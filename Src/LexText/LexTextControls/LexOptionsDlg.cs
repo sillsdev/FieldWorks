@@ -31,6 +31,9 @@ using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;
 using XCore;
+#if !__MonoCS__
+using NetSparkle;
+#endif
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -52,7 +55,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		public LexOptionsDlg()
 		{
 			InitializeComponent();
-			optionsTooltip = new ToolTip {AutoPopDelay = 6000, InitialDelay = 400, ReshowDelay = 500, IsBalloon = true};
+#if __MonoCS__
+			tabControl1.Controls.Remove(m_tabUpdates);
+#endif
+			optionsTooltip = new ToolTip { AutoPopDelay = 6000, InitialDelay = 400, ReshowDelay = 500, IsBalloon = true };
 			optionsTooltip.SetToolTip(updateGlobalWS, LexTextControls.ksUpdateGlobalWsTooltip);
 			optionsTooltip.SetToolTip(groupBox1, LexTextControls.ksUserInterfaceTooltip);
 		}
@@ -67,6 +73,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			base.OnLoad(e);
 			m_autoOpenCheckBox.Checked = AutoOpenLastProject;
 			m_okToPingCheckBox.Checked = Settings.Default.Reporting.OkToPingBasicUsageData;
+			checkForUpdatesBox.Checked = Settings.Default.AutoCheckForUpdates;
+			includeBetasBox.Checked = Settings.Default.CheckForBetaUpdates;
+			includeBetasBox.Enabled = checkForUpdatesBox.Checked;
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
@@ -75,6 +84,28 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			var reportingSettings = Settings.Default.Reporting;
 			reportingSettings.OkToPingBasicUsageData = m_okToPingCheckBox.Checked;
+			Settings.Default.AutoCheckForUpdates = checkForUpdatesBox.Checked;
+			Settings.Default.CheckForBetaUpdates = includeBetasBox.Checked;
+
+			Settings.Default.AutoCheckForUpdates = checkForUpdatesBox.Checked;
+			Settings.Default.CheckForBetaUpdates = includeBetasBox.Checked;
+
+#if !__MonoCS__
+			var sparkle = SingletonsContainer.Item("Sparkle") as Sparkle;
+			if (sparkle != null)
+			{
+				var appCastUrl = Settings.Default.IsBTE
+									? (Settings.Default.CheckForBetaUpdates
+										? CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastBteBetasUrl")
+										: CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastBteUrl"))
+									: (Settings.Default.CheckForBetaUpdates
+										? CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastSeBetasUrl")
+										: CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastSeUrl"));
+				sparkle.AppcastUrl = appCastUrl;
+			}
+#endif
+
+
 			Settings.Default.Save();
 			m_sNewUserWs = m_userInterfaceChooser.NewUserWs;
 			if (m_sUserWs != m_sNewUserWs)
@@ -288,6 +319,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void updateGlobalWS_MouseHover(object sender, EventArgs e)
 		{
 			;
+		}
+
+		private void checkForUpdatesBox_CheckedChanged(object sender, EventArgs e)
+		{
+			includeBetasBox.Enabled = checkForUpdatesBox.Checked;
 		}
 	}
 }

@@ -1130,6 +1130,34 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
+
+		/// <summary>
+		/// Update all existing references to point to objNew instead of objOld (which may be
+		/// getting deleted as soon as we return from this method), provided the new reference is valid.
+		/// If the new one is not valid in some instance, go ahead and replace the others.
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="objNew"></param>
+		/// <param name="objOld"></param>
+		internal static void ReplaceReferencesWhereValid(FdoCache cache, ICmObject objOld, ICmObject objNew)
+		{
+			var cmObject = ((CmObject)objOld);
+			cmObject.EnsureCompleteIncomingRefs();
+			// FWR-2969 If merging senses, m_incomingRefs will sometimes get changed
+			// by ReplaceAReference.
+			var refs = new List<IReferenceSource>(cmObject.m_incomingRefs);
+			foreach (var source in refs)
+			{
+				try
+				{
+					source.ReplaceAReference(objOld, objNew);
+				}
+				catch (InvalidOperationException)
+				{
+				}
+			}
+		}
+
 		/// <summary>
 		/// Get the real object corresponding to the HVO.
 		/// This is a convenient shortcut which saves duplicating this little code fragment a lot.
@@ -1298,6 +1326,17 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			m_hvo = ((IDataReader)cache.ServiceLocator.GetInstance<IDataSetup>()).GetNextRealHvo();
 			m_guid = Services.GetInstance<ICmObjectIdFactory>().FromGuid(Guid.NewGuid());
 			((IServiceLocatorInternal)servLoc).UnitOfWorkService.RegisterObjectAsCreated(this);
+			SetDefaultValuesAfterInit();
+		}
+
+		/// <summary>
+		/// A very special case, an ownerless object created with a constructor that predetermines the
+		/// guid (and also sets the cache, hvo, and calls RegisterObjectAsCreated).
+		/// However, since the object will be unowned, SetDefaultValuesAfterInit will not be
+		/// called when setting the owner, so we need to do it here.
+		/// </summary>
+		void ICmObjectInternal.InitializeNewOwnerlessCmObjectWithPresetGuid()
+		{
 			SetDefaultValuesAfterInit();
 		}
 

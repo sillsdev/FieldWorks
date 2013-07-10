@@ -95,14 +95,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			this.Text = MEStrings.ksChangeSpelling;
 		}
 
-		private RespellingSda RespellSda
-		{
-			get
-			{
-				return ((DomainDataByFlidDecoratorBase)m_specialSda.BaseSda).BaseSda as RespellingSda;
-			}
-		}
-
 		/// <summary>
 		/// Despite being public where the other SetDlgInfo is internal, this is a "special-case"
 		/// initialization method not used in Flex, but in TE, where there is not a pre-existing mediator
@@ -406,23 +398,16 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				foreach (var gloss in anal.MeaningsOC)
 					allAnalysesCandidatesOfWordform.Add(gloss);
 			}
-			// REVIEW JohnT (RandyR): Surely there must be a nice LINQ way to do the next set of loops. :-)
 			var allUsedSegments = new HashSet<ISegment>();
-			foreach (var segment in m_cache.ServiceLocator.GetInstance<ISegmentRepository>().AllInstances())
+			foreach (var segment in m_cache.ServiceLocator.GetInstance<ISegmentRepository>().AllInstances().Where(
+				segment => segment.AnalysesRS.Any(allAnalysesCandidatesOfWordform.Contains)))
 			{
-				foreach (var segAnal in segment.AnalysesRS)
-				{
-					if (!allAnalysesCandidatesOfWordform.Contains(segAnal))
-						continue;
-
-					allUsedSegments.Add(segment);
-					break;
-				}
+				allUsedSegments.Add(segment);
 			}
 			// There are 'other' occurrences if some of the real ones aren't in the displayed list.
 			if (m_repoSeg == null)
 				m_repoSeg = m_cache.ServiceLocator.GetInstance<ISegmentRepository>();
-			HashSet<ISegment> enabledSegments = new HashSet<ISegment>();
+			var enabledSegments = new HashSet<ISegment>();
 			foreach (int hvoFake in m_enabledItems)
 			{
 				int hvoSeg = m_specialSda.get_ObjectProp(hvoFake, ConcDecorator.kflidSegment);
@@ -1782,9 +1767,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			// Move remaining anals from src wf to new wf.
 			// This changes the owners of the remaining ones,
 			// since it is an owning property.
-			List<IWfiAnalysis> analyses = new List<IWfiAnalysis>();
+			var analyses = new List<IWfiAnalysis>();
 			analyses.AddRange(wfOld.AnalysesOC);
-			foreach (IWfiAnalysis anal in analyses)
+			foreach (var anal in analyses)
 				wfNew.AnalysesOC.Add(anal);
 		}
 

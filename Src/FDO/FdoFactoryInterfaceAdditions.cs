@@ -163,6 +163,23 @@ namespace SIL.FieldWorks.FDO
 	/// <summary>
 	/// Methods added for importing objects with known/fixed guids.
 	/// </summary>
+	public partial interface ICmLocationFactory
+	{
+		/// <summary>
+		/// Create a new Location instance with the given guid and owner.
+		/// It will be added to the end of the Possibilities list.
+		/// </summary>
+		ICmLocation Create(Guid guid, ICmPossibilityList owner);
+		/// <summary>
+		/// Create a new Location instance with the given guid and owner.
+		/// It will be added to the end of the SubPossibilities list.
+		/// </summary>
+		ICmLocation Create(Guid guid, ICmLocation owner);
+	}
+
+	/// <summary>
+	/// Methods added for importing objects with known/fixed guids.
+	/// </summary>
 	public partial interface ICmSemanticDomainFactory
 	{
 		/// <summary>

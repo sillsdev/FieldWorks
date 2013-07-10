@@ -281,20 +281,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			display.Enabled = display.Visible = Cache != null;
 			if (Cache == null)
 				return true;
-			var dictionaryExists = SpellingHelper.DictionaryExists(Cache.DefaultVernWs, Cache.LanguageWritingSystemFactoryAccessor);
-			if (!dictionaryExists)
-			{
-				//If the dictionary does not exist then do not display the menu item and also set
-				//the value appropriately in the property table
-				m_mediator.PropertyTable.SetProperty("UseVernSpellingDictionary", false);
-				m_mediator.PropertyTable.SetPropertyPersistence("UseVernSpellingDictionary", true);
-				display.Enabled = display.Visible = false;
-				display.Checked = false;
-			}
-			else
-			{
-				display.Checked = IsVernacularSpellingEnabled();
-			}
+			display.Checked = IsVernacularSpellingEnabled();
 			return true; //we've handled this
 		}
 

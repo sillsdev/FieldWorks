@@ -61,7 +61,6 @@ namespace SIL.FieldWorks.Discourse
 			#endregion
 
 			m_text = m_servLoc.GetInstance<ITextFactory>().Create();
-			//Cache.LangProject.TextsOC.Add(m_text);
 			m_stText = m_servLoc.GetInstance<IStTextFactory>().Create();
 			m_text.ContentsOA = m_stText;
 			m_allOccurrences = new Dictionary<IStTxtPara, AnalysisOccurrence[]>();
@@ -131,15 +130,6 @@ namespace SIL.FieldWorks.Discourse
 		internal IStTxtPara MakeParagraph()
 		{
 			return MakeParagraphForGivenText(m_stText);
-			//var para0 = m_servLoc.GetInstance<IStTxtParaFactory>().Create();
-			//m_stText.ParagraphsOS.Add(para0);
-			//var cPara = m_stText.ParagraphsOS.Count;
-			//var paraNum = cPara == 1 ? "one" : cPara.ToString();
-			//var tsstring = m_tsf.MakeString("this is paragraph " + paraNum + ". It is for our constituent chart database tests.",
-			//    Cache.DefaultVernWs);
-			//para0.Contents = tsstring;
-			//ParseTestParagraph(para0);
-			//return para0;
 		}
 
 		/// <summary>
@@ -167,7 +157,6 @@ namespace SIL.FieldWorks.Discourse
 		{
 			var servLoc = Cache.ServiceLocator;
 			var mainTextObj = servLoc.GetInstance<ITextFactory>().Create();
-			//Cache.LanguageProject.TextsOC.Add(mainTextObj);
 			var strangeText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 			mainTextObj.ContentsOA = strangeText;
 			return strangeText;

@@ -177,6 +177,36 @@ namespace SIL.FieldWorks.IText
 			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.Null);
 		}
 
+		/// <summary>
+		/// This test is for LT-14662, a problem that was happening in a bizarre situation where a morph bundle
+		/// has a sense and MSA, but no morph. We need to verify that we can actually make the combo without crashing
+		/// in that situation.
+		/// </summary>
+		[Test]
+		public void LexEntriesComboHandlerForBundleWithSenseAndMsaButNoMorph()
+		{
+			using (var sandbox = SetupSandbox(() =>
+				{
+					const string ali = "ali";
+					var mockText = MakeText(ali);
+					var wf = MakeWordform(ali);
+					var wa = MakeAnalysis(wf);
+					var bundle = MakeBundle(wa, ali, "something", "N");
+					bundle.MorphRA = null;
+					var para = (IStTxtPara)mockText.ContentsOA.ParagraphsOS[0];
+					var seg = para.SegmentsOS[0];
+					seg.AnalysesRS.Add(wa);
+					return new AnalysisOccurrence(seg, 0);
+				}))
+			{
+				using (var handler = GetComboHandler(sandbox, InterlinLineChoices.kflidLexEntries, 0) as SandboxBase.IhMissingEntry)
+				{
+					var imorphItemCurrentSandboxState = handler.IndexOfCurrentItem;
+					Assert.That(imorphItemCurrentSandboxState, Is.EqualTo(-1)); // no menu item corresponds to no allomorph.
+				}
+			}
+		}
+
 		[Test]
 		public void LexEntriesComboHandler_IndexOfCurrentLexSenseAndMsa()
 		{

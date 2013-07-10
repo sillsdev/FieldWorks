@@ -17,6 +17,8 @@ using System.IO;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 #endif
+using SIL.CoreImpl;
+
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -82,6 +84,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 				s_fIsTEInstalled = File.Exists(DirectoryFinder.TeExe);
 				return (bool)s_fIsTEInstalled;
 			}
+		}
+
+		/// <summary>
+		/// Many of the previous calls to IsTeInstalled were changed to call this instead,
+		/// when we made the SE edition able to work with Paratext Scripture if present.
+		/// Currently it always returns true, but if we someday want to hide every trace of Scripture
+		/// from the UI, we can make this configurable.
+		/// </summary>
+		public static bool IsOkToDisplayScriptureIfPresent
+		{
+			get { return true; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -200,5 +213,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return fontName;
 		}
 #endif
+
+		/// <summary>
+		/// Whenever possible use this in place of new PalasoWritingSystemManager.
+		/// It sets the TemplateFolder, which unfortunately the constructor cannot do because
+		/// the direction of our dependencies does not allow it to reference FwUtils and access DirectoryFinder.
+		/// </summary>
+		/// <returns></returns>
+		public static PalasoWritingSystemManager CreateWritingSystemManager()
+		{
+			var result = new PalasoWritingSystemManager();
+			result.TemplateFolder = DirectoryFinder.TemplateDirectory;
+			return result;
+		}
+
 	}
 }

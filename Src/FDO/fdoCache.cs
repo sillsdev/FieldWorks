@@ -1445,51 +1445,13 @@ namespace SIL.FieldWorks.FDO
 			return MaxFieldLength(flidProperty, MetaDataCache);
 		}
 		/// <summary>
-		/// This is the definitive method that sets limits on how long strings can be, based on the FLID.
-		/// AVOID using fixed constants like 450!
-		/// Review JohnT: is there still any reason for these limits??
+		/// This is the definitive method for setting limits on how long strings can be, based on the FLID.
+		/// Since we no longer use SQL tables, however, there is no longer any known reasons why truncating
+		/// strings of fields are necessary (LT-14684).
 		/// </summary>
 		public int MaxFieldLength(int flidProperty, IFwMetaDataCache mdc)
 		{
-			var nType = (CellarPropertyType)mdc.GetFieldType(flidProperty);
-			switch (nType)
-			{
-				// These ones should be limited
-				case CellarPropertyType.String:
-				case CellarPropertyType.MultiString:
-				case CellarPropertyType.Unicode:
-				case CellarPropertyType.MultiUnicode:
-					break;
-				default: // no limit
-					return Int32.MaxValue;
-			}
-			// Look for special cases.
-			// These two are special-cased shorter because they are indexed...
-			if (flidProperty == MoFormTags.kflidForm ||
-				flidProperty == WfiWordformTags.kflidForm)
-			{
-				return 300;
-			}
-
-			try
-			{
-				var sName = mdc.GetFieldName(flidProperty);
-				// descriptions can be long (probably should be Big variant, but...)
-				// definitions can also be long (see LT-8335)
-				// there's also no reason to limit custom fields, since we don't know what they'll
-				// be used for.
-				if (sName == "Description" || sName == "Definition")
-					return 4000; // our current max size in the database tables.
-				if (((IFwMetaDataCacheManaged)mdc).IsCustom(flidProperty))
-					return 4000;
-			}
-			catch(FDOInvalidFieldException)
-			{
-				// Some decorator property the MDC decorator doesn't know a name for or can't tell is not custom...treat like custom field.
-				// (Note that we will fail if the MDC doesn't even know the type, but that's more fully implemented.)
-				return 4000;
-			}
-			return 450; // current general default.
+			return Int32.MaxValue;
 		}
 
 		/// <summary>

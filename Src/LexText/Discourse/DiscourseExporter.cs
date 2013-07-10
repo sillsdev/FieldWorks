@@ -289,6 +289,8 @@ namespace SIL.FieldWorks.Discourse
 				var ws = GetWsFromTsString(tss);
 				WriteWordForm("word", tss, ws, m_frags.Contains(ConstChartVc.kfragMovedTextCellPart) ? "moved" : null);
 			}
+			else if (text == "***")
+				m_glossesInCellCollector.Add(tss.Text);
 			else
 			{
 				m_writer.WriteStartElement("lit");
@@ -296,7 +298,7 @@ namespace SIL.FieldWorks.Discourse
 
 				WriteLangAndContent(GetWsFromTsString(tss), tss);
 				m_writer.WriteEndElement();
-				base.AddString (tss);
+				base.AddString(tss);
 			}
 		}
 

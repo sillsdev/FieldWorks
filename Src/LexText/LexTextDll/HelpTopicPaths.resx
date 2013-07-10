@@ -2978,4 +2978,11 @@
   <data name="khtpCtxtOccurComplexConcordance" xml:space="preserve">
     <value>Using_Tools/Texts_&amp;_Words_tools/Complex_Concordance/Set_Occurrence_(Complex_Concordance).htm</value>
   </data>
+  <data name="khtpLinkedFilesWarningDialog" xml:space="preserve">
+    <value>User_Interface/Menus/File/Project_Properties/Project_Properties_External_Links_tab.htm</value>
+  </data>
+  <data name="khtpField-posEdit-FsFeatStruc-RegionFeatures" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Feature_Set_field_Category_Edit.htm</value>
+    <comment>Grammar Stem name Feature set</comment>
+  </data>
 </root>

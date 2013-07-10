@@ -206,7 +206,7 @@ $(INT_DIR)/libLanguage: $(OBJ_ALL) $(GENERIC_OBJ)/main.o $(LINK_LIBS) $(COM_OUT_
 	$(LINK.cc) -o $@ -Wl,-whole-archive $(COM_OUT_DIR)/libLanguageTlb.a -Wl,-no-whole-archive $(GENERIC_OBJ)/main.o $(OBJ_ALL) $(LINK_LIBS) $(LDLIBS)
 
 ComponentsMap: $(OUT_DIR)/libLanguage.so
-	(export PATH=$(PATH):$(COM_DIR)/bin$(ARCH) && cd $(OUT_DIR) && generate-map.sh libLanguage.so > libLanguage.compmap)
+	(export PATH=$(PATH):$(COM_DIR)/build$(ARCH)/bin && cd $(OUT_DIR) && generate-map.sh libLanguage.so > libLanguage.compmap)
 
 # === Rules ===
 

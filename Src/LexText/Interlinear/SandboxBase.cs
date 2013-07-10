@@ -3655,6 +3655,11 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+		internal int CurrentPos(int hvoMorph)
+		{
+			return m_caches.DataAccess.get_ObjectProp(hvoMorph, ktagSbMorphPos);
+		}
+
 		/// <summary>
 		/// Return the hvo best describing the state of the secondary cache for LexEntry fields
 		/// (by MSA, LexSense, or LexEntry).
@@ -4503,8 +4508,9 @@ namespace SIL.FieldWorks.IText
 					m_rootb.MakeSelAt(point.X, point.Y, rcSrcRoot, rcDstRoot, true);
 					m_fSuppressShowCombo = true;
 				}
-				catch (Exception)
+				catch (Exception e)
 				{
+					Debug.WriteLine(e.Message);
 					// Ignore not being able to make a selection.
 				}
 				EditingHelper.HandleMouseDown();

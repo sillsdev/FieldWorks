@@ -19,6 +19,7 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 {
@@ -341,12 +342,10 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// </summary>
 		protected abstract void ShutdownInternal();
 
-		///// <summary>
-		///// Remove the file(s) associated with the data store.
-		///// </summary>
-		//protected abstract void RemoveBackEnd();
-
-		private void StartupInternalWithDataMigrationIfNeeded(IThreadedProgress progressDlg)
+		/// <summary>
+		/// Protected for testing (see MockXMLBackendProvider)
+		/// </summary>
+		protected virtual void StartupInternalWithDataMigrationIfNeeded(IThreadedProgress progressDlg)
 		{
 			var currentDataStoreVersion = StartupInternal(ModelVersion);
 
@@ -742,6 +741,18 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				InitializeWritingSystemManager();
 				if (fBootstrapSystem)
 					BootstrapExtantSystem();
+			}
+			catch (System.UnauthorizedAccessException e)
+			{
+				if (MiscUtils.IsUnix)
+				{
+					// Tell Mono user he/she needs to logout and log back in
+					MessageBoxUtils.Show(Strings.ksNeedToJoinFwGroup);
+				}
+
+				// Release any resources.
+				ShutdownInternal();
+				throw;
 			}
 			catch (Exception e)
 			{

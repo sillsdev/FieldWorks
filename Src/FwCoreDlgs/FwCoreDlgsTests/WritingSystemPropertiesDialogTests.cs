@@ -152,6 +152,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		internal void VerifyLoadedForListBoxSelection(string expectedItemName, int selectedIndex)
 		{
 			ValidateGeneralInfo();
+			Assert.AreEqual(selectedIndex, WsList.SelectedIndex, "The wrong ws is selected.");
 			// Validate each tab is setup to match the current language definition info.
 			ValidateGeneralTab();
 			ValidateFontsTab();
@@ -433,6 +434,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_regionVariantControl.ScriptName = newScriptName;
 		}
 
+		/// <summary>
+		/// Set a new Custom (private use) Region subtag
+		/// </summary>
+		/// <param name="newRegionName"></param>
+		/// <remarks>Unless you modify this method it will fail given an input parameter length of less than 2.</remarks>
+		internal void SetCustomRegionName(string newRegionName)
+		{
+			var code = newRegionName.Substring(0, 2).ToUpperInvariant();
+			m_regionVariantControl.RegionSubtag = new RegionSubtag(code, newRegionName, true);
+		}
+
 		#endregion General Tab
 
 		#region Overrides
@@ -620,7 +632,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.PressBtnAdd("&Writing System for Kalaba...");
 			// Verify WsList has new item and it is selected
 			m_dlg.VerifyListBox(new[] { "Kalaba", "Kalaba", "Kalaba (International Phonetic Alphabet)" });
-			m_dlg.VerifyLoadedForListBoxSelection("Kalaba", 2);
+			m_dlg.VerifyLoadedForListBoxSelection("Kalaba", 0);
 			// verify we automatically switched back to General Tab.
 			m_dlg.VerifyTab(WritingSystemPropertiesDialog.kWsGeneral);
 			// Verify Switching context is not OK (force user to make unique Ws)
@@ -651,7 +663,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Now try adding a second/duplicate ws.
 			m_dlg.PressBtnAdd("&Writing System for Kala...");
 			m_dlg.VerifyListBox(new[] { "Kala", "Kala", "Kala (International Phonetic Alphabet)", "Kala (Phonetic)" });
-			m_dlg.VerifyLoadedForListBoxSelection("Kala", 3);
+			m_dlg.VerifyLoadedForListBoxSelection("Kala", 0);
 			m_dlg.SetVariantName("Phonetic");
 			m_dlg.VerifyListBox(new[] { "Kala", "Kala (International Phonetic Alphabet)", "Kala (Phonetic)", "Kala (Phonetic)" });
 			m_dlg.SwitchTab(WritingSystemPropertiesDialog.kWsFonts,
@@ -685,7 +697,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Verify WsList has new item and it is selected
 			m_dlg.VerifyListBox(new[] { "TestOnly", "TestOnly (International Phonetic Alphabet)" });
 			m_dlg.VerifyLoadedForListBoxSelection("TestOnly");
-			// verify we automatically switched back to General Tab.
+			// verify we stayed on the Fonts Tab
+			// Review gjm: Can we really do this through the UI; that is, create a new 'same' ws?
+			// There is already a separate test of 'copy'?).
 			m_dlg.VerifyTab(WritingSystemPropertiesDialog.kWsFonts);
 			// first, make sure we can remove the newly added writing system.
 			m_dlg.PressDeleteButton();
@@ -716,7 +730,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.PressBtnCopy();
 			// Verify WsList has new item and it is selected
 			m_dlg.VerifyListBox(new[] { "Kalaba", "Kalaba (International Phonetic Alphabet)", "Kalaba (International Phonetic Alphabet)" });
-			m_dlg.VerifyLoadedForListBoxSelection("Kalaba (International Phonetic Alphabet)", 2);
+			m_dlg.VerifyLoadedForListBoxSelection("Kalaba (International Phonetic Alphabet)", 1);
 			m_dlg.VerifyWritingSystemsAreEqual(1, 2);
 			// verify we automatically switched back to General Tab.
 			m_dlg.VerifyTab(WritingSystemPropertiesDialog.kWsGeneral);
@@ -802,7 +816,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.PressBtnAdd("&Writing System for Kalaba...");
 			// Verify WsList has new item and it is selected
 			m_dlg.VerifyListBox(new[] { "Kalaba", "Kalaba", "Kalaba (International Phonetic Alphabet)" });
-			m_dlg.VerifyLoadedForListBoxSelection("Kalaba", 2);
+			m_dlg.VerifyLoadedForListBoxSelection("Kalaba", 0);
 
 			//note: changes to the dialog have broken this behavior, but this test was catching more than it's advertised purpose,
 			//so rather than making a new way to set the script through the dialog I hacked out the following test code for now -naylor 2011-8-11
@@ -838,13 +852,38 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary>
-		///
+		/// Test creating a region variant (LT-13801)
 		/// </summary>
 		[Test]
-		[Ignore("TODO")]
 		public void GeneralTab_RegionVariantChanged()
 		{
-			//
+			m_dlg.ShowDialog(m_wsKalaba);
+			// Verify Remove doesn't (yet) do anything for Wss already in the Database.
+			m_dlg.VerifyListBox(new[] { "Kalaba", "Kalaba (International Phonetic Alphabet)" });
+			// Switch tabs, so we can test that Add New Ws will switch to General Tab.
+			m_dlg.SwitchTab(WritingSystemPropertiesDialog.kWsFonts);
+			m_dlg.VerifyTab(WritingSystemPropertiesDialog.kWsFonts);
+			m_dlg.VerifyAddWsContextMenuItems(new[] { "&Writing System for Kalaba..." });
+			// Click on Add Button...selecting "Add New..." option.
+			m_dlg.PressBtnAdd("&Writing System for Kalaba...");
+			// Verify WsList has new item and it is selected
+			m_dlg.VerifyListBox(new[] { "Kalaba", "Kalaba", "Kalaba (International Phonetic Alphabet)" });
+			m_dlg.VerifyLoadedForListBoxSelection("Kalaba", 0);
+			// verify we automatically switched back to General Tab.
+			m_dlg.VerifyTab(WritingSystemPropertiesDialog.kWsGeneral);
+			// Change Region info.
+			m_dlg.SetCustomRegionName("Minnesota");
+			m_dlg.VerifyListBox(new[] { "Kalaba", "Kalaba (International Phonetic Alphabet)", "Kalaba (Minnesota)" });
+			// Verify dialog indicates a list to add to current (vernacular) ws list
+			VerifyNewlyAddedWritingSystems(new[] { "qaa-QM-x-kal-MI" });
+			// Do OK
+			m_dlg.PressOk();
+			// Verify dialog indicates a list to add to current (vernacular) ws list
+			VerifyNewlyAddedWritingSystems(new[] { "qaa-QM-x-kal-MI" });
+			// Verify we've actually created the new ws.
+			VerifyWsNames(
+				new[] { "Kalaba", "Kalaba (International Phonetic Alphabet)", "Kalaba (Minnesota)" },
+				new[] { "qaa-x-kal", "qaa-fonipa-x-kal", "qaa-QM-x-kal-MI" });
 		}
 
 		#endregion

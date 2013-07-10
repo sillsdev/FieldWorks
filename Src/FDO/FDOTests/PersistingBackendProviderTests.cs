@@ -650,6 +650,42 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		}
 
 		/// <summary>
+		/// Tests that the right thing happens when StartupExtantLanguageProject() throws
+		/// an UnauthorizedAccessException in Linux.
+		/// In "real life" this happens if the user forgets to logout and back in
+		/// after the initial install of FieldWorks.
+		/// </summary>
+		[Test]
+		[Platform(Include = "Linux", Reason = "Linux specific")]
+		[ExpectedException(typeof(UnauthorizedAccessException))]
+		public void StartupExtantTest()
+		{
+			string testFileName = String.Empty;
+			try
+			{
+				var testDataPath = Path.Combine(DirectoryFinder.FwSourceDirectory, "FDO/FDOTests/BackupRestore/BackupTestProject");
+				var projName = Path.Combine(testDataPath, "BackupTestProject.fwdata");
+				testFileName = Path.GetTempFileName();
+				// If we leave the extension as .tmp, we get a sharing violation when the
+				// MockXMLBackendProvider ctor tries to write to the same name with .tmp extension
+				testFileName = Path.ChangeExtension(testFileName, "fwdata");
+				File.Copy(projName, testFileName, true);
+
+				// MockXMLBackendProvider implements IDisposable therefore we need the "using".
+				// Otherwise the build agent might complain, and in the worst case the test might hang.
+				using (var xmlBep = new MockXMLBackendProvider(Cache, testFileName))
+				{
+					// Should throw an UnauthorizedAccessException.
+					xmlBep.StartupExtant();
+				}
+			}
+			finally
+			{
+				File.Delete(testFileName);
+			}
+		}
+
+		/// <summary>
 		/// Tests that a fwdata file that was edited and has an extra newline at the end will not
 		/// throw an Exception.
 		/// </summary>
@@ -666,6 +702,33 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 				// Should not throw an XMLException. The code that detects a corrupt file shouldn't
 				// care about an extra character or two at the end of the file after the last tag.
 				xmlBep.Startup();
+			}
+		}
+
+		/// <summary>
+		/// Tests that a fwdata file with different rt element that have duplicate guids will report this error.
+		/// </summary>
+		[Test]
+		public void XMLFileWithDuplicateGuidsTest()
+		{
+			var testDataPath = Path.Combine(DirectoryFinder.FwSourceDirectory, "FDO/FDOTests/TestData");
+			var projName = Path.Combine(testDataPath, "DuplicateGuids.fwdata");
+
+			// MockXMLBackendProvider implements IDisposable therefore we need the "using".
+			// Otherwise the build agent might complain, and in the worst case the test might hang.
+			using (var xmlBep = new MockXMLBackendProvider(Cache, projName))
+			{
+				// Should not throw an XMLException. The code that detects a corrupt file shouldn't
+				// care about an extra character or two at the end of the file after the last tag.
+				xmlBep.Startup();
+				Assert.That(xmlBep.ListOfDuplicateGuids.Count, Is.GreaterThan(0), "The loading of this test project should result in finding duplicate guids.");
+
+				Assert.That(xmlBep.ListOfDuplicateGuids.Contains("cc60cb18-5067-442b-a740-d3b913b2610a, classname: PartOfSpeech"), "The guid cc60cb18-5067-442b-a740-d3b913b2610a should have been found as a duplicate.");
+				Assert.That(xmlBep.ListOfDuplicateGuids.Contains("30d07580-5052-4d91-bc24-469b8b2d7df9, classname: PartOfSpeech"), "The guid 30d07580-5052-4d91-bc24-469b8b2d7df9 should have been found as a duplicate.");
+				Assert.That(xmlBep.ListOfDuplicateGuids.Contains("6df1c8ee-5530-4180-99e8-be2afab0f60d, classname: PartOfSpeech"), "The guid 6df1c8ee-5530-4180-99e8-be2afab0f60d should have been found as a duplicate.");
+				Assert.That(xmlBep.ListOfDuplicateGuids.Contains("a4a759b4-5a10-4d7a-80a3-accf5bd840b1, classname: PartOfSpeech"), "The guid a4a759b4-5a10-4d7a-80a3-accf5bd840b1 should have been found as a duplicate.");
+				Assert.That(xmlBep.ListOfDuplicateGuids.Contains("a5311f3b-ff98-47d2-8ece-b1aca03a8bbd, classname: PartOfSpeech"), "The guid a5311f3b-ff98-47d2-8ece-b1aca03a8bbd should have been found as a duplicate.");
+				Assert.That(xmlBep.ListOfDuplicateGuids.Contains("f1ac9eab-5f8c-41cf-b234-e53405aaaac5, classname: PartOfSpeech"), "The guid f1ac9eab-5f8c-41cf-b234-e53405aaaac5 should have been found as a duplicate.");
 			}
 		}
 	}
@@ -700,6 +763,15 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			StartupInternal(ModelVersion);
 		}
 
+		/// <summary />
+		public void StartupExtant()
+		{
+			ProjectId = new TestProjectId(FDOBackendProviderType.kXML, Project);
+			// This will throw an UnauthorizedAccessException because of the
+			// StartupInternalWithDataMigrationIfNeeded() override below
+			StartupExtantLanguageProject(ProjectId, false, new DummyProgressDlg());
+		}
+
 		/// <summary/>
 		protected override void Dispose(bool disposing)
 		{
@@ -709,6 +781,18 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 					m_identityMap.Dispose();
 			}
 			base.Dispose(disposing);
+		}
+
+		/// <summary>
+		/// We don't want to display any dialogs when running tests.
+		/// </summary>
+		internal override void ReportDuplicateGuidsIfTheyExist()
+		{
+		}
+
+		protected override void StartupInternalWithDataMigrationIfNeeded(IThreadedProgress progressDlg)
+		{
+			throw new UnauthorizedAccessException();
 		}
 	}
 }

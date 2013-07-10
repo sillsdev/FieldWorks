@@ -153,10 +153,15 @@
 	  <Name>XMLUtils</Name>
 	  <HintPath>..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>
 	</Reference>
-	<Reference Include="Skybound.Gecko, Version=1.9.2.0, Culture=neutral, PublicKeyToken=3209ac31600d1857">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\DistFiles\Skybound.Gecko.dll</HintPath>
+    <Reference Condition="'$(OS)'=='Unix'" Include="geckofx-core-14">
+      <HintPath>\usr\lib\cli\geckofx-14.0.1\geckofx-core-14.dll</HintPath>
 	</Reference>
+    <Reference Condition="'$(OS)'=='Unix'" Include="Geckofx-Winforms-14">
+      <HintPath>\usr\lib\cli\geckofx-14.0.1\Geckofx-Winforms-14.dll</HintPath>
+	</Reference>
+    <None Condition="'$(OS)'=='Unix'" Include="\usr\lib\cli\geckofx-14.0.1\geckofx-core-14.dll.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
 	<Compile Include="..\..\..\CommonAssemblyInfo.cs">

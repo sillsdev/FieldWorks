@@ -11,7 +11,7 @@ ARCH=$(uname -m)
 [ -z "$MONO_PREFIX" ] && MONO_PREFIX=/usr/local
 
 # Dependency locations
-# search for xulrunner-1.9.2*, select the latest, and add its location to LD_LIBRARY_PATH
+# search for xulrunner and geckofx, select the best, and add its location to LD_LIBRARY_PATH
 . ./environ-xulrunner
 GDK_SHARP=/usr/lib/cli/gdk-sharp-2.0/
 
@@ -66,7 +66,7 @@ then
 	[ ! -d $FW_CommonAppData ] && mkdir -p $FW_CommonAppData
 fi
 
-MONO_PATH="${BASE}/DistFiles:${BASE}/Output_${ARCH}/${BUILD}:${GDK_SHARP}"
+MONO_PATH="${BASE}/DistFiles:${BASE}/Output_${ARCH}/${BUILD}:${GDK_SHARP}:${GECKOFX}"
 MONO_TRACE_LISTENER="Console.Out"
 #MONO_IOMAP=case
 MONO_MWF_SCALING=disable
@@ -74,7 +74,7 @@ MONO_MWF_SCALING=disable
 #DEBUG_ENABLE_PTR_VALIDATION=1
 
 export \
-	PATH LD_LIBRARY_PATH PKG_CONFIG_PATH \
+	PATH LD_LIBRARY_PATH PKG_CONFIG_PATH LD_PRELOAD \
 	COMPONENTS_MAP_PATH \
 	FW_ROOT FW_ROOTCODE FW_ROOTDATA \
 	ICU_DATA \

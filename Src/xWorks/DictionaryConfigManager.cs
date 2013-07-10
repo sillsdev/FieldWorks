@@ -336,20 +336,9 @@ namespace SIL.FieldWorks.XWorks
 		#region IDictConfigManager Members
 
 		/// <summary>
-		/// If there has been no change in change in current view, this will be null.
-		/// If a new configuration should now be the current one (a copy was made or
-		/// the current one was deleted), then this will return the unique code of the
-		/// new current view.
+		/// The view that should be selected in the main dialog after this one closes (if the user clicks OK).
 		/// </summary>
-		public string FinalConfigurationView
-		{
-			get
-			{
-				if (!m_fPersisted)
-					return null;
-				return !CurViewHasChanged ? null : m_currentView;
-			}
-		}
+		public string FinalConfigurationView { get; set; }
 
 		/// <summary>
 		/// If copies of older configuration views have been made, this property will

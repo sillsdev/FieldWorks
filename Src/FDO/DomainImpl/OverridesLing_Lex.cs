@@ -1877,6 +1877,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			var repo = Services.GetInstance<ILexEntryRepository>();
 			var newType = repo.HomographMorphType(Cache, newType1);
+			var oldType = repo.HomographMorphType(Cache, oldType1);
 			// This is deliberately obtained before updating, so it usually does NOT include this.
 			// However it might in one case: where the homograph cache had not previously been built.
 			var newHomographs = repo.GetHomographs(newHf)
@@ -1902,6 +1903,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					newHomographs[i].HomographNumber = (newHomographs.Count == 1 ? 0 : i + 1);
 				return;
 			}
+			if (oldHf == newHf && oldType == newType)
+				return;  // no significant change; e.g. change from stem to root, or no type to stem
 
 			// At some point AFTER we get the two lists we must fix the cache in the repository.
 			// However, if we just now built the cache, the entry is already in the right case.
@@ -1909,7 +1912,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				((ILexEntryRepositoryInternal)repo).UpdateHomographCache(this, oldHf);
 
 			// OldHomographs should not include this, since something changed.
-			var oldType = repo.HomographMorphType(Cache, oldType1);
 			var oldHomographs = repo.GetHomographs(oldHf)
 				.Where(le => repo.HomographMorphType(Cache, le.PrimaryMorphType) == oldType).ToList();
 			oldHomographs.Sort((first, second) => first.HomographNumber.CompareTo(second.HomographNumber));
@@ -1929,9 +1931,26 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				HomographNumber = 0;
 			else
 			{
-				HomographNumber = newHomographs.Count + 1; // give the new one the next available number.
-				if (newHomographs.Count == 1)
-					newHomographs[0].HomographNumber = 1; // was zero, now it has a homograph.
+				// If there was just one pre-existing entry which is a homograph, let it be #1 since it is
+				// probably the more common one. However, if the sole existing one already has an HN
+				// (e.g., it was imported from SFM as HN2), don't change it.
+				if (newHomographs.Count == 1 && newHomographs[0].HomographNumber == 0)
+					newHomographs[0].HomographNumber = 1;
+				var usedNumbers = new HashSet<int>(from h in newHomographs select h.HomographNumber);
+
+				// Now set our own HN.
+				int hn = newHomographs.Count + 1; // by default give the new one the next available number.
+				// If there is a gap in the numbering of the old ones, give the new one the first unused number.
+				for (int i = 1; i <= newHomographs.Count; i++)
+				{
+					if (!usedNumbers.Contains(i))
+					{
+						// There was a gap in the old sequence. Fill it.
+						hn = i;
+						break;
+					}
+				}
+				HomographNumber = hn;
 			}
 		}
 

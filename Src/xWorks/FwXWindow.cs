@@ -25,7 +25,6 @@ using System.Drawing;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Text;
-
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
@@ -43,6 +42,9 @@ using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
+#if !__MonoCS__
+using NetSparkle;
+#endif
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -1087,6 +1089,25 @@ namespace SIL.FieldWorks.XWorks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Check if any updates to FW are available
+		/// </summary>
+		/// <param name="args"></param>
+		/// <returns></returns>
+		/// ------------------------------------------------------------------------------------
+		protected bool OnHelpCheckForUpdates(object args)
+		{
+#if !__MonoCS__
+			var sparkle = SingletonsContainer.Item("Sparkle") as Sparkle;
+			if (sparkle == null)
+				MessageBox.Show("Updates do not work unless FieldWorks was installed via the installer.");
+			else
+				sparkle.CheckForUpdatesAtUserRequest();
+#endif
+			return true;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Show Help About dialog
 		/// </summary>
 		/// <param name="args"></param>
@@ -2058,9 +2079,9 @@ namespace SIL.FieldWorks.XWorks
 				object loc = m_mediator.PropertyTable.GetValue("windowLocation");
 				Debug.Assert(loc != null);
 
-				object size = m_mediator.PropertyTable.GetValue("windowSize", /*hack*/new System.Drawing.Size(400,400));
+				object size = m_mediator.PropertyTable.GetValue("windowSize", /*hack*/new Size(400,400));
 				Debug.Assert(size != null);
-				return new Rectangle((Point)loc, (System.Drawing.Size)size);
+				return new Rectangle((Point)loc, (Size)size);
 			}
 		}
 

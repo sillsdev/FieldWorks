@@ -883,6 +883,19 @@ namespace SIL.FieldWorks.Common.Framework
 				WriteCssXSenseNumber();
 				m_dictClassData.Remove("xsensenumber");
 			}
+			/*
+			 * This is a kludgy yet simple fix for LT-14606.
+			 * We are actually writing class="xsensenumber bold" to the XHTML
+			 * which are two distinct Css classes: ".xsensenumber" and ".bold".
+			 * However, GetValidCssClassName() joins these together in m_dictClassData dictionary
+			 * as "xsensenumber_bold". Oh well, we know this means two classes.
+			 */
+			if (m_dictClassData.ContainsKey("xsensenumber_bold"))
+			{
+				WriteCssXSenseNumber();
+				WriteCssBold();
+				m_dictClassData.Remove("xsensenumber_bold");
+			}
 			if (m_dictClassData.ContainsKey("xsensexrefnumber"))
 			{
 				WriteCssXSenseXrefNumber();
@@ -1184,6 +1197,11 @@ namespace SIL.FieldWorks.Common.Framework
 			m_writer.WriteLine(".xsensenumber {");
 			WriteFontInfoToCss(m_cache.DefaultAnalWs, "Sense-Reference-Number", "xsensenumber");
 			m_writer.WriteLine("}");
+		}
+
+		private void WriteCssBold()
+		{
+			m_writer.WriteLine(".bold { font-weight:bold; }");
 		}
 
 		private void WriteCssXSenseXrefNumber()
@@ -2207,14 +2225,26 @@ namespace SIL.FieldWorks.Common.Framework
 									rgsLangs.Add(sLang);
 							}
 						}
-						int idxHtml = sLine.IndexOf("<html ", StringComparison.Ordinal);
-						if (idxHtml >= 0)
-							sLine = sLine.Insert(idxHtml + 5, " xmlns=\"http://www.w3.org/1999/xhtml\"");
+						sLine = InsertHtmlNamespace(sLine);
 						wtr.WriteLine(sLine);
 						sLine = rdr.ReadLine();
 					}
 				}
 			}
+		}
+
+		/// <summary>
+		/// If this line contains the opening html attribute, add the required namespace info.
+		/// XSLT processors do too much with xmlns attributes, so we generally add it after the final xslt.
+		/// </summary>
+		/// <param name="sLine"></param>
+		/// <returns></returns>
+		public static string InsertHtmlNamespace(string sLine)
+		{
+			int idxHtml = sLine.IndexOf("<html ", StringComparison.Ordinal);
+			if (idxHtml >= 0)
+				sLine = sLine.Insert(idxHtml + 5, " xmlns=\"http://www.w3.org/1999/xhtml\"");
+			return sLine;
 		}
 
 		/// <summary>

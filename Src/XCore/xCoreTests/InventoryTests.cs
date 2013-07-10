@@ -15,14 +15,11 @@
 // <remarks>
 // </remarks>
 // --------------------------------------------------------------------------------------------
-using System;
 using System.IO;
 using System.Xml;
 using System.Collections.Generic;
-using System.Text;
 using NUnit.Framework;
 using SIL.Utils;
-using SIL.FieldWorks.Common.FwUtils;
 using System.Resources;
 
 namespace XCore

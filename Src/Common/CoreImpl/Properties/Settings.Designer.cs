@@ -60,5 +60,41 @@ namespace SIL.CoreImpl.Properties {
 				this["CallUpgrade"] = value;
 			}
 	    }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AutoCheckForUpdates {
+            get {
+                return ((bool)(this["AutoCheckForUpdates"]));
+            }
+            set {
+                this["AutoCheckForUpdates"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool CheckForBetaUpdates {
+            get {
+                return ((bool)(this["CheckForBetaUpdates"]));
+            }
+            set {
+                this["CheckForBetaUpdates"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IsBTE {
+            get {
+                return ((bool)(this["IsBTE"]));
+            }
+            set {
+                this["IsBTE"] = value;
+            }
+        }
     }
 }

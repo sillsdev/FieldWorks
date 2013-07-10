@@ -250,7 +250,7 @@ namespace SIL.FieldWorks.Common.Controls
 				// add the numbering if needed.
 				if (fNumber)
 				{
-					var sTag = CalculateAndFormatSenseLabel(rghvo, ihvo, xaNum);
+					var sTag = CalculateAndFormatSenseLabel(rghvo, ihvo, xaNum.Value);
 
 					ITsStrBldr tsb = tsf.GetBldr();
 					tsb.Replace(0, 0, sTag, ttpNum);
@@ -500,12 +500,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="rghvo">hvo array of senses</param>
 		/// <param name="ihvo">A sequence number or index (into rghvo).</param>
-		/// <param name="xaNum">The sequence number format to apply</param>
+		/// <param name="sTag">The sequence number format to apply</param>
 		/// <returns>The format filled in with the sequence number</returns>
-		private string CalculateAndFormatSenseLabel(int[] rghvo, int ihvo, XmlAttribute xaNum)
+		internal string CalculateAndFormatSenseLabel(int[] rghvo, int ihvo, string sTag)
 		{
 			var sNum = "";
-			var sTag = xaNum.Value;
 			int ich;
 			for (ich = 0; ich < sTag.Length; ++ich)
 			{
@@ -533,7 +532,22 @@ namespace SIL.FieldWorks.Common.Controls
 						if (m_cache.MetaDataCacheAccessor.get_IsVirtual(m_flid))
 							sNum = String.Format("{0}", ihvo + 1);
 						else
-							sNum = m_cache.GetOutlineNumber(m_objRepo.GetObject(rghvo[ihvo]), false, true);
+						{
+							var item = m_objRepo.GetObject(rghvo[ihvo]);
+							if (item is ILexSense)
+							{
+								// Need to use a virtual property which can be overridden by DictionaryPublicationDecorator
+								// So the numbering excludes any hidden senses.
+								var senseOutlineFlid = item.Cache.MetaDataCacheAccessor.GetFieldId2(LexSenseTags.kClassId, "LexSenseOutline", false);
+								sNum = m_sda.get_StringProp(item.Hvo, senseOutlineFlid).Text;
+							}
+							else
+							{
+								// Not sure this can ever happen (since the method name indicates is it supposed to make
+								// labels for senses), but it seemed safest to keep the old generic behavior for any other cases.
+								sNum = m_cache.GetOutlineNumber(item, false, true);
+							}
+						}
 						break;
 					case 'z':
 						sNum = GetOutlineStyle2biv(rghvo, ihvo);

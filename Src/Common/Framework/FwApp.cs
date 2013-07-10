@@ -353,7 +353,13 @@ namespace SIL.FieldWorks.Common.Framework
 			{
 				// Moved here due to FWNX-213
 				// OnHandleCreated must get called before the BroadcastPendingItems.
+				// Unfortunately, OnHandleCreated changes the window size, so we need to store
+				// the persisted size and restore it later.
+				var persistedSize = fwMainWindow.Size;
+				((IxWindow)fwMainWindow).SuspendWindowSizePersistence();
 				IntPtr dummy = fwMainWindow.Handle;
+				((IxWindow)fwMainWindow).ResumeWindowSizePersistence();
+				fwMainWindow.Size = persistedSize;
 				((IxWindow)fwMainWindow).Mediator.BroadcastPendingItems();
 			}
 			fwMainWindow.Show(); // Show method loads persisted settings for window & controls
@@ -997,7 +1003,8 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		public virtual void RemoveWindow(IFwMainWnd fwMainWindow)
 		{
-			CheckDisposed();
+			if (IsDisposed || BeingDisposed)
+				return;
 
 			if (!m_rgMainWindows.Contains(fwMainWindow))
 				return; // It isn't our window.

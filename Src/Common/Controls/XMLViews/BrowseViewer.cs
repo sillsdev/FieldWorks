@@ -171,7 +171,7 @@ namespace SIL.FieldWorks.Common.Controls
 	#region BrowseViewer class
 	/// <summary>
 	/// BrowseViewer is a container for various windows related to browsing. At a minimum it contains
-	/// a DnListView which provides the column headers and an XmlBrowseView that contains the
+	/// a DhListView which provides the column headers and an XmlBrowseView that contains the
 	/// actual browse view. It may also have a FilterBar, and eventually other controls, e.g.,
 	/// for filling in columns of data.
 	/// </summary>
@@ -767,7 +767,7 @@ namespace SIL.FieldWorks.Common.Controls
 					SetSortArrowColumn(iHeaderColumn, order, DhListView.ArrowSize.Small);
 
 				Logger.WriteEvent(String.Format("Sort on {0} {1} ({2})",
-						m_lvHeader.Columns[iHeaderColumn].Text, order, i));
+						m_lvHeader.ColumnsInDisplayOrder[iHeaderColumn].Text, order, i));
 			}
 			m_lvHeader.Refresh();
 		}
@@ -1012,10 +1012,11 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			if (m_xbv.Vc.HasSelectColumn)
 			{
-				// Don't enable DisplayCheckMarkHeader here, since it doesn't display reliably (LT-4473).
-				// Do our own setup for this button.
-				//m_lvHeader.DisplayCheckMarkHeader = true;
-				//m_lvHeader.CheckIconClick += new ConfigIconClickHandler(m_lvHeader_CheckIconClick);
+				// Do our own setup for checkmark header, since it doesn't display reliably when implemented in DhListView (LT-4473).
+				// In DhListView, an implementation of  checkmark header was not reliably receiving system Paint messages after
+				// an Invalidate(), Refresh(), or Update(). Until we find a solution to that problem, the parent of DhListView (e.g. BrowseViewer)
+				// will have to be responsible for setting up this button.
+
 				m_checkMarkButton = new Button();
 				m_checkMarkButton.Click += m_checkMarkButton_Click;
 				m_checkMarkButton.Image = ResourceHelper.CheckMarkHeader;
@@ -1276,7 +1277,6 @@ namespace SIL.FieldWorks.Common.Controls
 			CheckDisposed();
 
 			Controls.Remove(m_bulkEditBar);
-			m_lvHeader.DisplayCheckMarkHeader = false;
 		}
 
 		/// <summary>
@@ -1534,7 +1534,6 @@ namespace SIL.FieldWorks.Common.Controls
 #endif
 						m_lvHeader.ColumnRightClick -= m_lvHeader_ColumnRightClick;
 						m_lvHeader.ColumnDragDropReordered -= m_lvHeader_ColumnDragDropReordered;
-						m_lvHeader.CheckIconClick -= m_lvHeader_CheckIconClick;
 						if (!m_scrollContainer.Controls.Contains(m_lvHeader))
 							m_lvHeader.Dispose();
 					}
@@ -1560,6 +1559,7 @@ namespace SIL.FieldWorks.Common.Controls
 				} // m_scrollContainer != null
 				if (m_tooltip != null)
 					m_tooltip.Dispose();
+
 				if(components != null)
 				{
 					components.Dispose();
@@ -1803,8 +1803,7 @@ namespace SIL.FieldWorks.Common.Controls
 				if (ColumnIndexOffset() > 0)
 				{
 					int selColWidth = m_xbv.Vc.SelectColumnWidth * dpiX / 72000;
-					m_lvHeader.Columns[0].Width = selColWidth;
-					m_lvHeader.RecordCheckWidth(selColWidth);
+					m_lvHeader.ColumnsInDisplayOrder[0].Width = selColWidth;
 					widthAvail -= selColWidth;
 					widthExtra += selColWidth;
 				}
@@ -1821,7 +1820,7 @@ namespace SIL.FieldWorks.Common.Controls
 					widthTotal += width;
 					if (widthTotal + widthExtra + 1 > m_lvHeader.Width)
 						m_lvHeader.Width = widthTotal + widthExtra + 1; // otherwise it may truncate the width we set.
-					ColumnHeader ch = m_lvHeader.Columns[ColumnHeaderIndex(i)];
+					ColumnHeader ch = m_lvHeader.ColumnsInDisplayOrder[ColumnHeaderIndex(i)];
 					ch.Width = width;
 					// If the header isn't wide enough for the column to be the width we're setting, fix it.
 					while (ch.Width != width)
@@ -2076,7 +2075,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				// update the column according to the maxStringWidth.
 				// add in a little margin to prevent wrapping in some cases.
-				m_lvHeader.Columns[icolLvHeaderToAdjust].Width = maxStringWidth + 10;
+				m_lvHeader.ColumnsInDisplayOrder[icolLvHeaderToAdjust].Width = maxStringWidth + 10;
 
 				// force browse view to match header columns.
 				AdjustColumnWidths(true);
@@ -2114,7 +2113,6 @@ namespace SIL.FieldWorks.Common.Controls
 				SaveColumnWidths();
 			}
 			FireColumnsChangedEvent(true);
-			// m_lvHeader.UpdateConfigureButton();
 		}
 
 		private void FireColumnsChangedEvent(bool isWidthChange)
@@ -2145,7 +2143,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			for (int iCol = 0; iCol < m_lvHeader.Columns.Count - ColumnIndexOffset(); ++iCol)
 			{
-				int nNewWidth = m_lvHeader.Columns[ColumnHeaderIndex(iCol)].Width;
+				int nNewWidth = m_lvHeader.ColumnsInDisplayOrder[ColumnHeaderIndex(iCol)].Width;
 				string PropName = FormatColumnWidthPropertyName(iCol);
 				m_xbv.Mediator.PropertyTable.SetProperty(PropName, nNewWidth, PropertyTable.SettingsGroup.LocalSettings);
 			}
@@ -2177,14 +2175,13 @@ namespace SIL.FieldWorks.Common.Controls
 			int count = m_lvHeader.Columns.Count;
 			rglength = new VwLength[count];
 			widths = new int[count];
-			int widthTotal = 0;
 
+			var columns = m_lvHeader.ColumnsInDisplayOrder;
 			for (int i = 0; i < count; i++)
 			{
 				rglength[i].unit = VwUnit.kunPoint1000;
-				int width = m_lvHeader.Columns[i].Width;
+				int width = columns[i].Width;
 				rglength[i].nVal = width * 72000 / dpiX;
-				widthTotal += width;
 				widths[i] = width;
 			}
 		}
@@ -2205,8 +2202,9 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			if (wSum + 40 < wTotal)
 			{
+				var columns = m_lvHeader.ColumnsInDisplayOrder;
 				for (int i = 0; i < count; ++i)
-					m_lvHeader.Columns[i].Width = (rgw[i] * wTotal) / wSum;
+					columns[i].Width = (rgw[i] * wTotal) / wSum;
 				AdjustColumnWidths(false);
 			}
 		}
@@ -2437,8 +2435,6 @@ namespace SIL.FieldWorks.Common.Controls
 				return;			// Can't sort by this column.
 			m_icolCurrent = e.Column;
 
-			//Debug.WriteLine("Right click in header of column " + e.Column);
-
 			XWindow window = (XWindow)m_xbv.Mediator.PropertyTable.GetValue("window");
 			window.ShowContextMenu("mnuBrowseHeader",
 				new Point(Cursor.Position.X, Cursor.Position.Y),
@@ -2628,6 +2624,7 @@ namespace SIL.FieldWorks.Common.Controls
 			bool fSave = m_lvHeader.AdjustingWidth;
 			m_lvHeader.AdjustingWidth = true;	// Don't call AdjustColumnWidths() for each column.
 			// Remove all columns (except the 'select' column if any).
+			// We don't need to use ColumnsInDisplayOrder here because we don't allow the select column to be re-ordered.
 			while (m_lvHeader.Columns.Count > ColumnIndexOffset())
 				m_lvHeader.Columns.RemoveAt(m_lvHeader.Columns.Count - 1);
 			// Build the list of column headers.
@@ -2665,11 +2662,10 @@ namespace SIL.FieldWorks.Common.Controls
 			int index = 0;
 			foreach(XmlNode node in colSpecs)
 			{
-				widths.Add(node, m_lvHeader.Columns[ColumnHeaderIndex(index)].Width);
+				widths.Add(node, m_lvHeader.ColumnsInDisplayOrder[ColumnHeaderIndex(index)].Width);
 				index++;
 			}
 		}
-
 
 		private void m_lvHeader_ColumnDragDropReordered(object sender,
 			ColumnDragDropReorderedEventArgs e)
@@ -2968,20 +2964,21 @@ namespace SIL.FieldWorks.Common.Controls
 				// That doesn't fix columns added at the end, which the .NET code helpfully adjusts to
 				// one pixel wide each if the earlier columns use all available space!
 				int ccols = m_lvHeader.Columns.Count;
+				var columns = m_lvHeader.ColumnsInDisplayOrder;
 				for (int iAdjustCol = ccols - 1; iAdjustCol > 0; iAdjustCol--)
 				{
-					int adjust = DhListView.kMinColWidth - m_lvHeader.Columns[ccols - 1].Width;
+					int adjust = DhListView.kMinColWidth - columns[ccols - 1].Width;
 					if (adjust <= 0)
 						break; // only narrow columns at the end are a problem
 					for (int icol = iAdjustCol - 1; icol >= 0 && adjust > 0; icol--)
 					{
 						// See if we can narrow column icol by enough to fix things.
-						int avail = m_lvHeader.Columns[icol].Width - DhListView.kMinColWidth;
+						int avail = columns[icol].Width - DhListView.kMinColWidth;
 						if (avail > 0)
 						{
 							int delta = Math.Min(avail, adjust);
 							adjust -= delta;
-							m_lvHeader.Columns[icol].Width -= delta;
+							columns[icol].Width -= delta;
 						}
 					}
 				}
@@ -3311,11 +3308,11 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private void m_checkMarkButton_Click(object sender, EventArgs e)
 		{
-			m_lvHeader_CheckIconClick(this, new ConfigIconClickEventArgs(
+			CheckIconClick(this, new ConfigIconClickEventArgs(
 					RectangleToClient(m_checkMarkButton.RectangleToScreen(m_checkMarkButton.ClientRectangle))));
 		}
 
-		private void m_lvHeader_CheckIconClick(object sender, ConfigIconClickEventArgs e)
+		private void CheckIconClick(object sender, ConfigIconClickEventArgs e)
 		{
 			var menu = components.ContextMenu("CheckIconClickContextMenuStrip", false);
 			if (menu.MenuItems.Count == 0)
@@ -3324,9 +3321,8 @@ namespace SIL.FieldWorks.Common.Controls
 				menu.MenuItems.Add(XMLViewsStrings.ksUncheckAll, OnUncheckAll);
 				menu.MenuItems.Add(XMLViewsStrings.ksToggle, OnToggleAll);
 			}
-				menu.Show(this, new Point(e.Location.Left, e.Location.Bottom));
-			}
-
+			menu.Show(this, new Point(e.Location.Left, e.Location.Bottom));
+		}
 
 		/// <summary>
 		/// Get all the main items in this browse view.
@@ -3641,7 +3637,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (m_lvHeader == null || m_lvHeader.Columns.Count < 1)
 				return false;
-			int snapPos = m_lvHeader.Columns[0].Width + m_scrollBar.Width;
+			int snapPos = m_lvHeader.ColumnsInDisplayOrder[0].Width + m_scrollBar.Width;
 			// This guards against snapping when we have just one column that is stretching.
 			// When that happens, 'snapping' just prevents other behaviors, like
 			if (m_lvHeader.Columns.Count == 1 && snapPos >= width - 2)

@@ -1015,6 +1015,46 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			}
 		}
 
+		/// <summary>
+		/// If homographs have been given a non-standard set of numbers manually or by an import process,
+		/// and a new one is added, it should be given the first unused number.
+		/// </summary>
+		[Test]
+		public void CanInsertHomographIntoNonStandardSequence()
+		{
+			UndoableUnitOfWorkHelper.Do("undo", "redo", m_actionHandler,
+				() =>
+					{
+						var morphTypeStem =
+							Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
+						// Where the previous state should have had HN 0
+						var bankRiver = MakeStemEntry("bank", morphTypeStem);
+						bankRiver.HomographNumber = 2;
+						var bankMoney = MakeStemEntry("bank", morphTypeStem);
+						Assert.That(bankMoney.HomographNumber, Is.EqualTo(1));
+						Assert.That(bankRiver.HomographNumber, Is.EqualTo(2));
+
+						// Insert in the middle of a sequence
+						bankRiver.HomographNumber = 3;
+						var bankPlane = MakeStemEntry("bank", morphTypeStem);
+						Assert.That(bankMoney.HomographNumber, Is.EqualTo(1));
+						Assert.That(bankPlane.HomographNumber, Is.EqualTo(2));
+						Assert.That(bankRiver.HomographNumber, Is.EqualTo(3));
+
+						// Insert at the start of the sequence.
+						// Note that there is still a gap, and this is not corrected.
+						// (For example: might be importing SFM with explicit HNs, and the larger numbers occurring earlier.
+						// We don't want to renumber 4 and 5 when we import another.)
+						bankMoney.HomographNumber = 4;
+						bankPlane.HomographNumber = 5;
+						var bankRelyOn = MakeStemEntry("bank", morphTypeStem);
+						Assert.That(bankRelyOn.HomographNumber, Is.EqualTo(1)); // #1 was available
+						Assert.That(bankMoney.HomographNumber, Is.EqualTo(4)); // last value set unchanged
+						Assert.That(bankPlane.HomographNumber, Is.EqualTo(5)); // last value set unchanged
+						Assert.That(bankRiver.HomographNumber, Is.EqualTo(3)); // last value set unchanged
+					});
+		}
+
 
 		/// <summary>
 		/// Inspired by LT-13615 - tests homograph renumbering following a change in lex forms with multiple ws.

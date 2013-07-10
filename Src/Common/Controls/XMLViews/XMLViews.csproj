@@ -159,7 +159,7 @@
     </Reference>
     <Reference Include="Palaso, Version=1.7.43.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\Palaso.dll</HintPath>
+      <HintPath>..\..\..\..\Downloads\Palaso.dll</HintPath>
     </Reference>
     <Reference Include="Reporting">
       <Name>Reporting</Name>
@@ -225,6 +225,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>
     </Reference>
+    <Reference Condition="'$(OS)'=='Unix'" Include="geckofx-core-14">
+      <HintPath>\usr\lib\cli\geckofx-14.0.1\geckofx-core-14.dll</HintPath>
+	</Reference>
+    <Reference Condition="'$(OS)'=='Unix'" Include="Geckofx-Winforms-14">
+      <HintPath>\usr\lib\cli\geckofx-14.0.1\Geckofx-Winforms-14.dll</HintPath>
+	</Reference>
+    <None Condition="'$(OS)'=='Unix'" Include="\usr\lib\cli\geckofx-14.0.1\geckofx-core-14.dll.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\CommonAssemblyInfo.cs">
@@ -419,7 +428,6 @@
   <PropertyGroup>
     <DistFiles>../../../../DistFiles</DistFiles>
   </PropertyGroup>
-  <Import Project="../../../../Build/BeforeBuildCopyPalasoDlls.targets" />
   <ItemGroup>
     <None Include="gendarme-XMLViews.ignore" />
   </ItemGroup>

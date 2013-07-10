@@ -481,6 +481,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				ListNewPossibilities(writer, LexTextControls.ksPeopleAdded, m_rgnewPerson);
 				ListNewPossibilities(writer, LexTextControls.ksStatusValuesAdded, m_rgnewStatus);
 				ListNewPossibilities(writer, LexTextControls.ksUsageTypesAdded, m_rgnewUsageType);
+				ListNewPossibilities(writer, LexTextControls.ksLocationsAdded, new List<ICmPossibility>(m_rgnewLocation));
 				ListNewEnvironments(writer, LexTextControls.ksEnvironmentsAdded, m_rgnewEnvirons);
 				ListNewPossibilities(writer, LexTextControls.ksLexicalReferenceTypesAdded, m_rgnewLexRefTypes);
 				ListNewWritingSystems(writer, LexTextControls.ksWritingSystemsAdded, m_addedWss);
@@ -1244,7 +1245,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				case RangeNames.sConfidenceLevelsOA:
 				case RangeNames.sEducationOA:
 				case RangeNames.sGenreListOA:
+					break;
 				case RangeNames.sLocationsOA:
+					ProcessLocation(id, guidAttr, parent, newDesc, newLabel, newAbbrev);
 					break;
 
 					//xxx============================================xxx

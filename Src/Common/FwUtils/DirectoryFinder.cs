@@ -90,11 +90,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the full path of the Scripture-specific stylesheet.
+		/// This should NOT be in the TE folder, because it is used by the SE edition, when
+		/// doing minimal scripture initialization in order to include Paratext texts.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public static string TeStylesPath
 		{
-			get { return Path.Combine(TeFolder, kTeStylesFilename); }
+			get { return Path.Combine(FWCodeDirectory, kTeStylesFilename); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -464,13 +466,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// stores them in.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public static string GetZipfileFormatedPath(string path)
+		public static string GetZipfileFormattedPath(string path)
 		{
 			StringBuilder strBldr = new StringBuilder(path);
 			string pathRoot = Path.GetPathRoot(path);
 			strBldr.Remove(0, pathRoot.Length);
 			// replace back slashes with forward slashes (for Windows)
-			strBldr.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+			if (!MiscUtils.IsUnix && !MiscUtils.IsMac)
+				strBldr.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 			return strBldr.ToString();
 		}
 
@@ -1054,6 +1057,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns></returns>
 		public static String GetFullPathFromRelativeLFPath(string relativeLFPath, string linkedFilesRootDir)
 		{
+			// We could just catch the exception that IsPathRooted throws if there are invalid characters,
+			// or use Path.GetInvalidPathChars(). But that would pass things on Linux that will fail on Windows,
+			// which both makes unit testing difficult, and also may hide from Linux users the fact that their
+			// paths will cause problems on Windows.
+			var invalidChars = MiscUtils.GetInvalidProjectNameChars(MiscUtils.FilenameFilterStrength.kFilterProjName);
+			// relativeLFPath is allowed to include directories. And it MAY be rooted, meaning on Windows it could start X:
+			invalidChars = invalidChars.Replace(@"\", "").Replace("/", "").Replace(":", "");
+			// colon is allowed only as second character--such a path is probably no good on Linux, but will just be not found, not cause a crash
+			int indexOfColon = relativeLFPath.IndexOf(':');
+			if (relativeLFPath.IndexOfAny(invalidChars.ToCharArray()) != -1
+				|| (indexOfColon != -1 && indexOfColon != 1))
+			{
+				// This is a fairly clumsy solution, designed as a last-resort way to avoid crashing the program.
+				// Hopefully most paths for entering path names into the relevant fields do something nicer to
+				// avoid getting illegal characters there.
+				return FixPathSlashesIfNeeded(Path.Combine(linkedFilesRootDir, "__ILLEGALCHARS__"));
+			}
 			if (Path.IsPathRooted(relativeLFPath))
 				return FixPathSlashesIfNeeded(relativeLFPath);
 			else
@@ -1063,9 +1083,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// If a path gets stored with embedded \, fix it to work away from Windows.  (FWNX-882)
 		/// </summary>
-		internal static string FixPathSlashesIfNeeded(string path)
+		public static string FixPathSlashesIfNeeded(string path)
 		{
-			if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
+			if (string.IsNullOrEmpty(path))
+				return string.Empty;
+			if (MiscUtils.IsUnix || MiscUtils.IsMac)
 			{
 				if (path.Contains("\\"))
 					return path.Replace('\\', '/');

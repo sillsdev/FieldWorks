@@ -84,6 +84,7 @@
 			  Condition="'$(OS)'=='Windows_NT'"/>
 		<Unitpp Condition="'$(action)'=='test'"
 				FixturePath="$(dir-outputBase)/testGenericLib"
+				FudgeFactor="$(timeoutFudgeFactor)"
 				Timeout="60000">
 			<Output TaskParameter="FailedSuites" ItemName="FailedSuites"/>
 		</Unitpp>
@@ -143,6 +144,7 @@
 		<CatenateFiles SourceFiles="@(KernelCompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
 		<Unitpp Condition="'$(action)'=='test'"
 				FixturePath="$(dir-outputBase)/testFwKernel"
+				FudgeFactor="$(timeoutFudgeFactor)"
 				Timeout="60000">
 			<Output TaskParameter="FailedSuites" ItemName="FailedSuites"/>
 		</Unitpp>
@@ -197,6 +199,7 @@
 		<CatenateFiles SourceFiles="@(LanguageCompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
 		<Unitpp Condition="'$(action)'=='test'"
 				FixturePath="$(dir-outputBase)/testLanguage"
+				FudgeFactor="$(timeoutFudgeFactor)"
 				Timeout="60000">
 			<Output TaskParameter="FailedSuites" ItemName="FailedSuites"/>
 		</Unitpp>
@@ -241,6 +244,7 @@
 		<CatenateFiles SourceFiles="@(ViewsCompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
 		<Unitpp Condition="'$(action)'=='test'"
 				FixturePath="$(dir-outputBase)/testViews"
+				FudgeFactor="$(timeoutFudgeFactor)"
 				Timeout="60000">
 			<Output TaskParameter="FailedSuites" ItemName="FailedSuites"/>
 		</Unitpp>
@@ -340,8 +344,22 @@
 
 		<Message Text="Finished deleting the output directories!"/>
 	</Target>
+	<!-- item group for downloads, to allow easy copying -->
+	<!-- wildcards don't work unless the files have already been downloaded once -->
+	<ItemGroup>
+		<DownloadFiles Include="$(fwrt)/Downloads/Autofac.dll"/>
+		<DownloadFiles Include="$(fwrt)/Downloads/Chorus.exe"/>
+		<DownloadFiles Condition="'$(OS)'=='Unix'" Include="$(fwrt)/Downloads/ChorusHub.exe"/>
+		<DownloadFiles Include="$(fwrt)/Downloads/LibChorus.dll"/>
+		<DownloadFiles Include="$(fwrt)/Downloads/Vulcan.Uczniowie.HelpProvider.dll"/>
+		<DownloadFiles Include="$(fwrt)/Downloads/Palaso.dll"/>
+		<DownloadFiles Include="$(fwrt)/Downloads/Palaso.Lift.dll"/>
+		<DownloadFiles Include="$(fwrt)/Downloads/Palaso.Media.dll"/>
+		<DownloadFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.dll"/>
+		<DownloadFiles Include="$(fwrt)/Downloads/L10NSharp.dll"/>
+	</ItemGroup>
 
-	<Target Name="CopyDlls">
+	<Target Name="CopyDlls" DependsOnTargets="downloadWindowsDlls;downloadLinuxDlls">
 		<!-- .Net assemblies -->
 		<Copy SourceFiles="$(fwrt)/DistFiles/LinqBridge.dll" DestinationFolder="$(dir-outputBase)"
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
@@ -379,11 +397,46 @@
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<Copy SourceFiles="$(fwrt)/DistFiles/Windows/gennorm2.exe" DestinationFolder="$(dir-outputBase)"
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+		<!-- Copy the downloaded artifacts -->
+		<Copy SourceFiles="@(DownloadFiles)" DestinationFolder="$(dir-outputBase)"
+			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+	</Target>
+
+	<Target Name="downloadWindowsDlls" Condition="'$(OS)'=='Windows_NT'">
 		<!-- Chorus dlls. bt228 specifies the WeSay1.4 branch. Update when appropriate. -->
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt228/.lastSuccessful/Autofac.dll" LocalFilename="$(dir-outputBase)/Autofac.dll" />
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt228/.lastSuccessful/Chorus.exe" LocalFilename="$(dir-outputBase)/Chorus.exe" />
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt228/.lastSuccessful/LibChorus.dll" LocalFilename="$(dir-outputBase)/LibChorus.dll" />
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt228/.lastSuccessful/Vulcan.Uczniowie.HelpProvider.dll" LocalFilename="$(dir-outputBase)/Vulcan.Uczniowie.HelpProvider.dll" />
+		<Message Text="Downloading latest successful artifacts from Chorus WeSay1.4 build."/>
+		<MakeDir Directories="$(fwrt)/Downloads"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt228/.lastSuccessful/Autofac.dll" LocalFilename="$(fwrt)/Downloads/Autofac.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt228/.lastSuccessful/Chorus.exe" LocalFilename="$(fwrt)/Downloads/Chorus.exe"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt228/.lastSuccessful/LibChorus.dll" LocalFilename="$(fwrt)/Downloads/LibChorus.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt228/.lastSuccessful/Vulcan.Uczniowie.HelpProvider.dll" LocalFilename="$(fwrt)/Downloads/Vulcan.Uczniowie.HelpProvider.dll"/>
+		<!-- Palaso dlls. bt247 is the WeSay1.4 branch for Palaso. Update when appropriate. -->
+		<Message Text="Downloading latest successful artifacts from Palaso WeSay1.4 build."/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt247/.lastSuccessful/Palaso.dll" LocalFilename="$(fwrt)/Downloads/Palaso.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt247/.lastSuccessful/Palaso.Lift.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Lift.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt247/.lastSuccessful/Palaso.Media.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Media.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt247/.lastSuccessful/PalasoUIWindowsForms.dll" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.dll"/>
+		<!-- L10Sharp localization from the develop branch for now -->
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt247/.lastSuccessful/L10NSharp.dll" LocalFilename="$(fwrt)/Downloads/L10NSharp.dll"/>
+	</Target>
+
+	<Target Name="downloadLinuxDlls" Condition="'$(OS)'=='Unix'">
+		<!-- Chorus dlls. bt267 specifies the chorus-precise64-WeSay1.4Mono build. Update when appropriate. -->
+		<Message Text="Downloading latest successful artifacts from Chorus WeSay1.4Mono build."/>
+		<MakeDir Directories="$(fwrt)/Downloads"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt267/.lastSuccessful/Autofac.dll" LocalFilename="$(fwrt)/Downloads/Autofac.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt267/.lastSuccessful/Chorus.exe" LocalFilename="$(fwrt)/Downloads/Chorus.exe"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt267/.lastSuccessful/ChorusHub.exe" LocalFilename="$(fwrt)/Downloads/ChorusHub.exe"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt267/.lastSuccessful/LibChorus.dll" LocalFilename="$(fwrt)/Downloads/LibChorus.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt267/.lastSuccessful/Vulcan.Uczniowie.HelpProvider.dll" LocalFilename="$(fwrt)/Downloads/Vulcan.Uczniowie.HelpProvider.dll"/>
+		<!-- Palaso dlls. bt33 is the palaso-lucid32-DefaultMono branch for Palaso. Update when appropriate. -->
+		<Message Text="Downloading latest successful artifacts from Palaso DefaultMono build."/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt33/.lastSuccessful/Palaso.dll" LocalFilename="$(fwrt)/Downloads/Palaso.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt33/.lastSuccessful/Palaso.Lift.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Lift.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt33/.lastSuccessful/Palaso.Media.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Media.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt33/.lastSuccessful/PalasoUIWindowsForms.dll" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.dll"/>
+		<!-- L10Sharp localization from the develop branch for now -->
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt247/.lastSuccessful/L10NSharp.dll" LocalFilename="$(fwrt)/Downloads/L10NSharp.dll"/>
 	</Target>
 
 	<Target Name="setRegistryValues" DependsOnTargets="initLinux;initWindows;setKeysInHKLM;setKeysInHKCU"/>

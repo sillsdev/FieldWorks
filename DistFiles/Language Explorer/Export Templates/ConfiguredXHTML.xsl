@@ -464,6 +464,9 @@ display/printout!
 
   <xsl:template match="LexSense/LiteralString">
 	<xsl:if test="Str/Run/@bold='on'">
+	  <span class="xsensenumber bold"><xsl:value-of select="Str/Run"/></span>
+	</xsl:if>
+	<xsl:if test="Str/Run/@bold='off'">
 	  <span class="xsensenumber"><xsl:value-of select="Str/Run"/></span>
 	</xsl:if>
   </xsl:template>
@@ -716,9 +719,14 @@ display/printout!
 					<xsl:copy-of select="@id"/>
 					<xsl:if test="../../Paragraph/@style"><xsl:attribute name="style"><xsl:value-of select="../../Paragraph/@style"/></xsl:attribute></xsl:if>
 					<!-- If there is a sense number indicated, this will precede the current LexSense (LT-12119), so we have to hunt for it: -->
-					<xsl:if test="preceding-sibling::ItemNumber[1]/@class='xsensenumber'">
-						<span class="xsensenumber"><xsl:value-of select="../ItemNumber/Str/Run"/></span>
-					</xsl:if>
+					<xsl:choose>
+							<xsl:when test="preceding-sibling::ItemNumber[1][@class='xsensenumber']/Str/Run[@bold='on']">
+								<span class="xsensenumber bold"><xsl:value-of select="../ItemNumber/Str/Run"/></span>
+							</xsl:when>
+							<xsl:when test="preceding-sibling::ItemNumber[1][@class='xsensenumber']/Str/Run[@bold='off']">
+								<span class="xsensenumber"><xsl:value-of select="../ItemNumber/Str/Run"/></span>
+							</xsl:when>
+					</xsl:choose>
 		  <xsl:apply-templates/>
 		</div>
 	  </xsl:when>
@@ -739,7 +747,15 @@ display/printout!
   <xsl:template match="ItemNumber">
 	<!-- We've already dealt with sense number ItemNumber elements preceding a LexSense where a Paragraph style is invoked, so exlcude those here: -->
 	<xsl:if test="not(@class='xsensenumber' and following-sibling::LexSense and ../../Paragraph)">
-	  <span><xsl:attribute name="class"><xsl:value-of select="@class"/></xsl:attribute><xsl:value-of select="Str/Run"/></span>
+		<xsl:choose>
+			<xsl:when test="@class='xsensenumber' and Str/Run[@bold='on']">
+				  <span><xsl:attribute name="class">xsensenumber bold</xsl:attribute><xsl:value-of select="Str/Run"/></span>
+			</xsl:when>
+			<xsl:otherwise>
+				  <span><xsl:attribute name="class"><xsl:value-of select="@class"/></xsl:attribute><xsl:value-of select="Str/Run"/></span>
+			</xsl:otherwise>
+		</xsl:choose>
+
 	</xsl:if>
   </xsl:template>
 
@@ -966,6 +982,9 @@ display/printout!
 			<xsl:call-template name="ProcessStTxtPara"></xsl:call-template>
 		</xsl:for-each>
 	  </div>
+	</xsl:if>
+	<xsl:if test="CmPossibilityLink">
+		<xsl:apply-templates/>
 	</xsl:if>
 	<!-- LT-12612: If the custom field is a possibility list, no previous mechanism
 	appeared to deal with it, so here goes... -->

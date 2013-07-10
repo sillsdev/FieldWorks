@@ -972,4 +972,7 @@ The error was:
   <data name="ksWarningForSendReceiveLinkedFileslesPathHelp" xml:space="preserve">
     <value>To change the location of Linked files to the default location, launch the FieldWorks Project Properties dialog. This can be found under the File menu, then Project Management.</value>
   </data>
+  <data name="ksWSWarnWhenMergingWritingSystems" xml:space="preserve">
+    <value>Warning: You are about to merge two writing systems. If you have done interlinear analysis in both writing systems, the analyses in one of those writing systems will be lost. Do you wish to continue?</value>
+  </data>
 </root>

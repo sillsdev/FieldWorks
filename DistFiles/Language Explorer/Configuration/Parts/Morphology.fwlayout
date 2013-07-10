@@ -686,7 +686,7 @@
 		<part ref="ExceptionFeaturesPub" label="Exception Features" visibility="never" before="" after=" "/>
 	</layout>
 	<layout class="MoMorphSynAnalysis" type="jtview" name="publishStemMinorComplexFormGramInfo">
-		<part ref="PartOfSpeechPub" label="Category Info." visibility="ifdata" before="" after=" " ws="analysis" css="partofspeech-complexform"/>
+		<part ref="PartOfSpeechPub" label="Category Info." visibility="ifdata" before="" after=" " ws="analysis" css="partofspeech-complexform-minor"/>
 		<part ref="SlotsConfig" label="Slots (for Infl. Affixes)" visibility="ifdata" before=": " after="" sep=", " ws="analysis" param="publishStemMinorComplexFormGramInfo" css="slots-complexform"/>
 		<part ref="InflectionClassPub" label="Inflection Class" visibility="never" before="" after=" " ws="analysis"/>
 		<part ref="FeaturesPub" label="Inflection Features" visibility="never" before="" after=" "/>

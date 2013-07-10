@@ -16,6 +16,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Text;
 using System.Xml;
 using System.Diagnostics;
@@ -84,7 +85,7 @@ namespace XCore
 	{
 		#region Member data
 		/// <summary>
-		/// This does not represent any physical file on the desk,
+		/// This does not represent any physical file on the disk,
 		/// it is an in memory only document.
 		/// </summary>
 		protected XmlDocument m_mainDoc;
@@ -324,7 +325,7 @@ namespace XCore
 			if (idxTag > 0)
 			{
 				var tag = layoutName.Substring(idxTag);
-				var idx = tag.IndexOf(kcMarkNodeCopy);
+				var idx = tag.IndexOf(LayoutKeyUtils.kcMarkNodeCopy);
 				if (idx > 0)
 					tag = tag.Remove(idx);
 				Debug.Assert(m_mainDoc != null);
@@ -648,7 +649,7 @@ namespace XCore
 			m_mainDoc["Main"].AppendChild(result);
 			// we may already have a 'miss' for this element cached, so update the table
 			// 'result' may be null;
-			GetElementKey key = new GetElementKey(elementName, attrvals, m_mainDoc);
+			var key = new GetElementKey(elementName, attrvals, m_mainDoc);
 			m_getElementTable[key] = result;
 
 			return result;
@@ -839,7 +840,7 @@ namespace XCore
 
 		protected XmlNode GetEltFromDoc(string elementName, string[] attrvals, XmlDocument doc)
 		{
-			GetElementKey key = new GetElementKey(elementName, attrvals, doc);
+			var key = new GetElementKey(elementName, attrvals, doc);
 			XmlNode result = null;
 			bool hasKey = m_getElementTable.ContainsKey(key);
 			if (hasKey)
@@ -1143,7 +1144,7 @@ namespace XCore
 				}
 				//set up the values for other options
 				string[] keyAttrs;
-				GetElementKey key = GetKeyMain(node, out keyAttrs);
+				var key = GetKeyMain(node, out keyAttrs);
 				XmlNode current;
 				//if the element table already has a match then we want to insert replacing the current value
 				if (m_getElementTable.TryGetValue(key, out current))
@@ -1227,11 +1228,11 @@ namespace XCore
 				if (fileVersion != version && Merger != null && XmlUtils.GetOptionalAttributeValue(node, "base") == null)
 				{
 					string[] keyAttrs;
-					GetElementKey key = GetKeyMain(node, out keyAttrs);
+					var key = GetKeyMain(node, out keyAttrs);
 					XmlNode current;
 					if (m_getElementTable.TryGetValue(key, out current))
 					{
-						XmlNode merged = Merger.Merge(current, node, m_mainDoc);
+						XmlNode merged = Merger.Merge(current, node, m_mainDoc, string.Empty);
 						if (loadUserOverRides)
 							XmlUtils.SetAttribute(merged, "version", version.ToString());
 						survivors.Add(merged);
@@ -1240,25 +1241,20 @@ namespace XCore
 					else
 					{
 						// May be part of a named view or a duplicated node. Look for the unmodified one to merge with.
-						if (keyAttrs.Length > 2 && keyAttrs[2] == "name" && key.KeyVals.Length > 2)
+						string[] standardKeyVals;
+						var oldLayoutSuffix = LayoutKeyUtils.GetSuffixedPartOfNamedViewOrDuplicateNode(keyAttrs, key.KeyVals, out standardKeyVals);
+						if (!string.IsNullOrEmpty(oldLayoutSuffix))
 						{
-							var copyName = key.KeyVals[2];
-							int index = copyName.IndexOfAny(new [] {kcMarkLayoutCopy, kcMarkNodeCopy});
-							if (index > 0)
+							var originalKey = new GetElementKey(key.ElementName, standardKeyVals, m_mainDoc);
+							if (m_getElementTable.TryGetValue(originalKey, out current))
 							{
-								var originalName = copyName.Substring(0, index);
-								var originalKeyVals = (string[])key.KeyVals.Clone();
-								originalKeyVals[2] = originalName;
-								var originalKey = new GetElementKey(key.ElementName, originalKeyVals, m_mainDoc);
-								if (m_getElementTable.TryGetValue(originalKey, out current))
-								{
-									XmlNode merged = Merger.Merge(current, node, m_mainDoc);
-									XmlUtils.SetAttribute(merged, "name", copyName); // give it the name fro
-									if (loadUserOverRides)
-										XmlUtils.SetAttribute(merged, "version", version.ToString());
-									survivors.Add(merged);
-									wasMerged = true;
-								}
+								XmlNode merged = Merger.Merge(current, node, m_mainDoc, oldLayoutSuffix);
+								// We'll do the below and a bunch of other mods inside of LayoutMerger from now on.
+								//XmlUtils.SetAttribute(merged, "name", originalKey[2]); // give it the name from before
+								if (loadUserOverRides)
+									XmlUtils.SetAttribute(merged, "version", version.ToString(CultureInfo.InvariantCulture));
+								survivors.Add(merged);
+								wasMerged = true;
 							}
 						}
 					}
@@ -1330,7 +1326,7 @@ namespace XCore
 		private void AddNode(XmlNode node, XmlNode root)
 		{
 			string[] keyAttrs;
-			GetElementKey keyMain = GetKeyMain(node, out keyAttrs);
+			var keyMain = GetKeyMain(node, out keyAttrs);
 			string[] keyVals = keyMain.KeyVals;
 			string elementName = keyMain.ElementName;
 
@@ -1353,7 +1349,7 @@ namespace XCore
 						if (extantNode == null)
 							throw new Exception("no base found to override " + baseName);
 					}
-					GetElementKey keyBase = new GetElementKey(elementName, keyVals, m_baseDoc);
+					var keyBase = new GetElementKey(elementName, keyVals, m_baseDoc);
 					if (m_getElementTable.ContainsKey(keyBase))
 						throw new Exception("only one level of override is allowed " + baseName);
 					// Save the base node for future use.
@@ -1376,7 +1372,7 @@ namespace XCore
 				}
 				// alteration node goes into alterations doc (displacing any previous alteration
 				// with the same key).
-				GetElementKey keyAlterations = new GetElementKey(elementName, keyVals, m_alterationsDoc);
+				var keyAlterations = new GetElementKey(elementName, keyVals, m_alterationsDoc);
 				extantNode = null;
 				if (m_getElementTable.ContainsKey(keyAlterations))
 					extantNode = m_getElementTable[keyAlterations]; // May still be null.
@@ -1551,8 +1547,8 @@ namespace XCore
 				return true;
 			}
 
-			public string ElementName {get { return m_elementName;}}
-			public string[] KeyVals {get { return m_attrvals;}}
+			public string ElementName { get { return m_elementName; } }
+			public string[] KeyVals { get { return m_attrvals; } }
 
 			static int HashZeroForNull(object obj)
 			{
@@ -1722,6 +1718,6 @@ namespace XCore
 		/// <summary>
 		/// Do the merge.
 		/// </summary>
-		XmlNode Merge(XmlNode current, XmlNode wanted, XmlDocument dest);
+		XmlNode Merge(XmlNode newMaster, XmlNode oldConfigured, XmlDocument dest, string oldLayoutLevelSuffix);
 	}
 }

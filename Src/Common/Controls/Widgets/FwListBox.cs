@@ -10,6 +10,7 @@ using SIL.FieldWorks.Common.RootSites;
 using System.Diagnostics;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -1277,7 +1278,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			m_dataAccess = (ISilDataAccess)m_cacheDa;
 			// So many things blow up so badly if we don't have one of these that I finally decided to just
 			// make one, even though it won't always, perhaps not often, be the one we want.
-			m_wsf = new PalasoWritingSystemManager();
+			m_wsf = FwUtils.FwUtils.CreateWritingSystemManager();
 			m_dataAccess.WritingSystemFactory = WritingSystemFactory;
 			VScroll = true;
 			AutoScroll = true;
@@ -1378,7 +1379,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				CheckDisposed();
 
 				if (m_wsf == null)
-					m_wsf = new PalasoWritingSystemManager();
+					m_wsf = FwUtils.FwUtils.CreateWritingSystemManager();
 				return base.WritingSystemFactory;
 			}
 			set

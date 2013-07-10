@@ -848,7 +848,6 @@ namespace XCore
 			// Add the content control
 			// Note: We should be able to do it directly, since everything needed is in the default properties.
 			SetInitialContentObject(m_windowConfigurationNode);
-
 			m_sidebarAdapter.FinishInit();
 			m_menuBarAdapter.FinishInit();
 
@@ -1720,6 +1719,28 @@ namespace XCore
 		}
 
 		/// <summary>
+		/// Call this for the duration of a block of code outside of xWindow that might update
+		/// the size of the window (OnCreateHandle, for instance) without regard to the Mediator
+		/// PropertyTable. Call ResumeWindowSizing when done.
+		/// </summary>
+		public void SuspendWindowSizePersistence()
+		{
+			CheckDisposed();
+
+			m_persistWindowSize = false;
+		}
+
+		/// <summary>
+		/// See SuspentWindowSizing.
+		/// </summary>
+		public void ResumeWindowSizePersistence()
+		{
+			CheckDisposed();
+
+			m_persistWindowSize = true;
+		}
+
+		/// <summary>
 		/// Saves the property table (global) settings
 		/// Subclasses can override to save local settings.
 		/// </summary>
@@ -2242,7 +2263,7 @@ namespace XCore
 			m_widgetUpdateTimer.Enabled = true;
 		}
 
-		private void XWindow_Resize(object sender, System.EventArgs e)
+		private void XWindow_Resize(object sender, EventArgs e)
 		{
 			if (!m_persistWindowSize)
 				return;
@@ -2250,18 +2271,18 @@ namespace XCore
 			//don't bother storing the size if we are maximize or minimize.
 			//if we did, then when the user exits the application and then runs it again,
 			//	then switches to the normal state, we would be switching to a bizarre size.
-			if (WindowState == System.Windows.Forms.FormWindowState.Normal)
+			if (WindowState == FormWindowState.Normal)
 				m_mediator.PropertyTable.SetProperty("windowSize", Size);
 			// We do need to store the window state as well:  see LT-6602.
 			m_mediator.PropertyTable.SetProperty("windowState", WindowState, false);
 		}
 
-		private void XWindow_Move(object sender, System.EventArgs e)
+		private void XWindow_Move(object sender, EventArgs e)
 		{
 			//don't bother storing the location if we are maximized or minimized.
 			//if we did, then when the user exits the application and then runs it again,
 			//	then switches to the normal state, we would be switching to 0,0 or something.
-			if (this.WindowState == System.Windows.Forms.FormWindowState.Normal)
+			if (this.WindowState == FormWindowState.Normal)
 				m_mediator.PropertyTable.SetProperty("windowLocation", this.Location);
 		}
 

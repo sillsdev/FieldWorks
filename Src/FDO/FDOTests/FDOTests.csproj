@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -167,7 +167,7 @@
     </Reference>
     <Reference Include="Palaso, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\Palaso.dll</HintPath>
+      <HintPath>..\..\..\Downloads\Palaso.dll</HintPath>
     </Reference>
     <Reference Include="ParatextShared, Version=7.2.8.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -245,6 +245,7 @@
     <Compile Include="BackupRestore\ProjectBackupServiceTestForLinkedFiles.cs" />
     <Compile Include="BackupRestore\ProjectBackupServiceTests.cs" />
     <Compile Include="BackupRestore\ProjectRestoreServiceTests.cs" />
+    <Compile Include="BackupRestore\ProjectRestoreTestService.cs" />
     <Compile Include="BaseStyleInfoTests.cs" />
     <Compile Include="BtConverterTests.cs" />
     <Compile Include="BulletInfoTests.cs" />
@@ -524,6 +525,7 @@
     <Content Include="TestData\DataMigration7000042A.xml" />
     <Content Include="TestData\DataMigration7000042B.xml" />
     <Content Include="TestData\DataMigration7000044.xml" />
+    <None Include="TestData\DuplicateGuids.fwdata" />
     <None Include="TestData\SlightlyCorruptedXMLFile.fwdata" />
     <None Include="TestData\FeatureSystem2.xml" />
     <None Include="TestData\FeatureSystem3.xml" />
@@ -561,6 +563,5 @@
   <PropertyGroup>
     <DistFiles>../../../DistFiles</DistFiles>
   </PropertyGroup>
-  <Import Project="../../../Build/BeforeBuildCopyPalasoDlls.targets" />
   <Import Project="BuildInclude.targets" />
 </Project>

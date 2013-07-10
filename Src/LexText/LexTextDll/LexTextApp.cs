@@ -540,34 +540,22 @@ namespace SIL.FieldWorks.XWorks.LexText
 			}
 			return false;
 		}
-
-		public bool OnHelpUserManual(object sender)
+		/// <summary>
+		/// When user selects Help -> Training, display a webpage in place of the Word Training documents.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <returns></returns>
+		public bool OnHelpTraining(object sender)
 		{
 			CheckDisposed();
 
-			string path = String.Format(DirectoryFinder.FWCodeDirectory +
-				"{0}Helps{0}Language Explorer{0}Training{0}Flex Student Manual.doc",
-				Path.DirectorySeparatorChar);
-
-			OpenDocument(path, (e) => {
-				MessageBox.Show(null, String.Format(LexTextStrings.ksCannotLaunchX, path),
-					LexTextStrings.ksError);
-			});
-			return true;
-		}
-
-		public bool OnHelpInstructorGuide(object sender)
-		{
-			CheckDisposed();
-
-			string path = String.Format(DirectoryFinder.FWCodeDirectory +
-				"{0}Helps{0}Language Explorer{0}Training{0}FLEx Instructor Guide.doc",
-				Path.DirectorySeparatorChar);
-
-			OpenDocument(path, (e) => {
-				MessageBox.Show(null, String.Format(LexTextStrings.ksCannotLaunchX, path),
-					LexTextStrings.ksError);
-			});
+			using (var process = new Process())
+			{
+				process.StartInfo.UseShellExecute = true;
+				process.StartInfo.FileName = "http://wiki.lingtransoft.info/doku.php?id=tutorials:student_manual";
+				process.Start();
+				process.Close();
+			}
 			return true;
 		}
 
@@ -576,7 +564,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			CheckDisposed();
 
 			string path = String.Format(DirectoryFinder.FWCodeDirectory +
-				"{0}Helps{0}Language Explorer{0}Training{0}Technical Notes on LinguaLinks Database Import.doc",
+				"{0}Helps{0}Language Explorer{0}Training{0}Technical Notes on LinguaLinks Database Import.pdf",
 				Path.DirectorySeparatorChar);
 
 			OpenDocument(path, (e) => {
@@ -591,7 +579,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			CheckDisposed();
 
 			string path = String.Format(DirectoryFinder.FWCodeDirectory +
-				"{0}Helps{0}Language Explorer{0}Training{0}Technical Notes on Interlinear Import.doc",
+				"{0}Helps{0}Language Explorer{0}Training{0}Technical Notes on Interlinear Import.pdf",
 				Path.DirectorySeparatorChar);
 
 			OpenDocument(path, (e) => {
@@ -606,7 +594,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			CheckDisposed();
 
 			string path = String.Format(DirectoryFinder.FWCodeDirectory +
-				"{0}Helps{0}Language Explorer{0}Training{0}Technical Notes on SFM Database Import.doc",
+				"{0}Helps{0}Language Explorer{0}Training{0}Technical Notes on SFM Database Import.pdf",
 				Path.DirectorySeparatorChar);
 
 			OpenDocument(path, (e) => {
@@ -937,9 +925,9 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// surrounds the path in double quotes and opens it with a web browser.
 		/// </summary>
 		/// <param name="path"></param>
-		/// <param name="exceptionHandler">
+		/// <param name="exceptionHandler"/>
 		/// Delegate to run if an exception is thrown. Takes the exception as an argument.
-		/// </para>
+
 		private void OpenDocument(string path, Action<Exception> exceptionHandler)
 		{
 			OpenDocument<Exception>(path, exceptionHandler);

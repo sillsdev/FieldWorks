@@ -134,7 +134,7 @@
       <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
     <Reference Include="Palaso">
-      <HintPath>..\..\..\..\Output\Debug\Palaso.dll</HintPath>
+      <HintPath>..\..\..\..\Downloads\Palaso.dll</HintPath>
     </Reference>
     <Reference Include="ParatextShared">
       <HintPath>..\..\..\..\DistFiles\ParatextShared.dll</HintPath>
@@ -522,5 +522,4 @@
   <PropertyGroup>
     <DistFiles>../../../../DistFiles</DistFiles>
   </PropertyGroup>
-  <Import Project="../../../../Build/BeforeBuildCopyPalasoDlls.targets" />
 </Project>

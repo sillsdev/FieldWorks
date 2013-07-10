@@ -91,7 +91,6 @@ namespace SIL.FieldWorks.FixData
 					{
 						entriesWithCitationForm.Add(guid, citationForm);
 					}
-					// Enhance JohnT: possibly we should consider AlternateForms, if no LexemeForm?
 					break;
 				case "LangProject":
 					var homoWsElt = rt.Element("HomographWs");
@@ -121,27 +120,26 @@ namespace SIL.FieldWorks.FixData
 				List<Guid> guidsForHomograph;
 				var rtElem = morphKvp.Value;
 				var morphGuid = new Guid(rtElem.Attribute("guid").Value);
+				// We don't assign homographs based on allomorphs.
+				if (!m_firstAllomorphs.Contains(morphGuid))
+					continue;
 				string rtFormText;
 				if (entriesWithCitationForm.Keys.Contains(owners[morphGuid]))
 				{
 					var entryGuid = owners[morphGuid];
 					var cfElement = entriesWithCitationForm[entryGuid];
 					rtFormText = GetStringInHomographWritingSystem(cfElement);
-					if (!string.IsNullOrWhiteSpace(rtFormText))
-					{
-						rtFormText = rtFormText.Trim();
-					}
+					if (string.IsNullOrWhiteSpace(rtFormText))
+						continue;
+					rtFormText = rtFormText.Trim();
 				}
 				else
 				{
-					// We don't assign homographs based on allomorphs.
-					if (!m_firstAllomorphs.Contains(morphGuid))
-						continue;
 					var rtForm = rtElem.Element("Form");
 					if (rtForm == null)
 						continue;
 					rtFormText = GetStringInHomographWritingSystem(rtForm);
-					if (rtFormText == null || rtFormText.Trim().Length == 0)
+					if (string.IsNullOrWhiteSpace(rtFormText))
 						continue; // entries with no lexeme form are not considered homographs.
 				}
 

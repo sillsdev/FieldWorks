@@ -2392,7 +2392,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			ITsStrBldr bldr = TsStrBldrClass.Create();
 			// Footnotes go here:                      |
-			bldr.Replace(0, 0, "'This is sentence one.' Sentence two.",
+			bldr.Replace(0, 0, "\"This is sentence one.\" Sentence two.",
 			StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			Guid footnote1 = Guid.NewGuid();
 			TsStringUtils.InsertOrcIntoPara(footnote1, FwObjDataTypes.kodtOwnNameGuidHot, bldr, 23, 23, Cache.DefaultVernWs);

@@ -869,6 +869,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_cbAnalWrtSys.Items.Clear();
 			m_cbVernWrtSys.Items.Clear();
 
+			// Make sure our manager knows about any writing systems in the template folder.
+			// In pathological cases where no projects have been installed these might not be in the global store.
+			foreach (var templateLangFile in Directory.GetFiles(DirectoryFinder.TemplateDirectory, @"*.ldml"))
+			{
+				var id = Path.GetFileNameWithoutExtension(templateLangFile);
+				IWritingSystem dummy;
+				m_wsManager.GetOrSet(id, out dummy);
+			}
+
 			foreach (IWritingSystem ws in m_wsManager.LocalWritingSystems)
 			{
 				m_cbAnalWrtSys.Items.Add(ws);

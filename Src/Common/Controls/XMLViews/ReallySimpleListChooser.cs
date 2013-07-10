@@ -129,7 +129,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary></summary>
 		protected IVwStylesheet m_stylesheet;
 
+#if __MonoCS__
+		private Gecko.GeckoWebBrowser m_webBrowser;
+#else
 		private WebBrowser m_webBrowser;
+#endif
 		private Panel m_mainPanel;
 		private Button m_helpBrowserButton;
 		private SplitContainer m_splitContainer;
@@ -1057,9 +1061,6 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private void InitHelpBrowser()
 		{
-			if (MiscUtils.IsUnix) // See FWNX-464
-				return;
-
 			int splitterDistance = m_splitContainer.Width;
 			if (m_persistProvider != null)
 			{
@@ -1069,6 +1070,15 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 
 			// only create the web browser if we needed, because this control is pretty resource intensive
+#if __MonoCS__
+			m_webBrowser = new Gecko.GeckoWebBrowser
+			{
+				Dock = DockStyle.Fill,
+				TabIndex = 1,
+				MinimumSize = new Size(20, 20),
+				NoDefaultContextMenu = true
+			};
+#else
 			m_webBrowser = new WebBrowser
 			{
 				Dock = DockStyle.Fill,
@@ -1076,17 +1086,24 @@ namespace SIL.FieldWorks.Common.Controls
 				WebBrowserShortcutsEnabled = false,
 				AllowWebBrowserDrop = false
 			};
+#endif
 			m_helpBrowserButton.Visible = true;
 			m_viewExtrasPanel.Visible = true;
+#if !__MonoCS__
 			m_webBrowser.Navigated += m_webBrowser_Navigated;
+#endif
 			m_webBrowser.CanGoBackChanged += m_webBrowser_CanGoBackChanged;
 			m_webBrowser.CanGoForwardChanged += m_webBrowser_CanGoForwardChanged;
 			m_splitContainer.Panel2.Controls.Add(m_webBrowser);
 
 			m_backButton = new ToolStripButton(null, m_imageList.Images[2], m_backButton_Click) {Enabled = false};
 			m_forwardButton = new ToolStripButton(null, m_imageList.Images[3], m_forwardButton_Click) {Enabled = false};
+#if __MonoCS__
+			m_helpBrowserStrip = new ToolStrip(m_backButton, m_forwardButton) { Dock = DockStyle.Top };
+#else
 			m_printButton = new ToolStripButton(null, m_imageList.Images[4], m_printButton_Click);
 			m_helpBrowserStrip = new ToolStrip(m_backButton, m_forwardButton, m_printButton) { Dock = DockStyle.Top };
+#endif
 			m_splitContainer.Panel2.Controls.Add(m_helpBrowserStrip);
 
 			if (splitterDistance < m_splitContainer.Width)
@@ -1190,6 +1207,11 @@ namespace SIL.FieldWorks.Common.Controls
 				if (pos != null)
 				{
 					string helpFile = pos.OwningList.HelpFile;
+#if __MonoCS__
+					// Force Linux to use combined Ocm/OcmFrame files
+					if (helpFile == "Ocm.chm")
+						helpFile = "OcmFrame";
+#endif
 					string helpTopic = pos.HelpId;
 					if (!string.IsNullOrEmpty(helpFile) && !string.IsNullOrEmpty(helpTopic))
 					{
@@ -1202,9 +1224,14 @@ namespace SIL.FieldWorks.Common.Controls
 								string helpsPath = Path.Combine(DirectoryFinder.FWCodeDirectory, "Helps");
 								helpFile = Path.Combine(helpsPath, helpFile);
 							}
+#if __MonoCS__
+							// remove file extension, we need folder of the same name with the htm files
+							helpFile = helpFile.Replace(".chm","");
+							string url = string.Format("{0}/{1}.htm", helpFile, helpTopic.ToLowerInvariant());
+#else
 							string url = string.Format("its:{0}::/{1}.htm", helpFile, helpTopic);
-							if (!MiscUtils.IsUnix) // See FWNX-464
-								m_webBrowser.Navigate(url);
+#endif
+							m_webBrowser.Navigate(url);
 						}
 					}
 					else
@@ -1224,10 +1251,17 @@ namespace SIL.FieldWorks.Common.Controls
 			if (url == null)
 				return null;
 			string urlStr = url.ToString();
+#if __MonoCS__
+			int startIndex = urlStr.IndexOf("OcmFrame/");
+			if (startIndex == -1)
+				return null;
+			startIndex += 9;
+#else
 			int startIndex = urlStr.IndexOf("::/");
 			if (startIndex == -1)
 				return null;
 			startIndex += 3;
+#endif
 			int endIndex = urlStr.IndexOf(".htm", startIndex);
 			if (endIndex == -1)
 				return null;
@@ -1275,6 +1309,12 @@ namespace SIL.FieldWorks.Common.Controls
 				descFont = userFont;
 			}
 
+#if __MonoCS__
+			var tempfile = Path.Combine(FileUtils.GetTempFile("htm"));
+			using (var w = new StreamWriter(tempfile, false))
+			using (var tw = new XmlTextWriter(w))
+			{
+#endif
 			var htmlElem = new XElement("html",
 				new XElement("head",
 					new XElement("title", title)),
@@ -1288,7 +1328,18 @@ namespace SIL.FieldWorks.Common.Controls
 					new XElement("font",
 						new XAttribute("face", descFont),
 						new XElement("p", desc))));
+#if __MonoCS__
+			XmlDocument xmlDocument = new XmlDocument();
+			xmlDocument.LoadXml(htmlElem.ToString());
+			xmlDocument.WriteTo(tw);
+			}
+			m_webBrowser.Navigate(tempfile);
+			if (FileUtils.FileExists(tempfile))
+				FileUtils.Delete(tempfile);
+			tempfile = null;
+#else
 			m_webBrowser.DocumentText = htmlElem.ToString();
+#endif
 		}
 
 		private void m_flvLabels_SelectionChanged(object sender, FwObjectSelectionEventArgs e)
@@ -1311,10 +1362,12 @@ namespace SIL.FieldWorks.Common.Controls
 			m_webBrowser.GoForward();
 		}
 
+#if !__MonoCS__
 		private void m_printButton_Click(object sender, EventArgs e)
 		{
 			m_webBrowser.ShowPrintDialog();
 		}
+#endif
 
 		private void ExpandHelpBrowser()
 		{

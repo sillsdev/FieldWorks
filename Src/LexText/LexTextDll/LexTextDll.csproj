@@ -110,7 +110,7 @@
     </Reference>
     <Reference Include="Palaso, Version=2.0.33.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\Palaso.dll</HintPath>
+      <HintPath>..\..\..\Downloads\Palaso.dll</HintPath>
     </Reference>
     <Reference Include="SimpleRootSite, Version=7.3.0.12649, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>

@@ -20,15 +20,18 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Xml;
+using System.Xml.Xsl;
 using Microsoft.Win32;
 
 using Palaso.Lift;
 using Palaso.Lift.Validation;
+using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.FdoUi;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
@@ -75,7 +78,7 @@ namespace SIL.FieldWorks.XWorks
 		// ReSharper disable InconsistentNaming
 		// This stores the values of the format, configured, filtered, and sorted attributes of
 		// the toplevel <template> element.
-		protected enum FxtTypes
+		protected internal enum FxtTypes
 		{
 			kftFxt = 0,
 			kftConfigured = 1,
@@ -84,10 +87,11 @@ namespace SIL.FieldWorks.XWorks
 			kftPathway = 4,
 			kftLift = 5,
 			kftGrammarSketch,
-			kftClassifiedDict
+			kftClassifiedDict,
+			kftSemanticDomains
 		}
 		// ReSharper restore InconsistentNaming
-		protected struct FxtType
+		protected internal struct FxtType
 		{
 			public string m_sFormat;
 			public FxtTypes m_ft;
@@ -133,6 +137,13 @@ namespace SIL.FieldWorks.XWorks
 		private System.ComponentModel.Container components = null;
 
 		private List<ListViewItem> m_exportItems;
+
+		/// <summary>
+		/// For testing only!
+		/// </summary>
+		internal ExportDialog()
+		{
+		}
 
 		public ExportDialog(Mediator mediator)
 		{
@@ -490,6 +501,7 @@ namespace SIL.FieldWorks.XWorks
 
 		List<int> m_translationWritingSystems;
 		List<ICmPossibilityList> m_translatedLists;
+		private bool m_allQuestions; // For semantic domains, export missing translations as English?
 
 		private void btnExport_Click(object sender, EventArgs e)
 		{
@@ -586,6 +598,17 @@ namespace SIL.FieldWorks.XWorks
 								m_translatedLists = dlg.SelectedLists;
 							}
 							break;
+						case FxtTypes.kftSemanticDomains:
+							using (var dlg = new ExportSemanticDomainsDlg())
+							{
+								dlg.Initialize(m_cache);
+								if (dlg.ShowDialog(this) != DialogResult.OK)
+									return;
+								m_translationWritingSystems = new List<int>();
+								m_translationWritingSystems.Add(dlg.SelectedWs);
+								m_allQuestions = dlg.AllQuestions;
+							}
+							goto default;
 						case FxtTypes.kftPathway:
 							ProcessPathwayExport();
 							return;
@@ -754,6 +777,18 @@ namespace SIL.FieldWorks.XWorks
 								progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
 
 								progressDlg.RunTask(true, ExportTranslatedLists, outPath);
+								break;
+							case FxtTypes.kftSemanticDomains:
+								// Potentially, we could count semantic domains and try to make the export update for each.
+								// In practice this only takes a second or two on a typical modern computer
+								// an the main export routine is borrowed from kftTranslatedLists and set up to count each
+								// list as one step. For now, claiming this export just has one step seems good enough.
+								progressDlg.Minimum = 0;
+								progressDlg.Maximum = 1;
+								progressDlg.AllowCancel = true;
+								progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
+
+								progressDlg.RunTask(true, ExportSemanticDomains, outPath, ft, fxtPath, m_allQuestions);
 								break;
 							case FxtTypes.kftPathway:
 								break;
@@ -1079,9 +1114,14 @@ namespace SIL.FieldWorks.XWorks
 
 		private void ExportDialog_Load(object sender, EventArgs e)
 		{
-			string p = Path.Combine(DirectoryFinder.FWCodeDirectory, ConfigurationFilePath);
+			string p = FxtDirectory;
 			if (Directory.Exists(p))
 				AddFxts(Directory.GetFiles(p, "*.xml"));
+		}
+
+		internal string FxtDirectory
+		{
+			get { return Path.Combine(DirectoryFinder.FWCodeDirectory, ConfigurationFilePath); }
 		}
 
 		protected virtual string ConfigurationFilePath
@@ -1178,6 +1218,9 @@ namespace SIL.FieldWorks.XWorks
 					break;
 				case "grammarSketch":
 					ft.m_ft = FxtTypes.kftGrammarSketch;
+					break;
+				case "semanticDomains":
+					ft.m_ft = FxtTypes.kftSemanticDomains;
 					break;
 				default:
 					Debug.Assert(false, "Invalid type attribute value for the template element");
@@ -1307,6 +1350,89 @@ namespace SIL.FieldWorks.XWorks
 				m_translationWritingSystems, progressDlg);
 			exporter.ExportLists(outPath);
 			return null;
+		}
+
+		/// <summary>
+		/// For testing.
+		/// </summary>
+		/// <param name="wss"></param>
+		internal void SetTranslationWritingSystems(List<int> wss)
+		{
+			m_translationWritingSystems = wss;
+		}
+
+		/// <summary>
+		/// for testing
+		/// </summary>
+		/// <param name="cache"></param>
+		internal void SetCache(FdoCache cache)
+		{
+			m_cache = cache;
+		}
+
+		/// <summary>
+		/// Do the export of the semantic domains list to an HTML document (which is given extension .doc
+		/// since it is mainly intended to be opened as a Word document, since Word understands the
+		/// 'page break before' concept).
+		/// The signature of this method is required by the way it is used as the task of the ProgressDialog.
+		/// See the first few lines for the required parameters.
+		/// </summary>
+		/// <param name="progressDlg"></param>
+		/// <param name="parameters"></param>
+		/// <returns></returns>
+		internal object ExportSemanticDomains(IThreadedProgress progressDlg, object[] parameters)
+		{
+			string outPath = (string) parameters[0];
+			var ft = (FxtType) parameters[1];
+			var fxtPath = (string) parameters[2];
+			bool allQuestions = (bool) parameters[3];
+			m_progressDlg = progressDlg;
+			var lists = new List<ICmPossibilityList>();
+			lists.Add(m_cache.LangProject.SemanticDomainListOA);
+			var exporter = new TranslatedListsExporter(lists, m_translationWritingSystems, progressDlg);
+			exporter.ExportLists(outPath);
+			FxtType ft1 = ft;
+#if DEBUG
+			string dirPath = Path.GetTempPath();
+#endif
+			string xslt = ft1.m_sXsltFiles;
+			progressDlg.Position = 0;
+			progressDlg.Minimum = 0;
+			progressDlg.Maximum = 1;
+			progressDlg.Message = xWorksStrings.ProcessingIntoFinalForm;
+			int idx = fxtPath.LastIndexOfAny(new[] {'/', '\\'});
+			if (idx < 0)
+				idx = 0;
+			else
+				++idx;
+			string basePath = fxtPath.Substring(0, idx);
+			string sXsltPath = basePath + xslt;
+			string sIntermediateFile = ConfiguredExport.RenameOutputToPassN(outPath, 0);
+
+			// The semantic domain xslt uses document('folderStart.xml') to retrieve the list of H1 topics.
+			// This is not allowed by default so we must use a settings object to enable it.
+			var settings = new XsltSettings(enableDocumentFunction: true, enableScript: false);
+			XslCompiledTransform xsl = new XslCompiledTransform();
+			xsl.Load(sXsltPath, settings, new XmlUrlResolver());
+			var arguments = new XsltArgumentList();
+			// If we aren't outputting english we need to ignore it (except possibly for missing items)
+			bool ignoreEn = m_translationWritingSystems[0] != m_cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr("en");
+			arguments.AddParam(@"ignoreLang", @"", (ignoreEn ? @"en" : @""));
+			arguments.AddParam(@"allQuestions", @"", (allQuestions ? @"1" : @"0"));
+			using (var writer = FileUtils.OpenFileForWrite(outPath, Encoding.UTF8))
+				xsl.Transform(sIntermediateFile, arguments, writer);
+			// Deleting them deals with LT-6345,
+			// which asked that they be put in the temp folder.
+			// But moving them to the temp directory is better for debugging errors.
+			FileUtils.MoveFileToTempDirectory(sIntermediateFile, "FieldWorks-Export");
+			progressDlg.Step(0);
+
+#if DEBUG
+			string s = string.Format("Totally Finished Export Semantic domains at {0}",
+				DateTime.Now.ToLongTimeString());
+			Debug.WriteLine(s);
+#endif
+			return null; // method signature is required by ProgressDialog
 		}
 
 		/// ------------------------------------------------------------------------------------

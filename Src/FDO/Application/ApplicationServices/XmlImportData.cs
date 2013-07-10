@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
 
@@ -32,6 +33,8 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 	/// This class supports importing LinguaLinks data, standard format data, and any other form
 	/// of data that can be transformed into the standard hiearchical FieldWorks XML format.
 	/// </summary>
+	/// <remarks>Some aspects of the behavior of this class are tested in
+	/// LexTextControls.LexImportTests.</remarks>
 	/// ----------------------------------------------------------------------------------------
 	public class XmlImportData
 	{
@@ -114,6 +117,32 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 				}
 			}
 
+			/// <summary>
+			/// Return true if the other link is expected to link to the same object as this one when resolved.
+			/// We suppose this to be true if it is the same sort of link and has all the same attributes.
+			/// This might miss some cases (e.g., links to the same CmPossibility using names in different writing systems),
+			/// but false negatives just produce unwanted duplicate entries; false positives may cause distinct entries
+			/// to be deleted.
+			/// </summary>
+			/// <param name="other"></param>
+			/// <returns></returns>
+			internal bool SameDestination(PendingLink other)
+			{
+				if (m_sName != other.m_sName)
+					return false;
+				if (m_dictAttrs.Count != other.m_dictAttrs.Count)
+					return false;
+				foreach (var kvp in m_dictAttrs)
+				{
+					string otherVal;
+					if (!other.m_dictAttrs.TryGetValue(kvp.Key, out otherVal))
+						return false;
+					if (otherVal != kvp.Value)
+						return false;
+				}
+				return true;
+			}
+
 			internal Dictionary<string, string> LinkAttributes
 			{
 				get { return m_dictAttrs; }
@@ -157,7 +186,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 		private Dictionary<string, Guid> m_mapIdGuid = new Dictionary<string, Guid>();
 		private Dictionary<Guid, string> m_mapGuidId = new Dictionary<Guid, string>();
 
-		private List<PendingLink> m_rglinks = new List<PendingLink>();
+		private ReferenceTracker m_rglinks = new ReferenceTracker();
 		private TextReader m_rdrInput;
 		private TextWriter m_wrtrLog;
 
@@ -193,9 +222,10 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 				sLogFile = sLogFile.Substring(0, idx);
 			sLogFile = sLogFile + "-Import.log";
 			bool fRetVal = false;
+			var streamReader = new StreamReader(sFilename, Encoding.UTF8);
 			try
 			{
-				fRetVal = ImportData(new StreamReader(sFilename, Encoding.UTF8),
+				fRetVal = ImportData(streamReader,
 					new StreamWriter(sLogFile, false, Encoding.UTF8),
 					progress);
 				DateTime dtEnd = DateTime.Now;
@@ -209,6 +239,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 					m_wrtrLog.Close();
 					m_wrtrLog = null;
 				}
+				streamReader.Dispose();
 			}
 			return fRetVal;
 		}
@@ -568,11 +599,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 				lreNew.PrimaryLexemesRS.Replace(0, lreNew.PrimaryLexemesRS.Count, lreOld.PrimaryLexemesRS);
 			if (lreNew.RefType == LexEntryRefTags.krtVariant)
 				lreNew.RefType = lreOld.RefType;	// might well be krtComplexForm
-			foreach (var pend in m_rglinks)
-			{
-				if (pend.FieldInformation.Owner == lreOld)
-					pend.FieldInformation.Owner = lreNew;
-			}
+			m_rglinks.UpdateOwner(lreOld, lreNew, false);
 		}
 
 		private void CopyCustomFieldData(ICmObject cmoOld, ICmObject cmoNew)
@@ -1092,7 +1119,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 					FillEntryMap();
 				ILexEntry le = cmo as ILexEntry;
 				ILexEntry leDup;
-				StoreEntryInMap(le, fNewObject, out leDup);
+				StoreEntryInMap(le, fNewObject, true, out leDup);
 				if (leDup != null)
 				{
 					MergeRedundantEntries(leDup, le);
@@ -1104,18 +1131,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 					}
 					foreach (WsString key in delKeys)
 						m_mapFormEntry.Remove(key);
-					foreach (PendingLink pend in m_rglinks)
-					{
-						FieldInfo fi2 = pend.FieldInformation;
-						if (fi2.Owner == leDup)
-							fi2.Owner = le;
-						while (fi2.ParentOfOwner != null)
-						{
-							fi2 = fi2.ParentOfOwner;
-							if (fi2.Owner == leDup)
-								fi2.Owner = le;
-						}
-					}
+					m_rglinks.UpdateOwner(leDup, le, true);
 					int nHomograph = le.HomographNumber;
 					leDup.Delete();
 					if (le.HomographNumber != m_nHomograph)
@@ -1975,9 +1991,18 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			ILexRefType lrtPrev = null;
 			bool fReversePrev = false;
 			ILexReference lrPrev = null;
-			for (int i = 0; i < m_rglinks.Count; ++i)
+
+			// This fills it in if we haven't already made it, but also, there are special cases where
+			// some existing entries are not present in the map with the key corresponding to their
+			// current state (e.g., they may be pre-existing entries put in the map with HN 0, but
+			// a homograph was loaded so they are now HN1). Another pass ensures that any key that
+			// matches an existing entry will find something (not necessarily that element, since there
+			// are pathological cases where import produces an inconsistent set of HNs, and we give
+			// preference to the one imported as the one that links in the file probably mean).
+			FillEntryMap();
+
+			foreach (var pend in m_rglinks.Links)
 			{
-				PendingLink pend = m_rglinks[i];
 				int flid = pend.FieldInformation.FieldId;
 				if (flid == kflidCrossReferences || flid == kflidLexicalRelations)
 				{
@@ -2207,13 +2232,23 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 		}
 		static WsStringIgnoreCaseComparer s_wssIgnoreCaseComparer = new WsStringIgnoreCaseComparer();
 
-
+		/// <summary>
+		/// This dictionary is constructed so that for the most part, it contains an entry for each lex entry in the system,
+		/// whether pre-existing or imported this time, with the key [prefix][form][suffix][homograph number].
+		/// Exceptions:
+		///  - a pre-existing entry may be in the dictionary with key [prefix][form][suffix]0 (its old key), even though
+		///  we imported a homograph for it and its natural key would now be something else, probably 1.
+		///  - when the import contains two or more entries which are homographs of each other but of no pre-existing entry,
+		///  the last one created will be in the dictionary with key [prefix][form][suffix]0, and the others not at all.
+		/// This behavior facilitates matching cross-refs to the expected entry in the input file, though it is somewhat
+		/// arbitrary what entry we link to if the cross-ref does not specify an HN.
+		/// After the import, but before resolving links, we further add entries under their proper keys, if there is not
+		/// a conflicting one already present.
+		/// </summary>
 		private Dictionary<WsString, ILexEntry> m_mapFormEntry = null;
 
 		private ICmObject ResolveLexReferenceLink(Dictionary<string, string> dictAttrs, int flid)
 		{
-			if (m_mapFormEntry == null)
-				FillEntryMap();
 			string sWs;
 			if (dictAttrs.TryGetValue("wsv", out sWs))
 			{
@@ -2240,14 +2275,25 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 				else
 					return GetIndicatedSense(sSenseNumber, le);
 			}
-			else
+			// If we're looking for a key unmarked with homograph number, see whether we have homographs of this word.
+			// If so, allow it to locate the first one.
+			if (sn.Length > 0 && !Char.IsDigit(sn[wss.sVal.Length - 1]))
 			{
-				le = CreateLexEntryForReference(ws, sn, flid);
-				if (String.IsNullOrEmpty(sSenseNumber))
-					return le;
-				else
-					return le.SensesOS[0];
+				var wss1 = new WsString(ws, sn + "1");
+				if (m_mapFormEntry.TryGetValue(wss1, out le))
+				{
+					if (String.IsNullOrEmpty(sSenseNumber))
+						return le;
+					else
+						return GetIndicatedSense(sSenseNumber, le);
+				}
 			}
+			// no match...create one.
+			le = CreateLexEntryForReference(ws, sn, flid);
+			if (String.IsNullOrEmpty(sSenseNumber))
+				return le;
+			else
+				return le.SensesOS[0];
 		}
 
 		private string GetLexFormAndSenseNumber(Dictionary<string, string> dictAttrs,
@@ -2567,16 +2613,17 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 
 		private void FillEntryMap()
 		{
-			m_mapFormEntry = new Dictionary<WsString, ILexEntry>();
+			if (m_mapFormEntry == null)
+				m_mapFormEntry = new Dictionary<WsString, ILexEntry>();
 			ILexEntryRepository repo = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			foreach (ILexEntry le in repo.AllInstances())
 			{
 				ILexEntry leDup;
-				StoreEntryInMap(le, false, out leDup);
+				StoreEntryInMap(le, false, false, out leDup);
 			}
 		}
 
-		private void StoreEntryInMap(ILexEntry le, bool fNewEntry, out ILexEntry leDuplicate)
+		private void StoreEntryInMap(ILexEntry le, bool fNewEntry, bool fReplaceDuplicate, out ILexEntry leDuplicate)
 		{
 			string sPrefix = null;
 			string sPostfix = null;
@@ -2595,7 +2642,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			{
 				for (int i = 0; i < le.CitationForm.StringCount; ++i)
 				{
-					StoreFormEntryMapping(le.CitationForm, i, le, sPrefix, sPostfix, sHomograph, fNewEntry, out leDup);
+					StoreFormEntryMapping(le.CitationForm, i, le, sPrefix, sPostfix, sHomograph, fNewEntry, fReplaceDuplicate, out leDup);
 					if (leDup != null && leDup.EntryRefsOS.Count > 0 && !duplicates.Contains(leDup))
 						duplicates.Add(leDup);
 				}
@@ -2604,7 +2651,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			{
 				for (int i = 0; i < le.LexemeFormOA.Form.StringCount; ++i)
 				{
-					StoreFormEntryMapping(le.LexemeFormOA.Form, i, le, sPrefix, sPostfix, sHomograph, fNewEntry, out leDup);
+					StoreFormEntryMapping(le.LexemeFormOA.Form, i, le, sPrefix, sPostfix, sHomograph, fNewEntry, fReplaceDuplicate, out leDup);
 					if (leDup != null && leDup.EntryRefsOS.Count > 0 && !duplicates.Contains(leDup))
 						duplicates.Add(leDup);
 				}
@@ -2632,14 +2679,15 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			}
 		}
 
-		private static bool AreLexEntryRefsSame(ILexEntryRef refLex, ILexEntryRef refDup)
+		private bool AreLexEntryRefsSame(ILexEntryRef refLex, ILexEntryRef refDup)
 		{
 			// For SFM import, the only thing that can be compared reliably is the component
 			// list.
-			return AreComponentsSame(refLex.ComponentLexemesRS, refDup.ComponentLexemesRS);
+			return AreComponentsSame(m_rglinks.LinksForField(refLex, LexEntryRefTags.kflidComponentLexemes),
+				m_rglinks.LinksForField(refDup, LexEntryRefTags.kflidComponentLexemes));
 		}
 
-		private static bool AreComponentsSame(IList<ICmObject> refs, IList<ICmObject> refDups)
+		private static bool AreComponentsSame(IList<PendingLink> refs, IList<PendingLink> refDups)
 		{
 			if (refs == null && refDups == null)
 				return true;
@@ -2647,16 +2695,11 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 				return false;
 			if (refs.Count != refDups.Count)
 				return false;
-			for (var i = 0; i < refs.Count; ++i)
-			{
-				if (refs[i].Hvo != refDups[i].Hvo)
-					return false;
-			}
-			return true;
+			return !refs.Where((t, i) => !t.SameDestination(refDups[i])).Any(); // All corresponding items match
 		}
 
 		private void StoreFormEntryMapping(IMultiUnicode mu, int i, ILexEntry le,
-			string sPrefix, string sPostfix, string sHomograph, bool fNewEntry, out ILexEntry leDuplicate)
+			string sPrefix, string sPostfix, string sHomograph, bool fNewEntry, bool replaceDuplicate, out ILexEntry leDuplicate)
 		{
 			leDuplicate = null;
 			int ws;
@@ -2673,9 +2716,13 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			WsString wss = new WsString(ws, sForm);
 			ILexEntry le2;
 			if (m_mapFormEntry.TryGetValue(wss, out le2) && le2 != le)
+			{
 				leDuplicate = le2;
+				if (!replaceDuplicate)
+					return;
+			}
 			// The homograph number may be autogenerated.
-			if (fNewEntry && le2 == null && !String.IsNullOrEmpty(sHomograph) && m_nHomograph == 0)
+			if (fNewEntry && le2 == null && !String.IsNullOrEmpty(sHomograph) && m_nHomograph == 0 && replaceDuplicate)
 			{
 				WsString wss0 = new WsString(ws, sForm0);
 				if (m_mapFormEntry.TryGetValue(wss0, out le2) && le2 != le)

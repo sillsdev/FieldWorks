@@ -219,10 +219,8 @@
 	<item id="CmdShowHelpBalloons">If checked, this will show balloon pop-up help for items.</item>
 	<item id="CmdHelpAbout">Display version information about this application.</item>
 	<item id="CmdHelpMorphologyInto">Display a document describing how FieldWorks handles morphology (only available in English).</item>
-	<item id="CmdHelpUserManual">Display the Language Explorer Student Manual, to learn the basics.</item>
-	<item id="CmdHelpInstructorGuide">Display the Language Explorer Instructor Guide.</item>
 	<item id="CmdHelpXLingPap">You can edit your Grammar Sketch in XLingPaper format using an XML editor (only available in English).</item>
-	<item id="CmdHelpExercises">Display exercises you can follow to practice using Language Explorer.</item>
+	<item id="CmdHelpTraining">Training for using Language Explorer (only available in English).</item>
 	<item id="CmdHelpLanguageExplorer">Help on using Language Explorer (only available in English).</item>
 	<item id="CmdHelpDemoMovies">Run the Demo Movies.</item>
 	<item id="CmdHelpDemoWelcome">Purpose of movies and where else to find help.</item>

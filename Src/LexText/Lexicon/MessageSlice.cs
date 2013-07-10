@@ -55,10 +55,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			this.Control = m_notesBar;
 #if __MonoCS__
 			}
-			catch
+			catch (Exception ex)
 			{
 				// This does not work yet on Linux, but shouldn't keep the rest of
 				// the lexicon edit tool from working!  (See FWNX-960.)
+				Console.WriteLine("Initializing Chorus UI element failed: {0}", ex.Message);
 			}
 #endif
 		}

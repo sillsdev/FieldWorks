@@ -154,6 +154,7 @@
     <Compile Include="ParseFilerProcessingTests.cs">
       <SubType>Code</SubType>
     </Compile>
+    <None Include="gendarme-ParserCoreTests.ignore" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

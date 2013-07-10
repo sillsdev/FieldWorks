@@ -112,6 +112,24 @@ namespace SIL.FieldWorks.IText
 				m_rootb = sandbox.RootBox;
 			}
 
+			// only for testing
+			internal void SetSandboxForTesting(SandboxBase sandbox)
+			{
+				m_sandbox = sandbox;
+				m_caches = sandbox.Caches;
+				m_wsVern = m_caches.MainCache.DefaultVernWs;
+			}
+
+			internal void SetComboListForTesting(IComboList list)
+			{
+				m_comboList = list;
+			}
+
+			internal void SetMorphForTesting(int imorph)
+			{
+				m_hvoMorph = m_sandbox.Caches.DataAccess.get_VecItem(kSbWord, ktagSbWordMorphs, imorph);
+			}
+
 			#region FwDisposableBase for IDisposable
 
 			protected override void DisposeManagedResources()
@@ -1575,19 +1593,25 @@ namespace SIL.FieldWorks.IText
 					inflType = m_caches.MainCache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(m_caches.RealHvo(hvoInflType));
 				int hvoMSA = m_caches.DataAccess.get_ObjectProp(hvoWmb, ktagSbMorphPos);
 				int hvoMorphEntry = m_caches.DataAccess.get_ObjectProp(hvoWmb, ktagSbMorphEntry);
-				var realEntry = m_caches.MainCache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(m_caches.RealHvo(hvoMorphEntry));
-
-				var mf = realEntry.LexemeFormOA;
+				ILexEntry realEntry = null;
+				IMoForm mf = null;
+				if (hvoMorphEntry != 0)
+				{
+					realEntry =
+						m_caches.MainCache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(m_caches.RealHvo(hvoMorphEntry));
+					mf = realEntry.LexemeFormOA;
+				}
 				ILexSense realSense = null;
 				ILexEntryRef ler = null;
 				if (hvoMorphSense != 0)
 				{
 					realSense = m_caches.MainCache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(m_caches.RealHvo(hvoMorphSense));
-					realEntry.IsVariantOfSenseOrOwnerEntry(realSense, out ler);
+					if (realEntry != null)
+						realEntry.IsVariantOfSenseOrOwnerEntry(realSense, out ler);
 				}
 
 				//var mi = new MorphItem(options);
-				var mi = GetMorphItem(mf, null, realSense, null, ler, realEntry.Hvo, inflType);
+				var mi = GetMorphItem(mf, null, realSense, null, ler, HvoOrZero(realEntry), inflType);
 				return mi;
 			}
 
@@ -1675,7 +1699,7 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 
-			void LoadMorphItems()
+			internal void LoadMorphItems()
 			{
 				ISilDataAccess sda = m_caches.DataAccess;
 				int hvoForm = sda.get_ObjectProp(m_hvoMorph, ktagSbMorphForm);
@@ -1792,10 +1816,14 @@ namespace SIL.FieldWorks.IText
 			private static MorphItem GetMorphItem(IMoForm mf, ITsString tssName, ILexSense sense, ITsString tssSense,
 				ILexEntryRef ler, int hvoLexEntry, ILexEntryInflType inflType)
 			{
-				IMoMorphSynAnalysis msa = sense.MorphoSyntaxAnalysisRA;
+				IMoMorphSynAnalysis msa = null;
 				string msaText = null;
-				if (msa != null)
-					msaText = msa.InterlinearName;
+				if (sense != null)
+				{
+					msa = sense.MorphoSyntaxAnalysisRA;
+					if (msa != null)
+						msaText = msa.InterlinearName;
+				}
 
 				var options = new MorphItemOptions
 				{
@@ -2532,7 +2560,7 @@ namespace SIL.FieldWorks.IText
 			/// current item.
 			/// </summary>
 			/// <returns></returns>
-			bool NeedSelectSame()
+			internal bool NeedSelectSame()
 			{
 				if (ComboList.SelectedIndex >= m_morphItems.Count || ComboList.SelectedIndex < 0)
 				{
@@ -2541,14 +2569,18 @@ namespace SIL.FieldWorks.IText
 					// If we return true the dialog can be launched twice.
 					return false;
 				}
-				int sbHvo = m_sandbox.CurrentLexEntriesAnalysis(m_hvoMorph);
+				var sbHvo = m_sandbox.CurrentLexEntriesAnalysis(m_hvoMorph);
 				var realObject = m_sandbox.Caches.RealObject(sbHvo);
 				if (realObject == null)
 					return true; // nothing currently set, set whatever is current.
-				int classid = realObject.ClassID;
-				MorphItem mi = m_morphItems[ComboList.SelectedIndex];
+				var classid = realObject.ClassID;
+				var mi = m_morphItems[ComboList.SelectedIndex];
 				if (classid != LexSenseTags.kClassId && mi.m_hvoSense != 0)
 					return true; // item is a sense, and current value is not!
+				if (mi.m_hvoSense == 0)
+					return true; // Add New Sense...
+				if (m_sandbox.CurrentPos(m_hvoMorph) == 0)
+					return true; // sense MSA has been set since analysis created, need to update it (LT-14574)
 				// Review JohnT: are there any other cases where we should do it anyway?
 				return false;
 			}
@@ -2585,7 +2617,6 @@ namespace SIL.FieldWorks.IText
 					if (!(comboItem is MorphComboItem))
 						CopyLexEntryInfoToMonomorphemicWordGlossAndPos();
 					SelectEntryIcon(morphIndex);
-					return;
 				}
 			}
 

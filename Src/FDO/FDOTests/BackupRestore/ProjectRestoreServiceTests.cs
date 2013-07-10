@@ -13,6 +13,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.IO;
+using System.Text;
 using System.Threading;
 using NUnit.Framework;
 
@@ -62,8 +63,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 		[SetUp]
 		public void Initialize()
 		{
-			string restoreTestsZipFileDir = Path.Combine(DirectoryFinder.FwSourceDirectory,
-				"FDO/FDOTests/BackupRestore/RestoreServiceTestsZipFileDir");
+			var restoreTestsZipFileDir = Path.Combine(DirectoryFinder.FwSourceDirectory, "FDO", "FDOTests",
+				"BackupRestore","RestoreServiceTestsZipFileDir");
 
 			m_restoreSettings = new RestoreProjectSettings()
 			{
@@ -79,6 +80,15 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 		}
 
 		/// <summary>
+		/// Remove any files created by the individual test.
+		/// </summary>
+		[TearDown]
+		public void ShutDown()
+		{
+			RemoveAnyFilesAndFoldersCreatedByTests(m_restoreSettings);
+		}
+
+		/// <summary>
 		/// Restore files correctly for a project. Restore only the data file and
 		/// writingsystem files.
 		/// </summary>
@@ -87,14 +97,11 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 		{
 			m_restoreSettings.ProjectName = "TestRestoreFWProject 01";
 
-			RemoveAnyFilesAndFoldersCreatedByTests(m_restoreSettings);
 			m_restoreProjectService = new ProjectRestoreService(m_restoreSettings);
 
 			m_restoreProjectService.RestoreProject(new DummyProgressDlg());
 
 			VerifyManditoryFilesUnzippedAndDeleteThem();
-
-			RemoveAnyFilesAndFoldersCreatedByTests(m_restoreSettings);
 		}
 
 		/// <summary>
@@ -106,7 +113,6 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 		{
 			m_restoreSettings.ProjectName = "TestRestoreFWProject 01";
 			m_restoreSettings.IncludeConfigurationSettings = true;
-			RemoveAnyFilesAndFoldersCreatedByTests(m_restoreSettings);
 			m_restoreProjectService = new ProjectRestoreService(m_restoreSettings);
 
 			m_restoreProjectService.RestoreProject(new DummyProgressDlg());
@@ -114,8 +120,107 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			VerifyManditoryFilesUnzippedAndDeleteThem();
 
 			VerifyConfigurationSettingsFilesUnzippedAndDeleteThem();
+		}
 
-			RemoveAnyFilesAndFoldersCreatedByTests(m_restoreSettings);
+		/// <summary>
+		/// Restore files correctly for a project. Restore the linked files, which are
+		/// NOT initially in the default location, into the default location.
+		/// </summary>
+		[Test]
+		public void RestoreProject_PutLinkedFilesInDefaultLocation()
+		{
+			m_restoreSettings.IncludeLinkedFiles = true;
+			m_restoreSettings.IncludeConfigurationSettings = true;
+			var defaultLinkedFilesDir = m_restoreSettings.LinkedFilesPath;
+			m_restoreProjectService = new ProjectRestoreTestService(m_restoreSettings);
+			((ProjectRestoreTestService)m_restoreProjectService).PutFilesInProject = true;
+
+			m_restoreProjectService.RestoreProject(new DummyProgressDlg());
+
+			VerifyManditoryFilesUnzippedAndDeleteThem();
+
+			VerifyConfigurationSettingsFilesUnzippedAndDeleteThem();
+
+			var newDir = m_restoreProjectService.LinkDirChangedTo;
+			Assert.AreEqual(defaultLinkedFilesDir, newDir,
+				"Should have changed the LinkedFiles directory to the default location.");
+
+			VerifyFileWasUnzippedThenDeleteIt(Path.Combine(m_restoreProjectService.LinkDirChangedTo, "Pictures"), "PoolTable.JPG");
+		}
+
+		/// <summary>
+		/// Restore files correctly for a project. Restore the linked files, which are
+		/// NOT initially in the default location, into the same non-standard location.
+		/// </summary>
+		[Test]
+		public void RestoreProject_PutLinkedFilesInOldLocation()
+		{
+			m_restoreSettings.IncludeLinkedFiles = true;
+			m_restoreSettings.IncludeConfigurationSettings = true;
+			var nonStdLinkedFilesDir = m_restoreSettings.Backup.LinkedFilesPathActualPersisted;
+			m_restoreProjectService = new ProjectRestoreTestService(m_restoreSettings);
+			((ProjectRestoreTestService)m_restoreProjectService).PutFilesInProject = false;
+
+			var fullVersionOfRelativeNonStdDir = GetFullVersionOfRelativeNonStdDir(nonStdLinkedFilesDir);
+			try
+			{
+				m_restoreProjectService.RestoreProject(new DummyProgressDlg());
+
+				VerifyManditoryFilesUnzippedAndDeleteThem();
+
+				VerifyConfigurationSettingsFilesUnzippedAndDeleteThem();
+
+				var newDir = m_restoreProjectService.LinkDirChangedTo;
+				Assert.IsNull(newDir, "Should have left the LinkedFiles directory in the non-standard location.");
+
+				VerifyFileWasUnzippedThenDeleteIt(Path.Combine(fullVersionOfRelativeNonStdDir, "Pictures"), "PoolTable.JPG");
+			}
+			finally
+			{
+				RemoveAllFilesFromFolderAndSubfolders(fullVersionOfRelativeNonStdDir);
+				RemoveTestRestoreFolder(fullVersionOfRelativeNonStdDir);
+			}
+		}
+
+		/// <summary>
+		/// Restore files correctly for a project. Restore the linked files, which are
+		/// NOT initially in the default location, into the same non-standard location.
+		/// This test simulates the user clicking Cancel on the dialog.
+		/// </summary>
+		[Test]
+		public void RestoreProject_PutLinkedFilesInOldLocation_CancelSelected()
+		{
+			m_restoreSettings.IncludeLinkedFiles = true;
+			m_restoreSettings.IncludeConfigurationSettings = true;
+			var nonStdLinkedFilesDir = m_restoreSettings.Backup.LinkedFilesPathActualPersisted;
+			m_restoreProjectService = new ProjectRestoreTestService(m_restoreSettings);
+			((ProjectRestoreTestService)m_restoreProjectService).PutFilesInProject = true;
+			((ProjectRestoreTestService)m_restoreProjectService).SimulateOKResult = false;
+
+			var fullVersionOfRelativeNonStdDir = GetFullVersionOfRelativeNonStdDir(nonStdLinkedFilesDir);
+			try
+			{
+				m_restoreProjectService.RestoreProject(new DummyProgressDlg());
+
+				VerifyManditoryFilesUnzippedAndDeleteThem();
+
+				VerifyConfigurationSettingsFilesUnzippedAndDeleteThem();
+
+				var newDir = m_restoreProjectService.LinkDirChangedTo;
+				Assert.IsNull(newDir, "Should have left the LinkedFiles directory in the non-standard location.");
+
+				VerifyFileWasUnzippedThenDeleteIt(Path.Combine(fullVersionOfRelativeNonStdDir, "Pictures"), "PoolTable.JPG");
+			}
+			finally
+			{
+				RemoveAllFilesFromFolderAndSubfolders(fullVersionOfRelativeNonStdDir);
+				RemoveTestRestoreFolder(fullVersionOfRelativeNonStdDir);
+			}
+		}
+
+		private string GetFullVersionOfRelativeNonStdDir(string nonStdLinkedFilesDir)
+		{
+			return Path.Combine(Directory.GetParent(DirectoryFinder.FwSourceDirectory).ToString(), nonStdLinkedFilesDir);
 		}
 
 		/// <summary>
@@ -129,7 +234,6 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			IThreadedProgress progressDlg = new DummyProgressDlg();
 			m_restoreSettings.IncludeConfigurationSettings = false;
 
-			RemoveAnyFilesAndFoldersCreatedByTests(m_restoreSettings);
 			m_restoreProjectService = new ProjectRestoreService(m_restoreSettings);
 
 			//Restore the project once and do not delete it so that we can restore the project over the previous one.
@@ -156,7 +260,6 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 
 			VerifyManditoryFilesUnzippedAndDeleteThem();
 
-			RemoveAnyFilesAndFoldersCreatedByTests(m_restoreSettings);
 			RemotingServer.Stop();
 		}
 
@@ -174,6 +277,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 					File.Delete(file);
 			}
 		}
+
 		private static void RemoveAllFilesFromFolderAndSubfolders(string restoreDirectory)
 		{
 			if (!Directory.Exists(restoreDirectory))
@@ -212,10 +316,9 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 
 		private void VerifyFileWasUnzippedThenDeleteIt(string restoreDirectory, string fileName)
 		{
-			var fileUnzipped =
-				Path.Combine(restoreDirectory, fileName);
+			var fileUnzipped = Path.Combine(restoreDirectory, fileName);
 			bool fileCreated = File.Exists(fileUnzipped);
-			Assert.True(fileCreated, String.Format("{0} did not get restored.", fileName));
+			Assert.True(fileCreated, String.Format("{0} did not get restored to {1}.", fileName, restoreDirectory));
 			if (fileCreated)
 				File.Delete(fileUnzipped);
 		}
@@ -263,6 +366,5 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			//finally delete the restore subfolder for ConfigurationFiles
 			RemoveAllFilesFromFolderAndSubfolders(restoreConfigurationFilesDir);
 		}
-
 	}
 }

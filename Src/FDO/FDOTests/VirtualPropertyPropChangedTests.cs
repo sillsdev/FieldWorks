@@ -1222,6 +1222,24 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		}
 
 		/// <summary>
+		/// Tests that a PropChanged is generated when a Text is created using a fixed guid.
+		/// </summary>
+		[Test]
+		public void LangProjTextsGetsPropChangedForCreateWithGuid()
+		{
+			var guid = Guid.NewGuid();
+
+			var sut = Cache.ServiceLocator.GetInstance<ITextFactory>();
+			PrepareToTrackPropChanged();
+			IText result = null;
+			UndoableUnitOfWorkHelper.Do("undo", "redo", m_actionHandler,
+				() => result = sut.Create(Cache, guid));
+			CheckChange(LangProjectTags.kClassId, Cache.LangProject, "Texts", 0, 1, 0,
+				"Creating a text should generate a PropChanged on LangProj");
+
+		}
+
+		/// <summary>
 		/// We get a PropChanged for "FullConcordanceCount" when changing the Analyses of a segment.
 		/// </summary>
 		[Test]

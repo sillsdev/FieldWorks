@@ -1758,7 +1758,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// -------------------------------------------------------------------------------------
 		private void CreateTempWritingSystemFactory()
 		{
-			m_wsf = new PalasoWritingSystemManager();
+			m_wsf = FwUtils.FwUtils.CreateWritingSystemManager();
 			m_fUsingTempWsFactory = true;
 		}
 

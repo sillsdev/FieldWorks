@@ -15,6 +15,7 @@ DistFiles/Helps/
 DistFiles/Language Explorer/Movies/
 DistFiles/ReleaseData/
 DistFiles/SIL/Repository/
+Downloads/
 Installer/
 Localizations/
 Bin/_setLatestBuildConfig.bat
@@ -102,6 +103,7 @@ Src/Generic/libGeneric
 Src/Language/libLanguage
 Lib/src/HermitCrab.NET/HermitCrabExe/bin
 Lib/src/HermitCrab.NET/HermitCrab/bin
+Downloads/*
 
 DistFiles/ReleaseData/
 # Locally configurable project to run FieldWorks

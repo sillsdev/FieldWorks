@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.Common.Controls
 			Nodes.Clear();
 			LoadGeneralTexts(cache);
 
-			if (FwUtils.FwUtils.IsTEInstalled)
+			if (FwUtils.FwUtils.IsOkToDisplayScriptureIfPresent)
 				LoadScriptureTexts(cache, bookImporter);
 		}
 

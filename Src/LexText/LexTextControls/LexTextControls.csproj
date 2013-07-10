@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -156,13 +156,17 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
+    <Reference Include="NetSparkle.Net40, Version=1.0.22.0, Culture=neutral, processorArchitecture=x86" Condition="'$(OS)'!='Unix'">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\DistFiles\NetSparkle.Net40.dll</HintPath>
+    </Reference>
     <Reference Include="Palaso, Version=1.7.43.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\Palaso.dll</HintPath>
+      <HintPath>..\..\..\Downloads\Palaso.dll</HintPath>
     </Reference>
     <Reference Include="Palaso.Lift, Version=1.9.16.1, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\Palaso.Lift.dll</HintPath>
+      <HintPath>..\..\..\Downloads\Palaso.Lift.dll</HintPath>
     </Reference>
     <Reference Include="ParserCore">
       <Name>ParserCore</Name>
@@ -235,10 +239,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
-    <Reference Include="Skybound.Gecko, Version=1.9.2.0, Culture=neutral, PublicKeyToken=3209ac31600d1857">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\DistFiles\Skybound.Gecko.dll</HintPath>
-    </Reference>
+    <Reference Condition="'$(OS)'=='Unix'" Include="geckofx-core-14">
+      <HintPath>\usr\lib\cli\geckofx-14.0.1\geckofx-core-14.dll</HintPath>
+	</Reference>
+    <Reference Condition="'$(OS)'=='Unix'" Include="Geckofx-Winforms-14">
+      <HintPath>\usr\lib\cli\geckofx-14.0.1\Geckofx-Winforms-14.dll</HintPath>
+	</Reference>
+    <None Condition="'$(OS)'=='Unix'" Include="\usr\lib\cli\geckofx-14.0.1\geckofx-core-14.dll.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\CommonAssemblyInfo.cs">
@@ -682,11 +691,9 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-
   <PropertyGroup>
     <DistFiles>../../../DistFiles</DistFiles>
   </PropertyGroup>
-  <Import Project="../../../Build/BeforeBuildCopyPalasoDlls.targets" />
   <ItemGroup>
     <None Include="gendarme-LexTextControls.ignore" />
   </ItemGroup>

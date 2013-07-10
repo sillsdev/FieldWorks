@@ -24,7 +24,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Xsl;
 #if __MonoCS__
-using Skybound.Gecko;
+using Gecko;
 #endif
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;

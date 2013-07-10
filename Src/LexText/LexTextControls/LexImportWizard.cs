@@ -1721,7 +1721,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			return false;
 		}
 
-		private class FlexConverter : Sfm2Xml.Converter
+		internal class FlexConverter : Sfm2Xml.Converter
 		{
 			private FdoCache m_cache;
 			private int m_wsEn;
