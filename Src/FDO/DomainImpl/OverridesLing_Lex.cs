@@ -4960,13 +4960,13 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						// by typing in the Reversals field.
 						foreach (IReversalIndexEntry rie in goners)
 						{
-							if (rie.SubentriesOC.Count == 0 &&
+							if (rie.SubentriesOS.Count == 0 &&
 								Services.GetInstance<ILexSenseRepository>().InstancesWithReversalEntry(rie).FirstOrDefault() == null)
 							{
 								if (rie.Owner is ReversalIndex)
 									(rie.Owner as ReversalIndex).EntriesOC.Remove(rie);
 								else
-									(rie.Owner as ReversalIndexEntry).SubentriesOC.Remove(rie);
+									(rie.Owner as ReversalIndexEntry).SubentriesOS.Remove(rie);
 							}
 
 						}
@@ -5679,11 +5679,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				if (nextName.Length == 0)
 					continue;
 				var nextRie =
-					(from item in rie.SubentriesOC where item.ShortName == nextName select item).FirstOrDefault();
+					(from item in rie.SubentriesOS where item.ShortName == nextName select item).FirstOrDefault();
 				if (nextRie == null)
 				{
 					nextRie = Services.GetInstance<IReversalIndexEntryFactory>().Create();
-					rie.SubentriesOC.Add(nextRie);
+					rie.SubentriesOS.Add(nextRie);
 					nextRie.ReversalForm.set_String(ws, Cache.TsStrFactory.MakeString(nextName, ws));
 				}
 				rie = nextRie;
@@ -5793,7 +5793,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				var allEntries = new List<IReversalIndexEntry>();
 				allEntries.Add(this);
 
-				foreach (var rei in SubentriesOC)
+				foreach (var rei in SubentriesOS)
 				{
 					allEntries.AddRange(rei.AllEntries);
 				}
@@ -5954,7 +5954,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				rieOwner = rieSrc.OwningEntry;
 				if (rieOwner != null)
 				{
-					rieOwner.SubentriesOC.Add(this);
+					rieOwner.SubentriesOS.Add(this);
 					newOwner = rieOwner;
 				}
 				else
@@ -5988,25 +5988,36 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Get the set of senses that refer to this reversal entry.
 		/// This is a virtual, backreference property.
 		/// </summary>
-		[VirtualProperty(CellarPropertyType.ReferenceCollection, "LexSense")]
+		[VirtualProperty(CellarPropertyType.ReferenceSequence, "LexSense")]
 		public IEnumerable<ILexSense> ReferringSenses
 		{
-			get
-			{
-				((ICmObjectRepositoryInternal)Services.ObjectRepository).EnsureCompleteIncomingRefsFrom(LexSenseTags.kflidReversalEntries);
-				// This set needs to be returned as a sorted list.  See FWR-3173.
-				List<ILexSense> senses = new List<ILexSense>();
-				foreach (var item in m_incomingRefs)
-				{
-					var collection = item as FdoReferenceCollection<IReversalIndexEntry>;
-					if (collection == null)
-						continue;
-					if (collection.Flid == LexSenseTags.kflidReversalEntries)
-						senses.Add(collection.MainObject as ILexSense);
-				}
-				senses.Sort(new CompareSensesForReversal(m_cache.LangProject.DefaultVernacularWritingSystem));
-				return senses;
+			get {
+				return VirtualOrderingServices.GetOrderedValue(this, Cache.ServiceLocator.GetInstance<Virtuals>().ReversalIndexEntryLexSenseBackRefs,
+					SortReferringSenses());
 			}
+		}
+
+		/// <summary>
+		/// Get the set of senses that refer to this reversal entry and sort them
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<ILexSense> SortReferringSenses()
+		{
+			((ICmObjectRepositoryInternal) Services.ObjectRepository).EnsureCompleteIncomingRefsFrom(
+				LexSenseTags.kflidReversalEntries);
+			// This set needs to be returned as a sorted list.  See FWR-3173.
+			// Returning a sorted set is the default, but the user can override it.  See LT-6468.
+			List<ILexSense> senses = new List<ILexSense>();
+			foreach (var item in m_incomingRefs)
+			{
+				var collection = item as FdoReferenceCollection<IReversalIndexEntry>;
+				if (collection == null)
+					continue;
+				if (collection.Flid == LexSenseTags.kflidReversalEntries)
+					senses.Add(collection.MainObject as ILexSense);
+			}
+			senses.Sort(new CompareSensesForReversal(m_cache.LangProject.DefaultVernacularWritingSystem));
+			return senses;
 		}
 
 		/// <summary>

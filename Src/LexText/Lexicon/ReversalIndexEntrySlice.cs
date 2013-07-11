@@ -495,7 +495,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						else
 						{
 							Debug.Assert(owner is IReversalIndexEntry);
-							(owner as IReversalIndexEntry).SubentriesOC.Add(rie);
+							(owner as IReversalIndexEntry).SubentriesOS.Add(rie);
 						}
 						rie.ReversalForm.set_String(wsIndex, rgsForms[i]);
 						owner = rie;

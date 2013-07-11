@@ -313,7 +313,14 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private void InitializeReversalMap(IFdoOwningCollection<IReversalIndexEntry> entries,
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="entries">This is IEnumerable to capture similarity of IFdoOwningCollection and IFdoOwningSequence.
+		/// It is IFdoOwningCollection for entries owned by ReversalIndex and
+		/// IFdoOwningSequence for entries owned by Subentries of a ReversalIndexEntry</param>
+		/// <param name="mapToRIEs"></param>
+		private void InitializeReversalMap(IEnumerable<IReversalIndexEntry> entries,
 			Dictionary<MuElement, List<IReversalIndexEntry>> mapToRIEs)
 		{
 			foreach (IReversalIndexEntry rie in entries)
@@ -328,12 +335,12 @@ namespace SIL.FieldWorks.LexText.Controls
 						AddToReversalMap(mue, rie, mapToRIEs);
 					}
 				}
-				if (rie.SubentriesOC.Count > 0)
+				if (rie.SubentriesOS.Count > 0)
 				{
 					Dictionary<MuElement, List<IReversalIndexEntry>> submapToRIEs =
 						new Dictionary<MuElement, List<IReversalIndexEntry>>();
 					m_mapToMapToRie.Add(rie, submapToRIEs);
-					InitializeReversalMap(rie.SubentriesOC, submapToRIEs);
+					InitializeReversalMap(rie.SubentriesOS, submapToRIEs);
 				}
 			}
 		}
@@ -5959,7 +5966,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					mapToRIEs = new Dictionary<MuElement, List<IReversalIndexEntry>>();
 					m_mapToMapToRie.Add(rieOwner, mapToRIEs);
 				}
-				rie = FindOrCreateMatchingReversal(rev.Form, mapToRIEs, rieOwner.SubentriesOC);
+				rie = FindOrCreateMatchingReversal(rev.Form, mapToRIEs, rieOwner.SubentriesOS);
 			}
 			MergeInMultiUnicode(rie.ReversalForm, ReversalIndexEntryTags.kflidReversalForm, rev.Form, rie.Guid);
 			ProcessReversalGramInfo(rie, rev.GramInfo);
@@ -5971,13 +5978,27 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="form">safe XML</param>
 		/// <param name="mapToRIEs"></param>
-		/// <param name="entriesOC"></param>
+		/// <param name="entriesOS"></param>
 		/// <returns></returns>
 		private IReversalIndexEntry FindOrCreateMatchingReversal(LiftMultiText form,
 			Dictionary<MuElement, List<IReversalIndexEntry>> mapToRIEs,
-			IFdoOwningCollection<IReversalIndexEntry> entriesOC)
+			IFdoOwningCollection<IReversalIndexEntry> entriesOS)
 		{
-			IReversalIndexEntry rie = null;
+			IReversalIndexEntry rie;
+			var rgmue = FindAnyMatchingReversal(form, mapToRIEs, out rie);
+			if (rie == null)
+			{
+				rie = CreateNewReversalIndexEntry();
+				entriesOS.Add(rie);
+			}
+			foreach (MuElement mue in rgmue)
+				AddToReversalMap(mue, rie, mapToRIEs);
+			return rie;
+		}
+
+		private List<MuElement> FindAnyMatchingReversal(LiftMultiText form, Dictionary<MuElement, List<IReversalIndexEntry>> mapToRIEs, out IReversalIndexEntry rie)
+		{
+			rie = null;
 			List<IReversalIndexEntry> rgrie;
 			List<MuElement> rgmue = new List<MuElement>();
 			AddNewWsToAnalysis();
@@ -6006,10 +6027,26 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 				rgmue.Add(mue);
 			}
+			return rgmue;
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="form">safe XML</param>
+		/// <param name="mapToRIEs"></param>
+		/// <param name="entriesOS"></param>
+		/// <returns></returns>
+		private IReversalIndexEntry FindOrCreateMatchingReversal(LiftMultiText form,
+			Dictionary<MuElement, List<IReversalIndexEntry>> mapToRIEs,
+			IFdoOwningSequence<IReversalIndexEntry> entriesOS)
+		{
+			IReversalIndexEntry rie;
+			var rgmue = FindAnyMatchingReversal(form, mapToRIEs, out rie);
 			if (rie == null)
 			{
 				rie = CreateNewReversalIndexEntry();
-				entriesOC.Add(rie);
+				entriesOS.Add(rie);
 			}
 			foreach (MuElement mue in rgmue)
 				AddToReversalMap(mue, rie, mapToRIEs);

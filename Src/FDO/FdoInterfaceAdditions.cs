@@ -1846,6 +1846,11 @@ namespace SIL.FieldWorks.FDO
 		}
 
 		/// <summary>
+		/// Get the set of senses that refer to this reversal entry.
+		/// </summary>
+		IEnumerable<ILexSense> ReferringSenses { get; }
+
+		/// <summary>
 		///
 		/// </summary>
 		IReversalIndex ReversalIndex

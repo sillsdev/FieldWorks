@@ -216,5 +216,21 @@ namespace SIL.FieldWorks.FDO.DomainImpl // TODO: Move this to DomainServices
 				return m_langProjTexts;
 			}
 		}
+		private int m_reversalIndexEntryLexSenseBackRefs;
+
+		/// <summary>
+		/// The Flid for the LexEntry.VisibleComplexFormBackRefs virtual property.
+		/// </summary>
+		public int ReversalIndexEntryLexSenseBackRefs
+		{
+			get
+			{
+				if (m_reversalIndexEntryLexSenseBackRefs == 0)
+					m_reversalIndexEntryLexSenseBackRefs = m_mdc.GetFieldId2(ReversalIndexEntryTags.kClassId, "ReferringSenses", false);
+				return m_reversalIndexEntryLexSenseBackRefs;
+			}
+		}
+
+
 	}
 }

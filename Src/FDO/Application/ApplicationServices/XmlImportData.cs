@@ -3107,20 +3107,36 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			}
 		}
 
+		// for entries (in a collection) that come from the ReversalIndex
 		private void AddFormsToFormEntryMap(IFdoOwningCollection<IReversalIndexEntry> entries)
 		{
 			foreach (IReversalIndexEntry rie in entries)
 			{
-				for (int i = 0; i < rie.ReversalForm.StringCount; ++i)
-				{
-					int ws;
-					ITsString tss = rie.ReversalForm.GetStringFromIndex(i, out ws);
-					if (tss.Length == 0)
-						continue;
-					WsString wsstr = new WsString(ws, tss.Text);
-					m_mapFormReversal[wsstr] = rie;
-					AddFormsToFormEntryMap(rie.SubentriesOC);
-				}
+				AddFormToFormEntryMap(rie);
+			}
+		}
+
+
+		private void AddFormToFormEntryMap(IReversalIndexEntry rie)
+		{
+			for (int i = 0; i < rie.ReversalForm.StringCount; ++i)
+			{
+				int ws;
+				ITsString tss = rie.ReversalForm.GetStringFromIndex(i, out ws);
+				if (tss.Length == 0)
+					continue;
+				WsString wsstr = new WsString(ws, tss.Text);
+				m_mapFormReversal[wsstr] = rie;
+				AddFormsToFormEntryMap(rie.SubentriesOS);
+			}
+		}
+
+		// for subentries (in a sequence) that come from ReversalIndexEntry)
+		private void AddFormsToFormEntryMap(IFdoOwningSequence<IReversalIndexEntry> entries)
+		{
+			foreach (IReversalIndexEntry rie in entries)
+			{
+				AddFormToFormEntryMap(rie);
 			}
 		}
 

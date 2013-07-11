@@ -21,7 +21,8 @@
 			</slice>
 		</part>
 		<part id="ReversalIndexEntry-Detail-CurrentSenses" type="detail">
-			<slice label="Senses" field="ReferringSenses"  editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.RevEntrySensesCollectionReferenceSlice">
+			<slice field="ReferringSenses" label="Senses" menu="mnuReorderVector" reorder="true"
+				editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.RevEntrySensesCollectionReferenceSlice" >
 				<deParams displayProperty="FullReferenceName" ws="vernacular"/>
 			</slice>
 		</part>
