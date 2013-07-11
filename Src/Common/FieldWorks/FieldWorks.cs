@@ -2936,24 +2936,24 @@ namespace SIL.FieldWorks
 				{
 					app.RegistrySettings.LoadingProcessId = 0;
 #if !__MonoCS__
-					if (WindowsInstallerQuery.IsThisInstalled())
-					{
-						Settings.Default.IsBTE = WindowsInstallerQuery.IsThisBTE();
+					if (!WindowsInstallerQuery.IsThisInstalled() || app.ActiveMainWindow == null)
+						return true;
 
-						// Initialize NetSparkle to check for updates:
-						var appCastUrl = Settings.Default.IsBTE
-											? (Settings.Default.CheckForBetaUpdates
-												? CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastBteBetasUrl")
-												: CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastBteUrl"))
-											: (Settings.Default.CheckForBetaUpdates
-												? CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastSeBetasUrl")
-												: CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastSeUrl"));
-						var sparkle = new Sparkle(appCastUrl, app.ActiveMainWindow.Icon);
-						SingletonsContainer.Add("Sparkle", sparkle);
+					// Initialize NetSparkle to check for updates:
+					Settings.Default.IsBTE = WindowsInstallerQuery.IsThisBTE();
 
-						if (Settings.Default.AutoCheckForUpdates)
-							sparkle.CheckOnFirstApplicationIdle();
-					}
+					var appCastUrl = Settings.Default.IsBTE
+						? (Settings.Default.CheckForBetaUpdates
+							? CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastBteBetasUrl")
+							: CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastBteUrl"))
+						: (Settings.Default.CheckForBetaUpdates
+							? CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastSeBetasUrl")
+							: CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastSeUrl"));
+
+					var sparkle = SingletonsContainer.Get("Sparkle", () => new Sparkle(appCastUrl, app.ActiveMainWindow.Icon));
+
+					if (Settings.Default.AutoCheckForUpdates)
+						sparkle.CheckOnFirstApplicationIdle();
 #endif
 					return true;
 				}
