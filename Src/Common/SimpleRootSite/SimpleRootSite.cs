@@ -167,80 +167,6 @@ namespace SIL.FieldWorks.Common.RootSites
 	public class SimpleRootSite : UserControl, IVwRootSite, IRootSite, IxCoreColleague,
 		IEditingCallbacks, IReceiveSequentialMessages, IMessageFilter, IFWDisposable
 	{
-		#region Class LcidKeyboardStatus
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Holds information about a specific keyboard, especially for IMEs (e.g. whether
-		/// English input mode is selected). This is necessary to restore the current setting
-		/// when switching between fields with differing keyboards. The user expects that a
-		/// keyboard keeps its state between fields.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected class LcidKeyboardMode
-		{
-			// we use Nullable<T> for our two fields
-			private int? m_ConversionMode;
-			private int? m_SentenceMode;
-
-			/// --------------------------------------------------------------------------------
-			/// <summary>
-			/// Initializes a new instance of the <see cref="LcidKeyboardMode"/> class.
-			/// </summary>
-			/// --------------------------------------------------------------------------------
-			public LcidKeyboardMode()
-			{
-				m_ConversionMode = null;
-				m_SentenceMode = null;
-			}
-
-			/// --------------------------------------------------------------------------------
-			/// <summary>
-			/// Initializes a new instance of the <see cref="LcidKeyboardMode"/> class.
-			/// </summary>
-			/// <param name="conversionMode">The conversion mode.</param>
-			/// <param name="sentenceMode">The sentence mode.</param>
-			/// --------------------------------------------------------------------------------
-			public LcidKeyboardMode(int conversionMode, int sentenceMode)
-			{
-				m_ConversionMode = conversionMode;
-				m_SentenceMode = sentenceMode;
-			}
-
-			/// --------------------------------------------------------------------------------
-			/// <summary>
-			/// Gets a value indicating whether the conversion or sentence mode properties have
-			/// a value.
-			/// </summary>
-			/// --------------------------------------------------------------------------------
-			public bool HasValue
-			{
-				get { return m_ConversionMode.HasValue || m_SentenceMode.HasValue; }
-			}
-
-			/// --------------------------------------------------------------------------------
-			/// <summary>
-			/// Gets or sets the conversion mode.
-			/// </summary>
-			/// --------------------------------------------------------------------------------
-			public int ConversionMode
-			{
-				get { return m_ConversionMode ?? 0; }
-				set { m_ConversionMode = value; }
-			}
-
-			/// --------------------------------------------------------------------------------
-			/// <summary>
-			/// Gets or sets the sentence mode.
-			/// </summary>
-			/// --------------------------------------------------------------------------------
-			public int SentenceMode
-			{
-				get { return m_SentenceMode ?? 0; }
-				set { m_SentenceMode = value; }
-			}
-		}
-		#endregion
-
 		#region Events
 		/// <summary>
 		/// This event notifies you that the right mouse button was clicked,
@@ -374,23 +300,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		protected int m_wsPending;
 
-		/// <summary>Keyman select language message</summary>
-		protected static readonly uint s_wm_kmselectlang =
-#if !__MonoCS__
- Win32.RegisterWindowMessage("WM_KMSELECTLANG");
-#else
-			// This Keyman stuff will not work on Linux.
-			0;
-#endif
-		/// <summary>Keyman change keyboard message</summary>
-		protected static readonly uint s_wm_kmkbchange =
-#if !__MonoCS__
- Win32.RegisterWindowMessage("WM_KMKBCHANGE");
-#else
-			// This Keyman stuff will not work on Linux.
-			0;
-#endif
-
 		/// <summary>height of an optional fixed header at the top of the client window.</summary>
 		protected int m_dyHeader;
 
@@ -424,14 +333,6 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		/// <summary>Flag used to ensure that OnInputLangChanged gets registered once.</summary>
 		private bool m_fRegisteredOnInputLangChanged = false;
-
-#if !__MonoCS__
-		/// <summary>Keep track of the keyboard states for the different LCIDs (writing systems).
-		/// This variable can be static since the same keyboard should behave the same in all
-		/// fields in this application.</summary>
-		private static Dictionary<int, LcidKeyboardMode> s_KeyboardModes =
-			new Dictionary<int, LcidKeyboardMode>();
-#endif
 
 		/// <summary>
 		/// This is set true during processing of the OnPaint message. It serves to suppress
@@ -3154,84 +3055,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		/// ------------------------------------------------------------------------------------
-		/// <summary>The Keyman keyboard has changed. Determine the writing system that is
-		/// probably implied, and apply it to the current range and/or future typing.</summary>
-		/// ------------------------------------------------------------------------------------
-		public void OnKeymanKeyboardChange(IntPtr wpFlags, IntPtr lpHKL)
-		{
-			CheckDisposed();
-			if (m_rootb == null)
-				return; // For paranoia.
-			IVwSelection vwsel = m_rootb.Selection;
-			if (vwsel == null)
-				return; // can't do anything useful.
-
-			ILgWritingSystemFactory wsf;
-			List<int> vws = EditingHelper.GetWsListCurrentFirst(vwsel, out wsf);
-			if (vws == null)
-				return; // not enough valid writing systems to make it worth changing.
-
-			var keyboard = KeyboardController.ActiveKeyboard;
-			string sKeymanKbd = keyboard.Type == KeyboardType.OtherIm ? keyboard.Name : string.Empty;
-
-			int wsMatch = -1;
-			int countNoKeymanKeyboard = 0;
-			foreach (int ws in vws)
-			{
-				// Don't consider switching to the default, dummy writing system.
-				if (ws == 0)
-					continue;
-
-				ILgWritingSystem lgws = wsf.get_EngineOrNull(ws);
-				if (lgws == null)
-					continue;
-
-				if (string.IsNullOrEmpty(lgws.Keyboard))
-					countNoKeymanKeyboard++;
-				else
-				{
-					string sWsKbd = lgws.Keyboard;
-					if (sKeymanKbd == sWsKbd)
-					{
-						wsMatch = ws;
-						if (wsMatch == vws[0])
-							return; // no change from current.
-					}
-				}
-			}
-
-			if (wsMatch == -1) // no known writing system uses this keyboard
-				return;
-
-			// Don't switch to some writing system just on the strength of not using a keyman
-			// keyboard at all, unless it is the only active one that does not.
-			if (string.IsNullOrEmpty(sKeymanKbd) && countNoKeymanKeyboard > 1)
-				return;
-
-			m_wsPending = -1;
-			bool fRange = vwsel.IsRange;
-			if (fRange)
-			{
-				// Delay handling it until we get an insertion point.
-				m_wsPending = wsMatch;
-				return;
-			}
-
-			// props of current selection, an IP (therefore only 1 lot of props).
-			ITsTextProps[] vttpTmp;
-			IVwPropertyStore[] vvpsTmp;
-			int cttp;
-			SelectionHelper.GetSelectionProps(vwsel, out vttpTmp, out vvpsTmp, out cttp);
-
-			ITsPropsBldr tpb = vttpTmp[0].GetBldr();
-			tpb.SetIntPropValues((int)FwTextPropType.ktptWs,
-				(int)FwTextPropVar.ktpvDefault, wsMatch);
-			ITsTextProps[] rgttpNew = new ITsTextProps[1];
-			rgttpNew[0] = tpb.GetTextProps();
-			vwsel.SetSelectionProps(1, rgttpNew);
-		}
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Set the accessible name that the root box will return for this root site.
 		/// </summary>
@@ -3485,18 +3308,18 @@ namespace SIL.FieldWorks.Common.RootSites
 				// we must not.
 				// (Note: setting a WS by setting the Keyman keyboard is still not working, because
 				// it seems .NET applications don't get the notification from Keyman.)
-#if !__MonoCS__
-				IntPtr hwndOld = m.WParam;
-				int procIdOld, procIdThis;
-				Win32.GetWindowThreadProcessId(hwndOld, out procIdOld);
-				Win32.GetWindowThreadProcessId(Handle, out procIdThis);
-				if (procIdOld == procIdThis && m_rootb != null && EditingHelper != null)
-					EditingHelper.SetKeyboardForSelection(m_rootb.Selection);
-#else
-				// REVIEW: do we have to compare the process the old and new window belongs to?
-				if (m_rootb != null && EditingHelper != null)
-					EditingHelper.SetKeyboardForSelection(m_rootb.Selection);
-#endif
+//#if !__MonoCS__
+//                IntPtr hwndOld = m.WParam;
+//                int procIdOld, procIdThis;
+//                Win32.GetWindowThreadProcessId(hwndOld, out procIdOld);
+//                Win32.GetWindowThreadProcessId(Handle, out procIdThis);
+//                if (procIdOld == procIdThis && m_rootb != null && EditingHelper != null)
+//                    EditingHelper.SetKeyboardForSelection(m_rootb.Selection);
+//#else
+//                // REVIEW: do we have to compare the process the old and new window belongs to?
+//                if (m_rootb != null && EditingHelper != null)
+//                    EditingHelper.SetKeyboardForSelection(m_rootb.Selection);
+//#endif
 
 				// Start the blinking cursor timer here and stop it in the OnKillFocus handler later.
 				if (m_Timer != null)
@@ -3536,22 +3359,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (WantInitialSelection)
 				this.EnsureDefaultSelection();
 			Activate(VwSelectionState.vssEnabled);
-
-			// Restore the state of the new keyboard to the previous value. If we don't do
-			// that e.g. in Chinese IME the input mode will toggle between English and
-			// Chinese (LT-7487 et al).
-			// We used to do this only in OnInputLanguageChanged(), but WM_INPUTLANGCHANGED
-			// messages are no longer sequenced (but WM_SETFOCUS is), and so the field doesn't
-			// have focus yet when we process WM_INPUTLANGCHANGED. This means we don't call
-			// RestoreKeyboardStatus which results in toggling between English and Chinese
-			// input of Chinese IME.
-			int wsSel = SelectionHelper.GetFirstWsOfSelection(m_rootb.Selection);
-			if (wsSel != 0)
-			{
-				ILgWritingSystem qws = WritingSystemFactory.get_EngineOrNull(wsSel);
-				if (qws != null)
-					RestoreKeyboardStatus(qws.LCID);
-			}
 
 			EditingHelper.GotFocus();
 		}
@@ -3614,8 +3421,6 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			UpdateSelectionEnabledState(newWindow);
 
-			UpdateCurrentKeyboardStatus();
-
 			// This window is losing control of the keyboard, so make sure when we get the focus
 			// again we reset it to what we want.
 			EditingHelper.LostFocus(newWindow, fIsChildWindow);
@@ -3647,60 +3452,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public interface ISuppressDefaultKeyboardOnKillFocus
 		{
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Updates the current keyboard status so that we can restore this state.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void UpdateCurrentKeyboardStatus()
-		{
-#if !__MonoCS__
-			IntPtr context = Win32.ImmGetContext(new HandleRef(this, Handle));
-			if (context != IntPtr.Zero)
-			{
-				int conversionMode;
-				int sentenceMode;
-				Win32.ImmGetConversionStatus(new HandleRef(this, context),
-					out conversionMode, out sentenceMode);
-				int lcid = LcidHelper.LangIdFromLCID(InputLanguage.CurrentInputLanguage.Culture.LCID);
-				s_KeyboardModes[lcid] = new LcidKeyboardMode(conversionMode, sentenceMode);
-				Win32.ImmReleaseContext(new HandleRef(this, Handle),
-					new HandleRef(this, context));
-			}
-#else
-			// TODO-Linux: May have to do something with keyboard here
-#endif
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Restores the IME keyboard status.
-		/// </summary>
-		/// <param name="lcid">The locale id.</param>
-		/// ------------------------------------------------------------------------------------
-		private void RestoreKeyboardStatus(int lcid)
-		{
-#if !__MonoCS__
-			// Restore the state of the new keyboard to the previous value. If we don't do
-			// that e.g. in Chinese IME the input mode will toggle between English and
-			// Chinese (LT-7488).
-			LcidKeyboardMode keyboardMode;
-			if (s_KeyboardModes.TryGetValue(lcid, out keyboardMode) && keyboardMode.HasValue)
-			{
-				IntPtr context = Win32.ImmGetContext(new HandleRef(this, Handle));
-				if (context != IntPtr.Zero)
-				{
-					Win32.ImmSetConversionStatus(new HandleRef(this, context),
-						keyboardMode.ConversionMode, keyboardMode.SentenceMode);
-					Win32.ImmReleaseContext(new HandleRef(this, Handle),
-						new HandleRef(this, context));
-				}
-			}
-#else
-		// TODO-Linux: do we need to port this?
-#endif
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -5160,7 +4911,6 @@ namespace SIL.FieldWorks.Common.RootSites
 				int lcid = LcidHelper.LangIdFromLCID(e.Culture.LCID);
 				// Since we're being told it changed, assume this really is current, as opposed
 				// to whatever we last set it to.
-				m_editingHelper.ActiveLanguageId = lcid;
 				if (m_fHandlingOnGotFocus)
 				{
 					int wsSel = SelectionHelper.GetFirstWsOfSelection(vwsel);
@@ -5177,8 +4927,6 @@ namespace SIL.FieldWorks.Common.RootSites
 				// This causes Text Services to set its focus, which is the crucial bit
 				// of behavior.  See LT-7488 and LT-5345.
 				Activate(VwSelectionState.vssEnabled);
-
-				RestoreKeyboardStatus(lcid);
 
 				//Debug.WriteLine("End SimpleRootSite.OnInputLangChanged(" + lcid +
 				//    ") [hwnd = " + this.Handle + "] -> HandleKeyBoardChange(vwsel, " + lcid +
@@ -6574,30 +6322,6 @@ namespace SIL.FieldWorks.Common.RootSites
 					OnKillFocus(Control.FromHandle(msg.WParam),
 						MiscUtils.IsChildWindowOfForm(ParentForm, msg.WParam));
 					return;
-				default:
-					{
-						if (msg.Msg == s_wm_kmselectlang)
-						{
-							Debug.Assert(s_wm_kmselectlang != 0);
-							if (msg.WParam == (IntPtr)4)
-							{
-								OnKeymanKeyboardChange(msg.WParam, msg.LParam);
-							}
-							else if (msg.WParam == (IntPtr)1)
-							{
-								// We get these both as a result of our own changes, and changes
-								// resulting from control keys. If we just initiated a change ourselves,
-								// ignore it.
-								if (EditingHelper.SelectLangPending > 0)
-									EditingHelper.SelectLangPending--;
-								else
-									OnKeymanKeyboardChange(msg.WParam, msg.LParam);
-							}
-						}
-						else if (msg.Msg == s_wm_kmkbchange)
-							Debug.Assert(s_wm_kmkbchange != 0);
-						break;
-					}
 			}
 			base.WndProc(ref msg);
 		}

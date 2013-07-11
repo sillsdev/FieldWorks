@@ -8,7 +8,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 
-namespace SIL.FieldWorks.Common.Keyboarding
+namespace SIL.FieldWorks.Common.Keyboarding.Interfaces
 {
 	/// <summary>
 	/// Describes a keyboard layout that either gave an exception or other error trying to

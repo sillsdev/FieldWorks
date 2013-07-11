@@ -9,8 +9,10 @@
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Keyboarding;
+using SIL.FieldWorks.Common.Keyboarding.Interfaces;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites
@@ -20,7 +22,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// VwRootBox. On Windows we use VwTextStore instead.
 	/// </summary>
 	[Guid("830BAF1F-6F84-46EF-B63E-3C1BFDF9E83E")]
-	public class ViewInputManager: ILgTextServices, IKeyboardCallback, IViewInputMgr
+	public class ViewInputManager: IKeyboardCallback, IViewInputMgr
 	{
 		private IVwRootBox m_rootb;
 
@@ -124,7 +126,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 		#endregion /* IViewInputMgr */
 
-		private ILgWritingSystem CurrentWritingSystem
+		private IWritingSystem CurrentWritingSystem
 		{
 			get
 			{
@@ -137,7 +139,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				if (wsf == null)
 					return null;
 
-				return wsf.get_EngineOrNull(nWs);
+				return wsf.get_EngineOrNull(nWs) as IWritingSystem;
 			}
 		}
 
@@ -155,38 +157,9 @@ namespace SIL.FieldWorks.Common.RootSites
 				if (ws == null)
 					return KeyboardDescription.Zero;
 
-				var locale = ws.LCID;
-				var langId = ws.CurrentLCID;
-				var keyboardName = string.Empty;
-
-				// From VwRootBox::SetKeyboardForWs:
-				// We possibly set a Keyman keyboard, more precisely than the langid can do. Only attempt
-				// this if we are using the default langid for the ws.
-				if (locale == langId)
-					keyboardName = ws.Keyboard;
-
-				return KeyboardController.GetKeyboard(langId, keyboardName);
+				return KeyboardController.GetKeyboard(ws);
 			}
 		}
-		#endregion
-
-		#region ILgTextServices implementation
-		/// <summary>
-		/// Sets the keyboard.
-		/// </summary>
-		/// <param name='lcid'>Keyboard identifier of system keyboard</param>
-		/// <param name='otherImKeyboard'>Identifier for other input method keyboard (Keyman/ibus)
-		/// </param>
-		/// <param name='nActiveLangId'>The active keyboard lcid.</param>
-		/// <param name='activeOtherImKeyboard'>Active other input method keyboard.</param>
-		/// <param name='fSelectLangPending'></param>
-		public void SetKeyboard(int lcid, string otherImKeyboard, ref int nActiveLangId,
-			ref string activeOtherImKeyboard, ref bool fSelectLangPending)
-		{
-			KeyboardController.SetKeyboard(lcid, otherImKeyboard, ref nActiveLangId,
-				ref activeOtherImKeyboard, ref fSelectLangPending);
-		}
-
 		#endregion
 	}
 }

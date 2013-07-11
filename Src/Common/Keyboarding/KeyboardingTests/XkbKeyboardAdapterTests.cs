@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Keyboarding;
+using SIL.FieldWorks.Common.Keyboarding.Interfaces;
 using SIL.FieldWorks.Common.Keyboarding.Linux;
 using SIL.FieldWorks.Test.TestUtils;
 using X11.XKlavier;
@@ -124,7 +125,7 @@ namespace SIL.FieldWorks.Common.Keyboarding
 			KeyboardController.Manager.SetKeyboardAdaptors(new [] { new XkbKeyboardAdaptor() });
 			var keyboards = KeyboardController.InstalledKeyboards;
 			Assert.AreEqual(1, keyboards.Count);
-			Assert.AreEqual(1033, keyboards[0].Id);
+			Assert.AreEqual("en-US_English (United States)", keyboards[0].Id);
 			Assert.AreEqual(ExpectedKeyboardUSA, keyboards[0].Name);
 			Assert.AreEqual(0, KeyboardController.ErrorKeyboards.Count);
 		}
@@ -138,7 +139,7 @@ namespace SIL.FieldWorks.Common.Keyboarding
 			KeyboardController.Manager.SetKeyboardAdaptors(new [] { new XkbKeyboardAdaptor() });
 			var keyboards = KeyboardController.InstalledKeyboards;
 			Assert.AreEqual(1, keyboards.Count);
-			Assert.AreEqual(1031, keyboards[0].Id);
+			Assert.AreEqual("de-DE_German (Germany)", keyboards[0].Id);
 			Assert.AreEqual(ExpectedKeyboardGermany, keyboards[0].Name);
 			Assert.AreEqual(0, KeyboardController.ErrorKeyboards.Count);
 		}
@@ -152,7 +153,7 @@ namespace SIL.FieldWorks.Common.Keyboarding
 			KeyboardController.Manager.SetKeyboardAdaptors(new [] { new XkbKeyboardAdaptor() });
 			var keyboards = KeyboardController.InstalledKeyboards;
 			Assert.AreEqual(1, keyboards.Count);
-			Assert.AreEqual(1036, keyboards[0].Id);
+			Assert.AreEqual("fr-FR_French (France) - French (eliminate dead keys)", keyboards[0].Id);
 			Assert.AreEqual(ExpectedKeyboardFranceEliminateDeadKeys, keyboards[0].Name);
 			Assert.AreEqual(0, KeyboardController.ErrorKeyboards.Count);
 		}
@@ -166,7 +167,7 @@ namespace SIL.FieldWorks.Common.Keyboarding
 			KeyboardController.Manager.SetKeyboardAdaptors(new [] { new XkbKeyboardAdaptor() });
 			var keyboards = KeyboardController.InstalledKeyboards;
 			Assert.AreEqual(1, keyboards.Count);
-			Assert.AreEqual(2057, keyboards[0].Id);
+			Assert.AreEqual("en-GB_English (United Kingdom)", keyboards[0].Id);
 			Assert.AreEqual(ExpectedKeyboardUK, keyboards[0].Name);
 			Assert.AreEqual(0, KeyboardController.ErrorKeyboards.Count);
 		}
@@ -185,13 +186,11 @@ namespace SIL.FieldWorks.Common.Keyboarding
 			keyboards.Sort((x, y) => {
 				return x.Id.CompareTo(y.Id); });
 			var expectedKeyboards = new List<IKeyboardDescription>()
-				{ new KeyboardDescription(2060, "French (Belgium)", null) };
-			// Windows doesn't define German (Belgium), so there is no LCID defined. ICU returns
-			// some arbitrary number (7 in my case). We cheat and expect what we get here.
-			expectedKeyboards.Add(new KeyboardDescription(keyboards[0].Id, "German (Belgium)", null));
+				{ new KeyboardDescription("German (Belgium)", "de-BE", null) };
+			expectedKeyboards.Add(new KeyboardDescription("French (Belgium)", "fr-BE", null));
 
 			if (keyboards.Count > 2)
-				expectedKeyboards.Add(new KeyboardDescription(2067, "Dutch (Belgium)", null));
+				expectedKeyboards.Add(new KeyboardDescription("Dutch (Belgium)", "nl-BE", null));
 
 			CollectionAssert.AreEquivalent(expectedKeyboards, keyboards);
 			Assert.AreEqual(0, KeyboardController.ErrorKeyboards.Count);
@@ -206,9 +205,9 @@ namespace SIL.FieldWorks.Common.Keyboarding
 			KeyboardController.Manager.SetKeyboardAdaptors(new [] { new XkbKeyboardAdaptor() });
 			var keyboards = KeyboardController.InstalledKeyboards;
 			Assert.AreEqual(2, keyboards.Count);
-			Assert.AreEqual(1033, keyboards[0].Id);
+			Assert.AreEqual("en-US_English (United States)", keyboards[0].Id);
 			Assert.AreEqual(ExpectedKeyboardUSA, keyboards[0].Name);
-			Assert.AreEqual(1031, keyboards[1].Id);
+			Assert.AreEqual("de-DE_German (Germany)", keyboards[1].Id);
 			Assert.AreEqual(ExpectedKeyboardGermany, keyboards[1].Name);
 			Assert.AreEqual(0, KeyboardController.ErrorKeyboards.Count);
 		}
@@ -226,7 +225,7 @@ namespace SIL.FieldWorks.Common.Keyboarding
 			KeyboardController.Manager.SetKeyboardAdaptors(new [] { new XkbKeyboardAdaptor() });
 			var keyboards = KeyboardController.InstalledKeyboards;
 			Assert.AreEqual(1, keyboards.Count);
-			Assert.AreEqual(1031, keyboards[0].Id);
+			Assert.AreEqual("de-DE_Deutsch (Deutschland)", keyboards[0].Id);
 			Assert.AreEqual("Deutsch (Deutschland)", keyboards[0].Name);
 			Assert.AreEqual(0, KeyboardController.ErrorKeyboards.Count);
 		}
@@ -244,7 +243,7 @@ namespace SIL.FieldWorks.Common.Keyboarding
 			KeyboardController.Manager.SetKeyboardAdaptors(new [] { new XkbKeyboardAdaptor() });
 			var keyboards = KeyboardController.InstalledKeyboards;
 			Assert.AreEqual(1, keyboards.Count);
-			Assert.AreEqual(59, keyboards[0].Id);
+			Assert.AreEqual("se-FI_Northern Sami (Finland) - Northern Saami (Finland)", keyboards[0].Id);
 			Assert.AreEqual(ExpectedKeyboardFinlandNorthernSaami, keyboards[0].Name);
 			Assert.AreEqual(0, KeyboardController.ErrorKeyboards.Count);
 		}
@@ -274,7 +273,7 @@ namespace SIL.FieldWorks.Common.Keyboarding
 
 			var keyboards = KeyboardController.InstalledKeyboards;
 
-			adaptor.ActivateKeyboard(keyboards[0], null);
+			adaptor.ActivateKeyboard(keyboards[0]);
 		}
 
 		/// <summary>
@@ -289,12 +288,12 @@ namespace SIL.FieldWorks.Common.Keyboarding
 			var adaptor = new XkbKeyboardAdaptor();
 			KeyboardController.Manager.SetKeyboardAdaptors(new [] { adaptor });
 			var keyboards = KeyboardController.InstalledKeyboards;
-			adaptor.ActivateKeyboard(keyboards[0], null);
+			adaptor.ActivateKeyboard(keyboards[0]);
 
 			adaptor = new XkbKeyboardAdaptor();
 			KeyboardController.Manager.SetKeyboardAdaptors(new [] { adaptor });
 			keyboards = KeyboardController.InstalledKeyboards;
-			adaptor.ActivateKeyboard(keyboards[0], null);
+			adaptor.ActivateKeyboard(keyboards[0]);
 		}
 	}
 }

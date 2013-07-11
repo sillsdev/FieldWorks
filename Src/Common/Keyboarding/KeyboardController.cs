@@ -10,7 +10,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Keyboarding.Interfaces;
+using SIL.FieldWorks.Common.Keyboarding.InternalInterfaces;
 using SIL.Utils;
 #if __MonoCS__
 using SIL.FieldWorks.Views;
@@ -18,6 +20,7 @@ using SIL.FieldWorks.Common.Keyboarding.Linux;
 #else
 using SIL.FieldWorks.Common.Keyboarding.Windows;
 #endif
+using SIL.FieldWorks.Common.Keyboarding.Types;
 
 namespace SIL.FieldWorks.Common.Keyboarding
 {
@@ -37,7 +40,7 @@ namespace SIL.FieldWorks.Common.Keyboarding
 			/// <summary>
 			/// Sets the available keyboard adaptors
 			/// </summary>
-			public static void SetKeyboardAdaptors(IKeyboardAdaptor[] adaptors)
+			internal static void SetKeyboardAdaptors(IKeyboardAdaptor[] adaptors)
 			{
 				if (SingletonsContainer.Contains<IKeyboardController>())
 				{
@@ -71,7 +74,7 @@ namespace SIL.FieldWorks.Common.Keyboarding
 #if __MonoCS__
 					new XkbKeyboardAdaptor(), new IbusKeyboardAdaptor()
 #else
-					new WinKeyboardAdaptor(), new KeymanKeyboardAdapter()
+					new WinKeyboardAdaptor()
 #endif
 				});
 			}
@@ -86,29 +89,26 @@ namespace SIL.FieldWorks.Common.Keyboarding
 			/// <summary>
 			/// Adds a keyboard to the list of installed keyboards
 			/// </summary>
-			/// <param name='lcid'>Identifier of the language/keyboard layout (LCID), or hash code
-			/// of the keyboard name.</param>
 			/// <param name='description'>Keyboard description object</param>
-			public static void RegisterKeyboard(int lcid, IKeyboardDescription description)
+			public static void RegisterKeyboard(IKeyboardDescription description)
 			{
-				Debug.Assert(!Instance.Keyboards.ContainsKey(lcid),
-					String.Format("KeyboardController.Manager.RegisterKeyboard called with duplicate keyboard lcid '{0}', with description '{1}'.", lcid, description));
-
-				Instance.Keyboards[lcid] = description;
+				if (!Instance.Keyboards.Contains(description))
+					Instance.Keyboards.Add(description);
 			}
 		}
 		#endregion
 
 		#region Class KeyboardControllerImpl
-		private class KeyboardControllerImpl: IKeyboardController, IDisposable
+		private sealed class KeyboardControllerImpl: IKeyboardController, IDisposable
 		{
-			public Dictionary<int, IKeyboardDescription> Keyboards { get; private set; }
+			public KeyboardCollection Keyboards { get; private set; }
 			public IKeyboardEventHandler InternalEventHandler { get; set; }
 			public IKeyboardMethods InternalMethods { get; set; }
 
 			public KeyboardControllerImpl()
 			{
-				Keyboards = new Dictionary<int, IKeyboardDescription>();
+				Keyboards = new KeyboardCollection();
+				ActiveKeyboard = new KeyboardDescriptionNull();
 			}
 
 			#region Disposable stuff
@@ -131,7 +131,7 @@ namespace SIL.FieldWorks.Common.Keyboarding
 			}
 
 			/// <summary/>
-			protected virtual void Dispose(bool fDisposing)
+			private void Dispose(bool fDisposing)
 			{
 				System.Diagnostics.Debug.WriteLineIf(!fDisposing,
 					"****** Missing Dispose() call for " + GetType() + ". *******");
@@ -149,53 +149,65 @@ namespace SIL.FieldWorks.Common.Keyboarding
 			}
 			#endregion
 
+			public IKeyboardDescription GetKeyboard(string layoutNameWithLocale)
+			{
+				if (string.IsNullOrEmpty(layoutNameWithLocale))
+					return KeyboardDescription.Zero;
+
+				return Keyboards.Contains(layoutNameWithLocale) ?
+					Keyboards[layoutNameWithLocale] : KeyboardDescription.Zero;
+			}
+
+			public IKeyboardDescription GetKeyboard(string layoutName, string locale)
+			{
+				if (string.IsNullOrEmpty(layoutName) && string.IsNullOrEmpty(locale))
+					return KeyboardDescription.Zero;
+
+				return Keyboards.Contains(layoutName, locale) ?
+					Keyboards[layoutName, locale] : KeyboardDescription.Zero;
+			}
+
 			/// <summary>
-			/// Tries to get the keyboard specified by <paramref name="otherImKeyboard"/> or (if
-			/// not found) <paramref name="lcid"/>. Returns <c>KeyboardDescription.Zero</c> if
-			/// no keyboard can be found.
+			/// Tries to get the keyboard for the specified <paramref name="writingSystem"/>.
 			/// </summary>
-			public IKeyboardDescription GetKeyboard(int? lcid, string otherImKeyboard)
+			/// <returns>
+			/// Returns <c>KeyboardDescription.Zero</c> if no keyboard can be found.
+			/// </returns>
+			public IKeyboardDescription GetKeyboard(IWritingSystem writingSystem)
 			{
-				IKeyboardDescription systemKeyboard = null;
-				IKeyboardDescription otherKeyboard = null;
-				if (lcid.HasValue)
-					Keyboards.TryGetValue(lcid.Value, out systemKeyboard);
-
-				if (!string.IsNullOrEmpty(otherImKeyboard))
-					Keyboards.TryGetValue(otherImKeyboard.GetHashCode(), out otherKeyboard);
-
-				if (otherKeyboard != null && systemKeyboard != null)
-					return new KeyboardDescriptionWrapper(systemKeyboard, otherKeyboard);
-				return systemKeyboard ?? otherKeyboard ?? KeyboardDescription.Zero;
-			}
-
-			public IKeyboardDescription GetKeyboard(int lcid)
-			{
-				return GetKeyboard(lcid, null);
-			}
-
-			public IKeyboardDescription GetKeyboard(string otherImKeyboard)
-			{
-				return GetKeyboard(null, otherImKeyboard);
+				// TODO: use writingSystem.LocalKeyboard
+				if (writingSystem == null)
+					return KeyboardDescription.Zero;
+				return GetKeyboard(writingSystem.Keyboard);
 			}
 
 			/// <summary>
 			/// Sets the keyboard.
 			/// </summary>
-			/// <param name='lcid'>Keyboard identifier of system keyboard</param>
-			/// <param name='otherImKeyboard'>Identifier for other input method keyboard (Keyman/ibus)
-			/// </param>
-			/// <param name='nActiveLangId'>The active keyboard lcid.</param>
-			/// <param name='activeOtherImKeyboard'>Active other input method keyboard.</param>
-			/// <param name='fSelectLangPending'></param>
-			public void SetKeyboard(int lcid, string otherImKeyboard, ref int nActiveLangId,
-				ref string activeOtherImKeyboard, ref bool fSelectLangPending)
+			/// <param name='layoutName'>Keyboard layout name</param>
+			public void SetKeyboard(string layoutName)
 			{
-				var keyboard = GetKeyboard(lcid, otherImKeyboard);
-				keyboard.Activate();
-				nActiveLangId = lcid;
-				activeOtherImKeyboard = otherImKeyboard;
-				fSelectLangPending = true;
+				SetKeyboard(GetKeyboard(layoutName));
+			}
+
+			public void SetKeyboard(string layoutName, string locale)
+			{
+				SetKeyboard(GetKeyboard(layoutName, locale));
+			}
+
+			public void SetKeyboard(IWritingSystem writingSystem)
+			{
+				// TODO: use writingSystem.LocalKeyboard
+				SetKeyboard(writingSystem.Keyboard);
+			}
+
+			public void SetKeyboard(IKeyboardDescription keyboard)
+			{
+				if (ActiveKeyboard.Id != keyboard.Id)
+				{
+					ActiveKeyboard.Deactivate();
+					keyboard.Activate();
+				}
 			}
 
 			/// <summary>
@@ -205,7 +217,7 @@ namespace SIL.FieldWorks.Common.Keyboarding
 			{
 				get
 				{
-					return Keyboards.Values.ToList();
+					return Keyboards.ToList();
 				}
 			}
 
@@ -224,6 +236,11 @@ namespace SIL.FieldWorks.Common.Keyboarding
 					return Adaptors.SelectMany(adaptor => adaptor.ErrorKeyboards).ToList();
 				}
 			}
+
+			/// <summary>
+			/// Gets or sets the currently active keyboard
+			/// </summary>
+			public IKeyboardDescription ActiveKeyboard { get; set; }
 		}
 		#endregion
 
@@ -240,11 +257,14 @@ namespace SIL.FieldWorks.Common.Keyboarding
 
 #if __MonoCS__
 			var keyboardHelper = new LinuxKeyboardHelper();
-#else
-			var keyboardHelper = new WindowsKeyboardHelper();
-#endif
 			controller.InternalEventHandler = keyboardHelper;
 			controller.InternalMethods = keyboardHelper;
+#else
+			// On Windows the Views code implements unmanaged VwTextSource
+			// so that we don't need the InternalEventHandler/InternalMethods.
+			// It is implemented in unmanaged code for performance reasons
+			// because it interacts with TSF.
+#endif
 
 			return controller;
 		}
@@ -308,62 +328,37 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		}
 
 		/// <summary>
-		/// Tries to get the keyboard specified by <paramref name="otherImKeyboard"/> or (if not
-		/// found) <paramref name="lcid"/>. Returns <c>KeyboardDescription.Zero</c> if no
-		/// keyboard can be found.
-		/// </summary>
-		public static IKeyboardDescription GetKeyboard(int? lcid, string otherImKeyboard)
-		{
-			return Instance.GetKeyboard(lcid, otherImKeyboard);
-		}
-
-		/// <summary>
-		/// Tries to get the keyboard specified by <paramref name="lcid"/>.
+		/// Tries to get the keyboard specified by <paramref name="layoutName"/>.
 		/// Returns <c>KeyboardDescription.Zero</c> if no keyboard can be found.
 		/// </summary>
-		public static IKeyboardDescription GetKeyboard(int lcid)
+		public static IKeyboardDescription GetKeyboard(string layoutName)
 		{
-			return Instance.GetKeyboard(lcid);
+			return Instance.GetKeyboard(layoutName);
 		}
 
-		/// <summary>
-		/// Tries to get the keyboard specified by <paramref name="otherImKeyboard"/>.
-		/// Returns <c>KeyboardDescription.Zero</c> if no keyboard can be found.
-		/// </summary>
-		public static IKeyboardDescription GetKeyboard(string otherImKeyboard)
+		public static IKeyboardDescription GetKeyboard(string layoutName, string locale)
 		{
-			return Instance.GetKeyboard(otherImKeyboard);
+			return Instance.GetKeyboard(layoutName, locale);
 		}
 
-		/// <summary>
-		/// Sets the keyboard.
-		/// </summary>
-		/// <param name='lcid'>Keyboard identifier of system keyboard</param>
-		/// <param name='otherImKeyboard'>Identifier for other input method keyboard (Keyman/ibus)
-		/// </param>
-		public static void SetKeyboard(int lcid, string otherImKeyboard)
+		public static IKeyboardDescription GetKeyboard(IWritingSystem writingSystem)
 		{
-			int nActiveLangId = 0;
-			string activeOtherImKeyboard = string.Empty;
-			bool fSelectLangPending = false;
-			Instance.SetKeyboard(lcid, otherImKeyboard, ref nActiveLangId,
-				ref activeOtherImKeyboard, ref fSelectLangPending);
+			return Instance.GetKeyboard(writingSystem);
 		}
 
-		/// <summary>
-		/// Sets the keyboard.
-		/// </summary>
-		/// <param name='lcid'>Keyboard identifier of system keyboard</param>
-		/// <param name='otherImKeyboard'>Identifier for other input method keyboard (Keyman/ibus)
-		/// </param>
-		/// <param name='nActiveLangId'>The active keyboard lcid.</param>
-		/// <param name='activeOtherImKeyboard'>Active other input method keyboard.</param>
-		/// <param name='fSelectLangPending'></param>
-		public static void SetKeyboard(int lcid, string otherImKeyboard, ref int nActiveLangId,
-			ref string activeOtherImKeyboard, ref bool fSelectLangPending)
+		public static void SetKeyboard(IKeyboardDescription keyboard)
 		{
-			Instance.SetKeyboard(lcid, otherImKeyboard, ref nActiveLangId,
-				ref activeOtherImKeyboard, ref fSelectLangPending);
+			Instance.SetKeyboard(keyboard);
+		}
+
+		public static void SetKeyboard(string layoutName)
+		{
+			Instance.SetKeyboard(layoutName);
+		}
+
+		public static void SetKeyboard(IWritingSystem writingSystem)
+		{
+			Instance.SetKeyboard(writingSystem);
 		}
 
 		/// <summary>
@@ -376,8 +371,10 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		/// </summary>
 		public static IKeyboardDescription ActiveKeyboard
 		{
-			get { return Instance.InternalMethods.ActiveKeyboard; }
+			get { return Instance.ActiveKeyboard; }
+			internal set { Instance.ActiveKeyboard = value; }
 		}
+
 		#endregion
 
 	}

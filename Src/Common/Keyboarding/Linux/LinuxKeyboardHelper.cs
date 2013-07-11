@@ -9,6 +9,9 @@
 #if __MonoCS__
 using System;
 using System.Drawing;
+using System.Windows.Forms;
+using SIL.FieldWorks.Common.Keyboarding.Interfaces;
+using SIL.FieldWorks.Common.Keyboarding.InternalInterfaces;
 
 namespace SIL.FieldWorks.Common.Keyboarding.Linux
 {
@@ -17,9 +20,17 @@ namespace SIL.FieldWorks.Common.Keyboarding.Linux
 	/// </summary>
 	public class LinuxKeyboardHelper: IKeyboardEventHandler, IKeyboardMethods
 	{
-		private IKeyboardDescription m_ActiveKeyboard = new KeyboardDescriptionNull();
+		public LinuxKeyboardHelper()
+		{
+		}
 
-		#region IKeyboardEventHandler implementation
+		private void ActivateKeyboard(IKeyboardDescription keyboard)
+		{
+			keyboard.Activate();
+			KeyboardController.ActiveKeyboard = keyboard;
+		}
+
+#region IKeyboardEventHandler implementation
 		/// <summary>
 		/// Called before a property gets updated.
 		/// </summary>
@@ -37,7 +48,7 @@ namespace SIL.FieldWorks.Common.Keyboarding.Linux
 			Rectangle rcDst, MouseEvent mouseEvent)
 		{
 			if (mouseEvent == MouseEvent.kmeDown)
-				SetFocus(callback);
+				ActivateKeyboard(callback.Keyboard);
 			return false;
 		}
 
@@ -63,36 +74,38 @@ namespace SIL.FieldWorks.Common.Keyboarding.Linux
 		public void OnTextChange(IKeyboardCallback callback)
 		{
 		}
-		#endregion // IKeyboardEventHandler
-
-		#region IKeyboardMethods implementation
-		/// <summary>
-		/// End all active compositions.
-		/// </summary>
-		public void TerminateAllCompositions(IKeyboardCallback callback)
-		{
-		}
 
 		/// <summary>
 		/// Activate the input method
 		/// </summary>
-		public void SetFocus(IKeyboardCallback callback)
+		public void OnSetFocus(IKeyboardDescription keyboard, Control control)
 		{
-			var keyboard = callback.Keyboard;
-			keyboard.Activate();
-			m_ActiveKeyboard = keyboard;
+			ActivateKeyboard(keyboard);
 		}
 
 		/// <summary>
 		/// Deactivate the input method
 		/// </summary>
-		public void KillFocus(IKeyboardCallback callback)
+		public void OnKillFocus(IKeyboardDescription keyboard, Control control)
 		{
-			if (m_ActiveKeyboard != null)
+			if (KeyboardController.ActiveKeyboard != null)
 			{
-				m_ActiveKeyboard.Deactivate();
-				m_ActiveKeyboard = new KeyboardDescriptionNull();
+				// REVIEW (JohnT): Are you sure this is enough not to disrupt other programs that
+				// may not attempt keyboard manipulation? I have a vague recollection of SimpleRootSite
+				// trying to keep track of the IME that is active for other programs and restore it.
+				KeyboardController.ActiveKeyboard.Deactivate();
+				KeyboardController.ActiveKeyboard = new KeyboardDescriptionNull();
 			}
+		}
+
+#endregion // IKeyboardEventHandler
+
+#region IKeyboardMethods implementation
+		/// <summary>
+		/// End all active compositions.
+		/// </summary>
+		public void TerminateAllCompositions(IKeyboardCallback callback)
+		{
 		}
 
 		/// <summary>
@@ -129,14 +142,7 @@ namespace SIL.FieldWorks.Common.Keyboarding.Linux
 			return false;
 		}
 
-		/// <summary>
-		/// Gets the active keyboard.
-		/// </summary>
-		public IKeyboardDescription ActiveKeyboard
-		{
-			get { return m_ActiveKeyboard; }
-		}
-		#endregion
+#endregion
 	}
 }
 #endif

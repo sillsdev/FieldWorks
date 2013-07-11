@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -9,6 +10,7 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Keyboarding;
+using SIL.FieldWorks.Common.Keyboarding.Interfaces;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
@@ -31,18 +33,12 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
-			m_keyboardComboBox.DropDown += new EventHandler(m_keyboardComboBox_DropDown);
-			m_langIdComboBox.DropDown += new EventHandler(m_langIdComboBox_DropDown);
+			m_langIdComboBox.DropDown += m_langIdComboBox_DropDown;
 		}
 
 		void m_langIdComboBox_DropDown(object sender, EventArgs e)
 		{
 			InitLanguageCombo();
-		}
-
-		void m_keyboardComboBox_DropDown(object sender, EventArgs e)
-		{
-			InitKeymanCombo();
 		}
 
 		/// <summary>
@@ -171,45 +167,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			if (m_ws == null)
 				return;
 
-			InitKeymanCombo();
 			InitLanguageCombo();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Inits the keyman combo.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void InitKeymanCombo()
-		{
-			CheckDisposed();
-
-			m_keyboardComboBox.Items.Clear(); // Clear out any old items from combobox list
-			var strKbdName = string.IsNullOrEmpty(m_ws.Keyboard) ? FwCoreDlgControls.kstid_None :
-				m_ws.Keyboard;
-			m_keyboardComboBox.Items.Add(FwCoreDlgControls.kstid_None);
-
-			var badLocales = KeyboardController.ErrorKeyboards.Where(
-				keyboard => keyboard.Type == KeyboardType.OtherIm).ToList();
-			if (badLocales.Count > 0 && !m_fKeymanInitErrorReported)
-			{
-				m_fKeymanInitErrorReported = true;
-				string caption = FwCoreDlgControls.kstidKeymanInitFailed;
-				var exception = badLocales[0].Details as Exception;
-				string message = exception != null ? exception.Message : null;
-				if (string.IsNullOrEmpty(message))
-					message = caption;
-				MessageBoxUtils.Show(ParentForm, message, caption,
-					MessageBoxButtons.OK, MessageBoxIcon.Information);
-			}
-
-			foreach (var item in KeyboardController.InstalledKeyboards.Where(
-				keyboard => keyboard.Type == KeyboardType.OtherIm))
-			{
-				m_keyboardComboBox.Items.Add(item.Name);
-			}
-
-			m_keyboardComboBox.SelectedItem = strKbdName;
 		}
 
 		// Since InitLanguageCombo gets called from an OnGetFocus, and the message box causes a
@@ -245,7 +203,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				{
 					m_langIdComboBox.Items.Add(item);
 					// The 'if' below should make a 'fr-CAN' language choose a french keyboard, if installed.
-					if (item.Id == selectedId)
+					if (CultureInfo.CreateSpecificCulture(item.Locale).LCID == selectedId)
 						selectedName = item.Name;
 				}
 				catch
@@ -289,7 +247,9 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 					// The DefaultInputLanguage should already be in the control
 					if (selectedName == FwCoreDlgControls.kstidInvalidKeyboard)
 					{
-						m_langIdComboBox.Items.Add(new KeyboardDescription(selectedId, selectedName, null));
+						// TODO: add item for the invalid keyboard. Hopefully this control will be
+						// replaced by one from Palaso; otherwise we'll need to implement this.
+						//m_langIdComboBox.Items.Add(new KeyboardDescription(selectedId, selectedName, null));
 					}
 				}
 			}
@@ -301,7 +261,9 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			if (m_langIdComboBox.SelectedItem == null)
 				return;
-			m_ws.LCID = ((IKeyboardDescription)m_langIdComboBox.SelectedItem).Id;
+			var keyboard = m_langIdComboBox.SelectedItem as IKeyboardDescription;
+			m_ws.LCID = CultureInfo.CreateSpecificCulture(keyboard.Locale).LCID;
+			m_ws.Keyboard = keyboard.Name;
 		}
 
 		private void m_cboKeyboard_SelectedIndexChanged(object sender, EventArgs e)

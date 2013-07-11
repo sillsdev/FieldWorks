@@ -82,10 +82,7 @@ FWLANG_OBJ := \
 	$(LANGUAGE_OBJ)/RomRenderSegment.o \
 	$(LANGUAGE_OBJ)/LgSimpleEngines.o \
 	$(LANGUAGE_OBJ)/LgIcuCharPropEngine.o \
-	$(LANGUAGE_OBJ)/LgFontManager.o \
-	$(LANGUAGE_OBJ)/LgInputMethodEditor.o \
 	$(LANGUAGE_OBJ)/LocaleIndex.o \
-	$(LANGUAGE_OBJ)/LanguageGlobals.o \
 	$(GENERIC_OBJ)/TextProps1.o \
 	$(GR_LIB_OBJ)/GrUtil.o \
 	$(LANGUAGE_OBJ)/FwXml.o \
@@ -121,7 +118,6 @@ $(INT_DIR)/Collection.cpp: testLanguage.h \
 	MockLgWritingSystem.h \
 	TestLgCollatingEngine.h \
 	TestLgIcuCharPropEngine.h \
-	TestLgFontManager.h \
 	TestRomRenderEngine.h \
 	RenderEngineTestBase.h
 	@echo Collecting tests for testLanguage

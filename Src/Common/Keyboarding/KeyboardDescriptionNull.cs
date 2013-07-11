@@ -7,6 +7,8 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------
 using System;
+using SIL.FieldWorks.Common.Keyboarding.Interfaces;
+using SIL.FieldWorks.Common.Keyboarding.InternalInterfaces;
 
 namespace SIL.FieldWorks.Common.Keyboarding
 {
@@ -24,9 +26,9 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		{
 		}
 
-		public int Id
+		public string Id
 		{
-			get { return 0; }
+			get { return string.Empty; }
 		}
 
 		public KeyboardType Type
@@ -35,6 +37,11 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		}
 
 		public string Name
+		{
+			get { return string.Empty; }
+		}
+
+		public string Locale
 		{
 			get { return string.Empty; }
 		}

@@ -5459,7 +5459,7 @@ namespace SIL.FieldWorks.TE
 					m_StyleSheet.GetUiFontForWritingSystem(Cache.DefaultVernWs, 0), vernWs.IcuLocale,
 					vernWs.RightToLeftScript, Path.Combine(ScrTextCollection.SettingsDirectory ?? @"c:\My Paratext Projects", "cms"), ccSettings,
 					App.ApplicationName, start, end,
-					vern => KeyboardController.SetKeyboard(vern ? vernWs.LCID : defaultWs.LCID, vern ? vernWs.Keyboard : defaultWs.Keyboard),
+					vern => KeyboardController.SetKeyboard(vern ? vernWs : defaultWs),
 					() => ShowHelp.ShowHelpTopic(m_app, "khtpNoHelpTopic"),
 					LookupTerm); // TODO: Come up with a Help topic
 

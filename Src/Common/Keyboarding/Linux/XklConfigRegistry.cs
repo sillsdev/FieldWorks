@@ -21,50 +21,12 @@ namespace X11.XKlavier
 	/// </summary>
 	internal class XklConfigRegistry
 	{
+		#region struct LayoutDescription
 		/// <summary>
 		/// XKB keyboard layout description
 		/// </summary>
 		public struct LayoutDescription
 		{
-			#region Alternative language codes
-			// ICU uses the ISO 639-3 language codes; xkb has at least some ISO 639-2/B codes.
-			// According to http://en.wikipedia.org/wiki/ISO_639-2#B_and_T_codes there are 20 languages
-			// that have both B and T codes, so we need to translate those.
-			private static Dictionary<string, string> s_AlternateLanguageCodes;
-
-			private Dictionary<string, string> AlternateLanguageCodes
-			{
-				get
-				{
-					if (s_AlternateLanguageCodes == null)
-					{
-						s_AlternateLanguageCodes = new Dictionary<string, string>();
-						s_AlternateLanguageCodes["alb"] = "sqi"; // Albanian
-						s_AlternateLanguageCodes["arm"] = "hye"; // Armenian
-						s_AlternateLanguageCodes["baq"] = "eus"; // Basque
-						s_AlternateLanguageCodes["bur"] = "mya"; // Burmese
-						s_AlternateLanguageCodes["chi"] = "zho"; // Chinese
-						s_AlternateLanguageCodes["cze"] = "ces"; // Czech
-						s_AlternateLanguageCodes["dut"] = "nld"; // Dutch, Flemish
-						s_AlternateLanguageCodes["fre"] = "fra"; // French
-						s_AlternateLanguageCodes["geo"] = "kat"; // Georgian
-						s_AlternateLanguageCodes["ger"] = "deu"; // German
-						s_AlternateLanguageCodes["gre"] = "ell"; // Modern Greek (1453–)
-						s_AlternateLanguageCodes["ice"] = "isl"; // Icelandic
-						s_AlternateLanguageCodes["mac"] = "mkd"; // Macedonian
-						s_AlternateLanguageCodes["mao"] = "mri"; // Maori
-						s_AlternateLanguageCodes["may"] = "msa"; // Malay
-						s_AlternateLanguageCodes["per"] = "fas"; // Persian
-						s_AlternateLanguageCodes["rum"] = "ron"; // Romanian
-						s_AlternateLanguageCodes["slo"] = "slk"; // Slovak
-						s_AlternateLanguageCodes["tib"] = "bod"; // Tibetan
-						s_AlternateLanguageCodes["wel"] = "cym"; // Welsh
-					}
-					return s_AlternateLanguageCodes;
-				}
-			}
-			#endregion
-
 			/// <summary>
 			/// Gets or sets the layout identifier.
 			/// </summary>
@@ -85,30 +47,22 @@ namespace X11.XKlavier
 			public string LayoutVariant { get; internal set; }
 
 			/// <summary>
-			/// Gets the locale for the current layout
+			/// Gets the locale for the current layout. Language and country code are
+			/// separated by '-'.
 			/// </summary>
+			/// <remarks>The ICU documentation says that the components should be separated by
+			/// an underscore, but that contradicts the way Windows does it. And ICU seems
+			/// to understand the '-' as well.</remarks>
 			public string Locale
 			{
-				get { return LanguageCode + "_" + CountryCode; }
+				get { return LanguageCode + "-" + CountryCode; }
 			}
 
-			private string m_LanguageCode;
 
 			/// <summary>
-			/// Gets or sets the 3-letter language abbreviation (mostly ISO 639-2/B).
+			/// Gets or sets the 2-letter language abbreviation (mostly ISO 639-1).
 			/// </summary>
-			public string LanguageCode
-			{
-				get { return m_LanguageCode; }
-				internal set
-				{
-					string langCode;
-					if (AlternateLanguageCodes.TryGetValue(value, out langCode))
-						m_LanguageCode = langCode;
-					else
-						m_LanguageCode = value;
-				}
-			}
+			public string LanguageCode { get; internal set;}
 
 			/// <summary>
 			/// Gets the language name in the culture of the current thread
@@ -126,13 +80,12 @@ namespace X11.XKlavier
 			}
 
 			/// <summary>
-			/// Gets or sets the 3-letter country abbreviation. This is taken from the short
-			/// description of the layout converted to uppercase.
+			/// Gets or sets the country code (mostly 2-letter codes).
 			/// </summary>
 			public string CountryCode { get; internal set; }
 
 			/// <summary>
-			/// Gets the contry name in the culture of the current thread
+			/// Gets the country name in the culture of the current thread
 			/// </summary>
 			public string Country
 			{
@@ -154,6 +107,46 @@ namespace X11.XKlavier
 					Locale, LanguageCode, Language, CountryCode, Country);
 			}
 		}
+		#endregion
+
+		#region Alternative language codes
+		// ICU uses the ISO 639-3 language codes; xkb has at least some ISO 639-2/B codes.
+		// According to http://en.wikipedia.org/wiki/ISO_639-2#B_and_T_codes there are 20 languages
+		// that have both B and T codes, so we need to translate those.
+		private static Dictionary<string, string> s_AlternateLanguageCodes;
+
+		private Dictionary<string, string> AlternateLanguageCodes
+		{
+			get
+			{
+				if (s_AlternateLanguageCodes == null)
+				{
+					s_AlternateLanguageCodes = new Dictionary<string, string>();
+					s_AlternateLanguageCodes["alb"] = "sqi"; // Albanian
+					s_AlternateLanguageCodes["arm"] = "hye"; // Armenian
+					s_AlternateLanguageCodes["baq"] = "eus"; // Basque
+					s_AlternateLanguageCodes["bur"] = "mya"; // Burmese
+					s_AlternateLanguageCodes["chi"] = "zho"; // Chinese
+					s_AlternateLanguageCodes["cze"] = "ces"; // Czech
+					s_AlternateLanguageCodes["dut"] = "nld"; // Dutch, Flemish
+					s_AlternateLanguageCodes["fre"] = "fra"; // French
+					s_AlternateLanguageCodes["geo"] = "kat"; // Georgian
+					s_AlternateLanguageCodes["ger"] = "deu"; // German
+					s_AlternateLanguageCodes["gre"] = "ell"; // Modern Greek (1453–)
+					s_AlternateLanguageCodes["ice"] = "isl"; // Icelandic
+					s_AlternateLanguageCodes["mac"] = "mkd"; // Macedonian
+					s_AlternateLanguageCodes["mao"] = "mri"; // Maori
+					s_AlternateLanguageCodes["may"] = "msa"; // Malay
+					s_AlternateLanguageCodes["per"] = "fas"; // Persian
+					s_AlternateLanguageCodes["rum"] = "ron"; // Romanian
+					s_AlternateLanguageCodes["slo"] = "slk"; // Slovak
+					s_AlternateLanguageCodes["tib"] = "bod"; // Tibetan
+					s_AlternateLanguageCodes["wel"] = "cym"; // Welsh
+				}
+				return s_AlternateLanguageCodes;
+			}
+		}
+		#endregion
 
 		private Dictionary<string, List<LayoutDescription>> m_Layouts;
 
@@ -190,6 +183,14 @@ namespace X11.XKlavier
 			}
 		}
 
+		private string Get2LetterLanguageCode(string langCode3letter)
+		{
+			string newLangCode;
+			if (AlternateLanguageCodes.TryGetValue(langCode3letter, out newLangCode))
+				langCode3letter = newLangCode;
+			return Icu.GetLanguageCode(langCode3letter);
+		}
+
 		private void ProcessLanguage(IntPtr configRegistry, ref XklConfigItem item, IntPtr unused)
 		{
 			IntPtr dataPtr = Marshal.AllocHGlobal(Marshal.SizeOf(item));
@@ -219,15 +220,9 @@ namespace X11.XKlavier
 				LayoutId = subitemIsNull ? item.Name : item.Name + "\t" + subitem.Name,
 				Description = description,
 				LayoutVariant = subitemIsNull ? string.Empty : subitem.Description,
-				LanguageCode = language.Name };
-			if (item.Short_Description.Length < 3)
-			{
-				// we have a two letter country code; need to find the three-letter one
-				newLayout.CountryCode =
-					Icu.GetISO3Country(item.Short_Description + "_" + item.Name).ToUpper();
-			}
-			else
-				newLayout.CountryCode = item.Short_Description.ToUpper();
+				LanguageCode = Get2LetterLanguageCode(language.Name),
+				CountryCode = item.Name.ToUpper()
+			};
 			layouts.Add(newLayout);
 		}
 

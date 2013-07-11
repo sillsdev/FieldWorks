@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using X11.XKlavier;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Keyboarding.Interfaces;
+using SIL.FieldWorks.Common.Keyboarding.InternalInterfaces;
 
 namespace SIL.FieldWorks.Common.Keyboarding.Linux
 {
@@ -71,7 +73,7 @@ namespace SIL.FieldWorks.Common.Keyboarding.Linux
 
 			var configRegistry = XklConfigRegistry.Create(m_engine);
 			var layouts = configRegistry.Layouts;
-			var icuLocales = IcuLocalesByLanguageCountry;
+			//var icuLocales = IcuLocalesByLanguageCountry;
 
 			for (int iGroup = 0; iGroup < m_engine.GroupNames.Length; iGroup++)
 			{
@@ -100,25 +102,26 @@ namespace SIL.FieldWorks.Common.Keyboarding.Linux
 							layout.Country, layout.LayoutVariant);
 					}
 
-					IcuLocale icuLocale;
-					int lcid;
-					if (icuLocales.TryGetValue(layout.Locale, out icuLocale))
-						lcid = icuLocale.LCID;
-					else
-						lcid = Icu.GetLCID(layout.Locale);
+					// TODO: fix implementation without LCID
+					//IcuLocale icuLocale;
+					//int lcid;
+					//if (icuLocales.TryGetValue(layout.Locale, out icuLocale))
+					//    lcid = icuLocale.LCID;
+					//else
+					//    lcid = Icu.GetLCID(layout.Locale);
 
-					if (lcid <= 0)
+					//if (lcid <= 0)
+					//{
+					//    if (iLayout == 0)
+					//        unrecognizedLayout = groupName;
+					//}
+					//else
 					{
-						if (iLayout == 0)
-							unrecognizedLayout = groupName;
-					}
-					else
-					{
-						// if we find the LCID for at least one layout, we don't report
-						// the other failing variations of this layout as error.
+						//// if we find the LCID for at least one layout, we don't report
+						//// the other failing variations of this layout as error.
 						unrecognizedLayout = null;
-						var keyboard = new XkbKeyboardDescription(lcid, description, this, iGroup);
-						KeyboardController.Manager.RegisterKeyboard(lcid, keyboard);
+						var keyboard = new XkbKeyboardDescription(description, layout.Locale, this, iGroup);
+						KeyboardController.Manager.RegisterKeyboard(keyboard);
 					}
 				}
 				if (unrecognizedLayout != null)
@@ -146,10 +149,10 @@ namespace SIL.FieldWorks.Common.Keyboarding.Linux
 			m_engine = null;
 		}
 
-		public void ActivateKeyboard(IKeyboardDescription keyboard,
-			IKeyboardDescription ignored)
+		public void ActivateKeyboard(IKeyboardDescription keyboard)
 		{
-			Debug.Assert(keyboard.Engine == this);
+			Debug.Assert(keyboard is KeyboardDescription);
+			Debug.Assert(((KeyboardDescription)keyboard).Engine == this);
 			Debug.Assert(keyboard is XkbKeyboardDescription);
 			var xkbKeyboard = keyboard as XkbKeyboardDescription;
 			if (xkbKeyboard == null)

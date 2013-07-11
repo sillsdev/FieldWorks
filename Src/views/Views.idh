@@ -1664,7 +1664,7 @@ Last reviewed:
 
 		@H3{Hungarian: rootb}
 	*******************************************************************************************/
-	DeclareInterface(VwRootBox, VwNotifyChange, 85DB7D7D-D47B-440e-A213-F62D5224C982)
+	DeclareInterface(VwRootBox, VwNotifyChange, A8944421-3A75-4DD5-A469-2EE251228A26)
 	{
 		//:> Initialization
 
@@ -2341,18 +2341,6 @@ Last reviewed:
 			[in] ComBool fDrawSel,
 			[in] int ysTop,
 			[in] int dysHeight);
-
-		// Set the proper keyboard for the given writing system.
-		// The reason this method belongs in this interface is that it may use the selection
-		// location to place an IME composition window, and most callers know the rootbox
-		// explicitly, but not the selection.
-		HRESULT SetKeyboardForWs(
-			[in] ILgWritingSystem * pws,
-			[in, out] BSTR * pbstrActiveKeymanKbd,
-			[in, out] int * pnActiveLangId,
-			[in, out] int * phklActive,
-			[in, out] ComBool * pfSelectLangPending);
-
 
 		// Get/set the the maximum number of paragraphs to scan looking for editable text.  If
 		// we can't find anything editable in this many paragraphs, we'll assume the whole text

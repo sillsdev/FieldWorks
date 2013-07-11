@@ -7,6 +7,8 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------
 using System;
+using SIL.FieldWorks.Common.Keyboarding.Interfaces;
+using SIL.FieldWorks.Common.Keyboarding.InternalInterfaces;
 
 namespace SIL.FieldWorks.Common.Keyboarding
 {
@@ -39,7 +41,8 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		#region IKeyboardDescription implementation
 		public void Activate()
 		{
-			Engine.ActivateKeyboard(PrimaryKeyboard, m_SystemKeyboard);
+			throw new NotImplementedException("TODO: remove this class. It's no longer needed");
+			//Engine.ActivateKeyboard(PrimaryKeyboard, m_SystemKeyboard);
 		}
 
 		public void Deactivate()
@@ -47,7 +50,7 @@ namespace SIL.FieldWorks.Common.Keyboarding
 			Engine.DeactivateKeyboard(PrimaryKeyboard);
 		}
 
-		public int Id
+		public string Id
 		{
 			get { return PrimaryKeyboard.Id; }
 		}
@@ -62,9 +65,20 @@ namespace SIL.FieldWorks.Common.Keyboarding
 			get { return PrimaryKeyboard.Name; }
 		}
 
+		public string Locale
+		{
+			get { return PrimaryKeyboard.Locale; }
+		}
+
 		public IKeyboardAdaptor Engine
 		{
-			get { return PrimaryKeyboard.Engine; }
+			get
+			{
+				var keyboard = PrimaryKeyboard as KeyboardDescription;
+				if (keyboard == null)
+					return null;
+				return keyboard.Engine;
+			}
 		}
 		#endregion
 

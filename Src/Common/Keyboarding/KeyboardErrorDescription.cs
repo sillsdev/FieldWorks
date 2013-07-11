@@ -7,6 +7,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------
 using System;
+using SIL.FieldWorks.Common.Keyboarding.Interfaces;
 
 namespace SIL.FieldWorks.Common.Keyboarding
 {

@@ -10,7 +10,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Keyboarding.Interfaces;
+using SIL.FieldWorks.Common.Keyboarding.InternalInterfaces;
+using SIL.FieldWorks.Common.Keyboarding.Types;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Keyboarding
@@ -18,7 +22,7 @@ namespace SIL.FieldWorks.Common.Keyboarding
 	/// <summary>
 	/// Implements a fake do-nothing keyboard controller.
 	/// </summary>
-	public sealed class FakeKeyboardController: IKeyboardController, IKeyboardEventHandler, IKeyboardMethods
+	internal sealed class FakeKeyboardController: IKeyboardController, IKeyboardEventHandler, IKeyboardMethods
 	{
 		/// <summary>
 		/// Installs this fake keyboard controller instead of the real one
@@ -30,6 +34,11 @@ namespace SIL.FieldWorks.Common.Keyboarding
 			SingletonsContainer.Add(typeof(IKeyboardController).FullName, new FakeKeyboardController());
 		}
 
+		public FakeKeyboardController()
+		{
+			ActiveKeyboard = new KeyboardDescriptionNull();
+		}
+
 		#region IDisposable implementation
 		public void Dispose()
 		{
@@ -37,23 +46,35 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		#endregion
 
 		#region IKeyboardController implementation
-		public IKeyboardDescription GetKeyboard(int? lcid, string otherImKeyboard)
+		public IKeyboardDescription GetKeyboard(string layoutName)
 		{
 			return null;
 		}
 
-		public IKeyboardDescription GetKeyboard(int lcid)
+		public IKeyboardDescription GetKeyboard(string layoutName, string locale)
 		{
 			return null;
 		}
 
-		public IKeyboardDescription GetKeyboard(string otherImKeyboard)
+		public IKeyboardDescription GetKeyboard(IWritingSystem writingSystem)
 		{
 			return null;
 		}
 
-		public void SetKeyboard(int lcid, string otherImKeyboard, ref int nActiveLangId,
-			ref string activeOtherImKeyboard, ref bool fSelectLangPending)
+
+		public void SetKeyboard(string layoutName)
+		{
+		}
+
+		public void SetKeyboard(string layoutName, string locale)
+		{
+		}
+
+		public void SetKeyboard(IKeyboardDescription keyboard)
+		{
+		}
+
+		public void SetKeyboard(IWritingSystem writingSystem)
 		{
 		}
 
@@ -73,11 +94,11 @@ namespace SIL.FieldWorks.Common.Keyboarding
 			}
 		}
 
-		public Dictionary<int, IKeyboardDescription> Keyboards
+		public KeyboardCollection Keyboards
 		{
 			get
 			{
-				return new Dictionary<int, IKeyboardDescription>();
+				return new KeyboardCollection();
 			}
 		}
 
@@ -117,18 +138,19 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		public void OnTextChange(IKeyboardCallback callback)
 		{
 		}
+
+		public void OnSetFocus(IKeyboardDescription keyboard, Control control)
+		{
+		}
+
+		public void OnKillFocus(IKeyboardDescription keyboard, Control control)
+		{
+		}
+
 		#endregion
 
 		#region IKeyboardMethods implementation
 		public void TerminateAllCompositions(IKeyboardCallback callback)
-		{
-		}
-
-		public void SetFocus(IKeyboardCallback callback)
-		{
-		}
-
-		public void KillFocus(IKeyboardCallback callback)
 		{
 		}
 
@@ -150,10 +172,7 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		{
 		}
 
-		public IKeyboardDescription ActiveKeyboard
-		{
-			get { return new KeyboardDescriptionNull(); }
-		}
+		public IKeyboardDescription ActiveKeyboard { get; set; }
 
 		#endregion
 	}

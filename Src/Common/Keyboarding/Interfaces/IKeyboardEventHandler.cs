@@ -8,8 +8,9 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Drawing;
+using System.Windows.Forms;
 
-namespace SIL.FieldWorks.Common.Keyboarding
+namespace SIL.FieldWorks.Common.Keyboarding.Interfaces
 {
 	/// <summary>
 	/// The different types of a selection change
@@ -28,6 +29,9 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		/// <summary>Selection removed altogether, there is now no current selection.</summary>
 		Deleted = 4,
 	}
+
+	// TODO EberhardB: address JohnT's review comments on
+	// https://gerrit.lsdev.sil.org/#/c/1241/8/Src/Common/Keyboarding/Interfaces/IKeyboardEventHandler.cs
 
 	/// <summary>
 	/// Event handler that the keyboard controller or the keyboard implements to get notified
@@ -80,5 +84,19 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		/// </summary>
 		/// <remarks>Corresponding C++ method is VwTextStore::OnDocChange.</remarks>
 		void OnTextChange(IKeyboardCallback callback);
+
+		/// <summary>
+		/// Called when the control receives focus
+		/// </summary>
+		/// <param name="keyboard">The keyboard active for the control</param>
+		/// <param name="control">The control that receives focus</param>
+		void OnSetFocus(IKeyboardDescription keyboard, Control control);
+
+		/// <summary>
+		/// Called when the control loses focus
+		/// </summary>
+		/// <param name="keyboard">The keyboard active for the control</param>
+		/// <param name="control">The control that loses focus</param>
+		void OnKillFocus(IKeyboardDescription keyboard, Control control);
 	}
 }

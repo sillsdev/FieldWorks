@@ -7,6 +7,8 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------
 using System;
+using SIL.FieldWorks.Common.Keyboarding.Interfaces;
+using SIL.FieldWorks.Common.Keyboarding.InternalInterfaces;
 
 namespace SIL.FieldWorks.Common.Keyboarding
 {
@@ -24,8 +26,8 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		/// Initializes a new instance of the
 		/// <see cref="T:SIL.FieldWorks.Common.Keyboarding.KeyboardDescription"/> class.
 		/// </summary>
-		public KeyboardDescription(int id, string name, IKeyboardAdaptor engine)
-			: this(id, name, engine, KeyboardType.System)
+		internal KeyboardDescription(string name, string locale, IKeyboardAdaptor engine)
+			: this(name, locale, engine, KeyboardType.System)
 		{
 		}
 
@@ -33,18 +35,33 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		/// Initializes a new instance of the
 		/// <see cref="T:SIL.FieldWorks.Common.Keyboarding.KeyboardDescription"/> class.
 		/// </summary>
-		public KeyboardDescription(int id, string name, IKeyboardAdaptor engine, KeyboardType type)
+		internal KeyboardDescription(string name, string locale,
+			IKeyboardAdaptor engine, KeyboardType type)
 		{
-			Id = id;
 			Name = name;
+			Locale = locale;
 			Engine = engine;
 			Type = type;
 		}
 
 		/// <summary>
-		/// Gets an identifier of the language/keyboard layout (LCID).
+		/// Gets an identifier of the language/keyboard layout.
 		/// </summary>
-		public int Id { get; private set; }
+		public string Id
+		{
+			get
+			{
+				return GetId(Locale, Name);
+			}
+		}
+
+		/// <summary>
+		/// Gets the identifier for the keyboard based on the provided locale and layout.
+		/// </summary>
+		public static string GetId(string locale, string layout)
+		{
+			return string.Format("{0}_{1}", locale, layout);
+		}
 
 		/// <summary>
 		/// Gets the type of this keyboard (system or other)
@@ -57,9 +74,16 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		public string Name { get; private set; }
 
 		/// <summary>
+		/// The Locale of the keyboard in the format languagecode2-country/regioncode2.
+		/// This is mainly significant on Windows, which distinguishes (for example)
+		/// a German keyboard used in Germany, Switzerland, and Holland.
+		/// </summary>
+		public string Locale { get; private set; }
+
+		/// <summary>
 		/// Gets the keyboard adaptor that handles this keyboard.
 		/// </summary>
-		public IKeyboardAdaptor Engine { get; private set; }
+		internal IKeyboardAdaptor Engine { get; private set; }
 
 		/// <summary>
 		/// Activate this keyboard.
@@ -67,7 +91,7 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		public void Activate()
 		{
 			if (Engine != null)
-				Engine.ActivateKeyboard(this, null);
+				Engine.ActivateKeyboard(this);
 		}
 
 		/// <summary>
@@ -97,7 +121,7 @@ namespace SIL.FieldWorks.Common.Keyboarding
 			if (obj == null || !(obj is IKeyboardDescription))
 				return false;
 			var other = (IKeyboardDescription)obj;
-			return other.Id == Id && other.Name == Name;
+			return other.Name == Name && other.Locale == Locale;
 		}
 
 		/// <summary>
@@ -106,7 +130,7 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		/// </summary>
 		public override int GetHashCode()
 		{
-			return Id.GetHashCode() ^ Name.GetHashCode() ^ base.GetHashCode();
+			return Name.GetHashCode() ^ Locale.GetHashCode();
 		}
 	}
 }

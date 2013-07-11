@@ -332,9 +332,13 @@ namespace SIL.CoreImpl
 		}
 
 		/// <summary>
-		/// Gets or sets the Windows locale ID.
+		/// Gets or sets the Windows locale ID, consisting of sort-id (4 bits) and language-id
+		/// (16 bits, low word).
 		/// </summary>
-		/// <value>The LCID.</value>
+		/// <remarks>NOTE: the LCID consists of sort-id (4 bits) and language id (16bits, low
+		/// word). This is different from the input locale identifier (ILID), which consist of
+		/// input method id (16 bits) and language id (16 bits, low word). Often LCID and ILID
+		/// will be the same, but not necessarily.</remarks>
 		public int LCID
 		{
 			get

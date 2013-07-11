@@ -189,8 +189,6 @@ public:
 	IVwViewConstructor ** ppvwvc, int * pfrag, IVwStylesheet ** ppss);
 	STDMETHOD(DrawRoot2)(IVwGraphics * pvg, RECT rcSrcRoot1, RECT rcDstRoot1,
 		ComBool fDrawSel, int ysTop, int dysHeight);
-	STDMETHOD(SetKeyboardForWs)(ILgWritingSystem * pws, BSTR * pbstrActiveKeymanKbd,
-		int * pnActiveLangId, int * phklActive, ComBool * pfSelectLangPending);
 	STDMETHOD(get_MaxParasToScan)(int * pcParas);
 	STDMETHOD(put_MaxParasToScan)(int cParas);
 	STDMETHOD(DoSpellCheckStep)(ComBool * pfComplete);
@@ -475,7 +473,6 @@ protected:
 	virtual void FixSync(VwSynchronizer *psync, VwRootBox * prootb){}
 	VwNotifier * NotifierForObjPropIndex(HVO hvoContext, int tag,
 		int iprop);
-	void SetImeWindowLocation(HKL hkl);
 	VwBox * FindClosestBox(IVwGraphics * pvg, int xd, int yd, Rect rcSrc, Rect rcDst,
 		Rect * prcSrc, Rect * prcDst);
 	bool EnsureConstructed(bool fDoLayout = false);

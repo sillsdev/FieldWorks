@@ -56,15 +56,11 @@ OBJ_LANGUAGETESTSUITE=\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Language\autopch\RomRenderSegment.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Language\autopch\LgSimpleEngines.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Language\autopch\LgIcuCharPropEngine.obj\
-	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Language\autopch\LgFontManager.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Language\autopch\LgUnicodeCollater.obj\
-	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Language\autopch\LgInputMethodEditor.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Language\autopch\FwStyledText.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Language\autopch\WriteXml.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Language\usepch\TextProps1.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Language\autopch\FwXml.obj\
-	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Language\autopch\LanguageGlobals.obj\
-	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Language\autopch\LgTextServices.obj\
 
 OBJ_GRUTIL=\
 	$(INT_DIR)\autopch\GrUtil.obj\
@@ -101,7 +97,6 @@ $(LANGUAGETEST_SRC)\Collection.cpp: $(LANGUAGETEST_SRC)\testLanguage.h\
  $(LANGUAGETEST_SRC)\TestRegexMatcher.h\
  $(LANGUAGETEST_SRC)\TestLgCollatingEngine.h\
  $(LANGUAGETEST_SRC)\TestLgIcuCharPropEngine.h\
- $(LANGUAGETEST_SRC)\TestLgFontManager.h\
  $(LANGUAGETEST_SRC)\TestUniscribeEngine.h\
  $(LANGUAGETEST_SRC)\TestRomRenderEngine.h\
  $(LANGUAGETEST_SRC)\RenderEngineTestBase.h

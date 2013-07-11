@@ -75,13 +75,13 @@
     <ClInclude Include="RenderEngineTestBase.h" />
     <ClInclude Include="testLanguage.h" />
     <ClInclude Include="TestLgCollatingEngine.h" />
-    <ClInclude Include="TestLgFontManager.h" />
     <ClInclude Include="TestLgIcuCharPropEngine.h" />
     <ClInclude Include="TestRegexMatcher.h" />
     <ClInclude Include="TestRomRenderEngine.h" />
     <ClInclude Include="TestUniscribeEngine.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Makefile" />
     <None Include="testLanguage.mak" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

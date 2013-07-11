@@ -8,13 +8,14 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using SIL.FieldWorks.Common.Keyboarding.Interfaces;
 
-namespace SIL.FieldWorks.Common.Keyboarding
+namespace SIL.FieldWorks.Common.Keyboarding.InternalInterfaces
 {
 	/// <summary>
 	/// Methods and properties for dealing with keyboards
 	/// </summary>
-	public interface IKeyboardAdaptor
+	internal interface IKeyboardAdaptor
 	{
 		/// <summary>
 		/// Initialize the installed keyboards
@@ -36,10 +37,7 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		/// Activates the keyboard
 		/// </summary>
 		/// <param name="keyboard">The keyboard to activate</param>
-		/// <param name="systemKeyboard">A second keyboard (usually a system keyboard) that,
-		/// depending on the implementation, might also get activated when this keyboard gets
-		/// activated, or <c>null</c>.</param>
-		void ActivateKeyboard(IKeyboardDescription keyboard, IKeyboardDescription systemKeyboard);
+		void ActivateKeyboard(IKeyboardDescription keyboard);
 
 		/// <summary>
 		/// Deactivates the keyboard

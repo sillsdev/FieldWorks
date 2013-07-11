@@ -8,7 +8,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 
-namespace SIL.FieldWorks.Common.Keyboarding
+namespace SIL.FieldWorks.Common.Keyboarding.Interfaces
 {
 	/// <summary>
 	/// Interface that needs to be implemented by the view/document. This interface allows the

@@ -10,6 +10,8 @@
 using System;
 using System.Collections.Generic;
 using SIL.FieldWorks.Common.Keyboarding;
+using SIL.FieldWorks.Common.Keyboarding.Interfaces;
+using SIL.FieldWorks.Common.Keyboarding.InternalInterfaces;
 using SIL.FieldWorks.Views;
 
 namespace SIL.FieldWorks.Common.Keyboarding.Linux
@@ -36,9 +38,9 @@ namespace SIL.FieldWorks.Common.Keyboarding.Linux
 			for (int i = 0; i < nKeyboards; i++)
 			{
 				var name = m_KeyboardSwitcher.GetKeyboardName(i);
-				var id = name.GetHashCode();
-				var keyboard = new KeyboardDescription(id, name, this, KeyboardType.OtherIm);
-				KeyboardController.Manager.RegisterKeyboard(id, keyboard);
+				// REVIEW: what value should we pass as the locale name?
+				var keyboard = new KeyboardDescription(name, string.Empty, this, KeyboardType.OtherIm);
+				KeyboardController.Manager.RegisterKeyboard(keyboard);
 			}
 		}
 
@@ -62,12 +64,18 @@ namespace SIL.FieldWorks.Common.Keyboarding.Linux
 			m_KeyboardSwitcher = null;
 		}
 
+		public void ActivateKeyboard(IKeyboardDescription keyboard)
+		{
+			// TODO: implement
+		}
+
 		/// <summary>
 		/// Activates the keyboard
 		/// </summary>
 		public void ActivateKeyboard(IKeyboardDescription keyboard,
 			IKeyboardDescription systemKeyboard)
 		{
+			// TODO: Remove once the other overload is implemented
 			m_KeyboardSwitcher.IMEKeyboard = keyboard.Name;
 
 			if (systemKeyboard != null)

@@ -32,9 +32,6 @@
     <ClInclude Include="TestLgCollatingEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TestLgFontManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TestLgIcuCharPropEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -50,5 +47,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="testLanguage.mak" />
+    <None Include="Makefile" />
   </ItemGroup>
 </Project>

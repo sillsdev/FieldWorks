@@ -8,7 +8,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 
-namespace SIL.FieldWorks.Common.Keyboarding
+namespace SIL.FieldWorks.Common.Keyboarding.Interfaces
 {
 	/// <summary>
 	/// The different keyboard types we're supporting.
@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		/// <summary>
 		/// Gets an identifier of the language/keyboard layout
 		/// </summary>
-		int Id { get; }
+		string Id { get; }
 
 		/// <summary>
 		/// Gets the type of this keyboard (system or other)
@@ -41,14 +41,16 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		KeyboardType Type { get; }
 
 		/// <summary>
-		/// Gets a human-readable name of the language.
+		/// Gets a human-readable name of the input language.
 		/// </summary>
 		string Name { get; }
 
 		/// <summary>
-		/// Gets the keyboard adaptor that handles this keyboard.
+		/// The Locale of the keyboard in the format languagecode2-country/regioncode2.
+		/// This is mainly significant on Windows, which distinguishes (for example)
+		/// a German keyboard used in Germany, Switzerland, and Holland.
 		/// </summary>
-		IKeyboardAdaptor Engine { get; }
+		string Locale { get; }
 
 		/// <summary>
 		/// Activate this keyboard layout.

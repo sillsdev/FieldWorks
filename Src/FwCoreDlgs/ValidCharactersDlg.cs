@@ -1395,9 +1395,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				case kiTabUnicode:
 					break;
 			}
-			KeyboardController.SetKeyboard(
-				fUseWsKeyboard ? m_ws.LCID : InputLanguage.DefaultInputLanguage.Culture.LCID,
-				fUseWsKeyboard ? m_ws.Keyboard : null);
+			KeyboardController.SetKeyboard(fUseWsKeyboard ? m_ws.Keyboard : null);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1734,7 +1732,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		protected override void OnClosed(EventArgs e)
 		{
 			base.OnClosed(e);
-			KeyboardController.SetKeyboard(InputLanguage.DefaultInputLanguage.Culture.LCID, null);
+			KeyboardController.SetKeyboard(string.Empty);
 		}
 		#endregion
 

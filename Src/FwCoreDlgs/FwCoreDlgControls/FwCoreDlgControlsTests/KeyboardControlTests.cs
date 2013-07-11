@@ -10,6 +10,8 @@ using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Keyboarding;
+using SIL.FieldWorks.Common.Keyboarding.Interfaces;
+using SIL.FieldWorks.Common.Keyboarding.InternalInterfaces;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
@@ -360,8 +362,7 @@ namespace SIL.FieldWorks.FwCoreDlgControlsTests
 				get { return DummyErrorKeyboards; }
 			}
 
-			public void ActivateKeyboard(IKeyboardDescription keyboard,
-				IKeyboardDescription systemKeyboard)
+			public void ActivateKeyboard(IKeyboardDescription keyboard)
 			{
 				// do nothing
 			}
@@ -373,7 +374,7 @@ namespace SIL.FieldWorks.FwCoreDlgControlsTests
 			public void Initialize()
 			{
 				foreach (var keyboard in DummyInstalledKeyboards)
-					KeyboardController.Manager.RegisterKeyboard(keyboard.Id, keyboard);
+					KeyboardController.Manager.RegisterKeyboard(keyboard);
 			}
 
 			public void Close()
@@ -395,26 +396,6 @@ namespace SIL.FieldWorks.FwCoreDlgControlsTests
 		}
 
 		/// <summary>
-		/// Get available ibus keyboards. Don't run automatically since automated test
-		/// environment may not have the right keyboards set.
-		/// </summary>
-		[Test]
-		[Category("ByHand")]
-		[Platform(Include = "Linux", Reason = "Linux specific test")]
-		public void GetAvailableKeyboards_GetsKeyboards()
-		{
-			var expectedKeyboards = new List<string>();
-			expectedKeyboards.Add("ispell (m17n)");
-
-			List<string> actualKeyboards = ReflectionHelper.CallStaticMethod("FwCoreDlgControls.dll",
-				"SIL.FieldWorks.FwCoreDlgControls.KeyboardControl", "GetAvailableKeyboards",
-				new object[] {null}) as List<string>;
-
-			Assert.That(actualKeyboards, Is.EquivalentTo(expectedKeyboards),
-				"Available keyboards do not match expected.");
-		}
-
-		/// <summary>
 		/// Get available keyboards/languages. Don't run automatically since the installed
 		/// keyboards/languages vary on different systems.
 		/// </summary>
@@ -433,8 +414,8 @@ namespace SIL.FieldWorks.FwCoreDlgControlsTests
 				bool found = false;
 				foreach (IKeyboardDescription item in combo.Items)
 				{
-					Console.WriteLine("{0}: {1}", item.Id, item.Name);
-					if (item.Id == 1033)
+					Console.WriteLine("{0}: {1} {2}", item.Id, item.Name, item.Locale);
+					if (item.Locale == "en-US")
 						found = true;
 				}
 
@@ -451,8 +432,8 @@ namespace SIL.FieldWorks.FwCoreDlgControlsTests
 		{
 			DummyKeyboardAdaptor.DummyInstalledKeyboards = new List<IKeyboardDescription>(new []
 				{
-					new KeyboardDescription(1033, "English (United States)", null),
-					new KeyboardDescription(1031, "German (Germany)", null)
+					new KeyboardDescription("English (United States)", "en-US", null),
+					new KeyboardDescription("German (Germany)", "de-DE", null)
 				});
 			KeyboardController.Manager.SetKeyboardAdaptors(new [] { new DummyKeyboardAdaptor() });
 
@@ -477,8 +458,8 @@ namespace SIL.FieldWorks.FwCoreDlgControlsTests
 		{
 			DummyKeyboardAdaptor.DummyInstalledKeyboards = new List<IKeyboardDescription>(new []
 				{
-					new KeyboardDescription(1033, "English (United States)", null),
-					new KeyboardDescription(1031, "German (Germany)", null)
+					new KeyboardDescription("English (United States)", "en-US", null),
+					new KeyboardDescription("German (Germany)", "de-DE", null)
 				});
 			DummyKeyboardAdaptor.DummyErrorKeyboards = new List<IKeyboardErrorDescription>(new []
 				{

@@ -8,7 +8,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 
-namespace SIL.FieldWorks.Common.Keyboarding
+namespace SIL.FieldWorks.Common.Keyboarding.Interfaces
 {
 	/// <summary>
 	/// This interface provides additional methods for keyboards
@@ -19,16 +19,6 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		/// End all active compositions.
 		/// </summary>
 		void TerminateAllCompositions(IKeyboardCallback callback);
-
-		/// <summary>
-		/// Activate the input method
-		/// </summary>
-		void SetFocus(IKeyboardCallback callback);
-
-		/// <summary>
-		/// Deactivate the input method
-		/// </summary>
-		void KillFocus(IKeyboardCallback callback);
 
 		/// <summary>
 		/// Gets a value indicating whether a composition window is active.
@@ -55,10 +45,5 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		/// </summary>
 		/// <remarks>Corresponding C++ method is VwTextStore::OnLoseFocus.</remarks>
 		void DisableInput(IKeyboardCallback callback);
-
-		/// <summary>
-		/// Gets the active keyboard.
-		/// </summary>
-		IKeyboardDescription ActiveKeyboard { get; }
 	}
 }

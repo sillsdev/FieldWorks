@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0555 */
-/* at Wed May 29 18:54:41 2013
+/* at Wed Jun 05 12:23:51 2013
  */
 /* Compiler settings for d:\fwrepo\fw\Output\Common\ViewsTlb.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 7.00.0555 
@@ -856,7 +856,7 @@ enum VwBoundaryMark
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 IVwRootBox
 ,
-85DB7D7D-D47B-440e-A213-F62D5224C982
+A8944421-3A75-4DD5-A469-2EE251228A26
 );
 ATTACH_GUID_TO_CLASS(class,
 705C1A9A-D6DC-4C3F-9B29-85F0C4F4B7BE
@@ -5299,7 +5299,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
     
-    MIDL_INTERFACE("85DB7D7D-D47B-440e-A213-F62D5224C982")
+    MIDL_INTERFACE("A8944421-3A75-4DD5-A469-2EE251228A26")
     IVwRootBox : public IVwNotifyChange
     {
     public:
@@ -5590,13 +5590,6 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             /* [in] */ ComBool fDrawSel,
             /* [in] */ int ysTop,
             /* [in] */ int dysHeight) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE SetKeyboardForWs( 
-            /* [in] */ /* external definition not present */ ILgWritingSystem *pws,
-            /* [out][in] */ BSTR *pbstrActiveKeymanKbd,
-            /* [out][in] */ int *pnActiveLangId,
-            /* [out][in] */ int *phklActive,
-            /* [out][in] */ ComBool *pfSelectLangPending) = 0;
         
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_MaxParasToScan( 
             /* [retval][out] */ int *pcParas) = 0;
@@ -5996,14 +5989,6 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             /* [in] */ int ysTop,
             /* [in] */ int dysHeight);
         
-        HRESULT ( STDMETHODCALLTYPE *SetKeyboardForWs )( 
-            IVwRootBox * This,
-            /* [in] */ /* external definition not present */ ILgWritingSystem *pws,
-            /* [out][in] */ BSTR *pbstrActiveKeymanKbd,
-            /* [out][in] */ int *pnActiveLangId,
-            /* [out][in] */ int *phklActive,
-            /* [out][in] */ ComBool *pfSelectLangPending);
-        
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_MaxParasToScan )( 
             IVwRootBox * This,
             /* [retval][out] */ int *pcParas);
@@ -6238,9 +6223,6 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
 
 #define IVwRootBox_DrawRoot2(This,pvg,rcSrc,rcDst,fDrawSel,ysTop,dysHeight)	\
     ( (This)->lpVtbl -> DrawRoot2(This,pvg,rcSrc,rcDst,fDrawSel,ysTop,dysHeight) ) 
-
-#define IVwRootBox_SetKeyboardForWs(This,pws,pbstrActiveKeymanKbd,pnActiveLangId,phklActive,pfSelectLangPending)	\
-    ( (This)->lpVtbl -> SetKeyboardForWs(This,pws,pbstrActiveKeymanKbd,pnActiveLangId,phklActive,pfSelectLangPending) ) 
 
 #define IVwRootBox_get_MaxParasToScan(This,pcParas)	\
     ( (This)->lpVtbl -> get_MaxParasToScan(This,pcParas) ) 

@@ -68,6 +68,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
+    <Reference Include="CoreImpl, Version=8.1.0.29160, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+    </Reference>
     <Reference Include="KeyboardSwitcher, Version=7.3.0.27147, Culture=neutral, processorArchitecture=x86" Condition="'$(OS)'=='Unix'">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\KeyboardSwitcher.dll</HintPath>
@@ -92,10 +96,11 @@
     </Compile>
     <Compile Include="KeyboardController.cs" />
     <Compile Include="KeyboardDescription.cs" />
+    <Compile Include="Types\KeyboardCollection.cs" />
     <Compile Include="KeyboardDescriptionNull.cs" />
     <Compile Include="KeyboardDescriptionWrapper.cs" />
     <Compile Include="KeyboardErrorDescription.cs" />
-    <Compile Include="Interfaces\IKeyboardAdaptor.cs" />
+    <Compile Include="InternalInterfaces\IKeyboardAdaptor.cs" />
     <Compile Include="Interfaces\IKeyboardCallback.cs" />
     <Compile Include="Interfaces\IKeyboardDescription.cs" />
     <Compile Include="Interfaces\IKeyboardErrorDescription.cs" />
@@ -109,11 +114,10 @@
     <Compile Include="Linux\XklEngine.cs" />
     <Compile Include="Linux\XkbKeyboardAdaptor.cs" />
     <Compile Include="Linux\XkbKeyboardDescription.cs" />
-    <Compile Include="Windows\KeymanKeyboardAdapter.cs" />
-    <Compile Include="Windows\WindowsKeyboardHelper.cs" />
     <Compile Include="Windows\WinKeyboardAdaptor.cs" />
     <Compile Include="Types\MouseEvent.cs" />
-    <Compile Include="Interfaces\IKeyboardController.cs" />
+    <Compile Include="InternalInterfaces\IKeyboardController.cs" />
+    <Compile Include="Windows\WinKeyboardDescription.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
