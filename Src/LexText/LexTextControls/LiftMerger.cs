@@ -2037,16 +2037,10 @@ namespace SIL.FieldWorks.LexText.Controls
 				return true;
 			if (EntryNotesConflict(le, entry.Notes))
 				return true;
-			if (EntryPronunciationsConflict(le, entry.Pronunciations))
-				return true;
 			if (EntryTraitsConflict(le, entry.Traits))
 				return true;
 			if (EntryVariantsConflict(le, entry.Variants))
 				return true;
-			//entry.DateCreated;
-			//entry.DateModified;
-			//entry.Order;
-			//entry.Relations;
 			return false;
 		}
 
@@ -3539,45 +3533,6 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		}
 
-		private bool EntryPronunciationsConflict(ILexEntry le, List<CmLiftPhonetic> list)
-		{
-			if (le.PronunciationsOS.Count == 0 || list.Count == 0)
-				return false;
-			int cCommon = 0;
-			Dictionary<int, CmLiftPhonetic> dictHvoPhon = new Dictionary<int, CmLiftPhonetic>();
-			IgnoreNewWs();
-			foreach (CmLiftPhonetic phon in list)
-			{
-				ILexPronunciation pron = FindMatchingPronunciation(le, dictHvoPhon, phon);
-				if (pron != null)
-				{
-					if (MultiUnicodeStringsConflict(pron.Form, phon.Form, false, Guid.Empty, 0))
-					{
-						m_cdConflict = new ConflictingEntry(String.Format("Pronunciation ({0})",
-							TsStringAsHtml(pron.Form.BestVernacularAnalysisAlternative, m_cache)), le, this);
-						return true;
-					}
-					if (PronunciationFieldsOrTraitsConflict(pron, phon))
-					{
-						m_cdConflict = new ConflictingEntry(String.Format("Pronunciation ({0}) details",
-							TsStringAsHtml(pron.Form.BestVernacularAnalysisAlternative, m_cache)), le, this);
-						return true;
-					}
-					// TODO: Compare phon.Media and pron.MediaFilesOS
-					++cCommon;
-				}
-			}
-			if (cCommon < Math.Min(le.PronunciationsOS.Count, list.Count))
-			{
-				m_cdConflict = new ConflictingEntry("Pronunciations", le, this);
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-
 		/// <summary>
 		/// Find the best matching pronunciation in the lex entry (if one exists) for the imported LiftPhonetic phon.
 		/// If neither has any form, then only the media filenames are compared.  If both have forms, then both forms
@@ -3724,40 +3679,6 @@ namespace SIL.FieldWorks.LexText.Controls
 						break;
 				}
 			}
-		}
-
-		private bool PronunciationFieldsOrTraitsConflict(ILexPronunciation pron, CmLiftPhonetic phon)
-		{
-			IgnoreNewWs();
-			foreach (LiftField field in phon.Fields)
-			{
-				switch (field.Type.ToLowerInvariant())
-				{
-					case "cvpattern":
-					case "cv-pattern":
-						if (StringsConflict(pron.CVPattern, GetFirstLiftTsString(field.Content)))
-							return true;
-						break;
-					case "tone":
-						if (StringsConflict(pron.Tone, GetFirstLiftTsString(field.Content)))
-							return true;
-						break;
-				}
-			}
-			foreach (LiftTrait trait in phon.Traits)
-			{
-				switch (trait.Name.ToLowerInvariant())
-				{
-					case RangeNames.sLocationsOA:
-						ICmLocation loc = FindOrCreateLocation(trait.Value);
-						if (pron.LocationRA != null && pron.LocationRA != loc)
-							return true;
-						break;
-					default:
-						break;
-				}
-			}
-			return false;
 		}
 
 		private void ProcessEntryEtymologies(ILexEntry le, CmLiftEntry entry)
