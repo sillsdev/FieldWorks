@@ -118,6 +118,10 @@
       <Name>FwResources</Name>
       <HintPath>..\..\..\Output\Debug\FwResources.dll</HintPath>
     </Reference>
+    <Reference Include="IPCFramework, Version=1.0.4932.38422, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Downloads\IPCFramework.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
