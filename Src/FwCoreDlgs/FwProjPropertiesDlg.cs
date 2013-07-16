@@ -1857,7 +1857,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				m_fWsChanged = true;
 				foreach (var newWs in newWsIds)
 				{
-					ProgressDialogWithTask.ImportTranslatedListsForWs(this, m_cache, newWs);
+					// IcuLocale uses _ to separate, RFC5646 uses -.  We need the latter (see FWNX-1165).
+					ProgressDialogWithTask.ImportTranslatedListsForWs(this, m_cache, newWs.Replace("_","-"));
 				}
 			}
 
