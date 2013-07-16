@@ -243,6 +243,7 @@ install-tree:
 	# Install executables and scripts
 	install $(OUT_DIR)/*.exe $(DESTDIR)/usr/lib/fieldworks
 	install DistFiles/*.exe $(DESTDIR)/usr/lib/fieldworks
+	install Bin/ReadKey.exe $(DESTDIR)/usr/lib/fieldworks
 	install Bin/WriteKey.exe $(DESTDIR)/usr/lib/fieldworks
 	install Lib/src/icu/install$(ARCH)/bin/* $(DESTDIR)/usr/lib/fieldworks/icu-bin
 	install Lib/src/icu/source/bin/* $(DESTDIR)/usr/lib/fieldworks/icu-bin
