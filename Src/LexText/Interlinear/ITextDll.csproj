@@ -167,6 +167,7 @@
       <Name>System</Name>
     </Reference>
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
@@ -606,5 +607,8 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="gendarme-ITextDll.ignore" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
 </Project>

@@ -758,13 +758,17 @@
     <value>Total number of unique words (types):</value>
   </data>
   <data name="ksImportAnalysisLangMissing" xml:space="preserve">
-    <value> is used in this text as an analysis language, but it is not currently part of your FieldWorks project.  Would you like to add it?  Click "OK" to add it or "Cancel" to skip this text.</value>
+    <value> is used in one of your texts as an analysis writing system, but it is not currently part of your FieldWorks project.  Would you like to add it?  
+Click "OK" to add it as a vernacular writing system.
+Click "Cancel" to abort this import.</value>
   </data>
   <data name="ksImportAnalysisLangMissingTitle" xml:space="preserve">
     <value>Text has new analysis writing system</value>
   </data>
   <data name="ksImportVernacLangMissing" xml:space="preserve">
-    <value> is used in this text as a vernacular writing system, but it is not currently part of your FieldWorks project.  Would you like to add it?  Click "OK" to add it or "Cancel" to skip this text.</value>
+    <value> is used in one of your texts as a vernacular writing system, but it is not currently part of your FieldWorks project.  Would you like to add it?  
+Click "OK" to add it as a vernacular writing system.
+Click "Cancel" to abort this import.</value>
   </data>
   <data name="ksImportVernacLangMissingTitle" xml:space="preserve">
     <value>Text has new vernacular writing system</value>
@@ -940,5 +944,8 @@
   </data>
   <data name="ksInvalidTagMsg" xml:space="preserve">
     <value>A valid tag must be selected.</value>
+  </data>
+  <data name="ksImportLangMissingTextStartsWith" xml:space="preserve">
+    <value>The first words of this text are: </value>
   </data>
 </root>

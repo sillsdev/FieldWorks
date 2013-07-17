@@ -278,13 +278,22 @@ namespace SIL.FieldWorks.IText
 				ref firstNewText);
 		}
 
+		/// <summary>
+		/// Import a file which looks like a FieldWorks interlinear XML export. This file can contain many interlinear texts.
+		/// If a text was previously imported then attempt to merge it. If a text has not been imported before then a new text
+		/// is created and it is poplulated with the input if possible.
+		/// </summary>
+		/// <param name="options"></param>
+		/// <param name="firstNewText"></param>
+		/// <returns>return false to abort merge</returns>
 		public bool ImportInterlinear(ImportInterlinearOptions options, ref FDO.IText firstNewText)
 		{
 			IThreadedProgress progress = options.Progress;
 			Stream birdData = options.BirdData;
 			int allottedProgress = options.AllottedProgress;
 
-			bool retValue = false;
+			bool mergeSucceeded = false;
+			bool continueMerge = false;
 			firstNewText = null;
 			BIRDDocument doc;
 			int initialProgress = progress.Position;
@@ -313,32 +322,25 @@ namespace SIL.FieldWorks.IText
 							ICmObject repoObj;
 							m_cache.ServiceLocator.ObjectRepository.TryGetObject(new Guid(interlineartext.guid), out repoObj);
 							newText = repoObj as FDO.IText;
-							if(newText != null && ShowPossibleMergeDialog(progress) == DialogResult.Yes)
+							if (newText != null && ShowPossibleMergeDialog(progress) == DialogResult.Yes)
 							{
-								MergeTextWithBIRDDoc(ref newText, new TextCreationParams { Cache = m_cache, InterlinText = interlineartext,
-																						   Progress = progress,
-																						   ImportOptions = options,
-																						   Version = version
-								});
+								continueMerge = MergeTextWithBIRDDoc(ref newText,
+												new TextCreationParams
+												{
+													Cache = m_cache,
+													InterlinText = interlineartext,
+													Progress = progress,
+													ImportOptions = options,
+													Version = version
+												});
 							}
-							else if(newText == null)
+							else if (newText == null)
 							{
 								newText = m_cache.ServiceLocator.GetInstance<ITextFactory>().Create(m_cache, new Guid(interlineartext.guid));
 								//must be added for the cache to be initialized which is necessary for its population
 								// GJM 30 May 2012: No longer true as Texts are unowned
 								//langProject.TextsOC.Add(newText);
-
-								if (!PopulateTextFromBIRDDoc(ref newText, new TextCreationParams
-									{
-										Cache = m_cache,
-										InterlinText = interlineartext,
-										Progress = progress,
-										ImportOptions = options,
-										Version = version
-									})) //if the user aborted this text
-								{
-									newText.Delete(); //remove it from the list
-								}
+								continueMerge = PopulateTextIfPossible(options, ref newText, interlineartext, progress, version);
 							}
 							else //user said do not merge.
 							{
@@ -347,19 +349,7 @@ namespace SIL.FieldWorks.IText
 								//must be added for the cache to be initialized which is necessary for its population
 								// GJM 30 May 2012: No longer true as Texts are unowned
 								//langProject.TextsOC.Add(newText);
-								if (!PopulateTextFromBIRDDoc(ref newText,
-									new TextCreationParams
-									{
-										Cache = m_cache,
-										InterlinText = interlineartext,
-										Progress = progress,
-										ImportOptions = options,
-										Version = version
-									})) //if the user aborted this text
-								{
-									newText.Delete();  //remove it from the list
-								}
-
+								continueMerge = PopulateTextIfPossible(options, ref newText, interlineartext, progress, version);
 							}
 						}
 						else
@@ -369,26 +359,17 @@ namespace SIL.FieldWorks.IText
 							//must be added for the cache to be initialized which is necessary for its population
 							// GJM 30 May 2012: No longer true as Texts are unowned
 							//langProject.TextsOC.Add(newText);
-
-							if (!PopulateTextFromBIRDDoc(ref newText,
-								new TextCreationParams
-								{
-									Cache = m_cache,
-									InterlinText = interlineartext,
-									Progress = progress,
-									ImportOptions = options,
-									Version = version
-								})) //if the user aborted this text
-							{
-								newText.Delete(); //remove it from the list
-							}
+							continueMerge = PopulateTextIfPossible(options, ref newText, interlineartext, progress, version);
 						}
-						progress.Position = initialProgress + allottedProgress / 2 + allottedProgress * step / 2 / doc.interlineartext.Length;
+						if (!continueMerge)
+							break;
+						progress.Position = initialProgress + allottedProgress/2 + allottedProgress*step/2/doc.interlineartext.Length;
 						if (firstNewText == null)
 							firstNewText = newText;
 
 					}
-					retValue = true;
+					mergeSucceeded = continueMerge;
+
 				}
 			}
 			catch (Exception e)
@@ -400,8 +381,36 @@ namespace SIL.FieldWorks.IText
 			{
 				m_cache.DomainDataByFlid.EndNonUndoableTask();
 			}
-			return retValue;
+			return mergeSucceeded;
+		}
 
+		/// <summary>
+		/// Attempt to populate a new FieldWorks text with a BIRD format interlinear text. If this fails
+		/// for some reason then the new text is deleted and also return false to tell the calling method to abort the import.
+		/// </summary>
+		/// <param name="options"></param>
+		/// <param name="newText"></param>
+		/// <param name="interlineartext"></param>
+		/// <param name="progress"></param>
+		/// <param name="version"></param>
+		/// <returns>true if operation completed, false if the import operation should be aborted</returns>
+		private bool PopulateTextIfPossible(ImportInterlinearOptions options, ref FDO.IText newText, Interlineartext interlineartext,
+												IThreadedProgress progress, int version)
+		{
+			if (!PopulateTextFromBIRDDoc(ref newText,
+					new TextCreationParams
+					{
+						Cache = m_cache,
+						InterlinText = interlineartext,
+						Progress = progress,
+						ImportOptions = options,
+						Version = version
+					})) //if the user aborted this text
+			{
+				newText.Delete(); //remove it from the list
+				return false;
+			}
+			return true;
 		}
 
 		/// <summary>
