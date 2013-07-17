@@ -466,7 +466,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				// get the MoStemMsa of its variant
 				if (msaAsLexEntry.EntryRefsOS.Count > 0)
 				{
-					var index = IndexOfLexEntryRef(msaHvo.Value, indexOfPeriod);
+					var index = IndexOfLexEntryRef(msaHvo.Value, indexOfPeriod); // the value of the int after the period
 					var lexEntryRef = msaAsLexEntry.EntryRefsOS[index];
 					var sense = FDO.DomainServices.MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
 					var stemMsa = sense.MorphoSyntaxAnalysisRA as IMoStemMsa;

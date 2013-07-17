@@ -1014,7 +1014,7 @@ namespace SIL.HermitCrab
 				prevValidSynthesis = cur;
 			}
 			return results;
-		}
+		} // end MorphAndLookupToken
 
 		private void AddResult(string word, Set<WordSynthesis> results, WordSynthesis cur)
 		{
