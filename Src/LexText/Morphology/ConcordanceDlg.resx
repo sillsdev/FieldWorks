@@ -430,7 +430,7 @@
 	<value>False</value>
   </data>
   <data name="m_toolStripRecordStatusLabel.Size" type="System.Drawing.Size, System.Drawing">
-	<value>96, 19</value>
+	<value>80, 19</value>
   </data>
   <data name="m_statusStrip.Location" type="System.Drawing.Point, System.Drawing">
 	<value>8, 436</value>
