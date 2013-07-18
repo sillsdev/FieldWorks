@@ -1029,7 +1029,7 @@ namespace SIL.FieldWorks.Common.Controls
 				m_checkMarkButton.Left = 1;
 				ToolTip ttip = new ToolTip();
 				ttip.SetToolTip(m_checkMarkButton, XMLViewsStrings.ksTipCheck);
-				Controls.Add(m_checkMarkButton);
+				m_scrollContainer.Controls.Add(m_checkMarkButton);
 				m_checkMarkButton.BringToFront();
 			}
 
