@@ -272,6 +272,8 @@ install-tree:
 	rm -f $(DESTDIR)/usr/lib/fieldworks/lib{xample,patr}$$OTHERWIDTH.so
 	case $(ARCH) in i686) SUFFIX=x86_64;; x86_64) SUFFIX=x86;; esac; \
 	rm -f $(DESTDIR)/usr/lib/fieldworks/libTECkit{,_Compiler}_$$SUFFIX.so
+	case $(ARCH) in i686) OTHERSUFFIX=_64;; x86_64) OTHERSUFFIX=;; esac; \
+	rm -f $(DESTDIR)/usr/lib/fieldworks/lib{ecdriver,IcuConvEC,IcuRegexEC,IcuTranslitEC,PyScriptEncConverter)$$OTHERSUFFIX.so
 	rm -Rf $(DESTDIR)/usr/lib/share/fieldworks/Icu50/tools
 	rm -f $(DESTDIR)/usr/lib/share/fieldworks/Icu50/Keyboards
 
