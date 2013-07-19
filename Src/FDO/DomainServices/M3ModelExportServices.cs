@@ -474,7 +474,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 								new XElement("FeatureConstraints", from featureConstraint in phonologicalData.FeatConstraintsOS
 																 select ExportFeatureConstraint(featureConstraint)),
 								new XElement("PhonRules", from phonRule in phonologicalData.PhonRulesOS
-														   select ExportPhonRule(phonRule, mode)),
+											where !phonRule.Disabled
+											select ExportPhonRule(phonRule, mode)),
 								ExportPhonRuleFeats(phonologicalData, mode),
 							   new XElement("PhIters"),
 							   new XElement("PhIters"),
