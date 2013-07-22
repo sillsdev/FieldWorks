@@ -323,7 +323,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			// Step 2. Export lift file. If fails, then call into bridge with undo_export_lift and quit.
 			if (!ExportLiftLexicon())
+			{
+				MessageBox.Show(_parentForm, LexEdStrings.FLExBridgeListener_UndoExport_Error_exporting_LIFT, LexEdStrings.FLExBridgeListener_UndoExport_LIFT_Export_failed_Title,
+								MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return true;
+			}
 
 			// Step 3. Have Flex Bridge do the S/R.
 			// after saving the state enough to detect if conflicts are created.
@@ -635,7 +639,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		/// <summary>
-		/// Reregisters an inport failure, if needed, otherwise clears the token.
+		/// Reregisters an import failure, if needed, otherwise clears the token.
 		/// </summary>
 		/// <returns>'true' if the import failure continues, otherwise 'false'.</returns>
 		private bool RepeatPriorFailedImportIfNeeded()
@@ -1036,13 +1040,18 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						progressDlg.Title = ResourceHelper.GetResourceString("kstidExportLiftLexicon");
 						var outPath = (string)progressDlg.RunTask(true, ExportLiftLexicon, _liftPathname);
 						var retval = (!String.IsNullOrEmpty(outPath));
-						if (!retval)
+						if (!retval && CanUndoLiftExport)
+						{
 							UndoExport();
+						}
 						return retval;
 					}
 					catch
 					{
-						UndoExport();
+						if (CanUndoLiftExport)
+						{
+							UndoExport();
+						}
 						return false;
 					}
 					finally
@@ -1054,7 +1063,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		private const string kChorusNotesExtension = "ChorusNotes";
-		private bool m_fInitialExport;
 		/// <summary>
 		/// Export the contents of the lift lexicon.
 		/// </summary>
@@ -1071,11 +1079,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				if (!Directory.Exists(liftProjectDir))
 				{
 					Directory.CreateDirectory(liftProjectDir);
-					m_fInitialExport = true;
-				}
-				else
-				{
-					m_fInitialExport = false;
 				}
 				if (_liftPathname == null)
 				{
@@ -1192,18 +1195,24 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 		}
 
+		private bool CanUndoLiftExport
+		{
+			get
+			{
+				var liftProjectFolder = GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder);
+				return Directory.Exists(liftProjectFolder) && Directory.Exists(Path.Combine(liftProjectFolder, ".hg"));
+			}
+		}
+
 		private void UndoExport()
 		{
 			bool dataChanged;
 			string dummy;
 			// Have FLEx Bridge do its 'undo'
 			// flexbridge -p <project folder name> #-u username -v undo_export_lift)
-			if (!m_fInitialExport)
-				FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, SendReceiveUser,
-													FLExBridgeHelper.UndoExportLift, null, FDOBackendProvider.ModelVersion, "0.13", null,
-													out dataChanged, out dummy);
-			MessageBox.Show(_parentForm, LexEdStrings.FLExBridgeListener_UndoExport_Error_exporting_LIFT, LexEdStrings.FLExBridgeListener_UndoExport_LIFT_Export_failed_Title,
-							MessageBoxButtons.OK, MessageBoxIcon.Error);
+			FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, SendReceiveUser,
+				FLExBridgeHelper.UndoExportLift, null, FDOBackendProvider.ModelVersion, "0.13", null,
+				out dataChanged, out dummy);
 		}
 
 		#endregion
