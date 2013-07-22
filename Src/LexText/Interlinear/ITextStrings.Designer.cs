@@ -908,7 +908,7 @@ namespace SIL.FieldWorks.IText {
         
         /// <summary>
         ///   Looks up a localized string similar to  is used in one of your texts as an analysis writing system, but it is not currently part of your FieldWorks project.  Would you like to add it?  
-        ///Click &quot;OK&quot; to add it as a vernacular writing system.
+        ///Click &quot;OK&quot; to add it as a analysis writing system.
         ///Click &quot;Cancel&quot; to abort this import..
         /// </summary>
         internal static string ksImportAnalysisLangMissing {

@@ -759,7 +759,7 @@
   </data>
   <data name="ksImportAnalysisLangMissing" xml:space="preserve">
     <value> is used in one of your texts as an analysis writing system, but it is not currently part of your FieldWorks project.  Would you like to add it?  
-Click "OK" to add it as a vernacular writing system.
+Click "OK" to add it as a analysis writing system.
 Click "Cancel" to abort this import.</value>
   </data>
   <data name="ksImportAnalysisLangMissingTitle" xml:space="preserve">
