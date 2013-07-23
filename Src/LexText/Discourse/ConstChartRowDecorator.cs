@@ -296,6 +296,15 @@ namespace SIL.FieldWorks.Discourse
 			m_numOfCalls++;
 		}
 
+		/// <summary>
+		/// Current flow object is a paragraph. (But being in a span it will still be true.)
+		/// </summary>
+		/// <returns></returns>
+		public bool IsParagraphOpen()
+		{
+			throw new NotImplementedException();
+		}
+
 		public virtual void OpenParagraph()
 		{
 			if (!IsRtL)

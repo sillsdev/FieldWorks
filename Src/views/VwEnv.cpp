@@ -1597,6 +1597,19 @@ STDMETHODIMP VwEnv::OpenSpan()
 
 
 /*----------------------------------------------------------------------------------------------
+	True if the current flow object is a paragraph.
+----------------------------------------------------------------------------------------------*/
+STDMETHODIMP VwEnv::IsParagraphOpen(ComBool * pfRet)
+{
+	BEGIN_COM_METHOD;
+	ChkComOutPtr(pfRet);
+
+	*pfRet = dynamic_cast<VwParagraphBox *>(m_pgboxCurr) != NULL;
+
+	END_COM_METHOD(dfactEnv, IID_IVwEnv);
+}
+
+/*----------------------------------------------------------------------------------------------
 
 ----------------------------------------------------------------------------------------------*/
 STDMETHODIMP VwEnv::CloseSpan()

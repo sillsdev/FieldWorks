@@ -4,9 +4,9 @@
 
 
  /* File created by MIDL compiler version 7.00.0555 */
-/* at Fri Apr 19 17:38:16 2013
+/* at Tue Jul 23 10:57:51 2013
  */
-/* Compiler settings for d:\fwrepo\fw\Output\Common\FwKernelTlb.idl:
+/* Compiler settings for C:\fwrepo\fw\Output\Common\FwKernelTlb.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 7.00.0555 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 

@@ -639,6 +639,15 @@ namespace XMLViewsTests
 		}
 
 		/// <summary>
+		/// Current flow object is a paragraph. (But being in a span it will still be true.)
+		/// </summary>
+		/// <returns></returns>
+		public bool IsParagraphOpen()
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
 		/// Start a normal paragraph.
 		/// </summary>
 		public void OpenParagraph()

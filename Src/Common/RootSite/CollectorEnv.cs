@@ -331,6 +331,14 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Keeps track of whether things currently being added are part of some
 		/// known property of the current object.</summary>
 		protected bool m_fIsPropOpen;
+		/// <summary>
+		/// Current flow object is a paragraph (or possibly a span..that is considered an equivalent state).
+		/// This is maintained by code in various OpenX and CloseX methods. It should be correct if the
+		/// client code is correct: it closes every paragraph it opens, and only nests spans and inner piles
+		/// inside paragraphs. Client code that breaks these rules could get different results in this
+		/// code and the real VwEnv. To fully match the behavior we would have to implement a stack of
+		/// open flow objects.</summary>
+		private bool m_fIsParaOpen;
 		/// <summary>Set if we add something while m_fIsPropOpen is true;
 		/// cleared (and we note an occurrence of ktagNotAnAttr) if it is set
 		/// when clearing m_fIsPropOpen.</summary>
@@ -731,6 +739,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		public void OpenMappedTaggedPara()
 		{
 			OpenFlowObject();
+			m_fIsParaOpen = true;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -785,6 +794,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		public virtual void CloseParagraph()
 		{
 			CloseFlowObject();
+			m_fIsParaOpen = false;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -795,6 +805,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		public virtual void OpenParagraph()
 		{
 			OpenFlowObject();
+			m_fIsParaOpen = true;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -805,6 +816,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		public void OpenTaggedPara()
 		{
 			OpenFlowObject();
+			m_fIsParaOpen = true;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -902,6 +914,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		public virtual void CloseInnerPile()
 		{
 			CloseFlowObject();
+			m_fIsParaOpen = true;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1268,6 +1281,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		public virtual void OpenInnerPile()
 		{
 			OpenFlowObject();
+			m_fIsParaOpen = false;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1411,6 +1425,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			VwConcParaOpts cpoFlags, int dmpAlign)
 		{
 			OpenFlowObject();
+			m_fIsParaOpen = true;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1421,6 +1436,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		public void OpenMappedPara()
 		{
 			OpenFlowObject();
+			m_fIsParaOpen = true;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1658,7 +1674,6 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		#region IVwEnv Members
 
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Do nothing.  This doesn't affect the collection of data.
@@ -1666,6 +1681,15 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public void EmptyParagraphBehavior(int behavior)
 		{
+		}
+
+		/// <summary>
+		/// Current flow object is a paragraph. (But being in a span it will still be true.)
+		/// </summary>
+		/// <returns></returns>
+		public bool IsParagraphOpen()
+		{
+			return m_fIsParaOpen;
 		}
 
 		#endregion
