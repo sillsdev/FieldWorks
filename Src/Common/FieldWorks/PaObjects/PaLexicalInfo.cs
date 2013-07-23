@@ -131,6 +131,11 @@ namespace SIL.FieldWorks.PaObjects
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes the FDO repositories from the specified project and server.
+		///
+		/// <returns>
+		/// true if the repositories are successfully initialized and FieldWorks started;
+		/// otherwise, false.
+		/// </returns>
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
@@ -143,10 +148,11 @@ namespace SIL.FieldWorks.PaObjects
 			Process newFwInstance = null;
 
 			var start = DateTime.Now;
+			var timeToWaitTotalMillis = timeToWaitForLoadingData + timeToWaitForProcessStart;
 
 			try
 			{
-				while (!foundFwProcess)
+				do
 				{
 					FieldWorks.RunOnRemoteClients(FieldWorks.kPaRemoteRequest, requestor =>
 					{
@@ -159,15 +165,15 @@ namespace SIL.FieldWorks.PaObjects
 
 					if (!newProcessStarted)
 					{
+						newProcessStarted = true;
 						newFwInstance = FieldWorks.OpenProjectWithNewProcess(null, name, server,
 							FwUtils.ksFlexAbbrev, "-" + FwAppArgs.kNoUserInterface);
 
-						newProcessStarted = true;
 						// TODO-Linux: WaitForInputIdle isn't fully implemented on Linux.
 						if (!newFwInstance.WaitForInputIdle(timeToWaitForProcessStart))
 							return false;
 					}
-				}
+				} while ((DateTime.Now - start).TotalMilliseconds <= timeToWaitTotalMillis);
 			}
 			finally
 			{
@@ -181,7 +187,8 @@ namespace SIL.FieldWorks.PaObjects
 				Debug.WriteLine((DateTime.Now - start).TotalMilliseconds);
 			}
 
-			return true;
+			// this line is reached only on startup timeout.
+			return false;
 		}
 
 		/// ------------------------------------------------------------------------------------
