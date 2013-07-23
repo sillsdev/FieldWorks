@@ -413,6 +413,13 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 #endif
 		}
 
+		public bool OnDisplayEditSpellingStatus(object commandObject,
+			ref UIItemDisplayProperties display)
+		{
+			display.Enabled = display.Visible = InFriendlyArea;
+			return true; //we've handled this
+		}
+
 		/// <summary>
 		/// Called by reflection to implement the command.
 		/// </summary>
@@ -430,6 +437,13 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			additionalProps.Add(new Property("LinkSetupInfo", "TeReviewUndecidedSpelling"));
 			m_mediator.PostMessage("FollowLink", link);
 			return true;
+		}
+
+		public bool OnDisplayViewIncorrectWords(object commandObject,
+			ref UIItemDisplayProperties display)
+		{
+			display.Enabled = display.Visible = InFriendlyArea;
+			return true; //we've handled this
 		}
 
 		public bool OnViewIncorrectWords(object argument)
@@ -500,6 +514,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 		#endregion XCore Message handlers
 	}
+
 	/// <summary>
 	/// WordsEditToolMenuHandler inherits from DTMenuHandler and adds some special smarts.
 	/// this class would normally be constructed by the factory method on DTMenuHandler,
