@@ -1,0 +1,8 @@
+Verified+1: Jenkins CI
+Verified-Linux+1: Jenkins CI
+Code-Review+2: Gordon Martin <gordon-soft_martin@sil.org>
+Submitted-by: Hasso Pape <hasso_pape@sil.org>
+Submitted-at: Wed, 24 Jul 2013 14:35:12 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/1286
+Project: FieldWorks
+Branch: refs/heads/develop
