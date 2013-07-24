@@ -7,11 +7,12 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using Palaso.Lift;
 using Palaso.Lift.Migration;
 using Palaso.Lift.Parsing;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
@@ -262,7 +263,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			if (dataChanged)
 			{
-				bool conflictOccurred = DetectConflicts(projectFolder, savedState);
+				bool conflictOccurred = DetectMainConflicts(projectFolder, savedState);
 				var app = (LexTextApp)_mediator.PropertyTable.GetValue("App");
 				var newAppWindow = RefreshCacheWindowAndAll(app, fullProjectFileName);
 				if (conflictOccurred)
@@ -383,7 +384,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		public bool OnDisplayCheckForFlexBridgeUpdates(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckForFlexBridgeInstalled(display);
+			if (MiscUtils.IsUnix)
+			{
+				display.Visible = false;
+			}
+			else
+			{
+				CheckForFlexBridgeInstalled(display);
+			}
 
 			return true; // We dealt with it.
 		}
@@ -702,7 +710,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				}
 
 				/* TODO: What to do with Lift conflicts?
-								var conflictOccurred = DetectConflicts(projectFolder, savedState);
+								var conflictOccurred = DetectMainConflicts(projectFolder, savedState);
 								var app = (LexTextApp)m_mediator.PropertyTable.GetValue("App");
 								var newAppWindow = RefreshCacheWindowAndAll(app, m_liftPathname);
 
@@ -1285,6 +1293,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			foreach (string notesPathname in Directory.GetFiles(folderToSearchIn, "*.ChorusNotes", SearchOption.AllDirectories))
 			{
+				if (!NotesFileHasContent(notesPathname))
+					continue; // Skip ones with no content.
+
 				if (checkForLiftNotes)
 					return true;
 
@@ -1294,6 +1305,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				// Must be a nested lift one to get here, so try another one.
 			}
 			return false;
+		}
+
+		private static bool NotesFileHasContent(string chorusNotesPathname)
+		{
+			var doc = XDocument.Load(chorusNotesPathname);
+			return doc.Root.HasElements; // Files with no notes (e.g., "Lexicon.fwstub.ChorusNotes") are not interesting.
 		}
 
 		private static void ReportDuplicateBridge()
@@ -1361,7 +1378,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return false; // no conflicts added.
 		}
 
-		private static bool DetectConflicts(string path, Dictionary<string, long> savedState)
+		private static bool DetectMainConflicts(string path, Dictionary<string, long> savedState)
 		{
 			foreach (var file in Directory.GetFiles(path, "*.ChorusNotes", SearchOption.AllDirectories))
 			{
