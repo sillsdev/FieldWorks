@@ -1032,7 +1032,7 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			m_writer.WriteLine(".entry {");
 			ExportStyleInfo esi = WriteFontInfoToCss(m_cache.DefaultAnalWs, "Dictionary-Normal", "entry");
-			WriteParaStyleInfoToCss(esi, true); // LT-12658 allow to indent
+			WriteParaStyleInfoToCss(esi, true, true); // LT-12658 allow to indent
 			m_writer.WriteLine("    counter-reset: sense;");
 			m_writer.WriteLine("}");
 		}
@@ -1099,7 +1099,7 @@ namespace SIL.FieldWorks.Common.Framework
 			if (String.IsNullOrEmpty(style))
 				style = "Dictionary-Minor";
 			var esi = WriteFontInfoToCss(m_cache.DefaultAnalWs, style, "minorentry");
-			WriteParaStyleInfoToCss(esi, true); // LT-12658 allow to indent
+			WriteParaStyleInfoToCss(esi, true, true); // LT-12658 allow to indent
 			m_writer.WriteLine("}");
 			WriteParaBulletInfoToCss(style, "minorentry", "minorentryCounter");
 			// Todo: more style details; see LT-12184
@@ -1772,7 +1772,7 @@ namespace SIL.FieldWorks.Common.Framework
 			WriteParaStyleInfoToCss(esi, AllowDictionaryParagraphIndent);
 		}
 
-		private void WriteParaStyleInfoToCss(ExportStyleInfo esi, bool hangingIndent)
+		private void WriteParaStyleInfoToCss(ExportStyleInfo esi, bool hangingIndent, bool entryOrMinorEntry = false)
 		{
 			if (esi == null)
 				return; // If the style was not defined in our stylesheet, we can't write anything for it.
@@ -1821,10 +1821,13 @@ namespace SIL.FieldWorks.Common.Framework
 				// Indent is allowed, write it out if specified; otherwise, allow it to be inherited.
 				if (esi.HasFirstLineIndent)
 				{
-					m_writer.WriteLine("    text-indent: {0}pt;", ConvertMptToPt(esi.FirstLineIndent));
+					var firstLineIndentAdjusted = esi.FirstLineIndent;
+					if (entryOrMinorEntry) //LT-14757 Need to reduce indent for cell phone devices.
+						firstLineIndentAdjusted = firstLineIndentAdjusted/3;
+					m_writer.WriteLine("    text-indent: {0}pt;", ConvertMptToPt(firstLineIndentAdjusted));
 					m_writer.Write("    margin-{0}: ", sLeading);
 					if (esi.FirstLineIndent < 0)
-						m_writer.WriteLine("{0}pt;", ConvertMptToPt(-esi.FirstLineIndent));
+						m_writer.WriteLine("{0}pt;", ConvertMptToPt(-firstLineIndentAdjusted));
 					else
 						m_writer.WriteLine("0pt;");
 				}
