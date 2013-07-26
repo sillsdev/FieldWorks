@@ -2960,7 +2960,6 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 				if (m_bulkEditBar != null)
 					m_bulkEditBar.UpdateColumnList();
-				m_lvHeader.AdjustWidth(0); // adjust to fit
 				// That doesn't fix columns added at the end, which the .NET code helpfully adjusts to
 				// one pixel wide each if the earlier columns use all available space!
 				int ccols = m_lvHeader.Columns.Count;
