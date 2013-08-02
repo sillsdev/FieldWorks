@@ -70,7 +70,7 @@ h2 { font-family: Arial, sanserif; font-size: 16pt; margin: 0; page-break-after:
 						<xsl:attribute name="lang">
 							<xsl:value-of select="Name//AUni[@ws != $ignoreLang]/@ws"/>
 						</xsl:attribute>
-						<xsl:value-of select="Abbreviation/AUni[@ws != $ignoreLang][1]"/>
+						<xsl:value-of select="Abbreviation/AUni[1]"/>
 						<xsl:text> </xsl:text>
 						<xsl:call-template name="Name"/>
 					</xsl:element>
@@ -80,7 +80,7 @@ h2 { font-family: Arial, sanserif; font-size: 16pt; margin: 0; page-break-after:
 						<xsl:attribute name="lang">
 							<xsl:value-of select="Name//AUni[@ws != $ignoreLang]/@ws"/>
 						</xsl:attribute>
-						<xsl:value-of select="Abbreviation/AUni[@ws != $ignoreLang][1]"/>
+						<xsl:value-of select="Abbreviation/AUni[1]"/>
 						<xsl:text> </xsl:text>
 						<xsl:call-template name="Name"/>
 					</xsl:element>
