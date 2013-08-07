@@ -295,7 +295,7 @@
     <value>2</value>
   </data>
   <data name="receiveButton.Text" xml:space="preserve">
-    <value>            Receive project from a colleague...</value>
+    <value>            Get project from a colleague...</value>
   </data>
   <data name="receiveButton.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleLeft</value>

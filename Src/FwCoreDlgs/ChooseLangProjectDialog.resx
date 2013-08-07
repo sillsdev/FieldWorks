@@ -499,7 +499,7 @@
 	<value>7</value>
   </data>
   <data name="m_linkOpenBridgeProject.Text" xml:space="preserve">
-	<value>Receive project from a colleague</value>
+	<value>Get project from a colleague</value>
   </data>
   <data name="m_linkOpenBridgeProject.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
 	<value>MiddleLeft</value>
