@@ -13,6 +13,9 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using Microsoft.Win32;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 using Paratext;
 
@@ -34,7 +37,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			try
 			{
-				ScrTextCollection.Initialize();
+				if (FwRegistryHelper.ParatextSettingsDirectoryExists())
+				{
+					ScrTextCollection.Initialize();
+				}
 			}
 			catch (Exception e)
 			{
