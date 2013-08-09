@@ -1046,7 +1046,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					try
 					{
 						progressDlg.Title = ResourceHelper.GetResourceString("kstidExportLiftLexicon");
-						var outPath = (string)progressDlg.RunTask(true, ExportLiftLexicon, _liftPathname);
+						var outPath = (string)progressDlg.RunTask(true, ExportLiftLexicon, null);
 						var retval = (!String.IsNullOrEmpty(outPath));
 						if (!retval && CanUndoLiftExport)
 						{
@@ -1074,6 +1074,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>
 		/// Export the contents of the lift lexicon.
 		/// </summary>
+		/// <param name="progressDialog"></param>
+		/// <param name="parameters">parameters are not used in this method. This method is called by an invoker,
+		/// which requires this signature.</param>
 		/// <returns>the name of the exported LIFT file if successful, or null if an error occurs.</returns>
 		/// <remarks>
 		/// This method is called in a thread, during the export process.
@@ -1088,7 +1091,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				{
 					Directory.CreateDirectory(liftProjectDir);
 				}
-				if (_liftPathname == null)
+				if (String.IsNullOrEmpty(_liftPathname))
 				{
 					_liftPathname = Path.Combine(liftProjectDir, Cache.ProjectId.Name + ".lift");
 				}
