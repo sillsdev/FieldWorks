@@ -77,6 +77,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		{
 			Sequence = s_sequenceNumber++;
 			m_uowService = uowService;
+			ActionsToDoAtEndOfPropChanged = new List<Action>();
 		}
 
 		/// <summary>
@@ -112,6 +113,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				return result;
 			}
 		}
+
+		internal List<Action> ActionsToDoAtEndOfPropChanged { get; private set; }
 
 		/// <summary>
 		/// Two units of work have conflicting changes if they create, modify, or delete any of the same objects.

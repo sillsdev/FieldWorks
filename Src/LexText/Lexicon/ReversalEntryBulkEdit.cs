@@ -59,15 +59,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			ri.EntriesOC.Add(m_newItem);
 			var extensions = m_cache.ActionHandlerAccessor as IActionHandlerExtensions;
 			if (extensions != null)
-				extensions.PropChangedCompleted += SelectNewItem;
+				extensions.DoAtEndOfPropChanged(SelectNewItem);
 			return true;
 		}
 
 		private IReversalIndexEntry m_newItem;
 
-		void SelectNewItem(object sender, bool fromUndoRedo)
+		void SelectNewItem()
 		{
-			((IActionHandlerExtensions) m_cache.ActionHandlerAccessor).PropChangedCompleted -= SelectNewItem;
 			Clerk.OnJumpToRecord(m_newItem.Hvo);
 		}
 

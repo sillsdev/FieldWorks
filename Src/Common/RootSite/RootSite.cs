@@ -1172,7 +1172,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					return;
 
 				actionHandlerExtensions.DoingUndoOrRedo += DataChanging;
-				actionHandlerExtensions.PropChangedCompleted += DataChanged;
+				actionHandlerExtensions.DoAtEndOfPropChanged(DataChanged);
 			}
 			finally
 			{
@@ -1200,7 +1200,6 @@ namespace SIL.FieldWorks.Common.RootSites
 					return;
 
 				actionHandlerExtensions.DoingUndoOrRedo -= DataChanging;
-				actionHandlerExtensions.PropChangedCompleted -= DataChanged;
 			}
 			finally
 			{
@@ -1222,12 +1221,15 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		/// <summary>
-		/// Used to attach to PropChangedCompleted and inform SimpleRootSite the the underlying data change
+		/// Used as argument to DoAtEndOfPropChanged and inform SimpleRootSite the underlying data change
 		/// has finished.
 		/// </summary>
-		private void DataChanged(object sender, bool fromUndoRedo)
+		private void DataChanged()
 		{
-			if (fromUndoRedo && m_inputBusController != null)
+			// I think this is to let the keyboard processor know about any selection change we made,
+			// especially during Undo/Redo. (An earlier version of the code was able to distinguish
+			// and do nothing except when the change was an Undo/Redo.)
+			if (Focused && m_inputBusController != null)
 				m_inputBusController.NotifyDataChanged();
 		}
 #endif

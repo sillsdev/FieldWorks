@@ -2051,7 +2051,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 		}
 
 		/// <summary>
-		/// Test undo/redo with attached event handlers on events DoingUndoOrRedo and PropChangedCompleted
+		/// Test undo/redo with actions specified using DoingUndoOrRedo and DoAtEndOfPropChangedAlways
 		/// </summary>
 		[Test]
 		public void UndoOrRedoEventsTests()
@@ -2060,44 +2060,43 @@ namespace SIL.FieldWorks.FDO.CoreTests
 			// so here is some test data so we can do undos and redos.
 			var english = Cache.LanguageProject.CurrentAnalysisWritingSystems.First();
 			var firstNewValue = Cache.TsStrFactory.MakeString("Some Value", english.Handle);
+			var actionHandlerExtensions = (IActionHandlerExtensions)m_actionHandler;
+			int didUndoOrRedoCounter = 0;
 			using (var undoHelper = new UndoableUnitOfWorkHelper(m_actionHandler, "Some Test Value"))
 			{
 				Cache.LanguageProject.MainCountry.set_String(english.Handle, firstNewValue);
+				actionHandlerExtensions.DoAtEndOfPropChangedAlways(() => didUndoOrRedoCounter++);
 				undoHelper.RollBack = false;
 			}
+			Assert.AreEqual(1, didUndoOrRedoCounter, "DoAtEndOfPropChangedAlways action should have fired at end of original UOW");
 
 			int doingUndoOrRedoCounter = 0;
-			int didUndoOrRedoCounter = 0;
 
 			// Create some Delegate instances that are going to help us test the IActionHandlerExtension events
 			DoingUndoOrRedoDelegate doingCountingDelegate = (cancelArg) => { doingUndoOrRedoCounter++; };
-			PropChangedCompletedDelegate didCountingDelegate = (sender, fromUndoRedo) => { if (fromUndoRedo) didUndoOrRedoCounter++; };
 			DoingUndoOrRedoDelegate cancelDelegate = (cancelArg) => { cancelArg.Cancel = true; };
 
-			IActionHandlerExtensions actionHandlerExtensions = (IActionHandlerExtensions)m_actionHandler;
 			Assert.IsTrue(actionHandlerExtensions != null);
 
 			actionHandlerExtensions.DoingUndoOrRedo += doingCountingDelegate;
-			actionHandlerExtensions.PropChangedCompleted += didCountingDelegate;
 
 			Assert.AreEqual(0, doingUndoOrRedoCounter);
-			Assert.AreEqual(0, didUndoOrRedoCounter);
 			Assert.AreEqual(UndoResult.kuresSuccess, m_actionHandler.Undo());
 			Assert.AreEqual(1, doingUndoOrRedoCounter);
-			Assert.AreEqual(1, didUndoOrRedoCounter);
+			Assert.AreEqual(2, didUndoOrRedoCounter, "Undo should have executed DoAtEndOfPropChangedAlways action");
 
 			Assert.AreEqual(UndoResult.kuresSuccess, m_actionHandler.Redo());
 			Assert.AreEqual(2, doingUndoOrRedoCounter);
-			Assert.AreEqual(2, didUndoOrRedoCounter);
+			Assert.AreEqual(3, didUndoOrRedoCounter, "Redo should have executed DoAtEndOfPropChangedAlways action");
 
 			Assert.AreEqual(UndoResult.kuresSuccess, m_actionHandler.Undo());
 			Assert.AreEqual(3, doingUndoOrRedoCounter);
-			Assert.AreEqual(3, didUndoOrRedoCounter);
+			Assert.AreEqual(4, didUndoOrRedoCounter, "Undo (again)should have executed DoAtEndOfPropChangedAlways action");
 
 			// Do another Redo so we can Undo
 			Assert.AreEqual(UndoResult.kuresSuccess, m_actionHandler.Redo());
 			Assert.AreEqual(4, doingUndoOrRedoCounter);
-			Assert.AreEqual(4, didUndoOrRedoCounter);
+			Assert.AreEqual(5, didUndoOrRedoCounter, "Redo (again) should have executed DoAtEndOfPropChangedAlways action");
 
 			actionHandlerExtensions.DoingUndoOrRedo -= doingCountingDelegate;
 
@@ -2105,19 +2104,127 @@ namespace SIL.FieldWorks.FDO.CoreTests
 			actionHandlerExtensions.DoingUndoOrRedo += cancelDelegate;
 			Assert.AreEqual(UndoResult.kuresError, m_actionHandler.Undo());
 			actionHandlerExtensions.DoingUndoOrRedo -= cancelDelegate;
-			Assert.AreEqual(4, didUndoOrRedoCounter);
+			Assert.AreEqual(5, didUndoOrRedoCounter);
 
 			// Go back to inital state.
 			Assert.AreEqual(UndoResult.kuresSuccess, m_actionHandler.Undo());
-			Assert.AreEqual(5, didUndoOrRedoCounter);
+			Assert.AreEqual(6, didUndoOrRedoCounter);
 
 			// Now try a cancelled redo
 			actionHandlerExtensions.DoingUndoOrRedo += cancelDelegate;
 			Assert.AreEqual(UndoResult.kuresError, m_actionHandler.Redo());
 			actionHandlerExtensions.DoingUndoOrRedo -= cancelDelegate;
-			Assert.AreEqual(5, didUndoOrRedoCounter);
+			Assert.AreEqual(6, didUndoOrRedoCounter);
+		}
 
-			actionHandlerExtensions.PropChangedCompleted -= didCountingDelegate;
+		/// <summary>
+		/// Test DoAtEndOfPropChanged
+		/// </summary>
+		[Test]
+		public void DoAtEndOfPropChanged_TasksAreDone()
+		{
+			var english = Cache.LanguageProject.CurrentAnalysisWritingSystems.First();
+			var firstNewValue = Cache.TsStrFactory.MakeString("Some Value", english.Handle);
+			var actionHandlerExtensions = (IActionHandlerExtensions)m_actionHandler;
+			int doAtEndOfPropChangedAlwaysCount = 0;
+			var doAtEndOfPropChangedCount1 = 0;
+			var doAtEndOfPropChangedCount2 = 0;
+			using (var undoHelper = new UndoableUnitOfWorkHelper(m_actionHandler, "Some Test Value"))
+			{
+				Cache.LanguageProject.MainCountry.set_String(english.Handle, firstNewValue);
+				actionHandlerExtensions.DoAtEndOfPropChangedAlways(() => doAtEndOfPropChangedAlwaysCount++);
+				actionHandlerExtensions.DoAtEndOfPropChanged(() =>
+					{
+						Assert.That(actionHandlerExtensions.CanStartUow, Is.True, "DoAtEndOfPropChanged should be fired when UOW can be started");
+						if (doAtEndOfPropChangedCount1 == 0)
+						{
+							// These out-of-order checks should only be done when this action was supposed to be done itself.
+							// We have other checks with more appropriate messages if it was done when it should not be at all.
+							Assert.That(doAtEndOfPropChangedAlwaysCount, Is.EqualTo(0),
+								"DoAtEndOfPropChanged task should be done before DoAtEndOfPropChangedAlways");
+							Assert.That(doAtEndOfPropChangedCount2, Is.EqualTo(0), "First DoAtEndOfPropChanged task should be done before second");
+						}
+						doAtEndOfPropChangedCount1++;
+					});
+				actionHandlerExtensions.DoAtEndOfPropChanged(() =>
+				{
+					if (doAtEndOfPropChangedCount2 == 0)
+					{
+						// These out-of-order checks should only be done when this action was supposed to be done itself.
+						// We have other checks with more appropriate messages if it was done when it should not be at all.
+						Assert.That(doAtEndOfPropChangedAlwaysCount, Is.EqualTo(0),
+							"DoAtEndOfPropChanged task should be done before DoAtEndOfPropChangedAlways");
+						Assert.That(doAtEndOfPropChangedCount1, Is.EqualTo(1), "First DoAtEndOfPropChanged task should be done before second");
+					}
+					doAtEndOfPropChangedCount2++;
+				});
+				undoHelper.RollBack = false;
+			}
+			Assert.AreEqual(1, doAtEndOfPropChangedAlwaysCount, "DoAtEndOfPropChangedAlways action should have fired at end of original UOW");
+			Assert.AreEqual(1, doAtEndOfPropChangedCount1, "DoAtEndOfPropChanged action should have executed at end of UOW");
+			Assert.AreEqual(1, doAtEndOfPropChangedCount2, "DoAtEndOfPropChanged action should have executed at end of UOW");
+
+
+			Assert.AreEqual(UndoResult.kuresSuccess, m_actionHandler.Undo());
+			Assert.AreEqual(2, doAtEndOfPropChangedAlwaysCount, "Undo should have executed DoAtEndOfPropChangedAlways action");
+			Assert.AreEqual(1, doAtEndOfPropChangedCount1, "Undo should not have executed DoAtEndOfPropChanged action");
+			Assert.AreEqual(1, doAtEndOfPropChangedCount2, "Undo should not have executed DoAtEndOfPropChanged action");
+
+			Assert.AreEqual(UndoResult.kuresSuccess, m_actionHandler.Redo());
+			Assert.AreEqual(3, doAtEndOfPropChangedAlwaysCount, "Redo should have executed DoAtEndOfPropChangedAlways action");
+			Assert.AreEqual(1, doAtEndOfPropChangedCount1, "Redo should not have executed DoAtEndOfPropChanged action");
+			Assert.AreEqual(1, doAtEndOfPropChangedCount2, "Redo should not have executed DoAtEndOfPropChanged action");
+
+			UndoableUnitOfWorkHelper.Do("undo", "redo", m_actionHandler,
+				() => Cache.LanguageProject.MainCountry.set_String(english.Handle, "some other string"));
+			Assert.AreEqual(3, doAtEndOfPropChangedAlwaysCount, "DoAtEndOfPropChangedAlways action should not fire for a different task");
+			Assert.AreEqual(1, doAtEndOfPropChangedCount1, "DoAtEndOfPropChanged action should not fire for a different task");
+			Assert.AreEqual(1, doAtEndOfPropChangedCount2, "DoAtEndOfPropChanged action should not fire for a different task");
+
+			Assert.AreEqual(UndoResult.kuresSuccess, m_actionHandler.Undo());
+			Assert.AreEqual(3, doAtEndOfPropChangedAlwaysCount, "DoAtEndOfPropChangedAlways action should not fire undoing a different task");
+			Assert.AreEqual(1, doAtEndOfPropChangedCount1, "DoAtEndOfPropChanged action should not fire undoing a different task");
+			Assert.AreEqual(1, doAtEndOfPropChangedCount2, "DoAtEndOfPropChanged action should not fire undoing a different task");
+
+			Assert.AreEqual(UndoResult.kuresSuccess, m_actionHandler.Redo());
+			Assert.AreEqual(3, doAtEndOfPropChangedAlwaysCount, "DoAtEndOfPropChangedAlways action should not fire redoing a different task");
+			Assert.AreEqual(1, doAtEndOfPropChangedCount1, "DoAtEndOfPropChanged action should not fire redoing a different task");
+			Assert.AreEqual(1, doAtEndOfPropChangedCount2, "DoAtEndOfPropChanged action should not fire redoing a different task");
+
+			Assert.AreEqual(UndoResult.kuresSuccess, m_actionHandler.Undo());
+			Assert.AreEqual(3, doAtEndOfPropChangedAlwaysCount, "DoAtEndOfPropChangedAlways action should not fire undoing a different task");
+			Assert.AreEqual(1, doAtEndOfPropChangedCount1, "DoAtEndOfPropChanged action should not fire undoing a different task");
+			Assert.AreEqual(1, doAtEndOfPropChangedCount2, "DoAtEndOfPropChanged action should not fire undoing a different task");
+
+			Assert.AreEqual(UndoResult.kuresSuccess, m_actionHandler.Undo());
+			Assert.AreEqual(4, doAtEndOfPropChangedAlwaysCount, "DoAtEndOfPropChangedAlways action should fire undoing this task after undoing a different one");
+			Assert.AreEqual(1, doAtEndOfPropChangedCount1, "DoAtEndOfPropChanged action should not fire on Undo");
+			Assert.AreEqual(1, doAtEndOfPropChangedCount2, "DoAtEndOfPropChanged action should not fire on Undo");
+		}
+
+		/// <summary>
+		/// Test DoAtEndOfPropChanged
+		/// </summary>
+		[Test]
+		public void DoAtEndOfPropChanged_RollbackAbortsTasks()
+		{
+			var english = Cache.LanguageProject.CurrentAnalysisWritingSystems.First();
+			var firstNewValue = Cache.TsStrFactory.MakeString("Some Value", english.Handle);
+			var actionHandlerExtensions = (IActionHandlerExtensions)m_actionHandler;
+
+			using (var undoHelper = new UndoableUnitOfWorkHelper(m_actionHandler, "Some Test Value"))
+			{
+				Cache.LanguageProject.MainCountry.set_String(english.Handle, firstNewValue);
+				actionHandlerExtensions.DoAtEndOfPropChangedAlways(() => Assert.Fail("Should not do after-prop-changed always task"));
+				actionHandlerExtensions.DoAtEndOfPropChanged(() => Assert.Fail("Should not do after-prop-changed task"));
+				// undoHelper.RollBack = false; //without this disposing the helper will roll back.
+			}
+
+			using (var undoHelper = new UndoableUnitOfWorkHelper(m_actionHandler, "Some Test Value"))
+			{
+				Cache.LanguageProject.MainCountry.set_String(english.Handle, firstNewValue);
+				undoHelper.RollBack = false; // This time the change succeeds, but the actions were for the failed one, so they should not happen.
+			}
 		}
 	}
 }

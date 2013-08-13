@@ -54,12 +54,11 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_wsAlt = wsAlt;
 			m_fAssocPrev = fAssocPrev;
 			m_selProps = selProps;
-			m_hookup.PropChangedCompleted += m_hookup_PropChangedCompleted;
+			m_hookup.DoAtEndOfPropChanged(m_hookup_PropChangedCompleted);
 		}
 
-		void m_hookup_PropChangedCompleted(object sender, bool fromUndoRedo)
+		void m_hookup_PropChangedCompleted()
 		{
-			m_hookup.PropChangedCompleted -= m_hookup_PropChangedCompleted; // one-time event
 			try
 			{
 				if (m_rootb.Site != null)
@@ -127,7 +126,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_helper = helper;
 			m_sel = sel;
 			if (helper != null)
-				m_hookup.PropChangedCompleted += m_hookup_PropChangedCompleted;
+				m_hookup.DoAtEndOfPropChanged(m_hookup_PropChangedCompleted);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -136,9 +135,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// helper.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void m_hookup_PropChangedCompleted(object sender, bool fromUndoRedo)
+		private void m_hookup_PropChangedCompleted()
 		{
-			m_hookup.PropChangedCompleted -= m_hookup_PropChangedCompleted;
 			try
 			{
 				if (m_sel == null || !m_sel.IsValid)

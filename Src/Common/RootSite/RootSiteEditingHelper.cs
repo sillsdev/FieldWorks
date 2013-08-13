@@ -83,36 +83,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			Cache = cache;
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Executes in two distinct scenarios.
-		/// 1. If disposing is true, the method has been called directly
-		/// or indirectly by a user's code via the Dispose method.
-		/// Both managed and unmanaged resources can be disposed.
-		/// 2. If disposing is false, the method has been called by the
-		/// runtime from inside the finalizer and you should not reference (access)
-		/// other managed objects, as they already have been garbage collected.
-		/// Only unmanaged resources can be disposed.
-		/// </summary>
-		/// <param name="disposing"></param>
-		/// <remarks>
-		/// If any exceptions are thrown, that is fine.
-		/// If the method is being done in a finalizer, it will be ignored.
-		/// If it is thrown by client code calling Dispose,
-		/// it needs to be handled by fixing the bug.
-		/// If subclasses override this method, they should call the base implementation.
-		/// </remarks>
-		/// ------------------------------------------------------------------------------------
-		protected override void Dispose(bool disposing)
-		{
-			if (disposing)
-			{
-				if (m_cache != null && !m_cache.IsDisposed && m_cache.ActionHandlerAccessor is IActionHandlerExtensions)
-					((IActionHandlerExtensions)m_cache.ActionHandlerAccessor).PropChangedCompleted -= HandleSelectionChange;
-			}
-			base.Dispose(disposing);
-		}
-
 		#region Properties
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -554,7 +524,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			CheckDisposed();
 			if (m_cache != null)
 			{
-				((IActionHandlerExtensions)m_cache.ActionHandlerAccessor).PropChangedCompleted -= HandleSelectionChange;
 				if (m_cache.ActionHandlerAccessor.CurrentDepth > 0 ||
 					m_cache.ActionHandlerAccessor.SuppressSelections)
 				{
@@ -562,7 +531,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					// fire the deferred event, we don't use an out-of-date cached selection.
 					ClearCurrentSelection();
 
-					((IActionHandlerExtensions)m_cache.ActionHandlerAccessor).PropChangedCompleted += HandleSelectionChange;
+					((IActionHandlerExtensions)m_cache.ActionHandlerAccessor).DoAtEndOfPropChanged(HandleSelectionChange);
 					return;
 				}
 			}
@@ -573,13 +542,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Handles the selection changed.
 		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="fromUndoRedo">True if the event was fired from an undo (or rollback) or
-		/// redo, false otherwise.</param>
 		/// ------------------------------------------------------------------------------------
-		private void HandleSelectionChange(object sender, bool fromUndoRedo)
+		private void HandleSelectionChange()
 		{
-			((IActionHandlerExtensions)m_cache.ActionHandlerAccessor).PropChangedCompleted -= HandleSelectionChange;
+			if (IsDisposed)
+				return; // there is now no way for Dispose() to remove the task that requests this.
 			// At the end of a unit-of-work, the rootbox may or may not have a selection. If it
 			// does, it will (probably) be the same one that was passed to the last call to
 			// SelectionChanged, and we can respond to the change. If not, then a selection will
@@ -614,7 +581,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		protected override void MergeLastTwoUnitsOfWork()
 		{
-			((IActionHandlerExtensions)Cache.ActionHandlerAccessor).PropChangedCompleted += InvokeMergeLastTwoUnitsOfWork;
+			((IActionHandlerExtensions)Cache.ActionHandlerAccessor).DoAtEndOfPropChanged(InvokeMergeLastTwoUnitsOfWork);
 			m_undoCountBeforeMerge = Cache.ActionHandlerAccessor.UndoableSequenceCount;
 		}
 
@@ -623,21 +590,12 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Merges the last two units of work (when they are completely done and everyone has
 		/// been notified of the property changes).
 		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="fromUndoRedo">True if the event was fired from an undo (or rollback) or
-		/// redo, false otherwise.</param>
 		/// ------------------------------------------------------------------------------------
-		private void InvokeMergeLastTwoUnitsOfWork(object sender, bool fromUndoRedo)
+		private void InvokeMergeLastTwoUnitsOfWork()
 		{
-			Debug.Assert(!fromUndoRedo);
-
-			((IActionHandlerExtensions)Cache.ActionHandlerAccessor).PropChangedCompleted -= InvokeMergeLastTwoUnitsOfWork;
-			if (!fromUndoRedo)
-			{
-				// complex selection that started this may not have produced any changes
-				if (Cache.ActionHandlerAccessor.UndoableSequenceCount > m_undoCountBeforeMerge)
-					((IActionHandlerExtensions)Cache.ActionHandlerAccessor).MergeLastTwoUnitsOfWork();
-			}
+			// complex selection that started this may not have produced any changes
+			if (Cache.ActionHandlerAccessor.UndoableSequenceCount > m_undoCountBeforeMerge)
+				((IActionHandlerExtensions) Cache.ActionHandlerAccessor).MergeLastTwoUnitsOfWork();
 		}
 
 		/// ------------------------------------------------------------------------------------

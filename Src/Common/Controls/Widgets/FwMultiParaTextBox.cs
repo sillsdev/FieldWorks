@@ -447,7 +447,7 @@ namespace SIL.FieldWorks.Common.Widgets
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:MultiParaBoxEditingHelper"/> class.
+		/// Initializes a new instance of the class.
 		/// </summary>
 		/// <param name="innerFwTextBox">The inner fw text box.</param>
 		/// ------------------------------------------------------------------------------------
@@ -558,8 +558,16 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			if (!IsUndoTaskActive)
 				throw new InvalidOperationException();
-			if (PropChangedCompleted != null)
-				PropChangedCompleted(this, false);
+			DoEndPropChangedTasks();
+		}
+
+		List<Action> m_endPropChangedTasks = new List<Action>();
+		private void DoEndPropChangedTasks()
+		{
+			var tasks = m_endPropChangedTasks;
+			m_endPropChangedTasks = new List<Action>(); // reset in case a task starts a new one
+			foreach (var task in tasks)
+				task();
 		}
 
 		public bool CanRedo()
@@ -621,8 +629,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			if (!IsUndoTaskActive)
 				throw new InvalidOperationException();
-			if (PropChangedCompleted != null)
-				PropChangedCompleted(this, false);
+			DoEndPropChangedTasks();
 		}
 
 		public string GetRedoText()
@@ -746,12 +753,18 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 		}
 
-		public event PropChangedCompletedDelegate PropChangedCompleted;
+		public void DoAtEndOfPropChanged(Action task)
+		{
+			m_endPropChangedTasks.Add(task);
+		}
 
-#pragma warning disable 67
+		public void DoAtEndOfPropChangedAlways(Action task)
+		{
+			throw new NotImplementedException();
+		}
+#pragma warning disable 67 // event is required to fulfil interface, but not used, so disable unused warning
 		public event DoingUndoOrRedoDelegate DoingUndoOrRedo;
 #pragma warning restore 67
-
 		#endregion
 	}
 	#endregion

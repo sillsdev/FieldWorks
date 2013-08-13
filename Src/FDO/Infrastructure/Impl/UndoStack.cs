@@ -101,6 +101,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		// Positive values count unsaved bundles in m_undoBundles.
 		// Negative values count unsaved bundles in m_redoBundles, that is, things Undone since the last Save.
 		private int m_countUnsavedBundles;
+
+		private List<Action> m_actionsToDoAtEndOfPropChanged = new List<Action>();
 		#endregion
 
 		#region Constructor
@@ -350,28 +352,41 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				}
 			}
 
+			var oldCurrentBundle = m_currentBundle;
 			m_currentBundle = null;
 
 			m_uowService.CurrentProcessingState = UnitOfWorkService.FdoBusinessTransactionState.ReadyForBeginTask;
 
 			// Do this after we are back in a safe state to do a new UOW, if necessary.
-			RaisePropChangedCompleted(false);
+			DoTasksForEndOfPropChanged(oldCurrentBundle, false);
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Raises the prop changed completed event.
 		/// </summary>
-		/// <param name="fromUndoRedo">True if the event was fired from an undo (or rollback) or
-		/// redo, false otherwise.</param>
+		/// <param name="uow">The unit of work we are doing, undoing, or redoing.</param>
+		/// <param name="fromUndoRedo">True if the method was called for an undo or
+		/// redo, false for the original action.</param>
 		/// ------------------------------------------------------------------------------------
-		private void RaisePropChangedCompleted(bool fromUndoRedo)
+		private void DoTasksForEndOfPropChanged(FdoUnitOfWork uow, bool fromUndoRedo)
 		{
 			((CmObjectRepository)m_uowService.ObjectRepository).Cache.ThreadHelper.Invoke(() =>
-			{
-				if (PropChangedCompleted != null)
-					PropChangedCompleted(this, fromUndoRedo);
-			});
+				{
+					if (!fromUndoRedo)
+					{
+						// These notifications must be sent only once.
+						// In particular they must not be sent again if one of the tasks in the list makes a new UOW.
+						// Since this method will execute at the end of such a task, we must make sure that there is
+						// a fresh m_actionsToDoAtEndOfPropChanged for any such UOW so it will not see our list.
+						var temp = m_actionsToDoAtEndOfPropChanged;
+						m_actionsToDoAtEndOfPropChanged = new List<Action>();
+						foreach (var task in temp)
+							task();
+					}
+					foreach (var task in uow.ActionsToDoAtEndOfPropChanged)
+						task();
+				});
 		}
 
 		/// <summary>
@@ -601,10 +616,9 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			m_uowService.UndoOrRedoInProgress = true;
 			m_uowService.ObjectRepository.ClearCachesOnUndoRedo();
 			UndoResult res;
+			var undoBundle = m_undoBundles.Peek();
 			try
 			{
-				var undoBundle = m_undoBundles.Peek();
-
 				m_uowService.m_lock.EnterWriteLock();
 				try
 				{
@@ -626,7 +640,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			{
 				m_uowService.UndoOrRedoInProgress = false;
 			}
-			RaisePropChangedCompleted(true);
+			DoTasksForEndOfPropChanged(undoBundle, true);
 
 			return res;
 
@@ -653,10 +667,9 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			m_uowService.UndoOrRedoInProgress = true;
 			m_uowService.ObjectRepository.ClearCachesOnUndoRedo();
 			UndoResult res;
+			var redoBundle = m_redoBundles.Peek();
 			try
 			{
-				var redoBundle = m_redoBundles.Peek();
-
 				m_uowService.m_lock.EnterWriteLock();
 				try
 				{
@@ -677,7 +690,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				m_uowService.UndoOrRedoInProgress = false;
 			}
 
-			RaisePropChangedCompleted(true);
+			DoTasksForEndOfPropChanged(redoBundle, true);
 
 			return res;
 		}
@@ -708,7 +721,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 			m_currentBundle.Rollback();
 			m_currentBundle = null;
-			RaisePropChangedCompleted(true);
+			m_actionsToDoAtEndOfPropChanged.Clear(); // don't do them on some subsequent task
 			m_uowService.CurrentProcessingState = UnitOfWorkService.FdoBusinessTransactionState.ReadyForBeginTask;
 		}
 
@@ -1022,7 +1035,15 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		#region IActionHandlerExtensions Members
 
-		public event PropChangedCompletedDelegate PropChangedCompleted;
+		public void DoAtEndOfPropChanged(Action task)
+		{
+			m_actionsToDoAtEndOfPropChanged.Add(task);
+		}
+
+		public void DoAtEndOfPropChangedAlways(Action task)
+		{
+			m_currentBundle.ActionsToDoAtEndOfPropChanged.Add(task);
+		}
 
 		public event DoingUndoOrRedoDelegate DoingUndoOrRedo;
 

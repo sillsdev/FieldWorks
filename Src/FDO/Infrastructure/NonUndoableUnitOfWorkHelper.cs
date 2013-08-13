@@ -62,15 +62,13 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 			m_originalHandler = actionHandler; // as in regular constructor
 			m_postponedTask = task; // remember the task we have to do
 			// Arrange to be notified when we can do it
-			((IActionHandlerExtensions)m_actionHandler).PropChangedCompleted += NonUndoableUnitOfWorkHelper_PropChangedCompleted;
+			((IActionHandlerExtensions)m_actionHandler).DoAtEndOfPropChanged(NonUndoableUnitOfWorkHelper_PropChangedCompleted);
 		}
 
 		private Action m_postponedTask;
 
-		void NonUndoableUnitOfWorkHelper_PropChangedCompleted(object sender, bool fromUndoRedo)
+		void NonUndoableUnitOfWorkHelper_PropChangedCompleted()
 		{
-			// Don't want to be notified again.
-			((IActionHandlerExtensions)m_actionHandler).PropChangedCompleted -= NonUndoableUnitOfWorkHelper_PropChangedCompleted;
 			PrepareForTask();
 			m_postponedTask();
 			NoteSuccessfulCompletion();
