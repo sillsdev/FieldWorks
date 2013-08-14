@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000061">
+
+	<rt class="CmPossibilityList" guid="5250350b-83fb-432b-a24f-a8dad580d350">
+		<ItemClsid val="27" />
+		<Name>
+			<AUni ws="en">Custom test list</AUni>
+		</Name>
+	</rt>
+
+	<rt class="CmPossibilityList" guid="1e4c4389-7835-408f-9408-c7f1c488d737">
+		<ItemClsid val="27" />
+		<Name>
+			<AUni ws="en">Custom test list</AUni>
+		</Name>
+	</rt>
+</languageproject>

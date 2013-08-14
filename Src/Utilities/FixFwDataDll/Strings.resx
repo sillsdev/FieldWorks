@@ -214,4 +214,8 @@
     <value>Missing default value type added to {0}</value>
     <comment>{0} will be a guid.</comment>
   </data>
+  <data name="ksRepairingDuplicateListName" xml:space="preserve">
+    <value>Repairing duplicate lists both named "{0}". "{1}" kept the original name and "{2}"  was renamed to "{3}"</value>
+    <comment>{1} and {2} will be guids</comment>
+  </data>
 </root>
