@@ -597,4 +597,10 @@ Click 'Cancel' to cancel Send/Receive.</value>
     <comment>Title of message box displayed if an error occurred unexpectedly during the Send/Receive lift while the export of the LIFT data was going on.
 </comment>
   </data>
+  <data name="kProjectAlreadyHasLiftRepo" xml:space="preserve">
+    <value>This project has already been linked to a Lexicon (LIFT) repository. It is not possible to use Get and Merge with another Lexicon repository.</value>
+  </data>
+  <data name="kCannotDoGetAndMergeAgain" xml:space="preserve">
+    <value>Second Get and Merge not possible</value>
+  </data>
 </root>

@@ -12,7 +12,7 @@ using Palaso.Lift;
 using Palaso.Lift.Migration;
 using Palaso.Lift.Parsing;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Framework.DetailControls;
+using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
@@ -156,10 +156,16 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		/// <summary>
-		/// Handles the "Get and _Merge Lexicon with this Projec" menu item.
+		/// Handles the "Get and _Merge Lexicon with this Project" menu item.
 		/// </summary>
 		public bool OnObtainLiftProject(object commandObject)
 		{
+			if (Directory.Exists(GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder)))
+			{
+				MessageBox.Show(((FwApp)_mediator.PropertyTable.GetValue("App")).ActiveMainWindow, LexEdStrings.kProjectAlreadyHasLiftRepo, LexEdStrings.kCannotDoGetAndMergeAgain, MessageBoxButtons.OK);
+				return true;
+			}
+
 			StopParser();
 			bool dummy;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, null, FLExBridgeHelper.ObtainLift, null, FDOBackendProvider.ModelVersion, "0.13",
