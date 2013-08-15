@@ -373,6 +373,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
+		/// Answer whether the project appears to have a FLEx repo. This is currently determined by its having a .hg folder.
+		/// </summary>
+		/// <param name="projectFolderPath">Path to the project folder</param>
+		/// <returns></returns>
+		public static bool DoesProjectHaveFlexRepo(string projectFolderPath)
+		{
+			return Directory.Exists(Path.Combine(projectFolderPath, ".hg"));
+		}
+
+		/// <summary>
 		/// Returns the full path and filename of the FixFwData executable
 		/// </summary>
 		/// <returns></returns>
