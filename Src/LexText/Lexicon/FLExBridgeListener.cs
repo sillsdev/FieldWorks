@@ -1452,8 +1452,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private static void CheckForFlexBridgeInstalled(UIItemDisplayProperties display)
 		{
-			var fullName = FLExBridgeHelper.FullFieldWorksBridgePath();
-			display.Enabled = FileUtils.FileExists(fullName); // Flex Bridge exe has to exist
+			display.Enabled = FLExBridgeHelper.IsFlexBridgeInstalled();
 			display.Visible = true; // Always visible. Cf. LT-13885
 		}
 

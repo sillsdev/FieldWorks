@@ -363,6 +363,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
+		/// Determines if FLExBridge is installed.
+		/// </summary>
+		/// <returns><c>true</c> if is flex bridge installed; otherwise, <c>false</c>.</returns>
+		public static bool IsFlexBridgeInstalled()
+		{
+			var fullName = FLExBridgeHelper.FullFieldWorksBridgePath();
+			return FileUtils.FileExists(fullName); // Flex Bridge exe has to exist
+		}
+
+		/// <summary>
 		/// Returns the full path and filename of the FixFwData executable
 		/// </summary>
 		/// <returns></returns>

@@ -111,11 +111,9 @@ namespace SIL.FieldWorks
 			helpProvider.HelpNamespace = DirectoryFinder.FWCodeDirectory + m_helpTopicProvider.GetHelpString("UserHelpFile");
 			helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(m_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
-			receiveButton.Enabled = ClientServerServices.Current.Local.DefaultBackendType !=
-								FDOBackendProviderType.kDb4oClientServer;
-			// Disable button for unimplemented feature. FWNX-991.
-			if (MiscUtils.IsUnix)
-				receiveButton.Enabled = false;
+			receiveButton.Enabled =
+				ClientServerServices.Current.Local.DefaultBackendType != FDOBackendProviderType.kDb4oClientServer &&
+					FLExBridgeHelper.IsFlexBridgeInstalled();
 		}
 
 		public bool AppIsFlex
