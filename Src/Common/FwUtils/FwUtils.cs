@@ -75,13 +75,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				// If we have already determined that TE is installed (or are forcing it to
-				// pretend it is for the sake of tests, we don't need to re-test for TE.
-				if (s_fIsTEInstalled != null)
-					return (bool)s_fIsTEInstalled;
-
-				// see if we can find the program in the installation directory.
-				s_fIsTEInstalled = File.Exists(DirectoryFinder.TeExe);
+				if (s_fIsTEInstalled == null)
+					s_fIsTEInstalled = File.Exists(DirectoryFinder.TeExe);
 				return (bool)s_fIsTEInstalled;
 			}
 		}
