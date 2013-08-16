@@ -15,9 +15,13 @@
 	<ItemGroup>
 		<Fragments Include="$(OutDir)/../../DistFiles/*.fragment.manifest"/>
 	</ItemGroup>
-	<Target Name="RegFree" Condition="'$(OS)'=='Windows_NT'" Inputs="$(Executable)" Outputs="$(Executable).manifest">
+	<Target Name="CreateManifest" Condition="'$(OS)'=='Windows_NT'" Inputs="@(Dlls)" Outputs="$(Executable).manifest">
 		<RegFree Executable="$(Executable)" Dlls="@(Dlls)" Fragments="@(Fragments)"
 			NoTypeLib="$(OutDir)Graphite.dll" />
+	</Target>
+	<Target Name="AttachManifest" Condition="'$(OS)'=='Windows_NT'" DependsOnTargets="CreateManifest">
 		<Exec Command="mt.exe -outputresource:$(Executable) -manifest $(Executable).manifest"/>
+	</Target>
+	<Target Name="RegFree" Condition="'$(OS)'=='Windows_NT'" DependsOnTargets="CreateManifest;AttachManifest">
 	</Target>
 </Project>
