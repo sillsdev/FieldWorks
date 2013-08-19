@@ -23,13 +23,34 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	public class MultiStringSlice : ViewPropertySlice
 	{
 		public MultiStringSlice(ICmObject obj, int flid, int ws, int wsOptional, bool forceIncludeEnglish, bool editable, bool spellCheck)
-			: base(new LabeledMultiStringView(obj.Hvo, flid, ws, wsOptional, forceIncludeEnglish, editable, spellCheck), obj, flid)
 		{
-			var view = (LabeledMultiStringView) Control;
-			view.Display += view_Display;
-			view.RightMouseClickedEvent += HandleRightMouseClickedEvent;
-			view.LostFocus += view_LostFocus;
+			var view = new LabeledMultiStringView(obj.Hvo, flid, ws, wsOptional, forceIncludeEnglish, editable, spellCheck);
+			Control = view;
+#if _DEBUG
+			Control.CheckForIllegalCrossThreadCalls = true;
+#endif
+			InternalInitialize();
+			Reuse(obj, flid);
+			view.InnerView.Display += view_Display;
+			view.InnerView.RightMouseClickedEvent += HandleRightMouseClickedEvent;
+			view.InnerView.LostFocus += view_LostFocus;
 		}
+
+		/// <summary>
+		/// Get the rootsite. It's important to use this method to get the rootsite, not to
+		/// assume that the control is a rootsite, because some classes override and insert
+		/// another layer of control, with the root site being a child.
+		/// </summary>
+		public override RootSite RootSite
+		{
+			get
+			{
+				CheckDisposed();
+				var view = (LabeledMultiStringView)Control;
+				return (RootSite)view.InnerView;
+			}
+		}
+
 		/// <summary>
 		/// Reset the slice to the state as if it had been constructed with these arguments. (It is going to be
 		/// reused for a different record.)

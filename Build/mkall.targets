@@ -433,7 +433,7 @@
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt267/.lastSuccessful/ChorusHub.exe" LocalFilename="$(fwrt)/Downloads/ChorusHub.exe"/>
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt267/.lastSuccessful/LibChorus.dll" LocalFilename="$(fwrt)/Downloads/LibChorus.dll"/>
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt267/.lastSuccessful/Vulcan.Uczniowie.HelpProvider.dll" LocalFilename="$(fwrt)/Downloads/Vulcan.Uczniowie.HelpProvider.dll"/>
-		<!-- Palaso dlls. bt33 is the palaso-lucid32-DefaultMono branch for Palaso. Update when appropriate. -->
+		<!-- Palaso dlls. bt33 is the palaso-precise32-DefaultMono branch for Palaso. Update when appropriate. -->
 		<Message Text="Downloading latest successful artifacts from Palaso DefaultMono build."/>
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt33/.lastSuccessful/Palaso.dll" LocalFilename="$(fwrt)/Downloads/Palaso.dll"/>
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt33/.lastSuccessful/Palaso.Lift.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Lift.dll"/>

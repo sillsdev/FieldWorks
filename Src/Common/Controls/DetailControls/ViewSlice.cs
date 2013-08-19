@@ -32,6 +32,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// ------------------------------------------------------------------------------------
 		public ViewSlice(SimpleRootSite ctrlT): base(ctrlT)
 		{
+			InternalInitialize();
+		}
+
+		protected void InternalInitialize()
+		{
 			RootSite.Enter += new EventHandler(ViewSlice_Enter);
 		}
 
