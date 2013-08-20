@@ -603,4 +603,10 @@ Click 'Cancel' to cancel Send/Receive.</value>
   <data name="kCannotDoGetAndMergeAgain" xml:space="preserve">
     <value>Second Get and Merge not possible</value>
   </data>
+  <data name="ksAllNonAsciiProjectNameWarning" xml:space="preserve">
+    <value>The current Project name contains non-ASCII characters. This currently prevents use of the Send/Receive project function.
+Please use a name that only contains ASCII characters.
+You may choose a different project name in FieldWorks Project Properties.</value>
+    <comment>used when only non-Ascii characters are found in the project name on Send/Receive.</comment>
+  </data>
 </root>

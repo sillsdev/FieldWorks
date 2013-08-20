@@ -20,8 +20,6 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Linq;
 using System.Diagnostics;
-using System.Reflection;
-
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
@@ -999,6 +997,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					MessageBoxButtons.YesNo);
 			}
 
+			if (DidProjectTabChange())
+			{
+				CheckForAndWarnAboutNonAsciiName(m_txtProjName.Text);
+			}
+
 			using (new WaitCursor(this))
 			{
 				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
@@ -1020,6 +1023,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				}
 			}
 			Close();
+		}
+
+		private void CheckForAndWarnAboutNonAsciiName(string newProjName)
+		{
+			if (FwNewLangProject.CheckForNonAsciiProjectName(newProjName))
+			{
+				MessageBox.Show(this, FwCoreDlgs.ksNonAsciiProjectNameWarning, FwCoreDlgs.ksWarning,
+					MessageBoxButtons.OK, MessageBoxIcon.Information);
+			}
 		}
 
 		private bool DidProjectTabChange()

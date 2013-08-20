@@ -1251,7 +1251,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				var revisedProjName = Unicode.RemoveNonAsciiCharsFromString(Cache.ProjectId.Name);
 				if (revisedProjName == string.Empty)
-					return true; // The whole pre-existing project name is non-Ascii characters!
+				{
+					// The whole pre-existing project name is non-Ascii characters!
+					DisplayAllNonAsciiComplaint();
+					return true;
+				}
 				if (DisplayNonAsciiWarning(revisedProjName) == DialogResult.Cancel)
 					return true;
 				// Rename Project
@@ -1337,6 +1341,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			return MessageBox.Show(string.Format(LexEdStrings.ksNonAsciiProjectNameWarning, revisedProjName), LexEdStrings.ksWarning,
 					MessageBoxButtons.OKCancel, MessageBoxIcon.Information, MessageBoxDefaultButton.Button2);
+		}
+
+		private void DisplayAllNonAsciiComplaint()
+		{
+			MessageBox.Show(LexEdStrings.ksAllNonAsciiProjectNameWarning, LexEdStrings.ksWarning,
+					MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 
 		private static bool CheckForExistingFileName(string projectFolder, string revisedFileName)

@@ -214,6 +214,17 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The current Project name contains non-ASCII characters. This currently prevents use of the Send/Receive project function.
+        ///Please use a name that only contains ASCII characters.
+        ///You may choose a different project name in FieldWorks Project Properties..
+        /// </summary>
+        internal static string ksAllNonAsciiProjectNameWarning {
+            get {
+                return ResourceManager.GetString("ksAllNonAsciiProjectNameWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Alternate Forms.
         /// </summary>
         internal static string ksAlternateForms {
