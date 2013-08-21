@@ -614,11 +614,25 @@ namespace SIL.HermitCrab
 		{
 			string alloId = alloNode.GetAttribute("id");
 			string shapeStr = alloNode.SelectSingleNode("PhoneticShape").InnerText;
-			PhoneticShape shape = stratum.CharacterDefinitionTable.ToPhoneticShape(shapeStr, ModeType.SYNTHESIS);
-			if (shape == null || shape.IsAllBoundaries)
+			PhoneticShape shape;
+			try
+			{
+				shape = stratum.CharacterDefinitionTable.ToPhoneticShape(shapeStr, ModeType.SYNTHESIS);
+			}
+			catch (MissingPhoneticShapeException mpse)
 			{
 				LoadException le = new LoadException(LoadException.LoadErrorType.INVALID_ENTRY_SHAPE, this,
-					string.Format(HCStrings.kstidInvalidLexEntryShape, shapeStr, entry.ID, stratum.CharacterDefinitionTable.ID));
+					string.Format(HCStrings.kstidInvalidLexEntryShape, shapeStr, entry.ID, stratum.CharacterDefinitionTable.ID, mpse.Position + 1, shapeStr.Substring(mpse.Position)));
+				le.Data["shape"] = shapeStr;
+				le.Data["charDefTable"] = stratum.CharacterDefinitionTable.ID;
+				le.Data["entry"] = entry.ID;
+				throw le;
+			}
+
+			if (shape.IsAllBoundaries)
+			{
+				LoadException le = new LoadException(LoadException.LoadErrorType.INVALID_ENTRY_SHAPE, this,
+					string.Format(HCStrings.kstidInvalidLexEntryShapeAllBoundaries, shapeStr, entry.ID, stratum.CharacterDefinitionTable.ID));
 				le.Data["shape"] = shapeStr;
 				le.Data["charDefTable"] = stratum.CharacterDefinitionTable.ID;
 				le.Data["entry"] = entry.ID;
@@ -1189,16 +1203,21 @@ namespace SIL.HermitCrab
 					case "InsertSegments":
 						CharacterDefinitionTable charDefTable = GetCharDefTable(partElem.GetAttribute("characterTable"));
 						string shapeStr = partElem.SelectSingleNode("PhoneticShape").InnerText;
-						PhoneticShape pshape = charDefTable.ToPhoneticShape(shapeStr, ModeType.SYNTHESIS);
-						if (pshape == null)
+						PhoneticShape pshape;
+						try
+						{
+							pshape = charDefTable.ToPhoneticShape(shapeStr, ModeType.SYNTHESIS);
+						}
+						catch (MissingPhoneticShapeException mpse)
 						{
 							LoadException le = new LoadException(LoadException.LoadErrorType.INVALID_RULE_SHAPE, this,
-								string.Format(HCStrings.kstidInvalidRuleShape, shapeStr, ruleId, charDefTable.ID));
+								string.Format(HCStrings.kstidInvalidRuleShape, shapeStr, ruleId, charDefTable.ID, mpse.Position+1, shapeStr.Substring(mpse.Position)));
 							le.Data["shape"] = shapeStr;
 							le.Data["charDefTable"] = charDefTable.ID;
 							le.Data["rule"] = ruleId;
 							throw le;
 						}
+
 						rhsList.Add(new InsertSegments(pshape));
 						break;
 				}
@@ -1509,15 +1528,20 @@ namespace SIL.HermitCrab
 		{
 			CharacterDefinitionTable charDefTable = GetCharDefTable(ctxtsNode.GetAttribute("characterTable"));
 			string shapeStr = ctxtsNode.SelectSingleNode("PhoneticShape").InnerText;
-			PhoneticShape shape = charDefTable.ToPhoneticShape(shapeStr, ModeType.SYNTHESIS);
-			if (shape == null)
+			PhoneticShape shape;
+			try
+			{
+				shape = charDefTable.ToPhoneticShape(shapeStr, ModeType.SYNTHESIS);
+			}
+			catch (MissingPhoneticShapeException mpse)
 			{
 				LoadException le = new LoadException(LoadException.LoadErrorType.INVALID_RULE_SHAPE, this,
-					string.Format(HCStrings.kstidInvalidPseqShape, shapeStr, charDefTable.ID));
+					string.Format(HCStrings.kstidInvalidPseqShape, shapeStr, charDefTable.ID, mpse.Position + 1, shapeStr.Substring(mpse.Position)));
 				le.Data["shape"] = shapeStr;
 				le.Data["charDefTable"] = charDefTable.ID;
 				throw le;
 			}
+
 			List<PhoneticPatternNode> nodes = new List<PhoneticPatternNode>();
 			for (PhoneticShapeNode node = shape.Begin; node != shape.Last; node = node.Next)
 			{

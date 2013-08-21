@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!--
 	Microsoft ResX Schema
@@ -130,16 +130,16 @@
 	<value>'{0}' field is invalid in '{1}' {2}.</value>
   </data>
   <data name="kstidInvalidLexEntryShape" xml:space="preserve">
-	<value>Failure to translate shape '{0}' of lexical entry '{1}' into a phonetic shape using character table '{2}'.</value>
+	<value>Failure to translate shape '{0}' of lexical entry '{1}' into a phonetic shape using character table '{2}'.  The missing phonetic shape is at or near character number {3}: '{4}'.</value>
   </data>
   <data name="kstidInvalidRuleShape" xml:space="preserve">
-	<value>Failure to translate shape '{0}' of rule '{1}' into a phonetic shape using character table '{2}'.</value>
+	<value>Failure to translate shape '{0}' of rule '{1}' into a phonetic shape using character table '{2}'.  The missing phonetic shape is at or near character number {3}: '{4}'.</value>
   </data>
   <data name="kstidInvalidRuleSeg" xml:space="preserve">
 	<value>Segment or boundary marker '{0}' is not defined in character definition table '{2}'.</value>
   </data>
   <data name="kstidInvalidWord" xml:space="preserve">
-	<value>Failure to translate input word '{0}' into a phonetic shape using character table '{1}'.</value>
+	<value>Failure to translate input word '{0}' into a phonetic shape using character table '{1}'.  The missing phonetic shape is at or near character number {2}: '{3}'.</value>
   </data>
   <data name="kstidLLNotMember" xml:space="preserve">
 	<value>{0} is not a member of this collection.</value>
@@ -292,7 +292,7 @@
 	<value>Successful Parse [Output: {0}]</value>
   </data>
   <data name="kstidInvalidPseqShape" xml:space="preserve">
-	<value>Failure to translate shape '{0}' in a phonetic sequence into a phonetic shape using character table '{1}'.</value>
+	<value>Failure to translate shape '{0}' in a phonetic sequence into a phonetic shape using character table '{1}'.  The missing phonetic shape is at or near character number {2}: '{3}'.</value>
   </data>
   <data name="kstidInvalidSubruleType" xml:space="preserve">
 	<value>Invalid subrule defined in rule '{0}'.</value>
@@ -314,5 +314,8 @@
   </data>
   <data name="kstidTracePhonologicalRuleSynthesisRequiredPOS" xml:space="preserve">
 	<value>Phonological Rule Synthesis Required POS missing [Stem POS: {0}, Required POSes: {1}]</value>
+  </data>
+  <data name="kstidInvalidLexEntryShapeAllBoundaries" xml:space="preserve">
+    <value>Failure to translate shape '{0}' of lexical entry '{1}' into a phonetic shape using character table '{2}'.  The shape is all boundaries.</value>
   </data>
 </root>

@@ -143,7 +143,7 @@
 	<value>The phoneme {0} of affix {1} is not defined.  Please make sure all phonemes in all allomorphs of all affixes have been defined.</value>
   </data>
   <data name="ksHCInvalidWordform" xml:space="preserve">
-	<value>At least one of the phonemes in the word {0} is not defined.  Please make sure all phonemes in the word have been defined.</value>
+	<value>Somewhere in the word '{0}', beginning with character number {1} – that is, in the part of the word '{2}' – there is at least one undefined phoneme.  Please make sure all phonemes in the word have been defined.</value>
   </data>
   <data name="ksHCUninstFeature" xml:space="preserve">
 	<value>A phonological rule is using a feature variable for feature {0}, but there is no corresponding feature variable in the environment.</value>

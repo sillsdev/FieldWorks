@@ -992,11 +992,25 @@ namespace SIL.HermitCrab
 			if (stratum == null)
 				throw CreateUndefinedObjectException(string.Format(HCStrings.kstidUnknownLexEntryStratum, id, stratumName), stratumName);
 			entry.Stratum = stratum;
-			PhoneticShape pshape = stratum.CharacterDefinitionTable.ToPhoneticShape(shapeStr, ModeType.SYNTHESIS);
-			if (pshape == null || pshape.IsAllBoundaries)
+			PhoneticShape pshape;
+			try
+			{
+				pshape = stratum.CharacterDefinitionTable.ToPhoneticShape(shapeStr, ModeType.SYNTHESIS);
+			}
+			catch (MissingPhoneticShapeException mpse)
 			{
 				LoadException le = new LoadException(LoadException.LoadErrorType.INVALID_ENTRY_SHAPE, this,
-					string.Format(HCStrings.kstidInvalidLexEntryShape, shapeStr, id, stratum.CharacterDefinitionTable.ID));
+					string.Format(HCStrings.kstidInvalidLexEntryShape, shapeStr, id, stratum.CharacterDefinitionTable.ID, mpse.Position + 1, shapeStr.Substring(mpse.Position)));
+				le.Data["shape"] = shapeStr;
+				le.Data["charDefTable"] = stratum.CharacterDefinitionTable.ID;
+				le.Data["entry"] = entry.ID;
+				throw le;
+			}
+
+			if (pshape.IsAllBoundaries)
+			{
+				LoadException le = new LoadException(LoadException.LoadErrorType.INVALID_ENTRY_SHAPE, this,
+					string.Format(HCStrings.kstidInvalidLexEntryShapeAllBoundaries, shapeStr, id, stratum.CharacterDefinitionTable.ID));
 				le.Data["shape"] = shapeStr;
 				le.Data["charDefTable"] = stratum.CharacterDefinitionTable.ID;
 				le.Data["entry"] = entry.ID;
@@ -1570,16 +1584,21 @@ namespace SIL.HermitCrab
 						string shapeStr = list[0] as string;
 						string ctableName = list[1] as string;
 						CharacterDefinitionTable charDefTable = GetCharDefTable(ctableName);
-						PhoneticShape pshape = charDefTable.ToPhoneticShape(shapeStr, ModeType.SYNTHESIS);
-						if (pshape == null)
+						PhoneticShape pshape;
+						try
+						{
+							pshape = charDefTable.ToPhoneticShape(shapeStr, ModeType.SYNTHESIS);
+						}
+						catch (MissingPhoneticShapeException mpse)
 						{
 							LoadException le = new LoadException(LoadException.LoadErrorType.INVALID_RULE_SHAPE, this,
-								string.Format(HCStrings.kstidInvalidRuleShape, shapeStr, ruleName, ctableName));
+								string.Format(HCStrings.kstidInvalidRuleShape, shapeStr, ruleName, ctableName, mpse.Position + 1, shapeStr.Substring(mpse.Position)));
 							le.Data["shape"] = shapeStr;
 							le.Data["charDefTable"] = charDefTable.ID;
 							le.Data["rule"] = ruleName;
 							throw le;
 						}
+
 						rhsList.Add(new InsertSegments(pshape));
 					}
 				}
