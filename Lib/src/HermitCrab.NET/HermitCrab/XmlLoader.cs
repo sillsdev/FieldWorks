@@ -368,8 +368,7 @@ namespace SIL.HermitCrab
 					}
 					catch (LoadException le)
 					{
-						if (m_quitOnError)
-							throw le;
+						HandleLoadException(le);
 					}
 				}
 			}
@@ -428,8 +427,7 @@ namespace SIL.HermitCrab
 				}
 				catch (LoadException le)
 				{
-					if (m_quitOnError)
-						throw le;
+					HandleLoadException(le);
 				}
 			}
 
@@ -448,8 +446,7 @@ namespace SIL.HermitCrab
 					}
 					catch (LoadException le)
 					{
-						if (m_quitOnError)
-							throw le;
+						HandleLoadException(le);
 					}
 					try
 					{
@@ -457,8 +454,7 @@ namespace SIL.HermitCrab
 					}
 					catch (LoadException le)
 					{
-						if (m_quitOnError)
-							throw le;
+						HandleLoadException(le);
 					}
 				}
 
@@ -476,8 +472,7 @@ namespace SIL.HermitCrab
 						}
 						catch (LoadException le)
 						{
-							if (m_quitOnError)
-								throw le;
+							HandleLoadException(le);
 						}
 						try
 						{
@@ -485,8 +480,7 @@ namespace SIL.HermitCrab
 						}
 						catch (LoadException le)
 						{
-							if (m_quitOnError)
-								throw le;
+							HandleLoadException(le);
 						}
 					}
 				}
@@ -511,8 +505,7 @@ namespace SIL.HermitCrab
 				}
 				catch (LoadException le)
 				{
-					if (m_quitOnError)
-						throw le;
+					HandleLoadException(le);
 				}
 			}
 		}
@@ -598,8 +591,7 @@ namespace SIL.HermitCrab
 				}
 				catch (LoadException le)
 				{
-					if (m_quitOnError)
-						throw le;
+					HandleLoadException(le);
 				}
 			}
 
@@ -607,6 +599,16 @@ namespace SIL.HermitCrab
 			{
 				stratum.AddEntry(entry);
 				m_curMorpher.Lexicon.AddEntry(entry);
+			}
+		}
+
+		private void HandleLoadException(LoadException le)
+		{
+			if (m_quitOnError)
+				throw le;
+			if (Output != null)
+			{
+				Output.Write(le);
 			}
 		}
 
@@ -1077,8 +1079,7 @@ namespace SIL.HermitCrab
 				}
 				catch (LoadException le)
 				{
-					if (m_quitOnError)
-						throw le;
+					HandleLoadException(le);
 				}
 			}
 
@@ -1113,8 +1114,7 @@ namespace SIL.HermitCrab
 				}
 				catch (LoadException le)
 				{
-					if (m_quitOnError)
-						throw le;
+					HandleLoadException(le);
 				}
 			}
 
@@ -1293,8 +1293,7 @@ namespace SIL.HermitCrab
 				}
 				catch (LoadException le)
 				{
-					if (m_quitOnError)
-						throw le;
+					HandleLoadException(le);
 				}
 			}
 

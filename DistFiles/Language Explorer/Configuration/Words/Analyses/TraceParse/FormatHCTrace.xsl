@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output method="html" version="4.0" encoding="UTF-8" indent="yes" media-type="text/html; charset=utf-8"/>
+	<xsl:include href="FormatCommon.xsl"/>
 	<!--
 ================================================================
 Format the xml returned from XAmple parse for user display.
@@ -200,6 +201,7 @@ ResultSection
 					</xsl:if>
 					<xsl:call-template name="ShowSuccessfulAnalyses"/>
 				</div>
+				<xsl:call-template name="ShowAnyLoadErrors"/>
 				<xsl:call-template name="UseShowDetailsButton"/>
 			</xsl:when>
 			<xsl:otherwise>
@@ -224,6 +226,7 @@ ResultSection
 						</span>
 					</p>
 				</xsl:if>
+				<xsl:call-template name="ShowAnyLoadErrors"/>
 				<xsl:call-template name="UseShowDetailsButton"/>
 			</xsl:otherwise>
 		</xsl:choose>

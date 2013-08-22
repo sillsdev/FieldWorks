@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.XPath;
+using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -97,5 +99,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		protected override void AddParserSpecificArguments(List<XmlUtils.XSLParameter> args)
+		{
+			string sLoadErrorFile = Path.Combine(Path.GetTempPath(), m_sDataBaseName + "HCLoadErrors.xml");
+			args.Add(new XmlUtils.XSLParameter("prmHCTraceLoadErrorFile", sLoadErrorFile));
+		}
 	}
 }

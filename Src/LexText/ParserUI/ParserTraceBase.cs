@@ -502,6 +502,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			string sOutput = CreateTempFile(sTempFileBase, "htm");
 			string sTransform = Path.Combine(TransformPath, sTransformFile);
 			SetWritingSystemBasedArguments(args);
+			AddParserSpecificArguments(args);
 			XmlUtils.TransformFileToFile(sTransform, args.ToArray(), sInputFile, sOutput);
 			return sOutput;
 		}
@@ -526,6 +527,11 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			string sRTL = defVernWs.RightToLeftScript ? "Y" : "N";
 			args.Add(new XmlUtils.XSLParameter("prmVernacularRTL", sRTL));
+		}
+
+		protected virtual void AddParserSpecificArguments(List<XmlUtils.XSLParameter> args)
+		{
+			// default is to do nothing
 		}
 	}
 }

@@ -670,11 +670,26 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			transformer.MakeHCFiles(ref model);
 
 			m_patr.LoadGrammarFile(HcGrammarPath);
-			m_loader.Load(hcPath);
+
+			LoadHCInfo(hcPath);
 
 			XmlNode delReappsNode = model.SelectSingleNode("/M3Dump/ParserParameters/HC/DelReapps");
 			if (delReappsNode != null)
 				m_loader.CurrentMorpher.DelReapplications = Convert.ToInt32(delReappsNode.InnerText);
+		}
+
+		private void LoadHCInfo(string hcPath)
+		{
+			string loadErrorsFile = Path.Combine(m_outputDirectory, m_projectName + "HCLoadErrors.xml");
+			using (XmlWriter writer = new XmlTextWriter(loadErrorsFile, null))
+			{
+				XmlOutput loadOutput = new XmlOutput(writer);
+				writer.WriteStartElement("LoadErrors");
+				m_loader.Output = loadOutput;
+				m_loader.Load(hcPath);
+				writer.WriteEndElement();
+				loadOutput.Close();
+			}
 		}
 	}
 }
