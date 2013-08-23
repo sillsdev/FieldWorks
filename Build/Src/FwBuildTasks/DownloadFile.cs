@@ -53,12 +53,22 @@ namespace SIL.FieldWorks.Build.Tasks
 			}
 
 			bool success;
-			int read = DoDownloadFile(Address, LocalFilename, Username, Password, out success);
+			var read = DoDownloadFile(Address, LocalFilename, Username, Password, out success);
 
 			if (success)
 				Log.LogMessage(MessageImportance.Low, "{0} bytes written", read);
 			else
-				Log.LogError("Could not download {0}", Address);
+			{
+				if (File.Exists(LocalFilename))
+				{
+					Log.LogWarning("Could not download {0} using local file.", Address);
+					success = true;
+				}
+				else
+				{
+					Log.LogError("Could not download {0}", Address);
+				}
+			}
 
 			return success;
 		}
@@ -125,7 +135,7 @@ namespace SIL.FieldWorks.Build.Tasks
 					// We probably don't have a network connection (despite the check in the caller).
 					if (File.Exists(localFilename))
 					{
-						Log.LogWarning("Could not retrieve latest {0}. No network connection. Keeping existing file.", localFilename);
+						Log.LogMessage("Could not retrieve latest {0}. No network connection. Keeping existing file.", localFilename);
 					}
 					else
 					{
@@ -139,11 +149,11 @@ namespace SIL.FieldWorks.Build.Tasks
 				{
 					using (var sr = new StreamReader(wex.Response.GetResponseStream()))
 						html = sr.ReadToEnd();
-					Log.LogError("Could not download from {0}. Server responds {1}", remoteFilename, html);
+					Log.LogMessage("Could not download from {0}. Server responds {1}", remoteFilename, html);
 				}
 				else
 				{
-					Log.LogError("Could not download from {0}. no server response. Exception {1}. Status {2}",
+					Log.LogMessage("Could not download from {0}. no server response. Exception {1}. Status {2}",
 						remoteFilename, wex.Message, wex.Status);
 				}
 				success = false;
