@@ -278,7 +278,7 @@ namespace XCore
 		/// <returns></returns>
 		private static UIItemDisplayProperties QueryDisplayProperties(ChoiceGroup group, Mediator mediator, Command command, bool defaultVisible, string label)
 		{
-			// Let the default be that it is enabled if we know that it has
+			// Let the default be that it is enabled if it is visible by default and we know that it has
 			//at least one potential receiver, based on the method signatures of the
 			//current set of colleagues.
 			//If one of those colleagues thinks that it should be disabled at the moment,

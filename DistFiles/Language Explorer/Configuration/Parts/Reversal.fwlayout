@@ -105,7 +105,7 @@
 				<string field="$fieldName" />
 			</part>
 		</generate>
-		<part ref="SensesConfig" param="publishSubForReversal" label="Subsenses" sep="  " number="%O) " numstyle="bold" numsingle="yes" recurseConfig="false" visibility="never" css="subsenses" disallowCharStyle="true"/>
+		<part ref="SensesConfig" param="publishSubForReversal" label="Subsenses" sep="  " number="%O) " numstyle="bold" numsingle="yes" recurseConfig="false" visibility="never" css="subsenses" cssNumber="xsensenumber" disallowCharStyle="true"/>
 		<part ref="RIELexEntryConfig" param="publishRIELexEntry6" hideConfig="true"/>
 		<part ref="RIELexEntryConfig" param="publishRIELexEntry7" hideConfig="true"/>
 		<part ref="RIELexEntryConfig" param="publishRIELexEntry8" hideConfig="true"/>
@@ -185,7 +185,7 @@
 			</part>
 		</generate>
 		<part ref="StemComplexFormsConfig" param="publishSubSenseComplexFormRefForReversal" label="Referenced Complex Forms (of Sense)" visibility="ifdata" before=" " after="" sep=" " css="subsense-complexformrefs"/>
-		<part ref="SensesConfig" param="publishSubForReversal" label="Subsenses" sep="  " number="%O) " numstyle="bold" numsingle="yes" visibility="ifdata" recurseConfig="false" css="subsubsenses" disallowCharStyle="true"/>
+		<part ref="SensesConfig" param="publishSubForReversal" label="Subsenses" sep="  " number="%O) " numstyle="bold" numsingle="yes" visibility="ifdata" recurseConfig="false" css="subsubsenses" cssNumber="xsensenumber" disallowCharStyle="true"/>
 		<!-- Pictures - since we're on a specific sense, we can just show pictures for that one sense... -->
 	</layout>
 

@@ -237,6 +237,7 @@
       <Link>FwSetupFixtureClass.cs</Link>
     </Compile>
     <Compile Include="AddCustomFieldDialogTests.cs" />
+    <Compile Include="AllReversalEntriesRecordListTests.cs" />
     <Compile Include="BulkEditBarTests.cs">
     </Compile>
     <Compile Include="CustomListDlgTests.cs">
@@ -305,5 +306,11 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="gendarme-xWorksTests.ignore" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\LexText\Lexicon\LexEdDll.csproj">
+      <Project>{F361595E-E245-41A8-BCE9-C9AC82CBDF5E}</Project>
+      <Name>LexEdDll</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

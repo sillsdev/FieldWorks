@@ -18,6 +18,7 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Security;
 using Microsoft.Win32;
@@ -168,6 +169,29 @@ namespace SIL.FieldWorks.Common.FwUtils
 					return false;
 				}
 			}
+
+			/// <summary>
+			/// LT-14787 Database displays error about inaccessible Paratext projects
+			/// If there is a registry value for this but the folder is not there we need to return false because
+			/// paratext is not installed correctly. Also if there is no registry entry for this then return false.
+			/// </summary>
+			/// <returns></returns>
+			public bool ParatextSettingsDirectoryExists()
+			{
+				using (var paratextKey = Registry.LocalMachine.OpenSubKey("Software\\ScrChecks\\1.0\\Settings_Directory"))
+				{
+					if (paratextKey != null)
+					{
+						var keyName = paratextKey.ToString();
+						var regValue = Registry.GetValue(keyName, "", "") as string;
+						if (!String.IsNullOrEmpty(regValue) && Directory.Exists(regValue))
+						{
+							return true;
+						}
+					}
+				}
+				return false;
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -304,6 +328,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static string UserLocaleValueName
 		{
 			get { return RegistryHelperImpl.UserLocaleValueName; }
+		}
+
+
+		/// <summary>
+		/// If there is a registry value for this but the folder is not there we need to return false because
+		/// paratext is not installed correctly. Also if there is no registry entry for this then return false.
+		/// </summary>
+		/// <returns></returns>
+		public static bool ParatextSettingsDirectoryExists()
+		{
+			return RegistryHelperImpl.ParatextSettingsDirectoryExists();
 		}
 
 		/// ------------------------------------------------------------------------------------

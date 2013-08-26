@@ -64,7 +64,7 @@
 \mp IrregInflForm5373
 \mp IrregInflForm6652
 
-\lx 4157.1
+\lx 4157.0
 \g seek.pst.pl
 \c W
 \wc root

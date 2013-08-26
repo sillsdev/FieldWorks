@@ -251,6 +251,12 @@
 		<command id="CmdDataTree-Insert-ReversalSubentry" label="Insert Reversal Subentry" message="DataTreeInsert">
 			<parameters field="Subentries" className="ReversalIndexEntry"/>
 		</command>
+		<command id="CmdDataTree-MoveUp-ReversalSubentry" label="Move Subentry _Up" message="MoveUpObjectInSequence" icon="MoveUp">
+			<parameters field="Subentries" className="ReversalindexEntry"/>
+		</command>
+		<command id="CmdDataTree-MoveDown-ReversalSubentry" label="Move Subentry Down" message="MoveDownObjectInSequence" icon="MoveDown">
+			<parameters field="Subentries" className="ReversalindexEntry"/>
+		</command>
 		<command id="CmdDataTree-Move-MoveReversalIndexEntry" label="Move Entry..." message="MoveReversalindexEntry">
 			<parameters field="Subentries" className="ReversalindexEntry"/>
 		</command>
@@ -500,6 +506,9 @@
 			<item command="CmdDataTree-Insert-ReversalSubentry"/>
 		</menu>
 		<menu id="mnuDataTree-MoveReversalIndexEntry">
+			<item command="CmdDataTree-MoveUp-ReversalSubentry"/>
+			<item command="CmdDataTree-MoveDown-ReversalSubentry"/>
+			<item label="-" translate="do not translate"/>
 			<item command="CmdDataTree-Move-MoveReversalIndexEntry"/>
 			<item command="CmdDataTree-Promote-ProReversalIndexEntry"/>
 			<item label="-" translate="do not translate"/>

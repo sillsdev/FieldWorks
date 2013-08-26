@@ -20,7 +20,7 @@ using System.Xml;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using SIL.HermitCrab;
@@ -519,7 +519,16 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				{
 					case MorphException.MorphErrorType.INVALID_SHAPE:
 						var shape = me.Data["shape"] as string;
-						m_xmlWriter.WriteString(string.Format(ParserCoreStrings.ksHCInvalidWordform, shape));
+						int position = (int) me.Data["position"];
+						string rest = shape.Substring(position);
+						string restToUse = rest;
+						LgGeneralCharCategory cc = m_cache.ServiceLocator.UnicodeCharProps.get_GeneralCategory(rest[0]);
+						if (cc == LgGeneralCharCategory.kccMn)
+						{	// the first character is a diacritic, combining type of character
+							// insert a space so it does not show on top of a single quote in the message string
+							restToUse = " " + rest;
+						}
+						m_xmlWriter.WriteString(string.Format(ParserCoreStrings.ksHCInvalidWordform, shape, position+1, restToUse));
 						break;
 
 					case MorphException.MorphErrorType.UNINSTANTIATED_FEATURE:

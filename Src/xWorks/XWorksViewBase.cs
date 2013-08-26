@@ -599,7 +599,10 @@ namespace SIL.FieldWorks.XWorks
 					break;
 			}
 			using (var dlg = new AddCustomFieldDlg(m_mediator, locationType))
-				dlg.ShowDialog(this);
+			{
+				if (dlg.ShowCustomFieldWarning(this))
+					dlg.ShowDialog(this);
+			}
 
 			return true;	// handled
 		}

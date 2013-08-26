@@ -58,7 +58,8 @@
 		<xsl:variable name="iPos" select="count($lexEntryRef/preceding-sibling::LexEntryRef)"/>
 		<xsl:if test="$iPos &gt; 0">
 			<xsl:text>.</xsl:text>
-			<xsl:value-of select="$iPos"/>
+			<!-- Subtracting 1 to account for 0-indexing in C# -->
+			<xsl:value-of select="$iPos - 1"/>
 		</xsl:if>
 		<xsl:call-template name="AppendAnyMsaCountNumber">
 			<xsl:with-param name="msa" select="$msa"/>
@@ -75,7 +76,8 @@
 			<xsl:variable name="iMsaPos" select="count($msa/preceding-sibling::MorphoSyntaxAnalysis)"/>
 			<xsl:if test="$iMsaPos &gt; 0">
 				<xsl:text>.</xsl:text>
-				<xsl:value-of select="$iMsaPos"/>
+				<!-- Subtracting 1 to account for 0-indexing in C# -->
+				<xsl:value-of select="$iMsaPos - 1"/>
 			</xsl:if>
 		</xsl:if>
 	</xsl:template>

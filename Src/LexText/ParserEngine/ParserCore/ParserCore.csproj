@@ -122,6 +122,7 @@
   <ItemGroup>
     <Reference Include="BasicUtils, Version=7.2.0.24545, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
     <Reference Include="COMInterfaces, Version=5.1.0.21154, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

@@ -199,7 +199,7 @@ namespace SIL.FieldWorks.LexText.Controls
 							var entry = msaObj as ILexEntry;
 							if (entry.EntryRefsOS.Count > 0)
 							{
-								var index = ParseFiler.IndexOfLexEntryRef(msaid.Value, indexOfPeriod);
+								var index = ParseFiler.IndexOfLexEntryRef(msaid.Value, indexOfPeriod); // the value of the int after the period
 								var lexEntryRef = entry.EntryRefsOS[index];
 								ITsIncStrBldr sbGlossPrepend;
 								ITsIncStrBldr sbGlossAppend;

@@ -1359,6 +1359,21 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This project is set up for Send/Receive Project (with other FLEx users). If there are already other users in your team, it is VERY important to coordinate custom field changes. FLEx currently has only limited ability to Send/Receive custom field changes. It is possible to get into a situation where some team members cannot merge their changes and must Get the project again.
+        ///
+        ///Recommended procedure:
+        ///
+        ///1. All team members do Send/Receive and STOP WORK until they have done step 3.
+        ///
+        ///2. One team member does  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string kstCustomFieldSendReceive {
+            get {
+                return ResourceManager.GetString("kstCustomFieldSendReceive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A discourse chart template can only have three levels (template, column group, and column)..
         /// </summary>
         internal static string ksTemplateTooDeep {

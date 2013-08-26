@@ -4013,6 +4013,95 @@ namespace LexTextControlsTests
 			Assert.That(entry.AlternateFormsOS.First(), Is.InstanceOf(typeof(IMoStemAllomorph)), "affix should be changed to stem");
 			Assert.That(entry.AlternateFormsOS.First().LiftResidue, Is.StringContaining("look for this"));
 		}
+
+		static private readonly string[] s_LiftPronunciations = new[]
+		{
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+			"<lift producer=\"SIL.FLEx 8.0.3.41457\" version=\"0.13\">",
+			"<header>",
+			"<ranges/>",
+			"<fields/>",
+			"</header>",
+			"<entry dateCreated=\"2013-07-02T20:01:04Z\" dateModified=\"2013-07-02T20:05:43Z\" id=\"test_503d3478-3545-4213-9f6b-1f087464e140\" guid=\"503d3478-3545-4213-9f6b-1f087464e140\">",
+			"<lexical-unit>",
+			"<form lang=\"fr\"><text>test</text></form>",
+			"</lexical-unit>",
+			"<trait name=\"morph-type\" value=\"stem\"/>",
+			"<pronunciation>",
+			"<form lang=\"fr\"><text>pronunciation</text></form>",
+			"</pronunciation>",
+			"<pronunciation>",
+			"<form lang=\"es\"><text>pronunciation</text></form>",
+			"</pronunciation>",
+			"</entry>",
+			"<entry dateCreated=\"2013-07-02T20:01:04Z\" dateModified=\"2013-07-02T20:05:43Z\" id=\"test_8d735e34-c555-4390-a0af-21a12e1dd6ff\" guid=\"8d735e34-c555-4390-a0af-21a12e1dd6ff\">",
+			"<lexical-unit>",
+			"<form lang=\"fr\"><text>testb</text></form>",
+			"</lexical-unit>",
+			"<trait name=\"morph-type\" value=\"stem\"/>",
+			"<pronunciation>",
+			"<form lang=\"es\"><text>pronunciation</text></form>",
+			"</pronunciation>",
+			"</entry>",
+			"</lift>"
+		};
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test LIFT merger for problems merging pronunciations.
+		/// To produce the problem that led to this test, an entry with one or formless pronunciation
+		/// gets merged with a LIFT file that has the same entry with other pronunciations. (LT-14725)
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void TestLiftMergeOfPronunciations()
+		{
+			SetWritingSystems("fr es");
+
+			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
+			Assert.AreEqual(0, repoEntry.Count);
+			Assert.AreEqual(0, repoSense.Count);
+
+			// The entries should already be present.
+			var entry1 = CreateSimpleStemEntry("503d3478-3545-4213-9f6b-1f087464e140", "test");
+			AddPronunciation(entry1, "pronunciation", Cache.DefaultVernWs); // add 'fr' pronunciation
+			AddPronunciation(entry1, "", -1); // add blank pronunciation, no form
+			var entry2 = CreateSimpleStemEntry("8d735e34-c555-4390-a0af-21a12e1dd6ff", "testb");
+			AddPronunciation(entry2, "pronunciation", Cache.DefaultVernWs); // add 'fr' pronunciation
+
+			var sOrigFile = CreateInputFile(s_LiftPronunciations);
+
+			// Try to merge in two LIFT file entries that match our two existing entries
+			TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepBoth, 2);
+			File.Delete(sOrigFile);
+
+			// Verification
+			Assert.AreEqual(2, repoEntry.Count, "Created some unnecessary entries.");
+			Assert.AreEqual(0, repoSense.Count, "Created some unnecessary senses.");
+			var repoPronunciation = Cache.ServiceLocator.GetInstance<ILexPronunciationRepository>();
+			Assert.AreEqual(5, repoPronunciation.Count, "Wrong number of remaining LexPronunciation objects");
+		}
+
+		private ILexEntry CreateSimpleStemEntry(string entryGuid, string form)
+		{
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
+				new Guid(entryGuid), Cache.LangProject.LexDbOA);
+			var lf = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+			entry.LexemeFormOA = lf;
+			lf.Form.SetVernacularDefaultWritingSystem(form);
+			var stem = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
+			lf.MorphTypeRA = stem;
+			return entry;
+		}
+
+		private void AddPronunciation(ILexEntry entry, string pronunciation, int ws)
+		{
+			var lexPronunciation = Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
+			entry.PronunciationsOS.Add(lexPronunciation);
+			if (ws > 0)
+				lexPronunciation.Form.set_String(ws, Cache.TsStrFactory.MakeString(pronunciation, ws));
+		}
 	}
 
 	class CustomFieldData

@@ -889,15 +889,19 @@ namespace SIL.HermitCrab
 		/// <returns>All valid word synthesis records.</returns>
 		ICollection<WordSynthesis> MorphAndLookupToken(string word, string prev, string next, out WordAnalysisTrace trace, string[] selectTraceMorphs)
 		{
-			// convert the word to its phonetic shape
-			PhoneticShape input = SurfaceStratum.CharacterDefinitionTable.ToPhoneticShape(word, ModeType.ANALYSIS);
-			// if word contains invalid segments, the char def table will return null
-			if (input == null)
+			PhoneticShape input;
+			try
+			{
+				// convert the word to its phonetic shape; it could throw a missing phonetic shape exception
+				input = SurfaceStratum.CharacterDefinitionTable.ToPhoneticShape(word, ModeType.ANALYSIS);
+			}
+			catch (MissingPhoneticShapeException mpse)
 			{
 				MorphException me = new MorphException(MorphException.MorphErrorType.INVALID_SHAPE, this,
-					string.Format(HCStrings.kstidInvalidWord, word, SurfaceStratum.CharacterDefinitionTable.ID));
+					string.Format(HCStrings.kstidInvalidWord, word, SurfaceStratum.CharacterDefinitionTable.ID, mpse.Position+1, word.Substring(mpse.Position)));
 				me.Data["shape"] = word;
 				me.Data["charDefTable"] = SurfaceStratum.CharacterDefinitionTable.ID;
+				me.Data["position"] = mpse.Position;
 				throw me;
 			}
 
@@ -1014,7 +1018,7 @@ namespace SIL.HermitCrab
 				prevValidSynthesis = cur;
 			}
 			return results;
-		}
+		} // end MorphAndLookupToken
 
 		private void AddResult(string word, Set<WordSynthesis> results, WordSynthesis cur)
 		{

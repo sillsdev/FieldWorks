@@ -86,7 +86,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			using (var dlg = new AddCustomFieldDlg(mediator, LocationType.Notebook))
 			{
-				dlg.ShowDialog();
+				if (dlg.ShowCustomFieldWarning(null))
+					dlg.ShowDialog();
 			}
 		}
 
@@ -166,6 +167,20 @@ namespace SIL.FieldWorks.XWorks
 			}
 			m_addButton.Select();
 		}
+
+		/// <summary>
+		/// Show the warning we give the user before displaying the custom field dialog
+		/// (if the project has a repository...otherwise the warning is not needed).
+		/// </summary>
+		/// <returns>true if editing the custom fields should proceed</returns>
+		public bool ShowCustomFieldWarning(IWin32Window owner)
+		{
+			if (!FLExBridgeHelper.DoesProjectHaveFlexRepo(m_cache.ProjectId.ProjectFolder))
+				return true;
+			return MessageBox.Show(owner, xWorksStrings.kstCustomFieldSendReceive, xWorksStrings.ksWarning,
+				MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK;
+		}
+
 		/// <summary>
 		/// This method will populate the WritingSystemsList based off of the selection in the Type ComboBox.
 		/// </summary>

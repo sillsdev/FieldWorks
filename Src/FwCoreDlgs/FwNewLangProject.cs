@@ -479,7 +479,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private void btnOK_Click(object sender, EventArgs e)
 		{
-			if (CheckForNonAsciiProjectName())
+			if (CheckForNonAsciiProjectName(ProjectName))
 			{
 				if (DisplayNonAsciiWarningDialog() == DialogResult.Cancel)
 				{
@@ -552,9 +552,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			return Unicode.RemoveNonAsciiCharsFromString(ProjectName);
 		}
 
-		private bool CheckForNonAsciiProjectName()
+		// Made internal so that FwProjPropertiesDlg can use it too.
+		internal static bool CheckForNonAsciiProjectName(string projName)
 		{
-			return Unicode.CheckForNonAsciiCharacters(ProjectName);
+			return Unicode.CheckForNonAsciiCharacters(projName);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -737,7 +738,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		protected virtual DialogResult DisplayNonAsciiWarningDialog()
 		{
-			return MessageBox.Show(this, FwCoreDlgs.ksNonAsciiProjectNameWarning, FwCoreDlgs.ksWarning,
+			return MessageBox.Show(this, FwCoreDlgs.ksNonAsciiProjectNameWarning + FwCoreDlgs.ksOKToContinueCancelToChangeName, FwCoreDlgs.ksWarning,
 				MessageBoxButtons.OKCancel, MessageBoxIcon.Information, MessageBoxDefaultButton.Button2);
 		}
 

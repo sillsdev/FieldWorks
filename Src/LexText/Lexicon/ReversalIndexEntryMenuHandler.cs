@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 								case ReversalIndexEntryTags.kClassId:
 									{
 										IReversalIndexEntry rie = (IReversalIndexEntry) newOwner;
-										rie.SubentriesOC.Add(entry);
+										rie.SubentriesOS.Add(entry);
 										break;
 									}
 							}
@@ -123,7 +123,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						() =>
 						{
 							newOwner.MoveIfNeeded(currentEntry);
-							newOwner.SubentriesOC.Add(currentEntry);
+							newOwner.SubentriesOS.Add(currentEntry);
 						});
 					RecordClerk clerk = m_mediator.PropertyTable.GetValue("ActiveClerk") as RecordClerk;
 					if (clerk != null)
@@ -182,7 +182,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				if (rie.ReversalIndex.EntriesOC.Count == 0)
 					return false;
 				// exactly 1 top-level entry.
-				return rie.ReversalIndex.EntriesOC.ToArray()[0].SubentriesOC.Count > 0;
+				return rie.ReversalIndex.EntriesOC.ToArray()[0].SubentriesOS.Count > 0;
 			}
 		}
 

@@ -139,7 +139,7 @@ public:
 	STDMETHOD(get_StringWidth)(ITsString * ptss, ITsTextProps * pttp, int * dxs, int * dys);
 
 	STDMETHOD(EmptyParagraphBehavior)(int behavior);
-
+	STDMETHOD(IsParagraphOpen)(ComBool * pfRet);
 	void Initialize(IVwGraphics * pvg, VwRootBox * pzrootb, IVwViewConstructor * pvc);
 	void InitEmbedded(IVwGraphics * pvg, VwMoveablePileBox * pmpbox);
 	void InitRegenerate(IVwGraphics * pvg, VwRootBox * pzrootb,

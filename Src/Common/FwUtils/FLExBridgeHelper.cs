@@ -10,6 +10,8 @@ using System.Threading;
 using System.Windows.Forms;
 using SIL.Utils;
 
+using IPCFramework;
+
 namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary>
@@ -148,8 +150,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private const string FLExBridgeName = @"FLExBridge.exe";
 
 		private static object _waitObject = new object();
-		private static bool flexBridgeTerminated;
-		private static object _noBlockerHost;
+		private static bool _flexBridgeTerminated;
+		private static IIPCHost _noBlockerHost;
 		private static bool _receivedChanges; // true if changes merged via FLExBridgeService.BridgeWorkComplete()
 		private static string _projectName; // fw proj path via FLExBridgeService.InformFwProjectName()
 		private static string _pipeID;
@@ -177,7 +179,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			out bool changesReceived, out string projectName)
 		{
 			_pipeID = string.Format(@"SendReceive{0}{1}", projectFolder, command);
-			flexBridgeTerminated = false;
+			_flexBridgeTerminated = false;
 			changesReceived = false;
 			var args = "";
 			projectName = "";
@@ -232,36 +234,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 
 			// make a new FLExBridge
-			ServiceHost host = null;
-			try
-			{
-				var hostPipeBinding = new NetNamedPipeBinding { ReceiveTimeout = TimeSpan.MaxValue };
-				host = new ServiceHost(typeof(FLExBridgeService), new[] { new Uri("net.pipe://localhost/FLExBridgeEndpoint" + _pipeID) });
-
-				//open host ready for business
-				host.AddServiceEndpoint(typeof(IFLExBridgeService), hostPipeBinding, "FLExPipe");
-				host.Open();
-			}
-			catch (InvalidOperationException)
-				// Can happen if Conflict Report is open and we try to run FLExBridge again.
-			{
-				if (host != null)
-					((IDisposable)host).Dispose();
-				return false; // Unsuccessful startup. Caller should report duplicate bridge launch.
-			}
-			catch (AddressAlreadyInUseException)
-				// Can happen if FLExBridge has been launched and we try to launch FLExBridge again.
-			{
-				// host is normally not null for this exception, but there is no pipe to dispose
-				return false; // Unsuccessful startup. Caller should report duplicate bridge launch.
-			}
+			IIPCHost host = IPCHostFactory.Create();
+			host.VerbosityLevel = 1;
+			if (!host.Initialize<FLExBridgeService, IFLExBridgeService>("FLExBridgeEndpoint" + _pipeID, AlertFlex, CleanupHost))
+				return false;
 
 			LaunchFlexBridge(host, command, args, ref changesReceived, ref projectName);
 
 			return true;
 		}
 
-		private static void LaunchFlexBridge(ServiceHost host, string command, string args, ref bool changesReceived, ref string projectName)
+		private static void LaunchFlexBridge(IIPCHost host, string command, string args, ref bool changesReceived, ref string projectName)
 		{
 			// Launch the bridge process.
 			using (Process.Start(FullFieldWorksBridgePath(), args))
@@ -288,7 +271,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 				// Pause UI thread until FLEx Bridge terminates:
 				Monitor.Enter(_waitObject);
-				if (flexBridgeTerminated == false)
+				if (_flexBridgeTerminated == false)
 					Monitor.Wait(_waitObject, -1);
 				Monitor.Exit(_waitObject);
 
@@ -299,34 +282,41 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-		private static void KillTheHost(ServiceHost host)
+		private static void KillTheHost(IIPCHost host)
 		{
 			// Let the service host cleanup happen in another thread so the user can get on with life.
 			var letTheHostDie = new Thread(() =>
-												{
-													try
-													{
-														host.Close();
-														((IDisposable) host).Dispose();
-													}
-													catch(Exception)
-													{
-														//we don't care anymore, just die.
-													}
-												});
+				{
+					try
+					{
+						host.Close();
+						((IDisposable)host).Dispose();
+					}
+					catch(Exception)
+					{
+						//we don't care anymore, just die.
+					}
+				});
 			letTheHostDie.Start();
 		}
+
+		static IIPCClient _client;
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification="REVIEW: It is unclear if disposing the ChannelFactory affects channelClient.")]
 		private static void BeginEmergencyExitChute(string pipeID)
 		{
-			var clientPipeBinding = new NetNamedPipeBinding {ReceiveTimeout = TimeSpan.MaxValue};
-			var factory = new ChannelFactory<IFLExServiceChannel>
-				(clientPipeBinding, new EndpointAddress("net.pipe://localhost/FLExEndpoint" + pipeID + "/FLExPipe"));
-			var channelClient = factory.CreateChannel();
-			channelClient.OperationTimeout = TimeSpan.MaxValue;
-			channelClient.BeginBridgeWorkOngoing(WorkDoneCallback, channelClient);
+			try
+			{
+				_client = IPCClientFactory.Create();
+				_client.VerbosityLevel = 1;
+				_client.Initialize<IFLExService>("FLExEndpoint" + pipeID, _waitObject, CleanupHost);
+				_client.RemoteCall("BridgeWorkOngoing", SignalCompletion);
+			}
+			catch (Exception)
+			{
+				CleanupHost();
+			}
 		}
 
 		private static void AddArg(ref string extant, string flag, string value)
@@ -373,6 +363,26 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
+		/// Determines if FLExBridge is installed.
+		/// </summary>
+		/// <returns><c>true</c> if is flex bridge installed; otherwise, <c>false</c>.</returns>
+		public static bool IsFlexBridgeInstalled()
+		{
+			var fullName = FLExBridgeHelper.FullFieldWorksBridgePath();
+			return FileUtils.FileExists(fullName); // Flex Bridge exe has to exist
+		}
+
+		/// <summary>
+		/// Answer whether the project appears to have a FLEx repo. This is currently determined by its having a .hg folder.
+		/// </summary>
+		/// <param name="projectFolderPath">Path to the project folder</param>
+		/// <returns></returns>
+		public static bool DoesProjectHaveFlexRepo(string projectFolderPath)
+		{
+			return Directory.Exists(Path.Combine(projectFolderPath, ".hg"));
+		}
+
+		/// <summary>
 		/// Returns the full path and filename of the FixFwData executable
 		/// </summary>
 		/// <returns></returns>
@@ -414,11 +424,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				_receivedChanges = changesReceived;
 				AlertFlex();
-				if (_noBlockerHost != null)
-				{
-					KillTheHost((ServiceHost) _noBlockerHost);
-					_noBlockerHost = null;
-				}
+				CleanupHost();
 			}
 
 			public void BridgeReady()
@@ -440,18 +446,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 				if (FLExJumpUrlChanged != null)
 					FLExJumpUrlChanged(this, new FLExJumpEventArgs(jumpUrl));
 			}
-
-			/// <summary>
-			/// Acquire the lock on, and then pulse the wait object
-			/// </summary>
-			private static void AlertFlex()
-			{
-				Monitor.Enter(_waitObject); //acquire the lock on the _waitObject
-				flexBridgeTerminated = true;
-				Monitor.Pulse(_waitObject); //notify a thread waiting on _waitObject that it may continue.
-				Monitor.Exit(_waitObject); //release the lock on the _waitObject so they actually can continue.
-			}
 			#endregion
+		}
+
+		/// <summary>
+		/// Acquire the lock on, and then pulse the wait object
+		/// </summary>
+		public static void AlertFlex()
+		{
+			Monitor.Enter(_waitObject); //acquire the lock on the _waitObject
+			_flexBridgeTerminated = true;
+			Monitor.Pulse(_waitObject); //notify a thread waiting on _waitObject that it may continue.
+			Monitor.Exit(_waitObject); //release the lock on the _waitObject so they actually can continue.
 		}
 
 		/// <summary>
@@ -479,7 +485,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Service interface for the methods in FLEXBridge that we can call
 		/// </summary>
 		[ServiceContract]
-		private interface IFLExService
+		private interface IFLExService : IClientChannel
 		{
 			[OperationContract(AsyncPattern = true)]
 			IAsyncResult BeginBridgeWorkOngoing(AsyncCallback callback, object asyncState);
@@ -487,47 +493,21 @@ namespace SIL.FieldWorks.Common.FwUtils
 			void EndBridgeWorkOngoing(IAsyncResult result);
 		}
 
-		/// <summary>
-		/// This interface combines the service and channel objects so a factory can give us a useful oboject
-		/// </summary>
-		private interface IFLExServiceChannel : IFLExService, IClientChannel
+		static void CleanupHost()
 		{
-		}
-
-		/// <summary>
-		/// This callback mostly serves to help us terminate in exceptional cases.
-		/// It is not reliable for return data because it is asynchronous, and FLExBridge might close before we retrieve the data
-		/// </summary>
-		/// <param name="iar"></param>
-		private static void WorkDoneCallback(IAsyncResult iar)
-		{
-			Monitor.Enter(_waitObject);
-			flexBridgeTerminated = true;
-			try
+			Console.WriteLine(@"FLExBridgeHelper.CleanupHost()");
+			if (_noBlockerHost != null)
 			{
-				Monitor.Pulse(_waitObject);
-				((IFLExServiceChannel)iar.AsyncState).EndBridgeWorkOngoing(iar);
-			}
-			catch(CommunicationException)
-			{
-				//Something went wrong with the communication to the Bridge. Possibly it died unexpectedly, wake up FLEx
-				Monitor.Pulse(_waitObject);
-			}
-			catch (Exception e)
-			{
-				Logger.WriteError(e); //Write the log entry, but likely not important
-			}
-			finally
-			{
-				if (_noBlockerHost != null)
-				{
-					KillTheHost((ServiceHost) _noBlockerHost);
-					_noBlockerHost = null;
-				}
-				Monitor.Exit(_waitObject);
+				KillTheHost(_noBlockerHost);
+				_noBlockerHost = null;
 			}
 		}
 
+		static void SignalCompletion()
+		{
+			Console.WriteLine(@"FLExBridgeHelper.SignalCompletion()");
+			_flexBridgeTerminated = true;
+		}
 		#endregion
 	}
 

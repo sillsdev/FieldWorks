@@ -51,7 +51,7 @@
 	<item id="CmdViewMessages">View project questions, merge conflicts, and notifications</item>
 	<item id="CmdLiftBridge">Send/Receive the Lexicon in this project</item>
 	<item id="CmdViewLiftMessages">View lexicon questions, merge conflicts, and notifications</item>
-	<item id="CmdObtainAnyFlexBridgeProject">Receive a project or lexicon from a colleague for the first time</item>
+	<item id="CmdObtainAnyFlexBridgeProject">Receive a project or lexicon from a colleague for the first time (creates a new project)</item>
 	<item id="CmdObtainLiftProject">Receive a lexicon for the first time and merge it into the current project</item>
 	<item id="CmdHelpChorus">Help for using Chorus-enabled features</item>
 	<item id="CmdCheckForFlexBridgeUpdates">Check for FLEx Bridge updates</item>

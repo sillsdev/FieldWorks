@@ -1116,9 +1116,6 @@ namespace XCore
 
 			try
 			{
-				// Don't need this assert, since it can only be null, if the Mediator has been disposed,
-				// which will be caught higher up in this method.
-				//Debug.Assert(m_colleagues != null);
 				//we need to copy our list of colleagues because the list of colleagues may change while we are
 				//iterating over this list, which is not allowed if we simply use an enumerater.
 				IList<Tuple<int, IxCoreColleague>> targets = new List<Tuple<int, IxCoreColleague>>(m_colleagues.Keys);

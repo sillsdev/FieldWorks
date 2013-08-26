@@ -120,9 +120,9 @@ namespace SIL.FieldWorks.IText
 				ParseAndUpdate(); // do it now
 			else // do it as soon as possible. (we might be processing PropChanged.)
 			{
-				// In case something already forced us to do this, we don't want to be notified twice!
-				((IActionHandlerExtensions)Cache.ActionHandlerAccessor).PropChangedCompleted -= RecordList_PropChangedCompleted;
-				((IActionHandlerExtensions)Cache.ActionHandlerAccessor).PropChangedCompleted += RecordList_PropChangedCompleted;
+				// REVIEW (FWR-1906): Do we need to do this reload only the first time, or also (as here) when the prop change is from undo or redo?
+				// Enhance JohnT: is there some way we can be sure only one of these tasks gets added?
+				((IActionHandlerExtensions)Cache.ActionHandlerAccessor).DoAtEndOfPropChangedAlways(RecordList_PropChangedCompleted);
 				return true;
 			}
 			return false;
@@ -187,10 +187,8 @@ namespace SIL.FieldWorks.IText
 			return true; // if by any chance this is used without a conc decorator, assume all Scripture is interesting.
 		}
 
-		void RecordList_PropChangedCompleted(object sender, bool fromUndoRedo)
+		void RecordList_PropChangedCompleted()
 		{
-			((IActionHandlerExtensions)Cache.ActionHandlerAccessor).PropChangedCompleted -= RecordList_PropChangedCompleted;
-			// REVIEW (FWR-1906): Do we need to do this reload only when the prop change is not from undo or redo?
 			ReloadList();
 		}
 	}

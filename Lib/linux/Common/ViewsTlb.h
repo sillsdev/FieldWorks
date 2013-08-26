@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0555 */
-/* at Wed Jun 05 12:23:51 2013
+/* at Mon Aug 26 09:34:19 2013
  */
 /* Compiler settings for d:\fwrepo\fw\Output\Common\ViewsTlb.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 7.00.0555 
@@ -2523,6 +2523,9 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
         virtual HRESULT STDMETHODCALLTYPE EmptyParagraphBehavior( 
             /* [in] */ int behavior) = 0;
         
+        virtual HRESULT STDMETHODCALLTYPE IsParagraphOpen( 
+            /* [retval][out] */ ComBool *pfRet) = 0;
+        
     };
     
 #else 	/* C style interface */
@@ -2858,6 +2861,10 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             IVwEnv * This,
             /* [in] */ int behavior);
         
+        HRESULT ( STDMETHODCALLTYPE *IsParagraphOpen )( 
+            IVwEnv * This,
+            /* [retval][out] */ ComBool *pfRet);
+        
         END_INTERFACE
     } IVwEnvVtbl;
 
@@ -3075,6 +3082,9 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
 
 #define IVwEnv_EmptyParagraphBehavior(This,behavior)	\
     ( (This)->lpVtbl -> EmptyParagraphBehavior(This,behavior) ) 
+
+#define IVwEnv_IsParagraphOpen(This,pfRet)	\
+    ( (This)->lpVtbl -> IsParagraphOpen(This,pfRet) ) 
 
 #endif /* COBJMACROS */
 

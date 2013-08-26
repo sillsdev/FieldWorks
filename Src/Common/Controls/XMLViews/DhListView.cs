@@ -1,14 +1,8 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.Data;
-using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
-using SIL.FieldWorks.Resources;
 
 using SIL.Utils;
 using System.Linq;
@@ -100,6 +94,53 @@ namespace SIL.FieldWorks.Common.Controls
 			ColumnWidthChanging += ListView_ColumnWidthChanging;
 			ColumnReordered += HandleColumnReordered;
 		}
+
+		#region Support for context menu on header
+
+		private const int WM_CONTEXTMENU = 0x007B;
+
+		/// <summary>
+		/// Override of WndProc to handle the context menu on column headers.
+		/// Necessary because ListView eats almost all mouse events, and does not provide any that can be used to handling right
+		/// clicks in the header.
+		/// </summary>
+		/// <param name="m"></param>
+		protected override void WndProc(ref Message m)
+		{
+			switch (m.Msg)
+			{
+				case WM_CONTEXTMENU:
+					Point pointClicked = PointToClient(MousePosition);
+					int index = GetColumnIndexFromMousePosition(pointClicked);
+					if (index >= 0)
+					{
+						OnColumnRightClick(index, pointClicked);
+					}
+					break;
+				default:
+					base.WndProc(ref m);
+					break;
+			}
+		}
+
+		private int GetColumnIndexFromMousePosition(Point pt)
+		{
+			int width = 0;
+			for (int col = 0; col < Columns.Count; ++col)
+			{
+				width += Columns[col].Width;
+				// Review: is there some way we can check for a valid pt.Y value?
+				// It's probably okay as is, since the body of the list view intercepts
+				// mouse clicks before they get here.
+				if (pt.X <= width)
+				{
+					return col;
+				}
+			}
+			return -1;
+		}
+
+		#endregion
 
 		private List<ColumnHeader> m_overrideDisplayOrder;
 		/// <summary>
@@ -476,104 +517,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Minimum width a normal column can be (other than the checkbox column)
 		/// </summary>
 		internal const int kMinColWidth = 25;
-
-		/// <summary>
-		/// This attempts to prevent the header turning into a scroll bar by adjusting the widths
-		/// of columns as necessary so they fit.
-		///
-		/// </summary>
-		/// <param name="iLastAdjustItem">Index of the last column we are allowed to adjust the
-		/// width of; typically 0 or the column the user is dragging.</param>
-		internal void AdjustWidth(int iLastAdjustItem)
-		{
-			CheckDisposed();
-
-			if (m_fInAdjustWidth)
-				return;
-			bool fNeedResume = false;
-			try
-			{
-				m_fInAdjustWidth = true;
-				int count = Columns.Count;
-				int widthTotal = 0;
-
-				for (int i = 0; i < count; i++)
-				{
-					int width = Columns[i].Width;
-					widthTotal += width;
-				}
-				int goalWidth = Width - kgapForScrollBar;
-				if (widthTotal <= goalWidth)
-					return; // nothing to do.
-				// Currently we never make any adjustments here.
-				//				this.SuspendLayout();
-				//				fNeedResume = true;
-				//				// If it's gotten too wide, shrink the last column(s). First pass tries to make them no less than min.
-				//				while (widthTotal > goalWidth)
-				//				{
-				//					bool fGotOne = false; // any column we can shrink at all?
-				//					// Find last column we can shrink.
-				//					for (int icol = Columns.Count; --icol >= iLastAdjustItem; )
-				//					{
-				//						int widthCurrent = Columns[icol].Width;
-				//						int newWidth = Math.Max(widthCurrent - (widthTotal - goalWidth), kMinColWidth); // don't make column less than 1 pixel.
-				//						if (newWidth < widthCurrent)
-				//						{
-				//							widthTotal -= widthCurrent - newWidth;
-				//							Columns[icol].Width = newWidth;
-				//							fGotOne = true;
-				//							break;
-				//						}
-				//					}
-				//					if (!fGotOne)
-				//						break;
-				//				}
-				//				while (widthTotal > goalWidth)
-				//				{
-				//					bool fGotOne = false; // any column we can shrink at all?
-				//					// Find last column we can shrink.
-				//					for (int icol = Columns.Count; --icol >=0; )
-				//					{
-				//						int widthCurrent = Columns[icol].Width;
-				//						int newWidth = Math.Max(widthCurrent - (widthTotal - goalWidth), 1); // don't make column less than 1 pixel.
-				//						if (newWidth < widthCurrent)
-				//						{
-				//							widthTotal -= widthCurrent - newWidth;
-				//							Columns[icol].Width = newWidth;
-				//							fGotOne = true;
-				//							break;
-				//						}
-				//					}
-				//					if (!fGotOne)
-				//						break;
-				//				}
-				//				// If any column right of the one dragged is less than kMinColWidth pixels wide, assign some extra to it.
-				//				for (int i = iLastAdjustItem; i < count -1 && widthTotal < goalWidth; i++)
-				//				{
-				//					int currentWidth = Columns[i].Width;
-				//					if (currentWidth < kMinColWidth)
-				//					{
-				//						// Change the width to be at most kMinColWidth, but no more than the
-				//						// amount we want to grow plus the current size.
-				//						int newWidth = Math.Min(kMinColWidth, currentWidth + goalWidth - widthTotal);
-				//						Columns[i].Width = newWidth;
-				//						widthTotal += newWidth - currentWidth;
-				//					}
-				//				}
-				//				// If anything is left assign it to the last column.
-				//				if (widthTotal < goalWidth)
-				//				{
-				//					// May as well allocate the extra to the last column
-				//					Columns[count - 1].Width += (goalWidth - widthTotal);
-				//				}
-			}
-			finally
-			{
-				if (fNeedResume)
-					this.ResumeLayout();
-				m_fInAdjustWidth = false;
-			}
-		}
 
 		enum ArrowType { Ascending, Descending }
 		/// <summary></summary>

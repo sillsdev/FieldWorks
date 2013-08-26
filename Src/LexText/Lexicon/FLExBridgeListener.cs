@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using Palaso.Lift;
 using Palaso.Lift.Migration;
 using Palaso.Lift.Parsing;
@@ -155,10 +156,16 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		/// <summary>
-		/// Handles the "Get and _Merge Lexicon with this Projec" menu item.
+		/// Handles the "Get and _Merge Lexicon with this Project" menu item.
 		/// </summary>
 		public bool OnObtainLiftProject(object commandObject)
 		{
+			if (Directory.Exists(GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder)))
+			{
+				MessageBox.Show(((FwApp)_mediator.PropertyTable.GetValue("App")).ActiveMainWindow, LexEdStrings.kProjectAlreadyHasLiftRepo, LexEdStrings.kCannotDoGetAndMergeAgain, MessageBoxButtons.OK);
+				return true;
+			}
+
 			StopParser();
 			bool dummy;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, null, FLExBridgeHelper.ObtainLift, null, FDOBackendProvider.ModelVersion, "0.13",
@@ -262,7 +269,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			if (dataChanged)
 			{
-				bool conflictOccurred = DetectConflicts(projectFolder, savedState);
+				bool conflictOccurred = DetectMainConflicts(projectFolder, savedState);
 				var app = (LexTextApp)_mediator.PropertyTable.GetValue("App");
 				var newAppWindow = RefreshCacheWindowAndAll(app, fullProjectFileName);
 				if (conflictOccurred)
@@ -323,7 +330,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			// Step 2. Export lift file. If fails, then call into bridge with undo_export_lift and quit.
 			if (!ExportLiftLexicon())
+			{
+				MessageBox.Show(_parentForm, LexEdStrings.FLExBridgeListener_UndoExport_Error_exporting_LIFT, LexEdStrings.FLExBridgeListener_UndoExport_LIFT_Export_failed_Title,
+								MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return true;
+			}
 
 			// Step 3. Have Flex Bridge do the S/R.
 			// after saving the state enough to detect if conflicts are created.
@@ -379,7 +390,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		public bool OnDisplayCheckForFlexBridgeUpdates(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckForFlexBridgeInstalled(display);
+			if (MiscUtils.IsUnix)
+			{
+				display.Visible = false;
+			}
+			else
+			{
+				CheckForFlexBridgeInstalled(display);
+			}
 
 			return true; // We dealt with it.
 		}
@@ -635,7 +653,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		/// <summary>
-		/// Reregisters an inport failure, if needed, otherwise clears the token.
+		/// Reregisters an import failure, if needed, otherwise clears the token.
 		/// </summary>
 		/// <returns>'true' if the import failure continues, otherwise 'false'.</returns>
 		private bool RepeatPriorFailedImportIfNeeded()
@@ -698,7 +716,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				}
 
 				/* TODO: What to do with Lift conflicts?
-								var conflictOccurred = DetectConflicts(projectFolder, savedState);
+								var conflictOccurred = DetectMainConflicts(projectFolder, savedState);
 								var app = (LexTextApp)m_mediator.PropertyTable.GetValue("App");
 								var newAppWindow = RefreshCacheWindowAndAll(app, m_liftPathname);
 
@@ -1034,15 +1052,20 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					try
 					{
 						progressDlg.Title = ResourceHelper.GetResourceString("kstidExportLiftLexicon");
-						var outPath = (string)progressDlg.RunTask(true, ExportLiftLexicon, _liftPathname);
+						var outPath = (string)progressDlg.RunTask(true, ExportLiftLexicon, null);
 						var retval = (!String.IsNullOrEmpty(outPath));
-						if (!retval)
+						if (!retval && CanUndoLiftExport)
+						{
 							UndoExport();
+						}
 						return retval;
 					}
 					catch
 					{
-						UndoExport();
+						if (CanUndoLiftExport)
+						{
+							UndoExport();
+						}
 						return false;
 					}
 					finally
@@ -1054,10 +1077,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		private const string kChorusNotesExtension = "ChorusNotes";
-
 		/// <summary>
 		/// Export the contents of the lift lexicon.
 		/// </summary>
+		/// <param name="progressDialog"></param>
+		/// <param name="parameters">parameters are not used in this method. This method is called by an invoker,
+		/// which requires this signature.</param>
 		/// <returns>the name of the exported LIFT file if successful, or null if an error occurs.</returns>
 		/// <remarks>
 		/// This method is called in a thread, during the export process.
@@ -1072,7 +1097,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				{
 					Directory.CreateDirectory(liftProjectDir);
 				}
-				if (_liftPathname == null)
+				if (String.IsNullOrEmpty(_liftPathname))
 				{
 					_liftPathname = Path.Combine(liftProjectDir, Cache.ProjectId.Name + ".lift");
 				}
@@ -1187,6 +1212,15 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 		}
 
+		private bool CanUndoLiftExport
+		{
+			get
+			{
+				var liftProjectFolder = GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder);
+				return Directory.Exists(liftProjectFolder) && Directory.Exists(Path.Combine(liftProjectFolder, ".hg"));
+			}
+		}
+
 		private void UndoExport()
 		{
 			bool dataChanged;
@@ -1194,10 +1228,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			// Have FLEx Bridge do its 'undo'
 			// flexbridge -p <project folder name> #-u username -v undo_export_lift)
 			FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, SendReceiveUser,
-													FLExBridgeHelper.UndoExportLift, null, FDOBackendProvider.ModelVersion, "0.13", null,
-													out dataChanged, out dummy);
-			MessageBox.Show(_parentForm, LexEdStrings.FLExBridgeListener_UndoExport_Error_exporting_LIFT, LexEdStrings.FLExBridgeListener_UndoExport_LIFT_Export_failed_Title,
-							MessageBoxButtons.OK, MessageBoxIcon.Error);
+				FLExBridgeHelper.UndoExportLift, null, FDOBackendProvider.ModelVersion, "0.13", null,
+				out dataChanged, out dummy);
 		}
 
 		#endregion
@@ -1219,7 +1251,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				var revisedProjName = Unicode.RemoveNonAsciiCharsFromString(Cache.ProjectId.Name);
 				if (revisedProjName == string.Empty)
-					return true; // The whole pre-existing project name is non-Ascii characters!
+				{
+					// The whole pre-existing project name is non-Ascii characters!
+					DisplayAllNonAsciiComplaint();
+					return true;
+				}
 				if (DisplayNonAsciiWarning(revisedProjName) == DialogResult.Cancel)
 					return true;
 				// Rename Project
@@ -1270,6 +1306,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			foreach (string notesPathname in Directory.GetFiles(folderToSearchIn, "*.ChorusNotes", SearchOption.AllDirectories))
 			{
+				if (!NotesFileHasContent(notesPathname))
+					continue; // Skip ones with no content.
+
 				if (checkForLiftNotes)
 					return true;
 
@@ -1279,6 +1318,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				// Must be a nested lift one to get here, so try another one.
 			}
 			return false;
+		}
+
+		private static bool NotesFileHasContent(string chorusNotesPathname)
+		{
+			var doc = XDocument.Load(chorusNotesPathname);
+			return doc.Root.HasElements; // Files with no notes (e.g., "Lexicon.fwstub.ChorusNotes") are not interesting.
 		}
 
 		private static void ReportDuplicateBridge()
@@ -1296,6 +1341,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			return MessageBox.Show(string.Format(LexEdStrings.ksNonAsciiProjectNameWarning, revisedProjName), LexEdStrings.ksWarning,
 					MessageBoxButtons.OKCancel, MessageBoxIcon.Information, MessageBoxDefaultButton.Button2);
+		}
+
+		private void DisplayAllNonAsciiComplaint()
+		{
+			MessageBox.Show(LexEdStrings.ksAllNonAsciiProjectNameWarning, LexEdStrings.ksWarning,
+					MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 
 		private static bool CheckForExistingFileName(string projectFolder, string revisedFileName)
@@ -1346,7 +1397,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return false; // no conflicts added.
 		}
 
-		private static bool DetectConflicts(string path, Dictionary<string, long> savedState)
+		private static bool DetectMainConflicts(string path, Dictionary<string, long> savedState)
 		{
 			foreach (var file in Directory.GetFiles(path, "*.ChorusNotes", SearchOption.AllDirectories))
 			{
@@ -1411,8 +1462,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private static void CheckForFlexBridgeInstalled(UIItemDisplayProperties display)
 		{
-			var fullName = FLExBridgeHelper.FullFieldWorksBridgePath();
-			display.Enabled = FileUtils.FileExists(fullName); // Flex Bridge exe has to exist
+			display.Enabled = FLExBridgeHelper.IsFlexBridgeInstalled();
 			display.Visible = true; // Always visible. Cf. LT-13885
 		}
 

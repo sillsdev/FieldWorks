@@ -1699,7 +1699,7 @@ namespace SIL.FieldWorks.IText
 						// Wait to make the changes until the task (typically typing backspace) completes.
 						m_setupPromptHelper = helper;
 						m_setupPromptFlid = flid;
-						handlerExtensions.PropChangedCompleted += handlerExtensions_PropChangedCompleted;
+						handlerExtensions.DoAtEndOfPropChanged(handlerExtensions_PropChangedCompleted);
 					}
 					else
 					{
@@ -1729,10 +1729,8 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		private void handlerExtensions_PropChangedCompleted(object sender, bool fromUndoRedo)
+		private void handlerExtensions_PropChangedCompleted()
 		{
-			// Only do it once!
-			((IActionHandlerExtensions)(Cache.ActionHandlerAccessor)).PropChangedCompleted -= handlerExtensions_PropChangedCompleted;
 			SetupTranslationPrompt(m_setupPromptHelper, m_setupPromptFlid);
 		}
 

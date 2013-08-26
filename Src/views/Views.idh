@@ -3580,6 +3580,9 @@ Last reviewed:
 		// empty paragraph as nearly as possible invisible.
 		HRESULT EmptyParagraphBehavior(
 			[in] int behavior);
+		// True if the current flow object is a paragraph.
+		HRESULT IsParagraphOpen(
+			[out, retval] ComBool * pfRet);
 	};
 
 

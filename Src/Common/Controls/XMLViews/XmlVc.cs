@@ -1722,6 +1722,11 @@ namespace SIL.FieldWorks.Common.Controls
 						switch (group)
 						{
 							case "para":
+								if (vwenv.IsParagraphOpen())
+								{
+									group = ""; // suppress CloseParagraph
+									break; // don't start our own paragraph if some caller did it for us.
+								}
 								string style = XmlUtils.GetOptionalAttributeValue(frag, "style", null);
 								if (style == null)
 								{

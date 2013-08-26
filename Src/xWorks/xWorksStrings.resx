@@ -775,4 +775,23 @@ Do you want to continue with the export?</value>
     <value>Sorry, FLEx does not yet know how to jump to a particular location in Scripture.</value>
     <comment>Displayed when following a hot link to somewhere in Scripture. Not sure this can actually happen.</comment>
   </data>
+  <data name="kstCustomFieldSendReceive" xml:space="preserve">
+    <value>This project is set up for Send/Receive Project (with other FLEx users). If there are already other users in your team, it is VERY important to coordinate custom field changes. FLEx currently has only limited ability to Send/Receive custom field changes. It is possible to get into a situation where some team members cannot merge their changes and must Get the project again.
+
+Recommended procedure:
+
+1. All team members do Send/Receive and STOP WORK until they have done step 3.
+
+2. One team member does a final Send/Receive, makes the custom field changes, and does another Send/Receive.
+
+3. All other team members do another Send/Receive to get the new field.
+
+If you are going to CHANGE THE TYPE of a field (e.g., delete or rename a text field and add a list-reference field with the same name), we recommend that steps 2 and 3 be repeated, once to delete or rename the old field, and once to add the new one.
+
+Adding custom fields can safely be done with less trouble. The important thing is to avoid two people adding custom fields with the same name. We recommend that teams agree on one person who will make all custom field changes.
+
+If you are not the one designated user who adds fields, or you are making some other kind of change and have not yet had your team do step 1, PLEASE do not continue!
+
+(There is one other special case. If you are adding a temporary custom field for a special purpose and will delete it before you next Send/Receive, you may proceed safely.)</value>
+  </data>
 </root>

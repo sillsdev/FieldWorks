@@ -18,7 +18,6 @@
 using System;
 using System.Windows.Forms;
 using System.Diagnostics;
-using System.ComponentModel;	// for [Browsable] attribute
 using Microsoft.Win32;
 using System.IO;
 using System.Drawing;
@@ -30,7 +29,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
 using SIL.FieldWorks.Common.Controls;

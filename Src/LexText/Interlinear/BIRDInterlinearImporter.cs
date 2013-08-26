@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -17,6 +18,7 @@ namespace SIL.FieldWorks.IText
 	public partial class LinguaLinksImport
 	{
 		//this delegate is used for alerting the user of new writing systems found in the import
+		//or a text that is already found.
 		private delegate DialogResult ShowDialogAboveProgressbarDelegate(IThreadedProgress progress,
 			string text, string title, MessageBoxButtons buttons);
 
@@ -54,10 +56,13 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
-		/// This method will create a new Text document from the given BIRD format Interlineartext.
+		/// This method will create a new Text document from the given BIRD format Interlineartext. If this fails
+		/// for some reason then return false to tell the calling method to abort the import.
 		/// </summary>
 		/// <param name="newText">The text to populate, could be set to null.</param>
-		/// <param name="textParams"></param>
+		/// <param name="textParams">This contains the interlinear text.</param>
+		/// <returns>The imported text may be in a writing system that is not part of this project. Return false if the user
+		/// rejects the text which tells the caller of this method to abort the import.</returns>
 		private static bool PopulateTextFromBIRDDoc(ref FDO.IText newText, TextCreationParams textParams)
 		{
 			s_importOptions = textParams.ImportOptions;
@@ -170,6 +175,14 @@ namespace SIL.FieldWorks.IText
 			return wf == null;
 		}
 
+		/// <summary>
+		/// Merge the contents of the given Text into the exising one. If this fails
+		/// for some reason then return false to tell the calling method to abort the import.
+		/// </summary>
+		/// <param name="newText"></param>
+		/// <param name="textParams"></param>
+		/// <returns>The imported text may be in a writing system that is not part of this project. Return false if the user
+		/// rejects the text  which tells the caller of this method to abort the import.</returns>
 		private static bool MergeTextWithBIRDDoc(ref FDO.IText newText, TextCreationParams textParams)
 		{
 			s_importOptions = textParams.ImportOptions;
@@ -451,8 +464,18 @@ namespace SIL.FieldWorks.IText
 			return false;
 		}
 
+		/// <summary>
+		/// The imported text may be in a writing system that is not part of this project. Return false if the user
+		/// rejects the text which tells the caller of this method to abort the import.
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="interlinText"></param>
+		/// <param name="wsFactory"></param>
+		/// <param name="progress"></param>
+		/// <returns>return false to abort import</returns>
 		private static bool CheckAndAddLanguagesInternal(FdoCache cache, Interlineartext interlinText, ILgWritingSystemFactory wsFactory, IThreadedProgress progress)
 		{
+			DialogResult result;
 			if (interlinText.languages != null)
 			{
 				if (!SomeLanguageSpecifiesVernacular(interlinText))
@@ -470,21 +493,21 @@ namespace SIL.FieldWorks.IText
 						{
 							//we need to invoke the dialog on the main thread so we can use the progress dialog as the parent.
 							//otherwise the message box can be displayed behind everything
-							IAsyncResult asyncResult = progress.ThreadHelper.BeginInvoke(
-								new ShowDialogAboveProgressbarDelegate(ShowDialogAboveProgressbar),
-								new object[]
-								{
-									progress,
-									writingSystem.LanguageName + ITextStrings.ksImportVernacLangMissing,
-									ITextStrings.ksImportVernacLangMissingTitle,
-									MessageBoxButtons.OKCancel
-								});
-							var result = (DialogResult)progress.ThreadHelper.EndInvoke(asyncResult);
+							var instructions = GetInstructions(interlinText, writingSystem.LanguageName, ITextStrings.ksImportVernacLangMissing);
+							IAsyncResult asyncResult = progress.ThreadHelper.BeginInvoke(new ShowDialogAboveProgressbarDelegate(ShowDialogAboveProgressbar),
+																		 new object[]
+																			{
+																				progress,
+																				instructions,
+																				ITextStrings.ksImportVernacLangMissingTitle,
+																				MessageBoxButtons.OKCancel
+																			});
+							result = (DialogResult)progress.ThreadHelper.EndInvoke(asyncResult);
 							if (result == DialogResult.OK)
 							{
 								cache.LanguageProject.AddToCurrentVernacularWritingSystems((IWritingSystem)writingSystem);
 							}
-							else
+							else if (result == DialogResult.Cancel)
 							{
 								return false;
 							}
@@ -494,16 +517,17 @@ namespace SIL.FieldWorks.IText
 					{
 						if (!cache.LanguageProject.CurrentAnalysisWritingSystems.Contains(writingSystem.Handle))
 						{
-							IAsyncResult asyncResult = progress.ThreadHelper.BeginInvoke(
-								new ShowDialogAboveProgressbarDelegate(ShowDialogAboveProgressbar),
-								new object[]
-								{
-									progress,
-									writingSystem.LanguageName + ITextStrings.ksImportAnalysisLangMissing,
-									ITextStrings.ksImportAnalysisLangMissingTitle,
-									MessageBoxButtons.OKCancel
-								});
-							var result = (DialogResult)progress.ThreadHelper.EndInvoke(asyncResult);
+							var instructions = GetInstructions(interlinText, writingSystem.LanguageName,
+															   ITextStrings.ksImportAnalysisLangMissing);
+							IAsyncResult asyncResult = progress.ThreadHelper.BeginInvoke(new ShowDialogAboveProgressbarDelegate(ShowDialogAboveProgressbar),
+																		 new object[]
+																			{
+																				progress,
+																				instructions,
+																				ITextStrings.ksImportAnalysisLangMissingTitle,
+																				MessageBoxButtons.OKCancel
+																			});
+							result = (DialogResult)progress.ThreadHelper.EndInvoke(asyncResult);
 							//alert the user
 							if (result == DialogResult.OK)
 							{
@@ -512,7 +536,7 @@ namespace SIL.FieldWorks.IText
 								// We already have progress indications up.
 								XmlTranslatedLists.ImportTranslatedListsForWs(writingSystem.Id, cache, null);
 							}
-							else
+							else if (result == DialogResult.Cancel)
 							{
 								return false;
 							}
@@ -521,6 +545,39 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 			return true;
+		}
+
+		private static string GetInstructions(Interlineartext interlinText, String wsName, String instructions)
+		{
+			var strBldr = new StringBuilder(wsName);
+			strBldr.Append(instructions);
+			strBldr.Append(Environment.NewLine); strBldr.Append(Environment.NewLine);
+			strBldr.Append(GetPartOfPhrase(interlinText));
+			return strBldr.ToString();
+		}
+
+		private static string GetPartOfPhrase(Interlineartext interlinText)
+		{
+			int i = 0;
+			var strBldr = new StringBuilder(ITextStrings.ksImportLangMissingTextStartsWith);
+			foreach (var paragraph in interlinText.paragraphs)
+			{
+				foreach (var phrase in paragraph.phrases)
+				{
+					foreach (var word in phrase.WordsContent.Words)
+					{
+						strBldr.Append(word.Items[0].Value);
+						strBldr.Append(" ");
+						i++;
+						if (i > 6)
+						{
+							strBldr.Append(" ...");
+							return strBldr.ToString();
+						}
+					}
+				}
+			}
+			return strBldr.ToString();
 		}
 
 		private static void SetVernacularLanguagesByUsage(Interlineartext interlinText)

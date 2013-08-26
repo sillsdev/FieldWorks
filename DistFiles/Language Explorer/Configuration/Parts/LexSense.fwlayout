@@ -219,7 +219,7 @@
 			</part>
 		</generate>
 		<part ref="StemComplexFormsConfig" label="Referenced Complex Forms" param="publishCdSenseComplexFormRef" visibility="never" before="" after=" " sep=" " css="sense-complexformrefs" showasindentedpara="no"/>
-		<part ref="SensesConfig" label="Subsenses" sep="  " number="%O) " numstyle="bold" numsingle="yes" visibility="never" recurseConfig="false" param="publishcd" css="subsenses" parastyle="Dictionary-Sense"/>
+		<part ref="SensesConfig" label="Subsenses" sep="  " number="%O) " numstyle="bold" numsingle="yes" visibility="never" recurseConfig="false" param="publishcd" css="subsenses" cssNumber="xsensenumber" parastyle="Dictionary-Sense"/>
 	</layout>
 
 	<!-- STUFF ADDED FOR NEW CONFIGURATION WORK -->
@@ -289,7 +289,7 @@
 			</part>
 		</generate>
 		<part ref="StemComplexFormsConfig" label="Referenced Complex Forms" param="publishStemSenseComplexFormRef" visibility="ifdata" before="" after=" " sep=" " css="sense-complexformrefs" showasindentedpara="no"/>
-		<part ref="SensesConfig" label="Subsenses" sep="  " number="%O) " numstyle="bold" numsingle="yes" visibility="ifdata" recurseConfig="false" param="publishStem" css="subsenses" parastyle="Dictionary-Sense"/>
+		<part ref="SensesConfig" label="Subsenses" sep="  " number="%O) " numstyle="bold" numsingle="yes" visibility="ifdata" recurseConfig="false" param="publishStem" css="subsenses" cssNumber="xsensenumber" parastyle="Dictionary-Sense"/>
 	</layout>
 
 	<layout class="LexSense" type="jtview" name="publishStemMinor_AsPara">
@@ -357,7 +357,7 @@
 			</part>
 		</generate>
 		<part ref="StemComplexFormsConfig" label="Referenced Complex Forms" visibility="ifdata" before="" after=" " sep=" " param="publishStemMinorSenseComplexFormRef" css="sense-complexformrefs-minor"/>
-		<part ref="SensesConfig" label="Subsenses" sep="  " number="%O) " numstyle="bold" numsingle="yes" visibility="ifdata" recurseConfig="false" param="publishStemMinor" css="subsenses-minor" parastyle="Dictionary-Sense"/>
+		<part ref="SensesConfig" label="Subsenses" sep="  " number="%O) " numstyle="bold" numsingle="yes" visibility="ifdata" recurseConfig="false" param="publishStemMinor" css="subsenses-minor" cssNumber="xsensenumber" parastyle="Dictionary-Sense"/>
 	</layout>
 
 	<layout class="LexSense" type="jtview" name="publishRoot_AsPara">
@@ -426,7 +426,7 @@
 		</generate>
 		<part ref="ComplexFormsNotSubentries" label="Other Referenced Complex Forms" visibility="ifdata" before="" after=" " sep=" " param="publishRootSenseComplexFormRef" css="sense-complexformrefs"/>
 		<part ref="Subentries" label="Subentries" visibility="never" param="publishRootSubentry" indent="true" recurseConfig="false" recurseConfigLabel="Main Entry\Subentries" forceSubentryDisplay="true" parastyle="Dictionary-Subentry" preventnullstyle="true" flowType="divInPara" css="sense-subentries"/>
-		<part ref="SensesConfig" label="Subsenses" sep="  " number="%O) " numstyle="bold" numsingle="yes" visibility="ifdata" recurseConfig="false" param="publishRoot" css="subsenses" parastyle="Dictionary-Sense"/>
+		<part ref="SensesConfig" label="Subsenses" sep="  " number="%O) " numstyle="bold" numsingle="yes" visibility="ifdata" recurseConfig="false" param="publishRoot" css="subsenses" cssNumber="xsensenumber" parastyle="Dictionary-Sense"/>
 	</layout>
 
 	<layout class="LexSense" type="jtview" name="publishRootMinor_AsPara">
@@ -494,7 +494,7 @@
 			</part>
 		</generate>
 		<part ref="RootComplexFormsConfig" label="Referenced Complex Forms" visibility="ifdata" before="" after=" " sep=" " param="publishRootMinorSenseComplexFormRef" css="sense-complexformrefs-minor"/>
-		<part ref="SensesConfig" label="Subsenses" sep="  " number="%O) " numstyle="bold" numsingle="yes" visibility="ifdata" recurseConfig="false" param="publishRootMinor" css="subsenses-minor" parastyle="Dictionary-Sense"/>
+		<part ref="SensesConfig" label="Subsenses" sep="  " number="%O) " numstyle="bold" numsingle="yes" visibility="ifdata" recurseConfig="false" param="publishRootMinor" css="subsenses-minor" cssNumber="xsensenumber"  parastyle="Dictionary-Sense"/>
 	</layout>
 
 	<layout class="LexSense" type="jtview" name="publishMinorComplexFormDefn">
@@ -562,7 +562,7 @@
 			</part>
 		</generate>
 		<part ref="ComplexFormsNotSubentries" label="Referenced Complex Forms" visibility="ifdata" before="" after=" " sep=" " param="publishRootSubSenseComplexFormRef" css="sense-complexformrefs-sub"/>
-		<part ref="SensesConfig" label="Subsenses" sep="  " number="%O) " numstyle="bold" numsingle="yes" visibility="ifdata" recurseConfig="false" param="publishRootSub" css="subsenses-sub" parastyle="Dictionary-Sense"/>
+		<part ref="SensesConfig" label="Subsenses" sep="  " number="%O) " numstyle="bold" numsingle="yes" visibility="ifdata" recurseConfig="false" param="publishRootSub" css="subsenses-sub" cssNumber="xsensenumber" parastyle="Dictionary-Sense"/>
 	</layout>
 
 	<layout class="LexSense" type="jtview" name="publishRootMinorSub_AsPara">
@@ -630,7 +630,7 @@
 			</part>
 		</generate>
 		<part ref="ComplexFormsNotSubentries" label="Referenced Complex Forms" visibility="ifdata" before="" after=" " sep=" " param="publishRootMinorSubSenseComplexFormRef" css="sense-complexformrefs-minor-sub"/>
-		<part ref="SensesConfig" label="Subsenses" sep="  " number="%O) " numstyle="bold" numsingle="yes" visibility="ifdata" recurseConfig="false" param="publishRootMinorSub" css="subsenses-minor" parastyle="Dictionary-Sense"/>
+		<part ref="SensesConfig" label="Subsenses" sep="  " number="%O) " numstyle="bold" numsingle="yes" visibility="ifdata" recurseConfig="false" param="publishRootMinorSub" css="subsenses-minor" cssNumber="xsensenumber" parastyle="Dictionary-Sense"/>
 	</layout>
 
 	<layout class="LexExampleSentence" type="jtview" name="publishStem">

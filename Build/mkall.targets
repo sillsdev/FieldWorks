@@ -357,6 +357,7 @@
 		<DownloadFiles Include="$(fwrt)/Downloads/Palaso.Media.dll"/>
 		<DownloadFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.dll"/>
 		<DownloadFiles Include="$(fwrt)/Downloads/L10NSharp.dll"/>
+		<DownloadFiles Include="$(fwrt)/Downloads/IPCFramework.dll"/>
 	</ItemGroup>
 
 	<Target Name="CopyDlls" DependsOnTargets="downloadWindowsDlls;downloadLinuxDlls">
@@ -417,7 +418,10 @@
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt247/.lastSuccessful/Palaso.Media.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Media.dll"/>
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt247/.lastSuccessful/PalasoUIWindowsForms.dll" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.dll"/>
 		<!-- L10Sharp localization from the develop branch for now -->
+		<Message Text="Downloading latest successful artifacts for L10NSharp and IPCFramework."/>
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt247/.lastSuccessful/L10NSharp.dll" LocalFilename="$(fwrt)/Downloads/L10NSharp.dll"/>
+		<!-- IPCFramework.dll. bt278 is the IPC (win32) build (of the develop branch). -->
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt278/.lastSuccessful/IPCFramework.dll" LocalFilename="$(fwrt)/Downloads/IPCFramework.dll"/>
 	</Target>
 
 	<Target Name="downloadLinuxDlls" Condition="'$(OS)'=='Unix'">
@@ -429,14 +433,17 @@
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt267/.lastSuccessful/ChorusHub.exe" LocalFilename="$(fwrt)/Downloads/ChorusHub.exe"/>
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt267/.lastSuccessful/LibChorus.dll" LocalFilename="$(fwrt)/Downloads/LibChorus.dll"/>
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt267/.lastSuccessful/Vulcan.Uczniowie.HelpProvider.dll" LocalFilename="$(fwrt)/Downloads/Vulcan.Uczniowie.HelpProvider.dll"/>
-		<!-- Palaso dlls. bt33 is the palaso-lucid32-DefaultMono branch for Palaso. Update when appropriate. -->
+		<!-- Palaso dlls. bt33 is the palaso-precise32-DefaultMono branch for Palaso. Update when appropriate. -->
 		<Message Text="Downloading latest successful artifacts from Palaso DefaultMono build."/>
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt33/.lastSuccessful/Palaso.dll" LocalFilename="$(fwrt)/Downloads/Palaso.dll"/>
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt33/.lastSuccessful/Palaso.Lift.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Lift.dll"/>
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt33/.lastSuccessful/Palaso.Media.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Media.dll"/>
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt33/.lastSuccessful/PalasoUIWindowsForms.dll" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.dll"/>
 		<!-- L10Sharp localization from the develop branch for now -->
+		<Message Text="Downloading latest successful artifacts for L10NSharp and IPCFramework."/>
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt247/.lastSuccessful/L10NSharp.dll" LocalFilename="$(fwrt)/Downloads/L10NSharp.dll"/>
+		<!-- IPCFramework.dll. bt279 is the IPC-Precise64 build (of the develop branch). -->
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt279/.lastSuccessful/IPCFramework.dll" LocalFilename="$(fwrt)/Downloads/IPCFramework.dll"/>
 	</Target>
 
 	<Target Name="setRegistryValues" DependsOnTargets="initLinux;initWindows;setKeysInHKLM;setKeysInHKCU"/>

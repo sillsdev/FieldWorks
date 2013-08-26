@@ -1029,7 +1029,7 @@ namespace SIL.FieldWorks.Common.Controls
 				m_checkMarkButton.Left = 1;
 				ToolTip ttip = new ToolTip();
 				ttip.SetToolTip(m_checkMarkButton, XMLViewsStrings.ksTipCheck);
-				Controls.Add(m_checkMarkButton);
+				m_scrollContainer.Controls.Add(m_checkMarkButton);
 				m_checkMarkButton.BringToFront();
 			}
 
@@ -2960,7 +2960,6 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 				if (m_bulkEditBar != null)
 					m_bulkEditBar.UpdateColumnList();
-				m_lvHeader.AdjustWidth(0); // adjust to fit
 				// That doesn't fix columns added at the end, which the .NET code helpfully adjusts to
 				// one pixel wide each if the earlier columns use all available space!
 				int ccols = m_lvHeader.Columns.Count;

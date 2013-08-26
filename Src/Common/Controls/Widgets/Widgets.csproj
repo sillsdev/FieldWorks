@@ -276,6 +276,10 @@
     <EmbeddedResource Include="VSTabControl.resx">
       <DependentUpon>VSTabControl.cs</DependentUpon>
     </EmbeddedResource>
+    <Compile Include="LabeledMultiStringControl.cs" />
+    <Compile Include="InnerLabeledMultiStringControl.cs" />
+    <Compile Include="InnerLabeledMultiStringView.cs" />
+    <Compile Include="MultiStringSelectionUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

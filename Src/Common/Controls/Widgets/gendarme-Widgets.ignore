@@ -24,7 +24,7 @@ R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
 T: SIL.FieldWorks.Common.Widgets.FwMultilingualPropViewDataSource
 T: SIL.FieldWorks.Common.Widgets.VSTabControl/NativeUpDown
 T: SIL.FieldWorks.Common.Widgets.TextBoxVc
-T: SIL.FieldWorks.Common.Widgets.LabeledMultiStringViewVc
+T: SIL.FieldWorks.Common.Widgets.InnerLabeledMultiStringViewVc
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Correctness.DisposableFieldsShouldBeDisposedRule

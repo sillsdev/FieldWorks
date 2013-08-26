@@ -495,7 +495,6 @@ namespace SIL.FieldWorks.LexText.Controls
 				ListNewCustomFields(writer, LexTextControls.ksCustomFieldsAdded, m_rgnewCustomFields);
 				ListConflictsFound(writer, LexTextControls.ksConflictsResultedInDup, m_rgcdConflicts);
 				ListInvalidData(writer);
-				ListTruncatedData(writer);
 				ListInvalidRelations(writer);
 				ListCombinedCollections(writer);
 				ListInvalidMorphTypes(writer);
@@ -535,35 +534,6 @@ namespace SIL.FieldWorks.LexText.Controls
 				writer.WriteLine("<p>{0}</p>", LexTextControls.ksClickOnHyperLinks);
 			}
 
-		}
-
-		private void ListTruncatedData(StreamWriter writer)
-		{
-			if (m_rgTruncated.Count == 0)
-				return;
-			writer.WriteLine("<table border=\"1\" width=\"100%\">");
-			writer.WriteLine("<tbody>");
-			writer.WriteLine("<caption><h3>{0}</h3></caption>", LexTextControls.ksTruncatedOnImport);
-			writer.WriteLine("<tr>");
-			writer.WriteLine("<th width=\"15%\">{0}</th>", LexTextControls.ksTruncatedField);
-			writer.WriteLine("<th width=\"10%\">{0}</th>", LexTextControls.ksStoredLength);
-			writer.WriteLine("<th width=\"15%\">{0}</th>", LexTextControls.ksWritingSystem);
-			writer.WriteLine("<th width=\"20%\">{0}</th>", LexTextControls.ksEntry);
-			writer.WriteLine("<th width=\"40%\">{0}</th>", LexTextControls.ksOriginalValue);
-			writer.WriteLine("</tr>");
-			foreach (TruncatedData td in m_rgTruncated)
-			{
-				writer.WriteLine("<tr>");
-				writer.WriteLine("<td width=\"15%\">{0}</td>", td.FieldName);
-				writer.WriteLine("<td width=\"10%\">{0}</td>", td.StoredLength);
-				writer.WriteLine("<td width=\"15%\">{0}</td>", td.WritingSystem);
-				writer.WriteLine("<td width=\"20%\">{0}</td>", td.EntryHtmlReference());
-				writer.WriteLine("<td width=\"40%\">{0}</td>", td.OriginalText);
-				writer.WriteLine("</tr>");
-			}
-			writer.WriteLine("</tbody>");
-			writer.WriteLine("</table>");
-			writer.WriteLine("<p>{0}</p>", LexTextControls.ksClickOnHyperLinks);
 		}
 
 		private void ListInvalidData(StreamWriter writer)

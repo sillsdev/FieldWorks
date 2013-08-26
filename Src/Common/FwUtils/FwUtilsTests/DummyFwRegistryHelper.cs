@@ -26,6 +26,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		///
 		/// </summary>
+		/// <returns></returns>
+		public bool ParatextSettingsDirectoryExists()
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		///
+		/// </summary>
 		public RegistryKey FieldWorksRegistryKeyLocalMachine
 		{
 			get { return GetTestKey("FieldWorksRegistryKLM"); }

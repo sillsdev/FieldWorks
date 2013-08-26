@@ -545,7 +545,7 @@ namespace XCore
 				switch (childNode.Name)
 				{
 					case "item":
-						ChoiceBase choice = ChoiceBase.Make(m_mediator, childNode,m_adapter , this);
+						ChoiceBase choice = ChoiceBase.Make(m_mediator, childNode, m_adapter, this);
 						this.Add(choice);
 						break;
 					case "menu":

@@ -313,7 +313,14 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private void InitializeReversalMap(IFdoOwningCollection<IReversalIndexEntry> entries,
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="entries">This is IEnumerable to capture similarity of IFdoOwningCollection and IFdoOwningSequence.
+		/// It is IFdoOwningCollection for entries owned by ReversalIndex and
+		/// IFdoOwningSequence for entries owned by Subentries of a ReversalIndexEntry</param>
+		/// <param name="mapToRIEs"></param>
+		private void InitializeReversalMap(IEnumerable<IReversalIndexEntry> entries,
 			Dictionary<MuElement, List<IReversalIndexEntry>> mapToRIEs)
 		{
 			foreach (IReversalIndexEntry rie in entries)
@@ -328,12 +335,12 @@ namespace SIL.FieldWorks.LexText.Controls
 						AddToReversalMap(mue, rie, mapToRIEs);
 					}
 				}
-				if (rie.SubentriesOC.Count > 0)
+				if (rie.SubentriesOS.Count > 0)
 				{
 					Dictionary<MuElement, List<IReversalIndexEntry>> submapToRIEs =
 						new Dictionary<MuElement, List<IReversalIndexEntry>>();
 					m_mapToMapToRie.Add(rie, submapToRIEs);
-					InitializeReversalMap(rie.SubentriesOC, submapToRIEs);
+					InitializeReversalMap(rie.SubentriesOS, submapToRIEs);
 				}
 			}
 		}
@@ -2030,16 +2037,10 @@ namespace SIL.FieldWorks.LexText.Controls
 				return true;
 			if (EntryNotesConflict(le, entry.Notes))
 				return true;
-			if (EntryPronunciationsConflict(le, entry.Pronunciations))
-				return true;
 			if (EntryTraitsConflict(le, entry.Traits))
 				return true;
 			if (EntryVariantsConflict(le, entry.Variants))
 				return true;
-			//entry.DateCreated;
-			//entry.DateModified;
-			//entry.Order;
-			//entry.Relations;
 			return false;
 		}
 
@@ -3532,45 +3533,6 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		}
 
-		private bool EntryPronunciationsConflict(ILexEntry le, List<CmLiftPhonetic> list)
-		{
-			if (le.PronunciationsOS.Count == 0 || list.Count == 0)
-				return false;
-			int cCommon = 0;
-			Dictionary<int, CmLiftPhonetic> dictHvoPhon = new Dictionary<int, CmLiftPhonetic>();
-			IgnoreNewWs();
-			foreach (CmLiftPhonetic phon in list)
-			{
-				ILexPronunciation pron = FindMatchingPronunciation(le, dictHvoPhon, phon);
-				if (pron != null)
-				{
-					if (MultiUnicodeStringsConflict(pron.Form, phon.Form, false, Guid.Empty, 0))
-					{
-						m_cdConflict = new ConflictingEntry(String.Format("Pronunciation ({0})",
-							TsStringAsHtml(pron.Form.BestVernacularAnalysisAlternative, m_cache)), le, this);
-						return true;
-					}
-					if (PronunciationFieldsOrTraitsConflict(pron, phon))
-					{
-						m_cdConflict = new ConflictingEntry(String.Format("Pronunciation ({0}) details",
-							TsStringAsHtml(pron.Form.BestVernacularAnalysisAlternative, m_cache)), le, this);
-						return true;
-					}
-					// TODO: Compare phon.Media and pron.MediaFilesOS
-					++cCommon;
-				}
-			}
-			if (cCommon < Math.Min(le.PronunciationsOS.Count, list.Count))
-			{
-				m_cdConflict = new ConflictingEntry("Pronunciations", le, this);
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-
 		/// <summary>
 		/// Find the best matching pronunciation in the lex entry (if one exists) for the imported LiftPhonetic phon.
 		/// If neither has any form, then only the media filenames are compared.  If both have forms, then both forms
@@ -3717,40 +3679,6 @@ namespace SIL.FieldWorks.LexText.Controls
 						break;
 				}
 			}
-		}
-
-		private bool PronunciationFieldsOrTraitsConflict(ILexPronunciation pron, CmLiftPhonetic phon)
-		{
-			IgnoreNewWs();
-			foreach (LiftField field in phon.Fields)
-			{
-				switch (field.Type.ToLowerInvariant())
-				{
-					case "cvpattern":
-					case "cv-pattern":
-						if (StringsConflict(pron.CVPattern, GetFirstLiftTsString(field.Content)))
-							return true;
-						break;
-					case "tone":
-						if (StringsConflict(pron.Tone, GetFirstLiftTsString(field.Content)))
-							return true;
-						break;
-				}
-			}
-			foreach (LiftTrait trait in phon.Traits)
-			{
-				switch (trait.Name.ToLowerInvariant())
-				{
-					case RangeNames.sLocationsOA:
-						ICmLocation loc = FindOrCreateLocation(trait.Value);
-						if (pron.LocationRA != null && pron.LocationRA != loc)
-							return true;
-						break;
-					default:
-						break;
-				}
-			}
-			return false;
 		}
 
 		private void ProcessEntryEtymologies(ILexEntry le, CmLiftEntry entry)
@@ -5959,7 +5887,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					mapToRIEs = new Dictionary<MuElement, List<IReversalIndexEntry>>();
 					m_mapToMapToRie.Add(rieOwner, mapToRIEs);
 				}
-				rie = FindOrCreateMatchingReversal(rev.Form, mapToRIEs, rieOwner.SubentriesOC);
+				rie = FindOrCreateMatchingReversal(rev.Form, mapToRIEs, rieOwner.SubentriesOS);
 			}
 			MergeInMultiUnicode(rie.ReversalForm, ReversalIndexEntryTags.kflidReversalForm, rev.Form, rie.Guid);
 			ProcessReversalGramInfo(rie, rev.GramInfo);
@@ -5971,13 +5899,27 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="form">safe XML</param>
 		/// <param name="mapToRIEs"></param>
-		/// <param name="entriesOC"></param>
+		/// <param name="entriesOS"></param>
 		/// <returns></returns>
 		private IReversalIndexEntry FindOrCreateMatchingReversal(LiftMultiText form,
 			Dictionary<MuElement, List<IReversalIndexEntry>> mapToRIEs,
-			IFdoOwningCollection<IReversalIndexEntry> entriesOC)
+			IFdoOwningCollection<IReversalIndexEntry> entriesOS)
 		{
-			IReversalIndexEntry rie = null;
+			IReversalIndexEntry rie;
+			var rgmue = FindAnyMatchingReversal(form, mapToRIEs, out rie);
+			if (rie == null)
+			{
+				rie = CreateNewReversalIndexEntry();
+				entriesOS.Add(rie);
+			}
+			foreach (MuElement mue in rgmue)
+				AddToReversalMap(mue, rie, mapToRIEs);
+			return rie;
+		}
+
+		private List<MuElement> FindAnyMatchingReversal(LiftMultiText form, Dictionary<MuElement, List<IReversalIndexEntry>> mapToRIEs, out IReversalIndexEntry rie)
+		{
+			rie = null;
 			List<IReversalIndexEntry> rgrie;
 			List<MuElement> rgmue = new List<MuElement>();
 			AddNewWsToAnalysis();
@@ -6006,10 +5948,26 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 				rgmue.Add(mue);
 			}
+			return rgmue;
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="form">safe XML</param>
+		/// <param name="mapToRIEs"></param>
+		/// <param name="entriesOS"></param>
+		/// <returns></returns>
+		private IReversalIndexEntry FindOrCreateMatchingReversal(LiftMultiText form,
+			Dictionary<MuElement, List<IReversalIndexEntry>> mapToRIEs,
+			IFdoOwningSequence<IReversalIndexEntry> entriesOS)
+		{
+			IReversalIndexEntry rie;
+			var rgmue = FindAnyMatchingReversal(form, mapToRIEs, out rie);
 			if (rie == null)
 			{
 				rie = CreateNewReversalIndexEntry();
-				entriesOC.Add(rie);
+				entriesOS.Add(rie);
 			}
 			foreach (MuElement mue in rgmue)
 				AddToReversalMap(mue, rie, mapToRIEs);

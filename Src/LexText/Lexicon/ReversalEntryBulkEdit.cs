@@ -28,12 +28,17 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			BaseInit(cache, mediator, recordListNode);
 			//string owner = XmlUtils.GetOptionalAttributeValue(recordListNode, "owner");
 			m_flid = ReversalIndexTags.kflidEntries; //LT-12577 a record list needs a real flid.
-			Guid riGuid = GetReversalIndexGuid(mediator);
-			if (riGuid != Guid.Empty)
+			//LT-14722 Crash when clicking Reversal Indexes
+			//Clerk is null when going to Reversal Indexes for the first time.
+			if (Clerk != null)
 			{
-				IReversalIndex ri = cache.ServiceLocator.GetObject(riGuid) as IReversalIndex;
-				m_owningObject = ri;
-				m_fontName = cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem).DefaultFontName;
+				Guid riGuid = GetReversalIndexGuid(mediator);
+				if (riGuid != Guid.Empty)
+				{
+					IReversalIndex ri = cache.ServiceLocator.GetObject(riGuid) as IReversalIndex;
+					m_owningObject = ri;
+					m_fontName = cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem).DefaultFontName;
+				}
 			}
 			m_oldLength = 0;
 		}
@@ -54,15 +59,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			ri.EntriesOC.Add(m_newItem);
 			var extensions = m_cache.ActionHandlerAccessor as IActionHandlerExtensions;
 			if (extensions != null)
-				extensions.PropChangedCompleted += SelectNewItem;
+				extensions.DoAtEndOfPropChanged(SelectNewItem);
 			return true;
 		}
 
 		private IReversalIndexEntry m_newItem;
 
-		void SelectNewItem(object sender, bool fromUndoRedo)
+		void SelectNewItem()
 		{
-			((IActionHandlerExtensions) m_cache.ActionHandlerAccessor).PropChangedCompleted -= SelectNewItem;
 			Clerk.OnJumpToRecord(m_newItem.Hvo);
 		}
 

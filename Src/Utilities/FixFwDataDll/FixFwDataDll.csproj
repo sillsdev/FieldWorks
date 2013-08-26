@@ -92,6 +92,7 @@
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="BasicCustomPropertyFixer.cs" />
+    <Compile Include="CustomListNameFixer.cs" />
     <Compile Include="CustomPropertyFixer.cs" />
     <Compile Include="DuplicateWordformFixer.cs" />
     <Compile Include="GrammaticalSenseFixer.cs" />

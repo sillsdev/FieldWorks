@@ -554,5 +554,51 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			form.RefType = LexEntryRefTags.krtComplexForm;
 			return form;
 		}
+
+		/// <summary>
+		/// This property supports virtual ordering.
+		/// It is for ReversalIndexEntry
+		/// </summary>
+		[Test]
+		public void ReferringSenses()
+		{
+			// Verify that if we make three lex entries whose senses all refer to niño,
+			// that the reversal index shows them in alphabetical order: boy, child, girl.
+			var girl = (LexEntry)MakeEntry("girl", "niño");
+			var senseGirl = girl.SensesOS.First();
+			var boy = (LexEntry)MakeEntry("boy", "niño");
+			var senseBoy = boy.SensesOS.First();
+			var child = (LexEntry)MakeEntry("child", "niño");
+			var senseChild = child.SensesOS.First();
+
+			var lexDb = Cache.ServiceLocator.GetInstance<ILexDbRepository>().Singleton;
+			var ri = Cache.ServiceLocator.GetInstance<IReversalIndexFactory>().Create();
+			lexDb.ReversalIndexesOC.Add(ri);
+			var rie = MakeReversalIndexReference(senseGirl, "niño", ri);
+			senseBoy.ReversalEntriesRC.Add(rie);
+			senseChild.ReversalEntriesRC.Add(rie);
+
+			Assert.That(rie.ReferringSenses.First(), Is.EqualTo(senseBoy));
+			Assert.That(rie.ReferringSenses.Skip(1).First(), Is.EqualTo(senseChild));
+			Assert.That(rie.ReferringSenses.Last(), Is.EqualTo(senseGirl));
+
+			// we now manually reorder the senses
+			var flid = Cache.MetaDataCacheAccessor.GetFieldId2(ReversalIndexEntryTags.kClassId, "ReferringSenses", false);
+			VirtualOrderingServices.SetVO(rie, flid, new ICmObject[] { senseGirl, senseChild, senseBoy });
+			Assert.That(rie.ReferringSenses.First(), Is.EqualTo(senseGirl));
+			Assert.That(rie.ReferringSenses.Skip(1).First(), Is.EqualTo(senseChild));
+			Assert.That(rie.ReferringSenses.Last(), Is.EqualTo(senseBoy));
+		}
+
+		private IReversalIndexEntry MakeReversalIndexReference(ILexSense sense, string gloss, IReversalIndex ri)
+		{
+			var rie = Cache.ServiceLocator.GetInstance<IReversalIndexEntryFactory>().Create();
+			ri.EntriesOC.Add(rie);
+			rie.ReversalForm.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(gloss,
+				Cache.DefaultAnalWs);
+			sense.ReversalEntriesRC.Add(rie);
+			return rie;
+		}
+
 	}
 }

@@ -35,10 +35,10 @@
 		<command id="CmdLiftBridge" label="_Lexicon (with programs that use LIFT)..."  icon="syncSendReceive" message="LiftBridge" />
 		<command id="CmdViewLiftMessages" label="Vie_w Lexicon Messages..." message="ViewLiftMessages" />
 		<command id="CmdObtainAnyFlexBridgeProject" label="_Get Project from Colleague..." icon="syncObtain" message="ObtainAnyFlexBridgeProject" />
-		<command id="CmdObtainLiftProject" label="Get and _Merge Lexicon with this Project..." icon="syncObtain" message="ObtainLiftProject" />
+		<command id="CmdObtainLiftProject" label="Get Lexicon and _Merge with this Project..." icon="syncObtain" message="ObtainLiftProject" />
 		<command id="CmdHelpChorus" label="_Help..." message="ShowChorusHelp" />
-		<command id="CmdCheckForFlexBridgeUpdates" label="Check for _Updates..." message="CheckForFlexBridgeUpdates" />
-		<command id="CmdHelpAboutFLEXBridge" label="_About..." icon="chorus" message="AboutFlexBridge"/>
+		<command id="CmdCheckForFlexBridgeUpdates" label="Check for FLEx Bridge _Updates..." message="CheckForFlexBridgeUpdates" />
+		<command id="CmdHelpAboutFLEXBridge" label="_About FLEx Bridge..." icon="chorus" message="AboutFlexBridge"/>
 		<command id="CmdFLExLiftBridge" label="Send/Receive..." icon="syncSendReceive" message="FLExLiftBridge" shortcut="Ctrl+R" />
 
 		<command id="CmdClose" label="_Close" message="CloseWindow"/>

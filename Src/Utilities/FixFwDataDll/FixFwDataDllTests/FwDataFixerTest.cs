@@ -44,7 +44,8 @@ namespace FixFwDataDllTests
 			{
 				"DuplicateGuid", "DanglingCustomListReference", "DanglingCustomProperty", "DanglingReference",
 				"DuplicateWs", "SequenceFixer", "EntryWithExtraMSA", "EntryWithMsaAndNoSenses", "TagAndCellRefs", "GenericDates",
-				"HomographFixer", WordformswithsameformTestDir, "MorphBundleProblems", "MissingBasicCustomField", "DeletedMsaRefBySenseAndBundle"
+				"HomographFixer", WordformswithsameformTestDir, "MorphBundleProblems", "MissingBasicCustomField", "DeletedMsaRefBySenseAndBundle",
+				"DuplicateNameCustomList"
 			};
 
 		[TestFixtureSetUp]
@@ -81,6 +82,31 @@ namespace FixFwDataDllTests
 		public void Setup()
 		{
 			errors.Clear();
+		}
+
+		[Test]
+		public void DuplicateNameCustomLists_OneIsRenamed()
+		{
+			var testPath = Path.Combine(basePath, "DuplicateNameCustomList");
+
+			var fixedDataPath = Path.Combine(testPath, "BasicFixup.fwdata");
+			var data = new FwDataFixer(fixedDataPath, new DummyProgressDlg(), LogErrors);
+			data.FixErrorsAndSave();
+
+			// Verify initial state: two lists with the same name.
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='CmPossibilityList']/Name/AUni[text()='Custom test list']", 2, false);
+
+			// Verify output: two lists with original IDs and second is renamed.
+			AssertThatXmlIn.File(fixedDataPath).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='CmPossibilityList' and @guid='5250350b-83fb-432b-a24f-a8dad580d350']/Name/AUni[text()='Custom test list']", 1, false);
+			AssertThatXmlIn.File(fixedDataPath).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='CmPossibilityList' and @guid='1e4c4389-7835-408f-9408-c7f1c488d737']/Name/AUni[text()='Custom test list1']", 1, false);
+
+			Assert.AreEqual(1, errors.Count, "Unexpected number of errors found");
+
+			Assert.That(errors[0], Is.EqualTo("Repairing duplicate lists both named \"Custom test list\". \"5250350b-83fb-432b-a24f-a8dad580d350\" kept the original name and \"1e4c4389-7835-408f-9408-c7f1c488d737\"  was renamed to \"Custom test list1\""),
+				"Error message is incorrect for dup.");
 		}
 
 		[Test]

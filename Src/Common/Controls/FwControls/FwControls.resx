@@ -188,7 +188,7 @@
     <value>There is already a copy of FLExBridge running.
 You probably have a Conflict Report open. It will need to be closed before you can access any of the other FLExBridge functions such as:
 -- Send/Receive Project
--- Receive Project from a colleague
+-- Get project from a colleague
 -- View Conflict Report (can't have two open)</value>
   </data>
   <data name="kFlexBridge" xml:space="preserve">

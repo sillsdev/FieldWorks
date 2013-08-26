@@ -203,46 +203,6 @@ namespace SIL.FieldWorks.Common.RootSites
 				/ width;
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// If the text for pasting is too long, truncate it and warn the user.
-		/// This is shared by subclasses of RootSite for implementing handlers for
-		/// RootSiteEditingHelper.PasteFixTssEvent.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected void TruncatePasteIfNecessary(FwPasteFixTssEventArgs e, int flid)
-		{
-			// Use the following rather than Cache.MetaDataCache, as the RootBox.DataAccess.MetaDataCache
-			// may be a decorator which knows properties the base one does not.
-
-			var mdc = RootBox.DataAccess.MetaDataCache;
-			var type = (CellarPropertyType)mdc.GetFieldType(flid);
-			if (type == CellarPropertyType.MultiString ||
-				type == CellarPropertyType.MultiUnicode ||
-				type == CellarPropertyType.String ||
-				type == CellarPropertyType.Unicode)
-			{
-				ITsString tssCurrent = EditingHelper.CurrentSelection.GetTss(SelectionHelper.SelLimitType.End);
-				int cchSel = 0;
-				if (EditingHelper.CurrentSelection.IsRange)
-					cchSel = Math.Abs(EditingHelper.CurrentSelection.IchAnchor - EditingHelper.CurrentSelection.IchEnd);
-				int cchMax = Cache.MaxFieldLength(flid, mdc);
-				int cchIncoming = e.TsString.Length;
-				if (tssCurrent.Length + cchIncoming - cchSel > cchMax)
-				{
-					int cchPaste = cchMax - (tssCurrent.Length - cchSel);
-					if (cchPaste < 0)
-						cchPaste = 0;
-					MessageBox.Show(
-						String.Format(ResourceHelper.GetResourceString("kstidTruncatingPaste"), cchIncoming, cchPaste, cchMax),
-						ResourceHelper.GetResourceString("kstidWarning"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
-					ITsStrBldr bldr = e.TsString.GetBldr();
-					bldr.ReplaceTsString(cchPaste, cchIncoming, null);
-					e.TsString = bldr.GetString();
-				}
-			}
-		}
-
 		#region Properties
 		/// <summary>
 		/// Set to true if this view should be spell-checked. For now this just displays the red
@@ -1212,7 +1172,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					return;
 
 				actionHandlerExtensions.DoingUndoOrRedo += DataChanging;
-				actionHandlerExtensions.PropChangedCompleted += DataChanged;
+				actionHandlerExtensions.DoAtEndOfPropChanged(DataChanged);
 			}
 			finally
 			{
@@ -1240,7 +1200,6 @@ namespace SIL.FieldWorks.Common.RootSites
 					return;
 
 				actionHandlerExtensions.DoingUndoOrRedo -= DataChanging;
-				actionHandlerExtensions.PropChangedCompleted -= DataChanged;
 			}
 			finally
 			{
@@ -1262,12 +1221,15 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		/// <summary>
-		/// Used to attach to PropChangedCompleted and inform SimpleRootSite the the underlying data change
+		/// Used as argument to DoAtEndOfPropChanged and inform SimpleRootSite the underlying data change
 		/// has finished.
 		/// </summary>
-		private void DataChanged(object sender, bool fromUndoRedo)
+		private void DataChanged()
 		{
-			if (fromUndoRedo && m_inputBusController != null)
+			// I think this is to let the keyboard processor know about any selection change we made,
+			// especially during Undo/Redo. (An earlier version of the code was able to distinguish
+			// and do nothing except when the change was an Undo/Redo.)
+			if (Focused && m_inputBusController != null)
 				m_inputBusController.NotifyDataChanged();
 		}
 #endif

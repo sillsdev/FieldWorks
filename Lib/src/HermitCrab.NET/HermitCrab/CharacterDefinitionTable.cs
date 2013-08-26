@@ -301,7 +301,10 @@ namespace SIL.HermitCrab
 				}
 
 				if (!match)
-					return null;
+				{
+					var missing = new MissingPhoneticShapeException(str, i);
+					throw missing;
+				}
 			}
 			ps.Add(new Margin(Direction.RIGHT));
 
@@ -460,6 +463,47 @@ namespace SIL.HermitCrab
 			m_encoding = null;
 			m_segDefs.Clear();
 			m_bdryDefs.Clear();
+		}
+	}
+
+	public class MissingPhoneticShapeException : Exception
+	{
+		//
+		// For guidelines regarding the creation of new exception types, see
+		//    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpgenref/html/cpconerrorraisinghandlingguidelines.asp
+		// and
+		//    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dncscol/html/csharp07192001.asp
+		//
+
+		private string m_word;
+		private int m_position;
+
+		public MissingPhoneticShapeException(string word, int position)
+		{
+			m_word = word;
+			m_position = position;
+		}
+
+		public MissingPhoneticShapeException(string word, int position, string message) : base(message)
+		{
+			m_word = word;
+			m_position = position;
+		}
+
+		public MissingPhoneticShapeException(string word, int position, string message, Exception inner) : base(message, inner)
+		{
+			m_word = word;
+			m_position = position;
+		}
+
+		public string Word
+		{
+			get { return m_word; }
+		}
+
+		public int Position
+		{
+			get { return m_position; }
 		}
 	}
 }

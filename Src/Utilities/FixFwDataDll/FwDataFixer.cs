@@ -74,6 +74,7 @@ namespace SIL.FieldWorks.FixData
 			m_rtLevelFixers.Add(new SequenceFixer());
 			m_rtLevelFixers.Add(new HomographFixer());
 			m_rtLevelFixers.Add(new DuplicateWordformFixer());
+			m_rtLevelFixers.Add(new CustomListNameFixer());
 			using (XmlReader xrdr = XmlReader.Create(m_filename))
 			{
 				xrdr.MoveToContent();
