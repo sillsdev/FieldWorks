@@ -198,12 +198,6 @@
     </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Drawing" />
-    <Reference Include="Keyboarding">
-      <HintPath>..\..\..\..\..\Output\Debug\Keyboarding.dll</HintPath>
-    </Reference>
-    <Reference Include="KeyboardingTests">
-      <HintPath>..\..\..\..\..\Output\Debug\KeyboardingTests.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\..\AssemblyInfoForTests.cs">
@@ -236,12 +230,8 @@
     <Compile Include="TestColumnConfigureDialog.cs" />
     <Compile Include="XmlBrowseViewBaseVcTests.cs" />
     <Compile Include="XmlVcTests.cs" />
-    <Compile Include="XmlBrowseViewBaseTests.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DhListViewTests.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="XmlBrowseViewBaseTests.cs" />
+    <Compile Include="DhListViewTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

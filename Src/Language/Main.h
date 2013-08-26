@@ -192,6 +192,7 @@ DEFINE_COM_PTR(UniscribeEngine);
 #include "StringToNumHelpers.h"
 #include "WriteXml.h"		// From AppCore.
 #include "xmlparse.h"
+#include "LgKeymanHandler.h"
 #include "LgIcuWrappers.h"
 
 #include "RegexMatcherWrapper.h"

@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0555 */
-/* at Mon Aug 26 09:34:18 2013
+/* at Mon Aug 26 13:18:10 2013
  */
 /* Compiler settings for d:\fwrepo\fw\Output\Common\FwKernelTlb.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 7.00.0555 
@@ -419,6 +419,12 @@ typedef interface ILgNumericEngine ILgNumericEngine;
 #endif 	/* __ILgNumericEngine_FWD_DEFINED__ */
 
 
+#ifndef __ILgKeymanHandler_FWD_DEFINED__
+#define __ILgKeymanHandler_FWD_DEFINED__
+typedef interface ILgKeymanHandler ILgKeymanHandler;
+#endif 	/* __ILgKeymanHandler_FWD_DEFINED__ */
+
+
 #ifndef __ILgIcuConverterEnumerator_FWD_DEFINED__
 #define __ILgIcuConverterEnumerator_FWD_DEFINED__
 typedef interface ILgIcuConverterEnumerator ILgIcuConverterEnumerator;
@@ -543,6 +549,18 @@ typedef struct LgNumericEngine LgNumericEngine;
 #endif /* __cplusplus */
 
 #endif 	/* __LgNumericEngine_FWD_DEFINED__ */
+
+
+#ifndef __LgKeymanHandler_FWD_DEFINED__
+#define __LgKeymanHandler_FWD_DEFINED__
+
+#ifdef __cplusplus
+typedef class LgKeymanHandler LgKeymanHandler;
+#else
+typedef struct LgKeymanHandler LgKeymanHandler;
+#endif /* __cplusplus */
+
+#endif 	/* __LgKeymanHandler_FWD_DEFINED__ */
 
 
 #ifndef __LgIcuConverterEnumerator_FWD_DEFINED__
@@ -1487,6 +1505,11 @@ ILgWritingSystemFactory
 22376578-BFEB-4c46-8D72-C9154890DD16
 );
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
+ILgKeymanHandler
+,
+3F42144B-509F-4def-8DD3-6D8D26677001
+);
+GENERIC_DECLARE_SMART_INTERFACE_PTR(
 ILgIcuConverterEnumerator
 ,
 8E6D558E-8755-4EA1-9FF6-039D375312E9
@@ -1550,6 +1573,11 @@ ATTACH_GUID_TO_CLASS(class,
 FF22A7AB-223E-4D04-B648-0AE40588261D
 ,
 LgNumericEngine
+);
+ATTACH_GUID_TO_CLASS(class,
+69ACA99C-F852-4C2C-9B5F-FF83238A17A5
+,
+LgKeymanHandler
 );
 ATTACH_GUID_TO_CLASS(class,
 9E729461-F80D-4796-BA17-086BC61907F1
@@ -10408,6 +10436,103 @@ FwGraphiteProcess;
 #endif 	/* __ILgNumericEngine_INTERFACE_DEFINED__ */
 
 
+#ifndef __ILgKeymanHandler_INTERFACE_DEFINED__
+#define __ILgKeymanHandler_INTERFACE_DEFINED__
+
+/* interface ILgKeymanHandler */
+/* [unique][object][uuid] */ 
+
+
+#define IID_ILgKeymanHandler __uuidof(ILgKeymanHandler)
+
+#if defined(__cplusplus) && !defined(CINTERFACE)
+    
+    MIDL_INTERFACE("3F42144B-509F-4def-8DD3-6D8D26677001")
+    ILgKeymanHandler : public IUnknown
+    {
+    public:
+        virtual HRESULT STDMETHODCALLTYPE Init( 
+            /* [in] */ ComBool fForce) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE Close( void) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_ActiveKeyboardName( 
+            /* [retval][out] */ BSTR *pbstrName) = 0;
+        
+    };
+    
+#else 	/* C style interface */
+
+    typedef struct ILgKeymanHandlerVtbl
+    {
+        BEGIN_INTERFACE
+        
+        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+            ILgKeymanHandler * This,
+            /* [in] */ REFIID riid,
+            /* [annotation][iid_is][out] */ 
+            __RPC__deref_out  void **ppvObject);
+        
+        ULONG ( STDMETHODCALLTYPE *AddRef )( 
+            ILgKeymanHandler * This);
+        
+        ULONG ( STDMETHODCALLTYPE *Release )( 
+            ILgKeymanHandler * This);
+        
+        HRESULT ( STDMETHODCALLTYPE *Init )( 
+            ILgKeymanHandler * This,
+            /* [in] */ ComBool fForce);
+        
+        HRESULT ( STDMETHODCALLTYPE *Close )( 
+            ILgKeymanHandler * This);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_ActiveKeyboardName )( 
+            ILgKeymanHandler * This,
+            /* [retval][out] */ BSTR *pbstrName);
+        
+        END_INTERFACE
+    } ILgKeymanHandlerVtbl;
+
+    interface ILgKeymanHandler
+    {
+        CONST_VTBL struct ILgKeymanHandlerVtbl *lpVtbl;
+    };
+
+    
+
+#ifdef COBJMACROS
+
+
+#define ILgKeymanHandler_QueryInterface(This,riid,ppvObject)	\
+    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
+
+#define ILgKeymanHandler_AddRef(This)	\
+    ( (This)->lpVtbl -> AddRef(This) ) 
+
+#define ILgKeymanHandler_Release(This)	\
+    ( (This)->lpVtbl -> Release(This) ) 
+
+
+#define ILgKeymanHandler_Init(This,fForce)	\
+    ( (This)->lpVtbl -> Init(This,fForce) ) 
+
+#define ILgKeymanHandler_Close(This)	\
+    ( (This)->lpVtbl -> Close(This) ) 
+
+#define ILgKeymanHandler_get_ActiveKeyboardName(This,pbstrName)	\
+    ( (This)->lpVtbl -> get_ActiveKeyboardName(This,pbstrName) ) 
+
+#endif /* COBJMACROS */
+
+
+#endif 	/* C style interface */
+
+
+
+
+#endif 	/* __ILgKeymanHandler_INTERFACE_DEFINED__ */
+
+
 #ifndef __ILgIcuConverterEnumerator_INTERFACE_DEFINED__
 #define __ILgIcuConverterEnumerator_INTERFACE_DEFINED__
 
@@ -11119,6 +11244,14 @@ LgMSWordSpellChecker;
 
 class DECLSPEC_UUID("FF22A7AB-223E-4D04-B648-0AE40588261D")
 LgNumericEngine;
+#endif
+
+#define CLSID_LgKeymanHandler __uuidof(LgKeymanHandler)
+
+#ifdef __cplusplus
+
+class DECLSPEC_UUID("69ACA99C-F852-4C2C-9B5F-FF83238A17A5")
+LgKeymanHandler;
 #endif
 
 #define CLSID_LgIcuConverterEnumerator __uuidof(LgIcuConverterEnumerator)

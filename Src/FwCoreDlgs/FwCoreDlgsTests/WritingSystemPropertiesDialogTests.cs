@@ -18,7 +18,7 @@ using System.Linq;
 using System.Windows.Forms;
 
 using NUnit.Framework;
-
+using Palaso.WritingSystems;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.CoreImpl;
@@ -222,7 +222,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		internal void ValidateKeyboardTab()
 		{
-			Assert.AreEqual(CurrentWritingSystem, m_KeyboardControl.WritingSystem);
+			Assert.AreEqual(((IWritingSystemDefinition)CurrentWritingSystem).Bcp47Tag, m_modelForKeyboard.CurrentRFC4646);
 		}
 
 		internal void ValidateConvertersTab()

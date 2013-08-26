@@ -25,12 +25,11 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-
+using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Keyboarding;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
@@ -1395,7 +1394,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				case kiTabUnicode:
 					break;
 			}
-			KeyboardController.SetKeyboard(fUseWsKeyboard ? m_ws.Keyboard : null);
+			if (fUseWsKeyboard)
+				((IWritingSystemDefinition)m_ws).LocalKeyboard.Activate();
+			else
+				Keyboard.Controller.ActivateDefaultKeyboard();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1732,7 +1734,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		protected override void OnClosed(EventArgs e)
 		{
 			base.OnClosed(e);
-			KeyboardController.SetKeyboard(string.Empty);
+			Keyboard.Controller.ActivateDefaultKeyboard();
 		}
 		#endregion
 

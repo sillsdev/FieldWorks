@@ -76,6 +76,14 @@
 	<Target Name="linuxLibs" DependsOnTargets="iculibs">
 		<Exec Command="make externaltargets" WorkingDirectory="$(fwrt)" Condition="'$(action)'!='clean'"/>
 		<Exec Command="make externaltargets-test" WorkingDirectory="$(fwrt)" Condition="'$(action)'=='test'"/>
+		<!-- Always copy from Release -->
+		<CreateItem Include="$(dir-fwoutputlibPlatform)/Release/*.*">
+			<Output TaskParameter="Include" ItemName="LinuxReleaseLibs"/>
+		</CreateItem>
+		<Copy SourceFiles="@(LinuxReleaseLibs)"
+			  DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
+			  Condition="'$(action)'!='clean'"/>
 		<CreateItem Include="$(dir-fwoutputlibPlatformBase)/*.*">
 			<Output TaskParameter="Include" ItemName="LinuxDebugLibs"/>
 		</CreateItem>

@@ -96,6 +96,7 @@
     <ClCompile Include="dlldatax.c" />
     <ClCompile Include="LgIcuCharPropEngine.cpp" />
     <ClCompile Include="LgIcuWrappers.cpp" />
+    <ClCompile Include="LgKeymanHandler.cpp" />
     <ClCompile Include="LgNumericEngine.cpp" />
     <ClCompile Include="LgSimpleEngines.cpp" />
     <ClCompile Include="LgUnicodeCollater.cpp" />
@@ -110,6 +111,7 @@
     <ClInclude Include="LangResource.h" />
     <ClInclude Include="LgIcuCharPropEngine.h" />
     <ClInclude Include="LgIcuWrappers.h" />
+    <ClInclude Include="LgKeymanHandler.h" />
     <ClInclude Include="LgNumericEngine.h" />
     <ClInclude Include="LgSimpleEngines.h" />
     <ClInclude Include="LgUnicodeCollateInit.h" />

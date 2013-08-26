@@ -9,20 +9,20 @@
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using Palaso.UI.WindowsForms.Keyboarding;
+using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Keyboarding;
-using SIL.FieldWorks.Common.Keyboarding.Interfaces;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
 	/// <summary>
-	/// Connects a view (rootbox) with keyboards. This class gets created on Linux by the
-	/// VwRootBox. On Windows we use VwTextStore instead.
+	/// Connects a view (rootbox) with keyboards. This class gets created by the VwRootBox when ENABLE_TSF is not defined
+	/// and MANAGED_KEYBOARDING is, that is, on Mono but not on Windows. Thus, the code here is basically Mono/Linux-only.
 	/// </summary>
 	[Guid("830BAF1F-6F84-46EF-B63E-3C1BFDF9E83E")]
-	public class ViewInputManager: IKeyboardCallback, IViewInputMgr
+	public class ViewInputManager: IViewInputMgr
 	{
 		private IVwRootBox m_rootb;
 
@@ -41,11 +41,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		/// <summary>
-		/// End all active compositions.
+		/// End all active compositions. Not applicable on Mono.
 		/// </summary>
 		public void TerminateAllCompositions()
 		{
-			KeyboardController.Methods.TerminateAllCompositions(this);
 		}
 
 		/// <summary>
@@ -53,7 +52,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public void SetFocus()
 		{
-			KeyboardController.Methods.EnableInput(this);
 		}
 
 		/// <summary>
@@ -61,7 +59,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public void KillFocus()
 		{
-			KeyboardController.Methods.DisableInput(this);
 		}
 
 		/// <summary>
@@ -69,7 +66,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public bool IsCompositionActive
 		{
-			get { return KeyboardController.Methods.IsCompositionActive(this); }
+			get { return false; }
 		}
 
 		/// <summary>
@@ -78,7 +75,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public bool IsEndingComposition
 		{
-			get { return KeyboardController.Methods.IsEndingComposition(this); }
+			get { return false; }
 		}
 
 		/// <summary>
@@ -89,7 +86,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <c>false</c> if property can be processed regularly.</returns>
 		public bool OnUpdateProp()
 		{
-			return KeyboardController.EventHandler.OnUpdateProp(this);
+			return false;
 		}
 
 		/// <summary>
@@ -97,8 +94,13 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public bool OnMouseEvent(int xd, int yd, Rect rcSrc, Rect rcDst, VwMouseEvent me)
 		{
-			return KeyboardController.EventHandler.OnMouseEvent(this, xd, yd, rcSrc, rcDst,
-				(MouseEvent)me);
+			var mouseEvent = (MouseEvent) me;
+			if (mouseEvent == MouseEvent.kmeDown)
+			{
+				Keyboard.Activate();
+				return true;
+			}
+			return false;
 		}
 
 		/// <summary>
@@ -106,7 +108,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public void OnLayoutChange()
 		{
-			KeyboardController.EventHandler.OnLayoutChange(this);
 		}
 
 		/// <summary>
@@ -114,7 +115,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public void OnSelectionChange(int nHow)
 		{
-			KeyboardController.EventHandler.OnSelectionChange(this, (SelChangeType)nHow);
 		}
 
 		/// <summary>
@@ -122,7 +122,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public void OnTextChange()
 		{
-			KeyboardController.EventHandler.OnTextChange(this);
 		}
 		#endregion /* IViewInputMgr */
 
@@ -143,23 +142,23 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-		#region IKeyboardControllerCallback methods
 		/// <summary>
 		/// Gets the keyboard corresponding to the current selection.
 		/// </summary>
 		/// <returns>The keyboard, or KeyboardDescription.Zero if we can't detect the writing
 		/// system based on the current selection (e.g. there is no selection).</returns>
-		public IKeyboardDescription Keyboard
+		public IKeyboardDefinition Keyboard
 		{
 			get
 			{
+				var manager = m_rootb.DataAccess.WritingSystemFactory as PalasoWritingSystemManager;
 				var ws = CurrentWritingSystem;
 				if (ws == null)
 					return KeyboardDescription.Zero;
 
-				return KeyboardController.GetKeyboard(ws);
+				var wsd = manager.Get(ws.Handle) as IWritingSystemDefinition;
+				return wsd.LocalKeyboard;
 			}
 		}
-		#endregion
 	}
 }

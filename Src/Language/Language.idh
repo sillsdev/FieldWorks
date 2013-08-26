@@ -1502,6 +1502,41 @@ Description:
 	};
 
 /*******************************************************************************************
+	Interface ILgKeymanHandler
+
+	Last vestigaes of an interface that manages Keyman, being able to find out which
+	one is active, if any. This is not implemented for Mono, since the one remaining caller
+	is simply coded to know there is no Keyman keyboard.
+
+	@h3{When to implement}
+	The standard implementation should suffice.
+
+	@h3{When to use}
+	Whenever you want to manipulate or query Keyman
+
+	@h3{Hungarian: lkh}
+*******************************************************************************************/
+DeclareInterface(LgKeymanHandler, Unknown, 3F42144B-509F-4def-8DD3-6D8D26677001)
+{
+
+	// Initialize the Keyboard handler. Set fForce to re-initialize even if already
+	// initialized, for example, if a keyboard has been added or removed.
+	// All data is static, so it is only necessary to call this for one instance.
+	// Actually, it is not strictly necessary to call it at all, as other methods will
+	// do so if necessary.
+	HRESULT Init(
+		[in] ComBool fForce);
+
+	// Gracefully shut down the keyboard handler. We need this for calling from .NET so
+	// that we don't rely on garbage collection.
+	HRESULT Close();
+
+	// Get the active keyboard.
+	[propget] HRESULT ActiveKeyboardName(
+		[out, retval] BSTR * pbstrName);
+};
+
+/*******************************************************************************************
 	Interface ILgIcuConverterEnumerator
 
 	An interface that allows retrieving a list of the converters that ICU supports.
@@ -1780,6 +1815,10 @@ DeclareInterface(RegexMatcher, Unknown, 6C62CCF0-4EE1-493C-8092-319B6CFBEEBC)
 		interface ILgNumericEngine;
 	};
 
+	DeclareCoClass(LgKeymanHandler, 69ACA99C-F852-4C2C-9B5F-FF83238A17A5)
+	{
+		interface ILgKeymanHandler;
+	};
 	DeclareCoClass(LgIcuConverterEnumerator, 9E729461-F80D-4796-BA17-086BC61907F1)
 	{
 		interface ILgIcuConverterEnumerator;

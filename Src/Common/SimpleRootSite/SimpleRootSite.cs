@@ -18,14 +18,15 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Printing;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Automation.Provider;
 using Accessibility;
-
+using Palaso.WritingSystems;
+using Palaso.UI.WindowsForms.Keyboarding.Types;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Keyboarding;
 using SIL.Utils;
 using XCore;
 
@@ -2001,7 +2002,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					if (m_nAllowPaint == 0 && Visible && IsHandleCreated)
 					{
 #if !__MonoCS__
-						Win32.SendMessage(Handle, (int)Win32.WinMsgs.WM_SETREDRAW, 1, 0);
+						Utils.Win32.SendMessage(Handle, (int)Utils.Win32.WinMsgs.WM_SETREDRAW, 1, 0);
 						Update();
 						Invalidate();
 #else
@@ -2020,7 +2021,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				{   // prevent painting
 					if (m_nAllowPaint == 0 && Visible && IsHandleCreated)
 #if !__MonoCS__
-						Win32.SendMessage(Handle, (int)Win32.WinMsgs.WM_SETREDRAW, 0, 0);
+						Utils.Win32.SendMessage(Handle, (int)Utils.Win32.WinMsgs.WM_SETREDRAW, 0, 0);
 #else
 						this.SuspendLayout();
 #endif
@@ -3308,18 +3309,18 @@ namespace SIL.FieldWorks.Common.RootSites
 				// we must not.
 				// (Note: setting a WS by setting the Keyman keyboard is still not working, because
 				// it seems .NET applications don't get the notification from Keyman.)
-//#if !__MonoCS__
-//                IntPtr hwndOld = m.WParam;
-//                int procIdOld, procIdThis;
-//                Win32.GetWindowThreadProcessId(hwndOld, out procIdOld);
-//                Win32.GetWindowThreadProcessId(Handle, out procIdThis);
-//                if (procIdOld == procIdThis && m_rootb != null && EditingHelper != null)
-//                    EditingHelper.SetKeyboardForSelection(m_rootb.Selection);
-//#else
-//                // REVIEW: do we have to compare the process the old and new window belongs to?
-//                if (m_rootb != null && EditingHelper != null)
-//                    EditingHelper.SetKeyboardForSelection(m_rootb.Selection);
-//#endif
+#if !__MonoCS__
+				IntPtr hwndOld = m.WParam;
+				int procIdOld, procIdThis;
+				Utils.Win32.GetWindowThreadProcessId(hwndOld, out procIdOld);
+				Utils.Win32.GetWindowThreadProcessId(Handle, out procIdThis);
+				if (procIdOld == procIdThis && m_rootb != null && EditingHelper != null)
+					EditingHelper.SetKeyboardForSelection(m_rootb.Selection);
+#else
+				// REVIEW: do we have to compare the process the old and new window belongs to?
+				if (m_rootb != null && EditingHelper != null)
+					EditingHelper.SetKeyboardForSelection(m_rootb.Selection);
+#endif
 
 				// Start the blinking cursor timer here and stop it in the OnKillFocus handler later.
 				if (m_Timer != null)
@@ -4879,6 +4880,20 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		#endregion // Methods that delegate events to the rootbox
 
+		/// <summary>
+		/// Writing systems the user might reasonably choose. Overridden in RootSite to limit it to the ones active in this project.
+		/// </summary>
+		protected virtual IWritingSystemDefinition[] PlausibleWritingSystems
+		{
+			get
+			{
+				var manager = (WritingSystemFactory as PalasoWritingSystemManager);
+				if (manager == null)
+					return new IWritingSystemDefinition[0];
+				return manager.LocalWritingSystemStore.AllWritingSystems.ToArray();
+			}
+		}
+
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// The system keyboard has changed. Determine the corresponding codepage to use when
@@ -4894,6 +4909,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (IsDisposed || m_rootb == null || DataUpdateMonitor.IsUpdateInProgress())
 				return;
 
+			var manager = WritingSystemFactory as PalasoWritingSystemManager;
+			if (manager == null)
+				return;
 			//Debug.WriteLine(string.Format("OnInputLangChanged: Handle={2}, g_focusRootSite={0}, culture={1}",
 			//    g_focusRootSite.Target, e.InputLanguage.Culture.ToString(), Handle));
 			// JT: apparently this comes to all the views, but only the active keyboard
@@ -4902,26 +4920,22 @@ namespace SIL.FieldWorks.Common.RootSites
 			// Responding before that causes a nasty bug in language/keyboard selection.
 			// SMc: also, we trust the lcid derived from vwsel more than we trust the one
 			// passed in as e.CultureInfo.LCID.
-			if (this.Focused && g_focusRootSite.Target == this)
+			var wsRepo = manager.LocalWritingSystemStore;
+			if (this.Focused && g_focusRootSite.Target == this && wsRepo != null)
 			{
 				// If possible, adjust the language of the selection to be one that matches
 				// the keyboard just selected.
-				IVwSelection vwsel = m_rootb.Selection;
 
-				int lcid = LcidHelper.LangIdFromLCID(e.Culture.LCID);
-				// Since we're being told it changed, assume this really is current, as opposed
-				// to whatever we last set it to.
-				if (m_fHandlingOnGotFocus)
-				{
-					int wsSel = SelectionHelper.GetFirstWsOfSelection(vwsel);
-					if (wsSel != 0)
-					{
-						ILgWritingSystem qws = WritingSystemFactory.get_EngineOrNull(wsSel);
-						if (qws != null)
-							lcid = qws.LCID;
-					}
-				}
-				HandleKeyboardChange(vwsel, (short)lcid);
+				IVwSelection vwsel = m_rootb.Selection; // may be null
+				int wsSel = SelectionHelper.GetFirstWsOfSelection(vwsel); // may be zero
+				IWritingSystemDefinition wsSelDefn = null;
+				if (wsSel != 0)
+					wsSelDefn = manager.Get(wsSel) as IWritingSystemDefinition;
+				var wsNewDefn = wsRepo.GetWsForInputLanguage(e.InputLanguage.LayoutName, e.InputLanguage.Culture, wsSelDefn, PlausibleWritingSystems);
+				if (wsNewDefn == null || wsNewDefn.Equals(wsSelDefn))
+					return;
+
+				HandleKeyboardChange(vwsel, ((PalasoWritingSystem)wsNewDefn).Handle);
 
 				// The following line is needed to get Chinese IMEs to fully initialize.
 				// This causes Text Services to set its focus, which is the crucial bit
@@ -4945,113 +4959,14 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// the selection to something that matches, if possible.
 		/// </summary>
 		/// <param name="vwsel">Selection</param>
-		/// <param name="nLangId">Language identification</param>
+		/// <param name="wsMatch">Writing system determined from keyboard change</param>
 		/// -----------------------------------------------------------------------------------
-		public virtual void HandleKeyboardChange(IVwSelection vwsel, short nLangId)
+		public virtual void HandleKeyboardChange(IVwSelection vwsel, int wsMatch)
 		{
 			CheckDisposed();
 			// Get the writing system factory associated with the root box.
 			if (m_rootb == null || !GotCacheOrWs)
 				return; // For paranoia.
-
-			//			Debug.WriteLine("HandleKeyboardChange nLangId=" + nLangId + "; " + Name +
-			//				"/" + this);
-
-			ILgWritingSystemFactory wsf = WritingSystemFactory;
-
-			int cws = wsf.NumberOfWs;
-			if (cws < 2)
-				return;	// no writing systems to work with
-
-			var vwsTemp = GetPossibleWritingSystemsToSelectByInputLanguage(wsf);
-
-			// resize the array leaving slot 0 empty
-			int[] vws = new int[++cws];
-			Array.Copy(vwsTemp, 0, vws, 1, vwsTemp.Length);
-
-			// Put the writing system of the selection first in the list, which gives it
-			// priority -- we'll find it first if it matches.
-			int wsSel = SelectionHelper.GetFirstWsOfSelection(vwsel);
-			vws[0] = wsSel != 0 ? wsSel : vws[1];
-
-			InputLanguage lngDefault = InputLanguage.DefaultInputLanguage;
-			short defaultLangId = LcidHelper.LangIdFromLCID(lngDefault.Culture.LCID);
-			int wsMatch = -1;
-			int wsDefault = -1;
-			int wsCurrentLang = -1; // used to note first ws whose CurrentInputLanguage matches.
-			for (int iws = 0; iws < cws; iws++)
-			{
-				if (vws[iws] == 0)
-					continue;
-
-				ILgWritingSystem ws = wsf.get_EngineOrNull(vws[iws]);
-				if (ws == null)
-					continue;
-
-				// REVIEW SteveMc, SharonC, KenZ, JohnT: nail down where the locale/langid belongs, in
-				// the writing system or in the old writing system.
-				int nLocale = ws.LCID;
-				int nLangIdWs = LcidHelper.LangIdFromLCID(nLocale);
-
-				if (nLangIdWs != 0 && nLangIdWs == nLangId)
-				{
-					wsMatch = vws[iws];
-					break;
-				}
-				if (iws == 0 && nLangIdWs == 0 && nLangId == defaultLangId)
-				{
-					// The writing system of the current selection doesn't have any keyboard specified,
-					// and we've set the keyboard to the default. This is acceptable; leave as is.
-					wsMatch = vws[iws];
-					break;
-				}
-				if (nLangIdWs == 0 && nLangId == defaultLangId && wsDefault == -1)
-				{
-					// Use this old writing system as the default.
-					wsDefault = vws[iws];
-				}
-				if (wsCurrentLang == -1)
-				{
-					int nLangIdCurrent = ws.CurrentLCID;
-					if (nLangId == nLangIdCurrent)
-						wsCurrentLang = vws[iws];
-				}
-			}
-
-			if (wsMatch == -1)
-			{
-				wsMatch = wsDefault;
-			}
-			m_wsPending = -1;
-			// Next, see if it is the current langid of any ws. This will leave it -1 if we didn't find such a match.
-			if (wsMatch == -1)
-				wsMatch = wsCurrentLang;
-
-			if (wsMatch == -1)
-			{
-				// Nothing matched.
-				if (defaultLangId == nLangId) // We're trying to set to the default keyboard
-				{
-					// The default keyboard sets set for odd reasons. Just ignore it.
-					// Review: what if the HKL's are different versions of the same language,
-					// eg UK and US English?
-				}
-				else
-				{
-					// We will make this the current input language for the current writing system for the current session.
-					ILgWritingSystem wsCurrent = wsf.get_EngineOrNull(wsSel);
-					if (wsCurrent != null)
-						wsCurrent.CurrentLCID = nLangId;
-				}
-				return;
-			}
-
-			// We are going to make wsMatch the current writing system.
-			// Make sure it is set to use the langid that the user just selected.
-			// (This cleans up any earlier overrides).
-			ILgWritingSystem wsMatchEng = wsf.get_EngineOrNull(wsMatch);
-			if (wsMatchEng != null)
-				wsMatchEng.CurrentLCID = nLangId;
 
 			if (vwsel == null)
 			{
@@ -6248,20 +6163,20 @@ namespace SIL.FieldWorks.Common.RootSites
 			switch (msg.Msg)
 			{
 #if __MonoCS__
-			case (int)Win32.WinMsgs.WM_KEYDOWN:
+			case (int)Utils.Win32.WinMsgs.WM_KEYDOWN:
 				if (m_inputBusController != null && m_inputBusController.NotifyKeyDown(msg, ModifierKeys))
 					return;
 				break;
-			case (int)Win32.WinMsgs.WM_CHAR:
+			case (int)Utils.Win32.WinMsgs.WM_CHAR:
 				if (m_inputBusController != null && m_inputBusController.NotifyKeyPress((uint)msg.WParam, (uint)msg.LParam, ModifierKeys))
 					return;
 				break;
-			case (int)Win32.WinMsgs.WM_DESTROY:
-					if (m_inputBusController != null)
-					{
-				m_inputBusController.Dispose();
-						m_inputBusController = null;
-					}
+			case (int)Utils.Win32.WinMsgs.WM_DESTROY:
+				if (m_inputBusController != null)
+				{
+					m_inputBusController.Dispose();
+					m_inputBusController = null;
+				}
 				break;
 #endif
 
@@ -6303,7 +6218,7 @@ namespace SIL.FieldWorks.Common.RootSites
 						OnKeyPress(new KeyPressEventArgs((char)msg.WParam));
 						return;
 					}
-				case (int)Win32.WinMsgs.WM_SETFOCUS:
+				case (int)Utils.Win32.WinMsgs.WM_SETFOCUS:
 					OnSetFocus(msg);
 #if __MonoCS__
 					// In Linux+Mono, if you .Focus() a SimpleRootSite, checking .Focused reports false unless
@@ -6317,7 +6232,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					base.WndProc(ref msg);
 #endif // __MonoCS__
 					return;
-				case (int)Win32.WinMsgs.WM_KILLFOCUS:
+				case (int)Utils.Win32.WinMsgs.WM_KILLFOCUS:
 					base.WndProc(ref msg);
 					OnKillFocus(Control.FromHandle(msg.WParam),
 						MiscUtils.IsChildWindowOfForm(ParentForm, msg.WParam));
@@ -6414,17 +6329,17 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			switch (m.Msg)
 			{
-				case (int)Win32.WinMsgs.WM_KEYUP:
-				case (int)Win32.WinMsgs.WM_LBUTTONUP:
-				case (int)Win32.WinMsgs.WM_KEYDOWN:
+				case (int)Utils.Win32.WinMsgs.WM_KEYUP:
+				case (int)Utils.Win32.WinMsgs.WM_LBUTTONUP:
+				case (int)Utils.Win32.WinMsgs.WM_KEYDOWN:
 					// If user-initiated messages come (or our spurious one, which we check
 					// for below), remove this filter.
 					Application.RemoveMessageFilter(this);
 					m_messageFilterInstalled = false;
 
 					// Now check for the spurious CTRL-UP message
-					if (m.Msg == (int)Win32.WinMsgs.WM_KEYUP &&
-						m.WParam.ToInt32() == (int)Win32.VirtualKeycodes.VK_CONTROL)
+					if (m.Msg == (int)Utils.Win32.WinMsgs.WM_KEYUP &&
+						m.WParam.ToInt32() == (int)Utils.Win32.VirtualKeycodes.VK_CONTROL)
 					{
 						return true; // discard this message
 					}

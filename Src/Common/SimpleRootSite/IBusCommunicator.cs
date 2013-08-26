@@ -135,7 +135,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			ProtectedIBusInvoke(() => m_inputContext.FocusIn());
 
 			// For performance reasons we store the active inputContext
-			SIL.FieldWorks.Views.GlobalCachedInputContext.InputContext = m_inputContext;
+			// TODO: re-enable
+			//SIL.FieldWorks.Views.GlobalCachedInputContext.InputContext = m_inputContext;
 		}
 
 		/// <summary>
@@ -148,7 +149,8 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			ProtectedIBusInvoke(() => m_inputContext.FocusOut());
 
-			SIL.FieldWorks.Views.GlobalCachedInputContext.Clear();
+			// TODO: re-enable
+			//SIL.FieldWorks.Views.GlobalCachedInputContext.Clear();
 		}
 
 		/// <summary>

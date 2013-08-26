@@ -5158,6 +5158,41 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 
 
 
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgKeymanHandler") cpp_quote(",") cpp_quote("3F42144B-509F-4def-8DD3-6D8D26677001") cpp_quote(");") [ uuid("3F42144B-509F-4def-8DD3-6D8D26677001"), object, pointer_default(unique) ] interface ILgKeymanHandler : IUnknown
+{
+
+	
+	
+	
+	
+	
+	HRESULT Init(
+		[in] ComBool fForce);
+
+	
+	
+	HRESULT Close();
+
+	
+	[propget] HRESULT ActiveKeyboardName(
+		[out, retval] BSTR * pbstrName);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgIcuConverterEnumerator") cpp_quote(",") cpp_quote("8E6D558E-8755-4EA1-9FF6-039D375312E9") cpp_quote(");") [ uuid("8E6D558E-8755-4EA1-9FF6-039D375312E9"), object, pointer_default(unique) ] interface ILgIcuConverterEnumerator : IUnknown
 {
 	
@@ -5422,6 +5457,10 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IRegexMatcher") cpp
 		interface ILgNumericEngine;
 	};
 
+	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("69ACA99C-F852-4C2C-9B5F-FF83238A17A5") cpp_quote(",") cpp_quote("LgKeymanHandler") cpp_quote(");") [ uuid(69ACA99C-F852-4C2C-9B5F-FF83238A17A5) ] coclass LgKeymanHandler
+	{
+		interface ILgKeymanHandler;
+	};
 	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("9E729461-F80D-4796-BA17-086BC61907F1") cpp_quote(",") cpp_quote("LgIcuConverterEnumerator") cpp_quote(");") [ uuid(9E729461-F80D-4796-BA17-086BC61907F1) ] coclass LgIcuConverterEnumerator
 	{
 		interface ILgIcuConverterEnumerator;
@@ -5438,7 +5477,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IRegexMatcher") cpp
 	{
 		interface ILgIcuLocaleEnumerator;
 	};
-#line 1800 "d:\\fwrepo\\fw\\src\\language\\Language.idh"
+#line 1839 "d:\\fwrepo\\fw\\src\\language\\Language.idh"
 
 #line 34 "d:\\fwrepo\\fw\\Src\\Language\\LanguageTlb.idl"
 };

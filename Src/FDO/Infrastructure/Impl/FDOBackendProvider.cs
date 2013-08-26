@@ -16,6 +16,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Properties;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
@@ -549,6 +550,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			var wsManager = (PalasoWritingSystemManager)m_cache.ServiceLocator.WritingSystemManager;
 			wsManager.GlobalWritingSystemStore = globalStore;
 			wsManager.LocalWritingSystemStore = new LocalFileWritingSystemStore(storePath, globalStore);
+			wsManager.LocalWritingSystemStore.LocalKeyboardSettings = Settings.Default.LocalKeyboards;
 			wsManager.TemplateFolder = DirectoryFinder.TemplateDirectory;
 		}
 

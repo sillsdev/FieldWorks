@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -188,6 +188,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\Palaso.dll</HintPath>
     </Reference>
+    <Reference Include="PalasoUIWindowsForms, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="Rhino.Mocks, Version=3.6.0.0, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Bin\Rhino\Rhino.Mocks.dll</HintPath>
@@ -255,17 +258,29 @@
     <Compile Include="..\..\FDO\FDOTests\FwSetupFixtureClass.cs">
       <Link>FwSetupFixtureClass.cs</Link>
     </Compile>
-    <Compile Include="CnvtrPropertiesCtrlTests.cs" />
+    <Compile Include="CnvtrPropertiesCtrlTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="CharContextCtrlTests.cs" />
     <Compile Include="RestoreProjectPresenterTests.cs" />
-    <Compile Include="ValidCharactersDlgTests.cs" />
+    <Compile Include="ValidCharactersDlgTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="FindReplaceCollectorEnvTests.cs" />
-    <Compile Include="FwFindReplaceDlgTests.cs" />
-    <Compile Include="FwNewLangProjectTests.cs" />
-    <Compile Include="FwProjPropertiesDlgTests.cs" />
+    <Compile Include="FwFindReplaceDlgTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FwNewLangProjectTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FwProjPropertiesDlgTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="FwStylesDlgTests.cs" />
     <Compile Include="PunctuationDlgTests.cs" />
-    <Compile Include="WritingSystemPropertiesDialogTests.cs" />
+    <Compile Include="WritingSystemPropertiesDialogTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="RealSplashScreenTests.cs" />
     <Compile Include="FwFontDialogTests.cs" />
     <Compile Include="FwHelpAboutTests.cs" />
@@ -294,7 +309,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-
   <PropertyGroup>
     <DistFiles>../../../DistFiles</DistFiles>
   </PropertyGroup>

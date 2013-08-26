@@ -82,6 +82,7 @@ FWLANG_OBJ := \
 	$(LANGUAGE_OBJ)/RomRenderSegment.o \
 	$(LANGUAGE_OBJ)/LgSimpleEngines.o \
 	$(LANGUAGE_OBJ)/LgIcuCharPropEngine.o \
+	$(LANGUAGE_OBJ)/LgKeymanHandler.o \
 	$(LANGUAGE_OBJ)/LocaleIndex.o \
 	$(GENERIC_OBJ)/TextProps1.o \
 	$(GR_LIB_OBJ)/GrUtil.o \

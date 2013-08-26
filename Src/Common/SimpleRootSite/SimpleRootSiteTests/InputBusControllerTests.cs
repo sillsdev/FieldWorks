@@ -1784,12 +1784,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			throw new System.NotImplementedException();
 		}
 
-		public void SetKeyboardForWs(ILgWritingSystem _ws, ref string _bstrActiveKeymanKbd,
-			ref int _nActiveLangId, ref int _hklActive, ref bool _fSelectLangPending)
-		{
-			throw new System.NotImplementedException();
-		}
-
 		public bool DoSpellCheckStep()
 		{
 			throw new System.NotImplementedException();

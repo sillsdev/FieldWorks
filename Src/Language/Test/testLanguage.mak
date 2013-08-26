@@ -57,6 +57,7 @@ OBJ_LANGUAGETESTSUITE=\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Language\autopch\LgSimpleEngines.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Language\autopch\LgIcuCharPropEngine.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Language\autopch\LgUnicodeCollater.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Language\autopch\LgKeymanHandler.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Language\autopch\FwStyledText.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Language\autopch\WriteXml.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Language\usepch\TextProps1.obj\

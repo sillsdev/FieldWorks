@@ -33,6 +33,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Automation.Provider;
 using System.Windows.Forms;
+using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -235,6 +236,14 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get { return s_fInSelectionChanged; }
 			set { s_fInSelectionChanged = value; }
+		}
+
+		/// <summary>
+		/// With access to the cache, we can limit this to writing sytems the user might plausibly want for this project.
+		/// </summary>
+		protected override IWritingSystemDefinition[] PlausibleWritingSystems
+		{
+			get { return m_fdoCache.ServiceLocator.WritingSystems.AllWritingSystems.Cast<IWritingSystemDefinition>().ToArray(); }
 		}
 
 		/// ------------------------------------------------------------------------------------

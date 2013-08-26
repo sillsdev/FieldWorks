@@ -85,6 +85,7 @@ OBJ_LANG = \
 	$(INT_DIR)/LgSimpleEngines.o \
 	$(INT_DIR)/LgIcuCharPropEngine.o \
 	$(INT_DIR)/LgUnicodeCollater.o \
+	$(INT_DIR)/LgKeymanHandler.o \
 	$(INT_DIR)/LocaleIndex.o \
 	$(INT_DIR)/FwXml.o \
 	$(INT_DIR)/WriteXml.o \

@@ -29,10 +29,9 @@ using System.Diagnostics;
 using Microsoft.Win32;
 using System.Text;
 using System.Linq;
-
+using Palaso.UI.WindowsForms.WritingSystems;
 using Palaso.WritingSystems;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Keyboarding;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -66,10 +65,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public const int kWsConverters = 3;
 		/// <summary>Index(4) of the tab for writing system sorting</summary>
 		public const int kWsSorting = 4;
+		#endregion
+
+		internal Palaso.UI.WindowsForms.WritingSystems.WSKeyboardControl m_keyboardControl;
 		/// <summary>Index(5) of the tab for writing systems PUA characters</summary>
 		public const int kWsPUACharacters = 5;
 
-		#endregion
+		internal WritingSystemSetupModel m_modelForKeyboard;
+
 
 		/// <summary>
 		/// Shows the new writing system properties dialog.
@@ -269,13 +272,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		#region Keyboard Tab
 
-		private Label m_lblKeyboardInstruction;
-		/// <summary> </summary>
-		protected KeyboardControl m_KeyboardControl;
-		private LinkLabel m_linkWindowsKeyboard;
-		private Label m_lblKeyboardSetupInst;
-		private LinkLabel m_linkKeymanConfiguration;
-		private Label m_lblKeyboardTestInstr;
 
 		#endregion Keyboard Tab
 
@@ -317,7 +313,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private Label m_lblPunctuation;
 		private Button btnPunctuation;
-		private FwTextBox m_fwTextBoxTestWs;
 		private Label lblFullCode;
 		private Label m_FullCode;
 		private Label lblScriptRegionVariant;
@@ -360,19 +355,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_lblValidCharacters.Tag = m_lblValidCharacters.Text;
 			m_lblPunctuation.Tag = m_lblPunctuation.Text;
 			m_lblEncodingConverter.Tag = m_lblEncodingConverter.Text;
-			m_lblKeyboardInstruction.Tag = m_lblKeyboardInstruction.Text;
-			m_lblKeyboardTestInstr.Tag = m_lblKeyboardTestInstr.Text;
 			m_tsf = TsStrFactoryClass.Create();
 
 			LoadSortUsingComboBox();
 			LoadSortLanguageComboBox();
-
-			// FWNX-498 Different UI for IBus in Linux
-			if (MiscUtils.IsUnix)
-			{
-				m_linkWindowsKeyboard.Text = FwCoreDlgs.kstidSetUpKeyboards;
-				m_linkKeymanConfiguration.Visible = false;
-			}
 		}
 
 		/// <summary>
@@ -397,12 +383,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				if (m_sortRulesTextBox != null && m_sortRulesTextBox.WritingSystemFactory != null)
 				{
 					var disposable = m_sortRulesTextBox.WritingSystemFactory as IDisposable;
-					if (disposable != null)
-						disposable.Dispose();
-				}
-				if (m_fwTextBoxTestWs != null && m_fwTextBoxTestWs.WritingSystemFactory != null)
-				{
-					var disposable = m_fwTextBoxTestWs.WritingSystemFactory as IDisposable;
 					if (disposable != null)
 						disposable.Dispose();
 				}
@@ -518,8 +498,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			m_defaultFontsControl.WritingSystem = ws;
 
-			m_KeyboardControl.WritingSystem = ws;
-
 			//Switch Encoding Converters to the one for the user selected writing system
 			Select_cbEncodingConverter();
 
@@ -533,6 +511,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				SetupSortTab(ws);
 			}
+			m_modelForKeyboard = new WritingSystemSetupModel((WritingSystemDefinition) ws);
+			m_keyboardControl.BindToModel(m_modelForKeyboard);
 		}
 
 		private void SetupSortTab(IWritingSystem ws)
@@ -844,13 +824,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.tpFonts = new System.Windows.Forms.TabPage();
 			this.m_defaultFontsControl = new SIL.FieldWorks.FwCoreDlgControls.DefaultFontsControl();
 			this.tpKeyboard = new System.Windows.Forms.TabPage();
-			this.m_fwTextBoxTestWs = new SIL.FieldWorks.Common.Widgets.FwTextBox();
-			this.m_lblKeyboardTestInstr = new System.Windows.Forms.Label();
-			this.m_linkKeymanConfiguration = new System.Windows.Forms.LinkLabel();
-			this.m_linkWindowsKeyboard = new System.Windows.Forms.LinkLabel();
-			this.m_lblKeyboardSetupInst = new System.Windows.Forms.Label();
-			this.m_lblKeyboardInstruction = new System.Windows.Forms.Label();
-			this.m_KeyboardControl = new SIL.FieldWorks.FwCoreDlgControls.KeyboardControl();
+			this.m_keyboardControl = new Palaso.UI.WindowsForms.WritingSystems.WSKeyboardControl();
 			this.tpConverters = new System.Windows.Forms.TabPage();
 			this.btnEncodingConverter = new System.Windows.Forms.Button();
 			this.m_lblEncodingConverter = new System.Windows.Forms.Label();
@@ -897,7 +871,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.gbDirection.SuspendLayout();
 			this.tpFonts.SuspendLayout();
 			this.tpKeyboard.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.m_fwTextBoxTestWs)).BeginInit();
 			this.tpConverters.SuspendLayout();
 			this.tpSorting.SuspendLayout();
 			this.m_sortRulesPanel.SuspendLayout();
@@ -922,8 +895,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.tabControl.Name = "tabControl";
 			this.tabControl.SelectedIndex = 0;
 			this.helpProvider.SetShowHelp(this.tabControl, ((bool)(resources.GetObject("tabControl.ShowHelp"))));
-			this.tabControl.Deselecting += new System.Windows.Forms.TabControlCancelEventHandler(this.tabControl_Deselecting);
 			this.tabControl.SelectedIndexChanged += new System.EventHandler(this.tabControl_SelectedIndexChanged);
+			this.tabControl.Deselecting += new System.Windows.Forms.TabControlCancelEventHandler(this.tabControl_Deselecting);
 			//
 			// tpGeneral
 			//
@@ -980,7 +953,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			resources.ApplyResources(this.m_regionVariantControl, "m_regionVariantControl");
 			this.m_regionVariantControl.BackColor = System.Drawing.Color.Transparent;
 			this.m_regionVariantControl.Name = "m_regionVariantControl";
+			this.m_regionVariantControl.RegionName = global::SIL.FieldWorks.FwCoreDlgs.FwCoreDlgs.kstidOpen;
+			this.m_regionVariantControl.RegionSubtag = null;
+			this.m_regionVariantControl.ScriptName = global::SIL.FieldWorks.FwCoreDlgs.FwCoreDlgs.kstidOpen;
+			this.m_regionVariantControl.ScriptSubtag = null;
 			this.helpProvider.SetShowHelp(this.m_regionVariantControl, ((bool)(resources.GetObject("m_regionVariantControl.ShowHelp"))));
+			this.m_regionVariantControl.VariantName = global::SIL.FieldWorks.FwCoreDlgs.FwCoreDlgs.kstidOpen;
+			this.m_regionVariantControl.VariantSubtag = null;
 			this.m_regionVariantControl.WritingSystem = null;
 			this.m_regionVariantControl.ScriptRegionVariantChanged += new System.EventHandler(this.m_regionVariantControl_ScriptRegionVariantChanged);
 			//
@@ -1043,72 +1022,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			// tpKeyboard
 			//
-			this.tpKeyboard.Controls.Add(this.m_fwTextBoxTestWs);
-			this.tpKeyboard.Controls.Add(this.m_lblKeyboardTestInstr);
-			this.tpKeyboard.Controls.Add(this.m_linkKeymanConfiguration);
-			this.tpKeyboard.Controls.Add(this.m_linkWindowsKeyboard);
-			this.tpKeyboard.Controls.Add(this.m_lblKeyboardSetupInst);
-			this.tpKeyboard.Controls.Add(this.m_lblKeyboardInstruction);
-			this.tpKeyboard.Controls.Add(this.m_KeyboardControl);
+			this.tpKeyboard.Controls.Add(this.m_keyboardControl);
 			resources.ApplyResources(this.tpKeyboard, "tpKeyboard");
 			this.tpKeyboard.Name = "tpKeyboard";
 			this.helpProvider.SetShowHelp(this.tpKeyboard, ((bool)(resources.GetObject("tpKeyboard.ShowHelp"))));
 			this.tpKeyboard.UseVisualStyleBackColor = true;
 			//
-			// m_fwTextBoxTestWs
+			// m_keyboardControl
 			//
-			this.m_fwTextBoxTestWs.AcceptsReturn = false;
-			this.m_fwTextBoxTestWs.AdjustStringHeight = true;
-			this.m_fwTextBoxTestWs.BackColor = System.Drawing.SystemColors.Window;
-			this.m_fwTextBoxTestWs.controlID = null;
-			resources.ApplyResources(this.m_fwTextBoxTestWs, "m_fwTextBoxTestWs");
-			this.m_fwTextBoxTestWs.HasBorder = true;
-			this.m_fwTextBoxTestWs.Name = "m_fwTextBoxTestWs";
-			this.helpProvider.SetShowHelp(this.m_fwTextBoxTestWs, ((bool)(resources.GetObject("m_fwTextBoxTestWs.ShowHelp"))));
-			this.m_fwTextBoxTestWs.SuppressEnter = false;
-			this.m_fwTextBoxTestWs.WordWrap = true;
-			this.m_fwTextBoxTestWs.Enter += new System.EventHandler(this.m_fwTextBoxTestWs_Enter);
-			//
-			// m_lblKeyboardTestInstr
-			//
-			resources.ApplyResources(this.m_lblKeyboardTestInstr, "m_lblKeyboardTestInstr");
-			this.m_lblKeyboardTestInstr.Name = "m_lblKeyboardTestInstr";
-			this.helpProvider.SetShowHelp(this.m_lblKeyboardTestInstr, ((bool)(resources.GetObject("m_lblKeyboardTestInstr.ShowHelp"))));
-			//
-			// m_linkKeymanConfiguration
-			//
-			resources.ApplyResources(this.m_linkKeymanConfiguration, "m_linkKeymanConfiguration");
-			this.m_linkKeymanConfiguration.Name = "m_linkKeymanConfiguration";
-			this.helpProvider.SetShowHelp(this.m_linkKeymanConfiguration, ((bool)(resources.GetObject("m_linkKeymanConfiguration.ShowHelp"))));
-			this.m_linkKeymanConfiguration.TabStop = true;
-			this.m_linkKeymanConfiguration.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.m_linkKeymanConfiguration_LinkClicked);
-			//
-			// m_linkWindowsKeyboard
-			//
-			resources.ApplyResources(this.m_linkWindowsKeyboard, "m_linkWindowsKeyboard");
-			this.m_linkWindowsKeyboard.Name = "m_linkWindowsKeyboard";
-			this.helpProvider.SetShowHelp(this.m_linkWindowsKeyboard, ((bool)(resources.GetObject("m_linkWindowsKeyboard.ShowHelp"))));
-			this.m_linkWindowsKeyboard.TabStop = true;
-			this.m_linkWindowsKeyboard.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.m_linkWindowsKeyboard_LinkClicked);
-			//
-			// m_lblKeyboardSetupInst
-			//
-			resources.ApplyResources(this.m_lblKeyboardSetupInst, "m_lblKeyboardSetupInst");
-			this.m_lblKeyboardSetupInst.Name = "m_lblKeyboardSetupInst";
-			this.helpProvider.SetShowHelp(this.m_lblKeyboardSetupInst, ((bool)(resources.GetObject("m_lblKeyboardSetupInst.ShowHelp"))));
-			//
-			// m_lblKeyboardInstruction
-			//
-			resources.ApplyResources(this.m_lblKeyboardInstruction, "m_lblKeyboardInstruction");
-			this.m_lblKeyboardInstruction.Name = "m_lblKeyboardInstruction";
-			this.helpProvider.SetShowHelp(this.m_lblKeyboardInstruction, ((bool)(resources.GetObject("m_lblKeyboardInstruction.ShowHelp"))));
-			//
-			// m_KeyboardControl
-			//
-			resources.ApplyResources(this.m_KeyboardControl, "m_KeyboardControl");
-			this.m_KeyboardControl.Name = "m_KeyboardControl";
-			this.helpProvider.SetShowHelp(this.m_KeyboardControl, ((bool)(resources.GetObject("m_KeyboardControl.ShowHelp"))));
-			this.m_KeyboardControl.WritingSystem = null;
+			resources.ApplyResources(this.m_keyboardControl, "m_keyboardControl");
+			this.m_keyboardControl.Name = "m_keyboardControl";
 			//
 			// tpConverters
 			//
@@ -1459,15 +1382,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.helpProvider.SetShowHelp(this, ((bool)(resources.GetObject("$this.ShowHelp"))));
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
-			this.Activated += new System.EventHandler(this.WritingSystemPropertiesDialog_Activated);
 			this.tabControl.ResumeLayout(false);
 			this.tpGeneral.ResumeLayout(false);
 			this.tpGeneral.PerformLayout();
 			this.gbDirection.ResumeLayout(false);
 			this.tpFonts.ResumeLayout(false);
 			this.tpKeyboard.ResumeLayout(false);
-			this.tpKeyboard.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.m_fwTextBoxTestWs)).EndInit();
 			this.tpConverters.ResumeLayout(false);
 			this.tpConverters.PerformLayout();
 			this.tpSorting.ResumeLayout(false);
@@ -1625,8 +1545,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			SetLabelParams(m_lblValidCharacters, fullName);
 			SetLabelParams(m_lblPunctuation, fullName);
 			SetLabelParams(m_lblEncodingConverter, fullName);
-			SetLabelParams(m_lblKeyboardInstruction, fullName);
-			SetLabelParams(m_lblKeyboardTestInstr, fullName);
 		}
 
 		private static void SetLabelParams(Label lbl, params string[] parms)
@@ -2051,7 +1969,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						break;
 
 					case kWsKeyboard:
-						m_fwTextBoxTestWs.Text = "";
 						break;
 				}
 			}
@@ -2078,109 +1995,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			string targetURL = String.Format("http://www.ethnologue.com/show_language.asp?code={0}", m_LanguageCode.Text);
 			using (Process.Start(targetURL))
 			{
-			}
-		}
-
-		private void m_linkWindowsKeyboard_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-		{
-			string program;
-			string arguments = null;
-
-			if (MiscUtils.IsUnix)
-				program = "ibus-setup";
-			else
-			{
-				program = Path.Combine(
-					Environment.GetFolderPath(Environment.SpecialFolder.System), "control.exe");
-				arguments ="input.dll";
-			}
-			var processInfo = new ProcessStartInfo(program, arguments);
-			using (Process.Start(processInfo))
-			{
-			}
-		}
-
-		private void m_linkKeymanConfiguration_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-		{
-			int version = 0;
-			string keymanPath = GetKeymanRegistryValue("root path", ref version);
-			if (keymanPath != null)
-			{
-				string keyman = Path.Combine(keymanPath, "kmshell.exe");
-				if (File.Exists(keyman))
-				{
-					// From Marc Durdin (7/16/09):
-					// Re LT-9902, in Keyman 6, you could launch the configuration dialog reliably by running kmshell.exe.
-					// However, Keyman 7 works slightly differently.  The recommended approach is to use the COM API:
-					// http://www.tavultesoft.com/keymandev/documentation/70/comapi_interface_IKeymanProduct_OpenConfiguration.html
-					// Sample code:
-					//	dim kmcom, product
-					//	Set kmcom = CreateObject("kmcomapi.TavultesoftKeyman")
-					//	rem  Pro = ProductID 1; Light = ProductID 8
-					//	rem  Following line will raise exception if product is not installed, so try/catch it
-					//	Set product = kmcom.Products.ItemsByProductID(1)
-					//	Product.OpenConfiguration
-					// But if that is not going to be workable for you, then use the parameter  "-c" to start configuration.
-					// Without a parameter, the action is to start Keyman Desktop itself; v7.0 would fire configuration if restarted,
-					// v7.1 just flags to the user that Keyman is running and where to find it.  This change was due to feedback that
-					// users would repeatedly try to start Keyman when it was already running, and get confused when they got the
-					// Configuration dialog.  Sorry for the unannounced change... 9
-					// The -c parameter will not work with Keyman 6, so you would need to test for the specific version.  For what it's worth, the
-					// COM API is static and should not change, while the command line parameters are not guaranteed to change from version to version.
-					string param = "";
-					if (version > 6)
-						param = "-c";
-					using (Process.Start(keyman, param))
-					{
-						return;
-					}
-				}
-			}
-			MessageBox.Show("Keyman 5.0 or later is not Installed.");
-		}
-
-		/// <summary>
-		/// This method returns the path to Keyman Configuration if it is installed. Otherwise it returns null.
-		/// It also sets the version of Keyman that it found.
-		/// </summary>
-		/// <param name="key">The key.</param>
-		/// <param name="version">The version.</param>
-		/// <returns></returns>
-		private static string GetKeymanRegistryValue(string key, ref int version)
-		{
-			using (RegistryKey rkTavultesoft = Registry.LocalMachine.OpenSubKey("Software", false).OpenSubKey("Tavultesoft", false))
-			{
-				if (rkTavultesoft == null)
-					return null;
-
-				using (var rkKeyman = rkTavultesoft.OpenSubKey("Keyman", false))
-				{
-					if (rkKeyman == null)
-						return null;
-
-					//May 2008 version 7.0 is the lastest version. The others are here for
-					//future versions.
-					int[] versions = { 10, 9, 8, 7, 6, 5 };
-					foreach (int vers in versions)
-					{
-						using (var rkApplication = rkKeyman.OpenSubKey(vers + ".0", false))
-						{
-							if (rkApplication != null)
-							{
-								foreach (string sKey in rkApplication.GetValueNames())
-								{
-									if (sKey == key)
-									{
-										version = vers;
-										return (string)rkApplication.GetValue(sKey);
-									}
-								}
-							}
-						}
-					}
-				}
-
-				return null;
 			}
 		}
 
@@ -2342,21 +2156,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			PopulateRelatedWSsListBox(CurrentWritingSystem);
 		}
 
-		private void m_fwTextBoxTestWs_Enter(object sender, EventArgs e)
-		{
-			IWritingSystem tempWs = CurrentWritingSystem;
-			IWritingSystem origWs = m_tempWritingSystems[tempWs];
-			int height = m_stylesheet == null ? 10000 : FontHeightAdjuster.GetFontHeightForStyle("Normal", m_stylesheet,
-				origWs == null ? 0 : origWs.Handle, m_wsManager);
-			IWritingSystemManager wsManager = FwUtils.CreateWritingSystemManager();
-			wsManager.Set(tempWs);
-			m_fwTextBoxTestWs.WritingSystemFactory = wsManager;
-			m_fwTextBoxTestWs.WritingSystemCode = tempWs.Handle;
-			var bldr = TsStringUtils.MakeTss(string.Empty, tempWs.Handle).GetBldr();
-			bldr.SetIntPropValues(0, 0, (int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, height);
-			m_fwTextBoxTestWs.Tss = bldr.GetString();
-		}
-
 		private void m_sortUsingComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			IWritingSystem ws = CurrentWritingSystem;
@@ -2375,12 +2174,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			IWritingSystem ws = CurrentWritingSystem;
 			if (ws != null)
 				ws.SortRules = (string) m_sortLanguageComboBox.SelectedValue;
-		}
-
-		private void WritingSystemPropertiesDialog_Activated(object sender, EventArgs e)
-		{
-			KeyboardController.Manager.Reset(); // we want to see any keyboards added while we were not active.
-			m_KeyboardControl.Reset();
 		}
 
 		#endregion

@@ -207,7 +207,7 @@
 		<Message Text="Finished building testLanguage and running tests." Condition="'$(action)'=='test'"/>
 	</Target>
 
-	<Target Name="Views" DependsOnTargets="GenericLib;Language;KeyboardSwitcher;GenerateCellarConstants">
+	<Target Name="Views" DependsOnTargets="GenericLib;Language;GenerateCellarConstants">
 		<Make Condition="'$(OS)'=='Windows_NT'"
 			Makefile="$(fwrt)\Src\views\Views.mak"
 			Configuration="$(config-capital)"
@@ -352,15 +352,15 @@
 		<DownloadFiles Condition="'$(OS)'=='Unix'" Include="$(fwrt)/Downloads/ChorusHub.exe"/>
 		<DownloadFiles Include="$(fwrt)/Downloads/LibChorus.dll"/>
 		<DownloadFiles Include="$(fwrt)/Downloads/Vulcan.Uczniowie.HelpProvider.dll"/>
-		<DownloadFiles Include="$(fwrt)/Downloads/Palaso.dll"/>
-		<DownloadFiles Include="$(fwrt)/Downloads/Palaso.Lift.dll"/>
-		<DownloadFiles Include="$(fwrt)/Downloads/Palaso.Media.dll"/>
-		<DownloadFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.dll"/>
+		<DownloadFiles Include="$(fwrt)/Downloads/Palaso.dll*"/>
+		<DownloadFiles Include="$(fwrt)/Downloads/Palaso.Lift.dll*"/>
+		<DownloadFiles Include="$(fwrt)/Downloads/Palaso.Media.dll*"/>
+		<DownloadFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.dll*"/>
 		<DownloadFiles Include="$(fwrt)/Downloads/L10NSharp.dll"/>
 		<DownloadFiles Include="$(fwrt)/Downloads/IPCFramework.dll"/>
 	</ItemGroup>
 
-	<Target Name="CopyDlls" DependsOnTargets="downloadWindowsDlls;downloadLinuxDlls">
+	<Target Name="CopyDlls" DependsOnTargets="downloadDlls">
 		<!-- .Net assemblies -->
 		<Copy SourceFiles="$(fwrt)/DistFiles/LinqBridge.dll" DestinationFolder="$(dir-outputBase)"
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
@@ -403,47 +403,45 @@
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 	</Target>
 
-	<Target Name="downloadWindowsDlls" Condition="'$(OS)'=='Windows_NT'">
-		<!-- Chorus dlls. bt228 specifies the WeSay1.4 branch. Update when appropriate. -->
+	<PropertyGroup>
+		<!-- bt228 specifies the WeSay1.4 branch. Update when appropriate. -->
+		<ChorusDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt228/.lastSuccessful</ChorusDownloadUrl>
+		<!-- bt267 specifies the chorus-precise64-WeSay1.4Mono build. Update when appropriate. -->
+		<ChorusDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt267/.lastSuccessful</ChorusDownloadUrl>
+		<!--Update with proper TeamCity builds when available-->
+		<PalasoDownloadUrl Condition="'$(OS)'=='Windows_NT'">https://jenkins.lsdev.sil.org/userContent/artifacts/Palaso-Win-any-KeyboardingV2-debug/lastSuccessful</PalasoDownloadUrl>
+		<PalasoDownloadUrl Condition="'$(OS)'=='Unix'">https://jenkins.lsdev.sil.org/userContent/artifacts/Palaso-Linux-any-KeyboardingV2-debug/lastSuccessful</PalasoDownloadUrl>
+		<!--Todo: use PalasoDownlaodUrl, when it refers to somewhere that has the IPCFramework.-->
+		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt278/.lastSuccessful</IPCFrameworkDownloadUrl>
+		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt279/.lastSuccessful</IPCFrameworkDownloadUrl>
+		<DebugInfo Condition="'$(OS)'=='Unix'">mdb</DebugInfo>
+		<DebugInfo Condition="'$(OS)'=='Windows_NT'">pdb</DebugInfo>
+	</PropertyGroup>
+
+	<Target Name="downloadDlls" DependsOnTargets="downloadDllsNonJenkinsBuild">
 		<Message Text="Downloading latest successful artifacts from Chorus WeSay1.4 build."/>
 		<MakeDir Directories="$(fwrt)/Downloads"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt228/.lastSuccessful/Autofac.dll" LocalFilename="$(fwrt)/Downloads/Autofac.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt228/.lastSuccessful/Chorus.exe" LocalFilename="$(fwrt)/Downloads/Chorus.exe"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt228/.lastSuccessful/LibChorus.dll" LocalFilename="$(fwrt)/Downloads/LibChorus.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt228/.lastSuccessful/Vulcan.Uczniowie.HelpProvider.dll" LocalFilename="$(fwrt)/Downloads/Vulcan.Uczniowie.HelpProvider.dll"/>
-		<!-- Palaso dlls. bt247 is the WeSay1.4 branch for Palaso. Update when appropriate. -->
-		<Message Text="Downloading latest successful artifacts from Palaso WeSay1.4 build."/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt247/.lastSuccessful/Palaso.dll" LocalFilename="$(fwrt)/Downloads/Palaso.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt247/.lastSuccessful/Palaso.Lift.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Lift.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt247/.lastSuccessful/Palaso.Media.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Media.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt247/.lastSuccessful/PalasoUIWindowsForms.dll" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.dll"/>
-		<!-- L10Sharp localization from the develop branch for now -->
-		<Message Text="Downloading latest successful artifacts for L10NSharp and IPCFramework."/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt247/.lastSuccessful/L10NSharp.dll" LocalFilename="$(fwrt)/Downloads/L10NSharp.dll"/>
-		<!-- IPCFramework.dll. bt278 is the IPC (win32) build (of the develop branch). -->
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt278/.lastSuccessful/IPCFramework.dll" LocalFilename="$(fwrt)/Downloads/IPCFramework.dll"/>
+		<DownloadFile Address="$(ChorusDownloadUrl)/Autofac.dll" LocalFilename="$(fwrt)/Downloads/Autofac.dll"/>
+		<DownloadFile Address="$(ChorusDownloadUrl)/Chorus.exe" LocalFilename="$(fwrt)/Downloads/Chorus.exe"/>
+		<DownloadFile Address="$(ChorusDownloadUrl)/ChorusHub.exe" LocalFilename="$(fwrt)/Downloads/ChorusHub.exe" Condition="'$(OS)'=='Unix'"/>
+		<DownloadFile Address="$(ChorusDownloadUrl)/LibChorus.dll" LocalFilename="$(fwrt)/Downloads/LibChorus.dll"/>
+		<DownloadFile Address="$(ChorusDownloadUrl)/Vulcan.Uczniowie.HelpProvider.dll" LocalFilename="$(fwrt)/Downloads/Vulcan.Uczniowie.HelpProvider.dll"/>
+		<Message Text="Downloading latest successful artifacts for IPCFramework."/>
+		<DownloadFile Address="$(IPCFrameworkDownloadUrl)/IPCFramework.dll" LocalFilename="$(fwrt)/Downloads/IPCFramework.dll"/>
 	</Target>
 
-	<Target Name="downloadLinuxDlls" Condition="'$(OS)'=='Unix'">
-		<!-- Chorus dlls. bt267 specifies the chorus-precise64-WeSay1.4Mono build. Update when appropriate. -->
-		<Message Text="Downloading latest successful artifacts from Chorus WeSay1.4Mono build."/>
-		<MakeDir Directories="$(fwrt)/Downloads"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt267/.lastSuccessful/Autofac.dll" LocalFilename="$(fwrt)/Downloads/Autofac.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt267/.lastSuccessful/Chorus.exe" LocalFilename="$(fwrt)/Downloads/Chorus.exe"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt267/.lastSuccessful/ChorusHub.exe" LocalFilename="$(fwrt)/Downloads/ChorusHub.exe"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt267/.lastSuccessful/LibChorus.dll" LocalFilename="$(fwrt)/Downloads/LibChorus.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt267/.lastSuccessful/Vulcan.Uczniowie.HelpProvider.dll" LocalFilename="$(fwrt)/Downloads/Vulcan.Uczniowie.HelpProvider.dll"/>
-		<!-- Palaso dlls. bt33 is the palaso-precise32-DefaultMono branch for Palaso. Update when appropriate. -->
-		<Message Text="Downloading latest successful artifacts from Palaso DefaultMono build."/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt33/.lastSuccessful/Palaso.dll" LocalFilename="$(fwrt)/Downloads/Palaso.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt33/.lastSuccessful/Palaso.Lift.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Lift.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt33/.lastSuccessful/Palaso.Media.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Media.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt33/.lastSuccessful/PalasoUIWindowsForms.dll" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.dll"/>
-		<!-- L10Sharp localization from the develop branch for now -->
-		<Message Text="Downloading latest successful artifacts for L10NSharp and IPCFramework."/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt247/.lastSuccessful/L10NSharp.dll" LocalFilename="$(fwrt)/Downloads/L10NSharp.dll"/>
-		<!-- IPCFramework.dll. bt279 is the IPC-Precise64 build (of the develop branch). -->
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt279/.lastSuccessful/IPCFramework.dll" LocalFilename="$(fwrt)/Downloads/IPCFramework.dll"/>
+	<Target Name="downloadDllsNonJenkinsBuild" Condition="'$(JENKINS_HOME)'==''">
+		<Message Text="Downloading latest successful artifacts from Palaso WeSay1.4 build."/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.dll" LocalFilename="$(fwrt)/Downloads/Palaso.dll"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.dll.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/Palaso.dll.$(DebugInfo)" Condition="'$(Configuration)'=='Debug' "/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.Lift.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Lift.dll"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.Lift.dll.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/Palaso.Lift.dll.$(DebugInfo)" Condition="'$(Configuration)'=='Debug' "/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.Media.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Media.dll"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.Media.dll.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/Palaso.Media.dll.$(DebugInfo)" Condition="'$(Configuration)'=='Debug' "/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/PalasoUIWindowsForms.dll" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.dll"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/PalasoUIWindowsForms.dll.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.dll.$(DebugInfo)" Condition="'$(Configuration)'=='Debug' "/>
+		<Message Text="Downloading latest successful artifacts for L10NSharp."/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/L10NSharp.dll" LocalFilename="$(fwrt)/Downloads/L10NSharp.dll"/>
 	</Target>
 
 	<Target Name="setRegistryValues" DependsOnTargets="initLinux;initWindows;setKeysInHKLM;setKeysInHKCU"/>

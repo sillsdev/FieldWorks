@@ -146,16 +146,16 @@
       <HintPath>..\..\..\Bin\Interop.IWshRuntimeLibrary.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="Keyboarding, Version=8.1.0.21129, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\Keyboarding.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualBasic, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Palaso, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Downloads\Palaso.dll</HintPath>
     </Reference>
     <Reference Include="Reporting, Version=1.0.3490.18153, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\Output\Debug\Reporting.dll</HintPath>
@@ -244,9 +244,7 @@
     <Compile Include="FwRegistrySettings.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FwRootSite.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="FwRootSite.cs" />
     <Compile Include="IFieldWorksManager.cs" />
     <Compile Include="IFwMainWnd.cs" />
     <Compile Include="MainWindowDelegate.cs">

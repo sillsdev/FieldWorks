@@ -1152,6 +1152,9 @@ namespace SIL.CoreImpl
 				defFontFeats = pws.DefaultFontFeatures;
 				defFont = pws.DefaultFontName;
 				keyboard = pws.Keyboard;
+				// This will put the keyboard actually selected into the permanent WS's list.
+				// We don't need to remember any others that got temporarily added to KnownKeyboards for testing.
+				LocalKeyboard = pws.LocalKeyboard;
 
 				// IWritingSystem properties
 				abbr = pws.Abbreviation;

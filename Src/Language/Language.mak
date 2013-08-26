@@ -67,6 +67,7 @@ OBJ_LANG=\
 	$(INT_DIR)\autopch\LgSimpleEngines.obj\
 	$(INT_DIR)\autopch\LgIcuCharPropEngine.obj\
 	$(INT_DIR)\autopch\LgUnicodeCollater.obj\
+	$(INT_DIR)\autopch\LgKeymanHandler.obj\
 	$(INT_DIR)\autopch\ModuleEntry.obj\
 	$(INT_DIR)\autopch\FwStyledText.obj\
 	$(INT_DIR)\autopch\WriteXml.obj\

@@ -112,6 +112,7 @@
     <Compile Include="CellarPropertyTypeFilter.cs" />
     <Compile Include="IWritingSystem.cs" />
     <Compile Include="IWritingSystemManager.cs" />
+    <Compile Include="KeyboardHelper.cs" />
     <Compile Include="LangTagUtils.cs" />
     <Compile Include="PalasoWritingSystem.cs" />
     <Compile Include="PalasoWritingSystemManager.cs" />

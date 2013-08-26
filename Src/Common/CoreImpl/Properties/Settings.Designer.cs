@@ -96,5 +96,20 @@ namespace SIL.CoreImpl.Properties {
                 this["IsBTE"] = value;
             }
         }
-    }
+
+		[global::System.Configuration.UserScopedSettingAttribute()]
+		[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("")]
+		public string LocalKeyboards
+		{
+			get
+			{
+				return ((string)(this["LocalKeyboards"]));
+			}
+			set
+			{
+				this["LocalKeyboards"] = value;
+			}
+		}
+	}
 }

@@ -16,10 +16,10 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using Palaso.UI.WindowsForms.Keyboarding;
+using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Keyboarding;
-using SIL.FieldWorks.Common.Keyboarding.Interfaces;
 using SIL.FieldWorks.Common.RootSites.Properties;
 using SIL.Utils;
 
@@ -915,8 +915,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			// We need to disable type-ahead when using a Keyman keyboard since it can
 			// mess with the keyboard functionality. (FWR-2205)
-			var keyboard = KeyboardController.ActiveKeyboard;
-			if (Control == null || (keyboard != null && keyboard.Type == KeyboardType.OtherIm))
+			if (Control == null || KeyboardHelper.ActiveKeymanKeyboard != string.Empty)
 				return;
 
 			// Collect any characters that are currently in the message queue
@@ -2934,7 +2933,9 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			try
 			{
-				KeyboardController.SetKeyboard(ws as IWritingSystem);
+				var palasoWs = ((IWritingSystemManager)WritingSystemFactory).Get(ws.Handle) as IWritingSystemDefinition;
+				if (palasoWs != null && palasoWs.LocalKeyboard != null)
+					palasoWs.LocalKeyboard.Activate();
 			}
 			catch
 			{
@@ -2998,10 +2999,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		private void ActivateDefaultKeyboard()
 		{
-			InputLanguage inputLng = InputLanguage.DefaultInputLanguage;
-			Debug.Assert(inputLng != null);
-
-			KeyboardController.SetKeyboard(inputLng.LayoutName);
+			Keyboard.Controller.ActivateDefaultKeyboard();
 		}
 
 		/// <summary>
