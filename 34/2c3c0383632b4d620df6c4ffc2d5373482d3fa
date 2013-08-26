@@ -1,0 +1,9 @@
+Verified-Linux+1: Eberhard Beilharz <eb1@sil.org>
+Code-Review-1: Jenkins CI
+Verified+1: Jenkins CI
+Code-Review+2: John Thomson <john.thomson7540@gmail.com>
+Submitted-by: Eberhard Beilharz <eb1@sil.org>
+Submitted-at: Mon, 26 Aug 2013 16:40:03 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/1349
+Project: FieldWorks
+Branch: refs/heads/feature/Keyboarding
