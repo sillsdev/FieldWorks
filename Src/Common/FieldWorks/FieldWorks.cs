@@ -3406,6 +3406,8 @@ namespace SIL.FieldWorks
 				s_serviceChannel = null;
 			}
 
+			KeyboardController.Shutdown();
+
 			GracefullyShutDown();
 
 			if (s_threadHelper != null)
