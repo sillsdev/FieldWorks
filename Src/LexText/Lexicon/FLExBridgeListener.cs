@@ -356,14 +356,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			// Step 3. Have Flex Bridge do the S/R.
 			// after saving the state enough to detect if conflicts are created.
-			var projectFolder = Cache.ProjectId.ProjectFolder;
-			var liftFolder = GetLiftRepositoryFolderFromFwProjectFolder(projectFolder);
+			var liftFolder = GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder);
 			var savedState = PrepareToDetectLiftConflicts(liftFolder);
-			var fullProjectFileName = IsDb4oProject ?
-				Path.Combine(projectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataDb4oFileExtension) :
-				Path.Combine(projectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension);
+			var fullProjectFileName = GetFullProjectFileName();
 			bool dataChanged;
-			if (!DoSendReceiveForLift(out dataChanged))
+			if (!DoSendReceiveForLift(fullProjectFileName, out dataChanged))
 				return true; // Bail out, since the S/R failed for some reason.
 
 			// Step 4. Import lift file. If fails, then add the notifier file.
@@ -384,6 +381,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 
 			return true; // We dealt with it.
+		}
+
+		private string GetFullProjectFileName()
+		{
+			var currentExtension = IsDb4oProject
+				? FwFileExtensions.ksFwDataDb4oFileExtension
+				: FwFileExtensions.ksFwDataXmlFileExtension;
+			return Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + currentExtension);
 		}
 
 		private void SaveAllDataToDisk()
@@ -429,8 +434,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			bool dummy1;
 			string dummy2;
-			var success = FLExBridgeHelper.LaunchFieldworksBridge(
-				Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
+			FLExBridgeHelper.LaunchFieldworksBridge(
+				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.CheckForUpdates,
 				null, FDOBackendProvider.ModelVersion, "0.13", null,
@@ -462,8 +467,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			bool dummy1;
 			string dummy2;
-			var success = FLExBridgeHelper.LaunchFieldworksBridge(
-				Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
+			FLExBridgeHelper.LaunchFieldworksBridge(
+				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.AboutFLExBridge,
 				null, FDOBackendProvider.ModelVersion, "0.13", null,
@@ -556,11 +561,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			bool dummy1;
 			string dummy2;
 			FLExBridgeHelper.FLExJumpUrlChanged += JumpToFlexObject;
-			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
-								   SendReceiveUser,
-								   FLExBridgeHelper.LiftConflictViewer,
-								   null, FDOBackendProvider.ModelVersion, "0.13", null,
-								   out dummy1, out dummy2);
+			var success = FLExBridgeHelper.LaunchFieldworksBridge(
+				GetFullProjectFileName(),
+				SendReceiveUser,
+				FLExBridgeHelper.LiftConflictViewer,
+				null, FDOBackendProvider.ModelVersion, "0.13", null,
+				out dummy1, out dummy2);
 			if (!success)
 			{
 				FLExBridgeHelper.FLExJumpUrlChanged -= JumpToFlexObject;
@@ -639,7 +645,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// In this case the caller of this method will continue on and probably create a new repository,
 		///	thus doing the equivalent of the original Lift Bridge code where there FLEx user started a S/R lift system.</para>
 		/// </remarks>
-		/// <returns>'true' if the the move succeeded, or if there was no need to do the move. The caller code will continue its work.
+		/// <returns>'true' if the move succeeded, or if there was no need to do the move. The caller code will continue its work.
 		/// Return 'false', if the calling code should quit its work.</returns>
 		private bool MoveOldLiftRepoIfNeeded()
 		{
@@ -655,7 +661,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			bool dummyDataChanged;
 			// flexbridge -p <path to fwdata file> -u <username> -v move_lift -g Langprojguid
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(
-				Path.Combine(projectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
+				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.MoveLift,
 				Cache.LanguageProject.Guid.ToString().ToLowerInvariant(), FDOBackendProvider.ModelVersion, "0.13", null,
@@ -777,7 +783,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// Do the S/R. This *may* actually create the Lift repository, if it doesn't exist, or it may do a more normal S/R
 		/// </summary>
 		/// <returns>'true' if the S/R succeed, otherwise 'false'.</returns>
-		private bool DoSendReceiveForLift(out bool dataChanged)
+		private bool DoSendReceiveForLift(string fullProjectFileName, out bool dataChanged)
 		{
 			StopParser();
 			var projectFolder = Cache.ProjectId.ProjectFolder;
@@ -789,9 +795,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			_liftPathname = GetLiftPathname(liftProjectDir);
 			var savedState = PrepareToDetectLiftConflicts(liftProjectDir);
 			string dummy;
-			// flexbridge -p <path to fwdata file> -u <username> -v send_receive_lift
+			// flexbridge -p <path to fwdata/fwdb file> -u <username> -v send_receive_lift
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(
-				Path.Combine(projectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
+				fullProjectFileName,
 				SendReceiveUser,
 				FLExBridgeHelper.SendReceiveLift, // May create a new lift repo in the process of doing the S/R. Or, it may just use the extant lift repo.
 				null, FDOBackendProvider.ModelVersion, "0.13", Cache.LangProject.DefaultVernacularWritingSystem.Id,
@@ -899,7 +905,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private static string GetLiftPathname(string liftBaseDir)
 		{
-			return Directory.GetFiles(liftBaseDir, "*.lift").FirstOrDefault();
+			// Part 2 of the LT-14809 fix is to test for the existance of the lift folder.
+			// FB will delete it if the S/R was cancelled and Flex had just created the lift folder and file.
+			// So don't crash if the folder no longer exists.
+			return Directory.Exists(liftBaseDir) ? Directory.GetFiles(liftBaseDir, "*.lift").FirstOrDefault() : null;
 		}
 
 		/// <summary>
