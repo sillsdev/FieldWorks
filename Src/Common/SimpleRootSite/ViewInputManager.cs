@@ -92,13 +92,14 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Called when a mouse event happened.
 		/// </summary>
+		/// <returns>Returns <c>false</c>. Returning <c>true</c> would mean that no further
+		/// processing of the mouse event should happen.</returns>
 		public bool OnMouseEvent(int xd, int yd, Rect rcSrc, Rect rcDst, VwMouseEvent me)
 		{
 			var mouseEvent = (MouseEvent) me;
 			if (mouseEvent == MouseEvent.kmeDown)
 			{
 				Keyboard.Activate();
-				return true;
 			}
 			return false;
 		}

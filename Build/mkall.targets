@@ -352,11 +352,22 @@
 		<DownloadFiles Condition="'$(OS)'=='Unix'" Include="$(fwrt)/Downloads/ChorusHub.exe"/>
 		<DownloadFiles Include="$(fwrt)/Downloads/LibChorus.dll"/>
 		<DownloadFiles Include="$(fwrt)/Downloads/Vulcan.Uczniowie.HelpProvider.dll"/>
-		<DownloadFiles Include="$(fwrt)/Downloads/Palaso.dll*"/>
+		<!-- we need to explicitly specify the important files, otherwise they'll be ignored
+		if they don't exist by the time this ItemGroup is read -->
+		<DownloadFiles Include="$(fwrt)/Downloads/Palaso.dll"/>
+		<DownloadFiles Include="$(fwrt)/Downloads/Palaso.dll.config"/>
+		<DownloadFiles Include="$(fwrt)/Downloads/Palaso.dll.*"/>
+		<DownloadFiles Include="$(fwrt)/Downloads/Palaso.Lift.dll"/>
 		<DownloadFiles Include="$(fwrt)/Downloads/Palaso.Lift.dll*"/>
+		<DownloadFiles Include="$(fwrt)/Downloads/Palaso.Media.dll"/>
+		<DownloadFiles Include="$(fwrt)/Downloads/Palaso.Media.dll.config"/>
 		<DownloadFiles Include="$(fwrt)/Downloads/Palaso.Media.dll*"/>
+		<DownloadFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.dll"/>
+		<DownloadFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.dll.config"/>
 		<DownloadFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.dll*"/>
 		<DownloadFiles Include="$(fwrt)/Downloads/L10NSharp.dll"/>
+		<DownloadFiles Include="$(fwrt)/Downloads/Enchant.Net.dll"/>
+		<DownloadFiles Include="$(fwrt)/Downloads/Enchant.Net.dll.config"/>
 		<DownloadFiles Include="$(fwrt)/Downloads/IPCFramework.dll"/>
 	</ItemGroup>
 
@@ -432,16 +443,22 @@
 
 	<Target Name="downloadDllsNonJenkinsBuild" Condition="'$(JENKINS_HOME)'==''">
 		<Message Text="Downloading latest successful artifacts from Palaso WeSay1.4 build."/>
+		<MakeDir Directories="$(fwrt)/Downloads"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.dll" LocalFilename="$(fwrt)/Downloads/Palaso.dll"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.dll.config" LocalFilename="$(fwrt)/Downloads/Palaso.dll.config"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.dll.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/Palaso.dll.$(DebugInfo)" Condition="'$(Configuration)'=='Debug' "/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.Lift.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Lift.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.Lift.dll.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/Palaso.Lift.dll.$(DebugInfo)" Condition="'$(Configuration)'=='Debug' "/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.Media.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Media.dll"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.Media.dll.config" LocalFilename="$(fwrt)/Downloads/Palaso.Media.dll.config"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.Media.dll.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/Palaso.Media.dll.$(DebugInfo)" Condition="'$(Configuration)'=='Debug' "/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/PalasoUIWindowsForms.dll" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.dll"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/PalasoUIWindowsForms.dll.config" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.dll.config"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/PalasoUIWindowsForms.dll.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.dll.$(DebugInfo)" Condition="'$(Configuration)'=='Debug' "/>
-		<Message Text="Downloading latest successful artifacts for L10NSharp."/>
+		<Message Text="Downloading latest successful artifacts for L10NSharp and Enchant.Net."/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/L10NSharp.dll" LocalFilename="$(fwrt)/Downloads/L10NSharp.dll"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/Enchant.Net.dll" LocalFilename="$(fwrt)/Downloads/Enchant.Net.dll"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/Enchant.Net.dll.config" LocalFilename="$(fwrt)/Downloads/Enchant.Net.dll.config"/>
 	</Target>
 
 	<Target Name="setRegistryValues" DependsOnTargets="initLinux;initWindows;setKeysInHKLM;setKeysInHKCU"/>
