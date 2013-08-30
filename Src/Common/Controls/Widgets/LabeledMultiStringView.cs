@@ -47,6 +47,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			m_innerView = new InnerLabeledMultiStringView(hvo, flid, wsMagic, wsOptional, forceIncludeEnglish, editable, spellCheck);
 			m_innerView.SetupOtherControls += (sender, e) => { SetupSoundControls(); };
+			m_innerView.Dock = DockStyle.Fill;
 			Controls.Add(m_innerView);
 		}
 
