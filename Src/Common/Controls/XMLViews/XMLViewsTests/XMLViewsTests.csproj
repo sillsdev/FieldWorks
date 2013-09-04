@@ -147,6 +147,9 @@
       <Name>nunit.framework</Name>
       <HintPath>..\..\..\..\..\Output\Debug\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="Palaso, Version=2.1.23.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="RootSite, Version=6.1.1.18764, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Output\Debug\RootSite.dll</HintPath>
@@ -239,9 +242,7 @@
     <Compile Include="XmlBrowseViewBaseTests.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DhListViewTests.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="DhListViewTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
