@@ -753,6 +753,64 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 		}
 
 		/// <summary>
+		/// Check the merging LexReferences, when two entries are merged.
+		/// </summary>
+		[Test]
+		public void Merge2EntriesWithReferencesToAThird()
+		{
+			// grab the factories that we'll need.
+			var servLoc = Cache.ServiceLocator;
+			var factPOS = servLoc.GetInstance<IPartOfSpeechFactory>();
+			var factLex = servLoc.GetInstance<ILexEntryFactory>();
+			var factStemMsa = servLoc.GetInstance<IMoStemMsaFactory>();
+
+			var ldb = Cache.LangProject.LexDbOA;
+			var posSeq = Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS;
+			var pos = factPOS.Create();
+			posSeq.Add(pos);
+			var lmeKeeper = factLex.Create();
+			var lmeMerger = factLex.Create();
+			var lmeReferee = factLex.Create();
+			var lexRefType1 = MakeLexRefType("Occurant");
+			var lexRef1 = MakeLexReference(lexRefType1, lmeReferee);
+			lexRef1.TargetsRS.Add(lmeKeeper); // This LexReference is now valid, with 2 Targets
+			var lexRef2 = MakeLexReference(lexRefType1, lmeMerger); // Invalid LexReference w/only 1 Target, will be deleted
+			var lexRef3 = MakeLexReference(lexRefType1, lmeKeeper); // Invalid LexReference w/only 1 Target, will be kept
+			lmeKeeper.AddComponent(lmeReferee);
+			lmeMerger.AddComponent(lmeReferee);
+
+			try
+			{
+				// Set up stem MSAs.
+				var stemKeeper = factStemMsa.Create();
+				lmeKeeper.MorphoSyntaxAnalysesOC.Add(stemKeeper);
+				stemKeeper.PartOfSpeechRA = pos;
+				var stemMerger = factStemMsa.Create();
+				lmeMerger.MorphoSyntaxAnalysesOC.Add(stemMerger);
+				stemMerger.PartOfSpeechRA = pos;
+				var stemReferee = factStemMsa.Create();
+				lmeReferee.MorphoSyntaxAnalysesOC.Add(stemReferee);
+				stemReferee.PartOfSpeechRA = pos;
+
+				// Merge entries.
+				lmeKeeper.MergeObject(lmeMerger, true);
+				Assert.AreEqual(2, lmeKeeper.Cache.ServiceLocator.GetInstance<ILexEntryRepository>().Count,
+					"Merged entry should be deleted");
+				Assert.IsFalse(lmeMerger.IsValidObject, "Merged entry should be deleted");
+				Assert.AreEqual(2, Cache.ServiceLocator.GetInstance<ILexReferenceRepository>().Count,
+					"Merged LexReference should be deleted, since it only has one Target");
+				Assert.IsTrue(lexRef1.IsValidObject, "Has two valid Targets");
+				Assert.IsFalse(lexRef2.IsValidObject, "Should have been merged out of existence");
+				Assert.IsTrue(lexRef3.IsValidObject, "Invalid, but shouldn't have been affected by merge");
+			}
+			finally
+			{
+				lmeKeeper.Delete();
+				lmeReferee.Delete();
+			}
+		}
+
+		/// <summary>
 		/// Check the merging allomorphs, when two entries are merged.
 		/// </summary>
 		[Test]
@@ -1431,7 +1489,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			return result;
 		}
 
-		private ILexReference MakeLexReference(ILexRefType owner, ILexSense firstTarget)
+		private ILexReference MakeLexReference(ILexRefType owner, ICmObject firstTarget)
 		{
 			ILexReference result = null;
 			result = Cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create();

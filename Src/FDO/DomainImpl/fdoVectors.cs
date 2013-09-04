@@ -20,17 +20,13 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
-using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Linq;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {
@@ -802,9 +798,13 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		void IReferenceSource.ReplaceAReference(ICmObject target, ICmObject replacement)
 		{
-			Remove((T)target);
+			// 4 Sep 2013 GJM: Switched the order here to avoid a possible problem where
+			// removing the last reference in a collection would result in a deleted ReferenceSource
+			// before the Add could take place.
 			Add((T)replacement);
+			Remove((T)target);
 		}
+
 		ICmObject IReferenceSource.Source
 		{
 			get { return MainObject; }
@@ -1821,7 +1821,15 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				if (value == null)
 					throw new NotSupportedException("Setting value to null at 'index' is not supported. Use RemoveAt instead.");
 
-				base[index] = value;
+				// Doing an Insert first and then a RemoveAt prevents a single-item sequence deleting itself as a side-effect
+				// before the insert is done; (instead of "base[index] = value") (LT-14819)
+				// We might actually want the base method to do this too, but we're playing safe close to a release.
+				// 1. We can't just do a direct replace in the collection because we want to invoke side effect code.
+				// 2. It's hard to invoke side effect code while just doing a replace of the actual element, because the current
+				//    state of the collection is not right unless we do the delete first (and even then not quite right).
+				//    But if we do the delete side effect first, we trigger "too few eleemnt" side effects we don't want.
+				Insert(index+1, value);
+				RemoveAt(index);
 			}
 		}
 
@@ -1839,7 +1847,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		void IReferenceSource.ReplaceAReference(ICmObject target, ICmObject replacement)
 		{
-			int index = IndexOf((T)target);
+			var index = IndexOf((T)target);
 			this[index] = (T) replacement;
 		}
 

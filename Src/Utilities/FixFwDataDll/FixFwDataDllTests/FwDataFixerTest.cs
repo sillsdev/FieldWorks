@@ -45,7 +45,7 @@ namespace FixFwDataDllTests
 				"DuplicateGuid", "DanglingCustomListReference", "DanglingCustomProperty", "DanglingReference",
 				"DuplicateWs", "SequenceFixer", "EntryWithExtraMSA", "EntryWithMsaAndNoSenses", "TagAndCellRefs", "GenericDates",
 				"HomographFixer", WordformswithsameformTestDir, "MorphBundleProblems", "MissingBasicCustomField", "DeletedMsaRefBySenseAndBundle",
-				"DuplicateNameCustomList"
+				"DuplicateNameCustomList", "SingleTargetLexRefs"
 			};
 
 		[TestFixtureSetUp]
@@ -298,6 +298,52 @@ namespace FixFwDataDllTests
 				"//objsur[@guid=\"" + testObjsurGuid + "\"]", 0, false);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
 				"//SenseType/objsur[@guid=\"" + secondDangler + "\"]", 0, false);
+		}
+
+		[Test]
+		public void TestSingleTargetLexReferences()
+		{
+			var testPath = Path.Combine(basePath, "SingleTargetLexRefs");
+			// This test checks that LexReference objects with less than two Targets are identified and removed
+			// and that an error message is produced for them.
+			string lexRefDeleteGuid1 = "d4bea1a5-9877-4f16-bd56-9bb7ff6b2db1";
+			string lexRefDeleteGuid2 = "1ad0d051-b388-45e1-a45e-48cb4274df90";
+			string lexRefNotDeleted = "580dc185-b017-4d83-b302-8179538be3a1";
+			string lexRefTypeChangedGuid = "0d5692fa-aa84-4bed-ab0a-f05186315fcd";
+			var data = new FwDataFixer(Path.Combine(testPath, "BasicFixup.fwdata"), new DummyProgressDlg(), LogErrors);
+			data.FixErrorsAndSave();
+
+			// Should be two errors reported
+			Assert.AreEqual(2, errors.Count, "Unexpected number of errors found.");
+			Assert.True(errors[0].StartsWith("Removing LexReference with too few references (Targets) (guid='" + lexRefDeleteGuid1 +
+				"') from its owner (guid='" + lexRefTypeChangedGuid), "Error message is incorrect."); // SequenceFixer--ksRemovingBadLexReference
+			Assert.True(errors[1].StartsWith("Removing LexReference with too few references (Targets) (guid='" + lexRefDeleteGuid2 +
+				"') from its owner (guid='" + lexRefTypeChangedGuid), "Error message is incorrect."); // SequenceFixer--ksRemovingBadLexReference
+
+			// Check original errors
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"LexReference\"]", 3, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
+				"//objsur[@guid=\"" + lexRefDeleteGuid1 + "\"]", 1, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
+				"//objsur[@guid=\"" + lexRefDeleteGuid2 + "\"]", 1, false);
+
+			// Check that they were fixed
+			// Should have deleted both LexReference objects
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+				"//objsur[@guid=\"" + lexRefDeleteGuid1 + "\"]", 0, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+				"//objsur[@guid=\"" + lexRefDeleteGuid2 + "\"]", 0, false);
+
+			// Should still have the LexRefType object
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"LexRefType\" and @guid=\"" + lexRefTypeChangedGuid + "\"]", 1, false);
+			// And that it has only one objsur now
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+				"//objsur[@guid=\"" + lexRefNotDeleted + "\"]", 1, false);
+			// Check that the valid LexReference is not deleted
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"LexReference\"]", 1, false);
 		}
 
 		/// <summary>

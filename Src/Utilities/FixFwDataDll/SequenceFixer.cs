@@ -39,6 +39,11 @@ namespace SIL.FieldWorks.FixData
 	/// references. If both Begin and EndSegment belong to missing Segments, we delete the object
 	/// in question. If only one belongs to a missing Segment, we replace its reference with a
 	/// reference to the other Segment.
+	///
+	/// This class also contains code to fix situations where a LexReference object is found to only
+	/// contain one Target. The LexReference object will be deleted. There may have been bugs in the
+	/// past which allowed this sort of thing to occur. They seem to have been fixed, but Send/Receive
+	/// could conceivably generate such situations too.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	internal class SequenceFixer : RtFixer
@@ -48,7 +53,10 @@ namespace SIL.FieldWorks.FixData
 		Dictionary<Guid, List<Guid>> m_rowsToDelete = new Dictionary<Guid, List<Guid>>();
 		Dictionary<Guid, List<Guid>> m_cellRefsToDelete = new Dictionary<Guid, List<Guid>>();
 		Dictionary<Guid, List<Guid>> m_phContextRefsToDelete = new Dictionary<Guid, List<Guid>>();
+		Dictionary<Guid, List<Guid>> m_typeRefsLosingReferences = new Dictionary<Guid, List<Guid>>();
 		Dictionary<Guid, XElement> m_candidateForRefAdjustment = new Dictionary<Guid, XElement>();
+		Dictionary<Guid, XElement> m_lexRefTypes = new Dictionary<Guid, XElement>();
+		List<Guid> m_lexReferencesToDelete = new List<Guid>();
 		List<Guid> m_objsToDelete = new List<Guid>();
 		List<Guid> m_objsToAdjust = new List<Guid>();
 		Dictionary<Guid, List<Guid>> m_ownerThatWillLoseOwnee = new Dictionary<Guid, List<Guid>>();
@@ -88,8 +96,6 @@ namespace SIL.FieldWorks.FixData
 					if (!HoldsEmptySequence("Members", rt))
 						return;
 					m_emptySequenceContexts.Add(guid);
-					var owner = SafelyGetOwnerGuid(guid);
-					UpdateDanglingReferenceDictionary(m_phContextRefsToDelete, owner, guid);
 					break;
 				case "PhSegRuleRHS":
 					break;
@@ -98,9 +104,33 @@ namespace SIL.FieldWorks.FixData
 					// Possible candidate for Segment reference adjustment
 					m_candidateForRefAdjustment.Add(guid, rt);
 					break;
+				case "LexRefType":
+					// Might need to remove a reference from Members, if proven to only have one Target.
+					m_lexRefTypes.Add(guid, rt);
+					break;
+				case "LexReference":
+					// Check for less than two Targets
+					if (!HoldsLessThanTwoInSequence("Targets", rt))
+						return;
+					m_lexReferencesToDelete.Add(guid);
+					break;
 				default:
 					break;
 			}
+		}
+
+		/// <summary>
+		/// Determines whether the sequence held by this XElement object is empty or has less
+		/// than two descendants or not.
+		/// N.B. At this point, there must only be one sequence held by this object.
+		/// </summary>
+		/// <param name="propertyName"> </param>
+		/// <param name="xeObject"></param>
+		/// <returns></returns>
+		private static bool HoldsLessThanTwoInSequence(string propertyName, XElement xeObject)
+		{
+			var xeProperty = xeObject.Element(propertyName);
+			return xeProperty == null || xeProperty.Descendants("objsur").Count() < 2;
 		}
 
 		/// <summary>
@@ -176,6 +206,11 @@ namespace SIL.FieldWorks.FixData
 			{
 				var owner = SafelyGetOwnerGuid(contextGuid);
 				UpdateDanglingReferenceDictionary(m_phContextRefsToDelete, owner, contextGuid);
+			}
+			foreach (var refGuid in m_lexReferencesToDelete)
+			{
+				var owner = SafelyGetOwnerGuid(refGuid);
+				UpdateDanglingReferenceDictionary(m_typeRefsLosingReferences, owner, refGuid);
 			}
 		}
 
@@ -347,10 +382,33 @@ namespace SIL.FieldWorks.FixData
 						return true;
 					ReportOwnerOfEmptySequence(guid, guidOwner, className, errorLogger);
 					return false; // delete this rt element
+				case "LexRefType":
+					// Check for LexRefTypes to remove reference.
+					if (!m_typeRefsLosingReferences.TryGetValue(guid, out danglingRefList))
+						return true;
+					rt.Descendants("objsur").Where(
+						objsur => danglingRefList.Contains(GetObjsurGuid(objsur))).Remove();
+					break;
+				case "LexReference":
+					// Remove a LexReference that only has one (or fewer) Targets.
+					if (!m_lexReferencesToDelete.Contains(guid))
+						return true;
+					ReportBadLexReference(guid, guidOwner, errorLogger);
+					return false; // delete this rt element
+
 				default:
 					break;
 			}
 			return true;
+		}
+
+		private void ReportBadLexReference(Guid guid, Guid guidOwner, FwDataFixer.ErrorLogger errorLogger)
+		{
+			// Example: if guid and rt belong to a "LexReference" that has fewer than two Targets,
+			//			then the LexReference will be removed from the file and this will report it.
+			//			The objsur reference to the row gets removed elsewhere.
+			errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(), String.Format(Strings.ksRemovingBadLexReference,
+				guid, guidOwner));
 		}
 
 		private static void ReportOwnerOfEmptySequence(Guid guid, Guid guidOwner, string className, FwDataFixer.ErrorLogger errorLogger)

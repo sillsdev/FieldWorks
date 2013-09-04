@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000061">
+
+<rt class="LexEntry" guid="c5e6aab3-4236-43b4-998e-d41ff26eba7b">
+  <Senses>
+	<objsur guid="46862d71-8e5a-402e-bdca-f01b73854166" t="o" />
+  </Senses>
+</rt>
+
+<rt class="LexSense" guid="46862d71-8e5a-402e-bdca-f01b73854166" ownerguid="c5e6aab3-4236-43b4-998e-d41ff26eba7b" />
+
+<rt class="LexEntry" guid="efc0f898-7a52-4fe4-b827-f87a348e1b4b" />
+
+<rt class="CmPossibilityList" guid="8cf0a5df-2fc5-4b70-8c3a-951027511a6b">
+	<Possibilities>
+		<objsur guid="0d5692fa-aa84-4bed-ab0a-f05186315fcd" t="o" />
+	</Possibilities>
+</rt>
+
+<rt class="LexRefType" guid="0d5692fa-aa84-4bed-ab0a-f05186315fcd" ownerguid="8cf0a5df-2fc5-4b70-8c3a-951027511a6b">
+	<Members>
+		<objsur guid="580dc185-b017-4d83-b302-8179538be3a1" t="o" />
+		<objsur guid="d4bea1a5-9877-4f16-bd56-9bb7ff6b2db1" t="o" />
+		<objsur guid="1ad0d051-b388-45e1-a45e-48cb4274df90" t="o" />
+	</Members>
+</rt>
+
+<!-- This is a valid LexReference w/multiple Targets -->
+<rt class="LexReference" guid="580dc185-b017-4d83-b302-8179538be3a1" ownerguid="0d5692fa-aa84-4bed-ab0a-f05186315fcd">
+  <Targets>
+	<objsur guid="c5e6aab3-4236-43b4-998e-d41ff26eba7b" t="r" />
+	<objsur guid="efc0f898-7a52-4fe4-b827-f87a348e1b4b" t="r" />
+  </Targets>
+</rt>
+
+<!-- This is an invalid LexReference w/a single LexEntry Target
+		It should be deleted. -->
+<rt class="LexReference" guid="d4bea1a5-9877-4f16-bd56-9bb7ff6b2db1" ownerguid="0d5692fa-aa84-4bed-ab0a-f05186315fcd">
+  <Targets>
+	<objsur guid="efc0f898-7a52-4fe4-b827-f87a348e1b4b" t="r" />
+  </Targets>
+</rt>
+
+<!-- This is an invalid LexReference w/a single LexSense Target
+		It should be deleted. -->
+<rt class="LexReference" guid="1ad0d051-b388-45e1-a45e-48cb4274df90" ownerguid="0d5692fa-aa84-4bed-ab0a-f05186315fcd">
+  <Targets>
+	<objsur guid="46862d71-8e5a-402e-bdca-f01b73854166" t="r" />
+  </Targets>
+</rt>
+
+</languageproject>

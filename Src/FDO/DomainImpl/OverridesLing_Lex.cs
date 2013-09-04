@@ -3119,7 +3119,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			// base.MergeObject will call DeleteUnderlyingObject on objSrc,
 			// which, in turn, will reset homographs for any similar entries for objSrc.
 
-
 			Debug.Assert(m_cache != null);
 			// We don't allow merging items of different classes.
 			Debug.Assert(ClassID == objSrc.ClassID);
@@ -3131,8 +3130,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						   where !m_cache.MetaDataCache.get_IsVirtual(flid)
 						   select flid;
 			List<int> flidListWithPubs = new List<int>(flidList);
-			flidListWithPubs.Remove(FDO.LexEntryTags.kflidDoNotShowMainEntryIn);
-			flidListWithPubs.Remove(FDO.LexEntryTags.kflidDoNotPublishIn);
+			flidListWithPubs.Remove(LexEntryTags.kflidDoNotShowMainEntryIn);
+			flidListWithPubs.Remove(LexEntryTags.kflidDoNotPublishIn);
 			flidListWithPubs.Add(mdc.GetFieldId("LexEntry", "ShowMainEntryIn", false));
 			flidListWithPubs.Add(mdc.GetFieldId("LexEntry", "PublishIn", false));
 			// Process all the fields in the source.
