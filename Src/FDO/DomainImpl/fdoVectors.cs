@@ -798,8 +798,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		void IReferenceSource.ReplaceAReference(ICmObject target, ICmObject replacement)
 		{
-			// 4 Sep 2013 GJM: Switched the order here to avoid a possible problem where
-			// removing the last reference in a collection would result in a deleted ReferenceSource
+
+			// We do the Add prior to Remove to avoid removing the last reference in a collection,
+			// resulting in a deleted ReferenceSource (DeletedObjectSideEffects)
 			// before the Add could take place.
 			Add((T)replacement);
 			Remove((T)target);
@@ -1827,7 +1828,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				// 1. We can't just do a direct replace in the collection because we want to invoke side effect code.
 				// 2. It's hard to invoke side effect code while just doing a replace of the actual element, because the current
 				//    state of the collection is not right unless we do the delete first (and even then not quite right).
-				//    But if we do the delete side effect first, we trigger "too few eleemnt" side effects we don't want.
+				//    But if we do the delete side effect first, we trigger "too few element" side effects we don't want.
 				Insert(index+1, value);
 				RemoveAt(index);
 			}

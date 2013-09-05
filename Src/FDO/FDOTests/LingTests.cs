@@ -774,8 +774,10 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			var lexRefType1 = MakeLexRefType("Occurant");
 			var lexRef1 = MakeLexReference(lexRefType1, lmeReferee);
 			lexRef1.TargetsRS.Add(lmeKeeper); // This LexReference is now valid, with 2 Targets
-			var lexRef2 = MakeLexReference(lexRefType1, lmeMerger); // Invalid LexReference w/only 1 Target, will be deleted
-			var lexRef3 = MakeLexReference(lexRefType1, lmeKeeper); // Invalid LexReference w/only 1 Target, will be kept
+			// Invalid LexReference w/only 1 Target, will be deleted as part of the merge.
+			var lexRef2 = MakeLexReference(lexRefType1, lmeMerger);
+			// Invalid LexReference w/only 1 Target, will be kept since the merger won't touch it.
+			var lexRef3 = MakeLexReference(lexRefType1, lmeKeeper);
 			lmeKeeper.AddComponent(lmeReferee);
 			lmeMerger.AddComponent(lmeReferee);
 
