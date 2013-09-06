@@ -404,19 +404,19 @@
 	</Target>
 
 	<Target Name="downloadWindowsDlls" Condition="'$(OS)'=='Windows_NT'">
-		<!-- Chorus dlls. bt228 specifies the WeSay1.4 branch. Update when appropriate. -->
-		<Message Text="Downloading latest successful artifacts from Chorus WeSay1.4 build."/>
+		<!-- Chorus dlls. bt274 specifies the FLExBridgeBeta branch. Update when appropriate. -->
+		<Message Text="Downloading latest successful artifacts from 'Flex Bridge-Beta-Chorus-win32 Continuous'."/>
 		<MakeDir Directories="$(fwrt)/Downloads"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt228/.lastSuccessful/Autofac.dll" LocalFilename="$(fwrt)/Downloads/Autofac.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt228/.lastSuccessful/Chorus.exe" LocalFilename="$(fwrt)/Downloads/Chorus.exe"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt228/.lastSuccessful/LibChorus.dll" LocalFilename="$(fwrt)/Downloads/LibChorus.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt228/.lastSuccessful/Vulcan.Uczniowie.HelpProvider.dll" LocalFilename="$(fwrt)/Downloads/Vulcan.Uczniowie.HelpProvider.dll"/>
-		<!-- Palaso dlls. bt247 is the WeSay1.4 branch for Palaso. Update when appropriate. -->
-		<Message Text="Downloading latest successful artifacts from Palaso WeSay1.4 build."/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt247/.lastSuccessful/Palaso.dll" LocalFilename="$(fwrt)/Downloads/Palaso.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt247/.lastSuccessful/Palaso.Lift.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Lift.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt247/.lastSuccessful/Palaso.Media.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Media.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt247/.lastSuccessful/PalasoUIWindowsForms.dll" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt274/.lastSuccessful/Autofac.dll" LocalFilename="$(fwrt)/Downloads/Autofac.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt274/.lastSuccessful/Chorus.exe" LocalFilename="$(fwrt)/Downloads/Chorus.exe"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt274/.lastSuccessful/LibChorus.dll" LocalFilename="$(fwrt)/Downloads/LibChorus.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt274/.lastSuccessful/Vulcan.Uczniowie.HelpProvider.dll" LocalFilename="$(fwrt)/Downloads/Vulcan.Uczniowie.HelpProvider.dll"/>
+		<!-- Palaso dlls. bt273 is the FLExBridgeBeta branch for Palaso. Update when appropriate. -->
+		<Message Text="Downloading latest successful artifacts from 'Flex Bridge-Beta-Palaso-win32 Continuous'."/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt273/.lastSuccessful/Palaso.dll" LocalFilename="$(fwrt)/Downloads/Palaso.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt273/.lastSuccessful/Palaso.Lift.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Lift.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt273/.lastSuccessful/Palaso.Media.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Media.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt273/.lastSuccessful/PalasoUIWindowsForms.dll" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.dll"/>
 		<!-- L10Sharp localization from the develop branch for now -->
 		<Message Text="Downloading latest successful artifacts for L10NSharp and IPCFramework."/>
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt247/.lastSuccessful/L10NSharp.dll" LocalFilename="$(fwrt)/Downloads/L10NSharp.dll"/>
@@ -425,20 +425,20 @@
 	</Target>
 
 	<Target Name="downloadLinuxDlls" Condition="'$(OS)'=='Unix'">
-		<!-- Chorus dlls. bt267 specifies the chorus-precise64-WeSay1.4Mono build. Update when appropriate. -->
-		<Message Text="Downloading latest successful artifacts from Chorus WeSay1.4Mono build."/>
+		<!-- Chorus dlls. bt285 specifies the FLExBridgeBeta branch of Chorus. Update when appropriate. -->
+		<Message Text="Downloading latest successful artifacts from 'Flex Bridge-Beta-Chorus-Precise64 Continuous'."/>
 		<MakeDir Directories="$(fwrt)/Downloads"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt267/.lastSuccessful/Autofac.dll" LocalFilename="$(fwrt)/Downloads/Autofac.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt267/.lastSuccessful/Chorus.exe" LocalFilename="$(fwrt)/Downloads/Chorus.exe"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt267/.lastSuccessful/ChorusHub.exe" LocalFilename="$(fwrt)/Downloads/ChorusHub.exe"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt267/.lastSuccessful/LibChorus.dll" LocalFilename="$(fwrt)/Downloads/LibChorus.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt267/.lastSuccessful/Vulcan.Uczniowie.HelpProvider.dll" LocalFilename="$(fwrt)/Downloads/Vulcan.Uczniowie.HelpProvider.dll"/>
-		<!-- Palaso dlls. bt33 is the palaso-precise32-DefaultMono branch for Palaso. Update when appropriate. -->
-		<Message Text="Downloading latest successful artifacts from Palaso DefaultMono build."/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt33/.lastSuccessful/Palaso.dll" LocalFilename="$(fwrt)/Downloads/Palaso.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt33/.lastSuccessful/Palaso.Lift.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Lift.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt33/.lastSuccessful/Palaso.Media.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Media.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt33/.lastSuccessful/PalasoUIWindowsForms.dll" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt285/.lastSuccessful/Autofac.dll" LocalFilename="$(fwrt)/Downloads/Autofac.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt285/.lastSuccessful/Chorus.exe" LocalFilename="$(fwrt)/Downloads/Chorus.exe"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt285/.lastSuccessful/ChorusHub.exe" LocalFilename="$(fwrt)/Downloads/ChorusHub.exe"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt285/.lastSuccessful/LibChorus.dll" LocalFilename="$(fwrt)/Downloads/LibChorus.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt285/.lastSuccessful/Vulcan.Uczniowie.HelpProvider.dll" LocalFilename="$(fwrt)/Downloads/Vulcan.Uczniowie.HelpProvider.dll"/>
+		<!-- Palaso dlls. bt284 is the FLExBridgeBeta branch for Palaso. Update when appropriate. -->
+		<Message Text="Downloading latest successful artifacts from 'Flex Bridge-Beta-Palaso-Precise64 Continuous'."/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt284/.lastSuccessful/Palaso.dll" LocalFilename="$(fwrt)/Downloads/Palaso.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt284/.lastSuccessful/Palaso.Lift.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Lift.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt284/.lastSuccessful/Palaso.Media.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Media.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt284/.lastSuccessful/PalasoUIWindowsForms.dll" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.dll"/>
 		<!-- L10Sharp localization from the develop branch for now -->
 		<Message Text="Downloading latest successful artifacts for L10NSharp and IPCFramework."/>
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt247/.lastSuccessful/L10NSharp.dll" LocalFilename="$(fwrt)/Downloads/L10NSharp.dll"/>
