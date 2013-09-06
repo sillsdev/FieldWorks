@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
 using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO;
@@ -18,7 +15,6 @@ namespace SIL.FieldWorks.XWorks
 		protected List<ICmObject> m_createdObjectList;
 
 		private IReversalIndexEntryFactory m_revIndexEntryFactory;
-		private IReversalIndexEntryRepository m_revIndexEntryRepo;
 
 		private IReversalIndexFactory m_revIndexFactory;
 		private IReversalIndexRepository m_revIndexRepo;
@@ -106,7 +102,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Assert.True(Cache != null, "No cache yet!?");
 			m_revIndexEntryFactory = Cache.ServiceLocator.GetInstance<IReversalIndexEntryFactory>();
-			m_revIndexEntryRepo = Cache.ServiceLocator.GetInstance<IReversalIndexEntryRepository>();
 			m_revIndexFactory = Cache.ServiceLocator.GetInstance<IReversalIndexFactory>();
 			m_revIndexRepo = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
 		}

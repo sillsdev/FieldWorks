@@ -121,6 +121,10 @@
     <Reference Include="FwUtilsTests, Version=7.0.1.13090, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="LexEdDll, Version=8.0.4.12240, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\LexEdDll.dll</HintPath>
+    </Reference>
     <Reference Include="NMock, Version=1.0.4428.35173, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\NMock.dll</HintPath>
@@ -149,9 +153,6 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <Reference Include="AxInterop.SHDocVw, Version=1.1.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\Bin\AxInterop.SHDocVw.dll</HintPath>
-    </Reference>
     <Reference Include="BasicUtils, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
@@ -175,9 +176,6 @@
     <Reference Include="FwUtils, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="Interop.SHDocVw, Version=1.1.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\Bin\Interop.SHDocVw.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
@@ -306,11 +304,5 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="gendarme-xWorksTests.ignore" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\LexText\Lexicon\LexEdDll.csproj">
-      <Project>{F361595E-E245-41A8-BCE9-C9AC82CBDF5E}</Project>
-      <Name>LexEdDll</Name>
-    </ProjectReference>
   </ItemGroup>
 </Project>
