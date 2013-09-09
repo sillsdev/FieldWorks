@@ -67,6 +67,35 @@ namespace XMLViewsTests
 			}
 		}
 
+		/// <summary>
+		/// Test verifies minimal behavior added for sort rules other than Toolbox and ICU
+		/// (which currently does something minimal, enough to prevent crashes).
+		/// This test currently just verifies that, indeed, we don't crash.
+		/// It may be desirable to do something more for some or all of the other cases,
+		/// in which case this test will probably need to change.
+		/// </summary>
+		[Test]
+		public void XHTMLExportGetDigraphMapsFirstCharactersFromOtherSortRules()
+		{
+			var ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			ws.SortRules = "fr";
+			ws.SortUsing = WritingSystemDefinition.SortRulesType.OtherLanguage;
+
+			var exporter = new ConfiguredExport(null, null, 0);
+			string output;
+			using (var stream = new MemoryStream())
+			{
+				using (var writer = new StreamWriter(stream))
+				{
+					exporter.Initialize(Cache, null, writer, null, "xhtml", null, "dicBody");
+					Dictionary<string, string> mapChars;
+					Set<string> ignoreSet;
+					var data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet);
+					Assert.AreEqual(mapChars.Count, 0, "No equivalents expected");
+				}
+			}
+		}
+
 		private void TestBeginCssClassForFlowType(string flowType)
 		{
 			var exporter = new ConfiguredExport(null, null, 0);

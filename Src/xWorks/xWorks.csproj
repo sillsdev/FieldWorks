@@ -258,7 +258,7 @@
       <DependentUpon>DictionaryConfigMgrDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="DictionaryPublicationDecorator.cs" />
-    <Compile Include="DoNothingXmlResolver.cs" />
+    <Compile Include="FileStreamXmlResolver.cs" />
     <Compile Include="DTMenuHandler.cs">
       <SubType>Code</SubType>
     </Compile>

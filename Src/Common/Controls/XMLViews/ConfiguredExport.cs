@@ -751,6 +751,13 @@ namespace SIL.FieldWorks.Common.Controls
 					MapRuleCharsToPrimary(part, sWs, m_mapWsMapChars);
 				}
 			}
+			else
+			{
+				// This at least prevents null reference and key not found exceptions.
+				// Possibly we should at least map the ASCII LC letters to UC.
+				m_mapWsMapChars[sWs] = new Dictionary<string, string>();
+				m_mapWsDigraphs[sWs] = digraphs;
+			}
 			mapChars = m_mapWsMapChars[sWs];
 			m_mapWsIgnorables.Add(sWs, chIgnoreSet);
 			return digraphs;

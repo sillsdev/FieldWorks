@@ -244,7 +244,7 @@ namespace SIL.PublishingSolution
 			XmlDocument xDoc = new XmlDocument();
 			using (var stream = new FileStream(xml, FileMode.Open))
 			{
-				xDoc.XmlResolver = DoNothingXmlResolver.GetNullResolver(); // Null may not work on Mono; not trying to validate any URLs.
+				xDoc.XmlResolver = FileStreamXmlResolver.GetNullResolver(); // Null may not work on Mono; not trying to validate any URLs.
 				xDoc.Load(stream);
 			}
 		}
