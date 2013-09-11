@@ -1189,9 +1189,8 @@ namespace SIL.CoreImpl
 						}
 					}
 				}
-				int lcid;
-				if (int.TryParse(GetSpecialValue(reader, "fw", "windowsLCID"), out lcid))
-					fwWs.LCID = lcid;
+				var lcidString = GetSpecialValue(reader, "fw", "windowsLCID");
+				((ILegacyWritingSystemDefinition)fwWs).WindowsLcid = lcidString;
 
 				while (reader.NodeType != XmlNodeType.EndElement)
 					reader.Read();
@@ -1222,8 +1221,9 @@ namespace SIL.CoreImpl
 			WriteSpecialValue(writer, "fw", "scriptName", fwWs.ScriptName);
 			WriteSpecialValue(writer, "fw", "validChars", fwWs.ValidChars);
 			WriteSpecialValue(writer, "fw", "variantName", fwWs.VariantName);
-			if (fwWs.LCID != 0)
-				WriteSpecialValue(writer, "fw", "windowsLCID", fwWs.LCID.ToString());
+			var legacyWs = (ILegacyWritingSystemDefinition)fwWs;
+			if (!string.IsNullOrEmpty(legacyWs.WindowsLcid))
+				WriteSpecialValue(writer, "fw", "windowsLCID", legacyWs.WindowsLcid);
 			writer.WriteEndElement();
 		}
 	}

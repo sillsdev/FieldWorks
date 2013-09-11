@@ -4,9 +4,9 @@
 
 
  /* File created by MIDL compiler version 7.00.0555 */
-/* at Mon Aug 26 13:18:10 2013
+/* at Tue Sep 10 15:51:54 2013
  */
-/* Compiler settings for d:\fwrepo\fw\Output\Common\FwKernelTlb.idl:
+/* Compiler settings for C:\fwrepo\fw\Output\Common\FwKernelTlb.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 7.00.0555 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
@@ -9447,12 +9447,6 @@ FwGraphiteProcess;
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_ISO3( 
             /* [retval][out] */ BSTR *pbstr) = 0;
         
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_LCID( 
-            /* [retval][out] */ int *pnLocale) = 0;
-        
-        virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_LCID( 
-            /* [in] */ int nLocale) = 0;
-        
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_SpellCheckingId( 
             /* [retval][out] */ BSTR *pbstr) = 0;
         
@@ -9534,14 +9528,6 @@ FwGraphiteProcess;
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_ISO3 )( 
             ILgWritingSystem * This,
             /* [retval][out] */ BSTR *pbstr);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_LCID )( 
-            ILgWritingSystem * This,
-            /* [retval][out] */ int *pnLocale);
-        
-        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_LCID )( 
-            ILgWritingSystem * This,
-            /* [in] */ int nLocale);
         
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_SpellCheckingId )( 
             ILgWritingSystem * This,
@@ -9638,12 +9624,6 @@ FwGraphiteProcess;
 
 #define ILgWritingSystem_get_ISO3(This,pbstr)	\
     ( (This)->lpVtbl -> get_ISO3(This,pbstr) ) 
-
-#define ILgWritingSystem_get_LCID(This,pnLocale)	\
-    ( (This)->lpVtbl -> get_LCID(This,pnLocale) ) 
-
-#define ILgWritingSystem_put_LCID(This,nLocale)	\
-    ( (This)->lpVtbl -> put_LCID(This,nLocale) ) 
 
 #define ILgWritingSystem_get_SpellCheckingId(This,pbstr)	\
     ( (This)->lpVtbl -> get_SpellCheckingId(This,pbstr) ) 

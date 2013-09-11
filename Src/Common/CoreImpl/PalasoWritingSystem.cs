@@ -332,65 +332,6 @@ namespace SIL.CoreImpl
 		}
 
 		/// <summary>
-		/// Gets or sets the Windows locale ID, consisting of sort-id (4 bits) and language-id
-		/// (16 bits, low word).
-		/// </summary>
-		/// <remarks>NOTE: the LCID consists of sort-id (4 bits) and language id (16bits, low
-		/// word). This is different from the input locale identifier (ILID), which consist of
-		/// input method id (16 bits) and language id (16 bits, low word). Often LCID and ILID
-		/// will be the same, but not necessarily.</remarks>
-		public int LCID
-		{
-			get
-			{
-				lock (m_syncRoot)
-				{
-					if (m_lcid == 0)
-					{
-						// On Linux InstalledInputLanguages or DefaultInputLanguage doesn't do anything sensible.
-						// see: https://bugzilla.novell.com/show_bug.cgi?id=613014
-						// so just default to en-US.
-						if (MiscUtils.IsUnix)
-							return new CultureInfo("en-US").LCID;
-						var defaultLang = InputLanguage.DefaultInputLanguage;
-
-						InputLanguage first = null;
-						foreach (InputLanguage lang in InputLanguage.InstalledInputLanguages)
-						{
-							try
-							{
-								if (lang.Culture.IetfLanguageTag != Id)
-									continue;
-								first = lang;
-								break;
-							}
-							catch (ArgumentException e)
-							{
-								// Skip unsupported cultures.
-							}
-						}
-						var inputLanguage = first ?? InputLanguage.DefaultInputLanguage;
-						return inputLanguage.Culture.LCID;
-					}
-					return m_lcid;
-				}
-			}
-
-			set
-			{
-				lock (m_syncRoot)
-				{
-					if (m_lcid != value)
-					{
-						m_lcid = value;
-						m_currentLcid = value;
-						Modified = true;
-					}
-				}
-			}
-		}
-
-		/// <summary>
 		/// Gets or sets a value indicating whether the script is right-to-left.
 		/// </summary>
 		/// <value><c>true</c> if the script is right-to-left.</value>
@@ -1146,7 +1087,6 @@ namespace SIL.CoreImpl
 			lock (pws.m_syncRoot)
 			{
 				// ILgWritingSystem properties
-				lcid = pws.LCID;
 				spellCheckingId = pws.SpellCheckingId;
 				rtol = pws.RightToLeftScript;
 				defFontFeats = pws.DefaultFontFeatures;
@@ -1179,7 +1119,6 @@ namespace SIL.CoreImpl
 			lock (m_syncRoot)
 			{
 				// ILgWritingSystem properties
-				LCID = lcid;
 				SpellCheckingId = spellCheckingId;
 				RightToLeftScript = rtol;
 				DefaultFontFeatures = defFontFeats;

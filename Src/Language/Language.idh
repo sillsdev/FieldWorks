@@ -243,13 +243,6 @@ Description:
 		[propget] HRESULT ISO3(
 			[out, retval] BSTR * pbstr);
 
-		// Get the locale assigned to this writing system.
-		[propget] HRESULT LCID(
-			[out, retval] int * pnLocale);
-		// Set the locale for this writing system.
-		[propput] HRESULT LCID(
-			[in] int nLocale);
-
 		// Get the name of the spelling dictionary to use for this writing system.
 		// Currently returns a generally-useful default, unless explicitly set to empty
 		// to prevent this.
