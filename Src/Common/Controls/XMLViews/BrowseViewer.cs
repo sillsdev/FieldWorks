@@ -3771,10 +3771,16 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				//gracefully handle the situation where the list view has not initialized this yet.
-				if (m_orderForColumnsDisplay.Count == 0)
-					for (int i = 0; i < ColumnCount; i++)
-					{ m_orderForColumnsDisplay.Add(i); }
+				// gracefully handle the situation where the list view has not initialized this yet.
+				// If columns have been added since any reordering, then ensure that's reflected here.
+				// (See LT-14879.)
+				if (m_orderForColumnsDisplay.Count < ColumnCount)
+				{
+					int min = m_orderForColumnsDisplay.Count;
+					for (int i = min; i < ColumnCount; i++)
+						m_orderForColumnsDisplay.Add(i);
+				}
+				Debug.Assert(m_orderForColumnsDisplay.Count == ColumnCount);
 				return m_orderForColumnsDisplay;
 			}
 			set { m_orderForColumnsDisplay = value; }
