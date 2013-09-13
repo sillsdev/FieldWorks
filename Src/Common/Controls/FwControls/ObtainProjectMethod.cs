@@ -57,26 +57,33 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			string projectPath;
 			FdoCache cache;
+			// Do NOT dispose of the thread helper until we dispose of the cache...
+			// CreateProjectTask makes it the thread helper of the FdoCache that it creates and returns,
+			// and we must NOT dispose of the cache's thread helper until after we import the lexicon.
+			// We will actually dispose it twice, most likely, since disposing the cache will dispose it;
+			// but this is harmless.
 			using (var helper = new ThreadHelper())
-			using (var progressDlg = new ProgressDialogWithTask(parent, helper))
 			{
-				progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
-				progressDlg.Title = FwControls.ksCreatingLiftProject;
-				var cacheReceiver = new FdoCache[1]; // a clumsy way of handling an out parameter, consistent with RunTask
-				projectPath = (string)progressDlg.RunTask(true, CreateProjectTask, new object[] { liftPath, helper, cacheReceiver });
-				cache = cacheReceiver[0];
+				using (var progressDlg = new ProgressDialogWithTask(parent, helper))
+				{
+					progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
+					progressDlg.Title = FwControls.ksCreatingLiftProject;
+					var cacheReceiver = new FdoCache[1]; // a clumsy way of handling an out parameter, consistent with RunTask
+					projectPath = (string)progressDlg.RunTask(true, CreateProjectTask, new object[] { liftPath, helper, cacheReceiver });
+					cache = cacheReceiver[0];
+				}
+
+				// this is a horrible way to invoke this, but current project organization does not allow us to reference
+				// the LexEdDll project, nor is there any straightforward way to move the code we need into some project we can
+				// reference, or any obviously suitable project to move it to without creating other References loops.
+				// One nasty reflection call seems less technical debt than creating an otherwise unnecessary project.
+				// (It puts up its own progress dialog.)
+				ReflectionHelper.CallStaticMethod(@"LexEdDll.dll", @"SIL.FieldWorks.XWorks.LexEd.FLExBridgeListener",
+					@"ImportObtainedLexicon", cache, liftPath, parent);
+
+				ProjectLockingService.UnlockCurrentProject(cache); // finish all saves and completely write the file so we can proceed to open it
+				cache.Dispose();
 			}
-
-			// this is a horrible way to invoke this, but current project organization does not allow us to reference
-			// the LexEdDll project, nor is there any straightforward way to move the code we need into some project we can
-			// reference, or any obviously suitable project to move it to without creating other References loops.
-			// One nasty reflection call seems less technical debt than creating an otherwise unnecessary project.
-			// (It puts up its own progress dialog.)
-			ReflectionHelper.CallStaticMethod(@"LexEdDll.dll", @"SIL.FieldWorks.XWorks.LexEd.FLExBridgeListener",
-				@"ImportObtainedLexicon", cache, liftPath, parent);
-
-			ProjectLockingService.UnlockCurrentProject(cache); // finish all saves and completely write the file so we can proceed to open it
-			cache.Dispose();
 
 			return projectPath;
 		}
