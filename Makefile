@@ -712,7 +712,3 @@ Fw-build-package:
 
 TE-run: ComponentsMap-nodep
 	(. ./environ && cd $(OUT_DIR) && mono --debug TE.exe -db "$${TE_DATABASE}")
-
-###############################################################################
-### Below is local section that shouldn't get clobbered by merging with vcs ###
-###############################################################################
