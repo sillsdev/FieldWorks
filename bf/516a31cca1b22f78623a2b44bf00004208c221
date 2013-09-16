@@ -1,0 +1,8 @@
+Verified+1: Jenkins CI
+Verified-Linux+1: Jenkins CI
+Code-Review+2: Randy Regnier <rbregnier@gmail.com>
+Submitted-by: John Thomson <john.thomson7540@gmail.com>
+Submitted-at: Mon, 16 Sep 2013 14:19:48 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/1402
+Project: FieldWorks
+Branch: refs/heads/develop
