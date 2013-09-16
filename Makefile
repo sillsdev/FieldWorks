@@ -101,6 +101,7 @@ alltargets: \
 	ComponentsMap \
 	IcuDataFiles \
 	install-strings \
+	l10n-all \
 
 test: \
 	externaltargets-test \
@@ -203,6 +204,7 @@ clean: \
 	generic-Test-clean \
 	tlbs-clean \
 	teckit-clean \
+	l10n-clean \
 
 # IDLImp is a C# app, so there is no reason to re-create that during our build.
 # We should be able to just use the version in $(BUILD_ROOT)\Bin
@@ -286,7 +288,7 @@ install-menuentries:
 	desktop-file-install --dir $(DESTDIR)/usr/share/applications Lib/linux/fieldworks-te.desktop
 	desktop-file-install --dir $(DESTDIR)/usr/share/applications Lib/linux/fieldworks-flex.desktop
 
-install: install-tree install-menuentries
+install: install-tree install-menuentries l10n-install
 
 install-package: install install-COM
 	$(DESTDIR)/usr/lib/fieldworks/cpol-action pack
@@ -708,7 +710,32 @@ Fw-build:
 	(cd $(BUILD_ROOT)/Build && xbuild /t:remakefw)
 
 Fw-build-package:
-	(cd $(BUILD_ROOT)/Build && xbuild /t:remakefw /property:config=release && xbuild /t:zipLocalizedLists)
+	(cd $(BUILD_ROOT)/Build && xbuild /t:remakefw,zipLocalizedLists,localize /property:config=release)
 
 TE-run: ComponentsMap-nodep
 	(. ./environ && cd $(OUT_DIR) && mono --debug TE.exe -db "$${TE_DATABASE}")
+
+# Begin localization section
+
+LOCALIZATIONS := $(shell ls $(BUILD_ROOT)/Localizations/messages.*.po | sed 's/.*messages\.\(.*\)\.po/\1/')
+
+l10n-all:
+	(cd $(BUILD_ROOT)/Build && xbuild /t:localize)
+
+l10n-clean:
+	# We don't want to remove strings-en.xml
+	for LOCALE in $(LOCALIZATIONS); do \
+		rm -rf "$(BUILD_ROOT)/Output/{Debug,Release}/$$LOCALE" "$(BUILD_ROOT)/DistFiles/Language Explorer/Configuration/strings-$$LOCALE.xml"; \
+	done
+
+l10n-install:
+	# Create directories
+	install -d $(DESTDIR)/usr/lib/fieldworks
+	install -d $(DESTDIR)/usr/share/fieldworks
+	# Copy data
+	for LOCALE in $(LOCALIZATIONS); do \
+		install -d $(DESTDIR)/usr/lib/fieldworks/$$LOCALE; \
+		install -m 644 Output/Release/$$LOCALE/*.dll $(DESTDIR)/usr/lib/fieldworks/$$LOCALE; \
+	done
+
+# End localization section
