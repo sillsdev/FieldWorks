@@ -80,5 +80,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// paratext is not installed correctly. Also if there is no registry entry for this then return false.
 		/// </summary>
 		bool ParatextSettingsDirectoryExists();
+
+		/// <summary>
+		/// Returns the path to the Paratext settings (projects) directory as specified in the registry
+		/// ENHANCE (Hasso) 2013.09: added this to expose the directory for Unix users, because trying to get it from ScrTextCollections
+		/// always returns null on Unix.  This is really a Paratext problem, and this method may have no benefit.
+		/// </summary>
+		string ParatextSettingsDirectory();
 	}
 }

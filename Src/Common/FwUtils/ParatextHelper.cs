@@ -99,7 +99,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			/// --------------------------------------------------------------------------------
 			/// <summary>
-			/// Resets the IParatextHelper adapter to the default adapter which accesses Paratext.
+			/// Resets the IParatextHelper adapter to a new instance of the default adapter which accesses Paratext.
 			/// </summary>
 			/// --------------------------------------------------------------------------------
 			public static void Reset()
@@ -117,44 +117,34 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		private class ParatextHelperAdapter : IParatextHelper
 		{
+			private bool m_IsParatextInitialized;
+
 			/// <summary/>
 			public ParatextHelperAdapter()
 			{
-				try
-				{
-					ScrTextCollection.Initialize();
-				}
-				catch (Exception e)
-				{
-					Logger.WriteError(e);
-				}
+				RefreshProjects();
 			}
 
 			/// ------------------------------------------------------------------------------------
 			/// <summary>
-			/// Gets the Paratext project directory
+			/// Gets the Paratext projects directory (null if none)
 			/// </summary>
 			/// ------------------------------------------------------------------------------------
 			public string ProjectsDirectory
 			{
 				get
 				{
-					if (MiscUtils.IsUnix)
+					if (m_IsParatextInitialized)
 					{
-						return Path.Combine(
-							Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-							"MyParatextProjects");
-					}
-
-					try
-					{
+						if (MiscUtils.IsUnix)
+						{
+							// TODO FWNX-1235: Why does SrcTextCollection.SettingsDirectory not work in Unix?
+							// Does ScrTextCollection work at all in Unix?
+							return FwRegistryHelper.ParatextSettingsDirectory();
+						}
 						return ScrTextCollection.SettingsDirectory;
 					}
-					catch (Exception e)
-					{
-						Logger.WriteError(e);
-						return null;
-					}
+					return null;
 				}
 			}
 
@@ -167,11 +157,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				try
 				{
-					ScrTextCollection.RefreshScrTexts();
+					if (FwRegistryHelper.ParatextSettingsDirectoryExists())
+					{
+						// It is possible that the Projects directory was not available when we first initialized
+						// ScrTextCollection, but it now is (e.g. USB drive plugged or unplugged).  So we initialize
+						// again. ScrTextCollection.Initialize is safe to call multiple times and also refreshes texts.
+						ScrTextCollection.Initialize();
+						m_IsParatextInitialized = true;
+					}
+					else
+					{
+						m_IsParatextInitialized = false;
+					}
 				}
 				catch (Exception e)
 				{
 					Logger.WriteError(e);
+					m_IsParatextInitialized = false;
 				}
 			}
 
@@ -193,15 +195,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 			/// ------------------------------------------------------------------------------------
 			public IEnumerable<string> GetShortNames()
 			{
-				try
+				if (m_IsParatextInitialized)
 				{
 					return ScrTextCollection.ScrTextNames;
 				}
-				catch (Exception e)
-				{
-					Logger.WriteError(e);
-					return new string[0];
-				}
+				return new string[0];
 			}
 
 			/// --------------------------------------------------------------------------------
@@ -211,16 +209,21 @@ namespace SIL.FieldWorks.Common.FwUtils
 			/// --------------------------------------------------------------------------------
 			public IEnumerable<ScrText> GetProjects()
 			{
-				try
+				RefreshProjects();
+
+				if (m_IsParatextInitialized)
 				{
-					ScrTextCollection.RefreshScrTexts();
-					return ScrTextCollection.ScrTexts;
+					try
+					{
+						return ScrTextCollection.ScrTexts;
+					}
+					catch (Exception e)
+					{
+						Logger.WriteError(e);
+						m_IsParatextInitialized = false;
+					}
 				}
-				catch (Exception e)
-				{
-					Logger.WriteError(e);
-					return new ScrText[0];
-				}
+				return new ScrText[0];
 			}
 		}
 		#endregion
