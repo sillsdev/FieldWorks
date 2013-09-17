@@ -25,6 +25,9 @@ namespace SIL.FieldWorks.LexicalProvider
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Provides a service contract for getting a lexical provider from an application.
+	/// WARNING: Paratext contains its own identical definition of these interfaces.
+	/// Any change must be coordinated (both in corresponding source files and in terms
+	/// of product release schedules.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[ServiceContract]

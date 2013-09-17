@@ -60,7 +60,8 @@ namespace SIL.FieldWorks.LexicalProvider
 
 			if (providerType == kLexicalProviderType)
 			{
-				Uri projUri = new Uri("net.pipe://localhost/" + FwUtils.GeneratePipeHandle(projhandle) + ":LP");
+				var url = LexicalProviderManager.UrlPrefix + LexicalProviderManager.FixPipeHandle(FwUtils.GeneratePipeHandle(projhandle + ":LP"));
+				Uri projUri = new Uri(url);
 				LexicalProviderManager.StartProvider(projUri, new LexicalProviderImpl(m_cache), typeof(ILexicalProvider));
 				return projUri;
 			}

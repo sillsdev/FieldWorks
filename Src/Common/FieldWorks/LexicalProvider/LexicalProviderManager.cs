@@ -44,6 +44,27 @@ namespace SIL.FieldWorks.LexicalProvider
 			"already open. If you want to use Paratext with this project, make a change in this project" +
 			" (so that it will start first), close both projects, then restart Flex.";
 
+		// The different URL prefixes that are required for Windows named pipes and Linux basic http binding.
+		#if __MonoCS__
+		// Just in case port 40001 is in use for something else on a particular system, we allow the user to configure both
+		// programs to use a different port.
+		internal static string UrlPrefix = "http://127.0.0.1:" + (Environment.GetEnvironmentVariable("LEXICAL_PROVIDER_PORT") ?? "40001") + "/";
+		#else
+		internal const string UrlPrefix = "net.pipe://localhost/";
+		#endif
+
+		// Mono requires the pipe handle to use slashes instead of colons.
+		// We could put this conditional code somewhere in the routines that generate the pipe handles,
+		// but it seemed cleaner to keep all the conditional code for different kinds of pipe more-or-less in one place.
+		internal static string FixPipeHandle(string pipeHandle)
+		{
+			#if __MonoCS__
+			return pipeHandle.Replace (":", "/");
+			#else
+			return pipeHandle;
+			#endif
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Creates a LexicalServiceProvider listener for the specified project.
@@ -53,8 +74,8 @@ namespace SIL.FieldWorks.LexicalProvider
 		{
 			if (projectId == null)
 				throw new InvalidOperationException("Project identity must be known before creating the lexical provider listener");
-
-			StartProvider(new Uri("net.pipe://localhost/" + projectId.PipeHandle),
+			var url = UrlPrefix + FixPipeHandle(projectId.PipeHandle);
+			StartProvider(new Uri(url),
 				new LexicalServiceProvider(cache), typeof(ILexicalServiceProvider));
 
 			s_lexicalProviderTimer = new Timer(s_timeSinceLexicalProviderUsed_Tick, null,
@@ -76,9 +97,6 @@ namespace SIL.FieldWorks.LexicalProvider
 			Justification="See TODO-Linux comment")]
 		internal static void StartProvider(Uri providerLocation, object provider, Type providerType)
 		{
-#if __MonoCS__
-			Logger.WriteEvent("Cannot start provider " + providerLocation + " for type " + providerType + " in Mono because WCF is not sufficiently implemented!");
-#else
 			if (s_runningProviders.ContainsKey(providerType))
 				return;
 
@@ -89,10 +107,16 @@ namespace SIL.FieldWorks.LexicalProvider
 			try
 			{
 				providerHost = new ServiceHost(provider);
-				// TODO-Linux: various properties of NetNamedPipeBinding are marked with MonoTODO
-				// attributes. Test if this affects us.
+				// Named pipes are better for Windows...don't tie up a dedicated port and perform better.
+				// However, Mono does not yet support them, so on Mono we use a different binding.
+				// Note that any attempt to unify these will require parallel changes in Paratext
+				// and some sort of coordinated release of the new versions.
+#if __MonoCS__
+				BasicHttpBinding binding = new BasicHttpBinding();
+#else
 				NetNamedPipeBinding binding = new NetNamedPipeBinding();
 				binding.Security.Mode = NetNamedPipeSecurityMode.None;
+#endif
 				binding.MaxBufferSize *= 4;
 				binding.MaxReceivedMessageSize *= 4;
 				binding.MaxBufferPoolSize *= 2;
@@ -119,7 +143,6 @@ namespace SIL.FieldWorks.LexicalProvider
 			}
 			Logger.WriteEvent("Started provider " + providerLocation + " for type " + providerType + ".");
 			s_runningProviders.Add(providerType, providerHost);
-#endif
 		}
 
 		/// ------------------------------------------------------------------------------------
