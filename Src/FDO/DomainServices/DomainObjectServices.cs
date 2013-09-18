@@ -2007,7 +2007,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="to"></param>
 		public static void ReplaceReferences(ICmObject from, ICmObject to)
 		{
-			CmObject.ReplaceReferences(from.Cache, from, to);
+			CmObject.ReplaceReferences(from, to);
 		}
 
 		/// <summary>

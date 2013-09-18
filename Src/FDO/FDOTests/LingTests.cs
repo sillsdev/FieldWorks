@@ -18,15 +18,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.CoreTests;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.FDOTests.CellarTests;
-using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Validation;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
@@ -754,6 +751,11 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 
 		/// <summary>
 		/// Check the merging LexReferences, when two entries are merged.
+		/// A user had a situation where previous bugs left invalid LexReference objects
+		/// in the database with only one Target. This caused a crash when merging
+		/// entries. It may be that in the future we will improve the underlying code
+		/// to remove these invalid objects while merging. Then at least one line of this test
+		/// will need to change.
 		/// </summary>
 		[Test]
 		public void Merge2EntriesWithReferencesToAThird()
@@ -764,7 +766,6 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			var factLex = servLoc.GetInstance<ILexEntryFactory>();
 			var factStemMsa = servLoc.GetInstance<IMoStemMsaFactory>();
 
-			var ldb = Cache.LangProject.LexDbOA;
 			var posSeq = Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS;
 			var pos = factPOS.Create();
 			posSeq.Add(pos);
@@ -774,9 +775,9 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			var lexRefType1 = MakeLexRefType("Occurant");
 			var lexRef1 = MakeLexReference(lexRefType1, lmeReferee);
 			lexRef1.TargetsRS.Add(lmeKeeper); // This LexReference is now valid, with 2 Targets
-			// Invalid LexReference w/only 1 Target, will be deleted as part of the merge.
+			// Invalid LexReference (only 1 Target), will be kept since the merger won't touch it.
 			var lexRef2 = MakeLexReference(lexRefType1, lmeMerger);
-			// Invalid LexReference w/only 1 Target, will be kept since the merger won't touch it.
+			// Invalid LexReference (only 1 Target), will be kept since the merger won't touch it.
 			var lexRef3 = MakeLexReference(lexRefType1, lmeKeeper);
 			lmeKeeper.AddComponent(lmeReferee);
 			lmeMerger.AddComponent(lmeReferee);
@@ -799,16 +800,81 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 				Assert.AreEqual(2, lmeKeeper.Cache.ServiceLocator.GetInstance<ILexEntryRepository>().Count,
 					"Merged entry should be deleted");
 				Assert.IsFalse(lmeMerger.IsValidObject, "Merged entry should be deleted");
-				Assert.AreEqual(2, Cache.ServiceLocator.GetInstance<ILexReferenceRepository>().Count,
-					"Merged LexReference should be deleted, since it only has one Target");
+				Assert.AreEqual(3, Cache.ServiceLocator.GetInstance<ILexReferenceRepository>().Count,
+					"Something caused a LexReference to be deleted; this may be a good thing someday, but shouldn't be happening at the time of writing this test.");
 				Assert.IsTrue(lexRef1.IsValidObject, "Has two valid Targets");
-				Assert.IsFalse(lexRef2.IsValidObject, "Should have been merged out of existence");
+				Assert.IsTrue(lexRef2.IsValidObject, "Invalid, but shouldn't have been affected by merge");
 				Assert.IsTrue(lexRef3.IsValidObject, "Invalid, but shouldn't have been affected by merge");
+				// merged lexref should now refer to the new entry
+				Assert.IsTrue(lexRef2.TargetsRS.Contains(lmeKeeper));
 			}
 			finally
 			{
 				lmeKeeper.Delete();
 				lmeReferee.Delete();
+			}
+		}
+
+		/// <summary>
+		/// Check the merging LexEntryRefs, when two senses in an entry are merged.
+		/// </summary>
+		[Test]
+		public void Merge2SensesWithReferences()
+		{
+			// grab the factories that we'll need.
+			var servLoc = Cache.ServiceLocator;
+			var factPOS = servLoc.GetInstance<IPartOfSpeechFactory>();
+			var factLex = servLoc.GetInstance<ILexEntryFactory>();
+			var factSense = servLoc.GetInstance<ILexSenseFactory>();
+			var factStemMsa = servLoc.GetInstance<IMoStemMsaFactory>();
+
+			var posSeq = Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS;
+			var pos = factPOS.Create();
+			posSeq.Add(pos);
+			// Create an entry
+			var lexEntry = factLex.Create();
+			// Add 2 senses to the entry; these will be merged
+			var senseToMerge = factSense.Create();
+			lexEntry.SensesOS.Add(senseToMerge);
+			var senseToKeep = factSense.Create();
+			lexEntry.SensesOS.Add(senseToKeep);
+			// Create 2 entries that will have our 2 senses as Component Lexemes and Primary Lexemes
+			var lexEntryReferee1 = factLex.Create();
+			var lexEntryRefToChange = MakeLexEntryRef(lexEntryReferee1, senseToMerge);
+			var lexEntryReferee2 = factLex.Create();
+			MakeLexEntryRef(lexEntryReferee2, senseToKeep);
+			Assert.AreEqual(2, Cache.ServiceLocator.GetInstance<ILexSenseRepository>().Count,
+				"Should be 2 senses at this point.");
+
+			try
+			{
+				// Set up stem MSAs.
+				var stemKeeper = factStemMsa.Create();
+				lexEntry.MorphoSyntaxAnalysesOC.Add(stemKeeper);
+				stemKeeper.PartOfSpeechRA = pos;
+				var stemReferee1 = factStemMsa.Create();
+				lexEntryReferee1.MorphoSyntaxAnalysesOC.Add(stemReferee1);
+				stemReferee1.PartOfSpeechRA = pos;
+				var stemReferee2 = factStemMsa.Create();
+				lexEntryReferee2.MorphoSyntaxAnalysesOC.Add(stemReferee2);
+				stemReferee2.PartOfSpeechRA = pos;
+
+				// Merge the 2 senses.
+				senseToKeep.MergeObject(senseToMerge, true);
+				Assert.AreEqual(1, Cache.ServiceLocator.GetInstance<ILexSenseRepository>().Count,
+					"Merged sense should be deleted");
+				Assert.IsFalse(senseToMerge.IsValidObject, "Merged sense should be deleted");
+				Assert.IsTrue(senseToKeep.IsValidObject, "Keeper sense is still there.");
+				Assert.AreEqual(senseToKeep, lexEntryRefToChange.ComponentLexemesRS.FirstOrDefault(),
+					"The sense that was kept should be here");
+				Assert.AreEqual(senseToKeep, lexEntryRefToChange.PrimaryLexemesRS.FirstOrDefault(),
+					"The sense that was kept should be here");
+			}
+			finally
+			{
+				lexEntry.Delete();
+				lexEntryReferee1.Delete();
+				lexEntryReferee2.Delete();
 			}
 		}
 
@@ -1493,10 +1559,19 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 
 		private ILexReference MakeLexReference(ILexRefType owner, ICmObject firstTarget)
 		{
-			ILexReference result = null;
-			result = Cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create();
+			var result = Cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create();
 			owner.MembersOC.Add(result);
 			result.TargetsRS.Add(firstTarget);
+			return result;
+		}
+
+		private ILexEntryRef MakeLexEntryRef(ILexEntry owner, ICmObject firstEntryOrSense)
+		{
+			var result = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
+			owner.EntryRefsOS.Add(result);
+			result.RefType = 1; // Complex form
+			result.ComponentLexemesRS.Add(firstEntryOrSense);
+			result.PrimaryLexemesRS.Add(firstEntryOrSense);
 			return result;
 		}
 

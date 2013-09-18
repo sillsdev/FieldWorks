@@ -104,17 +104,6 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		void AllReferencedObjects(List<ICmObject> collector);
 
-#if WANTPORT // (FWR-2123 to fix this) INFO: Use the new ICloneableCmObject interface
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Copy contents of this object to another one
-		/// </summary>
-		/// <param name="objNew">target object</param>
-		/// <remarks>override this to copy the content</remarks>
-		/// ------------------------------------------------------------------------------------
-		void CopyTo(ICmObject objNew);
-#endif
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// tells whether the given field is relevant given the current values of related data items
@@ -303,7 +292,6 @@ namespace SIL.FieldWorks.FDO
 		{
 			get;
 		}
-
 	}
 
 	/// <summary>

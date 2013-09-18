@@ -659,7 +659,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (ClassID != objSrc.ClassID)
 				return;
 
-			IFwMetaDataCacheManaged mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCache;
+			var mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCache;
 			var flidList = from flid in mdc.GetFields(ClassID, true, (int)CellarPropertyTypeFilter.All)
 						   where !m_cache.MetaDataCache.get_IsVirtual(flid)
 						   select flid;
@@ -697,10 +697,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			Justification="See TODO-Linux comment")]
 		public void MergeSelectedPropertiesOfObject(ICmObject objSrc, bool fLoseNoStringData, int[] flidList)
 		{
-			IFwMetaDataCacheManaged mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCache;
-			PropertyInfo[] myProperties = GetType().GetProperties();
-			PropertyInfo[] srcProperties = objSrc.GetType().GetProperties();
-			string fieldname;
+			var mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCache;
 			// Process all the fields in the source.
 			foreach (int flid in flidList)
 			{
@@ -719,8 +716,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				if (flid < 1000)
 					continue; // Do nothing for the CmObject flids.
 
-				int nType = mdc.GetFieldType(flid);
-				fieldname = mdc.GetFieldName(flid);
+				var nType = mdc.GetFieldType(flid);
+				var fieldname = mdc.GetFieldName(flid);
 				//|| fieldname == "DateModified"
 				//|| nType == (int)CellarPropertyType.Time // This is handled by a separate connection, so it can time out, if another transaction is open.
 				if (fieldname == "DateCreated"
@@ -769,7 +766,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				MethodInfo mySetMethod = null;
 				Object srcCurrentValue = null;
 
-				PropertyInfo pi = this.GetType().GetProperty(fieldname);
+				var pi = this.GetType().GetProperty(fieldname);
 				if (pi != null)
 				{
 					myCurrentValue = pi.GetGetMethod().Invoke(this, null);
@@ -781,8 +778,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					// We must have a custom field, and it needs special treatment.
 					Debug.Assert(m_cache.GetIsCustomField(flid));
 					mySetMethod = null;
-					string classname = mdc.GetOwnClsName(flid);
-					string sView = classname + "_" + fieldname;
+#if DEBUG
+					var classname = mdc.GetOwnClsName(flid);
+					var sView = classname + "_" + fieldname;
+#endif
 					switch (nType)
 					{
 						case (int)CellarPropertyType.String:
@@ -819,8 +818,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						{
 							// Can't be null, so we have to live with default of 0 (false).
 							// 0 gets replaced with source data, if 1 (true).
-							bool myBool = (bool)myCurrentValue;
-							bool srcBool = (bool)srcCurrentValue;
+							var myBool = (bool)myCurrentValue;
+							var srcBool = (bool)srcCurrentValue;
 							if (!myBool && srcBool)
 							{
 								if (mySetMethod != null)
@@ -836,8 +835,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						{
 							// Can't be null, so we have to live with default of 0.
 							// Zero gets replaced with source data, if greater than 0.
-							int myInt = (int)myCurrentValue;
-							int srcInt = (int)srcCurrentValue;
+							var myInt = (int)myCurrentValue;
+							var srcInt = (int)srcCurrentValue;
 							if (myInt == 0 && srcInt > 0)
 							{
 								if (mySetMethod != null)
@@ -851,8 +850,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						{
 							// If it is DateCreated, we won't even be here,
 							// since we will have already skipped it.
-							bool resetTime = false;
-							DateTime srcTime = DateTime.Now;
+							var resetTime = false;
+							var srcTime = DateTime.Now;
 							// If it is DateModified, always set it to 'now'.
 							if (fieldname == "DateModified")
 							{
@@ -862,7 +861,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 							else
 							{
 								// Otherwise, a later source will replace an older target.
-								DateTime myTime = (DateTime)myCurrentValue;
+								var myTime = (DateTime)myCurrentValue;
 								srcTime = (DateTime)srcCurrentValue;
 								resetTime = (myTime < srcTime);
 								if (myTime < srcTime)
@@ -885,8 +884,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					case (int)CellarPropertyType.Guid: // 6
 						{
 							// May be null.
-							Guid myGuidValue = (Guid)myCurrentValue;
-							Guid srcGuidValue = (Guid)srcCurrentValue;
+							var myGuidValue = (Guid)myCurrentValue;
+							var srcGuidValue = (Guid)srcCurrentValue;
 							if (myGuidValue == Guid.Empty && srcGuidValue != Guid.Empty)
 							{
 								if (mySetMethod != null)
@@ -917,9 +916,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					/* 13 -> 20 */
 					case (int)CellarPropertyType.String: // 13
 						{
-							if (MergeStringProp((int)flid, nType, objSrc, fLoseNoStringData, myCurrentValue, srcCurrentValue))
+							if (MergeStringProp(flid, nType, objSrc, fLoseNoStringData, myCurrentValue, srcCurrentValue))
 								break;
-							ITsString myTss = myCurrentValue as ITsString;
+							var myTss = myCurrentValue as ITsString;
 							myTss = TsStringUtils.MergeString((ITsString)srcCurrentValue, myTss, fLoseNoStringData);
 							if (mySetMethod != null)
 								mySetMethod.Invoke(this, new object[] { myTss });
@@ -930,20 +929,20 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 					case (int)CellarPropertyType.MultiString: // 14
 						{
-							if (MergeStringProp((int)flid, nType, objSrc, fLoseNoStringData, myCurrentValue, srcCurrentValue))
+							if (MergeStringProp(flid, nType, objSrc, fLoseNoStringData, myCurrentValue, srcCurrentValue))
 								break;
-							IMultiStringAccessor myMsa = myCurrentValue as IMultiStringAccessor;
+							var myMsa = myCurrentValue as IMultiStringAccessor;
 							myMsa.MergeAlternatives(srcCurrentValue as IMultiStringAccessor, fLoseNoStringData);
 							break;
 						}
 
 					case (int)CellarPropertyType.Unicode: // 15
 						{
-							if (MergeStringProp((int)flid, nType, objSrc, fLoseNoStringData, myCurrentValue, srcCurrentValue))
+							if (MergeStringProp(flid, nType, objSrc, fLoseNoStringData, myCurrentValue, srcCurrentValue))
 								break;
-							string myUCurrent = myCurrentValue as string;
-							string srcUValue = srcCurrentValue as string;
-							if ((myUCurrent == null || myUCurrent == String.Empty)
+							var myUCurrent = myCurrentValue as string;
+							var srcUValue = srcCurrentValue as string;
+							if (String.IsNullOrEmpty(myUCurrent)
 								&& srcUValue != String.Empty)
 							{
 								if (mySetMethod != null)
@@ -952,8 +951,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 									SetCustomFieldValue(flid, nType, srcUValue);
 							}
 							else if (fLoseNoStringData
-								&& myUCurrent != null && myUCurrent != String.Empty
-								&& srcUValue != null && srcUValue != String.Empty
+								&& !String.IsNullOrEmpty(myUCurrent)
+								&& !String.IsNullOrEmpty(srcUValue)
 								&& srcUValue != myUCurrent)
 							{
 								if (mySetMethod != null)
@@ -966,9 +965,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 					case (int)CellarPropertyType.MultiUnicode: // 16
 						{
-							if (MergeStringProp((int)flid, nType, objSrc, fLoseNoStringData, myCurrentValue, srcCurrentValue))
+							if (MergeStringProp(flid, nType, objSrc, fLoseNoStringData, myCurrentValue, srcCurrentValue))
 								break;
-							IMultiUnicode myMua = myCurrentValue as IMultiUnicode;
+							var myMua = myCurrentValue as IMultiUnicode;
 							myMua.MergeAlternatives(srcCurrentValue as IMultiUnicode, fLoseNoStringData);
 							break;
 						}
@@ -977,8 +976,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					case (int)CellarPropertyType.OwningAtomic:
 					case (int)CellarPropertyType.ReferenceAtomic: // 24
 						{
-							ICmObject srcObj = srcCurrentValue as ICmObject;
-							ICmObject currentObj = myCurrentValue as ICmObject;
+							var srcObj = srcCurrentValue as ICmObject;
+							var currentObj = myCurrentValue as ICmObject;
 							if (myCurrentValue == null)
 							{
 								if (nType == (int)CellarPropertyType.OwningAtomic || mySetMethod != null)
@@ -1008,8 +1007,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					case (int)CellarPropertyType.OwningSequence: // 27 Fall through, since the collection class knows how to merge itself properly.
 					case (int)CellarPropertyType.ReferenceSequence: // 28
 						{
-							MethodInfo myAddMethod = myCurrentValue.GetType().GetMethod("Add");
-							foreach (ICmObject input in ((IFdoVector)srcCurrentValue).Objects)
+							var myAddMethod = myCurrentValue.GetType().GetMethod("Add");
+							foreach (var input in ((IFdoVector)srcCurrentValue).Objects)
 								myAddMethod.Invoke(myCurrentValue, new object[] { input });
 							break;
 						}
@@ -1017,8 +1016,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 
 			// Now move all incoming references.
-			CmObject.ReplaceReferences(m_cache, objSrc, this);
-			if (objSrc.IsValidObject) // possibly side effects of ReplaceReferences will have deleted it already.
+			var cmObject = ((CmObject)objSrc);
+			cmObject.EnsureCompleteIncomingRefs();
+			ReplaceIncomingReferences(objSrc);
+			if (objSrc.IsValidObject) // possibly side effects of ReplaceIncomingReferences will have deleted it already.
 				m_cache.DomainDataByFlid.DeleteObj(objSrc.Hvo);
 		}
 
@@ -1089,41 +1090,35 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			return false;
 		}
 
-#if WANTPORT // (FWR-2123 to fix this) INFO: Use the new ICloneableCmObject interface
-		/// <summary>
-		/// Copy contents of this object to another one
-		/// </summary>
-		/// <param name="objNew">target object</param>
-		/// <remarks>override this to copy the content</remarks>
-		public virtual void CopyTo(ICmObject objNew)
-		{
-			if (objNew == null)
-			{
-				throw new ApplicationException("Attempted to copy an object to a non-existant object.");
-			}
-			if (ClassID != objNew.ClassID)
-			{
-				throw new ApplicationException("Attempted to copy an object to a different class of object.");
-			}
-		}
-#endif
 		#endregion
 
 		#region Internal API
+
+		/// <summary>
+		/// Replace all incoming references to objOld with references to 'this'.
+		/// Virtual to allow special handling of certain groups of reference sequences that interact
+		/// (e.g. LexEntryRef properties ComponentLexemes and PrimaryLexemes; see LT-14540)
+		/// </summary>
+		/// <param name="objOld"></param>
+		/// <remarks>Assumes that EnsureCompleteIncomingRefs() has already been run on 'objOld'.</remarks>
+		internal virtual void ReplaceIncomingReferences(ICmObject objOld)
+		{
+			ReplaceReferences(objOld, this);
+		}
+
 		/// <summary>
 		/// Update all existing references to point to objNew instead of objOld (which may be
 		/// getting deleted as soon as we return from this method).
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="objNew"></param>
 		/// <param name="objOld"></param>
-		internal static void ReplaceReferences(FdoCache cache, ICmObject objOld, ICmObject objNew)
+		/// <param name="objNew"></param>
+		internal static void ReplaceReferences(ICmObject objOld, ICmObject objNew)
 		{
 			var cmObject = ((CmObject)objOld);
 			cmObject.EnsureCompleteIncomingRefs();
 			// FWR-2969 If merging senses, m_incomingRefs will sometimes get changed
 			// by ReplaceAReference.
-			var refs = new List<IReferenceSource>(cmObject.m_incomingRefs);
+			var refs = new Set<IReferenceSource>(cmObject.m_incomingRefs);
 			foreach (var source in refs)
 			{
 				source.ReplaceAReference(objOld, objNew);

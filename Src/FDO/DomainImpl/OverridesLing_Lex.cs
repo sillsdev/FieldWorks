@@ -896,6 +896,63 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
+		/// Replace all incoming references to objOld with references to 'this'.
+		/// This override allows special handling of certain groups of reference sequences that interact
+		/// (e.g. LexEntryRef properties ComponentLexemes and PrimaryLexemes; see LT-14540)
+		/// </summary>
+		/// <param name="objOld"></param>
+		/// <remarks>Assumes that EnsureCompleteIncomingRefs() has already been run on 'objOld'.</remarks>
+		internal override void ReplaceIncomingReferences(ICmObject objOld)
+		{
+			// FWR-2969 If merging senses, m_incomingRefs will sometimes get changed
+			// by ReplaceAReference.
+			var refs = new Set<IReferenceSource>(((CmObject)objOld).m_incomingRefs);
+			// References in sequences need to be handled differently.
+			var sequenceRefs = refs.Where(x => x.Source is LexEntryRef || x.Source is LexReference);
+			var otherRefs = refs.Difference(sequenceRefs);
+			foreach (var source in otherRefs)
+			{
+				source.ReplaceAReference(objOld, this);
+			}
+
+			if (!sequenceRefs.Any())
+				return;
+
+			SafelyReplaceSequenceReferences(objOld, this, sequenceRefs);
+		}
+
+		/// <summary>
+		/// Made internal so that LexSense can use it too.
+		/// </summary>
+		/// <param name="objOld"></param>
+		/// <param name="objNew"></param>
+		/// <param name="sequenceRefs"></param>
+		internal static void SafelyReplaceSequenceReferences(ICmObject objOld, ICmObject objNew, IEnumerable<IReferenceSource> sequenceRefs)
+		{
+			// LT-14540: In some cases (e.g. replacing a ComponentLexeme), side-effects of
+			// replacing a reference in one property will delete it from a different property
+			// (e.g. PrimaryLexemes), so we should assume that even if a reference to 'objOld'
+			// gets deleted before we replace it, we should still put a reference to 'objNew'
+			// in the same spot in the new sequence.
+			var refToIndexDict = new Dictionary<IReferenceSource, int>();
+			// Loop once to grab indices
+			foreach (var refSource in sequenceRefs)
+			{
+				var index = ((IFdoReferenceSequence<ICmObject>) refSource).IndexOf(objOld);
+				refToIndexDict.Add(refSource, index);
+			}
+			// Loop again to actually replace references (safely)
+			foreach (FdoReferenceSequence<ICmObject> referenceSource in sequenceRefs)
+			{
+				int index;
+				if (!refToIndexDict.TryGetValue(referenceSource, out index))
+					continue;
+				referenceSource.Remove(objOld);
+				referenceSource.Insert(index, objNew);
+			}
+		}
+
+		/// <summary>
 		/// Return the sense with the specified MSA
 		/// </summary>
 		public ILexSense SenseWithMsa(IMoMorphSynAnalysis msa)
@@ -3624,7 +3681,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				((ICmObjectRepositoryInternal)Services.ObjectRepository).EnsureCompleteIncomingRefsFrom(LexEntryRefTags.kflidComponentLexemes);
+				((ICmObjectRepositoryInternal)Services.ObjectRepository).EnsureCompleteIncomingRefsFrom(
+					LexEntryRefTags.kflidComponentLexemes);
 				foreach (var item in m_incomingRefs)
 				{
 					var sequence = item as FdoReferenceSequence<ICmObject>;
@@ -3645,7 +3703,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				return new FdoInvertSet<ICmPossibility>(DoNotPublishInRC, Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS);
+				return new FdoInvertSet<ICmPossibility>(DoNotPublishInRC,
+					Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS);
 			}
 		}
 
@@ -3658,7 +3717,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				((ICmObjectRepositoryInternal)Services.ObjectRepository).EnsureCompleteIncomingRefsFrom(LexEntryRefTags.kflidComponentLexemes);
+				((ICmObjectRepositoryInternal) Services.ObjectRepository).EnsureCompleteIncomingRefsFrom(
+					LexEntryRefTags.kflidComponentLexemes);
 				foreach (var item in m_incomingRefs)
 				{
 					var sequence = item as FdoReferenceSequence<ICmObject>;
@@ -3680,7 +3740,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				((ICmObjectRepositoryInternal)Services.ObjectRepository).EnsureCompleteIncomingRefsFrom(LexEntryRefTags.kflidPrimaryLexemes);
+				((ICmObjectRepositoryInternal) Services.ObjectRepository).EnsureCompleteIncomingRefsFrom(
+					LexEntryRefTags.kflidPrimaryLexemes);
 				foreach (var item in m_incomingRefs)
 				{
 					var sequence = item as FdoReferenceSequence<ICmObject>;
@@ -3699,7 +3760,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				((ICmObjectRepositoryInternal)Services.ObjectRepository).EnsureCompleteIncomingRefsFrom(LexEntryRefTags.kflidShowComplexFormsIn);
+				((ICmObjectRepositoryInternal) Services.ObjectRepository).EnsureCompleteIncomingRefsFrom(
+					LexEntryRefTags.kflidShowComplexFormsIn);
 				foreach (var item in m_incomingRefs)
 				{
 					var sequence = item as FdoReferenceSequence<ICmObject>;
@@ -3718,7 +3780,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				((ICmObjectRepositoryInternal)Services.ObjectRepository).EnsureCompleteIncomingRefsFrom(LexReferenceTags.kflidTargets);
+				((ICmObjectRepositoryInternal) Services.ObjectRepository).EnsureCompleteIncomingRefsFrom(
+					LexReferenceTags.kflidTargets);
 				foreach (var item in m_incomingRefs)
 				{
 					var sequence = item as FdoReferenceSequence<ICmObject>;
@@ -3756,8 +3819,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <param name="cache"></param>
 		/// <param name="newHvos">Set of new senses (including hvoSense).</param>
 		/// <returns>true if the sense has been deleted</returns>
-		public bool RDEMergeSense(int hvoDomain,
-			List<XmlNode> columns, FdoCache cache, Set<int> newHvos)
+		public bool RDEMergeSense(int hvoDomain, List<XmlNode> columns, FdoCache cache, Set<int> newHvos)
 		{
 			bool result = false;
 			// The goal is to find a lex entry with the same lexeme form.form as our LexEntry.
@@ -3768,44 +3830,44 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				"Undo adding sense or entry in Categorized Edit",
 				"Redo adding sense or entry in Categorized Edit",
 				m_cache.ActionHandlerAccessor, () =>
-					{
+				{
 
-						// Check for pre-existing LexEntry which has the same homograph form
-						bool fGotExactMatch;
-						ILexEntry leSaved = FindBestLexEntryAmongstHomographs(cache, homographForm, newHvos, hvoDomain, out fGotExactMatch);
-						if (fGotExactMatch)
+					// Check for pre-existing LexEntry which has the same homograph form
+					bool fGotExactMatch;
+					ILexEntry leSaved = FindBestLexEntryAmongstHomographs(cache, homographForm, newHvos, hvoDomain, out fGotExactMatch);
+					if (fGotExactMatch)
+					{
+						// delete the entry AND sense
+						leTarget.Delete(); // careful! This just got deleted.
+						result = true; // deleted sense altogether
+					}
+					else if (leSaved != null)
+					{
+						// move this to leSaved...provided it has a compatible MSA
+						// of the expected type.
+						if (MorphoSyntaxAnalysisRA is MoStemMsa)
 						{
-							// delete the entry AND sense
-							leTarget.Delete(); // careful! This just got deleted.
-							result = true; // deleted sense altogether
-						}
-						else if (leSaved != null)
-						{
-							// move this to leSaved...provided it has a compatible MSA
-							// of the expected type.
-							if (MorphoSyntaxAnalysisRA is MoStemMsa)
+							IMoMorphSynAnalysis newMsa = null;
+							foreach (IMoMorphSynAnalysis msa in leSaved.MorphoSyntaxAnalysesOC)
 							{
-								IMoMorphSynAnalysis newMsa = null;
-								foreach (IMoMorphSynAnalysis msa in leSaved.MorphoSyntaxAnalysesOC)
-								{
-									if (msa is IMoStemMsa)
-										newMsa = msa;
-								}
-								if (newMsa != null)
-								{
-									// Fix the MSA of the sense to point at one of the MSAs of the new owner.
-									MorphoSyntaxAnalysisRA = newMsa;
-									// Copy any extra fields the user filled in here that the target doesn't have.
-									// Do this BEFORE we move it and lose track of the source!
-									CopyExtraFieldsToEntry(leSaved);
-									// Move it to the new owner.
-									leSaved.SensesOS.Add(this);
-									// delete the entry.
-									leTarget.Delete();
-								}
+								if (msa is IMoStemMsa)
+									newMsa = msa;
+							}
+							if (newMsa != null)
+							{
+								// Fix the MSA of the sense to point at one of the MSAs of the new owner.
+								MorphoSyntaxAnalysisRA = newMsa;
+								// Copy any extra fields the user filled in here that the target doesn't have.
+								// Do this BEFORE we move it and lose track of the source!
+								CopyExtraFieldsToEntry(leSaved);
+								// Move it to the new owner.
+								leSaved.SensesOS.Add(this);
+								// delete the entry.
+								leTarget.Delete();
 							}
 						}
-					});
+					}
+				});
 			// else do nothing (no useful match, let the LE survive)
 			return result;
 		}
@@ -3822,8 +3884,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <param name="hvoDomain"></param>
 		/// <param name="fGotExactMatch"></param>
 		/// <returns></returns>
-		private ILexEntry FindBestLexEntryAmongstHomographs(FdoCache cache,
-			string homographForm, Set<int> newHvos,
+		private ILexEntry FindBestLexEntryAmongstHomographs(FdoCache cache, string homographForm, Set<int> newHvos,
 			int hvoDomain, out bool fGotExactMatch)
 		{
 			ILexEntry leSaved = null;
@@ -3996,10 +4057,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		private void TransferExtraFieldsToSense(ILexSense sense)
 		{
 			var sda = Cache.DomainDataByFlid as ISilDataAccessManaged;
-			var flids = (Cache.MetaDataCacheAccessor as FdoMetaDataCache).GetFields(LexSenseTags.kClassId, true, (int)CellarPropertyTypeFilter.AllMulti)
-					.Except(new int[] { LexSenseTags.kflidGloss, LexSenseTags.kflidDefinition });
+			var flids = (Cache.MetaDataCacheAccessor as FdoMetaDataCache).GetFields(LexSenseTags.kClassId, true,
+				(int)CellarPropertyTypeFilter.AllMulti).Except(new int[] {LexSenseTags.kflidGloss, LexSenseTags.kflidDefinition});
 			CopyMergeMultiStringFields(sense.Hvo, flids, Hvo, sda);
-			foreach (var flid in ((FdoMetaDataCache)Cache.MetaDataCacheAccessor).GetFields(LexSenseTags.kClassId, true, (int)CellarPropertyTypeFilter.String))
+			foreach (var flid in ((FdoMetaDataCache)Cache.MetaDataCacheAccessor).GetFields(LexSenseTags.kClassId, true,
+						(int)CellarPropertyTypeFilter.String))
 			{
 				var src = sda.get_StringProp(Hvo, flid);
 				if (src.Length == 0)
@@ -4032,8 +4094,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				}
 			}
 			var sda = Cache.DomainDataByFlid as ISilDataAccessManaged;
-			var flids = (Cache.MetaDataCacheAccessor as FdoMetaDataCache).GetFields(LexEntryTags.kClassId, true, (int) CellarPropertyTypeFilter.AllMulti)
-					.Except(new int[] {LexEntryTags.kflidCitationForm});
+			var flids = (Cache.MetaDataCacheAccessor as FdoMetaDataCache).GetFields(LexEntryTags.kClassId, true,
+				(int)CellarPropertyTypeFilter.AllMulti).Except(new int[] {LexEntryTags.kflidCitationForm});
 			CopyMergeMultiStringFields(entry.Hvo, flids, OwningEntry.Hvo, sda);
 		}
 
@@ -4081,7 +4143,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			return newVal;
 		}
 
-		bool WeHaveAnInterestingLf()
+		private bool WeHaveAnInterestingLf()
 		{
 			var entry = OwningEntry;
 			if (entry.LexemeFormOA == null)
@@ -4099,7 +4161,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		bool IsMatchingSense(ILexSense other)
+		private bool IsMatchingSense(ILexSense other)
 		{
 			// Note that it doesn't matter if the other sense has other AvailableWritingSystemIds, because those must all
 			// be empty for us, and a ws that is empty for us cannot influence the result.
@@ -4154,7 +4216,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		bool IsMatchingEntry(ILexEntry other)
+		private bool IsMatchingEntry(ILexEntry other)
 		{
 			var ours = OwningEntry;
 			bool gotRealMatch = false;
@@ -4196,8 +4258,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				return
 					PicturesOS.Concat(from LexSense sense in SensesOS
-									  from picture in sense.Pictures
-									  select picture);
+						from picture in sense.Pictures
+						select picture);
 			}
 		}
 
@@ -4218,13 +4280,13 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					ReversalEntryReferringSensesChanged(e.ObjectAdded as ReversalIndexEntry, true);
 					break;
 				case LexSenseTags.kflidSemanticDomains:
-					List<ICmObject> backrefs = ((CmSemanticDomain)e.ObjectAdded).ReferringSenses.Cast<ICmObject>().ToList();
+					List<ICmObject> backrefs = ((CmSemanticDomain) e.ObjectAdded).ReferringSenses.Cast<ICmObject>().ToList();
 					m_cache.ServiceLocator.GetInstance<IUnitOfWorkService>().RegisterVirtualAsModified(e.ObjectAdded,
 						"ReferringSenses", backrefs);
 					break;
 				case LexSenseTags.kflidPictures:
 					m_cache.ServiceLocator.GetInstance<IUnitOfWorkService>().RegisterVirtualAsModified(OwningEntry, "PicturesOfSenses",
-						((LexEntry)OwningEntry).PicturesOfSenses.Cast<ICmObject>());
+						((LexEntry) OwningEntry).PicturesOfSenses.Cast<ICmObject>());
 					break;
 				case LexSenseTags.kflidDoNotPublishIn:
 					var uowService = ((IServiceLocatorInternal) Services).UnitOfWorkService;
@@ -4254,22 +4316,22 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					((LexEntry) Entry).NumberOfSensesChanged(false);
 					break;
 				case LexSenseTags.kflidReversalEntries:
-					int ws = ((ReversalIndexEntry)e.ObjectRemoved).WritingSystem;
+					int ws = ((ReversalIndexEntry) e.ObjectRemoved).WritingSystem;
 					if (ws != 0) // defensive, mainly for tests
 						ReversalEntriesBulkTextChanged(ws);
 					ReversalEntryReferringSensesChanged(e.ObjectRemoved as ReversalIndexEntry, false);
 					break;
 				case LexSenseTags.kflidSemanticDomains:
-					List<ICmObject> backrefs = ((CmSemanticDomain)e.ObjectRemoved).ReferringSenses.Cast<ICmObject>().ToList();
+					List<ICmObject> backrefs = ((CmSemanticDomain) e.ObjectRemoved).ReferringSenses.Cast<ICmObject>().ToList();
 					m_cache.ServiceLocator.GetInstance<IUnitOfWorkService>().RegisterVirtualAsModified(e.ObjectRemoved,
 						"ReferringSenses", backrefs);
 					break;
 				case LexSenseTags.kflidPictures:
 					m_cache.ServiceLocator.GetInstance<IUnitOfWorkService>().RegisterVirtualAsModified(OwningEntry, "PicturesOfSenses",
-						((LexEntry)OwningEntry).PicturesOfSenses.Cast<ICmObject>());
+						((LexEntry) OwningEntry).PicturesOfSenses.Cast<ICmObject>());
 					break;
 				case LexSenseTags.kflidDoNotPublishIn:
-					var uowService = ((IServiceLocatorInternal)Services).UnitOfWorkService;
+					var uowService = ((IServiceLocatorInternal) Services).UnitOfWorkService;
 					uowService.RegisterVirtualAsModified(this, "PublishIn", PublishIn.Cast<ICmObject>());
 					break;
 			}
@@ -4290,7 +4352,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			StringBuilder sb = new StringBuilder(bldr.Length);
 			sb.Append(' ', bldr.Length);
 			bldr.Replace(0, bldr.Length, sb.ToString(), null);
-			((IServiceLocatorInternal)m_cache.ServiceLocator).UnitOfWorkService.RegisterVirtualAsModified(this, flid, bldr.GetString(), tssOutline);
+			((IServiceLocatorInternal) m_cache.ServiceLocator).UnitOfWorkService.RegisterVirtualAsModified(this, flid,
+				bldr.GetString(), tssOutline);
 			foreach (LexSense sense in SensesOS)
 				sense.LexSenseOutlineChanged();
 			// If our sense number changed, our MLOwnerOutlineName changes too.
@@ -4305,13 +4368,13 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		internal void ReversalEntriesBulkTextChanged(int ws)
 		{
 			// Enhance JohnT: is there some way to pass a valid old value? Does it matter?
-			((IServiceLocatorInternal)m_cache.ServiceLocator).UnitOfWorkService.RegisterVirtualAsModified(this,
+			((IServiceLocatorInternal) m_cache.ServiceLocator).UnitOfWorkService.RegisterVirtualAsModified(this,
 				ReversalEntriesBulkTextFlid, ws, null, ReversalEntriesBulkTextForWs(ws));
 		}
 
 		private void ReversalEntryReferringSensesChanged(ReversalIndexEntry rie, bool fAdded)
 		{
-			var unitOfWorkService = ((IServiceLocatorInternal)m_cache.ServiceLocator).UnitOfWorkService;
+			var unitOfWorkService = ((IServiceLocatorInternal) m_cache.ServiceLocator).UnitOfWorkService;
 			// We don't need to record virtual property changes for newly created objects. Nothing can be displaying the old value.
 			if (unitOfWorkService.IsNew(rie))
 				return;
@@ -4355,8 +4418,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				return VirtualOrderingServices.GetOrderedValue(this, Cache.ServiceLocator.GetInstance<Virtuals>().LexSenseVisibleComplexFormBackRefs,
-					((LexEntryRefRepository)Services.GetInstance<ILexEntryRefRepository>()).SortEntryRefs(ComplexFormRefsVisibleInThisSense));
+				return VirtualOrderingServices.GetOrderedValue(this,
+					Cache.ServiceLocator.GetInstance<Virtuals>().LexSenseVisibleComplexFormBackRefs,
+					((LexEntryRefRepository) Services.GetInstance<ILexEntryRefRepository>()).SortEntryRefs(
+						ComplexFormRefsVisibleInThisSense));
 			}
 		}
 
@@ -4381,6 +4446,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				return new VirtualStringAccessor(this, m_MLOwnerOutlineNameFlid, OwnerOutlineNameForWs);
 			}
 		}
+
 		/// <summary>
 		/// Gets the lexical entry that owns this entry. This is redundant; sometime we should refactor it out.
 		/// </summary>
@@ -4398,11 +4464,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				var tisb = TsIncStrBldrClass.Create();
-				tisb.SetIntPropValues((int)FwTextPropType.ktptEditable,
-									  (int)FwTextPropVar.ktpvEnum,
-									  (int)TptEditable.ktptNotEditable);
+				tisb.SetIntPropValues((int) FwTextPropType.ktptEditable,
+					(int) FwTextPropVar.ktpvEnum,
+					(int) TptEditable.ktptNotEditable);
 				var userWs = m_cache.WritingSystemFactory.UserWs;
-				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
+				tisb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, userWs);
 				tisb.Append(String.Format(Strings.ksDeleteLexSense, " "));
 				tisb.AppendTsString(ShortNameTSS);
 
@@ -4428,7 +4494,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				var wantMainWarningLine = true;
 				if (mbCount > 0)
 				{
-					tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
+					tisb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, userWs);
 					tisb.Append(warningMsg);
 					tisb.Append(StringUtils.kChHardLB.ToString());
 					if (mbCount > 1)
@@ -4439,7 +4505,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				}
 				if (lmeCount > 0)
 				{
-					tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
+					tisb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, userWs);
 					if (wantMainWarningLine)
 						tisb.Append(warningMsg);
 					tisb.Append(StringUtils.kChHardLB.ToString());
@@ -4451,7 +4517,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				}
 				if (lseCount > 0)
 				{
-					tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
+					tisb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, userWs);
 					if (wantMainWarningLine)
 						tisb.Append(warningMsg);
 					tisb.Append(StringUtils.kChHardLB.ToString());
@@ -4486,65 +4552,65 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				switch (msa.ClassID)
 				{
 					case MoStemMsaTags.kClassId:
+					{
+						fStemTypeSeen = true;
+						if (msaType == MsaType.kNotSet && !fEntryIsAffixType)
 						{
-							fStemTypeSeen = true;
-							if (msaType == MsaType.kNotSet && !fEntryIsAffixType)
-							{
-								msaType = MsaType.kStem;
-							}
-							else if (msaType != MsaType.kStem)
-							{
-								msaType = MsaType.kMixed;
-								Debug.Assert(fAffixTypeSeen);
-								morphTypesMixed = true;
-							}
-							break;
+							msaType = MsaType.kStem;
 						}
+						else if (msaType != MsaType.kStem)
+						{
+							msaType = MsaType.kMixed;
+							Debug.Assert(fAffixTypeSeen);
+							morphTypesMixed = true;
+						}
+						break;
+					}
 					case MoUnclassifiedAffixMsaTags.kClassId:
+					{
+						fAffixTypeSeen = true;
+						if (msaType == MsaType.kNotSet && fEntryIsAffixType)
 						{
-							fAffixTypeSeen = true;
-							if (msaType == MsaType.kNotSet && fEntryIsAffixType)
-							{
-								msaType = MsaType.kUnclassified;
-							}
-							else if (msaType != MsaType.kUnclassified)
-							{
-								msaType = MsaType.kMixed;
-								if (fStemTypeSeen)
-									morphTypesMixed = true;
-							}
-							break;
+							msaType = MsaType.kUnclassified;
 						}
+						else if (msaType != MsaType.kUnclassified)
+						{
+							msaType = MsaType.kMixed;
+							if (fStemTypeSeen)
+								morphTypesMixed = true;
+						}
+						break;
+					}
 					case MoInflAffMsaTags.kClassId:
+					{
+						fAffixTypeSeen = true;
+						if (msaType == MsaType.kNotSet && fEntryIsAffixType)
 						{
-							fAffixTypeSeen = true;
-							if (msaType == MsaType.kNotSet && fEntryIsAffixType)
-							{
-								msaType = MsaType.kInfl;
-							}
-							else if (msaType != MsaType.kInfl)
-							{
-								msaType = MsaType.kMixed;
-								if (fStemTypeSeen)
-									morphTypesMixed = true;
-							}
-							break;
+							msaType = MsaType.kInfl;
 						}
+						else if (msaType != MsaType.kInfl)
+						{
+							msaType = MsaType.kMixed;
+							if (fStemTypeSeen)
+								morphTypesMixed = true;
+						}
+						break;
+					}
 					case MoDerivAffMsaTags.kClassId:
+					{
+						fAffixTypeSeen = true;
+						if (msaType == MsaType.kNotSet && fEntryIsAffixType)
 						{
-							fAffixTypeSeen = true;
-							if (msaType == MsaType.kNotSet && fEntryIsAffixType)
-							{
-								msaType = MsaType.kDeriv;
-							}
-							else if (msaType != MsaType.kDeriv)
-							{
-								msaType = MsaType.kMixed;
-								if (fStemTypeSeen)
-									morphTypesMixed = true;
-							}
-							break;
+							msaType = MsaType.kDeriv;
 						}
+						else if (msaType != MsaType.kDeriv)
+						{
+							msaType = MsaType.kMixed;
+							if (fStemTypeSeen)
+								morphTypesMixed = true;
+						}
+						break;
+					}
 				}
 			}
 			if (msaType == MsaType.kNotSet || msaType == MsaType.kMixed)
@@ -4623,12 +4689,13 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <param name="tisb"></param>
 		internal void GetFullReferenceName(ITsIncStrBldr tisb)
 		{
-			AddOwnerOutlineName(tisb, Entry.HomographNumber, Cache.DefaultVernWs, HomographConfiguration.HeadwordVariant.DictionaryCrossRef);
+			AddOwnerOutlineName(tisb, Entry.HomographNumber, Cache.DefaultVernWs,
+				HomographConfiguration.HeadwordVariant.DictionaryCrossRef);
 			tisb.Append(" ");
 			// Add Sense POS and gloss info, as per LT-3811.
 			if (MorphoSyntaxAnalysisRA != null)
 			{
-				((MoMorphSynAnalysis)MorphoSyntaxAnalysisRA).AddChooserNameInItalics(tisb);
+				((MoMorphSynAnalysis) MorphoSyntaxAnalysisRA).AddChooserNameInItalics(tisb);
 				tisb.Append(" ");
 			}
 			tisb.AppendTsString(Gloss.BestAnalysisAlternative);
@@ -4641,7 +4708,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <returns></returns>
 		internal bool UsesMsa(IMoMorphSynAnalysis msaOld)
 		{
-			if (msaOld.Equals(MorphoSyntaxAnalysisRA))	// == doesn't work!  See LT-7088.
+			if (msaOld.Equals(MorphoSyntaxAnalysisRA)) // == doesn't work!  See LT-7088.
 				return true;
 			foreach (LexSense ls in SensesOS)
 			{
@@ -4693,86 +4760,86 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				{
 					case MsaType.kRoot: // Fall through
 					case MsaType.kStem:
+					{
+						var stemMsa = new MoStemMsa();
+						entry.MorphoSyntaxAnalysesOC.Add(stemMsa);
+						if (value.MainPOS != null)
+							stemMsa.PartOfSpeechRA = value.MainPOS;
+						stemMsa.FromPartsOfSpeechRC.Clear();
+						if (value.FromPartsOfSpeech != null)
 						{
-							var stemMsa = new MoStemMsa();
-							entry.MorphoSyntaxAnalysesOC.Add(stemMsa);
-							if (value.MainPOS != null)
-								stemMsa.PartOfSpeechRA = value.MainPOS;
-							stemMsa.FromPartsOfSpeechRC.Clear();
-							if (value.FromPartsOfSpeech != null)
-							{
-								foreach (var pos in value.FromPartsOfSpeech)
-									stemMsa.FromPartsOfSpeechRC.Add(pos);
-							}
-
-							// copy over attributes, such as inflection classes and features, that are still valid for the
-							// new category
-							var oldStemMsa = msaOld as MoStemMsa;
-							if (oldStemMsa != null)
-								stemMsa.CopyAttributesIfValid(oldStemMsa);
-
-							entry.MorphoSyntaxAnalysesOC.Add(stemMsa);	// added after setting POS so slice will show POS
-							msaMatch = stemMsa;
-							break;
+							foreach (var pos in value.FromPartsOfSpeech)
+								stemMsa.FromPartsOfSpeechRC.Add(pos);
 						}
+
+						// copy over attributes, such as inflection classes and features, that are still valid for the
+						// new category
+						var oldStemMsa = msaOld as MoStemMsa;
+						if (oldStemMsa != null)
+							stemMsa.CopyAttributesIfValid(oldStemMsa);
+
+						entry.MorphoSyntaxAnalysesOC.Add(stemMsa); // added after setting POS so slice will show POS
+						msaMatch = stemMsa;
+						break;
+					}
 					case MsaType.kInfl:
-						{
-							var inflMsa = new MoInflAffMsa();
-							entry.MorphoSyntaxAnalysesOC.Add(inflMsa);
-							if (value.MainPOS != null)
-								inflMsa.PartOfSpeechRA = value.MainPOS;
-							if (value.Slot != null)
-								inflMsa.SlotsRC.Add(value.Slot);
+					{
+						var inflMsa = new MoInflAffMsa();
+						entry.MorphoSyntaxAnalysesOC.Add(inflMsa);
+						if (value.MainPOS != null)
+							inflMsa.PartOfSpeechRA = value.MainPOS;
+						if (value.Slot != null)
+							inflMsa.SlotsRC.Add(value.Slot);
 
-							// copy over attributes, such as inflection classes and features, that are still valid for the
-							// new category
-							var oldInflMsa = msaOld as MoInflAffMsa;
-							if (oldInflMsa != null)
-								inflMsa.CopyAttributesIfValid(oldInflMsa);
+						// copy over attributes, such as inflection classes and features, that are still valid for the
+						// new category
+						var oldInflMsa = msaOld as MoInflAffMsa;
+						if (oldInflMsa != null)
+							inflMsa.CopyAttributesIfValid(oldInflMsa);
 
-							entry.MorphoSyntaxAnalysesOC.Add(inflMsa);	// added after setting POS so slice will show POS
-							msaMatch = inflMsa;
-							break;
-						}
+						entry.MorphoSyntaxAnalysesOC.Add(inflMsa); // added after setting POS so slice will show POS
+						msaMatch = inflMsa;
+						break;
+					}
 					case MsaType.kDeriv:
+					{
+						var derivMsa = new MoDerivAffMsa();
+						entry.MorphoSyntaxAnalysesOC.Add(derivMsa);
+						if (value.MainPOS != null)
+							derivMsa.FromPartOfSpeechRA = value.MainPOS;
+						if (value.SecondaryPOS != null)
+							derivMsa.ToPartOfSpeechRA = value.SecondaryPOS;
+
+						// copy over attributes, such as inflection classes and features, that are still valid for the
+						// new category
+						var oldDerivMsa = msaOld as MoDerivAffMsa;
+						if (oldDerivMsa != null)
 						{
-							var derivMsa = new MoDerivAffMsa();
-							entry.MorphoSyntaxAnalysesOC.Add(derivMsa);
-							if (value.MainPOS != null)
-								derivMsa.FromPartOfSpeechRA = value.MainPOS;
-							if (value.SecondaryPOS != null)
-								derivMsa.ToPartOfSpeechRA = value.SecondaryPOS;
-
-							// copy over attributes, such as inflection classes and features, that are still valid for the
-							// new category
-							var oldDerivMsa = msaOld as MoDerivAffMsa;
-							if (oldDerivMsa != null)
-							{
-								derivMsa.CopyToAttributesIfValid(oldDerivMsa);
-								derivMsa.CopyFromAttributesIfValid(oldDerivMsa);
-							}
-
-							entry.MorphoSyntaxAnalysesOC.Add(derivMsa);	// added after setting POS so slice will show POS
-							msaMatch = derivMsa;
-							break;
+							derivMsa.CopyToAttributesIfValid(oldDerivMsa);
+							derivMsa.CopyFromAttributesIfValid(oldDerivMsa);
 						}
+
+						entry.MorphoSyntaxAnalysesOC.Add(derivMsa); // added after setting POS so slice will show POS
+						msaMatch = derivMsa;
+						break;
+					}
 					case MsaType.kUnclassified:
-						{
-							var uncMsa = new MoUnclassifiedAffixMsa();
-							entry.MorphoSyntaxAnalysesOC.Add(uncMsa);
-							if (value.MainPOS != null)
-								uncMsa.PartOfSpeechRA = value.MainPOS;
-							else
-								uncMsa.PartOfSpeechRA = null;
-							entry.MorphoSyntaxAnalysesOC.Add(uncMsa);	// added after setting POS so slice will show POS
-							msaMatch = uncMsa;
-							break;
-						}
+					{
+						var uncMsa = new MoUnclassifiedAffixMsa();
+						entry.MorphoSyntaxAnalysesOC.Add(uncMsa);
+						if (value.MainPOS != null)
+							uncMsa.PartOfSpeechRA = value.MainPOS;
+						else
+							uncMsa.PartOfSpeechRA = null;
+						entry.MorphoSyntaxAnalysesOC.Add(uncMsa); // added after setting POS so slice will show POS
+						msaMatch = uncMsa;
+						break;
+					}
 				}
 				MorphoSyntaxAnalysisRA = Cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>().GetObject(msaMatch.Hvo);
 				if (msaOld != null && msaOld.IsValidObject && entry is LexEntry && !(entry as LexEntry).UsesMsa(msaOld))
 				{
-					ReplaceReferences(m_cache, msaOld, msaMatch);
+					ReplaceReferences(msaOld, msaMatch);
 					// ReplaceReferences may well delete this object for us.  See FWR-2855.
 					if (msaOld.IsValidObject)
 						Cache.DomainDataByFlid.DeleteObj(msaOld.Hvo);
@@ -4851,7 +4918,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get { return Cache.MetaDataCache.GetFieldId("LexSense", "ReversalEntriesBulkText", false); }
 		}
 
-			/// <summary>
+		/// <summary>
 		/// Virtual property allows ReversalEntries to be read through cache as a delimited string.
 		/// </summary>
 		[VirtualProperty(CellarPropertyType.MultiUnicode)]
@@ -4869,7 +4936,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			ITsStrBldr tsb = TsStrBldrClass.Create();
 			ITsTextProps ttpWs;
 			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
-			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, ws);
+			propsBldr.SetIntPropValues((int) FwTextPropType.ktptWs, (int) FwTextPropVar.ktpvDefault, ws);
 			ttpWs = propsBldr.GetTextProps();
 			tsb.Replace(0, 0, "", ttpWs); // In case it ends up empty, make sure it's empty in the right Ws.
 			foreach (ReversalIndexEntry revEntry in ReversalEntriesRC)
@@ -4940,37 +5007,37 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Strings.ksUndoMakeRevEntries, Strings.ksRedoMakeRevEntries,
 				Cache.ActionHandlerAccessor,
 				() =>
+				{
+					IReversalIndex revIndex = Services.GetInstance<IReversalIndexRepository>().FindOrCreateIndexForWs(ws);
+					ISilDataAccess sda = m_cache.MainCacheAccessor;
+					IActionHandler acth = sda.GetActionHandler();
+					foreach (string currentForm in formsColl)
 					{
-						IReversalIndex revIndex = Services.GetInstance<IReversalIndexRepository>().FindOrCreateIndexForWs(ws);
-						ISilDataAccess sda = m_cache.MainCacheAccessor;
-						IActionHandler acth = sda.GetActionHandler();
-						foreach (string currentForm in formsColl)
+						var idRevEntry = revIndex.FindOrCreateReversalEntry(currentForm);
+						survivingEntries.Add(idRevEntry);
+					}
+					var goners = new HashSet<ICmObject>(ReversalEntriesRC.Cast<ICmObject>());
+					var newbies = new HashSet<ICmObject>(survivingEntries.Cast<ICmObject>());
+					goners.ExceptWith(newbies); // orginals, except the survivors
+					newbies.ExceptWith(ReversalEntriesRC.Cast<ICmObject>());
+					// survivors, except the ones already present
+					ReversalEntriesRC.Replace(goners, newbies);
+					// Delete any leaf RIEs that have no referring senses and no children; probably spurious ones made
+					// by typing in the Reversals field.
+					foreach (IReversalIndexEntry rie in goners)
+					{
+						if (rie.SubentriesOS.Count == 0 &&
+							Services.GetInstance<ILexSenseRepository>().InstancesWithReversalEntry(rie).FirstOrDefault() == null)
 						{
-							var idRevEntry = revIndex.FindOrCreateReversalEntry(currentForm);
-							survivingEntries.Add(idRevEntry);
+							if (rie.Owner is ReversalIndex)
+								(rie.Owner as ReversalIndex).EntriesOC.Remove(rie);
+							else
+								(rie.Owner as ReversalIndexEntry).SubentriesOS.Remove(rie);
 						}
-						var goners = new HashSet<ICmObject>(ReversalEntriesRC.Cast<ICmObject>());
-						var newbies = new HashSet<ICmObject>(survivingEntries.Cast<ICmObject>());
-						goners.ExceptWith(newbies); // orginals, except the survivors
-						newbies.ExceptWith(ReversalEntriesRC.Cast<ICmObject>());
-							// survivors, except the ones already present
-						ReversalEntriesRC.Replace(goners, newbies);
-						// Delete any leaf RIEs that have no referring senses and no children; probably spurious ones made
-						// by typing in the Reversals field.
-						foreach (IReversalIndexEntry rie in goners)
-						{
-							if (rie.SubentriesOS.Count == 0 &&
-								Services.GetInstance<ILexSenseRepository>().InstancesWithReversalEntry(rie).FirstOrDefault() == null)
-							{
-								if (rie.Owner is ReversalIndex)
-									(rie.Owner as ReversalIndex).EntriesOC.Remove(rie);
-								else
-									(rie.Owner as ReversalIndexEntry).SubentriesOS.Remove(rie);
-							}
 
-						}
-						// End undoable section of code.
-					});
+					}
+					// End undoable section of code.
+				});
 		}
 
 
@@ -5013,36 +5080,37 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				var tisb = TsIncStrBldrClass.Create();
-				tisb.SetIntPropValues((int)FwTextPropType.ktptBold,
-									  (int)FwTextPropVar.ktpvEnum,
-									  (int)FwTextToggleVal.kttvForceOn);
-				tisb.SetIntPropValues((int)FwTextPropType.ktptBold,
-									  (int)FwTextPropVar.ktpvEnum,
-									  (int)FwTextToggleVal.kttvOff);
+				tisb.SetIntPropValues((int) FwTextPropType.ktptBold,
+					(int) FwTextPropVar.ktpvEnum,
+					(int) FwTextToggleVal.kttvForceOn);
+				tisb.SetIntPropValues((int) FwTextPropType.ktptBold,
+					(int) FwTextPropVar.ktpvEnum,
+					(int) FwTextToggleVal.kttvOff);
 				var wsAnal = Cache.DefaultAnalWs;
 				var msa = MorphoSyntaxAnalysisRA;
 				var tsf = Cache.TsStrFactory;
 				if (msa != null)
 				{
-					tisb.SetIntPropValues((int)FwTextPropType.ktptItalic,
-										  (int)FwTextPropVar.ktpvEnum,
-										  (int)FwTextToggleVal.kttvForceOn);
+					tisb.SetIntPropValues((int) FwTextPropType.ktptItalic,
+						(int) FwTextPropVar.ktpvEnum,
+						(int) FwTextToggleVal.kttvForceOn);
 					tisb.AppendTsString(msa.ChooserNameTS);
-					tisb.SetIntPropValues((int)FwTextPropType.ktptItalic,
-										  (int)FwTextPropVar.ktpvEnum,
-										  (int)FwTextToggleVal.kttvOff);
+					tisb.SetIntPropValues((int) FwTextPropType.ktptItalic,
+						(int) FwTextPropVar.ktpvEnum,
+						(int) FwTextToggleVal.kttvOff);
 				}
 
 				if (Gloss.AnalysisDefaultWritingSystem != null)
 				{
 					if (Gloss.AnalysisDefaultWritingSystem.Length > 0)
 					{
-						tisb.AppendTsString(tsf.MakeString((string.IsNullOrEmpty(tisb.Text) ? "" : " ") + Gloss.AnalysisDefaultWritingSystem.Text,
-														   wsAnal));
+						tisb.AppendTsString(
+							tsf.MakeString((string.IsNullOrEmpty(tisb.Text) ? "" : " ") + Gloss.AnalysisDefaultWritingSystem.Text,
+								wsAnal));
 					}
 				}
 				else if (Definition.AnalysisDefaultWritingSystem != null
-						 && Definition.AnalysisDefaultWritingSystem.Length > 0)
+						&& Definition.AnalysisDefaultWritingSystem.Length > 0)
 				{
 					if (!string.IsNullOrEmpty(tisb.Text))
 						tisb.AppendTsString(tsf.MakeString(" ", wsAnal));
@@ -5092,10 +5160,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				var tisb = OwnerOutlineName.GetIncBldr();
-				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.DefaultAnalWs);
+				tisb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, m_cache.DefaultAnalWs);
 				tisb.Append(" (");
 				tisb.AppendTsString(ShortNameTSS);
-				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.DefaultAnalWs);
+				tisb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, m_cache.DefaultAnalWs);
 				tisb.Append(")");
 				return tisb.GetString();
 
@@ -5123,6 +5191,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			return OwnerOutlineNameForWs(wsVern, HomographConfiguration.HeadwordVariant.DictionaryCrossRef);
 		}
+
 		/// <summary>
 		/// Returns a TsString with the entry headword and a sense number if there
 		/// are more than one senses.
@@ -5131,12 +5200,13 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			return OwnerOutlineNameForWs(wsVern, Entry.HomographNumber, hv);
 		}
+
 		/// <summary>
 		/// Returns a TsString with the entry headword and a sense number if there
 		/// are more than one senses.
 		/// Note: changes here probably require changes also in DictionaryPublicationDecorator.OwnerOutlineNameForWs
 		/// </summary>
-		public ITsString OwnerOutlineNameForWs(int wsVern, int hn,  HomographConfiguration.HeadwordVariant hv)
+		public ITsString OwnerOutlineNameForWs(int wsVern, int hn, HomographConfiguration.HeadwordVariant hv)
 		{
 			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
 			AddOwnerOutlineName(tisb, hn, wsVern, hv);
@@ -5159,8 +5229,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (hc.ShowSenseNumber(hv) && lexEntry.HasMoreThanOneSense)
 			{
 				// These int props may not be needed, but they're safe.
-				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, Cache.DefaultAnalWs);
-				tisb.SetStrPropValue((int)FwTextPropType.ktptNamedStyle,
+				tisb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, Cache.DefaultAnalWs);
+				tisb.SetStrPropValue((int) FwTextPropType.ktptNamedStyle,
 					HomographConfiguration.ksSenseReferenceNumberStyle);
 				tisb.Append(" ");
 				tisb.Append(SenseNumber);
@@ -5184,7 +5254,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				return new VirtualStringAccessor(this, Cache.ServiceLocator.GetInstance<Virtuals>().LexSenseReversalName, ReversalNameForWs);
+				return new VirtualStringAccessor(this, Cache.ServiceLocator.GetInstance<Virtuals>().LexSenseReversalName,
+					ReversalNameForWs);
 			}
 		}
 
@@ -5248,7 +5319,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				((ICmObjectRepositoryInternal)Services.ObjectRepository).EnsureCompleteIncomingRefsFrom(
+				((ICmObjectRepositoryInternal) Services.ObjectRepository).EnsureCompleteIncomingRefsFrom(
 					LexReferenceTags.kflidTargets);
 				return DomainObjectServices.ExtractMinimalLexReferences(m_incomingRefs);
 			}
@@ -5284,7 +5355,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				return Services.GetInstance<ILexEntryRepository>().GetSubentries(this);
 			}
-		}		/// <summary>
+		}
+
+		/// <summary>
 		/// This is a backreference (virtual) property.  It returns the list of ids for all the
 		/// LexEntry objects that own a LexEntryRef that refers to this LexEntry in its
 		/// ShowComplexFormIn field and that is a complex entry type.
@@ -5342,15 +5415,16 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// - Delete original MSA, if nothing uses it. (If assumeSurvives is true, caller already
 		/// knows that something still uses it.)
 		/// </summary>
-		public void HandleOldMSA(FdoCache cache, ILexSense sense, IMoMorphSynAnalysis oldMsa, IMoMorphSynAnalysis newMsa, bool assumeSurvives)
+		public void HandleOldMSA(FdoCache cache, ILexSense sense, IMoMorphSynAnalysis oldMsa, IMoMorphSynAnalysis newMsa,
+			bool assumeSurvives)
 		{
 			if (oldMsa == null || !oldMsa.IsValidObject)
 				return; // May have been deleted already, e.g., when deleting the whole entry.
 			// Update any WfiMorphBundle which has the old MSA value for this LexSense.
 			// (See LT-3804. This also fixes LT-3937, at least to some degree.)
 			var morphBundles = from mb in cache.ServiceLocator.GetInstance<IWfiMorphBundleRepository>().AllInstances()
-							   where mb.SenseRA == sense
-							   select mb;
+				where mb.SenseRA == sense
+				select mb;
 			foreach (var mb in morphBundles)
 				mb.MsaRA = newMsa;
 
@@ -5385,11 +5459,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			var allSegs = Cache.ServiceLocator.GetInstance<ISegmentRepository>().AllInstances();
 
 			var wg = (from gloss in allGlosses
-					  let bundles = (gloss.Owner as IWfiAnalysis).MorphBundlesOS.Where(bundle => bundle.SenseRA != null)
-					  where bundles.Count() == 1 && bundles.First() == this
-						  && !allSegs.Any(seg => seg.AnalysesRS.Contains(gloss))
-						  && !(gloss.Owner as IWfiAnalysis).EvaluationsRC.Any(eval=>eval.Approves && (eval.Owner as ICmAgent).Human)
-					  select gloss).FirstOrDefault();
+				let bundles = (gloss.Owner as IWfiAnalysis).MorphBundlesOS.Where(bundle => bundle.SenseRA != null)
+				where bundles.Count() == 1 && bundles.First() == this && !allSegs.Any(seg => seg.AnalysesRS.Contains(gloss))
+					&& !(gloss.Owner as IWfiAnalysis).EvaluationsRC.Any(eval => eval.Approves && (eval.Owner as ICmAgent).Human)
+				select gloss).FirstOrDefault();
 
 			if (wg != null)
 				wg.Form.UserDefaultWritingSystem = this.Gloss.UserDefaultWritingSystem;
@@ -5575,6 +5648,32 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						count += (cmo.Owner as WfiAnalysis).OccurrencesInTexts.Count<ISegment>();
 				return count;
 			}
+		}
+
+		/// <summary>
+		/// Replace all incoming references to objOld with references to 'this'.
+		/// This override allows special handling of certain groups of reference sequences that interact
+		/// (e.g. LexEntryRef properties ComponentLexemes and PrimaryLexemes; see LT-14540)
+		/// </summary>
+		/// <param name="objOld"></param>
+		/// <remarks>Assumes that EnsureCompleteIncomingRefs() has already been run on 'objOld'.</remarks>
+		internal override void ReplaceIncomingReferences(ICmObject objOld)
+		{
+			// FWR-2969 If merging senses, m_incomingRefs will sometimes get changed
+			// by ReplaceAReference.
+			var refs = new Set<IReferenceSource>(((CmObject) objOld).m_incomingRefs);
+			// References in sequences need to be handled differently.
+			var sequenceRefs = refs.Where(x => x.Source is LexEntryRef || x.Source is LexReference);
+			var otherRefs = refs.Difference(sequenceRefs);
+			foreach (var source in otherRefs)
+			{
+				source.ReplaceAReference(objOld, this);
+			}
+
+			if (!sequenceRefs.Any())
+				return;
+
+			LexEntry.SafelyReplaceSequenceReferences(objOld, this, sequenceRefs);
 		}
 	}
 
