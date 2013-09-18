@@ -591,7 +591,8 @@ namespace SIL.FieldWorks.IText
 					vwenv.set_IntProperty((int)FwTextPropType.ktptBackColor,
 						(int)FwTextPropVar.ktpvDefault, krgbEditable);
 				}
-				if (m_fIsMorphemeFormEditable)
+				// Per LT-14891, morpheme form is not editable except for the default vernacular.
+				if (m_fIsMorphemeFormEditable && m_choices.IsFirstOccurrenceOfFlid(choiceIndex))
 					MakeNextFlowObjectEditable(vwenv);
 				else
 					MakeNextFlowObjectReadOnly(vwenv);
