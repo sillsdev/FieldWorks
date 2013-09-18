@@ -126,6 +126,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private Button btnLinkedFilesBrowse;
 		/// <summary>The project name when we entered the dialog.</summary>
 		protected string m_sOrigProjName;
+		/// <summary>The project description when we entered the dialog.</summary>
+		protected string m_sOrigDescription;
 		/// <summary>Used to check if the vern ws at the top of the list changed</summary>
 		private IWritingSystem m_topVernWs;
 		private LinkLabel linkLbl_useDefaultFolder;
@@ -199,7 +201,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				m_cache.ProjectId.SharedProjectFolder;
 			m_lblProjCreatedDate.Text = m_langProj.DateCreated.ToString("g");
 			m_lblProjModifiedDate.Text = m_langProj.DateModified.ToString("g");
-			m_txtProjDescription.Text = m_langProj.Description.UserDefaultWritingSystem.Text;
+			m_txtProjDescription.Text = m_sOrigDescription = m_langProj.Description.UserDefaultWritingSystem.Text;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1036,7 +1038,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private bool DidProjectTabChange()
 		{
-			return m_txtProjName.Text != m_sOrigProjName;
+			return m_txtProjName.Text != m_sOrigProjName ||
+				m_txtProjDescription.Text != m_sOrigDescription;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1054,7 +1057,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			var userWs = m_cache.ServiceLocator.WritingSystemManager.UserWs;
 			m_fProjNameChanged = (m_txtProjName.Text != m_sOrigProjName);
-			if (m_langProj.Description.get_String(userWs).Text != m_txtProjDescription.Text)
+			if (m_txtProjDescription.Text != m_sOrigDescription)
 				m_langProj.Description.set_String(userWs, m_cache.TsStrFactory.MakeString(m_txtProjDescription.Text, userWs));
 
 			var sNewLinkedFilesRootDir = txtExtLnkEdit.Text;
