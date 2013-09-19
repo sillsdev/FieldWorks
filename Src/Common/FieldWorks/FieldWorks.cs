@@ -165,10 +165,11 @@ namespace SIL.FieldWorks
 					throw new ApplicationException("LD_LIBRARY_PATH must contain " + xulRunnerLocation);
 				Xpcom.Initialize(xulRunnerLocation);
 				GeckoPreferences.User["gfx.font_rendering.graphite.enabled"] = true;
-				Application.ApplicationExit += (sender, e) =>
-				{
-					Xpcom.Shutdown();
-				};
+				// Don't worry about shutting down Xpcom on exit from the application.  Doing
+				// so results in a scary looking "double free or corruption" message most of the
+				// time.  See FWNX-1214 and FWNX-1216.  Since we aren't going to restart Xpcom,
+				// there's no real need to shut it down "nicely" (especially when doing so
+				// doesn't seem to work so "nicely").
 #endif
 
 				Logger.WriteEvent("Starting app");
