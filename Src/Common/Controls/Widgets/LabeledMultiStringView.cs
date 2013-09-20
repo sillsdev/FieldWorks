@@ -20,6 +20,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using System.Text;
+using XCore;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -27,7 +28,9 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// LabeledMultiStringView displays one or more writing system alternatives of a string property.
 	/// It simply edits that property.
 	/// </summary>
-	public class LabeledMultiStringView : UserControl, IDisposable
+	/// <remarks>It must implement IxCoreColleague so that the inner view will be a message target when
+	/// the containing slice is. This allows things like appropriately enabling the writing system combo.</remarks>
+	public class LabeledMultiStringView : UserControl, IxCoreColleague
 	{
 		private InnerLabeledMultiStringView m_innerView;
 		private List<Palaso.Media.ShortSoundFieldControl> m_soundControls = new List<ShortSoundFieldControl>();
@@ -415,5 +418,34 @@ namespace SIL.FieldWorks.Common.Widgets
 						ws.Handle, m_innerView.Cache.TsStrFactory.MakeString(filenameNew, ws.Handle)));
 			}
 		}
+
+		/// <summary>
+		/// Required method for IXCoreColleague. As a colleague, it behaves exactly like its inner view.
+		/// </summary>
+		/// <param name="mediator"></param>
+		/// <param name="configurationParameters"></param>
+		public void Init(Mediator mediator, XmlNode configurationParameters)
+		{
+			m_innerView.Init(mediator, configurationParameters);
+		}
+
+		/// <summary>
+		/// Required method for IXCoreColleague. Return the message targets for the inner view.
+		/// </summary>
+		/// <returns></returns>
+		public IxCoreColleague[] GetMessageTargets()
+		{
+			return m_innerView == null ? new IxCoreColleague[0] : m_innerView.GetMessageTargets();
+		}
+
+		/// <summary>
+		/// Required method for IXCoreColleague. Behaves exactly like its inner view.
+		/// </summary>
+		public bool ShouldNotCall { get { return m_innerView.ShouldNotCall; } }
+
+		/// <summary>
+		/// Required method for IXCoreColleague. Behaves exactly like its inner view.
+		/// </summary>
+		public int Priority { get { return m_innerView.Priority; } }
 	}
 }
