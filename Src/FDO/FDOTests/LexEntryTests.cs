@@ -1555,6 +1555,28 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			lexform.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString(form, Cache.DefaultVernWs);
 			return entry;
 		}
+
+		/// <summary>
+		/// The method should not crash if applied to a entry with a sense that lacks an MSA (or an adhocProhib.FirstMorphemeRA that is empty).
+		/// This test basically just sets up the minimum preconditions so that if we forget to test for these things being null, it will crash.
+		/// </summary>
+		[Test]
+		public void ReplaceObsoleteMsas_NullProps()
+		{
+			UndoableUnitOfWorkHelper.Do("undo", "redo", m_actionHandler,
+				() =>
+				{
+					var entry = MakeEntryWithForm("in"); // We need an entry to be the owner of things
+					MakeSense(entry); // We need a sense with null MSA (so don't set it), since not testing for null MSA is one point of the test.
+					var pos = MakePartOfSpeech(); // We need this to make the MSA
+					var msa = MakeMsa(entry, pos); // We need an msa, because the problem code is bypassed if there are no MSAs to replace
+					// Another problem we are checking for is an MoMorphAdhocProhib with a FirstMorphemeRA null, so make one of those.
+					var prohibition = Cache.ServiceLocator.GetInstance<IMoMorphAdhocProhibFactory>().Create();
+					Cache.LangProject.MorphologicalDataOA.AdhocCoProhibitionsOC.Add(prohibition);
+					// If the replace call does not crash we've proved that these edge cases are coped with.
+					Assert.DoesNotThrow(() => entry.ReplaceObsoleteMsas(new List<IMoMorphSynAnalysis> { msa }));
+				});
+		}
 		/// <summary>
 		/// Tests the various paths through the indicated method.
 		/// </summary>

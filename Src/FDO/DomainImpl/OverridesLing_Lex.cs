@@ -1397,7 +1397,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			foreach (var sense in AllSenses)
 			{
 				IMoMorphSynAnalysis newMsa;
-				if (mapOldToNewMsa.TryGetValue(sense.MorphoSyntaxAnalysisRA, out newMsa))
+				if (sense.MorphoSyntaxAnalysisRA != null && mapOldToNewMsa.TryGetValue(sense.MorphoSyntaxAnalysisRA, out newMsa))
 					sense.MorphoSyntaxAnalysisRA = newMsa;
 			}
 
@@ -1411,7 +1411,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			foreach (var adhocProhib in Services.GetInstance<IMoMorphAdhocProhibRepository>().AllInstances())
 			{
 				IMoMorphSynAnalysis newMsa;
-				if (mapOldToNewMsa.TryGetValue(adhocProhib.FirstMorphemeRA, out newMsa))
+				if (adhocProhib.FirstMorphemeRA != null && mapOldToNewMsa.TryGetValue(adhocProhib.FirstMorphemeRA, out newMsa))
 					adhocProhib.FirstMorphemeRA = newMsa;
 				for (int i = 0; i < adhocProhib.MorphemesRS.Count; i++)
 				{
