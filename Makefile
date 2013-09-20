@@ -710,7 +710,7 @@ Fw-build:
 	(cd $(BUILD_ROOT)/Build && xbuild /t:remakefw)
 
 Fw-build-package:
-	(cd $(BUILD_ROOT)/Build && xbuild /t:remakefw,zipLocalizedLists,localize /property:config=release)
+	(cd $(BUILD_ROOT)/Build && xbuild '/t:remakefw;zipLocalizedLists;localize' /property:config=release)
 
 TE-run: ComponentsMap-nodep
 	(. ./environ && cd $(OUT_DIR) && mono --debug TE.exe -db "$${TE_DATABASE}")
