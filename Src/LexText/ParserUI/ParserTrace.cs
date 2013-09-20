@@ -409,6 +409,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected void ConvertAffixAlloFeats(XmlDocument doc, XmlNode node, IMoForm form, XmlNode tempNode)
 		{
 			IMoAffixAllomorph sallo = form as IMoAffixAllomorph;
+			if (sallo == null)
+				return;  // the form could be an IMoAffixProcess in which case there are no MsEnvFeatures.
 			IFsFeatStruc fsFeatStruc = sallo.MsEnvFeaturesOA;
 			if (fsFeatStruc != null && !fsFeatStruc.IsEmpty)
 			{
