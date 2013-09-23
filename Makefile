@@ -266,6 +266,10 @@ install-tree:
 	rm -rf $(DESTDIR)/usr/share/fieldworks-examples/ReleaseData
 	mv $(DESTDIR)/usr/share/fieldworks/ReleaseData $(DESTDIR)/usr/share/fieldworks-examples/ReleaseData
 	ln -s /usr/share/fieldworks-examples/ReleaseData $(DESTDIR)/usr/share/fieldworks/ReleaseData
+	# Remove localization data that came from "DistFiles/Language Explorer", which is handled separately by l10n-install
+	for LOCALE in $(LOCALIZATIONS); do \
+		rm -f "$(DESTDIR)/usr/share/fieldworks/Language Explorer/Configuration/strings-$$LOCALE.xml" ;\
+	done
 	# Handle the Converter files
 	mv $(DESTDIR)/usr/lib/fieldworks/{Converter.exe,ConvertLib.dll,ConverterConsole.exe} $(DESTDIR)/usr/share/fieldworks
 	# Remove unwanted items
@@ -728,17 +732,19 @@ l10n-all:
 l10n-clean:
 	# We don't want to remove strings-en.xml
 	for LOCALE in $(LOCALIZATIONS); do \
-		rm -rf "$(BUILD_ROOT)/Output/{Debug,Release}/$$LOCALE" "$(BUILD_ROOT)/DistFiles/Language Explorer/Configuration/strings-$$LOCALE.xml"; \
+		rm -rf "$(BUILD_ROOT)/Output/{Debug,Release}/$$LOCALE" "$(BUILD_ROOT)/DistFiles/Language Explorer/Configuration/strings-$$LOCALE.xml" ;\
 	done
 
 l10n-install:
-	# Create directories
 	install -d $(DESTDIR)/usr/lib/fieldworks
-	install -d $(DESTDIR)/usr/share/fieldworks
-	# Copy data
+	install -d "$(DESTDIR)/usr/share/fieldworks/Language Explorer/Configuration"
 	for LOCALE in $(LOCALIZATIONS); do \
-		install -d $(DESTDIR)/usr/lib/fieldworks/$$LOCALE; \
-		install -m 644 Output/Release/$$LOCALE/*.dll $(DESTDIR)/usr/lib/fieldworks/$$LOCALE; \
+		DESTINATION=$(DESTDIR)/usr/lib/fieldworks-l10n-$${LOCALE,,} ;\
+		install -d $$DESTINATION ;\
+		install -m 644 Output/Release/$$LOCALE/*.dll $$DESTINATION/ ;\
+		install -m 644 "$(BUILD_ROOT)/DistFiles/Language Explorer/Configuration/strings-$$LOCALE.xml" $$DESTINATION/ ;\
+		ln -sf ../fieldworks-l10n-$${LOCALE,,} $(DESTDIR)/usr/lib/fieldworks/$$LOCALE ;\
+		ln -sf ../../../../lib/fieldworks-l10n-$${LOCALE,,}/strings-$$LOCALE.xml "$(DESTDIR)/usr/share/fieldworks/Language Explorer/Configuration/strings-$$LOCALE.xml" ;\
 	done
 
 # End localization section
