@@ -80,7 +80,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <returns></returns>
 		public bool OnDisplayFLExLiftBridge(object parameters, ref UIItemDisplayProperties display)
 		{
-			CheckForFlexBridgeInstalled(display);
+			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
 			var bridgeLastUsed = _mediator.PropertyTable.GetStringProperty("LastBridgeUsed", "FLExBridge", PropertyTable.SettingsGroup.LocalSettings);
 			if (bridgeLastUsed == "FLExBridge")
 			{
@@ -134,7 +134,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		public bool OnDisplayObtainAnyFlexBridgeProject(object parameters, ref UIItemDisplayProperties display)
 		{
-			CheckForFlexBridgeInstalled(display);
+			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
 
 			return true; // We dealt with it.
 		}
@@ -164,7 +164,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		public bool OnDisplayObtainLiftProject(object parameters, ref UIItemDisplayProperties display)
 		{
-			CheckForFlexBridgeInstalled(display);
+			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
 
 			// Disable, if current project already has a lift repo.
 			var liftProjectFolder = GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder);
@@ -216,12 +216,16 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <returns></returns>
 		public bool OnDisplayFLExBridge(object parameters, ref UIItemDisplayProperties display)
 		{
-			CheckForFlexBridgeInstalled(display);
-
+			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
 			// If Fix it app does not exist, then disable main FLEx S/R, since FB needs to call it, after a merge.
-			display.Enabled = display.Enabled && FLExBridgeHelper.FixItAppExists;
+			display.Enabled = IsConfiguredForSR(Cache.ProjectId.ProjectFolder) && FLExBridgeHelper.FixItAppExists;
 
 			return true; // We dealt with it.
+		}
+
+		private static bool IsConfiguredForSR(string projectFolder)
+		{
+			return Directory.GetDirectories(projectFolder, ".hg").Count() == 1;
 		}
 
 		/// <summary>
@@ -317,12 +321,65 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		#region LiftBridge S/R messages
 
 		/// <summary>
-		/// Called (by xcore) to control display params of the Send/Receive "_Lexicon (with programs that use LIFT)" menu.
+		/// Called to setup Send/Receive by LiftBridge the first time. Currently just calls through to OnLiftBridge, but
+		/// eventually we may display a dialog of instructions applicable to the first time.
+		/// </summary>
+		public bool OnFirstLiftBridge(object commandObject)
+		{
+			return OnLiftBridge(commandObject);
+		}
+
+		/// <summary>
+		/// Called (by xcore) to control display params of the Send/Receive "_Lexicon (with programs that use WeSay)" menu.
+		/// </summary>
+		public bool OnDisplayFirstLiftBridge(object commandObject, ref UIItemDisplayProperties display)
+		{
+			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
+			if (!display.Enabled)
+				return true;
+			display.Enabled = !IsConfiguredForLiftSR(Cache.ProjectId.ProjectFolder);
+			return true; // We dealt with it.
+		}
+
+		private static bool IsConfiguredForLiftSR(string folder)
+		{
+			var otherRepoPath = Path.Combine(folder, "OtherRepositories");
+			if (!Directory.Exists(otherRepoPath))
+				return false;
+			var liftFolder = Directory.EnumerateDirectories(otherRepoPath, "*_LIFT").FirstOrDefault();
+			return !String.IsNullOrEmpty(liftFolder) && IsConfiguredForSR(liftFolder);
+		}
+
+		/// <summary>
+		/// Called (by xcore) to control display params of the Send/Receive Project menu.
+		/// </summary>
+		public bool OnDisplayFirstFLExBridge(object commandObject, ref UIItemDisplayProperties display)
+		{
+			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
+			if (!display.Enabled)
+				return true;
+			display.Enabled = !IsConfiguredForSR(Cache.ProjectId.ProjectFolder);
+			return true; // We dealt with it.
+		}
+
+		/// <summary>
+		/// Called to setup Send/Receive by FLExBridge the first time. Currently just calls through to OnFLExBridge, but
+		/// eventually we may display a dialog of instructions applicable to the first time.
+		/// </summary>
+		public bool OnFirstFLExBridge(object commandObject)
+		{
+			return OnFLExBridge(commandObject);
+		}
+
+		/// <summary>
+		/// Called (by xcore) to control display params of the Send/Receive "_Lexicon (with programs that use WeSay)" menu.
 		/// </summary>
 		public bool OnDisplayLiftBridge(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckForFlexBridgeInstalled(display);
-
+			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
+			if (!display.Enabled)
+				return true;
+			display.Enabled = IsConfiguredForLiftSR(Cache.ProjectId.ProjectFolder);
 			return true; // We dealt with it.
 		}
 
@@ -419,7 +476,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 			else
 			{
-				CheckForFlexBridgeInstalled(display);
+				CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
 			}
 
 			return true; // We dealt with it.
@@ -453,7 +510,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		public bool OnDisplayAboutFlexBridge(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckForFlexBridgeInstalled(display);
+			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
 
 			return true; // We dealt with it.
 		}
@@ -489,7 +546,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <returns></returns>
 		public bool OnDisplayViewMessages(object parameters, ref UIItemDisplayProperties display)
 		{
-			CheckForFlexBridgeInstalled(display);
+			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
 
 			display.Enabled = display.Enabled && NotesFileIsPresent(Cache, false);
 
@@ -544,7 +601,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <returns></returns>
 		public bool OnDisplayViewLiftMessages(object parameters, ref UIItemDisplayProperties display)
 		{
-			CheckForFlexBridgeInstalled(display);
+			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
 
 			display.Enabled = display.Enabled && NotesFileIsPresent(Cache, true);
 
@@ -587,7 +644,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <returns></returns>
 		public bool OnDisplayShowChorusHelp(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckForFlexBridgeInstalled(display);
+			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
 
 			display.Enabled = display.Enabled && File.Exists(ChorusHelpFile);
 
@@ -1487,11 +1544,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 		}
 
-		private static void CheckForFlexBridgeInstalled(UIItemDisplayProperties display)
+		private static void CheckForFlexBridgeInstalledAndSetMenuItemProperties(UIItemDisplayProperties display)
 		{
 			display.Enabled = FLExBridgeHelper.IsFlexBridgeInstalled();
 			display.Visible = true; // Always visible. Cf. LT-13885
 		}
+
 
 		#region IDisposable implementation
 

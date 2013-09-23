@@ -49,10 +49,12 @@
 	<!-- Send/Receive menu -->
 	<item id="CmdFLExBridge">Send/Receive this project</item>
 	<item id="CmdViewMessages">View project questions, merge conflicts, and notifications</item>
-	<item id="CmdLiftBridge">Send/Receive the Lexicon in this project</item>
+	<item id="CmdLiftBridge">Send/Receive the Lexicon in this project (with WeSay)</item>
 	<item id="CmdViewLiftMessages">View lexicon questions, merge conflicts, and notifications</item>
 	<item id="CmdObtainAnyFlexBridgeProject">Receive a project or lexicon from a colleague for the first time (creates a new project)</item>
-	<item id="CmdObtainLiftProject">Receive a lexicon for the first time and merge it into the current project</item>
+	<item id="CmdObtainLiftProject">Receive a lexicon for the first time (from a WeSay project) and merge it into the current project</item>
+	<item id="CmdObtainFirstFlexBridgeProject">Creates a repository for this project for the first time (other users will use "Get Project")</item>
+	<item id="CmdObtainFirstLiftProject">Creates a repository for the lexical data in this project for the first time (for use with WeSay)</item>
 	<item id="CmdHelpChorus">Help for using Chorus-enabled features</item>
 	<item id="CmdCheckForFlexBridgeUpdates">Check for FLEx Bridge updates</item>
 	<item id="CmdHelpAboutFLEXBridge">Display information about FLEx Bridge</item>
