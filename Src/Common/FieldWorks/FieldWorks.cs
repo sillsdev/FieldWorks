@@ -247,8 +247,7 @@ namespace SIL.FieldWorks
 					// That guid may depend on version or something similar; it's some artifact of how the Settings persists.
 					s_noPreviousReportingSettings = true;
 					reportingSettings = new ReportingSettings();
-					Settings.Default.Reporting = reportingSettings;
-					Settings.Default.Save();
+					Settings.Default.Reporting = reportingSettings; //to avoid a defect in Settings rely on the Save in the code below
 				}
 
 				// Note that in FLEx we are using this flag to indicate whether we can send usage data at all.
@@ -260,7 +259,7 @@ namespace SIL.FieldWorks
 				// sure, we don't even initialize reporting if it is false.
 				// (Note however that it starts out true. Thus, typically a few pings will be sent
 				// on the very first startup, before the user gets a chance to disable it.)
-				if (reportingSettings != null && reportingSettings.OkToPingBasicUsageData)
+				if (reportingSettings.OkToPingBasicUsageData)
 				{
 					UsageReporter.Init(reportingSettings, "flex.palaso.org", "UA-39238981-3",
 #if DEBUG
