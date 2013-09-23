@@ -144,6 +144,8 @@ namespace SIL.FieldWorks
 		/// ----------------------------------------------------------------------------
 		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
 			Justification = "See TODO-Linux")]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="open GeckoWebBrowser is disposed by Xpcom.Shutdown")]
 		[STAThread]
 		static int Main(string[] rgArgs)
 		{
@@ -165,11 +167,6 @@ namespace SIL.FieldWorks
 					throw new ApplicationException("LD_LIBRARY_PATH must contain " + xulRunnerLocation);
 				Xpcom.Initialize(xulRunnerLocation);
 				GeckoPreferences.User["gfx.font_rendering.graphite.enabled"] = true;
-				// Don't worry about shutting down Xpcom on exit from the application.  Doing
-				// so results in a scary looking "double free or corruption" message most of the
-				// time.  See FWNX-1214 and FWNX-1216.  Since we aren't going to restart Xpcom,
-				// there's no real need to shut it down "nicely" (especially when doing so
-				// doesn't seem to work so "nicely").
 #endif
 
 				Logger.WriteEvent("Starting app");
@@ -353,6 +350,19 @@ namespace SIL.FieldWorks
 			finally
 			{
 				StaticDispose();
+#if __MonoCS__
+				if (Xpcom.IsInitialized)
+				{
+					// The following line appears to be necessary to keep Xpcom.Shutdown()
+					// from triggering a scary looking "double free or corruption" message most
+					// of the time.  But the Xpcom.Shutdown() appears to be needed to keep the
+					// program from hanging around sometimes after it supposedly exits.
+					// Doing the shutdown here seems cleaner than using an ApplicationExit
+					// delegate.
+					var foo = new GeckoWebBrowser();
+					Xpcom.Shutdown();
+				}
+#endif
 			}
 			return 0;
 		}
