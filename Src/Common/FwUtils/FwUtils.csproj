@@ -202,7 +202,6 @@
     <Compile Include="MeasurementUtils.cs" />
     <Compile Include="Folders.cs" />
     <Compile Include="ParagraphCorrelation.cs" />
-    <Compile Include="ParatextHelper.cs" />
     <Compile Include="PictureHolder.cs" />
     <Compile Include="ProgressMessageArgs.cs" />
     <Compile Include="ProjectInfo.cs">

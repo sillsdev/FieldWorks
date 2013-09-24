@@ -12,12 +12,10 @@
 // Responsibility: TE Team
 // ---------------------------------------------------------------------------------------------
 using System;
-using System.Collections;
 
 using NUnit.Framework;
 using Rhino.Mocks;
 
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.Utils;

@@ -23,7 +23,6 @@ using System.Linq;
 using System.Security;
 using Microsoft.Win32;
 using SIL.Utils;
-using System.Reflection;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -74,7 +73,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					// On a developer Linux machine these are kept under output/registry. Since the program is running at output/{debug|release},
 					// one level up should find the registry folder.
 					var fwRegLoc = Path.Combine(
-						Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase)) ?? ".",
+						Path.GetDirectoryName(FileUtils.StripFilePrefix(System.Reflection.Assembly.GetExecutingAssembly().CodeBase)) ?? ".",
 						"../registry", ptRegKey);
 #else
 					var fwRegLoc = Path.Combine(

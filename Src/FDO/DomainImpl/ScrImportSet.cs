@@ -20,12 +20,10 @@ using System.Diagnostics;
 using System.Linq;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {
@@ -75,8 +73,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		private BCVRef m_endRef;
 
 		private string m_helpFile;
-
-		private IParatextAdapter m_paratextAdapter;
 		#endregion
 
 		#region Construction & initialization
@@ -95,8 +91,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		private void DoCommonNonModelSetup()
 		{
-			if (m_paratextAdapter == null)
-				m_paratextAdapter = new ParatextProxy();
 			m_scrMappingsList = new ScrMappingList(MappingSet.Main, m_stylesheet);
 			m_notesMappingsList = new ScrMappingList(MappingSet.Notes, m_stylesheet);
 
@@ -989,7 +983,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				// use notes list for the annotations domain, otherwise use the scripture list.
 				ScrMappingList loadedList = domain == ImportDomain.Annotations ? m_notesMappingsList : m_scrMappingsList;
-				bool fValidProj = m_paratextAdapter.LoadProjectMappings(value, loadedList, domain);
+				bool fValidProj = ParatextHelper.LoadProjectMappings(value, loadedList, domain);
 				return fValidProj ? value : null;
 			}
 

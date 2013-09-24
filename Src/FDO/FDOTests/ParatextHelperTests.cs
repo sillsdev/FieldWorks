@@ -19,10 +19,13 @@ using NUnit.Framework;
 using Paratext;
 using Paratext.DerivedTranslation;
 using Paratext.LexicalClient;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.Test.ProjectUnpacker;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace SIL.FieldWorks.FDO.FDOTests
 {
 	#region MockParatextHelper class
 	/// ----------------------------------------------------------------------------------------
@@ -34,6 +37,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 	{
 		/// <summary>The list of projects to simulate in Paratext</summary>
 		public readonly List<ScrText> Projects = new List<ScrText>();
+
+		/// <summary>Allows an implementation of LoadProjectMappings to be injected</summary>
+		public IParatextHelper m_loadProjectMappingsImpl;
 
 		#region Disposable stuff
 		#if DEBUG
@@ -119,6 +125,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public IEnumerable<ScrText> GetProjects()
 		{
 			return Projects;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Load the mappings for a Paratext 6/7 project into the specified list. (no-op)
+		/// We never use this method; for tests, we use <c>Rhino.Mocks.MockRepository</c>
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public bool LoadProjectMappings(string project, ScrMappingList mappingList, ImportDomain domain)
+		{
+			if (m_loadProjectMappingsImpl == null)
+				throw new NotImplementedException();
+			return m_loadProjectMappingsImpl.LoadProjectMappings(project, mappingList, domain);
 		}
 		#endregion
 
@@ -218,7 +237,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	[Platform(Exclude="Linux", Reason = "fails on Linux on build machine in fixture setup")]
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
 		Justification="Unit test - m_ptHelper gets disposed in TearDown()")]
-	public class ParatextHelperTests : BaseTest
+	public class ParatextHelperUnitTests : BaseTest
 	{
 		private MockParatextHelper m_ptHelper;
 
@@ -361,6 +380,126 @@ namespace SIL.FieldWorks.Common.FwUtils
 			foreach (T value in enumerable)
 				Assert.IsTrue(expectedValueList.Remove(value), "Got unexpected value in enumerable: " + value);
 			Assert.AreEqual(0, expectedValueList.Count);
+		}
+		#endregion
+	}
+
+	/// ----------------------------------------------------------------------------------------
+	/// <summary>
+	/// Integration Tests for ParatextHelper's interactions with Paratext.
+	/// </summary>
+	/// ----------------------------------------------------------------------------------------
+	[TestFixture]
+	[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
+	public class ParatextHelperTests : ScrInMemoryFdoTestBase
+	{
+		#region Tests
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test the ability to save and reload the Scripture and BT Paratext 6 projects
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void LoadParatextMappings_NullProjectName()
+		{
+			Assert.IsFalse(ParatextHelper.LoadProjectMappings(null, null, ImportDomain.Main));
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test the ability to save and reload the Scripture and BT Paratext 6 projects
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		[Category("LongRunning")]
+		public void LoadParatextMappings_Normal()
+		{
+			Unpacker.UnPackParatextTestProjects();
+
+			FwStyleSheet stylesheet = new FwStyleSheet();
+			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+			ScrMappingList mappingList = new ScrMappingList(MappingSet.Main, stylesheet);
+
+			Assert.IsTrue(ParatextHelper.LoadProjectMappings("KAM", mappingList, ImportDomain.Main));
+
+			// Test to see that the projects are set correctly
+			Assert.AreEqual(44, mappingList.Count);
+
+			Assert.AreEqual(MarkerDomain.Default, mappingList[@"\c"].Domain);
+			Assert.AreEqual(MarkerDomain.Default, mappingList[@"\v"].Domain);
+			Assert.AreEqual(@"\f*", mappingList[@"\f"].EndMarker);
+			Assert.IsTrue(mappingList[@"\p"].IsInUse);
+			Assert.IsFalse(mappingList[@"\tb2"].IsInUse);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test the ability to load a Paratext 6 project and distinguish between markers in use
+		/// in the files and those that only come for them STY file, as well as making sure that
+		/// the mappings are not in use when rescanning.
+		/// Jiras task is TE-2439
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		[Category("LongRunning")]
+		public void LoadParatextMappings_MarkMappingsInUse()
+		{
+			FwStyleSheet stylesheet = new FwStyleSheet();
+			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+			ScrMappingList mappingList = new ScrMappingList(MappingSet.Main, stylesheet);
+			mappingList.Add(new ImportMappingInfo(@"\hahaha", @"\*hahaha", false,
+				MappingTargetType.TEStyle, MarkerDomain.Default, "laughing",
+				null, null, true, ImportDomain.Main));
+			mappingList.Add(new ImportMappingInfo(@"\bthahaha", @"\*bthahaha", false,
+				MappingTargetType.TEStyle, MarkerDomain.Default, "laughing",
+				"en", null, true, ImportDomain.Main));
+
+			Unpacker.UnPackParatextTestProjects();
+			Assert.IsTrue(ParatextHelper.LoadProjectMappings("TEV", mappingList, ImportDomain.Main));
+
+			Assert.IsTrue(mappingList[@"\c"].IsInUse);
+			Assert.IsTrue(mappingList[@"\p"].IsInUse);
+			Assert.IsFalse(mappingList[@"\ipi"].IsInUse);
+			Assert.IsFalse(mappingList[@"\hahaha"].IsInUse,
+				"In-use flag should have been cleared before re-scanning when the P6 project changed.");
+			Assert.IsTrue(mappingList[@"\bthahaha"].IsInUse,
+				"In-use flag should not have been cleared before re-scanning when the P6 project changed because it was in use by the BT.");
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test attempting to load a Paratext project when the Paratext SSF references an
+		/// encoding file that does not exist.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		[Category("LongRunning")]
+		public void LoadParatextMappings_MissingEncodingFile()
+		{
+			FwStyleSheet stylesheet = new FwStyleSheet();
+			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+			ScrMappingList mappingList = new ScrMappingList(MappingSet.Main, stylesheet);
+
+			Unpacker.UnPackMissingFileParatextTestProjects();
+			Assert.IsFalse(ParatextHelper.LoadProjectMappings("NEC", mappingList, ImportDomain.Main));
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test attempting to load a Paratext project when the Paratext SSF references a
+		/// style file that does not exist.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		[Ignore("Causes build to hang since Paratext code displays a 'missing style file' message box")]
+		public void LoadParatextMappings_MissingStyleFile()
+		{
+			FwStyleSheet stylesheet = new FwStyleSheet();
+			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+			ScrMappingList mappingList = new ScrMappingList(MappingSet.Main, stylesheet);
+
+			Unpacker.UnPackMissingFileParatextTestProjects();
+			Assert.IsFalse(ParatextHelper.LoadProjectMappings("NSF", mappingList, ImportDomain.Main));
 		}
 		#endregion
 	}
