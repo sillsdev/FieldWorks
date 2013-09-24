@@ -247,6 +247,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				get { throw new NotImplementedException(); }
 			}
 
+			public string RFC5646
+			{
+				get { throw new NotImplementedException(); }
+			}
+
 			public bool IsGraphiteEnabled { get; set; }
 
 			public LanguageSubtag LanguageSubtag { get; set; }

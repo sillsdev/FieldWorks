@@ -945,6 +945,18 @@ namespace SIL.CoreImpl
 		}
 
 		/// <summary>
+		/// Gets the RFC-5646 language tag.
+		/// </summary>
+		public string RFC5646
+		{
+			get
+			{
+				lock (m_syncRoot)
+					return LangTagUtils.ToLangTag(LanguageSubtag, ScriptSubtag, RegionSubtag, VariantSubtag);
+			}
+		}
+
+		/// <summary>
 		/// Gets or sets the valid chars.
 		/// </summary>
 		/// <value>The valid chars.</value>
@@ -1247,18 +1259,6 @@ namespace SIL.CoreImpl
 		}
 
 		#endregion
-
-		/// <summary>
-		/// Gets the RFC-5646 language tag.
-		/// </summary>
-		public string RFC5646
-		{
-			get
-			{
-				lock (m_syncRoot)
-					return LangTagUtils.ToLangTag(LanguageSubtag, ScriptSubtag, RegionSubtag, VariantSubtag);
-			}
-		}
 
 		/// <summary>
 		/// Gets or sets the name of the region.
