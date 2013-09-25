@@ -36,8 +36,8 @@
 		<command id="CmdViewLiftMessages" label="Vie_w Lexicon Messages..." message="ViewLiftMessages" />
 		<command id="CmdObtainAnyFlexBridgeProject" label="_Get Project from Colleague..." icon="syncObtain" message="ObtainAnyFlexBridgeProject" />
 		<command id="CmdObtainLiftProject" label="Get Lexicon (WeSay) and _Merge with this Project..." icon="syncObtain" message="ObtainLiftProject" />
-		<command id="CmdObtainFirstFlexBridgeProject" label="Send this Project for the first time..." icon="syncSendReceiveFirst" message="FirstFLExBridge" />
-		<command id="CmdObtainFirstLiftProject" label="Send this Lexicon for the first time (to WeSay)..." icon="syncSendReceiveFirst" message="FirstLiftBridge" />
+		<command id="CmdObtainFirstFlexBridgeProject" label="Send this _Project for the first time..." icon="syncSendReceiveFirst" message="FirstFLExBridge" />
+		<command id="CmdObtainFirstLiftProject" label="Send this _Lexicon for the first time (to WeSay)..." icon="syncSendReceiveFirst" message="FirstLiftBridge" />
 		<command id="CmdHelpChorus" label="_Help..." message="ShowChorusHelp" />
 		<command id="CmdCheckForFlexBridgeUpdates" label="Check for FLEx Bridge _Updates..." message="CheckForFlexBridgeUpdates" />
 		<command id="CmdHelpAboutFLEXBridge" label="_About FLEx Bridge..." icon="chorus" message="AboutFlexBridge"/>

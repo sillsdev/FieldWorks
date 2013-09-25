@@ -321,12 +321,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		#region LiftBridge S/R messages
 
 		/// <summary>
-		/// Called to setup Send/Receive by LiftBridge the first time. Currently just calls through to OnLiftBridge, but
-		/// eventually we may display a dialog of instructions applicable to the first time.
+		/// Called to setup Send/Receive by LiftBridge the first time. Shows a brief instructional message,
+		/// then, if the user is ready, calls through to OnLiftBridge.
 		/// </summary>
 		public bool OnFirstLiftBridge(object commandObject)
 		{
-			return OnLiftBridge(commandObject);
+			if (ShowMessageBeforeFirstSendReceive_IsUserReady())
+				OnLiftBridge(commandObject);
+			return true;
 		}
 
 		/// <summary>
@@ -363,12 +365,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		/// <summary>
-		/// Called to setup Send/Receive by FLExBridge the first time. Currently just calls through to OnFLExBridge, but
-		/// eventually we may display a dialog of instructions applicable to the first time.
+		/// Called to setup Send/Receive by FLExBridge the first time. Shows a brief instructional message,
+		/// then, if the user is ready, calls through to OnFLExBridge.
 		/// </summary>
 		public bool OnFirstFLExBridge(object commandObject)
 		{
-			return OnFLExBridge(commandObject);
+			if (ShowMessageBeforeFirstSendReceive_IsUserReady())
+				OnFLExBridge(commandObject);
+			return true;
 		}
 
 		/// <summary>
@@ -1541,6 +1545,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				var args = new LocalLinkArgs { Link = e.JumpUrl };
 				if (_mediator != null)
 					_mediator.SendMessage("HandleLocalHotlink", args);
+			}
+		}
+
+		private bool ShowMessageBeforeFirstSendReceive_IsUserReady()
+		{
+			using (var FirstTimeDlg = new FLExBridgeFirstSendReceiveInstructionsDlg(_mediator.HelpTopicProvider))
+			{
+				return DialogResult.OK == FirstTimeDlg.ShowDialog();
 			}
 		}
 

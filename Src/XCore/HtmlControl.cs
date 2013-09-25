@@ -32,7 +32,6 @@ namespace XCore
 	public class HtmlControl : XCoreUserControl
 	{
 		private string m_url;
-		//private AxSHDocVw.AxWebBrowser m_browser;
 #if !__MonoCS__
 		private WebBrowser m_browser;
 #else // use geckofx on Linux
@@ -70,28 +69,20 @@ namespace XCore
 			{
 				CheckDisposed();
 
-				if (m_url == null)
-					return "about:blank";
-				else
-					return m_url;
+				return m_url ?? "about:blank";
 			}
 			set
 			{
 				CheckDisposed();
 
-				if (value == null)
-					m_url = "about:blank";
-				else
-					m_url = value;
+				// Review (Hasso): is there a case in which we would *want* to set m_url to null specifically (not about:blank)?
+				m_url = value ?? "about:blank";
 
 #if __MonoCS__
 				if (m_browser.Handle == IntPtr.Zero)
 					return; // This should never happen.
 #endif
 				m_browser.Navigate(m_url);
-				//System.Object nullObject = 0;
-				//System.Object nullObjStr = "";
-				//m_browser.Navigate(m_url, ref nullObject, ref nullObjStr, ref nullObjStr, ref nullObjStr);
 			}
 		}
 		/// <summary>
@@ -108,6 +99,31 @@ namespace XCore
 				CheckDisposed();
 
 				return m_browser.Document;
+			}
+		}
+
+		/// <summary>
+		/// The HTML text of the document currently loaded in the browser
+		/// TODO: implement get for GeckoFX browser
+		/// </summary>
+		public string DocumentText
+		{
+			get
+			{
+#if !__MonoCS__
+				return m_browser.DocumentText;
+#else
+				// TODO pH 2013.09: GeckoFX implementation
+				return @"<!DOCTYPE HTML></HTML>";
+#endif
+			}
+			set
+			{
+#if !__MonoCS__
+				m_browser.DocumentText = value;
+#else
+				m_browser.LoadHtml(value);
+#endif
 			}
 		}
 
