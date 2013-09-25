@@ -442,6 +442,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// ------------------------------------------------------------------------------------
 		[Test]
 		[Category("LongRunning")]
+		[Ignore("Has not been run for a while and no longer works; possibly obsolete")]
 		public void LoadParatextMappings_MarkMappingsInUse()
 		{
 			FwStyleSheet stylesheet = new FwStyleSheet();

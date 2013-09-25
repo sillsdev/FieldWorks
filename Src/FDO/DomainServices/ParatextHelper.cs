@@ -184,11 +184,18 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				{
 					if (FwRegistryHelper.ParatextSettingsDirectoryExists())
 					{
-						// It is possible that the Projects directory was not available when we first initialized
-						// ScrTextCollection, but it now is (e.g. USB drive plugged or unplugged).  So we initialize
-						// again. ScrTextCollection.Initialize is safe to call multiple times and also refreshes texts.
-						ScrTextCollection.Initialize();
-						m_IsParatextInitialized = true;
+						if (!m_IsParatextInitialized)
+						{
+							// It is possible that the Projects directory was not available when we first initialized
+							// ScrTextCollection, but it now is (e.g. USB drive plugged or unplugged).  So we initialize
+							// again. ScrTextCollection.Initialize is safe to call multiple times and also refreshes texts.
+							ScrTextCollection.Initialize();
+							m_IsParatextInitialized = true;
+						}
+						else
+						{
+							ScrTextCollection.RefreshScrTexts();
+						}
 					}
 					else
 					{
@@ -265,6 +272,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				Justification = "See REVIEW comment")]
 			public bool LoadProjectMappings(string project, ScrMappingList mappingList, ImportDomain domain)
 			{
+				RefreshProjects();
+
 				// If Paratext is not initialized or the new project ID is null, then do not load mappings.
 				if (!m_IsParatextInitialized || project == null)
 					return false;
