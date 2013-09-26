@@ -425,6 +425,58 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 		}
 
 		/// <summary>
+		/// Tests whether a user-entered citation form will match a lexeme form when the existing
+		/// citation form is empty.
+		/// </summary>
+		[Test]
+		public void RdeMerge_CitationFormCouldMatchLexeme()
+		{
+			var mySd = MakeSemanticDomain();
+
+			// Make a (pre-existing) LexEntry with form 'black', no cf, gloss 'noir' and defn 'noir absolu'
+			var entry = MakeLexEntry("black", "", "noir", "noir absolu", null);
+
+			// Make a (new) LexEntry that has a citation form that matches the existing lexeme form and
+			// the definition matches an existing gloss, and HAS a semantic domain tag.
+			var entry2 = MakeLexEntry("", "black", "", "noir", mySd);
+
+			var fSenseDeleted = RunMergeSense(entry2);
+
+			// Verification
+			Assert.IsTrue(fSenseDeleted, "Merging matching senses should delete new sense");
+			Assert.IsFalse(IsRealLexEntry(entry2), "New entry should be deleted");
+			Assert.IsTrue(IsRealLexEntry(entry));
+			Assert.AreEqual(mySd, entry.SensesOS[0].SemanticDomainsRC.FirstOrDefault(),
+				"Semantic Domain tagging should have been merged to existing entry");
+		}
+
+		/// <summary>
+		/// Tests whether a user-entered lexeme form will match a citation form when the existing
+		/// lexeme form is empty.
+		/// </summary>
+		[Test]
+		public void RdeMerge_LexemeFormCouldMatchCitation()
+		{
+			var mySd = MakeSemanticDomain();
+
+			// Make a (pre-existing) LexEntry with form 'black', no cf, gloss 'noir' and defn 'noir absolu'
+			var entry = MakeLexEntry("", "black", "noir", "noir absolu", null);
+
+			// Make a (new) LexEntry that has a citation form that matches the existing lexeme form and
+			// the definition matches an existing gloss, and HAS a semantic domain tag.
+			var entry2 = MakeLexEntry("black", "", "", "noir", mySd);
+
+			var fSenseDeleted = RunMergeSense(entry2);
+
+			// Verification
+			Assert.IsTrue(fSenseDeleted, "Merging matching senses should delete new sense");
+			Assert.IsFalse(IsRealLexEntry(entry2), "New entry should be deleted");
+			Assert.IsTrue(IsRealLexEntry(entry));
+			Assert.AreEqual(mySd, entry.SensesOS[0].SemanticDomainsRC.FirstOrDefault(),
+				"Semantic Domain tagging should have been merged to existing entry");
+		}
+
+		/// <summary>
 		/// Check the method for merging RDE senses, specifically how it handles non-key fields.
 		/// </summary>
 		[Test]

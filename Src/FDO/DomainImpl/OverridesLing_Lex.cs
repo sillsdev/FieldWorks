@@ -4157,25 +4157,40 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
-		/// Return whether the other sense matches this one in all user-entered non-empty gloss and definition fields.
+		/// Return whether the other sense matches this one in all user-entered gloss and definition fields.
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
 		private bool IsMatchingSense(ILexSense other)
 		{
 			var matchFound = false;
-			var defnMatchFound = false;
 			// First, check for a matching Definition, then for a matching Gloss
 			return NoUnmatchedValues(Definition, other.Definition, other.Gloss, ref matchFound) &&
 				NoUnmatchedValues(Gloss, other.Gloss, other.Definition, ref matchFound) && matchFound;
 		}
 
+		/// <summary>
+		/// Returns true if no alternative of userInputString conflicts with naturalMatch,
+		/// and sets matchFound to true if at least one alternative matches something
+		/// in one of the orginal multistrings.
+		/// </summary>
+		/// <param name="userInputString"></param>
+		/// <param name="naturalMatch"></param>
+		/// <param name="alternativeMatch"></param>
+		/// <param name="matchFound"></param>
+		/// <returns></returns>
 		private static bool NoUnmatchedValues(IMultiAccessorBase userInputString, ITsMultiString naturalMatch,
 			ITsMultiString alternativeMatch, ref bool matchFound)
 		{
-			// This method checks a new sense against existing ones to see if a user-entered Definition matches
-			// existing Definition or Gloss data. It is also used to see if a user-entered Gloss matches existing
-			// Gloss or Definition data.
+			// This method checks user-entered data for a new sense/entry against existing ones to see if the
+			// user-entered field data matches existing or alternative field data.
+			// e.g. user-entered citation form compared to existing citation forms or lexeme forms
+			//      user-entered definition compared to existing definition or gloss
+			//      vice versa in both of the above cases
+
+			// Add some guards since LexemeForm could come in here as null
+			if (userInputString == null)
+				return true;
 
 			// Note that it doesn't matter if the other sense has other AvailableWritingSystemIds, because those must all
 			// be empty for us, and a ws that is empty for us cannot influence the result.
@@ -4185,21 +4200,28 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				var myFieldData = userInputString.get_String(ws);
 				if (myFieldData.Length == 0)
 					continue; // If the user didn't enter anything in this field, it can't influence the decision.
-				var existingFieldData = naturalMatch.get_String(ws);
-				if (existingFieldData.Equals(myFieldData))
+				ITsString existingFieldData = null;
+				if (naturalMatch != null)
 				{
-					matchFound = true; // user-entered field data matched existing data
-					continue;
+					existingFieldData = naturalMatch.get_String(ws);
+					if (existingFieldData.Equals(myFieldData))
+					{
+						matchFound = true; // user-entered field data matched existing data
+						continue;
+					}
 				}
 				// Treat user field data matching the existing alternative field data as a match,
 				// even if it doesn't match the existing natural match data exactly.
-				var altExistingFieldData = alternativeMatch.get_String(ws);
-				if (altExistingFieldData.Equals(myFieldData))
+				if (alternativeMatch != null)
 				{
-					matchFound = true; // user-entered data matched existing alternative field data
-					continue;
+					var altExistingFieldData = alternativeMatch.get_String(ws);
+					if (altExistingFieldData.Equals(myFieldData))
+					{
+						matchFound = true; // user-entered data matched existing alternative field data
+						continue;
+					}
 				}
-				if (existingFieldData.Length != 0)
+				if (existingFieldData != null && existingFieldData.Length != 0)
 					return false; // Found a mis-match with the existing field data.
 			}
 			return true;
@@ -4207,48 +4229,23 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		/// <summary>
 		/// Return whether the other entry matches ours in the fields that are required for our sense to merge into it.
-		/// Currently: all non-empty alternatives of citation form must match;
-		/// all non-empty alternatives of Lexeme Form must match.
+		/// All user-entered alternatives of Citation Form must match either an existing cf or an existing lf;
+		/// all user-entered alternatives of Lexeme Form must match in the same way.
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
 		private bool IsMatchingEntry(ILexEntry other)
 		{
 			var ours = OwningEntry;
-			bool gotRealMatch = false;
-			// Note that it doesn't matter if the other sense has other AvailableWritingSystemIds, because those must all
-			// be empty for us, and a ws that is empty for us cannot influence the result.
-			foreach (var ws in ours.CitationForm.AvailableWritingSystemIds)
-			{
-				var myCf = ours.CitationForm.get_String(ws);
-				if (myCf.Length == 0)
-					continue; // If user didn't enter Citation Form, don't use it for determining match
-				var otherCf = other.CitationForm.get_String(ws);
-				if (otherCf.Equals(myCf))
-				{
-					gotRealMatch = true;
-					continue;
-				}
-				if (otherCf.Length != 0)
-					return false; // At least this ws has a citation form mis-match.
-			}
-			if (ours.LexemeFormOA == null || other.LexemeFormOA == null)
-				return gotRealMatch; // can't have a conflicting form
-			foreach (var ws in ours.LexemeFormOA.Form.AvailableWritingSystemIds)
-			{
-				var myForm = ours.LexemeFormOA.Form.get_String(ws);
-				if (myForm.Length == 0)
-					continue; // If user didn't enter Lexeme Form, don't use it for determining match
-				var otherForm = other.LexemeFormOA.Form.get_String(ws);
-				if (otherForm.Equals(myForm))
-				{
-					gotRealMatch = true;
-					continue;
-				}
-				if (otherForm.Length != 0)
-					return false; // At least this ws has a lexeme form mis-match.
-			}
-			return gotRealMatch;
+			var gotRealMatch = false;
+			// Unfortunately, it is a possibility that one or the other entry has no Lexeme Form,
+			// so we need to guard against that.
+			var ourForm = ours.LexemeFormOA == null ? null : ours.LexemeFormOA.Form;
+			var otherForm = other.LexemeFormOA == null ? null : other.LexemeFormOA.Form;
+
+			// First, check for a matching Citation Form, then for a matching Lexeme Form
+			return NoUnmatchedValues(ours.CitationForm, other.CitationForm, otherForm, ref gotRealMatch) &&
+				NoUnmatchedValues(ourForm, otherForm, other.CitationForm, ref gotRealMatch) && gotRealMatch;
 		}
 
 		/// <summary>
