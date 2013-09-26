@@ -1,0 +1,8 @@
+Verified+1: Jenkins CI
+Verified-Linux+1: Jenkins CI
+Code-Review+2: Stephen McConnel <stephen_mcconnel@sil.org>
+Submitted-by: John Thomson <john.thomson7540@gmail.com>
+Submitted-at: Thu, 26 Sep 2013 18:45:24 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/1439
+Project: FieldWorks
+Branch: refs/heads/develop
