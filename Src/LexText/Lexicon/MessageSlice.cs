@@ -36,10 +36,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		public override void FinishInit()
 		{
-#if __MonoCS__
-			try
-			{
-#endif
 			m_chorusSystem = new ChorusSystem(Cache.ProjectId.ProjectFolder);
 			m_chorusSystem.InitWithoutHg(SendReceiveUser);
 			// This is a required object for CreateNotesBar. It specifies delegates for getting the information
@@ -52,16 +48,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var dataFilePath = GetDataFilePath(Cache);
 			m_notesBar = m_chorusSystem.WinForms.CreateNotesBar(dataFilePath, notesToRecordMapping, new NullProgress());
 			m_notesBar.SetTargetObject(m_obj);
+			// Set the writing systems for the NoteDetailDialog.  (See FWNX-1239.)
+			var vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			var labelWs = new ChorusWritingSystem(vernWs.LanguageName, vernWs.RFC5646, vernWs.DefaultFontName, 12);
+			m_notesBar.LabelWritingSystem = labelWs;
+			var analWs = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+			var msgWs = new ChorusWritingSystem (analWs.LanguageName, analWs.RFC5646, analWs.DefaultFontName, 12);
+			m_notesBar.MessageWritingSystem = msgWs;
 			this.Control = m_notesBar;
-#if __MonoCS__
-			}
-			catch (Exception ex)
-			{
-				// This does not work yet on Linux, but shouldn't keep the rest of
-				// the lexicon edit tool from working!  (See FWNX-960.)
-				Console.WriteLine("Initializing Chorus UI element failed: {0}", ex.Message);
-			}
-#endif
 		}
 
 		// The notes bar expects to store notes about a particular file. Our notes are currently about the lexicon,
