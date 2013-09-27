@@ -1019,11 +1019,8 @@ namespace SIL.FieldWorks.FDO
 		/// is kept and the others merged.
 		/// </summary>
 		/// <param name="hvoDomain"></param>
-		/// <param name="columns">List of XmlNode objects</param>
-		/// <param name="cache"></param>
 		/// <param name="newHvos">Set of new senses (including hvoSense).</param>
-		bool RDEMergeSense(int hvoDomain,
-						   List<XmlNode> columns, FdoCache cache, Set<int> newHvos);
+		bool RDEMergeSense(int hvoDomain, Set<int> newHvos);
 
 		/// <summary>
 		/// This is a backreference (virtual) property.  It returns the list of object ids for

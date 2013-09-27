@@ -629,9 +629,8 @@ namespace SIL.FieldWorks.FDO
 		/// <param name="hvoDomain">database id of the semantic domain</param>
 		/// <param name="columns"></param>
 		/// <param name="rgtss"></param>
-		/// <param name="cache"></param>
 		/// <param name="stringTbl"></param>
-		int RDENewSense(int hvoDomain, List<XmlNode> columns, ITsString[] rgtss, FdoCache cache, StringTable stringTbl);
+		int RDENewSense(int hvoDomain, List<XmlNode> columns, ITsString[] rgtss, StringTable stringTbl);
 	}
 
 	/// <summary>

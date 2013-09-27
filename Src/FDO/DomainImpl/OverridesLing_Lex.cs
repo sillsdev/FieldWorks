@@ -3803,23 +3803,24 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// pre-existing lex entry.
 		///
 		/// The idea is to do one of the following, in order of preference:
-		/// (a) If there are other LexEntries which have the same LF and a sense with the
-		/// same definition, add hvoDomain to the domains of those senses, and delete hvoSense.
+		/// (a) If there are other LexEntries which have the same LF or CF and a sense with the
+		/// same definition or gloss, add hvoDomain to the domains of those senses, and delete
+		/// 'this' Sense. Matches on the entry level can be either LF or CF interchangeably
+		/// (i.e. an entered CF that matches an existing LF or vice versa), and matches on the
+		/// sense level can be either Defn or Gloss (also interchangeably).
 		/// (b) If there is a pre-existing LexEntry (not the owner of one of newHvos)
-		/// that has the same lexeme form, move hvoSense to that LexEntry.
-		/// (c) If there is another new LexEntry (the owner of one of newHvos other than hvoSense)
-		/// that has the same LF, we want to merge the two. In this case we expect to be called
+		/// that has the same lexeme form, move 'this' Sense to that LexEntry.
+		/// (c) If there is another new LexEntry (the owner of one of newHvos other than 'this' Sense)
+		/// that has the same lexeme form, we want to merge the two. In this case we expect to be called
 		/// in turn for all of these senses, so to simplify, the one with the smallest HVO
 		/// is kept and the others merged.
 		///
 		/// If Entries or senses are merged, non-key string fields are concatenated.
 		/// </summary>
 		/// <param name="hvoDomain"></param>
-		/// <param name="columns">List of XmlNode objects</param>
-		/// <param name="cache"></param>
 		/// <param name="newHvos">Set of new senses (including hvoSense).</param>
 		/// <returns>true if the sense has been deleted</returns>
-		public bool RDEMergeSense(int hvoDomain, List<XmlNode> columns, FdoCache cache, Set<int> newHvos)
+		public bool RDEMergeSense(int hvoDomain, Set<int> newHvos)
 		{
 			bool result = false;
 			// The goal is to find a lex entry with the same lexeme form.form as our LexEntry.
@@ -3834,7 +3835,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 					// Check for pre-existing LexEntry which has the same homograph form
 					bool fGotExactMatch;
-					ILexEntry leSaved = FindBestLexEntryAmongstHomographs(cache, homographForm, newHvos, hvoDomain, out fGotExactMatch);
+					ILexEntry leSaved = FindBestLexEntryAmongstHomographs(m_cache, homographForm, newHvos, hvoDomain, out fGotExactMatch);
 					if (fGotExactMatch)
 					{
 						// delete the entry AND sense
@@ -3887,12 +3888,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		private ILexEntry FindBestLexEntryAmongstHomographs(FdoCache cache, string homographForm, Set<int> newHvos,
 			int hvoDomain, out bool fGotExactMatch)
 		{
-			ILexEntry leSaved = null;
 			var entryRepo = cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			List<ILexEntry> rgEntries = ((ILexEntryRepositoryInternal) entryRepo).CollectHomographs(homographForm, 0,
 				entryRepo.GetHomographs(homographForm),
 				cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem), true);
-			leSaved = null; // saved entry to merge into (from previous iteration)
+			ILexEntry leSaved = null; // saved entry to merge into (from previous iteration)
 			bool fSavedIsOld = false; // true if leSaved is old (and non-null).
 			fGotExactMatch = false; // true if we find a match for cf AND defn.
 			bool fCurrentIsNew = false;
@@ -4157,56 +4157,52 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
-		/// Return whether the other sense matches this one in all non-empty gloss and definition fields.
+		/// Return whether the other sense matches this one in all user-entered non-empty gloss and definition fields.
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
 		private bool IsMatchingSense(ILexSense other)
 		{
+			var matchFound = false;
+			var defnMatchFound = false;
+			// First, check for a matching Definition, then for a matching Gloss
+			return NoUnmatchedValues(Definition, other.Definition, other.Gloss, ref matchFound) &&
+				NoUnmatchedValues(Gloss, other.Gloss, other.Definition, ref matchFound) && matchFound;
+		}
+
+		private static bool NoUnmatchedValues(IMultiAccessorBase userInputString, ITsMultiString naturalMatch,
+			ITsMultiString alternativeMatch, ref bool matchFound)
+		{
+			// This method checks a new sense against existing ones to see if a user-entered Definition matches
+			// existing Definition or Gloss data. It is also used to see if a user-entered Gloss matches existing
+			// Gloss or Definition data.
+
 			// Note that it doesn't matter if the other sense has other AvailableWritingSystemIds, because those must all
 			// be empty for us, and a ws that is empty for us cannot influence the result.
-			bool gotActualMatch = false;
-			foreach (var ws in Definition.AvailableWritingSystemIds)
+
+			foreach (var ws in userInputString.AvailableWritingSystemIds)
 			{
-				var otherDefn = other.Definition.get_String(ws);
-				var myDefn = Definition.get_String(ws);
-				if (myDefn.Length != 0)
+				var myFieldData = userInputString.get_String(ws);
+				if (myFieldData.Length == 0)
+					continue; // If the user didn't enter anything in this field, it can't influence the decision.
+				var existingFieldData = naturalMatch.get_String(ws);
+				if (existingFieldData.Equals(myFieldData))
 				{
-					if (otherDefn.Length != 0)
-					{
-						if (!otherDefn.Equals(myDefn))
-							return false;
-						gotActualMatch = true;
-						continue;
-					}
-					// Special case: treat my definition matching their gloss as a match.
-					if (other.Gloss.get_String(ws).Equals(myDefn))
-						gotActualMatch = true;
+					matchFound = true; // user-entered field data matched existing data
+					continue;
 				}
-			}
-			foreach (var ws in Gloss.AvailableWritingSystemIds)
-			{
-				var otherGloss = other.Gloss.get_String(ws);
-				var myGloss = Gloss.get_String(ws);
-				if (myGloss.Length != 0)
+				// Treat user field data matching the existing alternative field data as a match,
+				// even if it doesn't match the existing natural match data exactly.
+				var altExistingFieldData = alternativeMatch.get_String(ws);
+				if (altExistingFieldData.Equals(myFieldData))
 				{
-					if (otherGloss.Length != 0)
-					{
-						if (!otherGloss.Equals(myGloss))
-							return false;
-						gotActualMatch = true;
-						continue;
-					}
-					// Special case: treat my gloss matching their defn as a match.
-					if (other.Definition.get_String(ws).Equals(myGloss))
-						gotActualMatch = true;
+					matchFound = true; // user-entered data matched existing alternative field data
+					continue;
 				}
+				if (existingFieldData.Length != 0)
+					return false; // Found a mis-match with the existing field data.
 			}
-			if (!gotActualMatch)
-			{
-				// As a special case, see if one of our glosses matches one of their definitions.
-			}
-			return gotActualMatch;
+			return true;
 		}
 
 		/// <summary>
@@ -4224,27 +4220,33 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			// be empty for us, and a ws that is empty for us cannot influence the result.
 			foreach (var ws in ours.CitationForm.AvailableWritingSystemIds)
 			{
-				var otherCf = other.CitationForm.get_String(ws);
 				var myCf = ours.CitationForm.get_String(ws);
-				if (otherCf.Length != 0 && myCf.Length != 0)
+				if (myCf.Length == 0)
+					continue; // If user didn't enter Citation Form, don't use it for determining match
+				var otherCf = other.CitationForm.get_String(ws);
+				if (otherCf.Equals(myCf))
 				{
-					if (!otherCf.Equals(myCf))
-						return false;
 					gotRealMatch = true;
+					continue;
 				}
+				if (otherCf.Length != 0)
+					return false; // At least this ws has a citation form mis-match.
 			}
 			if (ours.LexemeFormOA == null || other.LexemeFormOA == null)
 				return gotRealMatch; // can't have a conflicting form
 			foreach (var ws in ours.LexemeFormOA.Form.AvailableWritingSystemIds)
 			{
-				var otherGloss = other.LexemeFormOA.Form.get_String(ws);
-				var myGloss = ours.LexemeFormOA.Form.get_String(ws);
-				if (otherGloss.Length != 0 && myGloss.Length != 0)
+				var myForm = ours.LexemeFormOA.Form.get_String(ws);
+				if (myForm.Length == 0)
+					continue; // If user didn't enter Lexeme Form, don't use it for determining match
+				var otherForm = other.LexemeFormOA.Form.get_String(ws);
+				if (otherForm.Equals(myForm))
 				{
-					if (!otherGloss.Equals(myGloss))
-						return false;
 					gotRealMatch = true;
+					continue;
 				}
+				if (otherForm.Length != 0)
+					return false; // At least this ws has a lexeme form mis-match.
 			}
 			return gotRealMatch;
 		}
