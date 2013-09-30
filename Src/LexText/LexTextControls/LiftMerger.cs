@@ -380,12 +380,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			if (tss.Length > 0)
 			{
-				string s = tss.Text;
-				if (!m_dictRevLexRefTypes.ContainsKey(s))
-					m_dictRevLexRefTypes.Add(s, lrt);
-				s = s.ToLowerInvariant();
-				if (!m_dictRevLexRefTypes.ContainsKey(s))
-					m_dictRevLexRefTypes.Add(s, lrt);
+				var s = tss.Text;
+				if(!m_dictRevLexRefTypes.ContainsKey(s.ToLowerInvariant()))
+				{
+					m_dictRevLexRefTypes.Add(s.ToLowerInvariant(), lrt);
+				}
 			}
 		}
 

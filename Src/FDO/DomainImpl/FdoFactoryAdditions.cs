@@ -16,6 +16,30 @@ using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {
+	#region LexRefTypeFactory
+	internal partial class LexRefTypeFactory
+	{
+		public ILexRefType Create(Guid guid, ILexRefType owner)
+		{
+			ILexRefType lexRefType;
+			if(guid == Guid.Empty)
+			{
+				lexRefType = Create();
+			}
+			else
+			{
+				var hvo = ((IDataReader)m_cache.ServiceLocator.GetInstance<IDataSetup>()).GetNextRealHvo();
+				lexRefType = new LexRefType(m_cache, hvo, guid);
+			}
+			if(owner != null)
+			{
+				owner.SubPossibilitiesOS.Add(lexRefType);
+			}
+			return lexRefType;
+		}
+	}
+	#endregion
+
 	#region LexSenseFactory class
 	internal partial class LexSenseFactory
 	{

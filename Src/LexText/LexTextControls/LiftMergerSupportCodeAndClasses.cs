@@ -527,6 +527,19 @@ namespace SIL.FieldWorks.LexText.Controls
 				return null;
 			}
 		}
+
+		private void SetStringsFromLiftContents(LiftMultiText contents, ITsMultiString destination)
+		{
+			if(contents != null && !contents.IsEmpty)
+			{
+				foreach(KeyValuePair<string, LiftString> keyValuePair in contents)
+				{
+					var ws = GetWsFromLiftLang(keyValuePair.Key);
+					destination.set_String(ws, CreateTsStringFromLiftString(keyValuePair.Value, ws));
+				}
+			}
+		}
+
 		public bool TsStringIsNullOrEmpty(ITsString tss)
 		{
 			return tss == null || tss.Length == 0;
@@ -975,7 +988,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void AppendXmlForMultiText(StringBuilder bldr, LiftMultiText content, string tagXml)
 		{
 			if (content == null)
-				return;		// probably shouldn't happen in a fully functional system, but...
+				return; // probably shouldn't happen in a fully functional system, but...
 			foreach (string lang in content.Keys)
 			{
 				LiftString str = content[lang]; // safe XML
@@ -2440,6 +2453,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		public void ProcessPendingRelations(IProgress progress)
 		{
+			var lexRefRepo = m_cache.ServiceLocator.GetInstance<ILexReferenceRepository>();
+			// Collection of the lexical references from before the import. Items remaining here may be removed for MergeStyle.MsKeepOnlyNew
+			var originalLexRefs = new List<ILexReference>(lexRefRepo.AllInstances());
 			// relationMap is used to group collection relations from the lift file into a structure useful for creating
 			// correct LexRefType and LexReference objects in our model.
 			// The key is the relationType string(eg. Synonym), The value is a list of groups of references.
@@ -2460,23 +2476,24 @@ namespace SIL.FieldWorks.LexText.Controls
 				// Also collect more information about collection type relations without
 				// storing anything in the database yet.
 				m_rgPendingTreeTargets.Clear();
-				for (int i = 0; i < m_rgPendingRelation.Count; )
+				for (var i = 0; i < m_rgPendingRelation.Count;)
 				{
-					List<PendingRelation> rgRelation = CollectRelationMembers(i);
-					if (rgRelation == null || rgRelation.Count == 0)
+					var relation = CollectRelationMembers(i);
+					if (relation == null || relation.Count == 0)
 					{
 						++i;
 					}
 					else
 					{
-						i += rgRelation.Count;
-						ProcessRelation(rgRelation, relationMap);
+						i += relation.Count;
+						ProcessRelation(originalLexRefs, relation, relationMap);
 					}
 					progress.Position = i;
 				}
 			}
-			StorePendingCollectionRelations(progress, relationMap);
-			StorePendingTreeRelations(progress);
+
+			StorePendingCollectionRelations(originalLexRefs, progress, relationMap);
+			StorePendingTreeRelations(originalLexRefs, progress);
 			StorePendingLexEntryRefs(progress);
 			// We can now store residue everywhere since any bogus relations have been added
 			// to residue.
@@ -2487,7 +2504,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (m_msImport == MergeStyle.MsKeepOnlyNew)
 			{
 				progress.Message = LexTextControls.ksDeletingUnwantedEntries;
-				GatherUnwantedEntries();
+				GatherUnwantedObjects(originalLexRefs); //at this point any LexRefs which haven't been matched are dead.
 				DeleteUnwantedObjects();
 			}
 			// Now that the relations have all been set, it's safe to set the entry
@@ -2546,7 +2563,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private void StorePendingTreeRelations(IProgress progress)
+		private void StorePendingTreeRelations(List<ILexReference> originalLexRefs, IProgress progress)
 		{
 			if (m_rgPendingTreeTargets.Count > 0)
 			{
@@ -2555,23 +2572,23 @@ namespace SIL.FieldWorks.LexText.Controls
 				progress.Position = 0;
 				progress.Minimum = 0;
 				progress.Maximum = m_rgPendingTreeTargets.Count;
-				for (int i = 0; i < m_rgPendingTreeTargets.Count; ++i)
+				for (var i = 0; i < m_rgPendingTreeTargets.Count; ++i)
 				{
-					ProcessRemainingTreeRelation(m_rgPendingTreeTargets[i]);
+					ProcessRemainingTreeRelation(originalLexRefs, m_rgPendingTreeTargets[i]);
 					progress.Position = i + 1;
 				}
 			}
 		}
 
-		private void ProcessRemainingTreeRelation(PendingRelation rel)
+		private void ProcessRemainingTreeRelation(List<ILexReference> originalLexRefs, PendingRelation rel)
 		{
 			Debug.Assert(rel.Target != null);
 			if (rel.Target == null)
 				return;
-			string sType = rel.RelationType;
+			var sType = rel.RelationType;
 			Debug.Assert(!rel.IsSequence);
-			ILexRefType lrt = FindOrCreateLexRefType(sType, false);
-			if (!TreeRelationAlreadyExists(lrt, rel))
+			var lrt = FindLexRefType(sType, false);
+			if (!TreeRelationAlreadyExists(originalLexRefs, lrt, rel))
 			{
 				ILexReference lr = CreateNewLexReference();
 				lrt.MembersOC.Add(lr);
@@ -2581,8 +2598,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private void ProcessRelation(List<PendingRelation> rgRelation,
-									 Dictionary<string, List<Tuple<Set<int>, Set<PendingRelation>>>> uniqueRelations)
+		private void ProcessRelation(List<ILexReference> originalLexRefs, List<PendingRelation> rgRelation, Dictionary<string, List<Tuple<Set<int>, Set<PendingRelation>>>> uniqueRelations)
 		{
 			if (rgRelation == null || rgRelation.Count == 0 || rgRelation[0] == null)
 				return;
@@ -2596,7 +2612,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					Debug.Assert(rgRelation[0].RelationType == "Something else...");
 					break;
 				default:
-					StoreLexReference(rgRelation, uniqueRelations);
+					StoreLexReference(originalLexRefs, rgRelation, uniqueRelations);
 					break;
 			}
 		}
@@ -2662,7 +2678,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="refType"></param>
 		/// <param name="complexEntryTypes"></param>
 		/// <param name="variantEntryTypes"></param>
-		/// <param name="hideMinorEntry"></param>
 		/// <param name="summary">safe-XML</param>
 		/// <param name="componentLexemes"></param>
 		/// <param name="primaryLexemes"></param>
@@ -3018,38 +3033,43 @@ namespace SIL.FieldWorks.LexText.Controls
 			return result;
 		}
 
-		private void StoreLexReference(List<PendingRelation> rgRelation,
+		private void StoreLexReference(ICollection<ILexReference> refsAsYetUnmatched, List<PendingRelation> rgRelation,
 									   Dictionary<string, List<Tuple<Set<int>, Set<PendingRelation>>>> uniqueRelations)
 		{
 			// Store any relations with unrecognized targets in residue, removing them from the
 			// list.
-			for (int i = 0; i < rgRelation.Count; ++i)
+			for (var i = 0; i < rgRelation.Count; ++i)
 			{
 				if (rgRelation[i].Target == null)
+				{
 					StoreResidue(rgRelation[i].CmObject, rgRelation[i].AsResidueString());
+				}
 			}
-			for (int i = rgRelation.Count - 1; i >= 0; --i)
+			for (var i = rgRelation.Count - 1; i >= 0; --i)
 			{
 				if (rgRelation[i].Target == null)
+				{
 					rgRelation.RemoveAt(i);
+				}
 			}
 			if (rgRelation.Count == 0)
+			{
 				return;
+			}
 			// Store the list of relations appropriately as a LexReference with a proper type.
-			string sType = rgRelation[0].RelationType;
-			ILexRefType lrt = FindOrCreateLexRefType(sType, rgRelation[0].IsSequence);
+			var sType = rgRelation[0].RelationType;
+			var lrt = FindLexRefType(sType, rgRelation[0].Order != -1);
 			switch (lrt.MappingType)
 			{
 				case (int)LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair:
 				case (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseAsymmetricPair:
 				case (int)LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair:
-					StoreAsymmetricPairRelations(lrt, rgRelation,
-						ObjectIsFirstInRelation(rgRelation[0].RelationType, lrt));
+					StoreAsymmetricPairRelations(refsAsYetUnmatched, lrt, rgRelation, ObjectIsFirstInRelation(rgRelation[0].RelationType, lrt));
 					break;
 				case (int)LexRefTypeTags.MappingTypes.kmtEntryPair:
 				case (int)LexRefTypeTags.MappingTypes.kmtEntryOrSensePair:
 				case (int)LexRefTypeTags.MappingTypes.kmtSensePair:
-					StorePairRelations(lrt, rgRelation);
+					StorePairRelations(refsAsYetUnmatched, lrt, rgRelation);
 					break;
 				case (int)LexRefTypeTags.MappingTypes.kmtEntryCollection:
 				case (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseCollection:
@@ -3059,29 +3079,79 @@ namespace SIL.FieldWorks.LexText.Controls
 				case (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseSequence:
 				case (int)LexRefTypeTags.MappingTypes.kmtEntrySequence:
 				case (int)LexRefTypeTags.MappingTypes.kmtSenseSequence:
-					StoreSequenceRelation(lrt, rgRelation);
+					StoreSequenceRelation(refsAsYetUnmatched, lrt, rgRelation);
 					break;
 				case (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
 				case (int)LexRefTypeTags.MappingTypes.kmtEntryTree:
 				case (int)LexRefTypeTags.MappingTypes.kmtSenseTree:
-					StoreTreeRelation(lrt, rgRelation);
+					StoreTreeRelation(refsAsYetUnmatched, lrt, rgRelation);
 					break;
 			}
 		}
 
-		private void StoreAsymmetricPairRelations(ILexRefType lrt, List<PendingRelation> rgRelation,
-			bool fFirst)
+		private ILexRefType FindLexRefType(string sType, bool isSequence)
 		{
-			for (int i = 0; i < rgRelation.Count; ++i)
+			ICmPossibility lrt = GetRefTypeByNameOrReverseName(sType);
+			if(lrt == null)
+			{
+
+				//This section is for older lift files where the type information wasn't written out well enough, new files will work better, but this is better than nothing
+				var newLexRefType = CreateNewLexRefType(null, null);
+				m_cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(newLexRefType);
+				newLexRefType.Name.set_String(m_cache.DefaultAnalWs, sType);
+				if((String.IsNullOrEmpty(m_sLiftProducer) || m_sLiftProducer.StartsWith("WeSay")) && (sType == "BaseForm"))
+				{
+					newLexRefType.Abbreviation.set_String(m_cache.DefaultAnalWs, "base");
+					newLexRefType.ReverseName.set_String(m_cache.DefaultAnalWs, "Derived Forms");
+					newLexRefType.ReverseAbbreviation.set_String(m_cache.DefaultAnalWs, "deriv");
+					newLexRefType.MappingType = (int)LexRefTypeTags.MappingTypes.kmtEntryTree;
+				}
+				else
+				{
+					newLexRefType.Abbreviation.set_String(m_cache.DefaultAnalWs, sType);
+					if(isSequence)
+						newLexRefType.MappingType = (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseSequence;
+					else
+						newLexRefType.MappingType = (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseCollection;
+				}
+				lrt = newLexRefType;
+				m_dictLexRefTypes.Add(sType.ToLowerInvariant(), lrt);
+				m_rgnewLexRefTypes.Add(lrt);
+			}
+			return lrt as ILexRefType;
+		}
+
+		private ICmPossibility GetRefTypeByNameOrReverseName(string sType)
+		{
+			ICmPossibility lrt;
+			m_dictLexRefTypes.TryGetValue(sType.ToLowerInvariant(), out lrt);
+			if(lrt == null)
+			{
+				foreach(ILexRefType dictLexRefType in m_dictLexRefTypes.Values)
+				{
+					if(dictLexRefType.ReverseName.OccursInAnyAlternative(sType))
+					{
+						return dictLexRefType;
+					}
+				}
+				lrt = m_rgnewLexRefTypes.FirstOrDefault(x => x.Name.OccursInAnyAlternative(sType)) ??
+						m_rgnewLexRefTypes.FirstOrDefault(x => ((ILexRefType)x).ReverseName.OccursInAnyAlternative(sType));
+			}
+			return lrt;
+		}
+
+		private void StoreAsymmetricPairRelations(ICollection<ILexReference> refsAsYetUnmatched, ILexRefType lrt, List<PendingRelation> rgRelation, bool fFirst)
+		{
+			for(var i = 0; i < rgRelation.Count; ++i)
 			{
 				Debug.Assert(rgRelation[i].Target != null);
 				if (rgRelation[i].Target == null)
 					continue;
-				if (AsymmetricPairRelationAlreadyExists(lrt, rgRelation[i], fFirst))
+				if(AsymmetricPairRelationAlreadyExists(refsAsYetUnmatched, lrt, rgRelation[i], fFirst))
 					continue;
-				ILexReference lr = CreateNewLexReference();
+				var lr = CreateNewLexReference();
 				lrt.MembersOC.Add(lr);
-				if (fFirst)
+				if(fFirst)
 				{
 					lr.TargetsRS.Add(rgRelation[i].CmObject);
 					lr.TargetsRS.Add(rgRelation[i].Target);
@@ -3095,40 +3165,58 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private bool AsymmetricPairRelationAlreadyExists(ILexRefType lrt, PendingRelation rel,
-			bool fFirst)
+		/// <summary>
+		/// Attempts to match the pending relation to any existing AsymmetricPairRelations
+		/// </summary>
+		/// <param name="refsAsYetUnmatched">The collection of relations prior to the lift merge operation, matched relations will be removed</param>
+		/// <param name="lrt"></param>
+		/// <param name="rel"></param>
+		/// <param name="isFirst"></param>
+		/// <returns></returns>
+		private static bool AsymmetricPairRelationAlreadyExists(ICollection<ILexReference> refsAsYetUnmatched, ILexRefType lrt, PendingRelation rel,
+			bool isFirst)
 		{
-			int hvo1 = rel.CmObject == null ? 0 : rel.ObjectHvo;
-			int hvo2 = rel.TargetHvo;
-			foreach (ILexReference lr in lrt.MembersOC)
+			var hvo1 = rel.CmObject == null ? 0 : rel.ObjectHvo;
+			var hvo2 = rel.TargetHvo;
+			foreach(var lr in lrt.MembersOC)
 			{
-				if (lr.TargetsRS.Count != 2)
-					continue;		// SHOULD NEVER HAPPEN!!
-				int hvoA = lr.TargetsRS[0].Hvo;
-				int hvoB = lr.TargetsRS[1].Hvo;
-				if (fFirst)
+				if(lr.TargetsRS.Count != 2)
+					continue; // SHOULD NEVER HAPPEN!!
+				var hvoA = lr.TargetsRS[0].Hvo;
+				var hvoB = lr.TargetsRS[1].Hvo;
+				if(isFirst)
 				{
-					if (hvoA == hvo1 && hvoB == hvo2)
+					if(hvoA == hvo1 && hvoB == hvo2)
+					{
+						refsAsYetUnmatched.Remove(lr);
 						return true;
+					}
 				}
 				else
 				{
-					if (hvoA == hvo2 && hvoB == hvo1)
+					if(hvoA == hvo2 && hvoB == hvo1)
+					{
+						refsAsYetUnmatched.Remove(lr);
 						return true;
+					}
 				}
 			}
 			return false;
 		}
 
-		private void StorePairRelations(ILexRefType lrt, List<PendingRelation> rgRelation)
+		private void StorePairRelations(ICollection<ILexReference> refsAsYetUnmatched, ILexRefType lrt, List<PendingRelation> rgRelation)
 		{
-			for (int i = 0; i < rgRelation.Count; ++i)
+			for(var i = 0; i < rgRelation.Count; ++i)
 			{
 				Debug.Assert(rgRelation[i].Target != null);
-				if (rgRelation[i].Target == null)
+				if(rgRelation[i].Target == null)
+				{
 					continue;
-				if (PairRelationAlreadyExists(lrt, rgRelation[i]))
+				}
+				if(PairRelationAlreadyExists(refsAsYetUnmatched, lrt, rgRelation[i]))
+				{
 					continue;
+				}
 				ILexReference lr = CreateNewLexReference();
 				lrt.MembersOC.Add(lr);
 				lr.TargetsRS.Add(rgRelation[i].CmObject);
@@ -3137,20 +3225,21 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private bool PairRelationAlreadyExists(ILexRefType lrt, PendingRelation rel)
+		private static bool PairRelationAlreadyExists(ICollection<ILexReference> refsAsYetUnmatched, ILexRefType lrt, PendingRelation rel)
 		{
-			int hvo1 = rel.CmObject == null ? 0 : rel.ObjectHvo;
-			int hvo2 = rel.TargetHvo;
-			foreach (ILexReference lr in lrt.MembersOC)
+			var hvo1 = rel.CmObject == null ? 0 : rel.ObjectHvo;
+			var hvo2 = rel.TargetHvo;
+			foreach(var lr in lrt.MembersOC)
 			{
-				if (lr.TargetsRS.Count != 2)
-					continue;		// SHOULD NEVER HAPPEN!!
-				int hvoA = lr.TargetsRS[0].Hvo;
-				int hvoB = lr.TargetsRS[1].Hvo;
-				if (hvoA == hvo1 && hvoB == hvo2)
+				if(lr.TargetsRS.Count != 2)
+					continue; // SHOULD NEVER HAPPEN!!
+				var hvoA = lr.TargetsRS[0].Hvo;
+				var hvoB = lr.TargetsRS[1].Hvo;
+				if((hvoA == hvo1 && hvoB == hvo2) || (hvoA == hvo2 && hvoB == hvo1))
+				{
+					refsAsYetUnmatched.Remove(lr);
 					return true;
-				else if (hvoA == hvo2 && hvoB == hvo1)
-					return true;
+				}
 			}
 			return false;
 		}
@@ -3160,14 +3249,15 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="rgRelation"></param>
 		/// <param name="uniqueRelations">see comment on </param>
-		private void CollapseCollectionRelationPairs(List<PendingRelation> rgRelation,
-													 Dictionary<string, List<Tuple<Set<int>, Set<PendingRelation>>>> uniqueRelations)
+		private static void CollapseCollectionRelationPairs(IEnumerable<PendingRelation> rgRelation,
+																			 IDictionary<string, List<Tuple<Set<int>, Set<PendingRelation>>>>
+																				 uniqueRelations)
 		{
 			//for every pending relation in this list
 			foreach(var rel in rgRelation)
 			{
 				Debug.Assert(rel.Target != null);
-				if (rel.Target == null)
+				if(rel.Target == null)
 					continue;
 				List<Tuple<Set<int>, Set<PendingRelation>>> relationsForType;
 				uniqueRelations.TryGetValue(rel.RelationType, out relationsForType);
@@ -3175,17 +3265,17 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					bool foundGroup = false;
 					//for every group of relations identified so far (relations which share target or object ids)
-					foreach (var refs in relationsForType)
+					foreach(var refs in relationsForType)
 					{
-						bool fAdd = true;
+						var fAdd = true;
 						//If this item belongs to an existing group
 						if(refs.Item1.Contains(rel.ObjectHvo) || refs.Item1.Contains(rel.TargetHvo))
 						{
 							foundGroup = true;
-							foreach (var pend in refs.Item2)
+							foreach(var pend in refs.Item2)
 							{
 								//test if we have added this relation or a mirror of it.
-								if (pend.IsSameOrMirror(rel))
+								if(pend.IsSameOrMirror(rel))
 								{
 									fAdd = false;
 									break;
@@ -3202,48 +3292,58 @@ namespace SIL.FieldWorks.LexText.Controls
 					}
 					//if this is a brand new relation for this type, build it
 					if(!foundGroup)
-						relationsForType.Add(new Tuple<Set<int>, Set<PendingRelation>>(new Set<int> {rel.ObjectHvo, rel.TargetHvo}, new Set<PendingRelation> {rel}));
+					{
+						relationsForType.Add(new Tuple<Set<int>, Set<PendingRelation>>(new Set<int> { rel.ObjectHvo, rel.TargetHvo },
+													new Set<PendingRelation> { rel }));
+					}
 				}
 				else //First relation that we are processing, create the dictionary with this relation as our initial data.
 				{
 					var relData = new List<Tuple<Set<int>, Set<PendingRelation>>>
-									{new Tuple<Set<int>, Set<PendingRelation>>(new Set<int> {rel.TargetHvo, rel.ObjectHvo}, new Set<PendingRelation> { rel })};
+						{
+							new Tuple<Set<int>, Set<PendingRelation>>(new Set<int> {rel.TargetHvo, rel.ObjectHvo},
+																					new Set<PendingRelation> {rel})
+						};
 					uniqueRelations[rel.RelationType] = relData;
 				}
 			}
 		}
 
-		private void StorePendingCollectionRelations(IProgress progress,
-													 Dictionary<string, List<Tuple<Set<int>, Set<PendingRelation>>>> relationMap)
+		private void StorePendingCollectionRelations(ICollection<ILexReference> originalLexRefs, IProgress progress,
+																	Dictionary<string, List<Tuple<Set<int>, Set<PendingRelation>>>>
+																		relationMap)
 		{
 			progress.Message = String.Format(LexTextControls.ksSettingCollectionRelationLinks,
-				m_rgPendingCollectionRelations.Count);
+														m_rgPendingCollectionRelations.Count);
 			progress.Minimum = 0;
 			progress.Maximum = relationMap.Count;
 			progress.Position = 0;
 			foreach(var typeCollections in relationMap) //for each relationType
 			{
 				string sType = typeCollections.Key;
-				foreach (var collection in typeCollections.Value)//for each grouping of relations for that type
+				foreach(var collection in typeCollections.Value) //for each grouping of relations for that type
 				{
 					var incomingRelationIDs = collection.Item1;
 					var incomingRelations = collection.Item2;
-					ILexRefType lrt = FindOrCreateLexRefType(sType, incomingRelations.FirstItem().IsSequence);
-					if (IsAnExistingCollectionAnExactMatch(lrt, incomingRelationIDs))
+					ILexRefType lrt = FindLexRefType(sType, false);
+					if(IsAnExistingCollectionAnExactMatch(originalLexRefs, lrt, incomingRelationIDs))
+					{
 						continue;
+					}
 					List<ICmObject> oldItems;
 					var lr = FindExistingSequence(lrt, incomingRelations, out oldItems);
 					if(lr == null)
 					{
 						lr = CreateNewLexReference();
 						lrt.MembersOC.Add(lr);
-						foreach (int hvo in incomingRelationIDs)
+						foreach(int hvo in incomingRelationIDs)
 							lr.TargetsRS.Add(GetObjectForId(hvo));
-						foreach (var relation in incomingRelations)
+						foreach(var relation in incomingRelations)
 							StoreRelationResidue(lr, relation);
 					}
 					else
 					{
+						originalLexRefs.Remove(lr);
 						ReplaceLexRefContents(lr, incomingRelationIDs);
 					}
 				}
@@ -3255,7 +3355,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// This method is necessary to prevent duplication of sets of relations due to the fact they are replicated in
 		/// all the members of the relation in the LIFT file.
 		/// </summary>
-		private static bool IsAnExistingCollectionAnExactMatch(ILexRefType lrt, Set<int> checkTargets)
+		/// <param name="originalLexRefs">Collection of the lexical references from before the import. Items remaining here may be removed for MergeStyle.MsKeepOnlyNew</param>
+		/// <param name="lrt">The LexRefType to inspect for duplicate collections</param>
+		/// <param name="checkTargets">The set of ids to look for</param>
+		/// <returns></returns>
+		private static bool IsAnExistingCollectionAnExactMatch(ICollection<ILexReference> originalLexRefs, ILexRefType lrt, Set<int> checkTargets)
 		{
 			foreach (var lr in lrt.MembersOC)
 			{
@@ -3264,8 +3368,11 @@ namespace SIL.FieldWorks.LexText.Controls
 				//build a set of the hvos in the lexical relation
 				var currentSet = lr.TargetsRS.Select(cmo => cmo.Hvo).ToList();
 				//for every object in the target sequence of the LexReference
-				if (currentSet.ContainsCollection(checkTargets))
+				if(currentSet.ContainsCollection(checkTargets))
+				{
+					originalLexRefs.Remove(lr);
 					return true; // got an exact match. If not, keep trying.
+				}
 			}
 			return false;
 		}
@@ -3312,18 +3419,20 @@ namespace SIL.FieldWorks.LexText.Controls
 			AdjustCollectionContents(otherObjects, lr.TargetsRS, lr);
 		}
 
-		private void StoreSequenceRelation(ILexRefType lrt, List<
-			PendingRelation> rgRelation)
+		private void StoreSequenceRelation(ICollection<ILexReference> refsAsYetUnmatched, ILexRefType lrt,
+													  List<PendingRelation> rgRelation)
 		{
-			if (IsAnExistingSequenceAnExactMatch(lrt, rgRelation))
+			if(IsAnExistingSequenceAnExactMatch(refsAsYetUnmatched, lrt, rgRelation))
+			{
 				return;
+			}
 			List<ICmObject> oldItems;
 			var lr = FindExistingSequence(lrt, rgRelation, out oldItems);
 			if(lr == null) //This is a new relation, add all the targets
 			{
 				lr = CreateNewLexReference();
 				lrt.MembersOC.Add(lr);
-				for (int i = 0; i < rgRelation.Count; ++i)
+				for(var i = 0; i < rgRelation.Count; ++i)
 				{
 					lr.TargetsRS.Add(GetObjectForId(rgRelation[i].TargetHvo));
 				}
@@ -3331,11 +3440,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			else //Reusing an old relation, replace the contents of the Targets sequence
 			{
 				var targetList = new List<ICmObject>();
-				for (int i = 0; i < rgRelation.Count; ++i)
+				for(var i = 0; i < rgRelation.Count; ++i)
 				{
 					targetList.Add(GetObjectForId(rgRelation[i].TargetHvo));
 				}
 				lr.TargetsRS.Replace(0, lr.TargetsRS.Count, targetList);
+				refsAsYetUnmatched.Remove(lr);
 			}
 			StoreRelationResidue(lr, rgRelation[0]);
 		}
@@ -3344,26 +3454,32 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Tests if there is an existing sequence in the LexRefType which exactly matches the pendingRelation
 		/// in contents and order.
 		/// </summary>
+		/// <param name="refsAsYetUnmatched"></param>
 		/// <param name="lrt">the ILexRefType to check</param>
 		/// <param name="rgRelation">An ordered list of relations from the LIFT file</param>
 		/// <returns>true if this sequence already exists in the system</returns>
-		private static bool IsAnExistingSequenceAnExactMatch(ILexRefType lrt, List<PendingRelation> rgRelation)
+		private static bool IsAnExistingSequenceAnExactMatch(ICollection<ILexReference> refsAsYetUnmatched, ILexRefType lrt, IList<PendingRelation> rgRelation)
 		{
-			foreach (var lr in lrt.MembersOC)
+			foreach(var lr in lrt.MembersOC)
 			{
-				if (lr.TargetsRS.Count != rgRelation.Count)
-					continue;
-				var fSame = true;
-				for (int i = 0; i < rgRelation.Count; ++i)
+				if(lr.TargetsRS.Count != rgRelation.Count)
 				{
-					if (lr.TargetsRS[i].Hvo != rgRelation[i].TargetHvo)
+					continue;
+				}
+				var sequenceMatched = true;
+				for(var i = 0; i < rgRelation.Count; ++i)
+				{
+					if(lr.TargetsRS[i].Hvo != rgRelation[i].TargetHvo)
 					{
-						fSame = false;
+						sequenceMatched = false;
 						break;
 					}
 				}
-				if (fSame)
+				if(sequenceMatched)
+				{
+					refsAsYetUnmatched.Remove(lr);
 					return true;
+				}
 			}
 			return false;
 		}
@@ -3398,15 +3514,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			return null;
 		}
 
-		private void StoreTreeRelation(ILexRefType lrt, List<PendingRelation> rgRelation)
+		private void StoreTreeRelation(ICollection<ILexReference> refsAsYetUnmatched, ILexRefType lrt, List<PendingRelation> rgRelation)
 		{
-			if (TreeRelationAlreadyExists(lrt, rgRelation))
+			if (TreeRelationAlreadyExists(refsAsYetUnmatched, lrt, rgRelation))
 			{
 				return;
 			}
 			if(ObjectIsFirstInRelation(rgRelation[0].RelationType, lrt))
 			{
-				ILexReference lr = CreateNewLexReference();
+				var lr = CreateNewLexReference();
 				lrt.MembersOC.Add(lr);
 				lr.TargetsRS.Add(rgRelation[0].CmObject);
 				for (int i = 0; i < rgRelation.Count; ++i)
@@ -3424,11 +3540,11 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void StoreRelationResidue(ILexReference lr, PendingRelation pend)
 		{
-			string sResidue = pend.Residue;
+			var sResidue = pend.Residue;
 			if (!String.IsNullOrEmpty(sResidue) ||
 				IsDateSet(pend.DateCreated) || IsDateSet(pend.DateModified))
 			{
-				StringBuilder bldr = new StringBuilder();
+				var bldr = new StringBuilder();
 				bldr.Append("<lift-residue");
 				AppendXmlDateAttributes(bldr, pend.DateCreated, pend.DateModified);
 				bldr.AppendLine(">");
@@ -3439,42 +3555,46 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		/// <summary>
-		/// This method will test if a TreeRelation already exists in a lex reference of the given ILexRefType
-		/// related to the given list of pending relations.
-		/// If it does then those relations which are not yet included will be added to the matching ILexReference.
-		/// </summary>
-		/// <param name="lrt"></param>
-		/// <param name="rgRelation"></param>
-		/// <returns>true if a match was found</returns>
-		private bool TreeRelationAlreadyExists(ILexRefType lrt, List<PendingRelation> rgRelation)
+	   /// <summary>
+	   /// This method will test if a TreeRelation already exists in a lex reference of the given ILexRefType
+	   /// related to the given list of pending relations.
+	   /// If it does then those relations which are not yet included will be added to the matching ILexReference.
+	   /// </summary>
+	   /// <param name="originalLexRefs"></param>
+	   /// <param name="lrt"></param>
+	   /// <param name="rgRelation"></param>
+	   /// <returns>true if a match was found</returns>
+	   private bool TreeRelationAlreadyExists(ICollection<ILexReference> originalLexRefs, ILexRefType lrt, List<PendingRelation> rgRelation)
 		{
-			foreach (ILexReference lr in lrt.MembersOC) //for every potential reference
-			{
-				if(lr.TargetsRS.Count == 0) //why this should be I don't know, probably due to some defect elsewhere.
-					continue;
-				int firstTargetHvo = lr.TargetsRS.First().Hvo;
-				if (firstTargetHvo == rgRelation[0].ObjectHvo) //if the target of the first relation is the first item in the list
-				{
-					foreach (var pendingRelation in rgRelation)
-					{
-						var pendingObj = GetObjectForId(pendingRelation.TargetHvo);
-						if (firstTargetHvo == pendingRelation.ObjectHvo
+		   foreach(var lr in lrt.MembersOC) //for every potential reference
+		   {
+			   if(lr.TargetsRS.Count == 0) //why this should be I don't know, probably due to some defect elsewhere.
+			   {
+				   continue;
+			   }
+			   var firstTargetHvo = lr.TargetsRS.First().Hvo;
+			   if(firstTargetHvo == rgRelation[0].ObjectHvo) //if the target of the first relation is the first item in the list
+			   {
+				   foreach(var pendingRelation in rgRelation)
+				   {
+					   var pendingObj = GetObjectForId(pendingRelation.TargetHvo);
+					   if(firstTargetHvo == pendingRelation.ObjectHvo
 							&& HasMatchingUnicodeAlternative(pendingRelation.RelationType.ToLowerInvariant(),
-															 lrt.Abbreviation, lrt.Name))
-						{
-							if (!lr.TargetsRS.Contains(pendingObj))
-								lr.TargetsRS.Add(pendingObj); //add each item which is not yet in this list
-						}
-						else
-						{
-							m_rgPendingTreeTargets.Add(pendingRelation);
-						}
-					}
-					return true;
-				}
-			}
-			return false;
+																		lrt.Abbreviation, lrt.Name))
+					   {
+						   if(!lr.TargetsRS.Contains(pendingObj))
+							   lr.TargetsRS.Add(pendingObj); //add each item which is not yet in this list
+					   }
+					   else
+					   {
+						   m_rgPendingTreeTargets.Add(pendingRelation);
+					   }
+				   }
+				   originalLexRefs.Remove(lr);
+				   return true;
+			   }
+		   }
+		   return false;
 		}
 
 		/// <summary>
@@ -3482,35 +3602,47 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// related to the given PendingRelation.
 		/// If it does then the relation will be added to the matching ILexReference if necessary.
 		/// </summary>
+		/// <param name="originalLexRefs"></param>
 		/// <param name="lrt"></param>
-		/// <param name="rgRelation"></param>
+		/// <param name="rel"></param>
 		/// <returns>true if a match was found</returns>
-		private bool TreeRelationAlreadyExists(ILexRefType lrt, PendingRelation rel)
+		private bool TreeRelationAlreadyExists(ICollection<ILexReference> originalLexRefs, ILexRefType lrt,
+															PendingRelation rel)
 		{
 			//The object who contains the other end of this relation, i.e. the entry with the Part
 			//may not have been processed, so if we are dealing with the Whole we need to make sure that
 			//the part is present.
-			if (!ObjectIsFirstInRelation(rel.RelationType, lrt))
+			if(!ObjectIsFirstInRelation(rel.RelationType, lrt))
 			{
-				foreach (ILexReference lr in lrt.MembersOC)
+				foreach(var lr in lrt.MembersOC)
 				{
-					if (lr.TargetsRS.Count == 0 || lr.TargetsRS[0].Hvo != rel.TargetHvo)
+					if(lr.TargetsRS.Count == 0 || lr.TargetsRS[0].Hvo != rel.TargetHvo)
+					{
 						continue;
+					}
 					var pendingObj = GetObjectForId(rel.ObjectHvo);
-					if (!lr.TargetsRS.Contains(pendingObj))
+					if(!lr.TargetsRS.Contains(pendingObj))
+					{
 						lr.TargetsRS.Add(pendingObj);
+					}
+					originalLexRefs.Remove(lr);
 					return true;
 				}
 			}
 			else
 			{
-				foreach (ILexReference lr in lrt.MembersOC)
+				foreach(var lr in lrt.MembersOC)
 				{
-					if (lr.TargetsRS.Count == 0 || lr.TargetsRS[0].Hvo != rel.ObjectHvo)
+					if(lr.TargetsRS.Count == 0 || lr.TargetsRS[0].Hvo != rel.ObjectHvo)
+					{
 						continue;
+					}
 					var pendingObj = GetObjectForId(rel.TargetHvo);
-					if (!lr.TargetsRS.Contains(pendingObj))
+					if(!lr.TargetsRS.Contains(pendingObj))
+					{
 						lr.TargetsRS.Add(pendingObj);
+					}
+					originalLexRefs.Remove(lr);
 					return true;
 				}
 			}
@@ -3537,13 +3669,13 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			if (i < 0 || i >= m_rgPendingRelation.Count)
 				return null;
-			List<PendingRelation> rgRelation = new List<PendingRelation>();
+			var relation = new List<PendingRelation>();
 			PendingRelation prev = null;
-			int hvo = m_rgPendingRelation[i].ObjectHvo;
-			string sType = m_rgPendingRelation[i].RelationType;
-			DateTime dateCreated = m_rgPendingRelation[i].DateCreated;
-			DateTime dateModified = m_rgPendingRelation[i].DateModified;
-			string sResidue = m_rgPendingRelation[i].Residue;
+			var hvo = m_rgPendingRelation[i].ObjectHvo;
+			var sType = m_rgPendingRelation[i].RelationType;
+			var dateCreated = m_rgPendingRelation[i].DateCreated;
+			var dateModified = m_rgPendingRelation[i].DateModified;
+			var sResidue = m_rgPendingRelation[i].Residue;
 			while (i < m_rgPendingRelation.Count)
 			{
 				PendingRelation pend = m_rgPendingRelation[i];
@@ -3561,18 +3693,22 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (prev != null && pend.Order < prev.Order)
 					break;
 				pend.Target = GetObjectFromTargetIdString(m_rgPendingRelation[i].TargetId);
-				rgRelation.Add(pend);	// We handle missing/unrecognized targets later.
+				relation.Add(pend);	// We handle missing/unrecognized targets later.
 				prev = pend;
 				++i;
 			}
-			return rgRelation;
+			return relation;
 		}
 
-		private void GatherUnwantedEntries()
+		private void GatherUnwantedObjects(IEnumerable<ILexReference> unusedLexRefs)
 		{
-			foreach (ILexEntry le in m_cache.LangProject.LexDbOA.Entries)
+			foreach(var lexRef in unusedLexRefs)
 			{
-				if (!m_setUnchangedEntry.Contains(le.Guid) &&
+				m_deletedObjects.Add(lexRef.Hvo);
+			}
+			foreach(var le in m_cache.LangProject.LexDbOA.Entries)
+			{
+				if(!m_setUnchangedEntry.Contains(le.Guid) &&
 					!m_setChangedEntry.Contains(le.Guid))
 				{
 					m_deletedObjects.Add(le.Hvo);
@@ -3948,11 +4084,21 @@ namespace SIL.FieldWorks.LexText.Controls
 			return m_factLexEntryType.Create();
 		}
 
-		internal ILexRefType CreateNewLexRefType()
+		/// <summary>
+		/// Will create a new ref type using the guid if one is passed. The type will be owned by the owner guid if one is passed.
+		/// </summary>
+		/// <param name="guid">can be null</param>
+		/// <param name="owner">can be null</param>
+		/// <returns></returns>
+		internal ILexRefType CreateNewLexRefType(string guid, string owner)
 		{
-			if (m_factLexRefType == null)
+			if(m_factLexRefType == null)
+			{
 				m_factLexRefType = m_cache.ServiceLocator.GetInstance<ILexRefTypeFactory>();
-			return m_factLexRefType.Create();
+			}
+			var cleanOwner = owner != null ? owner.ToLowerInvariant() : null;
+			return m_factLexRefType.Create(String.IsNullOrEmpty(guid) ? Guid.Empty : new Guid(guid),
+													 m_cache.ServiceLocator.GetAllInstances<ILexRefType>().FirstOrDefault(x => x.Guid.ToString().ToLowerInvariant() == cleanOwner));
 		}
 
 		internal ICmPossibility CreateNewCmPossibility()

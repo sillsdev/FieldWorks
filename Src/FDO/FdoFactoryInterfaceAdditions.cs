@@ -87,6 +87,17 @@ namespace SIL.FieldWorks.FDO
 		ICmPossibilityList Create(Guid guid, int hvo);
 	}
 
+	public partial interface ILexRefTypeFactory
+	{
+		/// <summary>
+		/// Constructor to build a ILexRefType with specific attributes
+		/// </summary>
+		/// <param name="guid"></param>
+		/// <param name="owner"></param>
+		/// <returns></returns>
+		ILexRefType Create(Guid guid, ILexRefType owner);
+	}
+
 	/// <summary>
 	/// Internal interface for use by merging code to create a copy of a CmPerson that exists in another project.
 	/// </summary>
