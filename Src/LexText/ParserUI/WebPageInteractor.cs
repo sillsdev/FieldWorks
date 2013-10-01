@@ -20,10 +20,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		private readonly FdoCache m_cache;
 		private readonly FwTextBox m_tbWordForm;
 
-		public WebPageInteractor(HtmlControl htmlControl, ParserTrace parserTrace, Mediator mediator, FwTextBox tbWordForm)
+		public WebPageInteractor(HtmlControl htmlControl, Mediator mediator, FwTextBox tbWordForm)
 		{
 			m_htmlControl = htmlControl;
-			ParserTrace = parserTrace;
 			m_mediator = mediator;
 			m_cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
 			m_tbWordForm = tbWordForm;

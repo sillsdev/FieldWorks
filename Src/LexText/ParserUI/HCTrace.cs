@@ -1,10 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Text;
 using System.Xml;
-using System.Xml.XPath;
 using SIL.Utils;
 using XCore;
 
@@ -37,12 +34,14 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_sFormatTrace = "FormatHCTrace.xsl";
 
 		}
+
 		/// <summary>
 		/// Initialize what is needed to perform the word grammar debugging and
 		/// produce an html page showing the results
 		/// </summary>
 		/// <param name="sNodeId">Id of the node to use</param>
 		/// <param name="sForm">the wordform being tried</param>
+		/// <param name="sLastURL"></param>
 		/// <returns>temporary html file showing the results of the first step</returns>
 		public override string SetUpWordGrammarDebuggerPage(string sNodeId, string sForm, string sLastURL)
 		{
@@ -55,7 +54,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			bool fIsTrace = result.Contains("<Trace>");
 
 			m_parseResult = new XmlDocument();
-			m_parseResult.LoadXml(ConvertHvosToStrings(result, fIsTrace));
+			m_parseResult.LoadXml(result);
+			ConvertHvosToStrings(fIsTrace);
 
 			AddMsaNodes(false);
 
@@ -67,20 +67,17 @@ namespace SIL.FieldWorks.LexText.Controls
 			return sOutput;
 		}
 
-		protected override string ConvertHvosToStrings(string sAdjusted, bool fIsTrace)
+		private void ConvertHvosToStrings(bool fIsTrace)
 		{
-			XmlDocument doc = new XmlDocument();
-			doc.LoadXml(sAdjusted);
 			if (fIsTrace)
 			{
-				ConvertMorphs(doc, "//RuleAllomorph/Morph | //RootAllomorph/Morph | //Morphs/Morph", false);
+				ConvertMorphs(m_parseResult, "//RuleAllomorph/Morph | //RootAllomorph/Morph | //Morphs/Morph", false);
 				//ConvertMorphs(doc, "//WordGrammarAttempt/Morphs", true);
 			}
 			else
 			{
-				ConvertMorphs(doc, "//Morphs/Morph", false);
+				ConvertMorphs(m_parseResult, "//Morphs/Morph", false);
 			}
-			return doc.InnerXml;
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",

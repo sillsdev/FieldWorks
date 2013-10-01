@@ -259,11 +259,11 @@ namespace SIL.HermitCrab
 						break;
 
 					case "TraceBlocking":
-						m_curMorpher.TraceBlocking = cmdElem.GetAttribute("on") == "true";
+						Output.TraceManager.TraceBlocking = cmdElem.GetAttribute("on") == "true";
 						break;
 
 					case "TraceLexicalLookup":
-						m_curMorpher.TraceLexLookup = cmdElem.GetAttribute("on") == "true";
+						Output.TraceManager.TraceLexLookup = cmdElem.GetAttribute("on") == "true";
 						break;
 
 					case "TraceMorpherRule":
@@ -271,23 +271,23 @@ namespace SIL.HermitCrab
 						bool traceSynthesis = cmdElem.GetAttribute("generateMode") == "true";
 						string ruleId = cmdElem.GetAttribute("rule");
 						if (string.IsNullOrEmpty(ruleId))
-							m_curMorpher.SetTraceRules(traceAnalysis, traceSynthesis);
+							Output.TraceManager.SetTraceRules(traceAnalysis, traceSynthesis);
 						else
-							m_curMorpher.SetTraceRule(ruleId, traceAnalysis, traceSynthesis);
+							Output.TraceManager.SetTraceRule(ruleId, traceAnalysis, traceSynthesis);
 						break;
 
 					case "TraceMorpherStrata":
-						m_curMorpher.TraceStrataAnalysis = cmdElem.GetAttribute("analysisMode") == "true";
-						m_curMorpher.TraceStrataSynthesis = cmdElem.GetAttribute("generateMode") == "true";
+						Output.TraceManager.TraceStrataAnalysis = cmdElem.GetAttribute("analysisMode") == "true";
+						Output.TraceManager.TraceStrataSynthesis = cmdElem.GetAttribute("generateMode") == "true";
 						break;
 
 					case "TraceMorpherTemplates":
-						m_curMorpher.TraceTemplatesAnalysis = cmdElem.GetAttribute("analysisMode") == "true";
-						m_curMorpher.TraceTemplatesSynthesis = cmdElem.GetAttribute("generateMode") == "true";
+						Output.TraceManager.TraceTemplatesAnalysis = cmdElem.GetAttribute("analysisMode") == "true";
+						Output.TraceManager.TraceTemplatesSynthesis = cmdElem.GetAttribute("generateMode") == "true";
 						break;
 
 					case "TraceMorpherSuccess":
-						m_curMorpher.TraceSuccess = cmdElem.GetAttribute("on") == "true";
+						Output.TraceManager.TraceSuccess = cmdElem.GetAttribute("on") == "true";
 						break;
 				}
 			}

@@ -44,8 +44,8 @@ namespace SIL.HermitCrab
 			TOO_MANY_SEGS
 		}
 
-		MorphErrorType m_errorType;
-		Morpher m_morpher;
+		readonly MorphErrorType m_errorType;
+		readonly Morpher m_morpher;
 
 		public MorphException(MorphErrorType errorType, Morpher morpher)
 		{
@@ -90,29 +90,20 @@ namespace SIL.HermitCrab
 	/// </summary>
 	public class Morpher : HCObject
 	{
-		FeatureSystem m_phoneticFeatSys;
-		FeatureSystem m_headFeatSys;
-		FeatureSystem m_footFeatSys;
-		HCObjectSet<Stratum> m_strata;
-		HCObjectSet<CharacterDefinitionTable> m_charDefTables;
-		HCObjectSet<NaturalClass> m_natClasses;
-		HCObjectSet<PhonologicalRule> m_prules;
-		HCObjectSet<MorphologicalRule> m_mrules;
-		HCObjectSet<AffixTemplate> m_templates;
-		Lexicon m_lexicon;
-		HCObjectSet<MPRFeatureGroup> m_mprFeatGroups;
-		HCObjectSet<MPRFeature> m_mprFeatures;
-		HCObjectSet<PartOfSpeech> m_pos;
-		HCObjectSet<Allomorph> m_allomorphs;
-		int m_delReapps = 0;
-
-		bool m_traceStrataAnalysis = false;
-		bool m_traceStrataSynthesis = false;
-		bool m_traceTemplatesAnalysis = false;
-		bool m_traceTemplatesSynthesis = false;
-		bool m_traceLexLookup = false;
-		bool m_traceBlocking = false;
-		bool m_traceSuccess = false;
+		readonly FeatureSystem m_phoneticFeatSys;
+		readonly FeatureSystem m_headFeatSys;
+		readonly FeatureSystem m_footFeatSys;
+		readonly HCObjectSet<Stratum> m_strata;
+		readonly HCObjectSet<CharacterDefinitionTable> m_charDefTables;
+		readonly HCObjectSet<NaturalClass> m_natClasses;
+		readonly HCObjectSet<PhonologicalRule> m_prules;
+		readonly HCObjectSet<MorphologicalRule> m_mrules;
+		readonly HCObjectSet<AffixTemplate> m_templates;
+		readonly Lexicon m_lexicon;
+		readonly HCObjectSet<MPRFeatureGroup> m_mprFeatGroups;
+		readonly HCObjectSet<MPRFeature> m_mprFeatures;
+		readonly HCObjectSet<PartOfSpeech> m_pos;
+		readonly HCObjectSet<Allomorph> m_allomorphs;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Morpher"/> class.
@@ -246,18 +237,7 @@ namespace SIL.HermitCrab
 		/// Default: 0.
 		/// </summary>
 		/// <value>Maximum number of delete reapplications.</value>
-		public int DelReapplications
-		{
-			get
-			{
-				return m_delReapps;
-			}
-
-			set
-			{
-				m_delReapps = value;
-			}
-		}
+		public int DelReapplications { get; set; }
 
 		/// <summary>
 		/// Gets the MPR feature groups.
@@ -268,232 +248,6 @@ namespace SIL.HermitCrab
 			get
 			{
 				return m_mprFeatGroups;
-			}
-		}
-
-		/// <summary>
-		/// Gets a value indicating whether this morpher is tracing.
-		/// </summary>
-		/// <value>
-		/// 	<c>true</c> if this morpher is tracing, otherwise <c>false</c>.
-		/// </value>
-		public bool IsTracing
-		{
-			get
-			{
-				if (m_traceStrataAnalysis || m_traceStrataSynthesis || m_traceTemplatesAnalysis || m_traceTemplatesSynthesis
-					|| m_traceLexLookup || m_traceBlocking || m_traceSuccess)
-				{
-					return true;
-				}
-
-				foreach (PhonologicalRule prule in m_prules)
-				{
-					if (prule.TraceAnalysis || prule.TraceSynthesis)
-						return true;
-				}
-
-				foreach (MorphologicalRule mrule in m_mrules)
-				{
-					if (mrule.TraceAnalysis || mrule.TraceSynthesis)
-						return true;
-				}
-
-				return false;
-			}
-		}
-
-		/// <summary>
-		/// Turns tracing on and off for all parts of the morpher.
-		/// </summary>
-		/// <value><c>true</c> to turn tracing on, <c>false</c> to turn tracing off.</value>
-		public bool TraceAll
-		{
-			set
-			{
-				m_traceStrataAnalysis = value;
-				m_traceStrataSynthesis = value;
-				m_traceTemplatesAnalysis = value;
-				m_traceTemplatesSynthesis = value;
-				m_traceLexLookup = value;
-				m_traceBlocking = value;
-				m_traceSuccess = value;
-				SetTraceRules(value, value);
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets a value indicating whether tracing of strata during analysis is
-		/// on or off.
-		/// </summary>
-		/// <value><c>true</c> if tracing is on, <c>false</c> if tracing is off.</value>
-		public bool TraceStrataAnalysis
-		{
-			get
-			{
-				return m_traceStrataAnalysis;
-			}
-
-			set
-			{
-				m_traceStrataAnalysis = value;
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets a value indicating whether tracing of strata during synthesis is
-		/// on or off.
-		/// </summary>
-		/// <value><c>true</c> if tracing is on, <c>false</c> if tracing is off.</value>
-		public bool TraceStrataSynthesis
-		{
-			get
-			{
-				return m_traceStrataSynthesis;
-			}
-
-			set
-			{
-				m_traceStrataSynthesis = value;
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets a value indicating whether tracing of affix templates during analysis
-		/// is on or off.
-		/// </summary>
-		/// <value><c>true</c> if tracing is on, <c>false</c> if tracing is off.</value>
-		public bool TraceTemplatesAnalysis
-		{
-			get
-			{
-				return m_traceTemplatesAnalysis;
-			}
-
-			set
-			{
-				m_traceTemplatesAnalysis = value;
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets a value indicating whether tracing of affix templates during synthesis
-		/// is on or off.
-		/// </summary>
-		/// <value><c>true</c> if tracing is on, <c>false</c> if tracing is off.</value>
-		public bool TraceTemplatesSynthesis
-		{
-			get
-			{
-				return m_traceTemplatesSynthesis;
-			}
-
-			set
-			{
-				m_traceTemplatesSynthesis = value;
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets a value indicating whether tracing of lexical lookup is
-		/// on or off.
-		/// </summary>
-		/// <value><c>true</c> if tracing is on, <c>false</c> if tracing is off.</value>
-		public bool TraceLexLookup
-		{
-			get
-			{
-				return m_traceLexLookup;
-			}
-
-			set
-			{
-				m_traceLexLookup = value;
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets a value indicating whether tracing of blocking is
-		/// on or off.
-		/// </summary>
-		/// <value><c>true</c> if tracing is on, <c>false</c> if tracing is off.</value>
-		public bool TraceBlocking
-		{
-			get
-			{
-				return m_traceBlocking;
-			}
-
-			set
-			{
-				m_traceBlocking = value;
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets a value indicating whether tracing of successful parses is
-		/// on or off.
-		/// </summary>
-		/// <value><c>true</c> if tracing is on, <c>false</c> if tracing is off.</value>
-		public bool TraceSuccess
-		{
-			get
-			{
-				return m_traceSuccess;
-			}
-
-			set
-			{
-				m_traceSuccess = value;
-			}
-		}
-
-		/// <summary>
-		/// Turns tracing of all rules on or off.
-		/// </summary>
-		/// <param name="traceAnalysis"><c>true</c> if tracing during analysis is on, <c>false</c>
-		/// if tracing during analysis is off.</param>
-		/// <param name="traceSynthesis"><c>true</c> if tracing during synthesis is on, <c>false</c>
-		/// if tracing during synthesis is off.</param>
-		public void SetTraceRules(bool traceAnalysis, bool traceSynthesis)
-		{
-			foreach (PhonologicalRule prule in m_prules)
-			{
-				prule.TraceAnalysis = traceAnalysis;
-				prule.TraceSynthesis = traceSynthesis;
-			}
-
-			foreach (MorphologicalRule mrule in m_mrules)
-			{
-				mrule.TraceAnalysis = traceAnalysis;
-				mrule.TraceSynthesis = traceSynthesis;
-			}
-		}
-
-		/// <summary>
-		/// Turns tracing of a rule on or off.
-		/// </summary>
-		/// <param name="id">The rule ID.</param>
-		/// <param name="traceAnalysis"><c>true</c> if tracing during analysis is on, <c>false</c>
-		/// if tracing during analysis is off.</param>
-		/// <param name="traceSynthesis"><c>true</c> if tracing during synthesis is on, <c>false</c>
-		/// if tracing during synthesis is off.</param>
-		public void SetTraceRule(string id, bool traceAnalysis, bool traceSynthesis)
-		{
-			PhonologicalRule prule = GetPhonologicalRule(id);
-			if (prule != null)
-			{
-				prule.TraceAnalysis = traceAnalysis;
-				prule.TraceSynthesis = traceSynthesis;
-			}
-			else
-			{
-				MorphologicalRule mrule = GetMorphologicalRule(id);
-				if (mrule != null)
-				{
-					mrule.TraceAnalysis = traceAnalysis;
-					mrule.TraceSynthesis = traceSynthesis;
-				}
 			}
 		}
 
@@ -827,18 +581,17 @@ namespace SIL.HermitCrab
 		/// <returns>All valid word synthesis records.</returns>
 		public ICollection<WordSynthesis> MorphAndLookupWord(string word)
 		{
-			WordAnalysisTrace trace;
-			return MorphAndLookupWord(word, out trace);
+			return MorphAndLookupWord(word, null);
 		}
 
-		public ICollection<WordSynthesis> MorphAndLookupWord(string word, out WordAnalysisTrace trace)
+		public ICollection<WordSynthesis> MorphAndLookupWord(string word, TraceManager trace)
 		{
-			return MorphAndLookupToken(word, null, null, out trace, null);
+			return MorphAndLookupToken(word, null, null, trace, null);
 		}
 
-		public ICollection<WordSynthesis> MorphAndLookupWord(string word, out WordAnalysisTrace trace, string[] selectTraceMorphs)
+		public ICollection<WordSynthesis> MorphAndLookupWord(string word, TraceManager trace, string[] selectTraceMorphs)
 		{
-			return MorphAndLookupToken(word, null, null, out trace, selectTraceMorphs);
+			return MorphAndLookupToken(word, null, null, trace, selectTraceMorphs);
 		}
 		/// <summary>
 		/// Morphs the list of specified words.
@@ -847,15 +600,12 @@ namespace SIL.HermitCrab
 		/// <returns>All valid word synthesis records for each word.</returns>
 		public IList<ICollection<WordSynthesis>> MorphAndLookupWordList(IList<string> wordList)
 		{
-			IList<WordAnalysisTrace> traces;
-			return MorphAndLookupWordList(wordList, out traces);
+			return MorphAndLookupWordList(wordList, null);
 		}
 
-		public IList<ICollection<WordSynthesis>> MorphAndLookupWordList(IList<string> wordList,
-			out IList<WordAnalysisTrace> traces)
+		public IList<ICollection<WordSynthesis>> MorphAndLookupWordList(IList<string> wordList, TraceManager trace)
 		{
-			List<ICollection<WordSynthesis>> results = new List<ICollection<WordSynthesis>>();
-			traces = new List<WordAnalysisTrace>();
+			var results = new List<ICollection<WordSynthesis>>();
 			string prev = null;
 			string word = wordList[0];
 			for (int i = 0; i < wordList.Count; i++)
@@ -864,9 +614,7 @@ namespace SIL.HermitCrab
 				if (i + 1 < wordList.Count)
 					next = wordList[i + 1];
 
-				WordAnalysisTrace trace;
-				results.Add(MorphAndLookupToken(word, prev, next, out trace));
-				traces.Add(trace);
+				results.Add(MorphAndLookupToken(word, prev, next, trace));
 
 				prev = word;
 				word = next;
@@ -875,10 +623,11 @@ namespace SIL.HermitCrab
 			return results;
 		}
 
-		ICollection<WordSynthesis> MorphAndLookupToken(string word, string prev, string next, out WordAnalysisTrace trace)
+		ICollection<WordSynthesis> MorphAndLookupToken(string word, string prev, string next, TraceManager trace)
 		{
-			return MorphAndLookupToken(word, prev, next, out trace, null);
+			return MorphAndLookupToken(word, prev, next, trace, null);
 		}
+
 		/// <summary>
 		/// Does the real work of morphing the specified word.
 		/// </summary>
@@ -886,8 +635,9 @@ namespace SIL.HermitCrab
 		/// <param name="prev">The previous word.</param>
 		/// <param name="next">The next word.</param>
 		/// <param name="trace">The trace.</param>
+		/// <param name="selectTraceMorphs"></param>
 		/// <returns>All valid word synthesis records.</returns>
-		ICollection<WordSynthesis> MorphAndLookupToken(string word, string prev, string next, out WordAnalysisTrace trace, string[] selectTraceMorphs)
+		ICollection<WordSynthesis> MorphAndLookupToken(string word, string prev, string next, TraceManager trace, string[] selectTraceMorphs)
 		{
 			PhoneticShape input;
 			try
@@ -897,7 +647,7 @@ namespace SIL.HermitCrab
 			}
 			catch (MissingPhoneticShapeException mpse)
 			{
-				MorphException me = new MorphException(MorphException.MorphErrorType.INVALID_SHAPE, this,
+				var me = new MorphException(MorphException.MorphErrorType.INVALID_SHAPE, this,
 					string.Format(HCStrings.kstidInvalidWord, word, SurfaceStratum.CharacterDefinitionTable.ID, mpse.Position+1, word.Substring(mpse.Position)));
 				me.Data["shape"] = word;
 				me.Data["charDefTable"] = SurfaceStratum.CharacterDefinitionTable.ID;
@@ -905,13 +655,15 @@ namespace SIL.HermitCrab
 				throw me;
 			}
 
-			// create the root of the trace tree
-			trace = new WordAnalysisTrace(word, input.Clone());
+			var inputAnalysis = new WordAnalysis(input, SurfaceStratum);
 
-			Set<WordSynthesis> candidates = new Set<WordSynthesis>();
-			Set<WordAnalysis> inAnalysis = new Set<WordAnalysis>();
-			Set<WordAnalysis> outAnalysis = new Set<WordAnalysis>();
-			inAnalysis.Add(new WordAnalysis(input, SurfaceStratum, trace));
+			if (trace != null)
+				trace.BeginAnalyzeWord(word, inputAnalysis);
+
+			var candidates = new Set<WordSynthesis>();
+			var inAnalysis = new Set<WordAnalysis>();
+			var outAnalysis = new Set<WordAnalysis>();
+			inAnalysis.Add(inputAnalysis);
 
 			// Unapply rules
 			for (int i = m_strata.Count - 1; i >= 0; i--)
@@ -919,21 +671,17 @@ namespace SIL.HermitCrab
 				outAnalysis.Clear();
 				foreach (WordAnalysis wa in inAnalysis)
 				{
-					if (m_traceStrataAnalysis)
-					{
-						// create the stratum analysis input trace record
-						StratumAnalysisTrace stratumTrace = new StratumAnalysisTrace(m_strata[i], true, wa.Clone());
-						wa.CurrentTrace.AddChild(stratumTrace);
-					}
-					foreach (WordAnalysis outWa in m_strata[i].Unapply(wa, candidates, selectTraceMorphs))
+					if (trace != null)
+						trace.BeginUnapplyStratum(m_strata[i], wa);
+
+					foreach (WordAnalysis outWa in m_strata[i].Unapply(wa, trace, selectTraceMorphs, candidates))
 					{
 						// promote each analysis to the next stratum
 						if (i != 0)
 							outWa.Stratum = m_strata[i - 1];
 
-						if (m_traceStrataAnalysis)
-							// create the stratum analysis output trace record for the output word synthesis
-							outWa.CurrentTrace.AddChild(new StratumAnalysisTrace(m_strata[i], false, outWa.Clone()));
+						if (trace != null)
+							trace.EndUnapplyStratum(m_strata[i], outWa);
 
 						outAnalysis.Add(outWa);
 					}
@@ -943,12 +691,12 @@ namespace SIL.HermitCrab
 				inAnalysis.AddMany(outAnalysis);
 			}
 
-			Set<WordSynthesis> allValidSyntheses = new Set<WordSynthesis>();
+			var allValidSyntheses = new Set<WordSynthesis>();
 			// Apply rules for each candidate entry
 			foreach (WordSynthesis candidate in candidates)
 			{
-				Set<WordSynthesis> inSynthesis = new Set<WordSynthesis>();
-				Set<WordSynthesis> outSynthesis = new Set<WordSynthesis>();
+				var inSynthesis = new Set<WordSynthesis>();
+				var outSynthesis = new Set<WordSynthesis>();
 				for (int i = 0; i < m_strata.Count; i++)
 				{
 					// start applying at the stratum that this lex entry belongs to
@@ -958,21 +706,17 @@ namespace SIL.HermitCrab
 					outSynthesis.Clear();
 					foreach (WordSynthesis cur in inSynthesis)
 					{
-						if (m_traceStrataSynthesis)
-						{
-							// create the stratum synthesis input trace record
-							StratumSynthesisTrace stratumTrace = new StratumSynthesisTrace(m_strata[i], true, cur.Clone());
-							cur.CurrentTrace.AddChild(stratumTrace);
-						}
-						foreach (WordSynthesis outWs in m_strata[i].Apply(cur))
+						if (trace != null)
+							trace.BeginApplyStratum(m_strata[i], cur);
+
+						foreach (WordSynthesis outWs in m_strata[i].Apply(cur, trace))
 						{
 							// promote the word synthesis to the next stratum
 							if (i != m_strata.Count - 1)
 								outWs.Stratum = m_strata[i + 1];
 
-							if (m_traceStrataSynthesis)
-								// create the stratum synthesis output trace record for the output analysis
-								outWs.CurrentTrace.AddChild(new StratumSynthesisTrace(m_strata[i], false, outWs.Clone()));
+							if (trace != null)
+								trace.EndApplyStratum(m_strata[i], outWs);
 
 							outSynthesis.Add(outWs);
 						}
@@ -989,10 +733,10 @@ namespace SIL.HermitCrab
 				}
 			}
 
-			Set<WordSynthesis> results = new Set<WordSynthesis>();
+			var results = new Set<WordSynthesis>();
 			// sort the resulting syntheses according to the order of precedence of each allomorph in
 			// their respective morphemes
-			List<WordSynthesis> sortedSyntheses = new List<WordSynthesis>(allValidSyntheses);
+			var sortedSyntheses = new List<WordSynthesis>(allValidSyntheses);
 			sortedSyntheses.Sort();
 
 			WordSynthesis prevValidSynthesis = null;
@@ -1004,12 +748,12 @@ namespace SIL.HermitCrab
 				// fluctuation
 				if (prevValidSynthesis == null || AreAllomorphsNondisjunctive(cur, prevValidSynthesis))
 				{
-					AddResult(word, results, cur);
+					AddResult(word, results, cur, trace);
 					allFreeFluctuation = true;
 				}
 				else if (allFreeFluctuation && CheckFreeFluctuation(cur, prevValidSynthesis))
 				{
-					AddResult(word, results, cur);
+					AddResult(word, results, cur, trace);
 				}
 				else
 				{
@@ -1020,13 +764,13 @@ namespace SIL.HermitCrab
 			return results;
 		} // end MorphAndLookupToken
 
-		private void AddResult(string word, Set<WordSynthesis> results, WordSynthesis cur)
+		private void AddResult(string word, Set<WordSynthesis> results, WordSynthesis cur, TraceManager trace)
 		{
 			if (SurfaceStratum.CharacterDefinitionTable.IsMatch(word, cur.Shape))
 			{
-				if (m_traceSuccess)
-					// create the report a success output trace record for the output analysis
-					cur.CurrentTrace.AddChild(new ReportSuccessTrace(cur));
+				if (trace != null)
+					trace.ReportSuccess(cur);
+
 				// do not add to the result if it has the same root, shape, and morphemes as another result
 				bool duplicate = false;
 				foreach (WordSynthesis ws in results)

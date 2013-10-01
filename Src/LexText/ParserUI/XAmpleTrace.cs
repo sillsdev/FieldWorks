@@ -126,7 +126,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				morphNode.InnerXml = "<" + sName +">" + nameNode.InnerXml + "</" + sName + ">";
 		}
 #endif
-		protected override string ConvertHvosToStrings(string sAdjusted, bool fIsTrace)
+		private string ConvertHvosToStrings(string sAdjusted, bool fIsTrace)
 		{
 			// When we  switched to VS 2005, the result from XAmple had a final trailing null character.
 			// I'm not sure why (Andy).  Remove it.

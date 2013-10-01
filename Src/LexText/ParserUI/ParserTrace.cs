@@ -73,9 +73,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <returns>URL of the resulting HTML page</returns>
 		public abstract string CreateResultPage(string result);
 
-
-		protected abstract string ConvertHvosToStrings(string sAdjusted, bool fIsTrace);
-
 		/// <summary>
 		/// Initialize what is needed to perform the word grammar debugging and
 		/// produce an html page showing the results
@@ -101,22 +98,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			return m_wordGrammarDebugger.PopWordGrammarStack();
 		}
 
-
-		private void CreateInflectionClassesAndSubclassesXmlElement(XmlDocument doc,
-			System.Collections.Generic.IEnumerable<IMoInflClass> inflectionClasses,
-			XmlNode inflClasses)
-		{
-			foreach (IMoInflClass ic in inflectionClasses)
-			{
-				XmlNode inflClass = CreateXmlElement(doc, "inflClass", inflClasses);
-				CreateXmlAttribute(doc, "hvo", ic.Hvo.ToString(), inflClass);
-				CreateXmlAttribute(doc, "abbr", ic.Abbreviation.BestAnalysisAlternative.Text, inflClass);
-				CreateInflectionClassesAndSubclassesXmlElement(doc, ic.SubclassesOC, inflClasses);
-			}
-		}
-
-
-
 		protected string TransformToHtml(string sInputFile, TransformKind kind)
 		{
 			string sOutput = null;
@@ -135,7 +116,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			return sOutput;
 		}
-
 
 		private string CreateIconPath()
 		{

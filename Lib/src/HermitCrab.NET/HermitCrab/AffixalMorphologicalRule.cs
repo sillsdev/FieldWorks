@@ -459,7 +459,7 @@ namespace SIL.HermitCrab
 		/// <returns>
 		/// 	<c>true</c> if the subrule was successfully unapplied, otherwise <c>false</c>
 		/// </returns>
-		public override bool Unapply(WordAnalysis input, int srIndex, out ICollection<WordAnalysis> output, string[] selectTraceMorphs)
+		public override bool Unapply(WordAnalysis input, int srIndex, TraceManager trace, string[] selectTraceMorphs, out ICollection<WordAnalysis> output)
 		{
 			if (UseThisRule(selectTraceMorphs) && m_subrules[srIndex].Unapply(input, out output))
 			{
@@ -477,17 +477,8 @@ namespace SIL.HermitCrab
 
 					wa.MorphologicalRuleUnapplied(this);
 
-					if (TraceAnalysis)
-					{
-						// create the morphological rule analysis trace record for each output analysis
-						MorphologicalRuleAnalysisTrace trace = new MorphologicalRuleAnalysisTrace(this, input.Clone());
-						trace.RuleAllomorph = m_subrules[srIndex];
-						trace.Output = wa.Clone();
-						wa.CurrentTrace.AddChild(trace);
-						// set current trace record to the morphological rule trace record for each
-						// output analysis
-						wa.CurrentTrace = trace;
-					}
+					if (trace != null)
+						trace.MorphologicalRuleUnapplied(this, input, wa, m_subrules[srIndex]);
 				}
 				return true;
 			}
@@ -505,17 +496,18 @@ namespace SIL.HermitCrab
 			}
 			return true;
 		}
+
 		/// <summary>
 		/// Performs any post-processing required after the unapplication of a word analysis. This must
 		/// be called after a successful <c>BeginUnapplication</c> call and any <c>Unapply</c> calls.
 		/// </summary>
 		/// <param name="input">The input word analysis.</param>
+		/// <param name="trace"></param>
 		/// <param name="unapplied">if set to <c>true</c> if the input word analysis was successfully unapplied.</param>
-		public override void EndUnapplication(WordAnalysis input, bool unapplied)
+		public override void EndUnapplication(WordAnalysis input, TraceManager trace, bool unapplied)
 		{
-			if (TraceAnalysis && !unapplied)
-				// create the morphological rule analysis trace record for a rule that did not succesfully unapply
-				input.CurrentTrace.AddChild(new MorphologicalRuleAnalysisTrace(this, input.Clone()));
+			if (trace != null && !unapplied)
+				trace.MorphologicalRuleNotUnapplied(this, input);
 		}
 
 		/// <summary>
@@ -542,7 +534,7 @@ namespace SIL.HermitCrab
 		/// <returns>
 		/// 	<c>true</c> if the rule was successfully applied, otherwise <c>false</c>
 		/// </returns>
-		public override bool Apply(WordSynthesis input, out ICollection<WordSynthesis> output)
+		public override bool Apply(WordSynthesis input, TraceManager trace, out ICollection<WordSynthesis> output)
 		{
 			output = null;
 
@@ -587,19 +579,10 @@ namespace SIL.HermitCrab
 
 					ws.MorphologicalRuleApplied(this);
 
-					ws = CheckBlocking(ws);
+					ws = CheckBlocking(ws, trace);
 
-					if (TraceSynthesis)
-					{
-						MorphologicalRuleSynthesisTrace trace = new MorphologicalRuleSynthesisTrace(this, input.Clone());
-						// add output to morphological rule trace record
-						trace.RuleAllomorph = m_subrules[i];
-						trace.Output = ws.Clone();
-						ws.CurrentTrace.AddChild(trace);
-						// set current trace record to the morphological rule trace record for each
-						// output analysis
-						ws.CurrentTrace = trace;
-					}
+					if (trace != null)
+						trace.MorphologicalRuleApplied(this, input, ws, m_subrules[i]);
 
 					output.Add(ws);
 					// return all word syntheses that match subrules that are constrained by environments,
@@ -617,8 +600,8 @@ namespace SIL.HermitCrab
 				}
 			}
 
-			if (TraceSynthesis && output.Count == 0)
-				input.CurrentTrace.AddChild(new MorphologicalRuleSynthesisTrace(this, input.Clone()));
+			if (trace != null && output.Count == 0)
+				trace.MorphologicalRuleNotApplied(this, input);
 
 			return output.Count > 0;
 		}
@@ -632,9 +615,9 @@ namespace SIL.HermitCrab
 		/// <returns>
 		/// 	<c>true</c> if the rule was successfully applied, otherwise <c>false</c>
 		/// </returns>
-		public override bool ApplySlotAffix(WordSynthesis input, FeatureValues origHeadFeatures, out ICollection<WordSynthesis> output)
+		public override bool ApplySlotAffix(WordSynthesis input, FeatureValues origHeadFeatures, TraceManager trace, out ICollection<WordSynthesis> output)
 		{
-			return Apply(input, out output);
+			return Apply(input, trace, out output);
 		}
 
 		public override void Reset()

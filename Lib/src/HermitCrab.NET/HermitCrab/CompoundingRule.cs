@@ -12,15 +12,15 @@ namespace SIL.HermitCrab
 		/// </summary>
 		public class Subrule : Allomorph
 		{
-			AlphaVariables m_alphaVars;
-			MorphologicalTransform m_transform;
-			PhoneticPattern m_headLhsTemp;
-			PhoneticPattern m_nonHeadLhsTemp;
-			int m_firstNonHeadPartition;
+			readonly AlphaVariables m_alphaVars;
+			readonly MorphologicalTransform m_transform;
+			readonly PhoneticPattern m_headLhsTemp;
+			readonly PhoneticPattern m_nonHeadLhsTemp;
+			readonly int m_firstNonHeadPartition;
 
-			MPRFeatureSet m_excludedMPRFeatures = null;
-			MPRFeatureSet m_requiredMPRFeatures = null;
-			MPRFeatureSet m_outputMPRFeatures = null;
+			MPRFeatureSet m_excludedMPRFeatures;
+			MPRFeatureSet m_requiredMPRFeatures;
+			MPRFeatureSet m_outputMPRFeatures;
 
 			/// <summary>
 			/// Initializes a new instance of the <see cref="Subrule"/> class.
@@ -38,7 +38,7 @@ namespace SIL.HermitCrab
 			{
 				m_alphaVars = alphaVars;
 
-				List<PhoneticPattern> lhs = new List<PhoneticPattern>();
+				var lhs = new List<PhoneticPattern>();
 				lhs.AddRange(headLhs);
 				lhs.AddRange(nonHeadLhs);
 
@@ -121,11 +121,11 @@ namespace SIL.HermitCrab
 			/// <returns><c>true</c> if the subrule was successfully unapplied, otherwise <c>false</c></returns>
 			public bool Unapply(WordAnalysis input, out ICollection<WordAnalysis> output)
 			{
-				VariableValues instantiatedVars = new VariableValues(m_alphaVars);
+				var instantiatedVars = new VariableValues(m_alphaVars);
 				IList<Match> matches;
 				m_transform.RHSTemplate.IsMatch(input.Shape.First, Direction.RIGHT, ModeType.ANALYSIS, instantiatedVars, out matches);
 
-				List<WordAnalysis> outputList = new List<WordAnalysis>();
+				var outputList = new List<WordAnalysis>();
 				output = outputList;
 				foreach (Match match in matches)
 				{
@@ -158,8 +158,7 @@ namespace SIL.HermitCrab
 						{
 							WordAnalysis wa = input.Clone();
 							wa.Shape = headShape;
-							wa.NonHead = new WordAnalysis(nonHeadShape, wa.Stratum, null);
-							wa.NonHead.RootAllomorph = allo;
+							wa.NonHead = new WordAnalysis(nonHeadShape, wa.Stratum) {RootAllomorph = allo};
 							output.Add(wa);
 						}
 					}
@@ -200,7 +199,7 @@ namespace SIL.HermitCrab
 					|| (m_excludedMPRFeatures != null &&  m_excludedMPRFeatures.Count > 0 && m_excludedMPRFeatures.IsMatch(input.MPRFeatures)))
 					return false;
 
-				VariableValues instantiatedVars = new VariableValues(m_alphaVars);
+				var instantiatedVars = new VariableValues(m_alphaVars);
 				IList<Match> headMatches, nonHeadMatches;
 				if (m_headLhsTemp.IsMatch(input.Shape.First, Direction.RIGHT, ModeType.SYNTHESIS, instantiatedVars, out headMatches)
 					&& m_nonHeadLhsTemp.IsMatch(input.NonHead.Shape.First, Direction.RIGHT, ModeType.SYNTHESIS, instantiatedVars, out nonHeadMatches))
@@ -242,19 +241,19 @@ namespace SIL.HermitCrab
 			}
 		}
 
-		List<Subrule> m_subrules;
+		readonly List<Subrule> m_subrules;
 
-		HCObjectSet<PartOfSpeech> m_headRequiredPOSs = null;
-		HCObjectSet<PartOfSpeech> m_nonHeadRequiredPOSs = null;
-		PartOfSpeech m_outPOS = null;
+		HCObjectSet<PartOfSpeech> m_headRequiredPOSs;
+		HCObjectSet<PartOfSpeech> m_nonHeadRequiredPOSs;
+		PartOfSpeech m_outPOS;
 		int m_maxNumApps = 1;
-		FeatureValues m_headRequiredHeadFeatures = null;
-		FeatureValues m_headRequiredFootFeatures = null;
-		FeatureValues m_nonHeadRequiredHeadFeatures = null;
-		FeatureValues m_nonHeadRequiredFootFeatures = null;
-		FeatureValues m_outHeadFeatures = null;
-		FeatureValues m_outFootFeatures = null;
-		HCObjectSet<Feature> m_obligHeadFeatures = null;
+		FeatureValues m_headRequiredHeadFeatures;
+		FeatureValues m_headRequiredFootFeatures;
+		FeatureValues m_nonHeadRequiredHeadFeatures;
+		FeatureValues m_nonHeadRequiredFootFeatures;
+		FeatureValues m_outHeadFeatures;
+		FeatureValues m_outFootFeatures;
+		HCObjectSet<Feature> m_obligHeadFeatures;
 		// TODO: add subcats
 
 		/// <summary>
@@ -511,11 +510,13 @@ namespace SIL.HermitCrab
 		/// </summary>
 		/// <param name="input">The input word analysis.</param>
 		/// <param name="srIndex">Index of the subrule.</param>
+		/// <param name="selectTraceMorphs"></param>
 		/// <param name="output">All resulting word analyses.</param>
+		/// <param name="trace"></param>
 		/// <returns>
 		/// 	<c>true</c> if the subrule was successfully unapplied, otherwise <c>false</c>
 		/// </returns>
-		public override bool Unapply(WordAnalysis input, int srIndex, out ICollection<WordAnalysis> output, string[] selectTraceMorphs)
+		public override bool Unapply(WordAnalysis input, int srIndex, TraceManager trace, string[] selectTraceMorphs, out ICollection<WordAnalysis> output)
 		{
 			if (m_subrules[srIndex].Unapply(input, out output))
 			{
@@ -539,17 +540,8 @@ namespace SIL.HermitCrab
 
 					wa.MorphologicalRuleUnapplied(this);
 
-					if (TraceAnalysis)
-					{
-						// create the morphological rule analysis trace record for each output analysis
-						MorphologicalRuleAnalysisTrace trace = new MorphologicalRuleAnalysisTrace(this, input.Clone());
-						trace.RuleAllomorph = m_subrules[srIndex];
-						trace.Output = wa.Clone();
-						wa.CurrentTrace.AddChild(trace);
-						// set current trace record to the morphological rule trace record for each
-						// output analysis
-						wa.CurrentTrace = trace;
-					}
+					if (trace != null)
+						trace.MorphologicalRuleUnapplied(this, input, wa, m_subrules[srIndex]);
 				}
 				return true;
 			}
@@ -563,12 +555,12 @@ namespace SIL.HermitCrab
 		/// be called after a successful <c>BeginUnapplication</c> call and any <c>Unapply</c> calls.
 		/// </summary>
 		/// <param name="input">The input word analysis.</param>
+		/// <param name="trace"></param>
 		/// <param name="unapplied">if set to <c>true</c> if the input word analysis was successfully unapplied.</param>
-		public override void EndUnapplication(WordAnalysis input, bool unapplied)
+		public override void EndUnapplication(WordAnalysis input, TraceManager trace, bool unapplied)
 		{
-			if (TraceAnalysis && !unapplied)
-				// create the morphological rule analysis trace record for a rule that did not succesfully unapply
-				input.CurrentTrace.AddChild(new MorphologicalRuleAnalysisTrace(this, input.Clone()));
+			if (trace != null && !unapplied)
+				trace.MorphologicalRuleNotUnapplied(this, input);
 		}
 
 		/// <summary>
@@ -597,7 +589,7 @@ namespace SIL.HermitCrab
 		/// <returns>
 		/// 	<c>true</c> if the rule was successfully applied, otherwise <c>false</c>
 		/// </returns>
-		public override bool Apply(WordSynthesis input, out ICollection<WordSynthesis> output)
+		public override bool Apply(WordSynthesis input, TraceManager trace, out ICollection<WordSynthesis> output)
 		{
 			output = null;
 
@@ -622,14 +614,6 @@ namespace SIL.HermitCrab
 			FeatureValues nonHeadFootFeatures;
 			if (!m_nonHeadRequiredFootFeatures.UnifyDefaults(input.NonHead.FootFeatures, out nonHeadFootFeatures))
 				return false;
-
-			MorphologicalRuleSynthesisTrace trace = null;
-			if (TraceSynthesis)
-			{
-				// create morphological rule synthesis trace record
-				trace = new MorphologicalRuleSynthesisTrace(this, input.Clone());
-				input.CurrentTrace.AddChild(trace);
-			}
 
 			output = new List<WordSynthesis>();
 			foreach (Subrule sr in m_subrules)
@@ -658,17 +642,10 @@ namespace SIL.HermitCrab
 
 					ws.MorphologicalRuleApplied(this);
 
-					ws = CheckBlocking(ws);
+					ws = CheckBlocking(ws, trace);
 
 					if (trace != null)
-					{
-						// set current trace record to the morphological rule trace record for each
-						// output analysis
-						ws.CurrentTrace = trace;
-						// add output to morphological rule trace record
-						trace.RuleAllomorph = sr;
-						trace.Output = ws.Clone();
-					}
+						trace.MorphologicalRuleApplied(this, input, ws, sr);
 
 					output.Add(ws);
 					// return all word syntheses that match subrules that are constrained by environments,
@@ -690,13 +667,14 @@ namespace SIL.HermitCrab
 		/// </summary>
 		/// <param name="input">The input word synthesis.</param>
 		/// <param name="origHeadFeatures">The original head features before template application.</param>
+		/// <param name="trace"></param>
 		/// <param name="output">The output word syntheses.</param>
 		/// <returns>
 		/// 	<c>true</c> if the rule was successfully applied, otherwise <c>false</c>
 		/// </returns>
-		public override bool ApplySlotAffix(WordSynthesis input, FeatureValues origHeadFeatures, out ICollection<WordSynthesis> output)
+		public override bool ApplySlotAffix(WordSynthesis input, FeatureValues origHeadFeatures, TraceManager trace, out ICollection<WordSynthesis> output)
 		{
-			return Apply(input, out output);
+			return Apply(input, trace, out output);
 		}
 
 		public override void Reset()

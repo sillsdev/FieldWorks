@@ -7,49 +7,11 @@ namespace SIL.HermitCrab
 	/// </summary>
 	public abstract class MorphologicalRule : Morpheme
 	{
-		bool m_traceAnalysis;
-		bool m_traceSynthesis;
 		bool m_isBlockable = true;
 
 		protected MorphologicalRule(string id, string desc, Morpher morpher)
 			: base(id, desc, morpher)
 		{
-		}
-
-		/// <summary>
-		/// Gets or sets a value indicating whether tracing of this morphological rule
-		/// during analysis is on or off.
-		/// </summary>
-		/// <value><c>true</c> if tracing is on, <c>false</c> if tracing is off.</value>
-		public bool TraceAnalysis
-		{
-			get
-			{
-				return m_traceAnalysis;
-			}
-
-			set
-			{
-				m_traceAnalysis = value;
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets a value indicating whether tracing of this morphological rule
-		/// during synthesis is on or off.
-		/// </summary>
-		/// <value><c>true</c> if tracing is on, <c>false</c> if tracing is off.</value>
-		public bool TraceSynthesis
-		{
-			get
-			{
-				return m_traceSynthesis;
-			}
-
-			set
-			{
-				m_traceSynthesis = value;
-			}
 		}
 
 		/// <summary>
@@ -95,17 +57,19 @@ namespace SIL.HermitCrab
 		/// <param name="input">The input word analysis.</param>
 		/// <param name="srIndex">Index of the subrule.</param>
 		/// <param name="output">All resulting word analyses.</param>
+		/// <param name="trace"></param>
 		/// <param name="selectTraceMorphs">list of ids to be used in a selective trace</param>
 		/// <returns><c>true</c> if the subrule was successfully unapplied, otherwise <c>false</c></returns>
-		public abstract bool Unapply(WordAnalysis input, int srIndex, out ICollection<WordAnalysis> output, string[] selectTraceMorphs);
+		public abstract bool Unapply(WordAnalysis input, int srIndex, TraceManager trace, string[] selectTraceMorphs, out ICollection<WordAnalysis> output);
 
 		/// <summary>
 		/// Performs any post-processing required after the unapplication of a word analysis. This must
 		/// be called after a successful <c>BeginUnapplication</c> call and any <c>Unapply</c> calls.
 		/// </summary>
 		/// <param name="input">The input word analysis.</param>
+		/// <param name="trace"></param>
 		/// <param name="unapplied">if set to <c>true</c> if the input word analysis was successfully unapplied.</param>
-		public abstract void EndUnapplication(WordAnalysis input, bool unapplied);
+		public abstract void EndUnapplication(WordAnalysis input, TraceManager trace, bool unapplied);
 
 		/// <summary>
 		/// Determines whether this rule is applicable to the specified word synthesis.
@@ -120,20 +84,22 @@ namespace SIL.HermitCrab
 		/// Applies the rule to the specified word synthesis.
 		/// </summary>
 		/// <param name="input">The input word synthesis.</param>
+		/// <param name="trace"></param>
 		/// <param name="output">The output word syntheses.</param>
 		/// <returns><c>true</c> if the rule was successfully applied, otherwise <c>false</c></returns>
-		public abstract bool Apply(WordSynthesis input, out ICollection<WordSynthesis> output);
+		public abstract bool Apply(WordSynthesis input, TraceManager trace, out ICollection<WordSynthesis> output);
 
 		/// <summary>
 		/// Applies the rule to the specified word synthesis. This method is used by affix templates.
 		/// </summary>
 		/// <param name="input">The input word synthesis.</param>
 		/// <param name="origHeadFeatures">The original head features before template application.</param>
+		/// <param name="trace"></param>
 		/// <param name="output">The output word syntheses.</param>
 		/// <returns>
 		/// 	<c>true</c> if the rule was successfully applied, otherwise <c>false</c>
 		/// </returns>
-		public abstract bool ApplySlotAffix(WordSynthesis input, FeatureValues origHeadFeatures, out ICollection<WordSynthesis> output);
+		public abstract bool ApplySlotAffix(WordSynthesis input, FeatureValues origHeadFeatures, TraceManager trace, out ICollection<WordSynthesis> output);
 
 		public virtual void Reset()
 		{
@@ -141,7 +107,7 @@ namespace SIL.HermitCrab
 			m_isBlockable = true;
 		}
 
-		protected WordSynthesis CheckBlocking(WordSynthesis ws)
+		protected WordSynthesis CheckBlocking(WordSynthesis ws, TraceManager trace)
 		{
 			if (!m_isBlockable || ws.Root.Family == null)
 				return ws;
@@ -154,10 +120,10 @@ namespace SIL.HermitCrab
 					&& entry.HeadFeatures.Equals(ws.HeadFeatures)
 					&& entry.FootFeatures.Equals(ws.FootFeatures))
 				{
-					if (Morpher.TraceBlocking)
-						// create a blocking trace record, should this become the current trace?
-						ws.CurrentTrace.AddChild(new BlockingTrace(BlockingTrace.BlockType.RULE, entry));
-					return new WordSynthesis(entry.PrimaryAllomorph, ws.RealizationalFeatures, ws.CurrentTrace);
+					if (trace != null)
+						trace.Blocking(BlockType.RULE, ws, entry);
+
+					return new WordSynthesis(entry.PrimaryAllomorph, ws.RealizationalFeatures, ws.CurrentTraceObject);
 				}
 			}
 

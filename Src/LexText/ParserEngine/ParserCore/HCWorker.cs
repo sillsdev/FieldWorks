@@ -12,14 +12,15 @@
 // Responsibility: FLEx Team
 // --------------------------------------------------------------------------------------------
 using System;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Xml.Linq;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
@@ -45,7 +46,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			public string Form
 			{
 				get
-				{ return string.IsNullOrEmpty(form) ? "0" : form;}
+				{ return String.IsNullOrEmpty(form) ? "0" : form;}
 			}
 		}
 
@@ -169,6 +170,70 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		}
 
+		private static int WordTypeIndex(int expectedindex, int wordTypesCount)
+		{
+			int wordTypeIndex = expectedindex;
+			if (wordTypeIndex + 1 > wordTypesCount)
+			{
+				// something is wrong (perhaps a missing suffix slot for a circumfix)
+				// we'll use the same as last time, hoping for a parse failure
+				wordTypeIndex = wordTypeIndex - 1;
+			}
+			return wordTypeIndex;
+		}
+
+		class FwXmlTraceManager : XmlTraceManager
+		{
+			public override void ReportSuccess(WordSynthesis output)
+			{
+				if (TraceSuccess)
+				{
+					XElement wsElem = Write("Result", output);
+					wsElem.Add(new XAttribute("id", ((uint) output.GetHashCode()).ToString(CultureInfo.InvariantCulture)));
+					((XElement) output.CurrentTraceObject).Add(new XElement("ReportSuccessTrace", wsElem));
+				}
+			}
+
+			public override void MorphologicalRuleNotUnapplied(MorphologicalRule rule, WordAnalysis input)
+			{
+			}
+
+			public override void MorphologicalRuleNotApplied(MorphologicalRule rule, WordSynthesis input)
+			{
+			}
+
+			protected override XElement Write(string name, Allomorph allomorph)
+			{
+				XElement elem = Write(name, (HCObject) allomorph);
+
+				string formIdsStr = allomorph.GetProperty("FormID");
+				string msaId = allomorph.GetProperty("MsaID");
+				if (!String.IsNullOrEmpty(formIdsStr) || !String.IsNullOrEmpty(msaId))
+				{
+					var morphElem = new XElement("Morph");
+
+					if (!String.IsNullOrEmpty(formIdsStr))
+					{
+						string[] formIds = formIdsStr.Split(' ');
+						string[] wordTypes = allomorph.GetProperty("WordCategory").Split(' ');
+						for (int i = 0; i < formIds.Length; i++)
+						{
+							int wordTypeIndex = WordTypeIndex(i, wordTypes.Count());
+							morphElem.Add(new XElement("MoForm", new XAttribute("DbRef", formIds[i]), new XAttribute("wordType", wordTypes[wordTypeIndex])));
+							string featDesc = allomorph.GetProperty("FeatureDescriptors");
+							morphElem.Add(string.IsNullOrEmpty(featDesc) ? new XElement("props") : new XElement("props", featDesc));
+						}
+					}
+
+					if (!String.IsNullOrEmpty(msaId))
+						morphElem.Add(new XElement("MSI", new XAttribute("DbRef", msaId)));
+					elem.Add(morphElem);
+				}
+
+				return elem;
+			}
+		}
+
 		class FwXmlOutput : XmlOutput
 		{
 			readonly bool m_fDotrace;
@@ -177,7 +242,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			readonly FdoCache m_cache;
 
 			public FwXmlOutput(XmlWriter writer, bool fDotrace, PatrParser patr, string patrlexPath, FdoCache cache)
-				: base(writer)
+				: base(writer, new FwXmlTraceManager())
 			{
 				m_fDotrace = fDotrace;
 				m_patr = patr;
@@ -187,34 +252,33 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			public override void MorphAndLookupWord(Morpher morpher, string word, bool prettyPrint, bool printTraceInputs)
 			{
-				MorphAndLookupWord(morpher, word, prettyPrint, printTraceInputs, null);
+				MorphAndLookupWord(morpher, word, printTraceInputs, null);
 			}
 
-			public void MorphAndLookupWord(Morpher morpher, string word, bool prettyPrint, bool printTraceInputs, string[] selectTraceMorphs)
+			public void MorphAndLookupWord(Morpher morpher, string word, bool printTraceInputs, string[] selectTraceMorphs)
 			{
 				try
 				{
 					ICollection<WordGrammarTrace> wordGrammarTraces = null;
 					if (m_fDotrace)
 						wordGrammarTraces = new HashSet<WordGrammarTrace>();
-					morpher.TraceAll = m_fDotrace;
-					WordAnalysisTrace trace;
-					ICollection<WordSynthesis> synthesisRecs = morpher.MorphAndLookupWord(word, out trace, selectTraceMorphs);
+					XmlTraceManager.WriteInputs = printTraceInputs;
+					TraceManager.TraceAll = m_fDotrace;
+					ICollection<WordSynthesis> synthesisRecs = morpher.MorphAndLookupWord(word, TraceManager, selectTraceMorphs);
 					foreach (WordSynthesis ws in synthesisRecs)
 					{
 						WordGrammarTrace wordGrammarTrace = null;
-						IEnumerable<PcPatrMorph> morphs = GetMorphs(ws);
+						List<PcPatrMorph> morphs = GetMorphs(ws);
 						if (wordGrammarTraces != null)
 						{
-							wordGrammarTrace = new WordGrammarTrace(((uint)ws.GetHashCode()).ToString(), morphs, m_cache);
+							wordGrammarTrace = new WordGrammarTrace(((uint) ws.GetHashCode()).ToString(CultureInfo.InvariantCulture), morphs, m_cache);
 							wordGrammarTraces.Add(wordGrammarTrace);
 						}
-						if (morphs.Count() == 1)
+						if (morphs.Count == 1)
 						{
-							var morph = morphs.First();
-							var formid = morph.formId;
-							var forms = m_cache.LanguageProject.LexDbOA.AllAllomorphs.Where(a => a.Hvo.ToString() == formid);
-							var form = forms.First();
+							PcPatrMorph morph = morphs[0];
+							string formid = morph.formId;
+							IMoForm form = m_cache.ServiceLocator.GetInstance<IMoFormRepository>().GetObject(int.Parse(formid));
 							var morphtype = form.MorphTypeRA;
 							if (morphtype.IsBoundType)
 							{
@@ -247,81 +311,15 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					}
 					if (m_fDotrace)
 					{
-						Write(trace, prettyPrint, printTraceInputs);
+						WriteTrace();
 						ConvertWordGrammarTraceToXml(wordGrammarTraces);
 					}
+					XmlTraceManager.Reset();
 				}
 				catch (MorphException exc)
 				{
 					Write(exc);
 				}
-			}
-
-			protected override void Write(HermitCrab.Trace trace, bool printTraceInputs)
-			{
-				if (trace.Type == HermitCrab.Trace.TraceType.REPORT_SUCCESS)
-				{
-					var rsTrace = (ReportSuccessTrace) trace;
-					m_xmlWriter.WriteStartElement(rsTrace.GetType().Name);
-					m_xmlWriter.WriteStartElement("Result");
-					m_xmlWriter.WriteAttributeString("id", ((uint)rsTrace.Output.GetHashCode()).ToString());
-					m_xmlWriter.WriteString(rsTrace.Output.Stratum.CharacterDefinitionTable.ToString(rsTrace.Output.Shape,
-						ModeType.SYNTHESIS, true));
-					m_xmlWriter.WriteEndElement();
-					m_xmlWriter.WriteEndElement();
-				}
-				else
-				{
-					base.Write(trace, printTraceInputs);
-				}
-			}
-
-			protected override void Write(string localName, Allomorph allo)
-			{
-				m_xmlWriter.WriteStartElement(localName);
-				m_xmlWriter.WriteAttributeString("id", allo.ID);
-				m_xmlWriter.WriteElementString("Description", allo.Description);
-
-				string formIdsStr = allo.GetProperty("FormID");
-				string msaId = allo.GetProperty("MsaID");
-				if (!string.IsNullOrEmpty(formIdsStr) || !string.IsNullOrEmpty(msaId))
-				{
-					m_xmlWriter.WriteStartElement("Morph");
-
-					if (!string.IsNullOrEmpty(formIdsStr))
-					{
-						string[] formIds = formIdsStr.Split(' ');
-						string[] wordTypes = allo.GetProperty("WordCategory").Split(' ');
-						for (int i = 0; i < formIds.Length; i++)
-						{
-							m_xmlWriter.WriteStartElement("MoForm");
-							m_xmlWriter.WriteAttributeString("DbRef", formIds[i]);
-							int wordTypeIndex = WordTypeIndex(i, wordTypes.Count());
-							m_xmlWriter.WriteAttributeString("wordType", wordTypes[wordTypeIndex]);
-							m_xmlWriter.WriteEndElement();
-							m_xmlWriter.WriteStartElement("props");
-							foreach (KeyValuePair<string, string> prop in allo.Properties)
-							{
-								if (prop.Key == "FeatureDescriptors")
-								{
-									m_xmlWriter.WriteString(prop.Value);
-								}
-							}
-							m_xmlWriter.WriteEndElement();
-						}
-					}
-
-					if (!string.IsNullOrEmpty(msaId))
-					{
-						m_xmlWriter.WriteStartElement("MSI");
-						m_xmlWriter.WriteAttributeString("DbRef", msaId);
-						m_xmlWriter.WriteEndElement();
-					}
-
-					m_xmlWriter.WriteEndElement();
-				}
-
-				m_xmlWriter.WriteEndElement();
 			}
 
 			private static string BuildPcPatrInputSentence(IEnumerable<PcPatrMorph> morphs)
@@ -340,15 +338,15 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			void ConvertWordGrammarTraceToXml(IEnumerable<WordGrammarTrace> wordGrammarTraces)
 			{
-				m_xmlWriter.WriteStartElement("WordGrammarTrace");
+				XmlWriter.WriteStartElement("WordGrammarTrace");
 				foreach (WordGrammarTrace trace in wordGrammarTraces)
 				{
-					trace.ToXml(m_xmlWriter);
+					trace.ToXml(XmlWriter);
 				}
-				m_xmlWriter.WriteEndElement();
+				XmlWriter.WriteEndElement();
 			}
 
-			static IEnumerable<PcPatrMorph> GetMorphs(WordSynthesis ws)
+			static List<PcPatrMorph> GetMorphs(WordSynthesis ws)
 			{
 				var ppMorphs = new Dictionary<string, PcPatrMorph>();
 				var result = new List<PcPatrMorph>();
@@ -410,18 +408,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				return result;
 			}
 
-			static int WordTypeIndex(int expectedindex, int wordTypesCount)
-			{
-				int wordTypeIndex = expectedindex;
-				if (wordTypeIndex + 1 > wordTypesCount)
-				{
-					// something is wrong (perhaps a missing suffix slot for a circumfix)
-					// we'll use the same as last time, hoping for a parse failure
-					wordTypeIndex = wordTypeIndex - 1;
-				}
-				return wordTypeIndex;
-			}
-
 			static void WritePcPatrLexiconFile(string path, IEnumerable<PcPatrMorph> morphs)
 			{
 				using (var writer = new StreamWriter(path))
@@ -431,7 +417,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					writer.WriteLine("\\w {0}", morph.Form);
 					writer.WriteLine("\\c {0}", morph.wordType);
 					writer.WriteLine("\\g {0}", morph.gloss);
-					if (!string.IsNullOrEmpty(morph.featureDescriptors))
+					if (!String.IsNullOrEmpty(morph.featureDescriptors))
 					{
 						string lastFeatDesc = "";
 						string combinedCFPFeatDescs = "";
@@ -462,64 +448,64 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			void BuildXmlOutput(IEnumerable<PcPatrMorph> morphs)
 			{
-				m_xmlWriter.WriteStartElement("WfiAnalysis");
-				m_xmlWriter.WriteStartElement("Morphs");
+				XmlWriter.WriteStartElement("WfiAnalysis");
+				XmlWriter.WriteStartElement("Morphs");
 
 				foreach (PcPatrMorph morph in morphs)
 				{
-					m_xmlWriter.WriteStartElement("Morph");
+					XmlWriter.WriteStartElement("Morph");
 
-					m_xmlWriter.WriteStartElement("MoForm");
-					m_xmlWriter.WriteAttributeString("DbRef", morph.formId);
-					m_xmlWriter.WriteAttributeString("Label", morph.form);
-					m_xmlWriter.WriteAttributeString("wordType", morph.wordType);
-					m_xmlWriter.WriteEndElement();
+					XmlWriter.WriteStartElement("MoForm");
+					XmlWriter.WriteAttributeString("DbRef", morph.formId);
+					XmlWriter.WriteAttributeString("Label", morph.form);
+					XmlWriter.WriteAttributeString("wordType", morph.wordType);
+					XmlWriter.WriteEndElement();
 
-					m_xmlWriter.WriteStartElement("MSI");
-					m_xmlWriter.WriteAttributeString("DbRef", morph.msaId);
-					m_xmlWriter.WriteEndElement();
+					XmlWriter.WriteStartElement("MSI");
+					XmlWriter.WriteAttributeString("DbRef", morph.msaId);
+					XmlWriter.WriteEndElement();
 
-					m_xmlWriter.WriteEndElement();
+					XmlWriter.WriteEndElement();
 				}
 
-				m_xmlWriter.WriteEndElement();
-				m_xmlWriter.WriteEndElement();
+				XmlWriter.WriteEndElement();
+				XmlWriter.WriteEndElement();
 			}
 
 			public override void Write(LoadException le)
 			{
-				m_xmlWriter.WriteStartElement("Error");
+				XmlWriter.WriteStartElement("Error");
 				switch (le.ErrorType)
 				{
 					case LoadException.LoadErrorType.INVALID_ENTRY_SHAPE:
 						var entryShape = le.Data["shape"] as string;
 						var entryId = le.Data["entry"] as string;
 						LexEntry entry = le.Loader.CurrentMorpher.Lexicon.GetEntry(entryId);
-						m_xmlWriter.WriteString(string.Format(ParserCoreStrings.ksHCInvalidEntryShape, entryShape, entry.Description));
+						XmlWriter.WriteString(String.Format(ParserCoreStrings.ksHCInvalidEntryShape, entryShape, entry.Description));
 						break;
 
 					case LoadException.LoadErrorType.INVALID_RULE_SHAPE:
 						var ruleShape = le.Data["shape"] as string;
 						var ruleId = le.Data["rule"] as string;
 						MorphologicalRule rule = le.Loader.CurrentMorpher.GetMorphologicalRule(ruleId);
-						m_xmlWriter.WriteString(string.Format(ParserCoreStrings.ksHCInvalidRuleShape, ruleShape, rule.Description));
+						XmlWriter.WriteString(String.Format(ParserCoreStrings.ksHCInvalidRuleShape, ruleShape, rule.Description));
 						break;
 
 					default:
-						m_xmlWriter.WriteString(string.Format(ParserCoreStrings.ksHCDefaultErrorMsg, le.Message));
+						XmlWriter.WriteString(String.Format(ParserCoreStrings.ksHCDefaultErrorMsg, le.Message));
 						break;
 				}
-				m_xmlWriter.WriteEndElement();
+				XmlWriter.WriteEndElement();
 			}
 
 			public override void Write(MorphException me)
 			{
-				m_xmlWriter.WriteStartElement("Error");
+				XmlWriter.WriteStartElement("Error");
 				switch (me.ErrorType)
 				{
 					case MorphException.MorphErrorType.INVALID_SHAPE:
-						var shape = me.Data["shape"] as string;
-						int position = (int) me.Data["position"];
+						var shape = (string) me.Data["shape"];
+						var position = (int) me.Data["position"];
 						string rest = shape.Substring(position);
 						string restToUse = rest;
 						LgGeneralCharCategory cc = m_cache.ServiceLocator.UnicodeCharProps.get_GeneralCategory(rest[0]);
@@ -528,20 +514,20 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							// insert a space so it does not show on top of a single quote in the message string
 							restToUse = " " + rest;
 						}
-						m_xmlWriter.WriteString(string.Format(ParserCoreStrings.ksHCInvalidWordform, shape, position+1, restToUse));
+						XmlWriter.WriteString(String.Format(ParserCoreStrings.ksHCInvalidWordform, shape, position+1, restToUse));
 						break;
 
 					case MorphException.MorphErrorType.UNINSTANTIATED_FEATURE:
 						var featId = me.Data["feature"] as string;
 						var feat = me.Morpher.PhoneticFeatureSystem.GetFeature(featId);
-						m_xmlWriter.WriteString(string.Format(ParserCoreStrings.ksHCUninstFeature, feat.Description));
+						XmlWriter.WriteString(String.Format(ParserCoreStrings.ksHCUninstFeature, feat.Description));
 						break;
 
 					default:
-						m_xmlWriter.WriteString(string.Format(ParserCoreStrings.ksHCDefaultErrorMsg, me.Message));
+						XmlWriter.WriteString(String.Format(ParserCoreStrings.ksHCDefaultErrorMsg, me.Message));
 						break;
 				}
-				m_xmlWriter.WriteEndElement();
+				XmlWriter.WriteEndElement();
 			}
 		}
 
@@ -591,10 +577,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			{
 				selectTraceMorphIds = selectTraceMorphs.TrimEnd().Split(' ');
 				int i = 0;
-				foreach (var sId in selectTraceMorphIds)
+				foreach (string sId in selectTraceMorphIds)
 				{
-					var msas = m_cache.LanguageProject.LexDbOA.AllMSAs.Where(m => m.Hvo.ToString() == sId);
-					var msa = msas.First();
+					IMoMorphSynAnalysis msa = m_cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>().GetObject(int.Parse(sId));
 					if (msa.ClassID == MoStemMsaTags.kClassId)
 						selectTraceMorphIds.SetValue("lex" + sId, i);
 					else
@@ -620,11 +605,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				writer.WriteAttributeString("Form", form);
 				var output = new FwXmlOutput(writer, fDotrace, m_patr,
 					Path.Combine(m_outputDirectory, m_projectName + "patrlex.txt"), m_cache);
-				output.MorphAndLookupWord(m_loader.CurrentMorpher, form, true, true, selectTraceMorphs);
+				output.MorphAndLookupWord(m_loader.CurrentMorpher, form, true, selectTraceMorphs);
 				writer.WriteEndElement();
-				writer.Close();
-				return sb.ToString();
 			}
+			return sb.ToString();
 		}
 
 		public string HcInputPath
@@ -645,7 +629,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			foreach (var affix in m_cache.ServiceLocator.GetInstance<IMoAffixAllomorphRepository>().AllInstances())
 			{
 				string form = affix.Form.VernacularDefaultWritingSystem.Text;
-				if (string.IsNullOrEmpty(form) || !form.Contains("["))
+				if (String.IsNullOrEmpty(form) || !form.Contains("["))
 					continue;
 				string environment = "/_" + form;
 				// A form containing a reduplication expression should look like an environment
@@ -654,7 +638,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					m_cache.LangProject.PhonologicalDataOA.AllNaturalClassAbbrs().ToArray());
 				if (!validator.Recognize(environment))
 				{
-					string msg = string.Format(ParserCoreStrings.ksHermitCrabReduplicationProblem, form,
+					string msg = String.Format(ParserCoreStrings.ksHermitCrabReduplicationProblem, form,
 						validator.ErrorMessage);
 					m_cache.ThreadHelper.Invoke(() => // We may be running in a background thread
 						{
@@ -683,7 +667,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			string loadErrorsFile = Path.Combine(m_outputDirectory, m_projectName + "HCLoadErrors.xml");
 			using (XmlWriter writer = new XmlTextWriter(loadErrorsFile, null))
 			{
-				XmlOutput loadOutput = new XmlOutput(writer);
+				var loadOutput = new XmlOutput(writer);
 				writer.WriteStartElement("LoadErrors");
 				m_loader.Output = loadOutput;
 				m_loader.Load(hcPath);

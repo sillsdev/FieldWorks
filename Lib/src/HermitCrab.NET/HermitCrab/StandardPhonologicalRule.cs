@@ -659,7 +659,7 @@ namespace SIL.HermitCrab
 			/// <returns>
 			/// 	<c>true</c> if this subrule is applicable, otherwise <c>false</c>.
 			/// </returns>
-			public bool IsApplicable(WordSynthesis input, Trace trace)
+			public bool IsApplicable(WordSynthesis input, TraceManager trace)
 			{
 				// check part of speech and MPR features
 				bool fRequiredPOSMet = m_requiredPOSs == null || m_requiredPOSs.Count == 0 || m_requiredPOSs.Contains(input.POS);
@@ -668,41 +668,26 @@ namespace SIL.HermitCrab
 				if (trace != null)
 				{
 					if (!fRequiredPOSMet)
-					{
-						var badPosTrace = new PhonologicalRuleSynthesisRequiredPOSTrace(input.POS, m_requiredPOSs);
-						trace.AddChild(badPosTrace);
-					}
+						trace.PhonologicalRuleNotApplicablePOS(input, m_requiredPOSs);
 					if (!fRequiredMPRFeaturesMet)
-					{
-						var badRequiredMPRFeaturesTrace =
-							new PhonologicalRuleSynthesisMPRFeaturesTrace(
-								PhonologicalRuleSynthesisMPRFeaturesTrace.PhonologicalRuleSynthesisMPRFeaturesTraceType.REQUIRED,
-								input.MPRFeatures, m_requiredMPRFeatures);
-						trace.AddChild(badRequiredMPRFeaturesTrace);
-					}
+						trace.PhonologicalRuleNotApplicableMPRFeatures(MPRFeaturesType.REQUIRED, input, m_requiredMPRFeatures);
 					if (!fExcludedMPRFeaturesMet)
-					{
-						var badExcludedMPRFeaturesTrace =
-							new PhonologicalRuleSynthesisMPRFeaturesTrace(
-								PhonologicalRuleSynthesisMPRFeaturesTrace.PhonologicalRuleSynthesisMPRFeaturesTraceType.EXCLUDED,
-								input.MPRFeatures, m_excludedMPRFeatures);
-						trace.AddChild(badExcludedMPRFeaturesTrace);
-					}
+						trace.PhonologicalRuleNotApplicableMPRFeatures(MPRFeaturesType.EXCLUDED, input, m_excludedMPRFeatures);
 				}
 				return (fRequiredPOSMet && fRequiredMPRFeaturesMet && fExcludedMPRFeaturesMet);
 			}
 		}
 
-		List<Subrule> m_subrules;
+		readonly List<Subrule> m_subrules;
 
 		MultAppOrder m_multApplication = MultAppOrder.LR_ITERATIVE;
-		AlphaVariables m_alphaVars = null;
-		PhoneticPattern m_lhs = null;
+		AlphaVariables m_alphaVars;
+		PhoneticPattern m_lhs;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="PhonologicalRule"/> class.
 		/// </summary>
-		/// <param name="featId">The ID.</param>
+		/// <param name="id">The ID.</param>
 		/// <param name="desc">The description.</param>
 		/// <param name="morpher">The morpher.</param>
 		public StandardPhonologicalRule(string id, string desc, Morpher morpher)
@@ -780,40 +765,31 @@ namespace SIL.HermitCrab
 		/// Unapplies the rule to the specified word analysis.
 		/// </summary>
 		/// <param name="input">The input word analysis.</param>
-		public override void Unapply(WordAnalysis input)
+		/// <param name="trace"></param>
+		public override void Unapply(WordAnalysis input, TraceManager trace)
 		{
-			PhonologicalRuleAnalysisTrace trace = null;
-			if (TraceAnalysis)
-			{
-				// create phonological rule analysis trace record
-				trace = new PhonologicalRuleAnalysisTrace(this, input.Clone());
-				input.CurrentTrace.AddChild(trace);
-			}
+			if (trace != null)
+				trace.BeginUnapplyPhonologicalRule(this, input);
 
 			foreach (Subrule sr in m_subrules)
 				sr.Unapply(input.Shape);
 
 			if (trace != null)
-				// add output to trace record
-				trace.Output = input.Clone();
+				trace.EndUnapplyPhonologicalRule(this, input);
 		}
 
 		/// <summary>
 		/// Applies the rule to the specified word synthesis.
 		/// </summary>
 		/// <param name="input">The word synthesis.</param>
-		public override void Apply(WordSynthesis input)
+		/// <param name="trace"></param>
+		public override void Apply(WordSynthesis input, TraceManager trace)
 		{
-			PhonologicalRuleSynthesisTrace trace = null;
-			if (TraceSynthesis)
-			{
-				// create phonological rule synthesis trace record
-				trace = new PhonologicalRuleSynthesisTrace(this, input.Clone());
-				input.CurrentTrace.AddChild(trace);
-			}
+			if (trace != null)
+				trace.BeginApplyPhonologicalRule(this, input);
 
 			// only try to apply applicable subrules
-			List<Subrule> subrules = new List<Subrule>();
+			var subrules = new List<Subrule>();
 			foreach (Subrule sr in m_subrules)
 			{
 				if (sr.IsApplicable(input, trace))
@@ -827,7 +803,7 @@ namespace SIL.HermitCrab
 				foreach (PhoneticShapeNode node in pshape)
 				{
 					if (node.Type == PhoneticShapeNode.NodeType.SEGMENT)
-						(node as Segment).IsClean = true;
+						((Segment) node).IsClean = true;
 				}
 
 				switch (m_multApplication)
@@ -848,7 +824,7 @@ namespace SIL.HermitCrab
 
 			// add output to phonological rule trace record
 			if (trace != null)
-				trace.Output = input.Clone();
+				trace.EndApplyPhonologicalRule(this, input);
 		}
 
 		void ApplySimultaneous(PhoneticShape input, List<Subrule> subrules)
@@ -856,7 +832,7 @@ namespace SIL.HermitCrab
 			foreach (Subrule sr in subrules)
 			{
 				// first find all segments which match the LHS
-				List<Match> matches = new List<Match>();
+				var matches = new List<Match>();
 				PhoneticShapeNode node = input.First;
 				Match match;
 				while (FindNextMatchLHS(node, Direction.RIGHT, out match))
