@@ -250,6 +250,7 @@ install-tree:
 	install Lib/src/icu/install$(ARCH)/bin/* $(DESTDIR)/usr/lib/fieldworks/icu-bin
 	install Lib/src/icu/source/bin/* $(DESTDIR)/usr/lib/fieldworks/icu-bin
 	install Lib/linux/fieldworks-{te,flex} $(DESTDIR)/usr/bin
+	install Lib/linux/unicodechareditor $(DESTDIR)/usr/bin
 	install Lib/linux/{cpol-action,run-app,extract-userws.xsl} $(DESTDIR)/usr/lib/fieldworks
 	install Lib/linux/setup-user $(DESTDIR)/usr/share/fieldworks/
 	install Lib/linux/ShareFwProjects $(DESTDIR)/usr/lib/fieldworks
@@ -291,6 +292,7 @@ install-menuentries:
 	install -m 644 Src/TeExe/Res/TE.png $(DESTDIR)/usr/share/pixmaps/fieldworks-te.png
 	desktop-file-install --dir $(DESTDIR)/usr/share/applications Lib/linux/fieldworks-te.desktop
 	desktop-file-install --dir $(DESTDIR)/usr/share/applications Lib/linux/fieldworks-flex.desktop
+	desktop-file-install --dir $(DESTDIR)/usr/share/applications Lib/linux/unicodechareditor.desktop
 
 install: install-tree install-menuentries l10n-install
 
