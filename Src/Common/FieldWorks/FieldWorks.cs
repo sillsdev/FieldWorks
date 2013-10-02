@@ -2961,7 +2961,14 @@ namespace SIL.FieldWorks
 							: CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastSeUrl"));
 
 					var sparkle = SingletonsContainer.Get("Sparkle", () => new Sparkle(appCastUrl, app.ActiveMainWindow.Icon));
-
+					sparkle.AboutToExitForInstallerRun += delegate(object sender, CancelEventArgs args)
+						{
+							CloseAllMainWindows();
+							if(app.ActiveMainWindow != null)
+							{
+								args.Cancel = true;
+							}
+						};
 					if (Settings.Default.AutoCheckForUpdates)
 						sparkle.CheckOnFirstApplicationIdle();
 #endif
