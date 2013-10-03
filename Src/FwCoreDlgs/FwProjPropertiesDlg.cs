@@ -972,13 +972,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			DialogResult = DialogResult.OK;
 			if (!DidProjectTabChange() && !DidWsTabChange() && !DidLinkedFilesTabChange())
 			{
-				Close(); //Ok, but nothing changed. Nothing to see here, carry on.
+				NotifyProjectPropsChangedAndClose(); //Ok, but nothing changed. Nothing to see here, carry on.
 				return;
 			}
 
 			if (!ClientServerServices.Current.WarnOnConfirmingSingleUserChanges(m_cache)) //if Anything changed, check and warn about DB4o
 			{
-				Close(); //The user changed something, but when warned decided against it, so do not save just quit
+				NotifyProjectPropsChangedAndClose(); //The user changed something, but when warned decided against it, so do not save just quit
 				return;
 			}
 			if (DidLinkedFilesTabChange())
@@ -1018,6 +1018,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().ResetHomographs(null);
 				});
 				m_cache.ServiceLocator.WritingSystemManager.Save();
+				NotifyProjectPropsChangedAndClose();
+			}
+		}
+
+		/// <summary>
+		/// Closing the dialog from the OK button has several exits. All should raise this event if something
+		/// changed that might require a master refresh.
+		/// </summary>
+		private void NotifyProjectPropsChangedAndClose()
+		{
+			using (new WaitCursor(this))
+			{
 				if (m_fWsChanged || m_fProjNameChanged || m_fLinkedFilesChanged)
 				{
 					if (ProjectPropertiesChanged != null)
