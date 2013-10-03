@@ -202,6 +202,16 @@ namespace SIL.CoreImpl
 			Assert.IsNull(variantSubtag);
 
 			Assert.IsFalse(LangTagUtils.GetSubtags("en_Latn_US_X_ETIC", out languageSubtag, out scriptSubtag, out regionSubtag, out variantSubtag));
+
+			// Although dupl0 is in a position where it would normally be interpreted as a private language code, since it isn't a valid one,
+			// we instead interpret it as simply a variant of qaa, the unknown language.
+			Assert.IsTrue(LangTagUtils.GetSubtags("qaa-x-dupl0", out languageSubtag, out scriptSubtag, out regionSubtag, out variantSubtag));
+			Assert.AreEqual("qaa", languageSubtag.Code);
+			Assert.IsFalse(languageSubtag.IsPrivateUse);
+			Assert.IsNull(scriptSubtag);
+			Assert.IsNull(regionSubtag);
+			Assert.That(variantSubtag.Code, Is.EqualTo("x-dupl0"));
+			Assert.IsTrue(variantSubtag.IsPrivateUse);
 		}
 	}
 }
