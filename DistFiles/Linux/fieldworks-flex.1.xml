@@ -115,4 +115,10 @@
 	  /usr/lib/fieldworks/FieldWorks.exe with the command line argument "-app Flex".
 	</para>
   </refsection>
+
+  <refsection>
+	<title>SEE ALSO</title>
+
+	<para>unicodechareditor</para>
+  </refsection>
 </refentry>

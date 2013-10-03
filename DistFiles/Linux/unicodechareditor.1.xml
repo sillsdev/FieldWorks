@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<refentry>
+  <refmeta>
+	<refentrytitle>unicodechareditor</refentrytitle>
+	<manvolnum>1</manvolnum>
+  </refmeta>
+
+  <refnamediv>
+	<refname>unicodechareditor</refname>
+	<refpurpose>Unicode Character Editor</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+	<cmdsynopsis>
+	  <command>unicodechareditor</command>
+	  <arg><option>-i</option></arg>
+	</cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsection>
+	<title>DESCRIPTION</title>
+
+	<para>unicodechareditor</para>
+
+	<variablelist>
+	  <varlistentry>
+		<term><option>-i</option></term>
+		<listitem>
+		  <para>Install the custom character definitions</para>
+		</listitem>
+	  </varlistentry>
+	</variablelist>
+	<para>
+	  unicodechareditor provides a tool for defining additional (Private Use Area)
+	  Unicode characters for use within the FieldWorks programs.
+	</para>
+  </refsection>
+
+  <refsection>
+	<title>NOTES</title>
+
+	<para>
+	  /usr/bin/unicodechareditor is a wrapper around the C# program
+	  /usr/lib/fieldworks/UnicodeCharEditor.exe.
+	</para>
+  </refsection>
+
+  <refsection>
+	<title>SEE ALSO</title>
+
+	<para>fieldworks-flex</para>
+  </refsection>
+</refentry>

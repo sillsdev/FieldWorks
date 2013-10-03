@@ -205,6 +205,7 @@ clean: \
 	tlbs-clean \
 	teckit-clean \
 	l10n-clean \
+	manpage-clean \
 
 # IDLImp is a C# app, so there is no reason to re-create that during our build.
 # We should be able to just use the version in $(BUILD_ROOT)\Bin
@@ -223,7 +224,19 @@ idl-do:
 idl-clean:
 	$(MAKE) -C$(SRC)/Common/COMInterfaces -f IDLMakefile clean
 
-install-tree:
+fieldworks-flex.1.gz: DistFiles/Linux/fieldworks-flex.1.xml
+	docbook2x-man DistFiles/Linux/fieldworks-flex.1.xml
+	gzip fieldworks-flex.1
+fieldworks-te.1.gz: DistFiles/Linux/fieldworks-te.1.xml
+	docbook2x-man DistFiles/Linux/fieldworks-te.1.xml
+	gzip fieldworks-te.1
+unicodechareditor.1.gz: DistFiles/Linux/unicodechareditor.1.xml
+	docbook2x-man DistFiles/Linux/unicodechareditor.1.xml
+	gzip unicodechareditor.1
+manpage-clean:
+	rm -f fieldworks-*.1.gz unicodechareditor.1.gz
+
+install-tree: fieldworks-flex.1.gz fieldworks-te.1.gz unicodechareditor.1.gz
 	# Create directories
 	install -d $(DESTDIR)/usr/bin
 	install -d $(DESTDIR)/usr/lib/fieldworks
@@ -231,6 +244,7 @@ install-tree:
 	install -d $(DESTDIR)/usr/share/fieldworks
 	install -d $(DESTDIR)/usr/share/fieldworks-movies
 	install -d $(DESTDIR)/usr/share/fieldworks-examples
+	install -d $(DESTDIR)/usr/share/man/man1
 	install -d $(DESTDIR)/usr/lib/fieldworks/EC/Plugins
 	install -d $(DESTDIR)/var/lib/fieldworks
 	# Install libraries and their support files
@@ -260,6 +274,8 @@ install-tree:
 	install -m 644 DistFiles/*.{pdf,txt,xml,map,tec,reg,dtd} $(DESTDIR)/usr/share/fieldworks
 	cp -pdr DistFiles/{"Editorial Checks",EncodingConverters} $(DESTDIR)/usr/share/fieldworks
 	cp -pdr DistFiles/{Ethnologue,Fonts,Graphite,Helps,Icu50,Keyboards,"Language Explorer",Parts,ReleaseData,SIL,Templates,"Translation Editor"} $(DESTDIR)/usr/share/fieldworks
+	# Install man pages
+	install -m 644 *.1.gz $(DESTDIR)/usr/share/man/man1
 	# Relocate items that are in separate packages
 	rm -rf $(DESTDIR)/usr/share/fieldworks-movies/"Language Explorer"
 	mv $(DESTDIR)/usr/share/fieldworks/"Language Explorer"/Movies $(DESTDIR)/usr/share/fieldworks-movies/"Language Explorer"
