@@ -995,6 +995,12 @@ namespace SIL.FieldWorks.Common.RootSites
 				// keys.  Setting this value to 0 accomplishes this.
 				if (value && m_rootb != null)
 					m_rootb.MaxParasToScan = 0;
+				// This allows read-only simple root sites embedded in dialogs not to trap tab keys that should move focus
+				// elsewhere and return keys that should close the dialog.
+				// It's not obvious, however, that every editable view should accept return; some may be one-liners.
+				// So only mess with it when set true.
+				if (value)
+					AcceptsReturn = AcceptsTab = false;
 			}
 		}
 
