@@ -93,5 +93,9 @@ export \
 
 #DEBUG_ENABLE_PTR_VALIDATION
 
+# prevent Gecko from printing scary message about "double free or corruption" on shutdown
+# (See FWNX-1216.)  Tom Hindle suggested this hack as a stopgap.
+MALLOC_CHECK_=0; export MALLOC_CHECK_
+
 #sets keyboard input method to none
 unset XMODIFIERS
