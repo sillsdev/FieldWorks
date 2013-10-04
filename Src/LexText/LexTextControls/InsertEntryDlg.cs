@@ -1481,41 +1481,40 @@ catch(Exception e)
 		{
 			var entryComponents = new LexEntryComponents();
 			entryComponents.MorphType = m_morphType;
-			entryComponents.LexemeFormAlternatives.Add(BestTssForm);
-			entryComponents.GlossAlternatives.Add(TsStringUtils.MakeTss(Gloss, m_cache.DefaultAnalWs));
+			CollectValuesFromMultiStringControl(msLexicalForm, entryComponents.LexemeFormAlternatives, BestTssForm);
+			CollectValuesFromMultiStringControl(msGloss, entryComponents.GlossAlternatives,
+				TsStringUtils.MakeTss(Gloss, m_cache.DefaultAnalWs));
 			entryComponents.MSA = m_msaGroupBox.SandboxMSA;
-			var bldr = m_cache.TsStrFactory;
-			if (msLexicalForm != null)
-			{
-				// Save the other writing systems.
-				for (int i = 0; i < msLexicalForm.NumberOfWritingSystems; i++)
-				{
-					int ws;
-					ITsString tss = msLexicalForm.ValueAndWs(i, out ws);
-					if (tss != null && tss.Text != null)
-					{
-						// In the case of copied text, sometimes the string had the wrong ws attached to it. (LT-11950)
-						entryComponents.LexemeFormAlternatives.Add(bldr.MakeString(tss.Text, ws));
-					}
-				}
-			}
-			if (msGloss != null)
-			{
-				// Save the other writing systems.
-				for (int i = 0; i < msGloss.NumberOfWritingSystems; i++)
-				{
-					int ws;
-					ITsString tss = msGloss.ValueAndWs(i, out ws);
-					// In the case of copied text, sometimes the string had the wrong ws attached to it. (LT-11950)
-					entryComponents.GlossAlternatives.Add(bldr.MakeString(tss.Text, ws));
-				}
-			}
 			if (m_MGAGlossListBoxItems != null)
 			{
 				foreach (GlossListBoxItem xn in m_MGAGlossListBoxItems)
 					entryComponents.GlossFeatures.Add(xn.XmlNode);
 			}
 			return entryComponents;
+		}
+
+		private void CollectValuesFromMultiStringControl(LabeledMultiStringControl lmsControl,
+			IList<ITsString> alternativesCollector, ITsString defaultIfNoMultiString)
+		{
+			var bldr = m_cache.TsStrFactory;
+			if (lmsControl == null)
+			{
+				alternativesCollector.Add(defaultIfNoMultiString);
+			}
+			else
+			{
+				// Save all the writing systems.
+				for (var i = 0; i < lmsControl.NumberOfWritingSystems; i++)
+				{
+					int ws;
+					ITsString tss = lmsControl.ValueAndWs(i, out ws);
+					if (tss != null && tss.Text != null)
+					{
+						// In the case of copied text, sometimes the string had the wrong ws attached to it. (LT-11950)
+						alternativesCollector.Add(bldr.MakeString(tss.Text, ws));
+					}
+				}
+			}
 		}
 
 		private void InsertEntryDlg_Closed(object sender, EventArgs e)
