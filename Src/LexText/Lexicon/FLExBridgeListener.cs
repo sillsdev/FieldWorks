@@ -477,6 +477,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (MiscUtils.IsUnix)
 			{
 				display.Visible = false;
+				display.Enabled = false;
 			}
 			else
 			{
