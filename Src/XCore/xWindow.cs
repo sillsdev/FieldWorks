@@ -747,7 +747,6 @@ namespace XCore
 
 			LoadStringTableIfPresent(configurationPath);
 			LoadResources(m_windowConfigurationNode.SelectSingleNode("resources"));
-			LoadListeners(m_windowConfigurationNode.SelectSingleNode("listeners"));
 
 			//make the command set
 			CommandSet commandset = new CommandSet(m_mediator);
@@ -755,6 +754,10 @@ namespace XCore
 			m_mediator.Initialize(commandset);
 			RestoreWindowSettings(wasCrashDuringPreviousStartup);
 			Size restoreSize = Size;
+
+			// Some of the listener initialization depends on PropertyTable initialization which
+			// occurs in RestoreWindowSettings() above (e.g. LT-14150 re: 'sticky' spell checking).
+			LoadListeners(m_windowConfigurationNode.SelectSingleNode("listeners"));
 
 			// Note: This will throw an exception, if the Init method has already been called.
 			// It is 'poor form' to try and add a colleague more than once,
