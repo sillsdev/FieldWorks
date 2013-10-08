@@ -1395,7 +1395,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				reverseAbbrev = CreateLiftMultiTextFromXml(revAbbrevNode);
 			}
-			var refType = refTypeTrait == null ? (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseCollection : int.Parse(refTypeTrait.Value);
+			int refType = (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseCollection;
+			if(refTypeTrait != null && !String.IsNullOrEmpty(refTypeTrait.Value))
+			{
+				refType = int.Parse(refTypeTrait.Value);
+			}
 			FindOrCreateLexRefType(id, guidAttr, parent, desc, label, abbrev, reverseName, reverseAbbrev, refType);
 		}
 
