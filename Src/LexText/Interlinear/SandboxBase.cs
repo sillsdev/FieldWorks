@@ -2865,6 +2865,7 @@ namespace SIL.FieldWorks.IText
 				finally
 				{
 					m_fHandlingRightClickMenu = false;
+					rightClickUiObj.Dispose();
 				}
 			}
 			return false;

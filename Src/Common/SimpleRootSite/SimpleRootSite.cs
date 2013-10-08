@@ -3861,7 +3861,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				// with unpredictably disastrous results. So don't do the recursive paint...
 				// on the other hand, the paint that is in progress may have been
 				// messed up, so request another one.
-				Debug.WriteLine("Recursive OnPaint call");
+				Debug.WriteLine(String.Format("Recursive OnPaint call for {0}", this));
 				// Calling Invalidate directly can cause an infinite loop of paint calls in certain
 				// circumstances.  But we don't want to leave the window incorrectly painted.
 				// Postponing the new Invalidate until the application is idle seems a good compromise.
