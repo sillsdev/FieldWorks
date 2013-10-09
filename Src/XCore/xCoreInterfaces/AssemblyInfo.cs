@@ -14,3 +14,5 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTitle("xCore Interfaces")]
 
 [assembly: System.Runtime.InteropServices.ComVisible(false)]
+
+[assembly: InternalsVisibleTo("xCoreInterfacesTests")]

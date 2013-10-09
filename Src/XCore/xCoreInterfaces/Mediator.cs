@@ -42,16 +42,63 @@ namespace XCore
 	{
 		#region IComparer<Tuple<int,IxCoreColleague>> Members
 
+		Dictionary<IxCoreColleague, int> m_equalColleagues = new Dictionary<IxCoreColleague, int>();
+		int m_nextEqualColleagueId;
+
 		public int Compare(Tuple<int, IxCoreColleague> x, Tuple<int, IxCoreColleague> y)
 		{
 			int c = x.Item1 - y.Item1;
 			if (c != 0)
 				return c;
-			// Avoid possible overflow in the subtraction.  See FWNX-896.  I'm not sure why
-			// this affects only Linux/Mono unless the Windows/.Net default implementation
-			// returns hash codes that are always positive integers.
-			Int64 val1 = (Int64)x.Item2.GetHashCode() - (Int64)y.Item2.GetHashCode();
-			return (int)(val1 / 2L);
+			// Now we are down to comparing colleagues at the same priority. In theory, we should give
+			// a different priority to any pair of colleagues if it is important to try one before the
+			// other. But it may cause problems in adding items if they come out equal, so we try
+			// to give a non-zero answer if they are different actual colleagues. It may also
+			// help reduce the occurrence of non-repeatable bugs if we order same-priority colleagues
+			// in some predictable way that is the same on all runs of the program and on both platforms.
+			// Unfortunately, there is a shortage of even arbitrary keys that have these properties
+			// in the IxCoreColleague interface. Comparing the type names gives a predictable
+			// result for most cases. FullName might be slightly more unique, but comparing would be
+			// slower for little return; I doubt we have any instances of colleagues with the same
+			// name in different namespaces.
+			c = string.CompareOrdinal(x.Item2.GetType().Name, y.Item2.GetType ().Name);
+			if (c != 0)
+				return c;
+			// This is a last-resort strategy to avoid returning zero for distinct objects.
+			// We assign a unique integer to each object the first time we see it.
+			// This will probably put them in roughly the order they are added as colleagues, though
+			// that would somewhat depend on how the sort algorithm presents them to the comparer.
+			// (For example it might present the new item as x and an existing one as y. If we
+			// didn't previously need to use this last-resort strategy on y, we won't have assigned
+			// either of them a value, and the new one will get the smaller value. I suppose this might
+			// produce some inconsistency between Windows and Mono if they use different sort algorithms,
+			// but I don't see how to do better.)
+			// We don't really care what the order is (for objects with the same priority).
+			// What we are trying to achieve is a unique, consistent
+			// value for each object so that for any given pair of objects (with the same class and priority),
+			// whichever of them is the first argument, if x < y then y > x,
+			// and if x < y & y < z, then x < z; and two different objects don't
+			// give the same result. IOW, we want consistent standard inequality behavior so sorting
+			// will work, even though the actual order is arbitrary.
+			// If the two objects are equal (in the sense used for dictionary keys), we will
+			// return 0, but this should not happen as the Mediator avoids adding duplicate colleagues.
+			// One disadvantage of this strategy is that the tuple comparer retains a reference to
+			// these objects which may prevent them from being garbage collected. I don't think this
+			// will be a problem as there are relatively few colleagues mostly with long lives,
+			// and most of them will be differentiated by priority or class and won't get into the
+			// dictionary.
+			int v1, v2;
+			if(!m_equalColleagues.TryGetValue(x.Item2, out v1))
+			{
+				v1 = m_nextEqualColleagueId++;
+				m_equalColleagues[x.Item2] = v1;
+			}
+			if(!m_equalColleagues.TryGetValue(y.Item2, out v2))
+			{
+				v2 = m_nextEqualColleagueId++;
+				m_equalColleagues[y.Item2] = v2;
+			}
+			return v1-v2;
 		}
 
 		#endregion

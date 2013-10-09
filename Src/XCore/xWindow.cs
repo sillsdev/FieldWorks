@@ -1317,7 +1317,7 @@ namespace XCore
 			XmlNode contentClassNode =  ((XmlNode)windowConfigurationNode).SelectSingleNode("contentClass");
 
 			if(contentClassNode == null)
-				ChangeContentObjectIfPossible("xCore.dll", "XCore.Ticker", null);//something to show by default
+				throw new ArgumentException("xWindow.OnSetInitialContentObject called. The area listener should have been tried first and handled this. " + m_mediator.GetColleaguesDumpString());
 			else
 				ChangeContentObjectIfPossible(XmlUtils.GetAttributeValue(contentClassNode, "assemblyPath"),
 					XmlUtils.GetAttributeValue(contentClassNode, "class"), contentClassNode);
