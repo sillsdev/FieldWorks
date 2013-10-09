@@ -538,6 +538,12 @@ rule {Stem via compound rule <xsl:value-of select="@Id"/>}
 				  <xsl:text>        &lt;Stem_1 synCat&gt; &lt;= </xsl:text>
 				  <xsl:value-of select="$overridingPOS"/>
 				  <xsl:text>                                | override category</xsl:text>
+				<xsl:variable name="overridingInflectionClass" select="$overridingMsa/@InflectionClass"/>
+				<xsl:if test="$overridingInflectionClass!=0">
+				<xsl:text>&#x0a;        &lt;Stem_1 inflectionClass&gt; &lt;= </xsl:text>
+				<xsl:value-of select="$overridingInflectionClass"/>
+				<xsl:text>                                | override inflection class</xsl:text>
+				</xsl:if>
 			   </xsl:if>
 			</xsl:when>
 			<xsl:when test="name()='MoExoCompound'">

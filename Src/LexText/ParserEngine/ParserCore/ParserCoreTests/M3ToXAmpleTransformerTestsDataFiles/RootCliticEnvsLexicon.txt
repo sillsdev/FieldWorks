@@ -1,4 +1,4 @@
-
+﻿
 \lx 41490
 \g delme
 \c W
@@ -74,7 +74,7 @@
 \c W/W
 \o NaN NaN 
 \wc 167
-\a sa {6072} ICA179 +/ {InflClass179} ... _ +/ {ToInflClass179} ... _
+\a sa {6072} ICA179
 \a ra {6071} ICA178 +/ {InflClass178} ... _ +/ {ToInflClass178} ... _
 \eType suffix
  
@@ -83,7 +83,7 @@
 \c W/W
 \o NaN NaN 
 \wc 180
-\a sa {6072} ICA179 +/ {InflClass179} ... _ +/ {ToInflClass179} ... _
+\a sa {6072} ICA179
 \a ra {6071} ICA178 +/ {InflClass178} ... _ +/ {ToInflClass178} ... _
 \eType suffix
  
@@ -353,7 +353,7 @@
 \c W/W
 \o NaN NaN 
 \wc 167
-\a ko {6171} ICA179 +/ {InflClass179} ... _ +/ {ToInflClass179} ... _
+\a ko {6171} ICA179
 \a bi {6170} ICA178 +/ {InflClass178} ... _ +/ {ToInflClass178} ... _
 \eType suffix
  
@@ -362,7 +362,7 @@
 \c W/W
 \o NaN NaN 
 \wc 180
-\a ko {6171} ICA179 +/ {InflClass179} ... _ +/ {ToInflClass179} ... _
+\a ko {6171} ICA179
 \a bi {6170} ICA178 +/ {InflClass178} ... _ +/ {ToInflClass178} ... _
 \eType suffix
  
@@ -371,7 +371,7 @@
 \c W/W
 \o NaN NaN 
 \wc 180
-\a pe {6176} ICA179 +/ {InflClass179} ... _ +/ {ToInflClass179} ... _
+\a pe {6176} ICA179
 \a gu {6175} ICA178 +/ {InflClass178} ... _ +/ {ToInflClass178} ... _
 \eType suffix
  

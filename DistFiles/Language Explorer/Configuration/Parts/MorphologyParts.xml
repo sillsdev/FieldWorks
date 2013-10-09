@@ -667,6 +667,21 @@
 				</deParams>
 			</slice>
 		</part>
+		<part id="MoStemMsa-Detail-InflectionClass" type="Detail">
+			<slice field="InflectionClass" label="Inflection Class" editor="defaultAtomicReference" menu="mnuDataTree-Help" chooserDlgHelpTopicID="khtpChoose-InflectionClass">
+				<deParams ws="best analorvern"/>
+				<chooserInfo flidTextParam="5001002" text="The following inflection classes are available for the category {0}.">
+					<chooserLink type="goto" label="Edit the Inflection Classes for {0}" tool="posEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="MoStemMsa-Detail-InflectionClassDisabled" type="Detail">
+			<slice field="InflectionClass" label="Inflection Class" editor="defaultAtomicReferenceDisabled" menu="mnuDataTree-Help" chooserDlgHelpTopicID="khtpChoose-InflectionClass">
+				<deParams ws="best analorvern">
+					<forecolor>GrayText</forecolor>
+				</deParams>
+			</slice>
+		</part>
 		<part id="MoStemMsa-Jt-PartOfSpeech" type="jtview">
 			<obj field="PartOfSpeech" layout="Name"/>
 		</part>
