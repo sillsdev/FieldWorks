@@ -648,10 +648,12 @@ namespace SIL.HermitCrab
 			catch (MissingPhoneticShapeException mpse)
 			{
 				var me = new MorphException(MorphException.MorphErrorType.INVALID_SHAPE, this,
-					string.Format(HCStrings.kstidInvalidWord, word, SurfaceStratum.CharacterDefinitionTable.ID, mpse.Position+1, word.Substring(mpse.Position)));
+					string.Format(HCStrings.kstidInvalidWord, word, SurfaceStratum.CharacterDefinitionTable.ID, mpse.Position+1,
+									word.Substring(mpse.Position), mpse.PhonemesFoundSoFar));
 				me.Data["shape"] = word;
 				me.Data["charDefTable"] = SurfaceStratum.CharacterDefinitionTable.ID;
 				me.Data["position"] = mpse.Position;
+				me.Data["phonemesFoundSoFar"] = mpse.PhonemesFoundSoFar;
 				throw me;
 			}
 

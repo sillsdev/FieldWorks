@@ -28,13 +28,14 @@
 					</p>
 					<ul>
 						<xsl:for-each select="$HCLoadErrors">
+							<xsl:variable name="iCharNum" select="substring-before(substring-after(.,'The missing phonetic shape is at or near character number '),':')"/>
+							<xsl:variable name="sPhonemesFoundSoFar" select="substring-before(substring-after(.,'The phoneme(s) found so far are '),'.')"/>
 							<xsl:choose>
 								<xsl:when test="contains(.,'of rule') and contains(.,'mrule')">
 									<xsl:variable name="sFormWithPlusSigns" select="substring-before(substring-after(.,'Failure to translate shape '),' of rule ')"/>
 									<xsl:call-template name="ShowLoadErrorMessage">
 										<xsl:with-param name="sForm" select="translate($sFormWithPlusSigns,'+','')"/>
 										<xsl:with-param name="iCharNum">
-											<xsl:variable name="iCharNum" select="substring-before(substring-after(.,'The missing phonetic shape is at or near character number '),':')"/>
 											<xsl:choose>
 												<xsl:when test="substring($sFormWithPlusSigns,2,1)='+'">
 													<xsl:value-of select="number($iCharNum) - 1"/>
@@ -45,6 +46,7 @@
 											</xsl:choose>
 										</xsl:with-param>
 										<xsl:with-param name="sFormPart" select="translate(substring-before(substring-after(.,': '),'.'),'+','')"/>
+										<xsl:with-param name="sPhonemesFoundSoFar" select="$sPhonemesFoundSoFar"/>
 										<xsl:with-param name="sHvo">
 											<xsl:variable name="sMruleHvoWithQuotes" select="substring-before(substring-after(.,' of rule '),' into a phonetic shape using character table ')"/>
 											<xsl:value-of select="substring($sMruleHvoWithQuotes,7,string-length($sMruleHvoWithQuotes)-7)"/>
@@ -54,8 +56,9 @@
 								<xsl:when test="contains(.,' of lexical entry ')">
 									<xsl:call-template name="ShowLoadErrorMessage">
 										<xsl:with-param name="sForm" select="substring-before(substring-after(.,'Failure to translate shape '),' of lexical entry ')"/>
-										<xsl:with-param name="iCharNum" select="substring-before(substring-after(.,'The missing phonetic shape is at or near character number '),':')"/>
+										<xsl:with-param name="iCharNum" select="$iCharNum"/>
 										<xsl:with-param name="sFormPart" select="substring-before(substring-after(.,': '),'.')"/>
+										<xsl:with-param name="sPhonemesFoundSoFar" select="$sPhonemesFoundSoFar"/>
 										<xsl:with-param name="sHvo">
 											<xsl:variable name="sLexHvoWithQuotes" select="substring-before(substring-after(.,' of lexical entry '),' into a phonetic shape using character table ')"/>
 											<xsl:value-of select="substring($sLexHvoWithQuotes,5,string-length($sLexHvoWithQuotes)-5)"/>
@@ -84,15 +87,18 @@
 		<xsl:param name="sForm"/>
 		<xsl:param name="iCharNum"/>
 		<xsl:param name="sFormPart"/>
+		<xsl:param name="sPhonemesFoundSoFar"/>
 		<xsl:param name="sHvo"/>
 		<li>
-			<xsl:text>Somewhere in the form </xsl:text>
+			<xsl:text>There is at least one undefined phoneme in the form </xsl:text>
 			<xsl:value-of select="$sForm"/>
-			<xsl:text>, beginning with character number </xsl:text>
+			<xsl:text>.  The following phonemes were parsed: '</xsl:text>
+			<xsl:value-of select="$sPhonemesFoundSoFar"/>
+			<xsl:text>. The problem begins with character/diacritic number </xsl:text>
 			<xsl:value-of select="$iCharNum"/>
 			<xsl:text> -- that is, in the part of the form </xsl:text>
 			<xsl:value-of select="$sFormPart"/>
-			<xsl:text> -- there is at least one undefined phoneme.  Please make sure all phonemes in the form have been defined.  The Hermit Crab parser will ignore this entry until it is fixed. </xsl:text>
+			<xsl:text>  Please make sure all phonemes in the form have been defined.  The Hermit Crab parser will ignore this entry until it is fixed. </xsl:text>
 			<span style="cursor:hand; text-decoration:underline">
 				<xsl:attribute name="onclick">
 					<xsl:text>JumpToToolBasedOnHvo(</xsl:text>

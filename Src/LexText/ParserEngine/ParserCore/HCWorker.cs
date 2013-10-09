@@ -506,6 +506,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					case MorphException.MorphErrorType.INVALID_SHAPE:
 						var shape = (string) me.Data["shape"];
 						var position = (int) me.Data["position"];
+						var phonemesFoundSoFar = (string) me.Data["phonemesFoundSoFar"];
 						string rest = shape.Substring(position);
 						string restToUse = rest;
 						LgGeneralCharCategory cc = m_cache.ServiceLocator.UnicodeCharProps.get_GeneralCategory(rest[0]);
@@ -514,7 +515,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							// insert a space so it does not show on top of a single quote in the message string
 							restToUse = " " + rest;
 						}
-						XmlWriter.WriteString(String.Format(ParserCoreStrings.ksHCInvalidWordform, shape, position+1, restToUse));
+						XmlWriter.WriteString(String.Format(ParserCoreStrings.ksHCInvalidWordform, shape, position+1, restToUse, phonemesFoundSoFar));
 						break;
 
 					case MorphException.MorphErrorType.UNINSTANTIATED_FEATURE:

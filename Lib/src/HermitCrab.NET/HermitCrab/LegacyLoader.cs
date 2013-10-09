@@ -999,9 +999,12 @@ namespace SIL.HermitCrab
 			catch (MissingPhoneticShapeException mpse)
 			{
 				LoadException le = new LoadException(LoadException.LoadErrorType.INVALID_ENTRY_SHAPE, this,
-					string.Format(HCStrings.kstidInvalidLexEntryShape, shapeStr, id, stratum.CharacterDefinitionTable.ID, mpse.Position + 1, shapeStr.Substring(mpse.Position)));
+					string.Format(HCStrings.kstidInvalidLexEntryShape, shapeStr, id, stratum.CharacterDefinitionTable.ID, mpse.Position + 1,
+									shapeStr.Substring(mpse.Position), mpse.PhonemesFoundSoFar));
 				le.Data["shape"] = shapeStr;
 				le.Data["charDefTable"] = stratum.CharacterDefinitionTable.ID;
+				le.Data["position"] = mpse.Position;
+				le.Data["phonemesFoundSoFar"] = mpse.PhonemesFoundSoFar;
 				le.Data["entry"] = entry.ID;
 				throw le;
 			}
@@ -1591,9 +1594,12 @@ namespace SIL.HermitCrab
 						catch (MissingPhoneticShapeException mpse)
 						{
 							LoadException le = new LoadException(LoadException.LoadErrorType.INVALID_RULE_SHAPE, this,
-								string.Format(HCStrings.kstidInvalidRuleShape, shapeStr, ruleName, ctableName, mpse.Position + 1, shapeStr.Substring(mpse.Position)));
+								string.Format(HCStrings.kstidInvalidRuleShape, shapeStr, ruleName, ctableName, mpse.Position + 1,
+												shapeStr.Substring(mpse.Position), mpse.PhonemesFoundSoFar));
 							le.Data["shape"] = shapeStr;
 							le.Data["charDefTable"] = charDefTable.ID;
+							le.Data["position"] = mpse.Position;
+							le.Data["phonemesFoundSoFar"] = mpse.PhonemesFoundSoFar;
 							le.Data["rule"] = ruleName;
 							throw le;
 						}
