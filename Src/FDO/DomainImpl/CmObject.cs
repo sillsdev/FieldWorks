@@ -28,6 +28,7 @@ using System.IO; // MemoryStream.
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -139,6 +140,57 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				m_cache = value;
 			}
 		}
+
+		/// <summary>
+		/// The objects directly owned by this one.
+		/// </summary>
+		public IEnumerable<ICmObject> OwnedObjects
+		{
+			get
+			{
+				var mdc = (IFwMetaDataCacheManaged)Cache.MetaDataCache;
+				var flids = mdc.GetFields(this.ClassID, true, (int)CellarPropertyTypeFilter.AllOwning);
+				foreach (var flid in flids)
+				{
+					var flidType = mdc.GetFieldType(flid);
+					switch (flidType)
+					{
+						case (int)CellarPropertyType.OwningAtomic:
+						{
+							var hvo = m_cache.DomainDataByFlid.get_ObjectProp(this.Hvo, flid);
+							if (hvo != 0)
+								yield return m_cache.ServiceLocator.GetObject(hvo);
+							break;
+						}
+						case (int)CellarPropertyType.OwningSequence:
+						case (int)CellarPropertyType.OwningCollection:
+						{
+							var hvos = ((ISilDataAccessManaged)m_cache.DomainDataByFlid).VecProp(this.Hvo, flid);
+							foreach (var hvo in hvos)
+								yield return m_cache.ServiceLocator.GetObject(hvo);
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// The objects owned directly or indirectly by this one.
+		/// </summary>
+		public IEnumerable<ICmObject> AllOwnedObjects
+		{
+			get
+			{
+				foreach (var obj in OwnedObjects)
+				{
+					yield return obj;
+					foreach (var child in obj.AllOwnedObjects)
+						yield return child;
+				}
+			}
+		}
+
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

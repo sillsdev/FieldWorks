@@ -1302,6 +1302,16 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		}
 
 		/// <summary>
+		/// Null object owns nothing.
+		/// </summary>
+		public IEnumerable<ICmObject> OwnedObjects { get {return new ICmObject[0];} }
+
+		/// <summary>
+		/// Null object owns nothing.
+		/// </summary>
+		public IEnumerable<ICmObject> AllOwnedObjects { get { return new ICmObject[0]; } }
+
+		/// <summary>
 		/// returns 0
 		/// </summary>
 		public int Hvo

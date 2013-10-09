@@ -43,10 +43,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var notesToRecordMapping = new NotesToRecordMapping()
 				{
 					FunctionToGetCurrentUrlForNewNotes = GetCurrentUrlForNewNotes,
-					FunctionToGoFromObjectToItsId = GetIdForObject
+					FunctionToGoFromObjectToItsId = GetIdForObject,
+					FunctionToGoFromObjectToAdditionalIds = GetAdditionalIdsForObject
 				};
 			var dataFilePath = GetDataFilePath(Cache);
-			m_notesBar = m_chorusSystem.WinForms.CreateNotesBar(dataFilePath, notesToRecordMapping, new NullProgress());
+			var additionalPaths = GetAdditionalLexiconFilePaths(Cache);
+			const string idAttrForOtherFiles = "guid"; // .lexdb chorus notes files identify FLEx object with a url attr of "guid".
+			m_notesBar = m_chorusSystem.WinForms.CreateNotesBar(dataFilePath, additionalPaths, idAttrForOtherFiles, notesToRecordMapping, new NullProgress());
 			m_notesBar.SetTargetObject(m_obj);
 			// Set the writing systems for the NoteDetailDialog.  (See FWNX-1239.)
 			var vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
@@ -79,6 +82,30 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return dataFilePath;
 		}
 
+		/// <summary>
+		/// Gets additional files that have annotation files containing notes about lexicon conflicts.
+		/// Note that we return the files (e.g., Lexicon_04.lexdb) that contain the lexical data,
+		/// not the files (e.g., Lexicon_04.lexdb.ChorusNotes) that contain the notes.
+		/// We do check for the existence of the ChorusNotes files (though I think the NotesBar would
+		/// handle their absence itself) just as a performance optimization.
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <returns></returns>
+		private static IEnumerable<string> GetAdditionalLexiconFilePaths(FdoCache cache)
+		{
+			var results = new List<string>();
+			var lexiconFolder = Path.Combine(cache.ProjectId.ProjectFolder, "Linguistics", "Lexicon");
+			if (!Directory.Exists(lexiconFolder))
+				return results;
+			foreach (var path in Directory.EnumerateFiles(lexiconFolder, "*.lexdb"))
+			{
+				var notesFile = path + "." + FLExBridgeListener.kChorusNotesExtension;
+				if (File.Exists(notesFile))
+					results.Add(path);
+			}
+			return results;
+		}
+
 		private string GetCurrentUrlForNewNotes(object dataItemInFocus, string escapedId)
 		{
 			// In this URI, the stuff up to tag=& is the part that allows FLEx to switch to the right object from the notes browser.
@@ -90,6 +117,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private static string GetIdForObject(object targetOfNote)
 		{
 			return ((ICmObject)targetOfNote).Guid.ToString().ToLowerInvariant();
+		}
+
+		private static IEnumerable<string> GetAdditionalIdsForObject(object targetOfNote)
+		{
+			return ((ICmObject)targetOfNote).AllOwnedObjects.Select(t => t.Guid.ToString().ToLowerInvariant());
 		}
 
 		// Used in ShowSliceForVisibleData. It will never display the control to which it passes this,

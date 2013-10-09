@@ -292,6 +292,16 @@ namespace SIL.FieldWorks.FDO
 		{
 			get;
 		}
+
+		/// <summary>
+		/// The objects directly owned by this one.
+		/// </summary>
+		IEnumerable<ICmObject> OwnedObjects { get; }
+
+		/// <summary>
+		/// The objects owned directly or indirectly by this one.
+		/// </summary>
+		IEnumerable<ICmObject> AllOwnedObjects { get; }
 	}
 
 	/// <summary>

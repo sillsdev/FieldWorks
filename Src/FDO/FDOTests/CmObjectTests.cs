@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
+using Rhino.Mocks.Constraints;
 using SIL.FieldWorks.FDO.Infrastructure;
+using Is = NUnit.Framework.Is;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -120,6 +122,15 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			return sense;
 		}
 
+		private ILexSense AddSense(ILexSense parent, string gloss)
+		{
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			parent.SensesOS.Add(sense);
+			sense.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(gloss,
+				Cache.DefaultAnalWs);
+			return sense;
+		}
+
 		private IWfiMorphBundle MakeBundle(string wordform, ILexSense sense)
 		{
 			var wf = Cache.ServiceLocator.GetInstance<IWfiWordformFactory>().Create();
@@ -130,6 +141,73 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			wa.MorphBundlesOS.Add(mb);
 			mb.SenseRA = sense;
 			return mb;
+		}
+
+		/// <summary></summary>
+		[Test]
+		public void OwnedObjects_IncludesAtomicChild()
+		{
+			UndoableUnitOfWorkHelper.Do("Undo", "Redo", m_actionHandler,
+				() =>
+				{
+					var entry1 = MakeEntry("kick", "strike with foot");
+					var ownedObjects = entry1.OwnedObjects;
+					Assert.That(ownedObjects, Has.Member(entry1.LexemeFormOA));
+				});
+
+		}
+
+		/// <summary></summary>
+		[Test]
+		public void OwnedObjects_IncludesSequenceChildren()
+		{
+			UndoableUnitOfWorkHelper.Do("Undo", "Redo", m_actionHandler,
+				() =>
+				{
+					var entry1 = MakeEntry("kick", "strike with foot");
+					AddSense(entry1, "move ball a long way");
+					var ownedObjects = entry1.OwnedObjects;
+					Assert.That(ownedObjects, Has.Member(entry1.SensesOS[0]));
+					Assert.That(ownedObjects, Has.Member(entry1.SensesOS[1]));
+				});
+
+		}
+		/// <summary></summary>
+		[Test]
+		public void OwnedObjects_IncludesCollectionChildren()
+		{
+			UndoableUnitOfWorkHelper.Do("Undo", "Redo", m_actionHandler,
+				() =>
+				{
+					var entry1 = MakeEntry("kick", "strike with foot");
+					var msa = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
+					entry1.MorphoSyntaxAnalysesOC.Add(msa);
+					var ownedObjects = entry1.OwnedObjects;
+					Assert.That(ownedObjects, Has.Member(msa));
+				});
+
+		}
+
+		/// <summary></summary>
+		[Test]
+		public void AllOwnedObjects_IncludesChildrenOfChildren()
+		{
+			UndoableUnitOfWorkHelper.Do("Undo", "Redo", m_actionHandler,
+				() =>
+				{
+					var entry1 = MakeEntry("kick", "strike with foot");
+					var sense2 = AddSense(entry1, "move ball a long way");
+					var sense2_1 = AddSense(sense2, "move football a long way");
+					var ex2_1 = Cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>().Create();
+					sense2_1.ExamplesOS.Add(ex2_1);
+					var ownedObjects = entry1.AllOwnedObjects;
+					Assert.That(ownedObjects, Has.Member(entry1.SensesOS[0]));
+					Assert.That(ownedObjects, Has.Member(sense2));
+					Assert.That(ownedObjects, Has.Member(sense2_1));
+					Assert.That(ownedObjects, Has.Member(ex2_1));
+					Assert.That(ownedObjects, Has.No.Member(entry1), "an object should not be one of the things in its own AllOwnedObjects");
+				});
+
 		}
 	}
 }

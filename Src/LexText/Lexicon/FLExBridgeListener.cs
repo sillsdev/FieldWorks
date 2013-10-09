@@ -1165,7 +1165,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 		}
 
-		private const string kChorusNotesExtension = "ChorusNotes";
+		internal const string kChorusNotesExtension = "ChorusNotes";
 		/// <summary>
 		/// Export the contents of the lift lexicon.
 		/// </summary>
