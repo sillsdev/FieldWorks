@@ -32,14 +32,14 @@
 			this.m_help = new System.Windows.Forms.Button();
 			this.m_cancel = new System.Windows.Forms.Button();
 			this.m_archive = new System.Windows.Forms.Button();
-			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.panel1 = new System.Windows.Forms.Panel();
-			this._rbExistingBackup = new System.Windows.Forms.RadioButton();
-			this._rbNewBackup = new System.Windows.Forms.RadioButton();
+			this.m_frame = new System.Windows.Forms.GroupBox();
+			this.m_whichBackup = new System.Windows.Forms.Panel();
+			this.m_lblMostRecentBackup = new System.Windows.Forms.Label();
+			this.m_rbExistingBackup = new System.Windows.Forms.RadioButton();
+			this.m_rbNewBackup = new System.Windows.Forms.RadioButton();
 			this.m_fieldWorksBackup = new System.Windows.Forms.CheckBox();
-			this._lblMostRecentBackup = new System.Windows.Forms.Label();
-			this.groupBox1.SuspendLayout();
-			this.panel1.SuspendLayout();
+			this.m_frame.SuspendLayout();
+			this.m_whichBackup.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// m_help
@@ -52,6 +52,7 @@
 			this.m_help.TabIndex = 12;
 			this.m_help.Text = "Help";
 			this.m_help.UseVisualStyleBackColor = true;
+			this.m_help.Click += new System.EventHandler(this.m_help_Click);
 			// 
 			// m_cancel
 			// 
@@ -78,48 +79,58 @@
 			this.m_archive.UseVisualStyleBackColor = true;
 			this.m_archive.Click += new System.EventHandler(this.m_archive_Click);
 			// 
-			// groupBox1
+			// m_frame
 			// 
-			this.groupBox1.Controls.Add(this.panel1);
-			this.groupBox1.Controls.Add(this.m_fieldWorksBackup);
-			this.groupBox1.Location = new System.Drawing.Point(12, 12);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(329, 265);
-			this.groupBox1.TabIndex = 13;
-			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "Items to Archive";
+			this.m_frame.Controls.Add(this.m_whichBackup);
+			this.m_frame.Controls.Add(this.m_fieldWorksBackup);
+			this.m_frame.Location = new System.Drawing.Point(12, 12);
+			this.m_frame.Name = "m_frame";
+			this.m_frame.Size = new System.Drawing.Size(329, 265);
+			this.m_frame.TabIndex = 13;
+			this.m_frame.TabStop = false;
+			this.m_frame.Text = "Items to Archive";
 			// 
-			// panel1
+			// m_whichBackup
 			// 
-			this.panel1.Controls.Add(this._lblMostRecentBackup);
-			this.panel1.Controls.Add(this._rbExistingBackup);
-			this.panel1.Controls.Add(this._rbNewBackup);
-			this.panel1.Location = new System.Drawing.Point(30, 42);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(293, 73);
-			this.panel1.TabIndex = 1;
+			this.m_whichBackup.Controls.Add(this.m_lblMostRecentBackup);
+			this.m_whichBackup.Controls.Add(this.m_rbExistingBackup);
+			this.m_whichBackup.Controls.Add(this.m_rbNewBackup);
+			this.m_whichBackup.Location = new System.Drawing.Point(30, 42);
+			this.m_whichBackup.Name = "m_whichBackup";
+			this.m_whichBackup.Size = new System.Drawing.Size(293, 73);
+			this.m_whichBackup.TabIndex = 1;
 			// 
-			// _rbExistingBackup
+			// m_lblMostRecentBackup
 			// 
-			this._rbExistingBackup.AutoSize = true;
-			this._rbExistingBackup.Location = new System.Drawing.Point(4, 27);
-			this._rbExistingBackup.Name = "_rbExistingBackup";
-			this._rbExistingBackup.Size = new System.Drawing.Size(141, 17);
-			this._rbExistingBackup.TabIndex = 1;
-			this._rbExistingBackup.Text = "Use most recent backup";
-			this._rbExistingBackup.UseVisualStyleBackColor = true;
+			this.m_lblMostRecentBackup.AutoSize = true;
+			this.m_lblMostRecentBackup.Location = new System.Drawing.Point(32, 50);
+			this.m_lblMostRecentBackup.Name = "m_lblMostRecentBackup";
+			this.m_lblMostRecentBackup.Size = new System.Drawing.Size(69, 13);
+			this.m_lblMostRecentBackup.TabIndex = 2;
+			this.m_lblMostRecentBackup.Text = "(None found)";
 			// 
-			// _rbNewBackup
+			// m_rbExistingBackup
 			// 
-			this._rbNewBackup.AutoSize = true;
-			this._rbNewBackup.Checked = true;
-			this._rbNewBackup.Location = new System.Drawing.Point(4, 4);
-			this._rbNewBackup.Name = "_rbNewBackup";
-			this._rbNewBackup.Size = new System.Drawing.Size(127, 17);
-			this._rbNewBackup.TabIndex = 0;
-			this._rbNewBackup.TabStop = true;
-			this._rbNewBackup.Text = "Create a new backup";
-			this._rbNewBackup.UseVisualStyleBackColor = true;
+			this.m_rbExistingBackup.AutoSize = true;
+			this.m_rbExistingBackup.Location = new System.Drawing.Point(4, 27);
+			this.m_rbExistingBackup.Name = "m_rbExistingBackup";
+			this.m_rbExistingBackup.Size = new System.Drawing.Size(157, 17);
+			this.m_rbExistingBackup.TabIndex = 1;
+			this.m_rbExistingBackup.Text = "Use most recent backup file";
+			this.m_rbExistingBackup.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.m_rbExistingBackup.UseVisualStyleBackColor = true;
+			// 
+			// m_rbNewBackup
+			// 
+			this.m_rbNewBackup.AutoSize = true;
+			this.m_rbNewBackup.Checked = true;
+			this.m_rbNewBackup.Location = new System.Drawing.Point(4, 4);
+			this.m_rbNewBackup.Name = "m_rbNewBackup";
+			this.m_rbNewBackup.Size = new System.Drawing.Size(143, 17);
+			this.m_rbNewBackup.TabIndex = 0;
+			this.m_rbNewBackup.TabStop = true;
+			this.m_rbNewBackup.Text = "Create a new backup file";
+			this.m_rbNewBackup.UseVisualStyleBackColor = true;
 			// 
 			// m_fieldWorksBackup
 			// 
@@ -136,15 +147,6 @@
 			this.m_fieldWorksBackup.Text = "FieldWorks backup file";
 			this.m_fieldWorksBackup.UseVisualStyleBackColor = true;
 			// 
-			// _lblMostRecentBackup
-			// 
-			this._lblMostRecentBackup.AutoSize = true;
-			this._lblMostRecentBackup.Location = new System.Drawing.Point(32, 50);
-			this._lblMostRecentBackup.Name = "_lblMostRecentBackup";
-			this._lblMostRecentBackup.Size = new System.Drawing.Size(69, 13);
-			this._lblMostRecentBackup.TabIndex = 2;
-			this._lblMostRecentBackup.Text = "(None found)";
-			// 
 			// ArchiveWithRamp
 			// 
 			this.AcceptButton = this.m_archive;
@@ -152,7 +154,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_cancel;
 			this.ClientSize = new System.Drawing.Size(353, 333);
-			this.Controls.Add(this.groupBox1);
+			this.Controls.Add(this.m_frame);
 			this.Controls.Add(this.m_help);
 			this.Controls.Add(this.m_cancel);
 			this.Controls.Add(this.m_archive);
@@ -160,12 +162,13 @@
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "ArchiveWithRamp";
+			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Archive With RAMP";
-			this.groupBox1.ResumeLayout(false);
-			this.groupBox1.PerformLayout();
-			this.panel1.ResumeLayout(false);
-			this.panel1.PerformLayout();
+			this.m_frame.ResumeLayout(false);
+			this.m_frame.PerformLayout();
+			this.m_whichBackup.ResumeLayout(false);
+			this.m_whichBackup.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -175,11 +178,11 @@
 		private System.Windows.Forms.Button m_help;
 		private System.Windows.Forms.Button m_cancel;
 		private System.Windows.Forms.Button m_archive;
-		private System.Windows.Forms.GroupBox groupBox1;
+		private System.Windows.Forms.GroupBox m_frame;
 		private System.Windows.Forms.CheckBox m_fieldWorksBackup;
-		private System.Windows.Forms.Panel panel1;
-		private System.Windows.Forms.RadioButton _rbExistingBackup;
-		private System.Windows.Forms.RadioButton _rbNewBackup;
-		private System.Windows.Forms.Label _lblMostRecentBackup;
+		private System.Windows.Forms.Panel m_whichBackup;
+		private System.Windows.Forms.RadioButton m_rbExistingBackup;
+		private System.Windows.Forms.RadioButton m_rbNewBackup;
+		private System.Windows.Forms.Label m_lblMostRecentBackup;
 	}
 }

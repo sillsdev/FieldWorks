@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -92,6 +93,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			_rbNewBackup.Checked = true;
 			_rbExistingBackup.Visible = false;
 			_lblMostRecentBackup.Visible = false;
+		}
+
+		private void m_help_Click(object sender, EventArgs e)
+		{
+			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtpArchiveWithRamp");
 		}
 	}
 }

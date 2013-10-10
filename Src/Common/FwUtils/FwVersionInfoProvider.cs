@@ -12,6 +12,7 @@
 // Responsibility: FW Team
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -63,6 +64,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					((AssemblyTitleAttribute)attributes[0]).Title : Application.ProductName;
 			}
 		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the version of the application in the format x.x.x.x.
@@ -78,6 +80,24 @@ namespace SIL.FieldWorks.Common.FwUtils
 				return (ichSpace > 0) ? version.Remove(ichSpace) : version;
 			}
 		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the version of the application in the format x.x.x.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public string ShortNumericAppVersion
+		{
+			get
+			{
+				var version = NumericAppVersion;
+				while (version.Count(c => c == '.') > 2)
+					version = version.Substring(0, version.LastIndexOf('.'));
+
+				return version;
+			}
+		}
+
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
