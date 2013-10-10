@@ -1,0 +1,8 @@
+Verified+1: Jenkins CI
+Verified-Linux+1: Jenkins CI
+Code-Review+2: Andy Black <andy_black@sil.org>
+Submitted-by: Andy Black <andy_black@sil.org>
+Submitted-at: Thu, 10 Oct 2013 16:04:30 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/1490
+Project: FieldWorks
+Branch: refs/heads/develop
