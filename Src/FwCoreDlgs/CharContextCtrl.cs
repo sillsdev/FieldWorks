@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Reflection;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -15,7 +14,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
-using SILUBS.ScriptureChecks;
 using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -642,11 +640,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			scrDataSource.LoadException += scrDataSource_LoadException;
 
-			IScrCheckInventory scrCharInventoryBldr;
-			if (m_checkToRun == CheckType.Punctuation)
-				scrCharInventoryBldr = new PunctuationCheck(scrDataSource);
-			else // CheckType.Characters
-				scrCharInventoryBldr = new CharactersCheck(scrDataSource);
+			IScrCheckInventory scrCharInventoryBldr = CreateScrCharInventoryBldr(DirectoryFinder.BasicEditorialChecksDll,
+				scrDataSource, m_checkToRun == CheckType.Punctuation ?
+				"SILUBS.ScriptureChecks.PunctuationCheck" : "SILUBS.ScriptureChecks.CharactersCheck");
 
 			var tokens = new List<ITextToken>();
 			var scr = m_cache.LangProject.TranslatedScriptureOA;
@@ -664,10 +660,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			scrDataSource.SetParameterValue("PreferredLocale", string.Empty);
 
-			if (tokens.Count == 0)
-				return null;
+			return tokens.Count == 0 ? null : GetTokenSubstrings(scrCharInventoryBldr, tokens);
+		}
 
-			return GetTokenSubstrings(scrCharInventoryBldr, tokens);
+		private static IScrCheckInventory CreateScrCharInventoryBldr(string checksDll, IChecksDataSource scrDataSource, string checkType)
+		{
+			var scrCharInventoryBldr = (IScrCheckInventory)ReflectionHelper.CreateObject(checksDll,
+				checkType, new object[] { scrDataSource });
+			return scrCharInventoryBldr;
 		}
 
 		/// ------------------------------------------------------------------------------------
