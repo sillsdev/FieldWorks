@@ -28,6 +28,9 @@ namespace SIL.FieldWorks.XWorks.Archiving
 	{
 		private static LocalizationManager s_localizationMgr;
 
+		private DateTime m_earliest = DateTime.MaxValue;
+		private DateTime m_latest = DateTime.MinValue;
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Prepares the selected files to be uploaded to REAP using RAMP.
@@ -148,13 +151,14 @@ namespace SIL.FieldWorks.XWorks.Archiving
 			model.SetScholarlyWorkType(ScholarlyWorkType.PrimaryData);
 
 			// use year range for CreationDate if possible
-			var yearStart = cache.LangProject.DateCreated.Year;
-			var yearEnd = cache.LangProject.DateModified.Year;
+			GetCreateDateRange(cache);
+			var yearStart = m_earliest.Year;
+			var yearEnd = m_latest.Year;
 
 			if (yearEnd > yearStart)
 				model.SetCreationDate(yearStart, yearEnd);
 			else
-				model.SetCreationDate(cache.LangProject.DateCreated);
+				model.SetCreationDate(m_earliest);
 
 			model.SetModifiedDate(cache.LangProject.DateModified);
 
@@ -258,6 +262,27 @@ namespace SIL.FieldWorks.XWorks.Archiving
 			files[string.Empty] = new Tuple<IEnumerable<string>, string>(filesToArchive,
 				ResourceHelper.GetResourceString("kstidAddingFwProject"));
 			return files;
+		}
+
+		private void GetCreateDateRange(FdoCache cache)
+		{
+			foreach (var obj in cache.LangProject.ResearchNotebookOA.AllRecords)
+				CompareDateCreated(obj.DateCreated);
+
+			foreach (var obj in cache.LangProject.LexDbOA.Entries.Where(o => (o.DateCreated < m_earliest) || (o.DateCreated > m_latest)))
+				CompareDateCreated(obj.DateCreated);
+
+			foreach (var obj in cache.LangProject.Texts.Where(o => (o.DateCreated < m_earliest) || (o.DateCreated > m_latest)))
+				CompareDateCreated(obj.DateCreated);
+		}
+
+		private void CompareDateCreated(DateTime created)
+		{
+			if (created < m_earliest)
+				m_earliest = created;
+
+			if (created > m_latest)
+				m_latest = created;
 		}
 	}
 }
