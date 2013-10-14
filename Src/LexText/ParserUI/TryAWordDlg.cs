@@ -105,13 +105,15 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			m_mediator = mediator;
 			m_persistProvider = new PersistenceProvider(PersistProviderID, m_mediator.PropertyTable);
-			m_persistProvider.RestoreWindowSettings(PersistProviderID, this);
 			m_cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
 			m_parserListener = parserListener;
 
 			Text = m_cache.ProjectId.UiName + " - " + Text;
 			SetRootSite();
 			SetFontInfo();
+			// restore window location and size after setting up the form textbox, because it might adjust size of
+			// window causing the window to grow every time it is opened
+			m_persistProvider.RestoreWindowSettings(PersistProviderID, this);
 			if (wordform == null)
 				GetLastWordUsed();
 			else
