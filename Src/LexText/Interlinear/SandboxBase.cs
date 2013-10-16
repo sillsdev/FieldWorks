@@ -1869,6 +1869,10 @@ namespace SIL.FieldWorks.IText
 		/// Given that we have set the form of hvoMorph (in the sandbox cache) to the given
 		/// form, figure defaults for the LexEntry, LexGloss, and LexPos lines as far as
 		/// possible. It is assumed that all three following lines are empty to begin with.
+		/// Also set matching text for any other WSs that are displayed for MoForm.
+		/// (This is important because if the user confirms the analysis, we will write that
+		/// information back to the MoForm. If we leave the lines blank that process could
+		/// remove the other alternatives.)
 		/// </summary>
 		/// <param name="hvoMorph"></param>
 		/// <param name="form"></param>
@@ -1882,6 +1886,16 @@ namespace SIL.FieldWorks.IText
 			var defFormReal = DefaultMorph(form, mmt);
 			if (defFormReal == null)
 				return; // this form never occurs anywhere, can't supply any default.
+			var otherWritingSystemsForMorphForm = m_choices.OtherWritingSystemsForFlid(InterlinLineChoices.kflidMorphemes, RawWordformWs);
+			if (otherWritingSystemsForMorphForm.Any())
+			{
+				var hvoSbForm = m_caches.DataAccess.get_ObjectProp(hvoMorph, ktagSbMorphForm);
+				foreach (var ws in otherWritingSystemsForMorphForm)
+				{
+					m_caches.DataAccess.SetMultiStringAlt(hvoSbForm, ktagSbNamedObjName, ws,
+						defFormReal.Form.get_String(ws));
+				}
+			}
 			var le = defFormReal.Owner as ILexEntry;
 			int hvoEntry = m_caches.FindOrCreateSec(le.Hvo, kclsidSbNamedObj,
 				kSbWord, ktagSbWordDummy);
@@ -2851,6 +2865,7 @@ namespace SIL.FieldWorks.IText
 				finally
 				{
 					m_fHandlingRightClickMenu = false;
+					rightClickUiObj.Dispose();
 				}
 			}
 			return false;

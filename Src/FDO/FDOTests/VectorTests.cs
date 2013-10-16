@@ -19,11 +19,9 @@ using System;
 using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.FDOTests;
 using Rhino.Mocks;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO.Infrastructure.Impl;
 
 namespace SIL.FieldWorks.FDO.CoreTests.VectorTests
 {

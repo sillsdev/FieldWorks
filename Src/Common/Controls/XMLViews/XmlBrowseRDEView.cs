@@ -806,12 +806,11 @@ namespace SIL.FieldWorks.Common.Controls
 			Type factoryType = ReflectionHelper.GetType(RDEVc.EditRowAssembly, factoryClassName);
 			object factory = Cache.ServiceLocator.GetService(factoryType);
 			System.Reflection.MethodInfo mi = factoryType.GetMethod(RDEVc.EditRowSaveMethod);
-			object[] parameters = new object[5];
+			object[] parameters = new object[4];
 			parameters[0] = (object)m_hvoRoot;
 			parameters[1] = (object)columns;
 			parameters[2] = (object)rgtss;
-			parameters[3] = (object)m_fdoCache;
-			parameters[4] = (m_mediator != null && m_mediator.HasStringTable) ? (object)m_mediator.StringTbl : null;
+			parameters[3] = (m_mediator != null && m_mediator.HasStringTable) ? (object)m_mediator.StringTbl : null;
 			int newObjHvo = (int)mi.Invoke(factory, parameters);
 			return newObjHvo;
 		}
@@ -828,8 +827,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Invoke the editRowSaveMethod for each new sense to merge any that match a pre-existing
 		/// sense (or each other).
 		/// The prototypical method we call is this one (from LexSense)
-		/// public static void RDEMergeSense(int hvoDomain, int tagList,
-		///		generic List(XmlNode) columns, FdoCache cache, int hvoSense, Dictionary(int, bool) newHvos)
+		/// public static void RDEMergeSense(int hvoDomain, Set(int) newHvos)
 		/// </summary>
 		public void DoMerges()
 		{
@@ -850,11 +848,9 @@ namespace SIL.FieldWorks.Common.Controls
 					fInDoMerges = true;
 					Type targetType = ReflectionHelper.GetType(RDEVc.EditRowAssembly, RDEVc.EditRowClass);
 					System.Reflection.MethodInfo mi = targetType.GetMethod(RDEVc.EditRowMergeMethod);
-					object[] parameters = new object[4];
+					object[] parameters = new object[2];
 					parameters[0] = (object)m_hvoRoot;
-					parameters[1] = (object)m_xbvvc.ColumnSpecs;	// this is already a List<XmlNode>
-					parameters[2] = (object)m_fdoCache;
-					parameters[3] = (object)idsClone; // This is a Set<int>.
+					parameters[1] = (object)idsClone; // This is a Set<int>.
 
 					// Make a copy. I (JohnT) don't see how this collection can get modified
 					// during the loop, but we've had exceptions (e.g., LT-1355) claiming that

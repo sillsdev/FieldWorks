@@ -81,8 +81,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// try to get a path to the help file.
 			try
 			{
-				//helpFile = DirectoryFinder.FWCodeDirectory +
-				//	helpTopicProvider.GetHelpString("UserHelpFile");
 				helpFile = DirectoryFinder.FWCodeDirectory +
 					helpTopicProvider.GetHelpString(helpFileKey);
 			}
@@ -107,8 +105,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 			else
 			{
-				// Ok, show the help. We have to use a label because without it the help is always
-				// on top of the window
+				// Show the help. We have to use a label because without it the help is always on top of the window
 				Help.ShowHelp(new Label(), helpFile, helpTopic);
 			}
 		}

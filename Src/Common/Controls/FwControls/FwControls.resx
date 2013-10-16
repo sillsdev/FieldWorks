@@ -189,7 +189,8 @@
 You probably have a Conflict Report open. It will need to be closed before you can access any of the other FLExBridge functions such as:
 -- Send/Receive Project
 -- Get project from a colleague
--- View Conflict Report (can't have two open)</value>
+-- View Conflict Report (can't have two open)
+If you don't see any FLExBridge windows open, it may just be that FLExBridge is still shutting down. Please wait 15 seconds and try again.</value>
   </data>
   <data name="kFlexBridge" xml:space="preserve">
     <value>FLExBridge</value>

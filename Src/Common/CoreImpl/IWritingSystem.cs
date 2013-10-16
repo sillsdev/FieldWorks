@@ -109,6 +109,15 @@ namespace SIL.CoreImpl
 		}
 
 		/// <summary>
+		/// Gets the RFC5646 language tag.  (This is preferred over the IcuLocale.)
+		/// </summary>
+		/// <value>The RFC5646 language tag.</value>
+		string RFC5646
+		{
+			get;
+		}
+
+		/// <summary>
 		/// Gets or sets the valid chars.
 		/// </summary>
 		/// <value>The valid chars.</value>

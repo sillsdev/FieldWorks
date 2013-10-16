@@ -222,7 +222,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			get
 			{
 				lock (SyncRoot)
-					return m_traceResult;
+				{
+					string res = m_traceResult;
+					m_traceResult = null;
+					return res;
+				}
 			}
 		}
 

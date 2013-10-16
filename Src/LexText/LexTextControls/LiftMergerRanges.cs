@@ -187,23 +187,22 @@ namespace SIL.FieldWorks.LexText.Controls
 			return GetExistingMoMorphType(MoMorphTypeTags.kguidMorphStem);
 		}
 
-		private ILexRefType FindOrCreateLexRefType(string relationTypeName, bool fIsSequence)
+		private void FindOrCreateLexRefType(string relationTypeName, string guid, string parent,
+														LiftMultiText desc, LiftMultiText label, LiftMultiText abbrev, LiftMultiText revName, LiftMultiText revAbbrev, int refType)
 		{
 			ICmPossibility poss;
-			if (m_dictLexRefTypes.TryGetValue(relationTypeName, out poss) ||
-				m_dictLexRefTypes.TryGetValue(relationTypeName.ToLowerInvariant(), out poss))
+			if(m_dictLexRefTypes.TryGetValue(relationTypeName.ToLowerInvariant(), out poss))
 			{
-				return poss as ILexRefType;
+				return;
 			}
-			if (m_dictRevLexRefTypes.TryGetValue(relationTypeName, out poss) ||
-				m_dictRevLexRefTypes.TryGetValue(relationTypeName.ToLowerInvariant(), out poss))
+			if(m_dictRevLexRefTypes.TryGetValue(relationTypeName.ToLowerInvariant(), out poss))
 			{
-				return poss as ILexRefType;
+				return;
 			}
-			ILexRefType lrt = CreateNewLexRefType();
+			var lrt = CreateNewLexRefType(guid, parent);
 			m_cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(lrt);
 			lrt.Name.set_String(m_cache.DefaultAnalWs, relationTypeName);
-			if ((String.IsNullOrEmpty(m_sLiftProducer) || m_sLiftProducer.StartsWith("WeSay")) &&
+			if((String.IsNullOrEmpty(m_sLiftProducer) || m_sLiftProducer.StartsWith("WeSay")) &&
 				(relationTypeName == "BaseForm"))
 			{
 				lrt.Abbreviation.set_String(m_cache.DefaultAnalWs, "base");
@@ -213,15 +212,16 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			else
 			{
-				lrt.Abbreviation.set_String(m_cache.DefaultAnalWs, relationTypeName);
-				if (fIsSequence)
-					lrt.MappingType = (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseSequence;
-				else
-					lrt.MappingType = (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseCollection;
+				SetStringsFromLiftContents(desc, lrt.Description);
+				SetStringsFromLiftContents(abbrev, lrt.Abbreviation);
+				SetStringsFromLiftContents(label, lrt.Name);
+				SetStringsFromLiftContents(revName, lrt.ReverseName);
+				SetStringsFromLiftContents(revAbbrev, lrt.ReverseAbbreviation);
+				lrt.MappingType = refType;
 			}
-			m_dictLexRefTypes.Add(relationTypeName, lrt);
+			m_dictLexRefTypes.Add(relationTypeName.ToLowerInvariant(), lrt);
 			m_rgnewLexRefTypes.Add(lrt);
-			return lrt;
+
 		}
 
 		private ILexEntryType FindComplexFormType(string sOldEntryType)
@@ -1028,7 +1028,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			LiftMultiText description; // non-safe-XML
 			LiftMultiText label; // non-safe-XML
 			LiftMultiText abbrev; // non-safe-XML
-			string id = GetRangeElementDetails(xnElem, out guidAttr, out parent, out description, out label, out abbrev);
+			var id = GetRangeElementDetails(xnElem, out guidAttr, out parent, out description, out label, out abbrev);
 
 			ProcessPossibility(id, guidAttr, parent, MakeSafeLiftMultiText(description), MakeSafeLiftMultiText(label), MakeSafeLiftMultiText(abbrev),
 							   dictCustomList, rgnewCustom, possList);
@@ -1041,8 +1041,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			LiftMultiText description; // non-safe-XML
 			LiftMultiText label; // non-safe-XML
 			LiftMultiText abbrev; // non-safe-XML
-			var id = GetRangeElementDetails(xnElem, out guidAttr, out parent, out description, out label,
-				out abbrev);
+			var id = GetRangeElementDetails(xnElem, out guidAttr, out parent, out description, out label, out abbrev);
 			(this as ILexiconMerger<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>).ProcessRangeElement(
 				range, id, guidAttr, parent, description, label, abbrev, xnElem.OuterXml);
 		}
@@ -1057,6 +1056,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="description">non-safe-XML (read from XmlNode without re-escaping)</param>
 		/// <param name="label">non-safe-XML</param>
 		/// <param name="abbrev">non-safe-XML</param>
+		/// <param name="traits"></param>
 		/// <returns></returns>
 		private string GetRangeElementDetails(XmlNode xnElem, out string guidAttr, out string parent, out LiftMultiText description, out LiftMultiText label, out LiftMultiText abbrev)
 		{
@@ -1310,7 +1310,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					//xxx============================================xxx
 				case RangeNames.sDbReferencesOAold: // original FLEX export
 				case RangeNames.sDbReferencesOA: // lexical relation types (?)
-					// TODO: Handle these here instead of where they're encountered in processing!
+					ProcessLexRefType(id, guidAttr, parent, newDesc, newLabel, newAbbrev, rawXml);
 					break;
 					//xxx============================================xxx
 					//New
@@ -1370,6 +1370,37 @@ namespace SIL.FieldWorks.LexText.Controls
 #endif
 					break;
 			}
+		}
+
+		private void ProcessLexRefType(string id, string guidAttr, string parent, LiftMultiText desc, LiftMultiText label,
+												 LiftMultiText abbrev, string rawXml)
+		{
+			var xdoc = new XmlDocument();
+			xdoc.LoadXml(rawXml);
+			LiftTrait refTypeTrait = null;
+			var traitNode = xdoc.FirstChild.SelectSingleNode("trait[@name='referenceType']");
+			if(traitNode != null)
+			{
+				refTypeTrait = CreateLiftTraitFromXml(traitNode);
+			}
+			var reversalNameNode = xdoc.FirstChild.SelectSingleNode("field[@type='reverse-label']");
+			LiftMultiText reverseName = null;
+			if(reversalNameNode != null)
+			{
+				reverseName = CreateLiftMultiTextFromXml(reversalNameNode);
+			}
+			var revAbbrevNode = xdoc.FirstChild.SelectSingleNode("field[@type='reverse-abbrev']");
+			LiftMultiText reverseAbbrev = null;
+			if(revAbbrevNode != null)
+			{
+				reverseAbbrev = CreateLiftMultiTextFromXml(revAbbrevNode);
+			}
+			int refType = (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseCollection;
+			if(refTypeTrait != null && !String.IsNullOrEmpty(refTypeTrait.Value))
+			{
+				refType = int.Parse(refTypeTrait.Value);
+			}
+			FindOrCreateLexRefType(id, guidAttr, parent, desc, label, abbrev, reverseName, reverseAbbrev, refType);
 		}
 
 		private void EnsureProdRestrictListExists()

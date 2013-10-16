@@ -55,6 +55,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		protected Button btnOK;
 		private Button btnHelp;
+		private Label m_lblTip;
+		private Label m_lblAnalysisWrtSys;
 		private Label m_lblVernacularWrtSys;
 		private Label m_lblProjectName;
 		private Label m_lblSpecifyWrtSys;
@@ -150,7 +152,28 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			InitializeComponent();
 			AccessibleName = GetType().Name;
 			m_wsManager = new PalasoWritingSystemManager(new GlobalFileWritingSystemStore(DirectoryFinder.GlobalWritingSystemStoreDirectory));
+#if __MonoCS__
+			FixLabelFont(m_lblTip);
+			FixLabelFont(m_lblAnalysisWrtSys);
+			FixLabelFont(m_lblVernacularWrtSys);
+			FixLabelFont(m_lblProjectName);
+			FixLabelFont(m_lblSpecifyWrtSys);
+#endif
 		}
+
+#if __MonoCS__
+		/// <summary>
+		/// Fix the label font for Linux/Mono.  Without this fix, the label may
+		/// still show boxes for Chinese characters when the rest of the UI is
+		/// properly showing Chinese characters.
+		/// </summary>
+		/// <param name="lbl">Lbl.</param>
+		private void FixLabelFont(Label lbl)
+		{
+			var oldFont = lbl.Font;
+			lbl.Font = new Font("Sans", oldFont.Size, oldFont.Style, oldFont.Unit);
+		}
+#endif
 
 		/// <summary>
 		/// Check to see if the object has been disposed.
@@ -192,9 +215,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			System.Windows.Forms.Button m_btnNewVernWrtSys;
 			System.Windows.Forms.Label m_lblTipText;
 			System.Windows.Forms.Button m_btnNewAnalWrtSys;
-			System.Windows.Forms.Label lblTip;
 			System.Windows.Forms.Label m_lblExplainWrtSys;
-			System.Windows.Forms.Label m_lblAnalysisWrtSys;
 			this.btnOK = new System.Windows.Forms.Button();
 			this.btnHelp = new System.Windows.Forms.Button();
 			this.m_txtName = new System.Windows.Forms.TextBox();
@@ -212,7 +233,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_btnNewVernWrtSys = new System.Windows.Forms.Button();
 			m_lblTipText = new System.Windows.Forms.Label();
 			m_btnNewAnalWrtSys = new System.Windows.Forms.Button();
-			lblTip = new System.Windows.Forms.Label();
+			m_lblTip = new System.Windows.Forms.Label();
 			m_lblExplainWrtSys = new System.Windows.Forms.Label();
 			m_lblAnalysisWrtSys = new System.Windows.Forms.Label();
 			this.SuspendLayout();
@@ -271,11 +292,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.helpProvider1.SetShowHelp(m_btnNewAnalWrtSys, ((bool)(resources.GetObject("m_btnNewAnalWrtSys.ShowHelp"))));
 			m_btnNewAnalWrtSys.Click += new System.EventHandler(this.m_btnNewAnalWrtSys_Click);
 			//
-			// lblTip
+			// m_lblTip
 			//
-			resources.ApplyResources(lblTip, "lblTip");
-			lblTip.Name = "lblTip";
-			this.helpProvider1.SetShowHelp(lblTip, ((bool)(resources.GetObject("lblTip.ShowHelp"))));
+			resources.ApplyResources(m_lblTip, "m_lblTip");
+			m_lblTip.Name = "m_lblTip";
+			this.helpProvider1.SetShowHelp(m_lblTip, ((bool)(resources.GetObject("m_lblTip.ShowHelp"))));
 			//
 			// m_lblExplainWrtSys
 			//
@@ -359,7 +380,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = btnCancel;
 			this.Controls.Add(m_lblTipText);
-			this.Controls.Add(lblTip);
+			this.Controls.Add(m_lblTip);
 			this.Controls.Add(m_btnNewVernWrtSys);
 			this.Controls.Add(this.m_cbVernWrtSys);
 			this.Controls.Add(m_lblExplainVernWrtSys);

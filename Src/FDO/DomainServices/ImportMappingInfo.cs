@@ -16,7 +16,6 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.COMInterfaces;
 
@@ -25,8 +24,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// In-memory information about mappings
-	/// ENHANCE (TimS): This class should somehow make it's way towards ParatextHelper so that
-	/// ParatextProxy can go away. There is no reason this code has to be in FDO.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	public class ImportMappingInfo

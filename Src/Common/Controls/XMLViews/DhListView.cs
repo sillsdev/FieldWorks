@@ -142,7 +142,6 @@ namespace SIL.FieldWorks.Common.Controls
 
 		#endregion
 
-		private List<ColumnHeader> m_overrideDisplayOrder;
 		/// <summary>
 		/// Get the columns in the order they display. This is USUALLY the same as the order of items in Columns,
 		/// but when the user drags a column to re-order it, the system does not re-order the Columns
@@ -159,15 +158,32 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				if (m_overrideDisplayOrder != null)
-					return m_overrideDisplayOrder;
 				var result = new List<ColumnHeader>(Columns.Cast<ColumnHeader>());
 				result.Sort((x, y) => x.DisplayIndex.CompareTo(y.DisplayIndex));
 				return result;
 			}
 		}
 
-		void HandleColumnReordered(object sender, ColumnReorderedEventArgs e)
+		private List<int> m_orderForColumnsDisplay = new List<int>();
+		/// <summary>
+		/// This is used to keep track of the positions of columns after they have been dragged and dropped.
+		/// ColumnsDisplayOrder[i] is the index of the position where the column at
+		/// position i in the orginal Columns collection is actually displayed.
+		/// </summary>
+		private List<int> OrderForColumnsDisplay
+		{
+			get
+			{
+				m_orderForColumnsDisplay.Clear();
+				foreach (ColumnHeader col in Columns)
+				{
+					m_orderForColumnsDisplay.Add(col.DisplayIndex);
+				}
+				return m_orderForColumnsDisplay;
+			}
+		}
+
+		private void HandleColumnReordered(object sender, ColumnReorderedEventArgs e)
 		{
 			// Disallow reordering the checkbox column, either by moving it or moving something into its place
 			if (HasCheckBoxColumn && (e.OldDisplayIndex == 0 || e.NewDisplayIndex == 0))
@@ -175,37 +191,31 @@ namespace SIL.FieldWorks.Common.Controls
 				e.Cancel = true;
 				return;
 			}
-
 			// At this point, we want to re-arrange the dependent parts of the display (the filter bar and the main data area)
 			// to reflect the re-ordering of the columns.
-			// However, the system has not actually re-ordered them yet. So we must simulate the order it is going to change
+			// However, the system has not actually re-ordered them. So we must simulate the order it is going to change
 			// them to.
-			var columnsInDisplayOrder = ColumnsInDisplayOrder;
-			columnsInDisplayOrder.Remove(e.Header);
-			columnsInDisplayOrder.Insert(e.NewDisplayIndex, e.Header);
-			m_overrideDisplayOrder = columnsInDisplayOrder;
-			try
-			{
-				// Now we want an array of integers showing how they are re-ordered.
-				// columnDisplayOrder[i] is the position that element i in the old (previous, not original) order will have in the new order.
-				// Note that we cannot depend on e.OldDisplayIndex. In Windows, this is the position in the
-				// most recent previous display order; in Mono, it is the position in the original sequence.
-				// However, both systems seem to pass us the columns with each header having its pre-change
-				// DisplayIndex intact.
-				var columnDisplayOrder = Enumerable.Range(0, Columns.Count).ToList();
-				var reorderedColumnHeader = columnDisplayOrder[e.Header.DisplayIndex];
-				columnDisplayOrder.Remove(reorderedColumnHeader);
-				columnDisplayOrder.Insert(e.NewDisplayIndex, reorderedColumnHeader);
 
-				// Let affected browse view update its columns of data
-				if (ColumnDragDropReordered != null)
-					ColumnDragDropReordered(this, new ColumnDragDropReorderedEventArgs(columnDisplayOrder));
-			}
-			finally
-			{
-				m_overrideDisplayOrder = null;
-			}
+			// Now we want an array of integers showing how they are re-ordered.
+			// columnDisplayOrder[i] is the position that element i in the old (previous, not original) order will have in the new order.
+			// Note that we cannot depend on e.OldDisplayIndex. In Windows, this is the position in the
+			// most recent previous display order; in Mono, it is the position in the original sequence.
+			// However, both systems seem to pass us the columns with each header having its pre-change
+			// DisplayIndex intact.
+			var columnDisplayOrder = Enumerable.Range(0, Columns.Count).ToList();
+			var reorderedColumnHeader = columnDisplayOrder[e.Header.DisplayIndex];
+			columnDisplayOrder.Remove(reorderedColumnHeader);
+			columnDisplayOrder.Insert(e.NewDisplayIndex, reorderedColumnHeader);
+
+			// Let affected browse view update its columns of data
+			if (ColumnDragDropReordered != null)
+				ColumnDragDropReordered(this, new ColumnDragDropReorderedEventArgs(columnDisplayOrder));
+
+			//Adjust the browseViewer column ordering whenever columns are moved.
+			m_bv.OrderForColumnsDisplay = m_orderForColumnsDisplay;
+
 		}
+
 #if __MonoCS__ // FWNX-224
 		internal void HandleColumnClick (object sender, ColumnClickEventArgs e)
 		{
@@ -356,7 +366,10 @@ namespace SIL.FieldWorks.Common.Controls
 			// For some reason Bounds.Height is much too big. Bigger than our whole control!
 			drawRect.Height = Height - 4;
 			int imageIndex;
-			if (!m_columnIconIndexes.TryGetValue(e.Header.Index, out imageIndex))
+			//e.Header.Index is it's index in the original, un-dragged list of columns.
+			//m_columnIconIndexes is indexed by the current display position of columns that require the icon to be displayed.
+			var currentDisplayPositionOfColumn = OrderForColumnsDisplay[e.Header.Index];
+			if (!m_columnIconIndexes.TryGetValue(currentDisplayPositionOfColumn, out imageIndex))
 				imageIndex = -1;
 			if (imageIndex >= 0)
 				drawRect.Width -= m_imgList.ImageSize.Width;

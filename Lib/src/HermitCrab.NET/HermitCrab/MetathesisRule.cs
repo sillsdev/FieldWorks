@@ -9,13 +9,13 @@ namespace SIL.HermitCrab
 	public class MetathesisRule : PhonologicalRule
 	{
 		MultAppOrder m_multApplication = MultAppOrder.LR_ITERATIVE;
-		PhoneticPattern m_lhsTemp = null;
-		PhoneticPattern m_rhsTemp = null;
+		PhoneticPattern m_lhsTemp;
+		PhoneticPattern m_rhsTemp;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MetathesisRule"/> class.
 		/// </summary>
-		/// <param name="featId">The ID.</param>
+		/// <param name="id">The ID.</param>
 		/// <param name="desc">The description.</param>
 		/// <param name="morpher">The morpher.</param>
 		public MetathesisRule(string id, string desc, Morpher morpher)
@@ -106,11 +106,12 @@ namespace SIL.HermitCrab
 		/// Unapplies the rule to the specified word analysis.
 		/// </summary>
 		/// <param name="input">The input word analysis.</param>
-		public override void Unapply(WordAnalysis input)
+		/// <param name="trace"></param>
+		public override void Unapply(WordAnalysis input, TraceManager trace)
 		{
 			// I don't think there is any difference between iterative and
 			// simultaneous application
-			Direction dir = Direction.RIGHT;
+			var dir = Direction.RIGHT;
 			switch (m_multApplication)
 			{
 				case MultAppOrder.LR_ITERATIVE:
@@ -130,11 +131,12 @@ namespace SIL.HermitCrab
 		/// Applies the rule to the specified word synthesis.
 		/// </summary>
 		/// <param name="input">The word synthesis.</param>
-		public override void Apply(WordSynthesis input)
+		/// <param name="trace"></param>
+		public override void Apply(WordSynthesis input, TraceManager trace)
 		{
 			// I don't think there is any difference between iterative and
 			// simultaneous application
-			Direction dir = Direction.RIGHT;
+			var dir = Direction.RIGHT;
 			switch (m_multApplication)
 			{
 				case MultAppOrder.LR_ITERATIVE:

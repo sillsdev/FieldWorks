@@ -73,16 +73,29 @@ MONO_MWF_SCALING=disable
 # if debugging Fieldworks for performance unset DEBUG_ENABLE_PTR_VALIDATION env var.
 #DEBUG_ENABLE_PTR_VALIDATION=1
 
+# If the standard installation directory for FLExBridge exists, and the environment
+# variable is not yet set, set the environment variable for finding FLExBridge.
+# (Setting the LocalMachine registry value at installation doesn't work for Linux.)
+if [ -z "$FLEXBRIDGEDIR" -a -d "/usr/lib/flexbridge" ]
+then
+	FLEXBRIDGEDIR="/usr/lib/flexbridge"
+fi
+
 export \
 	PATH LD_LIBRARY_PATH PKG_CONFIG_PATH LD_PRELOAD \
 	COMPONENTS_MAP_PATH \
 	FW_ROOT FW_ROOTCODE FW_ROOTDATA \
 	ICU_DATA \
+	FLEXBRIDGEDIR \
 	MONO_PATH MONO_REGISTRY_PATH \
 	MONO_RUNTIME MONO_PREFIX \
 	MONO_TRACE_LISTENER MONO_IOMAP MONO_MWF_SCALING FW_CommonAppData
 
 #DEBUG_ENABLE_PTR_VALIDATION
+
+# prevent Gecko from printing scary message about "double free or corruption" on shutdown
+# (See FWNX-1216.)  Tom Hindle suggested this hack as a stopgap.
+MALLOC_CHECK_=0; export MALLOC_CHECK_
 
 #sets keyboard input method to none
 unset XMODIFIERS

@@ -389,6 +389,9 @@ namespace SIL.FieldWorks.XWorks
 						if (File.Exists(m_sHtmlFileName))
 						{
 							CopyFile(m_sHtmlFileName, outPath);
+							// This task is too fast on Linux/Mono (FWNX-1191).  Wait half a second...
+							// (I would like a more principled fix, but have spent too much time on this issue already.)
+							System.Threading.Thread.Sleep(500);
 							return true;
 						}
 						break;

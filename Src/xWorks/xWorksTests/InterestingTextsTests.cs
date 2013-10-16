@@ -317,6 +317,8 @@ namespace SIL.FieldWorks.XWorks
 			Guid = Guid.NewGuid();
 
 		}
+
+		public IEnumerable<ICmObject> AllOwnedObjects { get; private set; }
 		public int Hvo { get; private set;}
 
 		public ICmObject Owner { get; set;}
@@ -503,6 +505,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get { throw new NotImplementedException(); }
 		}
+
+		public IEnumerable<ICmObject> OwnedObjects { get; private set; }
 	}
 
 	internal class MockScrSection : MockCmObject, IScrSection

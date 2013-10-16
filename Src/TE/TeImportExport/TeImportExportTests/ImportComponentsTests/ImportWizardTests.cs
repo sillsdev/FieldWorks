@@ -523,11 +523,11 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 		/// Sets up the mock Paratext proxy to simulate validity of any requested projects.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void SetupMockParatextProxy()
+		private void SetupMockParatextHelper()
 		{
-			IParatextAdapter mockParatextAdapter = MockRepository.GenerateMock<IParatextAdapter>();
-			ReflectionHelper.SetField(m_settings, "m_paratextAdapter", mockParatextAdapter);
-			mockParatextAdapter.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Anything,
+			IParatextHelper mockParatextHelper = MockRepository.GenerateMock<IParatextHelper>();
+			m_ptHelper.m_loadProjectMappingsImpl = mockParatextHelper;
+			mockParatextHelper.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Anything,
 				Arg<ScrMappingList>.Is.Anything, Arg<ImportDomain>.Is.Anything)).Return(true);
 		}
 		#endregion
@@ -819,7 +819,7 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 		public void PrepareToGetParatextProjectSettingss_AssociatedLinguisticAndBtProj()
 		{
 			// Setup mocked Paratext projects
-			SetupMockParatextProxy();
+			SetupMockParatextHelper();
 
 			m_ptHelper.AddProject("ABC", "Whatever");
 			m_ptHelper.AddProject("YES", Cache.ProjectId.Handle);
@@ -866,7 +866,7 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void PrepareToGetParatextProjectSettings_AssociatedLingProj_NoBt()
 		{
-			SetupMockParatextProxy();
+			SetupMockParatextHelper();
 
 			m_ptHelper.AddProject("ABC", "Whatever");
 			m_ptHelper.AddProject("YES", Cache.ProjectId.Handle);
@@ -906,7 +906,7 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void PrepareToGetParatextProjectSettings_NoAssociatedLingProj()
 		{
-			SetupMockParatextProxy();
+			SetupMockParatextHelper();
 
 			m_ptHelper.AddProject("ABC", "Whatever");
 			m_ptHelper.AddProject("BTP");

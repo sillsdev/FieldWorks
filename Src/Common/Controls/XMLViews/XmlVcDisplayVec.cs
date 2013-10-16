@@ -230,9 +230,31 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 
 			// Setup and run actual internal vector loop
-			var tsf = m_cache.TsStrFactory;
 			var xattrSeparator = listDelimitNode.Attributes["sep"];
 			var fFirst = true; // May actually mean first non-empty.
+			WrapParagraphDisplayCommand tempCommand = null;
+			int tempId = 0;
+			if (fShowAsParagraphsInInnerPile || fShowAsParagraphsInDivInPara)
+			{
+				// We make a temporary command object, whose purpose is to wrap the paragraphs we want to create
+				// here for each item and any embellishments we add INSIDE the display of each individual item.
+				// This ensures that if we break those paragraphs (e.g., for subentries of a sense), all the
+				// paragraphs for the outer object are still correctly nested inside the item.
+				// This is especially important for XML export, where if the paragraph and object elements are
+				// not correctly nested, we don't even have valid XML.
+				// The command object's lifetime is only as long as this XmlVcDisplayVec,
+				// because it references this XmlVcDisplayVec object and even updates some of its member variables.
+				// I'm not sure it really has to do that, but I was trying to make a minimal change to the code
+				// that had to be wrapped in the command object so it could be invoked by the AddObj call.
+				// It is possible we could make a more permanent and reusable command object, but it would
+				// require extensive analysis of at least how the member variables it modifies are used to make
+				// sure it is safe. At this point I'm going for the safest change I can. This whole area of the
+				// system is likely to be rewritten sometime.
+				tempCommand = new WrapParagraphDisplayCommand(childFrag, this, sParaStyle, tssBefore,
+					listDelimitNode, fNumber, fDelayNumber, xaNum, ttpNum);
+				tempId = m_viewConstructor.GetId(tempCommand);
+				tempCommand.DelayedNumber = tssDelayedNumber;
+			}
 			for (var ihvo = 0; ihvo < chvo; ++ihvo)
 			{
 				if (IsExcluded(exclude, ihvo, rghvo))
@@ -241,36 +263,35 @@ namespace SIL.FieldWorks.Common.Controls
 				if (fCheckForEmptyItems && IsItemEmpty(rghvo[ihvo], childFrag))
 					continue;
 
+				Debug.Assert(ihvo < rghvo.Length);
 				if (fShowAsParagraphsInInnerPile || fShowAsParagraphsInDivInPara)
-					SetupParagraph(sParaStyle, (fFirst ? tssBefore : null), listDelimitNode);
-
-				if (!fShowAsParagraphsInInnerPile && !fShowAsParagraphsInDivInPara)
-					AddSeparatorIfNeeded(fFirst, xattrSeparator, listDelimitNode, wsEng);
-
-				// add the numbering if needed.
-				if (fNumber)
 				{
-					var sTag = CalculateAndFormatSenseLabel(rghvo, ihvo, xaNum.Value);
-
-					ITsStrBldr tsb = tsf.GetBldr();
-					tsb.Replace(0, 0, sTag, ttpNum);
-					ITsString tss = tsb.GetString();
-					m_numberPartRef = listDelimitNode;
-					AddNumberingNowOrDelayed(fDelayNumber, tss, out tssDelayedNumber);
+					// Passing tempId causes it to use the tempCommand we made above, which does
+					// much the same as the code in the else branch, except for wrapping the content
+					// of the object in a paragraph (and not inserting separators). In general we want to keep
+					// them the same, which is why the common code is wrapped in the AddItemEmbellishments
+					// method. The critical thing is that the paragraph must be part of the object,
+					// even though it is caused by the listDelimitNode attributes rather than by those
+					// of the XML that directly controls the display of the object.
+					m_vwEnv.AddObj(rghvo[ihvo], m_viewConstructor, tempId);
+				}
+				else
+				{
+					// not part of add embellishments because never used with either showAsParagraphs option
+					AddSeparatorIfNeeded(fFirst, xattrSeparator, listDelimitNode, wsEng);
+					AddItemEmbellishments(listDelimitNode, fNumber, rghvo[ihvo], ihvo, xaNum, ttpNum, fDelayNumber, ref tssDelayedNumber);
+					m_vwEnv.AddObj(rghvo[ihvo], m_viewConstructor, childFrag);
+					fFirst = false;
 				}
 
-				// add the object.
-				Debug.Assert(ihvo < rghvo.Length);
-				m_vwEnv.AddObj(rghvo[ihvo], m_viewConstructor, childFrag);
-
-				// Close Paragraph if displaying paragraphs
-				if (fShowAsParagraphsInInnerPile || fShowAsParagraphsInDivInPara)
-					m_vwEnv.CloseParagraph();
-
-				fFirst = false;
 				if (fFirstOnly)
 					break;
 			} // end of sequence 'for' loop
+			if (tempCommand != null)
+			{
+				tssDelayedNumber = tempCommand.DelayedNumber; // recover the end result of how it was modified.
+				m_viewConstructor.RemoveCommand(tempCommand, tempId);
+			}
 
 			// Close Inner Pile if displaying paragraphs
 			if (fShowAsParagraphsInInnerPile && chvo > 0)
@@ -291,6 +312,20 @@ namespace SIL.FieldWorks.Common.Controls
 			// end of Display method
 		}
 
+		private void AddItemEmbellishments(XmlNode listDelimitNode, bool fNumber, int hvo, int ihvo, XmlAttribute xaNum, ITsTextProps ttpNum, bool fDelayNumber, ref ITsString tssDelayedNumber)
+		{
+			// add the numbering if needed.
+			if (fNumber)
+			{
+				var sTag = CalculateAndFormatSenseLabel(hvo, ihvo, xaNum.Value);
+
+				ITsStrBldr tsb = m_cache.TsStrFactory.GetBldr();
+				tsb.Replace(0, 0, sTag, ttpNum);
+				ITsString tss = tsb.GetString();
+				m_numberPartRef = listDelimitNode;
+				AddNumberingNowOrDelayed(fDelayNumber, tss, out tssDelayedNumber);
+			}
+		}
 
 		private ITsString SetBeforeString(XmlNode specialAttrsNode, XmlNode listDelimitNode)
 		{
@@ -498,11 +533,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// %O for outline number (a real number)
 		/// %z is short for %d.%a.%i; the lowest level is incremented or set.
 		/// </summary>
-		/// <param name="rghvo">hvo array of senses</param>
-		/// <param name="ihvo">A sequence number or index (into rghvo).</param>
+		/// <param name="hvo">the sense itself</param>
+		/// <param name="ihvo">A sequence number or index (of hvo in its containing sequence).</param>
 		/// <param name="sTag">The sequence number format to apply</param>
 		/// <returns>The format filled in with the sequence number</returns>
-		internal string CalculateAndFormatSenseLabel(int[] rghvo, int ihvo, string sTag)
+		internal string CalculateAndFormatSenseLabel(int hvo, int ihvo, string sTag)
 		{
 			var sNum = "";
 			int ich;
@@ -533,7 +568,7 @@ namespace SIL.FieldWorks.Common.Controls
 							sNum = String.Format("{0}", ihvo + 1);
 						else
 						{
-							var item = m_objRepo.GetObject(rghvo[ihvo]);
+							var item = m_objRepo.GetObject(hvo);
 							if (item is ILexSense)
 							{
 								// Need to use a virtual property which can be overridden by DictionaryPublicationDecorator
@@ -550,7 +585,7 @@ namespace SIL.FieldWorks.Common.Controls
 						}
 						break;
 					case 'z':
-						sNum = GetOutlineStyle2biv(rghvo, ihvo);
+						sNum = GetOutlineStyle2biv(hvo, ihvo);
 						break;
 					// MDL: can only get to this case for "%%" - does it mean anything?
 					case '%':
@@ -566,13 +601,13 @@ namespace SIL.FieldWorks.Common.Controls
 			return sTag;
 		}
 
-		private string GetOutlineStyle2biv(int[] rghvo, int ihvo)
+		private string GetOutlineStyle2biv(int hvo, int ihvo)
 		{
 			// Top-level: Arabic numeral.
 			// Second-level: lowercase letter.
 			// Third-level (and lower): lowercase Roman numeral.
 			string sNum; // return result string
-			var sOutline = m_cache.GetOutlineNumber(m_objRepo.GetObject(rghvo[ihvo]), false, true);
+			var sOutline = m_cache.GetOutlineNumber(m_objRepo.GetObject(hvo), false, true);
 			var cchPeriods = 0;
 			var ichPeriod = sOutline.IndexOf('.');
 			while (ichPeriod >= 0)
@@ -671,6 +706,72 @@ namespace SIL.FieldWorks.Common.Controls
 				(vwenv as ConfiguredExport).OutputItemNumber(tssNumber, m_numberPartRef);
 			else
 				vwenv.AddString(tssNumber);
+		}
+
+		/// <summary>
+		/// This class exists to invoke a display of the same object using a frag ID specified in its constructor, but wrapped in
+		/// an open and close paragraph. We need the Open/Close para to be INSIDE the main open/close object, so we need another
+		/// level of fragId. We also need a bunch of other data which the main XmlVcDisplayVec.Display method figures out
+		/// for other things we might want to do inside the paragraph. Since this is a temporary object that just exists
+		/// for the lifetime of the one loop, we just pass it all in.
+		/// Note that, unlike most DisplayCommand subclasses, we deliberately do NOT override Equals. In case anything goes
+		/// wrong with removing one of these from the dictionary, it still won't get reused by any other instance of XmlVcDisplayVec.
+		/// </summary>
+		internal class WrapParagraphDisplayCommand : DisplayCommand
+		{
+			/// <summary>
+			/// Make one.
+			/// </summary>
+			/// <param name="wrappedFragId"></param>
+			/// <param name="creator"></param>
+			/// <param name="paraStyle"></param>
+			/// <param name="before"></param>
+			/// <param name="listDelimitNode"></param>
+			/// <param name="number"></param>
+			/// <param name="delayNumber"></param>
+			/// <param name="xaNum"></param>
+			/// <param name="ttpNum"></param>
+			public WrapParagraphDisplayCommand(int wrappedFragId, XmlVcDisplayVec creator, string paraStyle, ITsString before, XmlNode listDelimitNode,
+				bool number, bool delayNumber, XmlAttribute xaNum, ITsTextProps ttpNum)
+			{
+				WrappedFragId = wrappedFragId;
+				m_creator = creator;
+				m_paraStyle = paraStyle;
+				m_tssBefore = before;
+				m_listDelimitNode = listDelimitNode;
+				m_numberItems = number;
+				m_delayNumber = delayNumber;
+				m_xaNum = xaNum;
+				m_ttpNum = ttpNum;
+			}
+			private readonly int WrappedFragId;
+			private readonly XmlVcDisplayVec m_creator;
+			private string m_paraStyle;
+			private ITsString m_tssBefore;
+			private XmlNode m_listDelimitNode;
+			private bool m_numberItems;
+			private bool m_delayNumber;
+			public ITsString DelayedNumber;
+			private XmlAttribute m_xaNum;
+			private ITsTextProps m_ttpNum;
+
+			internal override void PerformDisplay(XmlVc vc, int fragId, int hvo, IVwEnv vwenv)
+			{
+				int level = vwenv.EmbeddingLevel;
+				int hvoDum, tag, ihvo;
+				vwenv.GetOuterObject(level - 2, out hvoDum, out tag, out ihvo);
+				m_creator.SetupParagraph(m_paraStyle, m_tssBefore, m_listDelimitNode);
+				m_creator.AddItemEmbellishments(m_listDelimitNode, m_numberItems, hvo, ihvo, m_xaNum, m_ttpNum, m_delayNumber, ref DelayedNumber);
+
+				// This is the display of the object we wanted to wrap the paragraph etc around.
+				// We want to produce an effect rather like
+				// vwenv.AddObj(hvo, m_creator.m_viewConstructor, WrappedFragId);
+				// except we do NOT want to open/close an object in the VC, since we are already inside the addition of this object.
+				m_creator.m_viewConstructor.Display(vwenv, hvo, WrappedFragId);
+
+				// Close Paragraph if displaying paragraphs
+				vwenv.CloseParagraph();
+			}
 		}
 	}
 }

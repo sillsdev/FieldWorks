@@ -80,7 +80,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <returns></returns>
 		public bool OnDisplayFLExLiftBridge(object parameters, ref UIItemDisplayProperties display)
 		{
-			CheckForFlexBridgeInstalled(display);
+			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
 			var bridgeLastUsed = _mediator.PropertyTable.GetStringProperty("LastBridgeUsed", "FLExBridge", PropertyTable.SettingsGroup.LocalSettings);
 			if (bridgeLastUsed == "FLExBridge")
 			{
@@ -98,14 +98,32 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <returns></returns>
 		public bool OnFLExLiftBridge(object commandObject)
 		{
+			if (MiscUtils.IsMono)
+			{
+				// This is a horrible workaround for a nasty bug in Mono. The toolbar button captures the mouse,
+				// and does not release it before calling this event handler. If we proceed to run the bridge,
+				// which freezes our UI thread until FlexBridge returns, the mouse stays captured...and the whole
+				// system UI is frozen, for all applications.
+				_mediator.IdleQueue.Add(IdleQueuePriority.High,
+					obj =>
+						{
+							RunFLExLiftBridge(commandObject);
+							return true; // task is complete, don't try again, remove from idle queue.
+						});
+			}
+			else
+				RunFLExLiftBridge(commandObject); // on windows we can safely do it right away.
+			return true; // we handled it
+		}
+
+		private void RunFLExLiftBridge(object commandObject)
+		{
 			var bridgeLastUsed = _mediator.PropertyTable.GetStringProperty("LastBridgeUsed", "FLExBridge", PropertyTable.SettingsGroup.LocalSettings);
 			if (bridgeLastUsed == "FLExBridge")
-				return OnFLExBridge(commandObject);
+				OnFLExBridge(commandObject);
 
-			if (bridgeLastUsed == "LiftBridge")
-				return OnLiftBridge(commandObject);
-
-			return true;
+			else if (bridgeLastUsed == "LiftBridge")
+				OnLiftBridge(commandObject);
 		}
 		#endregion FLExLiftBridge Toolbar messages
 
@@ -116,7 +134,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		public bool OnDisplayObtainAnyFlexBridgeProject(object parameters, ref UIItemDisplayProperties display)
 		{
-			CheckForFlexBridgeInstalled(display);
+			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
 
 			return true; // We dealt with it.
 		}
@@ -146,7 +164,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		public bool OnDisplayObtainLiftProject(object parameters, ref UIItemDisplayProperties display)
 		{
-			CheckForFlexBridgeInstalled(display);
+			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
 
 			// Disable, if current project already has a lift repo.
 			var liftProjectFolder = GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder);
@@ -198,12 +216,16 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <returns></returns>
 		public bool OnDisplayFLExBridge(object parameters, ref UIItemDisplayProperties display)
 		{
-			CheckForFlexBridgeInstalled(display);
-
+			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
 			// If Fix it app does not exist, then disable main FLEx S/R, since FB needs to call it, after a merge.
-			display.Enabled = display.Enabled && FLExBridgeHelper.FixItAppExists;
+			display.Enabled = IsConfiguredForSR(Cache.ProjectId.ProjectFolder) && FLExBridgeHelper.FixItAppExists;
 
 			return true; // We dealt with it.
+		}
+
+		private static bool IsConfiguredForSR(string projectFolder)
+		{
+			return Directory.GetDirectories(projectFolder, ".hg").Count() == 1;
 		}
 
 		/// <summary>
@@ -299,12 +321,69 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		#region LiftBridge S/R messages
 
 		/// <summary>
-		/// Called (by xcore) to control display params of the Send/Receive "_Lexicon (with programs that use LIFT)" menu.
+		/// Called to setup Send/Receive by LiftBridge the first time. Shows a brief instructional message,
+		/// then, if the user is ready, calls through to OnLiftBridge.
+		/// </summary>
+		public bool OnFirstLiftBridge(object commandObject)
+		{
+			if (ShowMessageBeforeFirstSendReceive_IsUserReady())
+				OnLiftBridge(commandObject);
+			return true;
+		}
+
+		/// <summary>
+		/// Called (by xcore) to control display params of the Send/Receive "_Lexicon (with programs that use WeSay)" menu.
+		/// </summary>
+		public bool OnDisplayFirstLiftBridge(object commandObject, ref UIItemDisplayProperties display)
+		{
+			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
+			if (!display.Enabled)
+				return true;
+			display.Enabled = !IsConfiguredForLiftSR(Cache.ProjectId.ProjectFolder);
+			return true; // We dealt with it.
+		}
+
+		private static bool IsConfiguredForLiftSR(string folder)
+		{
+			var otherRepoPath = Path.Combine(folder, "OtherRepositories");
+			if (!Directory.Exists(otherRepoPath))
+				return false;
+			var liftFolder = Directory.EnumerateDirectories(otherRepoPath, "*_LIFT").FirstOrDefault();
+			return !String.IsNullOrEmpty(liftFolder) && IsConfiguredForSR(liftFolder);
+		}
+
+		/// <summary>
+		/// Called (by xcore) to control display params of the Send/Receive Project menu.
+		/// </summary>
+		public bool OnDisplayFirstFLExBridge(object commandObject, ref UIItemDisplayProperties display)
+		{
+			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
+			if (!display.Enabled)
+				return true;
+			display.Enabled = !IsConfiguredForSR(Cache.ProjectId.ProjectFolder);
+			return true; // We dealt with it.
+		}
+
+		/// <summary>
+		/// Called to setup Send/Receive by FLExBridge the first time. Shows a brief instructional message,
+		/// then, if the user is ready, calls through to OnFLExBridge.
+		/// </summary>
+		public bool OnFirstFLExBridge(object commandObject)
+		{
+			if (ShowMessageBeforeFirstSendReceive_IsUserReady())
+				OnFLExBridge(commandObject);
+			return true;
+		}
+
+		/// <summary>
+		/// Called (by xcore) to control display params of the Send/Receive "_Lexicon (with programs that use WeSay)" menu.
 		/// </summary>
 		public bool OnDisplayLiftBridge(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckForFlexBridgeInstalled(display);
-
+			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
+			if (!display.Enabled)
+				return true;
+			display.Enabled = IsConfiguredForLiftSR(Cache.ProjectId.ProjectFolder);
 			return true; // We dealt with it.
 		}
 
@@ -338,14 +417,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			// Step 3. Have Flex Bridge do the S/R.
 			// after saving the state enough to detect if conflicts are created.
-			var projectFolder = Cache.ProjectId.ProjectFolder;
-			var liftFolder = GetLiftRepositoryFolderFromFwProjectFolder(projectFolder);
+			var liftFolder = GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder);
 			var savedState = PrepareToDetectLiftConflicts(liftFolder);
-			var fullProjectFileName = IsDb4oProject ?
-				Path.Combine(projectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataDb4oFileExtension) :
-				Path.Combine(projectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension);
+			var fullProjectFileName = GetFullProjectFileName();
 			bool dataChanged;
-			if (!DoSendReceiveForLift(out dataChanged))
+			if (!DoSendReceiveForLift(fullProjectFileName, out dataChanged))
 				return true; // Bail out, since the S/R failed for some reason.
 
 			// Step 4. Import lift file. If fails, then add the notifier file.
@@ -366,6 +442,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 
 			return true; // We dealt with it.
+		}
+
+		private string GetFullProjectFileName()
+		{
+			var currentExtension = IsDb4oProject
+				? FwFileExtensions.ksFwDataDb4oFileExtension
+				: FwFileExtensions.ksFwDataXmlFileExtension;
+			return Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + currentExtension);
 		}
 
 		private void SaveAllDataToDisk()
@@ -393,10 +477,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (MiscUtils.IsUnix)
 			{
 				display.Visible = false;
+				display.Enabled = false;
 			}
 			else
 			{
-				CheckForFlexBridgeInstalled(display);
+				CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
 			}
 
 			return true; // We dealt with it.
@@ -411,8 +496,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			bool dummy1;
 			string dummy2;
-			var success = FLExBridgeHelper.LaunchFieldworksBridge(
-				Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
+			FLExBridgeHelper.LaunchFieldworksBridge(
+				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.CheckForUpdates,
 				null, FDOBackendProvider.ModelVersion, "0.13", null,
@@ -430,7 +515,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		public bool OnDisplayAboutFlexBridge(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckForFlexBridgeInstalled(display);
+			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
 
 			return true; // We dealt with it.
 		}
@@ -444,8 +529,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			bool dummy1;
 			string dummy2;
-			var success = FLExBridgeHelper.LaunchFieldworksBridge(
-				Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
+			FLExBridgeHelper.LaunchFieldworksBridge(
+				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.AboutFLExBridge,
 				null, FDOBackendProvider.ModelVersion, "0.13", null,
@@ -466,7 +551,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <returns></returns>
 		public bool OnDisplayViewMessages(object parameters, ref UIItemDisplayProperties display)
 		{
-			CheckForFlexBridgeInstalled(display);
+			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
 
 			display.Enabled = display.Enabled && NotesFileIsPresent(Cache, false);
 
@@ -521,7 +606,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <returns></returns>
 		public bool OnDisplayViewLiftMessages(object parameters, ref UIItemDisplayProperties display)
 		{
-			CheckForFlexBridgeInstalled(display);
+			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
 
 			display.Enabled = display.Enabled && NotesFileIsPresent(Cache, true);
 
@@ -538,11 +623,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			bool dummy1;
 			string dummy2;
 			FLExBridgeHelper.FLExJumpUrlChanged += JumpToFlexObject;
-			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
-								   SendReceiveUser,
-								   FLExBridgeHelper.LiftConflictViewer,
-								   null, FDOBackendProvider.ModelVersion, "0.13", null,
-								   out dummy1, out dummy2);
+			var success = FLExBridgeHelper.LaunchFieldworksBridge(
+				GetFullProjectFileName(),
+				SendReceiveUser,
+				FLExBridgeHelper.LiftConflictViewer,
+				null, FDOBackendProvider.ModelVersion, "0.13", null,
+				out dummy1, out dummy2);
 			if (!success)
 			{
 				FLExBridgeHelper.FLExJumpUrlChanged -= JumpToFlexObject;
@@ -563,7 +649,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <returns></returns>
 		public bool OnDisplayShowChorusHelp(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckForFlexBridgeInstalled(display);
+			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
 
 			display.Enabled = display.Enabled && File.Exists(ChorusHelpFile);
 
@@ -621,7 +707,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// In this case the caller of this method will continue on and probably create a new repository,
 		///	thus doing the equivalent of the original Lift Bridge code where there FLEx user started a S/R lift system.</para>
 		/// </remarks>
-		/// <returns>'true' if the the move succeeded, or if there was no need to do the move. The caller code will continue its work.
+		/// <returns>'true' if the move succeeded, or if there was no need to do the move. The caller code will continue its work.
 		/// Return 'false', if the calling code should quit its work.</returns>
 		private bool MoveOldLiftRepoIfNeeded()
 		{
@@ -637,7 +723,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			bool dummyDataChanged;
 			// flexbridge -p <path to fwdata file> -u <username> -v move_lift -g Langprojguid
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(
-				Path.Combine(projectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
+				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.MoveLift,
 				Cache.LanguageProject.Guid.ToString().ToLowerInvariant(), FDOBackendProvider.ModelVersion, "0.13", null,
@@ -759,7 +845,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// Do the S/R. This *may* actually create the Lift repository, if it doesn't exist, or it may do a more normal S/R
 		/// </summary>
 		/// <returns>'true' if the S/R succeed, otherwise 'false'.</returns>
-		private bool DoSendReceiveForLift(out bool dataChanged)
+		private bool DoSendReceiveForLift(string fullProjectFileName, out bool dataChanged)
 		{
 			StopParser();
 			var projectFolder = Cache.ProjectId.ProjectFolder;
@@ -771,9 +857,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			_liftPathname = GetLiftPathname(liftProjectDir);
 			var savedState = PrepareToDetectLiftConflicts(liftProjectDir);
 			string dummy;
-			// flexbridge -p <path to fwdata file> -u <username> -v send_receive_lift
+			// flexbridge -p <path to fwdata/fwdb file> -u <username> -v send_receive_lift
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(
-				Path.Combine(projectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
+				fullProjectFileName,
 				SendReceiveUser,
 				FLExBridgeHelper.SendReceiveLift, // May create a new lift repo in the process of doing the S/R. Or, it may just use the extant lift repo.
 				null, FDOBackendProvider.ModelVersion, "0.13", Cache.LangProject.DefaultVernacularWritingSystem.Id,
@@ -881,7 +967,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private static string GetLiftPathname(string liftBaseDir)
 		{
-			return Directory.GetFiles(liftBaseDir, "*.lift").FirstOrDefault();
+			// Part 2 of the LT-14809 fix is to test for the existance of the lift folder.
+			// FB will delete it if the S/R was cancelled and Flex had just created the lift folder and file.
+			// So don't crash if the folder no longer exists.
+			return Directory.Exists(liftBaseDir) ? Directory.GetFiles(liftBaseDir, "*.lift").FirstOrDefault() : null;
 		}
 
 		/// <summary>
@@ -1076,7 +1165,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 		}
 
-		private const string kChorusNotesExtension = "ChorusNotes";
+		internal const string kChorusNotesExtension = "ChorusNotes";
 		/// <summary>
 		/// Export the contents of the lift lexicon.
 		/// </summary>
@@ -1460,11 +1549,20 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 		}
 
-		private static void CheckForFlexBridgeInstalled(UIItemDisplayProperties display)
+		private bool ShowMessageBeforeFirstSendReceive_IsUserReady()
+		{
+			using (var FirstTimeDlg = new FLExBridgeFirstSendReceiveInstructionsDlg(_mediator.HelpTopicProvider))
+			{
+				return DialogResult.OK == FirstTimeDlg.ShowDialog();
+			}
+		}
+
+		private static void CheckForFlexBridgeInstalledAndSetMenuItemProperties(UIItemDisplayProperties display)
 		{
 			display.Enabled = FLExBridgeHelper.IsFlexBridgeInstalled();
 			display.Visible = true; // Always visible. Cf. LT-13885
 		}
+
 
 		#region IDisposable implementation
 

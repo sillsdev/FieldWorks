@@ -2044,6 +2044,7 @@ namespace LexTextControlsTests
 			throw new NotImplementedException();
 		}
 
+		public IEnumerable<ICmObject> AllOwnedObjects { get; private set; }
 		public int Hvo { get; private set; }
 		public ICmObject Owner { get; private set; }
 		public int OwningFlid { get; private set; }
@@ -2132,6 +2133,7 @@ namespace LexTextControlsTests
 		public int SortKey2 { get; private set; }
 		public string SortKey2Alpha { get; private set; }
 		public HashSet<ICmObject> ReferringObjects { get; private set; }
+		public IEnumerable<ICmObject> OwnedObjects { get; private set; }
 		public string Name { get; set; }
 		public IStStyle BasedOnRA { get; set; }
 		public IStStyle NextRA { get; set; }

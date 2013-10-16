@@ -3409,7 +3409,7 @@ namespace SIL.FieldWorks.XWorks
 				LayoutTypeComboItem ltci = (LayoutTypeComboItem)m_cbDictType.Items[ici];
 				for (int itn = 0; itn < ltci.TreeNodes.Count; ++itn)
 				{
-					ltci.TreeNodes[itn].MakeSenseNumberSchemeConsistent();
+					ltci.TreeNodes[itn].MakeSenseNumberFormatConsistent();
 					ltci.TreeNodes[itn].GetModifiedLayouts(rgxnLayouts, ltci.TreeNodes);
 				}
 				// update the inventory with the copied layout type.
@@ -4707,45 +4707,86 @@ namespace SIL.FieldWorks.XWorks
 			/// So far, we never have more than one child that has this property, so we don't try to handle
 			/// inconsistent children.
 			/// </summary>
-			internal void MakeSenseNumberSchemeConsistent()
+			/// <remarks>
+			/// pH 2013.09 LT-14749: Before I addressed this report, this code was intentionally not synchronising
+			/// punctuation before and after the numerals.  Per a discussion with Steve McConnel, before the dialog
+			/// to set these settings, users could set them by editing [project]/ConfigurationSettings/LexEntry.fwlayout
+			/// or LexSense.fwlayout.  So my fix may break formatting that users had set up, iff they change settings
+			/// through the dialog (Tools > Configure > Dictionary... > Sense).  However, the dialog does not provide the
+			/// same granularity as editing the .fwlayout files, and therefore, if users are using the dialog, they
+			/// probably expect to update formatting of sense numbers at all levels.
+			/// </remarks>
+			internal void MakeSenseNumberFormatConsistent()
 			{
 				foreach (TreeNode tn in Nodes)
 				{
 					LayoutTreeNode ltn = tn as LayoutTreeNode;
 					if (ltn != null)
 					{
-						ltn.MakeSenseNumberSchemeConsistent(); // recurse first, in case it has children needing to be fixed.
+						ltn.MakeSenseNumberFormatConsistent(); // recurse first, in case it has children needing to be fixed.
 						if (!ShowSenseConfig || !ltn.ShowSenseConfig)
 							continue;
 
-						string sBefore, sMark, sAfter;
-						SplitNumberFormat(out sBefore, out sMark, out sAfter);
-
-						string sBeforeChild, sMarkChild, sAfterChild;
-						ltn.SplitNumberFormat(out sBeforeChild, out sMarkChild, out sAfterChild);
-
-						if (sMark == sMarkChild)
-							continue; // nothing to reconcile.
-
-						string sOld = XmlUtils.GetOptionalAttributeValue(m_xnConfig, "number");
-						string sBeforeOld, sMarkOld, sAfterOld;
-						ltn.SplitNumberFormat(sOld, out sBeforeOld, out sMarkOld, out sAfterOld);
-
-						string sChildOld = XmlUtils.GetOptionalAttributeValue(ltn.m_xnConfig, "number");
-						string sBeforeChildOld, sMarkChildOld, sAfterChildOld;
-						ltn.SplitNumberFormat(sChildOld, out sBeforeChildOld, out sMarkChildOld, out sAfterChildOld);
-
-						if (sMark != sMarkOld)
+						// Update numerals and punctuation
+						string sNumber = Number;
+						string sNumberChild = ltn.Number;
+						if (sNumber != sNumberChild)
 						{
-							// parent changed; make child consistent
-							ltn.Number = sBeforeChild + sMark + sAfterChild;
+							string sNumberOld = XmlUtils.GetOptionalAttributeValue(m_xnConfig, "number");
+							string sNumberChildOld = XmlUtils.GetOptionalAttributeValue(ltn.m_xnConfig, "number");
+							if (sNumber != sNumberOld)
+							{
+								// parent changed; make child consistent
+								ltn.Number = sNumber;
+							}
+							else if (sNumberChild != sNumberChildOld)
+							{
+								// child changed; make parent consistent
+								Number = sNumberChild;
+							}
 						}
-						else if (sMarkChild != sMarkChildOld)
+
+						// Update style
+						string sStyle = NumStyle;
+						string sStyleChild = ltn.NumStyle;
+						if (sStyle != sStyleChild)
 						{
-							// child changed.
-							Number = sBefore + sMarkChild + sAfter;
+							string sStyleOld = XmlUtils.GetOptionalAttributeValue(m_xnConfig, "numstyle");
+							string sStyleChildOld = XmlUtils.GetOptionalAttributeValue(ltn.m_xnConfig, "numstyle");
+							if (sStyle != sStyleOld)
+								ltn.NumStyle = sStyle;
+							else if (sStyleChild != sStyleChildOld)
+								NumStyle = sStyleChild;
+						}
+
+						// Update font
+						string sFont = NumFont;
+						string sFontChild = ltn.NumFont;
+						if (sFont != sFontChild)
+						{
+							string sFontOld = XmlUtils.GetOptionalAttributeValue(m_xnConfig, "numfont");
+							string sFontChildOld = XmlUtils.GetOptionalAttributeValue(ltn.m_xnConfig, "numfont");
+							if (sFont != sFontOld)
+								ltn.NumFont = sFont;
+							else if (sFontChild != sFontChildOld)
+								NumFont = sFontChild;
+						}
+
+						// Update whether a single sense is numbered
+						bool bNumSingle = NumberSingleSense;
+						bool bNumSingleChild = ltn.NumberSingleSense;
+						if (bNumSingle != bNumSingleChild)
+						{
+							bool bNumSingleOld = XmlUtils.GetBooleanAttributeValue(m_xnConfig, "numsingle");
+							bool bNumSingleChildOld = XmlUtils.GetBooleanAttributeValue(ltn.m_xnConfig, "numsingle");
+							if (bNumSingle != bNumSingleOld)
+								ltn.NumberSingleSense = bNumSingle;
+							else if (bNumSingleChild != bNumSingleChildOld)
+								NumberSingleSense = bNumSingleChild;
 						}
 					}
+
+					// TODO: before, sep, after, param, parastyle, flowType, others? (these can wait until the refactor)
 				}
 
 			}

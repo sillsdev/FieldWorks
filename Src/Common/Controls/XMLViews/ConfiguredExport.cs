@@ -24,6 +24,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Diagnostics;
+using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
@@ -673,7 +674,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="mapChars">Set of character equivalences</param>
 		/// <param name="chIgnoreSet">Set of characters to ignore</param>
 		/// <returns></returns>
-		private Set<string> GetDigraphs(string sWs, out Dictionary<string, string> mapChars,
+		internal Set<string> GetDigraphs(string sWs, out Dictionary<string, string> mapChars,
 			out Set<string> chIgnoreSet)
 		{
 			// Collect the digraph and character equivalence maps and the ignorable character set
@@ -689,12 +690,13 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			digraphs = new Set<string>();
 			mapChars = new Dictionary<string, string>();
-			IWritingSystem ws = m_cache.ServiceLocator.WritingSystemManager.Get(sWs);
-			string sIcuRules = ws.SortRules;
+			var ws = m_cache.ServiceLocator.WritingSystemManager.Get(sWs);
+			var sortRules = ws.SortRules;
+			var sortType = ws.SortUsing;
 
-			if (!String.IsNullOrEmpty(sIcuRules) && sIcuRules.Contains("&"))
+			if (!String.IsNullOrEmpty(sortRules) && sortType == WritingSystemDefinition.SortRulesType.CustomICU)
 			{
-				string[] rgsRules = sIcuRules.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
+				string[] rgsRules = sortRules.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
 				for (int i = 0; i < rgsRules.Length; ++i)
 				{
 					string sRule = rgsRules[i];
@@ -727,56 +729,90 @@ namespace SIL.FieldWorks.Common.Controls
 						continue;
 					sRule = sRule.Replace("<<<", "=");
 					sRule = sRule.Replace("<<", "=");
-					if (sRule.Contains("<"))
+					// "&N<ng<<<Ng<ny<<<Ny" => "&N<ng=Ng<ny=Ny"
+					// "&N<ñ<<<Ñ" => "&N<ñ=Ñ"
+					// There are other issues we are not handling proplerly such as the next line
+					// &N<\u006e\u0067
+					var primaryParts = sRule.Split('<');
+					foreach (var part in primaryParts)
 					{
-						// "&N<ng<<<Ng<ny<<<Ny" => "&N<ng=Ng<ny=Ny"
-						// "&N<ñ<<<Ñ" => "&N<ñ=Ñ"
-						// There are other issues we are not handling proplerly such as the next line
-						// &N<\u006e\u0067
-						string[] rgsPieces = sRule.Split(new[] { '<', '=' }, StringSplitOptions.RemoveEmptyEntries);
-						for (int j = 0; j < rgsPieces.Length; ++j)
-						{
-							string sGraph = rgsPieces[j];
-							sGraph = sGraph.Trim();
-							if (String.IsNullOrEmpty(sGraph))
-								continue;
-							sGraph = Icu.Normalize(sGraph, Icu.UNormalizationMode.UNORM_NFD);
-							if (sGraph.Length > 1)
-							{
-								sGraph = Icu.ToLower(sGraph, sWs);
-								if (!digraphs.Contains(sGraph))
-									digraphs.Add(sGraph);
-							}
-						}
+						BuildDigraphSet(part, sWs, m_mapWsDigraphs);
+						MapRuleCharsToPrimary(part, sWs, m_mapWsMapChars);
 					}
-					else if (sRule.Contains("="))
+				}
+			}
+			else if(!String.IsNullOrEmpty(sortRules) && sortType == WritingSystemDefinition.SortRulesType.CustomSimple)
+			{
+				var rules = sortRules.Replace(" ", "=");
+				var primaryParts = rules.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+				foreach (var part in primaryParts)
+				{
+					BuildDigraphSet(part, sWs, m_mapWsDigraphs);
+					MapRuleCharsToPrimary(part, sWs, m_mapWsMapChars);
+				}
+			}
+			else
+			{
+				// This at least prevents null reference and key not found exceptions.
+				// Possibly we should at least map the ASCII LC letters to UC.
+				m_mapWsMapChars[sWs] = new Dictionary<string, string>();
+				m_mapWsDigraphs[sWs] = digraphs;
+			}
+			mapChars = m_mapWsMapChars[sWs];
+			m_mapWsIgnorables.Add(sWs, chIgnoreSet);
+			return digraphs;
+		}
+
+		private static void MapRuleCharsToPrimary(string part, string ws, Dictionary<string, Dictionary<string, string>> wsToCharMap)
+		{
+			string primaryPart = null;
+			foreach (var character in part.Split('='))
+			{
+				var sGraph = character.Trim();
+				if (String.IsNullOrEmpty(sGraph))
+					continue;
+				sGraph = Icu.Normalize(sGraph, Icu.UNormalizationMode.UNORM_NFD);
+				if (primaryPart == null)
+				{
+					primaryPart = sGraph;
+					continue;
+				}
+				if (!wsToCharMap.ContainsKey(ws))
+				{
+					wsToCharMap.Add(ws, new Dictionary<string, string>());
+				}
+				var mapToPrimary = wsToCharMap[ws];
+				if (!mapToPrimary.ContainsKey(sGraph)) //This should never be, but don't crash
+				{
+					mapToPrimary.Add(sGraph, primaryPart);
+				}
+			}
+		}
+
+		private static void BuildDigraphSet(string part, string ws, Dictionary<string, Set<string>> wsDigraphsMap)
+		{
+			foreach (var character in part.Split('='))
+			{
+				var sGraph = character.Trim();
+				if (String.IsNullOrEmpty(sGraph))
+					continue;
+				sGraph = Icu.Normalize(sGraph, Icu.UNormalizationMode.UNORM_NFD);
+				if (sGraph.Length > 1)
+				{
+					sGraph = Icu.ToLower(sGraph, ws);
+					if (!wsDigraphsMap.ContainsKey(ws))
 					{
-						// "&ae<<æ<<<Æ" => "&ae=æ=Æ"
-						string[] rgsPieces = sRule.Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
-						string sGraphPrimary = rgsPieces[0].Trim();
-						Debug.Assert(!String.IsNullOrEmpty(sGraphPrimary));
-						sGraphPrimary = Icu.ToLower(sGraphPrimary, sWs);
-						for (int j = 1; j < rgsPieces.Length; ++j)
+						wsDigraphsMap.Add(ws, new Set<String> { sGraph });
+					}
+					else
+					{
+						if (!wsDigraphsMap[ws].Contains(sGraph))
 						{
-							string sGraph = rgsPieces[j];
-							sGraph = sGraph.Trim();
-							if (String.IsNullOrEmpty(sGraph))
-								continue;
-							sGraph = Icu.Normalize(sGraph, Icu.UNormalizationMode.UNORM_NFD);
-							sGraph = Icu.ToLower(sGraph, sWs);
-							if (sGraph != sGraphPrimary)
-							{
-								if (!mapChars.ContainsKey(sGraph))
-									mapChars.Add(sGraph, sGraphPrimary);
-							}
+							wsDigraphsMap[ws].Add(sGraph);
 						}
 					}
 				}
 			}
-			m_mapWsDigraphs.Add(sWs, digraphs);
-			m_mapWsMapChars.Add(sWs, mapChars);
-			m_mapWsIgnorables.Add(sWs, chIgnoreSet);
-			return digraphs;
 		}
 
 		private void RemoveICUEscapeChars(ref string sRule)

@@ -126,6 +126,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private Button btnLinkedFilesBrowse;
 		/// <summary>The project name when we entered the dialog.</summary>
 		protected string m_sOrigProjName;
+		/// <summary>The project description when we entered the dialog.</summary>
+		protected string m_sOrigDescription;
 		/// <summary>Used to check if the vern ws at the top of the list changed</summary>
 		private IWritingSystem m_topVernWs;
 		private LinkLabel linkLbl_useDefaultFolder;
@@ -199,7 +201,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				m_cache.ProjectId.SharedProjectFolder;
 			m_lblProjCreatedDate.Text = m_langProj.DateCreated.ToString("g");
 			m_lblProjModifiedDate.Text = m_langProj.DateModified.ToString("g");
-			m_txtProjDescription.Text = m_langProj.Description.UserDefaultWritingSystem.Text;
+			m_txtProjDescription.Text = m_sOrigDescription = m_langProj.Description.UserDefaultWritingSystem.Text;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -970,13 +972,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			DialogResult = DialogResult.OK;
 			if (!DidProjectTabChange() && !DidWsTabChange() && !DidLinkedFilesTabChange())
 			{
-				Close(); //Ok, but nothing changed. Nothing to see here, carry on.
+				NotifyProjectPropsChangedAndClose(); //Ok, but nothing changed. Nothing to see here, carry on.
 				return;
 			}
 
 			if (!ClientServerServices.Current.WarnOnConfirmingSingleUserChanges(m_cache)) //if Anything changed, check and warn about DB4o
 			{
-				Close(); //The user changed something, but when warned decided against it, so do not save just quit
+				NotifyProjectPropsChangedAndClose(); //The user changed something, but when warned decided against it, so do not save just quit
 				return;
 			}
 			if (DidLinkedFilesTabChange())
@@ -1016,6 +1018,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().ResetHomographs(null);
 				});
 				m_cache.ServiceLocator.WritingSystemManager.Save();
+				NotifyProjectPropsChangedAndClose();
+			}
+		}
+
+		/// <summary>
+		/// Closing the dialog from the OK button has several exits. All should raise this event if something
+		/// changed that might require a master refresh.
+		/// </summary>
+		private void NotifyProjectPropsChangedAndClose()
+		{
+			using (new WaitCursor(this))
+			{
 				if (m_fWsChanged || m_fProjNameChanged || m_fLinkedFilesChanged)
 				{
 					if (ProjectPropertiesChanged != null)
@@ -1036,7 +1050,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private bool DidProjectTabChange()
 		{
-			return m_txtProjName.Text != m_sOrigProjName;
+			return m_txtProjName.Text != m_sOrigProjName ||
+				m_txtProjDescription.Text != m_sOrigDescription;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1054,7 +1069,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			var userWs = m_cache.ServiceLocator.WritingSystemManager.UserWs;
 			m_fProjNameChanged = (m_txtProjName.Text != m_sOrigProjName);
-			if (m_langProj.Description.get_String(userWs).Text != m_txtProjDescription.Text)
+			if (m_txtProjDescription.Text != m_sOrigDescription)
 				m_langProj.Description.set_String(userWs, m_cache.TsStrFactory.MakeString(m_txtProjDescription.Text, userWs));
 
 			var sNewLinkedFilesRootDir = txtExtLnkEdit.Text;

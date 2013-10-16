@@ -32,6 +32,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 			throw new NotImplementedException();
 		}
 
+		/// <summary></summary>
+		public string ParatextSettingsDirectory()
+		{
+			throw new NotImplementedException();
+		}
+
 		/// <summary>
 		///
 		/// </summary>

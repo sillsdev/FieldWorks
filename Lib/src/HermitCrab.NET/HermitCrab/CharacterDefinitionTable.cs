@@ -302,7 +302,8 @@ namespace SIL.HermitCrab
 
 				if (!match)
 				{
-					var missing = new MissingPhoneticShapeException(str, i);
+					string sPhonemesFoundSoFar = ToRegexString(ps, ModeType.ANALYSIS, true);
+					var missing = new MissingPhoneticShapeException(sPhonemesFoundSoFar, i);
 					throw missing;
 				}
 			}
@@ -475,30 +476,30 @@ namespace SIL.HermitCrab
 		//    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dncscol/html/csharp07192001.asp
 		//
 
-		private string m_word;
+		private string m_phonemesFoundSoFar;
 		private int m_position;
 
-		public MissingPhoneticShapeException(string word, int position)
+		public MissingPhoneticShapeException(string phonemesFoundSoFar, int position)
 		{
-			m_word = word;
+			m_phonemesFoundSoFar = phonemesFoundSoFar;
 			m_position = position;
 		}
 
-		public MissingPhoneticShapeException(string word, int position, string message) : base(message)
+		public MissingPhoneticShapeException(string phonemesFoundSoFar, int position, string message) : base(message)
 		{
-			m_word = word;
+			m_phonemesFoundSoFar = phonemesFoundSoFar;
 			m_position = position;
 		}
 
-		public MissingPhoneticShapeException(string word, int position, string message, Exception inner) : base(message, inner)
+		public MissingPhoneticShapeException(string phonemesFoundSoFar, int position, string message, Exception inner) : base(message, inner)
 		{
-			m_word = word;
+			m_phonemesFoundSoFar = phonemesFoundSoFar;
 			m_position = position;
 		}
 
-		public string Word
+		public string PhonemesFoundSoFar
 		{
-			get { return m_word; }
+			get { return m_phonemesFoundSoFar; }
 		}
 
 		public int Position

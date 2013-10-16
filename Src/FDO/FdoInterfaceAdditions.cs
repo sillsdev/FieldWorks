@@ -104,17 +104,6 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		void AllReferencedObjects(List<ICmObject> collector);
 
-#if WANTPORT // (FWR-2123 to fix this) INFO: Use the new ICloneableCmObject interface
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Copy contents of this object to another one
-		/// </summary>
-		/// <param name="objNew">target object</param>
-		/// <remarks>override this to copy the content</remarks>
-		/// ------------------------------------------------------------------------------------
-		void CopyTo(ICmObject objNew);
-#endif
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// tells whether the given field is relevant given the current values of related data items
@@ -304,6 +293,15 @@ namespace SIL.FieldWorks.FDO
 			get;
 		}
 
+		/// <summary>
+		/// The objects directly owned by this one.
+		/// </summary>
+		IEnumerable<ICmObject> OwnedObjects { get; }
+
+		/// <summary>
+		/// The objects owned directly or indirectly by this one.
+		/// </summary>
+		IEnumerable<ICmObject> AllOwnedObjects { get; }
 	}
 
 	/// <summary>
@@ -1031,11 +1029,8 @@ namespace SIL.FieldWorks.FDO
 		/// is kept and the others merged.
 		/// </summary>
 		/// <param name="hvoDomain"></param>
-		/// <param name="columns">List of XmlNode objects</param>
-		/// <param name="cache"></param>
 		/// <param name="newHvos">Set of new senses (including hvoSense).</param>
-		bool RDEMergeSense(int hvoDomain,
-						   List<XmlNode> columns, FdoCache cache, Set<int> newHvos);
+		bool RDEMergeSense(int hvoDomain, Set<int> newHvos);
 
 		/// <summary>
 		/// This is a backreference (virtual) property.  It returns the list of object ids for

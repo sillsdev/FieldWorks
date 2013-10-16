@@ -10,21 +10,21 @@ namespace SIL.HermitCrab
 	/// </summary>
 	public class WordSynthesis : ICloneable, IComparable<WordSynthesis>
 	{
-		LexEntry m_root;
+		readonly LexEntry m_root;
 		PhoneticShape m_shape;
-		Morphs m_morphs;
+		readonly Morphs m_morphs;
 		PartOfSpeech m_pos;
-		MPRFeatureSet m_mprFeatures;
-		WordSynthesis m_nonHead = null;
+		readonly MPRFeatureSet m_mprFeatures;
+		readonly WordSynthesis m_nonHead;
 		FeatureValues m_headFeatures;
 		FeatureValues m_footFeatures;
-		HCObjectSet<Feature> m_obligHeadFeatures;
-		List<MorphologicalRule> m_mrules;
-		int m_curRuleIndex = 0;
-		FeatureValues m_rzFeatures;
-		Trace m_curTrace = null;
+		readonly HCObjectSet<Feature> m_obligHeadFeatures;
+		readonly List<MorphologicalRule> m_mrules;
+		int m_curRuleIndex;
+		readonly FeatureValues m_rzFeatures;
+		object m_curTraceObject;
 		Stratum m_stratum;
-		Dictionary<MorphologicalRule, int> m_mrulesApplied;
+		readonly Dictionary<MorphologicalRule, int> m_mrulesApplied;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="WordSynthesis"/> class.
@@ -32,7 +32,7 @@ namespace SIL.HermitCrab
 		/// <param name="rootAllomorph">The root allomorph.</param>
 		/// <param name="rzFeatures">The realizational features.</param>
 		/// <param name="curTrace">The current trace record.</param>
-		internal WordSynthesis(LexEntry.RootAllomorph rootAllomorph, FeatureValues rzFeatures, Trace curTrace)
+		internal WordSynthesis(LexEntry.RootAllomorph rootAllomorph, FeatureValues rzFeatures, object curTrace)
 			: this(rootAllomorph, null, rzFeatures, new MorphologicalRule[] {}, curTrace)
 		{
 		}
@@ -43,7 +43,7 @@ namespace SIL.HermitCrab
 		/// <param name="wa">The word analysis.</param>
 		internal WordSynthesis(WordAnalysis wa)
 			: this(wa.RootAllomorph, wa.NonHead == null ? null : new WordSynthesis(wa.NonHead), wa.RealizationalFeatures.Clone(),
-			wa.UnappliedMorphologicalRules, wa.CurrentTrace)
+			wa.UnappliedMorphologicalRules, wa.CurrentTraceObject)
 		{
 		}
 
@@ -54,9 +54,9 @@ namespace SIL.HermitCrab
 		/// <param name="nonHead">The non-head synthesis.</param>
 		/// <param name="rzFeatures">The realizational features.</param>
 		/// <param name="mrules">The morphological rules to apply.</param>
-		/// <param name="curTrace">The current trace record.</param>
+		/// <param name="curTraceObject">The current trace record.</param>
 		internal WordSynthesis(LexEntry.RootAllomorph rootAllomorph, WordSynthesis nonHead, FeatureValues rzFeatures, IEnumerable<MorphologicalRule> mrules,
-			Trace curTrace)
+			object curTraceObject)
 		{
 			m_root = (LexEntry) rootAllomorph.Morpheme;
 			m_mprFeatures = m_root.MPRFeatures != null ? m_root.MPRFeatures.Clone() : new MPRFeatureSet();
@@ -67,7 +67,7 @@ namespace SIL.HermitCrab
 
 			m_nonHead = nonHead;
 			m_morphs = new Morphs();
-			Morph morph = new Morph(rootAllomorph);
+			var morph = new Morph(rootAllomorph);
 			morph.Shape.AddMany(rootAllomorph.Shape.Segments);
 			m_morphs.Add(morph);
 			m_shape = new PhoneticShape();
@@ -78,7 +78,7 @@ namespace SIL.HermitCrab
 			m_obligHeadFeatures = new HCObjectSet<Feature>();
 			m_mrules = new List<MorphologicalRule>(mrules);
 			m_rzFeatures = rzFeatures;
-			m_curTrace = curTrace;
+			m_curTraceObject = curTraceObject;
 			m_mrulesApplied = new Dictionary<MorphologicalRule, int>();
 		}
 
@@ -101,7 +101,7 @@ namespace SIL.HermitCrab
 			m_mrules = new List<MorphologicalRule>(ws.m_mrules);
 			m_curRuleIndex = ws.m_curRuleIndex;
 			m_rzFeatures = ws.m_rzFeatures.Clone();
-			m_curTrace = ws.m_curTrace;
+			m_curTraceObject = ws.m_curTraceObject;
 			m_stratum = ws.m_stratum;
 			m_mrulesApplied = new Dictionary<MorphologicalRule, int>(ws.m_mrulesApplied);
 		}
@@ -232,6 +232,11 @@ namespace SIL.HermitCrab
 			{
 				return m_rzFeatures;
 			}
+		}
+
+		public IEnumerable<MorphologicalRule> MorphologicalRules
+		{
+			get { return m_mrules; }
 		}
 
 		/// <summary>
@@ -379,16 +384,16 @@ namespace SIL.HermitCrab
 		/// Gets or sets the current trace record.
 		/// </summary>
 		/// <value>The current trace record.</value>
-		internal Trace CurrentTrace
+		public object CurrentTraceObject
 		{
 			get
 			{
-				return m_curTrace;
+				return m_curTraceObject;
 			}
 
 			set
 			{
-				m_curTrace = value;
+				m_curTraceObject = value;
 			}
 		}
 

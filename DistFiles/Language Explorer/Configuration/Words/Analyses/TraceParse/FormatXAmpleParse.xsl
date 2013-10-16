@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output method="html" version="4.0" encoding="UTF-8" indent="yes" media-type="text/html; charset=utf-8"/>
+	<xsl:include href="FormatCommon.xsl"/>
 	<!--
 ================================================================
 Format the xml returned from XAmple parse for user display.
@@ -127,6 +128,7 @@ ResultSection
 					<p>Note: when there are infixes, sometimes a successful parse will be shown more
 						than once.</p>
 				</xsl:if>
+				<xsl:call-template name="ShowAnyLoadErrors"/>
 			</xsl:when>
 			<xsl:otherwise>
 				<p>
@@ -150,6 +152,7 @@ ResultSection
 						</span>
 					</p>
 				</xsl:if>
+				<xsl:call-template name="ShowAnyLoadErrors"/>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>

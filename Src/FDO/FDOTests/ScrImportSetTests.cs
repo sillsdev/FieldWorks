@@ -22,12 +22,8 @@ using System.Text;
 using NUnit.Framework;
 using Rhino.Mocks;
 
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 using SILUBS.SharedScrUtils;
 
@@ -137,7 +133,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		private IScrImportSet m_importSettings;
 		private ICmAnnotationDefn m_translatorNoteDefn;
 		private ICmAnnotationDefn m_consultantNoteDefn;
-		private IParatextAdapter m_mockParatextAdapter;
+		private IParatextHelper m_mockParatextHelper;
 		private MockFileOS m_fileOs;
 		#endregion
 
@@ -177,9 +173,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_ptHelper.Projects.Clear();
 
 			m_importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
-			m_mockParatextAdapter = MockRepository.GenerateMock<IParatextAdapter>();
+			m_mockParatextHelper = MockRepository.GenerateMock<IParatextHelper>();
 			m_scr.ImportSettingsOC.Add(m_importSettings);
-			ReflectionHelper.SetField(m_importSettings, "m_paratextAdapter", m_mockParatextAdapter);
+			m_ptHelper.m_loadProjectMappingsImpl = m_mockParatextHelper;
 			m_translatorNoteDefn = Cache.ServiceLocator.GetInstance<ICmAnnotationDefnRepository>().TranslatorAnnotationDefn;
 			m_consultantNoteDefn = Cache.ServiceLocator.GetInstance<ICmAnnotationDefnRepository>().ConsultantAnnotationDefn;
 
@@ -698,7 +694,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			// Now that we've saved the settings, we'll "revert" in order to re-load from the DB
 			m_importSettings.RevertToSaved();
 
-			m_mockParatextAdapter.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Equal("KAM"),
+			m_mockParatextHelper.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Equal("KAM"),
 				Arg<ScrMappingList>.Is.Anything, Arg<ImportDomain>.Is.Equal(ImportDomain.Main))).Return(true);
 			m_importSettings.ImportTypeEnum = TypeOfImport.Paratext6;
 			m_importSettings.ParatextScrProj = "KAM";
@@ -804,9 +800,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			ScrMappingList mappingList = (ScrMappingList)m_importSettings.Mappings(MappingSet.Main);
 
-			m_mockParatextAdapter.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Equal("KAM"),
+			m_mockParatextHelper.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Equal("KAM"),
 				Arg<ScrMappingList>.Is.Equal(mappingList), Arg<ImportDomain>.Is.Equal(ImportDomain.Main))).Return(true);
-			m_mockParatextAdapter.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Equal("TEV"),
+			m_mockParatextHelper.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Equal("TEV"),
 				Arg<ScrMappingList>.Is.Equal(mappingList), Arg<ImportDomain>.Is.Equal(ImportDomain.BackTrans))).Return(true);
 
 			// add Scripture files
@@ -983,9 +979,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			ScrMappingList mappingListMain = (ScrMappingList)m_importSettings.Mappings(MappingSet.Main);
 			ScrMappingList mappingListNotes = (ScrMappingList)m_importSettings.Mappings(MappingSet.Notes);
 
-			m_mockParatextAdapter.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Equal("KAM"),
+			m_mockParatextHelper.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Equal("KAM"),
 				Arg<ScrMappingList>.Is.Equal(mappingListMain), Arg<ImportDomain>.Is.Equal(ImportDomain.Main))).Return(true);
-			m_mockParatextAdapter.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Equal("TEV"),
+			m_mockParatextHelper.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Equal("TEV"),
 				Arg<ScrMappingList>.Is.Equal(mappingListNotes), Arg<ImportDomain>.Is.Equal(ImportDomain.Annotations))).Return(true);
 
 			// set Scripture project
@@ -1065,7 +1061,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			m_importSettings.ImportTypeEnum = TypeOfImport.Paratext6;
 
-			m_mockParatextAdapter.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Equal("KAM"),
+			m_mockParatextHelper.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Equal("KAM"),
 				Arg<ScrMappingList>.Is.Anything, Arg<ImportDomain>.Is.Equal(ImportDomain.BackTrans))).Return(true);
 
 			m_importSettings.ParatextBTProj = "KAM";
@@ -1083,7 +1079,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			m_importSettings.ImportTypeEnum = TypeOfImport.Paratext6;
 
-			m_mockParatextAdapter.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Equal("KAM"),
+			m_mockParatextHelper.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Equal("KAM"),
 				Arg<ScrMappingList>.Is.Anything, Arg<ImportDomain>.Is.Equal(ImportDomain.BackTrans))).Return(true);
 
 			ScrMappingList mappings = m_importSettings.GetMappingListForDomain(ImportDomain.Main);
@@ -1152,7 +1148,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			m_importSettings.ImportTypeEnum = TypeOfImport.Paratext6;
 
-			m_mockParatextAdapter.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Anything,
+			m_mockParatextHelper.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Anything,
 				Arg<ScrMappingList>.Is.Anything, Arg<ImportDomain>.Is.Anything)).Return(true);
 
 			Assert.IsFalse(m_importSettings.BasicSettingsExist, "No project settings set yet");
@@ -1231,7 +1227,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			m_importSettings.ImportTypeEnum = TypeOfImport.Paratext6;
 
-			m_mockParatextAdapter.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Equal("NEC"),
+			m_mockParatextHelper.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Equal("NEC"),
 				Arg<ScrMappingList>.Is.Anything, Arg<ImportDomain>.Is.Anything)).Return(false);
 
 			m_importSettings.ParatextScrProj = "NEC";
@@ -1252,7 +1248,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_importSettings.ImportTypeEnum = TypeOfImport.Paratext6;
 
 			string paratextDir = ParatextHelper.ProjectsDirectory;
-			m_mockParatextAdapter.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Anything,
+			m_mockParatextHelper.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Anything,
 				Arg<ScrMappingList>.Is.Anything, Arg<ImportDomain>.Is.Anything)).Return(true);
 			m_ptHelper.AddProject("TEV", null, null, true, false, "100001");
 

@@ -85,6 +85,17 @@ namespace SIL.FieldWorks.Common.Widgets
 			get { return (m_sNewUserWs == "en-US" ? "en" : m_sNewUserWs); }
 		}
 
+		/// <summary>
+		/// Set true in FLEx, where the UI languages combo should not show extra languages
+		/// just because TE has localizations of the Key Terms list in those languages.
+		/// This is a bit of a kludge. Ideally we would make TE behave more like FLEx, where
+		/// list localizations are a function of analysis language rather than UI language,
+		/// and hence available localizations of them do not need to affect the UI language
+		/// choices. The negative definition makes TE's choice the default and avoids
+		/// having to change TE code.
+		/// </summary>
+		public bool SuppressKeyTermLocalizationLangs { get; set; }
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Populate the User Interface Languages combobox with the available languages.
@@ -97,7 +108,8 @@ namespace SIL.FieldWorks.Common.Widgets
 			// First, find those languages having satellite resource DLLs.
 			AddAvailableLangsFromSatelliteDlls();
 
-			AddAvailableLangsFromKeyTermsLocalizations();
+			if(!SuppressKeyTermLocalizationLangs)
+				AddAvailableLangsFromKeyTermsLocalizations();
 
 			// If no English locale was added, then add generic English. Otherwise,
 			// if another, non US version of English, was added (e.g. en_GB), then add

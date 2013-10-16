@@ -421,6 +421,12 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 		}
 
 		/// <summary></summary>
+		public IEnumerable<ICmObject> OwnedObjects { get { throw new NotImplementedException(); } }
+
+		/// <summary></summary>
+		public IEnumerable<ICmObject> AllOwnedObjects { get { throw new NotImplementedException(); } }
+
+		/// <summary></summary>
 		public int Hvo
 		{
 			get { throw new NotImplementedException(); }

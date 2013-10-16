@@ -1323,7 +1323,14 @@ namespace SIL.CoreImpl
 				return false;
 			if (languageCode.Equals("qaa", StringComparison.OrdinalIgnoreCase))
 			{
-				if (privateUseSubTags.Count > 0)
+				// In our own WS dialog, we don't allow no language, but if it isn't a standard one, a language like xkal
+				// produces an identifier like qaa-x-kal, and we interepret the first thing after the x as a private
+				// language code (not allowed as the first three characters according to the standard).
+				// If it's NOT a valid language code (e.g., too many characters), probably came from some other
+				// program. Treating it as a language code will fail if we try to create such a writing system,
+				// since we will detect the invalid language code. So only interpret the first element
+				// after the x as a language code if it is a valid one. Otherwise, we just let qaa be the language.
+				if (privateUseSubTags.Count > 0 && IsLanguageCodeValid(privateUseSubTags[0]))
 				{
 					languageSubtag = new LanguageSubtag(privateUseSubTags[0], "", true, null);
 					privateUseSubTags.RemoveAt(0);

@@ -106,14 +106,13 @@ namespace SIL.HermitCrab {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failure to translate shape &apos;{0}&apos; of lexical entry &apos;{1}&apos; into a phonetic shape using character table &apos;{2}&apos;.  The missing phonetic shape is at or near character number {3}: &apos;{4}&apos;..
+        ///   Looks up a localized string similar to Failure to translate shape &apos;{0}&apos; of lexical entry &apos;{1}&apos; into a phonetic shape using character table &apos;{2}&apos;. The phoneme(s) found so far are &apos;{5}&apos;. The missing phonetic shape is at or near character number {3}: &apos;{4}&apos;..
         /// </summary>
         internal static string kstidInvalidLexEntryShape {
             get {
                 return ResourceManager.GetString("kstidInvalidLexEntryShape", resourceCulture);
             }
         }
-        
         
         /// <summary>
         ///   Looks up a localized string similar to Failure to translate shape &apos;{0}&apos; of lexical entry &apos;{1}&apos; into a phonetic shape using character table &apos;{2}&apos;.  The shape is all boundaries..
@@ -123,9 +122,9 @@ namespace SIL.HermitCrab {
                 return ResourceManager.GetString("kstidInvalidLexEntryShapeAllBoundaries", resourceCulture);
             }
         }
-
+        
         /// <summary>
-        ///   Looks up a localized string similar to Failure to translate shape &apos;{0}&apos; in a phonetic sequence into a phonetic shape using character table &apos;{1}&apos;.  The missing phonetic shape is at or near character number {2}: &apos;{3}&apos;..
+        ///   Looks up a localized string similar to Failure to translate shape &apos;{0}&apos; in a phonetic sequence into a phonetic shape using character table &apos;{1}&apos;.  The phoneme(s) found so far are &apos;{4}&apos;.  The missing phonetic shape is at or near character number {2}: &apos;{3}&apos;..
         /// </summary>
         internal static string kstidInvalidPseqShape {
             get {
@@ -143,7 +142,7 @@ namespace SIL.HermitCrab {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failure to translate shape &apos;{0}&apos; of rule &apos;{1}&apos; into a phonetic shape using character table &apos;{2}&apos;.  The missing phonetic shape is at or near character number {3}: &apos;{4}&apos;..
+        ///   Looks up a localized string similar to Failure to translate shape &apos;{0}&apos; of rule &apos;{1}&apos; into a phonetic shape using character table &apos;{2}&apos;.  The phoneme(s) found so far are &apos;{5}&apos;.  The missing phonetic shape is at or near character number {3}: &apos;{4}&apos;..
         /// </summary>
         internal static string kstidInvalidRuleShape {
             get {
@@ -170,7 +169,7 @@ namespace SIL.HermitCrab {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failure to translate input word &apos;{0}&apos; into a phonetic shape using character table &apos;{1}&apos;.  The missing phonetic shape is at or near character number {2}: &apos;{3}&apos;..
+        ///   Looks up a localized string similar to Failure to translate input word &apos;{0}&apos; into a phonetic shape using character table &apos;{1}&apos;.  The phoneme(s) found so far are &apos;{4}&apos;.  The missing phonetic shape is at or near character number {2}: &apos;{3}&apos;..
         /// </summary>
         internal static string kstidInvalidWord {
             get {

@@ -223,7 +223,7 @@ namespace XMLViewsTests
 			vc.SetCache(Cache);
 			var sut = new XmlVcDisplayVec(vc, new MockEnv(), entry.Hvo, LexEntryTags.kflidSenses, 1);
 
-			Assert.That(sut.CalculateAndFormatSenseLabel(new int[] {sense.Hvo}, 0, "%O)"), Is.EqualTo("77)"),
+			Assert.That(sut.CalculateAndFormatSenseLabel(sense.Hvo, 0, "%O)"), Is.EqualTo("77)"),
 				"CalculateAndFormatSenseLabel should have used the decorator method");
 			Assert.That(sda.Tag, Is.EqualTo(Cache.MetaDataCacheAccessor.GetFieldId2(LexSenseTags.kClassId, "LexSenseOutline", false)),
 				"CalculateAndFormatSenseLabel should have used the right property");

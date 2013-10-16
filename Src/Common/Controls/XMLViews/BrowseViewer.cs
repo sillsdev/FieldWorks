@@ -2238,7 +2238,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (m_filterBar == null)
 				return; // for now we can't sort without a filter bar.
 			int icolumn = e.Column;
-			int ifsi = icolumn - m_filterBar.ColumnOffset;
+			int ifsi = OrderForColumnsDisplay[icolumn - m_filterBar.ColumnOffset];
 			if (ifsi < 0)
 			{
 				// Click on the check box column; todo: maybe we could sort checked before
@@ -3761,6 +3761,31 @@ namespace SIL.FieldWorks.Common.Controls
 			get { return m_xbv.SelectedRowHighlighting; }
 			set { m_xbv.SelectedRowHighlighting = value; }
 		}
+
+		/// <summary>
+		/// This is used to keep track of the positions of columns after they have been dragged and dropped.
+		/// OrderForColumnsDisplay[i] is the index of the position where the column at
+		/// position i in the orginal Columns collection is actually displayed.
+		/// </summary>
+		public List<int> OrderForColumnsDisplay
+		{
+			get
+			{
+				// gracefully handle the situation where the list view has not initialized this yet.
+				// If columns have been added since any reordering, then ensure that's reflected here.
+				// (See LT-14879.)
+				if (m_orderForColumnsDisplay.Count < ColumnCount)
+				{
+					int min = m_orderForColumnsDisplay.Count;
+					for (int i = min; i < ColumnCount; i++)
+						m_orderForColumnsDisplay.Add(i);
+				}
+				Debug.Assert(m_orderForColumnsDisplay.Count == ColumnCount);
+				return m_orderForColumnsDisplay;
+			}
+			set { m_orderForColumnsDisplay = value; }
+		}
+		private List<int> m_orderForColumnsDisplay = new List<int>();
 
 		// In your AllItems list, the specified objects have been replaced (typically dummy to real).
 		internal void FixReplacedItems(Dictionary<int, int> replacedObjects)

@@ -53,8 +53,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						// No other parts use the same relation, and there is no other relation with the new 'whole'.
 						// Therefore, we can just modify the relation.
 						Debug.Assert(lr.TargetsRS[1] == objToLink);
-						lr.TargetsRS.RemoveAt(0);
-						lr.TargetsRS.Insert(0, value);
+						// Do this in one step; if we delete first, FDO gets too smart and deletes the whole lexical relation.
+						lr.TargetsRS[0] = value;
 						return; // must not try to insert into newRef.
 					}
 					else
@@ -99,8 +99,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// This control is always configured as the child of a LexReferenceTreeRootSlice, which always
 		/// has a ParentSlice whose Object is the one we want.
 		/// </summary>
+		/// <remarks>internal and virtual to support testing...otherwise would be private</remarks>
 		/// <returns></returns>
-		private ICmObject GetChildObject()
+		internal virtual ICmObject GetChildObject()
 		{
 			LexReferenceTreeRootSlice owningSlice = null;
 			for (var parent = Parent; parent != null && owningSlice == null; parent = parent.Parent)

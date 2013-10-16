@@ -310,7 +310,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						{
 							foreach (var wg in waDup.MeaningsOC)
 								waKeep.MeaningsOC.Add(wg);
-							CmObject.ReplaceReferences(cache, waDup, waKeep);
+							CmObject.ReplaceReferences(waDup, waKeep);
 							waDup.Delete();
 							analyses.RemoveAt(j);
 						}
@@ -331,7 +331,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					var wgDup = glosses[j];
 					if (DuplicateGlosses(wgKeep, wgDup))
 					{
-						CmObject.ReplaceReferences(wa.Cache, wgDup, wgKeep);
+						CmObject.ReplaceReferences(wgDup, wgKeep);
 						wgDup.Delete();
 						glosses.RemoveAt(j);
 					}

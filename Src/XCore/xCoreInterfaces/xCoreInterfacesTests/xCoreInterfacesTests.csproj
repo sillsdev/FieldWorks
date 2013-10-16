@@ -104,6 +104,7 @@
     <Compile Include="TestMessageSequencer.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="TestTupleComparer.cs" />
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>

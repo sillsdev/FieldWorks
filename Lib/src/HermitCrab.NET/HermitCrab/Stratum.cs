@@ -12,8 +12,8 @@ namespace SIL.HermitCrab
 	{
 		public class Match
 		{
-			List<PhoneticShapeNode> m_nodes;
-			T m_value;
+			readonly List<PhoneticShapeNode> m_nodes;
+			readonly T m_value;
 
 			public Match(T value)
 			{
@@ -79,9 +79,9 @@ namespace SIL.HermitCrab
 
 		class TrieNode
 		{
-			List<T> m_values;
-			SegmentDefinition m_segDef;
-			List<TrieNode> m_children;
+			readonly List<T> m_values;
+			readonly SegmentDefinition m_segDef;
+			readonly List<TrieNode> m_children;
 
 			public TrieNode()
 				: this(null)
@@ -230,7 +230,7 @@ namespace SIL.HermitCrab
 
 		TrieNode m_root;
 		int m_numValues = 0;
-		Direction m_dir;
+		readonly Direction m_dir;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="SegmentDefinitionTrie&lt;T&gt;"/> class.
@@ -312,20 +312,19 @@ namespace SIL.HermitCrab
 		/// </summary>
 		public const string SURFACE_STRATUM_ID = "surface";
 
-		CharacterDefinitionTable m_charDefTable = null;
-		bool m_isCyclic = false;
+		bool m_isCyclic;
 		PRuleOrder m_pruleOrder = PRuleOrder.LINEAR;
 		MRuleOrder m_mruleOrder = MRuleOrder.LINEAR;
 
-		SegmentDefinitionTrie<LexEntry.RootAllomorph> m_entryTrie;
-		HCObjectSet<MorphologicalRule> m_mrules;
-		HCObjectSet<PhonologicalRule> m_prules;
-		HCObjectSet<AffixTemplate> m_templates;
+		readonly SegmentDefinitionTrie<LexEntry.RootAllomorph> m_entryTrie;
+		readonly HCObjectSet<MorphologicalRule> m_mrules;
+		readonly HCObjectSet<PhonologicalRule> m_prules;
+		readonly HCObjectSet<AffixTemplate> m_templates;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Stratum"/> class.
 		/// </summary>
-		/// <param name="featId">The ID.</param>
+		/// <param name="id">The ID.</param>
 		/// <param name="desc">The description.</param>
 		/// <param name="morpher">The morpher.</param>
 		public Stratum(string id, string desc, Morpher morpher)
@@ -341,18 +340,7 @@ namespace SIL.HermitCrab
 		/// Gets or sets the character definition table.
 		/// </summary>
 		/// <value>The character definition table.</value>
-		public CharacterDefinitionTable CharacterDefinitionTable
-		{
-			get
-			{
-				return m_charDefTable;
-			}
-
-			set
-			{
-				m_charDefTable = value;
-			}
-		}
+		public CharacterDefinitionTable CharacterDefinitionTable { get; set; }
 
 		/// <summary>
 		/// Gets or sets a value indicating whether this instance is cyclic.
@@ -498,21 +486,11 @@ namespace SIL.HermitCrab
 		/// entries are added to the <c>candidates</c> parameter.
 		/// </summary>
 		/// <param name="input">The input word analysis.</param>
+		/// <param name="selectTraceMorphs"></param>
 		/// <param name="candidates">The set of candidate word synthesis records.</param>
+		/// <param name="trace"></param>
 		/// <returns>All word analyses that result from the unapplication of rules.</returns>
-		public IEnumerable<WordAnalysis> Unapply(WordAnalysis input, ICollection<WordSynthesis> candidates)
-		{
-			return Unapply(input, candidates, null);
-
-		}
-		/// <summary>
-		/// Unapplies all of the rules to the specified input word analysis. All matching lexical
-		/// entries are added to the <c>candidates</c> parameter.
-		/// </summary>
-		/// <param name="input">The input word analysis.</param>
-		/// <param name="candidates">The set of candidate word synthesis records.</param>
-		/// <returns>All word analyses that result from the unapplication of rules.</returns>
-		public IEnumerable<WordAnalysis> Unapply(WordAnalysis input, ICollection<WordSynthesis> candidates, string[] selectTraceMorphs)
+		public IEnumerable<WordAnalysis> Unapply(WordAnalysis input, TraceManager trace, string[] selectTraceMorphs, ICollection<WordSynthesis> candidates)
 		{
 			if (m_isCyclic)
 				throw new NotImplementedException(HCStrings.kstidCyclicStratumNotSupported);
@@ -522,23 +500,18 @@ namespace SIL.HermitCrab
 
 			WordAnalysis wa = input.Clone();
 
-			UnapplyPhonologicalRules(wa);
+			UnapplyPhonologicalRules(wa, trace);
 
-			LexicalLookup(wa, candidates, selectTraceMorphs);
+			LexicalLookup(wa, trace, selectTraceMorphs, candidates);
 
-			Set<WordAnalysis> output = new Set<WordAnalysis>();
-			UnapplyMorphologicalRulesAndTemplates(wa, output, candidates, selectTraceMorphs);
+			var output = new Set<WordAnalysis>();
+			UnapplyMorphologicalRulesAndTemplates(wa, trace, selectTraceMorphs, output, candidates);
 
 			return output;
 		}
 
-		void UnapplyMorphologicalRules(WordAnalysis input, int rIndex, int srIndex, ICollection<WordSynthesis> candidates,
+		void UnapplyMorphologicalRules(WordAnalysis input, int rIndex, int srIndex, TraceManager trace, string[] selectTraceMorphs, ICollection<WordSynthesis> candidates,
 			Set<WordAnalysis> output)
-		{
-			UnapplyMorphologicalRules(input, rIndex, srIndex, candidates, output, null);
-		}
-			void UnapplyMorphologicalRules(WordAnalysis input, int rIndex, int srIndex, ICollection<WordSynthesis> candidates,
-			Set<WordAnalysis> output, string[] selectTraceMorphs)
 		{
 			// first try to unapply the specified subrule
 			bool unapplied = false;
@@ -547,10 +520,10 @@ namespace SIL.HermitCrab
 				if (m_mrules[rIndex].BeginUnapplication(input))
 				{
 					ICollection<WordAnalysis> analyses;
-					if (m_mrules[rIndex].Unapply(input, srIndex, out analyses, selectTraceMorphs))
+					if (m_mrules[rIndex].Unapply(input, srIndex, trace, selectTraceMorphs, out analyses))
 					{
 						foreach (WordAnalysis wa in analyses)
-							MorphologicalRuleUnapplied(wa, rIndex, srIndex, candidates, output, selectTraceMorphs);
+							MorphologicalRuleUnapplied(wa, rIndex, srIndex, trace, selectTraceMorphs, candidates, output);
 
 						unapplied = true;
 					}
@@ -574,17 +547,17 @@ namespace SIL.HermitCrab
 						if (j != srIndex)
 						{
 							ICollection<WordAnalysis> analyses;
-							if (m_mrules[i].Unapply(input, j, out analyses, selectTraceMorphs))
+							if (m_mrules[i].Unapply(input, j, trace, selectTraceMorphs, out analyses))
 							{
 								foreach (WordAnalysis wa in analyses)
-									MorphologicalRuleUnapplied(wa, i, j, candidates, output, selectTraceMorphs);
+									MorphologicalRuleUnapplied(wa, i, j, trace, selectTraceMorphs, candidates, output);
 
 								unapplied = true;
 							}
 						}
 					}
 
-					m_mrules[i].EndUnapplication(input, unapplied);
+					m_mrules[i].EndUnapplication(input, trace, unapplied);
 				}
 
 				unapplied = false;
@@ -594,53 +567,47 @@ namespace SIL.HermitCrab
 			output.Add(input);
 		}
 
-		void MorphologicalRuleUnapplied(WordAnalysis ruleOutput, int rIndex, int srIndex, ICollection<WordSynthesis> candidates,
-			Set<WordAnalysis> output, string[] selectTraceMorphs)
+		void MorphologicalRuleUnapplied(WordAnalysis ruleOutput, int rIndex, int srIndex, TraceManager trace, string[] selectTraceMorphs, ICollection<WordSynthesis> candidates,
+			Set<WordAnalysis> output)
 		{
 			if (ruleOutput.Shape.Count > 2)
 			{
 				// lookup resulting phonetic shape in lexicon
-				LexicalLookup(ruleOutput, candidates, selectTraceMorphs);
+				LexicalLookup(ruleOutput, trace, selectTraceMorphs, candidates);
 
 				// recursive call so that we can cover every permutation of rule unapplication
 				switch (m_mruleOrder)
 				{
 					case MRuleOrder.LINEAR:
-						UnapplyMorphologicalRules(ruleOutput, rIndex, srIndex, candidates, output, selectTraceMorphs);
+						UnapplyMorphologicalRules(ruleOutput, rIndex, srIndex, trace, selectTraceMorphs, candidates, output);
 						break;
 
 					case MRuleOrder.UNORDERED:
-						UnapplyMorphologicalRulesAndTemplates(ruleOutput, output, candidates, selectTraceMorphs);
+						UnapplyMorphologicalRulesAndTemplates(ruleOutput, trace, selectTraceMorphs, output, candidates);
 						break;
 				}
 			}
 		}
 
-		void UnapplyMorphologicalRulesAndTemplates(WordAnalysis wa, Set<WordAnalysis> output, ICollection<WordSynthesis> candidates)
+		void UnapplyMorphologicalRulesAndTemplates(WordAnalysis wa, TraceManager trace, string[] selectTraceMorphs, Set<WordAnalysis> output, ICollection<WordSynthesis> candidates)
 		{
-			UnapplyMorphologicalRulesAndTemplates(wa, output, candidates, null);
-		}
-
-		void UnapplyMorphologicalRulesAndTemplates(WordAnalysis wa, Set<WordAnalysis> output, ICollection<WordSynthesis> candidates, string[] selectTraceMorphs)
-		{
-			Set<WordAnalysis> tempOutput = new Set<WordAnalysis>();
-			tempOutput.Add(wa);
-			UnapplyTemplates(wa, tempOutput, candidates, selectTraceMorphs);
+			var tempOutput = new Set<WordAnalysis> {wa};
+			UnapplyTemplates(wa, trace, selectTraceMorphs, tempOutput, candidates);
 			foreach (WordAnalysis analysis in tempOutput)
 			{
 				// start over from the very beginning
-				UnapplyMorphologicalRules(analysis, m_mrules.Count - 1, 0, candidates, output, selectTraceMorphs);
+				UnapplyMorphologicalRules(analysis, m_mrules.Count - 1, 0, trace, selectTraceMorphs, candidates, output);
 			}
 		}
 
-		void UnapplyTemplates(WordAnalysis input, Set<WordAnalysis> output, ICollection<WordSynthesis> candidates, string[] selectTraceMorphs)
+		void UnapplyTemplates(WordAnalysis input, TraceManager trace, string[] selectTraceMorphs, Set<WordAnalysis> output, ICollection<WordSynthesis> candidates)
 		{
 			foreach (AffixTemplate template in m_templates)
 			{
 				if (template.IsUnapplicable(input))
 				{
 					IEnumerable<WordAnalysis> tempOutput;
-					if (template.Unapply(input, out tempOutput, selectTraceMorphs))
+					if (template.Unapply(input, trace, selectTraceMorphs, out tempOutput))
 					{
 						foreach (WordAnalysis tempAnalysis in tempOutput)
 						{
@@ -649,7 +616,7 @@ namespace SIL.HermitCrab
 							{
 								output.Add(tempAnalysis);
 								// lookup resulting phonetic shape in lexicon
-								LexicalLookup(tempAnalysis, candidates, selectTraceMorphs);
+								LexicalLookup(tempAnalysis, trace, selectTraceMorphs, candidates);
 							}
 						}
 					}
@@ -657,26 +624,17 @@ namespace SIL.HermitCrab
 			}
 		}
 
-		void LexicalLookup(WordAnalysis input, ICollection<WordSynthesis> candidates)
+		void LexicalLookup(WordAnalysis input, TraceManager trace, string[] selectTraceMorphs, ICollection<WordSynthesis> candidates)
 		{
-			LexicalLookup(input, candidates, null);
-		}
-		void LexicalLookup(WordAnalysis input, ICollection<WordSynthesis> candidates, string[] selectTraceMorphs)
-		{
-			LexLookupTrace lookupTrace = null;
-			if (Morpher.TraceLexLookup)
-			{
-				// create lexical lookup trace record
-				lookupTrace = new LexLookupTrace(this, input.Shape.Clone());
-				input.CurrentTrace.AddChild(lookupTrace);
-			}
+			if (trace != null)
+				trace.LexLookup(this, input);
 
 			foreach (SegmentDefinitionTrie<LexEntry.RootAllomorph>.Match match in m_entryTrie.Search(input.Shape))
 			{
 				// don't allow a compound where both roots are the same
 				if (input.NonHead == null || input.NonHead.RootAllomorph.Morpheme != match.Value.Morpheme)
 				{
-					LexEntry entry = (LexEntry) match.Value.Morpheme;
+					var entry = (LexEntry) match.Value.Morpheme;
 					if (IgnoreEntry(entry, selectTraceMorphs))
 						continue;
 					foreach (LexEntry.RootAllomorph allomorph in entry.Allomorphs)
@@ -685,14 +643,8 @@ namespace SIL.HermitCrab
 
 						wa.RootAllomorph = allomorph;
 
-						if (Morpher.TraceLexLookup)
-						{
-							// successful lookup, so create word synthesis trace record
-							WordSynthesisTrace wsTrace = new WordSynthesisTrace(wa.RootAllomorph, wa.UnappliedMorphologicalRules,
-								wa.RealizationalFeatures.Clone());
-							lookupTrace.AddChild(wsTrace);
-							wa.CurrentTrace = wsTrace;
-						}
+						if (trace != null)
+							trace.BeginSynthesizeWord(wa);
 
 						candidates.Add(new WordSynthesis(wa));
 					}
@@ -710,19 +662,20 @@ namespace SIL.HermitCrab
 			return false;
 		}
 
-		void UnapplyPhonologicalRules(WordAnalysis input)
+		void UnapplyPhonologicalRules(WordAnalysis input, TraceManager trace)
 		{
 			// TODO: handle ordering properly
 			for (int i = m_prules.Count - 1; i >= 0; i--)
-				m_prules[i].Unapply(input);
+				m_prules[i].Unapply(input, trace);
 		}
 
 		/// <summary>
 		/// Applies all of the rules to the specified word synthesis.
 		/// </summary>
 		/// <param name="input">The input word synthesis.</param>
+		/// <param name="trace"></param>
 		/// <returns>All word synthesis records that result from the application of rules.</returns>
-		public IEnumerable<WordSynthesis> Apply(WordSynthesis input)
+		public IEnumerable<WordSynthesis> Apply(WordSynthesis input, TraceManager trace)
 		{
 			if (m_isCyclic)
 				throw new NotImplementedException(HCStrings.kstidCyclicStratumNotSupported);
@@ -731,16 +684,16 @@ namespace SIL.HermitCrab
 				throw new NotImplementedException(HCStrings.kstidSimultOrderNotSupported);
 
 			// TODO: handle cyclicity
-			Set<WordSynthesis> output = new Set<WordSynthesis>();
-			ApplyMorphologicalRules(input.Clone(), 0, output);
+			var output = new Set<WordSynthesis>();
+			ApplyMorphologicalRules(input.Clone(), 0, trace, output);
 
 			foreach (WordSynthesis cur in output)
-				ApplyPhonologicalRules(cur);
+				ApplyPhonologicalRules(cur, trace);
 
 			return output;
 		}
 
-		void ApplyMorphologicalRules(WordSynthesis input, int rIndex, Set<WordSynthesis> output)
+		void ApplyMorphologicalRules(WordSynthesis input, int rIndex, TraceManager trace, Set<WordSynthesis> output)
 		{
 			// iterate thru all rules starting from the specified rule in synthesis order
 			for (int i = rIndex; i < m_mrules.Count; i++)
@@ -748,7 +701,7 @@ namespace SIL.HermitCrab
 				if (m_mrules[i].IsApplicable(input))
 				{
 					ICollection<WordSynthesis> syntheses;
-					if (m_mrules[i].Apply(input, out syntheses))
+					if (m_mrules[i].Apply(input, trace, out syntheses))
 					{
 						foreach (WordSynthesis ws in syntheses)
 						{
@@ -756,11 +709,11 @@ namespace SIL.HermitCrab
 							switch (m_mruleOrder)
 							{
 								case MRuleOrder.LINEAR:
-									ApplyMorphologicalRules(ws, i, output);
+									ApplyMorphologicalRules(ws, i, trace, output);
 									break;
 
 								case MRuleOrder.UNORDERED:
-									ApplyMorphologicalRules(ws, 0, output);
+									ApplyMorphologicalRules(ws, 0, trace, output);
 									break;
 							}
 						}
@@ -771,31 +724,31 @@ namespace SIL.HermitCrab
 			switch (m_mruleOrder)
 			{
 				case MRuleOrder.LINEAR:
-					ApplyTemplates(input, output);
+					ApplyTemplates(input, trace, output);
 					break;
 
 				case MRuleOrder.UNORDERED:
-					Set<WordSynthesis> tempOutput = new Set<WordSynthesis>();
-					if (ApplyTemplates(input, tempOutput))
+					var tempOutput = new Set<WordSynthesis>();
+					if (ApplyTemplates(input, trace, tempOutput))
 					{
 						if (tempOutput.Remove(input))
 							output.Add(input);
 						foreach (WordSynthesis synthesis in tempOutput)
-							ApplyMorphologicalRules(synthesis, 0, output);
+							ApplyMorphologicalRules(synthesis, 0, trace, output);
 					}
 					output.AddMany(tempOutput);
 					break;
 			}
 		}
 
-		bool ApplyTemplates(WordSynthesis input, Set<WordSynthesis> output)
+		bool ApplyTemplates(WordSynthesis input, TraceManager trace, Set<WordSynthesis> output)
 		{
 			// if this word synthesis is not compatible with the realizational features,
 			// then skip it
 			if (!input.RealizationalFeatures.IsCompatible(input.HeadFeatures))
 				return false;
 
-			WordSynthesis ws = ChooseInflStem(input);
+			WordSynthesis ws = ChooseInflStem(input, trace);
 			bool applicableTemplate = false;
 			foreach (AffixTemplate template in m_templates)
 			{
@@ -805,7 +758,7 @@ namespace SIL.HermitCrab
 				{
 					applicableTemplate = true;
 					IEnumerable<WordSynthesis> tempOutput;
-					if (template.Apply(ws, out tempOutput))
+					if (template.Apply(ws, trace, out tempOutput))
 						output.AddMany(tempOutput);
 				}
 			}
@@ -822,8 +775,9 @@ namespace SIL.HermitCrab
 		/// with any realizational feature or with the head and foot features of the input stem).
 		/// </summary>
 		/// <param name="ws">The input word synthesis.</param>
+		/// <param name="trace"></param>
 		/// <returns>The resulting word synthesis.</returns>
-		WordSynthesis ChooseInflStem(WordSynthesis ws)
+		WordSynthesis ChooseInflStem(WordSynthesis ws, TraceManager trace)
 		{
 			if (ws.RealizationalFeatures.NumFeatures == 0 || ws.Root.Family == null)
 				return ws;
@@ -840,20 +794,20 @@ namespace SIL.HermitCrab
 					if (best.HeadFeatures.GetSupersetRemainder(relative.HeadFeatures, out remainder) && remainder.NumFeatures > 0
 						&& ws.RealizationalFeatures.IsCompatible(remainder))
 					{
-						if (Morpher.TraceBlocking)
-							// create blocking trace record, should this become the current trace?
-							ws.CurrentTrace.AddChild(new BlockingTrace(BlockingTrace.BlockType.TEMPLATE, relative));
-						best = new WordSynthesis(relative.PrimaryAllomorph, ws.RealizationalFeatures, ws.CurrentTrace);
+						if (trace != null)
+							trace.Blocking(BlockType.TEMPLATE, ws, relative);
+
+						best = new WordSynthesis(relative.PrimaryAllomorph, ws.RealizationalFeatures, ws.CurrentTraceObject);
 					}
 				}
 			}
 			return best;
 		}
 
-		void ApplyPhonologicalRules(WordSynthesis input)
+		void ApplyPhonologicalRules(WordSynthesis input, TraceManager trace)
 		{
-			for (int i = 0; i < m_prules.Count; i++)
-				m_prules[i].Apply(input);
+			foreach (PhonologicalRule rule in m_prules)
+				rule.Apply(input, trace);
 		}
 	}
 }

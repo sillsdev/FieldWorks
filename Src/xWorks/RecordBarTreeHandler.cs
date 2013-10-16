@@ -1027,7 +1027,12 @@ namespace SIL.FieldWorks.XWorks
 		{
 			string displayPropertyName = GetDisplayPropertyName;
 			ObjectLabel label = ObjectLabel.CreateObjectLabel(obj.Cache, obj, displayPropertyName, m_bestWS);
-			int ws = TsStringUtils.GetWsAtOffset(label.AsTss, 0);
+			// Get the ws of the name, not the abbreviation, if we can.  See FWNX-1059.
+			// The string " - " is inserted by ObjectLabel.AsTss after the abbreviation
+			// and before the name for semantic domains and anthropology codes.  When
+			// localized, these lists are likely not to have localized the abbreviation.
+			var tss = label.AsTss;
+			int ws = tss.get_WritingSystem(tss.RunCount - 1);
 			if (!m_dictFonts.TryGetValue(ws, out font))
 			{
 				string sFont = m_cache.ServiceLocator.WritingSystemManager.Get(ws).DefaultFontName;

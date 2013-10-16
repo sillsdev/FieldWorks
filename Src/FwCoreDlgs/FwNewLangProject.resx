@@ -396,43 +396,43 @@
   <data name="&gt;&gt;m_btnNewAnalWrtSys.ZOrder" xml:space="preserve">
 	<value>10</value>
   </data>
-  <metadata name="lblTip.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="m_lblTip.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
 	<value>False</value>
   </metadata>
-  <data name="lblTip.Font" type="System.Drawing.Font, System.Drawing">
+  <data name="m_lblTip.Font" type="System.Drawing.Font, System.Drawing">
 	<value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
   </data>
-  <data name="lblTip.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+  <data name="m_lblTip.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
 	<value>NoControl</value>
   </data>
-  <data name="lblTip.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="m_lblTip.Location" type="System.Drawing.Point, System.Drawing">
 	<value>3, 412</value>
   </data>
-  <data name="lblTip.ShowHelp" type="System.Boolean, mscorlib">
+  <data name="m_lblTip.ShowHelp" type="System.Boolean, mscorlib">
 	<value>False</value>
   </data>
-  <data name="lblTip.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="m_lblTip.Size" type="System.Drawing.Size, System.Drawing">
 	<value>71, 13</value>
   </data>
-  <data name="lblTip.TabIndex" type="System.Int32, mscorlib">
+  <data name="m_lblTip.TabIndex" type="System.Int32, mscorlib">
 	<value>14</value>
   </data>
-  <data name="lblTip.Text" xml:space="preserve">
+  <data name="m_lblTip.Text" xml:space="preserve">
 	<value>Tip:</value>
   </data>
-  <data name="lblTip.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+  <data name="m_lblTip.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
 	<value>MiddleRight</value>
   </data>
-  <data name="&gt;&gt;lblTip.Name" xml:space="preserve">
-	<value>lblTip</value>
+  <data name="&gt;&gt;m_lblTip.Name" xml:space="preserve">
+	<value>m_lblTip</value>
   </data>
-  <data name="&gt;&gt;lblTip.Type" xml:space="preserve">
+  <data name="&gt;&gt;m_lblTip.Type" xml:space="preserve">
 	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;lblTip.Parent" xml:space="preserve">
+  <data name="&gt;&gt;m_lblTip.Parent" xml:space="preserve">
 	<value>$this</value>
   </data>
-  <data name="&gt;&gt;lblTip.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;m_lblTip.ZOrder" xml:space="preserve">
 	<value>1</value>
   </data>
   <metadata name="m_lblExplainWrtSys.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">

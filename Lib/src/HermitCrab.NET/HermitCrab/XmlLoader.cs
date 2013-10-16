@@ -259,11 +259,11 @@ namespace SIL.HermitCrab
 						break;
 
 					case "TraceBlocking":
-						m_curMorpher.TraceBlocking = cmdElem.GetAttribute("on") == "true";
+						Output.TraceManager.TraceBlocking = cmdElem.GetAttribute("on") == "true";
 						break;
 
 					case "TraceLexicalLookup":
-						m_curMorpher.TraceLexLookup = cmdElem.GetAttribute("on") == "true";
+						Output.TraceManager.TraceLexLookup = cmdElem.GetAttribute("on") == "true";
 						break;
 
 					case "TraceMorpherRule":
@@ -271,23 +271,23 @@ namespace SIL.HermitCrab
 						bool traceSynthesis = cmdElem.GetAttribute("generateMode") == "true";
 						string ruleId = cmdElem.GetAttribute("rule");
 						if (string.IsNullOrEmpty(ruleId))
-							m_curMorpher.SetTraceRules(traceAnalysis, traceSynthesis);
+							Output.TraceManager.SetTraceRules(traceAnalysis, traceSynthesis);
 						else
-							m_curMorpher.SetTraceRule(ruleId, traceAnalysis, traceSynthesis);
+							Output.TraceManager.SetTraceRule(ruleId, traceAnalysis, traceSynthesis);
 						break;
 
 					case "TraceMorpherStrata":
-						m_curMorpher.TraceStrataAnalysis = cmdElem.GetAttribute("analysisMode") == "true";
-						m_curMorpher.TraceStrataSynthesis = cmdElem.GetAttribute("generateMode") == "true";
+						Output.TraceManager.TraceStrataAnalysis = cmdElem.GetAttribute("analysisMode") == "true";
+						Output.TraceManager.TraceStrataSynthesis = cmdElem.GetAttribute("generateMode") == "true";
 						break;
 
 					case "TraceMorpherTemplates":
-						m_curMorpher.TraceTemplatesAnalysis = cmdElem.GetAttribute("analysisMode") == "true";
-						m_curMorpher.TraceTemplatesSynthesis = cmdElem.GetAttribute("generateMode") == "true";
+						Output.TraceManager.TraceTemplatesAnalysis = cmdElem.GetAttribute("analysisMode") == "true";
+						Output.TraceManager.TraceTemplatesSynthesis = cmdElem.GetAttribute("generateMode") == "true";
 						break;
 
 					case "TraceMorpherSuccess":
-						m_curMorpher.TraceSuccess = cmdElem.GetAttribute("on") == "true";
+						Output.TraceManager.TraceSuccess = cmdElem.GetAttribute("on") == "true";
 						break;
 				}
 			}
@@ -368,8 +368,7 @@ namespace SIL.HermitCrab
 					}
 					catch (LoadException le)
 					{
-						if (m_quitOnError)
-							throw le;
+						HandleLoadException(le);
 					}
 				}
 			}
@@ -428,8 +427,7 @@ namespace SIL.HermitCrab
 				}
 				catch (LoadException le)
 				{
-					if (m_quitOnError)
-						throw le;
+					HandleLoadException(le);
 				}
 			}
 
@@ -448,8 +446,7 @@ namespace SIL.HermitCrab
 					}
 					catch (LoadException le)
 					{
-						if (m_quitOnError)
-							throw le;
+						HandleLoadException(le);
 					}
 					try
 					{
@@ -457,8 +454,7 @@ namespace SIL.HermitCrab
 					}
 					catch (LoadException le)
 					{
-						if (m_quitOnError)
-							throw le;
+						HandleLoadException(le);
 					}
 				}
 
@@ -476,8 +472,7 @@ namespace SIL.HermitCrab
 						}
 						catch (LoadException le)
 						{
-							if (m_quitOnError)
-								throw le;
+							HandleLoadException(le);
 						}
 						try
 						{
@@ -485,8 +480,7 @@ namespace SIL.HermitCrab
 						}
 						catch (LoadException le)
 						{
-							if (m_quitOnError)
-								throw le;
+							HandleLoadException(le);
 						}
 					}
 				}
@@ -511,8 +505,7 @@ namespace SIL.HermitCrab
 				}
 				catch (LoadException le)
 				{
-					if (m_quitOnError)
-						throw le;
+					HandleLoadException(le);
 				}
 			}
 		}
@@ -598,8 +591,7 @@ namespace SIL.HermitCrab
 				}
 				catch (LoadException le)
 				{
-					if (m_quitOnError)
-						throw le;
+					HandleLoadException(le);
 				}
 			}
 
@@ -607,6 +599,16 @@ namespace SIL.HermitCrab
 			{
 				stratum.AddEntry(entry);
 				m_curMorpher.Lexicon.AddEntry(entry);
+			}
+		}
+
+		private void HandleLoadException(LoadException le)
+		{
+			if (m_quitOnError)
+				throw le;
+			if (Output != null)
+			{
+				Output.Write(le);
 			}
 		}
 
@@ -622,9 +624,12 @@ namespace SIL.HermitCrab
 			catch (MissingPhoneticShapeException mpse)
 			{
 				LoadException le = new LoadException(LoadException.LoadErrorType.INVALID_ENTRY_SHAPE, this,
-					string.Format(HCStrings.kstidInvalidLexEntryShape, shapeStr, entry.ID, stratum.CharacterDefinitionTable.ID, mpse.Position + 1, shapeStr.Substring(mpse.Position)));
+					string.Format(HCStrings.kstidInvalidLexEntryShape, shapeStr, entry.ID, stratum.CharacterDefinitionTable.ID, mpse.Position + 1,
+									shapeStr.Substring(mpse.Position), mpse.PhonemesFoundSoFar));
 				le.Data["shape"] = shapeStr;
 				le.Data["charDefTable"] = stratum.CharacterDefinitionTable.ID;
+				le.Data["position"] = mpse.Position;
+				le.Data["phonemesFoundSoFar"] = mpse.PhonemesFoundSoFar;
 				le.Data["entry"] = entry.ID;
 				throw le;
 			}
@@ -1077,8 +1082,7 @@ namespace SIL.HermitCrab
 				}
 				catch (LoadException le)
 				{
-					if (m_quitOnError)
-						throw le;
+					HandleLoadException(le);
 				}
 			}
 
@@ -1113,8 +1117,7 @@ namespace SIL.HermitCrab
 				}
 				catch (LoadException le)
 				{
-					if (m_quitOnError)
-						throw le;
+					HandleLoadException(le);
 				}
 			}
 
@@ -1211,9 +1214,12 @@ namespace SIL.HermitCrab
 						catch (MissingPhoneticShapeException mpse)
 						{
 							LoadException le = new LoadException(LoadException.LoadErrorType.INVALID_RULE_SHAPE, this,
-								string.Format(HCStrings.kstidInvalidRuleShape, shapeStr, ruleId, charDefTable.ID, mpse.Position+1, shapeStr.Substring(mpse.Position)));
+								string.Format(HCStrings.kstidInvalidRuleShape, shapeStr, ruleId, charDefTable.ID, mpse.Position+1,
+												shapeStr.Substring(mpse.Position), mpse.PhonemesFoundSoFar));
 							le.Data["shape"] = shapeStr;
 							le.Data["charDefTable"] = charDefTable.ID;
+							le.Data["position"] = mpse.Position;
+							le.Data["phonemesFoundSoFar"] = mpse.PhonemesFoundSoFar;
 							le.Data["rule"] = ruleId;
 							throw le;
 						}
@@ -1293,8 +1299,7 @@ namespace SIL.HermitCrab
 				}
 				catch (LoadException le)
 				{
-					if (m_quitOnError)
-						throw le;
+					HandleLoadException(le);
 				}
 			}
 
@@ -1536,9 +1541,12 @@ namespace SIL.HermitCrab
 			catch (MissingPhoneticShapeException mpse)
 			{
 				LoadException le = new LoadException(LoadException.LoadErrorType.INVALID_RULE_SHAPE, this,
-					string.Format(HCStrings.kstidInvalidPseqShape, shapeStr, charDefTable.ID, mpse.Position + 1, shapeStr.Substring(mpse.Position)));
+					string.Format(HCStrings.kstidInvalidPseqShape, shapeStr, charDefTable.ID, mpse.Position + 1,
+									shapeStr.Substring(mpse.Position), mpse.PhonemesFoundSoFar));
 				le.Data["shape"] = shapeStr;
 				le.Data["charDefTable"] = charDefTable.ID;
+				le.Data["position"] = mpse.Position;
+				le.Data["phonemesFoundSoFar"] = mpse.PhonemesFoundSoFar;
 				throw le;
 			}
 

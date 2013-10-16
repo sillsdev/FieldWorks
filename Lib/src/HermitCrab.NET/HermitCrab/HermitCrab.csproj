@@ -89,6 +89,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AffixalMorphologicalRule.cs" />
@@ -98,6 +99,7 @@
     <Compile Include="CharacterDefinitionTable.cs" />
     <Compile Include="CompoundingRule.cs" />
     <Compile Include="DefaultOutput.cs" />
+    <Compile Include="DefaultTraceManager.cs" />
     <Compile Include="FeatureSystem.cs" />
     <Compile Include="HCObject.cs" />
     <Compile Include="HCStrings.Designer.cs">
@@ -106,6 +108,7 @@
       <DependentUpon>HCStrings.resx</DependentUpon>
     </Compile>
     <Compile Include="IPACharacterDefinitionTable.cs" />
+    <Compile Include="TraceManager.cs" />
     <Compile Include="Lexicon.cs" />
     <Compile Include="LegacyLoader.cs" />
     <Compile Include="HCLinkedList.cs" />
@@ -135,6 +138,7 @@
     <Compile Include="WordSynthesis.cs" />
     <Compile Include="XmlLoader.cs" />
     <Compile Include="XmlOutput.cs" />
+    <Compile Include="XmlTraceManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="HCStrings.resx">

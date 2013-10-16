@@ -394,6 +394,12 @@ namespace SIL.FieldWorks.TE
 		}
 
 		/// <summary></summary>
+		public string RFC5646
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		/// <summary></summary>
 		public bool IsGraphiteEnabled
 		{
 			get { throw new NotImplementedException(); }

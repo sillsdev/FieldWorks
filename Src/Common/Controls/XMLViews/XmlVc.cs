@@ -4357,6 +4357,17 @@ namespace SIL.FieldWorks.Common.Controls
 			return GetId(new MainCallerDisplayCommandSeq(frag, caller, false, WsForce, m_stackPartRef), m_idToDisplayCommand, m_displayCommandToId);
 		}
 
+		internal int GetId(DisplayCommand command)
+		{
+			return GetId(command, m_idToDisplayCommand, m_displayCommandToId);
+		}
+
+		internal void RemoveCommand(DisplayCommand command, int id)
+		{
+			m_idToDisplayCommand.Remove(id);
+			m_displayCommandToId.Remove(command);
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Process all the children of the node as fragments.

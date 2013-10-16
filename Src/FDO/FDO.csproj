@@ -357,11 +357,10 @@
     <Compile Include="DomainServices\GhostParentHelper.cs" />
     <Compile Include="DomainServices\ImportFileSource.cs" />
     <Compile Include="DomainServices\ImportMappingInfo.cs" />
-    <Compile Include="DomainServices\IParatextAdapter.cs" />
     <Compile Include="DomainServices\IScrImportFileInfo.cs" />
     <Compile Include="DomainServices\MorphServices.cs" />
     <Compile Include="DomainServices\ParaNodeMap.cs" />
-    <Compile Include="DomainServices\ParatextProxy.cs" />
+    <Compile Include="DomainServices\ParatextHelper.cs" />
     <Compile Include="DomainServices\ProjectLockingService.cs" />
     <Compile Include="DomainServices\ReferenceAdjusterService.cs" />
     <Compile Include="DomainServices\ReferenceTargetServices.cs" />

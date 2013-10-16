@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -58,9 +57,9 @@ namespace SIL.HermitCrab
 		public bool GetStringList(string key, out List<string> value)
 		{
 			List<object> objList;
-			if (Get<List<object>>(key, out objList))
+			if (Get(key, out objList))
 			{
-				value = objList.ConvertAll<string>(Convert.ToString);
+				value = objList.ConvertAll(Convert.ToString);
 				return true;
 			}
 
@@ -76,9 +75,9 @@ namespace SIL.HermitCrab
 		public bool GetNodeList(string key, out List<ConfigNode> value)
 		{
 			List<object> objList;
-			if (Get<List<object>>(key, out objList))
+			if (Get(key, out objList))
 			{
-				value = objList.ConvertAll<ConfigNode>(ToConfigNode);
+				value = objList.ConvertAll(ToConfigNode);
 				return true;
 			}
 
@@ -89,7 +88,7 @@ namespace SIL.HermitCrab
 		public T Get<T>(string key)
 		{
 			T value;
-			if (!Get<T>(key, out value))
+			if (!Get(key, out value))
 				throw new LoadException(LoadException.LoadErrorType.INVALID_FORMAT, m_loader,
 					string.Format(HCStrings.kstidFieldNotDefined, key, m_name, (m_type == NodeType.COMMAND ? "command" : "object")));
 			return value;
@@ -130,14 +129,14 @@ namespace SIL.HermitCrab
 
 		public ICollection<ConfigNode> Parse(string configFile)
 		{
-			List<ConfigNode> nodes = new List<ConfigNode>();
+			var nodes = new List<ConfigNode>();
 			StreamReader r = null;
 			try
 			{
 				r = new StreamReader(new FileStream(configFile, FileMode.Open, FileAccess.Read), Encoding.GetEncoding(1252));
 
-				char[] parens = new char[] { '(', ')', '<', '>' };
-				StringBuilder sb = new StringBuilder();
+				var parens = new[] { '(', ')', '<', '>' };
+				var sb = new StringBuilder();
 				int count = 0;
 				char open = '(';
 				char close = ')';
@@ -213,7 +212,7 @@ namespace SIL.HermitCrab
 			int index = cmdStr.IndexOf(' ');
 			string name = cmdStr.Substring(0, index);
 			index++;
-			ConfigNode cmd = new ConfigNode(ConfigNode.NodeType.COMMAND, name, m_loader);
+			var cmd = new ConfigNode(ConfigNode.NodeType.COMMAND, name, m_loader);
 
 			bool message = false;
 			bool prettyPrint = false;
@@ -240,7 +239,7 @@ namespace SIL.HermitCrab
 			int begin = objStr.IndexOf(' ');
 			string name = objStr.Substring(0, begin);
 			begin++;
-			ConfigNode obj = new ConfigNode(ConfigNode.NodeType.OBJECT, name, m_loader);
+			var obj = new ConfigNode(ConfigNode.NodeType.OBJECT, name, m_loader);
 
 			int end;
 			while (begin < objStr.Length && (end = objStr.IndexOf(' ', begin)) != -1)
@@ -391,8 +390,8 @@ namespace SIL.HermitCrab
 			return PhonologicalRule.MultAppOrder.LR_ITERATIVE;
 		}
 
-		LegacyParser m_parser;
-		string m_rootPath = null;
+		readonly LegacyParser m_parser;
+		string m_rootPath;
 
 		public LegacyLoader()
 		{
@@ -448,14 +447,14 @@ namespace SIL.HermitCrab
 					if (m_output != null)
 						m_output.Write(me);
 					if (m_quitOnError)
-						throw me;
+						throw;
 				}
 				catch (LoadException le)
 				{
 					if (m_output != null)
 						m_output.Write(le);
 					if (m_quitOnError)
-						throw le;
+						throw;
 				}
 			}
 		}
@@ -576,7 +575,7 @@ namespace SIL.HermitCrab
 						}
 					}
 
-					List<string> values = (feat[1] as List<object>).ConvertAll<string>(Convert.ToString);
+					List<string> values = ((List<object>) feat[1]).ConvertAll(Convert.ToString);
 					HCObjectSet<FeatureValue> featVals = new HCObjectSet<FeatureValue>();
 					foreach (string value in values)
 					{
@@ -593,41 +592,41 @@ namespace SIL.HermitCrab
 					bool traceAnalysis = traceRuleParams[0] == "true";
 					bool traceSynthesis = traceRuleParams[1] == "true";
 					if (traceRuleParams.Count == 3)
-						m_curMorpher.SetTraceRule(traceRuleParams[2], traceAnalysis, traceSynthesis);
+						Output.TraceManager.SetTraceRule(traceRuleParams[2], traceAnalysis, traceSynthesis);
 					else
-						m_curMorpher.SetTraceRules(traceAnalysis, traceSynthesis);
+						Output.TraceManager.SetTraceRules(traceAnalysis, traceSynthesis);
 					break;
 
 				case "trace_morpher_strata":
 					CheckCurMorpher();
 					List<string> traceStrataParams = cmd.GetStringList("param");
-					m_curMorpher.TraceStrataAnalysis = traceStrataParams[0] == "true";
-					m_curMorpher.TraceStrataSynthesis = traceStrataParams[1] == "true";
+					Output.TraceManager.TraceStrataAnalysis = traceStrataParams[0] == "true";
+					Output.TraceManager.TraceStrataSynthesis = traceStrataParams[1] == "true";
 					break;
 
 				case "trace_morpher_templates":
 					CheckCurMorpher();
 					List<string> traceTemplatesParams = cmd.GetStringList("param");
-					m_curMorpher.TraceTemplatesAnalysis = traceTemplatesParams[0] == "true";
-					m_curMorpher.TraceTemplatesSynthesis = traceTemplatesParams[1] == "true";
+					Output.TraceManager.TraceTemplatesAnalysis = traceTemplatesParams[0] == "true";
+					Output.TraceManager.TraceTemplatesSynthesis = traceTemplatesParams[1] == "true";
 					break;
 
 				case "trace_lexical_lookup":
 					CheckCurMorpher();
 					bool traceLexLookup = false;
 					string traceLexLookupStr;
-					if (cmd.Get<string>("param", out traceLexLookupStr))
+					if (cmd.Get("param", out traceLexLookupStr))
 						traceLexLookup = traceLexLookupStr == "true";
-					m_curMorpher.TraceLexLookup = traceLexLookup;
+					Output.TraceManager.TraceLexLookup = traceLexLookup;
 					break;
 
 				case "trace_blocking":
 					CheckCurMorpher();
 					bool traceBlocking = false;
 					string traceBlockingStr;
-					if (cmd.Get<string>("param", out traceBlockingStr))
+					if (cmd.Get("param", out traceBlockingStr))
 						traceBlocking = traceBlockingStr == "true";
-					m_curMorpher.TraceBlocking = traceBlocking;
+					Output.TraceManager.TraceBlocking = traceBlocking;
 					break;
 			}
 		}
@@ -676,7 +675,7 @@ namespace SIL.HermitCrab
 				string featureName = enumerator.Current as string;
 				Feature feature = new Feature(featureName, featureName, m_curMorpher);
 				enumerator.MoveNext();
-				foreach (object valueObj in enumerator.Current as List<object>)
+				foreach (object valueObj in (List<object>) enumerator.Current)
 				{
 					string valueName = valueObj as string;
 					FeatureValue value = new FeatureValue(featureName + valueName, valueName, m_curMorpher);
@@ -842,7 +841,7 @@ namespace SIL.HermitCrab
 		{
 			CheckCurMorpher();
 			string name = pruleSpec.Get<string>("nm");
-			StandardPhonologicalRule rule = null;
+			StandardPhonologicalRule rule;
 			PhonologicalRule prule = m_curMorpher.GetPhonologicalRule(name);
 			if (prule != null)
 			{
@@ -856,11 +855,11 @@ namespace SIL.HermitCrab
 			rule.Reset();
 
 			string multAppOrderStr;
-			if (pruleSpec.Get<string>("mult_applic", out multAppOrderStr))
+			if (pruleSpec.Get("mult_applic", out multAppOrderStr))
 				rule.MultApplication = GetMultAppOrder(multAppOrderStr);
 
 			List<object> varFeatsList;
-			pruleSpec.Get<List<object>>("var_fs", out varFeatsList);
+			pruleSpec.Get("var_fs", out varFeatsList);
 			rule.AlphaVariables = LoadVarFeats(varFeatsList);
 
 			rule.LHS = new PhoneticPattern(true);
@@ -887,15 +886,15 @@ namespace SIL.HermitCrab
 
 			PhoneticPattern leftEnv = null;
 			ConfigNode leftEnvSpec;
-			if (psubruleSpec.Get<ConfigNode>("left_environ", out leftEnvSpec))
+			if (psubruleSpec.Get("left_environ", out leftEnvSpec))
 				leftEnv = LoadPTemp(leftEnvSpec, rule.AlphaVariables);
 
 			PhoneticPattern rightEnv = null;
 			ConfigNode rightEnvSpec;
-			if (psubruleSpec.Get<ConfigNode>("right_environ", out rightEnvSpec))
+			if (psubruleSpec.Get("right_environ", out rightEnvSpec))
 				rightEnv = LoadPTemp(rightEnvSpec, rule.AlphaVariables);
 
-			StandardPhonologicalRule.Subrule sr = null;
+			StandardPhonologicalRule.Subrule sr;
 			try
 			{
 				sr = new StandardPhonologicalRule.Subrule(outSeq, new Environment(leftEnv, rightEnv), rule);
@@ -909,21 +908,21 @@ namespace SIL.HermitCrab
 			}
 
 			List<object> reqPOSs;
-			if (!psubruleSpec.Get<List<object>>("r_pos", out reqPOSs))
+			if (!psubruleSpec.Get("r_pos", out reqPOSs))
 			{
 				reqPOSs = new List<object>();
 			}
 			sr.RequiredPOSs = reqPOSs.ConvertAll<PartOfSpeech>(ToPOS);
 
 			List<object> exFeats;
-			if (!psubruleSpec.Get<List<object>>("x_rf", out exFeats))
+			if (!psubruleSpec.Get("x_rf", out exFeats))
 			{
 				exFeats = new List<object>();
 			}
 			sr.ExcludedMPRFeatures = LoadMPRFeatures(exFeats);
 
 			List<object> reqFeats;
-			if (!psubruleSpec.Get<List<object>>("r_rf", out reqFeats))
+			if (!psubruleSpec.Get("r_rf", out reqFeats))
 			{
 				reqFeats = new List<object>();
 			}
@@ -936,15 +935,15 @@ namespace SIL.HermitCrab
 		{
 			bool initial = false;
 			string initStr;
-			if (ptempSpec.Get<string>("init", out initStr))
+			if (ptempSpec.Get("init", out initStr))
 				initial = initStr == "true";
 
 			bool final = false;
 			string finStr;
-			if (ptempSpec.Get<string>("fin", out finStr))
+			if (ptempSpec.Get("fin", out finStr))
 				final = finStr == "true";
 
-			PhoneticPattern pattern = new PhoneticPattern();
+			var pattern = new PhoneticPattern();
 			if (initial)
 				pattern.Add(new MarginContext(Direction.LEFT));
 			LoadPSeq(pattern, ptempSpec.GetNodeList("pseq"), varFeats);
@@ -984,7 +983,7 @@ namespace SIL.HermitCrab
 			LexEntry entry = new LexEntry(id, shapeStr, m_curMorpher);
 
 			string glossStr;
-			if (entrySpec.Get<string>("gl", out glossStr))
+			if (entrySpec.Get("gl", out glossStr))
 				entry.Gloss = new Gloss(glossStr, glossStr, m_curMorpher);
 			entry.POS = ToPOS(entrySpec.Get<string>("pos"));
 			string stratumName = entrySpec.Get<string>("str");
@@ -1000,9 +999,12 @@ namespace SIL.HermitCrab
 			catch (MissingPhoneticShapeException mpse)
 			{
 				LoadException le = new LoadException(LoadException.LoadErrorType.INVALID_ENTRY_SHAPE, this,
-					string.Format(HCStrings.kstidInvalidLexEntryShape, shapeStr, id, stratum.CharacterDefinitionTable.ID, mpse.Position + 1, shapeStr.Substring(mpse.Position)));
+					string.Format(HCStrings.kstidInvalidLexEntryShape, shapeStr, id, stratum.CharacterDefinitionTable.ID, mpse.Position + 1,
+									shapeStr.Substring(mpse.Position), mpse.PhonemesFoundSoFar));
 				le.Data["shape"] = shapeStr;
 				le.Data["charDefTable"] = stratum.CharacterDefinitionTable.ID;
+				le.Data["position"] = mpse.Position;
+				le.Data["phonemesFoundSoFar"] = mpse.PhonemesFoundSoFar;
 				le.Data["entry"] = entry.ID;
 				throw le;
 			}
@@ -1020,23 +1022,23 @@ namespace SIL.HermitCrab
 			entry.AddAllomorph(allomorph);
 			m_curMorpher.AddAllomorph(allomorph);
 			List<object> mprFeats;
-			if (!entrySpec.Get<List<object>>("rf", out mprFeats))
+			if (!entrySpec.Get("rf", out mprFeats))
 			{
 				mprFeats = new List<object>();
 			}
 			entry.MPRFeatures = LoadMPRFeatures(mprFeats);
 
-			FeatureValues headFeats = null;
+			FeatureValues headFeats;
 			List<object> headFeatsList;
-			if (entrySpec.Get<List<object>>("hf", out headFeatsList))
+			if (entrySpec.Get("hf", out headFeatsList))
 				headFeats = LoadSynFeats(headFeatsList, m_curMorpher.HeadFeatureSystem);
 			else
 				headFeats = new FeatureValues();
 			entry.HeadFeatures = headFeats;
 
-			FeatureValues footFeats = null;
+			FeatureValues footFeats;
 			List<object> footFeatsList;
-			if (entrySpec.Get<List<object>>("ff", out footFeatsList))
+			if (entrySpec.Get("ff", out footFeatsList))
 				footFeats = LoadSynFeats(footFeatsList, m_curMorpher.FootFeatureSystem);
 			else
 				footFeats = new FeatureValues();
@@ -1044,7 +1046,7 @@ namespace SIL.HermitCrab
 
 			stratum.AddEntry(entry);
 			string familyStr;
-			if (entrySpec.Get<string>("fam", out familyStr))
+			if (entrySpec.Get("fam", out familyStr))
 			{
 				LexFamily family = m_curMorpher.Lexicon.GetFamily(familyStr);
 				if (family == null)
@@ -1080,7 +1082,7 @@ namespace SIL.HermitCrab
 				}
 
 				enumerator.MoveNext();
-				List<string> values = (enumerator.Current as List<object>).ConvertAll<string>(Convert.ToString);
+				List<string> values = ((List<object>) enumerator.Current).ConvertAll(Convert.ToString);
 				HCObjectSet<FeatureValue> featVals = new HCObjectSet<FeatureValue>();
 				foreach (string valueName in values)
 				{
@@ -1191,42 +1193,42 @@ namespace SIL.HermitCrab
 			rule.Reset();
 
 			string glossStr;
-			if (mruleSpec.Get<string>("gl", out glossStr))
+			if (mruleSpec.Get("gl", out glossStr))
 				rule.Gloss = new Gloss(glossStr, glossStr, m_curMorpher);
 
 			List<object> reqPOSs;
-			if (!mruleSpec.Get<List<object>>("r_pos", out reqPOSs))
+			if (!mruleSpec.Get("r_pos", out reqPOSs))
 			{
 				reqPOSs = new List<object>();
 			}
-			rule.RequiredPOSs = reqPOSs.ConvertAll<PartOfSpeech>(ToPOS);
+			rule.RequiredPOSs = reqPOSs.ConvertAll(ToPOS);
 
 			PartOfSpeech outPOS = null;
 			string outPOSStr;
-			if (mruleSpec.Get<string>("pos", out outPOSStr))
+			if (mruleSpec.Get("pos", out outPOSStr))
 				outPOS = ToPOS(outPOSStr);
 			rule.OutPOS = outPOS;
 
 			List<object> reqHeadFeatsList;
-			if (mruleSpec.Get<List<object>>("r_hf", out reqHeadFeatsList))
+			if (mruleSpec.Get("r_hf", out reqHeadFeatsList))
 				rule.RequiredHeadFeatures = LoadSynFeats(reqHeadFeatsList, m_curMorpher.HeadFeatureSystem);
 			else
 				rule.RequiredHeadFeatures = new FeatureValues();
 
 			List<object> reqFootFeatsList;
-			if (mruleSpec.Get<List<object>>("r_ff", out reqFootFeatsList))
+			if (mruleSpec.Get("r_ff", out reqFootFeatsList))
 				rule.RequiredFootFeatures = LoadSynFeats(reqFootFeatsList, m_curMorpher.FootFeatureSystem);
 			else
 				rule.RequiredFootFeatures = new FeatureValues();
 
 			List<object> outHeadFeatsList;
-			if (mruleSpec.Get<List<object>>("hf", out outHeadFeatsList))
+			if (mruleSpec.Get("hf", out outHeadFeatsList))
 				rule.OutHeadFeatures = LoadSynFeats(outHeadFeatsList, m_curMorpher.HeadFeatureSystem);
 			else
 				rule.OutHeadFeatures = new FeatureValues();
 
 			List<object> outFootFeatsList;
-			if (mruleSpec.Get<List<object>>("ff", out outFootFeatsList))
+			if (mruleSpec.Get("ff", out outFootFeatsList))
 				rule.OutFootFeatures = LoadSynFeats(outFootFeatsList, m_curMorpher.FootFeatureSystem);
 			else
 				rule.OutFootFeatures = new FeatureValues();
@@ -1250,7 +1252,7 @@ namespace SIL.HermitCrab
 
 			bool blockable = true;
 			string blockableStr;
-			if (mruleSpec.Get<string>("blockable", out blockableStr))
+			if (mruleSpec.Get("blockable", out blockableStr))
 				blockable = blockableStr == "true";
 			rule.IsBlockable = blockable;
 
@@ -1259,7 +1261,7 @@ namespace SIL.HermitCrab
 				LoadMSubrule(srSpec, rule);
 
 			string stratumName;
-			if (!mruleSpec.Get<string>("stratum", out stratumName))
+			if (!mruleSpec.Get("stratum", out stratumName))
 			{
 				stratumName = mruleSpec.Get<string>("str");
 			}
@@ -1276,7 +1278,7 @@ namespace SIL.HermitCrab
 		{
 			CheckCurMorpher();
 			string name = realRuleSpec.Get<string>("nm");
-			RealizationalRule rule = null;
+			RealizationalRule rule;
 			MorphologicalRule mrule = m_curMorpher.GetMorphologicalRule(name);
 			if (mrule != null)
 			{
@@ -1292,30 +1294,30 @@ namespace SIL.HermitCrab
 			rule.Reset();
 
 			string glossStr;
-			if (realRuleSpec.Get<string>("gl", out glossStr))
+			if (realRuleSpec.Get("gl", out glossStr))
 				rule.Gloss = new Gloss(glossStr, glossStr, m_curMorpher);
 
 			List<object> reqHeadFeatsList;
-			if (realRuleSpec.Get<List<object>>("r_hf", out reqHeadFeatsList))
+			if (realRuleSpec.Get("r_hf", out reqHeadFeatsList))
 				rule.RequiredHeadFeatures = LoadSynFeats(reqHeadFeatsList, m_curMorpher.HeadFeatureSystem);
 			else
 				rule.RequiredHeadFeatures = new FeatureValues();
 
 			List<object> reqFootFeatsList;
-			if (realRuleSpec.Get<List<object>>("r_ff", out reqFootFeatsList))
+			if (realRuleSpec.Get("r_ff", out reqFootFeatsList))
 				rule.RequiredFootFeatures = LoadSynFeats(reqFootFeatsList, m_curMorpher.FootFeatureSystem);
 			else
 				rule.RequiredFootFeatures = new FeatureValues();
 
 			List<object> realFeatsList;
-			if (realRuleSpec.Get<List<object>>("rz_f", out realFeatsList))
+			if (realRuleSpec.Get("rz_f", out realFeatsList))
 				rule.RealizationalFeatures = LoadSynFeats(realFeatsList, m_curMorpher.HeadFeatureSystem);
 			else
 				rule.RealizationalFeatures = new FeatureValues();
 
 			bool blockable = true;
 			string blockableStr;
-			if (realRuleSpec.Get<string>("blockable", out blockableStr))
+			if (realRuleSpec.Get("blockable", out blockableStr))
 				blockable = blockableStr == "true";
 			rule.IsBlockable = blockable;
 
@@ -1327,7 +1329,7 @@ namespace SIL.HermitCrab
 		void LoadMSubrule(ConfigNode msubruleSpec, AffixalMorphologicalRule rule)
 		{
 			List<object> varFeatsList;
-			msubruleSpec.Get<List<object>>("var_fs", out varFeatsList);
+			msubruleSpec.Get("var_fs", out varFeatsList);
 			AlphaVariables varFeatures = LoadVarFeats(varFeatsList);
 
 			ConfigNode lhs = msubruleSpec.Get<ConfigNode>("in");
@@ -1336,7 +1338,7 @@ namespace SIL.HermitCrab
 			for (int i = 0; i < pseqList.Count; i++)
 			{
 				PhoneticPattern pattern = new PhoneticPattern();
-				LoadPSeq(pattern, (pseqList[i] as List<object>).ConvertAll<ConfigNode>(ConfigNode.ToConfigNode),
+				LoadPSeq(pattern, ((List<object>) pseqList[i]).ConvertAll(ConfigNode.ToConfigNode),
 					varFeatures);
 				lhsList.Add(pattern);
 			}
@@ -1350,21 +1352,21 @@ namespace SIL.HermitCrab
 				lhsList, rhsList, varFeatures, MorphologicalTransform.RedupMorphType.IMPLICIT);
 
 			List<object> exFeats;
-			if (!lhs.Get<List<object>>("x_rf", out exFeats))
+			if (!lhs.Get("x_rf", out exFeats))
 			{
 				exFeats = new List<object>();
 			}
 			sr.ExcludedMPRFeatures = LoadMPRFeatures(exFeats);
 
 			List<object> reqFeats;
-			if (!lhs.Get<List<object>>("r_rf", out reqFeats))
+			if (!lhs.Get("r_rf", out reqFeats))
 			{
 				reqFeats = new List<object>();
 			}
 			sr.RequiredMPRFeatures = LoadMPRFeatures(reqFeats);
 
 			List<object> outFeats;
-			if (!rhs.Get<List<object>>("rf", out outFeats))
+			if (!rhs.Get("rf", out outFeats))
 			{
 				outFeats = new List<object>();
 			}
@@ -1378,7 +1380,7 @@ namespace SIL.HermitCrab
 		{
 			CheckCurMorpher();
 			string name = compRuleSpec.Get<string>("nm");
-			CompoundingRule rule = null;
+			CompoundingRule rule;
 			MorphologicalRule mrule = m_curMorpher.GetMorphologicalRule(name);
 			if (mrule != null)
 			{
@@ -1394,61 +1396,61 @@ namespace SIL.HermitCrab
 			rule.Reset();
 
 			string glossStr;
-			if (compRuleSpec.Get<string>("gl", out glossStr))
+			if (compRuleSpec.Get("gl", out glossStr))
 				rule.Gloss = new Gloss(glossStr, glossStr, m_curMorpher);
 
 			List<object> headPOSs;
-			if (!compRuleSpec.Get<List<object>>("head_pos", out headPOSs))
+			if (!compRuleSpec.Get("head_pos", out headPOSs))
 			{
 				headPOSs = new List<object>();
 			}
-			rule.HeadRequiredPOSs = headPOSs.ConvertAll<PartOfSpeech>(ToPOS);
+			rule.HeadRequiredPOSs = headPOSs.ConvertAll(ToPOS);
 
 			List<object> nonHeadPOSs;
-			if (!compRuleSpec.Get<List<object>>("nonhead_pos", out nonHeadPOSs))
+			if (!compRuleSpec.Get("nonhead_pos", out nonHeadPOSs))
 			{
 				nonHeadPOSs = new List<object>();
 			}
-			rule.NonHeadRequiredPOSs = nonHeadPOSs.ConvertAll<PartOfSpeech>(ToPOS);
+			rule.NonHeadRequiredPOSs = nonHeadPOSs.ConvertAll(ToPOS);
 
 			PartOfSpeech outPOS = null;
 			string outPOSStr;
-			if (compRuleSpec.Get<string>("pos", out outPOSStr))
+			if (compRuleSpec.Get("pos", out outPOSStr))
 				outPOS = ToPOS(outPOSStr);
 			rule.OutPOS = outPOS;
 
 			List<object> headReqHeadFeatsList;
-			if (compRuleSpec.Get<List<object>>("head_r_hf", out headReqHeadFeatsList))
+			if (compRuleSpec.Get("head_r_hf", out headReqHeadFeatsList))
 				rule.HeadRequiredHeadFeatures = LoadSynFeats(headReqHeadFeatsList, m_curMorpher.HeadFeatureSystem);
 			else
 				rule.HeadRequiredHeadFeatures = new FeatureValues();
 
 			List<object> headReqFootFeatsList;
-			if (compRuleSpec.Get<List<object>>("head_r_ff", out headReqFootFeatsList))
+			if (compRuleSpec.Get("head_r_ff", out headReqFootFeatsList))
 				rule.HeadRequiredFootFeatures = LoadSynFeats(headReqFootFeatsList, m_curMorpher.FootFeatureSystem);
 			else
 				rule.HeadRequiredFootFeatures = new FeatureValues();
 
 			List<object> nonHeadReqHeadFeatsList;
-			if (compRuleSpec.Get<List<object>>("nonhead_r_hf", out nonHeadReqHeadFeatsList))
+			if (compRuleSpec.Get("nonhead_r_hf", out nonHeadReqHeadFeatsList))
 				rule.NonHeadRequiredHeadFeatures = LoadSynFeats(nonHeadReqHeadFeatsList, m_curMorpher.HeadFeatureSystem);
 			else
 				rule.NonHeadRequiredHeadFeatures = new FeatureValues();
 
 			List<object> nonHeadReqFootFeatsList;
-			if (compRuleSpec.Get<List<object>>("nonhead_r_ff", out nonHeadReqFootFeatsList))
+			if (compRuleSpec.Get("nonhead_r_ff", out nonHeadReqFootFeatsList))
 				rule.NonHeadRequiredFootFeatures = LoadSynFeats(nonHeadReqFootFeatsList, m_curMorpher.FootFeatureSystem);
 			else
 				rule.NonHeadRequiredFootFeatures = new FeatureValues();
 
 			List<object> outHeadFeatsList;
-			if (compRuleSpec.Get<List<object>>("hf", out outHeadFeatsList))
+			if (compRuleSpec.Get("hf", out outHeadFeatsList))
 				rule.OutHeadFeatures = LoadSynFeats(outHeadFeatsList, m_curMorpher.HeadFeatureSystem);
 			else
 				rule.OutHeadFeatures = new FeatureValues();
 
 			List<object> outFootFeatsList;
-			if (compRuleSpec.Get<List<object>>("ff", out outFootFeatsList))
+			if (compRuleSpec.Get("ff", out outFootFeatsList))
 				rule.OutFootFeatures = LoadSynFeats(outFootFeatsList, m_curMorpher.FootFeatureSystem);
 			else
 				rule.OutFootFeatures = new FeatureValues();
@@ -1472,7 +1474,7 @@ namespace SIL.HermitCrab
 
 			bool blockable = true;
 			string blockableStr;
-			if (compRuleSpec.Get<string>("blockable", out blockableStr))
+			if (compRuleSpec.Get("blockable", out blockableStr))
 				blockable = blockableStr == "true";
 			rule.IsBlockable = blockable;
 
@@ -1481,7 +1483,7 @@ namespace SIL.HermitCrab
 				LoadCompSubrule(srSpec, rule);
 
 			string stratumName;
-			if (!compRuleSpec.Get<string>("stratum", out stratumName))
+			if (!compRuleSpec.Get("stratum", out stratumName))
 			{
 				stratumName = compRuleSpec.Get<string>("str");
 			}
@@ -1497,7 +1499,7 @@ namespace SIL.HermitCrab
 		void LoadCompSubrule(ConfigNode compSubruleSpec, CompoundingRule rule)
 		{
 			List<object> varFeatsList;
-			compSubruleSpec.Get<List<object>>("var_fs", out varFeatsList);
+			compSubruleSpec.Get("var_fs", out varFeatsList);
 			AlphaVariables varFeatures = LoadVarFeats(varFeatsList);
 
 			ConfigNode headLhs = compSubruleSpec.Get<ConfigNode>("head");
@@ -1506,7 +1508,7 @@ namespace SIL.HermitCrab
 			for (int i = 0; i < headPseqList.Count; i++)
 			{
 				PhoneticPattern pattern = new PhoneticPattern();
-				LoadPSeq(pattern, (headPseqList[i] as List<object>).ConvertAll<ConfigNode>(ConfigNode.ToConfigNode),
+				LoadPSeq(pattern, ((List<object>) headPseqList[i]).ConvertAll(ConfigNode.ToConfigNode),
 					varFeatures);
 				headLhsList.Add(pattern);
 			}
@@ -1517,7 +1519,7 @@ namespace SIL.HermitCrab
 			for (int i = 0; i < nonHeadPseqList.Count; i++)
 			{
 				PhoneticPattern pattern = new PhoneticPattern();
-				LoadPSeq(pattern, (nonHeadPseqList[i] as List<object>).ConvertAll<ConfigNode>(ConfigNode.ToConfigNode),
+				LoadPSeq(pattern, ((List<object>) nonHeadPseqList[i]).ConvertAll(ConfigNode.ToConfigNode),
 					varFeatures);
 				nonHeadLhsList.Add(pattern);
 			}
@@ -1531,21 +1533,21 @@ namespace SIL.HermitCrab
 				headLhsList, nonHeadLhsList, rhsList, varFeatures);
 
 			List<object> exFeats;
-			if (!headLhs.Get<List<object>>("x_rf", out exFeats))
+			if (!headLhs.Get("x_rf", out exFeats))
 			{
 				exFeats = new List<object>();
 			}
 			sr.ExcludedMPRFeatures = LoadMPRFeatures(exFeats);
 
 			List<object> reqFeats;
-			if (!headLhs.Get<List<object>>("r_rf", out reqFeats))
+			if (!headLhs.Get("r_rf", out reqFeats))
 			{
 				reqFeats = new List<object>();
 			}
 			sr.RequiredMPRFeatures = LoadMPRFeatures(reqFeats);
 
 			List<object> outFeats;
-			if (!rhs.Get<List<object>>("rf", out outFeats))
+			if (!rhs.Get("rf", out outFeats))
 			{
 				outFeats = new List<object>();
 			}
@@ -1592,9 +1594,12 @@ namespace SIL.HermitCrab
 						catch (MissingPhoneticShapeException mpse)
 						{
 							LoadException le = new LoadException(LoadException.LoadErrorType.INVALID_RULE_SHAPE, this,
-								string.Format(HCStrings.kstidInvalidRuleShape, shapeStr, ruleName, ctableName, mpse.Position + 1, shapeStr.Substring(mpse.Position)));
+								string.Format(HCStrings.kstidInvalidRuleShape, shapeStr, ruleName, ctableName, mpse.Position + 1,
+												shapeStr.Substring(mpse.Position), mpse.PhonemesFoundSoFar));
 							le.Data["shape"] = shapeStr;
 							le.Data["charDefTable"] = charDefTable.ID;
+							le.Data["position"] = mpse.Position;
+							le.Data["phonemesFoundSoFar"] = mpse.PhonemesFoundSoFar;
 							le.Data["rule"] = ruleName;
 							throw le;
 						}
@@ -1613,16 +1618,16 @@ namespace SIL.HermitCrab
 			AffixTemplate template = new AffixTemplate(name, name, m_curMorpher);
 
 			List<object> reqPOSs;
-			if (!tempSpec.Get<List<object>>("r_pos", out reqPOSs))
+			if (!tempSpec.Get("r_pos", out reqPOSs))
 			{
 				reqPOSs = new List<object>();
 			}
-			template.RequiredPOSs = reqPOSs.ConvertAll<PartOfSpeech>(ToPOS);
+			template.RequiredPOSs = reqPOSs.ConvertAll(ToPOS);
 
 			List<object> slots = tempSpec.Get<List<object>>("slots");
 			for (int i = 0; i < slots.Count; i++)
 			{
-				string slotName = null;
+				string slotName;
 				if (slots[i] is string)
 				{
 					if ((slots[i++] as string) != "name")
@@ -1637,7 +1642,7 @@ namespace SIL.HermitCrab
 					slotName = name + i;
 				}
 				Slot slot = new Slot(slotName, slotName, m_curMorpher);
-				List<string> rules = (slots[i] as List<object>).ConvertAll<string>(Convert.ToString);
+				List<string> rules = (slots[i] as List<object>).ConvertAll(Convert.ToString);
 				RealizationalRule lastRule = null;
 				foreach (string ruleId in rules)
 				{

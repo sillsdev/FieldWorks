@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		public static ICmAnnotationDefn s_translatorNoteDefn = null;
 		/// <summary>Tests can set this to simulate importing a sequence of segments</summary>
 		public List<string> m_SegmentMarkers = null;
-		private static IParatextAdapter s_mockParatextAdapter;
+		private static IParatextHelper s_mockParatextHelper;
 
 		#region Constructors
 		/// ------------------------------------------------------------------------------------
@@ -109,9 +109,9 @@ namespace SIL.FieldWorks.TE.ImportTests
 		static public void MakeParatextTestSettings(IScrImportSet settings)
 		{
 			// Setup mocked Paratext projects
-			s_mockParatextAdapter = MockRepository.GenerateMock<IParatextAdapter>();
-			ReflectionHelper.SetField(settings, "m_paratextAdapter", s_mockParatextAdapter);
-			s_mockParatextAdapter.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Anything,
+			s_mockParatextHelper = MockRepository.GenerateMock<IParatextHelper>();
+			ParatextHelper.Manager.SetParatextHelperAdapter(s_mockParatextHelper);
+			s_mockParatextHelper.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Anything,
 				Arg<ScrMappingList>.Is.Anything, Arg<ImportDomain>.Is.Anything)).Return(true);
 
 			settings.ImportTypeEnum = TypeOfImport.Paratext6;

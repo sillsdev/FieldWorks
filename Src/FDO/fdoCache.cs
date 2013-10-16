@@ -601,7 +601,7 @@ namespace SIL.FieldWorks.FDO
 		{
 			foreach (var ws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
-				if (ws.IcuLocale == wsId)
+				if (ws.RFC5646.ToLowerInvariant() == wsId.ToLowerInvariant())
 					return true;
 			}
 			return false;

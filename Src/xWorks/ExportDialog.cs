@@ -1895,7 +1895,7 @@ namespace SIL.FieldWorks.XWorks
 			if (!File.Exists(xml))
 				throw new FileNotFoundException();
 			XmlDocument xDoc = new XmlDocument();
-			xDoc.XmlResolver = null;
+			xDoc.XmlResolver = FileStreamXmlResolver.GetNullResolver();
 			xDoc.Load(xml);
 		}
 	}

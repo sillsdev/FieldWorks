@@ -73,12 +73,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		private Panel m_sandboxPanel;
 		private CheckBox m_doSelectMorphsCheckBox;
 
-		/// <summary>
-		/// The parser trace objects
-		/// </summary>
-		private XAmpleTrace m_xampleTrace;
-		private HCTrace m_hermitCrabTrace;
-
 		private bool m_parserCanDoSelectMorphs = true;
 
 		private bool m_procesingTextChange;
@@ -112,8 +106,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_mediator = mediator;
 			m_persistProvider = new PersistenceProvider(PersistProviderID, m_mediator.PropertyTable);
 			m_persistProvider.RestoreWindowSettings(PersistProviderID, this);
-			m_xampleTrace = new XAmpleTrace(mediator);
-			m_hermitCrabTrace = new HCTrace(mediator);
 			m_cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
 			m_parserListener = parserListener;
 
@@ -125,7 +117,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			else
 				SetWordToUse(wordform.Form.VernacularDefaultWritingSystem.Text);
 
-			m_webPageInteractor = new WebPageInteractor(m_htmlControl, ParserTrace, m_mediator, m_wordformTextBox);
+			m_webPageInteractor = new WebPageInteractor(m_htmlControl, m_mediator, m_wordformTextBox);
 #if !__MonoCS__
 			m_htmlControl.Browser.ObjectForScripting = m_webPageInteractor;
 #endif
@@ -243,6 +235,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				if (components != null)
 					components.Dispose();
+				if (m_helpProvider != null)
+					m_helpProvider.Dispose();
+				m_webPageInteractor = null;
 			}
 			base.Dispose(disposing);
 		}
@@ -440,7 +435,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					sWord = sWord.Replace(' ', '.'); // LT-7334 to allow for phrases; do this at the last minute
 					m_parserListener.Connection.TryAWordDialogIsRunning = true; // make sure this is set properly
 					if (m_webPageInteractor != null)
-						m_webPageInteractor.ParserTrace = ParserTrace;
+						m_webPageInteractor.ParserTrace = CreateParserTrace();
 					m_tryAWordResult = m_parserListener.Connection.BeginTryAWord(sWord, DoTrace, selectedTraceMorphs);
 					// waiting for result, so disable Try It button
 					m_tryItButton.Enabled = false;
@@ -448,20 +443,16 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private ParserTrace ParserTrace
+		private ParserTrace CreateParserTrace()
 		{
-			get
+			switch (m_cache.LanguageProject.MorphologicalDataOA.ActiveParser)
 			{
-				switch (m_cache.LanguageProject.MorphologicalDataOA.ActiveParser)
-				{
-					case "XAmple":
-						return m_xampleTrace;
-
-					case "HC":
-						return m_hermitCrabTrace;
-				}
-				return null;
+				case "XAmple":
+					return new XAmpleTrace(m_mediator);
+				case "HC":
+					return new HCTrace(m_mediator);
 			}
+			return null;
 		}
 
 		private string CleanUpWord()
@@ -549,7 +540,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			if (m_tryAWordResult != null && m_tryAWordResult.IsCompleted)
 			{
-				var message = (string)m_tryAWordResult.AsyncState;
+				var message = (string) m_tryAWordResult.AsyncState;
 				string sOutput;
 				if (!message.TrimStart().StartsWith("<"))
 				{
@@ -567,7 +558,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 				else
 				{
-					sOutput = m_webPageInteractor.ParserTrace.CreateResultPage((string)m_tryAWordResult.AsyncState);
+					sOutput = m_webPageInteractor.ParserTrace.CreateResultPage(message);
 				}
 				m_htmlControl.URL = sOutput;
 				m_tryAWordResult = null;

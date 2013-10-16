@@ -87,6 +87,17 @@ namespace SIL.FieldWorks.FDO
 		ICmPossibilityList Create(Guid guid, int hvo);
 	}
 
+	public partial interface ILexRefTypeFactory
+	{
+		/// <summary>
+		/// Constructor to build a ILexRefType with specific attributes
+		/// </summary>
+		/// <param name="guid"></param>
+		/// <param name="owner"></param>
+		/// <returns></returns>
+		ILexRefType Create(Guid guid, ILexRefType owner);
+	}
+
 	/// <summary>
 	/// Internal interface for use by merging code to create a copy of a CmPerson that exists in another project.
 	/// </summary>
@@ -629,9 +640,8 @@ namespace SIL.FieldWorks.FDO
 		/// <param name="hvoDomain">database id of the semantic domain</param>
 		/// <param name="columns"></param>
 		/// <param name="rgtss"></param>
-		/// <param name="cache"></param>
 		/// <param name="stringTbl"></param>
-		int RDENewSense(int hvoDomain, List<XmlNode> columns, ITsString[] rgtss, FdoCache cache, StringTable stringTbl);
+		int RDENewSense(int hvoDomain, List<XmlNode> columns, ITsString[] rgtss, StringTable stringTbl);
 	}
 
 	/// <summary>

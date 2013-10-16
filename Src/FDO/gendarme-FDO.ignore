@@ -39,6 +39,8 @@ M: System.Boolean FwRemoteDatabaseConnector.Db4oServerInfo::<ListConnectedClient
 
 # GetEnumerator() returns a reference
 M: System.Collections.IEnumerator SIL.FieldWorks.FDO.FdoVectorUtils/<ConvertCmObjectsToHvos>*`1::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.CmObject/<get_OwnedObjects>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.CmObject/<get_AllOwnedObjects>*::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.Scripture/<get_StTexts>*::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.ScrTxtPara/OwningSequenceWrapper`2::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntry/<get_EntryRefsWithThisMainEntry>*::System.Collections.IEnumerable.GetEnumerator()

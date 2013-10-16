@@ -104,6 +104,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		private void HandleKeyDown(object sender, KeyEventArgs e)
 		{
+			if (!m_listBox.Visible)
+				return;
+
 			switch (e.KeyCode)
 			{
 				case Keys.Up:

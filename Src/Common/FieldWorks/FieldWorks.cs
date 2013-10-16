@@ -145,6 +145,8 @@ namespace SIL.FieldWorks
 		/// ----------------------------------------------------------------------------
 		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
 			Justification = "See TODO-Linux")]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="open GeckoWebBrowser is disposed by Xpcom.Shutdown")]
 		[STAThread]
 		static int Main(string[] rgArgs)
 		{
@@ -166,10 +168,6 @@ namespace SIL.FieldWorks
 					throw new ApplicationException("LD_LIBRARY_PATH must contain " + xulRunnerLocation);
 				Xpcom.Initialize(xulRunnerLocation);
 				GeckoPreferences.User["gfx.font_rendering.graphite.enabled"] = true;
-				Application.ApplicationExit += (sender, e) =>
-				{
-					Xpcom.Shutdown();
-				};
 #endif
 
 				Logger.WriteEvent("Starting app");
@@ -253,8 +251,7 @@ namespace SIL.FieldWorks
 					// That guid may depend on version or something similar; it's some artifact of how the Settings persists.
 					s_noPreviousReportingSettings = true;
 					reportingSettings = new ReportingSettings();
-					Settings.Default.Reporting = reportingSettings;
-					Settings.Default.Save();
+					Settings.Default.Reporting = reportingSettings; //to avoid a defect in Settings rely on the Save in the code below
 				}
 
 				// Note that in FLEx we are using this flag to indicate whether we can send usage data at all.
@@ -266,7 +263,7 @@ namespace SIL.FieldWorks
 				// sure, we don't even initialize reporting if it is false.
 				// (Note however that it starts out true. Thus, typically a few pings will be sent
 				// on the very first startup, before the user gets a chance to disable it.)
-				if (reportingSettings != null && reportingSettings.OkToPingBasicUsageData)
+				if (reportingSettings.OkToPingBasicUsageData)
 				{
 					UsageReporter.Init(reportingSettings, "flex.palaso.org", "UA-39238981-3",
 #if DEBUG
@@ -356,6 +353,19 @@ namespace SIL.FieldWorks
 			finally
 			{
 				StaticDispose();
+#if __MonoCS__
+				if (Xpcom.IsInitialized)
+				{
+					// The following line appears to be necessary to keep Xpcom.Shutdown()
+					// from triggering a scary looking "double free or corruption" message most
+					// of the time.  But the Xpcom.Shutdown() appears to be needed to keep the
+					// program from hanging around sometimes after it supposedly exits.
+					// Doing the shutdown here seems cleaner than using an ApplicationExit
+					// delegate.
+					var foo = new GeckoWebBrowser();
+					Xpcom.Shutdown();
+				}
+#endif
 			}
 			return 0;
 		}
@@ -2955,7 +2965,14 @@ namespace SIL.FieldWorks
 							: CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastSeUrl"));
 
 					var sparkle = SingletonsContainer.Get("Sparkle", () => new Sparkle(appCastUrl, app.ActiveMainWindow.Icon));
-
+					sparkle.AboutToExitForInstallerRun += delegate(object sender, CancelEventArgs args)
+						{
+							CloseAllMainWindows();
+							if(app.ActiveMainWindow != null)
+							{
+								args.Cancel = true;
+							}
+						};
 					if (Settings.Default.AutoCheckForUpdates)
 						sparkle.CheckOnFirstApplicationIdle();
 #endif

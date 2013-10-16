@@ -133,7 +133,7 @@ namespace SIL.FieldWorks.WordWorks.Parser {
 		}
 
 		/// <summary>
-		///   Looks up a localized string similar to At least one of the phonemes in the word {0} is not defined.  Please make sure all phonemes in the word have been defined..
+		///   Looks up a localized string similar to There is at least one undefined phoneme in the word &apos;{0}&apos;. The following phonemes were parsed: &apos;{3}&apos;.  The problem begins with character/diacritic number {1} – that is, in the part of the word &apos;{2}&apos;.  Please make sure all phonemes in the word have been defined..
 		/// </summary>
 		internal static string ksHCInvalidWordform {
 			get {

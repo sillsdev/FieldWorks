@@ -165,7 +165,6 @@
     <Compile Include="MeasurementUtilsTest.cs" />
     <Compile Include="MoreStringUtilsTests.cs" />
     <Compile Include="ParagraphCorrelationTests.cs" />
-    <Compile Include="ParatextHelperTests.cs" />
     <Compile Include="SpellingHelperTests.cs" />
     <Compile Include="StringSearcherTests.cs" />
     <Compile Include="ShowHelpTests.cs" />

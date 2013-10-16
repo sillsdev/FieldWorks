@@ -10,21 +10,21 @@ namespace SIL.HermitCrab
 	public class WordAnalysis : ICloneable
 	{
 		PhoneticShape m_shape;
-		HCObjectSet<PartOfSpeech> m_pos;
-		LexEntry.RootAllomorph m_rootAllomorph = null;
-		WordAnalysis m_nonHead = null;
-		List<MorphologicalRule> m_mrules;
-		Dictionary<MorphologicalRule, int> m_mrulesUnapplied;
+		readonly HCObjectSet<PartOfSpeech> m_pos;
+		LexEntry.RootAllomorph m_rootAllomorph;
+		WordAnalysis m_nonHead;
+		readonly List<MorphologicalRule> m_mrules;
+		readonly Dictionary<MorphologicalRule, int> m_mrulesUnapplied;
 		FeatureValues m_rzFeatures;
-		Trace m_curTrace;
+		object m_curTraceObject;
 		Stratum m_stratum;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="WordAnalysis"/> class.
 		/// </summary>
 		/// <param name="shape">The shape.</param>
-		/// <param name="curTrace">The current trace record.</param>
-		internal WordAnalysis(PhoneticShape shape, Stratum stratum, Trace curTrace)
+		/// <param name="stratum"></param>
+		internal WordAnalysis(PhoneticShape shape, Stratum stratum)
 		{
 			m_shape = shape;
 			m_pos = new HCObjectSet<PartOfSpeech>();
@@ -32,7 +32,6 @@ namespace SIL.HermitCrab
 			m_mrulesUnapplied = new Dictionary<MorphologicalRule, int>();
 			m_rzFeatures = new FeatureValues();
 			m_stratum = stratum;
-			m_curTrace = curTrace;
 		}
 
 		/// <summary>
@@ -49,7 +48,7 @@ namespace SIL.HermitCrab
 			m_mrules = new List<MorphologicalRule>(wa.m_mrules);
 			m_mrulesUnapplied = new Dictionary<MorphologicalRule, int>(wa.m_mrulesUnapplied);
 			m_rzFeatures = wa.m_rzFeatures.Clone();
-			m_curTrace = wa.m_curTrace;
+			m_curTraceObject = wa.m_curTraceObject;
 			m_stratum = wa.m_stratum;
 		}
 
@@ -137,16 +136,16 @@ namespace SIL.HermitCrab
 		/// Gets or sets the current trace record.
 		/// </summary>
 		/// <value>The current trace record.</value>
-		internal Trace CurrentTrace
+		public object CurrentTraceObject
 		{
 			get
 			{
-				return m_curTrace;
+				return m_curTraceObject;
 			}
 
 			set
 			{
-				m_curTrace = value;
+				m_curTraceObject = value;
 			}
 		}
 

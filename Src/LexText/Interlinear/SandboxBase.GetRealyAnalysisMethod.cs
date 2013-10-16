@@ -414,11 +414,12 @@ namespace SIL.FieldWorks.IText
 							int hvoSbMorph = m_sda.get_VecItem(m_hvoSbWord, ktagSbWordMorphs, imorph);
 							mb.Form.set_String(wsVern, m_sandbox.GetFullMorphForm(hvoSbMorph));
 							// Copy any other wss over, without any funny business about morpheme breaks
-							foreach (int ws in m_choices.OtherWritingSystemsForFlid(InterlinLineChoices.kflidMorphemes, 0))
-							{
-								mb.Form.set_String(ws,
-									m_caches.DataAccess.get_MultiStringAlt(hvoSbMorph, ktagSbNamedObjName, ws));
-							}
+							// Per LT-14891, we don't allow editing of the other morph lines, so no need to set them.
+							//foreach (int ws in m_choices.OtherWritingSystemsForFlid(InterlinLineChoices.kflidMorphemes, 0))
+							//{
+							//    mb.Form.set_String(ws,
+							//        m_caches.DataAccess.get_MultiStringAlt(hvoSbMorph, ktagSbNamedObjName, ws));
+							//}
 						}
 						else
 						{

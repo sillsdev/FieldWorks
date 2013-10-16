@@ -903,6 +903,7 @@ namespace SIL.Utils
 			xslDoc.async = false;
 			xslDoc.setProperty("ResolveExternals", true);
 			xslDoc.setProperty("ProhibitDTD", false);
+			xslDoc.setProperty("AllowDocumentFunction", true); // MSXSL 6 defaults to false
 			xslDoc.load(sTransformName);
 			xslt.stylesheet = xslDoc;
 			xmlDoc.setProperty("ResolveExternals", true);

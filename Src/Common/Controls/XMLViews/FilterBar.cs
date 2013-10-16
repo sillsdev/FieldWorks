@@ -566,10 +566,10 @@ namespace SIL.FieldWorks.Common.Controls
 					m_items.Add(item);
 					Controls.Add(item.Combo);
 					oldItems.Remove(colSpec);
-			}
+				}
 				else
 					m_items.Add(MakeItem(colSpec));
-		}
+			}
 			foreach (var item in oldItems)
 			{
 				item.FilterChanged -= FilterChangedHandler;

@@ -79,6 +79,7 @@ namespace SIL.HermitCrab
 		}
 
 		List<Trace> m_children;
+		Trace m_parent;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Trace"/> class.
@@ -138,6 +139,12 @@ namespace SIL.HermitCrab
 		internal void AddChild(Trace tr)
 		{
 			m_children.Add(tr);
+			tr.m_parent = this;
+		}
+
+		public Trace Parent
+		{
+			get { return m_parent; }
 		}
 
 		public override string ToString()
@@ -771,7 +778,7 @@ namespace SIL.HermitCrab
 
 		public override string ToString(bool includeInputs)
 		{
-			return string.Format(HCStrings.kstidTracePhonologicalRuleSynthesisRequiredPOS, m_partOfSpeech.ToString(), m_requiredPOSs.ToString());
+			return string.Format(HCStrings.kstidTracePhonologicalRuleSynthesisRequiredPOS, m_partOfSpeech, m_requiredPOSs);
 		}
 	}
 
@@ -781,12 +788,7 @@ namespace SIL.HermitCrab
 	/// </summary>
 	public class PhonologicalRuleSynthesisMPRFeaturesTrace : Trace
 	{
-		/// <summary>
-		/// The block type
-		/// </summary>
-		public enum PhonologicalRuleSynthesisMPRFeaturesTraceType { REQUIRED, EXCLUDED }
-
-		PhonologicalRuleSynthesisMPRFeaturesTraceType m_mprFeatureType;
+		MPRFeaturesType m_mprFeatureType;
 		private MPRFeatureSet m_mprFeatures;
 		private MPRFeatureSet m_constrainingMPRFeatures;
 
@@ -796,7 +798,7 @@ namespace SIL.HermitCrab
 		/// <param name="mprFeatureType">Type: required or excluded.</param>
 		/// <param name="mprFeatures">The set of MPR features the form has.</param>
 		/// <param name="constrainingMPRFeatures">The set of MPR features the form must have (required) or must not have (excluded).</param>
-		internal PhonologicalRuleSynthesisMPRFeaturesTrace(PhonologicalRuleSynthesisMPRFeaturesTraceType mprFeatureType,
+		internal PhonologicalRuleSynthesisMPRFeaturesTrace(MPRFeaturesType mprFeatureType,
 			MPRFeatureSet mprFeatures, MPRFeatureSet constrainingMPRFeatures)
 		{
 			m_mprFeatureType = mprFeatureType;
@@ -820,7 +822,7 @@ namespace SIL.HermitCrab
 		/// Gets the type of the checking.
 		/// </summary>
 		/// <value>The type of the checking.</value>
-		public PhonologicalRuleSynthesisMPRFeaturesTraceType MPRFeatureType
+		public MPRFeaturesType MPRFeatureType
 		{
 			get
 			{
@@ -850,11 +852,11 @@ namespace SIL.HermitCrab
 			string format = null;
 			switch (m_mprFeatureType)
 			{
-				case PhonologicalRuleSynthesisMPRFeaturesTraceType.REQUIRED:
+				case MPRFeaturesType.REQUIRED:
 					format = HCStrings.kstidTracePhonologicalRuleSynthesisRequiredMPRFeatures;
 					break;
 
-				case PhonologicalRuleSynthesisMPRFeaturesTraceType.EXCLUDED:
+				case MPRFeaturesType.EXCLUDED:
 					format = HCStrings.kstidTracePhonologicalRuleSynthesisExcludedMPRFeatures;
 					break;
 			}

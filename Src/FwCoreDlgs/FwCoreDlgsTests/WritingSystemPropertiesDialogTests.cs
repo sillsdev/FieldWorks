@@ -19,6 +19,7 @@ using System.Windows.Forms;
 
 using NUnit.Framework;
 using Palaso.WritingSystems;
+using Palaso.UI.WindowsForms.Keyboarding;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.CoreImpl;
@@ -484,6 +485,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_origLocalWss.UnionWith(Cache.ServiceLocator.WritingSystemManager.LocalWritingSystems);
 			m_origGlobalWss.UnionWith(Cache.ServiceLocator.WritingSystemManager.GlobalWritingSystems);
 			MessageBoxUtils.Manager.SetMessageBoxAdapter(new MessageBoxStub());
+			KeyboardController.Initialize();
+		}
+
+		/// <summary/>
+		public override void FixtureTeardown()
+		{
+			KeyboardController.Shutdown();
+			base.FixtureTeardown();
 		}
 
 		/// <summary>

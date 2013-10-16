@@ -99,8 +99,6 @@ namespace SIL.FieldWorks.FDO
 	/// <summary>
 	/// This is used both in defining mapping properties for this class AND also for the
 	/// ImportStyleProxy.
-	/// ENHANCE (TimS): This class should somehow make it's way towards ParatextHelper so that
-	/// ParatextProxy can go away. There is no reason this code has to be in FDO.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	public enum MappingTargetType

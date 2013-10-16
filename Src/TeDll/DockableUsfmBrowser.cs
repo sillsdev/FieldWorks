@@ -23,8 +23,8 @@ using Paratext.ScriptureEditor;
 using SIL.FieldWorks.Common.RootSites;
 using Microsoft.Win32;
 using Paratext.TextCollection;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
-using SIL.FieldWorks.Common.FwUtils;
 using SILUBS.SharedScrUtils;
 using ScrVers = Paratext.ScrVers;
 

@@ -1572,7 +1572,12 @@ namespace SIL.FieldWorks.LexText.Controls
 				sValue = multi.BestAnalysisVernacularAlternative.Text;
 			if (sValue == "***" && wsWant <= 0)
 				sValue = multi.get_String(m_wsEn).Text;
-			w.WriteLine("<trait  name=\"{0}\" value=\"{1}\"/>", sName, MakeSafeAndNormalizedAttribute(sValue));
+			WriteTrait(w, sName, sValue);
+		}
+
+		private static void WriteTrait(TextWriter textWriter, string traitName, string traitValue)
+		{
+			textWriter.WriteLine("<trait  name=\"{0}\" value=\"{1}\"/>", traitName, MakeSafeAndNormalizedAttribute(traitValue));
 		}
 
 		private void WriteLiftDates(TextWriter w, ICmObject obj)
@@ -1791,6 +1796,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			WriteAllForms(w, "description", null, "form", refer.Description);
 			WriteAllForms(w, "field", "type=\"reverse-label\"", "form", refer.ReverseName);
 			WriteAllForms(w, "field", "type=\"reverse-abbrev\"", "form", refer.ReverseAbbreviation);
+			//Write out the MappingType as a 2 digit string without decimal points (currently only 1 digit is needed)
+			WriteTrait(w, "referenceType", refer.MappingType.ToString("##"));
 			w.WriteLine("</range-element>");
 		}
 

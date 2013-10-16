@@ -27,8 +27,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	/// <summary>
 	/// ScrMappingList is a sorted list that contains ImportMappingInfo objects.
 	/// The list is sorted by begin marker.
-	/// ENHANCE (TimS): This class should somehow make it's way towards ParatextHelper so that
-	/// ParatextProxy can go away. There is no reason this code has to be in FDO.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	public class ScrMappingList : IEnumerable

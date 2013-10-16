@@ -56,5 +56,46 @@ namespace SIL.Utils
 		{
 			return Directory.GetFiles(path, searchPattern, searchOption).OrderByAscendingCaseInsensitive().ToArray();
 		}
+
+		/// <summary>
+		/// Copies the source directory and its files to the destination. Copies subdirectories *only if* <c>copySubDirs</c> is true
+		/// </summary>
+		/// <param name="sourceDirName">Source dir name.</param>
+		/// <param name="destDirName">Destination dir name.</param>
+		/// <param name="copySubDirs">If set to <c>true</c> copy sub dirs.</param>
+		/// <param name="overwrite">If set to <c>true</c> overwrite existing files.</param>
+		public static void CopyDirectory(string sourceDirName, string destDirName, bool copySubDirs, bool overwrite)
+		{
+			// Get the subdirectories for the specified directory.
+			DirectoryInfo dir = new DirectoryInfo(sourceDirName);
+
+			if (!dir.Exists)
+			{
+				throw new DirectoryNotFoundException(
+					"Source directory does not exist or could not be found: "
+					+ sourceDirName);
+			}
+
+			// If the destination directory doesn't exist, create it.
+			if (!Directory.Exists(destDirName))
+			{
+				Directory.CreateDirectory(destDirName);
+			}
+
+			// Get the files in the directory and copy them to the new location.
+			foreach (FileInfo file in dir.GetFiles())
+			{
+				file.CopyTo(Path.Combine(destDirName, file.Name), overwrite);
+			}
+
+			// If copying subdirectories, copy them and their contents to new location.
+			if (copySubDirs)
+			{
+				foreach (DirectoryInfo subdir in dir.GetDirectories())
+				{
+					CopyDirectory(subdir.FullName, Path.Combine(destDirName, subdir.Name), copySubDirs, overwrite);
+				}
+			}
+		}
 	}
 }

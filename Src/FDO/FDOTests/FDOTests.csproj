@@ -329,7 +329,6 @@
     <Compile Include="MergeObjectsTests.cs" />
     <Compile Include="NotebookTests.cs" />
     <Compile Include="ParaNodeMapTests.cs" />
-    <Compile Include="ParatextAdapterTests.cs" />
     <Compile Include="CopyObjectTests.cs" />
     <Compile Include="DataMigrationTests\DataMigration7000001Tests.cs" />
     <Compile Include="DataMigrationTests\DataMigration7000002Tests.cs" />
@@ -349,6 +348,7 @@
     <Compile Include="LexSenseTests.cs" />
     <Compile Include="LingTests.cs" />
     <Compile Include="ParagraphParserTests.cs" />
+    <Compile Include="ParatextHelperTests.cs" />
     <Compile Include="PersistingLayerTests.BEPPortTests.cs" />
     <Compile Include="PropChangedTests.cs" />
     <Compile Include="ReferenceAdjusterServiceTests.cs" />

@@ -19,7 +19,7 @@ using System.Windows.Forms;
 using Paratext;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Language;
 using SIL.FieldWorks.Resources;
 using SILUBS.SharedScrUtils;

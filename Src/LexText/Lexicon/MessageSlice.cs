@@ -36,10 +36,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		public override void FinishInit()
 		{
-#if __MonoCS__
-			try
-			{
-#endif
 			m_chorusSystem = new ChorusSystem(Cache.ProjectId.ProjectFolder);
 			m_chorusSystem.InitWithoutHg(SendReceiveUser);
 			// This is a required object for CreateNotesBar. It specifies delegates for getting the information
@@ -47,21 +43,22 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var notesToRecordMapping = new NotesToRecordMapping()
 				{
 					FunctionToGetCurrentUrlForNewNotes = GetCurrentUrlForNewNotes,
-					FunctionToGoFromObjectToItsId = GetIdForObject
+					FunctionToGoFromObjectToItsId = GetIdForObject,
+					FunctionToGoFromObjectToAdditionalIds = GetAdditionalIdsForObject
 				};
 			var dataFilePath = GetDataFilePath(Cache);
-			m_notesBar = m_chorusSystem.WinForms.CreateNotesBar(dataFilePath, notesToRecordMapping, new NullProgress());
+			var additionalPaths = GetAdditionalLexiconFilePaths(Cache);
+			const string idAttrForOtherFiles = "guid"; // .lexdb chorus notes files identify FLEx object with a url attr of "guid".
+			m_notesBar = m_chorusSystem.WinForms.CreateNotesBar(dataFilePath, additionalPaths, idAttrForOtherFiles, notesToRecordMapping, new NullProgress());
 			m_notesBar.SetTargetObject(m_obj);
+			// Set the writing systems for the NoteDetailDialog.  (See FWNX-1239.)
+			var vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			var labelWs = new ChorusWritingSystem(vernWs.LanguageName, vernWs.RFC5646, vernWs.DefaultFontName, 12);
+			m_notesBar.LabelWritingSystem = labelWs;
+			var analWs = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+			var msgWs = new ChorusWritingSystem (analWs.LanguageName, analWs.RFC5646, analWs.DefaultFontName, 12);
+			m_notesBar.MessageWritingSystem = msgWs;
 			this.Control = m_notesBar;
-#if __MonoCS__
-			}
-			catch (Exception ex)
-			{
-				// This does not work yet on Linux, but shouldn't keep the rest of
-				// the lexicon edit tool from working!  (See FWNX-960.)
-				Console.WriteLine("Initializing Chorus UI element failed: {0}", ex.Message);
-			}
-#endif
 		}
 
 		// The notes bar expects to store notes about a particular file. Our notes are currently about the lexicon,
@@ -85,6 +82,30 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return dataFilePath;
 		}
 
+		/// <summary>
+		/// Gets additional files that have annotation files containing notes about lexicon conflicts.
+		/// Note that we return the files (e.g., Lexicon_04.lexdb) that contain the lexical data,
+		/// not the files (e.g., Lexicon_04.lexdb.ChorusNotes) that contain the notes.
+		/// We do check for the existence of the ChorusNotes files (though I think the NotesBar would
+		/// handle their absence itself) just as a performance optimization.
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <returns></returns>
+		private static IEnumerable<string> GetAdditionalLexiconFilePaths(FdoCache cache)
+		{
+			var results = new List<string>();
+			var lexiconFolder = Path.Combine(cache.ProjectId.ProjectFolder, "Linguistics", "Lexicon");
+			if (!Directory.Exists(lexiconFolder))
+				return results;
+			foreach (var path in Directory.EnumerateFiles(lexiconFolder, "*.lexdb"))
+			{
+				var notesFile = path + "." + FLExBridgeListener.kChorusNotesExtension;
+				if (File.Exists(notesFile))
+					results.Add(path);
+			}
+			return results;
+		}
+
 		private string GetCurrentUrlForNewNotes(object dataItemInFocus, string escapedId)
 		{
 			// In this URI, the stuff up to tag=& is the part that allows FLEx to switch to the right object from the notes browser.
@@ -96,6 +117,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private static string GetIdForObject(object targetOfNote)
 		{
 			return ((ICmObject)targetOfNote).Guid.ToString().ToLowerInvariant();
+		}
+
+		private static IEnumerable<string> GetAdditionalIdsForObject(object targetOfNote)
+		{
+			return ((ICmObject)targetOfNote).AllOwnedObjects.Select(t => t.Guid.ToString().ToLowerInvariant());
 		}
 
 		// Used in ShowSliceForVisibleData. It will never display the control to which it passes this,

@@ -30,12 +30,14 @@
 	<commands>
 		<command id="CmdChooseLangProject" label="_Open..." message="ChooseLangProject" icon="OpenProject" shortcut="Ctrl+O"/>
 		<!-- Send/Receive commands. See "ContextHelp.xml" file for corresponding tooltips. -->
-		<command id="CmdFLExBridge" label="_Project (with other FLEx users)..." icon="syncSendReceive" message="FLExBridge" />
+		<command id="CmdFLExBridge" label="Send/Receive _Project (with other FLEx users)..." icon="syncSendReceive" message="FLExBridge" />
 		<command id="CmdViewMessages" label="_View Project Messages..." message="ViewMessages" />
-		<command id="CmdLiftBridge" label="_Lexicon (with programs that use LIFT)..."  icon="syncSendReceive" message="LiftBridge" />
+		<command id="CmdLiftBridge" label="Send/Receive _Lexicon (WeSay)..."  icon="syncSendReceive" message="LiftBridge" />
 		<command id="CmdViewLiftMessages" label="Vie_w Lexicon Messages..." message="ViewLiftMessages" />
 		<command id="CmdObtainAnyFlexBridgeProject" label="_Get Project from Colleague..." icon="syncObtain" message="ObtainAnyFlexBridgeProject" />
-		<command id="CmdObtainLiftProject" label="Get Lexicon and _Merge with this Project..." icon="syncObtain" message="ObtainLiftProject" />
+		<command id="CmdObtainLiftProject" label="Get Lexicon (WeSay) and _Merge with this Project..." icon="syncObtain" message="ObtainLiftProject" />
+		<command id="CmdObtainFirstFlexBridgeProject" label="Send this _Project for the first time..." icon="syncSendReceiveFirst" message="FirstFLExBridge" />
+		<command id="CmdObtainFirstLiftProject" label="Send this _Lexicon for the first time (to WeSay)..." icon="syncSendReceiveFirst" message="FirstLiftBridge" />
 		<command id="CmdHelpChorus" label="_Help..." message="ShowChorusHelp" />
 		<command id="CmdCheckForFlexBridgeUpdates" label="Check for FLEx Bridge _Updates..." message="CheckForFlexBridgeUpdates" />
 		<command id="CmdHelpAboutFLEXBridge" label="_About FLEx Bridge..." icon="chorus" message="AboutFlexBridge"/>
@@ -487,6 +489,9 @@
 			<item command="CmdObtainAnyFlexBridgeProject"/>
 			<item command="CmdObtainLiftProject"/>
 			<item label="-" translate="do not translate"/>
+			<item command="CmdObtainFirstFlexBridgeProject"/>
+			<item command="CmdObtainFirstLiftProject"/>
+			<item label="-" translate="do not translate"/>
 			<item command="CmdHelpChorus"/>
 			<item command="CmdCheckForFlexBridgeUpdates"/>
 			<item command="CmdHelpAboutFLEXBridge"/>
@@ -904,7 +909,7 @@ I (RandyR) brought them into this file, just to keep track of them for the time 
 		<imageList assemblyPath="xWorks.dll" class=" SIL.FieldWorks.XWorks.ImageHolder" field="smallImages" size="small" labels="BrowseView, EditView, DocumentView, NoFilter, SimpleFilter, DefaultSort, GenericTool, Delete, SpecialCharacter, ExternalLink, SideBySideView"/>
 		<imageList assemblyPath="xWorks.dll" class=" SIL.FieldWorks.XWorks.ImageHolder" field="smallCommandImages" size="small" labels="NewProject, OpenProject, SaveProject, historyBack, historyForward, Refresh, MenuWidget, Undo, Redo, Cut, Copy, Paste, MoveUp, MoveRight, MoveDown, MoveLeft, columnChooser"/>
 		<imageList assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.LexEntryImages" field="buttonImages" size="small" labels="majorEntry, minorEntry, subentry, goToEntry, reversalEntry, gotoReversalEntry"/>
-		<imageList assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordClerkImages" field="buttonImages" size="small" labels="firstRecord, lastRecord, previousRecord, nextRecord, syncSendReceive, syncObtain, chorus"/>
+		<imageList assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordClerkImages" field="buttonImages" size="small" labels="firstRecord, lastRecord, previousRecord, nextRecord, syncSendReceive, syncObtain, chorus, syncSendReceiveFirst"/>
 		<imageList assemblyPath="DetailControls.dll" class="SIL.FieldWorks.Common.Framework.DetailControls.DataTreeImages" field="nodeImages" size="small" labels="sequence, collection, atomic"/>
 		<imageList assemblyPath="LexTextDll.dll" class=" SIL.FieldWorks.XWorks.LexText.ImageHolder" field="smallImages" size="small" labels="Pie, Circle, TwoHalfs, Help, Delete, Remove, Left, Right"/>
 		<imageList assemblyPath="LexTextDll.dll" class=" SIL.FieldWorks.XWorks.LexText.ImageHolder" field="smallCommandImages" size="small" labels="findWordform, addNewAnalysis"/>

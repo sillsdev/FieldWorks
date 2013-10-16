@@ -31,14 +31,14 @@ namespace SIL.HermitCrab
 			return true;
 		}
 
-		public override bool Unapply(WordAnalysis input, int srIndex, out ICollection<WordAnalysis> output, string[] selectTraceMorphs)
+		public override bool Unapply(WordAnalysis input, int srIndex, TraceManager trace, string[] selectTraceMorphs, out ICollection<WordAnalysis> output)
 		{
 			output = null;
 			FeatureValues rzFeats;
 			if (!RealizationalFeatures.Unify(input.RealizationalFeatures, out rzFeats))
 				return false;
 
-			if (base.Unapply(input, srIndex, out output, selectTraceMorphs))
+			if (base.Unapply(input, srIndex, trace, selectTraceMorphs, out output))
 			{
 				foreach (WordAnalysis wa in output)
 					wa.RealizationalFeatures = rzFeats;
@@ -52,13 +52,13 @@ namespace SIL.HermitCrab
 			return RealizationalFeatures.IsMatch(input.RealizationalFeatures);
 		}
 
-		public override bool ApplySlotAffix(WordSynthesis input, FeatureValues origHeadFeatures, out ICollection<WordSynthesis> output)
+		public override bool ApplySlotAffix(WordSynthesis input, FeatureValues origHeadFeatures, TraceManager trace, out ICollection<WordSynthesis> output)
 		{
 			output = null;
 			if (IsBlockedSlotAffix(origHeadFeatures))
 				return false;
 
-			return base.ApplySlotAffix(input, origHeadFeatures, out output);
+			return base.ApplySlotAffix(input, origHeadFeatures, trace, out output);
 		}
 
 		/// <summary>

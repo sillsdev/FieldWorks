@@ -12,10 +12,12 @@ namespace SIL.HermitCrab
 	public class DefaultOutput : IOutput
 	{
 		protected TextWriter m_out;
+		protected DefaultTraceManager m_trace;
 
 		public DefaultOutput(TextWriter outWriter)
 		{
 			m_out = outWriter;
+			m_trace = new DefaultTraceManager();
 		}
 
 		/// <summary>
@@ -30,11 +32,15 @@ namespace SIL.HermitCrab
 			}
 		}
 
+		public TraceManager TraceManager
+		{
+			get { return m_trace; }
+		}
+
 		public virtual void MorphAndLookupWord(Morpher morpher, string word, bool prettyPrint, bool printTraceInputs)
 		{
 			m_out.WriteLine("Morph and Lookup: " + word);
-			WordAnalysisTrace trace;
-			ICollection<WordSynthesis> results = morpher.MorphAndLookupWord(word, out trace);
+			ICollection<WordSynthesis> results = morpher.MorphAndLookupWord(word, m_trace);
 			m_out.WriteLine("*Results*");
 			if (results.Count == 0)
 			{
@@ -47,12 +53,13 @@ namespace SIL.HermitCrab
 					Write(ws, prettyPrint);
 			}
 
-			if (prettyPrint && morpher.IsTracing)
+			if (prettyPrint && m_trace.IsTracing)
 			{
 				m_out.WriteLine("*Trace*");
-				Write(trace, prettyPrint, printTraceInputs);
+				WriteTrace(printTraceInputs);
 				m_out.WriteLine();
 			}
+			m_trace.Reset();
 		}
 
 		public virtual void Write(WordSynthesis ws, bool prettyPrint)
@@ -66,7 +73,7 @@ namespace SIL.HermitCrab
 
 		void PrettyPrintWordSynthesis(WordSynthesis ws)
 		{
-			StringBuilder sb = new StringBuilder();
+			var sb = new StringBuilder();
 			sb.Append("ID: ");
 			sb.AppendLine(ws.Root.ID);
 			sb.Append("POS: ");
@@ -109,14 +116,17 @@ namespace SIL.HermitCrab
 			sb.Append("Head Features: ");
 			sb.AppendLine(ws.HeadFeatures.ToString());
 			sb.Append("Foot Features: ");
-			sb.Append(ws.FootFeatures.ToString());
+			sb.Append(ws.FootFeatures);
 			m_out.WriteLine(sb.ToString());
 		}
 
-		public virtual void Write(Trace trace, bool prettyPrint, bool printTraceInputs)
+		protected virtual void WriteTrace(bool printTraceInputs)
 		{
-			Set<int> lineIndices = new Set<int>();
-			PrintTraceRecord(trace, 0, lineIndices, printTraceInputs);
+			foreach (WordAnalysisTrace trace in m_trace.WordAnalysisTraces)
+			{
+				var lineIndices = new Set<int>();
+				PrintTraceRecord(trace, 0, lineIndices, printTraceInputs);
+			}
 		}
 
 		void PrintTraceRecord(Trace trace, int indent, Set<int> lineIndices, bool printTraceInputs)

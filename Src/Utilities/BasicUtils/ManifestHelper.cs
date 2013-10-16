@@ -11,6 +11,7 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
 
@@ -115,10 +116,16 @@ namespace SIL.Utils
 				{
 					if (m_ActivationContext == IntPtr.Zero)
 					{
+						// Specifying a full path to the Tests.manifest file like this allows our unit tests to work even with a
+						// test runner like Resharper 8 which does not set the current directory to the one containing the DLLs.
+						// Note that we have to use CodeBase here because NUnit runs the tests from a shadow copy directory
+						// that doesn't contain the manifest file.
+						var uri = new Uri(System.Reflection.Assembly.GetExecutingAssembly().CodeBase);
+						var location = Path.GetDirectoryName(uri.AbsolutePath);
 						var context = new ActCtx
 							{
 								cbSize = Marshal.SizeOf(typeof(ActCtx)),
-								lpSource = "FieldWorks.Tests.manifest"
+								lpSource = Path.Combine(location, "FieldWorks.Tests.manifest")
 							};
 
 						var handle = CreateActCtx(ref context);

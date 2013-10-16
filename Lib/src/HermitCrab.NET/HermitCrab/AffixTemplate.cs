@@ -8,7 +8,7 @@ namespace SIL.HermitCrab
 	/// </summary>
 	public class Slot : HCObject
 	{
-		HCObjectSet<MorphologicalRule> m_rules;
+		readonly HCObjectSet<MorphologicalRule> m_rules;
 		bool m_isOptional;
 
 		/// <summary>
@@ -73,8 +73,8 @@ namespace SIL.HermitCrab
 	/// </summary>
 	public class AffixTemplate : HCObject
 	{
-		HCObjectSet<Slot> m_slots;
-		HCObjectSet<PartOfSpeech> m_requiredPOSs = null;
+		readonly HCObjectSet<Slot> m_slots;
+		HCObjectSet<PartOfSpeech> m_requiredPOSs;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="AffixTemplate"/> class.
@@ -128,18 +128,16 @@ namespace SIL.HermitCrab
 		/// Unapplies this affix template to specified input word analysis.
 		/// </summary>
 		/// <param name="input">The input word analysis.</param>
+		/// <param name="selectTraceMorphs"></param>
 		/// <param name="output">The output word analyses.</param>
+		/// <param name="trace"></param>
 		/// <returns>The resulting word analyses.</returns>
-		public bool Unapply(WordAnalysis input, out IEnumerable<WordAnalysis> output, string[] selectTraceMorphs)
+		public bool Unapply(WordAnalysis input, TraceManager trace, string[] selectTraceMorphs, out IEnumerable<WordAnalysis> output)
 		{
-			Set<WordAnalysis> results = new Set<WordAnalysis>();
-			if (Morpher.TraceTemplatesAnalysis)
-			{
-				// create the template analysis trace input record
-				TemplateAnalysisTrace tempTrace = new TemplateAnalysisTrace(this, true, input.Clone());
-				input.CurrentTrace.AddChild(tempTrace);
-			}
-			UnapplySlots(input.Clone(), m_slots.Count - 1, results, selectTraceMorphs);
+			var results = new Set<WordAnalysis>();
+			if (trace != null)
+				trace.BeginUnapplyTemplate(this, input);
+			UnapplySlots(input.Clone(), m_slots.Count - 1, trace, selectTraceMorphs, results);
 			foreach (WordAnalysis wa in results)
 			{
 				foreach (PartOfSpeech pos in m_requiredPOSs)
@@ -151,14 +149,12 @@ namespace SIL.HermitCrab
 				output = results;
 				return true;
 			}
-			else
-			{
-				output = null;
-				return false;
-			}
+
+			output = null;
+			return false;
 		}
 
-		void UnapplySlots(WordAnalysis input, int sIndex, Set<WordAnalysis> output, string[] selectTraceMorphs)
+		void UnapplySlots(WordAnalysis input, int sIndex, TraceManager trace, string[] selectTraceMorphs, Set<WordAnalysis> output)
 		{
 			for (int i = sIndex; i >= 0; i--)
 			{
@@ -170,30 +166,31 @@ namespace SIL.HermitCrab
 						for (int j = 0; j < rule.SubruleCount; j++)
 						{
 							ICollection<WordAnalysis> analyses;
-							if (rule.Unapply(input, j, out analyses, selectTraceMorphs))
+							if (rule.Unapply(input, j, trace, selectTraceMorphs, out analyses))
 							{
 								ruleUnapplied = true;
 								foreach (WordAnalysis wa in analyses)
 								{
 									if (wa.Shape.Count > 2)
-										UnapplySlots(wa, i - 1, output, selectTraceMorphs);
+										UnapplySlots(wa, i - 1, trace, selectTraceMorphs, output);
 								}
 							}
 						}
-						rule.EndUnapplication(input, ruleUnapplied);
+						rule.EndUnapplication(input, trace, ruleUnapplied);
 					}
 				}
 				// we can skip this slot if it is optional
 				if (!m_slots[i].IsOptional)
 				{
-					if (Morpher.TraceTemplatesAnalysis)
-						input.CurrentTrace.AddChild(new TemplateAnalysisTrace(this, false, null));
+					if (trace != null)
+						trace.EndUnapplyTemplate(this, input, false);
 					return;
 				}
 			}
 
-			if (Morpher.TraceTemplatesAnalysis)
-				input.CurrentTrace.AddChild(new TemplateAnalysisTrace(this, false, input.Clone()));
+			if (trace != null)
+				trace.EndUnapplyTemplate(this, input, true);
+
 			output.Add(input);
 		}
 
@@ -206,33 +203,30 @@ namespace SIL.HermitCrab
 		/// Applies this affix template to the specified input word synthesis.
 		/// </summary>
 		/// <param name="input">The input word synthesis.</param>
+		/// <param name="trace"></param>
 		/// <param name="output">The output word synthesis.</param>
 		/// <returns><c>true</c> if the affix template applied, otherwise <c>false</c>.</returns>
-		public bool Apply(WordSynthesis input, out IEnumerable<WordSynthesis> output)
+		public bool Apply(WordSynthesis input, TraceManager trace, out IEnumerable<WordSynthesis> output)
 		{
 			FeatureValues headFeatures = input.HeadFeatures.Clone();
-			Set<WordSynthesis> results = new Set<WordSynthesis>();
-			if (Morpher.TraceTemplatesSynthesis)
-			{
-				// create the template synthesis input trace record
-				TemplateSynthesisTrace tempTrace = new TemplateSynthesisTrace(this, true, input.Clone());
-				input.CurrentTrace.AddChild(tempTrace);
-			}
-			ApplySlots(input.Clone(), 0, headFeatures, results);
+			var results = new Set<WordSynthesis>();
+
+			if (trace != null)
+				trace.BeginApplyTemplate(this, input);
+
+			ApplySlots(input.Clone(), 0, headFeatures, trace, results);
 
 			if (results.Count > 0)
 			{
 				output = results;
 				return true;
 			}
-			else
-			{
-				output = null;
-				return false;
-			}
+
+			output = null;
+			return false;
 		}
 
-		void ApplySlots(WordSynthesis input, int sIndex, FeatureValues origHeadFeatures, Set<WordSynthesis> output)
+		void ApplySlots(WordSynthesis input, int sIndex, FeatureValues origHeadFeatures, TraceManager trace, Set<WordSynthesis> output)
 		{
 			for (int i = sIndex; i < m_slots.Count; i++)
 			{
@@ -242,24 +236,25 @@ namespace SIL.HermitCrab
 					{
 						// this is the slot affix that realizes the features
 						ICollection<WordSynthesis> syntheses;
-						if (rule.ApplySlotAffix(input, origHeadFeatures, out syntheses))
+						if (rule.ApplySlotAffix(input, origHeadFeatures, trace, out syntheses))
 						{
 							foreach (WordSynthesis ws in syntheses)
-								ApplySlots(ws, i + 1, origHeadFeatures, output);
+								ApplySlots(ws, i + 1, origHeadFeatures, trace, output);
 						}
 					}
 				}
 
 				if (!m_slots[i].IsOptional)
 				{
-					if (Morpher.TraceTemplatesSynthesis)
-						input.CurrentTrace.AddChild(new TemplateSynthesisTrace(this, false, null));
+					if (trace != null)
+						trace.EndApplyTemplate(this, input, false);
 					return;
 				}
 			}
 
-			if (Morpher.TraceTemplatesSynthesis)
-				input.CurrentTrace.AddChild(new TemplateSynthesisTrace(this, false, input.Clone()));
+			if (trace != null)
+				trace.EndApplyTemplate(this, input, true);
+
 			output.Add(input);
 		}
 	}

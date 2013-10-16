@@ -16,6 +16,30 @@ using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {
+	#region LexRefTypeFactory
+	internal partial class LexRefTypeFactory
+	{
+		public ILexRefType Create(Guid guid, ILexRefType owner)
+		{
+			ILexRefType lexRefType;
+			if(guid == Guid.Empty)
+			{
+				lexRefType = Create();
+			}
+			else
+			{
+				var hvo = ((IDataReader)m_cache.ServiceLocator.GetInstance<IDataSetup>()).GetNextRealHvo();
+				lexRefType = new LexRefType(m_cache, hvo, guid);
+			}
+			if(owner != null)
+			{
+				owner.SubPossibilitiesOS.Add(lexRefType);
+			}
+			return lexRefType;
+		}
+	}
+	#endregion
+
 	#region LexSenseFactory class
 	internal partial class LexSenseFactory
 	{
@@ -105,16 +129,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <param name="hvoDomain">database id of the semantic domain</param>
 		/// <param name="columns"></param>
 		/// <param name="rgtss"></param>
-		/// <param name="cache"></param>
 		/// <param name="stringTbl"></param>
-		public int RDENewSense(int hvoDomain,
-			List<XmlNode> columns, ITsString[] rgtss, FdoCache cache, StringTable stringTbl)
+		public int RDENewSense(int hvoDomain, List<XmlNode> columns, ITsString[] rgtss, StringTable stringTbl)
 		{
 			Debug.Assert(hvoDomain != 0);
 			Debug.Assert(rgtss.Length == columns.Count);
 
 			// Make a new sense in a new entry.
-			ILexEntry le = cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			ILexEntry le = m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			IMoForm morph = null;
 
 			// create a LexSense that has the given definition and semantic domain
@@ -123,7 +145,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			le.SensesOS.Add(ls);
 
 #pragma warning disable 219
-			ILgWritingSystemFactory wsf = cache.WritingSystemFactory;
+			ILgWritingSystemFactory wsf = m_cache.WritingSystemFactory;
 #pragma warning restore 219
 			// go through each column and store the appropriate information.
 			for (int i = 0; i < columns.Count; ++i)
@@ -199,7 +221,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (morph == null)
 				morph = le.LexemeFormOA = new MoStemAllomorph();
 
-			ls.SemanticDomainsRC.Add(cache.ServiceLocator.GetObject(hvoDomain) as CmSemanticDomain);
+			ls.SemanticDomainsRC.Add(m_cache.ServiceLocator.GetObject(hvoDomain) as CmSemanticDomain);
 
 			if (le.MorphoSyntaxAnalysesOC.Count == 0)
 			{
