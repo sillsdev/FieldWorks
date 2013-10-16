@@ -43,10 +43,20 @@ display/printout!
 	<xsl:copy>
 	  <xsl:copy-of select="@*"/><xsl:text>&#13;&#10;</xsl:text>
 	  <xsl:apply-templates/><xsl:text>&#13;&#10;</xsl:text>
+	  <!-- <link rel="schema.DCTERMS" href="http://purl.org/dc/terms/" /> -->
+	  <xsl:element name="link"><xsl:attribute name="rel"><xsl:text disable-output-escaping="yes">schema.DCTERMS</xsl:text></xsl:attribute><xsl:attribute name="href"><xsl:text disable-output-escaping="yes">http://purl.org/dc/terms/</xsl:text></xsl:attribute></xsl:element>
+	  <!-- <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/" /> -->
+	  <xsl:element name="link"><xsl:attribute name="rel"><xsl:text disable-output-escaping="yes">schema.DC</xsl:text></xsl:attribute><xsl:attribute name="href"><xsl:text disable-output-escaping="yes">http://purl.org/dc/elements/1.1/</xsl:text></xsl:attribute></xsl:element>
 	  <xsl:for-each select="../WritingSystemInfo">
+		<xsl:element name="meta">
+		  <xsl:attribute name="name">DC.language</xsl:attribute>
+		  <xsl:attribute name="content"><xsl:value-of select="@lang"/>:<xsl:value-of select="@name"/></xsl:attribute>
+		  <xsl:attribute name="scheme">DCTERMS.RFC5646</xsl:attribute>
+		</xsl:element><xsl:text>&#13;&#10;</xsl:text>
 		<xsl:element name="meta">
 		  <xsl:attribute name="name"><xsl:value-of select="@lang"/></xsl:attribute>
 		  <xsl:attribute name="content"><xsl:value-of select="@font"/></xsl:attribute>
+		  <xsl:attribute name="scheme">language to font</xsl:attribute>
 		</xsl:element><xsl:text>&#13;&#10;</xsl:text>
 	  </xsl:for-each>
 	</xsl:copy><xsl:text>&#13;&#10;</xsl:text>
