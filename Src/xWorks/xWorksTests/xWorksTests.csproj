@@ -236,6 +236,7 @@
     </Compile>
     <Compile Include="AddCustomFieldDialogTests.cs" />
     <Compile Include="AllReversalEntriesRecordListTests.cs" />
+    <Compile Include="ArchivingTests.cs" />
     <Compile Include="BulkEditBarTests.cs">
     </Compile>
     <Compile Include="CustomListDlgTests.cs">

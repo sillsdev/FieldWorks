@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using Palaso.Reporting;
 using SIL.Archiving;
 using SIL.FieldWorks.Common.FwUtils;
@@ -54,7 +55,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 			var uiLocale = wsMgr.Get(cache.DefaultUserWs).IcuLocale;
 			var projectId = cache.LanguageProject.ShortName;
 
-			var model = new ArchivingDlgViewModel(Application.ProductName, title, projectId, GetFileDescription);
+			var model = new RampArchivingDlgViewModel(Application.ProductName, title, projectId, GetFileDescription);
 
 			// image files should be labeled as Graphic rather than Photograph (the default).
 			model.ImagesArePhotographs = false;
@@ -77,9 +78,6 @@ namespace SIL.FieldWorks.XWorks.Archiving
 
 			AddMetsPairs(model, viProvider.ShortNumericAppVersion, cache);
 
-			// this is a Palaso dialog, so we need to tell it the correct font to use.
-			model.ProgramDialogFont = dialogFont;
-
 			const string localizationMgrId = "Archiving";
 
 			if (s_localizationMgr == null)
@@ -97,7 +95,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 			}
 
 			// create the dialog
-			using (var dlg = new ArchivingDlg(model, localizationMgrId, string.Empty,
+			using (var dlg = new ArchivingDlg(model, localizationMgrId, string.Empty, dialogFont,
 				() => GetFilesToArchive(filesToArchive), new FormSettings()))
 			using (var reportingAdapter = new PalasoErrorReportingAdapter(dlg, mediator))
 			{
@@ -142,7 +140,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 		/// <returns>A list of JSON encoded pairs that describe the information in the RAMP
 		/// package.</returns>
 		/// ------------------------------------------------------------------------------------
-		private void AddMetsPairs(ArchivingDlgViewModel model, string fieldWorksVersion, FdoCache cache)
+		private void AddMetsPairs(RampArchivingDlgViewModel model, string fieldWorksVersion, FdoCache cache)
 		{
 			IWritingSystemManager wsManager = cache.ServiceLocator.GetInstance<IWritingSystemManager>();
 			var wsDefaultVern = wsManager.Get(cache.DefaultVernWs);
@@ -193,7 +191,8 @@ namespace SIL.FieldWorks.XWorks.Archiving
 			model.SetSoftwareRequirements(softwareRequirements);
 
 			SilDomain domains = SilDomain.Linguistics;
-			if (cache.LangProject.ResearchNotebookOA.AllRecords.Any())
+			var cNotebookRecords = cache.LangProject.ResearchNotebookOA.AllRecords.Count();
+			if (cNotebookRecords > 0)
 			{
 				domains |= SilDomain.Anthropology;
 				domains |= SilDomain.Anth_Ethnography; // Data notebook data is considered a (partial) ethnography.
@@ -222,10 +221,21 @@ namespace SIL.FieldWorks.XWorks.Archiving
 
 			model.SetDomains(domains);
 
-			if (cLexicalEntries > 0 || cTexts > 0)
-			{
-				model.SetDatasetExtent(string.Format("{0} Lexical entries; {1} Texts", cLexicalEntries, cTexts));
-			}
+			// get the information for DatasetExtent
+			var datasetExtent = new StringBuilder();
+			const string delimiter = "; ";
+
+			if (cNotebookRecords > 0)
+				datasetExtent.AppendLineFormat("{0} Notebook record{1}", new object[] { cNotebookRecords, (cNotebookRecords == 1) ? "" : "s" }, delimiter);
+
+			if (cLexicalEntries > 0)
+				datasetExtent.AppendLineFormat("{0} Lexical entr{1}", new object[] { cLexicalEntries, (cLexicalEntries == 1) ? "y" : "ies" }, delimiter);
+
+			if (cTexts > 0)
+				datasetExtent.AppendLineFormat("{0} Text{1}", new object[] { cTexts, (cTexts == 1) ? "" : "s" }, delimiter);
+
+			if (datasetExtent.Length > 3)
+				model.SetDatasetExtent(datasetExtent.ToString());
 		}
 
 		private string GetIso3Code(IWritingSystem ws)

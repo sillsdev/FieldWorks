@@ -254,6 +254,7 @@
     <Compile Include="AddCustomFieldDlg.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Archiving\ArchivingExtensions.cs" />
     <Compile Include="PalasoErrorReportingAdapter.cs" />
     <Compile Include="ConcDecorator.cs" />
     <Compile Include="CustomListDlg.cs">
