@@ -77,7 +77,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		public void RestoreProjectSettings_VerifyExistanceOfProject()
+		public void RestoreProjectSettings_VerifyExistenceOfProject()
 		{
 			string restoreTestsZipFileDir = Path.Combine(DirectoryFinder.FwSourceDirectory,
 				"FDO/FDOTests/BackupRestore/RestoreServiceTestsZipFileDir");
@@ -90,12 +90,9 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 				IncludeLinkedFiles = false,
 				IncludeSupportingFiles = true,
 				IncludeSpellCheckAdditions = false,
-				ProjectName = "TestRestoreFWProject",
+				ProjectName = "TestRestoreFWProject 01",
 				BackupOfExistingProjectRequested = false,
 			};
-
-			restoreSettings.ProjectName = "TestRestoreFWProject 01";
-			restoreSettings.IncludeConfigurationSettings = false;
 
 			ProjectRestoreServiceTests.RemoveAnyFilesAndFoldersCreatedByTests(restoreSettings);
 			ProjectRestoreService restoreProjectService = new ProjectRestoreService(restoreSettings);
@@ -107,6 +104,60 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 				// Restore the project and check to ensure that it exists.
 				restoreProjectService.RestoreProject(new DummyProgressDlg());
 				Assert.True(restoreSettings.ProjectExists, "Project does not exist but it should.");
+			}
+			finally
+			{
+				ProjectRestoreServiceTests.RemoveAnyFilesAndFoldersCreatedByTests(restoreSettings);
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests for RestoreProjectSettings.UsingSendReceive
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void RestoreProjectSettings_VerifyExistenceOfHgRepo()
+		{
+			string restoreTestsZipFileDir = Path.Combine(DirectoryFinder.FwSourceDirectory,
+				"FDO/FDOTests/BackupRestore/RestoreServiceTestsZipFileDir");
+
+			RestoreProjectSettings restoreSettings = new RestoreProjectSettings()
+			{
+				Backup = new BackupFileSettings(Path.Combine(restoreTestsZipFileDir,
+					Path.ChangeExtension("TestRestoreFWProject", FwFileExtensions.ksFwBackupFileExtension))),
+				IncludeConfigurationSettings = false,
+				IncludeLinkedFiles = false,
+				IncludeSupportingFiles = true,
+				IncludeSpellCheckAdditions = false,
+				ProjectName = "TestRestoreFWProject 01",
+				BackupOfExistingProjectRequested = false,
+			};
+
+			ProjectRestoreService restoreProjectService = new ProjectRestoreService(restoreSettings);
+
+			try
+			{
+				// Restore the project and check to ensure that it exists, but is not using Send/Receive.
+				restoreProjectService.RestoreProject(new DummyProgressDlg());
+				Assert.True(restoreSettings.ProjectExists, "Project does not exist but it should.");
+				Assert.False(restoreSettings.UsingSendReceive, "Project is using S/R but it should not be.");
+
+				string otherReposDir = Path.Combine(restoreSettings.ProjectPath, FLExBridgeHelper.OtherRepositories);
+
+				// Create a non-repository folder in OtherRepositories and verify the project is not using Send/Receive
+				Directory.CreateDirectory(Path.Combine(otherReposDir, "NotARepo_LIFT", "RandomSubdir"));
+				Assert.False(restoreSettings.UsingSendReceive, "Project should not be using S/R if there is no hg repo in OtherRepositories.");
+
+				// Create a hg repository in OtherRepositories and verify the project is using Send/Receive
+				Directory.CreateDirectory(Path.Combine(otherReposDir, "IsARepo_ButNotNecessarilyLIFT", ".hg"));
+				Assert.True(restoreSettings.UsingSendReceive, "Project should be using S/R if there is a hg repo in OtherRepositories.");
+				Directory.Delete(otherReposDir, true);
+				Assert.False(restoreSettings.UsingSendReceive, "Project should not be using S/R if there is no hg repo.  Deletion failed?");
+
+				// Make the project directory a hg repo
+				Directory.CreateDirectory(Path.Combine(restoreSettings.ProjectPath, ".hg"));
+				Assert.True(restoreSettings.UsingSendReceive, "Project should be using S/R if the project directory is a hg repo.");
 			}
 			finally
 			{

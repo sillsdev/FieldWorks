@@ -924,13 +924,20 @@ The error was:
   <data name="ksBackupErrorRelativePath" xml:space="preserve">
     <value>Selected folder must be a complete path. Use Browse to find desired directory.</value>
   </data>
+  <data name="ksBackupCantRestoreWhenUsingSRCaption" xml:space="preserve">
+    <value>Cannot Restore Shared Project</value>
+  </data>
+  <data name="ksBackupCantRestoreWhenUsingSRMsg" xml:space="preserve">
+    <value>This project cannot be restored, because it is being shared using Send/Receive.  Attempting to restore a project that is shared using Send/Receive could result in data loss for everyone working on the project.  If you would like to view the contents of this backup, you can restore it using a different name.</value>
+    <comment>Message shown when user attempts to restore a project that is using Send/Receive (has a local FLEx or LIFT repository)</comment>
+  </data>
   <data name="kstidStyleContextMismatchCaption" xml:space="preserve">
     <value>Style Context Mismatch</value>
     <comment>Message box caption shown when  user adds a paragraph style and chooses a style for the following paragraph that cannot be applied in the same context (e.g., book title and footnote).</comment>
   </data>
   <data name="kstidStyleContextMismatchMsg" xml:space="preserve">
     <value>{0} cannot be the style for the following paragraph for {1} because these two styles cannot be applied in the same context.</value>
-    <comment>Message shown when  user adds a paragraph style and chooses a style for the following paragraph that cannot be applied in the same context (e.g., book title and footnote).</comment>
+    <comment>Message shown when user adds a paragraph style and chooses a style for the following paragraph that cannot be applied in the same context (e.g., book title and footnote).</comment>
   </data>
   <data name="kstidLanguageFileBrowser" xml:space="preserve">
     <value>Browse for Language File</value>

@@ -11,6 +11,7 @@
 using System;
 using System.Linq;
 using System.Text;
+using System.Web.Configuration;
 using System.Windows.Forms;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
 using System.Collections.Generic;
@@ -136,16 +137,25 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 
 		internal bool IsOkayToRestoreProject()
 		{
-			if (m_restoreProjectView.Settings.ProjectExists)
+			// If the project doesn't exist, it's ok to create it
+			if (!m_restoreProjectView.Settings.ProjectExists)
+				return true;
+
+			// If the user is using Send/Receive, it is NOT OK to restore
+			if (m_restoreProjectView.Settings.UsingSendReceive)
 			{
-				using (var dlg = new OverwriteExistingProject(m_restoreProjectView.Settings.ProjectName,
-					m_restoreProjectView.HelpTopicProvider))
-				{
-					var result = dlg.ShowDialog();
-					if (result == DialogResult.No || result == DialogResult.Cancel)
-						return false;
-					m_restoreProjectView.Settings.BackupOfExistingProjectRequested = dlg.BackupBeforeOverwritting;
-				}
+				MessageBox.Show(FwCoreDlgs.ksBackupCantRestoreWhenUsingSRMsg, FwCoreDlgs.ksBackupCantRestoreWhenUsingSRCaption,
+					MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return false;
+			}
+
+			using (var dlg = new OverwriteExistingProject(m_restoreProjectView.Settings.ProjectName,
+				m_restoreProjectView.HelpTopicProvider))
+			{
+				var result = dlg.ShowDialog();
+				if (result != DialogResult.Yes)
+					return false;
+				m_restoreProjectView.Settings.BackupOfExistingProjectRequested = dlg.BackupBeforeOverwritting;
 			}
 
 			return true;

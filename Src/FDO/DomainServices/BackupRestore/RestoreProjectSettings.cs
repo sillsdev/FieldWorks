@@ -13,6 +13,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.IO;
+using System.Linq;
 using SIL.FieldWorks.Common.FwUtils;
 using System.Text;
 using SIL.Utils;
@@ -143,6 +144,22 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		public bool ProjectExists
 		{
 			get { return FileUtils.NonEmptyDirectoryExists(ProjectPath); }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Assumes we are using Send/Receive if the project directory is a hg repo, or there are any hg repos in OtherRepositories
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public bool UsingSendReceive
+		{
+			get
+			{
+				var otherRepoPath = Path.Combine(ProjectPath, FLExBridgeHelper.OtherRepositories);
+				return Directory.Exists(Path.Combine(ProjectPath, ".hg")) ||
+					(Directory.Exists(otherRepoPath) &&
+					Directory.EnumerateDirectories(otherRepoPath).Any(dir => Directory.Exists(Path.Combine(dir, ".hg"))));
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------

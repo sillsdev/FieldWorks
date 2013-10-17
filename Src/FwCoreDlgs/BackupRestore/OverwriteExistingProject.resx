@@ -158,7 +158,7 @@
 	<value>3</value>
   </data>
   <data name="m_btnYes.Text" xml:space="preserve">
-	<value>Yes</value>
+	<value>&amp;Yes</value>
   </data>
   <data name="&gt;&gt;m_btnYes.Name" xml:space="preserve">
 	<value>m_btnYes</value>
@@ -185,7 +185,7 @@
 	<value>4</value>
   </data>
   <data name="m_btnNo.Text" xml:space="preserve">
-	<value>No</value>
+	<value>&amp;No</value>
   </data>
   <data name="&gt;&gt;m_btnNo.Name" xml:space="preserve">
 	<value>m_btnNo</value>
@@ -248,7 +248,7 @@
 	<value>2</value>
   </data>
   <data name="m_checkbox_BackupFirst.Text" xml:space="preserve">
-	<value>Back up existing project before restoring</value>
+	<value>&amp;Back up existing project before restoring</value>
   </data>
   <data name="&gt;&gt;m_checkbox_BackupFirst.Name" xml:space="preserve">
 	<value>m_checkbox_BackupFirst</value>
@@ -296,7 +296,7 @@
 	<value>5</value>
   </data>
   <data name="m_btnHelp.Text" xml:space="preserve">
-	<value>Help</value>
+	<value>&amp;Help</value>
   </data>
   <data name="&gt;&gt;m_btnHelp.Name" xml:space="preserve">
 	<value>m_btnHelp</value>

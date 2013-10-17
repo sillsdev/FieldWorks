@@ -142,6 +142,24 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot Restore Shared Project.
+        /// </summary>
+        public static string ksBackupCantRestoreWhenUsingSRCaption {
+            get {
+                return ResourceManager.GetString("ksBackupCantRestoreWhenUsingSRCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This project cannot be restored, because it is being shared using Send/Receive.  Attempting to restore a project that is shared using Send/Receive could result in data loss for everyone working on the project.  If you would like to view the contents of this backup, you can restore it using a different name..
+        /// </summary>
+        public static string ksBackupCantRestoreWhenUsingSRMsg {
+            get {
+                return ResourceManager.GetString("ksBackupCantRestoreWhenUsingSRMsg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to FieldWorks Backup Failed.
         /// </summary>
         public static string ksBackupErrorCaption {

@@ -237,7 +237,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private static bool IsConfiguredForSR(string projectFolder)
 		{
-			return Directory.GetDirectories(projectFolder, ".hg").Count() == 1;
+			return Directory.Exists(Path.Combine(projectFolder, ".hg"));
 		}
 
 		/// <summary>
@@ -357,7 +357,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private static bool IsConfiguredForLiftSR(string folder)
 		{
-			var otherRepoPath = Path.Combine(folder, "OtherRepositories");
+			var otherRepoPath = Path.Combine(folder, FLExBridgeHelper.OtherRepositories);
 			if (!Directory.Exists(otherRepoPath))
 				return false;
 			var liftFolder = Directory.EnumerateDirectories(otherRepoPath, "*_LIFT").FirstOrDefault();
