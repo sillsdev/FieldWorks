@@ -70,7 +70,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 			{
 				var descrText = descr.get_String(wsid).Text;
 				if ((!string.IsNullOrEmpty(descrText)) && (descrText != "***"))
-					descriptions[GetIso3Code(wsMgr.Get(wsid))] = descrText;
+					descriptions[wsMgr.Get(wsid).GetIso3Code()] = descrText;
 			}
 
 			if (descriptions.Count > 0)
@@ -144,7 +144,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 		{
 			IWritingSystemManager wsManager = cache.ServiceLocator.GetInstance<IWritingSystemManager>();
 			var wsDefaultVern = wsManager.Get(cache.DefaultVernWs);
-			var vernIso3Code = GetIso3Code(wsDefaultVern);
+			var vernIso3Code = wsDefaultVern.GetIso3Code();
 
 			model.SetScholarlyWorkType(ScholarlyWorkType.PrimaryData);
 
@@ -173,7 +173,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 				cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems).Union(
 				cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems))
 			{
-				var iso3Code = GetIso3Code(ws);
+				var iso3Code = ws.GetIso3Code();
 
 				if (!string.IsNullOrEmpty(iso3Code))
 					contentLanguages.Add(new ArchivingLanguage(iso3Code, ws.LanguageSubtag.Name));
@@ -234,23 +234,8 @@ namespace SIL.FieldWorks.XWorks.Archiving
 			if (cTexts > 0)
 				datasetExtent.AppendLineFormat("{0} Text{1}", new object[] { cTexts, (cTexts == 1) ? "" : "s" }, delimiter);
 
-			if (datasetExtent.Length > 3)
-				model.SetDatasetExtent(datasetExtent.ToString());
-		}
-
-		private string GetIso3Code(IWritingSystem ws)
-		{
-			var iso3Code = ws.LanguageSubtag.ISO3Code;
-			if (!string.IsNullOrEmpty(iso3Code))
-				return iso3Code;
-
-			iso3Code = ((PalasoWritingSystem)ws).RFC5646;
-
-			// return "mis" for uncoded languages
-			if (string.IsNullOrEmpty(iso3Code) || (iso3Code.Length != 3))
-				return "mis";
-
-			return iso3Code;
+			if (datasetExtent.Length > 0)
+				model.SetDatasetExtent(datasetExtent.ToString() + ".");
 		}
 
 		/// ------------------------------------------------------------------------------------
