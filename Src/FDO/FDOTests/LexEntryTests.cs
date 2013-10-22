@@ -241,6 +241,55 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		}
 
 		/// <summary>
+		/// Tests that affix processes aren't changed by LexEntry.MoveSenseToCopy.
+		/// </summary>
+		[Test]
+		public void AffixProcessesRemainUnchangedWhenSenseMovedToNewEntry()
+		{
+			ILexEntry past = null;
+			ILexSense mainPast = null;
+			ILexSense longPast = null;
+
+			UndoableUnitOfWorkHelper.Do("undoit", "doit", Cache.ActionHandlerAccessor, () =>
+				{
+					if (Cache.LangProject.PartsOfSpeechOA == null)
+						Cache.LangProject.PartsOfSpeechOA =
+							Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+					var posVerb = MakePartOfSpeech("Verb");
+					past = MakeAffixProcessEntry("ed", MoMorphTypeTags.kguidMorphSuffix);
+					var msa = MakeAffixMsa(past, posVerb, posVerb);
+					mainPast = MakeSense(past, "ed");
+					past.MorphoSyntaxAnalysesOC.Add(msa);
+					longPast = MakeSense(past, "ted");
+				});
+			var inputCount = ((IMoAffixProcess) (past.LexemeFormOA)).InputOS.Count;
+			var outputCount = ((IMoAffixProcess)(past.LexemeFormOA)).OutputOS.Count;
+
+			// The task we're testing.
+			past.MoveSenseToCopy(longPast);
+
+			var newEntry = longPast.Entry;
+			Assert.That(newEntry, Is.Not.EqualTo(past), "moved sense should have new owner");
+			Assert.That(past.SensesOS.Count, Is.EqualTo(1), "old entry should have lost a sense");
+			var newEntryProcess = newEntry.LexemeFormOA as IMoAffixProcess;
+			Assert.That(newEntryProcess.InputOS.Count, Is.EqualTo(inputCount),
+				"moved sense should maintain the same process inputs");
+			Assert.That(newEntryProcess.OutputOS.Count, Is.EqualTo(outputCount),
+				"moved sense should maintain the same process outputs");
+		}
+
+		private ILexEntry MakeAffixProcessEntry(string form, Guid morphType)
+		{
+			var ws = Cache.DefaultVernWs;
+			var entry = MakeEntry();
+			var process = Cache.ServiceLocator.GetInstance<IMoAffixProcessFactory>().Create();
+			entry.LexemeFormOA = process;
+			process.Form.set_String(ws, Cache.TsStrFactory.MakeString(form, ws));
+			process.MorphTypeRA = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(morphType);
+			return entry;
+		}
+
+		/// <summary>
 		/// Test PrimaryEntryRoots and the closely related NonTrivialEntryRoots.
 		/// </summary>
 		[Test]

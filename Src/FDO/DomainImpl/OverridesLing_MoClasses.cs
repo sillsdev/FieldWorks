@@ -3839,6 +3839,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				}
 			}
 		}
+
 		/// <summary>
 		/// This is needed at least for the Affix Process slice to work properly. See FWR-1619.
 		/// </summary>
@@ -3853,6 +3854,30 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			copy.ContentRA = var;
 
 			IsAbstract = true;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gives an object an opportunity to do any class-specific side-effect work when it has
+		/// been cloned with DomainServices.CopyObject. In this case, the creation of a MoAffixProcess
+		/// adds default initial values that are not wanted in the cloned copy, so PostClone()
+		/// removes them.
+		/// </summary>
+		/// <param name="copyMap"></param>
+		/// ------------------------------------------------------------------------------------
+
+		public override void PostClone(Dictionary<int, ICmObject> copyMap)
+		{
+			foreach (var cmObject in copyMap.Values)
+			{
+				var clonedProcess = cmObject as IMoAffixProcess;
+				if (clonedProcess == null)
+					return;
+				if (clonedProcess.InputOS.Count > 1)
+					clonedProcess.InputOS.RemoveAt(0);
+				if (clonedProcess.OutputOS.Count > 1)
+					clonedProcess.OutputOS.RemoveAt(0);
+			}
 		}
 	}
 
