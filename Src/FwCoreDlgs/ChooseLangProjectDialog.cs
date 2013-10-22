@@ -125,10 +125,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			m_helpTopicProvider = helpTopicProvider;
 
-#if __MonoCS__
-			// TODO-Linux: FWNX-606: remove workaround when mono bug is fixed.
-			m_tblLayoutOuter.LayoutSettings.SetColumnSpan(m_splitContainer, 4);
-#endif
 			if (helpTopicProvider == null)
 				m_btnHelp.Enabled = false;
 
