@@ -28,16 +28,18 @@ namespace SIL.FieldWorks
 		}
 
 		/// <summary>
-		/// Receive button should be disabled on Linux since not implemented. FWNX-991.
+		/// Receive button should be enabled/disabled based on FlexBridge availability.
 		/// </summary>
 		[Test]
-		[Platform(Include="Linux", Reason="Linux specific")]
 		public void ReceiveButtonIsDisabled()
 		{
 			using (var dlg = new WelcomeToFieldWorksDlg(new FlexHelpTopicProvider(), null, null, false))
 			{
 				var receiveButton = ReflectionHelper.GetField(dlg, "receiveButton") as Button;
-				Assert.That(receiveButton.Enabled, Is.False);
+				if (SIL.FieldWorks.Common.FwUtils.FLExBridgeHelper.IsFlexBridgeInstalled())
+					Assert.That(receiveButton.Enabled, Is.True);
+				else
+					Assert.That(receiveButton.Enabled, Is.False);
 			}
 		}
 	}

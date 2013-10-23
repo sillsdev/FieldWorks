@@ -124,7 +124,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			base.FixtureSetup();
 
-			SimpleRootsiteTestsBase.SetupTestModel(Properties.Resources.RootSiteDataProviderCacheModel_xml);
+			SimpleRootsiteTestsBase<RealDataCache>.SetupTestModel(Properties.Resources.RootSiteDataProviderCacheModel_xml);
 
 			m_cache = new RealDataCache { MetaDataCache = MetaDataCache.CreateMetaDataCache("TestModel.xml") };
 

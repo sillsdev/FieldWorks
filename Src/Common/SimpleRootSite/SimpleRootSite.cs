@@ -24,6 +24,7 @@ using System.Windows.Forms;
 using System.Windows.Automation.Provider;
 using Accessibility;
 using Palaso.WritingSystems;
+using Palaso.UI.WindowsForms.Keyboarding;
 using Palaso.UI.WindowsForms.Keyboarding.Types;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -382,10 +383,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			get { return m_orientationManager.IsVertical; }
 		}
 
-#if __MonoCS__
-		/// <summary> manage SimpleRootSite ibus interaction </summary>
-		protected InputBusController m_inputBusController;
-#endif
 		private bool m_acceptsTab;
 		private bool m_acceptsReturn;
 
@@ -418,7 +415,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_orientationManager = CreateOrientationManager();
 			if (UIAutomationServerProviderFactory == null)
 				UIAutomationServerProviderFactory = () => new SimpleRootSiteDataProvider(this);
-			CreateInputBusController();
+			#if __MonoCS__
+			KeyboardController.Register(this, new IbusRootSiteEventHandler(this));
+			#endif
 		}
 
 #if DEBUG
@@ -432,13 +431,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			// The base class finalizer is called automatically.
 		}
 #endif
-		/// <summary> Create connection to IME - This is a NullOp on Windows. </summary>
-		protected virtual void CreateInputBusController()
-		{
-			#if __MonoCS__
-			m_inputBusController = new InputBusController(this, new IBusCommunicator());
-			#endif
-		}
 
 		/// <summary>
 		/// The default creates a normal horizontal orientation manager. Override to create one of the other
@@ -464,13 +456,6 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			if (disposing)
 			{
-#if __MonoCS__
-				if (m_inputBusController != null)
-				{
-					m_inputBusController.Dispose();
-					m_inputBusController = null;
-				}
-#endif
 				// Do this here, before disposing m_messageSequencer,
 				// as we still get messages during dispose.
 				// Once the the base class has shut down the window handle,
@@ -3347,10 +3332,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		protected override void OnGotFocus(EventArgs e)
 		{
 			CheckDisposed();
-#if __MonoCS__
-			if (m_inputBusController != null)
-				m_inputBusController.Focus();
-#endif
 
 			//Debug.WriteLine("SimpleRootSite.OnGotFocus() hwnd = " + this.Handle);
 			// If it hasn't been registered yet, register OnInputLanguageChanged().
@@ -3380,10 +3361,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		protected virtual void OnKillFocus(Control newWindow, bool fIsChildWindow)
 		{
-#if __MonoCS__
-			if (m_inputBusController != null)
-				m_inputBusController.KillFocus();
-#endif
 			// If we have a timer (used for making the insertion point blink), then we want to stop it.
 			if (m_Timer != null)
 				m_Timer.Stop();
@@ -3792,11 +3769,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			CheckDisposed();
 
 			base.OnMouseDown(e);
-
-#if __MonoCS__
-			if (m_inputBusController != null)
-				m_inputBusController.NotifyMouseClick();
-#endif
 
 			if (m_rootb == null || DataUpdateMonitor.IsUpdateInProgress())
 				return;
@@ -4744,7 +4716,8 @@ namespace SIL.FieldWorks.Common.RootSites
 				{
 					// This was causing unhandled exceptions from the MakeSelection call in the C++ code
 #if __MonoCS__
-					Debug.Assert(false, "m_rootb.MouseDown threw exception."); // So exception is silently hidden.
+					// So exception isn't silently hidden (FWNX-343)
+					Debug.Assert(MiscUtils.RunningTests, "m_rootb.MouseDown threw exception.");
 #endif
 				}
 
@@ -6168,24 +6141,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			CheckDisposed();
 			switch (msg.Msg)
 			{
-#if __MonoCS__
-			case (int)Utils.Win32.WinMsgs.WM_KEYDOWN:
-				if (m_inputBusController != null && m_inputBusController.NotifyKeyDown(msg, ModifierKeys))
-					return;
-				break;
-			case (int)Utils.Win32.WinMsgs.WM_CHAR:
-				if (m_inputBusController != null && m_inputBusController.NotifyKeyPress((uint)msg.WParam, (uint)msg.LParam, ModifierKeys))
-					return;
-				break;
-			case (int)Utils.Win32.WinMsgs.WM_DESTROY:
-				if (m_inputBusController != null)
-				{
-					m_inputBusController.Dispose();
-					m_inputBusController = null;
-				}
-				break;
-#endif
-
 #if !__MonoCS__ // Disable use of UIAutomationProvider.dll on Linux
 				case 61: // WM_GETOBJECT
 					{

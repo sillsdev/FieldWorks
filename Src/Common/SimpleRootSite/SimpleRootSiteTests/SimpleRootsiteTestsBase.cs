@@ -1,16 +1,5 @@
-// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2003, SIL International. All Rights Reserved.
-// <copyright from='2003' to='2003' company='SIL International'>
-//		Copyright (c) 2003, SIL International. All Rights Reserved.
-//
-//		Distributable under the terms of either the Common Public License or the
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
-// </copyright>
-#endregion
-//
-// File: SimpleRootsiteTestsBase.cs
-// Responsibility: TE Team
-// --------------------------------------------------------------------------------------------
+// Copyright (c) 2003-2013, SIL International.
+// Distributable under the terms of the MIT license (http://opensource.org/licenses/MIT).
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -136,6 +125,27 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	}
 	#endregion
 
+	public static class SimpleRootsiteTestsConstants
+	{
+		internal const int kclsidProject = 1;
+		internal const int kflidDocTitle = 1001;
+		internal const int kflidDocDivisions= 1002;
+		internal const int kflidDocFootnotes = 1003;
+
+		internal const int kclsidSection = 7;
+		internal const int kflidSectionStuff = 7001;
+
+		internal const int kclsidStText = 14;
+		internal const int kflidTextParas = 14001;
+
+		internal const int kclsidStTxtPara = 16;
+		internal const int kflidParaContents = 16001;
+		internal const int kflidParaProperties = 16002;
+
+		internal const int kclsidStFootnote = 25;
+		internal const int kflidFootnoteMarker = 25002;
+	}
+
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Base class for tests that use <see cref="SimpleRootSite"/>. This class is specific for
@@ -144,7 +154,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	/// ----------------------------------------------------------------------------------------
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
 		Justification="Unit test. Variable disposed in Teardown method")]
-	public class SimpleRootsiteTestsBase : BaseTest
+	public class SimpleRootsiteTestsBase<T> : BaseTest
+		where T: IRealDataCache, new()
 	{
 		/// <summary>Defines the possible languages</summary>
 		[Flags]
@@ -165,26 +176,9 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		}
 
 		#region Data members
-		internal const int kclsidProject = 1;
-		internal const int kflidDocTitle = 1001;
-		internal const int kflidDocDivisions= 1002;
-		internal const int kflidDocFootnotes = 1003;
-
-		internal const int kclsidSection = 7;
-		internal const int kflidSectionStuff = 7001;
-
-		internal const int kclsidStText = 14;
-		internal const int kflidTextParas = 14001;
-
-		internal const int kclsidStTxtPara = 16;
-		internal const int kflidParaContents = 16001;
-		internal const int kflidParaProperties = 16002;
-
-		internal const int kclsidStFootnote = 25;
-		internal const int kflidFootnoteMarker = 25002;
 
 		/// <summary>The data cache</summary>
-		protected RealDataCache m_cache;
+		protected T m_cache;
 		/// <summary>The draft form</summary>
 		protected SimpleBasicView m_basicView;
 		/// <summary></summary>
@@ -222,11 +216,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			SetupTestModel(Properties.Resources.TextCacheModel_xml);
 
-			m_cache = new RealDataCache();
+			m_cache = new T();
 			m_cache.MetaDataCache = MetaDataCache.CreateMetaDataCache("TestModel.xml");
-			m_cache.ParaContentsFlid = kflidParaContents;
-			m_cache.ParaPropertiesFlid = kflidParaProperties;
-			m_cache.TextParagraphsFlid = kflidTextParas;
+			m_cache.ParaContentsFlid = SimpleRootsiteTestsConstants.kflidParaContents;
+			m_cache.ParaPropertiesFlid = SimpleRootsiteTestsConstants.kflidParaProperties;
+			m_cache.TextParagraphsFlid = SimpleRootsiteTestsConstants.kflidTextParas;
 
 			Debug.Assert(m_wsManager == null);
 			m_wsManager = new PalasoWritingSystemManager();
@@ -276,7 +270,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			// GrowToWord causes a Char Property Engine to be created, and the test runner
 			// fails if we don't shut the factory down.
 			m_cache.Dispose();
-			m_cache = null;
+			m_cache = default(T);
 
 			base.FixtureTeardown();
 		}
@@ -290,7 +284,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public virtual void TestSetup()
 		{
 			m_cache.ClearAllData();
-			m_hvoRoot = m_cache.MakeNewObject(kclsidProject, 0, -1, -1);
+			m_hvoRoot = m_cache.MakeNewObject(SimpleRootsiteTestsConstants.kclsidProject, 0, -1, -1);
 
 			var styleSheet = new SimpleStyleSheet(m_cache);
 
@@ -309,7 +303,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		/// <remarks>This method is called after each test</remarks>
 		/// ------------------------------------------------------------------------------------
 		[TearDown]
-		public void TestTearDown()
+		public virtual void TestTearDown()
 		{
 			m_basicView.CloseRootBox();
 			m_basicView.Dispose();
@@ -330,7 +324,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			// box and lay it out so that various test stuff can happen properly.
 			m_basicView.Width = 300;
 			m_basicView.Height = 307 - 25;
-			m_basicView.MakeRoot(m_hvoRoot, kflidDocFootnotes, m_frag, m_wsEng);
+			m_basicView.MakeRoot(m_hvoRoot, SimpleRootsiteTestsConstants.kflidDocFootnotes, m_frag, m_wsEng);
 			m_basicView.CallLayout();
 			m_basicView.AutoScrollPosition = new Point(0, 0);
 		}
@@ -400,10 +394,10 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			var propFact = TsPropsFactoryClass.Create();
 			var runStyle = propFact.MakeProps(null, ws, 0);
-			ITsString contents = m_cache.get_StringProp(hvoPara, kflidParaContents);
+			ITsString contents = m_cache.get_StringProp(hvoPara, SimpleRootsiteTestsConstants.kflidParaContents);
 			var bldr = contents.GetBldr();
 			bldr.Replace(bldr.Length, bldr.Length, runText, runStyle);
-			m_cache.SetString(hvoPara, kflidParaContents, bldr.GetString());
+			m_cache.SetString(hvoPara, SimpleRootsiteTestsConstants.kflidParaContents, bldr.GetString());
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -438,13 +432,13 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		/// ------------------------------------------------------------------------------------
 		protected int AddFootnoteAndParagraph()
 		{
-			int cTexts = m_cache.get_VecSize(m_hvoRoot, kflidDocFootnotes);
-			int hvoFootnote = m_cache.MakeNewObject(kclsidStFootnote, m_hvoRoot, kflidDocFootnotes, cTexts);
-			int hvoPara = m_cache.MakeNewObject(kclsidStTxtPara, hvoFootnote, kflidTextParas, 0);
+			int cTexts = m_cache.get_VecSize(m_hvoRoot, SimpleRootsiteTestsConstants.kflidDocFootnotes);
+			int hvoFootnote = m_cache.MakeNewObject(SimpleRootsiteTestsConstants.kclsidStFootnote, m_hvoRoot, SimpleRootsiteTestsConstants.kflidDocFootnotes, cTexts);
+			int hvoPara = m_cache.MakeNewObject(SimpleRootsiteTestsConstants.kclsidStTxtPara, hvoFootnote, SimpleRootsiteTestsConstants.kflidTextParas, 0);
 			ITsStrFactory tsStrFactory = TsStrFactoryClass.Create();
-			m_cache.CacheStringProp(hvoFootnote, kflidFootnoteMarker,
+			m_cache.CacheStringProp(hvoFootnote, SimpleRootsiteTestsConstants.kflidFootnoteMarker,
 				tsStrFactory.MakeString("a", m_wsFrn));
-			m_cache.CacheStringProp(hvoPara, kflidParaContents,
+			m_cache.CacheStringProp(hvoPara, SimpleRootsiteTestsConstants.kflidParaContents,
 				tsStrFactory.MakeString(string.Empty, m_wsFrn));
 			return hvoPara;
 		}

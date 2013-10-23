@@ -349,7 +349,7 @@
 	<ItemGroup>
 		<DownloadFiles Include="$(fwrt)/Downloads/Autofac.dll"/>
 		<DownloadFiles Include="$(fwrt)/Downloads/Chorus.exe"/>
-		<DownloadFiles Condition="'$(OS)'=='Unix'" Include="$(fwrt)/Downloads/ChorusHub.exe"/>
+		<DownloadFiles Include="$(fwrt)/Downloads/ChorusHub.exe" Condition="'$(OS)'=='Unix'"/>
 		<DownloadFiles Include="$(fwrt)/Downloads/LibChorus.dll"/>
 		<DownloadFiles Include="$(fwrt)/Downloads/Vulcan.Uczniowie.HelpProvider.dll"/>
 		<!-- we need to explicitly specify the important files, otherwise they'll be ignored
@@ -369,6 +369,9 @@
 		<DownloadFiles Include="$(fwrt)/Downloads/Enchant.Net.dll"/>
 		<DownloadFiles Include="$(fwrt)/Downloads/Enchant.Net.dll.config"/>
 		<DownloadFiles Include="$(fwrt)/Downloads/IPCFramework.dll"/>
+		<DownloadFiles Include="$(fwrt)/Downloads/ibusdotnet.dll" Condition="'$(OS)'=='Unix'"/>
+		<DownloadFiles Include="$(fwrt)/Downloads/NDesk.DBus.dll" Condition="'$(OS)'=='Unix'"/>
+		<DownloadFiles Include="$(fwrt)/Downloads/NDesk.DBus.dll.config" Condition="'$(OS)'=='Unix'"/>
 	</ItemGroup>
 
 	<Target Name="CopyDlls" DependsOnTargets="downloadDlls">
@@ -437,9 +440,9 @@
 	<Target Name="downloadDlls">
 		<MakeDir Directories="$(fwrt)/Downloads"/>
 
-		<Message Text="Downloading latest successful artifacts from Palaso fw/Keyboarding [FLExBridgeBeta] build."/>
 		<!-- Once we download from TeamCity again, the Condition="'$(JENKINS_HOME)'==''" attributes can be removed. -->
 		<!-- This is a temporary hack needed for building on Jenkins while pulling from Jenkins. -->
+		<Message Text="Downloading latest successful artifacts from Palaso fw/Keyboarding [FLExBridgeBeta] build."/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.dll" LocalFilename="$(fwrt)/Downloads/Palaso.dll"
 					  Condition="'$(JENKINS_HOME)'==''"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.dll.config" LocalFilename="$(fwrt)/Downloads/Palaso.dll.config"
@@ -463,13 +466,19 @@
 		<DownloadFile Address="$(PalasoDownloadUrl)/PalasoUIWindowsForms.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.$(DebugInfo)"
 					  Condition="'$(Configuration)'=='Debug' And '$(JENKINS_HOME)'==''"/>
 
-		<Message Text="Downloading latest successful artifacts for L10NSharp and Enchant.Net."/>
+		<Message Text="Downloading latest successful artifacts for L10NSharp, Enchant.Net, ibusdotnet, and NDesk.DBus."/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/L10NSharp.dll" LocalFilename="$(fwrt)/Downloads/L10NSharp.dll"
 					  Condition="'$(JENKINS_HOME)'==''"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Enchant.Net.dll" LocalFilename="$(fwrt)/Downloads/Enchant.Net.dll"
 					  Condition="'$(JENKINS_HOME)'==''"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Enchant.Net.dll.config" LocalFilename="$(fwrt)/Downloads/Enchant.Net.dll.config"
 					  Condition="'$(JENKINS_HOME)'==''"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/ibusdotnet.dll" LocalFilename="$(fwrt)/Downloads/ibusdotnet.dll"
+					  Condition="'$(OS)'=='Unix' And '$(JENKINS_HOME)'==''"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/NDesk.DBus.dll" LocalFilename="$(fwrt)/Downloads/NDesk.DBus.dll"
+					  Condition="'$(OS)'=='Unix' And '$(JENKINS_HOME)'==''"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/NDesk.DBus.dll.config" LocalFilename="$(fwrt)/Downloads/NDesk.DBus.dll.config"
+					  Condition="'$(OS)'=='Unix' And '$(JENKINS_HOME)'==''"/>
 
 		<Message Text="Downloading latest successful artifacts from Chorus FLExBridgeBeta build."/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/Autofac.dll" LocalFilename="$(fwrt)/Downloads/Autofac.dll"/>

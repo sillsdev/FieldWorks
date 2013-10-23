@@ -1,18 +1,9 @@
-// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2002, SIL International. All Rights Reserved.
-// <copyright from='2002' to='2002' company='SIL International'>
-//		Copyright (c) 2002, SIL International. All Rights Reserved.
-//
-//		Distributable under the terms of either the Common Public License or the
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
-// </copyright>
-#endregion
-//
-// File: SelectionHelperTests.cs
-// Responsibility: TE Team
+// Copyright (c) 2002-2013, SIL International.
+// Distributable under the terms of the MIT license (http://opensource.org/licenses/MIT).
 // --------------------------------------------------------------------------------------------
 using System.Windows.Forms;
 using NUnit.Framework;
+using SIL.FieldWorks.CacheLight;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 
@@ -87,7 +78,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public override void SetIch(SelLimitType type, int value)
 		{
 			base.SetIch(type, value);
-			SetTextPropId(type, SimpleRootsiteTestsBase.kflidParaContents);
+			SetTextPropId(type, SimpleRootsiteTestsConstants.kflidParaContents);
 		}
 	}
 	#endregion
@@ -99,7 +90,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	/// <see cref="DummyBasicView">DummyBasicView</see> to perform tests.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class SelectionHelperTestsBase : SimpleRootsiteTestsBase
+	public class SelectionHelperTestsBase : SimpleRootsiteTestsBase<RealDataCache>
 	{
 		/// <summary></summary>
 		internal DummySelectionHelper m_SelectionHelper;
@@ -181,10 +172,10 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			m_SelectionHelper.SetNumberOfLevels(type, 2);
 			SelLevInfo[] levelInfo = m_SelectionHelper.GetLevelInfo(type);
-			levelInfo[1].tag = kflidDocFootnotes;
+			levelInfo[1].tag = SimpleRootsiteTestsConstants.kflidDocFootnotes;
 			levelInfo[1].cpropPrevious = cPropPrevFootnoteVec;
 			levelInfo[1].ihvo = iFootnote;
-			levelInfo[0].tag = SimpleRootsiteTestsBase.kflidTextParas;
+			levelInfo[0].tag = SimpleRootsiteTestsConstants.kflidTextParas;
 			levelInfo[0].cpropPrevious = cPropPrevParaVec;
 			levelInfo[0].ihvo = iPara;
 			m_SelectionHelper.SetNumberOfPreviousProps(type, cPropPrevParaContents);
@@ -323,7 +314,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			Assert.AreEqual(0, selectionHelper.Ws);
 			Assert.AreEqual(false, selectionHelper.AssocPrev);
 			//Assert.AreEqual(-1, selectionHelper.IhvoEndPara);
-			Assert.AreEqual(kflidDocFootnotes, selectionHelper.LevelInfo[1].tag);
+			Assert.AreEqual(SimpleRootsiteTestsConstants.kflidDocFootnotes, selectionHelper.LevelInfo[1].tag);
 			Assert.AreEqual(0, selectionHelper.LevelInfo[1].cpropPrevious);
 			Assert.AreEqual(0, selectionHelper.LevelInfo[1].ihvo);
 
@@ -347,11 +338,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SelectionHelper selectionHelper = SelectionHelper.GetSelectionInfo(null,
 				m_basicView);
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, selectionHelper, 0,
-				0, 6, 0, true, 2, kflidDocFootnotes, 0, 2,
-				SimpleRootsiteTestsBase.kflidTextParas, 1, 0);
+				0, 6, 0, true, 2, SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 2,
+				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.End, selectionHelper, 0,
-				0, 6, 0, true, 2, kflidDocFootnotes, 0, 2,
-				SimpleRootsiteTestsBase.kflidTextParas, 1, 0);
+				0, 6, 0, true, 2, SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 2,
+				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -370,11 +361,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SelectionHelper selectionHelper = SelectionHelper.GetSelectionInfo(null,
 				m_basicView);
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, selectionHelper, 0,
-				0, 6, 0, false, 2, kflidDocFootnotes, 0, 2,
-				SimpleRootsiteTestsBase.kflidTextParas, 1, 0);
+				0, 6, 0, false, 2, SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 2,
+				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.End, selectionHelper, 0,
-				0, 7, 0, true, 2, kflidDocFootnotes, 0, 2,
-				SimpleRootsiteTestsBase.kflidTextParas, 1, 0);
+				0, 7, 0, true, 2, SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 2,
+				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -398,11 +389,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			SelectionHelper selectionHelper = SelectionHelper.GetSelectionInfo(null, m_basicView);
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, selectionHelper, 0,
-				0, 6, 0, false, 2, kflidDocFootnotes, 0, 1,
-				SimpleRootsiteTestsBase.kflidTextParas, 1, 0);
+				0, 6, 0, false, 2, SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 1,
+				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.End, selectionHelper, 0, 0,
-				3, 0, true, 2,  kflidDocFootnotes, 0, 2,
-				SimpleRootsiteTestsBase.kflidTextParas, 1, 0);
+				3, 0, true, 2,  SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 2,
+				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 
 		}
 
@@ -428,11 +419,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			SelectionHelper selectionHelper = SelectionHelper.GetSelectionInfo(null, m_basicView);
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, selectionHelper, 0,
-				0, 6, 0, false, 2, kflidDocFootnotes, 0, 1,
-				SimpleRootsiteTestsBase.kflidTextParas, 1, 0);
+				0, 6, 0, false, 2, SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 1,
+				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.End, selectionHelper, 0, 0,
-				6, 0, true, 2,  kflidDocFootnotes, 0, 2,
-				SimpleRootsiteTestsBase.kflidTextParas, 1, 0);
+				6, 0, true, 2,  SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 2,
+				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 		}
 		#endregion
 
@@ -927,11 +918,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
 			Assert.IsNotNull(vwsel, "No selection made");
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, newSel, 0,
-				0, 6, 0, false, 2, kflidDocFootnotes, 0, 1,
-				SimpleRootsiteTestsBase.kflidTextParas, 1, 0);
+				0, 6, 0, false, 2, SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 1,
+				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.End, newSel, 0, 0,
-				2, 0, true, 2,  kflidDocFootnotes, 1, 1,
-				SimpleRootsiteTestsBase.kflidTextParas, 1, 0);
+				2, 0, true, 2,  SimpleRootsiteTestsConstants.kflidDocFootnotes, 1, 1,
+				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -952,11 +943,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
 			Assert.IsNotNull(vwsel, "No selection made");
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, newSel, 0,
-				0, 6, 0, false, 2, kflidDocFootnotes, 0, 1,
-				SimpleRootsiteTestsBase.kflidTextParas, 1, 0);
+				0, 6, 0, false, 2, SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 1,
+				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.End, newSel, 0, 0,
-				SimpleBasicView.kSecondParaEng.Length, 0, true, 2,  kflidDocFootnotes, 1, 1,
-				SimpleRootsiteTestsBase.kflidTextParas, 1, 0);
+				SimpleBasicView.kSecondParaEng.Length, 0, true, 2,  SimpleRootsiteTestsConstants.kflidDocFootnotes, 1, 1,
+				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -978,12 +969,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			Assert.IsNotNull(vwsel, "No selection made");
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, newSel, 0,
 				0, SimpleBasicView.kSecondParaEng.Length, 0, false, 2,
-				kflidDocFootnotes, 0, 1,
-				SimpleRootsiteTestsBase.kflidTextParas, 1, 0);
+				SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 1,
+				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.End, newSel, 0, 0,
 				1, 0, true, 2,
-				kflidDocFootnotes, 1, 1,
-				SimpleRootsiteTestsBase.kflidTextParas, 1, 0);
+				SimpleRootsiteTestsConstants.kflidDocFootnotes, 1, 1,
+				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1004,11 +995,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
 			Assert.IsNotNull(vwsel, "No selection made");
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, newSel, 0, 0,
-				2, 0, true, 2,  kflidDocFootnotes, 1, 1,
-				SimpleRootsiteTestsBase.kflidTextParas, 1, 0);
+				2, 0, true, 2,  SimpleRootsiteTestsConstants.kflidDocFootnotes, 1, 1,
+				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.End, newSel, 0,
-				0, 6, 0, false, 2, kflidDocFootnotes, 0, 1,
-				SimpleRootsiteTestsBase.kflidTextParas, 1, 0);
+				0, 6, 0, false, 2, SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 1,
+				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1029,11 +1020,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
 			Assert.IsNotNull(vwsel, "No selection made");
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, newSel, 0,
-				0, SimpleBasicView.kSecondParaEng.Length, 0, true, 2, kflidDocFootnotes, 1, 1,
-				SimpleRootsiteTestsBase.kflidTextParas, 1, 0);
+				0, SimpleBasicView.kSecondParaEng.Length, 0, true, 2, SimpleRootsiteTestsConstants.kflidDocFootnotes, 1, 1,
+				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.End, newSel, 0, 0,
-				6, 0, false, 2, kflidDocFootnotes, 0, 1,
-				SimpleRootsiteTestsBase.kflidTextParas, 1, 0);
+				6, 0, false, 2, SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 1,
+				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1055,12 +1046,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			Assert.IsNotNull(vwsel, "No selection made");
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, newSel, 0,
 				0, 1, 0, true, 2,
-				kflidDocFootnotes, 1, 1,
-				SimpleRootsiteTestsBase.kflidTextParas, 1, 0);
+				SimpleRootsiteTestsConstants.kflidDocFootnotes, 1, 1,
+				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.End, newSel, 0, 0,
 				SimpleBasicView.kSecondParaEng.Length, 0, false, 2,
-				kflidDocFootnotes, 0, 1,
-				SimpleRootsiteTestsBase.kflidTextParas, 1, 0);
+				SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 1,
+				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1121,11 +1112,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
 			Assert.IsNotNull(vwsel, "No selection made");
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, newSel, 0,
-				0, 6, 0, false, 2, kflidDocFootnotes, 0, 1,
-				SimpleRootsiteTestsBase.kflidTextParas, 1, 0);
+				0, 6, 0, false, 2, SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 1,
+				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.End, newSel, 0, 0,
-				SimpleBasicView.kSecondParaEng.Length, 0, true, 2, kflidDocFootnotes, 1, 1,
-				SimpleRootsiteTestsBase.kflidTextParas, 1, 0);
+				SimpleBasicView.kSecondParaEng.Length, 0, true, 2, SimpleRootsiteTestsConstants.kflidDocFootnotes, 1, 1,
+				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1147,12 +1138,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			Assert.IsNotNull(vwsel, "No selection made");
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, newSel, 0,
 				0, SimpleBasicView.kSecondParaEng.Length, 0, false, 2,
-				kflidDocFootnotes, 0, 1,
-				SimpleRootsiteTestsBase.kflidTextParas, 1, 0);
+				SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 1,
+				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.End, newSel, 0, 0,
 				1, 0, true, 2,
-				kflidDocFootnotes, 1, 1,
-				SimpleRootsiteTestsBase.kflidTextParas, 1, 0);
+				SimpleRootsiteTestsConstants.kflidDocFootnotes, 1, 1,
+				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1173,11 +1164,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
 			Assert.IsNotNull(vwsel, "No selection made");
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, newSel, 0,
-				0, SimpleBasicView.kSecondParaEng.Length, 0, true, 2, kflidDocFootnotes, 1, 1,
-				SimpleRootsiteTestsBase.kflidTextParas, 1, 0);
+				0, SimpleBasicView.kSecondParaEng.Length, 0, true, 2, SimpleRootsiteTestsConstants.kflidDocFootnotes, 1, 1,
+				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.End, newSel, 0, 0,
-				6, 0, false, 2, kflidDocFootnotes, 0, 1,
-				SimpleRootsiteTestsBase.kflidTextParas, 1, 0);
+				6, 0, false, 2, SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 1,
+				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1199,12 +1190,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			Assert.IsNotNull(vwsel, "No selection made");
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, newSel, 0,
 				0, 1, 0, true, 2,
-				kflidDocFootnotes, 1, 1,
-				SimpleRootsiteTestsBase.kflidTextParas, 1, 0);
+				SimpleRootsiteTestsConstants.kflidDocFootnotes, 1, 1,
+				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.End, newSel, 0, 0,
 				SimpleBasicView.kSecondParaEng.Length, 0, false, 2,
-				kflidDocFootnotes, 0, 1,
-				SimpleRootsiteTestsBase.kflidTextParas, 1, 0);
+				SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 1,
+				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 		}
 	}
 	#endregion

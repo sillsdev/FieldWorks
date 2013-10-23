@@ -169,6 +169,12 @@
       <Name>xCoreInterfaces</Name>
       <HintPath>..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
     </Reference>
+    <Reference Include="ibusdotnet">
+      <HintPath>..\..\..\..\Downloads\ibusdotnet.dll</HintPath>
+    </Reference>
+    <Reference Include="PalasoUIWindowsForms">
+      <HintPath>..\..\..\..\Downloads\PalasoUIWindowsForms.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -204,9 +210,11 @@
     </Compile>
     <Compile Include="TsStringWrapperTests.cs">
     </Compile>
-    <Compile Include="InputBusControllerTests.cs">
+    <Compile Include="IbusRootSiteEventHandlerTests.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="IbusRootSiteEventHandlerTests_Simple.cs" />
+    <Compile Include="UndoableRealDataCache.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SimpleBasicView.resx">

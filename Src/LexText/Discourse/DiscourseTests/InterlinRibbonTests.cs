@@ -7,6 +7,7 @@ using System.Drawing;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
+using SIL.Utils.Attributes;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.DomainServices;
 
@@ -16,6 +17,7 @@ namespace SIL.FieldWorks.Discourse
 	/// Tests for the Constituent chart.
 	/// </summary>
 	[TestFixture]
+	[InitializeRealKeyboardController(InitDummyAfterTests = true)]
 	public class InterlinRibbonTests : InMemoryDiscourseTestBase
 	{
 		private TestInterlinRibbon m_ribbon;

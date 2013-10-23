@@ -1,20 +1,5 @@
-// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2003, SIL International. All Rights Reserved.
-// <copyright from='2003' to='2003' company='SIL International'>
-//		Copyright (c) 2003, SIL International. All Rights Reserved.
-//
-//		Distributable under the terms of either the Common Public License or the
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
-// </copyright>
-#endregion
-//
-// File: DummyBasicViewVc.cs
-// Responsibility: Eberhard Beilharz
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
-// --------------------------------------------------------------------------------------------
+// Copyright (c) 2003-2013, SIL International.
+// Distributable under the terms of the MIT license (http://opensource.org/licenses/MIT).
 using System;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Test.TestUtils;
@@ -136,21 +121,21 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 						}
 					}
 					if ((m_displayType & DisplayType.kTitle) == DisplayType.kTitle)
-						vwenv.AddObjProp(SimpleRootsiteTestsBase.kflidDocTitle, this, 3);
+						vwenv.AddObjProp(SimpleRootsiteTestsConstants.kflidDocTitle, this, 3);
 					if (m_displayType == DisplayType.kOuterObjDetails)
 						vwenv.AddObjVecItems(m_flid, this, 6);
 					break;
 				case 2: // An StText, display paragraphs lazily
 					if ((m_displayType & DisplayType.kWithTopMargin) == DisplayType.kWithTopMargin)
-						vwenv.AddLazyVecItems(SimpleRootsiteTestsBase.kflidTextParas, this, 4);
-					vwenv.AddLazyVecItems(SimpleRootsiteTestsBase.kflidTextParas, this, 5);
+						vwenv.AddLazyVecItems(SimpleRootsiteTestsConstants.kflidTextParas, this, 4);
+					vwenv.AddLazyVecItems(SimpleRootsiteTestsConstants.kflidTextParas, this, 5);
 					break;
 				case 3: // An StText, display paragraphs not lazily.
 					if ((m_displayType & DisplayType.kWithTopMargin) == DisplayType.kWithTopMargin)
-						vwenv.AddObjVecItems(SimpleRootsiteTestsBase.kflidTextParas, this, 4);
-					vwenv.AddObjVecItems(SimpleRootsiteTestsBase.kflidTextParas, this, 5);
+						vwenv.AddObjVecItems(SimpleRootsiteTestsConstants.kflidTextParas, this, 4);
+					vwenv.AddObjVecItems(SimpleRootsiteTestsConstants.kflidTextParas, this, 5);
 					if ((m_displayType & DisplayType.kDuplicateParagraphs) != 0)
-						vwenv.AddObjVecItems(SimpleRootsiteTestsBase.kflidTextParas, this, 5);
+						vwenv.AddObjVecItems(SimpleRootsiteTestsConstants.kflidTextParas, this, 5);
 					break;
 				case 4: // StTxtPara, display contents with top margin
 					OpenParaIfNeeded(vwenv, hvo);
@@ -169,11 +154,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 						m_wsDefault);
 					vwenv.AddString(tss);
 					break;
-				case SimpleRootsiteTestsBase.kflidDocDivisions:
-					vwenv.AddObjVecItems(SimpleRootsiteTestsBase.kflidDocDivisions, this,
-						SimpleRootsiteTestsBase.kflidSectionStuff);
+				case SimpleRootsiteTestsConstants.kflidDocDivisions:
+					vwenv.AddObjVecItems(SimpleRootsiteTestsConstants.kflidDocDivisions, this,
+						SimpleRootsiteTestsConstants.kflidSectionStuff);
 					break;
-				case SimpleRootsiteTestsBase.kflidSectionStuff:
+				case SimpleRootsiteTestsConstants.kflidSectionStuff:
 					if ((m_displayType & DisplayType.kNormal) == DisplayType.kNormal)
 						vwenv.AddObjProp(frag, this, 3);
 					if ((m_displayType & DisplayType.kLazy) == DisplayType.kLazy)
@@ -181,28 +166,28 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 					break;
 				case 7: // ScrBook
 					vwenv.OpenDiv();
-					vwenv.AddObjVecItems(SimpleRootsiteTestsBase.kflidDocFootnotes, this, 8);
+					vwenv.AddObjVecItems(SimpleRootsiteTestsConstants.kflidDocFootnotes, this, 8);
 					vwenv.CloseDiv();
 					break;
 				case 8: // StFootnote
-					vwenv.AddObjVecItems(SimpleRootsiteTestsBase.kflidTextParas, this,
+					vwenv.AddObjVecItems(SimpleRootsiteTestsConstants.kflidTextParas, this,
 						9);
 					break;
 				case 9: // StTxtPara
-					vwenv.AddStringProp(SimpleRootsiteTestsBase.kflidParaContents, null);
+					vwenv.AddStringProp(SimpleRootsiteTestsConstants.kflidParaContents, null);
 					break;
 				case 10:
 					// Display a Footnote by displaying its "FootnoteMarker" in a paragraph
 					// by itself, followed by the sequence of paragraphs.
-					vwenv.AddStringProp(SimpleRootsiteTestsBase.kflidFootnoteMarker, null);
-					vwenv.AddObjVecItems(SimpleRootsiteTestsBase.kflidTextParas, this,
+					vwenv.AddStringProp(SimpleRootsiteTestsConstants.kflidFootnoteMarker, null);
+					vwenv.AddObjVecItems(SimpleRootsiteTestsConstants.kflidTextParas, this,
 						9);
 					break;
 				case 11:
 					// Display a Footnote by displaying its "FootnoteMarker" followed by the
 					// contents of its first paragraph (similar to the way footnotes are displayed in
 					// real life.
-					vwenv.AddObjVecItems(SimpleRootsiteTestsBase.kflidTextParas, this, 12);
+					vwenv.AddObjVecItems(SimpleRootsiteTestsConstants.kflidTextParas, this, 12);
 					break;
 				case 12: // Footnote paragraph with marker
 					vwenv.OpenMappedTaggedPara();
@@ -210,7 +195,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 					vwenv.set_IntProperty((int)FwTextPropType.ktptEditable,
 						(int)FwTextPropVar.ktpvEnum,
 						(int)TptEditable.ktptNotEditable);
-					vwenv.AddStringProp(SimpleRootsiteTestsBase.kflidFootnoteMarker, null);
+					vwenv.AddStringProp(SimpleRootsiteTestsConstants.kflidFootnoteMarker, null);
 
 					// add a read-only space after the footnote marker
 					vwenv.set_IntProperty((int)FwTextPropType.ktptEditable,
@@ -219,7 +204,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 					ITsIncStrBldr strBldr = TsIncStrBldrClass.Create();
 					strBldr.Append(" ");
 					vwenv.AddString(strBldr.GetString());
-					vwenv.AddStringProp(SimpleRootsiteTestsBase.kflidParaContents, null);
+					vwenv.AddStringProp(SimpleRootsiteTestsConstants.kflidParaContents, null);
 					vwenv.CloseParagraph();
 					break;
 				default:
@@ -236,11 +221,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		/// ------------------------------------------------------------------------------------
 		private void AddParagraphContents(IVwEnv vwenv)
 		{
-			vwenv.AddStringProp(SimpleRootsiteTestsBase.kflidParaContents, null);
+			vwenv.AddStringProp(SimpleRootsiteTestsConstants.kflidParaContents, null);
 			if ((m_displayType & DisplayType.kOnlyDisplayContentsOnce) != DisplayType.kOnlyDisplayContentsOnce)
 			{
-				vwenv.AddStringProp(SimpleRootsiteTestsBase.kflidParaContents, null);
-				vwenv.AddStringProp(SimpleRootsiteTestsBase.kflidParaContents, null);
+				vwenv.AddStringProp(SimpleRootsiteTestsConstants.kflidParaContents, null);
+				vwenv.AddStringProp(SimpleRootsiteTestsConstants.kflidParaContents, null);
 			}
 			if ((m_displayType & DisplayType.kMappedPara) == DisplayType.kMappedPara)
 				vwenv.CloseParagraph();
@@ -259,7 +244,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			if ((m_displayType & DisplayType.kMappedPara) == DisplayType.kMappedPara)
 			{
 				if ((m_displayType & DisplayType.kUseParaProperties) == DisplayType.kUseParaProperties)
-					vwenv.Props = (ITsTextProps) vwenv.DataAccess.get_UnknownProp(hvo, SimpleRootsiteTestsBase.kflidParaProperties);
+					vwenv.Props = (ITsTextProps) vwenv.DataAccess.get_UnknownProp(hvo, SimpleRootsiteTestsConstants.kflidParaProperties);
 				vwenv.OpenMappedPara();
 			}
 		}
