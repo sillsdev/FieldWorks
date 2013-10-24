@@ -761,12 +761,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 		{
 			CheckDisposed();
 
-			if (MiscUtils.IsUnix)
-			{
-				ShowHelp.ShowHelpTopic_Linux(HelpFile, null);
-				return true;
-			}
-
 			try
 			{
 				// When the help window is closed it will return focus to the window that opened it (see MSDN

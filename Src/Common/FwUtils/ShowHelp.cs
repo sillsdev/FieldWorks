@@ -99,70 +99,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 				return;
 			}
 
-			if (MiscUtils.IsUnix)
-			{
-				ShowHelpTopic_Linux(helpFile, helpTopic);
-			}
-			else
-			{
-				// Show the help. We have to use a label because without it the help is always on top of the window
-				Help.ShowHelp(new Label(), helpFile, helpTopic);
-			}
-		}
-
-		/// <summary>Show a help file and topic using a Linux help viewer</summary>
-		/// <param name="helpFile">.chm help file</param>
-		/// <param name="helpTopic">path to a topic in helpFile, or null</param>
-		public static void ShowHelpTopic_Linux(string helpFile, string helpTopic)
-		{
-			if (helpFile == null)
-				throw new ArgumentNullException();
-			if (helpFile == String.Empty)
-				throw new ArgumentException();
-
-			// Adjust helpFile path to use only forward slashes
-			helpFile = helpFile.Replace(@"\", "/");
-
-
-			string helpViewer = "chmsee";
-			string arguments = helpFile;
-			if (!String.IsNullOrEmpty(helpTopic))
-			{
-				string ref_ht = helpTopic;
-				if (!ref_ht.StartsWith("/"))
-				{
-					ref_ht = String.Format("'/'{0}", helpTopic);
-				}
-				ref_ht = ref_ht.TrimEnd(' ');
-				arguments = String.Format("'{0}::{1}'", helpFile, ref_ht);
-			}
-
-			if (!RunNonblockingProcess(helpViewer, arguments))
-				MessageBox.Show(String.Format(FwUtilsStrings.ksLinuxHelpViewerCouldNotLoad, helpViewer));
-		}
-
-		/// <returns>
-		/// whether successfully started (or reused) process
-		/// </returns>
-		private static bool RunNonblockingProcess(string command, string arguments)
-		{
-			using (Process process = new Process())
-			{
-				process.StartInfo.FileName = command;
-				process.StartInfo.Arguments = arguments;
-				process.StartInfo.UseShellExecute = false;
-
-				try
-				{
-					process.Start();
-				}
-				catch
-				{
-					return false;
-				}
-
-				return true;
-			}
+			// Show the help. We have to use a label because without it the help is always on top of the window
+			Help.ShowHelp(new Label(), helpFile, helpTopic);
 		}
 	}
 }

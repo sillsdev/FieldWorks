@@ -158,10 +158,6 @@
 	<value> pt</value>
 	<comment>Measurement unit abbreviation for Points (Localized string should preserve leading space if needed in formatted display.)</comment>
   </data>
-  <data name="ksLinuxHelpViewerCouldNotLoad" xml:space="preserve">
-	<value>The help viewer could not load. Maybe you don't have {0} installed.</value>
-	<comment>Where {0} is the name of a help viewing application.</comment>
-  </data>
   <data name="kstidAppVersionFmt" xml:space="preserve">
 	<value>Version: {0}  {1}  {2}</value>
 	<comment>Displays in the Help/About box and the splash screen</comment>
