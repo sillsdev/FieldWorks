@@ -13,4 +13,4 @@ using System.Runtime.CompilerServices;
 
 [assembly: AssemblyCompany("SIL")]
 [assembly: AssemblyProduct("SIL FieldWorks")]
-[assembly: AssemblyCopyright("© 2003, SIL International")]
+[assembly: AssemblyCopyright("\u00A9 2003, SIL International")]

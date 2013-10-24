@@ -1,4 +1,4 @@
-// ---------------------------------------------------------------------------------------------
+﻿// ---------------------------------------------------------------------------------------------
 #region // Copyright (c) 2009, SIL International. All Rights Reserved.
 // <copyright from='2005' to='2009' company='SIL International'>
 //		Copyright (c) 2009, SIL International. All Rights Reserved.
@@ -620,7 +620,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 			AddRunToMockedPara(m_para, "My text for footnotes", string.Empty);
 			IScrFootnote footnote = AddFootnote(m_book, m_para, 2);
 			m_scr.FootnoteMarkerType = FootnoteMarkerTypes.SymbolicFootnoteMarker;
-			m_scr.FootnoteMarkerSymbol = "¶";
+			m_scr.FootnoteMarkerSymbol = "\u00B6"; // U+00B6 PILCROW SIGN (¶)
 			m_scr.DisplaySymbolInFootnote = true;
 			footnote.FootnoteMarker = stringFactory.MakeString(null, Cache.DefaultVernWs);
 			IScrTxtPara footnotePara = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(

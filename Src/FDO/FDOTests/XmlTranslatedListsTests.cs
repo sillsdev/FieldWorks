@@ -1,4 +1,4 @@
-// ---------------------------------------------------------------------------------------------
+﻿// ---------------------------------------------------------------------------------------------
 #region // Copyright (c) 2010, SIL International. All Rights Reserved.
 // <copyright from='2010' to='2010' company='SIL International'>
 //		Copyright (c) 2010, SIL International. All Rights Reserved.

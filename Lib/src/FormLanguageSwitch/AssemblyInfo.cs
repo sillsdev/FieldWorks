@@ -1,4 +1,4 @@
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 
 //
@@ -11,7 +11,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Julijan Sribar")]
 [assembly: AssemblyProduct("Form Language Switch")]
-[assembly: AssemblyCopyright("Copyright � Julijan Sribar 2004-2007")]
+[assembly: AssemblyCopyright("Copyright © Julijan Sribar 2004-2007")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

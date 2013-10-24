@@ -1,4 +1,4 @@
-// ---------------------------------------------------------------------------------------------
+ï»¿// ---------------------------------------------------------------------------------------------
 #region // Copyright (c) 2011, SIL International. All Rights Reserved.
 // <copyright from='2011' to='2011' company='SIL International'>
 //		Copyright (c) 2011, SIL International. All Rights Reserved.
@@ -238,12 +238,12 @@ namespace LexTextControlsTests
 			"<trait name=\"semantic-domain-ddp4\" value=\"2.6.4.4 Adult\"></trait>",
 			"</sense>",
 			"</entry>",
-			"<entry dateCreated=\"2011-03-01T18:17:06Z\" dateModified=\"2011-03-01T18:29:29Z\" guid=\"1767c76d-e35f-495a-9203-6b31fd82ad72\" id=\"niño_1767c76d-e35f-495a-9203-6b31fd82ad72\">",
+			"<entry dateCreated=\"2011-03-01T18:17:06Z\" dateModified=\"2011-03-01T18:29:29Z\" guid=\"1767c76d-e35f-495a-9203-6b31fd82ad72\" id=\"niÃ±o_1767c76d-e35f-495a-9203-6b31fd82ad72\">",
 			"<lexical-unit>",
-			"<form lang=\"es\"><text>niño</text></form>",
+			"<form lang=\"es\"><text>niÃ±o</text></form>",
 			"</lexical-unit>",
 			"<trait name=\"morph-type\" value=\"stem\"></trait>",
-			"<sense id=\"niño_04545fa2-e24c-446e-928c-2a13710359b3\">",
+			"<sense id=\"niÃ±o_04545fa2-e24c-446e-928c-2a13710359b3\">",
 			"<grammatical-info value=\"Noun\">",
 			"</grammatical-info>",
 			"<gloss lang=\"en\"><text>boy</text></gloss>",
@@ -254,15 +254,15 @@ namespace LexTextControlsTests
 			"<trait name=\"semantic-domain-ddp4\" value=\"2.6.5.1 Man\"></trait>",
 			"</sense>",
 			"</entry>",
-			"<entry dateCreated=\"2011-03-01T18:17:54Z\" dateModified=\"2011-03-01T18:29:36Z\" guid=\"185c528d-aeb1-4e32-8aac-2420322020d2\" id=\"niña_185c528d-aeb1-4e32-8aac-2420322020d2\">",
+			"<entry dateCreated=\"2011-03-01T18:17:54Z\" dateModified=\"2011-03-01T18:29:36Z\" guid=\"185c528d-aeb1-4e32-8aac-2420322020d2\" id=\"niÃ±a_185c528d-aeb1-4e32-8aac-2420322020d2\">",
 			"<lexical-unit>",
-			"<form lang=\"es\"><text>niña</text></form>",
+			"<form lang=\"es\"><text>niÃ±a</text></form>",
 			"</lexical-unit>",
 			"<trait name=\"morph-type\" value=\"stem\"></trait>",
 			"<relation type=\"_component-lexeme\" ref=\"\">",
 			"<trait  name=\"complex-form-type\" value=\"Derivative\"/>",
 			"</relation>",
-			"<sense id=\"niña_db9d3790-2f5c-4d99-b9fc-3b21b47fa505\">",
+			"<sense id=\"niÃ±a_db9d3790-2f5c-4d99-b9fc-3b21b47fa505\">",
 			"<grammatical-info value=\"Noun\">",
 			"</grammatical-info>",
 			"<gloss lang=\"en\"><text>girl</text></gloss>",
@@ -395,7 +395,7 @@ namespace LexTextControlsTests
 			Assert.IsNotNull(entry.LexemeFormOA);
 			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
 			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("niño".Normalize(NormalizationForm.FormD), entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
+			Assert.AreEqual("niÃ±o".Normalize(NormalizationForm.FormD), entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
 			Assert.IsNotNull(sense0.MorphoSyntaxAnalysisRA as IMoStemMsa);
 			// ReSharper disable PossibleNullReferenceException
 			Assert.IsNotNull((sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA);
@@ -424,7 +424,7 @@ namespace LexTextControlsTests
 			Assert.IsNotNull(entry.LexemeFormOA);
 			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
 			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("niña".Normalize(NormalizationForm.FormD), entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
+			Assert.AreEqual("niÃ±a".Normalize(NormalizationForm.FormD), entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
 			Assert.IsNotNull(sense0.MorphoSyntaxAnalysisRA as IMoStemMsa);
 			// ReSharper disable PossibleNullReferenceException
 			Assert.IsNotNull((sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA);

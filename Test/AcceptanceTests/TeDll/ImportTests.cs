@@ -1,4 +1,4 @@
-// --------------------------------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------
 #region // Copyright (c) 2010, SIL International. All Rights Reserved.
 // <copyright from='2003' to='2010' company='SIL International'>
 //		Copyright (c) 2010, SIL International. All Rights Reserved.
@@ -1110,7 +1110,7 @@ namespace SIL.FieldWorks.AcceptanceTests.TE
 			Assert.AreEqual(21, para.Contents.RunCount);
 			AssertEx.RunIsCorrect(para.Contents, 0, "3", "Chapter Number", m_wsVern);
 			AssertEx.RunIsCorrect(para.Contents, 1, "1", "Verse Number", m_wsVern);
-			AssertEx.RunIsCorrect(para.Contents, 2, "La parole du SEIGNEUR s'adressa une seconde fois � Jonas: ",
+			AssertEx.RunIsCorrect(para.Contents, 2, "La parole du SEIGNEUR s'adressa une seconde fois à Jonas: ",
 				null, m_wsVern);
 
 			// Check some text toward the end (in verse 4:11)

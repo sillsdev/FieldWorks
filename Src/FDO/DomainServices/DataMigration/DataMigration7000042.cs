@@ -1,4 +1,4 @@
-// ---------------------------------------------------------------------------------------------
+Ôªø// ---------------------------------------------------------------------------------------------
 #region // Copyright (c) 2011, SIL International. All Rights Reserved.
 // <copyright from='2011' to='2011' company='SIL International'>
 //		Copyright (c) 2011, SIL International. All Rights Reserved.
@@ -438,7 +438,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			bldr.AppendLine("<rt class=\"StTxtPara\" guid=\"b34bc8c8-ea5e-11de-8b9f-0013722f8dec\" ownerguid=\"b33653bc-ea5e-11de-9802-0013722f8dec\">");
 			bldr.AppendLine("<Contents>");
 			bldr.AppendLine("<Str>");
-			bldr.AppendLine("<Run ws=\"en\">Example: hasnít ëhas notí</Run>");
+			bldr.AppendLine("<Run ws=\"en\">Example: hasn‚Äôt ‚Äòhas not‚Äô</Run>");
 			bldr.AppendLine("</Str>");
 			bldr.AppendLine("</Contents>");
 			bldr.AppendLine("<ParseIsCurrent val=\"False\" />");
@@ -449,7 +449,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			bldr.AppendLine("<rt class=\"StTxtPara\" guid=\"b357b480-ea5e-11de-875d-0013722f8dec\" ownerguid=\"b33653bc-ea5e-11de-9802-0013722f8dec\">");
 			bldr.AppendLine("<Contents>");
 			bldr.AppendLine("<Str>");
-			bldr.AppendLine("<Run ws=\"en\">Contractions are different from compounds. A compound, such as ëhasbeení, is a combination of two lexemes with an unpredictable change in meaning. There is no such change in meaning in a contraction.</Run>");
+			bldr.AppendLine("<Run ws=\"en\">Contractions are different from compounds. A compound, such as ‚Äòhasbeen‚Äô, is a combination of two lexemes with an unpredictable change in meaning. There is no such change in meaning in a contraction.</Run>");
 			bldr.AppendLine("</Str>");
 			bldr.AppendLine("</Contents>");
 			bldr.AppendLine("<ParseIsCurrent val=\"False\" />");
@@ -460,7 +460,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			bldr.AppendLine("<rt class=\"StTxtPara\" guid=\"b3613dd4-ea5e-11de-879d-0013722f8dec\" ownerguid=\"b33653bc-ea5e-11de-9802-0013722f8dec\">");
 			bldr.AppendLine("<Contents>");
 			bldr.AppendLine("<Str>");
-			bldr.AppendLine("<Run ws=\"en\">Contractions are different from clitics. A clitic is a lexeme that is grammatically independent but attaches phonologically to any adjacent word. An example of a clitic is the English possessive ñís in the phrases ëElizabethís hatí, ëthe queenís hatí, and ëthe queen of Englandís hatí. The clitic ñís obligatorily attaches to whatever word precedes it. In contrast a contraction is a specific pair of words that regularly combines. The combination may be obligatory, as in the case of ëletísí, as in ìLetís goî (ìLet us goî has a different meaning), or it may be optional, as in the case of ëweíveí, as in ìWeíve been honored,î or ìWe have been honored.î</Run>");
+			bldr.AppendLine("<Run ws=\"en\">Contractions are different from clitics. A clitic is a lexeme that is grammatically independent but attaches phonologically to any adjacent word. An example of a clitic is the English possessive ‚Äì‚Äôs in the phrases ‚ÄòElizabeth‚Äôs hat‚Äô, ‚Äòthe queen‚Äôs hat‚Äô, and ‚Äòthe queen of England‚Äôs hat‚Äô. The clitic ‚Äì‚Äôs obligatorily attaches to whatever word precedes it. In contrast a contraction is a specific pair of words that regularly combines. The combination may be obligatory, as in the case of ‚Äòlet‚Äôs‚Äô, as in ‚ÄúLet‚Äôs go‚Äù (‚ÄúLet us go‚Äù has a different meaning), or it may be optional, as in the case of ‚Äòwe‚Äôve‚Äô, as in ‚ÄúWe‚Äôve been honored,‚Äù or ‚ÄúWe have been honored.‚Äù</Run>");
 			bldr.AppendLine("</Str>");
 			bldr.AppendLine("</Contents>");
 			bldr.AppendLine("<ParseIsCurrent val=\"False\" />");
@@ -471,7 +471,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			bldr.AppendLine("<rt class=\"StTxtPara\" guid=\"b36d298c-ea5e-11de-9bb0-0013722f8dec\" ownerguid=\"b33653bc-ea5e-11de-9802-0013722f8dec\">");
 			bldr.AppendLine("<Contents>");
 			bldr.AppendLine("<Str>");
-			bldr.AppendLine("<Run ws=\"en\">Contractions are different from portmanteau morphemes. A portmanteau morpheme is a single, indivisible morpheme that combines two meanings that are usually expressed by separate morphemes. An example of a portmanteau morpheme is the word ëwereí which is a single morpheme expressing the meaning of the lexeme ëbeí and the grammatical category ëPast.tenseí. ëWereí cannot be divided into two morphemes. (Note that ëbustedí can be divided into bust-ed ëbust-Past.tenseí.) In contrast the contraction ëweíreí (we are) can be divided into ëwe-íreí.</Run>");
+			bldr.AppendLine("<Run ws=\"en\">Contractions are different from portmanteau morphemes. A portmanteau morpheme is a single, indivisible morpheme that combines two meanings that are usually expressed by separate morphemes. An example of a portmanteau morpheme is the word ‚Äòwere‚Äô which is a single morpheme expressing the meaning of the lexeme ‚Äòbe‚Äô and the grammatical category ‚ÄòPast.tense‚Äô. ‚ÄòWere‚Äô cannot be divided into two morphemes. (Note that ‚Äòbusted‚Äô can be divided into bust-ed ‚Äòbust-Past.tense‚Äô.) In contrast the contraction ‚Äòwe‚Äôre‚Äô (we are) can be divided into ‚Äòwe-‚Äôre‚Äô.</Run>");
 			bldr.AppendLine("</Str>");
 			bldr.AppendLine("</Contents>");
 			bldr.AppendLine("<ParseIsCurrent val=\"False\" />");
@@ -482,7 +482,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			bldr.AppendLine("<rt class=\"StTxtPara\" guid=\"b379153a-ea5e-11de-93cc-0013722f8dec\" ownerguid=\"b33653bc-ea5e-11de-9802-0013722f8dec\">");
 			bldr.AppendLine("<Contents>");
 			bldr.AppendLine("<Str>");
-			bldr.AppendLine("<Run ws=\"en\">One or both members of a contraction can be shortened. Most English contractions only shorten the second member, as in ëIímí (I am), ëitísí (it is), ëisnítí (is not). Others shorten both members, as in ëwonítí (will not), ëshanítí (shall not), ëainítí (am not).</Run>");
+			bldr.AppendLine("<Run ws=\"en\">One or both members of a contraction can be shortened. Most English contractions only shorten the second member, as in ‚ÄòI‚Äôm‚Äô (I am), ‚Äòit‚Äôs‚Äô (it is), ‚Äòisn‚Äôt‚Äô (is not). Others shorten both members, as in ‚Äòwon‚Äôt‚Äô (will not), ‚Äòshan‚Äôt‚Äô (shall not), ‚Äòain‚Äôt‚Äô (am not).</Run>");
 			bldr.AppendLine("</Str>");
 			bldr.AppendLine("</Contents>");
 			bldr.AppendLine("<ParseIsCurrent val=\"False\" />");
@@ -493,7 +493,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			bldr.AppendLine("<rt class=\"StTxtPara\" guid=\"b3829e98-ea5e-11de-807d-0013722f8dec\" ownerguid=\"b33653bc-ea5e-11de-9802-0013722f8dec\">");
 			bldr.AppendLine("<Contents>");
 			bldr.AppendLine("<Str>");
-			bldr.AppendLine("<Run ws=\"en\">A contraction can combine more than two members, as in ëwouldnítíveí (would not have).</Run>");
+			bldr.AppendLine("<Run ws=\"en\">A contraction can combine more than two members, as in ‚Äòwouldn‚Äôt‚Äôve‚Äô (would not have).</Run>");
 			bldr.AppendLine("</Str>");
 			bldr.AppendLine("</Contents>");
 			bldr.AppendLine("<ParseIsCurrent val=\"False\" />");
@@ -504,7 +504,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			bldr.AppendLine("<rt class=\"StTxtPara\" guid=\"b38e8a50-ea5e-11de-8870-0013722f8dec\" ownerguid=\"b33653bc-ea5e-11de-9802-0013722f8dec\">");
 			bldr.AppendLine("<Contents>");
 			bldr.AppendLine("<Str>");
-			bldr.AppendLine("<Run ws=\"en\">English orthography uses the apostrophe to indicate the loss of a phoneme, as in ëshouldnítí (should not). But when both words lose a phoneme, only one apostrophe is used, as in ëshanítí (shall not). In writing sometimes a contraction is written out as two separate words, even when it would normally be shortened to the contracted form in speech. Other languages may or may not choose to follow these orthographic conventions.</Run>");
+			bldr.AppendLine("<Run ws=\"en\">English orthography uses the apostrophe to indicate the loss of a phoneme, as in ‚Äòshouldn‚Äôt‚Äô (should not). But when both words lose a phoneme, only one apostrophe is used, as in ‚Äòshan‚Äôt‚Äô (shall not). In writing sometimes a contraction is written out as two separate words, even when it would normally be shortened to the contracted form in speech. Other languages may or may not choose to follow these orthographic conventions.</Run>");
 			bldr.AppendLine("</Str>");
 			bldr.AppendLine("</Contents>");
 			bldr.AppendLine("<ParseIsCurrent val=\"False\" />");
@@ -603,7 +603,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			bldr.AppendLine("<rt class=\"StTxtPara\" guid=\"b3bbd6c2-ea5e-11de-9a08-0013722f8dec\" ownerguid=\"b39a75fe-ea5e-11de-8de8-0013722f8dec\">");
 			bldr.AppendLine("<Contents>");
 			bldr.AppendLine("<Str>");
-			bldr.AppendLine("<Run ws=\"en\">ï is not obligatory</Run>");
+			bldr.AppendLine("<Run ws=\"en\">‚Ä¢ is not obligatory</Run>");
 			bldr.AppendLine("</Str>");
 			bldr.AppendLine("</Contents>");
 			bldr.AppendLine("<ParseIsCurrent val=\"False\" />");
@@ -614,7 +614,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			bldr.AppendLine("<rt class=\"StTxtPara\" guid=\"b3c56020-ea5e-11de-9583-0013722f8dec\" ownerguid=\"b39a75fe-ea5e-11de-8de8-0013722f8dec\">");
 			bldr.AppendLine("<Contents>");
 			bldr.AppendLine("<Str>");
-			bldr.AppendLine("<Run ws=\"en\">ï typically produces a greater change of meaning from the original form</Run>");
+			bldr.AppendLine("<Run ws=\"en\">‚Ä¢ typically produces a greater change of meaning from the original form</Run>");
 			bldr.AppendLine("</Str>");
 			bldr.AppendLine("</Contents>");
 			bldr.AppendLine("<ParseIsCurrent val=\"False\" />");
@@ -625,7 +625,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			bldr.AppendLine("<rt class=\"StTxtPara\" guid=\"b3d14bce-ea5e-11de-8c98-0013722f8dec\" ownerguid=\"b39a75fe-ea5e-11de-8de8-0013722f8dec\">");
 			bldr.AppendLine("<Contents>");
 			bldr.AppendLine("<Str>");
-			bldr.AppendLine("<Run ws=\"en\">ï is more likely to result in a form which has a somewhat idiosyncratic meaning, and</Run>");
+			bldr.AppendLine("<Run ws=\"en\">‚Ä¢ is more likely to result in a form which has a somewhat idiosyncratic meaning, and</Run>");
 			bldr.AppendLine("</Str>");
 			bldr.AppendLine("</Contents>");
 			bldr.AppendLine("<ParseIsCurrent val=\"False\" />");
@@ -636,7 +636,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			bldr.AppendLine("<rt class=\"StTxtPara\" guid=\"b3dd3786-ea5e-11de-936b-0013722f8dec\" ownerguid=\"b39a75fe-ea5e-11de-8de8-0013722f8dec\">");
 			bldr.AppendLine("<Contents>");
 			bldr.AppendLine("<Str>");
-			bldr.AppendLine("<Run ws=\"en\">ï often changes the grammatical category of a root.</Run>");
+			bldr.AppendLine("<Run ws=\"en\">‚Ä¢ often changes the grammatical category of a root.</Run>");
 			bldr.AppendLine("</Str>");
 			bldr.AppendLine("</Contents>");
 			bldr.AppendLine("<ParseIsCurrent val=\"False\" />");
@@ -658,7 +658,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			bldr.AppendLine("<rt class=\"StTxtPara\" guid=\"b3f2ac92-ea5e-11de-90c6-0013722f8dec\" ownerguid=\"b39a75fe-ea5e-11de-8de8-0013722f8dec\">");
 			bldr.AppendLine("<Contents>");
 			bldr.AppendLine("<Str>");
-			bldr.AppendLine("<Run ws=\"en\">ï tend to be idiosyncratic and non-productive</Run>");
+			bldr.AppendLine("<Run ws=\"en\">‚Ä¢ tend to be idiosyncratic and non-productive</Run>");
 			bldr.AppendLine("</Str>");
 			bldr.AppendLine("</Contents>");
 			bldr.AppendLine("<ParseIsCurrent val=\"False\" />");
@@ -669,7 +669,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			bldr.AppendLine("<rt class=\"StTxtPara\" guid=\"b3fe984a-ea5e-11de-9fe0-0013722f8dec\" ownerguid=\"b39a75fe-ea5e-11de-8de8-0013722f8dec\">");
 			bldr.AppendLine("<Contents>");
 			bldr.AppendLine("<Str>");
-			bldr.AppendLine("<Run ws=\"en\">ï do not occur in well-defined 'paradigms,' and</Run>");
+			bldr.AppendLine("<Run ws=\"en\">‚Ä¢ do not occur in well-defined 'paradigms,' and</Run>");
 			bldr.AppendLine("</Str>");
 			bldr.AppendLine("</Contents>");
 			bldr.AppendLine("<ParseIsCurrent val=\"False\" />");
@@ -680,7 +680,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			bldr.AppendLine("<rt class=\"StTxtPara\" guid=\"b40a83f8-ea5e-11de-8af1-0013722f8dec\" ownerguid=\"b39a75fe-ea5e-11de-8de8-0013722f8dec\">");
 			bldr.AppendLine("<Contents>");
 			bldr.AppendLine("<Str>");
-			bldr.AppendLine("<Run ws=\"en\">ï are 'optional' insofar as they</Run>");
+			bldr.AppendLine("<Run ws=\"en\">‚Ä¢ are 'optional' insofar as they</Run>");
 			bldr.AppendLine("</Str>");
 			bldr.AppendLine("</Contents>");
 			bldr.AppendLine("<ParseIsCurrent val=\"False\" />");
@@ -724,7 +724,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			bldr.AppendLine("<rt class=\"StTxtPara\" guid=\"b4356e1a-ea5e-11de-8c84-0013722f8dec\" ownerguid=\"b39a75fe-ea5e-11de-8de8-0013722f8dec\">");
 			bldr.AppendLine("<Contents>");
 			bldr.AppendLine("<Str>");
-			bldr.AppendLine("<Run ws=\"en\">ï Kindness is derived from kind.</Run>");
+			bldr.AppendLine("<Run ws=\"en\">‚Ä¢ Kindness is derived from kind.</Run>");
 			bldr.AppendLine("</Str>");
 			bldr.AppendLine("</Contents>");
 			bldr.AppendLine("<ParseIsCurrent val=\"False\" />");
@@ -735,7 +735,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			bldr.AppendLine("<rt class=\"StTxtPara\" guid=\"b44159c8-ea5e-11de-8dae-0013722f8dec\" ownerguid=\"b39a75fe-ea5e-11de-8de8-0013722f8dec\">");
 			bldr.AppendLine("<Contents>");
 			bldr.AppendLine("<Str>");
-			bldr.AppendLine("<Run ws=\"en\">ï Joyful is derived from joy.</Run>");
+			bldr.AppendLine("<Run ws=\"en\">‚Ä¢ Joyful is derived from joy.</Run>");
 			bldr.AppendLine("</Str>");
 			bldr.AppendLine("</Contents>");
 			bldr.AppendLine("<ParseIsCurrent val=\"False\" />");
@@ -746,7 +746,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			bldr.AppendLine("<rt class=\"StTxtPara\" guid=\"b44d4580-ea5e-11de-9c90-0013722f8dec\" ownerguid=\"b39a75fe-ea5e-11de-8de8-0013722f8dec\">");
 			bldr.AppendLine("<Contents>");
 			bldr.AppendLine("<Str>");
-			bldr.AppendLine("<Run ws=\"en\">ï Amazement is derived from amaze.</Run>");
+			bldr.AppendLine("<Run ws=\"en\">‚Ä¢ Amazement is derived from amaze.</Run>");
 			bldr.AppendLine("</Str>");
 			bldr.AppendLine("</Contents>");
 			bldr.AppendLine("<ParseIsCurrent val=\"False\" />");
@@ -757,7 +757,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			bldr.AppendLine("<rt class=\"StTxtPara\" guid=\"b456ced4-ea5e-11de-90ca-0013722f8dec\" ownerguid=\"b39a75fe-ea5e-11de-8de8-0013722f8dec\">");
 			bldr.AppendLine("<Contents>");
 			bldr.AppendLine("<Str>");
-			bldr.AppendLine("<Run ws=\"en\">ï Speaker is derived from speak.</Run>");
+			bldr.AppendLine("<Run ws=\"en\">‚Ä¢ Speaker is derived from speak.</Run>");
 			bldr.AppendLine("</Str>");
 			bldr.AppendLine("</Contents>");
 			bldr.AppendLine("<ParseIsCurrent val=\"False\" />");
@@ -768,7 +768,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			bldr.AppendLine("<rt class=\"StTxtPara\" guid=\"b462ba8c-ea5e-11de-8964-0013722f8dec\" ownerguid=\"b39a75fe-ea5e-11de-8de8-0013722f8dec\">");
 			bldr.AppendLine("<Contents>");
 			bldr.AppendLine("<Str>");
-			bldr.AppendLine("<Run ws=\"en\">ï National is derived from nation.</Run>");
+			bldr.AppendLine("<Run ws=\"en\">‚Ä¢ National is derived from nation.</Run>");
 			bldr.AppendLine("</Str>");
 			bldr.AppendLine("</Contents>");
 			bldr.AppendLine("<ParseIsCurrent val=\"False\" />");
@@ -810,7 +810,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			bldr.AppendLine("<rt class=\"StTxtPara\" guid=\"b49006fe-ea5e-11de-9d75-0013722f8dec\" ownerguid=\"b39a75fe-ea5e-11de-8de8-0013722f8dec\">");
 			bldr.AppendLine("<Contents>");
 			bldr.AppendLine("<Str>");
-			bldr.AppendLine("<Run ws=\"en\">ï Operations that change the grammatical category of a root</Run>");
+			bldr.AppendLine("<Run ws=\"en\">‚Ä¢ Operations that change the grammatical category of a root</Run>");
 			bldr.AppendLine("</Str>");
 			bldr.AppendLine("</Contents>");
 			bldr.AppendLine("<ParseIsCurrent val=\"False\" />");
@@ -843,7 +843,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			bldr.AppendLine("<rt class=\"StTxtPara\" guid=\"b4b167c2-ea5e-11de-8214-0013722f8dec\" ownerguid=\"b39a75fe-ea5e-11de-8de8-0013722f8dec\">");
 			bldr.AppendLine("<Contents>");
 			bldr.AppendLine("<Str>");
-			bldr.AppendLine("<Run ws=\"en\">ï Operations that change the valency (transitivity) of a root</Run>");
+			bldr.AppendLine("<Run ws=\"en\">‚Ä¢ Operations that change the valency (transitivity) of a root</Run>");
 			bldr.AppendLine("</Str>");
 			bldr.AppendLine("</Contents>");
 			bldr.AppendLine("<ParseIsCurrent val=\"False\" />");
@@ -1358,7 +1358,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			bldr.AppendLine("<rt class=\"StTxtPara\" guid=\"b659c844-ea5e-11de-9e3d-0013722f8dec\" ownerguid=\"b641f0de-ea5e-11de-9395-0013722f8dec\">");
 			bldr.AppendLine("<Contents>");
 			bldr.AppendLine("<Str>");
-			bldr.AppendLine("<Run ws=\"en\"> The item ëgive upí is a phrasal verb, as in the following:</Run>");
+			bldr.AppendLine("<Run ws=\"en\"> The item ‚Äògive up‚Äô is a phrasal verb, as in the following:</Run>");
 			bldr.AppendLine("</Str>");
 			bldr.AppendLine("</Contents>");
 			bldr.AppendLine("<ParseIsCurrent val=\"False\" />");

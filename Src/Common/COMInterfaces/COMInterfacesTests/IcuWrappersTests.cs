@@ -87,8 +87,8 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		[Test]
 		public void Normalize_NFC2NFC()
 		{
-			var normalizedString = Icu.Normalize("tést", Icu.UNormalizationMode.UNORM_NFC);
-			Assert.AreEqual("tést", normalizedString);
+			var normalizedString = Icu.Normalize("t\u00E9st", Icu.UNormalizationMode.UNORM_NFC);
+			Assert.AreEqual("t\u00E9st", normalizedString);
 			Assert.IsTrue(normalizedString.IsNormalized(NormalizationForm.FormC));
 		}
 
@@ -100,7 +100,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		[Test]
 		public void Normalize_NFC2NFD()
 		{
-			var normalizedString = Icu.Normalize("tést", Icu.UNormalizationMode.UNORM_NFD);
+			var normalizedString = Icu.Normalize("t\u00E9st", Icu.UNormalizationMode.UNORM_NFD);
 			var i=0;
 			foreach (var c in normalizedString.ToCharArray())
 				Console.WriteLine("pos {0}: {1} ({1:x})", i++, c);
@@ -118,7 +118,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		public void Normalize_NFD2NFC()
 		{
 			var normalizedString = Icu.Normalize("te\u0301st", Icu.UNormalizationMode.UNORM_NFC);
-			Assert.AreEqual("tést", normalizedString);
+			Assert.AreEqual("t\u00E9st", normalizedString);
 			Assert.IsTrue(normalizedString.IsNormalized(NormalizationForm.FormC));
 		}
 

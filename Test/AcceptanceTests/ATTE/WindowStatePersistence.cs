@@ -1,4 +1,4 @@
-// --------------------------------------------------------------------------------------------
+ï»¿// --------------------------------------------------------------------------------------------
 #region // Copyright (c) 2003, SIL International. All Rights Reserved.
 // <copyright from='2003' to='2003' company='SIL International'>
 //		Copyright (c) 2003, SIL International. All Rights Reserved.
@@ -59,7 +59,7 @@ namespace SIL.FieldWorks.AcceptanceTests.TE
 
 			// TODO TeTeam: Fix - Due to Normalization this no longer works.
 			// The Info. Bar text is all messed up now.
-			Assert.AreEqual("Draft - ÉPÎTRE À PHILÉMON", firstSection);
+			Assert.AreEqual("Draft - Ã‰PÃŽTRE Ã€ PHILÃ‰MON", firstSection);
 
 			// Go to a different section - 12 paragraphs down should bring us to verse 1
 			m_app.SendKeys("^{DOWN}");

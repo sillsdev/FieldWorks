@@ -133,7 +133,7 @@ namespace GuiTestDriver
 		private string ReformDiffgram()
 		{
 			// tear off the xml pi and xd: namespace labels
-			string sDiffs = m_sDiffs.Replace("﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>","").Replace("xd:","");
+			string sDiffs = m_sDiffs.Replace("\ufeff<?xml version=\"1.0\" encoding=\"utf-8\"?>","").Replace("xd:","");
 			// Find the end of the xmldiff start tag. Delete the whole thing. Use the tag w/protoInstruction atts.
 			int pos = sDiffs.IndexOf("xmldiff\"",0,sDiffs.Length);
 			pos = sDiffs.IndexOf(">",pos,sDiffs.Length-pos);

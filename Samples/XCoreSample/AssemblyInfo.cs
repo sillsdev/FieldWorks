@@ -28,7 +28,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SIL")]
 [assembly: AssemblyProduct("SIL FieldWorks")]
-[assembly: AssemblyCopyright("© 2003, SIL International")]
+[assembly: AssemblyCopyright("\u00A9 2003, SIL International")] // COPYRIGHT SIGN, Â©
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

@@ -1,4 +1,4 @@
-// ---------------------------------------------------------------------------------------------
+ï»¿// ---------------------------------------------------------------------------------------------
 #region // Copyright (c) 2010, SIL International. All Rights Reserved.
 // <copyright from='2010' to='2010' company='SIL International'>
 //		Copyright (c) 2010, SIL International. All Rights Reserved.
@@ -97,16 +97,16 @@ namespace SIL.FieldWorks.XWorks
 				Assert.True(wsSp > 0, "Test failed because Spanish ws is not installed.");
 				dlg.InitializeMultiString();
 				// setup up multistring controls
-				var nameTssFr = Cache.TsStrFactory.MakeString("Une description en français!", wsFr);
-				var nameTssSp = Cache.TsStrFactory.MakeString("Un descripción en español?", wsSp);
+				var nameTssFr = Cache.TsStrFactory.MakeString("Une description en franÃ§ais!", wsFr);
+				var nameTssSp = Cache.TsStrFactory.MakeString("Un descripciÃ³n en espaÃ±ol?", wsSp);
 
 				// SUT (actually tests both Set and Get)
 				dlg.SetDescriptionForWs(nameTssFr, wsFr);
 				dlg.SetDescriptionForWs(nameTssSp, wsSp);
 
-				Assert.AreEqual("Une description en français!", dlg.GetDescriptionForWs(wsFr).Text,
+				Assert.AreEqual("Une description en franÃ§ais!", dlg.GetDescriptionForWs(wsFr).Text,
 					"Setting the custom list Description in French failed.");
-				Assert.AreEqual("Un descripción en español?", dlg.GetDescriptionForWs(wsSp).Text,
+				Assert.AreEqual("Un descripciÃ³n en espaÃ±ol?", dlg.GetDescriptionForWs(wsSp).Text,
 				"Setting the custom list Description in Spanish failed.");
 			}
 		}
