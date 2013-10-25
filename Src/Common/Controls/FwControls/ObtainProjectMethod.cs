@@ -8,6 +8,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -22,12 +23,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// The repo may be a lift or full FW repo, but it can be from any source source, as long as the code can create an FW project from it.
 		/// </summary>
 		/// <returns>Null if the operation was cancelled or otherwise did not work. The full pathname of an fwdata file, if it did work.</returns>
-		public static string ObtainProjectFromAnySource(Form parent, out ObtainedProjectType obtainedProjectType)
+		public static string ObtainProjectFromAnySource(Form parent, IHelpTopicProvider helpTopicProvider,
+			out ObtainedProjectType obtainedProjectType)
 		{
 			bool dummy;
 			string fwdataFileFullPathname;
-			var success = FLExBridgeHelper.LaunchFieldworksBridge(DirectoryFinder.ProjectsDirectory, null, FLExBridgeHelper.Obtain, null, FDOBackendProvider.ModelVersion, "0.13",
-				null, out dummy, out fwdataFileFullPathname);
+			var success = FLExBridgeHelper.LaunchFieldworksBridge(DirectoryFinder.ProjectsDirectory, null, FLExBridgeHelper.Obtain, null,
+				FDOBackendProvider.ModelVersion, "0.13", null, out dummy, out fwdataFileFullPathname);
 			if (!success)
 			{
 				ReportDuplicateBridge();
@@ -43,7 +45,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (fwdataFileFullPathname.EndsWith("lift"))
 			{
-				fwdataFileFullPathname = CreateProjectFromLift(parent, fwdataFileFullPathname);
+				fwdataFileFullPathname = CreateProjectFromLift(parent, helpTopicProvider, fwdataFileFullPathname);
 				obtainedProjectType = ObtainedProjectType.Lift;
 			}
 
@@ -53,10 +55,18 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Create a new Fieldworks project and import a lift file into it. Return the .fwdata path.
 		/// </summary>
-		private static string CreateProjectFromLift(Form parent, string liftPath)
+		private static string CreateProjectFromLift(Form parent, IHelpTopicProvider helpTopicProvider, string liftPath)
 		{
 			string projectPath;
 			FdoCache cache;
+
+			// this is a horrible way to invoke this, but the current project organization does not allow us to reference
+			// the FwCoreDlgs project, nor is there any straightforward way to move the code we need into some project we can
+			// reference, or any obviously suitable project to move it to without creating other References loops.
+			// One nasty reflection call seems less technical debt than creating an otherwise unnecessary project.
+			var anthroListFile = ReflectionHelper.CallStaticMethod(@"FwCoreDlgs.dll", @"SIL.FieldWorks.FwCoreDlgs.FwCheckAnthroListDlg",
+					@"PickAnthroList", parent, null, helpTopicProvider);
+
 			// Do NOT dispose of the thread helper until we dispose of the cache...
 			// CreateProjectTask makes it the thread helper of the FdoCache that it creates and returns,
 			// and we must NOT dispose of the cache's thread helper until after we import the lexicon.
@@ -69,11 +79,12 @@ namespace SIL.FieldWorks.Common.Controls
 					progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
 					progressDlg.Title = FwControls.ksCreatingLiftProject;
 					var cacheReceiver = new FdoCache[1]; // a clumsy way of handling an out parameter, consistent with RunTask
-					projectPath = (string)progressDlg.RunTask(true, CreateProjectTask, new object[] { liftPath, helper, cacheReceiver });
+					projectPath = (string)progressDlg.RunTask(true, CreateProjectTask,
+						new object[] { liftPath, helper, anthroListFile, cacheReceiver });
 					cache = cacheReceiver[0];
 				}
 
-				// this is a horrible way to invoke this, but current project organization does not allow us to reference
+				// this is a horrible way to invoke this, but the current project organization does not allow us to reference
 				// the LexEdDll project, nor is there any straightforward way to move the code we need into some project we can
 				// reference, or any obviously suitable project to move it to without creating other References loops.
 				// One nasty reflection call seems less technical debt than creating an otherwise unnecessary project.
@@ -100,16 +111,15 @@ namespace SIL.FieldWorks.Common.Controls
 			// Get required parameters. Ideally these would just be the signature of the method, but RunTask requires object[].
 			var liftPathname = (string)parameters[0];
 			var helper = (ThreadHelper)parameters[1];
-			var cacheReceiver = (FdoCache[])parameters[2];
+			var anthroFile = (string)parameters[2];
+			var cacheReceiver = (FdoCache[])parameters[3];
 
 			IWritingSystem wsVern, wsAnalysis;
 			RetrieveDefaultWritingSystemsFromLift(liftPathname, out wsVern, out wsAnalysis);
 
 			string projectPath = FdoCache.CreateNewLangProj(progress,
 				Directory.GetParent(Path.GetDirectoryName(liftPathname)).Parent.Name, // Get the new Flex project name from the Lift pathname.
-				helper,
-				wsAnalysis,
-				wsVern);
+				helper, wsAnalysis, wsVern, null, null, null, anthroFile);
 
 			// This is a temporary cache, just to do the import, and AFAIK we have no access to the current
 			// user WS. So create it as "English". Put it in the array to return to the caller.

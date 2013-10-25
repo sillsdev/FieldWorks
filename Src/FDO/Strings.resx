@@ -974,4 +974,10 @@ If you need to make changes, tell the other users to close this project before y
   <data name="ksDuplicateGuidsMsg4" xml:space="preserve">
     <value>Email the error report to FLExErrors@sil.org&lt;</value>
   </data>
+  <data name="ksAnth" xml:space="preserve">
+    <value>Anth</value>
+  </data>
+  <data name="ksAnthropologyCategories" xml:space="preserve">
+    <value>Anthropology Categories</value>
+  </data>
 </root>

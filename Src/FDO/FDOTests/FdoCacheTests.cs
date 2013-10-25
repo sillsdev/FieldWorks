@@ -78,12 +78,10 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		public void CreateNewLangProject_DbFilesExist()
 		{
 			var preExistingDirs = new List<string>(Directory.GetDirectories(DirectoryFinder.ProjectsDirectory));
-			string[] postExistingDirs = null;
 			try
 			{
 				// Setup: Create "pre-existing" DB filenames
-				using (new DummyFileMaker(Path.Combine(
-					Path.Combine(DirectoryFinder.ProjectsDirectory, "Gumby"), DirectoryFinder.GetXmlDataFileName("Gumby"))))
+				using (new DummyFileMaker(Path.Combine(DirectoryFinder.ProjectsDirectory, "Gumby", DirectoryFinder.GetXmlDataFileName("Gumby"))))
 				{
 					using (var threadHelper = new ThreadHelper())
 						FdoCache.CreateNewLangProj(new DummyProgressDlg(), "Gumby", threadHelper);
@@ -106,19 +104,9 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		{
 			const string dbName = "!!t'st";
 			string dbDir = Path.Combine(DirectoryFinder.ProjectsDirectory, dbName);
-			var tmpDbDir = Path.Combine(Path.Combine(DirectoryFinder.ProjectsDirectory, ".."), dbName);
-			if (Directory.Exists(dbDir))
-			{
-				// it might seem strange to move the directory first before deleting it.
-				// However, this solves the problem that the Delete() returns before
-				// everything is deleted.
-				Directory.Move(dbDir, tmpDbDir);
-				Directory.Delete(tmpDbDir, true);
-			}
-			Assert.IsFalse(Directory.Exists(dbDir), "Can't delete directory of test project: " + dbDir);
+			SureRemoveDb(dbName);
 
-			var expectedDirs = new List<string>(Directory.GetDirectories(DirectoryFinder.ProjectsDirectory))
-				{ dbDir };
+			var expectedDirs = new List<string>(Directory.GetDirectories(DirectoryFinder.ProjectsDirectory)) { dbDir };
 			var writingSystemsCommonDir = Path.Combine(DirectoryFinder.ProjectsDirectory, DirectoryFinder.ksWritingSystemsDir);
 
 			List<string> currentDirs = null;
@@ -142,7 +130,61 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 			}
 		}
 
+		/// <summary>
+		/// Tests that, when a new language project is created, the Anthropology Categories list is created for that project
+		/// </summary>
+		[Test]
+		public void CreateNewLangProject_AnthropologyCategoriesExist()
+		{
+			const string dbName = "AnthropologicalTest";
+			SureRemoveDb(dbName);
+			var preExistingDirs = new List<string>(Directory.GetDirectories(DirectoryFinder.ProjectsDirectory));
+
+			try
+			{
+				// create project
+				string dbFileName;
+				using (var threadHelper = new ThreadHelper())
+					dbFileName = FdoCache.CreateNewLangProj(new DummyProgressDlg(), dbName, threadHelper);
+
+				using (var cache = FdoCache.CreateCacheFromLocalProjectFile(dbFileName, "en", new DummyProgressDlg()))
+				{
+					Assert.AreEqual(Strings.ksAnthropologyCategories, cache.LangProject.AnthroListOA.Name.UiString,
+						"Anthropology Categories list was not properly initialized.");
+					Assert.AreEqual(Strings.ksAnth, cache.LangProject.AnthroListOA.Abbreviation.UiString,
+						"Anthropology Categories list abrv was not properly initialized.");
+					Assert.AreNotEqual(0, cache.LangProject.AnthroListOA.ItemClsid,
+						"Anthropology Categories list class ID was not properly initialized.");
+					Assert.AreNotEqual(0, cache.LangProject.AnthroListOA.Depth,
+						"Anthropology Categories list depth was not properly initialized.");
+				}
+			}
+			finally
+			{
+				RemoveTestDirs(preExistingDirs, Directory.GetDirectories(DirectoryFinder.ProjectsDirectory));
+			}
+		}
+
 		#region Private helper methods
+		/// <summary>
+		/// Removes a FW DB directory, and ensures the location is promptly available for reuse
+		/// </summary>
+		/// <param name="dbName">name of the FW DB to remove</param>
+		private static void SureRemoveDb(string dbName)
+		{
+			string dbDir = Path.Combine(DirectoryFinder.ProjectsDirectory, dbName);
+			var tmpDbDir = Path.Combine(DirectoryFinder.ProjectsDirectory, "..", dbName);
+			if (Directory.Exists(dbDir))
+			{
+				// it might seem strange to move the directory first before deleting it.
+				// However, this solves the problem that the Delete() returns before
+				// everything is deleted.
+				Directory.Move(dbDir, tmpDbDir);
+				Directory.Delete(tmpDbDir, true);
+			}
+			Assert.IsFalse(Directory.Exists(dbDir), "Can't delete directory of test project: " + dbDir);
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Removes the test dirs.

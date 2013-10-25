@@ -157,10 +157,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public bool OnObtainAnyFlexBridgeProject(object commandObject)
 		{
 			ObtainedProjectType obtainedProjectType;
-			var newprojectPathname = ObtainProjectMethod.ObtainProjectFromAnySource(_parentForm, out obtainedProjectType);
+			var newprojectPathname = ObtainProjectMethod.ObtainProjectFromAnySource(_parentForm, _mediator.HelpTopicProvider,
+				out obtainedProjectType);
 			if (string.IsNullOrEmpty(newprojectPathname))
-				return true;
-			_mediator.PropertyTable.SetProperty("LastBridgeUsed", obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge", PropertyTable.SettingsGroup.LocalSettings);
+				return true; // We dealt with it.
+			_mediator.PropertyTable.SetProperty("LastBridgeUsed", obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
+				PropertyTable.SettingsGroup.LocalSettings);
 
 			FieldWorks.OpenNewProject(new ProjectId(FDOBackendProviderType.kXML, newprojectPathname, null), FwUtils.ksFlexAppName);
 

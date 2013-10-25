@@ -583,7 +583,7 @@
 	<value>16, 96</value>
   </data>
   <data name="m_txtName.MaxLength" type="System.Int32, mscorlib">
-	<value>128</value>
+	<value>64</value>
   </data>
   <data name="m_txtName.ShowHelp" type="System.Boolean, mscorlib">
 	<value>True</value>
