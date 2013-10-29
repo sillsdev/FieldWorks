@@ -1,21 +1,22 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Diagnostics;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
 using System.Linq;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Common.FwUtils;
 using XCore;
@@ -27,12 +28,12 @@ using SilEncConverters40;
 namespace SIL.FieldWorks.Common.Controls
 {
 	/// <summary>
-	/// Summary description for BulkEditBar2.
+	/// Summary description for BulkEditBar.
 	/// </summary>
 	public class BulkEditBar : UserControl, IFWDisposable
 	{
 
-		private System.Windows.Forms.Label m_operationLabel;
+		private Label m_operationLabel;
 		/// <summary>
 		///
 		/// </summary>
@@ -43,15 +44,15 @@ namespace SIL.FieldWorks.Common.Controls
 		protected FwOverrideComboBox m_currentTargetCombo;
 		/// <summary> indicates that we've either finished seting up or restoring bulk edit bar tab during initialization. </summary>
 		internal protected bool m_setupOrRestoredBulkEditBarTab = false;
-		private System.Windows.Forms.TabPage m_listChoiceTab;
-		private System.Windows.Forms.TabPage m_bulkCopyTab;
-		private System.Windows.Forms.TabPage m_clickCopyTab;
-		private System.Windows.Forms.TabPage m_transduceTab;
-		private System.Windows.Forms.TabPage m_findReplaceTab;
-		private System.Windows.Forms.Label label2;
+		private TabPage m_listChoiceTab;
+		private TabPage m_bulkCopyTab;
+		private TabPage m_clickCopyTab;
+		private TabPage m_transduceTab;
+		private TabPage m_findReplaceTab;
+		private Label label2;
 		/// <summary> </summary>
 		protected FwOverrideComboBox m_listChoiceTargetCombo;
-		private System.Windows.Forms.Label label3;
+		private Label label3;
 		/// <summary>
 		/// m_listChoiceChangeToCombo is a dummy control which allows the programmer to adjust the position etc
 		/// in the VS designer.
@@ -79,7 +80,7 @@ namespace SIL.FieldWorks.Common.Controls
 		// so we can commit changes to it when the current index changes.
 		int m_hvoSelected;
 
-		private System.Windows.Forms.ImageList m_imageList16x14;
+		private ImageList m_imageList16x14;
 		/// <summary>
 		///
 		/// </summary>
@@ -92,45 +93,48 @@ namespace SIL.FieldWorks.Common.Controls
 
 		IVwPattern m_pattern; // pattern used for Find tab, contains find pattern
 		ITsString m_tssReplace; // text to replace with.
-		private System.Windows.Forms.Label m_bulkEditIcon;	// placeholder for button below.
-		private System.Windows.Forms.Button m_bulkEditIconButton;
-		private System.Windows.Forms.Label m_bulkEditOperationLabel;
-		private System.Windows.Forms.Button m_closeButton;
-		private System.Windows.Forms.Button m_previewButton;
-		private System.Windows.Forms.Button m_ApplyButton;
-		private System.Windows.Forms.Button m_helpButton;
-		private System.Windows.Forms.Label label4;
-		private System.Windows.Forms.Label label5;
-		private System.Windows.Forms.Label label6;
-		private System.Windows.Forms.Label label7;
-		private System.Windows.Forms.Label label8;
-		private System.Windows.Forms.Label label9;
-		private System.Windows.Forms.Label label12;
-		/// <summary/>
-		protected System.Windows.Forms.TabPage m_deleteTab;
-		private System.Windows.Forms.Label label13;
+		private Label m_bulkEditIcon;	// placeholder for button below.
+		private Button m_bulkEditIconButton;
+		private Label m_bulkEditOperationLabel;
+		private Button m_closeButton;
+		private Button m_previewButton;
+		private Button m_suggestButton; // for List Choice when Semantic Domains is active
+		private Button m_ApplyButton;
+		private Button m_helpButton;
+		private Label label4;
+		private Label label5;
+		private Label label6;
+		private Label label7;
+		private Label label8;
+		private Label label9;
+		private Label label12;
+		/// <summary>
+		///
+		/// </summary>
+		protected TabPage m_deleteTab;
+		private Label label13;
 		private FwOverrideComboBox m_bulkCopySourceCombo;
 		private FwOverrideComboBox m_bulkCopyTargetCombo;
 		private FwOverrideComboBox m_clickCopyTargetCombo;
-		private System.Windows.Forms.Button m_transduceSetupButton;
+		private Button m_transduceSetupButton;
 		private FwOverrideComboBox m_transduceSourceCombo;
 		private FwOverrideComboBox m_transduceTargetCombo;
 		private FwOverrideComboBox m_transduceProcessorCombo;
-		private System.Windows.Forms.Label m_findReplaceSummaryLabel;
-		private System.Windows.Forms.Button m_findReplaceSetupButton;
+		private Label m_findReplaceSummaryLabel;
+		private Button m_findReplaceSetupButton;
 		private FwOverrideComboBox m_findReplaceTargetCombo;
 		private FwOverrideComboBox m_deleteWhatCombo;
-		private System.Windows.Forms.GroupBox groupBox1;
-		private System.Windows.Forms.RadioButton m_clickCopyWordButton;
-		private System.Windows.Forms.RadioButton m_clickCopyReorderButton;
-		private System.Windows.Forms.GroupBox groupBox2;
-		private System.Windows.Forms.RadioButton m_clickCopyAppendButton;
-		private System.Windows.Forms.RadioButton m_clickCopyOverwriteButton;
-		private SIL.FieldWorks.Common.Widgets.FwTextBox m_clickCopySepBox; // index into m_beItems of current item, or -1 if none is active.
+		private GroupBox groupBox1;
+		private RadioButton m_clickCopyWordButton;
+		private RadioButton m_clickCopyReorderButton;
+		private GroupBox groupBox2;
+		private RadioButton m_clickCopyAppendButton;
+		private RadioButton m_clickCopyOverwriteButton;
+		private FwTextBox m_clickCopySepBox; // index into m_beItems of current item, or -1 if none is active.
 		private NonEmptyTargetControl m_bcNonEmptyTargetControl;
 		private NonEmptyTargetControl m_trdNonEmptyTargetControl;
 
-		private bool previewOn = false;
+		private bool m_previewOn = false;
 
 		string m_originalApplyText = XMLViewsStrings.ksApply;
 
@@ -337,7 +341,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		protected override void Dispose( bool disposing )
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
@@ -732,6 +736,9 @@ namespace SIL.FieldWorks.Common.Controls
 				case "complexListMultiple":
 					besc = new ComplexListChooserBEditControl(m_cache, m_mediator, colSpec);
 					break;
+				case "semanticDomainListMultiple":
+					besc = new SemanticDomainChooserBEditControl(m_cache, m_mediator, colSpec);
+					break;
 				case "variantEntryTypes":
 					besc = new VariantEntryTypesChooserBEditControl(m_cache, m_mediator, colSpec);
 					break;
@@ -773,9 +780,6 @@ namespace SIL.FieldWorks.Common.Controls
 			return false;
 		}
 
-
-
-
 		/// <summary>
 		/// The selected item may have changed in the "Change To" comboBox under
 		/// the List Choice tab therefore
@@ -790,13 +794,11 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				m_ApplyButton.Enabled = true;
 				m_previewButton.Enabled = true;
-				return;
 			}
 			else
 			{
 				m_ApplyButton.Enabled = false;
 				m_previewButton.Enabled = false;
-				return;
 			}
 		}
 
@@ -1477,6 +1479,54 @@ namespace SIL.FieldWorks.Common.Controls
 				ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, helpTopic);
 		}
 
+		/// <summary>
+		/// Handles searching for Semantic Domain suggestions to put in the Preview
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		protected void m_suggestButton_Click(object sender, EventArgs e)
+		{
+			HandlePreviewOrSuggestTask(DoSuggestTask);
+		}
+
+		private void DoSuggestTask(ProgressState state, int newCol, int oldCol)
+		{
+			if (PreviewOn)
+			{
+				// Clear the preview
+				ClearPreviewState();
+			}
+			PreviewOn = true;
+			if (m_operationsTabControl.SelectedTab == m_listChoiceTab)
+			{
+				if (m_itemIndex >= 0)
+				{
+					MakeSuggestions(state);
+					newCol = m_itemIndex + 1;
+				}
+			}
+			else
+			{
+				MessageBox.Show(this, XMLViewsStrings.ksSorryNoPreview, XMLViewsStrings.ksUnimplFeature);
+				PreviewOn = false; // Didn't actually happen
+			}
+
+			if (oldCol != newCol)
+			{
+				// Use the BrowseViewer special 'decorator' SDA.
+				m_bv.SpecialCache.SetInt(m_bv.RootObjectHvo, XMLViewsDataCache.ktagActiveColumn, newCol);
+			}
+		}
+
+		private void MakeSuggestions(ProgressState state)
+		{
+			BulkEditItem bei = m_beItems[m_itemIndex];
+			bei.BulkEditControl.MakeSuggestions(ItemsToChange(false), XMLViewsDataCache.ktagAlternateValue,
+										 XMLViewsDataCache.ktagItemEnabled, state);
+		}
+
+		private const int SUGGEST_BTN_YOFFSET = 30;
+
 		private void m_listChoiceTargetCombo_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			TargetFieldItem tfm = m_listChoiceTargetCombo.SelectedItem as TargetFieldItem;
@@ -1503,11 +1553,31 @@ namespace SIL.FieldWorks.Common.Controls
 			m_listChoiceControl.Name = "m_listChoiceControl";
 			m_itemIndex = index;
 			m_listChoiceTab.Controls.Add(m_listChoiceControl);
+
+			// If the new control has a Suggest button, add it.
+			// If not, it was already removed in RemoveOldChoiceControl() above.
+			CheckForAndSetupSuggestButton(bei);
+
 			m_listChoiceTab.ResumeLayout(false);
 			m_listChoiceTab.PerformLayout();
 
 			EnablePreviewApplyForListChoice();
 			OnTargetComboItemChanged(tfm);
+		}
+
+		private void CheckForAndSetupSuggestButton(BulkEditItem bei)
+		{
+			var button = bei.BulkEditControl.SuggestButton;
+			if (button != null)
+			{
+				m_suggestButton = button;
+				m_listChoiceTab.Controls.Add(m_suggestButton);
+				m_suggestButton.Location = new Point(m_listChoiceControl.Location.X,
+					m_listChoiceControl.Location.Y + SUGGEST_BTN_YOFFSET);
+				m_suggestButton.Size = m_listChoiceControl.Size;
+				m_suggestButton.Click += new EventHandler(m_suggestButton_Click);
+				m_suggestButton.Visible = true;
+			}
 		}
 
 		/// <summary>
@@ -1520,16 +1590,22 @@ namespace SIL.FieldWorks.Common.Controls
 				m_listChoiceTab.Controls.Remove(m_listChoiceControl);
 				m_listChoiceControl.Name = ""; // no longer the current listChoiceControl
 				m_listChoiceControl = null;
+				if (m_suggestButton != null)
+				{
+					m_suggestButton.Click -= m_suggestButton_Click;
+					m_listChoiceTab.Controls.Remove(m_suggestButton);
+					m_suggestButton = null;
+				}
 			}
 		}
 
 		private bool PreviewOn
 		{
-			get { return previewOn; }
+			get { return m_previewOn; }
 			set
 			{
-				previewOn = value;
-				switch (previewOn)
+				m_previewOn = value;
+				switch (m_previewOn)
 				{
 					case true:
 						m_previewButton.Text = XMLViewsStrings.ksClear;
@@ -1542,11 +1618,16 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
-		///
+		/// Handles a click on the Preview button
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		protected void m_previewButton_Click(object sender, EventArgs e)
+		{
+			HandlePreviewOrSuggestTask(DoPreviewTask);
+		}
+
+		private void HandlePreviewOrSuggestTask(Action<ProgressState, int, int> previewOrSuggestTask)
 		{
 			int oldCol = m_bv.SpecialCache.get_IntProp(m_bv.RootObjectHvo, XMLViewsDataCache.ktagActiveColumn);
 			int newCol = oldCol;
@@ -1558,89 +1639,89 @@ namespace SIL.FieldWorks.Common.Controls
 				// 'using' with the ProgressState fixes LT-4186, since it forces the manual Dispose call,
 				// which, in turn, clears the progress panel.
 				using (ProgressState state = CreateSimpleProgressState(m_mediator))
-				using (new SIL.Utils.WaitCursor(this))
+				using (new WaitCursor(this))
 				{
-					if (previewOn)
-					{
-						// Clear the preview
-						// No fake data caching.
-						//m_bv.Cache.VwCacheDaAccessor.CacheIntProp(m_bv.RootObjectHvo, XmlBrowseViewVc.ktagActiveColumn, 0);
-						// Use the BrowseViewer Decorator SDA instead.
-						ClearPreviewState();
-					}
-					else
-					{
-						PreviewOn = true;
-						if (m_operationsTabControl.SelectedTab == m_listChoiceTab)
-						{
-							if (m_itemIndex >= 0)
-							{
-								ShowPreviewItems(state);
-								newCol = m_itemIndex + 1;
-							}
-						}
-						else if (m_operationsTabControl.SelectedTab == m_findReplaceTab)
-						{
-							ReplaceWithMethod method = MakeReplaceWithMethod(out newCol);
-							if (method == null)
-								return;
-							method.FakeDoit(ItemsToChange(false), XMLViewsDataCache.ktagAlternateValue,
-											XMLViewsDataCache.ktagItemEnabled, state);
-						}
-						else if (m_operationsTabControl.SelectedTab == m_bulkCopyTab)
-						{
-							BulkCopyMethod method = MakeBulkCopyMethod(out newCol);
-							if (method == null)
-								return;
-							method.FakeDoit(ItemsToChange(false), XMLViewsDataCache.ktagAlternateValue,
-											XMLViewsDataCache.ktagItemEnabled, state);
-						}
-						else if (m_operationsTabControl.SelectedTab == m_transduceTab)
-						{
-							TransduceMethod method = MakeTransduceMethod(out newCol);
-							if (method == null)
-								return;
-							method.FakeDoit(ItemsToChange(false), XMLViewsDataCache.ktagAlternateValue,
-											XMLViewsDataCache.ktagItemEnabled, state);
-						}
-						else if (m_operationsTabControl.SelectedTab == m_deleteTab && !DeleteRowsItemSelected)
-						{
-							// clear a field
-							if (m_deleteWhatCombo.SelectedItem is TargetFieldItem)
-							{
-								TargetFieldItem item = m_deleteWhatCombo.SelectedItem as TargetFieldItem;
-								int index = item.ColumnIndex;
-								BulkEditItem bei = m_beItems[index];
-								bei.BulkEditControl.SetClearField();
-								bei.BulkEditControl.FakeDoit(ItemsToChange(false), XMLViewsDataCache.ktagAlternateValue,
-															 XMLViewsDataCache.ktagItemEnabled, state);
-								newCol = index + 1;
-							}
-							else if (m_deleteWhatCombo.SelectedItem is FieldComboItem)
-							{
-								ClearMethod method = MakeClearMethod(out newCol);
-								if (method == null)
-									return;
-								method.FakeDoit(ItemsToChange(false), XMLViewsDataCache.ktagAlternateValue,
-												XMLViewsDataCache.ktagItemEnabled, state);
-							}
-						}
-						else
-						{
-							MessageBox.Show(this, XMLViewsStrings.ksSorryNoPreview, XMLViewsStrings.ksUnimplFeature);
-							PreviewOn = false; // Didn't actually happen
-						}
-
-						if (oldCol != newCol)
-						{
-							// Don't store in the real cache (it has no IVwCacheDa interface anyway).
-							// (sda as IVwCacheDa).CacheIntProp(m_bv.RootObjectHvo, XmlBrowseViewVc.ktagActiveColumn, newCol);
-							// Use the BrowseViewer special 'decorator' SDA.
-							m_bv.SpecialCache.SetInt(m_bv.RootObjectHvo, XMLViewsDataCache.ktagActiveColumn, newCol);
-						}
-					}
+					previewOrSuggestTask(state, newCol, oldCol);
 				}
 			} // End using(ReconstructPreservingBVScrollPosition) [Does RootBox.Reconstruct() here.]
+		}
+
+		private void DoPreviewTask(ProgressState state, int newCol, int oldCol)
+		{
+			if (PreviewOn)
+			{
+				// Clear the preview
+				ClearPreviewState();
+			}
+			else
+			{
+				PreviewOn = true;
+				if (m_operationsTabControl.SelectedTab == m_listChoiceTab)
+				{
+					if (m_itemIndex >= 0)
+					{
+						ShowPreviewItems(state);
+						newCol = m_itemIndex + 1;
+					}
+				}
+				else if (m_operationsTabControl.SelectedTab == m_findReplaceTab)
+				{
+					ReplaceWithMethod method = MakeReplaceWithMethod(out newCol);
+					if (method == null)
+						return;
+					method.FakeDoit(ItemsToChange(false), XMLViewsDataCache.ktagAlternateValue,
+						XMLViewsDataCache.ktagItemEnabled, state);
+				}
+				else if (m_operationsTabControl.SelectedTab == m_bulkCopyTab)
+				{
+					BulkCopyMethod method = MakeBulkCopyMethod(out newCol);
+					if (method == null)
+						return;
+					method.FakeDoit(ItemsToChange(false), XMLViewsDataCache.ktagAlternateValue,
+						XMLViewsDataCache.ktagItemEnabled, state);
+				}
+				else if (m_operationsTabControl.SelectedTab == m_transduceTab)
+				{
+					TransduceMethod method = MakeTransduceMethod(out newCol);
+					if (method == null)
+						return;
+					method.FakeDoit(ItemsToChange(false), XMLViewsDataCache.ktagAlternateValue,
+						XMLViewsDataCache.ktagItemEnabled, state);
+				}
+				else if (m_operationsTabControl.SelectedTab == m_deleteTab && !DeleteRowsItemSelected)
+				{
+					// clear a field
+					if (m_deleteWhatCombo.SelectedItem is TargetFieldItem)
+					{
+						TargetFieldItem item = m_deleteWhatCombo.SelectedItem as TargetFieldItem;
+						int index = item.ColumnIndex;
+						BulkEditItem bei = m_beItems[index];
+						bei.BulkEditControl.SetClearField();
+						bei.BulkEditControl.FakeDoit(ItemsToChange(false), XMLViewsDataCache.ktagAlternateValue,
+							XMLViewsDataCache.ktagItemEnabled, state);
+						newCol = index + 1;
+					}
+					else if (m_deleteWhatCombo.SelectedItem is FieldComboItem)
+					{
+						ClearMethod method = MakeClearMethod(out newCol);
+						if (method == null)
+							return;
+						method.FakeDoit(ItemsToChange(false), XMLViewsDataCache.ktagAlternateValue,
+							XMLViewsDataCache.ktagItemEnabled, state);
+					}
+				}
+				else
+				{
+					MessageBox.Show(this, XMLViewsStrings.ksSorryNoPreview, XMLViewsStrings.ksUnimplFeature);
+					PreviewOn = false; // Didn't actually happen
+				}
+
+				if (oldCol != newCol)
+				{
+					// Use the BrowseViewer special 'decorator' SDA.
+					m_bv.SpecialCache.SetInt(m_bv.RootObjectHvo, XMLViewsDataCache.ktagActiveColumn, newCol);
+				}
+			}
 		}
 
 		/// <summary>
@@ -4365,8 +4446,22 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		List<int> FieldPath { get; }
 
+		/// <summary>
+		/// Returns the Suggest button if our target is Semantic Domains, otherwise null.
+		/// </summary>
+		Button SuggestButton { get; }
+
 		/// <summary></summary>
 		event FwSelectionChangedEventHandler ValueChanged;
+
+		/// <summary>
+		/// Tells SemanticDomainChooserBEditControl to make suggestions and then call FakeDoIt
+		/// </summary>
+		/// <param name="itemsToChange">The items to change.</param>
+		/// <param name="tagFakeFlid">The tag fake flid.</param>
+		/// <param name="tagEnabled">The tag enabled.</param>
+		/// <param name="state">The state.</param>
+		void MakeSuggestions(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state);
 	}
 
 	/// <summary>
@@ -5572,6 +5667,8 @@ namespace SIL.FieldWorks.Common.Controls
 			set {  }
 		}
 
+		public Button SuggestButton { get { return null; } }
+
 		public virtual void DoIt(IEnumerable<int> itemsToChange, ProgressState state)
 		{
 			throw new Exception("The method or operation is not implemented.");
@@ -5601,6 +5698,14 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			if (ValueChanged != null)
 				ValueChanged(sender, args);
+		}
+
+		/// <summary>
+		/// Used by SemanticDomainChooserBEditControl to make suggestions and then call FakeDoIt
+		/// </summary>
+		public void MakeSuggestions(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state)
+		{
+			throw new Exception("The method or operation is not implemented.");
 		}
 
 		#endregion
@@ -5655,6 +5760,11 @@ namespace SIL.FieldWorks.Common.Controls
 		protected int m_flidAtomicProp;
 		internal IVwStylesheet m_stylesheet;
 		GhostParentHelper m_ghostParentHelper;
+
+		public Button SuggestButton
+		{
+			get { return null; }
+		}
 
 		public event FwSelectionChangedEventHandler ValueChanged;
 
@@ -5845,6 +5955,14 @@ namespace SIL.FieldWorks.Common.Controls
 			return sda.get_ObjectProp(hvoItem, m_flidAtomicProp);
 		}
 
+		/// <summary>
+		/// Used by SemanticDomainChooserBEditControl to make suggestions and then call FakeDoIt
+		/// </summary>
+		public void MakeSuggestions(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state)
+		{
+			throw new Exception("The method or operation is not implemented.");
+		}
+
 		#endregion
 
 		protected virtual void FillComboBox()
@@ -5948,7 +6066,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// This type of editor can always select null.
 		/// </summary>
-		public bool  CanClearField
+		public bool CanClearField
 		{
 			get { return true; }
 		}
@@ -6034,6 +6152,11 @@ namespace SIL.FieldWorks.Common.Controls
 		bool m_fRemove = false; // true to remove selected items rather than append or replace
 		private GhostParentHelper m_ghostParentHelper;
 
+		public virtual Button SuggestButton
+		{
+			get { return null; } // SemanticDomainChooserBEditControl overrides this
+		}
+
 		public event FwSelectionChangedEventHandler ValueChanged;
 
 		public ComplexListChooserBEditControl(FdoCache cache, Mediator mediator,  XmlNode colSpec)
@@ -6073,16 +6196,13 @@ namespace SIL.FieldWorks.Common.Controls
 			if (m_hvoList == (int)SpecialHVOValues.kHvoUninitializedObject)
 				return; // Can't show a chooser for a non-existent list!
 			// Show a wait cursor (LT-4673)
-			using (new SIL.Utils.WaitCursor(this.Control))
+			using (new WaitCursor(this.Control))
 			{
 				var list = m_cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>().GetObject(m_hvoList);
-				List<int> candidates = new List<int>(list.PossibilitiesOS.ToHvoArray());
-				XCore.PersistenceProvider persistProvider =
-					new PersistenceProvider(m_mediator.PropertyTable);
-				var labels = ObjectLabel.CreateObjectLabels(m_cache, list.PossibilitiesOS.Cast<ICmObject>(),
+				var persistProvider = new PersistenceProvider(m_mediator.PropertyTable);
+				var labels = ObjectLabel.CreateObjectLabels(m_cache, list.PossibilitiesOS,
 					m_displayNameProperty, m_displayWs);
-				//m_cache.MetaDataCacheAccessor.GetFieldName((int)m_flid, out fieldName);
-				using (ReallySimpleListChooser chooser = new ReallySimpleListChooser(persistProvider,
+				using (var chooser = new ReallySimpleListChooser(persistProvider,
 					labels, m_fieldName, m_cache, m_chosenObjs, m_mediator.HelpTopicProvider))
 				{
 					chooser.Atomic = Atomic;
@@ -6093,8 +6213,8 @@ namespace SIL.FieldWorks.Common.Controls
 						chooser.SetHelpTopic("khtpBulkEditCustomField");
 					else
 						chooser.SetHelpTopic("khtpBulkEdit" + m_fieldName.Replace(" ", ""));
-					System.Windows.Forms.DialogResult res = chooser.ShowDialog((sender as Control).TopLevelControl);
-					if (System.Windows.Forms.DialogResult.Cancel == res)
+					var res = chooser.ShowDialog((sender as Control).TopLevelControl);
+					if (DialogResult.Cancel == res)
 						return;
 					m_chosenObjs = chooser.ChosenObjects.ToList();
 					m_fReplace = chooser.ReplaceMode;
@@ -6111,6 +6231,19 @@ namespace SIL.FieldWorks.Common.Controls
 						ValueChanged(sender, new FwObjectSelectionEventArgs(hvo));
 					}
 				}
+			}
+		}
+
+		protected void EnableButtonsIfChangesWaiting()
+		{
+			Debug.Assert(SuggestButton != null, "Only used for Semantic Domain subclass");
+
+			// Tell the parent control that we may have changed the selected item so it can
+			// enable or disable the Apply and Preview buttons based on the selection.
+			if (ValueChanged != null)
+			{
+				var hvo = -1; // not really a hvo, but we want to trigger this
+				ValueChanged(this, new FwObjectSelectionEventArgs(hvo));
 			}
 		}
 
@@ -6264,13 +6397,21 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
+		/// Tells SemanticDomainChooserBEditControl to make suggestions and then call FakeDoIt
+		/// </summary>
+		public virtual void MakeSuggestions(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
 		/// subclasses may override to determine if this hvoItem should be excluded.
 		/// Basically a kludge to avoid the hassle of trying to figure a way to generate
-		/// separate lists for variants/complex entry types since the target the same ListItemsClass (LexEntryRef).
+		/// separate lists for variants/complex entry types since they target the same ListItemsClass (LexEntryRef).
 		/// Currently EntriesOrChildClassesRecordList can only determine which virtual property
 		/// to load based upon the target ListItemsClass (not a flid). And since we typically don't
 		/// want the user to change variant types for complex entry refs (or vice-versa),
-		/// we need someway to filter out items in the list based upon the selected column.
+		/// we need some way to filter out items in the list based upon the selected column.
 		/// </summary>
 		/// <param name="hvoItem"></param>
 		/// <returns></returns>
@@ -6281,7 +6422,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return false;
 		}
 
-		List<ICmObject> GetOldVals(int hvoReal)
+		protected List<ICmObject> GetOldVals(int hvoReal)
 		{
 			if (hvoReal == 0)
 				return new List<ICmObject>();
@@ -6297,38 +6438,28 @@ namespace SIL.FieldWorks.Common.Controls
 					   select m_cache.ServiceLocator.GetObject(hvo)).ToList();
 		}
 
-		private int GetRealHvo(int hvoItem)
+		protected int GetRealHvo(int hvoItem)
 		{
 			if (m_ghostParentHelper != null)
 				return m_ghostParentHelper.GetOwnerOfTargetProperty(hvoItem);
 			return hvoItem;
 		}
 
-		private void ComputeValue(List<ICmObject> chosenObjs, int hvoItem, out List<ICmObject> oldVals, out List<ICmObject> newVal)
+		protected virtual void ComputeValue(List<ICmObject> chosenObjs, int hvoItem, out List<ICmObject> oldVals, out List<ICmObject> newVal)
 		{
+			int hvoReal;
 			// Check whether we can actually compute values for this item.  If not,
 			// just return a pair of empty lists.  (See LT-11016 and LT-11357.)
-			var hvoReal = GetRealHvo(hvoItem);
-			if (hvoReal != 0)
+			if (!CanActuallyComputeValuesFor(hvoItem, out hvoReal))
 			{
-				var clidItem = m_cache.ServiceLocator.ObjectRepository.GetClsid(hvoReal);
-				var clidField = m_cache.MetaDataCacheAccessor.GetOwnClsId(m_flid);
-				if (clidItem != clidField)
-				{
-					var baseClid = m_cache.MetaDataCacheAccessor.GetBaseClsId(clidItem);
-					while (baseClid != clidField && baseClid != 0)
-						baseClid = m_cache.MetaDataCacheAccessor.GetBaseClsId(baseClid);
-					if (baseClid != clidField)
-					{
-						oldVals = new List<ICmObject>();
-						newVal = oldVals;
-						return;
-					}
-				}
+				oldVals = new List<ICmObject>();
+				newVal = oldVals;
+				return;
 			}
-			oldVals = GetOldVals(hvoReal);
 
+			oldVals = GetOldVals(hvoReal);
 			newVal = chosenObjs;
+
 			if (m_fRemove)
 			{
 				newVal = oldVals; // by default no change in remove mode.
@@ -6361,14 +6492,30 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		private ITsString BuildValueString(List<ICmObject> chosenObjs)
+		protected bool CanActuallyComputeValuesFor(int hvoItem, out int hvoReal)
+		{
+			hvoReal = GetRealHvo(hvoItem);
+			if (hvoReal == 0)
+				return true;
+			var clidItem = m_cache.ServiceLocator.ObjectRepository.GetClsid(hvoReal);
+			var clidField = m_cache.MetaDataCacheAccessor.GetOwnClsId(m_flid);
+			if (clidItem == clidField)
+				return true;
+			var baseClid = m_cache.MetaDataCacheAccessor.GetBaseClsId(clidItem);
+			while (baseClid != clidField && baseClid != 0)
+				baseClid = m_cache.MetaDataCacheAccessor.GetBaseClsId(baseClid);
+
+			return baseClid == clidField;
+		}
+
+		private ITsString BuildValueString(IEnumerable<ICmObject> chosenObjs)
 		{
 			ITsStrBldr bldr = TsStrBldrClass.Create();
 			ITsString sep = null; // also acts as first-time flag.
-			foreach (ICmObject obj in chosenObjs)
+			foreach (var obj in chosenObjs)
 			{
 				PropertyInfo pi = obj.GetType().GetProperty(m_displayNameProperty);
-				ITsString tss = (ITsString)pi.GetValue(obj, null);
+				var tss = (ITsString)pi.GetValue(obj, null);
 				if (sep == null)
 				{
 					// first time create it
@@ -6382,7 +6529,7 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 				bldr.ReplaceTsString(bldr.Length, bldr.Length, tss);
 			}
-			ITsString tssVal = bldr.Length > 0 ? bldr.GetString() :
+			var tssVal = bldr.Length > 0 ? bldr.GetString() :
 				TsStringUtils.MakeTss("", m_cache.ServiceLocator.WritingSystemManager.UserWs);
 			return tssVal;
 		}
@@ -6413,6 +6560,140 @@ namespace SIL.FieldWorks.Common.Controls
 
 	}
 
+	class SemanticDomainChooserBEditControl : ComplexListChooserBEditControl, IFWDisposable
+	{
+		private Button m_suggestButton;
+		private bool m_doingSuggest; // as opposed to 'regular' Preview
+		private ICmSemanticDomainRepository m_semDomRepo;
+
+		public SemanticDomainChooserBEditControl(FdoCache cache, Mediator mediator, XmlNode colSpec) : base(cache, mediator, colSpec)
+		{
+			m_suggestButton = new Button();
+			m_suggestButton.Text = XMLViewsStrings.ksSuggestButtonText;
+			m_suggestButton.Image = ResourceHelper.SuggestLightbulb;
+			m_suggestButton.ImageAlign = ContentAlignment.MiddleRight;
+			var tip = new ToolTip();
+			tip.SetToolTip(m_suggestButton, XMLViewsStrings.ksSuggestButtonToolTip);
+			m_doingSuggest = false;
+			m_semDomRepo = cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
+		}
+
+		public override Button SuggestButton
+		{
+			get
+			{
+				CheckDisposed();
+				return m_suggestButton;
+			}
+		}
+
+		protected override void ComputeValue(List<ICmObject> chosenObjs, int hvoItem, out List<ICmObject> oldVals, out List<ICmObject> newVal)
+		{
+			if (!m_doingSuggest)
+			{
+				base.ComputeValue(chosenObjs, hvoItem, out oldVals, out newVal);
+				return;
+			}
+
+			// Not sure if we really need this section
+			int hvoReal;
+			// Check whether we can actually compute values for this item.  If not,
+			// just return a pair of empty lists.  (See LT-11016 and LT-11357.)
+			if (!CanActuallyComputeValuesFor(hvoItem, out hvoReal))
+			{
+				oldVals = new List<ICmObject>();
+				newVal = oldVals;
+				return;
+			}
+			// end of debatable section
+
+			oldVals = GetOldVals(hvoReal);
+			// resist the temptation to do "newVal = oldVals"
+			// if we change newVal we don't want oldVals to change
+			newVal = new List<ICmObject>();
+			newVal.AddRange(oldVals);
+
+			var curObject = m_cache.ServiceLocator.GetObject(hvoReal) as ILexSense;
+			if (curObject == null)
+				return;
+
+			var matches = m_semDomRepo.FindDomainsThatMatchWordsIn(curObject);
+
+			foreach (var domain in matches)
+			{
+				if (!newVal.Contains(domain))
+					newVal.Add(domain);
+			}
+		}
+
+		/// <summary>
+		/// Tells SemanticDomainChooserBEditControl to make suggestions and then call FakeDoIt
+		/// </summary>
+		public override void MakeSuggestions(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state)
+		{
+			m_doingSuggest = true;
+			base.FakeDoit(itemsToChange, tagFakeFlid, tagEnabled, state);
+			if (SomeChangesAreWaiting(itemsToChange, tagEnabled))
+				EnableButtonsIfChangesWaiting();
+		}
+
+		private bool SomeChangesAreWaiting(IEnumerable<int> itemsToChange, int tagEnabled)
+		{
+			return itemsToChange.Any() && itemsToChange.Any(hvo => DataAccess.get_IntProp(hvo, tagEnabled) == 1);
+		}
+
+		public override void FakeDoit(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state)
+		{
+			m_doingSuggest = false;
+			base.FakeDoit(itemsToChange, tagFakeFlid, tagEnabled, state);
+		}
+
+		#region IFWDisposable Implementation
+
+		/// <summary>
+		/// Check to see if the object has been disposed.
+		/// All public Properties and Methods should call this
+		/// before doing anything else.
+		/// </summary>
+		public void CheckDisposed()
+		{
+			if (IsDisposed)
+				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+		}
+
+		public bool IsDisposed { get; private set; }
+
+		/// <summary>
+		/// Clean up any resources being used.
+		/// </summary>
+		protected virtual void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			// Must not be run more than once.
+			if (IsDisposed)
+				return;
+
+			if (disposing)
+			{
+				m_suggestButton.Dispose();
+				IsDisposed = true;
+			}
+			m_suggestButton = null;
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		~SemanticDomainChooserBEditControl()
+		{
+			Dispose(false);
+		}
+
+		#endregion
+	}
 
 	class VariantEntryTypesChooserBEditControl : ComplexListChooserBEditControl
 	{

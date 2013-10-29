@@ -327,6 +327,11 @@ namespace SIL.FieldWorks.FdoUi
 
 		#region IBulkEditSpecControl implementation
 
+		/// <summary>
+		/// Returns the Suggest button if our target is Semantic Domains, otherwise null.
+		/// </summary>
+		public Button SuggestButton { get { return null; } }
+
 		public abstract void DoIt(IEnumerable<int> itemsToChange, ProgressState state);
 
 		public void FakeDoit(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnable, ProgressState state)
@@ -350,6 +355,14 @@ namespace SIL.FieldWorks.FdoUi
 					m_sda.SetString(hvo, tagFakeFlid, tss);
 				m_sda.SetInt(hvo, tagEnable, (fEnable ? 1 : 0));
 			}
+		}
+
+		/// <summary>
+		/// Used by SemanticDomainChooserBEditControl to make suggestions and then call FakeDoIt
+		/// </summary>
+		public void MakeSuggestions(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state)
+		{
+			throw new Exception("The method or operation is not implemented.");
 		}
 
 		/// <summary>

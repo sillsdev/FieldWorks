@@ -280,6 +280,11 @@ namespace SIL.FieldWorks.FdoUi
 		}
 
 		/// <summary>
+		/// Returns the Suggest button if our target is Semantic Domains, otherwise null.
+		/// </summary>
+		public Button SuggestButton { get { return null; } }
+
+		/// <summary>
 		/// Execute the change requested by the current selection in the combo.
 		/// Basically we want the MoInflClass indicated by m_selectedHvo, (even if 0?? not yet possible),
 		/// to become the InflectionClass of each record that is appropriate to change.
@@ -449,6 +454,14 @@ namespace SIL.FieldWorks.FdoUi
 					m_sda.SetString(hvo, tagFakeFlid, tss);
 				m_sda.SetInt(hvo, tagEnable, (fEnable ? 1 : 0));
 			}
+		}
+
+		/// <summary>
+		/// Used by SemanticDomainChooserBEditControl to make suggestions and then call FakeDoIt
+		/// </summary>
+		public void MakeSuggestions(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state)
+		{
+			throw new Exception("The method or operation is not implemented.");
 		}
 
 		/// <summary>

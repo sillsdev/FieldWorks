@@ -118,22 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="button1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29m
-        dHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAABAdEVYdENvcHlyaWdodABDb3B5cmlnaHQgqSAyMDA1
-        IGFuZCBmb2xsb3dpbmcgeWVhcnMgRGV2Q29tcG9uZW50cyBMTEMyIOTwAAAB9ElEQVQ4T42SX0hTURyA
-        lw8ZBisxHMyHBT2EkpoSIfRwqUD0STMKfYhLpeBCCfbSjMkeLMKgLB9qm1uzP1RQogt19FAaEoHZS4RQ
-        GbqyBlLcHvoju7vn64zaWMG1e+DHOYdzvu+c3/kdG2DLhu1PW21w+lP+Zk0P+EiHTqOfbdBSh4v92fW/
-        mH8FKfeOqFi4AvqyjASkFmUsIF57SZ9yRDMSU8FqjV01Zo/A9xH4+Qh+xOHbGHy5CVo/4lklevN61VSQ
-        Olk+xedOeHEIvl6Q0Dl4eRRmWyB5EN7XYvQVT5kK9Iu1sCJv8Hgn3CiRfQ0MroPncr68BxJViMgWyee9
-        W/5E76/QSB6Ad40SlKned8B1O7zZDR92wdJ2jNBmzTwFtTTKx/3wqR5iTnlyFYQLf8OJClh0YfQURs0F
-        e4uq09e2SaAOXlXK04vg9kYJl0t4K+LuJsSxguo1y6g3blCNcJkmMmncKYWHJYh5B+KWXRPHC9Q1y5j9
-        KG9bnE33LrUzHahn5modscv7WGova7L0kTKbWls7lfHxaZLJFebm5gkGR+jq6lMsC9raTigTE09yglBo
-        FI/nvHWBqnqUycmZnCAcjuH1DloXdHT0KPH405wgEnmAzxewLnC7/a7u7jMDw8NjDA2NZuCB3t6g679v
-        kF9fq+NfyEWD0jWh82UAAAAASUVORK5CYII=
-</value>
-  </data>
   <data name="btnCancelSearch.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAAK/INwWK6QAAAAlwSFlzAAAO
@@ -149,6 +133,6 @@
         Kw8NbXT0JLlwO0GVdpEGXYwOi3gUtkHrALLmXXXlxPsrWHBWE7XV4H10iuG+p9tgtXmJPMBXYf74fM5c
         cp1lUr+HV6d38UzXIJt5tnAewHrlxAZzq8zm6wB6b53Ld24TnffckLfz37H+GUHIR3fjPkzHdmO/1yxr
         7H8XL/gzkptEAVASUBJQElASUBJQEvgFd8uLfMW2VTkAAAAASUVORK5CYII=
-</value>
+    </value>
   </data>
 </root>

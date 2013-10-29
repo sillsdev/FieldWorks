@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Xml;
@@ -216,6 +214,14 @@ namespace SIL.FieldWorks.FdoUi
 				if (m_cache != null && m_tree != null)
 					m_tree.WritingSystemFactory = m_cache.WritingSystemFactory;
 			}
+		}
+
+		/// <summary>
+		/// Semantic Domain Chooser BEdit Control overrides to return its Button
+		/// </summary>
+		public Button SuggestButton
+		{
+			get { return null; }
 		}
 
 		/// <summary>
@@ -491,6 +497,14 @@ namespace SIL.FieldWorks.FdoUi
 					m_sda.SetString(hvo, tagFakeFlid, tss);
 				m_sda.SetInt(hvo, tagEnable, (fEnable ? 1 : 0));
 			}
+		}
+
+		/// <summary>
+		/// Used by SemanticDomainChooserBEditControl to make suggestions and then call FakeDoIt
+		/// </summary>
+		public void MakeSuggestions(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state)
+		{
+			throw new Exception("The method or operation is not implemented.");
 		}
 
 		/// <summary>
