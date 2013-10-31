@@ -1,0 +1,8 @@
+Verified+1: Jenkins CI
+Verified-Linux+1: Jenkins CI
+Code-Review+2: Hasso Pape <hasso_pape@sil.org>
+Submitted-by: Hasso Pape <hasso_pape@sil.org>
+Submitted-at: Thu, 31 Oct 2013 21:04:54 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/1525
+Project: FieldWorks
+Branch: refs/heads/develop
