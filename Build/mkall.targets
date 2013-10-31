@@ -381,6 +381,8 @@
 		<!-- Needed for Flex to access projects from Paratext in the text chooser dialog. -->
 		<Copy SourceFiles="$(fwrt)/DistFiles/Utilities.dll" DestinationFolder="$(dir-outputBase)"
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+		<Copy SourceFiles="$(fwrt)/DistFiles/NetLoc.dll" DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 		<!-- ICU50 dlls -->
 		<Copy SourceFiles="$(fwrt)/DistFiles/icudt50.dll" DestinationFolder="$(dir-outputBase)"
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>

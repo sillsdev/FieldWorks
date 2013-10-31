@@ -13,6 +13,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using NUnit.Framework;
@@ -186,13 +187,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Adds a dummy project to the simulated Paratext collection.
+		/// By default it is a standard project if there is no baseProject, otherwise a back translation
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public void AddProject(string shortName, string associatedProject, string baseProject,
 			bool editable, bool isResource, string booksPresent)
 		{
 			AddProject(shortName, associatedProject, baseProject, editable, isResource,
-				booksPresent, DerivedTranslationType.BackTranslation);
+				booksPresent, string.IsNullOrEmpty(baseProject) ? ProjectType.Standard : ProjectType.BackTranslation);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -203,15 +205,28 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification="ScrText gets added to Projects collection and disposed there")]
 		public void AddProject(string shortName, string associatedProject, string baseProject,
-			bool editable, bool isResource, string booksPresent, DerivedTranslationType derivedTranslationType)
+			bool editable, bool isResource, string booksPresent, Utilities.Enum<ProjectType> translationType)
 		{
 			ScrText scrText = new ScrText();
 			scrText.Name = shortName;
 
 			if (!string.IsNullOrEmpty(associatedProject))
 				scrText.AssociatedLexicalProject = new AssociatedLexicalProject(LexicalAppType.FieldWorks, associatedProject);
+			// Don't know how to implement a test involving baseProject now that BaseTranslation is gone from the PT API.
+			// However all clients I can find so far pass null.
 			if (!string.IsNullOrEmpty(baseProject))
-				scrText.BaseTranslation = new BaseTranslation(derivedTranslationType, baseProject, string.Empty);
+			{
+				//scrText.BaseTranslation = new BaseTranslation(derivedTranslationType, baseProject, string.Empty);
+				var baseProj = Projects.Select(x => x.Name == baseProject).FirstOrDefault();
+				Assert.That(baseProj, Is.Not.Null);
+				scrText.TranslationInfo = new TranslationInformation(translationType,
+					baseProject, string.Empty);
+				Assert.That(scrText.TranslationInfo.BaseProjectName, Is.EqualTo(baseProject));
+			}
+			else
+			{
+				scrText.TranslationInfo = new TranslationInformation(translationType);
+			}
 
 			scrText.Editable = editable;
 			scrText.SetParameterValue("ResourceText", isResource ? "T" : "F");

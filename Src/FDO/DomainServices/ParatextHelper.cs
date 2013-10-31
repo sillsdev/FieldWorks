@@ -189,7 +189,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 							// It is possible that the Projects directory was not available when we first initialized
 							// ScrTextCollection, but it now is (e.g. USB drive plugged or unplugged).  So we initialize
 							// again. ScrTextCollection.Initialize is safe to call multiple times and also refreshes texts.
-							ScrTextCollection.Initialize();
+							// We pass the directory (rather than passing no arguments, and letting the paratext dll figure
+							// it out) because the figuring out goes wrong on Linux, where both programs are simulating
+							// the registry.
+							ScrTextCollection.Initialize(FwRegistryHelper.ParatextSettingsDirectory(), false);
 							m_IsParatextInitialized = true;
 						}
 						else
@@ -247,7 +250,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				{
 					try
 					{
-						return ScrTextCollection.ScrTexts;
+						// The booleans say we are including resources (translations etc that are part of the Paratext release)
+						// and non-Scripture items (not sure what these are).
+						// Most likely neither of these are necessary, but I'm preserving the behavior we had with 7.3,
+						// which did not have these arguments.
+						return ScrTextCollection.ScrTexts(true, true);
 					}
 					catch (Exception e)
 					{
@@ -314,8 +321,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						// Create a new mapping for this marker.
 						mappingList.AddDefaultMappingIfNeeded(marker, endMarker, domain, false, false);
 					}
-					ScrParser parser = scParatextText.Parser();
-					foreach (int bookNum in scParatextText.BooksPresentSet.SelectedBookNumbers())
+					ScrParser parser = scParatextText.Parser;
+					foreach (int bookNum in scParatextText.BooksPresentSet.SelectedBookNumbers)
 					{
 						foreach (UsfmToken token in parser.GetUsfmTokens(new VerseRef(bookNum, 0, 0), false, true))
 						{
@@ -392,7 +399,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			{
 				s_ptHelper.RefreshProjects();
 				return s_ptHelper.GetProjects().Where(project =>
-					project.BooksPresentSet.SelectedBookNumbers().Any(bookNum => bookNum <= BCVRef.LastBook));
+					project.BooksPresentSet.SelectedBookNumbers.Any(bookNum => bookNum <= BCVRef.LastBook));
 			}
 		}
 
@@ -417,8 +424,12 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		public static IEnumerable<ScrText> GetBtsForProject(ScrText baseProj)
 		{
-			return s_ptHelper.GetProjects().Where(proj => proj.BaseTranslation.Is(baseProj.Name, baseProj.Guid) &&
-													proj.BaseTranslation.Type == DerivedTranslationType.BackTranslation);
+			// We're looking for projects that are back translations of baseProj. That means they have type
+			// back translation, and their base project is the one we want.
+			// Seems that baseProj.Equals(proj.BaseScrText) should work, but it doesn't, at least in one unit test,
+			// possibly just because the mock is not simulating the real helper well enough.
+			return s_ptHelper.GetProjects().Where(proj => baseProj.Name.Equals(proj.TranslationInfo.BaseProjectName) &&
+													proj.TranslationInfo.Type == ProjectType.BackTranslation);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -450,7 +461,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				ScrText foundText = s_ptHelper.GetProjects().FirstOrDefault(p => p.Name == projShortName);
 				// Make sure we don't add books outside of our valid range
 				if (foundText != null)
-					return foundText.BooksPresentSet.SelectedBookNumbers().Where(book => book <= BCVRef.LastBook);
+					return foundText.BooksPresentSet.SelectedBookNumbers.Where(book => book <= BCVRef.LastBook);
 			}
 			catch (Exception e)
 			{
