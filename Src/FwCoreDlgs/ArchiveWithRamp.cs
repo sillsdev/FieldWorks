@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// did the user select the FieldWorks backup file to archive?
 			if (m_fieldWorksBackup.Checked)
 			{
-				if (_rbNewBackup.Checked)
+				if (m_rbNewBackup.Checked)
 				{
 					using (BackupProjectDlg dlg = new BackupProjectDlg(m_cache, m_appAbbrev,
 						m_helpTopicProvider))
@@ -82,7 +82,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 					if (backup != null)
 					{
-						_lblMostRecentBackup.Text = fileDate.ToString(Thread.CurrentThread.CurrentCulture);
+						m_lblMostRecentBackup.Text = fileDate.ToString(Thread.CurrentThread.CurrentCulture);
 						m_lastBackupFile = backup.File;
 						return;
 					}
@@ -90,9 +90,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 
 			// no backup found if you are here
-			_rbNewBackup.Checked = true;
-			_rbExistingBackup.Visible = false;
-			_lblMostRecentBackup.Visible = false;
+			m_rbNewBackup.Checked = true;
+			m_rbExistingBackup.Visible = false;
+			m_lblMostRecentBackup.Visible = false;
 		}
 
 		private void m_help_Click(object sender, EventArgs e)
