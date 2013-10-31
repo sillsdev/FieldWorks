@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------
 #region /// Copyright (c) 2010, SIL International. All Rights Reserved.
 // <copyright from='2010' to='2010' company='SIL International'>
-//    Copyright (c) 2010, SIL International. All Rights Reserved.
+//	Copyright (c) 2010, SIL International. All Rights Reserved.
 // </copyright>
 #endregion
 //
@@ -33,7 +33,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		private readonly FdoCache m_cache;
 		private readonly BackupProjectPresenter m_presenter;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
-		private string m_backupFile;
 		#endregion
 
 		#region Constructors
@@ -93,6 +92,11 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 			}
 		}
 		#endregion
+
+		/// <summary>
+		/// Path to the backup file, or null
+		/// </summary>
+		public string BackupFilePath { get; private set; }
 
 		#region Event handlers
 		private void m_browse_Click(object sender, EventArgs e)
@@ -167,7 +171,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 				using (new WaitCursor(this))
 				using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(this, m_cache.ThreadHelper))
 				{
-					m_presenter.BackupProject(progressDlg);
+					BackupFilePath = m_presenter.BackupProject(progressDlg);
 				}
 			}
 			catch (FwBackupException be)

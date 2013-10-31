@@ -39,49 +39,49 @@
 
 	<Target Name="DebugProcs" DependsOnTargets="initLinux;initWindows">
 		<Make Condition="'$(OS)'=='Windows_NT'"
-			  Makefile="$(fwrt)\Src\DebugProcs\DebugProcs.mak"
-			  Configuration="$(config-capital)"
-			  BuildRoot="$(fwrt)"
-			  WorkingDirectory="$(fwrt)\Src\DebugProcs"/>
+				Makefile="$(fwrt)\Src\DebugProcs\DebugProcs.mak"
+				Configuration="$(config-capital)"
+				BuildRoot="$(fwrt)"
+				WorkingDirectory="$(fwrt)\Src\DebugProcs"/>
 		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
-			  Makefile="$(fwrt)/Src/DebugProcs/Makefile"
-			  Configuration="$(config-capital)" Target="$(make-target)"
-			  BuildRoot="$(fwrt)"
-			  WorkingDirectory="$(fwrt)/Src/DebugProcs"/>
+				Makefile="$(fwrt)/Src/DebugProcs/Makefile"
+				Configuration="$(config-capital)" Target="$(make-target)"
+				BuildRoot="$(fwrt)"
+				WorkingDirectory="$(fwrt)/Src/DebugProcs"/>
 		<Message Text="Finished building DebugProcs."/>
 	</Target>
 
 	<Target Name="GenericLib" DependsOnTargets="DebugProcs">
 		<Make Condition="'$(OS)'=='Windows_NT'"
-			  Makefile="$(fwrt)\Src\Generic\GenericLib.mak"
-			  Configuration="$(config-capital)"
-			  BuildRoot="$(fwrt)"
-			  WorkingDirectory="$(fwrt)\Src\Generic"/>
+				Makefile="$(fwrt)\Src\Generic\GenericLib.mak"
+				Configuration="$(config-capital)"
+				BuildRoot="$(fwrt)"
+				WorkingDirectory="$(fwrt)\Src\Generic"/>
 		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
-			  Makefile="$(fwrt)/Src/Generic/Makefile"
-			  Configuration="$(config-capital)" Target="$(make-target)"
-			  BuildRoot="$(fwrt)"
-			  WorkingDirectory="$(fwrt)/Src/Generic"/>
+				Makefile="$(fwrt)/Src/Generic/Makefile"
+				Configuration="$(config-capital)" Target="$(make-target)"
+				BuildRoot="$(fwrt)"
+				WorkingDirectory="$(fwrt)/Src/Generic"/>
 		<Message Text="Finished building GenericLib."/>
 	</Target>
 
 	<Target Name="testGenericLib" DependsOnTargets="GenericLib">
 		<Make Condition="'$(OS)'=='Windows_NT'"
-			  Makefile="$(fwrt)\Src\Generic\Test\testGenericLib.mak"
-			  Configuration="$(config-capital)"
-			  BuildRoot="$(fwrt)"
-			  WorkingDirectory="$(fwrt)\Bin"/>
+				Makefile="$(fwrt)\Src\Generic\Test\testGenericLib.mak"
+				Configuration="$(config-capital)"
+				BuildRoot="$(fwrt)"
+				WorkingDirectory="$(fwrt)\Bin"/>
 		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
-			  Makefile="$(fwrt)/Src/Generic/Test/Makefile"
-			  Configuration="$(config-capital)" Target="$(make-target)"
-			  BuildRoot="$(fwrt)"
-			  WorkingDirectory="$(fwrt)/Src/Generic/Test" ContinueOnError="true"/>
+				Makefile="$(fwrt)/Src/Generic/Test/Makefile"
+				Configuration="$(config-capital)" Target="$(make-target)"
+				BuildRoot="$(fwrt)"
+				WorkingDirectory="$(fwrt)/Src/Generic/Test" ContinueOnError="true"/>
 		<RegFree Executable="$(dir-outputBase)\testGenericLib.exe"
 				Dlls="$(dir-outputBase)\Language.dll;$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
 				NoTypeLib="$(dir-outputBase)\Graphite.dll"
 				Condition="'$(OS)'=='Windows_NT'"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testGenericLib.exe -manifest $(dir-outputBase)\testGenericLib.exe.manifest"
-			  Condition="'$(OS)'=='Windows_NT'"/>
+				Condition="'$(OS)'=='Windows_NT'"/>
 		<Unitpp Condition="'$(action)'=='test'"
 				FixturePath="$(dir-outputBase)/testGenericLib"
 				FudgeFactor="$(timeoutFudgeFactor)"
@@ -123,21 +123,21 @@
 
 	<Target Name="testFwKernel" DependsOnTargets="GenericLib;FwKernel">
 		<Make Condition="'$(OS)'=='Windows_NT'"
-			  Makefile="$(fwrt)\Src\Kernel\Test\testFwKernel.mak"
-			  Configuration="$(config-capital)"
-			  BuildRoot="$(fwrt)"
-			  WorkingDirectory="$(fwrt)\Bin"/>
+				Makefile="$(fwrt)\Src\Kernel\Test\testFwKernel.mak"
+				Configuration="$(config-capital)"
+				BuildRoot="$(fwrt)"
+				WorkingDirectory="$(fwrt)\Bin"/>
 		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
-			  Makefile="$(fwrt)/Src/Kernel/Test/Makefile"
-			  Configuration="$(config-capital)" Target="$(make-target)"
-			  BuildRoot="$(fwrt)"
-			  WorkingDirectory="$(fwrt)/Src/Kernel/Test" ContinueOnError="true"/>
+				Makefile="$(fwrt)/Src/Kernel/Test/Makefile"
+				Configuration="$(config-capital)" Target="$(make-target)"
+				BuildRoot="$(fwrt)"
+				WorkingDirectory="$(fwrt)/Src/Kernel/Test" ContinueOnError="true"/>
 		<RegFree Executable="$(dir-outputBase)\testFwKernel.exe"
 				Dlls="$(dir-outputBase)\Language.dll;$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
 				NoTypeLib="$(dir-outputBase)\Graphite.dll"
 				Condition="'$(OS)'=='Windows_NT'"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testFwKernel.exe -manifest $(dir-outputBase)\testFwKernel.exe.manifest"
-			  Condition="'$(OS)'=='Windows_NT'"/>
+				Condition="'$(OS)'=='Windows_NT'"/>
 		<CreateItem Include="$(dir-outputBase)/*.compmap">
 			<Output TaskParameter="Include" ItemName="KernelCompMapFiles"/>
 		</CreateItem>
@@ -155,10 +155,10 @@
 	<Target Name="AppCore" DependsOnTargets="DebugProcs;GenericLib">
 		<Message Text="AppCore make-target='$(make-target)'"/>
 		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
-			  Makefile="$(fwrt)/Src/AppCore/Makefile"
-			  Configuration="$(config-capital)" Target="$(make-target)"
-			  BuildRoot="$(fwrt)"
-			  WorkingDirectory="$(fwrt)/Src/AppCore"/>
+				Makefile="$(fwrt)/Src/AppCore/Makefile"
+				Configuration="$(config-capital)" Target="$(make-target)"
+				BuildRoot="$(fwrt)"
+				WorkingDirectory="$(fwrt)/Src/AppCore"/>
 		<Message Text="Finished building AppCore."/>
 	</Target>
 
@@ -178,21 +178,21 @@
 
 	<Target Name="testLanguage" DependsOnTargets="GenericLib;Language;FwKernel;Views;GrEngine">
 		<Make Condition="'$(OS)'=='Windows_NT'"
-			  Makefile="$(fwrt)\Src\Language\Test\testLanguage.mak"
-			  Configuration="$(config-capital)"
-			  BuildRoot="$(fwrt)"
-			  WorkingDirectory="$(fwrt)\Bin"/>
+				Makefile="$(fwrt)\Src\Language\Test\testLanguage.mak"
+				Configuration="$(config-capital)"
+				BuildRoot="$(fwrt)"
+				WorkingDirectory="$(fwrt)\Bin"/>
 		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
-			  Makefile="$(fwrt)/Src/Language/Test/Makefile"
-			  Configuration="$(config-capital)" Target="$(make-target)"
-			  BuildRoot="$(fwrt)"
-			  WorkingDirectory="$(fwrt)/Src/Language/Test" ContinueOnError="true"/>
+				Makefile="$(fwrt)/Src/Language/Test/Makefile"
+				Configuration="$(config-capital)" Target="$(make-target)"
+				BuildRoot="$(fwrt)"
+				WorkingDirectory="$(fwrt)/Src/Language/Test" ContinueOnError="true"/>
 		<RegFree Executable="$(dir-outputBase)\testLanguage.exe"
 				Dlls="$(dir-outputBase)\Language.dll;$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
 				NoTypeLib="$(dir-outputBase)\Graphite.dll"
 				Condition="'$(OS)'=='Windows_NT'"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testLanguage.exe -manifest $(dir-outputBase)\testLanguage.exe.manifest"
-			  Condition="'$(OS)'=='Windows_NT'"/>
+				Condition="'$(OS)'=='Windows_NT'"/>
 		<CreateItem Include="$(dir-outputBase)/*.compmap">
 			<Output TaskParameter="Include" ItemName="LanguageCompMapFiles"/>
 		</CreateItem>
@@ -223,21 +223,21 @@
 
 	<Target Name="testViews" DependsOnTargets="GenericLib;Views;SimpleRootSite">
 		<Make Condition="'$(OS)'=='Windows_NT'"
-			  Makefile="$(fwrt)\Src\views\Test\testViews.mak"
-			  Configuration="$(config-capital)"
-			  BuildRoot="$(fwrt)"
-			  WorkingDirectory="$(fwrt)\Bin"/>
+				Makefile="$(fwrt)\Src\views\Test\testViews.mak"
+				Configuration="$(config-capital)"
+				BuildRoot="$(fwrt)"
+				WorkingDirectory="$(fwrt)\Bin"/>
 		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
-			  Makefile="$(fwrt)/Src/views/Test/Makefile"
-			  Configuration="$(config-capital)" Target="$(make-target)"
-			  BuildRoot="$(fwrt)"
-			  WorkingDirectory="$(fwrt)/Src/views/Test" ContinueOnError="true"/>
+				Makefile="$(fwrt)/Src/views/Test/Makefile"
+				Configuration="$(config-capital)" Target="$(make-target)"
+				BuildRoot="$(fwrt)"
+				WorkingDirectory="$(fwrt)/Src/views/Test" ContinueOnError="true"/>
 		<RegFree Executable="$(dir-outputBase)\testViews.exe"
 				Dlls="$(dir-outputBase)\Language.dll;$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
 				NoTypeLib="$(dir-outputBase)\Graphite.dll"
 				Condition="'$(OS)'=='Windows_NT'"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testViews.exe -manifest $(dir-outputBase)\testViews.exe.manifest"
-			  Condition="'$(OS)'=='Windows_NT'"/>
+				Condition="'$(OS)'=='Windows_NT'"/>
 		<CreateItem Include="$(dir-outputBase)/*.compmap">
 			<Output TaskParameter="Include" ItemName="ViewsCompMapFiles"/>
 		</CreateItem>
@@ -272,9 +272,9 @@
 	<Target Name="CopyCellarBaseConstants" Inputs="$(fwrt)/Src/Kernel/CellarBaseConstants.h" Outputs="$(fwrt)/Output/Common/CellarBaseConstants.h">
 		<MakeDir Directories="$(dir-fwoutputCommon)" Condition="'$(action)'!='clean'"/>
 		<Copy SourceFiles="$(fwrt)/Src/Kernel/CellarBaseConstants.h"
-			  DestinationFolder="$(fwrt)/Output/Common"
-			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
-			  Condition="'$(action)'!='clean'"/>
+				DestinationFolder="$(fwrt)/Output/Common"
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
+				Condition="'$(action)'!='clean'"/>
 	</Target>
 
 	<PropertyGroup>
@@ -289,23 +289,23 @@
 		<SetEnvVar Variable="BUILD4UX" Value="$(build4ux)"/>
 		<SetEnvVar Variable="ANAL_TYPE" Value="performance" Condition="'$(performance)'=='true'"/>
 		<Make Condition="'$(OS)'=='Windows_NT'"
-			  Makefile="$(fwrt)\Src\Language\Language.mak"
-			  Configuration="$(config-capital)"
-			  Target="dirs $(dir-fwoutputCommon)\LanguageTlb.tlb"
-			  BuildRoot="$(fwrt)"
-			  WorkingDirectory="$(fwrt)"/>
+				Makefile="$(fwrt)\Src\Language\Language.mak"
+				Configuration="$(config-capital)"
+				Target="dirs $(dir-fwoutputCommon)\LanguageTlb.tlb"
+				BuildRoot="$(fwrt)"
+				WorkingDirectory="$(fwrt)"/>
 		<Make Condition="'$(OS)'=='Windows_NT'"
-			  Makefile="$(fwrt)\Src\Kernel\FwKernel.mak"
-			  Configuration="$(config-capital)"
-			  Target="dirs $(dir-fwoutputCommon)\FwKernelTlb.tlb"
-			  BuildRoot="$(fwrt)"
-			  WorkingDirectory="$(fwrt)"/>
+				Makefile="$(fwrt)\Src\Kernel\FwKernel.mak"
+				Configuration="$(config-capital)"
+				Target="dirs $(dir-fwoutputCommon)\FwKernelTlb.tlb"
+				BuildRoot="$(fwrt)"
+				WorkingDirectory="$(fwrt)"/>
 		<Make Condition="'$(OS)'=='Windows_NT'"
-			  Makefile="$(fwrt)\Src\views\Views.mak"
-			  Configuration="$(config-capital)"
-			  Target="dirs $(dir-fwoutputCommon)\ViewsTlb.tlb"
-			  BuildRoot="$(fwrt)"
-			  WorkingDirectory="$(fwrt)"/>
+				Makefile="$(fwrt)\Src\views\Views.mak"
+				Configuration="$(config-capital)"
+				Target="dirs $(dir-fwoutputCommon)\ViewsTlb.tlb"
+				BuildRoot="$(fwrt)"
+				WorkingDirectory="$(fwrt)"/>
 		<SetEnvVar Variable="BUILD_OUTPUT" Value="$(Original-BUILD_OUTPUT)" />
 		<SetEnvVar Variable="OBJ_DIR" Value="$(Original-OBJ_DIR)" />
 		<SetEnvVar Variable="BUILD4UX" Value="$(Original-BUILD4UX)" />
@@ -358,46 +358,48 @@
 		<DownloadFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.dll"/>
 		<DownloadFiles Include="$(fwrt)/Downloads/L10NSharp.dll"/>
 		<DownloadFiles Include="$(fwrt)/Downloads/IPCFramework.dll"/>
+		<DownloadFiles Include="$(fwrt)/Downloads/SIL.Archiving.dll"/>
+		<DownloadFiles Include="$(fwrt)/Downloads/Ionic.Zip.dll"/>
 	</ItemGroup>
 
 	<Target Name="CopyDlls" DependsOnTargets="downloadWindowsDlls;downloadLinuxDlls">
 		<!-- .Net assemblies -->
 		<Copy SourceFiles="$(fwrt)/DistFiles/LinqBridge.dll" DestinationFolder="$(dir-outputBase)"
-			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 		<Copy SourceFiles="$(fwrt)/DistFiles/log4net.dll" DestinationFolder="$(dir-outputBase)"
-			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 		<Copy SourceFiles="$(fwrt)/Lib/Common/Interop.ResourceDriver.dll" DestinationFolder="$(dir-outputBase)"
-			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 		<!-- Linux shared libraries -->
 		<Copy SourceFiles="$(fwrt)/DistFiles/libxample32.so" DestinationFolder="$(dir-outputBase)"
-			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Unix'"/>
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Unix'"/>
 		<Copy SourceFiles="$(fwrt)/DistFiles/libxample64.so" DestinationFolder="$(dir-outputBase)"
-			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Unix'"/>
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Unix'"/>
 		<!-- Windows dynamically loaded libraries -->
 		<Copy SourceFiles="$(fwrt)/DistFiles/xample.dll" DestinationFolder="$(dir-outputBase)"
-			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<Copy SourceFiles="$(fwrt)/DistFiles/Patr100.dll" DestinationFolder="$(dir-outputBase)"
-			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<!-- Needed for Flex to access projects from Paratext in the text chooser dialog. -->
 		<Copy SourceFiles="$(fwrt)/DistFiles/Utilities.dll" DestinationFolder="$(dir-outputBase)"
-			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 		<!-- ICU50 dlls -->
 		<Copy SourceFiles="$(fwrt)/DistFiles/icudt50.dll" DestinationFolder="$(dir-outputBase)"
-			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<Copy SourceFiles="$(fwrt)/DistFiles/icuin50.dll" DestinationFolder="$(dir-outputBase)"
-			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<Copy SourceFiles="$(fwrt)/DistFiles/icuuc50.dll" DestinationFolder="$(dir-outputBase)"
-			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<Copy SourceFiles="$(fwrt)/DistFiles/icu.net.dll" DestinationFolder="$(dir-outputBase)"
-			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<!-- Hunspell dlls -->
 		<Copy SourceFiles="$(fwrt)/DistFiles/Windows/libhunspell.dll" DestinationFolder="$(dir-outputBase)"
-				  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+					SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 
 		<Copy SourceFiles="$(fwrt)/DistFiles/Windows/icutu50.dll" DestinationFolder="$(dir-outputBase)"
-			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<Copy SourceFiles="$(fwrt)/DistFiles/Windows/gennorm2.exe" DestinationFolder="$(dir-outputBase)"
-			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<!-- Copy the downloaded artifacts -->
 		<Copy SourceFiles="@(DownloadFiles)" DestinationFolder="$(dir-outputBase)"
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
@@ -405,6 +407,7 @@
 
 	<Target Name="downloadWindowsDlls" Condition="'$(OS)'=='Windows_NT'">
 		<!-- Chorus dlls. bt274 specifies the FLExBridgeBeta branch. Update when appropriate. -->
+		<!-- Chorus dlls. bt228 (chorus-win32-WeSay1.4) specifies the WeSay1.4 branch. Update when appropriate. -->
 		<Message Text="Downloading latest successful artifacts from 'Flex Bridge-Beta-Chorus-win32 Continuous'."/>
 		<MakeDir Directories="$(fwrt)/Downloads"/>
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt274/.lastSuccessful/Autofac.dll" LocalFilename="$(fwrt)/Downloads/Autofac.dll"/>
@@ -412,14 +415,17 @@
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt274/.lastSuccessful/LibChorus.dll" LocalFilename="$(fwrt)/Downloads/LibChorus.dll"/>
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt274/.lastSuccessful/Vulcan.Uczniowie.HelpProvider.dll" LocalFilename="$(fwrt)/Downloads/Vulcan.Uczniowie.HelpProvider.dll"/>
 		<!-- Palaso dlls. bt273 is the FLExBridgeBeta branch for Palaso. Update when appropriate. -->
-		<Message Text="Downloading latest successful artifacts from 'Flex Bridge-Beta-Palaso-win32 Continuous'."/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt273/.lastSuccessful/Palaso.dll" LocalFilename="$(fwrt)/Downloads/Palaso.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt273/.lastSuccessful/Palaso.Lift.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Lift.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt273/.lastSuccessful/Palaso.Media.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Media.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt273/.lastSuccessful/PalasoUIWindowsForms.dll" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.dll"/>
-		<!-- L10Sharp localization from the develop branch for now -->
+		<!-- Palaso dlls. Use bt223 (palaso-win32-default Continuous) because we need files not in bt247. -->
+		<Message Text="Downloading latest successful artifacts from Palaso Win32 Continuous build."/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt223/.lastSuccessful/Palaso.dll" LocalFilename="$(fwrt)/Downloads/Palaso.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt223/.lastSuccessful/Palaso.Lift.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Lift.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt223/.lastSuccessful/Palaso.Media.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Media.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt223/.lastSuccessful/PalasoUIWindowsForms.dll" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt223/.lastSuccessful/SIL.Archiving.dll" LocalFilename="$(fwrt)/Downloads/SIL.Archiving.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt223/.lastSuccessful/Ionic.Zip.dll" LocalFilename="$(fwrt)/Downloads/Ionic.Zip.dll"/>
+		<!-- L10Sharp localization from the develop branch for now. bt196 (L10NSharp continuous) // WAS: bt247 (palaso-win32-wesay1.4 Continuous) -->
 		<Message Text="Downloading latest successful artifacts for L10NSharp and IPCFramework."/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt247/.lastSuccessful/L10NSharp.dll" LocalFilename="$(fwrt)/Downloads/L10NSharp.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt196/.lastSuccessful/L10NSharp.dll" LocalFilename="$(fwrt)/Downloads/L10NSharp.dll"/>
 		<!-- IPCFramework.dll. bt278 is the IPC (win32) build (of the develop branch). -->
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt278/.lastSuccessful/IPCFramework.dll" LocalFilename="$(fwrt)/Downloads/IPCFramework.dll"/>
 	</Target>
@@ -434,14 +440,17 @@
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt285/.lastSuccessful/LibChorus.dll" LocalFilename="$(fwrt)/Downloads/LibChorus.dll"/>
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt285/.lastSuccessful/Vulcan.Uczniowie.HelpProvider.dll" LocalFilename="$(fwrt)/Downloads/Vulcan.Uczniowie.HelpProvider.dll"/>
 		<!-- Palaso dlls. bt284 is the FLExBridgeBeta branch for Palaso. Update when appropriate. -->
+		<!-- Palaso dlls. Use bt294 (palaso-precise32-ArchivingMono Continuous) because we need files not in bt33. Update when appropriate. -->
 		<Message Text="Downloading latest successful artifacts from 'Flex Bridge-Beta-Palaso-Precise64 Continuous'."/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt284/.lastSuccessful/Palaso.dll" LocalFilename="$(fwrt)/Downloads/Palaso.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt284/.lastSuccessful/Palaso.Lift.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Lift.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt284/.lastSuccessful/Palaso.Media.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Media.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt284/.lastSuccessful/PalasoUIWindowsForms.dll" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.dll"/>
-		<!-- L10Sharp localization from the develop branch for now -->
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt294/.lastSuccessful/Palaso.dll" LocalFilename="$(fwrt)/Downloads/Palaso.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt294/.lastSuccessful/Palaso.Lift.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Lift.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt294/.lastSuccessful/Palaso.Media.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Media.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt294/.lastSuccessful/PalasoUIWindowsForms.dll" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt294/.lastSuccessful/SIL.Archiving.dll" LocalFilename="$(fwrt)/Downloads/SIL.Archiving.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt294/.lastSuccessful/Ionic.Zip.dll" LocalFilename="$(fwrt)/Downloads/Ionic.Zip.dll"/>
+		<!-- L10Sharp localization from the develop branch for now. bt271 (L10NSharp Mono continuous) // WAS: bt247 (palaso-win32-wesay1.4 Continuous) -->
 		<Message Text="Downloading latest successful artifacts for L10NSharp and IPCFramework."/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt247/.lastSuccessful/L10NSharp.dll" LocalFilename="$(fwrt)/Downloads/L10NSharp.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt271/.lastSuccessful/L10NSharp.dll" LocalFilename="$(fwrt)/Downloads/L10NSharp.dll"/>
 		<!-- IPCFramework.dll. bt279 is the IPC-Precise64 build (of the develop branch). -->
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt279/.lastSuccessful/IPCFramework.dll" LocalFilename="$(fwrt)/Downloads/IPCFramework.dll"/>
 	</Target>
@@ -451,11 +460,11 @@
 	<!-- This target only has an effect on Windows machines, and should be removed once encoding converters are updated to look in HKCU by default -->
 	<Target Name="setKeysInHKLM" Condition="'$(UserIsAdmin)'=='True'">
 		<WriteRegistry Hive="LocalMachine"
-					   Key="SOFTWARE\SIL\SilEncConverters40\RootDir"
-					   Value="$(fwrt)\DistFiles\Windows\EC Common"/>
+						 Key="SOFTWARE\SIL\SilEncConverters40\RootDir"
+						 Value="$(fwrt)\DistFiles\Windows\EC Common"/>
 		<WriteRegistry Hive="LocalMachine"
-					   Key="SOFTWARE\SIL\SilEncConverters40\DeveloperPluginDir"
-					   Value="$(fwrt)\DistFiles\Windows\EC\EC\Plugins"/>
+						 Key="SOFTWARE\SIL\SilEncConverters40\DeveloperPluginDir"
+						 Value="$(fwrt)\DistFiles\Windows\EC\EC\Plugins"/>
 	</Target>
 
 	<Target Name="setKeysInHKCU">

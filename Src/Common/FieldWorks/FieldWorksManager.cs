@@ -12,11 +12,13 @@
 // Responsibility: FW Team
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using System.Windows.Forms;
+using XCore;
 
 namespace SIL.FieldWorks
 {
@@ -138,10 +140,12 @@ namespace SIL.FieldWorks
 		/// </summary>
 		/// <param name="app">The application.</param>
 		/// <param name="dialogOwner">The owner of the dialog</param>
+		/// <returns>The path to the backup file, or <c>null</c> if the user cancels the
+		/// backup</returns>
 		/// ------------------------------------------------------------------------------------
-		public void BackupProject(FwApp app, Form dialogOwner)
+		public string BackupProject(FwApp app, Form dialogOwner)
 		{
-			FieldWorks.BackupProject(dialogOwner, app);
+			return FieldWorks.BackupProject(dialogOwner, app);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -154,6 +158,20 @@ namespace SIL.FieldWorks
 		public void RestoreProject(FwApp fwApp, Form dialogOwner)
 		{
 			FieldWorks.RestoreProject(dialogOwner, fwApp);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Archive selected project files using RAMP
+		/// </summary>
+		/// <param name="fwApp">The FieldWorks application</param>
+		/// <param name="dialogOwner">The owner of the dialog</param>
+		/// <returns>The list of the files to archive, or <c>null</c> if the user cancels the
+		/// archive dialog</returns>
+		/// ------------------------------------------------------------------------------------
+		public List<string> ArchiveProjectWithRamp(FwApp fwApp, Form dialogOwner)
+		{
+			return FieldWorks.ArchiveProjectWithRamp(dialogOwner, fwApp);
 		}
 
 		/// ------------------------------------------------------------------------------------

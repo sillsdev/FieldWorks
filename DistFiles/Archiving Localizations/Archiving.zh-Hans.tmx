@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tmx version="1.4">
+	<header srclang="zh-Hans" adminlang="en" creationtool="Palaso Localization Manager" creationtoolversion="1.1.4972.16808" segtype="block" datatype="unknown" o-tmf="PalasoTMXUtils">
+		<prop type="x-appversion">8.0.4.41508</prop>
+		<prop type="x-hardlinebreakreplacement">\n</prop>
+	</header>
+	<body>
+		<tu tuid="DialogBoxes.ArchivingDlg.CancellingMsg">
+			<tuv xml:lang="en">
+				<seg>Canceling...</seg>
+			</tuv>
+			<tuv xml:lang="zh-Hans">
+				<seg>正在取消</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg.CopyingFilesMsg">
+			<tuv xml:lang="en">
+				<seg>Copying files</seg>
+			</tuv>
+			<tuv xml:lang="zh-Hans">
+				<seg>复制文件</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg.PreparingFilesMsg">
+			<tuv xml:lang="en">
+				<seg>Analyzing component files</seg>
+			</tuv>
+			<tuv xml:lang="zh-Hans">
+				<seg>分析组成文件 </seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg.RampNotFoundMsg">
+			<tuv xml:lang="en">
+				<seg>The RAMP program cannot be found!</seg>
+			</tuv>
+			<tuv xml:lang="zh-Hans">
+				<seg>RAMP程序找不到！</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg.ReadyToCallRampMsg">
+			<tuv xml:lang="en">
+				<seg>Ready to hand the package to RAMP</seg>
+			</tuv>
+			<tuv xml:lang="zh-Hans">
+				<seg>准备给RAMP递交文件包</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg.SavingFilesInRAMPMsg">
+			<tuv xml:lang="en">
+				<seg>Saving files in RAMP package</seg>
+			</tuv>
+			<tuv xml:lang="zh-Hans">
+				<seg>保存文件到RAMP文件包中</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg.SearchingForRampMsg">
+			<tuv xml:lang="en">
+				<seg>Searching for the RAMP program...</seg>
+			</tuv>
+			<tuv xml:lang="zh-Hans">
+				<seg>查找RAMP程度</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg.StartingRampErrorMsg">
+			<tuv xml:lang="en">
+				<seg>There was an error attempting to open the archive package in RAMP.</seg>
+			</tuv>
+			<tuv xml:lang="zh-Hans">
+				<seg>在RAMP打开档案包出错</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg.WindowTitle">
+			<note>Parameter is application name</note>
+			<tuv xml:lang="en">
+				<seg>{0}: Archive with RAMP (SIL Only)</seg>
+			</tuv>
+			<tuv xml:lang="zh-Hans">
+				<seg>{0}：用RAMP存档（SIL专用）</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg._buttonCancel">
+			<tuv xml:lang="en">
+				<seg>Cancel</seg>
+			</tuv>
+			<tuv xml:lang="zh-Hans">
+				<seg>取消</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg._buttonCreatePackage">
+			<tuv xml:lang="en">
+				<seg>&amp;1) Create Package</seg>
+			</tuv>
+			<tuv xml:lang="zh-Hans">
+				<seg>&amp;1）打包</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg._buttonLaunchRamp">
+			<tuv xml:lang="en">
+				<seg>&amp;2) Launch RAMP</seg>
+			</tuv>
+			<tuv xml:lang="zh-Hans">
+				<seg>&amp;2)启动 RAMP</seg>
+			</tuv>
+		</tu>
+	</body>
+</tmx>

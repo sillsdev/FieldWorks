@@ -15,6 +15,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using System;
+using System.Collections.Generic;
 
 namespace SIL.FieldWorks.Common.Framework
 {
@@ -104,8 +105,10 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		/// <param name="app">The application.</param>
 		/// <param name="dialogOwner">The owner of the dialog</param>
+		/// <returns>The path to the backup file, or <c>null</c> if the user cancels the
+		/// backup</returns>
 		/// ------------------------------------------------------------------------------------
-		void BackupProject(FwApp app, Form dialogOwner);
+		string BackupProject(FwApp app, Form dialogOwner);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -116,6 +119,16 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		void RestoreProject(FwApp fwApp, Form dialogOwner);
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Lets the user archive data using RAMP
+		/// </summary>
+		/// <param name="fwApp">The application</param>
+		/// <param name="dialogOwner">The owner of the dialog</param>
+		/// <returns>The list of the files to archive, or <c>null</c> if the user cancels the
+		/// archive dialog</returns>
+		/// ------------------------------------------------------------------------------------
+		List<string> ArchiveProjectWithRamp(FwApp fwApp, Form dialogOwner);
 
 		/// <summary>
 		/// Reopens the given FLEx project. This may be necessary if some external process modified the project data.

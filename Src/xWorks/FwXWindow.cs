@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2010, SIL International. All Rights Reserved.
-// <copyright from='2003' to='2010' company='SIL International'>
-//		Copyright (c) 2010, SIL International. All Rights Reserved.
+#region // Copyright (c) 2013, SIL International. All Rights Reserved.
+// <copyright from='2003' to='2013' company='SIL International'>
+//		Copyright (c) 2013, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -16,6 +16,8 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
 using Microsoft.Win32;
@@ -24,6 +26,12 @@ using System.Drawing;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Text;
+using Palaso.Reporting;
+using Palaso.UI.WindowsForms.PortableSettingsProvider;
+using L10NSharp;
+using SIL.Archiving;
+using SIL.CoreImpl;
+using SIL.FieldWorks.Common.UIAdapters;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
@@ -40,6 +48,8 @@ using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
+using FileUtils = Palaso.IO.FileUtils;
+using Logger = SIL.Utils.Logger;
 #if !__MonoCS__
 using NetSparkle;
 #endif
@@ -85,6 +95,8 @@ namespace SIL.FieldWorks.XWorks
 		protected List<IVwVirtualHandler> m_installedVirtualHandlers;
 
 		static bool m_fInUndoRedo; // true while executing an Undo/Redo command.
+
+		private static LocalizationManager s_localizationMgr;
 
 		/// <summary>
 		/// The stylesheet used for all views in this window.
@@ -1129,6 +1141,232 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 			m_delegate.FileNew(this);
 			return true;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Update Archive With RAMP menu item
+		/// </summary>
+		/// <param name="args">the toolbar/menu item properties</param>
+		/// <returns>true if handled</returns>
+		/// ------------------------------------------------------------------------------------
+		public bool OnUpdateArchiveWithRamp(object args)
+		{
+			TMItemProperties itemProps = args as TMItemProperties;
+			if (itemProps != null)
+			{
+				itemProps.Visible = !(MiscUtils.IsMono);
+				itemProps.Update = true;
+				return true;
+			}
+			return false;
+		}
+
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handle click on Archive With RAMP menu item
+		/// </summary>
+		/// <param name="command">Not used</param>
+		/// <returns>true (handled)</returns>
+		/// ------------------------------------------------------------------------------------
+		public bool OnArchiveWithRamp(object command)
+		{
+			CheckDisposed();
+
+			// show the RAMP dialog
+			var filesToArchive = m_app.FwManager.ArchiveProjectWithRamp(m_app, this);
+
+			// if there are no files to archive, return now.
+			if ((filesToArchive == null) || (filesToArchive.Count == 0))
+				return true;
+
+			var viProvider = new FwVersionInfoProvider(Assembly.LoadFile(m_app.ProductExecutableFile), false);
+
+			var title = Cache.LanguageProject.Description.UiString ?? Cache.LanguageProject.ShortName;
+			if (title == "***")
+				title = Cache.LanguageProject.ShortName;
+
+			var model = new ArchivingDlgViewModel(Application.ProductName, title,
+				Cache.LanguageProject.ShortName, GetFileDescription);
+
+			// this is a Palaso dialog, so we need to tell it the correct font to use.
+			model.ProgramDialogFont = MainMenuStrip.Font;
+			AddMetsPairs(model, viProvider);
+
+			const string localizationMgrId = "Archiving";
+			var uiLocale = Cache.ServiceLocator.GetInstance<IWritingSystemManager>().Get(Cache.DefaultUserWs).IcuLocale;
+			if (s_localizationMgr == null)
+			{
+				try
+				{
+					s_localizationMgr = LocalizationManager.Create(
+						uiLocale,
+						localizationMgrId, viProvider.ProductName, viProvider.NumericAppVersion,
+						DirectoryFinder.GetFWCodeSubDirectory("Archiving Localizations"),
+						DirectoryFinder.CommonAppDataFolder(m_app.ApplicationName),
+						Icon, "FLExDevteam@sil.org", "SIL.Archiving");
+				}
+				catch (Exception e)
+				{
+					Logger.WriteError(e);
+				}
+			}
+			else
+			{
+				LocalizationManager.SetUILanguage(uiLocale, true);
+			}
+
+			// create the dialog
+			using (var dlg = new ArchivingDlg(model, localizationMgrId, string.Empty,
+				() => GetFilesToArchive(filesToArchive), new FormSettings()))
+			using (var reportingAdapter = new PalasoErrorReportingAdapter(dlg, m_mediator))
+			{
+				ErrorReport.SetErrorReporter(reportingAdapter);
+				dlg.ShowDialog(this);
+				ErrorReport.SetErrorReporter(null);
+			}
+
+			return true;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Called by the Archiving Dialog to retrieve the lists of the files and description
+		/// to be included in the RAMP package.
+		/// </summary>
+		/// <param name="filesToArchive">The files to include</param>
+		/// <returns>Groups of files to archive and descriptive progress messages</returns>
+		/// ------------------------------------------------------------------------------------
+		private IDictionary<string, Tuple<IEnumerable<string>, string>> GetFilesToArchive(List<string> filesToArchive)
+		{
+			// Explanation:
+			//   IDictionary<string1, Tuple<IEnumerable<string2>, string3>>
+			//     string1 = group name or key (used for normalizing file names in the zip file)
+			//     string2 = file name (a list of the files in this group)
+			//     string3 = progress message (a progress message for this group)
+			IDictionary<string, Tuple<IEnumerable<string>, string>> files =
+				new Dictionary<string, Tuple<IEnumerable<string>, string>>();
+			files[string.Empty] = new Tuple<IEnumerable<string>, string>(filesToArchive,
+				ResourceHelper.GetResourceString("kstidAddingFwProject"));
+			return files;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Called by the Archiving Dialog to get the file descriptions included in the
+		/// RAMP package.
+		/// </summary>
+		/// <param name="key">A group name returned by GetFilesToArchive.</param>
+		/// <param name="file">A file name returned by GetFilesToArchive.</param>
+		/// <returns>A description of the file.</returns>
+		/// ------------------------------------------------------------------------------------
+		private string GetFileDescription(string key, string file)
+		{
+			// TODO: Extend to supply "relationship" also (source, presentation or supporting)
+
+			if (Path.GetExtension(file) == FwFileExtensions.ksFwBackupFileExtension)
+				return "FieldWorks backup";
+			if (Path.GetExtension(file) == FwFileExtensions.ksLexiconInterchangeFormat)
+				return "Lexical Interchange Format Standard file";
+			return string.Empty;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets required and optional information that describes the files being submitted in
+		/// the RAMP package. METS = Metadata Encoding & Transmission Standard
+		/// (see http://www.loc.gov/METS/).
+		/// </summary>
+		/// <param name="model">Object provided by SIL.Archiving for setting application
+		/// specific archiving information.</param>
+		/// <param name="viProvider">Fieldworks version information.</param>
+		/// <returns>A list of JSON encoded pairs that describe the information in the RAMP
+		/// package.</returns>
+		/// ------------------------------------------------------------------------------------
+		private void AddMetsPairs(ArchivingDlgViewModel model, FwVersionInfoProvider viProvider)
+		{
+			IWritingSystemManager wsManager = Cache.ServiceLocator.GetInstance<IWritingSystemManager>();
+			var wsDefaultVern = wsManager.Get(Cache.DefaultVernWs);
+			var vernIso3Code = wsDefaultVern.LanguageSubtag.ISO3Code;
+
+			model.SetScholarlyWorkType(ScholarlyWorkType.PrimaryData);
+
+			model.SetCreationDate(Cache.LangProject.DateCreated);
+			model.SetModifiedDate(Cache.LangProject.DateModified);
+
+			if (!string.IsNullOrEmpty(vernIso3Code))
+				model.SetSubjectLanguage(vernIso3Code, wsDefaultVern.LanguageName);
+
+			var contentLanguages = new List<ArchivingLanguage>();
+			var softwareRequirements = new HashSet<string>();
+			bool fWsUsesKeyman = false;
+
+			softwareRequirements.Add(string.Format("FieldWorks Language Explorer, {0} or later", viProvider.FieldWorksVersion));
+
+			foreach (var ws in Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Union(
+				Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems).Union(
+				Cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems))
+			{
+				var iso3Code = ws.LanguageSubtag.ISO3Code;
+				if (!string.IsNullOrEmpty(iso3Code))
+					contentLanguages.Add(new ArchivingLanguage(iso3Code));
+				if (!string.IsNullOrEmpty(ws.DefaultFontName))
+					softwareRequirements.Add(ws.DefaultFontName);
+				fWsUsesKeyman |= !string.IsNullOrEmpty(ws.Keyboard);
+			}
+
+			if (fWsUsesKeyman)
+				softwareRequirements.Add("Keyman");
+
+			model.SetContentLanguages(contentLanguages);
+			model.SetSoftwareRequirements(softwareRequirements);
+
+			//if (filesToArchive.Contains(.../* TODO: files to include in archive includes a LIFT file  */)
+			//	pairs.Add(JSONUtils.MakeKeyValuePair("dc.relation.conformsto", "LIFT"));
+
+			SilDomain domains = SilDomain.Linguistics;
+			if (Cache.LangProject.ResearchNotebookOA.AllRecords.Any())
+				domains |= SilDomain.Anthropology;
+
+			var cLexicalEntries = Cache.LangProject.LexDbOA.Entries.Count();
+			if (cLexicalEntries > 0)
+				domains |= SilDomain.Ling_Lexicon;
+
+			// Determine if there are any interlinearized texts
+			if (Cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().AllInstances().Any(a => a.OccurrencesInTexts.Any() &&
+				a.GetAgentOpinion(Cache.LangProject.DefaultUserAgent) == Opinions.approves))
+				domains |= SilDomain.Ling_InterlinearizedText;
+
+			var cTexts = Cache.LangProject.Texts.Count();
+			if (cTexts > 0)
+				domains |= SilDomain.Ling_Text;
+
+			//if (filesToArchive.Contains(.../* TODO: files to include in archive includes a grammar sketch  */)
+			//	linguisticSubDomains.Add("grammatical description (LING)");
+
+			// REVIEW: Is data notebook data considered a (partial) ethnography?
+			if (Cache.LangProject.ResearchNotebookOA.AllRecords.Any())
+				domains |= SilDomain.Anth_Ethnography;
+
+			model.SetDomains(domains);
+
+			if (cLexicalEntries > 0 || cTexts > 0)
+			{
+				model.SetDatasetExtent(string.Format("{0} Lexical entries; {1} Texts", cLexicalEntries, cTexts));
+			}
+
+			//// Package's description.
+			//string sDesc = Cache.LanguageProject.ShortName;
+			//if (sDesc != null)
+			//{
+			//	pairs.Add(JSONUtils.MakeKeyValuePair("description.has", "Y"));
+			//	var wsUi = wsManager.Get(Cache.DefaultUserWs);
+			//	var desc = JSONUtils.MakeKeyValuePair(" ", sDesc) + "," +
+			//		JSONUtils.MakeKeyValuePair("lang", wsUi.LanguageSubtag.ISO3Code);
+
+			//	pairs.Add(JSONUtils.MakeArrayFromValues("dc.description", new[] { desc }));
+			//}
 		}
 
 		/// ------------------------------------------------------------------------------------

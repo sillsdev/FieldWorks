@@ -1441,4 +1441,8 @@ To restore from this backup, install version {1} of FieldWorks.
     <value>Change Vernacular Writing System</value>
     <comment>Dialog title for keeping or changing homograph numbering ws when default vernacular ws is changed</comment>
   </data>
+  <data name="kstidAddingFwProject" xml:space="preserve">
+    <value>Adding FieldWorks project</value>
+    <comment>Used in Archive with RAMP dialog box</comment>
+  </data>
 </root>
