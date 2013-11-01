@@ -134,7 +134,7 @@ namespace SIL.FieldWorks.Common.Widgets
 
 			// Add the user's UI writing system if it's not an English one,
 			// since English writing systems have already been added.
-			if (!userWsIsEnglish)
+			if (!userWsIsEnglish && m_sUserWs != "")
 				AddLanguage(m_sUserWs);
 
 			int index = IndexInList(m_sUserWs, false);

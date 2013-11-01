@@ -26,7 +26,6 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Filters;
 using SIL.Utils;
 using XCore;
-using List = XCore.List;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -158,6 +157,8 @@ namespace SIL.FieldWorks.XWorks
 				if (obj is IMoMorphType || obj is IPartOfSpeech)
 					continue; // these don't need to be deleted between tests
 				if (obj is ILexEntry)
+					obj.Delete();
+				if (obj is ICmSemanticDomain)
 					obj.Delete();
 				// Some types won't get deleted directly (e.g. ILexSense),
 				// but should get deleted by their owner.
@@ -303,6 +304,12 @@ namespace SIL.FieldWorks.XWorks
 			internal void ClickApply()
 			{
 				m_ApplyButton_Click(null, EventArgs.Empty);
+				m_wnd.ProcessPendingItems();
+			}
+
+			internal void ClickSuggest()
+			{
+				m_suggestButton_Click(null, EventArgs.Empty);
 				m_wnd.ProcessPendingItems();
 			}
 		}
@@ -628,6 +635,129 @@ namespace SIL.FieldWorks.XWorks
 				// make sure this entry owns the Sense we were on.
 				Assert.AreEqual(hvoOfCurrentEntry, Cache.ServiceLocator.GetObject(hvoOfCurrentSense).OwnerOfClass<ILexEntry>().Hvo);
 			}
+		}
+
+		[Test]
+		public void ListChoiceTargetSemDomSuggest()
+		{
+			// Add some Semantic Domains
+			var semDomDict = AddSemanticDomains(m_bv.Cache);
+			var oilSemDom = semDomDict["oil"];
+			var greenSemDom = semDomDict["green"];
+			var subsenseSemDom = semDomDict["subsense"];
+			ILexSense green, see, understand, english1, subsense1, subsense2; // 'out' values
+			GrabSensesWeNeed(out green, out see, out understand, out subsense1, out subsense2, out english1);
+			// give 'understand' a pre-existing 'oil' semantic domain
+			AddSemanticDomainToSense(understand, oilSemDom);
+
+			m_bulkEditBar.SwitchTab("ListChoice");
+			m_bv.ShowColumn("DomainsOfSensesForSense");
+			Assert.AreEqual(3, m_bv.AllItems.Count);
+			// Make sure we have the expected target fields
+			List<FieldComboItem> targetFields = m_bulkEditBar.GetTargetFields();
+			Assert.AreEqual(3, targetFields.Count);
+			Assert.AreEqual("Morph Type", targetFields[0].ToString());
+			Assert.AreEqual("Grammatical Category", targetFields[1].ToString());
+			Assert.AreEqual("Semantic Domains", targetFields[2].ToString());
+
+			// TargetField == Sense (e.g. "Semantic Domains")
+			using (m_bulkEditBar.SetTargetField("Semantic Domains"))
+			{
+				Assert.AreEqual("Semantic Domains", m_bulkEditBar.SelectedTargetFieldItem.ToString());
+				// make sure current record is an Sense
+				int hvoOfCurrentSense = m_bv.AllItems[m_bv.SelectedIndex];
+				Assert.AreEqual(LexSenseTags.kClassId, GetClassOfObject(hvoOfCurrentSense));
+				// verify there are now 7 rows.
+				Assert.AreEqual(7, m_bv.AllItems.Count);
+				// make sure checking only one sense should only check one row.
+				m_bv.SetCheckedItems(new List<int>()); // uncheck all rows.
+				m_bv.SetCheckedItems(new List<int>(new int[] {hvoOfCurrentSense}));
+				Assert.AreEqual(1, m_bv.CheckedItems.Count);
+
+				// Set all items to be checked (so ClickApply works on all of them)
+				m_bv.SetCheckedItems(m_bv.AllItems);
+
+				m_bulkEditBar.ClickSuggest(); // make sure we don't crash clicking Suggest button
+				m_bulkEditBar.ClickApply();
+
+				// Verify that clicking Apply adds "semantic domains" to any entries
+				// whose glosses match something in the domain name (and that it doesn't for others)
+				Assert.AreEqual(greenSemDom, green.SemanticDomainsRC.FirstOrDefault(),
+					"'green' should have gotten a matching domain");
+				Assert.AreEqual(oilSemDom, understand.SemanticDomainsRC.FirstOrDefault(),
+					"'to.understand' should still have its pre-existing domain");
+				Assert.AreEqual(0, see.SemanticDomainsRC.Count,
+					"'to.see' should not have gotten a domain");
+				Assert.AreEqual(0, english1.SemanticDomainsRC.Count,
+					"'English gloss' should not have gotten a domain");
+				Assert.AreEqual(subsenseSemDom, subsense1.SemanticDomainsRC.FirstOrDefault(),
+					"'English subsense gloss1.1' should have gotten a matching domain");
+				Assert.AreEqual(subsenseSemDom, subsense2.SemanticDomainsRC.FirstOrDefault(),
+					"'English subsense gloss1.2' should have gotten a matching domain");
+			}
+		}
+
+		private void AddSemanticDomainToSense(ILexSense understand, ICmSemanticDomain oilSemDom)
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
+				() => understand.SemanticDomainsRC.Add(oilSemDom));
+		}
+
+		private void GrabSensesWeNeed(out ILexSense green, out ILexSense see, out ILexSense understand,
+			out ILexSense subsense1, out ILexSense subsense2, out ILexSense english1)
+		{
+			// kinda a "hackish" way to do this, but it gets the job done
+			green = see = understand = subsense1 = subsense2 = english1 = null;
+			var lexSenses = Cache.ServiceLocator.GetInstance<ILexSenseRepository>().AllInstances();
+			foreach (var sense in lexSenses)
+			{
+				switch (sense.Gloss.AnalysisDefaultWritingSystem.Text)
+				{
+					case "green":
+						green = sense;
+						break;
+					case "to.see":
+						see = sense;
+						break;
+					case "to.understand":
+						understand = sense;
+						break;
+					case "English subsense gloss1.1":
+						subsense1 = sense;
+						break;
+					case "English subsense gloss1.2":
+						subsense2 = sense;
+						break;
+					case "English gloss":
+						english1 = sense;
+						break;
+				}
+			}
+		}
+
+		private Dictionary<string, ICmSemanticDomain> AddSemanticDomains(FdoCache cache)
+		{
+			var semDomFact = cache.ServiceLocator.GetInstance<ICmSemanticDomainFactory>();
+			var semDomList = cache.LangProject.SemanticDomainListOA;
+			// These aren't very "semantic domain-ish", but they match the gloss of test words
+			var domainWordsToCreate = new[] {"green", "subsense", "oil"};
+			var result = new Dictionary<string, ICmSemanticDomain>();
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				result = domainWordsToCreate.ToDictionary(domainWord => domainWord,
+					domainWord => MakeNewSemDom(semDomFact, semDomList, domainWord));
+			});
+			return result;
+		}
+
+		private ICmSemanticDomain MakeNewSemDom(ICmSemanticDomainFactory semDomFact, ICmPossibilityList semDomList,
+			string domainWord)
+		{
+			var newDomain = semDomFact.Create();
+			semDomList.PossibilitiesOS.Add(newDomain);
+			newDomain.Name.SetAnalysisDefaultWritingSystem(domainWord);
+			m_createdObjectList.Add(newDomain);
+			return newDomain;
 		}
 
 		[Test]

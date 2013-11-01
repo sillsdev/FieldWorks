@@ -1,4 +1,4 @@
-// ---------------------------------------------------------------------------------------------
+﻿// ---------------------------------------------------------------------------------------------
 #region // Copyright (c) 2009, SIL International. All Rights Reserved.
 // <copyright from='2005' to='2009' company='SIL International'>
 //		Copyright (c) 2009, SIL International. All Rights Reserved.
@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.MultiFooTests
 					tsf.MakeString("Stateful FDO Test Project: World Region", englishWsHvo));
 				lp.WorldRegion.set_String(
 					spanishWsHvo,
-					tsf.MakeString("Proyecto de prueba: FDO: Regi�n del Mundo ", spanishWsHvo));
+					tsf.MakeString("Proyecto de prueba: FDO: Región del Mundo ", spanishWsHvo));
 
 				// Set LP's Description.
 				lp.Description.set_String(

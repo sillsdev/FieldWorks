@@ -1,4 +1,4 @@
-// ---------------------------------------------------------------------------------------------
+ï»¿// ---------------------------------------------------------------------------------------------
 #region // Copyright (c) 2011, SIL International. All Rights Reserved.
 // <copyright from='2011' to='2011' company='SIL International'>
 //		Copyright (c) 2011, SIL International. All Rights Reserved.
@@ -562,19 +562,19 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void ReferringSenses()
 		{
-			// Verify that if we make three lex entries whose senses all refer to niño,
+			// Verify that if we make three lex entries whose senses all refer to niÃ±o,
 			// that the reversal index shows them in alphabetical order: boy, child, girl.
-			var girl = (LexEntry)MakeEntry("girl", "niño");
+			var girl = (LexEntry)MakeEntry("girl", "niÃ±o");
 			var senseGirl = girl.SensesOS.First();
-			var boy = (LexEntry)MakeEntry("boy", "niño");
+			var boy = (LexEntry)MakeEntry("boy", "niÃ±o");
 			var senseBoy = boy.SensesOS.First();
-			var child = (LexEntry)MakeEntry("child", "niño");
+			var child = (LexEntry)MakeEntry("child", "niÃ±o");
 			var senseChild = child.SensesOS.First();
 
 			var lexDb = Cache.ServiceLocator.GetInstance<ILexDbRepository>().Singleton;
 			var ri = Cache.ServiceLocator.GetInstance<IReversalIndexFactory>().Create();
 			lexDb.ReversalIndexesOC.Add(ri);
-			var rie = MakeReversalIndexReference(senseGirl, "niño", ri);
+			var rie = MakeReversalIndexReference(senseGirl, "niÃ±o", ri);
 			senseBoy.ReversalEntriesRC.Add(rie);
 			senseChild.ReversalEntriesRC.Add(rie);
 

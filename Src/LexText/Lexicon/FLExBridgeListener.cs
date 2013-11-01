@@ -73,7 +73,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		#region FLExLiftBridge Toolbar messages
 		/// <summary>
-		/// Determine whether or not to show the S/R toolbar icon.
+		/// Determine whether or not to enable the S/R toolbar icon and its hotkey.
+		/// The button and hotkey always disabled before the first successful S/R.
 		/// </summary>
 		/// <param name="parameters"></param>
 		/// <param name="display"></param>
@@ -81,11 +82,22 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public bool OnDisplayFLExLiftBridge(object parameters, ref UIItemDisplayProperties display)
 		{
 			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
-			var bridgeLastUsed = _mediator.PropertyTable.GetStringProperty("LastBridgeUsed", "FLExBridge", PropertyTable.SettingsGroup.LocalSettings);
+			var bridgeLastUsed = _mediator.PropertyTable.GetStringProperty(
+				"LastBridgeUsed", "NoBridgeUsedYet", PropertyTable.SettingsGroup.LocalSettings);
 			if (bridgeLastUsed == "FLExBridge")
 			{
 				// If Fix it app does not exist, then disable main FLEx S/R, since FB needs to call it, after a merge.
-				display.Enabled = display.Enabled && FLExBridgeHelper.FixItAppExists;
+				// If !IsConfiguredForSR (failed the first time), disable the button and hotkey
+				display.Enabled = display.Enabled && FLExBridgeHelper.FixItAppExists && IsConfiguredForSR(Cache.ProjectId.ProjectFolder);
+			}
+			else if (bridgeLastUsed == "LiftBridge")
+			{
+				// If !IsConfiguredForLiftSR (failed first time), disable the button and hotkey
+				display.Enabled = display.Enabled && IsConfiguredForLiftSR(Cache.ProjectId.ProjectFolder);
+			}
+			else // there was no LastBridgeUsed (this is the first time), disable the button and hotkey
+			{
+				display.Enabled = false;
 			}
 
 			return true; // We dealt with it.
@@ -225,7 +237,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private static bool IsConfiguredForSR(string projectFolder)
 		{
-			return Directory.GetDirectories(projectFolder, ".hg").Count() == 1;
+			return Directory.Exists(Path.Combine(projectFolder, ".hg"));
 		}
 
 		/// <summary>
@@ -345,7 +357,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private static bool IsConfiguredForLiftSR(string folder)
 		{
-			var otherRepoPath = Path.Combine(folder, "OtherRepositories");
+			var otherRepoPath = Path.Combine(folder, FLExBridgeHelper.OtherRepositories);
 			if (!Directory.Exists(otherRepoPath))
 				return false;
 			var liftFolder = Directory.EnumerateDirectories(otherRepoPath, "*_LIFT").FirstOrDefault();

@@ -1,553 +1,559 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!--
-	Microsoft ResX Schema
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
 
-	Version 2.0
-
-	The primary goals of this format is to allow a simple XML format
-	that is mostly human readable. The generation and parsing of the
-	various data types are done through the TypeConverter classes
-	associated with the data types.
-
-	Example:
-
-	... ado.net/XML headers & schema ...
-	<resheader name="resmimetype">text/microsoft-resx</resheader>
-	<resheader name="version">2.0</resheader>
-	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-		<value>[base64 mime encoded serialized .NET Framework object]</value>
-	</data>
-	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-		<comment>This is a comment</comment>
-	</data>
-
-	There are any number of "resheader" rows that contain simple
-	name/value pairs.
-
-	Each data row contains a name, and value. The row also contains a
-	type or mimetype. Type corresponds to a .NET class that support
-	text/value conversion through the TypeConverter architecture.
-	Classes that don't support this are serialized and stored with the
-	mimetype set.
-
-	The mimetype is used for serialized objects, and tells the
-	ResXResourceReader how to depersist the object. This is currently not
-	extensible. For a given mimetype the value must be set accordingly:
-
-	Note - application/x-microsoft.net.object.binary.base64 is the format
-	that the ResXResourceWriter will generate, however the reader can
-	read any of the formats listed below.
-
-	mimetype: application/x-microsoft.net.object.binary.base64
-	value   : The object must be serialized with
-			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-			: and then encoded with base64 encoding.
-
-	mimetype: application/x-microsoft.net.object.soap.base64
-	value   : The object must be serialized with
-			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-			: and then encoded with base64 encoding.
-
-	mimetype: application/x-microsoft.net.object.bytearray.base64
-	value   : The object must be serialized into a byte array
-			: using a System.ComponentModel.TypeConverter
-			: and then encoded with base64 encoding.
-	-->
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-	<xsd:element name="root" msdata:IsDataSet="true">
-	  <xsd:complexType>
-		<xsd:choice maxOccurs="unbounded">
-		  <xsd:element name="metadata">
-			<xsd:complexType>
-			  <xsd:sequence>
-				<xsd:element name="value" type="xsd:string" minOccurs="0" />
-			  </xsd:sequence>
-			  <xsd:attribute name="name" use="required" type="xsd:string" />
-			  <xsd:attribute name="type" type="xsd:string" />
-			  <xsd:attribute name="mimetype" type="xsd:string" />
-			  <xsd:attribute ref="xml:space" />
-			</xsd:complexType>
-		  </xsd:element>
-		  <xsd:element name="assembly">
-			<xsd:complexType>
-			  <xsd:attribute name="alias" type="xsd:string" />
-			  <xsd:attribute name="name" type="xsd:string" />
-			</xsd:complexType>
-		  </xsd:element>
-		  <xsd:element name="data">
-			<xsd:complexType>
-			  <xsd:sequence>
-				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-			  </xsd:sequence>
-			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-			  <xsd:attribute ref="xml:space" />
-			</xsd:complexType>
-		  </xsd:element>
-		  <xsd:element name="resheader">
-			<xsd:complexType>
-			  <xsd:sequence>
-				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-			  </xsd:sequence>
-			  <xsd:attribute name="name" type="xsd:string" use="required" />
-			</xsd:complexType>
-		  </xsd:element>
-		</xsd:choice>
-	  </xsd:complexType>
-	</xsd:element>
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
   </xsd:schema>
   <resheader name="resmimetype">
-	<value>text/microsoft-resx</value>
+    <value>text/microsoft-resx</value>
   </resheader>
   <resheader name="version">
-	<value>2.0</value>
+    <value>2.0</value>
   </resheader>
   <resheader name="reader">
-	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ksAddToExisting" xml:space="preserve">
-	<value>Add to existing items</value>
+    <value>Add to existing items</value>
   </data>
   <data name="ksAffixes" xml:space="preserve">
-	<value>affixes</value>
+    <value>affixes</value>
   </data>
   <data name="ksAllAnal" xml:space="preserve">
-	<value>All Analysis</value>
+    <value>All Analysis</value>
   </data>
   <data name="ksAllAnalVern" xml:space="preserve">
-	<value>All Analysis and Vernacular</value>
+    <value>All Analysis and Vernacular</value>
   </data>
   <data name="ksAllChecked" xml:space="preserve">
-	<value>All selected items</value>
+    <value>All selected items</value>
   </data>
   <data name="ksAllOf_" xml:space="preserve">
-	<value>All of...</value>
+    <value>All of...</value>
   </data>
   <data name="ksAllPron" xml:space="preserve">
-	<value>All Pronunciation</value>
+    <value>All Pronunciation</value>
   </data>
   <data name="ksAllVern" xml:space="preserve">
-	<value>All Vernacular</value>
+    <value>All Vernacular</value>
   </data>
   <data name="ksAllVernAnal" xml:space="preserve">
-	<value>All Vernacular and Analysis</value>
+    <value>All Vernacular and Analysis</value>
   </data>
   <data name="ksAnyChecked" xml:space="preserve">
-	<value>Any selected item</value>
+    <value>Any selected item</value>
   </data>
   <data name="ksAnyOf_" xml:space="preserve">
-	<value>Any of...</value>
+    <value>Any of...</value>
   </data>
   <data name="ksApply" xml:space="preserve">
-	<value>Apply</value>
-	<comment>label on a button</comment>
+    <value>Apply</value>
+    <comment>label on a button</comment>
   </data>
   <data name="ksBarElementFailed" xml:space="preserve">
-	<value>Failed to create bulk edit bar element</value>
+    <value>Failed to create bulk edit bar element</value>
   </data>
   <data name="ksBestAnal" xml:space="preserve">
-	<value>Best Analysis</value>
+    <value>Best Analysis</value>
   </data>
   <data name="ksBestAnalVern" xml:space="preserve">
-	<value>Best Analysis or Vernacular</value>
+    <value>Best Analysis or Vernacular</value>
   </data>
   <data name="ksBestVern" xml:space="preserve">
-	<value>Best Vernacular</value>
+    <value>Best Vernacular</value>
   </data>
   <data name="ksBestVernAnal" xml:space="preserve">
-	<value>Best Vernacular or Analysis</value>
+    <value>Best Vernacular or Analysis</value>
   </data>
   <data name="ksBlanks" xml:space="preserve">
-	<value>Blanks</value>
+    <value>Blanks</value>
   </data>
   <data name="ksBrowseNeedsAColumn" xml:space="preserve">
-	<value>A browse view must have at least one column.</value>
+    <value>A browse view must have at least one column.</value>
   </data>
   <data name="ksBulkCopyDesc" xml:space="preserve">
-	<value>Copy the contents of the source field to the target field</value>
+    <value>Copy the contents of the source field to the target field</value>
   </data>
   <data name="ksBulkReplaceDesc" xml:space="preserve">
-	<value>Change each occurrence of a pattern to the replacement text</value>
+    <value>Change each occurrence of a pattern to the replacement text</value>
   </data>
   <data name="ksCannotAccessEC" xml:space="preserve">
-	<value>{0}
+    <value>{0}
 Cannot access encoding converters, possibly due to insufficient access privilege.
 You may want to consult a system administrator.</value>
   </data>
   <data name="ksCannotRemoveColumn" xml:space="preserve">
-	<value>Cannot remove column</value>
+    <value>Cannot remove column</value>
   </data>
   <data name="ksChangingMorphType" xml:space="preserve">
-	<value>Changing fundamental type</value>
+    <value>Changing fundamental type</value>
   </data>
   <data name="ksCheckAll" xml:space="preserve">
-	<value>Select All</value>
+    <value>Select All</value>
   </data>
   <data name="ksChoose_" xml:space="preserve">
-	<value>Choose...</value>
+    <value>Choose...</value>
   </data>
   <data name="ksChooseClearTarget" xml:space="preserve">
-	<value>Please choose a target column to clear</value>
+    <value>Please choose a target column to clear</value>
   </data>
   <data name="ksChooseClickTarget" xml:space="preserve">
-	<value>Please select a target column for click copy</value>
+    <value>Please select a target column for click copy</value>
   </data>
   <data name="ksChooseDestination" xml:space="preserve">
-	<value>Please choose a destination column</value>
+    <value>Please choose a destination column</value>
   </data>
   <data name="ksChooseEditTarget" xml:space="preserve">
-	<value>Please choose a target column to edit</value>
+    <value>Please choose a target column to edit</value>
   </data>
   <data name="ksChooseNaturalClass" xml:space="preserve">
-	<value>Choose A Natural Class</value>
+    <value>Choose A Natural Class</value>
   </data>
   <data name="ksChooseSource" xml:space="preserve">
-	<value>Please choose a source column</value>
+    <value>Please choose a source column</value>
   </data>
   <data name="ksChooseTransducer" xml:space="preserve">
-	<value>Please choose or set up a Process</value>
+    <value>Please choose or set up a Process</value>
   </data>
   <data name="ksChooseX" xml:space="preserve">
-	<value>Choose {0}</value>
+    <value>Choose {0}</value>
   </data>
   <data name="ksClear" xml:space="preserve">
-	<value>Clear</value>
-	<comment>label on a button</comment>
+    <value>Clear</value>
+    <comment>label on a button</comment>
   </data>
   <data name="ksClickCopyDesc" xml:space="preserve">
-	<value>Click on any word to copy it to the target field</value>
+    <value>Click on any word to copy it to the target field</value>
   </data>
   <data name="ksConfirmDeleteMulti" xml:space="preserve">
-	<value>Confirm multiple deletions</value>
+    <value>Confirm multiple deletions</value>
   </data>
   <data name="ksConfirmDeleteMultiMsg" xml:space="preserve">
-	<value>This will delete ALL the selected items.
+    <value>This will delete ALL the selected items.
 
 Do you want to proceed?</value>
   </data>
   <data name="ksCtrlClickForSubItems" xml:space="preserve">
-	<value>Ctrl-click a check box to include all subitems</value>
+    <value>Ctrl-click a check box to include all subitems</value>
   </data>
   <data name="ksDefaultAnal" xml:space="preserve">
-	<value>Default Analysis</value>
+    <value>Default Analysis</value>
   </data>
   <data name="ksDefaultPron" xml:space="preserve">
-	<value>Default Pronunciation</value>
+    <value>Default Pronunciation</value>
   </data>
   <data name="ksDefaultVern" xml:space="preserve">
-	<value>Default Vernacular</value>
+    <value>Default Vernacular</value>
   </data>
   <data name="ksDelete" xml:space="preserve">
-	<value>Delete</value>
+    <value>Delete</value>
   </data>
   <data name="ksDeleteDesc" xml:space="preserve">
-	<value>Delete the checked items (rows) from the database</value>
+    <value>Delete the checked items (rows) from the database</value>
   </data>
   <data name="ksDeleteDesc2" xml:space="preserve">
-	<value>Delete the contents of the specified column for all selected rows</value>
+    <value>Delete the contents of the specified column for all selected rows</value>
   </data>
   <data name="ksDeletedObject" xml:space="preserve">
-	<value>Deleted object detected</value>
+    <value>Deleted object detected</value>
   </data>
   <data name="ksDeletedObjectMsg" xml:space="preserve">
-	<value>One of the objects in the list has been deleted (possibly by another user on a networked computer). Attempting to Refresh...</value>
+    <value>One of the objects in the list has been deleted (possibly by another user on a networked computer). Attempting to Refresh...</value>
   </data>
   <data name="ksDuplicateColumn" xml:space="preserve">
-	<value>Duplicate column found</value>
+    <value>Duplicate column found</value>
   </data>
   <data name="ksDuplicateColumnMsg" xml:space="preserve">
-	<value>You have configured the following fields to be displayed in two or more columns with the same writing system:
+    <value>You have configured the following fields to be displayed in two or more columns with the same writing system:
 	"{0}"
 Change the writing system of one of these columns or remove the duplicated column.</value>
   </data>
   <data name="ksEditNaturalClasses" xml:space="preserve">
-	<value>Edit the Natural Classes</value>
+    <value>Edit the Natural Classes</value>
   </data>
   <data name="ksEmpty" xml:space="preserve">
-	<value>&lt;Empty&gt;</value>
+    <value>&lt;Empty&gt;</value>
   </data>
   <data name="ksErrorProcessing" xml:space="preserve">
-	<value>A problem occurred processing the string '{0}': {1}</value>
+    <value>A problem occurred processing the string '{0}': {1}</value>
   </data>
   <data name="ksExactlyChecked" xml:space="preserve">
-	<value>Exactly checked items</value>
+    <value>Exactly checked items</value>
   </data>
   <data name="ksFilterError" xml:space="preserve">
-	<value>Error in Filter text</value>
+    <value>Error in Filter text</value>
   </data>
   <data name="ksFilterErrorMsg" xml:space="preserve">
-	<value>Error in filter: {0}</value>
+    <value>Error in filter: {0}</value>
   </data>
   <data name="ksFilterFor_" xml:space="preserve">
-	<value>Filter for...</value>
+    <value>Filter for...</value>
   </data>
   <data name="ksGreaterEqX" xml:space="preserve">
-	<value>=&gt; {0}</value>
+    <value>=&gt; {0}</value>
   </data>
   <data name="ksGreaterX" xml:space="preserve">
-	<value>&gt; {0}</value>
+    <value>&gt; {0}</value>
   </data>
   <data name="ksInvalidSavedLayout" xml:space="preserve">
-	<value>Language Explorer has had to revert to the default column layout. Sorry for the inconvenience.</value>
+    <value>Language Explorer has had to revert to the default column layout. Sorry for the inconvenience.</value>
   </data>
   <data name="ksLessEqX" xml:space="preserve">
-	<value>&lt;= {0}</value>
+    <value>&lt;= {0}</value>
   </data>
   <data name="ksLessX" xml:space="preserve">
-	<value>&lt; {0}</value>
+    <value>&lt; {0}</value>
   </data>
   <data name="ksListChoiceDesc" xml:space="preserve">
-	<value>Select the target field and the list choice to change it to</value>
+    <value>Select the target field and the list choice to change it to</value>
   </data>
   <data name="ksMoreColumns" xml:space="preserve">
-	<value>More Column Choices...</value>
+    <value>More Column Choices...</value>
   </data>
   <data name="ksMorphTypeChangesSlow" xml:space="preserve">
-	<value>Some of the selected items are being changed from {0} to {1}. Different kinds of information are stored for affixes and stems, so such changes could lose some details you have recorded about the items. Also, the change may take a long time. If many changes are of this type, you may notice a LONG pause at about 80% complete.</value>
-	<comment>the two arguments are either ksAffixes and ksStems, which may be swapped</comment>
+    <value>Some of the selected items are being changed from {0} to {1}. Different kinds of information are stored for affixes and stems, so such changes could lose some details you have recorded about the items. Also, the change may take a long time. If many changes are of this type, you may notice a LONG pause at about 80% complete.</value>
+    <comment>the two arguments are either ksAffixes and ksStems, which may be swapped</comment>
   </data>
   <data name="ksNaturalClassDesc" xml:space="preserve">
-	<value>These natural classes have been specified in the grammar area.</value>
+    <value>These natural classes have been specified in the grammar area.</value>
   </data>
   <data name="ksNoChecked" xml:space="preserve">
-	<value>No checked item</value>
+    <value>No checked item</value>
   </data>
   <data name="ksNoChoices" xml:space="preserve">
-	<value>No choices</value>
+    <value>No choices</value>
   </data>
   <data name="ksNonBlanks" xml:space="preserve">
-	<value>Non-blanks</value>
+    <value>Non-blanks</value>
   </data>
   <data name="ksNoneOf_" xml:space="preserve">
-	<value>None of...</value>
+    <value>None of...</value>
   </data>
   <data name="ksNote" xml:space="preserve">
-	<value>Note</value>
+    <value>Note</value>
   </data>
   <data name="ksNotSure" xml:space="preserve">
-	<value>&lt;Not Sure&gt;</value>
-	<comment>menu item to clear current value</comment>
+    <value>&lt;Not Sure&gt;</value>
+    <comment>menu item to clear current value</comment>
   </data>
   <data name="ksNotX" xml:space="preserve">
-	<value>Not {0}</value>
+    <value>Not {0}</value>
   </data>
   <data name="ksOnly_" xml:space="preserve">
-	<value>Only...</value>
+    <value>Only...</value>
   </data>
   <data name="ksOnlyX" xml:space="preserve">
-	<value>Only {0}</value>
+    <value>Only {0}</value>
   </data>
   <data name="ksPreview" xml:space="preserve">
-	<value>Preview</value>
-	<comment>label on a button</comment>
+    <value>Preview</value>
+    <comment>label on a button</comment>
   </data>
   <data name="ksProcessDesc" xml:space="preserve">
-	<value>Populate a field by applying a complex process to another field</value>
+    <value>Populate a field by applying a complex process to another field</value>
   </data>
   <data name="ksQuestionMarks" xml:space="preserve">
-	<value>???</value>
+    <value>???</value>
   </data>
   <data name="ksRangeXY" xml:space="preserve">
-	<value>{0}...{1}</value>
+    <value>{0}...{1}</value>
   </data>
   <data name="ksRedoBulkEdit" xml:space="preserve">
-	<value>Redo Bulk Edit</value>
+    <value>Redo Bulk Edit</value>
   </data>
   <data name="ksRedoClickCopy" xml:space="preserve">
-	<value>Redo Click Copy</value>
+    <value>Redo Click Copy</value>
   </data>
   <data name="ksRedoDeleteRecord" xml:space="preserve">
-	<value>Redo Delete Record</value>
+    <value>Redo Delete Record</value>
   </data>
   <data name="ksRedoNewEntryX" xml:space="preserve">
-	<value>Redo New Entry ({0})</value>
+    <value>Redo New Entry ({0})</value>
   </data>
   <data name="ksRemoveExisting" xml:space="preserve">
-	<value>Remove from existing items</value>
+    <value>Remove from existing items</value>
   </data>
   <data name="ksReplaceExisting" xml:space="preserve">
-	<value>Replace existing items</value>
+    <value>Replace existing items</value>
   </data>
   <data name="ksReplaceXWithY" xml:space="preserve">
-	<value>Replace: {0} with {1}</value>
+    <value>Replace: {0} with {1}</value>
   </data>
   <data name="ksRestrict_" xml:space="preserve">
-	<value>Restrict...</value>
+    <value>Restrict...</value>
   </data>
   <data name="ksRows" xml:space="preserve">
-	<value>Rows</value>
+    <value>Rows</value>
   </data>
   <data name="ksShowAll" xml:space="preserve">
-	<value>Show All</value>
+    <value>Show All</value>
   </data>
   <data name="ksSorryNoEdit" xml:space="preserve">
-	<value>Sorry...that bulk edit function is not implemented yet</value>
+    <value>Sorry...that bulk edit function is not implemented yet</value>
   </data>
   <data name="ksSorryNoPreview" xml:space="preserve">
-	<value>Sorry...that preview is not implemented yet</value>
+    <value>Sorry...that preview is not implemented yet</value>
   </data>
   <data name="ksSrcDstMustDiffer" xml:space="preserve">
-	<value>Source and destination columns should be different</value>
+    <value>Source and destination columns should be different</value>
   </data>
   <data name="ksStems" xml:space="preserve">
-	<value>stems</value>
+    <value>stems</value>
   </data>
   <data name="ksTipCheck" xml:space="preserve">
-	<value>Select all or clear all checkmark boxes</value>
+    <value>Select all or clear all checkmark boxes</value>
   </data>
   <data name="ksTipConfig" xml:space="preserve">
-	<value>Configure which columns to display</value>
+    <value>Configure which columns to display</value>
   </data>
   <data name="ksToggle" xml:space="preserve">
-	<value>Toggle</value>
+    <value>Toggle</value>
   </data>
   <data name="ksUncheckAll" xml:space="preserve">
-	<value>Clear All</value>
+    <value>Clear All</value>
   </data>
   <data name="ksUndoBulkEdit" xml:space="preserve">
-	<value>Undo Bulk Edit</value>
+    <value>Undo Bulk Edit</value>
   </data>
   <data name="ksUndoClickCopy" xml:space="preserve">
-	<value>Undo Click Copy</value>
+    <value>Undo Click Copy</value>
   </data>
   <data name="ksUndoDeleteRecord" xml:space="preserve">
-	<value>Undo Delete Record</value>
+    <value>Undo Delete Record</value>
   </data>
   <data name="ksUndoNewEntryX" xml:space="preserve">
-	<value>Undo New Entry ({0})</value>
+    <value>Undo New Entry ({0})</value>
   </data>
   <data name="ksUnimplFeature" xml:space="preserve">
-	<value>Unimplemented feature</value>
+    <value>Unimplemented feature</value>
   </data>
   <data name="ksUNK" xml:space="preserve">
-	<value>UNK</value>
-	<comment>short for Unknown</comment>
+    <value>UNK</value>
+    <comment>short for Unknown</comment>
   </data>
   <data name="ksWord" xml:space="preserve">
-	<value>Word</value>
+    <value>Word</value>
   </data>
   <data name="ConfiguredExportHasBeenCancelled" xml:space="preserve">
-	<value>Configured export has been cancelled.</value>
+    <value>Configured export has been cancelled.</value>
   </data>
   <data name="ksAnalysis" xml:space="preserve">
-	<value>analysis</value>
+    <value>analysis</value>
   </data>
   <data name="ksVernacular" xml:space="preserve">
-	<value>vernacular</value>
+    <value>vernacular</value>
   </data>
   <data name="khtpBulkReplaceTitle" xml:space="preserve">
-	<value>Bulk Replace Setup</value>
+    <value>Bulk Replace Setup</value>
   </data>
   <data name="ksNo" xml:space="preserve">
-	<value>no</value>
+    <value>no</value>
   </data>
   <data name="ksYes" xml:space="preserve">
-	<value>yes</value>
+    <value>yes</value>
   </data>
   <data name="ksVernacularInParagraph" xml:space="preserve">
-	<value>Baseline</value>
-	<comment>Currently, only used in IText. We could think of something more generic later.</comment>
+    <value>Baseline</value>
+    <comment>Currently, only used in IText. We could think of something more generic later.</comment>
   </data>
   <data name="ksGreaterThanZero" xml:space="preserve">
-	<value>Greater than 0</value>
+    <value>Greater than 0</value>
   </data>
   <data name="ksZero" xml:space="preserve">
-	<value>0</value>
+    <value>0</value>
   </data>
   <data name="ksGreaterThanOne" xml:space="preserve">
-	<value>Greater than 1</value>
+    <value>Greater than 1</value>
   </data>
   <data name="ksUndoNewRowData" xml:space="preserve">
-	<value>Undo typing in the new row</value>
+    <value>Undo typing in the new row</value>
   </data>
   <data name="ksSpellingErrors" xml:space="preserve">
-	<value>Spelling Errors</value>
-	<comment>Label for menu item in filter bar, selects lines containing spelling errors</comment>
+    <value>Spelling Errors</value>
+    <comment>Label for menu item in filter bar, selects lines containing spelling errors</comment>
   </data>
   <data name="ksExcludeX" xml:space="preserve">
-	<value>Exclude {0}</value>
-	<comment>Menu item, indicates search for items that do NOT match {0}.</comment>
+    <value>Exclude {0}</value>
+    <comment>Menu item, indicates search for items that do NOT match {0}.</comment>
   </data>
   <data name="ksWarning" xml:space="preserve">
-	<value>Warning</value>
+    <value>Warning</value>
   </data>
   <data name="ksCannotUndoTooManyDeleted" xml:space="preserve">
-	<value>This will delete ALL the selected items
+    <value>This will delete ALL the selected items
 and can sometimes take a long time.
 This action will not be undo-able.
 
 Do you want to proceed?</value>
   </data>
   <data name="ksSelectProcess" xml:space="preserve">
-	<value>Select a Process</value>
-	<comment>message box title</comment>
+    <value>Select a Process</value>
+    <comment>message box title</comment>
   </data>
   <data name="ksRedoBulkDelete" xml:space="preserve">
-	<value>Redo Bulk Delete</value>
+    <value>Redo Bulk Delete</value>
   </data>
   <data name="ksUndoBulkDelete" xml:space="preserve">
-	<value>Undo Bulk Delete</value>
+    <value>Undo Bulk Delete</value>
   </data>
   <data name="ksNoDesc" xml:space="preserve">
-	<value>There is no description available for this list item.</value>
+    <value>There is no description available for this list item.</value>
   </data>
   <data name="ksShortDesc" xml:space="preserve">
-	<value>Short Description</value>
+    <value>Short Description</value>
   </data>
   <data name="ksTitle" xml:space="preserve">
-	<value>Title</value>
+    <value>Title</value>
   </data>
   <data name="ksLess" xml:space="preserve">
-	<value>Less</value>
+    <value>Less</value>
   </data>
   <data name="ksMore" xml:space="preserve">
-	<value>More</value>
+    <value>More</value>
   </data>
   <data name="ksEmptyLC" xml:space="preserve">
-	<value>&lt;empty&gt;</value>
+    <value>&lt;empty&gt;</value>
   </data>
   <data name="ksRow" xml:space="preserve">
-	<value>row</value>
-	<comment>Used in "delete this {0}" to make it read "delete this row" in tooltip for delete button in Collect Words view.</comment>
+    <value>row</value>
+    <comment>Used in "delete this {0}" to make it read "delete this row" in tooltip for delete button in Collect Words view.</comment>
   </data>
   <data name="ksPublishIn" xml:space="preserve">
-	<value>Publish In</value>
+    <value>Publish In</value>
   </data>
   <data name="ksShowAsHeadwordIn" xml:space="preserve">
-	<value>Show As Headword In</value>
+    <value>Show As Headword In</value>
   </data>
   <data name="ksShowEntryInLexicon" xml:space="preserve">
-	<value>Show Entry in Lexicon</value>
-	<comment>popup menu item in Collect Words view</comment>
+    <value>Show Entry in Lexicon</value>
+    <comment>popup menu item in Collect Words view</comment>
   </data>
   <data name="ksRedoCheckAll" xml:space="preserve">
-	<value>Redo Select All</value>
+    <value>Redo Select All</value>
   </data>
   <data name="ksRedoToggle" xml:space="preserve">
-	<value>Redo Toggle</value>
+    <value>Redo Toggle</value>
   </data>
   <data name="ksRedoUncheckAll" xml:space="preserve">
-	<value>Redo Clear All</value>
+    <value>Redo Clear All</value>
   </data>
   <data name="ksUndoCheckAll" xml:space="preserve">
-	<value>Undo Select All</value>
+    <value>Undo Select All</value>
   </data>
   <data name="ksUndoToggle" xml:space="preserve">
-	<value>Undo Toggle</value>
+    <value>Undo Toggle</value>
   </data>
   <data name="ksUndoUncheckAll" xml:space="preserve">
-	<value>Undo Clear All</value>
+    <value>Undo Clear All</value>
+  </data>
+  <data name="ksSuggestButtonText" xml:space="preserve">
+    <value>Suggest</value>
+  </data>
+  <data name="ksSuggestButtonToolTip" xml:space="preserve">
+    <value>Suggest will replace the normal Preview; Apply will then add any suggestions to any currently saved domains.</value>
   </data>
 </root>

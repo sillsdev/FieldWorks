@@ -519,6 +519,16 @@ namespace SIL.FieldWorks.Resources
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Gets the icon that looks like a yellow lightbulb
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public static Image SuggestLightbulb
+		{
+			get { return Helper.m_imgLst16x16.Images[11]; }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Gets the icon that looks like ABC with check mark. (Review: this is from the MSVS2005
 		/// image library...can we make it part of an OS project like this?)
 		/// </summary>

@@ -1095,6 +1095,11 @@ Main template
 												</xsl:attribute>
 												<xsl:value-of select="key('POSID',$idToMsaPOS)/Abbreviation"/>
 											</genericRef>
+											<xsl:variable name="idToMsaInflClass" select="key('MsaID',ToMsa/@dst)/@InflectionClass"/>
+											<xsl:if test="$idToMsaInflClass!=0">
+												<xsl:text> and has an inflection class of </xsl:text>
+												<xsl:value-of select="$MoInflClasses[@Id=$idToMsaInflClass]/Name"/>
+											</xsl:if>
 											<xsl:text>.</xsl:text>
 										</xsl:when>
 										<xsl:otherwise>
@@ -4691,6 +4696,12 @@ OutputHeadedCompoundRuleInfo
 							</xsl:attribute>
 							<xsl:value-of select="key('POSID',$overridingPOS)/Abbreviation"/>
 						</genericRef>
+						<xsl:variable name="idToMsaInflClass" select="$overridingMsa/@InflectionClass"/>
+						<xsl:if test="$idToMsaInflClass!=0">
+							<xsl:text> and has an inflection class of </xsl:text>
+							<xsl:value-of select="$MoInflClasses[@Id=$idToMsaInflClass]/Name"/>
+						</xsl:if>
+
 						<xsl:text>.</xsl:text>
 						<xsl:call-template name="OutputExceptionFeaturesOfCompoundRule">
 							<xsl:with-param name="features" select="$features"/>

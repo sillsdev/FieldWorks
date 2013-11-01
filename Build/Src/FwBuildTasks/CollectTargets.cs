@@ -328,7 +328,8 @@ namespace FwBuildTasks
 							bldr.Append(";XCoreAdapterSilSidePane");
 							break;
 						case "TeImportExportTests":
-							// The TeImportExportTests require that the ScrChecks.dll is in DistFiles/Editorial Checks.
+						case "FwCoreDlgsTests":
+							// The TeImportExportTests and FwCoreDlgsTests require that the ScrChecks.dll is in DistFiles/Editorial Checks.
 							// We don't discover that dependency because it's not a reference (LT-13777).
 							bldr.Append(";ScrChecks");
 							break;

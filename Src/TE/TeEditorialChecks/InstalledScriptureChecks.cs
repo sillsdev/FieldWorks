@@ -17,13 +17,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SILUBS.SharedScrUtils;
 using System.Resources;
 using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
 

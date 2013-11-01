@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:TeChecksDataSource"/> class.
+		/// Initializes a new instance of the <see cref="T:ScrChecksDataSource"/> class.
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// ------------------------------------------------------------------------------------
@@ -72,7 +72,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:TeChecksDataSource"/> class.
+		/// Initializes a new instance of the <see cref="T:ScrChecksDataSource"/> class.
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// <param name="styleSheetFileName">Path to the stylesheet definition XML file</param>

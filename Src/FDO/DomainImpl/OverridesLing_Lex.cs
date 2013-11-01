@@ -1596,6 +1596,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						leNew.SensesOS.Add(ls); // moves it
 					});
 		}
+
 		/// <summary>
 		/// This goes through the LexSense and all its subsenses to create the needed MSAs on
 		/// the current LexEntry, replacing all those found in the LexSense.

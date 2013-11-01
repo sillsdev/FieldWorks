@@ -42,9 +42,11 @@
 	</layout>
 	<layout class="MoStemMsa" type="detail" name="Category">
 		<part ref="Category"/>
+		<part ref="InflectionClass"/>
 	</layout>
 	<layout class="MoStemMsa" type="detail" name="CategoryDisabled">
 		<part ref="CategoryDisabled"/>
+		<part ref="InflectionClassDisabled"/>
 	</layout>
 	<layout class="MoStemMsa" type="detail" name="Result">
 		<part ref="Category"/>

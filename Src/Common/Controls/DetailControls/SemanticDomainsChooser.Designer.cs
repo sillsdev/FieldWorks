@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -260,7 +261,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// button1
 			// 
 			this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.button1.Image = ((System.Drawing.Image)(resources.GetObject("button1.Image")));
+			this.button1.Image = ResourceHelper.SuggestLightbulb;
 			this.button1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.button1.Location = new System.Drawing.Point(214, 340);
 			this.button1.Name = "button1";

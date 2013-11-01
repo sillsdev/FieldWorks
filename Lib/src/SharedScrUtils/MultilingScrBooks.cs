@@ -1,4 +1,4 @@
-// --------------------------------------------------------------------------------------------
+ï»¿// --------------------------------------------------------------------------------------------
 #region // Copyright (c) 2011, SIL International. All Rights Reserved.
 // <copyright from='2008' to='2011' company='SIL International'>
 //		Copyright (c) 2011, SIL International. All Rights Reserved.
@@ -216,25 +216,25 @@ namespace SILUBS.SharedScrUtils
 			{
 				WsNames nameSet = new WsNames();
 
-				nameSet.Name = new [] {"Génesis","Exodo","Levítico","Números","Deuteronomio",
-					"Josué","Jueces","Rut","1 Samuel","2 Samuel","1 Reyes","2 Reyes","1 Crónicas",
-					"2 Crónicas", "Esdras","Nehemías","Ester","Job","Salmos","Proverbios","Eclesiastés",
-					"Cantares","Isaías", "Jeremías","Lamentaciones","Ezequiel","Daniel","Oseas","Joel",
-					"Amós","Abdías","Jonás", "Miqueas","Nahúm","Habacuc","Sofonías","Hageo","Zacarías",
-					"Malaquías",
+				nameSet.Name = new [] {"GÃ©nesis","Exodo","LevÃ­tico","NÃºmeros","Deuteronomio",
+					"JosuÃ©","Jueces","Rut","1 Samuel","2 Samuel","1 Reyes","2 Reyes","1 CrÃ³nicas",
+					"2 CrÃ³nicas", "Esdras","NehemÃ­as","Ester","Job","Salmos","Proverbios","EclesiastÃ©s",
+					"Cantares","IsaÃ­as", "JeremÃ­as","Lamentaciones","Ezequiel","Daniel","Oseas","Joel",
+					"AmÃ³s","AbdÃ­as","JonÃ¡s", "Miqueas","NahÃºm","Habacuc","SofonÃ­as","Hageo","ZacarÃ­as",
+					"MalaquÃ­as",
 					"Mateo","Marcos","Lucas","Juan","Hechos","Romanos","1 Corintios","2 Corintios",
-					"Gálatas","Efesios","Filipenses","Colosenses","1 Tesalonicenses","2 Tesalonicenses",
-					"1 Timoteo","2 Timoteo","Tito","Filemón","Hebreos","Santiago",
+					"GÃ¡latas","Efesios","Filipenses","Colosenses","1 Tesalonicenses","2 Tesalonicenses",
+					"1 Timoteo","2 Timoteo","Tito","FilemÃ³n","Hebreos","Santiago",
 					"1 Pedro","2 Pedro","1 Juan","2 Juan","3 Juan","Judas","Apocalipsis"};
 
-				nameSet.Abbrev = new [] {"Gén","Ex","Lev","Núm","Dt",
+				nameSet.Abbrev = new [] {"GÃ©n","Ex","Lev","NÃºm","Dt",
 					"Jos","Jue","Rt","1 Sam","2 Sam","1 Re","2 Re","1 Cro",
 					"2 Cro","Esd","Neh","Est","Job","Sal","Prov","Ecl",
 					"Cant","Is","Jer","Lam","Ez","Dan","Os","Jl",
 					"Am","Abd","Jon","Miq","Nah","Hab","Sof","Hag","Zac",
 					"Mal",
 					"Mt","Mc","Lc","Jn","Hch","Rom","1 Cor","2 Cor",
-					"Gál","Ef","Flp","Col","1 Tes","2 Tes",
+					"GÃ¡l","Ef","Flp","Col","1 Tes","2 Tes",
 					"1 Tim","2 Tim","Tit","Flm","Heb","Sant",
 					"1 Pe","2 Pe","1 Jn","2 Jn","3 Jn","Jds","Ap"};
 				return nameSet;

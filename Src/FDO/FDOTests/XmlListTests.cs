@@ -1,4 +1,4 @@
-// ---------------------------------------------------------------------------------------------
+﻿// ---------------------------------------------------------------------------------------------
 #region // Copyright (c) 2009, SIL International. All Rights Reserved.
 // <copyright from='2009' to='2009' company='SIL International'>
 //		Copyright (c) 2009, SIL International. All Rights Reserved.
@@ -115,7 +115,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			"                  <Run ws=\"en\">A nominal is a part of speech whose members differ grammatically from a substantive but which functions as one.</Run>" + Environment.NewLine +
 			"                </AStr>" + Environment.NewLine +
 			"                <AStr ws=\"fr\">" + Environment.NewLine +
-			"                  <Run ws=\"fr\">Un nominal est un constituant syntaxique caractérisé par ses latitudes de fonctions. Selon ce critère on distingue les noms (ainsi que les pronoms et les syntagmes nominaux), capables en particulier dassumer les fonctions de sujet et dobjet, et les adjectifs, assumant celle de déterminant du nom. Dans bien des langues le nominal a aussi un certain nombre de caractéristiques morphologiques. (Dans la terminologie française, « nominal » est plus vaste que nom, et comporte les nominaux substantifs ou noms, les nominaux adjectifs ou adjectifs, ainsi que les syntagmes nominaux et les pronoms.)</Run>" + Environment.NewLine +
+			"                  <Run ws=\"fr\">Un nominal est un constituant syntaxique caractérisé par ses latitudes de fonctions. Selon ce critère on distingue les noms (ainsi que les pronoms et les syntagmes nominaux), capables en particulier d’assumer les fonctions de sujet et d’objet, et les adjectifs, assumant celle de déterminant du nom. Dans bien des langues le nominal a aussi un certain nombre de caractéristiques morphologiques. (Dans la terminologie française, « nominal » est plus vaste que nom, et comporte les nominaux substantifs ou noms, les nominaux adjectifs ou adjectifs, ainsi que les syntagmes nominaux et les pronoms.)</Run>" + Environment.NewLine +
 			"                </AStr>" + Environment.NewLine +
 			"              </Description>" + Environment.NewLine +
 			"              <CatalogSourceId><Uni>Nominal</Uni></CatalogSourceId>" + Environment.NewLine +

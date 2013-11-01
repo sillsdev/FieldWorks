@@ -153,6 +153,9 @@
   <data name="m_lstLanguageProjects.Enabled" type="System.Boolean, mscorlib">
 	<value>False</value>
   </data>
+  <data name="m_lstLanguageProjects.HorizontalScrollbar" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
   <data name="m_lstLanguageProjects.IntegralHeight" type="System.Boolean, mscorlib">
 	<value>False</value>
   </data>

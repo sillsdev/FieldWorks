@@ -140,7 +140,7 @@ namespace SIL.FieldWorks.TE
 			IStTxtPara judePara = AddParaToMockedSectionContent(judeSection, "Intro Paragraph");
 			AddRunToMockedPara(judePara, "The Letter from Jude was written to warn against" +
 				" false teachers who claimed to be believers. In this brief letter, which is similar in" +
-				" content to 2 Peter the writer encourages his readers “to fight on for the faith which" +
+				" content to 2 Peter the writer encourages his readers \u201Cto fight on for the faith which" +
 				" once and for all God has given to his people.", null);
 			// Insert BT (in two different writing systems) of intro paragraph
 			ICmTranslation transEn = AddBtToMockedParagraph(judePara, m_wsEn);

@@ -1592,8 +1592,10 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_preedit = String.Empty;
 			// Delete the pre-edit first. This is necessary because we use a no-op action
 			// handler, so the rollback doesn't do anything.
-			UpdatePreeditText(string.Empty, 0);
-			HidePreeditText();
+			if (UpdatePreeditText != null)
+				UpdatePreeditText(String.Empty, 0);
+			if (HidePreeditText != null)
+				HidePreeditText();
 		}
 
 		public void CreateInputContext()
@@ -1684,12 +1686,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		public void FocusIn()
 		{
-			throw new NotImplementedException();
+			// nothing we need to do.
 		}
 
 		public void FocusOut()
 		{
-			throw new NotImplementedException();
+			// nothing we need to do.
 		}
 
 		/// <summary>
@@ -1721,7 +1723,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		public void Reset()
 		{
-			throw new NotImplementedException();
+			// nothing we need to do
 		}
 
 		public void CreateInputContext()
@@ -1839,12 +1841,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		public void FocusIn()
 		{
-			throw new NotImplementedException();
+			// nothing we need to do
 		}
 
 		public void FocusOut()
 		{
-			throw new NotImplementedException();
+			// nothing we need to do
 		}
 
 		public bool ProcessKeyEvent(int keySym, int scanCode, Keys state)
@@ -1866,7 +1868,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		public void Reset()
 		{
-			throw new NotImplementedException();
+			// nothing we need to do
 		}
 
 		public void CreateInputContext()
@@ -1920,12 +1922,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		public void FocusIn()
 		{
-			throw new NotImplementedException();
+			// nothing we need to do
 		}
 
 		public void FocusOut()
 		{
-			throw new NotImplementedException();
+			// nothing we need to do
 		}
 
 		public bool ProcessKeyEvent(int keySym, int scanCode, Keys state)
@@ -1959,7 +1961,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		public void Reset()
 		{
-			throw new NotImplementedException();
+			// nothing we need to do
 		}
 
 		public void CreateInputContext()
@@ -2017,12 +2019,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		public void FocusIn()
 		{
-			throw new NotImplementedException();
+			// nothing we need to do
 		}
 
 		public void FocusOut()
 		{
-			throw new NotImplementedException();
+			// nothing we need to do
 		}
 
 		public bool ProcessKeyEvent(int keySym, int scanCode, Keys state)
@@ -2057,7 +2059,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		public void Reset()
 		{
-			throw new NotImplementedException();
+			// nothing we need to do
 		}
 
 		public void CreateInputContext()

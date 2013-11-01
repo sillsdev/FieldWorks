@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -14,6 +15,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch
 		// Maps from writing system to words that occur in the sense that we should look for in that writing system.
 		private readonly Dictionary<int, HashSet<string>> m_searchKeys;
 		private readonly ILexSense m_sense;
+		private const int MIN_SEARCH_KEY_LENGTH = 3;
 
 		/// <summary>
 		/// Create and setup a search for keywords from a LexSense in the Semantic Domain list.
@@ -25,8 +27,6 @@ namespace SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch
 			m_sense = sense;
 			m_searchKeys = GetSearchKeysFromSense();
 		}
-
-		private const int MAX_WORDS_IN_USEABLE_DEFINITION = 2;
 
 		private Dictionary<int, HashSet<string>> GetSearchKeysFromSense()
 		{
@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch
 				if (wordSource == null)
 					continue;
 				var words = (from Match match in WordParsingRegex.Matches(wordSource) select match.Value).ToArray();
-				if (words.Length > maxWords)
+				if (words.Length > maxWords || words.Length == 0)
 					continue;
 				HashSet<string> wordSet;
 				if (!results.TryGetValue(ws, out wordSet))
@@ -65,8 +65,11 @@ namespace SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch
 					wordSet = new HashSet<string>();
 					results[ws] = wordSet;
 				}
-				foreach (var word in words)
+				foreach (var word in words.Where(
+					word => !String.IsNullOrEmpty(word) && word.Length >= MIN_SEARCH_KEY_LENGTH))
+				{
 					wordSet.Add(word);
+				}
 			}
 		}
 

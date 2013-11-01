@@ -26,7 +26,7 @@ namespace SIL.FieldWorks.FDO.Validation
 		PhonEnvRecognizer m_per;
 		string[] m_saSegments = { "a", "ai", "b", "c", "d", "e", "f", "fl", "fr",
 									"a", // test duplicate
-									"Ì",  // single combined Unicode acute i
+									"\u00ED",  // single combined Unicode acute i (√≠)
 									"H"
 								};
 		string[] m_saNaturalClasses = { "V", "Vowels", "C", "+son", "C", "+lab, +vd", "+ant, -cor, -vd" };
@@ -94,9 +94,9 @@ namespace SIL.FieldWorks.FDO.Validation
 			DoValidTest("/ _ [V^1]");
 			DoValidTest("/ _ [C^1][V^1]");
 			DoValidTest("/ _ [C^1] [V^1]");
-			DoValidTest("/ Ì _"); // single combined Unicode acute i
-			//DoValidTest("/ i¥ _"); // Unicode i followed by combining acute
-			DoValidTest("/ H _"); // single combined Unicode acute i
+			DoValidTest("/ \u00ED _"); // single combined Unicode acute i (√≠)
+			DoValidTest("/ i\u0301 _"); // Unicode i followed by combining acute (iÃÅ)
+			DoValidTest("/ H _");
 		}
 		/// <summary>
 		/// Test that can recognize a valid phonlogical environment

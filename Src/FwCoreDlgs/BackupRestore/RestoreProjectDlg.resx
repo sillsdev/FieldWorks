@@ -136,7 +136,7 @@
 	<value>9</value>
   </data>
   <data name="m_btnHelp.Text" xml:space="preserve">
-	<value>Help</value>
+	<value>&amp;Help</value>
   </data>
   <data name="&gt;&gt;m_btnHelp.Name" xml:space="preserve">
 	<value>m_btnHelp</value>
@@ -322,7 +322,7 @@
 	<value>0</value>
   </data>
   <data name="label13.Text" xml:space="preserve">
-	<value>Project:</value>
+	<value>&amp;Project:</value>
   </data>
   <data name="&gt;&gt;label13.Name" xml:space="preserve">
 	<value>label13</value>
@@ -355,7 +355,7 @@
 	<value>2</value>
   </data>
   <data name="label16.Text" xml:space="preserve">
-	<value>Version:</value>
+	<value>&amp;Version:</value>
   </data>
   <data name="&gt;&gt;label16.Name" xml:space="preserve">
 	<value>label16</value>

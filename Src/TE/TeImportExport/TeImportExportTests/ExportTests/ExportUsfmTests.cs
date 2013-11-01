@@ -1,4 +1,4 @@
-// ---------------------------------------------------------------------------------------------
+﻿// ---------------------------------------------------------------------------------------------
 #region // Copyright (c) 2007, SIL International. All Rights Reserved.
 // <copyright from='2004' to='2007' company='SIL International'>
 //		Copyright (c) 2007, SIL International. All Rights Reserved.
@@ -2876,7 +2876,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 		{
 			IScrSection section = ExportHelper.CreateSection(this, m_book, "My section head");
 			IScrTxtPara para = ExportHelper.AppendParagraph(this, m_book, section, @"\c1\v1\*won \v2\*too \*(Emphasis)mama mia! \v3\*treee", m_wsVern, ScrStyleNames.NormalParagraph);
-			ExportHelper.AddBackTranslation(this, m_book, para, @"\c1\v1\*uno \v2\*dos\*(Emphasis)�caramba!\v3\*tres", m_wsSpanish);
+			ExportHelper.AddBackTranslation(this, m_book, para, @"\c1\v1\*uno \v2\*dos\*(Emphasis)¡caramba!\v3\*tres", m_wsSpanish); // U+00A1 INVERTED EXCLAMATION MARK (¡)
 			ExportHelper.AddBackTranslation(this, m_book, para, @"\c1\v1\*eins \v2\*zwei \v3\*drei", m_wsGerman);
 			ExportHelper.AddBackTranslation(this, m_book, para, @"\c1\v1\*one \v2\*two\*(Emphasis)WOW!\v3\*three", m_wsEnglish);
 
@@ -2897,7 +2897,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 												 @"\v 2", @"\vt too", @"\em mama mia!",
 												 @"\btvt two", @"\btem WOW!",
 												 @"\btvt_es dos",
-												 @"\btem_es �caramba!",
+												 @"\btem_es ¡caramba!", // U+00A1 INVERTED EXCLAMATION MARK (¡)
 												 @"\btvt_de zwei",
 												 @"\vref GEN.1:3",
 												 @"\v 3", @"\vt treee",

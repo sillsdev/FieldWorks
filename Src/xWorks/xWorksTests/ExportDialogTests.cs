@@ -1,4 +1,4 @@
-// ---------------------------------------------------------------------------------------------
+Ôªø// ---------------------------------------------------------------------------------------------
 #region // Copyright (c) 2010, SIL International. All Rights Reserved.
 // <copyright from='2010' to='2010' company='SIL International'>
 //		Copyright (c) 2010, SIL International. All Rights Reserved.
@@ -77,7 +77,7 @@ namespace SIL.FieldWorks.XWorks
 			"            <CmDomainQ>" + Environment.NewLine +
 			"              <Question>" + Environment.NewLine +
 			"                <AUni ws=\"en\">(1) What words refer to everything we can see?</AUni>" + Environment.NewLine +
-			"                <AUni ws=\"fr\">(1) Quels mots se rÈfËrent ‡ tout ce que nous pouvons voir?</AUni>" + Environment.NewLine +
+			"                <AUni ws=\"fr\">(1) Quels mots se r√©f√®rent √† tout ce que nous pouvons voir?</AUni>" + Environment.NewLine +
 			"              </Question>" + Environment.NewLine +
 			"              <ExampleWords>" + Environment.NewLine +
 			"                <AUni ws=\"en\">universe, creation, cosmos, heaven and earth, macrocosm, everything that exists</AUni>" + Environment.NewLine +
@@ -610,7 +610,7 @@ namespace SIL.FieldWorks.XWorks
 					Assert.AreEqual("<CmDomainQ>", r.ReadLine());
 					Assert.AreEqual("<Question>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"en\">(1) What words refer to everything we can see?</AUni>", r.ReadLine());
-					Assert.AreEqual("<AUni ws=\"fr\">(1) Quels mots se rÈfËrent ‡ tout ce que nous pouvons voir?</AUni>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"fr\">(1) Quels mots se r√©f√®rent √† tout ce que nous pouvons voir?</AUni>", r.ReadLine());
 					Assert.AreEqual("</Question>", r.ReadLine());
 					Assert.AreEqual("<ExampleWords>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"en\">universe, creation, cosmos, heaven and earth, macrocosm, everything that exists</AUni>", r.ReadLine());
@@ -1096,19 +1096,19 @@ namespace SIL.FieldWorks.XWorks
 			using (UndoableUnitOfWorkHelper helper = new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor,
 				"Undo test", "Redo test"))
 			{
-				m_cache.LangProject.SemanticDomainListOA.Name.set_String(wsFr, "Domaines sÈmantiques");
+				m_cache.LangProject.SemanticDomainListOA.Name.set_String(wsFr, "Domaines s√©mantiques");
 				ICmSemanticDomain sem1 = repoSemDom.GetObject(new Guid("63403699-07C1-43F3-A47C-069D6E4316E5"));
 				Assert.IsNotNull(sem1);
 				sem1.Name.set_String(wsFr, "L'univers physique");
-				sem1.QuestionsOS[0].Question.set_String(wsFr, "Quels sont les mots qui font rÈfÈrence ‡ tout ce qu'on peut voir?");
+				sem1.QuestionsOS[0].Question.set_String(wsFr, "Quels sont les mots qui font r√©f√©rence √† tout ce qu'on peut voir?");
 				sem1.QuestionsOS[0].ExampleWords.set_String(wsFr, "univers, ciel, terre");
-				sem1.QuestionsOS[0].ExampleSentences.set_String(wsFr, "Le rÙle du prophËte est alors de rÈveiller le courage et la foi en Dieu.");
+				sem1.QuestionsOS[0].ExampleSentences.set_String(wsFr, "Le r√¥le du proph√®te est alors de r√©veiller le courage et la foi en Dieu.");
 				ICmSemanticDomain sem11 = sem1.SubPossibilitiesOS[0] as ICmSemanticDomain;
 				Assert.IsNotNull(sem11);
 				sem11.Name.set_String(wsFr, "Ciel");
 				sem11.QuestionsOS[0].Question.set_String(wsFr, "Quels sont les mots qui signifient le ciel?");
 				sem11.QuestionsOS[0].ExampleWords.set_String(wsFr, "ciel, firmament");
-				sem11.QuestionsOS[2].Question.set_String(wsFr, "Quels sont les mots qui signifient l'endroit ou le pays au-del‡ du ciel?");
+				sem11.QuestionsOS[2].Question.set_String(wsFr, "Quels sont les mots qui signifient l'endroit ou le pays au-del√† du ciel?");
 
 				string translatedList;
 				using (var w = new StringWriter())
@@ -1123,7 +1123,7 @@ namespace SIL.FieldWorks.XWorks
 					Assert.AreEqual("<List owner=\"LangProject\" field=\"SemanticDomainList\" itemClass=\"CmSemanticDomain\">", r.ReadLine());
 					Assert.AreEqual("<Name>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"en\">Semantic Domains</AUni>", r.ReadLine());
-					Assert.AreEqual("<AUni ws=\"fr\">Domaines sÈmantiques</AUni>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"fr\">Domaines s√©mantiques</AUni>", r.ReadLine());
 					Assert.AreEqual("</Name>", r.ReadLine());
 					Assert.AreEqual("<Abbreviation>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"en\">Sem</AUni>", r.ReadLine());
@@ -1151,7 +1151,7 @@ namespace SIL.FieldWorks.XWorks
 					Assert.AreEqual("<CmDomainQ>", r.ReadLine());
 					Assert.AreEqual("<Question>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"en\">(1) What words refer to everything we can see?</AUni>", r.ReadLine());
-					Assert.AreEqual("<AUni ws=\"fr\">Quels sont les mots qui font rÈfÈrence ‡ tout ce qu'on peut voir?</AUni>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"fr\">Quels sont les mots qui font r√©f√©rence √† tout ce qu'on peut voir?</AUni>", r.ReadLine());
 					Assert.AreEqual("</Question>", r.ReadLine());
 					Assert.AreEqual("<ExampleWords>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"en\">universe, creation, cosmos, heaven and earth, macrocosm, everything that exists</AUni>", r.ReadLine());
@@ -1162,7 +1162,7 @@ namespace SIL.FieldWorks.XWorks
 					Assert.AreEqual("<Run ws=\"en\">In the beginning God created &lt;the heavens and the earth&gt;.</Run>", r.ReadLine());
 					Assert.AreEqual("</AStr>", r.ReadLine());
 					Assert.AreEqual("<AStr ws=\"fr\">", r.ReadLine());
-					Assert.AreEqual("<Run ws=\"fr\">Le rÙle du prophËte est alors de rÈveiller le courage et la foi en Dieu.</Run>", r.ReadLine());
+					Assert.AreEqual("<Run ws=\"fr\">Le r√¥le du proph√®te est alors de r√©veiller le courage et la foi en Dieu.</Run>", r.ReadLine());
 					Assert.AreEqual("</AStr>", r.ReadLine());
 					Assert.AreEqual("</ExampleSentences>", r.ReadLine());
 					Assert.AreEqual("</CmDomainQ>", r.ReadLine());
@@ -1209,7 +1209,7 @@ namespace SIL.FieldWorks.XWorks
 					Assert.AreEqual("<CmDomainQ>", r.ReadLine());
 					Assert.AreEqual("<Question>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"en\">(3) What words are used to refer to the place or area beyond the sky?</AUni>", r.ReadLine());
-					Assert.AreEqual("<AUni ws=\"fr\">Quels sont les mots qui signifient l'endroit ou le pays au-del‡ du ciel?</AUni>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"fr\">Quels sont les mots qui signifient l'endroit ou le pays au-del√† du ciel?</AUni>", r.ReadLine());
 					Assert.AreEqual("</Question>", r.ReadLine());
 					Assert.AreEqual("<ExampleWords>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"en\">heaven, space, outer space, ether, void, solar system</AUni>", r.ReadLine());

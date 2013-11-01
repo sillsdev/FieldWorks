@@ -34,7 +34,7 @@ Preamble
 	<xsl:key name="PhonemeID" match="PhPhoneme" use="@Id"/>
 	<xsl:key name="StemAlloID" match="MoStemAllomorph" use="@Id"/>
 	<xsl:key name="StemMsaID" match="MoStemMsa" use="@Id"/>
-	<xsl:key name="ToMsaDst" match="ToMsa" use="@dst"/>
+	<xsl:key name="ToMsaDst" match="ToMsa | OverridingMsa" use="@dst"/>
 	<xsl:key name="NatClassAbbr" match="PhNCSegments/Abbreviation" use="."/>
 	<!-- various global variables to make searching faster -->
 	<xsl:variable name="AllAffixTemplates" select="MoInflAffixTemplate"/>
@@ -59,13 +59,9 @@ Preamble
 		<!-- will use a delimeter to guarantee uniqueness of the class name -->
 		<xsl:text>|</xsl:text>
 		<xsl:for-each select="$MoStemMsas[key('ToMsaDst', @Id) and @InflectionClass!=0]">
-			<xsl:sort select="@InflectionClass"/>
-			<xsl:variable name="sThisInflectionClass" select="@InflectionClass"/>
-			<xsl:if test="not(preceding-sibling::*/@InflectionClass = $sThisInflectionClass)">
-				<xsl:value-of select="@InflectionClass"/>
-				<!-- will use a delimeter to guarantee uniqueness of the class name -->
-				<xsl:text>|</xsl:text>
-			</xsl:if>
+			<xsl:value-of select="@InflectionClass"/>
+			<!-- will use a delimeter to guarantee uniqueness of the class name -->
+			<xsl:text>|</xsl:text>
 		</xsl:for-each>
 	</xsl:variable>
 	<!-- following is a way to deal with iteration contexts -->
@@ -1907,7 +1903,8 @@ InflClass
 					</xsl:variable>
 					<!-- We create an MEC to check for the inflection class property: if it's not there somewhere,
 					then something is not right.  However, if there's an exocentric compound rule that produces
-					a stem having the inflection class, then we cannot use the MEC to check.  We have to wait
+					a stem having the inflection class or if there is an endocentric compound rule whose overridding
+					MSA has an inflection class, then we cannot use the MEC to check.  We have to wait
 					for the word grammar to check.
 					By the way, we still need the word grammar because the MEC cannot test if the inflection
 					class is appearing in the correct stem; it also will be met if there is a prefix and a suffix both of

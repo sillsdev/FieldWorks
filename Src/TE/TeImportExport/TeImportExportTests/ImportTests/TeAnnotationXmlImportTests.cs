@@ -576,8 +576,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		#region Private helper methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Returns whether or not the specified DateTimes close to each other by checking only
-		/// down to the seconds.
+		/// Returns whether or not the specified DateTimes close to each other by checking whether they are within 5 seconds of each other
 		/// </summary>
 		/// <param name="first">The first day to compare.</param>
 		/// <param name="second">The second day to compare.</param>
@@ -586,7 +585,9 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// ------------------------------------------------------------------------------------
 		private bool AreDateTimesClose(DateTime first, DateTime second)
 		{
-			return first.ToString("yyMMddHHmm") == second.ToString("yyMMddHHmm");
+			TimeSpan twoSeconds = new TimeSpan(0, 0, 0, 5);
+			TimeSpan timeDifference = first - second;
+			return timeDifference.Duration() < twoSeconds;
 		}
 
 		/// ------------------------------------------------------------------------------------

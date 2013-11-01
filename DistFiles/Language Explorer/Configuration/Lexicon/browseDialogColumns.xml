@@ -51,7 +51,7 @@
 	</column>
 	<column layout="DomainsOfSensesForSense" label="Semantic Domains" width="72000" multipara="true" visibility="dialog"
 		chooserFilter="complexListMultiple"
-		bulkEdit="complexListMultiple" field="LexSense.SemanticDomains" list="SemanticDomainList" displayNameProperty="AbbrAndNameTSS"/>
+		bulkEdit="semanticDomainListMultiple" field="LexSense.SemanticDomains" list="SemanticDomainList" displayNameProperty="AbbrAndNameTSS"/>
 	<column layout="NumberOfSensesForEntry" label="Number of Senses (Entry)" sortType="integer" blankPossible="false" visibility="dialog"/>
 	<column layout="EtymologyGloss" label="Etymology - Gloss"  multipara="true" ws="$ws=analysis" transduce="LexEntry.Etymology.Gloss" editable="false" visibility="dialog" />
 	<column layout="EtymologySource" label="Etymology - Source"  multipara="true" transduce="LexEntry.Etymology.Source" editable="false" visibility="dialog" />

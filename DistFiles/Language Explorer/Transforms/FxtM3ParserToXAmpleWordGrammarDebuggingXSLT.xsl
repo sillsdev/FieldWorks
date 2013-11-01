@@ -2295,7 +2295,7 @@ Ignore text template
 						   </xsl:element>
 						   <xsl:element name="xsl:attribute">
 							  <xsl:attribute name="name">syncatAbbr</xsl:attribute>
-							  <xsl:value-of select="$ToPartOfSpeech/Abbreviation"/>
+							  <xsl:value-of select="key('POSID',$ToPartOfSpeech)/Abbreviation"/>
 						   </xsl:element>
 						   <xsl:element name="xsl:attribute">
 							  <xsl:attribute name="name">inflClass</xsl:attribute>
@@ -2303,7 +2303,7 @@ Ignore text template
 						   </xsl:element>
 						   <xsl:element name="xsl:attribute">
 							  <xsl:attribute name="name">inflClassAbbr</xsl:attribute>
-							  <xsl:value-of select="$ToInflectionClass/Abbreviation"/>
+							  <xsl:value-of select="key('POSID',$ToPartOfSpeech)/InflectionClasses/MoInflClass[@Id=$ToInflectionClass]/Abbreviation"/>
 						   </xsl:element>
 						   <xsl:variable name="sHasInflTemplate">
 							  <xsl:call-template name="SuperPOSHasTemplate">
@@ -3318,7 +3318,7 @@ CheckInflAffixCompatibility
    <!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 CreateCompoundRuleAttribute
-	Create an attribute for the lefth hand stem of an endocentric compound rule
+	Create an attribute for the left hand stem of an endocentric compound rule
 		Parameters: member = member which is the head
 							sAttr - the attribute to create
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -4068,7 +4068,7 @@ OutputUniqueStrings
    <!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 PercolateHeadedCompoundInfo
-	Pss up attributes of a headed compound
+	Pass up attributes of a headed compound
 		Parameters: member = member which is the head
 							  override = overriding msa (if any)
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -4096,14 +4096,26 @@ PercolateHeadedCompoundInfo
 			</xsl:call-template>
 		 </xsl:otherwise>
 	  </xsl:choose>
-	  <xsl:call-template name="CreateCompoundRuleAttribute">
-		 <xsl:with-param name="Member" select="$Member"/>
-		 <xsl:with-param name="sAttr">inflClass</xsl:with-param>
-	  </xsl:call-template>
-	  <xsl:call-template name="CreateCompoundRuleAttribute">
-		 <xsl:with-param name="Member" select="$Member"/>
-		 <xsl:with-param name="sAttr">inflClassAbbr</xsl:with-param>
-	  </xsl:call-template>
+	  <xsl:choose>
+		  <xsl:when test="$Override and $Override/@PartOfSpeech!=0 and $Override/@InflectionClass!=0">
+			  <wgd:attribute name="inflClass">
+				  <xsl:value-of select="$Override/@InflectionClass"/>
+			  </wgd:attribute>
+			  <wgd:attribute name="inflClassAbbr">
+				  <xsl:value-of select="key('POSID',$Override/@PartOfSpeech)/InflectionClasses/MoInflClass[@Id=$Override/@InflectionClass]/Abbreviation"/>
+			  </wgd:attribute>
+		  </xsl:when>
+		  <xsl:otherwise>
+			  <xsl:call-template name="CreateCompoundRuleAttribute">
+				  <xsl:with-param name="Member" select="$Member"/>
+				  <xsl:with-param name="sAttr">inflClass</xsl:with-param>
+			  </xsl:call-template>
+			  <xsl:call-template name="CreateCompoundRuleAttribute">
+				  <xsl:with-param name="Member" select="$Member"/>
+				  <xsl:with-param name="sAttr">inflClassAbbr</xsl:with-param>
+			  </xsl:call-template>
+		  </xsl:otherwise>
+	  </xsl:choose>
 	  <xsl:call-template name="CreateCompoundRuleAttribute">
 		 <xsl:with-param name="Member" select="$Member"/>
 		 <xsl:with-param name="sAttr">requiresInfl</xsl:with-param>

@@ -1626,6 +1626,10 @@ namespace TestViews
 			m_qzvps.Attach(NewObj VwPropertyStore());
 			m_qts->SetWritingSystemFactory(g_qwsf);
 			m_qzvps->putref_WritingSystemFactory(g_qwsf);
+			// Initialize the pattern locale to a known state
+			// The default is to use the system locale, which could be anything
+			StrUni stuLocale(L"en_US");
+			m_qpat->put_IcuLocale(stuLocale.Bstr());
 		}
 		virtual void Teardown()
 		{

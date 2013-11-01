@@ -6,7 +6,7 @@
       <shortName>ni- (1SgSubj): ni</shortName>
       <inflMsa slot="180" slotAbbr="Subject" />
     </morph>
-    <stem syncat="152" syncatAbbr="" inflClass="178" inflClassAbbr="" requiresInfl="+" blocksInfl="-">
+    <stem syncat="152" syncatAbbr="intrans" inflClass="178" inflClassAbbr="" requiresInfl="+" blocksInfl="-">
       <stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
         <morph wordType="root">
           <shortName>yalo (mat): yalo</shortName>
@@ -287,7 +287,7 @@
       <shortName>ni- (1SgSubj): ni</shortName>
       <inflMsa slot="180" slotAbbr="Subject" />
     </morph>
-    <stem syncat="152" syncatAbbr="" inflClass="178" inflClassAbbr="" requiresInfl="+" blocksInfl="-">
+    <stem syncat="152" syncatAbbr="intrans" inflClass="178" inflClassAbbr="" requiresInfl="+" blocksInfl="-">
       <stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
         <morph wordType="root">
           <shortName>yalo (mat): yalo</shortName>
