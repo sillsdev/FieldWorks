@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch;
 
 namespace SIL.FieldWorks.FDO
 {
@@ -159,6 +160,18 @@ namespace SIL.FieldWorks.FDO
 		/// <param name="partialMatches">extra partial matches</param>
 		/// <returns></returns>
 		IEnumerable<ICmSemanticDomain> FindDomainsThatMatchWordsIn(ILexSense sense, out IEnumerable<ICmSemanticDomain> partialMatches);
+
+		/// <summary>
+		/// This method assumes that a CachingSemDomSearchEngine has cached the Semantic Domains by
+		/// search key (a Tuple of word string and writing system integer). It then takes the gloss,
+		/// a short definition (if only one or two words), and reversal from a LexSense and uses those
+		/// words as search keys to find Semantic Domains that have one of those words in
+		/// their Name or Example Words fields.
+		/// </summary>
+		/// <param name="semDomCache"></param>
+		/// <param name="sense"></param>
+		/// <returns></returns>
+		IEnumerable<ICmSemanticDomain> FindCachedDomainsThatMatchWordsInSense(SemDomSearchCache semDomCache, ILexSense sense);
 	}
 
 	public partial interface IConstChartMovedTextMarkerRepository

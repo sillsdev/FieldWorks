@@ -1,16 +1,16 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Diagnostics;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
 using System.Linq;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
@@ -699,9 +699,6 @@ namespace SIL.FieldWorks.Common.Controls
 					besc = new MorphTypeChooserBEditControl(flid, flidSub, hvoList, ws, m_bv);
 					break;
 				case "variantConditionListItem":
-					flid = GetFlidFromClassDotName(colSpec, "field");
-					hvoList = GetNamedListHvo(colSpec, "list");
-					ws = WritingSystemServices.GetWritingSystem(m_cache, colSpec, null, WritingSystemServices.kwsAnal).Handle;
 					besc = new VariantEntryTypesChooserBEditControl(m_cache, m_mediator, colSpec);
 					break;
 				case "integer":
@@ -737,7 +734,7 @@ namespace SIL.FieldWorks.Common.Controls
 					besc = new ComplexListChooserBEditControl(m_cache, m_mediator, colSpec);
 					break;
 				case "semanticDomainListMultiple":
-					besc = new SemanticDomainChooserBEditControl(m_cache, m_mediator, colSpec);
+					besc = new SemanticDomainChooserBEditControl(m_cache, m_mediator, this, colSpec);
 					break;
 				case "variantEntryTypes":
 					besc = new VariantEntryTypesChooserBEditControl(m_cache, m_mediator, colSpec);
@@ -1622,7 +1619,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		protected void m_previewButton_Click(object sender, EventArgs e)
+		protected internal void m_previewButton_Click(object sender, EventArgs e)
 		{
 			HandlePreviewOrSuggestTask(DoPreviewTask);
 		}
@@ -6191,7 +6188,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_ghostParentHelper = gph;
 		}
 
-		void m_launcher_Click(object sender, EventArgs e)
+		protected virtual void m_launcher_Click(object sender, EventArgs e)
 		{
 			if (m_hvoList == (int)SpecialHVOValues.kHvoUninitializedObject)
 				return; // Can't show a chooser for a non-existent list!
@@ -6560,13 +6557,21 @@ namespace SIL.FieldWorks.Common.Controls
 
 	}
 
+	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
+		Justification = "m_bar owns this object; circular reference")]
 	class SemanticDomainChooserBEditControl : ComplexListChooserBEditControl, IFWDisposable
 	{
 		private Button m_suggestButton;
 		private bool m_doingSuggest; // as opposed to 'regular' Preview
 		private ICmSemanticDomainRepository m_semDomRepo;
+		private BulkEditBar m_bar;
+		private SemDomSearchCache m_searchCache;
 
-		public SemanticDomainChooserBEditControl(FdoCache cache, Mediator mediator, XmlNode colSpec) : base(cache, mediator, colSpec)
+		// Cache suggestions from FakeDoIt so DoIt is faster.
+		private Dictionary<int, List<ICmObject>> m_suggestionCache;
+
+		public SemanticDomainChooserBEditControl(FdoCache cache, Mediator mediator, BulkEditBar bar, XmlNode colSpec) :
+			base(cache, mediator, colSpec)
 		{
 			m_suggestButton = new Button();
 			m_suggestButton.Text = XMLViewsStrings.ksSuggestButtonText;
@@ -6576,6 +6581,8 @@ namespace SIL.FieldWorks.Common.Controls
 			tip.SetToolTip(m_suggestButton, XMLViewsStrings.ksSuggestButtonToolTip);
 			m_doingSuggest = false;
 			m_semDomRepo = cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
+			m_bar = bar;
+			m_searchCache = new SemDomSearchCache(cache);
 		}
 
 		public override Button SuggestButton
@@ -6587,7 +6594,8 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		protected override void ComputeValue(List<ICmObject> chosenObjs, int hvoItem, out List<ICmObject> oldVals, out List<ICmObject> newVal)
+		protected override void ComputeValue(List<ICmObject> chosenObjs, int hvoItem, out List<ICmObject> oldVals,
+			out List<ICmObject> newVal)
 		{
 			if (!m_doingSuggest)
 			{
@@ -6595,35 +6603,34 @@ namespace SIL.FieldWorks.Common.Controls
 				return;
 			}
 
-			// Not sure if we really need this section
-			int hvoReal;
-			// Check whether we can actually compute values for this item.  If not,
-			// just return a pair of empty lists.  (See LT-11016 and LT-11357.)
-			if (!CanActuallyComputeValuesFor(hvoItem, out hvoReal))
-			{
-				oldVals = new List<ICmObject>();
-				newVal = oldVals;
-				return;
-			}
-			// end of debatable section
+			oldVals = GetOldVals(hvoItem);
 
-			oldVals = GetOldVals(hvoReal);
+			// ComputeValue() is used by FakeDoIt to put values in the suggestion cache,
+			// and by DoIt to get values from the cache (and thereby not repeat the search).
+
+			if (m_suggestionCache.TryGetValue(hvoItem, out newVal))
+			{
+				return; // This must be the DoIt pass; MakeSuggestions clears out the cache each time.
+			}
+
 			// resist the temptation to do "newVal = oldVals"
 			// if we change newVal we don't want oldVals to change
 			newVal = new List<ICmObject>();
 			newVal.AddRange(oldVals);
 
-			var curObject = m_cache.ServiceLocator.GetObject(hvoReal) as ILexSense;
+			var curObject = m_cache.ServiceLocator.GetObject(hvoItem) as ILexSense;
 			if (curObject == null)
 				return;
 
-			var matches = m_semDomRepo.FindDomainsThatMatchWordsIn(curObject);
+			var matches = m_semDomRepo.FindCachedDomainsThatMatchWordsInSense(m_searchCache, curObject);
 
 			foreach (var domain in matches)
 			{
 				if (!newVal.Contains(domain))
 					newVal.Add(domain);
 			}
+
+			m_suggestionCache[hvoItem] = newVal; // This must be the FakeDoIt pass; cache semantic domains.
 		}
 
 		/// <summary>
@@ -6632,6 +6639,14 @@ namespace SIL.FieldWorks.Common.Controls
 		public override void MakeSuggestions(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state)
 		{
 			m_doingSuggest = true;
+			ChosenObjects = new List<ICmObject>(0);
+			// Unfortunately ProgressState is from FwControls which depends on FDO, so passing it as a parameter
+			// to the searchCache's InitializeCache method would result in a circular dependency.
+			state.PercentDone = 15;
+			state.Breath(); // give the user a LITTLE hope that things are happening!
+			// Should be the only time we need to loop through all the Semantic Domains
+			m_searchCache.InitializeCache();
+			m_suggestionCache = new Dictionary<int, List<ICmObject>>();
 			base.FakeDoit(itemsToChange, tagFakeFlid, tagEnabled, state);
 			if (SomeChangesAreWaiting(itemsToChange, tagEnabled))
 				EnableButtonsIfChangesWaiting();
@@ -6646,6 +6661,20 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			m_doingSuggest = false;
 			base.FakeDoit(itemsToChange, tagFakeFlid, tagEnabled, state);
+		}
+
+		protected override void m_launcher_Click(object sender, EventArgs e)
+		{
+			base.m_launcher_Click(sender, e);
+
+			// Automatically launch preview if Choose... button actually chose something
+			if (ChosenObjects.Any())
+				LaunchPreview();
+		}
+
+		private void LaunchPreview()
+		{
+			m_bar.m_previewButton_Click(null, new EventArgs());
 		}
 
 		#region IFWDisposable Implementation

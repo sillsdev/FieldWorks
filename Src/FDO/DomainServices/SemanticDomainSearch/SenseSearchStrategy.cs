@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch
 			m_searchKeys = GetSearchKeysFromSense();
 		}
 
-		private Dictionary<int, HashSet<string>> GetSearchKeysFromSense()
+		internal Dictionary<int, HashSet<string>> GetSearchKeysFromSense()
 		{
 			var results = new Dictionary<int, HashSet<string>>();
 			AddKeysFrom(m_sense.Gloss, results, int.MaxValue);
