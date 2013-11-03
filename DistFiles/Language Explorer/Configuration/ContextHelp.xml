@@ -247,6 +247,7 @@
 	<item id="CmdHelpDemoPlayAll">Play all the movies (length 84 minutes).</item>
 	<item id="CmdHelpLexicographyIntro">Display Introduction to Lexicography (only available in English).</item>
 	<item id="CmdHelpNotesSFMDatabaseImport">Display technical notes on SFM database import (only available in English).</item>
+	<item id="CmdHelpNotesSendReceive">Display technical notes on FieldWorks Send/Receive (only available in English).</item>
 	<item id="CmdHelpNotesLinguaLinksDatabaseImport">Display technical notes on LinguaLinks database import (only available in English).</item>
 	<item id="CmdHelpNotesInterlinearImport">Display technical notes on interlinear import (only available in English).</item>
 	<item id="CmdHelpNotesWritingSystems">Display technical notes on Writing Systems (only available in English).</item>

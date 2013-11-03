@@ -148,6 +148,7 @@
 			<parameters file="Lexicography Introduction/Introduction to Lexicography.htm"/>
 		</command>
 		<command id="CmdHelpNotesSFMDatabaseImport" label="Technical Notes on _SFM Database Import..." message="HelpNotesSFMDatabaseImport"/>
+		<command id="CmdHelpNotesSendReceive" label="Technical Notes on FieldWorks Send-_Receive..." message="HelpNotesSendReceive"/>
 		<command id="CmdHelpNotesLinguaLinksDatabaseImport" label="Technical Notes on Lin_guaLinks Import..." message="HelpNotesLinguaLinksDatabaseImport"/>
 		<!-- Help/Resources/Technical Notes on LinguaLinks Import... -->
 		<command id="CmdHelpNotesInterlinearImport" label="Technical Notes on _Interlinear Import..." message="HelpNotesInterlinearImport"/>
@@ -645,6 +646,7 @@
 			<menu id="Resources" label="_Resources">
 				<item command="CmdHelpLexicographyIntro"/>
 				<item command="CmdHelpMorphologyInto"/>
+				<item command="CmdHelpNotesSendReceive"/>
 				<item command="CmdHelpNotesSFMDatabaseImport"/>
 				<item command="CmdHelpNotesLinguaLinksDatabaseImport"/>
 				<item command="CmdHelpNotesInterlinearImport"/>
