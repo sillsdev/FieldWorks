@@ -62,10 +62,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private Label m_lblSpecifyWrtSys;
 		private HelpProvider helpProvider1;
 		private string m_dbFile;
-		/// <summary>
-		/// Maximum allowable length of the Project Name. Protected for testing purposes.
-		/// </summary>
-		protected const int kmaxNameLength = 64;
 		#endregion
 
 		#region Properties
@@ -81,7 +77,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				CheckDisposed();
 				return m_txtName.Text.Trim();
 			}
-			set
+			protected set // protected for tests; protected because this bypasses length enforcement specified in the resx
 			{
 				CheckDisposed();
 				m_txtName.Text = value.Trim();
@@ -495,28 +491,34 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Handle the OK button.
+		/// Handle the OK button: Validate input and create new project
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		private void btnOK_Click(object sender, EventArgs e)
 		{
+			Enabled = false;
+			DialogResult = DialogResult.OK;
+
+			//
+			// Validate input
+			//
+
 			if (CheckForNonAsciiProjectName(ProjectName))
 			{
 				if (DisplayNonAsciiWarningDialog() == DialogResult.Cancel)
 				{
-					m_fIgnoreClose = true;
 					ProjectName = RemoveNonAsciiCharsFromProjectName();
 					m_txtName.Focus();
+					Enabled = true;
+					DialogResult = DialogResult.None; // Return to New FieldWorks Project dialog
 					return;
 				}
 			}
-			Enabled = false;
-			DialogResult = DialogResult.OK;
-
 			Logger.WriteEvent(string.Format(
 				"Creating new language project: name: {0}, vernacular ws: {1}, anal ws: {2}",
 				ProjectName, m_cbVernWrtSys.Text, m_cbAnalWrtSys.Text));
 
+			// Project with this name already exists?
 			try
 			{
 				m_projInfo = ProjectInfo.GetProjectInfoByName(ProjectName);
@@ -527,7 +529,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				DialogResult = DialogResult.Cancel;
 				return;
 			}
-			// Project with this name already exists?
 			if (m_projInfo != null)
 			{
 				// Bring up a dialog giving the user the option to open this existing project,
@@ -543,29 +544,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 							m_dbFile = ClientServerServices.Current.Local.IdForLocalProject(ProjectName);
 							break;
 						case DialogResult.Cancel:
-							// Return to New FieldWorks Project dialog
 							Enabled = true;
-							DialogResult = DialogResult.None;
+							DialogResult = DialogResult.None; // Return to New FieldWorks Project dialog
 							break;
 					}
 				}
+				return;
 			}
-			else
-			{
-				// The project does not exist yet.
-				if (ProjectName.Length > kmaxNameLength)
-				{
-					if (DisplayUi)
-						MessageBox.Show(String.Format(FwCoreDlgs.kstidErrorProjectNameTooLong, ProjectName),
-										FwUtils.ksSuiteName);
-					m_txtName.Text = "";
-					m_txtName.Select();
-					// Need to figure out how to get the dialog to display itself again
-					DialogResult = DialogResult.Retry;
-					return;
-				}
-				CreateNewLangProjWithProgress();
-			}
+
+			//
+			// Create new project
+			//
+			CreateNewLangProjWithProgress();
 		}
 
 		private string RemoveNonAsciiCharsFromProjectName()
@@ -680,21 +670,23 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					progressDlg.Title = string.Format(FwCoreDlgs.kstidCreateLangProjCaption, ProjectName);
 					string anthroFile = null;
-					if (DisplayUi) //Dirty testing hack
+					if (DisplayUi) // Prevents dialogs from showing during unit tests.
 					{
 						anthroFile = FwCheckAnthroListDlg.PickAnthroList(progressDlg.Form, null, m_helpTopicProvider);
 					}
 					using (new WaitCursor())
 					{
-						RemoveWs(m_newVernWss, m_cbVernWrtSys.SelectedItem); // just keep additional ones
-						RemoveWs(m_newAnalysisWss, m_cbAnalWrtSys.SelectedItem); // just keep additional ones
+						// Remove primary WritingSystems; remaining WS's will be used as Additional WritingSystems for the new project
+						RemoveWs(m_newVernWss, m_cbVernWrtSys.SelectedItem);
+						RemoveWs(m_newAnalysisWss, m_cbAnalWrtSys.SelectedItem);
+
 						using (var threadHelper = new ThreadHelper())
 						{
 							m_dbFile = (string) progressDlg.RunTask(DisplayUi, FdoCache.CreateNewLangProj,
 																	ProjectName, threadHelper, m_cbAnalWrtSys.SelectedItem,
 																	m_cbVernWrtSys.SelectedItem,
-																	((PalasoWritingSystem)m_wsManager.UserWritingSystem).RFC5646, m_newAnalysisWss, m_newVernWss,
-																	anthroFile, FwCoreDlgs.ksAnthropologyCategories, FwCoreDlgs.ksAnth);
+																	((PalasoWritingSystem)m_wsManager.UserWritingSystem).RFC5646,
+																	m_newAnalysisWss, m_newVernWss, anthroFile);
 						}
 					}
 				}
@@ -726,6 +718,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				}
 				else
 				{
+					// REVIEW Hasso 2013.10: If we don't need to call OnClosing (we shouldn't), instead of using m_fIgnoreClose, we could set
+					// DialogResult = DialogResult.None; and eliminate a redundant flow-control variable
 					m_fIgnoreClose = true;
 					DialogResult = DialogResult.Cancel;
 					throw new Exception(FwCoreDlgs.kstidErrApp, e);

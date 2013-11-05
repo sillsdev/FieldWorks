@@ -126,6 +126,10 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
+    <Reference Include="Utilities, Version=7.3.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\DistFiles\Utilities.dll</HintPath>
+    </Reference>
     <Reference Include="XMLUtils">
       <Name>XMLUtils</Name>
       <HintPath>..\..\Output\Debug\XMLUtils.dll</HintPath>
@@ -376,6 +380,7 @@
     <Compile Include="DomainServices\ScrMappingList.cs" />
     <Compile Include="DomainServices\ScrSfFileList.cs" />
     <Compile Include="DomainServices\ScrVerse.cs" />
+    <Compile Include="DomainServices\SemanticDomainSearch\SemDomSearchCache.cs" />
     <Compile Include="DomainServices\SemanticDomainSearch\SenseSearchStrategy.cs" />
     <Compile Include="DomainServices\SemanticDomainSearch\PartialNameMatchPrioritySearchStrategy.cs" />
     <Compile Include="DomainServices\SemanticDomainSearch\SemDomSearchEngine.cs" />

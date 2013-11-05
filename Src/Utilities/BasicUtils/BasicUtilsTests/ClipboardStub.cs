@@ -84,6 +84,25 @@ namespace SIL.Utils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Places data on the system Clipboard and specifies whether the data should remain on
+		/// the Clipboard after the application exits.
+		/// </summary>
+		/// <param name="data">The data to place on the Clipboard.</param>
+		/// <param name="copy"><c>true</c> if you want data to remain on the Clipboard after
+		/// this application exits; otherwise, <c>false</c>.</param>
+		/// <param name="retries"># of times to retry</param>
+		/// <param name="msDelay"># of milliseconds to delay between retries</param>
+		/// ------------------------------------------------------------------------------------
+		public void SetDataObject(object data, bool copy, int retries, int msDelay)
+		{
+			if (data is IDataObject)
+				m_DataObject = (IDataObject) data;
+			else
+				m_DataObject = new DataObject(data);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Places nonpersistent data on the system Clipboard.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------

@@ -157,10 +157,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public bool OnObtainAnyFlexBridgeProject(object commandObject)
 		{
 			ObtainedProjectType obtainedProjectType;
-			var newprojectPathname = ObtainProjectMethod.ObtainProjectFromAnySource(_parentForm, out obtainedProjectType);
+			var newprojectPathname = ObtainProjectMethod.ObtainProjectFromAnySource(_parentForm, _mediator.HelpTopicProvider,
+				out obtainedProjectType);
 			if (string.IsNullOrEmpty(newprojectPathname))
-				return true;
-			_mediator.PropertyTable.SetProperty("LastBridgeUsed", obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge", PropertyTable.SettingsGroup.LocalSettings);
+				return true; // We dealt with it.
+			_mediator.PropertyTable.SetProperty("LastBridgeUsed", obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
+				PropertyTable.SettingsGroup.LocalSettings);
 
 			FieldWorks.OpenNewProject(new ProjectId(FDOBackendProviderType.kXML, newprojectPathname, null), FwUtils.ksFlexAppName);
 
@@ -675,25 +677,18 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <returns></returns>
 		public bool OnShowChorusHelp(object argument)
 		{
-			if (MiscUtils.IsUnix)
+			try
 			{
-				ShowHelp.ShowHelpTopic_Linux(ChorusHelpFile, null);
+				// When the help window is closed it will return focus to the window that opened it (see MSDN
+				// documentation for HtmlHelp()). We don't want to use the main window as the parent, because if
+				// a modal dialog is visible, it will still return focus to the main window, allowing the main window
+				// to perform some behaviors (such as refresh by pressing F5) while the modal dialog is visible,
+				// which can be bad. So, we just create a dummy control and pass that in as the parent.
+				Help.ShowHelp(new Control(), ChorusHelpFile);
 			}
-			else
+			catch (Exception)
 			{
-				try
-				{
-					// When the help window is closed it will return focus to the window that opened it (see MSDN
-					// documentation for HtmlHelp()). We don't want to use the main window as the parent, because if
-					// a modal dialog is visible, it will still return focus to the main window, allowing the main window
-					// to perform some behaviors (such as refresh by pressing F5) while the modal dialog is visible,
-					// which can be bad. So, we just create a dummy control and pass that in as the parent.
-					Help.ShowHelp(new Control(), ChorusHelpFile);
-				}
-				catch (Exception)
-				{
-					MessageBox.Show(null, String.Format(LexTextStrings.ksCannotLaunchX, ChorusHelpFile), LexTextStrings.ksError);
-				}
+				MessageBox.Show(null, String.Format(LexTextStrings.ksCannotLaunchX, ChorusHelpFile), LexTextStrings.ksError);
 			}
 
 			return true; // We dealt with it.

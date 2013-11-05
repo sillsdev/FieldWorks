@@ -265,7 +265,7 @@
 	<value>7</value>
   </data>
   <data name="m_btnHelp.Text" xml:space="preserve">
-	<value>Help...</value>
+    <value>&amp;Help...</value>
   </data>
   <data name="&gt;&gt;m_btnHelp.Name" xml:space="preserve">
 	<value>m_btnHelp</value>
@@ -292,7 +292,7 @@
 	<value>4</value>
   </data>
   <data name="m_radioOther.Text" xml:space="preserve">
-	<value>Use</value>
+    <value>&amp;Use</value>
   </data>
   <data name="&gt;&gt;m_radioOther.Name" xml:space="preserve">
 	<value>m_radioOther</value>

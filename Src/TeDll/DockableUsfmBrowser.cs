@@ -20,6 +20,7 @@ using System.Windows.Forms;
 using ControlExtenders;
 using Paratext;
 using Paratext.ScriptureEditor;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using Microsoft.Win32;
 using Paratext.TextCollection;
@@ -168,7 +169,7 @@ namespace SIL.FieldWorks.TE
 					ScrText text = null;
 					try
 					{
-						foreach (ScrText st in ScrTextCollection.ScrTexts)
+						foreach (ScrText st in ScrTextCollection.ScrTexts(true, true))
 						{
 							if (st.Name == name)
 							{
@@ -435,7 +436,11 @@ namespace SIL.FieldWorks.TE
 			if (m_textCollection.CurItem >= 0 && m_textCollection.CurItem < m_textCollection.Items.Count)
 				currentItem = m_textCollection.Items[m_textCollection.CurItem];
 
-			ScrTextCollection.Initialize(); // Re-initialize, just in case
+			// Re-initialize, just in case.
+			// We pass the directory (rather than passing no arguments, and letting the paratext dll figure
+			// it out) because the figuring out goes wrong on Linux, where both programs are simulating
+			// the registry.
+			ScrTextCollection.Initialize(FwRegistryHelper.ParatextSettingsDirectory(), false);
 			List<string> textNames = ScrTextCollection.ScrTextNames;
 
 			foreach (string nameVar in textNames)
@@ -465,8 +470,10 @@ namespace SIL.FieldWorks.TE
 				}
 			}
 
+			// the two booleans indicate we want all the available texts, including resources (part of the Paratext distribution)
+			// and non-scriptural materials (things like commentaries maybe?)
 			using (ScrTextListSelectionForm selForm = new ScrTextListSelectionForm(
-				ScrTextCollection.ScrTexts, currentItems))
+				ScrTextCollection.ScrTexts(true, true), currentItems))
 			{
 				if (selForm.ShowDialog(this) == DialogResult.OK)
 				{

@@ -124,15 +124,6 @@ namespace SIL.FieldWorks.Common.FwUtils {
 		}
 
 		/// <summary>
-		///   Looks up a localized string similar to The help viewer could not load. Maybe you don&apos;t have {0} installed..
-		/// </summary>
-		internal static string ksLinuxHelpViewerCouldNotLoad {
-			get {
-				return ResourceManager.GetString("ksLinuxHelpViewerCouldNotLoad", resourceCulture);
-			}
-		}
-
-		/// <summary>
 		///   Looks up a localized string similar to The help topic is not available for topic: {0}.
 		/// </summary>
 		internal static string ksNoHelpTopicX {

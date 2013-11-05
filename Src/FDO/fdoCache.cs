@@ -24,7 +24,6 @@ using System.Xml;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Xml.Linq;
-using SIL.CoreImpl.Properties;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
@@ -37,7 +36,6 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.Utils.FileDialog;
-using Sharpen.Util;
 
 namespace SIL.FieldWorks.FDO
 {
@@ -371,13 +369,14 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		/// <param name="progressDlg">The progress dialog.</param>
 		/// <param name="parameters">One or more parameters, supplied in this order:
-		/// A string containing the name of the project (required);
-		/// A ThreadHelper used for invoking actions on the main UI thread (required);
-		/// An IWritingSystem to be used as the default analylis writing system (default: English);
-		/// An IWritingSystem to be used as the default vernacular writing system (default: French);
-		/// A string with the ICU locale of the UI writing system (default: "en").
-		/// A set of IWritingSystem to provide additional analysis writing systems (default: no more)
-		/// A set of IWritingSystem to provide additional vernacular writing systems (default: no more)</param>
+		///  0. A string containing the name of the project (required);
+		///  1. A ThreadHelper used for invoking actions on the main UI thread (required);
+		///  2. An IWritingSystem to be used as the default analylis writing system (default: English);
+		///  3. An IWritingSystem to be used as the default vernacular writing system (default: French);
+		///  4. A string with the ICU locale of the UI writing system (default: "en").
+		///  5. A set of IWritingSystem to provide additional analysis writing systems (default: no more)
+		///  6. A set of IWritingSystem to provide additional vernacular writing systems (default: no more)
+		///  7. OCM Data filename. (default: OCM-Frame.xml if available; else, null)</param>
 		/// <returns>Path of the newly created project file.</returns>
 		/// <remarks>Override DisplayUi to prevent progress dialog from showing.</remarks>
 		/// ------------------------------------------------------------------------------------
@@ -387,12 +386,11 @@ namespace SIL.FieldWorks.FDO
 				throw new ArgumentException("Parameters must include at least a project name and the ThreadHelper");
 			var projectName = (string)parameters[0];
 			if (string.IsNullOrEmpty(projectName))
-				throw new ArgumentNullException("projectName", "Can not be null or empty");
+				throw new ArgumentNullException("projectName", "Cannot be null or empty");
 			var threadHelper = (ThreadHelper)parameters[1];
 			IWritingSystem analWrtSys = (parameters.Length > 2) ? (IWritingSystem)parameters[2] : null;
 			IWritingSystem vernWrtSys = (parameters.Length > 3) ? (IWritingSystem)parameters[3] : null;
-			// REVIEW: It looks like previously we just didn't set the UI WS if we got a null here. Is that what we want?
-			var userIcuLocale = (parameters.Length > 4) ? (string)parameters[4] : "en";
+			var userIcuLocale = (parameters.Length > 4 && parameters[4] != null) ? (string)parameters[4] : "en";
 			const int nMax = 10;
 			if (progressDlg != null)
 			{
@@ -410,7 +408,6 @@ namespace SIL.FieldWorks.FDO
 				progressDlg.Step(0);
 				progressDlg.Message = Properties.Resources.kstidInitializingDB;
 			}
-			Guid guidLp;
 
 			var projectId = new SimpleProjectId(FDOBackendProviderType.kXML, dbFileName);
 			using (var cache = CreateCacheInternal(projectId,
@@ -436,12 +433,12 @@ namespace SIL.FieldWorks.FDO
 				if (progressDlg != null)
 					progressDlg.Step(0);
 
-				var additionalAnalysisWss = (parameters.Length > 5)
+				var additionalAnalysisWss = (parameters.Length > 5 && parameters[5] != null)
 												? (HashSet<IWritingSystem>)parameters[5]
 												: new HashSet<IWritingSystem>();
 				foreach (var additionalWs in additionalAnalysisWss)
 					CreateAnalysisWritingSystem(cache, additionalWs, false);
-				var additionalVernWss = (parameters.Length > 6)
+				var additionalVernWss = (parameters.Length > 6 && parameters[6] != null)
 											? (HashSet<IWritingSystem>)parameters[6]
 											: new HashSet<IWritingSystem>();
 				foreach (var additionalWs in additionalVernWss)
@@ -453,7 +450,6 @@ namespace SIL.FieldWorks.FDO
 				if (progressDlg != null)
 					progressDlg.Step(0);
 
-				guidLp = cache.LanguageProject.Guid;
 				if (progressDlg != null)
 					progressDlg.Position = nMax;
 
@@ -495,15 +491,12 @@ namespace SIL.FieldWorks.FDO
 					cache.ServiceLocator.WritingSystemManager);
 				cache.ServiceLocator.WritingSystemManager.Save();
 
-				if (parameters.Length > 9)
-				{
-					cache.ActionHandlerAccessor.BeginNonUndoableTask();
-					InitializeOCMData(cache.LangProject,
-									  cache.WritingSystemFactory.GetWsFromStr(analWrtSys != null ? analWrtSys.IcuLocale : userIcuLocale),
-									 (string)parameters[7], (string)parameters[8], (string)parameters[9]);
-					ImportLocalizedLists(cache, progressDlg);
-					cache.ActionHandlerAccessor.EndNonUndoableTask();
-				}
+				cache.ActionHandlerAccessor.BeginNonUndoableTask();
+				InitializeAnthroList(cache.LangProject,
+									cache.WritingSystemFactory.GetWsFromStr(analWrtSys != null ? analWrtSys.IcuLocale : userIcuLocale),
+									(parameters.Length > 7) ? (string)parameters[7] : null);
+				ImportLocalizedLists(cache, progressDlg);
+				cache.ActionHandlerAccessor.EndNonUndoableTask();
 
 				NonUndoableUnitOfWorkHelper.Do(cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 				{
@@ -518,21 +511,36 @@ namespace SIL.FieldWorks.FDO
 				cache.ActionHandlerAccessor.Commit();
 
 				// Rewrite all objects to make sure they all have all of the basic properties.
-				progressDlg.ProgressBarStyle = ProgressBarStyle.Marquee;
-				progressDlg.Message = AppStrings.InitializeSavingMigratedDataProgressMessage;
-				progressDlg.RunTask(cache.SaveAndForceNewestXmlForCmObjectWithoutUnitOfWork, cache.m_serviceLocator.ObjectRepository.AllInstances().ToList());
+				if (progressDlg != null)
+				{
+					progressDlg.ProgressBarStyle = ProgressBarStyle.Marquee;
+					progressDlg.Message = AppStrings.InitializeSavingMigratedDataProgressMessage;
+					progressDlg.RunTask(cache.SaveAndForceNewestXmlForCmObjectWithoutUnitOfWork,
+						cache.m_serviceLocator.ObjectRepository.AllInstances().ToList());
+				}
+				else
+				{
+					// in case progressDlg is null, still do the work
+					cache.SaveAndForceNewestXmlForCmObjectWithoutUnitOfWork(null, cache.m_serviceLocator.ObjectRepository.AllInstances().ToList());
+				}
 			}
 			return ClientServerServices.Current.Local.ConvertToDb4oBackendIfNeeded(progressDlg, dbFileName);
 		}
 
-		private static void InitializeOCMData(ILangProject proj, int defaultWs, string ocmFile, string listName, string listAbbrev)
+		/// <summary>
+		/// Load the selected list from the file at ocmFile; otherwise, initialise an empty list
+		/// </summary>
+		/// <param name="proj">The language project</param>
+		/// <param name="defaultWs">default writing system</param>
+		/// <param name="ocmFile">path to the file containing the list to load</param>
+		private static void InitializeAnthroList(ILangProject proj, int defaultWs, string ocmFile)
 		{
 			// Load the selected list, or initialize properly for a User-defined (empty) list.
 
 			if (String.IsNullOrEmpty(ocmFile))
 			{
-				proj.AnthroListOA.Name.set_String(defaultWs, listName);
-				proj.AnthroListOA.Abbreviation.set_String(defaultWs, listAbbrev);
+				proj.AnthroListOA.Name.set_String(defaultWs, Strings.ksAnthropologyCategories);
+				proj.AnthroListOA.Abbreviation.set_String(defaultWs, Strings.ksAnth);
 				proj.AnthroListOA.ItemClsid = CmAnthroItemTags.kClassId;
 				proj.AnthroListOA.Depth = 127;
 			}

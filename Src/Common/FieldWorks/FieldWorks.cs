@@ -1607,15 +1607,19 @@ namespace SIL.FieldWorks
 							if (!FwNewLangProject.CheckProjectDirectory(null, helpTopicProvider))
 								break;
 							ObtainedProjectType obtainedProjectType;
-							projectToTry = null; //If the user cancel's the send/receive this null will result in a return to the welcome dialog.
-							var projectDataPathname = ObtainProjectMethod.ObtainProjectFromAnySource(Form.ActiveForm, out obtainedProjectType); // Hard to say what Form.ActiveForm is here. The splash and welcome dlgs are both gone.
+							projectToTry = null; // If the user cancels the send/receive, this null will result in a return to the welcome dialog.
+							// Hard to say what Form.ActiveForm is here. The splash and welcome dlgs are both gone.
+							var projectDataPathname = ObtainProjectMethod.ObtainProjectFromAnySource(Form.ActiveForm,
+								helpTopicProvider, out obtainedProjectType);
 							if (!string.IsNullOrEmpty(projectDataPathname))
 							{
 								projectToTry = new ProjectId(FDOBackendProviderType.kXML, projectDataPathname, null);
 								var activeWindow = startingApp.ActiveMainWindow;
 								if (activeWindow != null)
 								{
-									((IFwMainWnd)activeWindow).Mediator.PropertyTable.SetProperty("LastBridgeUsed", obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge", PropertyTable.SettingsGroup.LocalSettings);
+									((IFwMainWnd)activeWindow).Mediator.PropertyTable.SetProperty("LastBridgeUsed",
+										obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
+										PropertyTable.SettingsGroup.LocalSettings);
 								}
 							}
 							break;
@@ -1687,7 +1691,9 @@ namespace SIL.FieldWorks
 					var activeWindow = app.ActiveMainWindow;
 					if (activeWindow != null && dlg.ObtainedProjectType != ObtainedProjectType.None)
 					{
-						((IFwMainWnd)activeWindow).Mediator.PropertyTable.SetProperty("LastBridgeUsed", dlg.ObtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge", PropertyTable.SettingsGroup.LocalSettings);
+						((IFwMainWnd)activeWindow).Mediator.PropertyTable.SetProperty("LastBridgeUsed",
+							dlg.ObtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
+							PropertyTable.SettingsGroup.LocalSettings);
 					}
 				}
 				return dlg.DialogResult != DialogResult.OK ? null : new ProjectId(dlg.Project, dlg.Server);
@@ -1735,8 +1741,6 @@ namespace SIL.FieldWorks
 							ResourceHelper.GetResourceString("kstidNewProjError"),
 							ResourceHelper.GetResourceString("kstidMiscError"));
 						break;
-					case DialogResult.Retry:
-						return CreateNewProject(dialogOwner, app, helpTopicProvider);
 				}
 			}
 			return null;
@@ -2532,7 +2536,6 @@ namespace SIL.FieldWorks
 		/// up and for the correct project. This method is thread safe.
 		/// </summary>
 		/// <param name="link">The link.</param>
-		/// <returns>True if the link was successfully handled, false otherwise.</returns>
 		/// ------------------------------------------------------------------------------------
 		internal static void HandleLinkRequest(FwAppArgs link)
 		{
@@ -2550,7 +2553,7 @@ namespace SIL.FieldWorks
 					// However, that is a Process that gets started, and it is ok to dispose that
 					// right away if we don't work with the process object. It might be better
 					// though to change the signature of OpenProjectWithNewProcess to return
-					// a boolean.
+					// a boolean (true iff the link was successfully handled).
 					using (OpenProjectWithNewProcess(linkedProject, link.AppAbbrev, link.ToString()))
 					{
 					}

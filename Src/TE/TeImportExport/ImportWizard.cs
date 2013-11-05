@@ -159,9 +159,9 @@ namespace SIL.FieldWorks.TE
 		private Label label14;
 		private Label label15;
 		private Label label20;
-		private ColumnHeader columnHeader7;
-		private ColumnHeader columnHeader8;
-		private ColumnHeader columnHeader9;
+		private System.Windows.Forms.ColumnHeader columnHeader7;
+		private System.Windows.Forms.ColumnHeader columnHeader8;
+		private System.Windows.Forms.ColumnHeader columnHeader9;
 		private Label label21;
 		private Label label23;
 		private Label label24;
@@ -193,12 +193,12 @@ namespace SIL.FieldWorks.TE
 		private TabPage tabPage2;
 		private FwOverrideComboBox cboShowMappings;
 		private FwListView lvAnnotationMappings;
-		private ColumnHeader columnHeader4;
-		private ColumnHeader columnHeader5;
-		private ColumnHeader columnHeader6;
-		private ColumnHeader columnHeader1;
-		private ColumnHeader columnHeader2;
-		private ColumnHeader columnHeader3;
+		private System.Windows.Forms.ColumnHeader columnHeader4;
+		private System.Windows.Forms.ColumnHeader columnHeader5;
+		private System.Windows.Forms.ColumnHeader columnHeader6;
+		private System.Windows.Forms.ColumnHeader columnHeader1;
+		private System.Windows.Forms.ColumnHeader columnHeader2;
+		private System.Windows.Forms.ColumnHeader columnHeader3;
 		/// <summary></summary>
 		protected Button m_btnDeleteNoteMapping;
 		/// <summary></summary>

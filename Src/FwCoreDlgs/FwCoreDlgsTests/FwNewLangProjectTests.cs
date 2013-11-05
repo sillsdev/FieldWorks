@@ -41,11 +41,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		public bool NonAsciiWarningWasActivated { get; set; }
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary/>
 		public void CreateNewLangProj()
 		{
 			CheckDisposed();
@@ -68,19 +64,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary>
-		/// New Language Project maximum name length.
-		/// </summary>
-		internal int MaxProjectNameLength
-		{
-			get { return kmaxNameLength; }
-		}
-
-		/// <summary>
 		/// Try out the OK button
 		/// </summary>
 		internal void TestOkButton()
 		{
 			btnOK.PerformClick();
+		}
+
+		/// <summary>
+		/// Sets the project name programmatically (bypasses Windows Forms length checking)
+		/// </summary>
+		internal void setProjectName(string name)
+		{
+			ProjectName = name;
 		}
 
 		/// <summary>
@@ -126,7 +122,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				if (DbExists(dbName))
 					DestroyDb(dbName, true);
 
-				dlg.ProjectName = dbName;
+				dlg.setProjectName(dbName);
 				try
 				{
 					dlg.CreateNewLangProj();
@@ -160,33 +156,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Make sure nothing happens if the project name is too long.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void CreateNewLangProject_NameTooLong()
-		{
-			using (var dlg = new DummyFwNewLangProject())
-			{
-				dlg.ProjectName = "This name will be too long by one character.567890123456789012345";
-				Assert.Greater(dlg.ProjectName.Length, dlg.MaxProjectNameLength,
-							   "Constant maximum Project Name length has changed. Test may need to be modified.");
-				try
-				{
-					dlg.Show();
-					Application.DoEvents();
-					dlg.TestOkButton();
-					Assert.IsEmpty(dlg.ProjectName, "Project Name should have been cleared out.");
-				}
-				finally
-				{
-					dlg.Close();
-				}
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Make sure a non-Ascii project name triggers a warning.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -197,7 +166,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			const string dbName = "Fran\u00e7ais";
 			using (var dlg = new DummyFwNewLangProject())
 			{
-				dlg.ProjectName = dbName;
+				dlg.setProjectName(dbName);
 				if (DbExists(dbName))
 					DestroyDb(dbName, true);
 				try
@@ -230,7 +199,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				const string dbName = "Simple";
 				if (DbExists(dbName))
 					DestroyDb(dbName, true);
-				dlg.ProjectName = dbName;
+				dlg.setProjectName(dbName);
 				try
 				{
 					dlg.Show();
@@ -261,7 +230,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				const string dbName = "Fran\u00e7ais";
 				if (DbExists(dbName))
 					DestroyDb(dbName, true);
-				dlg.ProjectName = dbName;
+				dlg.setProjectName(dbName);
 				try
 				{
 					dlg.SimulatedNonAsciiDialogResult = DialogResult.Cancel;
@@ -295,7 +264,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				const string dbName = "Fran\u00e7ais";
 				if (DbExists(dbName))
 					DestroyDb(dbName, true);
-				dlg.ProjectName = dbName;
+				dlg.setProjectName(dbName);
 				try
 				{
 					dlg.SimulatedNonAsciiDialogResult = DialogResult.OK;
@@ -328,7 +297,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				const string dbName = "Fra\u014b\u00e7a\u01b4s\u028c"; // get around changing file type
 				if (DbExists(dbName))
 					DestroyDb(dbName, true);
-				dlg.ProjectName = dbName;
+				dlg.setProjectName(dbName);
 				try
 				{
 					dlg.SimulatedNonAsciiDialogResult = DialogResult.Cancel;

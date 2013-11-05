@@ -753,12 +753,6 @@ Do you want to remove English now?</value>
     <value>Database folder problem</value>
     <comment>Title for warning dialog issued instead of New FieldWorks Project dialog if the database folder is compressed.</comment>
   </data>
-  <data name="ksAnthropologyCategories" xml:space="preserve">
-    <value>Anthropology Categories</value>
-  </data>
-  <data name="ksAnth" xml:space="preserve">
-    <value>Anth</value>
-  </data>
   <data name="kstidLoneDiacriticNotValid" xml:space="preserve">
     <value>Combining marks (e.g. diacritics) cannot be added independently as valid characters. They must be combined with valid base characters.</value>
     <comment>Message displayed in Valid Characters dialog when user attempts to enter a single diacritic character on the Manual Entry tab.</comment>

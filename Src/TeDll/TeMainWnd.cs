@@ -1601,7 +1601,10 @@ namespace SIL.FieldWorks.TE
 					styleTable.ConnectStyles();
 					ldsAccessor.WriteParatextLdsFile(englishLdsPathname,
 						Cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr("en"), normalUsfmStyle);
-					ScrTextCollection.Initialize();
+					// We pass the directory (rather than passing no arguments, and letting the paratext dll figure
+					// it out) because the figuring out goes wrong on Linux, where both programs are simulating
+					// the registry.
+					ScrTextCollection.Initialize(FwRegistryHelper.ParatextSettingsDirectory(), false);
 				}
 			}
 		}

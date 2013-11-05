@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 {
@@ -85,6 +86,34 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			partialMatches = strategy.PartialMatches;
 
 			return strategy.FindResults;
+		}
+
+		/// <summary>
+		/// This method assumes that a SemDomSearchCache has cached the Semantic Domains by
+		/// search key (a Tuple of word string and writing system integer). It then takes the gloss,
+		/// a short definition (if only one or two words), and reversal from a LexSense and uses those
+		/// words as search keys to find Semantic Domains that have one of those words in
+		/// their Name or Example Words fields.
+		/// </summary>
+		/// <param name="semDomCache"></param>
+		/// <param name="sense"></param>
+		/// <returns></returns>
+		public IEnumerable<ICmSemanticDomain> FindCachedDomainsThatMatchWordsInSense(
+			SemDomSearchCache semDomCache, ILexSense sense)
+		{
+			var strategy = new SenseSearchStrategy(Cache, sense);
+			var results = new Set<ICmSemanticDomain>();
+			foreach (var keyValuePair in strategy.GetSearchKeysFromSense())
+			{
+				foreach (var wordFromSense in keyValuePair.Value)
+				{
+					var cachedDomains = semDomCache.GetDomainsForCachedString(keyValuePair.Key, wordFromSense);
+					if (cachedDomains == null)
+						continue;
+					results.AddRange(cachedDomains);
+				}
+			}
+			return results;
 		}
 	}
 }

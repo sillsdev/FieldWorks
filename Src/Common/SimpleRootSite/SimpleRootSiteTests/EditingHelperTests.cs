@@ -18,7 +18,6 @@ using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests

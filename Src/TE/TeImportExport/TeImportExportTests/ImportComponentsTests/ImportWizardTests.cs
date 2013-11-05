@@ -16,6 +16,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 using Paratext;
 using Rhino.Mocks;
 using SIL.FieldWorks.Common.Controls;
@@ -822,12 +823,12 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 			SetupMockParatextHelper();
 
 			m_ptHelper.AddProject("ABC", "Whatever");
-			m_ptHelper.AddProject("YES", Cache.ProjectId.Handle);
-			m_ptHelper.AddProject("ALM", null, "YES", true, false, "000110000000", DerivedTranslationType.Daughter);
-			m_ptHelper.AddProject("BTP", null, "YES");
-			m_ptHelper.AddProject("XYZ", null, "ABC");
-			m_ptHelper.AddProject("MNKY", null, "YES");
-			m_ptHelper.AddProject("SOUP", null, "YES", true, false, "000110000000", DerivedTranslationType.Daughter);
+			m_ptHelper.AddProject("YES", Cache.ProjectId.Handle); // The active project, since it has the relevant handle
+			m_ptHelper.AddProject("ALM", null, "YES", true, false, "000110000000", ProjectType.Daughter);
+			m_ptHelper.AddProject("BTP", null, "YES"); // type back translation by default in AddProject
+			m_ptHelper.AddProject("XYZ", null, "ABC");  // type back translation by default in AddProject, but not a BT of "YES"
+			m_ptHelper.AddProject("MNKY", null, "YES");  // type back translation by default in AddProject
+			m_ptHelper.AddProject("SOUP", null, "YES", true, false, "000110000000", ProjectType.Daughter);
 
 			m_settings.ParatextScrProj = "ABC";
 			m_settings.ParatextBTProj = "XYZ";

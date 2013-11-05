@@ -139,7 +139,7 @@ namespace SIL.FieldWorks.TE
 					m_settings.StartRef.AsString + " to " + m_settings.EndRef.AsString);
 
 				// Now initialize the TextEnum with the range of Scripture text we want
-				m_ptParser = m_ptProjectText.Parser();
+				m_ptParser = m_ptProjectText.Parser;
 				m_ptCurrBook = new VerseRef(m_settings.StartRef.Book, 0, 0);
 				ResetParatextState();
 			}
@@ -513,7 +513,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		private static BCVRef MakeBCVRef(VerseRef verseRef)
 		{
-			int segment = string.IsNullOrEmpty(verseRef.Segment) ? 0 : verseRef.Segment[0] - 'a';
+			int segment = string.IsNullOrEmpty(verseRef.Segment()) ? 0 : verseRef.Segment()[0] - 'a';
 			if (segment < 0 || segment > 2)
 				segment = 0;
 			return new BCVRef(verseRef.BookNum, verseRef.ChapterNum, verseRef.VerseNum, segment);

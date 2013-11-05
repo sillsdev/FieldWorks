@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// <param name="availableTexts"></param>
 		/// <param name="initialSelections"></param>
-		public ScrTextListSelectionForm(List<ScrText> availableTexts,
+		public ScrTextListSelectionForm(IEnumerable<ScrText> availableTexts,
 			List<ScrText> initialSelections)
 		{
 			InitializeComponent();

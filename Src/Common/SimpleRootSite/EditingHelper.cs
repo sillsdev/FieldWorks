@@ -3264,6 +3264,10 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			return true;
 		}
+
+		private const int MAX_RETRY = 3;
+		private const int SLEEP_INTERVAL = 200; // 2/10ths of a second
+
 		/// --------------------------------------------------------------------------------
 		/// <summary>
 		/// Put a ITsString on the clipboard
@@ -3272,12 +3276,22 @@ namespace SIL.FieldWorks.Common.RootSites
 		public static void SetTsStringOnClipboard(ITsString tsString, bool fCopy,
 			ILgWritingSystemFactory writingSystemFactory)
 		{
-			TsStringWrapper wrapper = new TsStringWrapper(tsString, writingSystemFactory);
+			var wrapper = new TsStringWrapper(tsString, writingSystemFactory);
 			IDataObject dataObject = new DataObject();
 			dataObject.SetData(TsStringWrapper.TsStringFormat, false, wrapper);
 			dataObject.SetData(DataFormats.Serializable, true, wrapper);
 			dataObject.SetData(DataFormats.UnicodeText, true, tsString.Text.Normalize(NormalizationForm.FormC));
-			ClipboardUtils.SetDataObject(dataObject, fCopy);
+			// In some circumstances (especially with virtual machines) SetDataObject() could
+			// throw an InteropServices.ExternalException. Catch and retry a few times.
+			// If unsuccessful, tell the user the copy failed (LT-14822).
+			try
+			{
+				ClipboardUtils.SetDataObject(dataObject, fCopy, MAX_RETRY, SLEEP_INTERVAL);
+			}
+			catch (ExternalException e)
+			{
+				MessageBox.Show(Resources.ksCopyFailed+e.Message);
+			}
 		}
 
 		/// --------------------------------------------------------------------------------

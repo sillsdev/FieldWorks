@@ -106,24 +106,6 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Anth.
-        /// </summary>
-        public static string ksAnth {
-            get {
-                return ResourceManager.GetString("ksAnth", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Anthropology Categories.
-        /// </summary>
-        public static string ksAnthropologyCategories {
-            get {
-                return ResourceManager.GetString("ksAnthropologyCategories", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Available Data for {0}.
         /// </summary>
         public static string ksAvailDataForX {

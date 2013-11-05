@@ -604,6 +604,21 @@ namespace SIL.FieldWorks.XWorks.LexText
 			return true;
 		}
 
+		public bool OnHelpNotesSendReceive(object sender)
+		{
+			CheckDisposed();
+
+			string path = String.Format(DirectoryFinder.FWCodeDirectory +
+				"{0}Helps{0}Language Explorer{0}Training{0}Technical Notes on FieldWorks Send-Receive.pdf",
+				Path.DirectorySeparatorChar);
+
+			OpenDocument(path, (e) => {
+				MessageBox.Show(null, String.Format(LexTextStrings.ksCannotLaunchX, path),
+					LexTextStrings.ksError);
+			});
+			return true;
+		}
+
 		/// <summary>
 		/// Display a file from the Language Explorer\Training directory.
 		/// </summary>
@@ -745,12 +760,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 		public bool OnHelpLanguageExplorer(object sender)
 		{
 			CheckDisposed();
-
-			if (MiscUtils.IsUnix)
-			{
-				ShowHelp.ShowHelpTopic_Linux(HelpFile, null);
-				return true;
-			}
 
 			try
 			{

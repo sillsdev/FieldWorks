@@ -558,7 +558,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void OpenBridgeProjectLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			Project = ObtainProjectMethod.ObtainProjectFromAnySource(this, out m_obtainedProjectType); // May return null, empty string, or the full pathname to an fwdata file.
+			// ObtainProjectFromAnySource may return null, empty string, or the full pathname to an fwdata file.
+			Project = ObtainProjectMethod.ObtainProjectFromAnySource(this, m_helpTopicProvider, out m_obtainedProjectType);
 			Server = null;
 			if (String.IsNullOrEmpty(Project))
 				return; // Don't close the Open project dialog yet (LT-13187)

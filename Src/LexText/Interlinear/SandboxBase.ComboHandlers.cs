@@ -2195,6 +2195,10 @@ namespace SIL.FieldWorks.IText
 							// Making the form active fixes LT-2344 & LT-2345.
 							// I'm (RandyR) not sure what adverse impact might show up by doing this.
 							mainWnd.Activate();
+							// The combo should be automatically hidden by activating another window.
+							// That works on Windows but not on Mono (reported as https://bugzilla.xamarin.com/show_bug.cgi?id=15848).
+							// So to prevent the combo hanging around on Mono, we hide it explicitly here.
+							HideCombo();
 							dlg.SetHelpTopic("khtpInsertEntryFromInterlinear");
 							if (dlg.ShowDialog(mainWnd) == DialogResult.OK)
 								fCreateAllomorph = true;
