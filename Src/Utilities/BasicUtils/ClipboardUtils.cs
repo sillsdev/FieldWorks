@@ -14,11 +14,7 @@
 // <remarks>
 // </remarks>
 // ---------------------------------------------------------------------------------------------
-using System;
-using System.Globalization;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 namespace SIL.Utils
 {
@@ -89,6 +85,19 @@ namespace SIL.Utils
 		/// this application exits; otherwise, <c>false</c>.</param>
 		/// ------------------------------------------------------------------------------------
 		void SetDataObject(object data, bool copy);
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Places data on the system Clipboard and specifies whether the data should remain on
+		/// the Clipboard after the application exits.
+		/// </summary>
+		/// <param name="data">The data to place on the Clipboard.</param>
+		/// <param name="copy"><c>true</c> if you want data to remain on the Clipboard after
+		/// this application exits; otherwise, <c>false</c>.</param>
+		/// <param name="retries"># of times to retry</param>
+		/// <param name="msDelay"># of milliseconds to delay between retries</param>
+		/// ------------------------------------------------------------------------------------
+		void SetDataObject(object data, bool copy, int retries, int msDelay);
 	}
 	#endregion
 
@@ -207,6 +216,17 @@ namespace SIL.Utils
 				Clipboard.SetDataObject(data, copy);
 			}
 
+			/// --------------------------------------------------------------------------------
+			/// <summary>
+			/// Places data on the system Clipboard and specifies whether the data should remain on
+			/// the Clipboard after the application exits.
+			/// </summary>
+			/// --------------------------------------------------------------------------------
+			public void SetDataObject(object data, bool copy, int retries, int msDelay)
+			{
+				Clipboard.SetDataObject(data, copy, retries, msDelay);
+			}
+
 			#endregion
 		}
 		#endregion
@@ -291,6 +311,22 @@ namespace SIL.Utils
 		public static void SetDataObject(object data, bool copy)
 		{
 			s_Clipboard.SetDataObject(data, copy);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Places data on the system Clipboard and specifies whether the data should remain on
+		/// the Clipboard after the application exits.
+		/// </summary>
+		/// <param name="data">The data to place on the Clipboard.</param>
+		/// <param name="copy"><c>true</c> if you want data to remain on the Clipboard after
+		/// this application exits; otherwise, <c>false</c>.</param>
+		/// <param name="retries"># of times to retry</param>
+		/// <param name="msDelay"># of milliseconds to delay between retries</param>
+		/// ------------------------------------------------------------------------------------
+		public static void SetDataObject(object data, bool copy, int retries, int msDelay)
+		{
+			s_Clipboard.SetDataObject(data, copy, retries, msDelay);
 		}
 	}
 }
