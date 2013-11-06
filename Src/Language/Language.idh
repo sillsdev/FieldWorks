@@ -47,7 +47,6 @@ Description:
 	interface ICollation;
 	interface ILgWritingSystem;
 	interface ILgWritingSystemFactory;
-	interface ILgTextServices;
 
 	//:>****************************************************************************************
 	//:>		Enumerations
@@ -244,13 +243,6 @@ Description:
 		[propget] HRESULT ISO3(
 			[out, retval] BSTR * pbstr);
 
-		// Get the locale assigned to this writing system.
-		[propget] HRESULT LCID(
-			[out, retval] int * pnLocale);
-		// Set the locale for this writing system.
-		[propput] HRESULT LCID(
-			[in] int nLocale);
-
 		// Get the name of the spelling dictionary to use for this writing system.
 		// Currently returns a generally-useful default, unless explicitly set to empty
 		// to prevent this.
@@ -325,176 +317,9 @@ Description:
 	//:>	These are the interfaces for the engines--the code that actually does the work.
 	//:>****************************************************************************************
 
-	/*******************************************************************************************
-		Interface ILgInputMethodEditor
-		Functions related to special ways of typing for exotic writing systems.
-		The ${#Setup} method is called before the user types something and may do things at the
-		system level (such as setting the current system IME or Keyman file) to change what is
-		received through WM_CHAR. The other methods allow post-processing of what is received
-		through WM_CHAR.
-
-		@h3{When to implement}
-		Clients should not normally implement this interface. Standard implementations are in
-		Language.dll. If you have a very unusual input method requirement, you could make your
-		own implementation.
-
-		Note: current FieldWorks code is @i{not} using this approach to typing. Check out
-		@HTTP{intranet.sil.org/softwaredev/project_status.htm} to see if there are any plans.
-
-		@h3{When to use}
-		Most programmers will not use this interface directly. It is used by the Views
-		subsystem and controls that accept typing in vernacular scripts.
-
-		@h3{How to obtain an instance}
-		At present, you can't. Eventually OldWritingSystem will implement a method. Some
-		implemenations may also be available through CoCreateInstance.
-
-		@h3{Hungarian: ime}
-
-	*******************************************************************************************/
-	DeclareInterface(LgInputMethodEditor, Unknown, E1B27A5F-DD1B-4BBA-9B72-00BDE03162FC)
-	{
-		// GET THE SYSTEM READY TO use this input method; for example, switch Keyman to the
-		// proper table.
-		HRESULT Setup();
-
-		// Given something the user typed, following any preprocessing that happens
-		// automatically as a result of Setup (e.g., Keyman processing), do any further
-		// processing required to actually replace the selected part of the string with  what
-		// the user typed.
-		// The default implementation just replaces characters from ichMin to ichLim with
-		// those from bstrInput, then sets *pichModMin to ichMin, and *pichModLim and
-		// *pichIP both to ichMin + BstrLen(bstrInput).
-		// @param bstrInput What the user typed.
-		// @param pttpInput Text properties desired for new text
-		// @param ptsbOld Original, unedited text, gets modified by this method
-		// @param ichMin Range in old ptsbOld to replace
-		// @param ichLim Range in old ptsbOld to replace
-		// @param pichModMin Range in modified ptsbOld that is different from before
-		// @param pichModLim Range in modified ptsbOld that is different from before
-		// @param pichIP Position of insertion point in modified string
-		// @return The result is the modified string represented by ptsbOld.
-		// @exception E_INVALIDARG ichMin/Lim is not a valid range within ptsbOld
-		[local, restricted] HRESULT Replace(
-			[in] BSTR bstrInput,
-			[in] ITsTextProps * pttpInput,
-			[in] ITsStrBldr * ptsbOld,
-			[in] int ichMin,
-			[in] int ichLim,
-			[out] int * pichModMin,
-			[out] int * pichModLim,
-			[out] int * pichIP);
-
-		// The user pressed a certain number of backspaces. Delete an appropriate amount of
-		// the string represented by the input string builder, indicating exactly what changed.
-		// Also, if there were not enough characters to delete, indicate how many backspaces
-		// were left over.
-		// @param pichStart start position (delete characters before here)
-		// @param cactBackspace number of backspaces pressed
-		// @param ptsbOld the text being edited; gets changed by this call
-		// @param pichModMin range in output text affected
-		// @param pichModLim range in output text affected
-		// @param pichIP position of IP in modified string
-		// @param pcactBsRemaining Number not handled, caller should apply to previous run or
-		// string
-		HRESULT Backspace(
-			[in] int pichStart,
-			[in] int cactBackspace,
-			[in] ITsStrBldr * ptsbOld,
-			[out] int * pichModMin,
-			[out] int * pichModLim,
-			[out] int * pichIP,
-			[out] int * pcactBsRemaining);
-
-		// The user pressed a certain number of delete forward characters. Compute the effect on
-		// ptsbInOut
-		// Also, if there were not enough characters to delete, indicate how many backspaces
-		// were left over.
-		// @param pichStart start position (delete characters after here)
-		// @param cactDelForward number of DF pressed
-		// @param ptsbInOut the text being edited; gets changed by this call
-		// @param pichModMin range in output text affected
-		// @param pichModLim range in output text affected
-		// @param pichIP position of IP in modified string
-		// @param pcactDfRemaining Number not handled, caller should apply to next run or string
-		HRESULT DeleteForward(
-			[in] int pichStart,
-			[in] int cactDelForward,
-			[in] ITsStrBldr * ptsbInOut,
-			[out] int * pichModMin,
-			[out] int * pichModLim,
-			[out] int * pichIP,
-			[out] int * pcactDfRemaining);
-
-		// Return true if input method considers an IP at the specified index reasonable.
-		// Note that really useful IPs should also satisfy the Renderer; see
-		// ${ILgSegment#IsValidInsertionPoint}.
-		HRESULT IsValidInsertionPoint(
-			[in] int ich,
-			[in] ITsString * ptss,
-			[out, retval] BOOL * pfValid);
-	};
-
-	/*******************************************************************************************
-		Interface ILgFontManager
-		Obtain a list of the (TrueType) fonts that are available on the system, and handle
-		simple queries about font availability.
-
-		Note: the font manager may load the available fonts once, and use this cached list
-		to answer subsequent queries. To be sure the answer to a query is current, call
-		RefreshFontList.
-
-		@h3{When to implement}
-		Clients should not implement this interface. There is a standard implementation in
-		Language.dll.
-
-		@h3{When to use}
-		Use this interface when you need to know whether a given font is available on the
-		system, or to get a list of available fonts.
-
-		@h3{How to obtain an instance}
-		Use CoCreateInstance, CLSID_LgFontManager. Or use the CreateInstance() method of a
-		smart pointer.
-
-		@h3{Hungarian: fm}
-	*******************************************************************************************/
-	DeclareInterface(LgFontManager, Unknown, 73718689-B701-4241-A408-4C389ECD6664)
-	{
-		// Is the given font available?
-		HRESULT IsFontAvailable(
-			[in] BSTR bstrName,
-			[out, retval] ComBool * pfAvail);
-
-		// Is the given font available?
-		HRESULT IsFontAvailableRgch(
-			[in] int cch,
-			[in] OLECHAR * prgchName,
-			[out, retval] ComBool * pfAvail);
-
-		// Get the list of available fonts delimited by L'\0'.
-		HRESULT AvailableFonts(
-			[out] BSTR * pbstrNames);
-
-		// Update the list of fonts (by re-reading from the OS).
-		HRESULT RefreshFontList();
-	};
-
-
 	//:>****************************************************************************************
 	//:>	CoClass definitions.
 	//:>****************************************************************************************
-
-	#ifndef NO_COCLASSES
-	DeclareCoClass(LgInputMethodEditor, 659C2C2F-7AF6-4F9E-AC6F-7A03C8418FC9)
-	{
-		interface ILgInputMethodEditor;
-	};
-
-	DeclareCoClass(LgFontManager, 02C3F580-796D-4B5F-BE43-166D97319DA5)
-	{
-		interface ILgFontManager;
-	};
-	#endif // !NO_COCLASSES
 
 	// Flags used to specify variations on how to collate.
 	// Default is all listed options off.
@@ -1672,9 +1497,9 @@ Description:
 /*******************************************************************************************
 	Interface ILgKeymanHandler
 
-	An interface that manages Keyman, being able to invoke a keyboard, find out which
-	one is active, find out which keyboards are available, return the windows message that
-	Keyman sends when a keyboard is selected, and so forth.
+	Last vestigaes of an interface that manages Keyman, being able to find out which
+	one is active, if any. This is not implemented for Mono, since the one remaining caller
+	is simply coded to know there is no Keyman keyboard.
 
 	@h3{When to implement}
 	The standard implementation should suffice.
@@ -1699,108 +1524,9 @@ DeclareInterface(LgKeymanHandler, Unknown, 3F42144B-509F-4def-8DD3-6D8D26677001)
 	// that we don't rely on garbage collection.
 	HRESULT Close();
 
-	// Obtain the number of keyboard layouts currently avaiable.
-	[propget] HRESULT NLayout(
-		[out, retval] int * pclayout);
-	// Obtain the ith layout name.
-	[propget] HRESULT Name(
-		[in] int ilayout,
-		[out, retval] BSTR * pbstrName);
-	// Get/Set the active keyboard.
+	// Get the active keyboard.
 	[propget] HRESULT ActiveKeyboardName(
 		[out, retval] BSTR * pbstrName);
-	[propput] HRESULT ActiveKeyboardName(
-		[in] BSTR bstrName);
-	// Return the windows message (obtained from RegisterWindowsMessage("WM_KMSELECTLANG").
-	[propget] HRESULT KeymanWindowsMessage(
-		[out, retval] int * pwm);
-	// Enhance JohnT: might be useful to add GetKeymanVersion, StartKeyman.
-};
-
-/*******************************************************************************************
-	Interface ILgTextServices
-
-	Provide access to TSF functionality wrapped in easy-to-call methods.
-
-	@h3{When to implement}
-	Clients should not implement this interface. There is a standard implementation in
-	Language.dll.
-
-	@h3{When to use}
-	When TSF related functionality is needed, especially from C# code which does not have
-	a built-in access path.
-
-	@h3{How to obtain an instance}
-	Use CoCreateInstance, CLSID_LgTextServices. Or use the CreateInstance() method of a
-	smart pointer.
-
-	@h3{Hungarian: lts}
-*******************************************************************************************/
-DeclareInterface(LgTextServices, Unknown, 5B6303DE-E635-4DD7-A7FC-345BEEF352D8)
-{
-	// Set the system keyboard and TSF language.
-	HRESULT SetKeyboard(
-		[in] int nLcid,
-		[in] BSTR bstrKeymanKbd,
-		[in, out] int * pnActiveLangId,
-		[in, out] BSTR * pbstrActiveKeymanKbd,
-		[in, out] ComBool * pfSelectLangPending
-		);
-};
-
-/*******************************************************************************************
-	Interface ILgCodePageEnumerator
-
-	An interface that allows retrieving a list of the code pages installed on the system,
-	with names suitable for displaying in a combo box.
-
-	@h3{When to implement}
-	The standard implementation should suffice.
-
-	@h3{When to use}
-	Whenever you want to retrieve a list of available code pages.
-
-	@h3{Hungarian: lcpe}
-*******************************************************************************************/
-DeclareInterface(LgCodePageEnumerator, Unknown, 2CFCF4B7-2FFE-4CF8-91BE-FBB57CC7782A)
-{
-
-	// Initialize enumerator. This default initializer gives all known code pages.
-	// We may eventually have others that allow them to be limited.
-	HRESULT Init();
-
-	// Get the next code page. When there are no more, sets pnId to 0 and pbstrName to null.
-	HRESULT Next(
-		[out] int * pnId,
-		[out] BSTR * pbstrName);
-};
-
-/*******************************************************************************************
-	Interface ILgLanguageEnumerator
-
-	An interface that allows retrieving a list of the languages installed on the system,
-	with names suitable for displaying in a combo box.
-
-	@h3{When to implement}
-	The standard implementation should suffice.
-
-	@h3{When to use}
-	Whenever you want to retrieve a list of available languages.
-
-	@h3{Hungarian: lcpe}
-*******************************************************************************************/
-DeclareInterface(LgLanguageEnumerator, Unknown, 746A16E1-0C36-4268-A261-E8012B0D67C5)
-{
-
-	// Initialize enumerator. This default initializer gives all installed languages.
-	// We may eventually have others that allow them to be limited.
-	HRESULT Init();
-
-	// Get the next language. When there are no more, sets pnId to 0 and pbstrName to null.
-	// For a language unsupported by the OS, it returns the id along with E_FAIL.
-	HRESULT Next(
-		[out] int * pnId,
-		[out] BSTR * pbstrName);
 };
 
 /*******************************************************************************************
@@ -2085,18 +1811,6 @@ DeclareInterface(RegexMatcher, Unknown, 6C62CCF0-4EE1-493C-8092-319B6CFBEEBC)
 	DeclareCoClass(LgKeymanHandler, 69ACA99C-F852-4C2C-9B5F-FF83238A17A5)
 	{
 		interface ILgKeymanHandler;
-	};
-	DeclareCoClass(LgTextServices, 720485C5-E8D5-4761-92F0-F70D2B3CF980)
-	{
-		interface ILgTextServices;
-	};
-	DeclareCoClass(LgCodePageEnumerator, 9045F113-8626-41C0-A61E-A73FBE5920D1)
-	{
-		interface ILgCodePageEnumerator;
-	};
-	DeclareCoClass(LgLanguageEnumerator, B887505B-74DE-4ADC-A1D9-5553428C8D02)
-	{
-		interface ILgLanguageEnumerator;
 	};
 	DeclareCoClass(LgIcuConverterEnumerator, 9E729461-F80D-4796-BA17-086BC61907F1)
 	{

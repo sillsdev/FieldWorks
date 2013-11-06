@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -201,12 +201,6 @@
     </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Drawing" />
-    <Reference Include="Keyboarding">
-      <HintPath>..\..\..\..\..\Output\Debug\Keyboarding.dll</HintPath>
-    </Reference>
-    <Reference Include="KeyboardingTests">
-      <HintPath>..\..\..\..\..\Output\Debug\KeyboardingTests.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\..\AssemblyInfoForTests.cs">
@@ -239,9 +233,7 @@
     <Compile Include="TestColumnConfigureDialog.cs" />
     <Compile Include="XmlBrowseViewBaseVcTests.cs" />
     <Compile Include="XmlVcTests.cs" />
-    <Compile Include="XmlBrowseViewBaseTests.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="XmlBrowseViewBaseTests.cs" />
     <Compile Include="DhListViewTests.cs" />
   </ItemGroup>
   <ItemGroup>

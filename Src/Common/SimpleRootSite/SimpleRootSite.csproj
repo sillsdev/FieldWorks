@@ -121,6 +121,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
+    <Reference Include="Palaso, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Downloads\Palaso.dll</HintPath>
+    </Reference>
+    <Reference Include="PalasoUIWindowsForms, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Downloads\PalasoUIWindowsForms.dll</HintPath>
+    </Reference>
     <Reference Include="Reporting, Version=1.0.3140.28468, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\Reporting.dll</HintPath>
@@ -171,14 +179,6 @@
     </Reference>
     <Reference Include="ibusdotnet" Condition="'$(OS)'=='Unix'">
       <HintPath>..\..\..\Output\Debug\ibusdotnet.dll</HintPath>
-    </Reference>
-    <Reference Include="KeyboardSwitcher">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\KeyboardSwitcher.dll</HintPath>
-    </Reference>
-    <Reference Include="Keyboarding, Version=7.0.5.0, Culture=neutral, PublicKeyToken=null">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\Keyboarding.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -237,9 +237,6 @@
     <Compile Include="VwBaseVc.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="InputBusController.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -251,12 +248,11 @@
       <DependentUpon>SimpleRootSite.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Compile Include="IIBusCommunicator.cs" />
-    <Compile Include="IBusCommunicator.cs" />
     <Compile Include="ViewInputManager.cs" />
     <Compile Include="VwSelectionBasedControl.cs" />
     <Compile Include="BaseFragmentProvider.cs" />
     <Compile Include="SimpleRootSiteTextRangeProvider.cs" />
+    <Compile Include="IbusRootSiteEventHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\HORIZONTAL_IBEAM.CUR" />

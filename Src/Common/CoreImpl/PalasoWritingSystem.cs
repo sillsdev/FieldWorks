@@ -332,61 +332,6 @@ namespace SIL.CoreImpl
 		}
 
 		/// <summary>
-		/// Gets or sets the Windows locale ID.
-		/// </summary>
-		/// <value>The LCID.</value>
-		public int LCID
-		{
-			get
-			{
-				lock (m_syncRoot)
-				{
-					if (m_lcid == 0)
-					{
-						// On Linux InstalledInputLanguages or DefaultInputLanguage doesn't do anything sensible.
-						// see: https://bugzilla.novell.com/show_bug.cgi?id=613014
-						// so just default to en-US.
-						if (MiscUtils.IsUnix)
-							return new CultureInfo("en-US").LCID;
-						var defaultLang = InputLanguage.DefaultInputLanguage;
-
-						InputLanguage first = null;
-						foreach (InputLanguage lang in InputLanguage.InstalledInputLanguages)
-						{
-							try
-							{
-								if (lang.Culture.IetfLanguageTag != Id)
-									continue;
-								first = lang;
-								break;
-							}
-							catch (ArgumentException e)
-							{
-								// Skip unsupported cultures.
-							}
-						}
-						var inputLanguage = first ?? InputLanguage.DefaultInputLanguage;
-						return inputLanguage.Culture.LCID;
-					}
-					return m_lcid;
-				}
-			}
-
-			set
-			{
-				lock (m_syncRoot)
-				{
-					if (m_lcid != value)
-					{
-						m_lcid = value;
-						m_currentLcid = value;
-						Modified = true;
-					}
-				}
-			}
-		}
-
-		/// <summary>
 		/// Gets or sets a value indicating whether the script is right-to-left.
 		/// </summary>
 		/// <value><c>true</c> if the script is right-to-left.</value>
@@ -1154,12 +1099,14 @@ namespace SIL.CoreImpl
 			lock (pws.m_syncRoot)
 			{
 				// ILgWritingSystem properties
-				lcid = pws.LCID;
 				spellCheckingId = pws.SpellCheckingId;
 				rtol = pws.RightToLeftScript;
 				defFontFeats = pws.DefaultFontFeatures;
 				defFont = pws.DefaultFontName;
 				keyboard = pws.Keyboard;
+				// This will put the keyboard actually selected into the permanent WS's list.
+				// We don't need to remember any others that got temporarily added to KnownKeyboards for testing.
+				LocalKeyboard = pws.LocalKeyboard;
 
 				// IWritingSystem properties
 				abbr = pws.Abbreviation;
@@ -1184,7 +1131,6 @@ namespace SIL.CoreImpl
 			lock (m_syncRoot)
 			{
 				// ILgWritingSystem properties
-				LCID = lcid;
 				SpellCheckingId = spellCheckingId;
 				RightToLeftScript = rtol;
 				DefaultFontFeatures = defFontFeats;

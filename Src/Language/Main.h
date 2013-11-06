@@ -109,8 +109,6 @@ using namespace fwutil;	// Rect and Point classes
 #include "LgWordBreakSpaceSpec.h"
 #endif // LANG_MODEL
 
-#include "LanguageGlobals.h"
-
 // these are a gray area, including aspects of both model and engine
 // Todo JohnT: These structs are part of an obsolete approach to overriding character properties.
 // Get rid of them and whatever uses them. (Taken from OldLgWritingSystem file.)
@@ -182,9 +180,7 @@ DEFINE_COM_PTR(UniscribeEngine);
 #include "RomRenderSegment.h"
 #include "RomRenderEngine.h"
 #include "LgSimpleEngines.h"
-#include "LgCPWordTokenizer.h"
 #include "LgNumericEngine.h"
-#include "LgInputMethodEditor.h"
 #if !WIN32
 #include "UniscribeLinux.h"
 #endif
@@ -192,15 +188,12 @@ DEFINE_COM_PTR(UniscribeEngine);
 #include "UniscribeEngine.h"
 
 // Other tools
-#include "LgFontManager.h"
 #include "FwStyledText.h"
 #include "StringToNumHelpers.h"
 #include "WriteXml.h"		// From AppCore.
 #include "xmlparse.h"
 #include "LgKeymanHandler.h"
-#include "LgCodePageEnumerator.h"
 #include "LgIcuWrappers.h"
-#include "LgTextServices.h"
 
 #include "RegexMatcherWrapper.h"
 

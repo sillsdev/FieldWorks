@@ -33,6 +33,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Automation.Provider;
 using System.Windows.Forms;
+using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -235,6 +236,14 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get { return s_fInSelectionChanged; }
 			set { s_fInSelectionChanged = value; }
+		}
+
+		/// <summary>
+		/// With access to the cache, we can limit this to writing sytems the user might plausibly want for this project.
+		/// </summary>
+		protected override IWritingSystemDefinition[] PlausibleWritingSystems
+		{
+			get { return m_fdoCache.ServiceLocator.WritingSystems.AllWritingSystems.Cast<IWritingSystemDefinition>().ToArray(); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1150,89 +1159,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			return m_fdoCache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
 		}
-#if __MonoCS__
-		/// <summary>
-		/// override to allow us access to IActionHanderExtensions without introducing FDO
-		/// dependency to SimpleRootSite.
-		/// </summary>
-		protected override void OnGotFocus(EventArgs e)
-		{
-			try
-			{
-				// Null checks added for FWNX-441
-				if (RootBox == null)
-					return;
-
-				if (RootBox.DataAccess == null)
-					return;
-
-				var actionHandlerExtensions = RootBox.DataAccess.GetActionHandler() as IActionHandlerExtensions;
-
-				if (actionHandlerExtensions == null)
-					return;
-
-				actionHandlerExtensions.DoingUndoOrRedo += DataChanging;
-				actionHandlerExtensions.DoAtEndOfPropChanged(DataChanged);
-			}
-			finally
-			{
-				base.OnGotFocus(e);
-			}
-		}
-
-		/// <summary>
-		/// override to allow us access to IActionHanderExtensions without introducing FDO
-		/// dependency to SimpleRootSite.
-		/// </summary>
-		protected override void OnKillFocus(Control newWindow, bool fIsChildWindow)
-		{
-			try
-			{
-				if (RootBox == null)
-					return;
-
-				if (RootBox.DataAccess == null)
-					return;
-
-				var actionHandlerExtensions = RootBox.DataAccess.GetActionHandler() as IActionHandlerExtensions;
-
-				if (actionHandlerExtensions == null)
-					return;
-
-				actionHandlerExtensions.DoingUndoOrRedo -= DataChanging;
-			}
-			finally
-			{
-				base.OnKillFocus(newWindow, fIsChildWindow);
-			}
-		}
-#endif
 		#endregion
-
-#if __MonoCS__
-		/// <summary>
-		/// Used to attach to DoingUndoOrRedo and inform SimpleRootSite when the underlying data is
-		/// about to change.
-		/// </summary>
-		private void DataChanging(CancelEventArgs args)
-		{
-			if (m_inputBusController != null)
-				m_inputBusController.NotifyDataChanging();
-		}
-
-		/// <summary>
-		/// Used as argument to DoAtEndOfPropChanged and inform SimpleRootSite the underlying data change
-		/// has finished.
-		/// </summary>
-		private void DataChanged()
-		{
-			// I think this is to let the keyboard processor know about any selection change we made,
-			// especially during Undo/Redo. (An earlier version of the code was able to distinguish
-			// and do nothing except when the change was an Undo/Redo.)
-			if (Focused && m_inputBusController != null)
-				m_inputBusController.NotifyDataChanged();
-		}
-#endif
 
 		#region IHeightEstimator implementation
 		/// ------------------------------------------------------------------------------------

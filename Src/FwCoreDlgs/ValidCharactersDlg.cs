@@ -25,7 +25,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-
+using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
@@ -1395,9 +1395,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					break;
 			}
 			if (fUseWsKeyboard)
-				KeyboardHelper.ActivateKeyboard(m_ws.LCID);
+				((IWritingSystemDefinition)m_ws).LocalKeyboard.Activate();
 			else
-				KeyboardHelper.ActivateDefaultKeyboard();
+				Keyboard.Controller.ActivateDefaultKeyboard();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1734,7 +1734,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		protected override void OnClosed(EventArgs e)
 		{
 			base.OnClosed(e);
-			KeyboardHelper.ActivateDefaultKeyboard();
+			Keyboard.Controller.ActivateDefaultKeyboard();
 		}
 		#endregion
 

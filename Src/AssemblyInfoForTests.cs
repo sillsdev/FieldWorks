@@ -1,11 +1,5 @@
-// --------------------------------------------------------------------------------------------
-// <copyright from='2012' to='2012' company='SIL International'>
-// 	Copyright (c) 2012, SIL International. All Rights Reserved.
-//
-// 	Distributable under the terms of either the Common Public License or the
-// 	GNU Lesser General Public License, as specified in the LICENSING.txt file.
-// </copyright>
-// --------------------------------------------------------------------------------------------
+// Copyright (c) 2012-2013, SIL International.
+// Distributable under the terms of the MIT license (http://opensource.org/licenses/MIT).
 
 using NUnit.Framework;
 using SIL.Utils.Attributes;
@@ -30,3 +24,6 @@ using SIL.Utils.Attributes;
 
 // Allow creating COM objects from manifest file
 [assembly: CreateComObjectsFromManifest]
+
+// Initialize a do-nothing keyboard controller
+[assembly: InitializeNoOpKeyboardController]

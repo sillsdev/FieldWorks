@@ -32,6 +32,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using Palaso.Reporting;
+using Palaso.UI.WindowsForms.Keyboarding;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
@@ -229,6 +230,9 @@ namespace SIL.FieldWorks
 #endif
 				// initialize ICU
 				Icu.InitIcuDataDir();
+
+				// initialize Palaso keyboarding
+				KeyboardController.Initialize();
 
 				FwAppArgs appArgs = new FwAppArgs(rgArgs);
 				s_noUserInterface = appArgs.NoUserInterface;
@@ -3422,6 +3426,8 @@ namespace SIL.FieldWorks
 				s_serviceChannel = null;
 			}
 
+			KeyboardController.Shutdown();
+
 			GracefullyShutDown();
 
 			if (s_threadHelper != null)
@@ -3429,7 +3435,6 @@ namespace SIL.FieldWorks
 			s_threadHelper = null;
 
 			FwRegistrySettings.Release();
-			KeyboardHelper.Release();
 		}
 
 #if DEBUG

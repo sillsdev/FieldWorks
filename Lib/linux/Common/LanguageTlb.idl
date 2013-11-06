@@ -3689,7 +3689,6 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 	interface ICollation;
 	interface ILgWritingSystem;
 	interface ILgWritingSystemFactory;
-	interface ILgTextServices;
 
 	
 	
@@ -3887,13 +3886,6 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 			[out, retval] BSTR * pbstr);
 
 		
-		[propget] HRESULT LCID(
-			[out, retval] int * pnLocale);
-		
-		[propput] HRESULT LCID(
-			[in] int nLocale);
-
-		
 		
 		
 		[propget] HRESULT SpellCheckingId(
@@ -3968,175 +3960,8 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 	
 
 	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgInputMethodEditor") cpp_quote(",") cpp_quote("E1B27A5F-DD1B-4BBA-9B72-00BDE03162FC") cpp_quote(");") [ uuid("E1B27A5F-DD1B-4BBA-9B72-00BDE03162FC"), object, pointer_default(unique) ] interface ILgInputMethodEditor : IUnknown
-	{
-		
-		
-		HRESULT Setup();
-
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		[local, restricted] HRESULT Replace(
-			[in] BSTR bstrInput,
-			[in] ITsTextProps * pttpInput,
-			[in] ITsStrBldr * ptsbOld,
-			[in] int ichMin,
-			[in] int ichLim,
-			[out] int * pichModMin,
-			[out] int * pichModLim,
-			[out] int * pichIP);
-
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		HRESULT Backspace(
-			[in] int pichStart,
-			[in] int cactBackspace,
-			[in] ITsStrBldr * ptsbOld,
-			[out] int * pichModMin,
-			[out] int * pichModLim,
-			[out] int * pichIP,
-			[out] int * pcactBsRemaining);
-
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		HRESULT DeleteForward(
-			[in] int pichStart,
-			[in] int cactDelForward,
-			[in] ITsStrBldr * ptsbInOut,
-			[out] int * pichModMin,
-			[out] int * pichModLim,
-			[out] int * pichIP,
-			[out] int * pcactDfRemaining);
-
-		
-		
-		
-		HRESULT IsValidInsertionPoint(
-			[in] int ich,
-			[in] ITsString * ptss,
-			[out, retval] BOOL * pfValid);
-	};
-
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgFontManager") cpp_quote(",") cpp_quote("73718689-B701-4241-A408-4C389ECD6664") cpp_quote(");") [ uuid("73718689-B701-4241-A408-4C389ECD6664"), object, pointer_default(unique) ] interface ILgFontManager : IUnknown
-	{
-		
-		HRESULT IsFontAvailable(
-			[in] BSTR bstrName,
-			[out, retval] ComBool * pfAvail);
-
-		
-		HRESULT IsFontAvailableRgch(
-			[in] int cch,
-			[in] OLECHAR * prgchName,
-			[out, retval] ComBool * pfAvail);
-
-		
-		HRESULT AvailableFonts(
-			[out] BSTR * pbstrNames);
-
-		
-		HRESULT RefreshFontList();
-	};
-
-
 	
 	
-	
-
-	
-	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("659C2C2F-7AF6-4F9E-AC6F-7A03C8418FC9") cpp_quote(",") cpp_quote("LgInputMethodEditor") cpp_quote(");") [ uuid(659C2C2F-7AF6-4F9E-AC6F-7A03C8418FC9) ] coclass LgInputMethodEditor
-	{
-		interface ILgInputMethodEditor;
-	};
-
-	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("02C3F580-796D-4B5F-BE43-166D97319DA5") cpp_quote(",") cpp_quote("LgFontManager") cpp_quote(");") [ uuid(02C3F580-796D-4B5F-BE43-166D97319DA5) ] coclass LgFontManager
-	{
-		interface ILgFontManager;
-	};
-	#line 498 "c:\\fwrepo\\fw\\src\\language\\Language.idh"
 
 	
 	
@@ -5342,107 +5167,8 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgKeymanHandler") 
 	HRESULT Close();
 
 	
-	[propget] HRESULT NLayout(
-		[out, retval] int * pclayout);
-	
-	[propget] HRESULT Name(
-		[in] int ilayout,
-		[out, retval] BSTR * pbstrName);
-	
 	[propget] HRESULT ActiveKeyboardName(
 		[out, retval] BSTR * pbstrName);
-	[propput] HRESULT ActiveKeyboardName(
-		[in] BSTR bstrName);
-	
-	[propget] HRESULT KeymanWindowsMessage(
-		[out, retval] int * pwm);
-	
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgTextServices") cpp_quote(",") cpp_quote("5B6303DE-E635-4DD7-A7FC-345BEEF352D8") cpp_quote(");") [ uuid("5B6303DE-E635-4DD7-A7FC-345BEEF352D8"), object, pointer_default(unique) ] interface ILgTextServices : IUnknown
-{
-	
-	HRESULT SetKeyboard(
-		[in] int nLcid,
-		[in] BSTR bstrKeymanKbd,
-		[in, out] int * pnActiveLangId,
-		[in, out] BSTR * pbstrActiveKeymanKbd,
-		[in, out] ComBool * pfSelectLangPending
-		);
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgCodePageEnumerator") cpp_quote(",") cpp_quote("2CFCF4B7-2FFE-4CF8-91BE-FBB57CC7782A") cpp_quote(");") [ uuid("2CFCF4B7-2FFE-4CF8-91BE-FBB57CC7782A"), object, pointer_default(unique) ] interface ILgCodePageEnumerator : IUnknown
-{
-
-	
-	
-	HRESULT Init();
-
-	
-	HRESULT Next(
-		[out] int * pnId,
-		[out] BSTR * pbstrName);
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgLanguageEnumerator") cpp_quote(",") cpp_quote("746A16E1-0C36-4268-A261-E8012B0D67C5") cpp_quote(");") [ uuid("746A16E1-0C36-4268-A261-E8012B0D67C5"), object, pointer_default(unique) ] interface ILgLanguageEnumerator : IUnknown
-{
-
-	
-	
-	HRESULT Init();
-
-	
-	
-	HRESULT Next(
-		[out] int * pnId,
-		[out] BSTR * pbstrName);
 };
 
 
@@ -5728,18 +5454,6 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IRegexMatcher") cpp
 	{
 		interface ILgKeymanHandler;
 	};
-	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("720485C5-E8D5-4761-92F0-F70D2B3CF980") cpp_quote(",") cpp_quote("LgTextServices") cpp_quote(");") [ uuid(720485C5-E8D5-4761-92F0-F70D2B3CF980) ] coclass LgTextServices
-	{
-		interface ILgTextServices;
-	};
-	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("9045F113-8626-41C0-A61E-A73FBE5920D1") cpp_quote(",") cpp_quote("LgCodePageEnumerator") cpp_quote(");") [ uuid(9045F113-8626-41C0-A61E-A73FBE5920D1) ] coclass LgCodePageEnumerator
-	{
-		interface ILgCodePageEnumerator;
-	};
-	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("B887505B-74DE-4ADC-A1D9-5553428C8D02") cpp_quote(",") cpp_quote("LgLanguageEnumerator") cpp_quote(");") [ uuid(B887505B-74DE-4ADC-A1D9-5553428C8D02) ] coclass LgLanguageEnumerator
-	{
-		interface ILgLanguageEnumerator;
-	};
 	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("9E729461-F80D-4796-BA17-086BC61907F1") cpp_quote(",") cpp_quote("LgIcuConverterEnumerator") cpp_quote(");") [ uuid(9E729461-F80D-4796-BA17-086BC61907F1) ] coclass LgIcuConverterEnumerator
 	{
 		interface ILgIcuConverterEnumerator;
@@ -5756,7 +5470,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IRegexMatcher") cpp
 	{
 		interface ILgIcuLocaleEnumerator;
 	};
-#line 2118 "c:\\fwrepo\\fw\\src\\language\\Language.idh"
+#line 1832 "c:\\fwrepo\\fw\\src\\language\\Language.idh"
 
 #line 34 "C:\\fwrepo\\fw\\Src\\Language\\LanguageTlb.idl"
 };

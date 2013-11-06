@@ -212,6 +212,8 @@ STDMETHODIMP VwTextStore::QueryInterface(REFIID riid, void ** ppv)
 		*ppv = static_cast<ITfMouseTrackerACP *>(this);
 	else if (riid == IID_ITfContextOwnerCompositionSink)
 		*ppv = static_cast<ITfContextOwnerCompositionSink *>(this);
+	else if (riid == IID_IViewInputMgr)
+		*ppv = static_cast<IViewInputMgr *>(this);
 //	else if (&riid == &CLSID_VwTextStore)
 //		*ppv = static_cast<VwTextStore *>(this);
 	else if (riid == IID_ISupportErrorInfo)
@@ -1562,6 +1564,456 @@ STDMETHODIMP VwTextStore::InsertEmbeddedAtSelection(DWORD dwFlags, IDataObject *
 }
 
 //:>********************************************************************************************
+//:>	IViewInputMgr methods
+//:>********************************************************************************************
+
+/*----------------------------------------------------------------------------------------------
+	Create and initialize the document manager.
+	This can be called more than once. If a document manager already exists we do nothing.
+----------------------------------------------------------------------------------------------*/
+STDMETHODIMP VwTextStore::Init(IVwRootBox* prootb)
+{
+	BEGIN_COM_METHOD;
+	if (!s_qttmThreadMgr)
+		return S_OK;
+	// If we already have a DocMgr, we don't want to create a new one, especially without
+	// properly closing off the old one with a pop to clear the reference count on this.
+	// Otherwise we end up with leaking memory on this.
+	if (m_qtdmDocMgr)
+		return S_OK;
+	// Create the Text Services Framework document manager for this "document" (root box).
+	CheckHr(s_qttmThreadMgr->CreateDocumentMgr(&m_qtdmDocMgr));
+
+	// Create and install the Text Services Framework "context".
+	CheckHr(m_qtdmDocMgr->CreateContext(s_tfClientID, 0, dynamic_cast<ITextStoreACP *>(this),
+		&m_qtcContext, &m_tfEditCookie));
+	CheckHr(m_qtdmDocMgr->Push(m_qtcContext));
+
+	m_prootb = dynamic_cast<VwRootBox*>(prootb);
+	AssertPtr(m_prootb);
+
+	END_COM_METHOD(g_factDummy, IID_IViewInputMgr);
+}
+
+/*----------------------------------------------------------------------------------------------
+	Release the interfaces installed by the constructor or by Init.
+----------------------------------------------------------------------------------------------*/
+STDMETHODIMP VwTextStore::Close()
+{
+	BEGIN_COM_METHOD;
+	if (!m_qtdmDocMgr)
+		return S_OK;
+	AssertPtr(s_qttmThreadMgr.Ptr());
+	CheckHr(m_qtdmDocMgr->Pop(TF_POPF_ALL));
+	m_qtdmDocMgr.Clear();
+	m_qtcContext.Clear();
+	m_qrootb.Clear();
+	m_qws.Clear();
+	END_COM_METHOD(g_factDummy, IID_IViewInputMgr);
+}
+
+/*----------------------------------------------------------------------------------------------
+	The document changed. (Ideally we'd like to know where, but at least let the service know.)
+----------------------------------------------------------------------------------------------*/
+STDMETHODIMP VwTextStore::OnTextChange()
+{
+	BEGIN_COM_METHOD;
+	if (m_fNotify)
+	{
+		if (m_AdviseSinkInfo.m_dwMask & TS_AS_TEXT_CHANGE &&
+			m_AdviseSinkInfo.m_qTextStoreACPSink)
+		{
+			// issue a document changed notification. The OldEnd may not be exactly right.
+			VwParagraphBox* pvpboxCurrent = m_prootb->GetLastSelectedAnchorBox();
+			TS_TEXTCHANGE ttc;
+			ttc.acpStart = 0;
+			ttc.acpOldEnd = pvpboxCurrent ? LogToAcp(pvpboxCurrent->Source()->Cch()) : 0;
+			ttc.acpNewEnd = ttc.acpOldEnd;
+#ifdef TRACING_TSF
+			StrAnsi sta;
+			sta.Format("VwTextStore::OnDocChange() calling AdviseSink->OnTextChange()%n");
+			TraceTSF(sta.Chars());
+#endif
+			m_AdviseSinkInfo.m_qTextStoreACPSink->OnTextChange(0, &ttc);
+		}
+	}
+	DoDisplayAttrs();
+
+	END_COM_METHOD(g_factDummy, IID_IViewInputMgr);
+}
+
+/*----------------------------------------------------------------------------------------------
+	The selection changed.
+
+	@param nHow Flag how the selection changed: ksctSamePara, ksctDiffPara, etc.
+----------------------------------------------------------------------------------------------*/
+STDMETHODIMP VwTextStore::OnSelectionChange(int nHow)
+{
+	BEGIN_COM_METHOD;
+#ifdef TRACING_TSF
+	StrAnsi sta;
+	sta.Format("VwTextStore::OnSelChange(%d), m_fNotify = %s%n",
+		nHow, m_fNotify ? "true" : "false");
+	TraceTSF(sta.Chars());
+#endif
+	// since the selection has changed, we must retrieve the current writing system, so that we
+	// can use it to determine whether to return NFD or NFC to TSF
+
+	GetCurrentWritingSystem();
+	// Brute force...if this works we should probably at least check that our window has focus.
+	//CheckHr(s_qttmThreadMgr->SetFocus(m_qtdmDocMgr));
+	if (m_fNotify)
+	{
+		if (nHow != ksctSamePara)
+		{
+			// Working on a different paragraph means we pretend the whole document changed.
+			// Todo: the first box of the selection.
+			VwTextSelection * psel = dynamic_cast<VwTextSelection *>(m_qrootb->Selection());
+			// If it's not a text selection don't send the notification. It seems to be a bad
+			// idea to tell TSF about a changed document or selection at a time when there
+			// is not actually any text data it can get. Note that this may depend on what
+			// scripts are installed. For example, we've had crashes here when selecting an
+			// icon in interlinear text using Chinese data.
+			if (!psel)
+				return S_OK;
+			VwParagraphBox * pvpboxNew = psel ? psel->AnchorBox() : NULL;
+			if (m_AdviseSinkInfo.m_dwMask & TS_AS_TEXT_CHANGE &&
+				m_AdviseSinkInfo.m_qTextStoreACPSink)
+			{
+				// issue a document changed notification.
+				TS_TEXTCHANGE ttc;
+				ttc.acpStart = 0;
+				// REVIEW (DamienD): I don't think this will give an accurate acpOldEnd, since
+				// the LogToAcp() method calculates the acp offset based off of the current
+				// paragraphs in the selection
+				VwParagraphBox* pvpboxCurrent = m_prootb->GetLastSelectedAnchorBox();
+				ttc.acpOldEnd = LogToAcp(pvpboxCurrent ? pvpboxCurrent->Source()->Cch()
+					: m_cchLastPara);
+				ttc.acpNewEnd = pvpboxNew ? LogToAcp(pvpboxNew->Source()->Cch()) : 0;
+#ifdef TRACING_TSF
+				StrAnsi sta;
+				sta.Format("VwTextStore::OnSelChange(%d) calling AdviseSink->OnTextChange()%n",
+					nHow);
+				TraceTSF(sta.Chars());
+#endif
+				if (nHow != ksctDeleted)
+				{
+					// When we delete the selection it seems to be disatrous to tell
+					// at least the Chinese IME that the doc changed. I (JT) am not sure
+					// whether this is because we're changing focus pane, or something even
+					// more obscure. If you consider putting this back in, check that
+					// you don't get an exception deep in TSF while switching from a
+					// selection in some Chinese text in one DN field to another field.
+					m_AdviseSinkInfo.m_qTextStoreACPSink->OnTextChange(0, &ttc);
+				}
+			}
+		}
+		if (m_AdviseSinkInfo.m_dwMask & TS_AS_SEL_CHANGE &&
+				m_AdviseSinkInfo.m_qTextStoreACPSink && nHow != ksctDeleted)
+		{
+			// issue a selection change notification.
+#ifdef TRACING_TSF
+			StrAnsi sta;
+			sta.Format("VwTextStore::OnSelChange(%d) calling AdviseSink->OnSelectionChange()%n",
+				nHow);
+			TraceTSF(sta.Chars());
+#endif
+			m_AdviseSinkInfo.m_qTextStoreACPSink->OnSelectionChange();
+		}
+	}
+	// Clear any error info resulting from advising the ACP.
+	// This prevents AssertNoErrorInfo from firing in debug builds.
+	// In a release, we just hope anything that goes wrong in TSF won't hurt us too badly.
+	IErrorInfo * pIErrorInfo = NULL;
+	HRESULT hr;
+	hr = GetErrorInfo(0, &pIErrorInfo);
+	if(pIErrorInfo != NULL) {
+#ifdef DEBUG // may as well output the info.
+		BSTR bstr;
+		hr = pIErrorInfo->GetDescription(&bstr);
+		Assert(SUCCEEDED(hr));
+		::OutputDebugString(bstr);
+		::SysFreeString(bstr);
+		hr = pIErrorInfo->GetSource(&bstr);
+		Assert(SUCCEEDED(hr));
+		::OutputDebugString(bstr);
+		::SysFreeString(bstr);
+#endif
+		pIErrorInfo->Release();
+	}
+
+	END_COM_METHOD(g_factDummy, IID_IViewInputMgr);
+}
+
+STDMETHODIMP VwTextStore::OnLayoutChange()
+{
+	BEGIN_COM_METHOD;
+	m_fLayoutChanged = false;
+	if (m_fNotify)
+	{
+		if (m_AdviseSinkInfo.m_dwMask & TS_AS_LAYOUT_CHANGE &&
+				m_AdviseSinkInfo.m_qTextStoreACPSink)
+		{
+			// issue a layout change notification.
+			TsViewCookie vcView;
+			GetActiveView(&vcView);
+#ifdef TRACING_TSF
+			StrAnsi sta;
+			sta.Format(
+	"VwTextStore::OnLayoutChange() calling AdviseSink->OnLayoutChange(TS_LC_CHANGE, ...)%n");
+			TraceTSF(sta.Chars());
+#endif
+			m_AdviseSinkInfo.m_qTextStoreACPSink->OnLayoutChange(TS_LC_CHANGE, vcView);
+		}
+	}
+	DoDisplayAttrs();
+
+	END_COM_METHOD(g_factDummy, IID_IViewInputMgr);
+}
+
+/*----------------------------------------------------------------------------------------------
+	Set the Text Service focus to our root box.
+----------------------------------------------------------------------------------------------*/
+STDMETHODIMP VwTextStore::SetFocus()
+{
+	BEGIN_COM_METHOD;
+#ifdef TRACING_TSF
+	TraceTSF("VwTextStore::SetFocus()\r\n");
+#endif
+	if (!s_qttmThreadMgr)
+		return S_OK;
+
+	// retrieve the current writing system, so that we can use it to determine whether to
+	// return NFD or NFC to TSF
+	GetCurrentWritingSystem();
+
+	// This try/catch is a patch to try to minimize the problems of a bug which appears
+	// to be in Microft's code...at least, they are throwing an exception across a COM
+	// interface, which is a no-no. See LT-8483. We may want to take it out if we can
+	// get a fix or work-around from Microsoft.
+	try
+	{
+		CheckHr(s_qttmThreadMgr->SetFocus(m_qtdmDocMgr));
+	}
+	catch (...)
+	{
+		Assert(false); //, "Microsoft's thread manager threw an exception from SetFocus!");
+	}
+	END_COM_METHOD(g_factDummy, IID_IViewInputMgr);
+}
+
+/*----------------------------------------------------------------------------------------------
+	Send appropriate mouse event notifications, if they have been requested.  A "Mouse Down"
+	event terminates all open compositions if it is not handled by the sink (unless, of course,
+	the sink does not exist).
+----------------------------------------------------------------------------------------------*/
+STDMETHODIMP VwTextStore::OnMouseEvent(int xd, int yd, RECT rcSrc1, RECT rcDst1, VwMouseEvent me,
+	ComBool * pfProcessed)
+{
+	BEGIN_COM_METHOD;
+	ChkComOutPtr(pfProcessed);
+	if (!m_qMouseSink)
+	{
+		*pfProcessed = FALSE;
+		return S_OK;
+	}
+	// Determine whether it intersects the range that the mouse sink is interested in.
+	HoldGraphicsAtDst hg(m_qrootb, Point(xd, yd));
+	// Find the most local box where the user clicked, and where he clicked relative to it.
+	Rect rcSrcBox;
+	Rect rcDstBox;
+	VwBox * pboxClick = m_qrootb->FindBoxClicked(hg.m_qvg, xd, yd, hg.m_rcSrcRoot, hg.m_rcDstRoot,
+		&rcSrcBox, &rcDstBox);
+	if (!pboxClick)
+	{
+		// The mouse event is nowhere of interest to text services.
+		*pfProcessed = EndAllCompositions(me == kmeDown);
+		return S_OK;
+	}
+
+	VwSelectionPtr qvwsel;
+	pboxClick->GetSelection(hg.m_qvg, m_qrootb, xd, yd, hg.m_rcSrcRoot, hg.m_rcDstRoot, rcSrcBox,
+		rcDstBox, &qvwsel);
+
+	VwTextSelection * psel = dynamic_cast<VwTextSelection *>(qvwsel.Ptr());
+	if (!psel)
+	{
+		// It must be a text selection to be relevant for text services.
+		*pfProcessed =  EndAllCompositions(me == kmeDown);
+		return S_OK;
+	}
+
+	VwParagraphBox * pvpboxClick = psel->AnchorBox();
+	if (pvpboxClick != m_pvpboxMouseSink)
+	{
+		// The mouse event is not near the box of interest.
+		*pfProcessed =  EndAllCompositions(me == kmeDown);
+		return S_OK;
+	}
+
+	int ichClick = psel->AnchorOffset();
+	if (ichClick < m_ichMinMouseSink || ichClick > m_ichLimMouseSink)
+	{
+		// The mouse event is not (even close to) the range of interest.
+		*pfProcessed =  EndAllCompositions(me == kmeDown);
+		return S_OK;
+	}
+	RECT rdPrimary, rdSecondary;
+	ComBool fSplit, fEndBeforeAnchor;
+	Point pt(xd,yd);
+	bool fFoundChar = false;
+	Rect rdChar;
+	if (ichClick > 0 && ichClick > m_ichMinMouseSink)
+	{
+		// See if the click is in the character before the position. Selection was made from a single
+		// click, so it is an IP. Extend it to cover the previous character.
+		psel->m_ichEnd--;
+		psel->m_fEndBeforeAnchor = true;
+		psel->Location(hg.m_qvg, hg.m_rcSrcRoot, hg.m_rcDstRoot, &rdPrimary,
+			&rdSecondary, &fSplit, &fEndBeforeAnchor);
+		rdChar = rdPrimary;
+		if (rdChar.Contains(pt))
+		{
+			fFoundChar = true;
+		}
+		else
+		{
+			psel->m_ichEnd++;
+		}
+	}
+	if (ichClick < pvpboxClick->Source()->Cch()  && ichClick < m_ichLimMouseSink && !fFoundChar)
+	{
+		// See if the click is in the character after the position. Selection was made from a single
+		// click, so it is an IP. Extend it to cover the following character.
+		psel->m_ichEnd++;
+		psel->m_fEndBeforeAnchor = false;
+		psel->Location(hg.m_qvg, hg.m_rcSrcRoot, hg.m_rcDstRoot, &rdPrimary,
+			&rdSecondary, &fSplit, &fEndBeforeAnchor);
+		rdChar = rdPrimary;
+		if (rdChar.Contains(pt))
+		{
+			fFoundChar = true;
+		}
+	}
+	if (!fFoundChar)
+	{
+		// The mouse event wasn't inside a character in the range, maybe just before or
+		// after (or empty string).
+		*pfProcessed =  EndAllCompositions(me == kmeDown);
+		return S_OK;
+	}
+
+	ULONG edge = LogToAcp(ichClick) - LogToAcp(m_ichMinMouseSink);
+	int section = ((rdChar.right - rdChar.left) > 0) ?
+		min<int>((xd - rdChar.left) * 4 / (rdChar.right - rdChar.left), 3) : 1;
+	ULONG quadrant = (section + 2) % 4; // want 2, 3, 0, 1 for the respective sections.
+	DWORD dwBtnStatus = 0;
+
+	// Figure a set of flags that indicates approximately the state of the mouse.
+	switch(me)
+	{
+	case kmeDown: // no shift, main button
+	case kmeDblClick: // assume no shift, main button
+	case kmeMoveDrag: // mouse move, main button down, assume no modifiers
+		// All of these cases assume the main button is down, nothing else.
+		dwBtnStatus = MK_LBUTTON;
+		break;
+	case kmeExtend: // main click, shift down
+		dwBtnStatus = MK_LBUTTON | MK_SHIFT;
+		break;
+	case kmeUp: // main button up.
+		// Assume nothing is down
+		break;
+	}
+
+	// Send the notification.
+	BOOL fEaten;
+	m_qMouseSink->OnMouseEvent(edge, quadrant, dwBtnStatus, &fEaten);
+#ifdef TRACING_TSF
+	if (me == kmeDown)
+	{
+		StrAnsi sta;
+		sta.Format(
+"VwTextStore::MouseEvent, xd = %d (%d), width = %d, edge = %d, quadrant = %d - fEaten = %s%n",
+			xd, xd - rdChar.left, rdChar.Width(), (int) edge, (int) quadrant,
+			fEaten ? "true" : "false");
+		TraceTSF(sta.Chars());
+	}
+#endif
+	if (!fEaten)
+	{
+		// End all current compositions on mouse down.
+		*pfProcessed =  EndAllCompositions(me == kmeDown);
+		return S_OK;
+	}
+	return S_OK;
+	END_COM_METHOD(g_factDummy, IID_IViewInputMgr);
+}
+
+STDMETHODIMP VwTextStore::KillFocus()
+{
+	BEGIN_COM_METHOD;
+	END_COM_METHOD(g_factDummy, IID_IViewInputMgr);
+}
+
+STDMETHODIMP VwTextStore::OnUpdateProp(ComBool * pSuppressNormalization)
+{
+	BEGIN_COM_METHOD;
+	ChkComOutPtr(pSuppressNormalization);
+	CheckHr(get_IsCompositionActive(pSuppressNormalization));
+	if (*pSuppressNormalization)
+		NoteCommitDuringComposition();
+	END_COM_METHOD(g_factDummy, IID_IViewInputMgr);
+}
+
+STDMETHODIMP VwTextStore::get_IsCompositionActive(ComBool * pfCompositionActive)
+{
+	BEGIN_COM_METHOD;
+	ChkComOutPtr(pfCompositionActive);
+	*pfCompositionActive = m_compositions.Size() > 0;
+	END_COM_METHOD(g_factDummy, IID_IViewInputMgr);
+}
+
+STDMETHODIMP VwTextStore::get_IsEndingComposition(ComBool * pfDoingRecommit)
+{
+	BEGIN_COM_METHOD;
+	ChkComOutPtr(pfDoingRecommit);
+	*pfDoingRecommit = m_fDoingRecommit;
+	END_COM_METHOD(g_factDummy, IID_IViewInputMgr);
+}
+
+/*----------------------------------------------------------------------------------------------
+	Terminate all compositions, and refresh the display attributes.
+----------------------------------------------------------------------------------------------*/
+STDMETHODIMP VwTextStore::TerminateAllCompositions()
+{
+	BEGIN_COM_METHOD;
+
+#ifdef TRACING_TSF
+	TraceTSF("VwTextStore::TerminateAllCompositions\n");
+#endif
+	// Can't have (or terminate!) compositions without a real context.
+	if (!m_qtcContext)
+		return S_OK;
+	HRESULT hr;
+	ITfContextOwnerCompositionServices * pCompServices;
+	//get the ITfContextOwnerCompositionServices interface pointer
+	hr = m_qtcContext->QueryInterface(IID_ITfContextOwnerCompositionServices,
+		(void **)&pCompServices);
+	if (SUCCEEDED(hr))
+	{
+		// passing NULL terminates all compositions. We should get OnEndComposition notifications.
+		hr = pCompServices->TerminateComposition(NULL);
+		pCompServices->Release();
+#ifdef TRACING_TSF
+		TraceTSF("          all compositions terminated!\n");
+#endif
+	}
+
+	END_COM_METHOD(g_factDummy, IID_IViewInputMgr);
+}
+
+//:>********************************************************************************************
 //:>	Other Methods.
 //:>********************************************************************************************
 
@@ -1634,230 +2086,6 @@ int VwTextStore::TextLength()
 		// Handle no selection by pretending we have an empty document.
 		return 0;
 	}
-}
-
-/*----------------------------------------------------------------------------------------------
-	The document changed. (Ideally we'd like to know where, but at least let the service know.)
-----------------------------------------------------------------------------------------------*/
-void VwTextStore::OnDocChange()
-{
-	if (m_fNotify)
-	{
-		if (m_AdviseSinkInfo.m_dwMask & TS_AS_TEXT_CHANGE &&
-			m_AdviseSinkInfo.m_qTextStoreACPSink)
-		{
-			// issue a document changed notification. The OldEnd may not be exactly right.
-			TS_TEXTCHANGE ttc;
-			ttc.acpStart = 0;
-			ttc.acpOldEnd = m_pvpboxCurrent ? LogToAcp(m_pvpboxCurrent->Source()->Cch()) : 0;
-			ttc.acpNewEnd = ttc.acpOldEnd;
-#ifdef TRACING_TSF
-			StrAnsi sta;
-			sta.Format("VwTextStore::OnDocChange() calling AdviseSink->OnTextChange()%n");
-			TraceTSF(sta.Chars());
-#endif
-			m_AdviseSinkInfo.m_qTextStoreACPSink->OnTextChange(0, &ttc);
-		}
-	}
-	DoDisplayAttrs();
-}
-
-/*----------------------------------------------------------------------------------------------
-	The selection changed.
-
-	@param nHow Flag how the selection changed: ksctSamePara, ksctDiffPara, etc.
-----------------------------------------------------------------------------------------------*/
-void VwTextStore::OnSelChange(VwSelChangeType nHow)
-{
-#ifdef TRACING_TSF
-	StrAnsi sta;
-	sta.Format("VwTextStore::OnSelChange(%d), m_fNotify = %s%n",
-		nHow, m_fNotify ? "true" : "false");
-	TraceTSF(sta.Chars());
-#endif
-	// since the selection has changed, we must retrieve the current writing system, so that we
-	// can use it to determine whether to return NFD or NFC to TSF
-
-	GetCurrentWritingSystem();
-	// Brute force...if this works we should probably at least check that our window has focus.
-	//CheckHr(s_qttmThreadMgr->SetFocus(m_qtdmDocMgr));
-	if (m_fNotify)
-	{
-		if (nHow != ksctSamePara)
-		{
-			// Working on a different paragraph means we pretend the whole document changed.
-			// Todo: the first box of the selection.
-			VwTextSelection * psel = dynamic_cast<VwTextSelection *>(m_qrootb->Selection());
-			// If it's not a text selection don't send the notification. It seems to be a bad
-			// idea to tell TSF about a changed document or selection at a time when there
-			// is not actually any text data it can get. Note that this may depend on what
-			// scripts are installed. For example, we've had crashes here when selecting an
-			// icon in interlinear text using Chinese data.
-			if (!psel)
-				return;
-			VwParagraphBox * pvpboxNew = psel ? psel->AnchorBox() : NULL;
-			if (m_AdviseSinkInfo.m_dwMask & TS_AS_TEXT_CHANGE &&
-				m_AdviseSinkInfo.m_qTextStoreACPSink)
-			{
-				// issue a document changed notification.
-				TS_TEXTCHANGE ttc;
-				ttc.acpStart = 0;
-				// REVIEW (DamienD): I don't think this will give an accurate acpOldEnd, since
-				// the LogToAcp() method calculates the acp offset based off of the current
-				// paragraphs in the selection
-				ttc.acpOldEnd = LogToAcp(m_pvpboxCurrent ? m_pvpboxCurrent->Source()->Cch()
-					: m_cchLastPara);
-				ttc.acpNewEnd = pvpboxNew ? LogToAcp(pvpboxNew->Source()->Cch()) : 0;
-#ifdef TRACING_TSF
-				StrAnsi sta;
-				sta.Format("VwTextStore::OnSelChange(%d) calling AdviseSink->OnTextChange()%n",
-					nHow);
-				TraceTSF(sta.Chars());
-#endif
-				if (nHow != ksctDeleted)
-				{
-					// When we delete the selection it seems to be disatrous to tell
-					// at least the Chinese IME that the doc changed. I (JT) am not sure
-					// whether this is because we're changing focus pane, or something even
-					// more obscure. If you consider putting this back in, check that
-					// you don't get an exception deep in TSF while switching from a
-					// selection in some Chinese text in one DN field to another field.
-					m_AdviseSinkInfo.m_qTextStoreACPSink->OnTextChange(0, &ttc);
-				}
-			}
-			m_pvpboxCurrent = pvpboxNew;
-		}
-		if (m_AdviseSinkInfo.m_dwMask & TS_AS_SEL_CHANGE &&
-				m_AdviseSinkInfo.m_qTextStoreACPSink && nHow != ksctDeleted)
-		{
-			// issue a selection change notification.
-#ifdef TRACING_TSF
-			StrAnsi sta;
-			sta.Format("VwTextStore::OnSelChange(%d) calling AdviseSink->OnSelectionChange()%n",
-				nHow);
-			TraceTSF(sta.Chars());
-#endif
-			m_AdviseSinkInfo.m_qTextStoreACPSink->OnSelectionChange();
-		}
-	}
-	// Clear any error info resulting from advising the ACP.
-	// This prevents AssertNoErrorInfo from firing in debug builds.
-	// In a release, we just hope anything that goes wrong in TSF won't hurt us too badly.
-	IErrorInfo * pIErrorInfo = NULL;
-	HRESULT hr;
-	hr = GetErrorInfo(0, &pIErrorInfo);
-	if(pIErrorInfo != NULL) {
-#ifdef DEBUG // may as well output the info.
-		BSTR bstr;
-		hr = pIErrorInfo->GetDescription(&bstr);
-		Assert(SUCCEEDED(hr));
-		::OutputDebugString(bstr);
-		::SysFreeString(bstr);
-		hr = pIErrorInfo->GetSource(&bstr);
-		Assert(SUCCEEDED(hr));
-		::OutputDebugString(bstr);
-		::SysFreeString(bstr);
-#endif
-		pIErrorInfo->Release();
-	}
-
-}
-
-void VwTextStore::OnLayoutChange()
-{
-	m_fLayoutChanged = false;
-	if (m_fNotify)
-	{
-		if (m_AdviseSinkInfo.m_dwMask & TS_AS_LAYOUT_CHANGE &&
-				m_AdviseSinkInfo.m_qTextStoreACPSink)
-		{
-			// issue a layout change notification.
-			TsViewCookie vcView;
-			GetActiveView(&vcView);
-#ifdef TRACING_TSF
-			StrAnsi sta;
-			sta.Format(
-	"VwTextStore::OnLayoutChange() calling AdviseSink->OnLayoutChange(TS_LC_CHANGE, ...)%n");
-			TraceTSF(sta.Chars());
-#endif
-			m_AdviseSinkInfo.m_qTextStoreACPSink->OnLayoutChange(TS_LC_CHANGE, vcView);
-		}
-	}
-	DoDisplayAttrs();
-}
-
-/*----------------------------------------------------------------------------------------------
-	Set the Text Service focus to our root box.
-----------------------------------------------------------------------------------------------*/
-void VwTextStore::SetFocus()
-{
-#ifdef TRACING_TSF
-	TraceTSF("VwTextStore::SetFocus()\r\n");
-#endif
-	if (!s_qttmThreadMgr)
-		return;
-
-	// retrieve the current writing system, so that we can use it to determine whether to
-	// return NFD or NFC to TSF
-	GetCurrentWritingSystem();
-
-	// This try/catch is a patch to try to minimize the problems of a bug which appears
-	// to be in Microft's code...at least, they are throwing an exception across a COM
-	// interface, which is a no-no. See LT-8483. We may want to take it out if we can
-	// get a fix or work-around from Microsoft.
-	try
-	{
-		CheckHr(s_qttmThreadMgr->SetFocus(m_qtdmDocMgr));
-	}
-	catch (...)
-	{
-		Assert(false); //, "Microsoft's thread manager threw an exception from SetFocus!");
-	}
-}
-
-/*----------------------------------------------------------------------------------------------
-	Create and initialize the document manager.
-	This can be called more than once. It releases the old document manager if one
-	already exists.
-----------------------------------------------------------------------------------------------*/
-void VwTextStore::Init()
-{
-	if (!s_qttmThreadMgr)
-		return;
-	// If we already have a DocMgr, we don't want to create a new one, especially without
-	// properly closing off the old one with a pop to clear the reference count on this.
-	// Otherwise we end up with leaking memory on this.
-	if (m_qtdmDocMgr)
-		return;
-	// Create the Text Services Framework document manager for this "document" (root box).
-	CheckHr(s_qttmThreadMgr->CreateDocumentMgr(&m_qtdmDocMgr));
-
-	// Create and install the Text Services Framework "context".
-	CheckHr(m_qtdmDocMgr->CreateContext(s_tfClientID, 0, dynamic_cast<ITextStoreACP *>(this),
-		&m_qtcContext, &m_tfEditCookie));
-	CheckHr(m_qtdmDocMgr->Push(m_qtcContext));
-
-//	HRESULT hr;
-//	hr = s_qttmThreadMgr->AssociateFocus(
-//		HWND hwnd,
-//		ITfDocumentMgr* pdimNew,
-//		ITfDocumentMgr** ppdimPrev);
-
-}
-
-/*----------------------------------------------------------------------------------------------
-	Release the interfaces installed by the constructor or by Init.
-----------------------------------------------------------------------------------------------*/
-void VwTextStore::Close()
-{
-	if (!m_qtdmDocMgr)
-		return;
-	AssertPtr(s_qttmThreadMgr.Ptr());
-	CheckHr(m_qtdmDocMgr->Pop(TF_POPF_ALL));
-	m_qtdmDocMgr.Clear();
-	m_qtcContext.Clear();
-	m_qrootb.Clear();
-	m_qws.Clear();
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -1987,21 +2215,6 @@ void VwTextStore::CreateNewSelection(int ichFirst, int ichLast, bool fEndBeforeA
 			pvpboxEnd));
 	}
 	*pptsel = qtsel.Detach();
-}
-
-void VwTextStore::AddToKeepList(LazinessIncreaser *pli)
-{
-	if (m_pvpboxCurrent)
-		pli->KeepSequence(m_pvpboxCurrent, m_pvpboxCurrent->NextOrLazy());
-}
-
-// The specified box is being deleted. If somehow we are stil pointing at it
-// (this can happen, for one example, during a replace all where NoteDependencies
-// cause large-scale regeneration), clear the pointers to a safe, neutral state.
-void VwTextStore::ClearPointersTo(VwParagraphBox * pvpbox)
-{
-	if (m_pvpboxCurrent == pvpbox)
-		m_pvpboxCurrent = NULL;
 }
 
 COLORREF InterpretTfDaColor(TF_DA_COLOR tdc, COLORREF current)
@@ -2261,33 +2474,6 @@ STDMETHODIMP VwTextStore::OnUpdateComposition(ITfCompositionView * pComposition,
 
 
 /*----------------------------------------------------------------------------------------------
-	Terminate all compositions, and refresh the display attributes.
-----------------------------------------------------------------------------------------------*/
-void VwTextStore::TerminateAllCompositions(void)
-{
-#ifdef TRACING_TSF
-	TraceTSF("VwTextStore::TerminateAllCompositions\n");
-#endif
-	// Can't have (or terminate!) compositions without a real context.
-	if (!m_qtcContext)
-		return;
-	HRESULT hr;
-	ITfContextOwnerCompositionServices * pCompServices;
-	//get the ITfContextOwnerCompositionServices interface pointer
-	hr = m_qtcContext->QueryInterface(IID_ITfContextOwnerCompositionServices,
-		(void **)&pCompServices);
-	if (SUCCEEDED(hr))
-	{
-		// passing NULL terminates all compositions. We should get OnEndComposition notifications.
-		hr = pCompServices->TerminateComposition(NULL);
-		pCompServices->Release();
-#ifdef TRACING_TSF
-		TraceTSF("          all compositions terminated!\n");
-#endif
-	}
-}
-
-/*----------------------------------------------------------------------------------------------
 	Called when a composition is terminated. See MSDN for details
 	(ITfContextOwnerCompositionSink::OnEndComposition).
 ----------------------------------------------------------------------------------------------*/
@@ -2381,145 +2567,6 @@ STDMETHODIMP VwTextStore::UnadviseMouseSink(DWORD dwCookie)
 		ThrowHr(WarnHr(E_UNEXPECTED));
 	m_qMouseSink.Clear();
 	END_COM_METHOD(g_factDummy, IID_ITfMouseTrackerACP);
-}
-
-/*----------------------------------------------------------------------------------------------
-	Send appropriate mouse event notifications, if they have been requested.  A "Mouse Down"
-	event terminates all open compositions if it is not handled by the sink (unless, of course,
-	the sink does not exist).
-----------------------------------------------------------------------------------------------*/
-bool VwTextStore::MouseEvent(int xd, int yd, RECT rcSrc1, RECT rcDst1, VwMouseEvent me)
-{
-	if (!m_qMouseSink)
-		return false;
-	// Determine whether it intersects the range that the mouse sink is interested in.
-	HoldGraphicsAtDst hg(m_qrootb, Point(xd, yd));
-	// Find the most local box where the user clicked, and where he clicked relative to it.
-	Rect rcSrcBox;
-	Rect rcDstBox;
-	VwBox * pboxClick = m_qrootb->FindBoxClicked(hg.m_qvg, xd, yd, hg.m_rcSrcRoot, hg.m_rcDstRoot,
-		&rcSrcBox, &rcDstBox);
-	if (!pboxClick)
-	{
-		// The mouse event is nowhere of interest to text services.
-		return EndAllCompositions(me == kmeDown);
-	}
-
-	VwSelectionPtr qvwsel;
-	pboxClick->GetSelection(hg.m_qvg, m_qrootb, xd, yd, hg.m_rcSrcRoot, hg.m_rcDstRoot, rcSrcBox,
-		rcDstBox, &qvwsel);
-
-	VwTextSelection * psel = dynamic_cast<VwTextSelection *>(qvwsel.Ptr());
-	if (!psel)
-	{
-		// It must be a text selection to be relevant for text services.
-		return EndAllCompositions(me == kmeDown);
-	}
-
-	VwParagraphBox * pvpboxClick = psel->AnchorBox();
-	if (pvpboxClick != m_pvpboxMouseSink)
-	{
-		// The mouse event is not near the box of interest.
-		return EndAllCompositions(me == kmeDown);
-	}
-
-	int ichClick = psel->AnchorOffset();
-	if (ichClick < m_ichMinMouseSink || ichClick > m_ichLimMouseSink)
-	{
-		// The mouse event is not (even close to) the range of interest.
-		return EndAllCompositions(me == kmeDown);
-	}
-	RECT rdPrimary, rdSecondary;
-	ComBool fSplit, fEndBeforeAnchor;
-	Point pt(xd,yd);
-	bool fFoundChar = false;
-	Rect rdChar;
-	if (ichClick > 0 && ichClick > m_ichMinMouseSink)
-	{
-		// See if the click is in the character before the position. Selection was made from a single
-		// click, so it is an IP. Extend it to cover the previous character.
-		psel->m_ichEnd--;
-		psel->m_fEndBeforeAnchor = true;
-		psel->Location(hg.m_qvg, hg.m_rcSrcRoot, hg.m_rcDstRoot, &rdPrimary,
-			&rdSecondary, &fSplit, &fEndBeforeAnchor);
-		rdChar = rdPrimary;
-		if (rdChar.Contains(pt))
-		{
-			fFoundChar = true;
-		}
-		else
-		{
-			psel->m_ichEnd++;
-		}
-	}
-	if (ichClick < pvpboxClick->Source()->Cch()  && ichClick < m_ichLimMouseSink && !fFoundChar)
-	{
-		// See if the click is in the character after the position. Selection was made from a single
-		// click, so it is an IP. Extend it to cover the following character.
-		psel->m_ichEnd++;
-		psel->m_fEndBeforeAnchor = false;
-		psel->Location(hg.m_qvg, hg.m_rcSrcRoot, hg.m_rcDstRoot, &rdPrimary,
-			&rdSecondary, &fSplit, &fEndBeforeAnchor);
-		rdChar = rdPrimary;
-		if (rdChar.Contains(pt))
-		{
-			fFoundChar = true;
-		}
-	}
-	if (!fFoundChar)
-	{
-		// The mouse event wasn't inside a character in the range, maybe just before or
-		// after (or empty string).
-		return EndAllCompositions(me == kmeDown);
-	}
-
-	ULONG edge = LogToAcp(ichClick) - LogToAcp(m_ichMinMouseSink);
-	int section = ((rdChar.right - rdChar.left) > 0) ?
-		min<int>((xd - rdChar.left) * 4 / (rdChar.right - rdChar.left), 3) : 1;
-	ULONG quadrant = (section + 2) % 4; // want 2, 3, 0, 1 for the respective sections.
-	DWORD dwBtnStatus = 0;
-
-	// Figure a set of flags that indicates approximately the state of the mouse.
-	switch(me)
-	{
-	case kmeDown: // no shift, main button
-	case kmeDblClick: // assume no shift, main button
-	case kmeMoveDrag: // mouse move, main button down, assume no modifiers
-		// All of these cases assume the main button is down, nothing else.
-		dwBtnStatus = MK_LBUTTON;
-		break;
-	case kmeExtend: // main click, shift down
-		dwBtnStatus = MK_LBUTTON | MK_SHIFT;
-		break;
-	case kmeUp: // main button up.
-		// Assume nothing is down
-		break;
-	}
-
-	// Send the notification.
-	BOOL fEaten;
-	m_qMouseSink->OnMouseEvent(edge, quadrant, dwBtnStatus, &fEaten);
-#ifdef TRACING_TSF
-	if (me == kmeDown)
-	{
-		StrAnsi sta;
-		sta.Format(
-"VwTextStore::MouseEvent, xd = %d (%d), width = %d, edge = %d, quadrant = %d - fEaten = %s%n",
-			xd, xd - rdChar.left, rdChar.Width(), (int) edge, (int) quadrant,
-			fEaten ? "true" : "false");
-		TraceTSF(sta.Chars());
-	}
-#endif
-	if (!fEaten)
-	{
-		// End all current compositions on mouse down.
-		return EndAllCompositions(me == kmeDown);
-	}
-	return fEaten;
-}
-
-void VwTextStore::OnLoseFocus()
-{
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -2626,14 +2673,11 @@ int VwTextStore::LogToAcp(int ichReq)
 ----------------------------------------------------------------------------------------------*/
 bool VwTextStore::IsNfdIMEActive()
 {
-	if (!m_qws)
-		return false;
-
-	// at this point, we assume that all Keyman keyboards require NFD and all other IMEs require
-	// NFC.
-	SmartBstr sbstrKeymanKbd;
-	CheckHr(m_qws->get_Keyboard(&sbstrKeymanKbd));
-	return BstrLen(sbstrKeymanKbd) > 0;
+	// Historically, we tried to give Keyman NFD, since normal operation requires Keyman keyboards
+	// for FLEx to be NFD-based. With the 2013 approach to keyboarding, we are not using TSF
+	// with Keyman 7 or 8. Marc promises that Keyman 9 will handle NFC context. Keeping the method
+	// in case we find we need NFD context for something...
+	return false;
 }
 
 void VwTextStore::GetCurrentWritingSystem()

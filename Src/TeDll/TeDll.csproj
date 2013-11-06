@@ -170,6 +170,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\OxesIO.dll</HintPath>
     </Reference>
+    <Reference Include="Palaso, Version=2.1.18.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Downloads\Palaso.dll</HintPath>
+    </Reference>
     <Reference Include="ParatextShared, Version=7.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\DistFiles\ParatextShared.dll</HintPath>
@@ -313,9 +317,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="BtDraftSplitWrapper.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="BtDraftSplitWrapper.cs" />
     <Compile Include="ContextMenuHelper.cs" />
     <Compile Include="DockableUsfmBrowser.cs">
       <SubType>UserControl</SubType>
@@ -323,21 +325,11 @@
     <Compile Include="DockableUsfmBrowser.Designer.cs">
       <DependentUpon>DockableUsfmBrowser.cs</DependentUpon>
     </Compile>
-    <Compile Include="DraftStyleBar.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DraftView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DraftViewBase.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DraftViewWrapper.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="FootnoteView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="DraftStyleBar.cs" />
+    <Compile Include="DraftView.cs" />
+    <Compile Include="DraftViewBase.cs" />
+    <Compile Include="DraftViewWrapper.cs" />
+    <Compile Include="FootnoteView.cs" />
     <Compile Include="GotoReferenceDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -352,16 +344,12 @@
     <Compile Include="ScrTextListSelectionForm.designer.cs">
       <DependentUpon>ScrTextListSelectionForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDraftViewWrapper.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="SimpleDraftViewWrapper.cs" />
     <Compile Include="TeApp.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="TeHelpTopicProvider.cs" />
-    <Compile Include="TeMainWnd.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="TeMainWnd.cs" />
     <Compile Include="TeStyleSheet.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -372,12 +360,8 @@
     <Compile Include="TrainingAvailable.Designer.cs">
       <DependentUpon>TrainingAvailable.cs</DependentUpon>
     </Compile>
-    <Compile Include="ViewWrapper.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="VerticalDraftView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="ViewWrapper.cs" />
+    <Compile Include="VerticalDraftView.cs" />
     <EmbeddedResource Include="BtDraftSplitWrapper.resx">
       <SubType>Designer</SubType>
       <DependentUpon>BtDraftSplitWrapper.cs</DependentUpon>

@@ -1,22 +1,12 @@
-// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2005, SIL International. All Rights Reserved.
-// <copyright from='2005' to='2005' company='SIL International'>
-//		Copyright (c) 2005, SIL International. All Rights Reserved.
-//
-//		Distributable under the terms of either the Common Public License or the
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
-// </copyright>
-#endregion
-//
-// File: EditingHelperTests.cs
-// Responsibility: TE Team
-// --------------------------------------------------------------------------------------------
+// Copyright (c) 2005-2013, SIL International.
+// Distributable under the terms of the MIT license (http://opensource.org/licenses/MIT).
 using System;
 using System.Text;
 using System.Windows.Forms;
-
 using NUnit.Framework;
+
 using SIL.CoreImpl;
+using SIL.FieldWorks.CacheLight;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 
@@ -96,19 +86,19 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public void PasteParagraphsWithDifferentStyles()
 		{
 			// Add a title to the root object
-			int hvoTitle = m_cache.MakeNewObject(kclsidStText, m_hvoRoot, kflidDocTitle, -2);
-			int hvoTitlePara1 = m_cache.MakeNewObject(kclsidStTxtPara, hvoTitle, kflidTextParas, 0);
+			int hvoTitle = m_cache.MakeNewObject(SimpleRootsiteTestsConstants.kclsidStText, m_hvoRoot, SimpleRootsiteTestsConstants.kflidDocTitle, -2);
+			int hvoTitlePara1 = m_cache.MakeNewObject(SimpleRootsiteTestsConstants.kclsidStTxtPara, hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas, 0);
 			ITsStrFactory tsStrFactory = TsStrFactoryClass.Create();
-			m_cache.CacheStringProp(hvoTitlePara1, kflidParaContents,
+			m_cache.CacheStringProp(hvoTitlePara1, SimpleRootsiteTestsConstants.kflidParaContents,
 				tsStrFactory.MakeString("The First Book of the Law given by Moses", m_wsEng));
 			ITsPropsFactory fact  = TsPropsFactoryClass.Create();
-			m_cache.SetUnknown(hvoTitlePara1, kflidParaProperties, fact.MakeProps("Title", m_wsEng, 0));
+			m_cache.SetUnknown(hvoTitlePara1, SimpleRootsiteTestsConstants.kflidParaProperties, fact.MakeProps("Title", m_wsEng, 0));
 
-			int hvoTitlePara2 = m_cache.MakeNewObject(kclsidStTxtPara, hvoTitle, kflidTextParas, 1);
+			int hvoTitlePara2 = m_cache.MakeNewObject(SimpleRootsiteTestsConstants.kclsidStTxtPara, hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas, 1);
 			string secondParaContents = "and Aaron";
-			m_cache.CacheStringProp(hvoTitlePara2, kflidParaContents,
+			m_cache.CacheStringProp(hvoTitlePara2, SimpleRootsiteTestsConstants.kflidParaContents,
 				tsStrFactory.MakeString(secondParaContents, m_wsEng));
-			m_cache.SetUnknown(hvoTitlePara2, kflidParaProperties, fact.MakeProps("Conclusion", m_wsEng, 0));
+			m_cache.SetUnknown(hvoTitlePara2, SimpleRootsiteTestsConstants.kflidParaProperties, fact.MakeProps("Conclusion", m_wsEng, 0));
 
 			ShowForm(SimpleViewVc.DisplayType.kTitle |
 				SimpleViewVc.DisplayType.kUseParaProperties |
@@ -128,7 +118,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_basicView.EditingHelper.PasteClipboard();
 
 			// We expect the contents to remain unchanged.
-			Assert.AreEqual(2, m_cache.get_VecSize(hvoTitle, kflidTextParas));
+			Assert.AreEqual(2, m_cache.get_VecSize(hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas));
 			Assert.IsNull(m_basicView.RequestedSelectionAtEndOfUow);
 		}
 
@@ -142,19 +132,19 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public void PasteParagraphsWithSameStyle()
 		{
 			// Add a title to the root object
-			int hvoTitle = m_cache.MakeNewObject(kclsidStText, m_hvoRoot, kflidDocTitle, -2);
-			int hvoTitlePara1 = m_cache.MakeNewObject(kclsidStTxtPara, hvoTitle, kflidTextParas, 0);
+			int hvoTitle = m_cache.MakeNewObject(SimpleRootsiteTestsConstants.kclsidStText, m_hvoRoot, SimpleRootsiteTestsConstants.kflidDocTitle, -2);
+			int hvoTitlePara1 = m_cache.MakeNewObject(SimpleRootsiteTestsConstants.kclsidStTxtPara, hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas, 0);
 			ITsStrFactory tsStrFactory = TsStrFactoryClass.Create();
-			m_cache.CacheStringProp(hvoTitlePara1, kflidParaContents,
+			m_cache.CacheStringProp(hvoTitlePara1, SimpleRootsiteTestsConstants.kflidParaContents,
 				tsStrFactory.MakeString("The First Book of the Law given by Moses", m_wsEng));
 			ITsPropsFactory fact = TsPropsFactoryClass.Create();
-			m_cache.SetUnknown(hvoTitlePara1, kflidParaProperties, fact.MakeProps("Title", m_wsEng, 0));
+			m_cache.SetUnknown(hvoTitlePara1, SimpleRootsiteTestsConstants.kflidParaProperties, fact.MakeProps("Title", m_wsEng, 0));
 
-			int hvoTitlePara2 = m_cache.MakeNewObject(kclsidStTxtPara, hvoTitle, kflidTextParas, 1);
+			int hvoTitlePara2 = m_cache.MakeNewObject(SimpleRootsiteTestsConstants.kclsidStTxtPara, hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas, 1);
 			string secondParaContents = "and Aaron";
-			m_cache.CacheStringProp(hvoTitlePara2, kflidParaContents,
+			m_cache.CacheStringProp(hvoTitlePara2, SimpleRootsiteTestsConstants.kflidParaContents,
 				tsStrFactory.MakeString(secondParaContents, m_wsEng));
-			m_cache.SetUnknown(hvoTitlePara2, kflidParaProperties, fact.MakeProps("Title", m_wsEng, 0));
+			m_cache.SetUnknown(hvoTitlePara2, SimpleRootsiteTestsConstants.kflidParaProperties, fact.MakeProps("Title", m_wsEng, 0));
 
 			ShowForm(SimpleViewVc.DisplayType.kTitle |
 				SimpleViewVc.DisplayType.kUseParaProperties |
@@ -174,11 +164,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_basicView.EditingHelper.PasteClipboard();
 
 			// We expect the contents to change.
-			Assert.AreEqual(4, m_cache.get_VecSize(hvoTitle, kflidTextParas));
-			Assert.AreEqual(hvoTitlePara2 + 1, m_cache.get_VecItem(hvoTitle, kflidTextParas, 0));
-			Assert.AreEqual(hvoTitlePara2 + 2, m_cache.get_VecItem(hvoTitle, kflidTextParas, 1));
-			Assert.AreEqual(hvoTitlePara1, m_cache.get_VecItem(hvoTitle, kflidTextParas, 2));
-			Assert.AreEqual(hvoTitlePara2, m_cache.get_VecItem(hvoTitle, kflidTextParas, 3));
+			Assert.AreEqual(4, m_cache.get_VecSize(hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas));
+			Assert.AreEqual(hvoTitlePara2 + 1, m_cache.get_VecItem(hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas, 0));
+			Assert.AreEqual(hvoTitlePara2 + 2, m_cache.get_VecItem(hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas, 1));
+			Assert.AreEqual(hvoTitlePara1, m_cache.get_VecItem(hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas, 2));
+			Assert.AreEqual(hvoTitlePara2, m_cache.get_VecItem(hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas, 3));
 
 			Assert.IsNotNull(m_basicView.RequestedSelectionAtEndOfUow);
 			// WANTTESTPORT: (Common) FWR-1649 Check properties of RequestedSelectionAtEndOfUow
@@ -211,8 +201,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SelectionHelper selectionHelper = SelectionHelper.GetSelectionInfo(null, m_basicView);
 			Assert.IsFalse(selectionHelper.IsRange);
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, selectionHelper, 0,
-				2, 0, 0, false, 2, kflidDocFootnotes, 0, 0,
-				SimpleRootsiteTestsBase.kflidTextParas, 0, 0);
+				2, 0, 0, false, 2, SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 0,
+				SimpleRootsiteTestsConstants.kflidTextParas, 0, 0);
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -241,8 +231,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SelectionHelper selectionHelper = SelectionHelper.GetSelectionInfo(null, m_basicView);
 			Assert.IsFalse(selectionHelper.IsRange);
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, selectionHelper, 0,
-				0, 0, 0, false, 2, kflidDocFootnotes, 0, 1,
-				SimpleRootsiteTestsBase.kflidTextParas, 0, 0);
+				0, 0, 0, false, 2, SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 1,
+				SimpleRootsiteTestsConstants.kflidTextParas, 0, 0);
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -256,10 +246,10 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public void GoToNextPara_NextFlid()
 		{
 			// Add a title to the root object
-			int hvoTitle = m_cache.MakeNewObject(kclsidStText, m_hvoRoot, kflidDocTitle, -2);
-			int hvoTitlePara = m_cache.MakeNewObject(kclsidStTxtPara, hvoTitle, kflidTextParas, 0);
+			int hvoTitle = m_cache.MakeNewObject(SimpleRootsiteTestsConstants.kclsidStText, m_hvoRoot, SimpleRootsiteTestsConstants.kflidDocTitle, -2);
+			int hvoTitlePara = m_cache.MakeNewObject(SimpleRootsiteTestsConstants.kclsidStTxtPara, hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas, 0);
 			ITsStrFactory tsStrFactory = TsStrFactoryClass.Create();
-			m_cache.CacheStringProp(hvoTitlePara, kflidParaContents,
+			m_cache.CacheStringProp(hvoTitlePara, SimpleRootsiteTestsConstants.kflidParaContents,
 				tsStrFactory.MakeString("The First Book of the Law given by Moses", m_wsFrn));
 
 			ShowForm(Lng.English, SimpleViewVc.DisplayType.kNormal |
@@ -280,8 +270,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SelectionHelper selectionHelper = SelectionHelper.GetSelectionInfo(null, m_basicView);
 			Assert.IsFalse(selectionHelper.IsRange);
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, selectionHelper, 0,
-				0, 0, 0, false, 2, kflidDocTitle, 0, 0,
-				SimpleRootsiteTestsBase.kflidTextParas, 0, 0);
+				0, 0, 0, false, 2, SimpleRootsiteTestsConstants.kflidDocTitle, 0, 0,
+				SimpleRootsiteTestsConstants.kflidTextParas, 0, 0);
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -309,7 +299,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SelectionHelper selectionHelper = SelectionHelper.GetSelectionInfo(null, m_basicView);
 			Assert.IsFalse(selectionHelper.IsRange);
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, selectionHelper, 0,
-				0, 0, 0, false, 1, -1, -1, -1, kflidDocFootnotes, 0, 1);
+				0, 0, 0, false, 1, -1, -1, -1, SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 1);
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -337,11 +327,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SelectionHelper selectionHelper = SelectionHelper.GetSelectionInfo(null, m_basicView);
 			Assert.IsTrue(selectionHelper.IsRange);
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, selectionHelper, 0,
-				2, 6, 0, true, 2, kflidDocFootnotes, 0, 1,
-				SimpleRootsiteTestsBase.kflidTextParas, 1, 0);
+				2, 6, 0, true, 2, SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 1,
+				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.End, selectionHelper, 0,
-				2, 0, 0, false, 2, kflidDocFootnotes, 0, 1,
-				SimpleRootsiteTestsBase.kflidTextParas, 1, 0);
+				2, 0, 0, false, 2, SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 1,
+				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -375,8 +365,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SelectionHelper selectionHelper = SelectionHelper.GetSelectionInfo(null, m_basicView);
 			Assert.IsFalse(selectionHelper.IsRange);
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, selectionHelper, 0,
-				0, 0, 0, false, 2, kflidDocFootnotes, 0, 0,
-				SimpleRootsiteTestsBase.kflidTextParas, 1, 0);
+				0, 0, 0, false, 2, SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 0,
+				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 		}
 		#endregion
 	}
@@ -388,7 +378,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	/// <remarks>This base class uses a clipboard stub.</remarks>
 	/// --------------------------------------------------------------------------------------------
 	[TestFixture]
-	public class EditingHelperTests_Clipboard : SimpleRootsiteTestsBase
+	public class EditingHelperTests_Clipboard : SimpleRootsiteTestsBase<RealDataCache>
 	{
 		protected virtual void SetClipboardAdapter()
 		{

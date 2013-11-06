@@ -1797,7 +1797,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 
 
 
-	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwRootBox") cpp_quote(",") cpp_quote("85DB7D7D-D47B-440e-A213-F62D5224C982") cpp_quote(");") [ uuid("85DB7D7D-D47B-440e-A213-F62D5224C982"), object, pointer_default(unique) ] interface IVwRootBox : IVwNotifyChange
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwRootBox") cpp_quote(",") cpp_quote("A8944421-3A75-4DD5-A469-2EE251228A26") cpp_quote(");") [ uuid("A8944421-3A75-4DD5-A469-2EE251228A26"), object, pointer_default(unique) ] interface IVwRootBox : IVwNotifyChange
 	{
 		
 
@@ -2479,18 +2479,6 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 		
 		
 		
-		HRESULT SetKeyboardForWs(
-			[in] ILgWritingSystem * pws,
-			[in, out] BSTR * pbstrActiveKeymanKbd,
-			[in, out] int * pnActiveLangId,
-			[in, out] int * phklActive,
-			[in, out] ComBool * pfSelectLangPending);
-
-
-		
-		
-		
-		
 		
 		
 		
@@ -2542,7 +2530,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwRootBox;
 	};
-#line 2413 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
+#line 2401 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
 
 	
 
@@ -4388,14 +4376,14 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 
 
 
-#line 4259 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
+#line 4247 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
 	};
 
 	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("CCE2A7ED-464C-4ec7-A0B0-E3C1F6B94C5A") cpp_quote(",") cpp_quote("VwStylesheet") cpp_quote(");") [ uuid(CCE2A7ED-464C-4ec7-A0B0-E3C1F6B94C5A) ] coclass VwStylesheet
 	{
 		interface IVwStylesheet;
 	};
-#line 4266 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
+#line 4254 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
 
 	
 
@@ -4472,7 +4460,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwPropertyStore;
 	};
-	#line 4343 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
+	#line 4331 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
 
 	
 	typedef [v1_enum] enum VwOverlayFlags
@@ -4756,7 +4744,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwOverlay;
 	};
-	#line 4627 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
+	#line 4615 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
 
 	
 	
@@ -4968,7 +4956,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwPrintContext;
 	};
-	#line 4839 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
+	#line 4827 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
 
 
 	
@@ -5279,7 +5267,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwPattern;
 	};
-	#line 5150 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
+	#line 5138 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
 
 
 	
@@ -5313,7 +5301,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 		interface IVwTxtSrcInit2;
 		interface IVwTextSource;
 	};
-	#line 5184 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
+	#line 5172 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
 
 
 	
@@ -5345,7 +5333,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 		interface IVwTxtSrcInit;
 		interface IVwTextSource;
 	};
-	#line 5216 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
+	#line 5204 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
 
 	
 
@@ -5387,7 +5375,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwSearchKiller;
 	};
-	#line 5258 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
+	#line 5246 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
 
 	
 
@@ -5467,7 +5455,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwDrawRootBuffered;
 	};
-	#line 5338 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
+	#line 5326 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
 
 	
 
@@ -5515,7 +5503,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwSynchronizer;
 	};
-	#line 5386 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
+	#line 5374 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
 
 
 
@@ -5684,7 +5672,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("1CD09E06-6978-4969-A1FC-4627
 {
 	interface IVwLayoutStream;
 };
-#line 5555 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
+#line 5543 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
 
 
 
@@ -5780,30 +5768,6 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwLayoutManager") 
 		[out, retval] int * pdxpHeight);
 };
 
-
-
-
-
-cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IIMEKeyboardSwitcher") cpp_quote(",") cpp_quote("4D2BC310-DADF-11DE-9E3A-0019DBF4566E") cpp_quote(");") [ uuid("4D2BC310-DADF-11DE-9E3A-0019DBF4566E"), object, pointer_default(unique) ] interface IIMEKeyboardSwitcher : IUnknown
-{
-	
-	[propget] HRESULT IMEKeyboard(
-		[out, retval] BSTR * pbstr);
-
-	
-	[propput] HRESULT IMEKeyboard(
-		[in] BSTR pbstr);
-
-	[propget] HRESULT IMEKeyboardsCount(
-			[out, retval] int * pdCount);
-
-	HRESULT GetKeyboardName(
-			[in] int index,
-			[out, retval] BSTR * pbstr);
-
-	HRESULT Close();
-}
-
 	
 
 
@@ -5821,7 +5785,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IIMEKeyboardSwitche
 	{
 		interface IPictureFactory;
 	};
-#line 5692 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
+#line 5656 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
 
 	
 
@@ -6055,7 +6019,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IIMEKeyboardSwitche
 	{
 		interface IVwWindow;
 	};
-	#line 5926 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
+	#line 5890 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
 
 
 typedef [v1_enum] enum VwMouseEvent
@@ -6122,17 +6086,8 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IViewInputMgr") cpp
 
 	
 	HRESULT OnTextChange();
-
-	
-	
-	
 }
 
 #line 29 "C:\\fwrepo\\fw\\Src\\Views\\ViewsTlb.idl"
-
-
-
-
-
 
 };

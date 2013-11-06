@@ -80,47 +80,13 @@ LINK_LIBS := \
 
 OBJ_LANGSERV =
 
-# not currently used
-OBJ_LANMODEL = \
-	$(INT_DIR)/LgCharOverride.o \
-	$(INT_DIR)/LgCharPropSpec.o \
-	$(INT_DIR)/LgCharSpec.o \
-	$(INT_DIR)/LgCollaterSpec.o \
-	$(INT_DIR)/LgComponent.o \
-	$(INT_DIR)/LgConverterSpec.o \
-	$(INT_DIR)/LgConvertStringSpec.o \
-	$(INT_DIR)/LgExternalSpecComponent.o \
-	$(INT_DIR)/LgLineBreakSpaceSpec.o \
-	$(INT_DIR)/LgLineBreakSpec.o \
-	$(INT_DIR)/LgOwnedSpecComponent.o \
-	$(INT_DIR)/LgNumericConverterSpec.o \
-	$(INT_DIR)/LgRenderSpec.o \
-	$(INT_DIR)/LgRomanRendererSpec.o \
-	$(INT_DIR)/LgSpec.o \
-	$(INT_DIR)/LgSpellCheckSpec.o \
-	$(INT_DIR)/LgSysCollaterSpec.o \
-	$(INT_DIR)/LgTokenizerSpec.o \
-	$(INT_DIR)/LgUnicodeCollaterSpec.o \
-	$(INT_DIR)/LgUserClassSpec.o \
-	$(INT_DIR)/LgWfiCheckerSpec.o \
-	$(INT_DIR)/LgWinRendSpec.o \
-	$(INT_DIR)/LgWordBreakSpaceSpec.o \
-	$(INT_DIR)/LgCPWordTokenizer.o \
-	$(INT_DIR)/LgNumericEngine.o \
-	$(INT_DIR)/TsStringPlus.o \
-	$(INT_DIR)/FwXml.o \
-
 OBJ_LANG = \
-	$(INT_DIR)/LanguageGlobals.o \
 	$(INT_DIR)/LgIcuWrappers.o \
 	$(INT_DIR)/LgSimpleEngines.o \
 	$(INT_DIR)/LgIcuCharPropEngine.o \
-	$(INT_DIR)/LgFontManager.o \
 	$(INT_DIR)/LgUnicodeCollater.o \
-	$(INT_DIR)/LgInputMethodEditor.o \
-	$(INT_DIR)/LocaleIndex.o \
-	$(INT_DIR)/LgCodePageEnumerator.o \
 	$(INT_DIR)/LgKeymanHandler.o \
+	$(INT_DIR)/LocaleIndex.o \
 	$(INT_DIR)/FwXml.o \
 	$(INT_DIR)/WriteXml.o \
 	$(INT_DIR)/FwStyledText.o \
@@ -130,38 +96,6 @@ OBJ_LANG = \
 	$(INT_DIR)/RomRenderEngine.o \
 	$(INT_DIR)/RomRenderSegment.o \
 
-
-#	LgCodePageEnumerator.o \  # This is used only in FwCoreDlgs (written in C#) - Need by FwCoreDlgs as loaded as a COM object
-#	LgKeymanHandler.o \
-#	UniscribeEngine.o \
-#	UniscribeSegment.o \
-
-# Not used
-XMO_LANGSERV = \
-	$(COM_INT_DIR)/LgCharOverride.xmo \
-	$(COM_INT_DIR)/LgCharPropSpec.xmo \
-	$(COM_INT_DIR)/LgCharSpec.xmo \
-	$(COM_INT_DIR)/LgCollaterSpec.xmo \
-	$(COM_INT_DIR)/LgComponent.xmo \
-	$(COM_INT_DIR)/LgConverterSpec.xmo \
-	$(COM_INT_DIR)/LgConvertStringSpec.xmo \
-	$(COM_INT_DIR)/LgWritingSystemModel.xmo \
-	$(COM_INT_DIR)/LgExternalSpecComponent.xmo \
-	$(COM_INT_DIR)/LgLineBreakSpaceSpec.xmo \
-	$(COM_INT_DIR)/LgLineBreakSpec.xmo \
-	$(COM_INT_DIR)/LgOwnedSpecComponent.xmo \
-	$(COM_INT_DIR)/LgNumericConverterSpec.xmo \
-	$(COM_INT_DIR)/LgRenderSpec.xmo \
-	$(COM_INT_DIR)/LgRomanRendererSpec.xmo \
-	$(COM_INT_DIR)/LgSpec.xmo \
-	$(COM_INT_DIR)/LgSpellCheckSpec.xmo \
-	$(COM_INT_DIR)/LgSysCollaterSpec.xmo \
-	$(COM_INT_DIR)/LgTokenizerSpec.xmo \
-	$(COM_INT_DIR)/LgUnicodeCollaterSpec.xmo \
-	$(COM_INT_DIR)/LgUserClassSpec.xmo \
-	$(COM_INT_DIR)/LgWfiCheckerSpec.xmo \
-	$(COM_INT_DIR)/LgWinRendSpec.xmo \
-	$(COM_INT_DIR)/LgWordBreakSpaceSpec.xmo \
 
 OBJ_OTHER = \
 	$(INT_DIR)/ModuleEntry.o \

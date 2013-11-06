@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -64,7 +65,7 @@ namespace SIL.CoreImpl
 			var ws = wsManager.Set("en-US");
 			ws.SpellCheckingId = "en-US";
 			ws.MatchedPairs = "matched pairs";
-			ws.LCID = 0x409;
+			((ILegacyWritingSystemDefinition)ws).WindowsLcid = 0x409.ToString(CultureInfo.InvariantCulture);
 			ws.ValidChars = "valid characters";
 			ws.LegacyMapping = "legacy mapping";
 			wsManager.Save();
@@ -78,7 +79,7 @@ namespace SIL.CoreImpl
 			Assert.AreEqual("en-US", ws.SpellCheckingId);
 			Assert.AreEqual("United States", ws.RegionSubtag.Name);
 			Assert.AreEqual("matched pairs", ws.MatchedPairs);
-			Assert.AreEqual(0x409 , ws.LCID);
+			Assert.AreEqual(0x409.ToString(CultureInfo.InvariantCulture), ((ILegacyWritingSystemDefinition)ws).WindowsLcid);
 			Assert.AreEqual("valid characters", ws.ValidChars);
 			Assert.AreEqual("legacy mapping", ws.LegacyMapping);
 			Assert.AreEqual("eng", ws.ISO3);
@@ -266,9 +267,7 @@ namespace SIL.CoreImpl
 			Assert.AreEqual("Latin", enWs.ScriptSubtag.Name);
 			Assert.AreEqual("United States", enWs.RegionSubtag.Name);
 			Assert.AreEqual("International Phonetic Alphabet", enWs.VariantSubtag.Name);
-			// On Linux InstalledInputLanguages or DefaultInputLanguage doesn't do anything sensible.
-			// see: https://bugzilla.novell.com/show_bug.cgi?id=613014
-			Assert.AreEqual(MiscUtils.IsUnix ? 0x409 : InputLanguage.DefaultInputLanguage.Culture.LCID, enWs.LCID);
+			Assert.AreEqual(null, ((ILegacyWritingSystemDefinition)enWs).WindowsLcid);
 
 			IWritingSystem chWs = wsManager.Create("zh-CN");
 			Assert.AreEqual("Man", chWs.Abbreviation);

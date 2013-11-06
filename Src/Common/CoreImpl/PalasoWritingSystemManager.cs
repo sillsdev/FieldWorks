@@ -10,6 +10,7 @@ using System.Threading;
 using System.Xml;
 using System.Collections.Generic;
 using Palaso.WritingSystems;
+using SIL.CoreImpl.Properties;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 
@@ -255,7 +256,7 @@ namespace SIL.CoreImpl
 			{
 				if (m_globalStore != null)
 				{
-					WritingSystemDefinition globalWs;
+					IWritingSystemDefinition globalWs;
 					if (m_globalStore.TryGet(identifier, out globalWs))
 						return (PalasoWritingSystem) m_globalStore.MakeDuplicate(globalWs);
 				}
@@ -413,7 +414,7 @@ namespace SIL.CoreImpl
 		{
 			lock (m_syncRoot)
 			{
-				WritingSystemDefinition wrsys;
+				IWritingSystemDefinition wrsys;
 				if (!m_localStore.TryGet(identifier, out wrsys))
 				{
 					if (identifier.StartsWith("cmn"))
@@ -667,6 +668,8 @@ namespace SIL.CoreImpl
 					}
 				}
 				m_localStore.Save();
+				Settings.Default.LocalKeyboards = m_localStore.LocalKeyboardSettings;
+				Settings.Default.Save();
 			}
 		}
 
@@ -928,7 +931,7 @@ namespace SIL.CoreImpl
 		/// <param name="identifier">The identifier.</param>
 		/// <param name="ws">The writing system.</param>
 		/// <returns></returns>
-		bool TryGet(string identifier, out WritingSystemDefinition ws);
+		bool TryGet(string identifier, out IWritingSystemDefinition ws);
 
 		/// <summary>
 		/// True if it is capable of saving changes to the specified WS.
@@ -955,7 +958,7 @@ namespace SIL.CoreImpl
 		/// Creates a new writing system definition.
 		/// </summary>
 		/// <returns></returns>
-		public override WritingSystemDefinition CreateNew()
+		public override IWritingSystemDefinition CreateNew()
 		{
 			return new PalasoWritingSystem();
 		}
@@ -999,7 +1002,7 @@ namespace SIL.CoreImpl
 			foreach (string id in idsToRemove)
 				Remove(id);
 
-			List<WritingSystemDefinition> allDefs = (from ws in AllWritingSystems
+			var allDefs = (from ws in AllWritingSystems
 				where CanSet(ws)
 				select ws).ToList();
 			foreach (WritingSystemDefinition ws in allDefs)
@@ -1025,7 +1028,7 @@ namespace SIL.CoreImpl
 		/// <param name="identifier">The identifier.</param>
 		/// <param name="ws">The writing system.</param>
 		/// <returns></returns>
-		public bool TryGet(string identifier, out WritingSystemDefinition ws)
+		public bool TryGet(string identifier, out IWritingSystemDefinition ws)
 		{
 			if (Contains(identifier))
 			{
@@ -1060,7 +1063,7 @@ namespace SIL.CoreImpl
 		///
 		/// </summary>
 		/// <param name="ws">The ws.</param>
-		protected override void OnChangeNotifySharedStore(WritingSystemDefinition ws)
+		protected override void OnChangeNotifySharedStore(IWritingSystemDefinition ws)
 		{
 			base.OnChangeNotifySharedStore(ws);
 
@@ -1186,9 +1189,8 @@ namespace SIL.CoreImpl
 						}
 					}
 				}
-				int lcid;
-				if (int.TryParse(GetSpecialValue(reader, "fw", "windowsLCID"), out lcid))
-					fwWs.LCID = lcid;
+				var lcidString = GetSpecialValue(reader, "fw", "windowsLCID");
+				((ILegacyWritingSystemDefinition)fwWs).WindowsLcid = lcidString;
 
 				while (reader.NodeType != XmlNodeType.EndElement)
 					reader.Read();
@@ -1219,8 +1221,9 @@ namespace SIL.CoreImpl
 			WriteSpecialValue(writer, "fw", "scriptName", fwWs.ScriptName);
 			WriteSpecialValue(writer, "fw", "validChars", fwWs.ValidChars);
 			WriteSpecialValue(writer, "fw", "variantName", fwWs.VariantName);
-			if (fwWs.LCID != 0)
-				WriteSpecialValue(writer, "fw", "windowsLCID", fwWs.LCID.ToString());
+			var legacyWs = (ILegacyWritingSystemDefinition)fwWs;
+			if (!string.IsNullOrEmpty(legacyWs.WindowsLcid))
+				WriteSpecialValue(writer, "fw", "windowsLCID", legacyWs.WindowsLcid);
 			writer.WriteEndElement();
 		}
 	}

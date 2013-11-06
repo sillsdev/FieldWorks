@@ -188,6 +188,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\Palaso.dll</HintPath>
     </Reference>
+    <Reference Include="PalasoUIWindowsForms, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="Rhino.Mocks, Version=3.6.0.0, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Bin\Rhino\Rhino.Mocks.dll</HintPath>

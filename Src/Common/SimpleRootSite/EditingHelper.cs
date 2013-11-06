@@ -16,6 +16,8 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using Palaso.UI.WindowsForms.Keyboarding;
+using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites.Properties;
@@ -220,14 +222,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		private UserControl m_control; // currently either SimpleRootSite or PublicationControl.
 		/// <summary>Object that provides editing callback methods (in production code, this is usually (always?) the rootsite)</summary>
 		protected IEditingCallbacks m_callbacks;
-		/// <summary>handle of current system keyboard/language</summary>
-		private IntPtr m_hklActive;
-		/// <summary>current Keyman keyboard</summary>
-		private string m_sActiveKeymanKbd; //"xxxUnknownyyy";
-		/// <summary>Current keyboard's langid</summary>
-		private int m_nActiveLangId;
-		/// <summary>count of pending Keyman keyboard changes to ignore</summary>
-		private int m_cSelectLangPending;
 		/// <summary>The default cursor to use</summary>
 		private Cursor m_defaultCursor;
 
@@ -242,7 +236,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// every time the selection changes) Protected to allow for testing - production
 		/// subclasses should not access this member directly</summary>
 		protected SelectionHelper m_currentSelection;
-		private int m_lastKeyboardWS = -1;
 		/// <summary>Flag to prevent deletion of an object</summary>
 		protected bool m_preventObjDeletions;
 
@@ -387,9 +380,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
-			// Should this be zapped?
-			//Marshal.FreeCoTaskMem(m_hklActive);
-			//m_hklActive = IntPtr.Zero;
 			m_control = null;
 			m_callbacks = null;
 			m_currentSelection = null;
@@ -917,6 +907,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			// The first character goes into the buffer
 			buffer.Append(chsFirst);
+#if !__MonoCS__
+			// Note: When/if porting to MONO, the following block of code can be removed
+			// and still work.
 			if (chsFirst < ' ' || chsFirst == (char)VwSpecialChars.kscDelForward)
 				return;
 
@@ -925,11 +918,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (Control == null || KeyboardHelper.ActiveKeymanKeyboard != string.Empty)
 				return;
 
-#if !__MonoCS__
 			// Collect any characters that are currently in the message queue
-			// Note: When/if porting to MONO, the following block of code can be removed
-			// and still work. However, make sure the final line in the method still remains
-			// (i.e. the line where stuBuffer is being set).
 			Win32.MSG msg = new Win32.MSG();
 			while (true)
 			{
@@ -1257,15 +1246,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-		/// <summary>
-		/// Get/Set the active input language.
-		/// </summary>
-		internal int ActiveLanguageId
-		{
-			get { return m_nActiveLangId; }
-			set { m_nActiveLangId = value; }
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets a value indicating whether the current view is a Scripture view.
@@ -1396,17 +1376,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		public UserControl Control
 		{
 			get { CheckDisposed(); return m_control; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Get/Set count indicating how many language selections are pending.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public int SelectLangPending
-		{
-			get { CheckDisposed(); return m_cSelectLangPending; }
-			set { CheckDisposed(); m_cSelectLangPending = value; }
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -2956,44 +2925,17 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		protected void SetKeyboardForWs(ILgWritingSystem ws)
 		{
-			if(Callbacks == null)
+			if(Callbacks == null || ws == null)
 			{
-				return;
-			}
-			IVwRootBox rootb = Callbacks.EditedRootBox;
-
-			if (ws == null || rootb == null)
-			{
-				//Debug.WriteLine("EditingHelper.SetKeyboardForWs(" +
-				//	ws.WritingSystem + "[" + ws.IcuLocale +
-				//	"]) -> ActivateDefaultKeyboard()");
 				ActivateDefaultKeyboard();
 				return;
 			}
+
 			try
 			{
-				int nWs = ws.Handle;
-				if (nWs == m_lastKeyboardWS)
-					return;
-				m_lastKeyboardWS = nWs;
-
-				//Debug.WriteLine("EditingHelper.SetKeyboardForWs(" +
-				//	ws.WritingSystem + "(" + ws.IcuLocale +
-				//	") -> rootb.SetKeyboardForWs(hklActive = " + (int)hklActive + ")");
-
-				int hklActive = (int)m_hklActive;
-
-				bool fSelectLangPending = false;
-				rootb.SetKeyboardForWs(ws, ref m_sActiveKeymanKbd, ref m_nActiveLangId,
-					ref hklActive, ref fSelectLangPending);
-				if (fSelectLangPending)
-					m_cSelectLangPending++;
-				m_hklActive = (IntPtr)hklActive;
-
-				//Debug.WriteLine("EditingHelper.SetKeyboardForWs(" +
-				//	ws.WritingSystem + "(" + ws.IcuLocale +
-				//	") - after rootb.SetKeyboardForWs(), LangId = " + m_nActiveLangId +
-				//	", hklActive = " + (int)hklActive);
+				var palasoWs = ((IWritingSystemManager)WritingSystemFactory).Get(ws.Handle) as IWritingSystemDefinition;
+				if (palasoWs != null && palasoWs.LocalKeyboard != null)
+					palasoWs.LocalKeyboard.Activate();
 			}
 			catch
 			{
@@ -3009,19 +2951,16 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Sets the keyboard for a writing system.
 		/// </summary>
 		/// <param name="newWs">The new ws.</param>
-		/// <returns>The previous writing system</returns>
 		/// ------------------------------------------------------------------------------------
-		public int SetKeyboardForWs(int newWs)
+		public void SetKeyboardForWs(int newWs)
 		{
 			CheckDisposed();
 
-			int oldWs = m_lastKeyboardWS;
 			if (Callbacks == null || !Callbacks.GotCacheOrWs || WritingSystemFactory == null)
-				return oldWs;			// Can't do anything useful, so let's not do anything at all.
+				return;			// Can't do anything useful, so let's not do anything at all.
 
 			ILgWritingSystem ws = WritingSystemFactory.get_EngineOrNull(newWs);
 			SetKeyboardForWs(ws);
-			return oldWs;
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -3057,35 +2996,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Activates the default keyboard.
 		/// </summary>
-		/// <remarks>On Windows 98, sending this message unnecessarily destroys
-		/// the current keystroke context, so only do it when we're actually switching
-		/// </remarks>
 		/// ------------------------------------------------------------------------------------
 		private void ActivateDefaultKeyboard()
 		{
-			InputLanguage inputLng = InputLanguage.DefaultInputLanguage;
-
-			Debug.Assert(inputLng != null);
-			// REVIEW: Do we really need to try to keep track of m_hklActive and have this
-			// logic to prevent "switching" when we're going to the same keyboard? The above
-			// remark suggests this was needed only for Windows 98.
-			if (inputLng == null || (m_hklActive != (IntPtr)0 && inputLng.Handle == m_hklActive))
-				return;
-
-			//Debug.WriteLine("EditingHelper.ActivateKeyboard() - inputLng = " +
-			//	inputLng.ToString() +
-			//	" [" + (int)inputLng.Handle + "],  m_hklActive = " + (int)m_hklActive);
-
-			if (KeyboardHelper.ActivateKeyboard(inputLng.Culture.LCID, ref m_nActiveLangId,
-				ref m_sActiveKeymanKbd))
-			{
-				m_cSelectLangPending++;
-			}
-
-			m_hklActive = inputLng.Handle;
-			m_sActiveKeymanKbd = null;
-			// REVIEW: this is not quite right if the sort is not 0 (default).
-			m_nActiveLangId = inputLng.Culture.LCID;
+			Keyboard.Controller.ActivateDefaultKeyboard();
 		}
 
 		/// <summary>
@@ -3141,11 +3055,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		public void LostFocus(Control newFocusedControl, bool fIsChildWindow)
 		{
 			CheckDisposed();
-			m_hklActive = (IntPtr) 0;
-			m_sActiveKeymanKbd = null; //"xxxUnknownyyy";
-			m_nActiveLangId = 0;
-			m_cSelectLangPending = 0;
-			m_lastKeyboardWS = -1;
 
 			//Debug.WriteLine(string.Format("EditingHelper.LostFocus:\n\t\t\tlost: {3} ({4}), Name={5}\n\t\t\tnew: {0} ({1}), Name={2}",
 			//    newFocusedControl != null ? newFocusedControl.ToString() : "<null>",
@@ -3177,14 +3086,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		internal void GotFocus()
 		{
-			// Added to solve a problem in TE Back Translation view where these values can be out of
-			// sync with current selected keyboard. Problem is caused by how selection is restored
-			// to each pane when view is created.
-			m_hklActive = (IntPtr)0;
-			m_sActiveKeymanKbd = null; //"xxxUnknownyyy";
-			m_nActiveLangId = 0;
-			m_cSelectLangPending = 0;
-			m_lastKeyboardWS = -1;
 		}
 		#endregion
 

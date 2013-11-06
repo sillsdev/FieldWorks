@@ -23,7 +23,8 @@ namespace SIL.CoreImpl
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// This class assists with keyboard switching.
+	/// This is an almost-obsolete class with one function left. There is still one place where
+	/// we need to know a Keyman keyboard is active.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	public static class KeyboardHelper
@@ -35,17 +36,15 @@ namespace SIL.CoreImpl
 		/// </summary>
 		private sealed class KeyboardHelperImpl: IDisposable
 		{
-			private readonly ILgTextServices m_lts;
 			private readonly ILgKeymanHandler m_keymanHandler;
 
 			#region Constructor
-			public KeyboardHelperImpl()
-		{
-				m_keymanHandler = LgKeymanHandlerClass.Create();
 
-			if (!MiscUtils.IsUnix)
-					m_lts = LgTextServicesClass.Create();
+			public KeyboardHelperImpl()
+			{
+				m_keymanHandler = LgKeymanHandlerClass.Create();
 			}
+
 			#endregion
 
 			#region Disposable stuff
@@ -87,31 +86,9 @@ namespace SIL.CoreImpl
 				}
 				if (m_keymanHandler != null && Marshal.IsComObject(m_keymanHandler))
 					Marshal.ReleaseComObject(m_keymanHandler);
-				if (m_lts != null && Marshal.IsComObject(m_lts))
-					Marshal.ReleaseComObject(m_lts);
 				IsDisposed = true;
 			}
 			#endregion
-
-			/// ------------------------------------------------------------------------------------
-			/// <summary>
-			/// Activates the specified keyboard.
-			/// </summary>
-			/// ------------------------------------------------------------------------------------
-			public bool ActivateKeyboard(int lcid, string keymanKbd, ref int activeLangId,
-				ref string activeKeymanKbd)
-			{
-				if (MiscUtils.IsUnix)
-					return false;
-
-				//System.Diagnostics.Debug.WriteLine(
-				//    "KeyboardHelper.ActivateKeyboard() -> ILgTextServices::SetKeyboard(" + lcid + ")");
-				bool fSelectLangPending = false;
-				m_lts.SetKeyboard(lcid, keymanKbd, ref activeLangId, ref activeKeymanKbd,
-					ref fSelectLangPending);
-
-				return fSelectLangPending;
-			}
 
 			/// ------------------------------------------------------------------------------------
 			/// <summary>
@@ -123,6 +100,8 @@ namespace SIL.CoreImpl
 			{
 				get
 				{
+					if (MiscUtils.IsUnix)
+						return "";
 					string sKeymanKbd = m_keymanHandler.ActiveKeyboardName;
 
 					// This constant '(None)' can not be localized until the C++ version is localized.
@@ -169,64 +148,6 @@ namespace SIL.CoreImpl
 					s_keyboardHelper = null;
 				}
 			}
-		}
-
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Activate the given keyboard.
-		/// </summary>
-		/// <remarks>On Windows 98, sending this message unnecessarily destroys
-		/// the current keystroke context, so only do it when we're actually switching
-		/// </remarks>
-		/// -----------------------------------------------------------------------------------
-		public static void ActivateDefaultKeyboard()
-		{
-			InputLanguage inputLng = InputLanguage.DefaultInputLanguage;
-			ActivateKeyboard(inputLng.Culture.LCID);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Activates the specified keyboard.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static bool ActivateKeyboard(int lcid)
-		{
-			return ActivateKeyboard(lcid, null);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Activates the specified keyboard.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static bool ActivateKeyboard(int lcid, string keymanKbd)
-		{
-			int langId = 0;
-			string activeKeymanKbd = null;
-			return ActivateKeyboard(lcid, keymanKbd, ref langId, ref activeKeymanKbd);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Activates the specified keyboard.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static bool ActivateKeyboard(int lcid, ref int activeLangId,
-			ref string activeKeymanKbd)
-		{
-			return ActivateKeyboard(lcid, null, ref activeLangId, ref activeKeymanKbd);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Activates the specified keyboard.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static bool ActivateKeyboard(int lcid, string keymanKbd, ref int activeLangId,
-			ref string activeKeymanKbd)
-		{
-			return KeyboardHelperObject.ActivateKeyboard(lcid, keymanKbd, ref activeLangId, ref activeKeymanKbd);
 		}
 
 		/// ------------------------------------------------------------------------------------

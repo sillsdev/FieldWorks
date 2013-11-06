@@ -891,6 +891,29 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Gets the language code for the specified locale.
+		/// </summary>
+		/// <param name="locale">the locale to get the language code with </param>
+		/// <returns>the language code for the locale.</returns>
+		/// <exception cref="ArgumentException">Thrown if ICU method fails with an error.
+		/// </exception>
+		/// ------------------------------------------------------------------------------------
+		public static string GetLanguageCode(string locale)
+		{
+			string languageCode;
+			UErrorCode err;
+			GetLanguageCode(locale, out languageCode, out err);
+			if (err != UErrorCode.U_ZERO_ERROR)
+			{
+				throw new ArgumentException(
+					string.Format("ICU uloc_getLanguage with argument '{0}' failed with error {1}", locale, err),
+					"locale");
+			}
+			return languageCode;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Gets the script code for the specified locale.
 		/// </summary>
 		/// <param name="localeID">the locale to get the script code with </param>
@@ -973,6 +996,29 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			{
 				Marshal.FreeCoTaskMem(resPtr);
 			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the country code for the specified locale.
+		/// </summary>
+		/// <param name="locale">the locale to get the country code with </param>
+		/// <returns>The country code for the locale.</returns>
+		/// <exception cref="ArgumentException">Thrown if ICU method fails with an error.
+		/// </exception>
+		/// ------------------------------------------------------------------------------------
+		public static string GetCountryCode(string locale)
+		{
+			string countryCode;
+			UErrorCode err;
+			GetCountryCode(locale, out countryCode, out err);
+			if (err != UErrorCode.U_ZERO_ERROR)
+			{
+				throw new ArgumentException(
+					string.Format("ICU uloc_getCountry with argument '{0}' failed with error {1}", locale, err),
+					"locale");
+			}
+			return countryCode;
 		}
 
 		/// ------------------------------------------------------------------------------------

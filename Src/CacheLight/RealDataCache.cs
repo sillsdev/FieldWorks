@@ -8,8 +8,30 @@ using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.CacheLight
 {
+	/// <summary>
+	/// Interface for RealDataCache that combines the different interfaces that RealDataCache
+	/// implements. This more easily allows to use a substitute implementation in unit tests.
+	/// </summary>
+	public interface IRealDataCache : ISilDataAccess, IVwCacheDa, IStructuredTextDataAccess, IFWDisposable
+	{
+		/// <summary>
+		/// Gets or sets the paragraph contents field id.
+		/// </summary>
+		new int ParaContentsFlid { get; set; }
+
+		/// <summary>
+		/// Gets or sets the paragraph properties field id.
+		/// </summary>
+		new int ParaPropertiesFlid { get; set; }
+
+		/// <summary>
+		/// Gets or sets the text paragraphs field id.
+		/// </summary>
+		new int TextParagraphsFlid { get; set; }
+	}
+
 	/// <summary></summary>
-	public sealed class RealDataCache : ISilDataAccess, IVwCacheDa, IStructuredTextDataAccess, IFWDisposable
+	public sealed class RealDataCache : IRealDataCache
 	{
 		#region Basic implementation
 
@@ -1479,6 +1501,8 @@ namespace SIL.FieldWorks.CacheLight
 				var ms = get_MultiStringProp(hvo, tag);
 				if (ms.StringCount > 0)
 					result = ms;
+				else if (Marshal.IsComObject(ms))
+					Marshal.ReleaseComObject(ms);
 			}
 
 			return result;

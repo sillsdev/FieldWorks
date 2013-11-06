@@ -22,6 +22,7 @@ using System.IO;
 using System.Media;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using Palaso.WritingSystems;
 using Paratext;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
@@ -5461,7 +5462,7 @@ namespace SIL.FieldWorks.TE
 					m_StyleSheet.GetUiFontForWritingSystem(Cache.DefaultVernWs, 0), vernWs.IcuLocale,
 					vernWs.RightToLeftScript, Path.Combine(ScrTextCollection.SettingsDirectory ?? @"c:\My Paratext Projects", "cms"), ccSettings,
 					App.ApplicationName, start, end,
-					vern => KeyboardHelper.ActivateKeyboard(vern ? vernWs.LCID : defaultWs.LCID),
+					vern => ((IWritingSystemDefinition)(vern ? vernWs : defaultWs)).LocalKeyboard.Activate(),
 					() => ShowHelp.ShowHelpTopic(m_app, "khtpNoHelpTopic"),
 					LookupTerm); // TODO: Come up with a Help topic
 

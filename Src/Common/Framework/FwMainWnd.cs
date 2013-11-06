@@ -19,6 +19,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
@@ -2825,9 +2826,8 @@ namespace SIL.FieldWorks.Common.Framework
 			// so we manually switch to the default keyboard here so that the Project Properties
 			// dialog displays the default keyboard. When we're all done we switch back to the
 			// keyboard we had recently. (TE-4683)
-			int oldWs = 0;
-			if (EditingHelper != null) // JohnT: guard against e.g. TE-6543.
-				oldWs = EditingHelper.SetKeyboardForWs(-1);
+			var oldWsd = Keyboard.Controller.ActiveKeyboard;
+			Keyboard.Controller.ActivateDefaultKeyboard();
 			// Disable windows on cache to prevent painting when fonts for writing system are changed
 			m_app.EnableMainWindows(false);
 			bool fDbRenamed = false;
@@ -2879,8 +2879,8 @@ namespace SIL.FieldWorks.Common.Framework
 					if (!IsDisposed)
 					{
 						// Restore the previous keyboard
-						if (oldWs != 0 && EditingHelper != null)
-							EditingHelper.SetKeyboardForWs(oldWs);
+						if (oldWsd != null)
+							oldWsd.Activate();
 					}
 				}
 			}

@@ -111,9 +111,7 @@ bool KeymanOn()
 		::CloseHandle(hMutex);
 		return true;
 	}
-#else // !WIN32
-	// TODO-Linux: - need to intergate with Keyman
-#endif // !WIN32
+#endif
 	return false; // Keyman is not running.
 }
 
@@ -125,11 +123,6 @@ LgKeymanHandler::LgKeymanHandler()
 {
 	m_cref = 1;
 	ModuleEntry::ModuleAddRef();
-
-#if !WIN32
-	// Create C# Keyboard Switcher which does most of the work on Linux.
-	m_qkbs.CreateInstance(CLSID_KeyboardSwitcher);
-#endif
 }
 
 LgKeymanHandler::~LgKeymanHandler()
@@ -349,21 +342,7 @@ STDMETHODIMP LgKeymanHandler::Init(ComBool fForce)
 	}
 
 	s_fKeymanInitialized = true;
-#else // !WIN32
-	// Use C# Keyboard Switcher to build up a list of avaliable keyboards.
-	int nKeyboards;
-	m_qkbs->get_IMEKeyboardsCount(&nKeyboards);
-	for(int i = 0; i < nKeyboards; ++i)
-	{
-		SmartBstr bstrKeyboardName;
-		m_qkbs->GetKeyboardName(i, &bstrKeyboardName);
-		KbdInfo ki;
-		ki.m_stuName = bstrKeyboardName.Chars();
-		ki.m_id = 0; // what todo about this?
-		s_vkiKeyboards.Push(ki);
-	}
-	s_fKeymanInitialized = true;
-#endif // !WIN32
+#endif
 	END_COM_METHOD(g_fact, IID_ILgKeymanHandler);
 }
 
@@ -374,14 +353,6 @@ STDMETHODIMP LgKeymanHandler::Init(ComBool fForce)
 STDMETHODIMP LgKeymanHandler::Close()
 {
 	BEGIN_COM_METHOD
-
-#if !WIN32
-	if (m_qkbs)
-	{
-		m_qkbs->Close();
-		m_qkbs = NULL;
-	}
-#endif
 
 	END_COM_METHOD(g_fact, IID_ILgKeymanHandler);
 }
@@ -423,40 +394,8 @@ bool LgKeymanHandler::InitInternal()
 	s_fKeymanFailed = true;
 #if WIN32
 	::MessageBox(NULL, stuMsg.Chars(), stuCaption.Chars(), MB_OK | MB_ICONINFORMATION);
-#else // !WIN32
-	// TODO-Linux: port
 #endif // !WIN32
 	return s_fKeymanInitialized;
-}
-
-/*----------------------------------------------------------------------------------------------
-	Obtain the number of keyboard layouts currently avaiable.
-----------------------------------------------------------------------------------------------*/
-STDMETHODIMP LgKeymanHandler::get_NLayout(int * pclayout)
-{
-	BEGIN_COM_METHOD
-	ChkComOutPtr(pclayout);
-	if (!s_fKeymanInitialized)
-		CheckHr(Init(false));
-	*pclayout = s_vkiKeyboards.Size();
-	END_COM_METHOD(g_fact, IID_ILgKeymanHandler);
-}
-
-/*----------------------------------------------------------------------------------------------
-	Obtain the ith layout name.
-----------------------------------------------------------------------------------------------*/
-STDMETHODIMP LgKeymanHandler::get_Name(int ilayout, BSTR * pbstrName)
-{
-	BEGIN_COM_METHOD
-	if (!s_fKeymanInitialized)
-		CheckHr(Init(false));
-	if (!s_fKeymanInitialized)
-		return E_UNEXPECTED;
-	if ((uint)ilayout >= (uint)(s_vkiKeyboards.Size()))
-		ThrowHr(WarnHr(E_INVALIDARG));
-	s_vkiKeyboards[ilayout].m_stuName.GetBstr(pbstrName);
-
-	END_COM_METHOD(g_fact, IID_ILgKeymanHandler);
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -505,92 +444,11 @@ STDMETHODIMP LgKeymanHandler::get_ActiveKeyboardName(BSTR * pbstrName)
 			return S_OK;
 		}
 	}
-#else
-	// Use C# Keyboard Switcher get the current active keyboard.
-	SmartBstr bstrKeyboardName;
-	m_qkbs->get_IMEKeyboard(&bstrKeyboardName);
-	*pbstrName = bstrKeyboardName.Detach();
-	return S_OK;
 #endif
 	Assert(false); // Keyman gave us an ID, but it didn't match!
 	return E_UNEXPECTED;
 	END_COM_METHOD(g_fact, IID_ILgKeymanHandler);
 }
-
-/*----------------------------------------------------------------------------------------------
-	Set the active keyboard. (Pass null or empty string to disable Keyman).
-----------------------------------------------------------------------------------------------*/
-STDMETHODIMP LgKeymanHandler::put_ActiveKeyboardName(BSTR bstrName)
-{
-	BEGIN_COM_METHOD
-	ChkComBstrArgN(bstrName);
-	if (!InitInternal() || !s_wm_kmselectlang)
-		return S_OK;
-#if WIN32
-	if (BstrLen(bstrName) != 0)
-	{
-		for (int iki = 0; iki < s_vkiKeyboards.Size(); ++iki)
-		{
-			if (wcscmp(s_vkiKeyboards[iki].m_stuName.Chars(), bstrName) == 0)
-			{
-#ifdef TRACING_KEYMAN
-				StrAnsi staMsg;
-				staMsg.Format("Setting keyman keyboard to %d for %B\n",
-					s_vkiKeyboards[iki].m_id, bstrName);
-				::OutputDebugStringA(staMsg.Chars());
-#endif
-				::PostMessage(::GetFocus(), s_wm_kmselectlang, knKeymanID,
-					s_vkiKeyboards[iki].m_id);
-				return S_OK;
-			}
-		}
-		// It's an error if it's an invalid name; but disable Keyman anyway.
-#ifdef TRACING_KEYMAN
-		StrAnsi staMsg;
-		staMsg.Format("Disabling keyman...name (%B) not recognized\n", bstrName);
-		::OutputDebugStringA(staMsg.Chars());
-#endif
-		// Posting a message saying there is no keyman keyboard active runs code in
-		// SimpleRootSite.OnKeymanKeyboardChange which tries to set the active writing system
-		// to one which requires no keyman keyboard. This is an unfortunate thing to do
-		// as a side effect of trying to set an unavailable keyboard for a particular WS. LS-12471.
-		//::PostMessage(::GetFocus(), s_wm_kmselectlang, knKeymanID, KEYMANID_NONKEYMAN);
-		// This can happen if people have been renaming/removing Keyman keyboards, so don't
-		// generate a useless (and expensive time-wise) stack trace.
-		ReturnHr(E_INVALIDARG);
-	}
-	else
-	{
-#ifdef TRACING_KEYMAN
-		OutputDebugStringA("Disabling keyman...name is null\n");
-#endif
-		::PostMessage(::GetFocus(), s_wm_kmselectlang, knKeymanID, KEYMANID_NONKEYMAN);
-	}
-#else
-	// Use C# Keyboard Switcher set the current active keyboard.
-	m_qkbs->put_IMEKeyboard(bstrName);
-#endif
-	END_COM_METHOD(g_fact, IID_ILgKeymanHandler);
-}
-
-/*----------------------------------------------------------------------------------------------
-	Return the windows message (obtained from RegisterWindowsMessage("WM_KMSELECTLANG").
-	Review JohnT: Or should it be WM_KMKBCHANGE?
-----------------------------------------------------------------------------------------------*/
-STDMETHODIMP LgKeymanHandler::get_KeymanWindowsMessage(int * pwm)
-{
-	BEGIN_COM_METHOD
-	ChkComOutPtr(pwm);
-#if WIN32
-	if (!s_wm_kmkbchange)
-		s_wm_kmkbchange = ::RegisterWindowMessageW(L"WM_KMKBCHANGE");
-	*pwm = s_wm_kmkbchange;
-#else
-	// TODO-Linux: port
-#endif
-	END_COM_METHOD(g_fact, IID_ILgKeymanHandler);
-}
-
 
 // Explicit instantiation.
 #include "Vector_i.cpp"

@@ -15,14 +15,6 @@ Description:
 #ifndef LgKeymanHandler_INCLUDED
 #define LgKeymanHandler_INCLUDED
 
-
-#if !WIN32
-#include "ViewsTlb.h"
-DEFINE_COM_PTR(IIMEKeyboardSwitcher);
-class KeyboardSwitcher;
-#define CLSID_KeyboardSwitcher __uuidof(KeyboardSwitcher)
-#endif
-
 /*----------------------------------------------------------------------------------------------
 Class: LgKeymanHandler
 Description: A class that manages Keyman, being able to invoke a keyboard, find out which
@@ -60,11 +52,7 @@ public:
 
 	STDMETHOD(Init)(ComBool fForce);
 	STDMETHOD(Close)();
-	STDMETHOD(get_NLayout)(int * pclayout);
-	STDMETHOD(get_Name)(int ilayout, BSTR * pbstrName);
 	STDMETHOD(get_ActiveKeyboardName)(BSTR * pbstrName);
-	STDMETHOD(put_ActiveKeyboardName)(BSTR bstrName);
-	STDMETHOD(get_KeymanWindowsMessage)(int * pwm);
 
 	// Other public methods
 protected:
@@ -73,10 +61,5 @@ protected:
 
 	bool InitInternal();
 	void ThrowErrorWithInfo(HRESULT hrErr, int stidDescription);
-
-#if !WIN32
-	// C# COM object that switches keyboards.
-	IIMEKeyboardSwitcherPtr m_qkbs;
-#endif
 };
 #endif  //LgKeymanHandler_INCLUDED

@@ -27,9 +27,4 @@ DeclareLibrary(Views, 1.0, "Views 1.0 Type Library",
 
 	#include "Views.idh"
 
-//	// Include WorldPad WPX load+save interfaces for Linux builds
-//	#if !WIN32
-//	#include "WorldPad.idh"
-//	#endif // !WIN32
-
 };

@@ -22,6 +22,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
 using System.Xml;
+using Palaso.WritingSystems;
 using XCore;
 using System.Text;
 using SIL.CoreImpl;
@@ -228,7 +229,10 @@ namespace SIL.FieldWorks.XWorks
 					XmlUtils.MakeSafeXml(wsLocal.LanguageName));
 				writer.WriteLine("<Abbreviation><Uni>{0}</Uni></Abbreviation>",
 					XmlUtils.MakeSafeXml(wsLocal.Abbreviation));
-				writer.WriteLine("<Locale><Integer val=\"{0}\"/></Locale>", wsLocal.LCID);
+				// We previously wrote out the LCID, but this is obsolete. It would be unreliable to output the WindowsLcid, which only
+				// old writing systems will have. If something needs this, we need to output something new in its place. But I'm pretty sure
+				// nothing does...Locale is not used in any of the notebook output transforms.
+				//writer.WriteLine("<Locale><Integer val=\"{0}\"/></Locale>", ((ILegacyWritingSystemDefinition)wsLocal).WindowsLcid);
 				writer.WriteLine("<RightToLeft><Boolean val=\"{0}\"/></RightToLeft>",
 					wsLocal.RightToLeftScript ? "true" : "false");
 				if (ws == m_cache.DefaultAnalWs)

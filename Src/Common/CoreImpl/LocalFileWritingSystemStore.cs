@@ -39,7 +39,7 @@ namespace SIL.CoreImpl
 		/// Creates a new writing system definition.
 		/// </summary>
 		/// <returns></returns>
-		public override WritingSystemDefinition CreateNew()
+		public override IWritingSystemDefinition CreateNew()
 		{
 			return new PalasoWritingSystem();
 		}
@@ -95,7 +95,7 @@ namespace SIL.CoreImpl
 		/// <param name="identifier">The identifier.</param>
 		/// <param name="ws">The writing system.</param>
 		/// <returns></returns>
-		public bool TryGet(string identifier, out WritingSystemDefinition ws)
+		public bool TryGet(string identifier, out IWritingSystemDefinition ws)
 		{
 			if (Contains(identifier))
 			{
@@ -168,13 +168,13 @@ namespace SIL.CoreImpl
 		///
 		/// </summary>
 		/// <param name="ws">The ws.</param>
-		protected override void OnChangeNotifySharedStore(WritingSystemDefinition ws)
+		protected override void OnChangeNotifySharedStore(IWritingSystemDefinition ws)
 		{
 			base.OnChangeNotifySharedStore(ws);
 
 			if (m_globalStore != null)
 			{
-				WritingSystemDefinition globalWs;
+				IWritingSystemDefinition globalWs;
 				if (m_globalStore.TryGet(ws.Id, out globalWs))
 				{
 					if (ws.DateModified > globalWs.DateModified)

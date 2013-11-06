@@ -108,6 +108,23 @@ namespace SIL.CoreImpl.Properties {
         }
         
         /// <summary>
+        /// Setting to store current keyboard assignments for writing systems.
+        /// </summary>
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.SettingsProviderAttribute(typeof(Palaso.Settings.CrossPlatformSettingsProvider))]
+        [global::System.Configuration.SettingsDescriptionAttribute("Setting to store current keyboard assignments for writing systems")]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LocalKeyboards {
+            get {
+                return ((string)(this["LocalKeyboards"]));
+            }
+            set {
+                this["LocalKeyboards"] = value;
+            }
+        }
+        
+        /// <summary>
         /// Setting indicating that the Settings need to be upgraded
         /// </summary>
         [global::System.Configuration.UserScopedSettingAttribute()]

@@ -4048,10 +4048,6 @@ VwParagraphBox::~VwParagraphBox()
 	if (prootb)
 	{
 #ifdef ENABLE_TSF
-		VwTextStore * ptxs = prootb->TextStore();
-		if (ptxs)
-			ptxs->ClearPointersTo(this);
-#elif defined(MANAGED_KEYBOARDING)
 		prootb->ClearSelectedAnchorPointerTo(this);
 #endif /*ENABLE_TSF*/
 		Assert(prootb->m_pvpboxNextSpellCheck != this);
@@ -4760,8 +4756,6 @@ void VwParagraphBox::ReplaceStrings(IVwGraphics * pvg, int itssMin, int itssLim,
 	int ctssOld = Source()->CStrings();
 	int ctssNew = pvpboxRep->Source()->CStrings();
 #ifdef ENABLE_TSF
-	VwTextStore * ptxs = Root()->TextStore();
-#elif defined(MANAGED_KEYBOARDING)
 	IViewInputMgr * pvim = Root()->InputManager();
 #endif /*ENABLE_TSF*/
 	VwBox * pboxFirstSubRep = pvpboxRep->FirstBox();
@@ -4793,12 +4787,6 @@ void VwParagraphBox::ReplaceStrings(IVwGraphics * pvg, int itssMin, int itssLim,
 			// dictionary. It requires a paint.
 			Source()->ReplaceContents(itssMin, itssLim, pvpboxRep->Source());
 			Assert(cchNew == cchOld);
-#ifdef ENABLE_TSF
-			// Must NOT notify if it didn't change...this produces spurious messages
-			// that interfere with IMEs.
-			//if (ptxs)
-			//	ptxs->OnDocChange();
-#endif /*ENABLE_TSF*/
 			return;	// no change needed
 		}
 
@@ -4819,9 +4807,6 @@ void VwParagraphBox::ReplaceStrings(IVwGraphics * pvg, int itssMin, int itssLim,
 			// string collection.
 			Source()->ReplaceContents(itssMin, itssLim, pvpboxRep->Source());
 #ifdef ENABLE_TSF
-			if (ptxs)
-				ptxs->OnDocChange();
-#elif defined(MANAGED_KEYBOARDING)
 			if (pvim)
 				CheckHr(pvim->OnTextChange());
 #endif /*ENABLE_TSF*/
@@ -4939,9 +4924,6 @@ void VwParagraphBox::ReplaceStrings(IVwGraphics * pvg, int itssMin, int itssLim,
 		prootb->RelayoutRoot(pvg, &fixmap);
 
 #ifdef ENABLE_TSF
-		if (ptxs)
-			ptxs->OnDocChange();
-#elif defined(MANAGED_KEYBOARDING)
 		if (pvim)
 			CheckHr(pvim->OnTextChange());
 #endif /*ENABLE_TSF*/
@@ -4976,9 +4958,6 @@ void VwParagraphBox::ReplaceStrings(IVwGraphics * pvg, int itssMin, int itssLim,
 				prootb->InvalidateRect(&vwrectNew);
 			}
 #ifdef ENABLE_TSF
-			if (ptxs)
-				ptxs->OnDocChange();
-#elif defined(MANAGED_KEYBOARDING)
 			if (pvim)
 				CheckHr(pvim->OnTextChange());
 #endif /*ENABLE_TSF*/
@@ -5008,9 +4987,6 @@ void VwParagraphBox::ReplaceStrings(IVwGraphics * pvg, int itssMin, int itssLim,
 		Root()->InvalidateRect(&vwrectNew);
 
 #ifdef ENABLE_TSF
-		if (ptxs)
-			ptxs->OnDocChange();
-#elif defined(MANAGED_KEYBOARDING)
 		if (pvim)
 			CheckHr(pvim->OnTextChange());
 #endif /*ENABLE_TSF*/
@@ -5835,9 +5811,6 @@ void VwParagraphBox::DoLayoutAux(IVwGraphics * pvg, void * pv)
 		Assert(false);
 #endif
 #ifdef ENABLE_TSF
-	if (Root()->TextStore())
-		Root()->TextStore()->OnLayoutChange();
-#elif defined(MANAGED_KEYBOARDING)
 	if (Root()->InputManager())
 		CheckHr(Root()->InputManager()->OnLayoutChange());
 #endif /*ENABLE_TSF*/

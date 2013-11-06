@@ -339,11 +339,6 @@ namespace SIL.FieldWorks.Common.PrintLayout
 			throw new NotImplementedException("The method or operation is not implemented.");
 		}
 
-		public void SetKeyboardForWs(ILgWritingSystem _ws, ref string _bstrActiveKeymanKbd, ref int _nActiveLangId, ref int _hklActive, ref bool _fSelectLangPending)
-		{
-			throw new NotImplementedException("The method or operation is not implemented.");
-		}
-
 		public void SetRootObject(int hvo, IVwViewConstructor _vwvc, int frag, IVwStylesheet _ss)
 		{
 			throw new NotImplementedException("The method or operation is not implemented.");
