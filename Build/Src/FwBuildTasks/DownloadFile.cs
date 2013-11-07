@@ -100,6 +100,10 @@ namespace SIL.FieldWorks.Build.Tasks
 					request.Credentials = new NetworkCredential(username, password);
 				}
 
+				// Prevent caching of requests so that we always download latest
+				var cacheControl = request.Headers[HttpRequestHeader.CacheControl];
+				request.Headers[HttpRequestHeader.CacheControl] = "no-cache";
+
 				// Send the request to the server and retrieve the
 				// WebResponse object
 				response = request.GetResponse();
