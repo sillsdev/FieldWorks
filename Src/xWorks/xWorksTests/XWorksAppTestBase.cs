@@ -340,7 +340,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="app">The application.</param>
 		/// <param name="dialogOwner">The owner of the dialog</param>
 		/// ------------------------------------------------------------------------------------
-		public void BackupProject(FwApp app, Form dialogOwner)
+		public string BackupProject(FwApp app, Form dialogOwner)
 		{
 			throw new NotImplementedException();
 		}
@@ -398,6 +398,20 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="link">The link.</param>
 		/// ------------------------------------------------------------------------------------
 		public void HandleLinkRequest(FwAppArgs link)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Archive selected project files using RAMP
+		/// </summary>
+		/// <param name="fwApp">The FieldWorks application</param>
+		/// <param name="dialogOwner">The owner of the dialog</param>
+		/// <returns>The list of the files to archive, or <c>null</c> if the user cancels the
+		/// archive dialog</returns>
+		/// ------------------------------------------------------------------------------------
+		public List<string> ArchiveProjectWithRamp(FwApp fwApp, Form dialogOwner)
 		{
 			throw new NotImplementedException();
 		}

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tmx version="1.4">
+	<header srclang="ru" adminlang="en" creationtool="Palaso Localization Manager" creationtoolversion="1.1.4972.16808" segtype="block" datatype="unknown" o-tmf="PalasoTMXUtils">
+		<prop type="x-appversion">8.0.4.41508</prop>
+		<prop type="x-hardlinebreakreplacement">\n</prop>
+	</header>
+	<body>
+		<tu tuid="DialogBoxes.ArchivingDlg.CancellingMsg">
+			<tuv xml:lang="en">
+				<seg>Canceling...</seg>
+			</tuv>
+			<tuv xml:lang="ru">
+				<seg>Отмена...</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg.CreatingArchiveErrorMsg">
+			<tuv xml:lang="en">
+				<seg>There was an error attempting to create the RAMP file.</seg>
+			</tuv>
+			<tuv xml:lang="ru">
+				<seg>Произошла ошибка при попытке создания архива для события «{0}».</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg.CreatingInternalReapMetsFileErrorMsg">
+			<tuv xml:lang="en">
+				<seg>There was an error attempting to create the RAMP/REAP mets file.</seg>
+			</tuv>
+			<tuv xml:lang="ru">
+				<seg>Произошла ошибка при попытке создания файла метаданных RAMP/REAP для события «{0}».</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg.CreatingZipFileErrorMsg">
+			<tuv xml:lang="en">
+				<seg>There was a problem starting process to create zip file.</seg>
+			</tuv>
+			<tuv xml:lang="ru">
+				<seg>Существует проблема c созданием zip-файла.</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg.OverviewText">
+			<note>The first occurrence of the word 'RAMP' will be made a hyperlink to the RAMP website. If the word 'RAMP' is not found, the text will not contain that hyperlink.</note>
+			<tuv xml:lang="en">
+				<seg>RAMP is a utility for entering metadata and uploading submissions to SIL's internal archive, REAP. If you have access to this archive, this tool will help you use RAMP to archive your {0} data. {1} When the RAMP package has been created, you can  launch RAMP and enter any additional information before doing the actual submission.</seg>
+			</tuv>
+			<tuv xml:lang="ru">
+				<seg>RAMP - утилита для ввода метаданных и их загрузки в внутренний архив SIL, REAP. Если у вас есть доступ к этому архиву, этот инструмент поможет вам использовать RAMP для архивирования вашего проекта SayMore. Эта утилита будет собирать все файлы и данные, связанные с событием и его составителями, затем запустит RAMP чтобы вы могли добавить более подробную информацию и загрузить данные.</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg.RampNotFoundMsg">
+			<tuv xml:lang="en">
+				<seg>The RAMP program cannot be found!</seg>
+			</tuv>
+			<tuv xml:lang="ru">
+				<seg>Не удается найти программу RAMP!</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg.ReadyToCallRampMsg">
+			<tuv xml:lang="en">
+				<seg>Ready to hand the package to RAMP</seg>
+			</tuv>
+			<tuv xml:lang="ru">
+				<seg>Готов передать пакет программе RAMP</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg.SearchingForRampMsg">
+			<tuv xml:lang="en">
+				<seg>Searching for the RAMP program...</seg>
+			</tuv>
+			<tuv xml:lang="ru">
+				<seg>Поиск программы RAMP ...</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg.StartingRampErrorMsg">
+			<tuv xml:lang="en">
+				<seg>There was an error attempting to open the archive package in RAMP.</seg>
+			</tuv>
+			<tuv xml:lang="ru">
+				<seg>Произошла ошибка при попытке открыть архив пакета в программе RAMP.</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg.WindowTitle">
+			<note>Parameter is application name</note>
+			<tuv xml:lang="en">
+				<seg>{0}: Archive with RAMP (SIL Only)</seg>
+			</tuv>
+			<tuv xml:lang="ru">
+				<seg>SayMore: Архивизировать программой RAMP (только SIL)</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg._buttonCancel">
+			<tuv xml:lang="en">
+				<seg>Cancel</seg>
+			</tuv>
+			<tuv xml:lang="ru">
+				<seg>Отмена</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg._buttonCreatePackage">
+			<tuv xml:lang="en">
+				<seg>&amp;1) Create Package</seg>
+			</tuv>
+			<tuv xml:lang="ru">
+				<seg>1) Создать пакет</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg._buttonLaunchRamp">
+			<tuv xml:lang="en">
+				<seg>&amp;2) Launch RAMP</seg>
+			</tuv>
+			<tuv xml:lang="ru">
+				<seg>2) Загрузить программу RAMP</seg>
+			</tuv>
+		</tu>
+	</body>
+</tmx>

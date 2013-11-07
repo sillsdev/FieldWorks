@@ -1,7 +1,7 @@
 ﻿//---------------------------------------------------------------------------------------------
 #region /// Copyright (c) 2011, SIL International. All Rights Reserved.
 // <copyright from='2010' to='2011' company='SIL International'>
-//    Copyright (c) 2011, SIL International. All Rights Reserved.
+//	Copyright (c) 2011, SIL International. All Rights Reserved.
 // </copyright>
 #endregion
 //
@@ -114,15 +114,16 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// <summary>
 		/// Backs up the project.
 		/// </summary>
+		/// <returns>The path to the backup file, or <c>null</c></returns>
 		/// ------------------------------------------------------------------------------------
-		internal void BackupProject(IThreadedProgress progressDlg)
+		internal string BackupProject(IThreadedProgress progressDlg)
 		{
 			BackupProjectSettings settings = new BackupProjectSettings(m_cache, m_backupProjectView);
 			settings.DestinationFolder = m_backupProjectView.DestinationFolder;
 			settings.AppAbbrev = m_appAbbrev;
 
 			ProjectBackupService backupService = new ProjectBackupService(m_cache, settings);
-			backupService.BackupProject(progressDlg);
+			return backupService.BackupProject(progressDlg);
 		}
 	}
 }

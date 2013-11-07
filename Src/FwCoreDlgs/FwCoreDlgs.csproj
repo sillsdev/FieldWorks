@@ -248,6 +248,12 @@
     <Compile Include="AdvancedEncProps.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="ArchiveWithRamp.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArchiveWithRamp.Designer.cs">
+      <DependentUpon>ArchiveWithRamp.cs</DependentUpon>
+    </Compile>
     <Compile Include="BackupRestore\BackupProjectDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -474,6 +480,9 @@
     <EmbeddedResource Include="AdvancedEncProps.resx">
       <DependentUpon>AdvancedEncProps.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ArchiveWithRamp.resx">
+      <DependentUpon>ArchiveWithRamp.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="BackupRestore\BackupProjectDlg.resx">
       <DependentUpon>BackupProjectDlg.cs</DependentUpon>

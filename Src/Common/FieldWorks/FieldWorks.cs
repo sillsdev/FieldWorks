@@ -983,18 +983,9 @@ namespace SIL.FieldWorks
 				Exception innerE = ExceptionHelper.GetInnerMostException(exception);
 				string strMessage = ResourceHelper.GetResourceString("kstidProgError")
 					+ ResourceHelper.GetResourceString("kstidFatalError");
-				string strVersion;
-				Assembly assembly = Assembly.GetEntryAssembly();
-				object[] attributes = null;
-				if (assembly != null)
-					attributes = assembly.GetCustomAttributes(typeof(AssemblyFileVersionAttribute), false);
-				if (attributes != null && attributes.Length > 0)
-					strVersion = ((AssemblyFileVersionAttribute)attributes[0]).Version;
-				else
-					strVersion = Application.ProductVersion;
 
 				string strReport = string.Format(ResourceHelper.GetResourceString("kstidGotException"),
-					SupportEmail, exception.Source, strVersion,
+					SupportEmail, exception.Source, Version,
 					ExceptionHelper.GetAllExceptionMessages(exception), innerE.Source,
 					innerE.TargetSite.Name, ExceptionHelper.GetAllStackTraces(exception));
 				Trace.Assert(false, strMessage, strReport);
@@ -1004,6 +995,23 @@ namespace SIL.FieldWorks
 				// we ignore any exceptions that might happen during reporting this error
 			}
 			return true;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// FieldWorks version
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public static string Version
+		{
+			get
+			{
+				Assembly assembly = Assembly.GetEntryAssembly();
+				object[] attributes = (assembly == null) ? null :
+					assembly.GetCustomAttributes(typeof(AssemblyFileVersionAttribute), false);
+				return attributes != null && attributes.Length > 0 ?
+					((AssemblyFileVersionAttribute) attributes[0]).Version : Application.ProductVersion;
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1775,14 +1783,19 @@ namespace SIL.FieldWorks
 		/// </summary>
 		/// <param name="dialogOwner">The dialog owner.</param>
 		/// <param name="fwApp">The FW application.</param>
+		/// <returns>The path to the backup file, or <c>null</c></returns>
 		/// ------------------------------------------------------------------------------------
-		internal static void BackupProject(Form dialogOwner, FwApp fwApp)
+		internal static string BackupProject(Form dialogOwner, FwApp fwApp)
 		{
 			using (BackupProjectDlg dlg = new BackupProjectDlg(Cache,
 				GetCommandLineAbbrevForAppName(fwApp.ApplicationName), fwApp))
 			{
-				dlg.ShowDialog(dialogOwner);
+				if (dlg.ShowDialog(dialogOwner) == DialogResult.OK)
+				{
+					return dlg.BackupFilePath;
+				}
 			}
+			return null;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1830,6 +1843,27 @@ namespace SIL.FieldWorks
 				HandleRestoreRequest(dialogOwner, new FwRestoreProjectSettings(GetCommandLineAbbrevForAppName(fwApp.ApplicationName),
 					dlg.Settings));
 			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Archive selected project files using RAMP
+		/// </summary>
+		/// <param name="fwApp"></param>
+		/// <param name="dialogOwner"></param>
+		/// <returns>The list of files to archive</returns>
+		/// ------------------------------------------------------------------------------------
+		internal static List<string> ArchiveProjectWithRamp(Form dialogOwner, FwApp fwApp)
+		{
+			using (var dlg = new ArchiveWithRamp(Cache,
+				GetCommandLineAbbrevForAppName(fwApp.ApplicationName), fwApp))
+			{
+				if (dlg.ShowDialog(dialogOwner) == DialogResult.OK)
+				{
+					return dlg.FilesToArchive;
+				}
+			}
+			return null;
 		}
 		#endregion
 
@@ -3492,16 +3526,9 @@ namespace SIL.FieldWorks
 			Justification="See TODO-Linux comment")]
 		private static void SetupErrorReportInformation()
 		{
-			object[] attributes;
-			Assembly assembly = Assembly.GetEntryAssembly();
-			if (assembly != null)
+			string version = Version;
+			if (version != null)
 			{
-				attributes = assembly.GetCustomAttributes(typeof(AssemblyFileVersionAttribute), false);
-				string version;
-				if (attributes != null && attributes.Length > 0)
-					version = ((AssemblyFileVersionAttribute)attributes[0]).Version;
-				else
-					version = Application.ProductVersion;
 				// Extract the fourth (and final) field of the version to get a date value.
 				int ich = version.IndexOf('.');
 				if (ich >= 0)

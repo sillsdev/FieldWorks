@@ -64,7 +64,8 @@
 		<command id="CmdProjectUtilities" label="_Utilities..." message="Utilities">
 			<parameters title="FieldWorks Project Utilities" filename="Language Explorer/Configuration/UtilityCatalogInclude.xml"/>
 		</command>
-		<command id="CmdPageSetup" label="Page Setup..." message="PageSetup"/>
+		<command id="CmdArchiveWithRamp" label="_Archive with RAMP (SIL)..." message="ArchiveWithRamp" icon="ArchiveWithRamp"/>
+    <command id="CmdPageSetup" label="Page Setup..." message="PageSetup"/>
 		<command id="CmdImportSFMLexicon" label="_Standard Format Lexicon..." message="SFMImport"/>
 		<command id="CmdImportSFMNotebook" label="Standard Format _Notebook data..." message="LaunchConnectedDialog">
 			<parameters>
@@ -455,6 +456,8 @@
 				<item command="CmdDeleteProject"/>
 				<item command="CmdCreateProjectShortcut"/>
 			</menu>
+      <item label="-" translate="do not translate"/>
+      <item command="CmdArchiveWithRamp" />
 			<item label="-" translate="do not translate"/>
 			<item command="CmdPageSetup"/>
 			<item command="CmdPrint"/>
@@ -909,7 +912,7 @@ I (RandyR) brought them into this file, just to keep track of them for the time 
 		<imageList assemblyPath="xCore.dll" class="XCore.IconHolder" field="largeImages" size="large" labels="Ticker"/>
 		<imageList assemblyPath="xWorks.dll" class=" SIL.FieldWorks.XWorks.ImageHolder" field="largeImages" size="large" labels="BrowseView, EditView, DocumentView, NoFilter, DefaultSort, GenericTool, GenericTool2, folder-lexicon, folder-lists, folder-texts, folder-words, folder-grammar"/>
 		<imageList assemblyPath="xWorks.dll" class=" SIL.FieldWorks.XWorks.ImageHolder" field="smallImages" size="small" labels="BrowseView, EditView, DocumentView, NoFilter, SimpleFilter, DefaultSort, GenericTool, Delete, SpecialCharacter, ExternalLink, SideBySideView"/>
-		<imageList assemblyPath="xWorks.dll" class=" SIL.FieldWorks.XWorks.ImageHolder" field="smallCommandImages" size="small" labels="NewProject, OpenProject, SaveProject, historyBack, historyForward, Refresh, MenuWidget, Undo, Redo, Cut, Copy, Paste, MoveUp, MoveRight, MoveDown, MoveLeft, columnChooser"/>
+		<imageList assemblyPath="xWorks.dll" class=" SIL.FieldWorks.XWorks.ImageHolder" field="smallCommandImages" size="small" labels="NewProject, OpenProject, SaveProject, historyBack, historyForward, Refresh, MenuWidget, Undo, Redo, Cut, Copy, Paste, MoveUp, MoveRight, MoveDown, MoveLeft, columnChooser, ArchiveWithRamp"/>
 		<imageList assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.LexEntryImages" field="buttonImages" size="small" labels="majorEntry, minorEntry, subentry, goToEntry, reversalEntry, gotoReversalEntry"/>
 		<imageList assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordClerkImages" field="buttonImages" size="small" labels="firstRecord, lastRecord, previousRecord, nextRecord, syncSendReceive, syncObtain, chorus, syncSendReceiveFirst"/>
 		<imageList assemblyPath="DetailControls.dll" class="SIL.FieldWorks.Common.Framework.DetailControls.DataTreeImages" field="nodeImages" size="small" labels="sequence, collection, atomic"/>

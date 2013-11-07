@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tmx version="1.4">
+	<header srclang="es" adminlang="en" creationtool="Palaso Localization Manager" creationtoolversion="1.1.4972.16808" segtype="block" datatype="unknown" o-tmf="PalasoTMXUtils">
+		<prop type="x-appversion">8.0.4.41508</prop>
+		<prop type="x-hardlinebreakreplacement">\n</prop>
+	</header>
+	<body>
+		<tu tuid="DialogBoxes.ArchivingDlg.CancellingMsg">
+			<tuv xml:lang="en">
+				<seg>Canceling...</seg>
+			</tuv>
+			<tuv xml:lang="es">
+				<seg>Cancelando...</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg.CopyingFilesMsg">
+			<tuv xml:lang="en">
+				<seg>Copying files</seg>
+			</tuv>
+			<tuv xml:lang="es">
+				<seg>Copiando archivos</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg.CreatingArchiveErrorMsg">
+			<tuv xml:lang="en">
+				<seg>There was an error attempting to create the RAMP file.</seg>
+			</tuv>
+			<tuv xml:lang="es">
+				<seg>Hubo un error al intentar crear el archivo de RAMP.</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg.CreatingInternalReapMetsFileErrorMsg">
+			<tuv xml:lang="en">
+				<seg>There was an error attempting to create the RAMP/REAP mets file.</seg>
+			</tuv>
+			<tuv xml:lang="es">
+				<seg>Hubo un error al intentar crear el archivo de mets RAMP/REAP.</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg.CreatingZipFileErrorMsg">
+			<tuv xml:lang="en">
+				<seg>There was a problem starting process to create zip file.</seg>
+			</tuv>
+			<tuv xml:lang="es">
+				<seg>Hubo un problema al intentar iniciar el proceso para crear el archivo zip.</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg.OverviewText">
+			<note>The first occurrence of the word 'RAMP' will be made a hyperlink to the RAMP website. If the word 'RAMP' is not found, the text will not contain that hyperlink.</note>
+			<tuv xml:lang="en">
+				<seg>RAMP is a utility for entering metadata and uploading submissions to SIL's internal archive, REAP. If you have access to this archive, this tool will help you use RAMP to archive your {0} data. {1} When the RAMP package has been created, you can  launch RAMP and enter any additional information before doing the actual submission.</seg>
+			</tuv>
+			<tuv xml:lang="es">
+				<seg>RAMP es una utilidad para introducir metadatos y subir información al archivo interno del SIL, REAP. Si tiene acceso a este archivo, esta herramienta le ayudará a utilizar RAMP para archivar sus sesiones de {0}. {1}. A continuación, usted puede ejecutar RAMP para completar cualquier información adicional y subir el paquete.</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg.PrearchivingStatusMsg">
+			<tuv xml:lang="en">
+				<seg>The following files will be added to the archive.</seg>
+			</tuv>
+			<tuv xml:lang="es">
+				<seg>Los siguientes archivos se agregarán a la colección permanente de archivos.</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg.PreparingFilesMsg">
+			<tuv xml:lang="en">
+				<seg>Analyzing component files</seg>
+			</tuv>
+			<tuv xml:lang="es">
+				<seg>Analizando archivos de componente</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg.RampNotFoundMsg">
+			<tuv xml:lang="en">
+				<seg>The RAMP program cannot be found!</seg>
+			</tuv>
+			<tuv xml:lang="es">
+				<seg>No se encuentra el pograma RAMP.</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg.ReadyToCallRampMsg">
+			<tuv xml:lang="en">
+				<seg>Ready to hand the package to RAMP</seg>
+			</tuv>
+			<tuv xml:lang="es">
+				<seg>Listo para transferir el paquete a RAMP</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg.SavingFilesInRAMPMsg">
+			<tuv xml:lang="en">
+				<seg>Saving files in RAMP package</seg>
+			</tuv>
+			<tuv xml:lang="es">
+				<seg>Guardando archivos en el paquete RAMP</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg.SearchingForRampMsg">
+			<tuv xml:lang="en">
+				<seg>Searching for the RAMP program...</seg>
+			</tuv>
+			<tuv xml:lang="es">
+				<seg>Buscando el programa RAMP...</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg.StartingRampErrorMsg">
+			<tuv xml:lang="en">
+				<seg>There was an error attempting to open the archive package in RAMP.</seg>
+			</tuv>
+			<tuv xml:lang="es">
+				<seg>Hubo un error al intentar abrir el paquete de archivo en RAMP.</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg.WindowTitle">
+			<note>Parameter is application name</note>
+			<tuv xml:lang="en">
+				<seg>{0}: Archive with RAMP (SIL Only)</seg>
+			</tuv>
+			<tuv xml:lang="es">
+				<seg>{0}: Archivar con RAMP (sólo SIL)</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg._buttonCancel">
+			<tuv xml:lang="en">
+				<seg>Cancel</seg>
+			</tuv>
+			<tuv xml:lang="es">
+				<seg>Cancelar</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg._buttonCreatePackage">
+			<tuv xml:lang="en">
+				<seg>&amp;1) Create Package</seg>
+			</tuv>
+			<tuv xml:lang="es">
+				<seg>&amp;1) Crear paquete</seg>
+			</tuv>
+		</tu>
+		<tu tuid="DialogBoxes.ArchivingDlg._buttonLaunchRamp">
+			<tuv xml:lang="en">
+				<seg>&amp;2) Launch RAMP</seg>
+			</tuv>
+			<tuv xml:lang="es">
+				<seg>&amp;2) Iniciar RAMP</seg>
+			</tuv>
+		</tu>
+	</body>
+</tmx>

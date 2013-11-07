@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2010, SIL International. All Rights Reserved.
-// <copyright from='2010' to='2010' company='SIL International'>
-//		Copyright (c) 2010, SIL International. All Rights Reserved.
+#region // Copyright (c) 2013, SIL International. All Rights Reserved.
+// <copyright from='2010' to='2013' company='SIL International'>
+//		Copyright (c) 2013, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -12,6 +12,7 @@
 // Responsibility: FW Team
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -66,7 +67,41 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the version of the application.
+		/// Gets the version of the application in the format x.x.x.x.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public string NumericAppVersion
+		{
+			get
+			{
+				object[] attributes = m_assembly.GetCustomAttributes(typeof(AssemblyFileVersionAttribute), false);
+				string version = (attributes.Length > 0) ? ((AssemblyFileVersionAttribute)attributes[0]).Version : Application.ProductVersion;
+				int ichSpace = version.IndexOf(' ');
+				return (ichSpace > 0) ? version.Remove(ichSpace) : version;
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the version of the application in the format x.x.x.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public string ShortNumericAppVersion
+		{
+			get
+			{
+				var version = NumericAppVersion;
+				while (version.Count(c => c == '.') > 2)
+					version = version.Substring(0, version.LastIndexOf('.'));
+
+				return version;
+			}
+		}
+
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets a user-friendly version of the application.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public string ApplicationVersion

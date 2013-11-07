@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2010, SIL International. All Rights Reserved.
-// <copyright from='2003' to='2010' company='SIL International'>
-//		Copyright (c) 2010, SIL International. All Rights Reserved.
+#region // Copyright (c) 2013, SIL International. All Rights Reserved.
+// <copyright from='2003' to='2013' company='SIL International'>
+//		Copyright (c) 2013, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -16,6 +16,7 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
 using Microsoft.Win32;
@@ -24,11 +25,16 @@ using System.Drawing;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Text;
+using L10NSharp;
+using SIL.Archiving;
+using SIL.CoreImpl;
+using SIL.FieldWorks.Common.UIAdapters;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.Application;
+using SIL.FieldWorks.XWorks.Archiving;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
 using SIL.FieldWorks.Common.Controls;
@@ -40,6 +46,7 @@ using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
+using Logger = SIL.Utils.Logger;
 #if !__MonoCS__
 using NetSparkle;
 #endif
@@ -85,6 +92,8 @@ namespace SIL.FieldWorks.XWorks
 		protected List<IVwVirtualHandler> m_installedVirtualHandlers;
 
 		static bool m_fInUndoRedo; // true while executing an Undo/Redo command.
+
+		private static LocalizationManager s_localizationMgr;
 
 		/// <summary>
 		/// The stylesheet used for all views in this window.
@@ -1129,6 +1138,54 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 			m_delegate.FileNew(this);
 			return true;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Update Archive With RAMP menu item
+		/// </summary>
+		/// <param name="args">the toolbar/menu item properties</param>
+		/// <returns>true if handled</returns>
+		/// ------------------------------------------------------------------------------------
+		public bool OnUpdateArchiveWithRamp(object args)
+		{
+			TMItemProperties itemProps = args as TMItemProperties;
+			if (itemProps != null)
+			{
+				itemProps.Visible = !(MiscUtils.IsMono);
+				itemProps.Update = true;
+				return true;
+			}
+			return false;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handle click on Archive With RAMP menu item
+		/// </summary>
+		/// <param name="command">Not used</param>
+		/// <returns>true (handled)</returns>
+		/// ------------------------------------------------------------------------------------
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handle click on Archive With RAMP menu item
+		/// </summary>
+		/// <param name="command">Not used</param>
+		/// <returns>true (handled)</returns>
+		/// ------------------------------------------------------------------------------------
+		public bool OnArchiveWithRamp(object command)
+		{
+			CheckDisposed();
+
+			// show the RAMP dialog
+			var filesToArchive = m_app.FwManager.ArchiveProjectWithRamp(m_app, this);
+
+			// if there are no files to archive, return now.
+			if((filesToArchive == null) || (filesToArchive.Count == 0))
+				return true;
+
+			ReapRamp ramp = new ReapRamp();
+			return ramp.ArchiveNow(this, MainMenuStrip.Font, Icon, filesToArchive, m_mediator, m_app, Cache);
 		}
 
 		/// ------------------------------------------------------------------------------------
