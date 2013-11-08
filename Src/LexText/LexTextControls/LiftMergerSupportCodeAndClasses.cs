@@ -2594,8 +2594,16 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				ILexReference lr = CreateNewLexReference();
 				lrt.MembersOC.Add(lr);
-				lr.TargetsRS.Add(rel.Target);
-				lr.TargetsRS.Add(rel.CmObject);
+				if(ObjectIsFirstInRelation(rel.RelationType, lrt))
+				{
+					lr.TargetsRS.Add(rel.Target);
+					lr.TargetsRS.Add(rel.CmObject);
+				}
+				else
+				{
+					lr.TargetsRS.Add(rel.CmObject);
+					lr.TargetsRS.Add(rel.Target);
+				}
 				StoreRelationResidue(lr, rel);
 			}
 		}
@@ -3577,6 +3585,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			   var firstTargetHvo = lr.TargetsRS.First().Hvo;
 			   if(firstTargetHvo == rgRelation[0].ObjectHvo) //if the target of the first relation is the first item in the list
 			   {
+					// Store the original contents of the LexReference to track removals
+					var relationsBeforeAdditions = new List<ICmObject>(lr.TargetsRS.AsEnumerable());
 				   foreach(var pendingRelation in rgRelation)
 				   {
 					   var pendingObj = GetObjectForId(pendingRelation.TargetHvo);
@@ -3585,14 +3595,33 @@ namespace SIL.FieldWorks.LexText.Controls
 																		lrt.Abbreviation, lrt.Name))
 					   {
 						   if(!lr.TargetsRS.Contains(pendingObj))
-							   lr.TargetsRS.Add(pendingObj); //add each item which is not yet in this list
+							{
+								lr.TargetsRS.Add(pendingObj); // Add each item which is not yet in this list
+							}
+							else
+							{
+								relationsBeforeAdditions.Remove(pendingObj); // The object was found in the relation
+							}
 					   }
 					   else
 					   {
+							relationsBeforeAdditions.Remove(pendingObj); // The pending relation wasn't for this LexRef, so don't store pendingObj for removal
 						   m_rgPendingTreeTargets.Add(pendingRelation);
 					   }
 				   }
 				   originalLexRefs.Remove(lr);
+					// Consider removing every object that wasn't matched from the tree relationship
+				   foreach(var unusedObject in relationsBeforeAdditions)
+				   {
+						// Check the LexReference for validity as removing an object could trigger its deletion.
+						// We will receive the relation with the head of the tree and the relation with the children in separate method calls.
+						// Skipping the removal of an unusedObject when the Hvo matches the CmObject that owns the relations prevents removing the head
+						// when processing the children.
+						if(lr.IsValidObject && unusedObject.Hvo != rgRelation[0].CmObject.Hvo)
+						{
+							lr.TargetsRS.Remove(unusedObject);
+						}
+				   }
 				   return true;
 			   }
 		   }

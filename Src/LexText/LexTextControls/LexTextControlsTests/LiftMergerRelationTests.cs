@@ -748,8 +748,7 @@ namespace LexTextControlsTests
 				"<gloss lang='en'><text>leg</text></gloss>",
 				"</sense>",
 				"</entry>",
-				"<entry dateCreated='2012-04-19T17:49:04Z' dateModified='2012-04-19T18:15:44Z' id='hand_c79278be-d698-4def-b104-c4303615683f' guid='c79278be-d698-4def-b104-c4303615683f'>"
-				,
+				"<entry dateCreated='2012-04-19T17:49:04Z' dateModified='2012-04-19T18:15:44Z' id='hand_c79278be-d698-4def-b104-c4303615683f' guid='c79278be-d698-4def-b104-c4303615683f'>",
 				"<lexical-unit>",
 				"<form lang='en'><text>hand</text></form>",
 				"</lexical-unit>",
@@ -800,8 +799,7 @@ namespace LexTextControlsTests
 				"<range id='lexical-relation' href='???'/>",
 				"    </ranges>",
 				"  </header>",
-				"<entry dateCreated='2012-04-19T17:47:25Z' dateModified='2012-04-19T18:15:32Z' id='arm_835b9236-c6a4-48fe-b66e-673e40ff040d' guid='835b9236-c6a4-48fe-b66e-673e40ff040d'>"
-				,
+				"<entry dateCreated='2012-04-19T17:47:25Z' dateModified='2012-04-19T18:15:32Z' id='arm_835b9236-c6a4-48fe-b66e-673e40ff040d' guid='835b9236-c6a4-48fe-b66e-673e40ff040d'>",
 				"<lexical-unit>",
 				"<form lang='en'><text>arm</text></form>",
 				"</lexical-unit>",
@@ -812,8 +810,7 @@ namespace LexTextControlsTests
 				"<relation type='Part' ref='72c632c2-98ad-4f97-b130-2a32992254e3'/>",
 				"</sense>",
 				"</entry>",
-				"<entry dateCreated='2012-04-19T17:49:04Z' dateModified='2012-04-19T18:15:45Z' id='body_a79278be-d698-4def-b104-c4303615683f' guid='a79278be-d698-4def-b104-c4303615683f'>"
-				,
+				"<entry dateCreated='2012-04-19T17:49:04Z' dateModified='2012-04-19T18:15:45Z' id='body_a79278be-d698-4def-b104-c4303615683f' guid='a79278be-d698-4def-b104-c4303615683f'>",
 				"<lexical-unit>",
 				"<form lang='en'><text>body</text></form>",
 				"</lexical-unit>",
@@ -824,8 +821,7 @@ namespace LexTextControlsTests
 				"<relation type='Part' ref='62c632c2-98ad-4f97-b130-2a32992254e3'/>",
 				"</sense>",
 				"</entry>",
-				"<entry dateCreated='2012-04-19T17:49:04Z' dateModified='2012-04-19T18:16:44Z' id='leg_b79278be-d698-4def-b104-c4303615683f' guid='b79278be-d698-4def-b104-c4303615683f'>"
-				,
+				"<entry dateCreated='2012-04-19T17:49:04Z' dateModified='2012-04-19T18:16:44Z' id='leg_b79278be-d698-4def-b104-c4303615683f' guid='b79278be-d698-4def-b104-c4303615683f'>",
 				"<lexical-unit>",
 				"<form lang='en'><text>leg</text></form>",
 				"</lexical-unit>",
@@ -835,8 +831,7 @@ namespace LexTextControlsTests
 				"<relation type='Whole' ref='52c632c2-98ad-4f97-b130-2a32992254e3'/>",
 				"</sense>",
 				"</entry>",
-				"<entry dateCreated='2012-04-19T17:49:04Z' dateModified='2012-04-19T18:15:45Z' id='hand_c79278be-d698-4def-b104-c4303615683f' guid='c79278be-d698-4def-b104-c4303615683f'>"
-				,
+				"<entry dateCreated='2012-04-19T17:49:04Z' dateModified='2012-04-19T18:15:45Z' id='hand_c79278be-d698-4def-b104-c4303615683f' guid='c79278be-d698-4def-b104-c4303615683f'>",
 				"<lexical-unit>",
 				"<form lang='en'><text>hand</text></form>",
 				"</lexical-unit>",
@@ -879,6 +874,134 @@ namespace LexTextControlsTests
 								 "Incorrect number of targets in the leg sense.");
 			Assert.AreEqual(bodySense.LexSenseReferences.First(), legSense.LexSenseReferences.First(), "LexReferences of Body and Leg should match.");
 			Assert.AreEqual(armSense.LexSenseReferences.First(), legSense.LexSenseReferences.First(), "LexReferences of Arm and Leg should match.");
+		}
+
+		// This lift data contains 'a' 'b' and 'c' entries with 'a' being a whole of 2 parts 'b' and 'c' (whole/part relation)
+		private static string[] treeLiftDataBase = new[]
+			{
+				"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
+				"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
+				"  <header>",
+				"    <fields>",
+				"    </fields>",
+				"  </header>",
+				"<entry dateCreated='2012-04-19T17:47:25Z' dateModified='2012-04-19T18:15:32Z' id='arm_835b9236-c6a4-48fe-b66e-673e40ff040d' guid='835b9236-c6a4-48fe-b66e-673e40ff040d'>",
+				"<lexical-unit>",
+				"<form lang='en'><text>a</text></form>",
+				"</lexical-unit>",
+				"<trait  name='morph-type' value='stem'/>",
+				"<sense id='5ca96ad0-cb18-4ddc-be8e-3547fc87221f'>",
+				"<gloss lang='en'><text>a</text></gloss>",
+				"<relation type='Part' ref='52c632c2-98ad-4f97-b130-2a32992254e3'/>",
+				"<relation type='Part' ref='62c632c2-98ad-4f97-b130-2a32992254e3'/>",
+				"</sense>",
+				"</entry>",
+				"<entry dateCreated='2012-04-19T17:49:04Z' dateModified='2012-04-19T18:15:45Z' id='body_a79278be-d698-4def-b104-c4303615683f' guid='a79278be-d698-4def-b104-c4303615683f'>",
+				"<lexical-unit>",
+				"<form lang='en'><text>b</text></form>",
+				"</lexical-unit>",
+				"<trait  name='morph-type' value='stem'/>",
+				"<sense id='52c632c2-98ad-4f97-b130-2a32992254e3'>",
+				"<gloss lang='en'><text>b</text></gloss>",
+				"<relation type='Whole' ref='5ca96ad0-cb18-4ddc-be8e-3547fc87221f'/>",
+				"</sense>",
+				"</entry>",
+				"<entry dateCreated='2012-04-19T17:49:04Z' dateModified='2012-04-19T18:16:44Z' id='leg_b79278be-d698-4def-b104-c4303615683f' guid='b79278be-d698-4def-b104-c4303615683f'>",
+				"<lexical-unit>",
+				"<form lang='en'><text>c</text></form>",
+				"</lexical-unit>",
+				"<trait  name='morph-type' value='stem'/>",
+				"<sense id='62c632c2-98ad-4f97-b130-2a32992254e3'>",
+				"<gloss lang='en'><text>c</text></gloss>",
+				"<relation type='Whole' ref='5ca96ad0-cb18-4ddc-be8e-3547fc87221f'/>",
+				"</sense>",
+				"</entry>",
+				"</lift>"
+			};
+
+		// This lift data modifies treeLiftDataBase adding a 'd' entry and changing 'c' to have 'd' as a parent while 'b' still has 'a'
+		private static string[] treeLiftDataReparented = new[]
+			{
+				"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
+				"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
+				"  <header>",
+				"    <fields>",
+				"    </fields>",
+				"  </header>",
+				"<entry dateCreated='2012-04-19T17:47:25Z' dateModified='2013-04-19T18:15:32Z' id='a_835b9236-c6a4-48fe-b66e-673e40ff040d' guid='835b9236-c6a4-48fe-b66e-673e40ff040d'>",
+				"<lexical-unit>",
+				"<form lang='en'><text>a</text></form>",
+				"</lexical-unit>",
+				"<trait  name='morph-type' value='stem'/>",
+				"<sense id='5ca96ad0-cb18-4ddc-be8e-3547fc87221f'>",
+				"<gloss lang='en'><text>a</text></gloss>",
+				"<relation type='Part' ref='52c632c2-98ad-4f97-b130-2a32992254e3'/>",
+				"</sense>",
+				"</entry>",
+				"<entry dateCreated='2012-04-19T17:49:04Z' dateModified='2013-04-19T18:15:45Z' id='b_a79278be-d698-4def-b104-c4303615683f' guid='a79278be-d698-4def-b104-c4303615683f'>",
+				"<lexical-unit>",
+				"<form lang='en'><text>b</text></form>",
+				"</lexical-unit>",
+				"<trait  name='morph-type' value='stem'/>",
+				"<sense id='52c632c2-98ad-4f97-b130-2a32992254e3'>",
+				"<gloss lang='en'><text>b</text></gloss>",
+				"<relation type='Whole' ref='5ca96ad0-cb18-4ddc-be8e-3547fc87221f'/>",
+				"</sense>",
+				"</entry>",
+				"<entry dateCreated='2012-04-19T17:49:04Z' dateModified='2013-04-19T18:16:44Z' id='c_b79278be-d698-4def-b104-c4303615683f' guid='b79278be-d698-4def-b104-c4303615683f'>",
+				"<lexical-unit>",
+				"<form lang='en'><text>c</text></form>",
+				"</lexical-unit>",
+				"<trait  name='morph-type' value='stem'/>",
+				"<sense id='62c632c2-98ad-4f97-b130-2a32992254e3'>",
+				"<gloss lang='en'><text>c</text></gloss>",
+				"<relation type='Whole' ref='3b3632c2-98ad-4f97-b130-2a32992254e3'/>",
+				"</sense>",
+				"</entry>",
+				"<entry dateCreated='2013-04-19T17:49:04Z' dateModified='2013-04-19T18:16:44Z' id='d_a87278be-d698-4def-b104-c4303615683f' guid='a87278be-d698-4def-b104-c4303615683f'>",
+				"<lexical-unit>",
+				"<form lang='en'><text>d</text></form>",
+				"</lexical-unit>",
+				"<trait  name='morph-type' value='stem'/>",
+				"<sense id='3b3632c2-98ad-4f97-b130-2a32992254e3'>",
+				"<gloss lang='en'><text>d</text></gloss>",
+				"<relation type='Part' ref='62c632c2-98ad-4f97-b130-2a32992254e3'/>",
+				"</sense>",
+				"</entry>",
+				"</lift>"
+			};
+
+		[Test]
+		public void TestImportDoesNotConfuseModifiedTreeRelations()
+		{
+			SetWritingSystems("fr");
+
+			CreateNeededStyles();
+
+			var senseRepo = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
+
+			var sOrigFile = CreateInputFile(treeLiftDataBase);
+			var logFile = TryImport(sOrigFile, CreateInputRangesFile(treeLiftRange), FlexLiftMerger.MergeStyle.MsKeepNew, 3);
+			var aSense = senseRepo.GetObject(new Guid("5ca96ad0-cb18-4ddc-be8e-3547fc87221f"));
+			var bSense = senseRepo.GetObject(new Guid("52c632c2-98ad-4f97-b130-2a32992254e3"));
+			var cSense = senseRepo.GetObject(new Guid("62c632c2-98ad-4f97-b130-2a32992254e3"));
+
+			Assert.AreEqual(1, aSense.LexSenseReferences.Count(), "Too many LexSenseReferences, the parts were split.");
+			Assert.AreEqual(3, aSense.LexSenseReferences.First().TargetsRS.Count,
+								 "Incorrect number of references, part relations not imported correctly.");
+
+			var sNewFile = CreateInputFile(treeLiftDataReparented);
+			TryImport(sNewFile, CreateInputRangesFile(treeLiftRange), FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 4);
+			var dSense = senseRepo.GetObject(new Guid("3b3632c2-98ad-4f97-b130-2a32992254e3"));
+			//There should be 1 LexSenseReference for the Whole/Part relationship and each involved sense should share it.
+			Assert.AreEqual(1, aSense.LexSenseReferences.Count(), "Too many LexSenseReferences, the parts were split.");
+			Assert.AreEqual(2, aSense.LexSenseReferences.First().TargetsRS.Count,
+								 "Incorrect number of references, part relations not imported correctly.");
+			Assert.AreEqual(1, cSense.LexSenseReferences.Count(), "Incorrect number of references in the c sense.");
+			Assert.AreEqual(2, cSense.LexSenseReferences.First().TargetsRS.Count,
+								 "Incorrect number of targets in the c senses reference.");
+			Assert.AreEqual(cSense.LexSenseReferences.First(), dSense.LexSenseReferences.First(), "c and d should be in the same relation");
+			Assert.AreEqual(1, dSense.LexSenseReferences.Count(), "dSense picked up a phantom reference.");
 		}
 
 		// Defines a lift file with two entries 'Bother' and 'me'.
