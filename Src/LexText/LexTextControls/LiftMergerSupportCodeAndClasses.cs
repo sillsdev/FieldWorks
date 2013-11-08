@@ -2454,7 +2454,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		public void ProcessPendingRelations(IProgress progress)
 		{
 			var lexRefRepo = m_cache.ServiceLocator.GetInstance<ILexReferenceRepository>();
+			var lexEntryRefRepo = m_cache.ServiceLocator.GetInstance<ILexEntryRefRepository>();
 			// Collection of the lexical references from before the import. Items remaining here may be removed for MergeStyle.MsKeepOnlyNew
+			var originalLexEntryRefs = new List<ILexEntryRef>(lexEntryRefRepo.AllInstances());
 			var originalLexRefs = new List<ILexReference>(lexRefRepo.AllInstances());
 			// relationMap is used to group collection relations from the lift file into a structure useful for creating
 			// correct LexRefType and LexReference objects in our model.
@@ -2494,7 +2496,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			StorePendingCollectionRelations(originalLexRefs, progress, relationMap);
 			StorePendingTreeRelations(originalLexRefs, progress);
-			StorePendingLexEntryRefs(progress);
+			StorePendingLexEntryRefs(originalLexEntryRefs, progress);
 			// We can now store residue everywhere since any bogus relations have been added
 			// to residue.
 			progress.Message = LexTextControls.ksWritingAccumulatedResidue;
@@ -2504,7 +2506,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (m_msImport == MergeStyle.MsKeepOnlyNew)
 			{
 				progress.Message = LexTextControls.ksDeletingUnwantedEntries;
-				GatherUnwantedObjects(originalLexRefs); //at this point any LexRefs which haven't been matched are dead.
+				GatherUnwantedObjects(originalLexEntryRefs, originalLexRefs); //at this point any LexRefs which haven't been matched are dead.
 				DeleteUnwantedObjects();
 			}
 			// Now that the relations have all been set, it's safe to set the entry
@@ -2514,7 +2516,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				pmt.SetModifyTime();
 		}
 
-		private void StorePendingLexEntryRefs(IProgress progress)
+		private void StorePendingLexEntryRefs(List<ILexEntryRef> originalLexEntryRefs, IProgress progress)
 		{
 			// Now create the LexEntryRef type links.
 			if (m_rgPendingLexEntryRefs.Count > 0)
@@ -2534,7 +2536,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					}
 					else
 					{
-						ProcessLexEntryRefs(rgRefs, missingRefs);
+						ProcessLexEntryRefs(originalLexEntryRefs, rgRefs, missingRefs);
 						i += rgRefs.Count;
 					}
 					progress.Position = i;
@@ -2714,7 +2716,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			return true;
 		}
 
-		private void ProcessLexEntryRefs(List<PendingLexEntryRef> rgRefs, List<Tuple<string, string>> missingRefs)
+		private void ProcessLexEntryRefs(List<ILexEntryRef> originalRefs, List<PendingLexEntryRef> rgRefs, List<Tuple<string, string>> missingRefs)
 		{
 			if (rgRefs.Count == 0)
 				return;
@@ -2816,8 +2818,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (MatchLexEntryRef(candidate, refType, complexEntryTypes, variantEntryTypes,
 					summary, componentLexemes, primaryLexemes))
 				{
-					ler = candidate;
-					break;
+					ler = ler ?? candidate;
+					originalRefs.Remove(candidate);
 				}
 			}
 
@@ -3700,11 +3702,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			return relation;
 		}
 
-		private void GatherUnwantedObjects(IEnumerable<ILexReference> unusedLexRefs)
+		private void GatherUnwantedObjects(List<ILexEntryRef> unusedLexEntryRefs, IEnumerable<ILexReference> unusedLexRefs)
 		{
 			foreach(var lexRef in unusedLexRefs)
 			{
 				m_deletedObjects.Add(lexRef.Hvo);
+			}
+			foreach(var lexEntryRef in unusedLexEntryRefs)
+			{
+				m_deletedObjects.Add(lexEntryRef.Hvo);
 			}
 			foreach(var le in m_cache.LangProject.LexDbOA.Entries)
 			{

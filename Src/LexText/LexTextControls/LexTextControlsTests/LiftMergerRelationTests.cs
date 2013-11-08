@@ -1242,5 +1242,281 @@ namespace LexTextControlsTests
 			var antType = refTypeRepo.AllInstances().FirstOrDefault(refType => refType.Name.BestAnalysisAlternative.Text.Equals("Antonym"));
 			Assert.That(antType != null && antType.MembersOC.Contains(bSense.LexSenseReferences.First()), "Antonym incorrectly imported.");
 		}
+
+		private static string[] twoEntryWithVariantComplexFormLift = new[]
+			{
+				"<?xml version='1.0' encoding='utf-8'?>",
+				"<lift producer='SIL.FLEx 8.0.4.41520' version='0.13'>",
+				"	<header></header>",
+				"	<entry dateCreated='2013-09-20T19:34:26Z' dateModified='2013-09-20T19:34:26Z' guid='40a9574d-2d13-4d30-9eab-9a6d84bf29f8' id='e_40a9574d-2d13-4d30-9eab-9a6d84bf29f8'>",
+				"		<lexical-unit>",
+				"			<form lang='fr'>",
+				"				<text>e</text>",
+				"			</form>",
+				"		</lexical-unit>",
+				"		<relation order='0' ref='a_ac828ef4-9a18-4802-b095-11cca00947db' type='_component-lexeme'>",
+				"			<trait name='variant-type' value='' />",
+				"		</relation>",
+				"		<trait name='morph-type' value='stem' />",
+				"	</entry>",
+				"	<entry dateCreated='2013-09-20T16:25:23Z' dateModified='2013-09-20T19:01:59Z' guid='ac828ef4-9a18-4802-b095-11cca00947db' id='a_ac828ef4-9a18-4802-b095-11cca00947db'>",
+				"		<lexical-unit>",
+				"			<form lang='fr'>",
+				"				<text>a</text>",
+				"			</form>",
+				"		</lexical-unit>",
+				"		<sense id='91eb7dc2-4057-4e7c-88c3-a81536a38c3e' />",
+				"		<trait name='morph-type' value='stem' />",
+				"	</entry>",
+				"</lift>"
+			};
+
+		private static string[] twoEntryWithVariantRefRemovedLift = new[]
+			{
+				"<?xml version='1.0' encoding='utf-8'?>",
+				"<lift producer='SIL.FLEx 8.0.4.41520' version='0.13'>",
+				"	<header></header>",
+				"	<entry dateCreated='2013-09-20T19:34:26Z' dateModified='2013-09-20T19:35:26Z' guid='40a9574d-2d13-4d30-9eab-9a6d84bf29f8' id='e_40a9574d-2d13-4d30-9eab-9a6d84bf29f8'>",
+				"		<lexical-unit>",
+				"			<form lang='fr'>",
+				"				<text>e</text>",
+				"			</form>",
+				"		</lexical-unit>",
+				"		<relation order='0' ref='' type='_component-lexeme'>",
+				"			<trait name='variant-type' value='' />",
+				"		</relation>",
+				"		<trait name='morph-type' value='stem' />",
+				"	</entry>",
+				"	<entry dateCreated='2013-09-20T16:25:23Z' dateModified='2013-09-20T19:35:26Z' guid='ac828ef4-9a18-4802-b095-11cca00947db' id='a_ac828ef4-9a18-4802-b095-11cca00947db'>",
+				"		<lexical-unit>",
+				"			<form lang='fr'>",
+				"				<text>a</text>",
+				"			</form>",
+				"		</lexical-unit>",
+				"		<sense id='91eb7dc2-4057-4e7c-88c3-a81536a38c3e' />",
+				"		<trait name='morph-type' value='stem' />",
+				"	</entry>",
+				"</lift>"
+			};
+
+		[Test]
+		public void TestDeleteRelationRefOnVariantComplexFormWorks()
+		{
+			SetWritingSystems("fr");
+
+			CreateNeededStyles();
+
+			var entryRepo = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+			var senseRepo = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
+			var refTypeRepo = Cache.ServiceLocator.GetInstance<ILexRefTypeRepository>();
+
+			var sOrigFile = CreateInputFile(twoEntryWithVariantComplexFormLift);
+			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 2);
+			var eEntry = entryRepo.GetObject(new Guid("40a9574d-2d13-4d30-9eab-9a6d84bf29f8"));
+			var aEntry = entryRepo.GetObject(new Guid("ac828ef4-9a18-4802-b095-11cca00947db"));
+			Assert.AreEqual(1, eEntry.VariantEntryRefs.Count(), "No VariantEntryRefs found when expected, import of lift data during test setup failed.");
+			Assert.AreEqual(1, aEntry.VariantFormEntries.Count(), "Variant form Entry not found when expected, import of lift data during test setup failed.");
+
+			var sNewFile = CreateInputFile(twoEntryWithVariantRefRemovedLift);
+			logFile = TryImport(sNewFile, null, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 2);
+			// An empty VariantEntryRef can not be unambiguously identified, so a new empty one is
+			// created. This results in stable lift (doesn't change on round trip), but the fwdata
+			// will change on round trip without real changes. This is not what we prefer, but think
+			// it is OK for now. Nov 2013
+			Assert.AreEqual(1, eEntry.VariantEntryRefs.Count(), "VariantEntryRef should remain after lift import.");
+			Assert.AreEqual(0, aEntry.VariantFormEntries.Count(), "VariantForm Entry was not deleted during lift import."); // The reference was removed so the Entries collection should be empty
+		}
+
+		private static string[] twoEntryWithVariantRemovedLift = new[]
+			{
+				"<?xml version='1.0' encoding='utf-8'?>",
+				"<lift producer='SIL.FLEx 8.0.4.41520' version='0.13'>",
+				"	<header></header>",
+				"	<entry dateCreated='2013-09-20T19:34:26Z' dateModified='2013-09-20T19:35:26Z' guid='40a9574d-2d13-4d30-9eab-9a6d84bf29f8' id='e_40a9574d-2d13-4d30-9eab-9a6d84bf29f8'>",
+				"		<lexical-unit>",
+				"			<form lang='fr'>",
+				"				<text>e</text>",
+				"			</form>",
+				"		</lexical-unit>",
+				"		<trait name='morph-type' value='stem' />",
+				"	</entry>",
+				"	<entry dateCreated='2013-09-20T16:25:23Z' dateModified='2013-09-20T19:35:26Z' guid='ac828ef4-9a18-4802-b095-11cca00947db' id='a_ac828ef4-9a18-4802-b095-11cca00947db'>",
+				"		<lexical-unit>",
+				"			<form lang='fr'>",
+				"				<text>a</text>",
+				"			</form>",
+				"		</lexical-unit>",
+				"		<sense id='91eb7dc2-4057-4e7c-88c3-a81536a38c3e' />",
+				"		<trait name='morph-type' value='stem' />",
+				"	</entry>",
+				"</lift>"
+			};
+
+		[Test]
+		public void TestDeleteVariantComplexFormWorks()
+		{
+			SetWritingSystems("fr");
+
+			CreateNeededStyles();
+
+			var entryRepo = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+			var senseRepo = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
+			var refTypeRepo = Cache.ServiceLocator.GetInstance<ILexRefTypeRepository>();
+
+			var sOrigFile = CreateInputFile(twoEntryWithVariantComplexFormLift);
+			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 2);
+			var eEntry = entryRepo.GetObject(new Guid("40a9574d-2d13-4d30-9eab-9a6d84bf29f8"));
+			var aEntry = entryRepo.GetObject(new Guid("ac828ef4-9a18-4802-b095-11cca00947db"));
+			Assert.AreEqual(1, eEntry.VariantEntryRefs.Count(), "No VariantEntryRefs found when expected, import of lift data during test setup failed.");
+			Assert.AreEqual(1, aEntry.VariantFormEntries.Count(), "Variant form Entry not found when expected, import of lift data during test setup failed.");
+
+			var sNewFile = CreateInputFile(twoEntryWithVariantRemovedLift);
+			logFile = TryImport(sNewFile, null, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 2);
+			Assert.AreEqual(0, eEntry.VariantEntryRefs.Count(), "VariantEntryRef was not deleted during lift import.");
+			Assert.AreEqual(0, aEntry.VariantFormEntries.Count(), "VariantForm Entry was not deleted during lift import.");
+		}
+
+		private static string[] twoEntryWithVariantComplexFormAndNewItemLift = new[]
+			{
+				"<?xml version='1.0' encoding='utf-8'?>",
+				"<lift producer='SIL.FLEx 8.0.4.41520' version='0.13'>",
+				"	<header></header>",
+				"	<entry dateCreated='2013-09-20T19:34:26Z' dateModified='2013-09-21T19:34:26Z' guid='40a9574d-2d13-4d30-9eab-9a6d84bf29f8' id='e_40a9574d-2d13-4d30-9eab-9a6d84bf29f8'>",
+				"		<lexical-unit>",
+				"			<form lang='fr'>",
+				"				<text>e</text>",
+				"			</form>",
+				"		</lexical-unit>",
+				"		<relation order='0' ref='a_ac828ef4-9a18-4802-b095-11cca00947db' type='_component-lexeme'>",
+				"			<trait name='variant-type' value='' />",
+				"		</relation>",
+				"		<trait name='morph-type' value='stem' />",
+				"	</entry>",
+				"	<entry dateCreated='2013-09-20T16:25:23Z' dateModified='2013-09-21T19:01:59Z' guid='ac828ef4-9a18-4802-b095-11cca00947db' id='a_ac828ef4-9a18-4802-b095-11cca00947db'>",
+				"		<lexical-unit>",
+				"			<form lang='fr'>",
+				"				<text>a</text>",
+				"			</form>",
+				"		</lexical-unit>",
+				"		<sense id='91eb7dc2-4057-4e7c-88c3-a81536a38c3e' />",
+				"		<trait name='morph-type' value='stem' />",
+				"	</entry>",
+				"	<entry dateCreated='2013-09-21T16:25:23Z' dateModified='2013-09-21T19:01:59Z' guid='ad928ef4-9a18-4802-b095-11cca00947db' id='a_ad928ef4-9a18-4802-b095-11cca00947db'>",
+				"		<lexical-unit>",
+				"			<form lang='fr'>",
+				"				<text>new</text>",
+				"			</form>",
+				"		</lexical-unit>",
+				"		<trait name='morph-type' value='stem' />",
+				"	</entry>",
+				"</lift>"
+			};
+
+		[Test]
+		public void TestVariantComplexFormNotDeletedWhenUnTouchedWorks()
+		{
+			SetWritingSystems("fr");
+
+			CreateNeededStyles();
+
+			var entryRepo = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+			var senseRepo = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
+			var refTypeRepo = Cache.ServiceLocator.GetInstance<ILexRefTypeRepository>();
+
+			var sOrigFile = CreateInputFile(twoEntryWithVariantComplexFormLift);
+			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 2);
+			var eEntry = entryRepo.GetObject(new Guid("40a9574d-2d13-4d30-9eab-9a6d84bf29f8"));
+			var aEntry = entryRepo.GetObject(new Guid("ac828ef4-9a18-4802-b095-11cca00947db"));
+			Assert.AreEqual(1, eEntry.VariantEntryRefs.Count(), "No VariantEntryRefs found when expected, import of lift data during test setup failed.");
+			Assert.AreEqual(1, aEntry.VariantFormEntries.Count(), "Variant form Entry not found when expected, import of lift data during test setup failed.");
+
+			var sNewFile = CreateInputFile(twoEntryWithVariantComplexFormAndNewItemLift);
+			logFile = TryImport(sNewFile, null, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 3);
+			Assert.AreEqual(1, eEntry.VariantEntryRefs.Count(), "VariantEntryRef mistakenly deleted during lift import.");
+			Assert.AreEqual(1, aEntry.VariantFormEntries.Count(), "VariantForm Entry was mistakenly deleted during lift import.");
+		}
+
+		private static string[] twoEntryWithDerivativeComplexFormLift = new[]
+			{
+				"<?xml version='1.0' encoding='utf-8'?>",
+				"<lift producer='SIL.FLEx 8.0.4.41520' version='0.13'>",
+				"	<header></header>",
+				"	<entry dateCreated='2013-09-20T19:34:26Z' dateModified='2013-09-20T19:34:26Z' guid='40a9574d-2d13-4d30-9eab-9a6d84bf29f8' id='e_40a9574d-2d13-4d30-9eab-9a6d84bf29f8'>",
+				"		<lexical-unit>",
+				"			<form lang='fr'>",
+				"				<text>e</text>",
+				"			</form>",
+				"		</lexical-unit>",
+				"		<relation order='0' ref='a_ac828ef4-9a18-4802-b095-11cca00947db' type='_component-lexeme'>",
+				"			<trait name='is-primary' value='true' />",
+				"			<trait name='complex-form-type' value='Derivative' />",
+				"		</relation>",
+				"		<trait name='morph-type' value='stem' />",
+				"	</entry>",
+				"	<entry dateCreated='2013-09-20T16:25:23Z' dateModified='2013-09-20T19:01:59Z' guid='ac828ef4-9a18-4802-b095-11cca00947db' id='a_ac828ef4-9a18-4802-b095-11cca00947db'>",
+				"		<lexical-unit>",
+				"			<form lang='fr'>",
+				"				<text>a</text>",
+				"			</form>",
+				"		</lexical-unit>",
+				"		<sense id='91eb7dc2-4057-4e7c-88c3-a81536a38c3e' />",
+				"		<trait name='morph-type' value='stem' />",
+				"	</entry>",
+				"</lift>"
+			};
+
+		private static string[] twoEntryWithDerivativeComplexFormRemovedLift = new[]
+			{
+				"<?xml version='1.0' encoding='utf-8'?>",
+				"<lift producer='SIL.FLEx 8.0.4.41520' version='0.13'>",
+				"	<header></header>",
+				"	<entry dateCreated='2013-09-20T19:34:26Z' dateModified='2013-09-20T19:35:26Z' guid='40a9574d-2d13-4d30-9eab-9a6d84bf29f8' id='e_40a9574d-2d13-4d30-9eab-9a6d84bf29f8'>",
+				"		<lexical-unit>",
+				"			<form lang='fr'>",
+				"				<text>e</text>",
+				"			</form>",
+				"		</lexical-unit>",
+				"		<relation order='0' ref='' type='_component-lexeme'>",
+				"			<trait name='variant-type' value='' />",
+				"		</relation>",
+				"		<trait name='morph-type' value='stem' />",
+				"	</entry>",
+				"	<entry dateCreated='2013-09-20T16:25:23Z' dateModified='2013-09-20T19:35:26Z' guid='ac828ef4-9a18-4802-b095-11cca00947db' id='a_ac828ef4-9a18-4802-b095-11cca00947db'>",
+				"		<lexical-unit>",
+				"			<form lang='fr'>",
+				"				<text>a</text>",
+				"			</form>",
+				"		</lexical-unit>",
+				"		<sense id='91eb7dc2-4057-4e7c-88c3-a81536a38c3e' />",
+				"		<trait name='morph-type' value='stem' />",
+				"	</entry>",
+				"</lift>"
+			};
+
+		[Test]
+		public void TestDeleteDerivativeComplexFormWorks()
+		{
+			SetWritingSystems("fr");
+
+			CreateNeededStyles();
+
+			var entryRepo = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+			var senseRepo = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
+			var refTypeRepo = Cache.ServiceLocator.GetInstance<ILexRefTypeRepository>();
+
+			var sOrigFile = CreateInputFile(twoEntryWithDerivativeComplexFormLift);
+			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 2);
+			var eEntry = entryRepo.GetObject(new Guid("40a9574d-2d13-4d30-9eab-9a6d84bf29f8"));
+			var aEntry = entryRepo.GetObject(new Guid("ac828ef4-9a18-4802-b095-11cca00947db"));
+			Assert.AreEqual(1, eEntry.ComplexFormEntryRefs.Count(), "No ComplexFormEntryRefs found when expected, import of lift data during test setup failed.");
+			Assert.AreEqual(1, aEntry.ComplexFormEntries.Count(), "No ComplexEntries found when expected, import of lift data during test setup failed.");
+
+			var sNewFile = CreateInputFile(twoEntryWithDerivativeComplexFormRemovedLift);
+			logFile = TryImport(sNewFile, null, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 2);
+			Assert.AreEqual(0, eEntry.ComplexFormEntryRefs.Count(), "ComplexFormEntryRefs was not deleted during lift import.");
+			Assert.AreEqual(0, aEntry.ComplexFormEntries.Count(), "ComplexFormEntry was not deleted during lift import.");
+			Assert.AreEqual(1, eEntry.VariantEntryRefs.Count(), "An empty VariantEntryRef should have resulted from the import");
+			Assert.AreEqual(0, aEntry.VariantFormEntries.Count(), "An empty VariantEntryRef should have resulted from the import");
+		}
 	}
 }
