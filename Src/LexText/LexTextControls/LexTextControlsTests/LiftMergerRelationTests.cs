@@ -1127,6 +1127,65 @@ namespace LexTextControlsTests
 			Assert.That(bSense.LexSenseReferences.First().TargetsRS[0].Equals(bSense), "Twin item should come before Twain");
 		}
 
+		//ranges file with defining an Antonym as a default relation (no guid) and a Twin relation
+		private static string[] rangeWithOneCustomAndOneDefault = new[]
+			{
+				"<?xml version='1.0' encoding='UTF-8'?>",
+				"<lift-ranges>",
+				"<range id='lexical-relation'>",
+				"<range-element id='Antonym'>",
+				"<label>",
+				"<form lang='en'><text>Antonym</text></form>",
+				"</label>",
+				"<abbrev>",
+				"<form lang='en'><text>ant</text></form>",
+				"</abbrev>",
+				"<description>",
+				"<form lang='en'><text>Use this type for antonym relationships (e.g., fast, slow).</text></form>",
+				"</description>",
+				"<trait name='referenceType' value='1'/>",
+				"</range-element>",
+				"<range-element id='Twin' guid='1ec1f6c7-da89-4a4a-adc5-1f0df5b0c1f5'>",
+				"<label>",
+				"<form lang='en'><text>Twin</text></form>",
+				"</label>",
+				"<abbrev>",
+				"<form lang='en'><text>twn</text></form>",
+				"</abbrev>",
+				"<field type='reverse-label'>",
+				"<form lang='en'><text>Twain</text></form>",
+				"</field>",
+				"<field type='reverse-abbrev'>",
+				"<form lang='en'><text>tin</text></form>",
+				"</field>",
+				"<trait name='referenceType' value='2'/>",
+				"</range-element>",
+				"</range>",
+				"</lift-ranges>"
+			};
+
+		[Test]
+		public void TestImportCustomRangesIgnoresNonCustomRanges()
+		{
+			SetWritingSystems("fr");
+
+			CreateNeededStyles();
+
+			var entryRepo = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+			var senseRepo = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
+			var typeRepo = Cache.ServiceLocator.GetInstance<ILexRefTypeRepository>();
+
+			var sOrigFile = CreateInputFile(newWithPair);
+			Assert.AreEqual(0, typeRepo.Count, "Too many types exist before import, bootstrapping has changed?");
+			var logFile = TryImport(sOrigFile, CreateInputRangesFile(rangeWithOneCustomAndOneDefault), FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 2);
+			var aSense = senseRepo.GetObject(new Guid("c2b4fe44-a3d9-4a42-a87c-8e174593fb30"));
+			var bSense = senseRepo.GetObject(new Guid("de2fcb48-319a-48cf-bfea-0f25b9f38b31"));
+			Assert.AreEqual(1, aSense.LexSenseReferences.Count(), "Incorrect number of component references.");
+			Assert.AreEqual(1, bSense.LexSenseReferences.Count(), "Incorrect number of component references.");
+			Assert.AreEqual(1, typeRepo.Count, "Too many types created during import.");
+
+		}
+
 		// Defines a lift file with two entries 'Bother' and 'me'.
 		private static string[] origNoRelation = new[]
 			{

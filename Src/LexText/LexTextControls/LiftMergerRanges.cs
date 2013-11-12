@@ -1400,7 +1400,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				refType = int.Parse(refTypeTrait.Value);
 			}
-			FindOrCreateLexRefType(id, guidAttr, parent, desc, label, abbrev, reverseName, reverseAbbrev, refType);
+			// If the guid and parent are both null this is probably a 'default' lexical-relation, we won't bother trying to create it
+			// since it just uglies up our data. LT-14979
+			if(guidAttr != null || parent != null)
+			{
+				FindOrCreateLexRefType(id, guidAttr, parent, desc, label, abbrev, reverseName, reverseAbbrev, refType);
+			}
 		}
 
 		private void EnsureProdRestrictListExists()

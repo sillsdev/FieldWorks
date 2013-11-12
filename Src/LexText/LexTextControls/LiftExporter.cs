@@ -1731,48 +1731,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void WriteLexicalRelationRange(TextWriter w)
 		{
 			w.WriteLine("<range id=\"{0}\">", RangeNames.sDbReferencesOA);
-			w.WriteLine("<range-element id=\"ref\">");
-			w.WriteLine("<label><form lang=\"en\"><text>ref</text></form></label>");
-			w.WriteLine("<description><form lang=\"en\"><text>General cross reference.</text></form></description>");
-			w.WriteLine("</range-element>");
-			w.WriteLine("<range-element id=\"main\">");
-			w.WriteLine("<label><form lang=\"en\"><text>main</text></form></label>");
-			w.WriteLine("<description><form lang=\"en\"><text>Reference to a main entry from a minor entry.</text></form></description>");
-			w.WriteLine("</range-element>");
-			w.WriteLine("<range-element id=\"isa\">");
-			w.WriteLine("<label><form lang=\"en\"><text>isa</text></form></label>");
-			w.WriteLine("<description><form lang=\"en\"><text>The gen-spec relation where the special relates to the general.</text></form></description>");
-			w.WriteLine("</range-element>");
-			w.WriteLine("<range-element id=\"kindof\">");
-			w.WriteLine("<label><form lang=\"en\"><text>kindof</text></form></label>");
-			w.WriteLine("<description><form lang=\"en\"><text>The kind-of relation in which the Sense is a kind of another sense.</text></form></description>");
-			w.WriteLine("</range-element>");
-			w.WriteLine("<range-element id=\"actor\">");
-			w.WriteLine("<label><form lang=\"en\"><text>actor</text></form></label>");
-			w.WriteLine("<description><form lang=\"en\"><text>The actor of this verb</text></form></description>");
-			w.WriteLine("</range-element>");
-			w.WriteLine("<range-element id=\"undergoer\">");
-			w.WriteLine("<label><form lang=\"en\"><text>undergoer</text></form></label>");
-			w.WriteLine("<description><form lang=\"en\"><text>The undergoer of this verb</text></form></description>");
-			w.WriteLine("</range-element>");
-			w.WriteLine("<range-element id=\"component\">");
-			w.WriteLine("<label><form lang=\"en\"><text>component</text></form></label>");
-			w.WriteLine("<description><form lang=\"en\"><text>This word is grammatically built from these components.</text></form></description>");
-			w.WriteLine("</range-element>");
 			w.WriteLine("<!--The following range elements were added by FieldWorks Language Explorer. -->");
 			if (m_cache.LangProject.LexDbOA.ReferencesOA != null)
 			{
 				foreach (var refer in m_cache.LangProject.LexDbOA.ReferencesOA.ReallyReallyAllPossibilities.OfType<ILexRefType>())
 					WriteLexRefType(w, refer);
 			}
-			w.WriteLine("<range-element id=\"subentry\">");
-			w.WriteLine("<label><form lang=\"en\"><text>subentry</text></form></label>");
-			w.WriteLine("<description><form lang=\"en\"><text>Reference to a subentry from a main entry.  This is a backreference in FLEX.</text></form></description>");
-			w.WriteLine("</range-element>");
-			w.WriteLine("<range-element id=\"minorentry\">");
-			w.WriteLine("<label><form lang=\"en\"><text>minorentry</text></form></label>");
-			w.WriteLine("<description><form lang=\"en\"><text>Reference to a minor entry from a main entry.  This is a backreference in FLEX.</text></form></description>");
-			w.WriteLine("</range-element>");
 			w.WriteLine("</range>");
 		}
 
