@@ -569,6 +569,31 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual("English gloss keep; English gloss src", lsKeeper.Gloss.AnalysisDefaultWritingSystem.Text);
 		}
 
+		/// <summary>
+		/// When merging a sense which has a LexReference into another sense it is best not to crash. LT-15014
+		/// </summary>
+		[Test]
+		public void MergeSensesWithLexRefs()
+		{
+			if(Cache.LangProject.LexDbOA.ReferencesOA == null)
+				Cache.LangProject.LexDbOA.ReferencesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+			var lexRefType = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
+			Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(lexRefType);
+			lexRefType.MappingType = (int)LexRefTypeTags.MappingTypes.kmtSenseCollection;
+
+			var targetEntry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			var senseOwner = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			var keeperSense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			var senseToMerge = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			senseOwner.SensesOS.Add(keeperSense);
+			senseOwner.SensesOS.Add(senseToMerge);
+			var lexRef = Cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create();
+			lexRefType.MembersOC.Add(lexRef);
+			lexRef.TargetsRS.Add(senseToMerge);
+			lexRef.TargetsRS.Add(targetEntry);
+
+			Assert.DoesNotThrow(()=> keeperSense.MergeObject(senseToMerge, true));
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

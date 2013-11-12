@@ -775,10 +775,10 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			var lexRefType1 = MakeLexRefType("Occurant");
 			var lexRef1 = MakeLexReference(lexRefType1, lmeReferee);
 			lexRef1.TargetsRS.Add(lmeKeeper); // This LexReference is now valid, with 2 Targets
-			// Invalid LexReference (only 1 Target), will be kept since the merger won't touch it.
 			var lexRef2 = MakeLexReference(lexRefType1, lmeMerger);
-			// Invalid LexReference (only 1 Target), will be kept since the merger won't touch it.
-			var lexRef3 = MakeLexReference(lexRefType1, lmeKeeper);
+			lexRef2.TargetsRS.Add(lmeReferee);
+			var lexRef3 = MakeLexReference(lexRefType1, lmeReferee);
+			lexRef3.TargetsRS.Add(lmeMerger);
 			lmeKeeper.AddComponent(lmeReferee);
 			lmeMerger.AddComponent(lmeReferee);
 
@@ -801,10 +801,10 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 					"Merged entry should be deleted");
 				Assert.IsFalse(lmeMerger.IsValidObject, "Merged entry should be deleted");
 				Assert.AreEqual(3, Cache.ServiceLocator.GetInstance<ILexReferenceRepository>().Count,
-					"Something caused a LexReference to be deleted; this may be a good thing someday, but shouldn't be happening at the time of writing this test.");
+					"Something caused an extra LexReference to be deleted.");
 				Assert.IsTrue(lexRef1.IsValidObject, "Has two valid Targets");
-				Assert.IsTrue(lexRef2.IsValidObject, "Invalid, but shouldn't have been affected by merge");
-				Assert.IsTrue(lexRef3.IsValidObject, "Invalid, but shouldn't have been affected by merge");
+				Assert.IsTrue(lexRef2.IsValidObject, "Shouldn't have been affected by merge");
+				Assert.IsTrue(lexRef3.IsValidObject, "Shouldn't have been affected by merge");
 				// merged lexref should now refer to the new entry
 				Assert.IsTrue(lexRef2.TargetsRS.Contains(lmeKeeper));
 			}

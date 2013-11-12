@@ -947,8 +947,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				int index;
 				if (!refToIndexDict.TryGetValue(referenceSource, out index))
 					continue;
-				referenceSource.Remove(objOld);
 				referenceSource.Insert(index, objNew);
+				// Remove after inserting, removing the last item from some collections can trigger side effects. Inserting first is safer.
+				referenceSource.Remove(objOld);
 			}
 		}
 
