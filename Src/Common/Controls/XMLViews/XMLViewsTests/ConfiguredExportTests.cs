@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Xml;
 using NUnit.Framework;
@@ -39,6 +40,58 @@ namespace XMLViewsTests
 					Assert.AreEqual(mapChars.Count, 2, "Too many characters found equivalents");
 					Assert.AreEqual(mapChars["a"], "az");
 					Assert.AreEqual(mapChars["ch"], "c");
+				}
+			}
+		}
+
+		[Test]
+		public void XHTMLExportGetDigraphMapsFromICUSortRules_TertiaryIgnorableDoesNotCrash()
+		{
+			var ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			ws.SortRules = "&[last tertiary ignorable] = \\";
+			ws.SortUsing = WritingSystemDefinition.SortRulesType.CustomICU;
+
+			var exporter = new ConfiguredExport(null, null, 0);
+			string output;
+			using(var stream = new MemoryStream())
+			{
+				using(var writer = new StreamWriter(stream))
+				{
+					exporter.Initialize(Cache, null, writer, null, "xhtml", null, "dicBody");
+					Dictionary<string, string> mapChars = null;
+					Set<string> ignoreSet = null;
+					Set<string> data = null;
+					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet));
+					// The second test catches the real world scenario, GetDigraphs is actually called many times, but the first time
+					// is the only one that should trigger the algorithm, afterward the information is cached in the exporter.
+					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet));
+					Assert.AreEqual(mapChars.Count, 0, "Too many characters found equivalents");
+					Assert.AreEqual(ignoreSet.Count, 1, "Ignorable character not parsed from rule");
+				}
+			}
+		}
+
+		[Test]
+		public void XHTMLExportGetDigraphMapsFromICUSortRules_UnicodeTertiaryIgnorableWorks()
+		{
+			var ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			ws.SortRules = "&[last tertiary ignorable] = \\uA78C";
+			ws.SortUsing = WritingSystemDefinition.SortRulesType.CustomICU;
+
+			var exporter = new ConfiguredExport(null, null, 0);
+			string output;
+			using(var stream = new MemoryStream())
+			{
+				using(var writer = new StreamWriter(stream))
+				{
+					exporter.Initialize(Cache, null, writer, null, "xhtml", null, "dicBody");
+					Dictionary<string, string> mapChars = null;
+					Set<string> ignoreSet = null;
+					Set<string> data = null;
+					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet));
+					Assert.AreEqual(mapChars.Count, 0, "Too many characters found equivalents");
+					Assert.AreEqual(ignoreSet.Count, 1, "Ignorable character not parsed from rule");
+					Assert.IsTrue(ignoreSet.Contains('\uA78C'.ToString(CultureInfo.InvariantCulture)));
 				}
 			}
 		}

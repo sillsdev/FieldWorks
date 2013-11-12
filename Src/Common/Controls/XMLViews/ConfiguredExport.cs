@@ -17,6 +17,7 @@
 // --------------------------------------------------------------------------------------------
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -601,7 +602,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				foreach (char ch in sEntryPre)
 				{
-					if (!(chIgnoreList.Contains(ch.ToString())))
+					if(!(chIgnoreList.Contains(ch.ToString(CultureInfo.InvariantCulture))))
 						sEntry += ch;
 				}
 			}
@@ -696,24 +697,27 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (!String.IsNullOrEmpty(sortRules) && sortType == WritingSystemDefinition.SortRulesType.CustomICU)
 			{
-				string[] rgsRules = sortRules.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
-				for (int i = 0; i < rgsRules.Length; ++i)
+				// prime with empty ws in case all the rules affect only the ignore set
+				m_mapWsMapChars[sWs] = mapChars;
+				m_mapWsDigraphs[sWs] = digraphs;
+				string[] individualRules = sortRules.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
+				for (int i = 0; i < individualRules.Length; ++i)
 				{
-					string sRule = rgsRules[i];
-					RemoveICUEscapeChars(ref sRule);
+					var rule = individualRules[i];
+					RemoveICUEscapeChars(ref rule);
 					// This is a valid rule that specifies that the digraph aa should be ignored
 					// [last tertiary ignorable] = \u02bc = aa
 					// This may never happen, but some single characters should be ignored or they will
 					// will be confused for digraphs with following characters.)))
-					if (sRule.Contains("["))
+					if (rule.Contains("["))
 					{
 						const string endMarker = "ignorable] = ";
 						// parse out the ignorables and add them to the ignore list
-						int bracketEnd = sRule.IndexOf(endMarker);
+						int bracketEnd = rule.IndexOf(endMarker);
 						if (bracketEnd > -1)
 						{
 							bracketEnd += endMarker.Length; // skip over the search target
-							string[] chars = sRule.Substring(bracketEnd).Split(new [ ] {" = "},
+							string[] chars = rule.Substring(bracketEnd).Split(new [ ] {" = "},
 																			   StringSplitOptions.RemoveEmptyEntries);
 							if (chars.Length > 0)
 							{
@@ -723,17 +727,17 @@ namespace SIL.FieldWorks.Common.Controls
 								}
 							}
 						}
-						sRule = sRule.Substring(0, sRule.IndexOf("["));
+						rule = rule.Substring(0, rule.IndexOf("["));
 					}
-					if (String.IsNullOrEmpty(sRule.Trim()))
+					if (String.IsNullOrEmpty(rule.Trim()))
 						continue;
-					sRule = sRule.Replace("<<<", "=");
-					sRule = sRule.Replace("<<", "=");
+					rule = rule.Replace("<<<", "=");
+					rule = rule.Replace("<<", "=");
 					// "&N<ng<<<Ng<ny<<<Ny" => "&N<ng=Ng<ny=Ny"
 					// "&N<ñ<<<Ñ" => "&N<ñ=Ñ"
 					// There are other issues we are not handling proplerly such as the next line
 					// &N<\u006e\u0067
-					var primaryParts = sRule.Split('<');
+					var primaryParts = rule.Split('<');
 					foreach (var part in primaryParts)
 					{
 						BuildDigraphSet(part, sWs, m_mapWsDigraphs);
@@ -815,7 +819,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		private void RemoveICUEscapeChars(ref string sRule)
+		private static void RemoveICUEscapeChars(ref string sRule)
 		{
 			const string quoteEscape = @"!@#quote#@!";
 			const string slashEscape = @"!@#slash#@!";
@@ -825,6 +829,13 @@ namespace SIL.FieldWorks.Common.Controls
 			sRule = sRule.Replace(@"\\\\", slashEscape);
 			sRule = sRule.Replace(@"\\", String.Empty);
 			sRule = sRule.Replace(slashEscape, @"\\");
+			ReplaceICUUnicodeEscapeChars(ref sRule);
+		}
+
+		private static void ReplaceICUUnicodeEscapeChars(ref string sRule)
+		{
+			sRule = Regex.Replace(sRule,@"\\u(?<Value>[a-zA-Z0-9]{4})",
+										 m => ((char)int.Parse(m.Groups["Value"].Value, NumberStyles.HexNumber)).ToString(CultureInfo.InvariantCulture));
 		}
 
 		private void WriteReversalLetterHeadIfNeeded(int hvoItem)
