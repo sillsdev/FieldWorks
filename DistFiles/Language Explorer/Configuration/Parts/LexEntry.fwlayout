@@ -755,22 +755,22 @@
 		<part ref="SummaryPub" label="Comment" before=" " after="" ws="analysis" wsType="analysis" visibility="never" css="sense-complexform-summary-minor"/>
 		<part ref="ComplexFormSummaryDefinitionConfig" param="publishRootMinorSenseComplexFormSummaryDef" hideConfig="true"/>
 		<part ref="ComplexFormExamplesConfig" label="Example Sentences" before="" after="" sep="" param="publishRootMinorSenseComplexFormExample" visibility="never" css="sense-complexform-examples-minor"/>
-		<part ref="SubentryUnder" label="Subentry Under Reference" param="publishRootMinorSenseSubUnderTarget" before=" (see under " after=") " sep=", " visibility="ifdata" style="Dictionary-CrossReferences" css="sense-subentryref-minor"/>
+		<part ref="SubentryUnder" label="Subentry Under Reference" param="publishRootMinorSenseSubUnderTarget" before=" (see under " after=") " sep=", " visibility="ifdata" style="Dictionary-CrossReferences" css="sense-complexform-minor"/>
 	</layout>
 	<layout class="LexEntryRef" type="jtview" name="publishRootComplexFormRef">
 		<part ref="EntryTypesConfig" label="Complex Form Type" param="publishRootComplexFormType" before="" after=" " visibility="ifdata" css="sense-complexform-type-minor"/>
 		<part ref="ComplexFormHeadwordConfig" param="publishRootComplexFormHeadword" hideConfig="true"/>
 		<part ref="SummaryPub" label="Comment" before=" " after="" ws="analysis" wsType="analysis" visibility="never" css="sense-complexform-summary-minor"/>
 		<part ref="ComplexFormSummaryDefinitionConfig" param="publishRootComplexFormSummaryDef" hideConfig="true"/>
-		<part ref="ComplexFormExamplesConfig" label="Example Sentences" before="" after="" sep="" param="publishRootMinorSenseComplexFormExample" visibility="never" css="sense-complexform-examples-minor"/>
-		<part ref="SubentryUnder" label="Subentry Under Reference" param="publishRootMinorSenseSubUnderTarget" before=" (see under " after=") " sep=", " visibility="ifdata" style="Dictionary-CrossReferences" css="sense-subentryref-minor"/>
+		<part ref="ComplexFormExamplesConfig" label="Example Sentences" before="" after="" sep="" param="publishRootMinorSenseComplexFormExample" visibility="never" css="complexform-examples"/>
+		<part ref="SubentryUnder" label="Subentry Under Reference" param="publishRootMinorSenseSubUnderTarget" before=" (see under " after=") " sep=", " visibility="ifdata" style="Dictionary-CrossReferences" css="complexform"/>
 	</layout>
 	<layout class="LexEntryRef" type="jtview" name="publishRootMinorSubSenseComplexFormRef">
 		<part ref="EntryTypesConfig" label="Complex Form Type" param="publishRootMinorSubSenseComplexFormType" before="" after=" " visibility="ifdata" css="sense-complexform-type-minor"/>
 		<part ref="ComplexFormHeadwordConfig" param="publishRootMinorSubSenseComplexFormHeadword" visibility="ifdata" hideConfig="true"/>
 		<part ref="SummaryPub" label="Comment" before=" " after="" ws="analysis" wsType="analysis" visibility="never" css="sense-complexform-summary-minor"/>
 		<part ref="ComplexFormSummaryDefinitionConfig" param="publishRootMinorSubSenseComplexFormSummaryDef" visibility="ifdata" hideConfig="true"/>
-		<part ref="ComplexFormExamplesConfig" label="Example Sentences" before="" after="" sep="" param="publishRootMinorSubSenseComplexFormExample" visibility="never" css="sense-complexform-examples-minor"/>
+		<part ref="ComplexFormExamplesConfig" label="Example Sentences" before="" after="" sep="" param="publishRootMinorSubSenseComplexFormExample" visibility="never" css="sense-complexform-examples-minor-sub"/>
 		<part ref="SubentryUnder" label="Subentry Under Reference" param="publishRootMinorSubSenseSubUnderTarget" before=" (see under " after=") " sep=", " visibility="ifdata" style="Dictionary-CrossReferences" css="sense-subentryref-minor"/>
 	</layout>
 	<layout class="LexEntryRef" type="jtview" name="publishRootSubSenseComplexFormRef">
@@ -816,10 +816,10 @@
 		<part ref="ComplexFormHeadwordPub" label="Complex Form" before="" after="" ws="vernacular" wsType="vernacular" visibility="ifdata" css="sense-complexform-form-minor"/>
 	</layout>
 	<layout class="LexEntry" type="jtview" name="publishRootComplexFormHeadword">
-		<part ref="ComplexFormHeadwordPub" label="Complex Form" before="" after="" ws="vernacular" wsType="vernacular" visibility="ifdata" css="sense-complexform-form-minor"/>
+		<part ref="ComplexFormHeadwordPub" label="Complex Form" before="" after="" ws="vernacular" wsType="vernacular" visibility="ifdata" css="complexform-form"/>
 	</layout>
 	<layout class="LexEntry" type="jtview" name="publishRootMinorSubSenseComplexFormHeadword">
-		<part ref="ComplexFormHeadwordPub" label="Complex Form" before="" after="" ws="vernacular" wsType="vernacular" visibility="ifdata" css="sense-complexform-form-minor"/>
+		<part ref="ComplexFormHeadwordPub" label="Complex Form" before="" after="" ws="vernacular" wsType="vernacular" visibility="ifdata" css="sense-complexform-form-minor-sub"/>
 	</layout>
 	<layout class="LexEntry" type="jtview" name="publishRootSubSenseComplexFormHeadword">
 		<part ref="ComplexFormHeadwordPub" label="Complex Form" before="" after="" ws="vernacular" wsType="vernacular" visibility="ifdata" css="sense-complexform-form-sub"/>

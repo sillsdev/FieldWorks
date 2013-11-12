@@ -1211,14 +1211,16 @@ namespace SIL.FieldWorks.Common.Controls
 							{
 								// another level of duplicate!
 								throw new ConfigurationException("Two distinct XML nodes are using the same cssClass (" + cssClass
-									+ ") and writing system (" + wsNew + ") in the same export: " + oldNode + " " + frag);
+									+ ") and writing system (" + wsNew + ") in the same export:"
+									+ Environment.NewLine + oldNode.OuterXml + Environment.NewLine + frag.OuterXml);
 							}
 							cssClass = tryCssClass; // This is a unique key we will use as the css class for these items.
 						}
 						else
 						{
 							throw new ConfigurationException("Two distinct XML nodes are using the same cssClass (" + cssClass
-								+ ") in the same export with the same (or no) writing system: " + oldNode + " " + frag);
+								+ ") in the same export with the same (or no) writing system:"
+								+ Environment.NewLine + oldNode.OuterXml + Environment.NewLine + frag.OuterXml);
 						}
 					}
 					m_xhtml.MapCssClassToXmlNode(cssClass, frag);
