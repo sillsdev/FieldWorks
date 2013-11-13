@@ -255,6 +255,41 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			Assert.That(selHelper.IchEnd, Is.EqualTo(2), "SelectionEnd");
 		}
 
+		/// <summary>
+		/// Unit tests for the OnDeleteSurroundingText method. These tests assume that offset
+		/// is 0-based, however the IBus docs don't say and I haven't found a keyboard in the
+		/// wild that uses positive offsets.
+		/// </summary>
+		[Test]
+		[TestCase(1, /*		 Input: */ -1, 1, /*		 expected: */ "bc", 0, TestName="DeleteSurroundingText_Before")]
+		[TestCase(1, /*		 Input: */  0, 1, /*		 expected: */ "ac", 1, TestName="DeleteSurroundingText_After")]
+		[TestCase(1, /*		 Input: */ -2, 1, /*		 expected: */ "abc",1, TestName="DeleteSurroundingText_IllegalBeforeIgnores")]
+		[TestCase(1, /*		 Input: */ -2, 2, /*		 expected: */ "c",  0, TestName="DeleteSurroundingText_ToManyBefore")]
+		[TestCase(2, /*		 Input: */ -1, 1, /*		 expected: */ "ac", 1, TestName="DeleteSurroundingText_BeforeUpdatesSelection")]
+		[TestCase(2, /*		 Input: */ -2, 2, /*		 expected: */ "c",  0, TestName="DeleteSurroundingText_MultipleBefore")]
+		[TestCase(1, /*		 Input: */  1, 1, /*		 expected: */ "ab", 1, TestName="DeleteSurroundingText_AfterWithOffset")]
+		[TestCase(1, /*		 Input: */  2, 1, /*		 expected: */ "abc",1, TestName="DeleteSurroundingText_IllegalAfterIgnores")]
+		[TestCase(1, /*		 Input: */  0, 2, /*		 expected: */ "a",  1, TestName="DeleteSurroundingText_MultipleAfter")]
+		[TestCase(1, /*		 Input: */  0, 3, /*		 expected: */ "a",  1, TestName="DeleteSurroundingText_ToManyAfterIgnoresRest")]
+		[TestCase(1, /*		 Input: */  0,-1, /*		 expected: */ "abc",1, TestName="DeleteSurroundingText_IllegalNumberOfChars")]
+		[TestCase(1, /*		 Input: */  0, 0, /*		 expected: */ "abc",1, TestName="DeleteSurroundingText_ZeroNumberOfChars")]
+		public void DeleteSurroundingText(int cursorPos, int offset, int nChars,
+			string expectedText, int expectedCursorPos)
+		{
+			// Setup
+			var hvoPara = SetupInitialText("abc");
+			SetSelection(cursorPos, cursorPos);
+
+			// Exercise
+			m_Handler.OnDeleteSurroundingText(offset, nChars);
+
+			// Verify
+			var selHelper = m_basicView.EditingHelper.CurrentSelection;
+			Assert.That(GetTextFromView(hvoPara), Is.EqualTo(expectedText));
+			Assert.That(selHelper.IchAnchor, Is.EqualTo(expectedCursorPos), "SelectionStart");
+			Assert.That(selHelper.IchEnd, Is.EqualTo(expectedCursorPos), "SelectionEnd");
+		}
+
 		[Test]
 		public void CancelPreedit()
 		{

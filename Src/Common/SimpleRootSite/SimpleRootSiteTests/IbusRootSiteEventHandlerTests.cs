@@ -1547,6 +1547,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public event Action<string, int> UpdatePreeditText;
 		public event Action HidePreeditText;
 #pragma warning disable 67
+		public event Action<int, int> DeleteSurroundingText;
 		public event Action<int, int, int> KeyEvent;
 
 #pragma warning restore 67
@@ -1674,6 +1675,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public event Action<string> CommitText;
 		public event Action<string, int> UpdatePreeditText;
 #pragma warning disable 67
+		public event Action<int, int> DeleteSurroundingText;
 		public event Action HidePreeditText;
 		public event Action<int, int, int> KeyEvent;
 
@@ -1828,6 +1830,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public event Action<string> CommitText;
 #pragma warning disable 67
 		public event Action<string, int> UpdatePreeditText;
+		public event Action<int, int> DeleteSurroundingText;
 		public event Action HidePreeditText;
 		public event Action<int, int, int> KeyEvent;
 #pragma warning restore 67
@@ -1909,6 +1912,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public event Action<string> CommitText;
 #pragma warning disable 67
 		public event Action<string, int> UpdatePreeditText;
+		public event Action<int, int> DeleteSurroundingText;
 		public event Action HidePreeditText;
 		public event Action<int, int, int> KeyEvent;
 #pragma warning restore 67
@@ -2005,6 +2009,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public event Action<string> CommitText;
 #pragma warning disable 67
 		public event Action<string, int> UpdatePreeditText;
+		public event Action<int, int> DeleteSurroundingText;
 		public event Action HidePreeditText;
 #pragma warning restore 67
 

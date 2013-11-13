@@ -123,6 +123,23 @@ namespace SIL.FieldWorks.Common.RootSites
 			return bldr.GetString().get_NormalizedForm(FwNormalizationMode.knmNFD);
 		}
 
+		private bool SetupForTypingEventHandler()
+		{
+			if (!AssociatedSimpleRootSite.Focused || AssociatedSimpleRootSite.RootBox == null ||
+				AssociatedSimpleRootSite.RootBox.Selection == null)
+			{
+				return false;
+			}
+			if (m_ActionHandler == null)
+			{
+				m_ActionHandler = AssociatedSimpleRootSite.DataAccess.GetActionHandler();
+				m_Depth = m_ActionHandler.CurrentDepth;
+				m_ActionHandler.BeginUndoTask(Resources.ksUndoTyping, Resources.ksRedoTyping);
+			}
+
+			return true;
+		}
+
 		#region IIbusEventHandler implementation
 
 		/// <summary>
@@ -158,18 +175,8 @@ namespace SIL.FieldWorks.Common.RootSites
 				return;
 			}
 
-			if (!AssociatedSimpleRootSite.Focused || AssociatedSimpleRootSite.RootBox == null ||
-				AssociatedSimpleRootSite.RootBox.Selection == null)
-			{
+			if (!SetupForTypingEventHandler())
 				return;
-			}
-
-			if (m_ActionHandler == null)
-			{
-				m_ActionHandler = AssociatedSimpleRootSite.DataAccess.GetActionHandler();
-				m_Depth = m_ActionHandler.CurrentDepth;
-				m_ActionHandler.BeginUndoTask(Resources.ksUndoTyping, Resources.ksRedoTyping);
-			}
 
 			try
 			{
@@ -228,18 +235,8 @@ namespace SIL.FieldWorks.Common.RootSites
 				return;
 			}
 
-			if (!AssociatedSimpleRootSite.Focused || AssociatedSimpleRootSite.RootBox == null ||
-				AssociatedSimpleRootSite.RootBox.Selection == null)
-			{
+			if (!SetupForTypingEventHandler())
 				return;
-			}
-
-			if (m_ActionHandler == null)
-			{
-				m_ActionHandler = AssociatedSimpleRootSite.DataAccess.GetActionHandler();
-				m_Depth = m_ActionHandler.CurrentDepth;
-				m_ActionHandler.BeginUndoTask(Resources.ksUndoTyping, Resources.ksRedoTyping);
-			}
 
 			if (m_InitialSelHelper == null)
 			{
@@ -285,6 +282,58 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			// make the selection visible
 			selHelper.SetSelection(true);
+		}
+
+		/// <summary>
+		/// Called when the IBus DeleteSurroundingText is raised to delete surrounding
+		/// characters.
+		/// </summary>
+		/// <param name="offset">The character offset from the cursor position of the text to be
+		/// deleted. A negative value indicates a position before the cursor.</param>
+		/// <param name="nChars">The number of characters to be deleted.</param>
+		public void OnDeleteSurroundingText(int offset, int nChars)
+		{
+			if (AssociatedSimpleRootSite.InvokeRequired)
+			{
+				AssociatedSimpleRootSite.BeginInvoke(() => OnDeleteSurroundingText(offset, nChars));
+				return;
+			}
+
+			if (!SetupForTypingEventHandler() || nChars <= 0)
+				return;
+
+			try
+			{
+				var selHelper = new SelectionHelper(AssociatedSimpleRootSite.EditingHelper.CurrentSelection);
+
+				var selectionStart = selHelper.GetIch(SelectionHelper.SelLimitType.Top);
+				var startIndex = selectionStart + offset;
+				if (startIndex + nChars <= 0)
+					return;
+
+				startIndex = Math.Max(startIndex, 0);
+				selHelper.IchAnchor = startIndex;
+				selHelper.IchEnd = startIndex + nChars;
+				selHelper.SetSelection(true);
+
+				ITsString str = CreateTsStringUsingSelectionProps(string.Empty, selHelper, true);
+				selHelper.Selection.ReplaceWithTsString(str);
+
+				if (startIndex < selectionStart)
+					selectionStart = Math.Max(selectionStart - nChars, 0);
+
+				selHelper.IchAnchor = selectionStart;
+				selHelper.IchEnd = selectionStart;
+
+				// make the selection visible
+				selHelper.SetSelection(true);
+			}
+			finally
+			{
+				if (m_ActionHandler != null)
+					m_ActionHandler.EndUndoTask();
+				m_ActionHandler = null;
+			}
 		}
 
 		/// <summary>
