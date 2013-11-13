@@ -668,7 +668,7 @@ namespace SIL.CoreImpl
 					}
 				}
 				m_localStore.Save();
-				Settings.Default.LocalKeyboards = m_localStore.LocalKeyboardSettings;
+				Settings.Default.LocalKeyboards = m_localStore.LocalKeyboardSettings ?? "";
 				Settings.Default.Save();
 			}
 		}
