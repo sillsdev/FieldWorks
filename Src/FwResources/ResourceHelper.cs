@@ -177,7 +177,7 @@ namespace SIL.FieldWorks.Resources
 			s_fileFilterExtensions[FileFilterType.FieldWorksBackupFiles] = "*" + FwFileExtensions.ksFwBackupFileExtension;
 			s_fileFilterExtensions[FileFilterType.FieldWorksAllBackupFiles] = String.Format("*{0}; *{1}; *.xml",
 				FwFileExtensions.ksFwBackupFileExtension, FwFileExtensions.ksFw60BackupFileExtension);
-			s_fileFilterExtensions[FileFilterType.FieldWorksTranslatedLists] = "*.xml";
+			s_fileFilterExtensions[FileFilterType.FieldWorksTranslatedLists] = "*.xml; *.zip";
 			s_fileFilterExtensions[FileFilterType.OXEKT] = "*" + FwFileExtensions.ksOpenXmlForExchangingKeyTerms;
 			s_fileFilterExtensions[FileFilterType.FLExText] = "*" + FwFileExtensions.ksFLexText;
 		}

@@ -55,12 +55,22 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			try
 			{
 				using (var inputStream = FileUtils.OpenStreamForRead(filename))
-				using (var zipReader = new ZipInputStream(inputStream))
 				{
-					var entry = zipReader.GetNextEntry(); // advances it to where we can read the one zipped file.
-
-					using (var reader = new StreamReader(zipReader, Encoding.UTF8))
-						ImportTranslatedLists(reader, cache, progress);
+					var type = Path.GetExtension(filename).ToLowerInvariant();
+					if (type == ".zip")
+					{
+						using (var zipStream = new ZipInputStream(inputStream))
+						{
+							var entry = zipStream.GetNextEntry(); // advances it to where we can read the one zipped file.
+							using (var reader = new StreamReader(zipStream, Encoding.UTF8))
+								ImportTranslatedLists(reader, cache, progress);
+						}
+					}
+					else
+					{
+						using (var reader = new StreamReader(inputStream, Encoding.UTF8))
+							ImportTranslatedLists(reader, cache, progress);
+					}
 				}
 			}
 			catch (Exception e)
