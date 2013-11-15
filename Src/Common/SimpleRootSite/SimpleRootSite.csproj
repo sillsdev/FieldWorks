@@ -220,7 +220,6 @@
     <Compile Include="PrintRootSite.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SelectionEvents.cs" />
     <Compile Include="SelectionHelper.cs">
       <SubType>Code</SubType>
     </Compile>
