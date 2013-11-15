@@ -4,6 +4,7 @@
 using System;
 using System.Drawing;
 using NUnit.Framework;
+using IBusDotNet;
 using Palaso.UI.WindowsForms.Keyboarding;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils.Attributes;
@@ -123,7 +124,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SetSelection(selectionStart, selectionEnd);
 
 			// Exercise
-			m_Handler.OnUpdatePreeditText(composition, insertPos);
+			m_Handler.OnUpdatePreeditText(new IBusText(composition), insertPos);
 
 			// Verify
 			var selHelper = m_basicView.EditingHelper.CurrentSelection;
@@ -155,16 +156,40 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			// Setup
 			var hvoPara = SetupInitialText(text);
 			SetSelection(selectionStart, selectionEnd);
-			m_Handler.OnUpdatePreeditText(firstComposition, firstInsertPos);
+			m_Handler.OnUpdatePreeditText(new IBusText(firstComposition), firstInsertPos);
 
 			// Exercise
-			m_Handler.OnUpdatePreeditText(composition, insertPos);
+			m_Handler.OnUpdatePreeditText(new IBusText(composition), insertPos);
 
 			// Verify
 			var selHelper = m_basicView.EditingHelper.CurrentSelection;
 			Assert.That(GetTextFromView(hvoPara), Is.EqualTo(expectedText));
 			Assert.That(selHelper.IchAnchor, Is.EqualTo(expectedSelectionStart), "SelectionStart");
 			Assert.That(selHelper.IchEnd, Is.EqualTo(expectedSelectionEnd), "SelectionEnd");
+		}
+
+		/// <summary>Unit tests for the CommitOrReset method</summary>
+		[Test]
+		[TestCase(IBusAttrUnderline.None,   /* expected: */ false, "ab", 2, 2, TestName="CommitOrReset_Commits")]
+		[TestCase(IBusAttrUnderline.Single, /* expected: */ true,   "a", 1, 1, TestName="CommitOrReset_Resets")]
+		public void CommitOrReset(IBusAttrUnderline underline,
+			bool expectedRetVal, string expectedText, int expectedSelStart, int expectedSelEnd)
+		{
+			// Setup
+			var hvoPara = SetupInitialText("a");
+			SetSelection(1, 1);
+			m_Handler.OnUpdatePreeditText(new IBusText("b",
+				new [] { new IBusUnderlineAttribute(underline, 0, 1)}), 1);
+
+			// Exercise
+			var ret = m_Handler.CommitOrReset();
+
+			// Verify
+			Assert.That(ret, Is.EqualTo(expectedRetVal));
+			var selHelper = m_basicView.EditingHelper.CurrentSelection;
+			Assert.That(GetTextFromView(hvoPara), Is.EqualTo(expectedText));
+			Assert.That(selHelper.IchAnchor, Is.EqualTo(expectedSelStart), "SelectionStart");
+			Assert.That(selHelper.IchEnd, Is.EqualTo(expectedSelEnd), "SelectionEnd");
 		}
 
 		/// <summary>Unit tests for the OnCommitText method. These tests are very similar to
@@ -187,17 +212,13 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			string commitText,
 			string expectedText, int expectedSelectionStart, int expectedSelectionEnd)
 		{
-			Console.WriteLine("Test/CommitText(\"{0}\", {1}, {2}, \"{3}\", {4}, \"{5}\", \"{6}\", {7}, {8}",
-				text, selectionStart, selectionEnd, composition, insertPos, commitText, expectedText, expectedSelectionStart, expectedSelectionEnd);
-			for (int i = 0; i < composition.Length; ++i)
-				Console.WriteLine(" - composition[{0}] = '{1}' = {2}", i, composition[i], (int)composition[i]);
 			// Setup
 			var hvoPara = SetupInitialText(text);
 			SetSelection(selectionStart, selectionEnd);
-			m_Handler.OnUpdatePreeditText(composition, insertPos);
+			m_Handler.OnUpdatePreeditText(new IBusText(composition), insertPos);
 
 			// Exercise
-			m_Handler.OnCommitText(commitText);
+			m_Handler.OnCommitText(new IBusText(commitText));
 
 			// Verify
 			var selHelper = m_basicView.EditingHelper.CurrentSelection;
@@ -219,7 +240,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SetSelection(1, 1);
 
 			// Exercise
-			m_Handler.OnCommitText("\u014B");
+			m_Handler.OnCommitText(new IBusText("\u014B"));
 
 			// Verify
 			var selHelper = m_basicView.EditingHelper.CurrentSelection;
@@ -244,9 +265,9 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SetSelection(1, 1);
 
 			// Exercise
-			m_Handler.OnCommitText("n");
+			m_Handler.OnCommitText(new IBusText("n"));
 			m_Handler.OnIbusKeyPress(KeySymBackspace, ScanCodeBackspace, 0);
-			m_Handler.OnCommitText("\u014B");
+			m_Handler.OnCommitText(new IBusText("\u014B"));
 
 			// Verify
 			var selHelper = m_basicView.EditingHelper.CurrentSelection;
@@ -291,12 +312,14 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		}
 
 		[Test]
-		public void CancelPreedit()
+		[TestCase(1, 1, TestName = "CancelPreedit_IP")]
+		[TestCase(0, 1, TestName = "CancelPreedit_RangeSelection")]
+		public void CancelPreedit(int selStart, int selEnd)
 		{
 			// Setup
 			var hvoPara = SetupInitialText("b");
-			SetSelection(1, 1);
-			m_Handler.OnUpdatePreeditText("\u4FDD\u989D", 0);
+			SetSelection(selStart, selEnd);
+			m_Handler.OnUpdatePreeditText(new IBusText("\u4FDD\u989D"), 0);
 
 			// Exercise
 			m_Handler.Reset();
@@ -304,28 +327,9 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			// Verify
 			var selHelper = m_basicView.EditingHelper.CurrentSelection;
 			Assert.That(GetTextFromView(hvoPara), Is.EqualTo("b"));
-			Assert.That(selHelper.IchAnchor, Is.EqualTo(1), "SelectionStart");
-			Assert.That(selHelper.IchEnd, Is.EqualTo(1), "SelectionEnd");
+			Assert.That(selHelper.IchAnchor, Is.EqualTo(selStart), "SelectionStart");
+			Assert.That(selHelper.IchEnd, Is.EqualTo(selEnd), "SelectionEnd");
 		}
-
-		[Test]
-		public void CancelPreedit_RangeSelection()
-		{
-			// Setup
-			var hvoPara = SetupInitialText("b");
-			SetSelection(0, 1);
-			m_Handler.OnUpdatePreeditText("\u4FDD\u989D", 0);
-
-			// Exercise
-			m_Handler.Reset();
-
-			// Verify
-			var selHelper = m_basicView.EditingHelper.CurrentSelection;
-			Assert.That(GetTextFromView(hvoPara), Is.EqualTo("b"));
-			Assert.That(selHelper.IchAnchor, Is.EqualTo(0), "SelectionStart");
-			Assert.That(selHelper.IchEnd, Is.EqualTo(1), "SelectionEnd");
-		}
-
 	}
 }
 #endif

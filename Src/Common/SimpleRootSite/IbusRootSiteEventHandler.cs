@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using IBusDotNet;
 using Palaso.UI.WindowsForms.Extensions;
 using Palaso.UI.WindowsForms.Keyboarding.Interfaces;
 using SIL.CoreImpl;
@@ -14,6 +15,7 @@ using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
+
 	/// <summary>
 	/// Views code specific handler of IBus events
 	/// </summary>
@@ -123,9 +125,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			return bldr.GetString().get_NormalizedForm(FwNormalizationMode.knmNFD);
 		}
 
-		private bool SetupForTypingEventHandler()
+		private bool SetupForTypingEventHandler(bool checkIfFocused)
 		{
-			if (!AssociatedSimpleRootSite.Focused || AssociatedSimpleRootSite.RootBox == null ||
+			if ((!AssociatedSimpleRootSite.Focused && checkIfFocused) ||
+				AssociatedSimpleRootSite.RootBox == null ||
 				AssociatedSimpleRootSite.RootBox.Selection == null)
 			{
 				return false;
@@ -140,42 +143,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			return true;
 		}
 
-		#region IIbusEventHandler implementation
-
-		/// <summary>
-		/// Called by the IBusKeyboardAdapter to cancel any open compositions, e.g. after the
-		/// user pressed the ESC key or if the application loses focus.
-		/// </summary>
-		/// <returns><c>true</c> if there was an open composition that got cancelled, otherwise
-		/// <c>false</c>.</returns>
-		public bool Reset()
+		private void OnCommitText(string text, bool checkIfFocused)
 		{
-			Debug.Assert(!AssociatedSimpleRootSite.InvokeRequired,
-				"Reset() should only be called on the GUI thread");
-			if (!AssociatedSimpleRootSite.Focused)
-				return false;
-
-			return Reset(true);
-		}
-
-		/// <summary>
-		/// This method gets called when the IBus CommitText event is raised and indicates that
-		/// the composition is ending. The temporarily inserted composition string will be
-		/// replaced with <paramref name="text"/>.
-		/// It's in the discretion of the IBus 'keyboard' to decide when it calls OnCommitText.
-		/// Typically this is done when the user selects a string in the pop-up composition
-		/// window, or when he types a character that isn't part of the previous composition
-		/// sequence.
-		/// </summary>
-		public void OnCommitText(string text)
-		{
-			if (AssociatedSimpleRootSite.InvokeRequired)
-			{
-				AssociatedSimpleRootSite.BeginInvoke(() => OnCommitText(text));
-				return;
-			}
-
-			if (!SetupForTypingEventHandler())
+			if (!SetupForTypingEventHandler(checkIfFocused))
 				return;
 
 			try
@@ -219,24 +189,123 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
+		// When the application loses focus the user expects different behavior for different
+		// ibus keyboards: for some keyboards (those that do the editing in-place and don't display
+		// a selection window, e.g. "Danish - post (m17n)") the user expects that what he
+		// typed remains, i.e. gets committed. Otherwise (e.g. with the Danish keyboard) it's not
+		// possible to type an "a" and then click in a different field or switch applications.
+		//
+		// For other keyboards (e.g. Chinese Pinyin) the commit is made when the user selects
+		// one of the possible characters in the pop-up window. If he clicks in a different
+		// field while the pop-up window is open the composition should be deleted.
+		//
+		// There doesn't seem to be a way to ask an IME keyboard if it shows a pop-up window or
+		// if we should commit or reset the composition. One indirect way however seems to be to
+		// check the attributes: it seems that keyboards where we can/should commit set the
+		// underline attribute to IBusAttrUnderline.None.
+		private bool IsCommittingKeyboard { get; set; }
+
+		private void CheckAttributesForCommittingKeyboard(IBusText text)
+		{
+			IsCommittingKeyboard = false;
+			foreach (var attribute in text.Attributes)
+			{
+				var iBusUnderlineAttribute = attribute as IBusUnderlineAttribute;
+				if (iBusUnderlineAttribute != null && iBusUnderlineAttribute.Underline == IBusAttrUnderline.None)
+					IsCommittingKeyboard = true;
+			}
+		}
+
+		#region IIbusEventHandler implementation
+
 		/// <summary>
-		/// Called when the IBus UpdatePreeditText event is raised to update the composition.
+		/// Called by the IBusKeyboardAdapter to cancel any open compositions, e.g. after the
+		/// user pressed the ESC key or if the application loses focus.
 		/// </summary>
-		/// <param name="compositionText">New composition string that will replace the existing
-		/// composition (sub-)string.</param>
-		/// <param name="cursorPos">1-based index in the composition (pre-edit window). The
-		/// composition string will be replaced with <paramref name="compositionText"/> starting
-		/// at this position.</param>
-		public void OnUpdatePreeditText(string compositionText, int cursorPos)
+		/// <returns><c>true</c> if there was an open composition that got cancelled, otherwise
+		/// <c>false</c>.</returns>
+		public bool Reset()
+		{
+			Debug.Assert(!AssociatedSimpleRootSite.InvokeRequired,
+				"Reset() should only be called on the GUI thread");
+			if (!AssociatedSimpleRootSite.Focused)
+				return false;
+
+			return Reset(true);
+		}
+
+		/// <summary>
+		/// Commits the or reset.
+		/// </summary>
+		/// <returns><c>true</c>, if or reset was commited, <c>false</c> otherwise.</returns>
+		public bool CommitOrReset()
+		{
+			// don't check if we have focus - we won't if this gets called from OnLostFocus.
+			// However, the IbusKeyboardAdapter calls this method only for the control that just
+			// lost focus, so it's ok not to check :-)
+
+			if (IsCommittingKeyboard)
+			{
+				if (m_InitialSelHelper != null && m_EndOfPreedit != null)
+				{
+					ITsString tss;
+					var selection = AssociatedSimpleRootSite.RootBox.MakeRangeSelection(
+						m_InitialSelHelper.SetSelection(AssociatedSimpleRootSite),
+						m_EndOfPreedit.SetSelection(AssociatedSimpleRootSite), true);
+					selection.GetSelectionString(out tss, string.Empty);
+					OnCommitText(tss.Text, false);
+
+					m_InitialSelHelper = null;
+					m_EndOfPreedit = null;
+				}
+				return false;
+			}
+
+			return Reset(true);
+		}
+
+		/// <summary>
+		/// This method gets called when the IBus CommitText event is raised and indicates that
+		/// the composition is ending. The temporarily inserted composition string will be
+		/// replaced with <paramref name="ibusText"/>.
+		/// It's in the discretion of the IBus 'keyboard' to decide when it calls OnCommitText.
+		/// Typically this is done when the user selects a string in the pop-up composition
+		/// window, or when he types a character that isn't part of the previous composition
+		/// sequence.
+		/// </summary>
+		public void OnCommitText(object ibusText)
 		{
 			if (AssociatedSimpleRootSite.InvokeRequired)
 			{
-				AssociatedSimpleRootSite.BeginInvoke(() => OnUpdatePreeditText(compositionText, cursorPos));
+				AssociatedSimpleRootSite.BeginInvoke(() => OnCommitText(ibusText));
 				return;
 			}
 
-			if (!SetupForTypingEventHandler())
+			OnCommitText(((IBusText)ibusText).Text, true);
+		}
+
+		/// <summary>
+		/// Called when the IBus UpdatePreeditText event is raised to update the composition.
+		/// </summary>
+		/// <param name="obj">New composition string that will replace the existing
+		/// composition (sub-)string.</param>
+		/// <param name="cursorPos">1-based index in the composition (pre-edit window). The
+		/// composition string will be replaced with <paramref name="obj"/> starting
+		/// at this position.</param>
+		public void OnUpdatePreeditText(object obj, int cursorPos)
+		{
+			if (AssociatedSimpleRootSite.InvokeRequired)
+			{
+				AssociatedSimpleRootSite.BeginInvoke(() => OnUpdatePreeditText(obj, cursorPos));
 				return;
+			}
+
+			if (!SetupForTypingEventHandler(true))
+				return;
+
+			var ibusText = obj as IBusText;
+			var compositionText = ibusText.Text;
+			CheckAttributesForCommittingKeyboard(ibusText);
 
 			if (m_InitialSelHelper == null)
 			{
@@ -299,7 +368,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				return;
 			}
 
-			if (!SetupForTypingEventHandler() || nChars <= 0)
+			if (!SetupForTypingEventHandler(true) || nChars <= 0)
 				return;
 
 			try
@@ -376,7 +445,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				return;
 
 			var inChar = (char)(0x00FF & keySym);
-			OnCommitText(inChar.ToString());
+			OnCommitText(inChar.ToString(), true);
 		}
 
 		/// <summary>

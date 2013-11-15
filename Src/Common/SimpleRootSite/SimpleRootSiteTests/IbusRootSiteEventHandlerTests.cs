@@ -1543,8 +1543,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		private string m_preedit = string.Empty;
 
 		#region IIbusCommunicator implementation
-		public event Action<string> CommitText;
-		public event Action<string, int> UpdatePreeditText;
+		public event Action<object> CommitText;
+		public event Action<object, int> UpdatePreeditText;
 		public event Action HidePreeditText;
 #pragma warning disable 67
 		public event Action<int, int> DeleteSurroundingText;
@@ -1577,14 +1577,14 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			{
 				// Delete the pre-edit first. This is necessary because we use a no-op action
 				// handler, so the rollback doesn't do anything.
-				UpdatePreeditText(string.Empty, 0);
-				CommitText(m_preedit);
+				UpdatePreeditText(new IBusText(string.Empty), 0);
+				CommitText(new IBusText(m_preedit));
 			}
 
 			m_preedit = ((char)keySym).ToString();
 			if (((uint)state & shift) != 0 || ((uint)state & capslock) != 0)
 				m_preedit = m_preedit.ToUpper();
-			UpdatePreeditText(m_preedit, 0);
+			UpdatePreeditText(new IBusText(m_preedit), 0);
 			return true;
 		}
 
@@ -1594,7 +1594,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			// Delete the pre-edit first. This is necessary because we use a no-op action
 			// handler, so the rollback doesn't do anything.
 			if (UpdatePreeditText != null)
-				UpdatePreeditText(String.Empty, 0);
+				UpdatePreeditText(new IBusText(String.Empty), 0);
 			if (HidePreeditText != null)
 				HidePreeditText();
 		}
@@ -1672,8 +1672,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		}
 		#endregion
 		#region IIbusCommunicator implementation
-		public event Action<string> CommitText;
-		public event Action<string, int> UpdatePreeditText;
+		public event Action<object> CommitText;
+		public event Action<object, int> UpdatePreeditText;
 #pragma warning disable 67
 		public event Action<int, int> DeleteSurroundingText;
 		public event Action HidePreeditText;
@@ -1750,12 +1750,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		protected void CallCommitText(string text)
 		{
 			CallUpdatePreeditText(string.Empty, 0);
-			CommitText(text);
+			CommitText(new IBusText(text));
 		}
 
 		protected void CallUpdatePreeditText(string text, int cursor_pos)
 		{
-			UpdatePreeditText(text, cursor_pos);
+			UpdatePreeditText(new IBusText(text), cursor_pos);
 		}
 
 		protected virtual void Commit(char lastCharacterTyped)
@@ -1827,9 +1827,9 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	public sealed class CommitOnlyIbusCommunicator : ITestableIbusCommunicator
 	{
 		#region IIbusCommunicator implementation
-		public event Action<string> CommitText;
+		public event Action<object> CommitText;
 #pragma warning disable 67
-		public event Action<string, int> UpdatePreeditText;
+		public event Action<object, int> UpdatePreeditText;
 		public event Action<int, int> DeleteSurroundingText;
 		public event Action HidePreeditText;
 		public event Action<int, int, int> KeyEvent;
@@ -1865,7 +1865,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			if (((uint)state & shift) != 0 || ((uint)state & capslock) != 0)
 				str = str.ToUpper();
 			if (CommitText != null)
-				CommitText(str);
+				CommitText(new IBusText(str));
 			return true;
 		}
 
@@ -1909,9 +1909,9 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		private string buffer = string.Empty;
 
 		#region IIbusCommunicator implementation
-		public event Action<string> CommitText;
+		public event Action<object> CommitText;
 #pragma warning disable 67
-		public event Action<string, int> UpdatePreeditText;
+		public event Action<object, int> UpdatePreeditText;
 		public event Action<int, int> DeleteSurroundingText;
 		public event Action HidePreeditText;
 		public event Action<int, int, int> KeyEvent;
@@ -1944,12 +1944,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			{
 				foreach (char c in buffer)
 				{
-					CommitText("\b"); // 0x0008
+					CommitText(new IBusText("\b")); // 0x0008
 				}
 
 				foreach (char c in buffer.ToLowerInvariant())
 				{
-					CommitText(c.ToString());
+					CommitText(new IBusText(c.ToString()));
 				}
 
 				buffer = String.Empty;
@@ -1959,7 +1959,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			if (((uint)state & shift) != 0 || ((uint)state & capslock) != 0)
 				str = str.ToUpper();
 			buffer += str;
-			CommitText(str);
+			CommitText(new IBusText(str));
 			return true;
 		}
 
@@ -2006,9 +2006,9 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		private string buffer = string.Empty;
 
 		#region IIbusCommunicator implementation
-		public event Action<string> CommitText;
+		public event Action<object> CommitText;
 #pragma warning disable 67
-		public event Action<string, int> UpdatePreeditText;
+		public event Action<object, int> UpdatePreeditText;
 		public event Action<int, int> DeleteSurroundingText;
 		public event Action HidePreeditText;
 #pragma warning restore 67
@@ -2048,7 +2048,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 				foreach (char c in buffer.ToLowerInvariant())
 				{
-					CommitText(c.ToString());
+					CommitText(new IBusText(c.ToString()));
 				}
 
 				buffer = String.Empty;
@@ -2058,7 +2058,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			if (((uint)state & shift) != 0 || ((uint)state & capslock) != 0)
 				str = str.ToUpper();
 			buffer += str;
-			CommitText(str);
+			CommitText(new IBusText(str));
 			return true;
 		}
 
