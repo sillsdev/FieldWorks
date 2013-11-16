@@ -29,7 +29,8 @@ Level Hierarchy
 <level name="Subentry" partOf="Entry" beginFields="se" additionalFields="bw ce cf cn cr mn mr ph" multiFields="bw ce cf cn cr mn mr ph"/>
 <level name="Sense" partOf="Entry Subentry" beginFields="ge ps sn" additionalFields="1d 1e 1i 1p 1s 2d 2p 2s 3d 3p 3s 4d 4p 4s an bb de dn dr dv ee en er ev gn gr gv lt na nd ng np nq ns nt oe on or ov pc pd pde pdl pdn pdr pdv pl pn rd re rn rr sc sg so st sy tb ue un ur uv we wn wr" multiFields="1d 1e 1i 1p 1s 2d 2p 2s 3d 3p 3s 4d 4p 4s an bb de dn dr dv ee en er ev ge gn gr gv is lt na nd ng np nq ns nt oe on or ov pc pd pde pdl pdn pdr pdv pl pn rd re rn rr sc sd sg so st sy tb th ue un ur uv we wn wr"/>
 <level name="Etymology" partOf="Entry Subentry" beginFields="et" additionalFields="ec eg es" multiFields="ec eg"/>
-<level name="Example" partOf="Sense" beginFields="rf xv" additionalFields="xe xn xr" multiFields="xe xn xr"/>
+<level name="Example" partOf="Sense" beginFields="rf xv" additionalFields="" multiFields=""/>
+<level name="ExampleTranslation" partOf="Example" beginFields="xe" additionalFields="xn xr" multiFields="xn xr"/>
 <level name="Function" partOf="Sense" beginFields="lf" additionalFields="lv"/>
 <level name="SemanticDomain" partOf="Sense" beginFields="is" additionalFields="sd th"/>
 <level name="Picture" partOf="Sense" beginFields="pc" additionalFields=""/>

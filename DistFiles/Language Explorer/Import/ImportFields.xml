@@ -753,9 +753,9 @@
 	</Field>
   </Class>
 
-	<Class name="Translation" partOf="Example">
+	<Class name="ExampleTranslation" partOf="Example">
 		<Field MDF="\xe \xn \xr" id="trans" multi="yes" property="Translation"
-			   signature="MultiString" type="string" uiname="Translation">
+			   signature="MultiString" type="string" uiname="Example Translation">
 			<Help>
 				<Usage>
 					When you have a marker that has a translation for an example

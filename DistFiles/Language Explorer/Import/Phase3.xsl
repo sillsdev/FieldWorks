@@ -811,9 +811,9 @@ DoExamples
 </xsl:template>
 
 	<xsl:template name="DoTranslations">
-		<xsl:if test="Translation">
+		<xsl:if test="ExampleTranslation">
 			<Translations>
-				<xsl:for-each select="Translation">
+				<xsl:for-each select="ExampleTranslation">
 					<!-- Translation -->
 					<Translation>
 						<xsl:if test="trans">

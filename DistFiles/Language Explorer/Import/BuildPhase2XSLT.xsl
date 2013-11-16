@@ -321,7 +321,7 @@ Main template
 	  </xsl:for-each>
 
 	  <sfm:template
-		match=" Sense | Example | Translation | Function | Subentry | Variant | Etymology | Picture | Pronunciation | SemanticDomain">
+		match=" Sense | Example | ExampleTranslation | Function | Subentry | Variant | Etymology | Picture | Pronunciation | SemanticDomain">
 		<xsl:comment> Only elements that have content are copied and propigated through the xsl's.
 		  All high level Elements are now 'tagged' with a GUID for future identification and
 		  reference. </xsl:comment>
