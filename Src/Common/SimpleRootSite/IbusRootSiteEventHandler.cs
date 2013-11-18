@@ -136,8 +136,11 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (m_ActionHandler == null)
 			{
 				m_ActionHandler = AssociatedSimpleRootSite.DataAccess.GetActionHandler();
-				m_Depth = m_ActionHandler.CurrentDepth;
-				m_ActionHandler.BeginUndoTask(Resources.ksUndoTyping, Resources.ksRedoTyping);
+				if (m_ActionHandler != null)
+				{
+					m_Depth = m_ActionHandler.CurrentDepth;
+					m_ActionHandler.BeginUndoTask(Resources.ksUndoTyping, Resources.ksRedoTyping);
+				}
 			}
 
 			return true;
@@ -150,9 +153,12 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			try
 			{
-				m_ActionHandler.Rollback(m_Depth);
-				m_Depth = m_ActionHandler.CurrentDepth;
-				m_ActionHandler.BeginUndoTask(Resources.ksUndoTyping, Resources.ksRedoTyping);
+				if (m_ActionHandler != null)
+				{
+					m_ActionHandler.Rollback(m_Depth);
+					m_Depth = m_ActionHandler.CurrentDepth;
+					m_ActionHandler.BeginUndoTask(Resources.ksUndoTyping, Resources.ksRedoTyping);
+				}
 
 				// Make the correct selection
 				var selHelper = m_InitialSelHelper;

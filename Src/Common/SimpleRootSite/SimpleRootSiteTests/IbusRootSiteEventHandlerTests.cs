@@ -275,6 +275,51 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			Assert.That(preedit.End, Is.EqualTo(2));
 		}
 
+		/// <summary>Test case for FWNX-1305</summary>
+		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+		Justification="Dummy IBusCommunicator is disposed in TestTearDown()")]
+		public void HandleNullActionHandler()
+		{
+			m_dummySimpleRootSite.DataAccess.SetActionHandler(null);
+			int anchor = 1;
+			int end = 0;
+
+			// Setup
+			ChooseSimulatedKeyboard(new KeyboardWithGlyphSubstitution());
+
+			m_dummyIBusCommunicator.ProcessKeyEvent('a', lparams['A'], Keys.None);
+			m_dummyIBusCommunicator.ProcessKeyEvent('a', lparams['A'], Keys.None);
+			// Commit by pressing space
+			m_dummyIBusCommunicator.ProcessKeyEvent(' ', lparams[' '], Keys.None);
+			m_dummyIBusCommunicator.ProcessKeyEvent('b', lparams['B'], Keys.None);
+			m_dummyIBusCommunicator.ProcessKeyEvent('b', lparams['B'], Keys.None);
+			// Commit by pressing space
+			m_dummyIBusCommunicator.ProcessKeyEvent(' ', lparams[' '], Keys.None);
+			m_dummyIBusCommunicator.ProcessKeyEvent('c', lparams['C'], Keys.None);
+			m_dummyIBusCommunicator.ProcessKeyEvent('c', lparams['C'], Keys.None);
+			// Commit by pressing space
+			m_dummyIBusCommunicator.ProcessKeyEvent(' ', lparams[' '], Keys.None);
+
+			// Select B
+			var preedit = (DummyVwSelection)m_dummySimpleRootSite.RootBox.Selection;
+			preedit.Anchor = anchor;
+			preedit.End = end;
+
+			// Exercise
+			m_dummyIBusCommunicator.ProcessKeyEvent('d', lparams['D'], Keys.None);
+			m_dummyIBusCommunicator.ProcessKeyEvent('d', lparams['D'], Keys.None);
+			// Commit by pressing space
+			m_dummyIBusCommunicator.ProcessKeyEvent(' ', lparams[' '], Keys.None);
+
+			// Verify
+			var document = (DummyRootBox)m_dummySimpleRootSite.RootBox;
+			preedit = (DummyVwSelection)m_dummySimpleRootSite.RootBox.Selection;
+			Assert.That(document.Text, Is.EqualTo("DBC"));
+			Assert.That(m_dummyIBusCommunicator.PreEdit, Is.EqualTo(string.Empty));
+			Assert.That(preedit.Anchor, Is.EqualTo(1));
+			Assert.That(preedit.End, Is.EqualTo(1));
+		}
 	}
 
 	#region Mock classes used for testing InputBusController
@@ -874,7 +919,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		public void SetActionHandler(IActionHandler _acth)
 		{
-			throw new NotImplementedException();
+			m_actionHandler = _acth;
 		}
 
 		public void DeleteObj(int hvoObj)
