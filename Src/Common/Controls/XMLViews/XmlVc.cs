@@ -2985,6 +2985,17 @@ namespace SIL.FieldWorks.Common.Controls
 			return keyToId[key];
 		}
 
+		internal int GetId(DisplayCommand command)
+		{
+			return GetId(command, m_idToDisplayCommand, m_displayCommandToId);
+		}
+
+		internal void RemoveCommand(DisplayCommand command, int id)
+		{
+			m_idToDisplayCommand.Remove(id);
+			m_displayCommandToId.Remove(command);
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Add an object to the display.
@@ -4355,17 +4366,6 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			// New approach: generate an ID that identifies Pair(frag, caller) in m_idToDisplayInfo
 			return GetId(new MainCallerDisplayCommandSeq(frag, caller, false, WsForce, m_stackPartRef), m_idToDisplayCommand, m_displayCommandToId);
-		}
-
-		internal int GetId(DisplayCommand command)
-		{
-			return GetId(command, m_idToDisplayCommand, m_displayCommandToId);
-		}
-
-		internal void RemoveCommand(DisplayCommand command, int id)
-		{
-			m_idToDisplayCommand.Remove(id);
-			m_displayCommandToId.Remove(command);
 		}
 
 		/// ------------------------------------------------------------------------------------

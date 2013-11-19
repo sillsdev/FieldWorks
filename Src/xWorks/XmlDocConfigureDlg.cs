@@ -2398,7 +2398,7 @@ namespace SIL.FieldWorks.XWorks
 			// applies to Root dictionary ltn=Senses when ShowSenseAsPara=false
 			var lts = sender as ConfigSenseLayout;
 			if (lts == null) return;
-			if (ltn.FlowType != "divInPara" || lts.DisplaySenseInPara) return;
+			if (lts.DisplaySenseInPara) return;
 			// find Stem: Main Entry-Senses-Visible Complex Forms ltn
 			foreach (TreeNode n in ltn.Nodes) // iterate over child nodes
 			{
@@ -2412,14 +2412,13 @@ namespace SIL.FieldWorks.XWorks
 
 						MessageBox.Show(resources.GetString("k_RootSenseOnSubentriesGoneDlgText"),
 							resources.GetString("k_RootSenseOnSubentriesGoneDlgLabel"),
-							MessageBoxButtons.OKCancel, MessageBoxIcon.Information,
-							MessageBoxDefaultButton.Button1);
+							MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 						tn.Checked = false;
 						break;
 					}
-						// meant for tn.Label.Contains("Referenced Complex Form") in stem dictionary
-					else if (tn.Checked && tn.FlowType == "span" &&
+					// meant for tn.Label.Contains("Referenced Complex Form") in stem dictionary
+					if (tn.Checked && tn.FlowType == "span" &&
 							 tn.Label.Contains(xWorksStrings.ksReferencedComplexForm) &&
 							 tn.ShowComplexFormPara)
 					{
