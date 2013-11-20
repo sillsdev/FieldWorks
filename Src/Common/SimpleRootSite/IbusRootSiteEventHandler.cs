@@ -128,6 +128,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		private bool SetupForTypingEventHandler(bool checkIfFocused)
 		{
 			if ((!AssociatedSimpleRootSite.Focused && checkIfFocused) ||
+				AssociatedSimpleRootSite.ReadOnlyView ||
 				AssociatedSimpleRootSite.RootBox == null ||
 				AssociatedSimpleRootSite.RootBox.Selection == null)
 			{
@@ -423,7 +424,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				return;
 			}
 
-			if (!AssociatedSimpleRootSite.Focused)
+			if (!AssociatedSimpleRootSite.Focused || AssociatedSimpleRootSite.ReadOnlyView)
 				return;
 
 			Reset(true);
@@ -447,7 +448,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				AssociatedSimpleRootSite.BeginInvoke(() => OnIbusKeyPress(keySym, scanCode, index));
 				return;
 			}
-			if (!AssociatedSimpleRootSite.Focused)
+			if (!AssociatedSimpleRootSite.Focused || AssociatedSimpleRootSite.ReadOnlyView)
 				return;
 
 			var inChar = (char)(0x00FF & keySym);

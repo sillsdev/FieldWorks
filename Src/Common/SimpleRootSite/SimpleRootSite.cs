@@ -502,6 +502,9 @@ namespace SIL.FieldWorks.Common.RootSites
 				}
 				if (components != null)
 					components.Dispose();
+				#if __MonoCS__
+				KeyboardController.Unregister(this);
+				#endif
 			}
 
 			if (m_vdrb != null && Marshal.IsComObject(m_vdrb))
@@ -877,6 +880,13 @@ namespace SIL.FieldWorks.Common.RootSites
 			set
 			{
 				CheckDisposed();
+				#if __MonoCS__
+				// If this is read-only, it should not try to handle keyboard input in general.
+				if (EditingHelper.Editable && value)
+					KeyboardController.Unregister(this);
+				else if (!EditingHelper.Editable && !value)
+					KeyboardController.Register(this, new IbusRootSiteEventHandler(this));
+				#endif
 				EditingHelper.Editable = !value;
 				// If the view is read-only, we don't want to waste time looking for an
 				// editable insertion point when moving the cursor with the cursor movement
