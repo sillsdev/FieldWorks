@@ -115,10 +115,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			string composition, int insertPos,
 			string expectedText, int expectedSelectionStart, int expectedSelectionEnd)
 		{
-			Console.WriteLine("Test/UpdatePreedit(\"{0}\", {1}, {2}, \"{3}\", {4}, \"{5}\", {6}, {7}",
-				text, selectionStart, selectionEnd, composition, insertPos, expectedText, expectedSelectionStart, expectedSelectionEnd);
-			for (int i = 0; i < composition.Length; ++i)
-				Console.WriteLine(" - composition[{0}] = '{1}' = {2}", i, composition[i], (int)composition[i]);
 			// Setup
 			var hvoPara = SetupInitialText(text);
 			SetSelection(selectionStart, selectionEnd);
@@ -149,10 +145,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			string composition, int insertPos,
 			string expectedText, int expectedSelectionStart, int expectedSelectionEnd)
 		{
-			Console.WriteLine("Test/UpdatePreedit_SecondUpdatePreedit(\"{0}\", {1}, {2}, \"{3}\", {4}, \"{5}\", {6}, \"{7}\", {8}, {9}",
-				text, selectionStart, selectionEnd, firstComposition, firstInsertPos, composition, insertPos, expectedText, expectedSelectionStart, expectedSelectionEnd);
-			for (int i = 0; i < composition.Length; ++i)
-				Console.WriteLine(" - composition[{0}] = '{1}' = {2}", i, composition[i], (int)composition[i]);
 			// Setup
 			var hvoPara = SetupInitialText(text);
 			SetSelection(selectionStart, selectionEnd);
