@@ -32,6 +32,15 @@ namespace SIL.FieldWorks.XWorks.Archiving
 		private DateTime m_earliest = DateTime.MaxValue;
 		private DateTime m_latest = DateTime.MinValue;
 
+		public static bool Installed
+		{
+			get
+			{
+				var exePath = RampArchivingDlgViewModel.GetExeFileLocation();
+				return !string.IsNullOrEmpty(exePath) && File.Exists(exePath);
+			}
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Prepares the selected files to be uploaded to REAP using RAMP.
