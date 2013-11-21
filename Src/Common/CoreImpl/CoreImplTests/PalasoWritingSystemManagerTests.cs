@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using System.Xml;
 using NUnit.Framework;
 using Palaso.WritingSystems;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -84,6 +85,39 @@ namespace SIL.CoreImpl
 			Assert.AreEqual("legacy mapping", ws.LegacyMapping);
 			Assert.AreEqual("eng", ws.ISO3);
 			wsManager.Save();
+		}
+
+		/// <summary>
+		/// Tests to make sure that the special fw extensions of ldml aren't duplicated when round tripping.
+		/// </summary>
+		[Test]
+		public void FieldWorksExtensionsAreNotDuplicatedOnRoundTrip()
+		{
+			var storePath = PrepareTempStore("Store");
+
+			// serialize
+			var wsManager = new PalasoWritingSystemManager(new LocalFileWritingSystemStore(storePath));
+			var ws = wsManager.Set("en-US");
+			ws.SpellCheckingId = "en-US";
+			ws.MatchedPairs = "matched pairs";
+			((ILegacyWritingSystemDefinition)ws).WindowsLcid = 0x409.ToString(CultureInfo.InvariantCulture);
+			ws.ValidChars = "valid characters";
+			ws.LegacyMapping = "legacy mapping";
+			wsManager.Save();
+
+			// deserialize
+			wsManager = new PalasoWritingSystemManager(new LocalFileWritingSystemStore(storePath));
+			Assert.IsTrue(wsManager.Exists("en-US"), "broken before SUT.");
+			ws = wsManager.Get("en-US");
+			Assert.AreEqual("valid characters", ws.ValidChars, "broken before SUT");
+			//change the valid chars data and save back out, this was duplicating in LT-15048
+			ws.ValidChars = "more valid characters";
+			wsManager.Save();
+
+			var xmlDoc = new XmlDocument();
+			xmlDoc.Load(Path.Combine(storePath, "en-US.ldml"));
+			Assert.AreEqual(1, xmlDoc.SelectNodes("//special/*[local-name()='validChars']").Count, "Special fw elements were duplicated");
+			Assert.AreEqual(1, xmlDoc.SelectNodes("//special/*[local-name()='validChars' and @value='more valid characters']").Count, "special fw changes not saved");
 		}
 
 		/// <summary>
