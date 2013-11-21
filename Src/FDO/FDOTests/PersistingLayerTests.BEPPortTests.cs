@@ -77,23 +77,24 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		/// ------------------------------------------------------------------------------------
 		public BEPPortTests()
 		{
+			var randomFileExtension = new Random((int)DateTime.Now.Ticks).Next(1000).ToString();
 			m_sourceInfo = new List<BackendStartupParameter>
 				{
 					new BackendStartupParameter(true, BackendBulkLoadDomain.All,
-												new TestProjectId(FDOBackendProviderType.kXML, DirectoryFinder.GetXmlDataFileName("TLP"))),
+												new TestProjectId(FDOBackendProviderType.kXML, DirectoryFinder.GetXmlDataFileName("TLP" + randomFileExtension))),
 					new BackendStartupParameter(true, BackendBulkLoadDomain.All,
 												new TestProjectId(FDOBackendProviderType.kMemoryOnly, null)),
 					new BackendStartupParameter(true, BackendBulkLoadDomain.All,
-												new TestProjectId(FDOBackendProviderType.kDb4oClientServer, "TLPCS"))
+												new TestProjectId(FDOBackendProviderType.kDb4oClientServer, "TLPCS" + randomFileExtension))
 				};
 			m_targetInfo = new List<BackendStartupParameter>
 				{
 					new BackendStartupParameter(true, BackendBulkLoadDomain.All,
-												new TestProjectId(FDOBackendProviderType.kXML, DirectoryFinder.GetXmlDataFileName("TLP_New"))),
+												new TestProjectId(FDOBackendProviderType.kXML, DirectoryFinder.GetXmlDataFileName("TLP_New" + randomFileExtension))),
 					new BackendStartupParameter(true, BackendBulkLoadDomain.All,
 												new TestProjectId(FDOBackendProviderType.kMemoryOnly, null)),
 					new BackendStartupParameter(true, BackendBulkLoadDomain.All,
-												new TestProjectId(FDOBackendProviderType.kDb4oClientServer, "TLPCS_New"))
+												new TestProjectId(FDOBackendProviderType.kDb4oClientServer, "TLPCS_New" + randomFileExtension))
 				};
 		}
 
@@ -197,10 +198,6 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			[Values(TestBackends.Xml, TestBackends.Memory, TestBackends.Db4o)] TestBackends iSource,
 			[Values(TestBackends.Xml, TestBackends.Memory, TestBackends.Db4o)] TestBackends iTarget)
 		{
-			var path = Path.Combine(Path.GetTempPath(), "FieldWorksTest");
-			if (! Directory.Exists(path))
-				Directory.CreateDirectory(path);
-
 			var sourceBackendStartupParameters = m_sourceInfo[(int)iSource];
 			var targetBackendStartupParameters = m_targetInfo[(int)iTarget];
 

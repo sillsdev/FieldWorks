@@ -10,7 +10,9 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
 using Microsoft.Practices.ServiceLocation;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -316,8 +318,19 @@ namespace SIL.FieldWorks.FDO.IOC
 			if (fDisposing && !IsDisposed)
 			{
 				// dispose managed and unmanaged objects
-				if (m_container != null)
-					m_container.Dispose();
+				if(m_container != null)
+				{
+					try
+					{
+						m_container.Dispose();
+					}
+					catch(InvalidComObjectException e) // Intermittantly the dispose of the container fails because a COM object has become invalid
+					{
+						// Display an indication of the failure, but don't crash, we made a good faith effort to dispose all our COM objects
+						// and they probably were disposed. Also at this point we are probably shutting down, or wrapping up a unit test.
+						Debug.WriteLine(String.Format(@"COM problem when disposing container in StructureMapServiceLocator: {0}", e.Message));
+					}
+				}
 			}
 			m_container = null;
 			m_lgpe = null;
