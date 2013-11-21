@@ -106,17 +106,11 @@
       <Name>COMInterfaces</Name>
       <HintPath>..\..\Output\Debug\COMInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.VisualBasic">
-      <Name>Microsoft.VisualBasic</Name>
-    </Reference>
     <Reference Include="PhonEnvValidator">
       <Name>PhonEnvValidator</Name>
       <HintPath>..\..\Output\Debug\PhonEnvValidator.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
-    </Reference>
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
@@ -146,9 +140,6 @@
     <Reference Include="Db4objects.Db4o.Linq">
       <HintPath>..\..\Output\Debug\Db4objects.Db4o.Linq.dll</HintPath>
     </Reference>
-    <Reference Include="ECInterfaces">
-      <HintPath>..\..\Output\Debug\ECInterfaces.dll</HintPath>
-    </Reference>
     <Reference Include="FwUtils">
       <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
@@ -176,9 +167,6 @@
     <Reference Include="SharedScrUtils">
       <HintPath>..\..\Output\Debug\SharedScrUtils.dll</HintPath>
     </Reference>
-    <Reference Include="SilEncConverters40">
-      <HintPath>..\..\Output\Debug\SilEncConverters40.dll</HintPath>
-    </Reference>
     <Reference Include="StructureMap">
       <HintPath>..\..\DistFiles\StructureMap.dll</HintPath>
     </Reference>
@@ -188,14 +176,8 @@
     <Reference Include="SilUtils">
       <HintPath>..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
-    <Reference Include="Tamir.SharpSSH">
-      <HintPath>..\..\DistFiles\Tamir.SharpSSH.dll</HintPath>
-    </Reference>
     <Reference Include="xCoreInterfaces">
       <HintPath>..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="ZipUtils">
-      <HintPath>..\..\Output\Debug\ZipUtils.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
