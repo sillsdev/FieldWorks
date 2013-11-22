@@ -427,6 +427,26 @@ namespace SIL.FieldWorks.FDO
 		/// entries to see whether they are homographs.
 		/// </summary>
 		IMoMorphType HomographMorphType(FdoCache cache, IMoMorphType morphType);
+
+		/// <summary>
+		/// Find the list of LexEntry objects which conceivably match the given wordform.
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="tssWf"></param>
+		/// <param name="wfa"></param>
+		/// <param name="duplicates"></param>
+		/// <returns></returns>
+		List<ILexEntry> FindEntriesForWordform(FdoCache cache, ITsString tssWf, IWfiAnalysis wfa, ref bool duplicates);
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Find wordform given a cache and the string.
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="tssWf"></param>
+		/// <returns></returns>
+		/// ------------------------------------------------------------------------------------
+		ILexEntry FindEntryForWordform(FdoCache cache, ITsString tssWf);
 	}
 
 	internal interface ILexEntryRepositoryInternal
