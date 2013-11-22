@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Xml;
 using System.Xml.Linq;
 using Palaso.Lift;
 using Palaso.Lift.Migration;
@@ -37,6 +37,33 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private string _liftPathname;
 		private IProgress _progressDlg;
 		private FdoCache Cache { get; set; }
+
+		/// <summary>
+		/// On static initialization the OldLiftBridgeProjects is populated from the mapping file if it is present.
+		/// Things are never removed because that isn't important since the only purpose is to enable a menu item
+		/// which will remain enabled after the project is migrated to the new flexbridge location.
+		/// </summary>
+		private static readonly List<string> OldLiftBridgeProjects;
+		static FLExBridgeListener()
+		{
+			OldLiftBridgeProjects = new List<string>();
+			var repoMapFile = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "LiftBridge"),
+													 "LanguageProject_Repository_Map.xml");
+			// look for old liftbridge repo info in path similar to C:\Users\<user>\AppData\Local\LiftBridge\LanguageProject_Repository_Map.xml
+			if(File.Exists(repoMapFile))
+			{
+				var repoMapDoc = new XmlDocument();
+				repoMapDoc.Load(repoMapFile);
+				var mappingNodes = repoMapDoc.SelectNodes("//Mapping");
+				if(mappingNodes != null)
+				{
+					foreach(XmlElement mappingNode in mappingNodes)
+					{
+						OldLiftBridgeProjects.Add(mappingNode.Attributes["projectguid"].Value);
+					}
+				}
+			}
+		}
 
 		#region IxCoreColleague Implementation
 
@@ -353,7 +380,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
 			if (!display.Enabled)
 				return true;
-			display.Enabled = !IsConfiguredForLiftSR(Cache.ProjectId.ProjectFolder);
+			display.Enabled = !OldLiftBridgeProjects.Contains(Cache.LangProject.Guid.ToString()) &&
+									!IsConfiguredForLiftSR(Cache.ProjectId.ProjectFolder);
 			return true; // We dealt with it.
 		}
 
@@ -397,7 +425,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
 			if (!display.Enabled)
 				return true;
-			display.Enabled = IsConfiguredForLiftSR(Cache.ProjectId.ProjectFolder);
+			display.Enabled = OldLiftBridgeProjects.Contains(Cache.LangProject.Guid.ToString()) || IsConfiguredForLiftSR(Cache.ProjectId.ProjectFolder);
 			return true; // We dealt with it.
 		}
 

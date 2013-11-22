@@ -32,14 +32,13 @@ namespace SIL.FieldWorks.XWorks.Archiving
 		private DateTime m_earliest = DateTime.MaxValue;
 		private DateTime m_latest = DateTime.MinValue;
 
-		public static bool Installed
+		static ReapRamp()
 		{
-			get
-			{
-				var exePath = RampArchivingDlgViewModel.GetExeFileLocation();
-				return !string.IsNullOrEmpty(exePath) && File.Exists(exePath);
-			}
+			var exePath = RampArchivingDlgViewModel.GetExeFileLocation();
+			Installed = !string.IsNullOrEmpty(exePath) && File.Exists(exePath);
 		}
+
+		public static bool Installed { get; private set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
