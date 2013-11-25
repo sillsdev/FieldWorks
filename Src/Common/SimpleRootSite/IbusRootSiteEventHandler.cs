@@ -34,7 +34,38 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		private SimpleRootSite AssociatedSimpleRootSite { get; set; }
 
-		private SelectionHelper m_InitialSelHelper;
+		private class SelectionWrapper
+		{
+			private readonly ITsTextProps[] m_TextProps;
+
+			public SelectionWrapper(SimpleRootSite rootSite)
+			{
+				SelectionHelper = new SelectionHelper(rootSite.EditingHelper.CurrentSelection);
+
+				ITsTextProps[] textProps;
+				IVwPropertyStore[] propertyStores;
+				int numberOfProps;
+				SelectionHelper.GetSelectionProps(SelectionHelper.Selection,
+					out textProps, out propertyStores, out numberOfProps);
+				if (numberOfProps > 0)
+					m_TextProps = textProps;
+			}
+
+			public SelectionHelper SelectionHelper { get; private set;}
+
+			public IVwSelection RestoreSelection()
+			{
+				if (SelectionHelper == null)
+					return null;
+
+				var selection = SelectionHelper.SetSelection(true);
+				if (selection != null && m_TextProps != null)
+					selection.SetSelectionProps(m_TextProps.Length, m_TextProps);
+				return selection;
+			}
+		}
+
+		private SelectionWrapper m_InitialSelection;
 		private SelectionHelper m_EndOfPreedit;
 		private IActionHandler m_ActionHandler;
 		private int m_Depth;
@@ -57,15 +88,14 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				if (cancel && m_ActionHandler != null)
 				{
-					if (m_ActionHandler.CanUndo())
-						m_ActionHandler.Rollback(m_Depth);
+					m_ActionHandler.Rollback(m_Depth);
 					retVal = true;
 				}
 				m_ActionHandler = null;
 
-				if (m_InitialSelHelper != null)
-					m_InitialSelHelper.SetSelection(true);
-				m_InitialSelHelper = null;
+				if (m_InitialSelection != null)
+					m_InitialSelection.RestoreSelection();
+				m_InitialSelection = null;
 				m_EndOfPreedit = null;
 				return retVal;
 			}
@@ -169,7 +199,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			else if (rollBackPreviousTask)
 			{
 				m_ActionHandler.Rollback(m_Depth);
-				selHelper = m_InitialSelHelper;
+				selHelper = m_InitialSelection.SelectionHelper;
 			}
 			else
 				return selHelper;
@@ -211,7 +241,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			finally
 			{
-				m_InitialSelHelper = null;
+				m_InitialSelection = null;
 				m_EndOfPreedit = null;
 				if (m_ActionHandler != null)
 				{
@@ -278,16 +308,16 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			if (IsCommittingKeyboard)
 			{
-				if (m_InitialSelHelper != null && m_EndOfPreedit != null)
+				if (m_InitialSelection != null && m_EndOfPreedit != null)
 				{
 					ITsString tss;
 					var selection = AssociatedSimpleRootSite.RootBox.MakeRangeSelection(
-						m_InitialSelHelper.SetSelection(AssociatedSimpleRootSite),
+						m_InitialSelection.RestoreSelection(),
 						m_EndOfPreedit.SetSelection(AssociatedSimpleRootSite), true);
 					selection.GetSelectionString(out tss, string.Empty);
 					OnCommitText(tss.Text, false);
 
-					m_InitialSelHelper = null;
+					m_InitialSelection = null;
 					m_EndOfPreedit = null;
 				}
 				return false;
@@ -336,12 +366,11 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (selHelper == null)
 				return;
 
-			if (m_InitialSelHelper == null)
+			if (m_InitialSelection == null)
 			{
 				// Create a new, independent selection helper for m_InitialSelHelper - we want
 				// to remember the current selection
-				m_InitialSelHelper = new SelectionHelper(
-					AssociatedSimpleRootSite.EditingHelper.CurrentSelection);
+				m_InitialSelection = new SelectionWrapper(AssociatedSimpleRootSite);
 			}
 
 			var ibusText = obj as IBusText;
@@ -365,7 +394,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			// end of our range selection. The bottom of m_InitialSelHelper is the position at
 			// the end of the initial range selection, so it will be part of the anchor.
 			selHelper.IchEnd = selHelper.GetIch(SelectionHelper.SelLimitType.Bottom);
-			selHelper.IchAnchor = m_InitialSelHelper.GetIch(SelectionHelper.SelLimitType.Bottom)
+			selHelper.IchAnchor = m_InitialSelection.SelectionHelper.GetIch(SelectionHelper.SelLimitType.Bottom)
 				+ cursorPos;
 			selHelper.SetSelection(true);
 
@@ -376,10 +405,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_EndOfPreedit = new SelectionHelper(
 				AssociatedSimpleRootSite.EditingHelper.CurrentSelection);
 
-			if (m_InitialSelHelper.IsRange)
+			if (m_InitialSelection.SelectionHelper.IsRange)
 			{
 				// keep the range selection
-				selHelper = m_InitialSelHelper;
+				selHelper = m_InitialSelection.SelectionHelper;
 			}
 			else
 				selHelper = m_EndOfPreedit;
