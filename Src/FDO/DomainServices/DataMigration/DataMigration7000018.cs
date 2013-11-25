@@ -1,12 +1,6 @@
-// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2010, SIL International. All Rights Reserved.
-// <copyright from='2010' to='2010' company='SIL International'>
-//		Copyright (c) 2010, SIL International. All Rights Reserved.
-//
-//		Distributable under the terms of either the Common Public License or the
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
-// </copyright>
-#endregion
+// Copyright (c) 2010-2013 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File: DataMigration7000018.cs
 // Responsibility: mcconnel
@@ -15,7 +9,7 @@
 // This implements FWR-648, FWR-741, and part of FWR-1163.
 // It also ensures that built-in styles for the LangProject.Styles list are all marked built-in.
 // </remarks>
-// ---------------------------------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
 using System.Text;

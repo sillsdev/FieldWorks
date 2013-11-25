@@ -1,12 +1,6 @@
-// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2006, SIL International. All Rights Reserved.
-// <copyright from='2006' to='2006' company='SIL International'>
-//		Copyright (c) 2006, SIL International. All Rights Reserved.
-//
-//		Distributable under the terms of either the Common Public License or the
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
-// </copyright>
-#endregion
+// Copyright (c) 2006-2013 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File: FwParagraphTab.cs
 // Responsibility: TE Team

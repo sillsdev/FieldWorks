@@ -1,13 +1,10 @@
-//---------------------------------------------------------------------------------------------
-#region /// Copyright (c) 2002-2008, SIL International. All Rights Reserved.
-// <copyright from='2002' to='2008' company='SIL International'>
-//    Copyright (c) 2008, SIL International. All Rights Reserved.
-// </copyright>
-#endregion
+// Copyright (c) 2002-2013 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File: FwRegistrySettings.cs
 // Responsibility:
-// --------------------------------------------------------------------------------------------
+
 using System;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;

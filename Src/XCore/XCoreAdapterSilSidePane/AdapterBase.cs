@@ -1,9 +1,6 @@
-// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2004, SIL International. All Rights Reserved.
-// <copyright from='2004' to='2004' company='SIL International'>
-//		Copyright (c) 2004, SIL International. All Rights Reserved.
-// </copyright>
-#endregion
+// Copyright (c) 2004-2013 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File: AdapterBase.cs
 // Authorship History: Randy Regnier
@@ -11,7 +8,7 @@
 //
 // <remarks>
 // </remarks>
-// --------------------------------------------------------------------------------------------
+
 using System;
 using System.Collections;
 using System.ComponentModel;

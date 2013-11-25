@@ -1,5 +1,6 @@
-// Copyright (c) 2012-2013, SIL International.
-// Distributable under the terms of the MIT license (http://opensource.org/licenses/MIT).
+// Copyright (c) 2012-2013 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using NUnit.Framework;
 using SIL.Utils.Attributes;

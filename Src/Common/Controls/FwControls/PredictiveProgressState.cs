@@ -1,12 +1,6 @@
-// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 20045 SIL International. All Rights Reserved.
-// <copyright from='2005' to='2005' company='SIL International'>
-//		Copyright (c) 2005, SIL International. All Rights Reserved.
-//
-//		Distributable under the terms of either the Common Public License or the
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
-// </copyright>
-#endregion
+// Copyright (c) 2005-2013 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File: PredictiveProgressState.cs
 // Responsibility:
@@ -28,7 +22,7 @@
 //
 //		We could add something so that we get a default prediction the first-time the user runs a task. This might include a "percent suggestion" for each milestone.
 // </remarks>
-// --------------------------------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
 using Microsoft.Win32;
