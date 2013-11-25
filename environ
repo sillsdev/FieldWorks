@@ -32,6 +32,7 @@ ${LD_LIBRARY_PATH}"
 PATH="/usr/lib/fieldworks/mono/bin:${PATH}"
 LD_LIBRARY_PATH="/usr/lib/fieldworks/mono/lib:${LD_LIBRARY_PATH}"
 PKG_CONFIG_PATH="/usr/lib/fieldworks/mono/lib/pkgconfig:${PKG_CONFIG_PATH}"
+MONO_GAC_PREFIX="/usr/lib/fieldworks/mono:/usr:/usr/local"
 
 if [ "$RUNMODE" != "PACKAGE" ]
 then
@@ -39,6 +40,7 @@ then
 	PATH="${MONO_PREFIX}/bin:${PATH}"
 	LD_LIBRARY_PATH="${MONO_PREFIX}/lib:${LD_LIBRARY_PATH}"
 	PKG_CONFIG_PATH="${MONO_PREFIX}/lib/pkgconfig:${PKG_CONFIG_PATH}"
+	MONO_GAC_PREFIX="${MONO_PREFIX}:${MONO_GAC_PREFIX}"
 fi
 
 if [ "$RUNMODE" = "INSTALLED" ]
@@ -88,7 +90,7 @@ export \
 	ICU_DATA \
 	FLEXBRIDGEDIR \
 	MONO_PATH MONO_REGISTRY_PATH \
-	MONO_RUNTIME MONO_PREFIX \
+	MONO_RUNTIME MONO_PREFIX MONO_GAC_PREFIX \
 	MONO_TRACE_LISTENER MONO_IOMAP MONO_MWF_SCALING FW_CommonAppData
 
 #DEBUG_ENABLE_PTR_VALIDATION
