@@ -420,19 +420,19 @@
 	</Target>
 
 	<PropertyGroup>
-		<!-- bt274 is the FLExBridgeBeta branch build of Chorus for Windows. Update when appropriate. -->
-		<ChorusDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt274/.lastSuccessful</ChorusDownloadUrl>
-		<!-- bt285 is the FLExBridgeBeta branch build of Chorus for Linux. Update when appropriate. -->
-		<ChorusDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt285/.lastSuccessful</ChorusDownloadUrl>
-		<!-- fwiw, bt273 is the FLExBridgeBeta branch build of Palaso for Windows. Update when appropriate. -->
-		<PalasoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt273/.lastSuccessful</PalasoDownloadUrl>
-		<!-- fwiw, bt284 is the FLExBridgeBeta branch build of Palaso for Linux. Update when appropriate. -->
-		<PalasoDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt284/.lastSuccessful</PalasoDownloadUrl>
+		<!-- bt274 is the FLExBridgeBeta branch build of Chorus for Windows release. Update when appropriate. -->
+		<ChorusDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt274/.lastPinned</ChorusDownloadUrl>
+		<!-- bt285 is the FLExBridgeBeta branch build of Chorus for Linux release. Update when appropriate. -->
+		<ChorusDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt285/.lastPinned</ChorusDownloadUrl>
+		<!-- fwiw, bt273 is the FLExBridgeBeta branch build of Palaso for Windows release. Update when appropriate. -->
+		<PalasoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt273/.lastPinned</PalasoDownloadUrl>
+		<!-- fwiw, bt284 is the FLExBridgeBeta branch build of Palaso for Linux release. Update when appropriate. -->
+		<PalasoDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt284/.lastPinned</PalasoDownloadUrl>
 		<!--Todo: use PalasoDownloadUrl, when it refers to somewhere that has the IPCFramework.-->
-		<!-- bt278 is the develop branch build of IPCFramework for Windows. Update when appropriate. -->
-		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt278/.lastSuccessful</IPCFrameworkDownloadUrl>
-		<!-- bt279 is the develop branch build of IPCFramework for Linux. Update when appropriate. -->
-		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt279/.lastSuccessful</IPCFrameworkDownloadUrl>
+		<!-- bt278 is the develop branch build of IPCFramework for Windows release. Update when appropriate. -->
+		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt278/.lastPinned</IPCFrameworkDownloadUrl>
+		<!-- bt279 is the develop branch build of IPCFramework for Linux release. Update when appropriate. -->
+		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt279/.lastPinned</IPCFrameworkDownloadUrl>
 		<!-- Windows/.Net and Linux/Mono use different extensions for debug information files. -->
 		<DebugInfo Condition="'$(OS)'=='Unix'">dll.mdb</DebugInfo>
 		<DebugInfo Condition="'$(OS)'=='Windows_NT'">pdb</DebugInfo>
