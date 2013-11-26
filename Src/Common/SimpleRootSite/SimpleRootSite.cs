@@ -1799,6 +1799,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Gets the (estimated) height of one line
 		/// </summary>
+		/// <remarks>
+		/// Should we use the selection text properties and stylesheet to get a more specific value?
+		/// (font height + 4pt?)
+		/// Note: the calculation below returns 18 for what would be 18.6667 (if Dpi.Y==96).
+		/// </remarks>
 		/// ------------------------------------------------------------------------------------
 		public int LineHeight
 		{

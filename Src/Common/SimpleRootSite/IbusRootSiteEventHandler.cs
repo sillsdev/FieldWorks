@@ -535,12 +535,11 @@ namespace SIL.FieldWorks.Common.RootSites
 
 				var location = selHelper.GetLocation();
 				AssociatedSimpleRootSite.ClientToScreen(AssociatedSimpleRootSite.RootBox, ref location);
-				// TODO: get line height from selection or style instead of hardcoding a value!
-				return new Rectangle(location.X, location.Y, 0, 20);
+				var lineHeight = AssociatedSimpleRootSite.LineHeight;
+				return new Rectangle(location.X, location.Y, 0, lineHeight);
 			}
 		}
 		#endregion
-
 	}
 }
 #endif
