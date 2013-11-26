@@ -240,9 +240,7 @@
     <Compile Include="ArchivingTests.cs" />
     <Compile Include="BulkEditBarTests.cs">
     </Compile>
-    <Compile Include="CustomListDlgTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="CustomListDlgTests.cs" />
     <Compile Include="DeleteCustomListTests.cs" />
     <Compile Include="DictionaryConfigManagerTests.cs" />
     <Compile Include="DictionaryConfigViewerStub.cs" />
@@ -258,9 +256,7 @@
     <Compile Include="MacroListenerTests.cs" />
     <Compile Include="WordsUsedOnlyElsewhereFilterTests.cs" />
     <Compile Include="XmlDocConfigureDlgTests.cs" />
-    <Compile Include="XWorksAppTestBase.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="XWorksAppTestBase.cs" />
     <Compile Include="..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfo.cs</Link>
     </Compile>

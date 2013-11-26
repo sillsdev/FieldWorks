@@ -59,6 +59,8 @@ using SIL.CoreImpl.Properties;
 using Gecko;
 #else
 using NetSparkle;
+using ProgressBarStyle = SIL.FieldWorks.Common.FwUtils.ProgressBarStyle;
+
 #endif
 
 [assembly:SuppressMessage("Gendarme.Rules.Portability", "ExitCodeIsLimitedOnUnixRule",

@@ -35,6 +35,7 @@ using XCore;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
 using SIL.FieldWorks.Resources;
+using ProgressBarStyle = SIL.FieldWorks.Common.FwUtils.ProgressBarStyle;
 
 namespace SIL.FieldWorks.LexText.Controls
 {

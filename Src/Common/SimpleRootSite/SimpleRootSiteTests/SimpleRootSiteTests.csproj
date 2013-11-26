@@ -206,9 +206,7 @@
     </Compile>
     <Compile Include="TsStringWrapperTests.cs">
     </Compile>
-    <Compile Include="IbusRootSiteEventHandlerTests.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="IbusRootSiteEventHandlerTests.cs" />
     <Compile Include="IbusRootSiteEventHandlerTests_Simple.cs" />
     <Compile Include="UndoableRealDataCache.cs" />
   </ItemGroup>

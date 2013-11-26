@@ -19,6 +19,7 @@ using Palaso.Reporting;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FixData;
 using Palaso.UI.WindowsForms.HotSpot;
+using ProgressBarStyle = SIL.FieldWorks.Common.FwUtils.ProgressBarStyle;
 
 namespace FixFwData
 {

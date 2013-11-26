@@ -1248,7 +1248,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// <summary>
 		/// Clear the list of homograph information
 		/// </summary>
-		public void ResetHomographs(ProgressBar progressBar)
+		public void ResetHomographs(IProgress progressBar)
 		{
 			m_homographInfo = null; // GetHomographs() will rebuild the homograph list
 			Cache.LanguageProject.LexDbOA.ResetHomographNumbers(progressBar);

@@ -17,6 +17,7 @@ using SIL.FieldWorks.FdoUi;
 using XCore;
 using SIL.FieldWorks.Common.Controls;
 using SIL.CoreImpl;
+using ProgressBarStyle = SIL.FieldWorks.Common.FwUtils.ProgressBarStyle;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -169,7 +170,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				m_progressBar.Minimum = 0;
 				m_progressBar.Maximum = 100;
 				m_progressBar.Value = 0;
-				m_progressBar.ProgressBar.Style = ProgressBarStyle.Continuous;
+				m_progressBar.ProgressBar.Style = ProgressBarStyleExtensions.Convert(ProgressBarStyle.Continuous);
 			}
 
 			#region IProgress Members

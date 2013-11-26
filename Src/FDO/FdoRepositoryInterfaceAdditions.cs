@@ -14,8 +14,8 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch;
 
@@ -409,7 +409,7 @@ namespace SIL.FieldWorks.FDO
 		/// <summary>
 		/// Clear the list of homograph information
 		/// </summary>
-		void ResetHomographs(ProgressBar progressBar);
+		void ResetHomographs(IProgress progressBar);
 
 		/// <summary>
 		/// Return a list of all the homographs of the specified form.

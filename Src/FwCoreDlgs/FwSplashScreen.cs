@@ -20,6 +20,7 @@ using System.Threading;
 using System.Windows.Forms;
 
 using SIL.FieldWorks.Common.FwUtils;
+using ProgressBarStyle = SIL.FieldWorks.Common.FwUtils.ProgressBarStyle;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

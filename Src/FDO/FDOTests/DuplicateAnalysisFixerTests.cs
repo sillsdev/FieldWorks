@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.FDO.FDOTests
@@ -20,7 +21,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	public class DuplicateAnalysisFixerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private IWfiWordformFactory m_wfiFactory;
-		private ProgressBar m_progress;
+		private ProgressBarWrapper m_progress;
 
 		/// <summary>
 		/// Set up some common data
@@ -29,13 +30,13 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			base.TestSetup();
 			m_wfiFactory = Cache.ServiceLocator.GetInstance<IWfiWordformFactory>();
-			m_progress = new ProgressBar();
+			m_progress = new ProgressBarWrapper(new ProgressBar());
 		}
 
 		/// <summary/>
 		public override void TestTearDown()
 		{
-			m_progress.Dispose();
+			m_progress.ProgressBar.Dispose();
 			m_progress = null;
 			base.TestTearDown();
 		}

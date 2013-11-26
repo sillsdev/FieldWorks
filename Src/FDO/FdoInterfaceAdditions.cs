@@ -869,17 +869,17 @@ namespace SIL.FieldWorks.FDO
 		/// <summary>
 		/// Resets the homograph numbers for all entries.
 		/// </summary>
-		void ResetHomographNumbers(ProgressBar progressBar);
+		void ResetHomographNumbers(IProgress progressBar);
 
 		/// <summary>
 		/// Allows user to convert LexEntryType to LexEntryInflType.
 		/// </summary>
-		void ConvertLexEntryInflTypes(ProgressBar progressBar, IEnumerable<ILexEntryType> list);
+		void ConvertLexEntryInflTypes(IProgress progressBar, IEnumerable<ILexEntryType> list);
 
 		/// <summary>
 		/// Allows user to convert LexEntryInflType to LexEntryType.
 		/// </summary>
-		void ConvertLexEntryTypes(ProgressBar progressBar, IEnumerable<ILexEntryType> list);
+		void ConvertLexEntryTypes(IProgress progressBar, IEnumerable<ILexEntryType> list);
 		/// <summary>
 		/// used when dumping the lexical database for the automated Parser
 		/// </summary>

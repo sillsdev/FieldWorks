@@ -350,9 +350,7 @@
     <Compile Include="InterlinDocChart.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="InterlinearExportDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="InterlinearExportDialog.cs" />
     <Compile Include="InterlinearExporter.cs" />
     <Compile Include="InterlinearImportDlg.cs">
       <SubType>Form</SubType>
@@ -382,15 +380,9 @@
     <Compile Include="InterlinDocRootSiteBase.Designer.cs">
       <DependentUpon>InterlinDocRootSiteBase.cs</DependentUpon>
     </Compile>
-    <Compile Include="InterlinMaster.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="InterlinMasterNoTitleBar.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="InterlinMasterNoTitleContent.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="InterlinMaster.cs" />
+    <Compile Include="InterlinMasterNoTitleBar.cs" />
+    <Compile Include="InterlinMasterNoTitleContent.cs" />
     <Compile Include="InterlinPrintView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -409,9 +401,7 @@
     <Compile Include="InterlinMaster.Designer.cs">
       <DependentUpon>InterlinMaster.cs</DependentUpon>
     </Compile>
-    <Compile Include="InterlinMasterBase.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="InterlinMasterBase.cs" />
     <Compile Include="InterlinViewDataCache.cs" />
     <Compile Include="ITextStrings.Designer.cs">
       <AutoGen>True</AutoGen>

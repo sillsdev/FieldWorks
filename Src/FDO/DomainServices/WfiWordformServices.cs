@@ -208,7 +208,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="cache"></param>
 		/// <param name="progressBar"></param>
 		/// <returns>A string containing a list of wordforms that could not be merged because they have differing values for other WSs</returns>
-		public static string FixDuplicates(FdoCache cache, ProgressBar progressBar)
+		public static string FixDuplicates(FdoCache cache, IProgress progressBar)
 		{
 			var failures = new HashSet<string>();
 			var wfRepo = cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
@@ -216,10 +216,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			var wfiWordforms = wfRepo.AllInstances().ToArray();
 			progressBar.Minimum = 0;
 			progressBar.Maximum = wfiWordforms.Length;
-			progressBar.Step = 1;
+			progressBar.StepSize = 1;
 			foreach (var wf in wfiWordforms)
 			{
-				progressBar.PerformStep();
+				progressBar.Step(1);
 				var text = wf.Form.VernacularDefaultWritingSystem.Text;
 				if (string.IsNullOrEmpty(text))
 					continue;
@@ -290,15 +290,15 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Merge duplicate analyses on all wordforms. (Also merges duplicate WfiGlosses.)
 		/// </summary>
 		/// <returns></returns>
-		public static void MergeDuplicateAnalyses(FdoCache cache, ProgressBar progressBar)
+		public static void MergeDuplicateAnalyses(FdoCache cache, IProgress progressBar)
 		{
 			var wfiWordforms = cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances().ToList();
 			progressBar.Minimum = 0;
 			progressBar.Maximum = wfiWordforms.Count;
-			progressBar.Step = 1;
+			progressBar.StepSize = 1;
 			foreach (var wf in wfiWordforms)
 			{
-				progressBar.PerformStep();
+				progressBar.Step(1);
 				var analyses = wf.AnalysesOC.ToList();
 				for (int i = 0; i < analyses.Count; i++)
 				{

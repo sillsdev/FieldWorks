@@ -24,6 +24,7 @@ using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks.LexText;
 using SIL.Utils;
 using XCore;
+using ProgressBarStyle = SIL.FieldWorks.Common.FwUtils.ProgressBarStyle;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {

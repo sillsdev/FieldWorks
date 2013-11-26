@@ -21,6 +21,7 @@ using System.Windows.Forms;
 
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
+using ProgressBarStyle = SIL.FieldWorks.Common.FwUtils.ProgressBarStyle;
 
 namespace SIL.FieldWorks.Common.Framework
 {
@@ -213,8 +214,8 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		public ProgressBarStyle ProgressBarStyle
 		{
-			get { return m_progressBar.Style; }
-			set { m_progressBar.Style = value; }
+			get { return ProgressBarStyleExtensions.Convert(m_progressBar.Style); }
+			set { m_progressBar.Style = ProgressBarStyleExtensions.Convert(value); }
 		}
 
 		/// ------------------------------------------------------------------------------------

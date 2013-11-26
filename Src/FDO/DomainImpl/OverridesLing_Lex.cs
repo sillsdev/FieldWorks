@@ -28,6 +28,7 @@ using System.Xml; // XMLWriter
 using System.Drawing;
 
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.Utils;
@@ -241,29 +242,29 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <summary>
 		/// Allows user to convert LexEntryType to LexEntryInflType.
 		/// </summary>
-		public void ConvertLexEntryInflTypes(ProgressBar progressBar, IEnumerable<ILexEntryType> list)
+		public void ConvertLexEntryInflTypes(IProgress progressBar, IEnumerable<ILexEntryType> list)
 		{
 			progressBar.Minimum = 0;
 			progressBar.Maximum = list.Count();
-			progressBar.Step = 1;
+			progressBar.StepSize = 1;
 			foreach (var lexEntryType in list)
 			{
 				var leitFactory = m_cache.ServiceLocator.GetInstance<ILexEntryInflTypeFactory>();
 				var leit = leitFactory.Create();
 				leit.ConvertLexEntryType(lexEntryType);
 				lexEntryType.Delete();
-				progressBar.PerformStep();
+				progressBar.Step(1);
 			}
 		}
 
 		/// <summary>
 		/// Allows user to convert LexEntryInflType to LexEntryType.
 		/// </summary>
-		public void ConvertLexEntryTypes(ProgressBar progressBar, IEnumerable<ILexEntryType> list)
+		public void ConvertLexEntryTypes(IProgress progressBar, IEnumerable<ILexEntryType> list)
 		{
 			progressBar.Minimum = 0;
 			progressBar.Maximum = list.Count();
-			progressBar.Step = 1;
+			progressBar.StepSize = 1;
 			foreach (var lexEntryInflType in list)
 			{
 				var leit = lexEntryInflType as ILexEntryInflType;
@@ -274,20 +275,20 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					lexEntryType.ConvertLexEntryType(leit);
 					leit.Delete();
 				}
-				progressBar.PerformStep();
+				progressBar.Step(1);
 			}
 		}
 
 		/// <summary>
 		/// Resets the homograph numbers for all entries but can take a null progress bar.
 		/// </summary>
-		public void ResetHomographNumbers(ProgressBar progressBar)
+		public void ResetHomographNumbers(IProgress progressBar)
 		{
 			if (progressBar != null)
 			{
 				progressBar.Minimum = 0;
 				progressBar.Maximum = Entries.Count();
-				progressBar.Step = 1;
+				progressBar.StepSize = 1;
 			}
 			var processedEntryIds = new List<int>();
 			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Strings.ksUndoResetHomographs, Strings.ksRedoResetHomographs, Cache.ActionHandlerAccessor,
@@ -298,7 +299,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						if (processedEntryIds.Contains(le.Hvo))
 						{
 							if (progressBar != null)
-								progressBar.PerformStep();
+								progressBar.Step(1);
 							continue;
 						}
 
@@ -316,7 +317,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						{
 							processedEntryIds.Add(homograph.Hvo);
 							if (progressBar != null)
-								progressBar.PerformStep();
+								progressBar.Step(1);
 						}
 					}
 				});

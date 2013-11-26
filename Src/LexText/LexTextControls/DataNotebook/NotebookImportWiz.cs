@@ -40,6 +40,7 @@ using System.Reflection;
 using System.Globalization;
 using SIL.FieldWorks.Common.RootSites;
 using SilEncConverters40;
+using ProgressBarStyle = SIL.FieldWorks.Common.FwUtils.ProgressBarStyle;
 
 namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 {

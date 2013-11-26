@@ -173,9 +173,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Gets or sets the progress bar style.
 		/// </summary>
-		public System.Windows.Forms.ProgressBarStyle ProgressBarStyle
+		public ProgressBarStyle ProgressBarStyle
 		{
-			get { return System.Windows.Forms.ProgressBarStyle.Continuous; }
+			get { return ProgressBarStyle.Continuous; }
 			set { }
 		}
 

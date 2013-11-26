@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -205,7 +206,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		protected override void Convert(IEnumerable<ILexEntryType> itemsToChange)
 		{
-			m_cache.LanguageProject.LexDbOA.ConvertLexEntryInflTypes(m_dlg.ProgressBar, itemsToChange);
+			m_cache.LanguageProject.LexDbOA.ConvertLexEntryInflTypes(new SIL.FieldWorks.Common.FwUtils.ProgressBarWrapper(m_dlg.ProgressBar), itemsToChange);
 		}
 
 	}
@@ -257,7 +258,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		protected override void Convert(IEnumerable<ILexEntryType> itemsToChange)
 		{
-			m_cache.LanguageProject.LexDbOA.ConvertLexEntryTypes(m_dlg.ProgressBar, itemsToChange);
+			m_cache.LanguageProject.LexDbOA.ConvertLexEntryTypes(new SIL.FieldWorks.Common.FwUtils.ProgressBarWrapper(m_dlg.ProgressBar), itemsToChange);
 		}
 
 		#endregion IUtility implementation
