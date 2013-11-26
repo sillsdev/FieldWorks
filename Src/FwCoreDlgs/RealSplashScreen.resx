@@ -5218,9 +5218,6 @@
   <data name="&gt;&gt;lblProductName.ZOrder" xml:space="preserve">
 	<value>8</value>
   </data>
-  <data name="lblCopyright.AutoSize" type="System.Boolean, mscorlib">
-	<value>True</value>
-  </data>
   <data name="lblCopyright.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
 	<value>NoControl</value>
   </data>
@@ -5228,16 +5225,13 @@
 	<value>186, 205</value>
   </data>
   <data name="lblCopyright.Size" type="System.Drawing.Size, System.Drawing">
-	<value>14, 13</value>
+	<value>360, 36</value>
   </data>
   <data name="lblCopyright.TabIndex" type="System.Int32, mscorlib">
 	<value>6</value>
   </data>
   <data name="lblCopyright.Text" xml:space="preserve">
 	<value>#</value>
-  </data>
-  <data name="lblCopyright.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-	<value>BottomLeft</value>
   </data>
   <data name="&gt;&gt;lblCopyright.Name" xml:space="preserve">
 	<value>lblCopyright</value>

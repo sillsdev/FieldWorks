@@ -91,7 +91,7 @@ namespace SILUBS.PhraseTranslationHelper
 			this.m_lblCopyright.Name = "m_lblCopyright";
 			this.m_lblCopyright.Size = new System.Drawing.Size(243, 57);
 			this.m_lblCopyright.TabIndex = 20;
-			this.m_lblCopyright.Text = "(C) 2011-2012, SIL International.";
+			this.m_lblCopyright.Text = "Copyright (c) 2011-2012 SIL International";
 			//
 			// m_pnlCredits
 			//

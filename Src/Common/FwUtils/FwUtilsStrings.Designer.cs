@@ -189,11 +189,20 @@ namespace SIL.FieldWorks.Common.FwUtils {
 		}
 
 		/// <summary>
-		///   Looks up a localized string similar to {0}. All rights reserved..
+		///   Looks up a localized string
 		/// </summary>
-		internal static string kstidCopyrightFmt {
+		internal static string kstidLicense {
 			get {
-				return ResourceManager.GetString("kstidCopyrightFmt", resourceCulture);
+				return ResourceManager.GetString("kstidLicense", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string
+		/// </summary>
+		internal static string kstidLicenseURL {
+			get {
+				return ResourceManager.GetString("kstidLicenseURL", resourceCulture);
 			}
 		}
 

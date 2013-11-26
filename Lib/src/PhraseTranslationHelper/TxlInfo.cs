@@ -57,7 +57,7 @@ namespace SILUBS.PhraseTranslationHelper
 			object[] attributes = assembly.GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
 			if (attributes.Length > 0)
 				m_lblCopyright.Text = ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
-			m_lblCopyright.Text = string.Format(Properties.Resources.kstidCopyrightFmt, m_lblCopyright.Text.Replace("(C)", "\u00A9")); // U+00A9 COPYRIGHT SYMBOL (©)
+			m_lblCopyright.Text = string.Format(Properties.Resources.kstidCopyrightFmt, m_lblCopyright.Text.Replace("(c)", "\u00A9")); // U+00A9 COPYRIGHT SYMBOL (©)
 
 			// For now, get the version of FW with which TXL is being distributed.
 			attributes = assembly.GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false);
