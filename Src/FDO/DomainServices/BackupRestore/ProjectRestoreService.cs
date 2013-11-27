@@ -73,11 +73,12 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// Perform a restore of the project specified in the settings.
 		/// </summary>
 		/// <param name="progressDlg">The progress dialog.</param>
+		/// <param name="userAction"></param>
 		/// <exception cref="IOException">File does not exist, or some such problem</exception>
 		/// <exception cref="InvalidBackupFileException">XML deserialization problem or required
 		/// files not found in zip file</exception>
 		/// ------------------------------------------------------------------------------------
-		public void RestoreProject(IThreadedProgress progressDlg)
+		public void RestoreProject(IThreadedProgress progressDlg, IFdoUserAction userAction)
 		{
 			BackupFileSettings fileSettings = m_restoreSettings.Backup;
 			fileSettings.Validate(); // Normally, this will already have been done, so this will do nothing.
@@ -126,7 +127,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 
 			// switch to the desired backend (if it's in the projects directory...anything else stays XML for now).
 			if (DirectoryFinder.IsSubFolderOfProjectsDirectory(m_restoreSettings.ProjectPath) && !suppressConversion)
-				ClientServerServices.Current.Local.ConvertToDb4oBackendIfNeeded(progressDlg, m_restoreSettings.FullProjectPath);
+				ClientServerServices.Current.Local.ConvertToDb4oBackendIfNeeded(progressDlg, m_restoreSettings.FullProjectPath, userAction);
 
 			CleanupAfterRestore(true);
 		}

@@ -247,7 +247,9 @@
     <Compile Include="TryAWordRootSite.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="TryAWordSandbox.cs" />
+    <Compile Include="TryAWordSandbox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="WebPageInteractor.cs" />
     <Compile Include="WordGrammarDebugger.cs" />
     <Compile Include="WordImporter.cs">

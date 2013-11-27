@@ -108,6 +108,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		private readonly IDataStorer m_dataStorer;
 		private readonly IdentityMap m_identityMap;
+		private readonly IFdoUserAction m_userAction;
 		internal ICmObjectRepositoryInternal ObjectRepository
 		{
 			get;
@@ -156,15 +157,17 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		internal UnitOfWorkService(IDataStorer dataStorer, IdentityMap identityMap, ICmObjectRepositoryInternal objectRepository)
+		internal UnitOfWorkService(IDataStorer dataStorer, IdentityMap identityMap, ICmObjectRepositoryInternal objectRepository, IFdoUserAction userAction)
 		{
 			if (dataStorer == null) throw new ArgumentNullException("dataStorer");
 			if (identityMap == null) throw new ArgumentNullException("identityMap");
 			if (objectRepository == null) throw new ArgumentNullException("objectRepository");
+			if (userAction == null) throw new ArgumentNullException("userAction");
 
 			m_dataStorer = dataStorer;
 			m_identityMap = identityMap;
 			ObjectRepository = objectRepository;
+			m_userAction = userAction;
 			CurrentProcessingState = FdoBusinessTransactionState.ReadyForBeginTask;
 			NonUndoableStack = (UndoStack)CreateUndoStack();
 			// Make a separate stack as the initial default. This should be mainly used in tests.
@@ -325,7 +328,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				{
 					if (m_pendingReconciliation != null)
 					{
-						ShowConflictingSaveDialogBox();
+						GetUserInputOnConflictingSave();
 						return; // Don't try to save the changes we just reverted!
 					}
 					List<ICmObjectSurrogate> foreignNewbies;
@@ -343,7 +346,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 						else
 						{
 							m_pendingReconciliation = reconciler;
-							ShowConflictingSaveDialogBox();
+							GetUserInputOnConflictingSave();
 							return;
 						}
 					}
@@ -366,19 +369,14 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Shows the conflicting save dialog box.
-		/// ENHANCE (TimS): We should not be showing a dialog box at this level. If we
-		/// really need to show it here, we should pass in the owning form instead of relying on
-		/// Form.ActiveForm since it can return null if no .Net forms have focus.
+		/// Gets user input on conflicting save
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void ShowConflictingSaveDialogBox()
+		private void GetUserInputOnConflictingSave()
 		{
-			using (ConflictingSaveDlg dlg = new ConflictingSaveDlg())
+			if (m_userAction.ConflictingSave())
 			{
-			DialogResult result = dlg.ShowDialog(Form.ActiveForm);
-				if (result != DialogResult.OK)
-			RevertToSavedState();
+				RevertToSavedState();
 			}
 		}
 

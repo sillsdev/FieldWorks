@@ -270,7 +270,9 @@
     <Compile Include="AnalysisInterlinearRS.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="AssignFeaturesToPhonemes.cs" />
+    <Compile Include="AssignFeaturesToPhonemes.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="AssignFeaturesToPhonemes.Designer.cs">
       <DependentUpon>AssignFeaturesToPhonemes.cs</DependentUpon>
     </Compile>
@@ -318,7 +320,9 @@
     <Compile Include="MorphologyListener.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="OneAnalysisSandbox.cs" />
+    <Compile Include="OneAnalysisSandbox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="OneAnalysisSandbox.Designer.cs">
       <DependentUpon>OneAnalysisSandbox.cs</DependentUpon>
     </Compile>

@@ -36,16 +36,18 @@ namespace SIL.FieldWorks.FDO.IOC
 	internal sealed partial class FdoServiceLocatorFactory : IServiceLocatorBootstrapper
 	{
 		private readonly FDOBackendProviderType m_backendProviderType;
+		private readonly IFdoUserAction m_userAction;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="backendProviderType">Type of backend provider to create.</param>
+		/// <param name="userAction">The user action implementation</param>
 		/// ------------------------------------------------------------------------------------
-		internal FdoServiceLocatorFactory(FDOBackendProviderType backendProviderType)
+		internal FdoServiceLocatorFactory(FDOBackendProviderType backendProviderType, IFdoUserAction userAction)
 		{
 			m_backendProviderType = backendProviderType;
+			m_userAction = userAction;
 		}
 
 		#region Implementation of IServiceLocatorBootstrapper
@@ -241,6 +243,10 @@ namespace SIL.FieldWorks.FDO.IOC
 			registry
 				.For<IWritingSystemContainer>()
 				.Use(c => c.GetInstance<ILangProjectRepository>().Singleton);
+
+			registry
+				.For<IFdoUserAction>()
+				.Use(m_userAction);
 
 			// =================================================================================
 			// Don't add COM object to the registry. StructureMap does not properly release COM

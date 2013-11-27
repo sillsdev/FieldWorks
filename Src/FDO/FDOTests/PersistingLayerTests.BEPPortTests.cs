@@ -211,7 +211,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			using (var threadHelper = new ThreadHelper())
 			using (var sourceCache = FdoCache.CreateCacheWithNewBlankLangProj(
 				new TestProjectId(sourceBackendStartupParameters.ProjectId.Type,
-								sourceBackendStartupParameters.ProjectId.Path), "en", "fr", "en", threadHelper))
+								sourceBackendStartupParameters.ProjectId.Path), "en", "fr", "en", threadHelper, new DummyFdoUserAction()))
 			{
 				// BEP is a singleton, so we shouldn't call Dispose on it. This will be done
 				// by service locator.
@@ -227,7 +227,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 				using (var otherThreadHelper = new ThreadHelper())
 				using (var targetCache = FdoCache.CreateCacheCopy(
 					new TestProjectId(targetBackendStartupParameters.ProjectId.Type,
-									targetBackendStartupParameters.ProjectId.Path), "en", sourceCache, otherThreadHelper))
+									targetBackendStartupParameters.ProjectId.Path), "en", sourceCache, otherThreadHelper, new DummyFdoUserAction()))
 				{
 					// BEP is a singleton, so we shouldn't call Dispose on it. This will be done
 					// by service locator.
@@ -276,7 +276,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 													sourceBackendStartupParameters.ProjectId.Path);
 			IThreadedProgress progressDlg = new DummyProgressDlg();
 			using (FdoCache sourceCache = FdoCache.CreateCacheWithNewBlankLangProj(
-				projId, "en", "fr", "en", progressDlg.ThreadHelper))
+				projId, "en", "fr", "en", progressDlg.ThreadHelper, new DummyFdoUserAction()))
 			{
 				// BEP is a singleton, so we shouldn't call Dispose on it. This will be done
 				// by service locator.
@@ -290,7 +290,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			// Migrate source data to new BEP.
 			progressDlg = new DummyProgressDlg();
 			using (var targetCache = FdoCache.CreateCacheWithNoLangProj(
-				new TestProjectId(targetBackendStartupParameters.ProjectId.Type, null), "en", progressDlg.ThreadHelper))
+				new TestProjectId(targetBackendStartupParameters.ProjectId.Type, null), "en", progressDlg.ThreadHelper, new DummyFdoUserAction()))
 			{
 				// BEP is a singleton, so we shouldn't call Dispose on it. This will be done
 				// by service locator.

@@ -183,8 +183,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		protected FdoCache BootstrapSystem(IProjectIdentifier projectId, BackendBulkLoadDomain loadType)
 		{
 			// This thread helper will be disposed in FixtureTeardown along with the cache.
-			var retval = m_internalRestart ? FdoCache.CreateCacheFromExistingData(projectId, "en", new DummyProgressDlg()) :
-				FdoCache.CreateCacheWithNewBlankLangProj(projectId, "en", "fr", "en", new ThreadHelper());
+			var retval = m_internalRestart ? FdoCache.CreateCacheFromExistingData(projectId, "en", new DummyProgressDlg(), new DummyFdoUserAction()) :
+				FdoCache.CreateCacheWithNewBlankLangProj(projectId, "en", "fr", "en", new ThreadHelper(), new DummyFdoUserAction());
 			var dataSetup = retval.ServiceLocator.GetInstance<IDataSetup>();
 			dataSetup.LoadDomain(loadType);
 			return retval;

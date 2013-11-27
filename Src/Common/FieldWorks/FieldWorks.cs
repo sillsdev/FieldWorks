@@ -42,6 +42,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.PaObjects;
@@ -130,6 +131,7 @@ namespace SIL.FieldWorks
 		// true if we have no previous reporting settings, typically the first time a version of FLEx that
 		// supports usage reporting has been run.
 		private static bool s_noPreviousReportingSettings;
+		private static IFdoUserAction s_userAction;
 		#endregion
 
 		#region Main Method and Initialization Methods
@@ -188,6 +190,8 @@ namespace SIL.FieldWorks
 				// TODO-Linux: uses mono feature that is not implemented. What are the implications of this? Review.
 #endif
 				s_threadHelper = new ThreadHelper();
+
+				s_userAction = new FdoUserActionWindowsForms();
 
 				// ENHANCE (TimS): Another idea for ensuring that we have only one process started for
 				// this project is to use a Mutex. They can be used for cross-process resource access
@@ -769,7 +773,7 @@ namespace SIL.FieldWorks
 			Form owner = s_splashScreen != null ? s_splashScreen.Form : Form.ActiveForm;
 			using (var progressDlg = new ProgressDialogWithTask(owner, s_threadHelper))
 			{
-				FdoCache cache = FdoCache.CreateCacheFromExistingData(projectId, s_sWsUser, progressDlg);
+				FdoCache cache = FdoCache.CreateCacheFromExistingData(projectId, s_sWsUser, progressDlg, s_userAction);
 			cache.ProjectNameChanged += ProjectNameChanged;
 			cache.ServiceLocator.GetInstance<IUndoStackManager>().OnSave += FieldWorks_OnSave;
 
@@ -1616,7 +1620,7 @@ namespace SIL.FieldWorks
 							projectToTry = null; // If the user cancels the send/receive, this null will result in a return to the welcome dialog.
 							// Hard to say what Form.ActiveForm is here. The splash and welcome dlgs are both gone.
 							var projectDataPathname = ObtainProjectMethod.ObtainProjectFromAnySource(Form.ActiveForm,
-								helpTopicProvider, out obtainedProjectType);
+								helpTopicProvider, out obtainedProjectType, s_userAction);
 							if (!string.IsNullOrEmpty(projectDataPathname))
 							{
 								projectToTry = new ProjectId(FDOBackendProviderType.kXML, projectDataPathname, null);
@@ -1688,7 +1692,7 @@ namespace SIL.FieldWorks
 			{
 				return null;
 			}
-			using (var dlg = new ChooseLangProjectDialog(helpTopicProvider, false))
+			using (var dlg = new ChooseLangProjectDialog(helpTopicProvider, false, s_userAction))
 			{
 				dlg.ShowDialog(dialogOwner);
 				var app = helpTopicProvider as IApp;
@@ -1720,7 +1724,7 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		internal static ProjectId CreateNewProject(Form dialogOwner, FwApp app, IHelpTopicProvider helpTopicProvider)
 		{
-			using (var dlg = new FwNewLangProject())
+			using (var dlg = new FwNewLangProject(s_userAction))
 			{
 				dlg.SetDialogProperties(helpTopicProvider);
 				switch (dlg.DisplayDialog(dialogOwner))
@@ -1950,7 +1954,7 @@ namespace SIL.FieldWorks
 				// Both these setters check and do nothing if not changed.
 				using (var progressDlg = new ProgressDialogWithTask(null, s_threadHelper))
 				{
-					return ClientServerServices.Current.Local.SetProjectSharing(fShareProjects, progressDlg);
+					return ClientServerServices.Current.Local.SetProjectSharing(fShareProjects, progressDlg, s_userAction);
 				}
 			}
 
@@ -1959,7 +1963,7 @@ namespace SIL.FieldWorks
 			{
 				using (var progressDlg = new ProgressDialogWithTask(null, s_threadHelper))
 				{
-					fSuccess = ClientServerServices.Current.Local.SetProjectSharing(fShareProjects, progressDlg);
+					fSuccess = ClientServerServices.Current.Local.SetProjectSharing(fShareProjects, progressDlg, s_userAction);
 				}
 				return new ProjectId(ClientServerServices.Current.Local.IdForLocalProject(Path.GetFileNameWithoutExtension(projectPath)), null);
 			});
@@ -2460,7 +2464,7 @@ namespace SIL.FieldWorks
 		private static void DoRestore(ProjectRestoreService restoreService)
 		{
 			using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(null, s_threadHelper))
-				restoreService.RestoreProject(progressDlg);
+				restoreService.RestoreProject(progressDlg, s_userAction);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2484,7 +2488,7 @@ namespace SIL.FieldWorks
 			{
 				FdoCache cache = existingCache ?? FdoCache.CreateCacheFromExistingData(
 					new ProjectId(restoreSettings.Settings.FullProjectPath, null),
-					s_sWsUser, progressDlg);
+					s_sWsUser, progressDlg, s_userAction);
 
 				try
 				{
@@ -2493,7 +2497,7 @@ namespace SIL.FieldWorks
 					settings.AppAbbrev = restoreSettings.FwAppCommandLineAbbrev;
 
 					ProjectBackupService backupService = new ProjectBackupService(cache, settings);
-					backupService.BackupProject(progressDlg);
+					backupService.BackupProject(progressDlg, s_userAction);
 				}
 				catch (FwBackupException e)
 				{

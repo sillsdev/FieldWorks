@@ -407,18 +407,6 @@
     <Compile Include="Infrastructure\Impl\ClientServerBackendProvider.cs" />
     <Compile Include="Infrastructure\Impl\CmObjectId.cs" />
     <Compile Include="Infrastructure\Impl\CommitData.cs" />
-    <Compile Include="Infrastructure\Impl\ConflictingSaveDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Infrastructure\Impl\ConflictingSaveDlg.Designer.cs">
-      <DependentUpon>ConflictingSaveDlg.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\Impl\ConnectionLostDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Infrastructure\Impl\ConnectionLostDlg.Designer.cs">
-      <DependentUpon>ConnectionLostDlg.cs</DependentUpon>
-    </Compile>
     <Compile Include="Infrastructure\Impl\DataSortingService.cs" />
     <Compile Include="DomainServices\Db4OPorts.cs" />
     <Compile Include="Infrastructure\Impl\FdoInvertSet.cs" />
@@ -558,14 +546,6 @@
     <EmbeddedResource Include="DomainServices\ScrFdoResources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ScrFdoResources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Infrastructure\Impl\ConflictingSaveDlg.resx">
-      <DependentUpon>ConflictingSaveDlg.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Infrastructure\Impl\ConnectionLostDlg.resx">
-      <DependentUpon>ConnectionLostDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">

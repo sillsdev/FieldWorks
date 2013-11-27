@@ -45,6 +45,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private readonly Rectangle m_initialBounds = Rectangle.Empty;
 		private readonly int m_initialSplitterPosition = -1;
 		private ObtainedProjectType m_obtainedProjectType = ObtainedProjectType.None;
+		private IFdoUserAction m_userAction;
 		#endregion
 
 		#region LanguageProjectInfo class
@@ -102,7 +103,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="bounds">The initial client bounds of the dialog.</param>
 		/// <param name="splitterPosition">The initial splitter position.</param>
 		/// ------------------------------------------------------------------------------------
-		public ChooseLangProjectDialog(Rectangle bounds, int splitterPosition) : this(null, false)
+		public ChooseLangProjectDialog(Rectangle bounds, int splitterPosition) : this(null, false, null)
 		{
 			m_initialBounds = bounds;
 			m_initialSplitterPosition = splitterPosition;
@@ -119,9 +120,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="openToAssosiateFwProject">If set to <c>true</c> the dialog will be
 		/// used to assosiate a FieldWorks project with another application (e.g. Paratext).
 		/// </param>
+		/// <param name="userAction"></param>
 		/// ------------------------------------------------------------------------------------
 		public ChooseLangProjectDialog(IHelpTopicProvider helpTopicProvider,
-			bool openToAssosiateFwProject) : this()
+			bool openToAssosiateFwProject, IFdoUserAction userAction)
+			: this()
 		{
 			m_helpTopicProvider = helpTopicProvider;
 
@@ -130,6 +133,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			if (openToAssosiateFwProject)
 				Text = FwCoreDlgs.kstidOpenToAssociateFwProj;
+
+			m_userAction = userAction;
 
 			m_lblAddNetworkComp.Font = SystemFonts.IconTitleFont;
 			m_lblChoosePrj.Font = SystemFonts.IconTitleFont;
@@ -559,7 +564,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void OpenBridgeProjectLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			// ObtainProjectFromAnySource may return null, empty string, or the full pathname to an fwdata file.
-			Project = ObtainProjectMethod.ObtainProjectFromAnySource(this, m_helpTopicProvider, out m_obtainedProjectType);
+			Project = ObtainProjectMethod.ObtainProjectFromAnySource(this, m_helpTopicProvider, out m_obtainedProjectType, m_userAction);
 			Server = null;
 			if (String.IsNullOrEmpty(Project))
 				return; // Don't close the Open project dialog yet (LT-13187)

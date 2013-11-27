@@ -1,4 +1,4 @@
-﻿namespace SIL.FieldWorks.FDO.Infrastructure.Impl
+namespace SIL.FieldWorks.FdoUi
 {
 	partial class ConflictingSaveDlg
 	{

@@ -644,7 +644,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void CreateMockCache()
 		{
 			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(
-				new TestProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", "es", "en", new ThreadHelper());
+				new TestProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", "es", "en", new ThreadHelper(), new DummyFdoUserAction());
 
 			var xl = new XmlList();
 			using (var reader = new StringReader(XmlListTests.s_ksPartsOfSpeechXml))

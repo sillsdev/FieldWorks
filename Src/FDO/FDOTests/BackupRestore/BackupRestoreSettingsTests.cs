@@ -102,7 +102,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			try
 			{
 				// Restore the project and check to ensure that it exists.
-				restoreProjectService.RestoreProject(new DummyProgressDlg());
+				restoreProjectService.RestoreProject(new DummyProgressDlg(), new DummyFdoUserAction());
 				Assert.True(restoreSettings.ProjectExists, "Project does not exist but it should.");
 			}
 			finally
@@ -139,7 +139,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			try
 			{
 				// Restore the project and check to ensure that it exists, but is not using Send/Receive.
-				restoreProjectService.RestoreProject(new DummyProgressDlg());
+				restoreProjectService.RestoreProject(new DummyProgressDlg(), new DummyFdoUserAction());
 				Assert.True(restoreSettings.ProjectExists, "Project does not exist but it should.");
 				Assert.False(restoreSettings.UsingSendReceive, "Project is using S/R but it should not be.");
 

@@ -87,13 +87,15 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// <param name="surrogateFactory"></param>
 		/// <param name="mdc"></param>
 		/// <param name="dataMigrationManager"></param>
+		/// <param name="userAction"></param>
 		public Db4oClientServerBackendProvider(
 			FdoCache cache,
 			IdentityMap identityMap,
 			ICmObjectSurrogateFactory surrogateFactory,
 			IFwMetaDataCacheManagedInternal mdc,
-			IDataMigrationManager dataMigrationManager)
-			: base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager)
+			IDataMigrationManager dataMigrationManager,
+			IFdoUserAction userAction)
+			: base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager, userAction)
 		{
 		}
 
@@ -743,24 +745,18 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					return true;
 			}
 
-			// It's useful to have this MessageBox handling here, as it allows reconnecting a dropped connection.
-			// Handling this at the application layer would require either recreating FdoCache or
-			// adding interface methods to expose resuming a dropped connection.
-			using (var dlg = new ConnectionLostDlg())
+			while (m_userAction.ConnectionLost())
 			{
-				while (dlg.ShowDialog() == DialogResult.Yes)
-				{
-					// if re-connection failed allow user to keep retrying as many times as they want.
-					if (ResumeDb4oConnection())
-						break;
-				}
-
-				if (m_dbStore == null)
-					System.Windows.Forms.Application.Exit();
-
-				// return true if connection re-established
-				return (m_dbStore != null);
+				// if re-connection failed allow user to keep retrying as many times as they want.
+				if (ResumeDb4oConnection())
+					break;
 			}
+
+			if (m_dbStore == null)
+				System.Windows.Forms.Application.Exit();
+
+			// return true if connection re-established
+			return (m_dbStore != null);
 		}
 
 		internal static Db4oServerInfo GetDb4OServerInfo(string host, int port)

@@ -491,7 +491,7 @@ namespace LexTextControlsTests
 			var mockProjectPath = Path.Combine(MockProjectFolder, mockProjectName + ".fwdata");
 			m_ThreadHelper = new ThreadHelper();
 			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(
-				new TestProjectId(FDOBackendProviderType.kMemoryOnly, mockProjectPath), "en", "fr", "en", m_ThreadHelper);
+				new TestProjectId(FDOBackendProviderType.kMemoryOnly, mockProjectPath), "en", "fr", "en", m_ThreadHelper, new DummyFdoUserAction());
 			MockLinkedFilesFolder = Path.Combine(MockProjectFolder, DirectoryFinder.ksLinkedFilesDir);
 			Directory.CreateDirectory(MockLinkedFilesFolder);
 			//m_cache.LangProject.LinkedFilesRootDir = MockLinkedFilesFolder; this is already the default.

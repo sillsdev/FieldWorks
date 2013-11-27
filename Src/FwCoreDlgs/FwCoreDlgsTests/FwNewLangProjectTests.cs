@@ -37,6 +37,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	public class DummyFwNewLangProject : FwNewLangProject
 	{
 		/// <summary>
+		/// Default parameterless constructor
+		/// </summary>
+		public DummyFwNewLangProject() : base(new DummyFdoUserAction())
+		{
+
+		}
+
+
+		/// <summary>
 		/// Tells tests whether or not the Non-Ascii project name warning dialog was activated.
 		/// </summary>
 		public bool NonAsciiWarningWasActivated { get; set; }
@@ -132,7 +141,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					// despite of the name is DummyProgressDlg no real dialog (doesn't derive from Control), so
 					// we don't need a 'using'
 					cache = FdoCache.CreateCacheFromExistingData(
-						new TestProjectId(FDOBackendProviderType.kXML, DbFilename(dbName)), "en", new DummyProgressDlg());
+						new TestProjectId(FDOBackendProviderType.kXML, DbFilename(dbName)), "en", new DummyProgressDlg(), new DummyFdoUserAction());
 					CheckInitialSetOfPartsOfSpeech(cache);
 
 					Assert.AreEqual(1, cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Count);

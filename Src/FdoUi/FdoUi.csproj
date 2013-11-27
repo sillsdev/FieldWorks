@@ -195,6 +195,18 @@
     <Compile Include="ConfirmDeleteObjectDlg.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="ConflictingSaveDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ConflictingSaveDlg.Designer.cs">
+      <DependentUpon>ConflictingSaveDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ConnectionLostDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ConnectionLostDlg.Designer.cs">
+      <DependentUpon>ConnectionLostDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="DummyCmObject.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -206,6 +218,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>FdoUiStrings.resx</DependentUpon>
     </Compile>
+    <Compile Include="FdoUserActionWindowsForms.cs" />
     <Compile Include="FsFeatDefnUi.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -245,6 +258,14 @@
     </Compile>
     <EmbeddedResource Include="ConfirmDeleteObjectDlg.resx">
       <DependentUpon>ConfirmDeleteObjectDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ConflictingSaveDlg.resx">
+      <DependentUpon>ConflictingSaveDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ConnectionLostDlg.resx">
+      <DependentUpon>ConnectionLostDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="FdoUiStrings.resx">

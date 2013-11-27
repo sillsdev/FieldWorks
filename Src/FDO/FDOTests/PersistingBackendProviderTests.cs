@@ -614,7 +614,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		private FdoCache OpenExistingFile(string filename)
 		{
 			return FdoCache.CreateCacheFromExistingData(
-				new TestProjectId(FDOBackendProviderType.kXMLWithMemoryOnlyWsMgr, filename), "en", new DummyProgressDlg());
+				new TestProjectId(FDOBackendProviderType.kXMLWithMemoryOnlyWsMgr, filename), "en", new DummyProgressDlg(), new DummyFdoUserAction());
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -750,7 +750,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		public MockXMLBackendProvider(FdoCache cache, string projName):
 			base(cache, new IdentityMap((IFwMetaDataCacheManaged)cache.MetaDataCache),
 			new CmObjectSurrogateFactory(cache), (IFwMetaDataCacheManagedInternal)cache.MetaDataCache,
-			new FdoDataMigrationManager())
+			new FdoDataMigrationManager(), new DummyFdoUserAction())
 		{
 			Project = projName;
 			Cache = cache;

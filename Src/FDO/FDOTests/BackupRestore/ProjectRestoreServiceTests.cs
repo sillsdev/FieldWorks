@@ -34,6 +34,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 	{
 		private ProjectRestoreService m_restoreProjectService;
 		private RestoreProjectSettings m_restoreSettings;
+		private IFdoUserAction m_userAction;
 		private bool m_fResetSharedProjectValue;
 		/// <summary>Setup for db4o client server tests.</summary>
 		[TestFixtureSetUp]
@@ -77,6 +78,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 				ProjectName = "TestRestoreFWProject",
 				BackupOfExistingProjectRequested = false,
 			};
+
+			m_userAction = new DummyFdoUserAction();
 		}
 
 		/// <summary>
@@ -99,7 +102,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 
 			m_restoreProjectService = new ProjectRestoreService(m_restoreSettings);
 
-			m_restoreProjectService.RestoreProject(new DummyProgressDlg());
+			m_restoreProjectService.RestoreProject(new DummyProgressDlg(), m_userAction);
 
 			VerifyManditoryFilesUnzippedAndDeleteThem();
 		}
@@ -115,7 +118,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			m_restoreSettings.IncludeConfigurationSettings = true;
 			m_restoreProjectService = new ProjectRestoreService(m_restoreSettings);
 
-			m_restoreProjectService.RestoreProject(new DummyProgressDlg());
+			m_restoreProjectService.RestoreProject(new DummyProgressDlg(), m_userAction);
 
 			VerifyManditoryFilesUnzippedAndDeleteThem();
 
@@ -135,7 +138,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			m_restoreProjectService = new ProjectRestoreTestService(m_restoreSettings);
 			((ProjectRestoreTestService)m_restoreProjectService).PutFilesInProject = true;
 
-			m_restoreProjectService.RestoreProject(new DummyProgressDlg());
+			m_restoreProjectService.RestoreProject(new DummyProgressDlg(), m_userAction);
 
 			VerifyManditoryFilesUnzippedAndDeleteThem();
 
@@ -164,7 +167,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			var fullVersionOfRelativeNonStdDir = GetFullVersionOfRelativeNonStdDir(nonStdLinkedFilesDir);
 			try
 			{
-				m_restoreProjectService.RestoreProject(new DummyProgressDlg());
+				m_restoreProjectService.RestoreProject(new DummyProgressDlg(), m_userAction);
 
 				VerifyManditoryFilesUnzippedAndDeleteThem();
 
@@ -200,7 +203,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			var fullVersionOfRelativeNonStdDir = GetFullVersionOfRelativeNonStdDir(nonStdLinkedFilesDir);
 			try
 			{
-				m_restoreProjectService.RestoreProject(new DummyProgressDlg());
+				m_restoreProjectService.RestoreProject(new DummyProgressDlg(), m_userAction);
 
 				VerifyManditoryFilesUnzippedAndDeleteThem();
 
@@ -237,7 +240,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			m_restoreProjectService = new ProjectRestoreService(m_restoreSettings);
 
 			//Restore the project once and do not delete it so that we can restore the project over the previous one.
-			m_restoreProjectService.RestoreProject(progressDlg);
+			m_restoreProjectService.RestoreProject(progressDlg, m_userAction);
 
 			string restoreProjectDirectory = m_restoreSettings.ProjectPath;
 			VerifyFileExists(restoreProjectDirectory, DirectoryFinder.GetXmlDataFileName("TestRestoreFWProject"));
@@ -253,7 +256,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			Assert.True(m_restoreSettings.ProjectExists, "Project does not exist but it should.");
 
 			//Now do another restore then verify that the two files are not the same by comparing the LastWriteTime values.
-			m_restoreProjectService.RestoreProject(progressDlg);
+			m_restoreProjectService.RestoreProject(progressDlg, m_userAction);
 
 			var dateTimeTicksOfSecondFile = GetLastWriteTimeOfRestoredFile(restoreProjectDirectory, DirectoryFinder.GetXmlDataFileName("TestRestoreFWProject"));
 			Assert.True(dateTimeTicksOfSecondFile.Equals(dateTimeTicksOfFirstFile), "The dates and times of the files should be the same since they are set to the timestamp of the file in the zip file.");

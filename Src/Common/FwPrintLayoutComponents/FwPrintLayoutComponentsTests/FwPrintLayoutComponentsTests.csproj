@@ -192,11 +192,15 @@
       <Link>FwSetupFixtureClass.cs</Link>
     </Compile>
     <Compile Include="HfModifyDlgVcTests.cs" />
-    <Compile Include="HeaderFooterSetupDlgTests.cs" />
+    <Compile Include="HeaderFooterSetupDlgTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="HeaderFooterVcTests.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="PageSetupDlgTests.cs" />
+    <Compile Include="PageSetupDlgTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

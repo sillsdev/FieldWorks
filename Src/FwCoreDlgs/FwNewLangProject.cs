@@ -62,6 +62,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private Label m_lblSpecifyWrtSys;
 		private HelpProvider helpProvider1;
 		private string m_dbFile;
+		private IFdoUserAction m_userAction;
 		#endregion
 
 		#region Properties
@@ -139,7 +140,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Constructs a new instance of the <see cref="FwNewLangProject"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public FwNewLangProject()
+		private FwNewLangProject()
 		{
 			Logger.WriteEvent("Opening New Language Project dialog");
 			//
@@ -170,6 +171,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			lbl.Font = new Font("Sans", oldFont.Size, oldFont.Style, oldFont.Unit);
 		}
 #endif
+
+		/// -----------------------------------------------------------------------------------
+		/// <summary>
+		/// Constructs a new instance of the <see cref="FwNewLangProject"/> class.
+		/// </summary>
+		/// -----------------------------------------------------------------------------------
+		public FwNewLangProject(IFdoUserAction userAction) : this()
+		{
+			m_userAction = userAction;
+		}
 
 		/// <summary>
 		/// Check to see if the object has been disposed.
@@ -682,7 +693,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 						using (var threadHelper = new ThreadHelper())
 						{
-							m_dbFile = (string) progressDlg.RunTask(DisplayUi, FdoCache.CreateNewLangProj,
+							m_dbFile = (string)progressDlg.RunTask(DisplayUi, (progress, args) => FdoCache.CreateNewLangProj(progress, m_userAction, args),
 																	ProjectName, threadHelper, m_cbAnalWrtSys.SelectedItem,
 																	m_cbVernWrtSys.SelectedItem,
 																	((PalasoWritingSystem)m_wsManager.UserWritingSystem).RFC5646,

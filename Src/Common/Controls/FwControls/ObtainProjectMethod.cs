@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <returns>Null if the operation was cancelled or otherwise did not work. The full pathname of an fwdata file, if it did work.</returns>
 		public static string ObtainProjectFromAnySource(Form parent, IHelpTopicProvider helpTopicProvider,
-			out ObtainedProjectType obtainedProjectType)
+			out ObtainedProjectType obtainedProjectType, IFdoUserAction userAction)
 		{
 			bool dummy;
 			string fwdataFileFullPathname;
@@ -46,7 +46,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (fwdataFileFullPathname.EndsWith("lift"))
 			{
-				fwdataFileFullPathname = CreateProjectFromLift(parent, helpTopicProvider, fwdataFileFullPathname);
+				fwdataFileFullPathname = CreateProjectFromLift(parent, helpTopicProvider, fwdataFileFullPathname, userAction);
 				obtainedProjectType = ObtainedProjectType.Lift;
 			}
 
@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Create a new Fieldworks project and import a lift file into it. Return the .fwdata path.
 		/// </summary>
-		private static string CreateProjectFromLift(Form parent, IHelpTopicProvider helpTopicProvider, string liftPath)
+		private static string CreateProjectFromLift(Form parent, IHelpTopicProvider helpTopicProvider, string liftPath, IFdoUserAction userAction)
 		{
 			string projectPath;
 			FdoCache cache;
@@ -80,7 +80,7 @@ namespace SIL.FieldWorks.Common.Controls
 					progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
 					progressDlg.Title = FwControls.ksCreatingLiftProject;
 					var cacheReceiver = new FdoCache[1]; // a clumsy way of handling an out parameter, consistent with RunTask
-					projectPath = (string)progressDlg.RunTask(true, CreateProjectTask,
+					projectPath = (string)progressDlg.RunTask(true, (progress, parameters) => CreateProjectTask(progress, userAction, parameters),
 						new object[] { liftPath, helper, anthroListFile, cacheReceiver });
 					cache = cacheReceiver[0];
 				}
@@ -105,9 +105,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// as a background task while showing the dialog.
 		/// </summary>
 		/// <param name="progress"></param>
+		/// <param name="userAction"></param>
 		/// <param name="parameters">A specific list is required...see the first few lines of the method.</param>
 		/// <returns></returns>
-		private static object CreateProjectTask(IThreadedProgress progress, object[] parameters)
+		private static object CreateProjectTask(IThreadedProgress progress, IFdoUserAction userAction, object[] parameters)
 		{
 			// Get required parameters. Ideally these would just be the signature of the method, but RunTask requires object[].
 			var liftPathname = (string)parameters[0];
@@ -118,13 +119,13 @@ namespace SIL.FieldWorks.Common.Controls
 			IWritingSystem wsVern, wsAnalysis;
 			RetrieveDefaultWritingSystemsFromLift(liftPathname, out wsVern, out wsAnalysis);
 
-			string projectPath = FdoCache.CreateNewLangProj(progress,
+			string projectPath = FdoCache.CreateNewLangProj(progress, userAction,
 				Directory.GetParent(Path.GetDirectoryName(liftPathname)).Parent.Name, // Get the new Flex project name from the Lift pathname.
 				helper, wsAnalysis, wsVern, null, null, null, anthroFile);
 
 			// This is a temporary cache, just to do the import, and AFAIK we have no access to the current
 			// user WS. So create it as "English". Put it in the array to return to the caller.
-			cacheReceiver[0] = FdoCache.CreateCacheFromLocalProjectFile(projectPath, "en", progress);
+			cacheReceiver[0] = FdoCache.CreateCacheFromLocalProjectFile(projectPath, "en", progress, userAction);
 			return projectPath;
 		}
 

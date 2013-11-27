@@ -382,12 +382,12 @@ namespace FDOBrowser
 					m_ThreadHelper = new ThreadHelper();
 
 				if (isMemoryBEP)
-					m_cache = FdoCache.CreateCacheWithNewBlankLangProj(new BrowserProjectId(bepType, null), "en", "en", "en", m_ThreadHelper);
+					m_cache = FdoCache.CreateCacheWithNewBlankLangProj(new BrowserProjectId(bepType, null), "en", "en", "en", m_ThreadHelper, new FdoUserAction());
 				else
 				{
 					using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(this, m_ThreadHelper))
 					{
-						m_cache = FdoCache.CreateCacheFromExistingData(new BrowserProjectId(bepType, fileName), "en", progressDlg);
+						m_cache = FdoCache.CreateCacheFromExistingData(new BrowserProjectId(bepType, fileName), "en", progressDlg, new FdoUserAction());
 					}
 				}
 			   // var v = m_cache.
