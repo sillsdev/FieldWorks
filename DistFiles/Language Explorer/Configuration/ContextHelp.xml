@@ -35,6 +35,7 @@
 	<item id="CmdChooseLangProject">Open an existing FieldWorks project.</item>
 	<item id="CmdClose">Close this project.</item>
 	<item id="CmdSave">Save</item>
+	<item id="CmdArchiveWithRamp">Starts RAMP (if it is installed) and prepares an archive package for uploading.</item>
 	<item id="CmdRefresh">Refresh the screen.</item>
 	<item id="CmdPageSetup">Determine page layout options for printing.</item>
 	<item id="CmdPrint">Print</item>
