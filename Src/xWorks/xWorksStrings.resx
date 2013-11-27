@@ -437,7 +437,7 @@ Are you SURE you want to delete the field {2}?</value>
     <value>Choose the location and name of the LIFT export folder FLEx will use.  You can make a new folder, or choose one which already contains LIFT data (e.g. a WeSay project folder)</value>
   </data>
   <data name="ksLIFTAlreadyExists" xml:space="preserve">
-    <value>This will overwrite the lexicon in that project.  Click “Cancel” if you have not already imported that LIFT file into FLEx.</value>
+    <value>There is already a project in that folder.  Click “OK” to overwrite the lexicon in that project, or “Cancel” to abort.</value>
   </data>
   <data name="ksLIFTFolderNotEmpty" xml:space="preserve">
     <value>The selected folder is not empty, but does not contain a lexicon.  Do you want to continue?</value>
