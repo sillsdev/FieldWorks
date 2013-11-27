@@ -61,13 +61,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			// Handle gloss.
 			if (!string.IsNullOrEmpty(gloss))
 			{
-				if (gloss.Length > 256)
-				{
-					MessageBoxUtils.Show(Strings.ksTruncatingGloss, Strings.ksWarning,
-														System.Windows.Forms.MessageBoxButtons.OK,
-														System.Windows.Forms.MessageBoxIcon.Warning);
-					gloss = gloss.Substring(0, 256);
-				}
 				var defAnalWs = entry.Cache.DefaultAnalWs;
 				var gls = entry.Cache.TsStrFactory.MakeString(gloss, defAnalWs);
 				sense.Gloss.set_String(defAnalWs, gls);

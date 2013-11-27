@@ -631,10 +631,6 @@ on the baseline text, or insert word breaks into the text manually.</value>
   <data name="ksNotUndoable" xml:space="preserve">
     <value>Not undoable</value>
   </data>
-  <data name="ksCantDeleteDefaultDiscourseTemplate" xml:space="preserve">
-    <value>The default discourse chart template cannot be deleted, moved or promoted.</value>
-    <comment>Error message attempting to delete the one and only discourse chart template. Same message is used for moving or promoting.</comment>
-  </data>
   <data name="ksDeletingCharts" xml:space="preserve">
     <value>Deleting discourse charts for this text.</value>
   </data>
@@ -646,18 +642,6 @@ on the baseline text, or insert word breaks into the text manually.</value>
   </data>
   <data name="ksUsedXTimesInRules" xml:space="preserve">
     <value>{0}. Being used {1} times by rules.</value>
-  </data>
-  <data name="ksCantDeleteMarkupTagInUse" xml:space="preserve">
-    <value>You cannot delete a Text Markup tag when there are texts using the tag. One such text using this tag is {0}.</value>
-    <comment>{0} is (one) text that prevents the delete.</comment>
-  </data>
-  <data name="ksCantDeleteLastTagList" xml:space="preserve">
-    <value>The last remaining Text Markup tag list cannot be deleted.</value>
-    <comment>Error message attempting to delete the one and only text markup tag type.</comment>
-  </data>
-  <data name="ksCantDeleteMarkupTypeInUse" xml:space="preserve">
-    <value>You cannot delete a Text Markup type when there are texts using its tags. One such text using this type of tag is {0}.</value>
-    <comment>{0} is (one) text that prevents the delete.</comment>
   </data>
   <data name="ksHomographLimits" xml:space="preserve">
     <value>There are {0} homographs of {1}.

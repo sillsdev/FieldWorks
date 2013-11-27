@@ -19,7 +19,7 @@
 
 // --------------------------------------------------------------------------------------------
 using System;
-using System.Linq;
+using SIL.FieldWorks.FdoUi;
 using XCore;
 using System.Collections;
 using System.Collections.Generic;
@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.XWorks
 
 		static public RecordBarHandler Create(Mediator mediator, XmlNode toolConfiguration)
 		{
-			RecordBarHandler handler = null;
+			RecordBarHandler handler;
 			XmlNode node = toolConfiguration.SelectSingleNode("treeBarHandler");
 			if (node == null)
 				handler = new RecordBarListHandler();
@@ -210,11 +210,6 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public class PossibilityTreeBarHandler : TreeBarHandler
 	{
-		//must have a constructor with no parameters, to use with the dynamic loader.
-		public PossibilityTreeBarHandler()
-		{
-		}
-
 		protected override string GetDisplayPropertyName
 		{
 			get
@@ -223,8 +218,7 @@ namespace SIL.FieldWorks.XWorks
 				// seems to load quicker for Semantic Domains and AnthroCodes.
 				if (m_includeAbbr)
 					return "LongName";
-				else
-					return base.GetDisplayPropertyName;
+				return base.GetDisplayPropertyName;
 			}
 		}
 
@@ -258,7 +252,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="parentsCollection"></param>
 		protected override void AddSubNodes(ICmObject obj, TreeNodeCollection parentsCollection)
 		{
-			var pss = obj as ICmPossibility;
+			var pss = (ICmPossibility) obj;
 			foreach (var subPss in pss.SubPossibilitiesOS)
 			{
 				AddTreeNode(subPss, parentsCollection);
@@ -313,19 +307,22 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			}
 
-			var column = m_possRepo.GetObject(hvoMove);
-			if (column.CheckAndReportProtectedChartColumn())
-				return;
+			ICmPossibility column = m_possRepo.GetObject(hvoMove);
+			using (var columnUI = new CmPossibilityUi(column))
+			{
+				if (columnUI.CheckAndReportProtectedChartColumn())
+					return;
+			}
 			var owner = column.Owner;
 			if (owner == null) // probably not possible
 				return;
 			int hvoOwner = owner.Hvo;
 			int ownFlid = column.OwningFlid;
-			int oldIndex = m_cache.DomainDataByFlid.GetObjIndex(hvoOwner, (int)ownFlid, column.Hvo);
+			int oldIndex = m_cache.DomainDataByFlid.GetObjIndex(hvoOwner, ownFlid, column.Hvo);
 			int newIndex = oldIndex + distance;
 			if (newIndex < 0)
 				return;
-			int cobj = m_cache.DomainDataByFlid.get_VecSize(hvoOwner, (int)ownFlid);
+			int cobj = m_cache.DomainDataByFlid.get_VecSize(hvoOwner, ownFlid);
 			if (newIndex >= cobj)
 				return;
 			// Without this, we insert it before the next object, which is the one it's already before,
@@ -352,7 +349,7 @@ namespace SIL.FieldWorks.XWorks
 		TreeView m_tree;
 		int m_typeSize;		// font size for the tree's fonts.
 		// map from writing system to font.
-		Dictionary<int, Font> m_dictFonts = new Dictionary<int, Font>();
+		readonly Dictionary<int, Font> m_dictFonts = new Dictionary<int, Font>();
 
 		//must have a constructor with no parameters, to use with the dynamic loader.
 		protected TreeBarHandler()
@@ -441,7 +438,7 @@ namespace SIL.FieldWorks.XWorks
 
 			if (currentObject == null || m_hvoToTreeNodeTable.Count == 0)
 				return;
-			if (this.IsShowing)
+			if (IsShowing)
 			{
 				m_fOutOfDate = false;
 			}
@@ -476,7 +473,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			if (this.IsShowing)
+			if (IsShowing)
 			{
 				m_fOutOfDate = false;
 			}
@@ -488,12 +485,12 @@ namespace SIL.FieldWorks.XWorks
 
 			m_list = list;
 
-			XWindow window = (XWindow)m_mediator.PropertyTable.GetValue("window");
+			var window = (XWindow)m_mediator.PropertyTable.GetValue("window");
 			using (new WaitCursor(window))
 			{
 				window.TreeBarControl.IsFlatList = false;
-				TreeView tree = (TreeView)window.TreeStyleRecordList;
-				Set<int> expandedItems = new Set<int>();
+				var tree = (TreeView)window.TreeStyleRecordList;
+				var expandedItems = new Set<int>();
 				if (m_tree != null && !m_expand)
 					GetExpandedItems(m_tree.Nodes, expandedItems);
 				m_tree = tree;
@@ -503,14 +500,14 @@ namespace SIL.FieldWorks.XWorks
 				// If we fail to do this, switching to a different list causes drag and drop to stop working.
 				ReleaseRecordBar();
 
-				tree.NodeMouseClick += new TreeNodeMouseClickEventHandler(tree_NodeMouseClick);
-				tree.MouseDown += new MouseEventHandler(tree_MouseDown);
-				tree.MouseMove += new MouseEventHandler(tree_MouseMove);
-				tree.DragDrop += new DragEventHandler(tree_DragDrop);
-				tree.DragOver += new DragEventHandler(tree_DragOver);
-				tree.GiveFeedback += new GiveFeedbackEventHandler(tree_GiveFeedback);
+				tree.NodeMouseClick += tree_NodeMouseClick;
+				tree.MouseDown += tree_MouseDown;
+				tree.MouseMove += tree_MouseMove;
+				tree.DragDrop += tree_DragDrop;
+				tree.DragOver += tree_DragOver;
+				tree.GiveFeedback += tree_GiveFeedback;
 				tree.ContextMenuStrip = CreateTreebarContextMenuStrip();
-				tree.ContextMenuStrip.MouseClick += new MouseEventHandler(tree_MouseClicked);
+				tree.ContextMenuStrip.MouseClick += tree_MouseClicked;
 				tree.AllowDrop = true;
 				tree.BeginUpdate();
 				window.ClearRecordBarList();	//don't want to directly clear the nodes, because that causes an event to be fired as every single note is removed!
@@ -520,7 +517,7 @@ namespace SIL.FieldWorks.XWorks
 				m_typeSize = list.TypeSize;
 				AddTreeNodes(list.SortedObjects, tree);
 
-				tree.Font = new System.Drawing.Font(list.FontName, m_typeSize);
+				tree.Font = new Font(list.FontName, m_typeSize);
 				tree.ShowRootLines = m_hierarchical;
 
 				if (m_expand)
@@ -578,8 +575,8 @@ namespace SIL.FieldWorks.XWorks
 
 		protected virtual ContextMenuStrip CreateTreebarContextMenuStrip()
 		{
-			ToolStripMenuItem promoteMenuItem = new ToolStripMenuItem(xWorksStrings.Promote);
-			ContextMenuStrip contStrip = new ContextMenuStrip();
+			var promoteMenuItem = new ToolStripMenuItem(xWorksStrings.Promote);
+			var contStrip = new ContextMenuStrip();
 			contStrip.Items.Add(promoteMenuItem);
 			return contStrip;
 		}
@@ -590,12 +587,12 @@ namespace SIL.FieldWorks.XWorks
 
 			if (m_tree != null)
 			{
-				m_tree.NodeMouseClick -= new TreeNodeMouseClickEventHandler(tree_NodeMouseClick);
-				m_tree.MouseDown -= new MouseEventHandler(tree_MouseDown);
-				m_tree.MouseMove -= new MouseEventHandler(tree_MouseMove);
-				m_tree.DragDrop -= new DragEventHandler(tree_DragDrop);
-				m_tree.DragOver -= new DragEventHandler(tree_DragOver);
-				m_tree.GiveFeedback -= new GiveFeedbackEventHandler(tree_GiveFeedback);
+				m_tree.NodeMouseClick -= tree_NodeMouseClick;
+				m_tree.MouseDown -= tree_MouseDown;
+				m_tree.MouseMove -= tree_MouseMove;
+				m_tree.DragDrop -= tree_DragDrop;
+				m_tree.DragOver -= tree_DragOver;
+				m_tree.GiveFeedback -= tree_GiveFeedback;
 			}
 		}
 
@@ -637,12 +634,12 @@ namespace SIL.FieldWorks.XWorks
 				if (item == null)
 					return;
 
-				string ItemSelected = item.Text;
-				if (ItemSelected.Equals(xWorksStrings.Promote))
+				string itemSelected = item.Text;
+				if (itemSelected.Equals(xWorksStrings.Promote))
 					tree_Promote();
-				else if (ItemSelected.Equals(xWorksStrings.MoveDown))
+				else if (itemSelected.Equals(xWorksStrings.MoveDown))
 					tree_moveDown();
-				else if (ItemSelected.Equals(xWorksStrings.MoveUp))
+				else if (itemSelected.Equals(xWorksStrings.MoveUp))
 					tree_moveUp();
 			}
 		}
@@ -670,15 +667,12 @@ namespace SIL.FieldWorks.XWorks
 			}
 			// An inactive handler is unfortunately also being notified. Don't express any
 			// opinion at all about drag effects.
-			LocalDragItem item = (LocalDragItem)e.Data.GetData(typeof(LocalDragItem));
+			var item = (LocalDragItem)e.Data.GetData(typeof(LocalDragItem));
 			if (item.Handler != this)
 				return;
 
 			TreeNode destNode;
-			if (OkToDrop(sender, e, out destNode))
-				e.Effect = DragDropEffects.Move;
-			else
-				e.Effect = DragDropEffects.None;
+			e.Effect = OkToDrop(sender, e, out destNode) ? DragDropEffects.Move : DragDropEffects.None;
 			if (destNode != m_dragHiliteNode)
 			{
 				ClearDragHilite();
@@ -692,7 +686,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if ((e.Button & MouseButtons.Left) != MouseButtons.Left)
 				return;
-			TreeView tree = sender as TreeView;
+			var tree = sender as TreeView;
 			if (tree == null)
 				return;
 			// The location here is always different than the one in tree_MouseDown.
@@ -703,7 +697,7 @@ namespace SIL.FieldWorks.XWorks
 			TreeNode selItem = tree.GetNodeAt(m_mouseDownLocation);
 			if (selItem == null)
 				return;
-			LocalDragItem item = new LocalDragItem(this, selItem);
+			var item = new LocalDragItem(this, selItem);
 			tree.DoDragDrop(item, DragDropEffects.Move);
 			ClearDragHilite();
 		}
@@ -719,7 +713,7 @@ namespace SIL.FieldWorks.XWorks
 			if (!OkToDrop(sender, e, out destNode))
 				return;
 			// Notification also gets sent to inactive handlers, which should ignore it.
-			LocalDragItem item = (LocalDragItem)e.Data.GetData(typeof(LocalDragItem));
+			var item = (LocalDragItem)e.Data.GetData(typeof(LocalDragItem));
 			if (item.Handler != this)
 				return;
 			if (e.Effect != DragDropEffects.Move)
@@ -730,16 +724,16 @@ namespace SIL.FieldWorks.XWorks
 		private void MoveItem(object sender, TreeNode destNode, TreeNode sourceItem)
 		{
 			var hvoMove = (int)sourceItem.Tag;
-			ICmObject dest;
 			var hvoDest = 0;
 			int flidDest;
 			var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
 			var move = cache.ServiceLocator.GetObject(hvoMove);
 			var moveLabel = sourceItem.Text;
 			TreeNodeCollection newSiblings;
-			var tree = sender as TreeView;
+			var tree = (TreeView) sender;
 			if (destNode == null)
 			{
+				ICmObject dest;
 				for (dest = move.Owner; dest != null; dest = dest.Owner)
 				{
 					if (!(dest is ICmPossibilityList))
@@ -802,7 +796,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns>true if a problem was reported and the move should be cancelled.</returns>
 		private bool CheckAndReportForbiddenMove(int hvoMove, int hvoDest)
 		{
-			var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+			var cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
 			var movingPossItem = m_possRepo.GetObject(hvoMove);
 			if (movingPossItem != null)
 			{
@@ -816,12 +810,12 @@ namespace SIL.FieldWorks.XWorks
 				// 1. Check to see if hvoRootItem is a chart template containing our target.
 				// If so, hvoPossList is owned in the chart templates property.
 				if (m_objRepo.GetObject(hvoPossList).OwningFlid == DsDiscourseDataTags.kflidConstChartTempl)
-					return CheckAndReportBadDiscourseTemplateMove(cache, movingPossItem, hvoRootItem, hvoPossList, hvoDest);
+					return CheckAndReportBadDiscourseTemplateMove(movingPossItem, hvoRootItem, hvoPossList, hvoDest);
 
 				// 2. Check to see if hvoRootItem is a TextMarkup TagList containing our target (i.e. a Tag type).
 				// If so, hvoPossList is owned in the text markup tags property.
 				if (m_objRepo.GetObject(hvoPossList).OwningFlid == LangProjectTags.kflidTextMarkupTags)
-					return CheckAndReportBadTagListMove(cache, movingPossItem, hvoRootItem, hvoPossList, hvoDest);
+					return CheckAndReportBadTagListMove(movingPossItem, hvoRootItem, hvoPossList, hvoDest);
 			}
 			return false; // not detecting problems with moving other kinds of things.
 		}
@@ -829,13 +823,12 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Checks for and reports any disallowed tag list moves.
 		/// </summary>
-		/// <param name="cache"></param>
 		/// <param name="movingTagItem">The proposed tag item to move.</param>
 		/// <param name="hvoSubListRoot">The hvo of the top-level Tag Type Possibility containing the moving item.</param>
 		/// <param name="hvoMainTagList">The hvo of the main PossiblityList grouping all TextMarkup Tags.</param>
 		/// <param name="hvoDest">The hvo of the destination tag item.</param>
 		/// <returns>true if we found and reported a bad move.</returns>
-		private bool CheckAndReportBadTagListMove(FdoCache cache, ICmPossibility movingTagItem, int hvoSubListRoot,
+		private bool CheckAndReportBadTagListMove(ICmPossibility movingTagItem, int hvoSubListRoot,
 			int hvoMainTagList, int hvoDest)
 		{
 			// Check if movingTagItem is a top-level Tag Type.
@@ -857,7 +850,7 @@ namespace SIL.FieldWorks.XWorks
 				return false;
 			}
 			if (hvoDest == hvoMainTagList)
-				{
+			{
 				// Can't promote tag to Tag Type root
 				MessageBox.Show(m_tree, xWorksStrings.ksCantPromoteTag,
 								xWorksStrings.ksProhibitedMovement, MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -867,55 +860,60 @@ namespace SIL.FieldWorks.XWorks
 			MessageBox.Show(m_tree, xWorksStrings.ksTagListTooDeep,
 							xWorksStrings.ksProhibitedMovement, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			return true;
-				}
+		}
 
 		/// <summary>
 		/// Checks for and reports any disallowed discourse template moves.
 		/// </summary>
-		/// <param name="cache"></param>
 		/// <param name="movingColumn">The proposed possibility item (template column) to move.</param>
 		/// <param name="hvoTemplate">The hvo of the affected Chart Template (only 'default' exists so far).</param>
 		/// <param name="hvoTemplateList">The hvo of the Template List.</param>
 		/// <param name="hvoDest">The hvo of the destination item.</param>
 		/// <returns>true means we found and reported a bad move.</returns>
-		private bool CheckAndReportBadDiscourseTemplateMove(FdoCache cache, ICmPossibility movingColumn, int hvoTemplate,
+		private bool CheckAndReportBadDiscourseTemplateMove(ICmPossibility movingColumn, int hvoTemplate,
 			int hvoTemplateList, int hvoDest)
 		{
-			// First, check whether we're allowed to manipulate this column at all. This is the same check as
+			using (var movingColumnUI = new CmPossibilityUi(movingColumn))
+			{
+				// First, check whether we're allowed to manipulate this column at all. This is the same check as
 				// whether we're allowed to delete it.
-			if (movingColumn.CheckAndReportProtectedChartColumn())
+				if (movingColumnUI.CheckAndReportProtectedChartColumn())
 					return true;
-				// Other things being equal, we now need to make sure we aren't messing up the chart levels
-				// Unless something is badly wrong, the destination is either the root template,
-				// a column group one level down from the root template, a column two levels down,
-				// or the base list.
+			}
+			// Other things being equal, we now need to make sure we aren't messing up the chart levels
+			// Unless something is badly wrong, the destination is either the root template,
+			// a column group one level down from the root template, a column two levels down,
+			// or the base list.
 			if (hvoDest == hvoTemplateList)
-				{
-					MessageBox.Show(m_tree, xWorksStrings.ksCantPromoteGroupToTemplate,
-								xWorksStrings.ksProhibitedMovement, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-					return true;
-				}
+			{
+				MessageBox.Show(m_tree, xWorksStrings.ksCantPromoteGroupToTemplate,
+					xWorksStrings.ksProhibitedMovement, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				return true;
+			}
 				// if the destination IS the root, that's fine...anything can move there.
 			if (hvoDest == hvoTemplate)
-					return false;
+				return false;
 				// It's OK to move a leaf to a group (one level down from the root, as long as
 				// the destination 'group' isn't a column that's in use.
 			bool moveColumnIsLeaf = movingColumn.SubPossibilitiesOS.Count == 0;
 			if (m_objRepo.GetObject(hvoDest).Owner.Hvo == hvoTemplate && moveColumnIsLeaf)
+			{
+				ICmPossibility dest = m_possRepo.GetObject(hvoDest);
+				using (var destUI = new CmPossibilityUi(dest))
 				{
-					var dest = m_possRepo.GetObject(hvoDest);
 					// If it isn't already a group, we can only turn it into one if it's empty
 					if (dest.SubPossibilitiesOS.Count == 0)
-						return dest.CheckAndReportProtectedChartColumn();
-					// If it's already a group it should be fine as a destination.
-					return false;
+						return destUI.CheckAndReportProtectedChartColumn();
 				}
-				// Anything else represents an attempt to make the tree too deep, e.g., moving a
-				// column into child column, or a group into another group.
-				MessageBox.Show(m_tree, xWorksStrings.ksTemplateTooDeep,
-							xWorksStrings.ksProhibitedMovement, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				return true;
+				// If it's already a group it should be fine as a destination.
+				return false;
 			}
+			// Anything else represents an attempt to make the tree too deep, e.g., moving a
+			// column into child column, or a group into another group.
+			MessageBox.Show(m_tree, xWorksStrings.ksTemplateTooDeep,
+				xWorksStrings.ksProhibitedMovement, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			return true;
+		}
 
 		private bool OkToDrop(object sender, DragEventArgs e, out TreeNode destNode)
 		{
@@ -923,19 +921,19 @@ namespace SIL.FieldWorks.XWorks
 			// Don't allow drop in non-hierarchical lists.
 			if (m_list.OwningObject is ICmPossibilityList && (m_list.OwningObject as ICmPossibilityList).Depth < 2)
 				return false;
-			TreeView tree = sender as TreeView;
+			var tree = sender as TreeView;
 			if (tree == null)
 				return false;
 			if (!e.Data.GetDataPresent(typeof(LocalDragItem)))
 				return false;
 			destNode = tree.GetNodeAt(tree.PointToClient(new Point(e.X, e.Y)));
-			LocalDragItem item = (LocalDragItem)e.Data.GetData(typeof(LocalDragItem));
+			var item = (LocalDragItem)e.Data.GetData(typeof(LocalDragItem));
 			if (item.SourceNode == destNode)
 				return false;
-			int hvoMove = (int)item.SourceNode.Tag;
+			var hvoMove = (int) item.SourceNode.Tag;
 			int hvoDest = 0;
 			if (destNode != null)
-				hvoDest = (int)destNode.Tag;
+				hvoDest = (int) destNode.Tag;
 			if (hvoDest <= 0)
 				return false;
 			// It must not be that hvoMove owns hvoDest
@@ -952,7 +950,7 @@ namespace SIL.FieldWorks.XWorks
 
 		void tree_MouseDown(object sender, MouseEventArgs e)
 		{
-			TreeView tree = sender as TreeView;
+			var tree = (TreeView) sender;
 			if (e.Button != MouseButtons.Left)
 			{
 				TreeNode node = tree.GetNodeAt(e.X, e.Y);
@@ -1045,9 +1043,7 @@ namespace SIL.FieldWorks.XWorks
 		protected virtual TreeNode AddTreeNode(ICmObject obj, TreeNodeCollection parentsCollection)
 		{
 			Font font;
-			TreeNode node = new TreeNode( GetTreeNodeLabel(obj, out font) );
-			node.Tag = obj.Hvo; //note that we could store the whole object instead.
-			node.NodeFont = font;
+			var node = new TreeNode( GetTreeNodeLabel(obj, out font) ) {Tag = obj.Hvo, NodeFont = font};
 			parentsCollection.Add(node);
 			AddToTreeNodeTable(obj.Hvo, node);
 			AddSubNodes(obj, node.Nodes);
@@ -1068,8 +1064,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			XWindow window = (XWindow)m_mediator.PropertyTable.GetValue("window");
-			TreeView tree = (TreeView)window.TreeStyleRecordList;
+			var window = (XWindow)m_mediator.PropertyTable.GetValue("window");
+			var tree = (TreeView)window.TreeStyleRecordList;
 			if (currentObject == null)
 			{
 				tree.SelectedNode = null;
@@ -1097,8 +1093,8 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	class LocalDragItem
 	{
-		TreeBarHandler m_handler; // handler dragging from
-		TreeNode m_sourceTreeNode; // tree node being dragged
+		readonly TreeBarHandler m_handler; // handler dragging from
+		readonly TreeNode m_sourceTreeNode; // tree node being dragged
 
 		public LocalDragItem(TreeBarHandler handler, TreeNode sourceTreeNode)
 		{

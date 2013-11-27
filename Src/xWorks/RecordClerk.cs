@@ -1477,13 +1477,6 @@ namespace SIL.FieldWorks.XWorks
 			if (CurrentObjectHvo == 0)
 				return true;
 
-			// Don't allow an object to be deleted if it shouldn't be deleted.
-			if (!CanDelete())
-			{
-				ReportCannotDelete();
-				return true;
-			}
-
 			//when we are doing an automated test, we don't know how to click the "yes" button, so
 			//look into the property table to see if there is a property controlling what we should do.
 			var doingAutomatedTest = m_mediator.PropertyTable.GetBoolProperty("DoingAutomatedTest", false);
@@ -1494,26 +1487,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				using (CmObjectUi uiObj = CmObjectUi.MakeUi(thingToDelete))
 				{
-					if (thingToDelete.CanDelete)
-					{
+					string cannotDeleteMsg;
+					if (uiObj.CanDelete(out cannotDeleteMsg))
 						dlg.SetDlgInfo(uiObj, Cache, m_mediator);
-					}
 					else
-					{
-						ITsString tssNote;
-						switch (thingToDelete.ClassID)
-						{
-							case WfiWordformTags.kClassId:
-								tssNote = Cache.TsStrFactory.MakeString(xWorksStrings.ksCannotWordform,
-									Cache.DefaultUserWs);
-								break;
-							default:
-								tssNote = Cache.TsStrFactory.MakeString(xWorksStrings.ksCannotDeleteItem,
-									Cache.DefaultUserWs);
-								break;
-						}
-						dlg.SetDlgInfo(uiObj, Cache, m_mediator, tssNote);
-					}
+						dlg.SetDlgInfo(uiObj, Cache, m_mediator, Cache.TsStrFactory.MakeString(cannotDeleteMsg, Cache.DefaultUserWs));
 				}
 				var window = (Form) m_mediator.PropertyTable.GetValue("window");
 				if (doingAutomatedTest ||

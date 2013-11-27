@@ -1651,11 +1651,20 @@ namespace SIL.FieldWorks.FDO
 		}
 
 		/// <summary>
-		/// If the recipient is a column in a chart that shouldn't be moved or deleted, report
-		/// accordingly and return true. Return false if OK to delete or move.
+		/// Gets a value indicating whether this is the default discourse template.
 		/// </summary>
-		/// <returns></returns>
-		bool CheckAndReportProtectedChartColumn();
+		bool IsDefaultDiscourseTemplate { get; }
+
+		/// <summary>
+		/// Return true if this or one of its children is in use as a Constituent chart column.
+		/// Most efficient to call this after checking that the root is a chart template.
+		/// </summary>
+		bool IsInUseAsChartColumn { get; }
+
+		/// <summary>
+		/// Gets a value indicating whether this is the last text markup tag.
+		/// </summary>
+		bool IsLastTextMarkupTag { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

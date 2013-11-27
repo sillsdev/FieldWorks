@@ -15,20 +15,20 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 	/// </summary>
 	public class ConfirmDeleteObjectDlg : Form, IFWDisposable
 	{
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.PictureBox pictureBox1;
-		private System.Windows.Forms.Button m_deleteButton;
-		private System.Windows.Forms.Button m_cancelButton;
-		private SIL.FieldWorks.Common.Widgets.FwTextBox m_descriptionBox3;
-		private SIL.FieldWorks.Common.Widgets.FwTextBox m_descriptionBox4;
+		private Label label1;
+		private Label label2;
+		private PictureBox pictureBox1;
+		private Button m_deleteButton;
+		private Button m_cancelButton;
+		private readonly FwTextBox m_descriptionBox3;
+		private readonly FwTextBox m_descriptionBox4;
 		protected FdoCache m_cache;
-		private System.Windows.Forms.Panel panel1;
-		private System.Windows.Forms.Panel panel2;
-		private System.Windows.Forms.Button buttonHelp;
-		private string s_helpTopic = null;
-		private System.Windows.Forms.HelpProvider helpProvider;
-		private IHelpTopicProvider m_helpTopicProvider;
+		private Panel panel1;
+		private Panel panel2;
+		private Button buttonHelp;
+		private string s_helpTopic;
+		private HelpProvider helpProvider;
+		private readonly IHelpTopicProvider m_helpTopicProvider;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -125,31 +125,18 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			base.Dispose( disposing );
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="strings"></param>
-		/// <param name="obj"></param>
-		/// <param name="cache"></param>
-		/// <param name="mediator"></param>
-		/// <param name="tssNote">a second message, in addition to what's in obj.Object.DeletionTextTss</param>
-		public void SetDlgInfo(CmObjectUi obj, FdoCache cache, XCore.Mediator mediator, ITsString tssNote)
+		public void SetDlgInfo(CmObjectUi obj, FdoCache cache, Mediator mediator)
 		{
 			CheckDisposed();
 
 			Debug.Assert(obj != null);
 			Debug.Assert(obj.Object != null);
 
-			//do not change the order of the following two lines of code
-			//because m_descritiptionBox4.Tss is given a default value first.
-			SetDlgInfo(obj, cache, mediator);
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
-			tisb.AppendTsString(tssNote);
-			m_descriptionBox4.Tss = tisb.GetString();
+			SetDlgInfo(obj, cache, mediator, cache.TsStrFactory.MakeString(" ", cache.DefaultUserWs));
 		}
 
 
-		public void SetDlgInfo(CmObjectUi obj, FdoCache cache, XCore.Mediator mediator)
+		public void SetDlgInfo(CmObjectUi obj, FdoCache cache, Mediator mediator, ITsString tssNote)
 		{
 
 			CheckDisposed();
@@ -197,24 +184,33 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			tisb3.AppendTsString(obj.Object.DeletionTextTSS);
 			m_descriptionBox3.Tss = tisb3.GetString();
 			// Adjust the dialog size if needed to display the message (FWNX-857).
-			int deltaY = m_descriptionBox3.PreferredHeight - m_descriptionBox3.Height;
-			if (deltaY > 0)
-			{
-				this.Height += deltaY;
-				this.Width += 4;		// Make it marginally wider as well for good measure.
-				// Reinitialize the string.  Otherwise only the first line is displayed for some reason.
-				m_descriptionBox3.Tss = tisb3.GetString();
-			}
+			int deltaY = GrowTextBox(panel1, m_descriptionBox3);
+			panel2.Top += deltaY;
 
 			m_descriptionBox4.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_descriptionBox4.WritingSystemCode = defUserWs;
 			m_descriptionBox4.StyleSheet = stylesheet;
 			ITsIncStrBldr tisb4 = TsIncStrBldrClass.Create();
-			tisb4.AppendTsString(m_cache.TsStrFactory.MakeString(" ", m_cache.WritingSystemFactory.UserWs)); //this is the default for m_descriptionBox4
+			tisb4.AppendTsString(tssNote); //this is the default for m_descriptionBox4
 			m_descriptionBox4.Tss = tisb4.GetString();
+			GrowTextBox(panel2, m_descriptionBox4);
 
 			m_deleteButton.Enabled = obj.Object.CanDelete;
 			label2.Visible = m_deleteButton.Enabled;
+		}
+
+		private int GrowTextBox(Panel panel, FwTextBox textBox)
+		{
+			int deltaY = textBox.PreferredHeight - textBox.Height;
+			if (deltaY > 0)
+			{
+				panel.Height += deltaY;
+				Height += deltaY;
+				// Reinitialize the string.  Otherwise only the first line is displayed for some reason.
+				textBox.Tss = textBox.Tss;
+				return deltaY;
+			}
+			return 0;
 		}
 
 		/// <summary>

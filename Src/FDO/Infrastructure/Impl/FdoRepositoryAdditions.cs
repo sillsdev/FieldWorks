@@ -1905,4 +1905,16 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		}
 	}
 	#endregion
+
+	#region TextTagRepository class
+	internal partial class TextTagRepository
+	{
+		public IEnumerable<ITextTag> GetByTextMarkupTag(ICmPossibility tag)
+		{
+			var tags = new HashSet<ICmPossibility> {tag};
+			tags.UnionWith(tag.SubPossibilitiesOS);
+			return AllInstances().Where(ttag => tags.Contains(ttag.TagRA));
+		}
+	}
+	#endregion
 }

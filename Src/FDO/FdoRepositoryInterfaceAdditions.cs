@@ -655,4 +655,12 @@ namespace SIL.FieldWorks.FDO
 		/// <returns>The annotations for the requested book</returns>
 		IScrBookAnnotations InstanceForBook(int bookId);
 	}
+
+	public partial interface ITextTagRepository
+	{
+		/// <summary>
+		/// Gets all text tags that reference the specified text markup tag.
+		/// </summary>
+		IEnumerable<ITextTag> GetByTextMarkupTag(ICmPossibility tag);
+	}
 }

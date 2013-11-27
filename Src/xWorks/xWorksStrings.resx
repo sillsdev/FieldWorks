@@ -561,12 +561,6 @@ Are you SURE you want to delete the field {2}?</value>
     <value>Duplicate List Name</value>
     <comment>used by AddListDlg</comment>
   </data>
-  <data name="ksCannotWordform" xml:space="preserve">
-    <value>Sorry, FieldWorks cannot delete this wordform because it occurs in your texts.</value>
-  </data>
-  <data name="ksCannotDeleteItem" xml:space="preserve">
-    <value>Sorry, FieldWorks cannot delete this item.</value>
-  </data>
   <data name="ksUndoInsertMedia" xml:space="preserve">
     <value>Undo Insert Media</value>
   </data>

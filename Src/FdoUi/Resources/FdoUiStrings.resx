@@ -301,4 +301,33 @@ Without these, we cannot find related entries.</value>
   <data name="ksUndoBEPhonemeFeatures" xml:space="preserve">
     <value>Undo Assign Features to Phonemes</value>
   </data>
+  <data name="ksCannotDeleteItem" xml:space="preserve">
+    <value>Sorry, FieldWorks cannot delete this item.</value>
+  </data>
+  <data name="ksCannotDeleteWordform" xml:space="preserve">
+    <value>Sorry, FieldWorks cannot delete this wordform because it occurs in your texts.</value>
+  </data>
+  <data name="ksCantDeleteDefaultDiscourseTemplate" xml:space="preserve">
+    <value>The default discourse chart template cannot be deleted, moved or promoted.</value>
+    <comment>Error message attempting to delete the one and only discourse chart template. Same message is used for moving or promoting.</comment>
+  </data>
+  <data name="ksCantDeleteLastTagList" xml:space="preserve">
+    <value>The last remaining Text Markup tag list cannot be deleted.</value>
+    <comment>Error message attempting to delete the one and only text markup tag type.</comment>
+  </data>
+  <data name="ksCantDeleteMarkupTagInUse" xml:space="preserve">
+    <value>You cannot delete a Text Markup tag when there are texts using the tag. One such text using this tag is {0}.</value>
+    <comment>{0} is (one) text that prevents the delete.</comment>
+  </data>
+  <data name="ksCantDeleteMarkupTypeInUse" xml:space="preserve">
+    <value>You cannot delete a Text Markup type when there are texts using its tags. One such text using this type of tag is {0}.</value>
+    <comment>{0} is (one) text that prevents the delete.</comment>
+  </data>
+  <data name="ksCantModifyTemplateInUse" xml:space="preserve">
+    <value>This part of a chart template cannot be moved or deleted, because it or one of its children is in use in one or more charts (e.g., {0}).</value>
+    <comment>{0} is the title of a text, or possibly a scripture reference.</comment>
+  </data>
+  <data name="ksWarningCaption" xml:space="preserve">
+    <value>Warning</value>
+  </data>
 </root>
