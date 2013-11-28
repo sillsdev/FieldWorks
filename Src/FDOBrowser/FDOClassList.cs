@@ -139,7 +139,7 @@ namespace FDOBrowser
 			if (s_allFDOClassNames != null)
 				return;
 
-			using (FdoCache cache = FdoCache.CreateCacheWithNoLangProj(new BrowserProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", null, new FdoUserAction()))
+			using (FdoCache cache = FdoCache.CreateCacheWithNoLangProj(new BrowserProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", null, new FdoBrowserUserAction()))
 			{
 			IFwMetaDataCacheManaged mdc = (IFwMetaDataCacheManaged)cache.MainCacheAccessor.MetaDataCache;
 			s_allFDOClassNames = new List<string>();

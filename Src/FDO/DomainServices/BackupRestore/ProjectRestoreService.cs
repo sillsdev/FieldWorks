@@ -39,6 +39,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		private bool m_fRestoreOverProject;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private string m_sLinkDirChangedTo;
+		private readonly IFdoUserAction m_userAction;
 		#endregion
 
 		#region Constructor
@@ -48,11 +49,13 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// </summary>
 		/// <param name="settings">The restore settings.</param>
 		/// <param name="helpTopicProvider"></param>
+		/// <param name="userAction"></param>
 		/// ------------------------------------------------------------------------------------
-		public ProjectRestoreService(RestoreProjectSettings settings, IHelpTopicProvider helpTopicProvider)
+		public ProjectRestoreService(RestoreProjectSettings settings, IHelpTopicProvider helpTopicProvider, IFdoUserAction userAction)
 		{
 			m_restoreSettings = settings;
 			m_helpTopicProvider = helpTopicProvider;
+			m_userAction = userAction;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -73,12 +76,11 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// Perform a restore of the project specified in the settings.
 		/// </summary>
 		/// <param name="progressDlg">The progress dialog.</param>
-		/// <param name="userAction"></param>
 		/// <exception cref="IOException">File does not exist, or some such problem</exception>
 		/// <exception cref="InvalidBackupFileException">XML deserialization problem or required
 		/// files not found in zip file</exception>
 		/// ------------------------------------------------------------------------------------
-		public void RestoreProject(IThreadedProgress progressDlg, IFdoUserAction userAction)
+		public void RestoreProject(IThreadedProgress progressDlg)
 		{
 			BackupFileSettings fileSettings = m_restoreSettings.Backup;
 			fileSettings.Validate(); // Normally, this will already have been done, so this will do nothing.
@@ -127,7 +129,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 
 			// switch to the desired backend (if it's in the projects directory...anything else stays XML for now).
 			if (DirectoryFinder.IsSubFolderOfProjectsDirectory(m_restoreSettings.ProjectPath) && !suppressConversion)
-				ClientServerServices.Current.Local.ConvertToDb4oBackendIfNeeded(progressDlg, m_restoreSettings.FullProjectPath, userAction);
+				ClientServerServices.Current.Local.ConvertToDb4oBackendIfNeeded(progressDlg, m_restoreSettings.FullProjectPath);
 
 			CleanupAfterRestore(true);
 		}
@@ -377,11 +379,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// <remarks>Protected so we can subclass in tests.</remarks>
 		protected virtual bool CanRestoreLinkedFilesToProjectsFolder()
 		{
-			using (var dlg = new RestoreLinkedFilesToProjectsFolder(m_helpTopicProvider))
-			{
-				// Let a Cancel result mean "Keep my old non-standard location"
-				return dlg.ShowDialog() == DialogResult.OK && dlg.fRestoreLinkedFilesToProjectFolder;
-			}
+			return m_userAction.RestoreLinkedFilesInProjectFolder();
 		}
 
 		/// <summary>
@@ -440,22 +438,17 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 				{
 					//Some files in the zip file are older than the ones on disk. Therefore find out if the user wants
 					//to keep the newer files on disk.
-					using (var dlg = new FilesToRestoreAreOlder(m_helpTopicProvider))
+					FileSelection fileSelection = m_userAction.ChooseFilesToUse();
+					if (fileSelection == FileSelection.OkKeepNewer)
 					{
-						if (dlg.ShowDialog() == DialogResult.OK)
-						{
-							if (dlg.fKeepFilesThatAreNewer)
-							{
-								var newList = RemoveFilesThatAreOlderThanThoseOnDisk(filesContainedInLinkdFilesFolder,
-												proposedDestinationLinkedFilesPath, linkedFilesPathPersisted);
-								UncompressLinkedFiles(newList, proposedDestinationLinkedFilesPath, linkedFilesPathPersisted);
-							}
-							if (dlg.fOverWriteThatAreNewer)
-							{
-								UncompressLinkedFiles(filesContainedInLinkdFilesFolder, proposedDestinationLinkedFilesPath,
-									linkedFilesPathPersisted);
-							}
-						}
+						var newList = RemoveFilesThatAreOlderThanThoseOnDisk(filesContainedInLinkdFilesFolder,
+										proposedDestinationLinkedFilesPath, linkedFilesPathPersisted);
+						UncompressLinkedFiles(newList, proposedDestinationLinkedFilesPath, linkedFilesPathPersisted);
+					}
+					if (fileSelection == FileSelection.OkUseOlder)
+					{
+						UncompressLinkedFiles(filesContainedInLinkdFilesFolder, proposedDestinationLinkedFilesPath,
+							linkedFilesPathPersisted);
 					}
 				}
 				else  //no files to be restored are older than those on disk so restore them all.
@@ -476,21 +469,16 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// <param name="filesContainedInLinkdFilesFolder"></param>
 		protected virtual void CouldNotRestoreLinkedFilesToOriginalLocation(string linkedFilesPathPersisted, Dictionary<string, DateTime> filesContainedInLinkdFilesFolder)
 		{
-			using (var dlgCantWriteFiles = new CantRestoreLinkedFilesToOriginalLocation(m_helpTopicProvider))
+			YesNoCancel userSelection = m_userAction.CannotRestoreLinkedFilesToOriginalLocation();
+			if (userSelection == YesNoCancel.OkYes)
 			{
-				if (dlgCantWriteFiles.ShowDialog() == DialogResult.OK)
-				{
-					if (dlgCantWriteFiles.fRestoreLinkedFilesToProjectFolder)
-					{
-						m_sLinkDirChangedTo = DirectoryFinder.GetDefaultLinkedFilesDir(m_restoreSettings.ProjectPath);
-						//Restore the files to the project folder.
-						UncompressLinkedFiles(filesContainedInLinkdFilesFolder, m_sLinkDirChangedTo, linkedFilesPathPersisted);
-					}
-					if (dlgCantWriteFiles.fDoNotRestoreLinkedFiles)
-					{
-						//Do nothing. Do not restore any LinkedFiles.
-					}
-				}
+				m_sLinkDirChangedTo = DirectoryFinder.GetDefaultLinkedFilesDir(m_restoreSettings.ProjectPath);
+				//Restore the files to the project folder.
+				UncompressLinkedFiles(filesContainedInLinkdFilesFolder, m_sLinkDirChangedTo, linkedFilesPathPersisted);
+			}
+			else if (userSelection == YesNoCancel.OkNo)
+			{
+				//Do nothing. Do not restore any LinkedFiles.
 			}
 		}
 

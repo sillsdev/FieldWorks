@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!--
 	Microsoft ResX Schema
@@ -119,14 +119,14 @@
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="button_OK.Location" type="System.Drawing.Point, System.Drawing">
-	<value>298, 112</value>
+	<value>287, 138</value>
   </data>
   <data name="button_OK.Size" type="System.Drawing.Size, System.Drawing">
 	<value>75, 23</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="button_OK.TabIndex" type="System.Int32, mscorlib">
-	<value>0</value>
+	<value>1</value>
   </data>
   <data name="button_OK.Text" xml:space="preserve">
 	<value>OK</value>
@@ -141,16 +141,16 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;button_OK.ZOrder" xml:space="preserve">
-	<value>6</value>
+	<value>7</value>
   </data>
   <data name="button_Cancel.Location" type="System.Drawing.Point, System.Drawing">
-	<value>379, 112</value>
+	<value>368, 138</value>
   </data>
   <data name="button_Cancel.Size" type="System.Drawing.Size, System.Drawing">
 	<value>75, 23</value>
   </data>
   <data name="button_Cancel.TabIndex" type="System.Int32, mscorlib">
-	<value>1</value>
+	<value>2</value>
   </data>
   <data name="button_Cancel.Text" xml:space="preserve">
 	<value>Cancel</value>
@@ -165,16 +165,16 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;button_Cancel.ZOrder" xml:space="preserve">
-	<value>5</value>
+	<value>6</value>
   </data>
   <data name="button_Help.Location" type="System.Drawing.Point, System.Drawing">
-	<value>460, 112</value>
+	<value>449, 138</value>
   </data>
   <data name="button_Help.Size" type="System.Drawing.Size, System.Drawing">
 	<value>75, 23</value>
   </data>
   <data name="button_Help.TabIndex" type="System.Int32, mscorlib">
-	<value>2</value>
+	<value>3</value>
   </data>
   <data name="button_Help.Text" xml:space="preserve">
 	<value>Help</value>
@@ -189,40 +189,16 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;button_Help.ZOrder" xml:space="preserve">
-	<value>4</value>
-  </data>
-  <data name="label_message.Location" type="System.Drawing.Point, System.Drawing">
-	<value>69, 12</value>
-  </data>
-  <data name="label_message.Size" type="System.Drawing.Size, System.Drawing">
-	<value>438, 49</value>
-  </data>
-  <data name="label_message.TabIndex" type="System.Int32, mscorlib">
-	<value>3</value>
-  </data>
-  <data name="label_message.Text" xml:space="preserve">
-	<value>FieldWorks cannot restore the linked files to their original location. The restored linked files for this project will be placed inside the project folder.</value>
-  </data>
-  <data name="&gt;&gt;label_message.Name" xml:space="preserve">
-	<value>label_message</value>
-  </data>
-  <data name="&gt;&gt;label_message.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label_message.Parent" xml:space="preserve">
-	<value>$this</value>
-  </data>
-  <data name="&gt;&gt;label_message.ZOrder" xml:space="preserve">
-	<value>3</value>
+	<value>5</value>
   </data>
   <data name="pictureBox1.Location" type="System.Drawing.Point, System.Drawing">
 	<value>12, 12</value>
   </data>
   <data name="pictureBox1.Size" type="System.Drawing.Size, System.Drawing">
-	<value>42, 38</value>
+	<value>46, 28</value>
   </data>
   <data name="pictureBox1.TabIndex" type="System.Int32, mscorlib">
-	<value>8</value>
+	<value>4</value>
   </data>
   <data name="&gt;&gt;pictureBox1.Name" xml:space="preserve">
 	<value>pictureBox1</value>
@@ -234,68 +210,116 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;pictureBox1.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <data name="labelMessage.Location" type="System.Drawing.Point, System.Drawing">
+	<value>64, 12</value>
+  </data>
+  <data name="labelMessage.Size" type="System.Drawing.Size, System.Drawing">
+	<value>457, 37</value>
+  </data>
+  <data name="labelMessage.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="labelMessage.Text" xml:space="preserve">
+	<value>The Linked Files folder was not previously stored in the project folder.</value>
+  </data>
+  <data name="&gt;&gt;labelMessage.Name" xml:space="preserve">
+	<value>labelMessage</value>
+  </data>
+  <data name="&gt;&gt;labelMessage.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;labelMessage.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;labelMessage.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="labelQuestion.Location" type="System.Drawing.Point, System.Drawing">
+	<value>67, 49</value>
+  </data>
+  <data name="labelQuestion.Size" type="System.Drawing.Size, System.Drawing">
+	<value>457, 44</value>
+  </data>
+  <data name="labelQuestion.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="labelQuestion.Text" xml:space="preserve">
+	<value>Would you like FieldWorks to restore the linked files within the project folder?</value>
+  </data>
+  <data name="&gt;&gt;labelQuestion.Name" xml:space="preserve">
+	<value>labelQuestion</value>
+  </data>
+  <data name="&gt;&gt;labelQuestion.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;labelQuestion.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;labelQuestion.ZOrder" xml:space="preserve">
 	<value>2</value>
   </data>
-  <data name="radio_NoThanks.AutoSize" type="System.Boolean, mscorlib">
+  <data name="radio_No.AutoSize" type="System.Boolean, mscorlib">
 	<value>True</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="radio_NoThanks.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+  <data name="radio_No.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
 	<value>NoControl</value>
   </data>
-  <data name="radio_NoThanks.Location" type="System.Drawing.Point, System.Drawing">
-	<value>72, 87</value>
+  <data name="radio_No.Location" type="System.Drawing.Point, System.Drawing">
+	<value>70, 115</value>
   </data>
-  <data name="radio_NoThanks.Size" type="System.Drawing.Size, System.Drawing">
-	<value>217, 17</value>
+  <data name="radio_No.Size" type="System.Drawing.Size, System.Drawing">
+	<value>159, 17</value>
   </data>
-  <data name="radio_NoThanks.TabIndex" type="System.Int32, mscorlib">
-	<value>6</value>
+  <data name="radio_No.TabIndex" type="System.Int32, mscorlib">
+	<value>8</value>
   </data>
-  <data name="radio_NoThanks.Text" xml:space="preserve">
-	<value>No thanks. Skip restoring the linked files.</value>
+  <data name="radio_No.Text" xml:space="preserve">
+	<value>No, please use original path.</value>
   </data>
-  <data name="&gt;&gt;radio_NoThanks.Name" xml:space="preserve">
-	<value>radio_NoThanks</value>
+  <data name="&gt;&gt;radio_No.Name" xml:space="preserve">
+	<value>radio_No</value>
   </data>
-  <data name="&gt;&gt;radio_NoThanks.Type" xml:space="preserve">
+  <data name="&gt;&gt;radio_No.Type" xml:space="preserve">
 	<value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;radio_NoThanks.Parent" xml:space="preserve">
+  <data name="&gt;&gt;radio_No.Parent" xml:space="preserve">
 	<value>$this</value>
   </data>
-  <data name="&gt;&gt;radio_NoThanks.ZOrder" xml:space="preserve">
-	<value>1</value>
+  <data name="&gt;&gt;radio_No.ZOrder" xml:space="preserve">
+	<value>0</value>
   </data>
-  <data name="radio_Thanks.AutoSize" type="System.Boolean, mscorlib">
+  <data name="radio_Yes.AutoSize" type="System.Boolean, mscorlib">
 	<value>True</value>
   </data>
-  <data name="radio_Thanks.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+  <data name="radio_Yes.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
 	<value>NoControl</value>
   </data>
-  <data name="radio_Thanks.Location" type="System.Drawing.Point, System.Drawing">
-	<value>72, 64</value>
+  <data name="radio_Yes.Location" type="System.Drawing.Point, System.Drawing">
+	<value>70, 92</value>
   </data>
-  <data name="radio_Thanks.Size" type="System.Drawing.Size, System.Drawing">
-	<value>348, 17</value>
+  <data name="radio_Yes.Size" type="System.Drawing.Size, System.Drawing">
+	<value>43, 17</value>
   </data>
-  <data name="radio_Thanks.TabIndex" type="System.Int32, mscorlib">
-	<value>9</value>
+  <data name="radio_Yes.TabIndex" type="System.Int32, mscorlib">
+	<value>7</value>
   </data>
-  <data name="radio_Thanks.Text" xml:space="preserve">
-	<value>Thanks, and change the default Linked Files location for this project.</value>
+  <data name="radio_Yes.Text" xml:space="preserve">
+	<value>Yes</value>
   </data>
-  <data name="&gt;&gt;radio_Thanks.Name" xml:space="preserve">
-	<value>radio_Thanks</value>
+  <data name="&gt;&gt;radio_Yes.Name" xml:space="preserve">
+	<value>radio_Yes</value>
   </data>
-  <data name="&gt;&gt;radio_Thanks.Type" xml:space="preserve">
+  <data name="&gt;&gt;radio_Yes.Type" xml:space="preserve">
 	<value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;radio_Thanks.Parent" xml:space="preserve">
+  <data name="&gt;&gt;radio_Yes.Parent" xml:space="preserve">
 	<value>$this</value>
   </data>
-  <data name="&gt;&gt;radio_Thanks.ZOrder" xml:space="preserve">
-	<value>0</value>
+  <data name="&gt;&gt;radio_Yes.ZOrder" xml:space="preserve">
+	<value>1</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
 	<value>True</value>
@@ -304,13 +328,13 @@
 	<value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-	<value>544, 146</value>
+	<value>533, 173</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
-	<value>Cannot restore files in Linked Files folder</value>
+	<value>Linked Files folder</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
-	<value>CantRestoreLinkedFilesToOriginalLocation</value>
+	<value>RestoreLinkedFilesToProjectsFolder</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
 	<value>System.Windows.Forms.Form, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>

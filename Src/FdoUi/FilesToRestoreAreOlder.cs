@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
-using System.Text;
+using System;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using XCore;
 
-namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
+namespace SIL.FieldWorks.FdoUi
 {
 	/// <summary>
 	///

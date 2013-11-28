@@ -1,4 +1,4 @@
-// ---------------------------------------------------------------------------------------------
+﻿// ---------------------------------------------------------------------------------------------
 #region // Copyright (c) 2013, SIL International. All Rights Reserved.
 // <copyright from='2013' to='2013' company='SIL International'>
 //		Copyright (c) 2013, SIL International. All Rights Reserved.
@@ -8,36 +8,28 @@
 // </copyright>
 #endregion
 // ---------------------------------------------------------------------------------------------
-using System.Windows.Forms;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
-using XCore;
 
-namespace SIL.FieldWorks.FdoUi
+namespace SIL.FieldWorks.FDO
 {
 	/// <summary>
-	/// Implementation of IFdoUserAction which uses Windows Forms
+	/// Silent implementation of FdoUserAction with reasonable defaults for
+	/// actions which should not require user intervention
 	/// </summary>
-	public class FdoUserActionWindowsForms : IFdoUserAction
+	public class SilentFdoUserAction : IFdoUserAction
 	{
-		private readonly IHelpTopicProvider m_helpTopicProvider;
-
-		public FdoUserActionWindowsForms(IHelpTopicProvider helpTopicProvider)
-		{
-			m_helpTopicProvider = helpTopicProvider;
-		}
-
 		/// <summary>
 		/// Check with user regarding conflicting changes
 		/// </summary>
 		/// <returns>True if user wishes to revert to saved state. False otherwise.</returns>
 		public bool ConflictingSave()
 		{
-			using (var dlg = new ConflictingSaveDlg())
-			{
-				DialogResult result = dlg.ShowDialog(Form.ActiveForm);
-				return result != DialogResult.OK;
-			}
+			// Assume saved data is correct data
+			return true;
 		}
 
 		/// <summary>
@@ -46,10 +38,8 @@ namespace SIL.FieldWorks.FdoUi
 		/// <returns>True if user wishes to attempt reconnect.  False otherwise.</returns>
 		public bool ConnectionLost()
 		{
-			using (var dlg = new ConnectionLostDlg())
-			{
-				return dlg.ShowDialog() == DialogResult.Yes;
-			}
+			// Assume we don't to continue to attempt to reconnect endlessly
+			return false;
 		}
 
 		/// <summary>
@@ -58,21 +48,8 @@ namespace SIL.FieldWorks.FdoUi
 		/// <returns></returns>
 		public FileSelection ChooseFilesToUse()
 		{
-			using (var dlg = new FilesToRestoreAreOlder(m_helpTopicProvider))
-			{
-				if (dlg.ShowDialog() == DialogResult.OK)
-				{
-					if (dlg.fKeepFilesThatAreNewer)
-					{
-						return FileSelection.OkKeepNewer;
-					}
-					if (dlg.fOverWriteThatAreNewer)
-					{
-						return FileSelection.OkUseOlder;
-					}
-				}
-				return FileSelection.Cancel;
-			}
+			// Assume newer files are correct files
+			return FileSelection.OkKeepNewer;
 		}
 
 		/// <summary>
@@ -81,10 +58,8 @@ namespace SIL.FieldWorks.FdoUi
 		/// <returns>True if user wishes to restore linked files in project folder. False to leave them in the original location.</returns>
 		public bool RestoreLinkedFilesInProjectFolder()
 		{
-			using (var dlg = new RestoreLinkedFilesToProjectsFolder(m_helpTopicProvider))
-			{
-				return dlg.ShowDialog() == DialogResult.OK && dlg.fRestoreLinkedFilesToProjectFolder;
-			}
+			// Assume linked files go in project folder
+			return true;
 		}
 
 		/// <summary>
@@ -94,21 +69,8 @@ namespace SIL.FieldWorks.FdoUi
 		/// <returns>OkYes to restore to project folder, OkNo to skip restoring linked files, Cancel otherwise</returns>
 		public YesNoCancel CannotRestoreLinkedFilesToOriginalLocation()
 		{
-			using (var dlgCantWriteFiles = new CantRestoreLinkedFilesToOriginalLocation(m_helpTopicProvider))
-			{
-				if (dlgCantWriteFiles.ShowDialog() == DialogResult.OK)
-				{
-					if (dlgCantWriteFiles.fRestoreLinkedFilesToProjectFolder)
-					{
-						return YesNoCancel.OkYes;
-					}
-					if (dlgCantWriteFiles.fDoNotRestoreLinkedFiles)
-					{
-						return YesNoCancel.OkNo;
-					}
-				}
-				return YesNoCancel.Cancel;
-			}
+			// Assume linked files go in project folder
+			return YesNoCancel.OkYes;
 		}
 
 		/// <summary>
@@ -116,7 +78,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// </summary>
 		public void MessageBox()
 		{
-			//System.Windows.Forms.MessageBox.Show();
+			throw new NotImplementedException();
 		}
 	}
 }

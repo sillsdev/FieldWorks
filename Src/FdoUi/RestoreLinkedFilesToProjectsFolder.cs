@@ -1,26 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
-using System.Text;
+using System;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using XCore;
 
-namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
+namespace SIL.FieldWorks.FdoUi
 {
 	/// <summary>
 	///
 	/// </summary>
-	public partial class CantRestoreLinkedFilesToOriginalLocation : Form
+	public partial class RestoreLinkedFilesToProjectsFolder : Form
 	{
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 
 		/// <summary>
 		///
 		/// </summary>
-		public CantRestoreLinkedFilesToOriginalLocation(IHelpTopicProvider helpTopicProvider)
+		public RestoreLinkedFilesToProjectsFolder(IHelpTopicProvider helpTopicProvider)
 		{
 			m_helpTopicProvider = helpTopicProvider;
 			InitializeComponent();
@@ -31,22 +26,13 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// </summary>
 		public bool fRestoreLinkedFilesToProjectFolder
 		{
-			get { return radio_Thanks.Checked; }
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		public bool fDoNotRestoreLinkedFiles
-		{
-			get { return radio_NoThanks.Checked; }
+			get { return radio_Yes.Checked; }
 		}
 
 		private void button_OK_Click(object sender, EventArgs e)
 		{
 			this.DialogResult = DialogResult.OK;
 			Close();
-
 		}
 
 		private void button_Cancel_Click(object sender, EventArgs e)

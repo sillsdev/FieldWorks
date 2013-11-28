@@ -154,7 +154,7 @@
     </Compile>
     <Compile Include="FDOClassList.cs" />
     <Compile Include="FdoInspectorList.cs" />
-    <Compile Include="FdoUserAction.cs" />
+    <Compile Include="FdoBrowserUserAction.cs" />
     <Compile Include="FileInOutChooser.cs">
       <SubType>Form</SubType>
     </Compile>

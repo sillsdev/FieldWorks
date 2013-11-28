@@ -693,7 +693,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 						using (var threadHelper = new ThreadHelper())
 						{
-							m_dbFile = (string)progressDlg.RunTask(DisplayUi, (progress, args) => FdoCache.CreateNewLangProj(progress, m_userAction, args),
+							m_dbFile = (string)progressDlg.RunTask(DisplayUi, FdoCache.CreateNewLangProj,
 																	ProjectName, threadHelper, m_cbAnalWrtSys.SelectedItem,
 																	m_cbVernWrtSys.SelectedItem,
 																	((PalasoWritingSystem)m_wsManager.UserWritingSystem).RFC5646,

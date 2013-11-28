@@ -116,14 +116,14 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// </summary>
 		/// <returns>The path to the backup file, or <c>null</c></returns>
 		/// ------------------------------------------------------------------------------------
-		internal string BackupProject(IThreadedProgress progressDlg, IFdoUserAction userAction)
+		internal string BackupProject(IThreadedProgress progressDlg)
 		{
 			BackupProjectSettings settings = new BackupProjectSettings(m_cache, m_backupProjectView);
 			settings.DestinationFolder = m_backupProjectView.DestinationFolder;
 			settings.AppAbbrev = m_appAbbrev;
 
 			ProjectBackupService backupService = new ProjectBackupService(m_cache, settings);
-			return backupService.BackupProject(progressDlg, userAction);
+			return backupService.BackupProject(progressDlg);
 		}
 	}
 }

@@ -9,16 +9,12 @@
 #endregion
 // ---------------------------------------------------------------------------------------------
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace FDOBrowser
 {
-	/// <summary>
-	/// Dummy implementation of FdoUserAction for unit tests
-	/// </summary>
-	public class DummyFdoUserAction : IFdoUserAction
+	class FdoBrowserUserAction : IFdoUserAction
 	{
 		/// <summary>
 		/// Check with user regarding conflicting changes
@@ -26,7 +22,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns>True if user wishes to revert to saved state. False otherwise.</returns>
 		public bool ConflictingSave()
 		{
-			throw new NotImplementedException();
+			DialogResult dialogResult = System.Windows.Forms.MessageBox.Show("There are conflicting changes from another user.  Do you want to load the latest saved version?", "Conflicting Changes", MessageBoxButtons.YesNo);
+			return dialogResult == DialogResult.Yes;
 		}
 
 		/// <summary>
@@ -35,16 +32,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns>True if user wishes to attempt reconnect.  False otherwise.</returns>
 		public bool ConnectionLost()
 		{
-			throw new NotImplementedException();
+			DialogResult dialogResult = System.Windows.Forms.MessageBox.Show("The connection has been lost.  Do you wish to attempt a reconnect?", "Connection Lost", MessageBoxButtons.YesNo);
+			return dialogResult == DialogResult.Yes;
 		}
 
-		/// <summary>
-		/// Check with user regarding which files to use
-		/// </summary>
-		/// <returns></returns>
 		public FileSelection ChooseFilesToUse()
 		{
-			throw new NotImplementedException();
+			DialogResult dialogResult = System.Windows.Forms.MessageBox.Show("Some files are newer than the files to be restored. Use these newer files?", "Files To Restore Are Older", MessageBoxButtons.YesNoCancel);
+			switch (dialogResult)
+			{
+				case DialogResult.Yes:
+					return FileSelection.OkKeepNewer;
+				case DialogResult.No:
+					return FileSelection.OkUseOlder;
+				case DialogResult.Cancel:
+				default:
+					return FileSelection.Cancel;
+			}
 		}
 
 		/// <summary>
@@ -53,7 +57,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns>True if user wishes to restore linked files in project folder. False to leave them in the original location.</returns>
 		public bool RestoreLinkedFilesInProjectFolder()
 		{
-			throw new NotImplementedException();
+			DialogResult dialogResult = System.Windows.Forms.MessageBox.Show("During restore, do you want to move linked files from their current location to the project folder?", "Restore Linked Files", MessageBoxButtons.YesNo);
+			return dialogResult == DialogResult.Yes;
 		}
 
 		/// <summary>
@@ -63,7 +68,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns>OkYes to restore to project folder, OkNo to skip restoring linked files, Cancel otherwise</returns>
 		public YesNoCancel CannotRestoreLinkedFilesToOriginalLocation()
 		{
-			throw new NotImplementedException();
+			DialogResult dialogResult = System.Windows.Forms.MessageBox.Show("Linked files cannot stay in original location and will be moved to project folder.  Restore linked files?", "Cannot Restore in Original Location", MessageBoxButtons.YesNoCancel);
+			switch (dialogResult)
+			{
+				case DialogResult.Yes:
+					return YesNoCancel.OkYes;
+				case DialogResult.No:
+					return YesNoCancel.OkNo;
+				case DialogResult.Cancel:
+				default:
+					return YesNoCancel.Cancel;
+			}
 		}
 
 		/// <summary>

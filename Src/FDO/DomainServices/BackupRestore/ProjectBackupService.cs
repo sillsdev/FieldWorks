@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// Perform a backup of the current project, using specified settings.
 		/// </summary>
 		/// <returns>The backup file or null if something went wrong.</returns>
-		public string BackupProject(IThreadedProgress progressDlg, IFdoUserAction userAction)
+		public string BackupProject(IThreadedProgress progressDlg)
 		{
 			PersistBackupFileSettings();
 
@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 				m_cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
 				m_cache.ServiceLocator.GetInstance<IDataStorer>().CompleteAllCommits();
 
-				string tempFilePath = ClientServerServices.Current.Local.CopyToXmlFile(m_cache, m_settings.DatabaseFolder, userAction);
+				string tempFilePath = ClientServerServices.Current.Local.CopyToXmlFile(m_cache, m_settings.DatabaseFolder);
 				var filesToZip = CreateListOfFilesToZip();
 
 				progressDlg.Title = Strings.ksBackupProgressCaption;

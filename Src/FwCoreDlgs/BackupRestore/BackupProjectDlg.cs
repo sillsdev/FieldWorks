@@ -171,7 +171,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 				using (new WaitCursor(this))
 				using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(this, m_cache.ThreadHelper))
 				{
-					BackupFilePath = m_presenter.BackupProject(progressDlg, m_cache.ServiceLocator.GetInstance<IFdoUserAction>());
+					BackupFilePath = m_presenter.BackupProject(progressDlg);
 				}
 			}
 			catch (FwBackupException be)

@@ -377,7 +377,6 @@ namespace SIL.FieldWorks.FDO
 		/// Create a new language project for the new language name
 		/// </summary>
 		/// <param name="progressDlg">The progress dialog.</param>
-		/// <param name="userAction"></param>
 		/// <param name="parameters">One or more parameters, supplied in this order:
 		///  0. A string containing the name of the project (required);
 		///  1. A ThreadHelper used for invoking actions on the main UI thread (required);
@@ -390,7 +389,7 @@ namespace SIL.FieldWorks.FDO
 		/// <returns>Path of the newly created project file.</returns>
 		/// <remarks>Override DisplayUi to prevent progress dialog from showing.</remarks>
 		/// ------------------------------------------------------------------------------------
-		public static string CreateNewLangProj(IThreadedProgress progressDlg, IFdoUserAction userAction, params object[] parameters)
+		public static string CreateNewLangProj(IThreadedProgress progressDlg, params object[] parameters)
 		{
 			if (parameters == null || parameters.Length < 2)
 				throw new ArgumentException("Parameters must include at least a project name and the ThreadHelper");
@@ -421,7 +420,7 @@ namespace SIL.FieldWorks.FDO
 
 			var projectId = new SimpleProjectId(FDOBackendProviderType.kXML, dbFileName);
 			using (var cache = CreateCacheInternal(projectId,
-				userIcuLocale, threadHelper, dataSetup => dataSetup.StartupExtantLanguageProject(projectId, true, progressDlg), userAction))
+				userIcuLocale, threadHelper, dataSetup => dataSetup.StartupExtantLanguageProject(projectId, true, progressDlg), new SilentFdoUserAction()))
 			{
 				if (progressDlg != null)
 				{
@@ -534,7 +533,7 @@ namespace SIL.FieldWorks.FDO
 					cache.SaveAndForceNewestXmlForCmObjectWithoutUnitOfWork(null, cache.m_serviceLocator.ObjectRepository.AllInstances().ToList());
 				}
 			}
-			return ClientServerServices.Current.Local.ConvertToDb4oBackendIfNeeded(progressDlg, dbFileName, userAction);
+			return ClientServerServices.Current.Local.ConvertToDb4oBackendIfNeeded(progressDlg, dbFileName);
 		}
 
 		/// <summary>

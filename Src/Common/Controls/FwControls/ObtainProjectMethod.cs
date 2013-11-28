@@ -119,7 +119,7 @@ namespace SIL.FieldWorks.Common.Controls
 			IWritingSystem wsVern, wsAnalysis;
 			RetrieveDefaultWritingSystemsFromLift(liftPathname, out wsVern, out wsAnalysis);
 
-			string projectPath = FdoCache.CreateNewLangProj(progress, userAction,
+			string projectPath = FdoCache.CreateNewLangProj(progress,
 				Directory.GetParent(Path.GetDirectoryName(liftPathname)).Parent.Name, // Get the new Flex project name from the Lift pathname.
 				helper, wsAnalysis, wsVern, null, null, null, anthroFile);
 

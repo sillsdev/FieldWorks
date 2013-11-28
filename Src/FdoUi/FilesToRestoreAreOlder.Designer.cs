@@ -1,4 +1,4 @@
-﻿namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
+namespace SIL.FieldWorks.FdoUi
 {
 	partial class FilesToRestoreAreOlder
 	{
@@ -40,63 +40,63 @@
 			this.button_OK = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
 			this.SuspendLayout();
-			//
+			// 
 			// label_message
-			//
+			// 
 			resources.ApplyResources(this.label_message, "label_message");
 			this.label_message.Name = "label_message";
-			//
+			// 
 			// label_Question
-			//
+			// 
 			resources.ApplyResources(this.label_Question, "label_Question");
 			this.label_Question.Name = "label_Question";
-			//
+			// 
 			// pictureBox1
-			//
-			this.pictureBox1.Image = global::SIL.FieldWorks.FDO.Properties.Resources.question;
+			// 
+			this.pictureBox1.Image = global::SIL.FieldWorks.FdoUi.Properties.Resources.question;
 			resources.ApplyResources(this.pictureBox1, "pictureBox1");
 			this.pictureBox1.Name = "pictureBox1";
 			this.pictureBox1.TabStop = false;
-			//
+			// 
 			// radio_Overwrite
-			//
+			// 
 			resources.ApplyResources(this.radio_Overwrite, "radio_Overwrite");
 			this.radio_Overwrite.Name = "radio_Overwrite";
 			this.radio_Overwrite.TabStop = true;
 			this.radio_Overwrite.UseVisualStyleBackColor = true;
-			//
+			// 
 			// radio_Keep
-			//
+			// 
 			resources.ApplyResources(this.radio_Keep, "radio_Keep");
 			this.radio_Keep.Checked = true;
 			this.radio_Keep.Name = "radio_Keep";
 			this.radio_Keep.TabStop = true;
 			this.radio_Keep.UseVisualStyleBackColor = true;
-			//
+			// 
 			// button_Help
-			//
+			// 
 			resources.ApplyResources(this.button_Help, "button_Help");
 			this.button_Help.Name = "button_Help";
 			this.button_Help.UseVisualStyleBackColor = true;
 			this.button_Help.Click += new System.EventHandler(this.button_Help_Click);
-			//
+			// 
 			// button_Cancel
-			//
+			// 
 			this.button_Cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			resources.ApplyResources(this.button_Cancel, "button_Cancel");
 			this.button_Cancel.Name = "button_Cancel";
 			this.button_Cancel.UseVisualStyleBackColor = true;
 			this.button_Cancel.Click += new System.EventHandler(this.button_Cancel_Click);
-			//
+			// 
 			// button_OK
-			//
+			// 
 			resources.ApplyResources(this.button_OK, "button_OK");
 			this.button_OK.Name = "button_OK";
 			this.button_OK.UseVisualStyleBackColor = true;
 			this.button_OK.Click += new System.EventHandler(this.button_OK_Click);
-			//
+			// 
 			// FilesToRestoreAreOlder
-			//
+			// 
 			this.AcceptButton = this.button_OK;
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;

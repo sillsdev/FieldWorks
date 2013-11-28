@@ -192,6 +192,12 @@
     <Compile Include="BulkPosEditor.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="CantRestoreLinkedFilesToOriginalLocation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CantRestoreLinkedFilesToOriginalLocation.Designer.cs">
+      <DependentUpon>CantRestoreLinkedFilesToOriginalLocation.cs</DependentUpon>
+    </Compile>
     <Compile Include="ConfirmDeleteObjectDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -219,6 +225,12 @@
       <DependentUpon>FdoUiStrings.resx</DependentUpon>
     </Compile>
     <Compile Include="FdoUserActionWindowsForms.cs" />
+    <Compile Include="FilesToRestoreAreOlder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FilesToRestoreAreOlder.Designer.cs">
+      <DependentUpon>FilesToRestoreAreOlder.cs</DependentUpon>
+    </Compile>
     <Compile Include="FsFeatDefnUi.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -241,8 +253,19 @@
     <Compile Include="PhonologicalFeatureEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="RelatedWords.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RestoreLinkedFilesToProjectsFolder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RestoreLinkedFilesToProjectsFolder.Designer.cs">
+      <DependentUpon>RestoreLinkedFilesToProjectsFolder.cs</DependentUpon>
     </Compile>
     <Compile Include="ReversalIndexEntryUi.cs">
       <SubType>Code</SubType>
@@ -256,6 +279,10 @@
     <Compile Include="WfiWordformUi.cs">
       <SubType>Code</SubType>
     </Compile>
+    <EmbeddedResource Include="CantRestoreLinkedFilesToOriginalLocation.resx">
+      <DependentUpon>CantRestoreLinkedFilesToOriginalLocation.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="ConfirmDeleteObjectDlg.resx">
       <DependentUpon>ConfirmDeleteObjectDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -273,12 +300,25 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>FdoUiStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="FilesToRestoreAreOlder.resx">
+      <DependentUpon>FilesToRestoreAreOlder.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="MergeObjectDlg.resx">
       <DependentUpon>MergeObjectDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="RelatedWords.resx">
       <DependentUpon>RelatedWords.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RestoreLinkedFilesToProjectsFolder.resx">
+      <DependentUpon>RestoreLinkedFilesToProjectsFolder.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="SummaryDialogForm.resx">
@@ -328,4 +368,8 @@
   <ItemGroup>
     <None Include="gendarme-FdoUi.ignore" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\question.ico" />
+  </ItemGroup>
+  <ItemGroup />
 </Project>

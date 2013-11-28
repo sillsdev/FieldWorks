@@ -191,8 +191,6 @@ namespace SIL.FieldWorks
 #endif
 				s_threadHelper = new ThreadHelper();
 
-				s_userAction = new FdoUserActionWindowsForms();
-
 				// ENHANCE (TimS): Another idea for ensuring that we have only one process started for
 				// this project is to use a Mutex. They can be used for cross-process resource access
 				// and would probably be less error-prone then our current implementation since it
@@ -243,6 +241,8 @@ namespace SIL.FieldWorks
 				FwAppArgs appArgs = new FwAppArgs(rgArgs);
 				s_noUserInterface = appArgs.NoUserInterface;
 				s_appServerMode = appArgs.AppServerMode;
+
+				s_userAction = new FdoUserActionWindowsForms(GetHelpTopicProvider(appArgs.AppAbbrev));
 
 				if (Settings.Default.CallUpgrade)
 				{
@@ -2427,7 +2427,7 @@ namespace SIL.FieldWorks
 					try
 					{
 						ProjectRestoreService restoreService = new ProjectRestoreService(restoreSettings.Settings,
-						GetHelpTopicProvider(restoreSettings.FwAppCommandLineAbbrev));
+						GetHelpTopicProvider(restoreSettings.FwAppCommandLineAbbrev), s_userAction);
 						Logger.WriteEvent("Restoring from " + restoreSettings.Settings.Backup.File);
 						if (ProjectRestoreService.HandleRestoreFileErrors(null, ResourceHelper.GetResourceString("ksRestoreFailed"),
 							restoreSettings.Settings.Backup.File, () => DoRestore(restoreService)))
@@ -2464,7 +2464,7 @@ namespace SIL.FieldWorks
 		private static void DoRestore(ProjectRestoreService restoreService)
 		{
 			using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(null, s_threadHelper))
-				restoreService.RestoreProject(progressDlg, s_userAction);
+				restoreService.RestoreProject(progressDlg);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2497,7 +2497,7 @@ namespace SIL.FieldWorks
 					settings.AppAbbrev = restoreSettings.FwAppCommandLineAbbrev;
 
 					ProjectBackupService backupService = new ProjectBackupService(cache, settings);
-					backupService.BackupProject(progressDlg, s_userAction);
+					backupService.BackupProject(progressDlg);
 				}
 				catch (FwBackupException e)
 				{
