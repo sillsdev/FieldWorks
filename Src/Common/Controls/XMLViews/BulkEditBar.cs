@@ -303,7 +303,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:BulkEditBar"/> class.
+		/// Initializes a new instance of the <see cref="BulkEditBar"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public BulkEditBar()
@@ -1269,7 +1269,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			var fWasPreviewOn = PreviewOn;
 			if (fWasPreviewOn)
-				ClearPreviewState();
+				ClearPreview();
 			FieldComboItem selectedItem = m_deleteWhatCombo.SelectedItem as FieldComboItem;
 			// need to change target before we do anything else, because calculating
 			// the items depends upon having the right sort of items listed.
@@ -1486,14 +1486,16 @@ namespace SIL.FieldWorks.Common.Controls
 			HandlePreviewOrSuggestTask(DoSuggestTask);
 		}
 
-		private void DoSuggestTask(ProgressState state, int newCol, int oldCol)
+		private void DoSuggestTask(ProgressState state)
 		{
+			var newCol = -1;
 			if (PreviewOn)
 			{
-				// Clear the preview
-				ClearPreviewState();
+				// Clear the previous preview
+				DoClearPreviewTask(state);
 			}
 			PreviewOn = true;
+
 			if (m_operationsTabControl.SelectedTab == m_listChoiceTab)
 			{
 				if (m_itemIndex >= 0)
@@ -1508,7 +1510,7 @@ namespace SIL.FieldWorks.Common.Controls
 				PreviewOn = false; // Didn't actually happen
 			}
 
-			if (oldCol != newCol)
+			if (newCol > 0)
 			{
 				// Use the BrowseViewer special 'decorator' SDA.
 				m_bv.SpecialCache.SetInt(m_bv.RootObjectHvo, XMLViewsDataCache.ktagActiveColumn, newCol);
@@ -1572,7 +1574,7 @@ namespace SIL.FieldWorks.Common.Controls
 				m_suggestButton.Location = new Point(m_listChoiceControl.Location.X,
 					m_listChoiceControl.Location.Y + SUGGEST_BTN_YOFFSET);
 				m_suggestButton.Size = m_listChoiceControl.Size;
-				m_suggestButton.Click += new EventHandler(m_suggestButton_Click);
+				m_suggestButton.Click += m_suggestButton_Click;
 				m_suggestButton.Visible = true;
 			}
 		}
@@ -1615,19 +1617,24 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
-		/// Handles a click on the Preview button
+		/// Handles a click on the Preview (or Clear [Preview]) button
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		protected internal void m_previewButton_Click(object sender, EventArgs e)
 		{
-			HandlePreviewOrSuggestTask(DoPreviewTask);
+			if (PreviewOn)
+			{
+				HandlePreviewOrSuggestTask(DoClearPreviewTask);
+			}
+			else
+			{
+				HandlePreviewOrSuggestTask(DoPreviewTask);
+			}
 		}
 
-		private void HandlePreviewOrSuggestTask(Action<ProgressState, int, int> previewOrSuggestTask)
+		private void HandlePreviewOrSuggestTask(Action<ProgressState> previewOrSuggestTask)
 		{
-			int oldCol = m_bv.SpecialCache.get_IntProp(m_bv.RootObjectHvo, XMLViewsDataCache.ktagActiveColumn);
-			int newCol = oldCol;
 			// Fixes LT-8336 by making sure that a highlighted row that was visible before the change is
 			// still visible after it too.
 			using (new ReconstructPreservingBVScrollPosition(m_bv))
@@ -1638,93 +1645,94 @@ namespace SIL.FieldWorks.Common.Controls
 				using (ProgressState state = CreateSimpleProgressState(m_mediator))
 				using (new WaitCursor(this))
 				{
-					previewOrSuggestTask(state, newCol, oldCol);
+					previewOrSuggestTask(state);
 				}
 			} // End using(ReconstructPreservingBVScrollPosition) [Does RootBox.Reconstruct() here.]
 		}
 
-		private void DoPreviewTask(ProgressState state, int newCol, int oldCol)
+		internal void LaunchPreview()
 		{
+			HandlePreviewOrSuggestTask(DoPreviewTask);
+		}
+
+		private void DoPreviewTask(ProgressState state)
+		{
+			var newCol = -1;
 			if (PreviewOn)
 			{
-				// Clear the preview
-				ClearPreviewState();
+				// Clear the previous preview
+				DoClearPreviewTask(state);
+			}
+			PreviewOn = true;
+
+			if (m_operationsTabControl.SelectedTab == m_listChoiceTab)
+			{
+				if (m_itemIndex >= 0)
+				{
+					ShowPreviewItems(state);
+					newCol = m_itemIndex + 1;
+				}
+			}
+			else if (m_operationsTabControl.SelectedTab == m_findReplaceTab)
+			{
+				ReplaceWithMethod method = MakeReplaceWithMethod(out newCol);
+				if (method == null)
+					return;
+				method.FakeDoit(ItemsToChange(false), XMLViewsDataCache.ktagAlternateValue,
+					XMLViewsDataCache.ktagItemEnabled, state);
+			}
+			else if (m_operationsTabControl.SelectedTab == m_bulkCopyTab)
+			{
+				BulkCopyMethod method = MakeBulkCopyMethod(out newCol);
+				if (method == null)
+					return;
+				method.FakeDoit(ItemsToChange(false), XMLViewsDataCache.ktagAlternateValue,
+					XMLViewsDataCache.ktagItemEnabled, state);
+			}
+			else if (m_operationsTabControl.SelectedTab == m_transduceTab)
+			{
+				TransduceMethod method = MakeTransduceMethod(out newCol);
+				if (method == null)
+					return;
+				method.FakeDoit(ItemsToChange(false), XMLViewsDataCache.ktagAlternateValue,
+					XMLViewsDataCache.ktagItemEnabled, state);
+			}
+			else if (m_operationsTabControl.SelectedTab == m_deleteTab && !DeleteRowsItemSelected)
+			{
+				// clear a field
+				if (m_deleteWhatCombo.SelectedItem is TargetFieldItem)
+				{
+					TargetFieldItem item = m_deleteWhatCombo.SelectedItem as TargetFieldItem;
+					int index = item.ColumnIndex;
+					BulkEditItem bei = m_beItems[index];
+					bei.BulkEditControl.SetClearField();
+					bei.BulkEditControl.FakeDoit(ItemsToChange(false), XMLViewsDataCache.ktagAlternateValue,
+						XMLViewsDataCache.ktagItemEnabled, state);
+					newCol = index + 1;
+				}
+				else if (m_deleteWhatCombo.SelectedItem is FieldComboItem)
+				{
+					ClearMethod method = MakeClearMethod(out newCol);
+					if (method == null)
+						return;
+					method.FakeDoit(ItemsToChange(false), XMLViewsDataCache.ktagAlternateValue,
+						XMLViewsDataCache.ktagItemEnabled, state);
+				}
 			}
 			else
 			{
-				PreviewOn = true;
-				if (m_operationsTabControl.SelectedTab == m_listChoiceTab)
-				{
-					if (m_itemIndex >= 0)
-					{
-						ShowPreviewItems(state);
-						newCol = m_itemIndex + 1;
-					}
-				}
-				else if (m_operationsTabControl.SelectedTab == m_findReplaceTab)
-				{
-					ReplaceWithMethod method = MakeReplaceWithMethod(out newCol);
-					if (method == null)
-						return;
-					method.FakeDoit(ItemsToChange(false), XMLViewsDataCache.ktagAlternateValue,
-						XMLViewsDataCache.ktagItemEnabled, state);
-				}
-				else if (m_operationsTabControl.SelectedTab == m_bulkCopyTab)
-				{
-					BulkCopyMethod method = MakeBulkCopyMethod(out newCol);
-					if (method == null)
-						return;
-					method.FakeDoit(ItemsToChange(false), XMLViewsDataCache.ktagAlternateValue,
-						XMLViewsDataCache.ktagItemEnabled, state);
-				}
-				else if (m_operationsTabControl.SelectedTab == m_transduceTab)
-				{
-					TransduceMethod method = MakeTransduceMethod(out newCol);
-					if (method == null)
-						return;
-					method.FakeDoit(ItemsToChange(false), XMLViewsDataCache.ktagAlternateValue,
-						XMLViewsDataCache.ktagItemEnabled, state);
-				}
-				else if (m_operationsTabControl.SelectedTab == m_deleteTab && !DeleteRowsItemSelected)
-				{
-					// clear a field
-					if (m_deleteWhatCombo.SelectedItem is TargetFieldItem)
-					{
-						TargetFieldItem item = m_deleteWhatCombo.SelectedItem as TargetFieldItem;
-						int index = item.ColumnIndex;
-						BulkEditItem bei = m_beItems[index];
-						bei.BulkEditControl.SetClearField();
-						bei.BulkEditControl.FakeDoit(ItemsToChange(false), XMLViewsDataCache.ktagAlternateValue,
-							XMLViewsDataCache.ktagItemEnabled, state);
-						newCol = index + 1;
-					}
-					else if (m_deleteWhatCombo.SelectedItem is FieldComboItem)
-					{
-						ClearMethod method = MakeClearMethod(out newCol);
-						if (method == null)
-							return;
-						method.FakeDoit(ItemsToChange(false), XMLViewsDataCache.ktagAlternateValue,
-							XMLViewsDataCache.ktagItemEnabled, state);
-					}
-				}
-				else
-				{
-					MessageBox.Show(this, XMLViewsStrings.ksSorryNoPreview, XMLViewsStrings.ksUnimplFeature);
-					PreviewOn = false; // Didn't actually happen
-				}
+				MessageBox.Show(this, XMLViewsStrings.ksSorryNoPreview, XMLViewsStrings.ksUnimplFeature);
+				PreviewOn = false; // Didn't actually happen
+			}
 
-				if (oldCol != newCol)
-				{
-					// Use the BrowseViewer special 'decorator' SDA.
-					m_bv.SpecialCache.SetInt(m_bv.RootObjectHvo, XMLViewsDataCache.ktagActiveColumn, newCol);
-				}
+			if (newCol != -1)
+			{
+				// Use the BrowseViewer special 'decorator' SDA.
+				m_bv.SpecialCache.SetInt(m_bv.RootObjectHvo, XMLViewsDataCache.ktagActiveColumn, newCol);
 			}
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="state"></param>
+		/// <summary/>
 		protected virtual void ShowPreviewItems(ProgressState state)
 		{
 			BulkEditItem bei = m_beItems[m_itemIndex];
@@ -1732,7 +1740,12 @@ namespace SIL.FieldWorks.Common.Controls
 										 XMLViewsDataCache.ktagItemEnabled, state);
 		}
 
-		private void ClearPreviewState()
+		internal void ClearPreview()
+		{
+			HandlePreviewOrSuggestTask(DoClearPreviewTask);
+		}
+
+		private void DoClearPreviewTask(ProgressState state)
 		{
 			m_bv.SpecialCache.SetInt(m_bv.RootObjectHvo, XMLViewsDataCache.ktagActiveColumn, 0);
 			PreviewOn = false;
@@ -6674,7 +6687,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private void LaunchPreview()
 		{
-			m_bar.m_previewButton_Click(null, new EventArgs());
+			m_bar.LaunchPreview();
 		}
 
 		#region IFWDisposable Implementation
