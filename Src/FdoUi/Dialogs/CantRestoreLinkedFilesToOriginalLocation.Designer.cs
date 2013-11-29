@@ -1,6 +1,6 @@
 using System.Windows.Forms;
 
-namespace SIL.FieldWorks.FdoUi
+namespace SIL.FieldWorks.FdoUi.Dialogs
 {
 	partial class CantRestoreLinkedFilesToOriginalLocation
 	{

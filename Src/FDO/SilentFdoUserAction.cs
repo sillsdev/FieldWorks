@@ -74,11 +74,19 @@ namespace SIL.FieldWorks.FDO
 		}
 
 		/// <summary>
+		/// Displays Fieldworks data version too old information
+		/// </summary>
+		public void VersionTooOld(string version)
+		{
+			// Informational only
+		}
+
+		/// <summary>
 		/// Displays information to the user
 		/// </summary>
 		public void MessageBox()
 		{
-			throw new NotImplementedException();
+			// Informational only
 		}
 	}
 }

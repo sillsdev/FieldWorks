@@ -12,11 +12,10 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Common.FwUtils;
-using Timer = System.Windows.Forms.Timer;
+using Timer = System.Timers.Timer;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 {
@@ -175,8 +174,9 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			m_currentUndoStack = m_activeUndoStack = (UndoStack)CreateUndoStack();
 			m_monitor = new UserActivityMonitor();
 			System.Windows.Forms.Application.AddMessageFilter(m_monitor);
+
 			m_saveTimer.Interval = 1000;
-			m_saveTimer.Tick += SaveOnIdle;
+			m_saveTimer.Elapsed += SaveOnIdle;
 			m_saveTimer.Start();
 		}
 

@@ -10,9 +10,8 @@
 // ---------------------------------------------------------------------------------------------
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.FwUtils;
 
-namespace SIL.FieldWorks.FdoUi
+namespace SIL.FieldWorks.FdoUi.Dialogs
 {
 	/// <summary>
 	/// This dialog is like a message box, but offers two buttons, OK and "Refresh Now", which

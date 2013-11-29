@@ -46,6 +46,7 @@ using System.Xml;
 using System.Collections.Generic;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;

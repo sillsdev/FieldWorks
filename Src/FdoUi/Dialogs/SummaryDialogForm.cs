@@ -16,24 +16,19 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
-using System.Drawing;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Windows.Forms;
 using System.Diagnostics;
-using System.Xml;
-using SIL.FieldWorks.FDO;
+using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.Utils;
-using SIL.FieldWorks.LexText.Controls;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.RootSites;
 using XCore;
 
-namespace SIL.FieldWorks.FdoUi
+namespace SIL.FieldWorks.FdoUi.Dialogs
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -412,7 +407,7 @@ namespace SIL.FieldWorks.FdoUi
 		}
 
 		/// <summary>
-		/// Gets or sets a value indicating whether the <see cref="SIL.FieldWorks.FdoUi.SummaryDialogForm"/> Other button was clicked.
+		/// Gets or sets a value indicating whether the <see cref="SummaryDialogForm"/> Other button was clicked.
 		/// </summary>
 		/// <value>
 		/// <c>true</c> if Other button clicked; otherwise, <c>false</c>.

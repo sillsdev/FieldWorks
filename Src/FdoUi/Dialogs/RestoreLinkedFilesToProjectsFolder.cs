@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using XCore;
 
-namespace SIL.FieldWorks.FdoUi
+namespace SIL.FieldWorks.FdoUi.Dialogs
 {
 	/// <summary>
 	///

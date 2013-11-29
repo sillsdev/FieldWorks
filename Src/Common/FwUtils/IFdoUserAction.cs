@@ -52,6 +52,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		YesNoCancel CannotRestoreLinkedFilesToOriginalLocation();
 
 		/// <summary>
+		/// Displays Fieldworks data version too old information
+		/// </summary>
+		void VersionTooOld(string version);
+
+		/// <summary>
 		/// Displays information to the user
 		/// </summary>
 		void MessageBox();

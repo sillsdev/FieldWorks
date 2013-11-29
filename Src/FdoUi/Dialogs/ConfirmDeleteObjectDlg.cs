@@ -1,15 +1,14 @@
 using System;
-using System.Windows.Forms;
 using System.Diagnostics;
+using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.Widgets;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FDO;
+using SIL.Utils;
 using XCore;
 
-namespace SIL.FieldWorks.FdoUi
+namespace SIL.FieldWorks.FdoUi.Dialogs
 {
 	/// <summary>
 	/// This dialog window allows for a user to confirm deleting an object, or cancel the deletion.

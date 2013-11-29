@@ -12,6 +12,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.FieldWorks.Filters;
 using XCore;
 using SIL.FieldWorks.FdoUi;

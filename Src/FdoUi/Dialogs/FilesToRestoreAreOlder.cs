@@ -3,19 +3,19 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using XCore;
 
-namespace SIL.FieldWorks.FdoUi
+namespace SIL.FieldWorks.FdoUi.Dialogs
 {
 	/// <summary>
 	///
 	/// </summary>
-	public partial class CantRestoreLinkedFilesToOriginalLocation : Form
+	public partial class FilesToRestoreAreOlder : Form
 	{
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 
 		/// <summary>
 		///
 		/// </summary>
-		public CantRestoreLinkedFilesToOriginalLocation(IHelpTopicProvider helpTopicProvider)
+		public FilesToRestoreAreOlder(IHelpTopicProvider helpTopicProvider)
 		{
 			m_helpTopicProvider = helpTopicProvider;
 			InitializeComponent();
@@ -24,24 +24,23 @@ namespace SIL.FieldWorks.FdoUi
 		/// <summary>
 		///
 		/// </summary>
-		public bool fRestoreLinkedFilesToProjectFolder
+		public bool fKeepFilesThatAreNewer
 		{
-			get { return radio_Thanks.Checked; }
+			get { return radio_Keep.Checked; }
 		}
 
 		/// <summary>
 		///
 		/// </summary>
-		public bool fDoNotRestoreLinkedFiles
+		public bool fOverWriteThatAreNewer
 		{
-			get { return radio_NoThanks.Checked; }
+			get { return radio_Overwrite.Checked; }
 		}
 
 		private void button_OK_Click(object sender, EventArgs e)
 		{
 			this.DialogResult = DialogResult.OK;
 			Close();
-
 		}
 
 		private void button_Cancel_Click(object sender, EventArgs e)
@@ -52,7 +51,7 @@ namespace SIL.FieldWorks.FdoUi
 
 		private void button_Help_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtp-LinkedFilesFolder");
+			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtp-LinkedFilesInBackupAreOlder");//"khtp-LinkedFilesFolder")
 		}
 	}
 }

@@ -192,26 +192,53 @@
     <Compile Include="BulkPosEditor.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CantRestoreLinkedFilesToOriginalLocation.cs">
+    <Compile Include="Dialogs\CantRestoreLinkedFilesToOriginalLocation.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CantRestoreLinkedFilesToOriginalLocation.Designer.cs">
+    <Compile Include="Dialogs\CantRestoreLinkedFilesToOriginalLocation.Designer.cs">
       <DependentUpon>CantRestoreLinkedFilesToOriginalLocation.cs</DependentUpon>
     </Compile>
-    <Compile Include="ConfirmDeleteObjectDlg.cs">
+    <Compile Include="Dialogs\ConfirmDeleteObjectDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ConflictingSaveDlg.cs">
+    <Compile Include="Dialogs\ConflictingSaveDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ConflictingSaveDlg.Designer.cs">
+    <Compile Include="Dialogs\ConflictingSaveDlg.Designer.cs">
       <DependentUpon>ConflictingSaveDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="ConnectionLostDlg.cs">
+    <Compile Include="Dialogs\ConnectionLostDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ConnectionLostDlg.Designer.cs">
+    <Compile Include="Dialogs\ConnectionLostDlg.Designer.cs">
       <DependentUpon>ConnectionLostDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\FilesToRestoreAreOlder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\FilesToRestoreAreOlder.Designer.cs">
+      <DependentUpon>FilesToRestoreAreOlder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\FWVersionTooOld.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\FWVersionTooOld.Designer.cs">
+      <DependentUpon>FWVersionTooOld.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\MergeObjectDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\RelatedWords.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\RestoreLinkedFilesToProjectsFolder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\RestoreLinkedFilesToProjectsFolder.Designer.cs">
+      <DependentUpon>RestoreLinkedFilesToProjectsFolder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\SummaryDialogForm.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="DummyCmObject.cs">
       <SubType>Code</SubType>
@@ -219,18 +246,7 @@
     <Compile Include="FdoUiCore.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FdoUiStrings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>FdoUiStrings.resx</DependentUpon>
-    </Compile>
     <Compile Include="FdoUserActionWindowsForms.cs" />
-    <Compile Include="FilesToRestoreAreOlder.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FilesToRestoreAreOlder.Designer.cs">
-      <DependentUpon>FilesToRestoreAreOlder.cs</DependentUpon>
-    </Compile>
     <Compile Include="FsFeatDefnUi.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -244,9 +260,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="LexPronunciationUi.cs" />
-    <Compile Include="MergeObjectDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="PartOfSpeechUi.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -258,20 +271,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="RelatedWords.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="RestoreLinkedFilesToProjectsFolder.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="RestoreLinkedFilesToProjectsFolder.Designer.cs">
-      <DependentUpon>RestoreLinkedFilesToProjectsFolder.cs</DependentUpon>
+    <Compile Include="Resources\FdoUiStrings.Designer.cs">
+      <DependentUpon>FdoUiStrings.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="ReversalIndexEntryUi.cs">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="SummaryDialogForm.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="TypeAheadSupportVc.cs">
       <SubType>Code</SubType>
@@ -279,37 +285,44 @@
     <Compile Include="WfiWordformUi.cs">
       <SubType>Code</SubType>
     </Compile>
-    <EmbeddedResource Include="CantRestoreLinkedFilesToOriginalLocation.resx">
+    <EmbeddedResource Include="Dialogs\CantRestoreLinkedFilesToOriginalLocation.resx">
       <DependentUpon>CantRestoreLinkedFilesToOriginalLocation.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ConfirmDeleteObjectDlg.resx">
+    <EmbeddedResource Include="Dialogs\ConfirmDeleteObjectDlg.resx">
       <DependentUpon>ConfirmDeleteObjectDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ConflictingSaveDlg.resx">
+    <EmbeddedResource Include="Dialogs\ConflictingSaveDlg.resx">
       <DependentUpon>ConflictingSaveDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ConnectionLostDlg.resx">
+    <EmbeddedResource Include="Dialogs\ConnectionLostDlg.resx">
       <DependentUpon>ConnectionLostDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="FdoUiStrings.resx">
-      <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>FdoUiStrings.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FilesToRestoreAreOlder.resx">
+    <EmbeddedResource Include="Dialogs\FilesToRestoreAreOlder.resx">
       <DependentUpon>FilesToRestoreAreOlder.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="MergeObjectDlg.resx">
+    <EmbeddedResource Include="Dialogs\FWVersionTooOld.resx">
+      <DependentUpon>FWVersionTooOld.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\MergeObjectDlg.resx">
       <DependentUpon>MergeObjectDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="RelatedWords.resx">
+    <EmbeddedResource Include="Dialogs\RelatedWords.resx">
       <DependentUpon>RelatedWords.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\RestoreLinkedFilesToProjectsFolder.resx">
+      <DependentUpon>RestoreLinkedFilesToProjectsFolder.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\SummaryDialogForm.resx">
+      <DependentUpon>SummaryDialogForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -317,12 +330,9 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="RestoreLinkedFilesToProjectsFolder.resx">
-      <DependentUpon>RestoreLinkedFilesToProjectsFolder.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SummaryDialogForm.resx">
-      <DependentUpon>SummaryDialogForm.cs</DependentUpon>
+    <EmbeddedResource Include="Resources\FdoUiStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>FdoUiStrings.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>

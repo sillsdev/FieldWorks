@@ -12,6 +12,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.Utils;
 using SIL.FieldWorks.LexText.Controls;
 using XCore;

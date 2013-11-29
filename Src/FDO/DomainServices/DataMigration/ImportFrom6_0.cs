@@ -51,6 +51,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 
 		readonly bool m_fVerboseDebug;
 		private readonly IThreadedProgress m_progressDlg;
+		private readonly IFdoUserAction m_userAction;
 		#endregion
 
 		/// <summary>
@@ -62,16 +63,17 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		/// <summary>
 		/// Constructor for run-time debugging.
 		/// </summary>
-		public ImportFrom6_0(IThreadedProgress progressDlg, bool fDebug)
+		public ImportFrom6_0(IThreadedProgress progressDlg, IFdoUserAction userAction, bool fDebug)
 		{
 			m_progressDlg = progressDlg;
+			m_userAction = userAction;
 			m_fVerboseDebug = fDebug;
 		}
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public ImportFrom6_0(IThreadedProgress progressDlg) : this(progressDlg, false)
+		public ImportFrom6_0(IThreadedProgress progressDlg, IFdoUserAction userAction) : this(progressDlg, userAction, false)
 		{
 		}
 		#endregion
@@ -203,7 +205,6 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			tempPath = Path.Combine(folderName, entry.Name);
 			using (var stream = zipFile.GetInputStream(entry))
 			{
-				var form = ParentForm ?? Form.ActiveForm;
 				m_progressDlg.Title = Strings.ksConverting;
 				m_progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
 				m_progressDlg.Maximum = (int)entry.Size;
@@ -423,10 +424,8 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 					{
 						if (!String.IsNullOrEmpty(version) && version.CompareTo("5.4") < 0)
 						{
-							using (FWVersionTooOld dlg = new FWVersionTooOld(version))
-							{
-								dlg.ShowDialog();
-							}
+							m_userAction.VersionTooOld(version);
+
 							string launchesFlex = "0";
 							string launchesTE = "0";
 							if (RegistryHelper.KeyExists(FwRegistryHelper.FieldWorksRegistryKey, "Language Explorer"))

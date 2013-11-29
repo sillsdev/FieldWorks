@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Forms;
 using System.Runtime.InteropServices;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
+using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
+using SIL.Utils;
 using XCore;
 
-namespace SIL.FieldWorks.FdoUi
+namespace SIL.FieldWorks.FdoUi.Dialogs
 {
 	/// <summary>
 	/// Summary description for RelatedWords.

@@ -26,6 +26,7 @@ using Palaso.WritingSystems.Migration;
 using Palaso.WritingSystems.Migration.WritingSystemsLdmlV0To1Migration;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.Utils;
 
@@ -106,7 +107,7 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 
 			using (var progressDlg = new ProgressDialogWithTask(null, new ThreadHelper()))
 			{
-				ImportFrom6_0 importer = new ImportFrom6_0(progressDlg, s_fDebug);
+				ImportFrom6_0 importer = new ImportFrom6_0(progressDlg, new SilentFdoUserAction(), s_fDebug);
 				if (!importer.IsFwSqlServerInstalled())
 					return -1;
 				string version;

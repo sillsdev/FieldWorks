@@ -1,22 +1,20 @@
 using System;
-using System.Drawing;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Diagnostics;
 using System.Xml;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
-using XCore;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
-using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Controls;
-using SIL.CoreImpl;
+using XCore;
 
-namespace SIL.FieldWorks.FdoUi
+namespace SIL.FieldWorks.FdoUi.Dialogs
 {
 	/// <summary>
 	/// Summary description for MergeObjectDlg.

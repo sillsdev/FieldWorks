@@ -10,7 +10,7 @@
 // ---------------------------------------------------------------------------------------------
 using System.Windows.Forms;
 
-namespace SIL.FieldWorks.FdoUi
+namespace SIL.FieldWorks.FdoUi.Dialogs
 {
 	/// <summary>
 	/// Dialog shown in place of MessageBox when connection lost, so it can have an Exit button.

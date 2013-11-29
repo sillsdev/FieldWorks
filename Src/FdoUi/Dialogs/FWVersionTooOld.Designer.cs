@@ -13,7 +13,7 @@
 // ---------------------------------------------------------------------------------------------
 using System.Diagnostics.CodeAnalysis;
 
-namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
+namespace SIL.FieldWorks.FdoUi.Dialogs
 {
 	partial class FWVersionTooOld
 	{

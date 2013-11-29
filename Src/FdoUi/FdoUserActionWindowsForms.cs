@@ -11,6 +11,7 @@
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
+using SIL.FieldWorks.FdoUi.Dialogs;
 using XCore;
 
 namespace SIL.FieldWorks.FdoUi
@@ -108,6 +109,17 @@ namespace SIL.FieldWorks.FdoUi
 					}
 				}
 				return YesNoCancel.Cancel;
+			}
+		}
+
+		/// <summary>
+		/// Displays Fieldworks data version too old information
+		/// </summary>
+		public void VersionTooOld(string version)
+		{
+			using (var dlg = new FWVersionTooOld(version))
+			{
+				dlg.ShowDialog();
 			}
 		}
 
