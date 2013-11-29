@@ -351,9 +351,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// <param name="obj">New composition string that will replace the existing
 		/// composition (sub-)string.</param>
-		/// <param name="cursorPos">1-based index in the composition (pre-edit window). The
-		/// composition string will be replaced with <paramref name="obj"/> starting
-		/// at this position.</param>
+		/// <param name="cursorPos">0-based position where the cursor should be put after
+		/// updating the composition (pre-edit window). This position is relative to the
+		/// composition/preedit text.</param>
 		public void OnUpdatePreeditText(object obj, int cursorPos)
 		{
 			if (AssociatedSimpleRootSite.InvokeRequired)
@@ -377,25 +377,18 @@ namespace SIL.FieldWorks.Common.RootSites
 			var compositionText = ibusText.Text;
 			CheckAttributesForCommittingKeyboard(ibusText);
 
-			if (cursorPos > 0)
-			{
-				// make cursorPos 0-based
-				cursorPos--;
-			}
-
 			// Make the correct selection
 			if (m_EndOfPreedit != null)
 				selHelper = m_EndOfPreedit;
 
 			var selectionProps = GetSelectionProps(selHelper);
 
-			// Replace any previous pre-edit text after cursorPos. selHelper points to
+			// Replace any previous pre-edit text. selHelper points to
 			// the position after inserting the previous pre-edit text, so it will be the
 			// end of our range selection. The bottom of m_InitialSelHelper is the position at
 			// the end of the initial range selection, so it will be part of the anchor.
 			selHelper.IchEnd = selHelper.GetIch(SelectionHelper.SelLimitType.Bottom);
-			selHelper.IchAnchor = m_InitialSelection.SelectionHelper.GetIch(SelectionHelper.SelLimitType.Bottom)
-				+ cursorPos;
+			selHelper.IchAnchor = m_InitialSelection.SelectionHelper.GetIch(SelectionHelper.SelLimitType.Bottom);
 			selHelper.SetSelection(true);
 
 			// Update the pre-edit text
@@ -411,7 +404,23 @@ namespace SIL.FieldWorks.Common.RootSites
 				selHelper = m_InitialSelection.SelectionHelper;
 			}
 			else
-				selHelper = m_EndOfPreedit;
+			{
+				// Set the IP to the position IBus told us. This is tricky because compositionText
+				// might be in NFC but we have converted it to NFD, so the position needs to
+				// change. To simplify this we expect for now that IBus sets the cursor always
+				// either at the start or the end of the composition string.
+				selHelper = new SelectionHelper(AssociatedSimpleRootSite.EditingHelper.CurrentSelection);
+				selHelper.IchAnchor = m_InitialSelection.SelectionHelper.GetIch(SelectionHelper.SelLimitType.Bottom);
+				if (compositionText.Length == cursorPos)
+					selHelper.IchAnchor += str.Length;
+				else
+				{
+					Debug.Assert(cursorPos == 0,
+						"IBus told us a cursor position that changed because of nfc->nfd normalization");
+					selHelper.IchAnchor += cursorPos;
+				}
+				selHelper.IchEnd = selHelper.IchAnchor;
+			}
 
 			// make the selection visible
 			selHelper.SetSelection(true);
@@ -539,6 +548,15 @@ namespace SIL.FieldWorks.Common.RootSites
 				return new Rectangle(location.X, location.Y, 0, lineHeight);
 			}
 		}
+
+		/// <summary>
+		/// Called by the IbusKeyboardAdapter to find out if a preedit is active.
+		/// </summary>
+		public bool IsPreeditActive
+		{
+			get { return m_InitialSelection != null; }
+		}
+
 		#endregion
 	}
 }
