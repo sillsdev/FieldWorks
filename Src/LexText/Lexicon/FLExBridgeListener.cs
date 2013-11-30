@@ -206,10 +206,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public bool OnDisplayObtainLiftProject(object parameters, ref UIItemDisplayProperties display)
 		{
 			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
+			if (!display.Enabled)
+				return true; // Flex Bridge isn't installed, so the rest doesn't matter.
 
 			// Disable, if current project already has a lift repo.
 			var liftProjectFolder = GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder);
-			display.Enabled = display.Enabled && !Directory.Exists(liftProjectFolder);
+			display.Enabled = !Directory.Exists(liftProjectFolder);
 
 			return true; // We dealt with it.
 		}
@@ -258,6 +260,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public bool OnDisplayFLExBridge(object parameters, ref UIItemDisplayProperties display)
 		{
 			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
+			if (!display.Enabled)
+				return true; // Flex Bridge isn't installed, so the rest doesn't matter.
+
 			// If Fix it app does not exist, then disable main FLEx S/R, since FB needs to call it, after a merge.
 			display.Enabled = IsConfiguredForSR(Cache.ProjectId.ProjectFolder) && FLExBridgeHelper.FixItAppExists;
 
@@ -379,7 +384,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
 			if (!display.Enabled)
-				return true;
+				return true; // Flex Bridge isn't installed, so the rest doesn't matter.
+
 			display.Enabled = !OldLiftBridgeProjects.Contains(Cache.LangProject.Guid.ToString()) &&
 									!IsConfiguredForLiftSR(Cache.ProjectId.ProjectFolder);
 			return true; // We dealt with it.
@@ -401,7 +407,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
 			if (!display.Enabled)
-				return true;
+				return true; // Flex Bridge isn't installed, so the rest doesn't matter.
+
 			display.Enabled = !IsConfiguredForSR(Cache.ProjectId.ProjectFolder);
 			return true; // We dealt with it.
 		}
@@ -424,8 +431,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
 			if (!display.Enabled)
-				return true;
-			display.Enabled = OldLiftBridgeProjects.Contains(Cache.LangProject.Guid.ToString()) || IsConfiguredForLiftSR(Cache.ProjectId.ProjectFolder);
+				return true; // Flex Bridge isn't installed, so the rest doesn't matter.
+
+				display.Enabled = OldLiftBridgeProjects.Contains(Cache.LangProject.Guid.ToString()) || IsConfiguredForLiftSR(Cache.ProjectId.ProjectFolder);
 			return true; // We dealt with it.
 		}
 
@@ -594,8 +602,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public bool OnDisplayViewMessages(object parameters, ref UIItemDisplayProperties display)
 		{
 			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
+			if (!display.Enabled)
+				return true; // Flex Bridge isn't installed, so the rest doesn't matter.
 
-			display.Enabled = display.Enabled && NotesFileIsPresent(Cache, false);
+			display.Enabled = NotesFileIsPresent(Cache, false);
 
 			return true;
 		}
@@ -649,8 +659,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public bool OnDisplayViewLiftMessages(object parameters, ref UIItemDisplayProperties display)
 		{
 			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
+			if (!display.Enabled)
+				return true; // Flex Bridge isn't installed, so the rest doesn't matter.
 
-			display.Enabled = display.Enabled && NotesFileIsPresent(Cache, true);
+			display.Enabled = NotesFileIsPresent(Cache, true);
 
 			return true;
 		}
