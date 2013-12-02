@@ -67,14 +67,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
-		/// Displays Fieldworks data version too old information
-		/// </summary>
-		public void VersionTooOld(string version)
-		{
-			throw new NotImplementedException();
-		}
-
-		/// <summary>
 		/// Displays information to the user
 		/// </summary>
 		public void MessageBox()

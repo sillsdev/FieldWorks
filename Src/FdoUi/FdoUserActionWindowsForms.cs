@@ -113,17 +113,6 @@ namespace SIL.FieldWorks.FdoUi
 		}
 
 		/// <summary>
-		/// Displays Fieldworks data version too old information
-		/// </summary>
-		public void VersionTooOld(string version)
-		{
-			using (var dlg = new FWVersionTooOld(version))
-			{
-				dlg.ShowDialog();
-			}
-		}
-
-		/// <summary>
 		/// Displays information to the user
 		/// </summary>
 		public void MessageBox()

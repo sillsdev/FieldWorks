@@ -136,7 +136,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 
 		private void ImportFrom6_0Backup(BackupFileSettings fileSettings, IThreadedProgress progressDlg)
 		{
-			ImportFrom6_0 importer = new ImportFrom6_0(progressDlg, m_userAction);
+			ImportFrom6_0 importer = new ImportFrom6_0(progressDlg);
 			string projFile;
 			if (!importer.Import(fileSettings.File, m_restoreSettings.ProjectName, out projFile))
 			{

@@ -204,7 +204,6 @@
     <Compile Include="Folders.cs" />
     <Compile Include="ParagraphCorrelation.cs" />
     <Compile Include="PictureHolder.cs" />
-    <Compile Include="ProgressBarWrapper.cs" />
     <Compile Include="ProgressMessageArgs.cs" />
     <Compile Include="ProjectInfo.cs">
       <SubType>Code</SubType>

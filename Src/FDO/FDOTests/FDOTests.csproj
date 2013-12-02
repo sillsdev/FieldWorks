@@ -562,6 +562,12 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\FdoUi\FdoUi.csproj">
+      <Project>{7B119B65-DD6F-4AFB-BBA3-682DC084FB33}</Project>
+      <Name>FdoUi</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <DistFiles>../../../DistFiles</DistFiles>

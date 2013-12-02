@@ -28,6 +28,7 @@ using SIL.FieldWorks.FDO.FDOTests.CellarTests;
 using SIL.FieldWorks.FDO.Validation;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
+using SIL.FieldWorks.FdoUi;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.FDOTests.LingTests

@@ -17,18 +17,16 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Drawing;
-using System.Collections;
-using System.ComponentModel;
-using System.Windows.Forms;
-using System.Diagnostics;
-using System.Xml;
-using System.Reflection;
 using System.IO;
+using System.Reflection;
+using System.Windows.Forms;
+using System.Xml;
+using SIL.Utils;
 
-namespace SIL.Utils
+namespace XCore
 {
 	/// <summary/>
-	public class ImageCollection: IDisposable
+	public class ImageCollection: IImageCollection
 	{
 		protected ImageList m_images;
 		protected System.Collections.Specialized.StringCollection m_labels;

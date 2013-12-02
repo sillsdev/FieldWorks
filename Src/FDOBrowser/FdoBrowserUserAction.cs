@@ -82,14 +82,6 @@ namespace FDOBrowser
 		}
 
 		/// <summary>
-		/// Displays Fieldworks data version too old information
-		/// </summary>
-		public void VersionTooOld(string version)
-		{
-			System.Windows.Forms.MessageBox.Show("Cannot migrate your data to this version of FieldWorks.", "Cannot Migrate Data");
-		}
-
-		/// <summary>
 		/// Displays information to the user
 		/// </summary>
 		public void MessageBox()

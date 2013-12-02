@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -145,14 +145,14 @@
     </Reference>
     <Reference Condition="'$(OS)'=='Unix'" Include="geckofx-core-14">
       <HintPath>\usr\lib\cli\geckofx-14.0.1\geckofx-core-14.dll</HintPath>
-	</Reference>
+    </Reference>
     <Reference Condition="'$(OS)'=='Unix'" Include="Geckofx-Winforms-14">
       <HintPath>\usr\lib\cli\geckofx-14.0.1\Geckofx-Winforms-14.dll</HintPath>
-	</Reference>
+    </Reference>
     <None Condition="'$(OS)'=='Unix'" Include="\usr\lib\cli\geckofx-14.0.1\geckofx-core-14.dll.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-	</ItemGroup>
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
@@ -176,6 +176,7 @@
     <Compile Include="IconHolder.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="ImageCollection.cs" />
     <Compile Include="ImageContent.cs">
       <SubType>UserControl</SubType>
     </Compile>

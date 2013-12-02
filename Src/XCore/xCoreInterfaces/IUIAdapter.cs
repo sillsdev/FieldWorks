@@ -14,7 +14,6 @@
 // --------------------------------------------------------------------------------------------
 
 using System.Diagnostics.CodeAnalysis;
-using System.Xml;
 using System.Drawing;
 using System.Windows.Forms;  //for ImageList
 using System.Reflection;
@@ -26,8 +25,8 @@ namespace XCore
 {
 	public interface IUIAdapter
 	{
-		Control Init(System.Windows.Forms.Form window, ImageCollection smallImages,
-			ImageCollection largeImages, Mediator mediator);
+		Control Init(System.Windows.Forms.Form window, IImageCollection smallImages,
+			IImageCollection largeImages, Mediator mediator);
 		void CreateUIForChoiceGroupCollection(ChoiceGroupCollection groupCollection);
 		void CreateUIForChoiceGroup(ChoiceGroup group);
 		void OnIdle();

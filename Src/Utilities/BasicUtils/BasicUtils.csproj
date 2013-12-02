@@ -116,9 +116,6 @@
     <Compile Include="ExceptionHelper.cs" />
     <Compile Include="EnvVarTraceListener.cs" />
     <Compile Include="FileUtils.cs" />
-    <Compile Include="FindFileStatusDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="IdleQueue.cs" />
     <Compile Include="IFWDisposable.cs" />
     <Compile Include="IPersistenceProvider.cs" />
@@ -148,10 +145,6 @@
     <EmbeddedResource Include="ColorStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ColorStrings.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FindFileStatusDialog.resx">
-      <DependentUpon>FindFileStatusDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="UcdCharacterResources.resx">

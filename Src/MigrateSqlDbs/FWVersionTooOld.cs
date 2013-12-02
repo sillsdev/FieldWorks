@@ -15,7 +15,7 @@ using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 
-namespace SIL.FieldWorks.FdoUi.Dialogs
+namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

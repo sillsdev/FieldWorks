@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
 #region // Copyright (c) 2013, SIL International. All Rights Reserved.
 // <copyright from='2013' to='2013' company='SIL International'>
 //		Copyright (c) 2013, SIL International. All Rights Reserved.
@@ -13,8 +13,10 @@
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
+using ProgressBarStyle = SIL.FieldWorks.Common.FwUtils.ProgressBarStyle;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace SIL.FieldWorks.FdoUi
 {
 	/// <summary>
 	/// Wrapper class to allow a ProgressBar to function as an IProgress

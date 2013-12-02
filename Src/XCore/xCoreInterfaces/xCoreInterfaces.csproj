@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -138,6 +138,7 @@
     </Compile>
     <Compile Include="IFeedbackInfoProvider.cs" />
     <Compile Include="IHelpTopicProvider.cs" />
+    <Compile Include="IImageCollection.cs" />
     <Compile Include="MessageSequencer.cs">
       <SubType>Code</SubType>
     </Compile>

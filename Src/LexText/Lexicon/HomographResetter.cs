@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using System.Linq;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FwCoreDlgs;
 using System.Windows.Forms;
 

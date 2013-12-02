@@ -13,7 +13,7 @@
 // ---------------------------------------------------------------------------------------------
 using System.Diagnostics.CodeAnalysis;
 
-namespace SIL.FieldWorks.FdoUi.Dialogs
+namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 {
 	partial class FWVersionTooOld
 	{

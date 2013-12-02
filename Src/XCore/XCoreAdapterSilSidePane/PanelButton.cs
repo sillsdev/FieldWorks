@@ -9,10 +9,10 @@ namespace XCore
 
 	class PanelButton : PanelEx
 	{
-		private ImageCollection m_images;
+		private IImageCollection m_images;
 		private bool mouseOverControl = false;
 
-		public PanelButton(XCore.ChoiceBase choice, ImageCollection images):base()
+		public PanelButton(XCore.ChoiceBase choice, IImageCollection images):base()
 		{
 			m_images = images;
 
