@@ -547,7 +547,14 @@ namespace SIL.FieldWorks.IText
 					//so that we can pull data from it to close out the interlinear-text element
 					//Naylor 11-2011
 					text = m_repoObj.GetObject(m_hvoCurr).Owner;
-					m_writer.WriteAttributeString("guid", text.Guid.ToString());
+					if(text is IScrBook || text is IScrSection)
+					{
+						m_writer.WriteAttributeString("guid", m_repoObj.GetObject(m_hvoCurr).Guid.ToString());
+					}
+					else
+					{
+						m_writer.WriteAttributeString("guid", text.Guid.ToString());
+					}
 					foreach (var mTssPendingTitle in pendingTitles)
 					{
 						var hystericalRaisens = mTssPendingTitle;

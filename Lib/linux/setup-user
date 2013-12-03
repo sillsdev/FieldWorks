@@ -11,7 +11,6 @@ FW_DATA="${XDG_DATA_HOME}/fieldworks"
 FW_CONFIG="${XDG_CONFIG_HOME}/fieldworks"
 FW_LIB=$prefix/lib/fieldworks
 FW_SHARE=$prefix/share/fieldworks
-FW_SAMPLES=${FW_SAMPLES:-$FW_SHARE-examples}
 
 WRITEKEY="${FW_LIB}/WriteKey.exe"
 READKEY="${FW_LIB}/ReadKey.exe"
@@ -43,18 +42,6 @@ CopyRegistryKey()
 		echo "# Copying encoding converter registry"
 		mkdir -p "${FW_CONFIG}/"
 		cp -a "${FW_SHARE}/SIL" "${FW_CONFIG}/"
-	fi
-
-	# Copy sample databases
-	if [ ! -d "${FW_DATA}/Projects/" ]; then
-		mkdir -p "${FW_DATA}/Projects/"
-		if [ -d "${FW_SAMPLES}"/ReleaseData ]; then
-			for db in "${FW_SAMPLES}"/ReleaseData/*; do
-				dbname=$(basename "$db")
-				echo "# Copying sample database $dbname"
-				cp -R "$db" "${FW_DATA}/Projects/"
-			done
-		fi
 	fi
 
 	# if we haven't setup running the remote access daemon yet, set it up and start it.

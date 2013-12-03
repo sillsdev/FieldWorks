@@ -301,7 +301,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				lblName.Text = viProvider.ProductName;
 				lblAppVersion.Text = viProvider.ApplicationVersion;
 				lblFwVersion.Text = viProvider.FieldWorksVersion;
-				lblCopyright.Text = viProvider.CopyrightString;
+				lblCopyright.Text = viProvider.CopyrightString + Environment.NewLine + viProvider.LicenseString + Environment.NewLine + viProvider.LicenseURL;
 
 				// Set the title bar text
 				Text = string.Format(m_sTitleFmt, viProvider.ProductName);

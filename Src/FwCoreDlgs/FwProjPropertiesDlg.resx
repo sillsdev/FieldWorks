@@ -1695,7 +1695,7 @@
     <value>True</value>
   </data>
   <data name="linkLbl_useDefaultFolder.Location" type="System.Drawing.Point, System.Drawing">
-    <value>255, 226</value>
+    <value>255, 255</value>
   </data>
   <data name="linkLbl_useDefaultFolder.Size" type="System.Drawing.Size, System.Drawing">
     <value>95, 13</value>
@@ -1725,7 +1725,7 @@
     <value>NoControl</value>
   </data>
   <data name="label13.Location" type="System.Drawing.Point, System.Drawing">
-    <value>16, 262</value>
+    <value>16, 97</value>
   </data>
   <data name="label13.ShowHelp" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -1737,7 +1737,7 @@
     <value>5</value>
   </data>
   <data name="label13.Text" xml:space="preserve">
-    <value>Note: If you share this project over a network connection, this folder needs to be in the project folder in order for linked files to be accessible to other users. </value>
+    <value>Note: If you will collaborate with Send/Receive or by sharing the project over a network connection, use the default folder location.</value>
   </data>
   <data name="&gt;&gt;label13.Name" xml:space="preserve">
     <value>label13</value>
@@ -1758,7 +1758,7 @@
     <value>NoControl</value>
   </data>
   <data name="btnLinkedFilesBrowse.Location" type="System.Drawing.Point, System.Drawing">
-    <value>270, 189</value>
+    <value>270, 218</value>
   </data>
   <data name="btnLinkedFilesBrowse.ShowHelp" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -1788,7 +1788,7 @@
     <value>Specifies a folder on your machine where external files you link to are stored.</value>
   </data>
   <data name="txtExtLnkEdit.Location" type="System.Drawing.Point, System.Drawing">
-    <value>16, 192</value>
+    <value>16, 221</value>
   </data>
   <data name="txtExtLnkEdit.ShowHelp" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -1821,7 +1821,7 @@
     <value>NoControl</value>
   </data>
   <data name="label12.Location" type="System.Drawing.Point, System.Drawing">
-    <value>16, 176</value>
+    <value>16, 205</value>
   </data>
   <data name="label12.ShowHelp" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -1854,7 +1854,7 @@
     <value>NoControl</value>
   </data>
   <data name="label11.Location" type="System.Drawing.Point, System.Drawing">
-    <value>16, 97</value>
+    <value>16, 151</value>
   </data>
   <data name="label11.ShowHelp" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -1866,7 +1866,7 @@
     <value>1</value>
   </data>
   <data name="label11.Text" xml:space="preserve">
-    <value>We suggest you collect these files in one location so that the FieldWorks backup function can include them in the project backup file. </value>
+    <value>Also, keep linked files in one location so that they are all included in the backup files when you back up the project.</value>
   </data>
   <data name="&gt;&gt;label11.Name" xml:space="preserve">
     <value>label11</value>
@@ -1899,7 +1899,7 @@
     <value>0</value>
   </data>
   <data name="label10.Text" xml:space="preserve">
-    <value>FieldWorks allows you to set links to files such as documents and pictures. </value>
+    <value>FieldWorks allows you to set links to files such as documents and pictures.</value>
   </data>
   <data name="&gt;&gt;label10.Name" xml:space="preserve">
     <value>label10</value>

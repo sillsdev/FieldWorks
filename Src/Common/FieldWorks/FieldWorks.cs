@@ -342,6 +342,10 @@ namespace SIL.FieldWorks
 				// Create a listener for this project for applications using FLEx as a LexicalProvider.
 				LexicalProviderManager.StartLexicalServiceProvider(s_projectId, s_cache);
 
+#if __MonoCS__
+				UglyHackForXkbIndicator();
+#endif
+
 				// Application was started successfully, so start the message loop
 				Application.Run();
 			}
@@ -374,6 +378,35 @@ namespace SIL.FieldWorks
 			}
 			return 0;
 		}
+
+#if __MonoCS__
+		/// <summary>
+		/// For some reason, setting an Xkb keyboard for the first time doesn't work well inside
+		/// FieldWorks.  The keyboard is actually set (although it may take effect only after the
+		/// first one or two keystrokes), but the indicator on the system icon bar does not change.
+		/// Setting several Xkb keyboards at this point seems to fix the problem for when the first
+		/// one is set different than the default keyboard.  This hack is not guaranteed to work,
+		/// but it does seem to help in most scenarios.  See FWNX-1299.
+		/// </summary>
+		/// <remarks>
+		/// If you can think of a better solution, by all means replace this ugly hack!  It took
+		/// me a day of work to come up with even this much.  I tried setting the multiple keyboards
+		/// in succession inside Palaso.UI.WindowsForms.Keyboarding.Linux.XkbKeyboardAdaptor.ReinitLocales()
+		/// but it didn't work doing it there for some reason.
+		/// </remarks>
+		private static void UglyHackForXkbIndicator()
+		{
+			foreach (var ws in s_cache.ServiceLocator.WritingSystems.AllWritingSystems)
+				SetKeyboardForWs(ws.Handle);
+			Palaso.WritingSystems.Keyboard.Controller.ActivateDefaultKeyboard();
+		}
+		private static void SetKeyboardForWs(int ws)
+		{
+			var palasoWs = ((IWritingSystemManager)s_cache.WritingSystemFactory).Get(ws) as Palaso.WritingSystems.IWritingSystemDefinition;
+			if (palasoWs != null && palasoWs.LocalKeyboard != null)
+				palasoWs.LocalKeyboard.Activate();
+		}
+#endif
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

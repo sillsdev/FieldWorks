@@ -2974,6 +2974,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			CheckDisposed();
 			if (vwsel == null || Callbacks == null || !Callbacks.GotCacheOrWs)
 				return;			// Can't do anything useful, so let's not do anything at all.
+			if (!Editable)
+				return;			// If it's not editable, the keyboard shouldn't matter.
 
 			int nWs = SelectionHelper.GetFirstWsOfSelection(vwsel);
 			if (nWs == 0)

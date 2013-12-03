@@ -423,6 +423,30 @@ namespace SIL.FieldWorks.IText
 		#endregion ScrElements
 
 		[Test]
+		public void UglyEmptyDataShouldNotCrash()
+		{
+			const string textGuid = "eb0770f4-23aa-4f7b-b45d-fe745a3790a2";
+			//an interliner text example xml string
+			const string xml = "<document><interlinear-text guid='" + textGuid + "'>" +
+									 "<paragraphs><paragraph guid='819742f3-3840-479e-9300-51755880680b'/></paragraphs><languages/>" +
+									 "</interlinear-text></document>";
+
+			var li = new LinguaLinksImport(Cache, null, null);
+			FDO.IText text = null;
+			using(var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
+			{
+				Assert.DoesNotThrow(()=> li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text));
+				using(var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
+				{
+					firstEntry.MoveNext();
+					var imported = firstEntry.Current;
+					//The empty ugly text imported as its empty ugly self
+					Assert.AreEqual(imported.Guid.ToString(), textGuid);
+				}
+			}
+		}
+
+		[Test]
 		public void OneOfEachElementTypeTest()
 		{
 			string title = "atrocious";

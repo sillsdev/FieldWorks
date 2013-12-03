@@ -455,8 +455,10 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				CheckDisposed();
 				m_useVisualStyleBackColor = value;
+#if !__MonoCS__
 				if (value)
 					m_comboTextBox.BackColor = Color.Transparent;
+#endif
 			}
 		}
 
@@ -2648,12 +2650,14 @@ namespace SIL.FieldWorks.Common.Widgets
 			m_comboBox = comboBox;
 			// Allows it to be big unless client shrinks it.
 			Font = new Font(Font.Name, (float)100.0);
+#if !__MonoCS__
 			if (Application.RenderWithVisualStyles)
 			{
 				DoubleBuffered = true;
 				BackColor = Color.Transparent;
 			}
 			else
+#endif
 			{
 				// And, if not changed, it's background color is white.
 				BackColor = SystemColors.Window;

@@ -202,7 +202,7 @@
 	<value>check-circle.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="kstidCopyrightFmt" xml:space="preserve">
-	<value>{0}. All rights reserved. Distributable under the terms of either the Common Public License or the GNU Lesser General Public License.</value>
+	<value>{0}. This software is licensed under the MIT License (http://opensource.org/licenses/MIT).</value>
 	<comment>Displays in the Help/About box and the splash screen</comment>
   </data>
   <data name="kstidCommentsLabel" xml:space="preserve">

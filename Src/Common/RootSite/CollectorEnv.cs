@@ -731,15 +731,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			set { }
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Nothing to do here.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary>Call virtual OpenParagraph</summary>
 		public void OpenMappedTaggedPara()
 		{
-			OpenFlowObject();
-			m_fIsParaOpen = true;
+			OpenParagraph();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -808,15 +803,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_fIsParaOpen = true;
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Nothing to do here.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary>Call virtual OpenParagraph</summary>
 		public void OpenTaggedPara()
 		{
-			OpenFlowObject();
-			m_fIsParaOpen = true;
+			OpenParagraph();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -843,7 +833,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Nothing to do here.
+		/// Call virtual OpenParagraph
 		/// </summary>
 		/// <param name="cOverrideProperties">cOverrideProperties</param>
 		/// <param name="_rgOverrideProperties">_rgOverrideProperties</param>
@@ -851,7 +841,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		public void OpenOverridePara(int cOverrideProperties,
 			DispPropOverride[] _rgOverrideProperties)
 		{
-			OpenFlowObject();
+			OpenParagraph();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -906,15 +896,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			OpenFlowObject();
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Nothing to do here.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary>Call virtual CloseParagraph</summary>
 		public virtual void CloseInnerPile()
 		{
-			CloseFlowObject();
-			m_fIsParaOpen = true;
+			CloseParagraph();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1273,15 +1258,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			OpenFlowObject();
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Nothing to do here.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary>Call virtual OpenParagraph</summary>
 		public virtual void OpenInnerPile()
 		{
-			OpenFlowObject();
-			m_fIsParaOpen = false;
+			OpenParagraph();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1416,27 +1396,17 @@ namespace SIL.FieldWorks.Common.RootSites
 			OpenFlowObject();
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Nothing to do here.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary>Call virtual OpenParagraph</summary>
 		public void OpenConcPara(int ichMinItem, int ichLimItem,
 			VwConcParaOpts cpoFlags, int dmpAlign)
 		{
-			OpenFlowObject();
-			m_fIsParaOpen = true;
+			OpenParagraph();
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Nothing to do here.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary>Call virtual OpenParagraph</summary>
 		public void OpenMappedPara()
 		{
-			OpenFlowObject();
-			m_fIsParaOpen = true;
+			OpenParagraph();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1603,7 +1573,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public virtual void PostProcess(string sXsltFile, string sOutputFile, int iPass)
 		{
-			if (sXsltFile == null || sXsltFile.Length == 0)
+			if (string.IsNullOrEmpty(sXsltFile))
 				return;
 			ProcessXsltForPass(sXsltFile, sOutputFile, iPass);
 		}

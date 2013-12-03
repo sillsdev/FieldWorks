@@ -158,6 +158,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (tss == null || tss.Length > 0)
 				return false;
 
+			if (m_rootObj.Hvo < 0)
+				return false;    // already deleted.  See LT-15042.
+
 			int[] hvosOld = m_sda.VecProp(m_rootObj.Hvo, m_rootFlid);
 			for (int i = 0; i < hvosOld.Length; ++i)
 			{

@@ -1161,11 +1161,18 @@ namespace SIL.FieldWorks.XWorks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Handle click on Archive With RAMP menu item
+		/// Handle whether to enable Archive With RAMP menu item (enabled iff properly installed)
 		/// </summary>
 		/// <param name="command">Not used</param>
+		/// <param name="display">Display properties</param>
 		/// <returns>true (handled)</returns>
 		/// ------------------------------------------------------------------------------------
+		public bool OnDisplayArchiveWithRamp(object command, ref UIItemDisplayProperties display)
+		{
+			display.Enabled = ReapRamp.Installed;
+			return true;
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handle click on Archive With RAMP menu item
@@ -1177,13 +1184,14 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			// show the RAMP dialog
+			// prompt the user to select or create a FieldWorks backup
 			var filesToArchive = m_app.FwManager.ArchiveProjectWithRamp(m_app, this);
 
 			// if there are no files to archive, return now.
 			if((filesToArchive == null) || (filesToArchive.Count == 0))
 				return true;
 
+			// show the RAMP dialog
 			ReapRamp ramp = new ReapRamp();
 			return ramp.ArchiveNow(this, MainMenuStrip.Font, Icon, filesToArchive, m_mediator, m_app, Cache);
 		}

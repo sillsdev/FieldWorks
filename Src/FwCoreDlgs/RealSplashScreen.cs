@@ -356,7 +356,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					Text = lblProductName.Text;
 					lblAppVersion.Text = viProvider.ApplicationVersion;
 					lblFwVersion.Text = viProvider.FieldWorksVersion;
-					lblCopyright.Text = viProvider.CopyrightString;
+					lblCopyright.Text = viProvider.CopyrightString + Environment.NewLine + viProvider.LicenseString;
 				}
 			}
 			catch

@@ -602,7 +602,8 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			//There seems to be some inconsistancy between some .fwbackup files so there is a need to check
 			//for both of these cases, with and without the AltDirectorySeparatorChar
 			var trimmedPathString = filenameWithSubFolders.TrimStart(Path.AltDirectorySeparatorChar);
-			return trimmedPathString.Substring(0, trimmedPathString.Length - filenameLength - 1);
+			//Return the subfolder path if the given string has one, and an empty string otherwise
+			return trimmedPathString.Length > filenameLength ? trimmedPathString.Substring(0, trimmedPathString.Length - filenameLength - 1) : "";
 		}
 
 		private void UncompressFilesContainedInFolderandSubFolders(String zipEntryStartsWith, String destinationDirectory)

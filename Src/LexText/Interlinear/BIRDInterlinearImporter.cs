@@ -456,12 +456,8 @@ namespace SIL.FieldWorks.IText
 
 		private static bool SomeLanguageSpecifiesVernacular(Interlineartext interlinText)
 		{
-			foreach (var lang in interlinText.languages.language)
-			{
-				if (lang.vernacularSpecified)
-					return true;
-			}
-			return false;
+			// return true if any language in the languages section is vernacular
+			return interlinText.languages.language.Any(lang => lang.vernacularSpecified);
 		}
 
 		/// <summary>
@@ -476,7 +472,7 @@ namespace SIL.FieldWorks.IText
 		private static bool CheckAndAddLanguagesInternal(FdoCache cache, Interlineartext interlinText, ILgWritingSystemFactory wsFactory, IThreadedProgress progress)
 		{
 			DialogResult result;
-			if (interlinText.languages != null)
+			if (interlinText.languages != null && interlinText.languages.language != null)
 			{
 				if (!SomeLanguageSpecifiesVernacular(interlinText))
 				{
@@ -584,6 +580,10 @@ namespace SIL.FieldWorks.IText
 		{
 			foreach (var para in interlinText.paragraphs)
 			{
+				if(para.phrases == null) // if there are no phrases, they have no languages we are interested in.
+				{
+					continue;
+				}
 				foreach (var phrase in para.phrases)
 				{
 					foreach (var item in phrase.Items)

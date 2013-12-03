@@ -34,7 +34,38 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		private SimpleRootSite AssociatedSimpleRootSite { get; set; }
 
-		private SelectionHelper m_InitialSelHelper;
+		private class SelectionWrapper
+		{
+			private readonly ITsTextProps[] m_TextProps;
+
+			public SelectionWrapper(SimpleRootSite rootSite)
+			{
+				SelectionHelper = new SelectionHelper(rootSite.EditingHelper.CurrentSelection);
+
+				ITsTextProps[] textProps;
+				IVwPropertyStore[] propertyStores;
+				int numberOfProps;
+				SelectionHelper.GetSelectionProps(SelectionHelper.Selection,
+					out textProps, out propertyStores, out numberOfProps);
+				if (numberOfProps > 0)
+					m_TextProps = textProps;
+			}
+
+			public SelectionHelper SelectionHelper { get; private set;}
+
+			public IVwSelection RestoreSelection()
+			{
+				if (SelectionHelper == null)
+					return null;
+
+				var selection = SelectionHelper.SetSelection(true);
+				if (selection != null && m_TextProps != null)
+					selection.SetSelectionProps(m_TextProps.Length, m_TextProps);
+				return selection;
+			}
+		}
+
+		private SelectionWrapper m_InitialSelection;
 		private SelectionHelper m_EndOfPreedit;
 		private IActionHandler m_ActionHandler;
 		private int m_Depth;
@@ -57,15 +88,14 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				if (cancel && m_ActionHandler != null)
 				{
-					if (m_ActionHandler.CanUndo())
-						m_ActionHandler.Rollback(m_Depth);
+					m_ActionHandler.Rollback(m_Depth);
 					retVal = true;
 				}
 				m_ActionHandler = null;
 
-				if (m_InitialSelHelper != null)
-					m_InitialSelHelper.SetSelection(true);
-				m_InitialSelHelper = null;
+				if (m_InitialSelection != null)
+					m_InitialSelection.RestoreSelection();
+				m_InitialSelection = null;
 				m_EndOfPreedit = null;
 				return retVal;
 			}
@@ -90,80 +120,106 @@ namespace SIL.FieldWorks.Common.RootSites
 			return count;
 		}
 
-		/// <summary>
-		/// Helper method that returns a TsString with properties read from Selection.
-		/// TODO: typing next to verse numbers shouldn't preserve selection.
-		/// </summary>
-		private ITsString CreateTsStringUsingSelectionProps(string text, SelectionHelper selectionHelper,
-			bool underLine)
+		private static ITsTextProps[] GetSelectionProps(SelectionHelper selectionHelper)
 		{
 			IVwSelection selection = selectionHelper.Selection;
-			TsStrBldr bldr = TsStrBldrClass.Create();
-
 			ITsTextProps[] vttp;
 			IVwPropertyStore[] vvps;
 			int cttp;
 			SelectionHelper.GetSelectionProps(selection, out vttp, out vvps, out cttp);
 
+			// ENHANCE: We probably should call a method similar to VwTextSel::CleanPropertiesForTyping
+			// to get rid of any unwanted properties.
+
+			return vttp;
+		}
+
+		/// <summary>
+		/// Helper method that returns a TsString with properties read from Selection.
+		/// TODO: typing next to verse numbers shouldn't preserve selection.
+		/// </summary>
+		private ITsString CreateTsStringUsingSelectionProps(string text, ITsTextProps[] selectionProps,
+			bool underLine)
+		{
 			// handle the unlikely event of no selection props.
-			if (cttp == 0)
+			if (selectionProps == null || selectionProps.Length == 0)
 				return TsStringUtils.MakeTss(text, AssociatedSimpleRootSite.WritingSystemFactory.UserWs);
 
-			bldr.ReplaceRgch(0, bldr.Length, text, text.Length, vttp[0]);
+			var textProps = selectionProps[0];
+			var propsBuilder = TsPropsBldrClass.Create();
+			var colorGray = (int)ColorUtil.ConvertColorToBGR(Color.Gray);
+			for (int i = 0; i < textProps.IntPropCount; i++)
+			{
+				int type, variation;
+				var value = textProps.GetIntProp(i, out type, out variation);
+
+				if (!underLine)
+				{
+					if (type == (int)FwTextPropType.ktptUnderline && value == (int)FwUnderlineType.kuntSingle ||
+						type == (int)FwTextPropType.ktptUnderColor && value == colorGray)
+					{
+						// ignore
+						continue;
+					}
+				}
+				propsBuilder.SetIntPropValues(type, variation, value);
+			}
 			if (underLine)
 			{
-				// Underline the pre-edit text
 				// REVIEW: this code seems to work, but it asserts in
 				// SIL.FieldWorks.FDO.DomainImpl.MultiUnicodeAccessor.set_String (The given
 				// ITsString has more than one run in it). Is there a way to make it work
 				// without assertion?
-				bldr.SetIntPropValues(0, bldr.Length, (int)FwTextPropType.ktptUnderline,
+				propsBuilder.SetIntPropValues((int)FwTextPropType.ktptUnderline,
 					(int)FwTextPropVar.ktpvEnum, (int)FwUnderlineType.kuntSingle);
-				bldr.SetIntPropValues(0, bldr.Length, (int)FwTextPropType.ktptUnderColor,
-					(int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.Gray));
+				propsBuilder.SetIntPropValues((int)FwTextPropType.ktptUnderColor,
+					(int)FwTextPropVar.ktpvDefault, colorGray);
 			}
-			return bldr.GetString().get_NormalizedForm(FwNormalizationMode.knmNFD);
+
+			var tssFactory = TsStrFactoryClass.Create();
+			return tssFactory.MakeStringWithPropsRgch(text, text.Length,
+				propsBuilder.GetTextProps()).get_NormalizedForm(FwNormalizationMode.knmNFD);
 		}
 
-		private bool SetupForTypingEventHandler(bool checkIfFocused)
+		private SelectionHelper SetupForTypingEventHandler(bool checkIfFocused,
+			bool rollBackPreviousTask)
 		{
 			if ((!AssociatedSimpleRootSite.Focused && checkIfFocused) ||
+				AssociatedSimpleRootSite.ReadOnlyView ||
 				AssociatedSimpleRootSite.RootBox == null ||
 				AssociatedSimpleRootSite.RootBox.Selection == null)
 			{
-				return false;
+				return null;
 			}
+			var selHelper = new SelectionHelper(AssociatedSimpleRootSite.EditingHelper.CurrentSelection);
 			if (m_ActionHandler == null)
 			{
 				m_ActionHandler = AssociatedSimpleRootSite.DataAccess.GetActionHandler();
-				if (m_ActionHandler != null)
-				{
-					m_Depth = m_ActionHandler.CurrentDepth;
-					m_ActionHandler.BeginUndoTask(Resources.ksUndoTyping, Resources.ksRedoTyping);
-				}
 			}
+			else if (rollBackPreviousTask)
+			{
+				m_ActionHandler.Rollback(m_Depth);
+				selHelper = m_InitialSelection.SelectionHelper;
+			}
+			else
+				return selHelper;
 
-			return true;
+			if (m_ActionHandler != null)
+			{
+				m_Depth = m_ActionHandler.CurrentDepth;
+				m_ActionHandler.BeginUndoTask(Resources.ksUndoTyping, Resources.ksRedoTyping);
+			}
+			return selHelper;
 		}
 
 		private void OnCommitText(string text, bool checkIfFocused)
 		{
-			if (!SetupForTypingEventHandler(checkIfFocused))
+			var selHelper = SetupForTypingEventHandler(checkIfFocused, true);
+			if (selHelper == null)
 				return;
-
 			try
 			{
-				if (m_ActionHandler != null)
-				{
-					m_ActionHandler.Rollback(m_Depth);
-					m_Depth = m_ActionHandler.CurrentDepth;
-					m_ActionHandler.BeginUndoTask(Resources.ksUndoTyping, Resources.ksRedoTyping);
-				}
-
-				// Make the correct selection
-				var selHelper = m_InitialSelHelper;
-				if (selHelper == null)
-					selHelper = new SelectionHelper(AssociatedSimpleRootSite.EditingHelper.CurrentSelection);
+				var selectionProps = GetSelectionProps(selHelper);
 
 				var countBackspace = TrimBeginningBackspaces(ref text);
 				var bottom = selHelper.GetIch(SelectionHelper.SelLimitType.Bottom);
@@ -173,9 +229,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				selHelper.SetSelection(true);
 
 				// Insert 'text'
-				AssociatedSimpleRootSite.EditingHelper.DeleteRangeIfComplex(
-					AssociatedSimpleRootSite.RootBox);
-				ITsString str = CreateTsStringUsingSelectionProps(text, selHelper, false);
+				ITsString str = CreateTsStringUsingSelectionProps(text, selectionProps, false);
 				try
 				{
 					selHelper.Selection.ReplaceWithTsString(str);
@@ -187,11 +241,13 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			finally
 			{
-				m_InitialSelHelper = null;
+				m_InitialSelection = null;
 				m_EndOfPreedit = null;
 				if (m_ActionHandler != null)
+				{
 					m_ActionHandler.EndUndoTask();
-				m_ActionHandler = null;
+					m_ActionHandler = null;
+				}
 			}
 		}
 
@@ -252,16 +308,16 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			if (IsCommittingKeyboard)
 			{
-				if (m_InitialSelHelper != null && m_EndOfPreedit != null)
+				if (m_InitialSelection != null && m_EndOfPreedit != null)
 				{
 					ITsString tss;
 					var selection = AssociatedSimpleRootSite.RootBox.MakeRangeSelection(
-						m_InitialSelHelper.SetSelection(AssociatedSimpleRootSite),
+						m_InitialSelection.RestoreSelection(),
 						m_EndOfPreedit.SetSelection(AssociatedSimpleRootSite), true);
 					selection.GetSelectionString(out tss, string.Empty);
 					OnCommitText(tss.Text, false);
 
-					m_InitialSelHelper = null;
+					m_InitialSelection = null;
 					m_EndOfPreedit = null;
 				}
 				return false;
@@ -295,9 +351,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// <param name="obj">New composition string that will replace the existing
 		/// composition (sub-)string.</param>
-		/// <param name="cursorPos">1-based index in the composition (pre-edit window). The
-		/// composition string will be replaced with <paramref name="obj"/> starting
-		/// at this position.</param>
+		/// <param name="cursorPos">0-based position where the cursor should be put after
+		/// updating the composition (pre-edit window). This position is relative to the
+		/// composition/preedit text.</param>
 		public void OnUpdatePreeditText(object obj, int cursorPos)
 		{
 			if (AssociatedSimpleRootSite.InvokeRequired)
@@ -306,54 +362,65 @@ namespace SIL.FieldWorks.Common.RootSites
 				return;
 			}
 
-			if (!SetupForTypingEventHandler(true))
+			var selHelper = SetupForTypingEventHandler(true, false);
+			if (selHelper == null)
 				return;
+
+			if (m_InitialSelection == null)
+			{
+				// Create a new, independent selection helper for m_InitialSelHelper - we want
+				// to remember the current selection
+				m_InitialSelection = new SelectionWrapper(AssociatedSimpleRootSite);
+			}
 
 			var ibusText = obj as IBusText;
 			var compositionText = ibusText.Text;
 			CheckAttributesForCommittingKeyboard(ibusText);
 
-			if (m_InitialSelHelper == null)
-			{
-				m_InitialSelHelper = new SelectionHelper(
-					AssociatedSimpleRootSite.EditingHelper.CurrentSelection);
-			}
-
-			if (cursorPos > 0)
-			{
-				// make cursorPos 0-based
-				cursorPos--;
-			}
-
 			// Make the correct selection
-			var selHelper = new SelectionHelper(
-				AssociatedSimpleRootSite.EditingHelper.CurrentSelection);
 			if (m_EndOfPreedit != null)
 				selHelper = m_EndOfPreedit;
 
-			// Replace any previous pre-edit text after cursorPos. selHelper points to
+			var selectionProps = GetSelectionProps(selHelper);
+
+			// Replace any previous pre-edit text. selHelper points to
 			// the position after inserting the previous pre-edit text, so it will be the
-			// end of our range selection. The bottom of m_InitialSelHelper is position at
+			// end of our range selection. The bottom of m_InitialSelHelper is the position at
 			// the end of the initial range selection, so it will be part of the anchor.
 			selHelper.IchEnd = selHelper.GetIch(SelectionHelper.SelLimitType.Bottom);
-			selHelper.IchAnchor = m_InitialSelHelper.GetIch(SelectionHelper.SelLimitType.Bottom)
-				+ cursorPos;
+			selHelper.IchAnchor = m_InitialSelection.SelectionHelper.GetIch(SelectionHelper.SelLimitType.Bottom);
 			selHelper.SetSelection(true);
 
 			// Update the pre-edit text
-			ITsString str = CreateTsStringUsingSelectionProps(compositionText, selHelper, true);
+			ITsString str = CreateTsStringUsingSelectionProps(compositionText, selectionProps, true);
 			selHelper.Selection.ReplaceWithTsString(str);
 
 			m_EndOfPreedit = new SelectionHelper(
 				AssociatedSimpleRootSite.EditingHelper.CurrentSelection);
 
-			if (m_InitialSelHelper.IsRange)
+			if (m_InitialSelection.SelectionHelper.IsRange)
 			{
 				// keep the range selection
-				selHelper = m_InitialSelHelper;
+				selHelper = m_InitialSelection.SelectionHelper;
 			}
 			else
-				selHelper = m_EndOfPreedit;
+			{
+				// Set the IP to the position IBus told us. This is tricky because compositionText
+				// might be in NFC but we have converted it to NFD, so the position needs to
+				// change. To simplify this we expect for now that IBus sets the cursor always
+				// either at the start or the end of the composition string.
+				selHelper = new SelectionHelper(AssociatedSimpleRootSite.EditingHelper.CurrentSelection);
+				selHelper.IchAnchor = m_InitialSelection.SelectionHelper.GetIch(SelectionHelper.SelLimitType.Bottom);
+				if (compositionText.Length == cursorPos)
+					selHelper.IchAnchor += str.Length;
+				else
+				{
+					Debug.Assert(cursorPos == 0,
+						"IBus told us a cursor position that changed because of nfc->nfd normalization");
+					selHelper.IchAnchor += cursorPos;
+				}
+				selHelper.IchEnd = selHelper.IchAnchor;
+			}
 
 			// make the selection visible
 			selHelper.SetSelection(true);
@@ -374,24 +441,25 @@ namespace SIL.FieldWorks.Common.RootSites
 				return;
 			}
 
-			if (!SetupForTypingEventHandler(true) || nChars <= 0)
+			var selHelper = SetupForTypingEventHandler(true, false);
+			if (selHelper == null  || nChars <= 0)
 				return;
 
 			try
 			{
-				var selHelper = new SelectionHelper(AssociatedSimpleRootSite.EditingHelper.CurrentSelection);
-
 				var selectionStart = selHelper.GetIch(SelectionHelper.SelLimitType.Top);
 				var startIndex = selectionStart + offset;
 				if (startIndex + nChars <= 0)
 					return;
+
+				var selectionProps = GetSelectionProps(selHelper);
 
 				startIndex = Math.Max(startIndex, 0);
 				selHelper.IchAnchor = startIndex;
 				selHelper.IchEnd = startIndex + nChars;
 				selHelper.SetSelection(true);
 
-				ITsString str = CreateTsStringUsingSelectionProps(string.Empty, selHelper, true);
+				ITsString str = CreateTsStringUsingSelectionProps(string.Empty, selectionProps, true);
 				selHelper.Selection.ReplaceWithTsString(str);
 
 				if (startIndex < selectionStart)
@@ -406,8 +474,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			finally
 			{
 				if (m_ActionHandler != null)
+				{
 					m_ActionHandler.EndUndoTask();
-				m_ActionHandler = null;
+					m_ActionHandler = null;
+				}
 			}
 		}
 
@@ -423,7 +493,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				return;
 			}
 
-			if (!AssociatedSimpleRootSite.Focused)
+			if (!AssociatedSimpleRootSite.Focused || AssociatedSimpleRootSite.ReadOnlyView)
 				return;
 
 			Reset(true);
@@ -447,7 +517,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				AssociatedSimpleRootSite.BeginInvoke(() => OnIbusKeyPress(keySym, scanCode, index));
 				return;
 			}
-			if (!AssociatedSimpleRootSite.Focused)
+			if (!AssociatedSimpleRootSite.Focused || AssociatedSimpleRootSite.ReadOnlyView)
 				return;
 
 			var inChar = (char)(0x00FF & keySym);
@@ -474,12 +544,20 @@ namespace SIL.FieldWorks.Common.RootSites
 
 				var location = selHelper.GetLocation();
 				AssociatedSimpleRootSite.ClientToScreen(AssociatedSimpleRootSite.RootBox, ref location);
-				// TODO: get line height from selection or style instead of hardcoding a value!
-				return new Rectangle(location.X, location.Y, 0, 20);
+				var lineHeight = AssociatedSimpleRootSite.LineHeight;
+				return new Rectangle(location.X, location.Y, 0, lineHeight);
 			}
 		}
-		#endregion
 
+		/// <summary>
+		/// Called by the IbusKeyboardAdapter to find out if a preedit is active.
+		/// </summary>
+		public bool IsPreeditActive
+		{
+			get { return m_InitialSelection != null; }
+		}
+
+		#endregion
 	}
 }
 #endif
