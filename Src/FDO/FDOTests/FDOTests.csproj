@@ -299,6 +299,7 @@
     <Compile Include="DataSortingServiceTests.cs" />
     <Compile Include="DataStoreInitializationServicesTests.cs" />
     <Compile Include="Db4oServerInfoTests.cs" />
+    <Compile Include="DummyFdoUserAction.cs" />
     <Compile Include="DummyProgressDlg.cs" />
     <Compile Include="DuplicateAnalysisFixerTests.cs" />
     <Compile Include="DuplicateWordformFixerTests.cs" />

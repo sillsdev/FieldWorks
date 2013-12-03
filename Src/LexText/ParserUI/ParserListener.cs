@@ -237,9 +237,20 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (ex != null)
 				{
 					DisconnectFromParser();
-					var app = (IApp)m_mediator.PropertyTable.GetValue("App");
-					ErrorReporter.ReportException(ex, app.SettingsKey, app.SupportEmailAddress,
-												  app.ActiveMainWindow, false);
+					var iree = ex as InvalidReduplicationEnvironmentException;
+					if (iree != null)
+					{
+						string msg = String.Format(ParserUIStrings.ksHermitCrabReduplicationProblem, iree.Morpheme,
+							iree.Message);
+						MessageBox.Show(Form.ActiveForm, msg, ParserUIStrings.ksBadAffixForm,
+								MessageBoxButtons.OK, MessageBoxIcon.Error);
+					}
+					else
+					{
+						var app = (IApp) m_mediator.PropertyTable.GetValue("App");
+						ErrorReporter.ReportException(ex, app.SettingsKey, app.SupportEmailAddress,
+													  app.ActiveMainWindow, false);
+					}
 				}
 				else
 				{

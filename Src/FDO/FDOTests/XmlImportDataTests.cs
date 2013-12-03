@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			m_now = DateTime.Now;
 			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(
-				new TestProjectId(FDOBackendProviderType.kMemoryOnly, "MemoryOnly.mem"), "en", "fr", "en", new ThreadHelper(), new DummyFdoUserAction());
+				new TestProjectId(FDOBackendProviderType.kMemoryOnly, "MemoryOnly.mem"), "en", "fr", "en", new DummyFdoUserAction());
 			IDataSetup dataSetup = m_cache.ServiceLocator.GetInstance<IDataSetup>();
 			dataSetup.LoadDomain(BackendBulkLoadDomain.All);
 			if (m_cache.LangProject != null)
@@ -82,7 +82,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			if (m_cache != null)
 			{
-				m_cache.ThreadHelper.Dispose();
 				m_cache.Dispose();
 				m_cache = null;
 			}

@@ -176,7 +176,6 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="CaseFunctions.cs" />
     <Compile Include="ConsoleProgress.cs" />
-    <Compile Include="IFdoUserAction.cs" />
     <Compile Include="FLExBridgeHelper.cs" />
     <Compile Include="IFocusablePanePortion.cs" />
     <Compile Include="IProjectIdentifier.cs" />

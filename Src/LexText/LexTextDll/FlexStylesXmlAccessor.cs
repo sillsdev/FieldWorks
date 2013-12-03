@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// -------------------------------------------------------------------------------------
 		/// <summary>
 		/// Required implementation of abstract method gives name of the Flex styles sheet
-		/// resource</summary>
+		/// resource
 		/// </summary>
 		/// -------------------------------------------------------------------------------------
 		protected override string ResourceName

@@ -437,7 +437,7 @@ namespace SIL.FieldWorks.TE
 
 			using (BookMerger merger = new BookMerger(m_cache, m_styleSheet, bookRev))
 			{
-			using (ProgressDialogWithTask progress = new ProgressDialogWithTask(this, m_cache.ThreadHelper))
+			using (ProgressDialogWithTask progress = new ProgressDialogWithTask(this))
 			{
 				progress.Title = DlgResources.ResourceString("kstidCompareCaption");
 				progress.Message = string.Format(
@@ -597,7 +597,7 @@ namespace SIL.FieldWorks.TE
 					// Perform an automerge of the original book and the saved version.
 					using (BookMerger merger = new BookMerger(m_cache, m_styleSheet, savedBook))
 					{
-						using (ProgressDialogWithTask progress = new ProgressDialogWithTask(this, m_cache.ThreadHelper))
+						using (ProgressDialogWithTask progress = new ProgressDialogWithTask(this))
 						{
 							progress.Title = DlgResources.ResourceString("kstidOverwriteCaption");
 							progress.RunTask(merger.DoPartialOverwrite, sectionsToRemove);

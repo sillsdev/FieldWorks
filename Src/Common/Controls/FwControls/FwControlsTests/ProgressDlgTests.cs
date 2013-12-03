@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Initializes a new instance of the <see cref="DummyProgressDlg"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public DummyProgressDlg() : base(null, new ThreadHelper())
+		public DummyProgressDlg() : base(new ThreadHelper())
 		{
 		}
 
@@ -42,8 +42,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			if (disposing && !IsDisposed)
 			{
-				if (ThreadHelper != null)
-					ThreadHelper.Dispose();
+				((ThreadHelper) SynchronizeInvoke).Dispose();
 			}
 			base.Dispose(disposing);
 		}

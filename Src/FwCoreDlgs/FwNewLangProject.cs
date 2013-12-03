@@ -677,7 +677,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			try
 			{
-				using (var progressDlg = new ProgressDialogWithTask(this, null))
+				using (var progressDlg = new ProgressDialogWithTask(this))
 				{
 					progressDlg.Title = string.Format(FwCoreDlgs.kstidCreateLangProjCaption, ProjectName);
 					string anthroFile = null;

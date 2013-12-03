@@ -148,7 +148,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DummyFdoUserAction.cs" />
     <Compile Include="UpgradeUserSettingsTests.cs" />
     <None Include="App.config" />
     <Compile Include="..\..\..\AssemblyInfoForTests.cs">

@@ -20,7 +20,6 @@ using Microsoft.Win32;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
-using ProgressBarStyle = SIL.FieldWorks.Common.FwUtils.ProgressBarStyle;
 
 namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 {
@@ -204,7 +203,6 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			using (var stream = zipFile.GetInputStream(entry))
 			{
 				m_progressDlg.Title = Strings.ksConverting;
-				m_progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
 				m_progressDlg.Maximum = (int)entry.Size;
 				if (File.Exists(tempPath))
 					File.Delete(tempPath);	// if we tried and failed earlier, try again.
@@ -524,7 +522,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		{
 			using (var process = CreateAndInitProcess(m_dbPath, args))
 			{
-				m_progressDlg.ProgressBarStyle = ProgressBarStyle.Marquee; // Can't get actual progress from external program
+				m_progressDlg.IsIndeterminate = true; // Can't get actual progress from external program
 				m_progressDlg.Title = Strings.ksConverting;
 				if (!(bool)m_progressDlg.RunTask(true, ProcessFile, process, progressMsg))
 				{
@@ -550,7 +548,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		{
 			using (var process = CreateAndInitProcess(m_dumpxmlPath, "-d \"" + dbName + "\" -o \"" + tempXmlPath + '"'))
 			{
-				m_progressDlg.ProgressBarStyle = ProgressBarStyle.Marquee; // Can't get actual progress from external program
+				m_progressDlg.IsIndeterminate = true; // Can't get actual progress from external program
 				m_progressDlg.Title = Strings.ksConverting;
 				if (!(bool)m_progressDlg.RunTask(true, ProcessFile, process, progressMsg))
 				{
@@ -666,7 +664,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				Path.Combine(DirectoryFinder.FWCodeDirectory, "ConverterConsole.exe"),
 				'"' + pathname + "\" \"" + projectFile + '"'))
 			{
-				m_progressDlg.ProgressBarStyle = ProgressBarStyle.Marquee; // Can't get actual progress from external program
+				m_progressDlg.IsIndeterminate = true; // Can't get actual progress from external program
 				m_progressDlg.Title = Strings.ksConverting;
 				string message = String.Format(Strings.ksConvertingFile, Path.GetFileNameWithoutExtension(projectFile));
 				if (!(bool)m_progressDlg.RunTask(true, ProcessFile, process, message))

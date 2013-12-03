@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.Common.Controls
 			: base(cache, objList, helpTopicProvider)
 		{
 			m_bookImporter = importer;
-			using (var progressDlg = new ProgressDialogWithTask(null, cache.ThreadHelper))
+			using (var progressDlg = new ProgressDialogWithTask(this))
 			{
 				// This somewhat duplicates some logic in FieldWorks.GetHelpTopicProvider, but it feels
 				// wrong to reference the main exe even though I can't find an actual circular dependency.

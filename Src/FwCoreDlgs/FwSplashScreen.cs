@@ -12,7 +12,6 @@
 // Responsibility: TE Team
 // --------------------------------------------------------------------------------------------
 using System;
-using System.Drawing;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
@@ -20,7 +19,6 @@ using System.Threading;
 using System.Windows.Forms;
 
 using SIL.FieldWorks.Common.FwUtils;
-using ProgressBarStyle = SIL.FieldWorks.Common.FwUtils.ProgressBarStyle;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -380,6 +378,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			set {  }
 		}
 
+		/// <summary>
+		/// Gets an object to be used for ensuring that required tasks are invoked on the main
+		/// UI thread.
+		/// </summary>
+		public ISynchronizeInvoke SynchronizeInvoke
+		{
+			get { return m_splashScreen; }
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the progress as a form (used for message box owners, etc).
@@ -390,25 +397,24 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			get { return m_splashScreen; }
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets the style of the ProgressBar.
+		/// Gets or sets a value indicating whether this progress is indeterminate.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public ProgressBarStyle ProgressBarStyle
+		public bool IsIndeterminate
 		{
 			get
 			{
 				if (m_splashScreen.InvokeRequired)
-					return (ProgressBarStyle)m_splashScreen.Invoke((Func<ProgressBarStyle>)(() => m_splashScreen.ProgressBarStyle));
-				return m_splashScreen.ProgressBarStyle;
+					return (bool) m_splashScreen.Invoke((Func<bool>)(() => m_splashScreen.IsIndeterminate));
+				return m_splashScreen.IsIndeterminate;
 			}
+
 			set
 			{
 				if (m_splashScreen.InvokeRequired)
-					m_splashScreen.Invoke((Action<ProgressBarStyle>)(style => m_splashScreen.ProgressBarStyle = style), value);
+					m_splashScreen.Invoke((Action<bool>)(b => m_splashScreen.IsIndeterminate = b), value);
 				else
-					m_splashScreen.ProgressBarStyle = value;
+					m_splashScreen.IsIndeterminate = value;
 			}
 		}
 

@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
 #region // Copyright (c) 2013, SIL International. All Rights Reserved.
 // <copyright from='2013' to='2013' company='SIL International'>
 //		Copyright (c) 2013, SIL International. All Rights Reserved.
@@ -9,79 +9,61 @@
 #endregion
 // ---------------------------------------------------------------------------------------------
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.ComponentModel;
 using Microsoft.Win32;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace SIL.FieldWorks.FDO
 {
 	/// <summary>
-	/// Dummy implementation of FdoUserAction for unit tests
+	/// Used for getting user feedback while processing FDO requests
 	/// </summary>
-	public class DummyFdoUserAction : IFdoUserAction
+	public interface IFdoUserAction
 	{
 		/// <summary>
-		/// Gets the error message.
+		/// Gets the object that is used to invoke methods on the main UI thread.
 		/// </summary>
-		/// <value>
-		/// The error message.
-		/// </value>
-		public string ErrorMessage { get; private set; }
+		ISynchronizeInvoke SynchronizeInvoke { get; }
 
 		/// <summary>
 		/// Check with user regarding conflicting changes
 		/// </summary>
 		/// <returns>True if user wishes to revert to saved state. False otherwise.</returns>
-		public bool ConflictingSave()
-		{
-			throw new NotImplementedException();
-		}
+		bool ConflictingSave();
 
 		/// <summary>
 		/// Inform the user of a lost connection
 		/// </summary>
 		/// <returns>True if user wishes to attempt reconnect.  False otherwise.</returns>
-		public bool ConnectionLost()
-		{
-			throw new NotImplementedException();
-		}
+		bool ConnectionLost();
+
+		/// <summary>
+		/// Gets the last time that there was user activity.
+		/// </summary>
+		DateTime LastActivityTime { get; }
 
 		/// <summary>
 		/// Check with user regarding which files to use
 		/// </summary>
 		/// <returns></returns>
-		public FileSelection ChooseFilesToUse()
-		{
-			throw new NotImplementedException();
-		}
+		FileSelection ChooseFilesToUse();
 
 		/// <summary>
 		/// Check with user regarding restoring linked files in the project folder or original path
 		/// </summary>
 		/// <returns>True if user wishes to restore linked files in project folder. False to leave them in the original location.</returns>
-		public bool RestoreLinkedFilesInProjectFolder()
-		{
-			throw new NotImplementedException();
-		}
+		bool RestoreLinkedFilesInProjectFolder();
 
 		/// <summary>
 		/// Cannot restore linked files to original path.
 		/// Check with user regarding restoring linked files in the project folder or not at all
 		/// </summary>
 		/// <returns>OkYes to restore to project folder, OkNo to skip restoring linked files, Cancel otherwise</returns>
-		public YesNoCancel CannotRestoreLinkedFilesToOriginalLocation()
-		{
-			throw new NotImplementedException();
-		}
+		YesNoCancel CannotRestoreLinkedFilesToOriginalLocation();
 
 		/// <summary>
 		/// Displays information to the user
 		/// </summary>
-		public void MessageBox()
-		{
-			throw new NotImplementedException();
-		}
+		void MessageBox();
 
 		/// <summary>
 		/// Show a dialog or output to the error log, as appropriate.
@@ -91,12 +73,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <c>false</c>.</param>
 		/// <returns>True if the error was lethal and the user chose to exit the application,
 		/// false otherwise.</returns>
-		public bool ReportException(Exception error, bool isLethal)
-		{
-			// Store the message so we can check it later
-			ErrorMessage = error.Message;
-			return isLethal;
-		}
+		bool ReportException(Exception error, bool isLethal);
 
 		/// <summary>
 		/// Reports duplicate guids to the user
@@ -104,9 +81,48 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="applicationKey">The application key.</param>
 		/// <param name="emailAddress">The email address.</param>
 		/// <param name="errorText">The error text.</param>
-		public void ReportDuplicateGuids(RegistryKey applicationKey, string emailAddress, string errorText)
-		{
-			throw new NotImplementedException();
-		}
+		void ReportDuplicateGuids(RegistryKey applicationKey, string emailAddress, string errorText);
+	}
+
+	/// <summary>
+	/// File selection enum
+	/// </summary>
+	public enum FileSelection
+	{
+		/// <summary>
+		/// OK - Keep new files
+		/// </summary>
+		OkKeepNewer,
+
+		/// <summary>
+		/// OK - Use older files
+		/// </summary>
+		OkUseOlder,
+
+		/// <summary>
+		/// Cancel
+		/// </summary>
+		Cancel
+	}
+
+	/// <summary>
+	/// Yes No Cancel enum
+	/// </summary>
+	public enum YesNoCancel
+	{
+		/// <summary>
+		/// Ok - Yes
+		/// </summary>
+		OkYes,
+
+		/// <summary>
+		/// Ok - No
+		/// </summary>
+		OkNo,
+
+		/// <summary>
+		/// Cancel
+		/// </summary>
+		Cancel
 	}
 }

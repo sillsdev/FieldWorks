@@ -8,12 +8,10 @@
 // Responsibility: Randy Regnier
 // --------------------------------------------------------------------------------------------
 using System;
-using System.Collections;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Linq;
-using System.Threading;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Application;
 using SIL.Utils;
@@ -98,6 +96,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		private bool m_createMarkIfNeeded;
 		internal FdoUnitOfWork m_currentBundle;
 		private readonly UnitOfWorkService m_uowService;
+		private readonly IFdoUserAction m_userAction;
 		// Positive values count unsaved bundles in m_undoBundles.
 		// Negative values count unsaved bundles in m_redoBundles, that is, things Undone since the last Save.
 		private int m_countUnsavedBundles;
@@ -106,9 +105,10 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		#endregion
 
 		#region Constructor
-		public UndoStack(UnitOfWorkService uowService)
+		public UndoStack(UnitOfWorkService uowService, IFdoUserAction userAction)
 		{
 			m_uowService = uowService;
+			m_userAction = userAction;
 			m_undoBundles = new Stack<FdoUnitOfWork>();
 			m_redoBundles = new Stack<FdoUnitOfWork>();
 			m_currentBundle = null;
@@ -371,7 +371,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// ------------------------------------------------------------------------------------
 		private void DoTasksForEndOfPropChanged(FdoUnitOfWork uow, bool fromUndoRedo)
 		{
-			((CmObjectRepository)m_uowService.ObjectRepository).Cache.ThreadHelper.Invoke(() =>
+			m_userAction.SynchronizeInvoke.Invoke(() =>
 				{
 					if (!fromUndoRedo)
 					{

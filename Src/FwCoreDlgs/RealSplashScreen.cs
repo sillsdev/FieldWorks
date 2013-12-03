@@ -20,7 +20,6 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 using SIL.FieldWorks.Common.Controls;
-using ProgressBarStyle = SIL.FieldWorks.Common.FwUtils.ProgressBarStyle;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -489,6 +488,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
+		/// <summary>
+		/// Gets an object to be used for ensuring that required tasks are invoked on the main
+		/// UI thread.
+		/// </summary>
+		public ISynchronizeInvoke SynchronizeInvoke
+		{
+			get { return this; }
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the form displaying the progress (used for message box owners, etc). If the progress
@@ -500,18 +508,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			get { return this; }
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets the style of the ProgressBar.
+		/// Gets or sets a value indicating whether this progress is indeterminate.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public ProgressBarStyle ProgressBarStyle
+		public bool IsIndeterminate
 		{
-			get { return marqueeGif.Visible ? ProgressBarStyle.Marquee : ProgressBarStyle.Continuous; }
-			set
-			{
-				marqueeGif.Visible = (value == ProgressBarStyle.Marquee);
-			}
+			get { return marqueeGif.Visible; }
+			set { marqueeGif.Visible = value; }
 		}
 
 		/// ------------------------------------------------------------------------------------

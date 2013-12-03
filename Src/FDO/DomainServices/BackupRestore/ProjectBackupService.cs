@@ -21,7 +21,6 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
-using ProgressBarStyle = SIL.FieldWorks.Common.FwUtils.ProgressBarStyle;
 
 namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 {
@@ -62,7 +61,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 				var filesToZip = CreateListOfFilesToZip();
 
 				progressDlg.Title = Strings.ksBackupProgressCaption;
-				progressDlg.ProgressBarStyle = ProgressBarStyle.Marquee;
+				progressDlg.IsIndeterminate = true;
 				progressDlg.AllowCancel = false;
 				m_failedFiles.Clear(); // I think it's always a new instance, but play safe.
 				backupFile = (string)progressDlg.RunTask(true, BackupTask, filesToZip);

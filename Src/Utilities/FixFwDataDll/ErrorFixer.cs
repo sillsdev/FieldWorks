@@ -11,7 +11,6 @@
 // File: LinkFixer.cs
 // Responsibility: mcconnel
 // ---------------------------------------------------------------------------------------------
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -111,7 +110,7 @@ namespace SIL.FieldWorks.FixData
 						{
 							using (new WaitCursor(m_dlg))
 							{
-								using (var progressDlg = new ProgressDialogWithTask(m_dlg, null))
+								using (var progressDlg = new ProgressDialogWithTask(m_dlg))
 								{
 									string fixes = (string)progressDlg.RunTask(true, FixDataFile, pathname);
 									if (fixes.Length > 0)

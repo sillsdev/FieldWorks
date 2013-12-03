@@ -259,4 +259,11 @@
     <value>NoDefaultCompounding</value>
     <comment>If true, no default compounding rules will be used.  (Do Not Localize)</comment>
   </data>
+  <data name="ksBadAffixForm" xml:space="preserve">
+    <value>Bad Affix Form</value>
+    <comment>Caption that goes with ksHermitCrabReduplicationProblem</comment>
+  </data>
+  <data name="ksHermitCrabReduplicationProblem" xml:space="preserve">
+    <value>The Hermit Crab parser cannot currently run, because the morpheme "{0}" has an invalid reduplication environment. The problem is {1}.</value>
+  </data>
 </root>

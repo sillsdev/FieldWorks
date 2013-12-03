@@ -11,7 +11,6 @@
 // File: IThreadedProgress.cs
 // ---------------------------------------------------------------------------------------------
 using System;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -23,14 +22,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// --------------------------------------------------------------------------------------------
 	public interface IThreadedProgress : IProgress
 	{
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets an object to be used for ensuring that required tasks are invoked on the main
-		/// UI thread.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		ThreadHelper ThreadHelper { get; }
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets a value indicating whether the task has been canceled.
@@ -80,7 +71,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:WorkerThreadException"/> class.
+		/// Initializes a new instance of the <see cref="WorkerThreadException"/> class.
 		/// </summary>
 		/// <param name="message">The message.</param>
 		/// <param name="innerException">The inner exception.</param>

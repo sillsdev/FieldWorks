@@ -1911,7 +1911,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void ImportTranslatedLists(string filename)
 		{
-			using (var dlg = new ProgressDialogWithTask(this, Cache.ThreadHelper))
+			using (var dlg = new ProgressDialogWithTask(this))
 			{
 				dlg.AllowCancel = true;
 				dlg.Maximum = 200;

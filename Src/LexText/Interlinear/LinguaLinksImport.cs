@@ -467,7 +467,7 @@ namespace SIL.FieldWorks.IText
 		virtual protected DialogResult ShowPossibleMergeDialog(IThreadedProgress progress)
 		{							//we need to invoke the dialog on the main thread so we can use the progress dialog as the parent.
 			//otherwise the message box can be displayed behind everything
-			IAsyncResult asyncResult = progress.ThreadHelper.BeginInvoke(new ShowDialogAboveProgressbarDelegate(ShowDialogAboveProgressbar),
+			IAsyncResult asyncResult = progress.SynchronizeInvoke.BeginInvoke(new ShowDialogAboveProgressbarDelegate(ShowDialogAboveProgressbar),
 																		 new object[]
 																			{
 																				progress,
@@ -475,7 +475,7 @@ namespace SIL.FieldWorks.IText
 																				ITextStrings.ksAskMergeInterlinearTextTitle,
 																				MessageBoxButtons.YesNo
 																			});
-			return (DialogResult)progress.ThreadHelper.EndInvoke(asyncResult);
+			return (DialogResult)progress.SynchronizeInvoke.EndInvoke(asyncResult);
 		}
 
 		private static ITsString GetSpaceAdjustedPunctString(ILgWritingSystemFactory wsFactory, ITsStrFactory tsStrFactory,

@@ -12,6 +12,8 @@
 // Responsibility: mcconnel
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.ComponentModel;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -24,6 +26,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// ----------------------------------------------------------------------------------------
 	public class ConsoleProgress : IProgress
 	{
+		private readonly SingleThreadedSynchronizeInvoke m_sychronizeInvoke = new SingleThreadedSynchronizeInvoke();
 		int m_min;
 		int m_max = 100;
 		string m_message;
@@ -42,12 +45,30 @@ namespace SIL.FieldWorks.Common.FwUtils
 		#region IProgress Members
 
 		/// <summary>
+		/// Gets an object to be used for ensuring that required tasks are invoked on the main
+		/// UI thread.
+		/// </summary>
+		public ISynchronizeInvoke SynchronizeInvoke
+		{
+			get { return m_sychronizeInvoke; }
+		}
+
+		/// <summary>
 		/// Gets the form displaying the progress (used for message box owners, etc). If the progress
 		/// is not associated with a visible Form, then this returns its owning form, if any.
 		/// </summary>
 		public System.Windows.Forms.Form Form
 		{
 			get { return null; }
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether this progress is indeterminate.
+		/// </summary>
+		public bool IsIndeterminate
+		{
+			get { return false; }
+			set { }
 		}
 
 		/// <summary>
@@ -169,15 +190,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Event handler for listening to whether or the cancel button is pressed.
 		/// </summary>
 		public event System.ComponentModel.CancelEventHandler Canceling;
-
-		/// <summary>
-		/// Gets or sets the progress bar style.
-		/// </summary>
-		public ProgressBarStyle ProgressBarStyle
-		{
-			get { return ProgressBarStyle.Continuous; }
-			set { }
-		}
 
 		#endregion
 	}

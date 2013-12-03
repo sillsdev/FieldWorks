@@ -517,7 +517,7 @@ namespace SIL.FieldWorks.IText
 			SaveSettings();
 			if (string.IsNullOrEmpty(m_fileListBox.Text))
 				return;
-			using (var dlg = new ProgressDialogWithTask(this, m_cache.ThreadHelper))
+			using (var dlg = new ProgressDialogWithTask(this))
 			{
 				dlg.AllowCancel = false;
 				dlg.Minimum = 0;

@@ -14,7 +14,6 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using ProgressBarStyle = SIL.FieldWorks.Common.FwUtils.ProgressBarStyle;
 
 namespace SIL.FieldWorks.FdoUi
 {
@@ -24,7 +23,6 @@ namespace SIL.FieldWorks.FdoUi
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule", Justification="Disposable member is exposed for Dispose call if necessary")]
 	public class ProgressBarWrapper : IProgress
 	{
-
 		private readonly ProgressBar m_progressBar;
 		/// <summary>
 		/// Gets the wrapped ProgressBar
@@ -120,18 +118,27 @@ namespace SIL.FieldWorks.FdoUi
 		}
 
 		/// <summary>
+		/// Gets an object to be used for ensuring that required tasks are invoked on the main
+		/// UI thread.
+		/// </summary>
+		public ISynchronizeInvoke SynchronizeInvoke
+		{
+			get { return m_progressBar; }
+		}
+
+		/// <summary>
 		/// Gets the form displaying the progress (used for message box owners, etc). If the progress
 		/// is not associated with a visible Form, then this returns its owning form, if any.
 		/// </summary>
 		public Form Form { get; set; }
 
 		/// <summary>
-		/// Gets or sets the progress bar style.
+		/// Gets or sets a value indicating whether this progress is indeterminate.
 		/// </summary>
-		public ProgressBarStyle ProgressBarStyle
+		public bool IsIndeterminate
 		{
-			get { return ProgressBarStyleExtensions.Convert(m_progressBar.Style); }
-			set { m_progressBar.Style = ProgressBarStyleExtensions.Convert(value); }
+			get { return m_progressBar.Style == ProgressBarStyle.Marquee; }
+			set { m_progressBar.Style = value ? ProgressBarStyle.Marquee : ProgressBarStyle.Continuous; }
 		}
 
 		/// <summary>

@@ -19,7 +19,6 @@ using Palaso.Reporting;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FixData;
 using Palaso.UI.WindowsForms.HotSpot;
-using ProgressBarStyle = SIL.FieldWorks.Common.FwUtils.ProgressBarStyle;
 
 namespace FixFwData
 {
@@ -84,11 +83,11 @@ namespace FixFwData
 			public int StepSize { get; set; }
 			public int Minimum { get; set; }
 			public int Maximum { get; set; }
+			public ISynchronizeInvoke SynchronizeInvoke { get; private set; }
 			public Form Form { get; private set; }
-
-			public ProgressBarStyle ProgressBarStyle
+			public bool IsIndeterminate
 			{
-				get { return ProgressBarStyle.Continuous; }
+				get { return false; }
 				set { }
 			}
 

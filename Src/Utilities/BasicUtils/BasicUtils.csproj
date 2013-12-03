@@ -101,7 +101,9 @@
     <Compile Include="DisposableObjectsSet.cs" />
     <Compile Include="IRefreshable.cs" />
     <Compile Include="SimpleLogger.cs" />
+    <Compile Include="SingleThreadedSynchronizeInvoke.cs" />
     <Compile Include="SingletonsContainer.cs" />
+    <Compile Include="SynchronizeInvokeExtensions.cs" />
     <Compile Include="ThreadHelper.cs" />
     <Compile Include="HiMetric.cs" />
     <Compile Include="ImagePicture.cs" />

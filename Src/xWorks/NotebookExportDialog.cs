@@ -113,7 +113,7 @@ namespace SIL.FieldWorks.XWorks
 			FxtType ft = m_rgFxtTypes[FxtIndex(fxtPath)];
 			using (new WaitCursor(this))
 			{
-				using (var progressDlg = new ProgressDialogWithTask(this, m_cache.ThreadHelper))
+				using (var progressDlg = new ProgressDialogWithTask(this))
 				{
 					try
 					{

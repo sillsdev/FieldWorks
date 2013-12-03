@@ -12,7 +12,6 @@ using System.Runtime.InteropServices;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.IOC;
 using SIL.Utils;
-using SIL.FieldWorks.FDO.Infrastructure;
 
 namespace SIL.FieldWorks.FDO
 {
@@ -161,7 +160,6 @@ namespace SIL.FieldWorks.FDO
 			// Main data members.
 			m_lgwsFactory = null;
 			m_serviceLocator = null;
-			m_threadHelper = null;
 
 			m_isDisposed = true;
 		}

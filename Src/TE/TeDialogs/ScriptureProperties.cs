@@ -810,7 +810,7 @@ namespace SIL.FieldWorks.TE
 		protected void ConvertChapterVerseNumbers()
 		{
 			// Show a progress dialog for this operation
-			using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(this, m_cache.ThreadHelper))
+			using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(this))
 			{
 				progressDlg.Minimum = 0;
 				progressDlg.Maximum = m_scr.ScriptureBooksOS.Count;
@@ -909,7 +909,7 @@ namespace SIL.FieldWorks.TE
 		private void UpdateVerseBridges(string oldBridge)
 		{
 			// Show a progress dialog for this operation
-			using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(this, m_cache.ThreadHelper))
+			using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(this))
 			{
 				progressDlg.Minimum = 0;
 				progressDlg.Maximum = m_scr.ScriptureBooksOS.Count;

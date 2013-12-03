@@ -634,7 +634,7 @@ namespace SIL.FieldWorks.TE
 				}
 			}
 
-			using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(dialogOwner, m_cache.ThreadHelper))
+			using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(dialogOwner))
 			{
 				try
 				{

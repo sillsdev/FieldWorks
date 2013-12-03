@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -24,7 +23,6 @@ using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks.LexText;
 using SIL.Utils;
 using XCore;
-using ProgressBarStyle = SIL.FieldWorks.Common.FwUtils.ProgressBarStyle;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -159,7 +157,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			ObtainedProjectType obtainedProjectType;
 			var newprojectPathname = ObtainProjectMethod.ObtainProjectFromAnySource(_parentForm, _mediator.HelpTopicProvider,
-				out obtainedProjectType, Cache.ServiceLocator.GetInstance<IFdoUserAction>());
+				out obtainedProjectType);
 			if (string.IsNullOrEmpty(newprojectPathname))
 				return true; // We dealt with it.
 			_mediator.PropertyTable.SetProperty("LastBridgeUsed", obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
@@ -993,11 +991,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			using (new WaitCursor(_parentForm))
 			{
-				using (var helper = new ThreadHelper()) // not _cache.ThreadHelper, which might be for a different thread
-				using (var progressDlg = new ProgressDialogWithTask(_parentForm, helper))
+				using (var progressDlg = new ProgressDialogWithTask(_parentForm))
 				{
 					_progressDlg = progressDlg;
-					progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
 					try
 					{
 						progressDlg.Title = ResourceHelper.GetResourceString("kstidImportLiftlexicon");
@@ -1141,11 +1137,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			using (new WaitCursor(_parentForm))
 			{
-				using (var helper = new ThreadHelper()) // not _cache.ThreadHelper, which might be for a different thread
-				using (var progressDlg = new ProgressDialogWithTask(_parentForm, helper))
+				using (var progressDlg = new ProgressDialogWithTask(_parentForm))
 				{
 					_progressDlg = progressDlg;
-					progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
 					try
 					{
 						progressDlg.Title = ResourceHelper.GetResourceString("kstidExportLiftLexicon");

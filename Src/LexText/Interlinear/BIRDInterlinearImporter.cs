@@ -494,7 +494,7 @@ namespace SIL.FieldWorks.IText
 							//we need to invoke the dialog on the main thread so we can use the progress dialog as the parent.
 							//otherwise the message box can be displayed behind everything
 							var instructions = GetInstructions(interlinText, writingSystem.LanguageName, ITextStrings.ksImportVernacLangMissing);
-							IAsyncResult asyncResult = progress.ThreadHelper.BeginInvoke(new ShowDialogAboveProgressbarDelegate(ShowDialogAboveProgressbar),
+							IAsyncResult asyncResult = progress.SynchronizeInvoke.BeginInvoke(new ShowDialogAboveProgressbarDelegate(ShowDialogAboveProgressbar),
 																		 new object[]
 																			{
 																				progress,
@@ -502,7 +502,7 @@ namespace SIL.FieldWorks.IText
 																				ITextStrings.ksImportVernacLangMissingTitle,
 																				MessageBoxButtons.OKCancel
 																			});
-							result = (DialogResult)progress.ThreadHelper.EndInvoke(asyncResult);
+							result = (DialogResult)progress.SynchronizeInvoke.EndInvoke(asyncResult);
 							if (result == DialogResult.OK)
 							{
 								cache.LanguageProject.AddToCurrentVernacularWritingSystems((IWritingSystem)writingSystem);
@@ -519,7 +519,7 @@ namespace SIL.FieldWorks.IText
 						{
 							var instructions = GetInstructions(interlinText, writingSystem.LanguageName,
 															   ITextStrings.ksImportAnalysisLangMissing);
-							IAsyncResult asyncResult = progress.ThreadHelper.BeginInvoke(new ShowDialogAboveProgressbarDelegate(ShowDialogAboveProgressbar),
+							IAsyncResult asyncResult = progress.SynchronizeInvoke.BeginInvoke(new ShowDialogAboveProgressbarDelegate(ShowDialogAboveProgressbar),
 																		 new object[]
 																			{
 																				progress,
@@ -527,7 +527,7 @@ namespace SIL.FieldWorks.IText
 																				ITextStrings.ksImportAnalysisLangMissingTitle,
 																				MessageBoxButtons.OKCancel
 																			});
-							result = (DialogResult)progress.ThreadHelper.EndInvoke(asyncResult);
+							result = (DialogResult)progress.SynchronizeInvoke.EndInvoke(asyncResult);
 							//alert the user
 							if (result == DialogResult.OK)
 							{

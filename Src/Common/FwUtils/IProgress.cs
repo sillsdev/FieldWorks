@@ -94,6 +94,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
+		/// Gets an object to be used for ensuring that required tasks are invoked on the main
+		/// UI thread.
+		/// </summary>
+		ISynchronizeInvoke SynchronizeInvoke { get; }
+
+		/// <summary>
 		/// Gets the form displaying the progress (used for message box owners, etc). If the progress
 		/// is not associated with a visible Form, then this returns its owning form, if any.
 		/// </summary>
@@ -103,75 +109,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
-		/// Gets or sets the progress bar style.
+		/// Gets or sets a value indicating whether this progress is indeterminate.
 		/// </summary>
-		ProgressBarStyle ProgressBarStyle { get; set; }
+		bool IsIndeterminate { get; set; }
 
 		/// <summary>
 		/// Gets or sets a value indicating whether the opertation executing on the separate thread
 		/// can be cancelled by a different thread (typically the main UI thread).
 		/// </summary>
 		bool AllowCancel { get; set; }
-	}
-
-	/// <summary>
-	/// Specifies the style that a <see cref="T:SIL.FieldWorks.Common.FwUtils.IProgress"/> uses to indicate the progress of an operation.
-	/// </summary>
-	/// <filterpriority>2</filterpriority>
-	public enum ProgressBarStyle
-	{
-		/// <summary>
-		/// Blocks
-		/// </summary>
-		Blocks,
-		/// <summary>
-		/// Continuous
-		/// </summary>
-		Continuous,
-		/// <summary>
-		/// Marquee
-		/// </summary>
-		Marquee
-	}
-
-	/// <summary>
-	/// Methods for the ProgressBarStyle enum
-	/// </summary>
-	public static class ProgressBarStyleExtensions
-	{
-		/// <summary>
-		/// Converts from Windows Forms ProgressBarStyle
-		/// </summary>
-		/// <param name="from">From.</param>
-		/// <returns></returns>
-		public static ProgressBarStyle Convert(System.Windows.Forms.ProgressBarStyle from)
-		{
-			switch (from)
-			{
-				case System.Windows.Forms.ProgressBarStyle.Blocks:
-					return ProgressBarStyle.Blocks;
-				case System.Windows.Forms.ProgressBarStyle.Continuous:
-					return ProgressBarStyle.Continuous;
-				default:
-					return ProgressBarStyle.Marquee;
-			}
-		}
-		/// <summary>
-		/// Converts to Windows Forms ProgressBarStyle
-		/// </summary>
-		/// <param name="from">From.</param>
-		/// <returns></returns>
-		public static System.Windows.Forms.ProgressBarStyle Convert(ProgressBarStyle from)
-		{
-			switch (from)
-			{
-				case ProgressBarStyle.Blocks:
-					return System.Windows.Forms.ProgressBarStyle.Blocks;
-				case ProgressBarStyle.Continuous:
-					return System.Windows.Forms.ProgressBarStyle.Continuous;
-				default:
-					return System.Windows.Forms.ProgressBarStyle.Marquee;
-			}
-		}
 	}
 }

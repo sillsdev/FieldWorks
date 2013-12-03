@@ -9,11 +9,8 @@
 #endregion
 // ---------------------------------------------------------------------------------------------
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.ComponentModel;
 using Microsoft.Win32;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.FDO
 {
@@ -23,6 +20,25 @@ namespace SIL.FieldWorks.FDO
 	/// </summary>
 	public class SilentFdoUserAction : IFdoUserAction
 	{
+		private readonly ISynchronizeInvoke m_synchronizeInvoke;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="SilentFdoUserAction"/> class.
+		/// </summary>
+		/// <param name="synchronizeInvoke">The synchronize invoke.</param>
+		public SilentFdoUserAction(ISynchronizeInvoke synchronizeInvoke)
+		{
+			m_synchronizeInvoke = synchronizeInvoke;
+		}
+
+		/// <summary>
+		/// Gets the object that is used to invoke methods on the main UI thread.
+		/// </summary>
+		public ISynchronizeInvoke SynchronizeInvoke
+		{
+			get { return m_synchronizeInvoke; }
+		}
+
 		/// <summary>
 		/// Check with user regarding conflicting changes
 		/// </summary>
@@ -41,6 +57,14 @@ namespace SIL.FieldWorks.FDO
 		{
 			// Assume we don't to continue to attempt to reconnect endlessly
 			return false;
+		}
+
+		/// <summary>
+		/// Gets the last time that there was user activity.
+		/// </summary>
+		public DateTime LastActivityTime
+		{
+			get { return DateTime.Now; }
 		}
 
 		/// <summary>

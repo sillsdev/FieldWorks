@@ -6698,7 +6698,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		public void RecalculateDifferences(Form owner)
 		{
-			using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(owner, Cache.ThreadHelper))
+			using (var progressDlg = new ProgressDialogWithTask(owner))
 			{
 				progressDlg.Title = DlgResources.ResourceString("kstidCompareCaption");
 				progressDlg.Message = TeDiffViewResources.kstidRecalculateDiff;

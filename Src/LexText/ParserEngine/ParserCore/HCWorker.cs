@@ -639,15 +639,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					m_cache.LangProject.PhonologicalDataOA.AllNaturalClassAbbrs().ToArray());
 				if (!validator.Recognize(environment))
 				{
-					string msg = String.Format(ParserCoreStrings.ksHermitCrabReduplicationProblem, form,
-						validator.ErrorMessage);
-					m_cache.ThreadHelper.Invoke(() => // We may be running in a background thread
-						{
-							MessageBox.Show(Form.ActiveForm, msg, ParserCoreStrings.ksBadAffixForm,
-								MessageBoxButtons.OK, MessageBoxIcon.Error);
-						});
 					m_loader.Reset(); // make sure nothing thinks it is in a useful state
-					return; // We can't load the parser, hopefully our caller will realize we failed.
+					throw new InvalidReduplicationEnvironmentException(validator.ErrorMessage, form);
 				}
 			}
 

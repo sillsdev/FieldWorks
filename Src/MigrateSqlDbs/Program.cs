@@ -104,7 +104,8 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 			var globalMigrator = new LdmlInFolderWritingSystemRepositoryMigrator(globalWsFolder, NoteMigration);
 			globalMigrator.Migrate();
 
-			using (var progressDlg = new ProgressDialogWithTask(null, new ThreadHelper()))
+			using (var threadHelper = new ThreadHelper())
+			using (var progressDlg = new ProgressDialogWithTask(threadHelper))
 			{
 				ImportFrom6_0 importer = new ImportFrom6_0(progressDlg, s_fDebug);
 				if (!importer.IsFwSqlServerInstalled())

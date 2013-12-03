@@ -375,6 +375,7 @@
     <Compile Include="DomainImpl\OverridesLing_MoClasses.cs" />
     <Compile Include="DomainImpl\OverridesLing_Wfi.cs" />
     <Compile Include="FdoStructs.cs" />
+    <Compile Include="IFdoUserAction.cs" />
     <Compile Include="SilentFdoUserAction.cs" />
     <Compile Include="Infrastructure\FdoXmlServices.cs" />
     <Compile Include="Infrastructure\GenericUndoAction.cs" />
@@ -397,7 +398,6 @@
     <Compile Include="Infrastructure\Impl\PargraphCounterRepository.cs" />
     <Compile Include="Infrastructure\Impl\SimpleProjectId.cs" />
     <Compile Include="Infrastructure\Impl\UndoUpdateDictionaryAction.cs" />
-    <Compile Include="Infrastructure\Impl\UserActivityMonitor.cs" />
     <Compile Include="Infrastructure\IWorkerThreadReadHandler.cs" />
     <Compile Include="Infrastructure\UnitOfWorkHelper.cs" />
     <Compile Include="Infrastructure\WorkerThreadReadHelper.cs" />

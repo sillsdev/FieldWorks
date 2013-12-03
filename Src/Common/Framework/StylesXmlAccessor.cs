@@ -18,7 +18,6 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Globalization;
-using System.Linq;
 using System.Xml;
 
 using SIL.FieldWorks.Common.FwUtils;
@@ -463,14 +462,14 @@ namespace SIL.FieldWorks.Common.Framework
 				}
 
 				SetFontProperties(styleName, styleTag,
-					((tpt, nVar, nVal) => m_cache.ThreadHelper.Invoke(() => propsBldr.SetIntPropValues(tpt, nVar, nVal))),
-					((tpt, sVal) => m_cache.ThreadHelper.Invoke(() => propsBldr.SetStrPropValue(tpt, sVal))),
+					((tpt, nVar, nVal) => m_progressDlg.SynchronizeInvoke.Invoke(() => propsBldr.SetIntPropValues(tpt, nVar, nVal))),
+					((tpt, sVal) => m_progressDlg.SynchronizeInvoke.Invoke(() => propsBldr.SetStrPropValue(tpt, sVal))),
 					option);
 
 				// Get paragraph properties
 				if (style.Type == StyleType.kstParagraph)
 					SetParagraphProperties(styleName, styleTag,
-					((tpt, nVar, nVal) => m_cache.ThreadHelper.Invoke(() => propsBldr.SetIntPropValues(tpt, nVar, nVal))),
+					((tpt, nVar, nVal) => m_progressDlg.SynchronizeInvoke.Invoke(() => propsBldr.SetIntPropValues(tpt, nVar, nVal))),
 					option);
 
 				style.Rules = propsBldr.GetTextProps();

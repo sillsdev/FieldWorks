@@ -8,7 +8,6 @@ using System.Linq;
 using System.Reflection;
 using System.Resources;
 using System.Windows.Forms;
-using FwRemoteDatabaseConnector;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls;
@@ -16,10 +15,8 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.FieldWorks.Resources;
 using SIL.ObjectBrowser;
-using SIL.Utils;
 using WeifenLuo.WinFormsUI.Docking;
 using XCore;
 
@@ -52,7 +49,6 @@ namespace FDOBrowser
 		private InspectorWnd m_repositoryWnd;
 		private int saveClid;
 		private string FileName = string.Empty;
-		private ThreadHelper m_ThreadHelper;
 		//private FwTextBox m_textBox;
 		//private System.Windows.Forms.Panel panel1;
 
@@ -378,16 +374,14 @@ namespace FDOBrowser
 
 				// Init backend data provider
 				// TODO: Get the correct ICU local for the user writing system
-				if (m_ThreadHelper == null)
-					m_ThreadHelper = new ThreadHelper();
 
 				if (isMemoryBEP)
-					m_cache = FdoCache.CreateCacheWithNewBlankLangProj(new BrowserProjectId(bepType, null), "en", "en", "en", m_ThreadHelper, new FdoBrowserUserAction());
+					m_cache = FdoCache.CreateCacheWithNewBlankLangProj(new BrowserProjectId(bepType, null), "en", "en", "en", new FdoBrowserUserAction(this));
 				else
 				{
-					using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(this, m_ThreadHelper))
+					using (var progressDlg = new ProgressDialogWithTask(this))
 					{
-						m_cache = FdoCache.CreateCacheFromExistingData(new BrowserProjectId(bepType, fileName), "en", progressDlg, new FdoBrowserUserAction());
+						m_cache = FdoCache.CreateCacheFromExistingData(new BrowserProjectId(bepType, fileName), "en", progressDlg, new FdoBrowserUserAction(this));
 					}
 				}
 			   // var v = m_cache.

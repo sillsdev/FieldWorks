@@ -9,10 +9,11 @@
 #endregion
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using Microsoft.Win32;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.Utils;
 using XCore;
@@ -25,10 +26,21 @@ namespace SIL.FieldWorks.FdoUi
 	public class FdoUserActionWindowsForms : IFdoUserAction
 	{
 		private readonly IHelpTopicProvider m_helpTopicProvider;
+		private readonly ISynchronizeInvoke m_synchronizeInvoke;
 
-		public FdoUserActionWindowsForms(IHelpTopicProvider helpTopicProvider)
+		public FdoUserActionWindowsForms(IHelpTopicProvider helpTopicProvider, ISynchronizeInvoke synchronizeInvoke)
 		{
 			m_helpTopicProvider = helpTopicProvider;
+			m_synchronizeInvoke = synchronizeInvoke;
+			Application.AddMessageFilter(new UserActivityMonitor(this));
+		}
+
+		/// <summary>
+		/// Gets the object that is used to invoke methods on the main UI thread.
+		/// </summary>
+		public ISynchronizeInvoke SynchronizeInvoke
+		{
+			get { return m_synchronizeInvoke; }
 		}
 
 		/// <summary>
@@ -136,6 +148,8 @@ namespace SIL.FieldWorks.FdoUi
 			return ErrorReporter.ReportException(error, null, null, null, isLethal);
 		}
 
+		public DateTime LastActivityTime { get; private set; }
+
 		/// <summary>
 		/// Reports duplicate guids to the user
 		/// </summary>
@@ -145,6 +159,44 @@ namespace SIL.FieldWorks.FdoUi
 		public void ReportDuplicateGuids(RegistryKey applicationKey, string emailAddress, string errorText)
 		{
 			ErrorReporter.ReportDuplicateGuids(applicationKey, emailAddress, null, errorText);
+		}
+
+		/// <summary>
+		/// This class is a message filter which can be installed in order to track when the user last
+		/// pressed a key or did any mouse action, including moving the mouse.
+		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Design", "TypesWithNativeFieldsShouldBeDisposableRule", Justification="No unmanaged resources to release")]
+		class UserActivityMonitor : IMessageFilter
+		{
+			private readonly FdoUserActionWindowsForms m_userAction;
+
+			public UserActivityMonitor(FdoUserActionWindowsForms userAction)
+			{
+				m_userAction = userAction;
+			}
+
+			private IntPtr m_lastMousePosition;
+
+			public bool PreFilterMessage(ref Message m)
+			{
+				if(m.Msg == (int)Win32.WinMsgs.WM_MOUSEMOVE)
+				{
+					// For mouse move, we get spurious ones when it didn't really move. So check the actual position.
+					if (m.LParam != m_lastMousePosition)
+					{
+						m_userAction.LastActivityTime = DateTime.Now;
+						m_lastMousePosition = m.LParam;
+						// Enhance JohnT: suppress ones where it doesn't move??
+					}
+					return false;
+				}
+				if ((m.Msg >= (int)Win32.WinMsgs.WM_MOUSE_Min && m.Msg <= (int)Win32.WinMsgs.WM_MOUSE_Max)
+					|| (m.Msg >= (int)Win32.WinMsgs.WM_KEY_Min && m.Msg <= (int)Win32.WinMsgs.WM_KEY_Max))
+				{
+					m_userAction.LastActivityTime = DateTime.Now;
+				}
+				return false; // don't want to block any messages.
+			}
 		}
 	}
 }

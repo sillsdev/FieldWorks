@@ -40,7 +40,7 @@ namespace FDOBrowser
 			m_lvModel.Font = SystemFonts.MenuFont;
 
 			// Add model browsing cache (no data, just model browsing).
-			m_cache = FdoCache.CreateCacheWithNoLangProj(new BrowserProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", new ThreadHelper(), new FdoBrowserUserAction());
+			m_cache = FdoCache.CreateCacheWithNoLangProj(new BrowserProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", new FdoBrowserUserAction(this));
 			m_mdc = (IFwMetaDataCacheManaged)m_cache.MainCacheAccessor.MetaDataCache;
 			PopulateModelTree();
 

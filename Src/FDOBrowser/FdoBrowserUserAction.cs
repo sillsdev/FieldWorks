@@ -9,14 +9,30 @@
 #endregion
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 using Microsoft.Win32;
-using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 
 namespace FDOBrowser
 {
 	class FdoBrowserUserAction : IFdoUserAction
 	{
+		private readonly ISynchronizeInvoke m_synchronizeInvoke;
+
+		public FdoBrowserUserAction(ISynchronizeInvoke synchronizeInvoke)
+		{
+			m_synchronizeInvoke = synchronizeInvoke;
+		}
+
+		/// <summary>
+		/// Gets the object that is used to invoke methods on the main UI thread.
+		/// </summary>
+		public ISynchronizeInvoke SynchronizeInvoke
+		{
+			get { return m_synchronizeInvoke; }
+		}
+
 		/// <summary>
 		/// Check with user regarding conflicting changes
 		/// </summary>
@@ -88,6 +104,14 @@ namespace FDOBrowser
 		public void MessageBox()
 		{
 			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Gets the last time that there was user activity.
+		/// </summary>
+		public DateTime LastActivityTime
+		{
+			get { return DateTime.Now; }
 		}
 
 		/// <summary>

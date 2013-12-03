@@ -549,7 +549,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					const int nLines = 40;
 					if (lines.Length > nLines)
 						msg = String.Join("\n", lines.Take(nLines).ToArray()) + "\n...";
-					m_cache.ThreadHelper.Invoke(() =>
+					m_cache.ServiceLocator.GetInstance<IFdoUserAction>().SynchronizeInvoke.Invoke(() =>
 					{
 						MessageBox.Show(null, msg, Strings.ksErrorCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);
 						m_cache.ServiceLocator.GetInstance<IFdoUserAction>().ReportException(new Exception(fullMsg, e), true);

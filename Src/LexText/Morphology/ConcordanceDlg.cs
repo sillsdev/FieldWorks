@@ -17,7 +17,6 @@ using SIL.FieldWorks.FdoUi;
 using XCore;
 using SIL.FieldWorks.Common.Controls;
 using SIL.CoreImpl;
-using ProgressBarStyle = SIL.FieldWorks.Common.FwUtils.ProgressBarStyle;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -170,7 +169,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				m_progressBar.Minimum = 0;
 				m_progressBar.Maximum = 100;
 				m_progressBar.Value = 0;
-				m_progressBar.ProgressBar.Style = ProgressBarStyleExtensions.Convert(ProgressBarStyle.Continuous);
+				m_progressBar.Style = ProgressBarStyle.Continuous;
 			}
 
 			#region IProgress Members
@@ -192,17 +191,28 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				get { return false; }
 			}
 
+			/// <summary>
+			/// Gets an object to be used for ensuring that required tasks are invoked on the main
+			/// UI thread.
+			/// </summary>
+			public ISynchronizeInvoke SynchronizeInvoke
+			{
+				get { return m_progressBar.Control; }
+			}
+
 			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 				Justification = "We're returning a reference")]
 			public Form Form
 			{
 				get { return m_progressBar.Control.FindForm(); }
 			}
-			public ProgressBarStyle ProgressBarStyle
+
+			public bool IsIndeterminate
 			{
 				get { throw new NotImplementedException(); }
 				set { throw new NotImplementedException(); }
 			}
+
 			public bool AllowCancel
 			{
 				get { throw new NotImplementedException(); }

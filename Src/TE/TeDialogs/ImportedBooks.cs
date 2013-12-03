@@ -428,7 +428,7 @@ namespace SIL.FieldWorks.TE
 					continue;
 				}
 
-				using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(m_owningForm, m_cache.ThreadHelper))
+				using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(m_owningForm))
 				{
 					bookMerger.AttemptAutoMerge = true;
 					bookMerger.BookVersionAgent = this;
@@ -1063,7 +1063,7 @@ namespace SIL.FieldWorks.TE
 			List<IScrSection> sectionsToRemove)
 		{
 			Logger.WriteEvent("Performing partial Overwrite of book: " + bookMerger.BookCurr.BookId);
-			using (ProgressDialogWithTask progress = new ProgressDialogWithTask(this, m_cache.ThreadHelper))
+			using (ProgressDialogWithTask progress = new ProgressDialogWithTask(this))
 			{
 				progress.Title = DlgResources.ResourceString("kstidOverwriteCaption");
 				progress.RunTask(bookMerger.DoPartialOverwrite, sectionsToRemove);

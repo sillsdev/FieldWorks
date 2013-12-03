@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.IText
 
 		private void m_btnOK_Click(object sender, EventArgs e)
 		{
-			using (var dlg = new ProgressDialogWithTask(this, m_cache.ThreadHelper))
+			using (var dlg = new ProgressDialogWithTask(this))
 			{
 				dlg.AllowCancel = false;
 				dlg.Minimum = 0;

@@ -36,7 +36,6 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.Utils.FileDialog;
-using ProgressBarStyle = SIL.FieldWorks.Common.FwUtils.ProgressBarStyle;
 
 namespace SIL.FieldWorks.FDO
 {
@@ -51,9 +50,8 @@ namespace SIL.FieldWorks.FDO
 	public sealed partial class FdoCache
 	{
 		#region Data Members
-		private ThreadHelper m_threadHelper; // FdoCache is NOT responsible to dispose this (typically FieldWorks.s_threadHelper)
 		private IFdoServiceLocator m_serviceLocator;
-		private static object m_syncRoot = new object();
+		private static readonly object m_syncRoot = new object();
 
 		/// <summary>
 		/// This is the 'hvo' for null values. (This is not very identifiable, but unfortunately, a lot of code (e.g., in Views) knows that
@@ -99,14 +97,12 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		/// <param name="projectId">Identifies the new project to create.</param>
 		/// <param name="userWsIcuLocale">The ICU locale of the default user WS.</param>
-		/// <param name="threadHelper">The thread helper used for invoking actions on the main
-		/// UI thread.</param>
 		/// <param name="userAction"></param>
 		/// ------------------------------------------------------------------------------------
 		public static FdoCache CreateCacheWithNoLangProj(IProjectIdentifier projectId,
-			string userWsIcuLocale, ThreadHelper threadHelper, IFdoUserAction userAction)
+			string userWsIcuLocale, IFdoUserAction userAction)
 		{
-			FdoCache createdCache = CreateCacheInternal(projectId, threadHelper, userAction);
+			FdoCache createdCache = CreateCacheInternal(projectId, userAction);
 			createdCache.FullyInitializedAndReadyToRock = true;
 			return createdCache;
 		}
@@ -126,15 +122,13 @@ namespace SIL.FieldWorks.FDO
 		/// system.</param>
 		/// <param name="userWsIcuLocale">The ICU locale of the default user writing
 		/// system.</param>
-		/// <param name="threadHelper">The thread helper used for invoking actions on the main
-		/// UI thread.</param>
 		/// <param name="userAction"></param>
 		/// ------------------------------------------------------------------------------------
 		public static FdoCache CreateCacheWithNewBlankLangProj(IProjectIdentifier projectId,
 			string analWsIcuLocale, string vernWsIcuLocale, string userWsIcuLocale,
-			ThreadHelper threadHelper, IFdoUserAction userAction)
+			IFdoUserAction userAction)
 		{
-			FdoCache createdCache = CreateCacheInternal(projectId, userWsIcuLocale, threadHelper,
+			FdoCache createdCache = CreateCacheInternal(projectId, userWsIcuLocale,
 				dataSetup => dataSetup.CreateNewLanguageProject(projectId), userAction);
 			NonUndoableUnitOfWorkHelper.Do(createdCache.ActionHandlerAccessor, () =>
 			{
@@ -159,9 +153,9 @@ namespace SIL.FieldWorks.FDO
 		public static FdoCache CreateCacheFromExistingData(IProjectIdentifier projectId,
 			string userWsIcuLocale, IThreadedProgress progressDlg, IFdoUserAction userAction)
 		{
-			return CreateCacheInternal(projectId, userWsIcuLocale, progressDlg.ThreadHelper,
+			return CreateCacheInternal(projectId, userWsIcuLocale,
 				dataSetup => dataSetup.StartupExtantLanguageProject(projectId, true, progressDlg),
-				cache => cache.Initialize(userWsIcuLocale, progressDlg), userAction);
+				cache => cache.Initialize(userWsIcuLocale), userAction);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -178,9 +172,9 @@ namespace SIL.FieldWorks.FDO
 			string userWsIcuLocale, IThreadedProgress progressDlg, IFdoUserAction userAction)
 		{
 			var projectId = new SimpleProjectId(FDOBackendProviderType.kXML, projectPath);
-			return CreateCacheInternal(projectId, userWsIcuLocale, progressDlg.ThreadHelper,
+			return CreateCacheInternal(projectId, userWsIcuLocale,
 				dataSetup => dataSetup.StartupExtantLanguageProject(projectId, true, progressDlg),
-				cache => cache.Initialize(userWsIcuLocale, progressDlg), userAction);
+				cache => cache.Initialize(userWsIcuLocale), userAction);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -191,14 +185,12 @@ namespace SIL.FieldWorks.FDO
 		/// <param name="projectId">Identifies the project to create (i.e., the copy).</param>
 		/// <param name="userWsIcuLocale">The ICU locale of the default user WS.</param>
 		/// <param name="sourceCache">The FdoCache to copy</param>
-		/// <param name="threadHelper">The thread helper used for invoking actions on the main
-		/// UI thread.</param>
 		/// <param name="userAction"></param>
 		/// ------------------------------------------------------------------------------------
 		public static FdoCache CreateCacheCopy(IProjectIdentifier projectId,
-			string userWsIcuLocale, FdoCache sourceCache, ThreadHelper threadHelper, IFdoUserAction userAction)
+			string userWsIcuLocale, FdoCache sourceCache, IFdoUserAction userAction)
 		{
-			return CreateCacheInternal(projectId, userWsIcuLocale, threadHelper,
+			return CreateCacheInternal(projectId, userWsIcuLocale,
 				dataSetup => dataSetup.InitializeFromSource(projectId, sourceCache), userAction);
 		}
 
@@ -207,12 +199,9 @@ namespace SIL.FieldWorks.FDO
 		/// Creates a new FdoCache that uses a specified data provider.
 		/// </summary>
 		/// <param name="projectId">Identifies the project to create or load.</param>
-		/// <param name="threadHelper">The thread helper used for invoking actions on the main
-		/// UI thread.</param>
 		/// <param name="userAction"></param>
 		/// ------------------------------------------------------------------------------------
-		private static FdoCache CreateCacheInternal(IProjectIdentifier projectId,
-			ThreadHelper threadHelper, IFdoUserAction userAction)
+		private static FdoCache CreateCacheInternal(IProjectIdentifier projectId, IFdoUserAction userAction)
 		{
 			FDOBackendProviderType providerType = projectId.Type;
 			if (providerType == FDOBackendProviderType.kXMLWithMemoryOnlyWsMgr)
@@ -223,7 +212,6 @@ namespace SIL.FieldWorks.FDO
 			var createdCache = servLoc.GetInstance<FdoCache>();
 			createdCache.m_serviceLocator = servLoc;
 			createdCache.m_lgwsFactory = servLoc.GetInstance<ILgWritingSystemFactory>();
-			createdCache.m_threadHelper = threadHelper;
 			return createdCache;
 		}
 
@@ -233,15 +221,13 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		/// <param name="projectId">Identifies the project to create or load.</param>
 		/// <param name="userWsIcuLocale">The ICU locale of the default user WS.</param>
-		/// <param name="threadHelper">The thread helper used for invoking actions on the main
-		/// UI thread.</param>
 		/// <param name="doThe">The data setup action to perform.</param>
 		/// <param name="userAction"></param>
 		/// ------------------------------------------------------------------------------------
 		private static FdoCache CreateCacheInternal(IProjectIdentifier projectId,
-			string userWsIcuLocale, ThreadHelper threadHelper, Action<IDataSetup> doThe, IFdoUserAction userAction)
+			string userWsIcuLocale, Action<IDataSetup> doThe, IFdoUserAction userAction)
 		{
-			return CreateCacheInternal(projectId, userWsIcuLocale, threadHelper, doThe, null, userAction);
+			return CreateCacheInternal(projectId, userWsIcuLocale, doThe, null, userAction);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -250,24 +236,22 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		/// <param name="projectId">Identifies the project to create or load.</param>
 		/// <param name="userWsIcuLocale">The ICU locale of the default user WS.</param>
-		/// <param name="threadHelper">The thread helper used for invoking actions on the main
-		/// UI thread.</param>
 		/// <param name="doThe">The data setup action to perform.</param>
 		/// <param name="initialize">The initialization step to perfrom (can be null).</param>
 		/// <param name="userAction"></param>
 		/// <returns>The newly created cache</returns>
 		/// ------------------------------------------------------------------------------------
 		private static FdoCache CreateCacheInternal(IProjectIdentifier projectId,
-			string userWsIcuLocale, ThreadHelper threadHelper, Action<IDataSetup> doThe,
+			string userWsIcuLocale, Action<IDataSetup> doThe,
 			Action<FdoCache> initialize, IFdoUserAction userAction)
 		{
 			FDOBackendProviderType providerType = projectId.Type;
 			bool useMemoryWsManager = (providerType == FDOBackendProviderType.kMemoryOnly ||
 				providerType == FDOBackendProviderType.kXMLWithMemoryOnlyWsMgr);
-			FdoCache createdCache = CreateCacheInternal(projectId, threadHelper, userAction);
+			FdoCache createdCache = CreateCacheInternal(projectId, userAction);
 
 			// Init backend data provider
-			IDataSetup dataSetup = createdCache.ServiceLocator.GetInstance<IDataSetup>();
+			var dataSetup = createdCache.ServiceLocator.GetInstance<IDataSetup>();
 			dataSetup.UseMemoryWritingSystemManager = useMemoryWsManager;
 			doThe(dataSetup);
 			if (initialize != null)
@@ -295,7 +279,7 @@ namespace SIL.FieldWorks.FDO
 		/// Initializes this cache (called whenever the cache is created).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void Initialize(string userWsIcuLocale, IThreadedProgress progressDlg)
+		private void Initialize(string userWsIcuLocale)
 		{
 			// check for updated global writing systems and ask the user if they want to use it
 			var writingSystemsWithNewerGlobalVersions = new List<IWritingSystem>();
@@ -379,7 +363,7 @@ namespace SIL.FieldWorks.FDO
 		/// <param name="progressDlg">The progress dialog.</param>
 		/// <param name="parameters">One or more parameters, supplied in this order:
 		///  0. A string containing the name of the project (required);
-		///  1. A ThreadHelper used for invoking actions on the main UI thread (required);
+		///  1. An ISynchronizeInvoke used for invoking actions on the main UI thread (required);
 		///  2. An IWritingSystem to be used as the default analylis writing system (default: English);
 		///  3. An IWritingSystem to be used as the default vernacular writing system (default: French);
 		///  4. A string with the ICU locale of the UI writing system (default: "en").
@@ -392,11 +376,11 @@ namespace SIL.FieldWorks.FDO
 		public static string CreateNewLangProj(IThreadedProgress progressDlg, params object[] parameters)
 		{
 			if (parameters == null || parameters.Length < 2)
-				throw new ArgumentException("Parameters must include at least a project name and the ThreadHelper");
+				throw new ArgumentException("Parameters must include at least a project name and a SynchronizeInvoke object");
 			var projectName = (string)parameters[0];
 			if (string.IsNullOrEmpty(projectName))
-				throw new ArgumentNullException("projectName", "Cannot be null or empty");
-			var threadHelper = (ThreadHelper)parameters[1];
+				throw new ArgumentNullException("parameters", "Cannot be null or empty");
+			var synchronizeInvoke = (ISynchronizeInvoke) parameters[1];
 			IWritingSystem analWrtSys = (parameters.Length > 2) ? (IWritingSystem)parameters[2] : null;
 			IWritingSystem vernWrtSys = (parameters.Length > 3) ? (IWritingSystem)parameters[3] : null;
 			var userIcuLocale = (parameters.Length > 4 && parameters[4] != null) ? (string)parameters[4] : "en";
@@ -419,8 +403,8 @@ namespace SIL.FieldWorks.FDO
 			}
 
 			var projectId = new SimpleProjectId(FDOBackendProviderType.kXML, dbFileName);
-			using (var cache = CreateCacheInternal(projectId,
-				userIcuLocale, threadHelper, dataSetup => dataSetup.StartupExtantLanguageProject(projectId, true, progressDlg), new SilentFdoUserAction()))
+			using (var cache = CreateCacheInternal(projectId, userIcuLocale,
+				dataSetup => dataSetup.StartupExtantLanguageProject(projectId, true, progressDlg), new SilentFdoUserAction(synchronizeInvoke)))
 			{
 				if (progressDlg != null)
 				{
@@ -522,7 +506,7 @@ namespace SIL.FieldWorks.FDO
 				// Rewrite all objects to make sure they all have all of the basic properties.
 				if (progressDlg != null)
 				{
-					progressDlg.ProgressBarStyle = ProgressBarStyle.Marquee;
+					progressDlg.IsIndeterminate = true;
 					progressDlg.Message = AppStrings.InitializeSavingMigratedDataProgressMessage;
 					progressDlg.RunTask(cache.SaveAndForceNewestXmlForCmObjectWithoutUnitOfWork,
 						cache.m_serviceLocator.ObjectRepository.AllInstances().ToList());
@@ -863,16 +847,6 @@ namespace SIL.FieldWorks.FDO
 		internal static object SyncRoot
 		{
 			get { return m_syncRoot; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the thread helper used for invoking actions on the main UI thread.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public ThreadHelper ThreadHelper
-		{
-			get { return m_threadHelper; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1463,14 +1437,14 @@ namespace SIL.FieldWorks.FDO
 			if (MiscUtils.RunningTests)
 				return;
 
-			var linkedFilesFolder = this.LangProject.LinkedFilesRootDir;
-			var defaultFolder = DirectoryFinder.GetDefaultLinkedFilesDir(this.ProjectId.ProjectFolder);
+			var linkedFilesFolder = LangProject.LinkedFilesRootDir;
+			var defaultFolder = DirectoryFinder.GetDefaultLinkedFilesDir(ProjectId.ProjectFolder);
 			EnsureValidLinkedFilesFolderCore(linkedFilesFolder, defaultFolder);
 
 			if (!Directory.Exists(linkedFilesFolder))
 			{
 				if (!Directory.Exists(defaultFolder))
-					defaultFolder = this.ProjectId.ProjectFolder;
+					defaultFolder = ProjectId.ProjectFolder;
 				MessageBox.Show(String.Format(Strings.ksInvalidLinkedFilesFolder, linkedFilesFolder), Strings.ksErrorCaption);
 				while (!Directory.Exists(linkedFilesFolder))
 				{
@@ -1483,8 +1457,8 @@ namespace SIL.FieldWorks.FDO
 							linkedFilesFolder = folderBrowserDlg.SelectedPath;
 					}
 				}
-				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(this.ActionHandlerAccessor, () =>
-					{ this.LangProject.LinkedFilesRootDir = linkedFilesFolder; });
+				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(ActionHandlerAccessor, () =>
+					{ LangProject.LinkedFilesRootDir = linkedFilesFolder; });
 			}
 		}
 
@@ -2022,7 +1996,7 @@ namespace SIL.FieldWorks.FDO
 		public static IEnumerable<int> ConvertCmObjectsToHvos<TDerived>(IEnumerable<TDerived> cmObjects)
 			where TDerived : ICmObject
 		{
-			foreach (ICmObject cmObject in cmObjects)
+			foreach (TDerived cmObject in cmObjects)
 				yield return cmObject.Hvo;
 		}
 	}

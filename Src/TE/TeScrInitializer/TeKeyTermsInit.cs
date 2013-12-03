@@ -352,7 +352,7 @@ namespace SIL.FieldWorks.TE
 						}
 						else
 						{
-							using (ProgressDialogWithTask dlg = new ProgressDialogWithTask(caller, m_scr.Cache.ThreadHelper))
+							using (ProgressDialogWithTask dlg = new ProgressDialogWithTask(caller))
 							{
 								dlg.AllowCancel = false;
 								dlg.RunTask(true, UpdateLocalization, loc, locale);

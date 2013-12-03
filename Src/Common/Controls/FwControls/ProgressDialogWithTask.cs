@@ -22,7 +22,6 @@ using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using System.IO;
-using ProgressBarStyle = SIL.FieldWorks.Common.FwUtils.ProgressBarStyle;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -44,17 +43,18 @@ namespace SIL.FieldWorks.Common.Controls
 		protected IProgress m_progressDialog;
 		private readonly bool m_fCreatedProgressDlg;
 		private volatile bool m_fDisposed;
+		private readonly Form m_owner;
 		private Func<IThreadedProgress, object[], object> m_backgroundTask;
 		private object[] m_parameters;
 		private object m_RetValue;
 		private Exception m_Exception;
-		private ThreadHelper m_threadHelper;
 		private bool m_fOwnerWasTopMost;
 		private BackgroundWorker m_worker;
-		private readonly ISynchronizeInvoke m_synchInvoke;
+		private readonly ISynchronizeInvoke m_synchronizeInvoke;
 		#endregion
 
 		#region Constructors
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ProgressDialogWithTask"/> class that
@@ -62,44 +62,49 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="progress">The object that will be used to track the progress.</param>
 		/// ------------------------------------------------------------------------------------
-		public ProgressDialogWithTask(IProgress progress) :
-			this(progress, null, progress.Form)
+		public ProgressDialogWithTask(IProgress progress)
+			: this(progress, null, progress.SynchronizeInvoke)
 		{
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ProgressDialogWithTask"/> class that
+		/// Initializes a new instance of the <see cref="ProgressDialogWithTask" /> class that
 		/// will create an actual progress dialog box to track the progress.
 		/// </summary>
 		/// <param name="owner">The form to use as the owner when creating the actual progress
 		/// dialog.</param>
-		/// <param name="threadHelper">The thread helper (must been created on the UI thread).</param>
-		/// ------------------------------------------------------------------------------------
-		public ProgressDialogWithTask(Form owner, ThreadHelper threadHelper) :
-			this(null, owner, (ISynchronizeInvoke)owner ?? threadHelper)
+		public ProgressDialogWithTask(Form owner)
+			: this(null, owner, owner)
 		{
-			m_threadHelper = threadHelper;
-			m_fCreatedProgressDlg = true;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ProgressDialogWithTask"/> class.
+		/// </summary>
+		/// <param name="synchronizeInvoke"></param>
+		public ProgressDialogWithTask(ISynchronizeInvoke synchronizeInvoke)
+			: this(null, null, synchronizeInvoke)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ProgressDialogWithTask" /> class.
 		/// </summary>
 		/// <param name="progress">An external implementation of IProgress that should be
 		/// used to report progress. If this is null, then this class will create a generic
 		/// progress dialog for the purpose of running tasks.</param>
 		/// <param name="owner">The "owning" form (can be null if progressDlg is specified or if
 		/// there is no suitable form available to own the progress dialog)</param>
-		/// <param name="synchInvoke">Object that can ensure that certain operations are
-		/// invoked on the UI thread.</param>
-		/// ------------------------------------------------------------------------------------
-		private ProgressDialogWithTask(IProgress progress, Form owner, ISynchronizeInvoke synchInvoke)
+		/// <param name="synchronizeInvoke">The synchronize invoke.</param>
+		private ProgressDialogWithTask(IProgress progress, Form owner, ISynchronizeInvoke synchronizeInvoke)
 		{
-			m_synchInvoke = synchInvoke;
 			m_progressDialog = progress;
-			InitOnOwnerThread(owner);
+			m_owner = owner;
+			m_synchronizeInvoke = synchronizeInvoke;
+			m_fCreatedProgressDlg = progress == null;
+			InitOnOwnerThread();
+			if (m_synchronizeInvoke == null)
+				m_synchronizeInvoke = m_progressDialog.SynchronizeInvoke;
 			m_progressDialog.Canceling += m_progressDialog_Canceling;
 			m_progressDialog.Form.FormClosing += m_progressDialog_FormClosing;
 			m_worker.DoWork += RunBackgroundTask;
@@ -108,18 +113,18 @@ namespace SIL.FieldWorks.Common.Controls
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification="m_worker gets disposed in Dispose()")]
-		private void InitOnOwnerThread(Form owner)
+		private void InitOnOwnerThread()
 		{
-			if (m_synchInvoke != null && m_synchInvoke.InvokeRequired)
+			if (m_synchronizeInvoke != null && m_synchronizeInvoke.InvokeRequired)
 			{
-				m_synchInvoke.Invoke((Action<Form>)InitOnOwnerThread, new object[] { owner });
+				m_synchronizeInvoke.Invoke(InitOnOwnerThread);
 				return;
 			}
 
 			m_worker = new BackgroundWorker { WorkerSupportsCancellation = true };
 			if (m_progressDialog == null)
 			{
-				m_progressDialog = new ProgressDialogWithTaskDlgImpl(owner);
+				m_progressDialog = new ProgressDialogWithTaskDlgImpl(m_owner);
 			}
 
 			// This is the only way to force handle creation for a form that is not yet visible.
@@ -227,9 +232,9 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			CheckDisposed();
 
-			if (m_fCreatedProgressDlg && m_synchInvoke.InvokeRequired)
+			if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
 			{
-				m_synchInvoke.Invoke((Action<int>)Step, new object[] {cSteps});
+				m_synchronizeInvoke.Invoke((Action<int>)Step, new object[] {cSteps});
 				return;
 			}
 			m_progressDialog.Position += (cSteps > 0) ? cSteps : m_progressDialog.StepSize;
@@ -245,16 +250,16 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				CheckDisposed();
 
-				if (m_fCreatedProgressDlg && m_synchInvoke.InvokeRequired)
-					return (string)m_synchInvoke.Invoke((Func<string>)(() => m_progressDialog.Title), null);
+				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
+					return (string)m_synchronizeInvoke.Invoke((Func<string>)(() => m_progressDialog.Title), null);
 				return m_progressDialog.Title;
 			}
 			set
 			{
 				CheckDisposed();
 
-				if (m_fCreatedProgressDlg && m_synchInvoke.InvokeRequired)
-					m_synchInvoke.Invoke((Action<string>)(s => m_progressDialog.Title = s), new [] {value});
+				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
+					m_synchronizeInvoke.Invoke((Action<string>)(s => m_progressDialog.Title = s), new [] {value});
 				else
 					m_progressDialog.Title = value;
 			}
@@ -270,16 +275,16 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				CheckDisposed();
 
-				if (m_fCreatedProgressDlg && m_synchInvoke.InvokeRequired)
-					return (string)m_synchInvoke.Invoke((Func<string>)(() => m_progressDialog.Message), null);
+				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
+					return (string)m_synchronizeInvoke.Invoke((Func<string>)(() => m_progressDialog.Message), null);
 				return m_progressDialog.Message;
 			}
 			set
 			{
 				CheckDisposed();
 
-				if (m_fCreatedProgressDlg && m_synchInvoke.InvokeRequired)
-					m_synchInvoke.Invoke((Action<string>)(s => m_progressDialog.Message = s), new [] {value});
+				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
+					m_synchronizeInvoke.Invoke((Action<string>)(s => m_progressDialog.Message = s), new [] {value});
 				else
 					m_progressDialog.Message = value;
 			}
@@ -295,16 +300,16 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				CheckDisposed();
 
-				if (m_fCreatedProgressDlg && m_synchInvoke.InvokeRequired)
-					return (int)m_synchInvoke.Invoke((Func<int>)(() => m_progressDialog.Position), null);
+				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
+					return (int)m_synchronizeInvoke.Invoke((Func<int>)(() => m_progressDialog.Position), null);
 				return m_progressDialog.Position;
 			}
 			set
 			{
 				CheckDisposed();
 
-				if (m_fCreatedProgressDlg && m_synchInvoke.InvokeRequired)
-					m_synchInvoke.Invoke((Action<int>)(i => m_progressDialog.Position = i), new object[] {value});
+				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
+					m_synchronizeInvoke.Invoke((Action<int>)(i => m_progressDialog.Position = i), new object[] {value});
 				else
 					m_progressDialog.Position = value;
 			}
@@ -320,16 +325,16 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				CheckDisposed();
 
-				if (m_fCreatedProgressDlg && m_synchInvoke.InvokeRequired)
-					return (int)m_synchInvoke.Invoke((Func<int>)(() => m_progressDialog.StepSize), null);
+				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
+					return (int)m_synchronizeInvoke.Invoke((Func<int>)(() => m_progressDialog.StepSize), null);
 				return m_progressDialog.StepSize;
 			}
 			set
 			{
 				CheckDisposed();
 
-				if (m_fCreatedProgressDlg && m_synchInvoke.InvokeRequired)
-					m_synchInvoke.Invoke((Action<int>)(i => m_progressDialog.StepSize = i), new object[] {value});
+				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
+					m_synchronizeInvoke.Invoke((Action<int>)(i => m_progressDialog.StepSize = i), new object[] {value});
 				else
 					m_progressDialog.StepSize = value;
 			}
@@ -346,7 +351,28 @@ namespace SIL.FieldWorks.Common.Controls
 			get
 			{
 				CheckDisposed();
-				return m_progressDialog.Form.Visible ? m_progressDialog.Form : m_synchInvoke as Form;
+				return m_progressDialog.Form.Visible ? m_progressDialog.Form : m_owner;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether this progress is indeterminate.
+		/// </summary>
+		public bool IsIndeterminate
+		{
+			get
+			{
+				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
+					return m_synchronizeInvoke.Invoke(() => m_progressDialog.IsIndeterminate);
+				return m_progressDialog.IsIndeterminate;
+			}
+
+			set
+			{
+				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
+					m_synchronizeInvoke.Invoke(() => m_progressDialog.IsIndeterminate = value);
+				else
+					m_progressDialog.IsIndeterminate = value;
 			}
 		}
 
@@ -360,16 +386,16 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				CheckDisposed();
 
-				if (m_fCreatedProgressDlg && m_synchInvoke.InvokeRequired)
-					return (int)m_synchInvoke.Invoke((Func<int>)(() => m_progressDialog.Minimum), null);
+				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
+					return (int)m_synchronizeInvoke.Invoke((Func<int>)(() => m_progressDialog.Minimum), null);
 				return m_progressDialog.Maximum;
 			}
 			set
 			{
 				CheckDisposed();
 
-				if (m_fCreatedProgressDlg && m_synchInvoke.InvokeRequired)
-					m_synchInvoke.Invoke((Action<int>)(i => m_progressDialog.Minimum = i), new object[] {value});
+				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
+					m_synchronizeInvoke.Invoke((Action<int>)(i => m_progressDialog.Minimum = i), new object[] {value});
 				else
 					m_progressDialog.Maximum = value;
 			}
@@ -387,16 +413,16 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				CheckDisposed();
 
-				if (m_fCreatedProgressDlg && m_synchInvoke.InvokeRequired)
-					return (int)m_synchInvoke.Invoke((Func<int>) (() => m_progressDialog.Maximum), null);
+				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
+					return (int)m_synchronizeInvoke.Invoke((Func<int>) (() => m_progressDialog.Maximum), null);
 				return m_progressDialog.Maximum;
 			}
 			set
 			{
 				CheckDisposed();
 
-				if (m_fCreatedProgressDlg && m_synchInvoke.InvokeRequired)
-					m_synchInvoke.Invoke((Action<int>) (i => m_progressDialog.Maximum = i), new object[] {value});
+				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
+					m_synchronizeInvoke.Invoke((Action<int>) (i => m_progressDialog.Maximum = i), new object[] {value});
 				else
 					m_progressDialog.Maximum = value;
 			}
@@ -418,8 +444,8 @@ namespace SIL.FieldWorks.Common.Controls
 				if (!(m_progressDialog is ProgressDialogImpl))
 					throw new InvalidOperationException("The underlying progress dialog implementation probably does not implement CancelButtonText.");
 
-				if (m_synchInvoke.InvokeRequired)
-					return (string)m_synchInvoke.Invoke((Func<string>)(() => ((ProgressDialogImpl)m_progressDialog).CancelButtonText), null);
+				if (m_synchronizeInvoke.InvokeRequired)
+					return (string)m_synchronizeInvoke.Invoke((Func<string>)(() => ((ProgressDialogImpl)m_progressDialog).CancelButtonText), null);
 				return ((ProgressDialogImpl)m_progressDialog).CancelButtonText;
 			}
 			set
@@ -429,32 +455,10 @@ namespace SIL.FieldWorks.Common.Controls
 				if (!(m_progressDialog is ProgressDialogImpl))
 					throw new InvalidOperationException("The underlying progress dialog implementation probably does not implement CancelButtonText.");
 
-				if (m_synchInvoke.InvokeRequired)
-					m_synchInvoke.Invoke((Action<string>)(s => ((ProgressDialogImpl)m_progressDialog).CancelButtonText = s), new object[] {value});
+				if (m_synchronizeInvoke.InvokeRequired)
+					m_synchronizeInvoke.Invoke((Action<string>)(s => ((ProgressDialogImpl)m_progressDialog).CancelButtonText = s), new object[] {value});
 				else
 					((ProgressDialogImpl)m_progressDialog).CancelButtonText = value;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets or sets the style of the ProgressBar.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public ProgressBarStyle ProgressBarStyle
-		{
-			get
-			{
-				if (m_fCreatedProgressDlg && m_synchInvoke.InvokeRequired)
-					return (ProgressBarStyle) m_synchInvoke.Invoke((Func<ProgressBarStyle>) (() => m_progressDialog.ProgressBarStyle), null);
-				return m_progressDialog.ProgressBarStyle;
-			}
-			set
-			{
-				if (m_fCreatedProgressDlg && m_synchInvoke.InvokeRequired)
-					m_synchInvoke.Invoke((Action<ProgressBarStyle>) (style => m_progressDialog.ProgressBarStyle = style), new object[] {value});
-				else
-					m_progressDialog.ProgressBarStyle = value;
 			}
 		}
 
@@ -509,16 +513,16 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				CheckDisposed();
 
-				if (m_fCreatedProgressDlg && m_synchInvoke.InvokeRequired)
-					return (bool)m_synchInvoke.Invoke((Func<bool>)(() => m_progressDialog.AllowCancel), null);
+				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
+					return (bool)m_synchronizeInvoke.Invoke((Func<bool>)(() => m_progressDialog.AllowCancel), null);
 				return m_progressDialog.AllowCancel;
 			}
 			set
 			{
 				CheckDisposed();
 
-				if (m_fCreatedProgressDlg && m_synchInvoke.InvokeRequired)
-					m_synchInvoke.Invoke((Action<bool>)(f => m_progressDialog.AllowCancel = f), new object[] {value});
+				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
+					m_synchronizeInvoke.Invoke((Action<bool>)(f => m_progressDialog.AllowCancel = f), new object[] {value});
 				else
 					m_progressDialog.AllowCancel = value;
 			}
@@ -530,19 +534,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// UI thread.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public ThreadHelper ThreadHelper
+		public ISynchronizeInvoke SynchronizeInvoke
 		{
-			get
-			{
-				if (m_threadHelper == null && m_synchInvoke != null)
-				{
-					if (m_fCreatedProgressDlg && m_synchInvoke.InvokeRequired)
-					{
-						m_synchInvoke.Invoke((Action)(() => { m_threadHelper = new ThreadHelper(); }), null);
-					}
-				}
-				return m_threadHelper;
-			}
+			get { return m_synchronizeInvoke; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -597,8 +591,8 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (!fDisplayUi)
 			{
-				if (m_synchInvoke.InvokeRequired)
-					m_synchInvoke.Invoke((Action) (() => m_progressDialog.Form.WindowState = FormWindowState.Minimized), null);
+				if (m_synchronizeInvoke.InvokeRequired)
+					m_synchronizeInvoke.Invoke((Action) (() => m_progressDialog.Form.WindowState = FormWindowState.Minimized), null);
 				else
 					m_progressDialog.Form.WindowState = FormWindowState.Minimized;
 			}
@@ -609,8 +603,8 @@ namespace SIL.FieldWorks.Common.Controls
 			// course throws an exception.  This is really a bug in Mono's Form.ShowDialog implementation.
 			if (Application.OpenForms.Count == 0 && fDisplayUi && !MiscUtils.IsUnix)
 			{
-				if (m_synchInvoke.InvokeRequired)
-					m_synchInvoke.Invoke((Action)(() => m_progressDialog.Form.ShowInTaskbar = true), null);
+				if (m_synchronizeInvoke.InvokeRequired)
+					m_synchronizeInvoke.Invoke((Action)(() => m_progressDialog.Form.ShowInTaskbar = true), null);
 				else
 					m_progressDialog.Form.ShowInTaskbar = true;
 			}
@@ -640,9 +634,9 @@ namespace SIL.FieldWorks.Common.Controls
 			var progressDlg = m_progressDialog as ProgressDialogWithTaskDlgImpl;
 			if (progressDlg != null)
 			{
-				if (m_synchInvoke.InvokeRequired)
+				if (m_synchronizeInvoke.InvokeRequired)
 				{
-					m_synchInvoke.Invoke((Func<IWin32Window, DialogResult>)progressDlg.LaunchDialogAndStartTask,
+					m_synchronizeInvoke.Invoke((Func<IWin32Window, DialogResult>)progressDlg.LaunchDialogAndStartTask,
 						new object[] { owner });
 				}
 				else
@@ -652,9 +646,9 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			else
 			{
-				if (m_synchInvoke.InvokeRequired)
+				if (m_synchronizeInvoke.InvokeRequired)
 				{
-					m_synchInvoke.Invoke((Func<IWin32Window, DialogResult>)m_progressDialog.Form.ShowDialog,
+					m_synchronizeInvoke.Invoke((Func<IWin32Window, DialogResult>)m_progressDialog.Form.ShowDialog,
 						new object[] { owner });
 				}
 				else
@@ -720,7 +714,7 @@ namespace SIL.FieldWorks.Common.Controls
 			string path = XmlTranslatedLists.TranslatedListsPathForWs(ws);
 			if (!File.Exists(path))
 				return;
-			using (var dlg = new ProgressDialogWithTask(parentWindow, cache.ThreadHelper))
+			using (var dlg = new ProgressDialogWithTask(parentWindow))
 			{
 				dlg.AllowCancel = true;
 				dlg.Maximum = 200;
@@ -771,7 +765,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			catch (Exception ex)
 			{
-				System.Diagnostics.Debug.WriteLine("Got exception in background thread: " + ex.Message);
+				Debug.WriteLine("Got exception in background thread: " + ex.Message);
 				m_Exception = ex;
 			}
 			finally
@@ -813,8 +807,8 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private void m_worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
 		{
-			if (m_fCreatedProgressDlg && m_synchInvoke.InvokeRequired)
-				m_synchInvoke.Invoke((Action)m_progressDialog.Form.Close, null);
+			if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
+				m_synchronizeInvoke.Invoke((Action)m_progressDialog.Form.Close, null);
 			else
 				m_progressDialog.Form.Close();
 		}

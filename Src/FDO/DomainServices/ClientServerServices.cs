@@ -28,7 +28,6 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
-using ProgressBarStyle = SIL.FieldWorks.Common.FwUtils.ProgressBarStyle;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {
@@ -778,7 +777,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 			progressDlg.Title = Strings.ksConvertingToNonShared;
 			progressDlg.AllowCancel = false;
-			progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
 			progressDlg.Maximum = Directory.GetDirectories(DirectoryFinder.ProjectsDirectory).Count();
 			progressDlg.RunTask(true, (progress, args) => ConvertAllProjectsToXmlTask(progress, userAction, args));
 			return true;
@@ -826,7 +824,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			progressDlg.Title = Strings.ksConvertingToShared;
 			progressDlg.AllowCancel = false;
-			progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
 			progressDlg.Maximum = Directory.GetDirectories(DirectoryFinder.ProjectsDirectory).Count();
 			return (bool)progressDlg.RunTask(true, ConvertAllProjectsToDb4o);
 		}
@@ -915,21 +912,20 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 			try
 			{
-			using (var tempCache = FdoCache.CreateCacheFromExistingData(
-					new SimpleProjectId(FDOBackendProviderType.kXML, xmlFilename), "en", progressDlg, new SilentFdoUserAction()))
-			{
-
-			// The zero in the object array is for db4o and causes it not to open a port.
-			// This is fine since we aren't yet trying to start up on this restored database.
-			// The null says we are creating the file on the local host.
-				using (var copyCache = FdoCache.CreateCacheCopy(
-						new SimpleProjectId(FDOBackendProviderType.kDb4oClientServer, desiredPath), "en", tempCache, progressDlg.ThreadHelper, new SilentFdoUserAction()))
+				using (var tempCache = FdoCache.CreateCacheFromExistingData(new SimpleProjectId(FDOBackendProviderType.kXML, xmlFilename),
+					"en", progressDlg, new SilentFdoUserAction(progressDlg.SynchronizeInvoke)))
 				{
-			copyCache.ServiceLocator.GetInstance<IDataStorer>().Commit(new HashSet<ICmObjectOrSurrogate>(),
-				new HashSet<ICmObjectOrSurrogate>(), new HashSet<ICmObjectId>());
-			// Enhance JohnT: how can we tell this succeeded?
+
+				// The zero in the object array is for db4o and causes it not to open a port.
+				// This is fine since we aren't yet trying to start up on this restored database.
+				// The null says we are creating the file on the local host.
+					using (var copyCache = FdoCache.CreateCacheCopy(new SimpleProjectId(FDOBackendProviderType.kDb4oClientServer, desiredPath),
+						"en", tempCache, new SilentFdoUserAction(progressDlg.SynchronizeInvoke)))
+					{
+						copyCache.ServiceLocator.GetInstance<IDataStorer>().Commit(new HashSet<ICmObjectOrSurrogate>(), new HashSet<ICmObjectOrSurrogate>(), new HashSet<ICmObjectId>());
+						// Enhance JohnT: how can we tell this succeeded?
+					}
 				}
-			}
 			}
 			catch (Exception)
 			{
@@ -965,7 +961,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			try
 			{
 				using (var copyCache = FdoCache.CreateCacheCopy(
-					new SimpleProjectId(FDOBackendProviderType.kXML, newFilePath), "en", source, source.ThreadHelper, source.ServiceLocator.GetInstance<IFdoUserAction>()))
+					new SimpleProjectId(FDOBackendProviderType.kXML, newFilePath), "en", source, source.ServiceLocator.GetInstance<IFdoUserAction>()))
 				{
 				copyCache.ServiceLocator.GetInstance<IDataStorer>().Commit(
 					new HashSet<ICmObjectOrSurrogate>(),

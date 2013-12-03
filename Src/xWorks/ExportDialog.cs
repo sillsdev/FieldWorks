@@ -45,7 +45,6 @@ using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.LexText.Controls;
 using XCore;
-using ProgressBarStyle = SIL.FieldWorks.Common.FwUtils.ProgressBarStyle;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -738,7 +737,7 @@ namespace SIL.FieldWorks.XWorks
 			FxtType ft = m_rgFxtTypes[FxtIndex(fxtPath)];
 			using (new WaitCursor(this))
 			{
-				using (var progressDlg = new ProgressDialogWithTask(this, m_cache.ThreadHelper))
+				using (var progressDlg = new ProgressDialogWithTask(this))
 				{
 					try
 					{
@@ -756,7 +755,6 @@ namespace SIL.FieldWorks.XWorks
 								progressDlg.Maximum = m_dumper.GetProgressMaximum();
 								progressDlg.AllowCancel = true;
 								progressDlg.Restartable = true;
-								progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
 
 								progressDlg.RunTask(true, ExportFxt, outPath, fxtPath, fLiftOutput);
 								break;
@@ -775,7 +773,6 @@ namespace SIL.FieldWorks.XWorks
 								progressDlg.Minimum = 0;
 								progressDlg.Maximum = m_translatedLists.Count;
 								progressDlg.AllowCancel = true;
-								progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
 
 								progressDlg.RunTask(true, ExportTranslatedLists, outPath);
 								break;
@@ -787,7 +784,6 @@ namespace SIL.FieldWorks.XWorks
 								progressDlg.Minimum = 0;
 								progressDlg.Maximum = 1;
 								progressDlg.AllowCancel = true;
-								progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
 
 								progressDlg.RunTask(true, ExportSemanticDomains, outPath, ft, fxtPath, m_allQuestions);
 								break;
@@ -798,7 +794,6 @@ namespace SIL.FieldWorks.XWorks
 								progressDlg.Maximum = 1000;
 								progressDlg.AllowCancel = true;
 								progressDlg.Restartable = true;
-								progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
 								progressDlg.RunTask(true, ExportLift, outPath, ft.m_filtered);
 								break;
 							case FxtTypes.kftGrammarSketch:
@@ -806,7 +801,6 @@ namespace SIL.FieldWorks.XWorks
 								progressDlg.Maximum = 1000;
 								progressDlg.AllowCancel = true;
 								progressDlg.Restartable = true;
-								progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
 								progressDlg.RunTask(true, ExportGrammarSketch, outPath, ft.m_sDataType, ft.m_sXsltFiles);
 								break;
 						}

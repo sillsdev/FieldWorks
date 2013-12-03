@@ -27,6 +27,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
@@ -458,7 +459,6 @@ namespace LexTextControlsTests
 			"</LexDb>" + Environment.NewLine;
 
 		private FdoCache m_cache;
-		private ThreadHelper m_ThreadHelper;
 		private readonly Dictionary<string, ICmSemanticDomain> m_mapSemanticDomains =
 			new Dictionary<string, ICmSemanticDomain>();
 		private readonly Dictionary<string, IPartOfSpeech> m_mapPartsOfSpeech =
@@ -489,9 +489,8 @@ namespace LexTextControlsTests
 			var mockProjectName = "xxyyzProjectFolderForLIFTTest";
 			MockProjectFolder = Path.Combine(Path.GetTempPath(), mockProjectName);
 			var mockProjectPath = Path.Combine(MockProjectFolder, mockProjectName + ".fwdata");
-			m_ThreadHelper = new ThreadHelper();
 			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(
-				new TestProjectId(FDOBackendProviderType.kMemoryOnly, mockProjectPath), "en", "fr", "en", m_ThreadHelper, new DummyFdoUserAction());
+				new TestProjectId(FDOBackendProviderType.kMemoryOnly, mockProjectPath), "en", "fr", "en", new DummyFdoUserAction());
 			MockLinkedFilesFolder = Path.Combine(MockProjectFolder, DirectoryFinder.ksLinkedFilesDir);
 			Directory.CreateDirectory(MockLinkedFilesFolder);
 			//m_cache.LangProject.LinkedFilesRootDir = MockLinkedFilesFolder; this is already the default.
@@ -1020,8 +1019,6 @@ namespace LexTextControlsTests
 			Directory.Delete(MockLinkedFilesFolder, true);
 			m_cache.Dispose();
 			m_cache = null;
-			m_ThreadHelper.Dispose();
-			m_ThreadHelper = null;
 		}
 
 		#endregion

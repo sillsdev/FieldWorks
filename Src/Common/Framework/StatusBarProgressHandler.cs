@@ -21,7 +21,6 @@ using System.Windows.Forms;
 
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
-using ProgressBarStyle = SIL.FieldWorks.Common.FwUtils.ProgressBarStyle;
 
 namespace SIL.FieldWorks.Common.Framework
 {
@@ -195,6 +194,15 @@ namespace SIL.FieldWorks.Common.Framework
 			get { return false; }
 		}
 
+		/// <summary>
+		/// Gets an object to be used for ensuring that required tasks are invoked on the main
+		/// UI thread.
+		/// </summary>
+		public ISynchronizeInvoke SynchronizeInvoke
+		{
+			get { return m_progressBar.Control; }
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the progress as a form (used for message box owners, etc).
@@ -207,15 +215,13 @@ namespace SIL.FieldWorks.Common.Framework
 			get { return m_progressBar.Control.FindForm(); }
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets the progress bar style.
+		/// Gets or sets a value indicating whether this progress is indeterminate.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public ProgressBarStyle ProgressBarStyle
+		public bool IsIndeterminate
 		{
-			get { return ProgressBarStyleExtensions.Convert(m_progressBar.Style); }
-			set { m_progressBar.Style = ProgressBarStyleExtensions.Convert(value); }
+			get { return m_progressBar.Style == ProgressBarStyle.Marquee; }
+			set { m_progressBar.Style = value ? ProgressBarStyle.Marquee : ProgressBarStyle.Blocks; }
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -882,7 +882,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		private void ExportKeyTerms(Form dialogOwner)
 		{
-			using (var progressDlg = new ProgressDialogWithTask(dialogOwner, m_cache.ThreadHelper))
+			using (var progressDlg = new ProgressDialogWithTask(dialogOwner))
 			{
 				progressDlg.Title = DlgResources.ResourceString("kstidExportRtfKeyTerms");
 				progressDlg.Minimum = 1;
@@ -927,7 +927,7 @@ namespace SIL.FieldWorks.TE
 			int sectionCount = 0;
 			for (int i = 0; i < m_bookFilter.BookCount; i++)
 				sectionCount += m_bookFilter.GetBook(i).SectionsOS.Count;
-			using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(dialogOwner, m_cache.ThreadHelper))
+			using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(dialogOwner))
 			{
 				progressDlg.Minimum = 0;
 				progressDlg.Maximum = sectionCount;

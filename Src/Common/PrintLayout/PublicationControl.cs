@@ -1,4 +1,4 @@
-// --------------------------------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------
 #region /// Copyright (c) 2004, SIL International. All Rights Reserved.
 // <copyright from='2004' to='2004' company='SIL International'>
 //		Copyright (c) 2004, SIL International. All Rights Reserved.
@@ -3218,7 +3218,7 @@ namespace SIL.FieldWorks.Common.PrintLayout
 			CheckDisposed();
 
 			IVwRootBox focusedRootBox = FocusedRootBox;
-			using (var dialog = new ProgressDialogWithTask(FindForm(), Cache.ThreadHelper))
+			using (var dialog = new ProgressDialogWithTask(FindForm()))
 			{
 				dialog.CancelButtonText = ResourceHelper.GetResourceString("kstidUpdatePageBreakButtonText");
 				dialog.Title = ResourceHelper.GetResourceString("kstidUpdatePageBreakWindowCaption");

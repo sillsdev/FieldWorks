@@ -32,7 +32,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SILUBS.SharedScrUtils;
 using XCore;
-using ProgressBarStyle = SIL.FieldWorks.Common.FwUtils.ProgressBarStyle;
 
 namespace SIL.FieldWorks.TE
 {
@@ -468,7 +467,7 @@ namespace SIL.FieldWorks.TE
 			try
 			{
 				Logger.WriteEvent("Starting import");
-				using (var progressDlg = new ProgressDialogWithTask(m_mainWnd, m_cache.ThreadHelper))
+				using (var progressDlg = new ProgressDialogWithTask(m_mainWnd))
 				{
 					progressDlg.CancelButtonText =
 						TeResourceHelper.GetResourceString("kstidStopImporting");
@@ -476,8 +475,6 @@ namespace SIL.FieldWorks.TE
 						TeResourceHelper.GetResourceString("kstidImportProgressCaption");
 					progressDlg.Message =
 						TeResourceHelper.GetResourceString("kstidImportInitializing");
-					if (importSettings == null) // XML (OXES) import
-						progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
 
 					using (TeImportUi importUi = CreateTeImportUi(progressDlg))
 					{

@@ -12,9 +12,11 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Timers;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 using Timer = System.Timers.Timer;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
@@ -93,11 +95,10 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		}
 		public event EventHandler<SaveEventArgs> OnSave;
 
-		private readonly UserActivityMonitor m_monitor;
 		private DateTime m_lastSave = DateTime.Now;
 		private readonly Timer m_saveTimer = new Timer();
 
-		private bool m_fInSaveInternal = false;
+		private bool m_fInSaveInternal;
 
 		/// <summary>
 		/// Non-null if a Save has failed due to conflicting changes (client-server only).
@@ -172,9 +173,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			// Make a separate stack as the initial default. This should be mainly used in tests.
 			// It serves to keep undoable UOWs separate from non-undoable ones, the only things ever put on the NonUndoableStack.
 			m_currentUndoStack = m_activeUndoStack = (UndoStack)CreateUndoStack();
-			m_monitor = new UserActivityMonitor();
-			System.Windows.Forms.Application.AddMessageFilter(m_monitor);
 
+			m_saveTimer.SynchronizingObject = userAction.SynchronizeInvoke;
 			m_saveTimer.Interval = 1000;
 			m_saveTimer.Elapsed += SaveOnIdle;
 			m_saveTimer.Start();
@@ -225,7 +225,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		}
 		#endregion
 
-		void SaveOnIdle(object sender, EventArgs e)
+		void SaveOnIdle(object sender, ElapsedEventArgs e)
 		{
 			lock (this)
 			{
@@ -250,7 +250,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				if (DateTime.Now - m_lastSave < TimeSpan.FromSeconds(10.0))
 					return;
 				// Nor if it's been less than 2s since the user did something. We don't want to interrupt continuous activity.
-				if (DateTime.Now - m_monitor.LastActivityTime < TimeSpan.FromSeconds(2.0))
+				if (DateTime.Now - m_userAction.LastActivityTime < TimeSpan.FromSeconds(2.0))
 					return;
 
 				SaveInternal();
@@ -383,7 +383,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		private void RaiseSave(bool undoable)
 		{
 			if (OnSave != null)
-				OnSave(this, new SaveEventArgs() {UndoableChanges = undoable, Cache = ((CmObjectRepository)ObjectRepository).Cache});
+				OnSave(this, new SaveEventArgs {UndoableChanges = undoable, Cache = ((CmObjectRepository)ObjectRepository).Cache});
 		}
 
 		/// <summary>
@@ -532,7 +532,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			// This is very likely to modify the UI, so if the UOW is not being done on the UI thread, we need
 			// to do at least this part on that thread. One known case is a task being done in the background
 			// thread of ProgressDialogWithTask.
-			((CmObjectRepository)ObjectRepository).Cache.ThreadHelper.Invoke(() =>
+			m_userAction.SynchronizeInvoke.Invoke(() =>
 			{
 				var subscribers = m_changeWatchers.ToArray();
 				var changes = changesEnum.ToList();
@@ -945,7 +945,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// <returns></returns>
 		public IActionHandler CreateUndoStack()
 		{
-			var result = new UndoStack(this);
+			var result = new UndoStack(this, m_userAction);
 			m_undoStacks.Add(result);
 			return result;
 		}

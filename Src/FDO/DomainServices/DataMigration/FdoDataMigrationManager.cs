@@ -174,7 +174,6 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 								  currentDataStoreModelVersion, updateToVersion));
 
 			progressDlg.Title = Strings.ksDataMigrationCaption;
-			progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
 			progressDlg.AllowCancel = false;
 			progressDlg.Minimum = 0;
 			progressDlg.Maximum = (updateToVersion - currentDataStoreModelVersion) + 1;

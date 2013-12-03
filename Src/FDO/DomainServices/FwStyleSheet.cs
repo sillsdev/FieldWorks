@@ -116,7 +116,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			/// --------------------------------------------------------------------------------
 			/// <summary>
-			/// Initializes a new instance of the <see cref="T:StyleInfoCollection"/> class.
+			/// Initializes a new instance of the <see cref="StyleInfoCollection"/> class.
 			/// </summary>
 			/// --------------------------------------------------------------------------------
 			public StyleInfoCollection()
@@ -927,7 +927,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			// that the property store does not implement IVwPropertyStore. See FWR-1918.
 			// Some more sophisticated trick may be needed if it is ever the case that the stylesheet
 			// is NOT created on the main UI thread.
-			return m_fdoCache.ThreadHelper.Invoke(() => GetChrps(ws, ttp, wsf));
+			return m_fdoCache.ServiceLocator.GetInstance<IFdoUserAction>().SynchronizeInvoke.Invoke(() => GetChrps(ws, ttp, wsf));
 		}
 
 		/// ------------------------------------------------------------------------------------

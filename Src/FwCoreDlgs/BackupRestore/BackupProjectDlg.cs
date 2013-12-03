@@ -169,7 +169,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 			try
 			{
 				using (new WaitCursor(this))
-				using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(this, m_cache.ThreadHelper))
+				using (var progressDlg = new ProgressDialogWithTask(this))
 				{
 					BackupFilePath = m_presenter.BackupProject(progressDlg);
 				}

@@ -199,6 +199,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="HCWorker.cs" />
+    <Compile Include="InvalidReduplicationEnvironmentException.cs" />
     <Compile Include="M3ModelRetriever.cs">
       <SubType>Code</SubType>
     </Compile>

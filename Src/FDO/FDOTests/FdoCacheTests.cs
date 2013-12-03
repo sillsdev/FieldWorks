@@ -218,10 +218,9 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		[Test]
 		public void ChangingLangProjDefaultVernWs_ChangesCacheDefaultVernWs()
 		{
-			using (var threadHelper = new ThreadHelper())
 			using (
 				var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-																	 "en", "fr", "en", threadHelper, m_userAction))
+																	 "en", "fr", "en", m_userAction))
 			{
 				var wsFr = cache.DefaultVernWs;
 				Assert.That(cache.LangProject.DefaultVernacularWritingSystem.Handle, Is.EqualTo(wsFr));
@@ -252,10 +251,9 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		[Test]
 		public void ChangingLangProjDefaultAnalysisWs_ChangesCacheDefaultAnalWs()
 		{
-			using (var threadHelper = new ThreadHelper())
 			using (
 				var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-																	 "en", "fr", "en", threadHelper, m_userAction))
+																	 "en", "fr", "en", m_userAction))
 			{
 				var wsEn = cache.DefaultAnalWs;
 				Assert.That(cache.LangProject.DefaultAnalysisWritingSystem.Handle, Is.EqualTo(wsEn));
@@ -287,10 +285,9 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		[Test]
 		public void ChangingLangProjDefaultPronunciationWs_ChangesCacheDefaultPronunciationWs()
 		{
-			using (var threadHelper = new ThreadHelper())
 			using (
 				var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-																	 "en", "fr", "en", threadHelper, m_userAction))
+																	 "en", "fr", "en", m_userAction))
 			{
 				var wsFr = cache.DefaultPronunciationWs;
 				Assert.That(cache.LangProject.DefaultPronunciationWritingSystem.Handle, Is.EqualTo(wsFr));
@@ -435,16 +432,13 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		public void CacheCheckDisposedTest()
 		{
 			// This can't be in the minimalist class, because it disposes the cache.
-			using (var threadHelper = new ThreadHelper())
-			{
-				var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-																	 "en", "fr", "en", threadHelper, m_userAction);
-				// Init backend data provider
-				var dataSetup = cache.ServiceLocator.GetInstance<IDataSetup>();
-				dataSetup.LoadDomain(BackendBulkLoadDomain.All);
-				cache.Dispose();
-				cache.CheckDisposed();
-			}
+			var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
+																	"en", "fr", "en", m_userAction);
+			// Init backend data provider
+			var dataSetup = cache.ServiceLocator.GetInstance<IDataSetup>();
+			dataSetup.LoadDomain(BackendBulkLoadDomain.All);
+			cache.Dispose();
+			cache.CheckDisposed();
 		}
 
 		/// <summary>
@@ -453,18 +447,15 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		[Test]
 		public void CacheIsDisposedTest()
 		{
-			using (var threadHelper = new ThreadHelper())
-			{
-				// This can't be in the minimalist class, because it disposes the cache.
-				var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-																	 "en", "fr", "en", threadHelper, m_userAction);
-				// Init backend data provider
-				var dataSetup = cache.ServiceLocator.GetInstance<IDataSetup>();
-				dataSetup.LoadDomain(BackendBulkLoadDomain.All);
-				Assert.IsFalse(cache.IsDisposed, "Should not have been disposed.");
-				cache.Dispose();
-				Assert.IsTrue(cache.IsDisposed, "Should have been disposed.");
-			}
+			// This can't be in the minimalist class, because it disposes the cache.
+			var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
+																	"en", "fr", "en", m_userAction);
+			// Init backend data provider
+			var dataSetup = cache.ServiceLocator.GetInstance<IDataSetup>();
+			dataSetup.LoadDomain(BackendBulkLoadDomain.All);
+			Assert.IsFalse(cache.IsDisposed, "Should not have been disposed.");
+			cache.Dispose();
+			Assert.IsTrue(cache.IsDisposed, "Should have been disposed.");
 		}
 
 		/// <summary>
@@ -473,17 +464,14 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		[Test]
 		public void CacheDisposedForFDOObject()
 		{
-			using (var threadHelper = new ThreadHelper())
-			{
-				var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-																	 "en", "fr", "en", threadHelper, m_userAction);
-				// Init backend data provider
-				var dataSetup = cache.ServiceLocator.GetInstance<IDataSetup>();
-				dataSetup.LoadDomain(BackendBulkLoadDomain.All);
-				var lp = cache.LanguageProject;
-				cache.Dispose();
-				Assert.IsFalse(lp.IsValidObject);
-			}
+			var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
+																	"en", "fr", "en", m_userAction);
+			// Init backend data provider
+			var dataSetup = cache.ServiceLocator.GetInstance<IDataSetup>();
+			dataSetup.LoadDomain(BackendBulkLoadDomain.All);
+			var lp = cache.LanguageProject;
+			cache.Dispose();
+			Assert.IsFalse(lp.IsValidObject);
 		}
 
 		/// <summary>
@@ -492,9 +480,8 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		[Test]
 		public void FDOObjectDeleted()
 		{
-			using (var threadHelper = new ThreadHelper())
 			using (var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-				"en", "fr", "en", threadHelper, m_userAction))
+				"en", "fr", "en", m_userAction))
 			{
 				// Init backend data provider
 				var dataSetup = cache.ServiceLocator.GetInstance<IDataSetup>();
@@ -515,10 +502,9 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		[Test]
 		public void NumberOfRemoteClients_NotClientServer_ReturnsZero()
 		{
-			using (var threadHelper = new ThreadHelper())
 			using (
 				var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-																	 "en", "fr", "en", threadHelper, m_userAction))
+																	 "en", "fr", "en", m_userAction))
 			{
 				Assert.AreEqual(0, cache.NumberOfRemoteClients);
 			}

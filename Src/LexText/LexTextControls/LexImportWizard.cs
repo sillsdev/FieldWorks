@@ -1923,7 +1923,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			SaveSettings();
 
-			using (var dlg = new ProgressDialogWithTask(this, m_cache.ThreadHelper))
+			using (var dlg = new ProgressDialogWithTask(this))
 			{
 				dlg.AllowCancel = true;
 				dlg.Maximum = 200;

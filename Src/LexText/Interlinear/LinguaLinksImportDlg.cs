@@ -19,7 +19,6 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.XWorks;
 using SilEncConverters40;
-using ProgressBarStyle = SIL.FieldWorks.Common.FwUtils.ProgressBarStyle;
 
 namespace SIL.FieldWorks.IText
 {
@@ -490,6 +489,16 @@ namespace SIL.FieldWorks.IText
 			}
 
 			/// <summary>
+			/// Gets an object to be used for ensuring that required tasks are invoked on the main
+			/// UI thread.
+			/// </summary>
+			/// <exception cref="System.NotImplementedException"></exception>
+			public ISynchronizeInvoke SynchronizeInvoke
+			{
+				get { throw new NotImplementedException(); }
+			}
+
+			/// <summary>
 			/// Gets the progress as a form (used for message box owners, etc).
 			/// </summary>
 			public Form Form
@@ -497,11 +506,12 @@ namespace SIL.FieldWorks.IText
 				get { throw new NotImplementedException(); }
 			}
 
-			public ProgressBarStyle ProgressBarStyle
+			public bool IsIndeterminate
 			{
 				get { throw new NotImplementedException(); }
 				set { throw new NotImplementedException(); }
 			}
+
 			public bool AllowCancel
 			{
 				get { throw new NotImplementedException(); }
@@ -896,7 +906,7 @@ namespace SIL.FieldWorks.IText
 		{
 			// if the shift key is down, then just build the phaseNoutput files
 			bool runToCompletion = ((ModifierKeys & Keys.Shift) != Keys.Shift);
-			using (var dlg = new ProgressDialogWithTask(this, m_cache.ThreadHelper))
+			using (var dlg = new ProgressDialogWithTask(this))
 			{
 				dlg.AllowCancel = true;
 

@@ -213,7 +213,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Trace.WriteLineIf(m_tracingSwitch.TraceInfo, "ParserWorker.ReloadGrammarAndLexicon");
 			m_retriever.Reset();
 			CheckNeedsUpdate();
-			}
+		}
 
 		private void CheckNeedsUpdate()
 		{

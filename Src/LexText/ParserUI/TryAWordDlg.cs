@@ -29,6 +29,7 @@ using System.Text;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.WordWorks.Parser;
 using SIL.Utils;
 using XCore;
 using SIL.FieldWorks.Common.FwUtils;
@@ -535,8 +536,19 @@ namespace SIL.FieldWorks.LexText.Controls
 				m_parserListener.DisconnectFromParser();
 				m_statusLabel.Text = ParserStoppedMessage();
 				m_tryItButton.Enabled = true;
-				var app = (IApp) m_mediator.PropertyTable.GetValue("App");
-				ErrorReporter.ReportException(ex, app.SettingsKey, app.SupportEmailAddress, this, false);
+				var iree = ex as InvalidReduplicationEnvironmentException;
+				if (iree != null)
+				{
+					string msg = String.Format(ParserUIStrings.ksHermitCrabReduplicationProblem, iree.Morpheme,
+						iree.Message);
+					MessageBox.Show(this, msg, ParserUIStrings.ksBadAffixForm,
+							MessageBoxButtons.OK, MessageBoxIcon.Error);
+				}
+				else
+				{
+					var app = (IApp) m_mediator.PropertyTable.GetValue("App");
+					ErrorReporter.ReportException(ex, app.SettingsKey, app.SupportEmailAddress, this, false);
+				}
 				return;
 			}
 

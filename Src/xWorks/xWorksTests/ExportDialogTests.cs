@@ -20,7 +20,6 @@ using SIL.FieldWorks.Test.TestUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
-using XCore;
 using System.Collections.Generic;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
@@ -475,7 +474,7 @@ namespace SIL.FieldWorks.XWorks
 		public void CreateMockCache()
 		{
 			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(
-				new TestProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", "fr", "en", new ThreadHelper(), new DummyFdoUserAction());
+				new TestProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", "fr", "en", new DummyFdoUserAction());
 			var xl = new XmlList();
 			using (var reader = new StringReader(s_ksSemanticDomainsXml))
 				xl.ImportList(m_cache.LangProject, "SemanticDomainList", reader, null);
@@ -487,7 +486,6 @@ namespace SIL.FieldWorks.XWorks
 		[TearDown]
 		public void DestroyMockCache()
 		{
-			m_cache.ThreadHelper.Dispose();
 			m_cache.Dispose();
 			m_cache = null;
 		}

@@ -60,7 +60,6 @@ using SIL.CoreImpl.Properties;
 using Gecko;
 #else
 using NetSparkle;
-using ProgressBarStyle = SIL.FieldWorks.Common.FwUtils.ProgressBarStyle;
 
 #endif
 
@@ -242,7 +241,7 @@ namespace SIL.FieldWorks
 				s_noUserInterface = appArgs.NoUserInterface;
 				s_appServerMode = appArgs.AppServerMode;
 
-				s_userAction = new FdoUserActionWindowsForms(GetHelpTopicProvider(appArgs.AppAbbrev));
+				s_userAction = new FdoUserActionWindowsForms(GetHelpTopicProvider(appArgs.AppAbbrev), s_threadHelper);
 
 				if (Settings.Default.CallUpgrade)
 				{
@@ -771,15 +770,15 @@ namespace SIL.FieldWorks
 
 			WriteSplashScreen(string.Format(Properties.Resources.kstidLoadingProject, projectId.UiName));
 			Form owner = s_splashScreen != null ? s_splashScreen.Form : Form.ActiveForm;
-			using (var progressDlg = new ProgressDialogWithTask(owner, s_threadHelper))
+			using (var progressDlg = new ProgressDialogWithTask(owner))
 			{
 				FdoCache cache = FdoCache.CreateCacheFromExistingData(projectId, s_sWsUser, progressDlg, s_userAction);
-			cache.ProjectNameChanged += ProjectNameChanged;
-			cache.ServiceLocator.GetInstance<IUndoStackManager>().OnSave += FieldWorks_OnSave;
+				cache.ProjectNameChanged += ProjectNameChanged;
+				cache.ServiceLocator.GetInstance<IUndoStackManager>().OnSave += FieldWorks_OnSave;
 
-			SetupErrorPropertiesNeedingCache(cache);
-			return cache;
-		}
+				SetupErrorPropertiesNeedingCache(cache);
+				return cache;
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1620,7 +1619,7 @@ namespace SIL.FieldWorks
 							projectToTry = null; // If the user cancels the send/receive, this null will result in a return to the welcome dialog.
 							// Hard to say what Form.ActiveForm is here. The splash and welcome dlgs are both gone.
 							var projectDataPathname = ObtainProjectMethod.ObtainProjectFromAnySource(Form.ActiveForm,
-								helpTopicProvider, out obtainedProjectType, s_userAction);
+								helpTopicProvider, out obtainedProjectType);
 							if (!string.IsNullOrEmpty(projectDataPathname))
 							{
 								projectToTry = new ProjectId(FDOBackendProviderType.kXML, projectDataPathname, null);
@@ -1692,7 +1691,7 @@ namespace SIL.FieldWorks
 			{
 				return null;
 			}
-			using (var dlg = new ChooseLangProjectDialog(helpTopicProvider, false, s_userAction))
+			using (var dlg = new ChooseLangProjectDialog(helpTopicProvider, false))
 			{
 				dlg.ShowDialog(dialogOwner);
 				var app = helpTopicProvider as IApp;
@@ -1952,7 +1951,7 @@ namespace SIL.FieldWorks
 			{
 				// We aren't going to convert this one, so no complication to just switching it.
 				// Both these setters check and do nothing if not changed.
-				using (var progressDlg = new ProgressDialogWithTask(null, s_threadHelper))
+				using (var progressDlg = new ProgressDialogWithTask(s_threadHelper))
 				{
 					return ClientServerServices.Current.Local.SetProjectSharing(fShareProjects, progressDlg, s_userAction);
 				}
@@ -1961,7 +1960,7 @@ namespace SIL.FieldWorks
 			bool fSuccess = false;
 			ExecuteWithAllFwProcessesShutDown(GetCommandLineAbbrevForAppName(fwApp.ApplicationName), () =>
 			{
-				using (var progressDlg = new ProgressDialogWithTask(null, s_threadHelper))
+				using (var progressDlg = new ProgressDialogWithTask(s_threadHelper))
 				{
 					fSuccess = ClientServerServices.Current.Local.SetProjectSharing(fShareProjects, progressDlg, s_userAction);
 				}
@@ -2109,7 +2108,7 @@ namespace SIL.FieldWorks
 		{
 			List<string> rgErrors = new List<string>();
 			bool fCopy = MustCopyFoldersAndFiles(oldFolderForProjects, newFolderForProjects);
-			using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(null, s_threadHelper))
+			using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(s_threadHelper))
 			{
 				string[] subDirs = Directory.GetDirectories(oldFolderForProjects);
 				progressDlg.Maximum = subDirs.Length;
@@ -2463,7 +2462,7 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		private static void DoRestore(ProjectRestoreService restoreService)
 		{
-			using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(null, s_threadHelper))
+			using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(s_threadHelper))
 				restoreService.RestoreProject(progressDlg);
 		}
 
@@ -2484,7 +2483,7 @@ namespace SIL.FieldWorks
 		private static bool BackupProjectForRestore(FwRestoreProjectSettings restoreSettings,
 			FdoCache existingCache, Form dialogOwner)
 		{
-			using (var progressDlg = new ProgressDialogWithTask(dialogOwner, s_threadHelper))
+			using (var progressDlg = new ProgressDialogWithTask(dialogOwner))
 			{
 				FdoCache cache = existingCache ?? FdoCache.CreateCacheFromExistingData(
 					new ProjectId(restoreSettings.Settings.FullProjectPath, null),
@@ -2856,7 +2855,7 @@ namespace SIL.FieldWorks
 				if (s_appServerMode)
 				{
 					// Make sure the cache is initialized for the application.
-					using (ProgressDialogWithTask dlg = new ProgressDialogWithTask(null, s_threadHelper))
+					using (ProgressDialogWithTask dlg = new ProgressDialogWithTask(s_threadHelper))
 						InitializeApp(app, dlg);
 					return;
 				}
@@ -2884,7 +2883,7 @@ namespace SIL.FieldWorks
 				else
 				{
 					// Make sure the cache is initialized for the application
-					using (ProgressDialogWithTask dlg = new ProgressDialogWithTask(otherApp.ActiveMainWindow, s_threadHelper))
+					using (var dlg = new ProgressDialogWithTask(otherApp.ActiveMainWindow))
 						InitializeApp(app, dlg);
 				}
 			});
@@ -3069,11 +3068,11 @@ namespace SIL.FieldWorks
 				if (progressDlg != null)
 				{
 					progressDlg.Message = String.Format(Properties.Resources.kstidSaving, s_cache.ProjectId.UiName);
-					progressDlg.ProgressBarStyle = ProgressBarStyle.Marquee;
+					progressDlg.IsIndeterminate = true;
 				}
 				s_cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
 				if (progressDlg != null)
-					progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
+					progressDlg.IsIndeterminate = false;
 			}
 
 			return CreateAndInitNewMainWindow(app, true, null, false);
@@ -3823,12 +3822,12 @@ namespace SIL.FieldWorks
 			{
 				DataUpdateMonitor.ClearSemaphore();
 
-				using (var progressDlg = new ProgressDialogWithTask(null, s_threadHelper))
+				using (var progressDlg = new ProgressDialogWithTask(s_threadHelper))
 				{
 					progressDlg.Title = string.Format(ResourceHelper.GetResourceString("kstidShutdownCaption"),
 						s_cache.ProjectId.UiName);
 					progressDlg.AllowCancel = false;
-					progressDlg.ProgressBarStyle = ProgressBarStyle.Marquee;
+					progressDlg.IsIndeterminate = true;
 					var stackMgr = s_cache.ServiceLocator.GetInstance<IUndoStackManager>();
 					if (stackMgr.HasUnsavedChanges)
 						progressDlg.RunTask(true, CommitAndDisposeCache);
