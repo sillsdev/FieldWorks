@@ -240,6 +240,11 @@
     <Compile Include="FdoUiCore.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="FdoUiStrings.Designer.cs">
+      <DependentUpon>FdoUiStrings.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="FdoUserActionWindowsForms.cs" />
     <Compile Include="FsFeatDefnUi.cs">
       <SubType>Code</SubType>
@@ -265,11 +270,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Resources\FdoUiStrings.Designer.cs">
-      <DependentUpon>FdoUiStrings.resx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="ReversalIndexEntryUi.cs">
       <SubType>Code</SubType>
@@ -316,14 +316,14 @@
       <DependentUpon>SummaryDialogForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="FdoUiStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>FdoUiStrings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resources\FdoUiStrings.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>FdoUiStrings.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
