@@ -109,6 +109,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				m_ws = ws;
 				m_app = app;
 
+				gridWf.Font = new Font(ws.DefaultFontName, gridWf.Font.Size);
+				gridNum.Font = new Font(ws.DefaultFontName, gridNum.Font.Size);
+				gridOther.Font = new Font(ws.DefaultFontName, gridOther.Font.Size);
+
 				gridWf.BackgroundColor = SystemColors.Window;
 				gridNum.BackgroundColor = SystemColors.Window;
 				gridOther.BackgroundColor = SystemColors.Window;
