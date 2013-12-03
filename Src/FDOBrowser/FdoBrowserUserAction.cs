@@ -10,6 +10,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Windows.Forms;
+using Microsoft.Win32;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace FDOBrowser
@@ -87,6 +88,31 @@ namespace FDOBrowser
 		public void MessageBox()
 		{
 			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Show a dialog or output to the error log, as appropriate.
+		/// </summary>
+		/// <param name="error">the exception you want to report</param>
+		/// <param name="isLethal">set to <c>true</c> if the error is lethal, otherwise
+		/// <c>false</c>.</param>
+		/// <returns>True if the error was lethal and the user chose to exit the application,
+		/// false otherwise.</returns>
+		public bool ReportException(Exception error, bool isLethal)
+		{
+			DialogResult dialogResult = System.Windows.Forms.MessageBox.Show("Close application?  Error: " + error.Message, "Application Error", MessageBoxButtons.YesNo);
+			return dialogResult == DialogResult.Yes;
+		}
+
+		/// <summary>
+		/// Reports duplicate guids to the user
+		/// </summary>
+		/// <param name="applicationKey">The application key.</param>
+		/// <param name="emailAddress">The email address.</param>
+		/// <param name="errorText">The error text.</param>
+		public void ReportDuplicateGuids(RegistryKey applicationKey, string emailAddress, string errorText)
+		{
+			System.Windows.Forms.MessageBox.Show(errorText, "Duplicate Guids");
 		}
 	}
 }

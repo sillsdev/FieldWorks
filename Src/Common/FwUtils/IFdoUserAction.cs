@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Win32;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -55,6 +56,24 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Displays information to the user
 		/// </summary>
 		void MessageBox();
+
+		/// <summary>
+		/// Show a dialog or output to the error log, as appropriate.
+		/// </summary>
+		/// <param name="error">the exception you want to report</param>
+		/// <param name="isLethal">set to <c>true</c> if the error is lethal, otherwise
+		/// <c>false</c>.</param>
+		/// <returns>True if the error was lethal and the user chose to exit the application,
+		/// false otherwise.</returns>
+		bool ReportException(Exception error, bool isLethal);
+
+		/// <summary>
+		/// Reports duplicate guids to the user
+		/// </summary>
+		/// <param name="applicationKey">The application key.</param>
+		/// <param name="emailAddress">The email address.</param>
+		/// <param name="errorText">The error text.</param>
+		void ReportDuplicateGuids(RegistryKey applicationKey, string emailAddress, string errorText);
 	}
 
 	/// <summary>

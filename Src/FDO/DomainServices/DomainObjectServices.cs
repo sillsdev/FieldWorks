@@ -36,35 +36,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	{
 		/// <summary>Book marker</summary>
 		public static readonly string kMarkerBook = @"\id";
-		/// <summary>Delegate to report a non-fatal "warning" message</summary>
-		private static Action<string> ReportWarning;
 
 		internal const char kKeyTokenSeparator = '\uffff';
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes the <see cref="ScriptureServices"/> class.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		static ScriptureServices()
-		{
-			InitializeWarningHandler();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes the delegate for reporting warnings.
-		/// </summary>
-		/// <remarks>This needs to be a separate method because it is called by reflection in
-		/// test(s).</remarks>
-		/// ------------------------------------------------------------------------------------
-		private static void InitializeWarningHandler()
-		{
-			ReportWarning = sMsg =>
-			{
-				ErrorReporter.ReportException(new Exception(sMsg), null, null, null, false);
-			};
-		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -459,7 +432,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			ITsTextProps ttp;
 			ITsPropsBldr propsBldr;
 			int iFootnote = 0;
-			var pictureRepo = book.Cache.ServiceLocator.GetInstance<ICmPictureRepository>();
+			IFdoServiceLocator serviceLocator = book.Cache.ServiceLocator;
+			var pictureRepo = serviceLocator.GetInstance<ICmPictureRepository>();
 			foreach (IScrTxtPara revPara in archivedBook.Paragraphs)
 			{
 				//TODO: TE-5082 Duplicate code! The following should call or use common code with
@@ -504,7 +478,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 											BCVRef.MakeReferenceString(startRef, endRef, ":", "-") + " with guid " + guid +
 											" does not have a corresponding footnote object owned by " + book.BookId +
 											" or refers to a footnote that is owned by another ORC that occurs earlier.";
-										ReportWarning(sMsg);
+										serviceLocator.GetInstance<IFdoUserAction>().ReportException(new Exception(sMsg), false);
 										break;
 									}
 									Logger.WriteEvent("Footnotes out of order in " + book.BookId + ". Expected footnote with guid " + guid +
@@ -558,7 +532,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			{
 				string sMsg = (archivedBook.FootnotesOS.Count -  iFootnote) + " footnote(s) in " +
 					book.BookId + " did not correspond to any owned footnotes in the vernacular text of that book. They have been moved to the end of the footnote sequence.";
-				ReportWarning(sMsg);
+				serviceLocator.GetInstance<IFdoUserAction>().ReportException(new Exception(sMsg), false);
 			}
 		}
 

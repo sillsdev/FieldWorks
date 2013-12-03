@@ -257,7 +257,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			catch (Exception)
 			{
 				if (m_fVerboseDebug)
-					MessageBoxUtils.Show("The FieldWorks installation of SQL Server (MSSQL$SILFW) does not exist.",
+					Debug.WriteLine("The FieldWorks installation of SQL Server (MSSQL$SILFW) does not exist.",
 						"DEBUG!");
 				return false;	// The FieldWorks installation of SQL Server isn't available
 			}
@@ -282,7 +282,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 					if (clsidKey == null)
 					{
 						if (m_fVerboseDebug)
-							MessageBoxUtils.Show("Unable to open the CLSID registry subkey????", "DEBUG!");
+							Debug.WriteLine("Unable to open the CLSID registry subkey????");
 						return false;
 					}
 					// check for registered class id for FwXmlData.
@@ -290,7 +290,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 					if (cellarPath == null)
 					{
 						if (m_fVerboseDebug)
-							MessageBoxUtils.Show("FwCellar.dll is not registered.", "DEBUG!");
+							Debug.WriteLine("FwCellar.dll is not registered.", "DEBUG!");
 						return false;
 					}
 					// check for registered class id for MigrateData.
@@ -298,7 +298,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 					if (migratePath == null)
 					{
 						if (m_fVerboseDebug)
-							MessageBoxUtils.Show("MigrateData.dll is not registered.", "DEBUG!");
+							Debug.WriteLine("MigrateData.dll is not registered.", "DEBUG!");
 						return false;
 					}
 					// check for registered class id for LgWritingSystemFactory.
@@ -306,7 +306,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 					if (languagePath == null)
 					{
 						if (m_fVerboseDebug)
-							MessageBoxUtils.Show("Language.dll is not registered.", "DEBUG!");
+							Debug.WriteLine("Language.dll is not registered.", "DEBUG!");
 						return false;
 					}
 					// check for registered class id for TsStrFactory.
@@ -314,7 +314,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 					if (kernelPath == null)
 					{
 						if (m_fVerboseDebug)
-							MessageBoxUtils.Show("FwKernel.dll is not registered.", "DEBUG!");
+							Debug.WriteLine("FwKernel.dll is not registered.", "DEBUG!");
 						return false;
 					}
 					// check for registered class id for OleDbEncap.
@@ -322,7 +322,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 					if (dbaccessPath == null)
 					{
 						if (m_fVerboseDebug)
-							MessageBoxUtils.Show("DbAccess.dll is not registered.", "DEBUG!");
+							Debug.WriteLine("DbAccess.dll is not registered.", "DEBUG!");
 						return false;
 					}
 					// Get (and save) the path to dumpxml.exe.
@@ -340,7 +340,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 							if (!File.Exists(m_dumpxmlPath))
 							{
 								if (m_fVerboseDebug)
-									MessageBoxUtils.Show("Cannot find dumpxml.exe in the old FieldWorks installation.", "DEBUG!");
+									Debug.WriteLine("Cannot find dumpxml.exe in the old FieldWorks installation.", "DEBUG!");
 								return false;
 							}
 						}
@@ -355,7 +355,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 						if (!File.Exists(scriptPath))
 						{
 							if (m_fVerboseDebug)
-								MessageBoxUtils.Show("Cannot find DataMigration\\200259To200260.sql in the old FieldWorks installation.", "DEBUG!");
+								Debug.WriteLine("Cannot find DataMigration\\200259To200260.sql in the old FieldWorks installation.", "DEBUG!");
 							return false;
 						}
 					}
@@ -363,7 +363,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 					if (!File.Exists(m_dbPath))
 					{
 						if (m_fVerboseDebug)
-							MessageBoxUtils.Show("Cannot find MSSQLMigration\\db.exe in the FieldWorks 7.0 or later installation.", "DEBUG!");
+							Debug.WriteLine("Cannot find MSSQLMigration\\db.exe in the FieldWorks 7.0 or later installation.", "DEBUG!");
 						return false;
 					}
 					return true;
@@ -376,7 +376,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 					string msg = String.Format(
 						"An exception was thrown while checking for an old version of FieldWorks:{1}{0}",
 						e.Message, Environment.NewLine);
-					MessageBoxUtils.Show(msg, "DEBUG!");
+					Debug.WriteLine(msg, "DEBUG!");
 				}
 			}
 			return false;
@@ -398,7 +398,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 						if (m_fVerboseDebug)
 						{
 							string msg = String.Format("Nonexistent file for a registered COM DLL: {0}", dllPath);
-							MessageBox.Show(msg, "DEBUG!");
+							Debug.WriteLine(msg, "DEBUG!");
 						}
 						return null;
 					}
@@ -414,7 +414,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 						{
 							string msg = String.Format("Multiple versions found in the registered COM DLLs: {0} and {1} [{2}]",
 								version, fileVersion, dllPath);
-							MessageBoxUtils.Show(msg, "DEBUG!");
+							Debug.WriteLine(msg, "DEBUG!");
 						}
 						return null; // don't want a mix of versions!!
 					}
@@ -443,7 +443,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 						{
 							string msg = String.Format("Invalid version found in a registered COM DLL: {0} [{1}]",
 								version, dllPath);
-							MessageBox.Show(msg, "DEBUG!");
+							Debug.WriteLine(msg, "DEBUG!");
 						}
 						return null;
 					}

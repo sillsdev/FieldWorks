@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 using System.Threading;
 
@@ -551,7 +552,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					m_cache.ThreadHelper.Invoke(() =>
 					{
 						MessageBox.Show(null, msg, Strings.ksErrorCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);
-						ErrorReporter.ReportException(new Exception(fullMsg, e), null, null, null, true);
+						m_cache.ServiceLocator.GetInstance<IFdoUserAction>().ReportException(new Exception(fullMsg, e), true);
 					});
 				}
 				return m_object;

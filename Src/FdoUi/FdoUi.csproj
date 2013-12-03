@@ -372,5 +372,10 @@
   <ItemGroup>
     <Content Include="Resources\question.ico" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Utilities\Reporting\Reporting.csproj">
+      <Project>{9CCBECEC-513C-4DA4-A4CE-F5361B633760}</Project>
+      <Name>Reporting</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

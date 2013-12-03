@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Win32;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -20,6 +21,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// </summary>
 	public class DummyFdoUserAction : IFdoUserAction
 	{
+		/// <summary>
+		/// Gets the error message.
+		/// </summary>
+		/// <value>
+		/// The error message.
+		/// </value>
+		public string ErrorMessage { get; private set; }
+
 		/// <summary>
 		/// Check with user regarding conflicting changes
 		/// </summary>
@@ -70,6 +79,32 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Displays information to the user
 		/// </summary>
 		public void MessageBox()
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Show a dialog or output to the error log, as appropriate.
+		/// </summary>
+		/// <param name="error">the exception you want to report</param>
+		/// <param name="isLethal">set to <c>true</c> if the error is lethal, otherwise
+		/// <c>false</c>.</param>
+		/// <returns>True if the error was lethal and the user chose to exit the application,
+		/// false otherwise.</returns>
+		public bool ReportException(Exception error, bool isLethal)
+		{
+			// Store the message so we can check it later
+			ErrorMessage = error.Message;
+			return isLethal;
+		}
+
+		/// <summary>
+		/// Reports duplicate guids to the user
+		/// </summary>
+		/// <param name="applicationKey">The application key.</param>
+		/// <param name="emailAddress">The email address.</param>
+		/// <param name="errorText">The error text.</param>
+		public void ReportDuplicateGuids(RegistryKey applicationKey, string emailAddress, string errorText)
 		{
 			throw new NotImplementedException();
 		}

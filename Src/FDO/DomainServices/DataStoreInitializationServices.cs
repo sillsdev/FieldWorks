@@ -17,6 +17,7 @@ using System.Diagnostics;
 using System.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.Utils;
 using SILUBS.SharedScrUtils;
@@ -385,7 +386,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (hadError)
 			{
 				// Tell the user that something bad happened
-				ErrorReporter.ReportException(new Exception("Error during resegmentation"), null, null, null, false);
+				cache.ServiceLocator.GetInstance<IFdoUserAction>().ReportException(new Exception("Error during resegmentation"), false);
 			}
 		}
 

@@ -305,7 +305,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					sb.AppendLine(String.Format(Strings.ksDuplicateGuidsMsg2, guid));
 					sb.AppendLine();
 				}
-				ErrorReporter.ReportDuplicateGuids(FwRegistryHelper.FieldWorksRegistryKey, "FLExErrors@sil.org", null, sb.ToString());
+				m_cache.ServiceLocator.GetInstance<IFdoUserAction>().ReportDuplicateGuids(FwRegistryHelper.FieldWorksRegistryKey, "FLExErrors@sil.org", sb.ToString());
 			}
 		}
 

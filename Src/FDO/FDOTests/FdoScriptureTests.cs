@@ -18,6 +18,7 @@ using System.Linq;
 using NUnit.Framework;
 
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.Utils;
 using SIL.FieldWorks.Test.TestUtils;
@@ -313,19 +314,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			base.TestSetup();
 			m_servloc = Cache.ServiceLocator;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Override to end the undoable UOW, Undo everything, and 'commit',
-		/// which will essentially clear out the Redo stack.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public override void TestTearDown()
-		{
-			base.TestTearDown();
-
-			ReflectionHelper.CallMethod(typeof(ScriptureServices), "InitializeWarningHandler");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2553,8 +2541,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			IScrFootnote footnoteOrig2 = AddFootnote(hebrews, para2, 0);
 
 			// archive draft
-			string sWarningMessage = null;
-			ReflectionHelper.SetAction<string>(typeof(ScriptureServices), "ReportWarning", sMsg => { sWarningMessage = sMsg; });
 			IScrDraft draft = m_servloc.GetInstance<IScrDraftFactory>().Create("", new [] { hebrews });
 
 			Assert.AreEqual(1, m_scr.ArchivedDraftsOC.Count);
@@ -2600,6 +2586,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string sOrc = tss.get_RunText(0);
 			Assert.AreEqual(StringUtils.kChObject, sOrc[0]);
 
+			// Expecting error to have been thrown in ScriptureServices.AdjustObjectsInArchivedBook, so now we make sure the error is the one expected.
+			var userAction = Cache.ServiceLocator.GetInstance<IFdoUserAction>();
+			Assert.IsTrue(userAction is DummyFdoUserAction);
+			string sWarningMessage = ((DummyFdoUserAction)userAction).ErrorMessage;
 			Assert.AreEqual("1 footnote(s) in HEB did not correspond to any owned footnotes in the vernacular text of that book. They have been moved to the end of the footnote sequence.", sWarningMessage);
 		}
 
