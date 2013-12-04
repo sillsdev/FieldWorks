@@ -24,8 +24,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// The repo may be a lift or full FW repo, but it can be from any source source, as long as the code can create an FW project from it.
 		/// </summary>
 		/// <returns>Null if the operation was cancelled or otherwise did not work. The full pathname of an fwdata file, if it did work.</returns>
-		public static string ObtainProjectFromAnySource(Form parent, IHelpTopicProvider helpTopicProvider,
-			out ObtainedProjectType obtainedProjectType)
+		public static string ObtainProjectFromAnySource(Form parent, IHelpTopicProvider helpTopicProvider, out ObtainedProjectType obtainedProjectType, IFdoUserAction userAction)
 		{
 			bool dummy;
 			string fwdataFileFullPathname;
@@ -46,7 +45,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (fwdataFileFullPathname.EndsWith("lift"))
 			{
-				fwdataFileFullPathname = CreateProjectFromLift(parent, helpTopicProvider, fwdataFileFullPathname);
+				fwdataFileFullPathname = CreateProjectFromLift(parent, helpTopicProvider, fwdataFileFullPathname, userAction);
 				obtainedProjectType = ObtainedProjectType.Lift;
 			}
 
@@ -56,7 +55,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Create a new Fieldworks project and import a lift file into it. Return the .fwdata path.
 		/// </summary>
-		private static string CreateProjectFromLift(Form parent, IHelpTopicProvider helpTopicProvider, string liftPath)
+		private static string CreateProjectFromLift(Form parent, IHelpTopicProvider helpTopicProvider, string liftPath, IFdoUserAction userAction)
 		{
 			string projectPath;
 			FdoCache cache;
@@ -73,7 +72,7 @@ namespace SIL.FieldWorks.Common.Controls
 				progressDlg.Title = FwControls.ksCreatingLiftProject;
 				var cacheReceiver = new FdoCache[1]; // a clumsy way of handling an out parameter, consistent with RunTask
 				projectPath = (string)progressDlg.RunTask(true, CreateProjectTask,
-					new[] { liftPath, parent, anthroListFile, cacheReceiver });
+					new[] { liftPath, parent, userAction, anthroListFile, cacheReceiver });
 				cache = cacheReceiver[0];
 			}
 
@@ -103,19 +102,20 @@ namespace SIL.FieldWorks.Common.Controls
 			// Get required parameters. Ideally these would just be the signature of the method, but RunTask requires object[].
 			var liftPathname = (string) parameters[0];
 			var synchronizeInvoke = (ISynchronizeInvoke) parameters[1];
-			var anthroFile = (string) parameters[2];
-			var cacheReceiver = (FdoCache[]) parameters[3];
+			var userAction = (IFdoUserAction) parameters[2];
+			var anthroFile = (string) parameters[3];
+			var cacheReceiver = (FdoCache[]) parameters[4];
 
 			IWritingSystem wsVern, wsAnalysis;
 			RetrieveDefaultWritingSystemsFromLift(liftPathname, out wsVern, out wsAnalysis);
 
 			string projectPath = FdoCache.CreateNewLangProj(progress,
 				Directory.GetParent(Path.GetDirectoryName(liftPathname)).Parent.Name, // Get the new Flex project name from the Lift pathname.
-				synchronizeInvoke, wsAnalysis, wsVern, null, null, null, anthroFile);
+				synchronizeInvoke, userAction, wsAnalysis, wsVern, null, null, null, anthroFile);
 
 			// This is a temporary cache, just to do the import, and AFAIK we have no access to the current
 			// user WS. So create it as "English". Put it in the array to return to the caller.
-			cacheReceiver[0] = FdoCache.CreateCacheFromLocalProjectFile(projectPath, "en", progress, new SilentFdoUserAction(synchronizeInvoke));
+			cacheReceiver[0] = FdoCache.CreateCacheFromLocalProjectFile(projectPath, "en", progress, userAction);
 			return projectPath;
 		}
 

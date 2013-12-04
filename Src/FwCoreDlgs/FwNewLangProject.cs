@@ -566,7 +566,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			// Create new project
 			//
-			CreateNewLangProjWithProgress();
+			CreateNewLangProjWithProgress(m_userAction);
 		}
 
 		private string RemoveNonAsciiCharsFromProjectName()
@@ -673,7 +673,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Create a new language project showing a progress dialog.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected void CreateNewLangProjWithProgress()
+		protected void CreateNewLangProjWithProgress(IFdoUserAction userAction)
 		{
 			try
 			{
@@ -694,7 +694,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						using (var threadHelper = new ThreadHelper())
 						{
 							m_dbFile = (string)progressDlg.RunTask(DisplayUi, FdoCache.CreateNewLangProj,
-																	ProjectName, threadHelper, m_cbAnalWrtSys.SelectedItem,
+																	ProjectName, threadHelper, userAction, m_cbAnalWrtSys.SelectedItem,
 																	m_cbVernWrtSys.SelectedItem,
 																	((PalasoWritingSystem)m_wsManager.UserWritingSystem).RFC5646,
 																	m_newAnalysisWss, m_newVernWss, anthroFile);

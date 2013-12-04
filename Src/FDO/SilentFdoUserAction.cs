@@ -129,5 +129,16 @@ namespace SIL.FieldWorks.FDO
 		{
 			// Informational only
 		}
+
+		/// <summary>
+		/// Present a message to the user and allow the options to Retry or Cancel
+		/// </summary>
+		/// <param name="msg">The message.</param>
+		/// <param name="caption">The caption.</param>
+		/// <returns>True to retry.  False otherwise</returns>
+		public bool Retry(string msg, string caption)
+		{
+			return false;
+		}
 	}
 }

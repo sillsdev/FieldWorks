@@ -87,7 +87,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 				using (new DummyFileMaker(Path.Combine(DirectoryFinder.ProjectsDirectory, "Gumby", DirectoryFinder.GetXmlDataFileName("Gumby"))))
 				{
 					using (var threadHelper = new ThreadHelper())
-						FdoCache.CreateNewLangProj(new DummyProgressDlg(), "Gumby", threadHelper);
+						FdoCache.CreateNewLangProj(new DummyProgressDlg(), "Gumby", threadHelper, new DummyFdoUserAction());
 				}
 			}
 			finally
@@ -117,7 +117,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 			{
 				string dbFileName;
 				using (var threadHelper = new ThreadHelper())
-					dbFileName = FdoCache.CreateNewLangProj(new DummyProgressDlg(), dbName, threadHelper);
+					dbFileName = FdoCache.CreateNewLangProj(new DummyProgressDlg(), dbName, threadHelper, new DummyFdoUserAction());
 
 				currentDirs = new List<string>(Directory.GetDirectories(DirectoryFinder.ProjectsDirectory));
 				if (currentDirs.Contains(writingSystemsCommonDir) && !expectedDirs.Contains(writingSystemsCommonDir))
@@ -148,7 +148,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 				// create project
 				string dbFileName;
 				using (var threadHelper = new ThreadHelper())
-					dbFileName = FdoCache.CreateNewLangProj(new DummyProgressDlg(), dbName, threadHelper);
+					dbFileName = FdoCache.CreateNewLangProj(new DummyProgressDlg(), dbName, threadHelper, new DummyFdoUserAction());
 
 				using (var cache = FdoCache.CreateCacheFromLocalProjectFile(dbFileName, "en", new DummyProgressDlg(), m_userAction))
 				{

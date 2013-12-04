@@ -1230,7 +1230,7 @@ namespace SIL.FieldWorks.XWorks
 		/// ------------------------------------------------------------------------------------
 		private void LaunchProjPropertiesDlg(bool startOnWSPage)
 		{
-			if (!ClientServerServices.Current.WarnOnOpeningSingleUserDialog(Cache))
+			if (!ClientServerServicesHelper.WarnOnOpeningSingleUserDialog(Cache))
 				return;
 			FdoCache cache = Cache;
 			bool fDbRenamed = false;

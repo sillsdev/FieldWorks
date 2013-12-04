@@ -168,22 +168,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		IDisposable GetExclusiveModeToken(FdoCache cache, string id);
 
 		/// <summary>
-		/// Display a warning indicating that it may be dangerous to change things that the user has just
-		/// asked to change when other users are connected. The warning should only be shown if, in fact,
-		/// other users are currently connected. The dialog may contain some information about the other
-		/// users that are connected. Return true to continue, false to discard the changes. This is typically
-		/// called in response to clicking an OK button in a dialog which changes dangerous user settings.
+		/// Returns the number of other users currently connected
 		/// </summary>
-		/// <returns></returns>
-		bool WarnOnConfirmingSingleUserChanges(FdoCache cache);
-		/// <summary>
-		/// Display a warning indicating that it may be dangerous to change things in the dialog that
-		/// is about to open when other users are connected. The warning should only be shown if, in fact,
-		/// other users are currently connected. The dialog may contain some information about the other
-		/// users that are connected. Return true to continue, false to cancel opening the dialog.
-		/// </summary>
-		/// <returns></returns>
-		bool WarnOnOpeningSingleUserDialog(FdoCache cache);
+		/// <param name="cache">The FDO cache.</param>
+		/// <returns>The number of other users currently connected</returns>
+		int CountOfOtherUsersConnected(FdoCache cache);
 	}
 	#endregion
 
@@ -238,10 +227,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="progressDlg">The progress dialog for getting a message box owner and/or
 		/// ensuring we're invoking on the uI thread.</param>
 		/// <param name="filename">The full path of the existing XML file for the project</param>
+		/// <param name="userAction"></param>
 		/// <returns>The project identifier, typically the path to the converted file (or the
 		/// original, if not configured for the client-server backend)</returns>
 		/// ------------------------------------------------------------------------------------
-		string ConvertToDb4oBackendIfNeeded(IThreadedProgress progressDlg, string filename);
+		string ConvertToDb4oBackendIfNeeded(IThreadedProgress progressDlg, string filename, IFdoUserAction userAction);
 
 		/// <summary>
 		/// Copies the specified project (assumed to be in the current Projects directory)
@@ -475,7 +465,12 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			return null;
 		}
 
-		int CountOfOtherUsersConnected(FdoCache cache)
+		/// <summary>
+		/// Returns the number of other users currently connected
+		/// </summary>
+		/// <param name="cache">The FDO cache.</param>
+		/// <returns>The number of other users currently connected</returns>
+		public int CountOfOtherUsersConnected(FdoCache cache)
 		{
 			if (cache == null) // Can happen when creating a new project when editing the WS properties. (FWR-2981)
 				return 0;
@@ -487,41 +482,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			var projectName = bep.ProjectId.Name;
 			var otherUsers = ListConnectedClients(serverName, projectName);
 			return otherUsers.Length - 1; // Assume this is connected!
-		}
-
-		/// <summary>
-		/// Display a warning indicating that it may be dangerous to change things that the user has just
-		/// asked to change when other users are connected. The warning should only be shown if, in fact,
-		/// other users are currently connected. The dialog may contain some information about the other
-		/// users that are connected. Return true to continue, false to discard the changes. This is typically
-		/// called in response to clicking an OK button in a dialog which changes dangerous user settings.
-		/// </summary>
-		/// <returns></returns>
-		public bool WarnOnConfirmingSingleUserChanges(FdoCache cache)
-		{
-			var others = CountOfOtherUsersConnected(cache);
-			if (others == 0)
-				return true;
-			var msg = string.Format(Strings.ksWarnOnConfirmingSingleUserChanges.Replace("\\n", Environment.NewLine), others);
-			return ThreadHelper.ShowMessageBox(null, msg, Strings.ksNotAdvisableOthersConnectedCaption,
-				MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
-		}
-
-		/// <summary>
-		/// Display a warning indicating that it may be dangerous to change things in the dialog that
-		/// is about to open when other users are connected. The warning should only be shown if, in fact,
-		/// other users are currently connected. The dialog may contain some information about the other
-		/// users that are connected. Return true to continue, false to cancel opening the dialog.
-		/// </summary>
-		/// <returns></returns>
-		public bool WarnOnOpeningSingleUserDialog(FdoCache cache)
-		{
-			var others = CountOfOtherUsersConnected(cache);
-			if (others == 0)
-				return true;
-			var msg = string.Format(Strings.ksWarnOnOpeningSingleUserDialog.Replace("\\n", Environment.NewLine), others);
-			return ThreadHelper.ShowMessageBox(null, msg, Strings.ksOthersConnectedCaption,
-				MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.OK;
 		}
 
 		#region TrivialDisposable class
@@ -630,10 +590,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				{
 				}
 			}
-			while ((serverInfo == null && ThreadHelper.ShowMessageBox(progress.Form,
-				string.Format(Strings.ksLocalConnectorServiceNotStarted, "FwRemoteDatabaseConnectorService"),
-				fShare ? Strings.ksConvertingToShared : Strings.ksConvertingToNonShared,
-				MessageBoxButtons.RetryCancel, MessageBoxIcon.None) == DialogResult.Retry));
+			while (serverInfo == null &&
+				userAction.Retry(string.Format(Strings.ksLocalConnectorServiceNotStarted, "FwRemoteDatabaseConnectorService"),
+				fShare ? Strings.ksConvertingToShared : Strings.ksConvertingToNonShared));
 
 			if (serverInfo == null || serverInfo.AreProjectShared() == fShare)
 				return false;
@@ -644,7 +603,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (fShare)
 			{
 				// Turning sharing on.
-				if (!ConvertAllProjectsToDb4o(progress))
+				if (!ConvertAllProjectsToDb4o(progress, userAction))
 				{
 					LocalDb4OServerInfoConnection.ShareProjects(false); // could not switch
 					return false;
@@ -687,7 +646,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// </summary>
 		/// <returns>false if clients are still connected.</returns>
 		/// ------------------------------------------------------------------------------------
-		private static bool EnsureNoClientsAreConnected()
+		private static bool EnsureNoClientsAreConnected(IFdoUserAction userAction)
 		{
 			var localService = LocalDb4OServerInfoConnection;
 			if (localService == null)
@@ -702,8 +661,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					connectedClientsMsg.AppendFormat("{2}{0} : {1}", client, Dns.GetHostEntry(client).HostName, Environment.NewLine);
 				}
 
-				if (MessageBoxUtils.Show(String.Format(Strings.ksAllProjectsMustDisconnectClients, connectedClientsMsg),
-					Strings.ksAllProjectsMustDisconnectCaption, MessageBoxButtons.RetryCancel) == DialogResult.Cancel)
+				if (!userAction.Retry(String.Format(Strings.ksAllProjectsMustDisconnectClients, connectedClientsMsg),
+					Strings.ksAllProjectsMustDisconnectCaption))
 					return false;
 
 				connectedClients = localService.ListConnectedClients();
@@ -720,11 +679,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// TODO: prevent new connections while in this shutdown phase.
 		/// TODO: as an enhancement connected clients could be messaged and asked to disconnect.
 		/// </summary>
-		/// <param name="messageBoxOwner">The message box owner.</param>
 		/// <param name="projectName">project name.</param>
+		/// <param name="userAction"></param>
 		/// <returns>false if clients are still connected.</returns>
 		/// ------------------------------------------------------------------------------------
-		private static bool EnsureNoClientsAreConnected(Form messageBoxOwner, string projectName)
+		private static bool EnsureNoClientsAreConnected(string projectName, IFdoUserAction userAction)
 		{
 			Db4oServerInfo localService = LocalDb4OServerInfoConnection;
 			if (localService == null)
@@ -736,7 +695,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				foreach (string client in connectedClients)
 					connectedClientsMsg.AppendFormat("{2}{0} : {1}", client, Dns.GetHostEntry(client).HostName, Environment.NewLine);
 
-				if (WarnOfOtherConnectedClients(messageBoxOwner, projectName, connectedClientsMsg.ToString()) == DialogResult.Cancel)
+				if (!WarnOfOtherConnectedClients(projectName, connectedClientsMsg.ToString(), userAction))
 					return false;
 
 				connectedClients = localService.ListConnectedClients(projectName);
@@ -749,18 +708,17 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <summary>
 		/// Warns the of other connected clients.
 		/// </summary>
-		/// <param name="messageBoxOwner">The message box owner.</param>
 		/// <param name="projectName">Name of the project.</param>
 		/// <param name="connectedClientsMsg">The message to show about the connected clients.
 		/// </param>
+		/// <param name="userAction"></param>
 		/// ------------------------------------------------------------------------------------
-		private static DialogResult WarnOfOtherConnectedClients(Form messageBoxOwner,
-			string projectName, string connectedClientsMsg)
+		private static bool WarnOfOtherConnectedClients(string projectName, string connectedClientsMsg, IFdoUserAction userAction)
 		{
 			var msg = String.Format(Strings.ksMustDisconnectClients, projectName, connectedClientsMsg);
 			var caption = String.Format(Strings.ksMustDisconnectCaption, projectName);
-			return ThreadHelper.ShowMessageBox(messageBoxOwner, msg, caption,
-				MessageBoxButtons.RetryCancel, MessageBoxIcon.None);
+
+			return userAction.Retry(msg, caption);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -772,7 +730,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		private bool ConvertAllProjectsToXml(IThreadedProgress progressDlg, IFdoUserAction userAction)
 		{
-			if (!EnsureNoClientsAreConnected())
+			if (!EnsureNoClientsAreConnected(userAction))
 				return false;
 
 			progressDlg.Title = Strings.ksConvertingToNonShared;
@@ -819,16 +777,17 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Converts all projects to db4o.
 		/// </summary>
 		/// <param name="progressDlg">The progress dialog box.</param>
+		/// <param name="userAction"></param>
 		/// ------------------------------------------------------------------------------------
-		private bool ConvertAllProjectsToDb4o(IThreadedProgress progressDlg)
+		private bool ConvertAllProjectsToDb4o(IThreadedProgress progressDlg, IFdoUserAction userAction)
 		{
 			progressDlg.Title = Strings.ksConvertingToShared;
 			progressDlg.AllowCancel = false;
 			progressDlg.Maximum = Directory.GetDirectories(DirectoryFinder.ProjectsDirectory).Count();
-			return (bool)progressDlg.RunTask(true, ConvertAllProjectsToDb4o);
+			return (bool)progressDlg.RunTask(true, (progress, args) => ConvertAllProjectsToDb4o(progress, userAction, args));
 		}
 
-		private object ConvertAllProjectsToDb4o(IThreadedProgress progress, object[] args)
+		private object ConvertAllProjectsToDb4o(IThreadedProgress progress, IFdoUserAction userAction, object[] args)
 		{
 			for (; ; )
 			{
@@ -846,9 +805,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				if (projects.Length == 0)
 					break;
 				projects = projects.Substring(0, projects.Length - ", ".Length);
-				// ENHANCE (TimS): Showing a message box at this level is not a good idea.
-				if (ThreadHelper.ShowMessageBox(progress.Form, string.Format(Strings.ksMustCloseProjectsToShare, projects),
-					Strings.ksConvertingToShared, MessageBoxButtons.RetryCancel, MessageBoxIcon.None) != DialogResult.Retry)
+
+				if (!userAction.Retry(string.Format(Strings.ksMustCloseProjectsToShare, projects), Strings.ksConvertingToShared))
 					return false;
 			}
 			foreach (string projectFolder in Directory.GetDirectories(DirectoryFinder.ProjectsDirectory))
@@ -861,7 +819,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				{
 				try
 				{
-						ConvertToDb4oBackendIfNeeded(progress, projectPath);
+						ConvertToDb4oBackendIfNeeded(progress, projectPath, userAction);
 				}
 				catch (Exception e)
 				{
@@ -899,15 +857,16 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="progressDlg">The progress dialog (for getting a message box owner and/or
 		/// ensuring we're invoking on the UI thread).</param>
 		/// <param name="xmlFilename">The full path of the existing XML file for the project</param>
+		/// <param name="userAction"></param>
 		/// <returns>The project identifier, typically the path to the converted file (or the
 		/// original, if not configured for the client-server backend)</returns>
 		/// ------------------------------------------------------------------------------------
-		public string ConvertToDb4oBackendIfNeeded(IThreadedProgress progressDlg, string xmlFilename)
+		public string ConvertToDb4oBackendIfNeeded(IThreadedProgress progressDlg, string xmlFilename, IFdoUserAction userAction)
 		{
 			if (!ShareMyProjects)
 				return xmlFilename; // no conversion needed.
 			string desiredPath = Path.ChangeExtension(xmlFilename, FwFileExtensions.ksFwDataDb4oFileExtension);
-			if (!EnsureNoClientsAreConnected(progressDlg.Form, Path.GetFileNameWithoutExtension(desiredPath)))
+			if (!EnsureNoClientsAreConnected(Path.GetFileNameWithoutExtension(desiredPath), userAction))
 				return null; // fail
 
 			try

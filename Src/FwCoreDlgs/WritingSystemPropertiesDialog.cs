@@ -155,7 +155,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				if (addNewForLangOfSelectedWs)
 					wsPropsDlg.AddNewWsForLanguage();
 
-				if (!ClientServerServices.Current.WarnOnOpeningSingleUserDialog(cache))
+				if (!ClientServerServicesHelper.WarnOnOpeningSingleUserDialog(cache))
 					return false; // nothing changed.
 
 				if (wsPropsDlg.ShowDialog(owner) == DialogResult.OK)
@@ -1566,7 +1566,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				if (!CheckOkToChangeContext())
 					return;
-				if (ThereAreChanges && ClientServerServices.Current.WarnOnConfirmingSingleUserChanges(m_cache))
+				if (ThereAreChanges && ClientServerServicesHelper.WarnOnConfirmingSingleUserChanges(m_cache))
 					SaveChanges();
 
 				DialogResult = DialogResult.OK;

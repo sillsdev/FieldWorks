@@ -82,6 +82,14 @@ namespace SIL.FieldWorks.FDO
 		/// <param name="emailAddress">The email address.</param>
 		/// <param name="errorText">The error text.</param>
 		void ReportDuplicateGuids(RegistryKey applicationKey, string emailAddress, string errorText);
+
+		/// <summary>
+		/// Present a message to the user and allow the options to Retry or Cancel
+		/// </summary>
+		/// <param name="msg">The message.</param>
+		/// <param name="caption">The caption.</param>
+		/// <returns>True to retry.  False otherwise</returns>
+		bool Retry(string msg, string caption);
 	}
 
 	/// <summary>

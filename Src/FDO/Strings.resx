@@ -860,18 +860,6 @@ Your changes to this entry will be discarded when you exit the project.</value>
   <data name="ksUndoResetHomographs" xml:space="preserve">
     <value>Undo Reset Homograph Numbers</value>
   </data>
-  <data name="ksWarnOnConfirmingSingleUserChanges" xml:space="preserve">
-    <value>Number of other users: {0}
-When saving changes in this dialog with other users connected, FieldWorks may crash or malfunction for those users.
-
-Do you want to make the changes anyway?</value>
-  </data>
-  <data name="ksNotAdvisableOthersConnectedCaption" xml:space="preserve">
-    <value>Not advisable when other users connected</value>
-  </data>
-  <data name="ksOthersConnectedCaption" xml:space="preserve">
-    <value>Take care - other users connected</value>
-  </data>
   <data name="ksCannotRestore" xml:space="preserve">
     <value>Cannot Restore</value>
     <comment>Caption for ksCannotRestoreBackup message box</comment>
@@ -895,13 +883,6 @@ Corrupted Record:
     <value>Short delay</value>
     <comment>Caption that goes with ksOtherClientsAreWriting</comment>
   </data>
-  <data name="ksWarnOnOpeningSingleUserDialog" xml:space="preserve">
-    <value>Number of other users: {0}
-The menu command you selected will open a dialog box. If you change any selections or settings in the dialog box, other users who have this project open on their computers will have problems.
-
-If you will only look at selections and settings, click OK.
-
-If you need to make changes, tell the other users to close this project before you continue, or click Cancel.</value>
   </data>
   <data name="ksConvertFailedNewerVersion" xml:space="preserve">
     <value>FieldWorks was unable to convert the project {0} because it was created by a more recent version of FieldWorks. To convert this project, install the appropriate version of FieldWorks, and turn sharing off then on again. (Note that doing this will upgrade all your projects to the newer version.)</value>

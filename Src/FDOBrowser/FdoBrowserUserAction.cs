@@ -138,5 +138,17 @@ namespace FDOBrowser
 		{
 			System.Windows.Forms.MessageBox.Show(errorText, "Duplicate Guids");
 		}
+
+		/// <summary>
+		/// Present a message to the user and allow the options to Retry or Cancel
+		/// </summary>
+		/// <param name="msg">The message.</param>
+		/// <param name="caption">The caption.</param>
+		/// <returns>True to retry.  False otherwise</returns>
+		public bool Retry(string msg, string caption)
+		{
+			return System.Windows.Forms.MessageBox.Show(msg, caption,
+				MessageBoxButtons.RetryCancel, MessageBoxIcon.None) == DialogResult.Retry;
+		}
 	}
 }

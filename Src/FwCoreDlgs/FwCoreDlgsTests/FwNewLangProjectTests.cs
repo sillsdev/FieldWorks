@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			CheckDisposed();
 
-			CreateNewLangProjWithProgress();
+			CreateNewLangProjWithProgress(new DummyFdoUserAction());
 			NonAsciiWarningWasActivated = false;
 			SimulatedNonAsciiDialogResult = DialogResult.Cancel;
 		}

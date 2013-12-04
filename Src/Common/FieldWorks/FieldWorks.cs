@@ -1652,7 +1652,7 @@ namespace SIL.FieldWorks
 							projectToTry = null; // If the user cancels the send/receive, this null will result in a return to the welcome dialog.
 							// Hard to say what Form.ActiveForm is here. The splash and welcome dlgs are both gone.
 							var projectDataPathname = ObtainProjectMethod.ObtainProjectFromAnySource(Form.ActiveForm,
-								helpTopicProvider, out obtainedProjectType);
+								helpTopicProvider, out obtainedProjectType, s_userAction);
 							if (!string.IsNullOrEmpty(projectDataPathname))
 							{
 								projectToTry = new ProjectId(FDOBackendProviderType.kXML, projectDataPathname, null);
@@ -1724,7 +1724,7 @@ namespace SIL.FieldWorks
 			{
 				return null;
 			}
-			using (var dlg = new ChooseLangProjectDialog(helpTopicProvider, false))
+			using (var dlg = new ChooseLangProjectDialog(helpTopicProvider, false, s_userAction))
 			{
 				dlg.ShowDialog(dialogOwner);
 				var app = helpTopicProvider as IApp;

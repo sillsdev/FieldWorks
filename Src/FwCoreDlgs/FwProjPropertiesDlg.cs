@@ -976,7 +976,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				return;
 			}
 
-			if (!ClientServerServices.Current.WarnOnConfirmingSingleUserChanges(m_cache)) //if Anything changed, check and warn about DB4o
+			if (!ClientServerServicesHelper.WarnOnConfirmingSingleUserChanges(m_cache)) //if Anything changed, check and warn about DB4o
 			{
 				NotifyProjectPropsChangedAndClose(); //The user changed something, but when warned decided against it, so do not save just quit
 				return;
