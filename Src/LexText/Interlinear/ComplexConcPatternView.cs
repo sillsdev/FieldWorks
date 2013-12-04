@@ -39,6 +39,14 @@ namespace SIL.FieldWorks.IText
 			{
 				return false;
 			}
+
+			/// <summary>
+			/// We don't want typing to do anything.  On Linux, it does without this method,
+			/// causing a crash immediately.  See FWNX-1337.
+			/// </summary>
+			protected override void CallOnTyping(string str, Keys modifiers)
+			{
+			}
 		}
 
 		protected override EditingHelper CreateEditingHelper()
