@@ -89,11 +89,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			if (extension == ".xml")
 			{
 				if (!IsValid6_0Xml(pathname))
-				{
-					MessageBoxUtils.Show(m_progressDlg.Form, Strings.ksBackupXMLFileTooOld,
-						Strings.ksCannotConvert);
-					return false;
-				}
+					throw new CannotConvertException(Strings.ksBackupXMLFileTooOld);
 				var result1 = ImportFrom6_0Xml(pathname, folderName, projectFile);
 				return result1;
 			}
@@ -129,9 +125,16 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 							else
 								continue;
 						}
-						// Next step is to run the converter. It should be in the same directory as FDO.dll
-						var result = ImportFrom6_0Xml(tempPath, folderName, projectFile);
-						File.Delete(tempPath);
+						bool result;
+						try
+						{
+							// Next step is to run the converter. It should be in the same directory as FDO.dll
+							result = ImportFrom6_0Xml(tempPath, folderName, projectFile);
+						}
+						finally
+						{
+							File.Delete(tempPath);
+						}
 						return result;
 					}
 					if (entry.Name.ToLowerInvariant().EndsWith(".bak") && entry.IsFile)
@@ -142,10 +145,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 					}
 				}
 				if (!fHasBak)
-				{
-					MessageBoxUtils.Show(m_progressDlg.Form, Strings.ksZipNotFieldWorksBackup, Strings.ksCannotConvert);
-					return false;
-				}
+					throw new CannotConvertException(Strings.ksZipNotFieldWorksBackup);
 				if (HaveFwSqlServer && HaveOldFieldWorks)
 				{
 					foreach (ZipEntry entry in zipFile)
@@ -179,15 +179,23 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 							proj, "{0}", "{1}");
 							if (!DumpDatabaseAsXml(TempDatabaseName, tempXmlPath, msg3, errMsgFmt3))
 								return false;
-							// Next step is to run the converter. It should be in the same directory as FDO.dll
-							var result = ImportFrom6_0Xml(tempXmlPath, folderName, projectFile);
-							File.Delete(tempXmlPath);
-							DeleteTempDatabase();
+
+							bool result;
+							try
+							{
+								// Next step is to run the converter. It should be in the same directory as FDO.dll
+								result = ImportFrom6_0Xml(tempXmlPath, folderName, projectFile);
+							}
+							finally
+							{
+								File.Delete(tempXmlPath);
+								DeleteTempDatabase();
+							}
 							return result;
 						}
 					}
 					// Should never get here, but ...
-					MessageBoxUtils.Show(m_progressDlg.Form, Strings.ksZipNotFieldWorksBackup, Strings.ksCannotConvert);
+					throw new CannotConvertException(Strings.ksZipNotFieldWorksBackup);
 				}
 				return false;
 			}
@@ -532,8 +540,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				if (process.ExitCode != 0 || !string.IsNullOrEmpty(m_errorMessages))
 				{
 					var msg = string.Format(errorMsgFmt, process.ExitCode, m_errorMessages);
-					MessageBoxUtils.Show(m_progressDlg.Form, msg, Strings.ksCannotConvert);
-					return false;
+					throw new CannotConvertException(msg);
 				}
 				return true;
 			}
@@ -558,8 +565,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				if (process.ExitCode != 0 || !string.IsNullOrEmpty(m_errorMessages))
 				{
 					var msg = string.Format(errorMsgFmt, process.ExitCode, m_errorMessages);
-					MessageBoxUtils.Show(m_progressDlg.Form, msg, Strings.ksCannotConvert);
-					return false;
+					throw new CannotConvertException(msg);
 				}
 				return true;
 			}
@@ -675,19 +681,12 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				else if (process.ExitCode != 0 || !String.IsNullOrEmpty(m_errorMessages))
 				{
 					message = String.Format(Strings.ksConversionProcessFailed, process.ExitCode, m_errorMessages);
-					// ENHANCE (TimS): We should not be showing a message box at this level. If we
-					// really need to show it here, we should pass in the owning form instead of relying on
-					// Form.ActiveForm since it can return null if no .Net forms have focus.
-					MessageBoxUtils.Show(Form.ActiveForm, message, Strings.ksCannotConvert);
-					retval = false;
+					BackOutCleanUp(projectFile, fCreateFolder, folderName, replacedProj);
+					throw new CannotConvertException(message);
 				}
 				if (retval == false)
 				{
-					File.Delete(projectFile);
-					if (fCreateFolder)
-						Directory.Delete(folderName);
-					else if (replacedProj != null)
-						File.Move(replacedProj, projectFile);
+					BackOutCleanUp(projectFile, fCreateFolder, folderName, replacedProj);
 				}
 				else
 				{
@@ -710,6 +709,15 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				}
 				return retval;
 			}
+		}
+
+		private void BackOutCleanUp(string projectFile, bool fCreateFolder, string folderName, string replacedProj)
+		{
+			File.Delete(projectFile);
+			if (fCreateFolder)
+				Directory.Delete(folderName);
+			else if (replacedProj != null)
+				File.Move(replacedProj, projectFile);
 		}
 
 		/// <summary>
@@ -803,4 +811,25 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				m_stdoutBldr.AppendLine(e.Data);
 		}
 	}
+
+	#region class CannotConvertException
+	/// ----------------------------------------------------------------------------------------
+	/// <summary>
+	/// Exception type to encapsulate a problem while running the conversion
+	/// </summary>
+	/// ----------------------------------------------------------------------------------------
+	public class CannotConvertException : Exception
+	{
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Initializes a new instance of the <see cref="CannotConvertException"/> class.
+		/// </summary>
+		/// <param name="message">The message.</param>
+		/// ------------------------------------------------------------------------------------
+		public CannotConvertException(string message)
+			: base(message)
+		{
+		}
+	}
+	#endregion
 }

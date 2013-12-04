@@ -129,12 +129,22 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 
 		private void ImportFrom6_0Backup(BackupFileSettings fileSettings, IThreadedProgress progressDlg)
 		{
-			ImportFrom6_0 importer = new ImportFrom6_0(progressDlg);
-			string projFile;
-			if (!importer.Import(fileSettings.File, m_restoreSettings.ProjectName, out projFile))
+			var importer = new ImportFrom6_0(progressDlg);
+			bool importSuccessful;
+			try
 			{
-				ExceptionHelper.LogAndIgnoreErrors(() => CleanupFrom6_0FailedRestore(importer));
-				ExceptionHelper.LogAndIgnoreErrors(() => CleanupAfterRestore(false));
+				string projFile;
+				importSuccessful = importer.Import(fileSettings.File, m_restoreSettings.ProjectName, out projFile);
+			}
+			catch (CannotConvertException e)
+			{
+				FailedImportCleanUp(importer);
+				throw;
+			}
+			if (!importSuccessful)
+			{
+				FailedImportCleanUp(importer);
+
 				if (!importer.HaveOldFieldWorks || !importer.HaveFwSqlServer)
 				{
 					throw new MissingOldFwException("Error restoring from FieldWorks 6.0 (or earlier) backup",
@@ -142,6 +152,12 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 				}
 				throw new FailedFwRestoreException("Error restoring from FieldWorks 6.0 (or earlier) backup");
 			}
+		}
+
+		private void FailedImportCleanUp(ImportFrom6_0 importer)
+		{
+			ExceptionHelper.LogAndIgnoreErrors(() => CleanupFrom6_0FailedRestore(importer));
+			ExceptionHelper.LogAndIgnoreErrors(() => CleanupAfterRestore(false));
 		}
 
 		private void RestoreFrom7_0AndNewerBackup(BackupFileSettings fileSettings)

@@ -41,6 +41,7 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
+using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FwCoreDlgs;
@@ -2516,6 +2517,10 @@ namespace SIL.FieldWorks
 							return s_projectId ??
 								new ProjectId(ClientServerServices.Current.Local.IdForLocalProject(restoreSettings.Settings.ProjectName), null);
 						}
+					}
+					catch (CannotConvertException e)
+					{
+						MessageBoxUtils.Show(e.Message, ResourceHelper.GetResourceString("ksRestoreFailed"));
 					}
 					catch (MissingOldFwException e)
 					{
