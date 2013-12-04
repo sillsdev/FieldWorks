@@ -13,7 +13,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
@@ -347,11 +346,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			string backupFilePath = Path.ChangeExtension(ProjectId.Path, "bak");
 			if (File.Exists(backupFilePath))
 			{
-				if (ThreadHelper.ShowMessageBox(null,
-					String.Format(Properties.Resources.kstidOfferToRestore, ProjectId.Path, File.GetLastWriteTime(ProjectId.Path),
-					backupFilePath, File.GetLastWriteTime(backupFilePath)),
-					Properties.Resources.kstidProblemOpeningFile, MessageBoxButtons.YesNo,
-					MessageBoxIcon.Error) == DialogResult.Yes)
+				if (m_userAction.OfferToRestore(ProjectId.Path, backupFilePath))
 				{
 					string badFilePath = Path.ChangeExtension(ProjectId.Path, "bad");
 					if (File.Exists(badFilePath))
@@ -488,7 +483,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				m_thread.WaitUntilIdle();
 		}
 
-		private static void ReportProblem(string message, string tempPath)
+		private void ReportProblem(string message, string tempPath)
 		{
 			if (File.Exists(tempPath))
 			{
@@ -501,8 +496,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					// Can't even clean up. Sigh.
 				}
 			}
-			ThreadHelper.ShowMessageBox(null, message, Strings.ksProblemWritingFile,
-				MessageBoxButtons.OK, MessageBoxIcon.Error);
+			m_userAction.DisplayMessage(MessageType.Error, message, Strings.ksProblemWritingFile);
 		}
 
 		/// <summary>
@@ -1105,7 +1099,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// <summary/>
 		protected virtual void Dispose(bool fDisposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (fDisposing && !IsDisposed)
 			{
 				// dispose managed and unmanaged objects

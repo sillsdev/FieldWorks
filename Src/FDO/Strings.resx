@@ -900,14 +900,6 @@ Corrupted Record:
     <value>Loading list member names</value>
     <comment>Caption for progress dialog, when a new writing system is added</comment>
   </data>
-  <data name="ksLinkedFilesFolder" xml:space="preserve">
-    <value>Linked Files Folder</value>
-    <comment>Caption for folder dialog, when setting a new LangProject.LinkedFilesRootDir value</comment>
-  </data>
-  <data name="ksInvalidLinkedFilesFolder" xml:space="preserve">
-    <value>{0} is not a valid directory for linked files. Please select a valid directory.</value>
-    <comment>Error message for accessing an invalid LangProject.LinkedFilesRootDir value</comment>
-  </data>
   <data name="ksReversalIndexPOSListName" xml:space="preserve">
     <value>Parts of Speech for {0} Reversal Index</value>
   </data>

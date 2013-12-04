@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Reflection;
 using System.Xml.Serialization;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO;
-using System.Collections;
 using System.IO;
 using SIL.Utils;
 
@@ -139,7 +137,8 @@ namespace FDOBrowser
 			if (s_allFDOClassNames != null)
 				return;
 
-			using (FdoCache cache = FdoCache.CreateCacheWithNoLangProj(new BrowserProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", new FdoBrowserUserAction(null)))
+			using (var threadHelper = new ThreadHelper())
+			using (FdoCache cache = FdoCache.CreateCacheWithNoLangProj(new BrowserProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", new SilentFdoUserAction(threadHelper)))
 			{
 				IFwMetaDataCacheManaged mdc = (IFwMetaDataCacheManaged)cache.MainCacheAccessor.MetaDataCache;
 				s_allFDOClassNames = new List<string>();

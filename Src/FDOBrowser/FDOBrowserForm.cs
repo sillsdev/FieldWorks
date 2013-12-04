@@ -15,6 +15,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Resources;
 using SIL.ObjectBrowser;
 using WeifenLuo.WinFormsUI.Docking;
@@ -375,13 +376,14 @@ namespace FDOBrowser
 				// Init backend data provider
 				// TODO: Get the correct ICU local for the user writing system
 
+				var userAction = new FdoUserActionWindowsForms(this, this);
 				if (isMemoryBEP)
-					m_cache = FdoCache.CreateCacheWithNewBlankLangProj(new BrowserProjectId(bepType, null), "en", "en", "en", new FdoBrowserUserAction(this));
+					m_cache = FdoCache.CreateCacheWithNewBlankLangProj(new BrowserProjectId(bepType, null), "en", "en", "en", userAction);
 				else
 				{
 					using (var progressDlg = new ProgressDialogWithTask(this))
 					{
-						m_cache = FdoCache.CreateCacheFromExistingData(new BrowserProjectId(bepType, fileName), "en", progressDlg, new FdoBrowserUserAction(this));
+						m_cache = FdoCache.CreateCacheFromExistingData(new BrowserProjectId(bepType, fileName), "en", progressDlg, userAction);
 					}
 				}
 			   // var v = m_cache.

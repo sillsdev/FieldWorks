@@ -98,7 +98,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// <summary>
 		/// Displays information to the user
 		/// </summary>
-		public void MessageBox()
+		/// <param name="type"></param>
+		/// <param name="message"></param>
+		/// <param name="caption"></param>
+		/// <exception cref="System.NotImplementedException"></exception>
+		public void DisplayMessage(MessageType type, string message, string caption)
 		{
 			throw new NotImplementedException();
 		}
@@ -111,11 +115,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// <c>false</c>.</param>
 		/// <returns>True if the error was lethal and the user chose to exit the application,
 		/// false otherwise.</returns>
-		public bool ReportException(Exception error, bool isLethal)
+		public void ReportException(Exception error, bool isLethal)
 		{
 			// Store the message so we can check it later
 			ErrorMessage = error.Message;
-			return isLethal;
 		}
 
 		/// <summary>
@@ -125,6 +128,18 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// <param name="emailAddress">The email address.</param>
 		/// <param name="errorText">The error text.</param>
 		public void ReportDuplicateGuids(RegistryKey applicationKey, string emailAddress, string errorText)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Ask user if they wish to restore an XML project from a backup project file.
+		/// </summary>
+		/// <param name="projectPath">The project path.</param>
+		/// <param name="backupPath">The backup path.</param>
+		/// <returns></returns>
+		/// <exception cref="System.NotImplementedException"></exception>
+		public bool OfferToRestore(string projectPath, string backupPath)
 		{
 			throw new NotImplementedException();
 		}

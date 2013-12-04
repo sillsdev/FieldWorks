@@ -11,6 +11,7 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using SIL.FieldWorks.FDO;
@@ -128,11 +129,28 @@ namespace SIL.FieldWorks.FdoUi
 		}
 
 		/// <summary>
-		/// Displays information to the user
+		/// Displays the message.
 		/// </summary>
-		public void MessageBox()
+		/// <param name="type">The type.</param>
+		/// <param name="message">The message.</param>
+		/// <param name="caption">The caption.</param>
+		/// <exception cref="System.NotImplementedException"></exception>
+		public void DisplayMessage(MessageType type, string message, string caption)
 		{
-			//System.Windows.Forms.MessageBox.Show();
+			var icon = MessageBoxIcon.Information;
+			switch (type)
+			{
+				case MessageType.Error:
+					icon = MessageBoxIcon.Error;
+					break;
+				case MessageType.Info:
+					icon = MessageBoxIcon.Information;
+					break;
+				case MessageType.Warning:
+					icon = MessageBoxIcon.Warning;
+					break;
+			}
+			m_synchronizeInvoke.Invoke(() => MessageBox.Show(message, caption, MessageBoxButtons.OK, icon));
 		}
 
 		/// <summary>
@@ -141,11 +159,9 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="error">the exception you want to report</param>
 		/// <param name="isLethal">set to <c>true</c> if the error is lethal, otherwise
 		/// <c>false</c>.</param>
-		/// <returns>True if the error was lethal and the user chose to exit the application,
-		/// false otherwise.</returns>
-		public bool ReportException(Exception error, bool isLethal)
+		public void ReportException(Exception error, bool isLethal)
 		{
-			return ErrorReporter.ReportException(error, null, null, null, isLethal);
+			m_synchronizeInvoke.Invoke(() => ErrorReporter.ReportException(error, null, null, null, isLethal));
 		}
 
 		public DateTime LastActivityTime { get; private set; }
@@ -158,7 +174,23 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="errorText">The error text.</param>
 		public void ReportDuplicateGuids(RegistryKey applicationKey, string emailAddress, string errorText)
 		{
-			ErrorReporter.ReportDuplicateGuids(applicationKey, emailAddress, null, errorText);
+			m_synchronizeInvoke.Invoke(() => ErrorReporter.ReportDuplicateGuids(applicationKey, emailAddress, null, errorText));
+		}
+
+		/// <summary>
+		/// Ask user if they wish to restore an XML project from a backup project file.
+		/// </summary>
+		/// <param name="projectPath">The project path.</param>
+		/// <param name="backupPath">The backup path.</param>
+		/// <returns></returns>
+		/// <exception cref="System.NotImplementedException"></exception>
+		public bool OfferToRestore(string projectPath, string backupPath)
+		{
+			return m_synchronizeInvoke.Invoke(() => MessageBox.Show(
+				String.Format(FdoUiStrings.kstidOfferToRestore, projectPath, File.GetLastWriteTime(projectPath),
+				backupPath, File.GetLastWriteTime(backupPath)),
+				FdoUiStrings.kstidProblemOpeningFile, MessageBoxButtons.YesNo,
+				MessageBoxIcon.Error) == DialogResult.Yes);
 		}
 
 		/// <summary>

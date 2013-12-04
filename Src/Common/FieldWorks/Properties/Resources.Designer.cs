@@ -211,6 +211,24 @@ namespace SIL.FieldWorks.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} is not a valid directory for linked files. Please select a valid directory..
+        /// </summary>
+        internal static string ksInvalidLinkedFilesFolder {
+            get {
+                return ResourceManager.GetString("ksInvalidLinkedFilesFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Linked Files Folder.
+        /// </summary>
+        internal static string ksLinkedFilesFolder {
+            get {
+                return ResourceManager.GetString("ksLinkedFilesFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Migrate projects.
         /// </summary>
         internal static string ksMigrateProjects {

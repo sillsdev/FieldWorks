@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.FDO
 		/// <summary>
 		/// Displays information to the user
 		/// </summary>
-		void MessageBox();
+		void DisplayMessage(MessageType type, string message, string caption);
 
 		/// <summary>
 		/// Show a dialog or output to the error log, as appropriate.
@@ -71,9 +71,7 @@ namespace SIL.FieldWorks.FDO
 		/// <param name="error">the exception you want to report</param>
 		/// <param name="isLethal">set to <c>true</c> if the error is lethal, otherwise
 		/// <c>false</c>.</param>
-		/// <returns>True if the error was lethal and the user chose to exit the application,
-		/// false otherwise.</returns>
-		bool ReportException(Exception error, bool isLethal);
+		void ReportException(Exception error, bool isLethal);
 
 		/// <summary>
 		/// Reports duplicate guids to the user
@@ -90,6 +88,34 @@ namespace SIL.FieldWorks.FDO
 		/// <param name="caption">The caption.</param>
 		/// <returns>True to retry.  False otherwise</returns>
 		bool Retry(string msg, string caption);
+		
+		/// <summary>
+		/// Ask user if they wish to restore an XML project from a backup project file.
+		/// </summary>
+		/// <param name="projectPath">The project path.</param>
+		/// <param name="backupPath">The backup path.</param>
+		/// <returns></returns>
+		bool OfferToRestore(string projectPath, string backupPath);
+
+	}
+
+	/// <summary>
+	/// Message type
+	/// </summary>
+	public enum MessageType
+	{
+		/// <summary>
+		/// Information message
+		/// </summary>
+		Info,
+		/// <summary>
+		/// Warning message
+		/// </summary>
+		Warning,
+		/// <summary>
+		/// Error message
+		/// </summary>
+		Error
 	}
 
 	/// <summary>

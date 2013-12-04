@@ -19,7 +19,6 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
 using System.Xml;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
@@ -35,7 +34,6 @@ using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
-using SIL.Utils.FileDialog;
 
 namespace SIL.FieldWorks.FDO
 {
@@ -270,7 +268,6 @@ namespace SIL.FieldWorks.FDO
 				servLoc.WritingSystemManager.UserWritingSystem = wsUser;
 			}
 
-			createdCache.EnsureValidLinkedFilesFolder();
 			return createdCache;
 		}
 
@@ -1426,52 +1423,6 @@ namespace SIL.FieldWorks.FDO
 					fTypeFound = false;
 					return itype.ToString();
 			}
-		}
-
-		/// <summary>
-		/// Ensure a valid folder for LangProject.LinkedFilesRootDir.  When moving projects
-		/// between systems, the stored value may become hopelessly invalid.  See FWNX-1005
-		/// for an example of the havoc than can ensue.
-		/// </summary>
-		/// <remarks>This method gets called when we open the FDO cache.</remarks>
-		private void EnsureValidLinkedFilesFolder()
-		{
-			if (MiscUtils.RunningTests)
-				return;
-
-			var linkedFilesFolder = LangProject.LinkedFilesRootDir;
-			var defaultFolder = DirectoryFinder.GetDefaultLinkedFilesDir(ProjectId.ProjectFolder);
-			EnsureValidLinkedFilesFolderCore(linkedFilesFolder, defaultFolder);
-
-			if (!Directory.Exists(linkedFilesFolder))
-			{
-				if (!Directory.Exists(defaultFolder))
-					defaultFolder = ProjectId.ProjectFolder;
-				MessageBox.Show(String.Format(Strings.ksInvalidLinkedFilesFolder, linkedFilesFolder), Strings.ksErrorCaption);
-				while (!Directory.Exists(linkedFilesFolder))
-				{
-					using (var folderBrowserDlg = new FolderBrowserDialogAdapter())
-					{
-						folderBrowserDlg.Description = Strings.ksLinkedFilesFolder;
-						folderBrowserDlg.RootFolder = Environment.SpecialFolder.Desktop;
-						folderBrowserDlg.SelectedPath = defaultFolder;
-						if (folderBrowserDlg.ShowDialog() == DialogResult.OK)
-							linkedFilesFolder = folderBrowserDlg.SelectedPath;
-					}
-				}
-				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(ActionHandlerAccessor, () =>
-					{ LangProject.LinkedFilesRootDir = linkedFilesFolder; });
-			}
-		}
-
-		/// <summary>
-		/// Just make the directory if it's the default.
-		/// See FWNX-1092, LT-14491.
-		/// </summary>
-		internal void EnsureValidLinkedFilesFolderCore(string linkedFilesFolder, string defaultLinkedFilesFolder)
-		{
-			if (linkedFilesFolder == defaultLinkedFilesFolder)
-				FileUtils.EnsureDirectoryExists(defaultLinkedFilesFolder);
 		}
 		#endregion Public methods
 

@@ -1142,15 +1142,6 @@ namespace SIL.FieldWorks.FDO {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} is not a valid directory for linked files. Please select a valid directory..
-        /// </summary>
-        internal static string ksInvalidLinkedFilesFolder {
-            get {
-                return ResourceManager.GetString("ksInvalidLinkedFilesFolder", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Invalid unmarked form ({0})..
         /// </summary>
         internal static string ksInvalidUnmarkedForm0 {
@@ -1372,15 +1363,6 @@ namespace SIL.FieldWorks.FDO {
         internal static string ksLexRelation {
             get {
                 return ResourceManager.GetString("ksLexRelation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Linked Files Folder.
-        /// </summary>
-        internal static string ksLinkedFilesFolder {
-            get {
-                return ResourceManager.GetString("ksLinkedFilesFolder", resourceCulture);
             }
         }
         

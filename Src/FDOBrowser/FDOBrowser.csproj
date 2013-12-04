@@ -85,6 +85,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FDO.dll</HintPath>
     </Reference>
+    <Reference Include="FdoUi, Version=8.0.6.25999, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\FdoUi.dll</HintPath>
+    </Reference>
     <Reference Include="FwControls, Version=7.0.1.24430, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
@@ -154,7 +158,6 @@
     </Compile>
     <Compile Include="FDOClassList.cs" />
     <Compile Include="FdoInspectorList.cs" />
-    <Compile Include="FdoBrowserUserAction.cs" />
     <Compile Include="FileInOutChooser.cs">
       <SubType>Form</SubType>
     </Compile>

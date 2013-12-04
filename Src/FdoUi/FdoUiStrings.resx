@@ -330,4 +330,11 @@ Without these, we cannot find related entries.</value>
   <data name="ksWarningCaption" xml:space="preserve">
     <value>Warning</value>
   </data>
+  <data name="kstidOfferToRestore" xml:space="preserve">
+    <value>There was a problem opening the current version of the file {0}, dated {1}. Would you like to open the automatic backup, {2}, dated {3}?</value>
+  </data>
+  <data name="kstidProblemOpeningFile" xml:space="preserve">
+    <value>Problem opening file</value>
+    <comment>Caption for error dialog</comment>
+  </data>
 </root>

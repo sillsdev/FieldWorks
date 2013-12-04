@@ -101,7 +101,10 @@ namespace SIL.FieldWorks.FDO
 		/// <summary>
 		/// Displays information to the user
 		/// </summary>
-		public void MessageBox()
+		/// <param name="type"></param>
+		/// <param name="message"></param>
+		/// <param name="caption"></param>
+		public void DisplayMessage(MessageType type, string message, string caption)
 		{
 			// Informational only
 		}
@@ -112,11 +115,9 @@ namespace SIL.FieldWorks.FDO
 		/// <param name="error">the exception you want to report</param>
 		/// <param name="isLethal">set to <c>true</c> if the error is lethal, otherwise
 		/// <c>false</c>.</param>
-		/// <returns>True if the error was lethal and the user chose to exit the application,
-		/// false otherwise.</returns>
-		public bool ReportException(Exception error, bool isLethal)
+		public void ReportException(Exception error, bool isLethal)
 		{
-			return isLethal;
+			// Informational only
 		}
 
 		/// <summary>
@@ -128,6 +129,18 @@ namespace SIL.FieldWorks.FDO
 		public void ReportDuplicateGuids(RegistryKey applicationKey, string emailAddress, string errorText)
 		{
 			// Informational only
+		}
+
+		/// <summary>
+		/// Ask user if they wish to restore an XML project from a backup project file.
+		/// </summary>
+		/// <param name="projectPath">The project path.</param>
+		/// <param name="backupPath">The backup path.</param>
+		/// <returns></returns>
+		/// <exception cref="System.NotImplementedException"></exception>
+		public bool OfferToRestore(string projectPath, string backupPath)
+		{
+			return true;
 		}
 
 		/// <summary>
