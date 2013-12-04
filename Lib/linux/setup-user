@@ -44,6 +44,11 @@ CopyRegistryKey()
 		cp -a "${FW_SHARE}/SIL" "${FW_CONFIG}/"
 	fi
 
+	if [ ! -d "${FW_DATA}/Projects/" ]; then
+		echo "# Creating default Project database directory"
+		mkdir -p "${FW_DATA}/Projects/"
+	fi
+
 	# if we haven't setup running the remote access daemon yet, set it up and start it.
 	if [ ! -f "${XDG_CONFIG_HOME}/autostart/ShareFwProjects.desktop" ]; then
 		echo "# Starting remote access"
