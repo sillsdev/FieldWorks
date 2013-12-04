@@ -883,7 +883,6 @@ Corrupted Record:
     <value>Short delay</value>
     <comment>Caption that goes with ksOtherClientsAreWriting</comment>
   </data>
-  </data>
   <data name="ksConvertFailedNewerVersion" xml:space="preserve">
     <value>FieldWorks was unable to convert the project {0} because it was created by a more recent version of FieldWorks. To convert this project, install the appropriate version of FieldWorks, and turn sharing off then on again. (Note that doing this will upgrade all your projects to the newer version.)</value>
   </data>
