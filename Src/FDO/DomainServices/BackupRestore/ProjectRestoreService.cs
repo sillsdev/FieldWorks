@@ -17,10 +17,8 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
-using System.Windows.Forms;
 using ICSharpCode.SharpZipLib.Zip;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using XCore;
@@ -105,24 +103,19 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 
 			try
 			{
-			//Import from FW version 6.0 based on the file extension.
-			var extension = Path.GetExtension(fileSettings.File).ToLowerInvariant();
-			if (extension == FwFileExtensions.ksFw60BackupFileExtension || extension == ".xml")
-				ImportFrom6_0Backup(fileSettings, progressDlg);
-			else     //Restore from FW version 7.0 and newer backup.
-				RestoreFrom7_0AndNewerBackup(fileSettings);
+				//Import from FW version 6.0 based on the file extension.
+				var extension = Path.GetExtension(fileSettings.File).ToLowerInvariant();
+				if (extension == FwFileExtensions.ksFw60BackupFileExtension || extension == ".xml")
+					ImportFrom6_0Backup(fileSettings, progressDlg);
+				else     //Restore from FW version 7.0 and newer backup.
+					RestoreFrom7_0AndNewerBackup(fileSettings);
 			}
-			catch(Exception error)
+			catch (Exception error)
 			{
 				if (error is IOException || error is InvalidBackupFileException ||
 					error is UnauthorizedAccessException)
 				{
 					CleanupAfterRestore(false);
-					// ENHANCE: If/when we have the restore process using a progress dialog so that this code
-					// runs in the progress dialog thread instead of the main thread, all message boxes should
-					// be replaced with the ThreadHelper.ShowMessageBox() method so that they will be thread-safe.
-					MessageBoxUtils.Show(null, error.Message, AppStrings.ksRestoreDidNotSucceed,
-						MessageBoxButtons.OK, MessageBoxIcon.Information);
 				}
 				throw;
 			}
@@ -147,7 +140,6 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 					throw new MissingOldFwException("Error restoring from FieldWorks 6.0 (or earlier) backup",
 						importer.HaveFwSqlServer, importer.HaveOldFieldWorks);
 				}
-				MessageBoxUtils.Show(Strings.ksRestoringOldFwBackupFailed, Strings.ksFailed);
 				throw new FailedFwRestoreException("Error restoring from FieldWorks 6.0 (or earlier) backup");
 			}
 		}
@@ -253,44 +245,6 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		}
 
 		#endregion
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Performs the requested actions and handles any IO or zip error by reporting them to
-		/// the user. (Intended for operations that deal directly with a backup zip file.
-		/// </summary>
-		/// <param name="parentWindow">The parent window to use when reporting an error (can be
-		/// null).</param>
-		/// <param name="caption">Used in title bar of message box when reporting an error
-		/// (typically the name of the application).
-		/// </param>
-		/// <param name="zipFilename">The backup zip filename.</param>
-		/// <param name="action">The action to perform.</param>
-		/// <returns>
-		/// 	<c>true</c> if successful (no exception caught); <c>false</c> otherwise
-		/// </returns>
-		/// ------------------------------------------------------------------------------------
-		public static bool HandleRestoreFileErrors(IWin32Window parentWindow, string caption,
-			string zipFilename, Action action)
-		{
-			try
-			{
-				action();
-			}
-			catch (Exception error)
-			{
-				if (error is IOException || error is InvalidBackupFileException ||
-					error is UnauthorizedAccessException)
-				{
-					Logger.WriteError(error);
-					MessageBoxUtils.Show(parentWindow, error.Message, caption,
-						MessageBoxButtons.OK, MessageBoxIcon.Information);
-					return false;
-				}
-				throw;
-			}
-			return true;
-		}
 
 		#region Private methods
 		/// ------------------------------------------------------------------------------------

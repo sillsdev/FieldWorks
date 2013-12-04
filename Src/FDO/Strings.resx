@@ -530,9 +530,6 @@
 truncated to the maximum length.  Try using the Tools/Guess Word Breaks tool
 on the baseline text, or insert word breaks into the text manually.</value>
   </data>
-  <data name="ksWarning" xml:space="preserve">
-    <value>Warning</value>
-  </data>
   <data name="ksInvalidBackendProviderType" xml:space="preserve">
     <value>The FDOBackendProviderType is not supported.</value>
   </data>
@@ -792,12 +789,6 @@ Your changes to this entry will be discarded when you exit the project.</value>
   <data name="ksErrorRestoringFromFw60Backup" xml:space="preserve">
     <value>Error restoring from FieldWorks 6.0 (or earlier) backup</value>
   </data>
-  <data name="ksRestoringOldFwBackupFailed" xml:space="preserve">
-    <value>Restoring from an old FieldWorks backup failed.</value>
-  </data>
-  <data name="ksFailed" xml:space="preserve">
-    <value>Failed</value>
-  </data>
   <data name="ksCannotConnectToServer" xml:space="preserve">
     <value>Could not connect to server. Check that {0} is running on the remote server and that any firewalls are configured to allow connections to it.</value>
     <comment>Parameter is hard-coded service name (FwRemoteDatabaseConnectorService). This is a message targeted primarily at a computer savvy person.</comment>
@@ -903,9 +894,6 @@ Corrupted Record:
   <data name="ksShortDelayCaption" xml:space="preserve">
     <value>Short delay</value>
     <comment>Caption that goes with ksOtherClientsAreWriting</comment>
-  </data>
-  <data name="ksCouldNotBackupSomeFiles" xml:space="preserve">
-    <value>FieldWorks was not able to back up some of the files used by this project. Do you want to keep the backup anyway? The files not backed up were {0}</value>
   </data>
   <data name="ksWarnOnOpeningSingleUserDialog" xml:space="preserve">
     <value>Number of other users: {0}

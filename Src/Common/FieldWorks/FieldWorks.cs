@@ -1846,7 +1846,7 @@ namespace SIL.FieldWorks
 		internal static void RestoreProject(Form dialogOwner, string backupFile)
 		{
 			BackupFileSettings settings = null;
-			if (!ProjectRestoreService.HandleRestoreFileErrors(null, FwUtils.ksSuiteName, backupFile,
+			if (!RestoreProjectDlg.HandleRestoreFileErrors(null, FwUtils.ksSuiteName, backupFile,
 				() => settings = new BackupFileSettings(backupFile, true)))
 			{
 				return;
@@ -2461,7 +2461,7 @@ namespace SIL.FieldWorks
 						ProjectRestoreService restoreService = new ProjectRestoreService(restoreSettings.Settings,
 						GetHelpTopicProvider(restoreSettings.FwAppCommandLineAbbrev), s_userAction);
 						Logger.WriteEvent("Restoring from " + restoreSettings.Settings.Backup.File);
-						if (ProjectRestoreService.HandleRestoreFileErrors(null, ResourceHelper.GetResourceString("ksRestoreFailed"),
+						if (RestoreProjectDlg.HandleRestoreFileErrors(null, ResourceHelper.GetResourceString("ksRestoreFailed"),
 							restoreSettings.Settings.Backup.File, () => DoRestore(restoreService)))
 						{
 							s_LinkDirChangedTo = restoreService.LinkDirChangedTo;
@@ -2479,6 +2479,7 @@ namespace SIL.FieldWorks
 					}
 					catch (FailedFwRestoreException e)
 					{
+						MessageBoxUtils.Show(Properties.Resources.ksRestoringOldFwBackupFailed, Properties.Resources.ksFailed);
 					}
 				}
 				while (retry);
@@ -2495,7 +2496,7 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		private static void DoRestore(ProjectRestoreService restoreService)
 		{
-			using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(s_threadHelper))
+			using (var progressDlg = new ProgressDialogWithTask(s_threadHelper))
 				restoreService.RestoreProject(progressDlg);
 		}
 
@@ -2529,7 +2530,13 @@ namespace SIL.FieldWorks
 					settings.AppAbbrev = restoreSettings.FwAppCommandLineAbbrev;
 
 					ProjectBackupService backupService = new ProjectBackupService(cache, settings);
-					backupService.BackupProject(progressDlg);
+					string backupFile;
+					if (!backupService.BackupProject(progressDlg, out backupFile))
+					{
+						string msg = string.Format(FwCoreDlgs.FwCoreDlgs.ksCouldNotBackupSomeFiles, backupService.FailedFiles.ToString(", ", Path.GetFileName));
+						if (MessageBox.Show(msg, FwCoreDlgs.FwCoreDlgs.ksWarning, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+							File.Delete(backupFile);
+					}
 				}
 				catch (FwBackupException e)
 				{

@@ -589,15 +589,6 @@ namespace SIL.FieldWorks.FDO {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to FieldWorks was not able to back up some of the files used by this project. Do you want to keep the backup anyway? The files not backed up were {0}.
-        /// </summary>
-        internal static string ksCouldNotBackupSomeFiles {
-            get {
-                return ResourceManager.GetString("ksCouldNotBackupSomeFiles", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Dashed {0} Underline.
         /// </summary>
         internal static string ksDashedColorUnderline {
@@ -1046,15 +1037,6 @@ namespace SIL.FieldWorks.FDO {
         internal static string ksExtractingFromZip {
             get {
                 return ResourceManager.GetString("ksExtractingFromZip", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed.
-        /// </summary>
-        internal static string ksFailed {
-            get {
-                return ResourceManager.GetString("ksFailed", resourceCulture);
             }
         }
         
@@ -1889,15 +1871,6 @@ namespace SIL.FieldWorks.FDO {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Restoring from an old FieldWorks backup failed..
-        /// </summary>
-        internal static string ksRestoringOldFwBackupFailed {
-            get {
-                return ResourceManager.GetString("ksRestoringOldFwBackupFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Restoring {0} to a temporary project.
         /// </summary>
         internal static string ksRestoringToTempProject {
@@ -2200,15 +2173,6 @@ namespace SIL.FieldWorks.FDO {
         internal static string ksUsedXTimesInRules {
             get {
                 return ResourceManager.GetString("ksUsedXTimesInRules", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Warning.
-        /// </summary>
-        internal static string ksWarning {
-            get {
-                return ResourceManager.GetString("ksWarning", resourceCulture);
             }
         }
         

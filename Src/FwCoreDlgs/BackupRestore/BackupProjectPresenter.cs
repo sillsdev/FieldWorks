@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 {
@@ -123,7 +124,15 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 			settings.AppAbbrev = m_appAbbrev;
 
 			ProjectBackupService backupService = new ProjectBackupService(m_cache, settings);
-			return backupService.BackupProject(progressDlg);
+			string backupFile;
+			if (!backupService.BackupProject(progressDlg, out backupFile))
+			{
+				string msg = string.Format(FwCoreDlgs.ksCouldNotBackupSomeFiles, backupService.FailedFiles.ToString(", ", Path.GetFileName));
+				if (MessageBox.Show(msg, FwCoreDlgs.ksWarning, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+					File.Delete(backupFile);
+				backupFile = null;
+			}
+			return backupFile;
 		}
 	}
 }

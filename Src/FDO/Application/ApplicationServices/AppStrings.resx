@@ -1,302 +1,299 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!--
-	Microsoft ResX Schema
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
 
-	Version 2.0
-
-	The primary goals of this format is to allow a simple XML format
-	that is mostly human readable. The generation and parsing of the
-	various data types are done through the TypeConverter classes
-	associated with the data types.
-
-	Example:
-
-	... ado.net/XML headers & schema ...
-	<resheader name="resmimetype">text/microsoft-resx</resheader>
-	<resheader name="version">2.0</resheader>
-	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-		<value>[base64 mime encoded serialized .NET Framework object]</value>
-	</data>
-	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-		<comment>This is a comment</comment>
-	</data>
-
-	There are any number of "resheader" rows that contain simple
-	name/value pairs.
-
-	Each data row contains a name, and value. The row also contains a
-	type or mimetype. Type corresponds to a .NET class that support
-	text/value conversion through the TypeConverter architecture.
-	Classes that don't support this are serialized and stored with the
-	mimetype set.
-
-	The mimetype is used for serialized objects, and tells the
-	ResXResourceReader how to depersist the object. This is currently not
-	extensible. For a given mimetype the value must be set accordingly:
-
-	Note - application/x-microsoft.net.object.binary.base64 is the format
-	that the ResXResourceWriter will generate, however the reader can
-	read any of the formats listed below.
-
-	mimetype: application/x-microsoft.net.object.binary.base64
-	value   : The object must be serialized with
-			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-			: and then encoded with base64 encoding.
-
-	mimetype: application/x-microsoft.net.object.soap.base64
-	value   : The object must be serialized with
-			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-			: and then encoded with base64 encoding.
-
-	mimetype: application/x-microsoft.net.object.bytearray.base64
-	value   : The object must be serialized into a byte array
-			: using a System.ComponentModel.TypeConverter
-			: and then encoded with base64 encoding.
-	-->
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-	<xsd:element name="root" msdata:IsDataSet="true">
-	  <xsd:complexType>
-		<xsd:choice maxOccurs="unbounded">
-		  <xsd:element name="metadata">
-			<xsd:complexType>
-			  <xsd:sequence>
-				<xsd:element name="value" type="xsd:string" minOccurs="0" />
-			  </xsd:sequence>
-			  <xsd:attribute name="name" use="required" type="xsd:string" />
-			  <xsd:attribute name="type" type="xsd:string" />
-			  <xsd:attribute name="mimetype" type="xsd:string" />
-			  <xsd:attribute ref="xml:space" />
-			</xsd:complexType>
-		  </xsd:element>
-		  <xsd:element name="assembly">
-			<xsd:complexType>
-			  <xsd:attribute name="alias" type="xsd:string" />
-			  <xsd:attribute name="name" type="xsd:string" />
-			</xsd:complexType>
-		  </xsd:element>
-		  <xsd:element name="data">
-			<xsd:complexType>
-			  <xsd:sequence>
-				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-			  </xsd:sequence>
-			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-			  <xsd:attribute ref="xml:space" />
-			</xsd:complexType>
-		  </xsd:element>
-		  <xsd:element name="resheader">
-			<xsd:complexType>
-			  <xsd:sequence>
-				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-			  </xsd:sequence>
-			  <xsd:attribute name="name" type="xsd:string" use="required" />
-			</xsd:complexType>
-		  </xsd:element>
-		</xsd:choice>
-	  </xsd:complexType>
-	</xsd:element>
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
   </xsd:schema>
   <resheader name="resmimetype">
-	<value>text/microsoft-resx</value>
+    <value>text/microsoft-resx</value>
   </resheader>
   <resheader name="version">
-	<value>2.0</value>
+    <value>2.0</value>
   </resheader>
   <resheader name="reader">
-	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ksCreatedObjectsFmt" xml:space="preserve">
-	<value>Created {0} {1} objects during import from {2}</value>
+    <value>Created {0} {1} objects during import from {2}</value>
   </data>
   <data name="ksElapsedTime" xml:space="preserve">
-	<value>Loading the XML file into the database took {0:F1} seconds.</value>
+    <value>Loading the XML file into the database took {0:F1} seconds.</value>
   </data>
   <data name="ksCheckCreatedForLexicalRelation" xml:space="preserve">
-	<value>This was automatically created to satisfy a Lexical Relation, and it should be checked.</value>
+    <value>This was automatically created to satisfy a Lexical Relation, and it should be checked.</value>
   </data>
   <data name="ksCreatedForLexicalRelation" xml:space="preserve">
-	<value>{0}:{1}: Created an entry for "{2}" to satisfy a Lexical Relation.</value>
+    <value>{0}:{1}: Created an entry for "{2}" to satisfy a Lexical Relation.</value>
   </data>
   <data name="ksCheckCreatedForCrossReference" xml:space="preserve">
-	<value>This was automatically created to satisfy a Cross Reference, and it should be checked.</value>
+    <value>This was automatically created to satisfy a Cross Reference, and it should be checked.</value>
   </data>
   <data name="ksCreatedForCrossReference" xml:space="preserve">
-	<value>{0}:{1}: Created an entry for "{2}" to satisfy a Cross Reference.</value>
+    <value>{0}:{1}: Created an entry for "{2}" to satisfy a Cross Reference.</value>
   </data>
   <data name="ksCreatedTypeForLexReference" xml:space="preserve">
-	<value>Info: Creating Entry Or Sense Pair Lexical Reference Type with name="{0}" and abbr="{1}".</value>
+    <value>Info: Creating Entry Or Sense Pair Lexical Reference Type with name="{0}" and abbr="{1}".</value>
   </data>
   <data name="ksInvalidBinaryData" xml:space="preserve">
-	<value>Warning: Invalid &lt;Binary&gt; data.</value>
+    <value>Warning: Invalid &lt;Binary&gt; data.</value>
   </data>
   <data name="ksIgnoringExtraNonBinaryData" xml:space="preserve">
-	<value>Warning: Ignoring extra character at the end of &lt;Binary&gt; data.</value>
+    <value>Warning: Ignoring extra character at the end of &lt;Binary&gt; data.</value>
   </data>
   <data name="ksCannotCreateLexRefType" xml:space="preserve">
-	<value>Warning: Cannot create desired Lexical Reference Type: &lt;Link {0}/&gt;.</value>
+    <value>Warning: Cannot create desired Lexical Reference Type: &lt;Link {0}/&gt;.</value>
   </data>
   <data name="ksCannottResolveCrossRef" xml:space="preserve">
-	<value>Warning: Cannot resolve a link for a cross reference: &lt;Link {0}/&gt;.</value>
+    <value>Warning: Cannot resolve a link for a cross reference: &lt;Link {0}/&gt;.</value>
   </data>
   <data name="ksCannotResolveLexRelation" xml:space="preserve">
-	<value>Warning: Cannot resolve a link for a lexical relation: &lt;Link {0}/&gt;.</value>
+    <value>Warning: Cannot resolve a link for a lexical relation: &lt;Link {0}/&gt;.</value>
   </data>
   <data name="ksCreatingWritingSystem" xml:space="preserve">
-	<value>Info: Creating new writing system for "{0}".</value>
+    <value>Info: Creating new writing system for "{0}".</value>
   </data>
   <data name="ksMissingMediaFile" xml:space="preserve">
-	<value>Warning: Media file "{0}" does not exist.</value>
+    <value>Warning: Media file "{0}" does not exist.</value>
   </data>
   <data name="ksMissingPictureFile" xml:space="preserve">
-	<value>Warning: Picture file "{0}" does not exist.</value>
+    <value>Warning: Picture file "{0}" does not exist.</value>
   </data>
   <data name="ksCreatingItemInList" xml:space="preserve">
-	<value>Info: Creating new item with ws="{0}", abbr="{1}", and name="{2}" in the {3} list.</value>
+    <value>Info: Creating new item with ws="{0}", abbr="{1}", and name="{2}" in the {3} list.</value>
   </data>
   <data name="ksAnthropologyCategories" xml:space="preserve">
-	<value>Anthropology Categories</value>
+    <value>Anthropology Categories</value>
   </data>
   <data name="ksSemanticDomain" xml:space="preserve">
-	<value>Semantic Domain</value>
+    <value>Semantic Domain</value>
   </data>
   <data name="ksPartsOfSpeech" xml:space="preserve">
-	<value>Parts of Speech</value>
+    <value>Parts of Speech</value>
   </data>
   <data name="ksLocation" xml:space="preserve">
-	<value>Location</value>
+    <value>Location</value>
   </data>
   <data name="ksPeople" xml:space="preserve">
-	<value>People</value>
+    <value>People</value>
   </data>
   <data name="ksConfidenceLevel" xml:space="preserve">
-	<value>Confidence Level</value>
+    <value>Confidence Level</value>
   </data>
   <data name="ksCannotResolveLink" xml:space="preserve">
-	<value>Warning: Cannot resolve &lt;Link {0}/&gt;</value>
+    <value>Warning: Cannot resolve &lt;Link {0}/&gt;</value>
   </data>
   <data name="ksCreatingReversalIndex" xml:space="preserve">
-	<value>Info: Creating Reversal Index for the {0} ("{1}") language.</value>
+    <value>Info: Creating Reversal Index for the {0} ("{1}") language.</value>
   </data>
   <data name="ksNameMatchesAbbr" xml:space="preserve">
-	<value>Info: Implicit CmPossibility target in a Link element has name attribute "{0}" which matches an Abbreviation value.</value>
+    <value>Info: Implicit CmPossibility target in a Link element has name attribute "{0}" which matches an Abbreviation value.</value>
   </data>
   <data name="ksAbbrMatchesName" xml:space="preserve">
-	<value>Info: Implicit CmPossibility target in a Link element has abbr attribute "{0}" which matches a Name value.</value>
+    <value>Info: Implicit CmPossibility target in a Link element has abbr attribute "{0}" which matches a Name value.</value>
   </data>
   <data name="ksUnexpectedElement" xml:space="preserve">
-	<value>Warning: Unexpected {0} element in XML file.</value>
+    <value>Warning: Unexpected {0} element in XML file.</value>
   </data>
   <data name="ksExpectedBoolean" xml:space="preserve">
-	<value>Warning: Expected &lt;Boolean val="..."/&gt; here.</value>
+    <value>Warning: Expected &lt;Boolean val="..."/&gt; here.</value>
   </data>
   <data name="ksMissingBooleanVal" xml:space="preserve">
-	<value>Warning: Need explicit val attribute for Boolean elements!</value>
+    <value>Warning: Need explicit val attribute for Boolean elements!</value>
   </data>
   <data name="ksExpectedInteger" xml:space="preserve">
-	<value>Warning: Expected &lt;Integer val="..."/&gt; here.</value>
+    <value>Warning: Expected &lt;Integer val="..."/&gt; here.</value>
   </data>
   <data name="ksMissingIntegerVal" xml:space="preserve">
-	<value>Warning: Need explicit val attribute for Integer elements!</value>
+    <value>Warning: Need explicit val attribute for Integer elements!</value>
   </data>
   <data name="ksExpectedGuid" xml:space="preserve">
-	<value>Warning: Expected &lt;Guid val="..."/&gt; here.</value>
+    <value>Warning: Expected &lt;Guid val="..."/&gt; here.</value>
   </data>
   <data name="ksMissingGuidVal" xml:space="preserve">
-	<value>Warning: Need explicit val attribute for Guid elements!</value>
+    <value>Warning: Need explicit val attribute for Guid elements!</value>
   </data>
   <data name="ksExpectedTime" xml:space="preserve">
-	<value>Warning: Expected &lt;Time val="..."/&gt; here.</value>
+    <value>Warning: Expected &lt;Time val="..."/&gt; here.</value>
   </data>
   <data name="ksMissingTimeVal" xml:space="preserve">
-	<value>Warning: Need explicit val attribute for Time elements!</value>
+    <value>Warning: Need explicit val attribute for Time elements!</value>
   </data>
   <data name="ksExpectedGenDate" xml:space="preserve">
-	<value>Warning: Expected &lt;GenDate val="..."/&gt; here.</value>
+    <value>Warning: Expected &lt;GenDate val="..."/&gt; here.</value>
   </data>
   <data name="ksMissingGenDateVal" xml:space="preserve">
-	<value>Warning: Need explicit val attribute for GenDate elements!</value>
+    <value>Warning: Need explicit val attribute for GenDate elements!</value>
   </data>
   <data name="ksExpectedBinary" xml:space="preserve">
-	<value>Warning: Expected &lt;Binary&gt;...&lt;/Binary&gt; here.</value>
+    <value>Warning: Expected &lt;Binary&gt;...&lt;/Binary&gt; here.</value>
   </data>
   <data name="ksExpectedUni" xml:space="preserve">
-	<value>Warning: Expected &lt;Uni&gt;...&lt;/Uni&gt; here.</value>
+    <value>Warning: Expected &lt;Uni&gt;...&lt;/Uni&gt; here.</value>
   </data>
   <data name="ksExpectedAUni" xml:space="preserve">
-	<value>Warning: Expected &lt;AUni&gt;...&lt;/AUni&gt; here.</value>
+    <value>Warning: Expected &lt;AUni&gt;...&lt;/AUni&gt; here.</value>
   </data>
   <data name="ksExpectedStr" xml:space="preserve">
-	<value>Warning: Expected &lt;Str&gt;...&lt;/Str&gt; here.</value>
+    <value>Warning: Expected &lt;Str&gt;...&lt;/Str&gt; here.</value>
   </data>
   <data name="ksExpectedAStr" xml:space="preserve">
-	<value>Warning: Expected &lt;AStr&gt;...&lt;/AStr&gt; here.</value>
+    <value>Warning: Expected &lt;AStr&gt;...&lt;/AStr&gt; here.</value>
   </data>
   <data name="ksExpectedLink" xml:space="preserve">
-	<value>Warning: Expected &lt;Link .../&gt; here.</value>
+    <value>Warning: Expected &lt;Link .../&gt; here.</value>
   </data>
   <data name="ksInvalidLinkElement" xml:space="preserve">
-	<value>Warning: Invalid &lt;Link/&gt; element - must have at least one attribute!</value>
+    <value>Warning: Invalid &lt;Link/&gt; element - must have at least one attribute!</value>
   </data>
   <data name="ksProblemImporting" xml:space="preserve">
-	<value>Warning: Problem importing from {0}.
+    <value>Warning: Problem importing from {0}.
 	{1}</value>
   </data>
   <data name="ksCouldNotMergeCustomFields" xml:space="preserve">
-	<value>Import could not merge the custom field named "{0}" from one entry to another.</value>
+    <value>Import could not merge the custom field named "{0}" from one entry to another.</value>
   </data>
   <data name="ksInvalidNestedXMLElements" xml:space="preserve">
-	<value>Warning: Nested XML object elements must reflect owning relationships.</value>
+    <value>Warning: Nested XML object elements must reflect owning relationships.</value>
   </data>
   <data name="ksUnrecognizedOwnerlessObjectClass" xml:space="preserve">
-	<value>Warning: Unrecognized ownerless object class.</value>
+    <value>Warning: Unrecognized ownerless object class.</value>
   </data>
   <data name="ksCheckCreatedForComponentsLink" xml:space="preserve">
-	<value>This was automatically created to satisfy a Components link, and it should be checked.</value>
+    <value>This was automatically created to satisfy a Components link, and it should be checked.</value>
   </data>
   <data name="ksCheckCreatedForShowSubentryUnderLink" xml:space="preserve">
-	<value>This was automatically created to satisfy a Show Subentry Under link, and it should be checked.</value>
+    <value>This was automatically created to satisfy a Show Subentry Under link, and it should be checked.</value>
   </data>
   <data name="ksCheckCreatedForLinkTarget" xml:space="preserve">
-	<value>This was automatically created to satisfy a link target, and it should be checked.</value>
+    <value>This was automatically created to satisfy a link target, and it should be checked.</value>
   </data>
   <data name="ksCreatedForComponentsLink" xml:space="preserve">
-	<value>{0}:{1}: Created an entry for "{2}" to satisfy a Components link.</value>
+    <value>{0}:{1}: Created an entry for "{2}" to satisfy a Components link.</value>
   </data>
   <data name="ksCreatedForShowSubentryUnderLink" xml:space="preserve">
-	<value>{0}:{1}: Created an entry for "{2}" to satisfy a Show Subentry Under link.</value>
+    <value>{0}:{1}: Created an entry for "{2}" to satisfy a Show Subentry Under link.</value>
   </data>
   <data name="ksCreatedForLinkTarget" xml:space="preserve">
-	<value>{0}:{1}: Created an entry for "{2}" to satisfy a link target.</value>
+    <value>{0}:{1}: Created an entry for "{2}" to satisfy a link target.</value>
   </data>
   <data name="ksTypeNameMatchesAbbr" xml:space="preserve">
-	<value>Info: Lexical reference type in a Link element has name attribute "{0}" which matches an Abbreviation value.</value>
+    <value>Info: Lexical reference type in a Link element has name attribute "{0}" which matches an Abbreviation value.</value>
   </data>
   <data name="ksTypeAbbrMatchesName" xml:space="preserve">
-	<value>Info: Lexical reference type in a Link element has abbr attribute "{0}" which matches a Name value.</value>
+    <value>Info: Lexical reference type in a Link element has abbr attribute "{0}" which matches a Name value.</value>
   </data>
   <data name="ksNotebkDeleteSubRecords" xml:space="preserve">
-	<value>  and  {0} subrecords.</value>
+    <value>  and  {0} subrecords.</value>
   </data>
   <data name="ksCreateNewProjectSubfoldersError" xml:space="preserve">
-	<value>There was an error trying to create a subfolder of the new project.
+    <value>There was an error trying to create a subfolder of the new project.
  The error was: {0}</value>
   </data>
-  <data name="ksRestoreDidNotSucceed" xml:space="preserve">
-	<value>Restore Failed</value>
-  </data>
-	<data name="InitializeSavingMigratedDataProgressMessage" xml:space="preserve">
+  <data name="InitializeSavingMigratedDataProgressMessage" xml:space="preserve">
     <value>Saving migrated data before loading.</value>
     <comment>Message on a progress dialog. Appears after a data migration has completed and before the project is opened by FLEx.</comment>
   </data>

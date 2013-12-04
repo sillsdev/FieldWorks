@@ -15,7 +15,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
 using ICSharpCode.SharpZipLib.Zip;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
@@ -31,7 +30,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 	{
 		private readonly FdoCache m_cache;
 		private readonly BackupProjectSettings m_settings;
-		List<string> m_failedFiles = new List<string>();
+		private readonly List<string> m_failedFiles = new List<string>();
 
 		///<summary>
 		/// Constructor
@@ -43,14 +42,25 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		}
 
 		/// <summary>
+		/// Gets the failed files.
+		/// </summary>
+		/// <value>
+		/// The failed files.
+		/// </value>
+		public IEnumerable<string> FailedFiles
+		{
+			get { return m_failedFiles; }
+		}
+
+		/// <summary>
 		/// Perform a backup of the current project, using specified settings.
 		/// </summary>
 		/// <returns>The backup file or null if something went wrong.</returns>
-		public string BackupProject(IThreadedProgress progressDlg)
+		public bool BackupProject(IThreadedProgress progressDlg, out string backupFile)
 		{
 			PersistBackupFileSettings();
 
-			string backupFile = null;
+			backupFile = null;
 			try
 			{
 				// Make sure any changes we want backup are saved.
@@ -65,19 +75,10 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 				progressDlg.AllowCancel = false;
 				m_failedFiles.Clear(); // I think it's always a new instance, but play safe.
 				backupFile = (string)progressDlg.RunTask(true, BackupTask, filesToZip);
-				if (m_failedFiles.Count > 0)
-				{
-					var msg = string.Format(Strings.ksCouldNotBackupSomeFiles, m_failedFiles.ToString(", ", Path.GetFileName));
-					if (MessageBox.Show(progressDlg.Form, msg, Strings.ksWarning, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) !=
-						DialogResult.Yes)
-					{
-						File.Delete(backupFile);
-					}
-				}
 				if (tempFilePath != null)
 					File.Delete(tempFilePath); // don't leave the extra fwdata file around to confuse things.
 			}
-			catch(Exception e)
+			catch (Exception e)
 			{
 				// Something went catastrophically wrong. Don't leave a junk backup around.
 				if (backupFile != null)
@@ -86,7 +87,8 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 					throw e.InnerException;
 				throw new ContinuableErrorException("Backup did not succeed. Code is needed to handle this case.", e);
 			}
-			return backupFile;
+
+			return m_failedFiles.Count == 0;
 		}
 
 		/// ------------------------------------------------------------------------------------

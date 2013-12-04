@@ -979,4 +979,7 @@ The error was:
   <data name="ksOKToContinueCancelToChangeName" xml:space="preserve">
     <value> Click 'OK' to continue with this project name or 'Cancel' to enter a different name.</value>
   </data>
+  <data name="ksCouldNotBackupSomeFiles" xml:space="preserve">
+    <value>FieldWorks was not able to back up some of the files used by this project. Do you want to keep the backup anyway? The files not backed up were {0}</value>
+  </data>
 </root>
