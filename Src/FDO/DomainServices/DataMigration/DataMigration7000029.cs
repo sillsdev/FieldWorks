@@ -15,15 +15,11 @@
 // </remarks>
 // ---------------------------------------------------------------------------------------------
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Linq;
 using System.Xml.XPath;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.DomainImpl;
 
 namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 {

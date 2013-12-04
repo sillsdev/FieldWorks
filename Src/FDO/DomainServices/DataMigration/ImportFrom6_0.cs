@@ -13,7 +13,6 @@ using System.Diagnostics;
 using System.IO;
 using System.ServiceProcess;
 using System.Text;
-using System.Windows.Forms;
 using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.Win32;
 
@@ -51,11 +50,6 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		readonly bool m_fVerboseDebug;
 		private readonly IThreadedProgress m_progressDlg;
 		#endregion
-
-		/// <summary>
-		/// provides parent form for progress dialog
-		/// </summary>
-		public Form ParentForm { get; set; }
 
 		#region Constructors
 		/// <summary>

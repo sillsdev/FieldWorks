@@ -18,12 +18,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.DomainImpl;
-using Sharpen.Util;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {

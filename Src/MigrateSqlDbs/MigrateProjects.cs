@@ -150,7 +150,6 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 			: this()
 		{
 			m_importer = importer;
-			m_importer.ParentForm = this;
 			m_projects = projects;
 			m_fAutoClose = fAutoClose;
 			if (m_fAutoClose)
