@@ -376,7 +376,7 @@ namespace FDOBrowser
 				// Init backend data provider
 				// TODO: Get the correct ICU local for the user writing system
 
-				var userAction = new FdoUserActionWindowsForms(this, this);
+				var userAction = new FwFdoUI(this, this);
 				if (isMemoryBEP)
 					m_cache = FdoCache.CreateCacheWithNewBlankLangProj(new BrowserProjectId(bepType, null), "en", "en", "en", userAction);
 				else

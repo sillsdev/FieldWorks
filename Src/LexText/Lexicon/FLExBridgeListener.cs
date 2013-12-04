@@ -181,11 +181,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>
 		/// Handle the S/R "_Get Project from Colleague" menu option.
 		/// </summary>
-		public bool OnObtainAnyFlexBridgeProject(object commandObject, IFdoUserAction userAction)
+		public bool OnObtainAnyFlexBridgeProject(object commandObject, IFdoUI ui)
 		{
 			ObtainedProjectType obtainedProjectType;
 			var newprojectPathname = ObtainProjectMethod.ObtainProjectFromAnySource(_parentForm, _mediator.HelpTopicProvider,
-				out obtainedProjectType, userAction);
+				out obtainedProjectType, ui);
 			if (string.IsNullOrEmpty(newprojectPathname))
 				return true; // We dealt with it.
 			_mediator.PropertyTable.SetProperty("LastBridgeUsed", obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",

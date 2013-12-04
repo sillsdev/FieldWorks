@@ -36,7 +36,7 @@ namespace XMLViewsTests
 			m_mediator = new Mediator();
 			m_mediator.StringTbl = new StringTable("../../DistFiles/Language Explorer/Configuration");
 			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(
-				new TestProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", "en", "en", new DummyFdoUserAction());
+				new TestProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", "en", "en", new DummyFdoUI());
 			m_mediator.PropertyTable.SetProperty("cache", m_cache);
 		}
 

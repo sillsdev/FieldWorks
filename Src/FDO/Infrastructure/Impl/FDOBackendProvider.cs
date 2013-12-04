@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		protected readonly FdoCache m_cache;
 		protected readonly IFwMetaDataCacheManagedInternal m_mdcInternal;
 		private readonly IDataMigrationManager m_dataMigrationManager;
-		protected readonly IFdoUserAction m_userAction;
+		protected readonly IFdoUI m_ui;
 		protected readonly Dictionary<string, CustomFieldInfo> m_extantCustomFields = new Dictionary<string, CustomFieldInfo>();
 		protected int m_modelVersionOverride = ModelVersion;
 		private readonly List<Thread> m_loadDomainThreads = new List<Thread>();
@@ -50,13 +50,13 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// </summary>
 		protected FDOBackendProvider(FdoCache cache, IdentityMap identityMap,
 			ICmObjectSurrogateFactory surrogateFactory, IFwMetaDataCacheManagedInternal mdc, IDataMigrationManager dataMigrationManager,
-			IFdoUserAction userAction)
+			IFdoUI ui)
 		{
 			if (cache == null) throw new ArgumentNullException("cache");
 			if (identityMap == null) throw new ArgumentNullException("identityMap");
 			if (surrogateFactory == null) throw new ArgumentNullException("surrogateFactory");
 			if (dataMigrationManager == null) throw new ArgumentNullException("dataMigrationManager");
-			if (userAction == null) throw new ArgumentNullException("userAction");
+			if (ui == null) throw new ArgumentNullException("ui");
 
 			m_cache = cache;
 			m_cache.Disposing += OnCacheDisposing;
@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			m_surrogateFactory = surrogateFactory;
 			m_mdcInternal = mdc;
 			m_dataMigrationManager = dataMigrationManager;
-			m_userAction = userAction;
+			m_ui = ui;
 		}
 
 
@@ -820,7 +820,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 			// 3. Startup source BEP, but without instantiating any FDO objects (surrogates, are loaded).
 			using (var sourceCache = FdoCache.CreateCacheFromExistingData(sourceDataStore.ProjectId,
-				userWsIcuLocale, progressDlg, m_userAction))
+				userWsIcuLocale, progressDlg, m_ui))
 			{
 				// 4. Do the port.
 				var sourceCacheServLoc = sourceCache.ServiceLocator;

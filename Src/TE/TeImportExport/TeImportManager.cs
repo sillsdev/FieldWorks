@@ -288,7 +288,6 @@ namespace SIL.FieldWorks.TE
 					scr.FindOrCreateDefaultImportSettings(TypeOfImport.Unknown);
 			});
 			importSettings.StyleSheet = m_styleSheet;
-			importSettings.HelpFile = m_helpTopicProvider.HelpFile;
 
 			importSettings.OverlappingFileResolver = new ConfirmOverlappingFileReplaceDialog(m_helpTopicProvider);
 			if (!importSettings.BasicSettingsExist)

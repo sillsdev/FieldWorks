@@ -547,8 +547,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					const int nLines = 40;
 					if (lines.Length > nLines)
 						msg = String.Join("\n", lines.Take(nLines).ToArray()) + "\n...";
-					var userAction = m_cache.ServiceLocator.GetInstance<IFdoUserAction>();
-					userAction.DisplayMessage(MessageType.Error, msg, Strings.ksErrorCaption);
+					var userAction = m_cache.ServiceLocator.GetInstance<IFdoUI>();
+					userAction.DisplayMessage(MessageType.Error, msg, Strings.ksErrorCaption, null);
 					userAction.ReportException(new Exception(fullMsg, e), true);
 				}
 				return m_object;

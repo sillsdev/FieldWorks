@@ -174,8 +174,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// <returns>a working FdoCache</returns>
 		protected FdoCache BootstrapSystem(IProjectIdentifier projectId, BackendBulkLoadDomain loadType)
 		{
-			var retval = m_internalRestart ? FdoCache.CreateCacheFromExistingData(projectId, "en", new DummyProgressDlg(), new DummyFdoUserAction()) :
-				FdoCache.CreateCacheWithNewBlankLangProj(projectId, "en", "fr", "en", new DummyFdoUserAction());
+			var retval = m_internalRestart ? FdoCache.CreateCacheFromExistingData(projectId, "en", new DummyProgressDlg(), new DummyFdoUI()) :
+				FdoCache.CreateCacheWithNewBlankLangProj(projectId, "en", "fr", "en", new DummyFdoUI());
 			var dataSetup = retval.ServiceLocator.GetInstance<IDataSetup>();
 			dataSetup.LoadDomain(loadType);
 			return retval;

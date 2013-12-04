@@ -2587,9 +2587,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(StringUtils.kChObject, sOrc[0]);
 
 			// Expecting error to have been thrown in ScriptureServices.AdjustObjectsInArchivedBook, so now we make sure the error is the one expected.
-			var userAction = Cache.ServiceLocator.GetInstance<IFdoUserAction>();
-			Assert.IsTrue(userAction is DummyFdoUserAction);
-			string sWarningMessage = ((DummyFdoUserAction)userAction).ErrorMessage;
+			var userAction = Cache.ServiceLocator.GetInstance<IFdoUI>();
+			Assert.IsTrue(userAction is DummyFdoUI);
+			string sWarningMessage = ((DummyFdoUI)userAction).ErrorMessage;
 			Assert.AreEqual("1 footnote(s) in HEB did not correspond to any owned footnotes in the vernacular text of that book. They have been moved to the end of the footnote sequence.", sWarningMessage);
 		}
 

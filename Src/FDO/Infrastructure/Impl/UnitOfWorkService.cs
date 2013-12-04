@@ -108,7 +108,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		private readonly IDataStorer m_dataStorer;
 		private readonly IdentityMap m_identityMap;
-		private readonly IFdoUserAction m_userAction;
+		private readonly IFdoUI m_ui;
 		internal ICmObjectRepositoryInternal ObjectRepository
 		{
 			get;
@@ -157,24 +157,24 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		internal UnitOfWorkService(IDataStorer dataStorer, IdentityMap identityMap, ICmObjectRepositoryInternal objectRepository, IFdoUserAction userAction)
+		internal UnitOfWorkService(IDataStorer dataStorer, IdentityMap identityMap, ICmObjectRepositoryInternal objectRepository, IFdoUI ui)
 		{
 			if (dataStorer == null) throw new ArgumentNullException("dataStorer");
 			if (identityMap == null) throw new ArgumentNullException("identityMap");
 			if (objectRepository == null) throw new ArgumentNullException("objectRepository");
-			if (userAction == null) throw new ArgumentNullException("userAction");
+			if (ui == null) throw new ArgumentNullException("ui");
 
 			m_dataStorer = dataStorer;
 			m_identityMap = identityMap;
 			ObjectRepository = objectRepository;
-			m_userAction = userAction;
+			m_ui = ui;
 			CurrentProcessingState = FdoBusinessTransactionState.ReadyForBeginTask;
 			NonUndoableStack = (UndoStack)CreateUndoStack();
 			// Make a separate stack as the initial default. This should be mainly used in tests.
 			// It serves to keep undoable UOWs separate from non-undoable ones, the only things ever put on the NonUndoableStack.
 			m_currentUndoStack = m_activeUndoStack = (UndoStack)CreateUndoStack();
 
-			m_saveTimer.SynchronizingObject = userAction.SynchronizeInvoke;
+			m_saveTimer.SynchronizingObject = ui.SynchronizeInvoke;
 			m_saveTimer.Interval = 1000;
 			m_saveTimer.Elapsed += SaveOnIdle;
 			m_saveTimer.Start();
@@ -250,7 +250,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				if (DateTime.Now - m_lastSave < TimeSpan.FromSeconds(10.0))
 					return;
 				// Nor if it's been less than 2s since the user did something. We don't want to interrupt continuous activity.
-				if (DateTime.Now - m_userAction.LastActivityTime < TimeSpan.FromSeconds(2.0))
+				if (DateTime.Now - m_ui.LastActivityTime < TimeSpan.FromSeconds(2.0))
 					return;
 
 				SaveInternal();
@@ -374,7 +374,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// ------------------------------------------------------------------------------------
 		private void GetUserInputOnConflictingSave()
 		{
-			if (m_userAction.ConflictingSave())
+			if (m_ui.ConflictingSave())
 			{
 				RevertToSavedState();
 			}
@@ -532,7 +532,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			// This is very likely to modify the UI, so if the UOW is not being done on the UI thread, we need
 			// to do at least this part on that thread. One known case is a task being done in the background
 			// thread of ProgressDialogWithTask.
-			m_userAction.SynchronizeInvoke.Invoke(() =>
+			m_ui.SynchronizeInvoke.Invoke(() =>
 			{
 				var subscribers = m_changeWatchers.ToArray();
 				var changes = changesEnum.ToList();
@@ -945,7 +945,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// <returns></returns>
 		public IActionHandler CreateUndoStack()
 		{
-			var result = new UndoStack(this, m_userAction);
+			var result = new UndoStack(this, m_ui);
 			m_undoStacks.Add(result);
 			return result;
 		}

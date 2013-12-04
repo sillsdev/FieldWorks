@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			ICmObjectSurrogateFactory surrogateFactory,
 			IFwMetaDataCacheManagedInternal mdc,
 			IDataMigrationManager dataMigrationManager,
-			IFdoUserAction userAction) : base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager, userAction)
+			IFdoUI ui) : base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager, ui)
 		{
 		}
 

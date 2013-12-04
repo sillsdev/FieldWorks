@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		private IThreadedProgress m_progress;
 
-		private IFdoUserAction m_userAction;
+		private IFdoUI m_ui;
 
 		///<summary></summary>
 		[SetUp]
@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			m_progress = new DummyProgressDlg();
 
-			m_userAction = new DummyFdoUserAction();
+			m_ui = new DummyFdoUI();
 		}
 
 		///<summary></summary>
@@ -82,7 +82,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void ProjectNames_LocalhostServiceIsRunning_ProjectsReturned()
 		{
-			ClientServerServices.Current.Local.SetProjectSharing(true, m_progress, m_userAction);
+			ClientServerServices.Current.Local.SetProjectSharing(true, m_progress, m_ui);
 
 			using (var db4OServerFile = new TemporaryDb4OServerFile(m_db4OServerInfo))
 			{
@@ -99,9 +99,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void ShareMyProjects_TurningShareMyProjectOff_ShareMyProjectsReturnedFalse()
 		{
-			ClientServerServices.Current.Local.SetProjectSharing(true, m_progress, m_userAction);
+			ClientServerServices.Current.Local.SetProjectSharing(true, m_progress, m_ui);
 
-			Assert.IsTrue(ClientServerServices.Current.Local.SetProjectSharing(false, m_progress, m_userAction));
+			Assert.IsTrue(ClientServerServices.Current.Local.SetProjectSharing(false, m_progress, m_ui));
 			Assert.AreEqual(false, ClientServerServices.Current.Local.ShareMyProjects);
 		}
 
@@ -109,9 +109,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void ShareMyProjects_TurningShareMyProjectOn_ShareMyProjectsReturnedTrue()
 		{
-			ClientServerServices.Current.Local.SetProjectSharing(false, m_progress, m_userAction);
+			ClientServerServices.Current.Local.SetProjectSharing(false, m_progress, m_ui);
 
-			Assert.IsTrue(ClientServerServices.Current.Local.SetProjectSharing(true, m_progress, m_userAction));
+			Assert.IsTrue(ClientServerServices.Current.Local.SetProjectSharing(true, m_progress, m_ui));
 			Assert.IsTrue(Db4OLocalClientServerServices.LocalDb4OServerInfoConnection.AreProjectShared());
 			Assert.IsFalse(ClientServerServices.Current.Local.ShareMyProjects, "ShareMyProjects should not be true unless HKCU projects dir same as HKLM");
 			var temp = DirectoryFinder.ProjectsDirectory;
@@ -131,7 +131,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void IdForLocalProject_SimpleNameProjectsAreNotShared_ReturnedFilenameHasFwdataExtenstionAndExistsInProjectDirectory()
 		{
-			ClientServerServices.Current.Local.SetProjectSharing(false, m_progress, m_userAction);
+			ClientServerServices.Current.Local.SetProjectSharing(false, m_progress, m_ui);
 			string filename = ClientServerServices.Current.Local.IdForLocalProject("tom");
 
 			// Assert ends with .fwdata

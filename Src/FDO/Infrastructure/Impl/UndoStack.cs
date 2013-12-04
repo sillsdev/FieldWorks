@@ -96,7 +96,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		private bool m_createMarkIfNeeded;
 		internal FdoUnitOfWork m_currentBundle;
 		private readonly UnitOfWorkService m_uowService;
-		private readonly IFdoUserAction m_userAction;
+		private readonly IFdoUI m_ui;
 		// Positive values count unsaved bundles in m_undoBundles.
 		// Negative values count unsaved bundles in m_redoBundles, that is, things Undone since the last Save.
 		private int m_countUnsavedBundles;
@@ -105,10 +105,10 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		#endregion
 
 		#region Constructor
-		public UndoStack(UnitOfWorkService uowService, IFdoUserAction userAction)
+		public UndoStack(UnitOfWorkService uowService, IFdoUI ui)
 		{
 			m_uowService = uowService;
-			m_userAction = userAction;
+			m_ui = ui;
 			m_undoBundles = new Stack<FdoUnitOfWork>();
 			m_redoBundles = new Stack<FdoUnitOfWork>();
 			m_currentBundle = null;
@@ -371,7 +371,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// ------------------------------------------------------------------------------------
 		private void DoTasksForEndOfPropChanged(FdoUnitOfWork uow, bool fromUndoRedo)
 		{
-			m_userAction.SynchronizeInvoke.Invoke(() =>
+			m_ui.SynchronizeInvoke.Invoke(() =>
 				{
 					if (!fromUndoRedo)
 					{

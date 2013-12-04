@@ -19,7 +19,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
@@ -38,15 +37,17 @@ namespace SIL.FieldWorks.PaObjects
 	{
 		private List<PaWritingSystem> m_writingSystems;
 		private List<PaLexEntry> m_lexEntries;
-		private readonly IFdoUserAction m_userAction;
+		private ThreadHelper m_threadHelper;
+		private readonly IFdoUI m_ui;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="PaLexicalInfo"/> class.
 		/// </summary>
 		public PaLexicalInfo()
 		{
-			var helpTopicProvider = (IHelpTopicProvider)DynamicLoader.CreateObject(DirectoryFinder.FlexDll, "SIL.FieldWorks.XWorks.LexText.FlexHelpTopicProvider");
-			m_userAction = new FdoUserActionWindowsForms(helpTopicProvider, new ThreadHelper());
+			m_threadHelper = new ThreadHelper();
+			var helpTopicProvider = (IHelpTopicProvider) DynamicLoader.CreateObject(DirectoryFinder.FlexDll, "SIL.FieldWorks.XWorks.LexText.FlexHelpTopicProvider");
+			m_ui = new FwFdoUI(helpTopicProvider, m_threadHelper);
 		}
 
 		#region Disposable stuff
@@ -71,7 +72,7 @@ namespace SIL.FieldWorks.PaObjects
 		/// <summary/>
 		protected virtual void Dispose(bool fDisposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().ToString() + " *******");
+			Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + " *******");
 			if (fDisposing && !IsDisposed)
 			{
 				// dispose managed and unmanaged objects
@@ -80,9 +81,13 @@ namespace SIL.FieldWorks.PaObjects
 
 				if (m_writingSystems != null)
 					m_writingSystems.Clear();
+
+				if (m_threadHelper != null)
+					m_threadHelper.Dispose();
 			}
 			m_lexEntries = null;
 			m_writingSystems = null;
+			m_threadHelper = null;
 			IsDisposed = true;
 		}
 		#endregion
@@ -99,7 +104,7 @@ namespace SIL.FieldWorks.PaObjects
 			Icu.InitIcuDataDir();
 			RegistryHelper.ProductName = "FieldWorks"; // inorder to find correct Registry keys
 
-			using (var dlg = new ChooseLangProjectDialog(dialogBounds, dialogSplitterPos, m_userAction))
+			using (var dlg = new ChooseLangProjectDialog(dialogBounds, dialogSplitterPos, m_ui))
 			{
 				if (dlg.ShowDialog(owner) == DialogResult.OK)
 				{
@@ -259,7 +264,7 @@ namespace SIL.FieldWorks.PaObjects
 		/// ------------------------------------------------------------------------------------
 		public IEnumerable<IPaLexEntry> LexEntries
 		{
-			get { return m_lexEntries.Cast<IPaLexEntry>(); }
+			get { return m_lexEntries; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -269,7 +274,7 @@ namespace SIL.FieldWorks.PaObjects
 		/// ------------------------------------------------------------------------------------
 		public IEnumerable<IPaWritingSystem> WritingSystems
 		{
-			get { return m_writingSystems.Cast<IPaWritingSystem>(); }
+			get { return m_writingSystems; }
 		}
 
 		#endregion

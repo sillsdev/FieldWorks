@@ -474,7 +474,7 @@ namespace SIL.FieldWorks.XWorks
 		public void CreateMockCache()
 		{
 			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(
-				new TestProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", "fr", "en", new DummyFdoUserAction());
+				new TestProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", "fr", "en", new DummyFdoUI());
 			var xl = new XmlList();
 			using (var reader = new StringReader(s_ksSemanticDomainsXml))
 				xl.ImportList(m_cache.LangProject, "SemanticDomainList", reader, null);

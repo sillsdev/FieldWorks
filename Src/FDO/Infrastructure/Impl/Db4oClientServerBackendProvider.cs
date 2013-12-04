@@ -18,7 +18,6 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Runtime.Remoting;
 using System.Threading;
-using System.Windows.Forms;
 using Db4objects.Db4o;
 using Db4objects.Db4o.Config;
 using Db4objects.Db4o.Config.Encoding;
@@ -87,15 +86,15 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// <param name="surrogateFactory"></param>
 		/// <param name="mdc"></param>
 		/// <param name="dataMigrationManager"></param>
-		/// <param name="userAction"></param>
+		/// <param name="ui"></param>
 		public Db4oClientServerBackendProvider(
 			FdoCache cache,
 			IdentityMap identityMap,
 			ICmObjectSurrogateFactory surrogateFactory,
 			IFwMetaDataCacheManagedInternal mdc,
 			IDataMigrationManager dataMigrationManager,
-			IFdoUserAction userAction)
-			: base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager, userAction)
+			IFdoUI ui)
+			: base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager, ui)
 		{
 		}
 
@@ -521,10 +520,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			while (!m_dbStore.Ext().SetSemaphore(kCommitLock, 3000))
 			{
 				if (fWaitForCommitLock)
-				{
-					ThreadHelper.ShowMessageBox(null, Strings.ksOtherClientsAreWriting, Strings.ksShortDelayCaption,
-												MessageBoxButtons.OK, MessageBoxIcon.None);
-				}
+					m_ui.DisplayMessage(MessageType.Info, Strings.ksOtherClientsAreWriting, Strings.ksShortDelayCaption, null);
 				else
 					return false;
 			}
@@ -745,7 +741,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					return true;
 			}
 
-			while (m_userAction.ConnectionLost())
+			while (m_ui.ConnectionLost())
 			{
 				// if re-connection failed allow user to keep retrying as many times as they want.
 				if (ResumeDb4oConnection())
@@ -753,7 +749,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			}
 
 			if (m_dbStore == null)
-				System.Windows.Forms.Application.Exit();
+				m_ui.Exit();
 
 			// return true if connection re-established
 			return (m_dbStore != null);

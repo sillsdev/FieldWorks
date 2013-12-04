@@ -245,7 +245,7 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="FdoUserActionWindowsForms.cs" />
+    <Compile Include="FwFdoUI.cs" />
     <Compile Include="FsFeatDefnUi.cs">
       <SubType>Code</SubType>
     </Compile>

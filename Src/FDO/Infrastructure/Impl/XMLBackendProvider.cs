@@ -124,8 +124,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// </summary>
 		internal XMLBackendProvider(FdoCache cache, IdentityMap identityMap,
 			ICmObjectSurrogateFactory surrogateFactory, IFwMetaDataCacheManagedInternal mdc,
-			IDataMigrationManager dataMigrationManager, IFdoUserAction userAction) :
-			base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager, userAction)
+			IDataMigrationManager dataMigrationManager, IFdoUI ui) :
+			base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager, ui)
 		{
 		}
 
@@ -304,7 +304,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					sb.AppendLine(String.Format(Strings.ksDuplicateGuidsMsg2, guid));
 					sb.AppendLine();
 				}
-				m_cache.ServiceLocator.GetInstance<IFdoUserAction>().ReportDuplicateGuids(FwRegistryHelper.FieldWorksRegistryKey, "FLExErrors@sil.org", sb.ToString());
+				m_cache.ServiceLocator.GetInstance<IFdoUI>().ReportDuplicateGuids(FwRegistryHelper.FieldWorksRegistryKey, "FLExErrors@sil.org", sb.ToString());
 			}
 		}
 
@@ -346,7 +346,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			string backupFilePath = Path.ChangeExtension(ProjectId.Path, "bak");
 			if (File.Exists(backupFilePath))
 			{
-				if (m_userAction.OfferToRestore(ProjectId.Path, backupFilePath))
+				if (m_ui.OfferToRestore(ProjectId.Path, backupFilePath))
 				{
 					string badFilePath = Path.ChangeExtension(ProjectId.Path, "bad");
 					if (File.Exists(badFilePath))
@@ -496,7 +496,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					// Can't even clean up. Sigh.
 				}
 			}
-			m_userAction.DisplayMessage(MessageType.Error, message, Strings.ksProblemWritingFile);
+			m_ui.DisplayMessage(MessageType.Error, message, Strings.ksProblemWritingFile, null);
 		}
 
 		/// <summary>

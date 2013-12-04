@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// The repo may be a lift or full FW repo, but it can be from any source source, as long as the code can create an FW project from it.
 		/// </summary>
 		/// <returns>Null if the operation was cancelled or otherwise did not work. The full pathname of an fwdata file, if it did work.</returns>
-		public static string ObtainProjectFromAnySource(Form parent, IHelpTopicProvider helpTopicProvider, out ObtainedProjectType obtainedProjectType, IFdoUserAction userAction)
+		public static string ObtainProjectFromAnySource(Form parent, IHelpTopicProvider helpTopicProvider, out ObtainedProjectType obtainedProjectType, IFdoUI ui)
 		{
 			bool dummy;
 			string fwdataFileFullPathname;
@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (fwdataFileFullPathname.EndsWith("lift"))
 			{
-				fwdataFileFullPathname = CreateProjectFromLift(parent, helpTopicProvider, fwdataFileFullPathname, userAction);
+				fwdataFileFullPathname = CreateProjectFromLift(parent, helpTopicProvider, fwdataFileFullPathname, ui);
 				obtainedProjectType = ObtainedProjectType.Lift;
 			}
 
@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Create a new Fieldworks project and import a lift file into it. Return the .fwdata path.
 		/// </summary>
-		private static string CreateProjectFromLift(Form parent, IHelpTopicProvider helpTopicProvider, string liftPath, IFdoUserAction userAction)
+		private static string CreateProjectFromLift(Form parent, IHelpTopicProvider helpTopicProvider, string liftPath, IFdoUI ui)
 		{
 			string projectPath;
 			FdoCache cache;
@@ -72,7 +72,7 @@ namespace SIL.FieldWorks.Common.Controls
 				progressDlg.Title = FwControls.ksCreatingLiftProject;
 				var cacheReceiver = new FdoCache[1]; // a clumsy way of handling an out parameter, consistent with RunTask
 				projectPath = (string)progressDlg.RunTask(true, CreateProjectTask,
-					new[] { liftPath, parent, userAction, anthroListFile, cacheReceiver });
+					new[] { liftPath, parent, ui, anthroListFile, cacheReceiver });
 				cache = cacheReceiver[0];
 			}
 
@@ -102,7 +102,7 @@ namespace SIL.FieldWorks.Common.Controls
 			// Get required parameters. Ideally these would just be the signature of the method, but RunTask requires object[].
 			var liftPathname = (string) parameters[0];
 			var synchronizeInvoke = (ISynchronizeInvoke) parameters[1];
-			var userAction = (IFdoUserAction) parameters[2];
+			var userAction = (IFdoUI) parameters[2];
 			var anthroFile = (string) parameters[3];
 			var cacheReceiver = (FdoCache[]) parameters[4];
 

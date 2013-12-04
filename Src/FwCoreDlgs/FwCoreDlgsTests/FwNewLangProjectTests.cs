@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Default parameterless constructor
 		/// </summary>
-		public DummyFwNewLangProject() : base(new DummyFdoUserAction())
+		public DummyFwNewLangProject() : base(new DummyFdoUI())
 		{
 
 		}
@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			CheckDisposed();
 
-			CreateNewLangProjWithProgress(new DummyFdoUserAction());
+			CreateNewLangProjWithProgress(new DummyFdoUI());
 			NonAsciiWarningWasActivated = false;
 			SimulatedNonAsciiDialogResult = DialogResult.Cancel;
 		}
@@ -141,7 +141,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					// despite of the name is DummyProgressDlg no real dialog (doesn't derive from Control), so
 					// we don't need a 'using'
 					cache = FdoCache.CreateCacheFromExistingData(
-						new TestProjectId(FDOBackendProviderType.kXML, DbFilename(dbName)), "en", new DummyProgressDlg(), new DummyFdoUserAction());
+						new TestProjectId(FDOBackendProviderType.kXML, DbFilename(dbName)), "en", new DummyProgressDlg(), new DummyFdoUI());
 					CheckInitialSetOfPartsOfSpeech(cache);
 
 					Assert.AreEqual(1, cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Count);

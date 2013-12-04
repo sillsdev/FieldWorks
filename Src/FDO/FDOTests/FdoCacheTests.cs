@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 	public class FdoCacheTests : MemoryOnlyBackendProviderTestBase
 	{
 		private string m_oldProjectDirectory;
-		private IFdoUserAction m_userAction;
+		private IFdoUI m_ui;
 
 		/// <summary>Setup for db4o client server tests.</summary>
 		public override void FixtureSetup()
@@ -46,7 +46,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 			DirectoryFinder.ProjectsDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 			Directory.CreateDirectory(DirectoryFinder.ProjectsDirectory);
 
-			m_userAction = new DummyFdoUserAction();
+			m_ui = new DummyFdoUI();
 
 			try
 			{
@@ -87,7 +87,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 				using (new DummyFileMaker(Path.Combine(DirectoryFinder.ProjectsDirectory, "Gumby", DirectoryFinder.GetXmlDataFileName("Gumby"))))
 				{
 					using (var threadHelper = new ThreadHelper())
-						FdoCache.CreateNewLangProj(new DummyProgressDlg(), "Gumby", threadHelper, new DummyFdoUserAction());
+						FdoCache.CreateNewLangProj(new DummyProgressDlg(), "Gumby", threadHelper, new DummyFdoUI());
 				}
 			}
 			finally
@@ -117,7 +117,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 			{
 				string dbFileName;
 				using (var threadHelper = new ThreadHelper())
-					dbFileName = FdoCache.CreateNewLangProj(new DummyProgressDlg(), dbName, threadHelper, new DummyFdoUserAction());
+					dbFileName = FdoCache.CreateNewLangProj(new DummyProgressDlg(), dbName, threadHelper, new DummyFdoUI());
 
 				currentDirs = new List<string>(Directory.GetDirectories(DirectoryFinder.ProjectsDirectory));
 				if (currentDirs.Contains(writingSystemsCommonDir) && !expectedDirs.Contains(writingSystemsCommonDir))
@@ -148,9 +148,9 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 				// create project
 				string dbFileName;
 				using (var threadHelper = new ThreadHelper())
-					dbFileName = FdoCache.CreateNewLangProj(new DummyProgressDlg(), dbName, threadHelper, new DummyFdoUserAction());
+					dbFileName = FdoCache.CreateNewLangProj(new DummyProgressDlg(), dbName, threadHelper, new DummyFdoUI());
 
-				using (var cache = FdoCache.CreateCacheFromLocalProjectFile(dbFileName, "en", new DummyProgressDlg(), m_userAction))
+				using (var cache = FdoCache.CreateCacheFromLocalProjectFile(dbFileName, "en", new DummyProgressDlg(), m_ui))
 				{
 					Assert.AreEqual(Strings.ksAnthropologyCategories, cache.LangProject.AnthroListOA.Name.UiString,
 						"Anthropology Categories list was not properly initialized.");
@@ -220,7 +220,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		{
 			using (
 				var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-																	 "en", "fr", "en", m_userAction))
+																	 "en", "fr", "en", m_ui))
 			{
 				var wsFr = cache.DefaultVernWs;
 				Assert.That(cache.LangProject.DefaultVernacularWritingSystem.Handle, Is.EqualTo(wsFr));
@@ -253,7 +253,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		{
 			using (
 				var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-																	 "en", "fr", "en", m_userAction))
+																	 "en", "fr", "en", m_ui))
 			{
 				var wsEn = cache.DefaultAnalWs;
 				Assert.That(cache.LangProject.DefaultAnalysisWritingSystem.Handle, Is.EqualTo(wsEn));
@@ -287,7 +287,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		{
 			using (
 				var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-																	 "en", "fr", "en", m_userAction))
+																	 "en", "fr", "en", m_ui))
 			{
 				var wsFr = cache.DefaultPronunciationWs;
 				Assert.That(cache.LangProject.DefaultPronunciationWritingSystem.Handle, Is.EqualTo(wsFr));
@@ -337,7 +337,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 	[TestFixture]
 	public class FdoCacheDisposedTests: BaseTest
 	{
-		private readonly IFdoUserAction m_userAction = new DummyFdoUserAction();
+		private readonly IFdoUI m_ui = new DummyFdoUI();
 
 		/// <summary>
 		/// Make sure the CheckDisposed method works.
@@ -348,7 +348,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		{
 			// This can't be in the minimalist class, because it disposes the cache.
 			var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-																	"en", "fr", "en", m_userAction);
+																	"en", "fr", "en", m_ui);
 			// Init backend data provider
 			var dataSetup = cache.ServiceLocator.GetInstance<IDataSetup>();
 			dataSetup.LoadDomain(BackendBulkLoadDomain.All);
@@ -364,7 +364,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		{
 			// This can't be in the minimalist class, because it disposes the cache.
 			var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-																	"en", "fr", "en", m_userAction);
+																	"en", "fr", "en", m_ui);
 			// Init backend data provider
 			var dataSetup = cache.ServiceLocator.GetInstance<IDataSetup>();
 			dataSetup.LoadDomain(BackendBulkLoadDomain.All);
@@ -380,7 +380,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		public void CacheDisposedForFDOObject()
 		{
 			var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-																	"en", "fr", "en", m_userAction);
+																	"en", "fr", "en", m_ui);
 			// Init backend data provider
 			var dataSetup = cache.ServiceLocator.GetInstance<IDataSetup>();
 			dataSetup.LoadDomain(BackendBulkLoadDomain.All);
@@ -396,7 +396,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		public void FDOObjectDeleted()
 		{
 			using (var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-				"en", "fr", "en", m_userAction))
+				"en", "fr", "en", m_ui))
 			{
 				// Init backend data provider
 				var dataSetup = cache.ServiceLocator.GetInstance<IDataSetup>();
@@ -419,7 +419,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		{
 			using (
 				var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-																	 "en", "fr", "en", m_userAction))
+																	 "en", "fr", "en", m_ui))
 			{
 				Assert.AreEqual(0, cache.NumberOfRemoteClients);
 			}

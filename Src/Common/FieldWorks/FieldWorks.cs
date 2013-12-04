@@ -131,7 +131,7 @@ namespace SIL.FieldWorks
 		// true if we have no previous reporting settings, typically the first time a version of FLEx that
 		// supports usage reporting has been run.
 		private static bool s_noPreviousReportingSettings;
-		private static IFdoUserAction s_userAction;
+		private static IFdoUI s_ui;
 		#endregion
 
 		#region Main Method and Initialization Methods
@@ -242,7 +242,7 @@ namespace SIL.FieldWorks
 				s_noUserInterface = appArgs.NoUserInterface;
 				s_appServerMode = appArgs.AppServerMode;
 
-				s_userAction = new FdoUserActionWindowsForms(GetHelpTopicProvider(appArgs.AppAbbrev), s_threadHelper);
+				s_ui = new FwFdoUI(GetHelpTopicProvider(appArgs.AppAbbrev), s_threadHelper);
 
 				if (Settings.Default.CallUpgrade)
 				{
@@ -806,7 +806,7 @@ namespace SIL.FieldWorks
 			Form owner = s_splashScreen != null ? s_splashScreen.Form : Form.ActiveForm;
 			using (var progressDlg = new ProgressDialogWithTask(owner))
 			{
-				FdoCache cache = FdoCache.CreateCacheFromExistingData(projectId, s_sWsUser, progressDlg, s_userAction);
+				FdoCache cache = FdoCache.CreateCacheFromExistingData(projectId, s_sWsUser, progressDlg, s_ui);
 				EnsureValidLinkedFilesFolder(cache);
 				cache.ProjectNameChanged += ProjectNameChanged;
 				cache.ServiceLocator.GetInstance<IUndoStackManager>().OnSave += FieldWorks_OnSave;
@@ -1700,7 +1700,7 @@ namespace SIL.FieldWorks
 							projectToTry = null; // If the user cancels the send/receive, this null will result in a return to the welcome dialog.
 							// Hard to say what Form.ActiveForm is here. The splash and welcome dlgs are both gone.
 							var projectDataPathname = ObtainProjectMethod.ObtainProjectFromAnySource(Form.ActiveForm,
-								helpTopicProvider, out obtainedProjectType, s_userAction);
+								helpTopicProvider, out obtainedProjectType, s_ui);
 							if (!string.IsNullOrEmpty(projectDataPathname))
 							{
 								projectToTry = new ProjectId(FDOBackendProviderType.kXML, projectDataPathname, null);
@@ -1772,7 +1772,7 @@ namespace SIL.FieldWorks
 			{
 				return null;
 			}
-			using (var dlg = new ChooseLangProjectDialog(helpTopicProvider, false, s_userAction))
+			using (var dlg = new ChooseLangProjectDialog(helpTopicProvider, false, s_ui))
 			{
 				dlg.ShowDialog(dialogOwner);
 				var app = helpTopicProvider as IApp;
@@ -1804,7 +1804,7 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		internal static ProjectId CreateNewProject(Form dialogOwner, FwApp app, IHelpTopicProvider helpTopicProvider)
 		{
-			using (var dlg = new FwNewLangProject(s_userAction))
+			using (var dlg = new FwNewLangProject(s_ui))
 			{
 				dlg.SetDialogProperties(helpTopicProvider);
 				switch (dlg.DisplayDialog(dialogOwner))
@@ -2034,7 +2034,7 @@ namespace SIL.FieldWorks
 				// Both these setters check and do nothing if not changed.
 				using (var progressDlg = new ProgressDialogWithTask(s_threadHelper))
 				{
-					return ClientServerServices.Current.Local.SetProjectSharing(fShareProjects, progressDlg, s_userAction);
+					return ClientServerServices.Current.Local.SetProjectSharing(fShareProjects, progressDlg, s_ui);
 				}
 			}
 
@@ -2043,7 +2043,7 @@ namespace SIL.FieldWorks
 			{
 				using (var progressDlg = new ProgressDialogWithTask(s_threadHelper))
 				{
-					fSuccess = ClientServerServices.Current.Local.SetProjectSharing(fShareProjects, progressDlg, s_userAction);
+					fSuccess = ClientServerServices.Current.Local.SetProjectSharing(fShareProjects, progressDlg, s_ui);
 				}
 				return new ProjectId(ClientServerServices.Current.Local.IdForLocalProject(Path.GetFileNameWithoutExtension(projectPath)), null);
 			});
@@ -2507,7 +2507,7 @@ namespace SIL.FieldWorks
 					try
 					{
 						ProjectRestoreService restoreService = new ProjectRestoreService(restoreSettings.Settings,
-						GetHelpTopicProvider(restoreSettings.FwAppCommandLineAbbrev), s_userAction);
+						GetHelpTopicProvider(restoreSettings.FwAppCommandLineAbbrev), s_ui);
 						Logger.WriteEvent("Restoring from " + restoreSettings.Settings.Backup.File);
 						if (RestoreProjectDlg.HandleRestoreFileErrors(null, ResourceHelper.GetResourceString("ksRestoreFailed"),
 							restoreSettings.Settings.Backup.File, () => DoRestore(restoreService)))
@@ -2569,7 +2569,7 @@ namespace SIL.FieldWorks
 			{
 				FdoCache cache = existingCache ?? FdoCache.CreateCacheFromExistingData(
 					new ProjectId(restoreSettings.Settings.FullProjectPath, null),
-					s_sWsUser, progressDlg, s_userAction);
+					s_sWsUser, progressDlg, s_ui);
 
 				try
 				{

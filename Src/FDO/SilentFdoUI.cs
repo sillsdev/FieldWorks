@@ -18,15 +18,15 @@ namespace SIL.FieldWorks.FDO
 	/// Silent implementation of FdoUserAction with reasonable defaults for
 	/// actions which should not require user intervention
 	/// </summary>
-	public class SilentFdoUserAction : IFdoUserAction
+	public class SilentFdoUI : IFdoUI
 	{
 		private readonly ISynchronizeInvoke m_synchronizeInvoke;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="SilentFdoUserAction"/> class.
+		/// Initializes a new instance of the <see cref="SilentFdoUI"/> class.
 		/// </summary>
 		/// <param name="synchronizeInvoke">The synchronize invoke.</param>
-		public SilentFdoUserAction(ISynchronizeInvoke synchronizeInvoke)
+		public SilentFdoUI(ISynchronizeInvoke synchronizeInvoke)
 		{
 			m_synchronizeInvoke = synchronizeInvoke;
 		}
@@ -104,7 +104,8 @@ namespace SIL.FieldWorks.FDO
 		/// <param name="type"></param>
 		/// <param name="message"></param>
 		/// <param name="caption"></param>
-		public void DisplayMessage(MessageType type, string message, string caption)
+		/// <param name="helpTopic"></param>
+		public void DisplayMessage(MessageType type, string message, string caption, string helpTopic)
 		{
 			// Informational only
 		}
@@ -141,6 +142,14 @@ namespace SIL.FieldWorks.FDO
 		public bool OfferToRestore(string projectPath, string backupPath)
 		{
 			return true;
+		}
+
+		/// <summary>
+		/// Exits the application.
+		/// </summary>
+		public void Exit()
+		{
+			Environment.Exit(0);
 		}
 
 		/// <summary>

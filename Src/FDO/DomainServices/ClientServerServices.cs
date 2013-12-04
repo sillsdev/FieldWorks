@@ -21,13 +21,11 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
-using System.Windows.Forms;
 using FwRemoteDatabaseConnector;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {
@@ -207,9 +205,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// </summary>
 		/// <param name="fShare">if set to <c>true</c>, turn sharing on.</param>
 		/// <param name="progress">The progress dialog.</param>
-		/// <param name="userAction"></param>
+		/// <param name="ui"></param>
 		/// <returns>Indication of whether the request was performed successfully.</returns>
-		bool SetProjectSharing(bool fShare, IThreadedProgress progress, IFdoUserAction userAction);
+		bool SetProjectSharing(bool fShare, IThreadedProgress progress, IFdoUI ui);
 
 		/// <summary>
 		/// Return true if the specified project (in the specified parent directory) will be
@@ -227,11 +225,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="progressDlg">The progress dialog for getting a message box owner and/or
 		/// ensuring we're invoking on the uI thread.</param>
 		/// <param name="filename">The full path of the existing XML file for the project</param>
-		/// <param name="userAction"></param>
+		/// <param name="ui"></param>
 		/// <returns>The project identifier, typically the path to the converted file (or the
 		/// original, if not configured for the client-server backend)</returns>
 		/// ------------------------------------------------------------------------------------
-		string ConvertToDb4oBackendIfNeeded(IThreadedProgress progressDlg, string filename, IFdoUserAction userAction);
+		string ConvertToDb4oBackendIfNeeded(IThreadedProgress progressDlg, string filename, IFdoUI ui);
 
 		/// <summary>
 		/// Copies the specified project (assumed to be in the current Projects directory)
@@ -575,9 +573,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// </summary>
 		/// <param name="fShare">if set to <c>true</c>, turn sharing on.</param>
 		/// <param name="progress">The progress dialog.</param>
-		/// <param name="userAction"></param>
+		/// <param name="ui"></param>
 		/// ------------------------------------------------------------------------------------
-		public bool SetProjectSharing(bool fShare, IThreadedProgress progress, IFdoUserAction userAction)
+		public bool SetProjectSharing(bool fShare, IThreadedProgress progress, IFdoUI ui)
 		{
 			Db4oServerInfo serverInfo = null;
 			do
@@ -591,7 +589,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				}
 			}
 			while (serverInfo == null &&
-				userAction.Retry(string.Format(Strings.ksLocalConnectorServiceNotStarted, "FwRemoteDatabaseConnectorService"),
+				ui.Retry(string.Format(Strings.ksLocalConnectorServiceNotStarted, "FwRemoteDatabaseConnectorService"),
 				fShare ? Strings.ksConvertingToShared : Strings.ksConvertingToNonShared));
 
 			if (serverInfo == null || serverInfo.AreProjectShared() == fShare)
@@ -603,7 +601,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (fShare)
 			{
 				// Turning sharing on.
-				if (!ConvertAllProjectsToDb4o(progress, userAction))
+				if (!ConvertAllProjectsToDb4o(progress, ui))
 				{
 					LocalDb4OServerInfoConnection.ShareProjects(false); // could not switch
 					return false;
@@ -611,7 +609,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			}
 			else
 			{
-				if (!ConvertAllProjectsToXml(progress, userAction))
+				if (!ConvertAllProjectsToXml(progress, ui))
 				{
 					// If ConvertAllProjectsToXml failed then leave sharing on.
 					LocalDb4OServerInfoConnection.ShareProjects(true);
@@ -646,7 +644,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// </summary>
 		/// <returns>false if clients are still connected.</returns>
 		/// ------------------------------------------------------------------------------------
-		private static bool EnsureNoClientsAreConnected(IFdoUserAction userAction)
+		private static bool EnsureNoClientsAreConnected(IFdoUI ui)
 		{
 			var localService = LocalDb4OServerInfoConnection;
 			if (localService == null)
@@ -661,7 +659,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					connectedClientsMsg.AppendFormat("{2}{0} : {1}", client, Dns.GetHostEntry(client).HostName, Environment.NewLine);
 				}
 
-				if (!userAction.Retry(String.Format(Strings.ksAllProjectsMustDisconnectClients, connectedClientsMsg),
+				if (!ui.Retry(String.Format(Strings.ksAllProjectsMustDisconnectClients, connectedClientsMsg),
 					Strings.ksAllProjectsMustDisconnectCaption))
 					return false;
 
@@ -680,10 +678,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// TODO: as an enhancement connected clients could be messaged and asked to disconnect.
 		/// </summary>
 		/// <param name="projectName">project name.</param>
-		/// <param name="userAction"></param>
+		/// <param name="ui"></param>
 		/// <returns>false if clients are still connected.</returns>
 		/// ------------------------------------------------------------------------------------
-		private static bool EnsureNoClientsAreConnected(string projectName, IFdoUserAction userAction)
+		private static bool EnsureNoClientsAreConnected(string projectName, IFdoUI ui)
 		{
 			Db4oServerInfo localService = LocalDb4OServerInfoConnection;
 			if (localService == null)
@@ -695,7 +693,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				foreach (string client in connectedClients)
 					connectedClientsMsg.AppendFormat("{2}{0} : {1}", client, Dns.GetHostEntry(client).HostName, Environment.NewLine);
 
-				if (!WarnOfOtherConnectedClients(projectName, connectedClientsMsg.ToString(), userAction))
+				if (!WarnOfOtherConnectedClients(projectName, connectedClientsMsg.ToString(), ui))
 					return false;
 
 				connectedClients = localService.ListConnectedClients(projectName);
@@ -711,14 +709,14 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="projectName">Name of the project.</param>
 		/// <param name="connectedClientsMsg">The message to show about the connected clients.
 		/// </param>
-		/// <param name="userAction"></param>
+		/// <param name="ui"></param>
 		/// ------------------------------------------------------------------------------------
-		private static bool WarnOfOtherConnectedClients(string projectName, string connectedClientsMsg, IFdoUserAction userAction)
+		private static bool WarnOfOtherConnectedClients(string projectName, string connectedClientsMsg, IFdoUI ui)
 		{
 			var msg = String.Format(Strings.ksMustDisconnectClients, projectName, connectedClientsMsg);
 			var caption = String.Format(Strings.ksMustDisconnectCaption, projectName);
 
-			return userAction.Retry(msg, caption);
+			return ui.Retry(msg, caption);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -728,20 +726,21 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <returns><c>true</c> if successful; <c>false</c> if other clients are connected,
 		/// which prevents conversion of shared projects.</returns>
 		/// ------------------------------------------------------------------------------------
-		private bool ConvertAllProjectsToXml(IThreadedProgress progressDlg, IFdoUserAction userAction)
+		private bool ConvertAllProjectsToXml(IThreadedProgress progressDlg, IFdoUI ui)
 		{
-			if (!EnsureNoClientsAreConnected(userAction))
+			if (!EnsureNoClientsAreConnected(ui))
 				return false;
 
 			progressDlg.Title = Strings.ksConvertingToNonShared;
 			progressDlg.AllowCancel = false;
 			progressDlg.Maximum = Directory.GetDirectories(DirectoryFinder.ProjectsDirectory).Count();
-			progressDlg.RunTask(true, (progress, args) => ConvertAllProjectsToXmlTask(progress, userAction, args));
+			progressDlg.RunTask(true, ConvertAllProjectsToXmlTask, ui);
 			return true;
 		}
 
-		private object ConvertAllProjectsToXmlTask(IThreadedProgress progress, IFdoUserAction userAction, object[] args)
+		private object ConvertAllProjectsToXmlTask(IThreadedProgress progress, object[] args)
 		{
+			var userAction = (IFdoUI) args[0];
 			foreach (var projectFolder in Directory.GetDirectories(DirectoryFinder.ProjectsDirectory))
 			{
 				var projectName = Path.GetFileName(projectFolder);
@@ -764,7 +763,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					}
 					catch (Exception e)
 					{
-						ReportConversionError(progress.Form, projectPath, e);
+						ReportConversionError(userAction, projectPath, e);
 					}
 				}
 				progress.Step(1);
@@ -777,18 +776,19 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Converts all projects to db4o.
 		/// </summary>
 		/// <param name="progressDlg">The progress dialog box.</param>
-		/// <param name="userAction"></param>
+		/// <param name="ui"></param>
 		/// ------------------------------------------------------------------------------------
-		private bool ConvertAllProjectsToDb4o(IThreadedProgress progressDlg, IFdoUserAction userAction)
+		private bool ConvertAllProjectsToDb4o(IThreadedProgress progressDlg, IFdoUI ui)
 		{
 			progressDlg.Title = Strings.ksConvertingToShared;
 			progressDlg.AllowCancel = false;
 			progressDlg.Maximum = Directory.GetDirectories(DirectoryFinder.ProjectsDirectory).Count();
-			return (bool)progressDlg.RunTask(true, (progress, args) => ConvertAllProjectsToDb4o(progress, userAction, args));
+			return (bool)progressDlg.RunTask(true, ConvertAllProjectsToDb4o, ui);
 		}
 
-		private object ConvertAllProjectsToDb4o(IThreadedProgress progress, IFdoUserAction userAction, object[] args)
+		private object ConvertAllProjectsToDb4o(IThreadedProgress progress, object[] args)
 		{
+			var userAction = (IFdoUI) args[0];
 			for (; ; )
 			{
 				string projects = "";
@@ -817,21 +817,21 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				progress.Message = Path.GetFileNameWithoutExtension(projectPath);
 				if (File.Exists(projectPath) && !File.Exists(suppressPath))
 				{
-				try
-				{
+					try
+					{
 						ConvertToDb4oBackendIfNeeded(progress, projectPath, userAction);
-				}
-				catch (Exception e)
-				{
-						ReportConversionError(progress.Form, projectPath, e);
-				}
+					}
+					catch (Exception e)
+					{
+						ReportConversionError(userAction, projectPath, e);
+					}
 				}
 				progress.Step(1);
 			}
 			return true;
 		}
 
-		private static void ReportConversionError(Form messageBoxOwner, string projectPath, Exception e)
+		private static void ReportConversionError(IFdoUI ui, string projectPath, Exception e)
 		{
 			string message;
 			if (e is FwNewerVersionException)
@@ -844,8 +844,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				message = string.Format(Strings.ksConvertFailedDetails, Path.GetFileName(projectPath),
 					Path.GetDirectoryName(projectPath), e.Message);
 			}
-			ThreadHelper.ShowMessageBox(messageBoxOwner, message, Strings.ksCannotConvert,
-				MessageBoxButtons.OK, MessageBoxIcon.Error);
+			ui.DisplayMessage(MessageType.Error, message, Strings.ksCannotConvert, null);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -857,29 +856,29 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="progressDlg">The progress dialog (for getting a message box owner and/or
 		/// ensuring we're invoking on the UI thread).</param>
 		/// <param name="xmlFilename">The full path of the existing XML file for the project</param>
-		/// <param name="userAction"></param>
+		/// <param name="ui"></param>
 		/// <returns>The project identifier, typically the path to the converted file (or the
 		/// original, if not configured for the client-server backend)</returns>
 		/// ------------------------------------------------------------------------------------
-		public string ConvertToDb4oBackendIfNeeded(IThreadedProgress progressDlg, string xmlFilename, IFdoUserAction userAction)
+		public string ConvertToDb4oBackendIfNeeded(IThreadedProgress progressDlg, string xmlFilename, IFdoUI ui)
 		{
 			if (!ShareMyProjects)
 				return xmlFilename; // no conversion needed.
 			string desiredPath = Path.ChangeExtension(xmlFilename, FwFileExtensions.ksFwDataDb4oFileExtension);
-			if (!EnsureNoClientsAreConnected(Path.GetFileNameWithoutExtension(desiredPath), userAction))
+			if (!EnsureNoClientsAreConnected(Path.GetFileNameWithoutExtension(desiredPath), ui))
 				return null; // fail
 
 			try
 			{
 				using (var tempCache = FdoCache.CreateCacheFromExistingData(new SimpleProjectId(FDOBackendProviderType.kXML, xmlFilename),
-					"en", progressDlg, new SilentFdoUserAction(progressDlg.SynchronizeInvoke)))
+					"en", progressDlg, new SilentFdoUI(progressDlg.SynchronizeInvoke)))
 				{
 
 				// The zero in the object array is for db4o and causes it not to open a port.
 				// This is fine since we aren't yet trying to start up on this restored database.
 				// The null says we are creating the file on the local host.
 					using (var copyCache = FdoCache.CreateCacheCopy(new SimpleProjectId(FDOBackendProviderType.kDb4oClientServer, desiredPath),
-						"en", tempCache, new SilentFdoUserAction(progressDlg.SynchronizeInvoke)))
+						"en", tempCache, new SilentFdoUI(progressDlg.SynchronizeInvoke)))
 					{
 						copyCache.ServiceLocator.GetInstance<IDataStorer>().Commit(new HashSet<ICmObjectOrSurrogate>(), new HashSet<ICmObjectOrSurrogate>(), new HashSet<ICmObjectId>());
 						// Enhance JohnT: how can we tell this succeeded?
@@ -920,7 +919,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			try
 			{
 				using (var copyCache = FdoCache.CreateCacheCopy(
-					new SimpleProjectId(FDOBackendProviderType.kXML, newFilePath), "en", source, source.ServiceLocator.GetInstance<IFdoUserAction>()))
+					new SimpleProjectId(FDOBackendProviderType.kXML, newFilePath), "en", source, source.ServiceLocator.GetInstance<IFdoUI>()))
 				{
 				copyCache.ServiceLocator.GetInstance<IDataStorer>().Commit(
 					new HashSet<ICmObjectOrSurrogate>(),

@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		private bool m_fRestoreOverProject;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private string m_sLinkDirChangedTo;
-		private readonly IFdoUserAction m_userAction;
+		private readonly IFdoUI m_ui;
 		#endregion
 
 		#region Constructor
@@ -47,13 +47,13 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// </summary>
 		/// <param name="settings">The restore settings.</param>
 		/// <param name="helpTopicProvider"></param>
-		/// <param name="userAction"></param>
+		/// <param name="ui"></param>
 		/// ------------------------------------------------------------------------------------
-		public ProjectRestoreService(RestoreProjectSettings settings, IHelpTopicProvider helpTopicProvider, IFdoUserAction userAction)
+		public ProjectRestoreService(RestoreProjectSettings settings, IHelpTopicProvider helpTopicProvider, IFdoUI ui)
 		{
 			m_restoreSettings = settings;
 			m_helpTopicProvider = helpTopicProvider;
-			m_userAction = userAction;
+			m_ui = ui;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -122,7 +122,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 
 			// switch to the desired backend (if it's in the projects directory...anything else stays XML for now).
 			if (DirectoryFinder.IsSubFolderOfProjectsDirectory(m_restoreSettings.ProjectPath) && !suppressConversion)
-				ClientServerServices.Current.Local.ConvertToDb4oBackendIfNeeded(progressDlg, m_restoreSettings.FullProjectPath, m_userAction);
+				ClientServerServices.Current.Local.ConvertToDb4oBackendIfNeeded(progressDlg, m_restoreSettings.FullProjectPath, m_ui);
 
 			CleanupAfterRestore(true);
 		}
@@ -333,7 +333,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// <remarks>Protected so we can subclass in tests.</remarks>
 		protected virtual bool CanRestoreLinkedFilesToProjectsFolder()
 		{
-			return m_userAction.RestoreLinkedFilesInProjectFolder();
+			return m_ui.RestoreLinkedFilesInProjectFolder();
 		}
 
 		/// <summary>
@@ -392,7 +392,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 				{
 					//Some files in the zip file are older than the ones on disk. Therefore find out if the user wants
 					//to keep the newer files on disk.
-					FileSelection fileSelection = m_userAction.ChooseFilesToUse();
+					FileSelection fileSelection = m_ui.ChooseFilesToUse();
 					if (fileSelection == FileSelection.OkKeepNewer)
 					{
 						var newList = RemoveFilesThatAreOlderThanThoseOnDisk(filesContainedInLinkdFilesFolder,
@@ -423,7 +423,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// <param name="filesContainedInLinkdFilesFolder"></param>
 		protected virtual void CouldNotRestoreLinkedFilesToOriginalLocation(string linkedFilesPathPersisted, Dictionary<string, DateTime> filesContainedInLinkdFilesFolder)
 		{
-			YesNoCancel userSelection = m_userAction.CannotRestoreLinkedFilesToOriginalLocation();
+			YesNoCancel userSelection = m_ui.CannotRestoreLinkedFilesToOriginalLocation();
 			if (userSelection == YesNoCancel.OkYes)
 			{
 				m_sLinkDirChangedTo = DirectoryFinder.GetDefaultLinkedFilesDir(m_restoreSettings.ProjectPath);

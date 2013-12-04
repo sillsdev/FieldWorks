@@ -22,14 +22,14 @@ using XCore;
 namespace SIL.FieldWorks.FdoUi
 {
 	/// <summary>
-	/// Implementation of IFdoUserAction which uses Windows Forms
+	/// The implementation of IFdoUI for FieldWorks apps.
 	/// </summary>
-	public class FdoUserActionWindowsForms : IFdoUserAction
+	public class FwFdoUI : IFdoUI
 	{
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private readonly ISynchronizeInvoke m_synchronizeInvoke;
 
-		public FdoUserActionWindowsForms(IHelpTopicProvider helpTopicProvider, ISynchronizeInvoke synchronizeInvoke)
+		public FwFdoUI(IHelpTopicProvider helpTopicProvider, ISynchronizeInvoke synchronizeInvoke)
 		{
 			m_helpTopicProvider = helpTopicProvider;
 			m_synchronizeInvoke = synchronizeInvoke;
@@ -134,8 +134,8 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="type">The type.</param>
 		/// <param name="message">The message.</param>
 		/// <param name="caption">The caption.</param>
-		/// <exception cref="System.NotImplementedException"></exception>
-		public void DisplayMessage(MessageType type, string message, string caption)
+		/// <param name="helpTopic">The help topic.</param>
+		public void DisplayMessage(MessageType type, string message, string caption, string helpTopic)
 		{
 			var icon = MessageBoxIcon.Information;
 			switch (type)
@@ -150,7 +150,14 @@ namespace SIL.FieldWorks.FdoUi
 					icon = MessageBoxIcon.Warning;
 					break;
 			}
-			m_synchronizeInvoke.Invoke(() => MessageBox.Show(message, caption, MessageBoxButtons.OK, icon));
+			m_synchronizeInvoke.Invoke(() =>
+				{
+					if (string.IsNullOrEmpty(helpTopic))
+						MessageBox.Show(message, caption, MessageBoxButtons.OK, icon);
+					else
+						MessageBox.Show(message, caption, MessageBoxButtons.OK, icon, MessageBoxDefaultButton.Button1,
+							0, m_helpTopicProvider.HelpFile, HelpNavigator.Topic, helpTopic);
+				});
 		}
 
 		/// <summary>
@@ -194,6 +201,14 @@ namespace SIL.FieldWorks.FdoUi
 		}
 
 		/// <summary>
+		/// Exits the application.
+		/// </summary>
+		public void Exit()
+		{
+			Application.Exit();
+		}
+
+		/// <summary>
 		/// Present a message to the user and allow the options to Retry or Cancel
 		/// </summary>
 		/// <param name="msg">The message.</param>
@@ -201,7 +216,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <returns>True to retry.  False otherwise</returns>
 		public bool Retry(string msg, string caption)
 		{
-			return System.Windows.Forms.MessageBox.Show(msg, caption,
+			return MessageBox.Show(msg, caption,
 				MessageBoxButtons.RetryCancel, MessageBoxIcon.None) == DialogResult.Retry;
 		}
 
@@ -212,11 +227,11 @@ namespace SIL.FieldWorks.FdoUi
 		[SuppressMessage("Gendarme.Rules.Design", "TypesWithNativeFieldsShouldBeDisposableRule", Justification="No unmanaged resources to release")]
 		class UserActivityMonitor : IMessageFilter
 		{
-			private readonly FdoUserActionWindowsForms m_userAction;
+			private readonly FwFdoUI m_ui;
 
-			public UserActivityMonitor(FdoUserActionWindowsForms userAction)
+			public UserActivityMonitor(FwFdoUI ui)
 			{
-				m_userAction = userAction;
+				m_ui = ui;
 			}
 
 			private IntPtr m_lastMousePosition;
@@ -228,7 +243,7 @@ namespace SIL.FieldWorks.FdoUi
 					// For mouse move, we get spurious ones when it didn't really move. So check the actual position.
 					if (m.LParam != m_lastMousePosition)
 					{
-						m_userAction.LastActivityTime = DateTime.Now;
+						m_ui.LastActivityTime = DateTime.Now;
 						m_lastMousePosition = m.LParam;
 						// Enhance JohnT: suppress ones where it doesn't move??
 					}
@@ -237,7 +252,7 @@ namespace SIL.FieldWorks.FdoUi
 				if ((m.Msg >= (int)Win32.WinMsgs.WM_MOUSE_Min && m.Msg <= (int)Win32.WinMsgs.WM_MOUSE_Max)
 					|| (m.Msg >= (int)Win32.WinMsgs.WM_KEY_Min && m.Msg <= (int)Win32.WinMsgs.WM_KEY_Max))
 				{
-					m_userAction.LastActivityTime = DateTime.Now;
+					m_ui.LastActivityTime = DateTime.Now;
 				}
 				return false; // don't want to block any messages.
 			}

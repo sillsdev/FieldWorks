@@ -478,7 +478,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 											BCVRef.MakeReferenceString(startRef, endRef, ":", "-") + " with guid " + guid +
 											" does not have a corresponding footnote object owned by " + book.BookId +
 											" or refers to a footnote that is owned by another ORC that occurs earlier.";
-										serviceLocator.GetInstance<IFdoUserAction>().ReportException(new Exception(sMsg), false);
+										serviceLocator.GetInstance<IFdoUI>().ReportException(new Exception(sMsg), false);
 										break;
 									}
 									Logger.WriteEvent("Footnotes out of order in " + book.BookId + ". Expected footnote with guid " + guid +
@@ -532,7 +532,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			{
 				string sMsg = (archivedBook.FootnotesOS.Count -  iFootnote) + " footnote(s) in " +
 					book.BookId + " did not correspond to any owned footnotes in the vernacular text of that book. They have been moved to the end of the footnote sequence.";
-				serviceLocator.GetInstance<IFdoUserAction>().ReportException(new Exception(sMsg), false);
+				serviceLocator.GetInstance<IFdoUI>().ReportException(new Exception(sMsg), false);
 			}
 		}
 

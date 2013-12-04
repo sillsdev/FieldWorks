@@ -71,8 +71,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		private bool m_fImportAnnotations;
 		private BCVRef m_startRef;
 		private BCVRef m_endRef;
-
-		private string m_helpFile;
 		#endregion
 
 		#region Construction & initialization
@@ -155,7 +153,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				{
 					m_scrFileInfoList = new ScrSfFileList((ScrImportSFFiles)source,
 						m_scrMappingsList, ImportDomain.Main,
-						(ImportTypeEnum == TypeOfImport.Paratext5),	m_helpFile);
+						(ImportTypeEnum == TypeOfImport.Paratext5));
 					m_scrFileInfoList.OverlappingFileResolver = m_resolver;
 					break;
 				}
@@ -170,7 +168,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					string wsId = source.WritingSystem ?? string.Empty;
 					m_btFileInfoLists[wsId] = new ScrSfFileList((ScrImportSFFiles)source,
 						m_scrMappingsList, ImportDomain.BackTrans,
-						(ImportTypeEnum == TypeOfImport.Paratext5), m_helpFile);
+						(ImportTypeEnum == TypeOfImport.Paratext5));
 				}
 			}
 
@@ -183,7 +181,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						((ScrImportSFFiles)source).NoteTypeRA);
 					m_notesFileInfoLists[key] = new ScrSfFileList((ScrImportSFFiles)source,
 						m_notesMappingsList, ImportDomain.Annotations,
-						(ImportTypeEnum == TypeOfImport.Paratext5), m_helpFile);
+						(ImportTypeEnum == TypeOfImport.Paratext5));
 				}
 			}
 		}
@@ -678,20 +676,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					m_scrMappingsList.StyleSheet = value;
 					m_notesMappingsList.StyleSheet = value;
 				}
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Sets the help file used in a message box if an error occurs.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string HelpFile
-		{
-			set
-			{
-				lock (SyncRoot)
-					m_helpFile = value;
 			}
 		}
 		#endregion
