@@ -442,7 +442,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 
 			var selHelper = SetupForTypingEventHandler(true, false);
-			if (selHelper == null  || nChars <= 0)
+			if (selHelper == null || nChars <= 0)
 				return;
 
 			try
@@ -469,7 +469,8 @@ namespace SIL.FieldWorks.Common.RootSites
 				selHelper.IchEnd = selectionStart;
 
 				// make the selection visible
-				selHelper.SetSelection(true);
+				var selection = selHelper.SetSelection(true);
+				selection.SetSelectionProps(selectionProps.Length, selectionProps);
 			}
 			finally
 			{
