@@ -14,6 +14,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -292,6 +293,8 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 		/// </summary>
 		/// <returns>true if successful, false if an error occurs</returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "xrdr is disposed when closed.")]
 		public void ImportData(TextReader rdr, TextWriter wrtrLog, IProgress progress)
 		{
 			bool fRetVal = true;

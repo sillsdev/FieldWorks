@@ -12,6 +12,7 @@
 // Responsibility: FW Team
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -24,6 +25,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	/// In a separate thread, finds any DB4o servers on the network.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
+	[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+		Justification = "m_hostListenerSocket is disposed when closed.")]
 	internal class Db4OServerFinder
 	{
 		#region Data members
