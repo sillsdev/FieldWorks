@@ -17,6 +17,7 @@ using System.Xml.Linq;
 using System.Collections.Generic;
 using System.Xml;
 using System.IO;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 

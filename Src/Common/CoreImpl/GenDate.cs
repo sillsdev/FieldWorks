@@ -1,9 +1,8 @@
-﻿using System;
-using System.Text;
-using System.Globalization;
+using System;
 using System.Collections.Generic;
+using System.Text;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace SIL.CoreImpl
 {
 	/// <summary>
 	/// This class encapsulates the generic (vague) date type. This type can store dates
@@ -215,15 +214,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 			switch (m_precision)
 			{
 				case PrecisionType.Approximate:
-					sb.Append(FwUtilsStrings.ksGenDateApprox);
+					sb.Append(CoreImplStrings.ksGenDateApprox);
 					sb.Append(" ");
 					break;
 				case PrecisionType.After:
-					sb.Append(FwUtilsStrings.ksGenDateAfter);
+					sb.Append(CoreImplStrings.ksGenDateAfter);
 					sb.Append(" ");
 					break;
 				case PrecisionType.Before:
-					sb.Append(FwUtilsStrings.ksGenDateBefore);
+					sb.Append(CoreImplStrings.ksGenDateBefore);
 					sb.Append(" ");
 					break;
 			}
@@ -247,7 +246,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 			else if (m_year != UnknownYear && m_ad)
 			{
-				sb.Append(FwUtilsStrings.ksGenDateAD);
+				sb.Append(CoreImplStrings.ksGenDateAD);
 				sb.Append(" ");
 			}
 
@@ -257,7 +256,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				if (!m_ad)
 				{
 					sb.Append(" ");
-					sb.Append(FwUtilsStrings.ksGenDateBC);
+					sb.Append(CoreImplStrings.ksGenDateBC);
 				}
 			}
 			return sb.ToString();
@@ -279,15 +278,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 				switch (m_precision)
 				{
 					case PrecisionType.Approximate:
-						sb.Append(FwUtilsStrings.ksGenDateApprox);
+						sb.Append(CoreImplStrings.ksGenDateApprox);
 						sb.Append(" ");
 						break;
 					case PrecisionType.After:
-						sb.Append(FwUtilsStrings.ksGenDateAfter);
+						sb.Append(CoreImplStrings.ksGenDateAfter);
 						sb.Append(" ");
 						break;
 					case PrecisionType.Before:
-						sb.Append(FwUtilsStrings.ksGenDateBefore);
+						sb.Append(CoreImplStrings.ksGenDateBefore);
 						sb.Append(" ");
 						break;
 				}
@@ -316,15 +315,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 				switch (m_precision)
 				{
 					case PrecisionType.Approximate:
-						sb.Append(FwUtilsStrings.ksGenDateApprox);
+						sb.Append(CoreImplStrings.ksGenDateApprox);
 						sb.Append(" ");
 						break;
 					case PrecisionType.After:
-						sb.Append(FwUtilsStrings.ksGenDateAfter);
+						sb.Append(CoreImplStrings.ksGenDateAfter);
 						sb.Append(" ");
 						break;
 					case PrecisionType.Before:
-						sb.Append(FwUtilsStrings.ksGenDateBefore);
+						sb.Append(CoreImplStrings.ksGenDateBefore);
 						sb.Append(" ");
 						break;
 				}
@@ -380,30 +379,30 @@ namespace SIL.FieldWorks.Common.FwUtils
 			bool fAD = true;
 
 			date = date.Trim();
-			if (date.StartsWith(FwUtilsStrings.ksGenDateApprox))
+			if (date.StartsWith(CoreImplStrings.ksGenDateApprox))
 			{
 				precision = PrecisionType.Approximate;
-				date = date.Substring(FwUtilsStrings.ksGenDateApprox.Length + 1);
+				date = date.Substring(CoreImplStrings.ksGenDateApprox.Length + 1);
 			}
-			else if (date.StartsWith(FwUtilsStrings.ksGenDateAfter))
+			else if (date.StartsWith(CoreImplStrings.ksGenDateAfter))
 			{
 				precision = PrecisionType.After;
-				date = date.Substring(FwUtilsStrings.ksGenDateAfter.Length + 1);
+				date = date.Substring(CoreImplStrings.ksGenDateAfter.Length + 1);
 			}
-			else if (date.StartsWith(FwUtilsStrings.ksGenDateBefore))
+			else if (date.StartsWith(CoreImplStrings.ksGenDateBefore))
 			{
 				precision = PrecisionType.Before;
-				date = date.Substring(FwUtilsStrings.ksGenDateBefore.Length + 1);
+				date = date.Substring(CoreImplStrings.ksGenDateBefore.Length + 1);
 			}
-			if (date.Contains(FwUtilsStrings.ksGenDateAD + " "))
+			if (date.Contains(CoreImplStrings.ksGenDateAD + " "))
 			{
 				fAD = true;
-				date = date.Replace(FwUtilsStrings.ksGenDateAD + " ", "");
+				date = date.Replace(CoreImplStrings.ksGenDateAD + " ", "");
 			}
-			else if (date.EndsWith(FwUtilsStrings.ksGenDateBC))
+			else if (date.EndsWith(CoreImplStrings.ksGenDateBC))
 			{
 				fAD = false;
-				date = date.Substring(0, date.Length - (FwUtilsStrings.ksGenDateBC.Length + 1));
+				date = date.Substring(0, date.Length - (CoreImplStrings.ksGenDateBC.Length + 1));
 			}
 			int nDay = UnknownDay;
 			int nMonth = UnknownMonth;

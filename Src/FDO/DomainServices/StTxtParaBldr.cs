@@ -16,10 +16,7 @@
 // </remarks>
 // ---------------------------------------------------------------------------------------------
 using System;
-using System.Runtime.InteropServices; // needed for Marshal
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
 using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.FDO.DomainServices

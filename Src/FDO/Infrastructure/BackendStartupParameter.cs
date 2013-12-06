@@ -1,5 +1,3 @@
-using SIL.FieldWorks.Common.FwUtils;
-
 namespace SIL.FieldWorks.FDO.Infrastructure
 {
 	/// <summary>

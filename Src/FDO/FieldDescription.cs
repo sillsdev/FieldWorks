@@ -22,7 +22,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using System.Reflection;
 using System.Collections;
 using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 
 namespace SIL.FieldWorks.FDO

@@ -120,6 +120,21 @@
   <data name="ksCannotWriteWritingSystemInfo" xml:space="preserve">
     <value>FieldWorks is unable to save some writing system settings because access to {0} is not authorized. This may cause unexpected behavior, and may be indicative of a wider problem with access permissions that could cause program crashes.</value>
   </data>
+  <data name="ksGenDateAD" xml:space="preserve">
+    <value>AD</value>
+  </data>
+  <data name="ksGenDateAfter" xml:space="preserve">
+    <value>After</value>
+  </data>
+  <data name="ksGenDateApprox" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="ksGenDateBC" xml:space="preserve">
+    <value>BC</value>
+  </data>
+  <data name="ksGenDateBefore" xml:space="preserve">
+    <value>Before</value>
+  </data>
   <data name="ksWarning" xml:space="preserve">
     <value>Warning</value>
   </data>

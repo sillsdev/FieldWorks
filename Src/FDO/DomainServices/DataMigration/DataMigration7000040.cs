@@ -11,17 +11,8 @@
 // File: DataMigration7000037.cs
 // Responsibility: mcconnel
 // ---------------------------------------------------------------------------------------------
-using System;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Web;
-using System.Xml;
 using System.Xml.Linq;
-using System.Xml.XPath;
-
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 {

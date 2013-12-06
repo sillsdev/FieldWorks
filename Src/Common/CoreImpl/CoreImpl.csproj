@@ -99,6 +99,7 @@
     <Compile Include="..\..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="GenDate.cs" />
     <Compile Include="GraphicsManager.cs" />
     <Compile Include="KernelExtensions.cs" />
     <Compile Include="DispPropOverrideFactory.cs" />

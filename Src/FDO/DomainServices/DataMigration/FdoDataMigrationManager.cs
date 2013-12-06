@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainServices.DataMigration

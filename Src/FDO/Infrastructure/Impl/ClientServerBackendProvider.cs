@@ -12,7 +12,6 @@
 /* This class may well replace ClientServerBackend, which currently is used only by the MySQL classes */
 
 using System.Collections.Generic;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl

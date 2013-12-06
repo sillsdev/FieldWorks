@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using SIL.Utils;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.FDO.Infrastructure
 {

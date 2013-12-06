@@ -191,7 +191,6 @@
       <DependentUpon>FwUtilsStrings.resx</DependentUpon>
     </Compile>
     <Compile Include="FwVersionInfoProvider.cs" />
-    <Compile Include="GenDate.cs" />
     <Compile Include="InstallationException.cs" />
     <Compile Include="IProjectSpecificSettingsKeyProvider.cs" />
     <Compile Include="IServiceLocatorBootstrapper.cs" />

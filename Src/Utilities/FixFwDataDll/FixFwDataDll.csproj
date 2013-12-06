@@ -144,6 +144,12 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\CoreImpl\CoreImpl.csproj">
+      <Project>{4C7D6B65-A331-4ED7-9B53-3301E714F8E7}</Project>
+      <Name>CoreImpl</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
 	   Other similar extension points exist, see Microsoft.Common.targets.
