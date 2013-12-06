@@ -814,9 +814,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						UpdateChanges(styleInfo);
 					}
 
-					// Check to make sure new styles are not going to result in duplicates
-					// in the database
-					m_styleSheet.CheckForDuplicates(m_styleTable, m_app.ApplicationName);
+					try
+					{
+						// Check to make sure new styles are not going to result in duplicates
+						// in the database
+						m_styleSheet.CheckForDuplicates(m_styleTable);
+					}
+					catch (IncompatibleStyleExistsException isee)
+					{
+						MessageBoxUtils.Show(isee.Message, m_app.ApplicationName);
+					}
 
 					foreach (StyleInfo style in m_styleTable.Values)
 					{

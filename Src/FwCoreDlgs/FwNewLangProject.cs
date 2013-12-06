@@ -25,6 +25,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Drawing;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using XCore;
 using SIL.FieldWorks.Common.RootSites;
@@ -701,6 +702,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						}
 					}
 				}
+			}
+			catch (UnauthorizedAccessException uae)
+			{
+				if (MiscUtils.IsUnix)
+				{
+					// Tell Mono user he/she needs to logout and log back in
+					MessageBoxUtils.Show(ResourceHelper.GetResourceString("ksNeedToJoinFwGroup"));
+				}
+				throw;
 			}
 			catch (WorkerThreadException wex)
 			{

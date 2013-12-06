@@ -1520,15 +1520,6 @@ namespace SIL.FieldWorks.FDO {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to FieldWorks has encountered a problem setting up the writing systems. It may be that you need to first log out and then back in. If that doesn&apos;t fix it, you can also try asking an administrator to add you to the fieldworks group by using the command: $ sudo adduser &apos;yourusername&apos; fieldworks.
-        /// </summary>
-        internal static string ksNeedToJoinFwGroup {
-            get {
-                return ResourceManager.GetString("ksNeedToJoinFwGroup", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to No ({0}) Underline.
         /// </summary>
         internal static string ksNoColorUnderline {

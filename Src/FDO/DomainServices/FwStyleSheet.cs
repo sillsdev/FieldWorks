@@ -993,10 +993,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// called for a style already known to exist in the stylesheet.
 		/// </summary>
 		/// <param name="styleInfoTable">The style info table, containing 0 or more new styles</param>
-		/// <param name="applicationName">Name of the application calling this (or whatever
-		/// string you want to appear in a message box if we happen to show one).</param>
 		/// ------------------------------------------------------------------------------------
-		public void CheckForDuplicates(StyleInfoTable styleInfoTable, string applicationName)
+		public void CheckForDuplicates(StyleInfoTable styleInfoTable)
 		{
 			bool fStylesheetReloaded = false;
 
@@ -1023,11 +1021,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 							basedOn.Structure != style.Structure ||
 							basedOn.Function != style.Function)
 						{
-							string sMsg = string.Format(
-								ResourceHelper.GetResourceString("kstidIncompatibleStyleExists"),
-								style.Name);
-							MessageBoxUtils.Show(sMsg, applicationName);
 							styleInfo.IsValid = false;
+							throw new IncompatibleStyleExistsException(string.Format(
+								ResourceHelper.GetResourceString("kstidIncompatibleStyleExists"),
+								style.Name));
 						}
 						else
 						{
@@ -1583,5 +1580,19 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			throw new InvalidOperationException("Cannot delete styles using an in-memory stylesheet");
 		}
 		#endregion
+	}
+
+	/// <summary>
+	/// Exception for handling case when an incompatible style already exists
+	/// </summary>
+	public class IncompatibleStyleExistsException : Exception
+	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="IncompatibleStyleExistsException"/> class.
+		/// </summary>
+		/// <param name="message">The message that describes the error.</param>
+		public IncompatibleStyleExistsException(string message) : base(message)
+		{
+		}
 	}
 }

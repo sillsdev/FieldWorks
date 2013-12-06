@@ -750,12 +750,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			}
 			catch (System.UnauthorizedAccessException e)
 			{
-				if (MiscUtils.IsUnix)
-				{
-					// Tell Mono user he/she needs to logout and log back in
-					MessageBoxUtils.Show(Strings.ksNeedToJoinFwGroup);
-				}
-
 				// Release any resources.
 				ShutdownInternal();
 				throw;

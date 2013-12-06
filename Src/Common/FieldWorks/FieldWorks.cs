@@ -3102,7 +3102,7 @@ namespace SIL.FieldWorks
 					sparkle.AboutToExitForInstallerRun += delegate(object sender, CancelEventArgs args)
 						{
 							CloseAllMainWindows();
-							if(app.ActiveMainWindow != null)
+							if (app.ActiveMainWindow != null)
 							{
 								args.Cancel = true;
 							}
@@ -3112,6 +3112,15 @@ namespace SIL.FieldWorks
 #endif
 					return true;
 				}
+			}
+			catch (UnauthorizedAccessException uae)
+			{
+				if (MiscUtils.IsUnix)
+				{
+					// Tell Mono user he/she needs to logout and log back in
+					MessageBoxUtils.Show(ResourceHelper.GetResourceString("ksNeedToJoinFwGroup"));
+				}
+				throw;
 			}
 			finally
 			{

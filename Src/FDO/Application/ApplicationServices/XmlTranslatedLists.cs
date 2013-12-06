@@ -52,30 +52,23 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 #if DEBUG
 			DateTime dtBegin = DateTime.Now;
 #endif
-			try
+			using (var inputStream = FileUtils.OpenStreamForRead(filename))
 			{
-				using (var inputStream = FileUtils.OpenStreamForRead(filename))
+				var type = Path.GetExtension(filename).ToLowerInvariant();
+				if (type == ".zip")
 				{
-					var type = Path.GetExtension(filename).ToLowerInvariant();
-					if (type == ".zip")
+					using (var zipStream = new ZipInputStream(inputStream))
 					{
-						using (var zipStream = new ZipInputStream(inputStream))
-						{
-							var entry = zipStream.GetNextEntry(); // advances it to where we can read the one zipped file.
-							using (var reader = new StreamReader(zipStream, Encoding.UTF8))
-								ImportTranslatedLists(reader, cache, progress);
-						}
-					}
-					else
-					{
-						using (var reader = new StreamReader(inputStream, Encoding.UTF8))
+						var entry = zipStream.GetNextEntry(); // advances it to where we can read the one zipped file.
+						using (var reader = new StreamReader(zipStream, Encoding.UTF8))
 							ImportTranslatedLists(reader, cache, progress);
 					}
 				}
-			}
-			catch (Exception e)
-			{
-				MessageBoxUtils.Show(e.Message);
+				else
+				{
+					using (var reader = new StreamReader(inputStream, Encoding.UTF8))
+						ImportTranslatedLists(reader, cache, progress);
+				}
 			}
 #if DEBUG
 			DateTime dtEnd = DateTime.Now;
@@ -101,16 +94,9 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			Debug.Assert(m_wsEn != 0);
 			m_progress = progress;
 
-			try
-			{
-				using (var xreader = XmlReader.Create(reader))
+			using (var xreader = XmlReader.Create(reader))
 				Import(xreader);
-			}
-			catch (Exception e)
-			{
-				MessageBoxUtils.Show(e.Message, "Import Error");
-				return false;
-			}
+
 			return true;
 		}
 
