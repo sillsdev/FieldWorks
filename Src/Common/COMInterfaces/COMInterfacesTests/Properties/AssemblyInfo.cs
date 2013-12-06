@@ -9,6 +9,6 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("COMInterfacesTests")]
 [assembly: AssemblyCompany("SIL")]
 [assembly: AssemblyProduct("SIL FieldWorks")]
-[assembly: AssemblyCopyright("Copyright (C) 2005 SIL International")]
+[assembly: AssemblyCopyright("Copyright (c) 2005-2013 SIL International")]
 
 [assembly: ComVisible(false)]

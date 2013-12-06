@@ -22,7 +22,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SIL International")]
 [assembly: AssemblyProduct("SIL FieldWorks")]
-[assembly: AssemblyCopyright("\u00A9 2002, SIL International")]
+[assembly: AssemblyCopyright("\u00A9 2002-2013 SIL International")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

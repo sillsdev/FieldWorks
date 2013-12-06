@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SIL International")]
 [assembly: AssemblyProduct("OxesIOTests")]
-[assembly: AssemblyCopyright("Copyright © SIL International 2008")]
+[assembly: AssemblyCopyright("Copyright © 2008-2013 SIL International")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
