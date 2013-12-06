@@ -16,9 +16,9 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using Palaso.Reporting;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FixData;
 using Palaso.UI.WindowsForms.HotSpot;
+using SIL.Utils;
 
 namespace FixFwData
 {

@@ -2,6 +2,7 @@ using System;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.LexText
 {

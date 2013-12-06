@@ -22,6 +22,7 @@ using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
+using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.TE

@@ -19,6 +19,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using NUnit.Framework;
 using SIL.FieldWorks.Test.TestUtils;
+using SIL.Utils;
 using XCore;
 using SIL.CoreImpl;
 using System.Collections.Generic;

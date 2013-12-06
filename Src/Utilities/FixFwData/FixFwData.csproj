@@ -59,6 +59,10 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BasicUtils, Version=8.0.6.26231, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
+    </Reference>
     <Reference Include="FixFwDataDll, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\FixFwDataDll.dll</HintPath>

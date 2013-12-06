@@ -21,6 +21,7 @@ using NUnit.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.FDOTests;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.TE
 {

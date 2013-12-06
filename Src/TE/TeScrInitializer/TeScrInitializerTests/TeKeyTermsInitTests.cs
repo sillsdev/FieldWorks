@@ -25,6 +25,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
 using System.Text;
+using SIL.Utils;
 using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.TE

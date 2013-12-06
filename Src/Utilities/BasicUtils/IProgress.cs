@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
 #region // Copyright (c) 2011, SIL International. All Rights Reserved.
 // <copyright from='2011' to='2011' company='SIL International'>
 //		Copyright (c) 2011, SIL International. All Rights Reserved.
@@ -12,7 +12,7 @@
 // ---------------------------------------------------------------------------------------------
 using System.ComponentModel;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace SIL.Utils
 {
 	/// --------------------------------------------------------------------------------------------
 	/// <summary>

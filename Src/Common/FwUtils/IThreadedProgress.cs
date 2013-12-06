@@ -11,6 +11,7 @@
 // File: IThreadedProgress.cs
 // ---------------------------------------------------------------------------------------------
 using System;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {

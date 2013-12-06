@@ -27,6 +27,7 @@ using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.TE
 {
