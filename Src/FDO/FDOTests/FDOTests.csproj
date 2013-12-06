@@ -381,6 +381,7 @@
     <Compile Include="StTxtParaTests.cs" />
     <Compile Include="StyleInfoTableTests.cs" />
     <Compile Include="TestBigSorting.cs" />
+    <Compile Include="TestProjectId.cs" />
     <Compile Include="UowHelperTests.cs" />
     <Compile Include="ValidationTests.cs" />
     <Compile Include="ValidCharactersTests.cs" />

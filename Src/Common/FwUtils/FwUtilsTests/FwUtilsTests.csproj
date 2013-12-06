@@ -168,7 +168,6 @@
     <Compile Include="SpellingHelperTests.cs" />
     <Compile Include="StringSearcherTests.cs" />
     <Compile Include="ShowHelpTests.cs" />
-    <Compile Include="TestProjectId.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

@@ -16,6 +16,7 @@ using System.IO;
 using NUnit.Framework;
 using Rhino.Mocks;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;

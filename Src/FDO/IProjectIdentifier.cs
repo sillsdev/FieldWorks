@@ -1,58 +1,121 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2011, SIL International. All Rights Reserved.
-// <copyright from='2010' to='2011' company='SIL International'>
-//		Copyright (c) 2011, SIL International. All Rights Reserved.
+#region // Copyright (c) 2010, SIL International. All Rights Reserved.
+// <copyright from='2010' to='2010' company='SIL International'>
+//		Copyright (c) 2010, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
 // </copyright>
 #endregion
 //
-// File: TestProjectId.cs
+// File: IProjectIdentifier.cs
 // Responsibility: FW Team
 // ---------------------------------------------------------------------------------------------
-using SysPath = System.IO.Path;
+using System;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace SIL.FieldWorks.FDO
 {
+	#region FDOBackendProviderType enum
+	/// <summary>
+	/// Supported backend data providers.
+	/// </summary>
+	public enum FDOBackendProviderType
+	{
+		/// <summary>
+		/// An invalid type
+		/// </summary>
+		kInvalid,
+
+		/// <summary>
+		/// A FieldWorks XML file.
+		/// </summary>
+		/// <remarks>uses XMLBackendProvider</remarks>
+		kXML,
+
+		/// <summary>
+		/// A mostly 'do nothing' backend.
+		/// This backend is used where there is no actual backend data store on the hard drive.
+		/// This could be used for tests, for instance, that create all FDO test data themselves.
+		/// </summary>
+		/// <remarks>uses MemoryOnlyBackendProvider</remarks>
+		kMemoryOnly,
+
+#if USING_MERCURIALBACKEND
+		/// <summary>
+		/// </summary>
+		kMercurial = 5,
+#endif
+
+#if USING_GITBACKEND
+		/// <summary>
+		/// Attempt at using Git DVCS as a back end. Makes use of Git's ability to store
+		/// blobs.
+		/// </summary>
+		kGit = 6,
+#endif
+
+#if USING_XMLFILES
+		/// <summary>
+		/// Multiple XML files
+		/// </summary>
+		/// <remarks>XMLFilesBackendProvider</remarks>
+		kXmlFiles = 7,
+#endif
+
+#if USING_MYSQL
+		/// <summary>
+		/// A client/server MySQL database, with a MyISAM engine.
+		/// </summary>
+		/// <remarks>MySQLClientServer</remarks>
+		kMySqlClientServer = 101,
+
+		/// <summary>
+		/// A client/server MySQL database, with an InnoDB engine.
+		/// </summary>
+		/// <remarks>MySQLClientServer</remarks>
+		kMySqlClientServerInnoDB = 102,
+#endif
+
+		/// <summary>
+		/// A FieldWorks XML file.
+		/// This has an actual backend data store on the hard drive, but does not use a real
+		/// repository of writing systems. There is probably no legitimate reason to use this
+		/// except for testing the XML BEP.
+		/// </summary>
+		/// <remarks>uses XMLBackendProvider</remarks>
+		kXMLWithMemoryOnlyWsMgr,
+
+		/// <summary>
+		/// A db4o client/server database
+		/// </summary>
+		/// <remarks>db4oClientServer</remarks>
+		kDb4oClientServer = 103,
+	};
+	#endregion
+
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// Project identification used for testing purposes
+	/// An interface that represents a FieldWorks project for a back-end provider
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class TestProjectId : IProjectIdentifier
+	public interface IProjectIdentifier
 	{
-		private readonly FDOBackendProviderType m_type;
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="TestProjectId"/> class.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public TestProjectId(FDOBackendProviderType type, string name)
-		{
-			m_type = type;
-			Path = name;
-		}
-
-		#region IProjectIdentifier implementation
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the UI name of the project (this will typically be formatted as [Name]
 		/// for local projects and [Name]-[ServerName] for remote projects).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string UiName
-		{
-			get { return Name; }
-		}
+		string UiName { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets the project path (typically a full path to the file) for local projects.
+		/// Gets or sets the project path for local projects (this is a full path to the file
+		/// for local file-based BEPs and just a name for client-server BEPs).
 		/// </summary>
+		/// <exception cref="InvalidOperationException">If the project is on a remote host</exception>
 		/// ------------------------------------------------------------------------------------
-		public string Path { get; set; }
+		string Path { get; set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -61,42 +124,29 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// be used as a path; use the <see cref="Path"/> property instead.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string Handle
-		{
-			get { return Name; }
-		}
+		string Handle { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets a token that uniquely identifies the project that can be used for a named pipe.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string PipeHandle
-		{
-			get { return FwUtils.GeneratePipeHandle(Handle); }
-		}
+		string PipeHandle { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the project short name (the project name without an extension or path.
-		/// Typically this will be the same as <see cref="Path"/> for remote projects)
+		/// Gets the project name (no extension or folder)
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string Name
-		{
-			get { return SysPath.GetFileNameWithoutExtension(Path); }
-		}
+		string Name { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the path to the folder that contains the project (can be <c>null</c> for
-		/// remote projects).
+		/// Gets the folder that contains the project file for a local project or the folder
+		/// where local settings will be saved for remote projects.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string ProjectFolder
-		{
-			get { return SysPath.GetDirectoryName(Path); }
-		}
+		string ProjectFolder { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -104,40 +154,27 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// shared. This includes writing systems, etc. and possibly linked files.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string SharedProjectFolder
-		{
-			get { return ProjectFolder; }
-		}
+		string SharedProjectFolder { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the name of the server (can be <c>null</c> for a local project).
+		/// Gets the name of the server (will typically be <c>null</c> for a local project).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string ServerName
-		{
-			get { return null; }
-		}
+		string ServerName { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the type of back-end used for storing the project.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public FDOBackendProviderType Type
-		{
-			get { return m_type; }
-		}
+		FDOBackendProviderType Type { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets a value indicating whether this project is on the local host.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public bool IsLocal
-		{
-			get { return true; }
-		}
-		#endregion
+		bool IsLocal { get; }
 	}
 }
