@@ -1,4 +1,4 @@
-/* Copyright © 2012 by SIL International. */
+/* Copyright © 2012-2013 SIL International */
 using System;
 using System.Collections.Generic;
 using System.IO;
