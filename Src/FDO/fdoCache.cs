@@ -28,7 +28,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.IOC;
-using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -324,15 +323,9 @@ namespace SIL.FieldWorks.FDO
 			writingSystemManager.Save();
 
 			if (ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem == null)
-			{
-				throw new FwStartupException(ResourceHelper.FormatResourceString("kstidNoWritingSystems",
-					ResourceHelper.GetResourceString("kstidAnalysis")));
-			}
+				throw new FwStartupException(string.Format(Strings.ksNoWritingSystems, Strings.ksAnalysis));
 			if (ServiceLocator.WritingSystems.DefaultVernacularWritingSystem == null)
-			{
-				throw new FwStartupException(ResourceHelper.FormatResourceString("kstidNoWritingSystems",
-					ResourceHelper.GetResourceString("kstidVernacular")));
-			}
+				throw new FwStartupException(string.Format(Strings.ksNoWritingSystems, Strings.ksVernacular));
 
 			NonUndoableUnitOfWorkHelper.Do(ActionHandlerAccessor, () =>
 				DataStoreInitializationServices.PrepareCache(this));

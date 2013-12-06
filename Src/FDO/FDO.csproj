@@ -90,9 +90,6 @@
     <Reference Include="BasicUtils">
       <HintPath>..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
-    <Reference Include="FwResources">
-      <HintPath>..\..\Output\Debug\FwResources.dll</HintPath>
-    </Reference>
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Remoting" />
@@ -101,7 +98,6 @@
     </Reference>
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Web" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="COMInterfaces">
       <Name>COMInterfaces</Name>

@@ -19,7 +19,6 @@ using System.Diagnostics;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.Utils;
 using SILUBS.SharedScrUtils;
-using SIL.FieldWorks.Resources;
 using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.FDO.DomainServices
@@ -52,6 +51,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		private readonly FdoCache m_cache;
 		private readonly IScripture m_scr;
 		private readonly string m_styleSheetFileName;
+		private readonly string m_punctWhitespaceChar;
 
 		private static StyleMarkupInfo s_styleMarkupInfo = null;
 
@@ -62,25 +62,28 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ScrChecksDataSource"/> class.
+		/// Initializes a new instance of the <see cref="ScrChecksDataSource"/> class.
 		/// </summary>
 		/// <param name="cache">The cache.</param>
+		/// <param name="punctWhitespaceChar"></param>
 		/// ------------------------------------------------------------------------------------
-		public ScrChecksDataSource(FdoCache cache) : this(cache, null)
+		public ScrChecksDataSource(FdoCache cache, string punctWhitespaceChar) : this(cache, punctWhitespaceChar, null)
 		{
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ScrChecksDataSource"/> class.
+		/// Initializes a new instance of the <see cref="ScrChecksDataSource"/> class.
 		/// </summary>
 		/// <param name="cache">The cache.</param>
+		/// <param name="punctWhitespaceChar"></param>
 		/// <param name="styleSheetFileName">Path to the stylesheet definition XML file</param>
 		/// ------------------------------------------------------------------------------------
-		public ScrChecksDataSource(FdoCache cache, string styleSheetFileName)
+		public ScrChecksDataSource(FdoCache cache, string punctWhitespaceChar, string styleSheetFileName)
 		{
 			m_cache = cache;
 			m_scr = cache.LangProject.TranslatedScriptureOA;
+			m_punctWhitespaceChar = punctWhitespaceChar;
 			m_styleSheetFileName = styleSheetFileName;
 		}
 
@@ -175,7 +178,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					return "Intermediate";
 
 				case "PunctWhitespaceChar":
-					return ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar").Substring(0, 1);
+					return m_punctWhitespaceChar.Substring(0, 1);
 
 				case "MatchedPairs":
 					return ws.MatchedPairs;

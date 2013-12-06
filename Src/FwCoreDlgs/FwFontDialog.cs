@@ -16,6 +16,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -97,9 +98,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_preview.WritingSystemCode = ws;
 			m_preview.StyleSheet = styleSheet;
 
-			m_tbFontName.Text = fontInfo.UIFontName;
+			m_tbFontName.Text = fontInfo.UIFontName();
 			FontSize = fontInfo.m_fontSize.Value / 1000;
-			m_tbFontSize.Text = FontSize.ToString();
+			m_tbFontSize.Text = FontSize.ToString(CultureInfo.InvariantCulture);
 
 			m_FontAttributes.UpdateForStyle(fontInfo);
 			m_FontAttributes.AllowSuperSubScript = fAllowSubscript;
@@ -129,7 +130,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		void IFontDialog.SaveFontInfo(FontInfo fontInfo)
 		{
 			// Font name
-			string newValue = FontInfo.GetInternalFontName(m_tbFontName.Text);
+			string newValue = GetInternalFontName(m_tbFontName.Text);
 			fontInfo.IsDirty |= fontInfo.m_fontName.Save(false, newValue);
 
 			// font size
@@ -435,5 +436,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "kstidBulletsAndNumberingSelectFont");
 		}
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the internal font name for the given UI font.
+		/// </summary>
+		/// <param name="fontNameUI">UI name of the font.</param>
+		/// <returns>Internal font name</returns>
+		/// ------------------------------------------------------------------------------------
+		private static string GetInternalFontName(string fontNameUI)
+		{
+			if (fontNameUI == ResourceHelper.GetResourceString("kstidDefaultFont"))
+				return StyleServices.DefaultFont;
+			return fontNameUI;
+		}
 	}
 }

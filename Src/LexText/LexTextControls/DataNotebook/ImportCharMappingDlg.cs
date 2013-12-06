@@ -24,6 +24,7 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.Resources;
 using XCore;
 using SIL.FieldWorks.FwCoreDlgs;
 
@@ -147,7 +148,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 				{
 					m_app.Synchronize(SyncMsg.ksyncStyle);
 					FwStyleSheet stylesheet = new FwStyleSheet();
-					stylesheet.Init(m_cache, m_cache.LangProject.Hvo, LangProjectTags.kflidStyles);
+					stylesheet.Init(m_cache, m_cache.LangProject.Hvo, LangProjectTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 					m_stylesheet = stylesheet;
 				}
 				string stySel = null;

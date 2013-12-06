@@ -72,7 +72,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				m_lp.StylesOC);
 			m_styleSheet = new FwStyleSheet();
 			m_styleSheet.Init(Cache, m_lp.Hvo,
-				LangProjectTags.kflidStyles);
+				LangProjectTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 
 			Debug.Assert(m_stylesComboBox == null, "m_stylesComboBox is not null.");
 			//if (m_stylesComboBox != null)

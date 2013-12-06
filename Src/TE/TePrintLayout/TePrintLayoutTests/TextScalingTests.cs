@@ -25,6 +25,7 @@ using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Common.PrintLayout;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.TE.TePrintLayoutComponents
 {
@@ -136,7 +137,7 @@ namespace SIL.FieldWorks.TE.TePrintLayoutComponents
 			m_pub = m_scr.PublicationsOC.ToArray()[0];
 			Assert.IsNotNull(m_pub);
 			m_realStylesheet = new FwStyleSheet();
-			m_realStylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+			m_realStylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 			SetFontSizeLineHeightAndSpaceBeforeAfter(m_realStylesheet, ScrStyleNames.Normal,
 				null, 10000, -12000, -1, -1);
 			SetFontSizeLineHeightAndSpaceBeforeAfter(m_realStylesheet, ScrStyleNames.NormalParagraph,

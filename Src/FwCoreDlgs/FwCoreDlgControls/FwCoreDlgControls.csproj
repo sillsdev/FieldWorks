@@ -203,6 +203,7 @@
     <Compile Include="ConfigSenseLayout.Designer.cs">
       <DependentUpon>ConfigSenseLayout.cs</DependentUpon>
     </Compile>
+    <Compile Include="FontInfoExtensions.cs" />
     <Compile Include="FwBulletsPreview.cs">
       <SubType>UserControl</SubType>
     </Compile>

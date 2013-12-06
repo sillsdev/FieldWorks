@@ -25,6 +25,7 @@ using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.TE
 {
@@ -105,7 +106,7 @@ namespace SIL.FieldWorks.TE
 			AddSectionHeadParaToSection(section, "Section Heading", ScrStyleNames.SectionHead);
 
 			m_stylesheet = new FwStyleSheet();
-			m_stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+			m_stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 		}
 		#endregion
 

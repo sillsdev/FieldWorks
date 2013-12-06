@@ -19,6 +19,7 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using XCore;
 
@@ -510,7 +511,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				{
 					m_styleSheet = new FwStyleSheet();
 					m_styleSheet.Init(m_cache, m_cache.LanguageProject.Hvo,
-						LangProjectTags.kflidStyles);
+						LangProjectTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 				}
 				return m_styleSheet;
 			}

@@ -20,6 +20,7 @@ using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.Resources;
 using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.TE.TeEditingHelpers
@@ -140,7 +141,7 @@ namespace SIL.FieldWorks.TE.TeEditingHelpers
 			base.TestSetup();
 
 			FwStyleSheet styleSheet = new FwStyleSheet();
-			styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+			styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 
 			Debug.Assert(m_draftView == null);
 			m_draftView = new TeDummyBasicView();

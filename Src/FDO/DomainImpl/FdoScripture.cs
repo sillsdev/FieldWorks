@@ -18,11 +18,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.Resources;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
@@ -407,8 +407,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// one (which is probably the only one), or creates new settings if none exist.
 		/// </summary>
 		/// <param name="importType">type of import type to find</param>
+		/// <param name="defaultParaCharsStyleName">The default paragraph characters style name.</param>
 		/// ------------------------------------------------------------------------------------
-		public IScrImportSet FindOrCreateDefaultImportSettings(TypeOfImport importType)
+		public IScrImportSet FindOrCreateDefaultImportSettings(TypeOfImport importType, string defaultParaCharsStyleName)
 		{
 			IScrImportSet settings = DefaultImportSettings_internal;
 
@@ -434,7 +435,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 			// Didn't find the specified type of settings, so create a new set.
 			IScrImportSet newSettings =
-				m_cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
+				m_cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create(defaultParaCharsStyleName);
 			ImportSettingsOC.Add(newSettings);
 			newSettings.ImportType = (int)importType;
 			return newSettings;
@@ -872,7 +873,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// first ensure there is no book with that ID.
 		/// </summary>
 		/// <param name="book">The book to copy.</param>
-		/// <exception cref="T:InvalidOperationException">Attempt to copy book to current version
+		/// <exception cref="InvalidOperationException">Attempt to copy book to current version
 		/// when that book already exists in the current version</exception>
 		/// <returns>The copied bok</returns>
 		/// ------------------------------------------------------------------------------------
@@ -975,7 +976,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			if (section.IsIntro)
 			{
-				return String.Format(ResourceHelper.GetResourceString("kstidScriptureSectionIntroduction"), section.OwnOrd);
+				return String.Format(Strings.ksScriptureSectionIntroduction, section.OwnOrd);
 			}
 			ScrReference startRef = new ScrReference(section.VerseRefStart, Versification);
 			ScrReference endRef = new ScrReference(section.VerseRefEnd, Versification);
@@ -1007,11 +1008,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 			else if (footnote.TryGetContainingTitle(out containingTitle))
 			{
-				parentContext = ResourceHelper.GetResourceString("kstidScriptureTitle");
-				footnoteRef = footnote.OwnOrd.ToString();
+				parentContext = Strings.ksScriptureTitle;
+				footnoteRef = footnote.OwnOrd.ToString(CultureInfo.InvariantCulture);
 			}
-			return String.Format("{0} {1}({2})", parentContext,
-				ResourceHelper.GetResourceString("kstidScriptureFootnote"), footnoteRef);
+			return String.Format("{0} {1}({2})", parentContext, Strings.ksScriptureFootnote, footnoteRef);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1079,8 +1079,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				{
 					ITsStrBldr bldr = tssBookName.GetBldr();
 					int cch = bldr.Length;
-					bldr.Replace(cch, cch, String.Format(" ({0})",
-						ResourceHelper.GetResourceString("kstidScriptureTitle")), null);
+					bldr.Replace(cch, cch, String.Format(" ({0})", Strings.ksScriptureTitle), null);
 					tssTitle = bldr.GetString();
 				}
 			}

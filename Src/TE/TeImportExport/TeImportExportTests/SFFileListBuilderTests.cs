@@ -23,6 +23,7 @@ using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -327,7 +328,7 @@ namespace SIL.FieldWorks.TE
 				Cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Add(wsGerman);
 				Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Add(wsGerman);
 			});
-			m_mappingList = new ScrMappingList(MappingSet.Main, null);
+			m_mappingList = new ScrMappingList(MappingSet.Main, null, ResourceHelper.DefaultParaCharsStyleName);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -337,7 +338,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		protected override void CreateTestData()
 		{
-			m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Other);
+			m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Other, ResourceHelper.DefaultParaCharsStyleName);
 			m_builder = new DummySFFileListBuilder();
 			m_builder.ImportSettings = m_settings;
 			DummyScrImportFileInfo.s_alwaysPretendFileDoesNotExist = false;

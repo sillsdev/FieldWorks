@@ -19,6 +19,7 @@ using System;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.PrintLayout;
@@ -164,7 +165,7 @@ namespace SIL.FieldWorks.TE
 
 			FwStyleSheet styleSheet = new FwStyleSheet();
 			styleSheet.Init(Cache, Cache.LangProject.TranslatedScriptureOA.Hvo,
-				ScriptureTags.kflidStyles);
+				ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 			m_pubCtrl = new DummyScripturePublicationNoDb(pub, styleSheet,
 				m_division, DateTime.Now, m_filterInstance);
 			m_pubCtrl.Configure();

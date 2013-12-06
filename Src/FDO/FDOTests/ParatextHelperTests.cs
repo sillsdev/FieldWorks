@@ -13,15 +13,13 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using NUnit.Framework;
 using Paratext;
-using Paratext.DerivedTranslation;
 using Paratext.LexicalClient;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Test.ProjectUnpacker;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
@@ -432,8 +430,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Unpacker.UnPackParatextTestProjects();
 
 			FwStyleSheet stylesheet = new FwStyleSheet();
-			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
-			ScrMappingList mappingList = new ScrMappingList(MappingSet.Main, stylesheet);
+			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+			ScrMappingList mappingList = new ScrMappingList(MappingSet.Main, stylesheet, ResourceHelper.DefaultParaCharsStyleName);
 
 			Assert.IsTrue(ParatextHelper.LoadProjectMappings("KAM", mappingList, ImportDomain.Main));
 
@@ -461,8 +459,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void LoadParatextMappings_MarkMappingsInUse()
 		{
 			FwStyleSheet stylesheet = new FwStyleSheet();
-			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
-			ScrMappingList mappingList = new ScrMappingList(MappingSet.Main, stylesheet);
+			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+			ScrMappingList mappingList = new ScrMappingList(MappingSet.Main, stylesheet, ResourceHelper.DefaultParaCharsStyleName);
 			mappingList.Add(new ImportMappingInfo(@"\hahaha", @"\*hahaha", false,
 				MappingTargetType.TEStyle, MarkerDomain.Default, "laughing",
 				null, null, true, ImportDomain.Main));
@@ -493,8 +491,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void LoadParatextMappings_MissingEncodingFile()
 		{
 			FwStyleSheet stylesheet = new FwStyleSheet();
-			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
-			ScrMappingList mappingList = new ScrMappingList(MappingSet.Main, stylesheet);
+			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+			ScrMappingList mappingList = new ScrMappingList(MappingSet.Main, stylesheet, ResourceHelper.DefaultParaCharsStyleName);
 
 			Unpacker.UnPackMissingFileParatextTestProjects();
 			Assert.IsFalse(ParatextHelper.LoadProjectMappings("NEC", mappingList, ImportDomain.Main));
@@ -511,8 +509,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void LoadParatextMappings_MissingStyleFile()
 		{
 			FwStyleSheet stylesheet = new FwStyleSheet();
-			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
-			ScrMappingList mappingList = new ScrMappingList(MappingSet.Main, stylesheet);
+			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+			ScrMappingList mappingList = new ScrMappingList(MappingSet.Main, stylesheet, ResourceHelper.DefaultParaCharsStyleName);
 
 			Unpacker.UnPackMissingFileParatextTestProjects();
 			Assert.IsFalse(ParatextHelper.LoadProjectMappings("NSF", mappingList, ImportDomain.Main));

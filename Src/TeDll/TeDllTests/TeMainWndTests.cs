@@ -25,6 +25,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SILUBS.SharedScrUtils;
 
@@ -88,7 +89,7 @@ namespace SIL.FieldWorks.TE
 				{
 					ILangProject lgproj = Cache.LangProject;
 					IScripture scripture = lgproj.TranslatedScriptureOA;
-					m_StyleSheet.Init(Cache, scripture.Hvo, ScriptureTags.kflidStyles);
+					m_StyleSheet.Init(Cache, scripture.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 				}
 				return m_StyleSheet;
 			}

@@ -30,6 +30,7 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.CoreImpl;
 using SIL.FieldWorks.TE.TeEditorialChecks;
+using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.TE.ImportTests
 {
@@ -81,7 +82,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			// part of the normal undoable work.
 			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
 			{
-				InstalledScriptureChecks.GetChecks(new ScrChecksDataSource(m_scr.Cache));
+				InstalledScriptureChecks.GetChecks(new ScrChecksDataSource(m_scr.Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar")));
 			});
 		}
 
@@ -95,7 +96,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			base.TestSetup();
 
 			m_stylesheet = new FwStyleSheet();
-			m_stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+			m_stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 
 			StyleProxyListManager.Initialize(m_stylesheet);
 		}

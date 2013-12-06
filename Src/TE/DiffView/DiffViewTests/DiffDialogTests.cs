@@ -18,6 +18,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
+using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 using SIL.FieldWorks.Common.ScriptureUtils;
@@ -608,7 +609,7 @@ namespace SIL.FieldWorks.TE
 			}
 
 			m_styleSheet = new FwStyleSheet();
-			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 
 			Debug.Assert(m_dlg == null, "m_dlg is not null.");
 			//if (m_dlg != null)
@@ -1605,7 +1606,7 @@ namespace SIL.FieldWorks.TE
 			m_bookMerger = new DummyBookMerger(Cache, null, m_philemonRev);
 
 			m_styleSheet = new FwStyleSheet();
-			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 
 			Debug.Assert(m_dlg == null, "m_dlg is not null.");
 			//if (m_dlg != null)

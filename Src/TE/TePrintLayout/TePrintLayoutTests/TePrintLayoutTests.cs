@@ -27,6 +27,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.TE
 {
@@ -706,7 +707,7 @@ namespace SIL.FieldWorks.TE
 
 			FwStyleSheet styleSheet = new FwStyleSheet();
 			styleSheet.Init(Cache, Cache.LangProject.TranslatedScriptureOA.Hvo,
-				ScriptureTags.kflidStyles);
+				ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 
 			FootnoteVc footnoteVc = new FootnoteVc(TeStVc.LayoutViewTarget.targetPrint, -1);
 			footnoteVc.Cache = Cache;

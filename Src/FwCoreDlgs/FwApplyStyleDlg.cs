@@ -89,7 +89,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_styleTable = new StyleInfoTable(normalStyleName,
 				cache.ServiceLocator.WritingSystemManager);
 			m_styleSheet = new FwStyleSheet();
-			m_styleSheet.Init(cache, hvoStylesOwner, stylesTag);
+			m_styleSheet.Init(cache, hvoStylesOwner, stylesTag, ResourceHelper.DefaultParaCharsStyleName);
 			m_styleListHelper = new StyleListBoxHelper(m_lstStyles);
 			m_styleListHelper.ShowInternalStyles = false;
 		}

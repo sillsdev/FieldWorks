@@ -169,10 +169,6 @@
     <value>A {0}</value>
     <comment>for instance "A CmObject" or "A ScrWidget"</comment>
   </data>
-  <data name="ksBackgroundIsX" xml:space="preserve">
-    <value>Background is {0}</value>
-    <comment>text background color</comment>
-  </data>
   <data name="ksBadClassInEnv" xml:space="preserve">
     <value>The abbreviation for the class '{0}' was not found in the set of Natural Classes.</value>
   </data>
@@ -185,26 +181,14 @@
   <data name="ksBadPhonemeInEnv" xml:space="preserve">
     <value>The phoneme which begins '{0}' was not found in the set of representations for any Phoneme.</value>
   </data>
-  <data name="ksBold" xml:space="preserve">
-    <value>Bold</value>
-  </data>
   <data name="ksCategUsedHere" xml:space="preserve">
     <value>The category is used in these contexts:</value>
-  </data>
-  <data name="ksColorUnderline" xml:space="preserve">
-    <value>{0} Underline</value>
   </data>
   <data name="ksContainsOneLexRef" xml:space="preserve">
     <value>It contains 1 lexical relation or cross reference.</value>
   </data>
   <data name="ksContainsXLexRefs" xml:space="preserve">
     <value>It contains {0} lexical relations or cross references.</value>
-  </data>
-  <data name="ksDashedColorUnderline" xml:space="preserve">
-    <value>Dashed {0} Underline</value>
-  </data>
-  <data name="ksDashedUnderline" xml:space="preserve">
-    <value>Dashed Underline</value>
   </data>
   <data name="ksDelAlloDelThese" xml:space="preserve">
     <value>Deleting the allomorph will also delete them.</value>
@@ -231,18 +215,6 @@
   <data name="ksDelWfGlossUsedXTimes" xml:space="preserve">
     <value>{0}. Any texts that use it will need more analysis work, as it is used {1} times in your texts.</value>
     <comment>{0} is a number (for showing a numbered list).</comment>
-  </data>
-  <data name="ksDottedColorUnderline" xml:space="preserve">
-    <value>Dotted {0} Underline</value>
-  </data>
-  <data name="ksDottedUnderline" xml:space="preserve">
-    <value>Dotted Underline</value>
-  </data>
-  <data name="ksDoubleColorUnderline" xml:space="preserve">
-    <value>Double {0} Underline</value>
-  </data>
-  <data name="ksDoubleUnderline" xml:space="preserve">
-    <value>Double Underline</value>
   </data>
   <data name="ksEmpty" xml:space="preserve">
     <value>&lt;empty&gt;</value>
@@ -340,19 +312,12 @@
   <data name="ksIsUsedXTimesInAnalyses" xml:space="preserve">
     <value>{0}. Is being used {1} times in analyses.</value>
   </data>
-  <data name="ksItalic" xml:space="preserve">
-    <value>Italic</value>
-  </data>
   <data name="ksLexRefUsedHere" xml:space="preserve">
     <value>The lexical reference type is used in this context:</value>
   </data>
   <data name="ksListSep" xml:space="preserve">
     <value>, </value>
     <comment>separate items in a list (comma space)</comment>
-  </data>
-  <data name="ksLoweredXpt" xml:space="preserve">
-    <value>Lowered by {0} pt</value>
-    <comment>Font lowered by X points</comment>
   </data>
   <data name="ksMissingCloseBracketInEnv" xml:space="preserve">
     <value>There is a missing closing square bracket ']' somewhere around here: '{0}'.</value>
@@ -373,33 +338,14 @@
     <value> - </value>
     <comment>separate name and abbreviation (space dash space)</comment>
   </data>
-  <data name="ksNoColorUnderline" xml:space="preserve">
-    <value>No ({0}) Underline</value>
-    <comment>nonsense, but a possibility</comment>
-  </data>
   <data name="ksNoExplanation" xml:space="preserve">
     <value>No explanation available.</value>
-  </data>
-  <data name="ksNoSuperSubscript" xml:space="preserve">
-    <value>No Super/Subscript</value>
-  </data>
-  <data name="ksNotBold" xml:space="preserve">
-    <value>Not Bold</value>
   </data>
   <data name="ksNotEvalYet" xml:space="preserve">
     <value>not evaluated yet</value>
   </data>
-  <data name="ksNotItalic" xml:space="preserve">
-    <value>Not Italic</value>
-  </data>
-  <data name="ksNotRaisedLowered" xml:space="preserve">
-    <value>Not Raised/Lowered</value>
-  </data>
   <data name="ksNotSure" xml:space="preserve">
     <value>&lt;Not Sure&gt;</value>
-  </data>
-  <data name="ksNoUnderline" xml:space="preserve">
-    <value>No Underline</value>
   </data>
   <data name="ksOrphanAnnotation" xml:space="preserve">
     <value>*Orphan Annotation</value>
@@ -413,10 +359,6 @@
   <data name="ksQuestions" xml:space="preserve">
     <value>???</value>
     <comment>default for an unknown/unrecognized/undefined value</comment>
-  </data>
-  <data name="ksRaisedXpt" xml:space="preserve">
-    <value>Raised by {0} pt</value>
-    <comment>Font raised by X points</comment>
   </data>
   <data name="ksRedoCreateEntry" xml:space="preserve">
     <value>Redo Create Entry</value>
@@ -433,33 +375,12 @@
   <data name="ksSenseUsedHere" xml:space="preserve">
     <value>The sense is being used in these contexts:</value>
   </data>
-  <data name="ksSingleColorUnderline" xml:space="preserve">
-    <value>Single {0} Underline</value>
-    <comment>insert explicit color</comment>
-  </data>
-  <data name="ksSingleUnderline" xml:space="preserve">
-    <value>Single Underline</value>
-  </data>
   <data name="ksStars" xml:space="preserve">
     <value>***</value>
     <comment>indicates a missing value</comment>
   </data>
   <data name="ksStemNoCatInfo" xml:space="preserve">
     <value>Stem/root of unknown category; takes any affix</value>
-  </data>
-  <data name="ksSubscript" xml:space="preserve">
-    <value>Subscript</value>
-  </data>
-  <data name="ksSuperscript" xml:space="preserve">
-    <value>Superscript</value>
-  </data>
-  <data name="ksTextIsX" xml:space="preserve">
-    <value>Text is {0}</value>
-    <comment>text foreground color</comment>
-  </data>
-  <data name="ksTextIsXonY" xml:space="preserve">
-    <value>Text is {0} on {1}</value>
-    <comment>text foreground and background colors</comment>
   </data>
   <data name="ksTodayAtX" xml:space="preserve">
     <value>today at {0}</value>
@@ -516,10 +437,6 @@
   <data name="ksWordformUsedXTimes" xml:space="preserve">
     <value>Sorry, FieldWorks cannot delete this wordform{1}because it is used {0} times in your texts.</value>
     <comment>{1} is a line separator character. it is optional.</comment>
-  </data>
-  <data name="ksXPt" xml:space="preserve">
-    <value>{0} pt</value>
-    <comment>size in "points"</comment>
   </data>
   <data name="ksWordOrPhraseIsTooLong" xml:space="preserve">
     <value>The word or phrase is too long so the interlinearized wordform has been
@@ -827,12 +744,6 @@ Your changes to this entry will be discarded when you exit the project.</value>
     <value>In order to continue with the conversion, you need to close the following projects: {0}</value>
     <comment>{0} may be a single project name or a list.</comment>
   </data>
-  <data name="ksColorStrikethrough" xml:space="preserve">
-    <value>{0} Strikethrough</value>
-  </data>
-  <data name="ksStrikethrough" xml:space="preserve">
-    <value>Strikethrough</value>
-  </data>
   <data name="ksNumberOfParent" xml:space="preserve">
     <value>{0} of {1}</value>
     <comment>Pattern string for the contents of the "Subrecord Of" column in Notebook. {0} is a number, {1} is the title of the parent record. For example, the column might say "1.2.3 of Fishing for Piranha" to indicate that the current record is the third subrecord of the second subrecord of the first subrecord of the main record called "Fishing for Piranha".</comment>
@@ -919,5 +830,38 @@ Corrupted Record:
   </data>
   <data name="ksAnthropologyCategories" xml:space="preserve">
     <value>Anthropology Categories</value>
+  </data>
+  <data name="ksAnalysis" xml:space="preserve">
+    <value>analysis</value>
+  </data>
+  <data name="ksBackupFileCreatedByNewerFwVersion" xml:space="preserve">
+    <value>Backup file contains a version of the project which was created using a newer version of FieldWorks:
+{0}
+
+To restore from this backup, install version {1} of FieldWorks.
+</value>
+  </data>
+  <data name="ksIncompatibleStyleExists" xml:space="preserve">
+    <value>Style {0} could not be added because an incompatible style with the same name already exists.</value>
+    <comment>Error message when someone adds a style that has been added on another machine that is incompatible (e.g. because of different context, structure, etc).</comment>
+  </data>
+  <data name="ksInvalidFwBackupFile" xml:space="preserve">
+    <value>File is not a valid FieldWorks backup:</value>
+  </data>
+  <data name="ksNoWritingSystems" xml:space="preserve">
+    <value>FieldWorks project has no current {0} writing systems.</value>
+    <comment>Message box displayed if count of current vernacular/analysis writing systems is 0. (parameter is either verncaular or analysis)</comment>
+  </data>
+  <data name="ksScriptureFootnote" xml:space="preserve">
+    <value>Footnote</value>
+  </data>
+  <data name="ksScriptureSectionIntroduction" xml:space="preserve">
+    <value>Introduction({0})</value>
+  </data>
+  <data name="ksScriptureTitle" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="ksVernacular" xml:space="preserve">
+    <value>vernacular</value>
   </data>
 </root>

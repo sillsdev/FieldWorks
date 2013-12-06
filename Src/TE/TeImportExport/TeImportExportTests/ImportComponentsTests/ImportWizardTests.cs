@@ -23,6 +23,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
+using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.FieldWorks.Test.ProjectUnpacker;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -479,10 +480,10 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 		/// ------------------------------------------------------------------------------------
 		protected override void CreateTestData()
 		{
-			m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Other);
+			m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Other, ResourceHelper.DefaultParaCharsStyleName);
 
 			m_styleSheet = new FwStyleSheet();
-			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 		}
 
 		/// ---------------------------------------------------------------------------------

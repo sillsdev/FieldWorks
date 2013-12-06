@@ -30,6 +30,7 @@ using SilEncConverters40;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Test.TestUtils;
+using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.TE
 {
@@ -298,7 +299,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		protected override void CreateTestData()
 		{
-			m_settings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
+			m_settings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create(ResourceHelper.DefaultParaCharsStyleName);
 			Cache.LangProject.TranslatedScriptureOA.ImportSettingsOC.Add(m_settings);
 			m_settings.ImportTypeEnum = TypeOfImport.Other;
 			m_converters = null;

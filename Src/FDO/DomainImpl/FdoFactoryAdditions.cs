@@ -2622,4 +2622,18 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 	}
 	#endregion
+
+	#region ScrImportSetFactory class
+
+	internal partial class ScrImportSetFactory
+	{
+		public IScrImportSet Create(string defaultParaCharsStyleName)
+		{
+			var settings = new ScrImportSet(defaultParaCharsStyleName);
+			((ICmObjectInternal) settings).InitializeNewOwnerlessCmObject(m_cache);
+			return settings;
+		}
+	}
+
+	#endregion
 }

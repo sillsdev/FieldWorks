@@ -2245,7 +2245,7 @@ namespace SIL.FieldWorks.XWorks
 					if (fss != fssPrev)
 					{
 						Debug.Assert(fss.RootObjectHvo != 0);
-						fss.Init(Cache, fss.RootObjectHvo, fss.StyleListTag);
+						fss.Init(Cache, fss.RootObjectHvo, fss.StyleListTag, ResourceHelper.DefaultParaCharsStyleName);
 					}
 					rootb.OnStylesheetChange();
 					fssPrev = fss;
@@ -2423,7 +2423,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (m_StyleSheet == null)
 				m_StyleSheet = new FwStyleSheet();
-			m_StyleSheet.Init(Cache, Cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
+			m_StyleSheet.Init(Cache, Cache.LanguageProject.Hvo, LangProjectTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 			if (m_rebarAdapter is IUIAdapterForceRegenerate)
 				((IUIAdapterForceRegenerate)m_rebarAdapter).ForceFullRegenerate();
 		}

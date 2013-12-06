@@ -14,6 +14,7 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -29,7 +30,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	[TestFixture]
 	public class ScrChecksDataSourceTests : ScrInMemoryFdoTestBase
 	{
-		private ScrChecksDataSource m_dataSource = null;
+		private ScrChecksDataSource m_dataSource;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -41,7 +42,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public override void TestSetup()
 		{
 			base.TestSetup();
-			m_dataSource = new ScrChecksDataSource(Cache, DirectoryFinder.TeStylesPath);
+			m_dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"), DirectoryFinder.TeStylesPath);
 		}
 
 		///--------------------------------------------------------------------------------------

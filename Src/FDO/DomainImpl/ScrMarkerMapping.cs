@@ -11,16 +11,8 @@
 // File: ScrMarkerMapping.cs
 // Responsibility: TE Team
 // ---------------------------------------------------------------------------------------------
-using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Diagnostics;
 
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {
@@ -54,7 +46,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Get the members of a ScrMarkerMapping into an ImportMappingInfo object
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public ImportMappingInfo ToImportMappingInfo()
+		public ImportMappingInfo ToImportMappingInfo(string defaultParaCharsStyleName)
 		{
 			MarkerDomain domain = (MarkerDomain)Domain;
 			if ((domain & MarkerDomain.DeprecatedScripture) != 0)
@@ -67,7 +59,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (Target == (int)MappingTargetType.DefaultParaChars)
 			{
 				return new ImportMappingInfo(BeginMarker, EndMarker, Excluded,
-					MappingTargetType.TEStyle, domain, ResourceHelper.DefaultParaCharsStyleName,
+					MappingTargetType.TEStyle, domain, defaultParaCharsStyleName,
 					WritingSystem, NoteTypeRA);
 			}
 

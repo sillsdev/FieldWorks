@@ -17,10 +17,10 @@
 // --------------------------------------------------------------------------------------------
 using System.Diagnostics;
 using NUnit.Framework;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			base.TestSetup();
 
 			var styleSheet = new FwStyleSheet();
-			styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+			styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 
 			Debug.Assert(m_basicView == null, "m_basicView is not null.");
 			//if (m_basicView != null)

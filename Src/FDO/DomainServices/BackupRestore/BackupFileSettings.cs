@@ -18,7 +18,6 @@ using ICSharpCode.SharpZipLib;
 using ICSharpCode.SharpZipLib.Zip;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
-using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 
 namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
@@ -230,8 +229,8 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			PopulateSettingsFromZipFileIfNeeded();
 			if (DbVersion > FDOBackendProvider.ModelVersion)
 			{
-				throw new InvalidBackupFileException(ResourceHelper.FormatResourceString(
-					"ksBackupFileCreatedByNewerFwVersion", m_sZipFileName, FwVersion));
+				throw new InvalidBackupFileException(string.Format(Strings.ksBackupFileCreatedByNewerFwVersion,
+					m_sZipFileName, FwVersion));
 			}
 		}
 		#endregion
@@ -576,7 +575,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// <param name="inner">The inner exception</param>
 		/// ------------------------------------------------------------------------------------
 		public InvalidBackupFileException(string zipFile, Exception inner) :
-			base(ResourceHelper.GetResourceString("ksInvalidFwBackupFile") + Environment.NewLine + zipFile, inner)
+			base(Strings.ksInvalidFwBackupFile + Environment.NewLine + zipFile, inner)
 		{
 		}
 

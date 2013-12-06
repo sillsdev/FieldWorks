@@ -120,6 +120,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\DiffView.dll</HintPath>
     </Reference>
+    <Reference Include="FwResources, Version=8.0.6.26892, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\FwResources.dll</HintPath>
+    </Reference>
     <Reference Include="FwUtils, Version=6.1.1.14872, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>

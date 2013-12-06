@@ -23,6 +23,7 @@ using SIL.Utils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.FDOTests;
 using SILUBS.SharedScrUtils;
+using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.TE
 {
@@ -521,7 +522,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		private void VerifyNoOrphanedFootnotes()
 		{
-			ScrChecksDataSource scrData = new ScrChecksDataSource(Cache);
+			ScrChecksDataSource scrData = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"));
 			foreach (IScrBook book in m_scr.ScriptureBooksOS)
 			{
 				using (IEnumerator<IScrFootnote> footnotes = book.FootnotesOS.GetEnumerator())

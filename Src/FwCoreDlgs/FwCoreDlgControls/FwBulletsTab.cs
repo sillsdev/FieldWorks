@@ -179,8 +179,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 					m_BulletsFontInfo = bulletInfo.FontInfo;
 					// create a number font based on the font for bullets
 					m_NumberFontInfo = new FontInfo(m_BulletsFontInfo);
-					m_NumberFontInfo.m_fontName.ResetToInherited(FontInfo.GetUIFontName(
-						styleInfo.FontInfoForWs(-1).m_fontName.Value));
+					m_NumberFontInfo.m_fontName.ResetToInherited(styleInfo.FontInfoForWs(-1).UIFontName());
 				}
 				else
 				{
@@ -189,8 +188,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 					if (bulletType == VwBulNum.kvbnNone)
 					{
-						m_NumberFontInfo.m_fontName.ResetToInherited(FontInfo.GetUIFontName(
-							styleInfo.FontInfoForWs(-1).m_fontName.Value));
+						m_NumberFontInfo.m_fontName.ResetToInherited(styleInfo.FontInfoForWs(-1).UIFontName());
 					}
 
 					// create a bullets font based on the font for numbers

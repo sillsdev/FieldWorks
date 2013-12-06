@@ -7,6 +7,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FwCoreDlgs;
+using SIL.FieldWorks.Resources;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -157,7 +158,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					m_app.Synchronize(SyncMsg.ksyncStyle);
 					FwStyleSheet stylesheet = new FwStyleSheet();
-					stylesheet.Init(m_cache, m_cache.LangProject.Hvo, LangProjectTags.kflidStyles);
+					stylesheet.Init(m_cache, m_cache.LangProject.Hvo, LangProjectTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 					m_stylesheet = stylesheet;
 				}
 			}

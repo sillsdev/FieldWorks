@@ -18,6 +18,7 @@ using NUnit.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -43,7 +44,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:SegmentInfo"/> class.
+		/// Initializes a new instance of the <see cref="SegmentInfo"/> class.
 		/// </summary>
 		/// <param name="sMarker">The segment marker.</param>
 		/// <param name="sText">The segment text.</param>
@@ -57,7 +58,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:SegmentInfo"/> class.
+		/// Initializes a new instance of the <see cref="SegmentInfo"/> class.
 		/// </summary>
 		/// <param name="sMarker">The segment marker.</param>
 		/// <param name="sText">The segment text.</param>
@@ -97,7 +98,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:MockScrObjWrapper"/> class.
+		/// Initializes a new instance of the <see cref="MockScrObjWrapper"/> class.
 		/// </summary>
 		/// <param name="importer">The importer.</param>
 		/// <param name="segmentList">The segment list.</param>
@@ -223,7 +224,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:MockTeImporter"/> class.
+		/// Initializes a new instance of the <see cref="MockTeImporter"/> class.
 		/// </summary>
 		/// <param name="settings">Import settings object (filled in by wizard)</param>
 		/// <param name="cache">The cache used to import to and get misc. info. from.</param>
@@ -395,7 +396,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		#region Constructor
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:DummyTeImportManager"/> class.
+		/// Initializes a new instance of the <see cref="DummyTeImportManager"/> class.
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// <param name="styleSheet">The style sheet.</param>
@@ -545,7 +546,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		#region Constructor
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:DummyTeImportManagerWithMockImporter"/> class.
+		/// Initializes a new instance of the <see cref="DummyTeImportManagerWithMockImporter"/> class.
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// <param name="styleSheet">The style sheet.</param>
@@ -621,7 +622,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			base.FixtureSetup();
 
 			m_styleSheet = new FwStyleSheet();
-			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 
 			// By default, use auto-generated footnote markers for import tests.
 			m_scr.FootnoteMarkerType = FootnoteMarkerTypes.AutoFootnoteMarker;
@@ -630,7 +631,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 
 			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
 			{
-				m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Unknown);
+				m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Unknown, ResourceHelper.DefaultParaCharsStyleName);
 				DummyTeImporter.MakeSFImportTestSettings(m_settings);
 			});
 		}

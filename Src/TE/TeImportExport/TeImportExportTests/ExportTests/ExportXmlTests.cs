@@ -20,6 +20,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.Test.TestUtils;
@@ -195,7 +196,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 			m_fileName = FileUtils.GetTempFile("tmp");
 			FileUtils.Delete(m_fileName);	// exporter pops up dialog if file exists!
 			m_stylesheet = new FwStyleSheet();
-			m_stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+			m_stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 
 			m_book = AddBookToMockedScripture(1, "Genesis");
 			AddTitleToMockedBook(m_book, "Genesis");

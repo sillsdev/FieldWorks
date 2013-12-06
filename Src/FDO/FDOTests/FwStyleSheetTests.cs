@@ -21,6 +21,7 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
 {
@@ -98,7 +99,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
 			base.TestSetup();
 
 			m_styleSheet = new DummyFwStyleSheet();
-			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 		}
 
 		/// ------------------------------------------------------------------------------------

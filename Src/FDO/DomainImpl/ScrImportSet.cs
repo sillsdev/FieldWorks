@@ -23,7 +23,6 @@ using SIL.Utils;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {
@@ -52,6 +51,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		private Hashtable m_notesFileInfoLists = new Hashtable();
 
+		private readonly string m_defaultParaCharsStyleName;
+
 		private IOverlappingFileResolver m_resolver;
 
 		private ScrMappingList m_scrMappingsList;
@@ -74,6 +75,12 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		#endregion
 
 		#region Construction & initialization
+
+		internal ScrImportSet(string defaultParaStylesName)
+		{
+			m_defaultParaCharsStyleName = defaultParaStylesName;
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initialize the ScrImportSet. Sets the default values after the initialization of a
@@ -89,8 +96,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		private void DoCommonNonModelSetup()
 		{
-			m_scrMappingsList = new ScrMappingList(MappingSet.Main, m_stylesheet);
-			m_notesMappingsList = new ScrMappingList(MappingSet.Notes, m_stylesheet);
+			m_scrMappingsList = new ScrMappingList(MappingSet.Main, m_stylesheet, m_defaultParaCharsStyleName);
+			m_notesMappingsList = new ScrMappingList(MappingSet.Notes, m_stylesheet, m_defaultParaCharsStyleName);
 
 			LoadInMemoryMappingLists();
 			LoadSources(false);
@@ -133,9 +140,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		private void LoadInMemoryMappingLists()
 		{
 			foreach (ScrMarkerMapping mapping in ScriptureMappingsOC)
-				m_scrMappingsList.Add(mapping.ToImportMappingInfo());
+				m_scrMappingsList.Add(mapping.ToImportMappingInfo(m_defaultParaCharsStyleName));
 			foreach (ScrMarkerMapping mapping in NoteMappingsOC)
-				m_notesMappingsList.Add(mapping.ToImportMappingInfo());
+				m_notesMappingsList.Add(mapping.ToImportMappingInfo(m_defaultParaCharsStyleName));
 			m_scrMappingsList.ResetChangedFlags();
 			m_notesMappingsList.ResetChangedFlags();
 		}
@@ -1441,7 +1448,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					mappingsOC.Add(mapping);
 					// The "Default Paragraph Characters" style is not a real style. So, we save it as
 					// as separate target type. We want to set the style now for the in-memory info.
-					if (info.StyleName == ResourceHelper.DefaultParaCharsStyleName)
+					if (info.StyleName == m_defaultParaCharsStyleName)
 						info.MappingTarget = MappingTargetType.DefaultParaChars;
 					else if (info.Style == null || info.Style.Name != info.StyleName)
 						info.SetStyle((StStyle)m_cache.LangProject.TranslatedScriptureOA.FindStyle(info.StyleName));

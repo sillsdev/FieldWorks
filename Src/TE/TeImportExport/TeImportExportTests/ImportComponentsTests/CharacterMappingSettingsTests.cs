@@ -22,6 +22,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.TE.ImportComponentsTests
 {
@@ -158,7 +159,7 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 			m_Scripture = Cache.LangProject.TranslatedScriptureOA;
 
 			m_styleSheet = new FwStyleSheet();
-			m_styleSheet.Init(Cache, m_Scripture.Hvo, ScriptureTags.kflidStyles);
+			m_styleSheet.Init(Cache, m_Scripture.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 
 			m_mapping = new ImportMappingInfo("emph{", "}", "Emphasis");
 			Options.ShowTheseStylesSetting = Options.ShowTheseStyles.All;

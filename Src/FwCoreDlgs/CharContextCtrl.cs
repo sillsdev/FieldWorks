@@ -636,7 +636,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private List<TextTokenSubstring> ReadTEScripture()
 		{
-			var scrDataSource = new ScrChecksDataSource(m_cache, DirectoryFinder.TeStylesPath);
+			var scrDataSource = new ScrChecksDataSource(m_cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"), DirectoryFinder.TeStylesPath);
 
 			scrDataSource.LoadException += scrDataSource_LoadException;
 
@@ -783,7 +783,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ContextInfo"/> class.
+		/// Initializes a new instance of the <see cref="ContextInfo"/> class.
 		/// </summary>
 		/// <param name="pattern">The punctuation pattern.</param>
 		/// <param name="tts">The TextTokenSubstring.</param>
@@ -795,7 +795,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ContextInfo"/> class.
+		/// Initializes a new instance of the <see cref="ContextInfo"/> class.
 		/// </summary>
 		/// <param name="chr">The character or pattern to which this context applies.</param>
 		/// <param name="tts">The TextTokenSubstring.</param>
@@ -807,7 +807,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ContextInfo"/> class.
+		/// Initializes a new instance of the <see cref="ContextInfo"/> class.
 		/// </summary>
 		/// <param name="pattern">The punctuation pattern.</param>
 		/// <param name="offset">The offset.</param>
@@ -836,7 +836,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ContextInfo"/> class.
+		/// Initializes a new instance of the <see cref="ContextInfo"/> class.
 		/// </summary>
 		/// <param name="chr">The character or pattern to which this context applies.</param>
 		/// <param name="offset">The offset.</param>
@@ -850,7 +850,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ContextInfo"/> class.
+		/// Initializes a new instance of the <see cref="ContextInfo"/> class.
 		/// </summary>
 		/// <param name="chr">The character or pattern to which this context applies.</param>
 		/// <param name="offset">The offset (can be negative!).</param>
@@ -944,7 +944,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ContextGrid"/> class.
+		/// Initializes a new instance of the <see cref="ContextGrid"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public ContextGrid()

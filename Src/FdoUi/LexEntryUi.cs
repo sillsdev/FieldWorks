@@ -22,6 +22,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FdoUi.Dialogs;
+using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.FieldWorks.LexText.Controls;
 using XCore;
@@ -449,7 +450,7 @@ namespace SIL.FieldWorks.FdoUi
 			// Get a style sheet for the Language Explorer, and store it in the
 			// (new) mediator.
 			FwStyleSheet styleSheet = new FwStyleSheet();
-			styleSheet.Init(cache, cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
+			styleSheet.Init(cache, cache.LanguageProject.Hvo, LangProjectTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 			mediator.PropertyTable.SetProperty("FwStyleSheet", styleSheet);
 			mediator.PropertyTable.SetPropertyPersistence("FwStyleSheet", false);
 			return styleSheet;

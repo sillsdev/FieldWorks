@@ -12,6 +12,7 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
 using SIL.Utils;
 using XCore;
@@ -429,7 +430,7 @@ namespace SIL.FieldWorks.IText
 			IScripture scr = Cache.LangProject.TranslatedScriptureOA;
 			bool haveSomethingToImport = NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 				{
-					IScrImportSet importSettings = scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6);
+					IScrImportSet importSettings = scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6, ResourceHelper.DefaultParaCharsStyleName);
 					ScrText paratextProj = ParatextHelper.GetAssociatedProject(Cache.ProjectId);
 					importSettings.ParatextScrProj = paratextProj.Name;
 					importSettings.IncludeBooks(bookNum, bookNum, paratextProj.Versification);
@@ -475,7 +476,7 @@ namespace SIL.FieldWorks.IText
 				if (m_stylesheet == null)
 				{
 					m_stylesheet = new FwStyleSheet();
-					m_stylesheet.Init(Cache, Cache.LangProject.TranslatedScriptureOA.Hvo, ScriptureTags.kflidStyles);
+					m_stylesheet.Init(Cache, Cache.LangProject.TranslatedScriptureOA.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 				}
 				return m_stylesheet;
 			}
