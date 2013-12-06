@@ -91,6 +91,8 @@ namespace SIL.CoreImpl
 		/// Tests to make sure that the special fw extensions of ldml aren't duplicated when round tripping.
 		/// </summary>
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void FieldWorksExtensionsAreNotDuplicatedOnRoundTrip()
 		{
 			var storePath = PrepareTempStore("Store");
