@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			m_restoreSettings = new RestoreProjectSettings()
 			{
 				Backup = new BackupFileSettings(Path.Combine(restoreTestsZipFileDir,
-					Path.ChangeExtension("TestRestoreFWProject", FwFileExtensions.ksFwBackupFileExtension))),
+					Path.ChangeExtension("TestRestoreFWProject", FdoFileExtensions.ksFwBackupFileExtension))),
 				IncludeConfigurationSettings = false,
 				IncludeLinkedFiles = false,
 				IncludeSupportingFiles = false,

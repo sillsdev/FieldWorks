@@ -21,7 +21,6 @@ using ICSharpCode.SharpZipLib.Zip;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
-using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 {
@@ -101,7 +100,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			{
 				//Import from FW version 6.0 based on the file extension.
 				var extension = Path.GetExtension(fileSettings.File).ToLowerInvariant();
-				if (extension == FwFileExtensions.ksFw60BackupFileExtension || extension == ".xml")
+				if (extension == FdoFileExtensions.ksFw60BackupFileExtension || extension == ".xml")
 					ImportFrom6_0Backup(fileSettings, progressDlg);
 				else     //Restore from FW version 7.0 and newer backup.
 					RestoreFrom7_0AndNewerBackup(fileSettings);
@@ -293,7 +292,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 							m_restoreSettings.ProjectPath, entry.DateTime);
 				}
 				string bakFile = Path.Combine(m_restoreSettings.ProjectPath, m_restoreSettings.ProjectName)
-					+ FwFileExtensions.ksFwDataFallbackFileExtension;
+					+ FdoFileExtensions.ksFwDataFallbackFileExtension;
 				if (FileUtils.TrySimilarFileExists(bakFile, out bakFile))
 				{
 					FileUtils.Delete(bakFile); // TODO: do something about the .Lock file.......

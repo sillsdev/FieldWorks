@@ -18,8 +18,6 @@ using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 
@@ -191,7 +189,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			DummyBackupProjectSettings backupSettings = new DummyBackupProjectSettings("monkey",
 				"Floozy", null, FDOBackendProviderType.kXML);
 			string backupFileName1 = Path.Combine(DirectoryFinder.DefaultBackupDirectory,
-				Path.ChangeExtension("Floozy 2010-8-21-0506", FwFileExtensions.ksFwBackupFileExtension));
+				Path.ChangeExtension("Floozy 2010-8-21-0506", FdoFileExtensions.ksFwBackupFileExtension));
 			m_fileOs.AddExistingFile(backupFileName1);
 
 			BackupFileRepository repo = new BackupFileRepository();

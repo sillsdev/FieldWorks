@@ -16,7 +16,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using SIL.FieldWorks.Common.FwUtils;
 using System.Collections.Generic;
-using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using System.Globalization;
 
@@ -58,7 +57,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			foreach (string backup in backups)
 			{
 				string ext = Path.GetExtension(backup);
-				if (ext != FwFileExtensions.ksFwBackupFileExtension && ext != FwFileExtensions.ksFw60BackupFileExtension)
+				if (ext != FdoFileExtensions.ksFwBackupFileExtension && ext != FdoFileExtensions.ksFw60BackupFileExtension)
 					continue;
 				string filename = Path.GetFileNameWithoutExtension(backup);
 				MatchCollection matches = regex.Matches(filename);
@@ -80,7 +79,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 					{
 						SortedDictionary<DateTime, BackupFileSettings> versions = GetOrCreateProjectVersions(projectName);
 						string comment;
-						if (ext == FwFileExtensions.ksFw60BackupFileExtension)
+						if (ext == FdoFileExtensions.ksFw60BackupFileExtension)
 							comment = Properties.Resources.kstidFw60OrEarlierBackupComment;
 						else
 						{

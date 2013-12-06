@@ -14,10 +14,8 @@
 using System;
 using System.IO;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using System.Reflection;
-using SIL.FieldWorks.Resources;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
@@ -155,7 +153,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		private string MakeBackupFileName(string comment)
 		{
 			return ProjectName + " " + BackupTime.ToString(ksBackupDateFormat) +
-				   comment + FwFileExtensions.ksFwBackupFileExtension;
+				   comment + FdoFileExtensions.ksFwBackupFileExtension;
 		}
 
 		/// ------------------------------------------------------------------------------------

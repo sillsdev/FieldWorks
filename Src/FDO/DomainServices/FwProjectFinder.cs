@@ -13,10 +13,8 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.IO;
-using System.Net;
 using System.Threading;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Resources;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainServices
@@ -95,7 +93,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 							if (!FileUtils.SimilarFileExists(db4oFile))
 							{
 								// See if there is a .bak file
-								string backupFile = Path.ChangeExtension(file, FwFileExtensions.ksFwDataFallbackFileExtension);
+								string backupFile = Path.ChangeExtension(file, FdoFileExtensions.ksFwDataFallbackFileExtension);
 								//NOTE: RickM  I think this probably should be changed to TrySimilarFileExists but don't want to try this
 								//on a release build.
 								if (FileUtils.SimilarFileExists(backupFile))

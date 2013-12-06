@@ -25,7 +25,6 @@ using FwRemoteDatabaseConnector;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
-using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {
@@ -78,8 +77,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			switch (type)
 			{
-				case FDOBackendProviderType.kDb4oClientServer: return FwFileExtensions.ksFwDataDb4oFileExtension;
-				case FDOBackendProviderType.kXML: return FwFileExtensions.ksFwDataXmlFileExtension;
+				case FDOBackendProviderType.kDb4oClientServer: return FdoFileExtensions.ksFwDataDb4oFileExtension;
+				case FDOBackendProviderType.kXML: return FdoFileExtensions.ksFwDataXmlFileExtension;
 				default: throw new InvalidEnumArgumentException("type", (int)type, typeof(FDOBackendProviderType));
 			}
 		}
@@ -864,7 +863,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			if (!ShareMyProjects)
 				return xmlFilename; // no conversion needed.
-			string desiredPath = Path.ChangeExtension(xmlFilename, FwFileExtensions.ksFwDataDb4oFileExtension);
+			string desiredPath = Path.ChangeExtension(xmlFilename, FdoFileExtensions.ksFwDataDb4oFileExtension);
 			if (!EnsureNoClientsAreConnected(Path.GetFileNameWithoutExtension(desiredPath), ui))
 				return null; // fail
 

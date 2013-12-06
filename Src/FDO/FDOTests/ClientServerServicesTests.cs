@@ -1,13 +1,10 @@
 ﻿using System;
 using System.IO;
-using System.Windows.Forms;
 using FwRemoteDatabaseConnector;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Test.TestUtils;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -135,7 +132,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string filename = ClientServerServices.Current.Local.IdForLocalProject("tom");
 
 			// Assert ends with .fwdata
-			Assert.AreEqual(FwFileExtensions.ksFwDataXmlFileExtension, Path.GetExtension(filename));
+			Assert.AreEqual(FdoFileExtensions.ksFwDataXmlFileExtension, Path.GetExtension(filename));
 
 			// Check file is in ProjectDirectory.
 			Assert.That(filename, Is.SubPath(DirectoryFinder.ProjectsDirectory));

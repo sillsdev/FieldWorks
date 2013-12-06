@@ -10,7 +10,6 @@ using FwRemoteDatabaseConnector;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Test.TestUtils;
 
 namespace SIL.FieldWorks.FDO.FDOTests
@@ -203,7 +202,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void ListServers_UnknownNumberOfServers_ReturnsAllServersInProjectsDirectory()
 		{
-			int projectsCount = Directory.GetFiles(DirectoryFinder.ProjectsDirectory, "*" + FwFileExtensions.ksFwDataDb4oFileExtension,
+			int projectsCount = Directory.GetFiles(DirectoryFinder.ProjectsDirectory, "*" + FdoFileExtensions.ksFwDataDb4oFileExtension,
 				SearchOption.AllDirectories).Count();
 
 			m_db4OServerInfo.RefreshServerList();

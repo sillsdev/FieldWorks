@@ -17,7 +17,6 @@ using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.Win32;
 
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Resources;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
@@ -76,7 +75,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		{
 			var destFolder = DirectoryFinder.ProjectsDirectory;
 			var folderName = Path.Combine(destFolder, projectName);
-			projectFile = Path.Combine(folderName, projectName + FwFileExtensions.ksFwDataXmlFileExtension);
+			projectFile = Path.Combine(folderName, projectName + FdoFileExtensions.ksFwDataXmlFileExtension);
 			string extension = Path.GetExtension(pathname);
 			if (extension != null)
 				extension = extension.ToLowerInvariant();

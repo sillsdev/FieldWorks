@@ -29,9 +29,7 @@ using System.Threading;
 using Db4objects.Db4o;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
-using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.FDO.DomainServices;
 using System.Runtime.Remoting.Channels;
 
@@ -98,14 +96,14 @@ namespace FwRemoteDatabaseConnector
 			if (!Directory.Exists(DirectoryFinder.ProjectsDirectory))
 				throw new DirectoryNotFoundException(String.Format(Strings.ksWarningProjectFolderNotFoundOnServer, DirectoryFinder.ProjectsDirectory));
 
-			string[] files = Directory.GetFiles(DirectoryFinder.ProjectsDirectory, "*" + FwFileExtensions.ksFwDataDb4oFileExtension);
+			string[] files = Directory.GetFiles(DirectoryFinder.ProjectsDirectory, "*" + FdoFileExtensions.ksFwDataDb4oFileExtension);
 			m_allServers.AddRange(files);
 
 			// search sub dirs
 			string[] dirs = Directory.GetDirectories(DirectoryFinder.ProjectsDirectory);
 			foreach (var dir in dirs)
 			{
-				files = Directory.GetFiles(dir, "*" + FwFileExtensions.ksFwDataDb4oFileExtension);
+				files = Directory.GetFiles(dir, "*" + FdoFileExtensions.ksFwDataDb4oFileExtension);
 				m_allServers.AddRange(files);
 			}
 		}
