@@ -121,8 +121,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				{
 					var userAction = source.Services.GetInstance<IFdoUI>();
 					userAction.DisplayMessage(MessageType.Error, string.Format(ScrFdoResources.kstidImportBadFile, e.Message), Strings.ksErrorCaption, e.HelpTopic);
-					//MessageBoxUtils.Show(, "", MessageBoxButtons.OK,
-					//	MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, 0, helpFile, HelpNavigator.Topic, e.HelpTopic);
 					deleteList.Add(file);
 				}
 			}

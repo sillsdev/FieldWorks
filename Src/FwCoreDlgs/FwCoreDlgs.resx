@@ -982,4 +982,7 @@ The error was:
   <data name="ksCouldNotBackupSomeFiles" xml:space="preserve">
     <value>FieldWorks was not able to back up some of the files used by this project. Do you want to keep the backup anyway? The files not backed up were {0}</value>
   </data>
+  <data name="ksFindServersError" xml:space="preserve">
+    <value>Unable to search for remote servers.</value>
+  </data>
 </root>

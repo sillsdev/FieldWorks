@@ -21,7 +21,6 @@ using ICSharpCode.SharpZipLib.Zip;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
-using XCore;
 using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
@@ -35,7 +34,6 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		private readonly RestoreProjectSettings m_restoreSettings;
 		private String m_tempBackupFolder;
 		private bool m_fRestoreOverProject;
-		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private string m_sLinkDirChangedTo;
 		private readonly IFdoUI m_ui;
 		#endregion
@@ -46,13 +44,11 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// Constructor
 		/// </summary>
 		/// <param name="settings">The restore settings.</param>
-		/// <param name="helpTopicProvider"></param>
 		/// <param name="ui"></param>
 		/// ------------------------------------------------------------------------------------
-		public ProjectRestoreService(RestoreProjectSettings settings, IHelpTopicProvider helpTopicProvider, IFdoUI ui)
+		public ProjectRestoreService(RestoreProjectSettings settings, IFdoUI ui)
 		{
 			m_restoreSettings = settings;
-			m_helpTopicProvider = helpTopicProvider;
 			m_ui = ui;
 		}
 
@@ -662,7 +658,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			{
 				Debug.WriteLine("Failed to create directory {0}; {1}", dir, e.Message);
 				var msg = string.Format(Strings.ksCannotRestoreLinkedFilesToDir, dir);
-				MessageBoxUtils.Show(msg, Strings.ksCannotRestore);
+				m_ui.DisplayMessage(MessageType.Warning, msg, Strings.ksCannotRestore, null);
 				return;
 			}
 			if (FileUtils.TrySimilarFileExists(newFileName, out newFileName))
@@ -702,7 +698,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 					{
 						Debug.WriteLine("Failed to restore file {0}; {1}", newFileName, e.Message);
 						var msg = string.Format(Strings.ksCannotRestoreBackup, newFileName);
-						MessageBoxUtils.Show(msg, Strings.ksCannotRestore);
+						m_ui.DisplayMessage(MessageType.Warning, msg, Strings.ksCannotRestore, null);
 						return;
 					}
 				}

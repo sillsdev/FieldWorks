@@ -98,7 +98,6 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			string sErrorMsg = LexTextControls.ksTransformProblem_X;
 			bool fAttemptedXml = false;
-			bool fXmlOk = false;
 			string processedInputFile = databaseFileName;
 			string sPhase1Output = Path.Combine(m_sTempDir, s_sPhase1FileName);
 			string sPhase2Output = Path.Combine(m_sTempDir, s_sPhase2FileName);
@@ -111,11 +110,20 @@ namespace SIL.FieldWorks.LexText.Controls
 				// if starting with a phase file, rename the phase file with the input file
 				switch (startPhase)
 				{
-					case 1: sPhase1Output = databaseFileName; break;
-					case 2: sPhase2Output = databaseFileName; break;
-					case 3: sPhase3Output = databaseFileName; break;
-					case 4: m_sPhase4Output = databaseFileName; break;
-					default: break;	// no renaming needed
+					case 1:
+						sPhase1Output = databaseFileName;
+						break;
+					case 2:
+						sPhase2Output = databaseFileName;
+						break;
+					case 3:
+						sPhase3Output = databaseFileName;
+						break;
+					case 4:
+						m_sPhase4Output = databaseFileName;
+						break;
+					default:
+						break; // no renaming needed
 				}
 
 				if (startPhase < 2)
@@ -167,7 +175,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					fAttemptedXml = true;
 					if (startPhase == 4 && processedInputFile.Length == 0)
 						processedInputFile = m_sPhase4Output;
-					fXmlOk = xid.ImportData(m_sPhase4Output, dlg);
+					xid.ImportData(m_sPhase4Output, dlg);
 					sErrorMsg = LexTextControls.ksLogFileProblem5_X;
 					ProcessLogFile(processedInputFile, startPhase, xid);
 					return true;
@@ -179,7 +187,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 				ReportError(string.Format(sErrorMsg, ex.Message), LexTextControls.ksUnhandledError);
 
-				if (fAttemptedXml && !fXmlOk)
+				if (fAttemptedXml)
 				{
 					// We want to see the log file even (especially) if the Xml blows up.
 					ProcessLogFile(processedInputFile, startPhase, xid);

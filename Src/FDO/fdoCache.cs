@@ -743,8 +743,6 @@ namespace SIL.FieldWorks.FDO
 			}
 			catch (Exception e)
 			{
-				MessageBoxUtils.Show(String.Format(AppStrings.ksCreateNewProjectSubfoldersError,
-					e.Message));
 				throw new ApplicationException(e.Message, e);
 			}
 

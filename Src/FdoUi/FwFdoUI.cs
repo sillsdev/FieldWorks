@@ -152,11 +152,16 @@ namespace SIL.FieldWorks.FdoUi
 			}
 			m_synchronizeInvoke.Invoke(() =>
 				{
+#if __MonoCS__
+					// Mono doesn't support Help
+					MessageBox.Show(message, caption, MessageBoxButtons.OK, icon);
+#else
 					if (string.IsNullOrEmpty(helpTopic))
 						MessageBox.Show(message, caption, MessageBoxButtons.OK, icon);
 					else
 						MessageBox.Show(message, caption, MessageBoxButtons.OK, icon, MessageBoxDefaultButton.Button1,
 							0, m_helpTopicProvider.HelpFile, HelpNavigator.Topic, helpTopic);
+#endif
 				});
 		}
 

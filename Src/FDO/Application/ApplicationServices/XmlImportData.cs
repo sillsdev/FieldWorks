@@ -212,7 +212,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 		/// </summary>
 		/// <returns>true if successful, false if an error occurs</returns>
 		/// ------------------------------------------------------------------------------------
-		public bool ImportData(string sFilename, IProgress progress)
+		public void ImportData(string sFilename, IProgress progress)
 		{
 			DateTime dtBegin = DateTime.Now;
 			m_sFilename = sFilename;
@@ -221,19 +221,18 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			if (idx >= 0)
 				sLogFile = sLogFile.Substring(0, idx);
 			sLogFile = sLogFile + "-Import.log";
-			bool fRetVal = false;
 			var streamReader = new StreamReader(sFilename, Encoding.UTF8);
 			try
 			{
-				fRetVal = ImportData(streamReader,
+				ImportData(streamReader,
 					new StreamWriter(sLogFile, false, Encoding.UTF8),
 					progress);
-				DateTime dtEnd = DateTime.Now;
-				TimeSpan span = new TimeSpan(dtEnd.Ticks - dtBegin.Ticks);
-				LogFinalCounts(Path.GetFileName(sFilename), span);
 			}
 			finally
 			{
+				DateTime dtEnd = DateTime.Now;
+				var span = new TimeSpan(dtEnd.Ticks - dtBegin.Ticks);
+				LogFinalCounts(Path.GetFileName(sFilename), span);
 				if (m_wrtrLog != null)
 				{
 					m_wrtrLog.Close();
@@ -241,7 +240,6 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 				}
 				streamReader.Dispose();
 			}
-			return fRetVal;
 		}
 
 		private void LogFinalCounts(string sFilename, TimeSpan span)
@@ -294,7 +292,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 		/// </summary>
 		/// <returns>true if successful, false if an error occurs</returns>
 		/// ------------------------------------------------------------------------------------
-		public bool ImportData(TextReader rdr, TextWriter wrtrLog, IProgress progress)
+		public void ImportData(TextReader rdr, TextWriter wrtrLog, IProgress progress)
 		{
 			bool fRetVal = true;
 			m_progress = progress;
@@ -333,9 +331,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 					m_sFilename, e.Message);
 				int line = LineNumber(xrdr);
 				LogMessage(sMsg, line);
-				string sTitle = String.Format("Error on line {0}", line);
-				MessageBoxUtils.Show(sMsg, sTitle);
-				fRetVal = false;
+				throw;
 			}
 			finally
 			{
@@ -343,7 +339,6 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 					xrdr.Close();
 				m_cache.MainCacheAccessor.EndNonUndoableTask();
 			}
-			return fRetVal;
 		}
 
 		ILexSenseFactory m_factLexSense;

@@ -1577,14 +1577,15 @@ namespace SIL.FieldWorks.IText
 			try
 			{
 				XmlImportData xid = new XmlImportData(m_cache);
-				return xid.ImportData(m_nextInput, m_progress);
+				xid.ImportData(m_nextInput, m_progress);
+				return true;
 			}
 			catch
 			{
 				string sLogFile = Path.Combine(m_sTempDir, m_nextInput);
 				ReportError(string.Format(ITextStrings.ksFailedLoadingLL,
 					m_LinguaLinksXmlFileName, m_cache.ProjectId.Name,
-					System.Environment.NewLine, sLogFile),
+					Environment.NewLine, sLogFile),
 					ITextStrings.ksLLImportFailed);
 				return false;
 			}

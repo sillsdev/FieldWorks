@@ -233,8 +233,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				}
 			}
 
-			// Asynchronously search for other Servers.
-			ClientServerServices.Current.BeginFindServers(AddHost1);
+			try
+			{
+				// Asynchronously search for other Servers.
+				ClientServerServices.Current.BeginFindServers(AddHost1);
+			}
+			catch (Exception)
+			{
+				MessageBox.Show(FwCoreDlgs.ksFindServersError, FwCoreDlgs.ksError, MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
 
 			m_lstLanguageProjects.SelectedIndexChanged += LanguageProjectsListSelectedIndexChanged;
 
@@ -285,9 +292,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				return false;
 			}
 
-			// store the HostName -> ipaddress mapping.
-			m_hostIpAddressMap[entry.HostName] = ipAddress;
-
 			AddHostInternal(entry);
 
 			return true;
@@ -311,6 +315,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Simple check for host already present by name.
 			if (IsDisposed || m_networkNeighborhood.Nodes.ContainsKey((entry.HostName)))
 				return;
+
+			// store the HostName -> ipaddress mapping.
+			m_hostIpAddressMap[entry.HostName] = entry.AddressList[0].ToString();
 
 			// if list of associated addresses in entry matches list of associated addresses of any item in hostsTreeView
 			// then ignore as its the same host.

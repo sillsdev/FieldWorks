@@ -483,6 +483,15 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to search for remote servers..
+        /// </summary>
+        public static string ksFindServersError {
+            get {
+                return ResourceManager.GetString("ksFindServersError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Find Spec file for unknown mapping type.
         /// </summary>
         public static string ksFindUnknownSpecFile {

@@ -311,9 +311,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		public void BeginFindServers(Action<string> foundServer)
 		{
-			if (m_serverFinder != null)
+			if (m_serverFinder != null && !m_serverFinder.IsCompleted)
 				throw new InvalidOperationException("Can not start a new find servers before the previous one finishes.");
-			m_serverFinder = new Db4OServerFinder(foundServer, () => m_serverFinder = null);
+			m_serverFinder = new Db4OServerFinder(foundServer);
 		}
 
 		/// ------------------------------------------------------------------------------------

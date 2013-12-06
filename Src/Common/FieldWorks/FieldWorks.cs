@@ -2507,8 +2507,7 @@ namespace SIL.FieldWorks
 					retry = false;
 					try
 					{
-						ProjectRestoreService restoreService = new ProjectRestoreService(restoreSettings.Settings,
-						GetHelpTopicProvider(restoreSettings.FwAppCommandLineAbbrev), s_ui);
+						var restoreService = new ProjectRestoreService(restoreSettings.Settings, s_ui);
 						Logger.WriteEvent("Restoring from " + restoreSettings.Settings.Backup.File);
 						if (RestoreProjectDlg.HandleRestoreFileErrors(null, ResourceHelper.GetResourceString("ksRestoreFailed"),
 							restoreSettings.Settings.Backup.File, () => DoRestore(restoreService)))
