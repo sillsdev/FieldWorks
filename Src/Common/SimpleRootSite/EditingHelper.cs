@@ -1,13 +1,5 @@
-//---------------------------------------------------------------------------------------------
-#region /// Copyright (c) 2002-2008, SIL International. All Rights Reserved.
-// <copyright from='2002' to='2008' company='SIL International'>
-//    Copyright (c) 2008, SIL International. All Rights Reserved.
-// </copyright>
-#endregion
-//
-// File: EditingHelper.cs
-// Responsibility: TE Team
-// --------------------------------------------------------------------------------------------
+// Copyright (c) 2002-2013 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -2974,8 +2966,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			CheckDisposed();
 			if (vwsel == null || Callbacks == null || !Callbacks.GotCacheOrWs)
 				return;			// Can't do anything useful, so let's not do anything at all.
-			if (!Editable)
-				return;			// If it's not editable, the keyboard shouldn't matter.
 
 			int nWs = SelectionHelper.GetFirstWsOfSelection(vwsel);
 			if (nWs == 0)
