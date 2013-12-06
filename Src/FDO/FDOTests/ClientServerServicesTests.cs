@@ -5,6 +5,7 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Test.TestUtils;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {

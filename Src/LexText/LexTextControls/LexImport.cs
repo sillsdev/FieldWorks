@@ -24,6 +24,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Controls;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.LexText.Controls
 {

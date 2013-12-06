@@ -24,6 +24,7 @@ using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.Test.TestUtils;
 using SILUBS.SharedScrUtils;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.TE
 {

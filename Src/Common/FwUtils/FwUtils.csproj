@@ -179,7 +179,6 @@
     <Compile Include="FLExBridgeHelper.cs" />
     <Compile Include="IFocusablePanePortion.cs" />
     <Compile Include="ISpellEngine.cs" />
-    <Compile Include="IThreadedProgress.cs" />
     <Compile Include="DirectoryFinder.cs" />
     <Compile Include="FwLinkArgs.cs" />
     <Compile Include="FwRegistryHelper.cs" />

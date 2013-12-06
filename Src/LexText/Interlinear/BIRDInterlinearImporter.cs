@@ -12,6 +12,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.IText.FlexInterlinModel;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.IText
 {

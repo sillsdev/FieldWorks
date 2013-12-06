@@ -15,6 +15,7 @@ using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 {

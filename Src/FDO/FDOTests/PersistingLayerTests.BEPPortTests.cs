@@ -10,6 +10,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Test.TestUtils;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 {

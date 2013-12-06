@@ -25,6 +25,7 @@ using FwRemoteDatabaseConnector;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {
