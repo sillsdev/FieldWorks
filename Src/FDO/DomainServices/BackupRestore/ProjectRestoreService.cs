@@ -176,7 +176,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 				Debug.Assert(fileSettings.IncludeSupportingFiles,
 				"The option to include supporting files should not be allowed if they aren't available in the backup settings");
 				var zipEntryStartsWith = FdoFileHelper.ksSupportingFilesDir;
-					UncompressFilesContainedInFolderandSubFolders(DirectoryFinder.GetZipfileFormattedPath(zipEntryStartsWith),
+					UncompressFilesContainedInFolderandSubFolders(FdoFileHelper.GetZipfileFormattedPath(zipEntryStartsWith),
 						m_restoreSettings.ProjectSupportingFilesPath);
 			}
 
@@ -450,7 +450,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		private Dictionary<String, DateTime> GetAllFilesUnderFolderInZipFileAndDateTimes(string dir)
 		{
 			var filesAndDateTime = new Dictionary<String, DateTime>();
-			var dirZipFileFormat = DirectoryFinder.GetZipfileFormattedPath(dir);
+			var dirZipFileFormat = FdoFileHelper.GetZipfileFormattedPath(dir);
 			using (var zipIn = OpenFWBackupZipfile())
 			{
 				ZipEntry entry;
@@ -546,14 +546,14 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 					Debug.Assert(!String.IsNullOrEmpty(fileName));
 
 					//Contruct the path where the file will be unzipped too.
-					var zipFileLinkFilesPath = DirectoryFinder.GetZipfileFormattedPath(linkedFilesPathPersisted);
+					var zipFileLinkFilesPath = FdoFileHelper.GetZipfileFormattedPath(linkedFilesPathPersisted);
 					var filenameWithSubFolders = entry.Name.Substring(zipFileLinkFilesPath.Length);
 					String pathForFileSubFolders = "";
 					if (!fileName.Equals(filenameWithSubFolders)) //if they are equal the file is in the root of LinkedFiles
 					{
 						pathForFileSubFolders = GetPathForSubFolders(filenameWithSubFolders, fileName.Length);
 					}
-					var destFolderZipFileFormat = DirectoryFinder.GetZipfileFormattedPath(destinationLinkedFilesPath);
+					var destFolderZipFileFormat = FdoFileHelper.GetZipfileFormattedPath(destinationLinkedFilesPath);
 					var pathRoot = Path.GetPathRoot(destinationLinkedFilesPath);
 					Debug.Assert(!String.IsNullOrEmpty(pathRoot));
 					var pathforfileunzip = Path.Combine(pathRoot, destFolderZipFileFormat, pathForFileSubFolders);

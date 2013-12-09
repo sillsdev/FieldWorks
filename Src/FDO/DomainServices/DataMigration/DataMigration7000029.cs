@@ -19,7 +19,6 @@ using System.IO;
 using System.Xml.Linq;
 using System.Linq;
 using System.Xml.XPath;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 {

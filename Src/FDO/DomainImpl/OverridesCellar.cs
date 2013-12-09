@@ -20,7 +20,6 @@ using System.Xml; // XMLWriter
 using System.Diagnostics;
 using System.IO;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;

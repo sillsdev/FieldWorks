@@ -326,7 +326,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 		/// ------------------------------------------------------------------------------------
 		private static void VerifyFileExistsInZipFile(ZipFile zip, String fileNameAndPath)
 		{
-			string str = DirectoryFinder.GetZipfileFormattedPath(fileNameAndPath);
+			string str = FdoFileHelper.GetZipfileFormattedPath(fileNameAndPath);
 			//ensure the entry is the correct one.
 			ZipEntry entry = zip.GetEntry(str);
 			Assert.True(entry.Name.Equals(str), String.Format("File {0} should exist in zipFile", str));

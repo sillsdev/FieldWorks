@@ -124,7 +124,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			m_supportingFiles = settings.IncludeSupportingFiles;
 			m_linkedFiles = settings.IncludeLinkedFiles;
 			m_projectName = settings.ProjectName;
-			m_projectPathPersisted = DirectoryFinder.GetPathWithoutRoot(settings.ProjectPath);
+			m_projectPathPersisted = FdoFileHelper.GetPathWithoutRoot(settings.ProjectPath);
 			m_spellCheckAdditions = settings.IncludeSpellCheckAdditions;
 			m_dbVersion = settings.DbVersion;
 			m_fwVersion = settings.FwVersion;

@@ -14,7 +14,6 @@
 using System;
 using System.IO;
 using SIL.Utils;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 {

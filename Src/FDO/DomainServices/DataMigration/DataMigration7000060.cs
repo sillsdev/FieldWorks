@@ -13,16 +13,6 @@
 // ---------------------------------------------------------------------------------------------
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Xml;
-using System.Xml.Linq;
-using System.Xml.XPath;
-using Palaso.WritingSystems.Migration;
-using Palaso.WritingSystems.Migration.WritingSystemsLdmlV0To1Migration;
-using SIL.FieldWorks.Common.FwUtils;
-using System;
 
 namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 {

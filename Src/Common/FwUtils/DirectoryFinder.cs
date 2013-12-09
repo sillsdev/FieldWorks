@@ -399,34 +399,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the path without the root directory (i.e. make it un-rooted).
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static string GetPathWithoutRoot(string pathWithRoot)
-		{
-			string pathRoot = Path.GetPathRoot(pathWithRoot);
-			return pathWithRoot.Substring(pathRoot.Length);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Takes a windows path and returns it in the format which our backup zip files
-		/// stores them in.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static string GetZipfileFormattedPath(string path)
-		{
-			StringBuilder strBldr = new StringBuilder(path);
-			string pathRoot = Path.GetPathRoot(path);
-			strBldr.Remove(0, pathRoot.Length);
-			// replace back slashes with forward slashes (for Windows)
-			if (!MiscUtils.IsUnix && !MiscUtils.IsMac)
-				strBldr.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-			return strBldr.ToString();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Gets a subdirectory of FieldWorks either by reading the
 		/// <paramref name="registryValue"/> or by getting <paramref name="defaultDir"/>.
 		/// Will not return <c>null</c>.

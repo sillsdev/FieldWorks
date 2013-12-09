@@ -14,6 +14,8 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO
 {
@@ -227,6 +229,34 @@ namespace SIL.FieldWorks.FDO
 			// Do not use Path.ChangeExtension because it will strip off anything following a period in the project name!
 			return projectName.EndsWith(ksFwDataDb4oFileExtension) ? projectName :
 						projectName + ksFwDataDb4oFileExtension;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the path without the root directory (i.e. make it un-rooted).
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public static string GetPathWithoutRoot(string pathWithRoot)
+		{
+			string pathRoot = Path.GetPathRoot(pathWithRoot);
+			return pathWithRoot.Substring(pathRoot.Length);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Takes a windows path and returns it in the format which our backup zip files
+		/// stores them in.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public static string GetZipfileFormattedPath(string path)
+		{
+			StringBuilder strBldr = new StringBuilder(path);
+			string pathRoot = Path.GetPathRoot(path);
+			strBldr.Remove(0, pathRoot.Length);
+			// replace back slashes with forward slashes (for Windows)
+			if (!MiscUtils.IsUnix && !MiscUtils.IsMac)
+				strBldr.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+			return strBldr.ToString();
 		}
 	}
 }
