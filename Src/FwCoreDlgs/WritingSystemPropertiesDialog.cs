@@ -946,7 +946,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			resources.ApplyResources(this.cbDictionaries, "cbDictionaries");
 			this.cbDictionaries.Name = "cbDictionaries";
 			this.helpProvider.SetShowHelp(this.cbDictionaries, ((bool)(resources.GetObject("cbDictionaries.ShowHelp"))));
-			this.cbDictionaries.TextChanged += new System.EventHandler(this.cbDictionaries_TextChanged);
+			this.cbDictionaries.SelectedIndexChanged += new System.EventHandler(this.cbDictionaries_SelectedIndexChanged);
 			//
 			// m_regionVariantControl
 			//
@@ -2102,7 +2102,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		private void cbDictionaries_TextChanged(object sender, EventArgs e)
+		private void cbDictionaries_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (m_userChangedSpellCheckDictionary)
 			{
