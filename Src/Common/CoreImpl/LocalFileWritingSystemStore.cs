@@ -180,7 +180,7 @@ namespace SIL.CoreImpl
 					if (ws.DateModified > globalWs.DateModified)
 					{
 						WritingSystemDefinition newWs = ws.Clone();
-						newWs.Modified = true;
+						newWs.Modified = true; // ensure any existing file for this WS is overwritten
 						try
 						{
 							m_globalStore.Remove(ws.Id);

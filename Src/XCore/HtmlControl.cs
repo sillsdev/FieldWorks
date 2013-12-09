@@ -114,7 +114,7 @@ namespace XCore
 				return m_browser.DocumentText;
 #else
 				// TODO pH 2013.09: GeckoFX implementation
-				return @"<!DOCTYPE HTML></HTML>";
+				return @"<!DOCTYPE HTML><HTML/>";
 #endif
 			}
 			set
