@@ -13,7 +13,7 @@
 // ---------------------------------------------------------------------------------------------
 using SIL.FieldWorks.Common.COMInterfaces;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace SIL.CoreImpl
 {
 	/// <summary>
 	/// CaseFunctions provides a set of case conversion functions derived from the ICU

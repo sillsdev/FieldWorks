@@ -18,6 +18,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using ICSharpCode.SharpZipLib.Zip;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;

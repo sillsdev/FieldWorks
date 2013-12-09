@@ -14,13 +14,11 @@
 // <remarks>
 // </remarks>
 // ---------------------------------------------------------------------------------------------
-using System;
-using System.Collections.Generic;
-using System.Text;
 
+using System;
 using SIL.FieldWorks.Common.COMInterfaces;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace SIL.CoreImpl
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

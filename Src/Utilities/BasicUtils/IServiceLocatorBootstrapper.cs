@@ -1,6 +1,6 @@
-﻿using Microsoft.Practices.ServiceLocation;
+using Microsoft.Practices.ServiceLocation;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace SIL.Utils
 {
 	/// <summary>
 	/// Create an IServiceLocator.

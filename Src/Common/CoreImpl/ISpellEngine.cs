@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using SIL.FieldWorks.Common.COMInterfaces;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace SIL.CoreImpl
 {
 	/// <summary>
 	/// This is our wrapper for Hunspell, currently. It hides everything we don't use in case we want to change again!

@@ -1,12 +1,11 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using SIL.Utils;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace SIL.CoreImpl
 {
 	/// <summary>
 	/// Tests (for now pretty incomplete) of the SpellingHelper class.

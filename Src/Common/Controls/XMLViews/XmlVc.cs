@@ -1534,7 +1534,7 @@ namespace SIL.FieldWorks.Common.Controls
 							CellarPropertyType itype = (CellarPropertyType)m_sda.MetaDataCache.GetFieldType(flid);
 							if (itype == CellarPropertyType.Time)
 							{
-								DateTime dt = FwUtils.SilTime.GetTimeProperty(m_sda, hvo, flid);
+								DateTime dt = SilTime.GetTimeProperty(m_sda, hvo, flid);
 								XmlNode dtNode = XmlViewsUtils.CopyWithParamDefaults(frag);
 								string format;
 								if (vwenv is SortCollectorEnv)

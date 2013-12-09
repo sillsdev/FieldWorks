@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using SIL.FieldWorks.Common.COMInterfaces;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace SIL.CoreImpl
 {
 	internal class SpellEngine : ISpellEngine, IDisposable
 	{

@@ -24,6 +24,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
+using SIL.Utils;
 using StructureMap;
 using StructureMap.Configuration.DSL;
 using StructureMap.Pipeline;

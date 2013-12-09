@@ -18,6 +18,7 @@
 using System;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
@@ -76,7 +77,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// "reused" (e.g. refresh or new target object)
 		/// </summary>
 		/// <param name="parent"></param>
-		/// </summary>
 		public override void Install(DataTree parent)
 		{
 			CheckDisposed();
@@ -384,7 +384,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected override void UpdateDisplayFromDatabase()
 		{
 			RichTextBox rtb = ((RichTextBox)this.Control);
-			DateTime dt = FwUtils.SilTime.GetTimeProperty(m_cache.DomainDataByFlid, Object.Hvo, m_flid);
+			DateTime dt = SilTime.GetTimeProperty(m_cache.DomainDataByFlid, Object.Hvo, m_flid);
 			if (dt == DateTime.MinValue)
 			{
 				rtb.Text = "Date/Time not set";

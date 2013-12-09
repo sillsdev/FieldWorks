@@ -1,15 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
-using XCore;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace SIL.CoreImpl
 {
 	/// <summary>
 	/// This class manages a dictionary of (currently) Hunspell objects so that we can do spell checking.

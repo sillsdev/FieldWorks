@@ -99,8 +99,10 @@
     <Compile Include="..\..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="CaseFunctions.cs" />
     <Compile Include="GenDate.cs" />
     <Compile Include="GraphicsManager.cs" />
+    <Compile Include="ISpellEngine.cs" />
     <Compile Include="KernelExtensions.cs" />
     <Compile Include="DispPropOverrideFactory.cs" />
     <Compile Include="CoreImplStrings.Designer.cs">
@@ -133,6 +135,9 @@
     </Compile>
     <Compile Include="PUACharacter.cs" />
     <Compile Include="PuaCharacterFactory.cs" />
+    <Compile Include="SilTime.cs" />
+    <Compile Include="SpellEngine.cs" />
+    <Compile Include="SpellingHelper.cs" />
     <Compile Include="StyleUtils.cs" />
     <Compile Include="TsPropsSerializer.cs" />
     <Compile Include="TsRunPart.cs" />

@@ -14,7 +14,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace SIL.Utils
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

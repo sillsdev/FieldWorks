@@ -11,9 +11,8 @@
 // File: CaseFunctionsTest.cs
 // Responsibility:
 // ---------------------------------------------------------------------------------------------
-using System;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 
