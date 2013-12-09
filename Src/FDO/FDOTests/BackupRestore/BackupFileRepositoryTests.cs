@@ -189,7 +189,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			DummyBackupProjectSettings backupSettings = new DummyBackupProjectSettings("monkey",
 				"Floozy", null, FDOBackendProviderType.kXML);
 			string backupFileName1 = Path.Combine(DirectoryFinder.DefaultBackupDirectory,
-				Path.ChangeExtension("Floozy 2010-8-21-0506", FdoFileExtensions.ksFwBackupFileExtension));
+				Path.ChangeExtension("Floozy 2010-8-21-0506", FdoFileHelper.ksFwBackupFileExtension));
 			m_fileOs.AddExistingFile(backupFileName1);
 
 			BackupFileRepository repo = new BackupFileRepository();

@@ -78,8 +78,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			switch (type)
 			{
-				case FDOBackendProviderType.kDb4oClientServer: return FdoFileExtensions.ksFwDataDb4oFileExtension;
-				case FDOBackendProviderType.kXML: return FdoFileExtensions.ksFwDataXmlFileExtension;
+				case FDOBackendProviderType.kDb4oClientServer: return FdoFileHelper.ksFwDataDb4oFileExtension;
+				case FDOBackendProviderType.kXML: return FdoFileHelper.ksFwDataXmlFileExtension;
 				default: throw new InvalidEnumArgumentException("type", (int)type, typeof(FDOBackendProviderType));
 			}
 		}
@@ -864,7 +864,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			if (!ShareMyProjects)
 				return xmlFilename; // no conversion needed.
-			string desiredPath = Path.ChangeExtension(xmlFilename, FdoFileExtensions.ksFwDataDb4oFileExtension);
+			string desiredPath = Path.ChangeExtension(xmlFilename, FdoFileHelper.ksFwDataDb4oFileExtension);
 			if (!EnsureNoClientsAreConnected(Path.GetFileNameWithoutExtension(desiredPath), ui))
 				return null; // fail
 

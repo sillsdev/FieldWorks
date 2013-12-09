@@ -299,13 +299,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					}
 					else
 					{
-						string path = Path.Combine(folder, info.DatabaseName + FwFileExtensions.ksFwDataXmlFileExtension);
+						string path = Path.Combine(folder, info.DatabaseName + FdoFileHelper.ksFwDataXmlFileExtension);
 						if (File.Exists(path))
 							File.Delete(path);
-						path = Path.ChangeExtension(path, FwFileExtensions.ksFwDataDb4oFileExtension);
+						path = Path.ChangeExtension(path, FdoFileHelper.ksFwDataDb4oFileExtension);
 						if (File.Exists(path))
 							File.Delete(path);
-						path = Path.ChangeExtension(path, FwFileExtensions.ksFwDataFallbackFileExtension);
+						path = Path.ChangeExtension(path, FdoFileHelper.ksFwDataFallbackFileExtension);
 						if (File.Exists(path))
 							File.Delete(path);
 						path = Path.Combine(folder, DirectoryFinder.ksWritingSystemsDir);
@@ -361,9 +361,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			foreach (string filepath in files)
 			{
 				string file = Path.GetFileName(filepath);
-				if (file != info.DatabaseName + FwFileExtensions.ksFwDataXmlFileExtension &&
-					file != info.DatabaseName + FwFileExtensions.ksFwDataDb4oFileExtension &&
-					file != info.DatabaseName + FwFileExtensions.ksFwDataFallbackFileExtension)
+				if (file != info.DatabaseName + FdoFileHelper.ksFwDataXmlFileExtension &&
+					file != info.DatabaseName + FdoFileHelper.ksFwDataDb4oFileExtension &&
+					file != info.DatabaseName + FdoFileHelper.ksFwDataFallbackFileExtension)
 				{
 					return true;
 				}

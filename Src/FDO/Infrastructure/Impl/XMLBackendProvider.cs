@@ -413,7 +413,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		//protected override void RestoreWithoutMigration(string xmlBepPathname)
 		//{
 		//    // Copy original file to backup.
-		//    var bakPathname = m_databasePath + FdoFileExtensions.ksFwDataFallbackFileExtension;
+		//    var bakPathname = m_databasePath + FdoFileHelper.ksFwDataFallbackFileExtension;
 		//    if (File.Exists(bakPathname))
 		//        File.Delete(bakPathname);
 		//    File.Copy(m_databasePath, bakPathname);

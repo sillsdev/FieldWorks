@@ -128,7 +128,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 		{
 			// TODO: Extend to supply "relationship" also (source, presentation or supporting)
 
-			if (Path.GetExtension(file) == FwFileExtensions.ksFwBackupFileExtension)
+			if (Path.GetExtension(file) == FdoFileHelper.ksFwBackupFileExtension)
 				return "FieldWorks backup";
 			if (Path.GetExtension(file) == FwFileExtensions.ksLexiconInterchangeFormat)
 				return "Lexical Interchange Format Standard file";

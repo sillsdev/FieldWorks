@@ -321,7 +321,7 @@ namespace SIL.FieldWorks
 						}
 						return string.Format(Properties.Resources.ksProjectNameAndServerFmt, Name, hostName);
 					case FDOBackendProviderType.kXML:
-						return (SysPath.GetExtension(Path) != FwFileExtensions.ksFwDataXmlFileExtension) ?
+						return (SysPath.GetExtension(Path) != FdoFileHelper.ksFwDataXmlFileExtension) ?
 							SysPath.GetFileName(Path) : Name;
 					case FDOBackendProviderType.kInvalid:
 						return string.Empty;
@@ -530,12 +530,12 @@ namespace SIL.FieldWorks
 			switch (type)
 			{
 				case FDOBackendProviderType.kXML:
-					ext = FwFileExtensions.ksFwDataXmlFileExtension;
+					ext = FdoFileHelper.ksFwDataXmlFileExtension;
 					break;
 				case FDOBackendProviderType.kDb4oClientServer:
 					if (!IsServerLocal(server))
 						return name;
-					ext = FwFileExtensions.ksFwDataDb4oFileExtension;
+					ext = FdoFileHelper.ksFwDataDb4oFileExtension;
 					break;
 				default:
 					return name;
@@ -584,9 +584,9 @@ namespace SIL.FieldWorks
 				switch (ext)  // Includes period.
 				{
 					case ".db4o": // for historical purposes
-					case FwFileExtensions.ksFwDataDb4oFileExtension:
+					case FdoFileHelper.ksFwDataDb4oFileExtension:
 						return FDOBackendProviderType.kDb4oClientServer;
-					case FwFileExtensions.ksFwDataXmlFileExtension:
+					case FdoFileHelper.ksFwDataXmlFileExtension:
 						return FDOBackendProviderType.kXML;
 				}
 			}

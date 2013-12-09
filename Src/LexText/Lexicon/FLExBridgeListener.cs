@@ -322,7 +322,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var projectFolder = Cache.ProjectId.ProjectFolder;
 			var savedState = PrepareToDetectMainConflicts(projectFolder);
 			string dummy;
-			var fullProjectFileName = Path.Combine(projectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension);
+			var fullProjectFileName = Path.Combine(projectFolder, Cache.ProjectId.Name + FdoFileHelper.ksFwDataXmlFileExtension);
 			bool dataChanged;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(fullProjectFileName, SendReceiveUser,
 																  FLExBridgeHelper.SendReceive,
@@ -497,8 +497,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private string GetFullProjectFileName()
 		{
 			var currentExtension = IsDb4oProject
-				? FwFileExtensions.ksFwDataDb4oFileExtension
-				: FwFileExtensions.ksFwDataXmlFileExtension;
+				? FdoFileHelper.ksFwDataDb4oFileExtension
+				: FdoFileHelper.ksFwDataXmlFileExtension;
 			return Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + currentExtension);
 		}
 
@@ -633,7 +633,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			bool dummy1;
 			string dummy2;
 			FLExBridgeHelper.FLExJumpUrlChanged += JumpToFlexObject;
-			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
+			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FdoFileHelper.ksFwDataXmlFileExtension),
 								   SendReceiveUser,
 								   FLExBridgeHelper.ConflictViewer,
 								   null, FDOBackendProvider.ModelVersion, "0.13", null,
@@ -1400,7 +1400,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				{
 					// Continuing straight on from here renames the db on disk, but not in the cache, apparently
 					// Try a more indirect approach...
-					var fullProjectFileName = Path.Combine(projectFolder, revisedProjName + FwFileExtensions.ksFwDataXmlFileExtension);
+					var fullProjectFileName = Path.Combine(projectFolder, revisedProjName + FdoFileHelper.ksFwDataXmlFileExtension);
 					var tempWindow = RefreshCacheWindowAndAll(app, fullProjectFileName);
 					tempWindow.Mediator.SendMessageDefered("FLExBridge", null);
 					// to hopefully come back here after resetting things
@@ -1483,7 +1483,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private static bool CheckForExistingFileName(string projectFolder, string revisedFileName)
 		{
-			if (File.Exists(Path.Combine(projectFolder, revisedFileName + FwFileExtensions.ksFwDataXmlFileExtension)))
+			if (File.Exists(Path.Combine(projectFolder, revisedFileName + FdoFileHelper.ksFwDataXmlFileExtension)))
 			{
 				MessageBox.Show(
 					LexEdStrings.ksExistingProjectName, LexEdStrings.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Information);

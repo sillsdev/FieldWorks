@@ -506,12 +506,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (m_hostsTreeView.SelectedNode == m_localhostNode)
 			{
 				Project = ((LanguageProjectInfo)m_lstLanguageProjects.SelectedItem).FullName;
-				if (Project.EndsWith(FwFileExtensions.ksFwDataFallbackFileExtension))
+				if (Project.EndsWith(FdoFileHelper.ksFwDataFallbackFileExtension))
 				{
 					// The user chose a .bak file, only possible when the fwdata file is missing.
 					// Rename it and open it.
 					string bakFileName = Project;
-					Project = Path.ChangeExtension(bakFileName, FwFileExtensions.ksFwDataXmlFileExtension);
+					Project = Path.ChangeExtension(bakFileName, FdoFileHelper.ksFwDataXmlFileExtension);
 					try
 					{
 						File.Move(bakFileName, Project);

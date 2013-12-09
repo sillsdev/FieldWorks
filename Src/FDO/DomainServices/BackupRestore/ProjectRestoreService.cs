@@ -100,7 +100,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			{
 				//Import from FW version 6.0 based on the file extension.
 				var extension = Path.GetExtension(fileSettings.File).ToLowerInvariant();
-				if (extension == FdoFileExtensions.ksFw60BackupFileExtension || extension == ".xml")
+				if (extension == FdoFileHelper.ksFw60BackupFileExtension || extension == ".xml")
 					ImportFrom6_0Backup(fileSettings, progressDlg);
 				else     //Restore from FW version 7.0 and newer backup.
 					RestoreFrom7_0AndNewerBackup(fileSettings);
@@ -292,7 +292,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 							m_restoreSettings.ProjectPath, entry.DateTime);
 				}
 				string bakFile = Path.Combine(m_restoreSettings.ProjectPath, m_restoreSettings.ProjectName)
-					+ FdoFileExtensions.ksFwDataFallbackFileExtension;
+					+ FdoFileHelper.ksFwDataFallbackFileExtension;
 				if (FileUtils.TrySimilarFileExists(bakFile, out bakFile))
 				{
 					FileUtils.Delete(bakFile); // TODO: do something about the .Lock file.......

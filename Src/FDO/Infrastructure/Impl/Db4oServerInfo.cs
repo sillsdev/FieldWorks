@@ -96,14 +96,14 @@ namespace FwRemoteDatabaseConnector
 			if (!Directory.Exists(DirectoryFinder.ProjectsDirectory))
 				throw new DirectoryNotFoundException(String.Format(Strings.ksWarningProjectFolderNotFoundOnServer, DirectoryFinder.ProjectsDirectory));
 
-			string[] files = Directory.GetFiles(DirectoryFinder.ProjectsDirectory, "*" + FdoFileExtensions.ksFwDataDb4oFileExtension);
+			string[] files = Directory.GetFiles(DirectoryFinder.ProjectsDirectory, "*" + FdoFileHelper.ksFwDataDb4oFileExtension);
 			m_allServers.AddRange(files);
 
 			// search sub dirs
 			string[] dirs = Directory.GetDirectories(DirectoryFinder.ProjectsDirectory);
 			foreach (var dir in dirs)
 			{
-				files = Directory.GetFiles(dir, "*" + FdoFileExtensions.ksFwDataDb4oFileExtension);
+				files = Directory.GetFiles(dir, "*" + FdoFileHelper.ksFwDataDb4oFileExtension);
 				m_allServers.AddRange(files);
 			}
 		}

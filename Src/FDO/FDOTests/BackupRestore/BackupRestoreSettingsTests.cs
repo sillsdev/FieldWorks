@@ -82,7 +82,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			RestoreProjectSettings restoreSettings = new RestoreProjectSettings()
 			{
 				Backup = new BackupFileSettings(Path.Combine(restoreTestsZipFileDir,
-					Path.ChangeExtension("TestRestoreFWProject", FdoFileExtensions.ksFwBackupFileExtension))),
+					Path.ChangeExtension("TestRestoreFWProject", FdoFileHelper.ksFwBackupFileExtension))),
 				IncludeConfigurationSettings = false,
 				IncludeLinkedFiles = false,
 				IncludeSupportingFiles = true,
@@ -122,7 +122,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			RestoreProjectSettings restoreSettings = new RestoreProjectSettings()
 			{
 				Backup = new BackupFileSettings(Path.Combine(restoreTestsZipFileDir,
-					Path.ChangeExtension("TestRestoreFWProject", FdoFileExtensions.ksFwBackupFileExtension))),
+					Path.ChangeExtension("TestRestoreFWProject", FdoFileHelper.ksFwBackupFileExtension))),
 				IncludeConfigurationSettings = false,
 				IncludeLinkedFiles = false,
 				IncludeSupportingFiles = true,
@@ -220,7 +220,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 		public void BackupFileSettings_InitializeFromZipfileMetadata()
 		{
 			string zipFilePath = Path.Combine(Path.Combine(DirectoryFinder.FwSourceDirectory, "FDO/FDOTests/BackupRestore/RestoreProjectPresenterTests"),
-				Path.ChangeExtension("RestoreProjectPresenterTests", FdoFileExtensions.ksFwBackupFileExtension));
+				Path.ChangeExtension("RestoreProjectPresenterTests", FdoFileHelper.ksFwBackupFileExtension));
 
 			BackupFileSettings backupSettings = new BackupFileSettings(zipFilePath);
 			Assert.AreEqual("BackupOnlyCoreFiles", backupSettings.Comment);

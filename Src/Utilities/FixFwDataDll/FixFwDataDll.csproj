@@ -59,6 +59,10 @@
     <Reference Include="BasicUtils, Version=7.2.0.26223, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="FDO, Version=8.0.6.17467, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
+    </Reference>
     <Reference Include="FwControls, Version=6.9.6.16174, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\FwControls.dll</HintPath>

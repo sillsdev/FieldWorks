@@ -33,12 +33,12 @@ namespace SIL.FieldWorks.Resources
 
 
 		/*
-		 * The following extensions are also defined in FdoFileExtensions.
+		 * The following 4 extensions are also defined in FdoFileHelper.
 		 * They are defined here as a temporary stopgap.
-		 * The idea is that eventually, these will be removed
-		 * from here and all references will use FdoFileExtensions.
+		 * The idea is that once FwUtils references FDO, these will be removed
+		 * from here and all references will use FdoFileHelper.
 		 *
-		 * If a change is made here, it should be made in FdoFileExtensions as well.
+		 * If a change is made here, it should be made in FdoFileHelper as well.
 		 */
 		/// <summary>Default extension for FieldWorks XML data files (with the period)</summary>
 		public const string ksFwDataXmlFileExtension = ".fwdata";
@@ -47,8 +47,6 @@ namespace SIL.FieldWorks.Resources
 		/// <summary>Default extension for FieldWorks backup files (with the period).</summary>
 		public const string ksFwBackupFileExtension = ".fwbackup";
 		/// <summary>Default extension for FieldWorks 6.0 and earlier backup files (with the period).</summary>
-		public const string ksFw60BackupFileExtension = ".zip";
-		/// <summary>Default extension for FieldWorks TEMPORARY fallback data files (with the period).</summary>
-		public const string ksFwDataFallbackFileExtension = ".bak";
+		internal const string ksFw60BackupFileExtension = ".zip";
 	}
 }

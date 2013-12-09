@@ -15,11 +15,9 @@
 // </remarks>
 // ---------------------------------------------------------------------------------------------
 using System;
-using System.Runtime;
 using System.Reflection;
 using System.Resources;
 using SILUBS.SharedScrUtils;
-using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.Common.ScriptureUtils
 {

@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			foreach (string backup in backups)
 			{
 				string ext = Path.GetExtension(backup);
-				if (ext != FdoFileExtensions.ksFwBackupFileExtension && ext != FdoFileExtensions.ksFw60BackupFileExtension)
+				if (ext != FdoFileHelper.ksFwBackupFileExtension && ext != FdoFileHelper.ksFw60BackupFileExtension)
 					continue;
 				string filename = Path.GetFileNameWithoutExtension(backup);
 				MatchCollection matches = regex.Matches(filename);
@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 					{
 						SortedDictionary<DateTime, BackupFileSettings> versions = GetOrCreateProjectVersions(projectName);
 						string comment;
-						if (ext == FdoFileExtensions.ksFw60BackupFileExtension)
+						if (ext == FdoFileHelper.ksFw60BackupFileExtension)
 							comment = Properties.Resources.kstidFw60OrEarlierBackupComment;
 						else
 						{

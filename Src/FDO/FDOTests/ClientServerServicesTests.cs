@@ -133,7 +133,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string filename = ClientServerServices.Current.Local.IdForLocalProject("tom");
 
 			// Assert ends with .fwdata
-			Assert.AreEqual(FdoFileExtensions.ksFwDataXmlFileExtension, Path.GetExtension(filename));
+			Assert.AreEqual(FdoFileHelper.ksFwDataXmlFileExtension, Path.GetExtension(filename));
 
 			// Check file is in ProjectDirectory.
 			Assert.That(filename, Is.SubPath(DirectoryFinder.ProjectsDirectory));

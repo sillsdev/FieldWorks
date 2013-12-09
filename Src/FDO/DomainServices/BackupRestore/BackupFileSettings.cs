@@ -396,7 +396,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 				return;
 
 			string extension = Path.GetExtension(m_sZipFileName).ToLowerInvariant();
-			if (extension == FdoFileExtensions.ksFw60BackupFileExtension)
+			if (extension == FdoFileHelper.ksFw60BackupFileExtension)
 			{
 				ProcessOldZipFile();
 				return;
@@ -430,7 +430,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 							foundBackupSettingsFile = true;
 							InitializeFromStream(zipIn);
 						}
-						else if (Path.GetExtension(fileName) == FdoFileExtensions.ksFwDataXmlFileExtension)
+						else if (Path.GetExtension(fileName) == FdoFileHelper.ksFwDataXmlFileExtension)
 						{
 							if (dataFileName != null)
 								throw new InvalidOperationException("Zip file " + m_sZipFileName +

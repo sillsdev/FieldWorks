@@ -8,7 +8,7 @@
 // </copyright>
 #endregion
 //
-// File: FdoFileExtensions.cs
+// File: FdoFileHelper.cs
 // --------------------------------------------------------------------------------------------
 
 namespace SIL.FieldWorks.FDO
@@ -18,25 +18,27 @@ namespace SIL.FieldWorks.FDO
 	/// Static class to hold a few constant FDO file extensions.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	internal static class FdoFileExtensions
+	public static class FdoFileHelper
 	{
 		/*
-		 * The following extensions are also defined in FwFileExtensions
+		 * The following 4 extensions are also defined in FwFileExtensions
 		 * as a temporary stopgap.
-		 * The idea is that eventually, those will be removed
-		 * and all references will use FdoFileExtensions.
+		 * The idea is that once FwUtils references FDO, those will be removed
+		 * and all references will use FdoFileHelper.
 		 *
 		 * If a change is made here, it should be made in FwFileExtensions as well.
 		 */
 		/// <summary>Default extension for FieldWorks XML data files (with the period)</summary>
-		internal const string ksFwDataXmlFileExtension = ".fwdata";
+		public const string ksFwDataXmlFileExtension = ".fwdata";
 		/// <summary>Default extension for FieldWorks DB4o data files (with the period)</summary>
-		internal const string ksFwDataDb4oFileExtension = ".fwdb";
+		public const string ksFwDataDb4oFileExtension = ".fwdb";
 		/// <summary>Default extension for FieldWorks backup files (with the period).</summary>
-		internal const string ksFwBackupFileExtension = ".fwbackup";
+		public const string ksFwBackupFileExtension = ".fwbackup";
 		/// <summary>Default extension for FieldWorks 6.0 and earlier backup files (with the period).</summary>
-		internal const string ksFw60BackupFileExtension = ".zip";
+		public const string ksFw60BackupFileExtension = ".zip";
+
+
 		/// <summary>Default extension for FieldWorks TEMPORARY fallback data files (with the period).</summary>
-		internal const string ksFwDataFallbackFileExtension = ".bak";
+		public const string ksFwDataFallbackFileExtension = ".bak";
 	}
 }

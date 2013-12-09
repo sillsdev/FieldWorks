@@ -13,7 +13,7 @@
 // ---------------------------------------------------------------------------------------------
 using System.Collections.Generic;
 using System.Diagnostics;
-
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FwCoreDlgs;
 using System.Windows.Forms;
 using System.IO;
@@ -105,7 +105,7 @@ namespace SIL.FieldWorks.FixData
 					{
 						string pathname = Path.Combine(
 							Path.Combine(DirectoryFinder.ProjectsDirectory, dlg.SelectedProject),
-							dlg.SelectedProject + Resources.FwFileExtensions.ksFwDataXmlFileExtension);
+							dlg.SelectedProject + FdoFileHelper.ksFwDataXmlFileExtension);
 						if (File.Exists(pathname))
 						{
 							using (new WaitCursor(m_dlg))
@@ -116,7 +116,7 @@ namespace SIL.FieldWorks.FixData
 									if (fixes.Length > 0)
 									{
 										MessageBox.Show(fixes, Strings.ksErrorsFoundOrFixed);
-										File.WriteAllText(pathname.Replace(Resources.FwFileExtensions.ksFwDataXmlFileExtension, "fixes"), fixes);
+										File.WriteAllText(pathname.Replace(FdoFileHelper.ksFwDataXmlFileExtension, "fixes"), fixes);
 									}
 								}
 							}

@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		{
 			var destFolder = DirectoryFinder.ProjectsDirectory;
 			var folderName = Path.Combine(destFolder, projectName);
-			projectFile = Path.Combine(folderName, projectName + FdoFileExtensions.ksFwDataXmlFileExtension);
+			projectFile = Path.Combine(folderName, projectName + FdoFileHelper.ksFwDataXmlFileExtension);
 			string extension = Path.GetExtension(pathname);
 			if (extension != null)
 				extension = extension.ToLowerInvariant();

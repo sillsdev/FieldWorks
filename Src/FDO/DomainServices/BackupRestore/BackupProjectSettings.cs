@@ -153,7 +153,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		private string MakeBackupFileName(string comment)
 		{
 			return ProjectName + " " + BackupTime.ToString(ksBackupDateFormat) +
-				   comment + FdoFileExtensions.ksFwBackupFileExtension;
+				   comment + FdoFileHelper.ksFwBackupFileExtension;
 		}
 
 		/// ------------------------------------------------------------------------------------

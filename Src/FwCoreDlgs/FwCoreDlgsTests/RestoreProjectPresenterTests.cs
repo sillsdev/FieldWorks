@@ -12,6 +12,7 @@ using System;
 using System.IO;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
@@ -56,7 +57,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var restoreProjectPresenter = new RestoreProjectPresenter(null, string.Empty);
 			BackupFileSettings backupSettings = new BackupFileSettings(
-				Path.ChangeExtension("dummy", FwFileExtensions.ksFwBackupFileExtension), false);
+				Path.ChangeExtension("dummy", FdoFileHelper.ksFwBackupFileExtension), false);
 			// This is needed to thwart BackupFileSettings's normal logic to populate the flags
 			// from the backup zip file
 			ReflectionHelper.SetField(backupSettings, "m_projectName", "dummy");

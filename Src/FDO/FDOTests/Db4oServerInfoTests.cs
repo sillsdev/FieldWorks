@@ -202,7 +202,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void ListServers_UnknownNumberOfServers_ReturnsAllServersInProjectsDirectory()
 		{
-			int projectsCount = Directory.GetFiles(DirectoryFinder.ProjectsDirectory, "*" + FdoFileExtensions.ksFwDataDb4oFileExtension,
+			int projectsCount = Directory.GetFiles(DirectoryFinder.ProjectsDirectory, "*" + FdoFileHelper.ksFwDataDb4oFileExtension,
 				SearchOption.AllDirectories).Count();
 
 			m_db4OServerInfo.RefreshServerList();

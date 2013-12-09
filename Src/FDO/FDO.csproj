@@ -366,7 +366,7 @@
     <Compile Include="DomainImpl\OverridesLing_MoClasses.cs" />
     <Compile Include="DomainImpl\OverridesLing_Wfi.cs" />
     <Compile Include="FdoStructs.cs" />
-    <Compile Include="FdoFileExtensions.cs" />
+    <Compile Include="FdoFileHelper.cs" />
     <Compile Include="IFdoUI.cs" />
     <Compile Include="IProjectIdentifier.cs" />
     <Compile Include="SilentFdoUI.cs" />

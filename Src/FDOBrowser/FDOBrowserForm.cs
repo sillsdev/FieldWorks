@@ -506,9 +506,9 @@ namespace FDOBrowser
 			{
 				default:
 					return FDOBackendProviderType.kMemoryOnly;
-				case FwFileExtensions.ksFwDataXmlFileExtension:
+				case FdoFileHelper.ksFwDataXmlFileExtension:
 					return FDOBackendProviderType.kXML;
-				case FwFileExtensions.ksFwDataDb4oFileExtension:
+				case FdoFileHelper.ksFwDataDb4oFileExtension:
 					return FDOBackendProviderType.kDb4oClientServer;
 
 			}

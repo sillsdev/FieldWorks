@@ -1304,10 +1304,10 @@ namespace SIL.FieldWorks
 				if (!File.Exists(projId.Path))
 				{
 					string altProject;
-					if (Path.GetExtension(latestProject) == FwFileExtensions.ksFwDataXmlFileExtension)
-						altProject = Path.ChangeExtension(latestProject, FwFileExtensions.ksFwDataDb4oFileExtension);
+					if (Path.GetExtension(latestProject) == FdoFileHelper.ksFwDataXmlFileExtension)
+						altProject = Path.ChangeExtension(latestProject, FdoFileHelper.ksFwDataDb4oFileExtension);
 					else
-						altProject = Path.ChangeExtension(latestProject, FwFileExtensions.ksFwDataXmlFileExtension);
+						altProject = Path.ChangeExtension(latestProject, FdoFileHelper.ksFwDataXmlFileExtension);
 					projId = new ProjectId(altProject, latestServer);
 				}
 			}
@@ -2310,12 +2310,12 @@ namespace SIL.FieldWorks
 		{
 			var projectName = Path.GetFileName(projectFolder);
 			// If it contains a matching fwdata file it is a project folder.
-			var projectFileName = Path.ChangeExtension(Path.Combine(projectFolder, projectName), FwFileExtensions.ksFwDataXmlFileExtension);
+			var projectFileName = Path.ChangeExtension(Path.Combine(projectFolder, projectName), FdoFileHelper.ksFwDataXmlFileExtension);
 			if(File.Exists(projectFileName))
 				return true;
 			// Just in case some project didn't get converted back to fwdata before we ask this question,
 			// allow folders containing fwdb files, too.
-			projectFileName = Path.ChangeExtension(projectFileName, FwFileExtensions.ksFwDataDb4oFileExtension);
+			projectFileName = Path.ChangeExtension(projectFileName, FdoFileHelper.ksFwDataDb4oFileExtension);
 			if (File.Exists(projectFileName))
 				return true;
 			return false;
