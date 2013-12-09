@@ -240,8 +240,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			m_restoreProjectService.RestoreProject(progressDlg);
 
 			string restoreProjectDirectory = m_restoreSettings.ProjectPath;
-			VerifyFileExists(restoreProjectDirectory, DirectoryFinder.GetXmlDataFileName("TestRestoreFWProject"));
-			var dateTimeTicksOfFirstFile = GetLastWriteTimeOfRestoredFile(restoreProjectDirectory, DirectoryFinder.GetXmlDataFileName("TestRestoreFWProject"));
+			VerifyFileExists(restoreProjectDirectory, FdoFileHelper.GetXmlDataFileName("TestRestoreFWProject"));
+			var dateTimeTicksOfFirstFile = GetLastWriteTimeOfRestoredFile(restoreProjectDirectory, FdoFileHelper.GetXmlDataFileName("TestRestoreFWProject"));
 
 			// Linux filesystem modification time precision can be to the second, so wait a moment.
 			if (MiscUtils.IsUnix)
@@ -255,7 +255,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			//Now do another restore then verify that the two files are not the same by comparing the LastWriteTime values.
 			m_restoreProjectService.RestoreProject(progressDlg);
 
-			var dateTimeTicksOfSecondFile = GetLastWriteTimeOfRestoredFile(restoreProjectDirectory, DirectoryFinder.GetXmlDataFileName("TestRestoreFWProject"));
+			var dateTimeTicksOfSecondFile = GetLastWriteTimeOfRestoredFile(restoreProjectDirectory, FdoFileHelper.GetXmlDataFileName("TestRestoreFWProject"));
 			Assert.True(dateTimeTicksOfSecondFile.Equals(dateTimeTicksOfFirstFile), "The dates and times of the files should be the same since they are set to the timestamp of the file in the zip file.");
 
 			VerifyManditoryFilesUnzippedAndDeleteThem();
@@ -290,7 +290,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 
 		internal static void RemoveAnyFilesAndFoldersCreatedByTests(RestoreProjectSettings settings)
 		{
-			RemoveAllFilesFromFolderAndSubfolders(DirectoryFinder.GetBackupSettingsDir(settings.ProjectPath));
+			RemoveAllFilesFromFolderAndSubfolders(FdoFileHelper.GetBackupSettingsDir(settings.ProjectPath));
 			RemoveAllFilesFromFolderAndSubfolders(settings.ProjectSupportingFilesPath);
 			RemoveAllFilesFromFolderAndSubfolders(settings.FlexConfigurationSettingsPath);
 			RemoveAllFilesFromFolderAndSubfolders(settings.PicturesPath);
@@ -298,7 +298,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			RemoveAllFilesFromFolderAndSubfolders(settings.OtherExternalFilesPath);
 			RemoveAllFilesFromFolderAndSubfolders(settings.LinkedFilesPath);
 			RemoveAllFilesFromFolderAndSubfolders(settings.WritingSystemStorePath);
-			RemoveAllFilesFromFolderAndSubfolders(Path.Combine(settings.ProjectPath, DirectoryFinder.ksSortSequenceTempDir));
+			RemoveAllFilesFromFolderAndSubfolders(Path.Combine(settings.ProjectPath, FdoFileHelper.ksSortSequenceTempDir));
 
 			//Remove this one last of all because the other folders need to be removed first.
 			RemoveAllFilesFromFolderAndSubfolders(settings.ProjectPath);

@@ -324,7 +324,7 @@ namespace SIL.FieldWorks.XWorks
 			string path = null;
 			if (app != null) // if configFile in FwXApp == null
 			{
-				path = DirectoryFinder.GetConfigSettingsDir(app.Cache.ProjectId.ProjectFolder);
+				path = FdoFileHelper.GetConfigSettingsDir(app.Cache.ProjectId.ProjectFolder);
 				Directory.CreateDirectory(path);
 			}
 			m_mediator.PropertyTable.UserSettingDirectory = path;
@@ -419,7 +419,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected override void DiscardProperties()
 		{
-			var tempDirectory = Path.Combine(Cache.ProjectId.ProjectFolder, DirectoryFinder.ksSortSequenceTempDir);
+			var tempDirectory = Path.Combine(Cache.ProjectId.ProjectFolder, FdoFileHelper.ksSortSequenceTempDir);
 			foreach (var pathname in Directory.GetFiles(tempDirectory, "*.fwss"))
 			{
 				File.Delete(pathname);

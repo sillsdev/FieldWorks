@@ -314,7 +314,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			IHelpTopicProvider helpTopicProvider, bool isLocal)
 		{
 			return MoveCopyOrLeaveFile(sFile,
-				Path.Combine(sRootDirLinkedFiles, DirectoryFinder.ksMediaDir),
+				Path.Combine(sRootDirLinkedFiles, FdoFileHelper.ksMediaDir),
 				sRootDirLinkedFiles,
 				helpTopicProvider, isLocal);
 		}
@@ -339,7 +339,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			IHelpTopicProvider helpTopicProvider, bool isLocal)
 		{
 			return MoveCopyOrLeaveFile(sFile,
-				Path.Combine(sRootDirLinkedFiles, DirectoryFinder.ksOtherLinkedFilesDir),
+				Path.Combine(sRootDirLinkedFiles, FdoFileHelper.ksOtherLinkedFilesDir),
 				sRootDirLinkedFiles,
 				helpTopicProvider, isLocal);
 		}

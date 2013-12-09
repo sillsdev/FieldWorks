@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 			m_backupProjectView = backupProjectView;
 
 			//Older projects might not have this folder so when launching the backup dialog we want to create it.
-			Directory.CreateDirectory(DirectoryFinder.GetSupportingFilesDir(m_cache.ProjectId.ProjectFolder));
+			Directory.CreateDirectory(FdoFileHelper.GetSupportingFilesDir(m_cache.ProjectId.ProjectFolder));
 		}
 
 		///<summary>
@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		{
 			get
 			{
-				return Path.Combine(DirectoryFinder.GetBackupSettingsDir(m_cache.ProjectId.ProjectFolder),
+				return Path.Combine(FdoFileHelper.GetBackupSettingsDir(m_cache.ProjectId.ProjectFolder),
 					DirectoryFinder.kBackupSettingsFilename);
 			}
 		}
@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		{
 			get
 			{
-				var supportingFilesFolder = DirectoryFinder.GetSupportingFilesDir(m_cache.ProjectId.ProjectFolder);
+				var supportingFilesFolder = FdoFileHelper.GetSupportingFilesDir(m_cache.ProjectId.ProjectFolder);
 				var files = ProjectBackupService.GenerateFileListFolderAndSubfolders(supportingFilesFolder);
 				if (files.Count > 0)
 					return true;

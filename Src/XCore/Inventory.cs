@@ -23,7 +23,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
-
+using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -520,7 +520,7 @@ namespace XCore
 
 		private string UserOverrideConfigurationSettingsPath
 		{
-			get { return DirectoryFinder.GetConfigSettingsDir(m_projectPath); }
+			get { return FdoFileHelper.GetConfigSettingsDir(m_projectPath); }
 		}
 
 		/// <summary>

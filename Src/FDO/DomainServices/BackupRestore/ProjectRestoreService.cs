@@ -159,7 +159,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		{
 			// Get rid of any saved settings, since they may not be consistent with something about the data
 			// or settings we are restoring. (This extension is also known to RecordView.GetClerkPersistPathname()).
-			var tempDirectory = Path.Combine(m_restoreSettings.ProjectPath, DirectoryFinder.ksSortSequenceTempDir);
+			var tempDirectory = Path.Combine(m_restoreSettings.ProjectPath, FdoFileHelper.ksSortSequenceTempDir);
 			if (Directory.Exists(tempDirectory))
 			{
 				foreach (var sortSeqFile in Directory.GetFiles(tempDirectory, "*.fwss"))
@@ -169,19 +169,19 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			UncompressDataFiles();
 
 			// We can't use Path.Combine here, because the zip files stores all file paths with '/'s
-			UncompressFilesMatchingPath(DirectoryFinder.ksWritingSystemsDir + "/", m_restoreSettings.WritingSystemStorePath);
+			UncompressFilesMatchingPath(FdoFileHelper.ksWritingSystemsDir + "/", m_restoreSettings.WritingSystemStorePath);
 
 			if (m_restoreSettings.IncludeSupportingFiles)
 			{
 				Debug.Assert(fileSettings.IncludeSupportingFiles,
 				"The option to include supporting files should not be allowed if they aren't available in the backup settings");
-				var zipEntryStartsWith = DirectoryFinder.ksSupportingFilesDir;
+				var zipEntryStartsWith = FdoFileHelper.ksSupportingFilesDir;
 					UncompressFilesContainedInFolderandSubFolders(DirectoryFinder.GetZipfileFormattedPath(zipEntryStartsWith),
 						m_restoreSettings.ProjectSupportingFilesPath);
 			}
 
 			if (m_restoreSettings.IncludeConfigurationSettings)
-				UncompressFilesMatchingPath(DirectoryFinder.ksConfigurationSettingsDir + "/", m_restoreSettings.FlexConfigurationSettingsPath);
+				UncompressFilesMatchingPath(FdoFileHelper.ksConfigurationSettingsDir + "/", m_restoreSettings.FlexConfigurationSettingsPath);
 
 			if (m_restoreSettings.IncludeLinkedFiles)
 				RestoreLinkedFiles(fileSettings);
@@ -284,7 +284,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 				while ((entry = zipIn.GetNextEntry()) != null)
 				{
 					var fileName = Path.GetFileName(entry.Name);
-					if (fileName == DirectoryFinder.GetXmlDataFileName(m_restoreSettings.Backup.ProjectName))
+					if (fileName == FdoFileHelper.GetXmlDataFileName(m_restoreSettings.Backup.ProjectName))
 						UnzipFileToRestoreFolder(zipIn, m_restoreSettings.DbFilename, entry.Size,
 							m_restoreSettings.ProjectPath, entry.DateTime);
 					if (fileName == m_restoreSettings.QuestionNotesFilename)
@@ -306,22 +306,22 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 				"The option to include linked files should not be allowed if they aren't available in the backup settings");
 
 			var proposedDestinationLinkedFilesPath =
-				DirectoryFinderRelativePaths.GetLinkedFilesFullPathFromRelativePath(
+				FdoFileHelperRelativePaths.GetLinkedFilesFullPathFromRelativePath(
 					fileSettings.LinkedFilesPathRelativePersisted, m_restoreSettings.ProjectPath);
 
 			var linkedFilesPathInZip = fileSettings.LinkedFilesPathActualPersisted;
-			if (fileSettings.LinkedFilesPathRelativePersisted.StartsWith(DirectoryFinderRelativePaths.ksProjectRelPath))
+			if (fileSettings.LinkedFilesPathRelativePersisted.StartsWith(FdoFileHelperRelativePaths.ksProjectRelPath))
 			{
 				// We store any files inside the project folder as a relative path from the project's directory.
 				// Make sure we don't attempt to search for the whole directory structure in the zip file. (FWR-2909)
 				linkedFilesPathInZip = fileSettings.LinkedFilesPathRelativePersisted.Substring(
-					DirectoryFinderRelativePaths.ksProjectRelPath.Length + 1);
+					FdoFileHelperRelativePaths.ksProjectRelPath.Length + 1);
 			}
 			var filesContainedInLinkdFilesFolder = GetAllFilesUnderFolderInZipFileAndDateTimes(linkedFilesPathInZip);
 
 			//If the proposed location is not in the default location under the project, then ask the user if they want
 			//to restore the files to the default location instead. Otherwise just go ahead and restore the files.
-			var defaultLinkedFilesPath = DirectoryFinder.GetDefaultLinkedFilesDir(m_restoreSettings.ProjectPath);
+			var defaultLinkedFilesPath = FdoFileHelper.GetDefaultLinkedFilesDir(m_restoreSettings.ProjectPath);
 			if (proposedDestinationLinkedFilesPath.Equals(defaultLinkedFilesPath))
 			{
 				if (!Directory.Exists(defaultLinkedFilesPath))
@@ -360,7 +360,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		{
 			if (fPutFilesInProject)
 			{
-				m_sLinkDirChangedTo = DirectoryFinder.GetDefaultLinkedFilesDir(m_restoreSettings.ProjectPath);
+				m_sLinkDirChangedTo = FdoFileHelper.GetDefaultLinkedFilesDir(m_restoreSettings.ProjectPath);
 				//Restore the files to the project folder.
 				UncompressLinkedFiles(filesContainedInLinkdFilesFolder, m_sLinkDirChangedTo, linkedFilesPathInZip);
 			}
@@ -437,7 +437,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			YesNoCancel userSelection = m_ui.CannotRestoreLinkedFilesToOriginalLocation();
 			if (userSelection == YesNoCancel.OkYes)
 			{
-				m_sLinkDirChangedTo = DirectoryFinder.GetDefaultLinkedFilesDir(m_restoreSettings.ProjectPath);
+				m_sLinkDirChangedTo = FdoFileHelper.GetDefaultLinkedFilesDir(m_restoreSettings.ProjectPath);
 				//Restore the files to the project folder.
 				UncompressLinkedFiles(filesContainedInLinkdFilesFolder, m_sLinkDirChangedTo, linkedFilesPathPersisted);
 			}

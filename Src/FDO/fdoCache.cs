@@ -470,7 +470,7 @@ namespace SIL.FieldWorks.FDO
 
 				// Make sure that the new project has all the writing systems actually used by the
 				// default data.  See FWR-1774.
-				AddMissingWritingSystems(Path.Combine(DirectoryFinder.TemplateDirectory, DirectoryFinder.GetXmlDataFileName("NewLangProj")),
+				AddMissingWritingSystems(Path.Combine(DirectoryFinder.TemplateDirectory, FdoFileHelper.GetXmlDataFileName("NewLangProj")),
 					cache.ServiceLocator.WritingSystemManager);
 				AddMissingWritingSystems(Path.Combine(DirectoryFinder.TemplateDirectory, "POS.xml"),
 					cache.ServiceLocator.WritingSystemManager);
@@ -487,7 +487,7 @@ namespace SIL.FieldWorks.FDO
 				{
 					//Make sure the new project has the default location set up for the External files.
 					cache.LanguageProject.LinkedFilesRootDir = Path.Combine(cache.ProjectId.ProjectFolder,
-						DirectoryFinder.ksLinkedFilesDir);
+						FdoFileHelper.ksLinkedFilesDir);
 
 					// Set the Date Created and Date Modified values.  (See FWR-3189.)
 					cache.LangProject.DateCreated = DateTime.Now;
@@ -682,14 +682,14 @@ namespace SIL.FieldWorks.FDO
 			if (ProjectInfo.GetProjectInfoByName(projectName) != null)
 				throw new ArgumentException("The specified project already exists.", "projectName");
 			string dbDirName = Path.Combine(DirectoryFinder.ProjectsDirectory, projectName);
-			string dbFileName = Path.Combine(dbDirName, DirectoryFinder.GetXmlDataFileName(projectName));
+			string dbFileName = Path.Combine(dbDirName, FdoFileHelper.GetXmlDataFileName(projectName));
 			try
 			{
 				Directory.CreateDirectory(dbDirName);
 				CreateProjectSubfolders(dbDirName);
 				// Make a copy of the template database that will become the new database
 				File.Copy(Path.Combine(DirectoryFinder.TemplateDirectory,
-					DirectoryFinder.GetXmlDataFileName("NewLangProj")), dbFileName, false);
+					FdoFileHelper.GetXmlDataFileName("NewLangProj")), dbFileName, false);
 				File.SetAttributes(dbFileName, FileAttributes.Normal);
 
 				// Change the LangProject Guid to a new one to make it unique between projects, so Lift Bridge won't get cross with FLEx.
@@ -725,14 +725,14 @@ namespace SIL.FieldWorks.FDO
 		{
 			try
 			{
-				Directory.CreateDirectory(DirectoryFinder.GetBackupSettingsDir(dbDirName));
-				Directory.CreateDirectory(DirectoryFinder.GetConfigSettingsDir(dbDirName));
-				Directory.CreateDirectory(DirectoryFinder.GetSupportingFilesDir(dbDirName));
-				Directory.CreateDirectory(DirectoryFinder.GetDefaultMediaDir(dbDirName));
-				Directory.CreateDirectory(DirectoryFinder.GetDefaultPicturesDir(dbDirName));
-				Directory.CreateDirectory(DirectoryFinder.GetDefaultOtherExternalFilesDir(dbDirName));
-				Directory.CreateDirectory(Path.Combine(dbDirName, DirectoryFinder.ksSortSequenceTempDir));
-				Directory.CreateDirectory(DirectoryFinder.GetWritingSystemDir(dbDirName));
+				Directory.CreateDirectory(FdoFileHelper.GetBackupSettingsDir(dbDirName));
+				Directory.CreateDirectory(FdoFileHelper.GetConfigSettingsDir(dbDirName));
+				Directory.CreateDirectory(FdoFileHelper.GetSupportingFilesDir(dbDirName));
+				Directory.CreateDirectory(FdoFileHelper.GetDefaultMediaDir(dbDirName));
+				Directory.CreateDirectory(FdoFileHelper.GetDefaultPicturesDir(dbDirName));
+				Directory.CreateDirectory(FdoFileHelper.GetDefaultOtherExternalFilesDir(dbDirName));
+				Directory.CreateDirectory(Path.Combine(dbDirName, FdoFileHelper.ksSortSequenceTempDir));
+				Directory.CreateDirectory(FdoFileHelper.GetWritingSystemDir(dbDirName));
 			}
 			catch (Exception e)
 			{

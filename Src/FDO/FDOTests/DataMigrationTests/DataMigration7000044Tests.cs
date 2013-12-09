@@ -73,7 +73,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		public void DataMigration7000044Test()
 		{
 			var projectFolder = Path.GetTempPath();
-			var storePath = Path.Combine(projectFolder, DirectoryFinder.ksWritingSystemsDir);
+			var storePath = Path.Combine(projectFolder, FdoFileHelper.ksWritingSystemsDir);
 			PrepareStore(storePath);
 			var testDataPath = Path.Combine(DirectoryFinder.FwSourceDirectory, "FDO/FDOTests/TestData");
 			var testEnglishPath = Path.Combine(storePath, "en.ldml");
@@ -100,7 +100,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			mockMDC.AddClass(8, "CmPossibilityList", "CmObject", new List<string>());
 			mockMDC.AddClass(9, "CmBaseAnnotation", "CmObject", new List<string>());
 
-			var settingsFolder = Path.Combine(projectFolder, DirectoryFinder.ksConfigurationSettingsDir);
+			var settingsFolder = Path.Combine(projectFolder, FdoFileHelper.ksConfigurationSettingsDir);
 			Directory.CreateDirectory(settingsFolder);
 			var sampleLayout = Path.Combine(settingsFolder, "Test_Layouts.xml");
 			File.WriteAllText(sampleLayout, sampleLayoutData, Encoding.UTF8);

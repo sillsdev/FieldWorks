@@ -122,7 +122,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void CreateNewLangProject()
 		{
 			const string dbName = "Maileingwij2025";
-			string storePath = DirectoryFinder.GetWritingSystemDir(Path.Combine(DirectoryFinder.ProjectsDirectory, dbName));
+			string storePath = FdoFileHelper.GetWritingSystemDir(Path.Combine(DirectoryFinder.ProjectsDirectory, dbName));
 			string sharedStorePath = DirectoryFinder.GlobalWritingSystemStoreDirectory;
 
 			using (var dlg = new DummyFwNewLangProject())
@@ -371,7 +371,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private static string DbFilename(string dbName)
 		{
-			return Path.Combine(DbDirectory(dbName), DirectoryFinder.GetXmlDataFileName(dbName));
+			return Path.Combine(DbDirectory(dbName), FdoFileHelper.GetXmlDataFileName(dbName));
 		}
 
 		/// ------------------------------------------------------------------------------------

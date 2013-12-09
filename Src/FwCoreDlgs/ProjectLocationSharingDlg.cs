@@ -97,7 +97,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					string path = m_tbProjectsFolder.Text;
 					// If it contains a settings directory, assume it's a project settings folder...possibly settings for a remote project.
-					if (Directory.Exists(Path.Combine(path, DirectoryFinder.ksConfigurationSettingsDir)))
+					if (Directory.Exists(Path.Combine(path, FdoFileHelper.ksConfigurationSettingsDir)))
 					{
 						m_btnOK.Enabled = false;
 						return;

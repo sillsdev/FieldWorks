@@ -84,7 +84,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 			try
 			{
 				// Setup: Create "pre-existing" DB filenames
-				using (new DummyFileMaker(Path.Combine(DirectoryFinder.ProjectsDirectory, "Gumby", DirectoryFinder.GetXmlDataFileName("Gumby"))))
+				using (new DummyFileMaker(Path.Combine(DirectoryFinder.ProjectsDirectory, "Gumby", FdoFileHelper.GetXmlDataFileName("Gumby"))))
 				{
 					using (var threadHelper = new ThreadHelper())
 						FdoCache.CreateNewLangProj(new DummyProgressDlg(), "Gumby", threadHelper, new DummyFdoUI());
@@ -110,7 +110,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 			SureRemoveDb(dbName);
 
 			var expectedDirs = new List<string>(Directory.GetDirectories(DirectoryFinder.ProjectsDirectory)) { dbDir };
-			var writingSystemsCommonDir = Path.Combine(DirectoryFinder.ProjectsDirectory, DirectoryFinder.ksWritingSystemsDir);
+			var writingSystemsCommonDir = Path.Combine(DirectoryFinder.ProjectsDirectory, FdoFileHelper.ksWritingSystemsDir);
 
 			List<string> currentDirs = null;
 			try

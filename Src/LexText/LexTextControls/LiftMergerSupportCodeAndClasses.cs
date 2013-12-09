@@ -245,7 +245,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						{
 							string sPath = Path.Combine(Path.GetDirectoryName(m_sLiftFile),
 								String.Format("audio{0}{1}", Path.DirectorySeparatorChar, form));
-							CopyFileToLinkedFiles(form, sPath, DirectoryFinder.ksMediaDir);
+							CopyFileToLinkedFiles(form, sPath, FdoFileHelper.ksMediaDir);
 						}
 						else
 						{
@@ -329,7 +329,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						{
 							string sPath = Path.Combine(Path.GetDirectoryName(m_sLiftFile),
 								String.Format("audio{0}{1}", Path.DirectorySeparatorChar, tss.Text));
-							CopyFileToLinkedFiles(tss.Text, sPath, DirectoryFinder.ksMediaDir);
+							CopyFileToLinkedFiles(tss.Text, sPath, FdoFileHelper.ksMediaDir);
 						}
 					}
 				}
@@ -373,7 +373,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						|| linkPath.StartsWith("others" + Path.DirectorySeparatorChar))
 					{
 						linkPath = CopyFileToLinkedFiles(linkPath.Substring("others/".Length), sPath,
-							DirectoryFinder.ksOtherLinkedFilesDir);
+							FdoFileHelper.ksOtherLinkedFilesDir);
 					}
 					char chOdt = Convert.ToChar((int)FwObjDataTypes.kodtExternalPathName);
 					string sRef = chOdt.ToString() + linkPath;

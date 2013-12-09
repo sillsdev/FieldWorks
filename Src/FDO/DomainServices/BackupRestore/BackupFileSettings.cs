@@ -128,7 +128,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			m_spellCheckAdditions = settings.IncludeSpellCheckAdditions;
 			m_dbVersion = settings.DbVersion;
 			m_fwVersion = settings.FwVersion;
-			m_linkedFilesPathRelative = DirectoryFinderRelativePaths.GetLinkedFilesRelativePathFromFullPath(settings.LinkedFilesPath, settings.ProjectPath, settings.ProjectName);
+			m_linkedFilesPathRelative = FdoFileHelperRelativePaths.GetLinkedFilesRelativePathFromFullPath(settings.LinkedFilesPath, settings.ProjectPath, settings.ProjectName);
 			m_linkedFilesPathActual = settings.LinkedFilesPath;
 			m_appAbbrev = settings.AppAbbrev;
 		}
@@ -437,7 +437,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 									" contained multiple project data files.");
 							dataFileName = fileName;
 						}
-						else if (!entry.Name.EndsWith("/") && entry.Name.Contains(DirectoryFinder.ksWritingSystemsDir + "/"))
+						else if (!entry.Name.EndsWith("/") && entry.Name.Contains(FdoFileHelper.ksWritingSystemsDir + "/"))
 							foundWritingSystemFiles = true;
 					}
 
@@ -447,7 +447,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 					if (m_projectName == null)
 						throw new InvalidOperationException(DirectoryFinder.kBackupSettingsFilename + " in " +
 							m_sZipFileName + " did not contain a project name.");
-					string expectedProjectFile = DirectoryFinder.GetXmlDataFileName(m_projectName);
+					string expectedProjectFile = FdoFileHelper.GetXmlDataFileName(m_projectName);
 					if (dataFileName == null || dataFileName != expectedProjectFile)
 						throw new InvalidOperationException("Zip file " + m_sZipFileName + " did not contain the " +
 							expectedProjectFile + " file.");
@@ -544,9 +544,9 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			m_backupTime = settings.BackupTime;
 			m_comment = settings.Comment;
 			m_projectName = settings.ProjectName;
-			m_linkedFilesPathRelative = DirectoryFinderRelativePaths.FixPathSlashesIfNeeded(settings.LinkedFilesPathRelativePersisted);
-			m_linkedFilesPathActual = DirectoryFinderRelativePaths.FixPathSlashesIfNeeded(settings.LinkedFilesPathActualPersisted);
-			m_projectPathPersisted = DirectoryFinderRelativePaths.FixPathSlashesIfNeeded(settings.ProjectPathPersisted);
+			m_linkedFilesPathRelative = FdoFileHelperRelativePaths.FixPathSlashesIfNeeded(settings.LinkedFilesPathRelativePersisted);
+			m_linkedFilesPathActual = FdoFileHelperRelativePaths.FixPathSlashesIfNeeded(settings.LinkedFilesPathActualPersisted);
+			m_projectPathPersisted = FdoFileHelperRelativePaths.FixPathSlashesIfNeeded(settings.ProjectPathPersisted);
 			m_configurationSettings = settings.IncludeConfigurationSettings;
 			m_linkedFiles = settings.IncludeLinkedFiles;
 			m_supportingFiles = settings.IncludeSupportingFiles;

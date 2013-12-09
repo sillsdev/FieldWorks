@@ -308,16 +308,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						path = Path.ChangeExtension(path, FdoFileHelper.ksFwDataFallbackFileExtension);
 						if (File.Exists(path))
 							File.Delete(path);
-						path = Path.Combine(folder, DirectoryFinder.ksWritingSystemsDir);
+						path = Path.Combine(folder, FdoFileHelper.ksWritingSystemsDir);
 						if (Directory.Exists(path))
 							Directory.Delete(path, true);
-						path = Path.Combine(folder, DirectoryFinder.ksBackupSettingsDir);
+						path = Path.Combine(folder, FdoFileHelper.ksBackupSettingsDir);
 						if (Directory.Exists(path))
 							Directory.Delete(path, true);
-						path = Path.Combine(folder, DirectoryFinder.ksConfigurationSettingsDir);
+						path = Path.Combine(folder, FdoFileHelper.ksConfigurationSettingsDir);
 						if (Directory.Exists(path))
 							Directory.Delete(path, true);
-						path = Path.Combine(folder, DirectoryFinder.ksSortSequenceTempDir);
+						path = Path.Combine(folder, FdoFileHelper.ksSortSequenceTempDir);
 						if (Directory.Exists(path))
 							Directory.Delete(path, true);
 						string[] folders = Directory.GetDirectories(folder);
@@ -345,10 +345,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			foreach (string dir in folders)
 			{
 				string name = Path.GetFileName(dir);
-				if (name == DirectoryFinder.ksWritingSystemsDir ||
-					name == DirectoryFinder.ksBackupSettingsDir ||
-					name == DirectoryFinder.ksConfigurationSettingsDir ||
-					name == DirectoryFinder.ksSortSequenceTempDir)
+				if (name == FdoFileHelper.ksWritingSystemsDir ||
+					name == FdoFileHelper.ksBackupSettingsDir ||
+					name == FdoFileHelper.ksConfigurationSettingsDir ||
+					name == FdoFileHelper.ksSortSequenceTempDir)
 				{
 					continue;
 				}

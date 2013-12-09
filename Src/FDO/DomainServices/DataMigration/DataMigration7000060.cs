@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		{
 			DataMigrationServices.CheckVersionNumber(repoDto, 7000059);
 
-			var configFolder = Path.Combine(repoDto.ProjectFolder, DirectoryFinder.ksConfigurationSettingsDir);
+			var configFolder = Path.Combine(repoDto.ProjectFolder, FdoFileHelper.ksConfigurationSettingsDir);
 			if (Directory.Exists(configFolder)) // Some of Randy's test data doesn't have the config folder, so it crashes here.
 			{
 				const string layoutSuffix = "_Layouts.xml";

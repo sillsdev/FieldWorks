@@ -604,8 +604,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			}
 
 			string oldProjectFolder = Path.Combine(DirectoryFinder.ProjectsDirectory, ProjectId.Name);
-			string oldFile = Path.Combine(sNewProjectFolder, DirectoryFinder.GetDb4oDataFileName(ProjectId.Name));
-			string newFile = Path.Combine(sNewProjectFolder, DirectoryFinder.GetDb4oDataFileName(sNewProjectName));
+			string oldFile = Path.Combine(sNewProjectFolder, FdoFileHelper.GetDb4oDataFileName(ProjectId.Name));
+			string newFile = Path.Combine(sNewProjectFolder, FdoFileHelper.GetDb4oDataFileName(sNewProjectName));
 
 			try
 			{

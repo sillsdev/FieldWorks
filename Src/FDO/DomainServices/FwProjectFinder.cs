@@ -82,12 +82,12 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					string[] dirs = Directory.GetDirectories(DirectoryFinder.ProjectsDirectory);
 					foreach (string dir in dirs)
 					{
-						string file = Path.Combine(dir, DirectoryFinder.GetXmlDataFileName(Path.GetFileName(dir)));
+						string file = Path.Combine(dir, FdoFileHelper.GetXmlDataFileName(Path.GetFileName(dir)));
 						if (FileUtils.SimilarFileExists(file))
 							m_projectFoundCallback(file);
 						else
 						{
-							string db4oFile = Path.Combine(dir, DirectoryFinder.GetDb4oDataFileName(Path.GetFileName(dir)));
+							string db4oFile = Path.Combine(dir, FdoFileHelper.GetDb4oDataFileName(Path.GetFileName(dir)));
 							//If the db4o file exists it will be added to the list later and therefore we do not want to
 							//show the .bak file to the user in the open project dialog
 							if (!FileUtils.SimilarFileExists(db4oFile))

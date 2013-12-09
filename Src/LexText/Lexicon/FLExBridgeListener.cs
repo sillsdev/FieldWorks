@@ -294,7 +294,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						var sLinkedFilesRootDir = app.Cache.LangProject.LinkedFilesRootDir;
 						NonUndoableUnitOfWorkHelper.Do(app.Cache.ActionHandlerAccessor, () =>
 						{
-							app.Cache.LangProject.LinkedFilesRootDir = DirectoryFinder.GetDefaultLinkedFilesDir(
+							app.Cache.LangProject.LinkedFilesRootDir = FdoFileHelper.GetDefaultLinkedFilesDir(
 								app.Cache.ProjectId.ProjectFolder);
 						});
 						app.UpdateExternalLinks(sLinkedFilesRootDir);
@@ -356,7 +356,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private bool LinkedFilesLocationIsDefault()
 		{
-			var defaultLinkedFilesFolder = DirectoryFinder.GetDefaultLinkedFilesDir(Cache.ServiceLocator.DataSetup.ProjectId.ProjectFolder);
+			var defaultLinkedFilesFolder = FdoFileHelper.GetDefaultLinkedFilesDir(Cache.ServiceLocator.DataSetup.ProjectId.ProjectFolder);
 			if (!defaultLinkedFilesFolder.Equals(Cache.LanguageProject.LinkedFilesRootDir))
 				return false;
 			else

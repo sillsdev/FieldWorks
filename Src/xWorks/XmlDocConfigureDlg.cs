@@ -5096,7 +5096,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void DeleteUnwantedConfigurations(IEnumerable<string> viewsToDelete)
 		{
-			var configDir = DirectoryFinder.GetConfigSettingsDir(m_cache.ProjectId.ProjectFolder);
+			var configDir = FdoFileHelper.GetConfigSettingsDir(m_cache.ProjectId.ProjectFolder);
 			// Load in existing combobox LayoutTypeComboItems
 			var layoutMap = LoadLayoutMapFromComboBox();
 
@@ -5147,7 +5147,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void RenameConfigurations(IEnumerable<Tuple<string, string>> viewsToRename)
 		{
-			var configDir = DirectoryFinder.GetConfigSettingsDir(m_cache.ProjectId.ProjectFolder);
+			var configDir = FdoFileHelper.GetConfigSettingsDir(m_cache.ProjectId.ProjectFolder);
 			// Load in existing combobox LayoutTypeComboItems
 			var layoutMap = LoadLayoutMapFromComboBox();
 

@@ -202,7 +202,7 @@ namespace FwRemoteDatabaseConnector
 		public void CreateServerFile(string projectName)
 		{
 			string projectDir = Path.Combine(DirectoryFinder.ProjectsDirectory, projectName);
-			string newFilename = Path.Combine(projectDir, DirectoryFinder.GetDb4oDataFileName(projectName));
+			string newFilename = Path.Combine(projectDir, FdoFileHelper.GetDb4oDataFileName(projectName));
 
 			// Ensure directory exists.
 			Directory.CreateDirectory(projectDir);

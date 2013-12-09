@@ -491,7 +491,7 @@ namespace LexTextControlsTests
 			var mockProjectPath = Path.Combine(MockProjectFolder, mockProjectName + ".fwdata");
 			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(
 				new TestProjectId(FDOBackendProviderType.kMemoryOnly, mockProjectPath), "en", "fr", "en", new DummyFdoUI());
-			MockLinkedFilesFolder = Path.Combine(MockProjectFolder, DirectoryFinder.ksLinkedFilesDir);
+			MockLinkedFilesFolder = Path.Combine(MockProjectFolder, FdoFileHelper.ksLinkedFilesDir);
 			Directory.CreateDirectory(MockLinkedFilesFolder);
 			//m_cache.LangProject.LinkedFilesRootDir = MockLinkedFilesFolder; this is already the default.
 
@@ -600,7 +600,7 @@ namespace LexTextControlsTests
 					var tssDefn = m_cache.TsStrFactory.MakeString("Definition for sense.\x2028Another para of defn", m_cache.DefaultAnalWs);
 					var bldr = tssDefn.GetBldr();
 					int len = bldr.Length;
-					var otherFileFolder = Path.Combine(MockLinkedFilesFolder, DirectoryFinder.ksOtherLinkedFilesDir);
+					var otherFileFolder = Path.Combine(MockLinkedFilesFolder, FdoFileHelper.ksOtherLinkedFilesDir);
 					var otherFilePath = Path.Combine(otherFileFolder, kotherLinkedFileName);
 					CreateDummyFile(otherFilePath);
 					var mockStyle = new MockStyle() { Name = "hyperlink" };
@@ -657,7 +657,7 @@ namespace LexTextControlsTests
 					MakePicture(picFolder, m_tempPictureFilePath);
 
 					// See if we can export audio writing system stuff.
-					var audioFolderPath = Path.Combine(MockLinkedFilesFolder, DirectoryFinder.ksMediaDir);
+					var audioFolderPath = Path.Combine(MockLinkedFilesFolder, FdoFileHelper.ksMediaDir);
 					CreateDummyFile(Path.Combine(audioFolderPath, kaudioFileName));
 					m_entryTest.SensesOS[0].Definition.set_String(m_audioWsCode, kaudioFileName);
 
@@ -680,7 +680,7 @@ namespace LexTextControlsTests
 					var pronunFile = m_cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
 					picFolder.FilesOC.Add(pronunFile); // maybe not quite appropriate, but has to be owned somewhere.
 					media.MediaFileRA = pronunFile;
-					pronunFile.InternalPath = Path.Combine(DirectoryFinder.ksMediaDir, kpronunciationFileName);
+					pronunFile.InternalPath = Path.Combine(FdoFileHelper.ksMediaDir, kpronunciationFileName);
 
 					// We should be able to export LexEntryRefs. BaseForm is a special case.
 					var entryUn = entryFact.Create("un", "not", new SandboxGenericMSA() { MsaType = MsaType.kDeriv });

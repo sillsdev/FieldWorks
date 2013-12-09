@@ -829,7 +829,7 @@ namespace SIL.FieldWorks
 				return;
 
 			var linkedFilesFolder = cache.LangProject.LinkedFilesRootDir;
-			var defaultFolder = DirectoryFinder.GetDefaultLinkedFilesDir(cache.ProjectId.ProjectFolder);
+			var defaultFolder = FdoFileHelper.GetDefaultLinkedFilesDir(cache.ProjectId.ProjectFolder);
 			EnsureValidLinkedFilesFolderCore(linkedFilesFolder, defaultFolder);
 
 			if (!Directory.Exists(linkedFilesFolder))
@@ -2323,7 +2323,7 @@ namespace SIL.FieldWorks
 
 		private static bool IsFieldWorksSettingsFolder(string projectFolder)
 		{
-			var settingsDir = Path.Combine(projectFolder, DirectoryFinder.ksConfigurationSettingsDir);
+			var settingsDir = Path.Combine(projectFolder, FdoFileHelper.ksConfigurationSettingsDir);
 			if (Directory.Exists(settingsDir))
 				return true;
 			return false;
@@ -2795,7 +2795,7 @@ namespace SIL.FieldWorks
 			var sLinkedFilesRootDir = app.Cache.LangProject.LinkedFilesRootDir;
 			NonUndoableUnitOfWorkHelper.Do(app.Cache.ActionHandlerAccessor, () =>
 			{
-				app.Cache.LangProject.LinkedFilesRootDir = DirectoryFinder.GetDefaultLinkedFilesDir(
+				app.Cache.LangProject.LinkedFilesRootDir = FdoFileHelper.GetDefaultLinkedFilesDir(
 					app.Cache.ProjectId.ProjectFolder);
 			});
 			app.UpdateExternalLinks(sLinkedFilesRootDir);
@@ -3272,7 +3272,7 @@ namespace SIL.FieldWorks
 			if (!Directory.Exists(projectFolder))
 				return FwUtils.ksFlexAbbrev; // got to do something
 
-			var settingsFolder = Path.Combine(projectFolder, DirectoryFinder.ksConfigurationSettingsDir);
+			var settingsFolder = Path.Combine(projectFolder, FdoFileHelper.ksConfigurationSettingsDir);
 			if (!Directory.Exists(settingsFolder))
 				return FwUtils.ksFlexAbbrev; // no settings at all, take the default.
 
@@ -3296,7 +3296,7 @@ namespace SIL.FieldWorks
 			if (s_flexApp != null && s_teApp != null)
 				return; // this isn't the last one to shut down, not time to record.
 
-			var settingsFolder = Path.Combine(Cache.ProjectId.ProjectFolder, DirectoryFinder.ksConfigurationSettingsDir);
+			var settingsFolder = Path.Combine(Cache.ProjectId.ProjectFolder, FdoFileHelper.ksConfigurationSettingsDir);
 			var teMarkerPath = Path.Combine(settingsFolder, ksTeOpenMarkerFileName);
 			try
 			{

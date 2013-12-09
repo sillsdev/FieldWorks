@@ -186,7 +186,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				txtExtLnkEdit.Enabled = false;
 			}
 
-			m_defaultLinkedFilesFolder = DirectoryFinder.GetDefaultLinkedFilesDir(m_cache.ServiceLocator.DataSetup.ProjectId.ProjectFolder);
+			m_defaultLinkedFilesFolder = FdoFileHelper.GetDefaultLinkedFilesDir(m_cache.ServiceLocator.DataSetup.ProjectId.ProjectFolder);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1452,7 +1452,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private string HandleLinkedFilesPathDoesNotExist(string linkedFilesPath)
 		{
 
-			var defaultLinkedFilesPath = DirectoryFinder.GetDefaultLinkedFilesDir(m_cache.ProjectId.ProjectFolder);
+			var defaultLinkedFilesPath = FdoFileHelper.GetDefaultLinkedFilesDir(m_cache.ProjectId.ProjectFolder);
 			if (!Directory.Exists(linkedFilesPath) && linkedFilesPath.Equals(defaultLinkedFilesPath))
 			{
 				//if the path points to the default location but does not exist then create it.

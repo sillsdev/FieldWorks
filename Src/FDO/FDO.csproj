@@ -189,6 +189,7 @@
     <Compile Include="Application\IActionHandlerExtensions.cs" />
     <Compile Include="Application\ReferenceTracker.cs" />
     <Compile Include="CacheKey.cs" />
+    <Compile Include="FdoFileHelperRelativePaths.cs" />
     <Compile Include="DomainImpl\AnalysisAdjuster.cs" />
     <Compile Include="DomainImpl\CmCell.cs" />
     <Compile Include="DomainImpl\CmFilter.cs" />

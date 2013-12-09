@@ -744,7 +744,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			foreach (var projectFolder in Directory.GetDirectories(DirectoryFinder.ProjectsDirectory))
 			{
 				var projectName = Path.GetFileName(projectFolder);
-				var projectPath = Path.Combine(projectFolder, DirectoryFinder.GetDb4oDataFileName(projectName));
+				var projectPath = Path.Combine(projectFolder, FdoFileHelper.GetDb4oDataFileName(projectName));
 				progress.Message = Path.GetFileNameWithoutExtension(projectPath);
 				if (File.Exists(projectPath))
 				{
@@ -795,7 +795,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				foreach (var projectFolder in Directory.GetDirectories(DirectoryFinder.ProjectsDirectory))
 				{
 					var projectName = Path.GetFileName(projectFolder);
-					var projectPath = Path.Combine(projectFolder, DirectoryFinder.GetXmlDataFileName(projectName));
+					var projectPath = Path.Combine(projectFolder, FdoFileHelper.GetXmlDataFileName(projectName));
 					var suppressPath = Path.Combine(projectFolder, ksDoNotShareProjectTxt);
 					if (!File.Exists(projectPath) || File.Exists(suppressPath))
 						continue; // not going to convert, it isn't a problem.
@@ -812,7 +812,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			foreach (string projectFolder in Directory.GetDirectories(DirectoryFinder.ProjectsDirectory))
 			{
 				string projectName = Path.GetFileName(projectFolder);
-				string projectPath = Path.Combine(projectFolder, DirectoryFinder.GetXmlDataFileName(projectName));
+				string projectPath = Path.Combine(projectFolder, FdoFileHelper.GetXmlDataFileName(projectName));
 				var suppressPath = Path.Combine(projectFolder, ksDoNotShareProjectTxt);
 				progress.Message = Path.GetFileNameWithoutExtension(projectPath);
 				if (File.Exists(projectPath) && !File.Exists(suppressPath))
@@ -913,7 +913,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (dataStorer is XMLBackendProvider)
 				return null; // already XML, no new file created.
 
-			var newFilePath = Path.Combine(destDir, DirectoryFinder.GetXmlDataFileName(source.ProjectId.Name));
+			var newFilePath = Path.Combine(destDir, FdoFileHelper.GetXmlDataFileName(source.ProjectId.Name));
 			if (File.Exists(newFilePath))
 				File.Delete(newFilePath); // Can't create a new file with FDO if the file already exists.
 			try

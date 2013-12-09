@@ -3383,7 +3383,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// give up and store relative path Pictures/filename (even though it doesn't exist)
 			string sPath = Path.Combine(Path.GetDirectoryName(m_sLiftFile),
 				String.Format("audio{0}{1}", Path.DirectorySeparatorChar, sFile));
-			sPath = CopyFileToLinkedFiles(sFile, sPath, DirectoryFinder.ksMediaDir);
+			sPath = CopyFileToLinkedFiles(sFile, sPath, FdoFileHelper.ksMediaDir);
 			if (!File.Exists(sPath) && !String.IsNullOrEmpty(m_cache.LangProject.LinkedFilesRootDir))
 			{
 				sPath = Path.Combine(m_cache.LangProject.LinkedFilesRootDir, sFile);
@@ -5610,7 +5610,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			string sPath = Path.Combine(Path.GetDirectoryName(m_sLiftFile),
 				String.Format("pictures{0}{1}", Path.DirectorySeparatorChar, ssFile));
-			sPath = CopyFileToLinkedFiles(ssFile, sPath, DirectoryFinder.ksPicturesDir);
+			sPath = CopyFileToLinkedFiles(ssFile, sPath, FdoFileHelper.ksPicturesDir);
 			if (!File.Exists(sPath) && !String.IsNullOrEmpty(m_cache.LangProject.LinkedFilesRootDir))
 			{
 				sPath = Path.Combine(m_cache.LangProject.LinkedFilesRootDir, sFile);

@@ -550,7 +550,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				return;
 
 			var globalStore = new GlobalFileWritingSystemStore(DirectoryFinder.GlobalWritingSystemStoreDirectory);
-			string storePath = Path.Combine(ProjectId.SharedProjectFolder, DirectoryFinder.ksWritingSystemsDir);
+			string storePath = Path.Combine(ProjectId.SharedProjectFolder, FdoFileHelper.ksWritingSystemsDir);
 			var wsManager = (PalasoWritingSystemManager)m_cache.ServiceLocator.WritingSystemManager;
 			wsManager.GlobalWritingSystemStore = globalStore;
 			wsManager.LocalWritingSystemStore = new LocalFileWritingSystemStore(storePath, globalStore);

@@ -66,7 +66,7 @@ namespace LexTextControlsTests
 			var mockProjectName = "xxyyzProjectFolderForLIFTImport";
 			MockProjectFolder = Path.Combine(Path.GetTempPath(), mockProjectName);
 			var mockProjectPath = Path.Combine(MockProjectFolder, mockProjectName + ".fwdata");
-			MockLinkedFilesFolder = Path.Combine(MockProjectFolder, DirectoryFinder.ksLinkedFilesDir);
+			MockLinkedFilesFolder = Path.Combine(MockProjectFolder, FdoFileHelper.ksLinkedFilesDir);
 			if (Directory.Exists(MockLinkedFilesFolder))
 				Directory.Delete(MockLinkedFilesFolder, true);
 			Directory.CreateDirectory(MockLinkedFilesFolder);
@@ -346,18 +346,18 @@ namespace LexTextControlsTests
 			}
 
 			Assert.That(sense0.PicturesOS.Count, Is.EqualTo(2));
-			Assert.That(sense0.PicturesOS[0].PictureFileRA.InternalPath, Is.EqualTo(Path.Combine(DirectoryFinder.ksPicturesDir, "Desert.jpg")));
-			Assert.That(sense0.PicturesOS[1].PictureFileRA.InternalPath, Is.EqualTo(Path.Combine(DirectoryFinder.ksPicturesDir, myPicRelativePath)));
-			VerifyLinkedFileExists(DirectoryFinder.ksPicturesDir, "Desert.jpg");
-			VerifyLinkedFileExists(DirectoryFinder.ksPicturesDir, myPicRelativePath);
+			Assert.That(sense0.PicturesOS[0].PictureFileRA.InternalPath, Is.EqualTo(Path.Combine(FdoFileHelper.ksPicturesDir, "Desert.jpg")));
+			Assert.That(sense0.PicturesOS[1].PictureFileRA.InternalPath, Is.EqualTo(Path.Combine(FdoFileHelper.ksPicturesDir, myPicRelativePath)));
+			VerifyLinkedFileExists(FdoFileHelper.ksPicturesDir, "Desert.jpg");
+			VerifyLinkedFileExists(FdoFileHelper.ksPicturesDir, myPicRelativePath);
 
 			Assert.That(entry.PronunciationsOS.Count, Is.EqualTo(1));
 			Assert.That(entry.PronunciationsOS[0].MediaFilesOS[0].MediaFileRA.InternalPath,
-				Is.EqualTo(Path.Combine(DirectoryFinder.ksMediaDir, "Sleep Away.mp3")));
-			VerifyLinkedFileExists(DirectoryFinder.ksMediaDir, "Sleep Away.mp3");
-			VerifyLinkedFileExists(DirectoryFinder.ksMediaDir, "hombre634407358826681759.wav");
-			VerifyLinkedFileExists(DirectoryFinder.ksMediaDir, "male adult634407358826681760.wav");
-			VerifyLinkedFileExists(DirectoryFinder.ksOtherLinkedFilesDir, "SomeFile.txt");
+				Is.EqualTo(Path.Combine(FdoFileHelper.ksMediaDir, "Sleep Away.mp3")));
+			VerifyLinkedFileExists(FdoFileHelper.ksMediaDir, "Sleep Away.mp3");
+			VerifyLinkedFileExists(FdoFileHelper.ksMediaDir, "hombre634407358826681759.wav");
+			VerifyLinkedFileExists(FdoFileHelper.ksMediaDir, "male adult634407358826681760.wav");
+			VerifyLinkedFileExists(FdoFileHelper.ksOtherLinkedFilesDir, "SomeFile.txt");
 
 			Assert.IsTrue(repoEntry.TryGetObject(new Guid("766aaee2-34b6-4e28-a883-5c2186125a2f"), out entry));
 			Assert.AreEqual(1, entry.SensesOS.Count);

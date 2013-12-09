@@ -124,7 +124,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			foreach (DomainObjectDTO dto in domainObjectDtoRepository.AllInstances())
 				UpdateStringsAndProps(domainObjectDtoRepository, dto, referencedWsIds);
 
-			var localStoreFolder = Path.Combine(domainObjectDtoRepository.ProjectFolder, DirectoryFinder.ksWritingSystemsDir);
+			var localStoreFolder = Path.Combine(domainObjectDtoRepository.ProjectFolder, FdoFileHelper.ksWritingSystemsDir);
 
 			// If any writing systems that project needs don't already exist as LDML files,
 			// create them, either by copying relevant data from a shipping LDML file, or by

@@ -26,7 +26,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		{
 
 			var projectFolder = Path.GetTempPath();
-			var settingsFolder = Path.Combine(projectFolder, DirectoryFinder.ksConfigurationSettingsDir);
+			var settingsFolder = Path.Combine(projectFolder, FdoFileHelper.ksConfigurationSettingsDir);
 			var sampleLayout = Path.Combine(settingsFolder, "Test_Layouts.xml");
 			var otherFile = Path.Combine(settingsFolder, "other.xml");
 			var newLayoutPath = Path.Combine(settingsFolder, "Test.fwlayout");

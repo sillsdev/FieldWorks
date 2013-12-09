@@ -81,7 +81,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			m_sourceInfo = new List<BackendStartupParameter>
 				{
 					new BackendStartupParameter(true, BackendBulkLoadDomain.All,
-												new TestProjectId(FDOBackendProviderType.kXML, DirectoryFinder.GetXmlDataFileName("TLP" + randomFileExtension))),
+												new TestProjectId(FDOBackendProviderType.kXML, FdoFileHelper.GetXmlDataFileName("TLP" + randomFileExtension))),
 					new BackendStartupParameter(true, BackendBulkLoadDomain.All,
 												new TestProjectId(FDOBackendProviderType.kMemoryOnly, null)),
 					new BackendStartupParameter(true, BackendBulkLoadDomain.All,
@@ -90,7 +90,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			m_targetInfo = new List<BackendStartupParameter>
 				{
 					new BackendStartupParameter(true, BackendBulkLoadDomain.All,
-												new TestProjectId(FDOBackendProviderType.kXML, DirectoryFinder.GetXmlDataFileName("TLP_New" + randomFileExtension))),
+												new TestProjectId(FDOBackendProviderType.kXML, FdoFileHelper.GetXmlDataFileName("TLP_New" + randomFileExtension))),
 					new BackendStartupParameter(true, BackendBulkLoadDomain.All,
 												new TestProjectId(FDOBackendProviderType.kMemoryOnly, null)),
 					new BackendStartupParameter(true, BackendBulkLoadDomain.All,

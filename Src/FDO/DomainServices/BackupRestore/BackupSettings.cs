@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// ------------------------------------------------------------------------------------
 		public string DbFilename
 		{
-			get { return DirectoryFinder.GetXmlDataFileName(ProjectName); }
+			get { return FdoFileHelper.GetXmlDataFileName(ProjectName); }
 		}
 
 		#region IBackupSettings implementation
@@ -181,7 +181,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// </summary>
 		public string FlexConfigurationSettingsPath
 		{
-			get { return DirectoryFinder.GetConfigSettingsDir(ProjectPath); }
+			get { return FdoFileHelper.GetConfigSettingsDir(ProjectPath); }
 		}
 
 		/// <summary>
@@ -194,7 +194,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 				if (String.IsNullOrEmpty(m_linkedFilesPath))
 				{
 					return Path.Combine(!string.IsNullOrEmpty(m_sharedProjectFolder) ?
-						m_sharedProjectFolder : ProjectPath, DirectoryFinder.ksLinkedFilesDir);
+						m_sharedProjectFolder : ProjectPath, FdoFileHelper.ksLinkedFilesDir);
 				}
 				return m_linkedFilesPath;
 			}
@@ -209,7 +209,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// </summary>
 		public string PicturesPath
 		{
-			get { return DirectoryFinder.GetPicturesDir(LinkedFilesPath); }
+			get { return FdoFileHelper.GetPicturesDir(LinkedFilesPath); }
 		}
 
 		/// <summary>
@@ -217,7 +217,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// </summary>
 		public string MediaPath
 		{
-			get { return DirectoryFinder.GetMediaDir(LinkedFilesPath); }
+			get { return FdoFileHelper.GetMediaDir(LinkedFilesPath); }
 		}
 
 		/// <summary>
@@ -225,7 +225,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// </summary>
 		public string OtherExternalFilesPath
 		{
-			get { return DirectoryFinder.GetOtherExternalFilesDir(LinkedFilesPath); }
+			get { return FdoFileHelper.GetOtherExternalFilesDir(LinkedFilesPath); }
 		}
 
 		/// <summary>
@@ -235,7 +235,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		{
 			get
 			{
-				return DirectoryFinder.GetWritingSystemDir(
+				return FdoFileHelper.GetWritingSystemDir(
 					string.IsNullOrEmpty(m_sharedProjectFolder) ? ProjectPath : m_sharedProjectFolder);
 			}
 		}
@@ -254,7 +254,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// </summary>
 		public string ProjectSupportingFilesPath
 		{
-			get { return DirectoryFinder.GetSupportingFilesDir(ProjectPath); }
+			get { return FdoFileHelper.GetSupportingFilesDir(ProjectPath); }
 		}
 		#endregion
 	}

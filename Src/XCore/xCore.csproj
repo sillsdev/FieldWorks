@@ -98,6 +98,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
+    <Reference Include="FDO, Version=8.0.6.21122, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\FDO.dll</HintPath>
+    </Reference>
     <Reference Include="FwUtils, Version=6.1.0.16975, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>

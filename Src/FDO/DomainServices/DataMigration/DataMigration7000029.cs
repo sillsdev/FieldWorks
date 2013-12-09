@@ -72,13 +72,13 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			string persistedLinkedFilesRootDir;
 			if (linkedFilesRootDirElement == null)
 			{
-				persistedLinkedFilesRootDir = Path.Combine(domainObjectDtoRepository.ProjectFolder, DirectoryFinder.ksLinkedFilesDir);
+				persistedLinkedFilesRootDir = Path.Combine(domainObjectDtoRepository.ProjectFolder, FdoFileHelper.ksLinkedFilesDir);
 			}
 			else
 			{
 				persistedLinkedFilesRootDir = linkedFilesRootDirElement.Value;
 			}
-			var linkedFilesRootDir = DirectoryFinderRelativePaths.GetLinkedFilesFullPathFromRelativePath(persistedLinkedFilesRootDir,
+			var linkedFilesRootDir = FdoFileHelperRelativePaths.GetLinkedFilesFullPathFromRelativePath(persistedLinkedFilesRootDir,
 				domainObjectDtoRepository.ProjectFolder);
 			//Get the Elements  for class="CmFile"
 			var CmFileDtosBeforeMigration = domainObjectDtoRepository.AllInstancesSansSubclasses("CmFile");
@@ -87,7 +87,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			{
 				XElement cmFileXML = XElement.Parse(fileDto.Xml);
 				var filePath = cmFileXML.XPathSelectElement("InternalPath").XPathSelectElement("Uni").Value;
-				var fileAsRelativePath = DirectoryFinderRelativePaths.GetRelativeLinkedFilesPath(filePath,
+				var fileAsRelativePath = FdoFileHelperRelativePaths.GetRelativeLinkedFilesPath(filePath,
 																								 linkedFilesRootDir);
 				//If these two strings do not match then a full path was converted to a LinkedFiles relative path
 				//so replace the path in the CmFile object.

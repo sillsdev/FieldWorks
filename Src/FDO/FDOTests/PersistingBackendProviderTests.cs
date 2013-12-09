@@ -564,7 +564,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		protected override void CheckAdditionalStuffAfterFirstRename()
 		{
 			Assert.AreEqual(Path.Combine(Path.Combine(DirectoryFinder.ProjectsDirectory, NewProjectName),
-				DirectoryFinder.GetDb4oDataFileName(NewProjectName)), Cache.ProjectId.Path);
+				FdoFileHelper.GetDb4oDataFileName(NewProjectName)), Cache.ProjectId.Path);
 		}
 	}
 
@@ -586,7 +586,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		{
 			const string projName = "TestLangProj-test";
 			string filename = Path.Combine(DirectoryFinder.ProjectsDirectory,
-				Path.Combine(projName, DirectoryFinder.GetXmlDataFileName(projName)));
+				Path.Combine(projName, FdoFileHelper.GetXmlDataFileName(projName)));
 			if (!m_internalRestart)
 			{
 				if (File.Exists(filename))
@@ -606,7 +606,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		[Ignore("There is a timing problem with this test - project file may not exist becuase background thread is doing commit.")]
 		public void OnlyOneCacheAllowed()
 		{
-			string filename = DirectoryFinder.GetXmlDataFileName("TestLangProj");
+			string filename = FdoFileHelper.GetXmlDataFileName("TestLangProj");
 			Assert.True(File.Exists(filename), "Test XML file not found");
 			using (FdoCache cache = OpenExistingFile(filename))
 				Assert.Fail("Able to open XML file that is already open");
@@ -626,7 +626,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		protected override void CheckAdditionalStuffAfterFirstRename()
 		{
 			Assert.AreEqual(Path.Combine(Path.Combine(DirectoryFinder.ProjectsDirectory, NewProjectName),
-				DirectoryFinder.GetXmlDataFileName(NewProjectName)), Cache.ProjectId.Path);
+				FdoFileHelper.GetXmlDataFileName(NewProjectName)), Cache.ProjectId.Path);
 		}
 
 		/// <summary>

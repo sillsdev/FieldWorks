@@ -165,7 +165,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		{
 			get
 			{
-				return Path.Combine(DirectoryFinder.GetBackupSettingsDir(ProjectPath),
+				return Path.Combine(FdoFileHelper.GetBackupSettingsDir(ProjectPath),
 					DirectoryFinder.kBackupSettingsFilename);
 			}
 		}

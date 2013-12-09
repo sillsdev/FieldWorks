@@ -98,7 +98,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// ------------------------------------------------------------------------------------
 		private void PersistBackupFileSettings()
 		{
-			string backupSettingsFile = Path.Combine(DirectoryFinder.GetBackupSettingsDir(
+			string backupSettingsFile = Path.Combine(FdoFileHelper.GetBackupSettingsDir(
 				m_settings.ProjectPath), DirectoryFinder.kBackupSettingsFilename);
 
 			string settingsDir = Path.GetDirectoryName(backupSettingsFile);
