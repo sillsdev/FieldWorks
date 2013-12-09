@@ -323,9 +323,9 @@ namespace SIL.FieldWorks.FDO
 			writingSystemManager.Save();
 
 			if (ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem == null)
-				throw new FwStartupException(string.Format(Strings.ksNoWritingSystems, Strings.ksAnalysis));
+				throw new StartupException(string.Format(Strings.ksNoWritingSystems, Strings.ksAnalysis));
 			if (ServiceLocator.WritingSystems.DefaultVernacularWritingSystem == null)
-				throw new FwStartupException(string.Format(Strings.ksNoWritingSystems, Strings.ksVernacular));
+				throw new StartupException(string.Format(Strings.ksNoWritingSystems, Strings.ksVernacular));
 
 			NonUndoableUnitOfWorkHelper.Do(ActionHandlerAccessor, () =>
 				DataStoreInitializationServices.PrepareCache(this));

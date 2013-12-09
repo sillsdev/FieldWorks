@@ -18,7 +18,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Windows.Forms;
 using Microsoft.Win32;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
@@ -403,7 +403,7 @@ namespace SIL.FieldWorks.TE
 			foreach (Form wnd in MainWindows)
 			{
 				if (!wnd.Enabled && wnd is FwMainWnd)
-					throw new FwStartupException(Properties.Resources.kstidProjectLocked);
+					throw new StartupException(Properties.Resources.kstidProjectLocked);
 			}
 			return NewTeMainWnd(wndCopyFrom);
 		}

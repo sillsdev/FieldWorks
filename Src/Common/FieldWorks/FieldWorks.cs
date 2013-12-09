@@ -1247,7 +1247,7 @@ namespace SIL.FieldWorks
 			// If we try to use command-line arguments and it fails, we will use the Welcome dialog
 			// to help the user figure out what to do next.
 			var projId = new ProjectId(args.DatabaseType, args.Database, args.Server);
-			FwStartupException projectOpenError;
+			StartupException projectOpenError;
 			if (TryCommandLineOption(projId, out projectOpenError))
 				return projId;
 
@@ -1270,7 +1270,7 @@ namespace SIL.FieldWorks
 			else if (previousStartupStatus == StartupStatus.Failed && !string.IsNullOrEmpty(latestProject))
 			{
 				// The previous project failed to open, so notify the user.
-				projectOpenError = new FwStartupException(String.Format(
+				projectOpenError = new StartupException(String.Format(
 					Properties.Resources.kstidUnableToOpenLastProject, app.ApplicationName,
 					latestProject));
 			}
@@ -1322,15 +1322,15 @@ namespace SIL.FieldWorks
 		/// <param name="projId"></param>
 		/// <param name="exception"></param>
 		/// <returns></returns>
-		private static bool TryCommandLineOption(ProjectId projId, out FwStartupException exception)
+		private static bool TryCommandLineOption(ProjectId projId, out StartupException exception)
 		{
 			exception = null;
 			if (string.IsNullOrEmpty(projId.Name))
 				return false;
 			var ex = projId.GetExceptionIfInvalid();
-			if (ex is FwStartupException)
+			if (ex is StartupException)
 			{
-				exception = (FwStartupException) ex;
+				exception = (StartupException) ex;
 				return false; // Invalid command-line arguments supplied.
 			}
 			if (ex == null)
@@ -1381,7 +1381,7 @@ namespace SIL.FieldWorks
 				{
 					return InitializeFirstApp(app, projectId);
 				}
-				catch (FwStartupException e)
+				catch (StartupException e)
 				{
 					if (s_cache != null)
 					{
@@ -1585,7 +1585,7 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification="startingApp is a reference")]
-		private static ProjectId ShowWelcomeDialog(FwAppArgs args, FwApp startingApp, ProjectId lastProjectId, FwStartupException exception)
+		private static ProjectId ShowWelcomeDialog(FwAppArgs args, FwApp startingApp, ProjectId lastProjectId, StartupException exception)
 		{
 			CloseSplashScreen();
 
@@ -1674,7 +1674,7 @@ namespace SIL.FieldWorks
 								if (projectToTry != null)
 									projectToTry.AssertValid();
 							}
-							catch (FwStartupException e)
+							catch (StartupException e)
 							{
 								exception = e;
 							}
@@ -2868,7 +2868,7 @@ namespace SIL.FieldWorks
 				// so just record it now as the active one.
 				s_activeMainWnd = (IFwMainWnd)fwMainWindow;
 			}
-			catch (FwStartupException ex)
+			catch (StartupException ex)
 			{
 				// REVIEW: Can this actually happen when just creating a new main window?
 				CloseSplashScreen();
@@ -3153,13 +3153,13 @@ namespace SIL.FieldWorks
 				try
 				{
 					if (!app.InitCacheForApp(progressDlg))
-						throw new FwStartupException(Properties.Resources.kstidCacheInitFailure);
+						throw new StartupException(Properties.Resources.kstidCacheInitFailure);
 				}
 				catch (Exception e)
 				{
-					if (e is FwStartupException)
+					if (e is StartupException)
 						throw;
-					throw new FwStartupException(Properties.Resources.kstidCacheInitFailure, e, true);
+					throw new StartupException(Properties.Resources.kstidCacheInitFailure, e, true);
 				}
 				undoHelper.RollBack = false;
 			}

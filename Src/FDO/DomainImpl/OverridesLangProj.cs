@@ -146,7 +146,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 				// Get regular texts.
 
-				if (FwUtils.IsOkToDisplayScriptureIfPresent && TranslatedScriptureOA != null)
+				if (TranslatedScriptureOA != null)
 				{
 					// TE installed, so also get them from Sripture.
 					foreach (var book in TranslatedScriptureOA.ScriptureBooksOS)

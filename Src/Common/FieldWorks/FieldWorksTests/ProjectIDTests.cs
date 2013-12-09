@@ -15,6 +15,7 @@ using System;
 using System.IO;
 using NUnit.Framework;
 using Rhino.Mocks;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -378,7 +379,7 @@ namespace SIL.FieldWorks
 				proj.AssertValid();
 				Assert.Fail("FwStartupException expected");
 			}
-			catch (FwStartupException exception)
+			catch (StartupException exception)
 			{
 				Assert.IsFalse(exception.ReportToUser);
 			}
@@ -399,7 +400,7 @@ namespace SIL.FieldWorks
 				proj.AssertValid();
 				Assert.Fail("FwStartupException expected");
 			}
-			catch (FwStartupException exception)
+			catch (StartupException exception)
 			{
 				Assert.IsTrue(exception.ReportToUser);
 			}
@@ -420,7 +421,7 @@ namespace SIL.FieldWorks
 				proj.AssertValid();
 				Assert.Fail("FwStartupException expected");
 			}
-			catch (FwStartupException exception)
+			catch (StartupException exception)
 			{
 				Assert.IsTrue(exception.ReportToUser);
 			}
@@ -441,7 +442,7 @@ namespace SIL.FieldWorks
 				proj.AssertValid();
 				Assert.Fail("FwStartupException expected");
 			}
-			catch (FwStartupException exception)
+			catch (StartupException exception)
 			{
 				Assert.IsTrue(exception.ReportToUser);
 			}

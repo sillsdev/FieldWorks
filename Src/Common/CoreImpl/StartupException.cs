@@ -8,7 +8,7 @@
 // </copyright>
 #endregion
 //
-// File: FwStartupException.cs
+// File: StartupException.cs
 // Responsibility: TE Team
 //
 // <remarks>
@@ -16,83 +16,83 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace SIL.CoreImpl
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Exception thrown during FieldWorks startup if something goes wrong
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class FwStartupException : Exception
+	public class StartupException : Exception
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="FwStartupException"/> class.
+		/// Initializes a new instance of the <see cref="StartupException"/> class.
 		/// </summary>
 		/// <param name="message">The message.</param>
 		/// ------------------------------------------------------------------------------------
-		public FwStartupException(string message) : this(message, null)
+		public StartupException(string message) : this(message, null)
 		{
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="FwStartupException"/> class.
+		/// Initializes a new instance of the <see cref="StartupException"/> class.
 		/// </summary>
 		/// <param name="message">The message.</param>
 		/// <param name="innerException">The inner exception.</param>
 		/// ------------------------------------------------------------------------------------
-		public FwStartupException(string message, Exception innerException) :
+		public StartupException(string message, Exception innerException) :
 			this(message, innerException, true)
 		{
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="FwStartupException"/> class.
+		/// Initializes a new instance of the <see cref="StartupException"/> class.
 		/// </summary>
 		/// <param name="message">The message.</param>
 		/// <param name="fReportToUser">True to report this error to the user, false otherwise
 		/// </param>
 		/// ------------------------------------------------------------------------------------
-		public FwStartupException(string message, bool fReportToUser) :
+		public StartupException(string message, bool fReportToUser) :
 			this(message, null, fReportToUser)
 		{
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="FwStartupException"/> class.
+		/// Initializes a new instance of the <see cref="StartupException"/> class.
 		/// </summary>
 		/// <param name="innerException">The inner exception.</param>
 		/// ------------------------------------------------------------------------------------
-		public FwStartupException(Exception innerException) : this(innerException, true)
+		public StartupException(Exception innerException) : this(innerException, true)
 		{
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="FwStartupException"/> class.
+		/// Initializes a new instance of the <see cref="StartupException"/> class.
 		/// </summary>
 		/// <param name="innerException">The inner exception.</param>
 		/// <param name="fReportToUser">True to report this error to the user, false otherwise
 		/// </param>
 		/// ------------------------------------------------------------------------------------
-		public FwStartupException(Exception innerException, bool fReportToUser) :
+		public StartupException(Exception innerException, bool fReportToUser) :
 			this(null, innerException, fReportToUser)
 		{
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="FwStartupException"/> class.
+		/// Initializes a new instance of the <see cref="StartupException"/> class.
 		/// </summary>
 		/// <param name="message">The message.</param>
 		/// <param name="innerException">The inner exception.</param>
 		/// <param name="fReportToUser">True to report this error to the user, false otherwise
 		/// </param>
 		/// ------------------------------------------------------------------------------------
-		public FwStartupException(string message, Exception innerException, bool fReportToUser) :
+		public StartupException(string message, Exception innerException, bool fReportToUser) :
 			base(message, innerException)
 		{
 			ReportToUser = fReportToUser;
@@ -107,19 +107,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get;
 			private set;
-		}
-	}
-
-	/// <summary>
-	/// Exception thrown when we try to open a project that belongs to a newer version of FieldWorks than this.
-	/// </summary>
-	public class FwNewerVersionException : FwStartupException
-	{
-		/// <summary>
-		/// Make one.
-		/// </summary>
-		public FwNewerVersionException(string message) : base(message)
-		{
 		}
 	}
 }

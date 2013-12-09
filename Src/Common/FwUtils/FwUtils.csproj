@@ -176,7 +176,6 @@
     <Compile Include="DirectoryFinder.cs" />
     <Compile Include="FwLinkArgs.cs" />
     <Compile Include="FwRegistryHelper.cs" />
-    <Compile Include="FwStartupException.cs" />
     <Compile Include="FwSubKey.cs" />
     <Compile Include="FwUtils.cs" />
     <Compile Include="FwUtilsStrings.Designer.cs">

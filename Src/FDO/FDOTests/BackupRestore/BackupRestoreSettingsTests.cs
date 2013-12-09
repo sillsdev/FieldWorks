@@ -140,7 +140,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 				Assert.True(restoreSettings.ProjectExists, "Project does not exist but it should.");
 				Assert.False(restoreSettings.UsingSendReceive, "Project is using S/R but it should not be.");
 
-				string otherReposDir = Path.Combine(restoreSettings.ProjectPath, FLExBridgeHelper.OtherRepositories);
+				string otherReposDir = Path.Combine(restoreSettings.ProjectPath, FdoFileHelper.OtherRepositories);
 
 				// Create a non-repository folder in OtherRepositories and verify the project is not using Send/Receive
 				Directory.CreateDirectory(Path.Combine(otherReposDir, "NotARepo_LIFT", "RandomSubdir"));

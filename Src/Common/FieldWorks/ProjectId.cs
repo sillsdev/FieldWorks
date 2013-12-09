@@ -14,6 +14,7 @@
 using System;
 using System.Diagnostics;
 using System.Net;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -345,7 +346,7 @@ namespace SIL.FieldWorks
 				var ex = GetExceptionIfInvalid();
 				if (ex == null)
 					return true;
-				if (ex is FwStartupException)
+				if (ex is StartupException)
 					return false;
 				// something totally unexpected that we don't know how to handle happened.
 				// Don't suppress it.
@@ -381,7 +382,7 @@ namespace SIL.FieldWorks
 		///
 		/// here.
 		/// </summary>
-		/// <exception cref="FwStartupException">If invalid (e.g., project Name is not set, the
+		/// <exception cref="StartupException">If invalid (e.g., project Name is not set, the
 		/// XML file can not be found, etc.)</exception>
 		/// ------------------------------------------------------------------------------------
 		public void AssertValid()
@@ -402,7 +403,7 @@ namespace SIL.FieldWorks
 		internal Exception GetExceptionIfInvalid()
 		{
 			if (string.IsNullOrEmpty(Name))
-				return new FwStartupException(Properties.Resources.kstidNoProjectName, false);
+				return new StartupException(Properties.Resources.kstidNoProjectName, false);
 
 			switch (Type)
 			{
@@ -413,7 +414,7 @@ namespace SIL.FieldWorks
 					}
 					catch (SocketException e)
 					{
-						return new FwStartupException(String.Format(Properties.Resources.kstidInvalidServer, ServerName, e.Message), e);
+						return new StartupException(String.Format(Properties.Resources.kstidInvalidServer, ServerName, e.Message), e);
 					}
 					catch (Exception ex)
 					{
@@ -422,10 +423,10 @@ namespace SIL.FieldWorks
 					break;
 				case FDOBackendProviderType.kXML:
 					if (!FileUtils.SimilarFileExists(Path))
-						return new FwStartupException(string.Format(Properties.Resources.kstidFileNotFound, Path));
+						return new StartupException(string.Format(Properties.Resources.kstidFileNotFound, Path));
 					break;
 				case FDOBackendProviderType.kInvalid:
-					return new FwStartupException(Properties.Resources.kstidInvalidFwProjType);
+					return new StartupException(Properties.Resources.kstidInvalidFwProjType);
 				default:
 					return new NotImplementedException("Unknown type of project.");
 			}
@@ -433,7 +434,7 @@ namespace SIL.FieldWorks
 			// Check this after checking for other valid information (e.g. if the server is
 			// not available, we want to show that error, not this error).
 			if (!FileUtils.DirectoryExists(SharedProjectFolder))
-				return new FwStartupException(String.Format(Properties.Resources.kstidCannotAccessProjectPath, SharedProjectFolder));
+				return new StartupException(String.Format(Properties.Resources.kstidCannotAccessProjectPath, SharedProjectFolder));
 			return null; // valid
 		}
 

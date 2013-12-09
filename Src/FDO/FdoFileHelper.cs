@@ -67,6 +67,9 @@ namespace SIL.FieldWorks.FDO
 		/// <summary>The name of the folder containing temporary persisted sort sequence info for a project</summary>
 		public const string ksSortSequenceTempDir = "Temp";
 
+		/// <summary>Constant for locating the other repositories path of a project</summary>
+		public const string OtherRepositories = @"OtherRepositories";
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the path to the configuration settings for the specified project.
@@ -164,6 +167,17 @@ namespace SIL.FieldWorks.FDO
 		public static string GetDefaultOtherExternalFilesDir(string projectPath)
 		{
 			return Path.Combine(projectPath, Path.Combine(ksLinkedFilesDir, ksOtherLinkedFilesDir));
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the path to the other repositories for the specified project.
+		/// </summary>
+		/// <param name="projectFolder">The path to the project folder.</param>
+		/// ------------------------------------------------------------------------------------
+		public static string GetOtherRepositoriesDir(string projectFolder)
+		{
+			return Path.Combine(projectFolder, OtherRepositories);
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -14,6 +14,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -76,7 +77,7 @@ namespace SIL.FieldWorks
 		/// <param name="showReportingRow">True (usually only on the first run) when we want to show the first-time warning about
 		/// sending google analytics information</param>
 		/// ------------------------------------------------------------------------------------
-		public WelcomeToFieldWorksDlg(IHelpTopicProvider helpTopicProvider, string appAbbrev, FwStartupException exception, bool showReportingRow)
+		public WelcomeToFieldWorksDlg(IHelpTopicProvider helpTopicProvider, string appAbbrev, StartupException exception, bool showReportingRow)
 		{
 			m_appAbbrev = appAbbrev;
 			InitializeComponent();

@@ -355,7 +355,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			var currentDataStoreVersion = StartupInternal(ModelVersion);
 
 			if (currentDataStoreVersion > ModelVersion)
-				throw new FwNewerVersionException(Properties.Resources.kstidProjectIsForNewerVersionOfFw);
+				throw new FdoNewerVersionException(Properties.Resources.kstidProjectIsForNewerVersionOfFw);
 
 			if (currentDataStoreVersion == ModelVersion)
 				return;

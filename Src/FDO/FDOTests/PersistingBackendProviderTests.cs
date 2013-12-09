@@ -634,7 +634,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		/// throw an Exception.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(FwStartupException))]
+		[ExpectedException(typeof(StartupException))]
 		public void CorruptedXMLFileTest()
 		{
 			var testDataPath = Path.Combine(DirectoryFinder.FwSourceDirectory, "FDO/FDOTests/TestData");
@@ -645,7 +645,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			using (var xmlBep = new MockXMLBackendProvider(Cache, projName))
 			{
 				// Should throw an XMLException, but this will be caught and because there's
-				// no .bak file, an FwStartupException will be thrown instead.
+				// no .bak file, an StartupException will be thrown instead.
 				xmlBep.Startup();
 			}
 		}

@@ -393,7 +393,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private static bool IsConfiguredForLiftSR(string folder)
 		{
-			var otherRepoPath = Path.Combine(folder, FLExBridgeHelper.OtherRepositories);
+			var otherRepoPath = Path.Combine(folder, FdoFileHelper.OtherRepositories);
 			if (!Directory.Exists(otherRepoPath))
 				return false;
 			var liftFolder = Directory.EnumerateDirectories(otherRepoPath, "*_LIFT").FirstOrDefault();
@@ -932,7 +932,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private static string GetLiftRepositoryFolderFromFwProjectFolder(string projectFolder)
 		{
-			var otherDir = Path.Combine(projectFolder, FLExBridgeHelper.OtherRepositories);
+			var otherDir = Path.Combine(projectFolder, FdoFileHelper.OtherRepositories);
 			if (Directory.Exists(otherDir))
 			{
 				var extantOtherFolders = Directory.GetDirectories(otherDir);
@@ -942,7 +942,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 
 			var flexProjName = Path.GetFileName(projectFolder);
-			return Path.Combine(projectFolder, FLExBridgeHelper.OtherRepositories, flexProjName + '_' + FLExBridgeHelper.LIFT);
+			return Path.Combine(projectFolder, FdoFileHelper.OtherRepositories, flexProjName + '_' + FLExBridgeHelper.LIFT);
 		}
 
 		void OnDumperSetProgressMessage(object sender, ProgressMessageArgs e)
@@ -1534,7 +1534,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			foreach (var file in Directory.GetFiles(path, "*.ChorusNotes", SearchOption.AllDirectories))
 			{
 				// TODO: Test to see if one conflict tool can do both FLEx and LIFT conflicts.
-				if (file.Contains(FLExBridgeHelper.OtherRepositories))
+				if (file.Contains(FdoFileHelper.OtherRepositories))
 					continue; // Skip them, since they are part of some other repository.
 
 				long oldLength;
@@ -1556,7 +1556,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var result = new Dictionary<string, long>();
 			foreach (var file in Directory.GetFiles(projectFolder, "*.ChorusNotes", SearchOption.AllDirectories))
 			{
-				if (file.Contains(FLExBridgeHelper.OtherRepositories))
+				if (file.Contains(FdoFileHelper.OtherRepositories))
 					continue; // Skip them, since they are part of some other repository.
 
 				result[file] = new FileInfo(file).Length;

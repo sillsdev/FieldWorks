@@ -15,6 +15,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
@@ -359,7 +360,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			}
 			// No backup, or the user didn't want to try. Show Unable to Open Project dialog box.
 			UnlockProject();
-			throw new FwStartupException(message);
+			throw new StartupException(message);
 		}
 
 		private void BasicInit()
@@ -371,7 +372,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			}
 			catch (IOException e)
 			{
-				throw new FwStartupException(String.Format(Properties.Resources.kstidLockFileLocked, ProjectId.Name), e, true);
+				throw new StartupException(String.Format(Properties.Resources.kstidLockFileLocked, ProjectId.Name), e, true);
 			}
 		}
 

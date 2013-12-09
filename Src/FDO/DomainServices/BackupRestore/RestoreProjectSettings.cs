@@ -155,7 +155,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		{
 			get
 			{
-				var otherRepoPath = Path.Combine(ProjectPath, FLExBridgeHelper.OtherRepositories);
+				var otherRepoPath = Path.Combine(ProjectPath, FdoFileHelper.OtherRepositories);
 				return Directory.Exists(Path.Combine(ProjectPath, ".hg")) ||
 					(Directory.Exists(otherRepoPath) &&
 					Directory.EnumerateDirectories(otherRepoPath).Any(dir => Directory.Exists(Path.Combine(dir, ".hg"))));

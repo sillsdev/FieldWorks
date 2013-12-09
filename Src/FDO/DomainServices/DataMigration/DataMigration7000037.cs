@@ -36,6 +36,10 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 	{
 		private static readonly byte[] s_externalLinkTag = Encoding.UTF8.GetBytes("externalLink");
 
+		// Moved here from FWLinkArgs. We don't want it to change here if it is changed there since
+		// the data migration will expect it to be what it was at that time, not the new value.
+		private const string kFwUrlPrefix = "silfw://localhost/link?";
+
 		#region IDataMigration Members
 
 		public void PerformMigration(IDomainObjectDTORepository domainObjectDtoRepository)
@@ -68,11 +72,11 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				if (attrLink == null)
 					continue;
 				string value = attrLink.Value;
-				if (value.StartsWith(FwLinkArgs.kFwUrlPrefix.Substring(1)))
-					value = FwLinkArgs.kFwUrlPrefix.Substring(0, 1) + value;
-				if (!value.StartsWith(FwLinkArgs.kFwUrlPrefix))
+				if (value.StartsWith(kFwUrlPrefix.Substring(1)))
+					value = kFwUrlPrefix.Substring(0, 1) + value;
+				if (!value.StartsWith(kFwUrlPrefix))
 					continue;
-				string query = HttpUtility.UrlDecode(value.Substring(FwLinkArgs.kFwUrlPrefix.Length));
+				string query = HttpUtility.UrlDecode(value.Substring(kFwUrlPrefix.Length));
 				string[] rgsProps = query.Split(new char[] {'&'}, StringSplitOptions.RemoveEmptyEntries);
 				string database = null;
 				int idxDatabase = -1;
@@ -136,7 +140,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				if (!fChange)
 					continue;
 
-				value = FwLinkArgs.kFwUrlPrefix + HttpUtility.UrlEncode(rgsProps.ToString("&"));
+				value = kFwUrlPrefix + HttpUtility.UrlEncode(rgsProps.ToString("&"));
 				if (attrLink.Value != value)
 				{
 					attrLink.Value = value;

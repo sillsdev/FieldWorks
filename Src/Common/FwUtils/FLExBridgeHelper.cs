@@ -120,13 +120,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		#endregion End of available '-v' parameter options:
 
-		// The two paths of a path that locate the Lift repository within a FLEx project.
 		/// <summary>
-		/// constant for locating the nested lift repository (part 1 of 2)
-		/// </summary>
-		public const string OtherRepositories = @"OtherRepositories";
-		/// <summary>
-		/// constant for locating the nested lift repository (part 2 of 2)
+		/// constant for locating the nested lift repository (within the "OtherRepositories" path of a project).
+		/// See also SIL.FieldWorks.FDO.FdoFileHelper.OtherRepositories
 		/// </summary>
 		public const string LIFT = @"LIFT";
 

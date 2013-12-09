@@ -22,6 +22,7 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using FwRemoteDatabaseConnector;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
@@ -834,7 +835,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		private static void ReportConversionError(IFdoUI ui, string projectPath, Exception e)
 		{
 			string message;
-			if (e is FwNewerVersionException)
+			if (e is FdoNewerVersionException)
 			{
 				message = string.Format(Strings.ksConvertFailedNewerVersion, Path.GetFileName(projectPath),
 				Path.GetDirectoryName(projectPath));

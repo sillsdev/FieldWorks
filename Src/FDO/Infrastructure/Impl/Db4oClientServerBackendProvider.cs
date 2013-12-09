@@ -25,6 +25,7 @@ using Db4objects.Db4o.CS;
 using Db4objects.Db4o.CS.Config;
 using Db4objects.Db4o.Linq;
 using FwRemoteDatabaseConnector;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
@@ -242,7 +243,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			}
 			catch (SocketException e)
 			{
-				throw new FwStartupException(string.Format(Strings.ksCannotConnectToServer, "FwRemoteDatabaseConnectorService"), e);
+				throw new StartupException(string.Format(Strings.ksCannotConnectToServer, "FwRemoteDatabaseConnectorService"), e);
 			}
 			finally
 			{
@@ -555,7 +556,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			}
 			catch (SocketException e)
 			{
-				throw new FwStartupException(string.Format(Strings.ksCannotConnectToServer, "FwRemoteDatabaseConnectorService"), e);
+				throw new StartupException(string.Format(Strings.ksCannotConnectToServer, "FwRemoteDatabaseConnectorService"), e);
 			}
 			catch (Exception err)
 			{
@@ -679,19 +680,19 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				if (!info.StartServer(ProjectId.Name, out port, out exceptionFromStartingServer))
 				{
 					// failed to start server
-					throw new FwStartupException(String.Format(Strings.ksFailedToStartServer,
+					throw new StartupException(String.Format(Strings.ksFailedToStartServer,
 							exceptionFromStartingServer.Message), exceptionFromStartingServer);
 				}
 				m_port = port;
 			}
 			catch (SocketException e)
 			{
-				throw new FwStartupException(string.Format(Strings.ksCannotConnectToServer, "FwRemoteDatabaseConnectorService"), e);
+				throw new StartupException(string.Format(Strings.ksCannotConnectToServer, "FwRemoteDatabaseConnectorService"), e);
 			}
 			catch (RemotingException e)
 			{
 				// on Mono we get a RemotingException instead of a SocketException
-				throw new FwStartupException(string.Format(Strings.ksCannotConnectToServer, "FwRemoteDatabaseConnectorService"), e);
+				throw new StartupException(string.Format(Strings.ksCannotConnectToServer, "FwRemoteDatabaseConnectorService"), e);
 			}
 		}
 

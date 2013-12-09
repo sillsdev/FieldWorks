@@ -370,6 +370,7 @@
     <Compile Include="FdoFileHelper.cs" />
     <Compile Include="IFdoUI.cs" />
     <Compile Include="IProjectIdentifier.cs" />
+    <Compile Include="FdoNewerVersionException.cs" />
     <Compile Include="SilentFdoUI.cs" />
     <Compile Include="Infrastructure\FdoXmlServices.cs" />
     <Compile Include="Infrastructure\GenericUndoAction.cs" />
