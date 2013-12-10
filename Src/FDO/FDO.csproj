@@ -167,9 +167,6 @@
     <Reference Include="SilUtils">
       <HintPath>..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
-    <Reference Include="xCoreInterfaces">
-      <HintPath>..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\CommonAssemblyInfo.cs">
@@ -273,7 +270,6 @@
     <Compile Include="DomainServices\Db4OServerFinder.cs" />
     <Compile Include="DomainServices\FootnoteLocationInfo.cs" />
     <Compile Include="DomainServices\FwProjectFinder.cs" />
-    <Compile Include="DomainServices\GlobalSettingServices.cs" />
     <Compile Include="DomainServices\M3ModelExportServices.cs" />
     <Compile Include="DomainServices\DataMigration\DataMigration7000010.cs" />
     <Compile Include="DomainServices\DataMigration\DataMigration7000008.cs" />

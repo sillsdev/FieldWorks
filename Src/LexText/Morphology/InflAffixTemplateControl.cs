@@ -266,7 +266,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			int index;
 			var slot = m_obj as IMoInflAffixSlot;
 			GetAffixSequenceContainingSlot(slot, out seq, out index);
-			UndoableUnitOfWorkHelper.Do(cmd, m_template,
+			UndoableUnitOfWorkHelper.Do(cmd.UndoText, cmd.RedoText, m_template,
 				() =>
 					{
 						seq.RemoveAt(index);

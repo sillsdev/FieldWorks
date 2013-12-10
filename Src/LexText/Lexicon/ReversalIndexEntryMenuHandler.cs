@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				FdoCache cache = m_dataEntryForm.Cache;
 				IReversalIndexEntry entry = slice.Object as IReversalIndexEntry;
 				ICmObject newOwner = entry.Owner.Owner;
-				UndoableUnitOfWorkHelper.Do((Command) cmd, newOwner,
+				UndoableUnitOfWorkHelper.Do(((Command)cmd).UndoText, ((Command)cmd).RedoText, newOwner,
 					() =>
 						{
 							switch (newOwner.ClassID)

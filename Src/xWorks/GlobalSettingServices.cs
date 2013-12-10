@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Practices.ServiceLocation;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainImpl;
 using XCore;
 
-namespace SIL.FieldWorks.FDO.DomainServices
+namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// Global setting services provides a simple API for persisting and restoring global settings that affect all windows.
