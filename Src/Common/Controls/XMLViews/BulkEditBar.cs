@@ -3825,6 +3825,15 @@ namespace SIL.FieldWorks.Common.Controls
 			// Enhance JohnT: use some sort of View-based label that can display Graphite etc.
 			if (m_pattern != null && m_pattern.Pattern != null && m_pattern.Pattern.Length > 0)
 			{
+#if __MonoCS__
+				// Linux/Mono doesn't handle font replacement as well as Windows/.Net, so we need
+				// to specify the font for the label.  See FWNX-1352.
+				var ws = TsStringUtils.GetWsAtOffset(m_tssReplace, 0);
+				m_findReplaceSummaryLabel.Font = new Font(
+					m_cache.ServiceLocator.WritingSystemManager.Get(ws).DefaultFontName,
+					m_findReplaceSummaryLabel.Font.Size,
+					m_findReplaceSummaryLabel.Font.Style);
+#endif
 				m_findReplaceSummaryLabel.Text = String.Format(XMLViewsStrings.ksReplaceXWithY,
 					GetString(m_pattern.Pattern), GetString(m_tssReplace));
 			}
