@@ -56,17 +56,6 @@ namespace SIL.FieldWorks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Fixture teardown.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public override void FixtureTeardown()
-		{
-			base.FixtureTeardown();
-			ReflectionHelper.CallMethod(typeof(ClientServerServices), "SetCurrentToDb4OBackend");
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Sets up default member values for each test.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
