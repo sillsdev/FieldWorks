@@ -16,6 +16,7 @@ using System.IO;
 using System.Text;
 using System.Collections.Generic;
 using System.Web;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using XCore;
@@ -835,7 +836,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					// There may not be a key, if this is the first argument, as when opening a file directly.
 					if (sKey.Length == 0)
 					{
-						sKey = (Path.GetExtension(value) == FwFileExtensions.ksFwBackupFileExtension) ? kRestoreFile : kProject;
+						sKey = (Path.GetExtension(value) == FdoFileHelper.ksFwBackupFileExtension) ? kRestoreFile : kProject;
 					}
 				}
 			}

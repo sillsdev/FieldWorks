@@ -30,23 +30,5 @@ namespace SIL.FieldWorks.Resources
 		public const string ksLexiconInterchangeFormat = ".lift";
 		/// <summary>Default extension for FlexText format interlinear texts.</summary>
 		public const string ksFLexText = ".flextext";
-
-
-		/*
-		 * The following 4 extensions are also defined in FdoFileHelper.
-		 * They are defined here as a temporary stopgap.
-		 * The idea is that once FwUtils references FDO, these will be removed
-		 * from here and all references will use FdoFileHelper.
-		 *
-		 * If a change is made here, it should be made in FdoFileHelper as well.
-		 */
-		/// <summary>Default extension for FieldWorks XML data files (with the period)</summary>
-		public const string ksFwDataXmlFileExtension = ".fwdata";
-		/// <summary>Default extension for FieldWorks DB4o data files (with the period)</summary>
-		public const string ksFwDataDb4oFileExtension = ".fwdb";
-		/// <summary>Default extension for FieldWorks backup files (with the period).</summary>
-		public const string ksFwBackupFileExtension = ".fwbackup";
-		/// <summary>Default extension for FieldWorks 6.0 and earlier backup files (with the period).</summary>
-		internal const string ksFw60BackupFileExtension = ".zip";
 	}
 }

@@ -25,6 +25,7 @@ using System.Text;
 using System.Windows.Forms;
 
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.FieldWorks.Resources;
 
@@ -64,8 +65,8 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 				string dir = Path.Combine(FwDirectoryFinder.ProjectsDirectory, name);
 				if (Directory.Exists(dir))
 				{
-					if (File.Exists(Path.Combine(dir, name + FwFileExtensions.ksFwDataXmlFileExtension)) ||
-						File.Exists(Path.Combine(dir, name + FwFileExtensions.ksFwDataDb4oFileExtension)))
+					if (File.Exists(Path.Combine(dir, name + FdoFileHelper.ksFwDataXmlFileExtension)) ||
+						File.Exists(Path.Combine(dir, name + FdoFileHelper.ksFwDataDb4oFileExtension)))
 					{
 						m_fExists = true;
 					}
@@ -285,7 +286,7 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 				if (!fOk)
 					return MigrateStatus.Failed;
 				// 5. Convert FW 6.0 XML to FW 7.0 XML
-				string projFile = Path.Combine(projDir, projName + FwFileExtensions.ksFwDataXmlFileExtension);
+				string projFile = Path.Combine(projDir, projName + FdoFileHelper.ksFwDataXmlFileExtension);
 				fOk = m_importer.ImportFrom6_0Xml(projXml, projDir, projFile);
 			}
 			catch (CannotConvertException e)
