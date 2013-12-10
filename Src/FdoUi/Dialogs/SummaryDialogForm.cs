@@ -144,7 +144,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			{
 				m_helpFileKey = helpFileKey;
 				this.helpProvider = new HelpProvider();
-				this.helpProvider.HelpNamespace = DirectoryFinder.FWCodeDirectory + m_helpProvider.GetHelpString("UserHelpFile");
+				this.helpProvider.HelpNamespace = FwDirectoryFinder.CodeDirectory + m_helpProvider.GetHelpString("UserHelpFile");
 				this.helpProvider.SetHelpKeyword(this, m_helpProvider.GetHelpString(s_helpTopicKey));
 				this.helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}

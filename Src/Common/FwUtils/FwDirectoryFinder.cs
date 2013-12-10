@@ -8,7 +8,7 @@
 // </copyright>
 #endregion
 //
-// File: DirectoryFinder.cs
+// File: FwDirectoryFinder.cs
 //
 // <remarks>
 // To find the current user's "My Documents" folder, use something like:
@@ -17,28 +17,23 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Diagnostics;
 using System.Reflection;
 using System.Security;
-using System.Security.AccessControl;
-using System.Security.Principal;
-using System.Text;
-using System.Windows.Forms;
 using Microsoft.Win32;
+using SIL.CoreImpl;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary>
-	/// Summary description for DirectoryFinder.
+	/// This class is used to find files and directories for FW apps.
 	/// </summary>
-	public static class DirectoryFinder
+	public static class FwDirectoryFinder
 	{
-		private static string s_CommonAppDataFolder;
-
 		/// <summary>
 		/// The name of the Translation Editor folder (Even though this is the same as
 		/// FwUtils.ksTeAppName and FwSubKey.TE, PLEASE do not use them interchangeably. Use
@@ -54,8 +49,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		/// <summary>The Scripture-specific stylesheet (ideally, this would be in a TE-specific place, but FDO needs it)</summary>
 		public const string kTeStylesFilename = "TeStyles.xml";
-		/// <summary>The filename of the backup settings file</summary>
-		public const string kBackupSettingsFilename = "BackupSettings.xml";
 
 		/// <summary>The name of the folder containing global writing systems.
 		/// Also see SIL.FieldWorks.FDO.FdoFileHelper.ksWritingSystemsDir
@@ -66,13 +59,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private const string ksBiblicaltermsLocFileExtension = ".xml";
 		private const string ksProjectsDir = "ProjectsDir";
 
-		/// <summary>
-		/// Resets the static variables. Used for unit tests.
-		/// </summary>
-		internal static void ResetStaticVars()
-		{
-			s_CommonAppDataFolder = null;
-		}
+		private static readonly IFdoDirectories s_fdoDirs = new FwFdoDirectories();
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -83,7 +70,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		public static string TeStylesPath
 		{
-			get { return Path.Combine(FWCodeDirectory, kTeStylesFilename); }
+			get { return Path.Combine(CodeDirectory, kTeStylesFilename); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -93,7 +80,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		public static string TeFolder
 		{
-			get { return GetFWCodeSubDirectory(ksTeFolderName); }
+			get { return GetCodeSubDirectory(ksTeFolderName); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -103,7 +90,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		public static string FlexFolder
 		{
-			get { return GetFWCodeSubDirectory(ksFlexFolderName); }
+			get { return GetCodeSubDirectory(ksFlexFolderName); }
 		}
 
 		/// <summary>
@@ -112,106 +99,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static string FlexBridgeFolder
 		{
 			get { return GetFLExBridgeFolderPath(); }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the path for storing user-specific application data.
-		/// </summary>
-		/// <param name="appName">Name of the application.</param>
-		/// ------------------------------------------------------------------------------------
-		public static string UserAppDataFolder(string appName)
-		{
-			string path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-			return Path.Combine(Path.Combine(path, CompanyName), appName);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the path for storing common application data that might be shared between
-		/// multiple applications and multiple users on the same machine.
-		///
-		/// On Windows this returns Environment.SpecialFolder.CommonApplicationData
-		/// (C:\ProgramData),on Linux /var/lib/fieldworks.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private static string CommonApplicationData
-		{
-			get
-			{
-				if (s_CommonAppDataFolder == null)
-				{
-					if (MiscUtils.IsUnix)
-					{
-						// allow to override the /var/lib/fieldworks path by setting the
-						// environment variable FW_CommonAppData. Is this is needed on our CI
-						// build machines.
-						s_CommonAppDataFolder =
-							Environment.GetEnvironmentVariable("FW_CommonAppData") ??
-							"/var/lib/fieldworks";
-					}
-					else
-					{
-						s_CommonAppDataFolder =
-							Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
-					}
-				}
-				return s_CommonAppDataFolder;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets a special folder, very similar to Environment.GetFolderPath. The main
-		/// difference is that this method works cross-platform and does some translations.
-		/// For example CommonApplicationData (/usr/share) is not writeable on Linux, so we
-		/// translate that to /var/lib/fieldworks instead.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static string GetFolderPath(Environment.SpecialFolder folder)
-		{
-			if (folder == Environment.SpecialFolder.CommonApplicationData)
-				return CommonApplicationData;
-			return Environment.GetFolderPath(folder);
-		}
-
-		static string s_companyName = Application.CompanyName; // default for real use; tests may override.
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Sets the name of the company used for registry settings (replaces
-		/// Application.CompanyName)
-		/// NOTE: THIS SHOULD ONLY BE SET IN TESTS AS THE DEFAULT Application.CompanyName IN
-		/// TESTS WILL BE "nunit.org" or jetbrains.something!!!
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static string CompanyName
-		{
-			set { s_companyName = value; }
-			private get
-			{
-				// This might be a good idea but will require all unit tests that depend on these functions to set one. Many of them
-				// don't seem to affected by using an NUnit or JetBrains application name.
-				//if (s_companyName.IndexOf("nunit", StringComparison.InvariantCultureIgnoreCase) >= 0 || s_companyName.IndexOf("jetbrains", StringComparison.InvariantCultureIgnoreCase) >= 0)
-				//    throw new ArgumentException("CompanyName can not be NUnit.org or some variant of NUnit or jetbrains!" +
-				//        " Make sure the test is overriding this property in RegistryHelper");
-				return s_companyName;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the path for storing common application data that might be shared between
-		/// multiple applications and multiple users on the same machine.
-		///
-		/// On Windows this returns a subdirectory of
-		/// Environment.SpecialFolder.CommonApplicationData (C:\ProgramData),on Linux
-		/// /var/lib/fieldworks.
-		/// </summary>
-		/// <param name="appName">Name of the application.</param>
-		/// ------------------------------------------------------------------------------------
-		public static string CommonAppDataFolder(string appName)
-		{
-			return Path.Combine(Path.Combine(CommonApplicationData, CompanyName), appName);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -264,6 +151,22 @@ namespace SIL.FieldWorks.Common.FwUtils
 			get { return ExeOrDllPath("MigrateSqlDbs.exe"); }
 		}
 
+		/// <summary>
+		/// Gets the path to MSSQLMigration\Db.exe.
+		/// </summary>
+		public static string DbExe
+		{
+			get { return Path.Combine(GetCodeSubDirectory("MSSQLMigration"), "db.exe"); }
+		}
+
+		/// <summary>
+		/// Gets the converter console executable.
+		/// </summary>
+		public static string ConverterConsoleExe
+		{
+			get { return ExeOrDllPath("ConverterConsole.exe"); }
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the full path of the config file
@@ -302,7 +205,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 #else
 				const string arch = "Release";
 #endif
-				return Path.Combine(Path.Combine(Path.Combine(Path.GetDirectoryName(FwSourceDirectory), "Output"), arch), file);
+				return Path.Combine(Path.Combine(Path.Combine(Path.GetDirectoryName(SourceDirectory), "Output"), arch), file);
 			}
 
 			return Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), file);
@@ -353,9 +256,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="subDirectory">examples: "WW\XAMPLE or \WW\XAMPLE"</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public static string GetFWCodeSubDirectory(string subDirectory)
+		public static string GetCodeSubDirectory(string subDirectory)
 		{
-			return GetSubDirectory(FWCodeDirectory, subDirectory);
+			return GetSubDirectory(CodeDirectory, subDirectory);
 		}
 
 		private static string GetFLExBridgeFolderPath()
@@ -380,9 +283,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="subDirectory">examples: "Languages or \Languages"</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public static string GetFWDataSubDirectory(string subDirectory)
+		public static string GetDataSubDirectory(string subDirectory)
 		{
-			return GetSubDirectory(FWDataDirectory, subDirectory);
+			return GetSubDirectory(DataDirectory, subDirectory);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -392,9 +295,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="filename">examples: "iso-8859-1.tec"</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public static string GetFWCodeFile(string filename)
+		public static string GetCodeFile(string filename)
 		{
-			return Path.Combine(FWCodeDirectory, filename);
+			return Path.Combine(CodeDirectory, filename);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -485,11 +388,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <exception cref="ApplicationException">If an installation directory could not be
 		/// found.</exception>
 		/// ------------------------------------------------------------------------------------
-		public static string FWCodeDirectory
+		public static string CodeDirectory
 		{
 			get
 			{
-				string defaultDir = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), CompanyName),
+				string defaultDir = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), DirectoryFinder.CompanyName),
 					string.Format("FieldWorks {0}", FwUtils.SuiteVersion));
 				return GetDirectory("RootCodeDir", defaultDir);
 			}
@@ -504,9 +407,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <exception cref="ApplicationException">If an installation directory could not be
 		/// found.</exception>
 		/// ------------------------------------------------------------------------------------
-		public static string FWDataDirectory
+		public static string DataDirectory
 		{
-			get { return GetDirectory(ksRootDataDir, CommonAppDataFolder(ksFieldWorks)); }
+			get { return GetDirectory(ksRootDataDir, DirectoryFinder.CommonAppDataFolder(ksFieldWorks)); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -517,9 +420,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <exception cref="ApplicationException">If an installation directory could not be
 		/// found.</exception>
 		/// ------------------------------------------------------------------------------------
-		public static string FWDataDirectoryLocalMachine
+		public static string DataDirectoryLocalMachine
 		{
-			get { return GetDirectoryLocalMachine(ksRootDataDir, CommonAppDataFolder(ksFieldWorks)); }
+			get { return GetDirectoryLocalMachine(ksRootDataDir, DirectoryFinder.CommonAppDataFolder(ksFieldWorks)); }
 		}
 
 		private static string m_srcdir;
@@ -529,7 +432,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Gets the src dir (for running tests)
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public static string FwSourceDirectory
+		public static string SourceDirectory
 		{
 			get
 			{
@@ -585,7 +488,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				string directory = GetFWCodeSubDirectory(@"Editorial Checks");
+				string directory = GetCodeSubDirectory(@"Editorial Checks");
 				if (!Directory.Exists(directory))
 				{
 					string msg = ResourceHelper.GetResourceString("kstidUnableToFindEditorialChecks");
@@ -630,6 +533,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
+		/// <summary>
+		/// Gets the legacy wordforming character overrides file.
+		/// </summary>
+		public static string LegacyWordformingCharOverridesFile
+		{
+			get
+			{
+				return Path.Combine(CodeDirectory, "WordFormingCharOverrides.xml");
+			}
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the dir where templates are installed
@@ -637,7 +551,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		public static string TemplateDirectory
 		{
-			get { return GetFWCodeSubDirectory("Templates"); }
+			get { return GetCodeSubDirectory("Templates"); }
 		}
 
 		private const string ksProjects = "Projects";
@@ -652,7 +566,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		public static string ProjectsDirectory
 		{
-			get { return GetDirectory(ksProjectsDir, Path.Combine(FWDataDirectory, ksProjects)); }
+			get { return GetDirectory(ksProjectsDir, Path.Combine(DataDirectory, ksProjects)); }
 			set
 			{
 				if (ProjectsDirectory == value)
@@ -677,7 +591,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public static string ProjectsDirectoryLocalMachine
 		{
-			get { return GetDirectoryLocalMachine(ksProjectsDir, Path.Combine(FWDataDirectoryLocalMachine, ksProjects)); }
+			get { return GetDirectoryLocalMachine(ksProjectsDir, Path.Combine(DataDirectoryLocalMachine, ksProjects)); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -725,48 +639,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the global writing system store directory. The directory is guaranteed to exist.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="Offending code is not executed on Linux")]
-		public static string GlobalWritingSystemStoreDirectory
-		{
-			get
-			{
-				string path = CommonAppDataFolder(ksWritingSystemsDir);
-				if (!Directory.Exists(path))
-				{
-					DirectoryInfo di;
-
-					// Provides FW on Linux multi-user access. Overrides the system
-					// umask and creates the directory with the permissions "775".
-					// The "fieldworks" group was created outside the app during
-					// configuration of the package which allows group access.
-					using(new FileModeOverride())
-					{
-						di = Directory.CreateDirectory(path);
-					}
-
-					if (!MiscUtils.IsUnix)
-					{
-						// NOTE: GetAccessControl/ModifyAccessRule/SetAccessControl is not implemented in Mono
-						DirectorySecurity ds = di.GetAccessControl();
-						var sid = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
-						AccessRule rule = new FileSystemAccessRule(sid, FileSystemRights.Write | FileSystemRights.ReadAndExecute
-							| FileSystemRights.Modify, InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit,
-							PropagationFlags.InheritOnly, AccessControlType.Allow);
-						bool modified;
-						ds.ModifyAccessRule(AccessControlModification.Add, rule, out modified);
-						di.SetAccessControl(ds);
-					}
-				}
-				return path;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Gets the biblical key terms localization files.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -803,6 +675,30 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			return Path.GetFileName(locFilename).Replace(ksBiblicaltermsLocFilePrefix,
 				String.Empty).Replace(ksBiblicaltermsLocFileExtension, String.Empty);
+		}
+
+		/// <summary>
+		/// Gets the FDO directories service.
+		/// </summary>
+		public static IFdoDirectories FdoDirectories
+		{
+			get { return s_fdoDirs; }
+		}
+
+		private class FwFdoDirectories : IFdoDirectories
+		{
+			/// <summary>
+			/// Gets the projects directory.
+			/// </summary>
+			public string ProjectsDirectory
+			{
+				get { return FwDirectoryFinder.ProjectsDirectory; }
+			}
+
+			public string TemplateDirectory
+			{
+				get { return FwDirectoryFinder.TemplateDirectory; }
+			}
 		}
 	}
 }

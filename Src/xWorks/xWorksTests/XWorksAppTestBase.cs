@@ -556,7 +556,7 @@ namespace SIL.FieldWorks.XWorks
 			FwRegistrySettings.Init();
 			Init(); // subclass version must create and set m_application
 
-			m_configFilePath = Path.Combine(DirectoryFinder.FWCodeDirectory, m_application.DefaultConfigurationPathname);
+			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
 
 			// Setup for possibility loading [GetPossibilityOrCreateOne()]
 			// and test data creation

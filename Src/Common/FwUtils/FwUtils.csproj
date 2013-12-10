@@ -114,6 +114,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
     </Reference>
+    <Reference Include="FDO, Version=8.0.6.24704, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
+    </Reference>
     <Reference Include="FwResources">
       <Name>FwResources</Name>
       <HintPath>..\..\..\Output\Debug\FwResources.dll</HintPath>
@@ -173,7 +177,7 @@
     <Compile Include="ConsoleProgress.cs" />
     <Compile Include="FLExBridgeHelper.cs" />
     <Compile Include="IFocusablePanePortion.cs" />
-    <Compile Include="DirectoryFinder.cs" />
+    <Compile Include="FwDirectoryFinder.cs" />
     <Compile Include="FwLinkArgs.cs" />
     <Compile Include="FwRegistryHelper.cs" />
     <Compile Include="FwSubKey.cs" />
@@ -183,7 +187,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>FwUtilsStrings.resx</DependentUpon>
     </Compile>
-    <Compile Include="FwVersionInfoProvider.cs" />
     <Compile Include="InstallationException.cs" />
     <Compile Include="IProjectSpecificSettingsKeyProvider.cs" />
     <Compile Include="LayoutKeyUtils.cs" />
@@ -192,9 +195,6 @@
     <Compile Include="ParagraphCorrelation.cs" />
     <Compile Include="PictureHolder.cs" />
     <Compile Include="ProgressMessageArgs.cs" />
-    <Compile Include="ProjectInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="SearchTimer.cs" />
     <Compile Include="SelectionEvents.cs" />
     <Compile Include="ShowHelp.cs">

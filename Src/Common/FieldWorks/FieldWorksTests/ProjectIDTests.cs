@@ -62,7 +62,7 @@ namespace SIL.FieldWorks
 		public override void FixtureTeardown()
 		{
 			base.FixtureTeardown();
-			ReflectionHelper.CallMethod(typeof(ClientServerServices), "SetCurrentToDefaultBackend");
+			ReflectionHelper.CallMethod(typeof(ClientServerServices), "SetCurrentToDb4OBackend");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -201,7 +201,7 @@ namespace SIL.FieldWorks
 		public void CleanUpNameForType_Default_onlyName()
 		{
 			m_defaultBepType = FDOBackendProviderType.kDb4oClientServer;
-			string expectedPath = Path.Combine(Path.Combine(DirectoryFinder.ProjectsDirectory, "ape"),
+			string expectedPath = Path.Combine(Path.Combine(FwDirectoryFinder.ProjectsDirectory, "ape"),
 				FdoFileHelper.GetDb4oDataFileName("ape"));
 			m_localCsSvcs.Stub(cs => cs.IdForLocalProject("ape")).Return(expectedPath);
 			m_mockFileOs.AddExistingFile(expectedPath);
@@ -222,7 +222,7 @@ namespace SIL.FieldWorks
 		[Test]
 		public void CleanUpNameForType_Default_NameWithPeriod_Exists()
 		{
-			string expectedPath = Path.Combine(Path.Combine(DirectoryFinder.ProjectsDirectory, "my.monkey"), "my.monkey");
+			string expectedPath = Path.Combine(Path.Combine(FwDirectoryFinder.ProjectsDirectory, "my.monkey"), "my.monkey");
 			m_localCsSvcs.Stub(cs => cs.IdForLocalProject("my.monkey")).Return(expectedPath);
 			m_mockFileOs.AddExistingFile(expectedPath);
 
@@ -242,7 +242,7 @@ namespace SIL.FieldWorks
 		[Test]
 		public void CleanUpNameForType_XML_NameWithPeriod_FilesWithAndWithoutExtensionExist()
 		{
-			string myMonkeyProjectFolder = Path.Combine(DirectoryFinder.ProjectsDirectory, "my.monkey");
+			string myMonkeyProjectFolder = Path.Combine(FwDirectoryFinder.ProjectsDirectory, "my.monkey");
 			string expectedPath = Path.Combine(myMonkeyProjectFolder, FdoFileHelper.GetXmlDataFileName("my.monkey"));
 			m_mockFileOs.AddExistingFile(expectedPath);
 			m_mockFileOs.AddExistingFile(Path.Combine(myMonkeyProjectFolder, "my.monkey"));
@@ -318,7 +318,7 @@ namespace SIL.FieldWorks
 		[Test]
 		public void CleanUpNameForType_XML_FullPath()
 		{
-			string expectedPath = Path.Combine(DirectoryFinder.ProjectsDirectory, FdoFileHelper.GetXmlDataFileName("monkey"));
+			string expectedPath = Path.Combine(FwDirectoryFinder.ProjectsDirectory, FdoFileHelper.GetXmlDataFileName("monkey"));
 			m_mockFileOs.AddExistingFile(expectedPath);
 
 			var proj = new ProjectId(expectedPath, null);
@@ -338,7 +338,7 @@ namespace SIL.FieldWorks
 		public void CleanUpNameForType_XML_RelativePath()
 		{
 			string relativePath = Path.Combine("primate", FdoFileHelper.GetXmlDataFileName("monkey"));
-			string expectedPath = Path.Combine(DirectoryFinder.ProjectsDirectory, relativePath);
+			string expectedPath = Path.Combine(FwDirectoryFinder.ProjectsDirectory, relativePath);
 			m_mockFileOs.AddExistingFile(expectedPath);
 
 			ProjectId proj = new ProjectId(relativePath, null);
@@ -459,7 +459,7 @@ namespace SIL.FieldWorks
 		[Test]
 		public void CheckProperties()
 		{
-			string expectedProjectDir = Path.Combine(DirectoryFinder.ProjectsDirectory, "SomeTest");
+			string expectedProjectDir = Path.Combine(FwDirectoryFinder.ProjectsDirectory, "SomeTest");
 			m_mockFileOs.ExistingDirectories.Add(expectedProjectDir);
 
 			const string type = "db4ocs";
@@ -483,7 +483,7 @@ namespace SIL.FieldWorks
 		[Test]
 		public void NameAndPath()
 		{
-			string myProjectFolder = Path.Combine(DirectoryFinder.ProjectsDirectory, "My.Project");
+			string myProjectFolder = Path.Combine(FwDirectoryFinder.ProjectsDirectory, "My.Project");
 			ProjectId projId = new ProjectId(FDOBackendProviderType.kXML, "My.Project", null);
 			Assert.AreEqual(Path.Combine(myProjectFolder, FdoFileHelper.GetXmlDataFileName("My.Project")), projId.Path);
 			Assert.AreEqual("My.Project", projId.Name);
@@ -505,7 +505,7 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		public static string GetXmlProjectFilename(string projectName)
 		{
-			return Path.Combine(Path.Combine(DirectoryFinder.ProjectsDirectory, projectName),
+			return Path.Combine(Path.Combine(FwDirectoryFinder.ProjectsDirectory, projectName),
 				FdoFileHelper.GetXmlDataFileName(projectName));
 		}
 		#endregion

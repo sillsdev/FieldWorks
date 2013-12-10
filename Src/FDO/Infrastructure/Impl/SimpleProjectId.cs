@@ -13,7 +13,6 @@
 // ---------------------------------------------------------------------------------------------
 
 using System;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 {
@@ -73,11 +72,12 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets a token that uniquely identifies the project that can be used for a named pipe.
+		/// TODO: this will probably go away after we finish integrating FDO into Paratext
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public string PipeHandle
 		{
-			get { return FwUtils.GeneratePipeHandle(Handle); }
+			get { throw new NotImplementedException(); }
 		}
 
 		/// ------------------------------------------------------------------------------------

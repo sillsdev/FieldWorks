@@ -16,7 +16,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace SIL.FieldWorks.FDO
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -60,26 +60,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// <returns>Set of ProjectInfo objects, representing the projects on server</returns>
 		/// ------------------------------------------------------------------------------------
-		public static List<ProjectInfo> AllProjects
+		public static List<ProjectInfo> GetAllProjects(string projectsDir)
 		{
-			get
+			// Ensure that the folder actually contains a project data file.
+			List<ProjectInfo> projectList = new List<ProjectInfo>();
+			string[] projectDirectories = Directory.GetDirectories(projectsDir);
+			foreach (var dir in projectDirectories)
 			{
-				// Ensure that the folder actually contains a project data file.
-				List<ProjectInfo> projectList = new List<ProjectInfo>();
-				string[] projectDirectories = Directory.GetDirectories(DirectoryFinder.ProjectsDirectory);
-				foreach (var dir in projectDirectories)
-				{
 
-					string basename = Path.GetFileName(dir);
-					if (File.Exists(Path.Combine(dir, basename + Resources.FwFileExtensions.ksFwDataXmlFileExtension)) ||
-						File.Exists(Path.Combine(dir, basename + Resources.FwFileExtensions.ksFwDataDb4oFileExtension)))
-					{
-						projectList.Add(new ProjectInfo(basename));
-					}
+				string basename = Path.GetFileName(dir);
+				if (File.Exists(Path.Combine(dir, basename + FdoFileHelper.ksFwDataXmlFileExtension)) ||
+					File.Exists(Path.Combine(dir, basename + FdoFileHelper.ksFwDataDb4oFileExtension)))
+				{
+					projectList.Add(new ProjectInfo(basename));
 				}
-				//projectList.AddRange(projectDirectories.Select(sFolder => new ProjectInfo(Path.GetFileName(sFolder))));
-				return projectList;
 			}
+			//projectList.AddRange(projectDirectories.Select(sFolder => new ProjectInfo(Path.GetFileName(sFolder))));
+			return projectList;
 		}
 		#endregion
 
@@ -100,12 +97,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Get the specified project info if it exists given the UI name (i.e., without path)
 		/// on the local machine.
 		/// </summary>
+		/// <param name="projectsDir"></param>
 		/// <param name="projectName">specified project name (without path)</param>
 		/// <returns>the project info for the specified name; otherwise null</returns>
 		/// ------------------------------------------------------------------------------------
-		public static ProjectInfo GetProjectInfoByName(string projectName)
+		public static ProjectInfo GetProjectInfoByName(string projectsDir, string projectName)
 		{
-			return AllProjects.FirstOrDefault(info => ProjectsAreSame(projectName, info.DatabaseName));
+			return GetAllProjects(projectsDir).FirstOrDefault(info => ProjectsAreSame(projectName, info.DatabaseName));
 		}
 
 		/// ------------------------------------------------------------------------------------

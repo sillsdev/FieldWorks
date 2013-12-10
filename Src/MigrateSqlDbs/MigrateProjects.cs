@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 			internal ProjectItem(string name)
 			{
 				m_name = name;
-				string dir = Path.Combine(DirectoryFinder.ProjectsDirectory, name);
+				string dir = Path.Combine(FwDirectoryFinder.ProjectsDirectory, name);
 				if (Directory.Exists(dir))
 				{
 					if (File.Exists(Path.Combine(dir, name + FwFileExtensions.ksFwDataXmlFileExtension)) ||
@@ -253,7 +253,7 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 					dbName = ImportFrom6_0.TempDatabaseName;
 				}
 				// 4. Dump XML for project (or for the temporary project copy)
-				string projDir = Path.Combine(DirectoryFinder.ProjectsDirectory, proj);
+				string projDir = Path.Combine(FwDirectoryFinder.ProjectsDirectory, proj);
 				string projName = proj;
 				if (Directory.Exists(projDir))
 				{
@@ -263,7 +263,7 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 							return MigrateStatus.Canceled;
 						projName = dlg.TargetProjectName;
 					}
-					projDir = Path.Combine(DirectoryFinder.ProjectsDirectory, projName);
+					projDir = Path.Combine(FwDirectoryFinder.ProjectsDirectory, projName);
 					if (!Directory.Exists(projDir))
 						Directory.CreateDirectory(projDir);
 				}
@@ -339,7 +339,7 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
-			string helpFile = Path.Combine(DirectoryFinder.FWCodeDirectory,
+			string helpFile = Path.Combine(FwDirectoryFinder.CodeDirectory,
 				"Helps\\FieldWorks_Language_Explorer_Help.chm");
 			string helpTopic = "/Overview/Migrate_FieldWorks_6.0.4_(or_earlier)_Projects.htm";
 			Help.ShowHelp(new Label(), helpFile, helpTopic);

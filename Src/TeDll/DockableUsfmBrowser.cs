@@ -440,7 +440,7 @@ namespace SIL.FieldWorks.TE
 			// We pass the directory (rather than passing no arguments, and letting the paratext dll figure
 			// it out) because the figuring out goes wrong on Linux, where both programs are simulating
 			// the registry.
-			ScrTextCollection.Initialize(FwRegistryHelper.ParatextSettingsDirectory(), false);
+			ScrTextCollection.Initialize(ParatextHelper.ProjectsDirectory, false);
 			List<string> textNames = ScrTextCollection.ScrTextNames;
 
 			foreach (string nameVar in textNames)

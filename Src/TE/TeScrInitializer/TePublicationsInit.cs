@@ -779,7 +779,7 @@ namespace SIL.FieldWorks.TE
 		/// -------------------------------------------------------------------------------------
 		protected override string ResourceFilePathFromFwInstall
 		{
-			get { return Path.DirectorySeparatorChar + DirectoryFinder.ksTeFolderName +
+			get { return Path.DirectorySeparatorChar + FwDirectoryFinder.ksTeFolderName +
 				Path.DirectorySeparatorChar + ResourceFileName; }
 		}
 

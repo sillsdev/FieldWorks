@@ -89,7 +89,7 @@ namespace SIL.FieldWorks.Common.Framework
 			Justification = "TODO-Linux: XmlReaderSettings.DtdProcessing is missing from Mono")]
 		protected override XmlNode LoadDoc()
 		{
-			string sXmlFilePath = DirectoryFinder.FWCodeDirectory + ResourceFilePathFromFwInstall;
+			string sXmlFilePath = FwDirectoryFinder.CodeDirectory + ResourceFilePathFromFwInstall;
 			try
 			{
 				XmlReaderSettings settings = new XmlReaderSettings();

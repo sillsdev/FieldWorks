@@ -531,7 +531,7 @@ namespace SIL.FieldWorks.IText
 								//alert the user
 								cache.LanguageProject.AddToCurrentAnalysisWritingSystems((IWritingSystem)writingSystem);
 								// We already have progress indications up.
-								XmlTranslatedLists.ImportTranslatedListsForWs(writingSystem.Id, cache, null);
+								XmlTranslatedLists.ImportTranslatedListsForWs(writingSystem.Id, cache, FwDirectoryFinder.TemplateDirectory, null);
 							}
 							else if (result == DialogResult.Cancel)
 							{
@@ -636,7 +636,7 @@ namespace SIL.FieldWorks.IText
 			catch (ArgumentException e)
 			{
 				IWritingSystem ws;
-				WritingSystemServices.FindOrCreateSomeWritingSystem(cache, lang.lang,
+				WritingSystemServices.FindOrCreateSomeWritingSystem(cache, FwDirectoryFinder.TemplateDirectory, lang.lang,
 					!fIsVernacular, fIsVernacular, out ws);
 				writingSystem = ws;
 				s_wsMapper.Add(lang.lang, writingSystem); // old id string -> new langWs mapping

@@ -23,7 +23,6 @@ using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SILUBS.SharedScrUtils;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainImpl;
 
 namespace SIL.FieldWorks.FDO.DomainServices
@@ -2326,49 +2325,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			cmFile.InternalPath = srcFile;
 
 			return cmFile;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Copy source file to a unique file in FW\pictures directory.
-		/// </summary>
-		/// <param name="srcFilename">The path to the original filename (an internal copy will
-		/// be made in this method)</param>
-		/// <param name="dstSubdir">The subfolder of the FW Data directory in which the
-		/// internal copy of the file should be created, if necessary (no backslashes needed)
-		/// </param>
-		/// <returns>Destination file path, relative to the FW data directory, or ".__NONE__"
-		/// if source file doesn't exist.
-		/// </returns>
-		/// ------------------------------------------------------------------------------------
-		public static string CopyFileToInternal(string srcFilename, string dstSubdir)
-		{
-			string srcFilenameCorrected;
-			if (!FileUtils.TrySimilarFileExists(srcFilename, out srcFilenameCorrected))
-				return EmptyFileName;
-
-			var strDestFolder = Path.Combine(DirectoryFinder.FWDataDirectory, dstSubdir);
-			if (!Directory.Exists(strDestFolder))
-				Directory.CreateDirectory(strDestFolder);
-
-			var strDestFileRelPath = Path.Combine(dstSubdir, Path.GetFileName(srcFilenameCorrected));
-			var strDestFileAbsPath = Path.Combine(DirectoryFinder.FWDataDirectory, strDestFileRelPath);
-
-			// (The case-independent comparison is valid only for Microsoft Windows.)
-			if (srcFilenameCorrected.Equals(strDestFileAbsPath, StringComparison.OrdinalIgnoreCase))
-				return strDestFileRelPath;	// don't copy files already in internal directory.
-
-			var strFile = Path.GetFileNameWithoutExtension(srcFilenameCorrected);
-			var strExt = Path.GetExtension(srcFilenameCorrected);
-			var iQual = 0;
-			while (FileUtils.FileExists(strDestFileAbsPath))
-			{
-				iQual++;
-				strDestFileRelPath = Path.Combine(dstSubdir, strFile + iQual + strExt);
-				strDestFileAbsPath = Path.Combine(DirectoryFinder.FWDataDirectory, strDestFileRelPath);
-			}
-			File.Copy(srcFilenameCorrected, strDestFileAbsPath);
-			return strDestFileRelPath;
 		}
 
 		/// ------------------------------------------------------------------------------------

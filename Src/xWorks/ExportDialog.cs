@@ -1116,7 +1116,7 @@ namespace SIL.FieldWorks.XWorks
 
 		internal string FxtDirectory
 		{
-			get { return Path.Combine(DirectoryFinder.FWCodeDirectory, ConfigurationFilePath); }
+			get { return Path.Combine(FwDirectoryFinder.CodeDirectory, ConfigurationFilePath); }
 		}
 
 		protected virtual string ConfigurationFilePath

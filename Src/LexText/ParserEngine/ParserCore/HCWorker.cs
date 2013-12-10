@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			public XmlFwResolver()
 			{
-				m_baseUri = new Uri(DirectoryFinder.FWCodeDirectory + Path.DirectorySeparatorChar);
+				m_baseUri = new Uri(FwDirectoryFinder.CodeDirectory + Path.DirectorySeparatorChar);
 			}
 
 			public override Uri ResolveUri(Uri baseUri, string relativeUri)

@@ -148,7 +148,7 @@ namespace  SIL.FieldWorks.LexText.Controls.MGA
 			CancelButton = buttonCancel;
 			// add the Info button
 			buttonInfo.Text = MGAStrings.ksHideInfo;
-			string sXmlFile = Path.Combine(DirectoryFinder.FWCodeDirectory,
+			string sXmlFile = Path.Combine(FwDirectoryFinder.CodeDirectory,
 				String.Format("Language Explorer{0}MGA{0}GlossLists{0}EticGlossList.xml",
 				Path.DirectorySeparatorChar));
 			treeViewGlossListItem.LoadGlossListTreeFromXml(sXmlFile,

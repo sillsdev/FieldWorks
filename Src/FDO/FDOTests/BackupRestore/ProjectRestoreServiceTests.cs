@@ -13,13 +13,11 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.IO;
-using System.Text;
 using System.Threading;
 using NUnit.Framework;
 
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
-using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using FwRemoteDatabaseConnector;
 
@@ -34,26 +32,18 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 	{
 		private ProjectRestoreService m_restoreProjectService;
 		private RestoreProjectSettings m_restoreSettings;
-		private bool m_fResetSharedProjectValue;
 		/// <summary>Setup for db4o client server tests.</summary>
 		[TestFixtureSetUp]
 		public void Init()
 		{
 			// Allow db4o client server unit test to work without running the window service.
-			RemotingServer.Start();
-			if (Db4oServerInfo.AreProjectsShared_Internal)
-			{
-				m_fResetSharedProjectValue = true;
-				Db4oServerInfo.AreProjectsShared_Internal = false;
-			}
+			RemotingServer.Start(FwDirectoryFinder.RemotingTcpServerConfigFile, FwDirectoryFinder.FdoDirectories, () => false, v => {});
 		}
 
 		/// <summary>Stop db4o client server.</summary>
 		[TestFixtureTearDown]
 		public void UnInit()
 		{
-			if (m_fResetSharedProjectValue)
-				Db4oServerInfo.AreProjectsShared_Internal = m_fResetSharedProjectValue;
 			RemotingServer.Stop();
 		}
 
@@ -63,10 +53,10 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 		[SetUp]
 		public void Initialize()
 		{
-			var restoreTestsZipFileDir = Path.Combine(DirectoryFinder.FwSourceDirectory, "FDO", "FDOTests",
+			var restoreTestsZipFileDir = Path.Combine(FwDirectoryFinder.SourceDirectory, "FDO", "FDOTests",
 				"BackupRestore","RestoreServiceTestsZipFileDir");
 
-			m_restoreSettings = new RestoreProjectSettings()
+			m_restoreSettings = new RestoreProjectSettings(FwDirectoryFinder.ProjectsDirectory)
 			{
 				Backup = new BackupFileSettings(Path.Combine(restoreTestsZipFileDir,
 					Path.ChangeExtension("TestRestoreFWProject", FdoFileHelper.ksFwBackupFileExtension))),
@@ -97,7 +87,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 		{
 			m_restoreSettings.ProjectName = "TestRestoreFWProject 01";
 
-			m_restoreProjectService = new ProjectRestoreService(m_restoreSettings);
+			m_restoreProjectService = new ProjectRestoreService(m_restoreSettings, new DummyFdoUI(),
+				FwDirectoryFinder.ConverterConsoleExe, FwDirectoryFinder.DbExe);
 
 			m_restoreProjectService.RestoreProject(new DummyProgressDlg());
 
@@ -113,7 +104,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 		{
 			m_restoreSettings.ProjectName = "TestRestoreFWProject 01";
 			m_restoreSettings.IncludeConfigurationSettings = true;
-			m_restoreProjectService = new ProjectRestoreService(m_restoreSettings);
+			m_restoreProjectService = new ProjectRestoreService(m_restoreSettings, new DummyFdoUI(),
+				FwDirectoryFinder.ConverterConsoleExe, FwDirectoryFinder.DbExe);
 
 			m_restoreProjectService.RestoreProject(new DummyProgressDlg());
 
@@ -220,7 +212,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 
 		private string GetFullVersionOfRelativeNonStdDir(string nonStdLinkedFilesDir)
 		{
-			return Path.Combine(Directory.GetParent(DirectoryFinder.FwSourceDirectory).ToString(), nonStdLinkedFilesDir);
+			return Path.Combine(Directory.GetParent(FwDirectoryFinder.SourceDirectory).ToString(), nonStdLinkedFilesDir);
 		}
 
 		/// <summary>
@@ -234,7 +226,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			IThreadedProgress progressDlg = new DummyProgressDlg();
 			m_restoreSettings.IncludeConfigurationSettings = false;
 
-			m_restoreProjectService = new ProjectRestoreService(m_restoreSettings);
+			m_restoreProjectService = new ProjectRestoreService(m_restoreSettings, new DummyFdoUI(),
+				FwDirectoryFinder.ConverterConsoleExe, FwDirectoryFinder.DbExe);
 
 			//Restore the project once and do not delete it so that we can restore the project over the previous one.
 			m_restoreProjectService.RestoreProject(progressDlg);

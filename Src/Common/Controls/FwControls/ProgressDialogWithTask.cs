@@ -711,7 +711,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="parentWindow"> </param>
 		public static void ImportTranslatedListsForWs(Form parentWindow, FdoCache cache, string ws)
 		{
-			string path = XmlTranslatedLists.TranslatedListsPathForWs(ws);
+			string path = XmlTranslatedLists.TranslatedListsPathForWs(ws, FwDirectoryFinder.TemplateDirectory);
 			if (!File.Exists(path))
 				return;
 			using (var dlg = new ProgressDialogWithTask(parentWindow))
@@ -736,7 +736,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			var ws = (string)args[0];
 			var cache = (FdoCache) args[1];
-			XmlTranslatedLists.ImportTranslatedListsForWs(ws, cache, dlg);
+			XmlTranslatedLists.ImportTranslatedListsForWs(ws, cache, FwDirectoryFinder.TemplateDirectory, dlg);
 			return null;
 		}
 		#endregion

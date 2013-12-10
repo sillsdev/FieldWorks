@@ -16,6 +16,7 @@ using System.Collections.Generic;
 
 using NUnit.Framework;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -522,7 +523,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		private void VerifyNoOrphanedFootnotes()
 		{
-			ScrChecksDataSource scrData = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"));
+			ScrChecksDataSource scrData = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"), FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			foreach (IScrBook book in m_scr.ScriptureBooksOS)
 			{
 				using (IEnumerator<IScrFootnote> footnotes = book.FootnotesOS.GetEnumerator())

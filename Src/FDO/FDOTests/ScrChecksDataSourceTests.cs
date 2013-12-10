@@ -42,7 +42,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public override void TestSetup()
 		{
 			base.TestSetup();
-			m_dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"), DirectoryFinder.TeStylesPath);
+			m_dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"),
+				FwDirectoryFinder.LegacyWordformingCharOverridesFile, FwDirectoryFinder.TeStylesPath);
 		}
 
 		///--------------------------------------------------------------------------------------

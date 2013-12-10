@@ -16,7 +16,6 @@ using System.Runtime.InteropServices;
 using Microsoft.Practices.ServiceLocation;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Application.Impl;
 using SIL.FieldWorks.FDO.DomainImpl;
@@ -40,17 +39,19 @@ namespace SIL.FieldWorks.FDO.IOC
 	{
 		private readonly FDOBackendProviderType m_backendProviderType;
 		private readonly IFdoUI m_ui;
+		private readonly IFdoDirectories m_dirs;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="backendProviderType">Type of backend provider to create.</param>
-		/// <param name="ui">The user action implementation</param>
-		/// ------------------------------------------------------------------------------------
-		internal FdoServiceLocatorFactory(FDOBackendProviderType backendProviderType, IFdoUI ui)
+		/// <param name="ui">The UI service.</param>
+		/// <param name="dirs">The directories service.</param>
+		internal FdoServiceLocatorFactory(FDOBackendProviderType backendProviderType, IFdoUI ui, IFdoDirectories dirs)
 		{
 			m_backendProviderType = backendProviderType;
 			m_ui = ui;
+			m_dirs = dirs;
 		}
 
 		#region Implementation of IServiceLocatorBootstrapper
@@ -238,7 +239,7 @@ namespace SIL.FieldWorks.FDO.IOC
 			registry
 				.For<IWritingSystemManager>()
 				.LifecycleIs(new SingletonLifecycle())
-				.Use(() => FwUtils.CreateWritingSystemManager());
+				.Use(() => new PalasoWritingSystemManager {TemplateFolder = m_dirs.TemplateDirectory});
 			registry
 				.For<ILgWritingSystemFactory>()
 				.Use(c => (ILgWritingSystemFactory)c.GetInstance<IWritingSystemManager>());
@@ -250,6 +251,10 @@ namespace SIL.FieldWorks.FDO.IOC
 			registry
 				.For<IFdoUI>()
 				.Use(m_ui);
+
+			registry
+				.For<IFdoDirectories>()
+				.Use(m_dirs);
 
 			// =================================================================================
 			// Don't add COM object to the registry. StructureMap does not properly release COM

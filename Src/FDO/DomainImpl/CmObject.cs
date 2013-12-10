@@ -27,7 +27,6 @@ using System.Xml;
 using System.IO; // MemoryStream.
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;

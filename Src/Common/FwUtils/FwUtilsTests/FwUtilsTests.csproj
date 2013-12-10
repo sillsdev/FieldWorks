@@ -158,7 +158,7 @@
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
     <Compile Include="CaseFunctionsTest.cs" />
-    <Compile Include="DirectoryFinderTests.cs" />
+    <Compile Include="FwDirectoryFinderTests.cs" />
     <Compile Include="DummyCharPropEngine.cs" />
     <Compile Include="DummyFwRegistryHelper.cs" />
     <Compile Include="DummyICU.cs" />

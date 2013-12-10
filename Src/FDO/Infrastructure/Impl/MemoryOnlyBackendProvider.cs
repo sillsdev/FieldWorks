@@ -24,8 +24,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// Constructor.
 		/// </summary>
 		internal MemoryOnlyBackendProvider(FdoCache cache, IdentityMap identityMap, ICmObjectSurrogateFactory surrogateFactory,
-			IFwMetaDataCacheManagedInternal mdc, IDataMigrationManager dataMigrationManager, IFdoUI ui)
-			: base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager, ui)
+			IFwMetaDataCacheManagedInternal mdc, IDataMigrationManager dataMigrationManager, IFdoUI ui, IFdoDirectories dirs)
+			: base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager, ui, dirs)
 		{
 		}
 

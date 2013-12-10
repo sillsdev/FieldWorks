@@ -46,7 +46,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private readonly Rectangle m_initialBounds = Rectangle.Empty;
 		private readonly int m_initialSplitterPosition = -1;
 		private ObtainedProjectType m_obtainedProjectType = ObtainedProjectType.None;
-		private readonly IFdoUI m_ui;
 		#endregion
 
 		#region LanguageProjectInfo class
@@ -103,10 +102,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// <param name="bounds">The initial client bounds of the dialog.</param>
 		/// <param name="splitterPosition">The initial splitter position.</param>
-		/// <param name="ui"></param>
 		/// ------------------------------------------------------------------------------------
-		public ChooseLangProjectDialog(Rectangle bounds, int splitterPosition, IFdoUI ui)
-			: this(null, false, ui)
+		public ChooseLangProjectDialog(Rectangle bounds, int splitterPosition)
+			: this(null, false)
 		{
 			m_initialBounds = bounds;
 			m_initialSplitterPosition = splitterPosition;
@@ -123,14 +121,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="openToAssosiateFwProject">If set to <c>true</c> the dialog will be
 		/// used to assosiate a FieldWorks project with another application (e.g. Paratext).
 		/// </param>
-		/// <param name="ui"></param>
 		/// ------------------------------------------------------------------------------------
 		public ChooseLangProjectDialog(IHelpTopicProvider helpTopicProvider,
-			bool openToAssosiateFwProject, IFdoUI ui)
+			bool openToAssosiateFwProject)
 			: this()
 		{
 			m_helpTopicProvider = helpTopicProvider;
-			m_ui = ui;
 
 			if (helpTopicProvider == null)
 				m_btnHelp.Enabled = false;
@@ -539,7 +535,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private string HostsFileName
 		{
-			get { return Path.Combine(DirectoryFinder.ProjectsDirectory, "HostsManuallyConnected.txt"); }
+			get { return Path.Combine(FwDirectoryFinder.ProjectsDirectory, "HostsManuallyConnected.txt"); }
 		}
 
 		private void AddHostButtonClick(object sender, EventArgs e)
@@ -559,7 +555,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				Hide();
 				dlg.CheckFileExists = true;
-				dlg.InitialDirectory = DirectoryFinder.ProjectsDirectory;
+				dlg.InitialDirectory = FwDirectoryFinder.ProjectsDirectory;
 				dlg.RestoreDirectory = true;
 				dlg.Title = FwCoreDlgs.ksChooseLangProjectDialogTitle;
 				dlg.ValidateNames = true;
@@ -573,7 +569,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void OpenBridgeProjectLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			// ObtainProjectFromAnySource may return null, empty string, or the full pathname to an fwdata file.
-			Project = ObtainProjectMethod.ObtainProjectFromAnySource(this, m_helpTopicProvider, out m_obtainedProjectType, m_ui);
+			Project = ObtainProjectMethod.ObtainProjectFromAnySource(this, m_helpTopicProvider, out m_obtainedProjectType);
 			Server = null;
 			if (String.IsNullOrEmpty(Project))
 				return; // Don't close the Open project dialog yet (LT-13187)

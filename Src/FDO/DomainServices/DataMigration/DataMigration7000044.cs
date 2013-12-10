@@ -21,7 +21,7 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using Palaso.WritingSystems.Migration;
 using Palaso.WritingSystems.Migration.WritingSystemsLdmlV0To1Migration;
-using SIL.FieldWorks.Common.FwUtils;
+using SIL.CoreImpl;
 using System;
 
 namespace SIL.FieldWorks.FDO.DomainServices.DataMigration

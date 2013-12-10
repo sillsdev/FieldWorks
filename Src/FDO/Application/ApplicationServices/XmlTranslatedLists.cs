@@ -20,7 +20,6 @@ using System.Xml;
 using ICSharpCode.SharpZipLib.Zip;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using System.Globalization;
 using SIL.Utils;
@@ -117,10 +116,11 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 		/// </summary>
 		/// <param name="ws"></param>
 		/// <param name="cache"></param>
+		/// <param name="templateDir"></param>
 		/// <param name="progress"> </param>
-		public static void ImportTranslatedListsForWs(string ws, FdoCache cache, IProgress progress)
+		public static void ImportTranslatedListsForWs(string ws, FdoCache cache, string templateDir, IProgress progress)
 		{
-			string path = TranslatedListsPathForWs(ws);
+			string path = TranslatedListsPathForWs(ws, templateDir);
 			if (File.Exists(path))
 			{
 				var instance = new XmlTranslatedLists();
@@ -141,10 +141,11 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 		/// Call before ImportTranslatedListsForWs. Call that only if the file exists.
 		/// </summary>
 		/// <param name="ws"></param>
+		/// <param name="templateDir"></param>
 		/// <returns></returns>
-		public static string TranslatedListsPathForWs(string ws)
+		public static string TranslatedListsPathForWs(string ws, string templateDir)
 		{
-			return Path.Combine(DirectoryFinder.TemplateDirectory, Path.ChangeExtension(LocalizedListPrefix + ws, "zip"));
+			return Path.Combine(templateDir, Path.ChangeExtension(LocalizedListPrefix + ws, "zip"));
 		}
 
 		private int GetWsFromStr(string sWs)

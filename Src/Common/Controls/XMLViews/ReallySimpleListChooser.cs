@@ -1221,7 +1221,7 @@ namespace SIL.FieldWorks.Common.Controls
 							if (!Path.IsPathRooted(helpFile))
 							{
 								// Helps are part of the installed code files.  See FWR-1002.
-								string helpsPath = Path.Combine(DirectoryFinder.FWCodeDirectory, "Helps");
+								string helpsPath = Path.Combine(FwDirectoryFinder.CodeDirectory, "Helps");
 								helpFile = Path.Combine(helpsPath, helpFile);
 							}
 #if __MonoCS__

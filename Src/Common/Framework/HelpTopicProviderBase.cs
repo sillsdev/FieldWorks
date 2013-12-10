@@ -46,7 +46,7 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			get
 			{
-				return DirectoryFinder.FWCodeDirectory + GetHelpString("UserHelpFile");
+				return FwDirectoryFinder.CodeDirectory + GetHelpString("UserHelpFile");
 			}
 		}
 		#endregion

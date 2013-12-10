@@ -207,7 +207,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_sHelpTopic = sHelpTopic;
 			if (m_helpTopicProvider != null)
 			{
-				this.m_helpProvider.HelpNamespace = Path.Combine(DirectoryFinder.FWCodeDirectory,
+				this.m_helpProvider.HelpNamespace = Path.Combine(FwDirectoryFinder.CodeDirectory,
 					m_helpTopicProvider.GetHelpString("UserHelpFile"));
 				this.m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(m_sHelpTopic));
 				this.m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);

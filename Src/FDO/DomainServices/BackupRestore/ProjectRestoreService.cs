@@ -19,7 +19,6 @@ using System.IO;
 using System.Text;
 using ICSharpCode.SharpZipLib.Zip;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 
@@ -36,6 +35,8 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		private bool m_fRestoreOverProject;
 		private string m_sLinkDirChangedTo;
 		private readonly IFdoUI m_ui;
+		private readonly string m_converterConsolePath;
+		private readonly string m_dbPath;
 		#endregion
 
 		#region Constructor
@@ -44,27 +45,22 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// Constructor
 		/// </summary>
 		/// <param name="settings">The restore settings.</param>
-		/// <param name="ui"></param>
+		/// <param name="ui">The UI service.</param>
+		/// <param name="converterConsolePath"></param>
+		/// <param name="dbPath"></param>
 		/// ------------------------------------------------------------------------------------
-		public ProjectRestoreService(RestoreProjectSettings settings, IFdoUI ui)
+		public ProjectRestoreService(RestoreProjectSettings settings, IFdoUI ui, string converterConsolePath, string dbPath)
 		{
 			m_restoreSettings = settings;
 			m_ui = ui;
+			m_converterConsolePath = converterConsolePath;
+			m_dbPath = dbPath;
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Constructor  used in Tests where we do not need to have a helpTopicProvider.
-		/// </summary>
-		/// <param name="settings">The restore settings.</param>
-		/// ------------------------------------------------------------------------------------
-		public ProjectRestoreService(RestoreProjectSettings settings)
-		{
-			m_restoreSettings = settings;
-		}
 		#endregion
 
 		#region Public methods
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Perform a restore of the project specified in the settings.
@@ -117,20 +113,20 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			}
 
 			// switch to the desired backend (if it's in the projects directory...anything else stays XML for now).
-			if (DirectoryFinder.IsSubFolderOfProjectsDirectory(m_restoreSettings.ProjectPath) && !suppressConversion)
-				ClientServerServices.Current.Local.ConvertToDb4oBackendIfNeeded(progressDlg, m_restoreSettings.FullProjectPath, m_ui);
+			if (Path.GetDirectoryName(m_restoreSettings.ProjectPath) == m_restoreSettings.ProjectsRootFolder && !suppressConversion)
+				ClientServerServices.Current.Local.ConvertToDb4oBackendIfNeeded(progressDlg, m_restoreSettings.FullProjectPath);
 
 			CleanupAfterRestore(true);
 		}
 
 		private void ImportFrom6_0Backup(BackupFileSettings fileSettings, IThreadedProgress progressDlg)
 		{
-			var importer = new ImportFrom6_0(progressDlg);
+			var importer = new ImportFrom6_0(progressDlg, m_converterConsolePath, m_dbPath);
 			bool importSuccessful;
 			try
 			{
 				string projFile;
-				importSuccessful = importer.Import(fileSettings.File, m_restoreSettings.ProjectName, out projFile);
+				importSuccessful = importer.Import(fileSettings.File, m_restoreSettings.ProjectName, m_restoreSettings.ProjectsRootFolder, out projFile);
 			}
 			catch (CannotConvertException e)
 			{
@@ -215,7 +211,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 						var fileName = Path.GetFileName(entry.Name);
 						if (!String.IsNullOrEmpty(fileName))
 						{
-							string filePath = Path.Combine(DirectoryFinder.ProjectsDirectory, fileName);
+							string filePath = Path.Combine(m_restoreSettings.ProjectsRootFolder, fileName);
 							if (FileUtils.TrySimilarFileExists(filePath, out filePath))
 								FileUtils.Delete(filePath);
 						}
@@ -307,16 +303,16 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 				"The option to include linked files should not be allowed if they aren't available in the backup settings");
 
 			var proposedDestinationLinkedFilesPath =
-				FdoFileHelperRelativePaths.GetLinkedFilesFullPathFromRelativePath(
+				LinkedFilesRelativePathHelper.GetLinkedFilesFullPathFromRelativePath(m_restoreSettings.ProjectsRootFolder,
 					fileSettings.LinkedFilesPathRelativePersisted, m_restoreSettings.ProjectPath);
 
 			var linkedFilesPathInZip = fileSettings.LinkedFilesPathActualPersisted;
-			if (fileSettings.LinkedFilesPathRelativePersisted.StartsWith(FdoFileHelperRelativePaths.ksProjectRelPath))
+			if (fileSettings.LinkedFilesPathRelativePersisted.StartsWith(LinkedFilesRelativePathHelper.ksProjectRelPath))
 			{
 				// We store any files inside the project folder as a relative path from the project's directory.
 				// Make sure we don't attempt to search for the whole directory structure in the zip file. (FWR-2909)
 				linkedFilesPathInZip = fileSettings.LinkedFilesPathRelativePersisted.Substring(
-					FdoFileHelperRelativePaths.ksProjectRelPath.Length + 1);
+					LinkedFilesRelativePathHelper.ksProjectRelPath.Length + 1);
 			}
 			var filesContainedInLinkdFilesFolder = GetAllFilesUnderFolderInZipFileAndDateTimes(linkedFilesPathInZip);
 

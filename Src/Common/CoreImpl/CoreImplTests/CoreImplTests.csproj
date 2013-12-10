@@ -110,6 +110,7 @@
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
     <Compile Include="DebugProcsTests.cs" />
+    <Compile Include="DirectoryFinderTests.cs" />
     <Compile Include="IVwCacheDaTests.cs" />
     <Compile Include="LangTagUtilsTests.cs" />
     <Compile Include="PalasoWritingSystemManagerTests.cs" />

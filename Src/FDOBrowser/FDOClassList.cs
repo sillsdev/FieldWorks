@@ -138,7 +138,7 @@ namespace FDOBrowser
 				return;
 
 			using (var threadHelper = new ThreadHelper())
-			using (FdoCache cache = FdoCache.CreateCacheWithNoLangProj(new BrowserProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", new SilentFdoUI(threadHelper)))
+			using (FdoCache cache = FdoCache.CreateCacheWithNoLangProj(new BrowserProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", new SilentFdoUI(threadHelper), FwDirectoryFinder.FdoDirectories))
 			{
 				IFwMetaDataCacheManaged mdc = (IFwMetaDataCacheManaged)cache.MainCacheAccessor.MetaDataCache;
 				s_allFDOClassNames = new List<string>();

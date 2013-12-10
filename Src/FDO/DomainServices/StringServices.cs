@@ -76,7 +76,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		public static string MarkTextInBldrAsHyperlink(ITsStrBldr strBldr, int ichStart,
 			int ichLim, string url, IStStyle linkStyle, string linkedFilesRootDir)
 		{
-			var relativeUrl = FdoFileHelperRelativePaths.GetRelativeLinkedFilesPath(url, linkedFilesRootDir);
+			var relativeUrl = LinkedFilesRelativePathHelper.GetRelativeLinkedFilesPath(url, linkedFilesRootDir);
 			if (string.IsNullOrEmpty(relativeUrl))
 			{
 				MarkTextInBldrAsHyperlink(strBldr, ichStart, ichLim, url, linkStyle);

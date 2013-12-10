@@ -86,7 +86,7 @@ namespace SIL.FieldWorks.Common.FXT
 		{
 			RegistryHelper.CompanyName = "SIL";
 			RegistryHelper.ProductName = "FieldWorks";
-			m_sExpectedResultsPath = Path.Combine(DirectoryFinder.FwSourceDirectory,
+			m_sExpectedResultsPath = Path.Combine(FwDirectoryFinder.SourceDirectory,
 															Path.Combine("FXT",
 															Path.Combine("FxtDll",
 															Path.Combine("FxtDllTests", "ExpectedResults"))));

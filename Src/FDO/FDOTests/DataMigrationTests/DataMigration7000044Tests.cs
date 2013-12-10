@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			var projectFolder = Path.GetTempPath();
 			var storePath = Path.Combine(projectFolder, FdoFileHelper.ksWritingSystemsDir);
 			PrepareStore(storePath);
-			var testDataPath = Path.Combine(DirectoryFinder.FwSourceDirectory, "FDO/FDOTests/TestData");
+			var testDataPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "FDO/FDOTests/TestData");
 			var testEnglishPath = Path.Combine(storePath, "en.ldml");
 			File.Copy(Path.Combine(testDataPath, "en_7000043.ldml"), testEnglishPath);
 			File.SetAttributes(testEnglishPath, FileAttributes.Normal); // don't want to copy readonly property.
@@ -107,7 +107,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			var sampleSettings = Path.Combine(settingsFolder, "db$local$Settings.xml");
 			File.WriteAllText(sampleSettings, sampleLocalSettingsData, Encoding.UTF8);
 
-			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000043, dtos, mockMDC, projectFolder);
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000043, dtos, mockMDC, projectFolder, FwDirectoryFinder.FdoDirectories);
 			// Do the migration.
 			m_dataMigrationManager.PerformMigration(dtoRepos, 7000044, new DummyProgressDlg());
 

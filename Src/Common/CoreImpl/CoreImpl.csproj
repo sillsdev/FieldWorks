@@ -99,7 +99,9 @@
     <Compile Include="..\..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="DirectoryFinder.cs" />
     <Compile Include="CaseFunctions.cs" />
+    <Compile Include="VersionInfoProvider.cs" />
     <Compile Include="StartupException.cs" />
     <Compile Include="GenDate.cs" />
     <Compile Include="GraphicsManager.cs" />

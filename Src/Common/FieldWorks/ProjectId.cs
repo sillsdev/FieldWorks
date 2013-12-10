@@ -200,7 +200,7 @@ namespace SIL.FieldWorks
 		{
 			get
 			{
-				return !IsLocal || (DirectoryFinder.IsSubFolderOfProjectsDirectory(ProjectFolder) &&
+				return !IsLocal || (FwDirectoryFinder.IsSubFolderOfProjectsDirectory(ProjectFolder) &&
 					SysPath.GetExtension(m_path) == ClientServerServices.Current.Local.DefaultBackendType.GetExtension()) ?
 					Name : m_path;
 			}
@@ -248,7 +248,7 @@ namespace SIL.FieldWorks
 			get
 			{
 				return IsLocal ? SysPath.GetDirectoryName(m_path) :
-					SysPath.Combine(SysPath.Combine(DirectoryFinder.ProjectsDirectory, ServerName), Name);
+					SysPath.Combine(SysPath.Combine(FwDirectoryFinder.ProjectsDirectory, ServerName), Name);
 			}
 		}
 
@@ -266,7 +266,7 @@ namespace SIL.FieldWorks
 					return ProjectFolder;
 				// TODO-Linux FWNX-446: Implement alternative way of getting path to shared folder
 				// Currently assumes projects also exist in the local Project Directory.
-				string baseDir = (MiscUtils.IsUnix) ? DirectoryFinder.ProjectsDirectory :
+				string baseDir = (MiscUtils.IsUnix) ? FwDirectoryFinder.ProjectsDirectory :
 					@"\\" + ServerName + @"\Projects";
 				return SysPath.Combine(baseDir, Name);
 			}
@@ -545,7 +545,7 @@ namespace SIL.FieldWorks
 			if (!SysPath.IsPathRooted(name))
 			{
 				string sProjName = (SysPath.GetExtension(name) == ext) ? SysPath.GetFileNameWithoutExtension(name) : name;
-				name = SysPath.Combine(SysPath.Combine(DirectoryFinder.ProjectsDirectory, sProjName), name);
+				name = SysPath.Combine(SysPath.Combine(FwDirectoryFinder.ProjectsDirectory, sProjName), name);
 			}
 			// If the file doesn't have the expected extension and exists with the extension or
 			// does not exist without it, we add the expected extension.

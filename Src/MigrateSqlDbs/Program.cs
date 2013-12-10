@@ -25,6 +25,7 @@ using System.Windows.Forms;
 using Microsoft.Win32;
 using Palaso.WritingSystems.Migration;
 using Palaso.WritingSystems.Migration.WritingSystemsLdmlV0To1Migration;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
@@ -101,14 +102,14 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 
 			// TE-9422. If we had an older version of FW7 installed, ldml files are < verion 2, so will cause
 			// a crash if we don't migrate the files to version 2 before opening a project with the current version.
-			var globalWsFolder = DirectoryFinder.GlobalWritingSystemStoreDirectory;
+			string globalWsFolder = DirectoryFinder.GlobalWritingSystemStoreDirectory;
 			var globalMigrator = new LdmlInFolderWritingSystemRepositoryMigrator(globalWsFolder, NoteMigration);
 			globalMigrator.Migrate();
 
 			using (var threadHelper = new ThreadHelper())
 			using (var progressDlg = new ProgressDialogWithTask(threadHelper))
 			{
-				ImportFrom6_0 importer = new ImportFrom6_0(progressDlg, s_fDebug);
+				ImportFrom6_0 importer = new ImportFrom6_0(progressDlg, FwDirectoryFinder.ConverterConsoleExe, FwDirectoryFinder.DbExe, s_fDebug);
 				if (!importer.IsFwSqlServerInstalled())
 					return -1;
 				string version;

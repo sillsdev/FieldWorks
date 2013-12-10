@@ -288,6 +288,10 @@ namespace SIL.FieldWorks
 				// from HKCU/Software/SIL/FieldWorks/7.0 -> FieldWorks/8.
 				FwRegistryHelper.UpgradeUserSettingsIfNeeded();
 
+				// initialize client-server services to use Db4O backend
+				ClientServerServices.SetCurrentToDb4OBackend(s_ui, FwDirectoryFinder.FdoDirectories,
+					() => FwDirectoryFinder.ProjectsDirectory == FwDirectoryFinder.ProjectsDirectoryLocalMachine);
+
 				if (appArgs.ShowHelp)
 				{
 					ShowCommandLineHelp();
@@ -481,7 +485,7 @@ namespace SIL.FieldWorks
 			// There is no need to re-show the dialog since the user has already chosen
 			// the options and confirmed to overwrite any existing database.
 			Logger.WriteEvent("Restoring project: " + appArgs.BackupFile);
-			RestoreProjectSettings restoreSettings = new RestoreProjectSettings(appArgs.Database,
+			RestoreProjectSettings restoreSettings = new RestoreProjectSettings(FwDirectoryFinder.ProjectsDirectory, appArgs.Database,
 				appArgs.BackupFile, appArgs.RestoreOptions);
 			RestoreCurrentProject(new FwRestoreProjectSettings(appArgs.AppAbbrev, restoreSettings), null);
 		}
@@ -807,7 +811,7 @@ namespace SIL.FieldWorks
 			Form owner = s_splashScreen != null ? s_splashScreen.Form : Form.ActiveForm;
 			using (var progressDlg = new ProgressDialogWithTask(owner))
 			{
-				FdoCache cache = FdoCache.CreateCacheFromExistingData(projectId, s_sWsUser, progressDlg, s_ui);
+				FdoCache cache = FdoCache.CreateCacheFromExistingData(projectId, s_sWsUser, s_ui, FwDirectoryFinder.FdoDirectories, progressDlg);
 				EnsureValidLinkedFilesFolder(cache);
 				cache.ProjectNameChanged += ProjectNameChanged;
 				cache.ServiceLocator.GetInstance<IUndoStackManager>().OnSave += FieldWorks_OnSave;
@@ -1701,7 +1705,7 @@ namespace SIL.FieldWorks
 							projectToTry = null; // If the user cancels the send/receive, this null will result in a return to the welcome dialog.
 							// Hard to say what Form.ActiveForm is here. The splash and welcome dlgs are both gone.
 							var projectDataPathname = ObtainProjectMethod.ObtainProjectFromAnySource(Form.ActiveForm,
-								helpTopicProvider, out obtainedProjectType, s_ui);
+								helpTopicProvider, out obtainedProjectType);
 							if (!string.IsNullOrEmpty(projectDataPathname))
 							{
 								projectToTry = new ProjectId(FDOBackendProviderType.kXML, projectDataPathname, null);
@@ -1773,7 +1777,7 @@ namespace SIL.FieldWorks
 			{
 				return null;
 			}
-			using (var dlg = new ChooseLangProjectDialog(helpTopicProvider, false, s_ui))
+			using (var dlg = new ChooseLangProjectDialog(helpTopicProvider, false))
 			{
 				dlg.ShowDialog(dialogOwner);
 				var app = helpTopicProvider as IApp;
@@ -1805,7 +1809,7 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		internal static ProjectId CreateNewProject(Form dialogOwner, FwApp app, IHelpTopicProvider helpTopicProvider)
 		{
-			using (var dlg = new FwNewLangProject(s_ui))
+			using (var dlg = new FwNewLangProject())
 			{
 				dlg.SetDialogProperties(helpTopicProvider);
 				switch (dlg.DisplayDialog(dialogOwner))
@@ -1973,7 +1977,7 @@ namespace SIL.FieldWorks
 				return;
 			string projectPath = fwApp.Cache.ProjectId.Path;
 			string parentDirectory = Path.GetDirectoryName(fwApp.Cache.ProjectId.ProjectFolder);
-			string projectsDirectory = DirectoryFinder.ProjectsDirectory;
+			string projectsDirectory = FwDirectoryFinder.ProjectsDirectory;
 				if (!MiscUtils.IsUnix)
 				{
 					parentDirectory = parentDirectory.ToLowerInvariant();
@@ -1987,7 +1991,7 @@ namespace SIL.FieldWorks
 				if (!ClientServerServices.Current.Local.ShareMyProjects)
 					UpdateProjectsLocation(dlg.ProjectsFolder, fwApp, projectPath);
 					if (!MiscUtils.IsUnix)
-						projectsDirectory = DirectoryFinder.ProjectsDirectory.ToLowerInvariant();
+						projectsDirectory = FwDirectoryFinder.ProjectsDirectory.ToLowerInvariant();
 				if (UpdateProjectsSharing(true, dialogOwner, fwApp, projectPath, parentDirectory, projectsDirectory))
 				{
 					using (var dlgShare = new ShareProjectsFolderDlg())
@@ -2035,7 +2039,7 @@ namespace SIL.FieldWorks
 				// Both these setters check and do nothing if not changed.
 				using (var progressDlg = new ProgressDialogWithTask(s_threadHelper))
 				{
-					return ClientServerServices.Current.Local.SetProjectSharing(fShareProjects, progressDlg, s_ui);
+					return ClientServerServices.Current.Local.SetProjectSharing(fShareProjects, progressDlg);
 				}
 			}
 
@@ -2044,7 +2048,7 @@ namespace SIL.FieldWorks
 			{
 				using (var progressDlg = new ProgressDialogWithTask(s_threadHelper))
 				{
-					fSuccess = ClientServerServices.Current.Local.SetProjectSharing(fShareProjects, progressDlg, s_ui);
+					fSuccess = ClientServerServices.Current.Local.SetProjectSharing(fShareProjects, progressDlg);
 				}
 				return new ProjectId(ClientServerServices.Current.Local.IdForLocalProject(Path.GetFileNameWithoutExtension(projectPath)), null);
 			});
@@ -2062,7 +2066,7 @@ namespace SIL.FieldWorks
 		private static void UpdateProjectsLocation(string newFolderForProjects, FwApp fwApp,
 			string projectPath)
 		{
-			if (newFolderForProjects == null || newFolderForProjects == DirectoryFinder.ProjectsDirectory ||
+			if (newFolderForProjects == null || newFolderForProjects == FwDirectoryFinder.ProjectsDirectory ||
 				!FileUtils.EnsureDirectoryExists(newFolderForProjects))
 				return;
 
@@ -2071,10 +2075,10 @@ namespace SIL.FieldWorks
 			{
 				fMoveFiles = dlg.ShowDialog(fwApp.ActiveMainWindow) == DialogResult.Yes;
 			}
-			string oldFolderForProjects = DirectoryFinder.ProjectsDirectory;
+			string oldFolderForProjects = FwDirectoryFinder.ProjectsDirectory;
 			try
 			{
-				DirectoryFinder.ProjectsDirectory = newFolderForProjects;
+				FwDirectoryFinder.ProjectsDirectory = newFolderForProjects;
 			}
 			catch (Exception)
 			{
@@ -2279,7 +2283,7 @@ namespace SIL.FieldWorks
 			{
 				if (projectPath.StartsWith(oldFolderForProjects))
 				{
-					// This is perhaps a temporary workaround.  On Linux, DirectoryFinder.ProjectsDirectory
+					// This is perhaps a temporary workaround.  On Linux, FwDirectoryFinder.ProjectsDirectory
 					// isn't returning the updated value, but rather the original value.  This seems to
 					// last for the duration of the program, but if you exit and restart the program, it
 					// gets the correct (updated) value!?
@@ -2385,7 +2389,7 @@ namespace SIL.FieldWorks
 					// TODO (TimS): We should probably put FW into single process mode for these
 					// migrations. It would probably be very bad to have two processes attempting to
 					// do migrations at the same time.
-					ProcessStartInfo info = new ProcessStartInfo(DirectoryFinder.MigrateSqlDbsExe);
+					ProcessStartInfo info = new ProcessStartInfo(FwDirectoryFinder.MigrateSqlDbsExe);
 					info.UseShellExecute = false;
 					using (Process proc = Process.Start(info))
 					{
@@ -2507,7 +2511,7 @@ namespace SIL.FieldWorks
 					retry = false;
 					try
 					{
-						var restoreService = new ProjectRestoreService(restoreSettings.Settings, s_ui);
+						var restoreService = new ProjectRestoreService(restoreSettings.Settings, s_ui, FwDirectoryFinder.ConverterConsoleExe, FwDirectoryFinder.DbExe);
 						Logger.WriteEvent("Restoring from " + restoreSettings.Settings.Backup.File);
 						if (RestoreProjectDlg.HandleRestoreFileErrors(null, ResourceHelper.GetResourceString("ksRestoreFailed"),
 							restoreSettings.Settings.Backup.File, () => DoRestore(restoreService)))
@@ -2573,12 +2577,12 @@ namespace SIL.FieldWorks
 			{
 				FdoCache cache = existingCache ?? FdoCache.CreateCacheFromExistingData(
 					new ProjectId(restoreSettings.Settings.FullProjectPath, null),
-					s_sWsUser, progressDlg, s_ui);
+					s_sWsUser, s_ui, FwDirectoryFinder.FdoDirectories, progressDlg);
 
 				try
 				{
-					BackupProjectSettings settings = new BackupProjectSettings(cache, restoreSettings.Settings);
-					settings.DestinationFolder = DirectoryFinder.DefaultBackupDirectory;
+					BackupProjectSettings settings = new BackupProjectSettings(cache, restoreSettings.Settings, FwDirectoryFinder.DefaultBackupDirectory);
+					settings.DestinationFolder = FwDirectoryFinder.DefaultBackupDirectory;
 					settings.AppAbbrev = restoreSettings.FwAppCommandLineAbbrev;
 
 					ProjectBackupService backupService = new ProjectBackupService(cache, settings);
@@ -2751,7 +2755,7 @@ namespace SIL.FieldWorks
 				if (oldDir == null)
 				{
 					// e.g. "C:\\ProgramData\\SIL\\FieldWorks"
-					oldDir = DirectoryFinder.CommonAppDataFolder("SIL/FieldWorks");
+					oldDir = DirectoryFinder.CommonAppDataFolder("FieldWorks");
 				}
 				oldDir = oldDir.TrimEnd(new [] {Path.PathSeparator});
 				var newDir = app.Cache.LangProject.LinkedFilesRootDir;
@@ -3003,7 +3007,7 @@ namespace SIL.FieldWorks
 				{
 					if (s_teApp == null)
 					{
-						s_teApp = (FwApp)DynamicLoader.CreateObject(DirectoryFinder.TeDll,
+						s_teApp = (FwApp)DynamicLoader.CreateObject(FwDirectoryFinder.TeDll,
 							FwUtils.ksFullTeAppObjectName, s_fwManager, GetHelpTopicProvider(appAbbrev), args);
 						s_teAppKey = s_teApp.SettingsKey;
 					}
@@ -3016,7 +3020,7 @@ namespace SIL.FieldWorks
 				{
 					if (s_flexApp == null)
 					{
-						s_flexApp = (FwApp)DynamicLoader.CreateObject(DirectoryFinder.FlexDll,
+						s_flexApp = (FwApp)DynamicLoader.CreateObject(FwDirectoryFinder.FlexDll,
 							FwUtils.ksFullFlexAppObjectName, s_fwManager, GetHelpTopicProvider(appAbbrev), args);
 						s_flexAppKey = s_flexApp.SettingsKey;
 					}
@@ -3615,10 +3619,10 @@ namespace SIL.FieldWorks
 			if ((appAbbrev.Equals(FwUtils.ksTeAbbrev, StringComparison.InvariantCultureIgnoreCase) && FwUtils.IsTEInstalled) ||
 				!FwUtils.IsFlexInstalled)
 			{
-				return s_teApp ?? (IHelpTopicProvider)DynamicLoader.CreateObject(DirectoryFinder.TeDll,
+				return s_teApp ?? (IHelpTopicProvider)DynamicLoader.CreateObject(FwDirectoryFinder.TeDll,
 					"SIL.FieldWorks.TE.TeHelpTopicProvider");
 			}
-			return s_flexApp ?? (IHelpTopicProvider)DynamicLoader.CreateObject(DirectoryFinder.FlexDll,
+			return s_flexApp ?? (IHelpTopicProvider)DynamicLoader.CreateObject(FwDirectoryFinder.FlexDll,
 				"SIL.FieldWorks.XWorks.LexText.FlexHelpTopicProvider");
 		}
 

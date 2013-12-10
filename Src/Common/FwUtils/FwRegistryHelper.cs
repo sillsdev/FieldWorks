@@ -195,35 +195,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 					return false;
 				}
 			}
-
-			/// <summary>
-			/// LT-14787 Database displays error about inaccessible Paratext projects
-			/// If there is a registry value for this but the folder is not there we need to return false because
-			/// paratext is not installed correctly. Also if there is no registry entry for this then return false.
-			/// </summary>
-			public bool ParatextSettingsDirectoryExists()
-			{
-				var regValue = ParatextSettingsDirectory();
-				return !String.IsNullOrEmpty(regValue) && Directory.Exists(regValue);
-			}
-
-			/// <summary>
-			/// Returns the path to the Paratext settings (projects) directory as specified in the registry
-			/// ENHANCE (Hasso) 2013.09: added this to expose the directory for Unix users, because trying to get it from ScrTextCollections
-			/// always returns null on Unix.  This is really a Paratext problem, and this method may have no benefit.
-			/// </summary>
-			public string ParatextSettingsDirectory()
-			{
-				using (var paratextKey = Registry.LocalMachine.OpenSubKey("Software\\ScrChecks\\1.0\\Settings_Directory"))
-				{
-					if (paratextKey != null)
-					{
-						var keyName = paratextKey.ToString();
-						return Registry.GetValue(keyName, "", "") as string;
-					}
-				}
-				return null;
-			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -376,25 +347,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static bool Paratext7orLaterInstalled()
 		{
 			return RegistryHelperImpl.Paratext7orLaterInstalled();
-		}
-
-		/// <summary>
-		/// If there is a registry value for this but the folder is not there we need to return false because
-		/// paratext is not installed correctly. Also if there is no registry entry for this then return false.
-		/// </summary>
-		public static bool ParatextSettingsDirectoryExists()
-		{
-			return RegistryHelperImpl.ParatextSettingsDirectoryExists();
-		}
-
-		/// <summary>
-		/// Returns the path to the Paratext settings (projects) directory as specified in the registry
-		/// ENHANCE (Hasso) 2013.09: added this to expose the directory for Unix users, because trying to get it from ScrTextCollections
-		/// always returns null on Unix.  This is really a Paratext problem, and this method may have no benefit.
-		/// </summary>
-		public static string ParatextSettingsDirectory()
-		{
-			return RegistryHelperImpl.ParatextSettingsDirectory();
 		}
 
 		/// <summary>

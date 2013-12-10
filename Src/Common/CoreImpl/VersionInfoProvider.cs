@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
 #region // Copyright (c) 2013, SIL International. All Rights Reserved.
 // <copyright from='2010' to='2013' company='SIL International'>
 //		Copyright (c) 2013, SIL International. All Rights Reserved.
@@ -8,7 +8,7 @@
 // </copyright>
 #endregion
 //
-// File: FwVersionInfoProvider.cs
+// File: VersionInfoProvider.cs
 // Responsibility: FW Team
 // ---------------------------------------------------------------------------------------------
 using System;
@@ -16,14 +16,14 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace SIL.CoreImpl
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// Class for getting version information out of a FieldWorks assembly
+	/// Class for getting version information out of an assembly
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class FwVersionInfoProvider
+	public class VersionInfoProvider
 	{
 		/// <summary>Default copyright string if no assembly could be found</summary>
 		public const string kDefaultCopyrightString = "Copyright (c) 2002-2013 SIL International";
@@ -36,13 +36,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="FwVersionInfoProvider"/> class.
+		/// Initializes a new instance of the <see cref="VersionInfoProvider"/> class.
 		/// </summary>
 		/// <param name="assembly">The assembly used to get the information.</param>
 		/// <param name="fShowSILInfo">if set to <c>false</c>, any SIL-identifying information
 		/// will be hidden.</param>
 		/// ------------------------------------------------------------------------------------
-		public FwVersionInfoProvider(Assembly assembly, bool fShowSILInfo)
+		public VersionInfoProvider(Assembly assembly, bool fShowSILInfo)
 		{
 			if (assembly == null)
 				throw new ArgumentNullException("assembly");
@@ -128,9 +128,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 					}
 				}
 #if DEBUG
-				return string.Format(FwUtilsStrings.kstidAppVersionFmt, appVersion, productDate, "(Debug version)");
+				return string.Format(CoreImplStrings.kstidAppVersionFmt, appVersion, productDate, "(Debug version)");
 #else
-				return string.Format(FwUtilsStrings.kstidAppVersionFmt, appVersion, productDate, "");
+				return string.Format(CoreImplStrings.kstidAppVersionFmt, appVersion, productDate, "");
 #endif
 			}
 		}
@@ -140,17 +140,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Gets the version of FieldWorks.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string FieldWorksVersion
+		public string MajorVersion
 		{
 			get
 			{
 				// Set the Fieldworks version text
 				object[] attributes = m_assembly.GetCustomAttributes(
 					typeof(AssemblyInformationalVersionAttribute), false);
-				string fwVersion = (attributes != null && attributes.Length > 0) ?
+				string version = (attributes != null && attributes.Length > 0) ?
 					((AssemblyInformationalVersionAttribute)attributes[0]).InformationalVersion :
 					Application.ProductVersion;
-				return string.Format(FwUtilsStrings.kstidFwVersionFmt, fwVersion);
+				return string.Format(CoreImplStrings.kstidMajorVersionFmt, version);
 			}
 		}
 
@@ -180,7 +180,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 						copyRight = kDefaultCopyrightString;
 					}
 				}
-				return copyRight.Replace("(c)", "©");
+				return copyRight.Replace("(c)", "�");
 			}
 		}
 
@@ -191,7 +191,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				return FwUtilsStrings.kstidLicense;
+				return CoreImplStrings.kstidLicense;
 			}
 		}
 
@@ -200,7 +200,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				return FwUtilsStrings.kstidLicenseURL;
+				return CoreImplStrings.kstidLicenseURL;
 			}
 		}
 	}

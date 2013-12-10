@@ -15,8 +15,6 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
-using System.Linq;
-using System.ComponentModel;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
@@ -24,10 +22,8 @@ using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.Common.UIAdapters;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.Infrastructure;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgControls;
@@ -210,7 +206,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		protected override string GetAppSpecificMenuToolBarDefinition()
 		{
-			return DirectoryFinder.FWCodeDirectory +
+			return FwDirectoryFinder.CodeDirectory +
 				@"/Translation Editor/Configuration/NotesTMDefinition.xml";
 		}
 

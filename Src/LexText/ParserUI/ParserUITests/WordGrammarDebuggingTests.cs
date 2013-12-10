@@ -114,9 +114,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
-			m_sTestPath = Path.Combine(DirectoryFinder.FwSourceDirectory,
+			m_sTestPath = Path.Combine(FwDirectoryFinder.SourceDirectory,
 				"LexText/ParserUI/ParserUITests/WordGrammarDebuggingInputsAndResults");
-			m_sTransformPath = Path.Combine(DirectoryFinder.FWCodeDirectory,
+			m_sTransformPath = Path.Combine(FwDirectoryFinder.CodeDirectory,
 				"Language Explorer/Transforms");
 
 			SetUpMasterTransform();

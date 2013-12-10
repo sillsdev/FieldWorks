@@ -74,7 +74,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			// ProjectInfo.AllProjects doesn't set the InUse flag, which is why we
 			// pass a list of open projects to the dialog constructor.
-			List<ProjectInfo> projectList = ProjectInfo.AllProjects;
+			List<ProjectInfo> projectList = ProjectInfo.GetAllProjects(FwDirectoryFinder.ProjectsDirectory);
 			foreach (ProjectInfo info in projectList.Where(info => projectsOpen.Contains(info.DatabaseName)))
 				info.InUse = true;
 			return projectList;
@@ -272,7 +272,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				itemsToDelete.Add(info);
 			foreach (ProjectInfo info in itemsToDelete)
 			{
-				string folder = Path.Combine(DirectoryFinder.ProjectsDirectory, info.DatabaseName);
+				string folder = Path.Combine(FwDirectoryFinder.ProjectsDirectory, info.DatabaseName);
 				bool fExtraData = CheckForExtraData(info, folder);
 				string msg;
 				MessageBoxButtons buttons;

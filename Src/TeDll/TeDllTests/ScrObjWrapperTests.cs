@@ -14,7 +14,7 @@
 using System;
 using System.IO;
 using NUnit.Framework;
-
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Resources;
@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.TE
 		{
 			using (ScrObjWrapper wrapper = new ScrObjWrapper())
 			{
-				IScrImportSet settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext5, ResourceHelper.DefaultParaCharsStyleName);
+				IScrImportSet settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext5, ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
 				settings.StartRef = new BCVRef(1, 1, 1);
 				settings.EndRef = new BCVRef(66, 22, 21);
 				TempSFFileMaker fileMaker = new TempSFFileMaker();
@@ -81,7 +81,7 @@ namespace SIL.FieldWorks.TE
 		{
 			using (ScrObjWrapper wrapper = new ScrObjWrapper())
 			{
-				IScrImportSet settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6, ResourceHelper.DefaultParaCharsStyleName);
+				IScrImportSet settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6, ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
 
 				Unpacker.UnPackParatextTestProjects();
 				settings.ParatextScrProj = "KAM";
@@ -110,7 +110,7 @@ namespace SIL.FieldWorks.TE
 		{
 			using (ScrObjWrapper wrapper = new ScrObjWrapper())
 			{
-				IScrImportSet settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6, ResourceHelper.DefaultParaCharsStyleName);
+				IScrImportSet settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6, ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
 
 				Unpacker.UnPackParatextTestProjects();
 				settings.ParatextBTProj = "KAM";

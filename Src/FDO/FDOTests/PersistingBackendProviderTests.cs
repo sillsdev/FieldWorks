@@ -9,7 +9,6 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -415,7 +414,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		public void RenameDatabaseTest()
 		{
 			string sOrigName = Cache.ProjectId.Name;
-			string newProjectDir = Path.Combine(DirectoryFinder.ProjectsDirectory, NewProjectName);
+			string newProjectDir = Path.Combine(FwDirectoryFinder.ProjectsDirectory, NewProjectName);
 			if (Cache.ProjectId.Type != FDOBackendProviderType.kMemoryOnly && Directory.Exists(newProjectDir))
 			{
 				// make sure database doesn't exist before running the test
@@ -520,7 +519,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 				while (true)
 				{
 					_randomProjectName = "TestLangProjCS" + Path.GetFileNameWithoutExtension(Path.GetRandomFileName());
-					var projectDir = Path.Combine(DirectoryFinder.ProjectsDirectory, _randomProjectName);
+					var projectDir = Path.Combine(FwDirectoryFinder.ProjectsDirectory, _randomProjectName);
 					if (!Directory.Exists(projectDir))
 					{
 						_projectDir = projectDir;
@@ -538,7 +537,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		/// ------------------------------------------------------------------------------------
 		public override void FixtureSetup()
 		{
-			RemotingServer.Start();
+			RemotingServer.Start(FwDirectoryFinder.RemotingTcpServerConfigFile, FwDirectoryFinder.FdoDirectories, () => false, v => {});
 			base.FixtureSetup();
 		}
 
@@ -563,7 +562,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		/// ------------------------------------------------------------------------------------
 		protected override void CheckAdditionalStuffAfterFirstRename()
 		{
-			Assert.AreEqual(Path.Combine(Path.Combine(DirectoryFinder.ProjectsDirectory, NewProjectName),
+			Assert.AreEqual(Path.Combine(Path.Combine(FwDirectoryFinder.ProjectsDirectory, NewProjectName),
 				FdoFileHelper.GetDb4oDataFileName(NewProjectName)), Cache.ProjectId.Path);
 		}
 	}
@@ -585,7 +584,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		protected override FdoCache CreateCache()
 		{
 			const string projName = "TestLangProj-test";
-			string filename = Path.Combine(DirectoryFinder.ProjectsDirectory,
+			string filename = Path.Combine(FwDirectoryFinder.ProjectsDirectory,
 				Path.Combine(projName, FdoFileHelper.GetXmlDataFileName(projName)));
 			if (!m_internalRestart)
 			{
@@ -615,7 +614,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		private FdoCache OpenExistingFile(string filename)
 		{
 			return FdoCache.CreateCacheFromExistingData(
-				new TestProjectId(FDOBackendProviderType.kXMLWithMemoryOnlyWsMgr, filename), "en", new DummyProgressDlg(), new DummyFdoUI());
+				new TestProjectId(FDOBackendProviderType.kXMLWithMemoryOnlyWsMgr, filename), "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new DummyProgressDlg());
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -625,7 +624,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		/// ------------------------------------------------------------------------------------
 		protected override void CheckAdditionalStuffAfterFirstRename()
 		{
-			Assert.AreEqual(Path.Combine(Path.Combine(DirectoryFinder.ProjectsDirectory, NewProjectName),
+			Assert.AreEqual(Path.Combine(Path.Combine(FwDirectoryFinder.ProjectsDirectory, NewProjectName),
 				FdoFileHelper.GetXmlDataFileName(NewProjectName)), Cache.ProjectId.Path);
 		}
 
@@ -637,7 +636,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		[ExpectedException(typeof(StartupException))]
 		public void CorruptedXMLFileTest()
 		{
-			var testDataPath = Path.Combine(DirectoryFinder.FwSourceDirectory, "FDO/FDOTests/TestData");
+			var testDataPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "FDO/FDOTests/TestData");
 			var projName = Path.Combine(testDataPath, "CorruptedXMLFileTest.fwdata");
 
 			// MockXMLBackendProvider implements IDisposable therefore we need the "using".
@@ -664,7 +663,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			string testFileName = String.Empty;
 			try
 			{
-				var testDataPath = Path.Combine(DirectoryFinder.FwSourceDirectory, "FDO/FDOTests/BackupRestore/BackupTestProject");
+				var testDataPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "FDO/FDOTests/BackupRestore/BackupTestProject");
 				var projName = Path.Combine(testDataPath, "BackupTestProject.fwdata");
 				testFileName = Path.GetTempFileName();
 				// If we leave the extension as .tmp, we get a sharing violation when the
@@ -693,7 +692,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		[Test]
 		public void SlightlyCorruptedXMLFileTest()
 		{
-			var testDataPath = Path.Combine(DirectoryFinder.FwSourceDirectory, "FDO/FDOTests/TestData");
+			var testDataPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "FDO/FDOTests/TestData");
 			var projName = Path.Combine(testDataPath, "SlightlyCorruptedXMLFile.fwdata");
 
 			// MockXMLBackendProvider implements IDisposable therefore we need the "using".
@@ -712,7 +711,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		[Test]
 		public void XMLFileWithDuplicateGuidsTest()
 		{
-			var testDataPath = Path.Combine(DirectoryFinder.FwSourceDirectory, "FDO/FDOTests/TestData");
+			var testDataPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "FDO/FDOTests/TestData");
 			var projName = Path.Combine(testDataPath, "DuplicateGuids.fwdata");
 
 			// MockXMLBackendProvider implements IDisposable therefore we need the "using".
@@ -751,7 +750,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		public MockXMLBackendProvider(FdoCache cache, string projName):
 			base(cache, new IdentityMap((IFwMetaDataCacheManaged)cache.MetaDataCache),
 			new CmObjectSurrogateFactory(cache), (IFwMetaDataCacheManagedInternal)cache.MetaDataCache,
-			new FdoDataMigrationManager(), new DummyFdoUI())
+			new FdoDataMigrationManager(), new DummyFdoUI(), FwDirectoryFinder.FdoDirectories)
 		{
 			Project = projName;
 			Cache = cache;

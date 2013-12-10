@@ -134,9 +134,6 @@
     <Reference Include="Db4objects.Db4o.Linq">
       <HintPath>..\..\Output\Debug\Db4objects.Db4o.Linq.dll</HintPath>
     </Reference>
-    <Reference Include="FwUtils">
-      <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
-    </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\..\Lib\debug\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
@@ -186,7 +183,8 @@
     <Compile Include="Application\IActionHandlerExtensions.cs" />
     <Compile Include="Application\ReferenceTracker.cs" />
     <Compile Include="CacheKey.cs" />
-    <Compile Include="FdoFileHelperRelativePaths.cs" />
+    <Compile Include="DomainServices\ParatextHelper.cs" />
+    <Compile Include="LinkedFilesRelativePathHelper.cs" />
     <Compile Include="DomainImpl\AnalysisAdjuster.cs" />
     <Compile Include="DomainImpl\CmCell.cs" />
     <Compile Include="DomainImpl\CmFilter.cs" />
@@ -310,7 +308,6 @@
     <Compile Include="DomainServices\IScrImportFileInfo.cs" />
     <Compile Include="DomainServices\MorphServices.cs" />
     <Compile Include="DomainServices\ParaNodeMap.cs" />
-    <Compile Include="DomainServices\ParatextHelper.cs" />
     <Compile Include="DomainServices\ProjectLockingService.cs" />
     <Compile Include="DomainServices\ReferenceAdjusterService.cs" />
     <Compile Include="DomainServices\ReferenceTargetServices.cs" />
@@ -364,9 +361,11 @@
     <Compile Include="DomainImpl\OverridesLing_Wfi.cs" />
     <Compile Include="FdoStructs.cs" />
     <Compile Include="FdoFileHelper.cs" />
+    <Compile Include="IFdoDirectories.cs" />
     <Compile Include="IFdoUI.cs" />
     <Compile Include="IProjectIdentifier.cs" />
     <Compile Include="FdoNewerVersionException.cs" />
+    <Compile Include="ProjectInfo.cs" />
     <Compile Include="SilentFdoUI.cs" />
     <Compile Include="Infrastructure\FdoXmlServices.cs" />
     <Compile Include="Infrastructure\GenericUndoAction.cs" />

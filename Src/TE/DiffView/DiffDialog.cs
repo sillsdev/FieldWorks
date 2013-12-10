@@ -103,7 +103,7 @@ namespace SIL.FieldWorks.TE
 		#region Construction/Destruction
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:DiffDialog"/> class.
+		/// Initializes a new instance of the <see cref="DiffDialog"/> class.
 		/// </summary>
 		/// <param name="bookMerger">The book merger.</param>
 		/// <param name="cache">The cache.</param>
@@ -123,7 +123,7 @@ namespace SIL.FieldWorks.TE
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:DiffDialog"/> class.
+		/// Initializes a new instance of the <see cref="DiffDialog"/> class.
 		/// </summary>
 		/// <param name="bookMerger">The book merger.</param>
 		/// <param name="cache">The cache.</param>
@@ -308,7 +308,7 @@ namespace SIL.FieldWorks.TE
 			// Use this to initialize combo box items.
 			m_tmAdapter.InitializeComboItem += InitializeToolBarCombos;
 
-			string[] def = new string[] {DirectoryFinder.FWCodeDirectory +
+			string[] def = new string[] {FwDirectoryFinder.CodeDirectory +
 				"/Translation Editor/Configuration/DiffViewTMDefinition.xml"};
 			m_tmAdapter.AllowUpdates = true;
 			m_tmAdapter.Initialize(this, m_msgMediator, def);
@@ -2014,7 +2014,7 @@ namespace SIL.FieldWorks.TE
 		/// User has changed the zoom percentage with the drop down list.
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">An <see cref="T:EventArgs"/> that contains the event data.</param>
+		/// <param name="e">An <see cref="EventArgs"/> that contains the event data.</param>
 		/// ------------------------------------------------------------------------------------
 		private void ZoomSelectionChanged(object sender, EventArgs e)
 		{
@@ -2026,7 +2026,7 @@ namespace SIL.FieldWorks.TE
 		/// User has pressed a key in the zoom percentage control
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">An <see cref="T:EventArgs"/> that contains the event data.</param>
+		/// <param name="e">An <see cref="EventArgs"/> that contains the event data.</param>
 		/// ------------------------------------------------------------------------------------
 		private void ZoomKeyPress(object sender, KeyPressEventArgs e)
 		{
@@ -2040,7 +2040,7 @@ namespace SIL.FieldWorks.TE
 		/// The zoom control has lost focus
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">An <see cref="T:EventArgs"/> that contains the event data.</param>
+		/// <param name="e">An <see cref="EventArgs"/> that contains the event data.</param>
 		/// ------------------------------------------------------------------------------------
 		private void ZoomLostFocus(object sender, EventArgs e)
 		{
@@ -2185,7 +2185,7 @@ namespace SIL.FieldWorks.TE
 		#region Overridden Methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Raises the <see cref="E:Layout"/> event.
+		/// Raises the Layout event.
 		/// </summary>
 		/// <param name="levent">The <see cref="T:System.Windows.Forms.LayoutEventArgs"/> instance
 		/// containing the event data.</param>

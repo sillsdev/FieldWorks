@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		{
 			DataMigrationServices.CheckVersionNumber(repoDto, 7000032);
 			var projectFolder = repoDto.ProjectFolder;
-			// This is equivalent to DirectoryFinder.GetConfigSettingsDir(projectFolder) at the time of creating
+			// This is equivalent to FwDirectoryFinder.GetConfigSettingsDir(projectFolder) at the time of creating
 			// the migration, but could conceivably change later.
 			var targetDir = Path.Combine(projectFolder, "ConfigurationSettings");
 			if (Directory.Exists(targetDir))

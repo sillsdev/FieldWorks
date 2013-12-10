@@ -2627,9 +2627,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 	internal partial class ScrImportSetFactory
 	{
-		public IScrImportSet Create(string defaultParaCharsStyleName)
+		public IScrImportSet Create(string defaultParaCharsStyleName, string stylesPath)
 		{
-			var settings = new ScrImportSet(defaultParaCharsStyleName);
+			var settings = new ScrImportSet(defaultParaCharsStyleName, stylesPath);
 			((ICmObjectInternal) settings).InitializeNewOwnerlessCmObject(m_cache);
 			return settings;
 		}

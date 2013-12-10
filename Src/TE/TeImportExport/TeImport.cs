@@ -2449,7 +2449,7 @@ namespace SIL.FieldWorks.TE
 				string sDescription = tokens[0];
 				string srcFilename = tokens[1];
 				if (String.IsNullOrEmpty(srcFilename))
-					srcFilename = Path.Combine(DirectoryFinder.FWCodeDirectory, "MissingPictureInImport.bmp");
+					srcFilename = Path.Combine(FwDirectoryFinder.CodeDirectory, "MissingPictureInImport.bmp");
 				string sLayoutPos = tokens[2];
 				string sLocationRange = tokens[3];
 				string sCopyright = tokens[4];

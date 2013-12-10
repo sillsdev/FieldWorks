@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		protected SqlConnection m_sqlConnection;
 		private string m_sFxtResultFile;
 
-		private string m_sFxtTemplatePath = Path.Combine(DirectoryFinder.FlexFolder,
+		private string m_sFxtTemplatePath = Path.Combine(FwDirectoryFinder.FlexFolder,
 														 Path.Combine("Configuration",
 														 Path.Combine("Grammar", "FXTs"))));
 
@@ -94,7 +94,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 													Path.Combine("Configuration",
 													Path.Combine("Grammar", "FXTs")));
 				string sFxtFile = Path.Combine(ksFXTPath, "M3Parser.fxt");
-				string sFxtPath = Path.Combine(DirectoryFinder.FWCodeDirectory, sFxtFile);
+				string sFxtPath = Path.Combine(FwDirectoryFinder.CodeDirectory, sFxtFile);
 				fxtDumper.Go(Cache.LangProject as CmObject, sFxtPath, File.CreateText(m_sFxtResultFile),
 							 new IFilterStrategy[] { new ConstraintFilterStrategy() });
 			}

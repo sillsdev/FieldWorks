@@ -76,12 +76,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			base.FixtureSetup();
 
-			m_sTestPath = Path.Combine(DirectoryFinder.FwSourceDirectory,
+			m_sTestPath = Path.Combine(FwDirectoryFinder.SourceDirectory,
 				Path.Combine("LexText",
 				Path.Combine("ParserEngine",
 				Path.Combine("ParserCore",
 				Path.Combine("ParserCoreTests", "M3ToXAmpleTransformerTestsDataFiles")))));
-			m_sTransformPath = Path.Combine(DirectoryFinder.FlexFolder, "Transforms");
+			m_sTransformPath = Path.Combine(FwDirectoryFinder.FlexFolder, "Transforms");
 
 			SetUpXAmpleTransforms();
 			SetUpM3FXTDump();

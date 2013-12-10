@@ -18,7 +18,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {
@@ -38,6 +37,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		private IVwStylesheet m_stylesheet;
 
 		private readonly string m_defaultParaCharsStyleName;
+		private readonly string m_stylesPath;
 
 		private static Dictionary<string, string> s_defaultMappings = new Dictionary<string, string>();
 		private static Dictionary<string, string> s_defaultProperties = new Dictionary<string, string>();
@@ -63,12 +63,15 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// </param>
 		/// <param name="stylesheet">The stylesheet</param>
 		/// <param name="defaultParaCharsStyleName"></param>
+		/// <param name="stylesPath"></param>
 		/// ------------------------------------------------------------------------------------
-		public ScrMappingList(MappingSet mappingSet, IVwStylesheet stylesheet, string defaultParaCharsStyleName)
+		public ScrMappingList(MappingSet mappingSet, IVwStylesheet stylesheet, string defaultParaCharsStyleName,
+			string stylesPath)
 		{
 			m_mappingSet = mappingSet;
 			m_stylesheet = stylesheet;
 			m_defaultParaCharsStyleName = defaultParaCharsStyleName;
+			m_stylesPath = stylesPath;
 		}
 		#endregion
 
@@ -433,10 +436,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		private static void ReadDefaultMappings()
+		private void ReadDefaultMappings()
 		{
 			XmlDocument doc = new XmlDocument();
-			doc.Load(DirectoryFinder.TeStylesPath);
+			doc.Load(m_stylesPath);
 			XmlNode mappingNode = doc.SelectSingleNode("Styles/ImportMappingSets/ImportMapping[@name='TE Default']");
 			foreach (XmlNode mapNode in mappingNode.SelectNodes("mapping"))
 			{

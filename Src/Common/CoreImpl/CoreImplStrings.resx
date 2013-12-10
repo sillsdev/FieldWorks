@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ksCannotWriteWritingSystemInfo" xml:space="preserve">
-    <value>FieldWorks is unable to save some writing system settings because access to {0} is not authorized. This may cause unexpected behavior, and may be indicative of a wider problem with access permissions that could cause program crashes.</value>
+    <value>Unable to save some writing system settings because access to {0} is not authorized. This may cause unexpected behavior, and may be indicative of a wider problem with access permissions that could cause program crashes.</value>
   </data>
   <data name="ksGenDateAD" xml:space="preserve">
     <value>AD</value>
@@ -134,6 +134,22 @@
   </data>
   <data name="ksGenDateBefore" xml:space="preserve">
     <value>Before</value>
+  </data>
+  <data name="kstidAppVersionFmt" xml:space="preserve">
+    <value>Version: {0}  {1}  {2}</value>
+    <comment>Displays in the Help/About box and the splash screen</comment>
+  </data>
+  <data name="kstidMajorVersionFmt" xml:space="preserve">
+    <value>Version: {0}</value>
+    <comment>Displays in the Help/About box and the splash screen</comment>
+  </data>
+  <data name="kstidLicense" xml:space="preserve">
+    <value>This software is licensed under the MIT License</value>
+    <comment>Displays in the Help/About box and the splash screen</comment>
+  </data>
+  <data name="kstidLicenseURL" xml:space="preserve">
+    <value>(http://opensource.org/licenses/MIT)</value>
+    <comment>Displays in the Help/About box</comment>
   </data>
   <data name="ksWarning" xml:space="preserve">
     <value>Warning</value>

@@ -14,7 +14,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using SIL.FieldWorks.Common.FwUtils;
 using System.Text;
 using SIL.Utils;
 
@@ -38,7 +37,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// Initializes a new instance of the <see cref="RestoreProjectSettings"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public RestoreProjectSettings() : base (DirectoryFinder.ProjectsDirectory, null, null)
+		public RestoreProjectSettings(string projectsRootFolder) : base (projectsRootFolder, null, null)
 		{
 		}
 
@@ -48,12 +47,13 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// a list of command-line options as created from the <see cref="CommandLineOptions"/>
 		/// property.
 		/// </summary>
-		/// <param name="commandLineOptions">The command line options.</param>
-		/// <param name="backupZipFileName">Name of the backup zip file.</param>
+		/// <param name="projectsRootFolder"></param>
 		/// <param name="projectName">Name of the project.</param>
+		/// <param name="backupZipFileName">Name of the backup zip file.</param>
+		/// <param name="commandLineOptions">The command line options.</param>
 		/// ------------------------------------------------------------------------------------
-		public RestoreProjectSettings(string projectName, string backupZipFileName,
-			string commandLineOptions) : this()
+		public RestoreProjectSettings(string projectsRootFolder, string projectName, string backupZipFileName,
+			string commandLineOptions) : this(projectsRootFolder)
 		{
 			if (string.IsNullOrEmpty(projectName))
 				throw new ArgumentNullException("projectName");

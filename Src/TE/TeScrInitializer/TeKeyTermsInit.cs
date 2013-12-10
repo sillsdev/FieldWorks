@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.TE
 		/// -------------------------------------------------------------------------------------
 		protected override string ResourceFilePathFromFwInstall
 		{
-			get { return Path.Combine(DirectoryFinder.ksTeFolderName, ResourceFileName); }
+			get { return Path.Combine(FwDirectoryFinder.ksTeFolderName, ResourceFileName); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -158,7 +158,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		protected override BiblicalTermsList LoadDoc()
 		{
-			return DeserializeBiblicalTermsFile(Path.Combine(DirectoryFinder.FWCodeDirectory,
+			return DeserializeBiblicalTermsFile(Path.Combine(FwDirectoryFinder.CodeDirectory,
 				ResourceFilePathFromFwInstall));
 		}
 
@@ -323,7 +323,7 @@ namespace SIL.FieldWorks.TE
 		private void EnsureCurrentLocalization(string locale, Form caller,
 			IProgress existingProgressDlg)
 		{
-			string localizationFile = DirectoryFinder.GetKeyTermsLocFilename(locale);
+			string localizationFile = FwDirectoryFinder.GetKeyTermsLocFilename(locale);
 			if (!FileUtils.FileExists(localizationFile))
 				return; // There is no localization available for this locale, so we're as current as we're going to get.
 
@@ -615,7 +615,7 @@ namespace SIL.FieldWorks.TE
 		protected virtual List<BiblicalTermsLocalization> GetLocalizations()
 		{
 			int defaultUserWs = m_scr.Cache.DefaultUserWs;
-			string[] locFiles = DirectoryFinder.KeyTermsLocalizationFiles;
+			string[] locFiles = FwDirectoryFinder.KeyTermsLocalizationFiles;
 			List<BiblicalTermsLocalization> localizations =
 				new List<BiblicalTermsLocalization>(locFiles.Length);
 			bool fFoundDefaultLoc = false;
@@ -636,7 +636,7 @@ namespace SIL.FieldWorks.TE
 			if (!fFoundDefaultLoc || localizations.Count == 0)
 			{
 				string icuLocale = m_wsf.GetStrFromWs(defaultUserWs);
-				string message = String.Format("File {0} is missing", DirectoryFinder.GetKeyTermsLocFilename(icuLocale));
+				string message = String.Format("File {0} is missing", FwDirectoryFinder.GetKeyTermsLocFilename(icuLocale));
 				Debug.Fail(message);
 				Logger.WriteEvent(message);
 				if (icuLocale == "en" || localizations.Count == 0)
@@ -660,7 +660,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		public static int GetWsFromLocFile(ILgWritingSystemFactory wsf, string localizationFile)
 		{
-			return wsf.GetWsFromStr(DirectoryFinder.GetLocaleFromKeyTermsLocFile(localizationFile));
+			return wsf.GetWsFromStr(FwDirectoryFinder.GetLocaleFromKeyTermsLocFile(localizationFile));
 		}
 
 		/// ------------------------------------------------------------------------------------

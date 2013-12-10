@@ -20,10 +20,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		private Db4oServerInfo m_db4OServerInfo;
 
 		private string m_oldProjectDirectory;
+		private bool m_projectShared;
 
 		private IThreadedProgress m_progress;
-
-		private IFdoUI m_ui;
 
 		///<summary></summary>
 		[SetUp]
@@ -31,11 +30,15 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			// Change the Project Directory to some temporary directory to ensure, other units tests don't add projects
 			// which would slow these tests down.
-			m_oldProjectDirectory = DirectoryFinder.ProjectsDirectory;
-			DirectoryFinder.ProjectsDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-			Directory.CreateDirectory(DirectoryFinder.ProjectsDirectory);
+			m_oldProjectDirectory = FwDirectoryFinder.ProjectsDirectory;
+			FwDirectoryFinder.ProjectsDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+			Directory.CreateDirectory(FwDirectoryFinder.ProjectsDirectory);
 
-			RemotingServer.Start();
+			ClientServerServices.SetCurrentToDb4OBackend(new DummyFdoUI(), FwDirectoryFinder.FdoDirectories,
+				() => FwDirectoryFinder.ProjectsDirectory == FwDirectoryFinder.ProjectsDirectoryLocalMachine);
+
+			m_projectShared = false;
+			RemotingServer.Start(FwDirectoryFinder.RemotingTcpServerConfigFile, FwDirectoryFinder.FdoDirectories, () => m_projectShared, v => m_projectShared = v);
 
 			var connectString = String.Format("tcp://{0}:{1}/FwRemoteDatabaseConnector.Db4oServerInfo",
 				"127.0.0.1", Db4OPorts.ServerPort);
@@ -45,8 +48,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_db4OServerInfo.AreProjectShared();
 
 			m_progress = new DummyProgressDlg();
-
-			m_ui = new DummyFdoUI();
 		}
 
 		///<summary></summary>
@@ -55,8 +56,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			RemotingServer.Stop();
 
-			Directory.Delete(DirectoryFinder.ProjectsDirectory, true);
-			DirectoryFinder.ProjectsDirectory = m_oldProjectDirectory;
+			Directory.Delete(FwDirectoryFinder.ProjectsDirectory, true);
+			FwDirectoryFinder.ProjectsDirectory = m_oldProjectDirectory;
 
 			m_db4OServerInfo = null;
 		}
@@ -80,7 +81,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void ProjectNames_LocalhostServiceIsRunning_ProjectsReturned()
 		{
-			ClientServerServices.Current.Local.SetProjectSharing(true, m_progress, m_ui);
+			ClientServerServices.Current.Local.SetProjectSharing(true, m_progress);
 
 			using (var db4OServerFile = new TemporaryDb4OServerFile(m_db4OServerInfo))
 			{
@@ -97,9 +98,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void ShareMyProjects_TurningShareMyProjectOff_ShareMyProjectsReturnedFalse()
 		{
-			ClientServerServices.Current.Local.SetProjectSharing(true, m_progress, m_ui);
+			ClientServerServices.Current.Local.SetProjectSharing(true, m_progress);
 
-			Assert.IsTrue(ClientServerServices.Current.Local.SetProjectSharing(false, m_progress, m_ui));
+			Assert.IsTrue(ClientServerServices.Current.Local.SetProjectSharing(false, m_progress));
 			Assert.AreEqual(false, ClientServerServices.Current.Local.ShareMyProjects);
 		}
 
@@ -107,15 +108,15 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void ShareMyProjects_TurningShareMyProjectOn_ShareMyProjectsReturnedTrue()
 		{
-			ClientServerServices.Current.Local.SetProjectSharing(false, m_progress, m_ui);
+			ClientServerServices.Current.Local.SetProjectSharing(false, m_progress);
 
-			Assert.IsTrue(ClientServerServices.Current.Local.SetProjectSharing(true, m_progress, m_ui));
+			Assert.IsTrue(ClientServerServices.Current.Local.SetProjectSharing(true, m_progress));
 			Assert.IsTrue(Db4OLocalClientServerServices.LocalDb4OServerInfoConnection.AreProjectShared());
 			Assert.IsFalse(ClientServerServices.Current.Local.ShareMyProjects, "ShareMyProjects should not be true unless HKCU projects dir same as HKLM");
-			var temp = DirectoryFinder.ProjectsDirectory;
-			DirectoryFinder.ProjectsDirectory = DirectoryFinder.ProjectsDirectoryLocalMachine;
+			var temp = FwDirectoryFinder.ProjectsDirectory;
+			FwDirectoryFinder.ProjectsDirectory = FwDirectoryFinder.ProjectsDirectoryLocalMachine;
 			Assert.IsTrue(ClientServerServices.Current.Local.ShareMyProjects);
-			DirectoryFinder.ProjectsDirectory = temp;
+			FwDirectoryFinder.ProjectsDirectory = temp;
 		}
 
 		/// <summary></summary>
@@ -129,14 +130,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void IdForLocalProject_SimpleNameProjectsAreNotShared_ReturnedFilenameHasFwdataExtenstionAndExistsInProjectDirectory()
 		{
-			ClientServerServices.Current.Local.SetProjectSharing(false, m_progress, m_ui);
+			ClientServerServices.Current.Local.SetProjectSharing(false, m_progress);
 			string filename = ClientServerServices.Current.Local.IdForLocalProject("tom");
 
 			// Assert ends with .fwdata
 			Assert.AreEqual(FdoFileHelper.ksFwDataXmlFileExtension, Path.GetExtension(filename));
 
 			// Check file is in ProjectDirectory.
-			Assert.That(filename, Is.SubPath(DirectoryFinder.ProjectsDirectory));
+			Assert.That(filename, Is.SubPath(FwDirectoryFinder.ProjectsDirectory));
 		}
 
 		/// <summary></summary>

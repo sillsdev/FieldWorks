@@ -197,7 +197,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				}
 				string linkedFilesRoot = sda.get_UnicodeProp(m_hvoLangProject, LangProjectTags.kflidLinkedFilesRootDir);
 				if (String.IsNullOrEmpty(linkedFilesRoot))
-					path = Path.Combine(DirectoryFinder.FWDataDirectory, fileName);
+					path = Path.Combine(FwDirectoryFinder.DataDirectory, fileName);
 				else
 					path = Path.Combine(linkedFilesRoot, fileName);
 			}

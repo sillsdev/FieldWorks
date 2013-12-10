@@ -5107,8 +5107,9 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		/// <param name="importType">type of import type to find.</param>
 		/// <param name="defaultParaCharsStyleName">The default paragraph characters style name.</param>
+		/// <param name="stylesPath"></param>
 		/// ------------------------------------------------------------------------------------
-		IScrImportSet FindOrCreateDefaultImportSettings(TypeOfImport importType, string defaultParaCharsStyleName);
+		IScrImportSet FindOrCreateDefaultImportSettings(TypeOfImport importType, string defaultParaCharsStyleName, string stylesPath);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

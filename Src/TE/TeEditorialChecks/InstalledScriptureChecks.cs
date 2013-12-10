@@ -151,7 +151,7 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 
 			s_scrCheckList = new List<Type>();
 
-			string directory = DirectoryFinder.EditorialChecksDirectory;
+			string directory = FwDirectoryFinder.EditorialChecksDirectory;
 
 			string[] dllFilenames = Directory.GetFiles(directory, "*.dll");
 			foreach (string dllFile in dllFilenames)

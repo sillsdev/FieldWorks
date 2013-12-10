@@ -412,7 +412,7 @@ namespace SIL.FieldWorks.Common.Framework
 			// Use this to initialize combo box items.
 			m_tmAdapter.InitializeComboItem += InitializeToolBarCombos;
 
-			string sMenuToolBarDefinition = Path.Combine(DirectoryFinder.FWCodeDirectory, "FwTMDefinition.xml");
+			string sMenuToolBarDefinition = Path.Combine(FwDirectoryFinder.CodeDirectory, "FwTMDefinition.xml");
 
 			m_tmAdapter.Initialize(this, AdapterContentControl, m_mediator, m_app.ProjectSpecificSettingsKey.ToString(),
 				new string[] { sMenuToolBarDefinition, GetAppSpecificMenuToolBarDefinition() });

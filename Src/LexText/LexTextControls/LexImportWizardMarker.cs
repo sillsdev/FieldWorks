@@ -76,7 +76,7 @@ namespace SIL.FieldWorks.LexText.Controls
 #endif
 		private XslCompiledTransform m_xslShowInfoTransform;
 		private XmlDocument m_xmlShowInfoDoc;
-		private string m_sHelpHtm = Path.Combine(DirectoryFinder.FWCodeDirectory, @"Language Explorer/Import/Help.htm");
+		private string m_sHelpHtm = Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer/Import/Help.htm");
 		private int m_panelBottomHeight = 0;
 		private HelpProvider helpProvider;
 
@@ -1021,7 +1021,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			// init transform used in help panel
 			m_xslShowInfoTransform = new XslCompiledTransform();
-			string sXsltFile = Path.Combine(DirectoryFinder.FWCodeDirectory, @"Language Explorer/Import/ImportFieldsHelpToHtml.xsl");
+			string sXsltFile = Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer/Import/ImportFieldsHelpToHtml.xsl");
 			m_xslShowInfoTransform.Load(sXsltFile);
 			// init XmlDoc, too
 			m_xmlShowInfoDoc = new XmlDocument();

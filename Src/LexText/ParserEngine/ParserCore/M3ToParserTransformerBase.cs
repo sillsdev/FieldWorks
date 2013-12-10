@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			using (task.AddSubTask(String.Format(ParserCoreStrings.ksCreatingX, outputName)))
 			{
-				XmlUtils.TransformDomToFile(Path.Combine(DirectoryFinder.FWCodeDirectory + "/Language Explorer/Transforms/", transformName),
+				XmlUtils.TransformDomToFile(Path.Combine(FwDirectoryFinder.CodeDirectory + "/Language Explorer/Transforms/", transformName),
 				inputDOM, Path.Combine(m_outputDirectory, outputName));
 			}
 		}

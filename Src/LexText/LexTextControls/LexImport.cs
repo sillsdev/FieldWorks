@@ -226,7 +226,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		internal static string GetHtmlJavaScript()
 		{
 			// create a string for storing the jscript html code for showing the link
-			string sRootDir = DirectoryFinder.FWCodeDirectory;
+			string sRootDir = FwDirectoryFinder.CodeDirectory;
 			if (!sRootDir.EndsWith("\\"))
 				sRootDir += "\\";
 

@@ -185,7 +185,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			ObtainedProjectType obtainedProjectType;
 			var newprojectPathname = ObtainProjectMethod.ObtainProjectFromAnySource(_parentForm, _mediator.HelpTopicProvider,
-				out obtainedProjectType, ui);
+				out obtainedProjectType);
 			if (string.IsNullOrEmpty(newprojectPathname))
 				return true; // We dealt with it.
 			_mediator.PropertyTable.SetProperty("LastBridgeUsed", obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",

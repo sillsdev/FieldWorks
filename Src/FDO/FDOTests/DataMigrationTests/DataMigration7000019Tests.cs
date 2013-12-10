@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -47,7 +46,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 
 			IFwMetaDataCacheManaged mockMdc = SetupMdc();
 
-			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000018, dtos, mockMdc, Path.GetTempPath());
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000018, dtos, mockMdc, Path.GetTempPath(), FwDirectoryFinder.FdoDirectories);
 
 			// Do the migration.
 			m_dataMigrationManager.PerformMigration(dtoRepos, 7000019, new DummyProgressDlg());

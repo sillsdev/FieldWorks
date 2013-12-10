@@ -16,6 +16,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 using System.Diagnostics;
@@ -297,10 +298,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			try
 			{
 				// Set the Application label to the name of the app
-				FwVersionInfoProvider viProvider = new FwVersionInfoProvider(ProductExecutableAssembly, true);
+				VersionInfoProvider viProvider = new VersionInfoProvider(ProductExecutableAssembly, true);
 				lblName.Text = viProvider.ProductName;
 				lblAppVersion.Text = viProvider.ApplicationVersion;
-				lblFwVersion.Text = viProvider.FieldWorksVersion;
+				lblFwVersion.Text = viProvider.MajorVersion;
 				lblCopyright.Text = viProvider.CopyrightString + Environment.NewLine + viProvider.LicenseString + Environment.NewLine + viProvider.LicenseURL;
 
 				// Set the title bar text

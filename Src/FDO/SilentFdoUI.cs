@@ -10,7 +10,6 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.ComponentModel;
-using Microsoft.Win32;
 
 namespace SIL.FieldWorks.FDO
 {
@@ -124,10 +123,8 @@ namespace SIL.FieldWorks.FDO
 		/// <summary>
 		/// Reports duplicate guids to the user
 		/// </summary>
-		/// <param name="applicationKey">The application key.</param>
-		/// <param name="emailAddress">The email address.</param>
 		/// <param name="errorText">The error text.</param>
-		public void ReportDuplicateGuids(RegistryKey applicationKey, string emailAddress, string errorText)
+		public void ReportDuplicateGuids(string errorText)
 		{
 			// Informational only
 		}

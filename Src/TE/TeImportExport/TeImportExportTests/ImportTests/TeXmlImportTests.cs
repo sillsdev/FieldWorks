@@ -20,7 +20,7 @@ using System.Text;
 using System.Xml;
 
 using NUnit.Framework;
-
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
@@ -101,7 +101,8 @@ namespace SIL.FieldWorks.TE.ImportTests
 			// part of the normal undoable work.
 			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
 			{
-				InstalledScriptureChecks.GetChecks(new ScrChecksDataSource(m_scr.Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar")));
+				InstalledScriptureChecks.GetChecks(new ScrChecksDataSource(m_scr.Cache,
+					ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"), FwDirectoryFinder.LegacyWordformingCharOverridesFile));
 			});
 		}
 

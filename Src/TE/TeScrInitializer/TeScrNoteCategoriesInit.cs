@@ -132,7 +132,7 @@ namespace SIL.FieldWorks.TE
 		{
 			try
 			{
-				using (var xmlTextReader = new XmlTextReader(Path.Combine(DirectoryFinder.FWCodeDirectory,
+				using (var xmlTextReader = new XmlTextReader(Path.Combine(FwDirectoryFinder.CodeDirectory,
 					"Translation Editor/TeScrNoteCategories.xml")))
 				{
 					XmlReaderSettings settings = new XmlReaderSettings();

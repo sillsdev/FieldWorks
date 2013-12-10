@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			cache.ServiceLocator.GetInstance<ICmAgentRepository>().GetObject(CmAgentTags.kguidAgentXAmpleParser))
 		{
 			m_xample = new XAmpleWrapper();
-			m_xample.Init(DirectoryFinder.FWCodeDirectory);
+			m_xample.Init(FwDirectoryFinder.CodeDirectory);
 			}
 
 		protected override string ParseWord(string form, int hvoWordform)
@@ -101,7 +101,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_xample.SetParameter("MaxAnalysesToReturn", maxAnalCount.ToString());
 
 			string tempPath = Path.GetTempPath();
-			m_xample.LoadFiles(DirectoryFinder.FWCodeDirectory + @"/Language Explorer/Configuration/Grammar",
+			m_xample.LoadFiles(FwDirectoryFinder.CodeDirectory + @"/Language Explorer/Configuration/Grammar",
 				tempPath, m_projectName);
 		}
 

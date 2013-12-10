@@ -248,8 +248,8 @@ namespace XCore
 					string extensionFileName = path.Substring(path.LastIndexOf("/") + 1);
 					string pluginBaseDir = (parentPath == null) ? m_resolver.BaseDirectory : parentPath;
 					extensionBaseDir = pluginBaseDir;
-					string sBaseCode = DirectoryFinder.FWCodeDirectory;
-					string sBaseData = DirectoryFinder.FWDataDirectory;
+					string sBaseCode = FwDirectoryFinder.CodeDirectory;
+					string sBaseData = FwDirectoryFinder.DataDirectory;
 					if (extensionBaseDir.StartsWith(sBaseCode) && sBaseCode != sBaseData)
 						extensionBaseDir = extensionBaseDir.Replace(sBaseCode, sBaseData);
 					// JohnT: allow the Extensions directory not even to exist. Just means no extentions, as if empty.

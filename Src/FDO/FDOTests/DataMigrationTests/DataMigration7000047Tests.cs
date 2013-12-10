@@ -14,6 +14,7 @@
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 
 namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
@@ -122,7 +123,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			mockMDC.AddClass(5, "ChkTerm", "CmObject", new List<string>());
 			mockMDC.AddClass(6, "CkRendering", "CmObject", new List<string>());
 			mockMDC.AddClass(7, "WfiWordform", "CmObject", new List<string>());
-			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000046, dtos, mockMDC, null);
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000046, dtos, mockMDC, null, FwDirectoryFinder.FdoDirectories);
 
 			m_dataMigrationManager.PerformMigration(dtoRepos, 7000047, new DummyProgressDlg());
 			Assert.AreEqual(7000047, dtoRepos.CurrentModelVersion, "Wrong updated version.");

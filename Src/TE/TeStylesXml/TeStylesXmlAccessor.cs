@@ -78,7 +78,7 @@ namespace SIL.FieldWorks.TE
 		/// -------------------------------------------------------------------------------------
 		protected override string ResourceName
 		{
-			get { return Path.GetFileNameWithoutExtension(DirectoryFinder.kTeStylesFilename); }
+			get { return Path.GetFileNameWithoutExtension(FwDirectoryFinder.kTeStylesFilename); }
 		}
 
 		/// ------------------------------------------------------------------------------------

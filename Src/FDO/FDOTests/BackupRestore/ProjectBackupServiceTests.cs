@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 		{
 			base.FixtureSetup();
 			var backupRestoreFolder = Path.Combine("FDO", Path.Combine("FDOTests", "BackupRestore"));
-			m_testProjectsRoot = Path.Combine(DirectoryFinder.FwSourceDirectory, backupRestoreFolder);
+			m_testProjectsRoot = Path.Combine(FwDirectoryFinder.SourceDirectory, backupRestoreFolder);
 		}
 
 		/// ------------------------------------------------------------------------------------

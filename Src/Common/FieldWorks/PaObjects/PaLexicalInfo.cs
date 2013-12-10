@@ -21,14 +21,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FdoUi;
 using SIL.PaToFdoInterfaces;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.PaObjects
 {
@@ -37,18 +34,6 @@ namespace SIL.FieldWorks.PaObjects
 	{
 		private List<PaWritingSystem> m_writingSystems;
 		private List<PaLexEntry> m_lexEntries;
-		private ThreadHelper m_threadHelper;
-		private readonly IFdoUI m_ui;
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="PaLexicalInfo"/> class.
-		/// </summary>
-		public PaLexicalInfo()
-		{
-			m_threadHelper = new ThreadHelper();
-			var helpTopicProvider = (IHelpTopicProvider) DynamicLoader.CreateObject(DirectoryFinder.FlexDll, "SIL.FieldWorks.XWorks.LexText.FlexHelpTopicProvider");
-			m_ui = new FwFdoUI(helpTopicProvider, m_threadHelper);
-		}
 
 		#region Disposable stuff
 		#if DEBUG
@@ -81,13 +66,9 @@ namespace SIL.FieldWorks.PaObjects
 
 				if (m_writingSystems != null)
 					m_writingSystems.Clear();
-
-				if (m_threadHelper != null)
-					m_threadHelper.Dispose();
 			}
 			m_lexEntries = null;
 			m_writingSystems = null;
-			m_threadHelper = null;
 			IsDisposed = true;
 		}
 		#endregion
@@ -104,7 +85,7 @@ namespace SIL.FieldWorks.PaObjects
 			Icu.InitIcuDataDir();
 			RegistryHelper.ProductName = "FieldWorks"; // inorder to find correct Registry keys
 
-			using (var dlg = new ChooseLangProjectDialog(dialogBounds, dialogSplitterPos, m_ui))
+			using (var dlg = new ChooseLangProjectDialog(dialogBounds, dialogSplitterPos))
 			{
 				if (dlg.ShowDialog(owner) == DialogResult.OK)
 				{

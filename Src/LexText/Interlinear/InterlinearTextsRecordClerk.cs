@@ -430,7 +430,7 @@ namespace SIL.FieldWorks.IText
 			IScripture scr = Cache.LangProject.TranslatedScriptureOA;
 			bool haveSomethingToImport = NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 				{
-					IScrImportSet importSettings = scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6, ResourceHelper.DefaultParaCharsStyleName);
+					IScrImportSet importSettings = scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6, ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
 					ScrText paratextProj = ParatextHelper.GetAssociatedProject(Cache.ProjectId);
 					importSettings.ParatextScrProj = paratextProj.Name;
 					importSettings.IncludeBooks(bookNum, bookNum, paratextProj.Versification);

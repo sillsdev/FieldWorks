@@ -52,7 +52,7 @@ namespace FixFwDataDllTests
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
-			basePath = Path.Combine(Path.Combine(Path.Combine(Path.Combine(DirectoryFinder.FwSourceDirectory, "Utilities"), "FixFwDataDll"), "FixFwDataDllTests"), "TestData");
+			basePath = Path.Combine(Path.Combine(Path.Combine(Path.Combine(FwDirectoryFinder.SourceDirectory, "Utilities"), "FixFwDataDll"), "FixFwDataDllTests"), "TestData");
 			foreach (var testDir in m_testFileDirectories)
 				CopyTestData(testDir);
 		}

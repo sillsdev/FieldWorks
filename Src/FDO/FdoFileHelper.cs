@@ -70,6 +70,9 @@ namespace SIL.FieldWorks.FDO
 		/// <summary>Constant for locating the other repositories path of a project</summary>
 		public const string OtherRepositories = @"OtherRepositories";
 
+		/// <summary>The filename of the backup settings file</summary>
+		public const string kBackupSettingsFilename = "BackupSettings.xml";
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the path to the configuration settings for the specified project.

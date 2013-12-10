@@ -23,13 +23,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 	{
 		/// <summary>
 		/// The name of the Translation Editor registry subkey (Even though this is the same as
-		/// DirectoryFinder.ksTeFolderName and FwUtils.ksTeAppName, PLEASE do not use them interchangeably.
+		/// FwDirectoryFinder.ksTeFolderName and FwUtils.ksTeAppName, PLEASE do not use them interchangeably.
 		/// Use the one that is correct for your context, in case they need to be changed later.)
 		/// </summary>
 		public const string TE = FwUtils.ksTeAppName;
 		/// <summary>
 		/// The name of the Language Explorer registry subkey (Even though this is the same as
-		/// DirectoryFinder.ksFlexFolderName and FwUtils.ksFlexAppName, PLEASE do not use them interchangeably.
+		/// FwDirectoryFinder.ksFlexFolderName and FwUtils.ksFlexAppName, PLEASE do not use them interchangeably.
 		/// Use the one that is correct for your context, in case they need to be changed later.)
 		/// </summary>
 		public const string LexText = FwUtils.ksFlexAppName;

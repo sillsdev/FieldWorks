@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.FixData
 			m_btnFixLinks.Enabled = false;
 			string ext = FdoFileHelper.ksFwDataXmlFileExtension;
 			string lockext = ext + ".lock";
-			foreach (var dir in Directory.GetDirectories(DirectoryFinder.ProjectsDirectory))
+			foreach (var dir in Directory.GetDirectories(FwDirectoryFinder.ProjectsDirectory))
 			{
 				string basename = Path.GetFileName(dir);
 				string datafile = Path.Combine(dir, basename + ext);

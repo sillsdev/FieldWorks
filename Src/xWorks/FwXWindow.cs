@@ -553,7 +553,7 @@ namespace SIL.FieldWorks.XWorks
 			Mediator.PropertyTable.SetPropertyPersistence("cache", false);
 			Mediator.PropertyTable.SetProperty("DocumentName", GetProjectName(cache));
 			Mediator.PropertyTable.SetPropertyPersistence("DocumentName", false);
-			Mediator.PathVariables["{DISTFILES}"] = DirectoryFinder.FWCodeDirectory;
+			Mediator.PathVariables["{DISTFILES}"] = FwDirectoryFinder.CodeDirectory;
 		}
 
 		/// ------------------------------------------------------------------------------------

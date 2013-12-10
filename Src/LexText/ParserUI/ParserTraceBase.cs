@@ -496,7 +496,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		protected string TransformPath
 		{
-			get { return DirectoryFinder.GetFWCodeSubDirectory(@"Language Explorer/Configuration/Words/Analyses/TraceParse"); }
+			get { return FwDirectoryFinder.GetCodeSubDirectory(@"Language Explorer/Configuration/Words/Analyses/TraceParse"); }
 		}
 		protected string TransformToHtml(string sInputFile, string sTempFileBase, string sTransformFile, List<XmlUtils.XSLParameter> args)
 		{

@@ -18,6 +18,7 @@ using System.Linq;
 using NUnit.Framework;
 
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
@@ -253,7 +254,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// <param name="maxIdenticalErrors">The maximum number of identical errors that will
 		/// be allowed for a Scripture check.</param>
 		/// ------------------------------------------------------------------------------------
-		public DummyScrChecksDataSource(FdoCache cache, int maxIdenticalErrors) : base(cache, " ")
+		public DummyScrChecksDataSource(FdoCache cache, int maxIdenticalErrors) : base(cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"),
+			FwDirectoryFinder.LegacyWordformingCharOverridesFile)
 		{
 			m_maxIdenticalErrors = maxIdenticalErrors;
 		}
@@ -758,7 +760,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void RecordError_ParaContentsToken()
 		{
-			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"));
+			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"),
+				FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			ScrCheckingToken tok = new DummyParaCheckingToken(m_scr, Cache.DefaultVernWs, 0);
 
 			Dictionary<int, Dictionary<Guid, ScrCheckRunResult>> bkChkFailedLst =
@@ -804,7 +807,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void RecordError_ParaContentsToken_SecondRun()
 		{
-			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"));
+			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"),
+				FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			ScrCheckingToken tok = new DummyParaCheckingToken(m_scr, Cache.DefaultVernWs, 10);
 
 			Dictionary<int, Dictionary<Guid, ScrCheckRunResult>> bkChkFailedLst =
@@ -848,7 +852,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void RecordError_PictureCaptionToken()
 		{
-			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"));
+			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"),
+				FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			ScrCheckingToken tok = new DummyPictureCheckingToken(m_scr, Cache.DefaultUserWs, "en");
 
 			Dictionary<int, Dictionary<Guid, ScrCheckRunResult>> bkChkFailedLst =
@@ -891,7 +896,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void RecordError_Duplicate()
 		{
-			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"));
+			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"),
+				FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			DummyEditorialCheck check = new DummyEditorialCheck(kCheckId1);
 			ScrCheckingToken tok = new DummyParaCheckingToken(m_scr, Cache.DefaultVernWs, 0);
 			check.m_ErrorsToReport.Add(new DummyEditorialCheck.DummyError(tok, 5, 8, "Lousy message"));
@@ -920,7 +926,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void RecordError_DuplicateAfterAdjustingReference()
 		{
-			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"));
+			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"),
+				FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			DummyEditorialCheck check = new DummyEditorialCheck(kCheckId1);
 			ScrCheckingToken tok = new DummyParaCheckingToken(m_scr, Cache.DefaultVernWs, 0);
 			tok.MissingStartRef = new BCVRef(tok.StartRef);
@@ -1242,7 +1249,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void RecordError_Duplicate_SameErrorTwiceInVerse()
 		{
-			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"));
+			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"),
+				FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			DummyEditorialCheck check = new DummyEditorialCheck(kCheckId1);
 			ScrCheckingToken tok = new DummyParaCheckingToken(m_scr, Cache.DefaultVernWs, 0);
 			check.m_ErrorsToReport.Add(new DummyEditorialCheck.DummyError(tok, 5, 2, "Lousy message"));
@@ -1283,7 +1291,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void RunCheck_ScrCheckRunRecordsWithFixedInconsistency()
 		{
-			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"));
+			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"),
+				FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			DummyEditorialCheck check = new DummyEditorialCheck(kCheckId1);
 			ScrCheckingToken tok = new DummyParaCheckingToken(m_scr, Cache.DefaultVernWs, 0);
 			check.m_ErrorsToReport.Add(new DummyEditorialCheck.DummyError(tok, 5, 2, "Verbification"));
@@ -1321,7 +1330,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void RunCheck_ScrCheckRunRecordsWithOneBookOneCheck()
 		{
-			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"));
+			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"),
+				FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			DummyEditorialCheck check = new DummyEditorialCheck(kCheckId1);
 			ScrCheckingToken tok = new DummyParaCheckingToken(m_scr, Cache.DefaultVernWs, 0);
 			check.m_ErrorsToReport.Add(new DummyEditorialCheck.DummyError(tok, 5, 2, "Verbification"));
@@ -1364,7 +1374,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void RunCheck_ScrCheckRunRecordsWithOneBookTwoChecks()
 		{
-			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"));
+			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"),
+				FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			DummyEditorialCheck check1 = new DummyEditorialCheck(kCheckId1);
 			ScrCheckingToken tok = new DummyParaCheckingToken(m_scr, Cache.DefaultVernWs, 0);
 			check1.m_ErrorsToReport.Add(new DummyEditorialCheck.DummyError(tok, 5, 2, "Verbification"));
@@ -1415,7 +1426,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void RunCheck_CorrectedErrorGetsDeleted()
 		{
-			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"));
+			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"),
+				FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			DummyEditorialCheck check = new DummyEditorialCheck(kCheckId1);
 			ScrCheckingToken tok = new DummyParaCheckingToken(m_scr, Cache.DefaultVernWs, 0);
 			check.m_ErrorsToReport.Add(new DummyEditorialCheck.DummyError(tok, 5, 8, "Lousy message"));
@@ -1451,7 +1463,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void RecordError_NearDuplicate_DifferByMessage()
 		{
-			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"));
+			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"),
+				FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			DummyEditorialCheck check = new DummyEditorialCheck(kCheckId1);
 			ScrCheckingToken tok = new DummyParaCheckingToken(m_scr, Cache.DefaultVernWs, 0);
 			check.m_ErrorsToReport.Add(new DummyEditorialCheck.DummyError(tok, 5, 8, "Lousy message"));
@@ -1486,7 +1499,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			BCVRef reference = new BCVRef(1, 2, 3);
 
-			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"));
+			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"),
+				FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			DummyEditorialCheck check = new DummyEditorialCheck(kCheckId1);
 			ScrCheckingToken tok = new DummyParaCheckingToken(book,
 				Cache.DefaultVernWs, 0, reference, reference);
@@ -1532,7 +1546,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void RecordError_NearDuplicate_DifferByCheck()
 		{
 			IFdoServiceLocator servloc = Cache.ServiceLocator;
-			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"));
+			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"),
+				FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			ICmAnnotationDefn annDefnChkError = servloc.GetInstance<ICmAnnotationDefnRepository>().CheckingError;
 			ICmAnnotationDefn errorCheck1 = servloc.GetInstance<ICmAnnotationDefnFactory>().Create(
 				Guid.NewGuid(), annDefnChkError);
@@ -1575,7 +1590,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			BCVRef endRef = new BCVRef(1, 2, 3);
 
-			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"));
+			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"),
+				FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			DummyEditorialCheck check = new DummyEditorialCheck(kCheckId1);
 			ScrCheckingToken tok = new DummyParaCheckingToken(m_scr,
 				Cache.DefaultVernWs, 0, new BCVRef(1, 2, 3), endRef);
@@ -1610,7 +1626,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			BCVRef startRef = new BCVRef(1, 2, 3);
 
-			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"));
+			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"),
+				FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			DummyEditorialCheck check = new DummyEditorialCheck(kCheckId1);
 			ScrCheckingToken tok = new DummyParaCheckingToken(m_scr,
 				Cache.DefaultVernWs, 0, startRef, new BCVRef(1, 2, 3));
@@ -1643,7 +1660,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void RecordError_NearDuplicate_DifferByCitedText()
 		{
-			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"));
+			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"),
+				FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			DummyEditorialCheck check = new DummyEditorialCheck(kCheckId1);
 			ScrCheckingToken tok = new DummyParaCheckingToken(m_scr, Cache.DefaultVernWs, 0);
 			check.m_ErrorsToReport.Add(new DummyEditorialCheck.DummyError(tok, 0, 4, "Message"));
@@ -1672,7 +1690,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void GetTextTokens_Chapter0()
 		{
-			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"));
+			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"),
+				FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			int iExodus = 2;
 			IScrBook exodus = AddBookToMockedScripture(iExodus, "Exodus");
 			AddTitleToMockedBook(exodus, "Exodus");
@@ -1706,7 +1725,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void GetTextTokens_WholeBook()
 		{
-			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"));
+			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"),
+				FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			AddBookToMockedScripture(1, "Genesis");
 			int iExodus = 2;
 			IScrBook exodus = AddBookToMockedScripture(iExodus, "Exodus");
@@ -1795,7 +1815,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			IScrBook exodus = AddBookToMockedScripture(iExodus, "Exodus");
 			AddTitleToMockedBook(exodus, "Exodus");
 
-			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"));
+			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"),
+				FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			IScrSection section = AddSectionToMockedBook(exodus, true);
 			IStTxtPara para = AddParaToMockedText(section.HeadingOA, ScrStyleNames.IntroSectionHead);
 			AddRunToMockedPara(para, "Everything you wanted to know about Exodus but were afraid to ask", null);
@@ -1863,7 +1884,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			AddTitleToMockedBook(exodus, "Exodus");
 
 			// Get the text (and set the valid characters for each writing system).
-			var dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"));
+			var dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"),
+				FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			dataSource.GetText(iExodus, 1);
 
 			iWs = 0;
@@ -1885,7 +1907,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void GetTextTokens_LastChapter()
 		{
-			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"));
+			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"),
+				FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			AddBookToMockedScripture(1, "Genesis");
 			int iExodus = 2;
 			IScrBook exodus = AddBookToMockedScripture(iExodus, "Exodus");
@@ -1933,7 +1956,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void GetTextTokens_ChapterStartsAndEndsMidSection()
 		{
 
-			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"));
+			ScrChecksDataSource dataSource = new ScrChecksDataSource(Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"),
+				FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			AddBookToMockedScripture(1, "Genesis");
 			int iExodus = 2;
 			IScrBook exodus = AddBookToMockedScripture(iExodus, "Exodus");

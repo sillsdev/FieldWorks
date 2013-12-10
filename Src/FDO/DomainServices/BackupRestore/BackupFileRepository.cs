@@ -14,7 +14,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using SIL.FieldWorks.Common.FwUtils;
 using System.Collections.Generic;
 using SIL.Utils;
 using System.Globalization;
@@ -41,12 +40,12 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// we'll need to pass in the directory name or have a way to change it.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public BackupFileRepository()
+		public BackupFileRepository(string defaultBackupDir)
 		{
 			string[] backups;
 			try
 			{
-				backups = FileUtils.GetFilesInDirectory(DirectoryFinder.DefaultBackupDirectory);
+				backups = FileUtils.GetFilesInDirectory(defaultBackupDir);
 			}
 			catch (Exception)
 			{

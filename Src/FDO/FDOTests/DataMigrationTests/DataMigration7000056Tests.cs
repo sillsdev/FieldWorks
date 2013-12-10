@@ -16,6 +16,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 
 namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
@@ -38,7 +39,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			var dtos = DataMigrationTestServices.ParseProjectFile("DataMigration7000056.xml");
 			// Set up mock MDC.
 			var mockMDC = new MockMDCForDataMigration();
-			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000055, dtos, mockMDC, null);
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000055, dtos, mockMDC, null, FwDirectoryFinder.FdoDirectories);
 
 			m_dataMigrationManager.PerformMigration(dtoRepos, 7000056, new DummyProgressDlg());
 			Assert.AreEqual(7000056, dtoRepos.CurrentModelVersion, "Wrong updated version.");
@@ -65,7 +66,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 				sb.Length = 0;
 
 				mockMDC = new MockMDCForDataMigration();
-				dtoRepos = new DomainObjectDtoRepository(7000055, dtos, mockMDC, null);
+				dtoRepos = new DomainObjectDtoRepository(7000055, dtos, mockMDC, null, FwDirectoryFinder.FdoDirectories);
 				m_dataMigrationManager.PerformMigration(dtoRepos, 7000056, new DummyProgressDlg());
 				Assert.AreEqual(7000056, dtoRepos.CurrentModelVersion, "Wrong updated version.");
 

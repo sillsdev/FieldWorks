@@ -219,6 +219,11 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		string ProjectFolder { get; }
+
+		/// <summary>
+		/// Gets the directories service.
+		/// </summary>
+		IFdoDirectories Directories { get; }
 	}
 
 	internal sealed class DomainObjectDtoRepository : IDomainObjectDTORepository
@@ -239,6 +244,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		private int m_currentModelVersionNumber;
 		private readonly HashSet<DomainObjectDTO> m_oldTimers = new HashSet<DomainObjectDTO>();
 		private readonly string m_projectFolder;
+		private readonly IFdoDirectories m_dirs;
 
 		private readonly IFwMetaDataCacheManaged m_mdc;	// needed for some data migrations changing over to custom fields.
 
@@ -253,9 +259,10 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		/// <param name="projectFolder">The project folder (don't even think about trying to
 		/// pass a path on a server other than the local machine, and -- yes -- I CAN control
 		/// your thoughts!).</param>
+		/// <param name="dirs"></param>
 		/// ------------------------------------------------------------------------------------
 		internal DomainObjectDtoRepository(int startingModelVersionNumber, HashSet<DomainObjectDTO> dtos,
-			IFwMetaDataCacheManaged mdc, string projectFolder)
+			IFwMetaDataCacheManaged mdc, string projectFolder, IFdoDirectories dirs)
 		{
 			if (dtos == null) throw new ArgumentNullException("dtos");
 			if (mdc == null) throw new ArgumentNullException("mdc");
@@ -264,6 +271,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			m_dtos = dtos;
 			m_mdc = mdc;
 			m_projectFolder = projectFolder;
+			m_dirs = dirs;
 
 			// Add classes from MDC
 			foreach (var clsid in mdc.GetClassIds())
@@ -726,6 +734,13 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			get { return m_projectFolder; }
 		}
 
+		/// <summary>
+		/// Gets the directories service.
+		/// </summary>
+		public IFdoDirectories Directories
+		{
+			get { return m_dirs; }
+		}
 		#endregion
 	}
 }

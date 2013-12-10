@@ -6,7 +6,7 @@
 // 	GNU Lesser General Public License, as specified in the LICENSING.txt file.
 // </copyright>
 // --------------------------------------------------------------------------------------------
-using System;
+
 using Microsoft.Win32;
 
 namespace SIL.FieldWorks.Common.FwUtils
@@ -74,18 +74,5 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		bool Paratext7orLaterInstalled();
-
-		/// <summary>
-		/// If there is a registry value for this but the folder is not there we need to return false because
-		/// paratext is not installed correctly. Also if there is no registry entry for this then return false.
-		/// </summary>
-		bool ParatextSettingsDirectoryExists();
-
-		/// <summary>
-		/// Returns the path to the Paratext settings (projects) directory as specified in the registry
-		/// ENHANCE (Hasso) 2013.09: added this to expose the directory for Unix users, because trying to get it from ScrTextCollections
-		/// always returns null on Unix.  This is really a Paratext problem, and this method may have no benefit.
-		/// </summary>
-		string ParatextSettingsDirectory();
 	}
 }

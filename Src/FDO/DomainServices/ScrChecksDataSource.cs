@@ -52,6 +52,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		private readonly IScripture m_scr;
 		private readonly string m_styleSheetFileName;
 		private readonly string m_punctWhitespaceChar;
+		private readonly string m_legacyOverridesFile;
 
 		private static StyleMarkupInfo s_styleMarkupInfo = null;
 
@@ -66,8 +67,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// <param name="punctWhitespaceChar"></param>
+		/// <param name="legacyOverridesFile"></param>
 		/// ------------------------------------------------------------------------------------
-		public ScrChecksDataSource(FdoCache cache, string punctWhitespaceChar) : this(cache, punctWhitespaceChar, null)
+		public ScrChecksDataSource(FdoCache cache, string punctWhitespaceChar, string legacyOverridesFile) : this(cache, punctWhitespaceChar, legacyOverridesFile, null)
 		{
 		}
 
@@ -77,14 +79,16 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// <param name="punctWhitespaceChar"></param>
+		/// <param name="legacyOverridesFile"></param>
 		/// <param name="styleSheetFileName">Path to the stylesheet definition XML file</param>
 		/// ------------------------------------------------------------------------------------
-		public ScrChecksDataSource(FdoCache cache, string punctWhitespaceChar, string styleSheetFileName)
+		public ScrChecksDataSource(FdoCache cache, string punctWhitespaceChar, string legacyOverridesFile, string styleSheetFileName)
 		{
 			m_cache = cache;
 			m_scr = cache.LangProject.TranslatedScriptureOA;
 			m_punctWhitespaceChar = punctWhitespaceChar;
 			m_styleSheetFileName = styleSheetFileName;
+			m_legacyOverridesFile = legacyOverridesFile;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -707,7 +711,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				return bldr.ToString();
 			}
 
-			var validChars = ValidCharacters.Load(ws, LoadException ?? NoErrorReport);
+			var validChars = ValidCharacters.Load(ws, LoadException ?? NoErrorReport, m_legacyOverridesFile);
 			return (validChars != null ? validChars.SpaceDelimitedList : string.Empty);
 		}
 
@@ -722,7 +726,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			{
 				// Get the writing system and valid characters list
 				return ValidCharacters.Load(m_cache.ServiceLocator.WritingSystemManager.Get(m_cache.DefaultVernWs),
-					LoadException ?? NoErrorReport);
+					LoadException ?? NoErrorReport, m_legacyOverridesFile);
 			}
 		}
 

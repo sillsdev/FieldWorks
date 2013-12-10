@@ -12,9 +12,8 @@
 // Responsibility: TE Team
 // --------------------------------------------------------------------------------------------
 using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
-
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -631,7 +630,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 
 			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
 			{
-				m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Unknown, ResourceHelper.DefaultParaCharsStyleName);
+				m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Unknown, ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
 				DummyTeImporter.MakeSFImportTestSettings(m_settings);
 			});
 		}

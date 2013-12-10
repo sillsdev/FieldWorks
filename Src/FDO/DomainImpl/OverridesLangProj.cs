@@ -23,7 +23,6 @@ using System.Xml;
 
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils; // Needed for Set class.
-using SIL.FieldWorks.Common.FwUtils; // for LanguageDefinitionFactory
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl;
@@ -84,7 +83,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Return LinkedFilesRootDir if explicitly set, otherwise FWDataDirectory.
+		/// Return LinkedFilesRootDir if explicitly set, otherwise DataDirectory.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[ModelProperty(CellarPropertyType.Unicode, 6001042, "string")]
@@ -94,13 +93,13 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				return String.IsNullOrEmpty(LinkedFilesRootDir_Generated)
 					? Path.Combine(m_cache.ProjectId.SharedProjectFolder, FdoFileHelper.ksLinkedFilesDir)
-					: FdoFileHelperRelativePaths.GetLinkedFilesFullPathFromRelativePath(LinkedFilesRootDir_Generated,
-						m_cache.ProjectId.SharedProjectFolder);
+					: LinkedFilesRelativePathHelper.GetLinkedFilesFullPathFromRelativePath(Services.GetInstance<IFdoDirectories>().ProjectsDirectory,
+					LinkedFilesRootDir_Generated, m_cache.ProjectId.SharedProjectFolder);
 			}
 			set
 			{
-				string relativePath = FdoFileHelperRelativePaths.GetLinkedFilesRelativePathFromFullPath(value,
-					m_cache.ProjectId.SharedProjectFolder, ShortName);
+				string relativePath = LinkedFilesRelativePathHelper.GetLinkedFilesRelativePathFromFullPath(Services.GetInstance<IFdoDirectories>().ProjectsDirectory,
+					value, m_cache.ProjectId.SharedProjectFolder, ShortName);
 
 				LinkedFilesRootDir_Generated = relativePath;
 			}

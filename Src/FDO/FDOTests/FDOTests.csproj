@@ -330,6 +330,7 @@
     <Compile Include="FilteredScrBooksTests.cs" />
     <Compile Include="LangProjectTests.cs" />
     <Compile Include="CmSemanticDomainRepositoryTests.cs" />
+    <Compile Include="LinkedFilesRelativePathHelperTests.cs" />
     <Compile Include="MergeObjectsTests.cs" />
     <Compile Include="NotebookTests.cs" />
     <Compile Include="ParaNodeMapTests.cs" />

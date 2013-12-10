@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.IText
 				{
 					var import = new LinguaLinksImport(m_cache,
 						Path.Combine(Path.GetTempPath(), "LanguageExplorer" + Path.DirectorySeparatorChar),
-						Path.Combine(DirectoryFinder.FWCodeDirectory, Path.Combine("Language Explorer", "Import" + Path.DirectorySeparatorChar)));
+						Path.Combine(FwDirectoryFinder.CodeDirectory, Path.Combine("Language Explorer", "Import" + Path.DirectorySeparatorChar)));
 					import.NextInput = m_tbFilename.Text;
 					import.Error += import_Error;
 					try
@@ -132,7 +132,7 @@ namespace SIL.FieldWorks.IText
 		// Otherwise, maybe we should change the .doc file to an html file for portability.
 		private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			string path = String.Format(DirectoryFinder.FWCodeDirectory +
+			string path = String.Format(FwDirectoryFinder.CodeDirectory +
 				"{0}Helps{0}Language Explorer{0}Training{0}Technical Notes on Interlinear Import.doc",
 				Path.DirectorySeparatorChar);
 			try

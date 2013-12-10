@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
 
 namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
@@ -14,7 +15,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 		/// we don't want to show up in tests (a dialog).
 		/// </summary>
 		/// <param name="settings"></param>
-		public ProjectRestoreTestService(RestoreProjectSettings settings) : base(settings)
+		public ProjectRestoreTestService(RestoreProjectSettings settings)
+			: base(settings, new DummyFdoUI(), FwDirectoryFinder.ConverterConsoleExe, FwDirectoryFinder.DbExe)
 		{
 			PutFilesInProject = false;
 			SimulateOKResult = true;

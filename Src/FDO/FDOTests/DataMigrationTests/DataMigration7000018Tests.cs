@@ -18,7 +18,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml.Linq;
 using NUnit.Framework;
-
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.Utils;
 
@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 
 			var mockMdc = SetupMdc();
 
-			IDomainObjectDTORepository repoDTO = new DomainObjectDtoRepository(7000017, dtos, mockMdc, null);
+			IDomainObjectDTORepository repoDTO = new DomainObjectDtoRepository(7000017, dtos, mockMdc, null, FwDirectoryFinder.FdoDirectories);
 
 			// SUT: Do the migration.
 			m_dataMigrationManager.PerformMigration(repoDTO, 7000018, new DummyProgressDlg());

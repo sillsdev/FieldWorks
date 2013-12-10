@@ -157,6 +157,15 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		#endregion
 
 		#region Paths
+
+		/// <summary>
+		/// Gets the projects root folder.
+		/// </summary>
+		public string ProjectsRootFolder
+		{
+			get { return m_projectsRootFolder; }
+		}
+
 		/// <summary>
 		/// This is the path of the project being (or about to be) backed up or restored.
 		/// </summary>

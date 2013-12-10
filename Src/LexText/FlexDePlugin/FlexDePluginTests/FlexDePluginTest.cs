@@ -44,7 +44,7 @@ namespace FlexDePluginTests
 		/// <summary>Location of test files</summary>
 		protected string _TestPath;
 		//protected string _TestPath = Path.Combine(@"..\..\src", @"LexText\FlexDePlugin\FlexDePluginTests\Input");
-		//protected string _TestPath = Path.Combine(DirectoryFinder.FwSourceDirectory, @"LexText\FlexDePlugin\FlexDePluginTests\Input");
+		//protected string _TestPath = Path.Combine(DirectoryFinder.SourceDirectory, @"LexText\FlexDePlugin\FlexDePluginTests\Input");
 
 		/// <summary>
 		/// Runs before all tests. CompanyName must be forced b/c Resharper sets it to itself
@@ -56,7 +56,7 @@ namespace FlexDePluginTests
 			RegistryHelper.CompanyName = "SIL";
 			RegistryHelper.ProductName = "FieldWorks";
 			var path = String.Format("LexText{0}FlexDePlugin{0}FlexDePluginTests{0}Input", Path.DirectorySeparatorChar);
-			_TestPath = Path.Combine(DirectoryFinder.FwSourceDirectory, path);
+			_TestPath = Path.Combine(FwDirectoryFinder.SourceDirectory, path);
 		}
 
 		/// <summary>

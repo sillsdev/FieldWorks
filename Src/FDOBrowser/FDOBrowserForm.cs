@@ -377,14 +377,14 @@ namespace FDOBrowser
 				// Init backend data provider
 				// TODO: Get the correct ICU local for the user writing system
 
-				var userAction = new FwFdoUI(this, this);
+				var ui = new FwFdoUI(this, this);
 				if (isMemoryBEP)
-					m_cache = FdoCache.CreateCacheWithNewBlankLangProj(new BrowserProjectId(bepType, null), "en", "en", "en", userAction);
+					m_cache = FdoCache.CreateCacheWithNewBlankLangProj(new BrowserProjectId(bepType, null), "en", "en", "en", ui, FwDirectoryFinder.FdoDirectories);
 				else
 				{
 					using (var progressDlg = new ProgressDialogWithTask(this))
 					{
-						m_cache = FdoCache.CreateCacheFromExistingData(new BrowserProjectId(bepType, fileName), "en", progressDlg, userAction);
+						m_cache = FdoCache.CreateCacheFromExistingData(new BrowserProjectId(bepType, fileName), "en", ui, FwDirectoryFinder.FdoDirectories, progressDlg);
 					}
 				}
 			   // var v = m_cache.
@@ -2513,7 +2513,7 @@ namespace FDOBrowser
 		/// </summary>
 		public string HelpFile
 		{
-			get { return Path.Combine(DirectoryFinder.FWCodeDirectory, GetHelpString("UserHelpFile")); }
+			get { return Path.Combine(FwDirectoryFinder.CodeDirectory, GetHelpString("UserHelpFile")); }
 		}
 
 		#endregion

@@ -82,7 +82,8 @@ namespace SIL.FieldWorks.TE.ImportTests
 			// part of the normal undoable work.
 			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
 			{
-				InstalledScriptureChecks.GetChecks(new ScrChecksDataSource(m_scr.Cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar")));
+				InstalledScriptureChecks.GetChecks(new ScrChecksDataSource(m_scr.Cache,
+					ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"), FwDirectoryFinder.LegacyWordformingCharOverridesFile));
 			});
 		}
 

@@ -24,11 +24,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// The repo may be a lift or full FW repo, but it can be from any source source, as long as the code can create an FW project from it.
 		/// </summary>
 		/// <returns>Null if the operation was cancelled or otherwise did not work. The full pathname of an fwdata file, if it did work.</returns>
-		public static string ObtainProjectFromAnySource(Form parent, IHelpTopicProvider helpTopicProvider, out ObtainedProjectType obtainedProjectType, IFdoUI ui)
+		public static string ObtainProjectFromAnySource(Form parent, IHelpTopicProvider helpTopicProvider, out ObtainedProjectType obtainedProjectType)
 		{
 			bool dummy;
 			string fwdataFileFullPathname;
-			var success = FLExBridgeHelper.LaunchFieldworksBridge(DirectoryFinder.ProjectsDirectory, null, FLExBridgeHelper.Obtain, null,
+			var success = FLExBridgeHelper.LaunchFieldworksBridge(FwDirectoryFinder.ProjectsDirectory, null, FLExBridgeHelper.Obtain, null,
 				FDOBackendProvider.ModelVersion, "0.13", null, out dummy, out fwdataFileFullPathname);
 			if (!success)
 			{
@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (fwdataFileFullPathname.EndsWith("lift"))
 			{
-				fwdataFileFullPathname = CreateProjectFromLift(parent, helpTopicProvider, fwdataFileFullPathname, ui);
+				fwdataFileFullPathname = CreateProjectFromLift(parent, helpTopicProvider, fwdataFileFullPathname);
 				obtainedProjectType = ObtainedProjectType.Lift;
 			}
 
@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Create a new Fieldworks project and import a lift file into it. Return the .fwdata path.
 		/// </summary>
-		private static string CreateProjectFromLift(Form parent, IHelpTopicProvider helpTopicProvider, string liftPath, IFdoUI ui)
+		private static string CreateProjectFromLift(Form parent, IHelpTopicProvider helpTopicProvider, string liftPath)
 		{
 			string projectPath;
 			FdoCache cache;
@@ -72,7 +72,7 @@ namespace SIL.FieldWorks.Common.Controls
 				progressDlg.Title = FwControls.ksCreatingLiftProject;
 				var cacheReceiver = new FdoCache[1]; // a clumsy way of handling an out parameter, consistent with RunTask
 				projectPath = (string)progressDlg.RunTask(true, CreateProjectTask,
-					new[] { liftPath, parent, ui, anthroListFile, cacheReceiver });
+					new[] { liftPath, parent, anthroListFile, cacheReceiver });
 				cache = cacheReceiver[0];
 			}
 
@@ -102,20 +102,19 @@ namespace SIL.FieldWorks.Common.Controls
 			// Get required parameters. Ideally these would just be the signature of the method, but RunTask requires object[].
 			var liftPathname = (string) parameters[0];
 			var synchronizeInvoke = (ISynchronizeInvoke) parameters[1];
-			var userAction = (IFdoUI) parameters[2];
-			var anthroFile = (string) parameters[3];
-			var cacheReceiver = (FdoCache[]) parameters[4];
+			var anthroFile = (string) parameters[2];
+			var cacheReceiver = (FdoCache[]) parameters[3];
 
 			IWritingSystem wsVern, wsAnalysis;
 			RetrieveDefaultWritingSystemsFromLift(liftPathname, out wsVern, out wsAnalysis);
 
 			string projectPath = FdoCache.CreateNewLangProj(progress,
 				Directory.GetParent(Path.GetDirectoryName(liftPathname)).Parent.Name, // Get the new Flex project name from the Lift pathname.
-				synchronizeInvoke, userAction, wsAnalysis, wsVern, null, null, null, anthroFile);
+				FwDirectoryFinder.FdoDirectories, synchronizeInvoke, wsAnalysis, wsVern, null, null, null, anthroFile);
 
 			// This is a temporary cache, just to do the import, and AFAIK we have no access to the current
 			// user WS. So create it as "English". Put it in the array to return to the caller.
-			cacheReceiver[0] = FdoCache.CreateCacheFromLocalProjectFile(projectPath, "en", progress, userAction);
+			cacheReceiver[0] = FdoCache.CreateCacheFromLocalProjectFile(projectPath, "en", new SilentFdoUI(synchronizeInvoke), FwDirectoryFinder.FdoDirectories, progress);
 			return projectPath;
 		}
 
@@ -127,8 +126,7 @@ namespace SIL.FieldWorks.Common.Controls
 				string vernWsId, analysisWsId;
 				using (var reader = XmlReader.Create(liftReader))
 					RetrieveDefaultWritingSystemIdsFromLift(reader, out vernWsId, out analysisWsId);
-				var wsManager = new PalasoWritingSystemManager(
-					new GlobalFileWritingSystemStore(DirectoryFinder.GlobalWritingSystemStoreDirectory));
+				var wsManager = new PalasoWritingSystemManager(new GlobalFileWritingSystemStore());
 				wsManager.GetOrSet(vernWsId, out wsVern);
 				wsManager.GetOrSet(analysisWsId, out wsAnalysis);
 			}

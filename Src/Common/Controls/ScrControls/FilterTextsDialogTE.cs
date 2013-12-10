@@ -58,12 +58,12 @@ namespace SIL.FieldWorks.Common.Controls
 				IHelpTopicProvider helpProvider;
 				if (FwUtils.FwUtils.IsTEInstalled)
 				{
-					helpProvider = (IHelpTopicProvider) DynamicLoader.CreateObject(DirectoryFinder.TeDll,
+					helpProvider = (IHelpTopicProvider) DynamicLoader.CreateObject(FwDirectoryFinder.TeDll,
 						"SIL.FieldWorks.TE.TeHelpTopicProvider");
 				}
 				else
 				{
-					helpProvider = (IHelpTopicProvider)DynamicLoader.CreateObject(DirectoryFinder.FlexDll,
+					helpProvider = (IHelpTopicProvider)DynamicLoader.CreateObject(FwDirectoryFinder.FlexDll,
 						"SIL.FieldWorks.XWorks.LexText.FlexHelpTopicProvider");
 				}
 				NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () =>

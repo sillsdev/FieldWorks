@@ -18,7 +18,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 
 using NUnit.Framework;
-
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Resources;
@@ -97,7 +97,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			DummyTeImporter.s_consultantNoteDefn = Cache.ServiceLocator.GetInstance<ICmAnnotationDefnRepository>().ConsultantAnnotationDefn;
 
 			m_titus = new BCVRef(56001001);
-			m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Other, ResourceHelper.DefaultParaCharsStyleName);
+			m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Other, ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
 			m_settings.StartRef = m_titus;
 			m_settings.EndRef = m_titus;
 			m_settings.ImportTranslation = true;

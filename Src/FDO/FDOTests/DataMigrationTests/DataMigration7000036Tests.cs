@@ -16,6 +16,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using System;
 using SIL.FieldWorks.FDO.DomainImpl;
@@ -177,7 +178,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			mockMDC.AddClass(10, "ScrTxtPara", "StTxtPara", new List<string>());
 			mockMDC.AddClass(11, "StPara", "CmObject", new List<string> { "StTxtPara" });
 			mockMDC.AddClass(12, "StJounalText", "StText", new List<string>());
-			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000035, dtos, mockMDC, null);
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000035, dtos, mockMDC, null, FwDirectoryFinder.FdoDirectories);
 
 			DateTime beforeMigration = DateTime.Now.AddSeconds(-1); // avoid tick problem
 

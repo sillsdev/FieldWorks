@@ -17,7 +17,6 @@ using System.IO;
 using System.Linq;
 using ICSharpCode.SharpZipLib.Zip;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 
@@ -99,7 +98,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		private void PersistBackupFileSettings()
 		{
 			string backupSettingsFile = Path.Combine(FdoFileHelper.GetBackupSettingsDir(
-				m_settings.ProjectPath), DirectoryFinder.kBackupSettingsFilename);
+				m_settings.ProjectPath), FdoFileHelper.kBackupSettingsFilename);
 
 			string settingsDir = Path.GetDirectoryName(backupSettingsFile);
 			if (!Directory.Exists(settingsDir))

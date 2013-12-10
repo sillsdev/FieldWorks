@@ -21,6 +21,7 @@ using System.IO;
 using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.FDOTests;
+using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -42,7 +43,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 		[SetUp]
 		public void Init()
 		{
-			string sXmlFile = Path.Combine(DirectoryFinder.FWCodeDirectory,
+			string sXmlFile = Path.Combine(FwDirectoryFinder.CodeDirectory,
 				@"Language Explorer/MGA/GlossLists/EticGlossList.xml");
 			m_doc = new XmlDocument();
 			m_doc.Load(sXmlFile);
@@ -106,10 +107,10 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 	/// Test sets for the GlossListTreeView class.
 	/// </summary>
 	[TestFixture]
-	public class GlossListTreeViewTest: SIL.FieldWorks.Test.TestUtils.BaseTest
+	public class GlossListTreeViewTest : BaseTest
 	{
 		private GlossListTreeView treeViewGlossList;
-		private string sXmlFile = Path.Combine(DirectoryFinder.FWCodeDirectory,
+		private string sXmlFile = Path.Combine(FwDirectoryFinder.CodeDirectory,
 			@"Language Explorer/MGA/GlossLists/EticGlossList.xml");
 		private XmlDocument dom = new XmlDocument();
 		private string m_sTopOfList = "eticGlossList";

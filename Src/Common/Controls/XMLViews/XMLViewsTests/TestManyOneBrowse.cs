@@ -63,7 +63,7 @@ namespace XMLViewsTests
 			// - MoMorphSynAnalysis
 			// - MoStemMsa
 			// - MoDerivationalMsa
-			string m_sTestPath = Path.Combine(DirectoryFinder.FwSourceDirectory,
+			string m_sTestPath = Path.Combine(FwDirectoryFinder.SourceDirectory,
 				Path.Combine("Common",
 				Path.Combine("Controls",
 				Path.Combine("XMLViews",
@@ -85,7 +85,7 @@ namespace XMLViewsTests
 			m_sda.WritingSystemFactory = m_wsManager;
 			var parser = new SimpleDataParser(m_mdc, m_cda);
 
-			parser.Parse(Path.Combine(DirectoryFinder.FwSourceDirectory,
+			parser.Parse(Path.Combine(FwDirectoryFinder.SourceDirectory,
 				Path.Combine("Common",
 				Path.Combine("Controls",
 				Path.Combine("XMLViews",
@@ -105,7 +105,7 @@ namespace XMLViewsTests
 			// - Semantic domains (pair of strings in para in seq in seq, using layout refs)
 			// - MSAs (simplified, but polymorphic with one having <choice> and one <obj> to CmPossibility
 			XmlDocument docColumns = new XmlDocument();
-			docColumns.Load(Path.Combine(DirectoryFinder.FwSourceDirectory,
+			docColumns.Load(Path.Combine(FwDirectoryFinder.SourceDirectory,
 				Path.Combine("Common",
 				Path.Combine("Controls",
 				Path.Combine("XMLViews",
@@ -113,7 +113,7 @@ namespace XMLViewsTests
 			m_columnList = docColumns.DocumentElement.ChildNodes;
 
 			// Parts just has what those columns need.
-			string partDirectory = Path.Combine(DirectoryFinder.FwSourceDirectory,
+			string partDirectory = Path.Combine(FwDirectoryFinder.SourceDirectory,
 				Path.Combine("Common",
 				Path.Combine("Controls",
 				Path.Combine("XMLViews", "XMLViewsTests"))));

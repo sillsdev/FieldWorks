@@ -879,7 +879,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:DummyUndoImportManager"/> class.
+		/// Initializes a new instance of the <see cref="DummyUndoImportManager"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public DummyUndoImportManager(FdoTestBase testBase) :
@@ -900,7 +900,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:SOWNoSegException"/> class.
+		/// Initializes a new instance of the <see cref="SOWNoSegException"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public SOWNoSegException()
@@ -4847,7 +4847,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 				{
 					if (picture != null)
 					{
-						FileUtils.Delete(Path.Combine(DirectoryFinder.FWDataDirectory,
+						FileUtils.Delete(Path.Combine(FwDirectoryFinder.DataDirectory,
 							picture.PictureFileRA.InternalPath));
 					}
 				}

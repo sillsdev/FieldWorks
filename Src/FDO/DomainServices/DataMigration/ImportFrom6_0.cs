@@ -15,8 +15,6 @@ using System.ServiceProcess;
 using System.Text;
 using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.Win32;
-
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
@@ -46,6 +44,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		bool m_fHaveSqlServer;
 		bool m_fHaveOldFieldWorks;
 
+		private readonly string m_converterConsolePath;
 		readonly bool m_fVerboseDebug;
 		private readonly IThreadedProgress m_progressDlg;
 		#endregion
@@ -54,16 +53,19 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		/// <summary>
 		/// Constructor for run-time debugging.
 		/// </summary>
-		public ImportFrom6_0(IThreadedProgress progressDlg, bool fDebug)
+		public ImportFrom6_0(IThreadedProgress progressDlg, string converterConsolePath, string dbPath, bool fDebug)
 		{
 			m_progressDlg = progressDlg;
+			m_converterConsolePath = converterConsolePath;
+			m_dbPath = dbPath;
 			m_fVerboseDebug = fDebug;
 		}
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public ImportFrom6_0(IThreadedProgress progressDlg) : this(progressDlg, false)
+		public ImportFrom6_0(IThreadedProgress progressDlg, string converterConsolePath, string dbPath)
+			: this(progressDlg, converterConsolePath, dbPath, false)
 		{
 		}
 		#endregion
@@ -71,9 +73,8 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		/// <summary>
 		/// Do the import of the specified zip or XML file. Return true if successful and the caller should open the database.
 		/// </summary>
-		public bool Import(string pathname, string projectName, out string projectFile)
+		public bool Import(string pathname, string projectName, string destFolder, out string projectFile)
 		{
-			var destFolder = DirectoryFinder.ProjectsDirectory;
 			var folderName = Path.Combine(destFolder, projectName);
 			projectFile = Path.Combine(folderName, projectName + FdoFileHelper.ksFwDataXmlFileExtension);
 			string extension = Path.GetExtension(pathname);
@@ -101,7 +102,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 						if (fCreateFolder)
 							Directory.CreateDirectory(folderName);
 						string message = String.Format(Strings.ksExtractingFromZip, Path.GetFileName(entry.Name));
-						if (!UnzipFile(zipFile, entry, message, out tempPath))
+						if (!UnzipFile(destFolder, zipFile, entry, message, out tempPath))
 						{
 							return false;
 						}
@@ -147,7 +148,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 						{
 							string tempPath;
 							string message = String.Format(Strings.ksExtractingFromZip, Path.GetFileName(entry.Name));
-							if (!UnzipFile(zipFile, entry, message, out tempPath))
+							if (!UnzipFile(destFolder, zipFile, entry, message, out tempPath))
 							{
 								return false;
 							}
@@ -194,9 +195,8 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			}
 		}
 
-		private bool UnzipFile(ZipFile zipFile, ZipEntry entry, string message, out string tempPath)
+		private bool UnzipFile(string folderName, ZipFile zipFile, ZipEntry entry, string message, out string tempPath)
 		{
-			string folderName = DirectoryFinder.ProjectsDirectory;
 			if (!Directory.Exists(folderName))
 				Directory.CreateDirectory(folderName);
 			// We will extract the file to here.
@@ -358,7 +358,6 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 							return false;
 						}
 					}
-					m_dbPath = Path.Combine(DirectoryFinder.GetFWCodeSubDirectory("MSSQLMigration"), "db.exe");
 					if (!File.Exists(m_dbPath))
 					{
 						if (m_fVerboseDebug)
@@ -419,10 +418,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 					}
 					if (String.IsNullOrEmpty(version) || version.CompareTo("5.4") < 0 || version.CompareTo("6.1") >= 0)
 					{
-						if (!String.IsNullOrEmpty(version) && version.CompareTo("5.4") < 0)
-						{
-						}
-						else if (m_fVerboseDebug)
+						if (m_fVerboseDebug)
 						{
 							string msg = String.Format("Invalid version found in a registered COM DLL: {0} [{1}]",
 								version, dllPath);
@@ -643,9 +639,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 					File.Delete(replacedProj);
 				File.Move(projectFile, replacedProj);
 			}
-			using (var process = CreateAndInitProcess(
-				Path.Combine(DirectoryFinder.FWCodeDirectory, "ConverterConsole.exe"),
-				'"' + pathname + "\" \"" + projectFile + '"'))
+			using (var process = CreateAndInitProcess(m_converterConsolePath, '"' + pathname + "\" \"" + projectFile + '"'))
 			{
 				m_progressDlg.IsIndeterminate = true; // Can't get actual progress from external program
 				m_progressDlg.Title = Strings.ksConverting;

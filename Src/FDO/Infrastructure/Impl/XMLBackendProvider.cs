@@ -18,7 +18,6 @@ using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.Utils;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 {
@@ -125,8 +124,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// </summary>
 		internal XMLBackendProvider(FdoCache cache, IdentityMap identityMap,
 			ICmObjectSurrogateFactory surrogateFactory, IFwMetaDataCacheManagedInternal mdc,
-			IDataMigrationManager dataMigrationManager, IFdoUI ui) :
-			base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager, ui)
+			IDataMigrationManager dataMigrationManager, IFdoUI ui, IFdoDirectories dirs) :
+			base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager, ui, dirs)
 		{
 		}
 
@@ -305,7 +304,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					sb.AppendLine(String.Format(Strings.ksDuplicateGuidsMsg2, guid));
 					sb.AppendLine();
 				}
-				m_cache.ServiceLocator.GetInstance<IFdoUI>().ReportDuplicateGuids(FwRegistryHelper.FieldWorksRegistryKey, "FLExErrors@sil.org", sb.ToString());
+				m_cache.ServiceLocator.GetInstance<IFdoUI>().ReportDuplicateGuids(sb.ToString());
 			}
 		}
 
@@ -736,9 +735,9 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// ------------------------------------------------------------------------------------
 		public override bool RenameDatabase(string sNewProjectName)
 		{
-			bool projectIsInDefaultLocation = DirectoryFinder.IsSubFolderOfProjectsDirectory(ProjectId.ProjectFolder);
+			bool projectIsInDefaultLocation = Path.GetDirectoryName(ProjectId.ProjectFolder) == m_dirs.ProjectsDirectory;
 			string sNewProjectFolder = projectIsInDefaultLocation ?
-				Path.Combine(DirectoryFinder.ProjectsDirectory, sNewProjectName) : ProjectId.ProjectFolder;
+				Path.Combine(m_dirs.ProjectsDirectory, sNewProjectName) : ProjectId.ProjectFolder;
 			if (FileUtils.NonEmptyDirectoryExists(sNewProjectFolder))
 				return false; // Destination directory already exists
 

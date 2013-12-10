@@ -14,10 +14,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
+using Microsoft.Win32;
 using Paratext;
-using Paratext.DerivedTranslation;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 using SILUBS.SharedScrUtils;
 
@@ -150,6 +150,35 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				RefreshProjects();
 			}
 
+			/// <summary>
+			/// LT-14787 Database displays error about inaccessible Paratext projects
+			/// If there is a registry value for this but the folder is not there we need to return false because
+			/// paratext is not installed correctly. Also if there is no registry entry for this then return false.
+			/// </summary>
+			private bool ParatextSettingsDirectoryExists()
+			{
+				var regValue = ParatextSettingsDirectory();
+				return !String.IsNullOrEmpty(regValue) && Directory.Exists(regValue);
+			}
+
+			/// <summary>
+			/// Returns the path to the Paratext settings (projects) directory as specified in the registry
+			/// ENHANCE (Hasso) 2013.09: added this to expose the directory for Unix users, because trying to get it from ScrTextCollections
+			/// always returns null on Unix.  This is really a Paratext problem, and this method may have no benefit.
+			/// </summary>
+			private string ParatextSettingsDirectory()
+			{
+				using (var paratextKey = Registry.LocalMachine.OpenSubKey("Software\\ScrChecks\\1.0\\Settings_Directory"))
+				{
+					if (paratextKey != null)
+					{
+						var keyName = paratextKey.ToString();
+						return Registry.GetValue(keyName, "", "") as string;
+					}
+				}
+				return null;
+			}
+
 			/// ------------------------------------------------------------------------------------
 			/// <summary>
 			/// Gets the Paratext projects directory (null if none)
@@ -165,7 +194,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						{
 							// TODO FWNX-1235: Why does SrcTextCollection.SettingsDirectory not work in Unix?
 							// Does ScrTextCollection work at all in Unix?
-							return FwRegistryHelper.ParatextSettingsDirectory();
+							return ParatextSettingsDirectory();
 						}
 						return ScrTextCollection.SettingsDirectory;
 					}
@@ -182,7 +211,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			{
 				try
 				{
-					if (FwRegistryHelper.ParatextSettingsDirectoryExists())
+					if (ParatextSettingsDirectoryExists())
 					{
 						if (!m_IsParatextInitialized)
 						{
@@ -192,7 +221,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 							// We pass the directory (rather than passing no arguments, and letting the paratext dll figure
 							// it out) because the figuring out goes wrong on Linux, where both programs are simulating
 							// the registry.
-							ScrTextCollection.Initialize(FwRegistryHelper.ParatextSettingsDirectory(), false);
+							ScrTextCollection.Initialize(ParatextSettingsDirectory(), false);
 							m_IsParatextInitialized = true;
 						}
 						else

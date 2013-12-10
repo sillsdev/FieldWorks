@@ -105,7 +105,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		/// ------------------------------------------------------------------------------------
 		public override void FixtureSetup()
 		{
-			RemotingServer.Start();
+			RemotingServer.Start(FwDirectoryFinder.RemotingTcpServerConfigFile, FwDirectoryFinder.FdoDirectories, () => false, v => {});
 			base.FixtureSetup();
 		}
 
@@ -207,7 +207,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			var sourceGuids = new List<Guid>();
 			using (var sourceCache = FdoCache.CreateCacheWithNewBlankLangProj(
 				new TestProjectId(sourceBackendStartupParameters.ProjectId.Type,
-								sourceBackendStartupParameters.ProjectId.Path), "en", "fr", "en", new DummyFdoUI()))
+								sourceBackendStartupParameters.ProjectId.Path), "en", "fr", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories))
 			{
 				// BEP is a singleton, so we shouldn't call Dispose on it. This will be done
 				// by service locator.
@@ -222,7 +222,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 				// Migrate source data to new BEP.
 				using (var targetCache = FdoCache.CreateCacheCopy(
 					new TestProjectId(targetBackendStartupParameters.ProjectId.Type,
-									targetBackendStartupParameters.ProjectId.Path), "en", sourceCache, new DummyFdoUI()))
+									targetBackendStartupParameters.ProjectId.Path), "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, sourceCache))
 				{
 					// BEP is a singleton, so we shouldn't call Dispose on it. This will be done
 					// by service locator.
@@ -271,7 +271,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 													sourceBackendStartupParameters.ProjectId.Path);
 			IThreadedProgress progressDlg = new DummyProgressDlg();
 			using (FdoCache sourceCache = FdoCache.CreateCacheWithNewBlankLangProj(
-				projId, "en", "fr", "en", new DummyFdoUI()))
+				projId, "en", "fr", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories))
 			{
 				// BEP is a singleton, so we shouldn't call Dispose on it. This will be done
 				// by service locator.
@@ -285,7 +285,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			// Migrate source data to new BEP.
 			progressDlg = new DummyProgressDlg();
 			using (var targetCache = FdoCache.CreateCacheWithNoLangProj(
-				new TestProjectId(targetBackendStartupParameters.ProjectId.Type, null), "en", new DummyFdoUI()))
+				new TestProjectId(targetBackendStartupParameters.ProjectId.Type, null), "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories))
 			{
 				// BEP is a singleton, so we shouldn't call Dispose on it. This will be done
 				// by service locator.

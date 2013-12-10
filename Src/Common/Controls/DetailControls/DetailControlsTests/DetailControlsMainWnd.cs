@@ -165,7 +165,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			m_dataEntryForm = new DataTree();
 			SuspendLayout();
-			string partDirectory = Path.Combine(DirectoryFinder.FWCodeDirectory,
+			string partDirectory = Path.Combine(FwDirectoryFinder.CodeDirectory,
 				@"Language Explorer\Configuration\Parts");
 			Dictionary<string, string[]> keyAttrs = new Dictionary<string, string[]>();
 			keyAttrs["layout"] = new string[] {"class", "type", "mode", "name" };

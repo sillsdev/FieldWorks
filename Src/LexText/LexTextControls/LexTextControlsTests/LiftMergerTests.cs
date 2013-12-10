@@ -2697,9 +2697,9 @@ namespace LexTextControlsTests
 		public void TestLDMLMigration()
 		{
 			var projectFolder = Path.GetTempPath();
-			var testLiftDataSource = Path.Combine(DirectoryFinder.FwSourceDirectory,
+			var testLiftDataSource = Path.Combine(FwDirectoryFinder.SourceDirectory,
 												  "LexText/LexTextControls/LexTextControlsTests/LDML-11723");
-			var testLiftDataPath = Path.Combine(DirectoryFinder.FwSourceDirectory,
+			var testLiftDataPath = Path.Combine(FwDirectoryFinder.SourceDirectory,
 												"LexText/LexTextControls/LexTextControlsTests/LDML-11723-test");
 
 			var sLiftDataFile = Path.Combine(testLiftDataPath, "LDML-11723.lift");

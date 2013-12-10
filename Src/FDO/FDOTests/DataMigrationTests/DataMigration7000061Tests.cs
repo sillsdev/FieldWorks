@@ -4,6 +4,7 @@ using System.Linq;
 using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 
 namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
@@ -42,7 +43,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			mockMdc.AddField(6001, "StemName", CellarPropertyType.ReferenceAtomic, 7);
 
 			var dtos = DataMigrationTestServices.ParseProjectFile("DataMigration7000061.xml");
-			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000060, dtos, mockMdc, null);
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000060, dtos, mockMdc, null, FwDirectoryFinder.FdoDirectories);
 
 			m_dataMigrationManager.PerformMigration(dtoRepos, 7000061, new DummyProgressDlg());
 

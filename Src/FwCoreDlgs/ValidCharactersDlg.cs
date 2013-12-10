@@ -24,7 +24,6 @@ using System.Media;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
 using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -77,7 +76,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			/// ---------------------------------------------------------------------------------
 			/// <summary>
-			/// Constructs a new instance of the <see cref="T:ValidCharGridsManager"/> class.
+			/// Constructs a new instance of the <see cref="ValidCharGridsManager"/> class.
 			/// </summary>
 			/// ---------------------------------------------------------------------------------
 			public ValidCharGridsManager()
@@ -139,7 +138,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				m_gridWordForming = gridWf;
 				m_gridNumbers = gridNum;
 				m_gridOther = gridOther;
-				m_validChars = ValidCharacters.Load(ws, LoadException);
+				m_validChars = ValidCharacters.Load(ws, LoadException, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 
 				RefreshCharacterGrids(ValidCharacterType.All);
 			}
@@ -674,7 +673,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#region Contructors
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ValidCharactersDlg"/> class.
+		/// Initializes a new instance of the <see cref="ValidCharactersDlg"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public ValidCharactersDlg()
@@ -706,7 +705,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ValidCharactersDlg"/> class.
+		/// Initializes a new instance of the <see cref="ValidCharactersDlg"/> class.
 		/// </summary>
 		/// <param name="cache">The cache. Can be <c>null</c> if called from New Project
 		/// dialog.</param>
@@ -2020,7 +2019,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:CharacterInventoryRow"/> class.
+		/// Initializes a new instance of the <see cref="CharacterInventoryRow"/> class.
 		/// </summary>
 		/// <param name="chr">The character for this inventory row.</param>
 		/// ------------------------------------------------------------------------------------

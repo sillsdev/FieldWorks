@@ -183,11 +183,11 @@ namespace XCore
 			:this (filePattern, xpath, keyAttrs, appName, projectPath)
 		{
 			int msStart = Environment.TickCount;
-			m_inventoryPaths.Add(DirectoryFinder.GetFWCodeSubDirectory(@"Parts"));
+			m_inventoryPaths.Add(FwDirectoryFinder.GetCodeSubDirectory(@"Parts"));
 			if (customInventoryPaths != null)
 			{
 				foreach (string customInventoryPath in customInventoryPaths)
-					m_inventoryPaths.Add(DirectoryFinder.GetFWCodeSubDirectory(customInventoryPath));
+					m_inventoryPaths.Add(FwDirectoryFinder.GetCodeSubDirectory(customInventoryPath));
 			}
 			LoadElements();
 			if (xmlInventorySwitch.TraceInfo)
@@ -1431,7 +1431,7 @@ namespace XCore
 			foreach(string inventoryPath in m_inventoryPaths)
 			{
 				//jdh added dec 2003
-				string p = DirectoryFinder.GetFWCodeSubDirectory(inventoryPath);
+				string p = FwDirectoryFinder.GetCodeSubDirectory(inventoryPath);
 
 				if (Directory.Exists(p))
 					AddElementsFromFiles(DirectoryUtils.GetOrderedFiles(p, m_filePattern));
@@ -1472,7 +1472,7 @@ namespace XCore
 			foreach(string inventoryPath in m_inventoryPaths)
 			{
 				//jdh added dec 2003
-				string p = DirectoryFinder.GetFWCodeSubDirectory(inventoryPath);
+				string p = FwDirectoryFinder.GetCodeSubDirectory(inventoryPath);
 
 				if (Directory.Exists(p))
 				{

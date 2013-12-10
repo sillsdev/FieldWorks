@@ -28,19 +28,10 @@ namespace SIL.FieldWorks.Common.FXT
 		/// </summary>
 		protected string m_testDir;
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="SimpleTests"/> class.
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		public StandardFormat()
-		{
-		}
-
 		public override void Init()
 		{
 			base.Init();
-			m_testDir = Path.Combine(DirectoryFinder.FlexFolder, "Export Templates");
+			m_testDir = Path.Combine(FwDirectoryFinder.FlexFolder, "Export Templates");
 		}
 
 		[Test]

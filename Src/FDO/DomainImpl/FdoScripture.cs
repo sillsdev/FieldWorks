@@ -408,8 +408,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		/// <param name="importType">type of import type to find</param>
 		/// <param name="defaultParaCharsStyleName">The default paragraph characters style name.</param>
+		/// <param name="stylesPath"></param>
 		/// ------------------------------------------------------------------------------------
-		public IScrImportSet FindOrCreateDefaultImportSettings(TypeOfImport importType, string defaultParaCharsStyleName)
+		public IScrImportSet FindOrCreateDefaultImportSettings(TypeOfImport importType, string defaultParaCharsStyleName, string stylesPath)
 		{
 			IScrImportSet settings = DefaultImportSettings_internal;
 
@@ -435,7 +436,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 			// Didn't find the specified type of settings, so create a new set.
 			IScrImportSet newSettings =
-				m_cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create(defaultParaCharsStyleName);
+				m_cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create(defaultParaCharsStyleName, stylesPath);
 			ImportSettingsOC.Add(newSettings);
 			newSettings.ImportType = (int)importType;
 			return newSettings;

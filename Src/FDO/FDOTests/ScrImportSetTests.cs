@@ -21,7 +21,7 @@ using System.Text;
 
 using NUnit.Framework;
 using Rhino.Mocks;
-
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
@@ -173,7 +173,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			base.TestSetup();
 			m_ptHelper.Projects.Clear();
 
-			m_importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create(ResourceHelper.DefaultParaCharsStyleName);
+			m_importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create(ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
 			m_mockParatextHelper = MockRepository.GenerateMock<IParatextHelper>();
 			m_scr.ImportSettingsOC.Add(m_importSettings);
 			m_ptHelper.m_loadProjectMappingsImpl = m_mockParatextHelper;

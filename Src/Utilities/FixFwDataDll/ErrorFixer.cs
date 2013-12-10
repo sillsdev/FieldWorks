@@ -104,7 +104,7 @@ namespace SIL.FieldWorks.FixData
 					if (dlg.ShowDialog(m_dlg) == DialogResult.OK)
 					{
 						string pathname = Path.Combine(
-							Path.Combine(DirectoryFinder.ProjectsDirectory, dlg.SelectedProject),
+							Path.Combine(FwDirectoryFinder.ProjectsDirectory, dlg.SelectedProject),
 							dlg.SelectedProject + FdoFileHelper.ksFwDataXmlFileExtension);
 						if (File.Exists(pathname))
 						{

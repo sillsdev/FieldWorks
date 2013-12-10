@@ -108,7 +108,7 @@ namespace SIL.FieldWorks
 
 			m_helpTopicProvider = helpTopicProvider;
 			helpProvider = new HelpProvider();
-			helpProvider.HelpNamespace = DirectoryFinder.FWCodeDirectory + m_helpTopicProvider.GetHelpString("UserHelpFile");
+			helpProvider.HelpNamespace = FwDirectoryFinder.CodeDirectory + m_helpTopicProvider.GetHelpString("UserHelpFile");
 			helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(m_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			receiveButton.Enabled =

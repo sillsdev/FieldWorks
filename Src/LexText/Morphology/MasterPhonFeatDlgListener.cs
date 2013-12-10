@@ -96,7 +96,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				FdoCache cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
 				Debug.Assert(cache != null);
-				string sXmlFile = Path.Combine(DirectoryFinder.FWCodeDirectory, String.Format("Language Explorer{0}MGA{0}GlossLists{0}PhonFeatsEticGlossList.xml", Path.DirectorySeparatorChar));
+				string sXmlFile = Path.Combine(FwDirectoryFinder.CodeDirectory, String.Format("Language Explorer{0}MGA{0}GlossLists{0}PhonFeatsEticGlossList.xml", Path.DirectorySeparatorChar));
 				if (cache.LanguageProject.PhFeatureSystemOA == null)
 				{
 					// Mainly for Memory-only backend, makes system more self-repairing.

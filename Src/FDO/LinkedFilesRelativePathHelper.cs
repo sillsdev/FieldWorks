@@ -10,7 +10,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.IO;
-using SIL.FieldWorks.Common.FwUtils;
+using SIL.CoreImpl;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO
@@ -18,7 +18,7 @@ namespace SIL.FieldWorks.FDO
 	/// <summary>
 	/// This class is designed for converting between relative paths and full paths for the LinkedFiles of a FW project
 	/// </summary>
-	public class FdoFileHelperRelativePaths
+	public static class LinkedFilesRelativePathHelper
 	{
 		/// <summary>Substitution string for a path that is under the LinkedFiles directory.</summary>
 		public const string ksLFrelPath = "%lf%";
@@ -155,23 +155,23 @@ namespace SIL.FieldWorks.FDO
 			return FixPathSlashesIfNeeded(relativePath);
 		}
 
-
 		/// <summary>
 		/// Return the fullPath for a project's LinkedFiles based on the relative path that was persisted.
 		/// If no match on a relativePath match is made then return the relativePath passed in assuming it
 		/// is actually a full path.
 		/// </summary>
+		/// <param name="projectsPath"></param>
 		/// <param name="relativePath"></param>
 		/// <param name="projectPath"></param>
 		/// <returns></returns>
-		public static String GetLinkedFilesFullPathFromRelativePath(string relativePath, String projectPath)
+		public static String GetLinkedFilesFullPathFromRelativePath(string projectsPath, string relativePath, String projectPath)
 		{
 			String fullPath = null;
 			fullPath = GetFullPathForRelativePath(relativePath, ksProjectRelPath, projectPath);
 
 			if (String.IsNullOrEmpty(fullPath))
 				fullPath = GetFullPathForRelativePath(relativePath, ksProjectsRelPath,
-													DirectoryFinder.ProjectsDirectory);
+													projectsPath);
 			if (String.IsNullOrEmpty(fullPath))
 				fullPath = GetFullPathForRelativePath(relativePath, ksCommonAppDataRelPath,
 													DirectoryFinder.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
@@ -201,11 +201,12 @@ namespace SIL.FieldWorks.FDO
 		/// Get a relative path for the LinkedFilesPath which we will persist to be used when
 		/// restoring a project.
 		/// </summary>
+		/// <param name="projectsPath"></param>
 		/// <param name="linkedFilesFullPath"></param>
 		/// <param name="projectPath"></param>
 		/// <param name="projectName"></param>
 		/// <returns></returns>
-		public static string GetLinkedFilesRelativePathFromFullPath(string linkedFilesFullPath,
+		public static string GetLinkedFilesRelativePathFromFullPath(string projectsPath, string linkedFilesFullPath,
 																	string projectPath, string projectName)
 		{
 			var linkedFilesPathLowercaseRoot = GetPathWithLowercaseRoot(linkedFilesFullPath);
@@ -221,8 +222,7 @@ namespace SIL.FieldWorks.FDO
 			// Even though the MyProj directory in both paths is the same directory.
 			// It's important to catch this case and return a relative path.
 			var projectFolderName = Path.GetFileName(projectPath);
-			var projectsPath = Path.GetDirectoryName(projectPath);
-			var allProjectsName = Path.GetFileName(projectsPath);
+			var allProjectsName = Path.GetFileName(Path.GetDirectoryName(projectPath));
 			var match = Path.Combine(allProjectsName, projectFolderName);
 			int index = linkedFilesFullPath.IndexOf(match, StringComparison.InvariantCultureIgnoreCase);
 			if (index >= 0)
@@ -243,8 +243,7 @@ namespace SIL.FieldWorks.FDO
 			// Case where user is presumably having a LinkedFiles folder shared among a number
 			// of projects under the Projects folder. That would be a good reason to put it in
 			// the projects folder common to all projects.
-			relativePath = GetRelativePathIfExists(ksProjectsRelPath, linkedFilesPathLowercaseRoot,
-													DirectoryFinder.ProjectsDirectory);
+			relativePath = GetRelativePathIfExists(ksProjectsRelPath, linkedFilesPathLowercaseRoot, projectsPath);
 			if (!String.IsNullOrEmpty(relativePath))
 				return FixPathSlashesIfNeeded(relativePath);
 

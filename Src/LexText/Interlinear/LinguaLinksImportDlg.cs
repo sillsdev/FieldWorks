@@ -187,7 +187,7 @@ namespace SIL.FieldWorks.IText
 
 			m_cache = cache;
 			m_mediator = mediator;
-			m_sRootDir = DirectoryFinder.FWCodeDirectory;
+			m_sRootDir = FwDirectoryFinder.CodeDirectory;
 			if (!m_sRootDir.EndsWith("\\"))
 				m_sRootDir += "\\";
 			m_sRootDir += "Language Explorer\\Import\\";

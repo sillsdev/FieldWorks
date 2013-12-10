@@ -18,7 +18,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		static BasicIPASymbolSlice()
 		{
-			s_ipaInfoDocument = XDocument.Load(Path.Combine(DirectoryFinder.TemplateDirectory, PhPhonemeTags.ksBasicIPAInfoFile));
+			s_ipaInfoDocument = XDocument.Load(Path.Combine(FwDirectoryFinder.TemplateDirectory, PhPhonemeTags.ksBasicIPAInfoFile));
 		}
 
 		private bool m_justChangedDescription;

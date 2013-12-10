@@ -12,7 +12,6 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using SIL.Utils;
-using Microsoft.Win32;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -124,10 +123,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// <summary>
 		/// Reports duplicate guids to the user
 		/// </summary>
-		/// <param name="applicationKey">The application key.</param>
-		/// <param name="emailAddress">The email address.</param>
 		/// <param name="errorText">The error text.</param>
-		public void ReportDuplicateGuids(RegistryKey applicationKey, string emailAddress, string errorText)
+		public void ReportDuplicateGuids(string errorText)
 		{
 			throw new NotImplementedException();
 		}

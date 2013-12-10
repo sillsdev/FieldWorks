@@ -173,7 +173,7 @@ namespace LexTextControlsTests
 			Directory.CreateDirectory(tempDir);
 			try
 			{
-				string sTransformDir = Path.Combine(DirectoryFinder.FWCodeDirectory,
+				string sTransformDir = Path.Combine(FwDirectoryFinder.CodeDirectory,
 					String.Format("Language Explorer{0}Import{0}", Path.DirectorySeparatorChar));
 				var sut = new LexImport(Cache, tempDir, sTransformDir);
 

@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 			get
 			{
 				return Path.Combine(FdoFileHelper.GetBackupSettingsDir(m_cache.ProjectId.ProjectFolder),
-					DirectoryFinder.kBackupSettingsFilename);
+					FdoFileHelper.kBackupSettingsFilename);
 			}
 		}
 
@@ -84,7 +84,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// ------------------------------------------------------------------------------------
 		internal bool FileNameProblems(Form messageBoxOwner)
 		{
-			BackupProjectSettings settings = new BackupProjectSettings(m_cache, m_backupProjectView);
+			BackupProjectSettings settings = new BackupProjectSettings(m_cache, m_backupProjectView, FwDirectoryFinder.DefaultBackupDirectory);
 			settings.DestinationFolder = m_backupProjectView.DestinationFolder;
 			if (settings.AdjustedComment.Trim() != settings.Comment.TrimEnd())
 			{
@@ -119,7 +119,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// ------------------------------------------------------------------------------------
 		internal string BackupProject(IThreadedProgress progressDlg)
 		{
-			BackupProjectSettings settings = new BackupProjectSettings(m_cache, m_backupProjectView);
+			BackupProjectSettings settings = new BackupProjectSettings(m_cache, m_backupProjectView, FwDirectoryFinder.DefaultBackupDirectory);
 			settings.DestinationFolder = m_backupProjectView.DestinationFolder;
 			settings.AppAbbrev = m_appAbbrev;
 

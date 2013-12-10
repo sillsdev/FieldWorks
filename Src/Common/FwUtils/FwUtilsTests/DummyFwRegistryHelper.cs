@@ -83,7 +83,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				return Registry.CurrentUser.CreateSubKey(@"Software\SIL\FieldWorks\UnitTests\DirectoryFinderTests");
+				return Registry.CurrentUser.CreateSubKey(@"Software\SIL\FieldWorks\UnitTests\FwDirectoryFinderTests");
 			}
 		}
 

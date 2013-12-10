@@ -3,6 +3,7 @@ using System.Linq;
 using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 
 namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
@@ -35,7 +36,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			mockMdc.AddClass(4, "ClassWithInheritedUnicodeProperties", "AbstractClassWithUnicodeProperties", new List<string>());
 
 			var dtos = DataMigrationTestServices.ParseProjectFile("DataMigration7000067TestData.xml");
-			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000066, dtos, mockMdc, null);
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000066, dtos, mockMdc, null, FwDirectoryFinder.FdoDirectories);
 
 			m_dataMigrationManager.PerformMigration(dtoRepos, 7000067, new DummyProgressDlg());
 

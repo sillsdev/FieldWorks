@@ -236,7 +236,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				{
 					try
 					{
-						slice = new ImageSlice(DirectoryFinder.FWCodeDirectory, XmlUtils.GetManditoryAttributeValue(node, "param1"));
+						slice = new ImageSlice(FwDirectoryFinder.CodeDirectory, XmlUtils.GetManditoryAttributeValue(node, "param1"));
 					}
 					catch (Exception error)
 					{
@@ -385,7 +385,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					//Since the editor has not been implemented yet,
 					//is there a bitmap file that we can show for this editor?
 					//Such bitmaps belong in the distFiles xde directory
-					string fwCodeDir = DirectoryFinder.FWCodeDirectory;
+					string fwCodeDir = FwDirectoryFinder.CodeDirectory;
 					string editorBitmapRelativePath = "xde/" + editor + ".bmp";
 					if(File.Exists(Path.Combine(fwCodeDir, editorBitmapRelativePath)))
 						slice = new ImageSlice(fwCodeDir, editorBitmapRelativePath);

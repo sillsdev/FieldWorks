@@ -24,7 +24,6 @@ using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.IOC;
@@ -95,11 +94,12 @@ namespace SIL.FieldWorks.FDO
 		/// <param name="projectId">Identifies the new project to create.</param>
 		/// <param name="userWsIcuLocale">The ICU locale of the default user WS.</param>
 		/// <param name="ui"></param>
+		/// <param name="dirs"></param>
 		/// ------------------------------------------------------------------------------------
 		public static FdoCache CreateCacheWithNoLangProj(IProjectIdentifier projectId,
-			string userWsIcuLocale, IFdoUI ui)
+			string userWsIcuLocale, IFdoUI ui, IFdoDirectories dirs)
 		{
-			FdoCache createdCache = CreateCacheInternal(projectId, ui);
+			FdoCache createdCache = CreateCacheInternal(projectId, ui, dirs);
 			createdCache.FullyInitializedAndReadyToRock = true;
 			return createdCache;
 		}
@@ -120,13 +120,14 @@ namespace SIL.FieldWorks.FDO
 		/// <param name="userWsIcuLocale">The ICU locale of the default user writing
 		/// system.</param>
 		/// <param name="ui"></param>
+		/// <param name="dirs"></param>
 		/// ------------------------------------------------------------------------------------
 		public static FdoCache CreateCacheWithNewBlankLangProj(IProjectIdentifier projectId,
 			string analWsIcuLocale, string vernWsIcuLocale, string userWsIcuLocale,
-			IFdoUI ui)
+			IFdoUI ui, IFdoDirectories dirs)
 		{
-			FdoCache createdCache = CreateCacheInternal(projectId, userWsIcuLocale,
-				dataSetup => dataSetup.CreateNewLanguageProject(projectId), ui);
+			FdoCache createdCache = CreateCacheInternal(projectId, userWsIcuLocale, ui, dirs,
+				dataSetup => dataSetup.CreateNewLanguageProject(projectId));
 			NonUndoableUnitOfWorkHelper.Do(createdCache.ActionHandlerAccessor, () =>
 			{
 				createdCache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem =
@@ -144,15 +145,16 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		/// <param name="projectId">Identifies the project to load.</param>
 		/// <param name="userWsIcuLocale">The ICU locale of the default user WS.</param>
-		/// <param name="progressDlg">The progress dialog box</param>
 		/// <param name="ui"></param>
+		/// <param name="dirs"></param>
+		/// <param name="progressDlg">The progress dialog box</param>
 		/// ------------------------------------------------------------------------------------
 		public static FdoCache CreateCacheFromExistingData(IProjectIdentifier projectId,
-			string userWsIcuLocale, IThreadedProgress progressDlg, IFdoUI ui)
+			string userWsIcuLocale, IFdoUI ui, IFdoDirectories dirs, IThreadedProgress progressDlg)
 		{
-			return CreateCacheInternal(projectId, userWsIcuLocale,
+			return CreateCacheInternal(projectId, userWsIcuLocale, ui, dirs,
 				dataSetup => dataSetup.StartupExtantLanguageProject(projectId, true, progressDlg),
-				cache => cache.Initialize(userWsIcuLocale), ui);
+				cache => cache.Initialize(userWsIcuLocale));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -162,16 +164,17 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		/// <param name="projectPath"></param>
 		/// <param name="userWsIcuLocale"></param>
-		/// <param name="progressDlg">The progress dialog box</param>
 		/// <param name="ui"></param>
+		/// <param name="dirs"></param>
+		/// <param name="progressDlg">The progress dialog box</param>
 		/// ------------------------------------------------------------------------------------
 		public static FdoCache CreateCacheFromLocalProjectFile(string projectPath,
-			string userWsIcuLocale, IThreadedProgress progressDlg, IFdoUI ui)
+			string userWsIcuLocale, IFdoUI ui, IFdoDirectories dirs, IThreadedProgress progressDlg)
 		{
 			var projectId = new SimpleProjectId(FDOBackendProviderType.kXML, projectPath);
-			return CreateCacheInternal(projectId, userWsIcuLocale,
+			return CreateCacheInternal(projectId, userWsIcuLocale, ui, dirs,
 				dataSetup => dataSetup.StartupExtantLanguageProject(projectId, true, progressDlg),
-				cache => cache.Initialize(userWsIcuLocale), ui);
+				cache => cache.Initialize(userWsIcuLocale));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -181,14 +184,15 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		/// <param name="projectId">Identifies the project to create (i.e., the copy).</param>
 		/// <param name="userWsIcuLocale">The ICU locale of the default user WS.</param>
-		/// <param name="sourceCache">The FdoCache to copy</param>
 		/// <param name="ui"></param>
+		/// <param name="dirs"></param>
+		/// <param name="sourceCache">The FdoCache to copy</param>
 		/// ------------------------------------------------------------------------------------
 		public static FdoCache CreateCacheCopy(IProjectIdentifier projectId,
-			string userWsIcuLocale, FdoCache sourceCache, IFdoUI ui)
+			string userWsIcuLocale, IFdoUI ui, IFdoDirectories dirs, FdoCache sourceCache)
 		{
-			return CreateCacheInternal(projectId, userWsIcuLocale,
-				dataSetup => dataSetup.InitializeFromSource(projectId, sourceCache), ui);
+			return CreateCacheInternal(projectId, userWsIcuLocale, ui, dirs,
+				dataSetup => dataSetup.InitializeFromSource(projectId, sourceCache));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -197,14 +201,15 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		/// <param name="projectId">Identifies the project to create or load.</param>
 		/// <param name="ui"></param>
+		/// <param name="dirs"></param>
 		/// ------------------------------------------------------------------------------------
-		private static FdoCache CreateCacheInternal(IProjectIdentifier projectId, IFdoUI ui)
+		private static FdoCache CreateCacheInternal(IProjectIdentifier projectId, IFdoUI ui, IFdoDirectories dirs)
 		{
 			FDOBackendProviderType providerType = projectId.Type;
 			if (providerType == FDOBackendProviderType.kXMLWithMemoryOnlyWsMgr)
 				providerType = FDOBackendProviderType.kXML;
 
-			var iocFactory = new FdoServiceLocatorFactory(providerType, ui);
+			var iocFactory = new FdoServiceLocatorFactory(providerType, ui, dirs);
 			var servLoc = (IFdoServiceLocator)iocFactory.CreateServiceLocator();
 			var createdCache = servLoc.GetInstance<FdoCache>();
 			createdCache.m_serviceLocator = servLoc;
@@ -218,13 +223,14 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		/// <param name="projectId">Identifies the project to create or load.</param>
 		/// <param name="userWsIcuLocale">The ICU locale of the default user WS.</param>
-		/// <param name="doThe">The data setup action to perform.</param>
 		/// <param name="ui"></param>
+		/// <param name="dirs"></param>
+		/// <param name="doThe">The data setup action to perform.</param>
 		/// ------------------------------------------------------------------------------------
 		private static FdoCache CreateCacheInternal(IProjectIdentifier projectId,
-			string userWsIcuLocale, Action<IDataSetup> doThe, IFdoUI ui)
+			string userWsIcuLocale, IFdoUI ui, IFdoDirectories dirs, Action<IDataSetup> doThe)
 		{
-			return CreateCacheInternal(projectId, userWsIcuLocale, doThe, null, ui);
+			return CreateCacheInternal(projectId, userWsIcuLocale, ui, dirs, doThe, null);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -233,19 +239,20 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		/// <param name="projectId">Identifies the project to create or load.</param>
 		/// <param name="userWsIcuLocale">The ICU locale of the default user WS.</param>
+		/// <param name="ui"></param>
+		/// <param name="dirs"></param>
 		/// <param name="doThe">The data setup action to perform.</param>
 		/// <param name="initialize">The initialization step to perfrom (can be null).</param>
-		/// <param name="ui"></param>
 		/// <returns>The newly created cache</returns>
 		/// ------------------------------------------------------------------------------------
 		private static FdoCache CreateCacheInternal(IProjectIdentifier projectId,
-			string userWsIcuLocale, Action<IDataSetup> doThe,
-			Action<FdoCache> initialize, IFdoUI ui)
+			string userWsIcuLocale, IFdoUI ui, IFdoDirectories dirs, Action<IDataSetup> doThe,
+			Action<FdoCache> initialize)
 		{
 			FDOBackendProviderType providerType = projectId.Type;
 			bool useMemoryWsManager = (providerType == FDOBackendProviderType.kMemoryOnly ||
 				providerType == FDOBackendProviderType.kXMLWithMemoryOnlyWsMgr);
-			FdoCache createdCache = CreateCacheInternal(projectId, ui);
+			FdoCache createdCache = CreateCacheInternal(projectId, ui, dirs);
 
 			// Init backend data provider
 			var dataSetup = createdCache.ServiceLocator.GetInstance<IDataSetup>();
@@ -353,8 +360,8 @@ namespace SIL.FieldWorks.FDO
 		/// <param name="progressDlg">The progress dialog.</param>
 		/// <param name="parameters">One or more parameters, supplied in this order:
 		///  0. A string containing the name of the project (required);
-		///  1. An ISynchronizeInvoke used for invoking actions on the main UI thread (required);
-		///  2. An IFdoUI used for soliciting user feedback during deep FDO processing (required);
+		///  1. An IFdoDirectories used to get needed directories (required);
+		///  2. An ISynchronizeInvoke used for invoking actions on the main UI thread (required);
 		///  3. An IWritingSystem to be used as the default analylis writing system (default: English);
 		///  4. An IWritingSystem to be used as the default vernacular writing system (default: French);
 		///  5. A string with the ICU locale of the UI writing system (default: "en").
@@ -366,16 +373,16 @@ namespace SIL.FieldWorks.FDO
 		/// ------------------------------------------------------------------------------------
 		public static string CreateNewLangProj(IThreadedProgress progressDlg, params object[] parameters)
 		{
-			if (parameters == null || parameters.Length < 3)
-				throw new ArgumentException("Parameters must include at least a project name, a SynchronizeInvoke object, and a FdoUserAction object");
-			var projectName = (string)parameters[0];
+			if (parameters == null || parameters.Length < 4)
+				throw new ArgumentException("Parameters must include at least a project directory, a project name, a template directory, and a SynchronizeInvoke object");
+			var projectName = (string) parameters[0];
 			if (string.IsNullOrEmpty(projectName))
 				throw new ArgumentNullException("parameters", "Cannot be null or empty");
-			var synchronizeInvoke = (ISynchronizeInvoke) parameters[1];
-			var userAction = (IFdoUI) parameters[2];
-			IWritingSystem analWrtSys = (parameters.Length > 3) ? (IWritingSystem)parameters[3] : null;
-			IWritingSystem vernWrtSys = (parameters.Length > 4) ? (IWritingSystem)parameters[4] : null;
-			var userIcuLocale = (parameters.Length > 5 && parameters[5] != null) ? (string)parameters[5] : "en";
+			var dirs = (IFdoDirectories) parameters[1];
+			var synchronizeInvoke = (ISynchronizeInvoke) parameters[2];
+			IWritingSystem analWrtSys = (parameters.Length > 3) ? (IWritingSystem) parameters[3] : null;
+			IWritingSystem vernWrtSys = (parameters.Length > 4) ? (IWritingSystem) parameters[4] : null;
+			var userIcuLocale = (parameters.Length > 5 && parameters[5] != null) ? (string) parameters[5] : "en";
 			const int nMax = 10;
 			if (progressDlg != null)
 			{
@@ -384,9 +391,7 @@ namespace SIL.FieldWorks.FDO
 				progressDlg.Message = Properties.Resources.kstidCreatingDB;
 			}
 
-			var dbFileName = CreateNewDbFile(ref projectName);
-			Debug.Assert(DirectoryFinder.IsSubFolderOfProjectsDirectory(Path.GetDirectoryName(dbFileName)),
-				"new projects should always be created in the current projects directory");
+			var dbFileName = CreateNewDbFile(dirs.ProjectsDirectory, dirs.TemplateDirectory, ref projectName);
 
 			if (progressDlg != null)
 			{
@@ -395,8 +400,8 @@ namespace SIL.FieldWorks.FDO
 			}
 
 			var projectId = new SimpleProjectId(FDOBackendProviderType.kXML, dbFileName);
-			using (var cache = CreateCacheInternal(projectId, userIcuLocale,
-				dataSetup => dataSetup.StartupExtantLanguageProject(projectId, true, progressDlg), new SilentFdoUI(synchronizeInvoke)))
+			using (FdoCache cache = CreateCacheInternal(projectId, userIcuLocale, new SilentFdoUI(synchronizeInvoke), dirs,
+				dataSetup => dataSetup.StartupExtantLanguageProject(projectId, true, progressDlg)))
 			{
 				if (progressDlg != null)
 				{
@@ -419,12 +424,12 @@ namespace SIL.FieldWorks.FDO
 					progressDlg.Step(0);
 
 				var additionalAnalysisWss = (parameters.Length > 6 && parameters[6] != null)
-												? (HashSet<IWritingSystem>)parameters[6]
+												? (HashSet<IWritingSystem>) parameters[6]
 												: new HashSet<IWritingSystem>();
 				foreach (var additionalWs in additionalAnalysisWss)
 					CreateAnalysisWritingSystem(cache, additionalWs, false);
 				var additionalVernWss = (parameters.Length > 7 && parameters[7] != null)
-											? (HashSet<IWritingSystem>)parameters[7]
+											? (HashSet<IWritingSystem>) parameters[7]
 											: new HashSet<IWritingSystem>();
 				foreach (var additionalWs in additionalVernWss)
 					CreateVernacularWritingSystem(cache, additionalWs, false);
@@ -445,7 +450,7 @@ namespace SIL.FieldWorks.FDO
 
 				// Load the semantic domain list.
 				// Enhance: allow user to choose among alternative semantic domain lists?
-				string sFile = Path.Combine(DirectoryFinder.TemplateDirectory, "SemDom.xml");
+				string sFile = Path.Combine(dirs.TemplateDirectory, "SemDom.xml");
 				if (progressDlg != null)
 				{
 					progressDlg.Message = Properties.Resources.ksLoadingSemanticDomains;
@@ -457,7 +462,7 @@ namespace SIL.FieldWorks.FDO
 				xlist.ImportList(cache.LangProject, "SemanticDomainList", sFile, progressDlg);
 
 				// Load the intitial Part of Speech list.
-				sFile = Path.Combine(DirectoryFinder.TemplateDirectory, "POS.xml");
+				sFile = Path.Combine(dirs.TemplateDirectory, "POS.xml");
 				if (progressDlg != null)
 				{
 					progressDlg.Message = Properties.Resources.ksLoadingPartsOfSpeech;
@@ -470,17 +475,17 @@ namespace SIL.FieldWorks.FDO
 
 				// Make sure that the new project has all the writing systems actually used by the
 				// default data.  See FWR-1774.
-				AddMissingWritingSystems(Path.Combine(DirectoryFinder.TemplateDirectory, FdoFileHelper.GetXmlDataFileName("NewLangProj")),
+				AddMissingWritingSystems(Path.Combine(dirs.TemplateDirectory, FdoFileHelper.GetXmlDataFileName("NewLangProj")),
 					cache.ServiceLocator.WritingSystemManager);
-				AddMissingWritingSystems(Path.Combine(DirectoryFinder.TemplateDirectory, "POS.xml"),
+				AddMissingWritingSystems(Path.Combine(dirs.TemplateDirectory, "POS.xml"),
 					cache.ServiceLocator.WritingSystemManager);
 				cache.ServiceLocator.WritingSystemManager.Save();
 
 				cache.ActionHandlerAccessor.BeginNonUndoableTask();
 				InitializeAnthroList(cache.LangProject,
 									cache.WritingSystemFactory.GetWsFromStr(analWrtSys != null ? analWrtSys.IcuLocale : userIcuLocale),
-									(parameters.Length > 8) ? (string)parameters[8] : null);
-				ImportLocalizedLists(cache, progressDlg);
+									(parameters.Length > 8) ? (string) parameters[8] : null);
+				ImportLocalizedLists(cache, dirs.TemplateDirectory, progressDlg);
 				cache.ActionHandlerAccessor.EndNonUndoableTask();
 
 				NonUndoableUnitOfWorkHelper.Do(cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
@@ -509,7 +514,7 @@ namespace SIL.FieldWorks.FDO
 					cache.SaveAndForceNewestXmlForCmObjectWithoutUnitOfWork(null, cache.m_serviceLocator.ObjectRepository.AllInstances().ToList());
 				}
 			}
-			return ClientServerServices.Current.Local.ConvertToDb4oBackendIfNeeded(progressDlg, dbFileName, userAction);
+			return ClientServerServices.Current.Local.ConvertToDb4oBackendIfNeeded(progressDlg, dbFileName);
 		}
 
 		/// <summary>
@@ -569,11 +574,11 @@ namespace SIL.FieldWorks.FDO
 		/// Check for any localized lists files using pattern Templates\LocalizedLists-*.xml.
 		/// If found, load each one into the project.
 		/// </summary>
-		private static void ImportLocalizedLists(FdoCache cache, IThreadedProgress progress)
+		private static void ImportLocalizedLists(FdoCache cache, string templateDir, IThreadedProgress progress)
 		{
 			var filePrefix = XmlTranslatedLists.LocalizedListPrefix;
 			var rgsAnthroFiles = new List<string>();
-			var rgsXmlFiles = Directory.GetFiles(DirectoryFinder.TemplateDirectory, filePrefix + "*.zip", SearchOption.TopDirectoryOnly);
+			var rgsXmlFiles = Directory.GetFiles(templateDir, filePrefix + "*.zip", SearchOption.TopDirectoryOnly);
 			string sFile;
 			for (var i = 0; i < rgsXmlFiles.Length; ++i)
 			{
@@ -676,19 +681,19 @@ namespace SIL.FieldWorks.FDO
 		/// Build the file name for the new project and copy the template file (NewLangProj.fwdata).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private static string CreateNewDbFile(ref string projectName)
+		private static string CreateNewDbFile(string projectsDir, string templateDir, ref string projectName)
 		{
 			projectName = MiscUtils.FilterForFileName(projectName, MiscUtils.FilenameFilterStrength.kFilterBackup);
-			if (ProjectInfo.GetProjectInfoByName(projectName) != null)
+			if (ProjectInfo.GetProjectInfoByName(projectsDir, projectName) != null)
 				throw new ArgumentException("The specified project already exists.", "projectName");
-			string dbDirName = Path.Combine(DirectoryFinder.ProjectsDirectory, projectName);
+			string dbDirName = Path.Combine(projectsDir, projectName);
 			string dbFileName = Path.Combine(dbDirName, FdoFileHelper.GetXmlDataFileName(projectName));
 			try
 			{
 				Directory.CreateDirectory(dbDirName);
 				CreateProjectSubfolders(dbDirName);
 				// Make a copy of the template database that will become the new database
-				File.Copy(Path.Combine(DirectoryFinder.TemplateDirectory,
+				File.Copy(Path.Combine(templateDir,
 					FdoFileHelper.GetXmlDataFileName("NewLangProj")), dbFileName, false);
 				File.SetAttributes(dbFileName, FileAttributes.Normal);
 
@@ -1088,6 +1093,7 @@ namespace SIL.FieldWorks.FDO
 		#endregion Public Properties
 
 		#region Public methods
+
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Change the name of the database represented by this connection.

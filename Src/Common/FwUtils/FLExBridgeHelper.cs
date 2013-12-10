@@ -191,7 +191,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			if (!String.IsNullOrEmpty(projectFolder))
 			{    // can S/R multiple projects simultaneously
 				AddArg(ref args, "-p", projectFolder);
-				if (projectFolder != DirectoryFinder.ProjectsDirectory)
+				if (projectFolder != FwDirectoryFinder.ProjectsDirectory)
 					_sFwProjectName = Path.GetFileNameWithoutExtension(projectFolder);
 			}
 
@@ -208,7 +208,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 
 			// Add two paths: to FW projDir & FW apps folder. Then, FB won't have to look in a zillion registry entries
-			AddArg(ref args, "-projDir", DirectoryFinder.ProjectsDirectory);
+			AddArg(ref args, "-projDir", FwDirectoryFinder.ProjectsDirectory);
 			AddArg(ref args, "-fwAppsDir", FieldWorksAppsDir);
 			// Tell Flex Bridge which model version of data are expected by FLEx.
 			AddArg(ref args, "-fwmodel", fwmodelVersionNumber.ToString());
@@ -346,7 +346,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns></returns>
 		public static string FullFieldWorksBridgePath()
 		{
-			return Path.Combine(DirectoryFinder.FlexBridgeFolder, FLExBridgeName);
+			return Path.Combine(FwDirectoryFinder.FlexBridgeFolder, FLExBridgeName);
 		}
 
 		/// <summary>

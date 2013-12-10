@@ -63,7 +63,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private Label m_lblSpecifyWrtSys;
 		private HelpProvider helpProvider1;
 		private string m_dbFile;
-		private IFdoUI m_ui;
 		#endregion
 
 		#region Properties
@@ -141,7 +140,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Constructs a new instance of the <see cref="FwNewLangProject"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		private FwNewLangProject()
+		public FwNewLangProject()
 		{
 			Logger.WriteEvent("Opening New Language Project dialog");
 			//
@@ -149,7 +148,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			InitializeComponent();
 			AccessibleName = GetType().Name;
-			m_wsManager = new PalasoWritingSystemManager(new GlobalFileWritingSystemStore(DirectoryFinder.GlobalWritingSystemStoreDirectory));
+			m_wsManager = new PalasoWritingSystemManager(new GlobalFileWritingSystemStore());
 #if __MonoCS__
 			FixLabelFont(m_lblTip);
 			FixLabelFont(m_lblAnalysisWrtSys);
@@ -172,16 +171,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			lbl.Font = new Font("Sans", oldFont.Size, oldFont.Style, oldFont.Unit);
 		}
 #endif
-
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Constructs a new instance of the <see cref="FwNewLangProject"/> class.
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		public FwNewLangProject(IFdoUI ui) : this()
-		{
-			m_ui = ui;
-		}
 
 		/// <summary>
 		/// Check to see if the object has been disposed.
@@ -533,7 +522,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Project with this name already exists?
 			try
 			{
-				m_projInfo = ProjectInfo.GetProjectInfoByName(ProjectName);
+				m_projInfo = ProjectInfo.GetProjectInfoByName(FwDirectoryFinder.ProjectsDirectory, ProjectName);
 			}
 			catch (IOException ex)
 			{
@@ -567,7 +556,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			// Create new project
 			//
-			CreateNewLangProjWithProgress(m_ui);
+			CreateNewLangProjWithProgress();
 		}
 
 		private string RemoveNonAsciiCharsFromProjectName()
@@ -674,7 +663,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Create a new language project showing a progress dialog.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected void CreateNewLangProjWithProgress(IFdoUI ui)
+		protected void CreateNewLangProjWithProgress()
 		{
 			try
 			{
@@ -694,8 +683,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 						using (var threadHelper = new ThreadHelper())
 						{
+
 							m_dbFile = (string)progressDlg.RunTask(DisplayUi, FdoCache.CreateNewLangProj,
-																	ProjectName, threadHelper, ui, m_cbAnalWrtSys.SelectedItem,
+																	ProjectName, FwDirectoryFinder.FdoDirectories, threadHelper, m_cbAnalWrtSys.SelectedItem,
 																	m_cbVernWrtSys.SelectedItem,
 																	((PalasoWritingSystem)m_wsManager.UserWritingSystem).RFC5646,
 																	m_newAnalysisWss, m_newVernWss, anthroFile);
@@ -807,7 +797,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public static bool CheckProjectDirectory(Form f, IHelpTopicProvider helpTopicProvider)
 		{
 			string warning = null;
-			string dataDirectory = DirectoryFinder.ProjectsDirectory;
+			string dataDirectory = FwDirectoryFinder.ProjectsDirectory;
 
 			// Get the database directory attributes:
 			var dir = new DirectoryInfo(dataDirectory);
@@ -822,17 +812,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					if (dlg.ShowDialog(f) != DialogResult.OK)
 						return false; // can't go on.
-					if (DirectoryFinder.ProjectsDirectoryLocalMachine == dlg.ProjectsFolder)
+					if (FwDirectoryFinder.ProjectsDirectoryLocalMachine == dlg.ProjectsFolder)
 					{
 						//Remove the user override since they reset to the default.
-						DirectoryFinder.ProjectsDirectory = null;
+						FwDirectoryFinder.ProjectsDirectory = null;
 					}
 					else
 					{
-						DirectoryFinder.ProjectsDirectory = dlg.ProjectsFolder;
+						FwDirectoryFinder.ProjectsDirectory = dlg.ProjectsFolder;
 					}
 				}
-				dataDirectory = DirectoryFinder.ProjectsDirectory;
+				dataDirectory = FwDirectoryFinder.ProjectsDirectory;
 				dir = new DirectoryInfo(dataDirectory);
 				// loop on the offchance it didn't get created.
 			}
@@ -908,7 +898,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			// Make sure our manager knows about any writing systems in the template folder.
 			// In pathological cases where no projects have been installed these might not be in the global store.
-			foreach (var templateLangFile in Directory.GetFiles(DirectoryFinder.TemplateDirectory, @"*.ldml"))
+			foreach (var templateLangFile in Directory.GetFiles(FwDirectoryFinder.TemplateDirectory, @"*.ldml"))
 			{
 				var id = Path.GetFileNameWithoutExtension(templateLangFile);
 				IWritingSystem dummy;

@@ -140,14 +140,14 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private static string TransformPath
 		{
-			get { return Path.Combine(DirectoryFinder.FlexFolder, "Transforms"); }
+			get { return Path.Combine(FwDirectoryFinder.FlexFolder, "Transforms"); }
 		}
 		/// <summary>
 		/// Path to utility html files
 		/// </summary>
 		private static string UtilityHtmlPath
 		{
-			get { return Path.Combine(DirectoryFinder.FlexFolder, "GeneratedHtmlViewer"); }
+			get { return Path.Combine(FwDirectoryFinder.FlexFolder, "GeneratedHtmlViewer"); }
 		}
 
 		/// <summary>
@@ -253,13 +253,13 @@ namespace SIL.FieldWorks.XWorks
 			RegistryKey regkey = RegistryKey;
 			if (regkey != null)
 			{
-				m_sHtmlFileName = (string)regkey.GetValue(m_ksHtmlFilePath, Path.Combine(DirectoryFinder.FWCodeDirectory, InitialDocument));
+				m_sHtmlFileName = (string)regkey.GetValue(m_ksHtmlFilePath, Path.Combine(FwDirectoryFinder.CodeDirectory, InitialDocument));
 				m_sAlsoSaveFileName = (string)regkey.GetValue(m_ksAlsoSaveFilePath, "");
 				regkey.Close();
 			}
 			if (!File.Exists(m_sHtmlFileName))
 			{
-				m_sHtmlFileName = Path.Combine(DirectoryFinder.FWCodeDirectory, InitialDocument);
+				m_sHtmlFileName = Path.Combine(FwDirectoryFinder.CodeDirectory, InitialDocument);
 				//DisableButtons();
 			}
 		}
@@ -573,7 +573,7 @@ namespace SIL.FieldWorks.XWorks
 		private void ShowGeneratingPage()
 		{
 			// this doesn't work for some reason...
-			m_sHtmlFileName = Path.Combine(DirectoryFinder.FWCodeDirectory, GeneratingDocument);
+			m_sHtmlFileName = Path.Combine(FwDirectoryFinder.CodeDirectory, GeneratingDocument);
 			ShowSketch();
 		}
 

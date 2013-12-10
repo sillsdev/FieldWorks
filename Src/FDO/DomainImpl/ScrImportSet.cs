@@ -52,6 +52,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		private Hashtable m_notesFileInfoLists = new Hashtable();
 
 		private readonly string m_defaultParaCharsStyleName;
+		private readonly string m_stylesPath;
 
 		private IOverlappingFileResolver m_resolver;
 
@@ -76,9 +77,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		#region Construction & initialization
 
-		internal ScrImportSet(string defaultParaStylesName)
+		internal ScrImportSet(string defaultParaStylesName, string stylesPath)
 		{
 			m_defaultParaCharsStyleName = defaultParaStylesName;
+			m_stylesPath = stylesPath;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -96,8 +98,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		private void DoCommonNonModelSetup()
 		{
-			m_scrMappingsList = new ScrMappingList(MappingSet.Main, m_stylesheet, m_defaultParaCharsStyleName);
-			m_notesMappingsList = new ScrMappingList(MappingSet.Notes, m_stylesheet, m_defaultParaCharsStyleName);
+			m_scrMappingsList = new ScrMappingList(MappingSet.Main, m_stylesheet, m_defaultParaCharsStyleName, m_stylesPath);
+			m_notesMappingsList = new ScrMappingList(MappingSet.Notes, m_stylesheet, m_defaultParaCharsStyleName, m_stylesPath);
 
 			LoadInMemoryMappingLists();
 			LoadSources(false);

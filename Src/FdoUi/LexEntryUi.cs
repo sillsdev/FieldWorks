@@ -169,7 +169,7 @@ namespace SIL.FieldWorks.FdoUi
 			}
 			if (fRestoreStringTable || stOrig == null)
 			{
-				string dir = Path.Combine(DirectoryFinder.FlexFolder, "Configuration");
+				string dir = Path.Combine(FwDirectoryFinder.FlexFolder, "Configuration");
 				mediator.StringTbl = new StringTable(dir);
 			}
 			return mediator;
@@ -461,7 +461,7 @@ namespace SIL.FieldWorks.FdoUi
 			XmlNode xnWindow = (XmlNode)mediator.PropertyTable.GetValue("WindowConfiguration");
 			if (xnWindow == null)
 			{
-				string configFile = DirectoryFinder.GetFWCodeFile("Language Explorer/Configuration/Main.xml");
+				string configFile = FwDirectoryFinder.GetCodeFile("Language Explorer/Configuration/Main.xml");
 				// This can be called from TE...in that case, we don't complain about missing include
 				// files (true argument) but just trust that we put enough in the installer to make it work.
 				XmlDocument configuration = XWindow.LoadConfigurationWithIncludes(configFile, true);
@@ -596,7 +596,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// ------------------------------------------------------------------------------------
 		public static string FlexConfigFile
 		{
-			get { return DirectoryFinder.GetFWCodeFile(@"Language Explorer/Configuration/Main.xml"); }
+			get { return FwDirectoryFinder.GetCodeFile(@"Language Explorer/Configuration/Main.xml"); }
 		}
 
 		/// ------------------------------------------------------------------------------------

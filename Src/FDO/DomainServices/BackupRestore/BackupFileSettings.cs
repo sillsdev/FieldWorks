@@ -16,7 +16,6 @@ using System.IO;
 using System.Runtime.Serialization;
 using ICSharpCode.SharpZipLib;
 using ICSharpCode.SharpZipLib.Zip;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 
@@ -128,7 +127,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			m_spellCheckAdditions = settings.IncludeSpellCheckAdditions;
 			m_dbVersion = settings.DbVersion;
 			m_fwVersion = settings.FwVersion;
-			m_linkedFilesPathRelative = FdoFileHelperRelativePaths.GetLinkedFilesRelativePathFromFullPath(settings.LinkedFilesPath, settings.ProjectPath, settings.ProjectName);
+			m_linkedFilesPathRelative = LinkedFilesRelativePathHelper.GetLinkedFilesRelativePathFromFullPath(settings.ProjectsRootFolder, settings.LinkedFilesPath, settings.ProjectPath, settings.ProjectName);
 			m_linkedFilesPathActual = settings.LinkedFilesPath;
 			m_appAbbrev = settings.AppAbbrev;
 		}
@@ -326,7 +325,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		[DataMember]
 		public string AppAbbrev
 		{
-			get { PopulateSettingsFromZipFileIfNeeded(); return m_appAbbrev ?? FwUtils.ksFlexAbbrev; }
+			get { PopulateSettingsFromZipFileIfNeeded(); return m_appAbbrev; }
 			private set { m_appAbbrev = value; }
 		}
 
@@ -422,11 +421,11 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 
 						if (String.IsNullOrEmpty(fileName))
 							continue;
-						if (fileName.Equals(DirectoryFinder.kBackupSettingsFilename))
+						if (fileName.Equals(FdoFileHelper.kBackupSettingsFilename))
 						{
 							if (foundBackupSettingsFile)
 								throw new InvalidOperationException("Zip file " + m_sZipFileName + " contained multiple " +
-									DirectoryFinder.kBackupSettingsFilename + " files.");
+									FdoFileHelper.kBackupSettingsFilename + " files.");
 							foundBackupSettingsFile = true;
 							InitializeFromStream(zipIn);
 						}
@@ -443,9 +442,9 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 
 					if (!foundBackupSettingsFile)
 						throw new InvalidOperationException("Zip file " + m_sZipFileName + " did not contain the " +
-							DirectoryFinder.kBackupSettingsFilename + " file.");
+							FdoFileHelper.kBackupSettingsFilename + " file.");
 					if (m_projectName == null)
-						throw new InvalidOperationException(DirectoryFinder.kBackupSettingsFilename + " in " +
+						throw new InvalidOperationException(FdoFileHelper.kBackupSettingsFilename + " in " +
 							m_sZipFileName + " did not contain a project name.");
 					string expectedProjectFile = FdoFileHelper.GetXmlDataFileName(m_projectName);
 					if (dataFileName == null || dataFileName != expectedProjectFile)
@@ -544,9 +543,9 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			m_backupTime = settings.BackupTime;
 			m_comment = settings.Comment;
 			m_projectName = settings.ProjectName;
-			m_linkedFilesPathRelative = FdoFileHelperRelativePaths.FixPathSlashesIfNeeded(settings.LinkedFilesPathRelativePersisted);
-			m_linkedFilesPathActual = FdoFileHelperRelativePaths.FixPathSlashesIfNeeded(settings.LinkedFilesPathActualPersisted);
-			m_projectPathPersisted = FdoFileHelperRelativePaths.FixPathSlashesIfNeeded(settings.ProjectPathPersisted);
+			m_linkedFilesPathRelative = LinkedFilesRelativePathHelper.FixPathSlashesIfNeeded(settings.LinkedFilesPathRelativePersisted);
+			m_linkedFilesPathActual = LinkedFilesRelativePathHelper.FixPathSlashesIfNeeded(settings.LinkedFilesPathActualPersisted);
+			m_projectPathPersisted = LinkedFilesRelativePathHelper.FixPathSlashesIfNeeded(settings.ProjectPathPersisted);
 			m_configurationSettings = settings.IncludeConfigurationSettings;
 			m_linkedFiles = settings.IncludeLinkedFiles;
 			m_supportingFiles = settings.IncludeSupportingFiles;

@@ -455,7 +455,7 @@ namespace SIL.FieldWorks.XWorks
 					filterPath = filterPath.Replace(@"\", "/");
 #endif
 					var document = new XmlDocument();
-					document.Load(DirectoryFinder.GetFWCodeFile(filterPath));
+					document.Load(FwDirectoryFinder.GetCodeFile(filterPath));
 					m_dataEntryForm.SliceFilter = new SliceFilter(document);
 				}
 				else //just set up a minimal filter

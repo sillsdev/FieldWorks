@@ -218,7 +218,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			// Key is a list we found, value is an index in result.
 			var resultsByList = new Dictionary<ICmObject, int>();
-			var isBTEVersion = Directory.Exists(DirectoryFinder.TeFolder);
+			var isBTEVersion = Directory.Exists(FwDirectoryFinder.TeFolder);
 			foreach (
 				XmlNode elt in
 					windowConfiguration.SelectNodes("//item[@value='lists' or @value='grammar']/parameters/tools/tool"))

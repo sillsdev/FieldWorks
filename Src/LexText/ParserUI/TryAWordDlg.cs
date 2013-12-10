@@ -616,7 +616,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		private static string TransformPath
 		{
-			get { return DirectoryFinder.GetFWCodeSubDirectory(@"Language Explorer/Configuration/Words/Analyses/TraceParse"); }
+			get { return FwDirectoryFinder.GetCodeSubDirectory(@"Language Explorer/Configuration/Words/Analyses/TraceParse"); }
 		}
 
 		private void m_buttonHelp_Click(object sender, EventArgs e)

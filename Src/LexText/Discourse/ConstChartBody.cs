@@ -617,7 +617,7 @@ namespace SIL.FieldWorks.Discourse
 		private void LoadFormatProps()
 		{
 			var doc = new XmlDocument();
-			var path = Path.Combine(DirectoryFinder.FWCodeDirectory, @"Language Explorer/Configuration/ConstituentChartStyleInfo.xml");
+			var path = Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer/Configuration/ConstituentChartStyleInfo.xml");
 			if (!File.Exists(path))
 				return;
 			doc.Load(path);

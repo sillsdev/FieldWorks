@@ -26,7 +26,6 @@ using Db4objects.Db4o.CS.Config;
 using Db4objects.Db4o.Linq;
 using FwRemoteDatabaseConnector;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.Utils;
@@ -88,14 +87,16 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// <param name="mdc"></param>
 		/// <param name="dataMigrationManager"></param>
 		/// <param name="ui"></param>
+		/// <param name="dirs"></param>
 		public Db4oClientServerBackendProvider(
 			FdoCache cache,
 			IdentityMap identityMap,
 			ICmObjectSurrogateFactory surrogateFactory,
 			IFwMetaDataCacheManagedInternal mdc,
 			IDataMigrationManager dataMigrationManager,
-			IFdoUI ui)
-			: base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager, ui)
+			IFdoUI ui,
+			IFdoDirectories dirs)
+			: base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager, ui, dirs)
 		{
 		}
 
@@ -582,7 +583,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			if (!ProjectId.IsLocal)
 				throw new InvalidOperationException("Renaming a database needs to be done on the local machine");
 
-			string sNewProjectFolder = Path.Combine(DirectoryFinder.ProjectsDirectory, sNewProjectName);
+			string sNewProjectFolder = Path.Combine(m_dirs.ProjectsDirectory, sNewProjectName);
 			if (FileUtils.NonEmptyDirectoryExists(sNewProjectFolder))
 				return false;
 
@@ -604,7 +605,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				return false;
 			}
 
-			string oldProjectFolder = Path.Combine(DirectoryFinder.ProjectsDirectory, ProjectId.Name);
+			string oldProjectFolder = Path.Combine(m_dirs.ProjectsDirectory, ProjectId.Name);
 			string oldFile = Path.Combine(sNewProjectFolder, FdoFileHelper.GetDb4oDataFileName(ProjectId.Name));
 			string newFile = Path.Combine(sNewProjectFolder, FdoFileHelper.GetDb4oDataFileName(sNewProjectName));
 

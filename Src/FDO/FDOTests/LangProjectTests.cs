@@ -13,16 +13,9 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.IO;
-using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Diagnostics;
-
 using NUnit.Framework;
-
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.CoreImpl;
@@ -185,14 +178,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void LinkedFilesRootDirTests()
 		{
 			//test when LinkedFiles is in the project's root folder
-			var projectFolder = Path.Combine(DirectoryFinder.ProjectsDirectory, "TestProjectName");
+			var projectFolder = Path.Combine(FwDirectoryFinder.ProjectsDirectory, "TestProjectName");
 			var linkedFilesFullPath = Path.Combine(projectFolder, "LinkedFiles");
 			Cache.LanguageProject.LinkedFilesRootDir = linkedFilesFullPath;
 			var outputLinkedFilesFullPath = Cache.LanguageProject.LinkedFilesRootDir;
 			Assert.True(linkedFilesFullPath.Equals(outputLinkedFilesFullPath));
 
 			//test when linked files is in FW Projects folder
-			linkedFilesFullPath = Path.Combine(DirectoryFinder.ProjectsDirectory, "LinkedFiles");
+			linkedFilesFullPath = Path.Combine(FwDirectoryFinder.ProjectsDirectory, "LinkedFiles");
 			Cache.LanguageProject.LinkedFilesRootDir = linkedFilesFullPath;
 			outputLinkedFilesFullPath = Cache.LanguageProject.LinkedFilesRootDir;
 			Assert.True(linkedFilesFullPath.Equals(outputLinkedFilesFullPath));

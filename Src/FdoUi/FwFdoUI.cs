@@ -13,7 +13,7 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Windows.Forms;
-using Microsoft.Win32;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.Utils;
@@ -181,12 +181,10 @@ namespace SIL.FieldWorks.FdoUi
 		/// <summary>
 		/// Reports duplicate guids to the user
 		/// </summary>
-		/// <param name="applicationKey">The application key.</param>
-		/// <param name="emailAddress">The email address.</param>
 		/// <param name="errorText">The error text.</param>
-		public void ReportDuplicateGuids(RegistryKey applicationKey, string emailAddress, string errorText)
+		public void ReportDuplicateGuids(string errorText)
 		{
-			m_synchronizeInvoke.Invoke(() => ErrorReporter.ReportDuplicateGuids(applicationKey, emailAddress, null, errorText));
+			m_synchronizeInvoke.Invoke(() => ErrorReporter.ReportDuplicateGuids(FwRegistryHelper.FieldWorksRegistryKey, "FLExErrors@sil.org", null, errorText));
 		}
 
 		/// <summary>

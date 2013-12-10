@@ -82,8 +82,8 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			{
 				persistedLinkedFilesRootDir = linkedFilesRootDirElement.Value;
 			}
-			var linkedFilesRootDir = FdoFileHelperRelativePaths.GetLinkedFilesFullPathFromRelativePath(persistedLinkedFilesRootDir,
-				domainObjectDtoRepository.ProjectFolder);
+			var linkedFilesRootDir = LinkedFilesRelativePathHelper.GetLinkedFilesFullPathFromRelativePath(domainObjectDtoRepository.Directories.ProjectsDirectory,
+				persistedLinkedFilesRootDir, domainObjectDtoRepository.ProjectFolder);
 
 			//-------------------------------------------------
 			var langProjectGuid = langProjElement.Attribute("guid").Value;
@@ -221,7 +221,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 							var filePath = FileUtils.ChangeWindowsPathIfLinux(externalLinkAttributeForThisRun.Value);
 							//Check the path and if it is a rooted path which is relative to the LinkedFilesRootDir
 							//then we will have to confirm that is was changed to a relative path after the migration.
-							var fileAsRelativePath = FdoFileHelperRelativePaths.GetRelativeLinkedFilesPath(filePath,
+							var fileAsRelativePath = LinkedFilesRelativePathHelper.GetRelativeLinkedFilesPath(filePath,
 																											 linkedFilesRootDir);
 							//Save the file paths so they can be turned into CmFiles
 							filePathsInTsStrings.Add(fileAsRelativePath);

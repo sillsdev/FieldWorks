@@ -161,11 +161,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			// Figure out what lists are available (in {FW}/Templates/*.xml).
 
-			var sFilePattern = Path.Combine(DirectoryFinder.TemplateDirectory, "*.xml");
+			var sFilePattern = Path.Combine(FwDirectoryFinder.TemplateDirectory, "*.xml");
 			var fHaveOCM = false;
 			var fHaveFRAME = false;
 			var rgsAnthroFiles = new List<string>();
-			var rgsXmlFiles = Directory.GetFiles(DirectoryFinder.TemplateDirectory, "*.xml", SearchOption.TopDirectoryOnly);
+			var rgsXmlFiles = Directory.GetFiles(FwDirectoryFinder.TemplateDirectory, "*.xml", SearchOption.TopDirectoryOnly);
 			string sFile;
 			for (var i = 0; i < rgsXmlFiles.Length; ++i)
 			{
@@ -199,14 +199,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 							case kralUserDef:
 								break;
 							case kralOCM:
-								sFile = Path.Combine(DirectoryFinder.TemplateDirectory, "OCM.xml");
+								sFile = Path.Combine(FwDirectoryFinder.TemplateDirectory, "OCM.xml");
 								break;
 							case kralFRAME:
-								sFile = Path.Combine(DirectoryFinder.TemplateDirectory, "OCM-Frame.xml");
+								sFile = Path.Combine(FwDirectoryFinder.TemplateDirectory, "OCM-Frame.xml");
 								break;
 							default:
 								Debug.Assert(nChoice >= 0 && nChoice < rgsAnthroFiles.Count);
-								sFile = Path.Combine(DirectoryFinder.TemplateDirectory, rgsAnthroFiles[nChoice]);
+								sFile = Path.Combine(FwDirectoryFinder.TemplateDirectory, rgsAnthroFiles[nChoice]);
 								break;
 						}
 					}

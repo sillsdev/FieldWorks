@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		[TestFixtureSetUp]
 		public void FixtureInit()
 		{
-			m_sTestPath = Path.Combine(DirectoryFinder.FwSourceDirectory,
+			m_sTestPath = Path.Combine(FwDirectoryFinder.SourceDirectory,
 				"LexText/ParserUI/ParserUITests");
 			string sFailureDocPath = Path.Combine(m_sTestPath, "Failures.xml");
 			m_doc = new XmlDocument();

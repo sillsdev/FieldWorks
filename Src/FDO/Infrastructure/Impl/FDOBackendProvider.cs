@@ -17,7 +17,6 @@ using System.Text;
 using System.Threading;
 using SIL.CoreImpl;
 using SIL.CoreImpl.Properties;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.Utils;
@@ -44,19 +43,21 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		private readonly List<Thread> m_loadDomainThreads = new List<Thread>();
 		private readonly object m_syncRoot = new object();
 		protected volatile bool m_stopLoadDomain;
+		protected readonly IFdoDirectories m_dirs;
 
 		/// <summary>
 		///
 		/// </summary>
 		protected FDOBackendProvider(FdoCache cache, IdentityMap identityMap,
 			ICmObjectSurrogateFactory surrogateFactory, IFwMetaDataCacheManagedInternal mdc, IDataMigrationManager dataMigrationManager,
-			IFdoUI ui)
+			IFdoUI ui, IFdoDirectories dirs)
 		{
 			if (cache == null) throw new ArgumentNullException("cache");
 			if (identityMap == null) throw new ArgumentNullException("identityMap");
 			if (surrogateFactory == null) throw new ArgumentNullException("surrogateFactory");
 			if (dataMigrationManager == null) throw new ArgumentNullException("dataMigrationManager");
 			if (ui == null) throw new ArgumentNullException("ui");
+			if (dirs == null) throw new ArgumentNullException("dirs");
 
 			m_cache = cache;
 			m_cache.Disposing += OnCacheDisposing;
@@ -65,6 +66,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			m_mdcInternal = mdc;
 			m_dataMigrationManager = dataMigrationManager;
 			m_ui = ui;
+			m_dirs = dirs;
 		}
 
 
@@ -400,7 +402,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				currentDataStoreVersion,
 				dtos,
 				(IFwMetaDataCacheManaged)m_mdcInternal,
-				ProjectId.ProjectFolder);
+				ProjectId.ProjectFolder, m_dirs);
 
 			m_dataMigrationManager.PerformMigration(dtoRepository, ModelVersion, progressDlg);
 
@@ -549,13 +551,12 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			if (UseMemoryWritingSystemManager || string.IsNullOrEmpty(ProjectId.SharedProjectFolder))
 				return;
 
-			var globalStore = new GlobalFileWritingSystemStore(DirectoryFinder.GlobalWritingSystemStoreDirectory);
+			var globalStore = new GlobalFileWritingSystemStore();
 			string storePath = Path.Combine(ProjectId.SharedProjectFolder, FdoFileHelper.ksWritingSystemsDir);
-			var wsManager = (PalasoWritingSystemManager)m_cache.ServiceLocator.WritingSystemManager;
+			var wsManager = (PalasoWritingSystemManager) m_cache.ServiceLocator.WritingSystemManager;
 			wsManager.GlobalWritingSystemStore = globalStore;
 			wsManager.LocalWritingSystemStore = new LocalFileWritingSystemStore(storePath, globalStore);
 			wsManager.LocalWritingSystemStore.LocalKeyboardSettings = Settings.Default.LocalKeyboards;
-			wsManager.TemplateFolder = DirectoryFinder.TemplateDirectory;
 		}
 
 		#region IDataSetup implementation
@@ -621,9 +622,9 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 						ReconstituteObjectsFor(ScrTxtParaTags.kClassId);
 						ReconstituteObjectsFor(CmTranslationTags.kClassId);
 						ReconstituteObjectsFor(ScrFootnoteTags.kClassId);
-					ReconstituteObjectsFor(ChkTermTags.kClassId);
-					ReconstituteObjectsFor(ChkRefTags.kClassId);
-					ReconstituteObjectsFor(ChkRenderingTags.kClassId);
+						ReconstituteObjectsFor(ChkTermTags.kClassId);
+						ReconstituteObjectsFor(ChkRefTags.kClassId);
+						ReconstituteObjectsFor(ChkRenderingTags.kClassId);
 						break;
 					case BackendBulkLoadDomain.Text:
 						lock (m_syncRoot)
@@ -748,12 +749,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				if (fBootstrapSystem)
 					BootstrapExtantSystem();
 			}
-			catch (System.UnauthorizedAccessException e)
-			{
-				// Release any resources.
-				ShutdownInternal();
-				throw;
-			}
 			catch (Exception e)
 			{
 				// If anything unexpected goes wrong give BEP change to release any resources.
@@ -813,8 +808,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			InitializeWritingSystemManager();
 
 			// 3. Startup source BEP, but without instantiating any FDO objects (surrogates, are loaded).
-			using (var sourceCache = FdoCache.CreateCacheFromExistingData(sourceDataStore.ProjectId,
-				userWsIcuLocale, progressDlg, m_ui))
+			using (FdoCache sourceCache = FdoCache.CreateCacheFromExistingData(sourceDataStore.ProjectId,
+				userWsIcuLocale, m_ui, m_cache.ServiceLocator.GetInstance<IFdoDirectories>(), progressDlg))
 			{
 				// 4. Do the port.
 				var sourceCacheServLoc = sourceCache.ServiceLocator;

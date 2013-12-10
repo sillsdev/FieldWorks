@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 		public bool ArchiveNow(Form owner, Font dialogFont, Icon localizationDialogIcon,
 			IEnumerable<string> filesToArchive, Mediator mediator, FwApp thisapp, FdoCache cache)
 		{
-			var viProvider = new FwVersionInfoProvider(Assembly.LoadFile(thisapp.ProductExecutableFile), false);
+			var viProvider = new VersionInfoProvider(Assembly.LoadFile(thisapp.ProductExecutableFile), false);
 			var wsMgr = cache.ServiceLocator.GetInstance<IWritingSystemManager>();
 			var appName = thisapp.ApplicationName;
 			var title = cache.LanguageProject.ShortName;
@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 				s_localizationMgr = LocalizationManager.Create(
 					uiLocale,
 					localizationMgrId, viProvider.ProductName, viProvider.NumericAppVersion,
-					DirectoryFinder.GetFWCodeSubDirectory("ArchivingLocalizations"),
+					FwDirectoryFinder.GetCodeSubDirectory("ArchivingLocalizations"),
 					DirectoryFinder.CommonAppDataFolder(appName),
 					localizationDialogIcon, "FLExDevteam@sil.org", "SIL.Archiving");
 			}

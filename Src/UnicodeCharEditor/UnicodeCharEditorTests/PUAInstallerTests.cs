@@ -55,7 +55,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		{
 			RegistryHelper.CompanyName = "SIL";
 			RegistryHelper.ProductName = "FieldWorks";
-			DirectoryFinder.CompanyName = "SIL";
 
 			Assert.IsTrue(InitializeIcuData());
 			m_sCustomCharsFile = Path.Combine(Icu.DefaultDirectory, "CustomChars.xml");
@@ -312,7 +311,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			{
 				try
 				{
-					var baseDir = DirectoryFinder.FWDataDirectory;
+					var baseDir = FwDirectoryFinder.DataDirectory;
 					zipIn = new ZipInputStream(File.OpenRead(Path.Combine(baseDir, "Icu50.zip")));
 				}
 				catch (Exception e1)

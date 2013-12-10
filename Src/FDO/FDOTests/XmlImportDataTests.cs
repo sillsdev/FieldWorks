@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			m_now = DateTime.Now;
 			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(
-				new TestProjectId(FDOBackendProviderType.kMemoryOnly, "MemoryOnly.mem"), "en", "fr", "en", new DummyFdoUI());
+				new TestProjectId(FDOBackendProviderType.kMemoryOnly, "MemoryOnly.mem"), "en", "fr", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories);
 			IDataSetup dataSetup = m_cache.ServiceLocator.GetInstance<IDataSetup>();
 			dataSetup.LoadDomain(BackendBulkLoadDomain.All);
 			if (m_cache.LangProject != null)
@@ -499,7 +499,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void ImportData3()
 		{
 			XmlImportData xid = new XmlImportData(m_cache);
-			string sFwSrcDir = DirectoryFinder.FwSourceDirectory;
+			string sFwSrcDir = FwDirectoryFinder.SourceDirectory;
 			using (var rdr = new StringReader(
 				"<FwDatabase>" + Environment.NewLine +
 				"<LangProject>" + Environment.NewLine +
@@ -1024,7 +1024,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		private void CheckFirstEntry(ILexEntry le, int wsEn, int wsAme)
 		{
-			string sFwSrcDir = DirectoryFinder.FwSourceDirectory;
+			string sFwSrcDir = FwDirectoryFinder.SourceDirectory;
 			Assert.AreEqual(1, le.LexemeFormOA.Form.StringCount);
 			Assert.AreEqual("an", le.LexemeFormOA.Form.get_String(wsAme).Text);
 			Assert.AreEqual("root", le.LexemeFormOA.MorphTypeRA.Name.get_String(wsEn).Text);

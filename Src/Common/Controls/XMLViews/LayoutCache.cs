@@ -91,7 +91,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			Debug.Assert(app != null, "app cannot be null");
 
-			string partDirectory = Path.Combine(DirectoryFinder.FlexFolder,
+			string partDirectory = Path.Combine(FwDirectoryFinder.FlexFolder,
 				Path.Combine("Configuration", "Parts"));
 			var keyAttrs = new Dictionary<string, string[]>();
 			keyAttrs["layout"] = new[] {"class", "type", "name", "choiceGuid" };

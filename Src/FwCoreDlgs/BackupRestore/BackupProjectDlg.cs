@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 				m_supportingFiles.Enabled = false;
 			}
 
-			DestinationFolder = DirectoryFinder.DefaultBackupDirectory;
+			DestinationFolder = FwDirectoryFinder.DefaultBackupDirectory;
 			if (File.Exists(m_presenter.PersistanceFilePath))
 			{
 				// If something bad happens when loading the previous dialog settings (probably just a
@@ -108,7 +108,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 
 				if (String.IsNullOrEmpty(DestinationFolder) || !Directory.Exists(DestinationFolder))
 				{
-					dlg.SelectedPath = DirectoryFinder.DefaultBackupDirectory;
+					dlg.SelectedPath = FwDirectoryFinder.DefaultBackupDirectory;
 				}
 				else
 				{
@@ -154,12 +154,12 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 				}
 			}
 
-			if (!DestinationFolder.Equals(DirectoryFinder.DefaultBackupDirectory))
+			if (!DestinationFolder.Equals(FwDirectoryFinder.DefaultBackupDirectory))
 			{
 				using (var dlgChangeDefaultBackupLocation = new ChangeDefaultBackupDir(m_helpTopicProvider))
 				{
 					if (dlgChangeDefaultBackupLocation.ShowDialog(this) == DialogResult.Yes)
-						DirectoryFinder.DefaultBackupDirectory = DestinationFolder;
+						FwDirectoryFinder.DefaultBackupDirectory = DestinationFolder;
 				}
 			}
 

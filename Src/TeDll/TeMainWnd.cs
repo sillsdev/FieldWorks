@@ -711,7 +711,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		protected override string GetAppSpecificMenuToolBarDefinition()
 		{
-			return DirectoryFinder.FWCodeDirectory +
+			return FwDirectoryFinder.CodeDirectory +
 				"/Translation Editor/Configuration/TeTMDefinition.xml";
 		}
 
@@ -1593,7 +1593,8 @@ namespace SIL.FieldWorks.TE
 				string englishLdsPathname = Path.Combine(paratextProjectDir, "English.lds");
 				if (!File.Exists(englishLdsPathname))
 				{
-					IStStyle normalStyle = m_StyleSheet.FindStyle(ScrStyleNames.Normal);					ParatextLdsFileAccessor ldsAccessor = new ParatextLdsFileAccessor(Cache);
+					IStStyle normalStyle = m_StyleSheet.FindStyle(ScrStyleNames.Normal);
+					ParatextLdsFileAccessor ldsAccessor = new ParatextLdsFileAccessor(Cache);
 					UsfmStyEntry normalUsfmStyle = new UsfmStyEntry();
 					StyleInfoTable styleTable = new StyleInfoTable(normalStyle.Name,
 						Cache.ServiceLocator.WritingSystemManager);
@@ -1605,7 +1606,7 @@ namespace SIL.FieldWorks.TE
 					// We pass the directory (rather than passing no arguments, and letting the paratext dll figure
 					// it out) because the figuring out goes wrong on Linux, where both programs are simulating
 					// the registry.
-					ScrTextCollection.Initialize(FwRegistryHelper.ParatextSettingsDirectory(), false);
+					ScrTextCollection.Initialize(ParatextHelper.ProjectsDirectory, false);
 				}
 			}
 		}
@@ -5449,11 +5450,11 @@ namespace SIL.FieldWorks.TE
 							(string)key.GetValue(kCCSettings, string.Empty));
 					}
 					if (string.IsNullOrEmpty(ccSettings.QuestionsFile))
-						ccSettings.QuestionsFile = Path.Combine(DirectoryFinder.TeFolder, "QTTallBooks.sfm");
+						ccSettings.QuestionsFile = Path.Combine(FwDirectoryFinder.TeFolder, "QTTallBooks.sfm");
 				}
 				catch
 				{
-					ccSettings = new ComprehensionCheckingSettings(Path.Combine(DirectoryFinder.TeFolder, "QTTallBooks.sfm"));
+					ccSettings = new ComprehensionCheckingSettings(Path.Combine(FwDirectoryFinder.TeFolder, "QTTallBooks.sfm"));
 				}
 				ScrReference start, end;
 				m_bookFilter.GetRefRangeForContiguousBooks(out start, out end);
@@ -6219,7 +6220,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		private void OpenTrainingDoc(string folder, string document)
 		{
-			string helpTeFolder = String.Format(DirectoryFinder.FWCodeDirectory +
+			string helpTeFolder = String.Format(FwDirectoryFinder.CodeDirectory +
 				"{0}Helps{0}Translation Editor", Path.DirectorySeparatorChar);
 			string path = Path.Combine(Path.Combine(helpTeFolder, folder), document);
 			ProcessStartInfo processInfo = new ProcessStartInfo(path);

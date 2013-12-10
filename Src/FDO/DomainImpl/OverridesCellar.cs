@@ -1978,7 +1978,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				if (value == null)
 					throw new ArgumentNullException("value");
 
-				string srcFilename = FdoFileHelperRelativePaths.GetRelativeLinkedFilesPath(value, m_cache.LangProject.LinkedFilesRootDir);
+				string srcFilename = LinkedFilesRelativePathHelper.GetRelativeLinkedFilesPath(value, m_cache.LangProject.LinkedFilesRootDir);
 
 				InternalPath_Generated = srcFilename;
 			}
@@ -2009,7 +2009,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				string internalPath = InternalPath;
 				if (String.IsNullOrEmpty(internalPath))
 					internalPath = DomainObjectServices.EmptyFileName;
-				return FdoFileHelperRelativePaths.GetFullPathFromRelativeLFPath(internalPath, m_cache.LangProject.LinkedFilesRootDir);
+				return LinkedFilesRelativePathHelper.GetFullPathFromRelativeLFPath(internalPath, m_cache.LangProject.LinkedFilesRootDir);
 			}
 		}
 

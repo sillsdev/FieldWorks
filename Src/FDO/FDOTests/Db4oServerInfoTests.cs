@@ -178,12 +178,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	{
 		// Get created a fresh for each unit test
 		private Db4oServerInfo m_db4OServerInfo;
+		private bool m_sharedProject;
 
 		///<summary></summary>
 		[SetUp]
 		public void StartFwRemoteDatabaseConnector()
 		{
-			RemotingServer.Start();
+			m_sharedProject = false;
+			RemotingServer.Start(FwDirectoryFinder.RemotingTcpServerConfigFile, FwDirectoryFinder.FdoDirectories, () => m_sharedProject, v => m_sharedProject = v);
 
 			var connectString = String.Format("tcp://{0}:{1}/FwRemoteDatabaseConnector.Db4oServerInfo",
 				"localhost", Db4OPorts.ServerPort);
@@ -202,13 +204,13 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void ListServers_UnknownNumberOfServers_ReturnsAllServersInProjectsDirectory()
 		{
-			int projectsCount = Directory.GetFiles(DirectoryFinder.ProjectsDirectory, "*" + FdoFileHelper.ksFwDataDb4oFileExtension,
+			int projectsCount = Directory.GetFiles(FwDirectoryFinder.ProjectsDirectory, "*" + FdoFileHelper.ksFwDataDb4oFileExtension,
 				SearchOption.AllDirectories).Count();
 
 			m_db4OServerInfo.RefreshServerList();
 
 			Assert.AreEqual(projectsCount, m_db4OServerInfo.ListServers().Count(),
-				String.Format("ListServer should return all the db4o projects in the DirectoryFinder.ProjectsDirectory : {0}", DirectoryFinder.ProjectsDirectory));
+				String.Format("ListServer should return all the db4o projects in the FwDirectoryFinder.ProjectsDirectory : {0}", FwDirectoryFinder.ProjectsDirectory));
 		}
 
 		///<summary></summary>

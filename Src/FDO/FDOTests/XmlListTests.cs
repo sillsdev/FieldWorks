@@ -17,7 +17,6 @@ using System.IO;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.Test.TestUtils;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.FDO.FDOTests
@@ -599,7 +598,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void CreateMockCache()
 		{
 			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(
-				new TestProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", "es", "en", new DummyFdoUI());
+				new TestProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", "es", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories);
 		}
 
 		/// <summary>

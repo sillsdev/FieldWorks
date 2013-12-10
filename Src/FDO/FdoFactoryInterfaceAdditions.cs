@@ -1080,6 +1080,6 @@ namespace SIL.FieldWorks.FDO
 		/// <summary>
 		/// Creates a new scripture import settings with the default paragraph characters style name.
 		/// </summary>
-		IScrImportSet Create(string defaultParaCharsStyleName);
+		IScrImportSet Create(string defaultParaCharsStyleName, string stylesPath);
 	}
 }

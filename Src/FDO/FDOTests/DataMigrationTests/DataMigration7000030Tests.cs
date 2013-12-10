@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using NUnit.Framework;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.Utils;
 
@@ -71,7 +72,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 
 			//-------------------+++++++++++++++++++++++++=
 
-			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000029, dtos, mockMDC, @"C:\FwWW\DistFiles\Projects\Sena 3");
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000029, dtos, mockMDC, @"C:\FwWW\DistFiles\Projects\Sena 3", FwDirectoryFinder.FdoDirectories);
 
 
 			//Get the Element <rt guid="b8bdad3d-9006-46f0-83e8-ae1d1726f2ad" class="LangProject">

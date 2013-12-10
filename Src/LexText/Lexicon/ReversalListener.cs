@@ -480,8 +480,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			get
 			{
-				var path = Path.Combine(Path.Combine(Path.Combine(Path.Combine(DirectoryFinder.FWCodeDirectory,
-																			   DirectoryFinder.ksFlexFolderName),
+				var path = Path.Combine(Path.Combine(Path.Combine(Path.Combine(FwDirectoryFinder.CodeDirectory,
+																			   FwDirectoryFinder.ksFlexFolderName),
 																  @"Configuration"),
 													 @"Lexicon"),
 										@"ReversalEntriesBulkEdit");

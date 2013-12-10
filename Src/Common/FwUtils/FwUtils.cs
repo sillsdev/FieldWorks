@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string ksSuiteName = "FieldWorks";
 		/// <summary>
 		/// The name of the Translation Editor folder (Even though this is the same as
-		/// DirectoryFinder.ksTeFolderName and FwSubKey.TE, PLEASE do not use them interchangeably.
+		/// FwDirectoryFinder.ksTeFolderName and FwSubKey.TE, PLEASE do not use them interchangeably.
 		/// Use the one that is correct for your context, in case they need to be changed later.)
 		/// </summary>
 		public const string ksTeAppName = "Translation Editor";
@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string ksFullTeAppObjectName = "SIL.FieldWorks.TE.TeApp";
 		/// <summary>
 		/// The name of the Language Explorer folder (Even though this is the same as
-		/// DirectoryFinder.ksFlexFolderName and FwSubKey.LexText, PLEASE do not use them interchangeably.
+		/// FwDirectoryFinder.ksFlexFolderName and FwSubKey.LexText, PLEASE do not use them interchangeably.
 		/// Use the one that is correct for your context, in case they need to be changed later.)
 		/// </summary>
 		public const string ksFlexAppName = "Language Explorer";
@@ -76,7 +76,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			get
 			{
 				if (s_fIsTEInstalled == null)
-					s_fIsTEInstalled = File.Exists(DirectoryFinder.TeExe);
+					s_fIsTEInstalled = File.Exists(FwDirectoryFinder.TeExe);
 				return (bool)s_fIsTEInstalled;
 			}
 		}
@@ -103,7 +103,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		public static bool IsFlexInstalled
 		{
-			get { return File.Exists(DirectoryFinder.FlexExe); }
+			get { return File.Exists(FwDirectoryFinder.FlexExe); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -212,13 +212,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Whenever possible use this in place of new PalasoWritingSystemManager.
 		/// It sets the TemplateFolder, which unfortunately the constructor cannot do because
-		/// the direction of our dependencies does not allow it to reference FwUtils and access DirectoryFinder.
+		/// the direction of our dependencies does not allow it to reference FwUtils and access FwDirectoryFinder.
 		/// </summary>
 		/// <returns></returns>
 		public static PalasoWritingSystemManager CreateWritingSystemManager()
 		{
 			var result = new PalasoWritingSystemManager();
-			result.TemplateFolder = DirectoryFinder.TemplateDirectory;
+			result.TemplateFolder = FwDirectoryFinder.TemplateDirectory;
 			return result;
 		}
 

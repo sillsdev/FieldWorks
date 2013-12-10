@@ -403,7 +403,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			const string expectedNum2 = "8.3.3"; // group3 match 'sunshine', under 'Light'
 			const string expectedName2 = "Light";
 			const string filePath = @"Templates\semdom.xml";
-			var homeDir = DirectoryFinder.FWCodeDirectory;
+			var homeDir = FwDirectoryFinder.CodeDirectory;
 			LoadSemDomTestDataFromFile(Path.Combine(homeDir, filePath));
 
 			// SUT

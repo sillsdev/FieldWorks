@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.Common.FXT
 		/// <summary>
 		/// Location of simple test FXT files
 		/// </summary>
-		protected string m_sFxtSimpleTestPath = Path.Combine(SIL.FieldWorks.Common.Utils.DirectoryFinder.FwSourceDirectory,
+		protected string m_sFxtSimpleTestPath = Path.Combine(SIL.FieldWorks.Common.Utils.DirectoryFinder.SourceDirectory,
 															Path.Combine("FXT",
 															Path.Combine("FxtDll", "FxtDllTests")));
 		/// -----------------------------------------------------------------------------------

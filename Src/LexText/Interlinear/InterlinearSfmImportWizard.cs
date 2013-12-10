@@ -667,7 +667,7 @@ namespace SIL.FieldWorks.IText
 		private string GetDefaultInputSettingsPath()
 		{
 			string path;
-			string sRootDir = DirectoryFinder.FWCodeDirectory;
+			string sRootDir = FwDirectoryFinder.CodeDirectory;
 			string sTransformDir;
 			if (!sRootDir.EndsWith(Path.DirectorySeparatorChar.ToString()))
 				sRootDir += Path.DirectorySeparatorChar;

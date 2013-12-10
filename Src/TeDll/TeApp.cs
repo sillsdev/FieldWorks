@@ -92,7 +92,7 @@ namespace SIL.FieldWorks.TE
 			base.DoApplicationInitialization(progressDlg);
 			CleanupRegistry();
 			CleanupOldFiles();
-			ScrReference.InitializeVersification(DirectoryFinder.TeFolder, false);
+			ScrReference.InitializeVersification(FwDirectoryFinder.TeFolder, false);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -201,7 +201,7 @@ namespace SIL.FieldWorks.TE
 #if !__MonoCS__
 		private static string WorkspaceLocation()
 		{
-			return Path.Combine(DirectoryFinder.ProjectsDirectory, WorkspaceFile);
+			return Path.Combine(FwDirectoryFinder.ProjectsDirectory, WorkspaceFile);
 		}
 #endif
 
@@ -283,7 +283,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		public override string ProductExecutableFile
 		{
-			get { return DirectoryFinder.TeExe; }
+			get { return FwDirectoryFinder.TeExe; }
 		}
 
 		/// -----------------------------------------------------------------------------------

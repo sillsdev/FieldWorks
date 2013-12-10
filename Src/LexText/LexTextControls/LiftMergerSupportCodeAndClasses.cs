@@ -462,7 +462,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (m_mapLangWs.TryGetValue(key, out hvo))
 				return hvo;
 			IWritingSystem ws;
-			if (!WritingSystemServices.FindOrCreateSomeWritingSystem(m_cache, key,
+			if (!WritingSystemServices.FindOrCreateSomeWritingSystem(m_cache, FwDirectoryFinder.TemplateDirectory, key,
 				m_fAddNewWsToAnal, m_fAddNewWsToVern, out ws))
 			{
 				m_addedWss.Add(ws);
