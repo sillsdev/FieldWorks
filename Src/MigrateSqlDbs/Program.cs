@@ -22,6 +22,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
+using Microsoft.Win32;
 using Palaso.WritingSystems.Migration;
 using Palaso.WritingSystems.Migration.WritingSystemsLdmlV0To1Migration;
 using SIL.FieldWorks.Common.Controls;
@@ -115,6 +116,22 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 				{
 					if (!String.IsNullOrEmpty(version) && version.CompareTo("5.4") < 0)
 					{
+						string launchesFlex = "0";
+						string launchesTE = "0";
+						if (RegistryHelper.KeyExists(FwRegistryHelper.FieldWorksRegistryKey, "Language Explorer"))
+						{
+							using (RegistryKey keyFlex = FwRegistryHelper.FieldWorksRegistryKey.CreateSubKey("Language Explorer"))
+								launchesFlex = keyFlex.GetValue("launches", "0") as string;
+						}
+						if (RegistryHelper.KeyExists(FwRegistryHelper.FieldWorksRegistryKey, FwSubKey.TE))
+						{
+							using (RegistryKey keyTE = FwRegistryHelper.FieldWorksRegistryKey.CreateSubKey(FwSubKey.TE))
+								launchesTE = keyTE.GetValue("launches", "0") as string;
+						}
+						if (launchesFlex == "0" && launchesTE == "0")
+						{
+							FwRegistryHelper.FieldWorksRegistryKey.SetValue("MigrationTo7Needed", "true");
+						}
 						using (var dlg = new FWVersionTooOld(version))
 						{
 							dlg.ShowDialog();
