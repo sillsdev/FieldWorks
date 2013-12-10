@@ -693,19 +693,25 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					}
 				}
 			}
-			catch (UnauthorizedAccessException uae)
-			{
-				if (MiscUtils.IsUnix)
-				{
-					// Tell Mono user he/she needs to logout and log back in
-					MessageBoxUtils.Show(ResourceHelper.GetResourceString("ksNeedToJoinFwGroup"));
-				}
-				throw;
-			}
 			catch (WorkerThreadException wex)
 			{
 				Exception e = wex.InnerException;
-				if (e.GetBaseException() is PathTooLongException)
+				if (e is UnauthorizedAccessException)
+				{
+					if (MiscUtils.IsUnix)
+					{
+						// Tell Mono user he/she needs to logout and log back in
+						MessageBox.Show(ResourceHelper.GetResourceString("ksNeedToJoinFwGroup"));
+					}
+					else
+					{
+						MessageBox.Show(string.Format(FwCoreDlgs.kstidErrorNewDb, e.Message),
+							FwUtils.ksSuiteName);
+					}
+					m_fIgnoreClose = true;
+					DialogResult = DialogResult.Cancel;
+				}
+				else if (e.GetBaseException() is PathTooLongException)
 				{
 					Show();
 					m_fIgnoreClose = true;

@@ -3122,7 +3122,7 @@ namespace SIL.FieldWorks
 				if (MiscUtils.IsUnix)
 				{
 					// Tell Mono user he/she needs to logout and log back in
-					MessageBoxUtils.Show(ResourceHelper.GetResourceString("ksNeedToJoinFwGroup"));
+					MessageBox.Show(ResourceHelper.GetResourceString("ksNeedToJoinFwGroup"));
 				}
 				throw;
 			}
