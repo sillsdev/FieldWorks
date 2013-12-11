@@ -157,7 +157,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Pops up a dialog to ask the user how they want to initialize their anthro lists.
 		/// Returns a string indicating what file to load, or null if the user selected the custom (make your own) option
 		/// </summary>
-		public static string PickAnthroList(Form parent, string description, IHelpTopicProvider helpTopicProvider)
+		public static string PickAnthroList(string description, IHelpTopicProvider helpTopicProvider)
 		{
 			// Figure out what lists are available (in {FW}/Templates/*.xml).
 
@@ -189,7 +189,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					if (!String.IsNullOrEmpty(description))
 						dlg.SetDescription(description);
 					//EnableRelatedWindows(hwnd, false);
-					DialogResult res = dlg.ShowDialog(parent);
+					DialogResult res = dlg.ShowDialog();
 					//EnableRelatedWindows(hwnd, true);
 					if (res == DialogResult.OK)
 					{

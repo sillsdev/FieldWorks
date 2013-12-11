@@ -165,7 +165,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="progressDlg">The progress dialog.</param>
 		/// <returns>True if the initialize was successful, false otherwise</returns>
 		/// ------------------------------------------------------------------------------------
-		public override bool InitCacheForApp(IProgress progressDlg)
+		public override bool InitCacheForApp(IThreadedProgress progressDlg)
 		{
 			if (!TeScrInitializer.Initialize(Cache, this, progressDlg))
 				return false;

@@ -78,7 +78,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="existingProgressDlg">The existing progress dialog, if any.</param>
 		/// ------------------------------------------------------------------------------------
 		public static void EnsureCurrentScrNoteCategories(ILangProject lp,
-			IProgress existingProgressDlg)
+			IThreadedProgress existingProgressDlg)
 		{
 			XmlNode scrNoteCategories = LoadScrNoteCategoriesDoc();
 			IScripture scr = lp.TranslatedScriptureOA;
@@ -94,10 +94,7 @@ namespace SIL.FieldWorks.TE
 			}
 			if (scr.NoteCategoriesOA == null || newVersion != scr.NoteCategoriesOA.ListVersion)
 			{
-				using (var dlg = new ProgressDialogWithTask(existingProgressDlg))
-				{
-					dlg.RunTask(CreateScrNoteCategories, scrNoteCategories, scr);
-				}
+				existingProgressDlg.RunTask(CreateScrNoteCategories, scrNoteCategories, scr);
 			}
 		}
 

@@ -673,7 +673,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					string anthroFile = null;
 					if (DisplayUi) // Prevents dialogs from showing during unit tests.
 					{
-						anthroFile = FwCheckAnthroListDlg.PickAnthroList(progressDlg.Form, null, m_helpTopicProvider);
+						anthroFile = FwCheckAnthroListDlg.PickAnthroList(null, m_helpTopicProvider);
 					}
 					using (new WaitCursor())
 					{

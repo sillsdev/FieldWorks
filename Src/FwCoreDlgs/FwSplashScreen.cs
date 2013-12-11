@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// FW Splash Screen
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class FwSplashScreen : IProgress, IDisposable
+	public class FwSplashScreen : IThreadedProgress, IDisposable
 	{
 		#region Events
 		event CancelEventHandler IProgress.Canceling
@@ -457,6 +457,51 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_splashScreen.Show();
 #endif
 			}
+		}
+		#endregion
+
+		#region IThreadedProgress implementation
+
+		/// <summary>
+		/// Gets a value indicating whether the task has been canceled.
+		/// </summary>
+		public bool Canceled
+		{
+			get { return false; }
+		}
+
+		/// <summary>
+		/// If progress dialog is already showing, we run the background task using it (without
+		/// creating a separate thread). Otherwise we display a new progress dialog as a modal
+		/// dialog and start the background task in a separate thread.
+		/// </summary>
+		/// <param name="backgroundTask">The background task.</param>
+		/// <param name="parameters">The paramters that will be passed to the background task</param>
+		/// <returns>
+		/// The return value from the background thread.
+		/// </returns>
+		/// ------------------------------------------------------------------------------------
+		/// ------------------------------------------------------------------------------------
+		public object RunTask(Func<IThreadedProgress, object[], object> backgroundTask, params object[] parameters)
+		{
+			return RunTask(true, backgroundTask, parameters);
+		}
+
+		/// <summary>
+		/// Displays the progress dialog as a modal dialog and starts the background task.
+		/// </summary>
+		/// <param name="fDisplayUi">set to <c>true</c> to display the progress dialog,
+		/// <c>false</c> to run without UI.</param>
+		/// <param name="backgroundTask">The background task.</param>
+		/// <param name="parameters">The paramters that will be passed to the background task</param>
+		/// <returns>
+		/// The return value from the background thread.
+		/// </returns>
+		/// ------------------------------------------------------------------------------------
+		/// ------------------------------------------------------------------------------------
+		public object RunTask(bool fDisplayUi, Func<IThreadedProgress, object[], object> backgroundTask, params object[] parameters)
+		{
+			return backgroundTask(this, parameters);
 		}
 		#endregion
 	}

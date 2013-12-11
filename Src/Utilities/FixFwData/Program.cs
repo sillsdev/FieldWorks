@@ -84,7 +84,6 @@ namespace FixFwData
 			public int Minimum { get; set; }
 			public int Maximum { get; set; }
 			public ISynchronizeInvoke SynchronizeInvoke { get; private set; }
-			public Form Form { get; private set; }
 			public bool IsIndeterminate
 			{
 				get { return false; }
@@ -116,11 +115,6 @@ namespace FixFwData
 			private void Dispose(bool fDisposing)
 			{
 				System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + ". *******");
-
-				if (Form != null && !Form.IsDisposed)
-				{
-					Form.Dispose();
-				}
 			}
 			#endregion
 		}

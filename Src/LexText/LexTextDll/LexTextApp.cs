@@ -807,7 +807,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// </summary>
 		/// <param name="progressDlg">The progress dialog.</param>
 		/// <returns>True if the initialize was successful, false otherwise</returns>
-		public override bool InitCacheForApp(IProgress progressDlg)
+		public override bool InitCacheForApp(IThreadedProgress progressDlg)
 		{
 			Cache.ServiceLocator.DataSetup.LoadDomainAsync(BackendBulkLoadDomain.All);
 			AddDefaultWordformingOverridesIfNeeded();

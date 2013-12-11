@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		#region Member variables
 		/// <summary>The form that actually displays the progress</summary>
-		protected IProgress m_progressDialog;
+		internal ProgressDialogWithTaskDlgImpl m_progressDialog;
 		private readonly bool m_fCreatedProgressDlg;
 		private volatile bool m_fDisposed;
 		private readonly Form m_owner;
@@ -55,18 +55,6 @@ namespace SIL.FieldWorks.Common.Controls
 
 		#region Constructors
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ProgressDialogWithTask"/> class that
-		/// uses an externally supplied object to track the progress.
-		/// </summary>
-		/// <param name="progress">The object that will be used to track the progress.</param>
-		/// ------------------------------------------------------------------------------------
-		public ProgressDialogWithTask(IProgress progress)
-			: this(progress, null, progress.SynchronizeInvoke)
-		{
-		}
-
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ProgressDialogWithTask" /> class that
 		/// will create an actual progress dialog box to track the progress.
@@ -74,7 +62,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="owner">The form to use as the owner when creating the actual progress
 		/// dialog.</param>
 		public ProgressDialogWithTask(Form owner)
-			: this(null, owner, owner)
+			: this(owner, owner)
 		{
 		}
 
@@ -83,30 +71,26 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="synchronizeInvoke"></param>
 		public ProgressDialogWithTask(ISynchronizeInvoke synchronizeInvoke)
-			: this(null, null, synchronizeInvoke)
+			: this(null, synchronizeInvoke)
 		{
 		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ProgressDialogWithTask" /> class.
 		/// </summary>
-		/// <param name="progress">An external implementation of IProgress that should be
-		/// used to report progress. If this is null, then this class will create a generic
-		/// progress dialog for the purpose of running tasks.</param>
 		/// <param name="owner">The "owning" form (can be null if progressDlg is specified or if
 		/// there is no suitable form available to own the progress dialog)</param>
 		/// <param name="synchronizeInvoke">The synchronize invoke.</param>
-		private ProgressDialogWithTask(IProgress progress, Form owner, ISynchronizeInvoke synchronizeInvoke)
+		private ProgressDialogWithTask(Form owner, ISynchronizeInvoke synchronizeInvoke)
 		{
-			m_progressDialog = progress;
 			m_owner = owner;
 			m_synchronizeInvoke = synchronizeInvoke;
-			m_fCreatedProgressDlg = progress == null;
+			m_fCreatedProgressDlg = true;
 			InitOnOwnerThread();
 			if (m_synchronizeInvoke == null)
 				m_synchronizeInvoke = m_progressDialog.SynchronizeInvoke;
 			m_progressDialog.Canceling += m_progressDialog_Canceling;
-			m_progressDialog.Form.FormClosing += m_progressDialog_FormClosing;
+			m_progressDialog.FormClosing += m_progressDialog_FormClosing;
 			m_worker.DoWork += RunBackgroundTask;
 			m_worker.RunWorkerCompleted += m_worker_RunWorkerCompleted;
 		}
@@ -122,13 +106,11 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 
 			m_worker = new BackgroundWorker { WorkerSupportsCancellation = true };
-			if (m_progressDialog == null)
-			{
-				m_progressDialog = new ProgressDialogWithTaskDlgImpl(m_owner);
-			}
+
+			m_progressDialog = new ProgressDialogWithTaskDlgImpl(m_owner);
 
 			// This is the only way to force handle creation for a form that is not yet visible.
-			IntPtr handle = m_progressDialog.Form.Handle;
+			IntPtr handle = m_progressDialog.Handle;
 		}
 
 		#endregion
@@ -201,10 +183,10 @@ namespace SIL.FieldWorks.Common.Controls
 				if (m_progressDialog != null)
 				{
 					m_progressDialog.Canceling -= m_progressDialog_Canceling;
-					m_progressDialog.Form.FormClosing -= m_progressDialog_FormClosing;
+					m_progressDialog.FormClosing -= m_progressDialog_FormClosing;
 					RemoveStartListener();
 					if (m_fCreatedProgressDlg)
-						m_progressDialog.Form.DisposeOnGuiThread();
+						m_progressDialog.DisposeOnGuiThread();
 				}
 				if (m_worker != null)
 				{
@@ -340,21 +322,6 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the progress as a form (used for message box owners, etc). If the progress
-		/// is not associated with a visible Form, then this returns its owning form, if any.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public virtual Form Form
-		{
-			get
-			{
-				CheckDisposed();
-				return m_progressDialog.Form.Visible ? m_progressDialog.Form : m_owner;
-			}
-		}
-
 		/// <summary>
 		/// Gets or sets a value indicating whether this progress is indeterminate.
 		/// </summary>
@@ -441,9 +408,6 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				CheckDisposed();
 
-				if (!(m_progressDialog is ProgressDialogImpl))
-					throw new InvalidOperationException("The underlying progress dialog implementation probably does not implement CancelButtonText.");
-
 				if (m_synchronizeInvoke.InvokeRequired)
 					return (string)m_synchronizeInvoke.Invoke((Func<string>)(() => ((ProgressDialogImpl)m_progressDialog).CancelButtonText), null);
 				return ((ProgressDialogImpl)m_progressDialog).CancelButtonText;
@@ -451,9 +415,6 @@ namespace SIL.FieldWorks.Common.Controls
 			set
 			{
 				CheckDisposed();
-
-				if (!(m_progressDialog is ProgressDialogImpl))
-					throw new InvalidOperationException("The underlying progress dialog implementation probably does not implement CancelButtonText.");
 
 				if (m_synchronizeInvoke.InvokeRequired)
 					m_synchronizeInvoke.Invoke((Action<string>)(s => ((ProgressDialogImpl)m_progressDialog).CancelButtonText = s), new object[] {value});
@@ -474,17 +435,13 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				CheckDisposed();
 
-				if (!(m_progressDialog is ProgressDialogImpl))
-					throw new InvalidOperationException("The underlying progress dialog implementation probably does not implement Restartable.");
-				return ((ProgressDialogImpl)m_progressDialog).Restartable;
+				return m_progressDialog.Restartable;
 			}
 			set
 			{
 				CheckDisposed();
 
-				if (!(m_progressDialog is ProgressDialogImpl))
-					throw new InvalidOperationException("The underlying progress dialog implementation probably does not implement Restartable.");
-				((ProgressDialogImpl)m_progressDialog).Restartable = value;
+				m_progressDialog.Restartable = value;
 			}
 		}
 		#endregion
@@ -572,7 +529,7 @@ namespace SIL.FieldWorks.Common.Controls
 		public object RunTask(bool fDisplayUi, Func<IThreadedProgress, object[], object> backgroundTask,
 			params object[] parameters)
 		{
-			if (m_progressDialog.Form.Visible)
+			if (m_progressDialog.Visible)
 			{
 				int nMin = Minimum;
 				int nMax = Maximum;
@@ -592,9 +549,9 @@ namespace SIL.FieldWorks.Common.Controls
 			if (!fDisplayUi)
 			{
 				if (m_synchronizeInvoke.InvokeRequired)
-					m_synchronizeInvoke.Invoke((Action) (() => m_progressDialog.Form.WindowState = FormWindowState.Minimized), null);
+					m_synchronizeInvoke.Invoke((Action) (() => m_progressDialog.WindowState = FormWindowState.Minimized), null);
 				else
-					m_progressDialog.Form.WindowState = FormWindowState.Minimized;
+					m_progressDialog.WindowState = FormWindowState.Minimized;
 			}
 
 			// On Linux using Xephyr (and possibly other environments that lack a taskbar),
@@ -604,18 +561,18 @@ namespace SIL.FieldWorks.Common.Controls
 			if (Application.OpenForms.Count == 0 && fDisplayUi && !MiscUtils.IsUnix)
 			{
 				if (m_synchronizeInvoke.InvokeRequired)
-					m_synchronizeInvoke.Invoke((Action)(() => m_progressDialog.Form.ShowInTaskbar = true), null);
+					m_synchronizeInvoke.Invoke((Action)(() => m_progressDialog.ShowInTaskbar = true), null);
 				else
-					m_progressDialog.Form.ShowInTaskbar = true;
+					m_progressDialog.ShowInTaskbar = true;
 			}
 
 			// Don't let the owner hide the progress dialog.  See FWR-3482.
-			Form owner = Form;
+			Form owner = m_owner;
 			if (owner != null && owner.TopMost)
 			{
 				m_fOwnerWasTopMost = true;
 				owner.TopMost = false;
-				m_progressDialog.Form.TopMost = true;
+				m_progressDialog.TopMost = true;
 			}
 
 			LaunchDialogAndTask(owner);
@@ -648,12 +605,12 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				if (m_synchronizeInvoke.InvokeRequired)
 				{
-					m_synchronizeInvoke.Invoke((Func<IWin32Window, DialogResult>)m_progressDialog.Form.ShowDialog,
+					m_synchronizeInvoke.Invoke((Func<IWin32Window, DialogResult>)m_progressDialog.ShowDialog,
 						new object[] { owner });
 				}
 				else
 				{
-					m_progressDialog.Form.ShowDialog(owner);
+					m_progressDialog.ShowDialog(owner);
 				}
 			}
 		}
@@ -667,7 +624,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			else
 			{
-				m_progressDialog.Form.Shown += DialogShown;
+				m_progressDialog.Shown += DialogShown;
 			}
 		}
 
@@ -680,7 +637,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			else
 			{
-				m_progressDialog.Form.Shown -= DialogShown;
+				m_progressDialog.Shown -= DialogShown;
 			}
 		}
 
@@ -808,9 +765,9 @@ namespace SIL.FieldWorks.Common.Controls
 		private void m_worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
 		{
 			if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
-				m_synchronizeInvoke.Invoke((Action)m_progressDialog.Form.Close, null);
+				m_synchronizeInvoke.Invoke((Action)m_progressDialog.Close, null);
 			else
-				m_progressDialog.Form.Close();
+				m_progressDialog.Close();
 		}
 		#endregion
 	}

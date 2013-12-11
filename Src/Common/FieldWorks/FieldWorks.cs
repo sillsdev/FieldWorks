@@ -3143,7 +3143,7 @@ namespace SIL.FieldWorks
 		/// <param name="progressDlg">The progress dialog.</param>
 		/// <returns>True if the application was started successfully, false otherwise</returns>
 		/// ------------------------------------------------------------------------------------
-		private static bool InitializeApp(FwApp app, IProgress progressDlg)
+		private static bool InitializeApp(FwApp app, IThreadedProgress progressDlg)
 		{
 			using (new DataUpdateMonitor(null, "Application Initialization"))
 				app.DoApplicationInitialization(progressDlg);

@@ -269,7 +269,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <param name="progressDlg">The progress dialog.</param>
 		/// <returns>True if the initialization was successful, false otherwise</returns>
 		/// ------------------------------------------------------------------------------------
-		public abstract bool InitCacheForApp(IProgress progressDlg);
+		public abstract bool InitCacheForApp(IThreadedProgress progressDlg);
 
 
 		/// ------------------------------------------------------------------------------------

@@ -123,7 +123,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="existingProgressDlg">The existing progress dialog, if any.</param>
 		/// ------------------------------------------------------------------------------------
 		public static void EnsureCurrentKeyTerms(ILangProject lp, FwApp app,
-			IProgress existingProgressDlg)
+			IThreadedProgress existingProgressDlg)
 		{
 			TeKeyTermsInit keyTermsInit = new TeKeyTermsInit(lp.TranslatedScriptureOA, app);
 			keyTermsInit.EnsureCurrentResource(existingProgressDlg);
@@ -303,7 +303,7 @@ namespace SIL.FieldWorks.TE
 		/// analysis writing systems are up-to-date.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected override void EnsureCurrentLocalizations(IProgress progressDlg)
+		protected override void EnsureCurrentLocalizations(IThreadedProgress progressDlg)
 		{
 			string locale = Cache.WritingSystemFactory.GetStrFromWs(Cache.DefaultUserWs);
 			EnsureCurrentLocalization(locale, null, progressDlg);
@@ -320,8 +320,7 @@ namespace SIL.FieldWorks.TE
 		/// of the progress dialog box - can be null if progress dialog is supplied).</param>
 		/// <param name="existingProgressDlg">The existing progress dialog box if any.</param>
 		/// ------------------------------------------------------------------------------------
-		private void EnsureCurrentLocalization(string locale, Form caller,
-			IProgress existingProgressDlg)
+		private void EnsureCurrentLocalization(string locale, Form caller, IThreadedProgress existingProgressDlg)
 		{
 			string localizationFile = FwDirectoryFinder.GetKeyTermsLocFilename(locale);
 			if (!FileUtils.FileExists(localizationFile))
@@ -343,21 +342,7 @@ namespace SIL.FieldWorks.TE
 			{
 				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_servLoc.GetInstance<IActionHandler>(),
 					() => {
-						if (existingProgressDlg is IThreadedProgress)
-							((IThreadedProgress)existingProgressDlg).RunTask(true, UpdateLocalization, loc, locale);
-						else if (existingProgressDlg != null)
-						{
-							using (ProgressDialogWithTask dlg = new ProgressDialogWithTask(existingProgressDlg))
-								dlg.RunTask(true, UpdateLocalization, loc, locale);
-						}
-						else
-						{
-							using (ProgressDialogWithTask dlg = new ProgressDialogWithTask(caller))
-							{
-								dlg.AllowCancel = false;
-								dlg.RunTask(true, UpdateLocalization, loc, locale);
-							}
-						}
+						existingProgressDlg.RunTask(true, UpdateLocalization, loc, locale);
 						SetNewResourceVersion(resourceName, loc.Version);
 					});
 			}

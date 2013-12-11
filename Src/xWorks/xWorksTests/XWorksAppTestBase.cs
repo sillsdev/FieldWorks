@@ -475,7 +475,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="progressDlg">The progress dialog.</param>
 		/// <returns>True if the initialization was successful, false otherwise</returns>
 		/// ------------------------------------------------------------------------------------
-		public override bool InitCacheForApp(IProgress progressDlg)
+		public override bool InitCacheForApp(IThreadedProgress progressDlg)
 		{
 			return true;
 		}

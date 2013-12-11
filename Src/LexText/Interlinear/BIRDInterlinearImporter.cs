@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.IText
 		private static DialogResult ShowDialogAboveProgressbar(IThreadedProgress progress,
 			string text, string title, MessageBoxButtons buttons)
 		{
-			return MessageBox.Show(progress.Form,
+			return MessageBox.Show(
 				text,
 				title,
 				buttons,
