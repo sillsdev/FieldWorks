@@ -581,7 +581,10 @@ namespace FwRemoteDatabaseConnector
 		public static void Stop()
 		{
 			if (ServerObject != null)
+			{
 				ServerObject.ShutdownAllServers();
+				ServerObject = null;
+			}
 		}
 	}
 }

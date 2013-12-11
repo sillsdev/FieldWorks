@@ -526,7 +526,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	{
 		internal const string kLocalService = "localhost";
 		internal const string ksDoNotShareProjectTxt = "do_not_share_project.txt";
-		private readonly Func<string> m_projectsDirAccessor;
 		private readonly Func<bool> m_usingDefaultProjectsDirAccessor;
 		private readonly IFdoUI m_ui;
 		private readonly IFdoDirectories m_dirs;
@@ -731,14 +730,14 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 			progressDlg.Title = Strings.ksConvertingToNonShared;
 			progressDlg.AllowCancel = false;
-			progressDlg.Maximum = Directory.GetDirectories(m_projectsDirAccessor()).Count();
+			progressDlg.Maximum = Directory.GetDirectories(m_dirs.ProjectsDirectory).Count();
 			progressDlg.RunTask(true, ConvertAllProjectsToXmlTask);
 			return true;
 		}
 
 		private object ConvertAllProjectsToXmlTask(IThreadedProgress progress, object[] args)
 		{
-			foreach (string projectFolder in Directory.GetDirectories(m_projectsDirAccessor()))
+			foreach (string projectFolder in Directory.GetDirectories(m_dirs.ProjectsDirectory))
 			{
 				var projectName = Path.GetFileName(projectFolder);
 				var projectPath = Path.Combine(projectFolder, FdoFileHelper.GetDb4oDataFileName(projectName));
@@ -779,7 +778,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			progressDlg.Title = Strings.ksConvertingToShared;
 			progressDlg.AllowCancel = false;
-			progressDlg.Maximum = Directory.GetDirectories(m_projectsDirAccessor()).Count();
+			progressDlg.Maximum = Directory.GetDirectories(m_dirs.ProjectsDirectory).Count();
 			return (bool)progressDlg.RunTask(true, ConvertAllProjectsToDb4o);
 		}
 
@@ -788,7 +787,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			for (; ; )
 			{
 				string projects = "";
-				foreach (string projectFolder in Directory.GetDirectories(m_projectsDirAccessor()))
+				foreach (string projectFolder in Directory.GetDirectories(m_dirs.ProjectsDirectory))
 				{
 					var projectName = Path.GetFileName(projectFolder);
 					var projectPath = Path.Combine(projectFolder, FdoFileHelper.GetXmlDataFileName(projectName));
@@ -805,7 +804,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				if (!m_ui.Retry(string.Format(Strings.ksMustCloseProjectsToShare, projects), Strings.ksConvertingToShared))
 					return false;
 			}
-			foreach (string projectFolder in Directory.GetDirectories(m_projectsDirAccessor()))
+			foreach (string projectFolder in Directory.GetDirectories(m_dirs.ProjectsDirectory))
 			{
 				string projectName = Path.GetFileName(projectFolder);
 				string projectPath = Path.Combine(projectFolder, FdoFileHelper.GetXmlDataFileName(projectName));
@@ -942,7 +941,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			// Project Name must not have an extension. Can't use ChangeExtension because
 			// the project name might contain some other period.
 			Debug.Assert(!projectName.EndsWith(".fwdata") && !projectName.EndsWith(".fwdb"));
-			string projectDirectory = Path.Combine(m_projectsDirAccessor(), projectName);
+			string projectDirectory = Path.Combine(m_dirs.ProjectsDirectory, projectName);
 			var result = Path.Combine(projectDirectory, projectName + DefaultBackendType.GetExtension());
 			if (!File.Exists(result))
 			{

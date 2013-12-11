@@ -184,7 +184,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[SetUp]
 		public void StartFwRemoteDatabaseConnector()
 		{
-			m_sharedProject = false;
+			ClientServerServices.SetCurrentToDb4OBackend(new DummyFdoUI(), FwDirectoryFinder.FdoDirectories,
+				() => FwDirectoryFinder.ProjectsDirectory == FwDirectoryFinder.ProjectsDirectoryLocalMachine);
+			m_sharedProject = true;
 			RemotingServer.Start(FwDirectoryFinder.RemotingTcpServerConfigFile, FwDirectoryFinder.FdoDirectories, () => m_sharedProject, v => m_sharedProject = v);
 
 			var connectString = String.Format("tcp://{0}:{1}/FwRemoteDatabaseConnector.Db4oServerInfo",

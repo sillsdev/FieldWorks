@@ -20,6 +20,7 @@ using System.IO;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
@@ -104,6 +105,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			// We need FieldWorks here to get the correct registry key HKLM\Software\SIL\FieldWorks.
 			// The default without this would be HKLM\Software\SIL\SIL FieldWorks, which breaks some tests.
 			RegistryHelper.ProductName = "FieldWorks";
+			ClientServerServices.SetCurrentToDb4OBackend(new DummyFdoUI(), FwDirectoryFinder.FdoDirectories,
+				() => FwDirectoryFinder.ProjectsDirectory == FwDirectoryFinder.ProjectsDirectoryLocalMachine);
 			m_cache = CreateCache();
 			m_actionHandler = m_cache.ServiceLocator.GetInstance<IActionHandler>();
 		}

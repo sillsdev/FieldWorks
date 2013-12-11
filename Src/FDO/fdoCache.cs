@@ -373,8 +373,8 @@ namespace SIL.FieldWorks.FDO
 		/// ------------------------------------------------------------------------------------
 		public static string CreateNewLangProj(IThreadedProgress progressDlg, params object[] parameters)
 		{
-			if (parameters == null || parameters.Length < 4)
-				throw new ArgumentException("Parameters must include at least a project directory, a project name, a template directory, and a SynchronizeInvoke object");
+			if (parameters == null || parameters.Length < 3)
+				throw new ArgumentException("Parameters must include at least a project name, an IFdoDirectories service, and a SynchronizeInvoke object");
 			var projectName = (string) parameters[0];
 			if (string.IsNullOrEmpty(projectName))
 				throw new ArgumentNullException("parameters", "Cannot be null or empty");
