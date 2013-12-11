@@ -114,11 +114,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (sAlloId == null)
 				return;
 			int hvoAllomorph = Convert.ToInt32(sAlloId);
-			// use IMoAffixForm instead of IMoAffixAllomorph because it could be an IMoAffixProcess
-			IMoAffixForm allo = m_cache.ServiceLocator.GetInstance<IMoAffixFormRepository>().GetObject(hvoAllomorph);
-			if (allo == null)
+			// use IMoForm instead of IMoAffixForm or IMoAffixAllomorph because it could be an IMoStemAllomorph
+			IMoForm form = m_cache.ServiceLocator.GetInstance<IMoFormRepository>().GetObject(hvoAllomorph);
+			if (form == null)
 				return;
-			foreach (IMoInflClass ic in allo.InflectionClassesRC)
+			if (!(form is IMoAffixForm))
+				return;
+			foreach (IMoInflClass ic in ((IMoAffixForm)form).InflectionClassesRC)
 			{
 				XmlNode icNode = CreateXmlElement(doc, "inflectionClass", morphNode);
 				CreateXmlAttribute(doc, "id", ic.Hvo.ToString(), icNode);

@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		#region Data members
 
 		private InterlinVc m_vc;
-		private readonly IWfiAnalysis m_wfiAnalysis;
+		private IWfiAnalysis m_wfiAnalysis;
 		private XmlNode m_configurationNode;
 		private OneAnalysisSandbox m_oneAnalSandbox;
 		private IWfiWordform m_wordform;
@@ -84,15 +84,21 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			if (IsDisposed)
 				return;
 
+			if (disposing)
+			{
+				if (m_oneAnalSandbox != null)
+				{
+					m_oneAnalSandbox.SizeChanged -= HandleSandboxSizeChanged;
+				}
+			}
+
 			base.Dispose(disposing);
 
 			if (disposing)
 			{
-				//RightMouseClickedEvent -= new FwRightMouseClickEventHandler(InterlinDocChild_RightMouseClickedEvent);
 				if (m_oneAnalSandbox != null)
 				{
-					if (!Controls.Contains(m_oneAnalSandbox))
-						m_oneAnalSandbox.Dispose();
+					m_oneAnalSandbox.Dispose();
 				}
 				if (m_vc != null)
 					m_vc.Dispose();
@@ -101,6 +107,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			m_vc = null;
 			m_configurationNode = null;
 			m_wordform = null;
+			m_wfiAnalysis = null;
 		}
 
 		#endregion Dispose
@@ -262,26 +269,29 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		void SaveChanges()
 		{
-			if (IsEditable)
+			if (IsDisposed)
+				return;
+
+			if (!IsEditable)
+				return;
+
+			if (!CanSaveAnalysis())
+				return;
+
+			// Collect up the old MSAs, since they need to go away, if they are unused afterwards.
+			var msaSet = new HashSet<IMoMorphSynAnalysis>();
+			m_wfiAnalysis.CollectReferencedMsas(msaSet);
+			m_oneAnalSandbox.UpdateAnalysis(m_wfiAnalysis);
+			foreach (var msa in msaSet)
 			{
-				if (CanSaveAnalysis())
+				if (msa != null && msa.CanDelete)
 				{
-					// Collect up the old MSAs, since they need to go away, if they are unused afterwards.
-					var msaSet = new HashSet<IMoMorphSynAnalysis>();
-					m_wfiAnalysis.CollectReferencedMsas(msaSet);
-					m_oneAnalSandbox.UpdateAnalysis(m_wfiAnalysis);
-					foreach (var msa in msaSet)
-					{
-						if (msa != null && msa.CanDelete)
-						{
-							// TODO: Add UOW? Probably use one for all that are to be deleted (collect them into one list).
-							m_fdoCache.MainCacheAccessor.DeleteObj(msa.Hvo);
-						}
-					}
-					//m_fdoCache.LangProject.DefaultUserAgent.SetEvaluation(anal, 1);
-					Debug.Assert(m_wfiAnalysis.ApprovalStatusIcon == 1, "Analysis must be approved, since it started that way.");
+					// TODO: Add UOW? Probably use one for all that are to be deleted (collect them into one list).
+					m_fdoCache.MainCacheAccessor.DeleteObj(msa.Hvo);
 				}
 			}
+			//m_fdoCache.LangProject.DefaultUserAgent.SetEvaluation(anal, 1);
+			Debug.Assert(m_wfiAnalysis.ApprovalStatusIcon == 1, "Analysis must be approved, since it started that way.");
 		}
 
 		/// <summary>

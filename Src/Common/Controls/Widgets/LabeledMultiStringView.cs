@@ -302,12 +302,12 @@ namespace SIL.FieldWorks.Common.Widgets
 						Justification="soundFieldControl gets disposed in Dispose method")]
 		private void SetupSoundControls()
 		{
-			if (m_innerView.WritingSystems == null)
+			if (m_innerView.WritingSystemsToDisplay == null)
 				return; // should get called again when it is set up.
 			if (m_innerView.RootBox == null)
 				return; // called again in MakeRoot, when information more complete.
 			int index = -1;
-			foreach (var ws in m_innerView.WritingSystems)
+			foreach (var ws in m_innerView.WritingSystemsToDisplay)
 			{
 				index++;
 				var pws = ws as WritingSystemDefinition;

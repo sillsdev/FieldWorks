@@ -625,6 +625,8 @@ namespace SIL.FieldWorks.Common.Controls
 			DataGridViewCell cell = this[e.ColumnIndex, e.RowIndex];
 			if (cell != null && cell.Tag is Font)
 				e.CellStyle.Font = cell.Tag as Font;
+			else
+				e.CellStyle.Font = this.Font;
 		}
 
 		/// ------------------------------------------------------------------------------------

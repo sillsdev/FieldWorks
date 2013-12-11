@@ -91,12 +91,16 @@ namespace SIL.FieldWorks.Common.RootSites
 					m_ActionHandler.Rollback(m_Depth);
 					retVal = true;
 				}
+				bool resetSelections = m_ActionHandler != null;
 				m_ActionHandler = null;
 
 				if (m_InitialSelection != null)
 					m_InitialSelection.RestoreSelection();
-				m_InitialSelection = null;
-				m_EndOfPreedit = null;
+				if (resetSelections)
+				{
+					m_InitialSelection = null;
+					m_EndOfPreedit = null;
+				}
 				return retVal;
 			}
 			finally
@@ -226,18 +230,21 @@ namespace SIL.FieldWorks.Common.RootSites
 				selHelper.IchAnchor = Math.Max(0,
 					selHelper.GetIch(SelectionHelper.SelLimitType.Top) - countBackspace);
 				selHelper.IchEnd = bottom;
+
+				if (m_ActionHandler == null && m_InitialSelection != null && m_EndOfPreedit != null)
+				{
+					// we don't have an action handler which means we didn't roll back the
+					// preedit. This means we have create a range selection that deletes the
+					// preedit.
+					selHelper.IchAnchor = Math.Max(0, m_InitialSelection.SelectionHelper.GetIch(
+						SelectionHelper.SelLimitType.Top) - countBackspace);
+					selHelper.IchEnd = m_EndOfPreedit.GetIch(SelectionHelper.SelLimitType.Bottom);
+				}
 				selHelper.SetSelection(true);
 
 				// Insert 'text'
 				ITsString str = CreateTsStringUsingSelectionProps(text, selectionProps, false);
-				try
-				{
-					selHelper.Selection.ReplaceWithTsString(str);
-				}
-				catch (Exception ex)
-				{
-					throw;
-				}
+				selHelper.Selection.ReplaceWithTsString(str);
 			}
 			finally
 			{
@@ -442,7 +449,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 
 			var selHelper = SetupForTypingEventHandler(true, false);
-			if (selHelper == null  || nChars <= 0)
+			if (selHelper == null || nChars <= 0)
 				return;
 
 			try
@@ -469,7 +476,8 @@ namespace SIL.FieldWorks.Common.RootSites
 				selHelper.IchEnd = selectionStart;
 
 				// make the selection visible
-				selHelper.SetSelection(true);
+				var selection = selHelper.SetSelection(true);
+				selection.SetSelectionProps(selectionProps.Length, selectionProps);
 			}
 			finally
 			{
