@@ -1874,9 +1874,12 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				if (tssGloss == null || tssGloss.Length == 0)
 				{
 					// if we can't find an MSA that matches, just use first gloss
-					var sense = entry.SensesOS[0];
-					if (sense != null)
-						tssGloss = sense.Gloss.AnalysisDefaultWritingSystem;
+					if (entry.SensesOS.Count > 0)
+					{
+						var sense = entry.SensesOS[0];
+						if (sense != null)
+							tssGloss = sense.Gloss.AnalysisDefaultWritingSystem;
+					}
 				}
 				if (tssGloss != null && tssGloss.Length > 0)
 					tisb.AppendTsString(tssGloss);

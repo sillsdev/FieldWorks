@@ -168,13 +168,14 @@ namespace SIL.FieldWorks.Common.RootSites
 		bool IsReallyVisible(IRootSite site)
 		{
 			Control control = site as Control;
-			if (!control.Visible)
+			if (control == null || !control.Visible)
 				return false;
 			// Unfortunately the above can somehow still be true for a control that is
 			// part of a disposed window. Check some more things to make sure.
 			if (!control.IsHandleCreated)
 				return false;
-			if (site is IVwRootSite && (site as IVwRootSite).RootBox == null)
+			var rootSite = site as IVwRootSite;
+			if (rootSite == null || rootSite.RootBox == null)
 				return false;
 			// Don't do this! It produces a stack overflow because CastAsIVwRootBox
 			// uses ActiveView to try to get a RootSite.
@@ -354,16 +355,16 @@ namespace SIL.FieldWorks.Common.RootSites
 					m_activeSite = null;
 			}
 
-			foreach (Control con in control.Controls)
-				DeepRemoveControl(con);
+			foreach (Control childControl in control.Controls)
+				DeepRemoveControl(childControl);
 
 			if (control is IControl)
 			{
 #if __MonoCS__ // TODO-Linux FWNX-534: work around for mono bug: https://bugzilla.novell.com/show_bug.cgi?id=656701
-				if (control.IsDisposed == false)
+				if (!control.IsDisposed)
 #endif
-				foreach (Control con in ((IControl)control).FocusableControls)
-					DeepRemoveControl(con);
+				foreach (Control focusableControl in ((IControl)control).FocusableControls)
+					DeepRemoveControl(focusableControl);
 			}
 		}
 		#endregion

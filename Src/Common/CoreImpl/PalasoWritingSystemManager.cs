@@ -1192,9 +1192,7 @@ namespace SIL.CoreImpl
 				var lcidString = GetSpecialValue(reader, "fw", "windowsLCID");
 				((ILegacyWritingSystemDefinition)fwWs).WindowsLcid = lcidString;
 
-				while (reader.NodeType != XmlNodeType.EndElement)
-					reader.Read();
-				reader.ReadEndElement();
+				ReadSpecialEndElement(reader);
 			}
 
 			else

@@ -157,7 +157,7 @@ namespace SIL.FieldWorks.FDO
 		{
 			return CreateCacheInternal(projectId, userWsIcuLocale, progressDlg.ThreadHelper,
 				dataSetup => dataSetup.StartupExtantLanguageProject(projectId, true, progressDlg),
-				cache => cache.Initialize(userWsIcuLocale, progressDlg));
+				cache => cache.Initialize());
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -175,7 +175,7 @@ namespace SIL.FieldWorks.FDO
 			var projectId = new SimpleProjectId(FDOBackendProviderType.kXML, projectPath);
 			return CreateCacheInternal(projectId, userWsIcuLocale, progressDlg.ThreadHelper,
 				dataSetup => dataSetup.StartupExtantLanguageProject(projectId, true, progressDlg),
-				cache => cache.Initialize(userWsIcuLocale, progressDlg));
+				cache => cache.Initialize());
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -286,52 +286,23 @@ namespace SIL.FieldWorks.FDO
 		/// Initializes this cache (called whenever the cache is created).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void Initialize(string userWsIcuLocale, IThreadedProgress progressDlg)
+		private void Initialize()
 		{
-			// check for updated global writing systems and ask the user if they want to use it
-			var writingSystemsWithNewerGlobalVersions = new List<IWritingSystem>();
+			// check for global writing system updates
 			var writingSystemManager = ServiceLocator.WritingSystemManager;
-			foreach (IWritingSystem ws in writingSystemManager.CheckForNewerGlobalWritingSystems())
-			{
-				if (NewerWritingSystemFound == null)
-				{
-					writingSystemManager.Replace(ws);
-				}
-				else
-				{
-					writingSystemsWithNewerGlobalVersions.Add(ws);
-				}
-			}
-			if (writingSystemsWithNewerGlobalVersions.Count > 0)
-			{
-				IWritingSystem wsUser;
-				writingSystemManager.GetOrSet(userWsIcuLocale, out wsUser);
+			var newerGlobalWritingSystems = writingSystemManager.CheckForNewerGlobalWritingSystems().ToList();
 
-				var updatedInUseWSs = new StringBuilder();
-				foreach (var ws in writingSystemsWithNewerGlobalVersions)
-				{
-					var matchedProjectWs =
-						ServiceLocator.WritingSystems.AllWritingSystems.SingleOrDefault(projectWs => projectWs.Id == ws.Id);
-					//Build up a string containing all the in use writing systems which have been updated.)
-					if (wsUser.Equals(ws) || matchedProjectWs != null)
-					{
-						if (updatedInUseWSs.Length > 0)
-							updatedInUseWSs.Append(", ");
-						updatedInUseWSs.Append(ws.DisplayLabel);
-					}
-				}
-				// We will update the global writing system manager with any changes we found if
-				//  - the only changes are to WSs the user is not using and probably not even aware of,
-				//  - or if a setting tells us to do this always,
-				//  - or if we ask the user and he says to go ahead.
-				if (!IsUpdatedWsInUse(updatedInUseWSs) ||
-					CoreImpl.Properties.Settings.Default.UpdateGlobalWSStore ||
-					NewerWritingSystemFound(updatedInUseWSs.ToString(), ProjectId.UiName))
-				{
-					UpdateGlobalWsMgr(writingSystemsWithNewerGlobalVersions, writingSystemManager);
-				}
+			// If there are updates, and at least one of the following is true:
+			// - The user has cleared the "Do Not Copy Writing Systems to Other Projects" box (cleared by default)
+			// - The NewerWritingSystemFound method is null
+			// - The NewerWritingSystemFound method returns true (the user wants to copy these WS's from global this time)
+			if (newerGlobalWritingSystems.Any() && (
+				CoreImpl.Properties.Settings.Default.UpdateGlobalWSStore ||
+				NewerWritingSystemFound == null ||
+				NewerWritingSystemFound(WsNamesToString(newerGlobalWritingSystems), ProjectId.UiName)))
+			{
+				SaveOnlyLocalWritingSystems(writingSystemManager, newerGlobalWritingSystems);
 			}
-			writingSystemManager.Save();
 
 			if (ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem == null)
 			{
@@ -348,16 +319,29 @@ namespace SIL.FieldWorks.FDO
 				DataStoreInitializationServices.PrepareCache(this));
 		}
 
-		private static void UpdateGlobalWsMgr(List<IWritingSystem> writingSystemsWithNewerGlobalVersions,
-												IWritingSystemManager writingSystemManager)
+		private static string WsNamesToString(IEnumerable<IWritingSystem> writingSystems)
 		{
-			foreach (var ws in writingSystemsWithNewerGlobalVersions)
-				writingSystemManager.Replace(ws);
+			var result = new StringBuilder();
+			foreach (var ws in writingSystems)
+			{
+				if (result.Length > 0)
+					result.Append(", ");
+				result.Append(ws.DisplayLabel);
+			}
+			return result.ToString();
 		}
 
-		private static bool IsUpdatedWsInUse(StringBuilder updatedWssInUseBuilder)
+		private static void SaveOnlyLocalWritingSystems(IWritingSystemManager writingSystemManager, IEnumerable<IWritingSystem> writingSystems)
 		{
-			return !String.IsNullOrEmpty(updatedWssInUseBuilder.ToString());
+			foreach (var ws in writingSystems)
+			{
+				// We only copied changes from Global, so the WS has not been "modified."
+				// Setting Modified to false prevents bumping the date on the global WS.
+				// Running Replace ensures the local ldml will be saved regardless of the Modified flag.
+				writingSystemManager.Replace(ws);
+				ws.Modified = false;
+			}
+			writingSystemManager.Save();
 		}
 
 		#endregion

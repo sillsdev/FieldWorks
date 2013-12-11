@@ -224,11 +224,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			var dummyRootBox = (DummyRootBox)m_dummySimpleRootSite.RootBox;
 			var dummySelection = (DummyVwSelection)m_dummySimpleRootSite.RootBox.Selection;
 
-			Assert.AreEqual("TU", dummyRootBox.Text);
+			Assert.AreEqual("TU", dummyRootBox.Text, "Rootbox text");
 
-			Assert.AreEqual("U", m_dummyIBusCommunicator.PreEdit);
-			Assert.AreEqual(2, dummySelection.Anchor);
-			Assert.AreEqual(2, dummySelection.End);
+			Assert.AreEqual("U", m_dummyIBusCommunicator.PreEdit, "pre-edit text");
+			Assert.AreEqual(2, dummySelection.Anchor, "Selection anchor");
+			Assert.AreEqual(2, dummySelection.End, "Selection end");
 		}
 
 		/// <summary>Test cases for FWNX-674</summary>
@@ -1594,7 +1594,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 #pragma warning disable 67
 		public event Action<int, int> DeleteSurroundingText;
 		public event Action<int, int, int> KeyEvent;
-
 #pragma warning restore 67
 
 		public bool IsDisposed { get; private set; }
@@ -1629,7 +1628,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_preedit = ((char)keySym).ToString();
 			if (((uint)state & shift) != 0 || ((uint)state & capslock) != 0)
 				m_preedit = m_preedit.ToUpper();
-			UpdatePreeditText(new IBusText(m_preedit), 0);
+			UpdatePreeditText(new IBusText(m_preedit), m_preedit.Length);
 			return true;
 		}
 
@@ -1723,7 +1722,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public event Action<int, int> DeleteSurroundingText;
 		public event Action HidePreeditText;
 		public event Action<int, int, int> KeyEvent;
-
 #pragma warning restore 67
 
 		public IBusConnection Connection
@@ -1763,7 +1761,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 				input = ToggleCase(input);
 
 			m_preedit += input;
-			CallUpdatePreeditText(m_preedit, 0);
+			CallUpdatePreeditText(m_preedit, m_preedit.Length);
 
 			return true;
 		}

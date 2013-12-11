@@ -522,7 +522,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		{
 			EnsureWritingSystemsExist(m_cache.LanguageProject.AnalysisWss);
 			EnsureWritingSystemsExist(m_cache.LanguageProject.VernWss);
-			m_cache.ServiceLocator.WritingSystemManager.Save();
 		}
 
 		private void EnsureWritingSystemsExist(string wssStr)
@@ -552,6 +551,10 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			wsManager.LocalWritingSystemStore = new LocalFileWritingSystemStore(storePath, globalStore);
 			wsManager.LocalWritingSystemStore.LocalKeyboardSettings = Settings.Default.LocalKeyboards;
 			wsManager.TemplateFolder = DirectoryFinder.TemplateDirectory;
+
+			// Writing systems are not "modified" when the system is freshly-initialized
+			foreach (var ws in wsManager.LocalWritingSystemStore.AllWritingSystems)
+				ws.Modified = false;
 		}
 
 		#region IDataSetup implementation

@@ -18,7 +18,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void m_linkWeSay_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			using (System.Diagnostics.Process.Start("http://www.wesay.org/wiki/ShareWithFLEx"))
+			using (System.Diagnostics.Process.Start("https://docs.google.com/document/d/1F6jBscOEOonPpx_z6R927fw79zMTOXzzxAYUmnbK9Gw"))
 			{
 			}
 		}

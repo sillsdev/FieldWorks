@@ -205,7 +205,7 @@
     <value>Top, Bottom, Left, Right</value>
   </data>
   <data name="htmlControl_Instructions.DocumentText" xml:space="preserve">
-    <value>&lt;!DOCTYPE html&gt;
+    <value>&lt;!DOCTYPE html&gt;&lt;html&gt;
 &lt;body lang=EN-US style='font-family:"Microsoft Sans Serif","sans-serif";font-size:9.5pt'&gt;
 &lt;p style='font-size:11pt;margin-bottom:0in'&gt;Getting Started&lt;/p&gt;
 &lt;p style='margin:0in;text-indent:10.5pt'&gt;When you begin to share
