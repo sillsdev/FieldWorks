@@ -1884,7 +1884,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		}
 
 
-		/// <summary>This method appends 'nameSplice' to a file ínputFilespec'.</summary>
+		/// <summary>This method appends 'nameSplice' to a file 'inputFilespec'.</summary>
 		/// <param name="inputFilespec">Input file name to modify.</param>
 		/// <param name="nameSplice">The 'text' to append to the file name before the
 		/// extension.</param>
