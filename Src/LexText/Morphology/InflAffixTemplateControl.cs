@@ -1076,7 +1076,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// ------------------------------------------------------------------------------------
 		protected override void OnLostFocus(EventArgs e)
 		{
-			if (!AllSlotNamesOk)
+			// During deletion of a Grammar Category, Windows/.Net can pass through here after
+			// the template has been deleted, resulting a crash trying to verify the slot names
+			// of the template.  See LT-13932.
+			if (m_template.IsValidObject && !AllSlotNamesOk)
 			{
 				UndoableUnitOfWorkHelper.Do(MEStrings.ksUndoChangeSlotName, MEStrings.ksRedoChangeSlotName,
 					Cache.ActionHandlerAccessor,
