@@ -1,12 +1,6 @@
-// --------------------------------------------------------------------------------------------
-#region /// Copyright (c) 2010, SIL International. All Rights Reserved.
-// <copyright from='2009' to='2010' company='SIL International'>
-//    Copyright (c) 2010, SIL International. All Rights Reserved.
-// </copyright>
-#endregion
-//
-// Distributable under the terms of either the Common Public License or the
-// GNU Lesser General Public License, as specified in the LICENSING.txt file.
+// Copyright (c) 2009-2013 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File: FdoRepositoryAdditions.cs
 // Responsibility: FW Team
@@ -15,7 +9,7 @@
 // Add additional methods/properties to Repository interfaces in this file.
 // Implementation of the additional interface information should go into the FdoRepositoryAdditions.cs file.
 // </remarks>
-// --------------------------------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

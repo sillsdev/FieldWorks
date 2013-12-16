@@ -2,7 +2,7 @@
 
 <!-- LexiqueProConfig.dtd -->
 <!-- DTD for Lexique Pro configuration file -->
-<!-- Copyright (c) 2004-2005 SIL International -->
+<!-- Copyright (c) 2004-2013 SIL International -->
 <!-- Valid for Lexique Pro version 2.4 - 25 April 2005 -->
 
 <!ELEMENT lexiqueProConfig (version, date?, encoding, lexiconLanguage, glossLanguages, fieldFormatting?, multiEntryView?, permissions?, fieldMarkers, labels, categories, omitRules?, aboutDir?, settingsDir?, databaseTypeFilename?, cctFilename?, homePage)>

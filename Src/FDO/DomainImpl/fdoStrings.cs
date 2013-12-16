@@ -1,8 +1,6 @@
-// --------------------------------------------------------------------------------------------
-// Copyright (C) 2002-2010 SIL International. All rights reserved.
-//
-// Distributable under the terms of either the Common Public License or the
-// GNU Lesser General Public License, as specified in the LICENSING.txt file.
+// Copyright (c) 2002-2013 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File: fdoStrings.cs
 // Responsibility: Randy Regnier
@@ -15,7 +13,7 @@
 //				MultiStringAccessor
 //			VirtualStringAccessor
 // </remarks>
-// --------------------------------------------------------------------------------------------
+
 using System;
 using System.Linq;
 using System.Text;

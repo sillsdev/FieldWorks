@@ -1,16 +1,10 @@
-// --------------------------------------------------------------------------------------------
-#region // Copyright © 2002-2010, SIL International. All Rights Reserved.
-// <copyright from='2002' to='2010' company='SIL International'>
-//		Copyright © 2002-2010, SIL International. All Rights Reserved.
-//
-//		Distributable under the terms of either the Common Public License or the
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
-// </copyright>
-#endregion
+// Copyright (c) 2002-2013 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File: FwHelpAbout.cs
 // Responsibility: TE Team
-// --------------------------------------------------------------------------------------------
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -301,7 +295,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				lblName.Text = viProvider.ProductName;
 				lblAppVersion.Text = viProvider.ApplicationVersion;
 				lblFwVersion.Text = viProvider.FieldWorksVersion;
-				lblCopyright.Text = viProvider.CopyrightString;
+				lblCopyright.Text = viProvider.CopyrightString + Environment.NewLine + viProvider.LicenseString + Environment.NewLine + viProvider.LicenseURL;
 
 				// Set the title bar text
 				Text = string.Format(m_sTitleFmt, viProvider.ProductName);

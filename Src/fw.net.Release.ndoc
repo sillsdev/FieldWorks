@@ -48,7 +48,7 @@
 			<property name="DocumentPrivates" value="False" />
 			<property name="DocumentEmptyNamespaces" value="False" />
 			<property name="IncludeAssemblyVersion" value="True" />
-			<property name="CopyrightText" value="Copyright  2002-2003, SIL International" />
+			<property name="CopyrightText" value="Copyright (c) 2002-2013 SIL International" />
 			<property name="CopyrightHref" value="http://www.sil.org" />
 			<property name="SkipNamespacesWithoutSummaries" value="False" />
 			<property name="AutoPropertyBackerSummaries" value="False" />
@@ -78,7 +78,7 @@
 			<property name="DocumentPrivates" value="False" />
 			<property name="DocumentEmptyNamespaces" value="False" />
 			<property name="IncludeAssemblyVersion" value="True" />
-			<property name="CopyrightText" value="Copyright  2002-2003, SIL International" />
+			<property name="CopyrightText" value="Copyright (c) 2002-2013 SIL International" />
 			<property name="CopyrightHref" value="http://www.sil.org" />
 			<property name="SkipNamespacesWithoutSummaries" value="False" />
 			<property name="AutoPropertyBackerSummaries" value="False" />
@@ -99,7 +99,7 @@
 			<property name="DocumentPrivates" value="False" />
 			<property name="DocumentEmptyNamespaces" value="False" />
 			<property name="IncludeAssemblyVersion" value="True" />
-			<property name="CopyrightText" value="Copyright  2002-2003, SIL International" />
+			<property name="CopyrightText" value="Copyright (c) 2002-2013 SIL International" />
 			<property name="CopyrightHref" value="http://www.sil.org" />
 			<property name="SkipNamespacesWithoutSummaries" value="False" />
 			<property name="AutoPropertyBackerSummaries" value="False" />

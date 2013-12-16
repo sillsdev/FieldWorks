@@ -1056,7 +1056,7 @@
 	<value>NoControl</value>
   </data>
   <data name="lblAvailableDiskSpace.Location" type="System.Drawing.Point, System.Drawing">
-	<value>144, 235</value>
+	<value>144, 247</value>
   </data>
   <data name="lblAvailableDiskSpace.Size" type="System.Drawing.Size, System.Drawing">
 	<value>141, 17</value>
@@ -1083,7 +1083,7 @@
 	<value>NoControl</value>
   </data>
   <data name="lblAvailableMemory.Location" type="System.Drawing.Point, System.Drawing">
-	<value>144, 212</value>
+	<value>144, 224</value>
   </data>
   <data name="lblAvailableMemory.Size" type="System.Drawing.Size, System.Drawing">
 	<value>136, 17</value>
@@ -1143,7 +1143,7 @@
 	<value>144, 175</value>
   </data>
   <data name="lblCopyright.Size" type="System.Drawing.Size, System.Drawing">
-	<value>360, 24</value>
+	<value>360, 36</value>
   </data>
   <data name="lblCopyright.TabIndex" type="System.Int32, mscorlib">
 	<value>4</value>
@@ -1167,7 +1167,7 @@
 	<value>NoControl</value>
   </data>
   <data name="edtAvailableDiskSpace.Location" type="System.Drawing.Point, System.Drawing">
-	<value>285, 235</value>
+	<value>285, 247</value>
   </data>
   <data name="edtAvailableDiskSpace.Size" type="System.Drawing.Size, System.Drawing">
 	<value>219, 17</value>
@@ -1194,7 +1194,7 @@
 	<value>NoControl</value>
   </data>
   <data name="edtAvailableMemory.Location" type="System.Drawing.Point, System.Drawing">
-	<value>285, 210</value>
+	<value>285, 222</value>
   </data>
   <data name="edtAvailableMemory.Size" type="System.Drawing.Size, System.Drawing">
 	<value>219, 19</value>

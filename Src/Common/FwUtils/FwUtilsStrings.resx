@@ -162,9 +162,13 @@
 	<value>Version: {0}  {1}  {2}</value>
 	<comment>Displays in the Help/About box and the splash screen</comment>
   </data>
-  <data name="kstidCopyrightFmt" xml:space="preserve">
-	<value>{0}. All rights reserved.</value>
+  <data name="kstidLicense" xml:space="preserve">
+	<value>This software is licensed under the LGPL, version 2.1 or later</value>
 	<comment>Displays in the Help/About box and the splash screen</comment>
+  </data>
+  <data name="kstidLicenseURL" xml:space="preserve">
+	<value>(http://www.gnu.org/licenses/lgpl-2.1.html)</value>
+	<comment>Displays in the Help/About box</comment>
   </data>
   <data name="kstidFwVersionFmt" xml:space="preserve">
 	<value>Version: {0}</value>

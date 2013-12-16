@@ -16,3 +16,4 @@
 *.svg -whitespace
 *.xml -whitespace
 changelog -whitespace
+LICENSE -whitespace

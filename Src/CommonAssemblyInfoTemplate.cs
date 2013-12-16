@@ -1,8 +1,7 @@
 ﻿/*----------------------------------------------------------------------------------------------
-Copyright (C) 2002 SIL International. All rights reserved.
-
-Distributable under the terms of either the Common Public License or the
-GNU Lesser General Public License, as specified in the LICENSING.txt file.
+Copyright (c) 2002-2013 SIL International
+This software is licensed under the LGPL, version 2.1 or later
+(http://www.gnu.org/licenses/lgpl-2.1.html)
 
 If this file is CommonAssemblyInfo.cs, it is a generated file, and should not be hand edited.
 If it is CommonAssemblyInfoTemplate.cs, it is the template from which CommonAssemblyInfo.cs
@@ -22,7 +21,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SIL")]
 [assembly: AssemblyProduct("SIL FieldWorks")]
-[assembly: AssemblyCopyright("(C) 2002-$YEAR, SIL International")]
+[assembly: AssemblyCopyright("Copyright (c) 2002-$YEAR SIL International")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
