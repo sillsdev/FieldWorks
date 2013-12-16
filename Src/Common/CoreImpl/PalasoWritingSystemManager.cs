@@ -238,7 +238,7 @@ namespace SIL.CoreImpl
 					foreach (WritingSystemDefinition wsDef in m_localStore.WritingSystemsNewerIn(m_globalStore.AllWritingSystems))
 					{
 						m_localStore.LastChecked(wsDef.Id, wsDef.DateModified);
-						results.Add((IWritingSystem)wsDef);
+						results.Add((IWritingSystem)wsDef); // REVIEW Hasso 2013.12: add only if not equal?
 					}
 					return results;
 				}
