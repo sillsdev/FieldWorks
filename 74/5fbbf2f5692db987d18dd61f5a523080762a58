@@ -1,0 +1,8 @@
+Code-Review+2: Eberhard Beilharz <eb1@sil.org>
+Verified+1: Jenkins CI
+Verified-Linux+1: Jenkins CI
+Submitted-by: Stephen McConnel <stephen_mcconnel@sil.org>
+Submitted-at: Mon, 16 Dec 2013 18:44:27 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/1646
+Project: FieldWorks
+Branch: refs/heads/release/8.0
