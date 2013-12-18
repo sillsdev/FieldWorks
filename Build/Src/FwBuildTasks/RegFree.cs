@@ -15,7 +15,7 @@
 // </remarks>
 // ---------------------------------------------------------------------------------------------
 using System;
-using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Security.Principal;
@@ -128,7 +128,14 @@ namespace SIL.FieldWorks.Build.Tasks
 			Log.LogMessage(MessageImportance.Normal, "RegFree processing {0}",
 				Path.GetFileName(Executable));
 
-			var manifestFile = string.IsNullOrEmpty(Output) ? Executable + ".manifest" : Output;
+			StringCollection dllPaths = IdlImp.GetFilesFrom(Dlls);
+			if (dllPaths.Count == 0)
+				dllPaths.Add(Executable);
+			bool isSxs = dllPaths.Count == 1 && dllPaths[0] == Executable;
+			string executable = Executable;
+			if (isSxs)
+				executable = Path.Combine(Path.GetDirectoryName(Executable), Path.GetFileNameWithoutExtension(Executable) + ".sxs");
+			string manifestFile = string.IsNullOrEmpty(Output) ? executable + ".manifest" : Output;
 
 			try
 			{
@@ -145,7 +152,6 @@ namespace SIL.FieldWorks.Build.Tasks
 				{
 					regHelper.RedirectRegistry(!UserIsAdmin);
 					var creator = new RegFreeCreator(doc, Log);
-					var dllPaths = IdlImp.GetFilesFrom(Dlls);
 					var filesToRemove = dllPaths.Cast<string>().Where(fileName => !File.Exists(fileName)).ToList();
 					foreach (var file in filesToRemove)
 						dllPaths.Remove(file);
@@ -164,7 +170,7 @@ namespace SIL.FieldWorks.Build.Tasks
 						}
 					}
 
-					XmlElement root = creator.CreateExeInfo(Executable);
+					XmlElement root = creator.CreateExeInfo(Executable, isSxs);
 					foreach (string fileName in dllPaths)
 					{
 						if (NoTypeLib.Count(f => f.ItemSpec == fileName) != 0)

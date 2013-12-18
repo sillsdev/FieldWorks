@@ -2,6 +2,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 
 	<UsingTask TaskName="CheckAdminPrivilege" AssemblyFile="FwBuildTasks.dll" Condition="'$(OS)'=='Windows_NT'"/>
+	<UsingTask TaskName="RegFree" AssemblyFile="FwBuildTasks.dll"/>
 
 	<!-- call preparatory Windows targets -->
 	<Target Name="initWindows" Condition="'$(OS)'=='Windows_NT'"
@@ -99,5 +100,10 @@
 		  </choose>
 -->
 	</Target>
-
+	<Target Name="SxSManifests" Condition="'$(OS)'=='Windows_NT'" DependsOnTargets="FwKernel;Language;GrEngine;Views">
+		<RegFree Executable="$(dir-outputBase)\FwKernel.dll" />
+		<RegFree Executable="$(dir-outputBase)\Language.dll" />
+		<RegFree Executable="$(dir-outputBase)\Views.dll" />
+		<RegFree Executable="$(dir-outputBase)\Graphite.dll" NoTypeLib="$(dir-outputBase)\Graphite.dll" />
+	</Target>
 </Project>

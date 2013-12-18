@@ -86,19 +86,20 @@ namespace SIL.FieldWorks.Build.Tasks
 
 		#endregion
 
+		///  ------------------------------------------------------------------------------------
+		///  <summary>
+		///  Creates the info for the executable. The info consist of:
+		///  <list type="bullet">
+		/// 		<item>name (from file name)</item>
+		/// 		<item>version info (from assembly)</item>
+		/// 		<item>type (hard coded as "win32" for now)</item>
+		///  </list>
+		///  This method also adds the root element with all necessary namespaces.
+		///  </summary>
+		///  <param name="pathName">pathname of the file.</param>
+		/// <param name="isSxs"></param>
 		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Creates the info for the executable. The info consist of:
-		/// <list type="bullet">
-		///		<item>name (from file name)</item>
-		///		<item>version info (from assembly)</item>
-		///		<item>type (hard coded as "win32" for now)</item>
-		/// </list>
-		/// This method also adds the root element with all necessary namespaces.
-		/// </summary>
-		/// <param name="pathName">pathname of the file.</param>
-		/// ------------------------------------------------------------------------------------
-		public XmlElement CreateExeInfo(string pathName)
+		public XmlElement CreateExeInfo(string pathName, bool isSxs)
 		{
 			XmlElement elem = _doc.CreateElement("assembly", UrnAsmv1);
 			elem.SetAttribute("manifestVersion", "1.0");
@@ -120,6 +121,8 @@ namespace SIL.FieldWorks.Build.Tasks
 			{
 				// <assemblyIdentity name="TE.exe" version="1.4.1.39149" type="win32" />
 				XmlElement assemblyIdentity = _doc.CreateElement("assemblyIdentity", UrnAsmv1);
+				if (isSxs)
+					fileName = Path.GetFileNameWithoutExtension(fileName) + ".sxs";
 				assemblyIdentity.SetAttribute("name", fileName);
 				// ReSharper disable EmptyGeneralCatchClause
 				try
