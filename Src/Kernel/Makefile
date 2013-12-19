@@ -82,13 +82,13 @@ OBJ_FWKERNEL = \
 	$(INT_DIR)/UniscribeEngine.o \
 	$(INT_DIR)/RomRenderEngine.o \
 	$(INT_DIR)/RomRenderSegment.o \
+	$(INT_DIR)/FwXml.o \
 
 OBJ_OTHER = \
 	$(GENERIC_OBJ)/ModuleEntry.o \
 	$(GENERIC_OBJ)/TextProps1.o \
 	$(APPCORE_OBJ)/FwStyledText.o \
 	$(APPCORE_OBJ)/WriteXml.o \
-	$(CELLAR_OBJ)/FwXml.o \
 
 # === Targets ===
 
@@ -127,9 +127,9 @@ $(APPCORE_OBJ)/FwStyledText.o $(APPCORE_OBJ)/WriteXml.o:
 	@$(MAKE) -C $(APPCORE_SRC) $@ -q || \
 	 $(MAKE) -C $(APPCORE_SRC) $@
 
-$(CELLAR_OBJ)/FwXml.o:
-	@$(MAKE) -C $(CELLAR_SRC) $@ -q || \
-	 $(MAKE) -C $(CELLAR_SRC) $@
+$(INT_DIR)/%.o: $(CELLAR_SRC)/%.cpp
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(INCLUDES) $(TARGET_ARCH) \
+	  -c $< -o $@ -MMD -MF $(@:%.o=%.d)
 
 $(GENERIC_OBJ)/main.o:
 	@$(MAKE) -C $(GENERIC_SRC) -q $@ || \
