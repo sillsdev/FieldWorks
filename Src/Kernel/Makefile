@@ -23,11 +23,9 @@ else
 	OPTIMIZATIONS = -O3
 endif
 
-CELLAR_SRC = $(SRC)/Cellar
-DBSERVICES_SRC = $(SRC)/DbServices
+PACKAGES = glib-2.0 gtk+-2.0 glibmm-2.4 gtkmm-2.4 cairomm-1.0 pangomm-1.4
 
 INCLUDES := -I$(KERNEL_SRC) -I$(CELLAR_SRC) -I$(GENERIC_SRC) -I$(APPCORE_SRC) $(DEBUG_INCLUDES)
-INCLUDES := $(INCLUDES) -I$(LANGUAGE_SRC) -I$(DBACCESS_SRC) -I$(DBSERVICES_SRC)
 
 INCLUDES := $(shell icu-config --cppflags) \
 	$(INCLUDES) \
@@ -36,12 +34,14 @@ INCLUDES := $(shell icu-config --cppflags) \
 	-I$(WIN32MORE_INC) \
 	-I$(COM_INC) \
 	-I$(WIN32BASE_INC) \
+	$(shell pkg-config --cflags $(PACKAGES)) \
 
 
 LDLIBS := $(LDLIBS) \
 	-L$(WIN32MORE_LIB) -lWin32More \
 	-L$(COM_LIB) -lcom \
 	-L$(WIN32BASE_LIB) -lWin32Base \
+	$(shell pkg-config --libs $(PACKAGES)) \
 	$(shell icu-config --ldflags) \
 	-luuid -lexpat
 
@@ -71,12 +71,24 @@ OBJ_FWKERNEL = \
 	$(INT_DIR)/TextServ.o \
 	$(INT_DIR)/ActionHandler.o \
 	$(INT_DIR)/DebugReport.o \
+	$(INT_DIR)/LgIcuWrappers.o \
+	$(INT_DIR)/LgSimpleEngines.o \
+	$(INT_DIR)/LgIcuCharPropEngine.o \
+	$(INT_DIR)/LgUnicodeCollater.o \
+	$(INT_DIR)/LgKeymanHandler.o \
+	$(INT_DIR)/LocaleIndex.o \
+	$(INT_DIR)/UniscribeLinux.o \
+	$(INT_DIR)/UniscribeSegment.o \
+	$(INT_DIR)/UniscribeEngine.o \
+	$(INT_DIR)/RomRenderEngine.o \
+	$(INT_DIR)/RomRenderSegment.o \
 
 OBJ_OTHER = \
 	$(GENERIC_OBJ)/ModuleEntry.o \
 	$(GENERIC_OBJ)/TextProps1.o \
 	$(APPCORE_OBJ)/FwStyledText.o \
 	$(APPCORE_OBJ)/WriteXml.o \
+	$(CELLAR_OBJ)/FwXml.o \
 
 # === Targets ===
 
@@ -114,6 +126,10 @@ $(GENERIC_OBJ)/ModuleEntry.o $(GENERIC_OBJ)/TextProps1.o:
 $(APPCORE_OBJ)/FwStyledText.o $(APPCORE_OBJ)/WriteXml.o:
 	@$(MAKE) -C $(APPCORE_SRC) $@ -q || \
 	 $(MAKE) -C $(APPCORE_SRC) $@
+
+$(CELLAR_OBJ)/FwXml.o:
+	@$(MAKE) -C $(CELLAR_SRC) $@ -q || \
+	 $(MAKE) -C $(CELLAR_SRC) $@
 
 $(GENERIC_OBJ)/main.o:
 	@$(MAKE) -C $(GENERIC_SRC) -q $@ || \

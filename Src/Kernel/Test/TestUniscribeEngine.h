@@ -15,10 +15,10 @@ Last reviewed:
 
 #pragma once
 
-#include "testLanguage.h"
+#include "testFwKernel.h"
 #include "RenderEngineTestBase.h"
 
-namespace TestLanguage
+namespace TestFwKernel
 {
 	/*******************************************************************************************
 		Tests for TestUniscribeEngine

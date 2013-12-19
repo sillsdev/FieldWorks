@@ -15,9 +15,9 @@ Last reviewed:
 
 #pragma once
 
-#include "testLanguage.h"
+#include "testFwKernel.h"
 
-namespace TestLanguage
+namespace TestFwKernel
 {
 	/*******************************************************************************************
 		Tests for LgCharacterPropertyEngine (ICU based implementation)

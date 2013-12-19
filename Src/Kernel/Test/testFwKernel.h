@@ -32,6 +32,14 @@ namespace TestFwKernel
 	static const StrUni g_pszTest2(L"TESTING");
 	static const int g_cchTest2 = 7;
 
+	const StrUni kszEng(L"en");
+	const StrUni kszTest(L"test");
+	const StrUni kszTest2(L"tst2");
+
+	extern int g_wsEng;
+	extern int g_wsTest;
+	extern int g_wsTest2;
+
 	enum
 	{
 		// Arbitrary values chosen more or less at random...

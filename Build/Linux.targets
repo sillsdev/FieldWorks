@@ -121,9 +121,8 @@
 		<IdhFiles Include="$(fwrt)/Src/Kernel/FwKernel.idh"/>
 		<IdhFiles Include="$(fwrt)/Src/Kernel/FwKernelTlb.idl"/>
 		<IdhFiles Include="$(fwrt)/Src/Kernel/TextServ.idh"/>
-		<IdhFiles Include="$(fwrt)/Src/Language/Language.idh"/>
-		<IdhFiles Include="$(fwrt)/Src/Language/LanguageTlb.idl"/>
-		<IdhFiles Include="$(fwrt)/Src/Language/Render.idh"/>
+		<IdhFiles Include="$(fwrt)/Src/Kernel/Language.idh"/>
+		<IdhFiles Include="$(fwrt)/Src/Kernel/Render.idh"/>
 		<IdhFiles Include="$(fwrt)/Src/SharpViews/FwComponents/FwComponents.idh"/>
 		<IdhFiles Include="$(fwrt)/Src/views/Views.idh"/>
 		<IdhFiles Include="$(fwrt)/Src/views/ViewsTlb.idl"/>
@@ -161,7 +160,6 @@
 		<!--We also need to extract the interface GUIDs for Linux -->
 		<Message Text="Extracting iids for use on Linux..."/>
 		<ExtractIIDs Input="$(dir-fwoutputCommon)/FwKernelTlb.h" Output="$(fwrt)/Src/Kernel/FwKernel_GUIDs.cpp"/>
-		<ExtractIIDs Input="$(dir-fwoutputCommon)/LanguageTlb.h" Output="$(fwrt)/Src/Language/Language_GUIDs.cpp"/>
 		<ExtractIIDs Input="$(dir-fwoutputCommon)/ViewsTlb.h" Output="$(fwrt)/Src/views/Views_GUIDs.cpp"
 			LinesToInsertAtTop='#include "FwKernelTlb.h"'/>
 		<Copy SourceFiles="$(dir-fwoutput)/idhfiles.MD5" DestinationFolder="$(fwrt)/Lib/linux/Common"/>

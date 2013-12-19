@@ -17,10 +17,10 @@ FWKERNELTEST_SRC=$(BUILD_ROOT)\Src\Kernel\Test
 GENERIC_SRC=$(BUILD_ROOT)\Src\Generic
 APPCORE_SRC=$(BUILD_ROOT)\Src\AppCore
 DEBUGPROCS_SRC=$(BUILD_ROOT)\src\DebugProcs
-LANGUAGETEST_SRC=$(BUILD_ROOT)\Src\Language\Test
+CELLAR_SRC=$(BUILD_ROOT)\Src\Cellar
 
 # Set the USER_INCLUDE environment variable.
-UI=$(UNITPP_INC);$(FWKERNELTEST_SRC);$(FWKERNEL_SRC);$(GENERIC_SRC);$(APPCORE_SRC);$(DEBUGPROCS_SRC);$(LANGUAGETEST_SRC)
+UI=$(UNITPP_INC);$(FWKERNELTEST_SRC);$(FWKERNEL_SRC);$(GENERIC_SRC);$(APPCORE_SRC);$(DEBUGPROCS_SRC);$(CELLAR_SRC)
 
 !IF "$(USER_INCLUDE)"!=""
 USER_INCLUDE=$(UI);$(USER_INCLUDE)
@@ -34,9 +34,11 @@ USER_INCLUDE=$(UI)
 
 PATH=$(COM_OUT_DIR);$(PATH)
 
+RCFILE=FwKernel.rc
+
 LINK_OPTS=$(LINK_OPTS:/subsystem:windows=/subsystem:console) /LIBPATH:"$(BUILD_ROOT)\Lib\$(BUILD_CONFIG)"
 CPPUNIT_LIBS=unit++.lib
-LINK_LIBS=$(CPPUNIT_LIBS) Generic.lib xmlparse.lib $(LINK_LIBS)
+LINK_LIBS=$(CPPUNIT_LIBS) Generic.lib xmlparse.lib Usp10.lib $(LINK_LIBS)
 
 # === Object Lists ===
 
@@ -53,8 +55,17 @@ OBJ_KERNELTESTSUITE=\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\TsMultiStr.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\usepch\TextProps1.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\ActionHandler.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\UniscribeEngine.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\UniscribeSegment.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\RomRenderEngine.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\RomRenderSegment.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\LgSimpleEngines.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\LgIcuCharPropEngine.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\LgUnicodeCollater.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\LgKeymanHandler.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\FwStyledText.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\WriteXml.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\FwXml.obj\
 
 OBJ_ALL=$(OBJ_KERNELTESTSUITE)
 
@@ -80,12 +91,21 @@ COLLECT=$(BUILD_ROOT)\Bin\CollectUnit++Tests.cmd Kernel
 $(INT_DIR)\genpch\Collection.obj: $(FWKERNELTEST_SRC)\Collection.cpp
 
 $(FWKERNELTEST_SRC)\Collection.cpp: $(FWKERNELTEST_SRC)\testFwKernel.h\
- $(LANGUAGETEST_SRC)\MockLgWritingSystemFactory.h\
- $(LANGUAGETEST_SRC)\MockLgWritingSystem.h\
  $(FWKERNELTEST_SRC)\TestUndoStack.h\
  $(FWKERNELTEST_SRC)\TestTsStrBldr.h\
  $(FWKERNELTEST_SRC)\TestTsString.h\
  $(FWKERNELTEST_SRC)\TestTsPropsBldr.h\
- $(FWKERNELTEST_SRC)\TestTsTextProps.h
+ $(FWKERNELTEST_SRC)\TestTsTextProps.h\
+ $(FWKERNELTEST_SRC)\MockLgWritingSystemFactory.h\
+ $(FWKERNELTEST_SRC)\MockLgWritingSystem.h\
+ $(FWKERNELTEST_SRC)\TestRegexMatcher.h\
+ $(FWKERNELTEST_SRC)\TestLgCollatingEngine.h\
+ $(FWKERNELTEST_SRC)\TestLgIcuCharPropEngine.h\
+ $(FWKERNELTEST_SRC)\TestUniscribeEngine.h\
+ $(FWKERNELTEST_SRC)\TestRomRenderEngine.h\
+ $(FWKERNELTEST_SRC)\RenderEngineTestBase.h
 	$(DISPLAY) Collecting tests for $(BUILD_PRODUCT).$(BUILD_EXTENSION)
 	$(COLLECT) $** $(FWKERNELTEST_SRC)\Collection.cpp
+
+$(INT_DIR)\FwKernel.res: $(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\FwKernel.res
+	copy $(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\FwKernel.res $(INT_DIR)\FwKernel.res >nul

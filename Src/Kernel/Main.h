@@ -21,6 +21,10 @@ Last reviewed:
 //#define kwsLim 0xfffffff9
 #include "CellarConstants.h"
 
+#if WIN32
+#include <mlang.h>
+#endif
+
 using std::min;
 using std::max;
 
@@ -32,6 +36,68 @@ using std::max;
 /***********************************************************************************************
 	Implementations.
 ***********************************************************************************************/
+#include "LangResource.h"
+using namespace fwutil;	// Rect and Point classes
+// these are a gray area, including aspects of both model and engine
+// Todo JohnT: These structs are part of an obsolete approach to overriding character properties.
+// Get rid of them and whatever uses them. (Taken from OldLgWritingSystem file.)
+/*----------------------------------------------------------------------------------------------
+	The CharacterPropertyObject stores all of the data that we allow to be overriden for a
+	single character (right now, pretty much everything except the Unicode 1.0 name).
+----------------------------------------------------------------------------------------------*/
+struct CharacterPropertyObject
+{
+	UChar32 uch32CodePoint;
+	StrUni stuCharName;
+	LgGeneralCharCategory ccGenCategory;
+	unsigned int nCombiningClass : 8;
+	LgBidiCategory bicBidiCategory;
+	LgDecompMapTag dtDecompMapTag;
+	Vector <UChar32> vuch32Decomp;
+	unsigned int nDecDigit : 4;
+	unsigned int nDigit : 4;
+	int nNumericValue;	//numerator stored in the top 16 bits, denominator in the bottom 16
+	bool fMirrored : 1;
+	StrUni stuISOComment;
+	UChar32 uch32Uppercase;
+	UChar32 uch32Lowercase;
+	UChar32 uch32Titlecase;
+	LgLBP lbpLineBreak;
+
+	void Clear()
+	{
+		uch32CodePoint = 0;
+		stuCharName.Clear();
+		ccGenCategory = kccLu;  //0
+		nCombiningClass = 0;
+		bicBidiCategory = kbicL;  //0
+		dtDecompMapTag = kdtNoTag;  //0
+		vuch32Decomp.Clear();
+		nDecDigit = 0;
+		nDigit = 0;
+		nNumericValue = 0;
+		fMirrored = false;
+		stuISOComment.Clear();
+		uch32Uppercase = 0;
+		uch32Lowercase = 0;
+		uch32Titlecase = 0;
+		lbpLineBreak = klbpAI;  //0
+	}
+}; //hungarian cpo
+struct CharPropRange
+{
+	UChar32 iMin;
+	UChar32 iLim;
+	Vector <unsigned short> vRange;
+}; //hungarian cpr
+struct OverriddenCharProps
+{
+	UChar32 iMin;
+	UChar32 iLim;
+	Vector <CharPropRange> * pvcprOverride1;
+	Vector <CharacterPropertyObject> * pvcpoOverride2;
+}; //hungarian ocp
+
 #include "KernelGlobals.h"
 #include "TsString.h"
 #include "TsTextProps.h"
@@ -40,7 +106,31 @@ using std::max;
 #include "TextServ.h"
 #include "TsMultiStr.h"
 #include "ActionHandler.h"
+// Engines
+#include "LgIcuCharPropEngine.h"
+#include "LgUnicodeCollater.h"
+class RomRenderEngine;
+DEFINE_COM_PTR(RomRenderEngine);
+class UniscribeEngine;
+DEFINE_COM_PTR(UniscribeEngine);
+#include "RomRenderSegment.h"
+#include "RomRenderEngine.h"
+#include "LgSimpleEngines.h"
+#include "LgNumericEngine.h"
+#if !WIN32
+#include "UniscribeLinux.h"
+#endif
+#include "UniscribeSegment.h"
+#include "UniscribeEngine.h"
+#include "RegexMatcherWrapper.h"
+
+// Other tools
 #include "FwStyledText.h"
+#include "StringToNumHelpers.h"
+#include "WriteXml.h"		// From AppCore.
+#include "xmlparse.h"
+#include "LgKeymanHandler.h"
+#include "LgIcuWrappers.h"
 
 #if WIN32
 // for parsing XML files; in this DLL, we want the parser to work with wide characters,

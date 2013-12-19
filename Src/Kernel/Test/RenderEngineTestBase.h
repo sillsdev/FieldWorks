@@ -15,16 +15,16 @@ Last reviewed:
 
 #pragma once
 
-#include "testLanguage.h"
+#include "testFwKernel.h"
 
 #ifndef WIN32 // on Linux - symbols for for methods of Vector<int> - This include adds them into testLanguage
 #include "Vector_i.cpp"
 #endif
 
-namespace TestLanguage
+namespace TestFwKernel
 {
 	// For error reporting:
-	static DummyFactory g_fact(_T("SIL.TestLanguage.TxtSrc"));
+	static DummyFactory g_fact(_T("SIL.TestFwKernel.TxtSrc"));
 
 	/*******************************************************************************************
 		Mock object class for TestUniscribeEngine::testBreakPointing().

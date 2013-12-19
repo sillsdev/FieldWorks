@@ -14,13 +14,13 @@
 		<GenerateNUnitReports Condition="'$(action)'=='test'" ReportFiles="@(NUnitReportFiles)"/>
 	</Target>
 
-	<Target Name="allCpp" DependsOnTargets="DebugProcs;GenericLib;testGenericLib;FwKernel;testFwKernel;Language;testLanguage;Views;testViews;GrEngine">
+	<Target Name="allCpp" DependsOnTargets="DebugProcs;GenericLib;testGenericLib;FwKernel;testFwKernel;Views;testViews;GrEngine">
 		<CreateItem Include="$(dir-outputBase)/*.compmap">
 			<Output TaskParameter="Include" ItemName="CompMapFiles"/>
 		</CreateItem>
 		<CatenateFiles SourceFiles="@(CompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
 	</Target>
-	<Target Name="allCppNoTest" DependsOnTargets="DebugProcs;GenericLib;FwKernel;Language;Views;GrEngine">
+	<Target Name="allCppNoTest" DependsOnTargets="DebugProcs;GenericLib;FwKernel;Views;GrEngine">
 		<CreateItem Include="$(dir-outputBase)/*.compmap">
 			<Output TaskParameter="Include" ItemName="CompMapFiles"/>
 		</CreateItem>
@@ -30,10 +30,10 @@
 	<ItemGroup>
 		<Fragments Include="$(dir-fwdistfiles)/*.fragment.manifest"/>
 	</ItemGroup>
-	<Target Name="regFreeCpp" DependsOnTargets="FwKernel;Language;GrEngine;Views"
-		AfterTargets="FwKernel;Language;GrEngine;Views" Condition="'$(OS)'=='Windows_NT'">
+	<Target Name="regFreeCpp" DependsOnTargets="FwKernel;GrEngine;Views"
+		AfterTargets="FwKernel;GrEngine;Views" Condition="'$(OS)'=='Windows_NT'">
 		<RegFree Executable="$(dir-outputBase)/FwKernel.dll" Output="$(dir-outputBase)/FieldWorks.Tests.manifest"
-			Dlls="$(dir-outputBase)/FwKernel.dll;$(dir-outputBase)/Language.dll;$(dir-outputBase)/Graphite.dll;$(dir-outputBase)/Views.dll"
+			Dlls="$(dir-outputBase)/FwKernel.dll;$(dir-outputBase)/Graphite.dll;$(dir-outputBase)/Views.dll"
 			Fragments="@(Fragments)" NoTypeLib="$(dir-outputBase)/Graphite.dll"/>
 	</Target>
 
@@ -77,7 +77,7 @@
 				BuildRoot="$(fwrt)"
 				WorkingDirectory="$(fwrt)/Src/Generic/Test" ContinueOnError="true"/>
 		<RegFree Executable="$(dir-outputBase)\testGenericLib.exe"
-				Dlls="$(dir-outputBase)\Language.dll;$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
+				Dlls="$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
 				NoTypeLib="$(dir-outputBase)\Graphite.dll"
 				Condition="'$(OS)'=='Windows_NT'"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testGenericLib.exe -manifest $(dir-outputBase)\testGenericLib.exe.manifest"
@@ -106,7 +106,7 @@
 		<Message Text="Finished building GrEngine."/>
 	</Target>
 
-	<Target Name="FwKernel" DependsOnTargets="GenericLib;GenerateCellarConstants;AppCore;createCompMaps">
+	<Target Name="FwKernel" DependsOnTargets="GenericLib;GenerateCellarConstants;AppCore;createCompMaps;ManagedLgIcuCollator">
 		<Message Text="FwKernel make-target='$(make-target)'"/>
 		<Make Condition="'$(OS)'=='Windows_NT'"
 			Makefile="$(fwrt)\Src\Kernel\FwKernel.mak"
@@ -133,7 +133,7 @@
 				BuildRoot="$(fwrt)"
 				WorkingDirectory="$(fwrt)/Src/Kernel/Test" ContinueOnError="true"/>
 		<RegFree Executable="$(dir-outputBase)\testFwKernel.exe"
-				Dlls="$(dir-outputBase)\Language.dll;$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
+				Dlls="$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
 				NoTypeLib="$(dir-outputBase)\Graphite.dll"
 				Condition="'$(OS)'=='Windows_NT'"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testFwKernel.exe -manifest $(dir-outputBase)\testFwKernel.exe.manifest"
@@ -162,52 +162,7 @@
 		<Message Text="Finished building AppCore."/>
 	</Target>
 
-	<Target Name="Language" DependsOnTargets="GenericLib;FwKernel;ManagedLgIcuCollator;GenerateCellarConstants">
-		<Make Condition="'$(OS)'=='Windows_NT'"
-			Makefile="$(fwrt)\Src\Language\Language.mak"
-			Configuration="$(config-capital)"
-			BuildRoot="$(fwrt)"
-			WorkingDirectory="$(fwrt)\Src\Language"/>
-		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
-			Makefile="$(fwrt)/Src/Language/Makefile"
-			Configuration="$(config-capital)" Target="$(make-target)"
-			BuildRoot="$(fwrt)"
-			WorkingDirectory="$(fwrt)/Src/Language"/>
-		<Message Text="Finished building Language."/>
-	</Target>
-
-	<Target Name="testLanguage" DependsOnTargets="GenericLib;Language;FwKernel;Views;GrEngine">
-		<Make Condition="'$(OS)'=='Windows_NT'"
-				Makefile="$(fwrt)\Src\Language\Test\testLanguage.mak"
-				Configuration="$(config-capital)"
-				BuildRoot="$(fwrt)"
-				WorkingDirectory="$(fwrt)\Bin"/>
-		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
-				Makefile="$(fwrt)/Src/Language/Test/Makefile"
-				Configuration="$(config-capital)" Target="$(make-target)"
-				BuildRoot="$(fwrt)"
-				WorkingDirectory="$(fwrt)/Src/Language/Test" ContinueOnError="true"/>
-		<RegFree Executable="$(dir-outputBase)\testLanguage.exe"
-				Dlls="$(dir-outputBase)\Language.dll;$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
-				NoTypeLib="$(dir-outputBase)\Graphite.dll"
-				Condition="'$(OS)'=='Windows_NT'"/>
-		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testLanguage.exe -manifest $(dir-outputBase)\testLanguage.exe.manifest"
-				Condition="'$(OS)'=='Windows_NT'"/>
-		<CreateItem Include="$(dir-outputBase)/*.compmap">
-			<Output TaskParameter="Include" ItemName="LanguageCompMapFiles"/>
-		</CreateItem>
-		<CatenateFiles SourceFiles="@(LanguageCompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
-		<Unitpp Condition="'$(action)'=='test'"
-				FixturePath="$(dir-outputBase)/testLanguage"
-				FudgeFactor="$(timeoutFudgeFactor)"
-				Timeout="60000">
-			<Output TaskParameter="FailedSuites" ItemName="FailedSuites"/>
-		</Unitpp>
-		<Message Text="Finished building testLanguage." Condition="'$(action)'!='test'"/>
-		<Message Text="Finished building testLanguage and running tests." Condition="'$(action)'=='test'"/>
-	</Target>
-
-	<Target Name="Views" DependsOnTargets="GenericLib;Language;GenerateCellarConstants">
+	<Target Name="Views" DependsOnTargets="GenericLib;FwKernel;GenerateCellarConstants">
 		<Make Condition="'$(OS)'=='Windows_NT'"
 			Makefile="$(fwrt)\Src\views\Views.mak"
 			Configuration="$(config-capital)"
@@ -233,7 +188,7 @@
 				BuildRoot="$(fwrt)"
 				WorkingDirectory="$(fwrt)/Src/views/Test" ContinueOnError="true"/>
 		<RegFree Executable="$(dir-outputBase)\testViews.exe"
-				Dlls="$(dir-outputBase)\Language.dll;$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
+				Dlls="$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
 				NoTypeLib="$(dir-outputBase)\Graphite.dll"
 				Condition="'$(OS)'=='Windows_NT'"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testViews.exe -manifest $(dir-outputBase)\testViews.exe.manifest"
@@ -288,12 +243,6 @@
 		<SetEnvVar Variable="OBJ_DIR" Value="$(dir-fwobj)" />
 		<SetEnvVar Variable="BUILD4UX" Value="$(build4ux)"/>
 		<SetEnvVar Variable="ANAL_TYPE" Value="performance" Condition="'$(performance)'=='true'"/>
-		<Make Condition="'$(OS)'=='Windows_NT'"
-				Makefile="$(fwrt)\Src\Language\Language.mak"
-				Configuration="$(config-capital)"
-				Target="dirs $(dir-fwoutputCommon)\LanguageTlb.tlb"
-				BuildRoot="$(fwrt)"
-				WorkingDirectory="$(fwrt)"/>
 		<Make Condition="'$(OS)'=='Windows_NT'"
 				Makefile="$(fwrt)\Src\Kernel\FwKernel.mak"
 				Configuration="$(config-capital)"

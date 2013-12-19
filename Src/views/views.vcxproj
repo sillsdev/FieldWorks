@@ -161,6 +161,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Bin\mkvw.bat" />
+    <None Include="Makefile" />
     <None Include="Views.def" />
     <None Include="Views.idh" />
     <None Include="Views.mak" />
