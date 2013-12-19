@@ -364,7 +364,7 @@ namespace SIL.FieldWorks.TE
 			get
 			{
 				if (TypeOfImport == TypeOfImport.Paratext6)
-					return MakeBCVRef(m_ptParserState.VerseRef.AllVerses().Last());
+					return MakeBCVRef(m_ptParserState.VerseRef.AllVerses(true).Last());
 				if (TypeOfImport == TypeOfImport.Other || TypeOfImport == TypeOfImport.Paratext5)
 					return m_scTextSegment.LastReference;
 				Debug.Assert(false, "bogus TypeOfImport");
