@@ -63,6 +63,8 @@ namespace SIL.FieldWorks.Common.Widgets
 			m_sda = m_innerFwTextBox.DataAccess;
 			m_sda.AddNotification(this);
 			m_innerFwTextBox.AdjustStringHeight = false;
+			m_innerFwTextBox.Dock = DockStyle.Fill;
+			m_innerFwTextBox.WordWrap = true;
 		}
 		#endregion
 

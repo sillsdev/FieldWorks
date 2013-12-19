@@ -120,7 +120,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private FwOverrideComboBox m_transduceSourceCombo;
 		private FwOverrideComboBox m_transduceTargetCombo;
 		private FwOverrideComboBox m_transduceProcessorCombo;
-		private Label m_findReplaceSummaryLabel;
+		private FwLabel m_findReplaceSummaryLabel;
 		private Button m_findReplaceSetupButton;
 		private FwOverrideComboBox m_findReplaceTargetCombo;
 		private FwOverrideComboBox m_deleteWhatCombo;
@@ -275,6 +275,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_ApplyButton.Click += new EventHandler(m_ApplyButton_Click);
 			m_closeButton.Click += new EventHandler(m_closeButton_Click);
 
+			m_findReplaceSummaryLabel.WritingSystemFactory = m_cache.WritingSystemFactory;
 		}
 
 		private void BrowseViewSorterChanged(object sender, EventArgs e)
@@ -323,6 +324,15 @@ namespace SIL.FieldWorks.Common.Controls
 			m_operationsTabControl.SelectedTab.Controls.Remove(m_bulkEditIconButton);
 			m_operationsTabControl.SelectedTab.Controls.Add(m_bulkEditIcon);
 			m_bulkEditIconButton = null;
+
+			m_findReplaceSummaryLabel = new FwLabel();
+			this.m_findReplaceTab.Controls.Add(this.m_findReplaceSummaryLabel);
+			m_findReplaceSummaryLabel.Location = new Point(275, 72);
+			m_findReplaceSummaryLabel.Size = new Size(215, 56);
+			m_findReplaceSummaryLabel.TabIndex = 17;
+			m_findReplaceSummaryLabel.Name = "m_findReplaceSummaryLabel";
+			m_findReplaceSummaryLabel.TextAlign = ContentAlignment.TopLeft;
+			m_findReplaceSummaryLabel.BackColor = SystemColors.Control;
 		}
 
 		/// <summary>
@@ -843,7 +853,6 @@ namespace SIL.FieldWorks.Common.Controls
 			this.m_transduceProcessorCombo = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
 			this.label9 = new System.Windows.Forms.Label();
 			this.m_findReplaceTab = new System.Windows.Forms.TabPage();
-			this.m_findReplaceSummaryLabel = new System.Windows.Forms.Label();
 			this.m_findReplaceSetupButton = new System.Windows.Forms.Button();
 			this.m_findReplaceTargetCombo = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
 			this.label12 = new System.Windows.Forms.Label();
@@ -1123,7 +1132,6 @@ namespace SIL.FieldWorks.Common.Controls
 			//
 			// m_findReplaceTab
 			//
-			this.m_findReplaceTab.Controls.Add(this.m_findReplaceSummaryLabel);
 			this.m_findReplaceTab.Controls.Add(this.m_findReplaceSetupButton);
 			this.m_findReplaceTab.Controls.Add(this.m_findReplaceTargetCombo);
 			this.m_findReplaceTab.Controls.Add(this.label12);
@@ -1131,11 +1139,6 @@ namespace SIL.FieldWorks.Common.Controls
 			this.m_findReplaceTab.Name = "m_findReplaceTab";
 			this.m_findReplaceTab.UseVisualStyleBackColor = true;
 			this.m_findReplaceTab.Enter += new System.EventHandler(this.m_findReplaceTab_Enter);
-			//
-			// m_findReplaceSummaryLabel
-			//
-			resources.ApplyResources(this.m_findReplaceSummaryLabel, "m_findReplaceSummaryLabel");
-			this.m_findReplaceSummaryLabel.Name = "m_findReplaceSummaryLabel";
 			//
 			// m_findReplaceSetupButton
 			//
@@ -3820,25 +3823,72 @@ namespace SIL.FieldWorks.Common.Controls
 			return tss.Text;
 		}
 
+		private static System.Text.RegularExpressions.Regex s_regexFormatItem = new System.Text.RegularExpressions.Regex("{[0-9]+}");
 		private void UpdateFindReplaceSummary()
 		{
-			// Enhance JohnT: use some sort of View-based label that can display Graphite etc.
 			if (m_pattern != null && m_pattern.Pattern != null && m_pattern.Pattern.Length > 0)
 			{
-#if __MonoCS__
-				// Linux/Mono doesn't handle font replacement as well as Windows/.Net, so we need
-				// to specify the font for the label.  See FWNX-1352.
-				var ws = TsStringUtils.GetWsAtOffset(m_tssReplace, 0);
-				m_findReplaceSummaryLabel.Font = new Font(
-					m_cache.ServiceLocator.WritingSystemManager.Get(ws).DefaultFontName,
-					m_findReplaceSummaryLabel.Font.Size,
-					m_findReplaceSummaryLabel.Font.Style);
-#endif
-				m_findReplaceSummaryLabel.Text = String.Format(XMLViewsStrings.ksReplaceXWithY,
-					GetString(m_pattern.Pattern), GetString(m_tssReplace));
+				if (m_findReplaceSummaryLabel.StyleSheet == null)
+					return;
+				if (m_findReplaceSummaryLabel.WritingSystemFactory == null)
+					return;
+				m_findReplaceSummaryLabel.BackColor = SystemColors.Control;
+				var wsArgs = TsStringUtils.GetWsAtOffset(m_tssReplace, 0);
+				ITsIncStrBldr bldr = TsIncStrBldrClass.Create();
+				bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 16000);
+				bldr.SetIntPropValues((int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
+
+				// Simulate String.Format(XMLViewsStrings.ksReplaceXWithY, <pattern>, <replace>) to build a TsString that
+				// properly displays everything.
+				foreach (var piece in ExtractFormattingPieces(XMLViewsStrings.ksReplaceXWithY))
+				{
+					if (s_regexFormatItem.IsMatch(piece))
+					{
+						bldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, wsArgs);
+						if (piece == "{0}")
+							bldr.Append(GetString(m_pattern.Pattern));
+						else
+							bldr.Append(m_tssReplace.Text);
+					}
+					else
+					{
+						bldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, m_cache.DefaultUserWs);
+						bldr.Append(piece);
+					}
+				}
+				m_findReplaceSummaryLabel.Tss = bldr.GetString();
 			}
 		}
 
+		/// <summary>
+		/// Split the string into pieces separated by the embedded "format items".  The input string is
+		/// a format specifier like those used by String.Format().  Since TsString doesn't have a compatible
+		/// Format method, and since the provided arguments that match the "format items" may need a different
+		/// writing system than the literal characters in the string, we return a list of pieces of the input
+		/// string.  These pieces include all of the characters of the original string in order, including a
+		/// separate piece for each "format item".  For example, consider the input "This {0} is {1}!"  The
+		/// method would break this into five pieces: "This ", "{0}", " is ", "{1}", and "!".  The caller
+		/// is expected to know what to do with each piece to put together the desired TsString.
+		/// </summary>
+		/// <remarks>
+		/// TODO: think about whether this might be a useful utility method of general import, and if so move
+		/// it (and the static Regex variable) to the appropriate utility class.
+		/// </remarks>
+		static List<string> ExtractFormattingPieces(string fmt)
+		{
+			List<string> pieces = new List<string>();
+			int idx = 0;
+			foreach (System.Text.RegularExpressions.Match match in s_regexFormatItem.Matches(fmt))
+			{
+				if (match.Index > idx)
+					pieces.Add(fmt.Substring(idx, match.Index - idx));
+				pieces.Add(fmt.Substring(match.Index, match.Length));
+				idx = match.Index + match.Length;
+			}
+			if (idx < fmt.Length)
+				pieces.Add(fmt.Substring(idx));
+			return pieces;
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -4331,6 +4381,7 @@ namespace SIL.FieldWorks.Common.Controls
 				if (item != null && item.BulkEditControl != null)
 					item.BulkEditControl.Stylesheet = value;
 			}
+			m_findReplaceSummaryLabel.StyleSheet = value;
 		}
 
 		private void m_findReplaceTargetCombo_SelectedIndexChanged(object sender, EventArgs e)
