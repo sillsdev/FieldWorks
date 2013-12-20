@@ -83,7 +83,7 @@ FWKERNEL_OBJ := \
 	$(KERNEL_OBJ)/LocaleIndex.o \
 	$(GENERIC_OBJ)/ModuleEntry.o \
 	$(GENERIC_OBJ)/TextProps1.o \
-	$(CELLAR_OBJ)/FwXml.o \
+	$(KERNEL_OBJ)/FwXml.o \
 
 #Run make in the directory of each library
 $(LINK_LIBS) $(FWKERNEL_OBJ)::
