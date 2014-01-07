@@ -36,7 +36,7 @@ namespace SIL.Utils.Attributes
 			base.BeforeTest(testDetails);
 
 #if !__MonoCS__
-			ManifestHelper.CreateActivationContext();
+			ManifestHelper.CreateActivationContext("FieldWorks.Tests.manifest");
 #endif
 		}
 

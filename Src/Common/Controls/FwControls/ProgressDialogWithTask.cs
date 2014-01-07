@@ -712,7 +712,8 @@ namespace SIL.FieldWorks.Common.Controls
 				Thread.CurrentThread.Name = "Background thread";
 
 			if (MiscUtils.RunningTests)
-				ManifestHelper.CreateActivationContext();
+				ManifestHelper.CreateActivationContext("FieldWorks.Tests.manifest");
+
 			m_Exception = null;
 			m_RetValue = null;
 

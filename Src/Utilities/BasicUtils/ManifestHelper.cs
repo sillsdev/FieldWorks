@@ -12,6 +12,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
 
@@ -108,43 +109,32 @@ namespace SIL.Utils
 			#endregion
 
 			/// <summary>
-			/// Gets (and creates) the activation context
+			/// Creates and activates an activation context on the current thread
 			/// </summary>
-			private IntPtr ActivationContext
+			public void CreateContext(string manifestFile)
 			{
-				get
+				if (m_Cookie == IntPtr.Zero)
 				{
 					if (m_ActivationContext == IntPtr.Zero)
 					{
-						// Specifying a full path to the Tests.manifest file like this allows our unit tests to work even with a
+						// Specifying a full path to the manifest file like this allows our unit tests to work even with a
 						// test runner like Resharper 8 which does not set the current directory to the one containing the DLLs.
 						// Note that we have to use CodeBase here because NUnit runs the tests from a shadow copy directory
 						// that doesn't contain the manifest file.
-						var uri = new Uri(System.Reflection.Assembly.GetExecutingAssembly().CodeBase);
-						var location = Path.GetDirectoryName(uri.AbsolutePath);
+						var uri = new Uri(Assembly.GetExecutingAssembly().CodeBase);
+						string location = Path.GetDirectoryName(uri.AbsolutePath);
 						var context = new ActCtx
 							{
 								cbSize = Marshal.SizeOf(typeof(ActCtx)),
-								lpSource = Path.Combine(location, "FieldWorks.Tests.manifest")
+								lpSource = Path.Combine(location, manifestFile)
 							};
 
-						var handle = CreateActCtx(ref context);
+						IntPtr handle = CreateActCtx(ref context);
 						if (handle == (IntPtr)(-1))
 							throw new Win32Exception(Marshal.GetLastWin32Error(), "Error creating activation context");
 						m_ActivationContext = handle;
 					}
-					return m_ActivationContext;
-				}
-			}
-
-			/// <summary>
-			/// Creates and activates an activation context on the current thread
-			/// </summary>
-			public void CreateContext()
-			{
-				if (m_Cookie == IntPtr.Zero)
-				{
-					if (!ActivateActCtx(ActivationContext, out m_Cookie))
+					if (!ActivateActCtx(m_ActivationContext, out m_Cookie))
 						throw new Win32Exception(Marshal.GetLastWin32Error(), "Error activating context");
 				}
 				m_Count++;
@@ -173,10 +163,10 @@ namespace SIL.Utils
 		/// <summary>
 		/// Creates and activates an activation context on the current thread
 		/// </summary>
-		public static void CreateActivationContext()
+		public static void CreateActivationContext(string manifestFile)
 		{
 #if !__MonoCS__
-			SingletonsContainer.Get<ManifestHelperImpl>().CreateContext();
+			SingletonsContainer.Get<ManifestHelperImpl>().CreateContext(manifestFile);
 #endif
 		}
 
