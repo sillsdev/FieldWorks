@@ -3,6 +3,7 @@
 // Derived from OutlookBar v2 2005 <http://www.codeproject.com/KB/vb/OutlookBar.aspx>, Copyright 2007 by Star Vega.
 // Changed in 2008 and 2009 by SIL International to convert to C# and add more functionality.
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
@@ -153,5 +154,40 @@ namespace SIL.SilSidePane
 				_clicked = false;
 			}
 		}
+
+		#region Overrides of ListView
+
+		/// <param name="e">An <see cref="T:System.EventArgs"/> that contains the event data. </param>
+		protected override void OnSizeChanged(EventArgs e)
+		{
+			base.OnSizeChanged(e);
+
+			// This fixes LT-583 (in part)
+			if (SelectedItems.Count > 0)
+				SelectedItems[0].EnsureVisible();
+			else if (Items.Count > 0)
+				EnsureVisible(0);
+
+			// This is a really bad hack, but it seems to be the only way that I know of to get around
+			// this bug in XP. EnsureVisible doesn't seem to work when we get in to this weird state
+			// in XP, so we go ahead and rebuild the entire list.
+			if (TopItem != null || base.Items.Count < 1)
+				return;
+
+			ListViewItem selected = null;
+			if (SelectedItems.Count > 0)
+				selected = SelectedItems[0];
+			var items = new ListViewItem[Items.Count];
+			for (var i = 0; i < base.Items.Count; i++)
+				items[i] = base.Items[i];
+			base.Items.Clear();
+			base.Items.AddRange(items);
+			if (selected == null)
+				return;
+			selected.Selected = true;
+			selected.EnsureVisible();
+		}
+
+		#endregion
 	}
 }
