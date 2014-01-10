@@ -1565,6 +1565,24 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 	}
 	#endregion
 
+	#region MoModifyFromInputRepository class
+	internal partial class MoModifyFromInputRepository
+	{
+		/// <summary>
+		/// Returns all rule mappings that reference the specified (feature) natural class.
+		/// </summary>
+		/// <param name="nc">The natural class.</param>
+		/// <returns></returns>
+		public IEnumerable<IMoModifyFromInput> InstancesWithNC(IPhNCFeatures nc)
+		{
+			return from ruleMapping in AllInstances()
+				   where ruleMapping.ModificationRA == nc
+				   select ruleMapping;
+		}
+	}
+	#endregion
+
+
 	#region PhSequenceContextRepository class
 	internal partial class PhSequenceContextRepository
 	{
