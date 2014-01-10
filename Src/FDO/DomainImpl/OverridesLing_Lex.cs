@@ -6497,6 +6497,22 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	/// <summary>
 	///
 	/// </summary>
+	internal partial class PhNCFeatures
+	{
+		protected override void OnBeforeObjectDeleted()
+		{
+			base.OnBeforeObjectDeleted();
+			foreach (var ruleMapping in Services.GetInstance<IMoModifyFromInputRepository>().InstancesWithNC(this))
+			{
+				m_cache.DomainDataByFlid.DeleteObj(ruleMapping.Hvo);
+			}
+		}
+
+	}
+
+	/// <summary>
+	///
+	/// </summary>
 	internal partial class PhNCSegments
 	{
 		/// <summary>

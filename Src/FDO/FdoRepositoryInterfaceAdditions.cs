@@ -365,6 +365,16 @@ namespace SIL.FieldWorks.FDO
 		ICmAnnotationDefn CheckingError { get; }
 	}
 
+	public partial interface IMoModifyFromInputRepository
+	{
+		/// <summary>
+		/// Returns all rule mappings that reference the specified (feature) natural class.
+		/// </summary>
+		/// <param name="nc">The natural class.</param>
+		/// <returns></returns>
+		IEnumerable<IMoModifyFromInput> InstancesWithNC(IPhNCFeatures nc);
+	}
+
 	public partial interface IMoMorphTypeRepository
 	{
 		/// <summary>
