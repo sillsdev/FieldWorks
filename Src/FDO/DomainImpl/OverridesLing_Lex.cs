@@ -6497,6 +6497,36 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	/// <summary>
 	///
 	/// </summary>
+	internal partial class PhFeatureConstraint
+	{
+		protected override void OnBeforeObjectDeleted()
+		{
+			base.OnBeforeObjectDeleted();
+			foreach (ICmObject obj in ReferringObjects)
+			{
+				if (obj is IPhSimpleContextNC)
+				{
+					var ctx = obj as IPhSimpleContextNC;
+					if (ctx.FeatureStructureRA is IPhNCFeatures)
+					{
+						var feats = ctx.FeatureStructureRA as IPhNCFeatures;
+						if ((feats.FeaturesOA == null) &&
+							(ctx.MinusConstrRS.Count == 1 && ctx.MinusConstrRS.Contains(this) && ctx.PlusConstrRS.Count == 0) ||
+							(ctx.PlusConstrRS.Count == 1 && ctx.PlusConstrRS.Contains(this) && ctx.MinusConstrRS.Count == 0))
+						{
+							// the context consisted solely of this feature constraint so
+							// the context is no longer needed
+							m_cache.DomainDataByFlid.DeleteObj(ctx.Hvo);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/// <summary>
+	///
+	/// </summary>
 	internal partial class PhNCFeatures
 	{
 		protected override void OnBeforeObjectDeleted()
@@ -6507,7 +6537,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				m_cache.DomainDataByFlid.DeleteObj(ruleMapping.Hvo);
 			}
 		}
-
 	}
 
 	/// <summary>
