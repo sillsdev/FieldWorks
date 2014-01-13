@@ -67,6 +67,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		private readonly Dictionary<string, int> m_nameToFlid = new Dictionary<string, int>();
 		private readonly Dictionary<int, int> m_clidToNextCustomFlid = new Dictionary<int, int>();
 		private readonly HashSet<MetaFieldRec> m_customFields = new HashSet<MetaFieldRec>();
+		private readonly HashSet<int> m_analysisClids = new HashSet<int>();
 
 		#endregion Data Members for IFwMetaDataCache Support
 
@@ -121,9 +122,10 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					continue; // ScrFootnote does not have the 'ModelClassAttribute'.
 				//throw new InvalidOperationException("CmObjects must use 'ModelClassAttribute'.");
 
+				int clid = ((ModelClassAttribute)classAttrs[0]).Clsid;
 				// Add its class information.
 				AddClass(fdoType.Name,
-						 ((ModelClassAttribute)classAttrs[0]).Clsid,
+						 clid,
 						 fdoType.Name == "CmObject" ? "CmObject" : fdoType.BaseType.Name,
 						 fdoType.IsAbstract);
 #else
@@ -154,6 +156,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 						 fdoType.IsAbstract);
 #endif
 
+				if (fdoType.GetInterface("IAnalysis") != null)
+					m_analysisClids.Add(clid);
 				// Cache properties.
 				// Regular foreach loop is faster.
 				//PropertyInfo[] pis = fdoType.GetProperties();
@@ -216,11 +220,21 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		private void ConnectMetaFieldRec(MetaFieldRec mfr)
 		{
-			int clid;
-			if (mfr.m_sig == null || !m_nameToClid.TryGetValue(mfr.m_sig, out clid)) return;
+			if (mfr.m_sig == null)
+				return;
 
-			SetDestClass(mfr, clid);
-			mfr.m_sig = null;
+			int clid;
+			if (m_nameToClid.TryGetValue(mfr.m_sig, out clid))
+			{
+				SetDestClass(mfr, clid);
+				mfr.m_sig = null;
+			}
+			else if (mfr.m_sig == "IAnalyses")
+			{
+				foreach (int analysisClid in m_analysisClids)
+					m_metaClassRecords[analysisClid].m_incomingFields.Add(mfr);
+				mfr.m_sig = null;
+			}
 		}
 
 		private void SetDestClass(MetaFieldRec mfr, int clid)
