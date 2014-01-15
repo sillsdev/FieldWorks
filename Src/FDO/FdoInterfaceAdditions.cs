@@ -1522,6 +1522,13 @@ namespace SIL.FieldWorks.FDO
 		/// <param name="sandboxMsa"></param>
 		/// <returns></returns>
 		IMoMorphSynAnalysis UpdateOrReplace(SandboxGenericMSA sandboxMsa);
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="ws">The ws.</param>
+		/// <returns></returns>
+		ITsString PartOfSpeechForWsTSS(int ws);
 	}
 
 	/// <summary>
