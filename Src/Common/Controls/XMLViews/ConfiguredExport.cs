@@ -646,14 +646,20 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 			}
 			// We don't want sFirst for an ignored first character or digraph.
-			var loc = Encoding.UTF8.GetBytes(sWs);
-			Icu.UErrorCode err;
-			var col = Icu.ucol_Open(loc, out err);
-			if ((int)err > (int)Icu.UErrorCode.U_ZERO_ERROR)
-				return sFirst;
+
+			IntPtr col;
 			try
 			{
-				var ka = CmObjectComparer.GetSortKey(col, sFirst);
+				string icuLocale = Icu.GetName(sWs);
+				col = Icu.OpenCollator(icuLocale);
+			}
+			catch (Exception)
+			{
+				return sFirst;
+			}
+			try
+			{
+				byte[] ka = Icu.GetSortKey(col, sFirst);
 				if (ka.Length > 0 && ka[0] == 1)
 				{
 					string sT = sEntry.Substring(sFirst.Length);
@@ -662,7 +668,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			finally
 			{
-				Icu.ucol_Close(col);
+				Icu.CloseCollator(col);
 			}
 			return sFirst;
 		}

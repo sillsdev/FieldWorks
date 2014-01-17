@@ -1,16 +1,14 @@
-﻿using System.Linq;
+using System.Linq;
 using NUnit.Framework;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Test.TestUtils;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace SIL.CoreImpl
 {
 	/// <summary>
 	/// StringSearcher tests
 	/// </summary>
 	[TestFixture]
-	public class StringSearcherTests: BaseTest
+	public class StringSearcherTests
 	{
 		private IWritingSystemManager m_wsManager;
 		private int m_enWs;
@@ -21,10 +19,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Setup the test fixture.
 		/// </summary>
 		[TestFixtureSetUp]
-		public override void FixtureSetup()
+		public void FixtureSetup()
 		{
-			base.FixtureSetup();
-
 			m_wsManager = new PalasoWritingSystemManager();
 			IWritingSystem enWs;
 			m_wsManager.GetOrSet("en", out enWs);

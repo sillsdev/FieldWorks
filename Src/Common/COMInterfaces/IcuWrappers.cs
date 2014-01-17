@@ -1272,15 +1272,20 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// <summary>
 		/// Gets the name of the locale (e.g. en_US).
 		/// </summary>
-		public static int GetName(string localeID, out string localeName, out UErrorCode err)
+		public static string GetName(string localeID)
 		{
+			if (string.IsNullOrEmpty(localeID))
+				return string.Empty;
+
 			const int nSize = 255;
 			IntPtr resPtr = Marshal.AllocCoTaskMem(nSize);
 			try
 			{
+				UErrorCode err;
 				int nResult = uloc_getName(localeID, resPtr, nSize, out err);
-				localeName = Marshal.PtrToStringAnsi(resPtr);
-				return nResult;
+				if (err > UErrorCode.U_ZERO_ERROR)
+					throw new Exception("uloc_getName failed with code " + err);
+				return Marshal.PtrToStringAnsi(resPtr);
 			}
 			finally
 			{
@@ -1366,13 +1371,17 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			out UErrorCode err);
 
 		/// <summary></summary>
-		public static IntPtr ucol_Open(byte[] loc, out UErrorCode err)
+		public static IntPtr OpenCollator(string locale)
 		{
-			return ucol_open(loc, out err);
+			UErrorCode err;
+			IntPtr collator = ucol_open(string.IsNullOrEmpty(locale) ? null : Encoding.UTF8.GetBytes(locale), out err);
+			if (err > UErrorCode.U_ZERO_ERROR)
+				throw new Exception("ucol_open failed with code " + err);
+			return collator;
 		}
 
 		/// <summary></summary>
-		public static void ucol_Close(IntPtr collator)
+		public static void CloseCollator(IntPtr collator)
 		{
 			ucol_close(collator);
 		}
@@ -1385,9 +1394,25 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		private static extern int ucol_getSortKey(IntPtr col1, string source, int sourceLength, byte[] result, int resultLength);
 
 		/// <summary></summary>
-		public static int ucol_GetSortKey(IntPtr col1, string source, int sourceLength, ref byte[] result, int resultLength)
+		public static byte[] GetSortKey(IntPtr collator, string source)
 		{
-			return ucol_getSortKey(col1, source, sourceLength, result, resultLength);
+			const int keyLength = 1024;
+			var key = new byte[keyLength + 1];
+			var len = ucol_getSortKey(collator, source, source.Length, key, keyLength);
+			if (len > keyLength)
+			{
+				key = new byte[len + 1];
+				len = ucol_getSortKey(collator, source, source.Length, key, len);
+			}
+			// Ensure that the byte array is truncated to its actual data length.
+			Debug.Assert(len <= key.Length);
+			if (len < key.Length)
+			{
+				var result = new byte[len];
+				Array.Copy(key, result, len);
+				return result;
+			}
+			return key;
 		}
 
 
@@ -1437,14 +1462,63 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// ------------------------------------------------------------------------------------
 		public class CollationRuleErrorInfo
 		{
+			internal CollationRuleErrorInfo(UParseError parseError)
+			{
+				Line = parseError.line + 1;
+				Offset = parseError.offset + 1;
+				PreContext = parseError.preContext;
+				PostContext = parseError.postContext;
+			}
+
 			/// <summary>Line number (1-based) containing the error</summary>
-			public int Line;
+			public int Line { get; private set; }
 			/// <summary>Character offset (1-based) on Line where the error was detected</summary>
-			public int Offset;
+			public int Offset { get; private set; }
 			/// <summary>Characters preceding the the error</summary>
-			public String PreContext;
+			public String PreContext { get; private set; }
 			/// <summary>Characters following the the error</summary>
-			public String PostContext;
+			public String PostContext { get; private set; }
+		}
+
+		/// <summary>
+		/// Collation rule exception
+		/// </summary>
+		public class CollationRuleException : Exception
+		{
+			private readonly CollationRuleErrorInfo m_errorInfo;
+
+			/// <summary>
+			/// Initializes a new instance of the <see cref="CollationRuleException"/> class.
+			/// </summary>
+			/// <param name="errorInfo">The error information.</param>
+			public CollationRuleException(CollationRuleErrorInfo errorInfo)
+			{
+				m_errorInfo = errorInfo;
+			}
+
+			/// <summary>
+			/// Gets the parse error information.
+			/// </summary>
+			public CollationRuleErrorInfo ErrorInfo
+			{
+				get { return m_errorInfo; }
+			}
+		}
+
+		/// <summary>
+		/// Opens the specified collation rules as a collator.
+		/// </summary>
+		/// <param name="rules">The rules.</param>
+		/// <returns></returns>
+		public static IntPtr OpenRuleBasedCollator(string rules)
+		{
+			UErrorCode err;
+			UParseError parseError;
+			IntPtr collator = ucol_openRules(rules, rules.Length, UColAttributeValue.UCOL_DEFAULT,
+				UColAttributeValue.UCOL_DEFAULT_STRENGTH, out parseError, out err);
+			if (err <= UErrorCode.U_ZERO_ERROR)
+				return collator;
+			throw new CollationRuleException(new CollationRuleErrorInfo(parseError));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1468,13 +1542,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 				if (err == UErrorCode.U_ZERO_ERROR)
 					return null;
 
-				return new CollationRuleErrorInfo
-								{
-									Line = parseError.line + 1,
-									Offset = parseError.offset + 1,
-									PreContext = parseError.preContext,
-									PostContext = parseError.postContext
-								};
+				return new CollationRuleErrorInfo(parseError);
 			}
 			finally
 			{
@@ -1552,13 +1620,13 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			UErrorCode err;
 			int size = ucol_getBound(sortKey, sortKey.Length, boundType, 1, result, result.Length, out err);
 			if (err > 0 && err != UErrorCode.U_BUFFER_OVERFLOW_ERROR)
-				throw new Exception("Icu.GetSortKeyBound() failed with code " + err);
+				throw new Exception("ucol_getBound failed with code " + err);
 			if (size > result.Length)
 			{
 				result = new byte[size + 1];
 				ucol_getBound(sortKey, sortKey.Length, boundType, 1, result, result.Length, out err);
 				if (err > 0)
-					throw new Exception("Icu.GetSortKeyBound() failed with code " + err);
+					throw new Exception("ucol_getBound failed with code " + err);
 			}
 		}
 
@@ -1874,7 +1942,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			UErrorCode err;
 			IntPtr bi = ubrk_open(type, locale, text, text.Length, out err);
 			if (err > 0)
-				throw new Exception("Icu.Split() failed with code " + err);
+				throw new Exception("ubrk_open failed with code " + err);
 			var tokens = new List<string>();
 			int cur = ubrk_first(bi);
 			while (cur != UBRK_DONE)

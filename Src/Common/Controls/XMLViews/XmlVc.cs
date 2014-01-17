@@ -187,7 +187,7 @@ namespace SIL.FieldWorks.Common.Controls
 		// This is the new constructor, where we find parts in the master inventory.
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:XmlVc"/> class.
+		/// Initializes a new instance of the <see cref="XmlVc"/> class.
 		/// </summary>
 		/// <param name="stringTable">The string table.</param>
 		/// <param name="rootLayoutName">Name of the root layout.</param>
@@ -205,7 +205,7 @@ namespace SIL.FieldWorks.Common.Controls
 		// This is a variant which can take a condition element to control which items in a list display.
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:XmlVc"/> class.
+		/// Initializes a new instance of the <see cref="XmlVc"/> class.
 		/// </summary>
 		/// <param name="stringTable">The string table.</param>
 		/// <param name="rootLayoutName">Name of the root layout.</param>
@@ -229,7 +229,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// This is another new constructor, for using the new approach without a single
 		/// top-level layout name, such as browse view.
-		/// Initializes a new instance of the <see cref="T:XmlVc"/> class.
+		/// Initializes a new instance of the <see cref="XmlVc"/> class.
 		/// </summary>
 		/// <param name="stringTable">The string table.</param>
 		/// ------------------------------------------------------------------------------------
@@ -4957,7 +4957,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:NodeDisplayCommand"/> class.
+		/// Initializes a new instance of the <see cref="NodeDisplayCommand"/> class.
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
@@ -5037,7 +5037,7 @@ namespace SIL.FieldWorks.Common.Controls
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:NodeChildrenDisplayCommand"/> class.
+		/// Initializes a new instance of the <see cref="NodeChildrenDisplayCommand"/> class.
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
@@ -5663,7 +5663,7 @@ namespace SIL.FieldWorks.Common.Controls
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:PropWs"/> class.
+		/// Initializes a new instance of the <see cref="PropWs"/> class.
 		/// </summary>
 		/// <param name="xflid">The xflid.</param>
 		/// <param name="xws">The XWS.</param>
@@ -5740,12 +5740,12 @@ namespace SIL.FieldWorks.Common.Controls
 				string ws = xobj.SortKeyWs;
 				if (string.IsNullOrEmpty(ws))
 					ws = yobj.SortKeyWs;
-				Icu.UErrorCode err;
-				m_col = Icu.ucol_Open(Encoding.UTF8.GetBytes(ws), out err);
+				string icuLocale = Icu.GetName(ws);
+				m_col = Icu.OpenCollator(icuLocale);
 			}
 
-			byte[] xkey = GetSortKey(m_col, xkeyStr);
-			byte[] ykey = GetSortKey(m_col, ykeyStr);
+			byte[] xkey = Icu.GetSortKey(m_col, xkeyStr);
+			byte[] ykey = Icu.GetSortKey(m_col, ykeyStr);
 			// Simulate strcmp on the two NUL-terminated byte strings.
 			// This avoids marshalling back and forth.
 			// JohnT: but apparently the strings are not null-terminated if the input was empty.
@@ -5775,33 +5775,11 @@ namespace SIL.FieldWorks.Common.Controls
 			return nVal;
 		}
 
-		internal static byte[] GetSortKey(IntPtr collater, string keyStr)
-		{
-			const int keyLength = 1024;
-			var key = new byte[keyLength+1];
-			var len = Icu.ucol_GetSortKey(collater, keyStr, keyStr.Length, ref key, keyLength);
-			if (len > keyLength)
-			{
-				key = new byte[len + 1];
-				len = Icu.ucol_GetSortKey(collater, keyStr, keyStr.Length, ref key, len);
-			}
-			// Ensure that the byte array is truncated to its actual data length.
-			Debug.Assert(len <= key.Length);
-			if (len < key.Length)
-			{
-				var result = new byte[len];
-				for (int i = 0; i < len; ++i)
-					result[i] = key[i];
-				return result;
-			}
-			return key;
-		}
-
 		protected override void DisposeUnmanagedResources()
 		{
 			if (m_col != IntPtr.Zero)
 			{
-				Icu.ucol_Close(m_col);
+				Icu.CloseCollator(m_col);
 				m_col = IntPtr.Zero;
 			}
 		}

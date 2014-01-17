@@ -200,7 +200,6 @@
     <Compile Include="ShowHelp.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="StringSearcher.cs" />
     <Compile Include="ValidationProgress.cs" />
     <Compile Include="ExemplarCharactersHelper.cs">
     </Compile>

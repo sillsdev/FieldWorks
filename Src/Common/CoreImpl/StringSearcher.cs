@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Palaso.WritingSystems.Collation;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace SIL.CoreImpl
 {
 	/// <summary>
 	/// Type of string searching.
@@ -116,7 +114,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private readonly Dictionary<Tuple<int, int>, SortKeyIndex> m_indices = new Dictionary<Tuple<int, int>, SortKeyIndex>();
 		private readonly SearchType m_type;
-		private readonly IWritingSystemManager m_wsManager;
+		private readonly Func<int, string, byte[]> m_sortKeySelector;
+		private readonly Func<int, string, IEnumerable<string>> m_tokenizer;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="StringSearcher&lt;T&gt;"/> class.
@@ -125,8 +124,30 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="wsManager">The writing system store.</param>
 		public StringSearcher(SearchType type, IWritingSystemManager wsManager)
 		{
+			if (wsManager == null)
+				throw new ArgumentNullException("wsManager");
+
 			m_type = type;
-			m_wsManager = wsManager;
+			m_sortKeySelector = (ws, text) => wsManager.Get(ws).Collator.GetSortKey(text).KeyData;
+			m_tokenizer = (ws, text) => Icu.Split(Icu.UBreakIteratorType.UBRK_WORD, wsManager.Get(ws).IcuLocale, text);
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="StringSearcher{T}"/> class.
+		/// </summary>
+		/// <param name="type">The type.</param>
+		/// <param name="sortKeySelector">The sort key selector.</param>
+		/// <param name="tokenizer">The text tokenizer</param>
+		public StringSearcher(SearchType type, Func<int, string, byte[]> sortKeySelector, Func<int, string, IEnumerable<string>> tokenizer)
+		{
+			if (sortKeySelector == null)
+				throw new ArgumentNullException("sortKeySelector");
+			if (type == SearchType.FullText && tokenizer == null)
+				throw new ArgumentNullException("tokenizer");
+
+			m_type = type;
+			m_sortKeySelector = sortKeySelector;
+			m_tokenizer = tokenizer;
 		}
 
 		/// <summary>
@@ -136,33 +157,35 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			if (tss.RunCount == 1) // VERY common special case
 			{
-				Add(indexId, tss.get_WritingSystemAt(0), tss.Text, item);
-				return;
+				Add(item, indexId, tss.get_WritingSystemAt(0), tss.Text);
 			}
-
-			foreach (Tuple<int, string> wsStr in GetWsStrings(tss))
+			else
 			{
-				var wsId = wsStr.Item1;
-				var text = wsStr.Item2;
-				Add(indexId, wsId, text, item);
+				foreach (Tuple<int, string> wsStr in GetWsStrings(tss))
+				{
+					var wsId = wsStr.Item1;
+					var text = wsStr.Item2;
+					Add(item, indexId, wsId, text);
+				}
 			}
 		}
 
-		private void Add(int indexId, int wsId, string text, T item)
+		/// <summary>
+		/// Adds the specified item to an index using the specified string.
+		/// </summary>
+		public void Add(T item, int indexId, int wsId, string text)
 		{
 			SortKeyIndex index = GetIndex(indexId, wsId);
-			IWritingSystem ws = m_wsManager.Get(wsId);
-			ICollator collator = ws.Collator;
 			switch (m_type)
 			{
 				case SearchType.Exact:
 				case SearchType.Prefix:
-					index.Add(collator.GetSortKey(text).KeyData, item);
+					index.Add(m_sortKeySelector(wsId, text), item);
 					break;
 
 				case SearchType.FullText:
-					foreach (string token in Icu.Split(Icu.UBreakIteratorType.UBRK_WORD, ws.IcuLocale, text))
-						index.Add(collator.GetSortKey(token).KeyData, item);
+					foreach (string token in m_tokenizer(wsId, text))
+						index.Add(m_sortKeySelector(wsId, token), item);
 					break;
 			}
 		}
@@ -178,55 +201,74 @@ namespace SIL.FieldWorks.Common.FwUtils
 			if (tss == null || string.IsNullOrEmpty(tss.Text))
 				return Enumerable.Empty<T>();
 
-			HashSet<T> results = null;
+			if (tss.RunCount == 1) // VERY common special case
+				return Search(indexId, tss.get_WritingSystemAt(0), tss.Text);
+
+			IEnumerable<T> results = null;
 			foreach (Tuple<int, string> wsStr in GetWsStrings(tss))
 			{
-				SortKeyIndex index = GetIndex(indexId, wsStr.Item1);
-				ICollator collator = m_wsManager.Get(wsStr.Item1).Collator;
-				switch (m_type)
-				{
-					case SearchType.Exact:
-					case SearchType.Prefix:
-						{
-							byte[] sortKey = collator.GetSortKey(wsStr.Item2).KeyData;
-							var lower = new byte[wsStr.Item2.Length * SortKeyFactor];
-							Icu.GetSortKeyBound(sortKey, Icu.UColBoundMode.UCOL_BOUND_LOWER, ref lower);
-							var upper = new byte[wsStr.Item2.Length * SortKeyFactor];
-							Icu.GetSortKeyBound(sortKey,
-												m_type == SearchType.Exact
-													? Icu.UColBoundMode.UCOL_BOUND_UPPER
-													: Icu.UColBoundMode.UCOL_BOUND_UPPER_LONG, ref upper);
-							IEnumerable<T> items = index.GetItems(lower, upper);
-							if (results == null)
-								results = new HashSet<T>(items);
-							else
-								results.IntersectWith(items);
-							break;
-						}
-
-					case SearchType.FullText:
-						string locale = m_wsManager.GetStrFromWs(wsStr.Item1);
-						string[] tokens = Icu.Split(Icu.UBreakIteratorType.UBRK_WORD, locale, wsStr.Item2).ToArray();
-						for (int i = 0; i < tokens.Length; i++)
-						{
-							byte[] sortKey = collator.GetSortKey(tokens[i]).KeyData;
-							var lower = new byte[tokens[i].Length*SortKeyFactor];
-							Icu.GetSortKeyBound(sortKey, Icu.UColBoundMode.UCOL_BOUND_LOWER, ref lower);
-							var upper = new byte[tokens[i].Length*SortKeyFactor];
-							Icu.GetSortKeyBound(sortKey,
-												i < tokens.Length - 1
-													? Icu.UColBoundMode.UCOL_BOUND_UPPER
-													: Icu.UColBoundMode.UCOL_BOUND_UPPER_LONG, ref upper);
-							IEnumerable<T> items = index.GetItems(lower, upper);
-							if (results == null)
-								results = new HashSet<T>(items);
-							else
-								results.IntersectWith(items);
-						}
-						break;
-				}
+				IEnumerable<T> items = Search(indexId, wsStr.Item1, wsStr.Item2);
+				if (results == null)
+					results = items;
+				else
+					results = results.Intersect(items);
 			}
 			return results ?? Enumerable.Empty<T>();
+		}
+
+		/// <summary>
+		/// Searches an index for the specified string.
+		/// </summary>
+		/// <param name="indexId">The index id.</param>
+		/// <param name="wsId">The ws id.</param>
+		/// <param name="text">The text.</param>
+		/// <returns>The search results.</returns>
+		public IEnumerable<T> Search(int indexId, int wsId, string text)
+		{
+			if (string.IsNullOrEmpty(text))
+				return Enumerable.Empty<T>();
+
+			SortKeyIndex index = GetIndex(indexId, wsId);
+			switch (m_type)
+			{
+				case SearchType.Exact:
+				case SearchType.Prefix:
+					{
+						byte[] sortKey = m_sortKeySelector(wsId, text);
+						var lower = new byte[text.Length * SortKeyFactor];
+						Icu.GetSortKeyBound(sortKey, Icu.UColBoundMode.UCOL_BOUND_LOWER, ref lower);
+						var upper = new byte[text.Length * SortKeyFactor];
+						Icu.GetSortKeyBound(sortKey,
+											m_type == SearchType.Exact
+												? Icu.UColBoundMode.UCOL_BOUND_UPPER
+												: Icu.UColBoundMode.UCOL_BOUND_UPPER_LONG, ref upper);
+
+						return index.GetItems(lower, upper);
+					}
+
+				case SearchType.FullText:
+					IEnumerable<T> results = null;
+					string[] tokens = m_tokenizer(wsId, text).ToArray();
+					for (int i = 0; i < tokens.Length; i++)
+					{
+						byte[] sortKey = m_sortKeySelector(wsId, tokens[i]);
+						var lower = new byte[tokens[i].Length*SortKeyFactor];
+						Icu.GetSortKeyBound(sortKey, Icu.UColBoundMode.UCOL_BOUND_LOWER, ref lower);
+						var upper = new byte[tokens[i].Length*SortKeyFactor];
+						Icu.GetSortKeyBound(sortKey,
+											i < tokens.Length - 1
+												? Icu.UColBoundMode.UCOL_BOUND_UPPER
+												: Icu.UColBoundMode.UCOL_BOUND_UPPER_LONG, ref upper);
+						IEnumerable<T> items = index.GetItems(lower, upper);
+						if (results == null)
+							results = items;
+						else
+							results = results.Intersect(items);
+					}
+					return results;
+			}
+
+			return null;
 		}
 
 		/// <summary>
