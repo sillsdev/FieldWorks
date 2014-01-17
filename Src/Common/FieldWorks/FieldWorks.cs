@@ -48,7 +48,6 @@ using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.PaObjects;
 using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.LexicalProvider;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
 using XCore;
@@ -344,9 +343,6 @@ namespace SIL.FieldWorks
 				}
 				else if (!LaunchApplicationFromCommandLine(appArgs))
 					return 0; // Didn't launch, but probably not a serious error
-
-				// Create a listener for this project for applications using FLEx as a LexicalProvider.
-				LexicalProviderManager.StartLexicalServiceProvider(s_projectId, s_cache);
 
 #if __MonoCS__
 				UglyHackForXkbIndicator();
@@ -3563,7 +3559,6 @@ namespace SIL.FieldWorks
 		private static void StaticDispose()
 		{
 			s_appServerMode = false; // Make sure the cache can be cleaned up
-			LexicalProviderManager.StaticDispose(); // Must be done before disposing the cache
 			if (s_serviceChannel != null)
 			{
 				ChannelServices.UnregisterChannel(s_serviceChannel);

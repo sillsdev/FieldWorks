@@ -200,9 +200,6 @@
     </Compile>
     <Compile Include="FieldWorksManager.cs" />
     <Compile Include="FwRestoreProjectSettings.cs" />
-    <Compile Include="LexicalProvider\LexicalProviderImpl.cs" />
-    <Compile Include="LexicalProvider\LexicalProviderManager.cs" />
-    <Compile Include="LexicalProvider\LexicalServiceProvider.cs" />
     <Compile Include="MoveProjectsDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -221,7 +218,6 @@
     <Compile Include="PaObjects\PaVariant.cs" />
     <Compile Include="PaObjects\PaVariantOfInfo.cs" />
     <Compile Include="PaObjects\PaWritingSystem.cs" />
-    <Compile Include="LexicalProvider\ILexicalProvider.cs" />
     <Compile Include="ProjectId.cs" />
     <Compile Include="FieldWorks.cs" />
     <Compile Include="WelcomeToFieldWorksDlg.Designer.cs">
