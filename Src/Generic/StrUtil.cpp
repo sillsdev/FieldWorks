@@ -11,6 +11,9 @@ Last reviewed: 27Sep99
 ----------------------------------------------------------------------------------------------*/
 
 #include "common.h"
+#if WIN32
+#include <shlobj.h>
+#endif
 
 //:>********************************************************************************************
 //:>	StrUtil methods.
@@ -61,15 +64,26 @@ void InitIcuDataDir()
 		if (!fRetrievedDir)
 			fRetrievedDir = GetIcuDir(HKEY_LOCAL_MACHINE, rgchDataDirectory, dwSize);
 
-		if (fRetrievedDir)
+		// Some broken Windows machines can have trouble accessing HKLM (LT-15158).
+		if (!fRetrievedDir)
 		{
-			// Remove any trailing \ from the registry value.
-			int cch = strlen(rgchDataDirectory);
-			if (rgchDataDirectory[cch - 1] == '\\')
-				rgchDataDirectory[cch - 1] = 0;
-			u_setDataDirectory(rgchDataDirectory);
-			s_fSilIcuInitCalled = false;	// probably redundant, but to be safe ...
+			StrAnsi defaultDir;
+			achar commonApplicationData[MAX_PATH];
+			if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_COMMON_APPDATA, NULL, 0, commonApplicationData)))
+				defaultDir.Append(commonApplicationData);
+			else
+				defaultDir.Append("C:\\ProgramData");
+			defaultDir.Append("\\SIL\\Icu50");
+
+			strncpy_s(rgchDataDirectory, defaultDir.Chars(), sizeof(rgchDataDirectory));
 		}
+
+		// Remove any trailing \ from the registry value.
+		int cch = strlen(rgchDataDirectory);
+		if (rgchDataDirectory[cch - 1] == '\\')
+			rgchDataDirectory[cch - 1] = 0;
+		u_setDataDirectory(rgchDataDirectory);
+		s_fSilIcuInitCalled = false;	// probably redundant, but to be safe ...
 	}
 #else //not WIN32
 	if (!pszDir || !*pszDir)

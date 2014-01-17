@@ -320,14 +320,14 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			{
 				using (HoldDummyGraphics hdg = new HoldDummyGraphics(fontName, fBold, fItalic, this))
 				{
-				// Ask it whether that font has the main Graphite data table. If it does,
-				// we assume it is a Graphite font.
-				int tblSize;
-				const int tag_Silf = 0x666c6953;
-				hdg.m_vwGraphics.GetFontData(tag_Silf, out tblSize);
-				if (tblSize > 0)
-					return true;
-			}
+					// Ask it whether that font has the main Graphite data table. If it does,
+					// we assume it is a Graphite font.
+					int tblSize;
+					const int tag_Silf = 0x666c6953;
+					hdg.m_vwGraphics.GetFontData(tag_Silf, out tblSize);
+					if (tblSize > 0)
+						return true;
+				}
 			}
 			catch
 			{
@@ -357,6 +357,13 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			//					return false;
 			//				dwIndex++;
 			//			}
+
+			// This code is a fallback for finding old Graphite fonts installed using the
+			// deprecated GrFontInst program.
+			// On a few broken Windows machines, normal registry access to HKLM returns null (LT-15158).
+			if (RegistryHelper.CompanyKeyLocalMachine == null)
+				return false;
+
 			using (RegistryKey regKey = RegistryHelper.CompanyKeyLocalMachine.OpenSubKey("GraphiteFonts"))
 			{
 				if (regKey == null)
