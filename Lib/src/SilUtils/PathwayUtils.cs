@@ -14,6 +14,7 @@
 // <remarks>
 // </remarks>
 // ---------------------------------------------------------------------------------------------
+using System;
 using System.IO;
 
 namespace SIL.Utils
@@ -36,6 +37,18 @@ namespace SIL.Utils
 				{
 					return (string)regObj;
 				}
+
+				// Some broken Windows machines can have trouble accessing HKLM (LT-15158).
+				if (RegistryHelper.CompanyKeyLocalMachine == null)
+				{
+					string companyName = "SIL";
+					string defaultDir = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), companyName), "Pathway7");
+					if (Directory.Exists(defaultDir))
+						return defaultDir;
+					else
+						return string.Empty;
+				}
+
 				if (RegistryHelper.RegEntryExists(RegistryHelper.CompanyKeyLocalMachine, SilSubKey.Pathway,
 					"PathwayDir", out regObj))
 				{

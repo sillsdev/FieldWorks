@@ -73,7 +73,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			get
 			{
 				var dir = Path.Combine(Environment.GetFolderPath(
-					Environment.SpecialFolder.CommonProgramFiles), "SIL/Icu50");
+					Environment.SpecialFolder.CommonApplicationData), "SIL/Icu50");
 
 				using(var userKey = RegistryHelper.CompanyKey)
 				using(var machineKey = RegistryHelper.CompanyKeyLocalMachine)
