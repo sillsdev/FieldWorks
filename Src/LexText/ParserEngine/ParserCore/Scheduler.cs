@@ -149,7 +149,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// Initializes a new instance of the <see cref="ParserScheduler"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public ParserScheduler(FdoCache cache, IdleQueue idleQueue)
+		public ParserScheduler(FdoCache cache, IdleQueue idleQueue, string appInstallDir)
 		{
 			if (cache == null) throw new ArgumentNullException("cache");
 
@@ -161,10 +161,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			{
 
 				case "XAmple":
-					m_parserWorker = new XAmpleParserWorker(cache, HandleTaskUpdate, idleQueue);
+					m_parserWorker = new XAmpleParserWorker(cache, HandleTaskUpdate, idleQueue, appInstallDir);
 					break;
 				case "HC":
-					m_parserWorker = new HCParserWorker(cache, HandleTaskUpdate, idleQueue);
+					m_parserWorker = new HCParserWorker(cache, HandleTaskUpdate, idleQueue, appInstallDir);
 					break;
 
 				default:

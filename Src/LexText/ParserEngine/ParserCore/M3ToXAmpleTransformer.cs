@@ -18,8 +18,6 @@ using System.Text;
 using System.Xml;
 using System.IO;
 using System.Diagnostics;
-using SIL.Utils;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.WordWorks.GAFAWS.PositionAnalysis;
 
 namespace SIL.FieldWorks.WordWorks.Parser
@@ -35,8 +33,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// Initializes a new instance of the <see cref="M3ToXAmpleTransformer"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public M3ToXAmpleTransformer(string database, Action<TaskReport> taskUpdateHandler)
-			: base(database, taskUpdateHandler)
+		public M3ToXAmpleTransformer(string database, Action<TaskReport> taskUpdateHandler, string appInstallDir)
+			: base(database, taskUpdateHandler, appInstallDir)
 		{
 		}
 
@@ -116,16 +114,16 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			using (var task = new TaskReport(ParserCoreStrings.ksMakingXAmpleFiles, m_taskUpdateHandler))
 			{
-					DateTime startTime = DateTime.Now;
+				DateTime startTime = DateTime.Now;
 				TransformDomToFile("FxtM3ParserToXAmpleADCtl.xsl", model, m_database + "adctl.txt", task);
 				TransformDomToFile("FxtM3ParserToToXAmpleGrammar.xsl", model, m_database + "gram.txt", task);
 				Trace.WriteLineIf(m_tracingSwitch.TraceInfo, "Grammar XSLTs took : " + (DateTime.Now.Ticks - startTime.Ticks));
-					// TODO: Putting this here is not necessarily efficient because it happens every time
-					//       the parser is run.  It would be more efficient to run this only when the user
-					//       is trying a word.  But we need the "model" to apply this transform an it is
-					//       available here, so we're doing this for now.
-					startTime = DateTime.Now;
-					string sName = m_database + "XAmpleWordGrammarDebugger.xsl";
+				// TODO: Putting this here is not necessarily efficient because it happens every time
+				//       the parser is run.  It would be more efficient to run this only when the user
+				//       is trying a word.  But we need the "model" to apply this transform an it is
+				//       available here, so we're doing this for now.
+				startTime = DateTime.Now;
+				string sName = m_database + "XAmpleWordGrammarDebugger.xsl";
 				TransformDomToFile("FxtM3ParserToXAmpleWordGrammarDebuggingXSLT.xsl", model, sName, task);
 				Trace.WriteLineIf(m_tracingSwitch.TraceInfo, "WordGrammarDebugger XSLT took : " + (DateTime.Now.Ticks - startTime.Ticks));
 

@@ -136,10 +136,6 @@
       <Name>FDO</Name>
       <HintPath>..\..\..\..\Output\Debug\FDO.dll</HintPath>
     </Reference>
-    <Reference Include="FwUtils, Version=5.5.0.29918, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
-    </Reference>
     <Reference Include="GAFAWSAnalysis">
       <Name>GAFAWSAnalysis</Name>
       <SpecificVersion>False</SpecificVersion>

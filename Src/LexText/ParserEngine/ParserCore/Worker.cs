@@ -55,6 +55,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	{
 		protected readonly FdoCache m_cache;
 		protected readonly Action<TaskReport> m_taskUpdateHandler;
+		protected readonly string m_appInstallDir;
 		private readonly ParseFiler m_parseFiler;
 		private long m_ticksParser;
 		private int m_numberOfWordForms;
@@ -68,10 +69,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// Initializes a new instance of the <see cref="ParserWorker"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		protected ParserWorker(FdoCache cache, Action<TaskReport> taskUpdateHandler, IdleQueue idleQueue, ICmAgent agent)
+		protected ParserWorker(FdoCache cache, Action<TaskReport> taskUpdateHandler, IdleQueue idleQueue, ICmAgent agent, string appInstallDir)
 		{
 			m_cache = cache;
 			m_taskUpdateHandler = taskUpdateHandler;
+			m_appInstallDir = appInstallDir;
 			m_parseFiler = new ParseFiler(cache, taskUpdateHandler, idleQueue, agent);
 			// N.B. m_projectName here is only used to create temporary files for the parser to load.
 			// We convert the name to use strictly ANSI characters so that the parsers (which are or involve

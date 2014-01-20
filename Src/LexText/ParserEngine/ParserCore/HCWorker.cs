@@ -15,7 +15,6 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
-using System.Windows.Forms;
 using System.Xml;
 using System.Collections.Generic;
 using System.Text;
@@ -26,7 +25,6 @@ using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using SIL.HermitCrab;
 using PatrParserWrapper;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Validation;
 
 namespace SIL.FieldWorks.WordWorks.Parser
@@ -54,9 +52,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			readonly Uri m_baseUri;
 
-			public XmlFwResolver()
+			public XmlFwResolver(string appInstallDir)
 			{
-				m_baseUri = new Uri(FwDirectoryFinder.CodeDirectory + Path.DirectorySeparatorChar);
+				m_baseUri = new Uri(appInstallDir + Path.DirectorySeparatorChar);
 			}
 
 			public override Uri ResolveUri(Uri baseUri, string relativeUri)
@@ -536,9 +534,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private PatrParser m_patr;
 		private readonly string m_outputDirectory;
 
-		public HCParserWorker(FdoCache cache, Action<TaskReport> taskUpdateHandler, IdleQueue idleQueue)
+		public HCParserWorker(FdoCache cache, Action<TaskReport> taskUpdateHandler, IdleQueue idleQueue, string appInstallDir)
 			: base(cache, taskUpdateHandler, idleQueue,
-			cache.ServiceLocator.GetInstance<ICmAgentRepository>().GetObject(CmAgentTags.kguidAgentHermitCrabParser))
+			cache.ServiceLocator.GetInstance<ICmAgentRepository>().GetObject(CmAgentTags.kguidAgentHermitCrabParser), appInstallDir)
 		{
 			m_outputDirectory = Path.GetTempPath();
 			m_patr = new PatrParser
@@ -548,7 +546,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						};
 			m_loader = new XmlLoader
 						{
-							XmlResolver = new XmlFwResolver(),
+							XmlResolver = new XmlFwResolver(appInstallDir),
 							QuitOnError = false
 						};
 		}
@@ -644,7 +642,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				}
 			}
 
-			var transformer = new M3ToHCTransformer(m_projectName, m_taskUpdateHandler);
+			var transformer = new M3ToHCTransformer(m_projectName, m_taskUpdateHandler, m_appInstallDir);
 			transformer.MakeHCFiles(ref model);
 
 			m_patr.LoadGrammarFile(HcGrammarPath);

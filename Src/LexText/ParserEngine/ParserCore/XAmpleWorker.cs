@@ -19,7 +19,6 @@ using System.IO;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using XAmpleManagedWrapper;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
@@ -27,12 +26,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	{
 		private XAmpleWrapper m_xample;
 
-		public XAmpleParserWorker(FdoCache cache, Action<TaskReport> taskUpdateHandler, IdleQueue idleQueue)
+		public XAmpleParserWorker(FdoCache cache, Action<TaskReport> taskUpdateHandler, IdleQueue idleQueue, string appInstallDir)
 			: base(cache, taskUpdateHandler, idleQueue,
-			cache.ServiceLocator.GetInstance<ICmAgentRepository>().GetObject(CmAgentTags.kguidAgentXAmpleParser))
+			cache.ServiceLocator.GetInstance<ICmAgentRepository>().GetObject(CmAgentTags.kguidAgentXAmpleParser), appInstallDir)
 		{
 			m_xample = new XAmpleWrapper();
-			m_xample.Init(FwDirectoryFinder.CodeDirectory);
+			m_xample.Init(appInstallDir);
 			}
 
 		protected override string ParseWord(string form, int hvoWordform)
@@ -80,7 +79,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// <param name="template">The template.</param>
 		protected override void LoadParser(ref XmlDocument model, XmlDocument template)
 		{
-			var transformer = new M3ToXAmpleTransformer(m_projectName, m_taskUpdateHandler);
+			var transformer = new M3ToXAmpleTransformer(m_projectName, m_taskUpdateHandler, m_appInstallDir);
 				var startTime = DateTime.Now;
 				// PrepareTemplatesForXAmpleFiles adds orderclass elements to MoInflAffixSlot elements
 			transformer.PrepareTemplatesForXAmpleFiles(ref model, template);
@@ -101,7 +100,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_xample.SetParameter("MaxAnalysesToReturn", maxAnalCount.ToString());
 
 			string tempPath = Path.GetTempPath();
-			m_xample.LoadFiles(FwDirectoryFinder.CodeDirectory + @"/Language Explorer/Configuration/Grammar",
+			m_xample.LoadFiles(m_appInstallDir + @"/Language Explorer/Configuration/Grammar",
 				tempPath, m_projectName);
 		}
 
