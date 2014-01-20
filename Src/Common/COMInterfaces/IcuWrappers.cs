@@ -20,8 +20,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Windows.Forms;
-using Microsoft.Win32;
-
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.COMInterfaces
@@ -1628,6 +1626,22 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 				if (err > 0)
 					throw new Exception("ucol_getBound failed with code " + err);
 			}
+		}
+
+		[DllImport(kIcuinDllName, EntryPoint = "ucol_strcoll" + kIcuVersion,
+			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+		private static extern int ucol_strcoll(IntPtr coll, string source, int sourceLength, string target, int targetLength);
+
+		/// <summary>
+		/// Compares strings using the specified collator.
+		/// </summary>
+		/// <param name="coll">The collator.</param>
+		/// <param name="source">The source.</param>
+		/// <param name="target">The target.</param>
+		/// <returns></returns>
+		public static int Compare(IntPtr coll, string source, string target)
+		{
+			return ucol_strcoll(coll, source, source.Length, target, target.Length);
 		}
 
 		/// <summary>
