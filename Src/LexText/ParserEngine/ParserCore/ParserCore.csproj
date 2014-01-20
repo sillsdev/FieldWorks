@@ -196,6 +196,7 @@
     </Compile>
     <Compile Include="HCWorker.cs" />
     <Compile Include="InvalidReduplicationEnvironmentException.cs" />
+    <Compile Include="IParser.cs" />
     <Compile Include="M3ModelRetriever.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -212,6 +213,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ParserCoreStrings.resx</DependentUpon>
     </Compile>
+    <Compile Include="ParseResult.cs" />
     <Compile Include="Scheduler.cs">
       <SubType>Code</SubType>
     </Compile>
