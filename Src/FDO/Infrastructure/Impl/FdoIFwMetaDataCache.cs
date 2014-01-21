@@ -122,10 +122,9 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					continue; // ScrFootnote does not have the 'ModelClassAttribute'.
 				//throw new InvalidOperationException("CmObjects must use 'ModelClassAttribute'.");
 
-				int clid = ((ModelClassAttribute)classAttrs[0]).Clsid;
 				// Add its class information.
 				AddClass(fdoType.Name,
-						 clid,
+						 ((ModelClassAttribute)classAttrs[0]).Clsid,
 						 fdoType.Name == "CmObject" ? "CmObject" : fdoType.BaseType.Name,
 						 fdoType.IsAbstract);
 #else
@@ -157,7 +156,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 #endif
 
 				if (fdoType.GetInterface("IAnalysis") != null)
-					m_analysisClids.Add(clid);
+					m_analysisClids.Add(((ModelClassAttribute)classAttrs[0]).Clsid);
 				// Cache properties.
 				// Regular foreach loop is faster.
 				//PropertyInfo[] pis = fdoType.GetProperties();
