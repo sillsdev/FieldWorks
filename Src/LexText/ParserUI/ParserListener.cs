@@ -468,8 +468,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					if (analysis.EvaluationsRC.Count == 0)
 						wf.AnalysesOC.Remove(analysis);
 
-					if (parserEvals.Length > 0)
-						wf.Checksum = 0;
+					wf.Checksum = 0;
 				}
 			});
 			return true;	//we handled this.

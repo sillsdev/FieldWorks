@@ -17,9 +17,8 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
-using SIL.Utils; // for Win32 message defns.
+using SIL.Utils;
 using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.WordWorks.Parser
@@ -135,14 +134,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public event EventHandler<ParserUpdateEventArgs> ParserUpdateNormal;
 
 		private readonly ConsumerThread<ParserPriority, ParserWork> m_thread;
-		private readonly ParserWorker m_parserWorker;
-		private readonly FdoCache m_cache;
+		private ParserWorker m_parserWorker;
 		private readonly object m_syncRoot = new object();
 		private readonly int[] m_queueCounts = new int[5];
 		private volatile bool m_tryAWordDialogRunning;
 		private TaskReport m_TaskReport;
-
-		private readonly TraceSwitch m_tracingSwitch = new TraceSwitch("ParserCore.TracingSwitch", "Just regular tracking", "Off");
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
@@ -151,25 +147,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// -----------------------------------------------------------------------------------
 		public ParserScheduler(FdoCache cache, IdleQueue idleQueue, string appInstallDir)
 		{
-			if (cache == null) throw new ArgumentNullException("cache");
-
-			Trace.WriteLineIf(m_tracingSwitch.TraceInfo, "ParserScheduler(): CurrentThreadId = " + Win32.GetCurrentThreadId());
-
-			m_cache = cache;
-
-			switch (m_cache.LanguageProject.MorphologicalDataOA.ActiveParser)
-			{
-
-				case "XAmple":
-					m_parserWorker = new XAmpleParserWorker(cache, HandleTaskUpdate, idleQueue, appInstallDir);
-					break;
-				case "HC":
-					m_parserWorker = new HCParserWorker(cache, HandleTaskUpdate, idleQueue, appInstallDir);
-					break;
-
-				default:
-					throw new InvalidOperationException("The language project is set to use an unrecognized parser.");
-			}
+			m_parserWorker = new ParserWorker(cache, HandleTaskUpdate, idleQueue, appInstallDir);
 			m_parserWorker.ParseFiler.WordformUpdated += ParseFiler_WordformUpdated;
 
 			m_thread = new ConsumerThread<ParserPriority, ParserWork>(Work) {IsBackground = true};
@@ -224,14 +202,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		protected override void DisposeManagedResources()
 		{
-			if (m_thread.Stop())
-				Trace.WriteLineIf(m_tracingSwitch.TraceInfo, "==== ParserScheduler thread Successfully shutdown.");
-			else
-				Trace.WriteLineIf(m_tracingSwitch.TraceError, "**** ERROR : ParserScheduler Thread didn't shutdown.");
 			m_thread.Dispose();
 
-			m_parserWorker.ParseFiler.WordformUpdated -= ParseFiler_WordformUpdated;
-			m_parserWorker.Dispose();
+			if (m_parserWorker != null)
+			{
+				m_parserWorker.ParseFiler.WordformUpdated -= ParseFiler_WordformUpdated;
+				m_parserWorker.Dispose();
+				m_parserWorker = null;
+			}
 
 			if (m_TaskReport != null)
 			{
@@ -328,8 +306,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			CheckDisposed();
 
-			Trace.WriteLineIf(m_tracingSwitch.TraceInfo, "Scheduler.HandleTaskUpdate() " + task.Description + " " + task.PhaseDescription);
-
 			if (ParserUpdateNormal != null && ((task.Depth == 0) || (task.NotificationMessage != null)))
 			{
 				//notify any delegates
@@ -341,9 +317,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				//notify any delegates
 				ParserUpdateVerbose(this, new ParserUpdateEventArgs(task.MostRecentTask)/*not sure this is right*/);
 			}
-
-
-			Trace.WriteLineIf(m_tracingSwitch.TraceInfo, "  Exiting HandleTaskUpdate()" + task.Description);
 		}
 
 		private void ParseFiler_WordformUpdated(object sender, WordformUpdatedEventArgs e)

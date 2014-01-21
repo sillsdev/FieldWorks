@@ -35,7 +35,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	public class M3ParserModelRetriever : FwDisposableBase, IVwNotifyChange
 	{
 		private readonly FdoCache m_cache;
-		private readonly Action<TaskReport> m_taskUpdateHandler;
 		private readonly string m_modelPath;
 		private readonly string m_templatePath;
 		private readonly string m_outputDirectory;
@@ -50,12 +49,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// Initializes a new instance of the <see cref="M3ParserModelRetriever"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public M3ParserModelRetriever(FdoCache cache, Action<TaskReport> taskUpdateHandler)
+		public M3ParserModelRetriever(FdoCache cache)
 		{
 			if (cache == null) throw new ArgumentNullException("cache");
 
 			m_cache = cache;
-			m_taskUpdateHandler = taskUpdateHandler;
 			m_cache.DomainDataByFlid.AddNotification(this);
 
 			m_outputDirectory = Path.GetTempPath();
@@ -84,25 +82,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
 			{
 				ILangProject lp = m_cache.LanguageProject;
-				using (var task = new TaskReport(ParserCoreStrings.ksRetrievingGrammarAndLexicon, m_taskUpdateHandler))
-				{
 				// 1. Export lexicon and/or grammar.
 				m_modelDom = null;
-					M3ModelExportServices.ExportGrammarAndLexicon(m_modelPath, lp);
-				}
+				M3ModelExportServices.ExportGrammarAndLexicon(m_modelPath, lp);
 
 				// 2. Export GAFAWS data.
-				using (var task = new TaskReport(ParserCoreStrings.ksRetrievingTemplateInformation, m_taskUpdateHandler))
-				{
-// The following needs to be enabled, in order to avoid an exception bieng thrown after the export work,
-// but it is such a handy way to get Flex to stop in my profiler. :-)
 				m_templateDom = null;
 				M3ModelExportServices.ExportGafaws(m_outputDirectory, m_cache.ProjectId.Name,
 					lp.PartsOfSpeechOA.PossibilitiesOS);
 			}
-		}
 			return true;
-			}
+		}
 
 		public void Reset()
 		{

@@ -151,33 +151,6 @@ namespace SIL.FieldWorks.WordWorks.Parser {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Making HC Files.
-        /// </summary>
-        internal static string ksMakingHCFiles {
-            get {
-                return ResourceManager.GetString("ksMakingHCFiles", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Making XAmple Files.
-        /// </summary>
-        internal static string ksMakingXAmpleFiles {
-            get {
-                return ResourceManager.GetString("ksMakingXAmpleFiles", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Preparing Templates for XAmple Files.
-        /// </summary>
-        internal static string ksPreparingTemplatesForXAmple {
-            get {
-                return ResourceManager.GetString("ksPreparingTemplatesForXAmple", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to ???.
         /// </summary>
         internal static string ksQuestions {
@@ -201,24 +174,6 @@ namespace SIL.FieldWorks.WordWorks.Parser {
         internal static string ksReachedMaxInternalBufferSize {
             get {
                 return ResourceManager.GetString("ksReachedMaxInternalBufferSize", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Retrieving Grammar and Lexicon.
-        /// </summary>
-        internal static string ksRetrievingGrammarAndLexicon {
-            get {
-                return ResourceManager.GetString("ksRetrievingGrammarAndLexicon", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Retrieving Template Information.
-        /// </summary>
-        internal static string ksRetrievingTemplateInformation {
-            get {
-                return ResourceManager.GetString("ksRetrievingTemplateInformation", resourceCulture);
             }
         }
         

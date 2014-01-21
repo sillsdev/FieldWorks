@@ -191,10 +191,6 @@
     <Compile Include="..\..\..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="CrcStream.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="HCWorker.cs" />
     <Compile Include="InvalidReduplicationEnvironmentException.cs" />
     <Compile Include="IParser.cs" />
     <Compile Include="M3ModelRetriever.cs">
@@ -214,16 +210,16 @@
       <DependentUpon>ParserCoreStrings.resx</DependentUpon>
     </Compile>
     <Compile Include="ParseResult.cs" />
-    <Compile Include="Scheduler.cs">
+    <Compile Include="ParserScheduler.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="TaskReport.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Worker.cs">
+    <Compile Include="ParserWorker.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="XAmpleWorker.cs" />
+    <Compile Include="XAmpleParser.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ParserCoreStrings.resx">

@@ -17,7 +17,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Xml;
 using System.IO;
-using System.Diagnostics;
 using SIL.WordWorks.GAFAWS.PositionAnalysis;
 
 namespace SIL.FieldWorks.WordWorks.Parser
@@ -33,8 +32,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// Initializes a new instance of the <see cref="M3ToXAmpleTransformer"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public M3ToXAmpleTransformer(string database, Action<TaskReport> taskUpdateHandler, string appInstallDir)
-			: base(database, taskUpdateHandler, appInstallDir)
+		public M3ToXAmpleTransformer(string database, string appInstallDir)
+			: base(database, appInstallDir)
 		{
 		}
 
@@ -42,19 +41,16 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		internal void PrepareTemplatesForXAmpleFiles(ref XmlDocument domModel, XmlDocument domTemplate)
 		{
-			using (var task = new TaskReport(ParserCoreStrings.ksPreparingTemplatesForXAmple, m_taskUpdateHandler))
+			// get top level POS that has at least one template with slots
+			XmlNodeList templateNodeList = domTemplate.SelectNodes("//PartsOfSpeech/PartOfSpeech[descendant-or-self::MoInflAffixTemplate[PrefixSlots or SuffixSlots]]");
+			foreach (XmlNode templateNode in templateNodeList)
 			{
-				// get top level POS that has at least one template with slots
-				XmlNodeList templateNodeList = domTemplate.SelectNodes("//PartsOfSpeech/PartOfSpeech[descendant-or-self::MoInflAffixTemplate[PrefixSlots or SuffixSlots]]");
-				foreach (XmlNode templateNode in templateNodeList)
-				{
-					// transform the POS that has templates to GAFAWS format
-					string sGafawsFile = m_database + "gafawsData.xml";
-					TransformPOSInfoToGafawsInputFormat(templateNode, sGafawsFile, task);
-					string sResultFile = ApplyGafawsAlgorithm(sGafawsFile);
-					//based on results of GAFAWS, modify the model dom by inserting orderclass in slots
-					InsertOrderclassInfo(ref domModel, sResultFile);
-				}
+				// transform the POS that has templates to GAFAWS format
+				string sGafawsFile = m_database + "gafawsData.xml";
+				TransformPosInfoToGafawsInputFormat(templateNode, sGafawsFile);
+				string sResultFile = ApplyGafawsAlgorithm(sGafawsFile);
+				//based on results of GAFAWS, modify the model dom by inserting orderclass in slots
+				InsertOrderclassInfo(ref domModel, sResultFile);
 			}
 		}
 
@@ -102,35 +98,27 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// <summary>
 		/// transform the POS that has templates to GAFAWS format
 		/// </summary>
-		protected void TransformPOSInfoToGafawsInputFormat(XmlNode templateNode, string sGafawsFile, TaskReport task)
+		protected void TransformPosInfoToGafawsInputFormat(XmlNode templateNode, string sGafawsFile)
 		{
 			var dom = new XmlDocument();
 			dom.CreateElement("GAFAWSData"); // create root element
 			dom.InnerXml = templateNode.OuterXml;	 // copy in POS elements
-			TransformDomToFile("FxtM3ParserToGAFAWS.xsl", dom, sGafawsFile, task);
+			TransformDomToFile("FxtM3ParserToGAFAWS.xsl", dom, sGafawsFile);
 		}
 
 		internal void MakeAmpleFiles(XmlDocument model)
 		{
-			using (var task = new TaskReport(ParserCoreStrings.ksMakingXAmpleFiles, m_taskUpdateHandler))
-			{
-				DateTime startTime = DateTime.Now;
-				TransformDomToFile("FxtM3ParserToXAmpleADCtl.xsl", model, m_database + "adctl.txt", task);
-				TransformDomToFile("FxtM3ParserToToXAmpleGrammar.xsl", model, m_database + "gram.txt", task);
-				Trace.WriteLineIf(m_tracingSwitch.TraceInfo, "Grammar XSLTs took : " + (DateTime.Now.Ticks - startTime.Ticks));
-				// TODO: Putting this here is not necessarily efficient because it happens every time
-				//       the parser is run.  It would be more efficient to run this only when the user
-				//       is trying a word.  But we need the "model" to apply this transform an it is
-				//       available here, so we're doing this for now.
-				startTime = DateTime.Now;
-				string sName = m_database + "XAmpleWordGrammarDebugger.xsl";
-				TransformDomToFile("FxtM3ParserToXAmpleWordGrammarDebuggingXSLT.xsl", model, sName, task);
-				Trace.WriteLineIf(m_tracingSwitch.TraceInfo, "WordGrammarDebugger XSLT took : " + (DateTime.Now.Ticks - startTime.Ticks));
+			DateTime startTime = DateTime.Now;
+			TransformDomToFile("FxtM3ParserToXAmpleADCtl.xsl", model, m_database + "adctl.txt");
+			TransformDomToFile("FxtM3ParserToToXAmpleGrammar.xsl", model, m_database + "gram.txt");
+			// TODO: Putting this here is not necessarily efficient because it happens every time
+			//       the parser is run.  It would be more efficient to run this only when the user
+			//       is trying a word.  But we need the "model" to apply this transform an it is
+			//       available here, so we're doing this for now.
+			string sName = m_database + "XAmpleWordGrammarDebugger.xsl";
+			TransformDomToFile("FxtM3ParserToXAmpleWordGrammarDebuggingXSLT.xsl", model, sName);
 
-				startTime = DateTime.Now;
-				TransformDomToFile("FxtM3ParserToXAmpleLex.xsl", model, m_database + "lex.txt", task);
-				Trace.WriteLineIf(m_tracingSwitch.TraceInfo, "Lex XSLT took : " + (DateTime.Now.Ticks - startTime.Ticks));
-			}
+			TransformDomToFile("FxtM3ParserToXAmpleLex.xsl", model, m_database + "lex.txt");
 		}
 	}
 }

@@ -147,15 +147,6 @@
   <data name="ksIdle_" xml:space="preserve">
     <value />
   </data>
-  <data name="ksMakingHCFiles" xml:space="preserve">
-    <value>Making HC Files</value>
-  </data>
-  <data name="ksMakingXAmpleFiles" xml:space="preserve">
-    <value>Making XAmple Files</value>
-  </data>
-  <data name="ksPreparingTemplatesForXAmple" xml:space="preserve">
-    <value>Preparing Templates for XAmple Files</value>
-  </data>
   <data name="ksQuestions" xml:space="preserve">
     <value>???</value>
     <comment>missiing/undefined information</comment>
@@ -165,12 +156,6 @@
   </data>
   <data name="ksReachedMaxInternalBufferSize" xml:space="preserve">
     <value>Maximum internal buffer size ({0}) reached.</value>
-  </data>
-  <data name="ksRetrievingGrammarAndLexicon" xml:space="preserve">
-    <value>Retrieving Grammar and Lexicon</value>
-  </data>
-  <data name="ksRetrievingTemplateInformation" xml:space="preserve">
-    <value>Retrieving Template Information</value>
   </data>
   <data name="ksStarted" xml:space="preserve">
     <value>started</value>

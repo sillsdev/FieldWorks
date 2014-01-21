@@ -22,6 +22,7 @@ using System.Linq;
 using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.Utils;
@@ -140,7 +141,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public override void FixtureTeardown()
 		{
 			m_vernacularWS = null;
-			m_filer.Dispose();
 			m_filer = null;
 			m_idleQueue.Dispose();
 			m_idleQueue = null;
@@ -185,11 +185,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		[Test]
 		public void TooManyAnalyses()
 		{
-			var bearsTEST = CheckAnnotationSize("bearsTEST", 0, true);
-			var xmlFragment = "<Wordform DbRef='" + bearsTEST.Hvo + "' Form='bearsTEST'>" + Environment.NewLine
-				+ "<Exception code='ReachedMaxAnalyses' totalAnalyses='448'/>" + Environment.NewLine
-				+ "</Wordform>";
-			m_filer.ProcessParse(ParserPriority.Low, xmlFragment, 0);
+			IWfiWordform bearsTest = CheckAnnotationSize("bearsTEST", 0, true);
+			var result = new ParseResult("Maximum permitted analyses (448) reached.");
+			m_filer.ProcessParse(bearsTest, ParserPriority.Low, result);
 			ExecuteIdleQueue();
 			CheckAnnotationSize("bearsTEST", 1, false);
 		}
@@ -197,11 +195,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		[Test]
 		public void BufferOverrun()
 		{
-			var dogsTEST = CheckAnnotationSize("dogsTEST", 0, true);
-			var xmlFragment = "<Wordform DbRef='" + dogsTEST.Hvo + "' Form='dogsTEST'>" + Environment.NewLine
-				+ "<Exception code='ReachedMaxBufferSize' totalAnalyses='117'/>" + Environment.NewLine
-				+ "</Wordform>";
-			m_filer.ProcessParse(ParserPriority.Low, xmlFragment, 0);
+			IWfiWordform dogsTest = CheckAnnotationSize("dogsTEST", 0, true);
+			var result = new ParseResult("Maximum internal buffer size (117) reached.");
+			m_filer.ProcessParse(dogsTest, ParserPriority.Low, result);
 			ExecuteIdleQueue();
 			CheckAnnotationSize("dogsTEST", 1, false);
 		}
@@ -209,71 +205,57 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		[Test]
 		public void TwoAnalyses()
 		{
-			var catsTEST = CheckAnalysisSize("catsTEST", 0, true);
-			var ldb = Cache.LanguageProject.LexDbOA;
+			IWfiWordform catsTest = CheckAnalysisSize("catsTEST", 0, true);
+			ILexDb ldb = Cache.LanguageProject.LexDbOA;
 
-			string xmlFragment = null;
+			ParseResult result = null;
 			UndoableUnitOfWorkHelper.Do("Undo stuff", "Redo stuff", m_actionHandler, () =>
 			{
 				// Noun
-				var catN = m_entryFactory.Create();
-				var catNForm = m_stemAlloFactory.Create();
+				ILexEntry catN = m_entryFactory.Create();
+				IMoStemAllomorph catNForm = m_stemAlloFactory.Create();
 				catN.AlternateFormsOS.Add(catNForm);
 				catNForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("catNTEST", m_vernacularWS.Handle);
-				var catNMSA = m_stemMsaFactory.Create();
-				catN.MorphoSyntaxAnalysesOC.Add(catNMSA);
+				IMoStemMsa catNMsa = m_stemMsaFactory.Create();
+				catN.MorphoSyntaxAnalysesOC.Add(catNMsa);
 
-				var sPL = m_entryFactory.Create();
-				var sPLForm = m_afxAlloFactory.Create();
-				sPL.AlternateFormsOS.Add(sPLForm);
-				sPLForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("sPLTEST", m_vernacularWS.Handle);
-				var sPLMSA = m_inflAffMsaFactory.Create();
-				sPL.MorphoSyntaxAnalysesOC.Add(sPLMSA);
+				ILexEntry sPl = m_entryFactory.Create();
+				IMoAffixAllomorph sPlForm = m_afxAlloFactory.Create();
+				sPl.AlternateFormsOS.Add(sPlForm);
+				sPlForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("sPLTEST", m_vernacularWS.Handle);
+				IMoInflAffMsa sPlMsa = m_inflAffMsaFactory.Create();
+				sPl.MorphoSyntaxAnalysesOC.Add(sPlMsa);
 
 				// Verb
-				var catV = m_entryFactory.Create();
-				var catVForm = m_stemAlloFactory.Create();
+				ILexEntry catV = m_entryFactory.Create();
+				IMoStemAllomorph catVForm = m_stemAlloFactory.Create();
 				catV.AlternateFormsOS.Add(catVForm);
 				catVForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("catVTEST", m_vernacularWS.Handle);
-				var catVMSA = m_stemMsaFactory.Create();
-				catV.MorphoSyntaxAnalysesOC.Add(catVMSA);
+				IMoStemMsa catVMsa = m_stemMsaFactory.Create();
+				catV.MorphoSyntaxAnalysesOC.Add(catVMsa);
 
-				var sAGR = m_entryFactory.Create();
-				var sAGRForm = m_afxAlloFactory.Create();
-				sAGR.AlternateFormsOS.Add(sAGRForm);
-				sAGRForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("sAGRTEST", m_vernacularWS.Handle);
-				var sAGRMSA = m_inflAffMsaFactory.Create();
-				sAGR.MorphoSyntaxAnalysesOC.Add(sAGRMSA);
+				ILexEntry sAgr = m_entryFactory.Create();
+				IMoAffixAllomorph sAgrForm = m_afxAlloFactory.Create();
+				sAgr.AlternateFormsOS.Add(sAgrForm);
+				sAgrForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("sAGRTEST", m_vernacularWS.Handle);
+				IMoInflAffMsa sAgrMsa = m_inflAffMsaFactory.Create();
+				sAgr.MorphoSyntaxAnalysesOC.Add(sAgrMsa);
 
-				xmlFragment = "<Wordform DbRef='" + catsTEST.Hvo + "' Form='catsTEST'>" + Environment.NewLine
-									 + "<WfiAnalysis>" + Environment.NewLine
-									 + "<Morphs>" + Environment.NewLine
-									 + "<Morph>" + Environment.NewLine
-									 + "<MoForm DbRef='" + catNForm.Hvo + "' Label='catNTEST'/>" + Environment.NewLine
-									 + "<MSI DbRef='" + catNMSA.Hvo + "'/>" + Environment.NewLine
-									 + "</Morph>" + Environment.NewLine
-									 + "<Morph>" + Environment.NewLine
-									 + "<MoForm DbRef='" + sPLForm.Hvo + "' Label='sPLTEST'/>" + Environment.NewLine
-									 + "<MSI DbRef='" + sPLMSA.Hvo + "'/>" + Environment.NewLine
-									 + "</Morph>" + Environment.NewLine
-									 + "</Morphs>" + Environment.NewLine
-									 + "</WfiAnalysis>" + Environment.NewLine
-									 + "<WfiAnalysis>" + Environment.NewLine
-									 + "<Morphs>" + Environment.NewLine
-									 + "<Morph>" + Environment.NewLine
-									 + "<MoForm DbRef='" + catVForm.Hvo + "' Label='catVTEST'/>" + Environment.NewLine
-									 + "<MSI DbRef='" + catVMSA.Hvo + "'/>" + Environment.NewLine
-									 + "</Morph>" + Environment.NewLine
-									 + "<Morph>" + Environment.NewLine
-									 + "<MoForm DbRef='" + sAGRForm.Hvo + "' Label='sAGRTEST'/>" + Environment.NewLine
-									 + "<MSI DbRef='" + sAGRMSA.Hvo + "'/>" + Environment.NewLine
-									 + "</Morph>" + Environment.NewLine
-									 + "</Morphs>" + Environment.NewLine
-									 + "</WfiAnalysis>" + Environment.NewLine
-									 + "</Wordform>" + Environment.NewLine;
+			result = new ParseResult(new[]
+				{
+					new ParseAnalysis(new[]
+						{
+							new ParseMorph(catNForm, catNMsa),
+							new ParseMorph(sPlForm, sPlMsa)
+						}),
+					new ParseAnalysis(new[]
+						{
+							new ParseMorph(catVForm, catVMsa),
+							new ParseMorph(sAgrForm, sAgrMsa)
+						})
+				});
 			});
-
-			m_filer.ProcessParse(ParserPriority.Low, xmlFragment, 0);
+			m_filer.ProcessParse(catsTest, ParserPriority.Low, result);
 			ExecuteIdleQueue();
 			CheckAnalysisSize("catsTEST", 2, false);
 		}
@@ -282,52 +264,43 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		[Ignore("Is it ever possible for a parser to return more than one wordform parse?")]
 		public void TwoWordforms()
 		{
-			var snakeTEST = CheckAnalysisSize("snakeTEST", 0, true);
-			var bullTEST = CheckAnalysisSize("bullTEST", 0, true);
-			var ldb = Cache.LanguageProject.LexDbOA;
+			IWfiWordform snake = CheckAnalysisSize("snakeTEST", 0, true);
+			IWfiWordform bull = CheckAnalysisSize("bullTEST", 0, true);
+			ILexDb ldb = Cache.LanguageProject.LexDbOA;
 
-			string xmlFragment = null;
+			ParseResult result = null;
 			UndoableUnitOfWorkHelper.Do("Undo stuff", "Redo stuff", m_actionHandler, () =>
 			{
 				// Snake
-				var snakeN = m_entryFactory.Create();
-				var snakeNForm = m_stemAlloFactory.Create();
+				ILexEntry snakeN = m_entryFactory.Create();
+				IMoStemAllomorph snakeNForm = m_stemAlloFactory.Create();
 				snakeN.AlternateFormsOS.Add(snakeNForm);
 				snakeNForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("snakeNTEST", m_vernacularWS.Handle);
-				var snakeNMSA = m_stemMsaFactory.Create();
-				snakeN.MorphoSyntaxAnalysesOC.Add(snakeNMSA);
+				IMoStemMsa snakeNMsa = m_stemMsaFactory.Create();
+				snakeN.MorphoSyntaxAnalysesOC.Add(snakeNMsa);
 
 				// Bull
-				var bullN = m_entryFactory.Create();
-				var bullNForm = m_stemAlloFactory.Create();
+				ILexEntry bullN = m_entryFactory.Create();
+				IMoStemAllomorph bullNForm = m_stemAlloFactory.Create();
 				bullN.AlternateFormsOS.Add(bullNForm);
 				bullNForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("bullNTEST", m_vernacularWS.Handle);
-				var bullNMSA = m_stemMsaFactory.Create();
-				bullN.MorphoSyntaxAnalysesOC.Add(bullNMSA);
+				IMoStemMsa bullNMsa = m_stemMsaFactory.Create();
+				bullN.MorphoSyntaxAnalysesOC.Add(bullNMsa);
 
-				xmlFragment = "<Wordform DbRef='" + snakeTEST.Hvo + "' Form='snakeTEST'>" + Environment.NewLine
-									 + "<WfiAnalysis>" + Environment.NewLine
-									 + "<Morphs>" + Environment.NewLine
-									 + "<Morph>" + Environment.NewLine
-									 + "<MoForm DbRef='" + snakeNForm.Hvo + "' Label='snakeNTEST'/>" + Environment.NewLine
-									 + "<MSI DbRef='" + snakeNMSA.Hvo + "'/>" + Environment.NewLine
-									 + "</Morph>" + Environment.NewLine
-									 + "</Morphs>" + Environment.NewLine
-									 + "</WfiAnalysis>" + Environment.NewLine
-									 + "</Wordform>" + Environment.NewLine
-									 + "<Wordform DbRef='" + bullTEST.Hvo + "' Form='bullTEST'>" + Environment.NewLine
-									 + "<WfiAnalysis>" + Environment.NewLine
-									 + "<Morphs>" + Environment.NewLine
-									 + "<Morph>" + Environment.NewLine
-									 + "<MoForm DbRef='" + bullNForm.Hvo + "' Label='bullNTEST'/>" + Environment.NewLine
-									 + "<MSI DbRef='" + bullNMSA.Hvo + "'/>" + Environment.NewLine
-									 + "</Morph>" + Environment.NewLine
-									 + "</Morphs>" + Environment.NewLine
-									 + "</WfiAnalysis>" + Environment.NewLine
-									 + "</Wordform>" + Environment.NewLine;
+				result = new ParseResult(new[]
+					{
+						new ParseAnalysis(new[]
+							{
+								new ParseMorph(snakeNForm, snakeNMsa)
+							}),
+						new ParseAnalysis(new[]
+							{
+								new ParseMorph(bullNForm, bullNMsa)
+							})
+					});
 			});
 
-			m_filer.ProcessParse(ParserPriority.Low, xmlFragment, 0);
+			m_filer.ProcessParse(snake, ParserPriority.Low, result);
 			ExecuteIdleQueue();
 			CheckAnalysisSize("snakeTEST", 1, false);
 			CheckAnalysisSize("bullTEST", 1, false);
@@ -340,67 +313,64 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		[Test]
 		public void DuplicateAnalysesApproval()
 		{
-			var pigsTEST = CheckAnalysisSize("pigsTEST", 0, true);
+			IWfiWordform pigs = CheckAnalysisSize("pigsTEST", 0, true);
 
-			string xmlFragment = null;
+			ParseResult result = null;
 			IWfiAnalysis anal1 = null, anal2 = null, anal3 = null;
 			UndoableUnitOfWorkHelper.Do("Undo stuff", "Redo stuff", m_actionHandler, () =>
 			{
 				// Bear entry
-				var pigN = m_entryFactory.Create();
-				var pigNForm = m_stemAlloFactory.Create();
+				ILexEntry pigN = m_entryFactory.Create();
+				IMoStemAllomorph pigNForm = m_stemAlloFactory.Create();
 				pigN.AlternateFormsOS.Add(pigNForm);
 				pigNForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("pigNTEST", m_vernacularWS.Handle);
-				var pigNMSA = m_stemMsaFactory.Create();
-				pigN.MorphoSyntaxAnalysesOC.Add(pigNMSA);
-				var pigNLS = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
-				pigN.SensesOS.Add(pigNLS);
+				IMoStemMsa pigNMsa = m_stemMsaFactory.Create();
+				pigN.MorphoSyntaxAnalysesOC.Add(pigNMsa);
+				ILexSense pigNSense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				pigN.SensesOS.Add(pigNSense);
 
 				var analFactory = Cache.ServiceLocator.GetInstance<IWfiAnalysisFactory>();
 				var mbFactory = Cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>();
 				// First of two duplicate analyses
-				var anal = analFactory.Create();
-				pigsTEST.AnalysesOC.Add(anal);
+				IWfiAnalysis anal = analFactory.Create();
+				pigs.AnalysesOC.Add(anal);
 				anal1 = anal;
-				var mb = mbFactory.Create();
+				IWfiMorphBundle mb = mbFactory.Create();
 				anal.MorphBundlesOS.Add(mb);
 				mb.MorphRA = pigNForm;
-				mb.MsaRA = pigNMSA;
+				mb.MsaRA = pigNMsa;
 				CheckEvaluationSize(anal1, 0, true, "anal1");
 
 				// Non-duplicate, to make sure it does not get approved.
 				anal = analFactory.Create();
-				pigsTEST.AnalysesOC.Add(anal);
+				pigs.AnalysesOC.Add(anal);
 				anal2 = anal;
 				mb = mbFactory.Create();
 				anal.MorphBundlesOS.Add(mb);
-				mb.SenseRA = pigNLS;
+				mb.SenseRA = pigNSense;
 				CheckEvaluationSize(anal2, 0, true, "anal2");
 
 				// Second of two duplicate analyses
 				anal = analFactory.Create();
-				pigsTEST.AnalysesOC.Add(anal);
+				pigs.AnalysesOC.Add(anal);
 				anal3 = anal;
 				mb = mbFactory.Create();
 				anal.MorphBundlesOS.Add(mb);
 				mb.MorphRA = pigNForm;
-				mb.MsaRA = pigNMSA;
+				mb.MsaRA = pigNMsa;
 				CheckEvaluationSize(anal3, 0, true, "anal3");
 				CheckAnalysisSize("pigsTEST", 3, false);
 
-				xmlFragment = "<Wordform DbRef='" + pigsTEST.Hvo + "' Form='pigsTEST'>" + Environment.NewLine
-									 + "<WfiAnalysis>" + Environment.NewLine
-									 + "<Morphs>" + Environment.NewLine
-									 + "<Morph>" + Environment.NewLine
-									 + "<MoForm DbRef='" + pigNForm.Hvo + "' Label='pigNTEST'/>" + Environment.NewLine
-									 + "<MSI DbRef='" + pigNMSA.Hvo + "'/>" + Environment.NewLine
-									 + "</Morph>" + Environment.NewLine
-									 + "</Morphs>" + Environment.NewLine
-									 + "</WfiAnalysis>" + Environment.NewLine
-									 + "</Wordform>" + Environment.NewLine;
+				result = new ParseResult(new[]
+					{
+						new ParseAnalysis(new[]
+							{
+								new ParseMorph(pigNForm, pigNMsa)
+							})
+					});
 			});
 
-			m_filer.ProcessParse(ParserPriority.Low, xmlFragment, 0);
+			m_filer.ProcessParse(pigs, ParserPriority.Low, result);
 			ExecuteIdleQueue();
 			CheckEvaluationSize(anal1, 1, false, "anal1Hvo");
 			Assert.IsFalse(anal2.IsValidObject, "analysis 2 should end up with no evaluations and so be deleted");
@@ -410,46 +380,45 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		[Test]
 		public void HumanApprovedParserPreviouslyApprovedButNowRejectedAnalysisSurvives()
 		{
-			var theThreeLittlePigsTEST = CheckAnalysisSize("theThreeLittlePigsTEST", 0, true);
+			IWfiWordform theThreeLittlePigs = CheckAnalysisSize("theThreeLittlePigsTEST", 0, true);
 
-			string xmlFragment = null;
+			ParseResult result = null;
 			IWfiAnalysis anal = null;
 			UndoableUnitOfWorkHelper.Do("Undo stuff", "Redo stuff", m_actionHandler, () =>
 			{
 				// Pig entry
-				var pigN = m_entryFactory.Create();
-				var pigNForm = m_stemAlloFactory.Create();
+				ILexEntry pigN = m_entryFactory.Create();
+				IMoStemAllomorph pigNForm = m_stemAlloFactory.Create();
 				pigN.AlternateFormsOS.Add(pigNForm);
 				pigNForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("pigNTEST", m_vernacularWS.Handle);
-				var pigNMSA = m_stemMsaFactory.Create();
-				pigN.MorphoSyntaxAnalysesOC.Add(pigNMSA);
-				var pigNLS = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
-				pigN.SensesOS.Add(pigNLS);
+				IMoStemMsa pigNMsa = m_stemMsaFactory.Create();
+				pigN.MorphoSyntaxAnalysesOC.Add(pigNMsa);
+				ILexSense pigNSense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				pigN.SensesOS.Add(pigNSense);
 
 				// Human approved anal. Start with parser approved, but then it failed.
 				var analFactory = Cache.ServiceLocator.GetInstance<IWfiAnalysisFactory>();
 				var mbFactory = Cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>();
 				// Only analysis: human approved, previously parser approved but no longer produced.
 				anal = analFactory.Create();
-				theThreeLittlePigsTEST.AnalysesOC.Add(anal);
-				var mb = mbFactory.Create();
+				theThreeLittlePigs.AnalysesOC.Add(anal);
+				IWfiMorphBundle mb = mbFactory.Create();
 				anal.MorphBundlesOS.Add(mb);
 				mb.MorphRA = pigNForm;
-				mb.MsaRA = pigNMSA;
+				mb.MsaRA = pigNMsa;
 				HumanAgent.SetEvaluation(anal, Opinions.approves);
 				ParserAgent.SetEvaluation(anal, Opinions.approves);
 				CheckEvaluationSize(anal, 2, true, "anal");
 				CheckAnalysisSize("theThreeLittlePigsTEST", 1, true);
 
-				xmlFragment = "<Wordform DbRef='" + theThreeLittlePigsTEST.Hvo + "' Form='theThreeLittlePigsTEST'>" + Environment.NewLine
-									 + "</Wordform>" + Environment.NewLine;
+				result = new ParseResult(Enumerable.Empty<ParseAnalysis>());
 			});
 
 			using (var idleQueue = new IdleQueue())
-			using (var filer = new ParseFiler(Cache, task => { }, idleQueue, ParserAgent))
 			{
+				var filer = new ParseFiler(Cache, task => { }, idleQueue, ParserAgent);
 				idleQueue.IsPaused = true;
-				filer.ProcessParse(ParserPriority.Low, xmlFragment, 0);
+				filer.ProcessParse(theThreeLittlePigs, ParserPriority.Low, result);
 				foreach (var task in idleQueue)
 					task.Delegate(task.Parameter);
 				idleQueue.Clear();
@@ -461,46 +430,45 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		[Test]
 		public void HumanHasNoopinionParserHadApprovedButNoLongerApprovesRemovesAnalisys()
 		{
-			var threeLittlePigsTEST = CheckAnalysisSize("threeLittlePigsTEST", 0, true);
+			IWfiWordform threeLittlePigs = CheckAnalysisSize("threeLittlePigsTEST", 0, true);
 
-			string xmlFragment = null;
+			ParseResult result = null;
 			IWfiAnalysis anal = null;
 			UndoableUnitOfWorkHelper.Do("Undo stuff", "Redo stuff", m_actionHandler, () =>
 			{
 				// Pig entry
-				var pigN = m_entryFactory.Create();
-				var pigNForm = m_stemAlloFactory.Create();
+				ILexEntry pigN = m_entryFactory.Create();
+				IMoStemAllomorph pigNForm = m_stemAlloFactory.Create();
 				pigN.AlternateFormsOS.Add(pigNForm);
 				pigNForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("pigNTEST", m_vernacularWS.Handle);
-				var pigNMSA = m_stemMsaFactory.Create();
-				pigN.MorphoSyntaxAnalysesOC.Add(pigNMSA);
-				var pigNLS = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
-				pigN.SensesOS.Add(pigNLS);
+				IMoStemMsa pigNMsa = m_stemMsaFactory.Create();
+				pigN.MorphoSyntaxAnalysesOC.Add(pigNMsa);
+				ILexSense pigNSense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				pigN.SensesOS.Add(pigNSense);
 
 				// Human no-opinion anal. Parser had approved, but then it failed to produce it.
 				var analFactory = Cache.ServiceLocator.GetInstance<IWfiAnalysisFactory>();
 				var mbFactory = Cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>();
 				// Human no-opinion anal. Parser had approved, but then it failed to produce it.
 				anal = analFactory.Create();
-				threeLittlePigsTEST.AnalysesOC.Add(anal);
-				var mb = mbFactory.Create();
+				threeLittlePigs.AnalysesOC.Add(anal);
+				IWfiMorphBundle mb = mbFactory.Create();
 				anal.MorphBundlesOS.Add(mb);
 				mb.MorphRA = pigNForm;
-				mb.MsaRA = pigNMSA;
+				mb.MsaRA = pigNMsa;
 				HumanAgent.SetEvaluation(anal, Opinions.noopinion);
 				ParserAgent.SetEvaluation(anal, Opinions.approves);
 				CheckEvaluationSize(anal, 1, true, "anal");
 				CheckAnalysisSize("threeLittlePigsTEST", 1, true);
 
-				xmlFragment = "<Wordform DbRef='" + threeLittlePigsTEST.Hvo + "' Form='pthreeLittlePigsTEST'>" + Environment.NewLine
-									 + "</Wordform>" + Environment.NewLine;
+				result = new ParseResult(Enumerable.Empty<ParseAnalysis>());
 			});
 
 			using (var idleQueue = new IdleQueue())
-			using (var filer = new ParseFiler(Cache, task => { }, idleQueue, ParserAgent))
 			{
+				var filer = new ParseFiler(Cache, task => { }, idleQueue, ParserAgent);
 				idleQueue.IsPaused = true;
-				filer.ProcessParse(ParserPriority.Low, xmlFragment, 0);
+				filer.ProcessParse(threeLittlePigs, ParserPriority.Low, result);
 				foreach (var task in idleQueue)
 					task.Delegate(task.Parameter);
 				idleQueue.Clear();
@@ -512,46 +480,46 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		[Test]
 		public void LexEntryInflTypeTwoAnalyses()
 		{
-			var crebTEST = CheckAnalysisSize("crebTEST", 0, true);
-			var ldb = Cache.LanguageProject.LexDbOA;
+			IWfiWordform creb = CheckAnalysisSize("crebTEST", 0, true);
+			ILexDb ldb = Cache.LanguageProject.LexDbOA;
 
-			string xmlFragment = null;
+			ParseResult result = null;
 			UndoableUnitOfWorkHelper.Do("Undo stuff", "Redo stuff", m_actionHandler, () =>
 			{
 				// Verb creb which is a past tense, plural irregularly inflected form of 'believe' and also 'seek'
 				// with automatically generated null Tense slot and an automatically generated null Number slot filler
 				// (This is not supposed to be English, in case you're wondering....)
 
-				var pastTenseLexEntryInflType = m_lexEntryInflTypeFactory.Create();
-				var pluralTenseLexEntryInflType = m_lexEntryInflTypeFactory.Create();
+				ILexEntryInflType pastTenseLexEntryInflType = m_lexEntryInflTypeFactory.Create();
+				ILexEntryInflType pluralTenseLexEntryInflType = m_lexEntryInflTypeFactory.Create();
 				Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Add(pastTenseLexEntryInflType);
 				Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Add(pluralTenseLexEntryInflType);
 
-				var believeV = m_entryFactory.Create();
-				var believeVForm = m_stemAlloFactory.Create();
+				ILexEntry believeV = m_entryFactory.Create();
+				IMoStemAllomorph believeVForm = m_stemAlloFactory.Create();
 				believeV.AlternateFormsOS.Add(believeVForm);
 				believeVForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("believeVTEST", m_vernacularWS.Handle);
-				var believeVMSA = m_stemMsaFactory.Create();
-				believeV.MorphoSyntaxAnalysesOC.Add(believeVMSA);
-				var believeVSense = m_senseFactory.Create();
+				IMoStemMsa believeVMsa = m_stemMsaFactory.Create();
+				believeV.MorphoSyntaxAnalysesOC.Add(believeVMsa);
+				ILexSense believeVSense = m_senseFactory.Create();
 				believeV.SensesOS.Add(believeVSense);
-				believeVSense.MorphoSyntaxAnalysisRA = believeVMSA;
+				believeVSense.MorphoSyntaxAnalysisRA = believeVMsa;
 
-				var seekV = m_entryFactory.Create();
-				var seekVForm = m_stemAlloFactory.Create();
+				ILexEntry seekV = m_entryFactory.Create();
+				IMoStemAllomorph seekVForm = m_stemAlloFactory.Create();
 				believeV.AlternateFormsOS.Add(seekVForm);
 				seekVForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("seekVTEST", m_vernacularWS.Handle);
-				var seekVMSA = m_stemMsaFactory.Create();
-				seekV.MorphoSyntaxAnalysesOC.Add(seekVMSA);
-				var seekVSense = m_senseFactory.Create();
+				IMoStemMsa seekVMsa = m_stemMsaFactory.Create();
+				seekV.MorphoSyntaxAnalysesOC.Add(seekVMsa);
+				ILexSense seekVSense = m_senseFactory.Create();
 				seekV.SensesOS.Add(seekVSense);
-				seekVSense.MorphoSyntaxAnalysisRA = seekVMSA;
+				seekVSense.MorphoSyntaxAnalysisRA = seekVMsa;
 
-				var crebV = m_entryFactory.Create();
-				var crebVForm = m_stemAlloFactory.Create();
+				ILexEntry crebV = m_entryFactory.Create();
+				IMoStemAllomorph crebVForm = m_stemAlloFactory.Create();
 				crebV.AlternateFormsOS.Add(crebVForm);
 				crebVForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("crebVTEST", m_vernacularWS.Handle);
-				var lexEntryref = m_lexEntryRefFactory.Create();
+				ILexEntryRef lexEntryref = m_lexEntryRefFactory.Create();
 				crebV.EntryRefsOS.Add(lexEntryref);
 				lexEntryref.ComponentLexemesRS.Add(believeV);
 				lexEntryref.VariantEntryTypesRS.Add(pastTenseLexEntryInflType);
@@ -562,59 +530,39 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				lexEntryref.VariantEntryTypesRS.Add(pastTenseLexEntryInflType);
 				lexEntryref.VariantEntryTypesRS.Add(pluralTenseLexEntryInflType);
 
-				var nullPAST = m_entryFactory.Create();
-				var nullPASTForm = m_afxAlloFactory.Create();
-				nullPAST.AlternateFormsOS.Add(nullPASTForm);
-				nullPASTForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("nullPASTTEST", m_vernacularWS.Handle);
-				var nullPASTMSA = m_inflAffMsaFactory.Create();
-				nullPAST.MorphoSyntaxAnalysesOC.Add(nullPASTMSA);
+				ILexEntry nullPast = m_entryFactory.Create();
+				IMoAffixAllomorph nullPastForm = m_afxAlloFactory.Create();
+				nullPast.AlternateFormsOS.Add(nullPastForm);
+				nullPastForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("nullPASTTEST", m_vernacularWS.Handle);
+				IMoInflAffMsa nullPastMsa = m_inflAffMsaFactory.Create();
+				nullPast.MorphoSyntaxAnalysesOC.Add(nullPastMsa);
 
-				var nullPLURAL = m_entryFactory.Create();
-				var nullPLURALForm = m_afxAlloFactory.Create();
-				nullPLURAL.AlternateFormsOS.Add(nullPLURALForm);
-				nullPLURALForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("nullPLURALTEST", m_vernacularWS.Handle);
-				var nullPluralMSA = m_inflAffMsaFactory.Create();
-				nullPLURAL.MorphoSyntaxAnalysesOC.Add(nullPluralMSA);
+				ILexEntry nullPlural = m_entryFactory.Create();
+				IMoAffixAllomorph nullPluralForm = m_afxAlloFactory.Create();
+				nullPlural.AlternateFormsOS.Add(nullPluralForm);
+				nullPluralForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("nullPLURALTEST", m_vernacularWS.Handle);
+				IMoInflAffMsa nullPluralMsa = m_inflAffMsaFactory.Create();
+				nullPlural.MorphoSyntaxAnalysesOC.Add(nullPluralMsa);
 
-				xmlFragment = "<Wordform DbRef='" + crebTEST.Hvo + "' Form='crebTEST'>" + Environment.NewLine
-									 + "<WfiAnalysis>" + Environment.NewLine
-									 + "<Morphs>" + Environment.NewLine
-									 + "<Morph>" + Environment.NewLine
-									 + "<MoForm DbRef='" + crebVForm.Hvo + "' Label='crebVTEST'/>" + Environment.NewLine
-									 + "<MSI DbRef='" + crebV.Hvo + ".1'/>" + Environment.NewLine
-									 + "</Morph>" + Environment.NewLine
-									 + "<Morph>" + Environment.NewLine
-									 + "<MoForm DbRef='" + pastTenseLexEntryInflType.Hvo + "' Label='TEST'/>" + Environment.NewLine
-									 + "<MSI DbRef='" + pastTenseLexEntryInflType.Hvo + "'/>" + Environment.NewLine
-									 + "</Morph>" + Environment.NewLine
-									 + "<Morph>" + Environment.NewLine
-									 + "<MoForm DbRef='" + pluralTenseLexEntryInflType.Hvo + "' Label='TEST'/>" + Environment.NewLine
-									 + "<MSI DbRef='" + pluralTenseLexEntryInflType.Hvo + "'/>" + Environment.NewLine
-									 + "</Morph>" + Environment.NewLine
-									 + "</Morphs>" + Environment.NewLine
-									 + "</WfiAnalysis>" + Environment.NewLine
-									 + "<WfiAnalysis>" + Environment.NewLine
-									 + "<Morphs>" + Environment.NewLine
-									 + "<Morph>" + Environment.NewLine
-									 + "<MoForm DbRef='" + crebVForm.Hvo + "' Label='crebVTEST'/>" + Environment.NewLine
-									 + "<MSI DbRef='" + crebV.Hvo + "'/>" + Environment.NewLine
-									 + "</Morph>" + Environment.NewLine
-									 + "<Morph>" + Environment.NewLine
-									 + "<MoForm DbRef='" + pastTenseLexEntryInflType.Hvo + "' Label='TEST'/>" + Environment.NewLine
-									 + "<MSI DbRef='" + pastTenseLexEntryInflType.Hvo + "'/>" + Environment.NewLine
-									 + "</Morph>" + Environment.NewLine
-									 + "<Morph>" + Environment.NewLine
-									 + "<MoForm DbRef='" + pluralTenseLexEntryInflType.Hvo + "' Label='TEST'/>" + Environment.NewLine
-									 + "<MSI DbRef='" + pluralTenseLexEntryInflType.Hvo + "'/>" + Environment.NewLine
-									 + "</Morph>" + Environment.NewLine
-									 + "</Morphs>" + Environment.NewLine
-									 + "</WfiAnalysis>" + Environment.NewLine + "</Wordform>" + Environment.NewLine;
+				result = new ParseResult(new[]
+					{
+						new ParseAnalysis(new[]
+							{
+								new ParseMorph(crebVForm, MorphServices.GetMainOrFirstSenseOfVariant(crebV.EntryRefsOS[1]).MorphoSyntaxAnalysisRA,
+									(ILexEntryInflType) crebV.EntryRefsOS[1].VariantEntryTypesRS[0])
+							}),
+						new ParseAnalysis(new[]
+							{
+								new ParseMorph(crebVForm, MorphServices.GetMainOrFirstSenseOfVariant(crebV.EntryRefsOS[0]).MorphoSyntaxAnalysisRA,
+									(ILexEntryInflType) crebV.EntryRefsOS[0].VariantEntryTypesRS[0])
+							})
+					});
 			});
 
-			m_filer.ProcessParse(ParserPriority.Low, xmlFragment, 0);
+			m_filer.ProcessParse(creb, ParserPriority.Low, result);
 			ExecuteIdleQueue();
 			CheckAnalysisSize("crebTEST", 2, false);
-			foreach (var analysis in crebTEST.AnalysesOC)
+			foreach (var analysis in creb.AnalysesOC)
 			{
 				Assert.AreEqual(1, analysis.MorphBundlesOS.Count, "Expected only 1 morph in the analysis");
 				var morphBundle = analysis.MorphBundlesOS.ElementAt(0);
@@ -627,76 +575,67 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		[Test]
 		public void LexEntryInflTypeAnalysisWithNullForSlotFiller()
 		{
-			var brubsTEST = CheckAnalysisSize("brubsTEST", 0, true);
-			var ldb = Cache.LanguageProject.LexDbOA;
+			IWfiWordform brubs = CheckAnalysisSize("brubsTEST", 0, true);
+			ILexDb ldb = Cache.LanguageProject.LexDbOA;
 
-			string xmlFragment = null;
+			ParseResult result = null;
 			UndoableUnitOfWorkHelper.Do("Undo stuff", "Redo stuff", m_actionHandler, () =>
 			{
 				// Verb brub which is a present tense irregularly inflected form of 'believe'
 				// with automatically generated null Tense slot and an -s Plural Number slot filler
 				// (This is not supposed to be English, in case you're wondering....)
 
-				var presentTenseLexEntryInflType = m_lexEntryInflTypeFactory.Create();
+				ILexEntryInflType presentTenseLexEntryInflType = m_lexEntryInflTypeFactory.Create();
 				Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Add(presentTenseLexEntryInflType);
 
-				var believeV = m_entryFactory.Create();
-				var believeVForm = m_stemAlloFactory.Create();
+				ILexEntry believeV = m_entryFactory.Create();
+				IMoStemAllomorph believeVForm = m_stemAlloFactory.Create();
 				believeV.AlternateFormsOS.Add(believeVForm);
 				believeVForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("believeVTEST", m_vernacularWS.Handle);
-				var believeVMSA = m_stemMsaFactory.Create();
-				believeV.MorphoSyntaxAnalysesOC.Add(believeVMSA);
-				var believeVSense = m_senseFactory.Create();
+				IMoStemMsa believeVMsa = m_stemMsaFactory.Create();
+				believeV.MorphoSyntaxAnalysesOC.Add(believeVMsa);
+				ILexSense believeVSense = m_senseFactory.Create();
 				believeV.SensesOS.Add(believeVSense);
-				believeVSense.MorphoSyntaxAnalysisRA = believeVMSA;
+				believeVSense.MorphoSyntaxAnalysisRA = believeVMsa;
 
-				var brubV = m_entryFactory.Create();
-				var brubVForm = m_stemAlloFactory.Create();
+				ILexEntry brubV = m_entryFactory.Create();
+				IMoStemAllomorph brubVForm = m_stemAlloFactory.Create();
 				brubV.AlternateFormsOS.Add(brubVForm);
 				brubVForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("brubVTEST", m_vernacularWS.Handle);
-				var lexEntryref = m_lexEntryRefFactory.Create();
+				ILexEntryRef lexEntryref = m_lexEntryRefFactory.Create();
 				brubV.EntryRefsOS.Add(lexEntryref);
 				lexEntryref.ComponentLexemesRS.Add(believeV);
 				lexEntryref.VariantEntryTypesRS.Add(presentTenseLexEntryInflType);
 
-				var nullPRESENT = m_entryFactory.Create();
-				var nullPRESENTForm = m_afxAlloFactory.Create();
-				nullPRESENT.AlternateFormsOS.Add(nullPRESENTForm);
-				nullPRESENTForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("nullPRESENTTEST", m_vernacularWS.Handle);
-				var nullPRESENTMSA = m_inflAffMsaFactory.Create();
-				nullPRESENT.MorphoSyntaxAnalysesOC.Add(nullPRESENTMSA);
+				ILexEntry nullPresent = m_entryFactory.Create();
+				IMoAffixAllomorph nullPresentForm = m_afxAlloFactory.Create();
+				nullPresent.AlternateFormsOS.Add(nullPresentForm);
+				nullPresentForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("nullPRESENTTEST", m_vernacularWS.Handle);
+				IMoInflAffMsa nullPresentMsa = m_inflAffMsaFactory.Create();
+				nullPresent.MorphoSyntaxAnalysesOC.Add(nullPresentMsa);
 
-				var sPLURAL = m_entryFactory.Create();
-				var sPLURALForm = m_afxAlloFactory.Create();
-				sPLURAL.AlternateFormsOS.Add(sPLURALForm);
-				sPLURALForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("sPLURALTEST", m_vernacularWS.Handle);
-				var sPluralMSA = m_inflAffMsaFactory.Create();
-				sPLURAL.MorphoSyntaxAnalysesOC.Add(sPluralMSA);
+				ILexEntry sPlural = m_entryFactory.Create();
+				IMoAffixAllomorph sPluralForm = m_afxAlloFactory.Create();
+				sPlural.AlternateFormsOS.Add(sPluralForm);
+				sPluralForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("sPLURALTEST", m_vernacularWS.Handle);
+				IMoInflAffMsa sPluralMsa = m_inflAffMsaFactory.Create();
+				sPlural.MorphoSyntaxAnalysesOC.Add(sPluralMsa);
 
-				xmlFragment = "<Wordform DbRef='" + brubsTEST.Hvo + "' Form='brubsTEST'>" + Environment.NewLine
-									 + "<WfiAnalysis>" + Environment.NewLine
-									 + "<Morphs>" + Environment.NewLine
-									 + "<Morph>" + Environment.NewLine
-									 + "<MoForm DbRef='" + brubVForm.Hvo + "' Label='brubVTEST'/>" + Environment.NewLine
-									 + "<MSI DbRef='" + brubV.Hvo + "'/>" + Environment.NewLine
-									 + "</Morph>" + Environment.NewLine
-									 + "<Morph>" + Environment.NewLine
-									 + "<MoForm DbRef='" + presentTenseLexEntryInflType.Hvo + "' Label='TEST'/>" + Environment.NewLine
-									 + "<MSI DbRef='" + presentTenseLexEntryInflType.Hvo + "'/>" + Environment.NewLine
-									 + "</Morph>" + Environment.NewLine
-									 + "<Morph>" + Environment.NewLine
-									 + "<MoForm DbRef='" + sPLURALForm.Hvo + "' Label='sPLURALTEST'/>" + Environment.NewLine
-									 + "<MSI DbRef='" + sPluralMSA.Hvo + "'/>" + Environment.NewLine
-									 + "</Morph>" + Environment.NewLine
-									 + "</Morphs>" + Environment.NewLine
-									 + "</WfiAnalysis>" + Environment.NewLine
-									 + "</Wordform>" + Environment.NewLine;
+				result = new ParseResult(new[]
+					{
+						new ParseAnalysis(new[]
+							{
+								new ParseMorph(brubVForm, MorphServices.GetMainOrFirstSenseOfVariant(brubV.EntryRefsOS[0]).MorphoSyntaxAnalysisRA,
+									(ILexEntryInflType) brubV.EntryRefsOS[0].VariantEntryTypesRS[0]),
+								new ParseMorph(sPluralForm, sPluralMsa)
+							})
+					});
 			});
 
-			m_filer.ProcessParse(ParserPriority.Low, xmlFragment, 0);
+			m_filer.ProcessParse(brubs, ParserPriority.Low, result);
 			ExecuteIdleQueue();
 			CheckAnalysisSize("brubsTEST", 1, false);
-			var analysis = brubsTEST.AnalysesOC.ElementAt(0);
+			var analysis = brubs.AnalysesOC.ElementAt(0);
 			Assert.AreEqual(2, analysis.MorphBundlesOS.Count, "Expected only 2 morphs in the analysis");
 			var morphBundle = analysis.MorphBundlesOS.ElementAt(0);
 			Assert.IsNotNull(morphBundle.Form, "First bundle: form is not null");

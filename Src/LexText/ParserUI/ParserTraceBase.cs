@@ -1,17 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Xml;
-using System.Xml.XPath;
-using System.Xml.Xsl;
-
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.WordWorks.Parser;
 using SIL.Utils;
 using XCore;
 
@@ -266,7 +261,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				string sObjHvo = attr.Value;
 				// Irregulary inflected forms can have a combination MSA hvo: the LexEntry hvo, a period, and an index to the LexEntryRef
-				var indexOfPeriod = ParseFiler.IndexOfPeriodInMsaHvo(ref sObjHvo);
+				var indexOfPeriod = IndexOfPeriodInMsaHvo(ref sObjHvo);
 				ICmObject obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(Convert.ToInt32(sObjHvo));
 				switch (obj.GetType().Name)
 				{
@@ -295,7 +290,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						var entry = obj as ILexEntry;
 						if (entry.EntryRefsOS.Count > 0)
 						{
-							var index = ParseFiler.IndexOfLexEntryRef(attr.Value, indexOfPeriod);
+							var index = IndexOfLexEntryRef(attr.Value, indexOfPeriod);
 							var lexEntryRef = entry.EntryRefsOS[index];
 							var sense = FDO.DomainServices.MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
 							stemMsa = sense.MorphoSyntaxAnalysisRA as IMoStemMsa;
@@ -310,6 +305,28 @@ namespace SIL.FieldWorks.LexText.Controls
 						break;
 				}
 			}
+		}
+
+		protected static int IndexOfLexEntryRef(string sHvo, int indexOfPeriod)
+		{
+			int index = 0;
+			if (indexOfPeriod >= 0)
+			{
+				string sIndex = sHvo.Substring(indexOfPeriod+1);
+				index = Convert.ToInt32(sIndex);
+			}
+			return index;
+		}
+
+		protected static int IndexOfPeriodInMsaHvo(ref string sObjHvo)
+		{
+			// Irregulary inflected forms can a combination MSA hvo: the LexEntry hvo, a period, and an index to the LexEntryRef
+			int indexOfPeriod = sObjHvo.IndexOf('.');
+			if (indexOfPeriod >= 0)
+			{
+				sObjHvo = sObjHvo.Substring(0, indexOfPeriod);
+			}
+			return indexOfPeriod;
 		}
 
 		protected void CreateInflMsaForLexEntryInflType(XmlDocument doc, XmlNode node, ILexEntryInflType lexEntryInflType)

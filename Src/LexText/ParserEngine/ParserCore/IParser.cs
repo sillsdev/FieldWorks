@@ -1,13 +1,15 @@
-﻿using System.Collections;
-
-namespace SIL.FieldWorks.WordWorks.Parser
+﻿namespace SIL.FieldWorks.WordWorks.Parser
 {
-	interface IParser
+	public interface IParser
 	{
 		void Initialize();
 
+		void Reset();
+
 		ParseResult ParseWord(string word);
 
-		string TraceWord(string word);
+		string ParseWordXml(string word);
+
+		string TraceWordXml(string word, string selectTraceMorphs);
 	}
 }

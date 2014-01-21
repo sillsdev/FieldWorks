@@ -1,18 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
-using System.IO;
 using System.Text;
 using System.Xml;
-using System.Xml.XPath;
-using System.Xml.Xsl;
-
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.WordWorks.Parser;
 using SIL.Utils;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using XCore;
 
@@ -171,7 +163,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						else
 							msaid = node.SelectSingleNode("MSI/@DbRef");
 						string sMsaHvo = msaid.InnerText;
-						var indexOfPeriod = ParseFiler.IndexOfPeriodInMsaHvo(ref sMsaHvo);
+						var indexOfPeriod = IndexOfPeriodInMsaHvo(ref sMsaHvo);
 						int hvoMsa = Convert.ToInt32(sMsaHvo);
 						var msaObj = m_cache.ServiceLocator.GetObject(hvoMsa);
 						if (msaObj.ClassID == LexEntryTags.kClassId)
@@ -179,7 +171,7 @@ namespace SIL.FieldWorks.LexText.Controls
 							var entry = msaObj as ILexEntry;
 							if (entry.EntryRefsOS.Count > 0)
 							{
-								var index = ParseFiler.IndexOfLexEntryRef(msaid.Value, indexOfPeriod); // the value of the int after the period
+								var index = IndexOfLexEntryRef(msaid.Value, indexOfPeriod); // the value of the int after the period
 								var lexEntryRef = entry.EntryRefsOS[index];
 								ITsIncStrBldr sbGlossPrepend;
 								ITsIncStrBldr sbGlossAppend;
