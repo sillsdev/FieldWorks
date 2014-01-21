@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using XAmpleManagedWrapper;
@@ -39,7 +36,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			XmlDocument fxtResult = m_retriever.ModelDom;
 			XmlDocument gafawsFxtResult = m_retriever.TemplateDom;
-			string projectName = ConvertNameToUseAnsiCharacters(m_cache.ProjectId.Name);
+			string projectName = ParserHelper.ConvertNameToUseAnsiCharacters(m_cache.ProjectId.Name);
 
 			var transformer = new M3ToXAmpleTransformer(projectName, m_appInstallDir);
 			// PrepareTemplatesForXAmpleFiles adds orderclass elements to MoInflAffixSlot elements
@@ -110,7 +107,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					foreach (XElement morphElem in analysisElem.Descendants("Morph"))
 					{
 						ParseMorph morph;
-						if (!TryCreateParseMorph(morphElem, out morph))
+						if (!ParserHelper.TryCreateParseMorph(m_cache, morphElem, out morph))
 						{
 							skip = true;
 							break;
@@ -128,86 +125,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return result;
 		}
 
-		/// <summary>
-		/// Creates a single ParseMorph object
-		/// Handles special cases where the MoForm hvo and/or MSI hvos are
-		/// not actual MoForm or MSA objects.
-		/// </summary>
-		/// <param name="morphElem">A Morph element returned by one of the automated parsers</param>
-		/// <param name="morph">a new ParseMorph object or null if the morpheme should be skipped</param>
-		/// <returns></returns>
-		private bool TryCreateParseMorph(XElement morphElem, out ParseMorph morph)
-		{
-			// Normally, the hvo for MoForm is a MoForm and the hvo for MSI is an MSA
-			// There are four exceptions, though, when an irregularly inflected form is involved:
-			// 1. <MoForm DbRef="x"... and x is an hvo for a LexEntryInflType.
-			//       This is one of the null allomorphs we create when building the
-			//       input for the parser in order to still get the Word Grammar to have something in any
-			//       required slots in affix templates.  The parser filer can ignore these.
-			// 2. <MSI DbRef="y"... and y is an hvo for a LexEntryInflType.
-			//       This is one of the null allomorphs we create when building the
-			//       input for the parser in order to still get the Word Grammar to have something in any
-			//       required slots in affix templates.  The parser filer can ignore these.
-			// 3. <MSI DbRef="y"... and y is an hvo for a LexEntry.
-			//       The LexEntry is an irregularly inflected form for the first set of LexEntryRefs.
-			// 4. <MSI DbRef="y"... and y is an hvo for a LexEntry followed by a period and an index digit.
-			//       The LexEntry is an irregularly inflected form and the (non-zero) index indicates
-			//       which set of LexEntryRefs it is for.
-			XElement formElement = morphElem.Element("MoForm");
-			Debug.Assert(formElement != null);
-			var hvoForm = (int) formElement.Attribute("DbRef");
-			ICmObject objForm;
-			if (!m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(hvoForm, out objForm))
-			{
-				morph = null;
-				return false;
-			}
-			var form = objForm as IMoForm;
-			if (form == null)
-			{
-				morph = null;
-				return true;
-			}
-
-			// Irregulary inflected forms can have a combination MSA hvo: the LexEntry hvo, a period, and an index to the LexEntryRef
-			XElement msiElement = morphElem.Element("MSI");
-			Debug.Assert(msiElement != null);
-			var msaHvoStr = (string) msiElement.Attribute("DbRef");
-			string[] msaHvoParts = msaHvoStr.Split('.');
-			ICmObject objMsa;
-			if (!m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(int.Parse(msaHvoParts[0]), out objMsa))
-			{
-				morph = null;
-				return false;
-			}
-			var msa = objMsa as IMoMorphSynAnalysis;
-			if (msa != null)
-			{
-				morph = new ParseMorph(form, msa);
-				return true;
-			}
-
-			var msaAsLexEntry = objMsa as ILexEntry;
-			if (msaAsLexEntry != null)
-			{
-				// is an irregularly inflected form
-				// get the MoStemMsa of its variant
-				if (msaAsLexEntry.EntryRefsOS.Count > 0)
-				{
-					int index = msaHvoParts.Length == 2 ? int.Parse(msaHvoParts[1]) : 0;
-					ILexEntryRef lexEntryRef = msaAsLexEntry.EntryRefsOS[index];
-					ILexSense sense = MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
-					var inflType = (ILexEntryInflType) lexEntryRef.VariantEntryTypesRS[0];
-					morph = new ParseMorph(form, sense.MorphoSyntaxAnalysisRA, inflType);
-					return true;
-				}
-			}
-
-			// if it is anything else, we ignore it
-			morph = null;
-			return true;
-		}
-
 		public string ParseWordXml(string word)
 		{
 			CheckDisposed();
@@ -220,32 +137,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			CheckDisposed();
 
 			return m_xample.TraceWord(word, selectTraceMorphs);
-		}
-
-		/// <summary>
-		/// Convert any characters in the name which are higher than 0x00FF to hex.
-		/// Neither XAmple nor PC-PATR can read a file name containing letters above 0x00FF.
-		/// </summary>
-		/// <param name="originalName">The original name to be converted</param>
-		/// <returns>Converted name</returns>
-		private static string ConvertNameToUseAnsiCharacters(string originalName)
-		{
-			var sb = new StringBuilder();
-			char[] letters = originalName.ToCharArray();
-			foreach (var letter in letters)
-			{
-				int value = Convert.ToInt32(letter);
-				if (value > 255)
-				{
-					string hex = value.ToString("X4");
-					sb.Append(hex);
-				}
-				else
-				{
-					sb.Append(letter);
-				}
-			}
-			return sb.ToString();
 		}
 
 		protected override void DisposeManagedResources()

@@ -70,7 +70,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					agent = cache.ServiceLocator.GetInstance<ICmAgentRepository>().GetObject(CmAgentTags.kguidAgentXAmpleParser);
 					break;
 				case "HC":
-					// create HCParser here
+					m_parser = new HCParser(cache, appInstallDir);
 					agent = cache.ServiceLocator.GetInstance<ICmAgentRepository>().GetObject(CmAgentTags.kguidAgentHermitCrabParser);
 					break;
 				default:

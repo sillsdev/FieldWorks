@@ -19,6 +19,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Diagnostics;
 using SIL.FieldWorks.FDO;
@@ -62,8 +63,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		#region Data members
 
+		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+			Justification = "m_cache is a reference and is disposed in a parent class")]
 		private readonly FdoCache m_cache;
 		private readonly Action<TaskReport> m_taskUpdateHandler;
+		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+			Justification = "m_idleQueue is a reference and is disposed in a parent class")]
 		private readonly IdleQueue m_idleQueue;
 		private readonly ICmAgent m_parserAgent;
 		private readonly Queue<WordformUpdateWork> m_workQueue;
