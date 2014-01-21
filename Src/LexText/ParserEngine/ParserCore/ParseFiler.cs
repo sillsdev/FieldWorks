@@ -80,12 +80,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private readonly ICmBaseAnnotationFactory m_baseAnnotationFactory;
 		private readonly ICmAgent m_userAgent;
 
-		/// <summary>
-		/// Set of analyses which had a recorded evaluation by this parser agent when the engine was loaded.
-		/// These evaluations are considered stale until we set a new evaluation, which removes that item from the set.
-		/// </summary>
-		private readonly HashSet<IWfiAnalysis> m_analysesWithOldEvaluation;
-
 		#endregion Data members
 
 		#region Properties
@@ -121,10 +115,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_baseAnnotationRepository = servLoc.GetInstance<ICmBaseAnnotationRepository>();
 			m_baseAnnotationFactory = servLoc.GetInstance<ICmBaseAnnotationFactory>();
 			m_userAgent = m_cache.LanguageProject.DefaultUserAgent;
-
-			m_analysesWithOldEvaluation = new HashSet<IWfiAnalysis>(
-				m_cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().AllInstances().Where(
-				analysis => analysis.GetAgentOpinion(m_parserAgent) != Opinions.noopinion));
 		}
 
 		#endregion Construction and Disposal
@@ -192,6 +182,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						foreach (ICmBaseAnnotation problem in problemAnnotations)
 							m_cache.DomainDataByFlid.DeleteObj(problem.Hvo);
 
+						foreach (IWfiAnalysis analysis in work.Wordform.AnalysesOC)
+							m_parserAgent.SetEvaluation(analysis, Opinions.noopinion);
+
 						if (work.ParseResult.ErrorMessage != null)
 						{
 							// there was an error, so create a problem annotation
@@ -201,22 +194,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							problemReport.SourceRA = m_parserAgent;
 							problemReport.AnnotationTypeRA = null;
 							problemReport.BeginObjectRA = work.Wordform;
-							FinishWordForm(work.Wordform);
+							SetUnsuccessfulParseEvals(work.Wordform, Opinions.noopinion);
 						}
 						else
 						{
 							// update the wordform
 							foreach (ParseAnalysis analysis in work.ParseResult.Analyses)
 								ProcessAnalysis(work.Wordform, analysis);
-							FinishWordForm(work.Wordform);
-							foreach (IWfiAnalysis analysis in work.Wordform.AnalysesOC.Where(anal => anal.GetAgentOpinion(m_parserAgent) != Opinions.approves))
-							{
-								m_analysesWithOldEvaluation.Remove(analysis);
-								if (analysis.GetAgentOpinion(m_userAgent) == Opinions.noopinion)
-									analysis.Delete();
-								else
-									m_parserAgent.SetEvaluation(analysis, Opinions.disapproves);
-							}
+							SetUnsuccessfulParseEvals(work.Wordform, Opinions.disapproves);
 						}
 						work.Wordform.Checksum = work.ParseResult.GetHashCode();
 					}
@@ -300,46 +285,29 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 			// (Re)set evaluations.
 			foreach (IWfiAnalysis matchingAnal in matches)
-			{
 				m_parserAgent.SetEvaluation(matchingAnal, Opinions.approves);
-				m_analysesWithOldEvaluation.Remove(matchingAnal);
-			}
 		}
 
 		#region Wordform Preparation methods
 
-		private void FinishWordForm(IWfiWordform wordform)
+		private void SetUnsuccessfulParseEvals(IWfiWordform wordform, Opinions opinion)
 		{
-			// the following is a port of the SP RemoveUnusedAnalyses
-
-			// Delete stale evaluations on analyses. The only non-stale analyses are new, positive ones, so this
-			// makes all analyses that are not known to be correct no-opinion. Later any of them that survive at all
-			// will be changed to failed (if there was no error in parsing the wordform).
-			foreach (IWfiAnalysis analysis in wordform.AnalysesOC.Where(a => m_analysesWithOldEvaluation.Contains(a)))
-				analysis.SetAgentOpinion(m_parserAgent, Opinions.noopinion);
-
-			// Make sure all analyses have human evaluations, if they,
-			// or glosses they own, are referred to by an ISegment.
-			//var annLookup = m_baseAnnotationRepository.AllInstances()
-			//	.Where(ann => ann.AnnotationTypeRA != null && ann.AnnotationTypeRA.Guid == CmAnnotationDefnTags.kguidAnnWordformInContext)
-			//	.ToLookup(ann => ann.InstanceOfRA);
 			var segmentAnalyses = new HashSet<IAnalysis>();
 			foreach (ISegment seg in wordform.OccurrencesBag)
-				segmentAnalyses.UnionWith(seg.AnalysesRS.ToArray());
-			IEnumerable<IWfiAnalysis> analyses =
-				from anal in wordform.AnalysesOC
-				where segmentAnalyses.Contains(anal) || anal.MeaningsOC.Any(segmentAnalyses.Contains)
-				select anal;
-			foreach (IWfiAnalysis analysis in analyses)
-				m_userAgent.SetEvaluation(analysis, Opinions.approves);
-
-			// Delete orphan analyses, which have no evaluations (Review JohnT: should we also check for no owned WfiGlosses?)
-			IEnumerable<IWfiAnalysis> orphanedAnalyses =
-				from anal in wordform.AnalysesOC
-				where anal.EvaluationsRC.Count == 0
-				select anal;
-			foreach (IWfiAnalysis analysis in orphanedAnalyses)
-				m_cache.DomainDataByFlid.DeleteObj(analysis.Hvo);
+				segmentAnalyses.UnionWith(seg.AnalysesRS);
+			foreach (IWfiAnalysis analysis in wordform.AnalysesOC)
+			{
+				// ensure that used analyses have a user evaluation
+				if (segmentAnalyses.Contains(analysis) || analysis.MeaningsOC.Any(gloss => segmentAnalyses.Contains(gloss)))
+					m_userAgent.SetEvaluation(analysis, Opinions.approves);
+				if (analysis.GetAgentOpinion(m_parserAgent) == Opinions.noopinion)
+				{
+					if (analysis.GetAgentOpinion(m_userAgent) == Opinions.noopinion)
+						analysis.Delete();
+					else if (opinion != Opinions.noopinion)
+						m_parserAgent.SetEvaluation(analysis, opinion);
+				}
+			}
 		}
 
 		#endregion Wordform Preparation methods

@@ -14,3 +14,5 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTitle("FieldWorks Morphological Parser")]
 
 [assembly: System.Runtime.InteropServices.ComVisible(false)]
+
+[assembly: InternalsVisibleTo("ParserCoreTests")]

@@ -71,22 +71,22 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		protected IWfiWordform CheckAnnotationSize(string form, int expectedSize, bool isStarting)
 		{
-			var servLoc = Cache.ServiceLocator;
-			var wf = FindOrCreateWordform(form);
-			var actualSize =
+			IFdoServiceLocator servLoc = Cache.ServiceLocator;
+			IWfiWordform wf = FindOrCreateWordform(form);
+			int actualSize =
 				(from ann in servLoc.GetInstance<ICmBaseAnnotationRepository>().AllInstances()
 				 where ann.BeginObjectRA == wf
 				 select ann).Count();
 				// wf.RefsFrom_CmBaseAnnotation_BeginObject.Count;
-			var msg = String.Format("Wrong number of {0} annotations for: {1}", isStarting ? "starting" : "ending", form);
+			string msg = String.Format("Wrong number of {0} annotations for: {1}", isStarting ? "starting" : "ending", form);
 			Assert.AreEqual(expectedSize, actualSize, msg);
 			return wf;
 		}
 
 		private IWfiWordform FindOrCreateWordform(string form)
 		{
-			var servLoc = Cache.ServiceLocator;
-			var wf = servLoc.GetInstance<IWfiWordformRepository>().GetMatchingWordform(m_vernacularWS.Handle, form);
+			IFdoServiceLocator servLoc = Cache.ServiceLocator;
+			IWfiWordform wf = servLoc.GetInstance<IWfiWordformRepository>().GetMatchingWordform(m_vernacularWS.Handle, form);
 			if (wf == null)
 			{
 				UndoableUnitOfWorkHelper.Do("Undo create", "Redo create", m_actionHandler,
@@ -97,17 +97,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		protected IWfiWordform CheckAnalysisSize(string form, int expectedSize, bool isStarting)
 		{
-			var wf = FindOrCreateWordform(form);
-			var actualSize = wf.AnalysesOC.Count;
-			var msg = String.Format("Wrong number of {0} analyses for: {1}", isStarting ? "starting" : "ending", form);
+			IWfiWordform wf = FindOrCreateWordform(form);
+			int actualSize = wf.AnalysesOC.Count;
+			string msg = String.Format("Wrong number of {0} analyses for: {1}", isStarting ? "starting" : "ending", form);
 			Assert.AreEqual(expectedSize, actualSize, msg);
 			return wf;
 		}
 
 		protected void CheckEvaluationSize(IWfiAnalysis analysis, int expectedSize, bool isStarting, string additionalMessage)
 		{
-			var actualSize = analysis.EvaluationsRC.Count;
-			var msg = String.Format("Wrong number of {0} evaluations for analysis: {1} ({2})", isStarting ? "starting" : "ending", analysis.Hvo, additionalMessage);
+			int actualSize = analysis.EvaluationsRC.Count;
+			string msg = String.Format("Wrong number of {0} evaluations for analysis: {1} ({2})", isStarting ? "starting" : "ending", analysis.Hvo, additionalMessage);
 			Assert.AreEqual(expectedSize, actualSize, msg);
 		}
 
@@ -414,21 +414,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				result = new ParseResult(Enumerable.Empty<ParseAnalysis>());
 			});
 
-			using (var idleQueue = new IdleQueue())
-			{
-				var filer = new ParseFiler(Cache, task => { }, idleQueue, ParserAgent);
-				idleQueue.IsPaused = true;
-				filer.ProcessParse(theThreeLittlePigs, ParserPriority.Low, result);
-				foreach (var task in idleQueue)
-					task.Delegate(task.Parameter);
-				idleQueue.Clear();
-			}
-			CheckEvaluationSize(anal, 1, false, "analHvo");
+			m_filer.ProcessParse(theThreeLittlePigs, ParserPriority.Low, result);
+			ExecuteIdleQueue();
+			CheckEvaluationSize(anal, 2, false, "analHvo");
 			Assert.IsTrue(anal.IsValidObject, "analysis should end up with one evaluation and not be deleted");
 		}
 
 		[Test]
-		public void HumanHasNoopinionParserHadApprovedButNoLongerApprovesRemovesAnalisys()
+		public void HumanHasNoopinionParserHadApprovedButNoLongerApprovesRemovesAnalysis()
 		{
 			IWfiWordform threeLittlePigs = CheckAnalysisSize("threeLittlePigsTEST", 0, true);
 
@@ -464,16 +457,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				result = new ParseResult(Enumerable.Empty<ParseAnalysis>());
 			});
 
-			using (var idleQueue = new IdleQueue())
-			{
-				var filer = new ParseFiler(Cache, task => { }, idleQueue, ParserAgent);
-				idleQueue.IsPaused = true;
-				filer.ProcessParse(threeLittlePigs, ParserPriority.Low, result);
-				foreach (var task in idleQueue)
-					task.Delegate(task.Parameter);
-				idleQueue.Clear();
-			}
-			//CheckEvaluationSize(anal, 0, false, "analHvo");
+			m_filer.ProcessParse(threeLittlePigs, ParserPriority.Low, result);
+			ExecuteIdleQueue();
 			Assert.IsFalse(anal.IsValidObject, "analysis should end up with no evaluations and be deleted.");
 		}
 

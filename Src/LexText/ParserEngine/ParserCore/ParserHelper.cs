@@ -17,7 +17,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
-	public class ParserHelper
+	internal class ParserHelper
 	{
 		public static bool TryCreateParseMorph(FdoCache cache, XElement morphElem, out ParseMorph morph)
 		{
