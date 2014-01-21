@@ -241,9 +241,10 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (ShouldAbort())
 				return;
-			// The following fixes LT-10293.
+			// if the firstSearchStr is null we can't get its writing system
+			// if the cache is null the writing system of the search is now meaningless (the dialog for the results is likely gone)
 			RecordSorter sorter = null;
-			if (firstSearchStr != null)
+			if (firstSearchStr != null && m_cache != null)
 			{
 				int ws = firstSearchStr.get_WritingSystemAt(0);
 				bool isVern = m_cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Contains(ws);
@@ -406,9 +407,13 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private void UpdateResults(int[] hvos)
 		{
-			int count = hvos.Length;
-			int prevIndex = m_bvMatches.SelectedIndex;
-			int prevHvo = prevIndex == -1 ? 0 : m_bvMatches.AllItems[prevIndex];
+			// If m_bvMatches is disposed this would not go well.
+			// The UpdateResults was probably triggered by an event left on the idle queue after this control was disposed, so skip it.
+			if(m_bvMatches.IsDisposed)
+				return;
+			var count = hvos.Length;
+			var prevIndex = m_bvMatches.SelectedIndex;
+			var prevHvo = prevIndex == -1 ? 0 : m_bvMatches.AllItems[prevIndex];
 			m_listPublisher.CacheVecProp(m_cache.LanguageProject.LexDbOA.Hvo, hvos);
 			TabStop = count > 0;
 			// Disable the list so that it doesn't steal the focus (LT-9481)
