@@ -31,9 +31,12 @@ namespace SIL.FieldWorks.FixData
 			foreach (var field in customFields)
 			{
 				var nameAttr = field.Attribute("name");
+				var ownerClassAttr = field.Attribute("class");
 				if (nameAttr == null || string.IsNullOrEmpty(nameAttr.Value))
 					continue;
-				m_customFieldNames.Add(nameAttr.Value, field);
+				// Using the name of the attribute followed by the class will allow the same name to be used on different types i.e. LexEntry and LexSense
+				var nameClassKey = nameAttr.Value + @"_" + (ownerClassAttr != null ? ownerClassAttr.Value : "");
+				m_customFieldNames.Add(nameClassKey, field);
 			}
 		}
 
@@ -48,7 +51,7 @@ namespace SIL.FieldWorks.FixData
 				if (!string.IsNullOrEmpty(kvp.Key) && m_customFieldNames.ContainsKey(kvp.Key))
 					continue;
 				logger(guid.ToString(), DateTime.Now.ToShortDateString(),
-					String.Format(Strings.ksRemovingUndefinedCustomProperty, kvp.Key, className, guid));
+					String.Format(Strings.ksRemovingUndefinedCustomProperty, kvp.Key.Substring(0, kvp.Key.LastIndexOf('_')), className, guid));
 				kvp.Value.Remove();
 			}
 			return true;
@@ -61,7 +64,21 @@ namespace SIL.FieldWorks.FixData
 			{
 				var nameAttr = customProp.Attribute("name");
 				var nameKey = (nameAttr == null) ? "" : nameAttr.Value;
-				customProps.Add(nameKey, customProp);
+				XAttribute ownerClassAttr = null;
+				string classKey = null;
+				if(customProp.Parent != null)
+				{
+					ownerClassAttr = customProp.Parent.Attribute("class");
+				}
+				// CustomFields added to Allomorphs get a class of MoForm in the CustomField Element
+				// however the class on the rt element that owns the Custom property can be either MoStemAllomorph or MoAffixForm
+				// Setting the classKey here to "MoForm" in those cases will prevent these properties from being mistaken as dangling
+				if(ownerClassAttr != null && !string.IsNullOrEmpty(ownerClassAttr.Value) && ownerClassAttr.Value.StartsWith("Mo"))
+				{
+					classKey = "MoForm";
+				}
+				var nameClassKey = nameKey + "_" + (classKey ?? (ownerClassAttr != null ? ownerClassAttr.Value : ""));
+				customProps.Add(nameClassKey, customProp);
 			}
 			return customProps;
 		}
