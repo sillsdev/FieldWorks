@@ -11,7 +11,7 @@ namespace XAmpleManagedWrapperTests
 		protected XAmpleDLLWrapper CreateXAmpleDllWrapper()
 		{
 			var xAmple = new XAmpleDLLWrapper();
-			xAmple.Init(""); // assume libample.so/XAMPLE.DLL is in the same directory.
+			xAmple.Init();
 			return xAmple;
 		}
 

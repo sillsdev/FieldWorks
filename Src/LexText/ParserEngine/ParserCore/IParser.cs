@@ -2,7 +2,7 @@
 {
 	public interface IParser
 	{
-		void Initialize();
+		void Update();
 
 		void Reset();
 

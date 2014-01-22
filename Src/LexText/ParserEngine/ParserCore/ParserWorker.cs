@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// Initializes a new instance of the <see cref="ParserWorker"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public ParserWorker(FdoCache cache, Action<TaskReport> taskUpdateHandler, IdleQueue idleQueue, string appInstallDir)
+		public ParserWorker(FdoCache cache, Action<TaskReport> taskUpdateHandler, IdleQueue idleQueue, string dataDir)
 		{
 			m_cache = cache;
 			m_taskUpdateHandler = taskUpdateHandler;
@@ -66,11 +66,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			switch (m_cache.LanguageProject.MorphologicalDataOA.ActiveParser)
 			{
 				case "XAmple":
-					m_parser = new XAmpleParser(cache, appInstallDir);
+					m_parser = new XAmpleParser(cache, dataDir);
 					agent = cache.ServiceLocator.GetInstance<ICmAgentRepository>().GetObject(CmAgentTags.kguidAgentXAmpleParser);
 					break;
 				case "HC":
-					m_parser = new HCParser(cache, appInstallDir);
+					m_parser = new HCParser(cache, dataDir);
 					agent = cache.ServiceLocator.GetInstance<ICmAgentRepository>().GetObject(CmAgentTags.kguidAgentHermitCrabParser);
 					break;
 				default:
@@ -154,7 +154,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			using (var task = new TaskReport(ParserCoreStrings.ksUpdatingGrammarAndLexicon, m_taskUpdateHandler))
 			{
-				m_parser.Initialize();
+				m_parser.Update();
 			}
 		}
 

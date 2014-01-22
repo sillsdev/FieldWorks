@@ -9,7 +9,7 @@ namespace XAmpleManagedWrapperTests
 		protected XAmpleWrapper InitHelper()
 		{
 			var xAmple = new XAmpleWrapper();
-			xAmple.Init("");
+			xAmple.Init();
 			return xAmple;
 		}
 

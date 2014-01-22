@@ -308,7 +308,7 @@ namespace XAmpleManagedWrapper
 			AmpleRemoveSelectiveAnalysisMorphsDelegate = AmpleRemoveSelectiveAnalysisMorphMarshaled;
 		}
 
-		public void Init (string lpszFolderContainingXAmpleDll)
+		public void Init ()
 		{
 			// TODO: Currently we are using fixed DllImports.
 			AssignDelegates ();

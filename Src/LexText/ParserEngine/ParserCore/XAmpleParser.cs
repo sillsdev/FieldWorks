@@ -14,20 +14,20 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	public class XAmpleParser : FwDisposableBase, IParser
 	{
 		private XAmpleWrapper m_xample;
-		private readonly string m_appInstallDir;
+		private readonly string m_dataDir;
 		private readonly FdoCache m_cache;
 		private M3ParserModelRetriever m_retriever;
 
-		public XAmpleParser(FdoCache cache, string appInstallDir)
+		public XAmpleParser(FdoCache cache, string dataDir)
 		{
 			m_cache = cache;
 			m_xample = new XAmpleWrapper();
-			m_xample.Init(appInstallDir);
-			m_appInstallDir = appInstallDir;
+			m_xample.Init();
+			m_dataDir = dataDir;
 			m_retriever = new M3ParserModelRetriever(m_cache);
 		}
 
-		public void Initialize()
+		public void Update()
 		{
 			CheckDisposed();
 
@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			XmlDocument gafawsFxtResult = m_retriever.TemplateDom;
 			string projectName = ParserHelper.ConvertNameToUseAnsiCharacters(m_cache.ProjectId.Name);
 
-			var transformer = new M3ToXAmpleTransformer(projectName, m_appInstallDir);
+			var transformer = new M3ToXAmpleTransformer(projectName, m_dataDir);
 			// PrepareTemplatesForXAmpleFiles adds orderclass elements to MoInflAffixSlot elements
 			transformer.PrepareTemplatesForXAmpleFiles(ref fxtResult, gafawsFxtResult);
 
@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_xample.SetParameter("MaxAnalysesToReturn", maxAnalCount.ToString(CultureInfo.InvariantCulture));
 
 			string tempPath = Path.GetTempPath();
-			m_xample.LoadFiles(m_appInstallDir + @"/Language Explorer/Configuration/Grammar", tempPath, projectName);
+			m_xample.LoadFiles(m_dataDir + @"/Configuration/Grammar", tempPath, projectName);
 		}
 
 		public void Reset()

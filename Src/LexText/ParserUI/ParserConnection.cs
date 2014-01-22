@@ -13,6 +13,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -42,7 +43,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		public ParserConnection(FdoCache cache, IdleQueue idleQueue)
 		{
 			m_activity = "";
-			m_scheduler = new ParserScheduler(cache, idleQueue, FwDirectoryFinder.CodeDirectory);
+			m_scheduler = new ParserScheduler(cache, idleQueue, Path.Combine(FwDirectoryFinder.CodeDirectory, FwDirectoryFinder.ksFlexFolderName));
 			m_scheduler.ParserUpdateVerbose += ParserUpdateHandlerForPolling;
 		}
 

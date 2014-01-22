@@ -145,9 +145,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// Initializes a new instance of the <see cref="ParserScheduler"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public ParserScheduler(FdoCache cache, IdleQueue idleQueue, string appInstallDir)
+		public ParserScheduler(FdoCache cache, IdleQueue idleQueue, string dataDir)
 		{
-			m_parserWorker = new ParserWorker(cache, HandleTaskUpdate, idleQueue, appInstallDir);
+			m_parserWorker = new ParserWorker(cache, HandleTaskUpdate, idleQueue, dataDir);
 			m_parserWorker.ParseFiler.WordformUpdated += ParseFiler_WordformUpdated;
 
 			m_thread = new ConsumerThread<ParserPriority, ParserWork>(Work) {IsBackground = true};

@@ -33,17 +33,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private PatrParser m_patr;
 		private readonly Loader m_loader;
 		private M3ParserModelRetriever m_retriever;
-		private readonly string m_appInstallDir;
+		private readonly string m_dataDir;
 		private readonly string m_outputDirectory;
 		// m_projectName here is only used to create temporary files for the parser to load.
 		// We convert the name to use strictly ANSI characters so that the patr parsers (which is
 		// a legacy C program) can read the file names.
 		private readonly string m_projectName;
 
-		public HCParser(FdoCache cache, string appInstallDir)
+		public HCParser(FdoCache cache, string dataDir)
 		{
 			m_cache = cache;
-			m_appInstallDir = appInstallDir;
+			m_dataDir = dataDir;
 
 			m_retriever = new M3ParserModelRetriever(m_cache);
 			m_patr = new PatrParser
@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			};
 			m_loader = new XmlLoader
 			{
-				XmlResolver = new XmlFwResolver(appInstallDir),
+				XmlResolver = new XmlFwResolver(dataDir),
 				QuitOnError = false
 			};
 
@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		}
 
 		#region IParser implementation
-		public void Initialize()
+		public void Update()
 		{
 			CheckDisposed();
 
@@ -192,7 +192,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				}
 			}
 
-			var transformer = new M3ToHCTransformer(m_projectName, m_appInstallDir);
+			var transformer = new M3ToHCTransformer(m_projectName, m_dataDir);
 			transformer.MakeHCFiles(ref model);
 
 			m_patr.LoadGrammarFile(HcGrammarPath);
@@ -798,9 +798,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			readonly Uri m_baseUri;
 
-			public XmlFwResolver(string appInstallDir)
+			public XmlFwResolver(string dataDir)
 			{
-				m_baseUri = new Uri(appInstallDir + Path.DirectorySeparatorChar);
+				m_baseUri = new Uri(dataDir + Path.DirectorySeparatorChar);
 			}
 
 			public override Uri ResolveUri(Uri baseUri, string relativeUri)

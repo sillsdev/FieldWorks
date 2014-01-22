@@ -43,10 +43,10 @@ namespace XAmpleManagedWrapper
 		#endregion
 
 		#region IXAmpleWrapper implementation
-		public void Init (string folderContainingXampleDll)
+		public void Init()
 		{
-			m_xample = new XAmpleDLLWrapper ();
-			m_xample.Init (folderContainingXampleDll);
+			m_xample = new XAmpleDLLWrapper();
+			m_xample.Init();
 		}
 
 

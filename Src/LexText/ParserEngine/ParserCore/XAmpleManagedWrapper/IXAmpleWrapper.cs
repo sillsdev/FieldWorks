@@ -4,7 +4,7 @@ namespace XAmpleManagedWrapper
 {
 	public interface IXAmpleWrapper
 	{
-		void Init(string folderContainingXampleDll);
+		void Init();
 
 		// returns xmlResult
 		string ParseWord(string wordform);

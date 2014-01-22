@@ -11,23 +11,23 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	{
 		protected string m_outputDirectory;
 		protected string m_database;
-		protected readonly string m_appInstallDir;
+		protected readonly string m_dataDir;
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="M3ToParserTransformerBase"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public M3ToParserTransformerBase(string database, string appInstallDir)
+		public M3ToParserTransformerBase(string database, string dataDir)
 		{
 			m_database = database;
-			m_appInstallDir = appInstallDir;
+			m_dataDir = dataDir;
 			m_outputDirectory = Path.GetTempPath();
 		}
 
 		protected void TransformDomToFile(string transformName, XmlDocument inputDom, string outputName)
 		{
-			XmlUtils.TransformDomToFile(Path.Combine(m_appInstallDir + "/Language Explorer/Transforms/", transformName),
+			XmlUtils.TransformDomToFile(Path.Combine(m_dataDir + "/Transforms/", transformName),
 			inputDom, Path.Combine(m_outputDirectory, outputName));
 		}
 	}
