@@ -46,6 +46,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 			get { return GetTestKey("FieldWorksRegistryKLM"); }
 		}
 
+		/// <summary></summary>
+		public RegistryKey LocalMachineHive
+		{
+			get { return GetTestKey("HKLM"); }
+		}
+
 		/// <summary>
 		///
 		/// </summary>
@@ -138,6 +144,24 @@ namespace SIL.FieldWorks.Common.FwUtils
 			teKey.SetValue(crashes, 10);
 			teKey.SetValue(dirName, "Z:\\somedirectory");
 			return version7Key;
+		}
+
+		/// <summary>
+		/// For testing key migration on upgrade.
+		/// </summary>
+		public RegistryKey SetupVersion7ProjectSharedSetting()
+		{
+			var hklmFw7 = SetupVersion7ProjectSharedSettingLocation();
+			hklmFw7.SetValue("ProjectShared", "True");
+			return hklmFw7;
+		}
+
+		/// <summary>
+		/// For testing key migration on upgrade.
+		/// </summary>
+		public RegistryKey SetupVersion7ProjectSharedSettingLocation()
+		{
+			return LocalMachineHive.CreateSubKey(@"SOFTWARE\SIL\FieldWorks\7.0");
 		}
 
 		/// <summary>

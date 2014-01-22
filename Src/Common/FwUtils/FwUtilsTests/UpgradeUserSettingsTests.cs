@@ -22,6 +22,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 				FwRegistryHelper.OldFieldWorksRegistryKeyNameVersion7);
 			DeleteRegistrySubkeyTreeIfPresent(FwRegistryHelper.FieldWorksVersionlessRegistryKey,
 				FwRegistryHelper.FieldWorksRegistryKeyName);
+			DeleteRegistrySubkeyTreeIfPresent(FwRegistryHelper.FieldWorksVersionlessRegistryKey, "DirectoryFinderTests");
+			DeleteRegistrySubkeyTreeIfPresent(FwRegistryHelper.FieldWorksVersionlessRegistryKey, "HelperFW");
+
 		}
 
 		/// <summary>
@@ -101,6 +104,25 @@ namespace SIL.FieldWorks.Common.FwUtils
 				FwRegistryHelper.FieldWorksRegistryKeyName);
 		}
 
+		/// <summary>
+		/// Tests the UpgradeUserSettingsIfNeeded method on FieldWorks with no upgrade necessary,
+		/// with respect to whether the ProjectShared key was migrated.
+		/// </summary>
+		[Test]
+		public void UpgradeUserSettingsIfNeeded_NotNeeded_ProjectSharedNotSet()
+		{
+			// If there's no version 7.0 key, the upgrade shouldn't happen
+
+			// SUT
+			FwRegistryHelper.UpgradeUserSettingsIfNeeded();
+
+			// Verification
+			// The above upgrade shouldn't have done anything; verify that the version 8 ProjectShared key
+			// is missing.
+			AssertIfRegistryValuePresent(FwRegistryHelper.FieldWorksRegistryKey, null, "ProjectShared");
+		}
+
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the UpgradeUserSettingsIfNeeded method on FieldWorks with an upgrade.
@@ -117,7 +139,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			const string valueName3 = "FlexTestValue1";
 			const string valueName4 = "FlexTestValue2";
 			const string launches = "launches";
-			using(var version7Key = m_helper.SetupVersion7Settings())
+			using (var version7Key = m_helper.SetupVersion7Settings())
 			{
 
 				// SUT
@@ -130,14 +152,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 					"Old version 7.0 subkey tree didn't get wiped out.");
 
 				// Check for version 8 key
-				using(var version8Key = AssertIfRegistrySubkeyNotPresent(
+				using (var version8Key = AssertIfRegistrySubkeyNotPresent(
 					FwRegistryHelper.FieldWorksVersionlessRegistryKey, FwRegistryHelper.FieldWorksRegistryKeyName))
 				{
 					// Check for flex key
-					using(var flexKey = AssertIfRegistrySubkeyNotPresent(version8Key, flexKeyName))
+					using (var flexKey = AssertIfRegistrySubkeyNotPresent(version8Key, flexKeyName))
 					{
 						// Check for TE key
-						using(var teKey = AssertIfRegistrySubkeyNotPresent(version8Key, teKeyName))
+						using (var teKey = AssertIfRegistrySubkeyNotPresent(version8Key, teKeyName))
 						{
 							// Check for absense of crash value
 							AssertIfRegistryValuePresent(FwRegistryHelper.FieldWorksVersionlessRegistryKey,
@@ -149,6 +171,64 @@ namespace SIL.FieldWorks.Common.FwUtils
 						}
 					}
 				}
+			}
+		}
+
+		/// <summary>
+		/// Tests the UpgradeUserSettingsIfNeeded method on FieldWorks with an upgrade,
+		/// with respect to whether the ProjectShared key was migrated.
+		/// </summary>
+		[Test]
+		public void UpgradeUserSettingsIfNeeded_NeededButNotProjectShared_ProjectSharedNotSet()
+		{
+			// Setup
+			using (var version7Key = m_helper.SetupVersion7Settings())
+			{
+				// SUT
+				FwRegistryHelper.UpgradeUserSettingsIfNeeded();
+
+				// Verification
+				// Verify that the version 8 ProjectShared key is missing.
+				AssertIfRegistryValuePresent(FwRegistryHelper.FieldWorksRegistryKey, null, "ProjectShared");
+			}
+		}
+
+		/// <summary>
+		/// Tests the UpgradeUserSettingsIfNeeded method on FieldWorks with an upgrade,
+		/// with respect to whether the ProjectShared key was migrated.
+		/// </summary>
+		[Test]
+		public void UpgradeUserSettingsIfNeeded_NeededButNotProjectSharedDespiteExistingPath_ProjectSharedNotSet()
+		{
+			// Setup
+			using (m_helper.SetupVersion7ProjectSharedSettingLocation())
+			using (var version7Key = m_helper.SetupVersion7Settings())
+			{
+				// SUT
+				FwRegistryHelper.UpgradeUserSettingsIfNeeded();
+
+				// Verification
+				// Verify that the version 8 ProjectShared key is missing.
+				AssertIfRegistryValuePresent(FwRegistryHelper.FieldWorksRegistryKey, null, "ProjectShared");
+			}
+		}
+		/// <summary>
+		/// Tests the UpgradeUserSettingsIfNeeded method on FieldWorks with an upgrade,
+		/// with respect to whether the ProjectShared key was migrated.
+		/// </summary>
+		[Test]
+		public void UpgradeUserSettingsIfNeeded_NeededIncludingProjectShared_ProjectSharedSet()
+		{
+			// Setup
+			using (m_helper.SetupVersion7ProjectSharedSetting())
+			using (var version7Key = m_helper.SetupVersion7Settings())
+			{
+				// SUT
+				FwRegistryHelper.UpgradeUserSettingsIfNeeded();
+
+				// Verification
+				// Verify that the version 8 ProjectShared key is set.
+				CheckForRegistryStringValue(FwRegistryHelper.FieldWorksRegistryKey, null, "ProjectShared", "True");
 			}
 		}
 
