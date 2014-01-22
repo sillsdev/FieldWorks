@@ -22,6 +22,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		RegistryKey FieldWorksRegistryKeyLocalMachine { get; }
 
+		/// <summary>
+		/// Get LocalMachine hive. (Overridable for unit tests.)
+		/// </summary>
+		RegistryKey LocalMachineHive { get; }
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the read-only local machine Registry key for FieldWorksBridge.
