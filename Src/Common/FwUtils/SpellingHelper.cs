@@ -297,12 +297,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private static void InitDictionary(string dicPath, IEnumerable<string> words)
 		{
-			using (var writer = FileUtils.OpenFileForWrite(Path.ChangeExtension(dicPath, ".aff"), Encoding.UTF8))
+			var affixFile = Path.ChangeExtension(dicPath, ".aff");
+			if(!File.Exists(affixFile))
 			{
-				writer.WriteLine("SET UTF-8");
-				// Enhance JohnT: may be helpful to write TRY followed by the word-forming and possibly punctuation
-				// characters of the language. This somehow affects the suggestions, but I haven't figured out how yet.
-				writer.WriteLine("KEEPCASE " + keepCaseFlag);
+				using(var writer = FileUtils.OpenFileForWrite(affixFile, Encoding.UTF8))
+				{
+					writer.WriteLine("SET UTF-8");
+					// Enhance JohnT: may be helpful to write TRY followed by the word-forming and possibly punctuation
+					// characters of the language. This somehow affects the suggestions, but I haven't figured out how yet.
+					writer.WriteLine("KEEPCASE " + keepCaseFlag);
+				}
 			}
 			// If it already exists, probably we disabled it by deleting the .aff file--an approach we
 			// no longer use; re-creating it should reinstate it.
