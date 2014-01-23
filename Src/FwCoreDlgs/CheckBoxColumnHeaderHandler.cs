@@ -1,12 +1,6 @@
-// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2011, SIL International. All Rights Reserved.
-// <copyright from='2010' to='2011' company='SIL International'>
-//		Copyright (c) 2011, SIL International. All Rights Reserved.
-//
-//		Distributable under the terms of either the Common Public License or the
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
-// </copyright>
-#endregion
+// Copyright (c) 2010-2013 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File: CheckBoxColumnHeader.cs
 // Responsibility: Olson
@@ -16,7 +10,7 @@
 // label, centering the checkbox in the header instead.  It also treated clicking anywhere in
 // the header as clicking in the checkbox.
 // </remarks>
-// ---------------------------------------------------------------------------------------------
+
 using System;
 using System.Diagnostics;
 using System.Drawing;

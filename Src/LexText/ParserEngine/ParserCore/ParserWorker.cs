@@ -1,12 +1,6 @@
-// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2009, SIL International. All Rights Reserved.
-// <copyright from='2003' to='2009' company='SIL International'>
-//		Copyright (c) 2009, SIL International. All Rights Reserved.
-//
-//		Distributable under the terms of either the Common Public License or the
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
-// </copyright>
-#endregion
+// Copyright (c) 2003-2014 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File: ParserWorker.cs
 // Responsibility:
@@ -16,7 +10,6 @@
 //	class which is the top of the heap of the worker thread.
 //	However, it is actually the "Scheduler" class which controls the thread and calls this.
 // </remarks>
-// --------------------------------------------------------------------------------------------
 /*
 
 throws exception:  * One way I recall is that they would create an inflectional template, but not put anything in it yet (i.e. no slots at all).
@@ -34,6 +27,7 @@ no exception:  Create an allomorph with an environment that is ill-formed.  (Pre
 no exception: Create an infl affix slot with no affixes in it and then use this slot in a template (though this just might not cause the parser to fail - it would just be useless!).
 
 */
+
 using System;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;

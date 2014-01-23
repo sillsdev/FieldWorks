@@ -2,6 +2,7 @@
 <languageproject version="7000061">
 <AdditionalFields>
 	<CustomField class="LexEntry" destclass="27" listRoot="5250350b-83fb-432b-a24f-a8dad580d350" name="Test Prop" type="RC" wsSelector="-1" />
+	<CustomField class="LexSense" type="String" wsSelector="-1" name="Test Prop"/>
 </AdditionalFields>
 
 <rt class="LexEntry" guid="c5e6aab3-4236-43b4-998e-d41ff26eba7b">

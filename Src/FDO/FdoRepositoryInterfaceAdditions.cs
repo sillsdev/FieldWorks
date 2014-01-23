@@ -1,8 +1,6 @@
-// --------------------------------------------------------------------------------------------
-// Copyright (C) 2009 SIL International. All rights reserved.
-//
-// Distributable under the terms of either the Common Public License or the
-// GNU Lesser General Public License, as specified in the LICENSING.txt file.
+// Copyright (c) 2009-2013 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File: FdoRepositoryInterfaceAdditions.cs
 // Responsibility: Randy Regnier
@@ -11,7 +9,7 @@
 // Add additional methods/properties to Repository interfaces in this file.
 // Implementation of the additional interface information should go into the FdoRepositoryAdditions.cs file.
 // </remarks>
-// --------------------------------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -365,6 +363,16 @@ namespace SIL.FieldWorks.FDO
 		/// AnnotationDefn used for editorial checking inconsistencies.
 		/// </summary>
 		ICmAnnotationDefn CheckingError { get; }
+	}
+
+	public partial interface IMoModifyFromInputRepository
+	{
+		/// <summary>
+		/// Returns all rule mappings that reference the specified (feature) natural class.
+		/// </summary>
+		/// <param name="nc">The natural class.</param>
+		/// <returns></returns>
+		IEnumerable<IMoModifyFromInput> InstancesWithNC(IPhNCFeatures nc);
 	}
 
 	public partial interface IMoMorphTypeRepository

@@ -50,16 +50,9 @@
 	<s:Int64 x:Key="/Default/CodeStyle/CodeFormatting/XmlFormatter/MaxBlankLines/@EntryValue">1</s:Int64>
 	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/XmlFormatter/ProcessingInstructionSpaceAfterLastAttr/@EntryValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/XmlFormatter/TagSpaceBeforeHeaderEnd1/@EntryValue">False</s:Boolean>
-	<s:String x:Key="/Default/CodeStyle/FileHeader/FileHeaderText/@EntryValue">// ---------------------------------------------------------------------------------------------&#xD;
-#region // Copyright (c) $year$, SIL International. All Rights Reserved.&#xD;
-// &lt;copyright from='$year$' to='$year$' company='SIL International'&gt;&#xD;
-//		Copyright (c) $year$, SIL International. All Rights Reserved.&#xD;
-//&#xD;
-//		Distributable under the terms of either the Common Public License or the&#xD;
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.&#xD;
-// &lt;/copyright&gt;&#xD;
-#endregion&#xD;
-// ---------------------------------------------------------------------------------------------&#xD;
+	<s:String x:Key="/Default/CodeStyle/FileHeader/FileHeaderText/@EntryValue">// Copyright (c) $year$ SIL International&#xD;
+// This software is licensed under the LGPL, version 2.1 or later&#xD;
+// (http://www.gnu.org/licenses/lgpl-2.1.html)&#xD;
 </s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/EventHandlerPatternLong/@EntryValue">$object$_On$event$</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/ExceptionName/@EntryValue"></s:String>

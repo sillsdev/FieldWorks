@@ -205,42 +205,20 @@
     <value>Top, Bottom, Left, Right</value>
   </data>
   <data name="htmlControl_Instructions.DocumentText" xml:space="preserve">
-    <value>&lt;!DOCTYPE html&gt;&lt;html&gt;
-&lt;body lang=EN-US style='font-family:"Microsoft Sans Serif","sans-serif";font-size:9.5pt'&gt;
+    <value>&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style='font-family:"Microsoft Sans Serif","sans-serif";font-size:9.5pt'&gt;
 &lt;p style='font-size:11pt;margin-bottom:0in'&gt;Getting Started&lt;/p&gt;
-&lt;p style='margin:0in;text-indent:10.5pt'&gt;When you begin to share
-data for the first time, the computer with the most authoritative copy &lt;b&gt;must&lt;/b&gt; be
-the first to send/receive, and all other computers must have the project &lt;b&gt;removed&lt;/b&gt;
-from that computer before proceeding.&lt;/p&gt;
-&lt;p style='margin:0in;text-indent:10pt'&gt;If your project is spread across two or more
-computers, and neither contains a more complete or up-to-date work, it is recommended to merge
-the databases into one project before sharing the project. If you need help with this process,
-please contact &lt;a href='mailto:FLEx_Errors@sil.org'&gt;FLEx_Errors@sil.org&lt;/a&gt; for advice.&lt;/p&gt;
-&lt;p style='margin:0in;text-indent:10pt'&gt;All other
-computers/users in the project will receive this project through the command &amp;quot;Get Project from Colleague&amp;quot;.
-After that, they can continue to work on the new shared project.&lt;/p&gt;
-&lt;p style='margin:0in;text-indent:10pt'&gt;For step-by-step
-instructions on project sharing, please search for &amp;quot;Get started with
-Send/Receive&amp;quot; in the Helps or click the Help button below.&lt;/p&gt;
-
+&lt;p style='margin:0in;text-indent:10.5pt'&gt;When you begin to share data for the first time, the computer with the most authoritative copy &lt;b&gt;must&lt;/b&gt; be the first to send/receive, and all other computers must have the project &lt;b&gt;removed&lt;/b&gt; from that computer before proceeding.&lt;/p&gt;
+&lt;p style='margin:0in;text-indent:10pt'&gt;If your project is spread across two or more computers, and neither contains a more complete or up-to-date work, it is recommended to merge the databases into one project before sharing the project. If you need help with this process, please contact &lt;a href='mailto:FLEx_Errors@sil.org'&gt;FLEx_Errors@sil.org&lt;/a&gt; for advice.&lt;/p&gt;
+&lt;p style='margin:0in;text-indent:10pt'&gt;All other computers/users in the project will receive this project through the command &amp;quot;Get Project from Colleague&amp;quot;. After that, they can continue to work on the new shared project.&lt;/p&gt;
+&lt;p style='margin:0in;text-indent:10pt'&gt;For step-by-step instructions on project sharing, please search for &amp;quot;Get started with Send/Receive&amp;quot; in the Helps or click the Help button below.&lt;/p&gt;
 &lt;p style='font-size:11pt;margin-bottom:0in'&gt;Best Practices&lt;/p&gt;
-&lt;p style='margin:0in;text-indent:10pt'&gt;When working, it is recommended for
-each user to complete a send/receive before starting the day’s work (to receive
-the most current data) and when ending the day’s work (to share your new
-changes with other users). Users who work at the same time, or who are making
-major changes to the database are encouraged to send/receive more often to
-prevent conflicts.&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;p style='margin:0in;margin-left:-30pt;text-indent:10pt'&gt;As with any Send/Receive process, there
-are recommendations about which areas to avoid editing at the same time:&lt;/p&gt;
+&lt;p style='margin:0in;text-indent:10pt'&gt;When working, it is recommended for each user to complete a send/receive before starting the day's work (to receive the most current data) and when ending the day's work (to share your new changes with other users). Users who work at the same time, or who are making major changes to the database are encouraged to send/receive more often to prevent conflicts.&lt;/p&gt;
+&lt;ul&gt;&lt;p style='margin:0in;margin-left:-30pt;text-indent:10pt'&gt;As with any Send/Receive process, there are recommendations about which areas to avoid editing at the same time:&lt;/p&gt;
 &lt;li style='list-style-type:bullet;margin-left:-10pt'&gt;If you will be doing a Bulk Edit, please do a Send/Receive immediately before and after, and ask other teammates to refrain from working while you do this.&lt;/li&gt;
 &lt;li style='list-style-type:bullet;margin-left:-10pt'&gt;Try to avoid having two users work on the same interlinear text during the same send/receive cycle. This includes the Text Chart.&lt;/li&gt;
 &lt;li style='list-style-type:bullet;margin-left:-10pt'&gt;If two users adjust lexical relations in the same entry in the same Send/Receive cycle, the results may not be what you expect.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/body&gt;
-&lt;/html&gt;
-      </value>
+&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</value>
+    <comment>Instructions shown before first Send/Receive. Please keep HTML tags as-is to preserve formatting, and use HTML escapes (&amp;quot; for &quot;, etc.). If using PoEdit, you will also need to keep all &quot;\n&quot; (line breaks) as-is.</comment>
   </data>
   <data name="htmlControl_Instructions.Location" type="System.Drawing.Point, System.Drawing">
     <value>13, 13</value>

@@ -1,5 +1,7 @@
 // Copyright (c) 2002-2013 SIL International
-// This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -236,6 +238,9 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		private bool m_fSuppressNextWritingSystemHvoChanged;
 		private bool m_fSuppressNextBestStyleNameChanged;
+
+		/// <summary>Flag to prevent reentrancy while setting keyboard.</summary>
+		private bool m_fSettingKeyboards;
 		#endregion
 
 		#region Enumerations
@@ -2923,9 +2928,14 @@ namespace SIL.FieldWorks.Common.RootSites
 				return;
 			}
 
+			if (m_fSettingKeyboards)
+				return;
+
 			try
 			{
-				var palasoWs = ((IWritingSystemManager)WritingSystemFactory).Get(ws.Handle) as IWritingSystemDefinition;
+				m_fSettingKeyboards = true;
+				var palasoWs = ((IWritingSystemManager)WritingSystemFactory).Get(ws.Handle)
+					as IWritingSystemDefinition;
 				if (palasoWs != null && palasoWs.LocalKeyboard != null)
 					palasoWs.LocalKeyboard.Activate();
 			}
@@ -2935,6 +2945,10 @@ namespace SIL.FieldWorks.Common.RootSites
 				//	ws.WritingSystem + "(" + ws.IcuLocale +
 				//	") -> ActivateDefaultKeyboard() in catch block");
 				ActivateDefaultKeyboard();
+			}
+			finally
+			{
+				m_fSettingKeyboards = false;
 			}
 		}
 

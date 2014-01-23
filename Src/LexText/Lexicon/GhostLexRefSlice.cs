@@ -137,5 +137,18 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				return;
 			}
 		}
+
+#if __MonoCS__
+		/// <summary>
+		/// Activate menu only if Alt key is being pressed.  See FWNX-1353.
+		/// </summary>
+		/// <remarks>TODO: Getting here without the Alt key may be considered a Mono bug.</remarks>
+		protected override bool ProcessDialogChar(char charCode)
+		{
+			if (Control.ModifierKeys == Keys.Alt)
+				return base.ProcessDialogChar(charCode);
+			return false;
+		}
+#endif
 	}
 }

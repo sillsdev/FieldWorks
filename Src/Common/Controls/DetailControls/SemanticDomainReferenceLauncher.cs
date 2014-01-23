@@ -1,15 +1,12 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (c) 2012, SIL International. All Rights Reserved.
-// <copyright from='2012' to='2012' company='SIL International'>
-//		Copyright (c) 2012, SIL International. All Rights Reserved.
-//
-// </copyright>
+﻿// Copyright (c) 2012-2013 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File: SemanticDomainReferenceLauncher.cs
 //
 // <remarks>
 // </remarks>
-// --------------------------------------------------------------------------------------------
+
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;

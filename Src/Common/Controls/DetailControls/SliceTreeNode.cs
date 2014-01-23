@@ -574,8 +574,20 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private void SliceTreeNode_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
 		{
 			Debug.WriteLine("TreeNode key down");
-
 		}
+
+		#if __MonoCS__
+		/// <summary>
+		/// Activate menu only if Alt key is being pressed.  See FWNX-1353.
+		/// </summary>
+		/// <remarks>TODO: Getting here without the Alt key may be considered a Mono bug.</remarks>
+		protected override bool ProcessDialogChar(char charCode)
+		{
+			if (Control.ModifierKeys == Keys.Alt)
+				return base.ProcessDialogChar(charCode);
+			return false;
+		}
+		#endif
 	}
 
 	/// <summary></summary>

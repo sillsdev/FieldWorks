@@ -1,5 +1,7 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
@@ -49,7 +51,33 @@ namespace SIL.FieldWorks.Common.Controls
 				obtainedProjectType = ObtainedProjectType.Lift;
 			}
 
+			EnsureLinkedFoldersExist(fwdataFileFullPathname);
+
 			return fwdataFileFullPathname;
+		}
+
+		private static void EnsureLinkedFoldersExist(string fwdataFileFullPathname)
+		{
+			var projectFolder = Path.GetDirectoryName(fwdataFileFullPathname);
+
+			// LinkedFiles: main folder in project folder.
+			var linkedFilesDir = Path.Combine(projectFolder, "LinkedFiles");
+			if (!Directory.Exists(linkedFilesDir))
+				Directory.CreateDirectory(linkedFilesDir);
+
+			var subfolders = new HashSet<string>
+			{
+				"AudioVisual",
+				"Others",
+				"Pictures"
+			};
+
+			foreach (var subfolderPath in subfolders
+				.Select(subfolder => Path.Combine(linkedFilesDir, subfolder))
+				.Where(subfolderPath => !Directory.Exists(subfolderPath)))
+			{
+				Directory.CreateDirectory(subfolderPath);
+			}
 		}
 
 		/// <summary>

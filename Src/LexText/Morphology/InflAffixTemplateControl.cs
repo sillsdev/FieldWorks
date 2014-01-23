@@ -1,12 +1,6 @@
-// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2004, SIL International. All Rights Reserved.
-// <copyright from='2003' to='2004' company='SIL International'>
-//		Copyright (c) 2004, SIL International. All Rights Reserved.
-//
-//		Distributable under the terms of either the Common Public License or the
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
-// </copyright>
-#endregion
+// Copyright (c) 2003-2013 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File: InflAffixTemplateControl.cs
 // Responsibility: Andy Black
@@ -14,7 +8,7 @@
 //
 // <remarks>
 // </remarks>
-// --------------------------------------------------------------------------------------------
+
 using System;
 using System.Xml;
 using System.Drawing;
@@ -1082,7 +1076,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// ------------------------------------------------------------------------------------
 		protected override void OnLostFocus(EventArgs e)
 		{
-			if (!AllSlotNamesOk)
+			// During deletion of a Grammar Category, Windows/.Net can pass through here after
+			// the template has been deleted, resulting a crash trying to verify the slot names
+			// of the template.  See LT-13932.
+			if (m_template.IsValidObject && !AllSlotNamesOk)
 			{
 				UndoableUnitOfWorkHelper.Do(MEStrings.ksUndoChangeSlotName, MEStrings.ksRedoChangeSlotName,
 					Cache.ActionHandlerAccessor,

@@ -1,12 +1,6 @@
-// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2012, SIL International. All Rights Reserved.
-// <copyright from='2012' to='2012' company='SIL International'>
-//		Copyright (c) 2012, SIL International. All Rights Reserved.
-//
-//		Distributable under the terms of either the Common Public License or the
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
-// </copyright>
-#endregion
+// Copyright (c) 2012-2013 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File: LibXslt.cs
 // Responsibility: Steve McConnel
@@ -16,7 +10,7 @@
 // This makes available some functions from libxslt.so, which has some capabilities lacking in
 // the Mono Xml/Xsl implementation.
 // </remarks>
-// --------------------------------------------------------------------------------------------
+
 using System;
 using System.IO;
 using System.Runtime.InteropServices;

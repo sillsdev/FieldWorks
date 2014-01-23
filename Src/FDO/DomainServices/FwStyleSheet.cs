@@ -1,7 +1,6 @@
-// --------------------------------------------------------------------------------------------
-// <copyright from='2002' to='2011' company='SIL International'>
-//    Copyright (c) 2011, SIL International. All Rights Reserved.
-// </copyright>
+// Copyright (c) 2002-2013 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File: FwStyleSheet.cs
 // Responsibility: FW Team
@@ -19,7 +18,7 @@
 // AfStylesheet used an ISilDataAccess only, while FwDbStylesheet added the extra
 // capabilities of CustViewDa to initially load the styles from the database.
 // </remarks>
-// --------------------------------------------------------------------------------------------
+
 using System;
 using System.Drawing;
 using System.Collections.Generic;

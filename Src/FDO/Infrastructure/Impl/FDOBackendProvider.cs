@@ -1,13 +1,11 @@
-// --------------------------------------------------------------------------------------------
-// Copyright (C) 2009 SIL International. All rights reserved.
-//
-// Distributable under the terms of either the Common Public License or the
-// GNU Lesser General Public License, as specified in the LICENSING.txt file.
+// Copyright (c) 2009-2013 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File: FDOBackendProvider.cs
 // Responsibility: John Thomson, Steve Miller
 // Last reviewed: never
-// --------------------------------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -528,7 +526,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		{
 			EnsureWritingSystemsExist(m_cache.LanguageProject.AnalysisWss);
 			EnsureWritingSystemsExist(m_cache.LanguageProject.VernWss);
-			m_cache.ServiceLocator.WritingSystemManager.Save();
 		}
 
 		private void EnsureWritingSystemsExist(string wssStr)
@@ -557,6 +554,10 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			wsManager.GlobalWritingSystemStore = globalStore;
 			wsManager.LocalWritingSystemStore = new LocalFileWritingSystemStore(storePath, globalStore);
 			wsManager.LocalWritingSystemStore.LocalKeyboardSettings = Settings.Default.LocalKeyboards;
+
+			// Writing systems are not "modified" when the system is freshly-initialized
+			foreach (var ws in wsManager.LocalWritingSystemStore.AllWritingSystems)
+				ws.Modified = false;
 		}
 
 		#region IDataSetup implementation

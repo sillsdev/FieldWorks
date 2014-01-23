@@ -1,19 +1,13 @@
-// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2010, SIL International. All Rights Reserved.
-// <copyright from='2010' to='2010' company='SIL International'>
-//		Copyright (c) 2010, SIL International. All Rights Reserved.
-//
-//		Distributable under the terms of either the Common Public License or the
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
-// </copyright>
-#endregion
+// Copyright (c) 2010-2013 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File: FwRegistryHelper.cs
 // Responsibility: FW Team
 //
 // <remarks>
 // </remarks>
-// ---------------------------------------------------------------------------------------------
+
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -100,6 +94,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 				{
 					return RegistryHelper.SettingsKeyLocalMachine(FieldWorksRegistryKeyName);
 				}
+			}
+
+			/// <summary>
+			/// Get LocalMachine hive. (Overridable for unit tests.)
+			/// </summary>
+			public RegistryKey LocalMachineHive
+			{
+				get { return Registry.LocalMachine; }
 			}
 
 			/// ------------------------------------------------------------------------------------
@@ -207,6 +209,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static RegistryKey FieldWorksRegistryKeyLocalMachine
 		{
 			get { return RegistryHelperImpl.FieldWorksRegistryKeyLocalMachine; }
+		}
+
+
+		/// <summary>
+		/// Get LocalMachine hive. (Overridable for unit tests.)
+		/// </summary>
+		public static RegistryKey LocalMachineHive
+		{
+			get { return RegistryHelperImpl.LocalMachineHive; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -352,6 +363,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// E.g. the first time the user runs FW8, we need to copy a bunch of registry keys
 		/// from HKCU/Software/SIL/FieldWorks/7.0 -> FieldWorks/8.
+		/// Also copy HKEY_LOCAL_MACHINE\SOFTWARE\SIL\FieldWorks\7.0 ProjectShared (LT-15154).
 		/// </summary>
 		public static void UpgradeUserSettingsIfNeeded()
 		{
@@ -363,16 +375,32 @@ namespace SIL.FieldWorks.Common.FwUtils
 					return; // We'll assume this already got done!
 
 				// If v8 key exists, we will go ahead and do the copy, but not overwrite any existing values.
-				using(var version7Key = FieldWorksVersionlessRegistryKey.CreateSubKey(OldFieldWorksRegistryKeyNameVersion7))
-				using(var version8Key = FieldWorksVersionlessRegistryKey.CreateSubKey(FieldWorksRegistryKeyName))
+				using (var version7Key = FieldWorksVersionlessRegistryKey.CreateSubKey(OldFieldWorksRegistryKeyNameVersion7))
+				using (var version8Key = FieldWorksVersionlessRegistryKey.CreateSubKey(FieldWorksRegistryKeyName))
 				{
 					// Copy over almost everything from 7.0 to 8
 					// Don't copy the "launches" key or keys starting with "NumberOf"
 					CopySubKeyTree(version7Key, version8Key);
 				}
 
+				// Guard for some broken Windows machines having trouble accessing HKLM (LT-15158).
+				var hklm = FwRegistryHelper.LocalMachineHive;
+				if (hklm != null)
+				{
+					using (var oldProjectSharedSettingLocation = hklm.OpenSubKey(@"SOFTWARE\SIL\FieldWorks\7.0"))
+					using (var newProjectSharedSettingLocation = FwRegistryHelper.FieldWorksRegistryKey)
+					{
+						object dummy;
+						if (oldProjectSharedSettingLocation != null &&
+							RegistryHelper.RegEntryExists(oldProjectSharedSettingLocation, string.Empty, "ProjectShared", out dummy))
+							CopyValueToNewKey("ProjectShared", oldProjectSharedSettingLocation, newProjectSharedSettingLocation);
+					}
+				}
+
+
 				// After copying everything delete the old key
 				FieldWorksVersionlessRegistryKey.DeleteSubKeyTree(OldFieldWorksRegistryKeyNameVersion7);
+				// Don't delete old ProjectShared since it is in HKLM and we would need admin privileges.
 			}
 			catch (SecurityException se)
 			{

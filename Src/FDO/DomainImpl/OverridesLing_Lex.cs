@@ -1,12 +1,6 @@
-// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2002-2008, SIL International. All Rights Reserved.
-// <copyright from='2002' to='2008' company='SIL International'>
-//		Copyright (c) 2002, SIL International. All Rights Reserved.
-//
-//		Distributable under the terms of either the Common Public License or the
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
-// </copyright>
-#endregion
+// Copyright (c) 2002-2013 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File: OverridesLing.cs
 // Responsibility: Randy Regnier
@@ -15,7 +9,7 @@
 // <remarks>
 // This file holds the overrides of the generated classes for the Ling module.
 // </remarks>
-// --------------------------------------------------------------------------------------------
+
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -6496,6 +6490,51 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		public override ITsString ShortNameTSS
 		{
 			get { return Representation.BestVernacularAlternative; }
+		}
+	}
+
+	/// <summary>
+	///
+	/// </summary>
+	internal partial class PhFeatureConstraint
+	{
+		protected override void OnBeforeObjectDeleted()
+		{
+			base.OnBeforeObjectDeleted();
+			foreach (ICmObject obj in ReferringObjects)
+			{
+				if (obj is IPhSimpleContextNC)
+				{
+					var ctx = obj as IPhSimpleContextNC;
+					if (ctx.FeatureStructureRA is IPhNCFeatures)
+					{
+						var feats = ctx.FeatureStructureRA as IPhNCFeatures;
+						if ((feats.FeaturesOA == null) &&
+							(ctx.MinusConstrRS.Count == 1 && ctx.MinusConstrRS.Contains(this) && ctx.PlusConstrRS.Count == 0) ||
+							(ctx.PlusConstrRS.Count == 1 && ctx.PlusConstrRS.Contains(this) && ctx.MinusConstrRS.Count == 0))
+						{
+							// the context consisted solely of this feature constraint so
+							// the context is no longer needed
+							m_cache.DomainDataByFlid.DeleteObj(ctx.Hvo);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/// <summary>
+	///
+	/// </summary>
+	internal partial class PhNCFeatures
+	{
+		protected override void OnBeforeObjectDeleted()
+		{
+			base.OnBeforeObjectDeleted();
+			foreach (var ruleMapping in Services.GetInstance<IMoModifyFromInputRepository>().InstancesWithNC(this))
+			{
+				m_cache.DomainDataByFlid.DeleteObj(ruleMapping.Hvo);
+			}
 		}
 	}
 

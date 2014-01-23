@@ -1,16 +1,10 @@
-// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2004, SIL International. All Rights Reserved.
-// <copyright from='2004' to='2004' company='SIL International'>
-//		Copyright (c) 2004, SIL International. All Rights Reserved.
-//
-//		Distributable under the terms of either the Common Public License or the
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
-// </copyright>
-#endregion
+// Copyright (c) 2004-2013 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File: ArchiveMaintenanceDialog.cs
 // Responsibility: TE team
-// ---------------------------------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;

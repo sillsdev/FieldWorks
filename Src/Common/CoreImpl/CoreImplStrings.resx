@@ -144,11 +144,11 @@
     <comment>Displays in the Help/About box and the splash screen</comment>
   </data>
   <data name="kstidLicense" xml:space="preserve">
-    <value>This software is licensed under the MIT License</value>
+    <value>This software is licensed under the LGPL, version 2.1 or later</value>
     <comment>Displays in the Help/About box and the splash screen</comment>
   </data>
   <data name="kstidLicenseURL" xml:space="preserve">
-    <value>(http://opensource.org/licenses/MIT)</value>
+    <value>(http://www.gnu.org/licenses/lgpl-2.1.html)</value>
     <comment>Displays in the Help/About box</comment>
   </data>
   <data name="ksWarning" xml:space="preserve">

@@ -1,12 +1,6 @@
-// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2007, SIL International. All Rights Reserved.
-// <copyright from='2007' to='2007' company='SIL International'>
-//		Copyright (c) 2007, SIL International. All Rights Reserved.
-//
-//		Distributable under the terms of either the Common Public License or the
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
-// </copyright>
-#endregion
+// Copyright (c) 2007-2013 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File: XmlDocConfigureDlg.cs
 // Responsibility:
@@ -17,7 +11,7 @@
 // (This affects only DEBUG builds.)
 // </remarks>
 #define DEBUG_TEST
-// --------------------------------------------------------------------------------------------
+
 using System;
 using System.Collections;
 using System.Collections.Generic;

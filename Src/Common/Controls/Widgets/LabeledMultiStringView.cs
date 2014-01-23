@@ -283,7 +283,9 @@ namespace SIL.FieldWorks.Common.Widgets
 						m_innerView.GetSoundControlRectangle(sel, out selRect);
 						control.Top = selRect.Top;
 					}
-					control.BringToFront();
+					// This test is needed on Linux.  See FWNX-1348.
+					if (control.Parent.Controls.Contains(control))
+						control.BringToFront();
 				}
 			}
 		}

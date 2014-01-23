@@ -1,12 +1,6 @@
-// --------------------------------------------------------------------------------------------
-#region
-// <copyright from='2002' to='2008' company='SIL International'>
-//		Copyright (c) 2002-2008, SIL International. All Rights Reserved.
-//
-//		Distributable under the terms of either the Common Public License or the
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
-// </copyright>
-#endregion
+// Copyright (c) 2002-2013 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File: FdoTestBase.cs
 // Responsibility: RandyR
@@ -15,7 +9,7 @@
 // <remarks>
 // Implements FdoTestBase, the base class for the FDO tests
 // </remarks>
-// --------------------------------------------------------------------------------------------
+
 using System.IO;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;

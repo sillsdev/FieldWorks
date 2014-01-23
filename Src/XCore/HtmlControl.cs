@@ -1,12 +1,6 @@
-// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2003, SIL International. All Rights Reserved.
-// <copyright from='2003' to='2003' company='SIL International'>
-//		Copyright (c) 2003, SIL International. All Rights Reserved.
-//
-//		Distributable under the terms of either the Common Public License or the
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
-// </copyright>
-#endregion
+// Copyright (c) 2003-2013 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File: HtmlControl.cs
 // Responsibility: RandyR
@@ -14,7 +8,7 @@
 //
 // <remarks>
 // </remarks>
-// --------------------------------------------------------------------------------------------
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
@@ -114,7 +108,7 @@ namespace XCore
 				return m_browser.DocumentText;
 #else
 				// TODO pH 2013.09: GeckoFX implementation
-				return @"<!DOCTYPE HTML></HTML>";
+				return @"<!DOCTYPE HTML><HTML/>";
 #endif
 			}
 			set

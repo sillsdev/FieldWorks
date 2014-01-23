@@ -1,4 +1,4 @@
-// Copyright (C) 2001, 2005 SIL International
+// Copyright (c) 2001-2013 SIL International
 // Terms of use are in the file COPYING
 #include "unit++.h"
 
