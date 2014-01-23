@@ -200,8 +200,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				foreach (var natClass in m_cache.LangProject.PhonologicalDataOA.NaturalClassesOS.OfType<IPhNCSegments>())
 				{
 					IFsFeatStruc fs = natClass.GetImpliedPhonologicalFeatures();
-					var predictedPhonemes = natClass.GetPredictedPhonemes(fs);
-					if (!predictedPhonemes.SequenceEqual(natClass.SegmentsRC))
+					IEnumerable<IPhPhoneme> predictedPhonemes = natClass.GetPredictedPhonemes(fs).OrderBy(ph => ph.Hvo);
+					if (!predictedPhonemes.SequenceEqual(natClass.SegmentsRC.OrderBy(ph => ph.Hvo)))
 					{
 						var mismatch = new PhonemeBasedNaturalClassMismatch(fs, predictedPhonemes, natClass);
 						m_mismatches.Add(mismatch);
