@@ -28,7 +28,10 @@ using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Validation;
-using SIL.CoreImpl; // XmlUtils
+using SIL.CoreImpl;
+using Sharpen.Util;
+
+// XmlUtils
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {
@@ -6446,6 +6449,48 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					m_cache.DomainDataByFlid.DeleteObj(segCtxt.Hvo);
 			}
 		}
+
+		/// <summary>
+		/// Determine if the set of (phonological) features are compatible with the phoneme's features
+		/// </summary>
+		/// <param name="fs">The set of features to compare</param>
+		/// <returns>true if compatible</returns>
+		public bool FeaturesAreCompatible(IFsFeatStruc fs)
+		{
+			if (fs == null)
+				return true;
+			if (!fs.FeatureSpecsOC.Any())
+				return true;
+			if (FeaturesOA == null)
+				return true;
+			if (!FeaturesOA.FeatureSpecsOC.Any())
+				return true;
+
+			var comparer = new FsClosedValue.FsClosedValueComparer();
+			var hashSetPhoneme = new HashSet<IFsClosedValue>(comparer);
+			var hashSetFeats = new HashSet<IFsClosedValue>(comparer);
+			foreach (var featureSpecification in FeaturesOA.FeatureSpecsOC)
+			{
+				var closed = featureSpecification as IFsClosedValue;
+				if (closed != null)
+					hashSetPhoneme.Add(closed);
+			}
+			foreach (var featureSpecification in fs.FeatureSpecsOC)
+			{
+				var closed = featureSpecification as IFsClosedValue;
+				if (closed != null)
+					hashSetFeats.Add(closed);
+			}
+
+			hashSetFeats.IntersectWith(hashSetPhoneme);
+
+			if (hashSetFeats.Count == fs.FeatureSpecsOC.Count)
+			{
+				return true;
+			}
+
+			return false;
+		}
 	}
 
 	/// <summary>
@@ -6586,6 +6631,108 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 			return base.ReferenceTargetCandidates(flid);
 		}
+
+		/// <summary>
+		/// Gets the the list of all the PhPhonemes which match the
+		/// intersection of the phonological features of the phonemes of this natural class.
+		/// </summary>
+		/// <param name="fs">the intersected feature structure</param>
+		/// <returns>the list of phonemes</returns>
+		public IEnumerable<IPhPhoneme> GetPredictedPhonemes(IFsFeatStruc fs)
+		{
+			return from ps in m_cache.LangProject.PhonologicalDataOA.PhonemeSetsOS
+				   from ph in ps.PhonemesOC
+				   where ph.FeaturesAreCompatible(fs)
+				   select ph;
+		}
+
+		/// <summary>
+		/// Gets the set of phonological features which are the intersection of the phonemes
+		/// in this class
+		/// </summary>
+		/// <returns>The intersected feature structure</returns>
+		public IFsFeatStruc GetImpliedPhonologicalFeatures()
+		{
+			IFsFeatStruc fs = null;
+			NonUndoableUnitOfWorkHelper.
+				Do(m_cache.ServiceLocator.GetInstance<IActionHandler>(),
+				   () =>
+				   {
+					   var anno = CmBaseAnnotation.GetOrCreateFeatureStructBaseAnnotation(m_cache, this);
+					   fs = SetIntersectionOfPhonemeFeatures(anno.FeaturesOA);
+				   });
+
+			return fs;
+		}
+		/// <summary>
+		/// Perform set intersection on the phonological features on all phonemes in this class
+		/// </summary>
+		/// <param name="fs">A feature structure that is in the cache</param>
+		/// <returns>The feature structure containing the intersection</returns>
+		public IFsFeatStruc SetIntersectionOfPhonemeFeatures(IFsFeatStruc fs)
+		{
+			fs.FeatureSpecsOC.Clear();
+			var comparer = new FsClosedValue.FsClosedValueComparer();
+			HashSet<IFsClosedValue> hashSetMaster = null;
+			var hashSetCurrent = new HashSet<IFsClosedValue>(comparer);
+			foreach (var phoneme in SegmentsRC)
+			{
+				var pfs = phoneme.FeaturesOA;
+				if (pfs.FeatureSpecsOC.Any())
+				{
+					hashSetCurrent.Clear();
+					foreach (var featureSpecification in pfs.FeatureSpecsOC)
+					{
+						var closed = featureSpecification as IFsClosedValue;
+						if (closed != null)
+							hashSetCurrent.Add(closed);
+					}
+					if (hashSetMaster == null)
+					{
+						hashSetMaster = new HashSet<IFsClosedValue>(comparer);
+						foreach (var closed in hashSetCurrent)
+						{
+							hashSetMaster.Add(closed);
+						}
+					}
+					else
+					{
+						hashSetMaster.IntersectWith(hashSetCurrent);
+					}
+				}
+			}
+
+			if (hashSetMaster != null)
+			{
+				foreach (var masterValue in hashSetMaster)
+				{
+					var closedValue = m_cache.ServiceLocator.GetInstance<IFsClosedValueFactory>().Create();
+					fs.FeatureSpecsOC.Add(closedValue);
+					closedValue.FeatureRA = masterValue.FeatureRA;
+					closedValue.ValueRA = masterValue.ValueRA;
+				}
+			}
+			return fs;
+		}
+		protected override void OnBeforeObjectDeleted()
+		{
+			base.OnBeforeObjectDeleted();
+
+			var annoDefns = m_cache.LangProject.AnnotationDefsOA;
+			var annoDefn = annoDefns.FindOrCreatePossibility("FeatureStructure", m_cache.DefaultAnalWs) as ICmAnnotationDefn;
+			var annos = m_cache.LangProject.AnnotationsOC;
+			var fsAnnos = from anno in annos
+				where (anno.AnnotationTypeRA == annoDefn &&
+				anno is ICmBaseAnnotation &&
+				(anno as ICmBaseAnnotation).BeginObjectRA == this)
+				select anno;
+			if (fsAnnos.Any())
+			{
+				var anno = fsAnnos.First() as ICmBaseAnnotation;
+				m_cache.DomainDataByFlid.DeleteObj(anno.Hvo);
+			}
+		}
+
 	}
 
 	/// <summary>
