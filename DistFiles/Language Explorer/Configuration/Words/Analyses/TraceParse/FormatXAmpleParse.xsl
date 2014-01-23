@@ -129,6 +129,7 @@ ResultSection
 						than once.</p>
 				</xsl:if>
 				<xsl:call-template name="ShowAnyLoadErrors"/>
+				<xsl:call-template name="ShowAnyDataIssues"/>
 			</xsl:when>
 			<xsl:otherwise>
 				<p>
@@ -153,6 +154,7 @@ ResultSection
 					</p>
 				</xsl:if>
 				<xsl:call-template name="ShowAnyLoadErrors"/>
+				<xsl:call-template name="ShowAnyDataIssues"/>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>

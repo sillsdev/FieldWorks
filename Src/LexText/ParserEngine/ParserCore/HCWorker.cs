@@ -176,6 +176,112 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return wordTypeIndex;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+			Justification = "m_cache is a reference and disposed in the parent class")]
+		private class ImpliedDataChecker
+		{
+			private readonly FdoCache m_cache;
+			private List<PhonemeBasedNaturalClassMismatch> m_mismatches = new List<PhonemeBasedNaturalClassMismatch>();
+
+			public ImpliedDataChecker(FdoCache cache)
+			{
+				m_cache = cache;
+			}
+
+			/// <summary>
+			/// Check integrity of phoneme-based natural classes (PhNCSegments)
+			/// when there are phonological features
+			/// </summary>
+			public void CheckPhonemeBasedNaturalClasses()
+			{
+				var feats = m_cache.LangProject.PhFeatureSystemOA.FeaturesOC;
+				if (!feats.Any())
+					return; // no phonological features so nothing to check
+				foreach (var natClass in m_cache.LangProject.PhonologicalDataOA.NaturalClassesOS.OfType<IPhNCSegments>())
+				{
+					IFsFeatStruc fs = natClass.GetImpliedPhonologicalFeatures();
+					var predictedPhonemes = natClass.GetPredictedPhonemes(fs);
+					if (!predictedPhonemes.SequenceEqual(natClass.SegmentsRC))
+					{
+						var mismatch = new PhonemeBasedNaturalClassMismatch(fs, predictedPhonemes, natClass);
+						m_mismatches.Add(mismatch);
+					}
+				}
+			}
+			/// <summary>
+			/// Report information as XML
+			/// </summary>
+			/// <param name="writer"></param>
+			public void ToXml(XmlWriter writer)
+			{
+				if (!m_mismatches.Any())
+					return;
+				writer.WriteStartElement("DataIssues");
+				foreach (var mismatch in m_mismatches)
+				{
+					writer.WriteStartElement("NatClassPhonemeMismatch");
+					writer.WriteStartElement("ClassName");
+					writer.WriteString(mismatch.NaturalClass.Name.BestAnalysisAlternative.Text);
+					writer.WriteEndElement();
+					writer.WriteStartElement("ClassAbbeviation");
+					writer.WriteString(mismatch.NaturalClass.Abbreviation.BestAnalysisAlternative.Text);
+					writer.WriteEndElement();
+					writer.WriteStartElement("ImpliedPhonologicalFeatures");
+					writer.WriteString(mismatch.ImpliedPhonologicalFeatures.LongName);
+					writer.WriteEndElement();
+					writer.WriteStartElement("PredictedPhonemes");
+					writer.WriteString(mismatch.ListOfPhonemes(mismatch.PredictedPhonemes));
+					writer.WriteEndElement();
+					writer.WriteStartElement("ActualPhonemes");
+					writer.WriteString(mismatch.ListOfPhonemes(mismatch.NaturalClass.SegmentsRC));
+					writer.WriteEndElement();
+					writer.WriteEndElement();
+				}
+				writer.WriteEndElement();
+			}
+
+			[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+			Justification = "All felds are references and are disposed in the parent class")]
+			private class PhonemeBasedNaturalClassMismatch
+			{
+				private IFsFeatStruc m_impliedPhonologicalFeatures;
+				private IEnumerable<IPhPhoneme> m_predictedPhonemes;
+				private IPhNCSegments m_natClass;
+
+				public PhonemeBasedNaturalClassMismatch(IFsFeatStruc fs, IEnumerable<IPhPhoneme> predictedPhonemes, IPhNCSegments natClass)
+				{
+					m_impliedPhonologicalFeatures = fs;
+					m_predictedPhonemes = predictedPhonemes;
+					m_natClass = natClass;
+				}
+
+				public IFsFeatStruc ImpliedPhonologicalFeatures
+				{
+					get { return m_impliedPhonologicalFeatures; }
+				}
+
+				public IEnumerable<IPhPhoneme> PredictedPhonemes
+				{
+					get { return m_predictedPhonemes; }
+				}
+
+				public IPhNCSegments NaturalClass
+				{
+					get { return m_natClass; }
+				}
+				public string ListOfPhonemes(IEnumerable<IPhPhoneme> list)
+				{
+					var sb = new StringBuilder();
+					foreach (var phoneme in list)
+					{
+						sb.Append(phoneme.Name.BestVernacularAlternative.Text);
+						sb.Append(" ");
+					}
+					return sb.ToString();
+				}
+			}
+		}
+
 		class FwXmlTraceManager : XmlTraceManager
 		{
 			public override void ReportSuccess(WordSynthesis output)
@@ -601,9 +707,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				var output = new FwXmlOutput(writer, fDotrace, m_patr,
 					Path.Combine(m_outputDirectory, m_projectName + "patrlex.txt"), m_cache);
 				output.MorphAndLookupWord(m_loader.CurrentMorpher, form, true, selectTraceMorphs);
+				AddImpliedDataCheckerInfo(writer);
 				writer.WriteEndElement();
 			}
 			return sb.ToString();
+		}
+
+		private void AddImpliedDataCheckerInfo(XmlWriter writer)
+		{
+			var impliedDataChecker = new ImpliedDataChecker(m_cache);
+			impliedDataChecker.CheckPhonemeBasedNaturalClasses();
+			impliedDataChecker.ToXml(writer);
 		}
 
 		public string HcInputPath

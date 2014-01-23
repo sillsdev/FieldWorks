@@ -687,6 +687,29 @@ namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
 			Assert.AreEqual("[asp:aor sbj:[gen:n num:sg pers:1]]", featStruct.LongNameSorted, "Incorrect LongNameSorted for merged feature struture");
 		}
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests adding closed features to feature system and to a feature structure
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void FeatureStructBaseAnnotation()
+		{
+			ILangProject lp = Cache.LangProject;
+
+			var natClass = Cache.ServiceLocator.GetInstance<IPhNCSegmentsFactory>().Create();
+			Cache.LangProject.PhonologicalDataOA.NaturalClassesOS.Add(natClass);
+			// initial invocation should create a new annotation
+			var anno = CmBaseAnnotation.GetOrCreateFeatureStructBaseAnnotation(Cache, natClass);
+			Assert.NotNull(anno, "Expect annotation to be found or created; should not be null");
+			Assert.NotNull(anno.FeaturesOA, "Expect annotation to have a feature structure");
+			Assert.AreEqual(natClass, anno.BeginObjectRA, "Expect the annotation object to be the natural class");
+
+			// second invocation should find first annotation
+			var anno2 = CmBaseAnnotation.GetOrCreateFeatureStructBaseAnnotation(Cache, natClass);
+			Assert.AreEqual(anno, anno2, "Expect second invocation to find the first annotation");
+		}
+
 		/// <summary>
 		/// Tests of CmAgent.SetAgentOpinion.
 		/// Note that this does not verify doing and undoing.
@@ -713,4 +736,181 @@ namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
 		}
 	}
 	#endregion
+
+	/// ----------------------------------------------------------------------------------------
+	/// <summary>
+	/// Tests for the non-generated parts of the CmAgent class can go here.
+	/// </summary>
+	/// ----------------------------------------------------------------------------------------
+	[TestFixture]
+	public class PhonologyTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
+	{
+		/// <summary>
+		///
+		/// </summary>
+		public static readonly string ksPhFS1 =
+			string.Format("<item id=\"gPAMajorClassFeature\" posid=\"Adjective\" guid=\"f673a43d-ba35-44f1-a4d0-308a292c4b97\" status=\"visible\" type=\"group\"><abbrev ws=\"en\">mcf</abbrev><term ws=\"en\">major class features</term><def ws=\"en\">“The features that represent the major classes of sounds.”</def><citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>" +
+				"<item id=\"fPAConsonantal\" guid=\"b4ddf8e5-1ff8-43fc-9723-04f1ee0471fc\" type=\"feature\"><abbrev ws=\"en\">cons</abbrev><term ws=\"en\">consonantal</term><def ws=\"en\">“Consonantal segments are produced with an audible constriction in the vocal tract, like plosives, affricates, fricatives, nasals, laterals and [r]. Vowels, glides and laryngeal segments are not consonantal.”</def><citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>" +
+				"<item id='vPAConsonantalPositive' guid=\"ec5800b4-52a8-4859-a976-f3005c53bd5f\" type='value'><abbrev ws='en'>+</abbrev><term ws='en'>positive</term><fs id='vPAConsonantalPositiveFS' type='Phon' typeguid=\"0ea53dd6-79f5-4fac-a672-f2f7026d8d15\"><f name='fPAConsonantal'><sym value='+'/></f></fs></item>" +
+				"<item id='vPAConsonantalNegative' guid=\"81c50b82-83ff-4f73-8e27-6ff9217b810a\" type='value'><abbrev ws='en'>-</abbrev><term ws='en'>negative</term><fs id='vPAConsonantalNegativeFS' type='Phon' typeguid=\"0ea53dd6-79f5-4fac-a672-f2f7026d8d15\"><f name='fPAConsonantal'><sym value='-'/></f></fs></item></item>" +
+				"<item id=\"fPASonorant\" guid=\"7df7b583-dd42-424d-9730-ab7bcda314e7\" type=\"feature\"><abbrev ws=\"en\">son</abbrev><term ws=\"en\">sonorant</term><def ws=\"en\">“This feature describes the type of oral constriction that can occur in the vocal tract. [+son] designates the vowels and sonorant consonants, which are produced without the imbalance of air pressure in the vocal tract that might cause turbulence. [-son] alternatively describes the obstruents, articulated with a noticeable turbulence caused by an imbalance of air pressure in the vocal tract.”</def><citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>" +
+				"<item id='vPASonorantPositive' guid=\"d190d8a1-f058-4a9c-b16e-f16b525b041c\" type='value'><abbrev ws='en'>+</abbrev><term ws='en'>positive</term><fs id='vPASonorantPositiveFS' type='Phon' typeguid=\"0ea53dd6-79f5-4fac-a672-f2f7026d8d15\"><f name='fPASonorant'><sym value='+'/></f></fs></item>" +
+				"<item id='vPASonorantNegative' guid=\"ff4a2434-54e9-4e3d-bf11-cadfedef1765\" type='value'><abbrev ws='en'>-</abbrev><term ws='en'>negative</term><fs id='vPASonorantNegativeFS' type='Phon' typeguid=\"0ea53dd6-79f5-4fac-a672-f2f7026d8d15\"><f name='fPASonorant'><sym value='-'/></f></fs></item></item>" +
+				"<item id=\"fPASyllabic\" guid=\"0acbdb9b-28bc-41c2-9706-5873bb3b12e5\" type=\"feature\"><abbrev ws=\"en\">syl</abbrev><term ws=\"en\">syllabic</term><def ws=\"en\">“Syllabic segments may function as the nucleus of a syllable, while their counterparts, the [-syl] segments, may not.”</def><citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>" +
+				"<item id='vPASyllabicPositive' guid=\"31929bd3-e2f8-4ea7-beed-527404d34e74\" type='value'><abbrev ws='en'>+</abbrev><term ws='en'>positive</term><fs id='vPASyllabicPositiveFS' type='Phon' typeguid=\"0ea53dd6-79f5-4fac-a672-f2f7026d8d15\"><f name='fPASyllabic'><sym value='+'/></f></fs></item>" +
+				"<item id='vPASyllabicNegative' guid=\"73a064b8-21f0-479a-b5d2-142f30297ffa\" type='value'><abbrev ws='en'>-</abbrev><term ws='en'>negative</term><fs id='vPASyllabicNegativeFS' type='Phon' typeguid=\"0ea53dd6-79f5-4fac-a672-f2f7026d8d15\"><f name='fPASyllabic'><sym value='-'/></f></fs></item></item></item>",
+				Environment.NewLine);
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests adding closed features to feature system and to a feature structure
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void PhonologicalFeatures()
+		{
+			ILangProject lp = Cache.LangProject;
+
+			// ==================================
+			// set up phonological feature system
+			// ==================================
+			// Set up the xml fs description
+			XmlDocument doc = new XmlDocument();
+			doc.LoadXml(ksPhFS1);
+			// get [consonantal:positive]
+			XmlNode itemValue = doc.SelectSingleNode("/item/item[1]/item[1]");
+
+			// Add the feature for first time
+			IFsFeatureSystem phfs = lp.PhFeatureSystemOA;
+			phfs.AddFeatureFromXml(itemValue);
+			// get [consonantal:negative]
+			itemValue = doc.SelectSingleNode("/item/item[1]/item[2]");
+			phfs.AddFeatureFromXml(itemValue);
+			Assert.AreEqual(1, phfs.TypesOC.Count, "should have one type");
+			Assert.AreEqual(1, phfs.FeaturesOC.Count, "should have one feature");
+			foreach (IFsFeatStrucType type in phfs.TypesOC)
+			{
+				Assert.AreEqual("Phon", type.Abbreviation.AnalysisDefaultWritingSystem.Text, "Expect to have Phon type");
+				Assert.AreEqual(1, type.FeaturesRS.Count, "Expect to have one feature in the type");
+				IFsClosedFeature closed = type.FeaturesRS[0] as IFsClosedFeature;
+				Assert.AreEqual("consonantal", closed.Name.AnalysisDefaultWritingSystem.Text, "Expect name of consonantal");
+			}
+			foreach (IFsClosedFeature closed in phfs.FeaturesOC)
+			{
+				Assert.AreEqual("consonantal", closed.Name.AnalysisDefaultWritingSystem.Text, "Expect to have consonantal feature");
+				Assert.AreEqual(2, closed.ValuesOC.Count, "Expect consonantal to have two values");
+				var value = closed.ValuesOC.First();
+				Assert.AreEqual("positive", value.Name.AnalysisDefaultWritingSystem.Text, "Expect positive first value");
+				value = closed.ValuesOC.Last();
+				Assert.AreEqual("negative", value.Name.AnalysisDefaultWritingSystem.Text, "Expect negative last value");
+			}
+			// add sonorant feature
+			itemValue = doc.SelectSingleNode("/item/item[2]/item[1]");
+			phfs.AddFeatureFromXml(itemValue);
+			itemValue = doc.SelectSingleNode("/item/item[2]/item[2]");
+			phfs.AddFeatureFromXml(itemValue);
+			// add syllabic feature
+			itemValue = doc.SelectSingleNode("/item/item[3]/item[1]");
+			phfs.AddFeatureFromXml(itemValue);
+			itemValue = doc.SelectSingleNode("/item/item[3]/item[2]");
+			phfs.AddFeatureFromXml(itemValue);
+			Assert.AreEqual(3, phfs.FeaturesOC.Count, "should have three features");
+			IFsClosedFeature closedf = phfs.FeaturesOC.First() as IFsClosedFeature;
+			CheckFeatureAndItsValues("consonantal", closedf);
+			closedf = phfs.FeaturesOC.ElementAt(1) as IFsClosedFeature;
+			CheckFeatureAndItsValues("sonorant", closedf);
+			closedf = phfs.FeaturesOC.Last() as IFsClosedFeature;
+			CheckFeatureAndItsValues("syllabic", closedf);
+
+			// ===============
+			// set up phonemes
+			// ===============
+			var phonData = lp.PhonologicalDataOA;
+
+			var phonemeset = Cache.ServiceLocator.GetInstance<IPhPhonemeSetFactory>().Create();
+			phonData.PhonemeSetsOS.Add(phonemeset);
+			var phonemeM = Cache.ServiceLocator.GetInstance<IPhPhonemeFactory>().Create();
+			phonemeset.PhonemesOC.Add(phonemeM);
+			phonemeM.Name.set_String(Cache.DefaultUserWs, "m");
+			phonemeM.FeaturesOA = Cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
+			var fsM = phonemeM.FeaturesOA;
+			var closedValue = Cache.ServiceLocator.GetInstance<IFsClosedValueFactory>().Create();
+			fsM.FeatureSpecsOC.Add(closedValue);
+			var feat = phfs.FeaturesOC.First() as IFsClosedFeature;
+			closedValue.FeatureRA = feat;
+			closedValue.ValueRA = feat.ValuesOC.First();
+			closedValue = Cache.ServiceLocator.GetInstance<IFsClosedValueFactory>().Create();
+			fsM.FeatureSpecsOC.Add(closedValue);
+			feat = phfs.FeaturesOC.ElementAt(1) as IFsClosedFeature;
+			closedValue.FeatureRA = feat;
+			closedValue.ValueRA = feat.ValuesOC.First();
+			Assert.AreEqual("[cons:+ son:+]", fsM.LongName, "Expect phoneme m to have [cons:+ son:+] features");
+			var phonemeP = Cache.ServiceLocator.GetInstance<IPhPhonemeFactory>().Create();
+			phonemeset.PhonemesOC.Add(phonemeP);
+			phonemeP.Name.set_String(Cache.DefaultUserWs, "p");
+			phonemeP.FeaturesOA = Cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
+			var fsP = phonemeP.FeaturesOA;
+			closedValue = Cache.ServiceLocator.GetInstance<IFsClosedValueFactory>().Create();
+			fsP.FeatureSpecsOC.Add(closedValue);
+			feat = phfs.FeaturesOC.First() as IFsClosedFeature;
+			closedValue.FeatureRA = feat;
+			closedValue.ValueRA = feat.ValuesOC.First();
+			closedValue = Cache.ServiceLocator.GetInstance<IFsClosedValueFactory>().Create();
+			fsP.FeatureSpecsOC.Add(closedValue);
+			feat = phfs.FeaturesOC.ElementAt(1) as IFsClosedFeature;
+			closedValue.FeatureRA = feat;
+			closedValue.ValueRA = feat.ValuesOC.Last();
+			Assert.AreEqual("[cons:+ son:-]", fsP.LongName, "Expect phoneme p to have [cons:+ son:-] features");
+
+			var phonemeB = Cache.ServiceLocator.GetInstance<IPhPhonemeFactory>().Create();
+			phonemeset.PhonemesOC.Add(phonemeB);
+			phonemeB.Name.set_String(Cache.DefaultUserWs, "b");
+			phonemeB.FeaturesOA = Cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
+			var fsB = phonemeB.FeaturesOA;
+			closedValue = Cache.ServiceLocator.GetInstance<IFsClosedValueFactory>().Create();
+			fsB.FeatureSpecsOC.Add(closedValue);
+			feat = phfs.FeaturesOC.First() as IFsClosedFeature;
+			closedValue.FeatureRA = feat;
+			closedValue.ValueRA = feat.ValuesOC.First();
+			closedValue = Cache.ServiceLocator.GetInstance<IFsClosedValueFactory>().Create();
+			fsB.FeatureSpecsOC.Add(closedValue);
+			feat = phfs.FeaturesOC.ElementAt(1) as IFsClosedFeature;
+			closedValue.FeatureRA = feat;
+			closedValue.ValueRA = feat.ValuesOC.Last();
+			Assert.AreEqual("[cons:+ son:-]", fsB.LongName, "Expect phoneme b to have [cons:+ son:-] features");
+
+			// ====================
+			// set up natural class
+			// ====================
+			var natClass = Cache.ServiceLocator.GetInstance<IPhNCSegmentsFactory>().Create();
+			phonData.NaturalClassesOS.Add(natClass);
+			natClass.SegmentsRC.Add(phonemeM);
+			natClass.SegmentsRC.Add(phonemeP);
+			natClass.SegmentsRC.Add(phonemeB);
+
+			var anno = CmBaseAnnotation.GetOrCreateFeatureStructBaseAnnotation(Cache, natClass);
+			var fs = natClass.SetIntersectionOfPhonemeFeatures(anno.FeaturesOA);
+			Assert.AreEqual(1, fs.FeatureSpecsOC.Count, "Expect one feature after intersection");
+			Assert.AreEqual("[cons:+]", fs.LongName, "Expect [cons:+]");
+
+			// ==================================
+			// Test phoneme feature compatibility
+			// ==================================
+			Assert.True(phonemeM.FeaturesAreCompatible(null), "Expect true if the feature structure is null");
+			Assert.True(phonemeM.FeaturesAreCompatible(fs), "Expect true because m is cons:+");
+			Assert.False(phonemeM.FeaturesAreCompatible(fsB), "Expect false because m is son:+ while b is son:-");
+		}
+
+		private static void CheckFeatureAndItsValues(string sFeatureName, IFsClosedFeature closedf)
+		{
+			Assert.AreEqual(sFeatureName, closedf.Name.AnalysisDefaultWritingSystem.Text,
+				"Expect to have " + sFeatureName + " feature");
+			Assert.AreEqual(2, closedf.ValuesOC.Count, "Expect consonantal to have two values");
+			var value = closedf.ValuesOC.First();
+			Assert.AreEqual("positive", value.Name.AnalysisDefaultWritingSystem.Text, "Expect positive first value");
+			value = closedf.ValuesOC.Last();
+			Assert.AreEqual("negative", value.Name.AnalysisDefaultWritingSystem.Text, "Expect negative last value");
+		}
+
+	}
 }

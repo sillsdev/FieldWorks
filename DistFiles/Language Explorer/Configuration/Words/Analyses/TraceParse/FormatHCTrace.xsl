@@ -202,6 +202,7 @@ ResultSection
 					<xsl:call-template name="ShowSuccessfulAnalyses"/>
 				</div>
 				<xsl:call-template name="ShowAnyLoadErrors"/>
+				<xsl:call-template name="ShowAnyDataIssues"/>
 				<xsl:call-template name="UseShowDetailsButton"/>
 			</xsl:when>
 			<xsl:otherwise>
@@ -227,6 +228,7 @@ ResultSection
 					</p>
 				</xsl:if>
 				<xsl:call-template name="ShowAnyLoadErrors"/>
+				<xsl:call-template name="ShowAnyDataIssues"/>
 				<xsl:call-template name="UseShowDetailsButton"/>
 			</xsl:otherwise>
 		</xsl:choose>
