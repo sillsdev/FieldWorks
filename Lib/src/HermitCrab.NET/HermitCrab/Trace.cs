@@ -73,6 +73,10 @@ namespace SIL.HermitCrab
 			/// </summary>
 			MORPHOLOGICAL_RULE_SYNTHESIS,
 			/// <summary>
+			/// Excluded morpheme co-occurrence trace
+			/// </summary>
+			MORPHEMECOOCCURRENCE,
+			/// <summary>
 			/// Report success trace
 			/// </summary>
 			REPORT_SUCCESS
@@ -1237,6 +1241,56 @@ namespace SIL.HermitCrab
 					(m_output == null ? HCStrings.kstidTraceNoOutput
 					: m_output.Stratum.CharacterDefinitionTable.ToString(m_output.Shape, ModeType.SYNTHESIS, true)));
 			}
+		}
+	}
+
+	/// <summary>
+	/// This is used to represent information resulting from the tracing of morph co-occurrence rules
+	/// during synthesis. This trace record is produced every time an attempt to apply a
+	/// morph co-occurrence rule to a word synthesis fails.
+	/// </summary>
+	public class MorphCoOccurrenceTrace : Trace
+	{
+		private MorphCoOccurrence m_cooccurrence;
+		private string m_usage;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MorphCoOccurrenceTrace"/> class.
+		/// </summary>
+		/// <param name="cooccurrence"></param>
+		/// <param name="usage"></param>
+		internal MorphCoOccurrenceTrace(MorphCoOccurrence cooccurrence, string usage)
+		{
+			m_cooccurrence = cooccurrence;
+			m_usage = usage;
+		}
+
+		/// <summary>
+		/// Gets the trace record type.
+		/// </summary>
+		/// <value>The trace record type.</value>
+		public override TraceType Type
+		{
+			get
+			{
+				return TraceType.MORPHEMECOOCCURRENCE;
+			}
+		}
+
+		public MorphCoOccurrence Cooccurrence
+		{
+			get { return m_cooccurrence; }
+		}
+
+		public string Usage
+		{
+			get { return m_usage; }
+		}
+
+		public override string ToString(bool includeInputs)
+		{
+			return string.Format(HCStrings.kstidTraceMorphemeCooccurrence, Cooccurrence.Type, Usage,
+				Cooccurrence.Others, Cooccurrence.Adjacency);
 		}
 	}
 

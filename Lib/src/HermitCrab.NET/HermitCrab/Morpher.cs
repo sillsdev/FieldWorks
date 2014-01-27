@@ -730,7 +730,7 @@ namespace SIL.HermitCrab
 
 				foreach (WordSynthesis ws in outSynthesis)
 				{
-					if (ws.IsValid)
+					if (ws.IsValid(trace))
 						allValidSyntheses.Add(ws);
 				}
 			}

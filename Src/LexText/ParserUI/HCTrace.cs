@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			if (fIsTrace)
 			{
-				ConvertMorphs(m_parseResult, "//RuleAllomorph/Morph | //RootAllomorph/Morph | //Morphs/Morph", false);
+				ConvertMorphs(m_parseResult, "//RuleAllomorph/Morph | //RootAllomorph/Morph | //Morphs/Morph | //Others/Allomorph/Morph", false);
 				//ConvertMorphs(doc, "//WordGrammarAttempt/Morphs", true);
 			}
 			else

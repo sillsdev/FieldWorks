@@ -262,6 +262,14 @@ namespace SIL.HermitCrab
 			}
 		}
 
+		public override void MorphCooccurrenceRuleFailed(MorphCoOccurrence cooccurrence, string usage, WordSynthesis input)
+		{
+			if (TraceTemplatesSynthesis)
+			{
+				((XElement)input.CurrentTraceObject).Add(Write("MorphCooccurrenceRuleFailed", cooccurrence, usage));
+			}
+		}
+
 		public override void Blocking(BlockType blockingType, WordSynthesis input, LexEntry blockingEntry)
 		{
 			if (TraceBlocking)
@@ -306,5 +314,31 @@ namespace SIL.HermitCrab
 			return new XElement(name, ws == null ? HCStrings.kstidTraceNoOutput
 				: ws.Stratum.CharacterDefinitionTable.ToString(ws.Shape, ModeType.SYNTHESIS, true));
 		}
+
+		protected virtual XElement Write(string name, MorphCoOccurrence coOccurrence, string usage)
+		{
+			XElement elem = new XElement(name);
+			elem.Add(new XElement("Usage", usage));
+			elem.Add(new XElement("Type", coOccurrence.Type));
+			var others = new XElement("Others");
+			foreach (var item in coOccurrence.Others)
+			{
+				var morpheme = item as Morpheme;
+				if (morpheme != null)
+				{
+					others.Add(Write("Morpheme", morpheme));
+					continue;
+				}
+				var allomorph = item as Allomorph;
+				if (allomorph != null)
+				{
+					others.Add(Write("Allomorph", allomorph));
+				}
+			}
+			elem.Add(others);
+			elem.Add(new XElement("Adjacency", coOccurrence.Adjacency));
+			return elem;
+		}
+
 	}
 }

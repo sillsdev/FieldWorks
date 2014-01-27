@@ -192,6 +192,16 @@ namespace SIL.HermitCrab
 				((Trace) input.CurrentTraceObject).AddChild(new MorphologicalRuleSynthesisTrace(rule, input.Clone()));
 		}
 
+		public override void MorphCooccurrenceRuleFailed(MorphCoOccurrence cooccurrence, string usage, WordSynthesis input)
+		{
+			if (TraceTemplatesSynthesis)
+			{
+				var trace = new MorphCoOccurrenceTrace(cooccurrence, usage);
+				((Trace)input.CurrentTraceObject).AddChild(trace);
+
+			}
+		}
+
 		public override void Blocking(BlockType blockingType, WordSynthesis input, LexEntry blockingEntry)
 		{
 			if (TraceBlocking)
