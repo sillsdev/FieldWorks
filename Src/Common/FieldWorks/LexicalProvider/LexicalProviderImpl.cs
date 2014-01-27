@@ -184,7 +184,7 @@ namespace SIL.FieldWorks.LexicalProvider
 
 							IMoMorphType morphType = GetMorphTypeForLexemeType(lexeme.Type);
 							ITsString tssForm = TsStringUtils.MakeTss(sForm, m_cache.DefaultVernWs);
-							m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(morphType, tssForm, null, msa);
+							m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(morphType, tssForm, (ITsString)null, msa);
 							break;
 						}
 					}
@@ -235,7 +235,7 @@ namespace SIL.FieldWorks.LexicalProvider
 							}
 
 							ILexSense newSense = m_cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create(
-								dbEntry, new SandboxGenericMSA(), null);
+								dbEntry, new SandboxGenericMSA(), (ITsString)null);
 							guid = newSense.Guid.ToString();
 							break;
 						}

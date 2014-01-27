@@ -2347,7 +2347,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			else
 				msa.MsaType = MsaType.kUnclassified;
 			ITsString tssForm = m_cache.TsStrFactory.MakeString(sForm, ws);
-			ILexEntry le = m_factLexEntry.Create(morphType, tssForm, null, msa);
+			ILexEntry le = m_factLexEntry.Create(morphType, tssForm, (ITsString)null, msa);
 			IncrementCreatedClidCount(LexEntryTags.kClassId);
 			ITsString tssResidue;
 			string sMsg;

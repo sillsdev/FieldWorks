@@ -50,16 +50,36 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		/// <param name="entry"></param>
 		/// <param name="sandboxMSA"></param>
-		/// <param name="gloss"></param>
+		/// <param name="gloss">string form of gloss, will be put in DefaultAnalysis ws</param>
 		/// <returns></returns>
 		public ILexSense Create(ILexEntry entry, SandboxGenericMSA sandboxMSA, string gloss)
+		{
+			// Handle gloss.
+			if (!string.IsNullOrEmpty(gloss))
+			{
+				var defAnalWs = entry.Cache.DefaultAnalWs;
+				var gls = entry.Cache.TsStrFactory.MakeString(gloss, defAnalWs);
+
+				return Create(entry, sandboxMSA, gls);
+			}
+
+			return Create(entry, sandboxMSA, (ITsString)null);
+		}
+
+		/// <summary>
+		/// Create a new sense and add it to the given entry.
+		/// </summary>
+		/// <param name="entry"></param>
+		/// <param name="sandboxMSA"></param>
+		/// <param name="gloss"></param>
+		/// <returns></returns>
+		public ILexSense Create(ILexEntry entry, SandboxGenericMSA sandboxMSA, ITsString gloss)
 		{
 			var sense = new LexSense();
 			entry.SensesOS.Add(sense);
 			sense.SandboxMSA = sandboxMSA;
 
-			// Handle gloss.
-			if (!string.IsNullOrEmpty(gloss))
+			if (gloss != null)
 			{
 				if (gloss.Length > 256)
 				{
@@ -68,11 +88,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 														System.Windows.Forms.MessageBoxIcon.Warning);
 					gloss = gloss.Substring(0, 256);
 				}
-				var defAnalWs = entry.Cache.DefaultAnalWs;
-				var gls = entry.Cache.TsStrFactory.MakeString(gloss, defAnalWs);
-				sense.Gloss.set_String(defAnalWs, gls);
+				sense.Gloss.set_String(gloss.get_WritingSystemAt(0), gloss);
 			}
-
 			return sense;
 		}
 
@@ -371,6 +388,21 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	{
 		#region Implementation of ILexEntryFactory
 
+		/// <summary>
+		/// Creates a new LexEntry with the given fields
+		/// </summary>
+		/// <param name="morphType"></param>
+		/// <param name="tssLexemeForm"></param>
+		/// <param name="gloss">string for gloss, placed in DefaultAnalysis ws</param>
+		/// <param name="sandboxMSA"></param>
+		/// <returns></returns>
+		public ILexEntry Create(IMoMorphType morphType, ITsString tssLexemeForm, string gloss, SandboxGenericMSA sandboxMSA)
+		{
+			int writingSystem = m_cache.WritingSystemFactory.GetWsFromStr(m_cache.LangProject.DefaultAnalysisWritingSystem.Id);
+			var tssGloss = m_cache.TsStrFactory.MakeString(gloss, writingSystem);
+			return Create(morphType, tssLexemeForm, tssGloss, sandboxMSA);
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Create a new entry.
@@ -381,7 +413,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <param name="sandboxMSA">The dummy MSA.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public ILexEntry Create(IMoMorphType morphType, ITsString tssLexemeForm, string gloss, SandboxGenericMSA sandboxMSA)
+		public ILexEntry Create(IMoMorphType morphType, ITsString tssLexemeForm, ITsString gloss, SandboxGenericMSA sandboxMSA)
 		{
 			var entry = Create();
 			var sense = m_cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create(entry, sandboxMSA, gloss);
@@ -432,7 +464,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					FirstOrDefault();
 			ILexEntry newEntry = Create(entryComponents.MorphType,
 				entryComponents.LexemeFormAlternatives[0],
-				tssGloss.Text,
+				tssGloss,
 				entryComponents.MSA);
 
 			foreach (ITsString tss in entryComponents.LexemeFormAlternatives)
