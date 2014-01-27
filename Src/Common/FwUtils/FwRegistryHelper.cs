@@ -431,21 +431,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 					CopySubKeyTree(version7Key, version8Key);
 				}
 
-				// Guard for some broken Windows machines having trouble accessing HKLM (LT-15158).
-				var hklm = FwRegistryHelper.LocalMachineHive;
-				if (hklm != null)
-				{
-					using (var oldProjectSharedSettingLocation = hklm.OpenSubKey(@"SOFTWARE\SIL\FieldWorks\7.0"))
-					using (var newProjectSharedSettingLocation = FwRegistryHelper.FieldWorksRegistryKey)
-					{
-						object dummy;
-						if (oldProjectSharedSettingLocation != null &&
-							RegistryHelper.RegEntryExists(oldProjectSharedSettingLocation, string.Empty, "ProjectShared", out dummy))
-							CopyValueToNewKey("ProjectShared", oldProjectSharedSettingLocation, newProjectSharedSettingLocation);
-					}
-				}
-
-
 				// After copying everything delete the old key
 				FieldWorksVersionlessRegistryKey.DeleteSubKeyTree(OldFieldWorksRegistryKeyNameVersion7);
 				// Don't delete old ProjectShared since it is in HKLM and we would need admin privileges.
