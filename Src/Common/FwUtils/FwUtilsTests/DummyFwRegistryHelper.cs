@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Win32;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -175,6 +176,27 @@ namespace SIL.FieldWorks.Common.FwUtils
 			version8Key.SetValue(userWs, "fr");
 
 			return version8Key;
+		}
+
+		/// <summary>
+		/// Removes all SubTrees from registry, for test SetUp or Teardown
+		/// </summary>
+		public void DeleteAllSubTreesIfPresent()
+		{
+			DeleteRegistrySubkeyTreeIfPresent(FwRegistryHelper.FieldWorksVersionlessRegistryKey,
+				FwRegistryHelper.OldFieldWorksRegistryKeyNameVersion7);
+			DeleteRegistrySubkeyTreeIfPresent(FwRegistryHelper.FieldWorksVersionlessRegistryKey,
+				FwRegistryHelper.FieldWorksRegistryKeyName);
+			DeleteRegistrySubkeyTreeIfPresent(FwRegistryHelper.FieldWorksVersionlessRegistryKey, "DirectoryFinderTests");
+			DeleteRegistrySubkeyTreeIfPresent(FwRegistryHelper.FieldWorksVersionlessRegistryKey, "HelperFW");
+		}
+
+		private void DeleteRegistrySubkeyTreeIfPresent(RegistryKey key, string subKeyName)
+		{
+			if(RegistryHelper.KeyExists(key, subKeyName))
+			{
+				key.DeleteSubKeyTree(subKeyName);
+			}
 		}
 	}
 	#endregion

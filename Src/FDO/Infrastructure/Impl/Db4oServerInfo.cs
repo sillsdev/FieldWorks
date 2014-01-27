@@ -21,11 +21,11 @@ using System.Threading;
 using Db4objects.Db4o;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.FDO.DomainServices;
 using System.Runtime.Remoting.Channels;
+using SIL.Utils;
 
 namespace FwRemoteDatabaseConnector
 {
@@ -391,7 +391,13 @@ namespace FwRemoteDatabaseConnector
 			get
 			{
 				bool result;
-				var value = FwRegistryHelper.FieldWorksRegistryKey.GetValue(ksSharedProjectKey, "false");
+				object value;
+				RegistryHelper.RegEntryExists(FwRegistryHelper.FieldWorksRegistryKey, string.Empty, ksSharedProjectKey,
+																	 out value);
+				if(value == null)
+				{
+					value = MigrateVersion7Value();
+				}
 				return (bool.TryParse((string)value, out result) && result);
 			}
 			set
@@ -399,6 +405,32 @@ namespace FwRemoteDatabaseConnector
 					FwRegistryHelper.FieldWorksRegistryKey.SetValue(
 						ksSharedProjectKey, value);
 			}
+		}
+
+		/// <summary>
+		/// Migrate the ProjectShared value stored in HKLM in version 7 into the HKCU (.Default since this will be run as system)
+		/// </summary>
+		/// <returns></returns>
+		private static object MigrateVersion7Value()
+		{
+			// Guard for some broken Windows machines having trouble accessing HKLM (LT-15158).
+			var hklm = FwRegistryHelper.LocalMachineHive;
+			if(hklm != null)
+			{
+				using(var oldProjectSharedSettingLocation = hklm.OpenSubKey(@"SOFTWARE\SIL\FieldWorks\7.0"))
+				using(var newProjectSharedSettingLocation = FwRegistryHelper.FieldWorksRegistryKey)
+				{
+					object projectSharedValue;
+					if(oldProjectSharedSettingLocation != null &&
+							RegistryHelper.RegEntryExists(oldProjectSharedSettingLocation, string.Empty, @"ProjectShared",
+																out projectSharedValue))
+					{
+						FwRegistryHelper.FieldWorksRegistryKey.SetValue(@"ProjectShared", projectSharedValue);
+						return projectSharedValue;
+					}
+				}
+			}
+			return @"False";
 		}
 
 		/// <summary>
