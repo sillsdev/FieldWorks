@@ -558,9 +558,9 @@ namespace SIL.HermitCrab
 			ADJACENT_TO_RIGHT
 		}
 
-		HCObjectSet<HCObject> m_others;
-		AdjacencyType m_adjacency;
-		ObjectType m_objectType;
+		private HCObjectSet<HCObject> m_others;
+		private AdjacencyType m_adjacency;
+		private ObjectType m_objectType;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MorphCoOccurrence"/> class.
@@ -575,6 +575,21 @@ namespace SIL.HermitCrab
 			m_adjacency = adjacency;
 		}
 
+		public HCObjectSet<HCObject> Others
+		{
+			get { return m_others; }
+		}
+
+		public AdjacencyType Adjacency
+		{
+			get { return m_adjacency; }
+		}
+
+		public ObjectType Type
+		{
+			get { return m_objectType; }
+		}
+
 		/// <summary>
 		/// Determines if all of the specified morphemes co-occur with the key morpheme.
 		/// </summary>
@@ -584,9 +599,9 @@ namespace SIL.HermitCrab
 		public bool CoOccurs(Morphs morphs, HCObject key)
 		{
 			Collection<Morph> morphList = morphs;
-			HCObjectSet<HCObject> others = new HCObjectSet<HCObject>(m_others);
+			HCObjectSet<HCObject> others = new HCObjectSet<HCObject>(Others);
 
-			switch (m_adjacency)
+			switch (Adjacency)
 			{
 				case AdjacencyType.ANYWHERE:
 					foreach (Morph morph in morphList)
@@ -604,7 +619,7 @@ namespace SIL.HermitCrab
 						}
 						else if (others.Count > 0 && others[0] == curMorphObj)
 						{
-							if (m_adjacency == AdjacencyType.ADJACENT_TO_LEFT)
+							if (Adjacency == AdjacencyType.ADJACENT_TO_LEFT)
 							{
 								if (i == morphList.Count - 1)
 									return false;
@@ -636,7 +651,7 @@ namespace SIL.HermitCrab
 						}
 						else if (others.Count > 0 && others[others.Count - 1] == curMorphObj)
 						{
-							if (m_adjacency == AdjacencyType.ADJACENT_TO_RIGHT)
+							if (Adjacency == AdjacencyType.ADJACENT_TO_RIGHT)
 							{
 								if (i == 0)
 									return false;
@@ -663,7 +678,7 @@ namespace SIL.HermitCrab
 
 		HCObject GetMorphObject(Morph morph)
 		{
-			switch (m_objectType)
+			switch (Type)
 			{
 				case ObjectType.ALLOMORPH:
 					return morph.Allomorph;
