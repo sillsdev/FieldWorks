@@ -28,13 +28,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	/// <remarks>Is public for testing purposes</remarks>
 	public class M3ParserModelRetriever : FwDisposableBase, IVwNotifyChange
 	{
+		public bool Loaded { get; private set; }
+
 		private readonly FdoCache m_cache;
 		private readonly string m_modelPath;
 		private readonly string m_templatePath;
 		private readonly string m_outputDirectory;
 		private XmlDocument m_modelDom;
 		private XmlDocument m_templateDom;
-		private bool m_loaded;
 
 		private readonly object m_syncRoot = new object();
 
@@ -67,9 +68,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			lock (m_syncRoot)
 			{
-				if (m_loaded)
+				if (Loaded)
 					return false;
-				m_loaded = true;
+				Loaded = true;
 			}
 
 			// According to the fxt template files, GAFAWS is NFC, all others are NFD.
@@ -91,7 +92,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public void Reset()
 		{
 			lock (m_syncRoot)
-				m_loaded = false;
+				Loaded = false;
 			m_modelDom = null;
 			m_templateDom = null;
 		}
@@ -193,7 +194,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					case PhSimpleContextSegTags.kClassId:
 					case PhVariableTags.kClassId:
 					case PhEnvironmentTags.kClassId:
-						m_loaded = false;
+						Loaded = false;
 						break;
 				}
 			}

@@ -56,6 +56,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		}
 
 		#region IParser implementation
+		public bool IsUpToDate()
+		{
+			return m_retriever.Loaded;
+		}
+
 		public void Update()
 		{
 			CheckDisposed();

@@ -148,7 +148,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			using (var task = new TaskReport(ParserCoreStrings.ksUpdatingGrammarAndLexicon, m_taskUpdateHandler))
 			{
-				m_parser.Update();
+				if (!m_parser.IsUpToDate())
+					m_parser.Update();
 			}
 		}
 

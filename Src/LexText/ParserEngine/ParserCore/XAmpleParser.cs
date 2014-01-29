@@ -27,6 +27,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_retriever = new M3ParserModelRetriever(m_cache);
 		}
 
+		public bool IsUpToDate()
+		{
+			return m_retriever.Loaded;
+		}
+
 		public void Update()
 		{
 			CheckDisposed();
