@@ -111,32 +111,6 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 				}
 			}
 
-			/// <summary>
-			/// Return true if the other link is expected to link to the same object as this one when resolved.
-			/// We suppose this to be true if it is the same sort of link and has all the same attributes.
-			/// This might miss some cases (e.g., links to the same CmPossibility using names in different writing systems),
-			/// but false negatives just produce unwanted duplicate entries; false positives may cause distinct entries
-			/// to be deleted.
-			/// </summary>
-			/// <param name="other"></param>
-			/// <returns></returns>
-			internal bool SameDestination(PendingLink other)
-			{
-				if (m_sName != other.m_sName)
-					return false;
-				if (m_dictAttrs.Count != other.m_dictAttrs.Count)
-					return false;
-				foreach (var kvp in m_dictAttrs)
-				{
-					string otherVal;
-					if (!other.m_dictAttrs.TryGetValue(kvp.Key, out otherVal))
-						return false;
-					if (otherVal != kvp.Value)
-						return false;
-				}
-				return true;
-			}
-
 			internal Dictionary<string, string> LinkAttributes
 			{
 				get { return m_dictAttrs; }
@@ -2681,7 +2655,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 				m_rglinks.LinksForField(refDup, LexEntryRefTags.kflidComponentLexemes));
 		}
 
-		private static bool AreComponentsSame(IList<PendingLink> refs, IList<PendingLink> refDups)
+		private bool AreComponentsSame(IList<PendingLink> refs, IList<PendingLink> refDups)
 		{
 			if (refs == null && refDups == null)
 				return true;
@@ -2689,7 +2663,14 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 				return false;
 			if (refs.Count != refDups.Count)
 				return false;
-			return !refs.Where((t, i) => !t.SameDestination(refDups[i])).Any(); // All corresponding items match
+			var matched = true;
+			for(var i = 0; i < refs.Count && matched; ++i)
+			{
+				var resolvedLinkHvo = ResolveLinkReference(refs[i].FieldInformation.FieldId, refs[i], true);
+				var resolvedDupHvo = ResolveLinkReference(refDups[i].FieldInformation.FieldId, refDups[i], false);
+				matched = resolvedLinkHvo != 0 && resolvedDupHvo == resolvedLinkHvo;
+			}
+			return matched; // All corresponding items match
 		}
 
 		private void StoreFormEntryMapping(IMultiUnicode mu, int i, ILexEntry le,
