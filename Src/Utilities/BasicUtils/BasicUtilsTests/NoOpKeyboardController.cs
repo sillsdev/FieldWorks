@@ -68,7 +68,7 @@ namespace SIL.Utils
 
 		public IKeyboardDefinition DefaultForWritingSystem(IWritingSystemDefinition ws)
 		{
-			throw new NotImplementedException();
+			return null;
 		}
 
 		public IKeyboardDefinition LegacyForWritingSystem(IWritingSystemDefinition ws)
@@ -78,14 +78,19 @@ namespace SIL.Utils
 
 		public IKeyboardDefinition CreateKeyboardDefinition(string layout, string locale)
 		{
-			throw new NotImplementedException();
+			return new DefaultKeyboardDefinition()
+			{
+				Layout = layout,
+				Locale = locale,
+				OperatingSystem = Environment.OSVersion.Platform
+			};
 		}
 
 		public IEnumerable<IKeyboardDefinition> AllAvailableKeyboards
 		{
 			get
 			{
-				throw new NotImplementedException();
+				return new IKeyboardDefinition[0];
 			}
 		}
 
