@@ -1,11 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
 using System.Text;
-using System.Linq;
-using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -605,7 +600,7 @@ namespace SIL.CoreImpl
 		/// Combine left and right using the specified separator, unless one of them is null or empty; then just return the
 		/// non-empty one.
 		/// </summary>
-		public string Combine (string left, string sep, string right)
+		public static string Combine (string left, string sep, string right)
 		{
 			if (string.IsNullOrEmpty(left))
 				return right ?? "";
@@ -622,7 +617,7 @@ namespace SIL.CoreImpl
 		{
 			var isOldCustom = oldValue == markerValue;
 			if (!isOldCustom && !isNewCustom)
-				return newValue; ; // nothing to do, no change to variant.
+				return newValue; // nothing to do, no change to variant.
 			string leadIn;
 			string variant;
 			string suffix = GetPartsOfVariant(position, out leadIn, out variant);

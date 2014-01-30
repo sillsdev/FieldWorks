@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Xml;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using Palaso.WritingSystems;
 using SIL.CoreImpl.Properties;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -668,9 +669,53 @@ namespace SIL.CoreImpl
 					}
 				}
 				m_localStore.Save();
-				Settings.Default.LocalKeyboards = m_localStore.LocalKeyboardSettings ?? "";
+				Settings.Default.LocalKeyboards = LocalKeyboardsUnionLocalStore();
 				Settings.Default.Save();
 			}
+		}
+
+		/// <summary>
+		/// Performs the Union of Settings.Default.LocalKeyboards and m_localStore.LocalKeyboardSettings and returns the result as an XML string.
+		/// Protected for tests.
+		/// </summary>
+		protected string LocalKeyboardsUnionLocalStore()
+		{
+			if (string.IsNullOrWhiteSpace(Settings.Default.LocalKeyboards))
+			{
+				return m_localStore.LocalKeyboardSettings ?? "";
+			}
+
+			// Parse user.config keyboard list
+			var root = XElement.Parse(Settings.Default.LocalKeyboards);
+			var keyboardSettings = new Dictionary<string, XElement>();
+			foreach (var kbd in root.Elements("keyboard"))
+			{
+				keyboardSettings[kbd.Attribute("ws").Value] = kbd;
+			}
+
+			// Update user.config keyboards with any from the local store.
+			// Although user.config should take precedence, this is safe, because we already should have copied
+			// any relevant keyboards from user.config to the local store, so the only keyboards that are actually
+			// changed will be keyboards the user has intentionally changed.
+			// This step will also save default keyboards for any WS w/o one assigned.
+			foreach (var ws in m_localStore.AllWritingSystems)
+			{
+				var kbd = ((WritingSystemDefinition)ws).LocalKeyboard;
+				if (kbd == null)
+					continue;
+				keyboardSettings[ws.Id] = new XElement("keyboard",
+					new XAttribute("ws", ws.Id),
+					new XAttribute("layout", kbd.Layout),
+					new XAttribute("locale", kbd.Locale));
+			}
+
+			// Convert back to an XML String and return
+			root.RemoveAll();
+			foreach (var kbd in keyboardSettings.Values)
+			{
+				root.Add(kbd);
+			}
+			return root.ToString();
 		}
 
 		/// <summary>
@@ -1093,7 +1138,7 @@ namespace SIL.CoreImpl
 		public override void Save()
 		{
 			base.Save();
-			if (m_globalStore != null && Properties.Settings.Default.UpdateGlobalWSStore)
+			if (m_globalStore != null && Settings.Default.UpdateGlobalWSStore)
 				m_globalStore.Save();
 		}
 	}
