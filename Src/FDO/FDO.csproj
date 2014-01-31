@@ -183,6 +183,7 @@
     <Compile Include="Application\IActionHandlerExtensions.cs" />
     <Compile Include="Application\ReferenceTracker.cs" />
     <Compile Include="CacheKey.cs" />
+    <Compile Include="FdoFileLockedException.cs" />
     <Compile Include="DomainServices\ParatextHelper.cs" />
     <Compile Include="LinkedFilesRelativePathHelper.cs" />
     <Compile Include="DomainImpl\AnalysisAdjuster.cs" />

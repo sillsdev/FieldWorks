@@ -369,7 +369,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			}
 			catch (IOException e)
 			{
-				throw new StartupException(String.Format(Properties.Resources.kstidLockFileLocked, ProjectId.Name), e, true);
+				throw new FdoFileLockedException(String.Format(Properties.Resources.kstidLockFileLocked, ProjectId.Name), e, true);
 			}
 		}
 
