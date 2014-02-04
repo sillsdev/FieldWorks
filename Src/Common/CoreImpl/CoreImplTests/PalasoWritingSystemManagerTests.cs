@@ -28,9 +28,9 @@ namespace SIL.CoreImpl
 		{
 			public TestPalasoWritingSystemManager(IFwWritingSystemStore store) : base(store) {}
 
-			public string NewLocalKeyboardsUnionLocalStore()
+			public string TestUnionSettingsKeyboardsWithLocalStore()
 			{
-				return base.LocalKeyboardsUnionLocalStore();
+				return base.UnionSettingsKeyboardsWithLocalStore();
 			}
 		}
 
@@ -495,7 +495,7 @@ namespace SIL.CoreImpl
 			var wsm = new TestPalasoWritingSystemManager(localStore);
 
 			// SUT
-			var resultXml = wsm.NewLocalKeyboardsUnionLocalStore();
+			var resultXml = wsm.TestUnionSettingsKeyboardsWithLocalStore();
 
 			// Parse resulting string into XElements
 			var root = XElement.Parse(resultXml);
