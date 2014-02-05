@@ -10,18 +10,45 @@
 // Implements the UpdateParserDataTests unit tests.
 // </remarks>
 
-using System;
-using System.Diagnostics;
-using System.IO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
-using System.Xml;
 using NUnit.Framework;
-using SIL.Utils;
+using SIL.FieldWorks.FDO.Infrastructure;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
+	[TestFixture]
+	public class UpdateParserDataTests : MemoryOnlyBackendProviderTestBase
+	{
+		private FdoCache m_cache;
+		private M3ParserModelRetriever m_retriever;
+
+		public UpdateParserDataTests() : base()
+		{
+		}
+
+		[TestFixtureSetUp]
+		public override void FixtureSetup()
+		{
+			base.FixtureSetup();
+
+			var projectId = new TestProjectId(FDOBackendProviderType.kMemoryOnly, "Test.fwdata");
+			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(projectId, "en", "fr", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories);
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor,
+				() => m_cache.LangProject.MorphologicalDataOA.ParserParameters = "<ParserParameters><XAmple><MaxNulls>1</MaxNulls><MaxPrefixes>5</MaxPrefixes><MaxInfixes>1</MaxInfixes><MaxSuffixes>5</MaxSuffixes><MaxInterfixes>0</MaxInterfixes><MaxAnalysesToReturn>10</MaxAnalysesToReturn></XAmple><ActiveParser>XAmple</ActiveParser></ParserParameters>");
+			//string activeParser = m_cache.LangProject.MorphologicalDataOA.ActiveParser;
+			//m_cache.LangProject.MorphologicalDataOA.ActiveParser = "XAmple";
+			m_retriever = new M3ParserModelRetriever(m_cache);
+		}
+
+		[Test]
+		public void EmptyLexicon()
+		{
+			Assert.IsTrue(m_retriever.RetrieveModel());
+		}
+	}
+
 #if WANTTESTPORT // Will we even want the updater stuff? Surely, we won't want it to use FXT.
 	[TestFixture]
 	public class UpdateParserDataTests : MemoryOnlyBackendProviderTestBase
