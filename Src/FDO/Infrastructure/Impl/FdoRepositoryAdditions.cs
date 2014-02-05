@@ -1385,7 +1385,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			Debug.Assert(cache != null);
 			var rgHomographs = new List<ILexEntry>();
 
-			morphType = HomographMorphType(cache, morphType);
+			var morphOrder = HomographMorphOrder(cache, morphType);
 
 			foreach (var le in entries)
 				{
@@ -1399,7 +1399,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 						var types = le.MorphTypes;
 						foreach (var mmt in types)
 						{
-							if (HomographMorphType(cache, mmt) == morphType)
+							if (HomographMorphOrder(cache, mmt) == morphOrder)
 							{
 								rgHomographs.Add(le);
 								// Only add it once, even if it has multiple morph type matches.
@@ -1419,24 +1419,16 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// Maps the specified morph type onto a canonical one that should be used in comparing two
 		/// entries to see whether they are homographs.
 		/// </summary>
-		public IMoMorphType HomographMorphType(FdoCache cache, IMoMorphType morphType)
+		public int HomographMorphOrder(FdoCache cache, IMoMorphType morphType)
 		{
-			IMoMorphTypeRepository morphTypeRep = cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>();
-			// TODO: what about entries with mixed morph types?
-			// Treat stems and roots as equivalent, bound or unbound, as well as entries with no
-			// idea what they are.
-			if (morphType == null ||
-				morphType.Guid == MoMorphTypeTags.kguidMorphBoundRoot ||
-					morphType.Guid == MoMorphTypeTags.kguidMorphBoundStem ||
-						morphType.Guid == MoMorphTypeTags.kguidMorphRoot ||
-							morphType.Guid == MoMorphTypeTags.kguidMorphParticle ||
-								morphType.Guid == MoMorphTypeTags.kguidMorphPhrase ||
-									morphType.Guid == MoMorphTypeTags.kguidMorphDiscontiguousPhrase ||
-										morphType.Guid == MoMorphTypeTags.kguidMorphClitic)
+			// Treat unknown type as stem.
+			if (morphType == null)
 			{
-				morphType = morphTypeRep.GetObject(MoMorphTypeTags.kguidMorphStem);
+				IMoMorphTypeRepository morphTypeRep =
+					cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>();
+				return morphTypeRep.GetObject(MoMorphTypeTags.kguidMorphStem).SecondaryOrder;
 			}
-			return morphType;
+			return morphType.SecondaryOrder;
 		}
 	}
 	#endregion
