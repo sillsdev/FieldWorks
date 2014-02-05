@@ -1473,54 +1473,52 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			if (tssWf == null)
 				return new List<ILexEntry>();
 
-			var wf = tssWf.Text;
+			string wf = tssWf.Text;
 			if (string.IsNullOrEmpty(wf))
 				return new List<ILexEntry>();
 
-			var wsVern = TsStringUtils.GetWsAtOffset(tssWf, 0);
+			int wsVern = TsStringUtils.GetWsAtOffset(tssWf, 0);
 
 			var entries = new Set<ILexEntry>();
 
 			// Get the entries from the matching wordform.
 			// Get matching wordform.
-			var matchingWordforms = cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances()
-				.Where(wrdfrm => wrdfrm.Form.get_String(wsVern).Text == wf);
+			IWfiWordform[] matchingWordforms = cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances()
+				.Where(wrdfrm => wrdfrm.Form.get_String(wsVern).Text == wf).ToArray();
 
-			duplicates = matchingWordforms.Count() > 1;
+			duplicates = matchingWordforms.Length > 1;
 
-			if (matchingWordforms.Count() > 0)
+			if (matchingWordforms.Length > 0)
 			{
-				if (wfa != null && matchingWordforms.First().AnalysesOC.Contains(wfa))
+				if (wfa != null && matchingWordforms[0].AnalysesOC.Contains(wfa))
 				{
 					entries.AddRange(wfa.MorphBundlesOS
-							.Where(mb => mb.MsaRA != null)
-							.Select(mb => mb.MsaRA.Owner as ILexEntry));
+							.Where(mb => mb.MorphRA != null)
+							.Select(mb => mb.MorphRA.OwnerOfClass<ILexEntry>()));
 				}
 				else
 				{
-					foreach (var analysis in matchingWordforms.First().AnalysesOC)
+					foreach (IWfiAnalysis analysis in matchingWordforms[0].AnalysesOC.Where(a => a.ApprovalStatusIcon == (int) Opinions.approves))
 					{
 						entries.AddRange(analysis.MorphBundlesOS
-							.Where(mb => mb.MsaRA != null)
-							.Select(mb => mb.MsaRA.Owner as ILexEntry));
+							.Where(mb => mb.MorphRA != null)
+							.Select(mb => mb.MorphRA.OwnerOfClass<ILexEntry>()));
 					}
 				}
 			}
 			// Get the entries from the matching MoForms.
 			entries.AddRange(
 				cache.ServiceLocator.GetInstance<IMoFormRepository>().AllInstances()
-				.Cast<IMoForm>()
 				.Where(mf => mf.Form.get_String(wsVern) != null && mf.Form.get_String(wsVern).Text == wf)
-				.Select(mf => mf.Owner as ILexEntry));
+				.Select(mf => mf.OwnerOfClass<ILexEntry>()));
 
 			// Get the entries from the citation form
 			entries.AddRange(
 				cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances()
-				.Cast<ILexEntry>()
 				.Where(entry => entry.CitationForm.get_String(wsVern) != null && entry.CitationForm.get_String(wsVern).Text == wf));
 
 			// Put the enrties in a List and sort it by the HomographNumber.
-			var retval = new List<ILexEntry>(entries.ToArray());
+			var retval = new List<ILexEntry>(entries);
 			retval.Sort(CompareEntriesByHomographNumber);
 			return retval;
 		}
