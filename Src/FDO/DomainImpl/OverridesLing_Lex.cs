@@ -1929,12 +1929,12 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		private void UpdateHomographs(string oldHf, string newHf, IMoMorphType oldType1, IMoMorphType newType1)
 		{
 			var repo = Services.GetInstance<ILexEntryRepository>();
-			var newType = repo.HomographMorphType(Cache, newType1);
-			var oldType = repo.HomographMorphType(Cache, oldType1);
+			var newMo = repo.HomographMorphOrder(Cache, newType1);
+			var oldMo = repo.HomographMorphOrder(Cache, oldType1);
 			// This is deliberately obtained before updating, so it usually does NOT include this.
 			// However it might in one case: where the homograph cache had not previously been built.
 			var newHomographs = repo.GetHomographs(newHf)
-				.Where(le => repo.HomographMorphType(Cache, le.PrimaryMorphType) == newType).ToList();
+				.Where(le => repo.HomographMorphOrder(Cache, le.PrimaryMorphType) == newMo).ToList();
 			newHomographs.Sort((first, second) => first.HomographNumber.CompareTo(second.HomographNumber));
 
 			// When the homograph form is not set: it is empty, or entirely non-word forming characters
@@ -1956,7 +1956,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					newHomographs[i].HomographNumber = (newHomographs.Count == 1 ? 0 : i + 1);
 				return;
 			}
-			if (oldHf == newHf && oldType == newType)
+			if (oldHf == newHf && oldMo == newMo)
 				return;  // no significant change; e.g. change from stem to root, or no type to stem
 
 			// At some point AFTER we get the two lists we must fix the cache in the repository.
@@ -1966,7 +1966,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 			// OldHomographs should not include this, since something changed.
 			var oldHomographs = repo.GetHomographs(oldHf)
-				.Where(le => repo.HomographMorphType(Cache, le.PrimaryMorphType) == oldType).ToList();
+				.Where(le => repo.HomographMorphOrder(Cache, le.PrimaryMorphType) == oldMo).ToList();
 			oldHomographs.Sort((first, second) => first.HomographNumber.CompareTo(second.HomographNumber));
 
 			// Fix old homographs, if any (may not have old ones if had no previous CF or LF).

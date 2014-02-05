@@ -149,7 +149,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (m_excludedItems.Contains(entry.Hvo))
 					continue;
-				var key = entry.HomographForm + repo.HomographMorphType(Cache, entry.PrimaryMorphType).Hvo;
+				var key = entry.HomographForm + repo.HomographMorphOrder(Cache, entry.PrimaryMorphType);
 				SortedList<int, ILexEntry> collection;
 				if (!homographs.TryGetValue(key, out collection))
 				{

@@ -89,6 +89,9 @@ namespace SIL.FieldWorks.XWorks
 		private ILexEntry m_blackVerb; // no headword
 		private ILexEntry m_blackColor; // real HN 2, but published as 0.
 
+		private ILexEntry m_edName;
+		private ILexEntry m_edSuffix;
+
 		private MockPublisher m_publisher;
 
 		const int kmainFlid = 89999956;
@@ -207,6 +210,9 @@ namespace SIL.FieldWorks.XWorks
 							(ILexEntryType)Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[0]);
 						m_nolanryan.DoNotPublishInRC.Add(m_mainDict);
 
+						m_edName = MakeEntry("ed", "someone called ed", false);
+						m_edSuffix = MakeEntry("ed", "past", false, false, true);
+
 						m_publisher = new MockPublisher((ISilDataAccessManaged)Cache.DomainDataByFlid, kmainFlid);
 						m_publisher.SetOwningPropValue(Cache.LangProject.LexDbOA.Entries.Select(le => le.Hvo).ToArray());
 						m_decorator = new DictionaryPublicationDecorator(Cache, m_publisher, ObjectListPublisher.OwningFlid);
@@ -269,6 +275,13 @@ namespace SIL.FieldWorks.XWorks
 				Is.EqualTo(Cache.LangProject.LexDbOA.Entries.Where(
 					le => le.DoNotPublishInRC.Count == 0 &&
 					le.DoNotShowMainEntryInRC.Count == 0).Count()));
+		}
+
+		[Test]
+		public void AffixAndStemAreNotHomographs()
+		{
+			Assert.That(m_decorator.get_IntProp(m_edName.Hvo, LexEntryTags.kflidHomographNumber), Is.EqualTo(0));
+			Assert.That(m_decorator.get_IntProp(m_edSuffix.Hvo, LexEntryTags.kflidHomographNumber), Is.EqualTo(0));
 		}
 
 		/// <summary>
@@ -554,10 +567,14 @@ namespace SIL.FieldWorks.XWorks
 			return result;
 		}
 
-		private ILexEntry MakeEntry(string form, string gloss, bool fExclude, bool hwExclude)
+		private ILexEntry MakeEntry(string form, string gloss, bool fExclude, bool hwExclude, bool suffix = false)
 		{
 			var entry = MakeEntry();
-			var lexform = MakeLexemeForm(entry);
+			IMoForm lexform;
+			if (suffix)
+				lexform = MakeSuffix(entry);
+			else
+				lexform = MakeLexemeForm(entry);
 			lexform.Form.VernacularDefaultWritingSystem = VernacularTss(form);
 			MakeSense(entry, gloss);
 			if (fExclude)
@@ -597,6 +614,17 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var form = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entry.LexemeFormOA = form;
+			entry.LexemeFormOA.MorphTypeRA =
+				Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
+			return form;
+		}
+
+		private IMoForm MakeSuffix(ILexEntry entry)
+		{
+			var form = Cache.ServiceLocator.GetInstance<IMoAffixAllomorphFactory>().Create();
+			entry.LexemeFormOA = form;
+			entry.LexemeFormOA.MorphTypeRA =
+				Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphSuffix);
 			return form;
 		}
 

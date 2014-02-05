@@ -421,10 +421,10 @@ namespace SIL.FieldWorks.FDO
 		List<ILexEntry> CollectHomographs(string sForm, IMoMorphType morphType);
 
 		/// <summary>
-		/// Maps the specified morph type onto a canonical one that should be used in comparing two
+		/// Maps the specified morph type onto a canonical ordering that should be used in comparing two
 		/// entries to see whether they are homographs.
 		/// </summary>
-		IMoMorphType HomographMorphType(FdoCache cache, IMoMorphType morphType);
+		int HomographMorphOrder(FdoCache cache, IMoMorphType morphType);
 	}
 
 	internal interface ILexEntryRepositoryInternal
