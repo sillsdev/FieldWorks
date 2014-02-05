@@ -575,11 +575,24 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		/// <param name="morphType">Type of the morph.</param>
 		/// <param name="tssLexemeForm">The TSS lexeme form.</param>
-		/// <param name="gloss">The gloss.</param>
+		/// <param name="gloss">The gloss, will be set in default analysis</param>
 		/// <param name="sandboxMSA">The dummy MSA.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
 		ILexEntry Create(IMoMorphType morphType, ITsString tssLexemeForm, string gloss,
+			SandboxGenericMSA sandboxMSA);
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Create a new entry.
+		/// </summary>
+		/// <param name="morphType">Type of the morph.</param>
+		/// <param name="tssLexemeForm">The TSS lexeme form.</param>
+		/// <param name="gloss">The gloss</param>
+		/// <param name="sandboxMSA">The dummy MSA.</param>
+		/// <returns></returns>
+		/// ------------------------------------------------------------------------------------
+		ILexEntry Create(IMoMorphType morphType, ITsString tssLexemeForm, ITsString gloss,
 			SandboxGenericMSA sandboxMSA);
 
 		/// <summary>
@@ -614,9 +627,18 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		/// <param name="entry"></param>
 		/// <param name="sandboxMSA"></param>
-		/// <param name="gloss"></param>
+		/// <param name="gloss">string to set in the DefaultAnalysis ws for the gloss</param>
 		/// <returns></returns>
 		ILexSense Create(ILexEntry entry, SandboxGenericMSA sandboxMSA, string gloss);
+
+		/// <summary>
+		/// Create a new sense and add it to the given entry.
+		/// </summary>
+		/// <param name="entry"></param>
+		/// <param name="sandboxMSA"></param>
+		/// <param name="gloss"></param>
+		/// <returns></returns>
+		ILexSense Create(ILexEntry entry, SandboxGenericMSA sandboxMSA, ITsString gloss);
 
 		/// <summary>
 		/// Create a new sense with the given guid and owner.

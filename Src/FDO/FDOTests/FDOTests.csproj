@@ -303,6 +303,7 @@
     <Compile Include="DummyProgressDlg.cs" />
     <Compile Include="DuplicateAnalysisFixerTests.cs" />
     <Compile Include="DuplicateWordformFixerTests.cs" />
+    <Compile Include="FdoFactoryAdditionsTests.cs" />
     <Compile Include="FeatureSystemTests.cs" />
     <Compile Include="FwSetupFixtureClass.cs" />
     <Compile Include="Ling_WfiTests.cs" />

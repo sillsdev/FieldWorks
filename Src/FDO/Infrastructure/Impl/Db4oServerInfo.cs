@@ -23,6 +23,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.FieldWorks.FDO.DomainServices;
 using System.Runtime.Remoting.Channels;
+using SIL.Utils;
 
 namespace FwRemoteDatabaseConnector
 {
@@ -368,31 +369,6 @@ namespace FwRemoteDatabaseConnector
 			EnsureClientIsLocalHost();
 			RemotingServer.SharedProjectsSetter(enableSharingOfProjects);
 		}
-
-		///// ------------------------------------------------------------------------------------
-		///// <summary>
-		///// Gets a value indicating whether projects are shared.
-		///// </summary>
-		///// <remarks>Internal method to facilitate testing. Tests can't use public setter
-		///// because that would actually do the conversion. Since this value is used only
-		///// temporarily during a test, there is no point in trying to set it on HKLM;
-		///// that only causes confusion if tests are sometimes run with admin privilege
-		///// and sometimes not.</remarks>
-		///// ------------------------------------------------------------------------------------
-		//internal static bool AreProjectsShared_Internal
-		//{
-		//    get
-		//    {
-		//        bool result;
-		//        var value = FwRegistryHelper.FieldWorksRegistryKey.GetValue(ksSharedProjectKey, "false");
-		//        return (bool.TryParse((string)value, out result) && result);
-		//    }
-		//    set
-		//    {
-		//            FwRegistryHelper.FieldWorksRegistryKey.SetValue(
-		//                ksSharedProjectKey, value);
-		//    }
-		//}
 
 		/// <summary>
 		/// Allows querying all the connected clients for all projects.

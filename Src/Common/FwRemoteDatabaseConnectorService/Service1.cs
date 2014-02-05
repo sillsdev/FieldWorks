@@ -73,6 +73,7 @@ namespace FwRemoteDatabaseConnectorService
 		private static bool GetSharedProject()
 		{
 			bool result;
+			FwRegistryHelper.MigrateVersion7ValueIfNeeded();
 			var value = FwRegistryHelper.FieldWorksRegistryKey.GetValue(ksSharedProjectKey, "false");
 			return (bool.TryParse((string)value, out result) && result);
 		}

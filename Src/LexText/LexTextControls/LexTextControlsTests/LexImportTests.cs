@@ -158,6 +158,28 @@ namespace LexTextControlsTests
 			VerifyHomographXRef("testD", 1);
 		}
 
+		private string sfmDataWithVariantsAndMainEntryLinks =
+@"\lx axle
+\va aa
+\ps v
+\ge axle
+\se ab
+
+\lx aa
+\mn axle
+\ps v
+\ge aa
+
+\lx ab
+\mn axle
+\ps v
+\ge ab";
+		[Test]
+		public void ImportVariantsAndMainEntryRefs_DoesNotDuplicateEntries()
+		{
+			DoImport(sfmDataWithVariantsAndMainEntryLinks, MakeDefaultFields(), 3);
+		}
+
 		/// <summary>
 		/// This messy process simulates what the real import wizard does to import a string like input,
 		/// with the given field mappings, and verifies that it produces the expected number of new lexEntries.

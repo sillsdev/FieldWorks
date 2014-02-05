@@ -7,8 +7,10 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
+using System.Xml.Linq;
 using NUnit.Framework;
 using Palaso.WritingSystems;
+using SIL.CoreImpl.Properties;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 
@@ -21,6 +23,16 @@ namespace SIL.CoreImpl
 	public class PalasoWritingSystemManagerTests // can't derive from BaseTest, but instantiate DebugProcs instead
 	{
 		private DebugProcs m_DebugProcs;
+
+		private class TestPalasoWritingSystemManager : PalasoWritingSystemManager
+		{
+			public TestPalasoWritingSystemManager(IFwWritingSystemStore store) : base(store) {}
+
+			public string NewLocalKeyboardsUnionLocalStore()
+			{
+				return base.LocalKeyboardsUnionLocalStore();
+			}
+		}
 
 		/// <summary>
 		/// If a test overrides this, it should call this base implementation.
@@ -456,6 +468,56 @@ namespace SIL.CoreImpl
 			// By the way it should work the same for one where it does not have to modify the ID.
 			Assert.That(wsManager.GetOrSet("fr", out ws), Is.False);
 			Assert.That(wsManager.GetOrSet("fr", out ws), Is.True);
+		}
+
+		[Test]
+		public void LocalKeyboardsUnionLocalStore()
+		{
+			// Populate Settings.Default.LocalKeyboards
+			Settings.Default.LocalKeyboards = "<keyboards>"
+											+ "<keyboard ws=\"en\" layout=\"US\" locale=\"en-US\" />"
+											+ "<keyboard ws=\"zh-CN-pinyin\" layout=\"US\" locale=\"en-US\" />"
+											+ "<keyboard ws=\"zh-CN\" layout=\"Chinese (Simplified) - US Keyboard\" locale=\"zh-CN\" />"
+											+ "</keyboards>";
+
+			// Set up a local store with one conflicting and one additional keyboard
+			var localStore = new LocalFileWritingSystemStore(PrepareTempStore("Store"));
+			var ws = new PalasoWritingSystem
+			{
+				LanguageSubtag = new LanguageSubtag("en", "en", false, null),
+				LocalKeyboard = Keyboard.Controller.CreateKeyboardDefinition("United States-Dvorak", "en-UK")
+			};
+			localStore.Set(ws);
+			ws = new PalasoWritingSystem
+			{
+				LanguageSubtag = new LanguageSubtag("ko", "ko", false, null),
+				LocalKeyboard = Keyboard.Controller.CreateKeyboardDefinition("US", "ta-IN")
+			};
+			localStore.Set(ws);
+			var wsm = new TestPalasoWritingSystemManager(localStore);
+
+			// SUT
+			var resultXml = wsm.NewLocalKeyboardsUnionLocalStore();
+
+			// Parse resulting string into XElements
+			var root = XElement.Parse(resultXml);
+			var keyboardSettings = new Dictionary<string, XElement>();
+			foreach (var kbd in root.Elements("keyboard"))
+			{
+				keyboardSettings[kbd.Attribute("ws").Value] = kbd;
+			}
+
+			Assert.AreEqual(4, keyboardSettings.Count, "Incorrect number of keyboards in Union");
+			// the same
+			Assert.AreEqual("US", keyboardSettings["zh-CN-pinyin"].Attribute("layout").Value, "Pinyin keyboard layout should not have changed");
+			Assert.AreEqual("en-US", keyboardSettings["zh-CN-pinyin"].Attribute("locale").Value, "Pinyin keyboard locale should not have changed");
+			Assert.AreEqual("Chinese (Simplified) - US Keyboard", keyboardSettings["zh-CN"].Attribute("layout").Value, "Chinese keyboard layout should not have changed");
+			Assert.AreEqual("zh-CN", keyboardSettings["zh-CN"].Attribute("locale").Value, "Chinese keyboard locale should not have changed");
+			// new or changed
+			Assert.AreEqual("United States-Dvorak", keyboardSettings["en"].Attribute("layout").Value, "English keyboard layout should have changed");
+			Assert.AreEqual("en-UK", keyboardSettings["en"].Attribute("locale").Value, "English keyboard locale should have changed");
+			Assert.AreEqual("US", keyboardSettings["ko"].Attribute("layout").Value, "Korean keyboard layout should have been created");
+			Assert.AreEqual("ta-IN", keyboardSettings["ko"].Attribute("locale").Value, "Korean keyboard locale should have been created");
 		}
 
 		/// ------------------------------------------------------------------------------------

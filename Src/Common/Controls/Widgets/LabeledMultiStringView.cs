@@ -283,8 +283,9 @@ namespace SIL.FieldWorks.Common.Widgets
 						m_innerView.GetSoundControlRectangle(sel, out selRect);
 						control.Top = selRect.Top;
 					}
-					// This test is needed on Linux.  See FWNX-1348.
-					if (control.Parent.Controls.Contains(control))
+					// Don't crash trying to bring to front if control is not a child control on Linux (FWNX-1348).
+					// If control.Parent is null, don't crash, and bring to front anyway on Windows (LT-15148).
+					if (control.Parent == null || control.Parent.Controls.Contains(control))
 						control.BringToFront();
 				}
 			}

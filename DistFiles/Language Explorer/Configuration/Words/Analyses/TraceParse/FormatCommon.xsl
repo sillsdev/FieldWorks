@@ -110,4 +110,71 @@
 			</span>
 		</li>
 	</xsl:template>
+	<xsl:template name="ShowAnyDataIssues">
+		<xsl:variable name="issues" select="DataIssues/NatClassPhonemeMismatch"/>
+		<xsl:if test="count($issues)&gt;0">
+		<div style="color:red">
+			<p>
+				<xsl:text>The following data issue</xsl:text>
+				<xsl:choose>
+					<xsl:when test="count($issues) &gt; 1">
+						<xsl:text>s were</xsl:text>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:text> was</xsl:text>
+					</xsl:otherwise>
+				</xsl:choose>
+				<xsl:text> found that may affect how the parser works.  When the Hermit Crab parser uses a natural class during its synthesis process, the natural class will use the phonological features which are the intersection of the features of all the phonemes in the class while trying to see if a segment matches the natural class.  The implied phonological features are shown for each class below and mean that it will match any of the predicted phonemes shown.  (If the implied features field is blank, then it will match *all* phonemes.)  For each of the natural classes shown below, the set of predicted phonemes is not the same as the set of actual  phonemes.  You will need to rework your phonological feature system and the assignment of these features to phonemes to make it be correct.</xsl:text>
+			</p>
+<!--			<ul>-->
+				<xsl:for-each select="$issues">
+<!--					<li>-->
+					<table>
+							<tr valign="top">
+								<td>
+									<table>
+										<tr style="color:red">
+											<td>
+												<xsl:value-of select="ClassName"/>
+											</td>
+										</tr>
+										<tr style="color:red">
+											<td>
+												<xsl:text>[</xsl:text>
+												<xsl:value-of select="ClassAbbeviation"/>
+												<xsl:text>]</xsl:text>
+											</td>
+										</tr>
+									</table>
+								</td>
+								<td>
+									<table>
+										<tr style="color:red">
+											<td>Implied Features</td>
+											<td>
+												<xsl:value-of select="ImpliedPhonologicalFeatures"/>
+											</td>
+										</tr>
+										<tr style="color:red">
+											<td>Predicted Phonemes</td>
+											<td>
+												<xsl:value-of select="PredictedPhonemes"/>
+											</td>
+										</tr>
+										<tr style="color:red">
+											<td>Actual Phonemes</td>
+											<td>
+												<xsl:value-of select="ActualPhonemes"/>
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+<!--					</li>-->
+				</xsl:for-each>
+<!--			</ul>-->
+			</div>
+		</xsl:if>
+	</xsl:template>
 </xsl:stylesheet>

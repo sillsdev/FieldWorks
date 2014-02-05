@@ -363,7 +363,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// E.g. the first time the user runs FW8, we need to copy a bunch of registry keys
 		/// from HKCU/Software/SIL/FieldWorks/7.0 -> FieldWorks/8.
-		/// Also copy HKEY_LOCAL_MACHINE\SOFTWARE\SIL\FieldWorks\7.0 ProjectShared (LT-15154).
 		/// </summary>
 		public static void UpgradeUserSettingsIfNeeded()
 		{
@@ -383,28 +382,36 @@ namespace SIL.FieldWorks.Common.FwUtils
 					CopySubKeyTree(version7Key, version8Key);
 				}
 
-				// Guard for some broken Windows machines having trouble accessing HKLM (LT-15158).
-				var hklm = FwRegistryHelper.LocalMachineHive;
-				if (hklm != null)
-				{
-					using (var oldProjectSharedSettingLocation = hklm.OpenSubKey(@"SOFTWARE\SIL\FieldWorks\7.0"))
-					using (var newProjectSharedSettingLocation = FwRegistryHelper.FieldWorksRegistryKey)
-					{
-						object dummy;
-						if (oldProjectSharedSettingLocation != null &&
-							RegistryHelper.RegEntryExists(oldProjectSharedSettingLocation, string.Empty, "ProjectShared", out dummy))
-							CopyValueToNewKey("ProjectShared", oldProjectSharedSettingLocation, newProjectSharedSettingLocation);
-					}
-				}
-
-
 				// After copying everything delete the old key
 				FieldWorksVersionlessRegistryKey.DeleteSubKeyTree(OldFieldWorksRegistryKeyNameVersion7);
-				// Don't delete old ProjectShared since it is in HKLM and we would need admin privileges.
 			}
 			catch (SecurityException se)
 			{
 				// What to do here? Punt!
+			}
+		}
+
+		/// <summary>
+		/// Migrate the ProjectShared value stored in HKLM in version 7 into the HKCU (.Default since this will be run as system)
+		/// </summary>
+		/// <returns></returns>
+		public static void MigrateVersion7ValueIfNeeded()
+		{
+			// Guard for some broken Windows machines having trouble accessing HKLM (LT-15158).
+			var hklm = LocalMachineHive;
+			if (hklm != null)
+			{
+				using (var oldProjectSharedSettingLocation = hklm.OpenSubKey(@"SOFTWARE\SIL\FieldWorks\7.0"))
+				using (var newProjectSharedSettingLocation = FieldWorksRegistryKey)
+				{
+					object projectSharedValue;
+					if (oldProjectSharedSettingLocation != null &&
+							RegistryHelper.RegEntryExists(oldProjectSharedSettingLocation, string.Empty, @"ProjectShared",
+																out projectSharedValue))
+					{
+						FieldWorksRegistryKey.SetValue(@"ProjectShared", projectSharedValue);
+					}
+				}
 			}
 		}
 

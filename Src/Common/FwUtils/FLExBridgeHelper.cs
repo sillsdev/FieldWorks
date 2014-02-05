@@ -129,7 +129,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Project name grafted to the pipe URI so multiple projects can S/R simultaneously
 		/// </summary>
-		private static string _sFwProjectName = "";
+		private static string _sFwProjectName = ""; // REVIEW (Hasso) 2014.01: this variable is never read.
 
 		/// <summary>
 		/// Event handler delegate that passes a jump URL.
@@ -180,7 +180,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var args = "";
 			projectName = "";
 			_projectName = "";
-			_sFwProjectName = "";
+			_sFwProjectName = ""; // REVIEW (Hasso) 2014.01: this variable is never read
 			var userNameActual = userName;
 			if (string.IsNullOrEmpty(userName))
 				userNameActual = Environment.UserName; // default so we can always pass something.
@@ -192,7 +192,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{    // can S/R multiple projects simultaneously
 				AddArg(ref args, "-p", projectFolder);
 				if (projectFolder != FwDirectoryFinder.ProjectsDirectory)
-					_sFwProjectName = Path.GetFileNameWithoutExtension(projectFolder);
+					_sFwProjectName = Path.GetFileNameWithoutExtension(projectFolder); // REVIEW (Hasso) 2014.01: this variable is never read
 			}
 
 			AddArg(ref args, "-v", command);
