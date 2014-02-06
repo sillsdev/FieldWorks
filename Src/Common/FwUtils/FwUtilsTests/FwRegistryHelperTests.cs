@@ -19,6 +19,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 	{
 		private DummyFwRegistryHelper m_helper;
 
+		/// <summary>
+		/// Setups the test bed
+		/// </summary>
 		[SetUp]
 		public void Setup()
 		{
@@ -27,6 +30,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_helper.DeleteAllSubTreesIfPresent();
 		}
 
+		/// <summary>
+		/// Tears down the test bed
+		/// </summary>
 		[TearDown]
 		public void TearDown()
 		{

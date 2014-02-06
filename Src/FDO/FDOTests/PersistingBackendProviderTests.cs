@@ -769,7 +769,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			ProjectId = new TestProjectId(FDOBackendProviderType.kXML, Project);
 			// This will throw an UnauthorizedAccessException because of the
 			// StartupInternalWithDataMigrationIfNeeded() override below
-			StartupExtantLanguageProject(ProjectId, false, new DummyProgressDlg());
+			StartupExtantLanguageProject(ProjectId, false, new DummyProgressDlg(), false);
 		}
 
 		/// <summary/>
@@ -790,7 +790,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		{
 		}
 
-		protected override void StartupInternalWithDataMigrationIfNeeded(IThreadedProgress progressDlg)
+		protected override void StartupInternalWithDataMigrationIfNeeded(IThreadedProgress progressDlg, bool forbidDataMigration)
 		{
 			throw new UnauthorizedAccessException();
 		}

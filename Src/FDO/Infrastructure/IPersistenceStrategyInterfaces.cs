@@ -42,7 +42,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 		/// <param name="fBootstrapSystem">True to bootstrap the existing system, false to skip that
 		/// step</param>
 		/// <param name="progressDlg">The progress dialog box</param>
-		void StartupExtantLanguageProject(IProjectIdentifier projectId, bool fBootstrapSystem, IThreadedProgress progressDlg);
+		/// <param name="forbidDataMigration">True if the application forbids data migration</param>
+		void StartupExtantLanguageProject(IProjectIdentifier projectId, bool fBootstrapSystem, IThreadedProgress progressDlg, bool forbidDataMigration);
 
 		/// <summary>
 		/// Create a new LanguageProject for the BEP with the given parameters.

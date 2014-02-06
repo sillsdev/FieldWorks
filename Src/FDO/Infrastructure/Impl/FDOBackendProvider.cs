@@ -350,7 +350,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// <summary>
 		/// Protected for testing (see MockXMLBackendProvider)
 		/// </summary>
-		protected virtual void StartupInternalWithDataMigrationIfNeeded(IThreadedProgress progressDlg)
+		protected virtual void StartupInternalWithDataMigrationIfNeeded(IThreadedProgress progressDlg, bool forbidDataMigration)
 		{
 			var currentDataStoreVersion = StartupInternal(ModelVersion);
 
@@ -359,6 +359,9 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 			if (currentDataStoreVersion == ModelVersion)
 				return;
+
+			if (!forbidDataMigration)
+				throw new FdoDataMigrationForbiddenException();
 
 			// See if migration involves real data migration(s).
 			// If it does not, just update the stored version number, and keep going.
@@ -738,14 +741,15 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// <param name="fBootstrapSystem">True to bootstrap the existing system, false to skip
 		/// that step</param>
 		/// <param name="progressDlg">The progress dialog box</param>
+		/// <param name="forbidDataMigration">True if the application forbids a data migration</param>
 		/// ------------------------------------------------------------------------------------
 		public void StartupExtantLanguageProject(IProjectIdentifier projectId, bool fBootstrapSystem,
-			IThreadedProgress progressDlg)
+			IThreadedProgress progressDlg, bool forbidDataMigration)
 		{
 			ProjectId = projectId;
 			try
 			{
-				StartupInternalWithDataMigrationIfNeeded(progressDlg);
+				StartupInternalWithDataMigrationIfNeeded(progressDlg, forbidDataMigration);
 				InitializeWritingSystemManager();
 				if (fBootstrapSystem)
 					BootstrapExtantSystem();

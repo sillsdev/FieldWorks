@@ -11,3 +11,4 @@ R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
 
 # Unit test. Object disposed in tear down method.
 T: SIL.FieldWorks.WordWorks.Parser.ParseFilerProcessingTests
+T: SIL.FieldWorks.WordWorks.Parser.UpdateParserDataTests

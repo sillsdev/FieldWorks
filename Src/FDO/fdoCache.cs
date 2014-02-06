@@ -144,8 +144,26 @@ namespace SIL.FieldWorks.FDO
 		public static FdoCache CreateCacheFromExistingData(IProjectIdentifier projectId,
 			string userWsIcuLocale, IFdoUI ui, IFdoDirectories dirs, IThreadedProgress progressDlg)
 		{
+			return CreateCacheFromExistingData(projectId, userWsIcuLocale, ui, dirs, progressDlg, false);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Creates a new FdoCache that uses a specified data provider type that loads the
+		/// language project data from an existing source.
+		/// </summary>
+		/// <param name="projectId">Identifies the project to load.</param>
+		/// <param name="userWsIcuLocale">The ICU locale of the default user WS.</param>
+		/// <param name="ui"></param>
+		/// <param name="dirs"></param>
+		/// <param name="progressDlg">The progress dialog box</param>
+		/// <param name="forbidDataMigration">True if data migration is forbidden by the application</param>
+		/// ------------------------------------------------------------------------------------
+		public static FdoCache CreateCacheFromExistingData(IProjectIdentifier projectId,
+			string userWsIcuLocale, IFdoUI ui, IFdoDirectories dirs, IThreadedProgress progressDlg, bool forbidDataMigration)
+		{
 			return CreateCacheInternal(projectId, userWsIcuLocale, ui, dirs,
-				dataSetup => dataSetup.StartupExtantLanguageProject(projectId, true, progressDlg),
+				dataSetup => dataSetup.StartupExtantLanguageProject(projectId, true, progressDlg, forbidDataMigration),
 				cache => cache.Initialize());
 		}
 
@@ -165,7 +183,7 @@ namespace SIL.FieldWorks.FDO
 		{
 			var projectId = new SimpleProjectId(FDOBackendProviderType.kXML, projectPath);
 			return CreateCacheInternal(projectId, userWsIcuLocale, ui, dirs,
-				dataSetup => dataSetup.StartupExtantLanguageProject(projectId, true, progressDlg),
+				dataSetup => dataSetup.StartupExtantLanguageProject(projectId, true, progressDlg, false),
 				cache => cache.Initialize());
 		}
 
@@ -377,7 +395,7 @@ namespace SIL.FieldWorks.FDO
 
 			var projectId = new SimpleProjectId(FDOBackendProviderType.kXML, dbFileName);
 			using (FdoCache cache = CreateCacheInternal(projectId, userIcuLocale, new SilentFdoUI(synchronizeInvoke), dirs,
-				dataSetup => dataSetup.StartupExtantLanguageProject(projectId, true, progressDlg)))
+				dataSetup => dataSetup.StartupExtantLanguageProject(projectId, true, progressDlg, false)))
 			{
 				if (progressDlg != null)
 				{
