@@ -257,6 +257,9 @@
     <Compile Include="Archiving\ArchivingExtensions.cs" />
     <Compile Include="Archiving\ReapRamp.cs" />
     <Compile Include="ConfigurableDictionaryNode.cs" />
+    <Compile Include="DictionaryConfigurationController.cs" />
+    <Compile Include="DictionaryConfigurationModel.cs" />
+    <Compile Include="IDictionaryConfigurationView.cs" />
     <Compile Include="IDictionaryNodeOptions.cs" />
     <Compile Include="PalasoErrorReportingAdapter.cs" />
     <Compile Include="ConcDecorator.cs" />
