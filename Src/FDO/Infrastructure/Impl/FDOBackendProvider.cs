@@ -360,7 +360,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			if (currentDataStoreVersion == ModelVersion)
 				return;
 
-			if (!forbidDataMigration)
+			if (forbidDataMigration)
 				throw new FdoDataMigrationForbiddenException();
 
 			// See if migration involves real data migration(s).
