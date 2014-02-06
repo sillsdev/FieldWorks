@@ -526,23 +526,28 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			// This is very likely to modify the UI, so if the UOW is not being done on the UI thread, we need
 			// to do at least this part on that thread. One known case is a task being done in the background
 			// thread of ProgressDialogWithTask.
+			IVwNotifyChange[] subscribers = m_changeWatchers.ToArray();
+			ChangeInformation[] changes = subscribers.Length == 0 ? changesEnum.Where(ci => ci.HasNotifier).ToArray() : changesEnum.ToArray();
+			if (changes.Length == 0)
+				return;
+
 			m_ui.SynchronizeInvoke.Invoke(() =>
 			{
-				var subscribers = m_changeWatchers.ToArray();
-				var changes = changesEnum.ToList();
-				foreach (var sub in subscribers)
+				foreach (IVwNotifyChange sub in subscribers)
 				{
-					if (sub is IBulkPropChanged)
-						((IBulkPropChanged)sub).BeginBroadcastingChanges(changes.Count);
+					var bulkPropChanged = sub as IBulkPropChanged;
+					if (bulkPropChanged != null)
+						bulkPropChanged.BeginBroadcastingChanges(changes.Length);
 				}
 				foreach (ChangeInformation change in changes)
 				{
 					change.BroadcastChanges(SubscriberCanReceivePropChangeCallDelegate, subscribers);
 				}
-				foreach (var sub in subscribers)
+				foreach (IVwNotifyChange sub in subscribers)
 				{
-					if (sub is IBulkPropChanged)
-						((IBulkPropChanged)sub).EndBroadcastingChanges();
+					var bulkPropChanged = sub as IBulkPropChanged;
+					if (bulkPropChanged != null)
+						bulkPropChanged.EndBroadcastingChanges();
 				}
 			});
 		}
@@ -1069,6 +1074,11 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 			m_cvIns = cvIns;
 			m_cvDel = cvDel;
 			m_notifier = notifier;
+		}
+
+		internal bool HasNotifier
+		{
+			get { return m_notifier != null; }
 		}
 
 		internal void BroadcastChanges(SubscriberCanReceivePropChangeCallDelegate subscriberChecker, IVwNotifyChange[] subscribers)
