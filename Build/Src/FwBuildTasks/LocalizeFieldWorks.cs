@@ -240,7 +240,7 @@ namespace FwBuildTasks
 			using (var resgenProc = new Process())
 			{
 				resgenProc.StartInfo.UseShellExecute = false;
-				resgenProc.StartInfo.RedirectStandardOutput = true;
+				resgenProc.StartInfo.RedirectStandardOutput = false;
 				if (Environment.OSVersion.Platform == PlatformID.Unix)
 				{
 					resgenProc.StartInfo.FileName = "resgen";
@@ -262,7 +262,11 @@ namespace FwBuildTasks
 
 				//log += resgenProc.StandardOutput.ReadToEnd() + Environment.NewLine;
 
-				resgenProc.WaitForExit();
+				// This loop is needed to work around what seems to be a race condition in Mono
+				do
+					resgenProc.WaitForExit();
+				while (!resgenProc.HasExited);
+
 				if (resgenProc.ExitCode != 0)
 				{
 					LogError("Error: resgen returned error " + resgenProc.ExitCode +
