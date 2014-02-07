@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace SIL.FieldWorks.XWorks
@@ -21,7 +20,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// The view to display the model in
 		/// </summary>
-		private IDictionaryConfigurationView _view;
+		internal IDictionaryConfigurationView View { get; set; }
 
 		/// <summary>
 		/// Available dictionary configurations (eg stem- and root-based)
@@ -40,23 +39,23 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Populate dictionary elements tree, from model.
 		/// </summary>
-		void PopulateTreeView(DictionaryConfigurationModel model)
+		internal void PopulateTreeView(DictionaryConfigurationModel model)
 		{
 			var rootNode = model.PartTree;
 
 			AddNode(null, rootNode);
 
-			_view.GetTreeView().AfterCheck += (sender, args) =>
+			View.GetTreeView().AfterCheck += (sender, args) =>
 			{
-				ConfigurableDictionaryNode node = (ConfigurableDictionaryNode) args.Node.Tag;
+				var node = (ConfigurableDictionaryNode) args.Node.Tag;
 				node.IsEnabled = args.Node.Checked;
 
-				_view.Redraw();
+				View.Redraw();
 			};
 
-			_view.GetTreeView().AfterSelect += (sender, args) =>
+			View.GetTreeView().AfterSelect += (sender, args) =>
 			{
-				ConfigurableDictionaryNode node = (ConfigurableDictionaryNode) args.Node.Tag;
+				var node = (ConfigurableDictionaryNode) args.Node.Tag;
 				BuildAndShowOptions(node);
 			};
 		}
@@ -64,9 +63,12 @@ namespace SIL.FieldWorks.XWorks
 		private void AddNode(ConfigurableDictionaryNode parent, ConfigurableDictionaryNode node)
 		{
 			AddNodeToWidgetTree(parent, node);
-			foreach (var child in node.Children)
+			if(node.Children != null)
 			{
-				AddNode(node, child);
+				foreach(var child in node.Children)
+				{
+					AddNode(node, child);
+				}
 			}
 		}
 
@@ -80,20 +82,63 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var newTreeNode = new TreeNode(newNode.Label) { Tag = newNode };
 
-			var treeView = _view.GetTreeView();
+			var treeView = View.GetTreeView();
 
 			if (parentNode == null)
 			{
+				treeView.Nodes.Add(newTreeNode);
 				treeView.TopNode = newTreeNode;
 				return;
 			}
 
-			// TODO: Fetch by object-as-key rather than by label-as-key. Could search the tree for a node that matches a tag.
-			treeView.Nodes[parentNode.Label].Nodes.Add(newTreeNode);
+			var parentTreeNode = FindTreeNode(parentNode, treeView.Nodes);
+			if(parentTreeNode != null)
+			{
+				parentTreeNode.Nodes.Add(newTreeNode);
+			}
 		}
 
-		public DictionaryConfigurationController()
+		/// <summary>
+		/// FindTreeNode returns the treenode which has the tag that matches nodeToMatch, or null
+		/// </summary>
+		/// <param name="nodeToMatch"></param>
+		/// <param name="nodeCollection"></param>
+		/// <returns></returns>
+		private static TreeNode FindTreeNode(ConfigurableDictionaryNode nodeToMatch, TreeNodeCollection nodeCollection)
 		{
+			if(nodeToMatch == null || nodeCollection == null)
+			{
+				throw new ArgumentNullException();
+			}
+			foreach(TreeNode treeNode in nodeCollection)
+			{
+				if(treeNode.Tag == nodeToMatch)
+				{
+					return treeNode;
+				}
+				var branchResult = FindTreeNode(nodeToMatch, treeNode.Nodes);
+				if(branchResult != null)
+				{
+					return branchResult;
+				}
+			}
+			return null;
+		}
+
+		/// <summary>
+		/// Default constructor to make testing easier.
+		/// </summary>
+		internal DictionaryConfigurationController()
+		{
+		}
+
+		/// <summary>
+		/// Constructs a DictionaryConfigurationController with a view and a model pulled from user settings
+		/// </summary>
+		/// <param name="view"></param>
+		public DictionaryConfigurationController(IDictionaryConfigurationView view)
+		{
+			View = view;
 			SetAlternateDictionaryChoices();
 			var lastUsedAlternateDictionary = ""; // TODO: fetch from cache or settings
 			PopulateTreeView(_alternateDictionaries[lastUsedAlternateDictionary]);

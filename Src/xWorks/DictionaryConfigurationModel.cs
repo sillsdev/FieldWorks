@@ -43,6 +43,11 @@ namespace SIL.FieldWorks.XWorks
 			Label = PartTree.Label; // If the root node's label is the alternate Dictionary name.
 		}
 
+		/// <summary>
+		/// Default constructor for easier testing.
+		/// </summary>
+		internal DictionaryConfigurationModel() {}
+
 		// Constructor could alternatively take a label or some other identifier
 		/// <summary></summary>
 		public DictionaryConfigurationModel(string path)
