@@ -225,7 +225,6 @@ install-tree: fieldworks-flex.1.gz fieldworks-te.1.gz unicodechareditor.1.gz
 	install -d $(DESTDIR)/usr/lib/fieldworks
 	install -d $(DESTDIR)/usr/lib/fieldworks/icu-bin
 	install -d $(DESTDIR)/usr/share/fieldworks
-	install -d $(DESTDIR)/usr/share/fieldworks-movies
 	install -d $(DESTDIR)/usr/share/man/man1
 	install -d $(DESTDIR)/usr/lib/fieldworks/EC/Plugins
 	install -d $(DESTDIR)/var/lib/fieldworks
@@ -258,10 +257,6 @@ install-tree: fieldworks-flex.1.gz fieldworks-te.1.gz unicodechareditor.1.gz
 	cp -pdr DistFiles/{Ethnologue,Fonts,Graphite,Helps,Icu50,Keyboards,"Language Explorer",Parts,SIL,Templates,"Translation Editor"} $(DESTDIR)/usr/share/fieldworks
 	# Install man pages
 	install -m 644 *.1.gz $(DESTDIR)/usr/share/man/man1
-	# Relocate items that are in separate packages
-	rm -rf $(DESTDIR)/usr/share/fieldworks-movies/"Language Explorer"
-	mv $(DESTDIR)/usr/share/fieldworks/"Language Explorer"/Movies $(DESTDIR)/usr/share/fieldworks-movies/"Language Explorer"
-	ln -s /usr/share/fieldworks-movies/"Language Explorer" $(DESTDIR)/usr/share/fieldworks/"Language Explorer"/Movies
 	# Remove localization data that came from "DistFiles/Language Explorer", which is handled separately by l10n-install
 	for LOCALE in $(LOCALIZATIONS); do \
 		rm -f "$(DESTDIR)/usr/share/fieldworks/Language Explorer/Configuration/strings-$$LOCALE.xml" ;\
