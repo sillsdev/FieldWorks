@@ -5,12 +5,12 @@ using System.Linq;
 using SIL.Collections;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
-using SIL.Machine;
+using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 
 namespace SIL.FieldWorks.IText
 {
-	public class ComplexConcParagraphData : IData<ShapeNode>, IDeepCloneable<ComplexConcParagraphData>
+	public class ComplexConcParagraphData : IAnnotatedData<ShapeNode>, IDeepCloneable<ComplexConcParagraphData>
 	{
 		private readonly Shape m_shape;
 		private readonly IStTxtPara m_para;
