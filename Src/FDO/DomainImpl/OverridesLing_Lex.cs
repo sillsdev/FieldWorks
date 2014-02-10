@@ -6678,6 +6678,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			foreach (var phoneme in SegmentsRC)
 			{
 				var pfs = phoneme.FeaturesOA;
+				if (pfs == null)
+					continue;
 				if (pfs.FeatureSpecsOC.Any())
 				{
 					hashSetCurrent.Clear();
