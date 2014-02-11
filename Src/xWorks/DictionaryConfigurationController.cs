@@ -102,15 +102,15 @@ namespace SIL.FieldWorks.XWorks
 		/// FindTreeNode returns the treenode which has the tag that matches nodeToMatch, or null
 		/// </summary>
 		/// <param name="nodeToMatch"></param>
-		/// <param name="nodeCollection"></param>
+		/// <param name="treeNodeCollection"></param>
 		/// <returns></returns>
-		private static TreeNode FindTreeNode(ConfigurableDictionaryNode nodeToMatch, TreeNodeCollection nodeCollection)
+		internal static TreeNode FindTreeNode(ConfigurableDictionaryNode nodeToMatch, TreeNodeCollection treeNodeCollection)
 		{
-			if(nodeToMatch == null || nodeCollection == null)
+			if(nodeToMatch == null || treeNodeCollection == null)
 			{
 				throw new ArgumentNullException();
 			}
-			foreach(TreeNode treeNode in nodeCollection)
+			foreach(TreeNode treeNode in treeNodeCollection)
 			{
 				if(treeNode.Tag == nodeToMatch)
 				{

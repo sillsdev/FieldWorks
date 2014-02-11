@@ -113,7 +113,74 @@ namespace SIL.FieldWorks.XWorks
 			return rootNode;
 		}
 
-		sealed class TestConfigurableDictionaryView : IDictionaryConfigurationView, IDisposable
+		/// <summary/>
+		[Test]
+		public void FindTreeNode_nullArgs_crash()
+		{
+			var node = new ConfigurableDictionaryNode();
+			using (var treeView = new TreeView())
+			{
+				var collection = treeView.Nodes;
+				// SUT
+				Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationController.FindTreeNode(null, collection));
+				Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationController.FindTreeNode(node, null));
+				Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationController.FindTreeNode(null, null));
+			}
+		}
+
+		/// <summary/>
+		[Test]
+		public void FindTreeNode_atRoot_success()
+		{
+			var node = new ConfigurableDictionaryNode();
+			using (var treeView = new TreeView())
+			{
+				var treeNode = new TreeNode();
+				treeNode.Tag = node;
+				treeView.Nodes.Add(treeNode);
+				treeView.TopNode = treeNode;
+				// SUT
+				var returnedTreeNode = DictionaryConfigurationController.FindTreeNode(node, treeView.Nodes);
+				Assert.That(returnedTreeNode.Tag, Is.EqualTo(node));
+			}
+		}
+
+		/// <summary/>
+		[Test]
+		public void FindTreeNode_atSecondLevel_success()
+		{
+			var node = new ConfigurableDictionaryNode();
+			using (var treeView = new TreeView())
+			{
+				var treeNode = new TreeNode();
+				treeNode.Tag = node;
+				treeView.Nodes.Add(new TreeNode());
+				// Adding a decoy tree node first
+				treeView.Nodes[0].Nodes.Add(new TreeNode());
+				treeView.Nodes[0].Nodes.Add(treeNode);
+				// SUT
+				var returnedTreeNode = DictionaryConfigurationController.FindTreeNode(node, treeView.Nodes);
+				Assert.That(returnedTreeNode.Tag, Is.EqualTo(node));
+			}
+		}
+
+		/// <summary/>
+		[Test]
+		public void FindTreeNode_notPresent_notFound()
+		{
+			var node = new ConfigurableDictionaryNode();
+			using (var treeView = new TreeView())
+			{
+				// Decoys
+				treeView.Nodes.Add(new TreeNode());
+				treeView.Nodes[0].Nodes.Add(new TreeNode());
+				// SUT
+				var returnedTreeNode = DictionaryConfigurationController.FindTreeNode(node, treeView.Nodes);
+				Assert.That(returnedTreeNode, Is.EqualTo(null));
+			}
+		}
+
+		private sealed class TestConfigurableDictionaryView : IDictionaryConfigurationView, IDisposable
 		{
 			private TreeView view = new TreeView();
 
