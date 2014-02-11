@@ -182,7 +182,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary/>
 		[Test]
-		public void CreateAndAddTreeNodeForNode_ThrowsOnNullArgument()
+		public void CreateAndAddTreeNodeForNode_ThrowsOnNullNodeArgument()
 		{
 			var controller = new DictionaryConfigurationController();
 			var parentNode = new ConfigurableDictionaryNode();
@@ -205,6 +205,108 @@ namespace SIL.FieldWorks.XWorks
 				controller.CreateAndAddTreeNodeForNode(null, node);
 				Assert.That(controller.View.GetTreeView().Nodes.Count, Is.EqualTo(1), "No TreeNode was added");
 				Assert.That(controller.View.GetTreeView().Nodes[0].Tag, Is.EqualTo(node), "New TreeNode's tag does not match");
+			}
+		}
+
+		/// <summary/>
+		[Test]
+		public void CreateTreeOfTreeNodes_ThrowsOnNullNodeArgument()
+		{
+			var controller = new DictionaryConfigurationController();
+			var parentNode = new ConfigurableDictionaryNode();
+			// SUT
+			Assert.Throws<ArgumentNullException>(() => controller.CreateTreeOfTreeNodes(parentNode, null));
+			Assert.Throws<ArgumentNullException>(() => controller.CreateTreeOfTreeNodes(null, null));
+		}
+
+		/// <summary/>
+		[Test]
+		public void CreateTreeOfTreeNodes_CanCreateOneLevelTree()
+		{
+			var controller = new DictionaryConfigurationController() {View = new TestConfigurableDictionaryView()};
+			var rootNode = new ConfigurableDictionaryNode() {Label = "0", Children = new List<ConfigurableDictionaryNode>()};
+			// SUT
+			controller.CreateTreeOfTreeNodes(null, rootNode);
+
+			BasicTreeNodeVerification(controller, rootNode);
+		}
+
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "GetTreeView returns a reference")]
+		private TreeNode BasicTreeNodeVerification(DictionaryConfigurationController controller, ConfigurableDictionaryNode rootNode)
+		{
+			Assert.That(controller.View.GetTreeView().Nodes[0].Tag, Is.EqualTo(rootNode), "root TreeNode does not corresponded to expected dictionary configuration node");
+			Assert.That(controller.View.GetTreeView().Nodes.Count, Is.EqualTo(1), "Did not expect more than one root TreeNode");
+			var rootTreeNode = controller.View.GetTreeView().Nodes[0];
+			VerifyTreeNodeHierarchy(rootTreeNode);
+			Assert.That(rootTreeNode.Nodes.Count, Is.EqualTo(rootNode.Children.Count), "root treenode does not have expected number of descendants");
+			return rootTreeNode;
+		}
+
+		/// <summary/>
+		[Test]
+		public void CreateTreeOfTreeNodes_CanCreateTwoLevelTree()
+		{
+			var controller = new DictionaryConfigurationController() { View = new TestConfigurableDictionaryView() };
+			var rootNode = new ConfigurableDictionaryNode() { Label = "0", Children = new List<ConfigurableDictionaryNode>() };
+			AddChildrenToNode(rootNode, 3);
+			// SUT
+			controller.CreateTreeOfTreeNodes(null, rootNode);
+
+			var rootTreeNode = BasicTreeNodeVerification(controller, rootNode);
+			string errorMessage = "Should not have made any third-level children that did not exist in the dictionary configuration node hierarchy";
+			Assert.That(rootTreeNode.Nodes[0].Nodes.Count, Is.EqualTo(rootNode.Children[0].Children.Count), errorMessage); // ie 0
+			Assert.That(rootTreeNode.Nodes[1].Nodes.Count, Is.EqualTo(rootNode.Children[1].Children.Count), errorMessage);
+			Assert.That(rootTreeNode.Nodes[2].Nodes.Count, Is.EqualTo(rootNode.Children[2].Children.Count), errorMessage);
+		}
+
+		/// <summary>
+		/// Will create tree with one root node having two child nodes.
+		/// The first of those second-level children will have 2 children,
+		/// and the second of the second-level children will have 3 children.
+		/// </summary>
+		[Test]
+		public void CreateTreeOfTreeNodes_CanCreateThreeLevelTree()
+		{
+			var controller = new DictionaryConfigurationController() { View = new TestConfigurableDictionaryView() };
+			var rootNode = new ConfigurableDictionaryNode() {Label = "0", Children = new List<ConfigurableDictionaryNode>()};
+			AddChildrenToNode(rootNode, 2);
+			AddChildrenToNode(rootNode.Children[0], 2);
+			AddChildrenToNode(rootNode.Children[1], 3);
+
+			// SUT
+			controller.CreateTreeOfTreeNodes(null, rootNode);
+
+			var rootTreeNode = BasicTreeNodeVerification(controller, rootNode);
+			string errorMessage = "Did not make correct number of third-level children";
+			Assert.That(rootTreeNode.Nodes[0].Nodes.Count, Is.EqualTo(rootNode.Children[0].Children.Count), errorMessage); // ie 2
+			Assert.That(rootTreeNode.Nodes[1].Nodes.Count, Is.EqualTo(rootNode.Children[1].Children.Count), errorMessage); // ie 3
+		}
+
+		/// <summary/>
+		public void AddChildrenToNode(ConfigurableDictionaryNode node, int numberOfChildren)
+		{
+			for (int childIndex = 0; childIndex < numberOfChildren; childIndex++)
+			{
+				var child = new ConfigurableDictionaryNode() { Label = node.Label + "." + childIndex, Children = new List<ConfigurableDictionaryNode>()};
+				node.Children.Add(child);
+			}
+		}
+
+		/// <summary>
+		/// Verify that all descendants of treeNode are associated with
+		/// ConfigurableDictionaryNode objects with labels that match
+		/// the hierarchy that they are found in the TreeNode.
+		/// </summary>
+		public void VerifyTreeNodeHierarchy(TreeNode treeNode)
+		{
+			var label = ((ConfigurableDictionaryNode)treeNode.Tag).Label;
+			for (int childIndex = 0; childIndex < treeNode.Nodes.Count; childIndex++)
+			{
+				var child = treeNode.Nodes[childIndex];
+				var childLabel = ((ConfigurableDictionaryNode) child.Tag).Label;
+				var expectedChildLabel = label + "." + childIndex;
+				Assert.That(childLabel, Is.EqualTo(expectedChildLabel), "TreeNode child has associated configuration dictionary node with wrong label");
+				VerifyTreeNodeHierarchy(child);
 			}
 		}
 
