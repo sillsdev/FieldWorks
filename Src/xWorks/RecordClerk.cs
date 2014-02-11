@@ -3353,7 +3353,9 @@ namespace SIL.FieldWorks.XWorks
 		static public XmlNode GetClerkNodeFromToolParamsNode(XmlNode parameterNode)
 		{
 			string clerk = XmlUtils.GetManditoryAttributeValue(parameterNode, "clerk");
-			string xpath = String.Format("ancestor::parameters/clerks/clerk[@id='{0}']",
+			// REVIEW (Hasso) 2014.02: while //clerks is probably an improvement over ancestors::parameters/clerks, this XPath should be
+			// either thorouhly reviewed or reverted before merging with our main codebase.
+			string xpath = String.Format("//clerks/clerk[@id='{0}']",
 				XmlUtils.MakeSafeXmlAttribute(clerk));
 			XmlNode clerkNode = parameterNode.SelectSingleNode(xpath);
 			if (clerkNode == null)

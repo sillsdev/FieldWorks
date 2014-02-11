@@ -80,6 +80,7 @@ namespace SIL.FieldWorks.XWorks
 			this.m_cbDictType = new System.Windows.Forms.ComboBox();
 			this.m_btnSetAll = new System.Windows.Forms.Button();
 			this.m_linkManageViews = new System.Windows.Forms.LinkLabel();
+			this.m_preview = new XWorks.RecordDocXmlView();
 			this.panel1.SuspendLayout();
 			this.SuspendLayout();
 			//
@@ -405,11 +406,17 @@ namespace SIL.FieldWorks.XWorks
 			this.m_linkManageViews.TabStop = true;
 			this.m_linkManageViews.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.m_linkManageViews_LinkClicked);
 			//
+			// m_preview
+			// 
+			resources.ApplyResources(this.m_preview, "m_preview");
+			this.m_preview.Name = "m_preview";
+			// 
 			// XmlDocConfigureDlg
 			//
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
+			this.Controls.Add(this.m_preview);
 			this.Controls.Add(this.m_linkManageViews);
 			this.Controls.Add(this.m_btnSetAll);
 			this.Controls.Add(this.m_cbDictType);
@@ -488,5 +495,6 @@ namespace SIL.FieldWorks.XWorks
 		private SIL.FieldWorks.FwCoreDlgControls.ConfigSenseLayout m_cfgSenses;
 		private System.Windows.Forms.LinkLabel m_linkManageViews;
 		private System.Windows.Forms.LinkLabel m_linkConfigureHomograph;
+		private XWorks.RecordDocXmlView m_preview;
 	}
 }
