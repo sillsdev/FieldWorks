@@ -180,6 +180,34 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		/// <summary/>
+		[Test]
+		public void AddNodeToWidgetTree_nullNode_crash()
+		{
+			var controller = new DictionaryConfigurationController();
+			var parentNode = new ConfigurableDictionaryNode();
+			// SUT
+			Assert.Throws<ArgumentNullException>(() => controller.AddNodeToWidgetTree(parentNode, null));
+			Assert.Throws<ArgumentNullException>(() => controller.AddNodeToWidgetTree(null, null));
+		}
+
+		/// <summary/>
+		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "GetTreeView returns a reference")]
+		public void AddNodeToWidgetTree_addRoot_success()
+		{
+			var controller = new DictionaryConfigurationController();
+			var node = new ConfigurableDictionaryNode();
+			using (var dummyView = new TestConfigurableDictionaryView())
+			{
+				controller.View = dummyView;
+				// SUT
+				controller.AddNodeToWidgetTree(null, node);
+				Assert.That(controller.View.GetTreeView().Nodes.Count, Is.EqualTo(1), "No TreeNode was added");
+				Assert.That(controller.View.GetTreeView().Nodes[0].Tag, Is.EqualTo(node), "New TreeNode's tag does not match");
+			}
+		}
+
 		private sealed class TestConfigurableDictionaryView : IDictionaryConfigurationView, IDisposable
 		{
 			private TreeView view = new TreeView();

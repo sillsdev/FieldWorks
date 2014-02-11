@@ -78,8 +78,11 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="parentNode"></param>
 		/// <param name="newNode"></param>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "TreeNode is owned by the view")]
-		void AddNodeToWidgetTree(ConfigurableDictionaryNode parentNode, ConfigurableDictionaryNode newNode)
+		internal void AddNodeToWidgetTree(ConfigurableDictionaryNode parentNode, ConfigurableDictionaryNode newNode)
 		{
+			if (newNode == null)
+				throw new ArgumentNullException();
+
 			var newTreeNode = new TreeNode(newNode.Label) { Tag = newNode };
 
 			var treeView = View.GetTreeView();
@@ -92,7 +95,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			var parentTreeNode = FindTreeNode(parentNode, treeView.Nodes);
-			if(parentTreeNode != null)
+			if (parentTreeNode != null)
 			{
 				parentTreeNode.Nodes.Add(newTreeNode);
 			}
