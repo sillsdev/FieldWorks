@@ -115,7 +115,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary/>
 		[Test]
-		public void FindTreeNode_nullArgs_crash()
+		public void FindTreeNode_ThrowsOnNullArgument()
 		{
 			var node = new ConfigurableDictionaryNode();
 			using (var treeView = new TreeView())
@@ -130,7 +130,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary/>
 		[Test]
-		public void FindTreeNode_atRoot_success()
+		public void FindTreeNode_CanFindRoot()
 		{
 			var node = new ConfigurableDictionaryNode();
 			using (var treeView = new TreeView())
@@ -147,7 +147,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary/>
 		[Test]
-		public void FindTreeNode_atSecondLevel_success()
+		public void FindTreeNode_CanFindChild()
 		{
 			var node = new ConfigurableDictionaryNode();
 			using (var treeView = new TreeView())
@@ -166,7 +166,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary/>
 		[Test]
-		public void FindTreeNode_notPresent_notFound()
+		public void FindTreeNode_ReturnsNullIfNotFound()
 		{
 			var node = new ConfigurableDictionaryNode();
 			using (var treeView = new TreeView())
@@ -182,19 +182,19 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary/>
 		[Test]
-		public void AddNodeToWidgetTree_nullNode_crash()
+		public void CreateAndAddTreeNodeForNode_ThrowsOnNullArgument()
 		{
 			var controller = new DictionaryConfigurationController();
 			var parentNode = new ConfigurableDictionaryNode();
 			// SUT
-			Assert.Throws<ArgumentNullException>(() => controller.AddNodeToWidgetTree(parentNode, null));
-			Assert.Throws<ArgumentNullException>(() => controller.AddNodeToWidgetTree(null, null));
+			Assert.Throws<ArgumentNullException>(() => controller.CreateAndAddTreeNodeForNode(parentNode, null));
+			Assert.Throws<ArgumentNullException>(() => controller.CreateAndAddTreeNodeForNode(null, null));
 		}
 
 		/// <summary/>
 		[Test]
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "GetTreeView returns a reference")]
-		public void AddNodeToWidgetTree_addRoot_success()
+		public void CreateAndAddTreeNodeForNode_CanAddRoot()
 		{
 			var controller = new DictionaryConfigurationController();
 			var node = new ConfigurableDictionaryNode();
@@ -202,7 +202,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				controller.View = dummyView;
 				// SUT
-				controller.AddNodeToWidgetTree(null, node);
+				controller.CreateAndAddTreeNodeForNode(null, node);
 				Assert.That(controller.View.GetTreeView().Nodes.Count, Is.EqualTo(1), "No TreeNode was added");
 				Assert.That(controller.View.GetTreeView().Nodes[0].Tag, Is.EqualTo(node), "New TreeNode's tag does not match");
 			}

@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var rootNode = model.PartTree;
 
-			AddNode(null, rootNode);
+			CreateTreeOfTreeNodes(null, rootNode);
 
 			View.GetTreeView().AfterCheck += (sender, args) =>
 			{
@@ -60,30 +60,38 @@ namespace SIL.FieldWorks.XWorks
 			};
 		}
 
-		private void AddNode(ConfigurableDictionaryNode parent, ConfigurableDictionaryNode node)
+		/// <summary>
+		/// Create a tree of TreeNodes from node and its Children, adding
+		/// them into the TreeView parented by the TreeNode corresponding
+		/// to parent.
+		/// If parent is null, node is considered to be at the root.
+		/// </summary>
+		internal void CreateTreeOfTreeNodes(ConfigurableDictionaryNode parent, ConfigurableDictionaryNode node)
 		{
-			AddNodeToWidgetTree(parent, node);
+			CreateAndAddTreeNodeForNode(parent, node);
 			if(node.Children != null)
 			{
 				foreach(var child in node.Children)
 				{
-					AddNode(node, child);
+					CreateTreeOfTreeNodes(node, child);
 				}
 			}
 		}
 
 		/// <summary>
-		/// This method will add an individual node to the configuration tree attaching the <code>ConfigurableDictionaryNode</code>
+		/// Create a TreeNode corresponding to node, and add it to the
+		/// TreeView parented by the TreeNode corresponding to parentNode.
+		/// If parentNode is null, node is considered to be at the root.
 		/// </summary>
 		/// <param name="parentNode"></param>
-		/// <param name="newNode"></param>
+		/// <param name="node"></param>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "TreeNode is owned by the view")]
-		internal void AddNodeToWidgetTree(ConfigurableDictionaryNode parentNode, ConfigurableDictionaryNode newNode)
+		internal void CreateAndAddTreeNodeForNode(ConfigurableDictionaryNode parentNode, ConfigurableDictionaryNode node)
 		{
-			if (newNode == null)
+			if (node == null)
 				throw new ArgumentNullException();
 
-			var newTreeNode = new TreeNode(newNode.Label) { Tag = newNode };
+			var newTreeNode = new TreeNode(node.Label) { Tag = node };
 
 			var treeView = View.GetTreeView();
 
