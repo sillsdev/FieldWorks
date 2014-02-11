@@ -147,6 +147,10 @@
   <data name="ksIdle_" xml:space="preserve">
     <value />
   </data>
+  <data name="ksIrregularlyInflectedFormNullAffix" xml:space="preserve">
+    <value>Automatically generated null affix for the {0} irregularly inflected form</value>
+    <comment>Content used when showing the details of a parse in Try a Word for these inflectional affix slot fillers.  {0} is the Name of the irregularly inflected form variant type.</comment>
+  </data>
   <data name="ksQuestions" xml:space="preserve">
     <value>???</value>
     <comment>missiing/undefined information</comment>
@@ -163,6 +167,15 @@
   <data name="ksTraceWordformX" xml:space="preserve">
     <value>Trying Wordform {0}</value>
   </data>
+  <data name="ksUnknownCitationForm" xml:space="preserve">
+    <value>Unknown CitationForm!</value>
+  </data>
+  <data name="ksUnknownGloss" xml:space="preserve">
+    <value>Unknown Gloss!</value>
+  </data>
+  <data name="ksUnknownMorpheme" xml:space="preserve">
+    <value>Unknown Morpheme!</value>
+  </data>
   <data name="ksUpdateX" xml:space="preserve">
     <value>Updating: {0}</value>
   </data>
@@ -171,5 +184,9 @@
   </data>
   <data name="ksX_error" xml:space="preserve">
     <value>{0}: error</value>
+  </data>
+  <data name="ksX_Y_Z" xml:space="preserve">
+    <value>{0} ({1}): {2}</value>
+    <comment>{0} is the lexical form, {1} is the gloss, {2} is the citation form</comment>
   </data>
 </root>

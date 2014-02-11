@@ -19,6 +19,7 @@ using System.Text;
 using System.Xml;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.WordWorks.Parser;
 using XCore;
 using System.Xml.XPath;
 
@@ -125,15 +126,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			// When we  switched to VS 2005, the result from XAmple had a final trailing null character.
 			// I'm not sure why (Andy).  Remove it.
 			string sNoFinalNull = RemoveAnyFinalNull(sAdjusted);
-			XmlDocument doc = new XmlDocument();
+			var doc = new XmlDocument();
 			doc.LoadXml(sNoFinalNull);
 			if (fIsTrace)
 			{
-				ConvertMorphs(doc, "//morph", true);
+				ParserXMLGenerator.ConvertMorphs(doc, "//morph", true, m_cache);
 				ConvertFailures(doc);
 			}
 			else
-				ConvertMorphs(doc, "//Morph", false);
+				ParserXMLGenerator.ConvertMorphs(doc, "//Morph", false, m_cache);
 			return doc.InnerXml;
 		}
 
@@ -204,7 +205,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					XmlNode test = node.Attributes.GetNamedItem("test");
 					string s = test.InnerText;
-					test.InnerText = CreateEntities(s);
+					test.InnerText = ParserXMLGenerator.CreateEntities(s);
 				}
 			}
 		}

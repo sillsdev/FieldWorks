@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Xml;
+using SIL.FieldWorks.WordWorks.Parser;
 using SIL.Utils;
 using XCore;
 
@@ -71,12 +72,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			if (fIsTrace)
 			{
-				ConvertMorphs(m_parseResult, "//RuleAllomorph/Morph | //RootAllomorph/Morph | //Morphs/Morph", false);
-				//ConvertMorphs(doc, "//WordGrammarAttempt/Morphs", true);
+				ParserXMLGenerator.ConvertMorphs(m_parseResult, "//RuleAllomorph/Morph | //RootAllomorph/Morph | //Morphs/Morph", false, m_cache);
 			}
 			else
 			{
-				ConvertMorphs(m_parseResult, "//Morphs/Morph", false);
+				ParserXMLGenerator.ConvertMorphs(m_parseResult, "//Morphs/Morph", false, m_cache);
 			}
 		}
 
