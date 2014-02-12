@@ -194,15 +194,6 @@
   <data name="ksUnknown" xml:space="preserve">
     <value>Unknown</value>
   </data>
-  <data name="ksUnknownAllomorph" xml:space="preserve">
-    <value>Unknown Allomorph!</value>
-  </data>
-  <data name="ksUnknownMorpheme" xml:space="preserve">
-    <value>Unknown Morpheme!</value>
-  </data>
-  <data name="ksUnknownNaturalClass" xml:space="preserve">
-    <value>Unknown Natural Class!</value>
-  </data>
   <data name="ksUpdate" xml:space="preserve">
     <value>Update</value>
     <comment>related to ParserCoreStrings.ksUpdateX</comment>

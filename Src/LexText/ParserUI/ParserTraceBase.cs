@@ -152,7 +152,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			CreateMorphGlossXmlElement(node, morphNode);
 			CreateMorphCitationFormXmlElement(node, morphNode);
 			CreateMorphInflectionClassesXmlElement(doc, node, morphNode);
-			ParserXMLGenerator.CreateMsaXmlElement(node, doc, morphNode, "@morphname", m_cache);
+			ParserXmlGenerator.CreateMsaXmlElement(node, doc, morphNode, "@morphname", m_cache);
 		}
 		public string CreateTempFile(string sPrefix, string sExtension)
 		{
@@ -207,12 +207,12 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		protected static XmlNode CreateXmlElement(XmlDocument doc, string sElementName, XmlNode parentNode)
 		{
-			return ParserXMLGenerator.CreateXmlElement(doc, sElementName, parentNode);
+			return ParserXmlGenerator.CreateXmlElement(doc, sElementName, parentNode);
 		}
 
 		protected static void CreateXmlAttribute(XmlDocument doc, string sAttrName, string sAttrValue, XmlNode elementNode)
 		{
-			ParserXMLGenerator.CreateXmlAttribute(doc, sAttrName, sAttrValue, elementNode);
+			ParserXmlGenerator.CreateXmlAttribute(doc, sAttrName, sAttrValue, elementNode);
 		}
 	}
 }

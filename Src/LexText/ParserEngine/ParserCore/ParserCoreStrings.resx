@@ -189,4 +189,10 @@
     <value>{0} ({1}): {2}</value>
     <comment>{0} is the lexical form, {1} is the gloss, {2} is the citation form</comment>
   </data>
+  <data name="ksUnknownAllomorph" xml:space="preserve">
+    <value>Unknown Allomorph!</value>
+  </data>
+  <data name="ksUnknownNaturalClass" xml:space="preserve">
+    <value>Unknown Natural Class!</value>
+  </data>
 </root>

@@ -11,7 +11,7 @@ using SIL.Utils;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
-	public class ParserXMLGenerator
+	public static class ParserXmlGenerator
 	{
 		public static void CreateMsaXmlElement(XmlNode node, XmlDocument doc, XmlNode morphNode, string sHvo, FdoCache fdoCache)
 		{

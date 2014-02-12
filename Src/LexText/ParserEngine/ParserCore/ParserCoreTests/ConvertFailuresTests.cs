@@ -5,29 +5,25 @@
 // File: ConvertFailuresTests.cs
 // Responsibility:
 
-using System;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Xml;
-using System.Xml.Xsl;
-
-using SIL.FieldWorks.Common.FwUtils;
-
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Test.TestUtils;
 
-namespace SIL.FieldWorks.LexText.Controls
+namespace SIL.FieldWorks.WordWorks.Parser
 {
 	/// <summary>
 	/// Summary description for ConvertFailuresTests.
 	/// </summary>
 	[TestFixture]
-	public class ConvertFailuresTests: BaseTest
+	public class ConvertFailuresTests : BaseTest
 	{
-		private XmlDocument m_doc;
+		private static readonly string[] SaTesting = { "A", "AB", "ABC", "ABCD", "ABCDE", "ABCDEF" };
 
-		private XAmpleTrace m_xampleTrace = new XAmpleTrace();
+		private XmlDocument m_doc;
+		private int m_testingCount;
 
 		/// <summary>
 		/// Location of simple test FXT files
@@ -50,6 +46,13 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 		}
 
+		private string GetRepresentation(int hvo)
+		{
+			if (m_testingCount > 5)
+				m_testingCount = 0;
+			return SaTesting[m_testingCount++];
+		}
+
 		[Test]
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
@@ -57,7 +60,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			XmlNodeList nl = m_doc.SelectNodes("//failure[contains(@test,'ANCC_FT')]");
 			Assert.IsTrue(nl.Count == 2, "Two ANCC failures");
-			m_xampleTrace.ConvertANCCFailures(m_doc, true);
+			m_testingCount = 0;
+			XAmpleParser.ConvertAdHocFailures(m_doc, "ANCC_FT", GetRepresentation);
 			int i = 1;
 			foreach (XmlNode node in nl)
 			{
@@ -83,7 +87,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			XmlNodeList nl = m_doc.SelectNodes("//failure[contains(@test,'MCC_FT')]");
 			Assert.IsTrue(nl.Count == 2, "Two MCC failures");
-			m_xampleTrace.ConvertMCCFailures(m_doc, true);
+			m_testingCount = 0;
+			XAmpleParser.ConvertAdHocFailures(m_doc, "MCC_FT", GetRepresentation);
 			int i = 1;
 			foreach (XmlNode node in nl)
 			{
@@ -109,7 +114,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			XmlNodeList nl = m_doc.SelectNodes("//failure[contains(@test,'SEC_ST') and contains(@test,'[')]");
 			Assert.IsTrue(nl.Count == 8, "Eight SEC failures with classes");
-			m_xampleTrace.ConvertSECFailures(m_doc, true);
+			m_testingCount = 0;
+			XAmpleParser.ConvertNaturalClasses(m_doc, "SEC_ST", GetRepresentation);
 			int i = 1;
 			foreach (XmlNode node in nl)
 			{
@@ -152,7 +158,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			XmlNodeList nl = m_doc.SelectNodes("//failure[contains(@test,'InfixEnvironment') and contains(@test,'[')]");
 			Assert.IsTrue(nl.Count == 8, "Eight Infix Environment failures with classes");
-			m_xampleTrace.ConvertInfixEnvironmentFailures(m_doc, true);
+			m_testingCount = 0;
+			XAmpleParser.ConvertNaturalClasses(m_doc, "InfixEnvironment", GetRepresentation);
 			int i = 1;
 			foreach (XmlNode node in nl)
 			{

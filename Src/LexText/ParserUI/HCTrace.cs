@@ -72,11 +72,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			if (fIsTrace)
 			{
-				ParserXMLGenerator.ConvertMorphs(m_parseResult, "//RuleAllomorph/Morph | //RootAllomorph/Morph | //Morphs/Morph", false, m_cache);
+				ParserXmlGenerator.ConvertMorphs(m_parseResult, "//RuleAllomorph/Morph | //RootAllomorph/Morph | //Morphs/Morph", false, m_cache);
 			}
 			else
 			{
-				ParserXMLGenerator.ConvertMorphs(m_parseResult, "//Morphs/Morph", false, m_cache);
+				ParserXmlGenerator.ConvertMorphs(m_parseResult, "//Morphs/Morph", false, m_cache);
 			}
 		}
 

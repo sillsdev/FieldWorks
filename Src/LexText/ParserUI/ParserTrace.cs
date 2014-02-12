@@ -137,7 +137,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				foreach (XmlNode node in nl)
 				{
-					ParserXMLGenerator.CreateMsaXmlElement(node, m_parseResult, node, sAttrXPath, m_cache);
+					ParserXmlGenerator.CreateMsaXmlElement(node, m_parseResult, node, sAttrXPath, m_cache);
 				}
 			}
 		}

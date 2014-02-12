@@ -146,6 +146,7 @@
     <Compile Include="..\..\..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
+    <Compile Include="ConvertFailuresTests.cs" />
     <Compile Include="HelperTests.cs" />
     <Compile Include="UpdateParserDataTests.cs" />
     <Compile Include="M3ToXAmpleTransformerTests.cs">
