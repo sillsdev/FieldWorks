@@ -252,6 +252,7 @@
     </Compile>
     <Compile Include="WebPageInteractor.cs" />
     <Compile Include="WordGrammarDebugger.cs" />
+    <Compile Include="WordGrammarStepPair.cs" />
     <Compile Include="WordImporter.cs">
       <SubType>Code</SubType>
     </Compile>

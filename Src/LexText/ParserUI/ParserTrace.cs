@@ -32,21 +32,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected string m_sFormatParse;
 		protected string m_sFormatTrace;
 
-		protected const string m_ksWordGrammarDebugger = "WordGrammarDebugger";
-		/// Testing variables
-		protected string[] m_saTesting = { "A", "AB", "ABC", "ABCD", "ABCDE", "ABCDEF" };
-		protected int m_iTestingCount = 0;
-		protected char[] m_space = { ' ' };
-
-		protected char[] m_digits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
-
-		/// <summary>
-		/// For testing
-		/// </summary>
-		public ParserTrace()
-			: base()
-		{
-		}
 		/// <summary>
 		/// The real deal
 		/// </summary>
@@ -67,20 +52,23 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Initialize what is needed to perform the word grammar debugging and
 		/// produce an html page showing the results
 		/// </summary>
-		/// <param name="sNodeId">Id of the node to use</param>
-		/// <param name="sForm">the wordform being tried</param>
+		/// <param name="nodeId">Id of the node to use</param>
+		/// <param name="form">the wordform being tried</param>
+		/// <param name="lastUrl"></param>
 		/// <returns>temporary html file showing the results of the first step</returns>
-		public abstract string SetUpWordGrammarDebuggerPage(string sNodeId, string sForm, string sLastUrl);
+		public abstract string SetUpWordGrammarDebuggerPage(string nodeId, string form, string lastUrl);
 
 		/// <summary>
 		/// Perform another step in the word grammar debugging process and
 		/// produce an html page showing the results
 		/// </summary>
 		/// <param name="sNodeId">Id of the selected node to use</param>
+		/// <param name="form"></param>
+		/// <param name="lastUrl"></param>
 		/// <returns>temporary html file showing the results of the next step</returns>
-		public string PerformAnotherWordGrammarDebuggerStepPage(string sNodeId, string sForm, string sLastURL)
+		public string PerformAnotherWordGrammarDebuggerStepPage(string sNodeId, string form, string lastUrl)
 		{
-			return m_wordGrammarDebugger.PerformAnotherWordGrammarDebuggerStepPage(sNodeId, sForm, sLastURL);
+			return m_wordGrammarDebugger.PerformAnotherWordGrammarDebuggerStepPage(sNodeId, form, lastUrl);
 		}
 
 		public string PopWordGrammarStack()

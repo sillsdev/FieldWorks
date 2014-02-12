@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				}
 			}
 		}
-		public static void CreateMsaXmlElement(XmlWriter writer, string sObjHvo, string sAlloId, string slotHvo, FdoCache fdoCache)
+		public static void CreateMsaXmlElement(XmlWriter writer, string sObjHvo, string sAlloId, string type, string wordType, FdoCache fdoCache)
 		{
 			// Irregulary inflected forms can have a combination MSA hvo: the LexEntry hvo, a period, and an index to the LexEntryRef
 			var indexOfPeriod = IndexOfPeriodInMsaHvo(ref sObjHvo);
@@ -83,7 +83,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				case "MoInflAffMsa":
 					var inflMsa = obj as IMoInflAffMsa;
 					CreateInflectionClasses(writer, sAlloId, fdoCache);
-					CreateInflMsaXmlElement(writer, inflMsa, slotHvo, fdoCache);
+					CreateInflMsaXmlElement(writer, inflMsa, type, fdoCache);
 					break;
 				case "MoDerivAffMsa":
 					var derivMsa = obj as IMoDerivAffMsa;
@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					// This is one of the null allomorphs we create when building the
 					// input for the parser in order to still get the Word Grammar to have something in any
 					// required slots in affix templates.
-					CreateInflMsaForLexEntryInflType(writer, slotHvo, obj as ILexEntryInflType, fdoCache);
+					CreateInflMsaForLexEntryInflType(writer, wordType, obj as ILexEntryInflType, fdoCache);
 					break;
 			}
 		}
@@ -263,12 +263,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			CreateProductivityRestrictionNodes(doc, inflMsaNode, inflMsa.FromProdRestrictRC, "fromProductivityRestriction");
 		}
 
-		private static void CreateInflMsaXmlElement(XmlWriter writer, IMoInflAffMsa inflMsa, string slotHvo, FdoCache fdoCache)
+		private static void CreateInflMsaXmlElement(XmlWriter writer, IMoInflAffMsa inflMsa, string type, FdoCache fdoCache)
 		{
 			writer.WriteStartElement("inflMsa");
 			CreatePOSXmlAttribute(writer, inflMsa.PartOfSpeechRA, "cat");
 			// handle any slot
-			HandleSlotInfoForInflectionalMsa(writer, slotHvo, fdoCache);
+			HandleSlotInfoForInflectionalMsa(writer, inflMsa, type, fdoCache);
 			CreateFeatureStructureNodes(writer, inflMsa.InflFeatsOA, inflMsa.Hvo);
 			CreateProductivityRestrictionNodes(writer, inflMsa.FromProdRestrictRC, "fromProductivityRestriction");
 			writer.WriteEndElement(); //inflMsa
@@ -346,12 +346,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 		}
 
-		private static void CreateInflMsaForLexEntryInflType(XmlWriter writer, string slotHvo, ILexEntryInflType lexEntryInflType, FdoCache fdoCache)
+		private static void CreateInflMsaForLexEntryInflType(XmlWriter writer, string wordType, ILexEntryInflType lexEntryInflType, FdoCache fdoCache)
 		{
 			IMoInflAffixSlot slot;
 			//var slotId = node.SelectSingleNode("MoForm/@wordType");
-			if (slotHvo != null)
-				slot = fdoCache.ServiceLocator.GetInstance<IMoInflAffixSlotRepository>().GetObject(Convert.ToInt32(slotHvo));
+			if (wordType != null)
+				slot = fdoCache.ServiceLocator.GetInstance<IMoInflAffixSlotRepository>().GetObject(Convert.ToInt32(wordType));
 			else
 			{
 				var slots = lexEntryInflType.SlotsRC;
@@ -547,8 +547,24 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			CreateXmlAttribute(doc, "slotOptional", sSlotOptional, inflMsaNode);
 		}
 
-		private static void HandleSlotInfoForInflectionalMsa(XmlWriter writer, string slotHvo, FdoCache fdoCache)
+		private static void HandleSlotInfoForInflectionalMsa(XmlWriter writer, IMoInflAffMsa inflMsa, string type, FdoCache fdoCache)
 		{
+			int slotHvo = 0;
+			int iCount = inflMsa.SlotsRC.Count;
+			if (iCount > 0)
+			{
+				if (iCount > 1)
+				{ // have a circumfix; assume only two slots and assume that the first is prefix and second is suffix
+					// TODO: ideally would figure out if the slots are prefix or suffix slots and then align the
+					// o and 1 indices to the appropriate slot.  Will just do this for now (hab 2005.08.04).
+					if (type != null && type != "sfx")
+						slotHvo = inflMsa.SlotsRC.ToHvoArray()[0];
+					else
+						slotHvo = inflMsa.SlotsRC.ToHvoArray()[1];
+				}
+				else
+					slotHvo = inflMsa.SlotsRC.ToHvoArray()[0];
+			}
 			writer.WriteAttributeString("slot", slotHvo.ToString(CultureInfo.InvariantCulture));
 			string sSlotOptional = "false";
 			string sSlotAbbr = "??";
