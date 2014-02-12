@@ -42,12 +42,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="sNodeId">Id of the node to use</param>
 		/// <param name="sForm">the wordform being tried</param>
-		/// <param name="sLastURL"></param>
+		/// <param name="sLastUrl"></param>
 		/// <returns>temporary html file showing the results of the first step</returns>
-		public override string SetUpWordGrammarDebuggerPage(string sNodeId, string sForm, string sLastURL)
+		public override string SetUpWordGrammarDebuggerPage(string sNodeId, string sForm, string sLastUrl)
 		{
 			m_wordGrammarDebugger = new HCWordGrammarDebugger(m_mediator, m_parseResult);
-			return m_wordGrammarDebugger.SetUpWordGrammarDebuggerPage(sNodeId, sForm, sLastURL);
+			return m_wordGrammarDebugger.SetUpWordGrammarDebuggerPage(sNodeId, sForm, sLastUrl);
 		}
 
 		public override string CreateResultPage(string result)
@@ -70,14 +70,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void ConvertHvosToStrings(bool fIsTrace)
 		{
-			if (fIsTrace)
-			{
-				ParserXmlGenerator.ConvertMorphs(m_parseResult, "//RuleAllomorph/Morph | //RootAllomorph/Morph | //Morphs/Morph", false, m_cache);
-			}
-			else
-			{
-				ParserXmlGenerator.ConvertMorphs(m_parseResult, "//Morphs/Morph", false, m_cache);
-			}
+			ParserXmlGenerator.ConvertMorphs(m_parseResult, fIsTrace ? "//RuleAllomorph/Morph | //RootAllomorph/Morph | //Morphs/Morph" : "//Morphs/Morph", false, m_cache);
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
@@ -89,9 +82,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (node != null)
 			{
 				XmlNodeList morphs = node.SelectNodes("Morphs");
-				foreach (XmlNode morph in morphs)
+				if (morphs != null)
 				{
-					CreateMorphXmlElement(doc, seqNode, morph);
+					foreach (XmlNode morph in morphs)
+					{
+						CreateMorphXmlElement(doc, seqNode, morph);
+					}
 				}
 			}
 		}

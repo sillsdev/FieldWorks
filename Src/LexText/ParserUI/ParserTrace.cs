@@ -70,7 +70,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="sNodeId">Id of the node to use</param>
 		/// <param name="sForm">the wordform being tried</param>
 		/// <returns>temporary html file showing the results of the first step</returns>
-		public abstract string SetUpWordGrammarDebuggerPage(string sNodeId, string sForm, string sLastURL);
+		public abstract string SetUpWordGrammarDebuggerPage(string sNodeId, string sForm, string sLastUrl);
 
 		/// <summary>
 		/// Perform another step in the word grammar debugging process and

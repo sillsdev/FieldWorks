@@ -55,10 +55,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="sNodeId">Id of the node to use</param>
 		/// <param name="sForm">the wordform being tried</param>
 		/// <returns>temporary html file showing the results of the first step</returns>
-		public override string SetUpWordGrammarDebuggerPage(string sNodeId, string sForm, string sLastURL)
+		public override string SetUpWordGrammarDebuggerPage(string sNodeId, string sForm, string sLastUrl)
 		{
 			m_wordGrammarDebugger = new XAmpleWordGrammarDebugger(m_mediator, m_parseResult);
-			return m_wordGrammarDebugger.SetUpWordGrammarDebuggerPage(sNodeId, sForm, sLastURL);
+			return m_wordGrammarDebugger.SetUpWordGrammarDebuggerPage(sNodeId, sForm, sLastUrl);
 		}
 
 		/// <summary>
