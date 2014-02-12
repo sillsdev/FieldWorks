@@ -97,37 +97,11 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private string CreateIconPath()
 		{
-			StringBuilder sb = new StringBuilder();
+			var sb = new StringBuilder();
 			sb.Append("file:///");
 			sb.Append(TransformPath.Replace(@"\", "/"));
 			sb.Append("/");
 			return sb.ToString();
-		}
-
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		protected void AddMsaNodes(bool fIsTrace)
-		{
-			string sXPath;
-			string sAttrXPath;
-			if (fIsTrace)
-			{
-				sXPath = "//morph[@morphname]";
-				sAttrXPath = "@morphname";
-			}
-			else
-			{
-				sXPath = "//Morph/MSI";
-				sAttrXPath = "@DbRef";
-			}
-			XmlNodeList nl = m_parseResult.SelectNodes(sXPath);
-			if (nl != null)
-			{
-				foreach (XmlNode node in nl)
-				{
-					ParserXmlGenerator.CreateMsaXmlElement(node, m_parseResult, node, sAttrXPath, m_cache);
-				}
-			}
 		}
 	}
 }

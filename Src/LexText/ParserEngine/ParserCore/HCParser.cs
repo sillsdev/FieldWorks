@@ -266,9 +266,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					writer.WriteStartElement("Wordform");
 					writer.WriteAttributeString("DbRef", Convert.ToString(0));
 					writer.WriteAttributeString("Form", form);
-					var output = new FwXmlOutput(this, writer, trace,
-												Path.Combine(m_outputDirectory, m_projectName + "patrlex.txt"));
-					output.MorphAndLookupWord(m_loader.CurrentMorpher, form, true, selectTraceMorphs);
+					MorphAndLookupWord(writer, m_loader.CurrentMorpher, form, true, selectTraceMorphs, Path.Combine(m_outputDirectory, m_projectName + "patrlex.txt"), trace);
 					AddImpliedDataCheckerInfo(writer);
 					writer.WriteEndElement();
 				}
@@ -330,7 +328,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return patrResults;
 		}
 
-		private static List<PcPatrMorph> GetMorphs(WordSynthesis ws)
+		private List<PcPatrMorph> GetMorphs(WordSynthesis ws)
 		{
 			var ppMorphs = new Dictionary<string, PcPatrMorph>();
 			var result = new List<PcPatrMorph>();
@@ -392,7 +390,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return result;
 		}
 
-		private static void WritePcPatrLexiconFile(string path, IEnumerable<PcPatrMorph> morphs)
+		private void WritePcPatrLexiconFile(string path, IEnumerable<PcPatrMorph> morphs)
 		{
 			using (var writer = new StreamWriter(path))
 			{
@@ -430,7 +428,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 		}
 
-		private static string BuildPcPatrInputSentence(IEnumerable<PcPatrMorph> morphs)
+		private string BuildPcPatrInputSentence(IEnumerable<PcPatrMorph> morphs)
 		{
 			var sentence = new StringBuilder();
 			bool firstItem = true;
@@ -490,6 +488,92 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return errorMessage;
 		}
 
+		#region Write Xml
+		private void MorphAndLookupWord(XmlWriter writer, Morpher morpher, string word, bool printTraceInputs, string[] selectTraceMorphs, string patrlexPath, bool doTrace)
+		{
+			try
+			{
+				ICollection<WordGrammarTrace> wordGrammarTraces = null;
+				if (doTrace)
+					wordGrammarTraces = new HashSet<WordGrammarTrace>();
+				var traceManager = new FwXmlTraceManager(m_cache) { WriteInputs = printTraceInputs, TraceAll = doTrace };
+				ICollection<WordSynthesis> synthesisRecs = morpher.MorphAndLookupWord(word, traceManager, selectTraceMorphs);
+
+				IEnumerable<PatrResult> patrResults = ProcessPatr(synthesisRecs, patrlexPath, doTrace);
+				foreach (PatrResult patrResult in patrResults)
+				{
+					if (patrResult.PassedPatr)
+						BuildXmlOutput(writer, patrResult.Morphs);
+					if (wordGrammarTraces != null)
+						wordGrammarTraces.Add(patrResult.WordGrammarTrace);
+				}
+
+				if (doTrace)
+				{
+					WriteTrace(writer, traceManager);
+					ConvertWordGrammarTraceToXml(writer, wordGrammarTraces);
+				}
+				traceManager.Reset();
+			}
+			catch (MorphException exc)
+			{
+				Write(writer, exc);
+			}
+		}
+
+		private void BuildXmlOutput(XmlWriter writer, IEnumerable<PcPatrMorph> morphs)
+		{
+			writer.WriteStartElement("WfiAnalysis");
+			writer.WriteStartElement("Morphs");
+
+			foreach (PcPatrMorph morph in morphs)
+			{
+				writer.WriteStartElement("Morph");
+
+				writer.WriteStartElement("MoForm");
+				writer.WriteAttributeString("DbRef", morph.formId);
+				writer.WriteAttributeString("Label", morph.form);
+				writer.WriteAttributeString("wordType", morph.wordType);
+				writer.WriteEndElement();
+
+				writer.WriteStartElement("MSI");
+				writer.WriteAttributeString("DbRef", morph.msaId);
+				ParserXmlGenerator.CreateMsaXmlElement(writer, morph.msaId, Convert.ToInt32(morph.formId), null, morph.wordType, m_cache);
+				writer.WriteEndElement();
+
+				ParserXmlGenerator.UpdateMorph(writer, m_cache, Convert.ToInt32(morph.formId), morph.msaId, morph.wordType, null);
+
+				writer.WriteEndElement();
+			}
+
+			writer.WriteEndElement();
+			writer.WriteEndElement();
+		}
+
+		private void ConvertWordGrammarTraceToXml(XmlWriter writer, IEnumerable<WordGrammarTrace> wordGrammarTraces)
+		{
+			writer.WriteStartElement("WordGrammarTrace");
+			foreach (WordGrammarTrace trace in wordGrammarTraces)
+				trace.ToXml(writer);
+			writer.WriteEndElement();
+		}
+
+		private void WriteTrace(XmlWriter writer, XmlTraceManager traceManager)
+		{
+			writer.WriteStartElement("Trace");
+			foreach (XElement trace in traceManager.WordAnalysisTraces)
+				trace.WriteTo(writer);
+			writer.WriteEndElement();
+		}
+
+		private void Write(XmlWriter writer, MorphException me)
+		{
+			writer.WriteStartElement("Error");
+			writer.WriteString(ProcessMorphException(me));
+			writer.WriteEndElement();
+		}
+		#endregion
+
 		private class PatrResult
 		{
 			public List<PcPatrMorph> Morphs { get; set; }
@@ -503,7 +587,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private class ImpliedDataChecker
 		{
 			private readonly FdoCache m_cache;
-			private List<PhonemeBasedNaturalClassMismatch> m_mismatches = new List<PhonemeBasedNaturalClassMismatch>();
+			private readonly List<PhonemeBasedNaturalClassMismatch> m_mismatches = new List<PhonemeBasedNaturalClassMismatch>();
 
 			public ImpliedDataChecker(FdoCache cache)
 			{
@@ -566,9 +650,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Justification = "All felds are references and are disposed in the parent class")]
 			private class PhonemeBasedNaturalClassMismatch
 			{
-				private IFsFeatStruc m_impliedPhonologicalFeatures;
-				private IEnumerable<IPhPhoneme> m_predictedPhonemes;
-				private IPhNCSegments m_natClass;
+				private readonly IFsFeatStruc m_impliedPhonologicalFeatures;
+				private readonly IEnumerable<IPhPhoneme> m_predictedPhonemes;
+				private readonly IPhNCSegments m_natClass;
 
 				public PhonemeBasedNaturalClassMismatch(IFsFeatStruc fs, IEnumerable<IPhPhoneme> predictedPhonemes, IPhNCSegments natClass)
 				{
@@ -601,132 +685,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					}
 					return sb.ToString();
 				}
-			}
-		}
-		#endregion
-
-		#region class FwXmlOutput
-		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-			Justification = "m_parser is a reference to the parent class")]
-		private class FwXmlOutput : XmlOutput
-		{
-			private readonly HCParser m_parser;
-			private readonly bool m_fDotrace;
-			private readonly string m_patrlexPath;
-
-			public FwXmlOutput(HCParser parser, XmlWriter writer, bool fDotrace, string patrlexPath)
-				: base(writer, new FwXmlTraceManager())
-			{
-				m_parser = parser;
-				m_fDotrace = fDotrace;
-				m_patrlexPath = patrlexPath;
-			}
-
-			public override void MorphAndLookupWord(Morpher morpher, string word, bool prettyPrint, bool printTraceInputs)
-			{
-				MorphAndLookupWord(morpher, word, printTraceInputs, null);
-			}
-
-			public void MorphAndLookupWord(Morpher morpher, string word, bool printTraceInputs, string[] selectTraceMorphs)
-			{
-				try
-				{
-					ICollection<WordGrammarTrace> wordGrammarTraces = null;
-					if (m_fDotrace)
-						wordGrammarTraces = new HashSet<WordGrammarTrace>();
-					XmlTraceManager.WriteInputs = printTraceInputs;
-					TraceManager.TraceAll = m_fDotrace;
-					ICollection<WordSynthesis> synthesisRecs = morpher.MorphAndLookupWord(word, TraceManager, selectTraceMorphs);
-
-					IEnumerable<PatrResult> patrResults = m_parser.ProcessPatr(synthesisRecs, m_patrlexPath, m_fDotrace);
-					foreach (PatrResult patrResult in patrResults)
-					{
-						if (patrResult.PassedPatr)
-							BuildXmlOutput(patrResult.Morphs);
-						if (wordGrammarTraces != null)
-							wordGrammarTraces.Add(patrResult.WordGrammarTrace);
-					}
-
-					if (m_fDotrace)
-					{
-						WriteTrace();
-						ConvertWordGrammarTraceToXml(wordGrammarTraces);
-					}
-					XmlTraceManager.Reset();
-				}
-				catch (MorphException exc)
-				{
-					Write(exc);
-				}
-			}
-
-			private void BuildXmlOutput(IEnumerable<PcPatrMorph> morphs)
-			{
-				XmlWriter.WriteStartElement("WfiAnalysis");
-				XmlWriter.WriteStartElement("Morphs");
-
-				foreach (PcPatrMorph morph in morphs)
-				{
-					XmlWriter.WriteStartElement("Morph");
-
-					XmlWriter.WriteStartElement("MoForm");
-					XmlWriter.WriteAttributeString("DbRef", morph.formId);
-					XmlWriter.WriteAttributeString("Label", morph.form);
-					XmlWriter.WriteAttributeString("wordType", morph.wordType);
-					XmlWriter.WriteEndElement();
-
-					XmlWriter.WriteStartElement("MSI");
-					XmlWriter.WriteAttributeString("DbRef", morph.msaId);
-					XmlWriter.WriteEndElement();
-
-					XmlWriter.WriteEndElement();
-				}
-
-				XmlWriter.WriteEndElement();
-				XmlWriter.WriteEndElement();
-			}
-
-			private void ConvertWordGrammarTraceToXml(IEnumerable<WordGrammarTrace> wordGrammarTraces)
-			{
-				XmlWriter.WriteStartElement("WordGrammarTrace");
-				foreach (WordGrammarTrace trace in wordGrammarTraces)
-				{
-					trace.ToXml(XmlWriter);
-				}
-				XmlWriter.WriteEndElement();
-			}
-
-			public override void Write(LoadException le)
-			{
-				XmlWriter.WriteStartElement("Error");
-				switch (le.ErrorType)
-				{
-					case LoadException.LoadErrorType.INVALID_ENTRY_SHAPE:
-						var entryShape = le.Data["shape"] as string;
-						var entryId = le.Data["entry"] as string;
-						LexEntry entry = le.Loader.CurrentMorpher.Lexicon.GetEntry(entryId);
-						XmlWriter.WriteString(String.Format(ParserCoreStrings.ksHCInvalidEntryShape, entryShape, entry.Description));
-						break;
-
-					case LoadException.LoadErrorType.INVALID_RULE_SHAPE:
-						var ruleShape = le.Data["shape"] as string;
-						var ruleId = le.Data["rule"] as string;
-						MorphologicalRule rule = le.Loader.CurrentMorpher.GetMorphologicalRule(ruleId);
-						XmlWriter.WriteString(String.Format(ParserCoreStrings.ksHCInvalidRuleShape, ruleShape, rule.Description));
-						break;
-
-					default:
-						XmlWriter.WriteString(String.Format(ParserCoreStrings.ksHCDefaultErrorMsg, le.Message));
-						break;
-				}
-				XmlWriter.WriteEndElement();
-			}
-
-			public override void Write(MorphException me)
-			{
-				XmlWriter.WriteStartElement("Error");
-				XmlWriter.WriteString(m_parser.ProcessMorphException(me));
-				XmlWriter.WriteEndElement();
 			}
 		}
 		#endregion
@@ -764,9 +722,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			public void ToXml(XmlWriter writer)
 			{
 				writer.WriteStartElement("WordGrammarAttempt");
-				writer.WriteStartAttribute("success");
-				writer.WriteValue(m_fSuccess ? "true" : "false");
-				writer.WriteEndAttribute();
+				writer.WriteAttributeString("success", m_fSuccess ? "true" : "false");
 				writer.WriteStartElement("Id");
 				writer.WriteValue(m_id);
 				writer.WriteEndElement();
@@ -776,30 +732,19 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				{
 					writer.WriteStartElement("Morphs");
 					string sWordType = morph.wordType;
-					writer.WriteStartAttribute("wordType");
-					writer.WriteValue(sWordType);
-					writer.WriteEndAttribute();
-					writer.WriteStartAttribute("type");
+					writer.WriteAttributeString("wordType", sWordType);
 					if (sType == "pfx" &&
 						sWordType == "root")
 						sType = "root";
 					else if (sType == "root" &&
 							sWordType != "root")
 						sType = "sfx";
-					writer.WriteValue(sType);
-					writer.WriteEndAttribute();
-					writer.WriteStartAttribute("alloid");
-					writer.WriteValue(morph.formId);
-					writer.WriteEndAttribute();
-					writer.WriteStartAttribute("morphname");
-					writer.WriteValue(morph.msaId);
-					writer.WriteEndAttribute();
+					writer.WriteAttributeString("type", sType);
+					writer.WriteAttributeString("alloid", morph.formId);
+					writer.WriteAttributeString("morphname", morph.msaId);
 
-					writer.WriteStartElement("alloform");
-					writer.WriteValue(morph.form);
-					writer.WriteEndElement(); // alloform
-					//writer.WriteStartElement("Msa");
-					//writer.WriteEndElement(); // Msa
+					writer.WriteElementString("alloform", morph.form);
+
 					int hvoForm = Convert.ToInt32(morph.formId);
 					var obj = m_cache.ServiceLocator.GetObject(hvoForm);
 					var stemAllo = obj as IMoStemAllomorph;
@@ -816,9 +761,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							writer.WriteEndElement(); // stemName
 						}
 					}
-					writer.WriteStartElement("gloss");
-					writer.WriteValue(morph.gloss);
-					writer.WriteEndElement(); // gloss
+					writer.WriteElementString("gloss", morph.gloss);
 					writer.WriteStartElement("citationForm");
 					var form = obj as IMoForm;
 					if (form != null)
@@ -838,6 +781,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		#region class FwXmlTraceManager
 		private class FwXmlTraceManager : XmlTraceManager
 		{
+			private readonly FdoCache m_cache;
+
+			public FwXmlTraceManager(FdoCache fdoCache) : base()
+			{
+				m_cache = fdoCache;
+			}
+
 			public override void ReportSuccess(WordSynthesis output)
 			{
 				if (TraceSuccess)
@@ -880,7 +830,27 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					}
 
 					if (!String.IsNullOrEmpty(msaId))
-						morphElem.Add(new XElement("MSI", new XAttribute("DbRef", msaId)));
+					{
+						var msiElement = new XElement("MSI", new XAttribute("DbRef", msaId));
+						XElement moFormElement = morphElem.Element("MoForm");
+						int formId = 0;
+						string wordType = null;
+						if (moFormElement != null)
+						{
+							formId = Convert.ToInt32(moFormElement.Attribute("DbRef").Value);
+							wordType = moFormElement.Attribute("wordType").Value;
+						}
+						XElement propsElement = morphElem.Element("props");
+						using (XmlWriter writer = msiElement.CreateWriter())
+						{
+							ParserXmlGenerator.CreateMsaXmlElement(writer, msaId, formId, null, wordType, m_cache);
+						}
+						morphElem.Add(msiElement);
+						using (XmlWriter writer = msiElement.CreateWriter())
+						{
+							ParserXmlGenerator.UpdateMorph(writer, m_cache, formId, msaId, wordType, propsElement != null ? propsElement.Value : null);
+						}
+					}
 					elem.Add(morphElem);
 				}
 

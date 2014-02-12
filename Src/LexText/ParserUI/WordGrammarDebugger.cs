@@ -173,7 +173,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			if (morphnameAttr != null)
 			{
-				ParserXmlGenerator.CreateMsaXmlElement(writer, morphnameAttr.Value, alloIdAttr == null ? null : alloIdAttr.Value,
+				ParserXmlGenerator.CreateMsaXmlElement(writer, morphnameAttr.Value, alloIdAttr == null ? 0 : Convert.ToInt32(alloIdAttr.Value),
 					typeAttr == null ? null : typeAttr.Value, wordTypeAttr == null ? null : wordTypeAttr.Value, m_cache);
 			}
 		}

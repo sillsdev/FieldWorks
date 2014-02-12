@@ -67,9 +67,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 
 			// Irregulary inflected forms can have a combination MSA hvo: the LexEntry hvo, a period, and an index to the LexEntryRef
-			string[] msaHvoParts = msaHvo.Split('.');
+			Tuple<int, int> msaTuple = ProcessMsaHvo(msaHvo);
 			ICmObject objMsa;
-			if (!cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(int.Parse(msaHvoParts[0]), out objMsa))
+			if (!cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(msaTuple.Item1, out objMsa))
 			{
 				morph = null;
 				return false;
@@ -88,8 +88,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				// get the MoStemMsa of its variant
 				if (msaAsLexEntry.EntryRefsOS.Count > 0)
 				{
-					int index = msaHvoParts.Length == 2 ? int.Parse(msaHvoParts[1]) : 0;
-					ILexEntryRef lexEntryRef = msaAsLexEntry.EntryRefsOS[index];
+					ILexEntryRef lexEntryRef = msaAsLexEntry.EntryRefsOS[msaTuple.Item1];
 					ILexSense sense = MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
 					var inflType = (ILexEntryInflType)lexEntryRef.VariantEntryTypesRS[0];
 					morph = new ParseMorph(form, sense.MorphoSyntaxAnalysisRA, inflType);
@@ -100,6 +99,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			// if it is anything else, we ignore it
 			morph = null;
 			return true;
+		}
+
+		public static Tuple<int, int> ProcessMsaHvo(string msaHvo)
+		{
+			string[] msaHvoParts = msaHvo.Split('.');
+			return Tuple.Create(int.Parse(msaHvoParts[0]), msaHvoParts.Length == 2 ? int.Parse(msaHvoParts[1]) : 0);
 		}
 
 		/// <summary>

@@ -69,11 +69,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				}
 			}
 		}
-		public static void CreateMsaXmlElement(XmlWriter writer, string sObjHvo, string sAlloId, string type, string wordType, FdoCache fdoCache)
+		public static void CreateMsaXmlElement(XmlWriter writer, string msaHvo, int allomorphHvo, string type, string wordType, FdoCache fdoCache)
 		{
 			// Irregulary inflected forms can have a combination MSA hvo: the LexEntry hvo, a period, and an index to the LexEntryRef
-			var indexOfPeriod = IndexOfPeriodInMsaHvo(ref sObjHvo);
-			ICmObject obj = fdoCache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(Convert.ToInt32(sObjHvo));
+			Tuple<int, int> msaTuple = ParserHelper.ProcessMsaHvo(msaHvo);
+			ICmObject obj = fdoCache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(msaTuple.Item1);
 			switch (obj.GetType().Name)
 			{
 				default:
@@ -84,7 +84,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					break;
 				case "MoInflAffMsa":
 					var inflMsa = obj as IMoInflAffMsa;
-					CreateInflectionClasses(writer, fdoCache, sAlloId);
+					CreateInflectionClasses(writer, fdoCache, allomorphHvo);
 					CreateInflMsaXmlElement(writer, inflMsa, type);
 					break;
 				case "MoDerivAffMsa":
@@ -102,8 +102,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					Debug.Assert(entry != null);
 					if (entry.EntryRefsOS.Count > 0)
 					{
-						var index = IndexOfLexEntryRef(sObjHvo, indexOfPeriod);
-						var lexEntryRef = entry.EntryRefsOS[index];
+						var lexEntryRef = entry.EntryRefsOS[msaTuple.Item2];
 						var sense = MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
 						stemMsa = sense.MorphoSyntaxAnalysisRA as IMoStemMsa;
 						CreateStemMsaXmlElement(writer, stemMsa);
@@ -235,13 +234,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 		}
 
-		private static void CreateInflectionClasses(XmlWriter writer, FdoCache fdoCache, string alloId)
+		private static void CreateInflectionClasses(XmlWriter writer, FdoCache fdoCache, int allomorphHvo)
 		{
-			if (alloId == null)
+			if (allomorphHvo <= 0)
 				return;
-			int hvoAllomorph = Convert.ToInt32(alloId);
 			// use IMoForm instead of IMoAffixForm or IMoAffixAllomorph because it could be an IMoStemAllomorph
-			IMoForm form = fdoCache.ServiceLocator.GetInstance<IMoFormRepository>().GetObject(hvoAllomorph);
+			IMoForm form = fdoCache.ServiceLocator.GetInstance<IMoFormRepository>().GetObject(allomorphHvo);
 			if (form == null)
 				return;
 			if (!(form is IMoAffixForm))
@@ -351,7 +349,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private static void CreateInflMsaForLexEntryInflType(FdoCache cache, XmlWriter writer, string wordType, ILexEntryInflType lexEntryInflType)
 		{
 			IMoInflAffixSlot slot;
-			//var slotId = node.SelectSingleNode("MoForm/@wordType");
 			if (wordType != null)
 				slot = cache.ServiceLocator.GetInstance<IMoInflAffixSlotRepository>().GetObject(Convert.ToInt32(wordType));
 			else
@@ -610,17 +607,15 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				int iFirstSpace = shortName.IndexOf(" (", StringComparison.Ordinal);
 				int iLastSpace = shortName.LastIndexOf("):", StringComparison.Ordinal) + 2;
 				alloform = shortName.Substring(0, iFirstSpace);
-				int indexOfPeriod = IndexOfPeriodInMsaHvo(ref msaId);
-				int hvoMsa = Convert.ToInt32(msaId);
-				ICmObject msaObj = cache.ServiceLocator.GetObject(hvoMsa);
+				Tuple<int, int> msaTuple = ParserHelper.ProcessMsaHvo(msaId);
+				ICmObject msaObj = cache.ServiceLocator.GetObject(msaTuple.Item1);
 				if (msaObj.ClassID == LexEntryTags.kClassId)
 				{
 					var entry = msaObj as ILexEntry;
 					Debug.Assert(entry != null);
 					if (entry.EntryRefsOS.Count > 0)
 					{
-						int index = IndexOfLexEntryRef(msaId, indexOfPeriod); // the value of the int after the period
-						ILexEntryRef lexEntryRef = entry.EntryRefsOS[index];
+						ILexEntryRef lexEntryRef = entry.EntryRefsOS[msaTuple.Item2];
 						ITsIncStrBldr sbGlossPrepend;
 						ITsIncStrBldr sbGlossAppend;
 						ILexSense sense = MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);

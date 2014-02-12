@@ -42,9 +42,6 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			m_parseResult = new XmlDocument();
 			m_parseResult.LoadXml(result);
-			ConvertHvosToStrings(fIsTrace);
-
-			AddMsaNodes(false);
 
 			string sInput = CreateTempFile(m_sTrace, "xml");
 			m_parseResult.Save(sInput);
@@ -52,11 +49,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			TransformKind kind = (fIsTrace ? TransformKind.kcptTrace : TransformKind.kcptParse);
 			string sOutput = TransformToHtml(sInput, kind);
 			return sOutput;
-		}
-
-		private void ConvertHvosToStrings(bool fIsTrace)
-		{
-			ParserXmlGenerator.ConvertMorphs(m_parseResult, fIsTrace ? "//RuleAllomorph/Morph | //RootAllomorph/Morph | //Morphs/Morph" : "//Morphs/Morph", false, m_cache);
 		}
 
 		protected override void AddParserSpecificArguments(List<XmlUtils.XSLParameter> args)
