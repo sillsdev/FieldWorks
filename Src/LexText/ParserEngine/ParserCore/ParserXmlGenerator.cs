@@ -5,8 +5,10 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.WordWorks.Parser
@@ -53,7 +55,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						{
 							var index = IndexOfLexEntryRef(attr.Value, indexOfPeriod);
 							var lexEntryRef = entry.EntryRefsOS[index];
-							var sense = FDO.DomainServices.MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
+							var sense = MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
 							stemMsa = sense.MorphoSyntaxAnalysisRA as IMoStemMsa;
 							CreateStemMsaXmlElement(doc, morphNode, stemMsa, fdoCache);
 						}
@@ -78,12 +80,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					throw new ApplicationException(String.Format("Invalid MSA type: {0}.", obj.GetType().Name));
 				case "MoStemMsa":
 					var stemMsa = obj as IMoStemMsa;
-					CreateStemMsaXmlElement(writer, stemMsa, fdoCache);
+					CreateStemMsaXmlElement(writer, stemMsa);
 					break;
 				case "MoInflAffMsa":
 					var inflMsa = obj as IMoInflAffMsa;
-					CreateInflectionClasses(writer, sAlloId, fdoCache);
-					CreateInflMsaXmlElement(writer, inflMsa, type, fdoCache);
+					CreateInflectionClasses(writer, fdoCache, sAlloId);
+					CreateInflMsaXmlElement(writer, inflMsa, type);
 					break;
 				case "MoDerivAffMsa":
 					var derivMsa = obj as IMoDerivAffMsa;
@@ -102,16 +104,16 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					{
 						var index = IndexOfLexEntryRef(sObjHvo, indexOfPeriod);
 						var lexEntryRef = entry.EntryRefsOS[index];
-						var sense = FDO.DomainServices.MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
+						var sense = MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
 						stemMsa = sense.MorphoSyntaxAnalysisRA as IMoStemMsa;
-						CreateStemMsaXmlElement(writer, stemMsa, fdoCache);
+						CreateStemMsaXmlElement(writer, stemMsa);
 					}
 					break;
 				case "LexEntryInflType":
 					// This is one of the null allomorphs we create when building the
 					// input for the parser in order to still get the Word Grammar to have something in any
 					// required slots in affix templates.
-					CreateInflMsaForLexEntryInflType(writer, wordType, obj as ILexEntryInflType, fdoCache);
+					CreateInflMsaForLexEntryInflType(fdoCache, writer, wordType, obj as ILexEntryInflType);
 					break;
 			}
 		}
@@ -182,7 +184,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			CreateFromPOSNodes(doc, stemMsaNode, stemMsa.FromPartsOfSpeechRC, "fromPartsOfSpeech");
 		}
 
-		private static void CreateStemMsaXmlElement(XmlWriter writer, IMoStemMsa stemMsa, FdoCache fdoCache)
+		private static void CreateStemMsaXmlElement(XmlWriter writer, IMoStemMsa stemMsa)
 		{
 			writer.WriteStartElement("stemMsa");
 			CreatePOSXmlAttribute(writer, stemMsa.PartOfSpeechRA, "cat");
@@ -198,12 +200,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						inflClassHvo = pos.DefaultInflectionClassRA.Hvo;
 					else
 					{
-						int clsid = fdoCache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(pos.Owner.Hvo).ClassID;
-						pos = clsid == PartOfSpeechTags.kClassId ? fdoCache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(pos.Owner.Hvo) : null;
+						int clsid = stemMsa.Services.GetInstance<ICmObjectRepository>().GetObject(pos.Owner.Hvo).ClassID;
+						pos = clsid == PartOfSpeechTags.kClassId ? stemMsa.Services.GetInstance<IPartOfSpeechRepository>().GetObject(pos.Owner.Hvo) : null;
 					}
 				}
 				if (inflClassHvo != 0)
-					inflClass = fdoCache.ServiceLocator.GetInstance<IMoInflClassRepository>().GetObject(inflClassHvo);
+					inflClass = stemMsa.Services.GetInstance<IMoInflClassRepository>().GetObject(inflClassHvo);
 			}
 			CreateInflectionClassXmlAttribute(writer, inflClass, "inflClass");
 			CreateRequiresInflectionXmlAttribute(writer, stemMsa.PartOfSpeechRA);
@@ -233,11 +235,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 		}
 
-		private static void CreateInflectionClasses(XmlWriter writer, string sAlloId, FdoCache fdoCache)
+		private static void CreateInflectionClasses(XmlWriter writer, FdoCache fdoCache, string alloId)
 		{
-			if (sAlloId == null)
+			if (alloId == null)
 				return;
-			int hvoAllomorph = Convert.ToInt32(sAlloId);
+			int hvoAllomorph = Convert.ToInt32(alloId);
 			// use IMoForm instead of IMoAffixForm or IMoAffixAllomorph because it could be an IMoStemAllomorph
 			IMoForm form = fdoCache.ServiceLocator.GetInstance<IMoFormRepository>().GetObject(hvoAllomorph);
 			if (form == null)
@@ -263,12 +265,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			CreateProductivityRestrictionNodes(doc, inflMsaNode, inflMsa.FromProdRestrictRC, "fromProductivityRestriction");
 		}
 
-		private static void CreateInflMsaXmlElement(XmlWriter writer, IMoInflAffMsa inflMsa, string type, FdoCache fdoCache)
+		private static void CreateInflMsaXmlElement(XmlWriter writer, IMoInflAffMsa inflMsa, string type)
 		{
 			writer.WriteStartElement("inflMsa");
 			CreatePOSXmlAttribute(writer, inflMsa.PartOfSpeechRA, "cat");
 			// handle any slot
-			HandleSlotInfoForInflectionalMsa(writer, inflMsa, type, fdoCache);
+			HandleSlotInfoForInflectionalMsa(writer, inflMsa, type);
 			CreateFeatureStructureNodes(writer, inflMsa.InflFeatsOA, inflMsa.Hvo);
 			CreateProductivityRestrictionNodes(writer, inflMsa.FromProdRestrictRC, "fromProductivityRestriction");
 			writer.WriteEndElement(); //inflMsa
@@ -346,12 +348,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 		}
 
-		private static void CreateInflMsaForLexEntryInflType(XmlWriter writer, string wordType, ILexEntryInflType lexEntryInflType, FdoCache fdoCache)
+		private static void CreateInflMsaForLexEntryInflType(FdoCache cache, XmlWriter writer, string wordType, ILexEntryInflType lexEntryInflType)
 		{
 			IMoInflAffixSlot slot;
 			//var slotId = node.SelectSingleNode("MoForm/@wordType");
 			if (wordType != null)
-				slot = fdoCache.ServiceLocator.GetInstance<IMoInflAffixSlotRepository>().GetObject(Convert.ToInt32(wordType));
+				slot = cache.ServiceLocator.GetInstance<IMoInflAffixSlotRepository>().GetObject(Convert.ToInt32(wordType));
 			else
 			{
 				var slots = lexEntryInflType.SlotsRC;
@@ -547,7 +549,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			CreateXmlAttribute(doc, "slotOptional", sSlotOptional, inflMsaNode);
 		}
 
-		private static void HandleSlotInfoForInflectionalMsa(XmlWriter writer, IMoInflAffMsa inflMsa, string type, FdoCache fdoCache)
+		private static void HandleSlotInfoForInflectionalMsa(XmlWriter writer, IMoInflAffMsa inflMsa, string type)
 		{
 			int slotHvo = 0;
 			int iCount = inflMsa.SlotsRC.Count;
@@ -570,7 +572,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			string sSlotAbbr = "??";
 			if (Convert.ToInt32(slotHvo) > 0)
 			{
-				var slot = fdoCache.ServiceLocator.GetInstance<IMoInflAffixSlotRepository>().GetObject(Convert.ToInt32(slotHvo));
+				var slot = inflMsa.Services.GetInstance<IMoInflAffixSlotRepository>().GetObject(Convert.ToInt32(slotHvo));
 				if (slot != null)
 				{
 					sSlotAbbr = slot.Name.BestAnalysisAlternative.Text;
@@ -580,6 +582,93 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 			writer.WriteAttributeString("slotAbbr", sSlotAbbr);
 			writer.WriteAttributeString("slotOptional", sSlotOptional);
+		}
+
+		public static void UpdateMorph(XmlWriter writer, FdoCache cache, int formHvo, string msaId, string wordType, string props)
+		{
+			ICmObject obj = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(formHvo);
+			var form = obj as IMoForm;
+			if (form == null)
+			{
+				// This is one of the null allomorphs we create when building the
+				// input for the parser in order to still get the Word Grammar to have something in any
+				// required slots in affix templates.
+				var lexEntryInflType = obj as ILexEntryInflType;
+				if (lexEntryInflType != null)
+				{
+					CreateLexEntryInflTypeElement(cache, writer, wordType, lexEntryInflType);
+					return;
+				}
+			}
+			string shortName;
+			string alloform;
+			string gloss;
+			string citationForm;
+			if (form != null)
+			{
+				shortName = form.LongName;
+				int iFirstSpace = shortName.IndexOf(" (", StringComparison.Ordinal);
+				int iLastSpace = shortName.LastIndexOf("):", StringComparison.Ordinal) + 2;
+				alloform = shortName.Substring(0, iFirstSpace);
+				int indexOfPeriod = IndexOfPeriodInMsaHvo(ref msaId);
+				int hvoMsa = Convert.ToInt32(msaId);
+				ICmObject msaObj = cache.ServiceLocator.GetObject(hvoMsa);
+				if (msaObj.ClassID == LexEntryTags.kClassId)
+				{
+					var entry = msaObj as ILexEntry;
+					Debug.Assert(entry != null);
+					if (entry.EntryRefsOS.Count > 0)
+					{
+						int index = IndexOfLexEntryRef(msaId, indexOfPeriod); // the value of the int after the period
+						ILexEntryRef lexEntryRef = entry.EntryRefsOS[index];
+						ITsIncStrBldr sbGlossPrepend;
+						ITsIncStrBldr sbGlossAppend;
+						ILexSense sense = MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
+						IWritingSystem glossWs = cache.ServiceLocator.WritingSystemManager.Get(cache.DefaultAnalWs);
+						MorphServices.JoinGlossAffixesOfInflVariantTypes(lexEntryRef.VariantEntryTypesRS,
+							glossWs, out sbGlossPrepend, out sbGlossAppend);
+						ITsIncStrBldr sbGloss = sbGlossPrepend;
+						sbGloss.Append(sense.Gloss.BestAnalysisAlternative.Text);
+						sbGloss.Append(sbGlossAppend.Text);
+						gloss = sbGloss.Text;
+					}
+					else
+					{
+						gloss = ParserCoreStrings.ksUnknownGloss;
+					}
+
+				}
+				else
+				{
+					var msa = msaObj as IMoMorphSynAnalysis;
+					gloss = msa != null ? msa.GetGlossOfFirstSense() : shortName.Substring(iFirstSpace, iLastSpace - iFirstSpace).Trim();
+				}
+				citationForm = shortName.Substring(iLastSpace).Trim();
+				shortName = String.Format(ParserCoreStrings.ksX_Y_Z, alloform, gloss, citationForm);
+			}
+			else
+			{
+				alloform = ParserCoreStrings.ksUnknownMorpheme; // in case the user continues...
+				gloss = ParserCoreStrings.ksUnknownGloss;
+				citationForm = ParserCoreStrings.ksUnknownCitationForm;
+				shortName = String.Format(ParserCoreStrings.ksX_Y_Z, alloform, gloss, citationForm);
+				throw new ApplicationException(shortName);
+			}
+			writer.WriteElementString("shortName", shortName);
+			writer.WriteElementString("alloform", alloform);
+			switch (form.ClassID)
+			{
+				case MoStemAllomorphTags.kClassId:
+					CreateStemNameElement(writer, form, props);
+					break;
+				case MoAffixAllomorphTags.kClassId:
+					CreateAffixAlloFeatsElement(writer, form, props);
+					CreateStemNameAffixElement(writer, cache, props);
+					break;
+
+			}
+			writer.WriteElementString("gloss", gloss);
+			writer.WriteElementString("citationForm", citationForm);
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
@@ -635,9 +724,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 								var lexEntryRef = entry.EntryRefsOS[index];
 								ITsIncStrBldr sbGlossPrepend;
 								ITsIncStrBldr sbGlossAppend;
-								var sense = FDO.DomainServices.MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
+								var sense = MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
 								var glossWs = fdoCache.ServiceLocator.WritingSystemManager.Get(fdoCache.DefaultAnalWs);
-								FDO.DomainServices.MorphServices.JoinGlossAffixesOfInflVariantTypes(lexEntryRef.VariantEntryTypesRS,
+								MorphServices.JoinGlossAffixesOfInflVariantTypes(lexEntryRef.VariantEntryTypesRS,
 																									glossWs,
 																									out sbGlossPrepend, out sbGlossAppend);
 								ITsIncStrBldr sbGloss = sbGlossPrepend;
@@ -711,6 +800,24 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			CreateInflMsaForLexEntryInflType(doc, node, lexEntryInflType, fdoCache);
 		}
 
+		private static void CreateLexEntryInflTypeElement(FdoCache cache, XmlWriter writer, string wordType, ILexEntryInflType lexEntryInflType)
+		{
+			writer.WriteElementString("lexEntryInflType", "");
+			writer.WriteElementString("alloform", "0");
+			string sNullGloss = null;
+			var sbGloss = new StringBuilder();
+			if (string.IsNullOrEmpty(lexEntryInflType.GlossPrepend.BestAnalysisAlternative.Text))
+			{
+				sbGloss.Append(lexEntryInflType.GlossPrepend.BestAnalysisAlternative.Text);
+				sbGloss.Append("...");
+			}
+			sbGloss.Append(lexEntryInflType.GlossAppend.BestAnalysisAlternative.Text);
+			writer.WriteElementString("gloss", sbGloss.ToString());
+			var sMsg = string.Format(ParserCoreStrings.ksIrregularlyInflectedFormNullAffix, lexEntryInflType.ShortName);
+			writer.WriteElementString("citationForm", sMsg);
+			CreateInflMsaForLexEntryInflType(cache, writer, wordType, lexEntryInflType);
+		}
+
 		private static void ConvertStemName(XmlDocument doc, XmlNode node, IMoForm form)
 		{
 			var sallo = form as IMoStemAllomorph;
@@ -731,26 +838,26 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 		}
 
-//		private static void ConvertStemName(XmlWriter writer, IMoForm form)
-//		{
-//			var sallo = form as IMoStemAllomorph;
-//			Debug.Assert(sallo != null);
-//			IMoStemName sn = sallo.StemNameRA;
-//			if (sn != null)
-//			{
-//				writer.WriteStartElement("stemName");
-//				writer.WriteAttributeString("id", sn.Hvo.ToString(CultureInfo.InvariantCulture));
-//				writer.WriteString(sn.Name.BestAnalysisAlternative.Text);
-//				writer.WriteEndElement(); //stemName
-//			}
-//			else
-//			{   // There's no overt stem name on this allomorph, but there might be overt stem names
-//				// on other allomorphs in this lexical entry.  This allomorph, then, cannot bear any
-//				// of the features of these other stem names.  If so, there will be a property named
-//				// NotStemNameddd or NotStemNamedddNotStemNamedddd, etc.
-//				CreateNotStemNameElement(writer);
-//			}
-//		}
+		private static void CreateStemNameElement(XmlWriter writer, IMoForm form, string props)
+		{
+			var sallo = form as IMoStemAllomorph;
+			Debug.Assert(sallo != null);
+			IMoStemName sn = sallo.StemNameRA;
+			if (sn != null)
+			{
+				writer.WriteStartElement("stemName");
+				writer.WriteAttributeString("id", sn.Hvo.ToString(CultureInfo.InvariantCulture));
+				writer.WriteString(sn.Name.BestAnalysisAlternative.Text);
+				writer.WriteEndElement(); //stemName
+			}
+			else
+			{   // There's no overt stem name on this allomorph, but there might be overt stem names
+				// on other allomorphs in this lexical entry.  This allomorph, then, cannot bear any
+				// of the features of these other stem names.  If so, there will be a property named
+				// NotStemNameddd or NotStemNamedddNotStemNamedddd, etc.
+				CreateNotStemNameElement(writer, props);
+			}
+		}
 
 		private static void ConvertStemNameAffix(XmlDocument doc, XmlNode node, FdoCache fdoCache)
 		{
@@ -772,6 +879,30 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							CreateXmlAttribute(doc, "id", sId, tempNode);
 							tempNode.InnerXml = CreateEntities(sn.Name.BestAnalysisAlternative.Text);
 						}
+					}
+				}
+			}
+		}
+
+		private static void CreateStemNameAffixElement(XmlWriter writer, FdoCache cache, string props)
+		{
+			if (string.IsNullOrEmpty(props))
+				return;
+
+			string[] propsArray = props.Trim().Split(' ');
+			foreach (string prop in propsArray)
+			{
+				int i = prop.IndexOf("StemNameAffix", StringComparison.Ordinal);
+				if (i > -1)
+				{
+					string id = (prop.Substring(i + 13)).Trim();
+					IMoStemName sn = cache.ServiceLocator.GetInstance<IMoStemNameRepository>().GetObject(Convert.ToInt32(id));
+					if (sn != null)
+					{
+						writer.WriteStartElement("stemNameAffix");
+						writer.WriteAttributeString("id", id);
+						writer.WriteString(sn.Name.BestAnalysisAlternative.Text);
+						writer.WriteEndElement();
 					}
 				}
 			}
@@ -831,7 +962,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 		}
 
-		private static void ConvertAffixAlloFeats(XmlWriter writer, IMoForm form, string propsText, FdoCache fdoCache)
+		private static void CreateAffixAlloFeatsElement(XmlWriter writer, IMoForm form, string propsText)
 		{
 			var sallo = form as IMoAffixAllomorph;
 			if (sallo == null)
@@ -848,7 +979,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				// on other allomorphs in this lexical entry.  This allomorph, then, cannot bear any
 				// of the features of these other stem names.  If so, there will be a property named
 				// NotStemNameddd or NotStemNamedddNotStemNamedddd, etc.
-				CreateNotAffixAlloFeatsElement(writer, propsText, fdoCache);
+				CreateNotAffixAlloFeatsElement(writer, form.Cache, propsText);
 			}
 		}
 
@@ -890,7 +1021,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 		}
 
-		private static void CreateNotAffixAlloFeatsElement(XmlWriter writer, string propsText, FdoCache fdoCache)
+		private static void CreateNotAffixAlloFeatsElement(XmlWriter writer, FdoCache cache, string propsText)
 		{
 			if (propsText != null)
 			{
@@ -912,14 +1043,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						{
 							// there are more
 							sFsHvo = s.Substring(iNot, iNextNot - iNot);
-							CreateFeatureStructureFromHvoString(writer, sFsHvo, fdoCache);
+							CreateFeatureStructureFromHvoString(writer, cache, sFsHvo);
 							iNot = iNextNot + 3;
 						}
 						else
 						{
 							// is the last one
 							sFsHvo = s.Substring(iNot);
-							CreateFeatureStructureFromHvoString(writer, sFsHvo, fdoCache);
+							CreateFeatureStructureFromHvoString(writer, cache, sFsHvo);
 							iNot = 0;
 						}
 					}
@@ -939,10 +1070,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 		}
 
-		private static void CreateFeatureStructureFromHvoString(XmlWriter writer, string sFsHvo, FdoCache fdoCache)
+		private static void CreateFeatureStructureFromHvoString(XmlWriter writer, FdoCache cache, string sFsHvo)
 		{
 			int fsHvo = Convert.ToInt32(sFsHvo);
-			var fsFeatStruc = (IFsFeatStruc)fdoCache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(fsHvo);
+			var fsFeatStruc = (IFsFeatStruc) cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(fsHvo);
 			if (fsFeatStruc != null)
 				CreateFeatureStructureNodes(writer, fsFeatStruc, fsHvo);
 		}
