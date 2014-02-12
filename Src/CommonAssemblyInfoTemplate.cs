@@ -28,6 +28,6 @@ using System.Runtime.InteropServices;
 // Format: Version.Milestone.Year.MMDDL
 [assembly: AssemblyFileVersion("$!{FWMAJOR:0}.$!{FWMINOR:0}.$!{FWREVISION:0}.$NUMBEROFDAYS")]
 // Format: FwMajorVersion.FwMinorVersion
-[assembly: AssemblyInformationalVersionAttribute("$!{FWMAJOR:0}.$!{FWMINOR:0} $!{FWBETAVERSION:0}")]
+[assembly: AssemblyInformationalVersionAttribute("$!{FWMAJOR:0}.$!{FWMINOR:0} $!FWBETAVERSION")]
 // Format: Version.Milestone.0.Level
 [assembly: AssemblyVersion("$!{FWMAJOR:0}.$!{FWMINOR:0}.$!{FWREVISION:0}.*")]
