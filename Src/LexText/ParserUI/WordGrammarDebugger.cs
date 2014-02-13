@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.WordWorks.Parser;
 using SIL.Utils;
@@ -97,8 +99,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void CreateSelectedWordGrammarXml(XmlWriter writer, string nodeId, string form)
 		{
-			var lastDoc = new XmlDocument();
-			lastDoc.Load(m_wordGrammarDebuggerXmlFile);
+			var lastDoc = XDocument.Load(m_wordGrammarDebuggerXmlFile);
 
 			writer.WriteStartDocument();
 
@@ -107,55 +108,56 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			// Find the sNode'th seq node
 			string sSelect = "//seq[position()='" + nodeId + "']";
-			XmlNode selectedSeqNode = lastDoc.SelectSingleNode(sSelect);
+			XElement selectedSeqNode = lastDoc.XPathSelectElement(sSelect);
+			string innerXml = InnerXml(selectedSeqNode);
 			// create the "result so far node"
 			writer.WriteStartElement("resultsSoFar");
-			writer.WriteRaw(selectedSeqNode.InnerXml);
+			writer.WriteRaw(innerXml);
 			writer.WriteEndElement();
 			// create the seq node
 			writer.WriteStartElement("seq");
-			writer.WriteRaw(selectedSeqNode.InnerXml);
+			writer.WriteRaw(innerXml);
 			writer.WriteEndElement();
 		}
 
-		protected void CreateMorphXmlElement(XmlWriter writer, XmlNode node)
+		protected void CreateMorphXElement(XmlWriter writer, XElement element)
 		{
 			writer.WriteStartElement("morph");
-			XmlAttribute alloIdAttr = node.Attributes["alloid"];
+			XAttribute alloIdAttr = element.Attribute("alloid");
 			if (alloIdAttr != null)
 				writer.WriteAttributeString("alloid", alloIdAttr.Value);
-			XmlAttribute morphnameAttr = node.Attributes["morphname"];
+			XAttribute morphnameAttr = element.Attribute("morphname");
 			if (morphnameAttr != null)
 				writer.WriteAttributeString("morphname", morphnameAttr.Value);
-			XmlAttribute typeAttr = node.Attributes["type"];
+			XAttribute typeAttr = element.Attribute("type");
 			if (typeAttr != null)
 				writer.WriteAttributeString("type", typeAttr.Value);
-			XmlAttribute wordTypeAttr = node.Attributes["wordType"];
+			XAttribute wordTypeAttr = element.Attribute("wordType");
 			if (wordTypeAttr != null)
 				writer.WriteAttributeString("wordType", wordTypeAttr.Value);
-			CreateMorphShortNameXmlElement(writer, node);
-			XmlNode formNode = node.SelectSingleNode("alloform");
+			CreateMorphShortNameXElement(writer, element);
+			XElement formNode = element.XPathSelectElement("alloform");
 			if (formNode != null)
-				writer.WriteElementString("alloform", formNode.InnerText);
-			XmlNode stemNameNode = node.SelectSingleNode("stemName");
+				writer.WriteElementString("alloform", formNode.Value);
+			XElement stemNameNode = element.XPathSelectElement("stemName");
 			if (stemNameNode != null)
 			{
-				XmlAttribute idAttr = stemNameNode.Attributes["id"];
+				XAttribute idAttr = stemNameNode.Attribute("id");
 				if (idAttr != null)
 				{
 					writer.WriteStartElement("stemName");
 					writer.WriteAttributeString("id", idAttr.Value);
-					writer.WriteString(stemNameNode.InnerText);
+					writer.WriteString(stemNameNode.Value);
 					writer.WriteEndElement();
 				}
 			}
-			CreateMorphAffixAlloFeatsXmlElement(writer, node);
-			XmlNode glossNode = node.SelectSingleNode("gloss");
+			CreateMorphAffixAlloFeatsXElement(writer, element);
+			XElement glossNode = element.XPathSelectElement("gloss");
 			if (glossNode != null)
-				writer.WriteElementString("gloss", glossNode.InnerText);
-			XmlNode citationFormNode = node.SelectSingleNode("citationForm");
+				writer.WriteElementString("gloss", glossNode.Value);
+			XElement citationFormNode = element.XPathSelectElement("citationForm");
 			if (citationFormNode != null)
-				writer.WriteElementString("citationForm", citationFormNode.InnerText);
+				writer.WriteElementString("citationForm", citationFormNode.Value);
 
 			if (alloIdAttr != null)
 			{
@@ -176,11 +178,12 @@ namespace SIL.FieldWorks.LexText.Controls
 				ParserXmlGenerator.CreateMsaXmlElement(writer, morphnameAttr.Value, alloIdAttr == null ? 0 : Convert.ToInt32(alloIdAttr.Value),
 					typeAttr == null ? null : typeAttr.Value, wordTypeAttr == null ? null : wordTypeAttr.Value, m_cache);
 			}
+			writer.WriteEndElement();
 		}
 
-		protected abstract void CreateMorphShortNameXmlElement(XmlWriter writer, XmlNode node);
+		protected abstract void CreateMorphShortNameXElement(XmlWriter writer, XElement element);
 
-		protected abstract void CreateMorphAffixAlloFeatsXmlElement(XmlWriter writer, XmlNode node);
+		protected abstract void CreateMorphAffixAlloFeatsXElement(XmlWriter writer, XElement element);
 
 		private void CreateInflectionClassesAndSubclassesXmlElement(XmlWriter writer, IEnumerable<IMoInflClass> inflectionClasses)
 		{
@@ -226,6 +229,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			string sTransform = Path.Combine(Path.GetDirectoryName(sOutput), sName);
 			XmlUtils.TransformFileToFile(sTransform, new XmlUtils.XSLParameter[0], sInputFile, sOutput);
 			return sOutput;
+		}
+
+		public string InnerXml(XElement element)
+		{
+			XmlReader xmlReader = element.CreateReader();
+			xmlReader.MoveToContent();
+			return xmlReader.ReadInnerXml();
 		}
 	}
 }

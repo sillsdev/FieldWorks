@@ -1,12 +1,14 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
 	public class HCWordGrammarDebugger : WordGrammarDebugger
 	{
-		public HCWordGrammarDebugger(Mediator mediator, XmlDocument parseResult)
+		public HCWordGrammarDebugger(Mediator mediator, XDocument parseResult)
 			: base(mediator)
 		{
 			m_parseResult = parseResult;
@@ -17,44 +19,43 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected override void CreateMorphNodes(XmlWriter writer, string nodeId)
 		{
 			string s = "//WordGrammarAttempt[Id=\"" + nodeId + "\"]";
-			XmlNode node = m_parseResult.SelectSingleNode(s);
-			if (node != null)
+			XElement element = m_parseResult.XPathSelectElement(s);
+			if (element != null)
 			{
-				XmlNodeList morphs = node.SelectNodes("Morphs");
-				foreach (XmlNode morph in morphs)
-					CreateMorphXmlElement(writer, morph);
+				foreach (XElement morph in element.Elements("Morphs"))
+					CreateMorphXElement(writer, morph);
 			}
 		}
 
-		protected override void CreateMorphAffixAlloFeatsXmlElement(XmlWriter writer, XmlNode node)
+		protected override void CreateMorphAffixAlloFeatsXElement(XmlWriter writer, XElement element)
 		{
-			XmlNode alloid = node.SelectSingleNode("@alloid");
+			XElement alloid = element.XPathSelectElement("@alloid");
 			if (alloid != null)
 			{
-				XmlNode affixAlloFeatsNode = m_parseResult.SelectSingleNode("//Morph[MoForm/@DbRef='" + alloid.InnerText + "']/affixAlloFeats");
+				XElement affixAlloFeatsNode = m_parseResult.XPathSelectElement("//Morph[MoForm/@DbRef='" + alloid.Value + "']/affixAlloFeats");
 				if (affixAlloFeatsNode != null)
 				{
 					writer.WriteStartElement("affixAlloFeats");
-					writer.WriteRaw(affixAlloFeatsNode.InnerXml);
+					writer.WriteRaw(InnerXml(affixAlloFeatsNode));
 					writer.WriteEndElement();
 				}
 			}
 		}
 
-		protected override void CreateMorphShortNameXmlElement(XmlWriter writer, XmlNode node)
+		protected override void CreateMorphShortNameXElement(XmlWriter writer, XElement element)
 		{
-			XmlNode formNode = node.SelectSingleNode("shortName");
+			XElement formNode = element.XPathSelectElement("shortName");
 			if (formNode != null)
 			{
-				writer.WriteElementString("shortName", formNode.InnerText);
+				writer.WriteElementString("shortName", formNode.Value);
 			}
 			else
 			{
-				XmlNode alloFormNode = node.SelectSingleNode("alloform");
-				XmlNode glossNode = node.SelectSingleNode("gloss");
-				XmlNode citationFormNode = node.SelectSingleNode("citationForm");
+				XElement alloFormNode = element.XPathSelectElement("alloform");
+				XElement glossNode = element.XPathSelectElement("gloss");
+				XElement citationFormNode = element.XPathSelectElement("citationForm");
 				if (alloFormNode != null && glossNode != null && citationFormNode != null)
-					writer.WriteElementString("shortName", string.Format("{0} ({1}): {2}", alloFormNode.InnerText, glossNode.InnerText, citationFormNode.InnerText));
+					writer.WriteElementString("shortName", string.Format("{0} ({1}): {2}", alloFormNode.Value, glossNode.Value, citationFormNode.Value));
 			}
 		}
 	}

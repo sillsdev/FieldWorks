@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
-using System.Xml;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// The parse result xml document
 		/// </summary>
-		protected XmlDocument m_parseResult;
+		protected XDocument m_parseResult;
 
 		/// <summary>
 		/// The real deal

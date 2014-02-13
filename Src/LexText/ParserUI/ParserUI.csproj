@@ -187,6 +187,7 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="Widgets">
       <Name>Widgets</Name>
       <HintPath>..\..\..\Output\Debug\Widgets.dll</HintPath>

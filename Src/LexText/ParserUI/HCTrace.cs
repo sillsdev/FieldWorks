@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
+using System.Xml.Linq;
 using SIL.FieldWorks.WordWorks.Parser;
 using SIL.Utils;
 using XCore;
@@ -40,8 +41,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			bool fIsTrace = result.Contains("<Trace>");
 
-			m_parseResult = new XmlDocument();
-			m_parseResult.LoadXml(result);
+			m_parseResult = XDocument.Parse(result);
 
 			string sInput = CreateTempFile(m_sTrace, "xml");
 			m_parseResult.Save(sInput);

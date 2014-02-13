@@ -14,6 +14,7 @@
 // </remarks>
 
 using System.Xml;
+using System.Xml.Linq;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -56,12 +57,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <returns>URL of the resulting HTML page</returns>
 		public override string CreateResultPage(string result)
 		{
-			m_parseResult = new XmlDocument();
-			m_parseResult.LoadXml(result);
+			m_parseResult = XDocument.Parse(result);
 
 			string sInput = CreateTempFile(m_sTrace, "xml");
 			m_parseResult.Save(sInput);
-			TransformKind kind = (m_parseResult.DocumentElement.Name == "AmpleTrace" ? TransformKind.kcptTrace : TransformKind.kcptParse);
+			TransformKind kind = (m_parseResult.Root.Name == "AmpleTrace" ? TransformKind.kcptTrace : TransformKind.kcptParse);
 			string sOutput = TransformToHtml(sInput, kind);
 			return sOutput;
 		}
