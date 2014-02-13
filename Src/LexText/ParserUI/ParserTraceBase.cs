@@ -1,6 +1,6 @@
-using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
+using System.Xml.Xsl;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -52,39 +52,49 @@ namespace SIL.FieldWorks.LexText.Controls
 			get { return FwDirectoryFinder.GetCodeSubDirectory(@"Language Explorer/Configuration/Words/Analyses/TraceParse"); }
 		}
 
-		protected string TransformToHtml(string sInputFile, string sTempFileBase, string sTransformFile, List<XmlUtils.XSLParameter> args)
+		protected string TransformToHtml(string inputPath, string tempFileBase, string transformFile, XsltArgumentList argumentList)
 		{
-			string sOutput = CreateTempFile(sTempFileBase, "htm");
-			string sTransform = Path.Combine(TransformPath, sTransformFile);
-			SetWritingSystemBasedArguments(args);
-			AddParserSpecificArguments(args);
-			XmlUtils.TransformFileToFile(sTransform, args.ToArray(), sInputFile, sOutput);
-			return sOutput;
+			string outputPath = CreateTempFile(tempFileBase, "htm");
+			string transformPath = Path.Combine(TransformPath, transformFile);
+			SetWritingSystemBasedArguments(argumentList);
+			AddParserSpecificArguments(argumentList);
+			XslCompiledTransformUtil.Instance.TransformFileToFile(transformPath, inputPath, outputPath, argumentList);
+			return outputPath;
 		}
 
-		private void SetWritingSystemBasedArguments(List<XmlUtils.XSLParameter> args)
+		protected string TransformToHtml(XDocument inputDoc, string tempFileBase, string transformFile, XsltArgumentList argumentList)
+		{
+			string outputPath = CreateTempFile(tempFileBase, "htm");
+			string transformPath = Path.Combine(TransformPath, transformFile);
+			SetWritingSystemBasedArguments(argumentList);
+			AddParserSpecificArguments(argumentList);
+			XslCompiledTransformUtil.Instance.TransformXDocumentToFile(transformPath, inputDoc, outputPath, argumentList);
+			return outputPath;
+		}
+
+		private void SetWritingSystemBasedArguments(XsltArgumentList argumentList)
 		{
 			ILgWritingSystemFactory wsf = m_cache.WritingSystemFactory;
 			IWritingSystemContainer wsContainer = m_cache.ServiceLocator.WritingSystems;
 			IWritingSystem defAnalWs = wsContainer.DefaultAnalysisWritingSystem;
 			using (var myFont = FontHeightAdjuster.GetFontForNormalStyle(defAnalWs.Handle, m_mediator, wsf))
 			{
-				args.Add(new XmlUtils.XSLParameter("prmAnalysisFont", myFont.FontFamily.Name));
-				args.Add(new XmlUtils.XSLParameter("prmAnalysisFontSize", myFont.Size + "pt"));
+				argumentList.AddParam("prmAnalysisFont", "", myFont.FontFamily.Name);
+				argumentList.AddParam("prmAnalysisFontSize", "", myFont.Size + "pt");
 			}
 
 			IWritingSystem defVernWs = wsContainer.DefaultVernacularWritingSystem;
 			using (var myFont = FontHeightAdjuster.GetFontForNormalStyle(defVernWs.Handle, m_mediator, wsf))
 			{
-				args.Add(new XmlUtils.XSLParameter("prmVernacularFont", myFont.FontFamily.Name));
-				args.Add(new XmlUtils.XSLParameter("prmVernacularFontSize", myFont.Size + "pt"));
+				argumentList.AddParam("prmVernacularFont", "", myFont.FontFamily.Name);
+				argumentList.AddParam("prmVernacularFontSize", "", myFont.Size + "pt");
 			}
 
 			string sRtl = defVernWs.RightToLeftScript ? "Y" : "N";
-			args.Add(new XmlUtils.XSLParameter("prmVernacularRTL", sRtl));
+			argumentList.AddParam("prmVernacularRTL", "", sRtl);
 		}
 
-		protected virtual void AddParserSpecificArguments(List<XmlUtils.XSLParameter> args)
+		protected virtual void AddParserSpecificArguments(XsltArgumentList argumentList)
 		{
 			// default is to do nothing
 		}

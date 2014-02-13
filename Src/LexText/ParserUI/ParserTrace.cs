@@ -1,9 +1,6 @@
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using System.Xml;
-using SIL.FieldWorks.WordWorks.Parser;
-using SIL.Utils;
+using System.Xml.Linq;
+using System.Xml.Xsl;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -76,20 +73,20 @@ namespace SIL.FieldWorks.LexText.Controls
 			return m_wordGrammarDebugger.PopWordGrammarStack();
 		}
 
-		protected string TransformToHtml(string sInputFile, TransformKind kind)
+		protected string TransformToHtml(XDocument xDocument, TransformKind kind)
 		{
 			string sOutput = null;
-			var args = new List<XmlUtils.XSLParameter>();
+			var argumentList = new XsltArgumentList();
 
 			switch (kind)
 			{
 				case TransformKind.kcptParse:
-					sOutput = TransformToHtml(sInputFile, m_sParse, m_sFormatParse, args);
+					sOutput = TransformToHtml(xDocument, m_sParse, m_sFormatParse, argumentList);
 					break;
 				case TransformKind.kcptTrace:
 					string sIconPath = CreateIconPath();
-					args.Add(new XmlUtils.XSLParameter("prmIconPath", sIconPath));
-					sOutput = TransformToHtml(sInputFile, m_sTrace, m_sFormatTrace, args);
+					argumentList.AddParam("prmIconPath", "", sIconPath);
+					sOutput = TransformToHtml(xDocument, m_sTrace, m_sFormatTrace, argumentList);
 					break;
 			}
 			return sOutput;

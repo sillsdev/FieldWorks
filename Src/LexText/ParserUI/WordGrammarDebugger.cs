@@ -5,6 +5,7 @@ using System.IO;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using System.Xml.Xsl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.WordWorks.Parser;
 using SIL.Utils;
@@ -45,10 +46,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		public string SetUpWordGrammarDebuggerPage(string nodeId, string form, string lastUrl)
 		{
 			m_xmlHtmlStack.Push(new WordGrammarStepPair(null, lastUrl));
-			string initialAnalysisFile = CreateTempFile(CreateWordGrammarDebuggerFileName(), "xml");
-			using (var writer = XmlWriter.Create(initialAnalysisFile))
+			var doc = new XDocument();
+			using (XmlWriter writer = doc.CreateWriter())
 				CreateAnalysisXml(writer, nodeId, form);
-			return CreateWordDebuggerPage(initialAnalysisFile);
+			return CreateWordDebuggerPage(doc);
 		}
 
 		/// <summary>
@@ -197,38 +198,51 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private string CreateWordDebuggerPage(string sXmlFile)
+		private string CreateWordDebuggerPage(object xml)
 		{
 			// apply word grammar step transform file
-			string sXmlOutput = TransformToXml(sXmlFile);
-			m_wordGrammarDebuggerXmlFile = sXmlOutput;
+			string xmlOutput = TransformToXml(xml);
+			m_wordGrammarDebuggerXmlFile = xmlOutput;
 			// format the result
-			string sOutput = TransformToHtml(sXmlOutput);
-			return sOutput;
+			return TransformToHtml(xmlOutput);
 		}
 
 		private string CreateWordGrammarDebuggerFileName()
 		{
-			string sDepthLevel = m_xmlHtmlStack.Count.ToString(CultureInfo.InvariantCulture);
-			return "WordGrammarDebugger" + sDepthLevel;
+			string depthLevel = m_xmlHtmlStack.Count.ToString(CultureInfo.InvariantCulture);
+			return "WordGrammarDebugger" + depthLevel;
 		}
 
-		protected string TransformToHtml(string sInputFile)
+		protected string TransformToHtml(string inputPath)
 		{
-			var args = new List<XmlUtils.XSLParameter>();
-			string sOutput = TransformToHtml(sInputFile, CreateWordGrammarDebuggerFileName(),
-									  "FormatXAmpleWordGrammarDebuggerResult.xsl", args);
-			return sOutput;
+			return TransformToHtml(inputPath, CreateWordGrammarDebuggerFileName(),
+									  "FormatXAmpleWordGrammarDebuggerResult.xsl", new XsltArgumentList());
 		}
 
-		private string TransformToXml(string sInputFile)
+		protected string TransformToHtml(XDocument inputDoc)
+		{
+			return TransformToHtml(inputDoc, CreateWordGrammarDebuggerFileName(),
+									  "FormatXAmpleWordGrammarDebuggerResult.xsl", new XsltArgumentList());
+		}
+
+		private string TransformToXml(string inputPath)
 		{
 			// Don't overwrite the input file before transforming it! (why +"A" on the next line)
-			string sOutput = CreateTempFile(CreateWordGrammarDebuggerFileName()+"A", "xml");
-			string sName = m_sDataBaseName + "XAmpleWordGrammarDebugger" + ".xsl";
-			string sTransform = Path.Combine(Path.GetDirectoryName(sOutput), sName);
-			XmlUtils.TransformFileToFile(sTransform, new XmlUtils.XSLParameter[0], sInputFile, sOutput);
-			return sOutput;
+			string outputPath = CreateTempFile(CreateWordGrammarDebuggerFileName() + "A", "xml");
+			string xslFileName = m_sDataBaseName + "XAmpleWordGrammarDebugger" + ".xsl";
+			string transform = Path.Combine(Path.GetDirectoryName(outputPath), xslFileName);
+			XslCompiledTransformUtil.Instance.TransformFileToFile(transform, inputPath, outputPath, new XsltArgumentList());
+			return outputPath;
+		}
+
+		private string TransformToXml(XDocument inputDoc)
+		{
+			// Don't overwrite the input file before transforming it! (why +"A" on the next line)
+			string outputPath = CreateTempFile(CreateWordGrammarDebuggerFileName() + "A", "xml");
+			string xslFileName = m_sDataBaseName + "XAmpleWordGrammarDebugger" + ".xsl";
+			string transform = Path.Combine(Path.GetDirectoryName(outputPath), xslFileName);
+			XslCompiledTransformUtil.Instance.TransformXDocumentToFile(transform, inputDoc, outputPath, new XsltArgumentList());
+			return outputPath;
 		}
 
 		public string InnerXml(XElement element)

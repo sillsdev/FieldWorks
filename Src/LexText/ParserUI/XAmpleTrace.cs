@@ -13,7 +13,6 @@
 //		XAmpleTrace - Deal with results of an XAmple trace
 // </remarks>
 
-using System.Xml;
 using System.Xml.Linq;
 using XCore;
 
@@ -59,11 +58,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			m_parseResult = XDocument.Parse(result);
 
-			string sInput = CreateTempFile(m_sTrace, "xml");
-			m_parseResult.Save(sInput);
 			TransformKind kind = (m_parseResult.Root.Name == "AmpleTrace" ? TransformKind.kcptTrace : TransformKind.kcptParse);
-			string sOutput = TransformToHtml(sInput, kind);
-			return sOutput;
+			return TransformToHtml(m_parseResult, kind);
 		}
 	}
 }

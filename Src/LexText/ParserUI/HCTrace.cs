@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
+using System.Xml.Xsl;
 using SIL.FieldWorks.WordWorks.Parser;
 using SIL.Utils;
 using XCore;
@@ -43,18 +44,14 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			m_parseResult = XDocument.Parse(result);
 
-			string sInput = CreateTempFile(m_sTrace, "xml");
-			m_parseResult.Save(sInput);
-
 			TransformKind kind = (fIsTrace ? TransformKind.kcptTrace : TransformKind.kcptParse);
-			string sOutput = TransformToHtml(sInput, kind);
-			return sOutput;
+			return TransformToHtml(m_parseResult, kind);
 		}
 
-		protected override void AddParserSpecificArguments(List<XmlUtils.XSLParameter> args)
+		protected override void AddParserSpecificArguments(XsltArgumentList argumentList)
 		{
 			string sLoadErrorFile = Path.Combine(Path.GetTempPath(), m_sDataBaseName + "HCLoadErrors.xml");
-			args.Add(new XmlUtils.XSLParameter("prmHCTraceLoadErrorFile", sLoadErrorFile));
+			argumentList.AddParam("prmHCTraceLoadErrorFile", "", sLoadErrorFile);
 		}
 	}
 }
