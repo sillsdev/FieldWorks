@@ -779,6 +779,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		#endregion
 
 		#region class FwXmlTraceManager
+		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+			Justification = "m_cache is a reference and disposed in the parent class")]
 		private class FwXmlTraceManager : XmlTraceManager
 		{
 			private readonly FdoCache m_cache;

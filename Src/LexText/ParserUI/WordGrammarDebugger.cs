@@ -198,10 +198,19 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private string CreateWordDebuggerPage(object xml)
+		private string CreateWordDebuggerPage(string xmlPath)
 		{
 			// apply word grammar step transform file
-			string xmlOutput = TransformToXml(xml);
+			string xmlOutput = TransformToXml(xmlPath);
+			m_wordGrammarDebuggerXmlFile = xmlOutput;
+			// format the result
+			return TransformToHtml(xmlOutput);
+		}
+
+		private string CreateWordDebuggerPage(XDocument xmlDoc)
+		{
+			// apply word grammar step transform file
+			string xmlOutput = TransformToXml(xmlDoc);
 			m_wordGrammarDebuggerXmlFile = xmlOutput;
 			// format the result
 			return TransformToHtml(xmlOutput);
@@ -247,9 +256,11 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		public string InnerXml(XElement element)
 		{
-			XmlReader xmlReader = element.CreateReader();
-			xmlReader.MoveToContent();
-			return xmlReader.ReadInnerXml();
+			using (XmlReader xmlReader = element.CreateReader())
+			{
+				xmlReader.MoveToContent();
+				return xmlReader.ReadInnerXml();
+			}
 		}
 	}
 }

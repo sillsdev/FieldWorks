@@ -20,17 +20,21 @@ namespace SIL.Utils
 		public void TransformXDocumentToFile(string xslPath, XDocument inputDoc, string outputPath, XsltArgumentList argumentList)
 		{
 			XslCompiledTransform transform = GetTransform(xslPath);
-			var fileStream = new FileStream(outputPath, FileMode.Create);
-			transform.Transform(inputDoc.CreateReader(), argumentList, fileStream);
-			fileStream.Close();
+			using (var fileStream = new FileStream(outputPath, FileMode.Create))
+			{
+				transform.Transform(inputDoc.CreateReader(), argumentList, fileStream);
+				fileStream.Close();
+			}
 		}
 
 		public void TransformFileToFile(string xslPath, string inputPath, string outputPath, XsltArgumentList argumentList)
 		{
 			XslCompiledTransform transform = GetTransform(xslPath);
-			var fileStream = new FileStream(outputPath, FileMode.Create);
-			transform.Transform(inputPath, argumentList, fileStream);
-			fileStream.Close();
+			using (var fileStream = new FileStream(outputPath, FileMode.Create))
+			{
+				transform.Transform(inputPath, argumentList, fileStream);
+				fileStream.Close();
+			}
 		}
 
 		private XslCompiledTransform GetTransform(string xslPath)
