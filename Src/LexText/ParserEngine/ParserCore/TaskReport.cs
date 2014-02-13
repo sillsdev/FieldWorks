@@ -12,7 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-
+using System.Xml.Linq;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.WordWorks.Parser
@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// <summary>
 		/// this was added to hold the results of a trace request
 		/// </summary>
-		private string m_details;
+		private XDocument m_details;
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
@@ -220,7 +220,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// <summary>
 		/// this is used to hold the results of a trace request
 		/// </summary>
-		public string Details
+		public XDocument Details
 		{
 			set
 			{

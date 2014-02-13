@@ -1,9 +1,8 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Xsl;
-using SIL.FieldWorks.WordWorks.Parser;
 using SIL.Utils;
 using XCore;
 
@@ -38,13 +37,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			return m_wordGrammarDebugger.SetUpWordGrammarDebuggerPage(nodeId, form, lastUrl);
 		}
 
-		public override string CreateResultPage(string result)
+		public override string CreateResultPage(XDocument result)
 		{
-			bool fIsTrace = result.Contains("<Trace>");
+			m_parseResult = result;
 
-			m_parseResult = XDocument.Parse(result);
-
-			TransformKind kind = (fIsTrace ? TransformKind.kcptTrace : TransformKind.kcptParse);
+			Debug.Assert(m_parseResult.Root != null);
+			TransformKind kind = (m_parseResult.Root.Element("Trace") != null ? TransformKind.kcptTrace : TransformKind.kcptParse);
 			return TransformToHtml(m_parseResult, kind);
 		}
 

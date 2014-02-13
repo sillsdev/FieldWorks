@@ -34,11 +34,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			XElement affixAlloFeatsNode = element.XPathSelectElement("affixAlloFeats");
 			if (affixAlloFeatsNode != null)
-			{
-				writer.WriteStartElement("affixAlloFeats");
-				writer.WriteRaw(InnerXml(affixAlloFeatsNode));
-				writer.WriteEndElement();
-			}
+				affixAlloFeatsNode.WriteTo(writer);
 		}
 
 		protected override void CreateMorphShortNameXElement(XmlWriter writer, XElement element)

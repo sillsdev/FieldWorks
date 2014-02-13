@@ -1,4 +1,6 @@
-﻿namespace SIL.FieldWorks.WordWorks.Parser
+﻿using System.Xml.Linq;
+
+namespace SIL.FieldWorks.WordWorks.Parser
 {
 	public interface IParser
 	{
@@ -12,8 +14,8 @@
 
 		ParseResult ParseWord(string word);
 
-		string ParseWordXml(string word);
+		XDocument ParseWordXml(string word);
 
-		string TraceWordXml(string word, string selectTraceMorphs);
+		XDocument TraceWordXml(string word, string selectTraceMorphs);
 	}
 }

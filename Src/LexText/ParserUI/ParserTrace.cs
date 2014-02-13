@@ -1,6 +1,7 @@
 using System.Text;
 using System.Xml.Linq;
 using System.Xml.Xsl;
+using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -41,9 +42,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Create an HTML page of the results
 		/// </summary>
-		/// <param name="result">XML string of the XAmple trace output</param>
+		/// <param name="result">XML of the parse trace output</param>
 		/// <returns>URL of the resulting HTML page</returns>
-		public abstract string CreateResultPage(string result);
+		public abstract string CreateResultPage(XDocument result);
 
 		/// <summary>
 		/// Initialize what is needed to perform the word grammar debugging and

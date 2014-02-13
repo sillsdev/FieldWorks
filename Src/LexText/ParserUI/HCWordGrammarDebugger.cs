@@ -34,11 +34,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				XElement affixAlloFeatsNode = m_parseResult.XPathSelectElement("//Morph[MoForm/@DbRef='" + alloid.Value + "']/affixAlloFeats");
 				if (affixAlloFeatsNode != null)
-				{
-					writer.WriteStartElement("affixAlloFeats");
-					writer.WriteRaw(InnerXml(affixAlloFeatsNode));
-					writer.WriteEndElement();
-				}
+					affixAlloFeatsNode.WriteTo(writer);
 			}
 		}
 

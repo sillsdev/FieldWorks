@@ -111,8 +111,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			using (var task = new TaskReport(string.Format(ParserCoreStrings.ksTraceWordformX, sForm), m_taskUpdateHandler))
 			{
 				string normForm = Icu.Normalize(sForm, Icu.UNormalizationMode.UNORM_NFD);
-				var result = fDoTrace ? m_parser.TraceWordXml(normForm, sSelectTraceMorphs) : m_parser.ParseWordXml(normForm);
-				task.Details = fDoTrace ? result : Icu.Normalize(result, Icu.UNormalizationMode.UNORM_NFD);
+				task.Details = fDoTrace ? m_parser.TraceWordXml(normForm, sSelectTraceMorphs) : m_parser.ParseWordXml(normForm);
 			}
 		}
 

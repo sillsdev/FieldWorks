@@ -120,9 +120,6 @@
   <data name="ksCreatingX" xml:space="preserve">
     <value>Creating {0}</value>
   </data>
-  <data name="ksDidNotParse" xml:space="preserve">
-    <value>Parse was not attempted because of errors in the lexical data</value>
-  </data>
   <data name="ksErrorEncountered" xml:space="preserve">
     <value>error encountered</value>
   </data>

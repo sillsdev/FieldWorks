@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Xml;
@@ -63,10 +64,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		public string PerformAnotherWordGrammarDebuggerStepPage(string nodeId, string form, string lastUrl)
 		{
 			m_xmlHtmlStack.Push(new WordGrammarStepPair(m_wordGrammarDebuggerXmlFile, lastUrl));
-			string nextFile = CreateTempFile("SelectedWordGrammarXml", "xml");
-			using (var writer = XmlWriter.Create(nextFile))
+			var doc = new XDocument();
+			using (XmlWriter writer = doc.CreateWriter())
 				CreateSelectedWordGrammarXml(writer, nodeId, form);
-			return CreateWordDebuggerPage(nextFile);
+			return CreateWordDebuggerPage(doc);
 		}
 
 		public string PopWordGrammarStack()
@@ -110,14 +111,14 @@ namespace SIL.FieldWorks.LexText.Controls
 			// Find the sNode'th seq node
 			string sSelect = "//seq[position()='" + nodeId + "']";
 			XElement selectedSeqNode = lastDoc.XPathSelectElement(sSelect);
-			string innerXml = InnerXml(selectedSeqNode);
 			// create the "result so far node"
-			writer.WriteStartElement("resultsSoFar");
-			writer.WriteRaw(innerXml);
+			writer.WriteStartElement("resultSoFar");
+			foreach (XElement child in selectedSeqNode.Elements())
+				child.WriteTo(writer);
 			writer.WriteEndElement();
 			// create the seq node
+			selectedSeqNode.WriteTo(writer);
 			writer.WriteStartElement("seq");
-			writer.WriteRaw(innerXml);
 			writer.WriteEndElement();
 		}
 
@@ -198,15 +199,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private string CreateWordDebuggerPage(string xmlPath)
-		{
-			// apply word grammar step transform file
-			string xmlOutput = TransformToXml(xmlPath);
-			m_wordGrammarDebuggerXmlFile = xmlOutput;
-			// format the result
-			return TransformToHtml(xmlOutput);
-		}
-
 		private string CreateWordDebuggerPage(XDocument xmlDoc)
 		{
 			// apply word grammar step transform file
@@ -234,33 +226,16 @@ namespace SIL.FieldWorks.LexText.Controls
 									  "FormatXAmpleWordGrammarDebuggerResult.xsl", new XsltArgumentList());
 		}
 
-		private string TransformToXml(string inputPath)
-		{
-			// Don't overwrite the input file before transforming it! (why +"A" on the next line)
-			string outputPath = CreateTempFile(CreateWordGrammarDebuggerFileName() + "A", "xml");
-			string xslFileName = m_sDataBaseName + "XAmpleWordGrammarDebugger" + ".xsl";
-			string transform = Path.Combine(Path.GetDirectoryName(outputPath), xslFileName);
-			XslCompiledTransformUtil.Instance.TransformFileToFile(transform, inputPath, outputPath, new XsltArgumentList());
-			return outputPath;
-		}
-
 		private string TransformToXml(XDocument inputDoc)
 		{
 			// Don't overwrite the input file before transforming it! (why +"A" on the next line)
 			string outputPath = CreateTempFile(CreateWordGrammarDebuggerFileName() + "A", "xml");
 			string xslFileName = m_sDataBaseName + "XAmpleWordGrammarDebugger" + ".xsl";
-			string transform = Path.Combine(Path.GetDirectoryName(outputPath), xslFileName);
+			string dir = Path.GetDirectoryName(outputPath);
+			Debug.Assert(dir != null);
+			string transform = Path.Combine(dir, xslFileName);
 			XslCompiledTransformUtil.Instance.TransformXDocumentToFile(transform, inputDoc, outputPath, new XsltArgumentList());
 			return outputPath;
-		}
-
-		public string InnerXml(XElement element)
-		{
-			using (XmlReader xmlReader = element.CreateReader())
-			{
-				xmlReader.MoveToContent();
-				return xmlReader.ReadInnerXml();
-			}
 		}
 	}
 }

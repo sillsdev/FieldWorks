@@ -20,6 +20,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using System.Text;
+using System.Xml.Linq;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
@@ -548,9 +549,9 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			if (m_tryAWordResult != null && m_tryAWordResult.IsCompleted)
 			{
-				var message = (string) m_tryAWordResult.AsyncState;
+				var result = (XDocument) m_tryAWordResult.AsyncState;
 				string sOutput;
-				if (!message.TrimStart().StartsWith("<"))
+				if (result == null)
 				{
 					// It's an error message.
 					sOutput = Path.GetTempFileName();
@@ -558,7 +559,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					{
 						writer.WriteLine("<!DOCTYPE html>");
 						writer.WriteLine("<body>");
-						writer.WriteLine(message);
+						writer.WriteLine(ParserUIStrings.ksDidNotParse);
 						writer.WriteLine("</body>");
 						writer.WriteLine("</html>");
 						writer.Close();
@@ -566,7 +567,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 				else
 				{
-					sOutput = m_webPageInteractor.ParserTrace.CreateResultPage(message);
+					sOutput = m_webPageInteractor.ParserTrace.CreateResultPage(result);
 				}
 				m_htmlControl.URL = sOutput;
 				m_tryAWordResult = null;

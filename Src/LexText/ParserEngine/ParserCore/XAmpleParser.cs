@@ -134,7 +134,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return result;
 		}
 
-		public string ParseWordXml(string word)
+		public XDocument ParseWordXml(string word)
 		{
 			CheckDisposed();
 
@@ -145,31 +145,34 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				sb.Remove(sb.Length - 1, 1);
 
 			XDocument doc = XDocument.Parse(sb.ToString());
-			foreach (XElement morphElem in doc.Descendants("Morph"))
+			using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
 			{
-				var type = (string) morphElem.Attribute("type");
-				var props = (string) morphElem.Element("props");
+				foreach (XElement morphElem in doc.Descendants("Morph"))
+				{
+					var type = (string)morphElem.Attribute("type");
+					var props = (string)morphElem.Element("props");
 
-				XElement formElem = morphElem.Element("MoForm");
-				Debug.Assert(formElem != null);
-				var formHvo = (int) formElem.Attribute("DbRef");
-				var wordType = (string) formElem.Attribute("wordType");
+					XElement formElem = morphElem.Element("MoForm");
+					Debug.Assert(formElem != null);
+					var formHvo = (int)formElem.Attribute("DbRef");
+					var wordType = (string)formElem.Attribute("wordType");
 
-				XElement msaElem = morphElem.Element("MSI");
-				Debug.Assert(msaElem != null);
-				var msaID = (string) msaElem.Attribute("DbRef");
+					XElement msaElem = morphElem.Element("MSI");
+					Debug.Assert(msaElem != null);
+					var msaID = (string)msaElem.Attribute("DbRef");
 
-				using (XmlWriter writer = morphElem.CreateWriter())
-					writer.WriteMorphInfoElements(m_cache, formHvo, msaID, wordType, props);
+					using (XmlWriter writer = morphElem.CreateWriter())
+						writer.WriteMorphInfoElements(m_cache, formHvo, msaID, wordType, props);
 
-				using (XmlWriter writer = msaElem.CreateWriter())
-					writer.WriteMsaElement(m_cache, msaID, formHvo, type, wordType);
+					using (XmlWriter writer = msaElem.CreateWriter())
+						writer.WriteMsaElement(m_cache, msaID, formHvo, type, wordType);
+				}
 			}
 
-			return doc.ToString();
+			return doc;
 		}
 
-		public string TraceWordXml(string word, string selectTraceMorphs)
+		public XDocument TraceWordXml(string word, string selectTraceMorphs)
 		{
 			CheckDisposed();
 
@@ -180,23 +183,26 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				sb.Remove(sb.Length - 1, 1);
 
 			XDocument doc = XDocument.Parse(sb.ToString());
-			foreach (XElement morphElem in doc.Descendants("morph"))
+			using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
 			{
-				var formHvo = (int) morphElem.Attribute("alloid");
-				var msaID = (string) morphElem.Attribute("morphname");
-				var type = (string) morphElem.Attribute("type");
-				var props = (string) morphElem.Element("props");
-				var wordType = (string) morphElem.Attribute("wordType");
-
-				using (XmlWriter writer = morphElem.CreateWriter())
+				foreach (XElement morphElem in doc.Descendants("morph"))
 				{
-					writer.WriteMorphInfoElements(m_cache, formHvo, msaID, wordType, props);
-					writer.WriteMsaElement(m_cache, msaID, formHvo, type, wordType);
-				}
-			}
-			ConvertFailures(doc, GetStrRep);
+					var formHvo = (int)morphElem.Attribute("alloid");
+					var msaID = (string)morphElem.Attribute("morphname");
+					var type = (string)morphElem.Attribute("type");
+					var props = (string)morphElem.Element("props");
+					var wordType = (string)morphElem.Attribute("wordType");
 
-			return doc.ToString();
+					using (XmlWriter writer = morphElem.CreateWriter())
+					{
+						writer.WriteMorphInfoElements(m_cache, formHvo, msaID, wordType, props);
+						writer.WriteMsaElement(m_cache, msaID, formHvo, type, wordType);
+					}
+				}
+				ConvertFailures(doc, GetStrRep);
+			}
+
+			return doc;
 		}
 
 		internal static void ConvertFailures(XDocument doc, Func<int, int, string> strRepSelector)

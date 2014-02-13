@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Xsl;
 
@@ -46,7 +47,7 @@ namespace SIL.Utils
 					return compiledXsl;
 
 				var transform = new XslCompiledTransform();
-				transform.Load(xslPath);
+				transform.Load(xslPath, new XsltSettings(true, false), new XmlUrlResolver());
 				m_transformCache.Add(xslPath, transform);
 				return transform;
 			}
