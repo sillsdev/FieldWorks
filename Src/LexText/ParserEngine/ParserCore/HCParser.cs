@@ -139,7 +139,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			CheckDisposed();
 
-			return ParseToXML(form, false, null);
+			return ParseToXml(form, false, null);
 		}
 		#endregion
 
@@ -147,7 +147,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			CheckDisposed();
 
-			return ParseToXML(form, true, selectTraceMorphs);
+			return ParseToXml(form, true, selectTraceMorphs);
 		}
 
 		protected override void DisposeManagedResources()
@@ -251,7 +251,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return selectTraceMorphIds;
 		}
 
-		private string ParseToXML(string form, bool trace, string[] selectTraceMorphs)
+		private string ParseToXml(string form, bool trace, string[] selectTraceMorphs)
 		{
 			if (!m_loader.IsLoaded)
 				return ParserCoreStrings.ksDidNotParse;
@@ -402,7 +402,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					if (!String.IsNullOrEmpty(morph.featureDescriptors))
 					{
 						string lastFeatDesc = "";
-						string combinedCFPFeatDescs = "";
+						string combinedCfpFeatDescs = "";
 						string[] featDescs = morph.featureDescriptors.Split(' ');
 						if (featDescs.Any())
 							writer.Write("\\f");
@@ -410,16 +410,16 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						{
 							if (featDesc.StartsWith("CFP"))
 							{
-								combinedCFPFeatDescs += featDesc;
+								combinedCfpFeatDescs += featDesc;
 								lastFeatDesc = featDesc;
 								continue;
 							}
 							if (lastFeatDesc.StartsWith("CFP"))
-								writer.Write(" {0}", combinedCFPFeatDescs);
+								writer.Write(" {0}", combinedCfpFeatDescs);
 							writer.Write(" {0}", featDesc);
 						}
 						if (lastFeatDesc.StartsWith("CFP"))
-							writer.Write(" {0}", combinedCFPFeatDescs);
+							writer.Write(" {0}", combinedCfpFeatDescs);
 					}
 					writer.WriteLine();
 					writer.WriteLine();
@@ -538,10 +538,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 				writer.WriteStartElement("MSI");
 				writer.WriteAttributeString("DbRef", morph.msaId);
-				ParserXmlGenerator.CreateMsaXmlElement(writer, morph.msaId, Convert.ToInt32(morph.formId), null, morph.wordType, m_cache);
+				writer.WriteMsaElement(m_cache, morph.msaId, Convert.ToInt32(morph.formId), null, morph.wordType);
 				writer.WriteEndElement();
 
-				ParserXmlGenerator.UpdateMorph(writer, m_cache, Convert.ToInt32(morph.formId), morph.msaId, morph.wordType, null);
+				writer.WriteMorphInfoElements(m_cache, Convert.ToInt32(morph.formId), morph.msaId, morph.wordType, null);
 
 				writer.WriteEndElement();
 			}
@@ -783,7 +783,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			private readonly FdoCache m_cache;
 
-			public FwXmlTraceManager(FdoCache fdoCache) : base()
+			public FwXmlTraceManager(FdoCache fdoCache)
 			{
 				m_cache = fdoCache;
 			}
@@ -843,12 +843,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						XElement propsElement = morphElem.Element("props");
 						using (XmlWriter writer = msiElement.CreateWriter())
 						{
-							ParserXmlGenerator.CreateMsaXmlElement(writer, msaId, formId, null, wordType, m_cache);
+							writer.WriteMsaElement(m_cache, msaId, formId, null, wordType);
 						}
 						morphElem.Add(msiElement);
 						using (XmlWriter writer = msiElement.CreateWriter())
 						{
-							ParserXmlGenerator.UpdateMorph(writer, m_cache, formId, msaId, wordType, propsElement != null ? propsElement.Value : null);
+							writer.WriteMorphInfoElements(m_cache, formId, msaId, wordType, propsElement != null ? propsElement.Value : null);
 						}
 					}
 					elem.Add(morphElem);

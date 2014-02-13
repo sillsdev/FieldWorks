@@ -215,7 +215,7 @@
     <Compile Include="ParserScheduler.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ParserXmlGenerator.cs" />
+    <Compile Include="ParserXmlWriterExtensions.cs" />
     <Compile Include="TaskReport.cs">
       <SubType>Code</SubType>
     </Compile>

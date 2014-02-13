@@ -175,8 +175,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			if (morphnameAttr != null)
 			{
-				ParserXmlGenerator.CreateMsaXmlElement(writer, morphnameAttr.Value, alloIdAttr == null ? 0 : Convert.ToInt32(alloIdAttr.Value),
-					typeAttr == null ? null : typeAttr.Value, wordTypeAttr == null ? null : wordTypeAttr.Value, m_cache);
+				writer.WriteMsaElement(m_cache, morphnameAttr.Value, alloIdAttr == null ? 0 : Convert.ToInt32(alloIdAttr.Value),
+					typeAttr == null ? null : typeAttr.Value, wordTypeAttr == null ? null : wordTypeAttr.Value);
 			}
 			writer.WriteEndElement();
 		}
@@ -209,7 +209,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private string CreateWordGrammarDebuggerFileName()
 		{
-			string sDepthLevel = m_xmlHtmlStack.Count.ToString();
+			string sDepthLevel = m_xmlHtmlStack.Count.ToString(CultureInfo.InvariantCulture);
 			return "WordGrammarDebugger" + sDepthLevel;
 		}
 
