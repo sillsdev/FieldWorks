@@ -217,6 +217,7 @@
 &lt;li style='list-style-type:bullet;margin-left:-10pt'&gt;If you will be doing a Bulk Edit, please do a Send/Receive immediately before and after, and ask other teammates to refrain from working while you do this.&lt;/li&gt;
 &lt;li style='list-style-type:bullet;margin-left:-10pt'&gt;Try to avoid having two users work on the same interlinear text during the same send/receive cycle. This includes the Text Chart.&lt;/li&gt;
 &lt;li style='list-style-type:bullet;margin-left:-10pt'&gt;If two users adjust lexical relations in the same entry in the same Send/Receive cycle, the results may not be what you expect.&lt;/li&gt;
+&lt;li style='list-style-type:bullet;margin-left:-10pt'&gt;Once you have done Send/Receive with this project, you will not be able to restore a backup over it.&lt;/li&gt;
 &lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</value>
     <comment>Instructions shown before first Send/Receive. Please keep HTML tags as-is to preserve formatting, and use HTML escapes (&amp;quot; for &quot;, etc.). If using PoEdit, you will also need to keep all &quot;\n&quot; (line breaks) as-is.</comment>
   </data>
