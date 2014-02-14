@@ -15,7 +15,7 @@ namespace XAmpleManagedWrapperTests
 
 		protected void LoadFilesHelper(XAmpleWrapper wrapper)
 		{
-			var tempPath = "../../Src/LexText/ParserEngine/ParserCore/ParserCoreTests/M3ToXAmpleTransformerTestsDataFiles";
+			var tempPath = "../../Src/LexText/ParserCore/ParserCoreTests/M3ToXAmpleTransformerTestsDataFiles";
 			// TODO: use DirectoryFinder.FWCodeDirectory
 			var xPath = "../../DistFiles/" + "/Language Explorer/Configuration/Grammar";
 			wrapper.LoadFiles(xPath, tempPath, "StemName3");

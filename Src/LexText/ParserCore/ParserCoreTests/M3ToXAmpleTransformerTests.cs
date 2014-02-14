@@ -70,11 +70,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			base.FixtureSetup();
 
-			m_sTestPath = Path.Combine(FwDirectoryFinder.SourceDirectory,
-				Path.Combine("LexText",
-				Path.Combine("ParserEngine",
-				Path.Combine("ParserCore",
-				Path.Combine("ParserCoreTests", "M3ToXAmpleTransformerTestsDataFiles")))));
+			m_sTestPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "LexText", "ParserCore", "ParserCoreTests", "M3ToXAmpleTransformerTestsDataFiles");
 			m_sTransformPath = Path.Combine(FwDirectoryFinder.FlexFolder, "Transforms");
 
 			SetUpXAmpleTransforms();

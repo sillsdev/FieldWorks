@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		[Test]
 		public void ConvertFailures()
 		{
-			string testPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "LexText", "ParserEngine", "ParserCore", "ParserCoreTests", "Failures.xml");
+			string testPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "LexText", "ParserCore", "ParserCoreTests", "Failures.xml");
 			XDocument doc = XDocument.Load(testPath);
 
 			XElement[] failures = doc.Descendants("failure").ToArray();

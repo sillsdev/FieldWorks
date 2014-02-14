@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -13,6 +14,8 @@ using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="m_cache and m_mediator are references")]
 	public abstract class WordGrammarDebugger
 	{
 		private static ParserTraceUITransform s_pageTransform;

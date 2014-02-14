@@ -32,7 +32,7 @@
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>..\..\..\..\Output\Debug\</OutputPath>
+    <OutputPath>..\..\..\Output\Debug\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
@@ -56,7 +56,7 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>..\..\..\..\Output\Release\</OutputPath>
+    <OutputPath>..\..\..\Output\Release\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
@@ -88,7 +88,7 @@
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
-    <CodeAnalysisLogFile>..\..\..\..\Output\Debug\ParserCore.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisLogFile>..\..\..\Output\Debug\ParserCore.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
@@ -108,7 +108,7 @@
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
-    <CodeAnalysisLogFile>..\..\..\..\Output\Release\ParserCore.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisLogFile>..\..\..\Output\Release\ParserCore.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
@@ -122,36 +122,36 @@
   <ItemGroup>
     <Reference Include="BasicUtils, Version=7.2.0.24545, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
     <Reference Include="COMInterfaces, Version=5.1.0.21154, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="CoreImpl, Version=6.1.1.22192, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
     </Reference>
     <Reference Include="FDO">
       <Name>FDO</Name>
-      <HintPath>..\..\..\..\Output\Debug\FDO.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
     </Reference>
     <Reference Include="GAFAWSAnalysis">
       <Name>GAFAWSAnalysis</Name>
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\DistFiles\GAFAWSAnalysis.dll</HintPath>
+      <HintPath>..\..\..\DistFiles\GAFAWSAnalysis.dll</HintPath>
     </Reference>
     <Reference Include="HermitCrab, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Lib\debug\HermitCrab.dll</HintPath>
+      <HintPath>..\..\..\Lib\debug\HermitCrab.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="PhonEnvValidator, Version=7.3.0.15150, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\PhonEnvValidator.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\PhonEnvValidator.dll</HintPath>
     </Reference>
     <Reference Include="SilUtils, Version=7.2.0.28885, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -173,22 +173,22 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="XAmpleManagedWrapper, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\XAmpleManagedWrapper.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\XAmpleManagedWrapper.dll</HintPath>
     </Reference>
     <Reference Include="XMLUtils">
       <Name>XMLUtils</Name>
-      <HintPath>..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\XMLUtils.dll</HintPath>
     </Reference>
     <Reference Include="PatrParserWrapper">
       <Name>PatrParserWrapper</Name>
-      <HintPath>..\..\..\..\Output\Debug\PatrParserWrapper.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\PatrParserWrapper.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\..\CommonAssemblyInfo.cs">
+    <Compile Include="..\..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="HCParser.cs" />

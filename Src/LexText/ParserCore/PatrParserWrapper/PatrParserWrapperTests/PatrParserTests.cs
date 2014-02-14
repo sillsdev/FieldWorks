@@ -11,7 +11,7 @@ namespace PatrParserWrapperTest
 	public class PatrParserInteropTests
 	{
 		protected const string LocationToSrcDirFromOutputDebug =
-			"../../Src/LexText/ParserEngine/ParserCore/PatrParserWrapper/PatrParserWrapperTests/";
+			"../../Src/LexText/ParserCore/PatrParserWrapper/PatrParserWrapperTests/";
 
 		protected const string GrammarFileName =
 			LocationToSrcDirFromOutputDebug + "StemNameWordGrammar.txt";
