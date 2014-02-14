@@ -568,10 +568,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 				writer.WriteStartElement("MSI");
 				writer.WriteAttributeString("DbRef", morph.msaId);
-				writer.WriteMsaElement(m_cache, morph.msaId, Convert.ToInt32(morph.formId), null, morph.wordType);
+				writer.WriteMsaElement(m_cache, morph.formId, morph.msaId, null, morph.wordType);
 				writer.WriteEndElement();
 
-				writer.WriteMorphInfoElements(m_cache, Convert.ToInt32(morph.formId), morph.msaId, morph.wordType, null);
+				writer.WriteMorphInfoElements(m_cache, morph.formId, morph.msaId, morph.wordType, null);
 
 				writer.WriteEndElement();
 			}
@@ -651,51 +651,24 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				writer.WriteValue(m_id);
 				writer.WriteEndElement();
 
-				string sType = "pfx"; // try to guess morph type based on word type
+				string type = "pfx"; // try to guess morph type based on word type
 				foreach (PcPatrMorph morph in m_morphs)
 				{
-					writer.WriteStartElement("Morphs");
+					writer.WriteStartElement("morph");
 					string sWordType = morph.wordType;
 					writer.WriteAttributeString("wordType", sWordType);
-					if (sType == "pfx" &&
-						sWordType == "root")
-						sType = "root";
-					else if (sType == "root" &&
-							sWordType != "root")
-						sType = "sfx";
-					writer.WriteAttributeString("type", sType);
+					if (type == "pfx" && sWordType == "root")
+						type = "root";
+					else if (type == "root" && sWordType != "root")
+						type = "sfx";
+					writer.WriteAttributeString("type", type);
 					writer.WriteAttributeString("alloid", morph.formId);
 					writer.WriteAttributeString("morphname", morph.msaId);
 
-					writer.WriteElementString("alloform", morph.form);
-
-					int hvoForm = Convert.ToInt32(morph.formId);
-					var obj = m_cache.ServiceLocator.GetObject(hvoForm);
-					var stemAllo = obj as IMoStemAllomorph;
-					if (stemAllo != null)
-					{
-						var stemName = stemAllo.StemNameRA;
-						if (stemName != null)
-						{
-							writer.WriteStartElement("stemName");
-							writer.WriteStartAttribute("id");
-							writer.WriteValue(stemName.Hvo);
-							writer.WriteEndAttribute();
-							writer.WriteValue(stemName.Name.BestAnalysisAlternative.Text);
-							writer.WriteEndElement(); // stemName
-						}
-					}
-					writer.WriteElementString("gloss", morph.gloss);
-					writer.WriteStartElement("citationForm");
-					var form = obj as IMoForm;
-					if (form != null)
-					{
-						var entry = form.Owner as ILexEntry;
-						if (entry != null)
-							writer.WriteValue(entry.HeadWord.Text);
-					}
-					writer.WriteEndElement(); // citationForm
-					writer.WriteEndElement(); // Morphs
+					writer.WriteMorphInfoElements(m_cache, morph.formId, morph.msaId, morph.wordType, morph.featureDescriptors);
+					writer.WriteMsaElement(m_cache, morph.formId, morph.msaId, type, morph.wordType);
+					writer.WriteInflClassesElement(m_cache, morph.formId);
+					writer.WriteEndElement(); // morph
 				}
 				writer.WriteEndElement();
 			}
@@ -741,42 +714,37 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				if (!String.IsNullOrEmpty(formIdsStr) || !String.IsNullOrEmpty(msaId))
 				{
 					var morphElem = new XElement("Morph");
-
+					string firstFormId = null;
+					string firstWordType = null;
+					string featDesc = allomorph.GetProperty("FeatureDescriptors");
 					if (!String.IsNullOrEmpty(formIdsStr))
 					{
 						string[] formIds = formIdsStr.Split(' ');
 						string[] wordTypes = allomorph.GetProperty("WordCategory").Split(' ');
 						for (int i = 0; i < formIds.Length; i++)
 						{
-							int wordTypeIndex = WordTypeIndex(i, wordTypes.Count());
-							morphElem.Add(new XElement("MoForm", new XAttribute("DbRef", formIds[i]), new XAttribute("wordType", wordTypes[wordTypeIndex])));
-							string featDesc = allomorph.GetProperty("FeatureDescriptors");
+							int wordTypeIndex = WordTypeIndex(i, wordTypes.Length);
+							string wordType = wordTypes[wordTypeIndex];
+							morphElem.Add(new XElement("MoForm", new XAttribute("DbRef", formIds[i]), new XAttribute("wordType", wordType)));
 							morphElem.Add(string.IsNullOrEmpty(featDesc) ? new XElement("props") : new XElement("props", featDesc));
+							if (i == 0)
+							{
+								firstFormId = formIds[i];
+								firstWordType = wordType;
+							}
 						}
 					}
 
 					if (!String.IsNullOrEmpty(msaId))
 					{
 						var msiElement = new XElement("MSI", new XAttribute("DbRef", msaId));
-						XElement moFormElement = morphElem.Element("MoForm");
-						int formId = 0;
-						string wordType = null;
-						if (moFormElement != null)
-						{
-							formId = Convert.ToInt32(moFormElement.Attribute("DbRef").Value);
-							wordType = moFormElement.Attribute("wordType").Value;
-						}
-						XElement propsElement = morphElem.Element("props");
 						using (XmlWriter writer = msiElement.CreateWriter())
-						{
-							writer.WriteMsaElement(m_cache, msaId, formId, null, wordType);
-						}
+							writer.WriteMsaElement(m_cache, firstFormId, msaId, null, firstWordType);
 						morphElem.Add(msiElement);
-						using (XmlWriter writer = msiElement.CreateWriter())
-						{
-							writer.WriteMorphInfoElements(m_cache, formId, msaId, wordType, propsElement != null ? propsElement.Value : null);
-						}
 					}
+
+					using (XmlWriter writer = morphElem.CreateWriter())
+						writer.WriteMorphInfoElements(m_cache, firstFormId, msaId, firstWordType, featDesc);
 					elem.Add(morphElem);
 				}
 

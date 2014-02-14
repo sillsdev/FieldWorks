@@ -149,23 +149,23 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			{
 				foreach (XElement morphElem in doc.Descendants("Morph"))
 				{
-					var type = (string)morphElem.Attribute("type");
-					var props = (string)morphElem.Element("props");
+					var type = (string) morphElem.Attribute("type");
+					var props = (string) morphElem.Element("props");
 
 					XElement formElem = morphElem.Element("MoForm");
 					Debug.Assert(formElem != null);
-					var formHvo = (int)formElem.Attribute("DbRef");
-					var wordType = (string)formElem.Attribute("wordType");
+					var formID = (string) formElem.Attribute("DbRef");
+					var wordType = (string) formElem.Attribute("wordType");
 
 					XElement msaElem = morphElem.Element("MSI");
 					Debug.Assert(msaElem != null);
-					var msaID = (string)msaElem.Attribute("DbRef");
+					var msaID = (string) msaElem.Attribute("DbRef");
 
 					using (XmlWriter writer = morphElem.CreateWriter())
-						writer.WriteMorphInfoElements(m_cache, formHvo, msaID, wordType, props);
+						writer.WriteMorphInfoElements(m_cache, formID, msaID, wordType, props);
 
 					using (XmlWriter writer = msaElem.CreateWriter())
-						writer.WriteMsaElement(m_cache, msaID, formHvo, type, wordType);
+						writer.WriteMsaElement(m_cache, formID, msaID, type, wordType);
 				}
 			}
 
@@ -187,16 +187,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			{
 				foreach (XElement morphElem in doc.Descendants("morph"))
 				{
-					var formHvo = (int)morphElem.Attribute("alloid");
-					var msaID = (string)morphElem.Attribute("morphname");
-					var type = (string)morphElem.Attribute("type");
-					var props = (string)morphElem.Element("props");
-					var wordType = (string)morphElem.Attribute("wordType");
+					var formID = (string) morphElem.Attribute("alloid");
+					var msaID = (string) morphElem.Attribute("morphname");
+					var type = (string) morphElem.Attribute("type");
+					var props = (string) morphElem.Element("props");
+					var wordType = (string) morphElem.Attribute("wordType");
 
 					using (XmlWriter writer = morphElem.CreateWriter())
 					{
-						writer.WriteMorphInfoElements(m_cache, formHvo, msaID, wordType, props);
-						writer.WriteMsaElement(m_cache, msaID, formHvo, type, wordType);
+						writer.WriteMorphInfoElements(m_cache, formID, msaID, wordType, props);
+						writer.WriteMsaElement(m_cache, formID, msaID, type, wordType);
+						writer.WriteInflClassesElement(m_cache, formID);
 					}
 				}
 				ConvertFailures(doc, GetStrRep);

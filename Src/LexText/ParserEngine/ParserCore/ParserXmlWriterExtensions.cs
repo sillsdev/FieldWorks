@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -11,9 +12,9 @@ using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
-	public static class ParserXmlWriterExtensions
+	internal static class ParserXmlWriterExtensions
 	{
-		public static void WriteMsaElement(this XmlWriter writer, FdoCache cache, string msaID, int allomorphHvo, string type, string wordType)
+		public static void WriteMsaElement(this XmlWriter writer, FdoCache cache, string formID, string msaID, string type, string wordType)
 		{
 			// Irregulary inflected forms can have a combination MSA hvo: the LexEntry hvo, a period, and an index to the LexEntryRef
 			Tuple<int, int> msaTuple = ParserHelper.ProcessMsaHvo(msaID);
@@ -26,7 +27,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					WriteStemMsaXmlElement(writer, (IMoStemMsa) obj);
 					break;
 				case "MoInflAffMsa":
-					WriteInflectionClasses(writer, cache, allomorphHvo);
+					WriteInflectionClasses(writer, cache, int.Parse(formID, CultureInfo.InvariantCulture));
 					WriteInflMsaXmlElement(writer, (IMoInflAffMsa) obj, type);
 					break;
 				case "MoDerivAffMsa":
@@ -283,9 +284,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			writer.WriteAttributeString("slotOptional", sSlotOptional);
 		}
 
-		public static void WriteMorphInfoElements(this XmlWriter writer, FdoCache cache, int formHvo, string msaID, string wordType, string props)
+		public static void WriteMorphInfoElements(this XmlWriter writer, FdoCache cache, string formID, string msaID, string wordType, string props)
 		{
-			ICmObject obj = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(formHvo);
+			ICmObject obj = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(int.Parse(formID, CultureInfo.InvariantCulture));
 			var form = obj as IMoForm;
 			if (form == null)
 			{
@@ -527,6 +528,34 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 			else
 				writer.WriteAttributeString(sCat, "0");
+		}
+
+		public static void WriteInflClassesElement(this XmlWriter writer, FdoCache cache, string formID)
+		{
+			int hvo = int.Parse(formID, CultureInfo.InvariantCulture);
+			ICmObject obj = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
+			var form = obj as IMoAffixForm;  // only for affix forms
+			if (form != null)
+			{
+				if (form.InflectionClassesRC.Count > 0)
+				{
+					writer.WriteStartElement("inflClasses");
+					WriteInflectionClassesAndSubclassesXmlElement(writer, form.InflectionClassesRC);
+					writer.WriteEndElement();
+				}
+			}
+		}
+
+		private static void WriteInflectionClassesAndSubclassesXmlElement(XmlWriter writer, IEnumerable<IMoInflClass> inflectionClasses)
+		{
+			foreach (IMoInflClass ic in inflectionClasses)
+			{
+				writer.WriteStartElement("inflClass");
+				writer.WriteAttributeString("hvo", ic.Hvo.ToString(CultureInfo.InvariantCulture));
+				writer.WriteAttributeString("abbr", ic.Abbreviation.BestAnalysisAlternative.Text);
+				writer.WriteEndElement();
+				WriteInflectionClassesAndSubclassesXmlElement(writer, ic.SubclassesOC);
+			}
 		}
 	}
 }

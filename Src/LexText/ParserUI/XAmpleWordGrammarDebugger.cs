@@ -1,6 +1,7 @@
-﻿using System.Xml;
+﻿using System.Diagnostics;
+using System.Xml;
 using System.Xml.Linq;
-using System.Xml.XPath;
+using System.Linq;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -15,33 +16,16 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		protected override void CreateMorphNodes(XmlWriter writer, string nodeId)
 		{
-			string s = "//failure[@id=\"" + nodeId + "\"]/ancestor::parseNode[morph][1]/morph";
-			XElement node = m_parseResult.XPathSelectElement(s);
-			if (node != null)
-				CreateMorphNode(writer, node);
-		}
-
-		private void CreateMorphNode(XmlWriter writer, XElement element)
-		{
-			// get the <morph> element closest up the chain to node
-			XElement morph = element.XPathSelectElement("../ancestor::parseNode[morph][1]/morph");
-			if (morph != null)
-				CreateMorphNode(writer, morph);
-			CreateMorphXElement(writer, element);
-		}
-
-		protected override void CreateMorphAffixAlloFeatsXElement(XmlWriter writer, XElement element)
-		{
-			XElement affixAlloFeatsNode = element.XPathSelectElement("affixAlloFeats");
-			if (affixAlloFeatsNode != null)
-				affixAlloFeatsNode.WriteTo(writer);
-		}
-
-		protected override void CreateMorphShortNameXElement(XmlWriter writer, XElement element)
-		{
-			XElement formNode = element.XPathSelectElement("shortName");
-			if (formNode != null)
-				writer.WriteElementString("shortName", formNode.Value);
+			XElement failureElem = m_parseResult.Descendants("failure").FirstOrDefault(e => ((string) e.Attribute("id")) == nodeId);
+			if (failureElem != null)
+			{
+				foreach (XElement parseNodeElem in failureElem.Ancestors("parseNode").Where(e => e.Element("morph") != null).Reverse())
+				{
+					XElement morphElem = parseNodeElem.Element("morph");
+					Debug.Assert(morphElem != null);
+					morphElem.WriteTo(writer);
+				}
+			}
 		}
 	}
 }
