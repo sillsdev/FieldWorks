@@ -1,53 +1,55 @@
-using System.Diagnostics;
 using System.IO;
 using System.Xml.Linq;
 using System.Xml.Xsl;
+using SIL.FieldWorks.FDO;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
 	public class HCTrace : ParserTrace
 	{
+		private static ParserTraceUITransform s_traceTransform;
+		private static ParserTraceUITransform TraceTransform
+		{
+			get
+			{
+				if (s_traceTransform == null)
+					s_traceTransform = new ParserTraceUITransform("FormatHCTrace.xsl");
+				return s_traceTransform;
+			}
+		}
+
+		private readonly Mediator m_mediator;
+		private readonly FdoCache m_cache;
+
 		/// <summary>
 		/// The real deal
 		/// </summary>
 		/// <param name="mediator"></param>
 		public HCTrace(Mediator mediator)
-			: base(mediator)
 		{
-			m_sParse = "HCParse";
-			m_sTrace = "HCTrace";
-			m_sFormatParse = "FormatXAmpleParse.xsl"; // the XAmple one works fine with Hermit Crab parse output
-			m_sFormatTrace = "FormatHCTrace.xsl";
+			m_mediator = mediator;
+			m_cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
 		}
 
-		/// <summary>
-		/// Initialize what is needed to perform the word grammar debugging and
-		/// produce an html page showing the results
-		/// </summary>
-		/// <param name="nodeId">Id of the node to use</param>
-		/// <param name="form">the wordform being tried</param>
-		/// <param name="lastUrl"></param>
-		/// <returns>temporary html file showing the results of the first step</returns>
-		public override string SetUpWordGrammarDebuggerPage(string nodeId, string form, string lastUrl)
+		public override string CreateResultPage(XDocument result, bool isTrace)
 		{
-			m_wordGrammarDebugger = new HCWordGrammarDebugger(m_mediator, m_parseResult);
-			return m_wordGrammarDebugger.SetUpWordGrammarDebuggerPage(nodeId, form, lastUrl);
-		}
-
-		public override string CreateResultPage(XDocument result)
-		{
-			m_parseResult = result;
-
-			Debug.Assert(m_parseResult.Root != null);
-			TransformKind kind = (m_parseResult.Root.Element("Trace") != null ? TransformKind.kcptTrace : TransformKind.kcptParse);
-			return TransformToHtml(m_parseResult, kind);
-		}
-
-		protected override void AddParserSpecificArguments(XsltArgumentList argumentList)
-		{
-			string sLoadErrorFile = Path.Combine(Path.GetTempPath(), m_sDataBaseName + "HCLoadErrors.xml");
-			argumentList.AddParam("prmHCTraceLoadErrorFile", "", sLoadErrorFile);
+			ParserTraceUITransform transform;
+			string baseName;
+			if (isTrace)
+			{
+				WordGrammarDebugger = new HCWordGrammarDebugger(m_mediator, result);
+				transform = TraceTransform;
+				baseName = "HCTrace";
+			}
+			else
+			{
+				transform = ParseTransform;
+				baseName = "HCParse";
+			}
+			var args = new XsltArgumentList();
+			args.AddParam("prmHCTraceLoadErrorFile", "", Path.Combine(Path.GetTempPath(), m_cache.ProjectId.Name + "HCLoadErrors.xml"));
+			return transform.Transform(m_mediator, result, baseName, args);
 		}
 	}
 }

@@ -562,12 +562,11 @@ namespace SIL.FieldWorks.LexText.Controls
 						writer.WriteLine(ParserUIStrings.ksDidNotParse);
 						writer.WriteLine("</body>");
 						writer.WriteLine("</html>");
-						writer.Close();
 					}
 				}
 				else
 				{
-					sOutput = m_webPageInteractor.ParserTrace.CreateResultPage(result);
+					sOutput = m_webPageInteractor.ParserTrace.CreateResultPage(result, DoTrace);
 				}
 				m_htmlControl.URL = sOutput;
 				m_tryAWordResult = null;

@@ -8,13 +8,15 @@ namespace SIL.FieldWorks.LexText.Controls
 {
 	public class XAmpleWordGrammarDebugger : WordGrammarDebugger
 	{
+		private readonly XDocument m_parseResult;
+
 		public XAmpleWordGrammarDebugger(Mediator mediator, XDocument parseResult)
 			: base(mediator)
 		{
 			m_parseResult = parseResult;
 		}
 
-		protected override void CreateMorphNodes(XmlWriter writer, string nodeId)
+		protected override void WriteMorphNodes(XmlWriter writer, string nodeId)
 		{
 			XElement failureElem = m_parseResult.Descendants("failure").FirstOrDefault(e => ((string) e.Attribute("id")) == nodeId);
 			if (failureElem != null)

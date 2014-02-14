@@ -13,7 +13,6 @@
 //		XAmpleTrace - Deal with results of an XAmple trace
 // </remarks>
 
-using System.Diagnostics;
 using System.Xml.Linq;
 using XCore;
 
@@ -24,55 +23,50 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// </summary>
 	public class XAmpleTrace : ParserTrace
 	{
+		private static ParserTraceUITransform s_traceTransform;
+		private static ParserTraceUITransform TraceTransform
+		{
+			get
+			{
+				if (s_traceTransform == null)
+					s_traceTransform = new ParserTraceUITransform("FormatXAmpleTrace.xsl");
+				return s_traceTransform;
+			}
+		}
+
+		private readonly Mediator m_mediator;
+
 		/// <summary>
 		/// The real deal
 		/// </summary>
 		/// <param name="mediator"></param>
-		public XAmpleTrace(Mediator mediator) : base(mediator)
+		public XAmpleTrace(Mediator mediator)
 		{
-			m_sParse = "XAmpleParse";
-			m_sTrace = "XAmpleTrace";
-			m_sFormatParse = "FormatXAmpleParse.xsl";
-			m_sFormatTrace = "FormatXAmpleTrace.xsl";
-		}
-
-		/// <summary>
-		/// Initialize what is needed to perform the word grammar debugging and
-		/// produce an html page showing the results
-		/// </summary>
-		/// <param name="nodeId">Id of the node to use</param>
-		/// <param name="form">the wordform being tried</param>
-		/// <param name="lastUrl"></param>
-		/// <returns>temporary html file showing the results of the first step</returns>
-		public override string SetUpWordGrammarDebuggerPage(string nodeId, string form, string lastUrl)
-		{
-			m_wordGrammarDebugger = new XAmpleWordGrammarDebugger(m_mediator, m_parseResult);
-			return m_wordGrammarDebugger.SetUpWordGrammarDebuggerPage(nodeId, form, lastUrl);
+			m_mediator = mediator;
 		}
 
 		/// <summary>
 		/// Create an HTML page of the results
 		/// </summary>
 		/// <param name="result">XML string of the XAmple trace output</param>
+		/// <param name="isTrace"></param>
 		/// <returns>URL of the resulting HTML page</returns>
-		public override string CreateResultPage(XDocument result)
+		public override string CreateResultPage(XDocument result, bool isTrace)
 		{
-			m_parseResult = result;
-
-			Debug.Assert(m_parseResult.Root != null);
-			TransformKind kind = (m_parseResult.Root.Name == "AmpleTrace" ? TransformKind.kcptTrace : TransformKind.kcptParse);
-			return TransformToHtml(m_parseResult, kind);
+			ParserTraceUITransform transform;
+			string baseName;
+			if (isTrace)
+			{
+				WordGrammarDebugger = new XAmpleWordGrammarDebugger(m_mediator, result);
+				transform = TraceTransform;
+				baseName = "XAmpleTrace";
+			}
+			else
+			{
+				transform = ParseTransform;
+				baseName = "XAmpleParse";
+			}
+			return transform.Transform(m_mediator, result, baseName);
 		}
 	}
 }
-///
-/// Note for Andy
-///
-#if Later
-using mshtml;
-
-IHTMLDocument2 doc;
-object boxDoc = m_browser.Document;
-doc = (IHTMLDocument2)boxDoc;
-string sHtml = doc.body.innerHTML;
-#endif

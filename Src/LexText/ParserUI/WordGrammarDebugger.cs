@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -5,32 +6,47 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
+using System.Xml.XPath;
 using System.Xml.Xsl;
-using SIL.Utils;
+using SIL.FieldWorks.FDO;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
-	public abstract class WordGrammarDebugger : ParserTraceBase
+	public abstract class WordGrammarDebugger
 	{
+		private static ParserTraceUITransform s_pageTransform;
+		private static ParserTraceUITransform PageTransform
+		{
+			get
+			{
+				if (s_pageTransform == null)
+					s_pageTransform = new ParserTraceUITransform("FormatXAmpleWordGrammarDebuggerResult.xsl");
+				return s_pageTransform;
+			}
+		}
+
 		/// <summary>
 		/// Word Grammar step stack
 		/// </summary>
-		private readonly Stack<WordGrammarStepPair> m_xmlHtmlStack;
+		private readonly Stack<Tuple<XDocument, string>> m_xmlHtmlStack;
 
 		/// <summary>
 		/// the latest word grammar debugging step xml document
 		/// </summary>
-		private string m_wordGrammarDebuggerXmlFile;
+		private XDocument m_wordGrammarDebuggerXml;
 
-		/// <summary>
-		/// The real deal
-		/// </summary>
-		/// <param name="mediator"></param>
+		private readonly XslCompiledTransform m_intermediateTransform;
+		private readonly Mediator m_mediator;
+		private readonly FdoCache m_cache;
+
 		protected WordGrammarDebugger(Mediator mediator)
-			: base(mediator)
 		{
-			m_xmlHtmlStack = new Stack<WordGrammarStepPair>();
+			m_mediator = mediator;
+			m_cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
+			m_xmlHtmlStack = new Stack<Tuple<XDocument, string>>();
+			m_intermediateTransform = new XslCompiledTransform();
+			m_intermediateTransform.Load(Path.Combine(Path.GetTempPath(), m_cache.ProjectId.Name + "XAmpleWordGrammarDebugger.xsl"), new XsltSettings(true, false), new XmlUrlResolver());
 		}
 
 		/// <summary>
@@ -43,7 +59,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <returns>temporary html file showing the results of the first step</returns>
 		public string SetUpWordGrammarDebuggerPage(string nodeId, string form, string lastUrl)
 		{
-			m_xmlHtmlStack.Push(new WordGrammarStepPair(null, lastUrl));
+			m_xmlHtmlStack.Push(Tuple.Create((XDocument) null, lastUrl));
 			var doc = new XDocument();
 			using (XmlWriter writer = doc.CreateWriter())
 				CreateAnalysisXml(writer, nodeId, form);
@@ -60,7 +76,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <returns>temporary html file showing the results of the next step</returns>
 		public string PerformAnotherWordGrammarDebuggerStepPage(string nodeId, string form, string lastUrl)
 		{
-			m_xmlHtmlStack.Push(new WordGrammarStepPair(m_wordGrammarDebuggerXmlFile, lastUrl));
+			m_xmlHtmlStack.Push(Tuple.Create(m_wordGrammarDebuggerXml, lastUrl));
 			var doc = new XDocument();
 			using (XmlWriter writer = doc.CreateWriter())
 				CreateSelectedWordGrammarXml(writer, nodeId, form);
@@ -71,9 +87,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			if (m_xmlHtmlStack.Count > 0)
 			{
-				WordGrammarStepPair wgsp = m_xmlHtmlStack.Pop();
-				m_wordGrammarDebuggerXmlFile = wgsp.XmlFile;
-				return wgsp.HtmlFile;
+				Tuple<XDocument, string> wgsp = m_xmlHtmlStack.Pop();
+				m_wordGrammarDebuggerXml = wgsp.Item1;
+				return wgsp.Item2;
 			}
 			return "unknown";
 		}
@@ -86,7 +102,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			writer.WriteElementString("form", form);
 			writer.WriteStartElement("seq");
 
-			CreateMorphNodes(writer, nodeId);
+			WriteMorphNodes(writer, nodeId);
 
 			writer.WriteEndElement();
 			writer.WriteEndElement();
@@ -94,20 +110,18 @@ namespace SIL.FieldWorks.LexText.Controls
 			writer.WriteEndDocument();
 		}
 
-		protected abstract void CreateMorphNodes(XmlWriter writer, string nodeId);
+		protected abstract void WriteMorphNodes(XmlWriter writer, string nodeId);
 
 		private void CreateSelectedWordGrammarXml(XmlWriter writer, string nodeId, string form)
 		{
-			var lastDoc = XDocument.Load(m_wordGrammarDebuggerXmlFile);
-
 			writer.WriteStartDocument();
 
 			writer.WriteStartElement("word");
 			writer.WriteElementString("form", form);
 
 			// Find the sNode'th seq node
-			Debug.Assert(lastDoc.Root != null);
-			XElement selectedSeqNode = lastDoc.Root.Elements("seq").ElementAt(int.Parse(nodeId, CultureInfo.InvariantCulture) - 1);
+			Debug.Assert(m_wordGrammarDebuggerXml.Root != null);
+			XElement selectedSeqNode = m_wordGrammarDebuggerXml.Root.Elements("seq").ElementAt(int.Parse(nodeId, CultureInfo.InvariantCulture) - 1);
 			// create the "result so far node"
 			writer.WriteStartElement("resultSoFar");
 			foreach (XElement child in selectedSeqNode.Elements())
@@ -122,40 +136,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		private string CreateWordDebuggerPage(XDocument xmlDoc)
 		{
 			// apply word grammar step transform file
-			string xmlOutput = TransformToXml(xmlDoc);
-			m_wordGrammarDebuggerXmlFile = xmlOutput;
+			var output = new XDocument();
+			using (XmlWriter writer = output.CreateWriter())
+				m_intermediateTransform.Transform(xmlDoc.CreateNavigator(), writer);
+			m_wordGrammarDebuggerXml = output;
 			// format the result
-			return TransformToHtml(xmlOutput);
-		}
-
-		private string CreateWordGrammarDebuggerFileName()
-		{
-			string depthLevel = m_xmlHtmlStack.Count.ToString(CultureInfo.InvariantCulture);
-			return "WordGrammarDebugger" + depthLevel;
-		}
-
-		protected string TransformToHtml(string inputPath)
-		{
-			return TransformToHtml(inputPath, CreateWordGrammarDebuggerFileName(),
-									  "FormatXAmpleWordGrammarDebuggerResult.xsl", new XsltArgumentList());
-		}
-
-		protected string TransformToHtml(XDocument inputDoc)
-		{
-			return TransformToHtml(inputDoc, CreateWordGrammarDebuggerFileName(),
-									  "FormatXAmpleWordGrammarDebuggerResult.xsl", new XsltArgumentList());
-		}
-
-		private string TransformToXml(XDocument inputDoc)
-		{
-			// Don't overwrite the input file before transforming it! (why +"A" on the next line)
-			string outputPath = CreateTempFile(CreateWordGrammarDebuggerFileName() + "A", "xml");
-			string xslFileName = m_sDataBaseName + "XAmpleWordGrammarDebugger" + ".xsl";
-			string dir = Path.GetDirectoryName(outputPath);
-			Debug.Assert(dir != null);
-			string transform = Path.Combine(dir, xslFileName);
-			XslCompiledTransformUtil.Instance.TransformXDocumentToFile(transform, inputDoc, outputPath, new XsltArgumentList());
-			return outputPath;
+			return PageTransform.Transform(m_mediator, output, "WordGrammarDebugger" + m_xmlHtmlStack.Count);
 		}
 	}
 }

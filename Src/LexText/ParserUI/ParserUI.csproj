@@ -236,7 +236,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ParserTrace.cs" />
-    <Compile Include="ParserTraceBase.cs" />
+    <Compile Include="ParserTraceUITransform.cs" />
     <Compile Include="ParserUIStrings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -253,7 +253,6 @@
     </Compile>
     <Compile Include="WebPageInteractor.cs" />
     <Compile Include="WordGrammarDebugger.cs" />
-    <Compile Include="WordGrammarStepPair.cs" />
     <Compile Include="WordImporter.cs">
       <SubType>Code</SubType>
     </Compile>

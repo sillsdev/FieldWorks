@@ -130,7 +130,6 @@
     <Compile Include="..\..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="XslCompiledTransformUtil.cs" />
     <Compile Include="DynamicLoader.cs">
       <SubType>Code</SubType>
     </Compile>

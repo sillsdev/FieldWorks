@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Xml;
 using System.Xml.Linq;
 using System.Linq;
@@ -8,17 +9,19 @@ namespace SIL.FieldWorks.LexText.Controls
 {
 	public class HCWordGrammarDebugger : WordGrammarDebugger
 	{
+		private readonly Dictionary<string, XElement> m_attempts;
+
 		public HCWordGrammarDebugger(Mediator mediator, XDocument parseResult)
 			: base(mediator)
 		{
-			m_parseResult = parseResult;
+			Debug.Assert(parseResult.Root != null);
+			m_attempts = parseResult.Root.Elements("WordGrammarTrace").Elements("WordGrammarAttempt").ToDictionary(e => (string) e.Element("Id"), e => new XElement(e));
 		}
 
-		protected override void CreateMorphNodes(XmlWriter writer, string nodeId)
+		protected override void WriteMorphNodes(XmlWriter writer, string nodeId)
 		{
-			Debug.Assert(m_parseResult.Root != null);
-			XElement wordGrammarAttemptElem = m_parseResult.Root.Elements("WordGrammarTrace").Elements("WordGrammarAttempt").FirstOrDefault(e => ((string) e.Element("Id")) == nodeId);
-			if (wordGrammarAttemptElem != null)
+			XElement wordGrammarAttemptElem;
+			if (m_attempts.TryGetValue(nodeId, out wordGrammarAttemptElem))
 			{
 				foreach (XElement morphElem in wordGrammarAttemptElem.Elements("morph"))
 					morphElem.WriteTo(writer);
