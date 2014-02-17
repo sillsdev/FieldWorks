@@ -27,17 +27,16 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private PatrParser m_patr;
 		private readonly Loader m_loader;
 		private M3ParserModelRetriever m_retriever;
-		private readonly string m_dataDir;
 		private readonly string m_outputDirectory;
 		// m_projectName here is only used to create temporary files for the parser to load.
 		// We convert the name to use strictly ANSI characters so that the patr parsers (which is
 		// a legacy C program) can read the file names.
 		private readonly string m_projectName;
+		private readonly M3ToHCTransformer m_transformer;
 
 		public HCParser(FdoCache cache, string dataDir)
 		{
 			m_cache = cache;
-			m_dataDir = dataDir;
 
 			m_retriever = new M3ParserModelRetriever(m_cache);
 			m_patr = new PatrParser
@@ -53,24 +52,24 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			m_outputDirectory = Path.GetTempPath();
 			m_projectName = ParserHelper.ConvertNameToUseAnsiCharacters(cache.ProjectId.Name);
+			m_transformer = new M3ToHCTransformer(m_projectName, dataDir);
 		}
 
 		#region IParser implementation
 		public bool IsUpToDate()
 		{
-			return m_retriever.Loaded;
+			return !m_retriever.Updated;
 		}
 
 		public void Update()
 		{
 			CheckDisposed();
 
-			if (!m_retriever.RetrieveModel())
+			XDocument model;
+			if (!m_retriever.RetrieveModel(out model))
 				return;
 
-			XmlDocument fxtResult = m_retriever.ModelDom;
-			XmlDocument gafawsFxtResult = m_retriever.TemplateDom;
-			LoadParser(ref fxtResult);
+			LoadParser(model);
 		}
 
 		public void Reset()
@@ -166,7 +165,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		}
 
 		#region Load
-		private void LoadParser(ref XmlDocument model)
+		private void LoadParser(XDocument model)
 		{
 			string hcPath = HcInputPath;
 			File.Delete(hcPath); // In case we don't produce one successfully, don't keep an old one.
@@ -191,16 +190,15 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				}
 			}
 
-			var transformer = new M3ToHCTransformer(m_projectName, m_dataDir);
-			transformer.MakeHCFiles(ref model);
+			m_transformer.MakeHCFiles(model);
 
 			m_patr.LoadGrammarFile(HcGrammarPath);
 
 			LoadHCInfo(hcPath);
 
-			XmlNode delReappsNode = model.SelectSingleNode("/M3Dump/ParserParameters/HC/DelReapps");
-			if (delReappsNode != null)
-				m_loader.CurrentMorpher.DelReapplications = Convert.ToInt32(delReappsNode.InnerText);
+			XElement delReappsElem = model.Elements("M3Dump").Elements("ParserParameters").Elements("HC").Elements("DelReapps").FirstOrDefault();
+			if (delReappsElem != null)
+				m_loader.CurrentMorpher.DelReapplications = (int) delReappsElem;
 		}
 
 		private void LoadHCInfo(string hcPath)

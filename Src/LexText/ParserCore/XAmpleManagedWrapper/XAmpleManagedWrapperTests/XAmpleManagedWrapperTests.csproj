@@ -73,7 +73,6 @@
     </Compile>
     <Compile Include="TestXAmpleWrapper.cs" />
     <Compile Include="TestXAmpleDLLWrapper.cs" />
-    <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

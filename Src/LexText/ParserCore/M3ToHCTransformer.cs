@@ -6,7 +6,10 @@
 // File: M3ParserTransformer.cs
 // Responsibility: John Hatton
 
-using System.Xml;
+using System.IO;
+using System.Xml.Linq;
+using System.Xml.XPath;
+using System.Xml.Xsl;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
@@ -16,6 +19,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	/// </summary>
 	internal class M3ToHCTransformer : M3ToParserTransformerBase
 	{
+		private XslCompiledTransform m_inputTransform;
+		private readonly string m_database;
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
@@ -23,22 +28,35 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
 		public M3ToHCTransformer(string database, string dataDir)
-			: base(database, dataDir)
+			: base(dataDir)
 		{
+			m_database = database;
 		}
 
-		public void MakeHCFiles(ref XmlDocument model)
+		private XslCompiledTransform InputTransform
 		{
-			TransformDomToFile("FxtM3ParserToHCInput.xsl", model, m_database + "HCInput.xml");
+			get
+			{
+				if (m_inputTransform == null)
+					m_inputTransform = CreateTransform("FxtM3ParserToHCInput.xsl");
+				return m_inputTransform;
+			}
+		}
 
-			TransformDomToFile("FxtM3ParserToToXAmpleGrammar.xsl", model, m_database + "gram.txt");
+		public void MakeHCFiles(XDocument model)
+		{
+			using (var writer = new StreamWriter(Path.Combine(Path.GetTempPath(), m_database + "HCInput.xml")))
+				InputTransform.Transform(model.CreateNavigator(), null, writer);
+
+			using (var writer = new StreamWriter(Path.Combine(Path.GetTempPath(), m_database + "gram.txt")))
+				GrammarTransform.Transform(model.CreateNavigator(), null, writer);
 
 			// TODO: Putting this here is not necessarily efficient because it happens every time
 			//       the parser is run.  It would be more efficient to run this only when the user
 			//       is trying a word.  But we need the "model" to apply this transform and it is
 			//       available here, so we're doing this for now.
-			string sName = m_database + "XAmpleWordGrammarDebugger.xsl";
-			TransformDomToFile("FxtM3ParserToXAmpleWordGrammarDebuggingXSLT.xsl", model, sName);
+			using (var writer = new StreamWriter(Path.Combine(Path.GetTempPath(), m_database + "XAmpleWordGrammarDebugger.xsl")))
+				GrammarDebuggingTransform.Transform(model.CreateNavigator(), null, writer);
 		}
 	}
 }

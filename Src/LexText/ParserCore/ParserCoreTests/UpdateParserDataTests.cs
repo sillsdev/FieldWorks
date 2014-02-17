@@ -10,6 +10,7 @@
 // Implements the UpdateParserDataTests unit tests.
 // </remarks>
 
+using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -46,7 +47,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		[Test]
 		public void EmptyLexicon()
 		{
-			Assert.IsTrue(m_retriever.RetrieveModel());
+			XDocument model;
+			Assert.IsTrue(m_retriever.RetrieveModel(out model));
 		}
 	}
 

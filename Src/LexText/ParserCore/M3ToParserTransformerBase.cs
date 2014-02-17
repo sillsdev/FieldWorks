@@ -1,34 +1,53 @@
 using System.IO;
-using System.Xml;
-using SIL.Utils;
+using System.Xml.Xsl;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
 	/// <summary>
 	/// Base class for transforming an M3 model to files needed by a parser
 	/// </summary>
-	abstract internal class M3ToParserTransformerBase
+	internal abstract class M3ToParserTransformerBase
 	{
-		protected string m_outputDirectory;
-		protected string m_database;
-		protected readonly string m_dataDir;
+		private readonly string m_dataDir;
+
+		private XslCompiledTransform m_grammarTransform;
+		private XslCompiledTransform m_grammarDebuggingTransform;
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="M3ToParserTransformerBase"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public M3ToParserTransformerBase(string database, string dataDir)
+		protected M3ToParserTransformerBase(string dataDir)
 		{
-			m_database = database;
 			m_dataDir = dataDir;
-			m_outputDirectory = Path.GetTempPath();
 		}
 
-		protected void TransformDomToFile(string transformName, XmlDocument inputDom, string outputName)
+		protected XslCompiledTransform GrammarTransform
 		{
-			XmlUtils.TransformDomToFile(Path.Combine(m_dataDir + "/Transforms/", transformName),
-			inputDom, Path.Combine(m_outputDirectory, outputName));
+			get
+			{
+				if (m_grammarTransform == null)
+					m_grammarTransform = CreateTransform("FxtM3ParserToToXAmpleGrammar.xsl");
+				return m_grammarTransform;
+			}
+		}
+
+		protected XslCompiledTransform GrammarDebuggingTransform
+		{
+			get
+			{
+				if (m_grammarDebuggingTransform == null)
+					m_grammarDebuggingTransform = CreateTransform("FxtM3ParserToXAmpleWordGrammarDebuggingXSLT.xsl");
+				return m_grammarDebuggingTransform;
+			}
+		}
+
+		protected XslCompiledTransform CreateTransform(string fileName)
+		{
+			var transform = new XslCompiledTransform();
+			transform.Load(Path.Combine(m_dataDir, "Transforms", fileName));
+			return transform;
 		}
 	}
 }

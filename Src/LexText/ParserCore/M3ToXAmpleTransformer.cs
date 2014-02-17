@@ -7,10 +7,12 @@
 // Responsibility: John Hatton
 
 using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Text;
-using System.Xml;
+using System.Diagnostics;
 using System.IO;
+using System.Xml.Linq;
+using System.Xml.XPath;
+using System.Xml.Xsl;
+using System.Linq;
 using SIL.WordWorks.GAFAWS.PositionAnalysis;
 
 namespace SIL.FieldWorks.WordWorks.Parser
@@ -21,98 +23,119 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	/// </summary>
 	internal class M3ToXAmpleTransformer : M3ToParserTransformerBase
 	{
+		private XslCompiledTransform m_gafawsTransform;
+		private XslCompiledTransform m_adctlTransform;
+		private XslCompiledTransform m_lexTransform;
+		private readonly string m_database;
+
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="M3ToXAmpleTransformer"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public M3ToXAmpleTransformer(string database, string dataDir)
-			: base(database, dataDir)
+		public M3ToXAmpleTransformer(string dataDir, string database)
+			: base(dataDir)
 		{
+			m_database = database;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		internal void PrepareTemplatesForXAmpleFiles(ref XmlDocument domModel, XmlDocument domTemplate)
+		private XslCompiledTransform AdctlTransform
 		{
+			get
+			{
+				if (m_adctlTransform == null)
+					m_adctlTransform = CreateTransform("FxtM3ParserToXAmpleADCtl.xsl");
+				return m_adctlTransform;
+			}
+		}
+
+		private XslCompiledTransform GafawsTransform
+		{
+			get
+			{
+				if (m_gafawsTransform == null)
+					m_gafawsTransform = CreateTransform("FxtM3ParserToGAFAWS.xsl");
+				return m_gafawsTransform;
+			}
+		}
+
+		private XslCompiledTransform LexTransform
+		{
+			get
+			{
+				if (m_lexTransform == null)
+					m_lexTransform = CreateTransform("FxtM3ParserToXAmpleLex.xsl");
+				return m_lexTransform;
+			}
+		}
+
+		public void PrepareTemplatesForXAmpleFiles(XDocument domModel, XDocument domTemplate)
+		{
+			Debug.Assert(domTemplate.Root != null);
 			// get top level POS that has at least one template with slots
-			XmlNodeList templateNodeList = domTemplate.SelectNodes("//PartsOfSpeech/PartOfSpeech[descendant-or-self::MoInflAffixTemplate[PrefixSlots or SuffixSlots]]");
-			foreach (XmlNode templateNode in templateNodeList)
+			foreach (XElement templateElem in domTemplate.Root.Elements("PartsOfSpeech").Elements("PartOfSpeech")
+				.Where(pe => pe.Elements("AffixTemplates").Elements("MoInflAffixTemplate").Any(te => te.Element("PrefixSlots") != null || te.Element("SuffixSlots") != null)))
 			{
 				// transform the POS that has templates to GAFAWS format
-				string sGafawsFile = m_database + "gafawsData.xml";
-				TransformPosInfoToGafawsInputFormat(templateNode, sGafawsFile);
-				string sResultFile = ApplyGafawsAlgorithm(sGafawsFile);
+				string gafawsFile = m_database + "gafawsData.xml";
+				TransformPosInfoToGafawsInputFormat(templateElem, gafawsFile);
+				string resultFile = ApplyGafawsAlgorithm(gafawsFile);
 				//based on results of GAFAWS, modify the model dom by inserting orderclass in slots
-				InsertOrderclassInfo(ref domModel, sResultFile);
+				InsertOrderclassInfo(domModel, resultFile);
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		protected void InsertOrderclassInfo(ref XmlDocument domModel, string sResultFile)
+		private void InsertOrderclassInfo(XDocument domModel, string resultFile)
 		{
 			// Check for a valid filename (see LT-6472).
-			if (String.IsNullOrEmpty(sResultFile))
+			if (String.IsNullOrEmpty(resultFile))
 				return;
-			var dom = new XmlDocument();
-			dom.Load(sResultFile);
-			XmlNodeList gafawsNodeList = dom.SelectNodes("//Morpheme");
-			foreach (XmlNode gafawsNode in gafawsNodeList)
+			XDocument dom = XDocument.Load(resultFile);
+			foreach (XElement gafawsElem in dom.Elements("GAFAWSData").Elements("Morphemes").Elements("Morpheme"))
 			{
-				string sMorphemeId = gafawsNode.Attributes.GetNamedItem("MID").InnerText;
-				if (sMorphemeId == "R")
+				var morphemeID = (string) gafawsElem.Attribute("MID");
+				if (morphemeID == "R")
 					continue;  // skip the stem/root node
-				string sXpathToMorphemeId = "//MoInflAffixSlot[@Id='" + sMorphemeId + "']";
-				XmlNode modelNode = domModel.SelectSingleNode(sXpathToMorphemeId);
-				StringBuilder sb;
-				BuildOrderclassElementsString(out sb, gafawsNode);
-				XmlElement orderclassNode = domModel.CreateElement("orderclass");
-				orderclassNode.InnerXml = sb.ToString();
-				modelNode.AppendChild(orderclassNode);
+				XElement modelElem = domModel.Descendants("MoInflAffixSlot").First(e => ((string) e.Attribute("Id")) == morphemeID);
+				modelElem.Add(new XElement("orderclass",
+					new XElement("minValue", (string) gafawsElem.Attribute("StartCLIDREF")),
+					new XElement("maxValue", (string) gafawsElem.Attribute("EndCLIDREF"))));
 			}
 		}
 
-		private static void BuildOrderclassElementsString(out StringBuilder sb, XmlNode gafawsNode)
-		{
-			sb = new StringBuilder();
-			sb.Append("<minValue>");
-			sb.Append(gafawsNode.Attributes.GetNamedItem("StartCLIDREF").InnerText);
-			sb.Append("</minValue> <maxValue>");
-			sb.Append(gafawsNode.Attributes.GetNamedItem("EndCLIDREF").InnerText);
-			sb.Append("</maxValue>");
-		}
-
-		protected string ApplyGafawsAlgorithm(string sGafawsFile)
+		private string ApplyGafawsAlgorithm(string gafawsFile)
 		{
 			var pa = new PositionAnalyzer();
-			string sGafawsInputFile = Path.Combine(m_outputDirectory, sGafawsFile);
-			return pa.Process(sGafawsInputFile);
+			string gafawsInputFile = Path.Combine(Path.GetTempPath(), gafawsFile);
+			return pa.Process(gafawsInputFile);
 		}
 		/// <summary>
 		/// transform the POS that has templates to GAFAWS format
 		/// </summary>
-		protected void TransformPosInfoToGafawsInputFormat(XmlNode templateNode, string sGafawsFile)
+		private void TransformPosInfoToGafawsInputFormat(XElement templateElem, string gafawsFile)
 		{
-			var dom = new XmlDocument();
-			dom.CreateElement("GAFAWSData"); // create root element
-			dom.InnerXml = templateNode.OuterXml;	 // copy in POS elements
-			TransformDomToFile("FxtM3ParserToGAFAWS.xsl", dom, sGafawsFile);
+			var dom = new XDocument(new XElement(templateElem));
+			using (var writer = new StreamWriter(Path.Combine(Path.GetTempPath(), gafawsFile)))
+				GafawsTransform.Transform(dom.CreateNavigator(), null, writer);
 		}
 
-		internal void MakeAmpleFiles(XmlDocument model)
+		public void MakeAmpleFiles(XDocument model)
 		{
-			DateTime startTime = DateTime.Now;
-			TransformDomToFile("FxtM3ParserToXAmpleADCtl.xsl", model, m_database + "adctl.txt");
-			TransformDomToFile("FxtM3ParserToToXAmpleGrammar.xsl", model, m_database + "gram.txt");
+			using (var writer = new StreamWriter(Path.Combine(Path.GetTempPath(), m_database + "adctl.txt")))
+				AdctlTransform.Transform(model.CreateNavigator(), null, writer);
+
+			using (var writer = new StreamWriter(Path.Combine(Path.GetTempPath(), m_database + "gram.txt")))
+				GrammarTransform.Transform(model.CreateNavigator(), null, writer);
+
 			// TODO: Putting this here is not necessarily efficient because it happens every time
 			//       the parser is run.  It would be more efficient to run this only when the user
 			//       is trying a word.  But we need the "model" to apply this transform an it is
 			//       available here, so we're doing this for now.
-			string sName = m_database + "XAmpleWordGrammarDebugger.xsl";
-			TransformDomToFile("FxtM3ParserToXAmpleWordGrammarDebuggingXSLT.xsl", model, sName);
+			using (var writer = new StreamWriter(Path.Combine(Path.GetTempPath(), m_database + "XAmpleWordGrammarDebugger.xsl")))
+				GrammarDebuggingTransform.Transform(model.CreateNavigator(), null, writer);
 
-			TransformDomToFile("FxtM3ParserToXAmpleLex.xsl", model, m_database + "lex.txt");
+			using (var writer = new StreamWriter(Path.Combine(Path.GetTempPath(), m_database + "lex.txt")))
+				LexTransform.Transform(model.CreateNavigator(), null, writer);
 		}
 	}
 }

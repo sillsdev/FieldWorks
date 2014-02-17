@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using Microsoft.Practices.ServiceLocation;
@@ -51,9 +50,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <summary>
 		/// Export the grammar and lexicon.
 		/// </summary>
-		public static void ExportGrammarAndLexicon(string outputPath, ILangProject languageProject)
+		public static XDocument ExportGrammarAndLexicon(ILangProject languageProject)
 		{
-			if (string.IsNullOrEmpty(outputPath)) throw new ArgumentNullException("outputPath");
 			if (languageProject == null) throw new ArgumentNullException("languageProject");
 
 			var servLoc = languageProject.Cache.ServiceLocator;
@@ -76,7 +74,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					ExportFeatureSystem(languageProject.PhFeatureSystemOA, "PhFeatureSystem", mode)
 				)
 			);
-			doc.Save(outputPath);
+			return doc;
 		}
 
 		private static XElement ExportLanguageProject(ILangProject languageProject, Icu.UNormalizationMode mode)
@@ -127,12 +125,12 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			return
 				(from affixSlot in template.PrefixSlotsRS.Concat(template.SuffixSlotsRS)
 				 where IsValidSlot(affixSlot)
-				 select affixSlot).Take(1).Count() > 0;
+				 select affixSlot).Take(1).Any();
 		}
 
 		private static bool IsValidSlot(IMoInflAffixSlot affixSlot)
 		{
-			return affixSlot.Affixes.Take(1).Count() > 0;
+			return affixSlot.Affixes.Take(1).Any();
 		}
 
 
@@ -316,7 +314,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			return new XElement("Lexicon",
 					ExportEntries(servLoc.GetInstance<ILexEntryRepository>()),
-					ExportMSAs(servLoc),
+					ExportMsas(servLoc),
 					ExportSenses(servLoc.GetInstance<ILexSenseRepository>(), mode),
 					ExportAllomorphs(servLoc, mode));
 		}
@@ -346,7 +344,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 							select ExportItemAsReference(lexEntryInflType, "LexEntryInflType"))));
 		}
 
-		private static XElement ExportMSAs(IServiceLocator servLoc)
+		private static XElement ExportMsas(IServiceLocator servLoc)
 		{
 			return new XElement("MorphoSyntaxAnalyses",
 				from stemMsa in servLoc.GetInstance<IMoStemMsaRepository>().AllInstances()
@@ -503,9 +501,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 		private static XElement ExportPhonRule(IPhSegmentRule phonRule, Icu.UNormalizationMode mode)
 		{
-			XElement retVal = null;
 			if (phonRule.Disabled)
-				return retVal;
+				return null;
+			XElement retVal = null;
 			switch (phonRule.ClassName)
 			{
 				case "PhMetathesisRule":
@@ -930,10 +928,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <summary>
 		/// Export everything needed by parsers for GAFAWS data.
 		/// </summary>
-		public static void ExportGafaws(string outputFolder, string databaseName, ICollection<ICmPossibility> partsOfSpeech)
+		public static XDocument ExportGafaws(IEnumerable<ICmPossibility> partsOfSpeech)
 		{
-			if (string.IsNullOrEmpty(outputFolder)) throw new ArgumentNullException("outputFolder");
-			if (string.IsNullOrEmpty(databaseName)) throw new ArgumentNullException("databaseName");
 			if (partsOfSpeech == null) throw new ArgumentNullException("partsOfSpeech");
 
 			var doc = new XDocument(
@@ -942,7 +938,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					new XElement("PartsOfSpeech",
 						from IPartOfSpeech pos in partsOfSpeech
 						select ExportPartOfSpeechGafaws("PartOfSpeech", pos))));
-			doc.Save(Path.Combine(outputFolder, databaseName + "GAFAWSFxtResult.xml"));
+			return doc;
 		}
 
 		/// <summary>

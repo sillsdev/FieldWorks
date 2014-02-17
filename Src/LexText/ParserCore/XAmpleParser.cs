@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
@@ -21,6 +22,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private readonly string m_dataDir;
 		private readonly FdoCache m_cache;
 		private M3ParserModelRetriever m_retriever;
+		private readonly M3ToXAmpleTransformer m_transformer;
+		private readonly string m_database;
 
 		public XAmpleParser(FdoCache cache, string dataDir)
 		{
@@ -29,43 +32,40 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_xample.Init();
 			m_dataDir = dataDir;
 			m_retriever = new M3ParserModelRetriever(m_cache);
+			m_database = ParserHelper.ConvertNameToUseAnsiCharacters(m_cache.ProjectId.Name);
+			m_transformer = new M3ToXAmpleTransformer(dataDir, m_database);
 		}
 
 		public bool IsUpToDate()
 		{
-			return m_retriever.Loaded;
+			return !m_retriever.Updated;
 		}
 
 		public void Update()
 		{
 			CheckDisposed();
 
-			if (!m_retriever.RetrieveModel())
+			XDocument model, template;
+			if (!m_retriever.RetrieveModel(out model, out template))
 				return;
 
-			XmlDocument fxtResult = m_retriever.ModelDom;
-			XmlDocument gafawsFxtResult = m_retriever.TemplateDom;
-			string projectName = ParserHelper.ConvertNameToUseAnsiCharacters(m_cache.ProjectId.Name);
-
-			var transformer = new M3ToXAmpleTransformer(projectName, m_dataDir);
 			// PrepareTemplatesForXAmpleFiles adds orderclass elements to MoInflAffixSlot elements
-			transformer.PrepareTemplatesForXAmpleFiles(ref fxtResult, gafawsFxtResult);
+			m_transformer.PrepareTemplatesForXAmpleFiles(model, template);
 
-			transformer.MakeAmpleFiles(fxtResult);
+			m_transformer.MakeAmpleFiles(model);
 
 			int maxAnalCount = 20;
-			XmlNode maxAnalCountNode = fxtResult.SelectSingleNode("/M3Dump/ParserParameters/XAmple/MaxAnalysesToReturn");
-			if (maxAnalCountNode != null)
+			XElement maxAnalCountElem = model.Elements("M3Dump").Elements("ParserParameters").Elements("XAmple").Elements("MaxAnalysesToReturn").FirstOrDefault();
+			if (maxAnalCountElem != null)
 			{
-				maxAnalCount = Convert.ToInt16(maxAnalCountNode.FirstChild.Value);
+				maxAnalCount = (int) maxAnalCountElem;
 				if (maxAnalCount < 1)
 					maxAnalCount = -1;
 			}
 
 			m_xample.SetParameter("MaxAnalysesToReturn", maxAnalCount.ToString(CultureInfo.InvariantCulture));
 
-			string tempPath = Path.GetTempPath();
-			m_xample.LoadFiles(m_dataDir + @"/Configuration/Grammar", tempPath, projectName);
+			m_xample.LoadFiles(Path.Combine(m_dataDir, "Configuration", "Grammar"), Path.GetTempPath(), m_database);
 		}
 
 		public void Reset()
