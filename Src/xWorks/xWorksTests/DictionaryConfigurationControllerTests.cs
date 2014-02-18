@@ -254,9 +254,8 @@ namespace SIL.FieldWorks.XWorks
 
 			var rootTreeNode = BasicTreeNodeVerification(controller, rootNode);
 			string errorMessage = "Should not have made any third-level children that did not exist in the dictionary configuration node hierarchy";
-			Assert.That(rootTreeNode.Nodes[0].Nodes.Count, Is.EqualTo(rootNode.Children[0].Children.Count), errorMessage); // ie 0
-			Assert.That(rootTreeNode.Nodes[1].Nodes.Count, Is.EqualTo(rootNode.Children[1].Children.Count), errorMessage);
-			Assert.That(rootTreeNode.Nodes[2].Nodes.Count, Is.EqualTo(rootNode.Children[2].Children.Count), errorMessage);
+			for (int i = 0; i < 3; i++)
+				Assert.That(rootTreeNode.Nodes[i].Nodes.Count, Is.EqualTo(rootNode.Children[i].Children.Count), errorMessage); // ie 0
 		}
 
 		/// <summary>
@@ -280,6 +279,11 @@ namespace SIL.FieldWorks.XWorks
 			string errorMessage = "Did not make correct number of third-level children";
 			Assert.That(rootTreeNode.Nodes[0].Nodes.Count, Is.EqualTo(rootNode.Children[0].Children.Count), errorMessage); // ie 2
 			Assert.That(rootTreeNode.Nodes[1].Nodes.Count, Is.EqualTo(rootNode.Children[1].Children.Count), errorMessage); // ie 3
+			string errorMessage2 = "Should not have made any fourth-level children that did not exist in the dictionary configuration node hierarchy.";
+			for (int i = 0; i < 2; i++)
+				Assert.That(rootTreeNode.Nodes[0].Nodes[i].Nodes.Count, Is.EqualTo(rootNode.Children[0].Children[i].Children.Count), errorMessage2); // ie 0
+			for (int i = 0; i < 3; i++)
+				Assert.That(rootTreeNode.Nodes[1].Nodes[i].Nodes.Count, Is.EqualTo(rootNode.Children[1].Children[i].Children.Count), errorMessage2); // ie 0
 		}
 
 		/// <summary/>
