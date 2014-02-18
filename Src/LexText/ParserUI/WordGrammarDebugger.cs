@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			get
 			{
 				if (s_pageTransform == null)
-					s_pageTransform = new ParserTraceUITransform("FormatXAmpleWordGrammarDebuggerResult.xsl");
+					s_pageTransform = new ParserTraceUITransform("FormatXAmpleWordGrammarDebuggerResult");
 				return s_pageTransform;
 			}
 		}

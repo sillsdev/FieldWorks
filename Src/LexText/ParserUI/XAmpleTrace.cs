@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			get
 			{
 				if (s_traceTransform == null)
-					s_traceTransform = new ParserTraceUITransform("FormatXAmpleTrace.xsl");
+					s_traceTransform = new ParserTraceUITransform("FormatXAmpleTrace");
 				return s_traceTransform;
 			}
 		}

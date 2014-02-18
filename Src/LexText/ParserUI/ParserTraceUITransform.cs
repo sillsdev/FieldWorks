@@ -1,6 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
-using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using System.Xml.Xsl;
@@ -17,10 +17,11 @@ namespace SIL.FieldWorks.LexText.Controls
 	{
 		private readonly XslCompiledTransform m_transform;
 
-		public ParserTraceUITransform(string xslFileName)
+		public ParserTraceUITransform(string fullTypeName)
 		{
+			// Assumes the XSL has been precompiled.  fullTypeName is the fully qualified name of the precompiled class
 			m_transform = new XslCompiledTransform();
-			m_transform.Load(Path.Combine(TransformPath, xslFileName), new XsltSettings(true, false), new XmlUrlResolver());
+			m_transform.Load(Type.GetType(fullTypeName));
 		}
 
 		public string Transform(Mediator mediator, XDocument doc, string baseName)

@@ -13,7 +13,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			get
 			{
 				if (s_traceTransform == null)
-					s_traceTransform = new ParserTraceUITransform("FormatXAmpleParse.xsl");
+					s_traceTransform = new ParserTraceUITransform("FormatXAmpleParse");
 				return s_traceTransform;
 			}
 		}
