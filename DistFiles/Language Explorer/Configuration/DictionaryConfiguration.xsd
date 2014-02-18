@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified">
+<xs:element name="DictionaryConfiguration">
+	 <xs:complexType>
+		  <xs:sequence>
+				<xs:element name="ConfigurationItem" type="ConfigurationItemType" maxOccurs="unbounded" minOccurs="0"/>
+		  </xs:sequence>
+		  <xs:attribute type="xs:string" name="name" use="required"/>
+		  <xs:attribute type="xs:byte" name="version" use="required"/>
+		  <xs:attribute type="xs:date" name="lastModified"/>
+	 </xs:complexType>
+</xs:element>
+<xs:complexType name="ConfigurationItemType">
+	 <xs:sequence>
+		  <xs:element name="WritingSystemOptions" minOccurs="0">
+				<xs:complexType>
+					 <xs:sequence>
+						  <xs:element name="Option" type="OptionListItemType" maxOccurs="unbounded" minOccurs="0"/>
+					 </xs:sequence>
+					 <xs:attribute type="writingSystemType" name="writingSystemType" use="required"/>
+					 <xs:attribute type="xs:string" name="displayWSAbreviation" use="optional"/>
+				</xs:complexType>
+		  </xs:element>
+		  <xs:element name="EntryTypeOptions" minOccurs="0">
+				<xs:complexType>
+					 <xs:sequence>
+						  <xs:element name="Option" type="OptionListItemType" maxOccurs="unbounded" minOccurs="0"/>
+					 </xs:sequence>
+					 <xs:attribute type="xs:string" name="EntryType" use="required"/>
+				</xs:complexType>
+		  </xs:element>
+		  <xs:element name="RelationTypeOptions" minOccurs="0">
+				<xs:complexType>
+					 <xs:sequence>
+						  <xs:element name="Option" type="OptionListItemType" maxOccurs="unbounded" minOccurs="0"/>
+					 </xs:sequence>
+					 <xs:attribute type="xs:string" name="LexicalRelationType"/>
+				</xs:complexType>
+		  </xs:element>
+		  <xs:element name="SenseOptions" minOccurs="0">
+				<xs:complexType>
+					 <xs:attribute type="xs:boolean" name="displayEachSenseInParagraph"/>
+					 <xs:attribute type="xs:string" name="senseParaStyle"/>
+					 <xs:attribute type="xs:string" name="numberStyle"/>
+					 <xs:attribute type="xs:string" name="numberBefore"/>
+					 <xs:attribute type="xs:string" name="numberAfter"/>
+					 <xs:attribute type="xs:string" name="numberMark"/>
+					 <xs:attribute type="xs:string" name="numberFont"/>
+					 <xs:attribute type="xs:boolean" name="numberSingleSense"/>
+					 <xs:attribute type="xs:boolean" name="showSingleGramInfoFirst"/>
+				</xs:complexType>
+		  </xs:element>
+		  <xs:element name="ConfigurationItem" type="ConfigurationItemType" minOccurs="0" maxOccurs="unbounded"/>
+	 </xs:sequence>
+	 <xs:attribute type="xs:string" name="name" use="required"/>
+	 <xs:attribute type="xs:string" name="identifier" use="required"/>
+	 <xs:attribute type="xs:boolean" name="isEnabled" use="required"/>
+	 <xs:attributeGroup ref="itemStyle"/>
+</xs:complexType>
+<xs:attributeGroup name="itemStyle">
+	 <xs:attribute type="xs:string" name="style" use="optional"/>
+	 <xs:attribute type="xs:string" name="before" use="optional"/>
+	 <xs:attribute type="xs:string" name="after" use="optional"/>
+	 <xs:attribute type="xs:string" name="between" use="optional"/>
+</xs:attributeGroup>
+<xs:simpleType name="writingSystemType">
+	 <xs:restriction base="xs:string">
+		  <xs:enumeration value="vernacular"/>
+		  <xs:enumeration value="analysis"/>
+		  <xs:enumeration value="both"/>
+		  <xs:enumeration value="pronunciation"/>
+	 </xs:restriction>
+</xs:simpleType>
+<xs:complexType name="OptionListItemType">
+	<xs:simpleContent>
+		<xs:extension base="xs:string">
+			<xs:attribute type="xs:boolean" name="isEnabled" use="required"/>
+			<xs:attribute type="xs:string" name="id" use="required"/>
+		</xs:extension>
+	</xs:simpleContent>
+</xs:complexType>
+</xs:schema>
