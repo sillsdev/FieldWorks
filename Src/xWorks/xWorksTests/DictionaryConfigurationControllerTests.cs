@@ -37,7 +37,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			using(var testView = new TestConfigurableDictionaryView())
 			{
-				m_model.PartTree = BuildTestPartTree(2, 5);
+				m_model.Parts = new List<ConfigurableDictionaryNode> { BuildTestPartTree(2, 5) };
+
 				var dcc = new DictionaryConfigurationController { View = testView };
 
 				//SUT
@@ -226,7 +227,7 @@ namespace SIL.FieldWorks.XWorks
 			var controller = new DictionaryConfigurationController() {View = new TestConfigurableDictionaryView()};
 			var rootNode = new ConfigurableDictionaryNode() {Label = "0", Children = new List<ConfigurableDictionaryNode>()};
 			// SUT
-			controller.CreateTreeOfTreeNodes(null, rootNode);
+			controller.CreateTreeOfTreeNodes(null, new List<ConfigurableDictionaryNode> { rootNode });
 
 			BasicTreeNodeVerification(controller, rootNode);
 		}
@@ -250,7 +251,7 @@ namespace SIL.FieldWorks.XWorks
 			var rootNode = new ConfigurableDictionaryNode() { Label = "0", Children = new List<ConfigurableDictionaryNode>() };
 			AddChildrenToNode(rootNode, 3);
 			// SUT
-			controller.CreateTreeOfTreeNodes(null, rootNode);
+			controller.CreateTreeOfTreeNodes(null, new List<ConfigurableDictionaryNode> { rootNode });
 
 			var rootTreeNode = BasicTreeNodeVerification(controller, rootNode);
 			string errorMessage = "Should not have made any third-level children that did not exist in the dictionary configuration node hierarchy";
@@ -273,7 +274,7 @@ namespace SIL.FieldWorks.XWorks
 			AddChildrenToNode(rootNode.Children[1], 3);
 
 			// SUT
-			controller.CreateTreeOfTreeNodes(null, rootNode);
+			controller.CreateTreeOfTreeNodes(null, new List<ConfigurableDictionaryNode> { rootNode });
 
 			var rootTreeNode = BasicTreeNodeVerification(controller, rootNode);
 			string errorMessage = "Did not make correct number of third-level children";

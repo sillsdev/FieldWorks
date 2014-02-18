@@ -198,6 +198,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="TestManager, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\Output\Debug\TestManager.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -246,6 +247,7 @@
     <Compile Include="DeleteCustomListTests.cs" />
     <Compile Include="DictionaryConfigManagerTests.cs" />
     <Compile Include="DictionaryConfigurationControllerTests.cs" />
+    <Compile Include="DictionaryConfigurationModelTests.cs" />
     <Compile Include="DictionaryConfigViewerStub.cs" />
     <Compile Include="DictionaryPublicationDecoratorTests.cs" />
     <Compile Include="ExportDialogTests.cs" />

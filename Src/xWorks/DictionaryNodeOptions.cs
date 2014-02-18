@@ -5,9 +5,10 @@
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// Interface for ConfigurableDictionaryNode options
+	/// Abstract class representing ConfigurableDictionaryNode options.
+	/// <note>This would be an interface, but the XMLSerialization doesn't like those</note>
 	/// </summary>
-	public interface IDictionaryNodeOptions
+	public abstract class DictionaryNodeOptions
 	{
 
 	}

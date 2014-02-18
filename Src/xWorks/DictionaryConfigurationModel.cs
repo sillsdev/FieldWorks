@@ -4,43 +4,67 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// A selection of dictionary elements and options, for configuring a dictionary publication.
 	/// </summary>
+	[XmlRoot(ElementName = "DictionaryConfiguration")]
 	public class DictionaryConfigurationModel
 	{
 		/// <summary>
-		/// Tree of dictionary elements
+		/// Trees of dictionary elements
 		/// </summary>
-		public ConfigurableDictionaryNode PartTree;
+		[XmlElement(ElementName = "ConfigurationItem")]
+		public List<ConfigurableDictionaryNode> Parts;
 
 		/// <summary>
 		/// File where data is stored
 		/// </summary>
-		private string _file;
+		[XmlIgnore]
+		public string FilePath { get; set; }
 
 		/// <summary>
 		/// Name of this dictionary configuration. eg "Stem-based"
 		/// </summary>
+		[XmlAttribute(AttributeName = "name")]
 		public string Label;
+
+		[XmlAttribute(AttributeName = "lastModified", DataType = "date")]
+		public DateTime LastModified { get; set; }
+
+		/// <summary>
+		/// The version of the DictionaryConfigurationModel for use in data migration ect.
+		/// </summary>
+		[XmlAttribute(AttributeName = "version")]
+		public int Version;
 
 		/// <summary></summary>
 		public void Save()
 		{
-			throw new NotImplementedException();
+			LastModified = DateTime.Now;
+			var serializer = new XmlSerializer(typeof(DictionaryConfigurationModel));
+			using(var writer = XmlWriter.Create(FilePath))
+			{
+				serializer.Serialize(writer, this);
+			}
 		}
 
 		/// <summary></summary>
-		public void Load(string path)
+		public void Load()
 		{
-			PartTree = Deserialize(_file);
-			Label = PartTree.Label; // If the root node's label is the alternate Dictionary name.
+			var serializer = new XmlSerializer(typeof(DictionaryConfigurationModel));
+			using(var reader = XmlReader.Create(FilePath))
+			{
+				var model = (DictionaryConfigurationModel)serializer.Deserialize(reader);
+				Label = model.Label;
+				LastModified = model.LastModified;
+				Version = model.Version;
+				Parts = model.Parts;
+			}
 		}
 
 		/// <summary>
@@ -48,19 +72,10 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal DictionaryConfigurationModel() {}
 
-		// Constructor could alternatively take a label or some other identifier
-		/// <summary></summary>
+		/// <summary>Loads a DictionaryConfigurationModel from the given path</summary>
 		public DictionaryConfigurationModel(string path)
 		{
-			Load(path);
-		}
-
-		/// <summary>
-		/// Process datafile into objects
-		/// </summary>
-		private ConfigurableDictionaryNode Deserialize(string file)
-		{
-			throw new NotImplementedException();
+			FilePath = path;
 		}
 	}
 }

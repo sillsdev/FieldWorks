@@ -41,9 +41,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal void PopulateTreeView(DictionaryConfigurationModel model)
 		{
-			var rootNode = model.PartTree;
-
-			CreateTreeOfTreeNodes(null, rootNode);
+			CreateTreeOfTreeNodes(null, model.Parts);
 
 			View.GetTreeView().AfterCheck += (sender, args) =>
 			{
@@ -61,19 +59,22 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Create a tree of TreeNodes from node and its Children, adding
+		/// Create a tree of TreeNodes from a list of nodes and their Children, adding
 		/// them into the TreeView parented by the TreeNode corresponding
 		/// to parent.
-		/// If parent is null, node is considered to be at the root.
+		/// If parent is null, the nodes are added as direct children of the TreeView
 		/// </summary>
-		internal void CreateTreeOfTreeNodes(ConfigurableDictionaryNode parent, ConfigurableDictionaryNode node)
+		internal void CreateTreeOfTreeNodes(ConfigurableDictionaryNode parent, List<ConfigurableDictionaryNode> nodes)
 		{
-			CreateAndAddTreeNodeForNode(parent, node);
-			if(node.Children != null)
+			if(nodes == null)
+				throw new ArgumentNullException();
+
+			foreach(var node in nodes)
 			{
-				foreach(var child in node.Children)
+				CreateAndAddTreeNodeForNode(parent, node);
+				if(node.Children != null)
 				{
-					CreateTreeOfTreeNodes(node, child);
+					CreateTreeOfTreeNodes(node, node.Children);
 				}
 			}
 		}
