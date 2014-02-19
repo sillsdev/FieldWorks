@@ -136,25 +136,23 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private void SetupXmlDocument(string filepath)
 		{
-			XPathDocument xdoc = new XPathDocument(filepath);
+			var xdoc = new XPathDocument(filepath);
 			m_mapXmlDocs.Add(filepath, xdoc);
 		}
 
 		private void SetUpXAmpleTransforms()
 		{
-			SetUpTransform(ref m_adTransform, "FxtM3ParserToXAmpleADCtl.xsl");
-			SetUpTransform(ref m_lexTransform, "FxtM3ParserToXAmpleLex.xsl");
-			SetUpTransform(ref m_gramTransform, "FxtM3ParserToToXAmpleGrammar.xsl");
+			SetUpTransform(out m_adTransform, "FxtM3ParserToXAmpleADCtl");
+			SetUpTransform(out m_lexTransform, "FxtM3ParserToXAmpleLex");
+			SetUpTransform(out m_gramTransform, "FxtM3ParserToToXAmpleGrammar");
 		}
-		private void SetUpTransform(ref XslCompiledTransform transform, string sName)
+		private void SetUpTransform(out XslCompiledTransform transform, string name)
 		{
-			string sTransformPath = Path.Combine(m_sTransformPath, sName);
-			transform = new XslCompiledTransform();
-			transform.Load(sTransformPath);
+			transform = XmlUtils.CreateTransform(name, "ApplicationTransforms");
 		}
-		private void SetUpTransform(ref IntPtr transform, string sName)
+		private void SetUpTransform(ref IntPtr transform, string name)
 		{
-			string sTransformPath = Path.Combine(m_sTransformPath, sName);
+			string sTransformPath = Path.Combine(m_sTransformPath, name);
 			transform = LibXslt.CompileTransform(sTransformPath);
 		}
 
@@ -215,7 +213,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			XPathDocument fxtDump = m_mapXmlDocs[sInput];
 			string sOutput = FileUtils.GetTempFile("txt");
-			using (StreamWriter result = new StreamWriter(sOutput))
+			using (var result = new StreamWriter(sOutput))
 			{
 				transform.Transform(fxtDump, null, result);
 				result.Close();
@@ -228,7 +226,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private void ApplyTransform(string sInput, IntPtr transform, string sExpectedOutput)
 		{
 			string sOutput = FileUtils.GetTempFile("txt");
-			SIL.Utils.LibXslt.TransformFileToFile(transform, sInput, sOutput);
+			LibXslt.TransformFileToFile(transform, sInput, sOutput);
 			string sExpectedResult = Path.Combine(m_sTestPath, sExpectedOutput);
 			CheckOutputEquals(sExpectedResult, sOutput);
 			// by deleting it here instead of a finally block, when it fails, we can see what the result is.

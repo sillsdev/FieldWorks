@@ -99,7 +99,7 @@
       <derivMsa fromCat="259" fromCatAbbr="n" toCat="258" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
     </morph>
   </resultSoFar>
-  <seq step="Try to build a Word analysis node on a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to build a Word analysis node on a Full analysis node.">
     <word syncat="262" syncatAbbr="v">
       <failure>The category 'v' requires inflection, but there was no inflection.</failure>
       <full syncat="262" syncatAbbr="v" requiresInfl="+" inflected="-">
@@ -202,7 +202,7 @@
       <derivMsa fromCat="259" fromCatAbbr="n" toCat="258" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
     </morph>
   </seq>
-  <seq step="Try to build a Word analysis node on a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to build a Word analysis node on a Full analysis node.">
     <word syncat="262" syncatAbbr="v">
       <full syncat="262" syncatAbbr="v" requiresInfl="-" inflected="+">
         <fs id="UnificationOf(PriorityUnionOf(UnificationOf(15022andEmpty)andEmpty)andEmpty)">

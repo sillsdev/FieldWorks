@@ -75,7 +75,7 @@
       <derivMsa fromCat="259" fromCatAbbr="n" toCat="262" toCatAbbr="v" fromInflClass="0" toInflClass="0" requiresInfl="+" />
     </morph>
   </resultSoFar>
-  <seq step="Try to build a Stem node by appending a derivational suffix to another Stem node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to build a Stem node by appending a derivational suffix to another Stem node.">
     <stem syncat="262" syncatAbbr="v" inflClass="0" inflClassAbbr="" requiresInfl="+" blocksInfl="-">
       <fs id="PriorityUnionOf(UnificationOf(15022andEmpty)andEmpty)">
         <feature>
@@ -169,7 +169,7 @@
       </morph>
     </stem>
   </seq>
-  <seq step="Try to build a Full analysis node on an uninflected Stem node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to build a Full analysis node on an uninflected Stem node.">
     <full syncat="259" syncatAbbr="n" requiresInfl="+" inflected="-">
       <stem syncat="259" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="+">
         <fs id="15022">
@@ -245,7 +245,7 @@
       <derivMsa fromCat="259" fromCatAbbr="n" toCat="262" toCatAbbr="v" fromInflClass="0" toInflClass="0" requiresInfl="+" />
     </morph>
   </seq>
-  <seq step="Try to apply inflectional template 'template for test'.  The result will be a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to apply inflectional template 'template for test'.  The result will be a Full analysis node.">
     <full syncat="259" syncatAbbr="n" requiresInfl="-" inflected="+">
       <fs id="UnificationOf(15022andEmpty)">
         <feature>
@@ -293,7 +293,7 @@
       <derivMsa fromCat="259" fromCatAbbr="n" toCat="262" toCatAbbr="v" fromInflClass="0" toInflClass="0" requiresInfl="+" />
     </morph>
   </seq>
-  <seq step="Try to apply inflectional template 'possessed'.  The result will be a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to apply inflectional template 'possessed'.  The result will be a Full analysis node.">
     <full syncat="259" syncatAbbr="n" requiresInfl="-" inflected="+">
       <fs id="UnificationOf(15022andEmpty)">
         <feature>
@@ -386,7 +386,7 @@
       <derivMsa fromCat="259" fromCatAbbr="n" toCat="262" toCatAbbr="v" fromInflClass="0" toInflClass="0" requiresInfl="+" />
     </morph>
   </seq>
-  <seq step="Try to apply inflectional template 'Tense/Aspect'.  The result will be a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to apply inflectional template 'Tense/Aspect'.  The result will be a Full analysis node.">
     <full syncat="259" syncatAbbr="n" requiresInfl="-" inflected="+">
       <failure>The  category (v) of the inflectional template "Tense/Aspect" is incompatible with the category (n) of the stem.</failure>
       <fs id="UnificationOf(15022andEmpty)">
@@ -480,7 +480,7 @@
       <derivMsa fromCat="259" fromCatAbbr="n" toCat="262" toCatAbbr="v" fromInflClass="0" toInflClass="0" requiresInfl="+" />
     </morph>
   </seq>
-  <seq step="Try to apply inflectional template 'Non-final'.  The result will be a Stem analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to apply inflectional template 'Non-final'.  The result will be a Stem analysis node.">
     <stem syncat="259" syncatAbbr="n" requiresInfl="+" inflected="-" blocksInflection="+">
       <failure>The  category (v) of the inflectional template "Non-final" is incompatible with the category (n) of the stem.</failure>
       <fs id="UnificationOf(15022andEmpty)">

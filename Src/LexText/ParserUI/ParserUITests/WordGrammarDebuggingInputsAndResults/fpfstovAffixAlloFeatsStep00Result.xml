@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <word>
   <form>fpfstov</form>
-  <seq step="Try to build a Stem node by appending a derivational suffix to another Stem node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to build a Stem node by appending a derivational suffix to another Stem node.">
     <stem syncat="262" syncatAbbr="v" inflClass="0" inflClassAbbr="" requiresInfl="+" blocksInfl="-">
       <fs id="PriorityUnionOf(UnificationOf(15033andEmpty)andEmpty)">
         <feature>
@@ -93,7 +93,7 @@
       </morph>
     </stem>
   </seq>
-  <seq step="Try to build a Full analysis node on an uninflected Stem node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to build a Full analysis node on an uninflected Stem node.">
     <full syncat="259" syncatAbbr="n" requiresInfl="+" inflected="-">
       <stem syncat="259" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="+">
         <fs id="15033">
@@ -167,7 +167,7 @@
       <derivMsa fromCat="259" fromCatAbbr="n" toCat="262" toCatAbbr="v" fromInflClass="0" toInflClass="0" requiresInfl="+" />
     </morph>
   </seq>
-  <seq step="Try to apply inflectional template 'Possessed noun'.  The result will be a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to apply inflectional template 'Possessed noun'.  The result will be a Full analysis node.">
     <full syncat="259" syncatAbbr="n" requiresInfl="-" inflected="+">
       <failure>The  category (N) of the inflectional template "Possessed noun" is incompatible with the category (n) of the stem.</failure>
       <fs id="UnificationOf(15033andEmpty)">
@@ -214,7 +214,7 @@
       <derivMsa fromCat="259" fromCatAbbr="n" toCat="262" toCatAbbr="v" fromInflClass="0" toInflClass="0" requiresInfl="+" />
     </morph>
   </seq>
-  <seq step="Try to apply inflectional template 'test stem name features'.  The result will be a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to apply inflectional template 'test stem name features'.  The result will be a Full analysis node.">
     <full syncat="259" syncatAbbr="n" requiresInfl="-" inflected="+">
       <failure>The  category (comm) of the inflectional template "test stem name features" is incompatible with the category (n) of the stem.</failure>
       <fs id="UnificationOf(15033andEmpty)">
@@ -261,7 +261,7 @@
       <derivMsa fromCat="259" fromCatAbbr="n" toCat="262" toCatAbbr="v" fromInflClass="0" toInflClass="0" requiresInfl="+" />
     </morph>
   </seq>
-  <seq step="Try to apply inflectional template 'Intransitive verb'.  The result will be a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to apply inflectional template 'Intransitive verb'.  The result will be a Full analysis node.">
     <full syncat="259" syncatAbbr="n" requiresInfl="-" inflected="+">
       <failure>The  category (intrans) of the inflectional template "Intransitive verb" is incompatible with the category (n) of the stem.</failure>
       <fs id="UnificationOf(15033andEmpty)">
@@ -354,7 +354,7 @@
       <derivMsa fromCat="259" fromCatAbbr="n" toCat="262" toCatAbbr="v" fromInflClass="0" toInflClass="0" requiresInfl="+" />
     </morph>
   </seq>
-  <seq step="Try to apply inflectional template 'Stative verb'.  The result will be a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to apply inflectional template 'Stative verb'.  The result will be a Full analysis node.">
     <full syncat="259" syncatAbbr="n" requiresInfl="-" inflected="+">
       <failure>The  category (sta) of the inflectional template "Stative verb" is incompatible with the category (n) of the stem.</failure>
       <fs id="UnificationOf(15033andEmpty)">
@@ -447,7 +447,7 @@
       <derivMsa fromCat="259" fromCatAbbr="n" toCat="262" toCatAbbr="v" fromInflClass="0" toInflClass="0" requiresInfl="+" />
     </morph>
   </seq>
-  <seq step="Try to apply inflectional template 'Transitive verb'.  The result will be a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to apply inflectional template 'Transitive verb'.  The result will be a Full analysis node.">
     <full syncat="259" syncatAbbr="n" requiresInfl="-" inflected="+">
       <failure>The  category (trans) of the inflectional template "Transitive verb" is incompatible with the category (n) of the stem.</failure>
       <fs id="UnificationOf(15033andEmpty)">
@@ -541,7 +541,7 @@
       <derivMsa fromCat="259" fromCatAbbr="n" toCat="262" toCatAbbr="v" fromInflClass="0" toInflClass="0" requiresInfl="+" />
     </morph>
   </seq>
-  <seq step="Try to apply inflectional template 'Bitransitive verb'.  The result will be a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to apply inflectional template 'Bitransitive verb'.  The result will be a Full analysis node.">
     <full syncat="259" syncatAbbr="n" requiresInfl="-" inflected="+">
       <failure>The  category (bitrans) of the inflectional template "Bitransitive verb" is incompatible with the category (n) of the stem.</failure>
       <fs id="UnificationOf(15033andEmpty)">

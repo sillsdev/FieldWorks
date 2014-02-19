@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<xsl:stylesheet version="1.0" auto-ns1:msxsl="" xmlns:auto-ns1="urn:schemas-microsoft-com:xslt" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:exsl="http://exslt.org/common" exclude-result-prefixes="exsl">
 <xsl:output method="xml" version="1.0" encoding="utf-8" indent="yes" />
 <!--
 ================================================================
@@ -779,18 +779,18 @@ ApplyDerivationalConstraints
 </xsl:call-template>
 </xsl:variable>
 <xsl:choose>
-<xsl:when test="auto-ns1:node-set($UnificationOfStemAndDerivFrom)/descendant::failure">
+<xsl:when test="exsl:node-set($UnificationOfStemAndDerivFrom)/descendant::failure">
 <xsl:copy-of select="$UnificationOfStemAndDerivFrom" />
 </xsl:when>
 <xsl:otherwise>
 <!--Override those unified features with deriv to features-->
 <xsl:variable name="PriorityUnion">
 <xsl:call-template name="OverrideFirstFsWithSecondFs">
-<xsl:with-param name="FirstFS" select="auto-ns1:node-set($UnificationOfStemAndDerivFrom)/fs" />
+<xsl:with-param name="FirstFS" select="exsl:node-set($UnificationOfStemAndDerivFrom)/fs" />
 <xsl:with-param name="SecondFS" select="$derivMorph/derivMsa/toFS" />
 </xsl:call-template>
 </xsl:variable>
-<xsl:if test="auto-ns1:node-set($PriorityUnion)/descendant::feature">
+<xsl:if test="exsl:node-set($PriorityUnion)/descendant::feature">
 <xsl:copy-of select="$PriorityUnion" />
 </xsl:if>
 </xsl:otherwise>
@@ -2103,9 +2103,9 @@ InflectionalTemplate102
 <xsl:choose>
 <xsl:when test="string-length($PrefixSlotsUnification) &gt; 0 and string-length($SuffixSlotsUnification) &gt; 0">
 <xsl:call-template name="UnifyTwoFeatureStructures">
-<xsl:with-param name="FirstFS" select="auto-ns1:node-set($PrefixSlotsUnification)/fs" />
-<xsl:with-param name="SecondFS" select="auto-ns1:node-set($SuffixSlotsUnification)/fs" />
-<xsl:with-param name="sTopLevelId" select="auto-ns1:node-set($PrefixSlotsUnification)/fs/@id" />
+<xsl:with-param name="FirstFS" select="exsl:node-set($PrefixSlotsUnification)/fs" />
+<xsl:with-param name="SecondFS" select="exsl:node-set($SuffixSlotsUnification)/fs" />
+<xsl:with-param name="sTopLevelId" select="exsl:node-set($PrefixSlotsUnification)/fs/@id" />
 <xsl:with-param name="sRuleInfo">The inflectional template named 'Possessed noun' for category 'noun'</xsl:with-param>
 <xsl:with-param name="sFirstDescription">
 <xsl:value-of select="'unification of all the prefix slots'" />
@@ -2125,7 +2125,7 @@ InflectionalTemplate102
 </xsl:variable>
 <xsl:call-template name="UnifyTwoFeatureStructures">
 <xsl:with-param name="FirstFS" select="fs" />
-<xsl:with-param name="SecondFS" select="auto-ns1:node-set($PrefixSuffixSlotsUnification)/fs" />
+<xsl:with-param name="SecondFS" select="exsl:node-set($PrefixSuffixSlotsUnification)/fs" />
 <xsl:with-param name="sTopLevelId" select="fs/@id" />
 <xsl:with-param name="sRuleInfo">The inflectional template named 'Possessed noun' for category 'noun'</xsl:with-param>
 <xsl:with-param name="sFirstDescription">
@@ -2136,17 +2136,17 @@ InflectionalTemplate102
 </xsl:with-param>
 </xsl:call-template>
 </xsl:variable>
-<xsl:if test="auto-ns1:node-set($InflFeaturesToPercolate)/fs/descendant::feature">
+<xsl:if test="exsl:node-set($InflFeaturesToPercolate)/fs/descendant::feature">
 <xsl:copy-of select="$InflFeaturesToPercolate" />
 </xsl:if>
 <xsl:variable name="StemNameConstraintResult">
 <xsl:call-template name="CheckStemNames81">
 <xsl:with-param name="stemName" select="stemName/@id" />
-<xsl:with-param name="InflFeatures" select="auto-ns1:node-set($InflFeaturesToPercolate)" />
+<xsl:with-param name="InflFeatures" select="exsl:node-set($InflFeaturesToPercolate)" />
 </xsl:call-template>
 </xsl:variable>
-<xsl:if test="auto-ns1:node-set($StemNameConstraintResult)/failure">
-<xsl:copy-of select="auto-ns1:node-set($StemNameConstraintResult)" />
+<xsl:if test="exsl:node-set($StemNameConstraintResult)/failure">
+<xsl:copy-of select="exsl:node-set($StemNameConstraintResult)" />
 </xsl:if>
 <xsl:if test="@blocksInflection!='-'">
 <failure>The inflectional template named 'Possessed noun' for category 'noun' failed because the stem was built by a non-final template and there was no intervening derivation or compounding.</failure>
@@ -2890,9 +2890,9 @@ InflectionalTemplate156
 <xsl:choose>
 <xsl:when test="string-length($PrefixSlotsUnification) &gt; 0 and string-length($SuffixSlotsUnification) &gt; 0">
 <xsl:call-template name="UnifyTwoFeatureStructures">
-<xsl:with-param name="FirstFS" select="auto-ns1:node-set($PrefixSlotsUnification)/fs" />
-<xsl:with-param name="SecondFS" select="auto-ns1:node-set($SuffixSlotsUnification)/fs" />
-<xsl:with-param name="sTopLevelId" select="auto-ns1:node-set($PrefixSlotsUnification)/fs/@id" />
+<xsl:with-param name="FirstFS" select="exsl:node-set($PrefixSlotsUnification)/fs" />
+<xsl:with-param name="SecondFS" select="exsl:node-set($SuffixSlotsUnification)/fs" />
+<xsl:with-param name="sTopLevelId" select="exsl:node-set($PrefixSlotsUnification)/fs/@id" />
 <xsl:with-param name="sRuleInfo">The inflectional template named 'Intransitive verb' for category 'intransitive verb'</xsl:with-param>
 <xsl:with-param name="sFirstDescription">
 <xsl:value-of select="'unification of all the prefix slots'" />
@@ -2912,7 +2912,7 @@ InflectionalTemplate156
 </xsl:variable>
 <xsl:call-template name="UnifyTwoFeatureStructures">
 <xsl:with-param name="FirstFS" select="fs" />
-<xsl:with-param name="SecondFS" select="auto-ns1:node-set($PrefixSuffixSlotsUnification)/fs" />
+<xsl:with-param name="SecondFS" select="exsl:node-set($PrefixSuffixSlotsUnification)/fs" />
 <xsl:with-param name="sTopLevelId" select="fs/@id" />
 <xsl:with-param name="sRuleInfo">The inflectional template named 'Intransitive verb' for category 'intransitive verb'</xsl:with-param>
 <xsl:with-param name="sFirstDescription">
@@ -2923,17 +2923,17 @@ InflectionalTemplate156
 </xsl:with-param>
 </xsl:call-template>
 </xsl:variable>
-<xsl:if test="auto-ns1:node-set($InflFeaturesToPercolate)/fs/descendant::feature">
+<xsl:if test="exsl:node-set($InflFeaturesToPercolate)/fs/descendant::feature">
 <xsl:copy-of select="$InflFeaturesToPercolate" />
 </xsl:if>
 <xsl:variable name="StemNameConstraintResult">
 <xsl:call-template name="CheckStemNames153">
 <xsl:with-param name="stemName" select="stemName/@id" />
-<xsl:with-param name="InflFeatures" select="auto-ns1:node-set($InflFeaturesToPercolate)" />
+<xsl:with-param name="InflFeatures" select="exsl:node-set($InflFeaturesToPercolate)" />
 </xsl:call-template>
 </xsl:variable>
-<xsl:if test="auto-ns1:node-set($StemNameConstraintResult)/failure">
-<xsl:copy-of select="auto-ns1:node-set($StemNameConstraintResult)" />
+<xsl:if test="exsl:node-set($StemNameConstraintResult)/failure">
+<xsl:copy-of select="exsl:node-set($StemNameConstraintResult)" />
 </xsl:if>
 <xsl:if test="@blocksInflection!='-'">
 <failure>The inflectional template named 'Intransitive verb' for category 'intransitive verb' failed because the stem was built by a non-final template and there was no intervening derivation or compounding.</failure>
@@ -3341,9 +3341,9 @@ InflectionalTemplate166
 <xsl:choose>
 <xsl:when test="string-length($PrefixSlotsUnification) &gt; 0 and string-length($SuffixSlotsUnification) &gt; 0">
 <xsl:call-template name="UnifyTwoFeatureStructures">
-<xsl:with-param name="FirstFS" select="auto-ns1:node-set($PrefixSlotsUnification)/fs" />
-<xsl:with-param name="SecondFS" select="auto-ns1:node-set($SuffixSlotsUnification)/fs" />
-<xsl:with-param name="sTopLevelId" select="auto-ns1:node-set($PrefixSlotsUnification)/fs/@id" />
+<xsl:with-param name="FirstFS" select="exsl:node-set($PrefixSlotsUnification)/fs" />
+<xsl:with-param name="SecondFS" select="exsl:node-set($SuffixSlotsUnification)/fs" />
+<xsl:with-param name="sTopLevelId" select="exsl:node-set($PrefixSlotsUnification)/fs/@id" />
 <xsl:with-param name="sRuleInfo">The inflectional template named 'Stative verb' for category 'stative'</xsl:with-param>
 <xsl:with-param name="sFirstDescription">
 <xsl:value-of select="'unification of all the prefix slots'" />
@@ -3363,7 +3363,7 @@ InflectionalTemplate166
 </xsl:variable>
 <xsl:call-template name="UnifyTwoFeatureStructures">
 <xsl:with-param name="FirstFS" select="fs" />
-<xsl:with-param name="SecondFS" select="auto-ns1:node-set($PrefixSuffixSlotsUnification)/fs" />
+<xsl:with-param name="SecondFS" select="exsl:node-set($PrefixSuffixSlotsUnification)/fs" />
 <xsl:with-param name="sTopLevelId" select="fs/@id" />
 <xsl:with-param name="sRuleInfo">The inflectional template named 'Stative verb' for category 'stative'</xsl:with-param>
 <xsl:with-param name="sFirstDescription">
@@ -3374,17 +3374,17 @@ InflectionalTemplate166
 </xsl:with-param>
 </xsl:call-template>
 </xsl:variable>
-<xsl:if test="auto-ns1:node-set($InflFeaturesToPercolate)/fs/descendant::feature">
+<xsl:if test="exsl:node-set($InflFeaturesToPercolate)/fs/descendant::feature">
 <xsl:copy-of select="$InflFeaturesToPercolate" />
 </xsl:if>
 <xsl:variable name="StemNameConstraintResult">
 <xsl:call-template name="CheckStemNames163">
 <xsl:with-param name="stemName" select="stemName/@id" />
-<xsl:with-param name="InflFeatures" select="auto-ns1:node-set($InflFeaturesToPercolate)" />
+<xsl:with-param name="InflFeatures" select="exsl:node-set($InflFeaturesToPercolate)" />
 </xsl:call-template>
 </xsl:variable>
-<xsl:if test="auto-ns1:node-set($StemNameConstraintResult)/failure">
-<xsl:copy-of select="auto-ns1:node-set($StemNameConstraintResult)" />
+<xsl:if test="exsl:node-set($StemNameConstraintResult)/failure">
+<xsl:copy-of select="exsl:node-set($StemNameConstraintResult)" />
 </xsl:if>
 <xsl:if test="@blocksInflection!='-'">
 <failure>The inflectional template named 'Stative verb' for category 'stative' failed because the stem was built by a non-final template and there was no intervening derivation or compounding.</failure>
@@ -3792,9 +3792,9 @@ InflectionalTemplate171
 <xsl:choose>
 <xsl:when test="string-length($PrefixSlotsUnification) &gt; 0 and string-length($SuffixSlotsUnification) &gt; 0">
 <xsl:call-template name="UnifyTwoFeatureStructures">
-<xsl:with-param name="FirstFS" select="auto-ns1:node-set($PrefixSlotsUnification)/fs" />
-<xsl:with-param name="SecondFS" select="auto-ns1:node-set($SuffixSlotsUnification)/fs" />
-<xsl:with-param name="sTopLevelId" select="auto-ns1:node-set($PrefixSlotsUnification)/fs/@id" />
+<xsl:with-param name="FirstFS" select="exsl:node-set($PrefixSlotsUnification)/fs" />
+<xsl:with-param name="SecondFS" select="exsl:node-set($SuffixSlotsUnification)/fs" />
+<xsl:with-param name="sTopLevelId" select="exsl:node-set($PrefixSlotsUnification)/fs/@id" />
 <xsl:with-param name="sRuleInfo">The inflectional template named 'Transitive verb' for category 'transitive verb'</xsl:with-param>
 <xsl:with-param name="sFirstDescription">
 <xsl:value-of select="'unification of all the prefix slots'" />
@@ -3814,7 +3814,7 @@ InflectionalTemplate171
 </xsl:variable>
 <xsl:call-template name="UnifyTwoFeatureStructures">
 <xsl:with-param name="FirstFS" select="fs" />
-<xsl:with-param name="SecondFS" select="auto-ns1:node-set($PrefixSuffixSlotsUnification)/fs" />
+<xsl:with-param name="SecondFS" select="exsl:node-set($PrefixSuffixSlotsUnification)/fs" />
 <xsl:with-param name="sTopLevelId" select="fs/@id" />
 <xsl:with-param name="sRuleInfo">The inflectional template named 'Transitive verb' for category 'transitive verb'</xsl:with-param>
 <xsl:with-param name="sFirstDescription">
@@ -3825,17 +3825,17 @@ InflectionalTemplate171
 </xsl:with-param>
 </xsl:call-template>
 </xsl:variable>
-<xsl:if test="auto-ns1:node-set($InflFeaturesToPercolate)/fs/descendant::feature">
+<xsl:if test="exsl:node-set($InflFeaturesToPercolate)/fs/descendant::feature">
 <xsl:copy-of select="$InflFeaturesToPercolate" />
 </xsl:if>
 <xsl:variable name="StemNameConstraintResult">
 <xsl:call-template name="CheckStemNames168">
 <xsl:with-param name="stemName" select="stemName/@id" />
-<xsl:with-param name="InflFeatures" select="auto-ns1:node-set($InflFeaturesToPercolate)" />
+<xsl:with-param name="InflFeatures" select="exsl:node-set($InflFeaturesToPercolate)" />
 </xsl:call-template>
 </xsl:variable>
-<xsl:if test="auto-ns1:node-set($StemNameConstraintResult)/failure">
-<xsl:copy-of select="auto-ns1:node-set($StemNameConstraintResult)" />
+<xsl:if test="exsl:node-set($StemNameConstraintResult)/failure">
+<xsl:copy-of select="exsl:node-set($StemNameConstraintResult)" />
 </xsl:if>
 <xsl:if test="@blocksInflection!='-'">
 <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the stem was built by a non-final template and there was no intervening derivation or compounding.</failure>
@@ -4307,9 +4307,9 @@ InflectionalTemplate175
 <xsl:choose>
 <xsl:when test="string-length($PrefixSlotsUnification) &gt; 0 and string-length($SuffixSlotsUnification) &gt; 0">
 <xsl:call-template name="UnifyTwoFeatureStructures">
-<xsl:with-param name="FirstFS" select="auto-ns1:node-set($PrefixSlotsUnification)/fs" />
-<xsl:with-param name="SecondFS" select="auto-ns1:node-set($SuffixSlotsUnification)/fs" />
-<xsl:with-param name="sTopLevelId" select="auto-ns1:node-set($PrefixSlotsUnification)/fs/@id" />
+<xsl:with-param name="FirstFS" select="exsl:node-set($PrefixSlotsUnification)/fs" />
+<xsl:with-param name="SecondFS" select="exsl:node-set($SuffixSlotsUnification)/fs" />
+<xsl:with-param name="sTopLevelId" select="exsl:node-set($PrefixSlotsUnification)/fs/@id" />
 <xsl:with-param name="sRuleInfo">The inflectional template named 'Bitransitive verb' for category 'bitransitive verb'</xsl:with-param>
 <xsl:with-param name="sFirstDescription">
 <xsl:value-of select="'unification of all the prefix slots'" />
@@ -4329,7 +4329,7 @@ InflectionalTemplate175
 </xsl:variable>
 <xsl:call-template name="UnifyTwoFeatureStructures">
 <xsl:with-param name="FirstFS" select="fs" />
-<xsl:with-param name="SecondFS" select="auto-ns1:node-set($PrefixSuffixSlotsUnification)/fs" />
+<xsl:with-param name="SecondFS" select="exsl:node-set($PrefixSuffixSlotsUnification)/fs" />
 <xsl:with-param name="sTopLevelId" select="fs/@id" />
 <xsl:with-param name="sRuleInfo">The inflectional template named 'Bitransitive verb' for category 'bitransitive verb'</xsl:with-param>
 <xsl:with-param name="sFirstDescription">
@@ -4340,17 +4340,17 @@ InflectionalTemplate175
 </xsl:with-param>
 </xsl:call-template>
 </xsl:variable>
-<xsl:if test="auto-ns1:node-set($InflFeaturesToPercolate)/fs/descendant::feature">
+<xsl:if test="exsl:node-set($InflFeaturesToPercolate)/fs/descendant::feature">
 <xsl:copy-of select="$InflFeaturesToPercolate" />
 </xsl:if>
 <xsl:variable name="StemNameConstraintResult">
 <xsl:call-template name="CheckStemNames172">
 <xsl:with-param name="stemName" select="stemName/@id" />
-<xsl:with-param name="InflFeatures" select="auto-ns1:node-set($InflFeaturesToPercolate)" />
+<xsl:with-param name="InflFeatures" select="exsl:node-set($InflFeaturesToPercolate)" />
 </xsl:call-template>
 </xsl:variable>
-<xsl:if test="auto-ns1:node-set($StemNameConstraintResult)/failure">
-<xsl:copy-of select="auto-ns1:node-set($StemNameConstraintResult)" />
+<xsl:if test="exsl:node-set($StemNameConstraintResult)/failure">
+<xsl:copy-of select="exsl:node-set($StemNameConstraintResult)" />
 </xsl:if>
 <xsl:if test="@blocksInflection!='-'">
 <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the stem was built by a non-final template and there was no intervening derivation or compounding.</failure>
@@ -5515,7 +5515,7 @@ UnifyPrefixSlots
 <xsl:choose>
 <xsl:when test="$iRemaining &gt; 0">
 <xsl:call-template name="UnifyPrefixSlots">
-<xsl:with-param name="PreviousResult" select="auto-ns1:node-set($CurrentUnification)/fs" />
+<xsl:with-param name="PreviousResult" select="exsl:node-set($CurrentUnification)/fs" />
 <xsl:with-param name="PrefixSlot" select="$PrefixSlot/preceding-sibling::*[1]" />
 <xsl:with-param name="iRemaining" select="$iRemaining - 1" />
 <xsl:with-param name="sRuleInfo" select="$sRuleInfo" />
@@ -5561,7 +5561,7 @@ UnifySuffixSlots
 <xsl:choose>
 <xsl:when test="$iRemaining &gt; 0">
 <xsl:call-template name="UnifySuffixSlots">
-<xsl:with-param name="PreviousResult" select="auto-ns1:node-set($CurrentUnification)/fs" />
+<xsl:with-param name="PreviousResult" select="exsl:node-set($CurrentUnification)/fs" />
 <xsl:with-param name="SuffixSlot" select="$SuffixSlot/following-sibling::*[1]" />
 <xsl:with-param name="iRemaining" select="$iRemaining - 1" />
 <xsl:with-param name="sRuleInfo" select="$sRuleInfo" />
@@ -5608,14 +5608,14 @@ UnifyTwoFeatureStructures
 </xsl:otherwise>
 </xsl:choose>
 <xsl:choose>
-<xsl:when test="auto-ns1:node-set($FirstFS)/@id != ''">
+<xsl:when test="exsl:node-set($FirstFS)/@id != ''">
 <xsl:value-of select="$FirstFS/@id" />
 </xsl:when>
 <xsl:otherwise>Empty</xsl:otherwise>
 </xsl:choose>
 <xsl:text>and</xsl:text>
 <xsl:choose>
-<xsl:when test="auto-ns1:node-set($SecondFS)/@id != ''">
+<xsl:when test="exsl:node-set($SecondFS)/@id != ''">
 <xsl:value-of select="$SecondFS/@id" />
 </xsl:when>
 <xsl:otherwise>Empty</xsl:otherwise>
@@ -5624,16 +5624,16 @@ UnifyTwoFeatureStructures
 </xsl:attribute>
 </xsl:if>
 <!--loop through the features of both feature structures at same time, sorted by name-->
-<xsl:for-each select="auto-ns1:node-set($FirstFS)/feature | auto-ns1:node-set($SecondFS)/feature">
+<xsl:for-each select="exsl:node-set($FirstFS)/feature | exsl:node-set($SecondFS)/feature">
 <xsl:sort select="name" />
 <!--get name of this feature-->
 <xsl:variable name="sName">
 <xsl:value-of select="name" />
 </xsl:variable>
 <!--get this feature if it's in the first feature structure-->
-<xsl:variable name="f1SameName" select="auto-ns1:node-set($FirstFS)/feature[name=$sName]" />
+<xsl:variable name="f1SameName" select="exsl:node-set($FirstFS)/feature[name=$sName]" />
 <!--get this feature if it's in the second feature structure -->
-<xsl:variable name="f2SameName" select="auto-ns1:node-set($SecondFS)/feature[name=$sName]" />
+<xsl:variable name="f2SameName" select="exsl:node-set($SecondFS)/feature[name=$sName]" />
 <xsl:choose>
 <xsl:when test="$f1SameName and $f2SameName">
 <!--both feature1 and feature2 have this feature name-->
@@ -5723,13 +5723,13 @@ XSubsumesY
 <xsl:text>N</xsl:text>
 </xsl:when>
 <xsl:otherwise>
-<xsl:for-each select="auto-ns1:node-set($X)/feature | auto-ns1:node-set($Y)/feature">
+<xsl:for-each select="exsl:node-set($X)/feature | exsl:node-set($Y)/feature">
 <xsl:sort select="name" />
 <xsl:variable name="sName">
 <xsl:value-of select="name" />
 </xsl:variable>
-<xsl:variable name="f1SameName" select="auto-ns1:node-set($X)/feature[name=$sName]" />
-<xsl:variable name="f2SameName" select="auto-ns1:node-set($Y)/feature[name=$sName]" />
+<xsl:variable name="f1SameName" select="exsl:node-set($X)/feature[name=$sName]" />
+<xsl:variable name="f2SameName" select="exsl:node-set($Y)/feature[name=$sName]" />
 <xsl:choose>
 <xsl:when test="$f1SameName and $f2SameName">
 <xsl:choose>

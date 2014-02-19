@@ -6,12 +6,10 @@
 // Responsibility:
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Text;
-using System.Xml;
 #if __MonoCS__
 using System.Xml.Linq;
 #endif
@@ -60,10 +58,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		protected string m_sTestPath;
 		/// <summary></summary>
-		protected string m_sTransformPath;
-		/// <summary></summary>
-		protected string m_sMasterTransform;
-		/// <summary></summary>
 		protected string m_sResultTransform;
 		/// <summary></summary>
 		protected string m_sResultTransformNoCompoundRules;
@@ -80,9 +74,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary></summary>
 		protected string m_sM3FXTDumpAffixAlloFeats;
 		/// <summary>Set to true to be able to debug into stylesheets</summary>
-		private bool m_fDebug;
+		private readonly bool m_fDebug;
 		/// <summary>path to the standard directory for temporary files.</summary>
-		private string m_sTempPath;
+		private readonly string m_sTempPath;
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:WordGrammarDebuggingTests"/> class.
@@ -110,19 +104,17 @@ namespace SIL.FieldWorks.LexText.Controls
 			base.FixtureSetup();
 			m_sTestPath = Path.Combine(FwDirectoryFinder.SourceDirectory,
 				"LexText/ParserUI/ParserUITests/WordGrammarDebuggingInputsAndResults");
-			m_sTransformPath = Path.Combine(FwDirectoryFinder.CodeDirectory,
-				"Language Explorer/Transforms");
 
 			SetUpMasterTransform();
-			CreateResultTransform("M3FXTDump.xml", ref m_sResultTransform);
+			CreateResultTransform("M3FXTDump.xml", out m_sResultTransform);
 			SetUpResultTransform(m_sResultTransform, out m_resultTransform);
 			SetUpUnificationViaXsltTransform();
 			SetUpSameSlotTwiceTransform();
-			CreateResultTransform("M3FXTDumpNoCompoundRules.xml", ref m_sResultTransformNoCompoundRules);
+			CreateResultTransform("M3FXTDumpNoCompoundRules.xml", out m_sResultTransformNoCompoundRules);
 			SetUpResultTransform(m_sResultTransformNoCompoundRules, out m_resultTransformNoCompoundRules);
-			CreateResultTransform("M3FXTDumpStemNames.xml", ref m_sResultTransformStemNames);
+			CreateResultTransform("M3FXTDumpStemNames.xml", out m_sResultTransformStemNames);
 			SetUpResultTransform(m_sResultTransformStemNames, out m_resultTransformStemNames);
-			CreateResultTransform("M3FXTDumpAffixAlloFeats.xml", ref m_sResultTransformAffixAlloFeats);
+			CreateResultTransform("M3FXTDumpAffixAlloFeats.xml", out m_sResultTransformAffixAlloFeats);
 			SetUpResultTransform(m_sResultTransformAffixAlloFeats, out m_resultTransformAffixAlloFeats);
 		}
 
@@ -258,12 +250,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Creates a result transform.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void CreateResultTransform(string sFXTDumpFile, ref string sResultTransform)
+		private void CreateResultTransform(string fxtDumpFile, out string resultTransform)
 		{
-			sResultTransform = FileUtils.GetTempFile("xsl");
-			string sFXTDump = Path.Combine(m_sTestPath, sFXTDumpFile);
-			SIL.Utils.XmlUtils.TransformFileToFile(m_sMasterTransform, sFXTDump,
-				sResultTransform);
+			resultTransform = FileUtils.GetTempFile("xsl");
+			string fxtDump = Path.Combine(m_sTestPath, fxtDumpFile);
+			using (var writer = new StreamWriter(resultTransform))
+				m_masterTransform.Transform(fxtDump, null, writer);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -273,14 +265,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// ------------------------------------------------------------------------------------
 		private void SetUpMasterTransform()
 		{
-			m_sMasterTransform = Path.Combine(m_sTransformPath,
-				"FxtM3ParserToXAmpleWordGrammarDebuggingXSLT.xsl");
-#if __MonoCS__
-			m_masterTransform = SIL.Utils.LibXslt.CompileTransform(m_sMasterTransform);
-#else
-			m_masterTransform = new XslCompiledTransform();
-			m_masterTransform.Load(m_sMasterTransform);
-#endif
+			m_masterTransform = XmlUtils.CreateTransform("FxtM3ParserToXAmpleWordGrammarDebuggingXSLT", "ApplicationTransforms");
 		}
 		#endregion
 
@@ -305,50 +290,28 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="sExpectedOutput">The expected output filename.</param>
 		/// <param name="transform">The transform.</param>
 		/// ------------------------------------------------------------------------------------
-		private void ApplyTransform(string sInputFile, string sExpectedOutput,
-			XslCompiledTransform transform)
-		{
-			ApplyTransform(sInputFile, sExpectedOutput, transform, true);
-		}
-		private void ApplyTransform(string sInputFile, string sExpectedOutput,
-			IntPtr transform)
-		{
-			ApplyTransform(sInputFile, sExpectedOutput, transform, true);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Applies the transform.
-		/// </summary>
-		/// <param name="sInputFile">The input file filename.</param>
-		/// <param name="sExpectedOutput">The expected output filename.</param>
-		/// <param name="transform">The transform.</param>
-		/// <param name="fFixMsxslNameSpace">remove Msxsl namespace</param>
-		/// ------------------------------------------------------------------------------------
-		private void ApplyTransform(string sInputFile, string sExpectedOutput,
-			XslCompiledTransform transform, bool fFixMsxslNameSpace)
+		private void ApplyTransform(string sInputFile, string sExpectedOutput, XslCompiledTransform transform)
 		{
 			string sInput = Path.Combine(m_sTestPath, sInputFile);
 			m_doc = new XPathDocument(sInput);
 			string sOutput = FileUtils.GetTempFile("xml");
-			using (StreamWriter result = new StreamWriter(sOutput))
+			using (var result = new StreamWriter(sOutput))
 			{
 				transform.Transform(m_doc, null, result);
 				result.Close();
 				string sExpectedResult = Path.Combine(m_sTestPath, sExpectedOutput);
-				CheckXmlEquals(sExpectedResult, sOutput, fFixMsxslNameSpace);
+				CheckXmlEquals(sExpectedResult, sOutput);
 				// by deleting it here instead of a finally block, when it fails, we can see what the result is.
 				File.Delete(sOutput);
 			}
 		}
-		private void ApplyTransform(string sInputFile, string sExpectedOutput,
-			IntPtr transform, bool fFixMsxslNameSpace)
+		private void ApplyTransform(string sInputFile, string sExpectedOutput, IntPtr transform)
 		{
 			string sInput = Path.Combine(m_sTestPath, sInputFile);
 			string sOutput = FileUtils.GetTempFile("xml");
 			SIL.Utils.LibXslt.TransformFileToFile(transform, sInput, sOutput);
 			string sExpectedResult = Path.Combine(m_sTestPath, sExpectedOutput);
-			CheckXmlEquals(sExpectedResult, sOutput, fFixMsxslNameSpace);
+			CheckXmlEquals(sExpectedResult, sOutput);
 			// by deleting it here instead of a finally block, when it fails, we can see what the result is.
 			File.Delete(sOutput);
 		}
@@ -359,39 +322,27 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="sExpectedResultFile">The expected result filename.</param>
 		/// <param name="sActualResultFile">The actual result filename.</param>
-		/// <param name="fFixMsxslNameSpace">remove Msxsl namespace</param>
 		/// ------------------------------------------------------------------------------------
-		private void CheckXmlEquals(string sExpectedResultFile, string sActualResultFile, bool fFixMsxslNameSpace)
+		private void CheckXmlEquals(string sExpectedResultFile, string sActualResultFile)
 		{
 			string sExpected, sActual;
-			using (StreamReader expected = new StreamReader(sExpectedResultFile))
+			using (var expected = new StreamReader(sExpectedResultFile))
 				sExpected = expected.ReadToEnd();
-			using (StreamReader actual = new StreamReader(sActualResultFile))
+			using (var actual = new StreamReader(sActualResultFile))
 				sActual = actual.ReadToEnd();
-			StringBuilder sb = new StringBuilder();
+			var sb = new StringBuilder();
 			sb.Append("Expected file was ");
 			sb.AppendLine(sExpectedResultFile);
 			sb.Append("Actual file was ");
 			sb.AppendLine(sActualResultFile);
 #if __MonoCS__
 			// REVIEW: Perhaps we should always use the fancy compare method using XElement objects?
-			if (fFixMsxslNameSpace)
-				sActual = sActual.Replace(" xmlns:auto-ns1=\"urn:schemas-microsoft-com:xslt\"", "");
 			XElement xeActual = XElement.Parse(sActual, LoadOptions.None);
 			XElement xeExpected = XElement.Parse(sExpected, LoadOptions.None);
 			bool ok = XmlHelper.EqualXml(xeExpected, xeActual, sb);
 			Assert.IsTrue(ok, sb.ToString());
 #else
-			if (fFixMsxslNameSpace)
-			{
-				string sFixMsxslNameSpace =
-					sActual.Replace(" xmlns:auto-ns1=\"urn:schemas-microsoft-com:xslt\"", "");
-				Assert.AreEqual(sExpected, sFixMsxslNameSpace, sb.ToString());
-			}
-			else
-			{
-				Assert.AreEqual(sExpected, sActual, sb.ToString());
-			}
+			Assert.AreEqual(sExpected, sActual, sb.ToString());
 #endif
 		}
 		#endregion
@@ -713,7 +664,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void DoWordGrammarDebuggerSteps(string sName, int count, XslCompiledTransform transform)
 		{
 			for (int i = 0; i < count; i++)
-				ApplyTransform(sName + "Step0" + i.ToString() + ".xml", sName + "Step0" + i.ToString() + "Result.xml", m_resultTransformStemNames, false);
+				ApplyTransform(sName + "Step0" + i.ToString(CultureInfo.InvariantCulture) + ".xml", sName + "Step0" + i.ToString(CultureInfo.InvariantCulture) + "Result.xml", m_resultTransformStemNames);
 		}
 		private void DoWordGrammarDebuggerSteps(string sName, int count, IntPtr transform)
 		{
@@ -721,7 +672,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				var inputName = String.Format("{0}Step0{1}.xml", sName, i);
 				var outputName = String.Format("{0}Step0{1}Result.xml", sName, i);
-				ApplyTransform(inputName, outputName, m_resultTransformStemNames, false);
+				ApplyTransform(inputName, outputName, m_resultTransformStemNames);
 			}
 		}
 
@@ -731,7 +682,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		public void UnificationViaXSLT()
+		public void UnificationViaXslt()
 		{
 			ApplyTransform("TestFeatureStructureUnification.xml",
 				"TestFeatureStructureUnification.xml", m_UnificationViaXsltTransform);

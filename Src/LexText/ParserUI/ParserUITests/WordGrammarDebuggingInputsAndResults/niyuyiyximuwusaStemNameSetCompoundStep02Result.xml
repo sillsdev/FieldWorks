@@ -67,7 +67,7 @@
       <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
     </morph>
   </resultSoFar>
-  <seq step="Try to build a Stem node by appending a derivational suffix to another Stem node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to build a Stem node by appending a derivational suffix to another Stem node.">
     <morph type="pfx" wordType="181">
       <shortName>ni- (1SgSubj): ni</shortName>
       <alloform>ni-</alloform>
@@ -134,7 +134,7 @@
       <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
     </morph>
   </seq>
-  <seq step="Try to apply the Compound rule 'noun-adverb -&gt; intransitive verb, ic:2'.  The result will be a new Stem node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to apply the Compound rule 'noun-adverb -&gt; intransitive verb, ic:2'.  The result will be a new Stem node.">
     <morph type="pfx" wordType="181">
       <shortName>ni- (1SgSubj): ni</shortName>
       <alloform>ni-</alloform>
@@ -215,7 +215,7 @@
       <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
     </morph>
   </seq>
-  <seq step="Try to apply the Compound rule 'adverb-noun --&gt; intransitive verb, ic:2'.  The result will be a new Stem node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to apply the Compound rule 'adverb-noun --&gt; intransitive verb, ic:2'.  The result will be a new Stem node.">
     <morph type="pfx" wordType="181">
       <shortName>ni- (1SgSubj): ni</shortName>
       <alloform>ni-</alloform>
@@ -308,7 +308,7 @@
       <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
     </morph>
   </seq>
-  <seq step="Try to apply the Compound rule 'adj-noun with linker'.  The result will be a new Stem node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to apply the Compound rule 'adj-noun with linker'.  The result will be a new Stem node.">
     <morph type="pfx" wordType="181">
       <shortName>ni- (1SgSubj): ni</shortName>
       <alloform>ni-</alloform>
@@ -401,7 +401,7 @@
       <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
     </morph>
   </seq>
-  <seq step="Try to apply the Compound rule 'verb-adverb'.  The result will be a new Stem node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to apply the Compound rule 'verb-adverb'.  The result will be a new Stem node.">
     <morph type="pfx" wordType="181">
       <shortName>ni- (1SgSubj): ni</shortName>
       <alloform>ni-</alloform>
@@ -470,7 +470,7 @@
       <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
     </morph>
   </seq>
-  <seq step="Try to apply the Compound rule 'noun-transitive verb'.  The result will be a new Stem node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to apply the Compound rule 'noun-transitive verb'.  The result will be a new Stem node.">
     <morph type="pfx" wordType="181">
       <shortName>ni- (1SgSubj): ni</shortName>
       <alloform>ni-</alloform>
@@ -563,7 +563,7 @@
       <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
     </morph>
   </seq>
-  <seq step="Try to apply the Compound rule 'noun-Intransitive verb'.  The result will be a new Stem node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to apply the Compound rule 'noun-Intransitive verb'.  The result will be a new Stem node.">
     <morph type="pfx" wordType="181">
       <shortName>ni- (1SgSubj): ni</shortName>
       <alloform>ni-</alloform>
@@ -656,7 +656,7 @@
       <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
     </morph>
   </seq>
-  <seq step="Try to build a Stem node by appending a derivational suffix to another Stem node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to build a Stem node by appending a derivational suffix to another Stem node.">
     <morph type="pfx" wordType="181">
       <shortName>ni- (1SgSubj): ni</shortName>
       <alloform>ni-</alloform>

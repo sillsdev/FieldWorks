@@ -1096,7 +1096,7 @@ namespace SIL.Utils
 			Debug.Assert(type != null);
 			transform.Load(type);
 #else
-			transform.Load(Path.Combine(TransformPath, xslName + ".xls"), new XsltSettings(true, false), new XmlUrlResolver());
+			//transform.Load(Path.Combine(TransformPath, xslName + ".xls"), new XsltSettings(true, false), new XmlUrlResolver());
 #endif
 			return transform;
 		}
