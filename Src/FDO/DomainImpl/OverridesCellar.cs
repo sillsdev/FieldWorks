@@ -4257,6 +4257,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				{
 					m_backrefsToDelete.Add(obj);
 				}
+				else if (obj is IPhFeatureConstraint &&
+					(obj as IPhFeatureConstraint).FeatureRA == this)
+				{
+					m_backrefsToDelete.Add(obj);
+				}
 			}
 		}
 
