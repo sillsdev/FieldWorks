@@ -27,10 +27,6 @@ using System.Xml.Serialization;
 using System.Windows.Forms;
 using System.Xml.Xsl;
 
-#if __MonoCS__
-using System.Xml.Xsl;
-#endif
-
 namespace SIL.Utils
 {
 	/// <summary>
