@@ -25,6 +25,8 @@ using System.Xml;
 using System.Globalization;
 using System.Xml.Serialization;
 using System.Windows.Forms;
+using System.Xml.Xsl;
+
 #if __MonoCS__
 using System.Xml.Xsl;
 #endif
@@ -1087,6 +1089,20 @@ namespace SIL.Utils
 				}
 			}
 			return fSuccessfulVisit;
+		}
+
+		public static XslCompiledTransform CreateTransform(string xslName, string assemblyName)
+		{
+			var transform = new XslCompiledTransform();
+#if !__MonoCS__
+			// Assumes the XSL has been precompiled.  xslName is the name of the precompiled class
+			Type type = Type.GetType(xslName + "," + assemblyName);
+			Debug.Assert(type != null);
+			transform.Load(type);
+#else
+			transform.Load(Path.Combine(TransformPath, xslName + ".xls"), new XsltSettings(true, false), new XmlUrlResolver());
+#endif
+			return transform;
 		}
 	}
 

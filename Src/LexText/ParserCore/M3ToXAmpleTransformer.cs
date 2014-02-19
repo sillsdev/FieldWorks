@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			get
 			{
 				if (m_adctlTransform == null)
-					m_adctlTransform = CreateTransform("FxtM3ParserToXAmpleADCtl.xsl");
+					m_adctlTransform = CreateTransform("FxtM3ParserToXAmpleADCtl");
 				return m_adctlTransform;
 			}
 		}
@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			get
 			{
 				if (m_gafawsTransform == null)
-					m_gafawsTransform = CreateTransform("FxtM3ParserToGAFAWS.xsl");
+					m_gafawsTransform = CreateTransform("FxtM3ParserToGAFAWS");
 				return m_gafawsTransform;
 			}
 		}
@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			get
 			{
 				if (m_lexTransform == null)
-					m_lexTransform = CreateTransform("FxtM3ParserToXAmpleLex.xsl");
+					m_lexTransform = CreateTransform("FxtM3ParserToXAmpleLex");
 				return m_lexTransform;
 			}
 		}

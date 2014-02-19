@@ -24,7 +24,7 @@
 	<xsl:variable name="wordBdry" select="$charTable/BoundaryMarkers/PhBdryMarker[@Guid = $wordBdryGuid]"/>
 	<xsl:variable name="fNotOnClitics" select="/M3Dump/ParserParameters/ParserParameters/HC/NotOnClitics"/>
 	<xsl:variable name="fNoDefaultCompounding" select="/M3Dump/ParserParameters/ParserParameters/HC/NoDefaultCompounding"/>
-	
+
 	<xsl:key name="AffixAlloId" match="MoAffixAllomorph" use="@Id"/>
 	<xsl:key name="StemMsaId" match="MoStemMsa" use="@Id"/>
 	<xsl:key name="MsaId" match="MoStemMsa | MoDerivAffMsa | MoInflAffMsa | MoUnclassifiedAffixMsa" use="@Id"/>

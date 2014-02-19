@@ -21,6 +21,7 @@ using System.Reflection;
 using System.IO;
 using System.Resources;
 using System.Text;
+using System.Xml.Xsl;
 using Microsoft.Win32;
 using SIL.FieldWorks.FDO.DomainServices;
 using XCore;
@@ -124,6 +125,8 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private const string m_ksHtmlFilePath = "HtmlFilePath";
 		private const string m_ksAlsoSaveFilePath = "AlsoSaveFilePath";
+
+		private readonly Dictionary<string, XslCompiledTransform> transforms = new Dictionary<string, XslCompiledTransform>();
 
 		#endregion // Data Members
 
@@ -594,31 +597,48 @@ namespace SIL.FieldWorks.XWorks
 			m_sHtmlFileName = sLastFile;
 		}
 
-		private string ApplyTransform(string sInputFile, XmlNode node, ProgressDialogWorkingOn dlg)
+		private string ApplyTransform(string inputFile, XmlNode node, ProgressDialogWorkingOn dlg)
 		{
-			string sProgressPrompt = XmlUtils.GetManditoryAttributeValue(node, "progressPrompt");
-			UpdateProgress(sProgressPrompt, dlg);
-			string sXslt = XmlUtils.GetManditoryAttributeValue(node, "file");
-			string sOutputFile = Path.Combine(m_outputDirectory, Cache.ProjectId.Name + sXslt + "Result." + GetExtensionFromNode(node));
+			string progressPrompt = XmlUtils.GetManditoryAttributeValue(node, "progressPrompt");
+			UpdateProgress(progressPrompt, dlg);
+			string stylesheetName = XmlUtils.GetManditoryAttributeValue(node, "stylesheetName");
+			string stylesheetAssembly = XmlUtils.GetManditoryAttributeValue(node, "stylesheetAssembly");
+			string outputFile = Path.Combine(m_outputDirectory, Cache.ProjectId.Name + stylesheetName + "Result." + GetExtensionFromNode(node));
 
-			XmlUtils.XSLParameter[] parameterList = CreateParameterList(node);
+			XsltArgumentList argumentList = CreateParameterList(node);
 			IWritingSystemContainer wsContainer = Cache.ServiceLocator.WritingSystems;
-			if (parameterList != null)
+
+			if (argumentList.GetParam("prmVernacularFontSize", "") != null)
 			{
-				foreach (XmlUtils.XSLParameter param in parameterList)
-				{
-					if (param.Name == "prmVernacularFontSize")
-					{
-						param.Value = GetNormalStyleFontSize(wsContainer.DefaultVernacularWritingSystem.Handle);
-					}
-					if (param.Name == "prmGlossFontSize")
-					{
-						param.Value = GetNormalStyleFontSize(wsContainer.DefaultAnalysisWritingSystem.Handle);
-					}
-				}
+				argumentList.RemoveParam("prmVernacularFontSize", "");
+				argumentList.AddParam("prmVernacularFontSize", "", GetNormalStyleFontSize(wsContainer.DefaultVernacularWritingSystem.Handle));
 			}
-			XmlUtils.TransformFileToFile(Path.Combine(TransformPath, sXslt), parameterList, sInputFile, sOutputFile);
-			return sOutputFile;
+			if (argumentList.GetParam("prmGlossFontSize", "") != null)
+			{
+				argumentList.RemoveParam("prmGlossFontSize", "");
+				argumentList.AddParam("prmGlossFontSize", "", GetNormalStyleFontSize(wsContainer.DefaultAnalysisWritingSystem.Handle));
+			}
+
+			var xmlReaderSettings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
+			using (var writer = new StreamWriter(outputFile))
+			using (var reader = XmlReader.Create(new XmlTextReader(inputFile), xmlReaderSettings))
+					GetTransform(stylesheetName, stylesheetAssembly).Transform(reader, argumentList, writer);
+			return outputFile;
+		}
+
+		private XslCompiledTransform GetTransform(string xslName, string xslAssembly)
+		{
+			lock(transforms)
+			{
+				XslCompiledTransform transform;
+				transforms.TryGetValue(xslName, out transform);
+				if (transform != null)
+					return transform;
+
+				transform = XmlUtils.CreateTransform(xslName, xslAssembly);
+				transforms.Add(xslName, transform);
+				return transform;
+			}
 		}
 
 		private string GetNormalStyleFontSize(int ws)
@@ -628,9 +648,9 @@ namespace SIL.FieldWorks.XWorks
 				return myFont.Size + "pt";
 		}
 
-		private static XmlUtils.XSLParameter[] CreateParameterList(XmlNode node)
+		private static XsltArgumentList CreateParameterList(XmlNode node)
 		{
-			XmlUtils.XSLParameter[] parameterList = null;
+			XsltArgumentList parameterList = new XsltArgumentList();
 			foreach (XmlNode rNode in node.ChildNodes)
 			{
 				if (rNode.Name == "xsltParameters")
@@ -638,29 +658,28 @@ namespace SIL.FieldWorks.XWorks
 					int cParams = CountParams(rNode);
 					if (cParams > 0)
 					{
-						parameterList = GetParameters(cParams, rNode);
+						parameterList = GetParameters(rNode);
+						break;
 					}
 				}
 			}
 			return parameterList;
 		}
 
-		private static XmlUtils.XSLParameter[] GetParameters(int cParams, XmlNode rNode)
+		private static XsltArgumentList GetParameters(XmlNode rNode)
 		{
-			var parameterList = new XmlUtils.XSLParameter[cParams];
-			int i = 0;
+			var parameterList = new XsltArgumentList();
 			foreach (XmlNode rParamNode in rNode.ChildNodes)
 			{
 				if (rParamNode.Name == "param")
 				{
-					string sName = XmlUtils.GetManditoryAttributeValue(rParamNode, "name");
-					string sValue = XmlUtils.GetManditoryAttributeValue(rParamNode, "value");
-					if (sValue == "TransformDirectory")
+					string name = XmlUtils.GetManditoryAttributeValue(rParamNode, "name");
+					string value = XmlUtils.GetManditoryAttributeValue(rParamNode, "value");
+					if (value == "TransformDirectory")
 					{
-						sValue = TransformPath.Replace("\\", "/");
+						value = TransformPath.Replace("\\", "/");
 					}
-					parameterList[i] = new XmlUtils.XSLParameter(sName, sValue);
-					i++;
+					parameterList.AddParam(name, "", value);
 				}
 			}
 			return parameterList;

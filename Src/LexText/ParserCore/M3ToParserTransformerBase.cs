@@ -1,5 +1,5 @@
-using System.IO;
 using System.Xml.Xsl;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			get
 			{
 				if (m_grammarTransform == null)
-					m_grammarTransform = CreateTransform("FxtM3ParserToToXAmpleGrammar.xsl");
+					m_grammarTransform = CreateTransform("FxtM3ParserToToXAmpleGrammar");
 				return m_grammarTransform;
 			}
 		}
@@ -38,16 +38,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			get
 			{
 				if (m_grammarDebuggingTransform == null)
-					m_grammarDebuggingTransform = CreateTransform("FxtM3ParserToXAmpleWordGrammarDebuggingXSLT.xsl");
+					m_grammarDebuggingTransform = CreateTransform("FxtM3ParserToXAmpleWordGrammarDebuggingXSLT");
 				return m_grammarDebuggingTransform;
 			}
 		}
 
-		protected XslCompiledTransform CreateTransform(string fileName)
+		protected XslCompiledTransform CreateTransform(string xslName)
 		{
-			var transform = new XslCompiledTransform();
-			transform.Load(Path.Combine(m_dataDir, "Transforms", fileName));
-			return transform;
+			return XmlUtils.CreateTransform(xslName, "ApplicationTransforms");
 		}
 	}
 }

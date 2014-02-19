@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			get
 			{
 				if (m_inputTransform == null)
-					m_inputTransform = CreateTransform("FxtM3ParserToHCInput.xsl");
+					m_inputTransform = CreateTransform("FxtM3ParserToHCInput");
 				return m_inputTransform;
 			}
 		}

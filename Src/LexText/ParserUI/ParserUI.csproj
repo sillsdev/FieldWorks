@@ -149,6 +149,10 @@
       <Name>ParserCore</Name>
       <HintPath>..\..\..\Output\Debug\ParserCore.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationTransforms, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\PresentationTransforms.dll</HintPath>
+    </Reference>
     <Reference Include="Reporting, Version=1.0.3852.22149, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\Output\Debug\Reporting.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -304,36 +308,4 @@
   <ItemGroup>
     <None Include="gendarme-ParserUI.ignore" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="FormatCommon.xsl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="FormatHCTrace.xsl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="FormatXAmpleParse.xsl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="FormatXAmpleTrace.xsl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="FormatXAmpleWordGrammarDebuggerResult.xsl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <PropertyGroup>
-    <WinSDK>C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Bin</WinSDK>
-	<OutputFile>$(OutputPath)\ParserUInew.dll</OutputFile>
-  </PropertyGroup>
-  <ItemGroup>
-    <inputAssemblies Include="$(OutputPath)\ParserUI.dll" />
-    <inputAssemblies Include="$(OutputPath)\Xslts.dll" />
-  </ItemGroup>
-  <UsingTask TaskName="ILMerge" AssemblyFile="..\..\..\Build\MSBuild.Community.Tasks.dll" />
-  <Target Name="AfterBuild">
-    <Exec Command="%22$(WinSDK)\xsltc.exe%22 /settings:document /out:$(OutputPath)\Xslts.dll /class:FormatHCTrace %22FormatHCTrace.xsl%22 /class:FormatXAmpleParse %22FormatXAmpleParse.xsl%22 /class:FormatXAmpleTrace %22FormatXAmpleTrace.xsl%22 /class:FormatXAmpleWordGrammarDebuggerResult %22FormatXAmpleWordGrammarDebuggerResult.xsl%22" />
-	<ILMerge InputAssemblies="@(inputAssemblies)" OutputFile="$(outputFile)" TargetPlatformVersion="v4" LogFile="log.txt" DebugInfo="true" />
-	<Move SourceFiles="$(OutputPath)\ParserUInew.dll" DestinationFiles="$(OutputPath)\ParserUI.dll" />
-	<Move SourceFiles="$(OutputPath)\ParserUInew.pdb" DestinationFiles="$(OutputPath)\ParserUI.pdb" />
-  </Target>
 </Project>
