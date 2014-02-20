@@ -180,6 +180,20 @@ namespace LexTextControlsTests
 			DoImport(sfmDataWithVariantsAndMainEntryLinks, MakeDefaultFields(), 3);
 		}
 
+		private string sfmDataWithMinorBeforeMainEntryLinks =
+@"\lx ab
+\mn a
+\ps n
+
+\lx a
+\va ab
+\ps v";
+		[Test]
+		public void ImportMinorBeforeMain_DoesNotDuplicateEntries()
+		{
+			DoImport(sfmDataWithMinorBeforeMainEntryLinks, MakeDefaultFields(), 2);
+		}
+
 		/// <summary>
 		/// This messy process simulates what the real import wizard does to import a string like input,
 		/// with the given field mappings, and verifies that it produces the expected number of new lexEntries.
@@ -265,11 +279,17 @@ namespace LexTextControlsTests
 		private static List<FieldHierarchyInfo> MakeDefaultFields()
 		{
 			var sfmInfo = new List<FieldHierarchyInfo>();
-			sfmInfo.Add(new FieldHierarchyInfo("lx", "lex", "Vernacular", true, ""));
-			sfmInfo.Add(new FieldHierarchyInfo("hm", "hom", "English", false, ""));
-			sfmInfo.Add(new FieldHierarchyInfo("de", "def", "English", true, ""));
-			sfmInfo.Add(new FieldHierarchyInfo("mn", "meref", "Vernacular", false, ""));
-			var subentryInfo = new FieldHierarchyInfo("se", "sub", "Vernacular", true, "");
+			sfmInfo.Add(new FieldHierarchyInfo("lx", "lex", "Vernacular", true, "Entry"));
+			sfmInfo.Add(new FieldHierarchyInfo("hm", "hom", "English", false, "Entry"));
+			sfmInfo.Add(new FieldHierarchyInfo("de", "def", "English", true, "Sense"));
+			sfmInfo.Add(new FieldHierarchyInfo("ge", "glos", "English", true, "Sense"));
+			sfmInfo.Add(new FieldHierarchyInfo("ps", "pos", "English", true, "Sense"));
+			sfmInfo.Add(new FieldHierarchyInfo("mn", "meref", "Vernacular", false, "Entry"));
+			var variantInfo = new FieldHierarchyInfo("va", "var", "Vernacular", true, "Variant");
+			sfmInfo.Add(variantInfo);
+			variantInfo.RefFunc = "fr";
+			variantInfo.RefFuncWS = "fr";
+			var subentryInfo = new FieldHierarchyInfo("se", "sub", "Vernacular", true, "SubEntry");
 			sfmInfo.Add(subentryInfo);
 			subentryInfo.RefFuncWS = "Derivative";
 			subentryInfo.RefFunc = "en";

@@ -181,6 +181,8 @@ namespace SIL.HermitCrab
 		public abstract void MorphologicalRuleApplied(MorphologicalRule rule, WordSynthesis input, WordSynthesis output, Allomorph allomorph);
 		public abstract void MorphologicalRuleNotApplied(MorphologicalRule rule, WordSynthesis input);
 
+		public abstract void MorphCooccurrenceRuleFailed(MorphCoOccurrence cooccurrence, string usage, WordSynthesis input);
+
 		public abstract void Blocking(BlockType blockingType, WordSynthesis input, LexEntry blockingEntry);
 		public abstract void ReportSuccess(WordSynthesis output);
 	}

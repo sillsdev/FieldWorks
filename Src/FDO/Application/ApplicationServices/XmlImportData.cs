@@ -2664,7 +2664,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			for(var i = 0; i < refs.Count && matched; ++i)
 			{
 				var resolvedLinkHvo = ResolveLinkReference(refs[i].FieldInformation.FieldId, refs[i], true);
-				var resolvedDupHvo = ResolveLinkReference(refDups[i].FieldInformation.FieldId, refDups[i], false);
+				var resolvedDupHvo = ResolveLinkReference(refDups[i].FieldInformation.FieldId, refDups[i], true);
 				matched = resolvedLinkHvo != 0 && resolvedDupHvo == resolvedLinkHvo;
 			}
 			return matched; // All corresponding items match

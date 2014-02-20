@@ -624,6 +624,93 @@ function Toggle(node, path, imgOffset)
 				</span>
 			</xsl:if>
 		</xsl:if>
+		<xsl:for-each select="MorphCooccurrenceRuleFailed">
+			<span style="unicode-bidi:embed">
+				<xsl:attribute name="style">
+					<xsl:text>color:</xsl:text>
+					<xsl:value-of select="$sFailureColor"/>
+					<xsl:text>; font-size:smaller</xsl:text>
+				</xsl:attribute>
+			<xsl:choose>
+				<xsl:when test="Usage='Excluded'">
+					<!-- is an ad hoc rule -->
+					<xsl:text>&#xa0;&#xa0;(Reason: </xsl:text>
+					<xsl:variable name="sType">
+					<xsl:choose>
+						<xsl:when test="Type='MORPHEME'">
+							<xsl:text>Morpheme</xsl:text>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:text>Allomorph</xsl:text>
+						</xsl:otherwise>
+					</xsl:choose>
+					</xsl:variable>
+					<xsl:text> ad hoc rule failed.  This </xsl:text>
+					<xsl:value-of select="translate($sType,'AM','am')"/>
+					<xsl:text> cannot occur </xsl:text>
+					<xsl:choose>
+						<xsl:when test="Adjacency='ADJACENT_TO_RIGHT'">
+							<xsl:text>adjacent before</xsl:text>
+						</xsl:when>
+						<xsl:when test="Adjacency='ADJACENT_TO_LEFT'">
+							<xsl:text>adjacent after</xsl:text>
+						</xsl:when>
+						<xsl:when test="Adjacency='SOMEWHERE_TO_RIGHT'">
+							<xsl:text>somewhere before</xsl:text>
+						</xsl:when>
+						<xsl:when test="Adjacency='SOMEWHERE_TO_LEFT'">
+							<xsl:text>somewhere after</xsl:text>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:text>anywhere around</xsl:text>
+						</xsl:otherwise>
+					</xsl:choose>
+					<xsl:variable name="others" select="Others/Morpheme | Others/Allomorph"/>
+					<xsl:choose>
+						<xsl:when test="count($others) &gt; 1">
+							<xsl:text> these other items: </xsl:text>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:text> this other item: </xsl:text>
+						</xsl:otherwise>
+					</xsl:choose>
+					<xsl:for-each select="Others/Morpheme">
+						<span>
+							<xsl:attribute name="onclick">
+								<xsl:text>JumpToToolBasedOnHvo(</xsl:text>
+								<xsl:value-of select="substring(@id,4)"/>
+								<xsl:text>)</xsl:text>
+							</xsl:attribute>
+							<xsl:attribute name="onmousemove">
+								<xsl:text>MouseMove()</xsl:text>
+							</xsl:attribute>
+							<xsl:value-of select="Gloss"/>
+						</span>
+						<xsl:if test="count(following-sibling::*)!=0">
+							<xsl:text>, </xsl:text>
+						</xsl:if>
+					</xsl:for-each>
+					<xsl:for-each select="Others/Allomorph">
+						<span>
+							<xsl:attribute name="onclick">
+								<xsl:text>JumpToToolBasedOnHvo(</xsl:text>
+								<xsl:value-of select="Morph/MoForm/@DbRef"/>
+								<xsl:text>)</xsl:text>
+							</xsl:attribute>
+							<xsl:attribute name="onmousemove">
+								<xsl:text>MouseMove()</xsl:text>
+							</xsl:attribute>
+							<xsl:value-of select="Morph/shortName"/>
+						</span>
+						<xsl:if test="count(following-sibling::*)!=0">
+							<xsl:text>, </xsl:text>
+						</xsl:if>
+					</xsl:for-each>
+					<xsl:text>.)</xsl:text>
+				</xsl:when>
+			</xsl:choose>
+			</span>
+		</xsl:for-each>
 	</xsl:template>
 	<!--
 		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
