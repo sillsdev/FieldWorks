@@ -44,16 +44,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		string m_sM3FXTAffixAlloFeatsDump;
 		string m_sM3FXTLatinDump;
 		string m_sM3FXTIrregularlyInflectedFormsDump;
-		Dictionary<string, XPathDocument> m_mapXmlDocs = new Dictionary<string, XPathDocument>();
-#if __MonoCS__
-		IntPtr m_adTransform;
-		IntPtr m_lexTransform;
-		IntPtr m_gramTransform;
-#else
+		readonly Dictionary<string, XPathDocument> m_mapXmlDocs = new Dictionary<string, XPathDocument>();
+
 		XslCompiledTransform m_adTransform;
 		XslCompiledTransform m_lexTransform;
 		XslCompiledTransform m_gramTransform;
-#endif
+
 		bool m_fResultMatchesExpected = true;
 
 		/// <summary>
@@ -80,23 +76,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		[TestFixtureTearDown]
 		public override void FixtureTeardown()
 		{
-#if __MonoCS__
-			if (m_adTransform != IntPtr.Zero)
-			{
-				LibXslt.FreeCompiledTransform(m_adTransform);
-				m_adTransform = IntPtr.Zero;
-			}
-			if (m_lexTransform != IntPtr.Zero)
-			{
-				LibXslt.FreeCompiledTransform(m_lexTransform);
-				m_lexTransform = IntPtr.Zero;
-			}
-			if (m_gramTransform != IntPtr.Zero)
-			{
-				LibXslt.FreeCompiledTransform(m_gramTransform);
-				m_gramTransform = IntPtr.Zero;
-			}
-#endif
 			base.FixtureTeardown();
 		}
 
@@ -116,7 +95,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_sM3FXTAffixAlloFeatsDump = Path.Combine(m_sTestPath, "TestAffixAllomorphFeatsParserFxtResult.xml");
 			m_sM3FXTLatinDump = Path.Combine(m_sTestPath, "LatinParserFxtResult.xml");
 			m_sM3FXTIrregularlyInflectedFormsDump = Path.Combine(m_sTestPath, "IrregularlyInflectedFormsParserFxtResult.xml");
-#if !__MonoCS__
+
 			SetupXmlDocument(m_sM3FXTDump);
 			SetupXmlDocument(m_sM3FXTCircumfixDump);
 			SetupXmlDocument(m_sM3FXTCircumfixInfixDump);
@@ -131,7 +110,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			SetupXmlDocument(m_sM3FXTAffixAlloFeatsDump);
 			SetupXmlDocument(m_sM3FXTLatinDump);
 			SetupXmlDocument(m_sM3FXTIrregularlyInflectedFormsDump);
-#endif
 		}
 
 		private void SetupXmlDocument(string filepath)
@@ -149,11 +127,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private void SetUpTransform(out XslCompiledTransform transform, string name)
 		{
 			transform = XmlUtils.CreateTransform(name, "ApplicationTransforms");
-		}
-		private void SetUpTransform(ref IntPtr transform, string name)
-		{
-			string sTransformPath = Path.Combine(m_sTransformPath, name);
-			transform = LibXslt.CompileTransform(sTransformPath);
 		}
 
 		/// <summary>
@@ -223,27 +196,18 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			// by deleting it here instead of a finally block, when it fails, we can see what the result is.
 			File.Delete(sOutput);
 		}
-		private void ApplyTransform(string sInput, IntPtr transform, string sExpectedOutput)
-		{
-			string sOutput = FileUtils.GetTempFile("txt");
-			LibXslt.TransformFileToFile(transform, sInput, sOutput);
-			string sExpectedResult = Path.Combine(m_sTestPath, sExpectedOutput);
-			CheckOutputEquals(sExpectedResult, sOutput);
-			// by deleting it here instead of a finally block, when it fails, we can see what the result is.
-			File.Delete(sOutput);
-		}
 
 		private void CheckOutputEquals(string sExpectedResultFile, string sActualResultFile)
 		{
 			string sExpected, sActual;
-			using (StreamReader expected = new StreamReader(sExpectedResultFile))
+			using (var expected = new StreamReader(sExpectedResultFile))
 				sExpected = expected.ReadToEnd();
-			using (StreamReader actual = new StreamReader(sActualResultFile))
+			using (var actual = new StreamReader(sActualResultFile))
 				sActual = actual.ReadToEnd();
 			// A non-empty last line in a file from git always ends with '\n' character
 			if (sActual.Substring(sActual.Length - 1) != "\n")
 				sActual += Environment.NewLine;
-			StringBuilder sb = new StringBuilder();
+			var sb = new StringBuilder();
 			sb.Append("Expected file was ");
 			sb.AppendLine(sExpectedResultFile);
 			sb.Append("Actual file was ");

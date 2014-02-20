@@ -10,10 +10,6 @@
 // This makes available some utilities for handling XML Nodes
 // </remarks>
 // --------------------------------------------------------------------------------------------
-//We're changing to using libxslt (wrapped in the LibXslt class) on Linux/Mono.
-//#if __MonoCS__
-//#define UsingDotNetTransforms
-//#endif
 
 using System;
 using System.Collections.Generic;
@@ -841,55 +837,6 @@ namespace SIL.Utils
 		}
 #endif
 #endif // UsingDotNetTransforms
-		/// <summary>
-		/// Are we using the .Net XSLT transforms?
-		/// </summary>
-		/// <returns>true if we're using .Net XSLT transforms
-		/// false if we're using MSXML2 or LibXslt</returns>
-		public static bool UsingDotNetTransforms()
-		{
-#if UsingDotNetTransforms
-			return true;
-#else
-			return false;
-#endif
-		}
-
-		/// <summary>
-		/// Are we using the Microsoft's MSXML2 XSLT transforms?
-		/// </summary>
-		/// <returns>true if we're using MSXML2 XSLT transforms
-		/// false if we're using .Net or LibXslt</returns>
-		public static bool UsingMSXML2Transforms()
-		{
-#if UsingDotNetTransforms
-			return false;
-#else
-#if __MonoCS__
-			return false;
-#else
-			return true;
-#endif
-#endif
-		}
-
-		/// <summary>
-		/// Are we using the libxslt.so XSLT transforms?
-		/// </summary>
-		/// <returns>true if we're using libxslt.so transforms
-		/// false if we're using MSXML2 or .Net</returns>
-		public static bool UsingLibXsltTransforms()
-		{
-#if UsingDotNetTransforms
-			return false;
-#else
-#if __MonoCS__
-			return true;
-#else
-			return false;
-#endif
-#endif
-		}
 
 		private static string GetCurrentDateTime()
 		{

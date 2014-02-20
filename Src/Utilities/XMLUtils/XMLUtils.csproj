@@ -133,9 +133,6 @@
     <Compile Include="DynamicLoader.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="LibXslt.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="ResolveDirectory.cs">
       <SubType>Code</SubType>
     </Compile>
