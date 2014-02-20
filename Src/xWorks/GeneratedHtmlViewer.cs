@@ -126,7 +126,7 @@ namespace SIL.FieldWorks.XWorks
 		private const string m_ksHtmlFilePath = "HtmlFilePath";
 		private const string m_ksAlsoSaveFilePath = "AlsoSaveFilePath";
 
-		private readonly Dictionary<string, XslCompiledTransform> transforms = new Dictionary<string, XslCompiledTransform>();
+		private readonly Dictionary<string, XslCompiledTransform> m_transforms = new Dictionary<string, XslCompiledTransform>();
 
 		#endregion // Data Members
 
@@ -139,6 +139,15 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get { return Path.Combine(FwDirectoryFinder.FlexFolder, "Transforms"); }
 		}
+
+		/// <summary>
+		/// Path to Export Templates
+		/// </summary>
+		private static string ExportTemplatePath
+		{
+			get { return Path.Combine(FwDirectoryFinder.FlexFolder, "Export Templates"); }
+		}
+
 		/// <summary>
 		/// Path to utility html files
 		/// </summary>
@@ -350,7 +359,7 @@ namespace SIL.FieldWorks.XWorks
 				return false; // we sure can't handle it; should we throw?
 			string whatToSave = param.Item1;
 			string outPath = param.Item2;
-			string sXsltFiles = param.Item3;
+			string xsltFiles = param.Item3;
 			string directory = Path.GetDirectoryName(outPath);
 			if (!Directory.Exists(directory))
 			{
@@ -362,23 +371,25 @@ namespace SIL.FieldWorks.XWorks
 					case "GrammarSketchXLingPaper":
 							if (File.Exists(m_sAlsoSaveFileName))
 							{
-								string sInputFile = m_sAlsoSaveFileName;
-								if (!string.IsNullOrEmpty(sXsltFiles))
+								string inputFile = m_sAlsoSaveFileName;
+								if (!string.IsNullOrEmpty(xsltFiles))
 								{
-									string sNewFileName = Path.GetFileNameWithoutExtension(outPath);
-									string sTempFileName = Path.Combine(Path.GetTempPath(), sNewFileName);
-									string sOutputFile = sTempFileName;
-									XmlUtils.XSLParameter[] parameterList = null;
-									string[] rgsXslts = sXsltFiles.Split(new[] { ';' });
+									string newFileName = Path.GetFileNameWithoutExtension(outPath);
+									string tempFileName = Path.Combine(Path.GetTempPath(), newFileName);
+									string outputFile = tempFileName;
+									string[] rgsXslts = xsltFiles.Split(new[] { ';' });
 									int cXslts = rgsXslts.GetLength(0);
-									for (int ix = 0; ix < cXslts; ++ix)
+									for (int i = 0; i < cXslts; ++i)
 									{
-											sOutputFile = sOutputFile + (ix + 1);
-											XmlUtils.TransformFileToFile(Path.Combine(TransformPath, rgsXslts[ix]), parameterList, sInputFile, sOutputFile + ".xml");
-											sInputFile = sOutputFile + ".xml";
+										outputFile = outputFile + (i + 1);
+										var transform = GetTransformFromFile(Path.Combine(ExportTemplatePath, rgsXslts[i]));
+										using (var writer = new StreamWriter(outputFile + ".xml"))
+										using (var reader = XmlReader.Create(new XmlTextReader(inputFile), new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse }))
+											transform.Transform(reader, null, writer);
+										inputFile = outputFile + ".xml";
 									}
 								}
-								CopyFile(sInputFile, outPath);
+								CopyFile(inputFile, outPath);
 								return true;
 							}
 						break;
@@ -619,24 +630,39 @@ namespace SIL.FieldWorks.XWorks
 				argumentList.AddParam("prmGlossFontSize", "", GetNormalStyleFontSize(wsContainer.DefaultAnalysisWritingSystem.Handle));
 			}
 
-			var xmlReaderSettings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
 			using (var writer = new StreamWriter(outputFile))
-			using (var reader = XmlReader.Create(new XmlTextReader(inputFile), xmlReaderSettings))
-					GetTransform(stylesheetName, stylesheetAssembly).Transform(reader, argumentList, writer);
+			using (var reader = XmlReader.Create(new XmlTextReader(inputFile), new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse }))
+				GetTransform(stylesheetName, stylesheetAssembly).Transform(reader, argumentList, writer);
 			return outputFile;
 		}
 
 		private XslCompiledTransform GetTransform(string xslName, string xslAssembly)
 		{
-			lock(transforms)
+			lock (m_transforms)
 			{
 				XslCompiledTransform transform;
-				transforms.TryGetValue(xslName, out transform);
+				m_transforms.TryGetValue(xslName, out transform);
 				if (transform != null)
 					return transform;
 
 				transform = XmlUtils.CreateTransform(xslName, xslAssembly);
-				transforms.Add(xslName, transform);
+				m_transforms.Add(xslName, transform);
+				return transform;
+			}
+		}
+
+		private XslCompiledTransform GetTransformFromFile(string xslPath)
+		{
+			lock (m_transforms)
+			{
+				XslCompiledTransform transform;
+				m_transforms.TryGetValue(xslPath, out transform);
+				if (transform != null)
+					return transform;
+
+				transform = new XslCompiledTransform();
+				transform.Load(xslPath);
+				m_transforms.Add(xslPath, transform);
 				return transform;
 			}
 		}

@@ -9,12 +9,7 @@
 // <remarks>
 // </remarks>
 
-using System;
-using System.IO;
-using System.Xml;
-using System.Text;
 using NUnit.Framework;
-using SIL.Utils;
 
 namespace SIL.Utils
 {
@@ -57,73 +52,6 @@ namespace SIL.Utils
 			Assert.IsTrue(XmlUtils.GetBooleanAttributeValue("YES"), "'YES' returns true");
 			Assert.IsTrue(XmlUtils.GetBooleanAttributeValue("Yes"), "'Yes' returns true");
 			Assert.IsTrue(XmlUtils.GetBooleanAttributeValue("yes"), "'yes' returns true");
-		}
-		[Test]
-		public void TransformFileToFileWithParametersTest()
-		{
-			// set up transform (use local copy so don't have to keep it in sync with the real one)
-			string sTransform = Path.Combine(m_sTestPath, "Test.xsl");
-			// build parameter list
-			XmlUtils.XSLParameter[] parameterList = new XmlUtils.XSLParameter[2];
-			parameterList[0] = new XmlUtils.XSLParameter("prmiNumber", "10");
-			parameterList[1] = new XmlUtils.XSLParameter("prmsNumber", "ten");
-			// use local input file
-			string sInput = Path.Combine(m_sTestPath, "Test.xml");
-			// create temp output file
-			string sResult = FileUtils.GetTempFile("xml");
-			// do transform
-			XmlUtils.TransformFileToFile(sTransform, parameterList, sInput, sResult);
-			// check results
-			string sExpected;
-			if (XmlUtils.UsingDotNetTransforms())
-				sExpected = "ResultWithParams.xml";
-			else
-				sExpected = "ResultWithParamsMSXML2.xml";
-			if (Environment.OSVersion.Platform == PlatformID.Unix) // Mono puts a newline in a different place
-				sExpected = "ResultWithParams-Linux.xml";
-			CheckXmlEquals(Path.Combine(m_sTestPath, sExpected), sResult);
-			if (File.Exists(sResult))
-				File.Delete(sResult);
-		}
-		[Test]
-		public void TransformFileToFileNoParametersTest()
-		{
-			// set up transform (use local copy so don't have to keep it in sync with the real one)
-			string sTransform = Path.Combine(m_sTestPath, "Test.xsl");
-			// use local input file
-			string sInput = Path.Combine(m_sTestPath, "Test.xml");
-			// create temp output file
-			string sResult = FileUtils.GetTempFile("xml");
-			// do transform
-			SIL.Utils.XmlUtils.TransformFileToFile(sTransform, sInput, sResult);
-			// check results
-			string sExpected;
-			if (SIL.Utils.XmlUtils.UsingDotNetTransforms())
-				sExpected = "ResultNoParams.xml";
-			else if (SIL.Utils.XmlUtils.UsingMSXML2Transforms())
-				sExpected = "ResultNoParamsMSXML2.xml";
-			else
-				sExpected = "ResultNoParams-Linux.xml";
-			CheckXmlEquals(Path.Combine(m_sTestPath, sExpected), sResult);
-			if (File.Exists(sResult))
-				File.Delete(sResult);
-		}
-		private void CheckXmlEquals(string sExpectedResultFile, string sActualResultFile)
-		{
-			using (var expected = new StreamReader(sExpectedResultFile))
-			{
-				using (var actual = new StreamReader(sActualResultFile))
-				{
-					string sExpected = expected.ReadToEnd();
-					string sActual = actual.ReadToEnd();
-					StringBuilder sb = new StringBuilder();
-					sb.Append("Expected file was ");
-					sb.Append(sExpectedResultFile);
-					Assert.AreEqual(sExpected, sActual, sb.ToString());
-					expected.Close();
-					actual.Close();
-				}
-			}
 		}
 
 		[Test]

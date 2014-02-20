@@ -24,7 +24,6 @@ using System.Text;
 using System.Xml;
 using System.Globalization;
 using System.Xml.Serialization;
-using System.Windows.Forms;
 using System.Xml.Xsl;
 
 namespace SIL.Utils
@@ -429,36 +428,6 @@ namespace SIL.Utils
 					return child;
 			return null;
 		}
-		/// <summary>
-		/// Apply an XSLT transform on a DOM to produce a resulting file
-		/// </summary>
-		/// <param name="sTransformName">full path name of the XSLT transform</param>
-		/// <param name="inputDOM">XmlDocument DOM containing input to be transformed</param>
-		/// <param name="sOutputName">full path of the resulting output file</param>
-		public static void TransformDomToFile(string sTransformName, XmlDocument inputDOM, string sOutputName)
-		{
-			string sTempInput = FileUtils.GetTempFile("xml");
-			try
-			{
-				inputDOM.Save(sTempInput);
-				TransformFileToFile(sTransformName, sTempInput, sOutputName);
-			}
-			finally
-			{
-				if (File.Exists(sTempInput))
-					File.Delete(sTempInput);
-			}
-		}
-		/// <summary>
-		/// Apply an XSLT transform on a file to produce a resulting file
-		/// </summary>
-		/// <param name="sTransformName">full path name of the XSLT transform</param>
-		/// <param name="sInputPath">full path of the input file</param>
-		/// <param name="sOutputName">full path of the resulting output file</param>
-		public static void TransformFileToFile(string sTransformName, string sInputPath, string sOutputName)
-		{
-			TransformFileToFile(sTransformName, null, sInputPath, sOutputName);
-		}
 
 		/// <summary>
 		/// Convert an encoded string (safe XML) into plain text.
@@ -827,103 +796,6 @@ namespace SIL.Utils
 			string sResult = "GetStaticMethod() could not find the " + sMainMsg +
 				" while processing " + sContext;
 			return sResult;
-		}
-
-		/// <summary>
-		/// Apply an XSLT transform on a file to produce a resulting file
-		/// </summary>
-		/// <param name="sTransformName">full path name of the XSLT transform</param>
-		/// <param name="parameterList">list of parameters to pass to the transform</param>
-		/// <param name="sInputPath">full path of the input file</param>
-		/// <param name="sOutputName">full path of the resulting output file</param>
-		public static void TransformFileToFile(string sTransformName, XSLParameter[] parameterList, string sInputPath, string sOutputName)
-		{
-#if DEBUG
-			Debug.WriteLine("Transform: " + sTransformName + " input file: " + sInputPath);
-			DateTime start = DateTime.Now;
-			Debug.WriteLine("\tStarting at: " + start.TimeOfDay.ToString());
-#endif
-#if UsingDotNetTransforms
-			// set up transform
-			XslCompiledTransform transformer = new XslCompiledTransform();
-			transformer.Load(sTransformName);
-
-			// add any parameters
-			XsltArgumentList args;
-			AddParameters(out args, parameterList);
-
-			// setup output file
-			using (var writer = File.CreateText(sOutputName))
-			{
-				// load input file
-				using (var reader = new XmlTextReader(sInputPath))
-				{
-#if !__MonoCS__
-					reader.DtdProcessing = DtdProcessing.Parse;
-#else
-					reader.ProhibitDtd = false;
-#endif
-					reader.EntityHandling = EntityHandling.ExpandEntities;
-
-					// Apply transform
-					transformer.Transform(reader, args, writer);
-				}
-			}
-#else // not UsingDotNetTransforms
-#if __MonoCS__
-			if (parameterList != null)
-			{
-				foreach(XSLParameter rParam in parameterList)
-				{
-					// Following is a specially recognized parameter name
-					if (rParam.Name == "prmSDateTime")
-					{
-						rParam.Value = GetCurrentDateTime();
-					}
-				}
-			}
-			SIL.Utils.LibXslt.TransformFileToFile(sTransformName, parameterList, sInputPath, sOutputName);
-#else
-			//.Net framework XML transform is still slower than something like MSXML2
-			// (this is so especially for transforms using xsl:key).
-			MSXML2.XSLTemplate60Class xslt = new MSXML2.XSLTemplate60Class();
-			MSXML2.FreeThreadedDOMDocument60Class xslDoc = new
-				MSXML2.FreeThreadedDOMDocument60Class();
-			MSXML2.DOMDocument60Class xmlDoc = new MSXML2.DOMDocument60Class();
-			MSXML2.IXSLProcessor xslProc;
-
-			xslDoc.async = false;
-			xslDoc.setProperty("ResolveExternals", true);
-			xslDoc.setProperty("ProhibitDTD", false);
-			xslDoc.setProperty("AllowDocumentFunction", true); // MSXSL 6 defaults to false
-			xslDoc.load(sTransformName);
-			xslt.stylesheet = xslDoc;
-			xmlDoc.setProperty("ResolveExternals", true);
-			xmlDoc.setProperty("ProhibitDTD", false);
-			xmlDoc.async = false;
-			var fOk = xmlDoc.load(sInputPath);
-			if (!fOk)
-			{
-				var msg = String.Format(XmlUtilsStrings.ksXmlFileIsInvalid, sInputPath);
-				MessageBox.Show(msg, XmlUtilsStrings.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-			}
-			xslProc = xslt.createProcessor();
-			xslProc.input = xmlDoc;
-			AddParameters(parameterList, xslProc);
-			xslProc.transform();
-			using (StreamWriter sr = File.CreateText(sOutputName))
-			{
-				sr.Write(xslProc.output);
-				sr.Close();
-			}
-#endif // __MonoCS__
-#endif // UsingDotNetTransforms
-#if DEBUG
-			DateTime end = DateTime.Now;
-			Debug.WriteLine("\tEnding at: " + end.TimeOfDay.ToString());
-			System.TimeSpan diff = end.Subtract(start);
-			Debug.WriteLine("\tProcess took: " + diff.ToString() + " " + sOutputName);
-#endif
 		}
 
 #if UsingDotNetTransforms
