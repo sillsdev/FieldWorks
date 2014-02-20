@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -15,7 +16,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// The current model being worked with
 		/// </summary>
-		private DictionaryConfigurationModel _model;
+		internal DictionaryConfigurationModel _model;
 
 		/// <summary>
 		/// The view to display the model in
@@ -164,6 +165,66 @@ namespace SIL.FieldWorks.XWorks
 			var options = node.DictionaryNodeOptions;
 
 			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Whether node can be moved among its siblings.
+		/// </summary>
+		public static bool CanReorder(ConfigurableDictionaryNode node, Direction direction)
+		{
+			if (node == null)
+				throw new ArgumentNullException();
+
+			var parent = node.Parent;
+			// Root node can't be moved
+			if (parent == null)
+				return false;
+
+			var nodeIndex = parent.Children.IndexOf(node);
+			if (direction == Direction.Up && nodeIndex == 0)
+				return false;
+			var lastSiblingIndex = parent.Children.Count - 1;
+			if (direction == Direction.Down && nodeIndex == lastSiblingIndex)
+				return false;
+
+			return true;
+		}
+
+		/// <summary>
+		/// Represents the direction of moving a configuration node among its siblings. (Not up or down a hierarchy).
+		/// </summary>
+		internal enum Direction
+		{
+			Up,
+			Down
+		};
+
+		/// <summary>
+		/// Move a node among its siblings in the model, and cause the view to update accordingly.
+		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "GetTreeView returns a reference")]
+		public void Reorder(ConfigurableDictionaryNode node, Direction direction)
+		{
+			if (node == null)
+				throw new ArgumentNullException();
+			if (!CanReorder(node, direction))
+				throw new ArgumentOutOfRangeException();
+			var parent = node.Parent;
+			var nodeIndex = parent.Children.IndexOf(node);
+
+			// For Direction.Up
+			var newNodeIndex = nodeIndex - 1;
+			// or Down
+			if (direction == Direction.Down)
+				newNodeIndex = nodeIndex + 1;
+
+			parent.Children.RemoveAt(nodeIndex);
+			parent.Children.Insert(newNodeIndex, node);
+
+			// Update view
+			View.GetTreeView().Nodes.Clear();
+			var rootNodes = _model.Parts;
+			CreateTreeOfTreeNodes(null, rootNodes);
 		}
 	}
 }

@@ -51,6 +51,12 @@ namespace SIL.FieldWorks.XWorks
 		public string Between { get; set; }
 
 		/// <summary>
+		/// Parent of this node, or null.
+		/// </summary>
+		[XmlIgnore]
+		public ConfigurableDictionaryNode Parent { get; internal set; }
+
+		/// <summary>
 		/// Ordered list of nodes contained by this configurable node
 		/// </summary>
 		[XmlElement(ElementName = "ConfigurationItem")]

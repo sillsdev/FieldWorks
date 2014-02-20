@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.Remoting;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -292,7 +293,12 @@ namespace SIL.FieldWorks.XWorks
 		{
 			for (int childIndex = 0; childIndex < numberOfChildren; childIndex++)
 			{
-				var child = new ConfigurableDictionaryNode() { Label = node.Label + "." + childIndex, Children = new List<ConfigurableDictionaryNode>()};
+				var child = new ConfigurableDictionaryNode()
+				{
+					Label = node.Label + "." + childIndex,
+					Children = new List<ConfigurableDictionaryNode>(),
+					Parent = node
+				};
 				node.Children.Add(child);
 			}
 		}
@@ -313,6 +319,129 @@ namespace SIL.FieldWorks.XWorks
 				Assert.That(childLabel, Is.EqualTo(expectedChildLabel), "TreeNode child has associated configuration dictionary node with wrong label");
 				VerifyTreeNodeHierarchy(child);
 			}
+		}
+
+		/// <summary/>
+		[Test]
+		public void CanReorder_ThrowsOnNullArgument()
+		{
+			// SUT
+			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationController.CanReorder(null, DictionaryConfigurationController.Direction.Up));
+		}
+
+		/// <summary/>
+		[Test]
+		public void CanReorder_CantMoveUpFirstNode()
+		{
+			var rootNode = new ConfigurableDictionaryNode() { Label = "root", Children = new List<ConfigurableDictionaryNode>() };
+			AddChildrenToNode(rootNode, 2);
+			var firstChild = rootNode.Children[0];
+			// SUT
+			Assert.That(DictionaryConfigurationController.CanReorder(firstChild, DictionaryConfigurationController.Direction.Up), Is.False, "Shouldn't be able to move up the first child");
+		}
+
+		/// <summary/>
+		[Test]
+		public void CanReorder_CanMoveDownFirstNode()
+		{
+			var rootNode = new ConfigurableDictionaryNode() { Label = "root", Children = new List<ConfigurableDictionaryNode>() };
+			AddChildrenToNode(rootNode, 2);
+			var firstChild = rootNode.Children[0];
+			// SUT
+			Assert.That(DictionaryConfigurationController.CanReorder(firstChild, DictionaryConfigurationController.Direction.Down), Is.True, "Should be able to move down the first child");
+		}
+
+		/// <summary/>
+		[Test]
+		public void CanReorder_CanMoveUpSecondNode()
+		{
+			var rootNode = new ConfigurableDictionaryNode() { Label = "root", Children = new List<ConfigurableDictionaryNode>() };
+			AddChildrenToNode(rootNode, 2);
+			var secondChild = rootNode.Children[1];
+			// SUT
+			Assert.That(DictionaryConfigurationController.CanReorder(secondChild, DictionaryConfigurationController.Direction.Up), Is.True, "Should be able to move up the second child");
+		}
+
+		/// <summary/>
+		[Test]
+		public void CanReorder_CantMoveDownLastNode()
+		{
+			var rootNode = new ConfigurableDictionaryNode() { Label = "root", Children = new List<ConfigurableDictionaryNode>() };
+			AddChildrenToNode(rootNode, 2);
+			var lastChild = rootNode.Children[1];
+			// SUT
+			Assert.That(DictionaryConfigurationController.CanReorder(lastChild, DictionaryConfigurationController.Direction.Down), Is.False, "Shouldn't be able to move down the last child");
+		}
+
+		/// <summary/>
+		[Test]
+		public void CanReorder_CantReorderRootNodes()
+		{
+			var rootNode = new ConfigurableDictionaryNode() { Label = "root", Children = new List<ConfigurableDictionaryNode>() };
+
+			// SUT
+			Assert.That(DictionaryConfigurationController.CanReorder(rootNode, DictionaryConfigurationController.Direction.Up), Is.False, "Should not be able to reorder a root node");
+			Assert.That(DictionaryConfigurationController.CanReorder(rootNode, DictionaryConfigurationController.Direction.Down), Is.False, "Should not be able to reorder a root node");
+		}
+
+		/// <summary/>
+		[Test]
+		public void Reorder_ThrowsOnNullArgument()
+		{
+			var controller = new DictionaryConfigurationController();
+			// SUT
+			Assert.Throws<ArgumentNullException>(() => controller.Reorder(null, DictionaryConfigurationController.Direction.Up));
+		}
+
+		/// <summary/>
+		[Test]
+		public void Reorder_ThrowsIfCantReorder()
+		{
+			var controller = new DictionaryConfigurationController();
+			var rootNode = new ConfigurableDictionaryNode() { Label = "root", Children = new List<ConfigurableDictionaryNode>() };
+			AddChildrenToNode(rootNode, 2);
+			var firstChild = rootNode.Children[0];
+			var secondChild = rootNode.Children[1];
+			AddChildrenToNode(firstChild, 1);
+			var grandChild = firstChild.Children[0];
+			// SUT
+			Assert.Throws<ArgumentOutOfRangeException>(() => controller.Reorder(firstChild, DictionaryConfigurationController.Direction.Up));
+			Assert.Throws<ArgumentOutOfRangeException>(() => controller.Reorder(secondChild, DictionaryConfigurationController.Direction.Down));
+			Assert.Throws<ArgumentOutOfRangeException>(() => controller.Reorder(grandChild, DictionaryConfigurationController.Direction.Up), "Can't move a node with no siblings");
+		}
+
+		/// <summary/>
+		[Test]
+		public void Reorder_ReordersSiblings()
+		{
+			var movingChildOriginalPosition = 1;
+			var movingChildExpectedPosition = 0;
+			var directionToMoveChild = DictionaryConfigurationController.Direction.Up;
+
+			MoveSiblingAndVerifyPosition(movingChildOriginalPosition, movingChildExpectedPosition, directionToMoveChild);
+
+			movingChildOriginalPosition = 0;
+			movingChildExpectedPosition = 1;
+			directionToMoveChild = DictionaryConfigurationController.Direction.Down;
+
+			MoveSiblingAndVerifyPosition(movingChildOriginalPosition, movingChildExpectedPosition, directionToMoveChild);
+		}
+
+		private void MoveSiblingAndVerifyPosition(int movingChildOriginalPosition, int movingChildExpectedPosition,
+			DictionaryConfigurationController.Direction directionToMoveChild)
+		{
+			var controller = new DictionaryConfigurationController() { View = new TestConfigurableDictionaryView(), _model = m_model };
+			var rootNode = new ConfigurableDictionaryNode() {Label = "root", Children = new List<ConfigurableDictionaryNode>()};
+			AddChildrenToNode(rootNode, 2);
+			var movingChild = rootNode.Children[movingChildOriginalPosition];
+			var otherChild = rootNode.Children[movingChildExpectedPosition];
+			m_model.Parts = new List<ConfigurableDictionaryNode>() {rootNode};
+			// SUT
+			controller.Reorder(movingChild, directionToMoveChild);
+			Assert.That(rootNode.Children[movingChildExpectedPosition], Is.EqualTo(movingChild), "movingChild should have been moved");
+			Assert.That(rootNode.Children[movingChildOriginalPosition], Is.Not.EqualTo(movingChild), "movingChild should not still be in original position");
+			Assert.That(rootNode.Children[movingChildOriginalPosition], Is.EqualTo(otherChild), "unexpected child in original movingChild position");
+			Assert.That(rootNode.Children.Count, Is.EqualTo(2), "unexpected number of reordered siblings");
 		}
 
 		private sealed class TestConfigurableDictionaryView : IDictionaryConfigurationView, IDisposable
