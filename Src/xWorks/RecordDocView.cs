@@ -480,7 +480,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			if (m_configObjectName == null || m_configObjectName == "")
+			if (string.IsNullOrEmpty(m_configObjectName))
 			{
 				display.Enabled = display.Visible = false;
 				return true;
@@ -510,7 +510,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				using(var dlg = new DictionaryConfigurationDlg(m_mediator))
 				{
-					var controller = new DictionaryConfigurationController(dlg, m_mediator);
+					new DictionaryConfigurationController(dlg, m_mediator);
 					if(dlg.ShowDialog(this) == DialogResult.OK)
 					{
 						m_mediator.SendMessage("MasterRefresh", null);

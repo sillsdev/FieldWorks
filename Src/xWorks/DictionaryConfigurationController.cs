@@ -8,7 +8,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -27,6 +26,11 @@ namespace SIL.FieldWorks.XWorks
 		/// The view to display the model in
 		/// </summary>
 		internal IDictionaryConfigurationView View { get; set; }
+
+		/// <summary>
+		/// Controls the portion of the dialog where an element in a dictionary entry is configured in detail
+		/// </summary>
+		private DictionaryDetailsController DetailsController { get; set; }
 
 		/// <summary>
 		/// Available dictionary configurations (eg stem- and root-based)
@@ -88,7 +92,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Populate dictionary elements tree, from model.
 		/// </summary>
-		internal void PopulateTreeView()
+		internal void PopulateTreeView(Mediator mediator)
 		{
 			View.TreeControl.Tree.AfterCheck += (sender, args) =>
 			{
@@ -109,7 +113,7 @@ namespace SIL.FieldWorks.XWorks
 				View.TreeControl.RemoveEnabled = false;
 				View.TreeControl.RenameEnabled = false;
 
-				BuildAndShowOptions(node);
+				BuildAndShowOptions(node, mediator);
 			};
 
 			RefreshView();
@@ -219,6 +223,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Constructs a DictionaryConfigurationController with a view and a model pulled from user settings
 		/// </summary>
 		/// <param name="view"></param>
+		/// <param name="mediator"></param>
 		public DictionaryConfigurationController(IDictionaryConfigurationView view, Mediator mediator)
 		{
 			View = view;
@@ -229,7 +234,7 @@ namespace SIL.FieldWorks.XWorks
 						? _alternateDictionaries[lastUsedAlternateDictionary]
 						: _alternateDictionaries.Values.First();
 			// Populate the tree view with the users last configuration, or the first one in the list of alternates.
-			PopulateTreeView();
+			PopulateTreeView(mediator);
 			view.ManageViews += (sender, args) => new DictionaryConfigMgrDlg(mediator, "", new List<XmlNode>(), null).ShowDialog(view as Form);
 			view.SaveModel += (sender, args) => { /*_model.Save(); (needs to save in project config location, not default where it was loaded from) */ };
 
@@ -243,10 +248,13 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Populate options pane, from model.
 		/// </summary>
-		private void BuildAndShowOptions(ConfigurableDictionaryNode node)
+		private void BuildAndShowOptions(ConfigurableDictionaryNode node, Mediator mediator)
 		{
-			var options = node.DictionaryNodeOptions;
-			// todo: Hasso will put awesome code here to make a control from the node and put it
+			if (DetailsController == null)
+				DetailsController = new DictionaryDetailsController(node, mediator);
+			else
+				DetailsController.Init(node, mediator);
+			View.DetailsView = DetailsController.View;
 		}
 
 		/// <summary>

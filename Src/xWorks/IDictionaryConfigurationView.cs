@@ -4,7 +4,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
+using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -24,6 +24,11 @@ namespace SIL.FieldWorks.XWorks
 		/// Gets the tree hierarchy control.
 		/// </summary>
 		DictionaryConfigurationTreeControl TreeControl { get; }
+
+		/// <summary>
+		/// Sets the DetailsView
+		/// </summary>
+		DetailsView DetailsView { set; }
 
 		/// <summary>
 		/// Redraw the widgets, updating anything that has changed.

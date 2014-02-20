@@ -10,6 +10,7 @@ using System.IO;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.FDOTests;
+using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -37,14 +38,15 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void PopulateTreeViewBuildsRightNumberOfNodes()
 		{
-			using(var testView = new TestConfigurableDictionaryView())
+			using (var testView = new TestConfigurableDictionaryView())
 			{
 				m_model.Parts = new List<ConfigurableDictionaryNode> { BuildTestPartTree(2, 5) };
 
 				var dcc = new DictionaryConfigurationController {View = testView, _model = m_model};
 
 				//SUT
-				dcc.PopulateTreeView();
+				dcc.PopulateTreeView(null);
+
 				ValidateTreeForm(2, 5, dcc.View.TreeControl.Tree);
 			}
 		}
@@ -54,7 +56,7 @@ namespace SIL.FieldWorks.XWorks
 			var validationCount = 0;
 			var validationLevels = 0;
 			CalculateTreeInfo(ref validationLevels, ref validationCount, treeView.Nodes);
-			Assert.AreEqual(levels, validationLevels, "Tree heirarchy incorrect");
+			Assert.AreEqual(levels, validationLevels, "Tree hierarchy incorrect");
 			Assert.AreEqual(nodeCount, validationCount, "Tree node count incorrect");
 		}
 
@@ -86,12 +88,12 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if(numberOfLevels < 1)
 			{
-				throw new ArgumentException("You wanted less than one level in the heirarchy, really?");
+				throw new ArgumentException("You wanted less than one level in the hierarchy.  Really?");
 			}
 
 			if(numberOfNodes < numberOfLevels)
 			{
-				throw new ArgumentException("You asked for more levels in the heirarchy then nodes in the tree, how did you expect me to do that?");
+				throw new ArgumentException("You asked for more levels in the hierarchy then nodes in the tree; how did you expect me to do that?");
 			}
 			ConfigurableDictionaryNode rootNode = null;
 			ConfigurableDictionaryNode workingNode = null;
@@ -237,7 +239,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "GetTreeView returns a reference")]
 		private TreeNode BasicTreeNodeVerification(DictionaryConfigurationController controller, ConfigurableDictionaryNode rootNode)
 		{
 			Assert.That(controller.View.TreeControl.Tree.Nodes[0].Tag, Is.EqualTo(rootNode), "root TreeNode does not corresponded to expected dictionary configuration node");
@@ -538,6 +539,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				get { return m_treeControl; }
 			}
+
+			public DetailsView DetailsView { set; private get; }
 
 			public void Redraw()
 			{

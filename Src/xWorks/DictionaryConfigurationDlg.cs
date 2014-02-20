@@ -4,10 +4,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -58,6 +60,22 @@ namespace SIL.FieldWorks.XWorks
 		public DictionaryConfigurationTreeControl TreeControl
 		{
 			get { return treeControl; }
+		}
+
+		public DetailsView DetailsView
+		{
+			set
+			{
+				if(detailsView != null)
+					detailsView.Dispose();
+
+				detailsView = value;
+				previewDetailSplit.Panel2.Controls.Add(detailsView);
+				detailsView.Dock = DockStyle.Fill;
+				detailsView.Location = new Point(0, 0);
+
+				// TODO pH 2014.02: ensure adequate size
+			}
 		}
 
 		public void Redraw()

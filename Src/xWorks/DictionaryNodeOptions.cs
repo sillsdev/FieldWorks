@@ -57,6 +57,13 @@ namespace SIL.FieldWorks.XWorks
 		public List<DictionaryNodeOption> Options { get; set; }
 	}
 
+	/// <summary>Options for Referenced Complex Forms</summary>
+	public class DictionaryNodeComplexFormOptions : DictionaryNodeListOptions
+	{
+		[XmlAttribute(AttributeName = "displayEachComplexFormInParagraph")]
+		public bool DisplayEachComplexFormInAParagraph { get; set; }
+	}
+
 	/// <summary>Options for selecting and ordering WritingSystems</summary>
 	public class DictionaryNodeWritingSystemOptions : DictionaryNodeListOptions
 	{

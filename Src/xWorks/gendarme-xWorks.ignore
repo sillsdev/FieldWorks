@@ -4,11 +4,11 @@
 R: Gendarme.Rules.Correctness.DisposableFieldsShouldBeDisposedRule
 
 # Reference only
+T: SIL.FieldWorks.XWorks.CombinedStylesListHandler
 T: SIL.FieldWorks.XWorks.LinkListener
 T: SIL.FieldWorks.XWorks.RecordBarHandler
 T: SIL.FieldWorks.XWorks.RecordClerk
 T: SIL.FieldWorks.XWorks.WritingSystemListHandler
-T: SIL.FieldWorks.XWorks.CombinedStylesListHandler
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
@@ -19,7 +19,7 @@ M: System.Boolean SIL.FieldWorks.XWorks.DTMenuHandler::OnDisplayDataTreeInsert(S
 M: System.Boolean SIL.FieldWorks.XWorks.DTMenuHandler::OnDisplayDataTreeCopy(System.Object,XCore.UIItemDisplayProperties&)
 M: System.Void SIL.FieldWorks.XWorks.ExportDialog::InitFromMainControl(System.Object)
 M: System.IO.Stream SIL.FieldWorks.XWorks.FwXApp::get_ApplicationIconStream()
-M:  System.Boolean SIL.FieldWorks.XWorks.FwXWindow::FocusControlHandlesMessage(System.String,System.Object[])
+M: System.Boolean SIL.FieldWorks.XWorks.FwXWindow::FocusControlHandlesMessage(System.String,System.Object[])
 M: System.Void SIL.FieldWorks.XWorks.TreeBarHandler::tree_MouseClicked(System.Object,System.Windows.Forms.MouseEventArgs)
 M: System.Boolean SIL.FieldWorks.XWorks.RecordBrowseView::OnRecordNavigation(System.Object)
 M: System.Boolean SIL.FieldWorks.XWorks.RecordClerk::get_SkipShowRecord()
@@ -43,14 +43,15 @@ M: System.Collections.IEnumerator SIL.FieldWorks.XWorks.InterestingTextList/<get
 R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
 
 # Reference only
+T: SIL.FieldWorks.XWorks.ConcDecorator
 T: SIL.FieldWorks.XWorks.DTMenuHandler
 T: SIL.FieldWorks.XWorks.DeleteCustomList
+T: SIL.FieldWorks.XWorks.DictionaryDetailsController
 T: SIL.FieldWorks.XWorks.ExportDialog/TranslatedListsExporter
 T: SIL.FieldWorks.XWorks.InterestingTextList
+T: SIL.FieldWorks.XWorks.ListChangedEventArgs
 T: SIL.FieldWorks.XWorks.LocalDragItem
 T: SIL.FieldWorks.XWorks.RecordClerk/ListUpdateHelper/ListUpdateHelperOptions
-T: SIL.FieldWorks.XWorks.RecordNavigationInfo
-T: SIL.FieldWorks.XWorks.ListChangedEventArgs
 T: SIL.FieldWorks.XWorks.RecordList/CpiPathBasedCreateAndInsert
+T: SIL.FieldWorks.XWorks.RecordNavigationInfo
 T: SIL.FieldWorks.XWorks.WordsUsedOnlyElsewhereFilter
-T: SIL.FieldWorks.XWorks.ConcDecorator

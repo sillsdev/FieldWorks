@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
+using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -287,5 +288,6 @@ namespace SIL.FieldWorks.XWorks
 		private System.Windows.Forms.SplitContainer previewDetailSplit;
 		private XWorks.RecordDocXmlView m_preview;
 		private DictionaryConfigurationTreeControl treeControl;
+		private DetailsView detailsView;
 	}
 }
