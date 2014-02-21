@@ -73,12 +73,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			SetUpM3FXTDump();
 		}
 
-		[TestFixtureTearDown]
-		public override void FixtureTeardown()
-		{
-			base.FixtureTeardown();
-		}
-
 		private void SetUpM3FXTDump()
 		{
 			m_sM3FXTDump = Path.Combine(m_sTestPath, "M3FXTDump.xml");
@@ -120,11 +114,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private void SetUpXAmpleTransforms()
 		{
-			SetUpTransform(out m_adTransform, "FxtM3ParserToXAmpleADCtl");
-			SetUpTransform(out m_lexTransform, "FxtM3ParserToXAmpleLex");
-			SetUpTransform(out m_gramTransform, "FxtM3ParserToToXAmpleGrammar");
+			SetUpTransform("FxtM3ParserToXAmpleADCtl", out m_adTransform);
+			SetUpTransform("FxtM3ParserToXAmpleLex", out m_lexTransform);
+			SetUpTransform("FxtM3ParserToToXAmpleGrammar", out m_gramTransform);
 		}
-		private void SetUpTransform(out XslCompiledTransform transform, string name)
+
+		private void SetUpTransform(string name, out XslCompiledTransform transform)
 		{
 			transform = XmlUtils.CreateTransform(name, "ApplicationTransforms");
 		}

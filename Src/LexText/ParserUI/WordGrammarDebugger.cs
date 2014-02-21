@@ -99,8 +99,6 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void CreateAnalysisXml(XmlWriter writer, string nodeId, string form)
 		{
-			writer.WriteStartDocument();
-
 			writer.WriteStartElement("word");
 			writer.WriteElementString("form", form);
 			writer.WriteStartElement("seq");
@@ -109,16 +107,12 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			writer.WriteEndElement();
 			writer.WriteEndElement();
-
-			writer.WriteEndDocument();
 		}
 
 		protected abstract void WriteMorphNodes(XmlWriter writer, string nodeId);
 
 		private void CreateSelectedWordGrammarXml(XmlWriter writer, string nodeId, string form)
 		{
-			writer.WriteStartDocument();
-
 			writer.WriteStartElement("word");
 			writer.WriteElementString("form", form);
 
@@ -132,7 +126,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			writer.WriteEndElement();
 			// create the seq node
 			selectedSeqNode.WriteTo(writer);
-			writer.WriteStartElement("seq");
 			writer.WriteEndElement();
 		}
 

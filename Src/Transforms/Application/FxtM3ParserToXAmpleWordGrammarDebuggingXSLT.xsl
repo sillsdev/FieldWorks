@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wgd="output.xsl"
- xmlns:exsl="http://exslt.org/common" exclude-result-prefixes="exsl">
+ xmlns:msxsl="urn:schemas-microsoft-com:xslt" exclude-result-prefixes="msxsl">
    <xsl:output method="xml" version="1.0" encoding="utf-8" indent="yes"/>
    <!--
 ================================================================
@@ -85,8 +85,8 @@ Main template
 	  <!-- output header info -->
 	  <xsl:element name="xsl:stylesheet">
 		 <xsl:attribute name="version">1.0</xsl:attribute>
-		 <xsl:attribute name="exsl:dummy" namespace="http://exslt.org/common"/>
-		 <xsl:attribute name="exclude-result-prefixes">exsl</xsl:attribute>
+		 <xsl:attribute name="msxsl:dummy" namespace="urn:schemas-microsoft-com:xslt"/>
+		 <xsl:attribute name="exclude-result-prefixes">msxsl</xsl:attribute>
 		 <xsl:element name="xsl:output">
 			<xsl:attribute name="method">xml</xsl:attribute>
 			<xsl:attribute name="version">1.0</xsl:attribute>
@@ -1334,16 +1334,16 @@ Ignore text template
 			<wgd:otherwise>
 			   <wgd:variable name="sResult">
 				  <xsl:comment>loop through the features of both feature structures at same time, sorted by name</xsl:comment>
-				  <wgd:for-each select="exsl:node-set($X)/feature | exsl:node-set($Y)/feature">
+				  <wgd:for-each select="msxsl:node-set($X)/feature | msxsl:node-set($Y)/feature">
 					 <wgd:sort select="name"/>
 					 <xsl:comment>get name of this feature</xsl:comment>
 					 <wgd:variable name="sName">
 						<wgd:value-of select="name"/>
 					 </wgd:variable>
 					 <xsl:comment>get this feature if it's in the first feature structure</xsl:comment>
-					 <wgd:variable name="f1SameName" select="exsl:node-set($X)/feature[name=$sName]"/>
+					 <wgd:variable name="f1SameName" select="msxsl:node-set($X)/feature[name=$sName]"/>
 					 <xsl:comment>get this feature if it's in the second feature structure</xsl:comment>
-					 <wgd:variable name="f2SameName" select="exsl:node-set($Y)/feature[name=$sName]"/>
+					 <wgd:variable name="f2SameName" select="msxsl:node-set($Y)/feature[name=$sName]"/>
 					 <wgd:choose>
 						<wgd:when test="$f1SameName and $f2SameName">
 						   <xsl:comment>both feature1 and feature2 have this feature name</xsl:comment>
@@ -1424,14 +1424,14 @@ Ignore text template
 					 </wgd:otherwise>
 				  </wgd:choose>
 				  <wgd:choose>
-					 <wgd:when test="exsl:node-set($FirstFS)/@id != ''">
+					 <wgd:when test="msxsl:node-set($FirstFS)/@id != ''">
 						<wgd:value-of select="$FirstFS/@id"/>
 					 </wgd:when>
 					 <wgd:otherwise>Empty</wgd:otherwise>
 				  </wgd:choose>
 				  <wgd:text>and</wgd:text>
 				  <wgd:choose>
-					 <wgd:when test="exsl:node-set($SecondFS)/@id != ''">
+					 <wgd:when test="msxsl:node-set($SecondFS)/@id != ''">
 						<wgd:value-of select="$SecondFS/@id"/>
 					 </wgd:when>
 					 <wgd:otherwise>Empty</wgd:otherwise>
@@ -1440,16 +1440,16 @@ Ignore text template
 			   </wgd:attribute>
 			</wgd:if>
 			<xsl:comment>loop through the features of both feature structures at same time, sorted by name</xsl:comment>
-			<wgd:for-each select="exsl:node-set($FirstFS)/feature | exsl:node-set($SecondFS)/feature">
+			<wgd:for-each select="msxsl:node-set($FirstFS)/feature | msxsl:node-set($SecondFS)/feature">
 			   <wgd:sort select="name"/>
 			   <xsl:comment>get name of this feature</xsl:comment>
 			   <wgd:variable name="sName">
 				  <wgd:value-of select="name"/>
 			   </wgd:variable>
 			   <xsl:comment>get this feature if it's in the first feature structure</xsl:comment>
-			   <wgd:variable name="f1SameName" select="exsl:node-set($FirstFS)/feature[name=$sName]"/>
+			   <wgd:variable name="f1SameName" select="msxsl:node-set($FirstFS)/feature[name=$sName]"/>
 			   <xsl:comment>get this feature if it's in the second feature structure </xsl:comment>
-			   <wgd:variable name="f2SameName" select="exsl:node-set($SecondFS)/feature[name=$sName]"/>
+			   <wgd:variable name="f2SameName" select="msxsl:node-set($SecondFS)/feature[name=$sName]"/>
 			   <wgd:choose>
 				  <wgd:when test="$f1SameName and $f2SameName">
 					 <xsl:comment>both feature1 and feature2 have this feature name</xsl:comment>
@@ -1582,7 +1582,7 @@ Ignore text template
 		 <wgd:choose>
 			<wgd:when test="$iRemaining &gt; 0">
 			   <wgd:call-template name="UnifySuffixSlots">
-				  <wgd:with-param name="PreviousResult" select="exsl:node-set($CurrentUnification)/fs"/>
+				  <wgd:with-param name="PreviousResult" select="msxsl:node-set($CurrentUnification)/fs"/>
 				  <wgd:with-param name="SuffixSlot" select="$SuffixSlot/following-sibling::*[1]"/>
 				  <wgd:with-param name="iRemaining" select="$iRemaining - 1"/>
 				  <wgd:with-param name="sRuleInfo" select="$sRuleInfo"/>
@@ -1630,7 +1630,7 @@ Ignore text template
 		 <wgd:choose>
 			<wgd:when test="$iRemaining &gt; 0">
 			   <wgd:call-template name="UnifyPrefixSlots">
-				  <wgd:with-param name="PreviousResult" select="exsl:node-set($CurrentUnification)/fs"/>
+				  <wgd:with-param name="PreviousResult" select="msxsl:node-set($CurrentUnification)/fs"/>
 				  <wgd:with-param name="PrefixSlot" select="$PrefixSlot/preceding-sibling::*[1]"/>
 				  <wgd:with-param name="iRemaining" select="$iRemaining - 1"/>
 				  <wgd:with-param name="sRuleInfo" select="$sRuleInfo"/>
@@ -1800,8 +1800,8 @@ Ignore text template
 										  <xsl:call-template name="OutputFsFeatStrucAsXml"/>
 									   </wgd:variable>
 									   <wgd:call-template name="XSubsumesY">
-										  <wgd:with-param name="X" select="exsl:node-set(${$regionFsWithId})/fs"/>
-										  <wgd:with-param name="Y" select="exsl:node-set($InflFeatures)/fs"/>
+										  <wgd:with-param name="X" select="msxsl:node-set(${$regionFsWithId})/fs"/>
+										  <wgd:with-param name="Y" select="msxsl:node-set($InflFeatures)/fs"/>
 									   </wgd:call-template>
 									</xsl:for-each>
 								 </xsl:when>
@@ -1832,7 +1832,7 @@ Ignore text template
 									<xsl:call-template name="OutputFsFeatStrucAsText"/>
 								 </xsl:for-each>
 								 <xsl:text>.  The inflected features for this word are: </xsl:text>
-								 <wgd:for-each select="exsl:node-set($InflFeatures)">
+								 <wgd:for-each select="msxsl:node-set($InflFeatures)">
 									<wgd:call-template name="OutputFeatureStructureAsText">
 									   <wgd:with-param name="fs" select="fs"/>
 									</wgd:call-template>
@@ -2750,15 +2750,15 @@ Ignore text template
 			<wgd:choose>
 			   <wgd:when test="$affixAlloFeats">
 				  <wgd:call-template name="XSubsumesY">
-					 <wgd:with-param name="X" select="exsl:node-set($affixAlloFeats)"/>
-					 <wgd:with-param name="Y" select="exsl:node-set($stem)/fs"/>
+					 <wgd:with-param name="X" select="msxsl:node-set($affixAlloFeats)"/>
+					 <wgd:with-param name="Y" select="msxsl:node-set($stem)/fs"/>
 				  </wgd:call-template>
 			   </wgd:when>
 			   <wgd:when test="$notAffixAlloFeats">
 				  <wgd:for-each select="$notAffixAlloFeats/fs">
 					 <wgd:call-template name="XSubsumesY">
-						<wgd:with-param name="X" select="exsl:node-set(.)"/>
-						<wgd:with-param name="Y" select="exsl:node-set($stem)/fs"/>
+						<wgd:with-param name="X" select="msxsl:node-set(.)"/>
+						<wgd:with-param name="Y" select="msxsl:node-set($stem)/fs"/>
 					 </wgd:call-template>
 				  </wgd:for-each>
 			   </wgd:when>
@@ -2789,7 +2789,7 @@ Ignore text template
 				  <wgd:text>.  The inflected features for this </wgd:text>
 				  <wgd:value-of select="$sAttachesTo"/>
 				  <wgd:text> are: </wgd:text>
-				  <wgd:for-each select="exsl:node-set($stem)">
+				  <wgd:for-each select="msxsl:node-set($stem)">
 					 <wgd:call-template name="OutputFeatureStructureAsText">
 						<wgd:with-param name="fs" select="fs"/>
 					 </wgd:call-template>
@@ -2820,7 +2820,7 @@ Ignore text template
 				  <wgd:text>.  The inflected features for this </wgd:text>
 				  <wgd:value-of select="$sAttachesTo"/>
 				  <wgd:text> are: </wgd:text>
-				  <wgd:for-each select="exsl:node-set($stem)">
+				  <wgd:for-each select="msxsl:node-set($stem)">
 					 <wgd:call-template name="OutputFeatureStructureAsText">
 						<wgd:with-param name="fs" select="fs"/>
 					 </wgd:call-template>
@@ -2856,18 +2856,18 @@ Ignore text template
 		 </wgd:call-template>
 	  </wgd:variable>
 	  <wgd:choose>
-		 <wgd:when test="exsl:node-set($UnificationOfStemAndDerivFrom)/descendant::failure">
+		 <wgd:when test="msxsl:node-set($UnificationOfStemAndDerivFrom)/descendant::failure">
 			<wgd:copy-of select="$UnificationOfStemAndDerivFrom"/>
 		 </wgd:when>
 		 <wgd:otherwise>
 			<xsl:comment>Override those unified features with deriv to features</xsl:comment>
 			<wgd:variable name="PriorityUnion">
 			   <wgd:call-template name="OverrideFirstFsWithSecondFs">
-				  <wgd:with-param name="FirstFS" select="exsl:node-set($UnificationOfStemAndDerivFrom)/fs"/>
+				  <wgd:with-param name="FirstFS" select="msxsl:node-set($UnificationOfStemAndDerivFrom)/fs"/>
 				  <wgd:with-param name="SecondFS" select="$derivMorph/derivMsa/toFS"/>
 			   </wgd:call-template>
 			</wgd:variable>
-			<wgd:if test="exsl:node-set($PriorityUnion)/descendant::feature">
+			<wgd:if test="msxsl:node-set($PriorityUnion)/descendant::feature">
 			   <wgd:copy-of select="$PriorityUnion"/>
 			</wgd:if>
 		 </wgd:otherwise>
@@ -3830,7 +3830,7 @@ OutputElsewhereChecksForStemNamesUsedInLexicalEntries
 					 <xsl:with-param name="sStemNames" select="$sFirst"/>
 				  </xsl:call-template>
 				  <xsl:text>.  The inflected features for this word are: </xsl:text>
-				  <wgd:for-each select="exsl:node-set($InflFeatures)">
+				  <wgd:for-each select="msxsl:node-set($InflFeatures)">
 					 <wgd:call-template name="OutputFeatureStructureAsText">
 						<wgd:with-param name="fs" select="fs"/>
 					 </wgd:call-template>
@@ -4013,8 +4013,8 @@ OutputMultipleStemNameRegionsSubsumptionChecks
 			   </wgd:variable>
 			   <wgd:variable name="{$regionFsWithId}SubsumptionResult">
 				  <wgd:call-template name="XSubsumesY">
-					 <wgd:with-param name="X" select="exsl:node-set(${$regionFsWithId})/fs"/>
-					 <wgd:with-param name="Y" select="exsl:node-set($InflFeatures)/fs"/>
+					 <wgd:with-param name="X" select="msxsl:node-set(${$regionFsWithId})/fs"/>
+					 <wgd:with-param name="Y" select="msxsl:node-set($InflFeatures)/fs"/>
 				  </wgd:call-template>
 			   </wgd:variable>
 			   <wgd:if test="contains(${$regionFsWithId}SubsumptionResult,'Y')">
@@ -4337,9 +4337,9 @@ ProcessInflectionalTemplatePercolationAndConstraints
 			   <wgd:choose>
 				  <wgd:when test="string-length($PrefixSlotsUnification) &gt; 0 and string-length($SuffixSlotsUnification) &gt; 0">
 					 <wgd:call-template name="UnifyTwoFeatureStructures">
-						<wgd:with-param name="FirstFS" select="exsl:node-set($PrefixSlotsUnification)/fs"/>
-						<wgd:with-param name="SecondFS" select="exsl:node-set($SuffixSlotsUnification)/fs"/>
-						<wgd:with-param name="sTopLevelId" select="exsl:node-set($PrefixSlotsUnification)/fs/@id"/>
+						<wgd:with-param name="FirstFS" select="msxsl:node-set($PrefixSlotsUnification)/fs"/>
+						<wgd:with-param name="SecondFS" select="msxsl:node-set($SuffixSlotsUnification)/fs"/>
+						<wgd:with-param name="sTopLevelId" select="msxsl:node-set($PrefixSlotsUnification)/fs/@id"/>
 						<wgd:with-param name="sRuleInfo">
 						   <xsl:call-template name="ReportInflectionalTemplateName">
 							  <xsl:with-param name="template" select="."/>
@@ -4363,7 +4363,7 @@ ProcessInflectionalTemplatePercolationAndConstraints
 			</wgd:variable>
 			<wgd:call-template name="UnifyTwoFeatureStructures">
 			   <wgd:with-param name="FirstFS" select="fs"/>
-			   <wgd:with-param name="SecondFS" select="exsl:node-set($PrefixSuffixSlotsUnification)/fs"/>
+			   <wgd:with-param name="SecondFS" select="msxsl:node-set($PrefixSuffixSlotsUnification)/fs"/>
 			   <wgd:with-param name="sTopLevelId" select="fs/@id"/>
 			   <wgd:with-param name="sRuleInfo">
 				  <xsl:call-template name="ReportInflectionalTemplateName">
@@ -4390,7 +4390,7 @@ ProcessInflectionalTemplatePercolationAndConstraints
 					<wgd:with-param name="sAffix" select="'inflectional'"/>
 					<wgd:with-param name="sAttachesTo" select="'inflected form'"/>
 					<wgd:with-param name="morph" select="."/>
-					<wgd:with-param name="stem" select="exsl:node-set($InflFeaturesToPercolate)"/>
+					<wgd:with-param name="stem" select="msxsl:node-set($InflFeaturesToPercolate)"/>
 				</wgd:call-template>
 			</wgd:for-each>
 		</wgd:if>
@@ -4405,11 +4405,11 @@ ProcessInflectionalTemplatePercolationAndConstraints
 					<wgd:with-param name="sAffix" select="'inflectional'"/>
 					<wgd:with-param name="sAttachesTo" select="'inflected form'"/>
 					<wgd:with-param name="morph" select="."/>
-					<wgd:with-param name="stem" select="exsl:node-set($InflFeaturesToPercolate)"/>
+					<wgd:with-param name="stem" select="msxsl:node-set($InflFeaturesToPercolate)"/>
 				</wgd:call-template>
 			</wgd:for-each>
 		</wgd:if>
-		<wgd:if test="exsl:node-set($InflFeaturesToPercolate)/fs/descendant::feature">
+		<wgd:if test="msxsl:node-set($InflFeaturesToPercolate)/fs/descendant::feature">
 			<wgd:copy-of select="$InflFeaturesToPercolate"/>
 		 </wgd:if>
 		 <!-- check on stem names
@@ -4427,11 +4427,11 @@ ProcessInflectionalTemplatePercolationAndConstraints
 				  <xsl:value-of select="$pos/@Id"/>
 			   </xsl:attribute>
 			   <wgd:with-param name="stemName" select="stemName/@id"/>
-			   <wgd:with-param name="InflFeatures" select="exsl:node-set($InflFeaturesToPercolate)"/>
+			   <wgd:with-param name="InflFeatures" select="msxsl:node-set($InflFeaturesToPercolate)"/>
 			</wgd:call-template>
 		 </wgd:variable>
-		 <wgd:if test="exsl:node-set($StemNameConstraintResult)/failure">
-			<wgd:copy-of select="exsl:node-set($StemNameConstraintResult)"/>
+		 <wgd:if test="msxsl:node-set($StemNameConstraintResult)/failure">
+			<wgd:copy-of select="msxsl:node-set($StemNameConstraintResult)"/>
 		 </wgd:if>
 		 <!-- end of stem name work -->
 	  </xsl:if>

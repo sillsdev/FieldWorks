@@ -382,9 +382,14 @@ namespace SIL.FieldWorks.XWorks
 									for (int i = 0; i < cXslts; ++i)
 									{
 										outputFile = outputFile + (i + 1);
-										var transform = GetTransformFromFile(Path.Combine(ExportTemplatePath, rgsXslts[i]));
+										XslCompiledTransform transform = GetTransformFromFile(Path.Combine(ExportTemplatePath, rgsXslts[i]));
+										#if !__MonoCS__
+										var xmlReaderSettings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
+										#else
+										var xmlReaderSettings = new XmlReaderSettings { ProhibitDtd = false };
+										#endif
 										using (var writer = new StreamWriter(outputFile + ".xml"))
-										using (var reader = XmlReader.Create(new XmlTextReader(inputFile), new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse }))
+										using (var reader = XmlReader.Create(inputFile, xmlReaderSettings))
 											transform.Transform(reader, null, writer);
 										inputFile = outputFile + ".xml";
 									}
@@ -630,25 +635,27 @@ namespace SIL.FieldWorks.XWorks
 				argumentList.AddParam("prmGlossFontSize", "", GetNormalStyleFontSize(wsContainer.DefaultAnalysisWritingSystem.Handle));
 			}
 
+#if !__MonoCS__
+			var xmlReaderSettings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
+#else
+			var xmlReaderSettings = new XmlReaderSettings { ProhibitDtd = false };
+#endif
 			using (var writer = new StreamWriter(outputFile))
-			using (var reader = XmlReader.Create(new XmlTextReader(inputFile), new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse }))
+			using (var reader = XmlReader.Create(inputFile, xmlReaderSettings))
 				GetTransform(stylesheetName, stylesheetAssembly).Transform(reader, argumentList, writer);
 			return outputFile;
 		}
 
 		private XslCompiledTransform GetTransform(string xslName, string xslAssembly)
 		{
-			lock (m_transforms)
+			XslCompiledTransform transform;
+			if (!m_transforms.TryGetValue(xslName, out transform))
 			{
-				XslCompiledTransform transform;
-				m_transforms.TryGetValue(xslName, out transform);
-				if (transform != null)
-					return transform;
-
 				transform = XmlUtils.CreateTransform(xslName, xslAssembly);
-				m_transforms.Add(xslName, transform);
-				return transform;
+				m_transforms[xslName] = transform;
 			}
+
+			return transform;
 		}
 
 		private XslCompiledTransform GetTransformFromFile(string xslPath)

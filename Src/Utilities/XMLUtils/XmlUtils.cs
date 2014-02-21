@@ -21,6 +21,7 @@ using System.Xml;
 using System.Globalization;
 using System.Xml.Serialization;
 using System.Xml.Xsl;
+using System.Reflection;
 
 namespace SIL.Utils
 {
@@ -915,9 +916,46 @@ namespace SIL.Utils
 			Debug.Assert(type != null);
 			transform.Load(type);
 #else
-			//transform.Load(Path.Combine(TransformPath, xslName + ".xls"), new XsltSettings(true, false), new XmlUrlResolver());
+			Assembly transformAssembly = Assembly.Load(assemblyName);
+			using (Stream stream = transformAssembly.GetManifestResourceStream(xslName + ".xsl"))
+			{
+				Debug.Assert(stream != null);
+				using (XmlReader reader = XmlReader.Create(stream))
+					transform.Load(reader, new XsltSettings(true, false), new XmlResourceResolver(transformAssembly));
+			}
 #endif
 			return transform;
+		}
+
+		private class XmlResourceResolver : XmlUrlResolver
+		{
+			private readonly Assembly m_assembly;
+
+			public XmlResourceResolver(Assembly assembly)
+			{
+				m_assembly = assembly;
+			}
+
+			public override Uri ResolveUri(Uri baseUri, string relativeUri)
+			{
+				if (baseUri == null)
+					return new Uri(string.Format("res://{0}", relativeUri));
+				return base.ResolveUri(baseUri, relativeUri);
+			}
+
+			public override object GetEntity(Uri absoluteUri, string role, Type ofObjectToReturn)
+			{
+				switch (absoluteUri.Scheme)
+				{
+				case "res":
+					return m_assembly.GetManifestResourceStream(absoluteUri.OriginalString.Substring(6));
+
+				default:
+					// Handle file:// and http://
+					// requests from the XmlUrlResolver base class
+					return base.GetEntity(absoluteUri, role, ofObjectToReturn);
+				}
+			}
 		}
 	}
 
