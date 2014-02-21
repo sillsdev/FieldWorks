@@ -16,12 +16,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Xml;
 using System.Globalization;
 using System.Xml.Serialization;
 using System.Xml.Xsl;
-using System.Reflection;
 
 namespace SIL.Utils
 {
@@ -30,13 +30,6 @@ namespace SIL.Utils
 	/// </summary>
 	public class XmlUtils
 	{
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		public XmlUtils()
-		{
-		}
-
 		/// <summary>
 		/// Returns true if value of attrName is 'true' or 'yes' (case ignored)
 		/// </summary>
@@ -94,7 +87,7 @@ namespace SIL.Utils
 		{
 			string input = GetManditoryAttributeValue(node, attrName);
 			string[] vals = input.Split(',');
-			int[] result = new int[vals.Length];
+			var result = new int[vals.Length];
 			for (int i = 0; i < vals.Length; i++)
 				result[i] = Int32.Parse(vals[i], CultureInfo.InvariantCulture);
 			return result;
@@ -110,7 +103,7 @@ namespace SIL.Utils
 		{
 			string input = GetManditoryAttributeValue(node, attrName);
 			string[] vals = input.Split(',');
-			uint[] result = new uint[vals.Length];
+			var result = new uint[vals.Length];
 			for (int i = 0; i < vals.Length; i++)
 				result[i] = UInt32.Parse(vals[i]);
 			return result;
@@ -123,12 +116,12 @@ namespace SIL.Utils
 		/// <returns></returns>
 		public static string MakeIntegerListValue(int[] vals)
 		{
-			StringBuilder builder = new StringBuilder(vals.Length * 7); // enough unless VERY big numbers
+			var builder = new StringBuilder(vals.Length * 7); // enough unless VERY big numbers
 			for (int i = 0; i < vals.Length; i++)
 			{
 				if (i != 0)
 					builder.Append(",");
-				builder.Append(vals[i].ToString());
+				builder.Append(vals[i].ToString(CultureInfo.InvariantCulture));
 			}
 			return builder.ToString();
 		}
@@ -140,12 +133,12 @@ namespace SIL.Utils
 		/// <returns></returns>
 		public static string MakeListValue(List<int> vals)
 		{
-			StringBuilder builder = new StringBuilder(vals.Count * 7); // enough unless VERY big numbers
+			var builder = new StringBuilder(vals.Count * 7); // enough unless VERY big numbers
 			for (int i = 0; i < vals.Count; i++)
 			{
 				if (i != 0)
 					builder.Append(",");
-				builder.Append(vals[i].ToString());
+				builder.Append(vals[i].ToString(CultureInfo.InvariantCulture));
 			}
 			return builder.ToString();
 		}
@@ -157,12 +150,12 @@ namespace SIL.Utils
 		/// <returns></returns>
 		public static string MakeListValue(List<uint> vals)
 		{
-			StringBuilder builder = new StringBuilder(vals.Count * 7); // enough unless VERY big numbers
+			var builder = new StringBuilder(vals.Count * 7); // enough unless VERY big numbers
 			for (int i = 0; i < vals.Count; i++)
 			{
 				if (i != 0)
 					builder.Append(",");
-				builder.Append(vals[i].ToString());
+				builder.Append(vals[i].ToString(CultureInfo.InvariantCulture));
 			}
 			return builder.ToString();
 		}
@@ -199,7 +192,7 @@ namespace SIL.Utils
 		/// <returns>The value of the attribute, or null, if not found.</returns>
 		public static string GetAttributeValue(XmlNode node, string attrName)
 		{
-			return XmlUtils.GetOptionalAttributeValue(node, attrName);
+			return GetOptionalAttributeValue(node, attrName);
 		}
 
 		/// <summary>
@@ -218,6 +211,7 @@ namespace SIL.Utils
 		/// </summary>
 		/// <param name="node">The XmlNode to look in.</param>
 		/// <param name="attrName">The attribute to find.</param>
+		/// <param name="defaultString"></param>
 		/// <returns>The value of the attribute, or null, if not found.</returns>
 		public static string GetOptionalAttributeValue(XmlNode node, string attrName, string defaultString)
 		{
@@ -245,8 +239,7 @@ namespace SIL.Utils
 			string sValue = GetOptionalAttributeValue(node, attrName, defaultString);
 			if (tbl == null)
 				return sValue;
-			else
-				return tbl.LocalizeAttributeValue(sValue);
+			return tbl.LocalizeAttributeValue(sValue);
 		}
 
 		/// <summary>
@@ -281,7 +274,7 @@ namespace SIL.Utils
 		/// </exception>
 		public static string GetManditoryAttributeValue(XmlNode node, string attrName)
 		{
-			string retval = XmlUtils.GetOptionalAttributeValue(node, attrName, null);
+			string retval = GetOptionalAttributeValue(node, attrName, null);
 			if (retval == null)
 			{
 				throw new ApplicationException("The attribute'"
@@ -321,8 +314,7 @@ namespace SIL.Utils
 		/// Append an attribute with the specified name and value to parent.
 		/// </summary>
 		/// <param name="parent"></param>
-		/// <param name="attrName"></param>
-		/// <param name="attrVal"></param>
+		/// <param name="elementName"></param>
 		public static XmlElement AppendElement(XmlNode parent, string elementName)
 		{
 			XmlElement xe = parent.OwnerDocument.CreateElement(elementName);
@@ -404,11 +396,9 @@ namespace SIL.Utils
 				// If we finished both lists we got a match.
 				return ichild1 == node1.ChildNodes.Count && ichild2 == node2.ChildNodes.Count;
 			}
-			else
-			{
-				// both lists are null
-				return true;
-			}
+
+			// both lists are null
+			return true;
 		}
 
 		/// <summary>
@@ -513,7 +503,7 @@ namespace SIL.Utils
 					{
 						char c = sOutput[i];
 						string sReplace = String.Format("&#x{0:X};", (int)c);
-						sOutput = sOutput.Replace(c.ToString(), sReplace);
+						sOutput = sOutput.Replace(c.ToString(CultureInfo.InvariantCulture), sReplace);
 						i += (sReplace.Length - 1);		// skip over the replacement string.
 					}
 				}
@@ -616,7 +606,7 @@ namespace SIL.Utils
 			int index = 0;
 			foreach (XmlNode node in nodes)
 			{
-				if (XmlUtils.NodesMatch(node, target))
+				if (NodesMatch(node, target))
 					return index;
 				index++;
 			}
@@ -639,10 +629,8 @@ namespace SIL.Utils
 				XmlNode clonedOwner = node.OwnerDocument.CloneNode(true);
 				return clonedOwner.SelectSingleNode(xpath);
 			}
-			else
-			{
-				return node.CloneNode(true);
-			}
+
+			return node.CloneNode(true);
 		}
 
 		#region Serialize/Deserialize
@@ -724,12 +712,12 @@ namespace SIL.Utils
 		/// </summary>
 		/// <param name="methodName"></param>
 		/// <returns></returns>
-		public static System.Reflection.MethodInfo GetStaticMethod(XmlNode node, string sAssemblyAttr, string sClassAttr,
-			string sMethodName, out System.Type typeFound)
+		public static MethodInfo GetStaticMethod(XmlNode node, string sAssemblyAttr, string sClassAttr,
+			string sMethodName, out Type typeFound)
 		{
-			string sAssemblyName = XmlUtils.GetAttributeValue(node, sAssemblyAttr);
-			string sClassName = XmlUtils.GetAttributeValue(node, sClassAttr);
-			System.Reflection.MethodInfo mi = GetStaticMethod(sAssemblyName, sClassName, sMethodName,
+			string sAssemblyName = GetAttributeValue(node, sAssemblyAttr);
+			string sClassName = GetAttributeValue(node, sClassAttr);
+			MethodInfo mi = GetStaticMethod(sAssemblyName, sClassName, sMethodName,
 				"node " + node.OuterXml, out typeFound);
 			return mi;
 		}
@@ -741,18 +729,18 @@ namespace SIL.Utils
 		/// <returns></returns>
 		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
 			Justification="See TODO-Linux comment")]
-		public static System.Reflection.MethodInfo GetStaticMethod(string sAssemblyName, string sClassName,
-			string sMethodName, string sContext, out System.Type typeFound)
+		public static MethodInfo GetStaticMethod(string sAssemblyName, string sClassName,
+			string sMethodName, string sContext, out Type typeFound)
 		{
 			typeFound = null;
-			System.Reflection.Assembly assemblyFound = null;
+			Assembly assemblyFound;
 			try
 			{
-				string baseDir = System.IO.Path.GetDirectoryName(
-					System.Reflection.Assembly.GetExecutingAssembly().CodeBase).
+				string baseDir = Path.GetDirectoryName(
+					Assembly.GetExecutingAssembly().CodeBase).
 					Substring(MiscUtils.IsUnix ? 5 : 6);
-				assemblyFound = System.Reflection.Assembly.LoadFrom(
-					System.IO.Path.Combine(baseDir, sAssemblyName));
+				assemblyFound = Assembly.LoadFrom(
+					Path.Combine(baseDir, sAssemblyName));
 			}
 			catch (Exception error)
 			{
@@ -774,7 +762,7 @@ namespace SIL.Utils
 			// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
 			// is marked with [MonoTODO] and might not work as expected in 4.0.
 			Debug.Assert(typeFound != null);
-			System.Reflection.MethodInfo mi = null;
+			MethodInfo mi;
 			try
 			{
 				mi = typeFound.GetMethod(sMethodName);
@@ -793,90 +781,6 @@ namespace SIL.Utils
 			string sResult = "GetStaticMethod() could not find the " + sMainMsg +
 				" while processing " + sContext;
 			return sResult;
-		}
-
-#if UsingDotNetTransforms
-		static private void AddParameters(out XsltArgumentList args, XSLParameter[] parameterList)
-		{
-			args = new XsltArgumentList();
-			if (parameterList != null)
-			{
-				foreach(XSLParameter rParam in parameterList)
-				{
-					// Following is a specially recognized parameter name
-					if (rParam.Name == "prmSDateTime")
-					{
-						args.AddParam(rParam.Name, "", GetCurrentDateTime());
-					}
-					else
-						args.AddParam(rParam.Name, "", rParam.Value);
-				}
-			}
-		}
-#else
-#if !__MonoCS__
-		/// <summary>
-		/// Add parameters to a transform
-		/// </summary>
-		/// <param name="parameterList"></param>
-		/// <param name="xslProc"></param>
-		private static void AddParameters(XSLParameter[] parameterList, MSXML2.IXSLProcessor xslProc)
-		{
-			if (parameterList != null)
-			{
-				foreach(XSLParameter rParam in parameterList)
-				{
-					// Following is a specially recognized parameter name
-					if (rParam.Name == "prmSDateTime")
-					{
-						xslProc.addParameter(rParam.Name, GetCurrentDateTime(), "");
-					}
-					else
-						xslProc.addParameter(rParam.Name, rParam.Value, "");
-				}
-			}
-		}
-#endif
-#endif // UsingDotNetTransforms
-
-		private static string GetCurrentDateTime()
-		{
-			DateTime now;
-			now = DateTime.Now;
-			return (now.ToShortDateString() + " " + now.ToLongTimeString());
-		}
-		/// <summary>
-		/// A class that represents a parameter of an XSL stylesheet.
-		/// </summary>
-		public class XSLParameter
-		{
-			/// <summary>
-			/// Parameter name.
-			/// </summary>
-			private string m_name;
-
-			/// <summary>
-			/// Parameter value.
-			/// </summary>
-			private string m_value;
-
-			public XSLParameter(string sName, string sValue)
-			{
-				m_name = sName;
-				m_value = sValue;
-			}
-
-			public string Name
-			{
-				get { return m_name; }
-				set { m_name = value; }
-			}
-
-			public string Value
-			{
-				get { return m_value; }
-				set { m_value = value; }
-			}
 		}
 
 		/// <summary>
@@ -927,6 +831,7 @@ namespace SIL.Utils
 			return transform;
 		}
 
+#if __MonoCS__
 		private class XmlResourceResolver : XmlUrlResolver
 		{
 			private readonly Assembly m_assembly;
@@ -957,6 +862,7 @@ namespace SIL.Utils
 				}
 			}
 		}
+#endif
 	}
 
 	/// <summary>
