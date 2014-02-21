@@ -258,6 +258,12 @@
     <Compile Include="Archiving\ReapRamp.cs" />
     <Compile Include="ConfigurableDictionaryNode.cs" />
     <Compile Include="DictionaryConfigurationController.cs" />
+    <Compile Include="DictionaryConfigurationDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DictionaryConfigurationDlg.Designer.cs">
+      <DependentUpon>DictionaryConfigurationDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="DictionaryConfigurationModel.cs" />
     <Compile Include="IDictionaryConfigurationView.cs" />
     <Compile Include="DictionaryNodeOptions.cs" />
@@ -395,6 +401,9 @@
     <EmbeddedResource Include="DictionaryConfigMgrDlg.resx">
       <DependentUpon>DictionaryConfigMgrDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DictionaryConfigurationDlg.resx">
+      <DependentUpon>DictionaryConfigurationDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ExportDialog.resx">
       <DependentUpon>ExportDialog.cs</DependentUpon>

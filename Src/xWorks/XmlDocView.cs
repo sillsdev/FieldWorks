@@ -1327,22 +1327,34 @@ namespace SIL.FieldWorks.XWorks
 
 		private void RunConfigureDialog(string nodePath)
 		{
-			using (XmlDocConfigureDlg dlg = new XmlDocConfigureDlg())
+			string sProp = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "layoutProperty");
+			if(String.IsNullOrEmpty(sProp))
+				sProp = "DictionaryPublicationLayout";
+// TODO: Remove this hack to get something visible and testable and replace it with a proper command
+			if(sProp == "DictionaryPublicationLayout")
 			{
-				string sProp = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "layoutProperty");
-				if (String.IsNullOrEmpty(sProp))
-					sProp = "DictionaryPublicationLayout";
-				dlg.SetConfigDlgInfo(m_configurationParameters, Cache, StyleSheet,
-					FindForm() as IMainWindowDelegateCallbacks, m_mediator, sProp);
-				dlg.SetActiveNode(nodePath);
-				if (dlg.ShowDialog(this) == DialogResult.OK)
+				using(var dlg = new DictionaryConfigurationDlg(m_mediator))
 				{
-					string sNewLayout = m_mediator.PropertyTable.GetStringProperty(sProp, null);
-					m_mainView.ResetTables(sNewLayout);
-					SelectAndScrollToCurrentRecord();
+					var controller = new DictionaryConfigurationController(dlg, m_mediator);
+					dlg.ShowDialog(this);
 				}
-				if (dlg.MasterRefreshRequired)
-					m_mediator.SendMessage("MasterRefresh", null);
+			}
+			else
+			{
+				using(XmlDocConfigureDlg dlg = new XmlDocConfigureDlg())
+				{
+					dlg.SetConfigDlgInfo(m_configurationParameters, Cache, StyleSheet,
+						FindForm() as IMainWindowDelegateCallbacks, m_mediator, sProp);
+					dlg.SetActiveNode(nodePath);
+					if(dlg.ShowDialog(this) == DialogResult.OK)
+					{
+						string sNewLayout = m_mediator.PropertyTable.GetStringProperty(sProp, null);
+						m_mainView.ResetTables(sNewLayout);
+						SelectAndScrollToCurrentRecord();
+					}
+					if(dlg.MasterRefreshRequired)
+						m_mediator.SendMessage("MasterRefresh", null);
+				}
 			}
 		}
 

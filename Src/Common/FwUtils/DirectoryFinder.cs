@@ -893,6 +893,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
+		/// <summary>
+		/// Location of the DefaultConfigurations folder (root for  Dictionary, Reversal, and other default configurations)
+		/// </summary>
+		public static string DefaultConfigurations
+		{
+			get { return Path.Combine(Path.Combine(FWCodeDirectory, "Language Explorer"), "DefaultConfigurations"); }
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Returns the file name containing the localization of the key terms list for the

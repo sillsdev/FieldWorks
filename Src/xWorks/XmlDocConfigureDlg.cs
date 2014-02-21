@@ -414,9 +414,6 @@ namespace SIL.FieldWorks.XWorks
 
 			// Load the lists for the styles combo boxes.
 			SetStylesLists();
-
-			// Initialize the dictionary publication preview
-			InitializeDictionaryPubPreview();
 		}
 
 		private void CreateComboAndTreeItems(string sLayoutType)
@@ -549,20 +546,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 			m_rgCharStyles.Sort();
 			m_rgParaStyles.Sort();
-		}
-
-		// TODO pH 2014.02: this method is a hack job and must be replaced.  For developer use only.
-		private void InitializeDictionaryPubPreview()
-		{
-			var previewConfiguration = new XmlDocument();
-			previewConfiguration.Load("../../DistFiles/Language Explorer/Configuration/Lexicon/Dictionary/toolConfiguration.xml"); // TODO pH 2014.02 correct path here
-			var parameters = previewConfiguration.SelectSingleNode("/root/reusableControls/control[@id='DictionaryPubPreviewControl']/parameters");
-			var clerks = previewConfiguration.CreateElement("clerks");
-			var clerk = previewConfiguration.CreateElement("clerk");
-			clerk.SetAttribute("id", "entries");
-			clerks.AppendChild(clerk);
-			parameters.AppendChild(clerks);
-			m_preview.Init(m_mediator, parameters);
 		}
 
 		private LayoutTreeNode BuildMainLayout(XmlNode config)

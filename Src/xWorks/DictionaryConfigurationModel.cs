@@ -76,6 +76,7 @@ namespace SIL.FieldWorks.XWorks
 		public DictionaryConfigurationModel(string path)
 		{
 			FilePath = path;
+			Load();
 		}
 	}
 }

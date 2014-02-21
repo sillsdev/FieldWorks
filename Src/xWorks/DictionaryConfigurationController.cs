@@ -5,9 +5,14 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
+using System.Xml;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -28,13 +33,56 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private Dictionary<string, DictionaryConfigurationModel> _alternateDictionaries;
 
-		void SetAlternateDictionaryChoices()
+		void SetAlternateDictionaryChoices(Mediator mediator)
 		{
+			var configurationType = mediator.PropertyTable.GetStringProperty("toolName", "Dictionary");
 			// Figure out what alternate dictionaries are available (eg root-, stem-, ...)
 			// Populate _alternateDictionaries with available models.
 			// Populate view's list of alternate dictionaries with available choices.
+			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			var projectConfigDir = Path.Combine(DirectoryFinder.GetConfigSettingsDir(cache.ProjectId.ProjectFolder), configurationType);
+			var defaultConfigDir = Path.Combine(DirectoryFinder.DefaultConfigurations, configurationType);
 
-			throw new NotImplementedException();
+			var choices = ReadAlternateDictionaryChoices(defaultConfigDir, projectConfigDir);
+			_alternateDictionaries = new Dictionary<string, DictionaryConfigurationModel>();
+			foreach(var choice in choices)
+			{
+				_alternateDictionaries[choice.Key] = new DictionaryConfigurationModel(choice.Value);
+			}
+			View.SetChoices(choices.Keys);
+		}
+
+		/// <summary>
+		/// Loads a dictionary with the configuration choices from two folders with the project specific
+		/// configurations overriding the default configurations of the same name.
+		/// </summary>
+		/// <param name="defaultPath"></param>
+		/// <param name="projectPath"></param>
+		/// <returns></returns>
+		internal Dictionary<string, string> ReadAlternateDictionaryChoices(string defaultPath, string projectPath)
+		{
+			var choices = new Dictionary<string, string>();
+			var defaultFiles = new List<string>(Directory.EnumerateFiles(defaultPath, "*.xml"));
+			if(!Directory.Exists(projectPath))
+			{
+				Directory.CreateDirectory(projectPath);
+			}
+			else
+			{
+				foreach(var choice in Directory.EnumerateFiles(projectPath, "*.xml"))
+				{
+					choices[Path.GetFileNameWithoutExtension(choice)] = choice;
+				}
+			}
+			foreach(var file in defaultFiles)
+			{
+				var niceName = Path.GetFileNameWithoutExtension(file);
+				if(!choices.ContainsKey(niceName))
+				{
+					choices[niceName] = file;
+				}
+			}
+			return choices;
 		}
 
 		/// <summary>
@@ -149,12 +197,19 @@ namespace SIL.FieldWorks.XWorks
 		/// Constructs a DictionaryConfigurationController with a view and a model pulled from user settings
 		/// </summary>
 		/// <param name="view"></param>
-		public DictionaryConfigurationController(IDictionaryConfigurationView view)
+		public DictionaryConfigurationController(IDictionaryConfigurationView view, Mediator mediator)
 		{
 			View = view;
-			SetAlternateDictionaryChoices();
-			var lastUsedAlternateDictionary = ""; // TODO: fetch from cache or settings
-			PopulateTreeView(_alternateDictionaries[lastUsedAlternateDictionary]);
+			SetAlternateDictionaryChoices(mediator);
+			var lastUsedAlternateDictionary =
+				mediator.PropertyTable.GetStringProperty("LastDictionaryConfiguration", "Root");
+			_model = _alternateDictionaries.ContainsKey(lastUsedAlternateDictionary)
+						? _alternateDictionaries[lastUsedAlternateDictionary]
+						: _alternateDictionaries.Values.First();
+			// Populate the tree view with the users last configuration, or the first one in the list of alternates.
+			PopulateTreeView(_model);
+			view.ManageViews += (sender, args) => new DictionaryConfigMgrDlg(mediator, "", new List<XmlNode>(), null).ShowDialog(view as Form);
+			view.SaveModel += (sender, args) => { /*_model.Save(); (needs to save in project config location, not default where it was loaded from) */ };
 		}
 
 		/// <summary>
@@ -163,8 +218,7 @@ namespace SIL.FieldWorks.XWorks
 		private void BuildAndShowOptions(ConfigurableDictionaryNode node)
 		{
 			var options = node.DictionaryNodeOptions;
-
-			throw new NotImplementedException();
+			// todo: Hasso will put awesome code here to make a control from the node and put it
 		}
 
 		/// <summary>

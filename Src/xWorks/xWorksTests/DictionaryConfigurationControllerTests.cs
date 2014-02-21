@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Remoting;
+using System.IO;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -288,10 +289,83 @@ namespace SIL.FieldWorks.XWorks
 				Assert.That(rootTreeNode.Nodes[1].Nodes[i].Nodes.Count, Is.EqualTo(rootNode.Children[1].Children[i].Children.Count), errorMessage2); // ie 0
 		}
 
-		/// <summary/>
-		public void AddChildrenToNode(ConfigurableDictionaryNode node, int numberOfChildren)
+		[Test]
+		public void ReadAlternateDictionaryChoices_MissingUserLocationIsCreated()
 		{
-			for (int childIndex = 0; childIndex < numberOfChildren; childIndex++)
+			var testDefaultFolder =
+				Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName())).FullName;
+			var userFolderName = Path.GetRandomFileName();
+			var testUserFolder = Path.Combine(Path.GetTempPath(), userFolderName);
+			var controller = new DictionaryConfigurationController();
+			// SUT
+			Assert.DoesNotThrow(()=>controller.ReadAlternateDictionaryChoices(testDefaultFolder, testUserFolder), "A missing User location should not throw.");
+			Assert.IsTrue(Directory.Exists(testUserFolder), "A missing user configuration folder should be created.");
+		}
+
+		[Test]
+		public void ReadAlternateDictionaryChoices_NoUserFilesUsesDefaults()
+		{
+			var testDefaultFolder =
+				Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
+			using(var writer = new StreamWriter(Path.Combine(testDefaultFolder.FullName, "default.xml")))
+			{
+				writer.Write("test");
+			}
+			var testUserFolder =
+				Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
+			var controller = new DictionaryConfigurationController();
+			// SUT
+			var choices = controller.ReadAlternateDictionaryChoices(testDefaultFolder.FullName, testUserFolder.FullName);
+			Assert.IsTrue(choices.Count == 1, "xml configuration file in default directory was not read");
+		}
+
+		[Test]
+		public void ReadAlternateDictionaryChoices_BothDefaultsAndUserFilesAppear()
+		{
+			var testDefaultFolder =
+				Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
+			using(var writer = new StreamWriter(Path.Combine(testDefaultFolder.FullName, "default.xml")))
+			{
+				writer.Write("test");
+			}
+			var testUserFolder =
+				Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
+			using(var writer = new StreamWriter(Path.Combine(testUserFolder.FullName, "user.xml")))
+			{
+				writer.Write("usertest");
+			}
+			var controller = new DictionaryConfigurationController();
+			// SUT
+			var choices = controller.ReadAlternateDictionaryChoices(testDefaultFolder.FullName, testUserFolder.FullName);
+			Assert.IsTrue(choices.Count == 2, "One of the configuration files was not listed");
+		}
+
+		[Test]
+		public void ReadAlternateDictionaryChoices_UserFilesOfSameNameAsDefaultGetOneEntry()
+		{
+			var testDefaultFolder =
+				Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
+			using(var writer = new StreamWriter(Path.Combine(testDefaultFolder.FullName, "Root.xml")))
+			{
+				writer.Write("test");
+			}
+			var testUserFolder =
+				Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
+			using(var writer = new StreamWriter(Path.Combine(testUserFolder.FullName, "Root.xml")))
+			{
+				writer.Write("usertest");
+			}
+			var controller = new DictionaryConfigurationController();
+			// SUT
+			var choices = controller.ReadAlternateDictionaryChoices(testDefaultFolder.FullName, testUserFolder.FullName);
+			Assert.IsTrue(choices.Count == 1, "Only the user configuration should be listed");
+			Assert.IsTrue(choices["Root"].Contains(testUserFolder.FullName), "The default overrode the user configuration.");
+		}
+
+		/// <summary/>
+		private void AddChildrenToNode(ConfigurableDictionaryNode node, int numberOfChildren)
+		{
+			for(int childIndex = 0; childIndex < numberOfChildren; childIndex++)
 			{
 				var child = new ConfigurableDictionaryNode()
 				{
@@ -308,13 +382,13 @@ namespace SIL.FieldWorks.XWorks
 		/// ConfigurableDictionaryNode objects with labels that match
 		/// the hierarchy that they are found in the TreeNode.
 		/// </summary>
-		public void VerifyTreeNodeHierarchy(TreeNode treeNode)
+		private void VerifyTreeNodeHierarchy(TreeNode treeNode)
 		{
 			var label = ((ConfigurableDictionaryNode)treeNode.Tag).Label;
-			for (int childIndex = 0; childIndex < treeNode.Nodes.Count; childIndex++)
+			for(int childIndex = 0; childIndex < treeNode.Nodes.Count; childIndex++)
 			{
 				var child = treeNode.Nodes[childIndex];
-				var childLabel = ((ConfigurableDictionaryNode) child.Tag).Label;
+				var childLabel = ((ConfigurableDictionaryNode)child.Tag).Label;
 				var expectedChildLabel = label + "." + childIndex;
 				Assert.That(childLabel, Is.EqualTo(expectedChildLabel), "TreeNode child has associated configuration dictionary node with wrong label");
 				VerifyTreeNodeHierarchy(child);
@@ -458,10 +532,20 @@ namespace SIL.FieldWorks.XWorks
 				;
 			}
 
+			public void SetChoices(IEnumerable<string> choices)
+			{
+				;
+			}
+
 			public void Dispose()
 			{
 				view.Dispose();
 			}
+#pragma warning disable 67
+			public event EventHandler ManageViews;
+
+			public event EventHandler SaveModel;
+#pragma warning restore 67
 		}
 	}
 }
