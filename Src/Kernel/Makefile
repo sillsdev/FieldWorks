@@ -23,9 +23,16 @@ else
 	OPTIMIZATIONS = -O3
 endif
 
+GRAPHITE_SRC = $(SRC)/Graphite
+GRFW_SRC = $(GRAPHITE_SRC)/FwOnly
+GRUTIL_LIB = $(GRAPHITE_SRC)/lib
+TTFUTIL_LIB = $(GRAPHITE_SRC)/TtfUtil
+VIEWS_LIB = $(VIEWS_SRC)/lib
+
 PACKAGES = glib-2.0 gtk+-2.0 glibmm-2.4 gtkmm-2.4 cairomm-1.0 pangomm-1.4
 
 INCLUDES := -I$(KERNEL_SRC) -I$(CELLAR_SRC) -I$(GENERIC_SRC) -I$(APPCORE_SRC) $(DEBUG_INCLUDES)
+INCLUDES := $(INCLUDES) -I$(GRUTIL_LIB) -I$(TTFUTIL_LIB) -I$(VIEWS_SRC) -I$(VIEWS_LIB) -I$(GRFW_SRC)
 
 INCLUDES := $(shell icu-config --cppflags) \
 	$(INCLUDES) \
@@ -35,7 +42,6 @@ INCLUDES := $(shell icu-config --cppflags) \
 	-I$(COM_INC) \
 	-I$(WIN32BASE_INC) \
 	$(shell pkg-config --cflags $(PACKAGES)) \
-
 
 LDLIBS := $(LDLIBS) \
 	-L$(WIN32MORE_LIB) -lWin32More \

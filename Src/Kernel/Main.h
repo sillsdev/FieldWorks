@@ -15,13 +15,27 @@ Last reviewed:
 #ifndef Main_H
 #define Main_H 1
 
+// If ICU_LINEBREAKING is defined, we use the ICU functions for linebreaking.
+// If this is undefined, then we go to JohnT's previous version which doesn't
+// use ICU functions.
+#ifndef ICU_LINEBREAKING
+#define ICU_LINEBREAKING
+#endif /*ICU_LINEBREAKING*/
+
 #include "common.h"
 
 //#define kwsLim 0xfffffff9
 #include "CellarConstants.h"
 
+#define NO_EXCEPTIONS 1
 #if WIN32
 #include <mlang.h>
+#endif
+
+#if !WIN32
+#include <OleStringLiteral.h>
+#include "BasicTypes.h"
+#include <memory>
 #endif
 
 using std::min;
@@ -32,11 +46,34 @@ using std::max;
 ***********************************************************************************************/
 #include "FwKernelTlb.h"
 
+// Special interface mainly used for Graphite engine not defined in an IDH.
+#include "../Graphite/GrEngine/ITraceControl.h"
+#ifndef ITraceControlPtr // for portability I don't think this header defines this.
+	DEFINE_COM_PTR(ITraceControl);
+#endif
+
 /***********************************************************************************************
 	Implementations.
 ***********************************************************************************************/
 #include "LangResource.h"
+
+// For interfacing with Graphite engines:
+namespace gr {
+typedef unsigned char utf8;
+typedef wchar_t utf16;
+typedef unsigned long int utf32;
+#define UtfType LgUtfForm
+}
+// defined in TtSfnt_en.h - but this avoids including all of TtfUtil in the Language.dll
+#define tag_Silf 0x666c6953
+#include "GrResult.h"
+#include "GrUtil.h"
+#include "ITextSource.h"
+#include "IGrJustifier.h"
+#include "FwGr.h"
+
 using namespace fwutil;	// Rect and Point classes
+
 // these are a gray area, including aspects of both model and engine
 // Todo JohnT: These structs are part of an obsolete approach to overriding character properties.
 // Get rid of them and whatever uses them. (Taken from OldLgWritingSystem file.)
