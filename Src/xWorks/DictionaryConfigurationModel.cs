@@ -65,6 +65,7 @@ namespace SIL.FieldWorks.XWorks
 				Version = model.Version;
 				Parts = model.Parts;
 			}
+			SpecifyParents(Parts);
 		}
 
 		/// <summary>
@@ -77,6 +78,24 @@ namespace SIL.FieldWorks.XWorks
 		{
 			FilePath = path;
 			Load();
+		}
+
+		/// <summary>
+		/// Assign Parent properties to descendants of nodes.
+		/// </summary>
+		internal static void SpecifyParents(List<ConfigurableDictionaryNode> nodes)
+		{
+			if (nodes == null)
+				throw new ArgumentNullException();
+
+			foreach (var node in nodes)
+			{
+				if (node.Children == null)
+					continue;
+				foreach (var child in node.Children)
+					child.Parent = node;
+				SpecifyParents(node.Children);
+			}
 		}
 	}
 }

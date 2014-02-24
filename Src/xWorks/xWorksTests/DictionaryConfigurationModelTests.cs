@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -136,6 +137,53 @@ namespace SIL.FieldWorks.XWorks
 				var document = XDocument.Load(xmlFile);
 				document.Validate(schemas, (sender, args) => Assert.Fail("Model saved as xml did not validate against schema: {0}", args.Message));
 			}
+		}
+
+		[Test]
+		public void SpecifyParents_ThrowsOnNullArgument()
+		{
+			// SUT
+			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationModel.SpecifyParents(null));
+		}
+
+		[Test]
+		public void SpecifyParents_DoesNotChangeRootNode()
+		{
+			var child = new ConfigurableDictionaryNode();
+			var rootNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode>() {child},
+				Parent = null
+			};
+			var parts = new List<ConfigurableDictionaryNode> {rootNode};
+			// SUT
+			DictionaryConfigurationModel.SpecifyParents(parts);
+			Assert.That(parts[0].Parent, Is.Null, "Shouldn't have changed parent of a root node");
+		}
+
+		[Test]
+		public void SpecifyParents_UpdatesParentPropertyOfChild()
+		{
+			var rootNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode>()
+			};
+			var childA = new ConfigurableDictionaryNode()
+			{
+				Children = new List<ConfigurableDictionaryNode>()
+			};
+			var childB = new ConfigurableDictionaryNode();
+			var grandchild = new ConfigurableDictionaryNode();
+			rootNode.Children.Add(childA);
+			rootNode.Children.Add(childB);
+			childA.Children.Add(grandchild);
+
+			var parts = new List<ConfigurableDictionaryNode> { rootNode };
+			// SUT
+			DictionaryConfigurationModel.SpecifyParents(parts);
+			Assert.That(grandchild.Parent, Is.EqualTo(childA), "Parent should have been set");
+			Assert.That(childA.Parent, Is.EqualTo(rootNode), "Parent should have been set");
+			Assert.That(childB.Parent, Is.EqualTo(rootNode), "Parent should have been set");
 		}
 	}
 }
