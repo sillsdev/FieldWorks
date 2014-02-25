@@ -54,6 +54,31 @@ namespace SIL.FieldWorks.XWorks
 			get { return tree; }
 		}
 
+		/// <summary>
+		/// Set whether button is enabled.
+		/// </summary>
+		public bool MoveUpEnabled { set { moveUp.Enabled = value; } }
+
+		/// <summary>
+		/// Set whether button is enabled.
+		/// </summary>
+		public bool MoveDownEnabled { set { moveDown.Enabled = value; } }
+
+		/// <summary>
+		/// Set whether button is enabled.
+		/// </summary>
+		public bool DuplicateEnabled { set { duplicate.Enabled = value; } }
+
+		/// <summary>
+		/// Set whether button is enabled.
+		/// </summary>
+		public bool RemoveEnabled { set { remove.Enabled = value; } }
+
+		/// <summary>
+		/// Set whether button is enabled.
+		/// </summary>
+		public bool RenameEnabled { set { rename.Enabled = value; } }
+
 		public DictionaryConfigurationTreeControl()
 		{
 			InitializeComponent();

@@ -103,6 +103,14 @@ namespace SIL.FieldWorks.XWorks
 			View.TreeControl.Tree.AfterSelect += (sender, args) =>
 			{
 				var node = (ConfigurableDictionaryNode) args.Node.Tag;
+
+				View.TreeControl.MoveUpEnabled = CanReorder(node, Direction.Up);
+				View.TreeControl.MoveDownEnabled = CanReorder(node, Direction.Down);
+				// TODO implement other buttons
+				View.TreeControl.DuplicateEnabled = false;
+				View.TreeControl.RemoveEnabled = false;
+				View.TreeControl.RenameEnabled = false;
+
 				BuildAndShowOptions(node);
 			};
 		}
