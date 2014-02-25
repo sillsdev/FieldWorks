@@ -265,6 +265,12 @@
       <DependentUpon>DictionaryConfigurationDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="DictionaryConfigurationModel.cs" />
+    <Compile Include="DictionaryConfigurationTreeControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DictionaryConfigurationTreeControl.Designer.cs">
+      <DependentUpon>DictionaryConfigurationTreeControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="IDictionaryConfigurationView.cs" />
     <Compile Include="DictionaryNodeOptions.cs" />
     <Compile Include="PalasoErrorReportingAdapter.cs" />
@@ -404,6 +410,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DictionaryConfigurationDlg.resx">
       <DependentUpon>DictionaryConfigurationDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DictionaryConfigurationTreeControl.resx">
+      <DependentUpon>DictionaryConfigurationTreeControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ExportDialog.resx">
       <DependentUpon>ExportDialog.cs</DependentUpon>
