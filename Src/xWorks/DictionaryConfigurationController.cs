@@ -88,10 +88,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Populate dictionary elements tree, from model.
 		/// </summary>
-		internal void PopulateTreeView(DictionaryConfigurationModel model)
+		internal void PopulateTreeView()
 		{
-			CreateTreeOfTreeNodes(null, model.Parts);
-
 			View.TreeControl.Tree.AfterCheck += (sender, args) =>
 			{
 				var node = (ConfigurableDictionaryNode) args.Node.Tag;
@@ -113,6 +111,22 @@ namespace SIL.FieldWorks.XWorks
 
 				BuildAndShowOptions(node);
 			};
+
+			RefreshView();
+		}
+
+		private void RefreshView()
+		{
+			// TODO Preserve node selection and tree expansions
+
+			View.TreeControl.Tree.Nodes.Clear();
+			var rootNodes = _model.Parts;
+			CreateTreeOfTreeNodes(null, rootNodes);
+
+			// Select a node in the tree so there will always be a selection for the buttons to be enabled or disabled with respect to.
+			var tree = View.TreeControl.Tree;
+			if (tree.Nodes.Count > 0)
+				tree.SelectedNode = tree.Nodes[0];
 		}
 
 		/// <summary>
@@ -215,7 +229,7 @@ namespace SIL.FieldWorks.XWorks
 						? _alternateDictionaries[lastUsedAlternateDictionary]
 						: _alternateDictionaries.Values.First();
 			// Populate the tree view with the users last configuration, or the first one in the list of alternates.
-			PopulateTreeView(_model);
+			PopulateTreeView();
 			view.ManageViews += (sender, args) => new DictionaryConfigMgrDlg(mediator, "", new List<XmlNode>(), null).ShowDialog(view as Form);
 			view.SaveModel += (sender, args) => { /*_model.Save(); (needs to save in project config location, not default where it was loaded from) */ };
 
@@ -289,10 +303,7 @@ namespace SIL.FieldWorks.XWorks
 			parent.Children.RemoveAt(nodeIndex);
 			parent.Children.Insert(newNodeIndex, node);
 
-			// Update view
-			View.TreeControl.Tree.Nodes.Clear();
-			var rootNodes = _model.Parts;
-			CreateTreeOfTreeNodes(null, rootNodes);
+			RefreshView();
 		}
 	}
 }

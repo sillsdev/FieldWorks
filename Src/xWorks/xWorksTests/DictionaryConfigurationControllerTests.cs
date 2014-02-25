@@ -41,10 +41,10 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_model.Parts = new List<ConfigurableDictionaryNode> { BuildTestPartTree(2, 5) };
 
-				var dcc = new DictionaryConfigurationController { View = testView };
+				var dcc = new DictionaryConfigurationController {View = testView, _model = m_model};
 
 				//SUT
-				dcc.PopulateTreeView(m_model);
+				dcc.PopulateTreeView();
 				ValidateTreeForm(2, 5, dcc.View.TreeControl.Tree);
 			}
 		}
