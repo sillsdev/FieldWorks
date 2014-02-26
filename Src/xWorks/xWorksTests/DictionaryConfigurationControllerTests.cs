@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.XWorks
 
 				//SUT
 				dcc.PopulateTreeView(m_model);
-				ValidateTreeForm(2, 5, dcc.View.GetTreeView());
+				ValidateTreeForm(2, 5, dcc.View.TreeControl.Tree);
 			}
 		}
 
@@ -206,8 +206,8 @@ namespace SIL.FieldWorks.XWorks
 				controller.View = dummyView;
 				// SUT
 				controller.CreateAndAddTreeNodeForNode(null, node);
-				Assert.That(controller.View.GetTreeView().Nodes.Count, Is.EqualTo(1), "No TreeNode was added");
-				Assert.That(controller.View.GetTreeView().Nodes[0].Tag, Is.EqualTo(node), "New TreeNode's tag does not match");
+				Assert.That(controller.View.TreeControl.Tree.Nodes.Count, Is.EqualTo(1), "No TreeNode was added");
+				Assert.That(controller.View.TreeControl.Tree.Nodes[0].Tag, Is.EqualTo(node), "New TreeNode's tag does not match");
 			}
 		}
 
@@ -226,20 +226,23 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void CreateTreeOfTreeNodes_CanCreateOneLevelTree()
 		{
-			var controller = new DictionaryConfigurationController() {View = new TestConfigurableDictionaryView()};
-			var rootNode = new ConfigurableDictionaryNode() {Label = "0", Children = new List<ConfigurableDictionaryNode>()};
-			// SUT
-			controller.CreateTreeOfTreeNodes(null, new List<ConfigurableDictionaryNode> { rootNode });
+			using (var view = new TestConfigurableDictionaryView())
+			{
+				var controller = new DictionaryConfigurationController() {View = view};
+				var rootNode = new ConfigurableDictionaryNode() {Label = "0", Children = new List<ConfigurableDictionaryNode>()};
+				// SUT
+				controller.CreateTreeOfTreeNodes(null, new List<ConfigurableDictionaryNode> { rootNode });
 
-			BasicTreeNodeVerification(controller, rootNode);
+				BasicTreeNodeVerification(controller, rootNode);
+			}
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "GetTreeView returns a reference")]
 		private TreeNode BasicTreeNodeVerification(DictionaryConfigurationController controller, ConfigurableDictionaryNode rootNode)
 		{
-			Assert.That(controller.View.GetTreeView().Nodes[0].Tag, Is.EqualTo(rootNode), "root TreeNode does not corresponded to expected dictionary configuration node");
-			Assert.That(controller.View.GetTreeView().Nodes.Count, Is.EqualTo(1), "Did not expect more than one root TreeNode");
-			var rootTreeNode = controller.View.GetTreeView().Nodes[0];
+			Assert.That(controller.View.TreeControl.Tree.Nodes[0].Tag, Is.EqualTo(rootNode), "root TreeNode does not corresponded to expected dictionary configuration node");
+			Assert.That(controller.View.TreeControl.Tree.Nodes.Count, Is.EqualTo(1), "Did not expect more than one root TreeNode");
+			var rootTreeNode = controller.View.TreeControl.Tree.Nodes[0];
 			VerifyTreeNodeHierarchy(rootTreeNode);
 			Assert.That(rootTreeNode.Nodes.Count, Is.EqualTo(rootNode.Children.Count), "root treenode does not have expected number of descendants");
 			return rootTreeNode;
@@ -249,16 +252,19 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void CreateTreeOfTreeNodes_CanCreateTwoLevelTree()
 		{
-			var controller = new DictionaryConfigurationController() { View = new TestConfigurableDictionaryView() };
-			var rootNode = new ConfigurableDictionaryNode() { Label = "0", Children = new List<ConfigurableDictionaryNode>() };
-			AddChildrenToNode(rootNode, 3);
-			// SUT
-			controller.CreateTreeOfTreeNodes(null, new List<ConfigurableDictionaryNode> { rootNode });
+			using (var view = new TestConfigurableDictionaryView())
+			{
+				var controller = new DictionaryConfigurationController() { View = view };
+				var rootNode = new ConfigurableDictionaryNode() { Label = "0", Children = new List<ConfigurableDictionaryNode>() };
+				AddChildrenToNode(rootNode, 3);
+				// SUT
+				controller.CreateTreeOfTreeNodes(null, new List<ConfigurableDictionaryNode> { rootNode });
 
-			var rootTreeNode = BasicTreeNodeVerification(controller, rootNode);
-			string errorMessage = "Should not have made any third-level children that did not exist in the dictionary configuration node hierarchy";
-			for (int i = 0; i < 3; i++)
-				Assert.That(rootTreeNode.Nodes[i].Nodes.Count, Is.EqualTo(rootNode.Children[i].Children.Count), errorMessage); // ie 0
+				var rootTreeNode = BasicTreeNodeVerification(controller, rootNode);
+				string errorMessage = "Should not have made any third-level children that did not exist in the dictionary configuration node hierarchy";
+				for (int i = 0; i < 3; i++)
+					Assert.That(rootTreeNode.Nodes[i].Nodes.Count, Is.EqualTo(rootNode.Children[i].Children.Count), errorMessage); // ie 0
+			}
 		}
 
 		/// <summary>
@@ -269,24 +275,27 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void CreateTreeOfTreeNodes_CanCreateThreeLevelTree()
 		{
-			var controller = new DictionaryConfigurationController() { View = new TestConfigurableDictionaryView() };
-			var rootNode = new ConfigurableDictionaryNode() {Label = "0", Children = new List<ConfigurableDictionaryNode>()};
-			AddChildrenToNode(rootNode, 2);
-			AddChildrenToNode(rootNode.Children[0], 2);
-			AddChildrenToNode(rootNode.Children[1], 3);
+			using (var view = new TestConfigurableDictionaryView())
+			{
+				var controller = new DictionaryConfigurationController() { View = view };
+				var rootNode = new ConfigurableDictionaryNode() {Label = "0", Children = new List<ConfigurableDictionaryNode>()};
+				AddChildrenToNode(rootNode, 2);
+				AddChildrenToNode(rootNode.Children[0], 2);
+				AddChildrenToNode(rootNode.Children[1], 3);
 
-			// SUT
-			controller.CreateTreeOfTreeNodes(null, new List<ConfigurableDictionaryNode> { rootNode });
+				// SUT
+				controller.CreateTreeOfTreeNodes(null, new List<ConfigurableDictionaryNode> { rootNode });
 
-			var rootTreeNode = BasicTreeNodeVerification(controller, rootNode);
-			string errorMessage = "Did not make correct number of third-level children";
-			Assert.That(rootTreeNode.Nodes[0].Nodes.Count, Is.EqualTo(rootNode.Children[0].Children.Count), errorMessage); // ie 2
-			Assert.That(rootTreeNode.Nodes[1].Nodes.Count, Is.EqualTo(rootNode.Children[1].Children.Count), errorMessage); // ie 3
-			string errorMessage2 = "Should not have made any fourth-level children that did not exist in the dictionary configuration node hierarchy.";
-			for (int i = 0; i < 2; i++)
-				Assert.That(rootTreeNode.Nodes[0].Nodes[i].Nodes.Count, Is.EqualTo(rootNode.Children[0].Children[i].Children.Count), errorMessage2); // ie 0
-			for (int i = 0; i < 3; i++)
-				Assert.That(rootTreeNode.Nodes[1].Nodes[i].Nodes.Count, Is.EqualTo(rootNode.Children[1].Children[i].Children.Count), errorMessage2); // ie 0
+				var rootTreeNode = BasicTreeNodeVerification(controller, rootNode);
+				string errorMessage = "Did not make correct number of third-level children";
+				Assert.That(rootTreeNode.Nodes[0].Nodes.Count, Is.EqualTo(rootNode.Children[0].Children.Count), errorMessage); // ie 2
+				Assert.That(rootTreeNode.Nodes[1].Nodes.Count, Is.EqualTo(rootNode.Children[1].Children.Count), errorMessage); // ie 3
+				string errorMessage2 = "Should not have made any fourth-level children that did not exist in the dictionary configuration node hierarchy.";
+				for (int i = 0; i < 2; i++)
+					Assert.That(rootTreeNode.Nodes[0].Nodes[i].Nodes.Count, Is.EqualTo(rootNode.Children[0].Children[i].Children.Count), errorMessage2); // ie 0
+				for (int i = 0; i < 3; i++)
+					Assert.That(rootTreeNode.Nodes[1].Nodes[i].Nodes.Count, Is.EqualTo(rootNode.Children[1].Children[i].Children.Count), errorMessage2); // ie 0
+			}
 		}
 
 		[Test]
@@ -504,27 +513,30 @@ namespace SIL.FieldWorks.XWorks
 		private void MoveSiblingAndVerifyPosition(int movingChildOriginalPosition, int movingChildExpectedPosition,
 			DictionaryConfigurationController.Direction directionToMoveChild)
 		{
-			var controller = new DictionaryConfigurationController() { View = new TestConfigurableDictionaryView(), _model = m_model };
-			var rootNode = new ConfigurableDictionaryNode() {Label = "root", Children = new List<ConfigurableDictionaryNode>()};
-			AddChildrenToNode(rootNode, 2);
-			var movingChild = rootNode.Children[movingChildOriginalPosition];
-			var otherChild = rootNode.Children[movingChildExpectedPosition];
-			m_model.Parts = new List<ConfigurableDictionaryNode>() {rootNode};
-			// SUT
-			controller.Reorder(movingChild, directionToMoveChild);
-			Assert.That(rootNode.Children[movingChildExpectedPosition], Is.EqualTo(movingChild), "movingChild should have been moved");
-			Assert.That(rootNode.Children[movingChildOriginalPosition], Is.Not.EqualTo(movingChild), "movingChild should not still be in original position");
-			Assert.That(rootNode.Children[movingChildOriginalPosition], Is.EqualTo(otherChild), "unexpected child in original movingChild position");
-			Assert.That(rootNode.Children.Count, Is.EqualTo(2), "unexpected number of reordered siblings");
+			using (var view = new TestConfigurableDictionaryView())
+			{
+				var controller = new DictionaryConfigurationController() { View = view, _model = m_model };
+				var rootNode = new ConfigurableDictionaryNode() {Label = "root", Children = new List<ConfigurableDictionaryNode>()};
+				AddChildrenToNode(rootNode, 2);
+				var movingChild = rootNode.Children[movingChildOriginalPosition];
+				var otherChild = rootNode.Children[movingChildExpectedPosition];
+				m_model.Parts = new List<ConfigurableDictionaryNode>() {rootNode};
+				// SUT
+				controller.Reorder(movingChild, directionToMoveChild);
+				Assert.That(rootNode.Children[movingChildExpectedPosition], Is.EqualTo(movingChild), "movingChild should have been moved");
+				Assert.That(rootNode.Children[movingChildOriginalPosition], Is.Not.EqualTo(movingChild), "movingChild should not still be in original position");
+				Assert.That(rootNode.Children[movingChildOriginalPosition], Is.EqualTo(otherChild), "unexpected child in original movingChild position");
+				Assert.That(rootNode.Children.Count, Is.EqualTo(2), "unexpected number of reordered siblings");
+			}
 		}
 
 		private sealed class TestConfigurableDictionaryView : IDictionaryConfigurationView, IDisposable
 		{
-			private TreeView view = new TreeView();
+			private DictionaryConfigurationTreeControl m_treeControl = new DictionaryConfigurationTreeControl();
 
-			public TreeView GetTreeView()
+			public DictionaryConfigurationTreeControl TreeControl
 			{
-				return view;
+				get { return m_treeControl; }
 			}
 
 			public void Redraw()
@@ -539,7 +551,7 @@ namespace SIL.FieldWorks.XWorks
 
 			public void Dispose()
 			{
-				view.Dispose();
+				m_treeControl.Dispose();
 			}
 #pragma warning disable 67
 			public event EventHandler ManageViews;

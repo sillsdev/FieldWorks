@@ -55,9 +55,9 @@ namespace SIL.FieldWorks.XWorks
 			m_preview.Init(mediator, parameters);
 		}
 
-		public TreeView GetTreeView()
+		public DictionaryConfigurationTreeControl TreeControl
 		{
-			return treeControl;
+			get { return treeControl; }
 		}
 
 		public void Redraw()

@@ -43,13 +43,13 @@ namespace SIL.FieldWorks.XWorks
 			this.m_linkManageViews = new System.Windows.Forms.LinkLabel();
 			this.treeDetail_Button_Split = new System.Windows.Forms.SplitContainer();
 			this.tree_Detail_Split = new System.Windows.Forms.SplitContainer();
-			this.treeControl = new System.Windows.Forms.TreeView();
 			this.previewDetailSplit = new System.Windows.Forms.SplitContainer();
 			this.buttonLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.helpButton = new System.Windows.Forms.Button();
 			this.applyButton = new System.Windows.Forms.Button();
 			this.cancelButton = new System.Windows.Forms.Button();
 			this.okButton = new System.Windows.Forms.Button();
+			this.treeControl = new SIL.FieldWorks.XWorks.DictionaryConfigurationTreeControl();
 			((System.ComponentModel.ISupportInitialize)(this.manageViews_viewSplit)).BeginInit();
 			this.manageViews_viewSplit.Panel1.SuspendLayout();
 			this.manageViews_viewSplit.Panel2.SuspendLayout();
@@ -164,14 +164,6 @@ namespace SIL.FieldWorks.XWorks
 			this.tree_Detail_Split.SplitterDistance = 287;
 			this.tree_Detail_Split.TabIndex = 0;
 			// 
-			// treeControl
-			// 
-			this.treeControl.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.treeControl.Location = new System.Drawing.Point(0, 0);
-			this.treeControl.Name = "treeControl";
-			this.treeControl.Size = new System.Drawing.Size(287, 558);
-			this.treeControl.TabIndex = 0;
-			// 
 			// previewDetailSplit
 			// 
 			this.previewDetailSplit.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -237,6 +229,14 @@ namespace SIL.FieldWorks.XWorks
 			this.okButton.UseVisualStyleBackColor = true;
 			this.okButton.Click += new System.EventHandler(this.okButton_Click);
 			// 
+			// treeControl
+			// 
+			this.treeControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.treeControl.Location = new System.Drawing.Point(0, 0);
+			this.treeControl.Name = "treeControl";
+			this.treeControl.Size = new System.Drawing.Size(287, 558);
+			this.treeControl.TabIndex = 0;
+			// 
 			// DictionaryConfigurationDlg
 			// 
 			this.AcceptButton = this.okButton;
@@ -279,7 +279,6 @@ namespace SIL.FieldWorks.XWorks
 		private System.Windows.Forms.Label m_lblViewType;
 		private System.Windows.Forms.LinkLabel m_linkManageViews;
 		private System.Windows.Forms.SplitContainer tree_Detail_Split;
-		private System.Windows.Forms.TreeView treeControl;
 		private System.Windows.Forms.FlowLayoutPanel buttonLayoutPanel;
 		private System.Windows.Forms.Button helpButton;
 		private System.Windows.Forms.Button applyButton;
@@ -287,5 +286,6 @@ namespace SIL.FieldWorks.XWorks
 		private System.Windows.Forms.Button okButton;
 		private System.Windows.Forms.SplitContainer previewDetailSplit;
 		private XWorks.RecordDocXmlView m_preview;
+		private DictionaryConfigurationTreeControl treeControl;
 	}
 }

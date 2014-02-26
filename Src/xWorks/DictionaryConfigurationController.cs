@@ -92,7 +92,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CreateTreeOfTreeNodes(null, model.Parts);
 
-			View.GetTreeView().AfterCheck += (sender, args) =>
+			View.TreeControl.Tree.AfterCheck += (sender, args) =>
 			{
 				var node = (ConfigurableDictionaryNode) args.Node.Tag;
 				node.IsEnabled = args.Node.Checked;
@@ -100,7 +100,7 @@ namespace SIL.FieldWorks.XWorks
 				View.Redraw();
 			};
 
-			View.GetTreeView().AfterSelect += (sender, args) =>
+			View.TreeControl.Tree.AfterSelect += (sender, args) =>
 			{
 				var node = (ConfigurableDictionaryNode) args.Node.Tag;
 				BuildAndShowOptions(node);
@@ -143,7 +143,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var newTreeNode = new TreeNode(node.Label) { Tag = node };
 
-			var treeView = View.GetTreeView();
+			var treeView = View.TreeControl.Tree;
 
 			if (parentNode == null)
 			{
@@ -210,6 +210,12 @@ namespace SIL.FieldWorks.XWorks
 			PopulateTreeView(_model);
 			view.ManageViews += (sender, args) => new DictionaryConfigMgrDlg(mediator, "", new List<XmlNode>(), null).ShowDialog(view as Form);
 			view.SaveModel += (sender, args) => { /*_model.Save(); (needs to save in project config location, not default where it was loaded from) */ };
+
+			view.TreeControl.MoveUp += node => Reorder(node.Tag as ConfigurableDictionaryNode, Direction.Up);
+			view.TreeControl.MoveDown += node => Reorder(node.Tag as ConfigurableDictionaryNode, Direction.Down);
+			view.TreeControl.Duplicate += node => { throw new NotImplementedException(); };
+			view.TreeControl.Rename += node => { throw new NotImplementedException(); };
+			view.TreeControl.Remove += node => { throw new NotImplementedException(); };
 		}
 
 		/// <summary>
@@ -276,7 +282,7 @@ namespace SIL.FieldWorks.XWorks
 			parent.Children.Insert(newNodeIndex, node);
 
 			// Update view
-			View.GetTreeView().Nodes.Clear();
+			View.TreeControl.Tree.Nodes.Clear();
 			var rootNodes = _model.Parts;
 			CreateTreeOfTreeNodes(null, rootNodes);
 		}

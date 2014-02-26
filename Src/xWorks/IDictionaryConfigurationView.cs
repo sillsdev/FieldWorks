@@ -21,9 +21,9 @@ namespace SIL.FieldWorks.XWorks
 		event EventHandler SaveModel;
 
 		/// <summary>
-		/// Gets the tree hierarchy widget.
+		/// Gets the tree hierarchy control.
 		/// </summary>
-		TreeView GetTreeView();
+		DictionaryConfigurationTreeControl TreeControl { get; }
 
 		/// <summary>
 		/// Redraw the widgets, updating anything that has changed.
