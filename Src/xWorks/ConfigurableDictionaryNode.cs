@@ -2,7 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Xml;
 using System.Xml.Serialization;
 using SIL.FieldWorks.FDO;
 
@@ -72,5 +75,49 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		[XmlAttribute(AttributeName = "isEnabled")]
 		public bool IsEnabled { get; set; }
+
+		/// <summary>
+		/// Clone this node. Point to the same Parent object. Deep-clone Children and DictionaryNodeOptions.
+		/// </summary>
+		internal ConfigurableDictionaryNode DeepCloneUnderSameParent()
+		{
+			var clone = new ConfigurableDictionaryNode();
+
+			// Copy everything over at first, importantly handling strings, bools, and Parent.
+			var properties = typeof (ConfigurableDictionaryNode).GetProperties();
+			foreach (var property in properties)
+			{
+				var originalValue = property.GetValue(this, null);
+				property.SetValue(clone, originalValue, null);
+			}
+
+			// Deep-clone Children
+			if (Children != null)
+			{
+				var clonedChildren = new List<ConfigurableDictionaryNode>();
+				foreach (var child in Children)
+				{
+					var clonedChild = child.DeepCloneUnderSameParent();
+					// Cloned children should point to their newly-cloned parent
+					clonedChild.Parent = clone;
+					clonedChildren.Add(clonedChild);
+				}
+				clone.Children = clonedChildren;
+			}
+
+			// TODO: Deep-clone DictionaryNodeOptions
+
+			return clone;
+		}
+
+		/// <summary>
+		/// Duplicate this node and its Children, adding the result to the Parent's list of children.
+		/// </summary>
+		public ConfigurableDictionaryNode DuplicateAmongSiblings()
+		{
+			var duplicate = DeepCloneUnderSameParent();
+			Parent.Children.Add(duplicate);
+			return duplicate;
+		}
 	}
 }
