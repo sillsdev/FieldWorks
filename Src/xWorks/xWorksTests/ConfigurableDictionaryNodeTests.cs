@@ -127,5 +127,63 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			Assert.DoesNotThrow(() => node.UnlinkFromParent());
 		}
+
+		[Test]
+		public void CanRelabel()
+		{
+			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
+			var node = new ConfigurableDictionaryNode() { Parent = parent, Label = "originalLabel"};
+			parent.Children.Add(node);
+
+			var newLabel = "newLabel";
+			// SUT
+			node.Relabel(newLabel);
+			Assert.That(node.Label, Is.EqualTo(newLabel), "Label was not updated");
+		}
+
+		[Test]
+		public void ReportSuccessfulRelabel()
+		{
+			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
+			var node = new ConfigurableDictionaryNode() { Parent = parent, Label = "originalLabel" };
+			parent.Children.Add(node);
+
+			// SUT
+			var result = node.Relabel("newLabel");
+			Assert.That(result, Is.True);
+		}
+
+		/// <summary>
+		/// Disallow relabeling with a label that is identical to an existing label among a node's siblings.
+		/// </summary>
+		[Test]
+		public void RelabelWontUseAnExistingLabel()
+		{
+			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
+			var originalLabel = "originalLabel";
+			var node = new ConfigurableDictionaryNode() { Parent = parent, Label = originalLabel };
+			var otherNode = new ConfigurableDictionaryNode() { Parent = parent, Label = "otherLabel" };
+			parent.Children.Add(node);
+			parent.Children.Add(otherNode);
+
+			// SUT
+			var result = node.Relabel(otherNode.Label);
+			Assert.That(result, Is.False, "Should have reported failure to relabel");
+			Assert.That(node.Label, Is.EqualTo(originalLabel), "Should not have changed label to the same value as an existing label");
+		}
+
+		[Test]
+		public void CanRelabelToSameLabel()
+		{
+			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
+			var originalLabel = "originalLabel";
+			var node = new ConfigurableDictionaryNode() { Parent = parent, Label = originalLabel };
+			parent.Children.Add(node);
+
+			// SUT
+			var result = node.Relabel(originalLabel);
+			Assert.That(result, Is.True, "Allow relabeling to the same label");
+			Assert.That(node.Label, Is.EqualTo(originalLabel), "Should not have changed label");
+		}
 	}
 }

@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
 using SIL.FieldWorks.FDO;
@@ -137,6 +138,17 @@ namespace SIL.FieldWorks.XWorks
 
 			Parent.Children.Remove(this);
 			Parent = null;
+		}
+
+		/// <summary>
+		/// Update label, but not if a sibling has the new label already. It's okay to relabel to the existing label.
+		/// </summary>
+		public bool Relabel(string newLabel)
+		{
+			if (Parent.Children.Any(sibling => sibling != this && sibling.Label == newLabel))
+				return false;
+			Label = newLabel;
+			return true;
 		}
 	}
 }
