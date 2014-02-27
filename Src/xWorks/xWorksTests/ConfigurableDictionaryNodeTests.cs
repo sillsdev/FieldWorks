@@ -86,5 +86,19 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(parent.Children.Count, Is.EqualTo(3), "should have increased");
 			Assert.That(parent.Children.Contains(duplicate), Is.True, "duplicate should be listed among siblings, added to the parent's list of children");
 		}
+
+		[Test]
+		public void DuplicatesAreMarkedAsSuch()
+		{
+			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>() };
+			var node = new ConfigurableDictionaryNode() { Parent = parent };
+			parent.Children.Add(node);
+			Assert.That(node.IsDuplicate, Is.False);
+
+			// SUT
+			var duplicate = node.DuplicateAmongSiblings();
+			Assert.That(duplicate.IsDuplicate, Is.True);
+			Assert.That(node.IsDuplicate, Is.False, "Original should not have been marked as a duplicate.");
+		}
 	}
 }

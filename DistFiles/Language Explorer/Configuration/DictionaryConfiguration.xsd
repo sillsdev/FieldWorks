@@ -55,6 +55,7 @@
 	 <xs:attribute type="xs:string" name="name" use="required"/>
 	 <xs:attribute type="xs:string" name="identifier" use="required"/>
 	 <xs:attribute type="xs:boolean" name="isEnabled" use="required"/>
+	 <xs:attribute type="xs:boolean" name="isDuplicate" use="optional"/>
 	 <xs:attributeGroup ref="itemStyle"/>
 </xs:complexType>
 <xs:attributeGroup name="itemStyle">

@@ -77,6 +77,12 @@ namespace SIL.FieldWorks.XWorks
 		public bool IsEnabled { get; set; }
 
 		/// <summary>
+		/// Whether this element of dictionary data was duplicated from another element of dictionary data.
+		/// </summary>
+		[XmlAttribute(AttributeName = "isDuplicate")]
+		public bool IsDuplicate { get; set; }
+
+		/// <summary>
 		/// Clone this node. Point to the same Parent object. Deep-clone Children and DictionaryNodeOptions.
 		/// </summary>
 		internal ConfigurableDictionaryNode DeepCloneUnderSameParent()
@@ -116,6 +122,7 @@ namespace SIL.FieldWorks.XWorks
 		public ConfigurableDictionaryNode DuplicateAmongSiblings()
 		{
 			var duplicate = DeepCloneUnderSameParent();
+			duplicate.IsDuplicate = true;
 			Parent.Children.Add(duplicate);
 			return duplicate;
 		}
