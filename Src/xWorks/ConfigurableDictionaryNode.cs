@@ -126,5 +126,17 @@ namespace SIL.FieldWorks.XWorks
 			Parent.Children.Add(duplicate);
 			return duplicate;
 		}
+
+		/// <summary>
+		/// Disassociate this node from its current Parent.
+		/// </summary>
+		public void UnlinkFromParent()
+		{
+			if (Parent == null)
+				return;
+
+			Parent.Children.Remove(this);
+			Parent = null;
+		}
 	}
 }

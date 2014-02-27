@@ -110,7 +110,7 @@ namespace SIL.FieldWorks.XWorks
 				View.TreeControl.MoveDownEnabled = CanReorder(node, Direction.Down);
 				// TODO implement other buttons
 				View.TreeControl.DuplicateEnabled = true;
-				View.TreeControl.RemoveEnabled = false;
+				View.TreeControl.RemoveEnabled = node.IsDuplicate;
 				View.TreeControl.RenameEnabled = false;
 
 				BuildAndShowOptions(node, mediator);
@@ -242,7 +242,7 @@ namespace SIL.FieldWorks.XWorks
 			view.TreeControl.MoveDown += node => Reorder(node.Tag as ConfigurableDictionaryNode, Direction.Down);
 			view.TreeControl.Duplicate += node => { (node.Tag as ConfigurableDictionaryNode).DuplicateAmongSiblings(); RefreshView(); };
 			view.TreeControl.Rename += node => { throw new NotImplementedException(); };
-			view.TreeControl.Remove += node => { throw new NotImplementedException(); };
+			view.TreeControl.Remove += node => { (node.Tag as ConfigurableDictionaryNode).UnlinkFromParent(); RefreshView(); };
 		}
 
 		/// <summary>

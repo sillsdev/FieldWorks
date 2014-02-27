@@ -100,5 +100,32 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(duplicate.IsDuplicate, Is.True);
 			Assert.That(node.IsDuplicate, Is.False, "Original should not have been marked as a duplicate.");
 		}
+
+		[Test]
+		public void CanUnlink()
+		{
+			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
+			var node = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = parent };
+			parent.Children.Add(node);
+			// SUT
+			node.UnlinkFromParent();
+			Assert.That(parent.Children.Count, Is.EqualTo(0), "Parent should not link to unlinked child");
+			Assert.That(node.Parent, Is.Null, "Node should not still claim the original parent");
+		}
+
+		/// <summary>
+		/// Can unlink a node twice in a row, or if a node is already at the root of a hierarchy.
+		/// </summary>
+		[Test]
+		public void CanUnlinkTwice()
+		{
+			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
+			var node = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = parent };
+			parent.Children.Add(node);
+			node.UnlinkFromParent();
+			Assert.That(node.Parent, Is.Null); // node is now at the root of a hierarchy
+			// SUT
+			Assert.DoesNotThrow(() => node.UnlinkFromParent());
+		}
 	}
 }
