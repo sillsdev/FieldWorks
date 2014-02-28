@@ -118,6 +118,10 @@
       <HintPath>..\..\..\Output\Debug\FwCoreDlgs.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="FwCoreDlgControls, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\Output\Debug\FwCoreDlgControls.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="FwUtilsTests, Version=7.0.1.13090, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
     </Reference>

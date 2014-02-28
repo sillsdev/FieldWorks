@@ -3,7 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
+using SIL.FieldWorks.FwCoreDlgControls;
 
 namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 {
@@ -43,15 +45,16 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 
 		public string Style
 		{
-			get { return dropDownStyle.SelectedText; }
-			set { dropDownStyle.SelectedText = value; /* TODO pH 2014.02: verify this is in the list */ }
+			get
+			{
+				var style = ((StyleComboItem)dropDownStyle.SelectedItem).Style;
+				return style != null ? style.Name : null;
+			}
 		}
 
 		//
 		// View setup properties
 		//
-
-		public string StylesLabel { set { labelStyle.Text = value; } }
 
 		public bool StylesVisible
 		{
@@ -72,7 +75,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			set
 			{
 				// TODO: position Options, resize this
-				optionsView = value;
+				value.Dispose();
 			}
 		}
 
@@ -99,5 +102,25 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			add { textBoxAfter.TextChanged += value; }
 			remove { textBoxAfter.TextChanged -= value; }
 		}
+
+
+		public void SetStyles(List<StyleComboItem> styles, string selectedStyle, bool usingParaStyles = false)
+		{
+			labelStyle.Text = usingParaStyles ? xWorksStrings.ksParagraphStyleForContent : xWorksStrings.ksCharacterStyleForContent;
+
+			dropDownStyle.Items.Clear();
+			dropDownStyle.Items.AddRange(styles.ToArray());
+			dropDownStyle.SelectedIndex = 0; // default so we don't have a null item selected.  If there are 0 items, we have other problems.
+			for (int i = 0; i < styles.Count; ++i)
+			{
+				if (styles[i].Style != null &&
+					styles[i].Style.Name == selectedStyle)
+				{
+					dropDownStyle.SelectedIndex = i;
+					break;
+				}
+			}
+		}
+
 	}
 }

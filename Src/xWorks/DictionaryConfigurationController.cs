@@ -285,7 +285,7 @@ namespace SIL.FieldWorks.XWorks
 			if (DetailsController == null)
 				DetailsController = new DictionaryDetailsController(node, mediator);
 			else
-				DetailsController.Init(node, mediator);
+				DetailsController.LoadNode(node);
 			View.DetailsView = DetailsController.View;
 		}
 

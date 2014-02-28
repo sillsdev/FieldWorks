@@ -103,10 +103,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			this.dropDownStyle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.dropDownStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.dropDownStyle.FormattingEnabled = true;
-			this.dropDownStyle.Items.AddRange(new object[] {
-            "Sample",
-            "Two",
-            "Three"});
 			this.dropDownStyle.Location = new System.Drawing.Point(3, 23);
 			this.dropDownStyle.Name = "dropDownStyle";
 			this.dropDownStyle.Size = new System.Drawing.Size(196, 21);
@@ -120,7 +116,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			this.labelStyle.Name = "labelStyle";
 			this.labelStyle.Size = new System.Drawing.Size(82, 13);
 			this.labelStyle.TabIndex = 1;
-			this.labelStyle.Text = "Character Style:";
 			// 
 			// buttonStyles
 			// 

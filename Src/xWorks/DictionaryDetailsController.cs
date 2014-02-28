@@ -3,7 +3,11 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 using XCore;
 
@@ -16,6 +20,11 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public class DictionaryDetailsController
 	{
+		private readonly Mediator m_mediator;
+		private readonly FwStyleSheet m_styleSheet;
+		private List<StyleComboItem> m_charStyles;
+		private List<StyleComboItem> m_paraStyles;
+
 		/// <summary>Model for the dictionary element being configured</summary>
 		private ConfigurableDictionaryNode m_node;
 		/// <summary>Model for options specific to the element type, such as writing systems or relation types</summary>
@@ -25,16 +34,21 @@ namespace SIL.FieldWorks.XWorks
 
 		public DictionaryDetailsController(ConfigurableDictionaryNode node, Mediator mediator)
 		{
-			Init(node, mediator);
+			// one-time setup
+			m_mediator = mediator;
+			m_styleSheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
+			SetStylesLists();
+
+			// load node
+			LoadNode(node);
 		}
 
 		/// <summary>
 		/// (Re)initializes the controller and view to configure the given node
 		/// </summary>
 		/// <param name="node"></param>
-		/// <param name="mediator"></param>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "View is disposed by its parent")]
-		public void Init(ConfigurableDictionaryNode node, Mediator mediator)
+		public void LoadNode(ConfigurableDictionaryNode node)
 		{
 			m_node = node;
 
@@ -44,15 +58,17 @@ namespace SIL.FieldWorks.XWorks
 				BetweenText = m_node.Between,
 				AfterText = m_node.After,
 				Enabled = m_node.IsEnabled
-				// TODO pH 2014.02: initialize styles list
 			};
 
 			View.SuspendLayout();
 
+			// Populate Styles dropdown
+			View.SetStyles(m_charStyles, m_node.Style);
+
 			// Test for Options type
 			if (Options != null)
 			{
-				if(Options is DictionaryNodeWritingSystemOptions)
+				if (Options is DictionaryNodeWritingSystemOptions)
 				{
 					InitWsOptions(Options as DictionaryNodeWritingSystemOptions);
 				}
@@ -69,12 +85,12 @@ namespace SIL.FieldWorks.XWorks
 					throw new ArgumentException("Unrecognised type of DictionaryNodeOptions");
 				}
 			}
-			else if (m_node.Label.Equals("Main Entry")) // TODO pH 2014.02: more-reliable test
+			else if ("Main Entry".Equals(m_node.Label)) // TODO pH 2014.02: more-reliable test
 			{
 				// There is nothing to configure on the Main Entry itself
 				View.Visible = false;
 			}
-			else if (m_node.Label.Equals("Subsubentries")) // TODO pH 2014.02: more-reliable test
+			else if ("Subsubentries".Equals(m_node.Label)) // TODO pH 2014.02: more-reliable test
 			{
 				// REVIEW (Hasso) 2014.02: Styles were hidden for subsubentries in the old dialog.  Is this still what we want?
 				View.StylesVisible = false;
@@ -110,25 +126,24 @@ namespace SIL.FieldWorks.XWorks
 				ShowGrammarFirst = senseOptions.ShowSharedGrammarInfoFirst,
 				SenseInPara = senseOptions.DisplayEachSenseInAParagraph
 			};
-			// TODO: swap out character Style for paragraph Style
+
+			// load paragraph Style
+			View.SetStyles(m_paraStyles, m_node.Style, true);
+
 			// TODO: action or event to dis- and enable Style and Context
 
 			View.OptionsView = senseOptionsView;
 		}
 
 		/// <summary>Initialize options for DictionaryNodeListOptions other than WritingSystem options</summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "listOptionsView is disposed by its parent")]
 		private void InitListOptions(DictionaryNodeListOptions listOptions)
 		{
 			var listOptionsView = new ListOptionsView();
 
-			var complexFormOptions = listOptions as DictionaryNodeComplexFormOptions;
-			if (complexFormOptions != null)
+			if (listOptions is DictionaryNodeComplexFormOptions)
 			{
-				listOptionsView.CheckBoxLabel = "Display each complex form in a paragraph"; // TODO: localize
-				listOptionsView.CheckBoxChanged += (sender, e) =>
-				{
-					complexFormOptions.DisplayEachComplexFormInAParagraph = listOptionsView.CheckBoxChecked;
-				};
+				InitComplexFormOptions(listOptions as DictionaryNodeComplexFormOptions, listOptionsView);
 			}
 			else
 			{
@@ -146,6 +161,41 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			View.OptionsView = listOptionsView;
+		}
+
+		private void InitComplexFormOptions(DictionaryNodeComplexFormOptions complexFormOptions, ListOptionsView listOptionsView)
+		{
+			listOptionsView.CheckBoxLabel = "Display each complex form in a paragraph"; // TODO: localize
+			listOptionsView.CheckBoxChanged += (sender, e) =>
+			{
+				complexFormOptions.DisplayEachComplexFormInAParagraph = listOptionsView.CheckBoxChecked;
+			};
+			View.SetStyles(m_paraStyles, m_node.Style, true);
+		}
+
+		private void SetStylesLists()
+		{
+			if (m_charStyles == null)
+				m_charStyles = new List<StyleComboItem>();
+			else
+				m_charStyles.Clear();
+			if (m_paraStyles == null)
+				m_paraStyles = new List<StyleComboItem>();
+			else
+				m_paraStyles.Clear();
+
+			m_charStyles.Add(new StyleComboItem(null));
+			// Per LT-10950, we don't want 'none' as an option for paragraph style, so don't add null to ParaStyles
+			foreach (var style in m_styleSheet.Styles)
+			{
+				if (style.IsCharacterStyle)
+					m_charStyles.Add(new StyleComboItem(style));
+				else if (style.IsParagraphStyle)
+					m_paraStyles.Add(new StyleComboItem(style));
+			}
+
+			m_charStyles.Sort();
+			m_paraStyles.Sort();
 		}
 
 		private void RefreshPreview(){/*TODO pH 2014.02*/}
