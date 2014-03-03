@@ -108,10 +108,9 @@ namespace SIL.FieldWorks.XWorks
 
 				View.TreeControl.MoveUpEnabled = CanReorder(node, Direction.Up);
 				View.TreeControl.MoveDownEnabled = CanReorder(node, Direction.Down);
-				// TODO implement other buttons
 				View.TreeControl.DuplicateEnabled = true;
 				View.TreeControl.RemoveEnabled = node.IsDuplicate;
-				View.TreeControl.RenameEnabled = false;
+				View.TreeControl.RenameEnabled = node.IsDuplicate;
 
 				BuildAndShowOptions(node, mediator);
 			};
@@ -241,7 +240,21 @@ namespace SIL.FieldWorks.XWorks
 			view.TreeControl.MoveUp += node => Reorder(node.Tag as ConfigurableDictionaryNode, Direction.Up);
 			view.TreeControl.MoveDown += node => Reorder(node.Tag as ConfigurableDictionaryNode, Direction.Down);
 			view.TreeControl.Duplicate += node => { (node.Tag as ConfigurableDictionaryNode).DuplicateAmongSiblings(); RefreshView(); };
-			view.TreeControl.Rename += node => { throw new NotImplementedException(); };
+			view.TreeControl.Rename += node =>
+			{
+				var dictionaryNode = node.Tag as ConfigurableDictionaryNode;
+				using (var renameDialog = new DictionaryConfigurationNodeRenameDlg())
+				{
+					renameDialog.NewName = dictionaryNode.Label;
+
+					if (renameDialog.ShowDialog() != DialogResult.OK)
+						return;
+
+					if (!dictionaryNode.Relabel(renameDialog.NewName))
+						MessageBox.Show("Failed to rename. Use a name that is not already in use.");
+				}
+				RefreshView();
+			};
 			view.TreeControl.Remove += node => { (node.Tag as ConfigurableDictionaryNode).UnlinkFromParent(); RefreshView(); };
 		}
 
