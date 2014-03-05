@@ -97,29 +97,27 @@ namespace SIL.FieldWorks.XWorks
 			RefreshView();
 		}
 
-		private void RefreshView()
+		/// <summary>
+		/// Refresh view from model. Try to select nodeToSelect in the view afterward. If nodeToSelect is null, try to preserve the existing node selection.
+		/// </summary>
+		private void RefreshView(ConfigurableDictionaryNode nodeToSelect = null)
 		{
-			ConfigurableDictionaryNode selectedNode = null;
 			// TODO maintain tree expansions
-			if(View != null && View.TreeControl.Tree.SelectedNode != null)
-			{
-				selectedNode = View.TreeControl.Tree.SelectedNode.Tag as ConfigurableDictionaryNode;
-			}
-			View.TreeControl.Tree.Nodes.Clear();
+
+			var tree = View.TreeControl.Tree;
+			if (nodeToSelect == null && tree.SelectedNode != null)
+				nodeToSelect = tree.SelectedNode.Tag as ConfigurableDictionaryNode;
+
+			// Rebuild view from model
+			tree.Nodes.Clear();
 			var rootNodes = _model.Parts;
 			CreateTreeOfTreeNodes(null, rootNodes);
 
-			// Select a node in the tree so there will always be a selection for the buttons to be enabled or disabled with respect to.
-			var tree = View.TreeControl.Tree;
-			if(tree.Nodes.Count > 0)
-			{
-				TreeNode matchingNode = null;
-				if(selectedNode != null)
-				{
-					matchingNode = FindTreeNode(selectedNode, tree.Nodes);
-				}
-				tree.SelectedNode = matchingNode ?? tree.Nodes[0];
-			}
+			if (nodeToSelect != null)
+				tree.SelectedNode = FindTreeNode(nodeToSelect, tree.Nodes);
+			// Fallback to selecting first root, trying to make sure there is always a selection for the buttons to be enabled or disabled with respect to.
+			if (tree.SelectedNode == null && tree.Nodes.Count > 0)
+				tree.SelectedNode = tree.Nodes[0];
 		}
 
 		/// <summary>
@@ -230,7 +228,11 @@ namespace SIL.FieldWorks.XWorks
 
 			View.TreeControl.MoveUp += node => Reorder(node.Tag as ConfigurableDictionaryNode, Direction.Up);
 			View.TreeControl.MoveDown += node => Reorder(node.Tag as ConfigurableDictionaryNode, Direction.Down);
-			View.TreeControl.Duplicate += node => { (node.Tag as ConfigurableDictionaryNode).DuplicateAmongSiblings(); RefreshView(); };
+			View.TreeControl.Duplicate += node =>
+			{
+				var duplicate = (node.Tag as ConfigurableDictionaryNode).DuplicateAmongSiblings();
+				RefreshView(duplicate);
+			};
 			View.TreeControl.Rename += node =>
 			{
 				var dictionaryNode = node.Tag as ConfigurableDictionaryNode;
