@@ -12,13 +12,19 @@ case $1 in
 	pack)
 		for F in $FILES
 		do
-			gzip -f $F || true
+			if [ -f $F -a ! -f $F.gz ]
+			then
+				gzip -f $F
+			fi
 		done
 	;;
 	unpack)
 		for F in $FILES
 		do
-			gunzip -f $F.gz || true
+			if [ -f $F.gz -a ! -f $F ]
+			then
+				gunzip -f $F.gz
+			fi
 		done
 	;;
 	check)
