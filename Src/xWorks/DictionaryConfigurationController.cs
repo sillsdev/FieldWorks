@@ -94,27 +94,6 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal void PopulateTreeView(Mediator mediator)
 		{
-			View.TreeControl.Tree.AfterCheck += (sender, args) =>
-			{
-				var node = (ConfigurableDictionaryNode) args.Node.Tag;
-				node.IsEnabled = args.Node.Checked;
-
-				View.Redraw();
-			};
-
-			View.TreeControl.Tree.AfterSelect += (sender, args) =>
-			{
-				var node = (ConfigurableDictionaryNode) args.Node.Tag;
-
-				View.TreeControl.MoveUpEnabled = CanReorder(node, Direction.Up);
-				View.TreeControl.MoveDownEnabled = CanReorder(node, Direction.Down);
-				View.TreeControl.DuplicateEnabled = true;
-				View.TreeControl.RemoveEnabled = node.IsDuplicate;
-				View.TreeControl.RenameEnabled = node.IsDuplicate;
-
-				BuildAndShowOptions(node, mediator);
-			};
-
 			RefreshView();
 		}
 
@@ -234,13 +213,13 @@ namespace SIL.FieldWorks.XWorks
 						: _alternateDictionaries.Values.First();
 			// Populate the tree view with the users last configuration, or the first one in the list of alternates.
 			PopulateTreeView(mediator);
-			view.ManageViews += (sender, args) => new DictionaryConfigMgrDlg(mediator, "", new List<XmlNode>(), null).ShowDialog(view as Form);
-			view.SaveModel += (sender, args) => { /*_model.Save(); (needs to save in project config location, not default where it was loaded from) */ };
+			View.ManageViews += (sender, args) => new DictionaryConfigMgrDlg(mediator, "", new List<XmlNode>(), null).ShowDialog(View as Form);
+			View.SaveModel += (sender, args) => { /*_model.Save(); (needs to save in project config location, not default where it was loaded from) */ };
 
-			view.TreeControl.MoveUp += node => Reorder(node.Tag as ConfigurableDictionaryNode, Direction.Up);
-			view.TreeControl.MoveDown += node => Reorder(node.Tag as ConfigurableDictionaryNode, Direction.Down);
-			view.TreeControl.Duplicate += node => { (node.Tag as ConfigurableDictionaryNode).DuplicateAmongSiblings(); RefreshView(); };
-			view.TreeControl.Rename += node =>
+			View.TreeControl.MoveUp += node => Reorder(node.Tag as ConfigurableDictionaryNode, Direction.Up);
+			View.TreeControl.MoveDown += node => Reorder(node.Tag as ConfigurableDictionaryNode, Direction.Down);
+			View.TreeControl.Duplicate += node => { (node.Tag as ConfigurableDictionaryNode).DuplicateAmongSiblings(); RefreshView(); };
+			View.TreeControl.Rename += node =>
 			{
 				var dictionaryNode = node.Tag as ConfigurableDictionaryNode;
 				using (var renameDialog = new DictionaryConfigurationNodeRenameDlg())
@@ -255,7 +234,28 @@ namespace SIL.FieldWorks.XWorks
 				}
 				RefreshView();
 			};
-			view.TreeControl.Remove += node => { (node.Tag as ConfigurableDictionaryNode).UnlinkFromParent(); RefreshView(); };
+			View.TreeControl.Remove += node => { (node.Tag as ConfigurableDictionaryNode).UnlinkFromParent(); RefreshView(); };
+
+			View.TreeControl.Tree.AfterCheck += (sender, args) =>
+			{
+				var node = (ConfigurableDictionaryNode) args.Node.Tag;
+				node.IsEnabled = args.Node.Checked;
+
+				View.Redraw();
+			};
+
+			View.TreeControl.Tree.AfterSelect += (sender, args) =>
+			{
+				var node = (ConfigurableDictionaryNode) args.Node.Tag;
+
+				View.TreeControl.MoveUpEnabled = CanReorder(node, Direction.Up);
+				View.TreeControl.MoveDownEnabled = CanReorder(node, Direction.Down);
+				View.TreeControl.DuplicateEnabled = true;
+				View.TreeControl.RemoveEnabled = node.IsDuplicate;
+				View.TreeControl.RenameEnabled = node.IsDuplicate;
+
+				BuildAndShowOptions(node, mediator);
+			};
 		}
 
 		/// <summary>
