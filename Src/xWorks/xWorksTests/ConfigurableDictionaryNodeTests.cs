@@ -124,6 +124,33 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void DuplicateIsPutImmediatelyAfterOriginal()
+		{
+			var parent = new ConfigurableDictionaryNode();
+			var nodeA = new ConfigurableDictionaryNode() { Parent = parent };
+			var nodeB = new ConfigurableDictionaryNode() { Parent = parent };
+			parent.Children = new List<ConfigurableDictionaryNode>() { nodeA, nodeB };
+			Assert.That(parent.Children[0], Is.SameAs(nodeA));
+
+			// SUT
+			var duplicate = nodeA.DuplicateAmongSiblings();
+			Assert.That(parent.Children[1], Is.SameAs(duplicate), "duplicate node should be placed immediately after duplicated node");
+			Assert.That(parent.Children[2], Is.SameAs(nodeB), "second node in original list did not move into expected position");
+		}
+
+		[Test]
+		public void DuplicateLastItemDoesNotThrow()
+		{
+			var parent = new ConfigurableDictionaryNode();
+			var nodeA = new ConfigurableDictionaryNode() { Parent = parent };
+			var nodeB = new ConfigurableDictionaryNode() { Parent = parent };
+			parent.Children = new List<ConfigurableDictionaryNode>() { nodeA, nodeB };
+
+			// SUT
+			Assert.DoesNotThrow(() => nodeB.DuplicateAmongSiblings(), "problem with edge case");
+		}
+
+		[Test]
 		public void CanUnlink()
 		{
 			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = null };

@@ -134,7 +134,8 @@ namespace SIL.FieldWorks.XWorks
 			} while (this.Parent.Children.Exists(node => node.Label == newLabel));
 
 			duplicate.Label = newLabel;
-			Parent.Children.Add(duplicate);
+			var locationOfThisNode = Parent.Children.IndexOf(this);
+			Parent.Children.Insert(locationOfThisNode + 1, duplicate);
 			return duplicate;
 		}
 
