@@ -34,7 +34,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// This test verifies that PopulateTreeView builds a TreeView that has the same structure as the model it is based on
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "GetTreeView returns a reference")]
 		[Test]
 		public void PopulateTreeViewBuildsRightNumberOfNodes()
 		{
@@ -198,7 +197,6 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary/>
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "GetTreeView returns a reference")]
 		public void CreateAndAddTreeNodeForNode_CanAddRoot()
 		{
 			var controller = new DictionaryConfigurationController();

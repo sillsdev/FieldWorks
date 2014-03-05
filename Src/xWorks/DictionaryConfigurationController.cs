@@ -306,7 +306,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Move a node among its siblings in the model, and cause the view to update accordingly.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "GetTreeView returns a reference")]
 		public void Reorder(ConfigurableDictionaryNode node, Direction direction)
 		{
 			if (node == null)
