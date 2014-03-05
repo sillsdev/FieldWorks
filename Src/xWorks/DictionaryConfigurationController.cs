@@ -226,11 +226,15 @@ namespace SIL.FieldWorks.XWorks
 				{
 					renameDialog.NewName = dictionaryNode.Label;
 
-					if (renameDialog.ShowDialog() != DialogResult.OK)
+					// Unchanged?
+					if (renameDialog.ShowDialog() != DialogResult.OK || renameDialog.NewName == dictionaryNode.Label)
 						return;
 
 					if (!dictionaryNode.Relabel(renameDialog.NewName))
+					{
 						MessageBox.Show("Failed to rename. Use a name that is not already in use.");
+						return;
+					}
 				}
 				RefreshView();
 			};
