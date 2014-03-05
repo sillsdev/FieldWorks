@@ -124,6 +124,16 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var duplicate = DeepCloneUnderSameParent();
 			duplicate.IsDuplicate = true;
+
+			// Append a suffix to make label unique
+			int newLabelSuffix=1;
+			string newLabel;
+			do
+			{
+				newLabel = string.Format("{0} ({1})", Label, newLabelSuffix++);
+			} while (this.Parent.Children.Exists(node => node.Label == newLabel));
+
+			duplicate.Label = newLabel;
 			Parent.Children.Add(duplicate);
 			return duplicate;
 		}

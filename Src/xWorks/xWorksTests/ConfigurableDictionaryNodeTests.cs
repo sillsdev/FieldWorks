@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
@@ -25,6 +26,7 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			var clone = child.DeepCloneUnderSameParent();
 			VerifyDuplication(clone, child);
+			Assert.That(clone.Label, Is.EqualTo(child.Label));
 		}
 
 		[Test]
@@ -37,6 +39,7 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			var clone = child.DeepCloneUnderSameParent();
 			VerifyDuplication(clone, child);
+			Assert.That(clone.Label, Is.EqualTo(child.Label));
 		}
 
 		private static void VerifyDuplication(ConfigurableDictionaryNode clone, ConfigurableDictionaryNode node)
@@ -50,7 +53,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Assert.That(clone.FieldDescription, Is.EqualTo(node.FieldDescription));
 			Assert.That(clone.Style, Is.EqualTo(node.Style));
-			Assert.That(clone.Label, Is.EqualTo(node.Label));
 			Assert.That(clone.Before, Is.EqualTo(node.Before));
 			Assert.That(clone.After, Is.EqualTo(node.After));
 			Assert.That(clone.Between, Is.EqualTo(node.Between));
@@ -62,6 +64,7 @@ namespace SIL.FieldWorks.XWorks
 				Assert.That(clone.Children.Count, Is.EqualTo(node.Children.Count));
 				for (int childIndex = 0; childIndex < node.Children.Count; childIndex++)
 				{
+					Assert.That(clone.Children[childIndex].Label, Is.EqualTo(node.Children[childIndex].Label));
 					VerifyDuplicationInner(clone.Children[childIndex], node.Children[childIndex]);
 					Assert.That(clone.Children[childIndex], Is.Not.SameAs(node.Children[childIndex]), "Didn't deep-clone");
 					Assert.That(clone.Children[childIndex].Parent, Is.SameAs(clone), "cloned children were not re-parented within deep-cloned object");
@@ -99,6 +102,25 @@ namespace SIL.FieldWorks.XWorks
 			var duplicate = node.DuplicateAmongSiblings();
 			Assert.That(duplicate.IsDuplicate, Is.True);
 			Assert.That(node.IsDuplicate, Is.False, "Original should not have been marked as a duplicate.");
+		}
+
+		[Test]
+		public void DuplicatesHaveUniqueLabels()
+		{
+			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>() };
+			var nodeToDuplicateLabel = "node";
+			var nodeToDuplicate = new ConfigurableDictionaryNode() { Parent = parent, Label = nodeToDuplicateLabel};
+			var otherNodeA = new ConfigurableDictionaryNode() { Parent = parent, Label = "node (1)" };
+			var otherNodeB = new ConfigurableDictionaryNode() { Parent = parent, Label = "node B" };
+			parent.Children.Add(nodeToDuplicate);
+			parent.Children.Add(otherNodeA);
+			parent.Children.Add(otherNodeB);
+
+			// SUT
+			var duplicate = nodeToDuplicate.DuplicateAmongSiblings();
+			Assert.That(parent.Children.FindAll(node => node.Label == nodeToDuplicate.Label).Count, Is.EqualTo(1), "Should not have any more nodes with the original label. Was the duplicate node's label not changed?");
+			Assert.That(parent.Children.FindAll(node => node.Label == duplicate.Label).Count, Is.EqualTo(1), "The duplicate node was not given a unique label among its siblings.");
+			Assert.That(nodeToDuplicate.Label, Is.EqualTo(nodeToDuplicateLabel), "should not have changed original node label");
 		}
 
 		[Test]
