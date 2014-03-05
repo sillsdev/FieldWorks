@@ -215,6 +215,26 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary/>
 		[Test]
+		public void CreateAndAddTreeNodeForNode_SetsCheckbox()
+		{
+			var controller = new DictionaryConfigurationController();
+			var enabledNode = new ConfigurableDictionaryNode {IsEnabled = true};
+			var disabledNode = new ConfigurableDictionaryNode {IsEnabled = false};
+
+			using (var dummyView = new TestConfigurableDictionaryView())
+			{
+				controller.View = dummyView;
+				// SUT
+				controller.CreateAndAddTreeNodeForNode(null, enabledNode);
+				controller.CreateAndAddTreeNodeForNode(null, disabledNode);
+
+				Assert.That(controller.View.TreeControl.Tree.Nodes[0].Checked, Is.EqualTo(true));
+				Assert.That(controller.View.TreeControl.Tree.Nodes[1].Checked, Is.EqualTo(false));
+			}
+		}
+
+		/// <summary/>
+		[Test]
 		public void CreateTreeOfTreeNodes_ThrowsOnNullNodeArgument()
 		{
 			var controller = new DictionaryConfigurationController();

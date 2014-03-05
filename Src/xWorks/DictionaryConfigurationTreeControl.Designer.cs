@@ -64,6 +64,7 @@
 			// 
 			// tree
 			// 
+			this.tree.CheckBoxes = true;
 			this.tree.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tree.HideSelection = false;
 			this.tree.Location = new System.Drawing.Point(3, 3);

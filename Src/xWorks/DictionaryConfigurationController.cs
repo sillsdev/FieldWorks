@@ -145,7 +145,7 @@ namespace SIL.FieldWorks.XWorks
 			if (node == null)
 				throw new ArgumentNullException();
 
-			var newTreeNode = new TreeNode(node.Label) { Tag = node };
+			var newTreeNode = new TreeNode(node.Label) { Tag = node, Checked = node.IsEnabled };
 
 			var treeView = View.TreeControl.Tree;
 
@@ -241,7 +241,8 @@ namespace SIL.FieldWorks.XWorks
 				var node = (ConfigurableDictionaryNode) args.Node.Tag;
 				node.IsEnabled = args.Node.Checked;
 
-				View.Redraw();
+				// Details may need enabled or disabled
+				RefreshView();
 			};
 
 			View.TreeControl.Tree.AfterSelect += (sender, args) =>
