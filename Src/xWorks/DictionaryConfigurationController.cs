@@ -102,9 +102,9 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void RefreshView(ConfigurableDictionaryNode nodeToSelect = null)
 		{
-			// TODO maintain tree expansions
-
 			var tree = View.TreeControl.Tree;
+			var expandedNodes = new List<ConfigurableDictionaryNode>();
+			FindExpandedNodes(tree.Nodes, ref expandedNodes);
 			if (nodeToSelect == null && tree.SelectedNode != null)
 				nodeToSelect = tree.SelectedNode.Tag as ConfigurableDictionaryNode;
 
@@ -113,11 +113,28 @@ namespace SIL.FieldWorks.XWorks
 			var rootNodes = _model.Parts;
 			CreateTreeOfTreeNodes(null, rootNodes);
 
+			// Preserve treenode expansions
+			foreach (var expandedNode in expandedNodes)
+				FindTreeNode(expandedNode, tree.Nodes).Expand();
+
 			if (nodeToSelect != null)
 				tree.SelectedNode = FindTreeNode(nodeToSelect, tree.Nodes);
 			// Fallback to selecting first root, trying to make sure there is always a selection for the buttons to be enabled or disabled with respect to.
 			if (tree.SelectedNode == null && tree.Nodes.Count > 0)
 				tree.SelectedNode = tree.Nodes[0];
+		}
+
+		/// <summary>
+		/// Populate a list of dictionary nodes that correspond to treenodes that are expanded in the 'treenodes' or its children.
+		/// </summary>
+		private static void FindExpandedNodes(TreeNodeCollection treenodes, ref List<ConfigurableDictionaryNode> expandedNodes)
+		{
+			foreach (TreeNode treenode in treenodes)
+			{
+				if (treenode.IsExpanded)
+					expandedNodes.Add(treenode.Tag as ConfigurableDictionaryNode);
+				FindExpandedNodes(treenode.Nodes, ref expandedNodes);
+			}
 		}
 
 		/// <summary>
@@ -128,7 +145,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal void CreateTreeOfTreeNodes(ConfigurableDictionaryNode parent, List<ConfigurableDictionaryNode> nodes)
 		{
-			if(nodes == null)
+			if (nodes == null)
 				throw new ArgumentNullException();
 
 			foreach(var node in nodes)
