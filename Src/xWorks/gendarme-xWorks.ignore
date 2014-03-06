@@ -46,6 +46,7 @@ R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
 T: SIL.FieldWorks.XWorks.ConcDecorator
 T: SIL.FieldWorks.XWorks.DTMenuHandler
 T: SIL.FieldWorks.XWorks.DeleteCustomList
+T: SIL.FieldWorks.XWorks.DictionaryConfigurationListener
 T: SIL.FieldWorks.XWorks.DictionaryDetailsController
 T: SIL.FieldWorks.XWorks.ExportDialog/TranslatedListsExporter
 T: SIL.FieldWorks.XWorks.InterestingTextList

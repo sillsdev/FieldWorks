@@ -52,8 +52,7 @@
 		<command id="CmdGoToReversalEntry" label="_Find reversal entry..." message="GotoReversalEntry" icon="gotoReversalEntry" shortcut="Ctrl+F">
 			<parameters title="Go To Entry" formlabel="Go _To..." okbuttonlabel="_Go"/>
 		</command>
-		<command id="CmdConfigureXmlDocView" label="{0}" message="ConfigureXmlDocView"/>
-		<command id="CmdConfigureDictionary" label="Configure {0}" message="ConfigureXmlDocView"/>
+		<command id="CmdConfigureDictionary" label="Configure {0}" message="ConfigureDictionary"/>
 	</commands>
 	<!-- ********************************************************** -->
 	<!-- ************************ lists *********************** -->
@@ -203,7 +202,7 @@
 		</menu>
 		<!-- This is really the Tools-Configure submenu.-->
 		<menu id="Configure">
-			<item label="{0}" command="CmdConfigureXmlDocView" defaultVisible="false"/>
+			<item label="{0}" command="CmdConfigureDictionary" defaultVisible="false"/>
 		</menu>
 		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/menuAddOn/*"/>
 	</menuAddOn>

@@ -494,6 +494,7 @@ namespace SIL.FieldWorks.XWorks
 			display.Text = String.Format(display.Text, m_configObjectName + "...");
 			return true; //we've handled this
 		}
+
 		/// <summary>
 		/// Launch the configure dialog.
 		/// </summary>
@@ -505,19 +506,6 @@ namespace SIL.FieldWorks.XWorks
 			string sProp = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "layoutProperty");
 			if(String.IsNullOrEmpty(sProp))
 				sProp = "DictionaryPublicationLayout";
-// TODO: Remove this hack to get something visible and testable and replace it with a proper command
-			if(sProp.Equals("DictionaryPublicationLayout"))
-			{
-				using(var dlg = new DictionaryConfigurationDlg(m_mediator))
-				{
-					new DictionaryConfigurationController(dlg, m_mediator);
-					if(dlg.ShowDialog(this) == DialogResult.OK)
-					{
-						m_mediator.SendMessage("MasterRefresh", null);
-					}
-				}
-				return true; // message handled
-			}
 			using(var dlg = new XmlDocConfigureDlg())
 			{
 				dlg.SetConfigDlgInfo(m_configurationParameters, Cache, StyleSheet,

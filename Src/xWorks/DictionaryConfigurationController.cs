@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.XWorks
 
 		void SetAlternateDictionaryChoices(Mediator mediator)
 		{
-			var configurationType = mediator.PropertyTable.GetStringProperty("toolName", "Dictionary");
+			var configurationType = DictionaryConfigurationListener.GetDictionaryConfigurationType(mediator);
 			// Figure out what alternate dictionaries are available (eg root-, stem-, ...)
 			// Populate _alternateDictionaries with available models.
 			// Populate view's list of alternate dictionaries with available choices.

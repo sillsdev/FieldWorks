@@ -264,6 +264,7 @@
     <Compile Include="DictionaryConfigurationDlg.Designer.cs">
       <DependentUpon>DictionaryConfigurationDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="DictionaryConfigurationListener.cs" />
     <Compile Include="DictionaryConfigurationNodeRenameDlg.cs">
       <SubType>Form</SubType>
     </Compile>

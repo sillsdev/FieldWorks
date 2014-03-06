@@ -311,6 +311,7 @@
 			<parameters file="Play_all"/>
 		</command>
 		<command id="CmdAddToLexicon" label="Add to Dictionary..." message="AddToLexicon" icon="majorEntry"/>
+		<command id="CmdConfigureXmlDocView" label="{0}" message="ConfigureXmlDocView"/>
 		<!-- F1 is omitted because used for Help-->
 		<command id="CmdMacroF2" label="F2" message="Macro" shortcut="F2">
 			<parameters key="2"/>
@@ -951,6 +952,7 @@ I (RandyR) brought them into this file, just to keep track of them for the time 
 			<parameters contextHelpPath="ContextHelp.xml"/>
 		</listener>
 		<listener assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.MacroListener"/>
+		<listener assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.DictionaryConfigurationListener"/>
 		<!--<listener assemblyPath="xCore.dll" class="XCore.ProgressListener" />-->
 	</listeners>
 	<!-- ********************************************************** -->
