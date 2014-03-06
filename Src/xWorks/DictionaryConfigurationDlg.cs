@@ -22,6 +22,8 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public event EventHandler ManageViews;
 
+		public event SwitchViewEvent SwitchView;
+
 		/// <summary>
 		/// When OK or Apply are clicked tell anyone who is listening to do their save.
 		/// </summary>
@@ -111,5 +113,9 @@ namespace SIL.FieldWorks.XWorks
 			SaveModel(sender, e);
 		}
 
+		private void OnViewChanged(object sender, EventArgs e)
+		{
+			SwitchView(sender, new SwitchViewEventArgs { ViewPicked = m_cbDictType.SelectedItem.ToString() });
+		}
 	}
 }

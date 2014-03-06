@@ -21,6 +21,11 @@ namespace SIL.FieldWorks.XWorks
 		event EventHandler SaveModel;
 
 		/// <summary>
+		/// Tell the controller that the user selected a different model(dictionary view)
+		/// </summary>
+		event SwitchViewEvent SwitchView;
+
+		/// <summary>
 		/// Gets the tree hierarchy control.
 		/// </summary>
 		DictionaryConfigurationTreeControl TreeControl { get; }
@@ -40,5 +45,15 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="choices"></param>
 		void SetChoices(IEnumerable<string> choices);
+	}
+
+	public delegate void SwitchViewEvent(object sender, SwitchViewEventArgs args);
+
+	/// <summary>
+	/// The arguments for a SwitchViewEvent. Includes the view selected as a property.
+	/// </summary>
+	public class SwitchViewEventArgs
+	{
+		public string ViewPicked { get; set; }
 	}
 }

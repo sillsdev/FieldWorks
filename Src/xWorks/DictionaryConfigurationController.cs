@@ -215,6 +215,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateTreeView(mediator);
 			View.ManageViews += (sender, args) => new DictionaryConfigMgrDlg(mediator, "", new List<XmlNode>(), null).ShowDialog(View as Form);
 			View.SaveModel += (sender, args) => { /*_model.Save(); (needs to save in project config location, not default where it was loaded from) */ };
+			view.SwitchView += (sender, args) => { _model = _alternateDictionaries[args.ViewPicked]; RefreshView(); };
 
 			View.TreeControl.MoveUp += node => Reorder(node.Tag as ConfigurableDictionaryNode, Direction.Up);
 			View.TreeControl.MoveDown += node => Reorder(node.Tag as ConfigurableDictionaryNode, Direction.Down);

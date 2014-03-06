@@ -578,6 +578,8 @@ namespace SIL.FieldWorks.XWorks
 			public event EventHandler ManageViews;
 
 			public event EventHandler SaveModel;
+
+			public event SwitchViewEvent SwitchView;
 #pragma warning restore 67
 		}
 	}

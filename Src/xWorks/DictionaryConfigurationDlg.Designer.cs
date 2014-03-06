@@ -107,6 +107,7 @@ namespace SIL.FieldWorks.XWorks
 			this.m_cbDictType.Name = "m_cbDictType";
 			this.m_cbDictType.Size = new System.Drawing.Size(250, 21);
 			this.m_cbDictType.TabIndex = 33;
+			this.m_cbDictType.SelectedIndexChanged += new System.EventHandler(this.OnViewChanged);
 			// 
 			// m_lblViewType
 			// 
