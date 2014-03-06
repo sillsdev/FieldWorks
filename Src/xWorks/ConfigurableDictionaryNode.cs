@@ -117,6 +117,41 @@ namespace SIL.FieldWorks.XWorks
 			return clone;
 		}
 
+		public override int GetHashCode()
+		{
+			return Parent == null ? Label.GetHashCode() : Label.GetHashCode() ^ Parent.GetHashCode();
+		}
+
+		public override bool Equals(object other)
+		{
+			if(other == null || !(other is ConfigurableDictionaryNode))
+			{
+				return false;
+			}
+			var otherNode = other as ConfigurableDictionaryNode;
+			// The rules for our tree prevent two same named nodes under a parent
+			return CheckParents(this, otherNode);
+		}
+
+		/// <summary>
+		/// A match is two nodes with the same label in the same hierarchy (all ancestors have same labels)
+		/// </summary>
+		/// <param name="first"></param>
+		/// <param name="second"></param>
+		/// <returns></returns>
+		private static bool CheckParents(ConfigurableDictionaryNode first, ConfigurableDictionaryNode second)
+		{
+			if(first == null && second == null)
+			{
+				return true;
+			}
+			if((first.Parent == null && second.Parent != null) || (second.Parent == null && first.Parent != null))
+			{
+				return false;
+			}
+			return first.Label == second.Label && CheckParents(first.Parent, second.Parent);
+		}
+
 		/// <summary>
 		/// Duplicate this node and its Children, adding the result to the Parent's list of children.
 		/// </summary>

@@ -2,17 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Linq;
-using System.Xml;
-using System.Xml.Linq;
-using System.Xml.Schema;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.FDOTests;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -233,6 +224,67 @@ namespace SIL.FieldWorks.XWorks
 			var result = node.Relabel(originalLabel);
 			Assert.That(result, Is.True, "Allow relabeling to the same label");
 			Assert.That(node.Label, Is.EqualTo(originalLabel), "Should not have changed label");
+		}
+
+		[Test]
+		public void Equals_SameLabelsAreEqual()
+		{
+			var firstNode = new ConfigurableDictionaryNode { Label = "same" };
+			var secondNode = new ConfigurableDictionaryNode { Label = "same" };
+
+			Assert.AreEqual(firstNode, secondNode);
+		}
+
+		[Test]
+		public void Equals_OneParentNullAreNotEqual()
+		{
+			var firstNode = new ConfigurableDictionaryNode { Label = "same" };
+			var secondNode = new ConfigurableDictionaryNode { Label = "same", Parent = firstNode };
+
+			Assert.AreNotEqual(firstNode, secondNode);
+			secondNode.Parent = null;
+			firstNode.Parent = secondNode;
+			Assert.AreNotEqual(firstNode, secondNode);
+		}
+
+		[Test]
+		public void Equals_DifferentParentsAreNotEqual()
+		{
+			var firstParent = new ConfigurableDictionaryNode { Label = "firstParent" };
+			var secondParent = new ConfigurableDictionaryNode { Label = "secondParent" };
+			var firstNode = new ConfigurableDictionaryNode { Label = "same", Parent = firstParent };
+			var secondNode = new ConfigurableDictionaryNode { Label = "same", Parent = secondParent };
+
+			Assert.AreNotEqual(firstNode, secondNode);
+		}
+
+		[Test]
+		public void Equals_DifferentLabelsAreNotEqual()
+		{
+			var firstNode = new ConfigurableDictionaryNode { Label = "same" };
+			var secondNode = new ConfigurableDictionaryNode { Label = "different" };
+
+			Assert.AreNotEqual(firstNode, secondNode);
+		}
+
+		[Test]
+		public void Equals_SameLabelsAndSameParentsAreEqual()
+		{
+			var parentNode = new ConfigurableDictionaryNode { Label = "Parent" };
+			var firstNode = new ConfigurableDictionaryNode { Label = "same", Parent = parentNode };
+			var secondNode = new ConfigurableDictionaryNode { Label = "same", Parent = parentNode };
+
+			Assert.AreEqual(firstNode, secondNode);
+		}
+
+		[Test]
+		public void Equals_DifferentLabelsAndSameParentsAreNotEqual()
+		{
+			var parentNode = new ConfigurableDictionaryNode { Label = "Parent" };
+			var firstNode = new ConfigurableDictionaryNode { Label = "same", Parent = parentNode };
+			var secondNode = new ConfigurableDictionaryNode { Label = "different", Parent = parentNode };
+
+			Assert.AreNotEqual(firstNode, secondNode);
 		}
 	}
 }

@@ -99,16 +99,27 @@ namespace SIL.FieldWorks.XWorks
 
 		private void RefreshView()
 		{
-			// TODO Preserve node selection and tree expansions
-
+			ConfigurableDictionaryNode selectedNode = null;
+			// TODO maintain tree expansions
+			if(View != null && View.TreeControl.Tree.SelectedNode != null)
+			{
+				selectedNode = View.TreeControl.Tree.SelectedNode.Tag as ConfigurableDictionaryNode;
+			}
 			View.TreeControl.Tree.Nodes.Clear();
 			var rootNodes = _model.Parts;
 			CreateTreeOfTreeNodes(null, rootNodes);
 
 			// Select a node in the tree so there will always be a selection for the buttons to be enabled or disabled with respect to.
 			var tree = View.TreeControl.Tree;
-			if (tree.Nodes.Count > 0)
-				tree.SelectedNode = tree.Nodes[0];
+			if(tree.Nodes.Count > 0)
+			{
+				TreeNode matchingNode = null;
+				if(selectedNode != null)
+				{
+					matchingNode = FindTreeNode(selectedNode, tree.Nodes);
+				}
+				tree.SelectedNode = matchingNode ?? tree.Nodes[0];
+			}
 		}
 
 		/// <summary>
@@ -177,7 +188,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			foreach(TreeNode treeNode in treeNodeCollection)
 			{
-				if(treeNode.Tag == nodeToMatch)
+				if(nodeToMatch.Equals(treeNode.Tag))
 				{
 					return treeNode;
 				}
