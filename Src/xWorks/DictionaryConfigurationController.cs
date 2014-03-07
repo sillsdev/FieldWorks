@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -258,12 +259,17 @@ namespace SIL.FieldWorks.XWorks
 			View.TreeControl.MoveDown += node => Reorder(node.Tag as ConfigurableDictionaryNode, Direction.Down);
 			View.TreeControl.Duplicate += node =>
 			{
-				var duplicate = (node.Tag as ConfigurableDictionaryNode).DuplicateAmongSiblings();
+				var dictionaryNode = node.Tag as ConfigurableDictionaryNode;
+				var siblings = dictionaryNode.Parent == null ? _model.Parts : dictionaryNode.Parent.Children;
+
+				var duplicate = dictionaryNode.DuplicateAmongSiblings(siblings);
 				RefreshView(duplicate);
 			};
 			View.TreeControl.Rename += node =>
 			{
 				var dictionaryNode = node.Tag as ConfigurableDictionaryNode;
+				var siblings = dictionaryNode.Parent == null ? _model.Parts : dictionaryNode.Parent.Children;
+
 				using (var renameDialog = new DictionaryConfigurationNodeRenameDlg())
 				{
 					renameDialog.NewName = dictionaryNode.Label;
@@ -272,7 +278,7 @@ namespace SIL.FieldWorks.XWorks
 					if (renameDialog.ShowDialog() != DialogResult.OK || renameDialog.NewName == dictionaryNode.Label)
 						return;
 
-					if (!dictionaryNode.Relabel(renameDialog.NewName))
+					if (!dictionaryNode.Relabel(renameDialog.NewName, siblings))
 					{
 						MessageBox.Show("Failed to rename. Use a name that is not already in use.");
 						return;
@@ -280,7 +286,15 @@ namespace SIL.FieldWorks.XWorks
 				}
 				RefreshView();
 			};
-			View.TreeControl.Remove += node => { (node.Tag as ConfigurableDictionaryNode).UnlinkFromParent(); RefreshView(); };
+			View.TreeControl.Remove += node =>
+			{
+				var dictionaryNode = node.Tag as ConfigurableDictionaryNode;
+				if (dictionaryNode.Parent == null)
+					_model.Parts.Remove(dictionaryNode);
+				else
+					dictionaryNode.UnlinkFromParent();
+				RefreshView();
+			};
 
 			View.TreeControl.Tree.AfterCheck += (sender, args) =>
 			{

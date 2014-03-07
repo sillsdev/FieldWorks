@@ -157,20 +157,28 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public ConfigurableDictionaryNode DuplicateAmongSiblings()
 		{
+			return DuplicateAmongSiblings(Parent.Children);
+		}
+
+		/// <summary>
+		/// Duplicate this node and its Children, adding the result among the list of siblings.
+		/// </summary>
+		public ConfigurableDictionaryNode DuplicateAmongSiblings(List<ConfigurableDictionaryNode> siblings)
+		{
 			var duplicate = DeepCloneUnderSameParent();
 			duplicate.IsDuplicate = true;
 
 			// Append a suffix to make label unique
-			int newLabelSuffix=1;
+			int newLabelSuffix = 1;
 			string newLabel;
 			do
 			{
 				newLabel = string.Format("{0} ({1})", Label, newLabelSuffix++);
-			} while (this.Parent.Children.Exists(node => node.Label == newLabel));
+			} while (siblings.Exists(node => node.Label == newLabel));
 
 			duplicate.Label = newLabel;
-			var locationOfThisNode = Parent.Children.IndexOf(this);
-			Parent.Children.Insert(locationOfThisNode + 1, duplicate);
+			var locationOfThisNode = siblings.IndexOf(this);
+			siblings.Insert(locationOfThisNode + 1, duplicate);
 			return duplicate;
 		}
 
@@ -191,7 +199,12 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public bool Relabel(string newLabel)
 		{
-			if (Parent.Children.Any(sibling => sibling != this && sibling.Label == newLabel))
+			return Relabel(newLabel, Parent.Children);
+		}
+
+		public bool Relabel(string newLabel, List<ConfigurableDictionaryNode> siblings)
+		{
+			if (siblings.Any(sibling => sibling != this && sibling.Label == newLabel))
 				return false;
 			Label = newLabel;
 			return true;

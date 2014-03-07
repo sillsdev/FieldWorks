@@ -142,6 +142,20 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void CanDuplicateRootNode()
+		{
+			var rootNodeA = new ConfigurableDictionaryNode() { Parent = null, Before="beforeA" };
+			var rootNodeB = new ConfigurableDictionaryNode() { Parent = null };
+			var rootNodes = new List<ConfigurableDictionaryNode>() { rootNodeA, rootNodeB };
+
+			// SUT
+			var duplicate = rootNodeA.DuplicateAmongSiblings(rootNodes);
+			Assert.That(rootNodes.Count, Is.EqualTo(3), "should have more nodes now");
+			Assert.That(rootNodes.Contains(duplicate), "duplicate isn't among expected list of nodes");
+			VerifyDuplication(duplicate, rootNodeA);
+		}
+
+		[Test]
 		public void CanUnlink()
 		{
 			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
@@ -224,6 +238,18 @@ namespace SIL.FieldWorks.XWorks
 			var result = node.Relabel(originalLabel);
 			Assert.That(result, Is.True, "Allow relabeling to the same label");
 			Assert.That(node.Label, Is.EqualTo(originalLabel), "Should not have changed label");
+		}
+
+		[Test]
+		public void CanRelabelRootNode()
+		{
+			var rootNode = new ConfigurableDictionaryNode() { Parent = null, Label = "rootNode" };
+			var rootNodes = new List<ConfigurableDictionaryNode>() { rootNode };
+
+			// SUT
+			var result = rootNode.Relabel("newlabel", rootNodes);
+			Assert.That(result, Is.True, "allow relabeling root");
+			Assert.That(rootNode.Label, Is.EqualTo("newlabel"), "failed to relabel");
 		}
 
 		[Test]
