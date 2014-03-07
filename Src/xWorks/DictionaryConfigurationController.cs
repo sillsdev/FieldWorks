@@ -105,6 +105,11 @@ namespace SIL.FieldWorks.XWorks
 			var tree = View.TreeControl.Tree;
 			var expandedNodes = new List<ConfigurableDictionaryNode>();
 			FindExpandedNodes(tree.Nodes, ref expandedNodes);
+
+			ConfigurableDictionaryNode topVisibleNode = null;
+			if (tree.TopNode != null)
+				topVisibleNode = tree.TopNode.Tag as ConfigurableDictionaryNode;
+
 			if (nodeToSelect == null && tree.SelectedNode != null)
 				nodeToSelect = tree.SelectedNode.Tag as ConfigurableDictionaryNode;
 
@@ -122,6 +127,12 @@ namespace SIL.FieldWorks.XWorks
 			// Fallback to selecting first root, trying to make sure there is always a selection for the buttons to be enabled or disabled with respect to.
 			if (tree.SelectedNode == null && tree.Nodes.Count > 0)
 				tree.SelectedNode = tree.Nodes[0];
+
+			// Try to prevent scrolling away from what the user was seeing in the tree. But if necessary, scroll so the selected node is visible.
+			if (topVisibleNode != null)
+				tree.TopNode = FindTreeNode(topVisibleNode, tree.Nodes);
+			if (tree.SelectedNode != null)
+				tree.SelectedNode.EnsureVisible();
 		}
 
 		/// <summary>
