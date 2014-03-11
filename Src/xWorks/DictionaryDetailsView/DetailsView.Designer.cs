@@ -42,6 +42,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			this.dropDownStyle = new System.Windows.Forms.ComboBox();
 			this.labelStyle = new System.Windows.Forms.Label();
 			this.buttonStyles = new System.Windows.Forms.Button();
+			this.panelOptions = new System.Windows.Forms.Panel();
 			this.SuspendLayout();
 			// 
 			// textBoxBefore
@@ -103,7 +104,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			this.dropDownStyle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.dropDownStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.dropDownStyle.FormattingEnabled = true;
-			this.dropDownStyle.Location = new System.Drawing.Point(3, 23);
+			this.dropDownStyle.Location = new System.Drawing.Point(3, 33);
 			this.dropDownStyle.Name = "dropDownStyle";
 			this.dropDownStyle.Size = new System.Drawing.Size(196, 21);
 			this.dropDownStyle.TabIndex = 2;
@@ -112,7 +113,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			// 
 			this.labelStyle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.labelStyle.AutoSize = true;
-			this.labelStyle.Location = new System.Drawing.Point(0, 7);
+			this.labelStyle.Location = new System.Drawing.Point(0, 17);
 			this.labelStyle.Name = "labelStyle";
 			this.labelStyle.Size = new System.Drawing.Size(82, 13);
 			this.labelStyle.TabIndex = 1;
@@ -120,17 +121,28 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			// buttonStyles
 			// 
 			this.buttonStyles.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.buttonStyles.Location = new System.Drawing.Point(206, 23);
+			this.buttonStyles.Location = new System.Drawing.Point(206, 33);
 			this.buttonStyles.Name = "buttonStyles";
 			this.buttonStyles.Size = new System.Drawing.Size(75, 20);
 			this.buttonStyles.TabIndex = 3;
 			this.buttonStyles.Text = "Styles...";
 			this.buttonStyles.UseVisualStyleBackColor = true;
 			// 
+			// panelOptions
+			// 
+			this.panelOptions.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.panelOptions.Location = new System.Drawing.Point(0, 0);
+			this.panelOptions.Name = "panelOptions";
+			this.panelOptions.Size = new System.Drawing.Size(320, 10);
+			this.panelOptions.TabIndex = 4;
+			// 
 			// DetailsView
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this.panelOptions);
 			this.Controls.Add(this.buttonStyles);
 			this.Controls.Add(this.dropDownStyle);
 			this.Controls.Add(this.labelAfter);
@@ -160,5 +172,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		private System.Windows.Forms.Label labelStyle;
 		private System.Windows.Forms.Button buttonStyles;
 		private System.Windows.Forms.UserControl optionsView;
+		private System.Windows.Forms.Panel panelOptions;
 	}
 }

@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.FwCoreDlgControls;
 
@@ -74,8 +75,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		{
 			set
 			{
-				// TODO: position Options, resize this
-				value.Dispose();
+				panelOptions.Controls.Add(value);
+				value.Dock = DockStyle.Fill;
+				value.Location = new Point(0, 0);
 			}
 		}
 

@@ -83,7 +83,7 @@ namespace SIL.FieldWorks.XWorks
 			// manageViews_viewSplit.Panel2
 			// 
 			this.manageViews_viewSplit.Panel2.Controls.Add(this.treeDetail_Button_Split);
-			this.manageViews_viewSplit.Size = new System.Drawing.Size(594, 687);
+			this.manageViews_viewSplit.Size = new System.Drawing.Size(633, 687);
 			this.manageViews_viewSplit.SplitterDistance = 81;
 			this.manageViews_viewSplit.TabIndex = 0;
 			// 
@@ -145,7 +145,7 @@ namespace SIL.FieldWorks.XWorks
 			// treeDetail_Button_Split.Panel2
 			// 
 			this.treeDetail_Button_Split.Panel2.Controls.Add(this.buttonLayoutPanel);
-			this.treeDetail_Button_Split.Size = new System.Drawing.Size(594, 602);
+			this.treeDetail_Button_Split.Size = new System.Drawing.Size(633, 602);
 			this.treeDetail_Button_Split.SplitterDistance = 558;
 			this.treeDetail_Button_Split.TabIndex = 0;
 			// 
@@ -162,8 +162,8 @@ namespace SIL.FieldWorks.XWorks
 			// tree_Detail_Split.Panel2
 			// 
 			this.tree_Detail_Split.Panel2.Controls.Add(this.previewDetailSplit);
-			this.tree_Detail_Split.Size = new System.Drawing.Size(594, 558);
-			this.tree_Detail_Split.SplitterDistance = 287;
+			this.tree_Detail_Split.Size = new System.Drawing.Size(633, 558);
+			this.tree_Detail_Split.SplitterDistance = 305;
 			this.tree_Detail_Split.TabIndex = 0;
 			// 
 			// previewDetailSplit
@@ -172,7 +172,7 @@ namespace SIL.FieldWorks.XWorks
 			this.previewDetailSplit.Location = new System.Drawing.Point(0, 0);
 			this.previewDetailSplit.Name = "previewDetailSplit";
 			this.previewDetailSplit.Orientation = System.Windows.Forms.Orientation.Horizontal;
-			this.previewDetailSplit.Size = new System.Drawing.Size(303, 558);
+			this.previewDetailSplit.Size = new System.Drawing.Size(324, 558);
 			this.previewDetailSplit.SplitterDistance = 101;
 			this.previewDetailSplit.TabIndex = 0;
 			// 
@@ -189,12 +189,12 @@ namespace SIL.FieldWorks.XWorks
 			this.buttonLayoutPanel.Location = new System.Drawing.Point(3, 3);
 			this.buttonLayoutPanel.MinimumSize = new System.Drawing.Size(340, 25);
 			this.buttonLayoutPanel.Name = "buttonLayoutPanel";
-			this.buttonLayoutPanel.Size = new System.Drawing.Size(588, 37);
+			this.buttonLayoutPanel.Size = new System.Drawing.Size(627, 37);
 			this.buttonLayoutPanel.TabIndex = 0;
 			// 
 			// helpButton
 			// 
-			this.helpButton.Location = new System.Drawing.Point(510, 3);
+			this.helpButton.Location = new System.Drawing.Point(549, 3);
 			this.helpButton.Name = "helpButton";
 			this.helpButton.Size = new System.Drawing.Size(75, 23);
 			this.helpButton.TabIndex = 7;
@@ -203,7 +203,7 @@ namespace SIL.FieldWorks.XWorks
 			// 
 			// applyButton
 			// 
-			this.applyButton.Location = new System.Drawing.Point(429, 3);
+			this.applyButton.Location = new System.Drawing.Point(468, 3);
 			this.applyButton.Name = "applyButton";
 			this.applyButton.Size = new System.Drawing.Size(75, 23);
 			this.applyButton.TabIndex = 6;
@@ -214,7 +214,7 @@ namespace SIL.FieldWorks.XWorks
 			// cancelButton
 			// 
 			this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.cancelButton.Location = new System.Drawing.Point(348, 3);
+			this.cancelButton.Location = new System.Drawing.Point(387, 3);
 			this.cancelButton.Name = "cancelButton";
 			this.cancelButton.Size = new System.Drawing.Size(75, 23);
 			this.cancelButton.TabIndex = 5;
@@ -223,7 +223,7 @@ namespace SIL.FieldWorks.XWorks
 			// 
 			// okButton
 			// 
-			this.okButton.Location = new System.Drawing.Point(267, 3);
+			this.okButton.Location = new System.Drawing.Point(306, 3);
 			this.okButton.Name = "okButton";
 			this.okButton.Size = new System.Drawing.Size(75, 23);
 			this.okButton.TabIndex = 4;
@@ -245,7 +245,7 @@ namespace SIL.FieldWorks.XWorks
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.cancelButton;
-			this.ClientSize = new System.Drawing.Size(594, 687);
+			this.ClientSize = new System.Drawing.Size(633, 687);
 			this.Controls.Add(this.manageViews_viewSplit);
 			this.MinimizeBox = false;
 			this.Name = "DictionaryConfigurationDlg";
