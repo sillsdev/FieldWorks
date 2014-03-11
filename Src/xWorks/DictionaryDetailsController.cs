@@ -5,9 +5,13 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Windows.Forms;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FwCoreDlgControls;
+using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 using XCore;
 
@@ -29,8 +33,12 @@ namespace SIL.FieldWorks.XWorks
 		private ConfigurableDictionaryNode m_node;
 		/// <summary>Model for options specific to the element type, such as writing systems or relation types</summary>
 		private DictionaryNodeOptions Options { get { return m_node.DictionaryNodeOptions; } }
+
 		/// <summary>The DetailsView controlled by this controller</summary>
 		public DetailsView View { get; private set; }
+
+		/// <summary>Fired whenever the model is changed so that the dictionary preview can be refreshed</summary>
+		public event EventHandler DetailsModelChanged;
 
 		public DictionaryDetailsController(ConfigurableDictionaryNode node, Mediator mediator)
 		{
@@ -98,10 +106,11 @@ namespace SIL.FieldWorks.XWorks
 			// else, show the default details (style, before, between, after)
 
 			// Register eventhandlers
+			View.StyleSelectionChanged += (sender, e) => StyleChanged();
+			View.StyleButtonClick += (sender, e) => HandleStylesBtn((ComboBox)sender, View.Style);
 			View.BeforeTextChanged += (sender, e) => BeforeTextChanged();
 			View.BetweenTextChanged += (sender, e) => BetweenTextChanged();
 			View.AfterTextChanged += (sender, e) => AfterTextChanged();
-			View.StyleSelectionChanged += (sender, e) => StyleChanged();
 
 			View.ResumeLayout();
 		}
@@ -198,7 +207,18 @@ namespace SIL.FieldWorks.XWorks
 			m_paraStyles.Sort();
 		}
 
-		private void RefreshPreview(){/*TODO pH 2014.02*/}
+		private void HandleStylesBtn(ComboBox combo, string defaultStyle)
+		{
+			FwStylesDlg.RunStylesDialogForCombo(combo, SetStylesLists, defaultStyle, m_styleSheet, 0, 0,
+				(FdoCache)m_mediator.PropertyTable.GetValue("cache"), View.TopLevelControl,
+				((IApp)m_mediator.PropertyTable.GetValue("App")), m_mediator.HelpTopicProvider);
+		}
+
+		private void RefreshPreview()
+		{
+			if (DetailsModelChanged != null)
+				DetailsModelChanged(m_node, new EventArgs());
+		}
 
 		private void BeforeTextChanged()
 		{

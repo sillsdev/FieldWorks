@@ -87,6 +87,15 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			remove { dropDownStyle.SelectedValueChanged -= value; }
 		}
 
+		private EventHandler ButtonStylesOnClick(EventHandler value) { return (sender, e) => value(dropDownStyle, e); }
+
+		/// <summary>Fired when the Styles... button is clicked. Object sender is the Style ComboBox so it can be updated</summary>
+		public event EventHandler StyleButtonClick
+		{
+			add { buttonStyles.Click += ButtonStylesOnClick(value); }
+			remove { buttonStyles.Click -= ButtonStylesOnClick(value); }
+		}
+
 		public event EventHandler BeforeTextChanged
 		{
 			add { textBoxBefore.TextChanged += value; }
