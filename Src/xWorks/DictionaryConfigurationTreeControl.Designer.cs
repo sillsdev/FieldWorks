@@ -29,6 +29,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DictionaryConfigurationTreeControl));
 			this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this.tree = new System.Windows.Forms.TreeView();
 			this.moveUp = new System.Windows.Forms.Button();
@@ -76,55 +77,55 @@
 			// moveUp
 			// 
 			this.moveUp.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.moveUp.Image = ((System.Drawing.Image)(resources.GetObject("moveUp.Image")));
 			this.moveUp.Location = new System.Drawing.Point(241, 3);
 			this.moveUp.Name = "moveUp";
 			this.moveUp.Size = new System.Drawing.Size(32, 32);
 			this.moveUp.TabIndex = 1;
-			this.moveUp.Text = "▲";
 			this.moveUp.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.moveUp.UseVisualStyleBackColor = true;
 			// 
 			// moveDown
 			// 
 			this.moveDown.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.moveDown.Image = ((System.Drawing.Image)(resources.GetObject("moveDown.Image")));
 			this.moveDown.Location = new System.Drawing.Point(241, 41);
 			this.moveDown.Name = "moveDown";
 			this.moveDown.Size = new System.Drawing.Size(32, 32);
 			this.moveDown.TabIndex = 2;
-			this.moveDown.Text = "▼";
 			this.moveDown.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.moveDown.UseVisualStyleBackColor = true;
 			// 
 			// duplicate
 			// 
 			this.duplicate.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.duplicate.Image = ((System.Drawing.Image)(resources.GetObject("duplicate.Image")));
 			this.duplicate.Location = new System.Drawing.Point(241, 79);
 			this.duplicate.Name = "duplicate";
 			this.duplicate.Size = new System.Drawing.Size(32, 32);
 			this.duplicate.TabIndex = 3;
-			this.duplicate.Text = "cp";
 			this.duplicate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.duplicate.UseVisualStyleBackColor = true;
 			// 
 			// remove
 			// 
 			this.remove.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.remove.Image = ((System.Drawing.Image)(resources.GetObject("remove.Image")));
 			this.remove.Location = new System.Drawing.Point(241, 117);
 			this.remove.Name = "remove";
 			this.remove.Size = new System.Drawing.Size(32, 32);
 			this.remove.TabIndex = 4;
-			this.remove.Text = "✘";
 			this.remove.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.remove.UseVisualStyleBackColor = true;
 			// 
 			// rename
 			// 
 			this.rename.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.rename.Image = ((System.Drawing.Image)(resources.GetObject("rename.Image")));
 			this.rename.Location = new System.Drawing.Point(241, 155);
 			this.rename.Name = "rename";
 			this.rename.Size = new System.Drawing.Size(32, 32);
 			this.rename.TabIndex = 5;
-			this.rename.Text = "✍";
 			this.rename.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.rename.UseVisualStyleBackColor = true;
 			// 
