@@ -9,8 +9,12 @@ using System.Runtime.Remoting;
 using System.IO;
 using System.Windows.Forms;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -529,6 +533,36 @@ namespace SIL.FieldWorks.XWorks
 			MoveSiblingAndVerifyPosition(movingChildOriginalPosition, movingChildExpectedPosition, directionToMoveChild);
 		}
 
+		[Test]
+		public void GetProjectConfigLocationForPath_AlreadyProjectLocNoChange()
+		{
+			using(var mockMediator = new MockMediator(Cache))
+			{
+				var mediator = mockMediator.Mediator;
+				var projectPath = Path.Combine(Path.Combine(DirectoryFinder.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "Test"), "test.xml");
+				//SUT
+				var controller = new DictionaryConfigurationController();
+				var result = controller.GetProjectConfigLocationForPath(projectPath, mediator);
+				Assert.AreEqual(result, projectPath);
+			}
+		}
+
+		[Test]
+		public void GetProjectConfigLocationForPath_DefaultLocResultsInProjectPath()
+		{
+			var defaultPath = Path.Combine(Path.Combine(DirectoryFinder.DefaultConfigurations, "Test"), "test.xml");
+			using(var mockMediator = new MockMediator(Cache))
+			{
+				var mediator = mockMediator.Mediator;
+				//SUT
+				var controller = new DictionaryConfigurationController();
+				Assert.IsFalse(defaultPath.StartsWith(DirectoryFinder.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder)));
+				var result = controller.GetProjectConfigLocationForPath(defaultPath, mediator);
+				Assert.IsTrue(result.StartsWith(DirectoryFinder.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder)));
+				Assert.IsTrue(result.EndsWith(Path.Combine("Test", "test.xml")));
+			}
+		}
+
 		private void MoveSiblingAndVerifyPosition(int movingChildOriginalPosition, int movingChildExpectedPosition,
 			DictionaryConfigurationController.Direction directionToMoveChild)
 		{
@@ -546,6 +580,31 @@ namespace SIL.FieldWorks.XWorks
 				Assert.That(rootNode.Children[movingChildOriginalPosition], Is.Not.EqualTo(movingChild), "movingChild should not still be in original position");
 				Assert.That(rootNode.Children[movingChildOriginalPosition], Is.EqualTo(otherChild), "unexpected child in original movingChild position");
 				Assert.That(rootNode.Children.Count, Is.EqualTo(2), "unexpected number of reordered siblings");
+			}
+		}
+
+		private sealed class MockMediator : IDisposable
+		{
+			private MockFwXApp application;
+			private MockFwXWindow window;
+
+			public Mediator Mediator { get; set; }
+
+			public MockMediator(FdoCache cache)
+			{
+				var manager = new MockFwManager { Cache = cache };
+				FwRegistrySettings.Init(); // Sets up fake static registry values for the MockFwXApp to use
+				application = new MockFwXApp(manager, null, null);
+				window = new MockFwXWindow(application, Path.GetTempFileName());
+				window.Init(cache); // initializes Mediator values
+				Mediator = window.Mediator;
+			}
+
+			public void Dispose()
+			{
+				application.Dispose();
+				window.Dispose();
+				Mediator.Dispose();
 			}
 		}
 
