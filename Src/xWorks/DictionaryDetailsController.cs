@@ -5,6 +5,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
+using System.Drawing.Text;
+using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
@@ -45,12 +49,13 @@ namespace SIL.FieldWorks.XWorks
 			// one-time setup
 			m_mediator = mediator;
 			m_styleSheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
-			SetStylesLists();
+			LoadStylesLists();
 
 			// load node
 			LoadNode(node);
 		}
 
+		#region LoadModel
 		/// <summary>
 		/// (Re)initializes the controller and view to configure the given node
 		/// </summary>
@@ -60,7 +65,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			m_node = node;
 
-			View = new DetailsView()
+			View = new DetailsView
 			{
 				BeforeText = m_node.Before,
 				BetweenText = m_node.Between,
@@ -78,15 +83,15 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (Options is DictionaryNodeWritingSystemOptions)
 				{
-					InitWsOptions(Options as DictionaryNodeWritingSystemOptions);
+					LoadWsOptions(Options as DictionaryNodeWritingSystemOptions);
 				}
 				else if (Options is DictionaryNodeSenseOptions)
 				{
-					InitSenseOptions(Options as DictionaryNodeSenseOptions);
+					LoadSenseOptions(Options as DictionaryNodeSenseOptions);
 				}
 				else if (Options is DictionaryNodeListOptions)
 				{
-					InitListOptions(Options as DictionaryNodeListOptions);
+					LoadListOptions(Options as DictionaryNodeListOptions);
 				}
 				else
 				{
@@ -116,43 +121,90 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>Initialize options for DictionaryNodeWritingSystemOptions</summary>
-		private void InitWsOptions(DictionaryNodeWritingSystemOptions wsOptions)
+		private void LoadWsOptions(DictionaryNodeWritingSystemOptions wsOptions)
 		{
 			// TODO: initialize WS view
 		}
 
 		/// <summary>Initialize options for DictionaryNodeSenseOptions</summary>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "senseOptionsView is disposed by its parent")]
-		private void InitSenseOptions(DictionaryNodeSenseOptions senseOptions)
+		private void LoadSenseOptions(DictionaryNodeSenseOptions senseOptions)
 		{
-			var senseOptionsView = new SenseOptionsView()
+			// parse style string
+			var bold = CheckState.Indeterminate;
+			var italic = CheckState.Indeterminate;
+			var style = senseOptions.NumberStyle;
+			if (!String.IsNullOrEmpty(style))
+			{
+				style = style.ToLowerInvariant();
+				if (style.IndexOf("-bold", StringComparison.Ordinal) >= 0)
+					bold = CheckState.Unchecked;
+				else if (style.IndexOf("bold", StringComparison.Ordinal) >= 0)
+					bold = CheckState.Checked;
+				if (style.IndexOf("-italic", StringComparison.Ordinal) >= 0)
+					italic = CheckState.Unchecked;
+				else if (style.IndexOf("italic", StringComparison.Ordinal) >= 0)
+					italic = CheckState.Checked;
+			}
+
+			// initialize SenseOptionsView
+			var senseOptionsView = new SenseOptionsView
 			{
 				BeforeText = senseOptions.BeforeNumber,
 				FormatMark = senseOptions.NumberMark,
 				AfterText = senseOptions.AfterNumber,
-				// TODO pH 2014.02: bold, italic, font
+				Bold = bold,
+				Italic = italic,
+				NumberFonts = AvailableFonts, // load list of available fonts before setting NumberFont
+				NumberFont = senseOptions.NumberFont,
 				NumberSingleSense = senseOptions.NumberEvenASingleSense,
 				ShowGrammarFirst = senseOptions.ShowSharedGrammarInfoFirst,
-				SenseInPara = senseOptions.DisplayEachSenseInAParagraph
+				SenseInPara = senseOptions.DisplayEachSenseInAParagraph,
+				// view setup
 			};
 
 			// load paragraph Style
 			View.SetStyles(m_paraStyles, m_node.Style, true);
 
-			// TODO: action or event to dis- and enable Style and Context
+			// (dis)actviate appropriate parts of the view
+			senseOptionsView.NumberMarkMetaConfigEnabled = !string.IsNullOrEmpty(senseOptions.NumberMark);
+			ToggleViewForShowInPara(senseOptions.DisplayEachSenseInAParagraph);
 
+			// Register eventhandlers
+			senseOptionsView.BeforeTextChanged += (sender, e) => { senseOptions.BeforeNumber = senseOptionsView.BeforeText; RefreshPreview(); };
+			senseOptionsView.FormatMarkChanged += (sender, e) => SenseNumFormatMarkChanged(senseOptions, senseOptionsView);
+			senseOptionsView.AfterTextChanged += (sender, e) => { senseOptions.AfterNumber = senseOptionsView.AfterText; RefreshPreview(); };
+			senseOptionsView.NumberFontChanged += (sender, e) => SenseNumFontChanged(senseOptions, senseOptionsView.NumberFont);
+// ReSharper disable ImplicitlyCapturedClosure
+// Justification: senseOptions, senseOptionsView, and all of these lambda functions will all disappear at the same time.
+			senseOptionsView.BoldChanged += (sender, e) => SenseNumStyleChanged(senseOptionsView.Bold, senseOptionsView.Italic);
+			senseOptionsView.ItalicChanged += (sender, e) => SenseNumStyleChanged(senseOptionsView.Bold, senseOptionsView.Italic);
+// ReSharper restore ImplicitlyCapturedClosure
+			senseOptionsView.NumberSingleSenseChanged += (sender, e) =>
+			{
+				senseOptions.NumberEvenASingleSense = senseOptionsView.NumberSingleSense;
+				RefreshPreview();
+			};
+			senseOptionsView.ShowGrammarFirstChanged += (sender, e) =>
+			{
+				senseOptions.ShowSharedGrammarInfoFirst = senseOptionsView.ShowGrammarFirst;
+				RefreshPreview();
+			};
+			senseOptionsView.SenseInParaChanged += (sender, e) => SenseInParaChanged(senseOptions, senseOptionsView);
+
+			// add senseOptionsView to the DetailsView
 			View.OptionsView = senseOptionsView;
 		}
 
 		/// <summary>Initialize options for DictionaryNodeListOptions other than WritingSystem options</summary>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "listOptionsView is disposed by its parent")]
-		private void InitListOptions(DictionaryNodeListOptions listOptions)
+		private void LoadListOptions(DictionaryNodeListOptions listOptions)
 		{
 			var listOptionsView = new ListOptionsView();
 
 			if (listOptions is DictionaryNodeComplexFormOptions)
 			{
-				InitComplexFormOptions(listOptions as DictionaryNodeComplexFormOptions, listOptionsView);
+				LoadComplexFormOptions(listOptions as DictionaryNodeComplexFormOptions, listOptionsView);
 			}
 			else
 			{
@@ -172,7 +224,7 @@ namespace SIL.FieldWorks.XWorks
 			View.OptionsView = listOptionsView;
 		}
 
-		private void InitComplexFormOptions(DictionaryNodeComplexFormOptions complexFormOptions, ListOptionsView listOptionsView)
+		private void LoadComplexFormOptions(DictionaryNodeComplexFormOptions complexFormOptions, ListOptionsView listOptionsView)
 		{
 			listOptionsView.CheckBoxLabel = "Display each complex form in a paragraph"; // TODO: localize
 			listOptionsView.CheckBoxChanged += (sender, e) =>
@@ -182,7 +234,23 @@ namespace SIL.FieldWorks.XWorks
 			View.SetStyles(m_paraStyles, m_node.Style, true);
 		}
 
-		private void SetStylesLists()
+		#region Load more-static parts
+		private static List<string> AvailableFonts
+		{
+			get
+			{
+				var fonts = new List<string> { xWorksStrings.ksUnspecified };
+				using (var installedFontCollection = new InstalledFontCollection())
+				{
+					// The .NET framework is unforgiving of fonts that don't support the "regular" style, so we hide them.
+					fonts.AddRange(installedFontCollection.Families.Where(family => family.IsStyleAvailable(FontStyle.Regular))
+						.Select(family => family.Name));
+				}
+				return fonts;
+			}
+		}
+
+		private void LoadStylesLists()
 		{
 			if (m_charStyles == null)
 				m_charStyles = new List<StyleComboItem>();
@@ -206,18 +274,22 @@ namespace SIL.FieldWorks.XWorks
 			m_charStyles.Sort();
 			m_paraStyles.Sort();
 		}
+		#endregion Load more-static parts
+		#endregion LoadModel
 
-		private void HandleStylesBtn(ComboBox combo, string defaultStyle)
-		{
-			FwStylesDlg.RunStylesDialogForCombo(combo, SetStylesLists, defaultStyle, m_styleSheet, 0, 0,
-				(FdoCache)m_mediator.PropertyTable.GetValue("cache"), View.TopLevelControl,
-				((IApp)m_mediator.PropertyTable.GetValue("App")), m_mediator.HelpTopicProvider);
-		}
-
+		#region HandleChanges
 		private void RefreshPreview()
 		{
 			if (DetailsModelChanged != null)
 				DetailsModelChanged(m_node, new EventArgs());
+		}
+
+		private void HandleStylesBtn(ComboBox combo, string defaultStyle)
+		{
+			FwStylesDlg.RunStylesDialogForCombo(combo, LoadStylesLists, defaultStyle, m_styleSheet, 0, 0,
+				(FdoCache)m_mediator.PropertyTable.GetValue("cache"), View.TopLevelControl,
+				((IApp)m_mediator.PropertyTable.GetValue("App")), m_mediator.HelpTopicProvider);
+			RefreshPreview();
 		}
 
 		private void BeforeTextChanged()
@@ -243,5 +315,51 @@ namespace SIL.FieldWorks.XWorks
 			m_node.Style = View.Style;
 			RefreshPreview();
 		}
+
+		#region SenseChanges
+		private void SenseNumFormatMarkChanged(DictionaryNodeSenseOptions senseOptions, SenseOptionsView senseOptionsView)
+		{
+			senseOptions.NumberMark = senseOptionsView.FormatMark;
+			senseOptionsView.NumberMarkMetaConfigEnabled = !string.IsNullOrEmpty(senseOptions.NumberMark);
+			RefreshPreview();
+		}
+
+		private void SenseNumStyleChanged(CheckState bold, CheckState italic)
+		{
+			var sbNumStyle = new StringBuilder();
+			if (bold == CheckState.Checked)
+				sbNumStyle.Append("bold");
+			else if (bold == CheckState.Unchecked)
+				sbNumStyle.Append("-bold");
+			if (bold != CheckState.Indeterminate && italic != CheckState.Indeterminate)
+				sbNumStyle.Append(" ");
+			if (italic == CheckState.Checked)
+				sbNumStyle.Append("italic");
+			else if (italic == CheckState.Unchecked)
+				sbNumStyle.Append("-italic");
+			((DictionaryNodeSenseOptions)Options).NumberStyle = sbNumStyle.ToString();
+			RefreshPreview();
+		}
+
+		private void SenseNumFontChanged(DictionaryNodeSenseOptions senseOptions, string font)
+		{
+			senseOptions.NumberFont = xWorksStrings.ksUnspecified.Equals(font) ? "" : font;
+			RefreshPreview();
+		}
+
+		private void SenseInParaChanged(DictionaryNodeSenseOptions senseOptions, SenseOptionsView senseOptionsView)
+		{
+			senseOptions.DisplayEachSenseInAParagraph = senseOptionsView.SenseInPara;
+			ToggleViewForShowInPara(senseOptions.DisplayEachSenseInAParagraph);
+			RefreshPreview();
+		}
+		#endregion SenseChanges
+
+		private void ToggleViewForShowInPara(bool showInPara)
+		{
+			View.StylesVisible = showInPara;
+			View.SurroundingCharsVisible = !showInPara;
+		}
+		#endregion HandleChanges
 	}
 }

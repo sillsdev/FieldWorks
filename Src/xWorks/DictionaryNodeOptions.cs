@@ -26,9 +26,12 @@ namespace SIL.FieldWorks.XWorks
 		[XmlAttribute(AttributeName = "numberAfter")]
 		public string AfterNumber { get; set; }
 
-		// currently represents bold, italic, and font
+		// currently represents bold and italic
 		[XmlAttribute(AttributeName = "numberStyle")]
 		public string NumberStyle { get; set; }
+
+		[XmlAttribute(AttributeName = "numberFont")]
+		public string NumberFont { get; set; }
 
 		[XmlAttribute(AttributeName = "numberSingleSense")]
 		public bool NumberEvenASingleSense { get; set; }

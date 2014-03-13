@@ -89,6 +89,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			this.checkBoxBold.AutoSize = true;
 			this.checkBoxBold.Checked = true;
 			this.checkBoxBold.CheckState = System.Windows.Forms.CheckState.Indeterminate;
+			this.checkBoxBold.ThreeState = true;
 			this.checkBoxBold.Location = new System.Drawing.Point(214, 12);
 			this.checkBoxBold.Name = "checkBoxBold";
 			this.checkBoxBold.Size = new System.Drawing.Size(47, 17);
@@ -102,6 +103,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			this.checkBoxItalic.AutoSize = true;
 			this.checkBoxItalic.Checked = true;
 			this.checkBoxItalic.CheckState = System.Windows.Forms.CheckState.Indeterminate;
+			this.checkBoxItalic.ThreeState = true;
 			this.checkBoxItalic.Location = new System.Drawing.Point(214, 32);
 			this.checkBoxItalic.Name = "checkBoxItalic";
 			this.checkBoxItalic.Size = new System.Drawing.Size(48, 17);
@@ -114,10 +116,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			this.dropDownFont.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.dropDownFont.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.dropDownFont.FormattingEnabled = true;
-			this.dropDownFont.Items.AddRange(new object[] {
-            "Sample",
-            "Two",
-            "Three"});
 			this.dropDownFont.Location = new System.Drawing.Point(9, 32);
 			this.dropDownFont.Name = "dropDownFont";
 			this.dropDownFont.Size = new System.Drawing.Size(199, 21);
@@ -128,10 +126,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			this.dropDownFormat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.dropDownFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.dropDownFormat.FormattingEnabled = true;
-			this.dropDownFormat.Items.AddRange(new object[] {
-            "Sample",
-            "Two",
-            "Three"});
 			this.dropDownFormat.Location = new System.Drawing.Point(87, 72);
 			this.dropDownFormat.Name = "dropDownFormat";
 			this.dropDownFormat.Size = new System.Drawing.Size(121, 21);

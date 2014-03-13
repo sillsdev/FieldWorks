@@ -2,7 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
+using SIL.FieldWorks.FwCoreDlgControls;
 
 namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 {
@@ -14,6 +17,25 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		public SenseOptionsView()
 		{
 			InitializeComponent();
+
+			// REVIEW (Hasso) 2014.03: in the old dialog, this list was hard-coded in the view.  It is a severe subset of what is available
+			// in XmlDisplayVec.CalculateAndFormatSenseLabel. TODO: a bit more integration in a future commit
+			dropDownFormat.Items.AddRange(new object[]
+			{
+				new NumberStyleComboItem(xWorksStrings.ksNone, ""),
+				new NumberStyleComboItem("1  1.2  1.2.3", "%O"),
+				new NumberStyleComboItem("1  b  iii", "%z")
+			});
+		}
+
+		public bool NumberMarkMetaConfigEnabled
+		{
+			set
+			{
+				textBoxBefore.Enabled = textBoxAfter.Enabled = labelBefore.Enabled = labelAfter.Enabled = value;
+				checkBoxBold.Enabled = checkBoxItalic.Enabled = checkBoxNumberSingleSense.Enabled = value;
+				dropDownFont.Enabled = labelFont.Enabled = value;
+			}
 		}
 
 		internal string BeforeText
@@ -22,10 +44,34 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			set { textBoxBefore.Text = value; }
 		}
 
+		internal List<NumberStyleComboItem> FormatMarks
+		{
+			set
+			{
+				dropDownFormat.Items.Clear();
+				dropDownFormat.Items.AddRange(value.ToArray());
+			}
+		}
+
 		internal string FormatMark
 		{
-			get { return dropDownFormat.SelectedText; }
-			set { dropDownFormat.SelectedText = value; /*TODO pH 2014.02: find list item*/ }
+			get{ return ((NumberStyleComboItem)dropDownFormat.SelectedItem).FormatString; }
+			set
+			{
+				if (string.IsNullOrEmpty(value))
+				{
+					dropDownFormat.SelectedIndex = 0;
+					return;
+				}
+				for (int i = 0; i < dropDownFormat.Items.Count; i++)
+				{
+					if (((NumberStyleComboItem)dropDownFormat.Items[i]).FormatString.Equals(value))
+					{
+						dropDownFormat.SelectedIndex = i;
+						break;
+					}
+				}
+			}
 		}
 
 		internal string AfterText
@@ -34,45 +80,48 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			set { textBoxAfter.Text = value; }
 		}
 
-		internal bool? Bold
+		internal CheckState Bold
 		{
-			get
-			{
-				if (checkBoxBold.CheckState == CheckState.Indeterminate)
-					return null;
-				return checkBoxBold.Checked;
-			}
+			get { return checkBoxBold.CheckState; }
+			set { checkBoxBold.CheckState = value; }
+		}
+
+		internal CheckState Italic
+		{
+			get { return checkBoxItalic.CheckState; }
+			set { checkBoxItalic.CheckState = value; }
+		}
+
+		/// <summary>Populate the Sense Number Font dropdown</summary>
+		internal List<string> NumberFonts
+		{
 			set
 			{
-				if (value == null)
-					checkBoxBold.CheckState = CheckState.Indeterminate;
-				else if (value.Value)
-					checkBoxBold.CheckState = CheckState.Checked;
-				else
-					checkBoxBold.CheckState = CheckState.Unchecked;
+				dropDownFont.Items.Clear();
+				dropDownFont.Items.AddRange(value.ToArray());
 			}
 		}
 
-		internal bool? Italic
+		internal string NumberFont
 		{
-			get
-			{
-				if (checkBoxItalic.CheckState == CheckState.Indeterminate)
-					return null;
-				return checkBoxItalic.Checked;
-			}
+			get { return (string)dropDownFont.SelectedItem; }
 			set
 			{
-				if (value == null)
-					checkBoxItalic.CheckState = CheckState.Indeterminate;
-				else if (value.Value)
-					checkBoxItalic.CheckState = CheckState.Checked;
-				else
-					checkBoxItalic.CheckState = CheckState.Unchecked;
+				if (string.IsNullOrEmpty(value))
+				{
+					dropDownFont.SelectedIndex = 0;
+					return;
+				}
+				for (int i = 0; i < dropDownFont.Items.Count; i++)
+				{
+					if (dropDownFont.Items[i].Equals(value))
+					{
+						dropDownFont.SelectedIndex = i;
+						break;
+					}
+				}
 			}
 		}
-
-		// TODO pH 2014.02: font
 
 		internal bool NumberSingleSense
 		{
@@ -92,6 +141,60 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			set { checkBoxSenseInPara.Checked = value; }
 		}
 
-		// TODO pH 2014.03: events
+		#region EventHandlers
+		public event EventHandler BeforeTextChanged
+		{
+			add { textBoxBefore.TextChanged += value; }
+			remove { textBoxBefore.TextChanged -= value; }
+		}
+
+		public event EventHandler FormatMarkChanged
+		{
+			add { dropDownFormat.SelectedValueChanged += value; }
+			remove { dropDownFormat.SelectedValueChanged -= value; }
+		}
+
+		public event EventHandler AfterTextChanged
+		{
+			add { textBoxAfter.TextChanged += value; }
+			remove { textBoxAfter.TextChanged -= value; }
+		}
+
+		public event EventHandler NumberSingleSenseChanged
+		{
+			add { checkBoxNumberSingleSense.CheckedChanged += value; }
+			remove { checkBoxNumberSingleSense.CheckedChanged -= value; }
+		}
+
+		public event EventHandler NumberFontChanged
+		{
+			add { dropDownFont.SelectedValueChanged += value; }
+			remove { dropDownFont.SelectedValueChanged -= value; }
+		}
+
+		public event EventHandler BoldChanged
+		{
+			add { checkBoxBold.CheckStateChanged += value; }
+			remove { checkBoxBold.CheckStateChanged -= value; }
+		}
+
+		public event EventHandler ItalicChanged
+		{
+			add { checkBoxItalic.CheckStateChanged += value; }
+			remove { checkBoxItalic.CheckStateChanged -= value; }
+		}
+
+		public event EventHandler ShowGrammarFirstChanged
+		{
+			add { checkBoxShowGrammarFirst.CheckedChanged += value; }
+			remove { checkBoxShowGrammarFirst.CheckedChanged -= value; }
+		}
+
+		public event EventHandler SenseInParaChanged
+		{
+			add { checkBoxSenseInPara.CheckedChanged += value; }
+			remove { checkBoxSenseInPara.CheckedChanged -= value; }
+		}
+		#endregion EventHandlers
 	}
 }
