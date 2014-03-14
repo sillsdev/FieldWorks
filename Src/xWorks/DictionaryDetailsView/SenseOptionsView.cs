@@ -17,18 +17,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		public SenseOptionsView()
 		{
 			InitializeComponent();
-
-			// REVIEW (Hasso) 2014.03: in the old dialog, this list was hard-coded in the view.  It is a severe subset of what is available
-			// in XmlDisplayVec.CalculateAndFormatSenseLabel. TODO: a bit more integration in a future commit
-			dropDownFormat.Items.AddRange(new object[]
-			{
-				new NumberStyleComboItem(xWorksStrings.ksNone, ""),
-				new NumberStyleComboItem("1  1.2  1.2.3", "%O"),
-				new NumberStyleComboItem("1  b  iii", "%z")
-			});
 		}
 
-		public bool NumberMarkMetaConfigEnabled
+		public bool NumberMetaConfigEnabled
 		{
 			set
 			{
@@ -44,30 +35,30 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			set { textBoxBefore.Text = value; }
 		}
 
-		internal List<NumberStyleComboItem> FormatMarks
+		internal List<NumberingStyleComboItem> NumberingStyles
 		{
 			set
 			{
-				dropDownFormat.Items.Clear();
-				dropDownFormat.Items.AddRange(value.ToArray());
+				dropDownNumberingStyle.Items.Clear();
+				dropDownNumberingStyle.Items.AddRange(value.ToArray());
 			}
 		}
 
-		internal string FormatMark
+		internal string NumberingStyle
 		{
-			get{ return ((NumberStyleComboItem)dropDownFormat.SelectedItem).FormatString; }
+			get{ return ((NumberingStyleComboItem)dropDownNumberingStyle.SelectedItem).FormatString; }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 				{
-					dropDownFormat.SelectedIndex = 0;
+					dropDownNumberingStyle.SelectedIndex = 0;
 					return;
 				}
-				for (int i = 0; i < dropDownFormat.Items.Count; i++)
+				for (int i = 0; i < dropDownNumberingStyle.Items.Count; i++)
 				{
-					if (((NumberStyleComboItem)dropDownFormat.Items[i]).FormatString.Equals(value))
+					if (((NumberingStyleComboItem)dropDownNumberingStyle.Items[i]).FormatString.Equals(value))
 					{
-						dropDownFormat.SelectedIndex = i;
+						dropDownNumberingStyle.SelectedIndex = i;
 						break;
 					}
 				}
@@ -148,10 +139,10 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			remove { textBoxBefore.TextChanged -= value; }
 		}
 
-		public event EventHandler FormatMarkChanged
+		public event EventHandler NumberingStyleChanged
 		{
-			add { dropDownFormat.SelectedValueChanged += value; }
-			remove { dropDownFormat.SelectedValueChanged -= value; }
+			add { dropDownNumberingStyle.SelectedValueChanged += value; }
+			remove { dropDownNumberingStyle.SelectedValueChanged -= value; }
 		}
 
 		public event EventHandler AfterTextChanged

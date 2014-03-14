@@ -2454,7 +2454,7 @@ namespace SIL.FieldWorks.XWorks
 			else
 			{
 				ltn.Number = m_cfgSenses.BeforeNumber +
-					((NumberStyleComboItem)m_cfgSenses.NumberStyleCombo.SelectedItem).FormatString +
+					((NumberingStyleComboItem)m_cfgSenses.NumberStyleCombo.SelectedItem).FormatString +
 					m_cfgSenses.AfterNumber;
 				ltn.NumStyle = GenerateNumStyleFromCheckBoxes();
 				ltn.NumFont = m_cfgSenses.NumberFontCombo.SelectedItem.ToString();	// item is a string actually...

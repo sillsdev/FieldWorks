@@ -10,6 +10,7 @@ using System.Drawing.Text;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
@@ -151,7 +152,8 @@ namespace SIL.FieldWorks.XWorks
 			var senseOptionsView = new SenseOptionsView
 			{
 				BeforeText = senseOptions.BeforeNumber,
-				FormatMark = senseOptions.NumberMark,
+				NumberingStyles = XmlVcDisplayVec.SupportedNumberingStyles, // load available list before setting value
+				NumberingStyle = senseOptions.NumberingStyle,
 				AfterText = senseOptions.AfterNumber,
 				Bold = bold,
 				Italic = italic,
@@ -160,19 +162,18 @@ namespace SIL.FieldWorks.XWorks
 				NumberSingleSense = senseOptions.NumberEvenASingleSense,
 				ShowGrammarFirst = senseOptions.ShowSharedGrammarInfoFirst,
 				SenseInPara = senseOptions.DisplayEachSenseInAParagraph,
-				// view setup
 			};
 
 			// load paragraph Style
 			View.SetStyles(m_paraStyles, m_node.Style, true);
 
 			// (dis)actviate appropriate parts of the view
-			senseOptionsView.NumberMarkMetaConfigEnabled = !string.IsNullOrEmpty(senseOptions.NumberMark);
+			senseOptionsView.NumberMetaConfigEnabled = !string.IsNullOrEmpty(senseOptions.NumberingStyle);
 			ToggleViewForShowInPara(senseOptions.DisplayEachSenseInAParagraph);
 
 			// Register eventhandlers
 			senseOptionsView.BeforeTextChanged += (sender, e) => { senseOptions.BeforeNumber = senseOptionsView.BeforeText; RefreshPreview(); };
-			senseOptionsView.FormatMarkChanged += (sender, e) => SenseNumFormatMarkChanged(senseOptions, senseOptionsView);
+			senseOptionsView.NumberingStyleChanged += (sender, e) => SenseNumbingStyleChanged(senseOptions, senseOptionsView);
 			senseOptionsView.AfterTextChanged += (sender, e) => { senseOptions.AfterNumber = senseOptionsView.AfterText; RefreshPreview(); };
 			senseOptionsView.NumberFontChanged += (sender, e) => SenseNumFontChanged(senseOptions, senseOptionsView.NumberFont);
 // ReSharper disable ImplicitlyCapturedClosure
@@ -317,10 +318,10 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		#region SenseChanges
-		private void SenseNumFormatMarkChanged(DictionaryNodeSenseOptions senseOptions, SenseOptionsView senseOptionsView)
+		private void SenseNumbingStyleChanged(DictionaryNodeSenseOptions senseOptions, SenseOptionsView senseOptionsView)
 		{
-			senseOptions.NumberMark = senseOptionsView.FormatMark;
-			senseOptionsView.NumberMarkMetaConfigEnabled = !string.IsNullOrEmpty(senseOptions.NumberMark);
+			senseOptions.NumberingStyle = senseOptionsView.NumberingStyle;
+			senseOptionsView.NumberMetaConfigEnabled = !string.IsNullOrEmpty(senseOptions.NumberingStyle);
 			RefreshPreview();
 		}
 

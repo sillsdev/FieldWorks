@@ -203,7 +203,10 @@
     <Compile Include="ConfigSenseLayout.Designer.cs">
       <DependentUpon>ConfigSenseLayout.cs</DependentUpon>
     </Compile>
-    <Compile Include="FwBulletsPreview.cs" />
+    <Compile Include="DictionaryConfigComboItems.cs" />
+    <Compile Include="FwBulletsPreview.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="FwFontAttributes.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -222,7 +225,9 @@
     <Compile Include="FwGeneralTab.Designer.cs">
       <DependentUpon>FwGeneralTab.cs</DependentUpon>
     </Compile>
-    <Compile Include="FwInheritablePropComboBox.cs" />
+    <Compile Include="FwInheritablePropComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="IFontDialog.cs" />
     <Compile Include="IStylesTab.cs" />
     <Compile Include="StyleInfo.cs" />

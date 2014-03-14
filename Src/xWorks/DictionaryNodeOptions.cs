@@ -21,12 +21,12 @@ namespace SIL.FieldWorks.XWorks
 
 		// Valid values: ""->none; %O->1.2.3; %z->1, b, iii
 		[XmlAttribute(AttributeName = "numberMark")]
-		public string NumberMark { get; set; }
+		public string NumberingStyle { get; set; }
 
 		[XmlAttribute(AttributeName = "numberAfter")]
 		public string AfterNumber { get; set; }
 
-		// currently represents bold and italic
+		// Whether the sense number should be bold and/or italic.
 		[XmlAttribute(AttributeName = "numberStyle")]
 		public string NumberStyle { get; set; }
 

@@ -39,13 +39,13 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			this.checkBoxBold = new System.Windows.Forms.CheckBox();
 			this.checkBoxItalic = new System.Windows.Forms.CheckBox();
 			this.dropDownFont = new System.Windows.Forms.ComboBox();
-			this.dropDownFormat = new System.Windows.Forms.ComboBox();
+			this.dropDownNumberingStyle = new System.Windows.Forms.ComboBox();
 			this.textBoxAfter = new System.Windows.Forms.TextBox();
 			this.textBoxBefore = new System.Windows.Forms.TextBox();
 			this.labelBefore = new System.Windows.Forms.Label();
 			this.labelAfter = new System.Windows.Forms.Label();
 			this.labelFont = new System.Windows.Forms.Label();
-			this.labelMark = new System.Windows.Forms.Label();
+			this.labelNumberingStyle = new System.Windows.Forms.Label();
 			this.groupBoxSenseNumber = new System.Windows.Forms.GroupBox();
 			this.groupBoxSenseNumber.SuspendLayout();
 			this.SuspendLayout();
@@ -121,15 +121,15 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			this.dropDownFont.Size = new System.Drawing.Size(199, 21);
 			this.dropDownFont.TabIndex = 12;
 			// 
-			// dropDownFormat
+			// dropDownNumberingStyle
 			// 
-			this.dropDownFormat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.dropDownFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.dropDownFormat.FormattingEnabled = true;
-			this.dropDownFormat.Location = new System.Drawing.Point(87, 72);
-			this.dropDownFormat.Name = "dropDownFormat";
-			this.dropDownFormat.Size = new System.Drawing.Size(121, 21);
-			this.dropDownFormat.TabIndex = 11;
+			this.dropDownNumberingStyle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.dropDownNumberingStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.dropDownNumberingStyle.FormattingEnabled = true;
+			this.dropDownNumberingStyle.Location = new System.Drawing.Point(87, 72);
+			this.dropDownNumberingStyle.Name = "dropDownNumberingStyle";
+			this.dropDownNumberingStyle.Size = new System.Drawing.Size(121, 21);
+			this.dropDownNumberingStyle.TabIndex = 11;
 			// 
 			// textBoxAfter
 			// 
@@ -177,20 +177,20 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			this.labelFont.TabIndex = 9;
 			this.labelFont.Text = "Font:";
 			// 
-			// labelMark
+			// labelNumberingStyle
 			// 
-			this.labelMark.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.labelMark.AutoSize = true;
-			this.labelMark.Location = new System.Drawing.Point(84, 56);
-			this.labelMark.Name = "labelMark";
-			this.labelMark.Size = new System.Drawing.Size(42, 13);
-			this.labelMark.TabIndex = 7;
-			this.labelMark.Text = "Format:";
+			this.labelNumberingStyle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.labelNumberingStyle.AutoSize = true;
+			this.labelNumberingStyle.Location = new System.Drawing.Point(84, 56);
+			this.labelNumberingStyle.Name = "labelNumberingStyle";
+			this.labelNumberingStyle.Size = new System.Drawing.Size(42, 13);
+			this.labelNumberingStyle.TabIndex = 7;
+			this.labelNumberingStyle.Text = "Numbering Style:";
 			// 
 			// groupBoxSenseNumber
 			// 
 			this.groupBoxSenseNumber.Controls.Add(this.dropDownFont);
-			this.groupBoxSenseNumber.Controls.Add(this.labelMark);
+			this.groupBoxSenseNumber.Controls.Add(this.labelNumberingStyle);
 			this.groupBoxSenseNumber.Controls.Add(this.labelFont);
 			this.groupBoxSenseNumber.Controls.Add(this.checkBoxNumberSingleSense);
 			this.groupBoxSenseNumber.Controls.Add(this.labelAfter);
@@ -199,7 +199,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			this.groupBoxSenseNumber.Controls.Add(this.checkBoxItalic);
 			this.groupBoxSenseNumber.Controls.Add(this.textBoxBefore);
 			this.groupBoxSenseNumber.Controls.Add(this.textBoxAfter);
-			this.groupBoxSenseNumber.Controls.Add(this.dropDownFormat);
+			this.groupBoxSenseNumber.Controls.Add(this.dropDownNumberingStyle);
 			this.groupBoxSenseNumber.Location = new System.Drawing.Point(3, 3);
 			this.groupBoxSenseNumber.Name = "groupBoxSenseNumber";
 			this.groupBoxSenseNumber.Size = new System.Drawing.Size(300, 120);
@@ -233,13 +233,13 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		private System.Windows.Forms.CheckBox checkBoxBold;
 		private System.Windows.Forms.CheckBox checkBoxItalic;
 		private System.Windows.Forms.ComboBox dropDownFont;
-		private System.Windows.Forms.ComboBox dropDownFormat;
+		private System.Windows.Forms.ComboBox dropDownNumberingStyle;
 		private System.Windows.Forms.TextBox textBoxAfter;
 		private System.Windows.Forms.TextBox textBoxBefore;
 		private System.Windows.Forms.Label labelBefore;
 		private System.Windows.Forms.Label labelAfter;
 		private System.Windows.Forms.Label labelFont;
-		private System.Windows.Forms.Label labelMark;
+		private System.Windows.Forms.Label labelNumberingStyle;
 		private System.Windows.Forms.GroupBox groupBoxSenseNumber;
 	}
 }

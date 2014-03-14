@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2013 SIL International
+// Copyright (c) 2011-2014 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -18,6 +18,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -517,15 +518,34 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
+		/// <summary>Returns the list of number styles supported by <see cref="CalculateAndFormatSenseLabel"/></summary>
+		public static List<NumberingStyleComboItem> SupportedNumberingStyles
+		{
+			get
+			{
+				return new List<NumberingStyleComboItem>
+				{
+					new NumberingStyleComboItem(XMLViewsStrings.ksNone, ""),
+					new NumberingStyleComboItem("1  1.2  1.2.3", "%O"),
+					new NumberingStyleComboItem("1  b  iii", "%z"),
+					new NumberingStyleComboItem("1  2  3", "%d"),
+					new NumberingStyleComboItem("A  B  C", "%A"),
+					new NumberingStyleComboItem("a  b  c", "%a"),
+					new NumberingStyleComboItem("I  II  III", "%I"),
+					new NumberingStyleComboItem("i  ii  iii", "%i"),
+				};
+			}
+		}
+
 		/// <summary>
 		/// Takes a coded number string and interprets it.
 		/// Only the first code in the string is interpreted.
 		/// The emedded codes are:
 		/// %d for an integer
-		/// %A, %a for upper and lower alpha,
-		/// %I, %i for upper and lower roman numerals,
+		/// %A, %a for upper and lower alpha
+		/// %I, %i for upper and lower roman numerals
 		/// %O for outline number (a real number)
-		/// %z is short for %d.%a.%i; the lowest level is incremented or set.
+		/// %z for %d at the top level, %a at the next level, and %i at all subsequent levels
 		/// </summary>
 		/// <param name="hvo">the sense itself</param>
 		/// <param name="ihvo">A sequence number or index (of hvo in its containing sequence).</param>
