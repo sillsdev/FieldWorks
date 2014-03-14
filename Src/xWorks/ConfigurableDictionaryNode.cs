@@ -84,6 +84,12 @@ namespace SIL.FieldWorks.XWorks
 		public bool IsDuplicate { get; set; }
 
 		/// <summary>
+		/// Whether this element of dictionary data represents a custom field.
+		/// </summary>
+		[XmlAttribute(AttributeName = "isCustomField")]
+		public bool IsCustomField { get; set; }
+
+		/// <summary>
 		/// Clone this node. Point to the same Parent object. Deep-clone Children and DictionaryNodeOptions.
 		/// </summary>
 		internal ConfigurableDictionaryNode DeepCloneUnderSameParent()

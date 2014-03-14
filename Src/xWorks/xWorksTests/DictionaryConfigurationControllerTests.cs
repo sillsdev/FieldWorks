@@ -4,14 +4,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Remoting;
 using System.IO;
 using System.Windows.Forms;
 using NUnit.Framework;
+using SIL.CoreImpl;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 using XCore;
@@ -562,6 +561,82 @@ namespace SIL.FieldWorks.XWorks
 				Assert.IsTrue(result.EndsWith(Path.Combine("Test", "test.xml")));
 			}
 		}
+		
+		[Test]
+		public void GetCustomFieldsForType_NoCustomFieldsGivesEmptyList()
+		{
+			CollectionAssert.IsEmpty(DictionaryConfigurationController.GetCustomFieldsForType(Cache, "LexEntry"));
+		}
+
+		[Test]
+		public void GetCustomFieldsForType_EntryCustomFieldIsRepresented()
+		{
+				using(var cf = new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+									 CellarPropertyType.MultiString, Guid.Empty))
+			{
+				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache,
+																														  "LexEntry");
+				CollectionAssert.IsNotEmpty(customFieldNodes);
+				Assert.IsTrue(customFieldNodes[0].Label == "CustomString");
+			}
+		}
+
+		[Test]
+		public void GetCustomFieldsForType_SenseCustomFieldIsRepresented()
+		{
+			using(var cf = new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("LexSense"), 0,
+								 CellarPropertyType.ReferenceCollection, Guid.Empty))
+			{
+				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache,
+																														  "LexSense");
+				CollectionAssert.IsNotEmpty(customFieldNodes);
+				Assert.IsTrue(customFieldNodes[0].Label == "CustomCollection");
+			}
+		}
+
+		[Test]
+		public void GetCustomFieldsForType_MorphCustomFieldIsRepresented()
+		{
+			using(var cf = new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("MoForm"), 0,
+								 CellarPropertyType.ReferenceCollection, Guid.Empty))
+			{
+				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache,
+																														  "MoForm");
+				CollectionAssert.IsNotEmpty(customFieldNodes);
+				Assert.IsTrue(customFieldNodes[0].Label == "CustomCollection");
+			}
+		}
+
+		[Test]
+		public void GetCustomFieldsForType_ExampleCustomFieldIsRepresented()
+		{
+			using(var cf = new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("LexExampleSentence"), 0,
+								 CellarPropertyType.ReferenceCollection, Guid.Empty))
+			{
+				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache,
+																														  "LexExampleSentence");
+				CollectionAssert.IsNotEmpty(customFieldNodes);
+				Assert.IsTrue(customFieldNodes[0].Label == "CustomCollection");
+			}
+		}
+
+		[Test]
+		public void GetCustomFieldsForType_MultipleFieldsAreReturned()
+		{
+			using(var cf = new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("LexSense"), 0,
+								 CellarPropertyType.ReferenceCollection, Guid.Empty))
+			using(var cf2 = new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexSense"), 0,
+								 CellarPropertyType.ReferenceCollection, Guid.Empty))
+			{
+				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache,
+																														  "LexSense");
+				CollectionAssert.IsNotEmpty(customFieldNodes);
+				CollectionAssert.AllItemsAreUnique(customFieldNodes);
+				Assert.IsTrue(customFieldNodes.Count == 2, "Incorrect number of nodes created from the custom fields.");
+				Assert.IsTrue(customFieldNodes[0].Label == "CustomCollection");
+				Assert.IsTrue(customFieldNodes[1].Label == "CustomString");
+			}
+		}
 
 		private void MoveSiblingAndVerifyPosition(int movingChildOriginalPosition, int movingChildExpectedPosition,
 			DictionaryConfigurationController.Direction directionToMoveChild)
@@ -640,6 +715,33 @@ namespace SIL.FieldWorks.XWorks
 
 			public event SwitchViewEvent SwitchView;
 #pragma warning restore 67
+		}
+
+		/// <summary>
+		/// Creates and removes a custom field, designed for using statement
+		/// </summary>
+		private sealed class CustomFieldForTest : IDisposable
+		{
+			private FieldDescription m_customField;
+			public CustomFieldForTest(FdoCache cache, string customFieldName, int classId, int ws,
+											  CellarPropertyType fieldType, Guid listGuid)
+			{
+				m_customField = new FieldDescription(cache)
+				{
+					Userlabel = customFieldName,
+					HelpString = string.Empty,
+					Class = classId,
+					ListRootId = listGuid,
+					Type = fieldType,
+				};
+				m_customField.UpdateCustomField();
+			}
+
+			public void Dispose()
+			{
+				m_customField.MarkForDeletion = true;
+				m_customField.UpdateCustomField();
+			}
 		}
 	}
 }

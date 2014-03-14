@@ -10,8 +10,11 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Infrastructure;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -398,6 +401,73 @@ namespace SIL.FieldWorks.XWorks
 			parent.Children.Insert(newNodeIndex, node);
 
 			RefreshView();
+		}
+
+		private static void MergeCustomFieldLists(List<ConfigurableDictionaryNode> children, List<ConfigurableDictionaryNode> customFields)
+		{
+			// Traverse through the children from end to beginning removing any custom fields that no longer exist.
+			for(var i = children.Count - 1; i >= 0; --i)
+			{
+				var field = children[i];
+				if(field.IsCustomField && !customFields.Contains(field))
+				{
+					children.Remove(field);
+				}
+				if(field.IsCustomField && customFields.Contains(field))
+				{
+					customFields.Remove(field);
+				}
+			}
+			// Then add any custom fields that don't yet exist in the children list to the end.
+			children.AddRange(customFields);
+		}
+		/// <summary>
+		/// Generate a list of ConfigurableDictionaryNode objects to represent each custom field of the given type.
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="className"></param>
+		/// <returns></returns>
+		public static List<ConfigurableDictionaryNode> GetCustomFieldsForType(FdoCache cache, string className)
+		{
+			var customFieldList = new List<ConfigurableDictionaryNode>();
+			var metaDataCache = (IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor;
+			var lexEntryId = metaDataCache.GetClassId(className);
+			var size = metaDataCache.GetFields(lexEntryId, true, (int)CellarPropertyTypeFilter.All, 0, null);
+			using(var fields = MarshalEx.ArrayToNative<int>(size))
+			{
+				metaDataCache.GetFields(lexEntryId, true, (int)CellarPropertyTypeFilter.All, size, fields);
+				var fieldArray = MarshalEx.NativeToArray<int>(fields, size);
+				foreach(var field in fieldArray)
+				{
+					if(metaDataCache.IsCustom(field))
+					{
+						var configNode = new ConfigurableDictionaryNode();
+						configNode.Label = metaDataCache.GetFieldLabel(field) ?? metaDataCache.GetFieldName(field);
+						configNode.IsCustomField = true;
+						configNode.IsEnabled = false;
+						configNode.FieldDescription = metaDataCache.GetFieldName(field);
+						configNode.DictionaryNodeOptions = BuildOptionsForType(metaDataCache.GetFieldType(field));
+						customFieldList.Add(configNode);
+					}
+				}
+			}
+			return customFieldList;
+		}
+
+		private static DictionaryNodeOptions BuildOptionsForType(int fieldType)
+		{
+			switch(fieldType)
+			{
+				case (int)CellarPropertyType.MultiString:
+				case (int)CellarPropertyType.MultiUnicode:
+					return new DictionaryNodeWritingSystemOptions();
+				case (int)CellarPropertyType.OwningCollection:
+				case (int)CellarPropertyType.OwningSequence:
+				case (int)CellarPropertyType.ReferenceCollection:
+				case (int)CellarPropertyType.ReferenceSequence:
+					return new DictionaryNodeListOptions();
+			}
+			return null;
 		}
 	}
 }
