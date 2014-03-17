@@ -89,12 +89,12 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			this.checkBoxBold.AutoSize = true;
 			this.checkBoxBold.Checked = true;
 			this.checkBoxBold.CheckState = System.Windows.Forms.CheckState.Indeterminate;
-			this.checkBoxBold.ThreeState = true;
 			this.checkBoxBold.Location = new System.Drawing.Point(214, 12);
 			this.checkBoxBold.Name = "checkBoxBold";
 			this.checkBoxBold.Size = new System.Drawing.Size(47, 17);
 			this.checkBoxBold.TabIndex = 13;
 			this.checkBoxBold.Text = "Bold";
+			this.checkBoxBold.ThreeState = true;
 			this.checkBoxBold.UseVisualStyleBackColor = true;
 			// 
 			// checkBoxItalic
@@ -103,12 +103,12 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			this.checkBoxItalic.AutoSize = true;
 			this.checkBoxItalic.Checked = true;
 			this.checkBoxItalic.CheckState = System.Windows.Forms.CheckState.Indeterminate;
-			this.checkBoxItalic.ThreeState = true;
 			this.checkBoxItalic.Location = new System.Drawing.Point(214, 32);
 			this.checkBoxItalic.Name = "checkBoxItalic";
 			this.checkBoxItalic.Size = new System.Drawing.Size(48, 17);
 			this.checkBoxItalic.TabIndex = 14;
 			this.checkBoxItalic.Text = "Italic";
+			this.checkBoxItalic.ThreeState = true;
 			this.checkBoxItalic.UseVisualStyleBackColor = true;
 			// 
 			// dropDownFont
@@ -183,23 +183,23 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			this.labelNumberingStyle.AutoSize = true;
 			this.labelNumberingStyle.Location = new System.Drawing.Point(84, 56);
 			this.labelNumberingStyle.Name = "labelNumberingStyle";
-			this.labelNumberingStyle.Size = new System.Drawing.Size(42, 13);
+			this.labelNumberingStyle.Size = new System.Drawing.Size(87, 13);
 			this.labelNumberingStyle.TabIndex = 7;
 			this.labelNumberingStyle.Text = "Numbering Style:";
 			// 
 			// groupBoxSenseNumber
 			// 
 			this.groupBoxSenseNumber.Controls.Add(this.dropDownFont);
-			this.groupBoxSenseNumber.Controls.Add(this.labelNumberingStyle);
-			this.groupBoxSenseNumber.Controls.Add(this.labelFont);
 			this.groupBoxSenseNumber.Controls.Add(this.checkBoxNumberSingleSense);
-			this.groupBoxSenseNumber.Controls.Add(this.labelAfter);
 			this.groupBoxSenseNumber.Controls.Add(this.checkBoxBold);
-			this.groupBoxSenseNumber.Controls.Add(this.labelBefore);
 			this.groupBoxSenseNumber.Controls.Add(this.checkBoxItalic);
 			this.groupBoxSenseNumber.Controls.Add(this.textBoxBefore);
 			this.groupBoxSenseNumber.Controls.Add(this.textBoxAfter);
 			this.groupBoxSenseNumber.Controls.Add(this.dropDownNumberingStyle);
+			this.groupBoxSenseNumber.Controls.Add(this.labelBefore);
+			this.groupBoxSenseNumber.Controls.Add(this.labelNumberingStyle);
+			this.groupBoxSenseNumber.Controls.Add(this.labelAfter);
+			this.groupBoxSenseNumber.Controls.Add(this.labelFont);
 			this.groupBoxSenseNumber.Location = new System.Drawing.Point(3, 3);
 			this.groupBoxSenseNumber.Name = "groupBoxSenseNumber";
 			this.groupBoxSenseNumber.Size = new System.Drawing.Size(300, 120);

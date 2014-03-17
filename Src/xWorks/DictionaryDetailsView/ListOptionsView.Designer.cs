@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.listView.Location = new System.Drawing.Point(3, 20);
 			this.listView.Name = "listView";
-			this.listView.Size = new System.Drawing.Size(253, 95);
+			this.listView.Size = new System.Drawing.Size(256, 95);
 			this.listView.TabIndex = 0;
 			this.listView.UseCompatibleStateImageBehavior = false;
 			this.listView.View = System.Windows.Forms.View.Details;
@@ -55,21 +55,19 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			// buttonUp
 			// 
 			this.buttonUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonUp.Location = new System.Drawing.Point(262, 20);
+			this.buttonUp.Location = new System.Drawing.Point(265, 20);
 			this.buttonUp.Name = "buttonUp";
-			this.buttonUp.Size = new System.Drawing.Size(26, 23);
+			this.buttonUp.Size = new System.Drawing.Size(32, 32);
 			this.buttonUp.TabIndex = 1;
-			this.buttonUp.Text = "▲";
 			this.buttonUp.UseVisualStyleBackColor = true;
 			// 
 			// buttonDown
 			// 
 			this.buttonDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonDown.Location = new System.Drawing.Point(262, 49);
+			this.buttonDown.Location = new System.Drawing.Point(265, 58);
 			this.buttonDown.Name = "buttonDown";
-			this.buttonDown.Size = new System.Drawing.Size(26, 23);
+			this.buttonDown.Size = new System.Drawing.Size(32, 32);
 			this.buttonDown.TabIndex = 1;
-			this.buttonDown.Text = "▼";
 			this.buttonDown.UseVisualStyleBackColor = true;
 			// 
 			// checkBoxDisplayOption
@@ -96,11 +94,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.labelListView);
 			this.Controls.Add(this.checkBoxDisplayOption);
 			this.Controls.Add(this.buttonDown);
 			this.Controls.Add(this.buttonUp);
 			this.Controls.Add(this.listView);
+			this.Controls.Add(this.labelListView);
 			this.MinimumSize = new System.Drawing.Size(300, 100);
 			this.Name = "ListOptionsView";
 			this.Size = new System.Drawing.Size(300, 140);

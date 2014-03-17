@@ -115,7 +115,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			this.labelStyle.AutoSize = true;
 			this.labelStyle.Location = new System.Drawing.Point(0, 17);
 			this.labelStyle.Name = "labelStyle";
-			this.labelStyle.Size = new System.Drawing.Size(82, 13);
+			this.labelStyle.Size = new System.Drawing.Size(0, 13);
 			this.labelStyle.TabIndex = 1;
 			// 
 			// buttonStyles
@@ -145,13 +145,13 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			this.Controls.Add(this.panelOptions);
 			this.Controls.Add(this.buttonStyles);
 			this.Controls.Add(this.dropDownStyle);
-			this.Controls.Add(this.labelAfter);
-			this.Controls.Add(this.labelBetween);
-			this.Controls.Add(this.labelStyle);
-			this.Controls.Add(this.labelBefore);
 			this.Controls.Add(this.textBoxAfter);
 			this.Controls.Add(this.textBoxBetween);
 			this.Controls.Add(this.textBoxBefore);
+			this.Controls.Add(this.labelBefore);
+			this.Controls.Add(this.labelBetween);
+			this.Controls.Add(this.labelStyle);
+			this.Controls.Add(this.labelAfter);
 			this.MinimumSize = new System.Drawing.Size(320, 100);
 			this.Name = "DetailsView";
 			this.Size = new System.Drawing.Size(320, 100);

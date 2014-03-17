@@ -3,6 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.ComponentModel;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
@@ -18,6 +20,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		public ListOptionsView()
 		{
 			InitializeComponent();
+			var resources = new ComponentResourceManager(typeof(DictionaryConfigurationTreeControl));
+			buttonUp.Image = (Image)resources.GetObject("moveUp.Image");
+			buttonDown.Image = (Image)resources.GetObject("moveDown.Image");
 		}
 
 		//
