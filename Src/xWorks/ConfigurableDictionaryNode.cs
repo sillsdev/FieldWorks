@@ -69,6 +69,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Type specific configuration options for this configurable node;
 		/// </summary>
+		[XmlIgnore] // TODO pH 2014.03: fix saving of Options on all platforms
 		public DictionaryNodeOptions DictionaryNodeOptions { get; set; }
 
 		/// <summary>
