@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -252,6 +253,8 @@ namespace SIL.FieldWorks.XWorks
 			_model = _alternateDictionaries.ContainsKey(lastUsedAlternateDictionary)
 						? _alternateDictionaries[lastUsedAlternateDictionary]
 						: _alternateDictionaries.Values.First();
+			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			MergeCustomFieldsIntoDictionaryModel(cache, _model);
 			// Populate the tree view with the users last configuration, or the first one in the list of alternates.
 			PopulateTreeView(mediator);
 			View.ManageViews += (sender, args) => new DictionaryConfigMgrDlg(mediator, "", new List<XmlNode>(), null).ShowDialog(View as Form);
@@ -403,24 +406,110 @@ namespace SIL.FieldWorks.XWorks
 			RefreshView();
 		}
 
-		private static void MergeCustomFieldLists(List<ConfigurableDictionaryNode> children, List<ConfigurableDictionaryNode> customFields)
+		public static void MergeCustomFieldsIntoDictionaryModel(FdoCache cache,
+																				  DictionaryConfigurationModel model)
 		{
+			foreach(var part in model.Parts)
+			{
+				var customFields = GetCustomFieldsForType(cache, part.FieldDescription);
+				if(part.Children == null)
+					part.Children = new List<ConfigurableDictionaryNode>();
+				MergeCustomFieldLists(part, customFields);
+				MergeCustomFieldsIntoDictionaryModel(cache, part.FieldDescription, part.Children);
+			}
+		}
+
+		/// <summary>
+		/// This helper method is used to recurse into all of the configuration nodes in a DictionaryModel and merge the custom fields
+		/// in each ConfigurableDictionaryNode with those defined in the FieldWorks model according to the metadata cache.
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="parentClass"></param>
+		/// <param name="configurationList"></param>
+		private static void MergeCustomFieldsIntoDictionaryModel(FdoCache cache, string parentClass, List<ConfigurableDictionaryNode> configurationList)
+		{
+			if(configurationList == null)
+				return;
+			var metaDataCache = (IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor;
+			foreach(var configNode in configurationList)
+			{
+				// The class that contains the type information for the field we are inspecting
+				var lookupClass = parentClass;
+				if(!metaDataCache.FieldExists(parentClass, configNode.FieldDescription, true))
+				{
+					Debug.WriteLine(@"Couldn't locate {0} in the MetaDataCache for the class {1}: ConfigNode {2} under {3}",
+										 configNode.FieldDescription, parentClass, configNode.Label, configNode.Parent.Label);
+					continue; // The field as specified in the configuration can not be looked up in the metadata, but may still exist
+				}
+				// The type of the field configured by configNode that we will check for user defined custom fields
+				var fieldType = metaDataCache.GetFieldType(metaDataCache.GetFieldId(parentClass, configNode.FieldDescription, true));
+				// If there is a sub field then the type we are interested in belongs to a property of the field in the configNode
+				if(!String.IsNullOrEmpty(configNode.SubField))
+				{
+					lookupClass =
+						metaDataCache.GetClassName(metaDataCache.GetDstClsId(fieldType));
+					if(!metaDataCache.FieldExists(lookupClass, configNode.SubField, true))
+					{
+						Debug.WriteLine(@"Couldn't locate {0} in the MetaDataCache for the class {1}: ConfigNode {2} under {3}",
+											 configNode.SubField, lookupClass, configNode.Label, configNode.Parent.Label);
+						continue; // The field as specified in the configuration can not be looked up in the metadata, but may still exist
+					}
+					fieldType = metaDataCache.GetFieldType(metaDataCache.GetFieldId(lookupClass, configNode.SubField, true));
+				}
+				string className;
+				// These types in the FieldWorks model only point to or contain the class we are interested in, so we grab their destination class
+				if(fieldType == (int)CellarPropertyType.OwningSequence ||
+					fieldType == (int)CellarPropertyType.OwningCollection ||
+					fieldType == (int)CellarPropertyType.OwningAtomic ||
+					fieldType == (int)CellarPropertyType.ReferenceCollection ||
+					fieldType == (int)CellarPropertyType.ReferenceSequence ||
+					fieldType == (int)CellarPropertyType.ReferenceAtomic)
+				{
+					var destinationClass = metaDataCache.GetDstClsId(metaDataCache.GetFieldId(lookupClass, configNode.SubField ?? configNode.FieldDescription, true));
+					className = metaDataCache.GetClassName(destinationClass);
+				}
+				else
+				{
+					className = metaDataCache.GetClassName(fieldType);
+				}
+				var fieldsForType = GetCustomFieldsForType(cache, className);
+				if(fieldsForType.Count > 0)
+				{
+					if(configNode.Children == null)
+					{
+						configNode.Children = new List<ConfigurableDictionaryNode>();
+					}
+					MergeCustomFieldLists(configNode, fieldsForType);
+				}
+				// recurse into the rest of the dictionary model
+				MergeCustomFieldsIntoDictionaryModel(cache, className, configNode.Children);
+			}
+		}
+
+		private static void MergeCustomFieldLists(ConfigurableDictionaryNode parent, List<ConfigurableDictionaryNode> customFieldNodes)
+		{
+			var children = parent.Children;
 			// Traverse through the children from end to beginning removing any custom fields that no longer exist.
 			for(var i = children.Count - 1; i >= 0; --i)
 			{
-				var field = children[i];
-				if(field.IsCustomField && !customFields.Contains(field))
+				var configNode = children[i];
+				if(configNode.IsCustomField && !customFieldNodes.Contains(configNode))
 				{
-					children.Remove(field);
+					children.Remove(configNode);
 				}
-				if(field.IsCustomField && customFields.Contains(field))
+				if(configNode.IsCustomField && customFieldNodes.Contains(configNode))
 				{
-					customFields.Remove(field);
+					customFieldNodes.Remove(configNode);
 				}
 			}
-			// Then add any custom fields that don't yet exist in the children list to the end.
-			children.AddRange(customFields);
+			// Then add any custom fields that don't yet exist in the children configurationList to the end.
+			foreach(var customField in customFieldNodes)
+			{
+				customField.Parent = parent;
+			}
+			children.AddRange(customFieldNodes);
 		}
+
 		/// <summary>
 		/// Generate a list of ConfigurableDictionaryNode objects to represent each custom field of the given type.
 		/// </summary>

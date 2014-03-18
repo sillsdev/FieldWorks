@@ -22,6 +22,13 @@ namespace SIL.FieldWorks.XWorks
 		public List<ConfigurableDictionaryNode> Parts;
 
 		/// <summary>
+		/// Trees of shared dictionary elements
+		/// </summary>
+		[XmlArray(ElementName = "SharedItems")]
+		[XmlArrayItem("ConfigurationItem", typeof(ConfigurableDictionaryNode))]
+		public List<ConfigurableDictionaryNode> SharedItems;
+
+		/// <summary>
 		/// File where data is stored
 		/// </summary>
 		[XmlIgnore]

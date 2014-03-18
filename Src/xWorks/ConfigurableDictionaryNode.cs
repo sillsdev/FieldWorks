@@ -19,9 +19,15 @@ namespace SIL.FieldWorks.XWorks
 	public class ConfigurableDictionaryNode
 	{
 		/// <summary>
-		/// Information about the field in the model that this node is configuring
+		/// Additional information directing this configuration to a sub field, or property of a field, in the FieldWorks model
 		/// </summary>
-		[XmlAttribute(AttributeName = "identifier")]
+		[XmlAttribute(AttributeName = "subField")]
+		public string SubField { get; set; }
+
+		/// <summary>
+		/// Information about the field in the FieldWorks model that this node is configuring
+		/// </summary>
+		[XmlAttribute(AttributeName = "field")]
 		public string FieldDescription { get; set; }
 
 		/// <summary>
@@ -59,6 +65,12 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		[XmlIgnore]
 		public ConfigurableDictionaryNode Parent { get; internal set; }
+
+		/// <summary>
+		/// Reference to a shared configuration node or null.
+		/// </summary>
+		[XmlElement("ReferenceItem")]
+		public string ReferenceItem { get; set; }
 
 		/// <summary>
 		/// Ordered list of nodes contained by this configurable node

@@ -4,6 +4,13 @@
 	 <xs:complexType>
 		  <xs:sequence>
 				<xs:element name="ConfigurationItem" type="ConfigurationItemType" maxOccurs="unbounded" minOccurs="0"/>
+			  <xs:element name="SharedItems" minOccurs="0" maxOccurs="1">
+				<xs:complexType>
+				<xs:sequence>
+				  <xs:element name="ConfigurationItem" type="ConfigurationItemType" maxOccurs="unbounded" minOccurs="0"/>
+				</xs:sequence>
+				</xs:complexType>
+			  </xs:element>
 		  </xs:sequence>
 		  <xs:attribute type="xs:string" name="name" use="required"/>
 		  <xs:attribute type="xs:integer" name="version" use="required"/>
@@ -11,7 +18,8 @@
 	 </xs:complexType>
 </xs:element>
 <xs:complexType name="ConfigurationItemType">
-	 <xs:sequence>
+	 <xs:choice minOccurs="0" maxOccurs="1">
+		<xs:sequence>
 		  <xs:element name="WritingSystemOptions" minOccurs="0">
 				<xs:complexType>
 					 <xs:sequence>
@@ -51,9 +59,18 @@
 				</xs:complexType>
 		  </xs:element>
 		  <xs:element name="ConfigurationItem" type="ConfigurationItemType" minOccurs="0" maxOccurs="unbounded"/>
-	 </xs:sequence>
+		</xs:sequence>
+		 <xs:element name="ReferenceItem">
+			<xs:complexType>
+				 <xs:simpleContent>
+					<xs:extension base="xs:string"/>
+				 </xs:simpleContent>
+			 </xs:complexType>
+		 </xs:element>
+	 </xs:choice>
 	 <xs:attribute type="xs:string" name="name" use="required"/>
-	 <xs:attribute type="xs:string" name="identifier" use="required"/>
+	 <xs:attribute type="xs:string" name="field" use="required"/>
+	 <xs:attribute type="xs:string" name="subField" use="optional"/>
 	 <xs:attribute type="xs:boolean" name="isEnabled" use="required"/>
 	 <xs:attribute type="xs:boolean" name="isDuplicate" use="optional"/>
 	 <xs:attribute type="xs:boolean" name="isCustomField" use="optional"/>

@@ -125,6 +125,37 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/ConfigurationItem", 1);
 		}
 
+		[Test]
+		public void Save_ConfigWithReferenceItemValidatesAgainstSchema()
+		{
+			var modelFile = Path.GetTempFileName();
+			var oneConfigNode = new ConfigurableDictionaryNode();
+			oneConfigNode.Label = "Main Entry";
+			oneConfigNode.IsEnabled = true;
+			oneConfigNode.Before = "[";
+			oneConfigNode.FieldDescription = "LexEntry";
+
+			var oneRefConfigNode = new ConfigurableDictionaryNode();
+			oneConfigNode.ReferenceItem = "Reference";
+			oneRefConfigNode.Label = "Reference";
+			oneRefConfigNode.FieldDescription = "LexEntry";
+			var model = new DictionaryConfigurationModel
+			{
+				FilePath = modelFile,
+				Version = 0,
+				Label = "root",
+				Parts = new List<ConfigurableDictionaryNode> { oneConfigNode },
+				SharedItems = new List<ConfigurableDictionaryNode> { oneRefConfigNode }
+			};
+			//SUT
+			model.Save();
+			ValidateAgainstSchema(modelFile);
+			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 1);
+			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/ReferenceItem", 1);
+			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/ConfigurationItem", 0);
+			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/SharedItems/ConfigurationItem", 1);
+		}
+
 		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
 							  Justification = "Certain types can't be validated. e.g. xs:byte, otherwise implemented enough for us")]
 		private static void ValidateAgainstSchema(string xmlFile)

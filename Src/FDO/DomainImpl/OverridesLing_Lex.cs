@@ -2453,7 +2453,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Get the minimal set of LexReferences for this entry.
 		/// This is a virtual, backreference property.
 		/// </summary>
-		[VirtualProperty(CellarPropertyType.ReferenceCollection, "MinimalLexReferences")]
+		[VirtualProperty(CellarPropertyType.ReferenceCollection, "LexReference")]
 		public List<ILexReference> MinimalLexReferences
 		{
 			get
@@ -5312,7 +5312,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Get the minimal set of LexReferences for this sense.
 		/// This is a virtual, backreference property.
 		/// </summary>
-		[VirtualProperty(CellarPropertyType.ReferenceCollection, "MinimalLexReferences")]
+		[VirtualProperty(CellarPropertyType.ReferenceCollection, "LexReference")]
 		public List<ILexReference> MinimalLexReferences
 		{
 			get
@@ -7928,6 +7928,19 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 #endif
 				TargetsRS.Add(newObj);
 			}
+		}
+
+
+		/// <summary>
+		/// Object owner. This virtual may seem redundant with CmObject.Owner, but it is important,
+		/// because we can correctly indicate the destination class. This is used for dictionary configuration.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceAtomic, "LexRefType")]
+		public ILexRefType OwnerType
+		{
+			// using 'as LexRefType' to enforce consistancy with MetaData from the VirtualProperty
+			// also there will always ever only be one.
+			get { return Owner as LexRefType; }
 		}
 
 		/// <summary>

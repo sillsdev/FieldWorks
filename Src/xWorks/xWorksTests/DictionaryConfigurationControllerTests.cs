@@ -683,6 +683,112 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		[Test]
+		public void MergeCustomFieldsIntoDictionaryModel_NewFieldsAreAdded()
+		{
+			using(var cf2 = new CustomFieldForTest(Cache, "CustomString",
+															Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+															CellarPropertyType.ReferenceCollection, Guid.Empty))
+			{
+				var model = new DictionaryConfigurationModel();
+				model.Parts = new List<ConfigurableDictionaryNode>
+					{
+						new ConfigurableDictionaryNode { Label = "Main Entry", FieldDescription = "LexEntry" }
+					};
+				//SUT
+				DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(Cache, model);
+				Assert.IsNotNull(model.Parts[0].Children, "Custom Field did not add to children");
+				CollectionAssert.IsNotEmpty(model.Parts[0].Children, "Custom Field did not add to children");
+				Assert.AreEqual(model.Parts[0].Children[0].Label, "CustomString");
+				Assert.AreEqual(model.Parts[0].Children[0].FieldDescription, "CustomString");
+				Assert.AreEqual(model.Parts[0].Children[0].IsCustomField, true);
+			}
+		}
+
+		[Test]
+		public void MergeCustomFieldsIntoDictionaryModel_FieldsAreNotDuplicated()
+		{
+			using(var cf2 = new CustomFieldForTest(Cache, "CustomString",
+															Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+															CellarPropertyType.ReferenceCollection, Guid.Empty))
+			{
+				var model = new DictionaryConfigurationModel();
+				var customNode = new ConfigurableDictionaryNode()
+				{
+					Label = "CustomString",
+					FieldDescription = "CustomString",
+					IsCustomField = true
+				};
+				var entryNode = new ConfigurableDictionaryNode
+				{
+					Label = "Main Entry",
+					FieldDescription = "LexEntry",
+					Children = new List<ConfigurableDictionaryNode> { customNode }
+				};
+				model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
+
+				//SUT
+				DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(Cache, model);
+				Assert.AreEqual(1, model.Parts[0].Children.Count, "Only the existing custom field node should be present");
+			}
+		}
+
+		[Test]
+		public void MergeCustomFieldsIntoDictionaryModel_DeletedFieldsAreRemoved()
+		{
+			var model = new DictionaryConfigurationModel();
+			var customNode = new ConfigurableDictionaryNode()
+			{
+				Label = "CustomString",
+				FieldDescription = "CustomString",
+				IsCustomField = true
+			};
+			var entryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { customNode }
+			};
+			model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
+
+			//SUT
+			DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(Cache, model);
+			Assert.AreEqual(0, model.Parts[0].Children.Count, "The custom field in the model should have been removed since it isn't in the project(cache)");
+		}
+
+		[Test]
+		public void MergeCustomFieldsIntoDictionaryModel_ExampleCustomFieldIsRepresented()
+		{
+			using(var cf = new CustomFieldForTest(Cache, "CustomCollection",
+														  Cache.MetaDataCacheAccessor.GetClassId("LexExampleSentence"), 0,
+														  CellarPropertyType.ReferenceCollection, Guid.Empty))
+			{
+				var model = new DictionaryConfigurationModel();
+				var examplesNode = new ConfigurableDictionaryNode()
+				{
+					Label = "Example Sentences",
+					FieldDescription = "Examples"
+				};
+				var senseNode = new ConfigurableDictionaryNode()
+				{
+					Label = "Senses",
+					FieldDescription = "Senses",
+					Children = new List<ConfigurableDictionaryNode> { examplesNode }
+				};
+				var entryNode = new ConfigurableDictionaryNode
+				{
+					Label = "Main Entry",
+					FieldDescription = "LexEntry",
+					Children = new List<ConfigurableDictionaryNode> { senseNode }
+				};
+				model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
+
+				//SUT
+				DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(Cache, model);
+				Assert.AreEqual(1, examplesNode.Children.Count, "Custom field should have been added to ExampleSentence");
+			}
+		}
+
 		private sealed class TestConfigurableDictionaryView : IDictionaryConfigurationView, IDisposable
 		{
 			private DictionaryConfigurationTreeControl m_treeControl = new DictionaryConfigurationTreeControl();
