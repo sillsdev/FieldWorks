@@ -407,8 +407,7 @@ namespace SIL.FieldWorks.XWorks
 			RefreshView();
 		}
 
-		public static void MergeCustomFieldsIntoDictionaryModel(FdoCache cache,
-																				  DictionaryConfigurationModel model)
+		public static void MergeCustomFieldsIntoDictionaryModel(FdoCache cache, DictionaryConfigurationModel model)
 		{
 			foreach(var part in model.Parts)
 			{

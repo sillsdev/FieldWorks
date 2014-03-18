@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.XWorks
 		[XmlAttribute(AttributeName = "numberBefore")]
 		public string BeforeNumber { get; set; }
 
-		// Valid values: ""->none; %O->1.2.3; %z->1, b, iii
+		// Example values: ""->none; %O->1.2.3; %z->1, b, iii
 		[XmlAttribute(AttributeName = "numberMark")]
 		public string NumberingStyle { get; set; }
 
@@ -52,12 +52,10 @@ namespace SIL.FieldWorks.XWorks
 	{
 		public class DictionaryNodeOption
 		{
-			[XmlIgnore]
-			public string Label { get; set; }
 			[XmlAttribute(AttributeName = "id")]
 			public string Id { get; set; }
 			[XmlAttribute(AttributeName = "isEnabled")]
-			public bool IsEnabled { get; set; }
+			public bool IsEnabled { get; set; } // REVIEW pH 2014.03: do we need this?  isn't everything here enabled by merit of being here?
 		}
 
 		[XmlElement(ElementName = "Option")]

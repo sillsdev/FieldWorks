@@ -2,14 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Windows.Forms;
-using System.Xml;
 using System.Xml.Serialization;
-using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -170,13 +164,9 @@ namespace SIL.FieldWorks.XWorks
 
 		public override bool Equals(object other)
 		{
-			if(other == null || !(other is ConfigurableDictionaryNode))
-			{
-				return false;
-			}
 			var otherNode = other as ConfigurableDictionaryNode;
-			// The rules for our tree prevent two same named nodes under a parent
-			return CheckParents(this, otherNode);
+			// The rules for our tree prevent two same-named nodes under a parent
+			return otherNode != null && CheckParents(this, otherNode);
 		}
 
 		/// <summary>

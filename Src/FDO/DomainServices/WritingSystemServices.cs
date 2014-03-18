@@ -1,3 +1,7 @@
+// Copyright (c) 2014 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -50,20 +54,19 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <summary>(-10) The first available vernacular ws with data in the current sequence,
 		/// or the first available analysis ws in that sequence.</summary>
 		public const int kwsFirstVernOrAnal = -10;
-		/// <summary>The first pronunciation writing system.</summary>
+		/// <summary>(-11) The first pronunciation writing system.</summary>
 		public const int kwsPronunciation = -11;
-		/// <summary>The first pronunciation writing system with data.</summary>
+		/// <summary>(-12) The first pronunciation writing system with data.</summary>
 		public const int kwsFirstPronunciation = -12;
-		/// <summary>All pronunciation writing systems.</summary>
+		/// <summary>(-13) All pronunciation writing systems.</summary>
 		public const int kwsPronunciations = -13;
-		/// <summary>The primary writing system for the current reversal index.</summary>
+		/// <summary>(-14) The primary writing system for the current reversal index.</summary>
 		public const int kwsReversalIndex = -14;
-		/// <summary>The full list of writing systems for the current reversal index.</summary>
+		/// <summary>(-15) The full list of writing systems for the current reversal index.</summary>
 		public const int kwsAllReversalIndex = -15;
-		/// <summary>The ws of the relevant text at an offset in its paragraph</summary>
+		/// <summary>(-16) The ws of the relevant text at an offset in its paragraph</summary>
 		public const int kwsVernInParagraph = -16;
-		/// <summary>(-17) The first available vern ws with data in the current sequence
-		/// or else a ws named in the database. </summary>
+		/// <summary>(-17) The first available vern ws with data in the current sequence or else a ws named in the database. </summary>
 		public const int kwsFirstVernOrNamed = -17;
 		/// <summary> One beyond the last magic value.</summary>
 		public const int kwsLim = -18;

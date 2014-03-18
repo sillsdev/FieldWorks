@@ -38,6 +38,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			this.buttonDown = new System.Windows.Forms.Button();
 			this.checkBoxDisplayOption = new System.Windows.Forms.CheckBox();
 			this.labelListView = new System.Windows.Forms.Label();
+			this.invisibleHeaderToSetColWidth = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.SuspendLayout();
 			// 
 			// listView
@@ -45,7 +46,14 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			this.listView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.listView.CheckBoxes = true;
+			this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.invisibleHeaderToSetColWidth});
+			this.listView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+			this.listView.HideSelection = false;
+			this.listView.LabelWrap = false;
 			this.listView.Location = new System.Drawing.Point(3, 20);
+			this.listView.MultiSelect = false;
 			this.listView.Name = "listView";
 			this.listView.Size = new System.Drawing.Size(256, 95);
 			this.listView.TabIndex = 0;
@@ -55,6 +63,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			// buttonUp
 			// 
 			this.buttonUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.buttonUp.Enabled = false;
 			this.buttonUp.Location = new System.Drawing.Point(265, 20);
 			this.buttonUp.Name = "buttonUp";
 			this.buttonUp.Size = new System.Drawing.Size(32, 32);
@@ -64,6 +73,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			// buttonDown
 			// 
 			this.buttonDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.buttonDown.Enabled = false;
 			this.buttonDown.Location = new System.Drawing.Point(265, 58);
 			this.buttonDown.Name = "buttonDown";
 			this.buttonDown.Size = new System.Drawing.Size(32, 32);
@@ -90,6 +100,10 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			this.labelListView.TabIndex = 3;
 			this.labelListView.Text = "Writing Systems:";
 			// 
+			// invisibleHeaderToSetColWidth
+			// 
+			this.invisibleHeaderToSetColWidth.Width = 255;
+			// 
 			// ListOptionsView
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -114,6 +128,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		private System.Windows.Forms.Button buttonDown;
 		private System.Windows.Forms.CheckBox checkBoxDisplayOption;
 		private System.Windows.Forms.Label labelListView;
+		private System.Windows.Forms.ColumnHeader invisibleHeaderToSetColWidth;
 
 	}
 }

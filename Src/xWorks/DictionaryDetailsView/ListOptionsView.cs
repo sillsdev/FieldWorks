@@ -3,8 +3,10 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
@@ -36,7 +38,15 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			set { checkBoxDisplayOption.Checked = value; }
 		}
 
-		// TODO pH 2014.03: somehow expose the list in the listview
+		public List<ListViewItem> AvailableItems
+		{
+			set
+			{
+				listView.Items.Clear();
+				listView.Items.AddRange(value.ToArray());
+			}
+			internal get { return listView.Items.Cast<ListViewItem>().ToList(); }
+		}
 
 		//
 		// View setup properties
@@ -48,13 +58,16 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		/// <summary>Label for the list, eg "Writing Systems:" or "Complex Form Types:"</summary>
 		public string ListViewLabel { set { labelListView.Text = value; } }
 
+		public bool MoveUpEnabled { set { buttonUp.Enabled = value; } }
+
+		public bool MoveDownEnabled { set { buttonDown.Enabled = value; } }
+
 		/// <summary>Whether or not the single checkbox below the list is visible</summary>
 		public bool CheckBoxVisible
 		{
 			set
 			{
 				checkBoxDisplayOption.Visible = value;
-				// TODO pH 2014.02: adjust view size
 			}
 		}
 
@@ -68,8 +81,31 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			{
 				labelListView.Visible = value;
 				listView.Visible = value;
-				// TODO pH 2014.02: adjust view size
 			}
+		}
+
+		public event EventHandler UpClicked
+		{
+			add { buttonUp.Click += value; }
+			remove { buttonUp.Click -= value; }
+		}
+
+		public event EventHandler DownClicked
+		{
+			add { buttonDown.Click += value; }
+			remove { buttonDown.Click -= value; }
+		}
+
+		public event ListViewItemSelectionChangedEventHandler ListItemSelectionChanged
+		{
+			add { listView.ItemSelectionChanged += value; }
+			remove { listView.ItemSelectionChanged -= value; }
+		}
+
+		public event ItemCheckedEventHandler ListItemCheckBoxChanged
+		{
+			add { listView.ItemChecked += value; }
+			remove { listView.ItemChecked -= value; }
 		}
 
 		/// <summary>EventHandler for the single checkbox below the list</summary>
@@ -78,7 +114,5 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			add { checkBoxDisplayOption.CheckedChanged += value; }
 			remove { checkBoxDisplayOption.CheckedChanged -= value; }
 		}
-
-		// TODO pH 2014.03: CancelEventHandler for ListItemCheckedChanged, ListItemReordered
 	}
 }

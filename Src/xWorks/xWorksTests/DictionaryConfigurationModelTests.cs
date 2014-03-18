@@ -170,7 +170,7 @@ namespace SIL.FieldWorks.XWorks
 																{
 																	Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
 																	{
-																		new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = false, Label = "English" }
+																		new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = false }
 																	}
 																};
 
