@@ -789,6 +789,21 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		[Test]
+		public void MergeCustomFieldsIntoModel_MergeWithDefaultRootModelDoesNotThrow()
+		{
+			using(var cf = new CustomFieldForTest(Cache, "CustomCollection",
+														  Cache.MetaDataCacheAccessor.GetClassId("LexExampleSentence"), 0,
+														  CellarPropertyType.ReferenceCollection, Guid.Empty))
+			{
+				var model = new DictionaryConfigurationModel(Path.Combine(DirectoryFinder.DefaultConfigurations, Path.Combine("Dictionary", "Root.xml")));
+				model.Load();
+
+				//SUT
+				Assert.DoesNotThrow(()=>DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(Cache, model));
+			}
+		}
+
 		private sealed class TestConfigurableDictionaryView : IDictionaryConfigurationView, IDisposable
 		{
 			private DictionaryConfigurationTreeControl m_treeControl = new DictionaryConfigurationTreeControl();

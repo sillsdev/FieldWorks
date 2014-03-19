@@ -446,8 +446,8 @@ namespace SIL.FieldWorks.XWorks
 				// If there is a sub field then the type we are interested in belongs to a property of the field in the configNode
 				if(!String.IsNullOrEmpty(configNode.SubField))
 				{
-					lookupClass =
-						metaDataCache.GetClassName(metaDataCache.GetDstClsId(fieldType));
+					lookupClass = GetClassNameForTargetType(fieldType, parentClass, configNode.FieldDescription,
+																		 metaDataCache);
 					if(!metaDataCache.FieldExists(lookupClass, configNode.SubField, true))
 					{
 						Debug.WriteLine(@"Couldn't locate {0} in the MetaDataCache for the class {1}: ConfigNode {2} under {3}",
@@ -456,22 +456,7 @@ namespace SIL.FieldWorks.XWorks
 					}
 					fieldType = metaDataCache.GetFieldType(metaDataCache.GetFieldId(lookupClass, configNode.SubField, true));
 				}
-				string className;
-				// These types in the FieldWorks model only point to or contain the class we are interested in, so we grab their destination class
-				if(fieldType == (int)CellarPropertyType.OwningSequence ||
-					fieldType == (int)CellarPropertyType.OwningCollection ||
-					fieldType == (int)CellarPropertyType.OwningAtomic ||
-					fieldType == (int)CellarPropertyType.ReferenceCollection ||
-					fieldType == (int)CellarPropertyType.ReferenceSequence ||
-					fieldType == (int)CellarPropertyType.ReferenceAtomic)
-				{
-					var destinationClass = metaDataCache.GetDstClsId(metaDataCache.GetFieldId(lookupClass, configNode.SubField ?? configNode.FieldDescription, true));
-					className = metaDataCache.GetClassName(destinationClass);
-				}
-				else
-				{
-					className = metaDataCache.GetClassName(fieldType);
-				}
+				string className = GetClassNameForTargetType(fieldType, lookupClass, configNode.SubField ?? configNode.FieldDescription, metaDataCache);
 				var fieldsForType = GetCustomFieldsForType(cache, className);
 				if(fieldsForType.Count > 0)
 				{
@@ -541,6 +526,40 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 			return customFieldList;
+		}
+
+		/// <summary>
+		/// This method will return the class name string in the FieldWorks model that represents the data type of the
+		/// given in fieldType.
+		/// In cases where this is a simple type the class name is returned directly but in cases where the type in the model
+		/// is a reference the class name string is that of the destination class for the reference.
+		/// </summary>
+		/// <param name="fieldType"></param>
+		/// <param name="lookupClass"></param>
+		/// <param name="metaDataCache"></param>
+		/// <param name="fieldName"></param>
+		/// <returns></returns>
+		private static string GetClassNameForTargetType(int fieldType,
+																		string lookupClass,
+																		string fieldName,
+																		IFwMetaDataCacheManaged metaDataCache)
+		{
+			string className;
+			// These types in the FieldWorks model only point to or contain the class we are interested in, so we grab their destination class
+			if(fieldType == (int)CellarPropertyType.OwningSequence ||
+				fieldType == (int)CellarPropertyType.OwningCollection ||
+				fieldType == (int)CellarPropertyType.OwningAtomic ||
+				fieldType == (int)CellarPropertyType.ReferenceCollection ||
+				fieldType == (int)CellarPropertyType.ReferenceSequence ||
+				fieldType == (int)CellarPropertyType.ReferenceAtomic)
+			{
+				var destinationClass =
+					metaDataCache.GetDstClsId(metaDataCache.GetFieldId(lookupClass, fieldName, true));
+				className = metaDataCache.GetClassName(destinationClass);
+			}
+			else
+				className = metaDataCache.GetClassName(fieldType);
+			return className;
 		}
 
 		private static DictionaryNodeOptions BuildOptionsForType(int fieldType)
