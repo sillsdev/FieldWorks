@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
 using SIL.FieldWorks.FDO;
@@ -41,6 +42,26 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		[XmlAttribute(AttributeName = "name")]
 		public string Label { get; set; }
+
+		/// <summary>
+		/// A suffix to distinguish between duplicate nodes
+		/// </summary>
+		[XmlAttribute(AttributeName = "nameSuffix")]
+		public string LabelSuffix { get; set; }
+
+		/// <summary>
+		/// Combination of Label and LabelSuffix, if set.
+		/// </summary>
+		[XmlIgnore]
+		public string DisplayLabel
+		{
+			get
+			{
+				if (LabelSuffix == null)
+					return Label;
+				return string.Format("{0} ({1})", Label, LabelSuffix);
+			}
+		}
 
 		/// <summary>
 		/// String to apply before the content configured by this node
@@ -113,6 +134,9 @@ namespace SIL.FieldWorks.XWorks
 			var properties = typeof (ConfigurableDictionaryNode).GetProperties();
 			foreach (var property in properties)
 			{
+				// Skip read-only properties (eg DisplayLabel)
+				if (!property.CanWrite)
+					continue;
 				var originalValue = property.GetValue(this, null);
 				property.SetValue(clone, originalValue, null);
 			}
@@ -138,7 +162,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public override int GetHashCode()
 		{
-			return Parent == null ? Label.GetHashCode() : Label.GetHashCode() ^ Parent.GetHashCode();
+			return Parent == null ? DisplayLabel.GetHashCode() : DisplayLabel.GetHashCode() ^ Parent.GetHashCode();
 		}
 
 		public override bool Equals(object other)
@@ -153,7 +177,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// A match is two nodes with the same label in the same hierarchy (all ancestors have same labels)
+		/// A match is two nodes with the same label and suffix in the same hierarchy (all ancestors have same labels & suffixes)
 		/// </summary>
 		/// <param name="first"></param>
 		/// <param name="second"></param>
@@ -168,7 +192,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				return false;
 			}
-			return first.Label == second.Label && CheckParents(first.Parent, second.Parent);
+			return first.Label == second.Label && first.LabelSuffix == second.LabelSuffix && CheckParents(first.Parent, second.Parent);
 		}
 
 		/// <summary>
@@ -187,15 +211,14 @@ namespace SIL.FieldWorks.XWorks
 			var duplicate = DeepCloneUnderSameParent();
 			duplicate.IsDuplicate = true;
 
-			// Append a suffix to make label unique
-			int newLabelSuffix = 1;
-			string newLabel;
-			do
+			// Provide a suffix to distinguish among similar dictionary items.
+			int suffix = 1;
+			while (siblings.Exists(sibling => sibling.Label == this.Label && sibling.LabelSuffix == suffix.ToString()))
 			{
-				newLabel = string.Format("{0} ({1})", Label, newLabelSuffix++);
-			} while (siblings.Exists(node => node.Label == newLabel));
+				suffix++;
+			}
+			duplicate.LabelSuffix = suffix.ToString();
 
-			duplicate.Label = newLabel;
 			var locationOfThisNode = siblings.IndexOf(this);
 			siblings.Insert(locationOfThisNode + 1, duplicate);
 			return duplicate;
@@ -214,18 +237,19 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Update label, but not if a sibling has the new label already. It's okay to relabel to the existing label.
+		/// Change suffix. Must be unique among sibling dictionary items with the same label. It's okay to request to change to the current suffix.
 		/// </summary>
-		public bool Relabel(string newLabel)
+		public bool ChangeSuffix(string newSuffix)
 		{
-			return Relabel(newLabel, Parent.Children);
+			return ChangeSuffix(newSuffix, Parent.Children);
 		}
 
-		public bool Relabel(string newLabel, List<ConfigurableDictionaryNode> siblings)
+		public bool ChangeSuffix(string newSuffix, List<ConfigurableDictionaryNode> siblings)
 		{
-			if (siblings.Any(sibling => sibling != this && sibling.Label == newLabel))
+			if (siblings.Exists(sibling => sibling != this && sibling.Label == this.Label && sibling.LabelSuffix == newSuffix))
 				return false;
-			Label = newLabel;
+
+			LabelSuffix = newSuffix;
 			return true;
 		}
 	}

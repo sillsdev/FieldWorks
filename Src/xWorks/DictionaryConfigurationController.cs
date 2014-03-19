@@ -187,7 +187,7 @@ namespace SIL.FieldWorks.XWorks
 			if (node == null)
 				throw new ArgumentNullException();
 
-			var newTreeNode = new TreeNode(node.Label) { Tag = node, Checked = node.IsEnabled };
+			var newTreeNode = new TreeNode(node.DisplayLabel) { Tag = node, Checked = node.IsEnabled };
 
 			var treeView = View.TreeControl.Tree;
 
@@ -278,13 +278,14 @@ namespace SIL.FieldWorks.XWorks
 
 				using (var renameDialog = new DictionaryConfigurationNodeRenameDlg())
 				{
-					renameDialog.NewName = dictionaryNode.Label;
+					renameDialog.DisplayLabel = dictionaryNode.DisplayLabel;
+					renameDialog.NewSuffix = dictionaryNode.LabelSuffix;
 
 					// Unchanged?
-					if (renameDialog.ShowDialog() != DialogResult.OK || renameDialog.NewName == dictionaryNode.Label)
+					if (renameDialog.ShowDialog() != DialogResult.OK || renameDialog.NewSuffix == dictionaryNode.LabelSuffix)
 						return;
 
-					if (!dictionaryNode.Relabel(renameDialog.NewName, siblings))
+					if (!dictionaryNode.ChangeSuffix(renameDialog.NewSuffix, siblings))
 					{
 						MessageBox.Show("Failed to rename. Use a name that is not already in use.");
 						return;

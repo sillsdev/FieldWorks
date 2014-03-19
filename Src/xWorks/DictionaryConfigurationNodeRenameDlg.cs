@@ -11,10 +11,18 @@ namespace SIL.FieldWorks.XWorks
 {
 	public partial class DictionaryConfigurationNodeRenameDlg : Form
 	{
-		public string NewName
+		/// <summary>
+		/// Insert value into description in dialog.
+		/// </summary>
+		public string DisplayLabel
 		{
-			get { return newName.Text; }
-			set { newName.Text = value; }
+			set { description.Text = description.Text.Replace("%s", value); }
+		}
+
+		public string NewSuffix
+		{
+			get { return newSuffix.Text; }
+			set { newSuffix.Text = value; }
 		}
 
 		public DictionaryConfigurationNodeRenameDlg()

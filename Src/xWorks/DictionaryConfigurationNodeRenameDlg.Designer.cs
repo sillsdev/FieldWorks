@@ -33,7 +33,7 @@
 			this.description = new System.Windows.Forms.Label();
 			this.ok = new System.Windows.Forms.Button();
 			this.cancel = new System.Windows.Forms.Button();
-			this.newName = new System.Windows.Forms.TextBox();
+			this.newSuffix = new System.Windows.Forms.TextBox();
 			this.tableLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -45,7 +45,7 @@
 			this.tableLayoutPanel.Controls.Add(this.description, 0, 0);
 			this.tableLayoutPanel.Controls.Add(this.ok, 0, 2);
 			this.tableLayoutPanel.Controls.Add(this.cancel, 1, 2);
-			this.tableLayoutPanel.Controls.Add(this.newName, 0, 1);
+			this.tableLayoutPanel.Controls.Add(this.newSuffix, 0, 1);
 			this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel.Location = new System.Drawing.Point(0, 0);
 			this.tableLayoutPanel.Name = "tableLayoutPanel";
@@ -65,7 +65,7 @@
 			this.description.Name = "description";
 			this.description.Size = new System.Drawing.Size(230, 13);
 			this.description.TabIndex = 0;
-			this.description.Text = "New name for element";
+			this.description.Text = "New name for element %s";
 			// 
 			// ok
 			// 
@@ -89,14 +89,14 @@
 			this.cancel.Text = "Cancel";
 			this.cancel.UseVisualStyleBackColor = true;
 			// 
-			// newName
+			// newSuffix
 			// 
-			this.tableLayoutPanel.SetColumnSpan(this.newName, 2);
-			this.newName.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.newName.Location = new System.Drawing.Point(3, 16);
-			this.newName.Name = "newName";
-			this.newName.Size = new System.Drawing.Size(230, 20);
-			this.newName.TabIndex = 1;
+			this.tableLayoutPanel.SetColumnSpan(this.newSuffix, 2);
+			this.newSuffix.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.newSuffix.Location = new System.Drawing.Point(3, 16);
+			this.newSuffix.Name = "newSuffix";
+			this.newSuffix.Size = new System.Drawing.Size(230, 20);
+			this.newSuffix.TabIndex = 1;
 			// 
 			// DictionaryConfigurationNodeRenameDlg
 			// 
@@ -120,6 +120,6 @@
 		private System.Windows.Forms.Label description;
 		private System.Windows.Forms.Button ok;
 		private System.Windows.Forms.Button cancel;
-		private System.Windows.Forms.TextBox newName;
+		private System.Windows.Forms.TextBox newSuffix;
 	}
 }

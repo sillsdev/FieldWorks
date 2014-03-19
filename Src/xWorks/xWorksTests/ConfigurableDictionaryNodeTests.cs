@@ -17,7 +17,6 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			var clone = child.DeepCloneUnderSameParent();
 			VerifyDuplication(clone, child);
-			Assert.That(clone.Label, Is.EqualTo(child.Label));
 		}
 
 		[Test]
@@ -30,7 +29,6 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			var clone = child.DeepCloneUnderSameParent();
 			VerifyDuplication(clone, child);
-			Assert.That(clone.Label, Is.EqualTo(child.Label));
 		}
 
 		private static void VerifyDuplication(ConfigurableDictionaryNode clone, ConfigurableDictionaryNode node)
@@ -49,6 +47,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(clone.Between, Is.EqualTo(node.Between));
 			Assert.That(clone.DictionaryNodeOptions, Is.EqualTo(node.DictionaryNodeOptions));
 			Assert.That(clone.IsEnabled, Is.EqualTo(node.IsEnabled));
+			Assert.That(clone.Label, Is.EqualTo(node.Label));
 
 			if (node.Children != null)
 			{
@@ -96,22 +95,23 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void DuplicatesHaveUniqueLabels()
+		public void DuplicatesHaveUniqueLabelSuffixes()
 		{
 			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>() };
 			var nodeToDuplicateLabel = "node";
-			var nodeToDuplicate = new ConfigurableDictionaryNode() { Parent = parent, Label = nodeToDuplicateLabel};
-			var otherNodeA = new ConfigurableDictionaryNode() { Parent = parent, Label = "node (1)" };
-			var otherNodeB = new ConfigurableDictionaryNode() { Parent = parent, Label = "node B" };
+			var nodeToDuplicate = new ConfigurableDictionaryNode() { Parent = parent, Label = nodeToDuplicateLabel, LabelSuffix = null};
+			var otherNodeA = new ConfigurableDictionaryNode() { Parent = parent, Label = "node", LabelSuffix = "1" };
+			var otherNodeB = new ConfigurableDictionaryNode() { Parent = parent, Label = "node", LabelSuffix = "B" };
 			parent.Children.Add(nodeToDuplicate);
 			parent.Children.Add(otherNodeA);
 			parent.Children.Add(otherNodeB);
 
 			// SUT
 			var duplicate = nodeToDuplicate.DuplicateAmongSiblings();
-			Assert.That(parent.Children.FindAll(node => node.Label == nodeToDuplicate.Label).Count, Is.EqualTo(1), "Should not have any more nodes with the original label. Was the duplicate node's label not changed?");
-			Assert.That(parent.Children.FindAll(node => node.Label == duplicate.Label).Count, Is.EqualTo(1), "The duplicate node was not given a unique label among its siblings.");
+			Assert.That(parent.Children.FindAll(node => node.LabelSuffix == nodeToDuplicate.LabelSuffix).Count, Is.EqualTo(1), "Should not have any more nodes with the original label suffix. Was the duplicate node's label suffix not changed?");
+			Assert.That(parent.Children.FindAll(node => node.LabelSuffix == duplicate.LabelSuffix).Count, Is.EqualTo(1), "The duplicate node was not given a unique label suffix among the siblings.");
 			Assert.That(nodeToDuplicate.Label, Is.EqualTo(nodeToDuplicateLabel), "should not have changed original node label");
+			Assert.That(nodeToDuplicate.LabelSuffix, Is.Null, "should not have changed original node label suffix");
 		}
 
 		[Test]
@@ -183,81 +183,107 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void CanRelabel()
+		public void CanChangeSuffix()
 		{
 			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
-			var node = new ConfigurableDictionaryNode() { Parent = parent, Label = "originalLabel"};
+
+			var originallabel = "originalLabel";
+			var node = new ConfigurableDictionaryNode() { Parent = parent, Label = originallabel, LabelSuffix = "orig"};
 			parent.Children.Add(node);
 
-			var newLabel = "newLabel";
+			var newSuffix = "new";
 			// SUT
-			node.Relabel(newLabel);
-			Assert.That(node.Label, Is.EqualTo(newLabel), "Label was not updated");
+			node.ChangeSuffix(newSuffix);
+			Assert.That(node.LabelSuffix, Is.EqualTo(newSuffix), "suffix was not updated");
+			Assert.That(node.Label, Is.EqualTo(originallabel), "should not have changed label");
 		}
 
 		[Test]
-		public void ReportSuccessfulRelabel()
+		public void CanAddInitialSuffix()
 		{
 			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
-			var node = new ConfigurableDictionaryNode() { Parent = parent, Label = "originalLabel" };
+
+			var originallabel = "originalLabel";
+			var node = new ConfigurableDictionaryNode() { Parent = parent, Label = originallabel, LabelSuffix = null };
+			parent.Children.Add(node);
+
+			var newSuffix = "new";
+			// SUT
+			node.ChangeSuffix(newSuffix);
+			Assert.That(node.LabelSuffix, Is.EqualTo(newSuffix), "suffix was not updated");
+			Assert.That(node.Label, Is.EqualTo(originallabel), "should not have changed label");
+		}
+
+		[Test]
+		public void ReportSuccessfulChangedSuffix()
+		{
+			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
+			var node = new ConfigurableDictionaryNode() { Parent = parent, Label = "originalLabel",LabelSuffix = "blah" };
 			parent.Children.Add(node);
 
 			// SUT
-			var result = node.Relabel("newLabel");
+			var result = node.ChangeSuffix("new");
 			Assert.That(result, Is.True);
 		}
 
-		/// <summary>
-		/// Disallow relabeling with a label that is identical to an existing label among a node's siblings.
-		/// </summary>
 		[Test]
-		public void RelabelWontUseAnExistingLabel()
+		public void CantHaveTwoSiblingsWithSameNonNullSuffix()
 		{
 			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
 			var originalLabel = "originalLabel";
-			var node = new ConfigurableDictionaryNode() { Parent = parent, Label = originalLabel };
-			var otherNode = new ConfigurableDictionaryNode() { Parent = parent, Label = "otherLabel" };
+			var originalSuffix = "originalSuffix";
+			var node = new ConfigurableDictionaryNode() { Parent = parent, Label = originalLabel, LabelSuffix = originalSuffix};
+			var otherNode = new ConfigurableDictionaryNode() { Parent = parent, Label = originalLabel, LabelSuffix = "otherSuffix"};
 			parent.Children.Add(node);
 			parent.Children.Add(otherNode);
 
 			// SUT
-			var result = node.Relabel(otherNode.Label);
-			Assert.That(result, Is.False, "Should have reported failure to relabel");
-			Assert.That(node.Label, Is.EqualTo(originalLabel), "Should not have changed label to the same value as an existing label");
+			var result = node.ChangeSuffix(otherNode.LabelSuffix);
+			Assert.That(result, Is.False, "Should have reported failure to change suffix");
+			Assert.That(node.LabelSuffix, Is.EqualTo(originalSuffix), "Should not have changed suffix");
 		}
 
 		[Test]
-		public void CanRelabelToSameLabel()
+		public void CanRequestChangingSuffixToSameSuffix()
 		{
 			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
 			var originalLabel = "originalLabel";
-			var node = new ConfigurableDictionaryNode() { Parent = parent, Label = originalLabel };
+			var originalSuffix = "blah";
+			var node = new ConfigurableDictionaryNode() { Parent = parent, Label = originalLabel, LabelSuffix = originalSuffix };
 			parent.Children.Add(node);
 
 			// SUT
-			var result = node.Relabel(originalLabel);
-			Assert.That(result, Is.True, "Allow relabeling to the same label");
-			Assert.That(node.Label, Is.EqualTo(originalLabel), "Should not have changed label");
+			var result = node.ChangeSuffix(originalSuffix);
+			Assert.That(result, Is.True, "Report success when requesting a suffix that is already the suffix");
+			Assert.That(node.LabelSuffix, Is.EqualTo(originalSuffix), "Should not have changed suffix");
 		}
 
 		[Test]
-		public void CanRelabelRootNode()
+		public void CanChangeSuffixOfRootNode()
 		{
-			var rootNode = new ConfigurableDictionaryNode() { Parent = null, Label = "rootNode" };
+			var rootNode = new ConfigurableDictionaryNode() { Parent = null, Label = "rootNode",LabelSuffix = "orig" };
 			var rootNodes = new List<ConfigurableDictionaryNode>() { rootNode };
 
 			// SUT
-			var result = rootNode.Relabel("newlabel", rootNodes);
-			Assert.That(result, Is.True, "allow relabeling root");
-			Assert.That(rootNode.Label, Is.EqualTo("newlabel"), "failed to relabel");
+			var result = rootNode.ChangeSuffix("new", rootNodes);
+			Assert.That(result, Is.True, "allow changing suffix of root");
+			Assert.That(rootNode.LabelSuffix, Is.EqualTo("new"), "failed to change suffix");
 		}
 
 		[Test]
-		public void Equals_SameLabelsAreEqual()
+		public void Equals_SameLabelsAndSuffixesAreEqual()
 		{
 			var firstNode = new ConfigurableDictionaryNode { Label = "same" };
 			var secondNode = new ConfigurableDictionaryNode { Label = "same" };
+			Assert.That(firstNode.LabelSuffix, Is.Null);
+			Assert.That(secondNode.LabelSuffix, Is.Null);
 
+			// SUT
+			Assert.AreEqual(firstNode, secondNode);
+
+			firstNode.LabelSuffix = "suffix";
+			secondNode.LabelSuffix = "suffix";
+			// SUT
 			Assert.AreEqual(firstNode, secondNode);
 		}
 
@@ -294,11 +320,29 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void Equals_DifferentSuffixesAreNotEqual()
+		{
+			var firstNode = new ConfigurableDictionaryNode { Label="label", LabelSuffix = "same" };
+			var secondNode = new ConfigurableDictionaryNode { Label="label", LabelSuffix = "different" };
+
+			Assert.AreNotEqual(firstNode, secondNode);
+		}
+
+		[Test]
+		public void Equals_DifferentLabelsAndSuffixesAreNotEqual()
+		{
+			var firstNode = new ConfigurableDictionaryNode { Label = "same", LabelSuffix = "suffixA"};
+			var secondNode = new ConfigurableDictionaryNode { Label = "different", LabelSuffix = "suffixB"};
+
+			Assert.AreNotEqual(firstNode, secondNode);
+		}
+
+		[Test]
 		public void Equals_SameLabelsAndSameParentsAreEqual()
 		{
 			var parentNode = new ConfigurableDictionaryNode { Label = "Parent" };
-			var firstNode = new ConfigurableDictionaryNode { Label = "same", Parent = parentNode };
-			var secondNode = new ConfigurableDictionaryNode { Label = "same", Parent = parentNode };
+			var firstNode = new ConfigurableDictionaryNode { Label = "same", Parent = parentNode, LabelSuffix = null};
+			var secondNode = new ConfigurableDictionaryNode { Label = "same", Parent = parentNode,LabelSuffix = null};
 
 			Assert.AreEqual(firstNode, secondNode);
 		}
@@ -307,10 +351,32 @@ namespace SIL.FieldWorks.XWorks
 		public void Equals_DifferentLabelsAndSameParentsAreNotEqual()
 		{
 			var parentNode = new ConfigurableDictionaryNode { Label = "Parent" };
-			var firstNode = new ConfigurableDictionaryNode { Label = "same", Parent = parentNode };
-			var secondNode = new ConfigurableDictionaryNode { Label = "different", Parent = parentNode };
+			var firstNode = new ConfigurableDictionaryNode { Label = "same", Parent = parentNode, LabelSuffix = null};
+			var secondNode = new ConfigurableDictionaryNode { Label = "different", Parent = parentNode, LabelSuffix = null};
 
 			Assert.AreNotEqual(firstNode, secondNode);
+		}
+
+		[Test]
+		public void Equals_DifferentSuffixesAndSameParentsAreNotEqual()
+		{
+			var parentNode = new ConfigurableDictionaryNode { Label = "Parent" };
+			var firstNode = new ConfigurableDictionaryNode { Label="label", LabelSuffix = "same", Parent = parentNode };
+			var secondNode = new ConfigurableDictionaryNode { Label="label", LabelSuffix = "different", Parent = parentNode };
+
+			Assert.AreNotEqual(firstNode, secondNode);
+		}
+
+		[Test]
+		public void HasCorrectDisplayLabel()
+		{
+			var nodeWithNullSuffix = new ConfigurableDictionaryNode() {Label = "label", LabelSuffix = null};
+			// SUT
+			Assert.That(nodeWithNullSuffix.DisplayLabel, Is.EqualTo("label"), "DisplayLabel should omit parentheses and suffix if suffix is null");
+
+			var nodeWithSuffix = new ConfigurableDictionaryNode() { Label = "label2", LabelSuffix = "suffix2" };
+			// SUT
+			Assert.That(nodeWithSuffix.DisplayLabel, Is.EqualTo("label2 (suffix2)"), "DisplayLabel should include suffix");
 		}
 	}
 }
