@@ -20,6 +20,10 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		public DetailsView()
 		{
 			InitializeComponent();
+
+			textBoxBefore.TextChanged += SpecialCharacterHandling.RevealInvisibleCharacters;
+			textBoxAfter.TextChanged += SpecialCharacterHandling.RevealInvisibleCharacters;
+			textBoxBetween.TextChanged += SpecialCharacterHandling.RevealInvisibleCharacters;
 		}
 
 		//
@@ -28,19 +32,19 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 
 		public string BeforeText
 		{
-			get { return textBoxBefore.Text; }
+			get { return SpecialCharacterHandling.VisibleToInvisibleCharacters(textBoxBefore.Text); }
 			set { textBoxBefore.Text = value; }
 		}
 
 		public string BetweenText
 		{
-			get { return textBoxBetween.Text; }
+			get { return SpecialCharacterHandling.VisibleToInvisibleCharacters(textBoxBetween.Text); }
 			set { textBoxBetween.Text = value; }
 		}
 
 		public string AfterText
 		{
-			get { return textBoxAfter.Text; }
+			get { return SpecialCharacterHandling.VisibleToInvisibleCharacters(textBoxAfter.Text); }
 			set { textBoxAfter.Text = value; }
 		}
 
@@ -114,7 +118,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			remove { textBoxAfter.TextChanged -= value; }
 		}
 
-
 		public void SetStyles(List<StyleComboItem> styles, string selectedStyle, bool usingParaStyles = false)
 		{
 			labelStyle.Text = usingParaStyles ? xWorksStrings.ksParagraphStyleForContent : xWorksStrings.ksCharacterStyleForContent;
@@ -132,6 +135,5 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 				}
 			}
 		}
-
 	}
 }

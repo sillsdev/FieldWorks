@@ -297,6 +297,7 @@
     <Compile Include="DictionaryDetailsView\ListOptionsView.Designer.cs">
       <DependentUpon>ListOptionsView.cs</DependentUpon>
     </Compile>
+    <Compile Include="DictionaryDetailsView\SpecialCharacterHandling.cs" />
     <Compile Include="IDictionaryConfigurationView.cs" />
     <Compile Include="DictionaryNodeOptions.cs" />
     <Compile Include="PalasoErrorReportingAdapter.cs" />

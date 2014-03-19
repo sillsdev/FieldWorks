@@ -17,6 +17,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		public SenseOptionsView()
 		{
 			InitializeComponent();
+
+			textBoxBefore.TextChanged += SpecialCharacterHandling.RevealInvisibleCharacters;
+			textBoxAfter.TextChanged += SpecialCharacterHandling.RevealInvisibleCharacters;
 		}
 
 		public bool NumberMetaConfigEnabled
@@ -31,7 +34,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 
 		internal string BeforeText
 		{
-			get { return textBoxBefore.Text; }
+			get { return SpecialCharacterHandling.VisibleToInvisibleCharacters(textBoxBefore.Text); }
 			set { textBoxBefore.Text = value; }
 		}
 
@@ -67,7 +70,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 
 		internal string AfterText
 		{
-			get { return textBoxAfter.Text; }
+			get { return SpecialCharacterHandling.VisibleToInvisibleCharacters(textBoxAfter.Text); }
 			set { textBoxAfter.Text = value; }
 		}
 
