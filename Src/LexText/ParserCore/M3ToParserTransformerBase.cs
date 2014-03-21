@@ -8,20 +8,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	/// </summary>
 	internal abstract class M3ToParserTransformerBase
 	{
-		private readonly string m_dataDir;
-
 		private XslCompiledTransform m_grammarTransform;
 		private XslCompiledTransform m_grammarDebuggingTransform;
-
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="M3ToParserTransformerBase"/> class.
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		protected M3ToParserTransformerBase(string dataDir)
-		{
-			m_dataDir = dataDir;
-		}
 
 		protected XslCompiledTransform GrammarTransform
 		{

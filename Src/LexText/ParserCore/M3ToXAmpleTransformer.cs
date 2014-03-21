@@ -33,8 +33,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// Initializes a new instance of the <see cref="M3ToXAmpleTransformer"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public M3ToXAmpleTransformer(string dataDir, string database)
-			: base(dataDir)
+		public M3ToXAmpleTransformer(string database)
 		{
 			m_database = database;
 		}

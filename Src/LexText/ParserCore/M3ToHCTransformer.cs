@@ -27,8 +27,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// Initializes a new instance of the <see cref="M3ToHCTransformer"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public M3ToHCTransformer(string database, string dataDir)
-			: base(dataDir)
+		public M3ToHCTransformer(string database)
 		{
 			m_database = database;
 		}

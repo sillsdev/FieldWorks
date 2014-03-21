@@ -1,0 +1,7 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# Don't need to dipose IEnumerator
+M: System.Collections.IEnumerator SIL.FieldWorks.ParatextLexiconPlugin.FdoLexicon/<GetForms>d__25::System.Collections.IEnumerable.GetEnumerator()

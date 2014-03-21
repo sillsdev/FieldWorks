@@ -9,7 +9,6 @@
 	<ItemGroup>
 		<Dlls Include="$(OutDir)FwKernel.dll"/>
 		<Dlls Include="$(OutDir)Views.dll"/>
-		<Dlls Include="$(OutDir)Language.dll"/>
 		<Dlls Include="$(OutDir)Graphite.dll"/>
 	</ItemGroup>
 	<ItemGroup>

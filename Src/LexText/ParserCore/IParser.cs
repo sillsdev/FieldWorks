@@ -1,8 +1,9 @@
-﻿using System.Xml.Linq;
+﻿using System;
+using System.Xml.Linq;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
-	public interface IParser
+	public interface IParser : IDisposable
 	{
 		// Warning: This method is not thread-safe.
 		//  The parser could end up using stale data.

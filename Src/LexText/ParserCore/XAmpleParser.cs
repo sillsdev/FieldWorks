@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_dataDir = dataDir;
 			m_retriever = new M3ParserModelRetriever(m_cache);
 			m_database = ParserHelper.ConvertNameToUseAnsiCharacters(m_cache.ProjectId.Name);
-			m_transformer = new M3ToXAmpleTransformer(dataDir, m_database);
+			m_transformer = new M3ToXAmpleTransformer(m_database);
 		}
 
 		public bool IsUpToDate()

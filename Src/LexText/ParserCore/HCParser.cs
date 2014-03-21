@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			m_outputDirectory = Path.GetTempPath();
 			m_projectName = ParserHelper.ConvertNameToUseAnsiCharacters(cache.ProjectId.Name);
-			m_transformer = new M3ToHCTransformer(m_projectName, dataDir);
+			m_transformer = new M3ToHCTransformer(m_projectName);
 		}
 
 		#region IParser implementation

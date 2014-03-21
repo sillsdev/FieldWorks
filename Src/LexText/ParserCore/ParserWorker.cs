@@ -75,10 +75,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		protected override void DisposeManagedResources()
 		{
-			var disposeParser = m_parser as IDisposable;
-			if (disposeParser != null)
+			if (m_parser != null)
 			{
-				disposeParser.Dispose();
+				m_parser.Dispose();
 				m_parser = null;
 			}
 		}

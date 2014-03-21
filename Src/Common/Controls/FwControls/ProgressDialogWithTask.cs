@@ -705,14 +705,18 @@ namespace SIL.FieldWorks.Common.Controls
 			if (string.IsNullOrEmpty(Thread.CurrentThread.Name))
 				Thread.CurrentThread.Name = "Background thread";
 
-			if (MiscUtils.RunningTests)
-				ManifestHelper.CreateActivationContext("FieldWorks.Tests.manifest");
-
 			m_Exception = null;
 			m_RetValue = null;
 
+			ActivationContextHelper activationContext = null;
+			IDisposable activation = null;
 			try
 			{
+				if (MiscUtils.RunningTests)
+				{
+					activationContext = new ActivationContextHelper("FieldWorks.Tests.manifest");
+					activation = activationContext.Activate();
+				}
 				m_RetValue = m_backgroundTask(this, m_parameters);
 			}
 			catch (Exception ex)
@@ -722,8 +726,10 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			finally
 			{
-				if (MiscUtils.RunningTests)
-					ManifestHelper.DestroyActivationContext();
+				if (activation != null)
+					activation.Dispose();
+				if (activationContext != null)
+					activationContext.Dispose();
 			}
 		}
 
