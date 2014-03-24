@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
-	<UsingTask TaskName="RegFree" AssemblyFile="../../Build/FwBuildTasks.dll"/>
-	<Target Name="AfterBuild">
+	<UsingTask TaskName="RegFree" AssemblyFile="../../Build/FwBuildTasks.dll" Condition="'$(OS)'=='Windows_NT'"/>
+	<Target Name="AfterBuild" Condition="'$(OS)'=='Windows_NT'">
 		<RegFree Executable="$(OutDir)FwParatextLexiconPlugin.dll" Dlls="$(OutDir)FwKernel.dll" />
 	</Target>
 </Project>
