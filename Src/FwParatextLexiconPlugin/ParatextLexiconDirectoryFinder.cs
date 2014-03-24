@@ -69,7 +69,12 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		public static string CodeDirectory
 		{
-			get { return GetDirectory(RootCodeDir, DirectoryFinder.CommonAppDataFolder(ProductName)); }
+			get
+			{
+				string defaultDir = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), DirectoryFinder.CompanyName),
+					string.Format("FieldWorks {0}", FdoVersion));
+				return GetDirectory(RootCodeDir, defaultDir);
+			}
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",

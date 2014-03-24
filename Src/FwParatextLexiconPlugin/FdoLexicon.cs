@@ -490,7 +490,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		private void InstantiateParser()
 		{
-			string parserDataDir = Path.Combine(ParatextLexiconDirectoryFinder.DataDirectory, "Language Explorer");
+			string parserDataDir = Path.Combine(ParatextLexiconDirectoryFinder.CodeDirectory, "Language Explorer");
 			switch (m_cache.LanguageProject.MorphologicalDataOA.ActiveParser)
 			{
 				case "XAmple":

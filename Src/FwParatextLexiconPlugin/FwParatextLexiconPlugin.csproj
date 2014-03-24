@@ -78,7 +78,7 @@
     <Compile Include="ChooseFdoProjectForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ChooseFdoProjectForm.designer.cs">
+    <Compile Include="ChooseFdoProjectForm.Designer.cs">
       <DependentUpon>ChooseFdoProjectForm.cs</DependentUpon>
     </Compile>
     <Compile Include="FdoLanguageText.cs" />
@@ -97,7 +97,7 @@
     <Compile Include="ProjectExistsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ProjectExistsForm.designer.cs">
+    <Compile Include="ProjectExistsForm.Designer.cs">
       <DependentUpon>ProjectExistsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
