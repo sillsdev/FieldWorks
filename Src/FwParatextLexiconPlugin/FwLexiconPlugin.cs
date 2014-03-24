@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Paratext.LexicalContracts;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
@@ -33,6 +34,12 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			m_lexiconCache = new FdoLexiconCollection();
 			m_fdoCacheCache = new FdoCacheCollection();
 			m_activationContext = new ActivationContextHelper("FwParatextLexiconPlugin.dll.manifest");
+
+			// initialize client-server services to use Db4O backend for FDO
+			var ui = ParatextLexiconFdoUI.Instance;
+			var dirs = ParatextLexiconDirectoryFinder.FdoDirectories;
+			ClientServerServices.SetCurrentToDb4OBackend(ui, dirs,
+				() => dirs.ProjectsDirectory == ParatextLexiconDirectoryFinder.ProjectsDirectoryLocalMachine);
 		}
 
 		/// <summary>
