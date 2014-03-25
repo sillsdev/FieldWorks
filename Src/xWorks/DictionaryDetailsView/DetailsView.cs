@@ -21,6 +21,10 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		{
 			InitializeComponent();
 
+			textBoxBefore.KeyDown += UnicodeCharacterEditingHelper.HandleKeyDown;
+			textBoxAfter.KeyDown += UnicodeCharacterEditingHelper.HandleKeyDown;
+			textBoxBetween.KeyDown += UnicodeCharacterEditingHelper.HandleKeyDown;
+
 			textBoxBefore.TextChanged += SpecialCharacterHandling.RevealInvisibleCharacters;
 			textBoxAfter.TextChanged += SpecialCharacterHandling.RevealInvisibleCharacters;
 			textBoxBetween.TextChanged += SpecialCharacterHandling.RevealInvisibleCharacters;
