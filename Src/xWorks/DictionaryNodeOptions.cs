@@ -11,6 +11,10 @@ namespace SIL.FieldWorks.XWorks
 	/// Base class for ConfigurableDictionaryNode options
 	/// <note>This would be an interface, but the XMLSerialization doesn't like those</note>
 	/// </summary>
+	[XmlInclude(typeof(DictionaryNodeSenseOptions))]
+	[XmlInclude(typeof(DictionaryNodeListOptions))]
+	[XmlInclude(typeof(DictionaryNodeWritingSystemOptions))]
+	[XmlInclude(typeof(DictionaryNodeComplexFormOptions))]
 	public abstract class DictionaryNodeOptions {}
 
 	/// <summary>Options for formatting Senses</summary>
@@ -56,7 +60,7 @@ namespace SIL.FieldWorks.XWorks
 			public bool IsEnabled { get; set; }
 		}
 
-		[XmlElement(ElementName = "Options")]
+		[XmlElement(ElementName = "Option")]
 		public List<DictionaryNodeOption> Options { get; set; }
 	}
 

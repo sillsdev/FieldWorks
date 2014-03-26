@@ -156,6 +156,39 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/SharedItems/ConfigurationItem", 1);
 		}
 
+		[Test]
+		public void Save_ConfigWithWritingSystemOptionValidatesAgainstSchema()
+		{
+			var modelFile = Path.GetTempFileName();
+			var oneConfigNode = new ConfigurableDictionaryNode();
+			oneConfigNode.Label = "Main Entry";
+			oneConfigNode.IsEnabled = true;
+			oneConfigNode.Before = "[";
+			oneConfigNode.FieldDescription = "LexEntry";
+
+			oneConfigNode.DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+																{
+																	Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+																	{
+																		new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = false, Label = "English" }
+																	}
+																};
+
+			var model = new DictionaryConfigurationModel
+			{
+				FilePath = modelFile,
+				Version = 0,
+				Label = "root",
+				Parts = new List<ConfigurableDictionaryNode> { oneConfigNode }
+			};
+			//SUT
+			model.Save();
+			ValidateAgainstSchema(modelFile);
+			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 1);
+			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/WritingSystemOptions", 1);
+			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/WritingSystemOptions/Option", 1);
+		}
+
 		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
 							  Justification = "Certain types can't be validated. e.g. xs:byte, otherwise implemented enough for us")]
 		private static void ValidateAgainstSchema(string xmlFile)

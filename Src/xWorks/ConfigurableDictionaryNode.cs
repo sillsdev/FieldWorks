@@ -102,7 +102,10 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Type specific configuration options for this configurable node;
 		/// </summary>
-		[XmlIgnore] // TODO pH 2014.03: fix saving of Options on all platforms
+		[XmlElement("WritingSystemOptions", typeof(DictionaryNodeWritingSystemOptions))]
+		[XmlElement("ListTypeOptions", typeof(DictionaryNodeListOptions))]
+		[XmlElement("ComplexFormOptions", typeof(DictionaryNodeComplexFormOptions))]
+		[XmlElement("SenseOptions", typeof(DictionaryNodeSenseOptions))]
 		public DictionaryNodeOptions DictionaryNodeOptions { get; set; }
 
 		/// <summary>
