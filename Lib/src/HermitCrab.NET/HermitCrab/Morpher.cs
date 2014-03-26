@@ -745,48 +745,49 @@ namespace SIL.HermitCrab
 			bool allFreeFluctuation = true;
 			foreach (WordSynthesis cur in sortedSyntheses)
 			{
-				// enforce the disjunctive property of allomorphs by ensuring that this word synthesis
-				// has the highest order of precedence for its allomorphs while also allowing for free
-				// fluctuation
-				if (prevValidSynthesis == null || AreAllomorphsNondisjunctive(cur, prevValidSynthesis))
+				if (SurfaceStratum.CharacterDefinitionTable.IsMatch(word, cur.Shape))
 				{
-					AddResult(word, results, cur, trace);
-					allFreeFluctuation = true;
+					// enforce the disjunctive property of allomorphs by ensuring that this word synthesis
+					// has the highest order of precedence for its allomorphs while also allowing for free
+					// fluctuation
+					if (prevValidSynthesis == null || AreAllomorphsNondisjunctive(cur, prevValidSynthesis))
+					{
+						AddResult(word, results, cur, trace);
+						allFreeFluctuation = true;
+					}
+					else if (allFreeFluctuation && CheckFreeFluctuation(cur, prevValidSynthesis))
+					{
+						AddResult(word, results, cur, trace);
+					}
+					else
+					{
+						allFreeFluctuation = false;
+					}
+					prevValidSynthesis = cur;
 				}
-				else if (allFreeFluctuation && CheckFreeFluctuation(cur, prevValidSynthesis))
-				{
-					AddResult(word, results, cur, trace);
-				}
-				else
-				{
-					allFreeFluctuation = false;
-				}
-				prevValidSynthesis = cur;
 			}
 			return results;
 		} // end MorphAndLookupToken
 
 		private void AddResult(string word, Set<WordSynthesis> results, WordSynthesis cur, TraceManager trace)
 		{
-			if (SurfaceStratum.CharacterDefinitionTable.IsMatch(word, cur.Shape))
-			{
-				if (trace != null)
-					trace.ReportSuccess(cur);
 
-				// do not add to the result if it has the same root, shape, and morphemes as another result
-				bool duplicate = false;
-				foreach (WordSynthesis ws in results)
+			if (trace != null)
+				trace.ReportSuccess(cur);
+
+			// do not add to the result if it has the same root, shape, and morphemes as another result
+			bool duplicate = false;
+			foreach (WordSynthesis ws in results)
+			{
+				if (cur.Duplicates(ws))
 				{
-					if (cur.Duplicates(ws))
-					{
-						duplicate = true;
-						break;
-					}
+					duplicate = true;
+					break;
 				}
-				if (!duplicate)
-				{
-					results.Add(cur);
-				}
+			}
+			if (!duplicate)
+			{
+				results.Add(cur);
 			}
 		}
 
