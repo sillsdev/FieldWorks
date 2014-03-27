@@ -63,12 +63,13 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		public bool MoveDownEnabled { set { buttonDown.Enabled = value; } }
 
 		/// <summary>Whether or not the single checkbox below the list is visible</summary>
-		public bool CheckBoxVisible
+		public bool CheckBoxVisible { set { checkBoxDisplayOption.Visible = value; } }
+
+		/// <summary>Whether or not the single checkbox below the list is enabled</summary>
+		public bool CheckBoxEnabled
 		{
-			set
-			{
-				checkBoxDisplayOption.Visible = value;
-			}
+			get { return checkBoxDisplayOption.Enabled; }
+			set { checkBoxDisplayOption.Enabled = value; }
 		}
 
 		/// <note>

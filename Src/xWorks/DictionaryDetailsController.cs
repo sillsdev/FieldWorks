@@ -177,6 +177,9 @@ namespace SIL.FieldWorks.XWorks
 
 			wsOptionsView.AvailableItems = availableWSs;
 
+			// Displaying WS Abbreviations is available only when multiple WS's are selected.
+			wsOptionsView.CheckBoxEnabled = (availableWSs.Count(item => item.Checked) >= 2);
+
 			// Prevent events from firing while the view is being initialized
 			wsOptionsView.Load += WritingSystemEventHandlerAdder(wsOptionsView, wsOptions);
 
@@ -192,7 +195,7 @@ namespace SIL.FieldWorks.XWorks
 				wsOptionsView.DownClicked += (sender, e) =>
 					Reorder(wsOptionsView.AvailableItems.First(item => item.Selected), DictionaryConfigurationController.Direction.Down);
 				wsOptionsView.ListItemSelectionChanged += (sender, e) => ListViewSelectionChanged(wsOptionsView, e);
-				wsOptionsView.ListItemCheckBoxChanged += WritingSystemCheckedChanged;
+				wsOptionsView.ListItemCheckBoxChanged += (sender, e) => WritingSystemCheckedChanged(wsOptionsView, wsOptions, e);
 				wsOptionsView.CheckBoxChanged += (sender, e) =>
 				{
 					wsOptions.DisplayWritingSystemAbbreviations = wsOptionsView.CheckBoxChecked;
@@ -431,7 +434,7 @@ namespace SIL.FieldWorks.XWorks
 
 		#region ListChanges
 		#region WritingSystemChanges
-		private void WritingSystemCheckedChanged(object sender, ItemCheckedEventArgs e)
+		private void WritingSystemCheckedChanged(ListOptionsView wsOptionsView, DictionaryNodeWritingSystemOptions wsOptions, ItemCheckedEventArgs e)
 		{
 			var items = e.Item.ListView.Items;
 
@@ -455,6 +458,11 @@ namespace SIL.FieldWorks.XWorks
 				foreach (var item in items.Cast<ListViewItem>().Where(item => item.Tag is int))
 					item.Checked = false;
 			}
+
+			// Displaying WS Abbreviations is available only when multiple WS's are selected.
+			wsOptionsView.CheckBoxEnabled = (items.Cast<ListViewItem>().Count(item => item.Checked) >= 2);
+			// Don't clear the checkbox while users are working, but don't persist an invalid value.
+			wsOptions.DisplayWritingSystemAbbreviations = wsOptionsView.CheckBoxEnabled && wsOptionsView.CheckBoxChecked;
 
 			SerializeListOptionsAndRefreshPreview(items);
 		}
