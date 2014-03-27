@@ -104,15 +104,11 @@ namespace SIL.FieldWorks.XWorks
 					throw new ArgumentException("Unrecognised type of DictionaryNodeOptions");
 				}
 			}
-			else if ("Main Entry".Equals(m_node.Label)) // TODO pH 2014.02: more-reliable test
+			else if ("LexEntry".Equals(m_node.FieldDescription))
 			{
+				// Main Entry and Minor Entry are the only two where field=LexEntry; only Main Entry has Options=null
 				// There is nothing to configure on the Main Entry itself
 				View.Visible = false;
-			}
-			else if ("Subsubentries".Equals(m_node.Label)) // TODO pH 2014.02: more-reliable test
-			{
-				// REVIEW (Hasso) 2014.02: Styles were hidden for subsubentries in the old dialog.  Is this still what we want?
-				View.StylesVisible = false;
 			}
 			// else, show the default details (style, before, between, after)
 
@@ -280,6 +276,13 @@ namespace SIL.FieldWorks.XWorks
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "listOptionsView is disposed by its parent")]
 		private void LoadListOptions(DictionaryNodeListOptions listOptions)
 		{
+			if ("Subentries".Equals(m_node.FieldDescription) && "Subentries".Equals(m_node.Parent.FieldDescription))
+			{
+				// REVIEW (Hasso) 2014.02: Styles were hidden for subsubentries in the old dialog.  Is this still what we want?
+				// Subsubentries have no unique style
+				View.StylesVisible = false;
+			}
+
 			var listOptionsView = new ListOptionsView();
 
 			if (listOptions is DictionaryNodeComplexFormOptions)
@@ -306,7 +309,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void LoadComplexFormOptions(DictionaryNodeComplexFormOptions complexFormOptions, ListOptionsView listOptionsView)
 		{
-			listOptionsView.CheckBoxLabel = "Display each complex form in a paragraph"; // TODO: localize
+			listOptionsView.CheckBoxLabel = xWorksStrings.ksDisplayComplexFormsInParagraphs;
 			listOptionsView.CheckBoxChanged += (sender, e) =>
 			{
 				complexFormOptions.DisplayEachComplexFormInAParagraph = listOptionsView.CheckBoxChecked;

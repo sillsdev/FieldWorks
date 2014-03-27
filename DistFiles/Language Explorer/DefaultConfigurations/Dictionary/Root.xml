@@ -39,13 +39,13 @@
                 </ConfigurationItem>
                 <ConfigurationItem name="Alias" between=" " after=" " isEnabled="true" field="Alias">
                     <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-                        <Option id="analysis" isEnabled="false"/>
+                        <Option id="analysis" isEnabled="true"/>
                     </WritingSystemOptions>
                 </ConfigurationItem>
             </ConfigurationItem>
         </ConfigurationItem>
         <ConfigurationItem name="Variant Forms" before="(" between="; " after=") " isEnabled="true" field="VariantFormEntryBackRefs">
-            <EntryTypeOptions EntryType="variant">
+            <ListTypeOptions list="variant">
                 <Option isEnabled="true" id="b0000000-c40e-433e-80b5-31da08771344"/>
                 <Option isEnabled="true" id="024b62c9-93b3-41a0-ab19-587a0030219a"/>
                 <Option isEnabled="true" id="4343b1ef-b54f-4fa4-9998-271319a6d74c"/>
@@ -53,7 +53,7 @@
                 <Option isEnabled="true" id="837ebe72-8c1d-4864-95d9-fa313c499d78"/>
                 <Option isEnabled="true" id="a32f1d1c-4832-46a2-9732-c2276d6547e8"/>
                 <Option isEnabled="true" id="0c4663b3-4d9a-47af-b9a1-c8565d8112ed"/>
-            </EntryTypeOptions>
+            </ListTypeOptions>
             <ConfigurationItem name="Variant Type" between=", " after=" " isEnabled="true" field="VariantEntryTypes">
                 <ConfigurationItem name="Reverse Abbreviation" between=" " after=" " isEnabled="true" field="ReverseAbbr">
                     <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -122,9 +122,9 @@
             <ConfigurationItem name="Source" after=" " isEnabled="false" field="Source"/>
         </ConfigurationItem>
         <ConfigurationItem name="Cross References" between="; " after=". " isEnabled="true" field="MinimalLexReferences">
-            <RelationTypeOptions LexicalRelationType="entry">
+            <ListTypeOptions list="entry">
                 <Option isEnabled="true" id="b79ba420-ea5e-11de-8f71-0013722f8dec"/>
-            </RelationTypeOptions>
+            </ListTypeOptions>
             <ConfigurationItem name="Relation Abbreviation" between=" " after=": " style="Dictionary-Contrasting" isEnabled="true" field="OwnerType" subField="Abbreviation">
                 <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
                     <Option id="analysis" isEnabled="true"/>
@@ -249,7 +249,7 @@
                 </WritingSystemOptions>
             </ConfigurationItem>
             <ConfigurationItem name="Lexical Relations" between="; " after=". " isEnabled="true" field="LexSenseReferences">
-                <RelationTypeOptions LexicalRelationType="sense">
+                <ListTypeOptions list="sense">
                     <Option isEnabled="true" id="b7862f14-ea5e-11de-8d47-0013722f8dec"/>
                     <Option isEnabled="true" id="b7921ac2-ea5e-11de-880d-0013722f8dec" />
                     <Option isEnabled="true" id="b7a78fd8-ea5e-11de-9ef2-0013722f8dec" />
@@ -259,7 +259,7 @@
                     <Option isEnabled="true" id="b770ba08-ea5e-11de-9ca9-0013722f8dec" />
                     <Option isEnabled="true" id="b770ba08-ea5e-11de-9ca9-0013722f8dec" />
                     <Option isEnabled="true" id="b77a435c-ea5e-11de-9a66-0013722f8dec" />
-                </RelationTypeOptions>
+                </ListTypeOptions>
                 <ConfigurationItem name="Relation Abbreviation" between=" " after=": " style="Dictionary-Contrasting" isEnabled="true" field="OwnerType" subField="Abbreviation">
                     <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
                         <Option id="analysis" isEnabled="true"/>
@@ -610,7 +610,7 @@
             </ConfigurationItem>
         </ConfigurationItem>
         <ConfigurationItem name="Subentries" style="Dictionary-Subentry" isEnabled="true" field="Subentries">
-            <EntryTypeOptions EntryType="complex">
+            <ListTypeOptions list="complex">
                 <Option isEnabled="true"  id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
                 <Option isEnabled="true"  id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>
                 <Option isEnabled="true"  id="73266a3a-48e8-4bd7-8c84-91c730340b7d"/>
@@ -618,7 +618,7 @@
                 <Option isEnabled="true"  id="b2276dec-b1a6-4d82-b121-fd114c009c59"/>
                 <Option isEnabled="true"  id="35cee792-74c8-444e-a9b7-ed0461d4d3b7"/>
                 <Option isEnabled="true"  id="9466d126-246e-400b-8bba-0703e09bc567"/>
-            </EntryTypeOptions>
+            </ListTypeOptions>
 			<ConfigurationItem name="Headword" between=" " after="  " style="Dictionary-Headword" isEnabled="true" field="HeadWord">
 				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 					<Option id="vernacular" isEnabled="true"/>
@@ -657,13 +657,13 @@
 					</ConfigurationItem>
 					<ConfigurationItem name="Alias" between=" " after=" " isEnabled="true" field="Alias">
 						<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-							<Option id="analysis" isEnabled="false"/>
+							<Option id="analysis" isEnabled="true"/>
 						</WritingSystemOptions>
 					</ConfigurationItem>
 				</ConfigurationItem>
 			</ConfigurationItem>
 			<ConfigurationItem name="Variant Forms" before="(" between="; " after=") " isEnabled="true" field="VariantFormEntryBackRefs">
-				<EntryTypeOptions EntryType="variant">
+				<ListTypeOptions list="variant">
 					<Option isEnabled="true" id="b0000000-c40e-433e-80b5-31da08771344"/>
 					<Option isEnabled="true" id="024b62c9-93b3-41a0-ab19-587a0030219a"/>
 					<Option isEnabled="true" id="4343b1ef-b54f-4fa4-9998-271319a6d74c"/>
@@ -671,7 +671,7 @@
 					<Option isEnabled="true" id="837ebe72-8c1d-4864-95d9-fa313c499d78"/>
 					<Option isEnabled="true" id="a32f1d1c-4832-46a2-9732-c2276d6547e8"/>
 					<Option isEnabled="true" id="0c4663b3-4d9a-47af-b9a1-c8565d8112ed"/>
-				</EntryTypeOptions>
+				</ListTypeOptions>
 				<ConfigurationItem name="Variant Type" between=", " after=" " isEnabled="true" field="VariantEntryTypes">
 					<ConfigurationItem name="Reverse Abbreviation" between=" " after=" " isEnabled="true" field="ReverseAbbr">
 						<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -740,9 +740,9 @@
 				<ConfigurationItem name="Source" after=" " isEnabled="false" field="Source"/>
 			</ConfigurationItem>
 			<ConfigurationItem name="Cross References" between="; " after=". " isEnabled="true" field="MinimalLexReferences">
-				<RelationTypeOptions LexicalRelationType="entry">
+				<ListTypeOptions list="entry">
 					<Option isEnabled="true" id="b79ba420-ea5e-11de-8f71-0013722f8dec"/>
-				</RelationTypeOptions>
+				</ListTypeOptions>
 				<ConfigurationItem name="Relation Abbreviation" between=" " after=": " style="Dictionary-Contrasting" isEnabled="true" field="OwnerType" subField="Abbreviation">
 					<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 						<Option id="analysis" isEnabled="true"/>
@@ -867,7 +867,7 @@
 					</WritingSystemOptions>
 				</ConfigurationItem>
 				<ConfigurationItem name="Lexical Relations" between="; " after=". " isEnabled="true" field="LexSenseReferences">
-					<RelationTypeOptions LexicalRelationType="sense">
+					<ListTypeOptions list="sense">
 						<Option isEnabled="true" id="b7862f14-ea5e-11de-8d47-0013722f8dec"/>
 						<Option isEnabled="true" id="b7921ac2-ea5e-11de-880d-0013722f8dec" />
 						<Option isEnabled="true" id="b7a78fd8-ea5e-11de-9ef2-0013722f8dec" />
@@ -877,7 +877,7 @@
 						<Option isEnabled="true" id="b770ba08-ea5e-11de-9ca9-0013722f8dec" />
 						<Option isEnabled="true" id="b770ba08-ea5e-11de-9ca9-0013722f8dec" />
 						<Option isEnabled="true" id="b77a435c-ea5e-11de-9a66-0013722f8dec" />
-					</RelationTypeOptions>
+					</ListTypeOptions>
 					<ConfigurationItem name="Relation Abbreviation" between=" " after=": " style="Dictionary-Contrasting" isEnabled="true" field="OwnerType" subField="Abbreviation">
 						<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 							<Option id="analysis" isEnabled="true"/>
@@ -1228,7 +1228,7 @@
 				</ConfigurationItem>
 			</ConfigurationItem>
             <ConfigurationItem name="Subsubentries" after=" " isEnabled="true" field="Subentries">
-                <EntryTypeOptions EntryType="complex">
+                <ListTypeOptions list="complex">
                     <Option isEnabled="true"  id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
                     <Option isEnabled="true"  id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>
                     <Option isEnabled="true"  id="73266a3a-48e8-4bd7-8c84-91c730340b7d"/>
@@ -1236,12 +1236,12 @@
                     <Option isEnabled="true"  id="b2276dec-b1a6-4d82-b121-fd114c009c59"/>
                     <Option isEnabled="true"  id="35cee792-74c8-444e-a9b7-ed0461d4d3b7"/>
                     <Option isEnabled="true"  id="9466d126-246e-400b-8bba-0703e09bc567"/>
-                </EntryTypeOptions>
+                </ListTypeOptions>
             </ConfigurationItem>
         </ConfigurationItem>
     </ConfigurationItem>
 	<ConfigurationItem name="Minor Entry" after=" " style="Dictionary-Minor" isEnabled="true" field="LexEntry">
-		<EntryTypeOptions EntryType="minor">
+		<ListTypeOptions list="minor">
 			<Option isEnabled="true"  id="b0000000-c40e-433e-80b5-31da08771344"/>
 			<Option isEnabled="true"  id="024b62c9-93b3-41a0-ab19-587a0030219a"/>
 			<Option isEnabled="true"  id="4343b1ef-b54f-4fa4-9998-271319a6d74c"/>
@@ -1256,7 +1256,7 @@
 			<Option isEnabled="true"  id="b2276dec-b1a6-4d82-b121-fd114c009c59"/>
 			<Option isEnabled="true"  id="35cee792-74c8-444e-a9b7-ed0461d4d3b7"/>
 			<Option isEnabled="true"  id="9466d126-246e-400b-8bba-0703e09bc567"/>
-		</EntryTypeOptions>
+		</ListTypeOptions>
         <ConfigurationItem name="Headword" between=" " after="  " style="Dictionary-Headword" isEnabled="true" field="HeadWord">
             <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
                 <Option id="vernacular" isEnabled="true"/>
@@ -1295,13 +1295,13 @@
                 </ConfigurationItem>
                 <ConfigurationItem name="Alias" between=" " after=" " isEnabled="true" field="Alias">
                     <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-                        <Option id="analysis" isEnabled="false"/>
+                        <Option id="analysis" isEnabled="true"/>
                     </WritingSystemOptions>
                 </ConfigurationItem>
             </ConfigurationItem>
         </ConfigurationItem>
         <ConfigurationItem name="Variant Forms" before="(" between="; " after=") " isEnabled="true" field="VariantFormEntryBackRefs">
-            <EntryTypeOptions EntryType="variant">
+            <ListTypeOptions list="variant">
                 <Option isEnabled="true" id="b0000000-c40e-433e-80b5-31da08771344"/>
                 <Option isEnabled="true" id="024b62c9-93b3-41a0-ab19-587a0030219a"/>
                 <Option isEnabled="true" id="4343b1ef-b54f-4fa4-9998-271319a6d74c"/>
@@ -1309,7 +1309,7 @@
                 <Option isEnabled="true" id="837ebe72-8c1d-4864-95d9-fa313c499d78"/>
                 <Option isEnabled="true" id="a32f1d1c-4832-46a2-9732-c2276d6547e8"/>
                 <Option isEnabled="true" id="0c4663b3-4d9a-47af-b9a1-c8565d8112ed"/>
-            </EntryTypeOptions>
+            </ListTypeOptions>
             <ConfigurationItem name="Variant Type" between=", " after=" " isEnabled="true" field="VariantEntryTypes">
                 <ConfigurationItem name="Reverse Abbreviation" between=" " after=" " isEnabled="true" field="ReverseAbbr">
                     <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -1378,9 +1378,9 @@
             <ConfigurationItem name="Source" after=" " isEnabled="false" field="Source"/>
         </ConfigurationItem>
         <ConfigurationItem name="Cross References" between="; " after=". " isEnabled="true" field="MinimalLexReferences">
-            <RelationTypeOptions LexicalRelationType="entry">
+            <ListTypeOptions list="entry">
                 <Option isEnabled="true" id="b79ba420-ea5e-11de-8f71-0013722f8dec"/>
-            </RelationTypeOptions>
+            </ListTypeOptions>
             <ConfigurationItem name="Relation Abbreviation" between=" " after=": " style="Dictionary-Contrasting" isEnabled="true" field="OwnerType" subField="Abbreviation">
                 <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
                     <Option id="analysis" isEnabled="true"/>
@@ -1405,7 +1405,7 @@
             </ConfigurationItem>
         </ConfigurationItem>
 		<ConfigurationItem name="Variant Of" between=", " after=" " isEnabled="true" field="VisibleVariantEntryRefs">
-			<EntryTypeOptions EntryType="variant">
+			<ListTypeOptions list="variant">
 				<Option isEnabled="true"  id="b0000000-c40e-433e-80b5-31da08771344"/>
 				<Option isEnabled="true"  id="024b62c9-93b3-41a0-ab19-587a0030219a"/>
 				<Option isEnabled="true"  id="4343b1ef-b54f-4fa4-9998-271319a6d74c"/>
@@ -1413,7 +1413,7 @@
 				<Option isEnabled="true"  id="837ebe72-8c1d-4864-95d9-fa313c499d78"/>
 				<Option isEnabled="true"  id="a32f1d1c-4832-46a2-9732-c2276d6547e8"/>
 				<Option isEnabled="true"  id="0c4663b3-4d9a-47af-b9a1-c8565d8112ed"/>
-			</EntryTypeOptions>
+			</ListTypeOptions>
 			<ConfigurationItem name="Variant Type" between=", " after=" " isEnabled="true" field="VariantTypeEntries">
 				<ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="RevAbbr">
 					<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -1455,7 +1455,7 @@
 			</ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Components" before=" (" between=", " after=")" isEnabled="true" field="ComplexFormEntryRefs">
-			<EntryTypeOptions EntryType="complex">
+			<ListTypeOptions list="complex">
 				<Option isEnabled="true"  id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
 				<Option isEnabled="true"  id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>
 				<Option isEnabled="true"  id="73266a3a-48e8-4bd7-8c84-91c730340b7d"/>
@@ -1463,7 +1463,7 @@
 				<Option isEnabled="true"  id="b2276dec-b1a6-4d82-b121-fd114c009c59"/>
 				<Option isEnabled="true"  id="35cee792-74c8-444e-a9b7-ed0461d4d3b7"/>
 				<Option isEnabled="true"  id="9466d126-246e-400b-8bba-0703e09bc567"/>
-			</EntryTypeOptions>
+			</ListTypeOptions>
 			<ConfigurationItem name="Complex Form Type" between=", " after=" " isEnabled="true" field="ComplexEntryTypes">
 				<ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
 					<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -1610,7 +1610,7 @@
                 </WritingSystemOptions>
             </ConfigurationItem>
             <ConfigurationItem name="Lexical Relations" between="; " after=". " isEnabled="true" field="LexSenseReferences">
-                <RelationTypeOptions LexicalRelationType="sense">
+                <ListTypeOptions list="sense">
                     <Option isEnabled="true" id="b7862f14-ea5e-11de-8d47-0013722f8dec"/>
                     <Option isEnabled="true" id="b7921ac2-ea5e-11de-880d-0013722f8dec" />
                     <Option isEnabled="true" id="b7a78fd8-ea5e-11de-9ef2-0013722f8dec" />
@@ -1620,7 +1620,7 @@
                     <Option isEnabled="true" id="b770ba08-ea5e-11de-9ca9-0013722f8dec" />
                     <Option isEnabled="true" id="b770ba08-ea5e-11de-9ca9-0013722f8dec" />
                     <Option isEnabled="true" id="b77a435c-ea5e-11de-9a66-0013722f8dec" />
-                </RelationTypeOptions>
+                </ListTypeOptions>
                 <ConfigurationItem name="Relation Abbreviation" between=" " after=": " style="Dictionary-Contrasting" isEnabled="true" field="OwnerType" subField="Abbreviation">
                     <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
                         <Option id="analysis" isEnabled="true"/>
@@ -1904,7 +1904,7 @@
         <ConfigurationItem name="Date Created" before=" created on: " isEnabled="false" field="DateCreated"/>
         <ConfigurationItem name="Date Modified" before=" modified on: " isEnabled="false" field="DateModified"/>
 		<ConfigurationItem name="Referenced Complex Forms" before=" " between=", " after=" " isEnabled="true" field="ComplexFormsNotSubentries">
-			<EntryTypeOptions EntryType="complex">
+			<ComplexFormOptions list="complex" displayEachComplexFormInParagraph="true">
 				<Option isEnabled="true"  id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
 				<Option isEnabled="true"  id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>
 				<Option isEnabled="true"  id="73266a3a-48e8-4bd7-8c84-91c730340b7d"/>
@@ -1912,7 +1912,7 @@
 				<Option isEnabled="true"  id="b2276dec-b1a6-4d82-b121-fd114c009c59"/>
 				<Option isEnabled="true"  id="35cee792-74c8-444e-a9b7-ed0461d4d3b7"/>
 				<Option isEnabled="true"  id="9466d126-246e-400b-8bba-0703e09bc567"/>
-			</EntryTypeOptions>
+			</ComplexFormOptions>
 			<ConfigurationItem name="Complex Form Type" after=" " isEnabled="true" field="ComplexEntryTypes">
 				<ConfigurationItem name="Reverse Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 					<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">

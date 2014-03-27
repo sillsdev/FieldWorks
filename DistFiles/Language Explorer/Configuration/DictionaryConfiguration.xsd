@@ -26,23 +26,24 @@
 						  <xs:element name="Option" type="OptionListItemType" maxOccurs="unbounded" minOccurs="0"/>
 					 </xs:sequence>
 					 <xs:attribute type="writingSystemType" name="writingSystemType" use="required"/>
-					 <xs:attribute type="xs:string" name="displayWSAbreviation" use="optional"/>
+					 <xs:attribute type="xs:boolean" name="displayWSAbreviation" use="optional"/>
 				</xs:complexType>
 		  </xs:element>
-		  <xs:element name="EntryTypeOptions" minOccurs="0">
+		  <xs:element name="ListTypeOptions" minOccurs="0">
 				<xs:complexType>
 					 <xs:sequence>
 						  <xs:element name="Option" type="OptionListItemType" maxOccurs="unbounded" minOccurs="0"/>
 					 </xs:sequence>
-					 <xs:attribute type="xs:string" name="EntryType" use="required"/>
+					 <xs:attribute type="xs:string" name="list" use="required"/>
 				</xs:complexType>
 		  </xs:element>
-		  <xs:element name="RelationTypeOptions" minOccurs="0">
+		  <xs:element name="ComplexFormOptions" minOccurs="0">
 				<xs:complexType>
 					 <xs:sequence>
 						  <xs:element name="Option" type="OptionListItemType" maxOccurs="unbounded" minOccurs="0"/>
 					 </xs:sequence>
-					 <xs:attribute type="xs:string" name="LexicalRelationType"/>
+					 <xs:attribute type="xs:string" name="list" use="optional"/>
+					 <xs:attribute type="xs:boolean" name="displayEachComplexFormInParagraph" use="optional"/>
 				</xs:complexType>
 		  </xs:element>
 		  <xs:element name="SenseOptions" minOccurs="0">

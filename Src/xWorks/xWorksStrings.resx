@@ -377,6 +377,9 @@ Are you SURE you want to delete the field {2}?</value>
   <data name="ksUnspecified" xml:space="preserve">
     <value>(unspecified)</value>
   </data>
+  <data name="ksDisplayComplexFormsInParagraphs" xml:space="preserve">
+    <value>Display each Complex Form in a paragraph</value>
+  </data>
   <data name="ksCantPromoteGroupToTemplate" xml:space="preserve">
     <value>You cannot promote part of one discourse chart template to a new template. In fact, currently we do not support having more than one template at all.</value>
   </data>

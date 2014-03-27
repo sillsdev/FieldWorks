@@ -58,6 +58,9 @@ namespace SIL.FieldWorks.XWorks
 			public bool IsEnabled { get; set; } // REVIEW pH 2014.03: do we need this?  isn't everything here enabled by merit of being here?
 		}
 
+		[XmlAttribute(AttributeName = "list")]
+		public string ListId { get; set; }
+
 		[XmlElement(ElementName = "Option")]
 		public List<DictionaryNodeOption> Options { get; set; }
 	}
