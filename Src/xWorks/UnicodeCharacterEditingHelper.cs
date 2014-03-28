@@ -15,9 +15,10 @@ namespace SIL.FieldWorks.XWorks
 	static class UnicodeCharacterEditingHelper
 	{
 		/// <summary>
-		/// If input ends in one of more hex digits, replace them with a UTF-16 character at that codepoint. Only up to 4 hex digits are supported.
+		/// If input ends in one or more hex digits, replace them with a UTF-16 character at that codepoint. Only up to 4 hex digits are supported.
 		/// Hex digits can optionally start with "U+" or "u+".
 		/// See LT-13359.
+		/// Does not handle surrogates, to prevent allowing an unpaired surrogate.
 		/// </summary>
 		internal static string ConvertFinalDigitsToCharacter(string input)
 		{
@@ -40,7 +41,9 @@ namespace SIL.FieldWorks.XWorks
 					return match.Value;
 				}
 
-				var character = (char) codepoint;
+				// Converting to a char should not overflow since hexdigits is never more than 4 digits.
+				var character = Convert.ToChar(codepoint);
+
 				if (char.IsSurrogate(character))
 					return match.Value;
 				return character.ToString();
@@ -49,7 +52,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// Replace the last character of input with four hex digits, representing the code point of the character replaced. See LT-13359.
-		/// Does not convert surrogates.
+		/// Does not handle surrogates or surrogate pairs.
 		/// </summary>
 		internal static string ConvertFinalCharacterToCodepoint(string input)
 		{

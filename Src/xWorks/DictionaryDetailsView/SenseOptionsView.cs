@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using SIL.FieldWorks.FwCoreDlgControls;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 {
@@ -17,6 +18,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		public SenseOptionsView()
 		{
 			InitializeComponent();
+
+			textBoxBefore.KeyDown += UnicodeCharacterEditingHelper.HandleKeyDown;
+			textBoxAfter.KeyDown += UnicodeCharacterEditingHelper.HandleKeyDown;
 
 			textBoxBefore.TextChanged += SpecialCharacterHandling.RevealInvisibleCharacters;
 			textBoxAfter.TextChanged += SpecialCharacterHandling.RevealInvisibleCharacters;
