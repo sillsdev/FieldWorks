@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.XWorks
 		public string BeforeNumber { get; set; }
 
 		// Example values: ""->none; %O->1.2.3; %z->1, b, iii
-		[XmlAttribute(AttributeName = "numberMark")]
+		[XmlAttribute(AttributeName = "numberingStyle")]
 		public string NumberingStyle { get; set; }
 
 		[XmlAttribute(AttributeName = "numberAfter")]

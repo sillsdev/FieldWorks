@@ -109,7 +109,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				XmlOpenTagsThruHeadword, @"
 				<SenseOptions displayEachSenseInParagraph=""true"" numberStyle=""bold"" numberBefore=""("" numberAfter="") ""
-						numberMarkS=""%O"" numberFont="""" numberSingleSense=""true"" showSingleGramInfoFirst=""true""/>",
+						numberingStyle=""%O"" numberFont="""" numberSingleSense=""true"" showSingleGramInfoFirst=""true""/>",
 				XmlCloseTagsFromHeadword
 			}))
 			{
@@ -121,6 +121,7 @@ namespace SIL.FieldWorks.XWorks
 			var testNodeOptions = model.Parts[0].Children[0].DictionaryNodeOptions;
 			Assert.IsInstanceOf(typeof(DictionaryNodeSenseOptions), testNodeOptions);
 			var senseOptions = (DictionaryNodeSenseOptions)testNodeOptions;
+			Assert.AreEqual("%O", senseOptions.NumberingStyle);
 			Assert.AreEqual("(", senseOptions.BeforeNumber);
 			Assert.AreEqual(") ", senseOptions.AfterNumber);
 			Assert.AreEqual("bold", senseOptions.NumberStyle);
