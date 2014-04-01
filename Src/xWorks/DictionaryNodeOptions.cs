@@ -50,6 +50,27 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>Options for selecting and ordering items in lists, including Custom Lists and WritingSystem lists</summary>
 	public class DictionaryNodeListOptions : DictionaryNodeOptions
 	{
+		public enum ListIds
+		{
+			// REVIEW (Hasso) 2014.04: One instance of Complex Forms doesn't display the list in the old dialog. This may not be needed.
+			// Since None=0, it is the default selected if nothing is specified in the xml
+			[XmlEnum("none")]
+			None = 0,
+			/// <summary>Minor Entry could be a Complex or Variant Form</summary>
+			[XmlEnum("minor")]
+			Minor,
+			[XmlEnum("complex")]
+			Complex,
+			[XmlEnum("variant")]
+			Variant,
+			/// <summary>Lexical Relations, including Reverses, having to do with Sense</summary>
+			[XmlEnum("sense")]
+			Sense,
+			/// <summary>Lexical Relations, including Reverses, having to do with Entry</summary>
+			[XmlEnum("entry")]
+			Entry
+		}
+
 		public class DictionaryNodeOption
 		{
 			[XmlAttribute(AttributeName = "id")]
@@ -59,7 +80,14 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[XmlAttribute(AttributeName = "list")]
-		public string ListId { get; set; }
+		public ListIds ListId { get; set; }
+
+		/// <summary>ShouldSerialize___ is a magic method to prevent XmlSerializer from serializing ListId if there is none.</summary>
+		/// <note>Per https://bugzilla.xamarin.com/show_bug.cgi?id=1852, this does not work until Mono 3.3.0</note>
+		public bool ShouldSerializeListId()
+		{
+			return ListId != ListIds.None;
+		}
 
 		[XmlElement(ElementName = "Option")]
 		public List<DictionaryNodeOption> Options { get; set; }
@@ -73,7 +101,7 @@ namespace SIL.FieldWorks.XWorks
 	}
 
 	/// <summary>Options for selecting and ordering WritingSystems</summary>
-	public class DictionaryNodeWritingSystemOptions : DictionaryNodeListOptions
+	public class DictionaryNodeWritingSystemOptions : DictionaryNodeOptions
 	{
 		public enum WritingSystemType
 		{
@@ -95,5 +123,8 @@ namespace SIL.FieldWorks.XWorks
 
 		[XmlAttribute(AttributeName = "displayWSAbreviation")]
 		public bool DisplayWritingSystemAbbreviations { get; set; }
+
+		[XmlElement(ElementName = "Option")]
+		public List<DictionaryNodeListOptions.DictionaryNodeOption> Options { get; set; }
 	}
 }

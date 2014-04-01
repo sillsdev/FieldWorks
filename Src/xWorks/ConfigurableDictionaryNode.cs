@@ -112,7 +112,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Whether this element of dictionary data was duplicated from another element of dictionary data.
 		/// </summary>
 		[XmlAttribute(AttributeName = "isDuplicate")]
-		public bool IsDuplicate { get; set; }
+		public bool IsDuplicate { get; set; } // REVIEW (Hasso) 2014.04: could we use get { return !string.IsNullOrEmpty(NameSuffix); }?
 
 		/// <summary>
 		/// Whether this element of dictionary data represents a custom field.

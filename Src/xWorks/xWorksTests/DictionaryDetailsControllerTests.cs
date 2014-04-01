@@ -169,6 +169,7 @@ namespace SIL.FieldWorks.XWorks
 			// Load paragraph styles
 			node.DictionaryNodeOptions = new DictionaryNodeComplexFormOptions
 			{
+				ListId = DictionaryNodeListOptions.ListIds.Complex,
 				Options =  new List<DictionaryNodeListOptions.DictionaryNodeOption>()
 			};
 			controller.LoadNode(node); // SUT

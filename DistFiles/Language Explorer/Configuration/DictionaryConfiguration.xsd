@@ -34,7 +34,7 @@
 					 <xs:sequence>
 						  <xs:element name="Option" type="OptionListItemType" maxOccurs="unbounded" minOccurs="0"/>
 					 </xs:sequence>
-					 <xs:attribute type="xs:string" name="list" use="required"/>
+					 <xs:attribute type="listIdType" name="list" use="required"/>
 				</xs:complexType>
 		  </xs:element>
 		  <xs:element name="ComplexFormOptions" minOccurs="0">
@@ -42,7 +42,7 @@
 					 <xs:sequence>
 						  <xs:element name="Option" type="OptionListItemType" maxOccurs="unbounded" minOccurs="0"/>
 					 </xs:sequence>
-					 <xs:attribute type="xs:string" name="list" use="optional"/>
+					 <xs:attribute type="listIdType" name="list" use="optional"/>
 					 <xs:attribute type="xs:boolean" name="displayEachComplexFormInParagraph" use="optional"/>
 				</xs:complexType>
 		  </xs:element>
@@ -70,6 +70,7 @@
 		 </xs:element>
 	 </xs:choice>
 	 <xs:attribute type="xs:string" name="name" use="required"/>
+	 <xs:attribute type="xs:string" name="nameSuffix" use="optional"/>
 	 <xs:attribute type="xs:string" name="field" use="required"/>
 	 <xs:attribute type="xs:string" name="subField" use="optional"/>
 	 <xs:attribute type="xs:boolean" name="isEnabled" use="required"/>
@@ -89,6 +90,16 @@
 		  <xs:enumeration value="analysis"/>
 		  <xs:enumeration value="both"/>
 		  <xs:enumeration value="pronunciation"/>
+	 </xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="listIdType">
+	 <xs:restriction base="xs:string">
+		  <xs:enumeration value="none"/>
+		  <xs:enumeration value="minor"/>
+		  <xs:enumeration value="complex"/>
+		  <xs:enumeration value="variant"/>
+		  <xs:enumeration value="sense"/>
+		  <xs:enumeration value="entry"/>
 	 </xs:restriction>
 </xs:simpleType>
 <xs:complexType name="OptionListItemType">

@@ -6,10 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using NUnit.Framework;
+using Palaso.IO;
 using Palaso.TestUtilities;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -19,6 +21,201 @@ namespace SIL.FieldWorks.XWorks
 	[TestFixture]
 	class DictionaryConfigurationModelTests : MemoryOnlyBackendProviderTestBase
 	{
+		private const string XmlOpenTagsThruHeadword = @"<?xml version=""1.0"" encoding=""utf-8""?>
+			<DictionaryConfiguration name=""Root"" version=""1"" lastModified=""2014-02-13"">
+				<ConfigurationItem name=""Main Entry"" isEnabled=""true"" field=""LexEntry"">
+					<ConfigurationItem name=""Testword"" nameSuffix=""2b""
+							before=""["" between="", "" after=""] "" style=""Dictionary-Headword"" isEnabled=""true"" field=""HeadWord"">";
+
+		private const string XmlCloseTagsFromHeadword = @"
+					</ConfigurationItem>
+				</ConfigurationItem>
+				<SharedItems/>
+			</DictionaryConfiguration>";
+
+		[Test]
+		public void Load_LoadsBasicsAndDetails()
+		{
+			DictionaryConfigurationModel model;
+			using (var modelFile = new TempFile(new[] { XmlOpenTagsThruHeadword, XmlCloseTagsFromHeadword }))
+			{
+				// SUT
+				model = new DictionaryConfigurationModel(modelFile.Path);
+			}
+
+			// basic info
+			Assert.AreEqual("Root", model.Label);
+			Assert.AreEqual(1, model.Version);
+			Assert.AreEqual(new DateTime(2014, 02, 13), model.LastModified);
+
+			// Main Entry
+			Assert.AreEqual(1, model.Parts.Count);
+			var rootConfigNode = model.Parts[0];
+			Assert.AreEqual("Main Entry", rootConfigNode.Label);
+			Assert.AreEqual("LexEntry", rootConfigNode.FieldDescription);
+			Assert.IsNullOrEmpty(rootConfigNode.LabelSuffix);
+			Assert.IsNullOrEmpty(rootConfigNode.SubField);
+			Assert.IsNullOrEmpty(rootConfigNode.Before);
+			Assert.IsNullOrEmpty(rootConfigNode.Between);
+			Assert.IsNullOrEmpty(rootConfigNode.After);
+			Assert.IsFalse(rootConfigNode.IsCustomField);
+			Assert.IsFalse(rootConfigNode.IsDuplicate);
+			Assert.IsTrue(rootConfigNode.IsEnabled);
+
+			// Testword
+			Assert.AreEqual(1, rootConfigNode.Children.Count);
+			var headword = rootConfigNode.Children[0];
+			Assert.AreEqual("Testword", headword.Label);
+			Assert.AreEqual("2b", headword.LabelSuffix);
+			Assert.AreEqual("Dictionary-Headword", model.Parts[0].Children[0].Style);
+			Assert.AreEqual("[", headword.Before);
+			Assert.AreEqual(", ", headword.Between);
+			Assert.AreEqual("] ", headword.After);
+			Assert.IsTrue(headword.IsEnabled);
+		}
+
+		[Test]
+		public void Load_LoadsWritingSystemOptions()
+		{
+			DictionaryConfigurationModel model;
+			using (var modelFile = new TempFile(new[]
+			{
+				XmlOpenTagsThruHeadword, @"
+				<WritingSystemOptions writingSystemType=""analysis"" displayWSAbreviation=""true"">
+					<Option id=""fr"" isEnabled=""true""/>
+				</WritingSystemOptions>",
+				XmlCloseTagsFromHeadword
+			}))
+			{
+				// SUT
+				model = new DictionaryConfigurationModel(modelFile.Path);
+			}
+
+			var testNodeOptions = model.Parts[0].Children[0].DictionaryNodeOptions;
+			Assert.IsInstanceOf(typeof(DictionaryNodeWritingSystemOptions), testNodeOptions);
+			var wsOptions = (DictionaryNodeWritingSystemOptions)testNodeOptions;
+			Assert.IsTrue(wsOptions.DisplayWritingSystemAbbreviations);
+			Assert.AreEqual(DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis, wsOptions.WsType);
+			Assert.AreEqual(1, wsOptions.Options.Count);
+			Assert.AreEqual("fr", wsOptions.Options[0].Id);
+			Assert.IsTrue(wsOptions.Options[0].IsEnabled);
+		}
+
+		[Test]
+		public void Load_LoadsSenseOptions()
+		{
+			DictionaryConfigurationModel model;
+			using (var modelFile = new TempFile(new[]
+			{
+				XmlOpenTagsThruHeadword, @"
+				<SenseOptions displayEachSenseInParagraph=""true"" numberStyle=""bold"" numberBefore=""("" numberAfter="") ""
+						numberMarkS=""%O"" numberFont="""" numberSingleSense=""true"" showSingleGramInfoFirst=""true""/>",
+				XmlCloseTagsFromHeadword
+			}))
+			{
+				// SUT
+				model = new DictionaryConfigurationModel(modelFile.Path);
+			}
+
+			// The following assertions are based on the specific test data loaded from the file
+			var testNodeOptions = model.Parts[0].Children[0].DictionaryNodeOptions;
+			Assert.IsInstanceOf(typeof(DictionaryNodeSenseOptions), testNodeOptions);
+			var senseOptions = (DictionaryNodeSenseOptions)testNodeOptions;
+			Assert.AreEqual("(", senseOptions.BeforeNumber);
+			Assert.AreEqual(") ", senseOptions.AfterNumber);
+			Assert.AreEqual("bold", senseOptions.NumberStyle);
+			Assert.IsTrue(senseOptions.DisplayEachSenseInAParagraph);
+			Assert.IsTrue(senseOptions.NumberEvenASingleSense);
+			Assert.IsTrue(senseOptions.ShowSharedGrammarInfoFirst);
+		}
+
+		[Test]
+		public void Load_LoadsListOptions()
+		{
+			DictionaryConfigurationModel model;
+			using (var modelFile = new TempFile(new[]
+			{
+				XmlOpenTagsThruHeadword, @"
+				<ListTypeOptions list=""variant"">
+					<Option isEnabled=""true"" id=""b0000000-c40e-433e-80b5-31da08771344""/>
+					<Option isEnabled=""true"" id=""024b62c9-93b3-41a0-ab19-587a0030219a""/>
+					<Option isEnabled=""true"" id=""4343b1ef-b54f-4fa4-9998-271319a6d74c""/>
+					<Option isEnabled=""true"" id=""01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c""/>
+					<Option isEnabled=""true"" id=""837ebe72-8c1d-4864-95d9-fa313c499d78""/>
+					<Option isEnabled=""true"" id=""a32f1d1c-4832-46a2-9732-c2276d6547e8""/>
+					<Option isEnabled=""true"" id=""0c4663b3-4d9a-47af-b9a1-c8565d8112ed""/>
+				</ListTypeOptions>",
+				XmlCloseTagsFromHeadword
+			}))
+			{
+				// SUT
+				model = new DictionaryConfigurationModel(modelFile.Path);
+			}
+
+			// The following assertions are based on the specific test data loaded from the file
+			var testNodeOptions = model.Parts[0].Children[0].DictionaryNodeOptions;
+			Assert.IsInstanceOf(typeof(DictionaryNodeListOptions), testNodeOptions);
+			var listOptions = (DictionaryNodeListOptions)testNodeOptions;
+			Assert.AreEqual(DictionaryNodeListOptions.ListIds.Variant, listOptions.ListId);
+			Assert.AreEqual(7, listOptions.Options.Count);
+			Assert.AreEqual(7, listOptions.Options.Count(option => option.IsEnabled));
+			Assert.AreEqual("b0000000-c40e-433e-80b5-31da08771344", listOptions.Options[0].Id);
+		}
+
+		[Test]
+		public void Load_LoadsComplexFormOptions()
+		{
+			DictionaryConfigurationModel model;
+			using (var modelFile = new TempFile(new[]
+			{
+				XmlOpenTagsThruHeadword, @"
+				<ComplexFormOptions list=""complex"" displayEachComplexFormInParagraph=""true"">
+					<Option isEnabled=""true""  id=""a0000000-dd15-4a03-9032-b40faaa9a754""/>
+					<Option isEnabled=""true""  id=""1f6ae209-141a-40db-983c-bee93af0ca3c""/>
+					<Option isEnabled=""true""  id=""73266a3a-48e8-4bd7-8c84-91c730340b7d""/>
+				</ComplexFormOptions>",
+				XmlCloseTagsFromHeadword
+			}))
+			{
+				// SUT
+				model = new DictionaryConfigurationModel(modelFile.Path);
+			}
+
+			// The following assertions are based on the specific test data loaded from the file
+			var testNodeOptions = model.Parts[0].Children[0].DictionaryNodeOptions;
+			Assert.IsInstanceOf(typeof(DictionaryNodeComplexFormOptions), testNodeOptions);
+			var cfOptions = (DictionaryNodeComplexFormOptions)testNodeOptions;
+			Assert.AreEqual(DictionaryNodeListOptions.ListIds.Complex, cfOptions.ListId);
+			Assert.IsTrue(cfOptions.DisplayEachComplexFormInAParagraph);
+			Assert.AreEqual(3, cfOptions.Options.Count);
+			Assert.AreEqual(3, cfOptions.Options.Count(option => option.IsEnabled));
+			Assert.AreEqual("a0000000-dd15-4a03-9032-b40faaa9a754", cfOptions.Options[0].Id);
+		}
+
+		[Test]
+		public void Load_NoListSpecifiedResultsInNone()
+		{
+			DictionaryConfigurationModel model;
+			using (var modelFile = new TempFile(new[]
+			{
+				XmlOpenTagsThruHeadword, @"
+				<ComplexFormOptions displayEachComplexFormInParagraph=""false""/>",
+				XmlCloseTagsFromHeadword
+			}))
+			{
+				// SUT
+				model = new DictionaryConfigurationModel(modelFile.Path);
+			}
+
+			// The following assertions are based on the specific test data loaded from the file
+			var testNodeOptions = model.Parts[0].Children[0].DictionaryNodeOptions;
+			Assert.IsInstanceOf(typeof(DictionaryNodeComplexFormOptions), testNodeOptions);
+			var cfOptions = (DictionaryNodeComplexFormOptions)testNodeOptions;
+			Assert.AreEqual(DictionaryNodeListOptions.ListIds.None, cfOptions.ListId);
+			Assert.That(cfOptions.Options, Is.Null.Or.Empty);
+			Assert.IsFalse(cfOptions.DisplayEachComplexFormInAParagraph);
+		}
+
 		[Test]
 		public void Save_BasicValidatesAgainstSchema()
 		{
@@ -39,11 +236,13 @@ namespace SIL.FieldWorks.XWorks
 		public void Save_ConfigWithOneNodeValidatesAgainstSchema()
 		{
 			var modelFile = Path.GetTempFileName();
-			var oneConfigNode = new ConfigurableDictionaryNode();
-			oneConfigNode.Label = "Main Entry";
-			oneConfigNode.IsEnabled = true;
-			oneConfigNode.Before = "[";
-			oneConfigNode.FieldDescription = "LexEntry";
+			var oneConfigNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				IsEnabled = true,
+				Before = "[",
+				FieldDescription = "LexEntry"
+			};
 
 			var model = new DictionaryConfigurationModel
 			{
@@ -129,16 +328,22 @@ namespace SIL.FieldWorks.XWorks
 		public void Save_ConfigWithReferenceItemValidatesAgainstSchema()
 		{
 			var modelFile = Path.GetTempFileName();
-			var oneConfigNode = new ConfigurableDictionaryNode();
-			oneConfigNode.Label = "Main Entry";
-			oneConfigNode.IsEnabled = true;
-			oneConfigNode.Before = "[";
-			oneConfigNode.FieldDescription = "LexEntry";
+			const string reference = "Reference";
+			var oneConfigNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				IsEnabled = true,
+				Before = "[",
+				FieldDescription = "LexEntry",
+				ReferenceItem = reference
+			};
 
-			var oneRefConfigNode = new ConfigurableDictionaryNode();
-			oneConfigNode.ReferenceItem = "Reference";
-			oneRefConfigNode.Label = "Reference";
-			oneRefConfigNode.FieldDescription = "LexEntry";
+			var oneRefConfigNode = new ConfigurableDictionaryNode
+			{
+				Label = reference,
+				FieldDescription = "LexEntry",
+			};
+
 			var model = new DictionaryConfigurationModel
 			{
 				FilePath = modelFile,
@@ -157,22 +362,23 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void Save_ConfigWithWritingSystemOptionValidatesAgainstSchema()
+		public void Save_ConfigWithWritingSystemOptionsValidatesAgainstSchema()
 		{
 			var modelFile = Path.GetTempFileName();
-			var oneConfigNode = new ConfigurableDictionaryNode();
-			oneConfigNode.Label = "Main Entry";
-			oneConfigNode.IsEnabled = true;
-			oneConfigNode.Before = "[";
-			oneConfigNode.FieldDescription = "LexEntry";
-
-			oneConfigNode.DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
-																{
-																	Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-																	{
-																		new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = false }
-																	}
-																};
+			var oneConfigNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				IsEnabled = true,
+				Before = "[",
+				FieldDescription = "LexEntry",
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+				{
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					{
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = false }
+					}
+				}
+			};
 
 			var model = new DictionaryConfigurationModel
 			{
@@ -187,6 +393,102 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 1);
 			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/WritingSystemOptions", 1);
 			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/WritingSystemOptions/Option", 1);
+		}
+
+		[Test]
+		public void Save_ConfigWithSenseOptionsValidatesAgainstSchema()
+		{
+			var modelFile = Path.GetTempFileName();
+			var oneConfigNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				IsEnabled = true,
+				Before = "[",
+				FieldDescription = "LexEntry",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions()
+			};
+
+			var model = new DictionaryConfigurationModel
+			{
+				FilePath = modelFile,
+				Version = 0,
+				Label = "root",
+				Parts = new List<ConfigurableDictionaryNode> { oneConfigNode }
+			};
+			//SUT
+			model.Save();
+			ValidateAgainstSchema(modelFile);
+			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 1);
+			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/SenseOptions", 1);
+		}
+
+		[Test]
+		public void Save_ConfigWithListOptionsValidatesAgainstSchema()
+		{
+			var modelFile = Path.GetTempFileName();
+			var oneConfigNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				IsEnabled = true,
+				Before = "[",
+				FieldDescription = "LexEntry",
+				DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Entry,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					{
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id = "1f6ae209-141a-40db-983c-bee93af0ca3c", IsEnabled = false }
+					}
+				}
+			};
+
+			var model = new DictionaryConfigurationModel
+			{
+				FilePath = modelFile,
+				Version = 0,
+				Label = "root",
+				Parts = new List<ConfigurableDictionaryNode> { oneConfigNode }
+			};
+			//SUT
+			model.Save();
+			ValidateAgainstSchema(modelFile);
+			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 1);
+			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/ListTypeOptions", 1);
+			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/ListTypeOptions/Option", 1);
+		}
+
+		[Test]
+		public void Save_ConfigWithComplexFormOptionsValidatesAgainstSchema()
+		{
+			var modelFile = Path.GetTempFileName();
+			var oneConfigNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				IsEnabled = true,
+				Before = "[",
+				FieldDescription = "LexEntry",
+				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions
+				{
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					{
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id = "1f6ae209-141a-40db-983c-bee93af0ca3c", IsEnabled = false }
+					}
+				}
+			};
+
+			var model = new DictionaryConfigurationModel
+			{
+				FilePath = modelFile,
+				Version = 0,
+				Label = "root",
+				Parts = new List<ConfigurableDictionaryNode> { oneConfigNode }
+			};
+			//SUT
+			model.Save();
+			ValidateAgainstSchema(modelFile);
+			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 1);
+			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/ComplexFormOptions", 1);
+			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/ComplexFormOptions/Option", 1);
 		}
 
 		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",

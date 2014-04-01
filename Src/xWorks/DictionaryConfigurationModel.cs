@@ -19,14 +19,14 @@ namespace SIL.FieldWorks.XWorks
 		/// Trees of dictionary elements
 		/// </summary>
 		[XmlElement(ElementName = "ConfigurationItem")]
-		public List<ConfigurableDictionaryNode> Parts;
+		public List<ConfigurableDictionaryNode> Parts { get; set; }
 
 		/// <summary>
 		/// Trees of shared dictionary elements
 		/// </summary>
 		[XmlArray(ElementName = "SharedItems")]
 		[XmlArrayItem("ConfigurationItem", typeof(ConfigurableDictionaryNode))]
-		public List<ConfigurableDictionaryNode> SharedItems;
+		public List<ConfigurableDictionaryNode> SharedItems { get; set; }
 
 		/// <summary>
 		/// File where data is stored
@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Name of this dictionary configuration. eg "Stem-based"
 		/// </summary>
 		[XmlAttribute(AttributeName = "name")]
-		public string Label;
+		public string Label { get; set; }
 
 		[XmlAttribute(AttributeName = "lastModified", DataType = "date")]
 		public DateTime LastModified { get; set; }
@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.XWorks
 		/// The version of the DictionaryConfigurationModel for use in data migration ect.
 		/// </summary>
 		[XmlAttribute(AttributeName = "version")]
-		public int Version;
+		public int Version { get; set; }
 
 		/// <summary></summary>
 		public void Save()

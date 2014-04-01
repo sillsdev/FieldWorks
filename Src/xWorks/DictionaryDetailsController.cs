@@ -278,9 +278,14 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if ("Subentries".Equals(m_node.FieldDescription) && "Subentries".Equals(m_node.Parent.FieldDescription))
 			{
-				// REVIEW (Hasso) 2014.02: Styles were hidden for subsubentries in the old dialog.  Is this still what we want?
-				// Subsubentries have no unique style
+				// Subsubentries inherit everything except context from Subentries.  We doubt users will even have Subsubentries.
 				View.StylesVisible = false;
+			}
+
+			if (listOptions.ListId == DictionaryNodeListOptions.ListIds.Complex ||
+				listOptions.ListId == DictionaryNodeListOptions.ListIds.Minor)
+			{
+				View.SetStyles(m_paraStyles, m_node.Style, true);
 			}
 
 			var listOptionsView = new ListOptionsView();
@@ -294,14 +299,17 @@ namespace SIL.FieldWorks.XWorks
 				listOptionsView.CheckBoxVisible = false;
 			}
 
-			if (listOptions.Options != null)
+			// TODO pH 2014.03: test the following cases: Options =!= null, ListId =!= null
+			if (listOptions.ListId == DictionaryNodeListOptions.ListIds.None)
 			{
-				// TODO pH 2014.02: find list label
-				// TODO: populate list
+				listOptionsView.ListViewVisible = false;
 			}
 			else
 			{
-				listOptionsView.ListViewVisible = false;
+				listOptions.Options = listOptions.Options ?? new List<DictionaryNodeListOptions.DictionaryNodeOption>();
+
+				// TODO pH 2014.02: find list label
+				// TODO: populate list
 			}
 
 			View.OptionsView = listOptionsView;
@@ -310,11 +318,14 @@ namespace SIL.FieldWorks.XWorks
 		private void LoadComplexFormOptions(DictionaryNodeComplexFormOptions complexFormOptions, ListOptionsView listOptionsView)
 		{
 			listOptionsView.CheckBoxLabel = xWorksStrings.ksDisplayComplexFormsInParagraphs;
+			listOptionsView.CheckBoxChecked = complexFormOptions.DisplayEachComplexFormInAParagraph;
+			ToggleViewForShowInPara(complexFormOptions.DisplayEachComplexFormInAParagraph);
+
 			listOptionsView.CheckBoxChanged += (sender, e) =>
 			{
 				complexFormOptions.DisplayEachComplexFormInAParagraph = listOptionsView.CheckBoxChecked;
+				ToggleViewForShowInPara(complexFormOptions.DisplayEachComplexFormInAParagraph);
 			};
-			View.SetStyles(m_paraStyles, m_node.Style, true);
 		}
 
 		#region Load more-static parts
