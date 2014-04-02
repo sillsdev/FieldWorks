@@ -959,6 +959,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
+		/// Convenience accessor for the owned sequence of Senses
+		/// </summary>
+		public IFdoOwningSequence<ILexSense> Senses { get { return SensesOS; } }
+
+		/// <summary>
 		/// Initialize the DateCreated and DateModified values in the constructor.
 		/// </summary>
 		partial void SetDefaultValuesInConstruction()

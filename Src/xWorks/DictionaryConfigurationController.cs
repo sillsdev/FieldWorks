@@ -539,7 +539,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="metaDataCache"></param>
 		/// <param name="fieldName"></param>
 		/// <returns></returns>
-		private static string GetClassNameForTargetType(int fieldType,
+		public static string GetClassNameForTargetType(int fieldType,
 																		string lookupClass,
 																		string fieldName,
 																		IFwMetaDataCacheManaged metaDataCache)

@@ -1254,8 +1254,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			switch (wsMagic)
 			{
 				case kwsAnals:
+				case kwsAnal:
 					return AnalysisWss(cache, fIncludeUncheckedActiveWss);
 				case kwsVerns:
+				case kwsVern:
 					return VernWss(cache, fIncludeUncheckedActiveWss);
 				case kwsAnalVerns:
 					return AnalysisVernacularWss(cache, fIncludeUncheckedActiveWss);

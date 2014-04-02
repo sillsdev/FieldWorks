@@ -246,6 +246,7 @@
     <Compile Include="BulkEditBarTests.cs">
     </Compile>
     <Compile Include="ConfigurableDictionaryNodeTests.cs" />
+    <Compile Include="ConfiguredXHTMLGeneratorTests.cs" />
     <Compile Include="CustomListDlgTests.cs">
       <SubType>Form</SubType>
     </Compile>
