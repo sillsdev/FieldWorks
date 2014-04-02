@@ -91,14 +91,33 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private static string MakeEmptyFooDictionary()
 		{
+			return MakeEmptyDictionary("foo");
+		}
+
+		private static string MakeEmptyDictionary(string dictId)
+		{
 			Directory.CreateDirectory(SpellingHelper.GetSpellingDirectoryPath());
-			var dictId = "foo";
 			var filePath = SpellingHelper.GetDicPath(SpellingHelper.GetSpellingDirectoryPath(), dictId);
+			// We must delete this FIRST, because we can't get the correct name for the affix file once we delete the main dictionary one.
+			File.Delete(SpellingHelper.GetExceptionFileName(filePath));
 			File.Delete(filePath);
 			File.Delete(Path.ChangeExtension(filePath, ".aff"));
-			File.Delete(Path.ChangeExtension(filePath, ".exc"));
 			SpellingHelper.EnsureDictionary(dictId);
 			return dictId;
+		}
+
+		/// <summary>
+		/// Check that non-ascii text in path to dictionary works.
+		/// </summary>
+		[Test]
+		public void DictionaryCanHaveNonAsciId()
+		{
+			var dictId = MakeEmptyDictionary("ab\x1234\x3456");
+			var dict = SpellingHelper.GetSpellChecker(dictId);
+			Assert.That(dict.Check("nonsense"), Is.False);
+			Assert.That(dict.Check("big"), Is.False);
+			dict.SetStatus("big", true);
+			Assert.That(dict.Check("big"), Is.True);
 		}
 
 		/// <summary>
