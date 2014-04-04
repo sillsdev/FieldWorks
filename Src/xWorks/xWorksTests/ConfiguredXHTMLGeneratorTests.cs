@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
 using NUnit.Framework;
@@ -297,6 +298,143 @@ namespace SIL.FieldWorks.XWorks
 				const string headwordThatShouldNotBe = "//span[@class='gloss']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(sensesThatShouldNotBe, 0);
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(headwordThatShouldNotBe, 0);
+			}
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_MakesSpanForRA()
+		{
+			var gramInfoNode = new ConfigurableDictionaryNode()
+			{
+				FieldDescription = "MorphoSyntaxAnalysisRA",
+				IsEnabled = true
+			};
+			var sensesNode = new ConfigurableDictionaryNode()
+			{
+				FieldDescription = "Senses",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { gramInfoNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { sensesNode },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			var entry = CreateInterestingLexEntry();
+
+			var sense = entry.SensesOS.First();
+
+			var msa = Cache.ServiceLocator.GetInstance<IMoInflAffMsaFactory>().Create();
+			entry.MorphoSyntaxAnalysesOC.Add(msa);
+			sense.MorphoSyntaxAnalysisRA = msa;
+
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				// SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, XHTMLWriter, Cache));
+				XHTMLWriter.Flush();
+				var gramInfoPath = "/div[@class='entry']/span[@class='senses']/span[@class='sense']/span[@class='morphosyntaxanalysis']";
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(gramInfoPath, 1);
+			}
+		}
+
+		/// <summary>
+		/// If the dictionary configuration specifies to export grammatical info, but there is no such grammatical info object to export, don't write a span.
+		/// </summary>
+		[Test]
+		public void GenerateXHTMLForEntry_DoesNotMakeSpanForRAIfNoData()
+		{
+			var gramInfoNode = new ConfigurableDictionaryNode()
+			{
+				FieldDescription = "MorphoSyntaxAnalysisRA",
+				IsEnabled = true
+			};
+			var sensesNode = new ConfigurableDictionaryNode()
+			{
+				FieldDescription = "Senses",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { gramInfoNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { sensesNode },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			var entry = CreateInterestingLexEntry();
+
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				// SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, XHTMLWriter, Cache));
+				XHTMLWriter.Flush();
+				var gramInfoPath = "/div[@class='entry']/span[@class='senses']/span[@class='sense']/span[@class='morphosyntaxanalysis']";
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(gramInfoPath, 0);
+			}
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_SupportsGramAbbrChildOfMSARA()
+		{
+			var gramAbbrNode = new ConfigurableDictionaryNode()
+			{
+				FieldDescription = "InterlinearAbbrTSS",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var gramNameNode = new ConfigurableDictionaryNode()
+			{
+				FieldDescription = "InterlinearNameTSS",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var gramInfoNode = new ConfigurableDictionaryNode()
+			{
+				FieldDescription = "MorphoSyntaxAnalysisRA",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode>{gramAbbrNode,gramNameNode}
+			};
+			var sensesNode = new ConfigurableDictionaryNode()
+			{
+				FieldDescription = "Senses",
+				IsEnabled = true,
+				Children=new List<ConfigurableDictionaryNode>{gramInfoNode}
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { sensesNode },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
+			var entry = CreateInterestingLexEntry();
+
+			ILangProject lp = Cache.LangProject;
+
+			IFdoOwningSequence<ICmPossibility> posSeq = lp.PartsOfSpeechOA.PossibilitiesOS;
+			IPartOfSpeech pos = Cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create();
+			posSeq.Add(pos);
+
+			var sense = entry.SensesOS.First();
+
+			var msa = Cache.ServiceLocator.GetInstance<IMoInflAffMsaFactory>().Create();
+			entry.MorphoSyntaxAnalysesOC.Add(msa);
+			sense.MorphoSyntaxAnalysisRA = msa;
+
+			msa.PartOfSpeechRA = pos;
+			msa.PartOfSpeechRA.Abbreviation.set_String(wsFr,"Blah");
+
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				// SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, XHTMLWriter, Cache));
+				XHTMLWriter.Flush();
+
+				var gramAbbr = "/div[@class='entry']/span[@class='senses']/span[@class='sense']/span[@class='morphosyntaxanalysis']/span[@class='interlinearabbrtss' and @lang='fr' and text()='Blah:Any']";
+				var gramName = "/div[@class='entry']/span[@class='senses']/span[@class='sense']/span[@class='morphosyntaxanalysis']/span[@class='interlinearnametss' and @lang='fr' and text()='Blah:Any']";
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(gramAbbr, 1);
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(gramName, 1);
 			}
 		}
 

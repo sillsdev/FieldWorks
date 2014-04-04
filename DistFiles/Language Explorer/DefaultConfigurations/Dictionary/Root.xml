@@ -161,7 +161,9 @@
         <ConfigurationItem name="Senses" between="  " after=" " isEnabled="true" field="Senses">
             <SenseOptions displayEachSenseInParagraph="false" senseParaStyle="Dictionary-Sense" numberStyle="bold" numberBefore="" numberAfter=") " numberingStyle="%O" numberFont="" numberSingleSense="false" showSingleGramInfoFirst="true"/>
             <ConfigurationItem name="Grammatical Info." after=" " style="Dictionary-Contrasting" isEnabled="true" field="MorphoSyntaxAnalysisRA">
-                <ConfigurationItem name="Category Info." between=" " after=" " isEnabled="true" field="MLPartOfSpeech">
+				<ConfigurationItem name="Gram Info (Name)" between=" " after=" " isEnabled="false" field="InterlinearNameTSS"/>
+				<ConfigurationItem name="Gram Info (Abbrev)" between=" " after=" " isEnabled="false" field="InterlinearAbbrTSS"/>
+				<ConfigurationItem name="Category Info." between=" " after=" " isEnabled="true" field="MLPartOfSpeech">
                     <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
                         <Option id="analysis" isEnabled="true"/>
                     </WritingSystemOptions>
@@ -779,6 +781,8 @@
 			<ConfigurationItem name="Senses" between="  " after=" " isEnabled="true" field="Senses">
 				<SenseOptions displayEachSenseInParagraph="false" senseParaStyle="Dictionary-Sense" numberStyle="bold" numberBefore="" numberAfter=") " numberingStyle="%O" numberFont="" numberSingleSense="false" showSingleGramInfoFirst="true"/>
 				<ConfigurationItem name="Grammatical Info." after=" " style="Dictionary-Contrasting" isEnabled="true" field="MorphoSyntaxAnalysis">
+					<ConfigurationItem name="Gram Info (Name)" between=" " after=" " isEnabled="false" field="InterlinearNameTSS"/>
+					<ConfigurationItem name="Gram Info (Abbrev)" between=" " after=" " isEnabled="false" field="InterlinearAbbrTSS"/>
 					<ConfigurationItem name="Category Info." between=" " after=" " isEnabled="true" field="MLPartOfSpeech">
 						<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 							<Option id="analysis" isEnabled="true"/>
@@ -1522,7 +1526,9 @@
         <ConfigurationItem name="Senses" between="  " after=" " isEnabled="true" field="Senses">
             <SenseOptions displayEachSenseInParagraph="false" senseParaStyle="Dictionary-Sense" numberStyle="bold" numberBefore="" numberAfter=") " numberingStyle="%O" numberFont="" numberSingleSense="false" showSingleGramInfoFirst="true"/>
             <ConfigurationItem name="Grammatical Info." after=" " style="Dictionary-Contrasting" isEnabled="true" field="MorphoSyntaxAnalysis">
-                <ConfigurationItem name="Category Info." between=" " after=" " isEnabled="true" field="MLPartOfSpeech">
+				<ConfigurationItem name="Gram Info (Name)" between=" " after=" " isEnabled="false" field="InterlinearNameTSS"/>
+				<ConfigurationItem name="Gram Info (Abbrev)" between=" " after=" " isEnabled="false" field="InterlinearAbbrTSS"/>
+				<ConfigurationItem name="Category Info." between=" " after=" " isEnabled="true" field="MLPartOfSpeech">
                     <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
                         <Option id="analysis" isEnabled="true"/>
                     </WritingSystemOptions>

@@ -96,6 +96,13 @@ namespace SIL.FieldWorks.XWorks
 				}
 				return;
 			}
+
+			if (propertyValue is ICmObject)
+			{
+				GenerateXHTMLForICmObject(propertyValue as ICmObject, config, writer, cache);
+				return;
+			}
+
 			GenerateXHTMLForValue(propertyValue, config, writer, cache);
 			if(config.Children != null)
 			{
@@ -146,6 +153,33 @@ namespace SIL.FieldWorks.XWorks
 				}
 				writer.WriteEndElement();
 			}
+			writer.WriteEndElement();
+		}
+
+		private static void GenerateXHTMLForICmObject(ICmObject propertyValue, ConfigurableDictionaryNode config, XmlWriter writer, FdoCache cache)
+		{
+			// Don't export if there is no such data
+			if (propertyValue == null)
+				return;
+
+			writer.WriteStartElement("span");
+			// Trim trailing "RA".
+			var fieldDescription = config.FieldDescription.ToLower();
+			if (fieldDescription.EndsWith("ra"))
+				fieldDescription = fieldDescription.Remove(fieldDescription.Length - 2);
+			writer.WriteAttributeString("class", fieldDescription);
+
+			if (config.Children != null)
+			{
+				foreach (var child in config.Children)
+				{
+					if (child.IsEnabled)
+					{
+						ConfiguredXHTMLGenerator.GenerateXHTMLForFieldByReflection(propertyValue, child, writer, cache);
+					}
+				}
+			}
+
 			writer.WriteEndElement();
 		}
 
