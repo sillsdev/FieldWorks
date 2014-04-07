@@ -576,6 +576,8 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 	[TestFixture]
 	public sealed class XMLTests : PersistingBackendProviderTestBase
 	{
+		private const string kClosingTag = "</languageproject>";
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Override to create and load a very basic cache.
@@ -729,6 +731,42 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 				Assert.That(xmlBep.ListOfDuplicateGuids.Contains("a4a759b4-5a10-4d7a-80a3-accf5bd840b1, classname: PartOfSpeech"), "The guid a4a759b4-5a10-4d7a-80a3-accf5bd840b1 should have been found as a duplicate.");
 				Assert.That(xmlBep.ListOfDuplicateGuids.Contains("a5311f3b-ff98-47d2-8ece-b1aca03a8bbd, classname: PartOfSpeech"), "The guid a5311f3b-ff98-47d2-8ece-b1aca03a8bbd should have been found as a duplicate.");
 				Assert.That(xmlBep.ListOfDuplicateGuids.Contains("f1ac9eab-5f8c-41cf-b234-e53405aaaac5, classname: PartOfSpeech"), "The guid f1ac9eab-5f8c-41cf-b234-e53405aaaac5 should have been found as a duplicate.");
+			}
+		}
+
+		/// <summary>
+		/// Tests that we successfully handle a closing tag which spans the buffer boundary.
+		/// </summary>
+		[Test]
+		public void ClosingTagSpansBufferTest()
+		{
+			int numCharsInClosingTag = kClosingTag.Length;
+			string testDataPath = Path.Combine(DirectoryFinder.FwSourceDirectory, "FDO/FDOTests/TestData", "ClosingTagSpansBuffer.fwdata");
+			var numCharsInFile = (int) new FileInfo(testDataPath).Length;
+
+			// Try each edge case
+			int bufferSize = numCharsInFile - numCharsInClosingTag;
+			Assert.DoesNotThrow(() => RunElementReaderWithSpecifiedBufferSize(testDataPath, bufferSize),
+				"Final buffer starts with beginning of closing tag - edge case not handled");
+
+			bufferSize = numCharsInFile - numCharsInClosingTag + 1;
+			Assert.DoesNotThrow(() => RunElementReaderWithSpecifiedBufferSize(testDataPath, bufferSize),
+				"Penultimate buffer ends with beginning of closing tag - edge case not handled");
+
+			bufferSize = numCharsInFile - 1;
+			Assert.DoesNotThrow(() => RunElementReaderWithSpecifiedBufferSize(testDataPath, bufferSize),
+				"Final buffer starts with end of closing tag - edge case not handled");
+
+			bufferSize = numCharsInFile;
+			Assert.DoesNotThrow(() => RunElementReaderWithSpecifiedBufferSize(testDataPath, bufferSize),
+				"Penultimate buffer ends with end of closing tag - edge case not handled");
+		}
+
+		private void RunElementReaderWithSpecifiedBufferSize(string projPath, int bufferSize)
+		{
+			using (var er = new ElementReader("<rt ", kClosingTag, projPath, bytes => { }, bufferSize))
+			{
+				er.Run();
 			}
 		}
 	}
