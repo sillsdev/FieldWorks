@@ -1518,6 +1518,13 @@ namespace SIL.FieldWorks.FDO
 		/// <param name="sandboxMsa"></param>
 		/// <returns></returns>
 		IMoMorphSynAnalysis UpdateOrReplace(SandboxGenericMSA sandboxMsa);
+
+		/// <summary>
+		/// True if the MSA can safely be deleted once the given sense has been deleted
+		/// </summary>
+		/// <param name="lexSense"></param>
+		/// <returns></returns>
+		bool CanDeleteIfSenseDeleted(ILexSense lexSense);
 	}
 
 	/// <summary>
