@@ -437,7 +437,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				w.Write("<span lang=\"{0}\"", MakeSafeAndNormalizedAttribute(sLang));
 				if (!String.IsNullOrEmpty(style))
 					w.Write(" class=\"{0}\"", MakeSafeAndNormalizedAttribute(style));
-				w.Write(">{0}</span>", tss.get_RunText(irun));
+				w.Write(">{0}</span>", MakeSafeAndNormalizedXml(tss.get_RunText(irun)));
 			}
 		}
 

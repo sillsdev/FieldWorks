@@ -13,6 +13,8 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using NUnit.Framework;
+using Palaso.IO;
+using Palaso.Lift.Validation;
 using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -511,6 +513,19 @@ namespace LexTextControlsTests
 			CreatePublicationsList();
 
 			AddLexEntries();
+			CreateDirectoryForTest();
+		}
+
+		private void CreateDirectoryForTest()
+		{
+			LiftFolder = Path.Combine(Path.GetTempPath(), Path.Combine("LiftExportTests", Path.GetRandomFileName()));
+			Directory.CreateDirectory(LiftFolder);
+		}
+
+		private void DestroyTestDirectory()
+		{
+			if(Directory.Exists(LiftFolder))
+				Directory.Delete(LiftFolder, true);
 		}
 
 		private void CreatePartsOfSpeechPossibilityList()
@@ -941,6 +956,19 @@ namespace LexTextControlsTests
 			m_cache.DomainDataByFlid.SetMultiStringAlt(hvo, fd.Id, m_cache.DefaultVernWs, tss);
 		}
 
+		private void AddCustomFieldMultiParaText(FieldDescription fd, int hvo)
+		{
+			var text = m_cache.ServiceLocator.GetInstance<ITextFactory>().Create();
+			var stText = m_cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
+			m_cache.LangProject.Texts.Add(text);
+			text.ContentsOA = stText;
+			var para = stText.AddNewTextPara("normal");
+			var seg = m_cache.ServiceLocator.GetInstance<ISegmentFactory>().Create();
+			para.Contents =
+				m_cache.TsStrFactory.MakeString("MultiString Analysis ws string & ampersand check", m_cache.DefaultAnalWs);
+			m_cache.DomainDataByFlid.SetObjProp(hvo, fd.Id, stText.Hvo);
+		}
+
 		private void AddCustomFieldInAllomorph()
 		{
 			//Create Allomorph
@@ -1016,6 +1044,7 @@ namespace LexTextControlsTests
 			m_cache = null;
 			m_ThreadHelper.Dispose();
 			m_ThreadHelper = null;
+			DestroyTestDirectory();
 		}
 
 		#endregion
@@ -1031,9 +1060,6 @@ namespace LexTextControlsTests
 		public void LiftExport()
 		{
 			var exporter = new LiftExporter(m_cache);
-			LiftFolder = Path.Combine(Path.GetTempPath(), "xxyyTestLIFTExport");
-			if (Directory.Exists(LiftFolder))
-				Directory.Delete(LiftFolder, true);
 			var xdoc = new XmlDocument();
 			using (TextWriter w = new StringWriter())
 			{
@@ -1050,6 +1076,28 @@ namespace LexTextControlsTests
 				xdocRangeFile.LoadXml(w.ToString());
 			}
 			VerifyExportRanges(xdocRangeFile);
+		}
+
+		[Test]
+		public void LiftExport_MultiParagraphWithAmpersandExports()
+		{
+			using(var uowhelper = new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor, "undothis"))
+			{
+				var fd = MakeCustomField("MultiParaOnLexEntry", LexEntryTags.kClassId,
+									 WritingSystemServices.kwsVernAnals, CustomFieldType.MultiparagraphText, Guid.Empty);
+				m_customFieldEntryIds.Add(fd.Id);
+				AddCustomFieldMultiParaText(fd, m_entryTest.Hvo);
+				var exporter = new LiftExporter(m_cache);
+				var xdoc = new XmlDocument();
+				var liftFilePath = Path.Combine(LiftFolder, "test.lift");
+				using(var liftFile = File.Create(liftFilePath))
+				using(TextWriter w = new StreamWriter(liftFile))
+				{
+					exporter.ExportPicturesAndMedia = false;
+					exporter.ExportLift(w, LiftFolder);
+				}
+				Assert.DoesNotThrow(() => Validator.CheckLiftWithPossibleThrow(liftFilePath));
+			}
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
@@ -1792,9 +1840,6 @@ namespace LexTextControlsTests
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, AddStTextCustomFieldAndData);
 
 			var exporter = new LiftExporter(m_cache);
-			LiftFolder = Path.Combine(Path.GetTempPath(), "xxyyTestLIFTExport");
-			if (Directory.Exists(LiftFolder))
-				Directory.Delete(LiftFolder, true);
 			var xdoc = new XmlDocument();
 			xdoc.PreserveWhitespace = true;
 			using (TextWriter w = new StringWriter())
