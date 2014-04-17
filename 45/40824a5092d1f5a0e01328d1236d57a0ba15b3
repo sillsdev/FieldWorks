@@ -1,0 +1,9 @@
+Verified+1: Jenkins CI <jenkins@sil.org>
+Verified-Linux+1: Jenkins CI <jenkins@sil.org>
+Code-Review+2: Andy Black <blackhandrew@gmail.com>
+Code-Review-1: Damien Daspit <damien_daspit@sil.org>
+Submitted-by: Automatic Submission <gerrit@sil.org>
+Submitted-at: Thu, 17 Apr 2014 20:05:21 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/1895
+Project: FieldWorks
+Branch: refs/heads/develop
