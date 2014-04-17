@@ -246,6 +246,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			IWfiAnalysis waBankBrook = null;
 			IMoForm baank = null;
 			IMoForm baaank = null;
+			IMoForm originalMbBankBrook = null;
 
 			UndoableUnitOfWorkHelper.Do("undoit", "doit", Cache.ActionHandlerAccessor,
 				() =>
@@ -286,6 +287,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 					waBankStream.MorphBundlesOS[0].MorphRA = baank;
 					waBankBrook = MakeAnalysis(wfBank, bankBrook);
 					waBankBrook.MorphBundlesOS[0].MorphRA = baaank;
+					originalMbBankBrook = baaank;
 
 					bankNSource.CitationForm.VernacularDefaultWritingSystem = MakeVernString("cf");
 					bankNSource.Bibliography.AnalysisDefaultWritingSystem = MakeAnalysisString("biblio");
@@ -329,8 +331,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			var mbBankBrook = waBankBrook.MorphBundlesOS[0];
 			Assert.That(mbBankBrook.MsaRA, Is.EqualTo(msaNewNoun), "The MSA for the brook analysis should be the new one");
-			// The allomorph doesn't exist in the target entry, so fail over to the lexeme form
-			Assert.That(mbBankBrook.MorphRA, Is.EqualTo(targetEntry.LexemeFormOA), "The morph for the brook analysis should be the target lexeme form");
+			CollectionAssert.Contains(targetEntry.AlternateFormsOS, mbBankBrook.MorphRA, "The allomorph is not present in the new entry.");
+			Assert.AreEqual(originalMbBankBrook.GetType(), mbBankBrook.MorphRA.GetType(), "The allomorph in the new entry isn't the same type as the original");
+			Assert.AreEqual(originalMbBankBrook.GetFormWithMarkers(GetVernWs(0)),
+								 mbBankBrook.MorphRA.GetFormWithMarkers(GetVernWs(0)),
+								 "The allomorph in the new entry doesn't have the same form as the original");
 		}
 
 		IWfiWordform MakeWordform(string form)

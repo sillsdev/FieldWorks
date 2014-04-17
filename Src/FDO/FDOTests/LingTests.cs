@@ -1713,6 +1713,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			Assert.AreEqual(2, le.SensesOS.Count, "Two Senses not created.");
 			Assert.AreEqual(2, le.MorphoSyntaxAnalysesOC.Count, "Two Msas not created.");
 			var msa2 = le.MorphoSyntaxAnalysesOC.ToArray()[1];
+			//SUT
 			le.SensesOS.Remove(ls2);
 			Assert.AreEqual(1, le.MorphoSyntaxAnalysesOC.Count, "Msa not deleted.");
 			Assert.AreEqual((int)SpecialHVOValues.kHvoObjectDeleted, msa2.Hvo, "Msa not with correct hvo.");

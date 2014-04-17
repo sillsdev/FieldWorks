@@ -1586,37 +1586,46 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					var mb = source as WfiMorphBundle;
 					if (mb == null || mb.MorphRA == null)
 						continue;
-					if (mb.MorphRA == leSource.LexemeFormOA)
+					if (leSource.LexemeFormOA == mb.MorphRA || leSource.AlternateFormsOS.Contains(mb.MorphRA))
 					{
-						mb.MorphRA = leTarget.LexemeFormOA;
+						IMoForm sourceAllomorph = mb.MorphRA;
+						mb.MorphRA = null;
+						foreach(IMoForm targetAllomorph in leTarget.AllAllomorphs)
+						{
+							if(IsMatchingAllomorph(sourceAllomorph, targetAllomorph))
+							{
+								mb.MorphRA = targetAllomorph;
+								break;
+							}
+						}
+						// The failover case is to create a matching allomorph in the target entry
+						if(mb.MorphRA == null)
+						{
+							mb.MorphRA = CreateMatchingAllomorphInTargetEntry(leTarget, sourceAllomorph);
+						}
 					}
-					else // point to the corresponding allomorph
+					else
 					{
-						//if the referringObject is a variant then index will be -1
-						var index = leSource.AlternateFormsOS.IndexOf(mb.MorphRA);
-						if (index >= 0)
-						{
-							IMoForm sourceAllomorph = mb.MorphRA;
-							// The failover case is to use the lexeme form
-							mb.MorphRA = leTarget.LexemeFormOA;
-							foreach(IMoForm targetAllomorph in leTarget.AlternateFormsOS)
-								if (IsMatchingAllomorph(sourceAllomorph, targetAllomorph))
-								{
-									mb.MorphRA = targetAllomorph;
-									break;
-								}
-						}
-						else
-						{
-							//Clear out the morph bundle where the morph was pointing to a variant
-							//that references the old entry which no longer holds this sense.
-							mb.MorphRA = null;
-							mb.MsaRA = null;
-							mb.SenseRA = null;
-						}
+						//Clear out the morph bundle where the morph was pointing to a variant
+						//that references the old entry which no longer holds this sense.
+						mb.MorphRA = null;
+						mb.MsaRA = null;
+						mb.SenseRA = null;
 					}
 				}
 			}
+		}
+
+		internal static IMoForm CreateMatchingAllomorphInTargetEntry(ILexEntry leTarget, IMoForm sourceAllomorph)
+		{
+			IMoForm newForm = null;
+			CopyObject<IMoForm>.CloneFdoObject(sourceAllomorph,
+														  created =>
+															{
+																leTarget.AlternateFormsOS.Add(created);
+																newForm = created;
+															});
+			return newForm;
 		}
 
 		/// <summary>
@@ -4511,14 +4520,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				var tisb = TsIncStrBldrClass.Create();
-				tisb.SetIntPropValues((int) FwTextPropType.ktptEditable,
+				var deleteTextTssBuilder = TsIncStrBldrClass.Create();
+				deleteTextTssBuilder.SetIntPropValues((int) FwTextPropType.ktptEditable,
 					(int) FwTextPropVar.ktpvEnum,
 					(int) TptEditable.ktptNotEditable);
 				var userWs = m_cache.WritingSystemFactory.UserWs;
-				tisb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, userWs);
-				tisb.Append(String.Format(Strings.ksDeleteLexSense, " "));
-				tisb.AppendTsString(ShortNameTSS);
+				deleteTextTssBuilder.SetIntPropValues((int) FwTextPropType.ktptWs, 0, userWs);
+				deleteTextTssBuilder.Append(String.Format(Strings.ksDeleteLexSense, " "));
+				deleteTextTssBuilder.AppendTsString(ShortNameTSS);
 
 				var lmeCount = 0;
 				var lseCount = 0;
@@ -4561,76 +4570,76 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				var wantMsaWarningLine = true;
 				if (mbCount > 0)
 				{
-					tisb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, userWs);
-					tisb.Append(warningMsg);
-					tisb.Append(StringUtils.kChHardLB.ToString(CultureInfo.InvariantCulture));
+					deleteTextTssBuilder.SetIntPropValues((int) FwTextPropType.ktptWs, 0, userWs);
+					deleteTextTssBuilder.Append(warningMsg);
+					deleteTextTssBuilder.Append(StringUtils.kChHardLB.ToString(CultureInfo.InvariantCulture));
 					if (mbCount > 1)
-						tisb.Append(String.Format(Strings.ksIsUsedXTimesInAnalyses, cnt++, mbCount));
+						deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedXTimesInAnalyses, cnt++, mbCount));
 					else
-						tisb.Append(String.Format(Strings.ksIsUsedOnceInAnalyses, cnt++));
+						deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedOnceInAnalyses, cnt++));
 					wantMainWarningLine = false;
 				}
 				if (textCount > 0)
 				{
-					tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
+					deleteTextTssBuilder.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 					if (wantMainWarningLine)
-						tisb.Append(warningMsg);
-					tisb.Append(StringUtils.kChHardLB.ToString(CultureInfo.InvariantCulture));
+						deleteTextTssBuilder.Append(warningMsg);
+					deleteTextTssBuilder.Append(StringUtils.kChHardLB.ToString(CultureInfo.InvariantCulture));
 					if (textCount > 1)
-						tisb.Append(String.Format(Strings.ksIsUsedXTimesInTexts, cnt++, textCount));
+						deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedXTimesInTexts, cnt++, textCount));
 					else
-						tisb.Append(String.Format(Strings.ksIsUsedOnceInTexts, cnt++));
+						deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedOnceInTexts, cnt++));
 					wantMainWarningLine = false;
 				}
 				if (lmeCount > 0)
 				{
-					tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
+					deleteTextTssBuilder.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 					if (wantMainWarningLine)
-						tisb.Append(warningMsg);
-					tisb.Append(StringUtils.kChHardLB.ToString(CultureInfo.InvariantCulture));
+						deleteTextTssBuilder.Append(warningMsg);
+					deleteTextTssBuilder.Append(StringUtils.kChHardLB.ToString(CultureInfo.InvariantCulture));
 					if (lmeCount > 1)
-						tisb.Append(String.Format(Strings.ksIsUsedXTimesByEntries, cnt++, lmeCount));
+						deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedXTimesByEntries, cnt++, lmeCount));
 					else
-						tisb.Append(String.Format(Strings.ksIsUsedOnceByEntries, cnt++));
+						deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedOnceByEntries, cnt++));
 					wantMainWarningLine = false;
 				}
 				if (lseCount > 0)
 				{
-					tisb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, userWs);
+					deleteTextTssBuilder.SetIntPropValues((int) FwTextPropType.ktptWs, 0, userWs);
 					if (wantMainWarningLine)
-						tisb.Append(warningMsg);
-					tisb.Append(StringUtils.kChHardLB.ToString(CultureInfo.InvariantCulture));
+						deleteTextTssBuilder.Append(warningMsg);
+					deleteTextTssBuilder.Append(StringUtils.kChHardLB.ToString(CultureInfo.InvariantCulture));
 					if (lseCount > 1)
-						tisb.Append(String.Format(Strings.ksIsUsedXTimesBySubentries, cnt++, lseCount));
+						deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedXTimesBySubentries, cnt++, lseCount));
 					else
-						tisb.Append(String.Format(Strings.ksIsUsedOnceBySubentries, cnt++));
+						deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedOnceBySubentries, cnt++));
 				}
 				if (MorphoSyntaxAnalysisRA != null && MorphoSyntaxAnalysisRA.CanDeleteIfSenseDeleted(this))
 				{
 					if (msaCount > 0)
 					{
-						tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
-						tisb.Append(msaWarningMsg);
-						tisb.Append(StringUtils.kChHardLB.ToString(CultureInfo.InvariantCulture));
+						deleteTextTssBuilder.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
+						deleteTextTssBuilder.Append(msaWarningMsg);
+						deleteTextTssBuilder.Append(StringUtils.kChHardLB.ToString(CultureInfo.InvariantCulture));
 						if (msaCount > 1)
-							tisb.Append(String.Format(Strings.ksIsUsedXTimesInAnalyses, cnt++, msaCount));
+							deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedXTimesInAnalyses, cnt++, msaCount));
 						else
-							tisb.Append(String.Format(Strings.ksIsUsedOnceInAnalyses, cnt++));
+							deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedOnceInAnalyses, cnt++));
 						wantMsaWarningLine = false;
 					}
 					if (msaTextCount > 0)
 					{
-						tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
+						deleteTextTssBuilder.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 						if (wantMsaWarningLine)
-							tisb.Append(msaWarningMsg);
-						tisb.Append(StringUtils.kChHardLB.ToString(CultureInfo.InvariantCulture));
+							deleteTextTssBuilder.Append(msaWarningMsg);
+						deleteTextTssBuilder.Append(StringUtils.kChHardLB.ToString(CultureInfo.InvariantCulture));
 						if (msaTextCount > 1)
-							tisb.Append(String.Format(Strings.ksIsUsedXTimesInTexts, cnt++, msaTextCount));
+							deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedXTimesInTexts, cnt++, msaTextCount));
 						else
-							tisb.Append(String.Format(Strings.ksIsUsedOnceInTexts, cnt++));
+							deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedOnceInTexts, cnt++));
 					}
 				}
-				return tisb.GetString();
+				return deleteTextTssBuilder.GetString();
 			}
 		}
 
