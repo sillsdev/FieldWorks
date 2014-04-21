@@ -14,7 +14,6 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using System.Collections;
-using System.Collections.Specialized;
 
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;
@@ -4165,21 +4164,6 @@ namespace SIL.FieldWorks.FDO
 			set;
 		}
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Indicates whether the in-memory import projects/files are currently accessible from
-		/// this machine.
-		/// </summary>
-		/// <param name="thingsNotFound">A list of Paratext project IDs or file paths that
-		/// could not be found.</param>
-		/// <remarks>
-		/// For Paratext projects, this will only return true if all projects are accessible.
-		/// For Standard Format, this will return true if any of the files are accessible.
-		/// We think this might make sense, but we aren't sure why.
-		/// </remarks>
-		/// -----------------------------------------------------------------------------------
-		bool ImportProjectIsAccessible(out StringCollection thingsNotFound);
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets whether to import back translations
@@ -4351,20 +4335,6 @@ namespace SIL.FieldWorks.FDO
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets a list of books that exist for all of the files in this project.
-		/// </summary>
-		/// <returns>A List of integers representing 1-based canonical book numbers that exist
-		/// in any source represented by these import settings</returns>
-		/// <exception cref="NotSupportedException">If project is not a supported type</exception>
-		/// ------------------------------------------------------------------------------------
-		List<int> BooksForProject
-		{
-			get;
-		}
-
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Starting reference for the import; for now, we ignore the
 		/// chapter and verse since import will always start at the beginning of the book.
 		/// </summary>
@@ -4422,13 +4392,6 @@ namespace SIL.FieldWorks.FDO
 		{
 			get;
 		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Sets the StartRef and EndRef based on the requested canonical book numbers.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		void IncludeBooks(int startBook, int endBook, Paratext.ScrVers versification);
 	}
 
 	/// ----------------------------------------------------------------------------------------

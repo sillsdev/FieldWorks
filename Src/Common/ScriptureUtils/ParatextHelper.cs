@@ -12,10 +12,12 @@ using System.IO;
 using System.Linq;
 using Microsoft.Win32;
 using Paratext;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using SILUBS.SharedScrUtils;
 
-namespace SIL.FieldWorks.FDO.DomainServices
+namespace SIL.FieldWorks.Common.ScriptureUtils
 {
 	#region IParatextHelper interface
 	/// ----------------------------------------------------------------------------------------
@@ -64,13 +66,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <summary>
 		/// Load the mappings for a Paratext 6/7 project into the specified list.
 		/// </summary>
-		/// <param name="project">Paratext project ID</param>
-		/// <param name="mappingList">ScrMappingList to which new mappings will be added</param>
-		/// <param name="domain">The import domain for which this project is the source</param>
-		/// <returns><c>true</c> if the Paratext mappings were loaded successfully; <c>false</c>
-		/// otherwise</returns>
 		/// ------------------------------------------------------------------------------------
-		bool LoadProjectMappings(string project, ScrMappingList mappingList, ImportDomain domain);
+		void LoadProjectMappings(IScrImportSet importSettings);
 	}
 	#endregion
 
@@ -292,20 +289,36 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			/// <summary>
 			/// Load the mappings for a Paratext 6/7 project into the specified list.
 			/// </summary>
-			/// <param name="project">Paratext project ID</param>
-			/// <param name="mappingList">ScrMappingList to which new mappings will be added</param>
-			/// <param name="domain">The import domain for which this project is the source</param>
 			/// <returns><c>true</c> if the Paratext mappings were loaded successfully; <c>false</c>
 			/// otherwise</returns>
 			/// ------------------------------------------------------------------------------------
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "See REVIEW comment")]
-			public bool LoadProjectMappings(string project, ScrMappingList mappingList, ImportDomain domain)
+			public void LoadProjectMappings(IScrImportSet importSettings)
 			{
 				RefreshProjects();
+				if (!m_IsParatextInitialized)
+				{
+					importSettings.ParatextScrProj = null;
+					importSettings.ParatextBTProj = null;
+					importSettings.ParatextNotesProj = null;
+					return;
+				}
 
-				// If Paratext is not initialized or the new project ID is null, then do not load mappings.
-				if (!m_IsParatextInitialized || project == null)
+				if (!LoadProjectMappings(importSettings.ParatextScrProj, importSettings.GetMappingListForDomain(ImportDomain.Main), ImportDomain.Main))
+					importSettings.ParatextScrProj = null;
+
+				if (!LoadProjectMappings(importSettings.ParatextBTProj, importSettings.GetMappingListForDomain(ImportDomain.BackTrans), ImportDomain.BackTrans))
+					importSettings.ParatextBTProj = null;
+
+				if (!LoadProjectMappings(importSettings.ParatextNotesProj, importSettings.GetMappingListForDomain(ImportDomain.Annotations), ImportDomain.Annotations))
+					importSettings.ParatextNotesProj = null;
+			}
+
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "See REVIEW comment")]
+			private bool LoadProjectMappings(string project, ScrMappingList mappingList, ImportDomain domain)
+			{
+				// If the new project ID is null, then do not load mappings.
+				if (string.IsNullOrEmpty(project))
 					return false;
 
 				// Load the tags from the paratext project and create mappings for them.
@@ -324,7 +337,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					return false;
 				}
 
-				mappingList.ResetInUseFlags(domain);
+				foreach (ImportMappingInfo mapping in mappingList)
+					mapping.SetIsInUse(domain, false);
 				try
 				{
 					foreach (ScrTag tag in scParatextText.DefaultStylesheet.Tags)
@@ -497,17 +511,12 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Load the mappings for a Paratext 6/7 project into the specified list.
+		/// Load the mappings for a Paratext 6/7 project into the specified import settings.
 		/// </summary>
-		/// <param name="project">Paratext project ID</param>
-		/// <param name="mappingList">ScrMappingList to which new mappings will be added</param>
-		/// <param name="domain">The import domain for which this project is the source</param>
-		/// <returns><c>true</c> if the Paratext mappings were loaded successfully; <c>false</c>
-		/// otherwise</returns>
 		/// ------------------------------------------------------------------------------------
-		public static bool LoadProjectMappings(string project, ScrMappingList mappingList, ImportDomain domain)
+		public static void LoadProjectMappings(IScrImportSet importSettings)
 		{
-			return s_ptHelper.LoadProjectMappings(project, mappingList, domain);
+			s_ptHelper.LoadProjectMappings(importSettings);
 		}
 		#endregion
 

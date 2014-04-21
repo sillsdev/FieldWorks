@@ -175,6 +175,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\RootSite.dll</HintPath>
     </Reference>
+    <Reference Include="ScriptureUtils, Version=8.0.9.31119, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\ScriptureUtils.dll</HintPath>
+    </Reference>
     <Reference Include="SharedScrUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SharedScrUtils.dll</HintPath>

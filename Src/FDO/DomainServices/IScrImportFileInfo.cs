@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// (only used for Note sources)
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		SIL.FieldWorks.FDO.ICmAnnotationDefn NoteType { get; }
+		ICmAnnotationDefn NoteType { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -111,5 +111,18 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		SILUBS.SharedScrUtils.ScrReference StartRef { get; }
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Rechecks the accessibility of a file that might have been initially determined to
+		/// be inaccessible. If the file was inaccessible but is now accessible, it will be
+		/// properly initialized so all the cached info will be valid.
+		/// </summary>
+		/// <remarks>Use <seealso cref="IsStillReadable"/> to recheck accessibility of a file
+		/// that was initially determined to be accessible. Use <seealso cref="IsReadable"/> to
+		/// access the cached value.</remarks>
+		/// <returns><c>true</c> if the file is currently accessible</returns>
+		/// ------------------------------------------------------------------------------------
+		bool RecheckAccessibility();
 	}
 }

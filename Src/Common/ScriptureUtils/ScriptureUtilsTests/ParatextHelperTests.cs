@@ -12,13 +12,15 @@ using System.Linq;
 using NUnit.Framework;
 using Paratext;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Test.ProjectUnpacker;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 
-namespace SIL.FieldWorks.FDO.FDOTests
+namespace SIL.FieldWorks.Common.ScriptureUtils
 {
 	#region MockParatextHelper class
 	/// ----------------------------------------------------------------------------------------
@@ -126,11 +128,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// We never use this method; for tests, we use <c>Rhino.Mocks.MockRepository</c>
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public bool LoadProjectMappings(string project, ScrMappingList mappingList, ImportDomain domain)
+		public void LoadProjectMappings(IScrImportSet importSettings)
 		{
 			if (m_loadProjectMappingsImpl == null)
 				throw new NotImplementedException();
-			return m_loadProjectMappingsImpl.LoadProjectMappings(project, mappingList, domain);
+			m_loadProjectMappingsImpl.LoadProjectMappings(importSettings);
 		}
 		#endregion
 
@@ -409,7 +411,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void LoadParatextMappings_NullProjectName()
 		{
-			Assert.IsFalse(ParatextHelper.LoadProjectMappings(null, null, ImportDomain.Main));
+			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create(ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
+			ParatextHelper.LoadProjectMappings(importSettings);
+			Assert.That(importSettings.ParatextScrProj, Is.Null);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -423,12 +427,13 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			Unpacker.UnPackParatextTestProjects();
 
-			FwStyleSheet stylesheet = new FwStyleSheet();
+			var stylesheet = new FwStyleSheet();
 			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
-			ScrMappingList mappingList = new ScrMappingList(MappingSet.Main, stylesheet, ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
+			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create(ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
+			importSettings.ParatextScrProj = "KAM";
+			ParatextHelper.LoadProjectMappings(importSettings);
 
-			Assert.IsTrue(ParatextHelper.LoadProjectMappings("KAM", mappingList, ImportDomain.Main));
-
+			ScrMappingList mappingList = importSettings.GetMappingListForDomain(ImportDomain.Main);
 			// Test to see that the projects are set correctly
 			Assert.AreEqual(44, mappingList.Count);
 
@@ -452,9 +457,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Ignore("Has not been run for a while and no longer works; possibly obsolete")]
 		public void LoadParatextMappings_MarkMappingsInUse()
 		{
-			FwStyleSheet stylesheet = new FwStyleSheet();
+			var stylesheet = new FwStyleSheet();
 			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
-			ScrMappingList mappingList = new ScrMappingList(MappingSet.Main, stylesheet, ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
+			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create(ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
+			importSettings.ParatextScrProj = "TEV";
+			ScrMappingList mappingList = importSettings.GetMappingListForDomain(ImportDomain.Main);
 			mappingList.Add(new ImportMappingInfo(@"\hahaha", @"\*hahaha", false,
 				MappingTargetType.TEStyle, MarkerDomain.Default, "laughing",
 				null, null, true, ImportDomain.Main));
@@ -463,7 +470,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				"en", null, true, ImportDomain.Main));
 
 			Unpacker.UnPackParatextTestProjects();
-			Assert.IsTrue(ParatextHelper.LoadProjectMappings("TEV", mappingList, ImportDomain.Main));
+
+			ParatextHelper.LoadProjectMappings(importSettings);
 
 			Assert.IsTrue(mappingList[@"\c"].IsInUse);
 			Assert.IsTrue(mappingList[@"\p"].IsInUse);
@@ -484,12 +492,15 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Category("LongRunning")]
 		public void LoadParatextMappings_MissingEncodingFile()
 		{
-			FwStyleSheet stylesheet = new FwStyleSheet();
+			var stylesheet = new FwStyleSheet();
 			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
-			ScrMappingList mappingList = new ScrMappingList(MappingSet.Main, stylesheet, ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
+			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create(ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
+			importSettings.ParatextScrProj = "NEC";
 
 			Unpacker.UnPackMissingFileParatextTestProjects();
-			Assert.IsFalse(ParatextHelper.LoadProjectMappings("NEC", mappingList, ImportDomain.Main));
+
+			ParatextHelper.LoadProjectMappings(importSettings);
+			Assert.That(importSettings.ParatextScrProj, Is.Null);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -504,10 +515,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			FwStyleSheet stylesheet = new FwStyleSheet();
 			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
-			ScrMappingList mappingList = new ScrMappingList(MappingSet.Main, stylesheet, ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
+			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create(ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
+			importSettings.ParatextScrProj = "NSF";
 
 			Unpacker.UnPackMissingFileParatextTestProjects();
-			Assert.IsFalse(ParatextHelper.LoadProjectMappings("NSF", mappingList, ImportDomain.Main));
+			ParatextHelper.LoadProjectMappings(importSettings);
+			Assert.That(importSettings.ParatextScrProj, Is.Null);
 		}
 		#endregion
 	}

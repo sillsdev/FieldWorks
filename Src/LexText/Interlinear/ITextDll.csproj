@@ -148,8 +148,16 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\ScrControls.dll</HintPath>
     </Reference>
+    <Reference Include="ScriptureUtils, Version=8.0.9.31119, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\ScriptureUtils.dll</HintPath>
+    </Reference>
     <Reference Include="Sfm2Xml, Version=1.0.4246.16219, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="SharedScrUtils, Version=8.0.9.18601, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\SharedScrUtils.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Collections, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

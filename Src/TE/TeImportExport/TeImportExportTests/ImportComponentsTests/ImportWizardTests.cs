@@ -10,7 +10,6 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using NUnit.Framework;
-using NUnit.Framework.Constraints;
 using Paratext;
 using Rhino.Mocks;
 using SIL.FieldWorks.Common.Controls;
@@ -21,9 +20,7 @@ using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.FieldWorks.Test.ProjectUnpacker;
 using SIL.FieldWorks.FDO.DomainServices;
-using System.Collections.Generic;
 using SIL.FieldWorks.Common.FwUtils;
-using Paratext.DerivedTranslation;
 
 namespace SIL.FieldWorks.TE.ImportComponentsTests
 {
@@ -434,6 +431,7 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 	{
 		#region Data members
 		private MockParatextHelper m_ptHelper;
+		private IParatextHelper m_mockParatextHelper;
 		private IScrImportSet m_settings;
 		private ImportWizardWrapper m_importWizard;
 		private FwStyleSheet m_styleSheet;
@@ -495,6 +493,9 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 			createHandle.Invoke(m_importWizard.ScrMappings, null);
 			m_settings = (IScrImportSet)ReflectionHelper.GetField(m_importWizard, "m_settings");
 			m_ptHelper.Projects.Clear();
+
+			m_mockParatextHelper = MockRepository.GenerateMock<IParatextHelper>();
+			m_ptHelper.m_loadProjectMappingsImpl = m_mockParatextHelper;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -514,18 +515,6 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 			base.TestTearDown();
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Sets up the mock Paratext proxy to simulate validity of any requested projects.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void SetupMockParatextHelper()
-		{
-			IParatextHelper mockParatextHelper = MockRepository.GenerateMock<IParatextHelper>();
-			m_ptHelper.m_loadProjectMappingsImpl = mockParatextHelper;
-			mockParatextHelper.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Anything,
-				Arg<ScrMappingList>.Is.Anything, Arg<ImportDomain>.Is.Anything)).Return(true);
-		}
 		#endregion
 
 		#region Mapping List display tests
@@ -814,9 +803,6 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void PrepareToGetParatextProjectSettingss_AssociatedLinguisticAndBtProj()
 		{
-			// Setup mocked Paratext projects
-			SetupMockParatextHelper();
-
 			m_ptHelper.AddProject("ABC", "Whatever");
 			m_ptHelper.AddProject("YES", Cache.ProjectId.Handle); // The active project, since it has the relevant handle
 			m_ptHelper.AddProject("ALM", null, "YES", true, false, "000110000000", ProjectType.Daughter);
@@ -862,8 +848,6 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void PrepareToGetParatextProjectSettings_AssociatedLingProj_NoBt()
 		{
-			SetupMockParatextHelper();
-
 			m_ptHelper.AddProject("ABC", "Whatever");
 			m_ptHelper.AddProject("YES", Cache.ProjectId.Handle);
 			m_ptHelper.AddProject("BTP");
@@ -902,8 +886,6 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void PrepareToGetParatextProjectSettings_NoAssociatedLingProj()
 		{
-			SetupMockParatextHelper();
-
 			m_ptHelper.AddProject("ABC", "Whatever");
 			m_ptHelper.AddProject("BTP");
 			m_ptHelper.AddProject("XYZ", null, "ABC");

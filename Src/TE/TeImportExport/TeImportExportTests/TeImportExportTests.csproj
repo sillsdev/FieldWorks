@@ -158,6 +158,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\ScriptureUtils.dll</HintPath>
     </Reference>
+    <Reference Include="ScriptureUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\ScriptureUtilsTests.dll</HintPath>
+    </Reference>
     <Reference Include="ScrUtilsInterfaces, Version=5.5.0.19437, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>
@@ -263,6 +267,7 @@
     <Compile Include="SFFileListBuilderTests.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="TeImportExportExtensionsTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

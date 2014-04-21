@@ -18,6 +18,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using Microsoft.Win32;
 using Paratext.TextCollection;
+using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using SILUBS.SharedScrUtils;

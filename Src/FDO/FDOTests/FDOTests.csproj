@@ -354,7 +354,6 @@
     <Compile Include="LexSenseTests.cs" />
     <Compile Include="LingTests.cs" />
     <Compile Include="ParagraphParserTests.cs" />
-    <Compile Include="ParatextHelperTests.cs" />
     <Compile Include="PersistingLayerTests.BEPPortTests.cs" />
     <Compile Include="PropChangedTests.cs" />
     <Compile Include="ReferenceAdjusterServiceTests.cs" />

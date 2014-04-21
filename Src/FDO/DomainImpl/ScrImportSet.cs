@@ -6,14 +6,10 @@
 // Responsibility: TE Team
 
 using System;
-using System.IO;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Linq;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -261,104 +257,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		#endregion
 
 		#region Import Project Accessibility Methods
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Indicates whether the in-memory import projects/files are currently accessible from
-		/// this machine.
-		/// </summary>
-		/// <param name="thingsNotFound">A list of Paratext project IDs or file paths that
-		/// could not be found.</param>
-		/// <remarks>
-		/// For Paratext projects, this will only return true if all projects are accessible.
-		/// For Standard Format, this will return true if any of the files are accessible.
-		/// We think this might make sense, but we aren't sure why.
-		/// </remarks>
-		/// -----------------------------------------------------------------------------------
-		public bool ImportProjectIsAccessible(out StringCollection thingsNotFound)
-		{
-			lock (SyncRoot)
-			{
-				if (ImportTypeEnum == TypeOfImport.Paratext6)
-					return ParatextProjectsAccessible(out thingsNotFound);
-				else if (ImportTypeEnum == TypeOfImport.Other || ImportTypeEnum == TypeOfImport.Paratext5)
-					return SFProjectFilesAccessible(out thingsNotFound);
-				thingsNotFound = null;
-				return false;
-			}
-		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Determines whether or not a set of paratext projects can be found and are
-		/// accessible.
-		/// </summary>
-		/// <param name="projectsNotFound">A list of the Paratext projects that couldn't
-		/// be found or are inaccessible.</param>
-		/// <returns>A value indicating whether or not the projects are accessible. True if
-		/// all are. Otherwise, false.</returns>
-		/// ------------------------------------------------------------------------------------
-		private bool ParatextProjectsAccessible(out StringCollection projectsNotFound)
-		{
-			projectsNotFound = new StringCollection();
-
-			if (m_ParatextScrProject == null)
-				return false;
-
-			// Paratext seems to want to have write access to do an import...
-			string filename = Path.Combine(ParatextHelper.ProjectsDirectory, m_ParatextScrProject + ".ssf");
-			if (!FileUtils.IsFileReadableAndWritable(filename) ||
-				!ParatextHelper.GetProjectBooks(m_ParatextScrProject).Any())
-			{
-				projectsNotFound.Add(m_ParatextScrProject);
-			}
-
-			if (m_ParatextBTProject != null)
-			{
-				filename = Path.Combine(ParatextHelper.ProjectsDirectory, m_ParatextBTProject + ".ssf");
-				if (!FileUtils.IsFileReadableAndWritable(filename) ||
-					!ParatextHelper.GetProjectBooks(m_ParatextBTProject).Any())
-				{
-					projectsNotFound.Add(m_ParatextBTProject);
-				}
-			}
-
-			if (m_ParatextNotesProject != null)
-			{
-				filename = Path.Combine(ParatextHelper.ProjectsDirectory, m_ParatextNotesProject + ".ssf");
-				if (!FileUtils.IsFileReadableAndWritable(filename) ||
-					!ParatextHelper.GetProjectBooks(m_ParatextNotesProject).Any())
-				{
-					projectsNotFound.Add(m_ParatextNotesProject);
-				}
-			}
-
-			return (projectsNotFound.Count == 0);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Determines whether or not a set of SFM project files can be found and are
-		/// accessible.
-		/// </summary>
-		/// <param name="filesNotFound">A list of files that couldn't be found.</param>
-		/// <returns>true if any SFM files are accessible. Otherwise, false.</returns>
-		/// ------------------------------------------------------------------------------------
-		private bool SFProjectFilesAccessible(out StringCollection filesNotFound)
-		{
-			filesNotFound = new StringCollection();
-
-			bool fProjectFileFound = false;
-
-			fProjectFileFound |= m_scrFileInfoList.FilesAreAccessible(ref filesNotFound);
-
-			foreach (ScrSfFileList list in m_btFileInfoLists.Values)
-				fProjectFileFound |= list.FilesAreAccessible(ref filesNotFound);
-
-			foreach (ScrSfFileList list in m_notesFileInfoLists.Values)
-				fProjectFileFound |= list.FilesAreAccessible(ref filesNotFound);
-
-			return (fProjectFileFound);
-		}
 		#endregion
 
 		#region Public Properties
@@ -648,18 +547,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Sets the StartRef and EndRef based on the requested canonical book numbers.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void IncludeBooks(int startBook, int endBook, Paratext.ScrVers versification)
-		{
-			StartRef = new BCVRef(startBook, 0, 0);
-			int chapter = versification.LastChapter(endBook);
-			EndRef = new BCVRef(endBook, chapter, versification.LastVerse(endBook, chapter));
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Gets/sets stylesheet for settings.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -897,7 +784,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					if (value != null && (value == ParatextNotesProj || value == ParatextBTProj))
 						throw new ArgumentException(ScrFdoResources.kstidPtScrAlreadyUsed);
 
-					m_ParatextScrProject = SetParatextProject(value, ImportDomain.Main);
+					m_ParatextScrProject = value;
 				}
 			}
 		}
@@ -923,7 +810,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					if (value != null && (value == ParatextScrProj || value == ParatextNotesProj))
 						throw new ArgumentException(ScrFdoResources.kstidPtBtAlreadyUsed);
 
-					m_ParatextBTProject = SetParatextProject(value, ImportDomain.BackTrans);
+					m_ParatextBTProject = value;
 				}
 			}
 		}
@@ -949,32 +836,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					if (value != null && (value == ParatextScrProj || value == ParatextBTProj))
 						throw new ArgumentException(ScrFdoResources.kstidPtNotesAlreadyUsed);
 
-					m_ParatextNotesProject = SetParatextProject(value, ImportDomain.Annotations);
+					m_ParatextNotesProject = value;
 				}
 			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Sets the Paratext project name for the specified domain.
-		/// </summary>
-		/// <param name="value">The name of the Paratext project.</param>
-		/// <param name="domain">The domain (Scripture, back translation or annotations).</param>
-		/// <returns>name of the project, if not empty and the project loads without error;
-		/// otherwise null</returns>
-		/// ------------------------------------------------------------------------------------
-		private string SetParatextProject(string value, ImportDomain domain)
-		{
-			string projName = (value == string.Empty) ? null : value;
-			if (projName != null)
-			{
-				// use notes list for the annotations domain, otherwise use the scripture list.
-				ScrMappingList loadedList = domain == ImportDomain.Annotations ? m_notesMappingsList : m_scrMappingsList;
-				bool fValidProj = ParatextHelper.LoadProjectMappings(value, loadedList, domain);
-				return fValidProj ? value : null;
-			}
-
-			return null;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1061,60 +925,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					return marker;
 
 			return null;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets a list of books that exist for all of the files in this project.
-		/// </summary>
-		/// <returns>A List of integers representing 1-based canonical book numbers that exist
-		/// in any source represented by these import settings</returns>
-		/// <exception cref="NotSupportedException">If project is not a supported type</exception>
-		/// ------------------------------------------------------------------------------------
-		public List<int> BooksForProject
-		{
-			get
-			{
-				Debug.Assert(BasicSettingsExist, "Vernacular Scripture project not defined.");
-				switch (ImportTypeEnum)
-				{
-					case TypeOfImport.Paratext6:
-							// TODO (TE-5903): Check BT and Notes projects as well.
-							return ParatextHelper.GetProjectBooks(ParatextScrProj).ToList();
-					case TypeOfImport.Paratext5:
-					case TypeOfImport.Other:
-						lock (SyncRoot)
-						{
-							List<int> booksPresent = new List<int>();
-							foreach (IScrImportFileInfo file in m_scrFileInfoList)
-								foreach (int iBook in file.BooksInFile)
-								{
-									if (!booksPresent.Contains(iBook))
-										booksPresent.Add(iBook);
-								}
-
-							foreach (ScrSfFileList fileList in m_btFileInfoLists.Values)
-								foreach (IScrImportFileInfo file in fileList)
-									foreach (int iBook in file.BooksInFile)
-									{
-										if (!booksPresent.Contains(iBook))
-											booksPresent.Add(iBook);
-									}
-
-							foreach (ScrSfFileList fileList in m_notesFileInfoLists.Values)
-								foreach (IScrImportFileInfo file in fileList)
-									foreach (int iBook in file.BooksInFile)
-									{
-										if (!booksPresent.Contains(iBook))
-											booksPresent.Add(iBook);
-									}
-							booksPresent.Sort();
-							return booksPresent;
-						}
-					default:
-						throw new NotSupportedException("Unexpected type of Import Project");
-				}
-			}
 		}
 
 		/// ------------------------------------------------------------------------------------

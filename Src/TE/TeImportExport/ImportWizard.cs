@@ -1155,6 +1155,7 @@ namespace SIL.FieldWorks.TE
 			ScrText assocProj = ParatextHelper.GetAssociatedProject(m_cache.ProjectId);
 			//Ignore the case that there is information already in the combobox.
 			//Solution for TE - 4441)
+			bool loadMappings = false;
 			if (cboPTLangProj.Items.Count == 0)
 			{
 				if (assocProj != null)
@@ -1163,6 +1164,7 @@ namespace SIL.FieldWorks.TE
 					cboPTLangProj.Items.Add(assocProj);
 					cboPTLangProj.SelectedIndex = 0;
 					cboPTLangProj.Enabled = false;
+					loadMappings = true;
 				}
 				else
 				{
@@ -1181,6 +1183,7 @@ namespace SIL.FieldWorks.TE
 						cboPTBackTrans.Items.Add(btText);
 					cboPTBackTrans.SelectedIndex = 0;
 					cboPTBackTrans.Enabled = (btProjects.Count() > 1);
+					loadMappings = true;
 				}
 				else
 				{
@@ -1198,6 +1201,9 @@ namespace SIL.FieldWorks.TE
 				cboPTTransNotes.Items.Add(s_noneProject);
 				LoadParatextProjectCombo(cboPTTransNotes, m_settings.ParatextNotesProj);
 			}
+
+			if (loadMappings)
+				ParatextHelper.LoadProjectMappings(m_settings);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1243,10 +1249,12 @@ namespace SIL.FieldWorks.TE
 			// The projects will only be assigned if the project can be loaded (part of the set
 			// property).
 			m_settings.ParatextScrProj = GetPTShortName(cboPTLangProj);
-			CheckProjectCombo(m_settings.ParatextScrProj, cboPTLangProj, ImportDomain.Main);
 			m_settings.ParatextBTProj = GetPTShortName(cboPTBackTrans);
-			CheckProjectCombo(m_settings.ParatextBTProj, cboPTBackTrans, ImportDomain.BackTrans);
 			m_settings.ParatextNotesProj = GetPTShortName(cboPTTransNotes);
+			ParatextHelper.LoadProjectMappings(m_settings);
+
+			CheckProjectCombo(m_settings.ParatextScrProj, cboPTLangProj, ImportDomain.Main);
+			CheckProjectCombo(m_settings.ParatextBTProj, cboPTBackTrans, ImportDomain.BackTrans);
 			CheckProjectCombo(m_settings.ParatextNotesProj, cboPTTransNotes,
 				ImportDomain.Annotations);
 

@@ -8,11 +8,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Text;
-
 using NUnit.Framework;
 using Rhino.Mocks;
 using SIL.FieldWorks.Common.FwUtils;
@@ -124,39 +120,13 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	public class ScrImportSetTests : ScrInMemoryFdoTestBase
 	{
 		#region data members
-		private MockParatextHelper m_ptHelper;
 		private IScrImportSet m_importSettings;
 		private ICmAnnotationDefn m_translatorNoteDefn;
 		private ICmAnnotationDefn m_consultantNoteDefn;
-		private IParatextHelper m_mockParatextHelper;
 		private MockFileOS m_fileOs;
 		#endregion
 
 		#region Setup & Teardown
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public override void FixtureSetup()
-		{
-			base.FixtureSetup();
-			m_ptHelper = new MockParatextHelper();
-			ParatextHelper.Manager.SetParatextHelperAdapter(m_ptHelper);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public override void FixtureTeardown()
-		{
-			base.FixtureTeardown();
-			m_ptHelper.Dispose();
-			ParatextHelper.Manager.Reset();
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test setup stuff
@@ -165,12 +135,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public override void TestSetup()
 		{
 			base.TestSetup();
-			m_ptHelper.Projects.Clear();
 
 			m_importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create(ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
-			m_mockParatextHelper = MockRepository.GenerateMock<IParatextHelper>();
 			m_scr.ImportSettingsOC.Add(m_importSettings);
-			m_ptHelper.m_loadProjectMappingsImpl = m_mockParatextHelper;
 			m_translatorNoteDefn = Cache.ServiceLocator.GetInstance<ICmAnnotationDefnRepository>().TranslatorAnnotationDefn;
 			m_consultantNoteDefn = Cache.ServiceLocator.GetInstance<ICmAnnotationDefnRepository>().ConsultantAnnotationDefn;
 
@@ -689,8 +656,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			// Now that we've saved the settings, we'll "revert" in order to re-load from the DB
 			m_importSettings.RevertToSaved();
 
-			m_mockParatextHelper.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Equal("KAM"),
-				Arg<ScrMappingList>.Is.Anything, Arg<ImportDomain>.Is.Equal(ImportDomain.Main))).Return(true);
 			m_importSettings.ImportTypeEnum = TypeOfImport.Paratext6;
 			m_importSettings.ParatextScrProj = "KAM";
 			m_importSettings.SaveSettings();
@@ -795,11 +760,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			ScrMappingList mappingList = (ScrMappingList)m_importSettings.Mappings(MappingSet.Main);
 
-			m_mockParatextHelper.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Equal("KAM"),
-				Arg<ScrMappingList>.Is.Equal(mappingList), Arg<ImportDomain>.Is.Equal(ImportDomain.Main))).Return(true);
-			m_mockParatextHelper.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Equal("TEV"),
-				Arg<ScrMappingList>.Is.Equal(mappingList), Arg<ImportDomain>.Is.Equal(ImportDomain.BackTrans))).Return(true);
-
 			// add Scripture files
 			m_importSettings.ParatextScrProj = "KAM";
 			m_importSettings.ParatextBTProj = "TEV";
@@ -850,32 +810,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.IsTrue(factory.m_mockedScrImportFinfos.ContainsKey("file1"));
 			Assert.AreEqual(factory.m_mockedScrImportFinfos["file1"],
 				((ScrSfFileList)ReflectionHelper.GetField(m_importSettings, "m_scrFileInfoList"))[0]);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Test adding a file that is locked
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void AddFileAndCheckAccessibility_Locked()
-		{
-			m_importSettings.ImportTypeEnum = TypeOfImport.Other;
-
-			string filename = m_fileOs.MakeSfFile("EPH", @"\c 1", @"\v 1");
-			m_fileOs.LockFile(filename);
-
-			// Lock the file
-			//using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.ReadWrite))
-			//{
-				IScrImportFileInfo info = m_importSettings.AddFile(filename, ImportDomain.Main, null, null);
-				Assert.AreEqual(Encoding.ASCII, info.FileEncoding);
-				Assert.AreEqual(1, m_importSettings.GetImportFiles(ImportDomain.Main).Count);
-				StringCollection notFound;
-				Assert.IsFalse(m_importSettings.ImportProjectIsAccessible(out notFound));
-				Assert.AreEqual(1, notFound.Count);
-				Assert.AreEqual(filename, (string)notFound[0]);
-			//}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -974,11 +908,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			ScrMappingList mappingListMain = (ScrMappingList)m_importSettings.Mappings(MappingSet.Main);
 			ScrMappingList mappingListNotes = (ScrMappingList)m_importSettings.Mappings(MappingSet.Notes);
 
-			m_mockParatextHelper.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Equal("KAM"),
-				Arg<ScrMappingList>.Is.Equal(mappingListMain), Arg<ImportDomain>.Is.Equal(ImportDomain.Main))).Return(true);
-			m_mockParatextHelper.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Equal("TEV"),
-				Arg<ScrMappingList>.Is.Equal(mappingListNotes), Arg<ImportDomain>.Is.Equal(ImportDomain.Annotations))).Return(true);
-
 			// set Scripture project
 			m_importSettings.ParatextScrProj = "TEV";
 			m_importSettings.ParatextNotesProj = "KAM";
@@ -1056,9 +985,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			m_importSettings.ImportTypeEnum = TypeOfImport.Paratext6;
 
-			m_mockParatextHelper.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Equal("KAM"),
-				Arg<ScrMappingList>.Is.Anything, Arg<ImportDomain>.Is.Equal(ImportDomain.BackTrans))).Return(true);
-
 			m_importSettings.ParatextBTProj = "KAM";
 			m_importSettings.ParatextNotesProj = "KAM";
 		}
@@ -1073,9 +999,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void SwitchFromParatext6ToParatext5Project()
 		{
 			m_importSettings.ImportTypeEnum = TypeOfImport.Paratext6;
-
-			m_mockParatextHelper.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Equal("KAM"),
-				Arg<ScrMappingList>.Is.Anything, Arg<ImportDomain>.Is.Equal(ImportDomain.BackTrans))).Return(true);
 
 			ScrMappingList mappings = m_importSettings.GetMappingListForDomain(ImportDomain.Main);
 
@@ -1143,9 +1066,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			m_importSettings.ImportTypeEnum = TypeOfImport.Paratext6;
 
-			m_mockParatextHelper.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Anything,
-				Arg<ScrMappingList>.Is.Anything, Arg<ImportDomain>.Is.Anything)).Return(true);
-
 			Assert.IsFalse(m_importSettings.BasicSettingsExist, "No project settings set yet");
 
 			m_importSettings.ParatextBTProj = "KAM";
@@ -1210,83 +1130,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		}
 		#endregion
 
-		#region Attempting to load Paratext project with missing files
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Attempting to set the Paratext project to a project that can't be loaded should not
-		/// set the value.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void ParatextScrProj_Set_FailureToLoadProject()
-		{
-			m_importSettings.ImportTypeEnum = TypeOfImport.Paratext6;
-
-			m_mockParatextHelper.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Equal("NEC"),
-				Arg<ScrMappingList>.Is.Anything, Arg<ImportDomain>.Is.Anything)).Return(false);
-
-			m_importSettings.ParatextScrProj = "NEC";
-
-			Assert.IsNull(m_importSettings.ParatextScrProj);
-		}
-		#endregion
-
-		#region ImportProjectIsAccessible tests
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Test to see if the ImportProjectIsAccessible method works for Paratext 6 projects.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void ImportProjectIsAccessible_Paratext6()
-		{
-			m_importSettings.ImportTypeEnum = TypeOfImport.Paratext6;
-
-			string paratextDir = ParatextHelper.ProjectsDirectory;
-			m_mockParatextHelper.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Anything,
-				Arg<ScrMappingList>.Is.Anything, Arg<ImportDomain>.Is.Anything)).Return(true);
-			m_ptHelper.AddProject("TEV", null, null, true, false, "100001");
-
-			m_fileOs.AddExistingFile(Path.Combine(paratextDir, "TEV.ssf"));
-
-			m_importSettings.ParatextScrProj = "KAM";
-			m_importSettings.ParatextBTProj = "TEV";
-
-			StringCollection projectsNotFound;
-			Assert.IsFalse(m_importSettings.ImportProjectIsAccessible(out projectsNotFound));
-			Assert.AreEqual(1, projectsNotFound.Count);
-			Assert.AreEqual("KAM", projectsNotFound[0]);
-
-			m_fileOs.AddExistingFile(Path.Combine(paratextDir, "KAM.ssf"));
-			m_ptHelper.AddProject("KAM", null, null, true, false, "000101");
-			Assert.IsTrue(m_importSettings.ImportProjectIsAccessible(out projectsNotFound));
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Test to see if the ImportProjectIsAccessible method works for Paratext 5 projects.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void ImportProjectIsAccessible_Paratext5()
-		{
-			m_importSettings.ImportTypeEnum = TypeOfImport.Paratext5;
-			ImportProjectIsAccessible_helper();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Test to see if the ImportProjectIsAccessible method works for Other projects.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void ImportProjectIsAccessible_Other()
-		{
-			m_importSettings.ImportTypeEnum = TypeOfImport.Other;
-			ImportProjectIsAccessible_helper();
-		}
-		#endregion
-
 		#region Helper methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1338,77 +1181,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			}
 			for (int index = 0; index < found.Length; index++)
 				Assert.IsTrue(found[index], "File not found in " + domain + " source: " + files[index]);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Test to see if the ImportProjectIsAccessible method works for projects other than
-		/// Paratext 6.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void ImportProjectIsAccessible_helper()
-		{
-			string scrFile1 = m_fileOs.MakeSfFile("GEN", @"\p", @"\c 1", @"\v 1", @"\v 2");
-			string scrFile2 = m_fileOs.MakeSfFile("EXO", @"\p", @"\c 1", @"\v 1", @"\v 2");
-			string scrFile3 = m_fileOs.MakeSfFile("LEV", @"\p", @"\c 1", @"\v 1", @"\v 2");
-			string btFileDef = m_fileOs.MakeSfFile("GEN", @"\p", @"\c 3", @"\v 1");
-			string btFileSpan = m_fileOs.MakeSfFile("GEN", @"\p", @"\c 3", @"\v 1");
-			string annotFileCons = m_fileOs.MakeSfFile("GEN", @"\p", @"\c 3", @"\v 1");
-			string annotFileTrans = m_fileOs.MakeSfFile("GEN", @"\p", @"\c 3", @"\v 1");
-
-			m_importSettings.AddFile(scrFile1, ImportDomain.Main, null, null);
-			m_importSettings.AddFile(scrFile2, ImportDomain.Main, null, null);
-			m_importSettings.AddFile(scrFile3, ImportDomain.Main, null, null);
-			m_importSettings.AddFile(btFileDef, ImportDomain.BackTrans, null, null);
-			m_importSettings.AddFile(btFileSpan, ImportDomain.BackTrans, "es", null);
-			m_importSettings.AddFile(annotFileCons, ImportDomain.Annotations, null, m_consultantNoteDefn);
-			m_importSettings.AddFile(annotFileTrans, ImportDomain.Annotations, null, m_translatorNoteDefn);
-
-			StringCollection filesNotFound;
-			Assert.IsTrue(m_importSettings.ImportProjectIsAccessible(out filesNotFound));
-			Assert.AreEqual(0, filesNotFound.Count);
-			m_importSettings.SaveSettings();
-
-			// Blow away some project files: should still return true, but should
-			// report missing files.
-			FileUtils.Delete(scrFile2);
-			FileUtils.Delete(scrFile3);
-			FileUtils.Delete(btFileDef);
-			FileUtils.Delete(annotFileCons);
-			FileUtils.Delete(annotFileTrans);
-
-			// Now that we've saved the settings, we'll "revert" in order to re-load from the DB
-			m_importSettings.RevertToSaved();
-
-			Assert.IsTrue(m_importSettings.ImportProjectIsAccessible(out filesNotFound));
-			Assert.AreEqual(5, filesNotFound.Count);
-
-			Assert.IsTrue(filesNotFound.Contains(scrFile2));
-			Assert.IsTrue(filesNotFound.Contains(scrFile3));
-			Assert.IsTrue(filesNotFound.Contains(btFileDef));
-			Assert.IsTrue(filesNotFound.Contains(annotFileCons));
-			Assert.IsTrue(filesNotFound.Contains(annotFileTrans));
-
-			m_importSettings.SaveSettings();
-
-			// Blow away the rest of the project files: should return false and report
-			// missing files.
-			FileUtils.Delete(scrFile1);
-			FileUtils.Delete(btFileSpan);
-
-			// Now that we've saved the settings, we'll "revert" in order to re-load from the DB
-			m_importSettings.RevertToSaved();
-
-			Assert.IsFalse(m_importSettings.ImportProjectIsAccessible(out filesNotFound));
-			Assert.AreEqual(7, filesNotFound.Count);
-
-			Assert.IsTrue(filesNotFound.Contains(scrFile1));
-			Assert.IsTrue(filesNotFound.Contains(scrFile2));
-			Assert.IsTrue(filesNotFound.Contains(scrFile3));
-			Assert.IsTrue(filesNotFound.Contains(btFileDef));
-			Assert.IsTrue(filesNotFound.Contains(btFileSpan));
-			Assert.IsTrue(filesNotFound.Contains(annotFileCons));
-			Assert.IsTrue(filesNotFound.Contains(annotFileTrans));
 		}
 		#endregion
 	}
