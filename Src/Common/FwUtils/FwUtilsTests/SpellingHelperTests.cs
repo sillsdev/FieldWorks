@@ -107,6 +107,35 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
+		/// Verify that we do not arbitrarily wipe out existing non-FLEx generated dictionaries
+		/// </summary>
+		[Test]
+		public void EnsureDictionaryDoesNotOverwriteNonVernacularDictionary()
+		{
+			const string dictId = "nonvern";
+			const string testWord = "testWord";
+
+			Directory.CreateDirectory(SpellingHelper.GetSpellingDirectoryPath());
+			var filePath = SpellingHelper.GetDicPath(SpellingHelper.GetSpellingDirectoryPath(), dictId);
+			// Wipe out any files related to our fake test dictionary
+			File.Delete(SpellingHelper.GetExceptionFileName(filePath));
+			File.Delete(filePath);
+			File.Delete(Path.ChangeExtension(filePath, ".aff"));
+
+			//build new fake test dictionary that is not vernacular
+			var nonverndict = @"10" + Environment.NewLine + testWord + Environment.NewLine;
+			var nonvernaff = @"SET UTF-8" + Environment.NewLine + "KEEPCASE C" + Environment.NewLine;
+			File.WriteAllText(filePath, nonverndict);
+			File.WriteAllText(Path.ChangeExtension(filePath, ".aff"), nonvernaff);
+			//SUT
+			SpellingHelper.EnsureDictionary(dictId);
+			//read back the hopefully unaffected dictionary
+			var contents = File.ReadAllText(filePath);
+			Assert.That(contents, Is.Not.StringContaining(SpellingHelper.PrototypeWord));
+			Assert.That(contents, Contains.Substring(testWord));
+		}
+
+		/// <summary>
 		/// Check that non-ascii text in path to dictionary works.
 		/// </summary>
 		[Test]
@@ -169,6 +198,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			using (var writer = FileUtils.OpenFileForWrite(filePath, Encoding.UTF8))
 			{
 				writer.WriteLine("10");
+				writer.WriteLine("blah");
 			}
 		}
 
@@ -199,10 +229,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Check that we don't 'reset' (overwrite) dictionaries we didn't make
 		/// </summary>
 		[Test]
-		public void ResetDictionary_ThrowsForNonPrivateDictionary()
+		public void ResetDictionary_AddsNoWordsToNonPrivate()
 		{
 			MakeNonPrivateBlahDictionary();
-			Assert.Throws<ArgumentException>(() => SpellingHelper.ResetDictionary("blah", new[] {"hello", "world"}));
+			SpellingHelper.ResetDictionary("blah", new[] { "hello", "world" });
+			var filePath = SpellingHelper.GetDicPath(SpellingHelper.GetSpellingDirectoryPath(), "blah");
+			var contents = File.ReadAllText(filePath);
+			Assert.That(contents, Is.Not.StringContaining(SpellingHelper.PrototypeWord));
+			Assert.That(contents, Is.Not.StringContaining("hello"));
+			Assert.That(contents, Is.Not.StringContaining("world"));
+			Assert.That(contents, Contains.Substring("blah"));
 		}
 
 		/// <summary>
