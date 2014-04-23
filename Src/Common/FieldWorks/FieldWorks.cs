@@ -32,6 +32,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
@@ -418,6 +419,9 @@ namespace SIL.FieldWorks
 
 			// Get the project the user wants to open and attempt to launch it.
 			ProjectId projectId = DetermineProject(appArgs);
+			if (projectId != null && ParatextHelper.GetAssociatedProject(projectId) != null)
+				projectId.Type = FDOBackendProviderType.kSharedXML;
+
 			// s_projectId can be non-null if the user decided to restore a project from
 			// the Welcome to Fieldworks dialog. (FWR-2146)
 			if (s_projectId == null && !LaunchProject(appArgs, ref projectId))
@@ -1781,7 +1785,16 @@ namespace SIL.FieldWorks
 							PropertyTable.SettingsGroup.LocalSettings);
 					}
 				}
-				return dlg.DialogResult != DialogResult.OK ? null : new ProjectId(dlg.Project, dlg.Server);
+
+				if (dlg.DialogResult == DialogResult.OK)
+				{
+					var projId = new ProjectId(dlg.Project, dlg.Server);
+					if (ParatextHelper.GetAssociatedProject(projId) != null)
+						projId.Type = FDOBackendProviderType.kSharedXML;
+					return projId;
+				}
+
+				return null;
 			}
 		}
 

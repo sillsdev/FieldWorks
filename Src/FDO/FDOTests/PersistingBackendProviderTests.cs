@@ -795,4 +795,33 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			throw new UnauthorizedAccessException();
 		}
 	}
+
+	/// ----------------------------------------------------------------------------------------
+	/// <summary>
+	/// Base class for testing the FdoCache with the FDOBackendProviderType.kXML
+	/// backend provider.
+	/// </summary>
+	/// ----------------------------------------------------------------------------------------
+	[TestFixture]
+	public sealed class SharedXMLTests : PersistingBackendProviderTestBase
+	{
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Override to create and load a very basic cache.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		protected override FdoCache CreateCache()
+		{
+			const string projName = "TestLangProj-test";
+			string filename = Path.Combine(FwDirectoryFinder.ProjectsDirectory,
+				Path.Combine(projName, FdoFileHelper.GetXmlDataFileName(projName)));
+			if (!m_internalRestart)
+			{
+				if (File.Exists(filename))
+					File.Delete(filename);
+			}
+
+			return BootstrapSystem(new TestProjectId(FDOBackendProviderType.kSharedXML, filename), m_loadType);
+		}
+	}
 }

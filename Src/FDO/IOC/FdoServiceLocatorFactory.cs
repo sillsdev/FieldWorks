@@ -175,6 +175,12 @@ namespace SIL.FieldWorks.FDO.IOC
 						.LifecycleIs(new SingletonLifecycle())
 						.Use<MemoryOnlyBackendProvider>();
 					break;
+				case FDOBackendProviderType.kSharedXML:
+					registry
+						.For<IDataSetup>()
+						.LifecycleIs(new SingletonLifecycle())
+						.Use<SharedXMLBackendProvider>();
+					break;
 			}
 			// Register two additional interfaces of the BEP, which are injected into other services.
 			registry

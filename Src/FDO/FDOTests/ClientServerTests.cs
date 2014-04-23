@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.CoreTests;
 using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 
@@ -45,7 +42,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			modified.Add(GetSurrogate(sense1, cmoFactory));
 			m_actionHandler.Undo();
 			var uowService = (UnitOfWorkService) undoManager;
-			var reconciler = uowService.Reconciler(new List<ICmObjectSurrogate>(), modified, new List<ICmObjectId>());
+			var reconciler = uowService.CreateReconciler(new List<ICmObjectSurrogate>(), modified, new List<ICmObjectId>());
 
 			// Only other client made changes
 			Assert.That(reconciler.OkToReconcileChanges(), Is.True,
@@ -55,21 +52,21 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			UndoableUnitOfWorkHelper.Do("undo change gloss", "redo", m_actionHandler,
 				() => sense1.Gloss.AnalysisDefaultWritingSystem =
 					Cache.TsStrFactory.MakeString("strike with shoe", Cache.DefaultAnalWs));
-			reconciler = uowService.Reconciler(new List<ICmObjectSurrogate>(), modified, new List<ICmObjectId>());
+			reconciler = uowService.CreateReconciler(new List<ICmObjectSurrogate>(), modified, new List<ICmObjectId>());
 			Assert.That(reconciler.OkToReconcileChanges(), Is.False,
 				"we should not be able to make a change if we have a conflicting change to the same object.");
 			m_actionHandler.Undo();
-			reconciler = uowService.Reconciler(new List<ICmObjectSurrogate>(), modified, new List<ICmObjectId>());
+			reconciler = uowService.CreateReconciler(new List<ICmObjectSurrogate>(), modified, new List<ICmObjectId>());
 			Assert.That(reconciler.OkToReconcileChanges(), Is.True);
 
 			// Foreign modified, local deleted.
 			UndoableUnitOfWorkHelper.Do("undo delete sense", "redo", m_actionHandler,
 				() => entry1.SensesOS.RemoveAt(0));
-			reconciler = uowService.Reconciler(new List<ICmObjectSurrogate>(), modified, new List<ICmObjectId>());
+			reconciler = uowService.CreateReconciler(new List<ICmObjectSurrogate>(), modified, new List<ICmObjectId>());
 			Assert.That(reconciler.OkToReconcileChanges(), Is.False,
 				"we should not be able to make a change if we have deleted an object that the change modifies.");
 			m_actionHandler.Undo();
-			reconciler = uowService.Reconciler(new List<ICmObjectSurrogate>(), modified, new List<ICmObjectId>());
+			reconciler = uowService.CreateReconciler(new List<ICmObjectSurrogate>(), modified, new List<ICmObjectId>());
 			Assert.That(reconciler.OkToReconcileChanges(), Is.True);
 
 			// Local modified, foreign deleted.
@@ -78,11 +75,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 					Cache.TsStrFactory.MakeString("strike with boot", Cache.DefaultAnalWs));
 			var listOfSense1Id = new List<ICmObjectId>();
 			listOfSense1Id.Add(sense1.Id);
-			reconciler = uowService.Reconciler(new List<ICmObjectSurrogate>(), new List<ICmObjectSurrogate>(), listOfSense1Id);
+			reconciler = uowService.CreateReconciler(new List<ICmObjectSurrogate>(), new List<ICmObjectSurrogate>(), listOfSense1Id);
 			Assert.That(reconciler.OkToReconcileChanges(), Is.False,
 				"we should not be able to make a change if it involves deleting an object that we have modified.");
 			m_actionHandler.Undo();
-			reconciler = uowService.Reconciler(new List<ICmObjectSurrogate>(), modified, new List<ICmObjectId>());
+			reconciler = uowService.CreateReconciler(new List<ICmObjectSurrogate>(), modified, new List<ICmObjectId>());
 			Assert.That(reconciler.OkToReconcileChanges(), Is.True);
 
 			// We added a reference to something they deleted (on a new object).
@@ -94,7 +91,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			newObjectSurrogates.Add(GetSurrogate(bundle.Owner.Owner, cmoFactory));
 			newObjectSurrogates.Add(GetSurrogate(bundle.Owner,cmoFactory));
 			newObjectSurrogates.Add(GetSurrogate(bundle, cmoFactory));
-			reconciler = uowService.Reconciler(new List<ICmObjectSurrogate>(), new List<ICmObjectSurrogate>(), listOfSense1Id);
+			reconciler = uowService.CreateReconciler(new List<ICmObjectSurrogate>(), new List<ICmObjectSurrogate>(), listOfSense1Id);
 			Assert.That(reconciler.OkToReconcileChanges(), Is.False,
 				"we should not be able to make a change if it involves deleting an object that one we have added refers to.");
 
@@ -102,11 +99,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			UndoableUnitOfWorkHelper.Do("undo clear ref", "redo", m_actionHandler,
 				() => bundle.SenseRA = null);
 			undoManager.Save();
-			reconciler = uowService.Reconciler(new List<ICmObjectSurrogate>(), new List<ICmObjectSurrogate>(), listOfSense1Id);
+			reconciler = uowService.CreateReconciler(new List<ICmObjectSurrogate>(), new List<ICmObjectSurrogate>(), listOfSense1Id);
 			Assert.That(reconciler.OkToReconcileChanges(),Is.True);
 			UndoableUnitOfWorkHelper.Do("undo set ref", "redo", m_actionHandler,
 				() => bundle.SenseRA = sense1);
-			reconciler = uowService.Reconciler(new List<ICmObjectSurrogate>(), new List<ICmObjectSurrogate>(), listOfSense1Id);
+			reconciler = uowService.CreateReconciler(new List<ICmObjectSurrogate>(), new List<ICmObjectSurrogate>(), listOfSense1Id);
 			Assert.That(reconciler.OkToReconcileChanges(), Is.False,
 				"we should not be able to make a change if it involves deleting an object that we have made a reference to.");
 			m_actionHandler.Undo(); // setting the sense of the bundle
@@ -118,13 +115,13 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			UndoableUnitOfWorkHelper.Do("undo delete sense", "redo", m_actionHandler,
 				() => entry1.SensesOS.RemoveAt(0));
 			// Now pretend THEY made the change adding the objects referring to sense1, which we just deleted.
-			reconciler = uowService.Reconciler(newObjectSurrogates, new List<ICmObjectSurrogate>(), new List<ICmObjectId>());
+			reconciler = uowService.CreateReconciler(newObjectSurrogates, new List<ICmObjectSurrogate>(), new List<ICmObjectId>());
 			Assert.That(reconciler.OkToReconcileChanges(), Is.False,
 				"we should not be able to make a change if it involves adding an object that refers to an object we have deleted.");
 
 			// This is cheating a little bit, because we're passing as modified objects things not in our db at all.
 			// But it exercises the relevant code, making sure we check the modified objects for refs to our deleted ones.
-			reconciler = uowService.Reconciler(new List<ICmObjectSurrogate>(), newObjectSurrogates, new List<ICmObjectId>());
+			reconciler = uowService.CreateReconciler(new List<ICmObjectSurrogate>(), newObjectSurrogates, new List<ICmObjectId>());
 			Assert.That(reconciler.OkToReconcileChanges(), Is.False,
 				"we should not be able to make a change if it involves adding a ref to an object we have deleted.");
 		}
@@ -160,7 +157,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 						remove.Delete();
 					});
 			var uowService = Cache.ServiceLocator.GetInstance<IUnitOfWorkService>();
-			var reconciler = ((UnitOfWorkService)uowService).Reconciler(newbiesClockwise, dirtballsClockwise, gonersClockwise);
+			var reconciler = ((UnitOfWorkService)uowService).CreateReconciler(newbiesClockwise, dirtballsClockwise, gonersClockwise);
 			var notifiee = new Notifiee();
 			Cache.DomainDataByFlid.AddNotification(notifiee);
 			Assert.That(reconciler.OkToReconcileChanges(), Is.True);
@@ -239,7 +236,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var newTime = entry1.DateModified; // should be definitely after oldTime.
 			Assert.That(newTime, Is.GreaterThan(oldTime));
 			var uowService = Cache.ServiceLocator.GetInstance<IUnitOfWorkService>();
-			var reconciler = ((UnitOfWorkService)uowService).Reconciler(newbiesClockwise, dirtballsClockwise, gonersClockwise);
+			var reconciler = ((UnitOfWorkService)uowService).CreateReconciler(newbiesClockwise, dirtballsClockwise, gonersClockwise);
 			Assert.That(reconciler.OkToReconcileChanges(), Is.True);
 			reconciler.ReconcileForeignChanges();
 
@@ -314,7 +311,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.That(newTime, Is.LessThan(foreignTime)); // might not be if stepping in debugger
 
 			var uowService = Cache.ServiceLocator.GetInstance<IUnitOfWorkService>();
-			var reconciler = ((UnitOfWorkService)uowService).Reconciler(newbiesClockwise, dirtballsClockwise, gonersClockwise);
+			var reconciler = ((UnitOfWorkService)uowService).CreateReconciler(newbiesClockwise, dirtballsClockwise, gonersClockwise);
 			Assert.That(reconciler.OkToReconcileChanges(), Is.True);
 			reconciler.ReconcileForeignChanges();
 
@@ -645,26 +642,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		}
 
 		/// <summary>
-		/// Helper method for tests on this pattern:
-		/// Create some initial state;
-		/// Save;
-		/// Make a change locally;
-		/// Record the changes and their final state;
-		/// Undo;
-		/// Wait until a new DateTime occurs;
-		/// Make the other change locally;
-		/// Reconcile the changes in the first group;
-		/// </summary>
-		/// <param name="firstChange"></param>
-		/// <param name="secondChange"></param>
-		/// <param name="label"></param>
-		void VerifyCheckingAndReconcilingAChange(Action firstChange, Action secondChange, string label)
-		{
-
-		}
-
-
-		/// <summary>
 		/// Helper method for several tests on this pattern:
 		/// create an object that has the required kind of data;
 		/// Save;
@@ -686,7 +663,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			GetEffectsOfChange(makeTheChange, out newbySurrogates, out dirtballSurrogates, out gonerList);
 			var undoManager = Cache.ServiceLocator.GetInstance<IUndoStackManager>();
 			// Re-apply the changes using the reconciliation mechanism
-			var reconciler = ((UnitOfWorkService)undoManager).Reconciler(newbySurrogates, dirtballSurrogates, gonerList);
+			var reconciler = ((UnitOfWorkService)undoManager).CreateReconciler(newbySurrogates, dirtballSurrogates, gonerList);
 			reconciler.ReconcileForeignChanges();
 			// verify deletions
 			foreach (var id in gonerList)

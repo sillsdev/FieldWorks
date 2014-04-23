@@ -84,6 +84,11 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		/// <remarks>db4oClientServer</remarks>
 		kDb4oClientServer = 103,
+
+		/// <summary>
+		/// A FieldWorks XML file that can be accessed by multiple local clients.
+		/// </summary>
+		kSharedXML = 104
 	};
 	#endregion
 

@@ -159,7 +159,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			}
 			else
 			{
-				var backendProviderType = FDOBackendProviderType.kXML;
+				var backendProviderType = FDOBackendProviderType.kSharedXML;
 				string path = Path.Combine(ParatextLexiconDirectoryFinder.ProjectsDirectory, projectId, projectId + FdoFileHelper.ksFwDataXmlFileExtension);
 				if (!File.Exists(path))
 				{

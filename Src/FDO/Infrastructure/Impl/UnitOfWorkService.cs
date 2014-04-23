@@ -99,7 +99,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// No further Saves can be attempted until Refresh allows these changes to be reconciled.
 		/// </summary>
 		private IReconcileChanges m_pendingReconciliation;
-
 		private readonly IDataStorer m_dataStorer;
 		private readonly IdentityMap m_identityMap;
 		private readonly IFdoUI m_ui;
@@ -302,7 +301,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				bool fWaitForCommitLock = false;
 				if (newbies.Count != 0 || dirtballs.Count != 0 || goners.Count != 0)
 				{
-					fWaitForCommitLock = true;
 					// raise the OnSave event: something nontrivial is being saved.
 					bool undoable = false;
 					foreach (var stack in m_undoStacks)
@@ -318,32 +316,11 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 						(from id in newbies
 						 select (ICmObjectOrSurrogate)repo.GetObject(id)).Where(x => x != null));
 
-				if (m_dataStorer is IClientServerDataManager)
+
+				if (m_pendingReconciliation != null)
 				{
-					if (m_pendingReconciliation != null)
-					{
-						GetUserInputOnConflictingSave();
-						return; // Don't try to save the changes we just reverted!
-					}
-					List<ICmObjectSurrogate> foreignNewbies;
-					List<ICmObjectSurrogate> foreignDirtballs;
-					List<ICmObjectId> foreignGoners;
-					var csm = (IClientServerDataManager)m_dataStorer;
-					while (csm.GetUnseenForeignChanges(out foreignNewbies, out foreignDirtballs, out foreignGoners, fWaitForCommitLock))
-					{
-						var reconciler = Reconciler(foreignNewbies, foreignDirtballs, foreignGoners);
-						if (reconciler.OkToReconcileChanges())
-						{
-							reconciler.ReconcileForeignChanges();
-							// And continue looping, in case there are by now MORE foreign changes!
-						}
-						else
-						{
-							m_pendingReconciliation = reconciler;
-							GetUserInputOnConflictingSave();
-							return;
-						}
-					}
+					GetUserInputOnConflictingSave();
+					return; // Don't try to save the changes we just reverted!
 				}
 
 				// let the BEP determine if a commit should occur or not
@@ -352,13 +329,25 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					// TODO: What happens if BEP was not able to commit?
 					throw new InvalidOperationException("Could not save the data for some reason.");
 				}
-				foreach (var stack in m_undoStacks)
+				// the BEP might have found a conflicting change during the commit
+				if (m_pendingReconciliation != null)
+				{
+					GetUserInputOnConflictingSave();
+					return;
+				}
+
+				foreach (UndoStack stack in m_undoStacks)
 					stack.RecordSaved();
 			}
 			finally
 			{
 				m_fInSaveInternal = false;
 			}
+		}
+
+		public void ConflictingChanges(IReconcileChanges pendingReconciliation)
+		{
+			m_pendingReconciliation = pendingReconciliation;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -432,7 +421,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// <summary>
 		/// A hook for testing.
 		/// </summary>
-		internal IReconcileChanges Reconciler( List<ICmObjectSurrogate> foreignNewbies,
+		public IReconcileChanges CreateReconciler( List<ICmObjectSurrogate> foreignNewbies,
 			List<ICmObjectSurrogate> foreignDirtballs, List<ICmObjectId> foreignGoners)
 		{
 			return new ChangeReconciler(this, foreignNewbies, foreignDirtballs, foreignGoners);

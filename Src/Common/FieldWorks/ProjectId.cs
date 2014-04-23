@@ -11,8 +11,6 @@ using System.Net;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using System.Runtime.Serialization;
 using SIL.FieldWorks.Common.FwUtils;
@@ -40,7 +38,7 @@ namespace SIL.FieldWorks
 
 		#region Member variables
 		private string m_path;
-		private readonly FDOBackendProviderType m_type;
+		private FDOBackendProviderType m_type;
 		private readonly string m_serverName;
 		#endregion
 
@@ -148,6 +146,7 @@ namespace SIL.FieldWorks
 		public FDOBackendProviderType Type
 		{
 			get { return m_type; }
+			set { m_type = value; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -316,6 +315,7 @@ namespace SIL.FieldWorks
 						}
 						return string.Format(Properties.Resources.ksProjectNameAndServerFmt, Name, hostName);
 					case FDOBackendProviderType.kXML:
+					case FDOBackendProviderType.kSharedXML:
 						return (SysPath.GetExtension(Path) != FdoFileHelper.ksFwDataXmlFileExtension) ?
 							SysPath.GetFileName(Path) : Name;
 					case FDOBackendProviderType.kInvalid:
@@ -416,6 +416,7 @@ namespace SIL.FieldWorks
 					}
 					break;
 				case FDOBackendProviderType.kXML:
+				case FDOBackendProviderType.kSharedXML:
 					if (!FileUtils.SimilarFileExists(Path))
 						return new StartupException(string.Format(Properties.Resources.kstidFileNotFound, Path));
 					break;

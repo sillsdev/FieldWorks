@@ -654,6 +654,16 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			{
 				throw new NotImplementedException();
 			}
+
+			public IReconcileChanges CreateReconciler(List<ICmObjectSurrogate> foreignNewbies, List<ICmObjectSurrogate> foreignDirtballs, List<ICmObjectId> foreignGoners)
+			{
+				throw new NotImplementedException();
+			}
+
+			public void ConflictingChanges(IReconcileChanges pendingReconciliation)
+			{
+				throw new NotImplementedException();
+			}
 		}
 
 		/// <summary>

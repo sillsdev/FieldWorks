@@ -261,5 +261,21 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 		/// </summary>
 		void GatherChanges(HashSet<ICmObjectId> newbies, HashSet<ICmObjectOrSurrogate> dirtballs,
 			HashSet<ICmObjectId> goners);
+
+		/// <summary>
+		/// Creates a change reconciler.
+		/// </summary>
+		/// <param name="foreignNewbies">The foreign newbies.</param>
+		/// <param name="foreignDirtballs">The foreign dirtballs.</param>
+		/// <param name="foreignGoners">The foreign goners.</param>
+		/// <returns></returns>
+		IReconcileChanges CreateReconciler(List<ICmObjectSurrogate> foreignNewbies,
+			List<ICmObjectSurrogate> foreignDirtballs, List<ICmObjectId> foreignGoners);
+
+		/// <summary>
+		/// Notifies the service of conflicting changes.
+		/// </summary>
+		/// <param name="pendingReconciliation">The pending reconciliation.</param>
+		void ConflictingChanges(IReconcileChanges pendingReconciliation);
 	}
 }

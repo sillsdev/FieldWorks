@@ -90,6 +90,9 @@
     <Reference Include="BasicUtils">
       <HintPath>..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
+    <Reference Include="protobuf-net">
+      <HintPath>..\..\DistFiles\protobuf-net.dll</HintPath>
+    </Reference>
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Remoting" />
@@ -178,6 +181,9 @@
     <Compile Include="CacheKey.cs" />
     <Compile Include="FdoDataMigrationForbiddenException.cs" />
     <Compile Include="FdoFileLockedException.cs" />
+    <Compile Include="Infrastructure\Impl\CommitLogMetadata.cs" />
+    <Compile Include="Infrastructure\Impl\CommitLogRecord.cs" />
+    <Compile Include="Infrastructure\Impl\SharedXMLBackendProvider.cs" />
     <Compile Include="LinkedFilesRelativePathHelper.cs" />
     <Compile Include="DomainImpl\AnalysisAdjuster.cs" />
     <Compile Include="DomainImpl\CmCell.cs" />

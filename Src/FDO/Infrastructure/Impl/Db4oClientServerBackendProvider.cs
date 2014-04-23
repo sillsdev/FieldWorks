@@ -259,9 +259,9 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// </summary>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification="Ext() returns a reference")]
-		public override bool GetUnseenForeignChanges(out List<ICmObjectSurrogate> foreignNewbies,
+		private bool GetUnseenForeignChanges(out List<ICmObjectSurrogate> foreignNewbies,
 			out List<ICmObjectSurrogate> foreignDirtballs,
-			out List<ICmObjectId> foreignGoners, bool fWaitForCommitLock)
+			out List<ICmObjectId> foreignGoners)
 		{
 			foreignNewbies = new List<ICmObjectSurrogate>();
 			foreignDirtballs = new List<ICmObjectSurrogate>();
@@ -278,8 +278,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 			try
 			{
-				if (!GetCommitLock(fWaitForCommitLock))
-					return false;
 				var unseenCommits = (from CommitData cd in m_dbStore
 									 where cd.WriteGeneration > m_lastWriteGenerationSeen && cd.Source != m_mySourceTag
 									 select cd).ToList();
@@ -349,16 +347,12 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			{
 
 				if (ResumeDb4oConnectionAskingUser())
-					return GetUnseenForeignChanges(out foreignNewbies, out foreignDirtballs, out foreignGoners, fWaitForCommitLock);
+					return GetUnseenForeignChanges(out foreignNewbies, out foreignDirtballs, out foreignGoners);
 
 				StopClient();
 				// get back to a consistant state.
 				m_lastWriteGenerationSeen = startingWriteGeneration;
 				throw new NonRecoverableConnectionLostException();
-			}
-			finally
-			{
-				ReleaseCommitLock();
 			}
 		}
 
@@ -392,14 +386,34 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				}
 			}
 
-			IEnumerable<CustomFieldInfo> cfiList;
-			bool anyModifiedCustomFields;
-			if (!HaveAnythingToCommit(newbies, dirtballs, goners, out anyModifiedCustomFields, out cfiList))
+			if (!GetCommitLock(newbies.Count != 0 || dirtballs.Count != 0 || goners.Count != 0))
 				return true;
-
-			GetCommitLock(true);
 			try
 			{
+				List<ICmObjectSurrogate> foreignNewbies;
+				List<ICmObjectSurrogate> foreignDirtballs;
+				List<ICmObjectId> foreignGoners;
+				if (GetUnseenForeignChanges(out foreignNewbies, out foreignDirtballs, out foreignGoners))
+				{
+					IUnitOfWorkService uowService = ((IServiceLocatorInternal) m_cache.ServiceLocator).UnitOfWorkService;
+					IReconcileChanges reconciler = uowService.CreateReconciler(foreignNewbies, foreignDirtballs, foreignGoners);
+					if (reconciler.OkToReconcileChanges())
+					{
+						reconciler.ReconcileForeignChanges();
+						// And continue looping, in case there are by now MORE foreign changes!
+					}
+					else
+					{
+						uowService.ConflictingChanges(reconciler);
+						return true;
+					}
+				}
+
+				IEnumerable<CustomFieldInfo> cfiList;
+				bool anyModifiedCustomFields;
+				if (!HaveAnythingToCommit(newbies, dirtballs, goners, out anyModifiedCustomFields, out cfiList))
+					return true;
+
 				var commitData = new CommitData { Source = m_mySourceTag };
 				int objectAddedIndex = 0;
 				commitData.ObjectsDeleted = (from item in goners select item.Guid).ToArray();
@@ -619,7 +633,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				try { Directory.Move(sNewProjectFolder, oldProjectFolder); }
 				catch
 				{ }
-				;
 
 				return false;
 			}
