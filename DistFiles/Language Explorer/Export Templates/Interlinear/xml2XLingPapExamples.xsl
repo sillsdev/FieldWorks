@@ -59,16 +59,6 @@ Main template
 			</languages>
 			<types>
 				<xsl:call-template name="CommonTypes"/>
-				<!--<type id="tHomographNumber" font-size="65%" cssSpecial="vertical-align:sub"
-					xsl-foSpecial="baseline-shift='sub'"/>
-				<type id="tVariantTypes" >
-					<xsl:variable name="analysisLanguage" select="//language[not(@vernacular='true')][1]"/>
-					<xsl:if test="$analysisLanguage">
-						<xsl:attribute name="font-family">
-							<xsl:value-of select="$analysisLanguage/@font"/>
-						</xsl:attribute>
-					</xsl:if>
-				</type>-->
 			</types>
 		</lingPaper>
 	</xsl:template>
@@ -136,18 +126,21 @@ phrase
 				<!-- what is this for?   -->
 			</xsl:when>
 			<xsl:when test="@type='gls'">
-				<item type="gls" lang="{@lang}">
+				<item type="gls">
+					<xsl:call-template name="GetFreeLangAttribute"/>
 					<xsl:apply-templates/>
 				</item>
 			</xsl:when>
 			<xsl:when test="@type='note'">
-				<item type="note" lang="{@lang}">
+				<item type="note">
+					<xsl:call-template name="GetFreeLangAttribute"/>
 					<xsl:apply-templates/>
 				</item>
 			</xsl:when>
 			<xsl:when test="@type='lit' ">
 				<!--  someday we'll have a literal translation element in XLingPaper -->
-				<item type="gls" lang="{@lang}">
+				<item type="gls">
+					<xsl:call-template name="GetFreeLangAttribute"/>
 					<object type="tLiteralTranslation">
 						<xsl:apply-templates/>
 					</object>
