@@ -151,10 +151,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		private void BasicInit()
 		{
 			m_mutex = new Mutex(false, ProjectId.Name + "_Mutex");
-			m_commitLogMetadata = MemoryMappedFile.CreateOrOpen(ProjectId.Name + "_CommitLogMetadata", 1024, MemoryMappedFileAccess.ReadWrite,
-				MemoryMappedFileOptions.DelayAllocatePages, null, HandleInheritability.None);
-			m_commitLog = MemoryMappedFile.CreateOrOpen(ProjectId.Name + "_CommitLog", CommitLogSize, MemoryMappedFileAccess.ReadWrite,
-				MemoryMappedFileOptions.DelayAllocatePages, null, HandleInheritability.None);
+			m_commitLogMetadata = MemoryMappedFile.CreateOrOpen(ProjectId.Name + "_CommitLogMetadata", 1024);
+			m_commitLog = MemoryMappedFile.CreateOrOpen(ProjectId.Name + "_CommitLog", CommitLogSize);
 		}
 
 		public override bool Commit(HashSet<ICmObjectOrSurrogate> newbies, HashSet<ICmObjectOrSurrogate> dirtballs, HashSet<ICmObjectId> goners)
@@ -301,7 +299,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			{
 				if (viewLength > 0)
 				{
-					using (MemoryMappedViewStream stream = m_commitLog.CreateViewStream(viewOffset, viewLength))
+					using (MemoryMappedViewStream stream = m_commitLog.CreateViewStream(viewOffset, viewLength, MemoryMappedFileAccess.Read))
 					{
 						while (stream.Position < viewLength)
 						{

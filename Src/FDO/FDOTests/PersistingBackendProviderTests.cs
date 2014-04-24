@@ -9,6 +9,7 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -187,6 +188,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			lp.EthnologueCode = newEthCode;
 			// CellarPropertyType.String:
 			var le = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			Guid leGuid = le.Guid;
 			var irOriginalValue = Cache.TsStrFactory.MakeString("<import & residue>",
 																Cache.WritingSystemFactory.UserWs);
 			le.ImportResidue = irOriginalValue;
@@ -276,10 +278,11 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			// Check Unicode
 			Assert.AreEqual(newEthCode, lp.EthnologueCode, "Wrong Unicode value restored.");
 			// Check string (ITsString)
-			var irRestoredValue = lp.LexDbOA.Entries.ToArray()[0].ImportResidue;
+			le = Cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(leGuid);
+			var irRestoredValue = le.ImportResidue;
 			var xmlRestoredValue = TsStringUtils.GetXmlRep(irRestoredValue, Cache.WritingSystemFactory, Cache.WritingSystemFactory.UserWs, true);
 			Assert.AreEqual(xmlOriginalValue, xmlRestoredValue, "Wrong ITsString value restored.");
-			var irRestoredBlankValue = lp.LexDbOA.Entries.ToArray()[0].Comment.get_String(Cache.WritingSystemFactory.UserWs);
+			var irRestoredBlankValue = le.Comment.get_String(Cache.WritingSystemFactory.UserWs);
 			var xmlRestoredBlankValue = TsStringUtils.GetXmlRep(irRestoredBlankValue, Cache.WritingSystemFactory, Cache.WritingSystemFactory.UserWs, true);
 			Assert.AreEqual(xmlOriginalBlankValue, xmlRestoredBlankValue, "Wrong ITsString value restored for blank string.");
 			// ITsTextProps
@@ -798,7 +801,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// Base class for testing the FdoCache with the FDOBackendProviderType.kXML
+	/// Base class for testing the FdoCache with the FDOBackendProviderType.kSharedXML
 	/// backend provider.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
@@ -812,16 +815,209 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		/// ------------------------------------------------------------------------------------
 		protected override FdoCache CreateCache()
 		{
-			const string projName = "TestLangProj-test";
-			string filename = Path.Combine(FwDirectoryFinder.ProjectsDirectory,
-				Path.Combine(projName, FdoFileHelper.GetXmlDataFileName(projName)));
+			IProjectIdentifier projectID = ProjectID;
 			if (!m_internalRestart)
 			{
-				if (File.Exists(filename))
-					File.Delete(filename);
+				if (File.Exists(projectID.Path))
+					File.Delete(projectID.Path);
 			}
 
-			return BootstrapSystem(new TestProjectId(FDOBackendProviderType.kSharedXML, filename), m_loadType);
+			return BootstrapSystem(projectID, m_loadType);
+		}
+
+		private IProjectIdentifier ProjectID
+		{
+			get
+			{
+				const string projName = "TestLangProj-test";
+				string filename = Path.Combine(FwDirectoryFinder.ProjectsDirectory,
+					Path.Combine(projName, FdoFileHelper.GetXmlDataFileName(projName)));
+				return new TestProjectId(FDOBackendProviderType.kSharedXMLWithMemoryOnlyWsMgr, filename);
+			}
+		}
+
+		private FdoCache CreateOtherCache()
+		{
+			FdoCache retval = FdoCache.CreateCacheFromExistingData(ProjectID, "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new DummyProgressDlg());
+			var dataSetup = retval.ServiceLocator.GetInstance<IDataSetup>();
+			dataSetup.LoadDomain(m_loadType);
+			return retval;
+		}
+
+		/// <summary>
+		/// Tests sequential changes by two caches on the same project.
+		/// </summary>
+		[Test]
+		public void SequentialChanges()
+		{
+			Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+			Cache.ServiceLocator.GetInstance<IDataStorer>().CompleteAllCommits();
+			using (FdoCache otherCache = CreateOtherCache())
+			{
+				ILexEntry entry1 = null;
+				NonUndoableUnitOfWorkHelper.Do(Cache.ServiceLocator.ActionHandler, () =>
+				{
+					IMoMorphType stemType = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
+					entry1 = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(stemType, Cache.TsStrFactory.MakeString("form1", Cache.DefaultVernWs),
+						Cache.TsStrFactory.MakeString("gloss1", Cache.DefaultAnalWs), new SandboxGenericMSA());
+				});
+				Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+
+				ILexEntry otherEntry1;
+				Assert.That(otherCache.ServiceLocator.GetInstance<ILexEntryRepository>().TryGetObject(entry1.Guid, out otherEntry1), Is.False);
+				otherCache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+
+				Assert.That(otherCache.ServiceLocator.GetInstance<ILexEntryRepository>().TryGetObject(entry1.Guid, out otherEntry1), Is.True);
+				Assert.That(otherEntry1.LexemeFormOA.ShortName, Is.EqualTo(entry1.LexemeFormOA.ShortName));
+				Assert.That(otherEntry1.SensesOS[0].ShortName, Is.EqualTo(entry1.SensesOS[0].ShortName));
+
+				ILexEntry otherEntry2 = null;
+				NonUndoableUnitOfWorkHelper.Do(otherCache.ServiceLocator.ActionHandler, () =>
+				{
+					IMoMorphType stemType = otherCache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
+					otherEntry2 = otherCache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(stemType, otherCache.TsStrFactory.MakeString("form2", otherCache.DefaultVernWs),
+						otherCache.TsStrFactory.MakeString("gloss2", otherCache.DefaultAnalWs), new SandboxGenericMSA());
+				});
+				otherCache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+
+				ILexEntry entry2;
+				Assert.That(Cache.ServiceLocator.GetInstance<ILexEntryRepository>().TryGetObject(otherEntry2.Guid, out entry2), Is.False);
+				Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+
+				Assert.That(Cache.ServiceLocator.GetInstance<ILexEntryRepository>().TryGetObject(otherEntry2.Guid, out entry2), Is.True);
+				Assert.That(entry2.LexemeFormOA.ShortName, Is.EqualTo(otherEntry2.LexemeFormOA.ShortName));
+				Assert.That(entry2.SensesOS[0].ShortName, Is.EqualTo(otherEntry2.SensesOS[0].ShortName));
+			}
+		}
+
+		/// <summary>
+		/// Tests simultaneous changes by two caches on the same project.
+		/// </summary>
+		[Test]
+		public void SimultaneousChanges()
+		{
+			Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+			Cache.ServiceLocator.GetInstance<IDataStorer>().CompleteAllCommits();
+			using (FdoCache otherCache = CreateOtherCache())
+			{
+				ILexEntry entry1 = null;
+				NonUndoableUnitOfWorkHelper.Do(Cache.ServiceLocator.ActionHandler, () =>
+				{
+					IMoMorphType stemType = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
+					entry1 = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(stemType, Cache.TsStrFactory.MakeString("form1", Cache.DefaultVernWs),
+						Cache.TsStrFactory.MakeString("gloss1", Cache.DefaultAnalWs), new SandboxGenericMSA());
+				});
+
+				ILexEntry otherEntry2 = null;
+				NonUndoableUnitOfWorkHelper.Do(otherCache.ServiceLocator.ActionHandler, () =>
+				{
+					IMoMorphType stemType = otherCache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
+					otherEntry2 = otherCache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(stemType, otherCache.TsStrFactory.MakeString("form2", otherCache.DefaultVernWs),
+						otherCache.TsStrFactory.MakeString("gloss2", otherCache.DefaultAnalWs), new SandboxGenericMSA());
+				});
+
+				Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+
+				ILexEntry otherEntry1;
+				Assert.That(otherCache.ServiceLocator.GetInstance<ILexEntryRepository>().TryGetObject(entry1.Guid, out otherEntry1), Is.False);
+				otherCache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+
+				ILexEntry entry2;
+				Assert.That(Cache.ServiceLocator.GetInstance<ILexEntryRepository>().TryGetObject(otherEntry2.Guid, out entry2), Is.False);
+				Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+
+				Assert.That(otherCache.ServiceLocator.GetInstance<ILexEntryRepository>().TryGetObject(entry1.Guid, out otherEntry1), Is.True);
+				Assert.That(otherEntry1.LexemeFormOA.ShortName, Is.EqualTo(entry1.LexemeFormOA.ShortName));
+				Assert.That(otherEntry1.SensesOS[0].ShortName, Is.EqualTo(entry1.SensesOS[0].ShortName));
+
+				Assert.That(Cache.ServiceLocator.GetInstance<ILexEntryRepository>().TryGetObject(otherEntry2.Guid, out entry2), Is.True);
+				Assert.That(entry2.LexemeFormOA.ShortName, Is.EqualTo(otherEntry2.LexemeFormOA.ShortName));
+				Assert.That(entry2.SensesOS[0].ShortName, Is.EqualTo(otherEntry2.SensesOS[0].ShortName));
+			}
+		}
+
+		/// <summary>
+		/// Tests that renaming the project is not allowed when there are multiple caches using the same project.
+		/// </summary>
+		[Test]
+		public void RenameDatabaseNotAllowedWhenMultipleCaches()
+		{
+			Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+			Cache.ServiceLocator.GetInstance<IDataStorer>().CompleteAllCommits();
+			using (FdoCache otherCache = CreateOtherCache())
+			{
+				Assert.That(Cache.RenameDatabase("NewName"), Is.False);
+				Assert.That(otherCache.RenameDatabase("NewName"), Is.False);
+			}
+			Assert.That(Cache.RenameDatabase("NewName"), Is.True);
+			Assert.That(Cache.RenameDatabase("TestLangProj-test"), Is.True);
+		}
+
+		/// <summary>
+		/// Tests conflicting changes by two caches on the same project.
+		/// </summary>
+		[Test]
+		public void ConflictingChanges()
+		{
+			Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+			Cache.ServiceLocator.GetInstance<IDataStorer>().CompleteAllCommits();
+			using (FdoCache otherCache = CreateOtherCache())
+			{
+				ILexEntry entry1 = null;
+				NonUndoableUnitOfWorkHelper.Do(Cache.ServiceLocator.ActionHandler, () =>
+				{
+					IMoMorphType stemType = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
+					entry1 = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(stemType, Cache.TsStrFactory.MakeString("form1", Cache.DefaultVernWs),
+						Cache.TsStrFactory.MakeString("gloss1", Cache.DefaultAnalWs), new SandboxGenericMSA());
+				});
+				Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+				otherCache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+
+				ILexEntry otherEntry1;
+				Assert.That(otherCache.ServiceLocator.GetInstance<ILexEntryRepository>().TryGetObject(entry1.Guid, out otherEntry1), Is.True);
+				NonUndoableUnitOfWorkHelper.Do(otherCache.ServiceLocator.ActionHandler, () =>
+				{
+					otherEntry1.CitationForm.set_String(otherCache.DefaultVernWs, "othercitation");
+				});
+				otherCache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+
+				NonUndoableUnitOfWorkHelper.Do(Cache.ServiceLocator.ActionHandler, () =>
+				{
+					entry1.CitationForm.set_String(Cache.DefaultVernWs, "citation");
+				});
+				Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+				Assert.That(entry1.CitationForm.VernacularDefaultWritingSystem.Text, Is.EqualTo(otherEntry1.CitationForm.VernacularDefaultWritingSystem.Text));
+			}
+		}
+
+		/// <summary>
+		/// Tests shutting down the master cache and letting the slave take over.
+		/// </summary>
+		[Test]
+		public void SwitchMasters()
+		{
+			Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+			Cache.ServiceLocator.GetInstance<IDataStorer>().CompleteAllCommits();
+			Guid otherEntryGuid1;
+			using (FdoCache otherCache = CreateOtherCache())
+			{
+				DisposeEverythingButBase();
+				ILexEntry otherEntry1 = null;
+				NonUndoableUnitOfWorkHelper.Do(otherCache.ServiceLocator.ActionHandler, () =>
+				{
+					IMoMorphType stemType = otherCache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
+					otherEntry1 = otherCache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(stemType, otherCache.TsStrFactory.MakeString("form1", otherCache.DefaultVernWs),
+						otherCache.TsStrFactory.MakeString("gloss1", otherCache.DefaultAnalWs), new SandboxGenericMSA());
+				});
+				otherEntryGuid1 = otherEntry1.Guid;
+				otherCache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+			}
+
+			RestartCache(false);
+			ILexEntry entry1;
+			Assert.That(Cache.ServiceLocator.GetInstance<ILexEntryRepository>().TryGetObject(otherEntryGuid1, out entry1), Is.True);
+			Assert.That(entry1.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("form1"));
+			Assert.That(entry1.SensesOS[0].Gloss.AnalysisDefaultWritingSystem.Text, Is.EqualTo("gloss1"));
 		}
 	}
 }

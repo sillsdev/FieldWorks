@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// <returns>True if user wishes to revert to saved state. False otherwise.</returns>
 		public bool ConflictingSave()
 		{
-			throw new NotImplementedException();
+			return true;
 		}
 
 		/// <summary>

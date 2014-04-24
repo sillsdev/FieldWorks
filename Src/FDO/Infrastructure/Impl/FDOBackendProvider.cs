@@ -779,14 +779,13 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		internal void RegisterOriginalCustomProperties(IEnumerable<CustomFieldInfo> originalCustomProperties)
 		{
-			foreach (var cfi in originalCustomProperties)
+			m_mdcInternal.AddCustomFields(originalCustomProperties);
+			foreach (CustomFieldInfo cfi in m_mdcInternal.GetCustomFields())
 			{
 				if (m_extantCustomFields.ContainsKey(cfi.Key))
 					return; // Must have done a migration.
 				m_extantCustomFields.Add(cfi.Key, cfi);
 			}
-			if (originalCustomProperties.Count() > 0)
-				m_mdcInternal.AddCustomFields(originalCustomProperties);
 		}
 
 		/// ------------------------------------------------------------------------------------

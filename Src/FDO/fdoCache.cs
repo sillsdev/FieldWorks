@@ -218,6 +218,8 @@ namespace SIL.FieldWorks.FDO
 			FDOBackendProviderType providerType = projectId.Type;
 			if (providerType == FDOBackendProviderType.kXMLWithMemoryOnlyWsMgr)
 				providerType = FDOBackendProviderType.kXML;
+			if (providerType == FDOBackendProviderType.kSharedXMLWithMemoryOnlyWsMgr)
+				providerType = FDOBackendProviderType.kSharedXML;
 
 			var iocFactory = new FdoServiceLocatorFactory(providerType, ui, dirs);
 			var servLoc = (IFdoServiceLocator)iocFactory.CreateServiceLocator();
@@ -260,8 +262,9 @@ namespace SIL.FieldWorks.FDO
 			Action<FdoCache> initialize)
 		{
 			FDOBackendProviderType providerType = projectId.Type;
-			bool useMemoryWsManager = (providerType == FDOBackendProviderType.kMemoryOnly ||
-				providerType == FDOBackendProviderType.kXMLWithMemoryOnlyWsMgr);
+			bool useMemoryWsManager = (providerType == FDOBackendProviderType.kMemoryOnly
+				|| providerType == FDOBackendProviderType.kXMLWithMemoryOnlyWsMgr
+				|| providerType == FDOBackendProviderType.kSharedXMLWithMemoryOnlyWsMgr);
 			FdoCache createdCache = CreateCacheInternal(projectId, ui, dirs);
 
 			// Init backend data provider

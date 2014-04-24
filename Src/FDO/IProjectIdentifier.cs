@@ -88,7 +88,15 @@ namespace SIL.FieldWorks.FDO
 		/// <summary>
 		/// A FieldWorks XML file that can be accessed by multiple local clients.
 		/// </summary>
-		kSharedXML = 104
+		kSharedXML = 104,
+
+		/// <summary>
+		/// A FieldWorks XML file that can be accessed by multiple local clients.
+		/// This has an actual backend data store on the hard drive, but does not use a real
+		/// repository of writing systems. There is probably no legitimate reason to use this
+		/// except for testing the shared XML BEP.
+		/// </summary>
+		kSharedXMLWithMemoryOnlyWsMgr = 105
 	};
 	#endregion
 
