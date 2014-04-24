@@ -6786,7 +6786,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <returns>The feature structure containing the intersection</returns>
 		public IFsFeatStruc SetIntersectionOfPhonemeFeatures(IFsFeatStruc fs)
 		{
-			fs.FeatureSpecsOC.Clear();
 			var comparer = new FsClosedValue.FsClosedValueComparer();
 			HashSet<IFsClosedValue> hashSetMaster = null;
 			var hashSetCurrent = new HashSet<IFsClosedValue>(comparer);
@@ -6821,16 +6820,39 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 			if (hashSetMaster != null)
 			{
+				// Collect the old contents of fs for potential removal
+				var featuresToRemove = new HashSet<IFsClosedValue>(comparer);
+				foreach(IFsClosedValue feature in fs.FeatureSpecsOC)
+				{
+					featuresToRemove.Add(feature);
+				}
 				foreach (var masterValue in hashSetMaster)
 				{
+					// if a matching feature was present before we will leave it
+					if(featuresToRemove.Contains(masterValue))
+					{
+						featuresToRemove.Remove(masterValue);
+						continue;
+					}
+					// otherwise we add it
 					var closedValue = m_cache.ServiceLocator.GetInstance<IFsClosedValueFactory>().Create();
 					fs.FeatureSpecsOC.Add(closedValue);
 					closedValue.FeatureRA = masterValue.FeatureRA;
 					closedValue.ValueRA = masterValue.ValueRA;
 				}
+				foreach(var goner in featuresToRemove)
+				{
+					fs.FeatureSpecsOC.Remove(goner);
+				}
+			}
+			else
+			{
+				// if there were no entries for hashSetMaster then we should clear out the old contents
+				fs.FeatureSpecsOC.Clear();
 			}
 			return fs;
 		}
+
 		protected override void OnBeforeObjectDeleted()
 		{
 			base.OnBeforeObjectDeleted();
