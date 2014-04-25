@@ -151,6 +151,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				if (!ClientServerServicesHelper.WarnOnOpeningSingleUserDialog(cache))
 					return false; // nothing changed.
+				if (!SharedBackendServicesHelper.WarnOnOpeningSingleUserDialog(cache))
+					return false;
 
 				if (wsPropsDlg.ShowDialog(owner) == DialogResult.OK)
 				{
@@ -1560,8 +1562,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				if (!CheckOkToChangeContext())
 					return;
-				if (ThereAreChanges && ClientServerServicesHelper.WarnOnConfirmingSingleUserChanges(m_cache))
+				if (ThereAreChanges && ClientServerServicesHelper.WarnOnConfirmingSingleUserChanges(m_cache)
+					&& SharedBackendServicesHelper.WarnOnConfirmingSingleUserChanges(m_cache))
+				{
 					SaveChanges();
+				}
 
 				DialogResult = DialogResult.OK;
 			}

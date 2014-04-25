@@ -1241,6 +1241,9 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (!ClientServerServicesHelper.WarnOnOpeningSingleUserDialog(Cache))
 				return;
+			if (!SharedBackendServicesHelper.WarnOnOpeningSingleUserDialog(Cache))
+				return;
+
 			FdoCache cache = Cache;
 			bool fDbRenamed = false;
 			string sProject = cache.ProjectId.Name;

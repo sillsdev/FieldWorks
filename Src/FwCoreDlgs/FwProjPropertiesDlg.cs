@@ -975,6 +975,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				NotifyProjectPropsChangedAndClose(); //The user changed something, but when warned decided against it, so do not save just quit
 				return;
 			}
+			if (!SharedBackendServicesHelper.WarnOnConfirmingSingleUserChanges(m_cache)) //if Anything changed, check and warn about other apps
+			{
+				NotifyProjectPropsChangedAndClose(); //The user changed something, but when warned decided against it, so do not save just quit
+				return;
+			}
 			if (DidLinkedFilesTabChange())
 			{
 				WarnOnNonDefaultLinkedFilesChange();

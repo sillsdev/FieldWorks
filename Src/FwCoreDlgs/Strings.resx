@@ -117,17 +117,35 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ksNotAdvisableOtherAppsUsingProjectCaption" xml:space="preserve">
+    <value>Not advisable when other applications are using this project</value>
+  </data>
   <data name="ksNotAdvisableOthersConnectedCaption" xml:space="preserve">
     <value>Not advisable when other users connected</value>
   </data>
+  <data name="ksOtherAppsUsingProjectCaption" xml:space="preserve">
+    <value>Take care - other applications are using this project</value>
+  </data>
   <data name="ksOthersConnectedCaption" xml:space="preserve">
     <value>Take care - other users connected</value>
+  </data>
+  <data name="ksWarnOnConfirmingSingleAppChanges" xml:space="preserve">
+    <value>Saving changes in this dialog while this project is open in other applications may cause those applications to crash or malfunction.
+
+Do you want to make the changes anyway?</value>
   </data>
   <data name="ksWarnOnConfirmingSingleUserChanges" xml:space="preserve">
     <value>Number of other users: {0}
 When saving changes in this dialog with other users connected, FieldWorks may crash or malfunction for those users.
 
 Do you want to make the changes anyway?</value>
+  </data>
+  <data name="ksWarnOnOpeningSingleAppDialog" xml:space="preserve">
+    <value>The menu command you selected will open a dialog box. If you change any selections or settings in the dialog box, it can cause problems in other applications that have this project open.
+
+If you will only look at selections and settings, click OK.
+
+If you need to make changes, close all other applications that have this project open before you continue, or click Cancel.</value>
   </data>
   <data name="ksWarnOnOpeningSingleUserDialog" xml:space="preserve">
     <value>Number of other users: {0}

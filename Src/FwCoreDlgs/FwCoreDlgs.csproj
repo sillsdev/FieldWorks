@@ -446,6 +446,7 @@
     <Compile Include="RegexHelperMenu.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="SharedBackendServicesHelper.cs" />
     <Compile Include="Strings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -627,6 +628,7 @@
     <EmbeddedResource Include="Strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="UtilityDlg.resx">
       <DependentUpon>UtilityDlg.cs</DependentUpon>

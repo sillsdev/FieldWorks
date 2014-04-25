@@ -179,6 +179,7 @@
     <Compile Include="Application\IActionHandlerExtensions.cs" />
     <Compile Include="Application\ReferenceTracker.cs" />
     <Compile Include="CacheKey.cs" />
+    <Compile Include="DomainServices\SharedBackendServices.cs" />
     <Compile Include="FdoDataMigrationForbiddenException.cs" />
     <Compile Include="FdoFileLockedException.cs" />
     <Compile Include="Infrastructure\Impl\CommitLogMetadata.cs" />

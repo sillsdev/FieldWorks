@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2013-2014 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.MemoryMappedFiles;
@@ -22,6 +26,26 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			IDataMigrationManager dataMigrationManager, IFdoUI ui, IFdoDirectories dirs)
 			: base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager, ui, dirs)
 		{
+		}
+
+		internal int OtherApplicationsConnectedCount
+		{
+			get
+			{
+				m_mutex.WaitOne();
+				try
+				{
+					using (MemoryMappedViewStream stream = m_commitLogMetadata.CreateViewStream())
+					{
+						var metadata = Serializer.DeserializeWithLengthPrefix<CommitLogMetadata>(stream, PrefixStyle.Base128, 1);
+						return metadata.Slots.Count(s => s != -1) - 1;
+					}
+				}
+				finally
+				{
+					m_mutex.ReleaseMutex();
+				}
+			}
 		}
 
 		protected override int StartupInternal(int currentModelVersion)
