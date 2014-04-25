@@ -51,12 +51,6 @@ namespace SIL.HermitCrab
 				}
 			}
 
-			public override bool ConstraintsEqual(Allomorph other)
-			{
-				RootAllomorph otherAllo = (RootAllomorph) other;
-				return m_shape.Equals(otherAllo.m_shape) && base.ConstraintsEqual(other);
-			}
-
 			public override string ToString()
 			{
 				return m_shape.ToString();
