@@ -22,5 +22,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		[ProtoMember(6)]
 		public int[] Slots;
+
+		[ProtoMember(7)]
+		public int Master;
 	}
 }

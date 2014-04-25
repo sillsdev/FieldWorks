@@ -301,6 +301,18 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					}
 				}
 			}
+			// Make sure that there aren't multiple applications accessing the project
+			// It is possible for a user to start up an application that accesses the
+			// project after this check, but the application should not interfere with
+			// the S/R operation.
+			while (SharedBackendServices.AreMultipleApplicationsConnected(Cache))
+			{
+				if (ThreadHelper.ShowMessageBox(null, LexEdStrings.ksSendReceiveNotPermittedMultipleAppsText,
+					LexEdStrings.ksSendReceiveNotPermittedMultipleAppsCaption, MessageBoxButtons.RetryCancel, MessageBoxIcon.Warning) == DialogResult.Cancel)
+				{
+					return true;
+				}
+			}
 			StopParser();
 			SaveAllDataToDisk();
 			_mediator.PropertyTable.SetProperty("LastBridgeUsed", "FLExBridge", PropertyTable.SettingsGroup.LocalSettings);

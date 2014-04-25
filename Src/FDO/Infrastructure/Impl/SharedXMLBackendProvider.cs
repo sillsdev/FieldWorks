@@ -56,8 +56,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			{
 				using (MemoryMappedViewStream stream = m_commitLogMetadata.CreateViewStream())
 				{
-					int length;
 					CommitLogMetadata metadata;
+					int length;
 					if (Serializer.TryReadLengthPrefix(stream, PrefixStyle.Base128, out length) && length > 0)
 					{
 						stream.Seek(0, SeekOrigin.Begin);
@@ -70,25 +70,21 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 							metadata.Slots[i] = -1;
 					}
 
-					bool lockProject = true;
 					for (int i = 0; i < metadata.Slots.Length; i++)
 					{
 						if (metadata.Slots[i] == -1)
 						{
-							if (m_slotIndex == -1)
-							{
-								m_slotIndex = i;
-								metadata.Slots[i] = metadata.FileGeneration;
-							}
-						}
-						else
-						{
-							lockProject = false;
+							m_slotIndex = i;
+							metadata.Slots[i] = metadata.FileGeneration;
+							break;
 						}
 					}
 
-					if (lockProject)
-						LockProject();
+					if (metadata.Master == -1)
+					{
+						base.LockProject();
+						metadata.Master = m_slotIndex;
+					}
 
 					stream.Seek(0, SeekOrigin.Begin);
 					Serializer.SerializeWithLengthPrefix(stream, metadata, PrefixStyle.Base128, 1);
@@ -117,11 +113,13 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					{
 						var metadata = Serializer.DeserializeWithLengthPrefix<CommitLogMetadata>(stream, PrefixStyle.Base128, 1);
 						metadata.Slots[m_slotIndex] = -1;
+						if (metadata.Master == m_slotIndex)
+							metadata.Master = -1;
 						stream.Seek(0, SeekOrigin.Begin);
 						Serializer.SerializeWithLengthPrefix(stream, metadata, PrefixStyle.Base128, 1);
 					}
 
-					UnlockProject();
+					base.UnlockProject();
 				}
 				finally
 				{
@@ -156,6 +154,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			{
 				var metadata = new CommitLogMetadata { Slots = new int[8] };
 				m_slotIndex = 0;
+				metadata.Master = 0;
 				metadata.Slots[0] = metadata.FileGeneration;
 				for (int i = 1; i < metadata.Slots.Length; i++)
 					metadata.Slots[i] = -1;
@@ -179,18 +178,67 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			m_commitLog = MemoryMappedFile.CreateOrOpen(ProjectId.Name + "_CommitLog", CommitLogSize);
 		}
 
+		internal override void LockProject()
+		{
+			m_mutex.WaitOne();
+			try
+			{
+				base.LockProject();
+				using (MemoryMappedViewStream stream = m_commitLogMetadata.CreateViewStream())
+				{
+					var metadata = Serializer.DeserializeWithLengthPrefix<CommitLogMetadata>(stream, PrefixStyle.Base128, 1);
+					if (metadata.Master == -1)
+					{
+						metadata.Master = m_slotIndex;
+						stream.Seek(0, SeekOrigin.Begin);
+						Serializer.SerializeWithLengthPrefix(stream, metadata, PrefixStyle.Base128, 1);
+					}
+				}
+			}
+			finally
+			{
+				m_mutex.ReleaseMutex();
+			}
+		}
+
+		internal override void UnlockProject()
+		{
+			m_mutex.WaitOne();
+			try
+			{
+				base.UnlockProject();
+				using (MemoryMappedViewStream stream = m_commitLogMetadata.CreateViewStream())
+				{
+					var metadata = Serializer.DeserializeWithLengthPrefix<CommitLogMetadata>(stream, PrefixStyle.Base128, 1);
+					if (metadata.Master == m_slotIndex)
+					{
+						metadata.Master = -1;
+						stream.Seek(0, SeekOrigin.Begin);
+						Serializer.SerializeWithLengthPrefix(stream, metadata, PrefixStyle.Base128, 1);
+					}
+				}
+			}
+			finally
+			{
+				m_mutex.ReleaseMutex();
+			}
+		}
+
 		public override bool Commit(HashSet<ICmObjectOrSurrogate> newbies, HashSet<ICmObjectOrSurrogate> dirtballs, HashSet<ICmObjectId> goners)
 		{
 			CommitLogMetadata metadata = null;
 			m_mutex.WaitOne();
 			try
 			{
-				if (!HasLockFile && !IsFileLocked(ProjectId.Path))
-					LockProject();
-
 				using (MemoryMappedViewStream stream = m_commitLogMetadata.CreateViewStream())
 				{
 					metadata = Serializer.DeserializeWithLengthPrefix<CommitLogMetadata>(stream, PrefixStyle.Base128, 1);
+				}
+
+				if (metadata.Master == -1)
+				{
+					base.LockProject();
+					metadata.Master = m_slotIndex;
 				}
 
 				List<ICmObjectSurrogate> foreignNewbies;
@@ -414,23 +462,9 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		public override bool RenameDatabase(string sNewProjectName)
 		{
-			m_mutex.WaitOne();
-			try
-			{
-				CommitLogMetadata metadata;
-				using (MemoryMappedViewStream stream = m_commitLogMetadata.CreateViewStream())
-				{
-					metadata = Serializer.DeserializeWithLengthPrefix<CommitLogMetadata>(stream, PrefixStyle.Base128, 1);
-				}
-				int slotCount = metadata.Slots.Count(s => s != -1);
-				if (slotCount > 1)
-					return false;
-				return base.RenameDatabase(sNewProjectName);
-			}
-			finally
-			{
-				m_mutex.ReleaseMutex();
-			}
+			if (OtherApplicationsConnectedCount > 0)
+				return false;
+			return base.RenameDatabase(sNewProjectName);
 		}
 	}
 }

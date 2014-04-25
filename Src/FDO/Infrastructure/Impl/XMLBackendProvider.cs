@@ -362,7 +362,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			throw new StartupException(message);
 		}
 
-		internal void LockProject()
+		internal virtual void LockProject()
 		{
 			try
 			{
@@ -396,7 +396,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			return File.Open(projectPath + ".lock", FileMode.OpenOrCreate, FileAccess.Write, FileShare.None);
 		}
 
-		internal void UnlockProject()
+		internal virtual void UnlockProject()
 		{
 			if (m_lockFile != null)
 			{
