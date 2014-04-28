@@ -24,8 +24,11 @@ using System.Security;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using Gecko;
 using Microsoft.Win32;
+using Palaso.IO;
 using Palaso.Reporting;
+using Palaso.UI.WindowsForms.HtmlBrowser;
 using Palaso.UI.WindowsForms.Keyboarding;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
@@ -48,10 +51,8 @@ using ConfigurationException = SIL.Utils.ConfigurationException;
 using ExceptionHelper = SIL.Utils.ExceptionHelper;
 using Logger = SIL.Utils.Logger;
 using SIL.CoreImpl.Properties;
-
-#if __MonoCS__
-using Gecko;
-#else
+using FileUtils = SIL.Utils.FileUtils;
+#if !__MonoCS__
 using NetSparkle;
 #endif
 
@@ -131,6 +132,10 @@ namespace SIL.FieldWorks
 		public extern static IntPtr LoadLibrary(string fileName);
 #endif
 
+		[DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		static extern bool SetDllDirectory(string lpPathName);
+
 		/// ----------------------------------------------------------------------------
 		/// <summary>
 		/// The main entry point for the FieldWorks executable.
@@ -152,17 +157,31 @@ namespace SIL.FieldWorks
 			//MessageBox.Show("Attach debugger now");
 			try
 			{
-#if __MonoCS__
-				// Initialize XULRunner - required to use the geckofx WebBrowser Control (GeckoWebBrowser).
-				string xulRunnerLocation = XULRunnerLocator.GetXULRunnerLocation();
-				if (String.IsNullOrEmpty(xulRunnerLocation))
-					throw new ApplicationException("The XULRunner library is missing or has the wrong version");
-				string librarySearchPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH") ?? String.Empty;
-				if (!librarySearchPath.Contains(xulRunnerLocation))
-					throw new ApplicationException("LD_LIBRARY_PATH must contain " + xulRunnerLocation);
+				// Initialize XULRunner - required to use the geckofx WebBrowser Control (GeckoWebBrowser)
+				string xulRunnerLocation;
+				if (MiscUtils.IsUnix)
+				{
+					xulRunnerLocation = XULRunnerLocator.GetXULRunnerLocation();
+					if (String.IsNullOrEmpty(xulRunnerLocation))
+						throw new ApplicationException("The XULRunner library is missing or has the wrong version");
+					string librarySearchPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH") ?? String.Empty;
+					if (!librarySearchPath.Contains(xulRunnerLocation))
+						throw new ApplicationException("LD_LIBRARY_PATH must contain " + xulRunnerLocation);
+				}
+				else
+				{
+					xulRunnerLocation = Path.Combine(FileLocator.DirectoryOfApplicationOrSolution, "xulrunner");
+					if (!Directory.Exists(xulRunnerLocation))
+						throw new ApplicationException("XULRunner needs to be installed to " + xulRunnerLocation);
+					if (!SetDllDirectory(xulRunnerLocation))
+						throw new ApplicationException("SetDllDirectory failed for " + xulRunnerLocation);
+				}
+
 				Xpcom.Initialize(xulRunnerLocation);
 				GeckoPreferences.User["gfx.font_rendering.graphite.enabled"] = true;
-#endif
+				//Set default browser for XWebBrowser to use GeckoFX.
+				//This can still be changed per instance by passing a parameter to the constructor.
+				XWebBrowser.DefaultBrowserType = XWebBrowser.BrowserType.GeckoFx;
 
 				Logger.WriteEvent("Starting app");
 				SetGlobalExceptionHandler();
@@ -351,7 +370,6 @@ namespace SIL.FieldWorks
 			finally
 			{
 				StaticDispose();
-#if __MonoCS__
 				if (Xpcom.IsInitialized)
 				{
 					// The following line appears to be necessary to keep Xpcom.Shutdown()
@@ -363,7 +381,6 @@ namespace SIL.FieldWorks
 					var foo = new GeckoWebBrowser();
 					Xpcom.Shutdown();
 				}
-#endif
 			}
 			return 0;
 		}

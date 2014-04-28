@@ -4,7 +4,11 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
+using System.Windows.Forms;
+using Palaso.UI.WindowsForms.HtmlBrowser;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -44,13 +48,14 @@ namespace SIL.FieldWorks.XWorks
 			this.m_linkManageViews = new System.Windows.Forms.LinkLabel();
 			this.treeDetail_Button_Split = new System.Windows.Forms.SplitContainer();
 			this.tree_Detail_Split = new System.Windows.Forms.SplitContainer();
+			this.treeControl = new SIL.FieldWorks.XWorks.DictionaryConfigurationTreeControl();
 			this.previewDetailSplit = new System.Windows.Forms.SplitContainer();
+			this.m_preview = new Palaso.UI.WindowsForms.HtmlBrowser.XWebBrowser();
 			this.buttonLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.helpButton = new System.Windows.Forms.Button();
 			this.applyButton = new System.Windows.Forms.Button();
 			this.cancelButton = new System.Windows.Forms.Button();
 			this.okButton = new System.Windows.Forms.Button();
-			this.treeControl = new SIL.FieldWorks.XWorks.DictionaryConfigurationTreeControl();
 			((System.ComponentModel.ISupportInitialize)(this.manageViews_viewSplit)).BeginInit();
 			this.manageViews_viewSplit.Panel1.SuspendLayout();
 			this.manageViews_viewSplit.Panel2.SuspendLayout();
@@ -65,6 +70,7 @@ namespace SIL.FieldWorks.XWorks
 			this.tree_Detail_Split.Panel2.SuspendLayout();
 			this.tree_Detail_Split.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.previewDetailSplit)).BeginInit();
+			this.previewDetailSplit.Panel1.SuspendLayout();
 			this.previewDetailSplit.SuspendLayout();
 			this.buttonLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
@@ -166,15 +172,36 @@ namespace SIL.FieldWorks.XWorks
 			this.tree_Detail_Split.SplitterDistance = 305;
 			this.tree_Detail_Split.TabIndex = 0;
 			// 
+			// treeControl
+			// 
+			this.treeControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.treeControl.Location = new System.Drawing.Point(0, 0);
+			this.treeControl.Name = "treeControl";
+			this.treeControl.Size = new System.Drawing.Size(305, 558);
+			this.treeControl.TabIndex = 0;
+			// 
 			// previewDetailSplit
 			// 
 			this.previewDetailSplit.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.previewDetailSplit.Location = new System.Drawing.Point(0, 0);
 			this.previewDetailSplit.Name = "previewDetailSplit";
 			this.previewDetailSplit.Orientation = System.Windows.Forms.Orientation.Horizontal;
+			// 
+			// previewDetailSplit.Panel1
+			// 
+			this.previewDetailSplit.Panel1.Controls.Add(this.m_preview);
 			this.previewDetailSplit.Size = new System.Drawing.Size(324, 558);
 			this.previewDetailSplit.SplitterDistance = 101;
 			this.previewDetailSplit.TabIndex = 0;
+			// 
+			// m_preview
+			// 
+			this.m_preview.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.m_preview.IsWebBrowserContextMenuEnabled = false;
+			this.m_preview.Location = new System.Drawing.Point(0, 0);
+			this.m_preview.Name = "m_preview";
+			this.m_preview.Size = new System.Drawing.Size(324, 101);
+			this.m_preview.TabIndex = 0;
 			// 
 			// buttonLayoutPanel
 			// 
@@ -231,14 +258,6 @@ namespace SIL.FieldWorks.XWorks
 			this.okButton.UseVisualStyleBackColor = true;
 			this.okButton.Click += new System.EventHandler(this.okButton_Click);
 			// 
-			// treeControl
-			// 
-			this.treeControl.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.treeControl.Location = new System.Drawing.Point(0, 0);
-			this.treeControl.Name = "treeControl";
-			this.treeControl.Size = new System.Drawing.Size(287, 558);
-			this.treeControl.TabIndex = 0;
-			// 
 			// DictionaryConfigurationDlg
 			// 
 			this.AcceptButton = this.okButton;
@@ -265,6 +284,7 @@ namespace SIL.FieldWorks.XWorks
 			this.tree_Detail_Split.Panel2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.tree_Detail_Split)).EndInit();
 			this.tree_Detail_Split.ResumeLayout(false);
+			this.previewDetailSplit.Panel1.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.previewDetailSplit)).EndInit();
 			this.previewDetailSplit.ResumeLayout(false);
 			this.buttonLayoutPanel.ResumeLayout(false);
@@ -287,7 +307,7 @@ namespace SIL.FieldWorks.XWorks
 		private System.Windows.Forms.Button cancelButton;
 		private System.Windows.Forms.Button okButton;
 		private System.Windows.Forms.SplitContainer previewDetailSplit;
-		private XWorks.RecordDocXmlView m_preview;
+		private XWebBrowser m_preview;
 		private DictionaryConfigurationTreeControl treeControl;
 		private DetailsView detailsView;
 	}

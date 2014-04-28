@@ -352,8 +352,18 @@
 		<ChorusDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt285/.lastSuccessful</ChorusDownloadUrl>
 		<!-- fwiw, bt273 is the FLExBridgeBeta branch build of Palaso for Windows development. Update when appropriate. -->
 		<PalasoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt273/.lastSuccessful</PalasoDownloadUrl>
+		<!-- fwiw, bt223 is the master build for Windows development. Using this temporarily to get XWebBrowser. When done with this temp solution, delete this one
+			and set the items which use it to PalasoDownloadUrl -->
+		<PalasoDownloadUrlMaster Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt223/.lastSuccessful</PalasoDownloadUrlMaster>
 		<!-- fwiw, bt284 is the FLExBridgeBeta branch build of Palaso for Linux development. Update when appropriate. -->
 		<PalasoDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt284/.lastSuccessful</PalasoDownloadUrl>
+		<!-- fwiw, bt322 is the master build for Linux development. Using this temporarily to get XWebBrowser. When done with this temp solution, delete this one
+			and set the items which use it to PalasoDownloadUrl -->
+		<PalasoDownloadUrlMaster Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt322/.lastSuccessful</PalasoDownloadUrlMaster>
+		<!-- bt358 is the GeckoFX 14 build for Windows -->
+		<GeckoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt358/.lastSuccessful</GeckoDownloadUrl>
+		<!-- bt375 is the XULRunner 14 build for Windows -->
+		<XULRunnerDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt375/.lastSuccessful</XULRunnerDownloadUrl>
 		<!--Todo: use PalasoDownloadUrl, when it refers to somewhere that has the IPCFramework.-->
 		<!-- bt278 is the develop branch build of IPCFramework for Windows development. Update when appropriate. -->
 		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt278/.lastSuccessful</IPCFrameworkDownloadUrl>
@@ -363,6 +373,10 @@
 		<ExCssDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt393/.lastSuccessful</ExCssDownloadUrl>
 		<!-- bt395 is the master branch build of ExCss for Linux development. Update when appropriate. -->
 		<ExCssDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt395/.lastSuccessful</ExCssDownloadUrl>
+		<!-- bt398 is the icu50 branch build of icucil for Windows development. Update when appropriate. -->
+		<IcuDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt398/.lastSuccessful</IcuDownloadUrl>
+		<!-- bt281 is the master branch build of icucil for linux development. Update when appropriate. -->
+		<IcuDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt281/.lastSuccessful</IcuDownloadUrl>
 		<!-- Windows/.Net and Linux/Mono use different extensions for debug information files. -->
 		<DebugInfo Condition="'$(OS)'=='Unix'">dll.mdb</DebugInfo>
 		<DebugInfo Condition="'$(OS)'=='Windows_NT'">pdb</DebugInfo>
@@ -371,17 +385,25 @@
 	<Target Name="downloadDlls">
 		<MakeDir Directories="$(fwrt)/Downloads"/>
 		<Message Text="Downloading latest successful artifacts from Palaso [FLExBridgeBeta] build."/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.dll" LocalFilename="$(fwrt)/Downloads/Palaso.dll"/>
+		<DownloadFile Address="$(PalasoDownloadUrlMaster)/Palaso.dll" LocalFilename="$(fwrt)/Downloads/Palaso.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.dll.config" LocalFilename="$(fwrt)/Downloads/Palaso.dll.config"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/Palaso.$(DebugInfo)"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.Lift.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Lift.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.Lift.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/Palaso.Lift.$(DebugInfo)"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.Media.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Media.dll"/>
+		<DownloadFile Address="$(PalasoDownloadUrlMaster)/Palaso.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/Palaso.$(DebugInfo)"/>
+		<DownloadFile Address="$(PalasoDownloadUrlMaster)/Palaso.Lift.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Lift.dll"/>
+		<DownloadFile Address="$(PalasoDownloadUrlMaster)/Palaso.Lift.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/Palaso.Lift.$(DebugInfo)"/>
+		<DownloadFile Address="$(PalasoDownloadUrlMaster)/Palaso.Media.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Media.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.Media.dll.config" LocalFilename="$(fwrt)/Downloads/Palaso.Media.dll.config"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.Media.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/Palaso.Media.$(DebugInfo)"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/PalasoUIWindowsForms.dll" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.dll"/>
+		<DownloadFile Address="$(PalasoDownloadUrlMaster)/Palaso.Media.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/Palaso.Media.$(DebugInfo)"/>
+		<DownloadFile Address="$(PalasoDownloadUrlMaster)/PalasoUIWindowsForms.dll" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/PalasoUIWindowsForms.dll.config" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.dll.config"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/PalasoUIWindowsForms.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.$(DebugInfo)"/>
+		<DownloadFile Address="$(PalasoDownloadUrlMaster)/PalasoUIWindowsForms.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.$(DebugInfo)"/>
+		<DownloadFile Address="$(PalasoDownloadUrlMaster)/PalasoUIWindowsForms.GeckoBrowserAdapter.dll"
+					  LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.GeckoFxWebBrowserAdapter.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(PalasoDownloadUrlMaster)/PalasoUIWindowsForms.GeckoBrowserAdapter.$(DebugInfo)"
+					  LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.GeckoFxWebBrowserAdapter.$(DebugInfo)" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(PalasoDownloadUrlMaster)/PalasoUIWindowsForms.GeckoFxWebBrowserAdapter.dll"
+					  LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.GeckoFxWebBrowserAdapter.dll" Condition="'$(OS)'=='Unix'"/>
+		<DownloadFile Address="$(PalasoDownloadUrlMaster)/PalasoUIWindowsForms.GeckoFxWebBrowserAdapter.$(DebugInfo)"
+					  LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.GeckoFxWebBrowserAdapter.$(DebugInfo)" Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Archiving.dll" LocalFilename="$(fwrt)/Downloads/SIL.Archiving.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Archiving.dll.config" LocalFilename="$(fwrt)/Downloads/SIL.Archiving.dll.config"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Archiving.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.Archiving.$(DebugInfo)"/>
@@ -396,6 +418,20 @@
 					  Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/NDesk.DBus.dll.config" LocalFilename="$(fwrt)/Downloads/NDesk.DBus.dll.config"
 					  Condition="'$(OS)'=='Unix'"/>
+
+		<Message Text="Downloading latest successful artifacts for GeckoFX and XULRunner." Condition="'$(OS)'=='Windows_NT'" />
+		<DownloadFile Address="$(GeckoDownloadUrl)/geckofx-core-14.dll" LocalFilename="$(fwrt)/Downloads/geckofx-core-14.dll"
+					  Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(GeckoDownloadUrl)/Geckofx-Winforms-14.dll" LocalFilename="$(fwrt)/Downloads/Geckofx-Winforms-14.dll"
+					  Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(GeckoDownloadUrl)/Geckofx-Winforms-14.pdb" LocalFilename="$(fwrt)/Downloads/Geckofx-Winforms-14.pdb"
+					  Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(GeckoDownloadUrl)/geckofx-core-14.dll.config" LocalFilename="$(fwrt)/Downloads/geckofx-core-14.dll.config"
+					  Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(XULRunnerDownloadUrl)/xulrunner-14.0.1.en-US.win32.zip" LocalFilename="$(fwrt)/Downloads/xulrunner-14.0.1.en-US.win32.zip"
+					  Condition="'$(OS)'=='Windows_NT'"/>
+		<Message Text="Unzipping XULRunner." Condition="'$(OS)'=='Windows_NT'"/>
+		<Unzip ZipFilename="$(fwrt)/Downloads/xulrunner-14.0.1.en-US.win32.zip" ToDir=".." Condition="'$(OS)'=='Windows_NT'"/>
 
 		<Message Text="Downloading latest successful artifacts from Chorus FLExBridgeBeta build."/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/Autofac.dll" LocalFilename="$(fwrt)/Downloads/Autofac.dll"/>
@@ -412,6 +448,10 @@
 		<DownloadFile Address="$(ExCssDownloadUrl)/ExCss.dll" LocalFilename="$(fwrt)/Downloads/ExCSS.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadFile Address="$(ExCssDownloadUrl)/ExCSS.dll.mdb" LocalFilename="$(fwrt)/Downloads/ExCSS.dll.mdb" Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(ExCssDownloadUrl)/ExCss.pdb" LocalFilename="$(fwrt)/Downloads/ExCss.pdb" Condition="'$(OS)'=='Windows_NT'"/>
+
+		<Message Text="Downloading latest successful artifacts for ICU."/>
+		<DownloadFile Address="$(IcuDownloadUrl)/icu.net.dll" LocalFilename="$(fwrt)/Downloads/icu.net.dll"/>
+		<DownloadFile Address="$(IcuDownloadUrl)/icu.net.dll.config" LocalFilename="$(fwrt)/Downloads/icu.net.dll.config" Condition="'$(OS)'=='Unix'"/>
 	</Target>
 
 	<!-- item group for downloads, to allow easy copying -->
@@ -439,10 +479,15 @@
 		<DownloadedFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.dll.config"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.dll.mdb" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.pdb" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.GeckoFxWebBrowserAdapter.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.GeckoFxWebBrowserAdapter.dll.mdb" Condition="'$(OS)'=='Unix'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.GeckoFxWebBrowserAdapter.pdb" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.dll.config"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.dll.mdb" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.pdb" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/icu.net.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/icu.net.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/L10NSharp.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Enchant.Net.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Enchant.Net.dll.config"/>
@@ -485,8 +530,6 @@
 		<Copy SourceFiles="$(fwrt)/DistFiles/icuin50.dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<Copy SourceFiles="$(fwrt)/DistFiles/icuuc50.dll" DestinationFolder="$(dir-outputBase)"
-				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
-		<Copy SourceFiles="$(fwrt)/DistFiles/icu.net.dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<!-- Hunspell dlls -->
 		<Copy SourceFiles="$(fwrt)/DistFiles/Windows/libhunspell.dll" DestinationFolder="$(dir-outputBase)"
