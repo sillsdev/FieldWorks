@@ -152,15 +152,16 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if(exportStyleInfo.HasFirstLineIndent)
 			{
-				//TODO
+				//Handles both first-line and hanging indent, hanging-indent will result in a negative text-indent value
+				declaration.Add(new Property("text-indent") { Term = new PrimitiveTerm(UnitType.Point, exportStyleInfo.FirstLineIndent) });
 			}
 			if(exportStyleInfo.HasKeepTogether)
 			{
-				//TODO
+				throw new NotImplementedException("Keep Together style export not yet implemented.");
 			}
 			if(exportStyleInfo.HasKeepWithNext)
 			{
-				//TODO
+				throw new NotImplementedException("Keep With Next style export not yet implemented.");
 			}
 			if(exportStyleInfo.HasLeadingIndent)
 			{
@@ -168,7 +169,17 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if(exportStyleInfo.HasLineSpacing)
 			{
-				//TODO
+				var lineHeight = new Property("line-height");
+				//m_relative means single, 1.5 or double line spacing was chosen. The CSS should be a number
+				if(exportStyleInfo.LineSpacing.m_relative)
+				{
+					lineHeight.Term = new PrimitiveTerm(UnitType.Number, exportStyleInfo.LineSpacing.m_lineHeight);
+				}
+				else
+				{
+					lineHeight.Term = new PrimitiveTerm(UnitType.Point, exportStyleInfo.LineSpacing.m_lineHeight);
+				}
+				declaration.Add(lineHeight);
 			}
 			if(exportStyleInfo.HasSpaceAfter)
 			{
@@ -182,7 +193,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				declaration.Add(new Property("padding-right") { Term = new PrimitiveTerm(UnitType.Point, exportStyleInfo.TrailingIndent) });
 			}
-
+			//TODO address the style per writing system option here
 			// Build css rules for font properties
 			if(projectStyle.DefaultCharacterStyleInfo.FontName.ValueIsSet)
 			{
@@ -216,10 +227,10 @@ namespace SIL.FieldWorks.XWorks
 			if(exportStyleInfo.DefaultCharacterStyleInfo.BackColor.ValueIsSet)
 			{
 				var styleColorValue = projectStyle.DefaultCharacterStyleInfo.BackColor.Value;
-				var fontColor = new Property("background-color");
-				fontColor.Term = new PrimitiveTerm(UnitType.RGB,
+				var backColor = new Property("background-color");
+				backColor.Term = new PrimitiveTerm(UnitType.RGB,
 															  HtmlColor.FromRgba(styleColorValue.R, styleColorValue.G, styleColorValue.B, styleColorValue.A).ToString());
-				declaration.Add(fontColor);
+				declaration.Add(backColor);
 			}
 
 			return declaration;
