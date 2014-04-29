@@ -102,6 +102,10 @@
       <HintPath>..\..\..\Output\Debug\DetailControls.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="ExCss, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Downloads\ExCSS.dll</HintPath>
+    </Reference>
     <Reference Include="FDO, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -250,6 +254,7 @@
     </Compile>
     <Compile Include="ConfigurableDictionaryNodeTests.cs" />
     <Compile Include="ConfiguredXHTMLGeneratorTests.cs" />
+    <Compile Include="CssGeneratorTests.cs" />
     <Compile Include="CustomListDlgTests.cs">
       <SubType>Form</SubType>
     </Compile>

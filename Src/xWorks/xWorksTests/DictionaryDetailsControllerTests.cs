@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.XWorks
 		#endregion Setup and Teardown
 
 		#region Helpers
-		private static List<DictionaryNodeListOptions.DictionaryNodeOption> ListOfEnabledDNOsFromStrings(IEnumerable<String> idList)
+		public static List<DictionaryNodeListOptions.DictionaryNodeOption> ListOfEnabledDNOsFromStrings(IEnumerable<String> idList)
 		{
 			return idList.Select(id => new DictionaryNodeListOptions.DictionaryNodeOption { Id = id, IsEnabled = true }).ToList();
 		}

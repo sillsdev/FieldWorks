@@ -114,6 +114,10 @@
       <HintPath>..\..\Output\Debug\DetailControls.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="ExCss, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Downloads\ExCSS.dll</HintPath>
+    </Reference>
     <Reference Include="FDO, Version=6.1.1.30361, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Output\Debug\FDO.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -259,6 +263,7 @@
     <Compile Include="Archiving\ReapRamp.cs" />
     <Compile Include="ConfigurableDictionaryNode.cs" />
     <Compile Include="ConfiguredXHTMLGenerator.cs" />
+    <Compile Include="CssGenerator.cs" />
     <Compile Include="DictionaryConfigurationController.cs" />
     <Compile Include="DictionaryConfigurationDlg.cs">
       <SubType>Form</SubType>

@@ -47,6 +47,7 @@ R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
 T: SIL.FieldWorks.XWorks.ExportDialogTests
 T: SIL.FieldWorks.XWorks.XWorksAppTestBase
 T: SIL.FieldWorks.XWorks.InterestingTextsTests
+T: SIL.FieldWorks.XWorks.CssGeneratorTests
 
 # Reference only
 T: SIL.FieldWorks.XWorks.MockFwManager

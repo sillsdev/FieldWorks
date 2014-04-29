@@ -319,14 +319,10 @@ namespace SIL.FieldWorks.XWorks
 			return entry;
 		}
 
-		private DictionaryNodeOptions GetWsOptionsForLanguages(string[] languages)
+		public static DictionaryNodeOptions GetWsOptionsForLanguages(string[] languages)
 		{
 			var wsOptions = new DictionaryNodeWritingSystemOptions();
-			wsOptions.Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>();
-			foreach(var lang in languages)
-			{
-				wsOptions.Options.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = lang, IsEnabled = true });
-			}
+			wsOptions.Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(languages);
 			return wsOptions;
 		}
 	}
