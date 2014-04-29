@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					}
 					else
 					{
-						metadata = new CommitLogMetadata { Slots = new int[8] };
+						metadata = new CommitLogMetadata { Slots = new int[8], Master = -1 };
 						for (int i = 0; i < metadata.Slots.Length; i++)
 							metadata.Slots[i] = -1;
 					}
@@ -111,12 +111,17 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				{
 					using (MemoryMappedViewStream stream = m_commitLogMetadata.CreateViewStream())
 					{
-						var metadata = Serializer.DeserializeWithLengthPrefix<CommitLogMetadata>(stream, PrefixStyle.Base128, 1);
-						metadata.Slots[m_slotIndex] = -1;
-						if (metadata.Master == m_slotIndex)
-							metadata.Master = -1;
-						stream.Seek(0, SeekOrigin.Begin);
-						Serializer.SerializeWithLengthPrefix(stream, metadata, PrefixStyle.Base128, 1);
+						int length;
+						if (Serializer.TryReadLengthPrefix(stream, PrefixStyle.Base128, out length) && length > 0)
+						{
+							stream.Seek(0, SeekOrigin.Begin);
+							var metadata = Serializer.DeserializeWithLengthPrefix<CommitLogMetadata>(stream, PrefixStyle.Base128, 1);
+							metadata.Slots[m_slotIndex] = -1;
+							if (metadata.Master == m_slotIndex)
+								metadata.Master = -1;
+							stream.Seek(0, SeekOrigin.Begin);
+							Serializer.SerializeWithLengthPrefix(stream, metadata, PrefixStyle.Base128, 1);
+						}
 					}
 
 					base.UnlockProject();
@@ -209,12 +214,17 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				base.UnlockProject();
 				using (MemoryMappedViewStream stream = m_commitLogMetadata.CreateViewStream())
 				{
-					var metadata = Serializer.DeserializeWithLengthPrefix<CommitLogMetadata>(stream, PrefixStyle.Base128, 1);
-					if (metadata.Master == m_slotIndex)
+					int length;
+					if (Serializer.TryReadLengthPrefix(stream, PrefixStyle.Base128, out length) && length > 0)
 					{
-						metadata.Master = -1;
 						stream.Seek(0, SeekOrigin.Begin);
-						Serializer.SerializeWithLengthPrefix(stream, metadata, PrefixStyle.Base128, 1);
+						var metadata = Serializer.DeserializeWithLengthPrefix<CommitLogMetadata>(stream, PrefixStyle.Base128, 1);
+						if (metadata.Master == m_slotIndex)
+						{
+							metadata.Master = -1;
+							stream.Seek(0, SeekOrigin.Begin);
+							Serializer.SerializeWithLengthPrefix(stream, metadata, PrefixStyle.Base128, 1);
+						}
 					}
 				}
 			}
