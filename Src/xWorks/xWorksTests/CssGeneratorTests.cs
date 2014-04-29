@@ -110,7 +110,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			GenerateStyle("Dictionary-Vernacular");
 			//SUT
-			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Vernacular", m_mediator);
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Vernacular", CssGenerator.DefaultStyle, m_mediator);
 			VerifyFontInfoInCss(FontColor, FontBGColor, FontName, FontBold, FontItalic, FontSize, styleDeclaration.ToString());
 		}
 
@@ -119,7 +119,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			GenerateParagraphStyle("Dictionary-Paragraph");
 			//SUT
-			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph", m_mediator);
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph", CssGenerator.DefaultStyle, m_mediator);
+			//border leading omitted from paragraph style definition which should result in 0pt left width
 			VerifyParagraphBorderInCss(BorderColor, 0, BorderTrailing, BorderBottom, BorderTop, styleDeclaration.ToString());
 		}
 
@@ -128,7 +129,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			GenerateParagraphStyle("Dictionary-Paragraph-Padding");
 			//SUT
-			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-Padding", m_mediator);
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-Padding", CssGenerator.DefaultStyle, m_mediator);
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("padding-left:" + LeadingIndent + "pt"));
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("padding-right:" + TrailingIndent + "pt"));
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("padding-top:" + PadTop + "pt"));
@@ -140,7 +141,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			GenerateParagraphStyle("Dictionary-Paragraph-Justify");
 			//SUT
-			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-Justify", m_mediator);
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-Justify", CssGenerator.DefaultStyle, m_mediator);
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("align:" + ParagraphAlignment.AsCssString()));
 		}
 
@@ -149,7 +150,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			GenerateParagraphStyle("Dictionary-Paragraph-RelativeLine");
 			//SUT
-			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-RelativeLine", m_mediator);
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-RelativeLine", CssGenerator.DefaultStyle, m_mediator);
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("line-height:" + LineHeight + ";"));
 		}
 
@@ -159,7 +160,7 @@ namespace SIL.FieldWorks.XWorks
 			var style = GenerateParagraphStyle("Dictionary-Paragraph-Absolute");
 			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLineHeight, (int)FwTextPropVar.ktpvMilliPoint, 9);
 			//SUT
-			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-Absolute", m_mediator);
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-Absolute", CssGenerator.DefaultStyle, m_mediator);
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("line-height:9pt;"));
 		}
 
@@ -179,6 +180,30 @@ namespace SIL.FieldWorks.XWorks
 			model.Parts = new List<ConfigurableDictionaryNode> { headwordNode };
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			VerifyFontInfoInCss(FontColor, FontBGColor, FontName, true, true, FontSize, cssResult);
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_CharStyleWsOverrideWorks()
+		{
+			var style = GenerateStyle("WsStyleTest");
+			var fontInfo = new FontInfo();
+			fontInfo.m_italic.ExplicitValue = false;
+			fontInfo.m_fontName.ExplicitValue = "french";
+			style.SetWsStyle(fontInfo, Cache.DefaultVernWs);
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				Label = "Headword",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				Style = "WsStyleTest"
+			};
+
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { headwordNode };
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			VerifyFontInfoInCss(FontColor, FontBGColor, "french", true, false, FontSize, cssResult);
 			VerifyFontInfoInCss(FontColor, FontBGColor, FontName, true, true, FontSize, cssResult);
 		}
 
@@ -220,17 +245,25 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void GenerateCssForStyleName_FwStyleInheritanceWorks()
+		public void GenerateCssForConfiguration_FwStyleInheritanceWorks()
 		{
 			var parentStyle = GenerateParagraphStyle("Parent");
 			var childStyle = GenerateEmptyParagraphStyle("Child");
 			childStyle.SetBasedOnStyle(parentStyle);
 			childStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptBorderColor, 0, (int)ColorUtil.ConvertColorToBGR(Color.HotPink));
-			//SUT
-			var cssResult = CssGenerator.GenerateCssStyleFromFwStyleSheet("Child", m_mediator);
+			//SUT - Generate using default font info
+			var cssResult = CssGenerator.GenerateCssStyleFromFwStyleSheet("Child", CssGenerator.DefaultStyle, m_mediator);
 			// The css should have the overridden border color, but report all other values as the parent style
 			//border leading omitted from paragraph style definition which should result in 0pt left width
 			VerifyParagraphBorderInCss(Color.HotPink, 0, BorderTrailing, BorderBottom, BorderTop, cssResult.ToString());
+		}
+
+		[Test]
+		public void GenerateCssForStyleName_CharStyleUnsetValuesAreNotExported()
+		{
+			var emptyCharStyle = GenerateEmptyStyle("EmptyChar");
+			var cssResult = CssGenerator.GenerateCssStyleFromFwStyleSheet("EmptyChar", CssGenerator.DefaultStyle, m_mediator);
+			Assert.AreEqual(cssResult.ToString().Trim(), String.Empty);
 		}
 
 		[TestFixtureSetUp]
@@ -256,7 +289,7 @@ namespace SIL.FieldWorks.XWorks
 			FwRegistrySettings.Release();
 		}
 
-		private void GenerateStyle(string name)
+		private TestStyle GenerateStyle(string name)
 		{
 			var fontInfo = new FontInfo();
 			fontInfo.m_fontColor.ExplicitValue = FontColor;
@@ -268,6 +301,16 @@ namespace SIL.FieldWorks.XWorks
 			var style = new TestStyle(fontInfo, Cache) { Name = name, IsParagraphStyle = false };
 			m_styleSheet.Styles.Add(style);
 			m_owningTable.Add(name, style);
+			return style;
+		}
+
+		private TestStyle GenerateEmptyStyle(string name)
+		{
+			var fontInfo = new FontInfo();
+			var style = new TestStyle(fontInfo, Cache) { Name = name, IsParagraphStyle = false };
+			m_styleSheet.Styles.Add(style);
+			m_owningTable.Add(name, style);
+			return style;
 		}
 
 		private TestStyle GenerateParagraphStyle(string name)
@@ -334,6 +377,11 @@ namespace SIL.FieldWorks.XWorks
 		public TestStyle(FontInfo defaultFontInfo, FdoCache cache) : base(cache)
 		{
 			m_defaultFontInfo = defaultFontInfo;
+		}
+
+		public void SetWsStyle(FontInfo fontInfo, int wsId)
+		{
+			m_fontInfoOverrides[wsId] = fontInfo;
 		}
 
 		/// <summary>

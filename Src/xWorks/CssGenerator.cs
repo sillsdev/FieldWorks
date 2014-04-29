@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using ExCSS;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using XCore;
 using Property = ExCSS.Property;
@@ -12,6 +14,11 @@ namespace SIL.FieldWorks.XWorks
 {
 	public static class CssGenerator
 	{
+		/// <summary>
+		/// id that triggers using the default selection on a character style instead of a writing system specific one
+		/// </summary>
+		internal const int DefaultStyle = -1;
+
 		/// <summary>
 		/// Generate all the css rules necessary to represent every enabled portion of the given configuration
 		/// </summary>
@@ -49,7 +56,21 @@ namespace SIL.FieldWorks.XWorks
 			// if the configuration node defines a style then add all the rules generated from that style
 			if(!String.IsNullOrEmpty(configNode.Style))
 			{
-				rule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(configNode.Style, mediator).Properties);
+				//Generate the rules for the default font info
+				rule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(configNode.Style, DefaultStyle, mediator).Properties);
+				var wsOptions = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+				if(wsOptions != null)
+				{
+					foreach(var ws in wsOptions.Options)
+					{
+						// grab the integer id for the writing system from the string id saved in the configuration node
+						var wsId = ((FdoCache)mediator.PropertyTable.GetValue("cache")).LanguageWritingSystemFactoryAccessor.GetWsFromStr(ws.Id);
+						var wsRule = new StyleRule();
+						wsRule.Value = baseSelection + String.Format("[language={0}]", ws.Id);
+						wsRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(configNode.Style, wsId, mediator).Properties);
+						styleSheet.Rules.Add(wsRule);
+					}
+				}
 			}
 			foreach(var selector in beforeAfterSelectors)
 				styleSheet.Rules.Add(selector);
@@ -111,9 +132,10 @@ namespace SIL.FieldWorks.XWorks
 		/// <remarks>internal to facilitate separate unit testing.</remarks>
 		/// </summary>
 		/// <param name="styleName"></param>
+		/// <param name="wsId">writing system id</param>
 		/// <param name="mediator"></param>
 		/// <returns></returns>
-		internal static StyleDeclaration GenerateCssStyleFromFwStyleSheet(string styleName, Mediator mediator)
+		internal static StyleDeclaration GenerateCssStyleFromFwStyleSheet(string styleName, int wsId, Mediator mediator)
 		{
 			var declaration = new StyleDeclaration();
 			var styleSheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
@@ -193,47 +215,132 @@ namespace SIL.FieldWorks.XWorks
 			{
 				declaration.Add(new Property("padding-right") { Term = new PrimitiveTerm(UnitType.Point, exportStyleInfo.TrailingIndent) });
 			}
-			//TODO address the style per writing system option here
-			// Build css rules for font properties
-			if(projectStyle.DefaultCharacterStyleInfo.FontName.ValueIsSet)
-			{
-				var fontFamily = new Property("font-family");
-				fontFamily.Term = new TermList(new PrimitiveTerm(UnitType.String, projectStyle.DefaultCharacterStyleInfo.FontName.Value),
-														 new PrimitiveTerm(UnitType.Ident, "serif"));
-				declaration.Add(fontFamily);
-			}
-			var fontSize = new Property("font-size");
-			fontSize.Term = new PrimitiveTerm(UnitType.Point, projectStyle.DefaultCharacterStyleInfo.FontSize.Value);
-			declaration.Add(fontSize);
 
-			var fontStyle = new Property("font-style");
-			fontStyle.Term = new PrimitiveTerm(UnitType.Ident, projectStyle.DefaultCharacterStyleInfo.Italic.Value ? "italic" : "normal");
-			declaration.Add(fontStyle);
-
-			var fontWeight = new Property("font-weight");
-			fontWeight.Term = new PrimitiveTerm(UnitType.Ident,
-															projectStyle.DefaultCharacterStyleInfo.Bold.Value ? "bold" : "normal");
-			declaration.Add(fontWeight);
-
-			if(exportStyleInfo.DefaultCharacterStyleInfo.FontColor.ValueIsSet)
-			{
-				var styleColorValue = projectStyle.DefaultCharacterStyleInfo.FontColor.Value;
-				var fontColor = new Property("color");
-				fontColor.Term = new PrimitiveTerm(UnitType.RGB,
-															  HtmlColor.FromRgba(styleColorValue.R, styleColorValue.G, styleColorValue.B, styleColorValue.A).ToString());
-				declaration.Add(fontColor);
-			}
-
-			if(exportStyleInfo.DefaultCharacterStyleInfo.BackColor.ValueIsSet)
-			{
-				var styleColorValue = projectStyle.DefaultCharacterStyleInfo.BackColor.Value;
-				var backColor = new Property("background-color");
-				backColor.Term = new PrimitiveTerm(UnitType.RGB,
-															  HtmlColor.FromRgba(styleColorValue.R, styleColorValue.G, styleColorValue.B, styleColorValue.A).ToString());
-				declaration.Add(backColor);
-			}
+			AddFontInfoCss(projectStyle, declaration, wsId);
 
 			return declaration;
+		}
+
+		/// <summary>
+		/// Builds the css rules for font info properties using the writing system overrides
+		/// </summary>
+		/// <param name="projectStyle"></param>
+		/// <param name="declaration"></param>
+		/// <param name="wsId">writing system id</param>
+		private static void AddFontInfoCss(BaseStyleInfo projectStyle, StyleDeclaration declaration, int wsId)
+		{
+			var wsFontInfo = projectStyle.FontInfoForWs(wsId);
+			var defaultFontInfo = projectStyle.DefaultCharacterStyleInfo;
+			// set fontName to the wsFontInfo value if set, otherwise the defaultFontInfo if set, or null
+			var fontName = wsFontInfo.FontName.ValueIsSet ? wsFontInfo.FontName.Value
+																		 : defaultFontInfo.FontName.ValueIsSet ? defaultFontInfo.FontName.Value : null;
+			if(fontName != null)
+			{
+				var fontFamily = new Property("font-family");
+				fontFamily.Term =
+					new TermList(
+						new PrimitiveTerm(UnitType.String, fontName),
+						new PrimitiveTerm(UnitType.Ident, "serif"));
+				declaration.Add(fontFamily);
+			}
+
+			AddInfoFromWsOrDefaultValue(wsFontInfo.FontSize, defaultFontInfo.FontSize, "font-size", UnitType.Point, declaration);
+			AddInfoFromWsOrDefaultValue(wsFontInfo.Bold, defaultFontInfo.Bold, "font-weight", "bold", "normal", declaration);
+			AddInfoFromWsOrDefaultValue(wsFontInfo.Italic, defaultFontInfo.Italic, "font-style", "italic", "normal", declaration);
+			AddInfoFromWsOrDefaultValue(wsFontInfo.FontColor, defaultFontInfo.FontColor, "color", declaration);
+			AddInfoFromWsOrDefaultValue(wsFontInfo.BackColor, defaultFontInfo.BackColor, "background-color", declaration);
+		}
+
+		/// <summary>
+		/// Generates css from boolean style values using writing system overrides where appropriate
+		/// </summary>
+		/// <param name="wsFontInfo"></param>
+		/// <param name="defaultFontInfo"></param>
+		/// <param name="propName"></param>
+		/// <param name="trueValue"></param>
+		/// <param name="falseValue"></param>
+		/// <param name="declaration"></param>
+		private static void AddInfoFromWsOrDefaultValue(IStyleProp<bool> wsFontInfo,
+																		IStyleProp<bool> defaultFontInfo, string propName, string trueValue,
+																		string falseValue, StyleDeclaration declaration)
+		{
+			bool fontValue;
+			if(wsFontInfo.ValueIsSet)
+			{
+				fontValue = wsFontInfo.Value;
+			}
+			else if(defaultFontInfo.ValueIsSet)
+			{
+				fontValue = defaultFontInfo.Value;
+			}
+			else
+			{
+				return;
+			}
+			var fontProp = new Property(propName);
+			fontProp.Term = new PrimitiveTerm(UnitType.Ident, fontValue ? trueValue : falseValue);
+			declaration.Add(fontProp);
+		}
+
+		/// <summary>
+		/// Generates css from Color style values using writing system overrides where appropriate
+		/// </summary>
+		/// <param name="wsFontInfo"></param>
+		/// <param name="defaultFontInfo"></param>
+		/// <param name="propName"></param>
+		/// <param name="declaration"></param>
+		private static void AddInfoFromWsOrDefaultValue(IStyleProp<Color> wsFontInfo,
+																		IStyleProp<Color> defaultFontInfo, string propName, StyleDeclaration declaration)
+		{
+			Color fontValue;
+			if(wsFontInfo.ValueIsSet)
+			{
+				fontValue = wsFontInfo.Value;
+			}
+			else if(defaultFontInfo.ValueIsSet)
+			{
+				fontValue = defaultFontInfo.Value;
+			}
+			else
+			{
+				return;
+			}
+			var fontProp = new Property(propName);
+			fontProp.Term = new PrimitiveTerm(UnitType.RGB,
+														 HtmlColor.FromRgba(fontValue.R, fontValue.G, fontValue.B,
+																				  fontValue.A).ToString());
+			declaration.Add(fontProp);
+		}
+
+
+		/// <summary>
+		/// Generates css from integer style values using writing system overrides where appropriate
+		/// </summary>
+		/// <param name="wsFontInfo"></param>
+		/// <param name="defaultFontInfo"></param>
+		/// <param name="propName"></param>
+		/// <param name="termType"></param>
+		/// <param name="declaration"></param>
+		private static void AddInfoFromWsOrDefaultValue(IStyleProp<int> wsFontInfo,
+																		IStyleProp<int> defaultFontInfo, string propName, UnitType termType,
+																		StyleDeclaration declaration)
+		{
+			int fontValue;
+			if(wsFontInfo.ValueIsSet)
+			{
+				fontValue = wsFontInfo.Value;
+			}
+			else if(defaultFontInfo.ValueIsSet)
+			{
+				fontValue = defaultFontInfo.Value;
+			}
+			else
+			{
+				return;
+			}
+			var fontProp = new Property(propName);
+			fontProp.Term = new PrimitiveTerm(termType, fontValue);
+			declaration.Add(fontProp);
 		}
 
 		/// <summary>
