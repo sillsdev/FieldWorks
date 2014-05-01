@@ -210,7 +210,7 @@ namespace SIL.FieldWorks.XWorks
 				checkedItem.Checked = false;
 				// SUT
 				// Events are not actually fired during tests, so they must be run manually
-				ReflectionHelper.CallMethod(controller, "WritingSystemCheckedChanged",
+				ReflectionHelper.CallMethod(controller, "ListItemCheckedChanged",
 					GetListOptionsView(view), wsOptions, new ItemCheckedEventArgs(checkedItem));
 
 				Assert.AreEqual(1, listViewItems.Count(item => item.Checked), "There should still be exactly one item checked");
@@ -220,8 +220,6 @@ namespace SIL.FieldWorks.XWorks
 					wsOptions.Options.First(option => option.IsEnabled).Id,
 					"The same item should still be enabled");
 			}
-
-			// TODO pH 2014.03: verify for non-WS list types
 		}
 
 		[Test]
@@ -250,8 +248,6 @@ namespace SIL.FieldWorks.XWorks
 					Assert.AreEqual(originalListViewItems[i], listViewItems[i], "Order should not have changed");
 				}
 			}
-
-			// TODO pH 2014.03: verify for non-WS list types
 		}
 
 		[Test]
@@ -280,8 +276,6 @@ namespace SIL.FieldWorks.XWorks
 					Assert.AreEqual(originalListViewItems[i], listViewItems[i], "Order should not have changed");
 				}
 			}
-
-			// TODO pH 2014.03: verify for non-WS list types
 		}
 
 		#region Writing System tests
@@ -307,7 +301,7 @@ namespace SIL.FieldWorks.XWorks
 				defaultItem.Checked = true;
 				// SUT
 				// Events are not actually fired during tests, so they must be run manually
-				ReflectionHelper.CallMethod(controller, "WritingSystemCheckedChanged",
+				ReflectionHelper.CallMethod(controller, "ListItemCheckedChanged",
 					GetListOptionsView(view), wsOptions, new ItemCheckedEventArgs(defaultItem));
 
 				Assert.AreEqual(1, listViewItems.Count(item => item.Checked), "There should be exactly one item checked");
@@ -339,7 +333,7 @@ namespace SIL.FieldWorks.XWorks
 				namedItem.Checked = true;
 				// SUT
 				// Events are not actually fired during tests, so they must be run manually
-				ReflectionHelper.CallMethod(controller, "WritingSystemCheckedChanged",
+				ReflectionHelper.CallMethod(controller, "ListItemCheckedChanged",
 					GetListOptionsView(view), wsOptions, new ItemCheckedEventArgs(namedItem));
 
 				Assert.AreEqual(1, listViewItems.Count(item => item.Checked), "There should still be exactly one item checked");
@@ -369,7 +363,7 @@ namespace SIL.FieldWorks.XWorks
 				otherNamedItem.Checked = true;
 				// SUT
 				// Events are not actually fired during tests, so they must be run manually
-				ReflectionHelper.CallMethod(controller, "WritingSystemCheckedChanged",
+				ReflectionHelper.CallMethod(controller, "ListItemCheckedChanged",
 					GetListOptionsView(view), wsOptions, new ItemCheckedEventArgs(otherNamedItem));
 
 				Assert.AreEqual(2, listViewItems.Count(item => item.Checked), "There should now be two items checked");

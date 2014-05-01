@@ -35,8 +35,6 @@ namespace SIL.FieldWorks.XWorks
 
 		private List<StyleComboItem> m_charStyles;
 		private List<StyleComboItem> m_paraStyles;
-		private List<ListViewItem> m_vernWSs;
-		private List<ListViewItem> m_analWSs;
 
 		/// <summary>Model for the dictionary element being configured</summary>
 		private ConfigurableDictionaryNode m_node;
@@ -110,7 +108,7 @@ namespace SIL.FieldWorks.XWorks
 				// There is nothing to configure on the Main Entry itself
 				View.Visible = false;
 			}
-			// else, show the default details (style, before, between, after)
+			// else, show only the default details (style, before, between, after)
 
 			// Register eventhandlers
 			View.StyleSelectionChanged += (sender, e) => StyleChanged();
@@ -128,7 +126,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var wsOptionsView = new ListOptionsView
 			{
-				CheckBoxChecked = wsOptions.DisplayWritingSystemAbbreviations
+				DisplayOptionCheckBoxChecked = wsOptions.DisplayWritingSystemAbbreviations
 			};
 
 			// Find and add available and selected Writing Systems
@@ -174,7 +172,7 @@ namespace SIL.FieldWorks.XWorks
 			wsOptionsView.AvailableItems = availableWSs;
 
 			// Displaying WS Abbreviations is available only when multiple WS's are selected.
-			wsOptionsView.CheckBoxEnabled = (availableWSs.Count(item => item.Checked) >= 2);
+			wsOptionsView.DisplayOptionCheckBoxEnabled = (availableWSs.Count(item => item.Checked) >= 2);
 
 			// Prevent events from firing while the view is being initialized
 			wsOptionsView.Load += WritingSystemEventHandlerAdder(wsOptionsView, wsOptions);
@@ -191,10 +189,10 @@ namespace SIL.FieldWorks.XWorks
 				wsOptionsView.DownClicked += (sender, e) =>
 					Reorder(wsOptionsView.AvailableItems.First(item => item.Selected), DictionaryConfigurationController.Direction.Down);
 				wsOptionsView.ListItemSelectionChanged += (sender, e) => ListViewSelectionChanged(wsOptionsView, e);
-				wsOptionsView.ListItemCheckBoxChanged += (sender, e) => WritingSystemCheckedChanged(wsOptionsView, wsOptions, e);
-				wsOptionsView.CheckBoxChanged += (sender, e) =>
+				wsOptionsView.ListItemCheckBoxChanged += (sender, e) => ListItemCheckedChanged(wsOptionsView, wsOptions, e);
+				wsOptionsView.DisplayOptionCheckBoxChanged += (sender, e) =>
 				{
-					wsOptions.DisplayWritingSystemAbbreviations = wsOptionsView.CheckBoxChecked;
+					wsOptions.DisplayWritingSystemAbbreviations = wsOptionsView.DisplayOptionCheckBoxChecked;
 					RefreshPreview();
 				};
 
@@ -276,6 +274,18 @@ namespace SIL.FieldWorks.XWorks
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "listOptionsView is disposed by its parent")]
 		private void LoadListOptions(DictionaryNodeListOptions listOptions)
 		{
+			var listOptionsView = new ListOptionsView();
+
+			if (listOptions is DictionaryNodeComplexFormOptions)
+			{
+				LoadComplexFormOptions(listOptions as DictionaryNodeComplexFormOptions, listOptionsView);
+			}
+			else
+			{
+				// Complex Forms are the only List type that make use of the Display Option CheckBox below the list
+				listOptionsView.DisplayOptionCheckBoxVisible = false;
+			}
+
 			if ("Subentries".Equals(m_node.FieldDescription) && "Subentries".Equals(m_node.Parent.FieldDescription))
 			{
 				// Subsubentries inherit everything except context from Subentries.  We doubt users will even have Subsubentries.
@@ -288,28 +298,41 @@ namespace SIL.FieldWorks.XWorks
 				View.SetStyles(m_paraStyles, m_node.Style, true);
 			}
 
-			var listOptionsView = new ListOptionsView();
-
-			if (listOptions is DictionaryNodeComplexFormOptions)
-			{
-				LoadComplexFormOptions(listOptions as DictionaryNodeComplexFormOptions, listOptionsView);
-			}
-			else
-			{
-				listOptionsView.CheckBoxVisible = false;
-			}
-
-			// TODO pH 2014.03: test the following cases: Options =!= null, ListId =!= null
 			if (listOptions.ListId == DictionaryNodeListOptions.ListIds.None)
 			{
 				listOptionsView.ListViewVisible = false;
 			}
 			else
 			{
-				listOptions.Options = listOptions.Options ?? new List<DictionaryNodeListOptions.DictionaryNodeOption>();
-
 				// TODO pH 2014.02: find list label
-				// TODO: populate list
+
+				listOptions.Options = listOptions.Options ?? new List<DictionaryNodeListOptions.DictionaryNodeOption>();
+				var selectedOptions = listOptions.Options.Where(option => option.IsEnabled);
+				var availableOptions = GetListItems(listOptions.ListId);
+
+				var atLeastOneChecked = false;
+				// Insert checked items in their saved order
+				int insertionIdx = 0;
+				foreach (var optn in selectedOptions)
+				{
+					var selectedItem = availableOptions.FirstOrDefault(item => optn.Id.Equals((item.Tag)));
+					if (selectedItem != null && availableOptions.Remove(selectedItem))
+					{
+						selectedItem.Checked = true;
+						availableOptions.Insert(insertionIdx++, selectedItem);
+						atLeastOneChecked = true;
+					}
+				}
+
+				// If we haven't checked anything, check everything
+				if (!atLeastOneChecked)
+					foreach (var item in availableOptions)
+						item.Checked = true;
+
+				listOptionsView.AvailableItems = availableOptions;
+
+				// Prevent events from firing while the view is being initialized
+				listOptionsView.Load += ListEventHandlerAdder(listOptionsView, listOptions);
 			}
 
 			View.OptionsView = listOptionsView;
@@ -317,14 +340,34 @@ namespace SIL.FieldWorks.XWorks
 
 		private void LoadComplexFormOptions(DictionaryNodeComplexFormOptions complexFormOptions, ListOptionsView listOptionsView)
 		{
-			listOptionsView.CheckBoxLabel = xWorksStrings.ksDisplayComplexFormsInParagraphs;
-			listOptionsView.CheckBoxChecked = complexFormOptions.DisplayEachComplexFormInAParagraph;
+			listOptionsView.DisplayOptionCheckBoxLabel = xWorksStrings.ksDisplayComplexFormsInParagraphs;
+			listOptionsView.DisplayOptionCheckBoxChecked = complexFormOptions.DisplayEachComplexFormInAParagraph;
 			ToggleViewForShowInPara(complexFormOptions.DisplayEachComplexFormInAParagraph);
+		}
 
-			listOptionsView.CheckBoxChanged += (sender, e) =>
+		private EventHandler ListEventHandlerAdder(ListOptionsView listOptionsView, DictionaryNodeListOptions listOptions)
+		{
+			return (o, args) =>
 			{
-				complexFormOptions.DisplayEachComplexFormInAParagraph = listOptionsView.CheckBoxChecked;
-				ToggleViewForShowInPara(complexFormOptions.DisplayEachComplexFormInAParagraph);
+				listOptionsView.UpClicked += (sender, e) =>
+					Reorder(listOptionsView.AvailableItems.First(item => item.Selected), DictionaryConfigurationController.Direction.Up);
+				listOptionsView.DownClicked += (sender, e) =>
+					Reorder(listOptionsView.AvailableItems.First(item => item.Selected), DictionaryConfigurationController.Direction.Down);
+				listOptionsView.ListItemSelectionChanged += (sender, e) => ListViewSelectionChanged(listOptionsView, e);
+				listOptionsView.ListItemCheckBoxChanged += (sender, e) => ListItemCheckedChanged(listOptionsView, null, e);
+
+				var complexFormOptions = listOptions as DictionaryNodeComplexFormOptions;
+				if (complexFormOptions != null)
+				{
+					listOptionsView.DisplayOptionCheckBoxChanged += (sender, e) =>
+					{
+						complexFormOptions.DisplayEachComplexFormInAParagraph = listOptionsView.DisplayOptionCheckBoxChecked;
+						ToggleViewForShowInPara(complexFormOptions.DisplayEachComplexFormInAParagraph);
+						RefreshPreview();
+					};
+				}
+
+				listOptionsView.Load -= ListEventHandlerAdder(listOptionsView, listOptions);
 			};
 		}
 
@@ -405,6 +448,113 @@ namespace SIL.FieldWorks.XWorks
 			m_charStyles.Sort();
 			m_paraStyles.Sort();
 		}
+
+		private List<ListViewItem> GetListItems(DictionaryNodeListOptions.ListIds listId)
+		{
+			switch (listId)
+			{
+				case DictionaryNodeListOptions.ListIds.Minor:
+					// TODO pH 2014.04: handle this special case, which cares whether the configuration is root- or stem-based
+					return new List<ListViewItem>();
+				case DictionaryNodeListOptions.ListIds.Complex:
+				case DictionaryNodeListOptions.ListIds.Variant:
+					return new List<ListViewItem>(); // TODO pH 2014.05: implement
+				case DictionaryNodeListOptions.ListIds.Sense:
+				case DictionaryNodeListOptions.ListIds.Entry:
+					return LoadLexicalRelationTypes(listId);
+				default:
+					throw new ArgumentException("Unrecognised List ID: " + listId);
+			}
+		}
+
+		// REVIEW (Hasso) 2014.05: This method is currently optimised for loading and caching both Sense and Entry lists at once. It
+		// could be optimised for loading each as needed without caching: by checking first for whether each relType is applicable.
+		private List<ListViewItem> LoadLexicalRelationTypes(DictionaryNodeListOptions.ListIds listId)
+		{
+			var lexRelTypesSubset = new List<ListViewItem>();
+
+			var allRelationTypes = m_cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.ToList();
+			allRelationTypes.Sort(ComparePossibilitiesByName);
+			foreach (var relType in allRelationTypes)
+			{
+				var listViewItemS = new List<ListViewItem>();
+				var lexRelType = (ILexRefType)relType;
+				var mappingType = (LexRefTypeTags.MappingTypes)lexRelType.MappingType;
+				if (mappingType == LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair ||
+					mappingType == LexRefTypeTags.MappingTypes.kmtEntryOrSenseAsymmetricPair ||
+					mappingType == LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair ||
+					mappingType == LexRefTypeTags.MappingTypes.kmtEntryTree ||
+					mappingType == LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree ||
+					mappingType == LexRefTypeTags.MappingTypes.kmtSenseTree)
+				{
+					listViewItemS.Add(new ListViewItem(lexRelType.Name.BestAnalysisVernacularAlternative.Text)
+					{
+						// TODO pH 2014.05: update default configuration to use StorageString
+						Tag = new LexReferenceInfo(true, relType.Guid)
+						{
+							SubClass = LexReferenceInfo.TypeSubClass.Forward
+						}.StorageString.Substring(1) // substring removes the leading "+"; REVIEW (Hasso) 2014.05: do we want to?
+					});
+					listViewItemS.Add(new ListViewItem(lexRelType.ReverseName.BestAnalysisVernacularAlternative.Text)
+					{
+						Tag = new LexReferenceInfo(true, relType.Guid)
+						{
+							SubClass = LexReferenceInfo.TypeSubClass.Reverse
+						}.StorageString.Substring(1)
+					});
+				}
+				else
+				{
+					listViewItemS.Add(new ListViewItem(lexRelType.Name.BestAnalysisVernacularAlternative.Text)
+					{
+						Tag = new LexReferenceInfo(true, relType.Guid)
+						{
+							SubClass = LexReferenceInfo.TypeSubClass.Normal
+						}.StorageString.Substring(1)
+					});
+				}
+
+				switch (mappingType)
+				{
+					case LexRefTypeTags.MappingTypes.kmtEntryTree:
+					case LexRefTypeTags.MappingTypes.kmtEntrySequence:
+					case LexRefTypeTags.MappingTypes.kmtEntryPair:
+					case LexRefTypeTags.MappingTypes.kmtEntryCollection:
+					case LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair:
+						if (listId == DictionaryNodeListOptions.ListIds.Entry)
+							lexRelTypesSubset.AddRange(listViewItemS);
+						break;
+					case LexRefTypeTags.MappingTypes.kmtSenseTree:
+					case LexRefTypeTags.MappingTypes.kmtSenseSequence:
+					case LexRefTypeTags.MappingTypes.kmtSensePair:
+					case LexRefTypeTags.MappingTypes.kmtSenseCollection:
+					case LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair:
+						if (listId == DictionaryNodeListOptions.ListIds.Sense)
+							lexRelTypesSubset.AddRange(listViewItemS);
+						break;
+					default:
+						lexRelTypesSubset.AddRange(listViewItemS);
+						break;
+				}
+			}
+
+			return lexRelTypesSubset;
+		}
+
+		private static int ComparePossibilitiesByName(ICmPossibility x, ICmPossibility y)
+		{
+			if (x == null)
+				return y == null ? 0 : -1;
+			if (y == null)
+				return 1;
+			var xName = x.Name.BestAnalysisVernacularAlternative.Text;
+			var yName = y.Name.BestAnalysisVernacularAlternative.Text;
+			if (xName == null)
+				return yName == null ? 0 : -1;
+			if (yName == null)
+				return 1;
+			return String.Compare(xName, yName);
+		}
 		#endregion Load more-static parts
 		#endregion LoadModel
 
@@ -447,8 +597,14 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		#region ListChanges
-		#region WritingSystemChanges
-		private void WritingSystemCheckedChanged(ListOptionsView wsOptionsView, DictionaryNodeWritingSystemOptions wsOptions, ItemCheckedEventArgs e)
+		/// <summary>
+		/// Called when an item in the ListView is checked or unchecked.  Validates the new set of checked items (preventing if invalid),
+		/// serializes, and refreshes the preview
+		/// </summary>
+		/// <param name="listOptionsView"></param>
+		/// <param name="wsOptions">Null if the list doesn't represent writing systems</param>
+		/// <param name="e"></param>
+		private void ListItemCheckedChanged(ListOptionsView listOptionsView, DictionaryNodeWritingSystemOptions wsOptions, ItemCheckedEventArgs e)
 		{
 			var items = e.Item.ListView.Items;
 
@@ -473,18 +629,28 @@ namespace SIL.FieldWorks.XWorks
 					item.Checked = false;
 			}
 
-			// Displaying WS Abbreviations is available only when multiple WS's are selected.
-			wsOptionsView.CheckBoxEnabled = (items.Cast<ListViewItem>().Count(item => item.Checked) >= 2);
-			// Don't clear the checkbox while users are working, but don't persist an invalid value.
-			wsOptions.DisplayWritingSystemAbbreviations = wsOptionsView.CheckBoxEnabled && wsOptionsView.CheckBoxChecked;
+			if (wsOptions != null)
+			{
+				// Displaying WS Abbreviations is available only when multiple WS's are selected.
+				listOptionsView.DisplayOptionCheckBoxEnabled = (items.Cast<ListViewItem>().Count(item => item.Checked) >= 2);
+				// Don't clear the checkbox while users are working, but don't persist an invalid value.
+				wsOptions.DisplayWritingSystemAbbreviations = listOptionsView.DisplayOptionCheckBoxEnabled &&
+															  listOptionsView.DisplayOptionCheckBoxChecked;
+			}
 
 			SerializeListOptionsAndRefreshPreview(items);
 		}
-		#endregion WritingSystemChanges
 
 		private void SerializeListOptionsAndRefreshPreview(ListView.ListViewItemCollection items)
 		{
-			var options = ((DictionaryNodeWritingSystemOptions)Options).Options;
+			List<DictionaryNodeListOptions.DictionaryNodeOption> options;
+			if (Options is DictionaryNodeWritingSystemOptions)
+				options = (Options as DictionaryNodeWritingSystemOptions).Options;
+			else if (Options is DictionaryNodeListOptions)
+				options = (Options as DictionaryNodeListOptions).Options;
+			else
+				throw new InvalidCastException("Options could not be cast to WS- or ListOptions type.");
+
 			options.Clear();
 			options.AddRange(items.Cast<ListViewItem>().Select(item => new DictionaryNodeListOptions.DictionaryNodeOption
 			{

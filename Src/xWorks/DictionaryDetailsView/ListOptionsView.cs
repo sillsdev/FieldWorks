@@ -13,7 +13,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 {
 	/// <summary>
 	/// Displays controls for detailed configuration of elements of dictionary entries that have an orderable list of selectable items
-	/// or a single checkbox outside of the list.  This view comes pre-configured for
+	/// or a single checkbox outside of the list for a related display option.  This view comes pre-configured for
 	/// Writing Systems (list of checkable Writing Systems; single checkbox to display WS Abbreviations), but it can be configured for anything,
 	/// for example, Complex Forms (list of checkable Complex Form Types, single checkbox to display each Complex Form in a paragraph).
 	/// </summary>
@@ -31,8 +31,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		// User configuration properties
 		//
 
-		/// <summary>Whether or not the single checkbox below the list is checked</summary>
-		public bool CheckBoxChecked
+		/// <summary>Whether or not the single "display option" checkbox below the list is checked</summary>
+		public bool DisplayOptionCheckBoxChecked
 		{
 			get { return checkBoxDisplayOption.Checked; }
 			set { checkBoxDisplayOption.Checked = value; }
@@ -52,8 +52,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		// View setup properties
 		//
 
-		/// <summary>Label for the CheckBox below the list, eg "Disp WS Abbrevs" or "Disp Complex Forms in Paragraphs"</summary>
-		public string CheckBoxLabel { set { checkBoxDisplayOption.Text = value; } }
+		/// <summary>Label for the "DisplayOption" CheckBox below the list, eg "Disp WS Abbrevs" or "Disp Complex Forms in Paragraphs"</summary>
+		public string DisplayOptionCheckBoxLabel { set { checkBoxDisplayOption.Text = value; } }
 
 		/// <summary>Label for the list, eg "Writing Systems:" or "Complex Form Types:"</summary>
 		public string ListViewLabel { set { labelListView.Text = value; } }
@@ -62,11 +62,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 
 		public bool MoveDownEnabled { set { buttonDown.Enabled = value; } }
 
-		/// <summary>Whether or not the single checkbox below the list is visible</summary>
-		public bool CheckBoxVisible { set { checkBoxDisplayOption.Visible = value; } }
+		/// <summary>Whether or not the single "display option" checkbox below the list is visible</summary>
+		public bool DisplayOptionCheckBoxVisible { set { checkBoxDisplayOption.Visible = value; } }
 
-		/// <summary>Whether or not the single checkbox below the list is enabled</summary>
-		public bool CheckBoxEnabled
+		/// <summary>Whether or not the single "display option" checkbox below the list is enabled</summary>
+		public bool DisplayOptionCheckBoxEnabled
 		{
 			get { return checkBoxDisplayOption.Enabled; }
 			set { checkBoxDisplayOption.Enabled = value; }
@@ -109,8 +109,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			remove { listView.ItemChecked -= value; }
 		}
 
-		/// <summary>EventHandler for the single checkbox below the list</summary>
-		public event EventHandler CheckBoxChanged
+		/// <summary>EventHandler for the single "display option" checkbox below the list</summary>
+		public event EventHandler DisplayOptionCheckBoxChanged
 		{
 			add { checkBoxDisplayOption.CheckedChanged += value; }
 			remove { checkBoxDisplayOption.CheckedChanged -= value; }
