@@ -293,6 +293,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 			if (!Directory.Exists(dirPath))
 				Directory.CreateDirectory(dirPath);
 			string dicPath = GetDicPath(dirPath, dictId);
+			// if the dictionary already exists, and it is not vernacular, return rather than wiping it.
+			if(File.Exists(dicPath))
+			{
+				var dict = GetSpellChecker(dictId);
+				if(dict != null && !dict.IsVernacular)
+					return;
+			}
 			InitDictionary(dicPath, new string[0]);
 		}
 
@@ -330,6 +337,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private static void InitDictionary(string dicPath, IEnumerable<string> words)
 		{
+
 			var affixFile = Path.ChangeExtension(dicPath, ".aff");
 			if(!File.Exists(affixFile))
 			{
@@ -431,8 +439,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var dict = GetSpellChecker(id);
 			if (dict != null)
 			{
-				if (!dict.IsVernacular)
-					throw new ArgumentException("Only vernacular dictionaries can be reset", "id");
+				if(!dict.IsVernacular)
+				{
+					// If the discovered dictionary is not one of our vernaculars we will not reset it or crash (LT-15285)
+					return;
+				}
 				foreach (var kvp in m_spellers.ToList())
 				{
 					if (kvp.Value == dict)

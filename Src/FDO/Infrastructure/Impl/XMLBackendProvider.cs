@@ -839,6 +839,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		private int m_nextReadBuffer;  // The buffer we will next read into.
 		private int m_currentProcessBuffer; // the buffer we are currently processing
 		private Action<byte[]> m_outputHandler;
+		private byte[] m_previousBuffer; // the buffer we previously read
 		private byte[] m_currentBuffer; // one of m_buffers, that contains data we are currently reading.
 		private int m_currentIndex; // position of next character to read in m_currentBuffer.
 		private int m_currentBufIndex; // index where m_currentBuffer is found in m_buffers.
@@ -846,10 +847,14 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		// MS doc says this is the smallest buffer that will produce real async reads.
 		// We want them relatively small so we can start overlapping quickly.
-		private const int kInitBufSize = 65536;
-
+		private const int kDefaultInitBufSize = 65536;
 
 		public ElementReader(string openingMarker, string finalClosingTag, string pathname, Action<byte[]> outputHandler)
+			: this(openingMarker, finalClosingTag, pathname, outputHandler, kDefaultInitBufSize)
+		{
+		}
+
+		internal ElementReader(string openingMarker, string finalClosingTag, string pathname, Action<byte[]> outputHandler, int bufferSize)
 		{
 			if (!openingMarker.EndsWith(" "))
 				openingMarker += " ";
@@ -860,7 +865,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			m_reader = new FileStream(m_pathname, FileMode.Open, FileAccess.Read, FileShare.None, 4096, true);
 			for (int i = 0; i < kbufCount; i++)
 			{
-				m_buffers[i] = new byte[kInitBufSize];
+				m_buffers[i] = new byte[bufferSize];
 				m_states[i] = BufferStatus.kNotInUse;
 			}
 			m_nextReadBuffer = 0;
@@ -883,14 +888,24 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		private bool EndMarkerFound()
 		{
+			// extraBuffer allows for possible whitespace at the end of the file
 			const int extraBuffer = 5;
 			var lengthEndTag = m_finalClosingTag.Length;
-			if (m_currentIndex < (lengthEndTag + extraBuffer))
-				return false;
-			string lastBufferString = Encoding.UTF8.GetString(m_currentBuffer, m_currentIndex - (lengthEndTag + extraBuffer),
-															  m_currentBufLength - (m_currentIndex - (lengthEndTag + extraBuffer)));
+			var lengthWithExtra = (lengthEndTag + extraBuffer);
+			string bufferString;
+			if (m_currentIndex < lengthWithExtra)
+			{
+				// It is possible that the final tag spans the buffer boundary
+				var boundaryBytes = new byte[lengthWithExtra*2];
+				Array.Copy(m_previousBuffer, m_previousBuffer.Length - lengthWithExtra, boundaryBytes, 0, lengthWithExtra);
+				Array.Copy(m_currentBuffer, 0, boundaryBytes, lengthWithExtra, lengthWithExtra);
+				bufferString = Encoding.UTF8.GetString(boundaryBytes, 0, boundaryBytes.Length - 1);
+			}
+			else
+				bufferString = Encoding.UTF8.GetString(m_currentBuffer, m_currentIndex - lengthWithExtra,
+																  m_currentBufLength - (m_currentIndex - lengthWithExtra));
 
-			return lastBufferString.Contains(Encoding.UTF8.GetString(m_finalClosingTag, 0, lengthEndTag));
+			return bufferString.Contains(Encoding.UTF8.GetString(m_finalClosingTag, 0, lengthEndTag));
 		}
 
 		private static byte closeBracket = Encoding.UTF8.GetBytes(">")[0];
@@ -1060,6 +1075,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			{
 				m_currentBufIndex = m_nextReadBuffer;
 				m_currentBufLength = m_bufferLengths[m_currentBufIndex] = m_reader.EndRead(m_tokens[m_currentBufIndex]);
+				m_previousBuffer = m_currentBuffer;
 				m_currentBuffer = m_buffers[m_currentBufIndex];
 				m_currentIndex = 0;
 				m_states[m_currentBufIndex] = BufferStatus.kBeingProcessed;
@@ -1076,6 +1092,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			Array.Copy(m_currentBuffer, newBuffer, oldLength); // doc indicates it could be dangerous to overlap this
 			var token = m_reader.BeginRead(newBuffer, oldLength, oldLength, null, null);
 			m_buffers[m_currentBufIndex] = newBuffer;
+			m_previousBuffer = m_currentBuffer;
 			m_currentBuffer = newBuffer;
 			int newReadLength = m_reader.EndRead(token);
 			m_currentBufLength = m_bufferLengths[m_currentBufIndex] = newReadLength + oldLength;

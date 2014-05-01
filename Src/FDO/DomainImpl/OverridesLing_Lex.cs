@@ -13,11 +13,13 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Windows.Forms.VisualStyles;
 using System.Xml; // XMLWriter
 using System.Drawing;
 
@@ -1047,6 +1049,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				SensesChangedPosition(e.Index);
 				NumberOfSensesChanged(true);
 				UpdateMorphoSyntaxAnalysesOfLexEntryRefs();
+
+				var sourceLexEntry = e.PreviousOwner as ILexEntry;
+				if (sourceLexEntry != null && !Equals(sourceLexEntry))
+					UpdateReferencesForSenseMove(sourceLexEntry, this, SensesOS[e.Index]);
 			}
 					break;
 				case LexEntryTags.kflidAlternateForms:
@@ -1392,18 +1398,20 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (mapOldToNewMsa.Keys.Count == 0)
 				return;
 
+			// Must move mb reference first.  Otherwise the MSA may be deleted already
+			// since a mb reference alone will not keep the MSA from being deleted (LT-14740)
+			foreach (var mb in Services.GetInstance<IWfiMorphBundleRepository>().AllInstances())
+			{
+				IMoMorphSynAnalysis newMsa;
+				if (mb.MsaRA != null && mapOldToNewMsa.TryGetValue(mb.MsaRA, out newMsa))
+					mb.MsaRA = newMsa;
+			}
+
 			foreach (var sense in AllSenses)
 			{
 				IMoMorphSynAnalysis newMsa;
 				if (sense.MorphoSyntaxAnalysisRA != null && mapOldToNewMsa.TryGetValue(sense.MorphoSyntaxAnalysisRA, out newMsa))
 					sense.MorphoSyntaxAnalysisRA = newMsa;
-			}
-
-			foreach (var mb in Services.GetInstance<IWfiMorphBundleRepository>().AllInstances())
-			{
-				IMoMorphSynAnalysis newMsa;
-				if (mb.MsaRA != null &&  mapOldToNewMsa.TryGetValue(mb.MsaRA, out newMsa))
-					mb.MsaRA = newMsa;
 			}
 
 			foreach (var adhocProhib in Services.GetInstance<IMoMorphAdhocProhibRepository>().AllInstances())
@@ -1561,38 +1569,89 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						if (EtymologyOA != null)
 							CopyObject<ILexEtymology>.CloneFdoObject(EtymologyOA, newEtymology => leNew.EtymologyOA = newEtymology);
 
-						var msaCorrespondence = new Dictionary<IMoMorphSynAnalysis, IMoMorphSynAnalysis>(4);
-						(leNew as LexEntry).ReplaceMsasForSense(ls, msaCorrespondence);
-						foreach (var sense in ls.AllSenses)
-						{
-							foreach (var source in sense.ReferringObjects)
-							{
-								var mb = source as WfiMorphBundle;
-								if (mb == null || mb.MorphRA == null)
-									continue;
-								if (mb.MorphRA == LexemeFormOA)
-								{
-									mb.MorphRA = leNew.LexemeFormOA;
-								}
-								else // point to the corresponding allomorph
-								{
-									//if the referringObject is a variant then index will be -1
-									var index = AlternateFormsOS.IndexOf(mb.MorphRA);
-									if (index >= 0)
-										mb.MorphRA = leNew.AlternateFormsOS[index];
-									else
-									{
-										//Clear out the morph bundle where the morph was pointing to a variant
-										//that references the old entry which no longer holds this sense.
-										mb.MorphRA = null;
-										mb.MsaRA = null;
-										mb.SenseRA = null;
-									}
-								}
-							}
-						}
+						UpdateReferencesForSenseMove(this, leNew, ls);
+
 						leNew.SensesOS.Add(ls); // moves it
 					});
+		}
+
+		public static void UpdateReferencesForSenseMove(ILexEntry leSource, ILexEntry leTarget, ILexSense ls)
+		{
+			var msaCorrespondence = new Dictionary<IMoMorphSynAnalysis, IMoMorphSynAnalysis>(4);
+			(leTarget as LexEntry).ReplaceMsasForSense(ls, msaCorrespondence);
+			foreach (var sense in ls.AllSenses)
+			{
+				foreach (var source in sense.ReferringObjects)
+				{
+					var mb = source as WfiMorphBundle;
+					if (mb == null || mb.MorphRA == null)
+						continue;
+					if (leSource.LexemeFormOA == mb.MorphRA || leSource.AlternateFormsOS.Contains(mb.MorphRA))
+					{
+						IMoForm sourceAllomorph = mb.MorphRA;
+						mb.MorphRA = null;
+						foreach(IMoForm targetAllomorph in leTarget.AllAllomorphs)
+						{
+							if(IsMatchingAllomorph(sourceAllomorph, targetAllomorph))
+							{
+								mb.MorphRA = targetAllomorph;
+								break;
+							}
+						}
+						// The failover case is to create a matching allomorph in the target entry
+						if(mb.MorphRA == null)
+						{
+							mb.MorphRA = CreateMatchingAllomorphInTargetEntry(leTarget, sourceAllomorph);
+						}
+					}
+					else
+					{
+						//Clear out the morph bundle where the morph was pointing to a variant
+						//that references the old entry which no longer holds this sense.
+						mb.MorphRA = null;
+						mb.MsaRA = null;
+						mb.SenseRA = null;
+					}
+				}
+			}
+		}
+
+		internal static IMoForm CreateMatchingAllomorphInTargetEntry(ILexEntry leTarget, IMoForm sourceAllomorph)
+		{
+			IMoForm newForm = null;
+			CopyObject<IMoForm>.CloneFdoObject(sourceAllomorph,
+														  created =>
+															{
+																leTarget.AlternateFormsOS.Add(created);
+																newForm = created;
+															});
+			return newForm;
+		}
+
+		/// <summary>
+		/// True if there is at least one writing system for which both IMoForms have the same text and
+		/// the texts match for each writing system for which both IMoForms have text.
+		/// Writing systems with no text for either IMoForm are ignored.
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="target"></param>
+		/// <returns></returns>
+		private static bool IsMatchingAllomorph(IMoForm source, IMoForm target)
+		{
+			bool found = false;
+			foreach (var ws in source.Form.AvailableWritingSystemIds)
+			{
+				string sourceForm = source.Form.get_String(ws).Text;
+				if (string.IsNullOrEmpty(sourceForm))
+					continue;
+				string targetForm = target.Form.get_String(ws).Text;
+				if (string.IsNullOrEmpty(targetForm))
+					continue;
+				found = true;
+				if (!sourceForm.Equals(targetForm, StringComparison.Ordinal))
+					return false;
+			}
+			return found;
 		}
 
 		/// <summary>
@@ -4461,21 +4520,38 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				var tisb = TsIncStrBldrClass.Create();
-				tisb.SetIntPropValues((int) FwTextPropType.ktptEditable,
+				var deleteTextTssBuilder = TsIncStrBldrClass.Create();
+				deleteTextTssBuilder.SetIntPropValues((int) FwTextPropType.ktptEditable,
 					(int) FwTextPropVar.ktpvEnum,
 					(int) TptEditable.ktptNotEditable);
 				var userWs = m_cache.WritingSystemFactory.UserWs;
-				tisb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, userWs);
-				tisb.Append(String.Format(Strings.ksDeleteLexSense, " "));
-				tisb.AppendTsString(ShortNameTSS);
+				deleteTextTssBuilder.SetIntPropValues((int) FwTextPropType.ktptWs, 0, userWs);
+				deleteTextTssBuilder.Append(String.Format(Strings.ksDeleteLexSense, " "));
+				deleteTextTssBuilder.AppendTsString(ShortNameTSS);
 
 				var lmeCount = 0;
 				var lseCount = 0;
 				var servLoc = Cache.ServiceLocator;
 
-				var bundles = servLoc.GetInstance<IWfiMorphBundleRepository>().AllInstances();
-				var mbCount = (bundles.Where(bundle => bundle.SenseRA == this)).Count();
+				int mbCount = 0;
+				int textCount = 0;
+				int msaCount = 0;
+				int msaTextCount = 0;
+				var bundles = servLoc.GetInstance<IWfiMorphBundleRepository>().AllInstances().Where(bundle => bundle.SenseRA == this);
+				foreach (IWfiMorphBundle bundle in bundles)
+				{
+					mbCount++;
+					if (bundle.MsaRA != null && bundle.MsaRA.ComponentsRS != null && bundle.MsaRA.Equals(MorphoSyntaxAnalysisRA))
+						msaCount++;
+					var analysis = bundle.Owner as IWfiAnalysis;
+					if (analysis != null)
+					{
+						int textOccurences = analysis.Wordform.OccurrencesInTexts.Distinct().Sum(seg => seg.GetOccurrencesOfAnalysis(analysis, int.MaxValue, true).Count);
+						textCount += textOccurences;
+						if (bundle.MsaRA != null && bundle.MsaRA.ComponentsRS != null && bundle.MsaRA.Equals(MorphoSyntaxAnalysisRA))
+							msaTextCount += textOccurences;
+					}
+				}
 
 				var entries = servLoc.GetInstance<ILexEntryRepository>().AllInstances();
 				lmeCount = (entries.Where(e => e.MainEntriesOrSensesRS.Contains(this))).Count();
@@ -4490,41 +4566,80 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				var cnt = 1;
 				var warningMsg = String.Format("\x2028\x2028{0}", Strings.ksSenseUsedHere);
 				var wantMainWarningLine = true;
+				var msaWarningMsg = String.Format("\x2028\x2028{0}", Strings.ksMsaWhichWouldBeDeletedUsedHere);
+				var wantMsaWarningLine = true;
 				if (mbCount > 0)
 				{
-					tisb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, userWs);
-					tisb.Append(warningMsg);
-					tisb.Append(StringUtils.kChHardLB.ToString());
+					deleteTextTssBuilder.SetIntPropValues((int) FwTextPropType.ktptWs, 0, userWs);
+					deleteTextTssBuilder.Append(warningMsg);
+					deleteTextTssBuilder.Append(StringUtils.kChHardLB.ToString(CultureInfo.InvariantCulture));
 					if (mbCount > 1)
-						tisb.Append(String.Format(Strings.ksIsUsedXTimesInAnalyses, cnt++, mbCount));
+						deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedXTimesInAnalyses, cnt++, mbCount));
 					else
-						tisb.Append(String.Format(Strings.ksIsUsedOnceInAnalyses, cnt++));
+						deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedOnceInAnalyses, cnt++));
+					wantMainWarningLine = false;
+				}
+				if (textCount > 0)
+				{
+					deleteTextTssBuilder.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
+					if (wantMainWarningLine)
+						deleteTextTssBuilder.Append(warningMsg);
+					deleteTextTssBuilder.Append(StringUtils.kChHardLB.ToString(CultureInfo.InvariantCulture));
+					if (textCount > 1)
+						deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedXTimesInTexts, cnt++, textCount));
+					else
+						deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedOnceInTexts, cnt++));
 					wantMainWarningLine = false;
 				}
 				if (lmeCount > 0)
 				{
-					tisb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, userWs);
+					deleteTextTssBuilder.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 					if (wantMainWarningLine)
-						tisb.Append(warningMsg);
-					tisb.Append(StringUtils.kChHardLB.ToString());
+						deleteTextTssBuilder.Append(warningMsg);
+					deleteTextTssBuilder.Append(StringUtils.kChHardLB.ToString(CultureInfo.InvariantCulture));
 					if (lmeCount > 1)
-						tisb.Append(String.Format(Strings.ksIsUsedXTimesByEntries, cnt++, lmeCount));
+						deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedXTimesByEntries, cnt++, lmeCount));
 					else
-						tisb.Append(String.Format(Strings.ksIsUsedOnceByEntries, cnt++));
+						deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedOnceByEntries, cnt++));
 					wantMainWarningLine = false;
 				}
 				if (lseCount > 0)
 				{
-					tisb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, userWs);
+					deleteTextTssBuilder.SetIntPropValues((int) FwTextPropType.ktptWs, 0, userWs);
 					if (wantMainWarningLine)
-						tisb.Append(warningMsg);
-					tisb.Append(StringUtils.kChHardLB.ToString());
+						deleteTextTssBuilder.Append(warningMsg);
+					deleteTextTssBuilder.Append(StringUtils.kChHardLB.ToString(CultureInfo.InvariantCulture));
 					if (lseCount > 1)
-						tisb.Append(String.Format(Strings.ksIsUsedXTimesBySubentries, cnt++, lseCount));
+						deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedXTimesBySubentries, cnt++, lseCount));
 					else
-						tisb.Append(String.Format(Strings.ksIsUsedOnceBySubentries, cnt++));
+						deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedOnceBySubentries, cnt++));
 				}
-				return tisb.GetString();
+				if (MorphoSyntaxAnalysisRA != null && MorphoSyntaxAnalysisRA.CanDeleteIfSenseDeleted(this))
+				{
+					if (msaCount > 0)
+					{
+						deleteTextTssBuilder.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
+						deleteTextTssBuilder.Append(msaWarningMsg);
+						deleteTextTssBuilder.Append(StringUtils.kChHardLB.ToString(CultureInfo.InvariantCulture));
+						if (msaCount > 1)
+							deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedXTimesInAnalyses, cnt++, msaCount));
+						else
+							deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedOnceInAnalyses, cnt++));
+						wantMsaWarningLine = false;
+					}
+					if (msaTextCount > 0)
+					{
+						deleteTextTssBuilder.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
+						if (wantMsaWarningLine)
+							deleteTextTssBuilder.Append(msaWarningMsg);
+						deleteTextTssBuilder.Append(StringUtils.kChHardLB.ToString(CultureInfo.InvariantCulture));
+						if (msaTextCount > 1)
+							deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedXTimesInTexts, cnt++, msaTextCount));
+						else
+							deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedOnceInTexts, cnt++));
+					}
+				}
+				return deleteTextTssBuilder.GetString();
 			}
 		}
 
@@ -6671,7 +6786,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <returns>The feature structure containing the intersection</returns>
 		public IFsFeatStruc SetIntersectionOfPhonemeFeatures(IFsFeatStruc fs)
 		{
-			fs.FeatureSpecsOC.Clear();
 			var comparer = new FsClosedValue.FsClosedValueComparer();
 			HashSet<IFsClosedValue> hashSetMaster = null;
 			var hashSetCurrent = new HashSet<IFsClosedValue>(comparer);
@@ -6706,16 +6820,39 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 			if (hashSetMaster != null)
 			{
+				// Collect the old contents of fs for potential removal
+				var featuresToRemove = new HashSet<IFsClosedValue>(comparer);
+				foreach(IFsClosedValue feature in fs.FeatureSpecsOC)
+				{
+					featuresToRemove.Add(feature);
+				}
 				foreach (var masterValue in hashSetMaster)
 				{
+					// if a matching feature was present before we will leave it
+					if(featuresToRemove.Contains(masterValue))
+					{
+						featuresToRemove.Remove(masterValue);
+						continue;
+					}
+					// otherwise we add it
 					var closedValue = m_cache.ServiceLocator.GetInstance<IFsClosedValueFactory>().Create();
 					fs.FeatureSpecsOC.Add(closedValue);
 					closedValue.FeatureRA = masterValue.FeatureRA;
 					closedValue.ValueRA = masterValue.ValueRA;
 				}
+				foreach(var goner in featuresToRemove)
+				{
+					fs.FeatureSpecsOC.Remove(goner);
+				}
+			}
+			else
+			{
+				// if there were no entries for hashSetMaster then we should clear out the old contents
+				fs.FeatureSpecsOC.Clear();
 			}
 			return fs;
 		}
+
 		protected override void OnBeforeObjectDeleted()
 		{
 			base.OnBeforeObjectDeleted();

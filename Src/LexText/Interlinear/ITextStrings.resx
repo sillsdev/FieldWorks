@@ -600,7 +600,7 @@
     <comment>caption to go with ksInterlinImportFailed</comment>
   </data>
   <data name="ksInterlinImportFailed" xml:space="preserve">
-    <value>Interlinear Import failed. Are you sure you are importing a file in FLExText interlinear format? Word and Open Office/Libre Office docs cannot yet be imported:</value>
+    <value>Interlinear Import failed. Are you sure you are importing a file in FLExText interlinear format? Word, Open Office, and Libre Office docs cannot yet be imported.</value>
   </data>
   <data name="ksCannotLaunchX" xml:space="preserve">
     <value>Sorry, could not launch {0}.</value>
