@@ -330,7 +330,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private static void InitDictionary(string dicPath, IEnumerable<string> words)
 		{
-
 			var affixFile = Path.ChangeExtension(dicPath, ".aff");
 			if(!File.Exists(affixFile))
 			{
