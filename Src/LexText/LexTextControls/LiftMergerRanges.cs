@@ -896,9 +896,9 @@ namespace SIL.FieldWorks.LexText.Controls
 					}
 				}
 			}
-			catch (Exception)
+			catch (Exception e)
 			{
-				// swallow any exception...
+				m_rgErrorMsgs.Add("Error encountered processing ranges file: " + e.Message);
 			}
 		}
 
