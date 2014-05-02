@@ -376,6 +376,12 @@
     <Compile Include="NotebookExportDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="PublishToWebonaryDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PublishToWebonaryDlg.Designer.cs">
+      <DependentUpon>PublishToWebonaryDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="SemanticDomainRdeTreeBarHandler.cs" />
     <Compile Include="RecordBarListHandler.cs">
       <SubType>Code</SubType>
@@ -488,6 +494,9 @@
     <EmbeddedResource Include="LiftExportMessageDlg.resx">
       <DependentUpon>LiftExportMessageDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PublishToWebonaryDlg.resx">
+      <DependentUpon>PublishToWebonaryDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="RecordBrowseView.resx">
       <DependentUpon>RecordBrowseView.cs</DependentUpon>
