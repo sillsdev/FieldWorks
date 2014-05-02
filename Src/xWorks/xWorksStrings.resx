@@ -788,4 +788,10 @@ If you are not the one designated user who adds fields, or you are making some o
 
 (There is one other special case. If you are adding a temporary custom field for a special purpose and will delete it before you next Send/Receive, you may proceed safely.)</value>
   </data>
+  <data name="ksCustomFieldsCanNotBeAddedDueToOtherAppsCaption" xml:space="preserve">
+    <value>Cannot Add Custom Fields</value>
+  </data>
+  <data name="ksCustomFieldsCanNotBeAddedDueToOtherAppsText" xml:space="preserve">
+    <value>Custom Fields cannot be added when there is more than one application using this project.</value>
+  </data>
 </root>
