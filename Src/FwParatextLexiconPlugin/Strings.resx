@@ -117,99 +117,55 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="btnOverwrite.Location" type="System.Drawing.Point, System.Drawing">
-    <value>189, 85</value>
+  <data name="ksConflictingSaveText" xml:space="preserve">
+    <value>ParaTExt cannot save changes to the lexicon, because they conflict with changes made by another user or application. The conflicting changes will be reverted.</value>
   </data>
-  <data name="btnOverwrite.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+  <data name="ksConflictingSaveCaption" xml:space="preserve">
+    <value>Cannot Save Lexicon</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="btnOverwrite.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
+  <data name="ksConnectionLostText" xml:space="preserve">
+    <value>There is a problem with the connection to the lexicon.  Usually, this occurs when there is a problem with the FwRemoteDatabaseConnectorService.  Would you like to attempt to reestablish the connection?</value>
   </data>
-  <data name="btnOverwrite.Text" xml:space="preserve">
-    <value>Overwrite</value>
+  <data name="ksConnectionLostCaption" xml:space="preserve">
+    <value>Lexicon Connection Lost</value>
   </data>
-  <data name="&gt;&gt;btnOverwrite.Name" xml:space="preserve">
-    <value>btnOverwrite</value>
+  <data name="ksOfferToRestoreCaption" xml:space="preserve">
+    <value>Problem opening file</value>
   </data>
-  <data name="&gt;&gt;btnOverwrite.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="ksOfferToRestoreText" xml:space="preserve">
+    <value>There was a problem opening the current version of the file {0}, dated {1}. Would you like to open the automatic backup, {2}, dated {3}?</value>
   </data>
-  <data name="&gt;&gt;btnOverwrite.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="ksProjectExistsText1" xml:space="preserve">
+    <value>The {0} project already exists.</value>
   </data>
-  <data name="&gt;&gt;btnOverwrite.ZOrder" xml:space="preserve">
-    <value>2</value>
+  <data name="ksProjectExistsText2" xml:space="preserve">
+    <value>You may overwrite the existing project or select a different name.</value>
   </data>
-  <data name="btnRename.Location" type="System.Drawing.Point, System.Drawing">
-    <value>271, 84</value>
+  <data name="ksWarningCaption" xml:space="preserve">
+    <value>Warning</value>
   </data>
-  <data name="btnRename.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+  <data name="ksCouldNotConnectText" xml:space="preserve">
+    <value>Could not connect to server. Check service is running and that any running firewalls are configured to allow connections to the service.</value>
   </data>
-  <data name="btnRename.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
+  <data name="ksBackupFileProblemCaption" xml:space="preserve">
+    <value>Problem With Backup File</value>
   </data>
-  <data name="btnRename.Text" xml:space="preserve">
-    <value>Rename</value>
+  <data name="ksBackupFileProblemText" xml:space="preserve">
+    <value>An error occurred. Please select a different file.</value>
   </data>
-  <data name="&gt;&gt;btnRename.Name" xml:space="preserve">
-    <value>btnRename</value>
+  <data name="ksRestoreProblemText" xml:space="preserve">
+    <value>An error occurred and the project could not be restored.</value>
   </data>
-  <data name="&gt;&gt;btnRename.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="ksCannotRestoreLinkedFilesToOriginalLocationCaption" xml:space="preserve">
+    <value>Cannot Restore Linked Files</value>
   </data>
-  <data name="&gt;&gt;btnRename.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="ksCannotRestoreLinkedFilesToOriginalLocationText" xml:space="preserve">
+    <value>ParaTExt cannot restore the linked files to their original location. If you choose to restore the linked files, they will be placed inside the project folder. Do you wish to restore the linked files anyway? </value>
   </data>
-  <data name="&gt;&gt;btnRename.ZOrder" xml:space="preserve">
-    <value>1</value>
+  <data name="ksRestoreLinkedFilesInProjectFolderCaption" xml:space="preserve">
+    <value>Linked Files Folder</value>
   </data>
-  <data name="label1.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>13, 13</value>
-  </data>
-  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>50, 13</value>
-  </data>
-  <data name="label1.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="label1.Text" xml:space="preserve">
-    <value>labelText</value>
-  </data>
-  <data name="&gt;&gt;label1.Name" xml:space="preserve">
-    <value>label1</value>
-  </data>
-  <data name="&gt;&gt;label1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>6, 13</value>
-  </data>
-  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>360, 121</value>
-  </data>
-  <data name="$this.Text" xml:space="preserve">
-    <value>Project Already Exists</value>
-  </data>
-  <data name="&gt;&gt;$this.Name" xml:space="preserve">
-    <value>ProjectExistsForm</value>
-  </data>
-  <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="ksRestoreLinkedFilesInProjectFolderText" xml:space="preserve">
+    <value>The Linked Files folder was not previously stored in the project folder. Would you like ParaTExt to restore the linked files within the project folder?</value>
   </data>
 </root>

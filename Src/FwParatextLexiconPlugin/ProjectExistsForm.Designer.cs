@@ -29,52 +29,41 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnOverwrite = new System.Windows.Forms.Button();
-            this.btnRename = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
-            this.SuspendLayout();
-            // 
-            // btnOverwrite
-            // 
-            this.btnOverwrite.Location = new System.Drawing.Point(189, 85);
-            this.btnOverwrite.Name = "btnOverwrite";
-            this.btnOverwrite.Size = new System.Drawing.Size(75, 23);
-            this.btnOverwrite.TabIndex = 0;
-            this.btnOverwrite.Text = "Overwrite";
-            this.btnOverwrite.UseVisualStyleBackColor = true;
-            this.btnOverwrite.Click += new System.EventHandler(this.btnOverwrite_Click);
-            // 
-            // btnRename
-            // 
-            this.btnRename.Location = new System.Drawing.Point(271, 84);
-            this.btnRename.Name = "btnRename";
-            this.btnRename.Size = new System.Drawing.Size(75, 23);
-            this.btnRename.TabIndex = 1;
-            this.btnRename.Text = "Rename";
-            this.btnRename.UseVisualStyleBackColor = true;
-            this.btnRename.Click += new System.EventHandler(this.btnRename_Click);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 13);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(50, 13);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "labelText";
-            // 
-            // ProjectExistsForm
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(360, 121);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.btnRename);
-            this.Controls.Add(this.btnOverwrite);
-            this.Name = "ProjectExistsForm";
-            this.Text = "Project Already Exists";
-            this.ResumeLayout(false);
-            this.PerformLayout();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProjectExistsForm));
+			this.btnOverwrite = new System.Windows.Forms.Button();
+			this.btnRename = new System.Windows.Forms.Button();
+			this.label1 = new System.Windows.Forms.Label();
+			this.SuspendLayout();
+			// 
+			// btnOverwrite
+			// 
+			resources.ApplyResources(this.btnOverwrite, "btnOverwrite");
+			this.btnOverwrite.Name = "btnOverwrite";
+			this.btnOverwrite.UseVisualStyleBackColor = true;
+			this.btnOverwrite.Click += new System.EventHandler(this.btnOverwrite_Click);
+			// 
+			// btnRename
+			// 
+			resources.ApplyResources(this.btnRename, "btnRename");
+			this.btnRename.Name = "btnRename";
+			this.btnRename.UseVisualStyleBackColor = true;
+			this.btnRename.Click += new System.EventHandler(this.btnRename_Click);
+			// 
+			// label1
+			// 
+			resources.ApplyResources(this.label1, "label1");
+			this.label1.Name = "label1";
+			// 
+			// ProjectExistsForm
+			// 
+			resources.ApplyResources(this, "$this");
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this.label1);
+			this.Controls.Add(this.btnRename);
+			this.Controls.Add(this.btnOverwrite);
+			this.Name = "ProjectExistsForm";
+			this.ResumeLayout(false);
+			this.PerformLayout();
 
         }
 

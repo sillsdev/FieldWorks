@@ -242,10 +242,10 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		public void Save()
 		{
-			// Comment copied from previous
-
-			// ENHANCE: We could do a save on the cache here. It doesn't seem really important
-			// since the cache will be saved automatically with 10 seconds of inactivity anyways.
+			using (m_activationContext.Activate())
+			{
+				m_cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+			}
 		}
 
 		public Lexeme FindClosestMatchingLexeme(string wordForm)
@@ -281,14 +281,11 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		public bool CanOpenInLexicon
 		{
-			get { return ParatextLexiconDirectoryFinder.IsFieldWorksInstalled; }
+			get { return ParatextLexiconPluginDirectoryFinder.IsFieldWorksInstalled; }
 		}
 
 		public void OpenInLexicon(Lexeme lexeme)
 		{
-			if (m_cache.ProjectId.Type != FDOBackendProviderType.kDb4oClientServer)
-				throw new LexiconUnavailableException("Fieldworks and Paratext cannot access the same project at the same time unless the Fieldworks project is shared.");
-
 			string guid = null, toolName;
 			using (m_activationContext.Activate())
 			{
@@ -490,7 +487,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		private void InstantiateParser()
 		{
-			string parserDataDir = Path.Combine(ParatextLexiconDirectoryFinder.CodeDirectory, "Language Explorer");
+			string parserDataDir = Path.Combine(ParatextLexiconPluginDirectoryFinder.CodeDirectory, "Language Explorer");
 			switch (m_cache.LanguageProject.MorphologicalDataOA.ActiveParser)
 			{
 				case "XAmple":

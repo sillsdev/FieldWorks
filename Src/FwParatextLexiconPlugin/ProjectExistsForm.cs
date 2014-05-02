@@ -5,9 +5,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
 	internal partial class ProjectExistsForm : Form
 	{
-		private const string labelText1 = "The {0} project already exists.";
-		private const string labelText2 = "You may overwrite the existing project or select a different name.";
-
 		private ProjectExistsForm()
 		{
 			InitializeComponent();
@@ -17,7 +14,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		public ProjectExistsForm(string projectName) : this()
 		{
-			label1.Text = string.Format(labelText1, projectName) + Environment.NewLine + labelText2;
+			label1.Text = string.Format(Strings.ksProjectExistsText1, projectName) + Environment.NewLine + Strings.ksProjectExistsText2;
 			DialogResult = DialogResult.Cancel;
 		}
 

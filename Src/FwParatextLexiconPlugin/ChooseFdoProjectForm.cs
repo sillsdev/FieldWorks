@@ -149,13 +149,13 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			{
 				MessageBox.Show(
 					ActiveForm,
-					"Could not connect to server. Check service is running and that any running firewalls are configured to allow connections to the service.",
-					"Warning",
+					Strings.ksCouldNotConnectText,
+					Strings.ksWarningCaption,
 					MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
 			else if (e is DirectoryNotFoundException)
 			{
-				MessageBox.Show(ActiveForm, e.Message, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show(ActiveForm, e.Message, Strings.ksWarningCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
 			else
 				throw e;
@@ -195,7 +195,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		{
 			try
 			{
-				m_restoreSettings = new RestoreProjectSettings(ParatextLexiconDirectoryFinder.ProjectsDirectory)
+				m_restoreSettings = new RestoreProjectSettings(ParatextLexiconPluginDirectoryFinder.ProjectsDirectory)
 					{
 						Backup = new BackupFileSettings(m_restoreFileFullPath),
 						IncludeConfigurationSettings = true,
@@ -207,12 +207,12 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			}
 			catch (InvalidBackupFileException ibfe)
 			{
-				MessageBox.Show(ibfe.Message, "Problem With Backup File", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				MessageBox.Show(ibfe.Message, Strings.ksBackupFileProblemCaption, MessageBoxButtons.OK, MessageBoxIcon.Information);
 				return false;
 			}
 			catch
 			{
-				MessageBox.Show("An error occurred.  Please select a different file.", "Problem With Backup File", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				MessageBox.Show(Strings.ksBackupFileProblemText, Strings.ksBackupFileProblemCaption, MessageBoxButtons.OK, MessageBoxIcon.Information);
 				return false;
 			}
 			return true;
@@ -241,15 +241,15 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			{
 				//ProgressUtils.Execute(string.Format(Localizer.Str("Restoring {0} project..."), m_restoreSettings.ProjectName), CancelModes.NonCancelable, () =>
 				//    {
-						var restoreService = new ProjectRestoreService(m_restoreSettings, ParatextLexiconFdoUI.Instance, null, null);
-						restoreService.RestoreProject(new ParatextLexiconThreadedProgress(ParatextLexiconFdoUI.Instance.SynchronizeInvoke));
+						var restoreService = new ProjectRestoreService(m_restoreSettings, ParatextLexiconPluginFdoUI.Instance, null, null);
+						restoreService.RestoreProject(new ParatextLexiconPluginThreadedProgress(ParatextLexiconPluginFdoUI.Instance.SynchronizeInvoke));
 
 						m_selectedItem = new LanguageProjectInfo(m_restoreSettings.FullProjectPath);
 				//    });
 			}
 			catch
 			{
-				MessageBox.Show("An error occurred and the project could not be restored.");
+				MessageBox.Show(Strings.ksRestoreProblemText);
 				return false;
 			}
 

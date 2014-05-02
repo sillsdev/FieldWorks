@@ -213,8 +213,8 @@ namespace SIL.FieldWorks.FdoUi
 		/// <returns>True to retry.  False otherwise</returns>
 		public bool Retry(string msg, string caption)
 		{
-			return MessageBox.Show(msg, caption,
-				MessageBoxButtons.RetryCancel, MessageBoxIcon.None) == DialogResult.Retry;
+			return m_synchronizeInvoke.Invoke(() => MessageBox.Show(msg, caption,
+				MessageBoxButtons.RetryCancel, MessageBoxIcon.None) == DialogResult.Retry);
 		}
 
 		/// <summary>

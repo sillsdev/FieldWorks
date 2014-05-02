@@ -4,11 +4,11 @@ using SIL.Utils;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
-	internal class ParatextLexiconThreadedProgress : IThreadedProgress
+	internal class ParatextLexiconPluginThreadedProgress : IThreadedProgress
 	{
 		private readonly ISynchronizeInvoke m_synchronizeInvoke;
 
-		public ParatextLexiconThreadedProgress(ISynchronizeInvoke synchronizeInvoke)
+		public ParatextLexiconPluginThreadedProgress(ISynchronizeInvoke synchronizeInvoke)
 		{
 			m_synchronizeInvoke = synchronizeInvoke;
 		}

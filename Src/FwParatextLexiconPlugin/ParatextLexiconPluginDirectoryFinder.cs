@@ -8,11 +8,11 @@ using SIL.Utils;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
-	internal static class ParatextLexiconDirectoryFinder
+	internal static class ParatextLexiconPluginDirectoryFinder
 	{
-		private static readonly IFdoDirectories s_fdoDirs = new ParatextLexiconFdoDirectories();
+		private static readonly IFdoDirectories s_fdoDirs = new ParatextLexiconPluginFdoDirectories();
 
-		static ParatextLexiconDirectoryFinder()
+		static ParatextLexiconPluginDirectoryFinder()
 		{
 			RegistryHelper.CompanyName = DirectoryFinder.CompanyName;
 			RegistryHelper.ProductName = ProductName;
@@ -131,15 +131,15 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			}
 		}
 
-		private class ParatextLexiconFdoDirectories : IFdoDirectories
+		private class ParatextLexiconPluginFdoDirectories : IFdoDirectories
 		{
 			public string ProjectsDirectory
 			{
-				get { return ParatextLexiconDirectoryFinder.ProjectsDirectory; }
+				get { return ParatextLexiconPluginDirectoryFinder.ProjectsDirectory; }
 			}
 			public string TemplateDirectory
 			{
-				get { return ParatextLexiconDirectoryFinder.TemplateDirectory; }
+				get { return ParatextLexiconPluginDirectoryFinder.TemplateDirectory; }
 			}
 		}
 	}

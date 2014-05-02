@@ -36,10 +36,10 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			m_activationContext = new ActivationContextHelper("FwParatextLexiconPlugin.dll.manifest");
 
 			// initialize client-server services to use Db4O backend for FDO
-			var ui = ParatextLexiconFdoUI.Instance;
-			var dirs = ParatextLexiconDirectoryFinder.FdoDirectories;
+			var ui = ParatextLexiconPluginFdoUI.Instance;
+			var dirs = ParatextLexiconPluginDirectoryFinder.FdoDirectories;
 			ClientServerServices.SetCurrentToDb4OBackend(ui, dirs,
-				() => dirs.ProjectsDirectory == ParatextLexiconDirectoryFinder.ProjectsDirectoryLocalMachine);
+				() => dirs.ProjectsDirectory == ParatextLexiconPluginDirectoryFinder.ProjectsDirectoryLocalMachine);
 		}
 
 		/// <summary>
@@ -160,17 +160,17 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			else
 			{
 				var backendProviderType = FDOBackendProviderType.kSharedXML;
-				string path = Path.Combine(ParatextLexiconDirectoryFinder.ProjectsDirectory, projectId, projectId + FdoFileHelper.ksFwDataXmlFileExtension);
+				string path = Path.Combine(ParatextLexiconPluginDirectoryFinder.ProjectsDirectory, projectId, projectId + FdoFileHelper.ksFwDataXmlFileExtension);
 				if (!File.Exists(path))
 				{
 					backendProviderType = FDOBackendProviderType.kDb4oClientServer;
-					path = Path.Combine(ParatextLexiconDirectoryFinder.ProjectsDirectory, projectId, projectId + FdoFileHelper.ksFwDataDb4oFileExtension);
+					path = Path.Combine(ParatextLexiconPluginDirectoryFinder.ProjectsDirectory, projectId, projectId + FdoFileHelper.ksFwDataDb4oFileExtension);
 					if (!File.Exists(path))
 						throw new LexiconUnavailableException("The associated Fieldworks project has been moved, renamed, or does not exist.");
 				}
 
-				var progress = new ParatextLexiconThreadedProgress(ParatextLexiconFdoUI.Instance.SynchronizeInvoke) { IsIndeterminate = true, Title = string.Format("Opening {0}", projectId) };
-				fdoCache = (FdoCache) progress.RunTask(CreateFdoCache, new ParatextLexiconProjectIdentifier(backendProviderType, path));
+				var progress = new ParatextLexiconPluginThreadedProgress(ParatextLexiconPluginFdoUI.Instance.SynchronizeInvoke) { IsIndeterminate = true, Title = string.Format("Opening {0}", projectId) };
+				fdoCache = (FdoCache) progress.RunTask(CreateFdoCache, new ParatextLexiconPluginProjectID(backendProviderType, path));
 
 				m_fdoCacheCache.Add(fdoCache);
 			}
@@ -179,10 +179,10 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		private static FdoCache CreateFdoCache(IThreadedProgress progress, object[] parameters)
 		{
-			var projectId = (ParatextLexiconProjectIdentifier) parameters[0];
+			var projectId = (ParatextLexiconPluginProjectID) parameters[0];
 			try
 			{
-				return FdoCache.CreateCacheFromExistingData(projectId, Thread.CurrentThread.CurrentUICulture.Name, ParatextLexiconFdoUI.Instance, ParatextLexiconDirectoryFinder.FdoDirectories, progress, true);
+				return FdoCache.CreateCacheFromExistingData(projectId, Thread.CurrentThread.CurrentUICulture.Name, ParatextLexiconPluginFdoUI.Instance, ParatextLexiconPluginDirectoryFinder.FdoDirectories, progress, true);
 			}
 			catch (FdoDataMigrationForbiddenException)
 			{
@@ -190,7 +190,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			}
 			catch (FdoFileLockedException)
 			{
-				throw new LexiconUnavailableException("Fieldworks and Paratext cannot access the same project at the same time unless the Fieldworks project is shared.");
+				throw new LexiconUnavailableException("Paratext cannot currently access the lexicon. Please close FieldWorks.");
 			}
 			catch (StartupException se)
 			{

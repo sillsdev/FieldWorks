@@ -3,11 +3,11 @@ using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
-	internal class ParatextLexiconProjectIdentifier : IProjectIdentifier
+	internal class ParatextLexiconPluginProjectID : IProjectIdentifier
 	{
 		private readonly FDOBackendProviderType m_backendProviderType;
 
-		public ParatextLexiconProjectIdentifier(FDOBackendProviderType backendProviderType, string projectPath)
+		public ParatextLexiconPluginProjectID(FDOBackendProviderType backendProviderType, string projectPath)
 		{
 			m_backendProviderType = backendProviderType;
 			Path = projectPath;

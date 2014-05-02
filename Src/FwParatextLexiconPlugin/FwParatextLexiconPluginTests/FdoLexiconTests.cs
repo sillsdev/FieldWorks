@@ -34,8 +34,8 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			{
 				m_threadHelper = new ThreadHelper();
 				var ui = new DummyFdoUI(m_threadHelper);
-				var projectId = new ParatextLexiconProjectIdentifier(FDOBackendProviderType.kMemoryOnly, "Test.fwdata");
-				m_cache = FdoCache.CreateCacheWithNewBlankLangProj(projectId, "en", "fr", "en", ui, ParatextLexiconDirectoryFinder.FdoDirectories);
+				var projectId = new ParatextLexiconPluginProjectID(FDOBackendProviderType.kMemoryOnly, "Test.fwdata");
+				m_cache = FdoCache.CreateCacheWithNewBlankLangProj(projectId, "en", "fr", "en", ui, ParatextLexiconPluginDirectoryFinder.FdoDirectories);
 				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 					{
 						m_cache.ServiceLocator.WritingSystems.AddToCurrentAnalysisWritingSystems(m_cache.ServiceLocator.WritingSystemManager.Get("fr"));
