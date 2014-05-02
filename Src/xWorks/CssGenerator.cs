@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using ExCSS;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
@@ -61,12 +62,15 @@ namespace SIL.FieldWorks.XWorks
 				var wsOptions = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 				if(wsOptions != null)
 				{
+					var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 					foreach(var ws in wsOptions.Options)
 					{
-						// grab the integer id for the writing system from the string id saved in the configuration node
-						var wsId = ((FdoCache)mediator.PropertyTable.GetValue("cache")).LanguageWritingSystemFactoryAccessor.GetWsFromStr(ws.Id);
+						var possiblyMagic = WritingSystemServices.GetMagicWsIdFromName(ws.Id);
+						// if the writing system isn't a magic name just use it otherwise find the right one from the magic list
+						var wsIdString = possiblyMagic == 0 ? ws.Id : WritingSystemServices.GetWritingSystemList(cache, possiblyMagic, true).First().Id;
+						var wsId = cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(wsIdString);
 						var wsRule = new StyleRule();
-						wsRule.Value = baseSelection + String.Format("[language={0}]", ws.Id);
+						wsRule.Value = baseSelection + String.Format("[lang=({0})]", wsIdString);
 						wsRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(configNode.Style, wsId, mediator).Properties);
 						styleSheet.Rules.Add(wsRule);
 					}

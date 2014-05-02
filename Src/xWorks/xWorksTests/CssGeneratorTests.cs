@@ -188,8 +188,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var style = GenerateStyle("WsStyleTest");
 			var fontInfo = new FontInfo();
-			fontInfo.m_italic.ExplicitValue = false;
-			fontInfo.m_fontName.ExplicitValue = "french";
+			fontInfo.m_italic.ExplicitValue = false; //override the italic value to false
+			fontInfo.m_fontName.ExplicitValue = "french"; //override the fontname to 'french'
 			style.SetWsStyle(fontInfo, Cache.DefaultVernWs);
 			var headwordNode = new ConfigurableDictionaryNode
 			{
@@ -203,7 +203,9 @@ namespace SIL.FieldWorks.XWorks
 			model.Parts = new List<ConfigurableDictionaryNode> { headwordNode };
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			//make sure that fontinfo with the french overrides is present
 			VerifyFontInfoInCss(FontColor, FontBGColor, "french", true, false, FontSize, cssResult);
+			//make sure that the default options are also present
 			VerifyFontInfoInCss(FontColor, FontBGColor, FontName, true, true, FontSize, cssResult);
 		}
 
@@ -264,6 +266,48 @@ namespace SIL.FieldWorks.XWorks
 			var emptyCharStyle = GenerateEmptyStyle("EmptyChar");
 			var cssResult = CssGenerator.GenerateCssStyleFromFwStyleSheet("EmptyChar", CssGenerator.DefaultStyle, m_mediator);
 			Assert.AreEqual(cssResult.ToString().Trim(), String.Empty);
+		}
+
+		[Test]
+		public void GenerateCssForStyleName_DefaultVernMagicConfigResultsInRealLanguageCss()
+		{
+			GenerateParagraphStyle("VernacularStyle");
+			var testNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "vernholder",
+				Label = "Vern Holder",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "vernacular" }),
+				Style = "VernacularStyle"
+			};
+			var model = new DictionaryConfigurationModel
+				{
+					Parts = new List<ConfigurableDictionaryNode> { testNode }
+				};
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			//Verify that vernacular was converted into french to match the vernholder node
+			Assert.That(cssResult, Contains.Substring(".vernholder[lang=(fr)]"));
+		}
+
+		[Test]
+		public void GenerateCssForStyleName_DefaultAnalysisMagicConfigResultsInRealLanguageCss()
+		{
+			GenerateParagraphStyle("AnalysisStyle");
+			var testNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "analyHolder",
+				Label = "Analy Holder",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "analysis" }),
+				Style = "AnalysisStyle"
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { testNode }
+			};
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			//Verify that analysis was converted into english to match the analyholder node
+			Assert.That(cssResult, Contains.Substring(".analyholder[lang=(en)]"));
 		}
 
 		[TestFixtureSetUp]
