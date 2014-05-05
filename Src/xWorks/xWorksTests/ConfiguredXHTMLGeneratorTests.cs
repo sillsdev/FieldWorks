@@ -22,6 +22,15 @@ namespace SIL.FieldWorks.XWorks
 	{
 		StringBuilder XHTMLStringBuilder { get; set; }
 
+		[TestFixtureSetUp]
+		public void AddClassMapping()
+		{
+			var lexEntryOverride = new Dictionary<string, string>();
+			lexEntryOverride["LexEntry"] = "entry";
+			CssGenerator.ClassMappingOverrides = new Dictionary<string, Dictionary<string, string>>();
+			CssGenerator.ClassMappingOverrides[String.Empty] = lexEntryOverride;
+		}
+
 		[SetUp]
 		public void SetupExportVariables()
 		{

@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml;
 using ExCSS;
 using NUnit.Framework;
+using Palaso.TestUtilities;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
@@ -310,6 +313,89 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(cssResult, Contains.Substring(".analyholder[lang=(en)]"));
 		}
 
+		[Test]
+		public void ClassMappingOverrides_ApplyAtRoot()
+		{
+			var testNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "LexEntry",
+					Label = "Bow, Bolo, Ect",
+					IsEnabled = true,
+					Children = new List<ConfigurableDictionaryNode>()
+				};
+			var model = new DictionaryConfigurationModel
+				{
+					Parts = new List<ConfigurableDictionaryNode> { testNode }
+				};
+			var testOverrides = new Dictionary<string, Dictionary<string, string>>();
+			var boloOverride = new Dictionary<string, string>();
+			boloOverride.Add("LexEntry", "Bolo");
+			testOverrides[String.Empty] = boloOverride;
+			var factory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
+			var entry = factory.Create();
+			//SUT
+			CssGenerator.ClassMappingOverrides = testOverrides;
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.That(cssResult, Is.Not.StringContaining(".lexentry"));
+			Assert.That(cssResult, Contains.Substring(".bolo"));
+			var xhtmResult = new StringBuilder();
+			using(var XHTMLWriter = XmlWriter.Create(xhtmResult))
+			{
+				ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testNode, XHTMLWriter, Cache);
+				XHTMLWriter.Flush();
+				const string positiveTest = "//*[@class='bolo']";
+				const string negativeTest = "//*[@class='lexentry']";
+				AssertThatXmlIn.String(xhtmResult.ToString()).HasNoMatchForXpath(negativeTest);
+				AssertThatXmlIn.String(xhtmResult.ToString()).HasSpecifiedNumberOfMatchesForXpath(positiveTest, 1);
+			}
+		}
+
+		[Test]
+		public void ClassMappingOverrides_ApplyToChildren()
+		{
+			var testChildNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				IsEnabled = true
+			};
+			var testParentNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Label = "Bow, Bolo, Ect",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { testChildNode }
+			};
+			testChildNode.Parent = testParentNode;
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { testParentNode }
+			};
+			var testOverrides = new Dictionary<string, Dictionary<string, string>>();
+			var boloOverride = new Dictionary<string, string>();
+			boloOverride.Add("HeadWord", "tailwind");
+			testOverrides["LexEntry"] = boloOverride;
+			// Make a LexEntry with a headword so something is Generated
+			var factory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
+			var entry = factory.Create();
+			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
+			entry.CitationForm.set_String(wsFr, Cache.TsStrFactory.MakeString("HeadWordTest", wsFr));
+			//SUT
+			CssGenerator.ClassMappingOverrides = testOverrides;
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.That(cssResult, Is.Not.StringContaining(".headword"));
+			Assert.That(cssResult, Contains.Substring(".tailwind"));
+			var xhtmResult = new StringBuilder();
+			using(var XHTMLWriter = XmlWriter.Create(xhtmResult))
+			{
+				ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testParentNode, XHTMLWriter, Cache);
+				XHTMLWriter.Flush();
+				const string positiveTest = "//*[@class='tailwind']";
+				const string negativeTest = "//*[@class='headword']";
+				AssertThatXmlIn.String(xhtmResult.ToString()).HasNoMatchForXpath(negativeTest);
+				AssertThatXmlIn.String(xhtmResult.ToString()).HasSpecifiedNumberOfMatchesForXpath(positiveTest, 1);
+			}
+		}
+
 		[TestFixtureSetUp]
 		protected void Init()
 		{
@@ -331,6 +417,13 @@ namespace SIL.FieldWorks.XWorks
 			m_application.Dispose();
 			m_mediator.Dispose();
 			FwRegistrySettings.Release();
+		}
+
+		[TearDown]
+		public void PerTestTearDown()
+		{
+			//Wipe out any test related overrides
+			CssGenerator.ClassMappingOverrides = null;
 		}
 
 		private TestStyle GenerateStyle(string name)

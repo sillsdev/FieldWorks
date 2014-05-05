@@ -21,6 +21,15 @@ namespace SIL.FieldWorks.XWorks
 		internal const int DefaultStyle = -1;
 
 		/// <summary>
+		/// This is a dictionary which maps a parent configuration field name to a dictionary of child configuration field name to
+		/// css class name. Normally the FieldDescription in a ConfigurationNode will be directly used as the class name for
+		/// the css and xhtml generated at that node. This mapping is used to provide alternative class names either to match
+		/// historical exports, or for other strong reasons which should be documented where the override is defined.
+		/// This Property should be set just prior to an export.
+		/// </summary>
+		internal static Dictionary<string, Dictionary<string, string>> ClassMappingOverrides { get; set; }
+
+		/// <summary>
 		/// Generate all the css rules necessary to represent every enabled portion of the given configuration
 		/// </summary>
 		/// <param name="model"></param>
@@ -128,7 +137,31 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		private static string SelectClassName(ConfigurableDictionaryNode configNode)
 		{
-			return "." + configNode.FieldDescription.ToLower();
+			var cssClassSelector = GetClassAttributeForConfig(configNode);
+			return "." + cssClassSelector;
+		}
+
+		/// <summary>
+		/// Generates a class name for the given configuration for use by Css and XHTML.
+		/// Uses any ClassMappingOverrides which apply to the given node
+		/// </summary>
+		/// <param name="configNode"></param>
+		/// <returns></returns>
+		internal static string GetClassAttributeForConfig(ConfigurableDictionaryNode configNode)
+		{
+			var classAttribute = configNode.FieldDescription +
+										(String.IsNullOrEmpty(configNode.SubField) ? "" : ("." + configNode.SubField));
+			Dictionary<string, string> parentMap;
+			if(ClassMappingOverrides != null &&
+				ClassMappingOverrides.TryGetValue(configNode.Parent == null ? String.Empty : configNode.Parent.FieldDescription,
+					out parentMap))
+			{
+				if(parentMap.ContainsKey(configNode.FieldDescription))
+				{
+					classAttribute = parentMap[configNode.FieldDescription];
+				}
+			}
+			return classAttribute.ToLower();
 		}
 
 		/// <summary>

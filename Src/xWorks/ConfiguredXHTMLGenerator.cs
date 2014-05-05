@@ -46,13 +46,23 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			writer.WriteStartElement("div");
-			writer.WriteAttributeString("class", "entry");
+			WriteClassNameAttribute(writer, configuration);
 			writer.WriteAttributeString("id", "hvo" + entry.Hvo);
 			foreach(var config in configuration.Children)
 			{
 				GenerateXHTMLForFieldByReflection(entry, config, writer, cache);
 			}
 			writer.WriteEndElement();
+		}
+
+		/// <summary>
+		/// This method will write out the class name attribute into the xhtml for the given configuration node
+		/// taking into account the current information in CssGenerator.ClassMappingOverrides
+		/// </summary>
+		/// <param name="writer"></param>
+		private static void WriteClassNameAttribute(XmlWriter writer, ConfigurableDictionaryNode configNode)
+		{
+			writer.WriteAttributeString("class", CssGenerator.GetClassAttributeForConfig(configNode));
 		}
 
 		/// <summary>
@@ -126,7 +136,7 @@ namespace SIL.FieldWorks.XWorks
 		private static void GenerateXHTMLForCollection(object collectionField, ConfigurableDictionaryNode config, XmlWriter writer, FdoCache cache)
 		{
 			writer.WriteStartElement("span");
-			writer.WriteAttributeString("class", config.FieldDescription.ToLower());
+			WriteClassNameAttribute(writer, config);
 			IEnumerable collection;
 			if(collectionField is IEnumerable)
 			{
@@ -164,7 +174,7 @@ namespace SIL.FieldWorks.XWorks
 
 			writer.WriteStartElement("span");
 			// Trim trailing "RA".
-			var fieldDescription = config.FieldDescription.ToLower();
+			var fieldDescription = CssGenerator.GetClassAttributeForConfig(config);
 			if (fieldDescription.EndsWith("ra"))
 				fieldDescription = fieldDescription.Remove(fieldDescription.Length - 2);
 			writer.WriteAttributeString("class", fieldDescription);
@@ -175,7 +185,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					if (child.IsEnabled)
 					{
-						ConfiguredXHTMLGenerator.GenerateXHTMLForFieldByReflection(propertyValue, child, writer, cache);
+						GenerateXHTMLForFieldByReflection(propertyValue, child, writer, cache);
 					}
 				}
 			}
@@ -188,12 +198,11 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="config"></param>
 		/// <param name="writer"></param>
-		private static void WriteCollectionItemClassAttribute(ConfigurableDictionaryNode config,
-																	  XmlWriter writer)
+		private static void WriteCollectionItemClassAttribute(ConfigurableDictionaryNode config, XmlWriter writer)
 		{
 			// chop the pluralization off the parent class
-			writer.WriteAttributeString("class",
-												 config.FieldDescription.Substring(0, config.FieldDescription.Length - 1).ToLower());
+			var collectionName = CssGenerator.GetClassAttributeForConfig(config);
+			writer.WriteAttributeString("class", collectionName.Substring(0, config.FieldDescription.Length - 1).ToLower());
 		}
 
 		/// <summary>
@@ -243,7 +252,7 @@ namespace SIL.FieldWorks.XWorks
 			if(propertyValue is ITsString)
 			{
 				writer.WriteStartElement("span");
-				writer.WriteAttributeString("class", config.FieldDescription.ToLower());
+				WriteClassNameAttribute(writer, config);
 				GenerateXHTMLForString((ITsString)propertyValue, config, writer, cache);
 				writer.WriteEndElement();
 			}
@@ -271,9 +280,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			writer.WriteStartElement(GetElementNameForProperty(propertyValue, config));
 			// write out the FieldDescription as the class name, and append a . followed by the SubField if it is defined.
-			writer.WriteAttributeString("class",
-												 config.FieldDescription.ToLower() +
-												 (String.IsNullOrEmpty(config.SubField) ? "" : ("." + config.SubField.ToLower())));
+			WriteClassNameAttribute(writer, config);
 			writer.WriteString(propertyValue.ToString());
 			writer.WriteEndElement();
 		}
@@ -327,7 +334,7 @@ namespace SIL.FieldWorks.XWorks
 					writer.WriteEndElement();
 				}
 				writer.WriteStartElement("span");
-				writer.WriteAttributeString("class", config.FieldDescription);
+				WriteClassNameAttribute(writer, config);
 				var wsName = cache.WritingSystemFactory.get_EngineOrNull(wsId).Id;
 				GenerateXHTMLForString(bestString, config, writer, cache, wsName);
 				writer.WriteEndElement();
