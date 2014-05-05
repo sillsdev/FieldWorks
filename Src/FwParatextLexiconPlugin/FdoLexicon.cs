@@ -324,6 +324,11 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		#endregion
 
 		#region WordAnalyses implementation
+		public WordAnalysis CreateWordAnalysis(IEnumerable<Lexeme> lexemes)
+		{
+			return new FdoWordAnalysis(lexemes);
+		}
+
 		public IEnumerable<WordAnalysis> GetWordAnalyses(string word)
 		{
 			using (m_activationContext.Activate())
@@ -335,8 +340,8 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				var analyses = new HashSet<WordAnalysis>();
 				foreach (IWfiAnalysis analysis in wordform.AnalysesOC.Where(a => a.MorphBundlesOS.Count > 0 && a.ApprovalStatusIcon == (int) Opinions.approves))
 				{
-					FdoWordAnalysis lexemes;
-					if (GetMorpologySegment(analysis, out lexemes))
+					WordAnalysis lexemes;
+					if (GetWordAnalysis(analysis, out lexemes))
 						analyses.Add(lexemes);
 				}
 				return analyses;
@@ -421,9 +426,9 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				var analyses = new HashSet<KeyValuePair<string, WordAnalysis>>();
 				foreach (IWfiAnalysis analysis in m_cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().AllInstances().Where(a => a.MorphBundlesOS.Count > 0 && a.ApprovalStatusIcon == (int) Opinions.approves))
 				{
-					FdoWordAnalysis lexemes;
+					WordAnalysis lexemes;
 					string wordFormWs = analysis.Wordform.Form.get_String(m_defaultVernWs).Text;
-					if (wordFormWs != null && GetMorpologySegment(analysis, out lexemes))
+					if (wordFormWs != null && GetWordAnalysis(analysis, out lexemes))
 						analyses.Add(new KeyValuePair<string, WordAnalysis>(wordFormWs.Normalize(), lexemes));
 				}
 				return analyses;
@@ -431,7 +436,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		}
 		#endregion
 
-		private bool GetMorpologySegment(IWfiAnalysis analysis, out FdoWordAnalysis lexemes)
+		private bool GetWordAnalysis(IWfiAnalysis analysis, out WordAnalysis lexemes)
 		{
 			var lexemeArray = new Lexeme[analysis.MorphBundlesOS.Count];
 			for (int i = 0; i < analysis.MorphBundlesOS.Count; i++)

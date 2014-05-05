@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 using Paratext.LexicalContracts;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
@@ -11,32 +10,19 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 	{
 		private readonly Lexeme[] m_lexemes;
 
-		public FdoWordAnalysis(Lexeme[] lexemes)
+		public FdoWordAnalysis(IEnumerable<Lexeme> lexemes)
 		{
-			m_lexemes = lexemes;
-		}
-
-		public string DisplayString
-		{
-			get
-			{
-				var sb = new StringBuilder();
-				foreach (Lexeme lex in m_lexemes)
-				{
-					switch (lex.Type)
-					{
-						case LexemeType.Prefix: sb.Append(lex.LexicalForm + "+ "); break;
-						case LexemeType.Suffix: sb.Append("+" + lex.LexicalForm + " "); break;
-						default: sb.Append(lex.LexicalForm + " "); break;
-					}
-				}
-				return sb.ToString().TrimEnd();
-			}
+			m_lexemes = lexemes.ToArray();
 		}
 
 		public Lexeme this[int index]
 		{
 			get { return m_lexemes[index]; }
+		}
+
+		public int Length
+		{
+			get { return m_lexemes.Length; }
 		}
 
 		public override bool Equals(object obj)
@@ -56,11 +42,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		public override int GetHashCode()
 		{
 			return m_lexemes.Aggregate(23, (code, lexeme) => code * 31 + lexeme.GetHashCode());
-		}
-
-		public override string ToString()
-		{
-			return DisplayString;
 		}
 
 		public IEnumerator<Lexeme> GetEnumerator()

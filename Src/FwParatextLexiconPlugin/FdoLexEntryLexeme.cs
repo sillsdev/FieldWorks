@@ -68,38 +68,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			}
 		}
 
-		public string InterlinearDisplayString
-		{
-			get
-			{
-				using (m_lexicon.ActivationContext.Activate())
-				{
-					// Add pre- post markers, if any.
-					string prefix = string.Empty;
-					string postfix = string.Empty;
-					if (Type == LexemeType.Stem)
-					{
-						prefix = "/";
-						postfix = "/";
-					}
-					else
-					{
-						ILexEntry entry;
-						if (m_lexicon.TryGetEntry(m_key, out entry))
-						{
-							IMoMorphType mmt = entry.PrimaryMorphType;
-							if (mmt != null) // It may be null.
-							{
-								prefix = mmt.Prefix;
-								postfix = mmt.Postfix;
-							}
-						}
-					}
-					return prefix + LexicalForm + postfix;
-				}
-			}
-		}
-
 		public string CitationForm
 		{
 			get

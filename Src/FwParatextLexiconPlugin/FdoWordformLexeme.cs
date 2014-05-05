@@ -52,11 +52,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			get { return LexicalForm; }
 		}
 
-		public string InterlinearDisplayString
-		{
-			get { return DisplayString; }
-		}
-
 		public string CitationForm
 		{
 			get { return null; }
