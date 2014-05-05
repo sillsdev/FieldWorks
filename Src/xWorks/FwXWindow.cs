@@ -1192,6 +1192,41 @@ namespace SIL.FieldWorks.XWorks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Handle whether to enable menu item.
+		/// </summary>
+		/// <param name="command">Not used</param>
+		/// <param name="display">Display properties</param>
+		/// <returns>true (handled)</returns>
+		/// ------------------------------------------------------------------------------------
+		public bool OnDisplayPublishToWebonary(object command, ref UIItemDisplayProperties display)
+		{
+			display.Enabled = true;
+			return true;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handle click on menu item
+		/// </summary>
+		/// <param name="command">Not used</param>
+		/// <returns>true (handled)</returns>
+		/// ------------------------------------------------------------------------------------
+		public bool OnPublishToWebonary(object command)
+		{
+			CheckDisposed();
+
+			// show dialog
+			using (var dialog = new PublishToWebonaryDlg())
+			{
+				dialog.ShowDialog();
+			}
+
+			return true;
+		}
+
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Display the project properties dialog
 		/// </summary>
 		/// <param name="args"></param>
