@@ -306,28 +306,20 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// TODO pH 2014.02: find list label
 
-				listOptions.Options = listOptions.Options ?? new List<DictionaryNodeListOptions.DictionaryNodeOption>();
-				var selectedOptions = listOptions.Options.Where(option => option.IsEnabled);
+				var savedOptions = listOptions.Options = listOptions.Options ?? new List<DictionaryNodeListOptions.DictionaryNodeOption>();
 				var availableOptions = GetListItems(listOptions.ListId);
 
-				var atLeastOneChecked = false;
-				// Insert checked items in their saved order
+				// Insert saved items in their saved order, with their saved check-state
 				int insertionIdx = 0;
-				foreach (var optn in selectedOptions)
+				foreach (var optn in savedOptions)
 				{
-					var selectedItem = availableOptions.FirstOrDefault(item => optn.Id.Equals((item.Tag)));
-					if (selectedItem != null && availableOptions.Remove(selectedItem))
+					var savedItem = availableOptions.FirstOrDefault(item => optn.Id.Equals((item.Tag)));
+					if (savedItem != null && availableOptions.Remove(savedItem))
 					{
-						selectedItem.Checked = true;
-						availableOptions.Insert(insertionIdx++, selectedItem);
-						atLeastOneChecked = true;
+						savedItem.Checked = optn.IsEnabled;
+						availableOptions.Insert(insertionIdx++, savedItem);
 					}
 				}
-
-				// If we haven't checked anything, check everything
-				if (!atLeastOneChecked)
-					foreach (var item in availableOptions)
-						item.Checked = true;
 
 				listOptionsView.AvailableItems = availableOptions;
 
@@ -376,6 +368,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns>
 		/// A list of ListViewItem's representing this project's WritingSystems, with "magic" default WS's at the beginning of the list.
 		/// Each LVI's Tag is the WS Id: negative int for "magic" default WS's, and a string like "en" or "fr" for normal WS's.
+		/// LVI's are unchecked by default
 		/// </returns>
 		private List<ListViewItem> GetCurrentWritingSystems(DictionaryNodeWritingSystemOptions.WritingSystemType wsType)
 		{
@@ -449,6 +442,9 @@ namespace SIL.FieldWorks.XWorks
 			m_paraStyles.Sort();
 		}
 
+		/// <summary>
+		/// Get ListViewItems for the given List ID. Tag is a String representation of the item's GUID.  Items are checked by default.
+		/// </summary>
 		internal List<ListViewItem> GetListItems(DictionaryNodeListOptions.ListIds listId)
 		{
 			switch (listId)
@@ -480,7 +476,7 @@ namespace SIL.FieldWorks.XWorks
 			var result = FlattenSortAndConvertList(m_cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS);
 			result.Insert(0, new ListViewItem("<" + xWorksStrings.ksNoComplexFormType + ">")
 			{
-				Tag = XmlViewsUtils.GetGuidForUnspecifiedComplexFormType().ToString()
+				Checked = true, Tag = XmlViewsUtils.GetGuidForUnspecifiedComplexFormType().ToString()
 			});
 			return result;
 		}
@@ -490,7 +486,7 @@ namespace SIL.FieldWorks.XWorks
 			var result = FlattenSortAndConvertList(m_cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS);
 			result.Insert(0, new ListViewItem("<" + xWorksStrings.ksNoVariantType + ">")
 			{
-				Tag = XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString()
+				Checked = true, Tag = XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString()
 			});
 			return result;
 		}
@@ -502,7 +498,7 @@ namespace SIL.FieldWorks.XWorks
 			result.Sort(ComparePossibilitiesByName);
 			return result.Select(item => new ListViewItem(item.Name.BestAnalysisVernacularAlternative.Text)
 			{
-				Tag = item.Guid.ToString()
+				Checked = true, Tag = item.Guid.ToString()
 			}).ToList();
 		}
 
@@ -539,6 +535,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					listViewItemS.Add(new ListViewItem(lexRelType.Name.BestAnalysisVernacularAlternative.Text)
 					{
+						Checked = true,
 						// TODO pH 2014.05: update default configuration to use StorageString
 						Tag = new LexReferenceInfo(true, relType.Guid)
 						{
@@ -547,6 +544,7 @@ namespace SIL.FieldWorks.XWorks
 					});
 					listViewItemS.Add(new ListViewItem(lexRelType.ReverseName.BestAnalysisVernacularAlternative.Text)
 					{
+						Checked = true,
 						Tag = new LexReferenceInfo(true, relType.Guid)
 						{
 							SubClass = LexReferenceInfo.TypeSubClass.Reverse
@@ -557,6 +555,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					listViewItemS.Add(new ListViewItem(lexRelType.Name.BestAnalysisVernacularAlternative.Text)
 					{
+						Checked = true,
 						Tag = new LexReferenceInfo(true, relType.Guid)
 						{
 							SubClass = LexReferenceInfo.TypeSubClass.Normal
