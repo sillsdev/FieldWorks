@@ -254,12 +254,12 @@
                 <ListTypeOptions list="sense">
                     <Option isEnabled="true" id="b7862f14-ea5e-11de-8d47-0013722f8dec"/>
                     <Option isEnabled="true" id="b7921ac2-ea5e-11de-880d-0013722f8dec" />
-                    <Option isEnabled="true" id="b7a78fd8-ea5e-11de-9ef2-0013722f8dec" />
-                    <Option isEnabled="true" id="b7a78fd8-ea5e-11de-9ef2-0013722f8dec" />
-                    <Option isEnabled="true" id="b764ce50-ea5e-11de-864f-0013722f8dec" />
-                    <Option isEnabled="true" id="b764ce50-ea5e-11de-864f-0013722f8dec" />
-                    <Option isEnabled="true" id="b770ba08-ea5e-11de-9ca9-0013722f8dec" />
-                    <Option isEnabled="true" id="b770ba08-ea5e-11de-9ca9-0013722f8dec" />
+                    <Option isEnabled="true" id="b7a78fd8-ea5e-11de-9ef2-0013722f8dec:f" />
+                    <Option isEnabled="true" id="b7a78fd8-ea5e-11de-9ef2-0013722f8dec:r" />
+                    <Option isEnabled="true" id="b764ce50-ea5e-11de-864f-0013722f8dec:f" />
+                    <Option isEnabled="true" id="b764ce50-ea5e-11de-864f-0013722f8dec:r" />
+                    <Option isEnabled="true" id="b770ba08-ea5e-11de-9ca9-0013722f8dec:f" />
+                    <Option isEnabled="true" id="b770ba08-ea5e-11de-9ca9-0013722f8dec:r" />
                     <Option isEnabled="true" id="b77a435c-ea5e-11de-9a66-0013722f8dec" />
                 </ListTypeOptions>
                 <ConfigurationItem name="Relation Abbreviation" between=" " after=": " style="Dictionary-Contrasting" isEnabled="true" field="OwnerType" subField="Abbreviation">
@@ -874,12 +874,12 @@
 					<ListTypeOptions list="sense">
 						<Option isEnabled="true" id="b7862f14-ea5e-11de-8d47-0013722f8dec"/>
 						<Option isEnabled="true" id="b7921ac2-ea5e-11de-880d-0013722f8dec" />
-						<Option isEnabled="true" id="b7a78fd8-ea5e-11de-9ef2-0013722f8dec" />
-						<Option isEnabled="true" id="b7a78fd8-ea5e-11de-9ef2-0013722f8dec" />
-						<Option isEnabled="true" id="b764ce50-ea5e-11de-864f-0013722f8dec" />
-						<Option isEnabled="true" id="b764ce50-ea5e-11de-864f-0013722f8dec" />
-						<Option isEnabled="true" id="b770ba08-ea5e-11de-9ca9-0013722f8dec" />
-						<Option isEnabled="true" id="b770ba08-ea5e-11de-9ca9-0013722f8dec" />
+						<Option isEnabled="true" id="b7a78fd8-ea5e-11de-9ef2-0013722f8dec:f" />
+						<Option isEnabled="true" id="b7a78fd8-ea5e-11de-9ef2-0013722f8dec:r" />
+						<Option isEnabled="true" id="b764ce50-ea5e-11de-864f-0013722f8dec:f" />
+						<Option isEnabled="true" id="b764ce50-ea5e-11de-864f-0013722f8dec:r" />
+						<Option isEnabled="true" id="b770ba08-ea5e-11de-9ca9-0013722f8dec:f" />
+						<Option isEnabled="true" id="b770ba08-ea5e-11de-9ca9-0013722f8dec:r" />
 						<Option isEnabled="true" id="b77a435c-ea5e-11de-9a66-0013722f8dec" />
 					</ListTypeOptions>
 					<ConfigurationItem name="Relation Abbreviation" between=" " after=": " style="Dictionary-Contrasting" isEnabled="true" field="OwnerType" subField="Abbreviation">
@@ -1619,12 +1619,12 @@
                 <ListTypeOptions list="sense">
                     <Option isEnabled="true" id="b7862f14-ea5e-11de-8d47-0013722f8dec"/>
                     <Option isEnabled="true" id="b7921ac2-ea5e-11de-880d-0013722f8dec" />
-                    <Option isEnabled="true" id="b7a78fd8-ea5e-11de-9ef2-0013722f8dec" />
-                    <Option isEnabled="true" id="b7a78fd8-ea5e-11de-9ef2-0013722f8dec" />
-                    <Option isEnabled="true" id="b764ce50-ea5e-11de-864f-0013722f8dec" />
-                    <Option isEnabled="true" id="b764ce50-ea5e-11de-864f-0013722f8dec" />
-                    <Option isEnabled="true" id="b770ba08-ea5e-11de-9ca9-0013722f8dec" />
-                    <Option isEnabled="true" id="b770ba08-ea5e-11de-9ca9-0013722f8dec" />
+                    <Option isEnabled="true" id="b7a78fd8-ea5e-11de-9ef2-0013722f8dec:f" />
+                    <Option isEnabled="true" id="b7a78fd8-ea5e-11de-9ef2-0013722f8dec:r" />
+                    <Option isEnabled="true" id="b764ce50-ea5e-11de-864f-0013722f8dec:f" />
+                    <Option isEnabled="true" id="b764ce50-ea5e-11de-864f-0013722f8dec:r" />
+                    <Option isEnabled="true" id="b770ba08-ea5e-11de-9ca9-0013722f8dec:f" />
+                    <Option isEnabled="true" id="b770ba08-ea5e-11de-9ca9-0013722f8dec:r" />
                     <Option isEnabled="true" id="b77a435c-ea5e-11de-9a66-0013722f8dec" />
                 </ListTypeOptions>
                 <ConfigurationItem name="Relation Abbreviation" between=" " after=": " style="Dictionary-Contrasting" isEnabled="true" field="OwnerType" subField="Abbreviation">
