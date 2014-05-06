@@ -82,7 +82,8 @@ namespace SIL.FieldWorks.XWorks
 			kftLift = 5,
 			kftGrammarSketch,
 			kftClassifiedDict,
-			kftSemanticDomains
+			kftSemanticDomains,
+			kftWebonary
 		}
 		// ReSharper restore InconsistentNaming
 		protected internal struct FxtType
@@ -606,6 +607,9 @@ namespace SIL.FieldWorks.XWorks
 						case FxtTypes.kftPathway:
 							ProcessPathwayExport();
 							return;
+						case FxtTypes.kftWebonary:
+							ProcessWebonaryExport();
+							return;
 						default:
 							using (var dlg = new SaveFileDialogAdapter())
 							{
@@ -785,6 +789,8 @@ namespace SIL.FieldWorks.XWorks
 								progressDlg.RunTask(true, ExportSemanticDomains, outPath, ft, fxtPath, m_allQuestions);
 								break;
 							case FxtTypes.kftPathway:
+								break;
+							case FxtTypes.kftWebonary:
 								break;
 							case FxtTypes.kftLift:
 								progressDlg.Minimum = 0;
@@ -1206,6 +1212,9 @@ namespace SIL.FieldWorks.XWorks
 					break;
 				case "pathway":
 					ft.m_ft = FxtTypes.kftPathway;
+					break;
+				case "webonary":
+					ft.m_ft = FxtTypes.kftWebonary;
 					break;
 				case "LIFT":
 					ft.m_ft = FxtTypes.kftLift;
@@ -1792,6 +1801,17 @@ namespace SIL.FieldWorks.XWorks
 				false, 40, assembly);
 
 			this.Close();
+		}
+
+		/// <summary>
+		/// Hand off to Webonary publishing area.
+		/// </summary>
+		private void ProcessWebonaryExport()
+		{
+			using (var dialog = new PublishToWebonaryDlg())
+			{
+				dialog.ShowDialog();
+			}
 		}
 
 		private bool SelectOption(string exportFormat)
