@@ -1236,6 +1236,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		private void FinishMergingComplexFeatDefn(IFsComplexFeature featComplex, string sComplexType)
 		{
+			if (sComplexType == null)
+				return;		// The user didn't give a type -- see LT-15112.
 			if (featComplex.TypeRA == null ||
 				m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew)
 			{
