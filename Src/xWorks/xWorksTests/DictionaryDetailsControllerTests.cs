@@ -237,6 +237,39 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void LoadList_NewItemsChecked()
+		{
+			var listOptions = new DictionaryNodeListOptions
+			{
+				Options = ListOfEnabledDNOsFromStrings(new List<string> { XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString() }),
+				ListId = DictionaryNodeListOptions.ListIds.Variant
+			};
+			var node = new ConfigurableDictionaryNode { DictionaryNodeOptions = listOptions };
+			var controller = new DictionaryDetailsController(node, m_mediator); // SUT
+			using (var view = controller.View)
+			{
+				var listViewItems = GetListViewItems(view);
+
+				Assert.AreEqual(XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString(), listViewItems[0].Tag,
+					"The saved selection should be first");
+				Assert.AreEqual(listViewItems.Count, listViewItems.Count(item => item.Checked), "All items should be checked");
+			}
+			Assert.AreEqual(1, listOptions.Options.Count, "Loading the node should not affect the original list");
+
+			listOptions.Options[0].IsEnabled = false;
+			controller.LoadNode(node); // SUT
+			using (var view = controller.View)
+			{
+				var listViewItems = GetListViewItems(view);
+
+				Assert.AreEqual(XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString(), listViewItems[0].Tag,
+					"The saved item should be first");
+				Assert.False(listViewItems[0].Checked, "This item was saved as unchecked");
+				Assert.AreEqual(listViewItems.Count - 1, listViewItems.Count(item => item.Checked), "All new items should be checked");
+			}
+		}
+
+		[Test]
 		public void CannotUncheckOnlyCheckedItemInList()
 		{
 			var wsOptions = new DictionaryNodeWritingSystemOptions
