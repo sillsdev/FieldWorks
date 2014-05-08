@@ -50,6 +50,7 @@ T: SIL.FieldWorks.XWorks.DeleteCustomList
 T: SIL.FieldWorks.XWorks.DictionaryConfigurationController
 T: SIL.FieldWorks.XWorks.DictionaryConfigurationListener
 T: SIL.FieldWorks.XWorks.DictionaryDetailsController
+T: SIL.FieldWorks.XWorks.DictionaryConfigurationManagerController
 T: SIL.FieldWorks.XWorks.ExportDialog/TranslatedListsExporter
 T: SIL.FieldWorks.XWorks.InterestingTextList
 T: SIL.FieldWorks.XWorks.ListChangedEventArgs

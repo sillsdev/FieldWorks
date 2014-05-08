@@ -94,7 +94,7 @@ namespace SIL.FieldWorks.XWorks
 			return FilterRealPublications(model.Publications, cache);
 		}
 
-		private List<string> GetAllPublications(FdoCache cache)
+		public List<string> GetAllPublications(FdoCache cache)
 		{
 			return cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p.Name.BestAnalysisAlternative.Text).ToList();
 		}

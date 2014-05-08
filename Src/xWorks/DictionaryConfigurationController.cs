@@ -274,7 +274,15 @@ namespace SIL.FieldWorks.XWorks
 			MergeCustomFieldsIntoDictionaryModel(cache, _model);
 			// Populate the tree view with the users last configuration, or the first one in the list of alternates.
 			PopulateTreeView(mediator);
-			View.ManageViews += (sender, args) => new DictionaryConfigMgrDlg(mediator, "", new List<XmlNode>(), null).ShowDialog(View as Form);
+			View.ManageViews += (sender, args) =>
+			{
+				using (var dialog = new DictionaryConfigurationManagerDlg())
+				{
+					var configurationManagerController = new DictionaryConfigurationManagerController(dialog,
+						_alternateDictionaries.Values.ToList(), _model.GetAllPublications(cache));
+					dialog.ShowDialog(View as Form);
+				}
+			};
 			View.SaveModel += (sender, args) => { _model.FilePath = GetProjectConfigLocationForPath(_model.FilePath, mediator); _model.Save(); };
 			view.SwitchView += (sender, args) => { _model = _alternateDictionaries[args.ViewPicked]; RefreshView(); };
 

@@ -280,6 +280,7 @@
       <DependentUpon>DictionaryConfigurationDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="DictionaryConfigurationListener.cs" />
+    <Compile Include="DictionaryConfigurationManagerController.cs" />
     <Compile Include="DictionaryConfigurationManagerDlg.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -217,10 +217,10 @@
 		private System.Windows.Forms.Label explanationLabel;
 		private System.Windows.Forms.Label configurationsListLabel;
 		private System.Windows.Forms.Label publicationsListLabel;
-		private System.Windows.Forms.CheckedListBox publicationsCheckedListBox;
-		private System.Windows.Forms.ListBox configurationsListBox;
-		private System.Windows.Forms.Button copyButton;
-		private System.Windows.Forms.Button removeButton;
+		public System.Windows.Forms.CheckedListBox publicationsCheckedListBox;
+		public System.Windows.Forms.ListBox configurationsListBox;
+		public System.Windows.Forms.Button copyButton;
+		public System.Windows.Forms.Button removeButton;
 		private System.Windows.Forms.TableLayoutPanel buttonTableLayoutPanel;
 		private System.Windows.Forms.Button cancelButton;
 		private System.Windows.Forms.Button helpButton;
