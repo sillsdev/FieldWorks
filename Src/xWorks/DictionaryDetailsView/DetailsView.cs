@@ -74,8 +74,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		{
 			set
 			{
-				labelBefore.Visible = labelBetween.Visible = labelAfter.Visible = value;
 				textBoxBefore.Visible = textBoxBetween.Visible = textBoxAfter.Visible = value;
+				labelBefore.Visible = labelBetween.Visible = labelAfter.Visible = value;
 			}
 		}
 
