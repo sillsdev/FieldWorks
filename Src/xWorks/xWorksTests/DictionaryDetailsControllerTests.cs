@@ -225,15 +225,18 @@ namespace SIL.FieldWorks.XWorks
 
 		private List<ListViewItem> VerifyGetListItems(DictionaryNodeListOptions.ListIds listId, int expectedCount)
 		{
-			var result = m_staticDDController.GetListItems(listId); // SUT
+			string label;
+			var result = m_staticDDController.GetListItemsAndLabel(listId, out label); // SUT
 			Assert.AreEqual(expectedCount, result.Count, String.Format("Incorrect number of {0} Types", listId));
+			StringAssert.Contains(listId.ToString(), label);
 			return result;
 		}
 
 		[Test]
 		public void GetListItems_ThrowsIfUnknown()
 		{
-			Assert.Throws<ArgumentException>(() => m_staticDDController.GetListItems(DictionaryNodeListOptions.ListIds.None));
+			string label;
+			Assert.Throws<ArgumentException>(() => m_staticDDController.GetListItemsAndLabel(DictionaryNodeListOptions.ListIds.None, out label));
 		}
 
 		[Test]
@@ -285,10 +288,11 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual(WritingSystemServices.GetMagicWsNameFromId(WritingSystemServices.kwsVern),
 				wsOptions.Options.First(option => option.IsEnabled).Id, "The same item should still be enabled");
 
+			string label;
 			var listOptions = new DictionaryNodeListOptions
 			{
 				// For non-WS lists, we must save any unchecked items explicitly.
-				Options = m_staticDDController.GetListItems(DictionaryNodeListOptions.ListIds.Variant)
+				Options = m_staticDDController.GetListItemsAndLabel(DictionaryNodeListOptions.ListIds.Variant, out label)
 					.Select(lvi => new DictionaryNodeListOptions.DictionaryNodeOption { Id = (string)lvi.Tag, IsEnabled = false }).ToList(),
 				ListId = DictionaryNodeListOptions.ListIds.Variant
 			};

@@ -689,7 +689,7 @@ Are you sure you want to delete this list?</value>
     <value>No Variant Type</value>
   </data>
   <data name="ksVariantTypes" xml:space="preserve">
-    <value>Variant Types</value>
+    <value>Variant Types:</value>
   </data>
   <data name="ksDictConfigMultiCopyOf" xml:space="preserve">
     <value>Copy of {0} ({1})</value>

@@ -5927,6 +5927,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Get the string representation used in the part ref attributes.
 		/// </summary>
+		// REVIEW (Hasso) 2014.05: The only places StorageString is used are in the Configuration Dialogs
+		// (DictionaryDetailsController and XmlDocConfigureDlg). Since the newer dialog stores whether an item is enabled as its own property,
+		// we may soon no longer need the leading + or -. (At which point we may no longer need this class)
 		public override string StorageString
 		{
 			get

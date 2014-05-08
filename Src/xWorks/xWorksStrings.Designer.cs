@@ -1545,7 +1545,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Variant Types.
+        ///   Looks up a localized string similar to Variant Types:.
         /// </summary>
         internal static string ksVariantTypes {
             get {

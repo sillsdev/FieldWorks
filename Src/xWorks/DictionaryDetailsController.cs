@@ -304,10 +304,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else
 			{
-				// TODO pH 2014.02: find list label
-
+				string label;
 				var savedOptions = listOptions.Options = listOptions.Options ?? new List<DictionaryNodeListOptions.DictionaryNodeOption>();
-				var availableOptions = GetListItems(listOptions.ListId);
+				var availableOptions = GetListItemsAndLabel(listOptions.ListId, out label);
+				listOptionsView.ListViewLabel = label;
 
 				// Insert saved items in their saved order, with their saved check-state
 				int insertionIdx = 0;
@@ -443,20 +443,26 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Get ListViewItems for the given List ID. Tag is a String representation of the item's GUID.  Items are checked by default.
+		/// Get the list label and ListViewItems for the given List ID.
+		/// Each item's Tag is a String representation of the item's GUID (with forward and reverse flags on applicable lex relations).
+		/// Items are checked by default.
 		/// </summary>
-		internal List<ListViewItem> GetListItems(DictionaryNodeListOptions.ListIds listId)
+		internal List<ListViewItem> GetListItemsAndLabel(DictionaryNodeListOptions.ListIds listId, out string listLabel)
 		{
 			switch (listId)
 			{
 				case DictionaryNodeListOptions.ListIds.Minor:
+					listLabel = xWorksStrings.ksMinorEntryTypes;
 					return GetMinorEntryTypes();
 				case DictionaryNodeListOptions.ListIds.Complex:
+					listLabel = xWorksStrings.ksComplexFormTypes;
 					return GetComplexFormTypes();
 				case DictionaryNodeListOptions.ListIds.Variant:
+					listLabel = xWorksStrings.ksVariantTypes;
 					return GetVariantTypes();
 				case DictionaryNodeListOptions.ListIds.Sense:
 				case DictionaryNodeListOptions.ListIds.Entry:
+					listLabel = xWorksStrings.ksLexicalRelationTypes;
 					return GetLexicalRelationTypes(listId);
 				default:
 					throw new ArgumentException("Unrecognised List ID: " + listId);
@@ -536,11 +542,11 @@ namespace SIL.FieldWorks.XWorks
 					listViewItemS.Add(new ListViewItem(lexRelType.Name.BestAnalysisVernacularAlternative.Text)
 					{
 						Checked = true,
-						// TODO pH 2014.05: update default configuration to use StorageString
+						// REVIEW (Hasso) 2014.05: is there a less-expensive, equally-robust, way of appending the direction marker (:f or :r)?
 						Tag = new LexReferenceInfo(true, relType.Guid)
 						{
 							SubClass = LexReferenceInfo.TypeSubClass.Forward
-						}.StorageString.Substring(1) // substring removes the leading "+"; REVIEW (Hasso) 2014.05: do we want to?
+						}.StorageString.Substring(1) // substring removes the leading "+";
 					});
 					listViewItemS.Add(new ListViewItem(lexRelType.ReverseName.BestAnalysisVernacularAlternative.Text)
 					{
