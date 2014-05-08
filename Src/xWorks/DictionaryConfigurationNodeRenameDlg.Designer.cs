@@ -43,6 +43,7 @@ namespace SIL.FieldWorks.XWorks
 			// 
 			// tableLayoutPanel
 			// 
+			this.tableLayoutPanel.AutoSize = true;
 			this.tableLayoutPanel.ColumnCount = 2;
 			this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -54,8 +55,8 @@ namespace SIL.FieldWorks.XWorks
 			this.tableLayoutPanel.Location = new System.Drawing.Point(0, 0);
 			this.tableLayoutPanel.Name = "tableLayoutPanel";
 			this.tableLayoutPanel.RowCount = 3;
-			this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel.Size = new System.Drawing.Size(236, 67);
 			this.tableLayoutPanel.TabIndex = 0;
@@ -66,6 +67,7 @@ namespace SIL.FieldWorks.XWorks
 			this.tableLayoutPanel.SetColumnSpan(this.description, 2);
 			this.description.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.description.Location = new System.Drawing.Point(3, 0);
+			this.description.MaximumSize = new System.Drawing.Size(500, 0);
 			this.description.Name = "description";
 			this.description.Size = new System.Drawing.Size(230, 13);
 			this.description.TabIndex = 0;
@@ -75,7 +77,7 @@ namespace SIL.FieldWorks.XWorks
 			// 
 			this.ok.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.ok.Dock = System.Windows.Forms.DockStyle.Right;
-			this.ok.Location = new System.Drawing.Point(77, 41);
+			this.ok.Location = new System.Drawing.Point(77, 42);
 			this.ok.Name = "ok";
 			this.ok.Size = new System.Drawing.Size(75, 23);
 			this.ok.TabIndex = 2;
@@ -86,7 +88,7 @@ namespace SIL.FieldWorks.XWorks
 			// 
 			this.cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.cancel.Dock = System.Windows.Forms.DockStyle.Right;
-			this.cancel.Location = new System.Drawing.Point(158, 41);
+			this.cancel.Location = new System.Drawing.Point(158, 42);
 			this.cancel.Name = "cancel";
 			this.cancel.Size = new System.Drawing.Size(75, 23);
 			this.cancel.TabIndex = 3;
@@ -107,6 +109,7 @@ namespace SIL.FieldWorks.XWorks
 			this.AcceptButton = this.ok;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoSize = true;
 			this.CancelButton = this.cancel;
 			this.ClientSize = new System.Drawing.Size(236, 67);
 			this.Controls.Add(this.tableLayoutPanel);
@@ -115,6 +118,7 @@ namespace SIL.FieldWorks.XWorks
 			this.tableLayoutPanel.ResumeLayout(false);
 			this.tableLayoutPanel.PerformLayout();
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 
