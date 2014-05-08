@@ -9,9 +9,12 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 using SIL.Utils;
@@ -24,6 +27,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private Mediator m_mediator;
 		private FwStyleSheet m_styleSheet;
+		private DictionaryDetailsController m_staticDDController; // for testing methods that would be static if not for m_mediator
 
 		#region IDisposable and Gendarme requirements
 		~DictionaryDetailsControllerTests()
@@ -50,6 +54,10 @@ namespace SIL.FieldWorks.XWorks
 				if (m_mediator != null && !m_mediator.IsDisposed)
 					m_mediator.Dispose();
 				m_mediator = null;
+
+				if (m_staticDDController != null && m_staticDDController.View != null && !m_staticDDController.View.IsDisposed)
+					m_staticDDController.View.Dispose();
+				m_staticDDController = null;
 			}
 			IsDisposed = true;
 		}
@@ -75,6 +83,8 @@ namespace SIL.FieldWorks.XWorks
 
 			m_styleSheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
 			GenerateStyles();
+
+			m_staticDDController = new DictionaryDetailsController(new ConfigurableDictionaryNode(), m_mediator);
 		}
 
 		protected void GenerateStyles()
@@ -189,6 +199,44 @@ namespace SIL.FieldWorks.XWorks
 
 		#region List tests
 		[Test]
+		public void GetListItems()
+		{
+			var complexCount = DictionaryDetailsController.FlattenPossibilityList(
+				Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS).Count;
+			var variantCount = DictionaryDetailsController.FlattenPossibilityList(
+				Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS).Count;
+
+			var listItems = VerifyGetListItems(DictionaryNodeListOptions.ListIds.Complex, complexCount + 1); // +1 for <None> element
+			StringAssert.Contains(xWorksStrings.ksNoComplexFormType, listItems[0].Text);
+			Assert.AreEqual(XmlViewsUtils.GetGuidForUnspecifiedComplexFormType().ToString(), listItems[0].Tag);
+
+			listItems = VerifyGetListItems(DictionaryNodeListOptions.ListIds.Variant, variantCount + 1); // +1 for <None> element
+			StringAssert.Contains(xWorksStrings.ksNoVariantType, listItems[0].Text);
+			Assert.AreEqual(XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString(), listItems[0].Tag);
+
+			listItems = VerifyGetListItems(DictionaryNodeListOptions.ListIds.Minor, complexCount + variantCount + 2); // Minor has 2 <None> elements
+			StringAssert.Contains(xWorksStrings.ksNoVariantType, listItems[0].Text);
+			Assert.AreEqual(XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString(), listItems[0].Tag);
+			StringAssert.Contains(xWorksStrings.ksNoComplexFormType, listItems[variantCount + 1].Text,
+				"<No Complex Form Type> should immediately follow the Variant Types");
+			Assert.AreEqual(XmlViewsUtils.GetGuidForUnspecifiedComplexFormType().ToString(), listItems[variantCount + 1].Tag,
+				"<No Complex Form Type> should immediately follow the Variant Types");
+		}
+
+		private List<ListViewItem> VerifyGetListItems(DictionaryNodeListOptions.ListIds listId, int expectedCount)
+		{
+			var result = m_staticDDController.GetListItems(listId); // SUT
+			Assert.AreEqual(expectedCount, result.Count, String.Format("Incorrect number of {0} Types", listId));
+			return result;
+		}
+
+		[Test]
+		public void GetListItems_ThrowsIfUnknown()
+		{
+			Assert.Throws<ArgumentException>(() => m_staticDDController.GetListItems(DictionaryNodeListOptions.ListIds.None));
+		}
+
+		[Test]
 		public void CannotUncheckOnlyCheckedItemInList()
 		{
 			var wsOptions = new DictionaryNodeWritingSystemOptions
@@ -199,7 +247,28 @@ namespace SIL.FieldWorks.XWorks
 				}),
 				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular
 			};
-			var controller = new DictionaryDetailsController(new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions }, m_mediator);
+			VerifyCannotUncheckOnlyCheckedItemInList(wsOptions);
+			Assert.AreEqual(1, wsOptions.Options.Count(option => option.IsEnabled), "There should be exactly one enabled option in the model");
+			Assert.AreEqual(WritingSystemServices.GetMagicWsNameFromId(WritingSystemServices.kwsVern),
+				wsOptions.Options.First(option => option.IsEnabled).Id, "The same item should still be enabled");
+
+			var listOptions = new DictionaryNodeListOptions
+			{
+				// For non-WS lists, we must save any unchecked items explicitly.
+				Options = m_staticDDController.GetListItems(DictionaryNodeListOptions.ListIds.Variant)
+					.Select(lvi => new DictionaryNodeListOptions.DictionaryNodeOption { Id = (string)lvi.Tag, IsEnabled = false }).ToList(),
+				ListId = DictionaryNodeListOptions.ListIds.Variant
+			};
+			listOptions.Options.Last().IsEnabled = true;
+			var selectedId = listOptions.Options.Last().Id;
+			VerifyCannotUncheckOnlyCheckedItemInList(listOptions);
+			Assert.AreEqual(1, listOptions.Options.Count(option => option.IsEnabled), "There should be exactly one enabled option in the model");
+			Assert.AreEqual(selectedId, listOptions.Options.First(option => option.IsEnabled).Id, "The same item should still be enabled");
+		}
+
+		private void VerifyCannotUncheckOnlyCheckedItemInList(DictionaryNodeOptions options)
+		{
+			var controller = new DictionaryDetailsController(new ConfigurableDictionaryNode { DictionaryNodeOptions = options }, m_mediator);
 			using (var view = controller.View)
 			{
 				// Verify setup
@@ -211,26 +280,31 @@ namespace SIL.FieldWorks.XWorks
 				// SUT
 				// Events are not actually fired during tests, so they must be run manually
 				ReflectionHelper.CallMethod(controller, "ListItemCheckedChanged",
-					GetListOptionsView(view), wsOptions, new ItemCheckedEventArgs(checkedItem));
+					GetListOptionsView(view), options as DictionaryNodeWritingSystemOptions, new ItemCheckedEventArgs(checkedItem));
 
 				Assert.AreEqual(1, listViewItems.Count(item => item.Checked), "There should still be exactly one item checked");
 				Assert.AreEqual(checkedItem, listViewItems.First(item => item.Checked), "The same item should be checked");
-				Assert.AreEqual(1, wsOptions.Options.Count(option => option.IsEnabled), "There should be exactly one enabled option in the model");
-				Assert.AreEqual(WritingSystemServices.GetMagicWsNameFromId(WritingSystemServices.kwsVern),
-					wsOptions.Options.First(option => option.IsEnabled).Id,
-					"The same item should still be enabled");
 			}
 		}
 
 		[Test]
 		public void CannotMoveTopItemUp()
 		{
-			var wsOptions = new DictionaryNodeWritingSystemOptions
+			VerifyCannotMoveTopItemUp(new DictionaryNodeWritingSystemOptions
 			{
 				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>(),
 				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Both
-			};
-			var controller = new DictionaryDetailsController(new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions }, m_mediator);
+			});
+			VerifyCannotMoveTopItemUp(new DictionaryNodeListOptions
+			{
+				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>(),
+				ListId = DictionaryNodeListOptions.ListIds.Complex
+			});
+		}
+
+		private void VerifyCannotMoveTopItemUp(DictionaryNodeOptions options)
+		{
+			var controller = new DictionaryDetailsController(new ConfigurableDictionaryNode { DictionaryNodeOptions = options }, m_mediator);
 			using (var view = controller.View)
 			{
 				var listViewItems = GetListViewItems(view);
@@ -253,12 +327,21 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void CannotMoveBottomItemDown()
 		{
-			var wsOptions = new DictionaryNodeWritingSystemOptions
+			VerifyCannotMoveBottomItemDown(new DictionaryNodeWritingSystemOptions
 			{
 				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>(),
 				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Both
-			};
-			var controller = new DictionaryDetailsController(new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions }, m_mediator);
+			});
+			VerifyCannotMoveBottomItemDown(new DictionaryNodeListOptions
+			{
+				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>(),
+				ListId = DictionaryNodeListOptions.ListIds.Variant
+			});
+		}
+
+		private void VerifyCannotMoveBottomItemDown(DictionaryNodeOptions options)
+		{
+			var controller = new DictionaryDetailsController(new ConfigurableDictionaryNode { DictionaryNodeOptions = options }, m_mediator);
 			using (var view = controller.View)
 			{
 				var listViewItems = GetListViewItems(view);
@@ -435,5 +518,24 @@ namespace SIL.FieldWorks.XWorks
 		}
 		#endregion Writing System tests
 		#endregion List tests
+
+		[Test]
+		public void FlattenPossibilityList()
+		{
+			ICmPossibilityList theList = null;
+			UndoableUnitOfWorkHelper.Do("undo", "redo", m_actionHandler,
+				() =>
+				{
+					theList = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+					var topItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
+					theList.PossibilitiesOS.Add(topItem);
+					var secondLevelItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
+					var thirdLevelItemItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
+					topItem.SubPossibilitiesOS.Add(secondLevelItem);
+					secondLevelItem.SubPossibilitiesOS.Add(thirdLevelItemItem);
+				});
+
+			Assert.AreEqual(3, DictionaryDetailsController.FlattenPossibilityList(theList.PossibilitiesOS).Count);
+		}
 	}
 }

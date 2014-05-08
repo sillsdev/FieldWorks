@@ -104,7 +104,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else if ("LexEntry".Equals(m_node.FieldDescription))
 			{
-				// Main Entry and Minor Entry are the only two where field=LexEntry; only Main Entry has Options=null
+				// Main Entry and Minor Entry are the only two where field=LexEntry; of these, only Main Entry has Options=null
 				// There is nothing to configure on the Main Entry itself
 				View.Visible = false;
 			}
@@ -449,27 +449,77 @@ namespace SIL.FieldWorks.XWorks
 			m_paraStyles.Sort();
 		}
 
-		private List<ListViewItem> GetListItems(DictionaryNodeListOptions.ListIds listId)
+		internal List<ListViewItem> GetListItems(DictionaryNodeListOptions.ListIds listId)
 		{
 			switch (listId)
 			{
 				case DictionaryNodeListOptions.ListIds.Minor:
-					// TODO pH 2014.04: handle this special case, which cares whether the configuration is root- or stem-based
-					return new List<ListViewItem>();
+					return GetMinorEntryTypes();
 				case DictionaryNodeListOptions.ListIds.Complex:
+					return GetComplexFormTypes();
 				case DictionaryNodeListOptions.ListIds.Variant:
-					return new List<ListViewItem>(); // TODO pH 2014.05: implement
+					return GetVariantTypes();
 				case DictionaryNodeListOptions.ListIds.Sense:
 				case DictionaryNodeListOptions.ListIds.Entry:
-					return LoadLexicalRelationTypes(listId);
+					return GetLexicalRelationTypes(listId);
 				default:
 					throw new ArgumentException("Unrecognised List ID: " + listId);
 			}
 		}
 
+		private List<ListViewItem> GetMinorEntryTypes()
+		{
+			var result = GetVariantTypes();
+			// TODO pH 2014.05: AddRange iff this is Root-Based (not Stem-Based)
+			result.AddRange(GetComplexFormTypes());
+			return result;
+		}
+
+		private List<ListViewItem> GetComplexFormTypes()
+		{
+			var result = FlattenSortAndConvertList(m_cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS);
+			result.Insert(0, new ListViewItem("<" + xWorksStrings.ksNoComplexFormType + ">")
+			{
+				Tag = XmlViewsUtils.GetGuidForUnspecifiedComplexFormType().ToString()
+			});
+			return result;
+		}
+
+		private List<ListViewItem> GetVariantTypes()
+		{
+			var result = FlattenSortAndConvertList(m_cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS);
+			result.Insert(0, new ListViewItem("<" + xWorksStrings.ksNoVariantType + ">")
+			{
+				Tag = XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString()
+			});
+			return result;
+		}
+
+		/// <summary>Flattens hierarchy, sorts by name, and converts to ListViewItems</summary>
+		private static List<ListViewItem> FlattenSortAndConvertList(IFdoOwningSequence<ICmPossibility> sequence)
+		{
+			var result = FlattenPossibilityList(sequence);
+			result.Sort(ComparePossibilitiesByName);
+			return result.Select(item => new ListViewItem(item.Name.BestAnalysisVernacularAlternative.Text)
+			{
+				Tag = item.Guid.ToString()
+			}).ToList();
+		}
+
+		internal static List<ICmPossibility> FlattenPossibilityList(IFdoOwningSequence<ICmPossibility> sequence)
+		{
+			var list = sequence.ToList();
+			foreach (var poss in sequence)
+			{
+				// Recurse to get all nested items
+				list.AddRange(FlattenPossibilityList(poss.SubPossibilitiesOS));
+			}
+			return list;
+		}
+
 		// REVIEW (Hasso) 2014.05: This method is currently optimised for loading and caching both Sense and Entry lists at once. It
 		// could be optimised for loading each as needed without caching: by checking first for whether each relType is applicable.
-		private List<ListViewItem> LoadLexicalRelationTypes(DictionaryNodeListOptions.ListIds listId)
+		private List<ListViewItem> GetLexicalRelationTypes(DictionaryNodeListOptions.ListIds listId)
 		{
 			var lexRelTypesSubset = new List<ListViewItem>();
 
@@ -541,6 +591,7 @@ namespace SIL.FieldWorks.XWorks
 			return lexRelTypesSubset;
 		}
 
+		// REVIEW pH 2014.05: we could convert to ListViewItems first, if we don't need forward and reverse lex relations to be in pairs
 		private static int ComparePossibilitiesByName(ICmPossibility x, ICmPossibility y)
 		{
 			if (x == null)
