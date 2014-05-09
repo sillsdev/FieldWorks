@@ -48,7 +48,6 @@ namespace SIL.FieldWorks.XWorks
 			this.m_linkManageViews = new System.Windows.Forms.LinkLabel();
 			this.treeDetail_Button_Split = new System.Windows.Forms.SplitContainer();
 			this.tree_Detail_Split = new System.Windows.Forms.SplitContainer();
-			this.treeControl = new SIL.FieldWorks.XWorks.DictionaryConfigurationTreeControl();
 			this.previewDetailSplit = new System.Windows.Forms.SplitContainer();
 			this.m_preview = new Palaso.UI.WindowsForms.HtmlBrowser.XWebBrowser();
 			this.buttonLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
@@ -56,6 +55,7 @@ namespace SIL.FieldWorks.XWorks
 			this.applyButton = new System.Windows.Forms.Button();
 			this.cancelButton = new System.Windows.Forms.Button();
 			this.okButton = new System.Windows.Forms.Button();
+			this.treeControl = new SIL.FieldWorks.XWorks.DictionaryConfigurationTreeControl();
 			((System.ComponentModel.ISupportInitialize)(this.manageViews_viewSplit)).BeginInit();
 			this.manageViews_viewSplit.Panel1.SuspendLayout();
 			this.manageViews_viewSplit.Panel2.SuspendLayout();
@@ -172,14 +172,6 @@ namespace SIL.FieldWorks.XWorks
 			this.tree_Detail_Split.SplitterDistance = 305;
 			this.tree_Detail_Split.TabIndex = 0;
 			// 
-			// treeControl
-			// 
-			this.treeControl.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.treeControl.Location = new System.Drawing.Point(0, 0);
-			this.treeControl.Name = "treeControl";
-			this.treeControl.Size = new System.Drawing.Size(305, 558);
-			this.treeControl.TabIndex = 0;
-			// 
 			// previewDetailSplit
 			// 
 			this.previewDetailSplit.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -197,11 +189,13 @@ namespace SIL.FieldWorks.XWorks
 			// m_preview
 			// 
 			this.m_preview.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.m_preview.DocumentText = "<HTML></HTML>\0";
 			this.m_preview.IsWebBrowserContextMenuEnabled = false;
 			this.m_preview.Location = new System.Drawing.Point(0, 0);
 			this.m_preview.Name = "m_preview";
 			this.m_preview.Size = new System.Drawing.Size(324, 101);
 			this.m_preview.TabIndex = 0;
+			this.m_preview.Url = new System.Uri("about:blank", System.UriKind.Absolute);
 			// 
 			// buttonLayoutPanel
 			// 
@@ -257,6 +251,14 @@ namespace SIL.FieldWorks.XWorks
 			this.okButton.Text = "OK";
 			this.okButton.UseVisualStyleBackColor = true;
 			this.okButton.Click += new System.EventHandler(this.okButton_Click);
+			// 
+			// treeControl
+			// 
+			this.treeControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.treeControl.Location = new System.Drawing.Point(0, 0);
+			this.treeControl.Name = "treeControl";
+			this.treeControl.Size = new System.Drawing.Size(305, 558);
+			this.treeControl.TabIndex = 0;
 			// 
 			// DictionaryConfigurationDlg
 			// 
