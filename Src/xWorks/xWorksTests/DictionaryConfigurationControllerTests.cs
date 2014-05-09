@@ -796,8 +796,7 @@ namespace SIL.FieldWorks.XWorks
 														  Cache.MetaDataCacheAccessor.GetClassId("LexExampleSentence"), 0,
 														  CellarPropertyType.ReferenceCollection, Guid.Empty))
 			{
-				var model = new DictionaryConfigurationModel(Path.Combine(DirectoryFinder.DefaultConfigurations, Path.Combine("Dictionary", "Root.xml")));
-				model.Load();
+				var model = new DictionaryConfigurationModel(Path.Combine(DirectoryFinder.DefaultConfigurations, Path.Combine("Dictionary", "Root.xml")), Cache);
 
 				//SUT
 				Assert.DoesNotThrow(()=>DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(Cache, model));

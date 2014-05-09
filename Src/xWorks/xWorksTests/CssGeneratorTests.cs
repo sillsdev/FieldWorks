@@ -241,7 +241,7 @@ namespace SIL.FieldWorks.XWorks
 			GenerateStyle("Dictionary-Headword");
 			string defaultRoot =
 				Path.Combine(Path.Combine(DirectoryFinder.DefaultConfigurations, "Dictionary"), "Root.xml");
-			var model = new DictionaryConfigurationModel(defaultRoot);
+			var model = new DictionaryConfigurationModel(defaultRoot, Cache);
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			var parser = new ExCSS.Parser();
 			var styleSheet = parser.Parse(cssResult);

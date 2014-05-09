@@ -14,24 +14,29 @@ using NUnit.Framework;
 using Palaso.IO;
 using Palaso.TestUtilities;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
+using SIL.FieldWorks.FDO.Infrastructure;
 
 namespace SIL.FieldWorks.XWorks
 {
 	[TestFixture]
 	class DictionaryConfigurationModelTests : MemoryOnlyBackendProviderTestBase
 	{
-		private const string XmlOpenTagsThruHeadword = @"<?xml version=""1.0"" encoding=""utf-8""?>
-			<DictionaryConfiguration name=""Root"" version=""1"" lastModified=""2014-02-13"">
-				<ConfigurationItem name=""Main Entry"" isEnabled=""true"" field=""LexEntry"">
+		private const string XmlOpenTagsThruRoot = @"<?xml version=""1.0"" encoding=""utf-8""?>
+			<DictionaryConfiguration name=""Root"" version=""1"" lastModified=""2014-02-13"">";
+		private const string XmlOpenTagsThruHeadword =
+				XmlOpenTagsThruRoot +
+				@"<ConfigurationItem name=""Main Entry"" isEnabled=""true"" field=""LexEntry"">
 					<ConfigurationItem name=""Testword"" nameSuffix=""2b""
 							before=""["" between="", "" after=""] "" style=""Dictionary-Headword"" isEnabled=""true"" field=""HeadWord"">";
 
 		private const string XmlCloseTagsFromHeadword = @"
 					</ConfigurationItem>
 				</ConfigurationItem>
-				<SharedItems/>
-			</DictionaryConfiguration>";
+				<SharedItems/>" +
+			XmlCloseTagsFromRoot;
+		private const string XmlCloseTagsFromRoot = @"</DictionaryConfiguration>";
 
 		[Test]
 		public void Load_LoadsBasicsAndDetails()
@@ -40,7 +45,7 @@ namespace SIL.FieldWorks.XWorks
 			using (var modelFile = new TempFile(new[] { XmlOpenTagsThruHeadword, XmlCloseTagsFromHeadword }))
 			{
 				// SUT
-				model = new DictionaryConfigurationModel(modelFile.Path);
+				model = new DictionaryConfigurationModel(modelFile.Path, Cache);
 			}
 
 			// basic info
@@ -88,7 +93,7 @@ namespace SIL.FieldWorks.XWorks
 			}))
 			{
 				// SUT
-				model = new DictionaryConfigurationModel(modelFile.Path);
+				model = new DictionaryConfigurationModel(modelFile.Path, Cache);
 			}
 
 			var testNodeOptions = model.Parts[0].Children[0].DictionaryNodeOptions;
@@ -114,7 +119,7 @@ namespace SIL.FieldWorks.XWorks
 			}))
 			{
 				// SUT
-				model = new DictionaryConfigurationModel(modelFile.Path);
+				model = new DictionaryConfigurationModel(modelFile.Path, Cache);
 			}
 
 			// The following assertions are based on the specific test data loaded from the file
@@ -150,7 +155,7 @@ namespace SIL.FieldWorks.XWorks
 			}))
 			{
 				// SUT
-				model = new DictionaryConfigurationModel(modelFile.Path);
+				model = new DictionaryConfigurationModel(modelFile.Path, Cache);
 			}
 
 			// The following assertions are based on the specific test data loaded from the file
@@ -179,7 +184,7 @@ namespace SIL.FieldWorks.XWorks
 			}))
 			{
 				// SUT
-				model = new DictionaryConfigurationModel(modelFile.Path);
+				model = new DictionaryConfigurationModel(modelFile.Path, Cache);
 			}
 
 			// The following assertions are based on the specific test data loaded from the file
@@ -205,7 +210,7 @@ namespace SIL.FieldWorks.XWorks
 			}))
 			{
 				// SUT
-				model = new DictionaryConfigurationModel(modelFile.Path);
+				model = new DictionaryConfigurationModel(modelFile.Path, Cache);
 			}
 
 			// The following assertions are based on the specific test data loaded from the file
@@ -215,6 +220,131 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual(DictionaryNodeListOptions.ListIds.None, cfOptions.ListId);
 			Assert.That(cfOptions.Options, Is.Null.Or.Empty);
 			Assert.IsFalse(cfOptions.DisplayEachComplexFormInAParagraph);
+		}
+
+		[Test]
+		public void Load_LoadsPublications()
+		{
+			// "Main Dictionary" was added by base class
+			ICmPossibility addedPublication = AddPublication("Another Dictionary");
+
+			DictionaryConfigurationModel model;
+			using (var modelFile = new TempFile(new[]
+			{
+				XmlOpenTagsThruRoot,
+				"<Publications><Publication>Main Dictionary</Publication><Publication>Another Dictionary</Publication></Publications>",
+				XmlCloseTagsFromRoot
+			}))
+			{
+				// SUT
+				model = new DictionaryConfigurationModel(modelFile.Path, Cache);
+			}
+
+			Assert.IsNotEmpty(model.Publications);
+			Assert.AreEqual(2, model.Publications.Count);
+			Assert.AreEqual("Main Dictionary", model.Publications[0]);
+			Assert.AreEqual("Another Dictionary", model.Publications[1]);
+
+			RemovePublication(addedPublication);
+		}
+
+		private ICmPossibility AddPublication(string publicationName)
+		{
+			ICmPossibility result = null;
+			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
+			{
+				if (Cache.LangProject.LexDbOA.PublicationTypesOA == null)
+					Cache.LangProject.LexDbOA.PublicationTypesOA =
+						Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+				result = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
+				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(result);
+				result.Name.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(publicationName,
+					Cache.DefaultAnalWs);
+			});
+			return result;
+		}
+
+		private void RemovePublication(ICmPossibility publication)
+		{
+			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
+			{
+				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Remove(publication);
+			});
+		}
+
+		private readonly List<string[]> m_NoPublicationsList = new List<string[]>
+		{
+			// Three different Xml samples with no publications specified
+			new[] { XmlOpenTagsThruRoot, XmlCloseTagsFromRoot },
+			new[] { XmlOpenTagsThruRoot, @"<Publications/>", XmlCloseTagsFromRoot },
+			new[] { XmlOpenTagsThruRoot, @"<Publications></Publications>", XmlCloseTagsFromRoot }
+		};
+
+		[Test]
+		public void Load_NoPublicationsLoadsAllPublications()
+		{
+			// "Main Dictionary" was added by base class
+			ICmPossibility addedPublication = AddPublication("Another Dictionary");
+
+			// Test three different possibilities of how no publications might present in the xml
+			foreach (string[] noPublicationsXml in m_NoPublicationsList)
+			{
+				DictionaryConfigurationModel model;
+				using (var modelFile = new TempFile(noPublicationsXml))
+				{
+					// SUT
+					model = new DictionaryConfigurationModel(modelFile.Path, Cache);
+				}
+
+				Assert.IsNotEmpty(model.Publications);
+				Assert.AreEqual(2, model.Publications.Count);
+				Assert.AreEqual("Main Dictionary", model.Publications[0]);
+				Assert.AreEqual("Another Dictionary", model.Publications[1]);
+			}
+
+			RemovePublication(addedPublication);
+		}
+
+		[Test]
+		public void Load_LoadOnlyRealPublications()
+		{
+			// "Main Dictionary" was added by base class
+
+			DictionaryConfigurationModel model;
+			using (var modelFile = new TempFile(
+				new[] {
+					XmlOpenTagsThruRoot,
+					@"<Publications><Publication>Main Dictionary</Publication><Publication>Not A Real Publication</Publication></Publications>",
+					XmlCloseTagsFromRoot }))
+			{
+				// SUT
+				model = new DictionaryConfigurationModel(modelFile.Path, Cache);
+			}
+
+			Assert.IsNotEmpty(model.Publications);
+			Assert.AreEqual(1, model.Publications.Count);
+			Assert.AreEqual("Main Dictionary", model.Publications[0]);
+		}
+
+		[Test]
+		public void Load_NoRealPublicationLoadsAllPublications()
+		{
+			// "Main Dictionary" was added by base class
+
+			DictionaryConfigurationModel model;
+			using (var modelFile = new TempFile(
+				new[] {
+					XmlOpenTagsThruRoot,
+					@"<Publications><Publication>Not A Real Publication</Publication></Publications>",
+					XmlCloseTagsFromRoot }))
+			{
+				// SUT
+				model = new DictionaryConfigurationModel(modelFile.Path, Cache);
+			}
+
+			Assert.IsNotEmpty(model.Publications);
+			Assert.AreEqual(1, model.Publications.Count);
+			Assert.AreEqual("Main Dictionary", model.Publications[0]);
 		}
 
 		[Test]
@@ -490,6 +620,44 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 1);
 			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/ComplexFormOptions", 1);
 			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/ComplexFormOptions/Option", 1);
+		}
+
+		[Test]
+		public void Save_ConfigWithOnePublicationValidatesAgainstSchema()
+		{
+			var modelFile = Path.GetTempFileName();
+			var model = new DictionaryConfigurationModel
+			{
+				FilePath = modelFile,
+				Version = 0,
+				Label = "root",
+				Publications = new List<string> { "Main Dictionary" }
+			};
+			//SUT
+			model.Save();
+			ValidateAgainstSchema(modelFile);
+			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 0);
+			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/Publications", 1);
+			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/Publications/Publication", 1);
+		}
+
+		[Test]
+		public void Save_ConfigWithTwoPublicationsValidatesAgainstSchema()
+		{
+			var modelFile = Path.GetTempFileName();
+			var model = new DictionaryConfigurationModel
+			{
+				FilePath = modelFile,
+				Version = 0,
+				Label = "root",
+				Publications = new List<string> { "Main Dictionary", "Subset Dictionary" }
+			};
+			//SUT
+			model.Save();
+			ValidateAgainstSchema(modelFile);
+			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 0);
+			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/Publications", 1);
+			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/Publications/Publication", 2);
 		}
 
 		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",

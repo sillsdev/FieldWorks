@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.XWorks
 			_alternateDictionaries = new Dictionary<string, DictionaryConfigurationModel>();
 			foreach(var choice in choices)
 			{
-				_alternateDictionaries[choice.Key] = new DictionaryConfigurationModel(choice.Value);
+				_alternateDictionaries[choice.Key] = new DictionaryConfigurationModel(choice.Value, cache);
 			}
 			View.SetChoices(choices.Keys);
 		}

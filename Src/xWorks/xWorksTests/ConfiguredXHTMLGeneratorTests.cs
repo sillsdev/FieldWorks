@@ -258,8 +258,7 @@ namespace SIL.FieldWorks.XWorks
 			string defaultRoot =
 				Path.Combine(Path.Combine(DirectoryFinder.DefaultConfigurations, "Dictionary"), "Root.xml");
 			var entry = CreateInterestingLexEntry();
-			var dictionaryModel = new DictionaryConfigurationModel(defaultRoot);
-			dictionaryModel.Load();
+			var dictionaryModel = new DictionaryConfigurationModel(defaultRoot, Cache);
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				//SUT

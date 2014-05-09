@@ -4,8 +4,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
+using SIL.CoreImpl;
+using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -49,6 +52,13 @@ namespace SIL.FieldWorks.XWorks
 		[XmlAttribute(AttributeName = "version")]
 		public int Version { get; set; }
 
+		/// <summary>
+		/// Publications for which this view applies.
+		/// </summary>
+		[XmlArray(ElementName = "Publications")]
+		[XmlArrayItem(ElementName = "Publication")]
+		public List<string> Publications { get; set; }
+
 		/// <summary></summary>
 		public void Save()
 		{
@@ -61,7 +71,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary></summary>
-		public void Load()
+		public void Load(FdoCache cache)
 		{
 			var serializer = new XmlSerializer(typeof(DictionaryConfigurationModel));
 			using(var reader = XmlReader.Create(FilePath))
@@ -71,8 +81,38 @@ namespace SIL.FieldWorks.XWorks
 				LastModified = model.LastModified;
 				Version = model.Version;
 				Parts = model.Parts;
+				Publications = LoadPublicationsSafe(model, cache);
 			}
 			SpecifyParents(Parts);
+		}
+
+		private List<string> LoadPublicationsSafe(DictionaryConfigurationModel model, FdoCache cache)
+		{
+			// Default is to list no publications in the configuration file.  That indicates all publications apply.
+			if (model == null || model.Publications == null || !model.Publications.Any())
+				return GetAllPublications(cache);
+			return FilterRealPublications(model.Publications, cache);
+		}
+
+		private List<string> GetAllPublications(FdoCache cache)
+		{
+			return cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p.Name.BestAnalysisAlternative.Text).ToList();
+		}
+
+		private List<string> FilterRealPublications(List<string> modelPublications, FdoCache cache)
+		{
+			List<ICmPossibility> allPossibilities =
+				cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.ToList();
+			var allPossiblePublicationsInAllWs = new HashSet<string>();
+			foreach (ICmPossibility possibility in allPossibilities)
+				foreach (int ws in cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Handles())
+					allPossiblePublicationsInAllWs.Add(possibility.Name.get_String(ws).Text);
+			var realPublications = modelPublications.Where(allPossiblePublicationsInAllWs.Contains).ToList();
+
+			// If there are no real ones in the configuration, default to all
+			if (!realPublications.Any())
+				return GetAllPublications(cache);
+			return realPublications;
 		}
 
 		/// <summary>
@@ -81,10 +121,10 @@ namespace SIL.FieldWorks.XWorks
 		internal DictionaryConfigurationModel() {}
 
 		/// <summary>Loads a DictionaryConfigurationModel from the given path</summary>
-		public DictionaryConfigurationModel(string path)
+		public DictionaryConfigurationModel(string path, FdoCache cache)
 		{
 			FilePath = path;
-			Load();
+			Load(cache);
 		}
 
 		/// <summary>
