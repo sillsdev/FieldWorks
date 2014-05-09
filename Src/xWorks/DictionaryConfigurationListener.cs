@@ -99,9 +99,10 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		public bool OnConfigureDictionary(object commandObject)
 		{
-			using(var dlg = new DictionaryConfigurationDlg(m_mediator))
+			using(var dlg = new DictionaryConfigurationDlg())
 			{
-				var controller = new DictionaryConfigurationController(dlg, m_mediator);
+				var clerk = m_mediator.PropertyTable.GetValue("ActiveClerk", null) as RecordClerk;
+				var controller = new DictionaryConfigurationController(dlg, m_mediator, clerk != null ? clerk.CurrentObject : null);
 				var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
 				dlg.ShowDialog(m_mediator.PropertyTable.GetValue("window") as IWin32Window);
 			}

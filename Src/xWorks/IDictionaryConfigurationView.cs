@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -34,6 +35,11 @@ namespace SIL.FieldWorks.XWorks
 		/// Sets the DetailsView
 		/// </summary>
 		DetailsView DetailsView { set; }
+
+		/// <summary>
+		/// Sets the XHTML to display in the preview control
+		/// </summary>
+		string PreviewData { set; }
 
 		/// <summary>
 		/// Redraw the widgets, updating anything that has changed.

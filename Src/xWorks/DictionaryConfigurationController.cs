@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -26,6 +25,16 @@ namespace SIL.FieldWorks.XWorks
 		/// The current model being worked with
 		/// </summary>
 		internal DictionaryConfigurationModel _model;
+
+		/// <summary>
+		/// The entry being used for preview purposes
+		/// </summary>
+		internal ICmObject _previewEntry;
+
+		/// <summary>
+		/// Mediator to use
+		/// </summary>
+		internal Mediator _mediator;
 
 		/// <summary>
 		/// The view to display the model in
@@ -138,6 +147,11 @@ namespace SIL.FieldWorks.XWorks
 				tree.TopNode = FindTreeNode(topVisibleNode, tree.Nodes);
 			if (tree.SelectedNode != null)
 				tree.SelectedNode.EnsureVisible();
+			//_mediator should only be null for unit tests which don't need styles
+			if(_mediator != null)
+			{
+				View.PreviewData = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(_previewEntry, _model, _mediator);
+			}
 		}
 
 		/// <summary>
@@ -244,8 +258,11 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="view"></param>
 		/// <param name="mediator"></param>
-		public DictionaryConfigurationController(IDictionaryConfigurationView view, Mediator mediator)
+		/// <param name="previewEntry"></param>
+		public DictionaryConfigurationController(IDictionaryConfigurationView view, Mediator mediator, ICmObject previewEntry)
 		{
+			_mediator = mediator;
+			_previewEntry = previewEntry;
 			View = view;
 			SetAlternateDictionaryChoices(mediator);
 			var lastUsedAlternateDictionary =

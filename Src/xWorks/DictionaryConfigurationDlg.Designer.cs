@@ -165,6 +165,8 @@ namespace SIL.FieldWorks.XWorks
 			this.m_preview.IsWebBrowserContextMenuEnabled = false;
 			this.m_preview.Name = "m_preview";
 			this.m_preview.Url = new System.Uri("about:blank", System.UriKind.Absolute);
+			this.m_preview.Padding = new System.Windows.Forms.Padding(0, 0, 0, 5);
+			this.m_preview.Size = new System.Drawing.Size(320, 101);
 			// 
 			// buttonLayoutPanel
 			// 

@@ -813,6 +813,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			public DetailsView DetailsView { set; private get; }
+			public string PreviewData { set; private get; }
 
 			public void Redraw()
 			{

@@ -137,8 +137,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		private static string SelectClassName(ConfigurableDictionaryNode configNode)
 		{
-			var cssClassSelector = GetClassAttributeForConfig(configNode);
-			return "." + cssClassSelector;
+			return "." + GetClassAttributeForConfig(configNode);
 		}
 
 		/// <summary>
@@ -149,6 +148,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		internal static string GetClassAttributeForConfig(ConfigurableDictionaryNode configNode)
 		{
+			// write out the FieldDescription as the class name, and append a . followed by the SubField if it is defined.
 			var classAttribute = configNode.FieldDescription +
 										(String.IsNullOrEmpty(configNode.SubField) ? "" : ("." + configNode.SubField));
 			Dictionary<string, string> parentMap;

@@ -4,13 +4,18 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -19,6 +24,39 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public static class ConfiguredXHTMLGenerator
 	{
+		private const string PublicIdentifier = @"-//W3C//DTD XHTML 1.1//EN";
+		private const string SystemIdentifier = @"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd";
+
+		public static string GenerateEntryHtmlWithStyles(ICmObject entry, DictionaryConfigurationModel configuration, Mediator mediator)
+		{
+			var projectPath = Path.Combine(DirectoryFinder.GetConfigSettingsDir(entry.Cache.ProjectId.ProjectFolder),
+													 DictionaryConfigurationListener.GetDictionaryConfigurationType(mediator));
+			var previewCssPath = Path.Combine(projectPath, "Preview.css");
+			var stringBuilder = new StringBuilder();
+			using(var XHTMLWriter = XmlWriter.Create(stringBuilder))
+			using(var CssWriter = new StreamWriter(previewCssPath, false))
+			{
+				XHTMLWriter.WriteDocType("html", PublicIdentifier, null, null);
+				XHTMLWriter.WriteStartElement("html", "http://www.w3.org/1999/xhtml");
+				XHTMLWriter.WriteAttributeString("lang", "utf-8");
+				XHTMLWriter.WriteStartElement("head");
+				XHTMLWriter.WriteStartElement("link");
+				XHTMLWriter.WriteAttributeString("href", "file:///" + previewCssPath);
+				XHTMLWriter.WriteAttributeString("rel", "stylesheet");
+				XHTMLWriter.WriteEndElement();//</style>
+				XHTMLWriter.WriteEndElement(); //</head>
+				XHTMLWriter.WriteStartElement("body");
+				GenerateXHTMLForEntry(entry, configuration.Parts[0], XHTMLWriter, (FdoCache)mediator.PropertyTable.GetValue("cache"));
+				XHTMLWriter.WriteEndElement();//</body>
+				XHTMLWriter.WriteEndElement();//</html>
+				XHTMLWriter.Flush();
+				CssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, mediator));
+				CssWriter.Flush();
+			}
+
+			return stringBuilder.ToString();
+		}
+
 		/// <summary>
 		/// Generating the xhtml representation for the given ICmObject using the given configuration to select which data to write out
 		/// </summary>
@@ -60,6 +98,7 @@ namespace SIL.FieldWorks.XWorks
 		/// taking into account the current information in CssGenerator.ClassMappingOverrides
 		/// </summary>
 		/// <param name="writer"></param>
+		/// <param name="configNode">used to look up any mapping overrides</param>
 		private static void WriteClassNameAttribute(XmlWriter writer, ConfigurableDictionaryNode configNode)
 		{
 			writer.WriteAttributeString("class", CssGenerator.GetClassAttributeForConfig(configNode));
@@ -120,7 +159,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					if(child.IsEnabled)
 					{
-						ConfiguredXHTMLGenerator.GenerateXHTMLForFieldByReflection(propertyValue, child, writer, cache);
+						GenerateXHTMLForFieldByReflection(propertyValue, child, writer, cache);
 					}
 				}
 			}
@@ -279,7 +318,6 @@ namespace SIL.FieldWorks.XWorks
 															  XmlWriter writer)
 		{
 			writer.WriteStartElement(GetElementNameForProperty(propertyValue, config));
-			// write out the FieldDescription as the class name, and append a . followed by the SubField if it is defined.
 			WriteClassNameAttribute(writer, config);
 			writer.WriteString(propertyValue.ToString());
 			writer.WriteEndElement();

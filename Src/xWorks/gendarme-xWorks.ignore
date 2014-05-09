@@ -29,6 +29,7 @@ M: System.Boolean SIL.FieldWorks.XWorks.DTMenuHandler::OnDataTreeCopy(System.Obj
 
 # added to control and disposed there
 M: System.Void SIL.FieldWorks.XWorks.GeneratedHtmlViewer::InitHtmlControl()
+M: System.Void SIL.FieldWorks.XWorks.DictionaryConfigurationController::RefreshView(SIL.FieldWorks.XWorks.ConfigurableDictionaryNode)
 
 # Gendarme bug. Object is disposed in Dispose method
 M: System.Void SIL.FieldWorks.XWorks.CustomListDlg::InitializeHelpProvider()
@@ -46,6 +47,7 @@ R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
 T: SIL.FieldWorks.XWorks.ConcDecorator
 T: SIL.FieldWorks.XWorks.DTMenuHandler
 T: SIL.FieldWorks.XWorks.DeleteCustomList
+T: SIL.FieldWorks.XWorks.DictionaryConfigurationController
 T: SIL.FieldWorks.XWorks.DictionaryConfigurationListener
 T: SIL.FieldWorks.XWorks.DictionaryDetailsController
 T: SIL.FieldWorks.XWorks.ExportDialog/TranslatedListsExporter
