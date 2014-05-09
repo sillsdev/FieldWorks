@@ -33,6 +33,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SenseOptionsView));
 			this.checkBoxSenseInPara = new System.Windows.Forms.CheckBox();
 			this.checkBoxShowGrammarFirst = new System.Windows.Forms.CheckBox();
 			this.checkBoxNumberSingleSense = new System.Windows.Forms.CheckBox();
@@ -52,140 +53,83 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			// 
 			// checkBoxSenseInPara
 			// 
-			this.checkBoxSenseInPara.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.checkBoxSenseInPara.AutoSize = true;
-			this.checkBoxSenseInPara.Location = new System.Drawing.Point(3, 150);
+			resources.ApplyResources(this.checkBoxSenseInPara, "checkBoxSenseInPara");
 			this.checkBoxSenseInPara.Name = "checkBoxSenseInPara";
-			this.checkBoxSenseInPara.Size = new System.Drawing.Size(189, 17);
-			this.checkBoxSenseInPara.TabIndex = 15;
-			this.checkBoxSenseInPara.Text = "Display each sense in a paragraph";
 			this.checkBoxSenseInPara.UseVisualStyleBackColor = true;
 			// 
 			// checkBoxShowGrammarFirst
 			// 
-			this.checkBoxShowGrammarFirst.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.checkBoxShowGrammarFirst.AutoSize = true;
-			this.checkBoxShowGrammarFirst.Location = new System.Drawing.Point(3, 127);
+			resources.ApplyResources(this.checkBoxShowGrammarFirst, "checkBoxShowGrammarFirst");
 			this.checkBoxShowGrammarFirst.Name = "checkBoxShowGrammarFirst";
-			this.checkBoxShowGrammarFirst.Size = new System.Drawing.Size(299, 17);
-			this.checkBoxShowGrammarFirst.TabIndex = 16;
-			this.checkBoxShowGrammarFirst.Text = "If all senses share the grammatical information, show it first";
 			this.checkBoxShowGrammarFirst.UseVisualStyleBackColor = true;
 			// 
 			// checkBoxNumberSingleSense
 			// 
-			this.checkBoxNumberSingleSense.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.checkBoxNumberSingleSense.AutoSize = true;
-			this.checkBoxNumberSingleSense.Location = new System.Drawing.Point(10, 99);
+			resources.ApplyResources(this.checkBoxNumberSingleSense, "checkBoxNumberSingleSense");
 			this.checkBoxNumberSingleSense.Name = "checkBoxNumberSingleSense";
-			this.checkBoxNumberSingleSense.Size = new System.Drawing.Size(160, 17);
-			this.checkBoxNumberSingleSense.TabIndex = 17;
-			this.checkBoxNumberSingleSense.Text = "Number even a single sense";
 			this.checkBoxNumberSingleSense.UseVisualStyleBackColor = true;
 			// 
 			// checkBoxBold
 			// 
-			this.checkBoxBold.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.checkBoxBold.AutoSize = true;
+			resources.ApplyResources(this.checkBoxBold, "checkBoxBold");
 			this.checkBoxBold.Checked = true;
 			this.checkBoxBold.CheckState = System.Windows.Forms.CheckState.Indeterminate;
-			this.checkBoxBold.Location = new System.Drawing.Point(214, 12);
 			this.checkBoxBold.Name = "checkBoxBold";
-			this.checkBoxBold.Size = new System.Drawing.Size(47, 17);
-			this.checkBoxBold.TabIndex = 13;
-			this.checkBoxBold.Text = "Bold";
 			this.checkBoxBold.ThreeState = true;
 			this.checkBoxBold.UseVisualStyleBackColor = true;
 			// 
 			// checkBoxItalic
 			// 
-			this.checkBoxItalic.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.checkBoxItalic.AutoSize = true;
+			resources.ApplyResources(this.checkBoxItalic, "checkBoxItalic");
 			this.checkBoxItalic.Checked = true;
 			this.checkBoxItalic.CheckState = System.Windows.Forms.CheckState.Indeterminate;
-			this.checkBoxItalic.Location = new System.Drawing.Point(214, 32);
 			this.checkBoxItalic.Name = "checkBoxItalic";
-			this.checkBoxItalic.Size = new System.Drawing.Size(48, 17);
-			this.checkBoxItalic.TabIndex = 14;
-			this.checkBoxItalic.Text = "Italic";
 			this.checkBoxItalic.ThreeState = true;
 			this.checkBoxItalic.UseVisualStyleBackColor = true;
 			// 
 			// dropDownFont
 			// 
-			this.dropDownFont.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			resources.ApplyResources(this.dropDownFont, "dropDownFont");
 			this.dropDownFont.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.dropDownFont.FormattingEnabled = true;
-			this.dropDownFont.Location = new System.Drawing.Point(9, 32);
 			this.dropDownFont.Name = "dropDownFont";
-			this.dropDownFont.Size = new System.Drawing.Size(199, 21);
-			this.dropDownFont.TabIndex = 12;
 			// 
 			// dropDownNumberingStyle
 			// 
-			this.dropDownNumberingStyle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			resources.ApplyResources(this.dropDownNumberingStyle, "dropDownNumberingStyle");
 			this.dropDownNumberingStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.dropDownNumberingStyle.FormattingEnabled = true;
-			this.dropDownNumberingStyle.Location = new System.Drawing.Point(87, 72);
 			this.dropDownNumberingStyle.Name = "dropDownNumberingStyle";
-			this.dropDownNumberingStyle.Size = new System.Drawing.Size(121, 21);
-			this.dropDownNumberingStyle.TabIndex = 11;
 			// 
 			// textBoxAfter
 			// 
-			this.textBoxAfter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.textBoxAfter.Location = new System.Drawing.Point(214, 72);
+			resources.ApplyResources(this.textBoxAfter, "textBoxAfter");
 			this.textBoxAfter.Name = "textBoxAfter";
-			this.textBoxAfter.Size = new System.Drawing.Size(72, 20);
-			this.textBoxAfter.TabIndex = 6;
 			// 
 			// textBoxBefore
 			// 
-			this.textBoxBefore.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.textBoxBefore.Location = new System.Drawing.Point(9, 72);
+			resources.ApplyResources(this.textBoxBefore, "textBoxBefore");
 			this.textBoxBefore.Name = "textBoxBefore";
-			this.textBoxBefore.Size = new System.Drawing.Size(72, 20);
-			this.textBoxBefore.TabIndex = 5;
 			// 
 			// labelBefore
 			// 
-			this.labelBefore.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.labelBefore.AutoSize = true;
-			this.labelBefore.Location = new System.Drawing.Point(6, 56);
+			resources.ApplyResources(this.labelBefore, "labelBefore");
 			this.labelBefore.Name = "labelBefore";
-			this.labelBefore.Size = new System.Drawing.Size(41, 13);
-			this.labelBefore.TabIndex = 8;
-			this.labelBefore.Text = "Before:";
 			// 
 			// labelAfter
 			// 
-			this.labelAfter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.labelAfter.AutoSize = true;
-			this.labelAfter.Location = new System.Drawing.Point(211, 56);
+			resources.ApplyResources(this.labelAfter, "labelAfter");
 			this.labelAfter.Name = "labelAfter";
-			this.labelAfter.Size = new System.Drawing.Size(32, 13);
-			this.labelAfter.TabIndex = 10;
-			this.labelAfter.Text = "After:";
 			// 
 			// labelFont
 			// 
-			this.labelFont.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.labelFont.AutoSize = true;
-			this.labelFont.Location = new System.Drawing.Point(6, 16);
+			resources.ApplyResources(this.labelFont, "labelFont");
 			this.labelFont.Name = "labelFont";
-			this.labelFont.Size = new System.Drawing.Size(31, 13);
-			this.labelFont.TabIndex = 9;
-			this.labelFont.Text = "Font:";
 			// 
 			// labelNumberingStyle
 			// 
-			this.labelNumberingStyle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.labelNumberingStyle.AutoSize = true;
-			this.labelNumberingStyle.Location = new System.Drawing.Point(84, 56);
+			resources.ApplyResources(this.labelNumberingStyle, "labelNumberingStyle");
 			this.labelNumberingStyle.Name = "labelNumberingStyle";
-			this.labelNumberingStyle.Size = new System.Drawing.Size(87, 13);
-			this.labelNumberingStyle.TabIndex = 7;
-			this.labelNumberingStyle.Text = "Numbering Style:";
 			// 
 			// groupBoxSenseNumber
 			// 
@@ -200,16 +144,13 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			this.groupBoxSenseNumber.Controls.Add(this.labelNumberingStyle);
 			this.groupBoxSenseNumber.Controls.Add(this.labelAfter);
 			this.groupBoxSenseNumber.Controls.Add(this.labelFont);
-			this.groupBoxSenseNumber.Location = new System.Drawing.Point(3, 3);
+			resources.ApplyResources(this.groupBoxSenseNumber, "groupBoxSenseNumber");
 			this.groupBoxSenseNumber.Name = "groupBoxSenseNumber";
-			this.groupBoxSenseNumber.Size = new System.Drawing.Size(300, 120);
-			this.groupBoxSenseNumber.TabIndex = 18;
 			this.groupBoxSenseNumber.TabStop = false;
-			this.groupBoxSenseNumber.Text = "Sense Number Configuration";
 			// 
 			// SenseOptionsView
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.groupBoxSenseNumber);
 			this.Controls.Add(this.checkBoxSenseInPara);
@@ -217,7 +158,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			this.MaximumSize = new System.Drawing.Size(0, 170);
 			this.MinimumSize = new System.Drawing.Size(305, 170);
 			this.Name = "SenseOptionsView";
-			this.Size = new System.Drawing.Size(305, 170);
 			this.groupBoxSenseNumber.ResumeLayout(false);
 			this.groupBoxSenseNumber.PerformLayout();
 			this.ResumeLayout(false);

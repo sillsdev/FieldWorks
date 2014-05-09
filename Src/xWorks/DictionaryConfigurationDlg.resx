@@ -117,4 +117,517 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="manageViews_viewSplit.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="manageViews_viewSplit.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="manageViews_viewSplit.Orientation" type="System.Windows.Forms.Orientation, System.Windows.Forms">
+    <value>Horizontal</value>
+  </data>
+  <data name="m_cbDictType.AccessibleName" xml:space="preserve">
+    <value>m_cbDictType</value>
+  </data>
+  <data name="m_cbDictType.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 34</value>
+  </data>
+  <data name="m_cbDictType.Size" type="System.Drawing.Size, System.Drawing">
+    <value>250, 21</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_cbDictType.TabIndex" type="System.Int32, mscorlib">
+    <value>33</value>
+  </data>
+  <data name="&gt;&gt;m_cbDictType.Name" xml:space="preserve">
+    <value>m_cbDictType</value>
+  </data>
+  <data name="&gt;&gt;m_cbDictType.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_cbDictType.Parent" xml:space="preserve">
+    <value>viewManagerGroupBox</value>
+  </data>
+  <data name="&gt;&gt;m_cbDictType.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="m_lblViewType.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_lblViewType.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="m_lblViewType.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 14</value>
+  </data>
+  <data name="m_lblViewType.Size" type="System.Drawing.Size, System.Drawing">
+    <value>148, 13</value>
+  </data>
+  <data name="m_lblViewType.TabIndex" type="System.Int32, mscorlib">
+    <value>34</value>
+  </data>
+  <data name="m_lblViewType.Text" xml:space="preserve">
+    <value>Choose the view to configure:</value>
+  </data>
+  <data name="&gt;&gt;m_lblViewType.Name" xml:space="preserve">
+    <value>m_lblViewType</value>
+  </data>
+  <data name="&gt;&gt;m_lblViewType.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblViewType.Parent" xml:space="preserve">
+    <value>viewManagerGroupBox</value>
+  </data>
+  <data name="&gt;&gt;m_lblViewType.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="m_linkManageViews.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_linkManageViews.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="m_linkManageViews.Location" type="System.Drawing.Point, System.Drawing">
+    <value>277, 45</value>
+  </data>
+  <data name="m_linkManageViews.Size" type="System.Drawing.Size, System.Drawing">
+    <value>77, 13</value>
+  </data>
+  <data name="m_linkManageViews.TabIndex" type="System.Int32, mscorlib">
+    <value>35</value>
+  </data>
+  <data name="m_linkManageViews.Text" xml:space="preserve">
+    <value>Manage Views</value>
+  </data>
+  <data name="&gt;&gt;m_linkManageViews.Name" xml:space="preserve">
+    <value>m_linkManageViews</value>
+  </data>
+  <data name="&gt;&gt;m_linkManageViews.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_linkManageViews.Parent" xml:space="preserve">
+    <value>viewManagerGroupBox</value>
+  </data>
+  <data name="&gt;&gt;m_linkManageViews.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="viewManagerGroupBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 7</value>
+  </data>
+  <data name="viewManagerGroupBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>572, 70</value>
+  </data>
+  <data name="viewManagerGroupBox.TabIndex" type="System.Int32, mscorlib">
+    <value>33</value>
+  </data>
+  <data name="&gt;&gt;viewManagerGroupBox.Name" xml:space="preserve">
+    <value>viewManagerGroupBox</value>
+  </data>
+  <data name="&gt;&gt;viewManagerGroupBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;viewManagerGroupBox.Parent" xml:space="preserve">
+    <value>manageViews_viewSplit.Panel1</value>
+  </data>
+  <data name="&gt;&gt;viewManagerGroupBox.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;manageViews_viewSplit.Panel1.Name" xml:space="preserve">
+    <value>manageViews_viewSplit.Panel1</value>
+  </data>
+  <data name="&gt;&gt;manageViews_viewSplit.Panel1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;manageViews_viewSplit.Panel1.Parent" xml:space="preserve">
+    <value>manageViews_viewSplit</value>
+  </data>
+  <data name="&gt;&gt;manageViews_viewSplit.Panel1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="treeDetail_Button_Split.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="treeDetail_Button_Split.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="treeDetail_Button_Split.Orientation" type="System.Windows.Forms.Orientation, System.Windows.Forms">
+    <value>Horizontal</value>
+  </data>
+  <data name="tree_Detail_Split.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="tree_Detail_Split.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="treeControl.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="treeControl.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="treeControl.Size" type="System.Drawing.Size, System.Drawing">
+    <value>305, 558</value>
+  </data>
+  <data name="treeControl.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;treeControl.Name" xml:space="preserve">
+    <value>treeControl</value>
+  </data>
+  <data name="&gt;&gt;treeControl.Type" xml:space="preserve">
+    <value>SIL.FieldWorks.XWorks.DictionaryConfigurationTreeControl, xWorks, Version=8.0.8.24262, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;treeControl.Parent" xml:space="preserve">
+    <value>tree_Detail_Split.Panel1</value>
+  </data>
+  <data name="&gt;&gt;treeControl.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;tree_Detail_Split.Panel1.Name" xml:space="preserve">
+    <value>tree_Detail_Split.Panel1</value>
+  </data>
+  <data name="&gt;&gt;tree_Detail_Split.Panel1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tree_Detail_Split.Panel1.Parent" xml:space="preserve">
+    <value>tree_Detail_Split</value>
+  </data>
+  <data name="&gt;&gt;tree_Detail_Split.Panel1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="previewDetailSplit.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="previewDetailSplit.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="previewDetailSplit.Orientation" type="System.Windows.Forms.Orientation, System.Windows.Forms">
+    <value>Horizontal</value>
+  </data>
+  <data name="m_preview.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="m_preview.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="m_preview.Size" type="System.Drawing.Size, System.Drawing">
+    <value>324, 101</value>
+  </data>
+  <data name="m_preview.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;m_preview.Name" xml:space="preserve">
+    <value>m_preview</value>
+  </data>
+  <data name="&gt;&gt;m_preview.Type" xml:space="preserve">
+    <value>Palaso.UI.WindowsForms.HtmlBrowser.XWebBrowser, PalasoUIWindowsForms, Version=2.5.128.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_preview.Parent" xml:space="preserve">
+    <value>previewDetailSplit.Panel1</value>
+  </data>
+  <data name="&gt;&gt;m_preview.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;previewDetailSplit.Panel1.Name" xml:space="preserve">
+    <value>previewDetailSplit.Panel1</value>
+  </data>
+  <data name="&gt;&gt;previewDetailSplit.Panel1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;previewDetailSplit.Panel1.Parent" xml:space="preserve">
+    <value>previewDetailSplit</value>
+  </data>
+  <data name="&gt;&gt;previewDetailSplit.Panel1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;previewDetailSplit.Panel2.Name" xml:space="preserve">
+    <value>previewDetailSplit.Panel2</value>
+  </data>
+  <data name="&gt;&gt;previewDetailSplit.Panel2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;previewDetailSplit.Panel2.Parent" xml:space="preserve">
+    <value>previewDetailSplit</value>
+  </data>
+  <data name="&gt;&gt;previewDetailSplit.Panel2.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="previewDetailSplit.Size" type="System.Drawing.Size, System.Drawing">
+    <value>324, 558</value>
+  </data>
+  <data name="previewDetailSplit.SplitterDistance" type="System.Int32, mscorlib">
+    <value>101</value>
+  </data>
+  <data name="previewDetailSplit.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;previewDetailSplit.Name" xml:space="preserve">
+    <value>previewDetailSplit</value>
+  </data>
+  <data name="&gt;&gt;previewDetailSplit.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitContainer, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;previewDetailSplit.Parent" xml:space="preserve">
+    <value>tree_Detail_Split.Panel2</value>
+  </data>
+  <data name="&gt;&gt;previewDetailSplit.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;tree_Detail_Split.Panel2.Name" xml:space="preserve">
+    <value>tree_Detail_Split.Panel2</value>
+  </data>
+  <data name="&gt;&gt;tree_Detail_Split.Panel2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tree_Detail_Split.Panel2.Parent" xml:space="preserve">
+    <value>tree_Detail_Split</value>
+  </data>
+  <data name="&gt;&gt;tree_Detail_Split.Panel2.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="tree_Detail_Split.Size" type="System.Drawing.Size, System.Drawing">
+    <value>633, 558</value>
+  </data>
+  <data name="tree_Detail_Split.SplitterDistance" type="System.Int32, mscorlib">
+    <value>305</value>
+  </data>
+  <data name="tree_Detail_Split.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;tree_Detail_Split.Name" xml:space="preserve">
+    <value>tree_Detail_Split</value>
+  </data>
+  <data name="&gt;&gt;tree_Detail_Split.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitContainer, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tree_Detail_Split.Parent" xml:space="preserve">
+    <value>treeDetail_Button_Split.Panel1</value>
+  </data>
+  <data name="&gt;&gt;tree_Detail_Split.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;treeDetail_Button_Split.Panel1.Name" xml:space="preserve">
+    <value>treeDetail_Button_Split.Panel1</value>
+  </data>
+  <data name="&gt;&gt;treeDetail_Button_Split.Panel1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;treeDetail_Button_Split.Panel1.Parent" xml:space="preserve">
+    <value>treeDetail_Button_Split</value>
+  </data>
+  <data name="&gt;&gt;treeDetail_Button_Split.Panel1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="buttonLayoutPanel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="helpButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>549, 3</value>
+  </data>
+  <data name="helpButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="helpButton.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="helpButton.Text" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="&gt;&gt;helpButton.Name" xml:space="preserve">
+    <value>helpButton</value>
+  </data>
+  <data name="&gt;&gt;helpButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;helpButton.Parent" xml:space="preserve">
+    <value>buttonLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;helpButton.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="applyButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>468, 3</value>
+  </data>
+  <data name="applyButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="applyButton.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="applyButton.Text" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="&gt;&gt;applyButton.Name" xml:space="preserve">
+    <value>applyButton</value>
+  </data>
+  <data name="&gt;&gt;applyButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;applyButton.Parent" xml:space="preserve">
+    <value>buttonLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;applyButton.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="cancelButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>387, 3</value>
+  </data>
+  <data name="cancelButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="cancelButton.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="cancelButton.Text" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="&gt;&gt;cancelButton.Name" xml:space="preserve">
+    <value>cancelButton</value>
+  </data>
+  <data name="&gt;&gt;cancelButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cancelButton.Parent" xml:space="preserve">
+    <value>buttonLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;cancelButton.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="okButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>306, 3</value>
+  </data>
+  <data name="okButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="okButton.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="okButton.Text" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="&gt;&gt;okButton.Name" xml:space="preserve">
+    <value>okButton</value>
+  </data>
+  <data name="&gt;&gt;okButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;okButton.Parent" xml:space="preserve">
+    <value>buttonLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;okButton.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="buttonLayoutPanel.FlowDirection" type="System.Windows.Forms.FlowDirection, System.Windows.Forms">
+    <value>RightToLeft</value>
+  </data>
+  <data name="buttonLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 3</value>
+  </data>
+  <data name="buttonLayoutPanel.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>340, 25</value>
+  </data>
+  <data name="buttonLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>627, 37</value>
+  </data>
+  <data name="buttonLayoutPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;buttonLayoutPanel.Name" xml:space="preserve">
+    <value>buttonLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;buttonLayoutPanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonLayoutPanel.Parent" xml:space="preserve">
+    <value>treeDetail_Button_Split.Panel2</value>
+  </data>
+  <data name="&gt;&gt;buttonLayoutPanel.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;treeDetail_Button_Split.Panel2.Name" xml:space="preserve">
+    <value>treeDetail_Button_Split.Panel2</value>
+  </data>
+  <data name="&gt;&gt;treeDetail_Button_Split.Panel2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;treeDetail_Button_Split.Panel2.Parent" xml:space="preserve">
+    <value>treeDetail_Button_Split</value>
+  </data>
+  <data name="&gt;&gt;treeDetail_Button_Split.Panel2.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="treeDetail_Button_Split.Size" type="System.Drawing.Size, System.Drawing">
+    <value>633, 602</value>
+  </data>
+  <data name="treeDetail_Button_Split.SplitterDistance" type="System.Int32, mscorlib">
+    <value>558</value>
+  </data>
+  <data name="treeDetail_Button_Split.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;treeDetail_Button_Split.Name" xml:space="preserve">
+    <value>treeDetail_Button_Split</value>
+  </data>
+  <data name="&gt;&gt;treeDetail_Button_Split.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitContainer, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;treeDetail_Button_Split.Parent" xml:space="preserve">
+    <value>manageViews_viewSplit.Panel2</value>
+  </data>
+  <data name="&gt;&gt;treeDetail_Button_Split.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;manageViews_viewSplit.Panel2.Name" xml:space="preserve">
+    <value>manageViews_viewSplit.Panel2</value>
+  </data>
+  <data name="&gt;&gt;manageViews_viewSplit.Panel2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;manageViews_viewSplit.Panel2.Parent" xml:space="preserve">
+    <value>manageViews_viewSplit</value>
+  </data>
+  <data name="&gt;&gt;manageViews_viewSplit.Panel2.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="manageViews_viewSplit.Size" type="System.Drawing.Size, System.Drawing">
+    <value>633, 687</value>
+  </data>
+  <data name="manageViews_viewSplit.SplitterDistance" type="System.Int32, mscorlib">
+    <value>81</value>
+  </data>
+  <data name="manageViews_viewSplit.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;manageViews_viewSplit.Name" xml:space="preserve">
+    <value>manageViews_viewSplit</value>
+  </data>
+  <data name="&gt;&gt;manageViews_viewSplit.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitContainer, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;manageViews_viewSplit.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;manageViews_viewSplit.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>6, 13</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+    <value>633, 687</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>{0} Configuration Dialog</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>DictionaryConfigurationDlg</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

@@ -33,6 +33,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DetailsView));
 			this.textBoxBefore = new System.Windows.Forms.TextBox();
 			this.textBoxBetween = new System.Windows.Forms.TextBox();
 			this.textBoxAfter = new System.Windows.Forms.TextBox();
@@ -47,100 +48,60 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			// 
 			// textBoxBefore
 			// 
-			this.textBoxBefore.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.textBoxBefore.Location = new System.Drawing.Point(3, 77);
+			resources.ApplyResources(this.textBoxBefore, "textBoxBefore");
 			this.textBoxBefore.Name = "textBoxBefore";
-			this.textBoxBefore.Size = new System.Drawing.Size(100, 20);
-			this.textBoxBefore.TabIndex = 0;
 			// 
 			// textBoxBetween
 			// 
-			this.textBoxBetween.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.textBoxBetween.Location = new System.Drawing.Point(109, 77);
+			resources.ApplyResources(this.textBoxBetween, "textBoxBetween");
 			this.textBoxBetween.Name = "textBoxBetween";
-			this.textBoxBetween.Size = new System.Drawing.Size(100, 20);
-			this.textBoxBetween.TabIndex = 0;
 			// 
 			// textBoxAfter
 			// 
-			this.textBoxAfter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.textBoxAfter.Location = new System.Drawing.Point(215, 77);
+			resources.ApplyResources(this.textBoxAfter, "textBoxAfter");
 			this.textBoxAfter.Name = "textBoxAfter";
-			this.textBoxAfter.Size = new System.Drawing.Size(100, 20);
-			this.textBoxAfter.TabIndex = 0;
 			// 
 			// labelBefore
 			// 
-			this.labelBefore.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.labelBefore.AutoSize = true;
-			this.labelBefore.Location = new System.Drawing.Point(0, 61);
+			resources.ApplyResources(this.labelBefore, "labelBefore");
 			this.labelBefore.Name = "labelBefore";
-			this.labelBefore.Size = new System.Drawing.Size(41, 13);
-			this.labelBefore.TabIndex = 1;
-			this.labelBefore.Text = "Before:";
 			// 
 			// labelBetween
 			// 
-			this.labelBetween.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.labelBetween.AutoSize = true;
-			this.labelBetween.Location = new System.Drawing.Point(106, 61);
+			resources.ApplyResources(this.labelBetween, "labelBetween");
 			this.labelBetween.Name = "labelBetween";
-			this.labelBetween.Size = new System.Drawing.Size(52, 13);
-			this.labelBetween.TabIndex = 1;
-			this.labelBetween.Text = "Between:";
 			// 
 			// labelAfter
 			// 
-			this.labelAfter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.labelAfter.AutoSize = true;
-			this.labelAfter.Location = new System.Drawing.Point(212, 61);
+			resources.ApplyResources(this.labelAfter, "labelAfter");
 			this.labelAfter.Name = "labelAfter";
-			this.labelAfter.Size = new System.Drawing.Size(32, 13);
-			this.labelAfter.TabIndex = 1;
-			this.labelAfter.Text = "After:";
 			// 
 			// dropDownStyle
 			// 
-			this.dropDownStyle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			resources.ApplyResources(this.dropDownStyle, "dropDownStyle");
 			this.dropDownStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.dropDownStyle.FormattingEnabled = true;
-			this.dropDownStyle.Location = new System.Drawing.Point(3, 33);
 			this.dropDownStyle.Name = "dropDownStyle";
-			this.dropDownStyle.Size = new System.Drawing.Size(196, 21);
-			this.dropDownStyle.TabIndex = 2;
 			// 
 			// labelStyle
 			// 
-			this.labelStyle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.labelStyle.AutoSize = true;
-			this.labelStyle.Location = new System.Drawing.Point(0, 17);
+			resources.ApplyResources(this.labelStyle, "labelStyle");
 			this.labelStyle.Name = "labelStyle";
-			this.labelStyle.Size = new System.Drawing.Size(0, 13);
-			this.labelStyle.TabIndex = 1;
 			// 
 			// buttonStyles
 			// 
-			this.buttonStyles.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.buttonStyles.Location = new System.Drawing.Point(206, 33);
+			resources.ApplyResources(this.buttonStyles, "buttonStyles");
 			this.buttonStyles.Name = "buttonStyles";
-			this.buttonStyles.Size = new System.Drawing.Size(75, 20);
-			this.buttonStyles.TabIndex = 3;
-			this.buttonStyles.Text = "Styles...";
 			this.buttonStyles.UseVisualStyleBackColor = true;
 			// 
 			// panelOptions
 			// 
-			this.panelOptions.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.panelOptions.Location = new System.Drawing.Point(0, 0);
+			resources.ApplyResources(this.panelOptions, "panelOptions");
 			this.panelOptions.Name = "panelOptions";
-			this.panelOptions.Size = new System.Drawing.Size(320, 10);
-			this.panelOptions.TabIndex = 4;
 			// 
 			// DetailsView
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.panelOptions);
 			this.Controls.Add(this.buttonStyles);
@@ -154,7 +115,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			this.Controls.Add(this.labelAfter);
 			this.MinimumSize = new System.Drawing.Size(320, 100);
 			this.Name = "DetailsView";
-			this.Size = new System.Drawing.Size(320, 100);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

@@ -41,6 +41,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DictionaryConfigurationDlg));
 			this.manageViews_viewSplit = new System.Windows.Forms.SplitContainer();
 			this.viewManagerGroupBox = new System.Windows.Forms.GroupBox();
 			this.m_cbDictType = new System.Windows.Forms.ComboBox();
@@ -48,6 +49,7 @@ namespace SIL.FieldWorks.XWorks
 			this.m_linkManageViews = new System.Windows.Forms.LinkLabel();
 			this.treeDetail_Button_Split = new System.Windows.Forms.SplitContainer();
 			this.tree_Detail_Split = new System.Windows.Forms.SplitContainer();
+			this.treeControl = new SIL.FieldWorks.XWorks.DictionaryConfigurationTreeControl();
 			this.previewDetailSplit = new System.Windows.Forms.SplitContainer();
 			this.m_preview = new Palaso.UI.WindowsForms.HtmlBrowser.XWebBrowser();
 			this.buttonLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
@@ -55,7 +57,6 @@ namespace SIL.FieldWorks.XWorks
 			this.applyButton = new System.Windows.Forms.Button();
 			this.cancelButton = new System.Windows.Forms.Button();
 			this.okButton = new System.Windows.Forms.Button();
-			this.treeControl = new SIL.FieldWorks.XWorks.DictionaryConfigurationTreeControl();
 			((System.ComponentModel.ISupportInitialize)(this.manageViews_viewSplit)).BeginInit();
 			this.manageViews_viewSplit.Panel1.SuspendLayout();
 			this.manageViews_viewSplit.Panel2.SuspendLayout();
@@ -77,10 +78,8 @@ namespace SIL.FieldWorks.XWorks
 			// 
 			// manageViews_viewSplit
 			// 
-			this.manageViews_viewSplit.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.manageViews_viewSplit.Location = new System.Drawing.Point(0, 0);
+			resources.ApplyResources(this.manageViews_viewSplit, "manageViews_viewSplit");
 			this.manageViews_viewSplit.Name = "manageViews_viewSplit";
-			this.manageViews_viewSplit.Orientation = System.Windows.Forms.Orientation.Horizontal;
 			// 
 			// manageViews_viewSplit.Panel1
 			// 
@@ -89,60 +88,40 @@ namespace SIL.FieldWorks.XWorks
 			// manageViews_viewSplit.Panel2
 			// 
 			this.manageViews_viewSplit.Panel2.Controls.Add(this.treeDetail_Button_Split);
-			this.manageViews_viewSplit.Size = new System.Drawing.Size(633, 687);
-			this.manageViews_viewSplit.SplitterDistance = 81;
-			this.manageViews_viewSplit.TabIndex = 0;
 			// 
 			// viewManagerGroupBox
 			// 
 			this.viewManagerGroupBox.Controls.Add(this.m_cbDictType);
 			this.viewManagerGroupBox.Controls.Add(this.m_lblViewType);
 			this.viewManagerGroupBox.Controls.Add(this.m_linkManageViews);
-			this.viewManagerGroupBox.Location = new System.Drawing.Point(6, 7);
+			resources.ApplyResources(this.viewManagerGroupBox, "viewManagerGroupBox");
 			this.viewManagerGroupBox.Name = "viewManagerGroupBox";
-			this.viewManagerGroupBox.Size = new System.Drawing.Size(572, 70);
-			this.viewManagerGroupBox.TabIndex = 33;
 			this.viewManagerGroupBox.TabStop = false;
 			// 
 			// m_cbDictType
 			// 
-			this.m_cbDictType.AccessibleName = "m_cbDictType";
+			resources.ApplyResources(this.m_cbDictType, "m_cbDictType");
 			this.m_cbDictType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.m_cbDictType.FormattingEnabled = true;
-			this.m_cbDictType.Location = new System.Drawing.Point(6, 34);
 			this.m_cbDictType.Name = "m_cbDictType";
-			this.m_cbDictType.Size = new System.Drawing.Size(250, 21);
-			this.m_cbDictType.TabIndex = 33;
 			this.m_cbDictType.SelectedIndexChanged += new System.EventHandler(this.OnViewChanged);
 			// 
 			// m_lblViewType
 			// 
-			this.m_lblViewType.AutoSize = true;
-			this.m_lblViewType.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.m_lblViewType.Location = new System.Drawing.Point(6, 14);
+			resources.ApplyResources(this.m_lblViewType, "m_lblViewType");
 			this.m_lblViewType.Name = "m_lblViewType";
-			this.m_lblViewType.Size = new System.Drawing.Size(148, 13);
-			this.m_lblViewType.TabIndex = 34;
-			this.m_lblViewType.Text = "Choose the view to configure:";
 			// 
 			// m_linkManageViews
 			// 
-			this.m_linkManageViews.AutoSize = true;
-			this.m_linkManageViews.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.m_linkManageViews.Location = new System.Drawing.Point(277, 45);
+			resources.ApplyResources(this.m_linkManageViews, "m_linkManageViews");
 			this.m_linkManageViews.Name = "m_linkManageViews";
-			this.m_linkManageViews.Size = new System.Drawing.Size(77, 13);
-			this.m_linkManageViews.TabIndex = 35;
 			this.m_linkManageViews.TabStop = true;
-			this.m_linkManageViews.Text = "Manage Views";
 			this.m_linkManageViews.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.m_linkManageViews_LinkClicked);
 			// 
 			// treeDetail_Button_Split
 			// 
-			this.treeDetail_Button_Split.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.treeDetail_Button_Split.Location = new System.Drawing.Point(0, 0);
+			resources.ApplyResources(this.treeDetail_Button_Split, "treeDetail_Button_Split");
 			this.treeDetail_Button_Split.Name = "treeDetail_Button_Split";
-			this.treeDetail_Button_Split.Orientation = System.Windows.Forms.Orientation.Horizontal;
 			// 
 			// treeDetail_Button_Split.Panel1
 			// 
@@ -151,14 +130,10 @@ namespace SIL.FieldWorks.XWorks
 			// treeDetail_Button_Split.Panel2
 			// 
 			this.treeDetail_Button_Split.Panel2.Controls.Add(this.buttonLayoutPanel);
-			this.treeDetail_Button_Split.Size = new System.Drawing.Size(633, 602);
-			this.treeDetail_Button_Split.SplitterDistance = 558;
-			this.treeDetail_Button_Split.TabIndex = 0;
 			// 
 			// tree_Detail_Split
 			// 
-			this.tree_Detail_Split.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tree_Detail_Split.Location = new System.Drawing.Point(0, 0);
+			resources.ApplyResources(this.tree_Detail_Split, "tree_Detail_Split");
 			this.tree_Detail_Split.Name = "tree_Detail_Split";
 			// 
 			// tree_Detail_Split.Panel1
@@ -168,110 +143,75 @@ namespace SIL.FieldWorks.XWorks
 			// tree_Detail_Split.Panel2
 			// 
 			this.tree_Detail_Split.Panel2.Controls.Add(this.previewDetailSplit);
-			this.tree_Detail_Split.Size = new System.Drawing.Size(633, 558);
-			this.tree_Detail_Split.SplitterDistance = 305;
-			this.tree_Detail_Split.TabIndex = 0;
+			// 
+			// treeControl
+			// 
+			resources.ApplyResources(this.treeControl, "treeControl");
+			this.treeControl.Name = "treeControl";
 			// 
 			// previewDetailSplit
 			// 
-			this.previewDetailSplit.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.previewDetailSplit.Location = new System.Drawing.Point(0, 0);
+			resources.ApplyResources(this.previewDetailSplit, "previewDetailSplit");
 			this.previewDetailSplit.Name = "previewDetailSplit";
-			this.previewDetailSplit.Orientation = System.Windows.Forms.Orientation.Horizontal;
 			// 
 			// previewDetailSplit.Panel1
 			// 
 			this.previewDetailSplit.Panel1.Controls.Add(this.m_preview);
-			this.previewDetailSplit.Size = new System.Drawing.Size(324, 558);
-			this.previewDetailSplit.SplitterDistance = 101;
-			this.previewDetailSplit.TabIndex = 0;
 			// 
 			// m_preview
 			// 
-			this.m_preview.Dock = System.Windows.Forms.DockStyle.Fill;
+			resources.ApplyResources(this.m_preview, "m_preview");
 			this.m_preview.DocumentText = "<HTML></HTML>\0";
 			this.m_preview.IsWebBrowserContextMenuEnabled = false;
-			this.m_preview.Location = new System.Drawing.Point(0, 0);
 			this.m_preview.Name = "m_preview";
-			this.m_preview.Size = new System.Drawing.Size(324, 101);
-			this.m_preview.TabIndex = 0;
 			this.m_preview.Url = new System.Uri("about:blank", System.UriKind.Absolute);
 			// 
 			// buttonLayoutPanel
 			// 
-			this.buttonLayoutPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			resources.ApplyResources(this.buttonLayoutPanel, "buttonLayoutPanel");
 			this.buttonLayoutPanel.Controls.Add(this.helpButton);
 			this.buttonLayoutPanel.Controls.Add(this.applyButton);
 			this.buttonLayoutPanel.Controls.Add(this.cancelButton);
 			this.buttonLayoutPanel.Controls.Add(this.okButton);
-			this.buttonLayoutPanel.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-			this.buttonLayoutPanel.Location = new System.Drawing.Point(3, 3);
-			this.buttonLayoutPanel.MinimumSize = new System.Drawing.Size(340, 25);
 			this.buttonLayoutPanel.Name = "buttonLayoutPanel";
-			this.buttonLayoutPanel.Size = new System.Drawing.Size(627, 37);
-			this.buttonLayoutPanel.TabIndex = 0;
 			// 
 			// helpButton
 			// 
-			this.helpButton.Location = new System.Drawing.Point(549, 3);
+			resources.ApplyResources(this.helpButton, "helpButton");
 			this.helpButton.Name = "helpButton";
-			this.helpButton.Size = new System.Drawing.Size(75, 23);
-			this.helpButton.TabIndex = 7;
-			this.helpButton.Text = "Help";
 			this.helpButton.UseVisualStyleBackColor = true;
 			// 
 			// applyButton
 			// 
-			this.applyButton.Location = new System.Drawing.Point(468, 3);
+			resources.ApplyResources(this.applyButton, "applyButton");
 			this.applyButton.Name = "applyButton";
-			this.applyButton.Size = new System.Drawing.Size(75, 23);
-			this.applyButton.TabIndex = 6;
-			this.applyButton.Text = "Apply";
 			this.applyButton.UseVisualStyleBackColor = true;
 			this.applyButton.Click += new System.EventHandler(this.applyButton_Click);
 			// 
 			// cancelButton
 			// 
 			this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.cancelButton.Location = new System.Drawing.Point(387, 3);
+			resources.ApplyResources(this.cancelButton, "cancelButton");
 			this.cancelButton.Name = "cancelButton";
-			this.cancelButton.Size = new System.Drawing.Size(75, 23);
-			this.cancelButton.TabIndex = 5;
-			this.cancelButton.Text = "Cancel";
 			this.cancelButton.UseVisualStyleBackColor = true;
 			// 
 			// okButton
 			// 
-			this.okButton.Location = new System.Drawing.Point(306, 3);
+			resources.ApplyResources(this.okButton, "okButton");
 			this.okButton.Name = "okButton";
-			this.okButton.Size = new System.Drawing.Size(75, 23);
-			this.okButton.TabIndex = 4;
-			this.okButton.Text = "OK";
 			this.okButton.UseVisualStyleBackColor = true;
 			this.okButton.Click += new System.EventHandler(this.okButton_Click);
-			// 
-			// treeControl
-			// 
-			this.treeControl.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.treeControl.Location = new System.Drawing.Point(0, 0);
-			this.treeControl.Name = "treeControl";
-			this.treeControl.Size = new System.Drawing.Size(305, 558);
-			this.treeControl.TabIndex = 0;
 			// 
 			// DictionaryConfigurationDlg
 			// 
 			this.AcceptButton = this.okButton;
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.cancelButton;
-			this.ClientSize = new System.Drawing.Size(633, 687);
 			this.Controls.Add(this.manageViews_viewSplit);
 			this.MinimizeBox = false;
 			this.Name = "DictionaryConfigurationDlg";
 			this.ShowIcon = false;
-			this.Text = "{0} Configuration Dialog";
 			this.manageViews_viewSplit.Panel1.ResumeLayout(false);
 			this.manageViews_viewSplit.Panel2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.manageViews_viewSplit)).EndInit();

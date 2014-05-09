@@ -33,80 +33,58 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ListOptionsView));
 			this.listView = new System.Windows.Forms.ListView();
+			this.invisibleHeaderToSetColWidth = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.buttonUp = new System.Windows.Forms.Button();
 			this.buttonDown = new System.Windows.Forms.Button();
 			this.checkBoxDisplayOption = new System.Windows.Forms.CheckBox();
 			this.labelListView = new System.Windows.Forms.Label();
-			this.invisibleHeaderToSetColWidth = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.SuspendLayout();
 			// 
 			// listView
 			// 
-			this.listView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			resources.ApplyResources(this.listView, "listView");
 			this.listView.CheckBoxes = true;
 			this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.invisibleHeaderToSetColWidth});
 			this.listView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
 			this.listView.HideSelection = false;
-			this.listView.LabelWrap = false;
-			this.listView.Location = new System.Drawing.Point(3, 20);
 			this.listView.MultiSelect = false;
 			this.listView.Name = "listView";
-			this.listView.Size = new System.Drawing.Size(256, 95);
-			this.listView.TabIndex = 0;
 			this.listView.UseCompatibleStateImageBehavior = false;
 			this.listView.View = System.Windows.Forms.View.Details;
 			// 
+			// invisibleHeaderToSetColWidth
+			// 
+			resources.ApplyResources(this.invisibleHeaderToSetColWidth, "invisibleHeaderToSetColWidth");
+			// 
 			// buttonUp
 			// 
-			this.buttonUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonUp.Enabled = false;
-			this.buttonUp.Location = new System.Drawing.Point(265, 20);
+			resources.ApplyResources(this.buttonUp, "buttonUp");
 			this.buttonUp.Name = "buttonUp";
-			this.buttonUp.Size = new System.Drawing.Size(32, 32);
-			this.buttonUp.TabIndex = 1;
 			this.buttonUp.UseVisualStyleBackColor = true;
 			// 
 			// buttonDown
 			// 
-			this.buttonDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonDown.Enabled = false;
-			this.buttonDown.Location = new System.Drawing.Point(265, 58);
+			resources.ApplyResources(this.buttonDown, "buttonDown");
 			this.buttonDown.Name = "buttonDown";
-			this.buttonDown.Size = new System.Drawing.Size(32, 32);
-			this.buttonDown.TabIndex = 1;
 			this.buttonDown.UseVisualStyleBackColor = true;
 			// 
 			// checkBoxDisplayOption
 			// 
-			this.checkBoxDisplayOption.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.checkBoxDisplayOption.AutoSize = true;
-			this.checkBoxDisplayOption.Location = new System.Drawing.Point(4, 121);
+			resources.ApplyResources(this.checkBoxDisplayOption, "checkBoxDisplayOption");
 			this.checkBoxDisplayOption.Name = "checkBoxDisplayOption";
-			this.checkBoxDisplayOption.Size = new System.Drawing.Size(200, 17);
-			this.checkBoxDisplayOption.TabIndex = 2;
-			this.checkBoxDisplayOption.Text = "Display Writing System Abbreviations";
 			this.checkBoxDisplayOption.UseVisualStyleBackColor = true;
 			// 
 			// labelListView
 			// 
-			this.labelListView.AutoSize = true;
-			this.labelListView.Location = new System.Drawing.Point(4, 4);
+			resources.ApplyResources(this.labelListView, "labelListView");
 			this.labelListView.Name = "labelListView";
-			this.labelListView.Size = new System.Drawing.Size(85, 13);
-			this.labelListView.TabIndex = 3;
-			this.labelListView.Text = "Writing Systems:";
-			// 
-			// invisibleHeaderToSetColWidth
-			// 
-			this.invisibleHeaderToSetColWidth.Width = 255;
 			// 
 			// ListOptionsView
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.checkBoxDisplayOption);
 			this.Controls.Add(this.buttonDown);
@@ -115,7 +93,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			this.Controls.Add(this.labelListView);
 			this.MinimumSize = new System.Drawing.Size(300, 100);
 			this.Name = "ListOptionsView";
-			this.Size = new System.Drawing.Size(300, 140);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

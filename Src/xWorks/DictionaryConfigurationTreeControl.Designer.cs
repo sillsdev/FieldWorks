@@ -46,100 +46,59 @@ namespace SIL.FieldWorks.XWorks
 			// 
 			// tableLayoutPanel
 			// 
-			this.tableLayoutPanel.ColumnCount = 2;
-			this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+			resources.ApplyResources(this.tableLayoutPanel, "tableLayoutPanel");
 			this.tableLayoutPanel.Controls.Add(this.tree, 0, 0);
 			this.tableLayoutPanel.Controls.Add(this.moveUp, 1, 0);
 			this.tableLayoutPanel.Controls.Add(this.moveDown, 1, 1);
 			this.tableLayoutPanel.Controls.Add(this.duplicate, 1, 2);
 			this.tableLayoutPanel.Controls.Add(this.remove, 1, 3);
 			this.tableLayoutPanel.Controls.Add(this.rename, 1, 4);
-			this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tableLayoutPanel.Location = new System.Drawing.Point(0, 0);
 			this.tableLayoutPanel.Name = "tableLayoutPanel";
-			this.tableLayoutPanel.RowCount = 5;
-			this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
-			this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
-			this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
-			this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
-			this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel.Size = new System.Drawing.Size(276, 394);
-			this.tableLayoutPanel.TabIndex = 0;
 			// 
 			// tree
 			// 
 			this.tree.CheckBoxes = true;
-			this.tree.Dock = System.Windows.Forms.DockStyle.Fill;
+			resources.ApplyResources(this.tree, "tree");
 			this.tree.HideSelection = false;
-			this.tree.Location = new System.Drawing.Point(3, 3);
 			this.tree.Name = "tree";
 			this.tableLayoutPanel.SetRowSpan(this.tree, 5);
-			this.tree.Size = new System.Drawing.Size(232, 388);
-			this.tree.TabIndex = 0;
 			// 
 			// moveUp
 			// 
-			this.moveUp.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.moveUp.Image = ((System.Drawing.Image)(resources.GetObject("moveUp.Image")));
-			this.moveUp.Location = new System.Drawing.Point(241, 3);
+			resources.ApplyResources(this.moveUp, "moveUp");
 			this.moveUp.Name = "moveUp";
-			this.moveUp.Size = new System.Drawing.Size(32, 32);
-			this.moveUp.TabIndex = 1;
-			this.moveUp.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.moveUp.UseVisualStyleBackColor = true;
 			// 
 			// moveDown
 			// 
-			this.moveDown.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.moveDown.Image = ((System.Drawing.Image)(resources.GetObject("moveDown.Image")));
-			this.moveDown.Location = new System.Drawing.Point(241, 41);
+			resources.ApplyResources(this.moveDown, "moveDown");
 			this.moveDown.Name = "moveDown";
-			this.moveDown.Size = new System.Drawing.Size(32, 32);
-			this.moveDown.TabIndex = 2;
-			this.moveDown.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.moveDown.UseVisualStyleBackColor = true;
 			// 
 			// duplicate
 			// 
-			this.duplicate.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.duplicate.Image = ((System.Drawing.Image)(resources.GetObject("duplicate.Image")));
-			this.duplicate.Location = new System.Drawing.Point(241, 79);
+			resources.ApplyResources(this.duplicate, "duplicate");
 			this.duplicate.Name = "duplicate";
-			this.duplicate.Size = new System.Drawing.Size(32, 32);
-			this.duplicate.TabIndex = 3;
-			this.duplicate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.duplicate.UseVisualStyleBackColor = true;
 			// 
 			// remove
 			// 
-			this.remove.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.remove.Image = ((System.Drawing.Image)(resources.GetObject("remove.Image")));
-			this.remove.Location = new System.Drawing.Point(241, 117);
+			resources.ApplyResources(this.remove, "remove");
 			this.remove.Name = "remove";
-			this.remove.Size = new System.Drawing.Size(32, 32);
-			this.remove.TabIndex = 4;
-			this.remove.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.remove.UseVisualStyleBackColor = true;
 			// 
 			// rename
 			// 
-			this.rename.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.rename.Image = ((System.Drawing.Image)(resources.GetObject("rename.Image")));
-			this.rename.Location = new System.Drawing.Point(241, 155);
+			resources.ApplyResources(this.rename, "rename");
 			this.rename.Name = "rename";
-			this.rename.Size = new System.Drawing.Size(32, 32);
-			this.rename.TabIndex = 5;
-			this.rename.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.rename.UseVisualStyleBackColor = true;
 			// 
 			// DictionaryConfigurationTreeControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.tableLayoutPanel);
 			this.Name = "DictionaryConfigurationTreeControl";
-			this.Size = new System.Drawing.Size(276, 394);
 			this.tableLayoutPanel.ResumeLayout(false);
 			this.ResumeLayout(false);
 
