@@ -2,10 +2,16 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Resources;
+
 namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 {
 	partial class SenseOptionsView
 	{
+		// these two variables are used to get shared labels
+		private static ResourceManager s_resourceMan;
+		private static System.Globalization.CultureInfo s_resourceCulture;
+
 		/// <summary> 
 		/// Required designer variable.
 		/// </summary>
@@ -24,6 +30,35 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			}
 			base.Dispose(disposing);
 		}
+
+		#region SharedLabels
+		/// <summary>Returns the cached ResourceManager instance used by this class.</summary>
+		[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+		internal static ResourceManager ResourceManager
+		{
+			get
+			{
+				return s_resourceMan ?? (s_resourceMan =
+					new ResourceManager("SIL.FieldWorks.XWorks.DictionaryDetailsView.SenseOptionsView", typeof(SenseOptionsView).Assembly));
+			}
+		}
+
+		/// <summary>
+		/// Overrides the current thread's CurrentUICulture property for all resource lookups using this strongly typed resource class.
+		/// </summary>
+		[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+		internal static System.Globalization.CultureInfo Culture
+		{
+			get { return s_resourceCulture; }
+			set { s_resourceCulture = value; }
+		}
+
+		/// <summary>Looks up a localized string similar to If all senses share the grammatical information, show it first.</summary>
+		internal static string ksShowGrammarFirst
+		{
+			get { return ResourceManager.GetString("checkBoxShowGrammarFirst.Text", s_resourceCulture); }
+		}
+		#endregion SharedLabels
 
 		#region Component Designer generated code
 

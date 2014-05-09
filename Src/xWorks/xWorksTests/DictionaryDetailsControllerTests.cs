@@ -195,6 +195,32 @@ namespace SIL.FieldWorks.XWorks
 			AssertShowingCharacterStyles(controller.View);
 			controller.View.Dispose();
 		}
+
+		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "ListOptionsView is disposed by its parent")]
+		public void ShowGrammaticalInfo_LinksToSense()
+		{
+			var parentSenseOptions = new DictionaryNodeSenseOptions { ShowSharedGrammarInfoFirst = true };
+			var parentSenseNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+				DictionaryNodeOptions = parentSenseOptions
+			};
+			var childGramarNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MorphoSyntaxAnalysis",
+				Parent = parentSenseNode
+			};
+			parentSenseNode.Children = new List<ConfigurableDictionaryNode>{ childGramarNode };
+
+			using (var view = new DictionaryDetailsController(childGramarNode, m_mediator).View)
+			{
+				var optionsView = GetListOptionsView(view);
+				optionsView.DisplayOptionCheckBoxChecked = false;
+
+				Assert.False(parentSenseOptions.ShowSharedGrammarInfoFirst, "ShowSharedGrammarInfoFirst should have been updated");
+			}
+		}
 		#endregion Sense tests
 
 		#region List tests

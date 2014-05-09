@@ -108,6 +108,10 @@ namespace SIL.FieldWorks.XWorks
 				// There is nothing to configure on the Main Entry itself
 				View.Visible = false;
 			}
+			else if (m_node.FieldDescription != null && m_node.FieldDescription.StartsWith("MorphoSyntaxAnalysis")) // optional suffix RA
+			{
+				LoadGrammaticalInfoOptions();
+			}
 			// else, show only the default details (style, before, between, after)
 
 			// Register eventhandlers
@@ -361,6 +365,29 @@ namespace SIL.FieldWorks.XWorks
 
 				listOptionsView.Load -= ListEventHandlerAdder(listOptionsView, listOptions);
 			};
+		}
+
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "optionsView is disposed by its parent")]
+		private void LoadGrammaticalInfoOptions()
+		{
+			var optionsView = new ListOptionsView
+			{
+				ListViewVisible = false,
+				DisplayOptionCheckBoxLabel = SenseOptionsView.ksShowGrammarFirst
+			};
+
+			// The option to show grammatical info first is stored on the Sense node, which should be Grammatical Info's direct parent
+			var senseOptions = (DictionaryNodeSenseOptions)m_node.Parent.DictionaryNodeOptions;
+
+			optionsView.DisplayOptionCheckBoxChecked = senseOptions.ShowSharedGrammarInfoFirst;
+
+			optionsView.DisplayOptionCheckBoxChanged += (sender, e) =>
+			{
+				senseOptions.ShowSharedGrammarInfoFirst = optionsView.DisplayOptionCheckBoxChecked;
+				RefreshPreview();
+			};
+
+			View.OptionsView = optionsView;
 		}
 
 		#region Load more-static parts
