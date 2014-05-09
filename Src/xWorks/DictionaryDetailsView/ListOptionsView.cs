@@ -82,6 +82,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			{
 				labelListView.Visible = value;
 				listView.Visible = value;
+				buttonUp.Visible = buttonDown.Visible = value;
 			}
 		}
 

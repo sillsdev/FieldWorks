@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using SIL.FieldWorks.FwCoreDlgControls;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 {

@@ -199,6 +199,25 @@ namespace SIL.FieldWorks.XWorks
 
 		#region List tests
 		[Test]
+		public void FlattenPossibilityList()
+		{
+			ICmPossibilityList theList = null;
+			UndoableUnitOfWorkHelper.Do("undo", "redo", m_actionHandler,
+				() =>
+				{
+					theList = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+					var topItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
+					theList.PossibilitiesOS.Add(topItem);
+					var secondLevelItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
+					var thirdLevelItemItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
+					topItem.SubPossibilitiesOS.Add(secondLevelItem);
+					secondLevelItem.SubPossibilitiesOS.Add(thirdLevelItemItem);
+				});
+
+			Assert.AreEqual(3, DictionaryDetailsController.FlattenPossibilityList(theList.PossibilitiesOS).Count);
+		}
+
+		[Test]
 		public void GetListItems()
 		{
 			var complexCount = DictionaryDetailsController.FlattenPossibilityList(
@@ -555,24 +574,5 @@ namespace SIL.FieldWorks.XWorks
 		}
 		#endregion Writing System tests
 		#endregion List tests
-
-		[Test]
-		public void FlattenPossibilityList()
-		{
-			ICmPossibilityList theList = null;
-			UndoableUnitOfWorkHelper.Do("undo", "redo", m_actionHandler,
-				() =>
-				{
-					theList = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
-					var topItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
-					theList.PossibilitiesOS.Add(topItem);
-					var secondLevelItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
-					var thirdLevelItemItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
-					topItem.SubPossibilitiesOS.Add(secondLevelItem);
-					secondLevelItem.SubPossibilitiesOS.Add(thirdLevelItemItem);
-				});
-
-			Assert.AreEqual(3, DictionaryDetailsController.FlattenPossibilityList(theList.PossibilitiesOS).Count);
-		}
 	}
 }
