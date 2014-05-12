@@ -76,11 +76,11 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		#region Lexicon implementation
 
-		public event EventHandler<LexemeAddedEventArgs> LexemeAdded;
+		public event LexemeAddedEventHandler LexemeAdded;
 
-		public event EventHandler<LexiconSenseAddedEventArgs> LexiconSenseAdded;
+		public event LexiconSenseAddedEventHandler LexiconSenseAdded;
 
-		public event EventHandler<LexiconGlossAddedEventArgs> LexiconGlossAdded;
+		public event LexiconGlossAddedEventHandler LexiconGlossAdded;
 
 		public bool RequiresLanguageId
 		{
@@ -324,9 +324,9 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		#endregion
 
 		#region WordAnalyses implementation
-		public WordAnalysis CreateWordAnalysis(IEnumerable<Lexeme> lexemes)
+		public WordAnalysis CreateWordAnalysis(string word, IEnumerable<Lexeme> lexemes)
 		{
-			return new FdoWordAnalysis(lexemes);
+			return new FdoWordAnalysis(word, lexemes);
 		}
 
 		public IEnumerable<WordAnalysis> GetWordAnalyses(string word)
@@ -348,17 +348,17 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			}
 		}
 
-		public void AddWordAnalysis(string word, WordAnalysis lexemes)
+		public void AddWordAnalysis(WordAnalysis lexemes)
 		{
 			using (m_activationContext.Activate())
 			{
 				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 					{
 						IWfiWordform wordform;
-						if (!TryGetWordform(word, out wordform))
+						if (!TryGetWordform(lexemes.Word, out wordform))
 						{
 							wordform = m_cache.ServiceLocator.GetInstance<IWfiWordformFactory>().Create(
-								m_cache.TsStrFactory.MakeString(word.Normalize(NormalizationForm.FormD), DefaultVernWs));
+								m_cache.TsStrFactory.MakeString(lexemes.Word.Normalize(NormalizationForm.FormD), DefaultVernWs));
 						}
 
 						IWfiAnalysis analysis = m_cache.ServiceLocator.GetInstance<IWfiAnalysisFactory>().Create();
@@ -382,12 +382,12 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			}
 		}
 
-		public void RemoveWordAnalysis(string word, WordAnalysis lexemes)
+		public void RemoveWordAnalysis(WordAnalysis lexemes)
 		{
 			using (m_activationContext.Activate())
 			{
 				IWfiWordform wordform;
-				if (!TryGetWordform(word, out wordform))
+				if (!TryGetWordform(lexemes.Word, out wordform))
 					return;
 
 				foreach (IWfiAnalysis analysis in wordform.AnalysesOC.Where(a => a.MorphBundlesOS.Count > 0 && a.ApprovalStatusIcon == (int) Opinions.approves))
@@ -419,19 +419,22 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			}
 		}
 
-		public IEnumerable<KeyValuePair<string, WordAnalysis>> GetWordAnalyses()
+		public IEnumerable<WordAnalysis> WordAnalyses
 		{
-			using (m_activationContext.Activate())
+			get
 			{
-				var analyses = new HashSet<KeyValuePair<string, WordAnalysis>>();
-				foreach (IWfiAnalysis analysis in m_cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().AllInstances().Where(a => a.MorphBundlesOS.Count > 0 && a.ApprovalStatusIcon == (int) Opinions.approves))
+				using (m_activationContext.Activate())
 				{
-					WordAnalysis lexemes;
-					string wordFormWs = analysis.Wordform.Form.get_String(m_defaultVernWs).Text;
-					if (wordFormWs != null && GetWordAnalysis(analysis, out lexemes))
-						analyses.Add(new KeyValuePair<string, WordAnalysis>(wordFormWs.Normalize(), lexemes));
+					var analyses = new HashSet<WordAnalysis>();
+					foreach (IWfiAnalysis analysis in m_cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().AllInstances().Where(a => a.MorphBundlesOS.Count > 0 && a.ApprovalStatusIcon == (int) Opinions.approves))
+					{
+						WordAnalysis lexemes;
+						string wordFormWs = analysis.Wordform.Form.get_String(m_defaultVernWs).Text;
+						if (wordFormWs != null && GetWordAnalysis(analysis, out lexemes))
+							analyses.Add(lexemes);
+					}
+					return analyses;
 				}
-				return analyses;
 			}
 		}
 		#endregion
@@ -456,7 +459,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				lexemeArray[i] = GetEntryLexeme(entry);
 			}
 
-			lexemes = new FdoWordAnalysis(lexemeArray);
+			lexemes = new FdoWordAnalysis(analysis.Wordform.Form.get_String(DefaultVernWs).Text.Normalize(), lexemeArray);
 			return true;
 		}
 
@@ -696,19 +699,19 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		internal void OnLexemeAdded(Lexeme lexeme)
 		{
 			if (LexemeAdded != null)
-				LexemeAdded(this, new LexemeAddedEventArgs(lexeme));
+				LexemeAdded(this, new FdoLexemeAddedEventArgs(lexeme));
 		}
 
 		internal void OnLexiconSenseAdded(Lexeme lexeme, LexiconSense sense)
 		{
 			if (LexiconSenseAdded != null)
-				LexiconSenseAdded(this, new LexiconSenseAddedEventArgs(lexeme, sense));
+				LexiconSenseAdded(this, new FdoLexiconSenseAddedEventArgs(lexeme, sense));
 		}
 
 		internal void OnLexiconGlossAdded(Lexeme lexeme, LexiconSense sense, LanguageText gloss)
 		{
 			if (LexiconGlossAdded != null)
-				LexiconGlossAdded(this, new LexiconGlossAddedEventArgs(lexeme, sense, gloss));
+				LexiconGlossAdded(this, new FdoLexiconGlossAddedEventArgs(lexeme, sense, gloss));
 		}
 
 		/// ------------------------------------------------------------------------------------

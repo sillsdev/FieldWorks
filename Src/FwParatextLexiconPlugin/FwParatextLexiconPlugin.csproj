@@ -52,8 +52,8 @@
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="ParatextLexicalContracts">
-      <HintPath>..\..\DistFiles\ParatextLexicalContracts.dll</HintPath>
+    <Reference Include="Paratext.LexicalContracts">
+      <HintPath>..\..\DistFiles\Paratext.LexicalContracts.dll</HintPath>
     </Reference>
     <Reference Include="ParserCore">
       <HintPath>..\..\Output\Debug\ParserCore.dll</HintPath>
@@ -82,9 +82,12 @@
       <DependentUpon>ChooseFdoProjectForm.cs</DependentUpon>
     </Compile>
     <Compile Include="FdoLanguageText.cs" />
+    <Compile Include="FdoLexemeAddedEventArgs.cs" />
     <Compile Include="FdoLexicalRelation.cs" />
     <Compile Include="FdoLexEntryLexeme.cs" />
     <Compile Include="FdoLexicon.cs" />
+    <Compile Include="FdoLexiconGlossAddedEventArgs.cs" />
+    <Compile Include="FdoLexiconSenseAddedEventArgs.cs" />
     <Compile Include="FilesToRestoreAreOlder.cs">
       <SubType>Form</SubType>
     </Compile>

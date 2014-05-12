@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -8,11 +9,20 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
 	internal class FdoWordAnalysis : WordAnalysis
 	{
+		private readonly string m_word;
 		private readonly Lexeme[] m_lexemes;
 
-		public FdoWordAnalysis(IEnumerable<Lexeme> lexemes)
+		public FdoWordAnalysis(string word, IEnumerable<Lexeme> lexemes)
 		{
+			if (!word.IsNormalized())
+				throw new ArgumentException("The word is not normalized.", "word");
+			m_word = word;
 			m_lexemes = lexemes.ToArray();
+		}
+
+		public string Word
+		{
+			get { return m_word; }
 		}
 
 		public Lexeme this[int index]

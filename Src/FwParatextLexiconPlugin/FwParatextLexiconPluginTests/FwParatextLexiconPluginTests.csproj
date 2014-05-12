@@ -57,8 +57,8 @@
     <Reference Include="nunit.framework">
       <HintPath>..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="ParatextLexicalContracts">
-      <HintPath>..\..\..\DistFiles\ParatextLexicalContracts.dll</HintPath>
+    <Reference Include="Paratext.LexicalContracts">
+      <HintPath>..\..\..\DistFiles\Paratext.LexicalContracts.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

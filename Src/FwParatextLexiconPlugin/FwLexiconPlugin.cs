@@ -203,6 +203,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			if (m_lexiconCache.All(lexicon => lexicon.Cache != fdoCache))
 			{
 				m_fdoCacheCache.Remove(fdoCache.ProjectId.Name);
+				fdoCache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
 				fdoCache.Dispose();
 			}
 		}
@@ -222,7 +223,10 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 							lexicon.Dispose();
 						m_lexiconCache.Clear();
 						foreach (FdoCache fdoCache in m_fdoCacheCache)
+						{
+							fdoCache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
 							fdoCache.Dispose();
+						}
 						m_fdoCacheCache.Clear();
 					}
 				}

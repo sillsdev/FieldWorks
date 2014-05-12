@@ -493,7 +493,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			m_lexicon.AddLexeme(lexemePre);
 			Lexeme lexemeSuf = m_lexicon.CreateLexeme(LexemeType.Suffix, "suf");
 			m_lexicon.AddLexeme(lexemeSuf);
-			m_lexicon.AddWordAnalysis("preasuf", m_lexicon.CreateWordAnalysis(new[] { lexemePre, lexemeA, lexemeSuf }));
+			m_lexicon.AddWordAnalysis(m_lexicon.CreateWordAnalysis("preasuf", new[] { lexemePre, lexemeA, lexemeSuf }));
 			matchingLexemes = m_lexicon.FindMatchingLexemes("preasuf").ToArray();
 			Assert.That(matchingLexemes.Length, Is.EqualTo(3));
 			Assert.IsTrue(matchingLexemes.Contains(lexemePre));
