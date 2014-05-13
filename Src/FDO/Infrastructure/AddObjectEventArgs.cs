@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace SIL.FieldWorks.FDO.Infrastructure
 {
@@ -15,7 +12,15 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 	/// </summary>
 	class AddObjectEventArgs
 	{
-		private int m_index;
+		private readonly int m_index;
+
+		/// <summary>
+		///  Construct one. For the index, pass -1 for a collection and -2 for atomic.
+		/// </summary>
+		internal AddObjectEventArgs(ICmObject newby, int flid, int index, ICmObject previousOwner) : this(newby, flid, index)
+		{
+			PreviousOwner = previousOwner;
+		}
 
 		/// <summary>
 		///  Construct one. For the index, pass -1 for a collection and -2 for atomic.
@@ -58,5 +63,11 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 		{
 			get { return m_index >= 0; }
 		}
+
+		/// <summary>
+		/// The previous owner of the object being added. Or null if irrelevant.
+		/// Do not trust that null means there was no previous owner as this is not always set.
+		/// </summary>
+		public ICmObject PreviousOwner { get; internal set; }
 	}
 }

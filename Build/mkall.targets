@@ -410,6 +410,8 @@
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<Copy SourceFiles="$(fwrt)/DistFiles/Patr100.dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+		<Copy SourceFiles="$(fwrt)/DistFiles/Commons.Xml.Relaxng.dll" DestinationFolder="$(dir-outputBase)"
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<!-- Needed for Flex to access projects from Paratext in the text chooser dialog. -->
 		<Copy SourceFiles="$(fwrt)/DistFiles/Utilities.dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
@@ -422,6 +424,15 @@
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<Copy SourceFiles="$(fwrt)/DistFiles/icu.net.dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+		<!-- Paratext dlls (ParatextShared.dll and Utilities.dll copy automatically during build) -->
+		<Copy SourceFiles="$(fwrt)/DistFiles/FormattedEditor.dll" DestinationFolder="$(dir-outputBase)"
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="$(fwrt)/DistFiles/HelpSystem.dll" DestinationFolder="$(dir-outputBase)"
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="$(fwrt)/DistFiles/HtmlEditor.dll" DestinationFolder="$(dir-outputBase)"
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="$(fwrt)/DistFiles/NetLoc.dll" DestinationFolder="$(dir-outputBase)"
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 		<!-- Hunspell dlls -->
 		<Copy SourceFiles="$(fwrt)/DistFiles/Windows/libhunspell.dll" DestinationFolder="$(dir-outputBase)"
 					SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>

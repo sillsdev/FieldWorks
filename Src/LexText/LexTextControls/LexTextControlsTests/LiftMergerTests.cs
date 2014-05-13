@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
 using Palaso.Lift.Parsing;
+using Palaso.TestUtilities;
 using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -1903,6 +1904,80 @@ namespace LexTextControlsTests
 			VerifyCmPossibilityCustomFields(entry);
 
 			VerifyCmPossibilityCustomFieldsData(entry);
+		}
+
+		private static readonly string[] s_inflectionLiftData = new[]
+		{
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+			"<lift producer=\"SIL.FLEx 7.3.2.41302\" version=\"0.13\">",
+			"<header>",
+			"<fields/>",
+			"</header>",
+			"<entry dateCreated=\"2013-01-29T08:53:26Z\" dateModified=\"2013-01-29T08:10:28Z\" id=\"baba_aef5e807-c841-4f35-9591-c8a998dc2465\" guid=\"aef5e807-c841-4f35-9591-c8a998dc2465\">",
+			"<lexical-unit>",
+			"<form lang=\"fr\"><text>baba baba</text></form>",
+			"</lexical-unit>",
+			"<sense id=\"$guid2\" dateCreated=\"2013-01-29T08:55:26Z\" dateModified=\"2013-01-29T08:15:28Z\">",
+			"<gloss lang=\"en\"><text>dad</text></gloss>",
+			"</sense>",
+			"</entry>",
+			"</lift>"
+		};
+
+		private static readonly string[] s_inflectionLiftRangeData = new[]
+		{
+		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+		"<!-- See http://code.google.com/p/lift-standard for more information on the format used here. -->",
+		"<lift-ranges>",
+		"<range id='inflection-feature'>",
+		@"<range-element guid=""21fb4fd5-278c-4530-b1ac-2755ced5b278"" id=""NounAgr"">",
+		@"<label>",
+		@"<form lang=""en""><text>noun agreement</text></form><form	lang=""pt""><text>concordancia nominal</text></form>",
+		@"</label>",
+		@"<abbrev><form lang=""en""><text>NounAgr</text></form><form lang=""pt""><text>NounAgr</text></form></abbrev>",
+		@"<trait	name=""catalog-source-id""	value=""cNounAgr""/>",
+		@"<trait	name=""display-to-right"" value=""False"" />",
+		@"<trait name=""show-in-gloss"" value=""False"" />",
+		@"<trait	name=""feature-definition-type"" value=""complex"" />",
+		@"</range-element>",
+		"</range>",
+		"</lift-ranges>"
+		};
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// LIFT Import:  test import of Custom Lists from the Ranges file.
+		/// Also test the import of field definitions for custom fields
+		/// which contain CmPossibility list data and verify that the data is correct too.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void TestLiftImport_InflectionFieldRangeDoesNotCauseError()
+		{
+			SetWritingSystems("fr");
+
+			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
+			Assert.AreEqual(0, repoEntry.Count);
+			Assert.AreEqual(0, repoSense.Count);
+
+			//Creat the LIFT data file
+			var sOrigFile = CreateInputFile(s_inflectionLiftData);
+			//Create the LIFT ranges file
+			var sOrigRangesFile = CreateInputRangesFile(s_inflectionLiftRangeData);
+
+			var logFile = TryImportWithRanges(sOrigFile, sOrigRangesFile, 1);
+//			VerifyListItem(Cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>());
+			File.Delete(sOrigFile);
+			File.Delete(sOrigRangesFile);
+			//Verify that no errors were encountered loading the inflection features range
+			AssertThatXmlIn.File(logFile).HasNoMatchForXpath("//*[contains(., 'Error encountered processing ranges')]");
+			File.Delete(logFile);
+			Assert.AreEqual(1, repoEntry.Count);
+			Assert.AreEqual(1, repoSense.Count);
+
+			ILexEntry entry;
+			Assert.IsTrue(repoEntry.TryGetObject(new Guid("aef5e807-c841-4f35-9591-c8a998dc2465"), out entry));
 		}
 
 		private void VerifyCmPossibilityLists()

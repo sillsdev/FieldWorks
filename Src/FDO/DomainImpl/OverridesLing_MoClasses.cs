@@ -172,27 +172,33 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				if (!base.CanDelete)
-					return false;
-				var servLoc = m_cache.ServiceLocator;
-				// If any surviving senses (which must belong to the same entry) refer to it, we can't delete it.
-				if (((ILexEntry)Owner).AllSenses.Where(
-					sense => sense.MorphoSyntaxAnalysisRA == this).FirstOrDefault() != null)
-				{
-					return false;
-				}
-				var morphBundleCount = (servLoc.GetInstance<IWfiMorphBundleRepository>().AllInstances().Where(mb => mb.MsaRA == this)).Count();
-				if (morphBundleCount > 0) return false;
-				var allMoMorphAdhocProhib = servLoc.GetInstance<IMoMorphAdhocProhibRepository>().AllInstances();
-				var mapCount = (allMoMorphAdhocProhib.Where(map => map.FirstMorphemeRA == this
-																   || map.MorphemesRS.Contains(this)
-																   || map.RestOfMorphsRS.Contains(this))).Count();
-				if (mapCount > 0) return false;
-
-				var msaCount = (servLoc.GetInstance<IMoMorphSynAnalysisRepository>().AllInstances().Where(
-					msa => msa.ComponentsRS.Contains(this))).Count();
-				return msaCount < 1;
+				return CanDeleteIfSenseDeleted(null);
 			}
+		}
+
+		/// <summary>
+		/// Gets delete status for the object.
+		/// True means it can be deleted if the given sense is deleted first, otherwise false.
+		/// </summary>
+		public bool CanDeleteIfSenseDeleted(ILexSense senseToDelete)
+		{
+			if (!base.CanDelete)
+				return false;
+			var servLoc = m_cache.ServiceLocator;
+			// If any surviving senses (which must belong to the same entry) refer to it, we can't delete it.
+			if (((ILexEntry) Owner).AllSenses.FirstOrDefault(
+				s => s.MorphoSyntaxAnalysisRA == this && (senseToDelete == null || s != senseToDelete)) != null)
+			{
+				return false;
+			}
+			var allMoMorphAdhocProhib = servLoc.GetInstance<IMoMorphAdhocProhibRepository>().AllInstances();
+			var mapCount = (allMoMorphAdhocProhib.Where(map => map.FirstMorphemeRA == this
+															   || map.MorphemesRS.Contains(this)
+															   || map.RestOfMorphsRS.Contains(this))).Count();
+			if (mapCount > 0) return false;
+
+			int msaCount = servLoc.GetInstance<IMoMorphSynAnalysisRepository>().AllInstances().Count(msa => msa.ComponentsRS.Contains(this));
+			return msaCount < 1;
 		}
 
 		/// <summary>

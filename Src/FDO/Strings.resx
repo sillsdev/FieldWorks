@@ -277,6 +277,9 @@
   <data name="ksIsUsedOnceInAnalyses" xml:space="preserve">
     <value>{0}. Is being used 1 time in analyses.</value>
   </data>
+  <data name="ksIsUsedOnceInTexts" xml:space="preserve">
+    <value>{0}. Is being used 1 time in your texts.</value>
+  </data>
   <data name="ksIsUsedXTimesByAlloAdhoc" xml:space="preserve">
     <value>{0}. Is being used {1} times by{2}    allomorph adhoc co-prohibitions.</value>
     <comment>{2} is a line separator character.  it is optional.</comment>
@@ -311,6 +314,9 @@
   </data>
   <data name="ksIsUsedXTimesInAnalyses" xml:space="preserve">
     <value>{0}. Is being used {1} times in analyses.</value>
+  </data>
+  <data name="ksIsUsedXTimesInTexts" xml:space="preserve">
+    <value>{0}. Is being used {1} times in your texts.</value>
   </data>
   <data name="ksLexRefUsedHere" xml:space="preserve">
     <value>The lexical reference type is used in this context:</value>
@@ -374,6 +380,9 @@
   </data>
   <data name="ksSenseUsedHere" xml:space="preserve">
     <value>The sense is being used in these contexts:</value>
+  </data>
+  <data name="ksMsaWhichWouldBeDeletedUsedHere" xml:space="preserve">
+    <value>The Grammatical Info. (which will also be deleted) is being used in these contexts:</value>
   </data>
   <data name="ksStars" xml:space="preserve">
     <value>***</value>

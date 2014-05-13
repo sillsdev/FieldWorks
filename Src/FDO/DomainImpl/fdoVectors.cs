@@ -2054,6 +2054,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						// The purpose of this is to allow the removal of a chart cell part to
 						// cause the deletion of the row if it's empty after a MoveTo().
 						removeEventArgs = new RemoveObjectEventArgs(obj, Flid, obj.IndexInOwner, false, true);
+						eventArgs.PreviousOwner = obj.Owner;
 					}
 				}
 				((ICmObjectInternal)obj).SetOwner(MainObject, Flid, eventArgs.Index);

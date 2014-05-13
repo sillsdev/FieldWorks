@@ -28,7 +28,10 @@ word/item
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 -->
 	<xsl:template match="word/item">
-		<xsl:copy-of select="."/>
+		<item type="{@type}">
+			<xsl:call-template name="GetWordLangAttribute"/>
+			<xsl:apply-templates/>
+		</item>
 	</xsl:template>
 	<!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -47,7 +50,8 @@ morph/item
 -->
 	<xsl:template match="morph/item[@type!='cf' and @type!='hn' and @type!='variantTypes']">
 		<item>
-			<xsl:copy-of select="@*"/>
+			<xsl:copy-of select="@*[name()!='lang']"/>
+			<xsl:call-template name="GetMorphLangAttribute"/>
 			<xsl:apply-templates/>
 		</item>
 	</xsl:template>
@@ -58,7 +62,8 @@ morph/item
 	-->
 	<xsl:template match="morph/item[@type='gls']">
 		<item>
-			<xsl:copy-of select="@*"/>
+			<xsl:copy-of select="@*[name()!='lang']"/>
+			<xsl:call-template name="GetMorphLangAttribute"/>
 			<xsl:apply-templates/>
 			<xsl:apply-templates select="following-sibling::item[@type='glsAppend']" mode="glsAppend"/>
 		</item>
@@ -90,7 +95,8 @@ morph/item[@type='cf']
 -->
 	<xsl:template match="morph/item[@type='cf']">
 		<item>
-			<xsl:copy-of select="@*"/>
+			<xsl:copy-of select="@*[name()!='lang']"/>
+			<xsl:call-template name="GetMorphLangAttribute"/>
 			<xsl:apply-templates/>
 			<xsl:variable name="homographNumber" select="following-sibling::item[@type='hn']"/>
 			<xsl:if test="$homographNumber">

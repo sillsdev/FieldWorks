@@ -332,28 +332,18 @@ namespace SIL.FieldWorks.IText
 							else if (newText == null)
 							{
 								newText = m_cache.ServiceLocator.GetInstance<ITextFactory>().Create(m_cache, new Guid(interlineartext.guid));
-								//must be added for the cache to be initialized which is necessary for its population
-								// GJM 30 May 2012: No longer true as Texts are unowned
-								//langProject.TextsOC.Add(newText);
 								continueMerge = PopulateTextIfPossible(options, ref newText, interlineartext, progress, version);
 							}
 							else //user said do not merge.
 							{
-								//ignore the Guid, we shouldn't have two texts with the same guid
+								//ignore the Guid; we shouldn't create another text with the same guid
 								newText = m_cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-								//must be added for the cache to be initialized which is necessary for its population
-								// GJM 30 May 2012: No longer true as Texts are unowned
-								//langProject.TextsOC.Add(newText);
 								continueMerge = PopulateTextIfPossible(options, ref newText, interlineartext, progress, version);
 							}
 						}
 						else
 						{
 							newText = m_cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-							//must be added for the cache to be initialized which is necessary for its population
-							//must be added for the cache to be initialized which is necessary for its population
-							// GJM 30 May 2012: No longer true as Texts are unowned
-							//langProject.TextsOC.Add(newText);
 							continueMerge = PopulateTextIfPossible(options, ref newText, interlineartext, progress, version);
 						}
 						if (!continueMerge)

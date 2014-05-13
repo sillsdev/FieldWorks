@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using FwRemoteDatabaseConnector;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -56,8 +57,8 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		/// <summary>
 		/// Set up parameters for both source and target databases for use in PortAllBEPsTestsUsingAnAlreadyOpenedSource
 		/// </summary>
-		private readonly List<BackendStartupParameter> m_sourceInfo;
-		private readonly List<BackendStartupParameter> m_targetInfo;
+		private List<BackendStartupParameter> m_sourceInfo;
+		private List<BackendStartupParameter> m_targetInfo;
 
 		/// <summary>Database backends used for testing</summary>
 		public enum TestBackends
@@ -70,12 +71,12 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			Db4o
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="BEPPortTests"/> class.
+		/// Adds unique parameters prior to each test run. Should avoid any delayed file closes or deletes from one test causing
+		/// a subsequent test to fail.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public BEPPortTests()
+		[SetUp]
+		public void Setup()
 		{
 			var randomFileExtension = new Random((int)DateTime.Now.Ticks).Next(1000).ToString();
 			m_sourceInfo = new List<BackendStartupParameter>
@@ -170,13 +171,23 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		private static void DeleteDatabase(BackendStartupParameter backendParameters)
 		{
 			// db4o client/server has its own mechanism.
-			if (backendParameters.ProjectId.Type == FDOBackendProviderType.kDb4oClientServer)
+			if(backendParameters.ProjectId.Type == FDOBackendProviderType.kDb4oClientServer)
 				return;
 			string pathname = string.Empty;
-			if (backendParameters.ProjectId.Type != FDOBackendProviderType.kMemoryOnly)
+			if(backendParameters.ProjectId.Type != FDOBackendProviderType.kMemoryOnly)
 				pathname = backendParameters.ProjectId.Path;
-			if (backendParameters.ProjectId.Type != FDOBackendProviderType.kMemoryOnly && File.Exists(pathname))
+			if(backendParameters.ProjectId.Type != FDOBackendProviderType.kMemoryOnly &&
+			File.Exists(pathname))
+			{
 				File.Delete(pathname);
+				//The File.Delete command returns before the OS has actually removed the file,
+				//this causes re-creation of the file to fail intermittently so we'll wait a bit for it to be gone.
+				for(var i = 0; File.Exists(pathname) && i < 5; ++i)
+				{
+					Thread.Sleep(10);
+				}
+				Assert.That(!File.Exists(pathname), "Database file failed to be deleted.");
+			}
 		}
 
 		#endregion Non-test methods.

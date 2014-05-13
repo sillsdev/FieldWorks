@@ -72,27 +72,8 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 			}
 			RegistryHelper.ProductName = "FieldWorks";	// needed to access proper registry values
 
-			if (s_fMigrateChars || s_fAutoClose)
-			{
-				try
-				{
-					string location = Assembly.GetExecutingAssembly().Location;
-					string program = Path.Combine(Path.GetDirectoryName(location), "UnicodeCharEditor.exe");
-					using (Process proc = Process.Start(program, "-i"))
-					{
-						proc.WaitForExit();
-					}
-				}
-				catch (Exception e)
-				{
-					if (s_fDebug)
-					{
-						var msg = String.Format("Cannot migrate the custom character definitions:{1}{0}",
-							e.Message, Environment.NewLine);
-						MessageBox.Show(msg);
-					}
-				}
-			}
+			if (s_fMigrateChars && s_fDebug)
+				MessageBox.Show("Warning: MigrateSqlDbs called with no-longer valid argument, '-chars'. Run 'UnicodeCharEditor -i' instead.");
 
 			// TE-9422. If we had an older version of FW7 installed, ldml files are < verion 2, so will cause
 			// a crash if we don't migrate the files to version 2 before opening a project with the current version.

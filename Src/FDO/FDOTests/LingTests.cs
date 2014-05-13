@@ -1669,16 +1669,23 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 
 			var ws = Cache.DefaultVernWs;
 			le.CitationForm.set_String(ws, Cache.TsStrFactory.MakeString(cf, ws));
+			AddLexSense(le, defn, domain, null);
+			return le;
+		}
+
+		private ILexSense AddLexSense(ILexEntry le, string defn, ICmSemanticDomain domain, IMoMorphSynAnalysis msa)
+		{
+			var servLoc = Cache.ServiceLocator;
+			var ws = Cache.DefaultAnalWs;
 			var ls = servLoc.GetInstance<ILexSenseFactory>().Create();
 			le.SensesOS.Add(ls);
-			ws = Cache.DefaultAnalWs;
 			ls.Definition.set_String(ws, Cache.TsStrFactory.MakeString(defn, ws));
 			if (domain != null)
 				ls.SemanticDomainsRC.Add(domain);
-			var msa = servLoc.GetInstance<IMoStemMsaFactory>().Create();
-			le.MorphoSyntaxAnalysesOC.Add(msa);
-			ls.MorphoSyntaxAnalysisRA = msa;
-			return le;
+			var msaToAdd = msa ?? servLoc.GetInstance<IMoStemMsaFactory>().Create();
+			le.MorphoSyntaxAnalysesOC.Add(msaToAdd);
+			ls.MorphoSyntaxAnalysisRA = msaToAdd;
+			return ls;
 		}
 
 		/// <summary>
@@ -1695,6 +1702,68 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			Assert.AreEqual(0, le.MorphoSyntaxAnalysesOC.Count, "Msa not deleted.");
 			Assert.AreEqual((int)SpecialHVOValues.kHvoObjectDeleted, msa.Hvo, "Msa not with correct hvo.");
 		}
+
+		/// <summary>
+		/// Check that deleting one of two LexSenses for an entry also deletes any MSA
+		/// that was referred to only by that LexSense.
+		/// </summary>
+		[Test]
+		public void DeleteSecondLexSense()
+		{
+			var le = MakeLexEntry("xyzTest1", "xyzDefn1.1", null);
+			var ls2 = AddLexSense(le, "xyzDefn1.2", null, null);
+			Assert.AreEqual(2, le.SensesOS.Count, "Two Senses not created.");
+			Assert.AreEqual(2, le.MorphoSyntaxAnalysesOC.Count, "Two Msas not created.");
+			var msa2 = le.MorphoSyntaxAnalysesOC.ToArray()[1];
+			//SUT
+			le.SensesOS.Remove(ls2);
+			Assert.AreEqual(1, le.MorphoSyntaxAnalysesOC.Count, "Msa not deleted.");
+			Assert.AreEqual((int)SpecialHVOValues.kHvoObjectDeleted, msa2.Hvo, "Msa not with correct hvo.");
+		}
+
+		/// <summary>
+		/// Tests the method of the given name.
+		/// </summary>
+		[Test]
+		public void CanDeleteIfSenseDeleted()
+		{
+			var le = MakeLexEntry("xyzTest1", "xyzDefn1.1", null);
+			var ls = le.SensesOS[0];
+			var msa = le.MorphoSyntaxAnalysesOC.ToArray()[0];
+
+			Assert.IsFalse(msa.CanDelete);
+			Assert.IsTrue(msa.CanDeleteIfSenseDeleted(ls));
+
+			SetupWfiMorphBundle(le, ls);
+
+			Assert.IsFalse(msa.CanDelete);
+			Assert.IsTrue(msa.CanDeleteIfSenseDeleted(ls));
+
+			var ls2 = AddLexSense(le, "xyzDefn1.2", null, msa);
+
+			Assert.IsFalse(msa.CanDelete);
+			Assert.IsFalse(msa.CanDeleteIfSenseDeleted(ls));
+
+			le.SensesOS.Remove(ls2);
+
+			Assert.IsFalse(msa.CanDelete);
+			Assert.IsTrue(msa.CanDeleteIfSenseDeleted(ls));
+		}
+
+		private IWfiMorphBundle SetupWfiMorphBundle(ILexEntry le, ILexSense ls)
+		{
+			var servLoc = Cache.ServiceLocator;
+			var wf = servLoc.GetInstance<IWfiWordformFactory>().Create();
+			var anal = servLoc.GetInstance<IWfiAnalysisFactory>().Create();
+			wf.AnalysesOC.Add(anal);
+			var wmb = servLoc.GetInstance<IWfiMorphBundleFactory>().Create();
+			anal.MorphBundlesOS.Add(wmb);
+			wmb.MorphRA = le.LexemeFormOA;
+			wmb.MsaRA = ls.MorphoSyntaxAnalysisRA;
+			wmb.SenseRA = ls;
+			return wmb;
+		}
+
 		/// <summary>
 		/// Check that changing an MSA on the LexSense also deletes any MSA
 		/// that was referred to only by that LexSense.
@@ -1716,11 +1785,11 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 		}
 
 		/// <summary>
-		/// Check that deleting a WfiMorphBundle also deletes any MSA that was referred to only
-		/// by that WfiMorphBundle.
+		/// Check that deleting a Sense also deletes any MSA that was referred to only by that Sense.
+		/// Note that references in WfiMorphBundles will not prevent the MSA from being deleted (LT-14740).
 		/// </summary>
 		[Test]
-		public void DeleteWfiMorphBundle()
+		public void DeleteSenseWithMsaInMorphBundle()
 		{
 			var le = MakeLexEntry("xyzTest1", "xyzDefn1.1", null);
 			var ls = le.SensesOS[0];
@@ -1733,17 +1802,13 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			wf.AnalysesOC.Add(anal);
 			var wmb = servLoc.GetInstance<IWfiMorphBundleFactory>().Create();
 			anal.MorphBundlesOS.Add(wmb);
-			var bearNForm = servLoc.GetInstance<IMoStemAllomorphFactory>().Create();
-			le.AlternateFormsOS.Add(bearNForm);
-			wmb.MorphRA = bearNForm;
+			var allomorph = servLoc.GetInstance<IMoStemAllomorphFactory>().Create();
+			le.AlternateFormsOS.Add(allomorph);
+			wmb.MorphRA = allomorph;
 			wmb.MsaRA = ls.MorphoSyntaxAnalysisRA;
 
 			// Delete the LexSense
 			le.SensesOS.Remove(ls);
-			Assert.AreEqual(1, le.MorphoSyntaxAnalysesOC.Count);
-
-			// Delete the WfiMorphBundle
-			anal.MorphBundlesOS.Remove(wmb);
 			Assert.AreEqual(0, le.MorphoSyntaxAnalysesOC.Count);
 			Assert.AreEqual((int)SpecialHVOValues.kHvoObjectDeleted, oldMsa.Hvo, "Msa not with correct hvo.");
 		}
@@ -1776,13 +1841,14 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			le.MorphoSyntaxAnalysesOC.Add(msa);
 			// Change LexSense MSA to new MSA
 			ls.MorphoSyntaxAnalysisRA = msa;
-			Assert.AreEqual(2, le.MorphoSyntaxAnalysesOC.Count);
+			// Old MSA deleted because MorphBundle is the only remaining reference (besides the entry) - LT-14740
+			Assert.AreEqual(1, le.MorphoSyntaxAnalysesOC.Count);
+			Assert.AreEqual((int)SpecialHVOValues.kHvoObjectDeleted, oldMsa.Hvo, "Msa not with correct hvo.");
 
 			// Change Msa on WfiMorphBundle
 			wmb.MsaRA = ls.MorphoSyntaxAnalysisRA;
 			Assert.AreEqual(msa.Hvo, wmb.MsaRA.Hvo);
 			Assert.AreEqual(1, le.MorphoSyntaxAnalysesOC.Count);
-			Assert.AreEqual((int)SpecialHVOValues.kHvoObjectDeleted, oldMsa.Hvo, "Msa not with correct hvo.");
 		}
 
 		/// <summary>

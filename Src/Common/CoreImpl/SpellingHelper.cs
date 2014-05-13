@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
@@ -153,7 +154,7 @@ namespace SIL.CoreImpl
 				// Most likely, then, this file is actually a list of additions to the dictionary.
 				// Fortunately, we store exceptions the same way, except for file naming and location.
 				// So all we need do is fix the extension on the destination
-				Path.ChangeExtension(destPath, "exc");
+				GetExceptionFileName(destPath);
 			}
 			File.Copy(path, destPath, true);
 		}
@@ -200,9 +201,9 @@ namespace SIL.CoreImpl
 		{
 			SpellEngine result = null;
 			var rootDir = GetSpellingDirectoryPath();
-			var dictPath = Path.Combine(rootDir, Path.ChangeExtension(dictId, "dic"));
-			var affixPath = Path.Combine(rootDir, Path.ChangeExtension(dictId, "aff"));
-			var exceptionPath = Path.ChangeExtension(dictPath, "exc");
+			var dictPath = GetShortName(Path.Combine(rootDir, Path.ChangeExtension(dictId, "dic")));
+			var affixPath = GetShortName(Path.Combine(rootDir, Path.ChangeExtension(dictId, "aff")));
+			var exceptionPath = GetExceptionFileName(dictPath);
 			if (File.Exists(dictPath) && File.Exists(affixPath))
 			{
 				try
@@ -290,11 +291,51 @@ namespace SIL.CoreImpl
 			if (!Directory.Exists(dirPath))
 				Directory.CreateDirectory(dirPath);
 			string dicPath = GetDicPath(dirPath, dictId);
+			// if the dictionary already exists, and it is not vernacular, return rather than wiping it.
+			if(File.Exists(dicPath))
+			{
+				var dict = GetSpellChecker(dictId);
+				if(dict != null && !dict.IsVernacular)
+					return;
+			}
 			InitDictionary(dicPath, new string[0]);
+		}
+
+#if !__MonoCS__
+		[DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+		static extern uint GetShortPathName(string lpszLongPath, char[] lpszShortPath, int cchBuffer);
+#endif
+
+		private static string GetShortName(string input)
+		{
+#if __MonoCS__
+			return input;
+#else
+			if (!File.Exists(input))
+				return input; // can only convert real files, hope for the best on others.
+			char[] buffer = new char[270];
+			uint chars = GetShortPathName(input, buffer, 270);
+			return new string(buffer).Substring(0, (int) chars);
+#endif
+		}
+
+		/// <summary>
+		/// The file name where we store exceptions is unfortunately the short-file-name version of the dictionary.
+		/// We can't easily change this, so that is what we have to deal with any time we care about it.
+		/// </summary>
+		/// <param name="dictFileName"></param>
+		/// <returns></returns>
+		public static string GetExceptionFileName(string dictFileName)
+		{
+			// The order here is important. Since the exception file might not exist, we need to get the short name of
+			// the dictionary itself, which hopefully does, and change its extension. Changing the extension first
+			// will produce the name of a possibly non-existent file, for which we can't get a short name.
+			return Path.ChangeExtension(GetShortName(dictFileName), ".exc");
 		}
 
 		private static void InitDictionary(string dicPath, IEnumerable<string> words)
 		{
+
 			var affixFile = Path.ChangeExtension(dicPath, ".aff");
 			if(!File.Exists(affixFile))
 			{
@@ -396,8 +437,11 @@ namespace SIL.CoreImpl
 			var dict = GetSpellChecker(id);
 			if (dict != null)
 			{
-				if (!dict.IsVernacular)
-					throw new ArgumentException("Only vernacular dictionaries can be reset", "id");
+				if(!dict.IsVernacular)
+				{
+					// If the discovered dictionary is not one of our vernaculars we will not reset it or crash (LT-15285)
+					return;
+				}
 				foreach (var kvp in m_spellers.ToList())
 				{
 					if (kvp.Value == dict)
@@ -408,7 +452,7 @@ namespace SIL.CoreImpl
 			var sorted = new List<string>(words);
 			sorted.Sort((x, y) => string.Compare(x, y, StringComparison.Ordinal));
 			var dicPath = GetDicPath(GetSpellingDirectoryPath(), id);
-			File.Delete(Path.ChangeExtension(dicPath, "exc")); // get rid of any obsolete exceptions
+			File.Delete(GetExceptionFileName(dicPath)); // get rid of any obsolete exceptions
 			InitDictionary(dicPath, sorted);
 			m_spellers.Remove(id); // make a new one when next asked.
 		}

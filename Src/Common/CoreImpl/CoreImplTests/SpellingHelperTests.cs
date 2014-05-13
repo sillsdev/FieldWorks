@@ -90,14 +90,62 @@ namespace SIL.CoreImpl
 
 		private static string MakeEmptyFooDictionary()
 		{
+			return MakeEmptyDictionary("foo");
+		}
+
+		private static string MakeEmptyDictionary(string dictId)
+		{
 			Directory.CreateDirectory(SpellingHelper.GetSpellingDirectoryPath());
-			var dictId = "foo";
 			var filePath = SpellingHelper.GetDicPath(SpellingHelper.GetSpellingDirectoryPath(), dictId);
+			// We must delete this FIRST, because we can't get the correct name for the affix file once we delete the main dictionary one.
+			File.Delete(SpellingHelper.GetExceptionFileName(filePath));
 			File.Delete(filePath);
 			File.Delete(Path.ChangeExtension(filePath, ".aff"));
-			File.Delete(Path.ChangeExtension(filePath, ".exc"));
 			SpellingHelper.EnsureDictionary(dictId);
 			return dictId;
+		}
+
+		/// <summary>
+		/// Check that non-ascii text in path to dictionary works.
+		/// </summary>
+		[Test]
+		public void DictionaryCanHaveNonAsciId()
+		{
+			var dictId = MakeEmptyDictionary("ab\x1234\x3456");
+			var dict = SpellingHelper.GetSpellChecker(dictId);
+			Assert.That(dict.Check("nonsense"), Is.False);
+			Assert.That(dict.Check("big"), Is.False);
+			dict.SetStatus("big", true);
+			Assert.That(dict.Check("big"), Is.True);
+		}
+
+		/// <summary>
+		/// Verify that we do not arbitrarily wipe out existing non-FLEx generated dictionaries
+		/// </summary>
+		[Test]
+		public void EnsureDictionaryDoesNotOverwriteNonVernacularDictionary()
+		{
+			const string dictId = "nonvern";
+			const string testWord = "testWord";
+
+			Directory.CreateDirectory(SpellingHelper.GetSpellingDirectoryPath());
+			var filePath = SpellingHelper.GetDicPath(SpellingHelper.GetSpellingDirectoryPath(), dictId);
+			// Wipe out any files related to our fake test dictionary
+			File.Delete(SpellingHelper.GetExceptionFileName(filePath));
+			File.Delete(filePath);
+			File.Delete(Path.ChangeExtension(filePath, ".aff"));
+
+			//build new fake test dictionary that is not vernacular
+			var nonverndict = @"10" + Environment.NewLine + testWord + Environment.NewLine;
+			var nonvernaff = @"SET UTF-8" + Environment.NewLine + "KEEPCASE C" + Environment.NewLine;
+			File.WriteAllText(filePath, nonverndict);
+			File.WriteAllText(Path.ChangeExtension(filePath, ".aff"), nonvernaff);
+			//SUT
+			SpellingHelper.EnsureDictionary(dictId);
+			//read back the hopefully unaffected dictionary
+			var contents = File.ReadAllText(filePath);
+			Assert.That(contents, Is.Not.StringContaining(SpellingHelper.PrototypeWord));
+			Assert.That(contents, Contains.Substring(testWord));
 		}
 
 		/// <summary>
@@ -149,6 +197,7 @@ namespace SIL.CoreImpl
 			using (var writer = FileUtils.OpenFileForWrite(filePath, Encoding.UTF8))
 			{
 				writer.WriteLine("10");
+				writer.WriteLine("blah");
 			}
 		}
 
@@ -179,10 +228,16 @@ namespace SIL.CoreImpl
 		/// Check that we don't 'reset' (overwrite) dictionaries we didn't make
 		/// </summary>
 		[Test]
-		public void ResetDictionary_ThrowsForNonPrivateDictionary()
+		public void ResetDictionary_AddsNoWordsToNonPrivate()
 		{
 			MakeNonPrivateBlahDictionary();
-			Assert.Throws<ArgumentException>(() => SpellingHelper.ResetDictionary("blah", new[] {"hello", "world"}));
+			SpellingHelper.ResetDictionary("blah", new[] { "hello", "world" });
+			var filePath = SpellingHelper.GetDicPath(SpellingHelper.GetSpellingDirectoryPath(), "blah");
+			var contents = File.ReadAllText(filePath);
+			Assert.That(contents, Is.Not.StringContaining(SpellingHelper.PrototypeWord));
+			Assert.That(contents, Is.Not.StringContaining("hello"));
+			Assert.That(contents, Is.Not.StringContaining("world"));
+			Assert.That(contents, Contains.Substring("blah"));
 		}
 
 		/// <summary>

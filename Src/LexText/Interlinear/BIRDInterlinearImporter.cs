@@ -74,13 +74,13 @@ namespace SIL.FieldWorks.IText
 				s_importOptions.CheckAndAddLanguages = CheckAndAddLanguagesInternal;
 
 			ILgWritingSystemFactory wsFactory = cache.WritingSystemFactory;
-			char space = ' ';
+			const char space = ' ';
 			//handle the languages(writing systems) section alerting the user if new writing systems are encountered
 			if (!s_importOptions.CheckAndAddLanguages(cache, interlinText, wsFactory, progress))
 				return false;
 
 			//handle the header(info or meta) information
-			SetTextMetaAndMedia(cache, interlinText, wsFactory, newText);
+			SetTextMetaAndMergeMedia(cache, interlinText, wsFactory, newText, false);
 
 			//create all the paragraphs
 			foreach (var paragraph in interlinText.paragraphs)
@@ -103,7 +103,7 @@ namespace SIL.FieldWorks.IText
 					{
 						if (cache.ServiceLocator.ObjectRepository.TryGetObject(new Guid(phrase.guid), out oldSegment))
 						{
-							//We aren't merging, but we have this guid in our system, ignore the file Guid
+							//We aren't merging, but we have this guid in our system; ignore the file Guid
 							oldSegment = cache.ServiceLocator.GetInstance<ISegmentFactory>().Create(newTextPara, offset);
 						}
 						else
@@ -200,9 +200,8 @@ namespace SIL.FieldWorks.IText
 				return false;
 
 			//handle the header(info or meta) information as well as any media-files sections
-			SetTextMetaAndMedia(cache, interlinText, wsFactory, newText);
+			SetTextMetaAndMergeMedia(cache, interlinText, wsFactory, newText, true);
 
-			IStText oldContents = newText.ContentsOA;
 			IStText newContents = null;
 			//create all the paragraphs NOTE: Currently the paragraph guids are being ignored, this might be wrong.
 			foreach (var paragraph in interlinText.paragraphs)
@@ -625,9 +624,7 @@ namespace SIL.FieldWorks.IText
 		private static ILgWritingSystem SafelyGetWritingSystem(FdoCache cache, ILgWritingSystemFactory wsFactory,
 			Language lang, out bool fIsVernacular)
 		{
-			fIsVernacular = false;
-			if (lang.vernacularSpecified && lang.vernacular)
-				fIsVernacular = true;
+			fIsVernacular = lang.vernacularSpecified && lang.vernacular;
 			ILgWritingSystem writingSystem = null;
 			try
 			{
@@ -805,16 +802,14 @@ namespace SIL.FieldWorks.IText
 							// create a new WfiAnalysis to store a new gloss
 							analysisTree = WordAnalysisOrGlossServices.CreateNewAnalysisTreeGloss(wfiWord);
 						}
-						else
-						{
-							// reuse the same analysisTree for setting a gloss alternative
-						}
+						// else, reuse the same analysisTree for setting a gloss alternative
+
 						analysisTree.Gloss.Form.set_String(wsNewGloss, wordGlossItem.Value);
 						// Make sure this analysis is marked as user-approved (green check mark)
 						cache.LangProject.DefaultUserAgent.SetEvaluation(analysisTree.WfiAnalysis, Opinions.approves);
 						// Create a morpheme form that matches the wordform.
 						var morphemeBundle = cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>().Create();
-						var wordItem = word.Items.Select(i => i).Where(i => i.type == "txt").First();
+						var wordItem = word.Items.Select(i => i).First(i => i.type == "txt");
 						int wsWord = GetWsEngine(wsFact, wordItem.lang).Handle;
 						analysisTree.WfiAnalysis.MorphBundlesOS.Add(morphemeBundle);
 						morphemeBundle.Form.set_String(wsWord, wordItem.Value);
@@ -825,7 +820,17 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		private static void SetTextMetaAndMedia(FdoCache cache, Interlineartext interlinText, ILgWritingSystemFactory wsFactory, FDO.IText newText)
+		/// <summary>
+		/// Set text metadata, create or merge media file URI's.
+		/// <note>media files (ELAN initiated) need to be processed before the paragraphs, as segments could reference these parts.</note>
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="interlinText">The source text</param>
+		/// <param name="wsFactory"></param>
+		/// <param name="newText">The target text</param>
+		/// <param name="merging">True if we are merging into an existing text; False if we are creating everything new</param>
+		private static void SetTextMetaAndMergeMedia(FdoCache cache, Interlineartext interlinText, ILgWritingSystemFactory wsFactory,
+			FDO.IText newText, bool merging)
 		{
 			if (interlinText.Items != null) // apparently it is null if there are no items.
 			{
@@ -849,16 +854,36 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 
-			//handle media files section (ELAN initiated) needs to be processed before the paragraphs as segmenets could reference
-			//these parts.
 			if (interlinText.mediafiles != null)
 			{
-				var mediaFiles = newText.MediaFilesOA = cache.ServiceLocator.GetInstance<ICmMediaContainerFactory>().Create();
-				mediaFiles.OffsetType = interlinText.mediafiles.offsetType;
+				if (newText.MediaFilesOA == null)
+					newText.MediaFilesOA = cache.ServiceLocator.GetInstance<ICmMediaContainerFactory>().Create();
+				newText.MediaFilesOA.OffsetType = interlinText.mediafiles.offsetType;
+
 				foreach (var mediaFile in interlinText.mediafiles.media)
 				{
-					var media = cache.ServiceLocator.GetInstance<ICmMediaURIFactory>().Create(cache, new Guid(mediaFile.guid));
-					mediaFiles.MediaURIsOC.Add(media);
+					ICmObject extantObject;
+					cache.ServiceLocator.ObjectRepository.TryGetObject(new Guid(mediaFile.guid), out extantObject);
+					var media = extantObject as ICmMediaURI;
+					if (media == null)
+					{
+						media = cache.ServiceLocator.GetInstance<ICmMediaURIFactory>().Create(cache, new Guid(mediaFile.guid));
+						newText.MediaFilesOA.MediaURIsOC.Add(media);
+					}
+					else if (!merging)
+					{
+						// If a media URI with the same GUID exists, and we are not merging, create a new media URI with a new GUID
+						media = cache.ServiceLocator.GetInstance<ICmMediaURIFactory>().Create();
+						newText.MediaFilesOA.MediaURIsOC.Add(media);
+
+						// Update references to this Media URI
+						foreach (var phrase in interlinText.paragraphs.SelectMany(para => para.phrases))
+						{
+							if (mediaFile.guid.Equals(phrase.mediaFile))
+								phrase.mediaFile = media.Guid.ToString();
+						}
+					}
+					// else, the media URI already exists and we are merging; simply update the location
 					media.MediaURI = mediaFile.location;
 				}
 			}

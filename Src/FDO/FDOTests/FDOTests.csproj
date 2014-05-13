@@ -456,6 +456,7 @@
     <None Include="BackupRestore\LinkedFilesTestProject\WritingSystemStore\id.ldml" />
     <None Include="BackupRestore\RestoreProjectPresenterTests\RestoreProjectPresenterTests.fwbackup" />
     <None Include="BackupRestore\RestoreServiceTestsZipFileDir\TestRestoreFWProject.fwbackup" />
+    <None Include="TestData\ClosingTagSpansBuffer.fwdata" />
     <None Include="TestData\CorruptedXMLFileTest.fwdata" />
     <None Include="TestData\DataMigration7000010Tests.xml" />
     <None Include="TestData\DataMigration7000008Tests.xml" />

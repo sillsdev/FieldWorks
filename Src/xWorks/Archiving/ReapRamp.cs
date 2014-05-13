@@ -94,7 +94,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 					uiLocale,
 					localizationMgrId, viProvider.ProductName, viProvider.NumericAppVersion,
 					FwDirectoryFinder.GetCodeSubDirectory("ArchivingLocalizations"),
-					DirectoryFinder.CommonAppDataFolder(appName),
+					Path.Combine(Application.CompanyName, appName),
 					localizationDialogIcon, "FLExDevteam@sil.org", "SIL.Archiving");
 			}
 			else
@@ -243,7 +243,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 				datasetExtent.AppendLineFormat("{0} Text{1}", new object[] { cTexts, (cTexts == 1) ? "" : "s" }, delimiter);
 
 			if (datasetExtent.Length > 0)
-				model.SetDatasetExtent(datasetExtent.ToString() + ".");
+				model.SetDatasetExtent(datasetExtent + ".");
 		}
 
 		/// ------------------------------------------------------------------------------------

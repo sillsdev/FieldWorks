@@ -1311,7 +1311,7 @@ namespace SIL.FieldWorks.IText
 
 						// Get the real Sense that supplies the gloss, if any.
 						var senseReal = mb.SenseRA;
-						if (senseReal == null)
+						if (senseReal == null && UsingGuess)
 						{
 							// Guess a default
 							senseReal = mb.DefaultSense;
