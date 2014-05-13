@@ -24,6 +24,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		private readonly FdoCacheCollection m_fdoCacheCache;
 		private readonly object m_syncRoot;
 		private ActivationContextHelper m_activationContext;
+		private readonly ParatextLexiconPluginFdoUI m_ui;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="FwLexiconPlugin"/> class.
@@ -36,9 +37,9 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			m_activationContext = new ActivationContextHelper("FwParatextLexiconPlugin.dll.manifest");
 
 			// initialize client-server services to use Db4O backend for FDO
-			var ui = ParatextLexiconPluginFdoUI.Instance;
+			m_ui = new ParatextLexiconPluginFdoUI(m_activationContext);
 			var dirs = ParatextLexiconPluginDirectoryFinder.FdoDirectories;
-			ClientServerServices.SetCurrentToDb4OBackend(ui, dirs,
+			ClientServerServices.SetCurrentToDb4OBackend(m_ui, dirs,
 				() => dirs.ProjectsDirectory == ParatextLexiconPluginDirectoryFinder.ProjectsDirectoryLocalMachine);
 		}
 
@@ -75,7 +76,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		public bool ChooseLexicalProject(out string projectId)
 		{
 			using (m_activationContext.Activate())
-			using (var dialog = new ChooseFdoProjectForm())
+			using (var dialog = new ChooseFdoProjectForm(m_ui))
 			{
 				if (dialog.ShowDialog() == DialogResult.OK)
 				{
@@ -169,7 +170,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 						throw new LexiconUnavailableException("The associated Fieldworks project has been moved, renamed, or does not exist.");
 				}
 
-				var progress = new ParatextLexiconPluginThreadedProgress(ParatextLexiconPluginFdoUI.Instance.SynchronizeInvoke) { IsIndeterminate = true, Title = string.Format("Opening {0}", projectId) };
+				var progress = new ParatextLexiconPluginThreadedProgress(m_ui.SynchronizeInvoke) { IsIndeterminate = true, Title = string.Format("Opening {0}", projectId) };
 				fdoCache = (FdoCache) progress.RunTask(CreateFdoCache, new ParatextLexiconPluginProjectID(backendProviderType, path));
 
 				m_fdoCacheCache.Add(fdoCache);
@@ -177,12 +178,12 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			return fdoCache;
 		}
 
-		private static FdoCache CreateFdoCache(IThreadedProgress progress, object[] parameters)
+		private FdoCache CreateFdoCache(IThreadedProgress progress, object[] parameters)
 		{
 			var projectId = (ParatextLexiconPluginProjectID) parameters[0];
 			try
 			{
-				return FdoCache.CreateCacheFromExistingData(projectId, Thread.CurrentThread.CurrentUICulture.Name, ParatextLexiconPluginFdoUI.Instance, ParatextLexiconPluginDirectoryFinder.FdoDirectories, progress, true);
+				return FdoCache.CreateCacheFromExistingData(projectId, Thread.CurrentThread.CurrentUICulture.Name, m_ui, ParatextLexiconPluginDirectoryFinder.FdoDirectories, progress, true);
 			}
 			catch (FdoDataMigrationForbiddenException)
 			{

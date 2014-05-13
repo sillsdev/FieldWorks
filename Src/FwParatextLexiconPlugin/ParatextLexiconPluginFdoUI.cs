@@ -1,25 +1,29 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
 	internal class ParatextLexiconPluginFdoUI : IFdoUI
 	{
-		// Singleton
-		private static readonly ParatextLexiconPluginFdoUI s_instance = new ParatextLexiconPluginFdoUI();
-		private ParatextLexiconPluginFdoUI(){}
-		public static ParatextLexiconPluginFdoUI Instance
+		private readonly SynchronizeInvokeWrapper m_synchronizeInvoke;
+		private readonly UserActivityMonitor m_activityMonitor;
+
+		public ParatextLexiconPluginFdoUI(ActivationContextHelper activationContext)
 		{
-			get { return s_instance; }
+			m_synchronizeInvoke = new SynchronizeInvokeWrapper(activationContext);
+			m_activityMonitor = new UserActivityMonitor();
+			m_activityMonitor.StartMonitoring();
 		}
 
 		public bool ConflictingSave()
 		{
-			SynchronizeInvoke.Invoke(new Action(() => MessageBox.Show(Strings.ksConflictingSaveText,
-				Strings.ksConflictingSaveCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning)), null);
+			SynchronizeInvoke.Invoke(() => MessageBox.Show(Strings.ksConflictingSaveText,
+				Strings.ksConflictingSaveCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning));
 			return true;
 		}
 
@@ -29,8 +33,8 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		/// <returns>True if user wishes to attempt reconnect.  False otherwise.</returns>
 		public bool ConnectionLost()
 		{
-			return (bool) SynchronizeInvoke.Invoke(new Func<bool>(() => MessageBox.Show(Strings.ksConnectionLostText,
-				Strings.ksConnectionLostCaption, MessageBoxButtons.YesNo) == DialogResult.Yes), null);
+			return SynchronizeInvoke.Invoke(() => MessageBox.Show(Strings.ksConnectionLostText,
+				Strings.ksConnectionLostCaption, MessageBoxButtons.YesNo) == DialogResult.Yes);
 		}
 
 		public FileSelection ChooseFilesToUse()
@@ -54,16 +58,16 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		public bool RestoreLinkedFilesInProjectFolder()
 		{
-			return (bool) SynchronizeInvoke.Invoke(new Func<bool>(() => MessageBox.Show(
+			return SynchronizeInvoke.Invoke(() => MessageBox.Show(
 				Strings.ksRestoreLinkedFilesInProjectFolderText, Strings.ksRestoreLinkedFilesInProjectFolderCaption,
-				MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes), null);
+				MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes);
 		}
 
 		public YesNoCancel CannotRestoreLinkedFilesToOriginalLocation()
 		{
-			var result = (DialogResult) SynchronizeInvoke.Invoke(new Func<DialogResult>(() => MessageBox.Show(
+			DialogResult result = SynchronizeInvoke.Invoke(() => MessageBox.Show(
 				Strings.ksCannotRestoreLinkedFilesToOriginalLocationText, Strings.ksCannotRestoreLinkedFilesToOriginalLocationCaption,
-				MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question)), null);
+				MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question));
 			switch (result)
 			{
 				case DialogResult.Yes:
@@ -89,7 +93,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 					icon = MessageBoxIcon.Warning;
 					break;
 			}
-			SynchronizeInvoke.Invoke(new Action(() => MessageBox.Show(message, caption, MessageBoxButtons.OK, icon)), null);
+			SynchronizeInvoke.Invoke(() => MessageBox.Show(message, caption, MessageBoxButtons.OK, icon));
 		}
 
 		public void ReportException(Exception error, bool isLethal)
@@ -104,17 +108,17 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		public bool Retry(string msg, string caption)
 		{
-			return (bool) SynchronizeInvoke.Invoke(new Func<bool>(() => MessageBox.Show(msg, caption,
-				MessageBoxButtons.RetryCancel, MessageBoxIcon.None) == DialogResult.Retry), null);
+			return SynchronizeInvoke.Invoke(() => MessageBox.Show(msg, caption,
+				MessageBoxButtons.RetryCancel, MessageBoxIcon.None) == DialogResult.Retry);
 		}
 
 		public bool OfferToRestore(string projectPath, string backupPath)
 		{
-			return (bool) SynchronizeInvoke.Invoke(new Func<bool>(() => MessageBox.Show(
+			return SynchronizeInvoke.Invoke(() => MessageBox.Show(
 				String.Format(Strings.ksOfferToRestoreText, projectPath, File.GetLastWriteTime(projectPath),
 					backupPath, File.GetLastWriteTime(backupPath)),
 				Strings.ksOfferToRestoreCaption, MessageBoxButtons.YesNo,
-				MessageBoxIcon.Error) == DialogResult.Yes), null);
+				MessageBoxIcon.Error) == DialogResult.Yes);
 		}
 
 		public void Exit()
@@ -124,23 +128,64 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		public ISynchronizeInvoke SynchronizeInvoke
 		{
-			get
-			{
-				Form form = Form.ActiveForm;
-				if (form != null)
-					return form;
-				if (Application.OpenForms.Count > 0)
-					return Application.OpenForms[0];
-				return null;
-			}
+			get { return m_synchronizeInvoke; }
 		}
 
 		public DateTime LastActivityTime
 		{
-			get
+			get { return m_activityMonitor.LastActivityTime; }
+		}
+
+		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+			Justification="m_activationContext is a reference")]
+		private class SynchronizeInvokeWrapper : ISynchronizeInvoke
+		{
+			private readonly ActivationContextHelper m_activationContext;
+
+			public SynchronizeInvokeWrapper(ActivationContextHelper activationContext)
 			{
-				// this effectively disables saving on idle
-				return DateTime.Now;
+				m_activationContext = activationContext;
+			}
+
+			private ISynchronizeInvoke SynchronizeInvoke
+			{
+				get
+				{
+					Form form = Form.ActiveForm;
+					if (form != null)
+						return form;
+					if (Application.OpenForms.Count > 0)
+						return Application.OpenForms[0];
+					return null;
+				}
+			}
+
+			public IAsyncResult BeginInvoke(Delegate method, object[] args)
+			{
+				return SynchronizeInvoke.BeginInvoke(new Func<object>(() =>
+				{
+					using (m_activationContext.Activate())
+						return method.DynamicInvoke(args);
+				}), null);
+			}
+
+			public object EndInvoke(IAsyncResult result)
+			{
+				return SynchronizeInvoke.EndInvoke(result);
+			}
+
+			public object Invoke(Delegate method, object[] args)
+			{
+				return SynchronizeInvoke.Invoke(new Func<object>(() =>
+				{
+					using (m_activationContext)
+						return method.DynamicInvoke(args);
+				}), null);
+			}
+
+			public bool InvokeRequired
+			{
+				get { return SynchronizeInvoke.InvokeRequired; }
 			}
 		}
 	}

@@ -143,6 +143,7 @@
     <Compile Include="SmallDictionary.cs" />
     <Compile Include="TextWriterStream.cs" />
     <Compile Include="Unicode.cs" />
+    <Compile Include="UserActivityMonitor.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="ViewSizeEvents.cs" />
     <Compile Include="LinuxPackageUtils.cs" />

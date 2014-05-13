@@ -15,6 +15,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		private LanguageProjectInfo m_selectedItem;
 		private string m_restoreFileFullPath;
 		private RestoreProjectSettings m_restoreSettings;
+		private readonly ParatextLexiconPluginFdoUI m_ui;
 
 		public string SelectedProject
 		{
@@ -103,11 +104,11 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		}
 		#endregion
 
-		public ChooseFdoProjectForm()
+		public ChooseFdoProjectForm(ParatextLexiconPluginFdoUI ui)
 		{
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
-
+			m_ui = ui;
 			PopulateLanguageProjectsList(Dns.GetHostName(), true);
 		}
 
@@ -239,13 +240,10 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 			try
 			{
-				//ProgressUtils.Execute(string.Format(Localizer.Str("Restoring {0} project..."), m_restoreSettings.ProjectName), CancelModes.NonCancelable, () =>
-				//    {
-						var restoreService = new ProjectRestoreService(m_restoreSettings, ParatextLexiconPluginFdoUI.Instance, null, null);
-						restoreService.RestoreProject(new ParatextLexiconPluginThreadedProgress(ParatextLexiconPluginFdoUI.Instance.SynchronizeInvoke));
+				var restoreService = new ProjectRestoreService(m_restoreSettings, m_ui, null, null);
+				restoreService.RestoreProject(new ParatextLexiconPluginThreadedProgress(m_ui.SynchronizeInvoke));
 
-						m_selectedItem = new LanguageProjectInfo(m_restoreSettings.FullProjectPath);
-				//    });
+				m_selectedItem = new LanguageProjectInfo(m_restoreSettings.FullProjectPath);
 			}
 			catch
 			{
