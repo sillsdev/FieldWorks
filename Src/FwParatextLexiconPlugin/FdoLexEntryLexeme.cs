@@ -153,6 +153,29 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			}
 		}
 
+		public IEnumerable<string> AlternateForms
+		{
+			get
+			{
+				using (m_lexicon.ActivationContext.Activate())
+				{
+					ILexEntry entry;
+					if (!m_lexicon.TryGetEntry(m_key, out entry))
+						return Enumerable.Empty<string>();
+
+					var forms = new List<string>();
+					foreach (IMoForm form in entry.AlternateFormsOS)
+					{
+						ITsString tss = form.Form.StringOrNull(m_lexicon.DefaultVernWs);
+						if (tss != null)
+							forms.Add(tss.Text.Normalize());
+					}
+
+					return forms;
+				}
+			}
+		}
+
 		private string GetLexReferenceName(ILexEntry lexEntry, ILexRefType lexRefType)
 		{
 			// The name we want to use for our lex reference is either the name or the reverse name

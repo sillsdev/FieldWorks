@@ -83,6 +83,11 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			get { return Enumerable.Empty<LexicalRelation>(); }
 		}
 
+		public IEnumerable<string> AlternateForms
+		{
+			get { return Enumerable.Empty<string>(); }
+		}
+
 		public LexiconSense AddSense()
 		{
 			LexiconSense sense = null;
