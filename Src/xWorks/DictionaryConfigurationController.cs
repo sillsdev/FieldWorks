@@ -147,7 +147,13 @@ namespace SIL.FieldWorks.XWorks
 				tree.TopNode = FindTreeNode(topVisibleNode, tree.Nodes);
 			if (tree.SelectedNode != null)
 				tree.SelectedNode.EnsureVisible();
-			//_mediator should only be null for unit tests which don't need styles
+			RefreshPreview();
+		}
+
+		/// <summary>Refresh the Preview without reloading the entire configuration tree</summary>
+		private void RefreshPreview()
+		{
+			//_mediator should be null only for unit tests which don't need styles
 			if(_mediator != null)
 			{
 				View.PreviewData = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(_previewEntry, _model, _mediator);
@@ -333,7 +339,7 @@ namespace SIL.FieldWorks.XWorks
 				var node = (ConfigurableDictionaryNode) args.Node.Tag;
 				node.IsEnabled = args.Node.Checked;
 
-				// Details may need enabled or disabled
+				// Details may need to be enabled or disabled
 				RefreshView();
 			};
 
@@ -370,7 +376,10 @@ namespace SIL.FieldWorks.XWorks
 		private void BuildAndShowOptions(ConfigurableDictionaryNode node, Mediator mediator)
 		{
 			if (DetailsController == null)
+			{
 				DetailsController = new DictionaryDetailsController(node, mediator);
+				DetailsController.DetailsModelChanged += (sender, e) => RefreshPreview();
+			}
 			else
 				DetailsController.LoadNode(node);
 			View.DetailsView = DetailsController.View;
