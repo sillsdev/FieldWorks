@@ -289,7 +289,7 @@ namespace SIL.FieldWorks.XWorks
 					dialog.ShowDialog(View as Form);
 				}
 			};
-			View.SaveModel += (sender, args) => { _model.FilePath = GetProjectConfigLocationForPath(_model.FilePath, mediator); _model.Save(); };
+			View.SaveModel += SaveModelHandler;
 			view.SwitchView += (sender, args) => { _model = _alternateDictionaries[args.ViewPicked]; RefreshView(); };
 
 			View.TreeControl.MoveUp += node => Reorder(node.Tag as ConfigurableDictionaryNode, Direction.Up);
@@ -355,6 +355,13 @@ namespace SIL.FieldWorks.XWorks
 
 				BuildAndShowOptions(node, mediator);
 			};
+		}
+
+		private void SaveModelHandler(object sender, EventArgs e)
+		{
+			_model.FilePath = GetProjectConfigLocationForPath(_model.FilePath, _mediator);
+			_model.Save();
+			RefreshView();
 		}
 
 		internal string GetProjectConfigLocationForPath(string filePath, Mediator mediator)

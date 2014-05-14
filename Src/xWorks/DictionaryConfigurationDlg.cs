@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				//The second parameter is only used if the string data in the first parameter is unusable but it must be
 				//set to a valid Uri
-				((GeckoWebBrowser)m_preview.NativeBrowser).LoadHtml(value, "file:///c:/MayNotExist/doesnotmatter.html");
+				((GeckoWebBrowser)m_preview.NativeBrowser).LoadContent(value, "file:///c:/MayNotExist/doesnotmatter.html", "application/xhtml+xml");
 				m_preview.Refresh();
 			}
 		}

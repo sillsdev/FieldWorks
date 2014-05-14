@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <DictionaryConfiguration name="Root" version="1" lastModified="2014-02-13">
-    <ConfigurationItem name="Main Entry" isEnabled="true" field="LexEntry">
+	<!-- Main entries in the dictionary have historically been written out with class="entry" -->
+    <ConfigurationItem name="Main Entry" isEnabled="true" field="LexEntry" classNameOverride="entry">
         <ConfigurationItem name="Headword" between=" " after="  " style="Dictionary-Headword" isEnabled="true" field="HeadWord">
             <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
                 <Option id="vernacular" isEnabled="true"/>
@@ -1244,7 +1245,8 @@
             </ConfigurationItem>
         </ConfigurationItem>
     </ConfigurationItem>
-	<ConfigurationItem name="Minor Entry" after=" " style="Dictionary-Minor" isEnabled="true" field="LexEntry">
+	<!-- Minor entries in the dictionary have historically been written out with class="minorentry" -->
+	<ConfigurationItem name="Minor Entry" after=" " style="Dictionary-Minor" isEnabled="true" field="LexEntry" classNameOverride="minorentry">
 		<ListTypeOptions list="minor">
 			<Option isEnabled="true"  id="b0000000-c40e-433e-80b5-31da08771344"/>
 			<Option isEnabled="true"  id="024b62c9-93b3-41a0-ab19-587a0030219a"/>

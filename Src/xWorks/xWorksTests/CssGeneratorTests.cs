@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.XWorks
 		private const int TrailingIndent = 48;
 		private const int PadTop = 15;
 		private const int PadBottom = 30;
-		private const int FontSize = 10;
+		private const int FontSize = 10000;
 
 		[Test]
 		public void GenerateCssForConfiguration_NullModelThrowsNullArgument()
@@ -289,7 +289,7 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			//Verify that vernacular was converted into french to match the vernholder node
-			Assert.That(cssResult, Contains.Substring(".vernholder[lang=(fr)]"));
+			Assert.That(cssResult, Contains.Substring(".vernholder[lang|=\"fr\"]"));
 		}
 
 		[Test]
@@ -310,7 +310,7 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			//Verify that analysis was converted into english to match the analyholder node
-			Assert.That(cssResult, Contains.Substring(".analyholder[lang=(en)]"));
+			Assert.That(cssResult, Contains.Substring(".analyholder[lang|=\"en\"]"));
 		}
 
 		[Test]
@@ -321,6 +321,7 @@ namespace SIL.FieldWorks.XWorks
 					FieldDescription = "LexEntry",
 					Label = "Bow, Bolo, Ect",
 					IsEnabled = true,
+					ClassNameOverride = "Bolo",
 					Children = new List<ConfigurableDictionaryNode>()
 				};
 			var model = new DictionaryConfigurationModel
@@ -328,13 +329,9 @@ namespace SIL.FieldWorks.XWorks
 					Parts = new List<ConfigurableDictionaryNode> { testNode }
 				};
 			var testOverrides = new Dictionary<string, Dictionary<string, string>>();
-			var boloOverride = new Dictionary<string, string>();
-			boloOverride.Add("LexEntry", "Bolo");
-			testOverrides[String.Empty] = boloOverride;
 			var factory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			var entry = factory.Create();
 			//SUT
-			CssGenerator.ClassMappingOverrides = testOverrides;
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			Assert.That(cssResult, Is.Not.StringContaining(".lexentry"));
 			Assert.That(cssResult, Contains.Substring(".bolo"));
@@ -356,6 +353,7 @@ namespace SIL.FieldWorks.XWorks
 			var testChildNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "HeadWord",
+				ClassNameOverride = "tailwind",
 				IsEnabled = true
 			};
 			var testParentNode = new ConfigurableDictionaryNode
@@ -371,16 +369,12 @@ namespace SIL.FieldWorks.XWorks
 				Parts = new List<ConfigurableDictionaryNode> { testParentNode }
 			};
 			var testOverrides = new Dictionary<string, Dictionary<string, string>>();
-			var boloOverride = new Dictionary<string, string>();
-			boloOverride.Add("HeadWord", "tailwind");
-			testOverrides["LexEntry"] = boloOverride;
 			// Make a LexEntry with a headword so something is Generated
 			var factory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			var entry = factory.Create();
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 			entry.CitationForm.set_String(wsFr, Cache.TsStrFactory.MakeString("HeadWordTest", wsFr));
 			//SUT
-			CssGenerator.ClassMappingOverrides = testOverrides;
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			Assert.That(cssResult, Is.Not.StringContaining(".headword"));
 			Assert.That(cssResult, Contains.Substring(".tailwind"));
@@ -417,13 +411,6 @@ namespace SIL.FieldWorks.XWorks
 			m_application.Dispose();
 			m_mediator.Dispose();
 			FwRegistrySettings.Release();
-		}
-
-		[TearDown]
-		public void PerTestTearDown()
-		{
-			//Wipe out any test related overrides
-			CssGenerator.ClassMappingOverrides = null;
 		}
 
 		private TestStyle GenerateStyle(string name)
@@ -496,7 +483,8 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(css, Contains.Substring("font-family:'" + fontName + "'"), "font name missing");
 			Assert.That(css, Contains.Substring("font-weight:" + (bold ? "bold" : "normal") + ";"), "font bold missing");
 			Assert.That(css, Contains.Substring("font-style:" + (italic ? "italic" : "normal") + ";"), "font italic missing");
-			Assert.That(css, Contains.Substring("font-size:" + size + "pt;"), "font size missing");
+			// Font sizes are stored as integers in the styles by FLEx and turned into pt values on export
+			Assert.That(css, Contains.Substring("font-size:" + (float)size / 1000 + "pt;"), "font size missing");
 		}
 
 		private void VerifyParagraphBorderInCss(Color color, int leading, int trailing, int bottom, int top, string css)

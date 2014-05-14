@@ -21,15 +21,6 @@ namespace SIL.FieldWorks.XWorks
 		internal const int DefaultStyle = -1;
 
 		/// <summary>
-		/// This is a dictionary which maps a parent configuration field name to a dictionary of child configuration field name to
-		/// css class name. Normally the FieldDescription in a ConfigurationNode will be directly used as the class name for
-		/// the css and xhtml generated at that node. This mapping is used to provide alternative class names either to match
-		/// historical exports, or for other strong reasons which should be documented where the override is defined.
-		/// This Property should be set just prior to an export.
-		/// </summary>
-		internal static Dictionary<string, Dictionary<string, string>> ClassMappingOverrides { get; set; }
-
-		/// <summary>
 		/// Generate all the css rules necessary to represent every enabled portion of the given configuration
 		/// </summary>
 		/// <param name="model"></param>
@@ -79,7 +70,7 @@ namespace SIL.FieldWorks.XWorks
 						var wsIdString = possiblyMagic == 0 ? ws.Id : WritingSystemServices.GetWritingSystemList(cache, possiblyMagic, true).First().Id;
 						var wsId = cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(wsIdString);
 						var wsRule = new StyleRule();
-						wsRule.Value = baseSelection + String.Format("[lang=({0})]", wsIdString);
+						wsRule.Value = baseSelection + String.Format("[lang|=\"{0}\"]", wsIdString);
 						wsRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(configNode.Style, wsId, mediator).Properties);
 						styleSheet.Rules.Add(wsRule);
 					}
@@ -151,15 +142,9 @@ namespace SIL.FieldWorks.XWorks
 			// write out the FieldDescription as the class name, and append a . followed by the SubField if it is defined.
 			var classAttribute = configNode.FieldDescription +
 										(String.IsNullOrEmpty(configNode.SubField) ? "" : ("." + configNode.SubField));
-			Dictionary<string, string> parentMap;
-			if(ClassMappingOverrides != null &&
-				ClassMappingOverrides.TryGetValue(configNode.Parent == null ? String.Empty : configNode.Parent.FieldDescription,
-					out parentMap))
+			if(!String.IsNullOrEmpty(configNode.ClassNameOverride))
 			{
-				if(parentMap.ContainsKey(configNode.FieldDescription))
-				{
-					classAttribute = parentMap[configNode.FieldDescription];
-				}
+					classAttribute = configNode.ClassNameOverride;
 			}
 			return classAttribute.ToLower();
 		}
@@ -376,7 +361,7 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			}
 			var fontProp = new Property(propName);
-			fontProp.Term = new PrimitiveTerm(termType, fontValue);
+			fontProp.Term = new PrimitiveTerm(termType, (float)fontValue / 1000);
 			declaration.Add(fontProp);
 		}
 

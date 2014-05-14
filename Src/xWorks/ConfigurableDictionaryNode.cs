@@ -120,6 +120,15 @@ namespace SIL.FieldWorks.XWorks
 		[XmlAttribute(AttributeName = "isCustomField")]
 		public bool IsCustomField { get; set; }
 
+
+		/// <summary>
+		/// Normally the FieldDescription in a ConfigurationNode will be directly used as the class name for
+		/// the css and xhtml generated at that node. This field is used to provide alternative class names either to match
+		/// historical exports, or for other strong reasons which should be documented where the override is defined.
+		/// </summary>
+		[XmlAttribute(AttributeName = "classNameOverride")]
+		public string ClassNameOverride { get; set; }
+
 		/// <summary>
 		/// Clone this node. Point to the same Parent object. Deep-clone Children and DictionaryNodeOptions.
 		/// </summary>
