@@ -431,7 +431,7 @@
 		<DownloadFile Address="$(XULRunnerDownloadUrl)/xulrunner-14.0.1.en-US.win32.zip" LocalFilename="$(fwrt)/Downloads/xulrunner-14.0.1.en-US.win32.zip"
 					  Condition="'$(OS)'=='Windows_NT'"/>
 		<Message Text="Unzipping XULRunner." Condition="'$(OS)'=='Windows_NT'"/>
-		<Unzip ZipFilename="$(fwrt)/Downloads/xulrunner-14.0.1.en-US.win32.zip" ToDir=".." Condition="'$(OS)'=='Windows_NT'"/>
+		<Unzip ZipFilename="$(fwrt)/Downloads/xulrunner-14.0.1.en-US.win32.zip" ToDir="$(dir-outputBase)" Condition="'$(OS)'=='Windows_NT'"/>
 
 		<Message Text="Downloading latest successful artifacts from Chorus FLExBridgeBeta build."/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/Autofac.dll" LocalFilename="$(fwrt)/Downloads/Autofac.dll"/>
