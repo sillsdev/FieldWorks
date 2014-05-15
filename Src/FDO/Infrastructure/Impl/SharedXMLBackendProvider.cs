@@ -8,6 +8,7 @@ using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
 using System.Threading;
+using System.Diagnostics.CodeAnalysis;
 using ProtoBuf;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 
@@ -15,7 +16,9 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 {
 	internal class SharedXMLBackendProvider : XMLBackendProvider
 	{
-		private const int CommitLogSize = 10000 * 4096;
+		private const int PageSize = 4096;
+		private const int CommitLogSize = 2500 * PageSize;
+		private const int CommitLogMetadataSize = 1 * PageSize;
 
 		private Mutex m_mutex;
 		private MemoryMappedFile m_commitLogMetadata;
@@ -50,15 +53,18 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		protected override int StartupInternal(int currentModelVersion)
 		{
-			BasicInit();
-			m_mutex.WaitOne();
+			bool createdNew;
+			m_mutex = new Mutex(true, MutexName, out createdNew);
+			if (!createdNew)
+				m_mutex.WaitOne();
 			try
 			{
+				CreateSharedMemory(createdNew);
 				using (MemoryMappedViewStream stream = m_commitLogMetadata.CreateViewStream())
 				{
 					CommitLogMetadata metadata;
 					int length;
-					if (Serializer.TryReadLengthPrefix(stream, PrefixStyle.Base128, out length) && length > 0)
+					if (!createdNew && Serializer.TryReadLengthPrefix(stream, PrefixStyle.Base128, out length) && length > 0)
 					{
 						stream.Seek(0, SeekOrigin.Begin);
 						metadata = Serializer.DeserializeWithLengthPrefix<CommitLogMetadata>(stream, PrefixStyle.Base128, 1);
@@ -109,6 +115,9 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				m_mutex.WaitOne();
 				try
 				{
+#if __MonoCS__
+					bool delete = false;
+#endif
 					using (MemoryMappedViewStream stream = m_commitLogMetadata.CreateViewStream())
 					{
 						int length;
@@ -119,12 +128,29 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 							metadata.Slots[m_slotIndex] = -1;
 							if (metadata.Master == m_slotIndex)
 								metadata.Master = -1;
+#if __MonoCS__
+							delete = metadata.Slots.All(s => s == -1);
+#endif
 							stream.Seek(0, SeekOrigin.Begin);
 							Serializer.SerializeWithLengthPrefix(stream, metadata, PrefixStyle.Base128, 1);
 						}
 					}
 
 					base.UnlockProject();
+
+					m_commitLog.Dispose();
+					m_commitLog = null;
+
+					m_commitLogMetadata.Dispose();
+					m_commitLogMetadata = null;
+
+#if __MonoCS__
+					if (delete)
+					{
+						File.Delete(Path.Combine(Path.GetTempPath(), CommitLogMetadataName));
+						File.Delete(Path.Combine(Path.GetTempPath(), CommitLogName));
+					}
+#endif
 				}
 				finally
 				{
@@ -134,16 +160,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 			base.ShutdownInternal();
 
-			if (m_commitLog != null)
-			{
-				m_commitLog.Dispose();
-				m_commitLog = null;
-			}
-			if (m_commitLogMetadata != null)
-			{
-				m_commitLogMetadata.Dispose();
-				m_commitLogMetadata = null;
-			}
 			if (m_mutex != null)
 			{
 				m_mutex.Dispose();
@@ -153,10 +169,13 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		protected override void CreateInternal()
 		{
-			BasicInit();
-			m_mutex.WaitOne();
+			bool createdNew;
+			m_mutex = new Mutex(true, MutexName, out createdNew);
+			if (!createdNew)
+				throw new InvalidOperationException("Cannot create shared XML backend.");
 			try
 			{
+				CreateSharedMemory(createdNew);
 				var metadata = new CommitLogMetadata { Slots = new int[8] };
 				m_slotIndex = 0;
 				metadata.Master = 0;
@@ -176,11 +195,45 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			}
 		}
 
-		private void BasicInit()
+		private string MutexName
 		{
-			m_mutex = new Mutex(false, ProjectId.Name + "_Mutex");
-			m_commitLogMetadata = MemoryMappedFile.CreateOrOpen(ProjectId.Name + "_CommitLogMetadata", 1024);
-			m_commitLog = MemoryMappedFile.CreateOrOpen(ProjectId.Name + "_CommitLog", CommitLogSize);
+			get { return ProjectId.Name + "_Mutex"; }
+		}
+
+		private string CommitLogName
+		{
+			get { return ProjectId.Name + "_CommitLog"; }
+		}
+
+		private string CommitLogMetadataName
+		{
+			get { return ProjectId.Name + "_CommitLogMetadata"; }
+		}
+
+		private void CreateSharedMemory(bool createdNew)
+		{
+			m_commitLogMetadata = CreateOrOpen(CommitLogMetadataName, CommitLogMetadataSize, createdNew);
+			m_commitLog = CreateOrOpen(CommitLogName, CommitLogSize, createdNew);
+		}
+
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification = "An actual file is passed into MemoryMappedFile.CreateOrOpen")]
+		private MemoryMappedFile CreateOrOpen(string name, long capacity, bool createdNew)
+		{
+#if __MonoCS__
+			name = Path.Combine(Path.GetTempPath(), name);
+			// delete old file that could be left after a crash
+			if (createdNew && File.Exists(name))
+				File.Delete(name);
+
+			// Mono only supports memory mapped files that are backed by an actual file
+			if (!File.Exists(name))
+			{
+				using (var fs = new FileStream(name, FileMode.CreateNew))
+					fs.SetLength(capacity);
+			}
+#endif
+			return MemoryMappedFile.CreateOrOpen(name, capacity);
 		}
 
 		internal override void LockProject()
@@ -208,6 +261,9 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		internal override void UnlockProject()
 		{
+			if (m_commitLogMetadata == null)
+				return;
+
 			m_mutex.WaitOne();
 			try
 			{
@@ -301,7 +357,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				using (var buffer = new MemoryStream())
 				{
 					Serializer.SerializeWithLengthPrefix(buffer, commitRec, PrefixStyle.Base128, 1);
-
 					if (metadata.Length + buffer.Length > CommitLogSize)
 						return false;
 
@@ -381,7 +436,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			{
 				if (viewLength > 0)
 				{
-					using (MemoryMappedViewStream stream = m_commitLog.CreateViewStream(viewOffset, viewLength, MemoryMappedFileAccess.Read))
+					using (MemoryMappedViewStream stream = m_commitLog.CreateViewStream(viewOffset, viewLength))
 					{
 						while (stream.Position < viewLength)
 						{
