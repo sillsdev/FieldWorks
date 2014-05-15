@@ -179,6 +179,64 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			Assert.AreEqual("2.2.1", sense2_2_1.LexSenseOutline.Text);
 		}
 
+		/// <summary>
+		///
+		/// </summary>
+		[Test]
+		public void DefinitionOrGloss_DefinitionBeatsGloss()
+		{
+			UndoableUnitOfWorkHelper.Do("Undo add senses", "Redo add senses", m_actionHandler, () =>
+			{
+				int ws = Cache.LangProject.DefaultAnalysisWritingSystem.Handle;
+				var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+				var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				entry.SensesOS.Add(sense);
+				sense.Definition.set_String(ws, Cache.TsStrFactory.MakeString("definition", ws));
+				sense.Gloss.set_String(ws, Cache.TsStrFactory.MakeString("gloss", ws));
+
+				var dorg = sense.DefinitionOrGloss;
+				Assert.That(dorg.BestAnalysisAlternative.Text, Contains.Substring("definition"));
+			});
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		[Test]
+		public void DefinitionOrGloss_DefinitionNullGivesGloss()
+		{
+			UndoableUnitOfWorkHelper.Do("Undo add senses", "Redo add senses", m_actionHandler, () =>
+			{
+				int ws = Cache.LangProject.DefaultAnalysisWritingSystem.Handle;
+				var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+				var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				entry.SensesOS.Add(sense);
+				sense.Gloss.set_String(ws, Cache.TsStrFactory.MakeString("gloss", ws));
+
+				var dorg = sense.DefinitionOrGloss;
+				Assert.That(dorg.BestAnalysisAlternative.Text, Contains.Substring("gloss"));
+			});
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		[Test]
+		public void DefinitionOrGloss_EmptyDefinitionGivesGloss()
+		{
+			UndoableUnitOfWorkHelper.Do("Undo add senses", "Redo add senses", m_actionHandler, () =>
+			{
+				int ws = Cache.LangProject.DefaultAnalysisWritingSystem.Handle;
+				var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+				var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				entry.SensesOS.Add(sense);
+				sense.Definition.set_String(ws, Cache.TsStrFactory.MakeString("", ws));
+				sense.Gloss.set_String(ws, Cache.TsStrFactory.MakeString("gloss", ws));
+
+				var dorg = sense.DefinitionOrGloss;
+				Assert.That(dorg.BestAnalysisAlternative.Text, Contains.Substring("gloss"));
+			});
+		}
 	}
 
 	/// <summary>

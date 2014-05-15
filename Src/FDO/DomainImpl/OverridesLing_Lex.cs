@@ -5678,6 +5678,19 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 			LexEntry.SafelyReplaceSequenceReferences(objOld, this, sequenceRefs);
 		}
+
+		public IMultiStringAccessor DefinitionOrGloss
+		{
+			get
+			{
+				if(Definition.StringCount != 0)
+				{
+					if(Definition.BestAnalysisAlternative.Text != Strings.ksStars)
+						return Definition;
+				}
+				return Gloss;
+			}
+		}
 	}
 
 	/// <summary>

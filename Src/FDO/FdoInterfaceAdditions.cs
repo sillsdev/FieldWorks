@@ -1032,6 +1032,12 @@ namespace SIL.FieldWorks.FDO
 		/// Note this is called on SFM export by mdf.xml so needs to be a property.
 		/// </summary>
 		IEnumerable<ILexReference> LexSenseReferences { get; }
+
+		/// <summary>
+		/// Convenience method for returning the contents of the Definition field or of the
+		/// Gloss field if the Definition is undefined.
+		/// </summary>
+		IMultiStringAccessor DefinitionOrGloss { get; }
 	}
 
 	/// <summary>
