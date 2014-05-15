@@ -5,6 +5,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
+using Palaso.Linq;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -79,24 +81,56 @@ namespace SIL.FieldWorks.XWorks
 			Configurations = configurations;
 			Publications = publications;
 
-			_view.configurationsListBox.Items.AddRange(Configurations.Select(configuration=>configuration.Label).ToArray());
+			// Populate lists of configurations and publications
+			foreach (var configuration in Configurations)
+			{
+				var item = new ListViewItem {Tag = configuration, Text = configuration.Label};
+				_view.configurationsListView.Items.Add(item);
+			}
 			_view.publicationsCheckedListBox.Items.AddRange(Publications.ToArray());
 
 			// When a different dictionary configuration is selected, update which publications are checked.
-			_view.configurationsListBox.SelectedIndexChanged += (sender, args) =>
-			{
-				var newConfigurationName = _view.configurationsListBox.SelectedItem.ToString();
-				var newConfiguration = Configurations.Find(configuration => configuration.Label == newConfigurationName);
-				var associatedPublications = GetPublications(newConfiguration);
-				for (int index = 0; index < _view.publicationsCheckedListBox.Items.Count; index++)
-				{
-					var publication = _view.publicationsCheckedListBox.Items[index];
-					_view.publicationsCheckedListBox.SetItemChecked(index, associatedPublications.Contains(publication));
-				}
-			};
+			_view.configurationsListView.SelectedIndexChanged += OnSelectConfiguration;
+
+			_view.configurationsListView.AfterLabelEdit += OnRenameConfiguration;
 
 			// Select first configuration, and cause publications to be checked or unchecked.
-			_view.configurationsListBox.SelectedIndex = 0;
+			_view.configurationsListView.Items[0].Selected = true;
+		}
+
+		/// <summary>
+		// Update which publications are checked in response to configuration selection.
+		/// </summary>
+		private void OnSelectConfiguration(object sender, EventArgs args)
+		{
+			if (_view.configurationsListView.SelectedIndices.Count < 1)
+				return;
+			// MultiSelect is not enabled, so can just use the first selected item.
+			var newConfiguration = _view.configurationsListView.SelectedItems[0].Tag as DictionaryConfigurationModel;
+			var associatedPublications = GetPublications(newConfiguration);
+			for (int index = 0; index < _view.publicationsCheckedListBox.Items.Count; index++)
+			{
+				var publication = _view.publicationsCheckedListBox.Items[index];
+				_view.publicationsCheckedListBox.SetItemChecked(index, associatedPublications.Contains(publication));
+			}
+		}
+
+		/// <remarks>
+		/// Renaming a configuration won't be saved to disk until the user saves the parent dialog.
+		/// </remarks>
+		private void OnRenameConfiguration(object sender, LabelEditEventArgs labelEditEventArgs)
+		{
+			var newName = labelEditEventArgs.Label;
+			if (string.IsNullOrWhiteSpace(newName))
+			{
+				// newName may be 'null' if there was no change. In either case, don't allow renaming to null, empty, or whitespace.
+				labelEditEventArgs.CancelEdit = true;
+				return;
+			}
+			var itemIndex = labelEditEventArgs.Item;
+			var item = _view.configurationsListView.Items[itemIndex];
+			var configuration = item.Tag as DictionaryConfigurationModel;
+			configuration.Label = newName;
 		}
 	}
 }

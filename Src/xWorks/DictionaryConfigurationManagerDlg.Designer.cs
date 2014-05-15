@@ -35,13 +35,12 @@
 			this.configurationsListLabel = new System.Windows.Forms.Label();
 			this.publicationsListLabel = new System.Windows.Forms.Label();
 			this.publicationsCheckedListBox = new System.Windows.Forms.CheckedListBox();
-			this.configurationsListBox = new System.Windows.Forms.ListBox();
 			this.copyButton = new System.Windows.Forms.Button();
 			this.removeButton = new System.Windows.Forms.Button();
-			this.buttonTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
-			this.cancelButton = new System.Windows.Forms.Button();
+			this.configurationsListView = new System.Windows.Forms.ListView();
+			this.closeButton = new System.Windows.Forms.Button();
 			this.helpButton = new System.Windows.Forms.Button();
-			this.okButton = new System.Windows.Forms.Button();
+			this.buttonTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this.mainTableLayoutPanel.SuspendLayout();
 			this.buttonTableLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
@@ -57,10 +56,10 @@
 			this.mainTableLayoutPanel.Controls.Add(this.configurationsListLabel, 0, 2);
 			this.mainTableLayoutPanel.Controls.Add(this.publicationsListLabel, 3, 2);
 			this.mainTableLayoutPanel.Controls.Add(this.publicationsCheckedListBox, 3, 3);
-			this.mainTableLayoutPanel.Controls.Add(this.configurationsListBox, 0, 3);
 			this.mainTableLayoutPanel.Controls.Add(this.copyButton, 1, 3);
 			this.mainTableLayoutPanel.Controls.Add(this.removeButton, 1, 4);
 			this.mainTableLayoutPanel.Controls.Add(this.buttonTableLayoutPanel, 3, 6);
+			this.mainTableLayoutPanel.Controls.Add(this.configurationsListView, 0, 3);
 			this.mainTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.mainTableLayoutPanel.Location = new System.Drawing.Point(0, 0);
 			this.mainTableLayoutPanel.Name = "mainTableLayoutPanel";
@@ -72,7 +71,7 @@
 			this.mainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.mainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.mainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 0F));
-			this.mainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 37F));
+			this.mainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.mainTableLayoutPanel.Size = new System.Drawing.Size(523, 325);
 			this.mainTableLayoutPanel.TabIndex = 0;
 			// 
@@ -118,16 +117,6 @@
 			this.publicationsCheckedListBox.Size = new System.Drawing.Size(232, 233);
 			this.publicationsCheckedListBox.TabIndex = 2;
 			// 
-			// configurationsListBox
-			// 
-			this.configurationsListBox.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.configurationsListBox.FormattingEnabled = true;
-			this.configurationsListBox.Location = new System.Drawing.Point(3, 52);
-			this.configurationsListBox.Name = "configurationsListBox";
-			this.mainTableLayoutPanel.SetRowSpan(this.configurationsListBox, 3);
-			this.configurationsListBox.Size = new System.Drawing.Size(231, 233);
-			this.configurationsListBox.TabIndex = 1;
-			// 
 			// copyButton
 			// 
 			this.copyButton.Dock = System.Windows.Forms.DockStyle.Top;
@@ -148,33 +137,29 @@
 			this.removeButton.TabIndex = 4;
 			this.removeButton.UseVisualStyleBackColor = true;
 			// 
-			// buttonTableLayoutPanel
+			// configurationsListView
 			// 
-			this.buttonTableLayoutPanel.ColumnCount = 3;
-			this.mainTableLayoutPanel.SetColumnSpan(this.buttonTableLayoutPanel, 4);
-			this.buttonTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.buttonTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this.buttonTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this.buttonTableLayoutPanel.Controls.Add(this.cancelButton, 1, 0);
-			this.buttonTableLayoutPanel.Controls.Add(this.helpButton, 2, 0);
-			this.buttonTableLayoutPanel.Controls.Add(this.okButton, 0, 0);
-			this.buttonTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.buttonTableLayoutPanel.Location = new System.Drawing.Point(3, 291);
-			this.buttonTableLayoutPanel.Name = "buttonTableLayoutPanel";
-			this.buttonTableLayoutPanel.RowCount = 1;
-			this.buttonTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.buttonTableLayoutPanel.Size = new System.Drawing.Size(517, 31);
-			this.buttonTableLayoutPanel.TabIndex = 12;
+			this.configurationsListView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.configurationsListView.LabelEdit = true;
+			this.configurationsListView.Location = new System.Drawing.Point(3, 52);
+			this.configurationsListView.MultiSelect = false;
+			this.configurationsListView.Name = "configurationsListView";
+			this.mainTableLayoutPanel.SetRowSpan(this.configurationsListView, 3);
+			this.configurationsListView.Size = new System.Drawing.Size(231, 233);
+			this.configurationsListView.TabIndex = 1;
+			this.configurationsListView.UseCompatibleStateImageBehavior = false;
+			this.configurationsListView.View = System.Windows.Forms.View.List;
 			// 
-			// cancelButton
+			// closeButton
 			// 
-			this.cancelButton.Dock = System.Windows.Forms.DockStyle.Right;
-			this.cancelButton.Location = new System.Drawing.Point(358, 3);
-			this.cancelButton.Name = "cancelButton";
-			this.cancelButton.Size = new System.Drawing.Size(75, 25);
-			this.cancelButton.TabIndex = 6;
-			this.cancelButton.Text = "Cancel";
-			this.cancelButton.UseVisualStyleBackColor = true;
+			this.closeButton.DialogResult = System.Windows.Forms.DialogResult.OK;
+			this.closeButton.Dock = System.Windows.Forms.DockStyle.Right;
+			this.closeButton.Location = new System.Drawing.Point(358, 3);
+			this.closeButton.Name = "closeButton";
+			this.closeButton.Size = new System.Drawing.Size(75, 25);
+			this.closeButton.TabIndex = 5;
+			this.closeButton.Text = "Close";
+			this.closeButton.UseVisualStyleBackColor = true;
 			// 
 			// helpButton
 			// 
@@ -186,18 +171,26 @@
 			this.helpButton.Text = "Help";
 			this.helpButton.UseVisualStyleBackColor = true;
 			// 
-			// okButton
+			// buttonTableLayoutPanel
 			// 
-			this.okButton.Dock = System.Windows.Forms.DockStyle.Right;
-			this.okButton.Location = new System.Drawing.Point(277, 3);
-			this.okButton.Name = "okButton";
-			this.okButton.Size = new System.Drawing.Size(75, 25);
-			this.okButton.TabIndex = 5;
-			this.okButton.Text = "OK";
-			this.okButton.UseVisualStyleBackColor = true;
+			this.buttonTableLayoutPanel.ColumnCount = 2;
+			this.mainTableLayoutPanel.SetColumnSpan(this.buttonTableLayoutPanel, 4);
+			this.buttonTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.buttonTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.buttonTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this.buttonTableLayoutPanel.Controls.Add(this.helpButton, 1, 0);
+			this.buttonTableLayoutPanel.Controls.Add(this.closeButton, 0, 0);
+			this.buttonTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.buttonTableLayoutPanel.Location = new System.Drawing.Point(3, 291);
+			this.buttonTableLayoutPanel.Name = "buttonTableLayoutPanel";
+			this.buttonTableLayoutPanel.RowCount = 1;
+			this.buttonTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.buttonTableLayoutPanel.Size = new System.Drawing.Size(517, 31);
+			this.buttonTableLayoutPanel.TabIndex = 12;
 			// 
 			// DictionaryConfigurationManagerDlg
 			// 
+			this.AcceptButton = this.closeButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(523, 325);
@@ -218,12 +211,11 @@
 		private System.Windows.Forms.Label configurationsListLabel;
 		private System.Windows.Forms.Label publicationsListLabel;
 		public System.Windows.Forms.CheckedListBox publicationsCheckedListBox;
-		public System.Windows.Forms.ListBox configurationsListBox;
 		public System.Windows.Forms.Button copyButton;
 		public System.Windows.Forms.Button removeButton;
+		public System.Windows.Forms.ListView configurationsListView;
 		private System.Windows.Forms.TableLayoutPanel buttonTableLayoutPanel;
-		private System.Windows.Forms.Button cancelButton;
 		private System.Windows.Forms.Button helpButton;
-		private System.Windows.Forms.Button okButton;
+		private System.Windows.Forms.Button closeButton;
 	}
 }
