@@ -524,7 +524,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					displayWs = XmlUtils.GetAttributeValue(node, "ws", "analysis vernacular").ToLower();
 			}
 
-			var labels = ObjectLabel.CreateObjectLabels(m_cache, candidates, null, displayWs);
+			var labels = ObjectLabel.CreateObjectLabels(m_cache, candidates.OrderBy(e => e.ShortName), null, displayWs);
 
 			using (var chooser = new SimpleListChooser(m_persistProvider, labels,
 				m_fieldName, m_mediator.HelpTopicProvider))
@@ -576,7 +576,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			switch (option.Type)
 			{
 				case RuleInsertType.Phoneme:
-					IEnumerable<IPhPhoneme> phonemes = m_cache.LangProject.PhonologicalDataOA.PhonemeSetsOS[0].PhonemesOC;
+					IEnumerable<IPhPhoneme> phonemes = m_cache.LangProject.PhonologicalDataOA.PhonemeSetsOS[0].PhonemesOC.OrderBy(ph => ph.ShortName);
 					ICmObject phonemeObj = DisplayChooser(MEStrings.ksRulePhonemeOpt, MEStrings.ksRulePhonemeChooserLink,
 						"phonemeEdit", "RulePhonemeFlatList", phonemes);
 					var phoneme = phonemeObj as IPhPhoneme;
@@ -589,7 +589,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					break;
 
 				case RuleInsertType.NaturalClass:
-					IEnumerable<IPhNaturalClass> natClasses = m_cache.LangProject.PhonologicalDataOA.NaturalClassesOS;
+					IEnumerable<IPhNaturalClass> natClasses = m_cache.LangProject.PhonologicalDataOA.NaturalClassesOS.OrderBy(natc => natc.ShortName);
 					ICmObject ncObj = DisplayChooser(MEStrings.ksRuleNCOpt, MEStrings.ksRuleNCChooserLink,
 						"naturalClassedit", "RuleNaturalClassFlatList", natClasses);
 					var nc = ncObj as IPhNaturalClass;
