@@ -47,11 +47,7 @@
 			// 
 			// mainTableLayoutPanel
 			// 
-			this.mainTableLayoutPanel.ColumnCount = 4;
-			this.mainTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.mainTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 38F));
-			this.mainTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 10F));
-			this.mainTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			resources.ApplyResources(this.mainTableLayoutPanel, "mainTableLayoutPanel");
 			this.mainTableLayoutPanel.Controls.Add(this.explanationLabel, 0, 0);
 			this.mainTableLayoutPanel.Controls.Add(this.configurationsListLabel, 0, 2);
 			this.mainTableLayoutPanel.Controls.Add(this.publicationsListLabel, 3, 2);
@@ -60,145 +56,83 @@
 			this.mainTableLayoutPanel.Controls.Add(this.buttonTableLayoutPanel, 3, 6);
 			this.mainTableLayoutPanel.Controls.Add(this.configurationsListView, 0, 3);
 			this.mainTableLayoutPanel.Controls.Add(this.publicationsListView, 3, 3);
-			this.mainTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.mainTableLayoutPanel.Location = new System.Drawing.Point(0, 0);
 			this.mainTableLayoutPanel.Name = "mainTableLayoutPanel";
-			this.mainTableLayoutPanel.RowCount = 7;
-			this.mainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.mainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
-			this.mainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.mainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.mainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.mainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.mainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 0F));
-			this.mainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.mainTableLayoutPanel.Size = new System.Drawing.Size(523, 325);
-			this.mainTableLayoutPanel.TabIndex = 0;
 			// 
 			// explanationLabel
 			// 
-			this.explanationLabel.AutoSize = true;
+			resources.ApplyResources(this.explanationLabel, "explanationLabel");
 			this.mainTableLayoutPanel.SetColumnSpan(this.explanationLabel, 4);
-			this.explanationLabel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.explanationLabel.Location = new System.Drawing.Point(3, 0);
 			this.explanationLabel.Name = "explanationLabel";
-			this.explanationLabel.Size = new System.Drawing.Size(517, 26);
-			this.explanationLabel.TabIndex = 0;
-			this.explanationLabel.Text = "Rename, copy, and delete dictionary configurations. Choose which publications are" +
-    " associated with which dictionary configurations.";
 			// 
 			// configurationsListLabel
 			// 
-			this.configurationsListLabel.AutoSize = true;
-			this.configurationsListLabel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.configurationsListLabel.Location = new System.Drawing.Point(3, 36);
+			resources.ApplyResources(this.configurationsListLabel, "configurationsListLabel");
 			this.configurationsListLabel.Name = "configurationsListLabel";
-			this.configurationsListLabel.Size = new System.Drawing.Size(231, 13);
-			this.configurationsListLabel.TabIndex = 1;
-			this.configurationsListLabel.Text = "Dictionary Configurations";
 			// 
 			// publicationsListLabel
 			// 
-			this.publicationsListLabel.AutoSize = true;
-			this.publicationsListLabel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.publicationsListLabel.Location = new System.Drawing.Point(288, 36);
+			resources.ApplyResources(this.publicationsListLabel, "publicationsListLabel");
 			this.publicationsListLabel.Name = "publicationsListLabel";
-			this.publicationsListLabel.Size = new System.Drawing.Size(232, 13);
-			this.publicationsListLabel.TabIndex = 2;
-			this.publicationsListLabel.Text = "Dictionary Publications";
 			// 
 			// copyButton
 			// 
-			this.copyButton.Dock = System.Windows.Forms.DockStyle.Top;
-			this.copyButton.Image = ((System.Drawing.Image)(resources.GetObject("copyButton.Image")));
-			this.copyButton.Location = new System.Drawing.Point(240, 52);
+			resources.ApplyResources(this.copyButton, "copyButton");
 			this.copyButton.Name = "copyButton";
-			this.copyButton.Size = new System.Drawing.Size(32, 32);
-			this.copyButton.TabIndex = 3;
 			this.copyButton.UseVisualStyleBackColor = true;
 			// 
 			// removeButton
 			// 
-			this.removeButton.Dock = System.Windows.Forms.DockStyle.Top;
-			this.removeButton.Image = ((System.Drawing.Image)(resources.GetObject("removeButton.Image")));
-			this.removeButton.Location = new System.Drawing.Point(240, 90);
+			resources.ApplyResources(this.removeButton, "removeButton");
 			this.removeButton.Name = "removeButton";
-			this.removeButton.Size = new System.Drawing.Size(32, 32);
-			this.removeButton.TabIndex = 4;
 			this.removeButton.UseVisualStyleBackColor = true;
 			// 
 			// buttonTableLayoutPanel
 			// 
-			this.buttonTableLayoutPanel.ColumnCount = 2;
+			resources.ApplyResources(this.buttonTableLayoutPanel, "buttonTableLayoutPanel");
 			this.mainTableLayoutPanel.SetColumnSpan(this.buttonTableLayoutPanel, 4);
-			this.buttonTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.buttonTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this.buttonTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
 			this.buttonTableLayoutPanel.Controls.Add(this.helpButton, 1, 0);
 			this.buttonTableLayoutPanel.Controls.Add(this.closeButton, 0, 0);
-			this.buttonTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.buttonTableLayoutPanel.Location = new System.Drawing.Point(3, 291);
 			this.buttonTableLayoutPanel.Name = "buttonTableLayoutPanel";
-			this.buttonTableLayoutPanel.RowCount = 1;
-			this.buttonTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.buttonTableLayoutPanel.Size = new System.Drawing.Size(517, 31);
-			this.buttonTableLayoutPanel.TabIndex = 12;
 			// 
 			// helpButton
 			// 
-			this.helpButton.Dock = System.Windows.Forms.DockStyle.Right;
-			this.helpButton.Location = new System.Drawing.Point(439, 3);
+			resources.ApplyResources(this.helpButton, "helpButton");
 			this.helpButton.Name = "helpButton";
-			this.helpButton.Size = new System.Drawing.Size(75, 25);
-			this.helpButton.TabIndex = 7;
-			this.helpButton.Text = "Help";
 			this.helpButton.UseVisualStyleBackColor = true;
 			// 
 			// closeButton
 			// 
 			this.closeButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.closeButton.Dock = System.Windows.Forms.DockStyle.Right;
-			this.closeButton.Location = new System.Drawing.Point(358, 3);
+			resources.ApplyResources(this.closeButton, "closeButton");
 			this.closeButton.Name = "closeButton";
-			this.closeButton.Size = new System.Drawing.Size(75, 25);
-			this.closeButton.TabIndex = 5;
-			this.closeButton.Text = "Close";
 			this.closeButton.UseVisualStyleBackColor = true;
 			// 
 			// configurationsListView
 			// 
-			this.configurationsListView.Dock = System.Windows.Forms.DockStyle.Fill;
+			resources.ApplyResources(this.configurationsListView, "configurationsListView");
 			this.configurationsListView.LabelEdit = true;
-			this.configurationsListView.Location = new System.Drawing.Point(3, 52);
 			this.configurationsListView.MultiSelect = false;
 			this.configurationsListView.Name = "configurationsListView";
 			this.mainTableLayoutPanel.SetRowSpan(this.configurationsListView, 3);
-			this.configurationsListView.Size = new System.Drawing.Size(231, 233);
-			this.configurationsListView.TabIndex = 1;
 			this.configurationsListView.UseCompatibleStateImageBehavior = false;
 			this.configurationsListView.View = System.Windows.Forms.View.List;
 			// 
 			// publicationsListView
 			// 
 			this.publicationsListView.CheckBoxes = true;
-			this.publicationsListView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.publicationsListView.Location = new System.Drawing.Point(288, 52);
+			resources.ApplyResources(this.publicationsListView, "publicationsListView");
 			this.publicationsListView.Name = "publicationsListView";
 			this.mainTableLayoutPanel.SetRowSpan(this.publicationsListView, 3);
-			this.publicationsListView.Size = new System.Drawing.Size(232, 233);
-			this.publicationsListView.TabIndex = 2;
 			this.publicationsListView.UseCompatibleStateImageBehavior = false;
 			this.publicationsListView.View = System.Windows.Forms.View.List;
 			// 
 			// DictionaryConfigurationManagerDlg
 			// 
 			this.AcceptButton = this.closeButton;
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(523, 325);
 			this.Controls.Add(this.mainTableLayoutPanel);
 			this.Name = "DictionaryConfigurationManagerDlg";
-			this.Text = "Dictionary Configuration Manager";
 			this.mainTableLayoutPanel.ResumeLayout(false);
 			this.mainTableLayoutPanel.PerformLayout();
 			this.buttonTableLayoutPanel.ResumeLayout(false);
