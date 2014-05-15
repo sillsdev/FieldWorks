@@ -34,13 +34,13 @@
 			this.explanationLabel = new System.Windows.Forms.Label();
 			this.configurationsListLabel = new System.Windows.Forms.Label();
 			this.publicationsListLabel = new System.Windows.Forms.Label();
-			this.publicationsCheckedListBox = new System.Windows.Forms.CheckedListBox();
 			this.copyButton = new System.Windows.Forms.Button();
 			this.removeButton = new System.Windows.Forms.Button();
-			this.configurationsListView = new System.Windows.Forms.ListView();
-			this.closeButton = new System.Windows.Forms.Button();
-			this.helpButton = new System.Windows.Forms.Button();
 			this.buttonTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+			this.helpButton = new System.Windows.Forms.Button();
+			this.closeButton = new System.Windows.Forms.Button();
+			this.configurationsListView = new System.Windows.Forms.ListView();
+			this.publicationsListView = new System.Windows.Forms.ListView();
 			this.mainTableLayoutPanel.SuspendLayout();
 			this.buttonTableLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
@@ -55,11 +55,11 @@
 			this.mainTableLayoutPanel.Controls.Add(this.explanationLabel, 0, 0);
 			this.mainTableLayoutPanel.Controls.Add(this.configurationsListLabel, 0, 2);
 			this.mainTableLayoutPanel.Controls.Add(this.publicationsListLabel, 3, 2);
-			this.mainTableLayoutPanel.Controls.Add(this.publicationsCheckedListBox, 3, 3);
 			this.mainTableLayoutPanel.Controls.Add(this.copyButton, 1, 3);
 			this.mainTableLayoutPanel.Controls.Add(this.removeButton, 1, 4);
 			this.mainTableLayoutPanel.Controls.Add(this.buttonTableLayoutPanel, 3, 6);
 			this.mainTableLayoutPanel.Controls.Add(this.configurationsListView, 0, 3);
+			this.mainTableLayoutPanel.Controls.Add(this.publicationsListView, 3, 3);
 			this.mainTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.mainTableLayoutPanel.Location = new System.Drawing.Point(0, 0);
 			this.mainTableLayoutPanel.Name = "mainTableLayoutPanel";
@@ -107,16 +107,6 @@
 			this.publicationsListLabel.TabIndex = 2;
 			this.publicationsListLabel.Text = "Dictionary Publications";
 			// 
-			// publicationsCheckedListBox
-			// 
-			this.publicationsCheckedListBox.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.publicationsCheckedListBox.FormattingEnabled = true;
-			this.publicationsCheckedListBox.Location = new System.Drawing.Point(288, 52);
-			this.publicationsCheckedListBox.Name = "publicationsCheckedListBox";
-			this.mainTableLayoutPanel.SetRowSpan(this.publicationsCheckedListBox, 3);
-			this.publicationsCheckedListBox.Size = new System.Drawing.Size(232, 233);
-			this.publicationsCheckedListBox.TabIndex = 2;
-			// 
 			// copyButton
 			// 
 			this.copyButton.Dock = System.Windows.Forms.DockStyle.Top;
@@ -137,40 +127,6 @@
 			this.removeButton.TabIndex = 4;
 			this.removeButton.UseVisualStyleBackColor = true;
 			// 
-			// configurationsListView
-			// 
-			this.configurationsListView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.configurationsListView.LabelEdit = true;
-			this.configurationsListView.Location = new System.Drawing.Point(3, 52);
-			this.configurationsListView.MultiSelect = false;
-			this.configurationsListView.Name = "configurationsListView";
-			this.mainTableLayoutPanel.SetRowSpan(this.configurationsListView, 3);
-			this.configurationsListView.Size = new System.Drawing.Size(231, 233);
-			this.configurationsListView.TabIndex = 1;
-			this.configurationsListView.UseCompatibleStateImageBehavior = false;
-			this.configurationsListView.View = System.Windows.Forms.View.List;
-			// 
-			// closeButton
-			// 
-			this.closeButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.closeButton.Dock = System.Windows.Forms.DockStyle.Right;
-			this.closeButton.Location = new System.Drawing.Point(358, 3);
-			this.closeButton.Name = "closeButton";
-			this.closeButton.Size = new System.Drawing.Size(75, 25);
-			this.closeButton.TabIndex = 5;
-			this.closeButton.Text = "Close";
-			this.closeButton.UseVisualStyleBackColor = true;
-			// 
-			// helpButton
-			// 
-			this.helpButton.Dock = System.Windows.Forms.DockStyle.Right;
-			this.helpButton.Location = new System.Drawing.Point(439, 3);
-			this.helpButton.Name = "helpButton";
-			this.helpButton.Size = new System.Drawing.Size(75, 25);
-			this.helpButton.TabIndex = 7;
-			this.helpButton.Text = "Help";
-			this.helpButton.UseVisualStyleBackColor = true;
-			// 
 			// buttonTableLayoutPanel
 			// 
 			this.buttonTableLayoutPanel.ColumnCount = 2;
@@ -187,6 +143,52 @@
 			this.buttonTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.buttonTableLayoutPanel.Size = new System.Drawing.Size(517, 31);
 			this.buttonTableLayoutPanel.TabIndex = 12;
+			// 
+			// helpButton
+			// 
+			this.helpButton.Dock = System.Windows.Forms.DockStyle.Right;
+			this.helpButton.Location = new System.Drawing.Point(439, 3);
+			this.helpButton.Name = "helpButton";
+			this.helpButton.Size = new System.Drawing.Size(75, 25);
+			this.helpButton.TabIndex = 7;
+			this.helpButton.Text = "Help";
+			this.helpButton.UseVisualStyleBackColor = true;
+			// 
+			// closeButton
+			// 
+			this.closeButton.DialogResult = System.Windows.Forms.DialogResult.OK;
+			this.closeButton.Dock = System.Windows.Forms.DockStyle.Right;
+			this.closeButton.Location = new System.Drawing.Point(358, 3);
+			this.closeButton.Name = "closeButton";
+			this.closeButton.Size = new System.Drawing.Size(75, 25);
+			this.closeButton.TabIndex = 5;
+			this.closeButton.Text = "Close";
+			this.closeButton.UseVisualStyleBackColor = true;
+			// 
+			// configurationsListView
+			// 
+			this.configurationsListView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.configurationsListView.LabelEdit = true;
+			this.configurationsListView.Location = new System.Drawing.Point(3, 52);
+			this.configurationsListView.MultiSelect = false;
+			this.configurationsListView.Name = "configurationsListView";
+			this.mainTableLayoutPanel.SetRowSpan(this.configurationsListView, 3);
+			this.configurationsListView.Size = new System.Drawing.Size(231, 233);
+			this.configurationsListView.TabIndex = 1;
+			this.configurationsListView.UseCompatibleStateImageBehavior = false;
+			this.configurationsListView.View = System.Windows.Forms.View.List;
+			// 
+			// publicationsListView
+			// 
+			this.publicationsListView.CheckBoxes = true;
+			this.publicationsListView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.publicationsListView.Location = new System.Drawing.Point(288, 52);
+			this.publicationsListView.Name = "publicationsListView";
+			this.mainTableLayoutPanel.SetRowSpan(this.publicationsListView, 3);
+			this.publicationsListView.Size = new System.Drawing.Size(232, 233);
+			this.publicationsListView.TabIndex = 2;
+			this.publicationsListView.UseCompatibleStateImageBehavior = false;
+			this.publicationsListView.View = System.Windows.Forms.View.List;
 			// 
 			// DictionaryConfigurationManagerDlg
 			// 
@@ -210,12 +212,12 @@
 		private System.Windows.Forms.Label explanationLabel;
 		private System.Windows.Forms.Label configurationsListLabel;
 		private System.Windows.Forms.Label publicationsListLabel;
-		public System.Windows.Forms.CheckedListBox publicationsCheckedListBox;
 		public System.Windows.Forms.Button copyButton;
 		public System.Windows.Forms.Button removeButton;
 		public System.Windows.Forms.ListView configurationsListView;
 		private System.Windows.Forms.TableLayoutPanel buttonTableLayoutPanel;
 		private System.Windows.Forms.Button helpButton;
 		private System.Windows.Forms.Button closeButton;
+		public System.Windows.Forms.ListView publicationsListView;
 	}
 }

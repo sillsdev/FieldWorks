@@ -87,7 +87,11 @@ namespace SIL.FieldWorks.XWorks
 				var item = new ListViewItem {Tag = configuration, Text = configuration.Label};
 				_view.configurationsListView.Items.Add(item);
 			}
-			_view.publicationsCheckedListBox.Items.AddRange(Publications.ToArray());
+			foreach (var publication in Publications)
+			{
+				var item = new ListViewItem {Text = publication};
+				_view.publicationsListView.Items.Add(item);
+			}
 
 			// When a different dictionary configuration is selected, update which publications are checked.
 			_view.configurationsListView.SelectedIndexChanged += OnSelectConfiguration;
@@ -108,10 +112,9 @@ namespace SIL.FieldWorks.XWorks
 			// MultiSelect is not enabled, so can just use the first selected item.
 			var newConfiguration = _view.configurationsListView.SelectedItems[0].Tag as DictionaryConfigurationModel;
 			var associatedPublications = GetPublications(newConfiguration);
-			for (int index = 0; index < _view.publicationsCheckedListBox.Items.Count; index++)
+			foreach (ListViewItem publicationItem in _view.publicationsListView.Items)
 			{
-				var publication = _view.publicationsCheckedListBox.Items[index];
-				_view.publicationsCheckedListBox.SetItemChecked(index, associatedPublications.Contains(publication));
+				publicationItem.Checked = associatedPublications.Contains(publicationItem.Text);
 			}
 		}
 
