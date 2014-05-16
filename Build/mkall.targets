@@ -360,10 +360,10 @@
 		<!-- fwiw, bt322 is the master build for Linux development. Using this temporarily to get XWebBrowser. When done with this temp solution, delete this one
 			and set the items which use it to PalasoDownloadUrl -->
 		<PalasoDownloadUrlMaster Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt322/.lastSuccessful</PalasoDownloadUrlMaster>
-		<!-- bt358 is the GeckoFX 14 build for Windows -->
-		<GeckoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt358/.lastSuccessful</GeckoDownloadUrl>
-		<!-- bt375 is the XULRunner 14 build for Windows -->
-		<XULRunnerDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt375/.lastSuccessful</XULRunnerDownloadUrl>
+		<!-- bt399 is the GeckoFX 29 build for Windows -->
+		<GeckoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt399/.lastSuccessful</GeckoDownloadUrl>
+		<!-- bt400 is the XULRunner 29 build for Windows -->
+		<XULRunnerDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt400/.lastSuccessful</XULRunnerDownloadUrl>
 		<!--Todo: use PalasoDownloadUrl, when it refers to somewhere that has the IPCFramework.-->
 		<!-- bt278 is the develop branch build of IPCFramework for Windows development. Update when appropriate. -->
 		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt278/.lastSuccessful</IPCFrameworkDownloadUrl>
@@ -420,18 +420,18 @@
 					  Condition="'$(OS)'=='Unix'"/>
 
 		<Message Text="Downloading latest successful artifacts for GeckoFX and XULRunner." Condition="'$(OS)'=='Windows_NT'" />
-		<DownloadFile Address="$(GeckoDownloadUrl)/geckofx-core-14.dll" LocalFilename="$(fwrt)/Downloads/geckofx-core-14.dll"
+		<DownloadFile Address="$(GeckoDownloadUrl)/Geckofx-Core.dll" LocalFilename="$(fwrt)/Downloads/geckofx-core.dll"
 					  Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(GeckoDownloadUrl)/Geckofx-Winforms-14.dll" LocalFilename="$(fwrt)/Downloads/Geckofx-Winforms-14.dll"
+		<DownloadFile Address="$(GeckoDownloadUrl)/Geckofx-Winforms.dll" LocalFilename="$(fwrt)/Downloads/Geckofx-Winforms.dll"
 					  Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(GeckoDownloadUrl)/Geckofx-Winforms-14.pdb" LocalFilename="$(fwrt)/Downloads/Geckofx-Winforms-14.pdb"
+		<DownloadFile Address="$(GeckoDownloadUrl)/Geckofx-Winforms.pdb" LocalFilename="$(fwrt)/Downloads/Geckofx-Winforms.pdb"
 					  Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(GeckoDownloadUrl)/geckofx-core-14.dll.config" LocalFilename="$(fwrt)/Downloads/geckofx-core-14.dll.config"
+		<DownloadFile Address="$(GeckoDownloadUrl)/Geckofx-Core.dll.config" LocalFilename="$(fwrt)/Downloads/geckofx-core.dll.config"
 					  Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(XULRunnerDownloadUrl)/xulrunner-14.0.1.en-US.win32.zip" LocalFilename="$(fwrt)/Downloads/xulrunner-14.0.1.en-US.win32.zip"
+		<DownloadFile Address="$(XULRunnerDownloadUrl)/xulrunner-29.0.en-US.win32.zip" LocalFilename="$(fwrt)/Downloads/xulrunner-29.0.en-US.win32.zip"
 					  Condition="'$(OS)'=='Windows_NT'"/>
 		<Message Text="Unzipping XULRunner." Condition="'$(OS)'=='Windows_NT'"/>
-		<Unzip ZipFilename="$(fwrt)/Downloads/xulrunner-14.0.1.en-US.win32.zip" ToDir="$(dir-outputBase)" Condition="'$(OS)'=='Windows_NT'"/>
+		<Unzip ZipFilename="$(fwrt)/Downloads/xulrunner-29.0.en-US.win32.zip" ToDir="$(dir-outputBase)" Condition="'$(OS)'=='Windows_NT'"/>
 
 		<Message Text="Downloading latest successful artifacts from Chorus FLExBridgeBeta build."/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/Autofac.dll" LocalFilename="$(fwrt)/Downloads/Autofac.dll"/>

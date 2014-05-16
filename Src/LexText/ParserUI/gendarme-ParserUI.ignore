@@ -14,6 +14,8 @@ R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
 # added to control and disposed there
 M: System.Void SIL.FieldWorks.LexText.Controls.ParserParametersDlg::SetDlgInfo(System.String,System.String,System.String)
 M: System.Void SIL.FieldWorks.LexText.Controls.ParserParametersDlg::PopulateDataGrid(System.Windows.Forms.DataGrid,System.String)
+M: System.Void SIL.FieldWorks.LexText.Controls.WebPageInteractor::HandleDomClick(System.Object,Gecko.DomMouseEventArgs)
+M: System.Void SIL.FieldWorks.LexText.Controls.WebPageInteractor::HandleHtmlControlBrowserDomMouseMove(System.Object,Gecko.DomMouseEventArgs)
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule

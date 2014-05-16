@@ -107,6 +107,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
+    <Reference Include="Geckofx-Core, Version=29.0.4.0, Culture=neutral, PublicKeyToken=3209ac31600d1857, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Downloads\Geckofx-Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Winforms, Version=29.0.4.0, Culture=neutral, PublicKeyToken=3209ac31600d1857, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Downloads\Geckofx-Winforms.dll</HintPath>
+    </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Lib\debug\ICSharpCode.SharpZipLib.dll</HintPath>
@@ -178,22 +186,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\Framework.dll</HintPath>
     </Reference>
-    <Reference Condition="'$(OS)'=='Unix'" Include="geckofx-core-14">
-      <HintPath>\usr\lib\cli\geckofx-14.0.1\geckofx-core-14.dll</HintPath>
-    </Reference>
-    <Reference Condition="'$(OS)'=='Unix'" Include="Geckofx-Winforms-14">
-      <HintPath>\usr\lib\cli\geckofx-14.0.1\Geckofx-Winforms-14.dll</HintPath>
-    </Reference>
-    <None Condition="'$(OS)'=='Unix'" Include="\usr\lib\cli\geckofx-14.0.1\geckofx-core-14.dll.config">
+    <None Condition="'$(OS)'=='Unix'" Include="\usr\lib\cli\geckofx-29\Geckofx-Core.dll.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-	<Reference Condition="'$(OS)'=='Windows_NT'" Include="geckofx-core-14">
-      <HintPath>..\..\..\Downloads\geckofx-core-14.dll</HintPath>
-    </Reference>
-    <Reference Condition="'$(OS)'=='Windows_NT'" Include="Geckofx-Winforms-14">
-      <HintPath>..\..\..\Downloads\Geckofx-Winforms-14.dll</HintPath>
-    </Reference>
-    <None Condition="'$(OS)'=='Windows_NT'" Include="..\..\..\Downloads\geckofx-core-14.dll.config">
+    <None Condition="'$(OS)'=='Windows_NT'" Include="..\..\..\Downloads\Geckofx-Core.dll.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

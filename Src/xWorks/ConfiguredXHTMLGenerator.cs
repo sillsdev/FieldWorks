@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -43,7 +42,7 @@ namespace SIL.FieldWorks.XWorks
 				XHTMLWriter.WriteStartElement("link");
 				XHTMLWriter.WriteAttributeString("href", "file:///" + previewCssPath);
 				XHTMLWriter.WriteAttributeString("rel", "stylesheet");
-				XHTMLWriter.WriteEndElement();//</style>
+				XHTMLWriter.WriteEndElement();//</link>
 				XHTMLWriter.WriteEndElement(); //</head>
 				XHTMLWriter.WriteStartElement("body");
 				GenerateXHTMLForEntry(entry, configuration.Parts[0], XHTMLWriter, (FdoCache)mediator.PropertyTable.GetValue("cache"));

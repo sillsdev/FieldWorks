@@ -53,12 +53,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			return javascript.Substring(start + 1, end - start - 1);
 		}
 
-		protected void HandleHtmlControlBrowserDomMouseMove(object sender, GeckoDomMouseEventArgs e)
+		protected void HandleHtmlControlBrowserDomMouseMove(object sender, DomMouseEventArgs e)
 		{
 			if (sender == null || e == null || e.Target == null)
 				return;
 
-			GeckoElement parentTable = GetParentTable(e.Target);
+			GeckoElement parentTable = GetParentTable(e.Target.CastToGeckoElement());
 
 			if (parentTable == null)
 				return;
@@ -71,17 +71,17 @@ namespace SIL.FieldWorks.LexText.Controls
 			MouseMove();
 		}
 
-		protected void HandleDomClick(object sender, GeckoDomEventArgs e)
+		protected void HandleDomClick(object sender, DomMouseEventArgs e)
 		{
 			if (sender == null || e == null || e.Target == null)
 				return;
 
 			GeckoNode onClick = null;
-			GeckoElement parentTable = GetParentTable(e.Target);
+			GeckoElement parentTable = GetParentTable(e.Target.CastToGeckoElement());
 			if (parentTable != null)
 				onClick = parentTable.Attributes["onclick"];
 			if (onClick == null)
-				onClick = e.Target.Attributes["onclick"];
+				onClick = e.Target.CastToGeckoElement().Attributes["onclick"];
 			if (onClick == null)
 				return;
 
