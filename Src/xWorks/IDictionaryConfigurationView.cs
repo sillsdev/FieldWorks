@@ -50,6 +50,18 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="choices"></param>
 		void SetChoices(IEnumerable<string> choices);
+
+		/// <summary>
+		/// Show the publications for the current dictionary configuration.
+		/// </summary>
+		/// <param name="publications"></param>
+		void ShowPublicationsForView(String publications);
+
+		/// <summary>
+		/// Select current dictionary configuration in the combo box
+		/// </summary>
+		/// <param name="publications"></param>
+		void SelectView(String view);
 	}
 
 	public delegate void SwitchViewEvent(object sender, SwitchViewEventArgs args);

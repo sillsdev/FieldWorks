@@ -57,6 +57,8 @@ namespace SIL.FieldWorks.XWorks
 			this.applyButton = new System.Windows.Forms.Button();
 			this.cancelButton = new System.Windows.Forms.Button();
 			this.okButton = new System.Windows.Forms.Button();
+			this.lblPubsForView = new System.Windows.Forms.Label();
+			this.m_publicationsTxt = new System.Windows.Forms.TextBox();
 			((System.ComponentModel.ISupportInitialize)(this.manageViews_viewSplit)).BeginInit();
 			this.manageViews_viewSplit.Panel1.SuspendLayout();
 			this.manageViews_viewSplit.Panel2.SuspendLayout();
@@ -91,6 +93,8 @@ namespace SIL.FieldWorks.XWorks
 			// 
 			// viewManagerGroupBox
 			// 
+			this.viewManagerGroupBox.Controls.Add(this.m_publicationsTxt);
+			this.viewManagerGroupBox.Controls.Add(this.lblPubsForView);
 			this.viewManagerGroupBox.Controls.Add(this.m_cbDictType);
 			this.viewManagerGroupBox.Controls.Add(this.m_lblViewType);
 			this.viewManagerGroupBox.Controls.Add(this.m_linkManageViews);
@@ -204,6 +208,18 @@ namespace SIL.FieldWorks.XWorks
 			this.okButton.UseVisualStyleBackColor = true;
 			this.okButton.Click += new System.EventHandler(this.okButton_Click);
 			// 
+			// lblPubsForView
+			// 
+			resources.ApplyResources(this.lblPubsForView, "lblPubsForView");
+			this.lblPubsForView.Name = "lblPubsForView";
+			// 
+			// m_publicationsTxt
+			// 
+			this.m_publicationsTxt.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			resources.ApplyResources(this.m_publicationsTxt, "m_publicationsTxt");
+			this.m_publicationsTxt.Name = "m_publicationsTxt";
+			this.m_publicationsTxt.ReadOnly = true;
+			// 
 			// DictionaryConfigurationDlg
 			// 
 			this.AcceptButton = this.okButton;
@@ -254,5 +270,7 @@ namespace SIL.FieldWorks.XWorks
 		private XWebBrowser m_preview;
 		private DictionaryConfigurationTreeControl treeControl;
 		private DetailsView detailsView;
+		private TextBox m_publicationsTxt;
+		private Label lblPubsForView;
 	}
 }

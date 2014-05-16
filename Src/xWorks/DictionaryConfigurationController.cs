@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.CoreImpl;
@@ -148,6 +149,7 @@ namespace SIL.FieldWorks.XWorks
 			if (tree.SelectedNode != null)
 				tree.SelectedNode.EnsureVisible();
 			RefreshPreview();
+			DisplayPublicationTypes();
 		}
 
 		/// <summary>Refresh the Preview without reloading the entire configuration tree</summary>
@@ -270,15 +272,9 @@ namespace SIL.FieldWorks.XWorks
 			_mediator = mediator;
 			_previewEntry = previewEntry;
 			View = view;
-			SetAlternateDictionaryChoices(mediator);
-			var lastUsedAlternateDictionary =
-				mediator.PropertyTable.GetStringProperty("LastDictionaryConfiguration", "Root");
-			_model = _alternateDictionaries.ContainsKey(lastUsedAlternateDictionary)
-						? _alternateDictionaries[lastUsedAlternateDictionary]
-						: _alternateDictionaries.Values.First();
+			GetDictionaryChoices(mediator);
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			MergeCustomFieldsIntoDictionaryModel(cache, _model);
-			// Populate the tree view with the users last configuration, or the first one in the list of alternates.
 			PopulateTreeView(mediator);
 			View.ManageViews += (sender, args) =>
 			{
@@ -355,6 +351,17 @@ namespace SIL.FieldWorks.XWorks
 
 				BuildAndShowOptions(node, mediator);
 			};
+			SelectCurrentView();
+		}
+
+		private void GetDictionaryChoices(Mediator mediator)
+		{
+			SetAlternateDictionaryChoices(mediator);
+			var lastUsedAlternateDictionary =
+				mediator.PropertyTable.GetStringProperty("LastDictionaryConfiguration", "Root");
+			_model = _alternateDictionaries.ContainsKey(lastUsedAlternateDictionary)
+				? _alternateDictionaries[lastUsedAlternateDictionary]
+				: _alternateDictionaries.Values.First();
 		}
 
 		private void SaveModelHandler(object sender, EventArgs e)
@@ -413,6 +420,37 @@ namespace SIL.FieldWorks.XWorks
 				return false;
 
 			return true;
+		}
+
+		/// <summary>
+		/// Get the PublicationTypes for the current View
+		/// and display them.
+		/// </summary>
+		private void DisplayPublicationTypes()
+		{
+			View.ShowPublicationsForView(Publications);
+		}
+
+		public string Publications
+		{
+			get
+			{
+				var strbldr = new StringBuilder();
+
+				if (_model.Publications == null || !_model.Publications.Any())
+					return "";
+				foreach (var pubType in _model.Publications)
+				{
+					strbldr.AppendFormat("{0}, ", pubType);
+				}
+				var str = strbldr.ToString();
+				return str.Substring(0, str.Length - 2);
+			}
+		}
+
+		private void SelectCurrentView()
+		{
+			View.SelectView(_model.Label);
 		}
 
 		/// <summary>

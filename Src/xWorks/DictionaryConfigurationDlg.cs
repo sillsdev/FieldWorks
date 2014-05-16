@@ -5,8 +5,10 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Text;
 using System.Windows.Forms;
 using Gecko;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 
 namespace SIL.FieldWorks.XWorks
@@ -35,6 +37,7 @@ namespace SIL.FieldWorks.XWorks
 			manageViews_viewSplit.IsSplitterFixed = true;
 			treeDetail_Button_Split.IsSplitterFixed = true;
 		}
+
 		public DictionaryConfigurationTreeControl TreeControl
 		{
 			get { return treeControl; }
@@ -82,6 +85,16 @@ namespace SIL.FieldWorks.XWorks
 					m_cbDictType.Items.Add(choice);
 				}
 			}
+		}
+
+		public void ShowPublicationsForView(String publications)
+		{
+			m_publicationsTxt.Text = publications;
+		}
+
+		public void SelectView(string view)
+		{
+			m_cbDictType.SelectedItem = view;
 		}
 
 		private void m_linkManageViews_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

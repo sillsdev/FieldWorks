@@ -128,6 +128,64 @@
   <data name="manageViews_viewSplit.Orientation" type="System.Windows.Forms.Orientation, System.Windows.Forms">
     <value>Horizontal</value>
   </data>
+  <data name="m_publicationsTxt.Location" type="System.Drawing.Point, System.Drawing">
+    <value>374, 30</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_publicationsTxt.Multiline" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_publicationsTxt.Size" type="System.Drawing.Size, System.Drawing">
+    <value>244, 34</value>
+  </data>
+  <data name="m_publicationsTxt.TabIndex" type="System.Int32, mscorlib">
+    <value>37</value>
+  </data>
+  <data name="m_publicationsTxt.Text" xml:space="preserve">
+    <value>Here are the views</value>
+  </data>
+  <data name="&gt;&gt;m_publicationsTxt.Name" xml:space="preserve">
+    <value>m_publicationsTxt</value>
+  </data>
+  <data name="&gt;&gt;m_publicationsTxt.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_publicationsTxt.Parent" xml:space="preserve">
+    <value>viewManagerGroupBox</value>
+  </data>
+  <data name="&gt;&gt;m_publicationsTxt.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="lblPubsForView.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblPubsForView.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="lblPubsForView.Location" type="System.Drawing.Point, System.Drawing">
+    <value>371, 14</value>
+  </data>
+  <data name="lblPubsForView.Size" type="System.Drawing.Size, System.Drawing">
+    <value>164, 13</value>
+  </data>
+  <data name="lblPubsForView.TabIndex" type="System.Int32, mscorlib">
+    <value>36</value>
+  </data>
+  <data name="lblPubsForView.Text" xml:space="preserve">
+    <value>Publications affected by this view</value>
+  </data>
+  <data name="&gt;&gt;lblPubsForView.Name" xml:space="preserve">
+    <value>lblPubsForView</value>
+  </data>
+  <data name="&gt;&gt;lblPubsForView.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblPubsForView.Parent" xml:space="preserve">
+    <value>viewManagerGroupBox</value>
+  </data>
+  <data name="&gt;&gt;lblPubsForView.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
   <data name="m_cbDictType.AccessibleName" xml:space="preserve">
     <value>m_cbDictType</value>
   </data>
@@ -137,7 +195,6 @@
   <data name="m_cbDictType.Size" type="System.Drawing.Size, System.Drawing">
     <value>250, 21</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="m_cbDictType.TabIndex" type="System.Int32, mscorlib">
     <value>33</value>
   </data>
@@ -151,7 +208,7 @@
     <value>viewManagerGroupBox</value>
   </data>
   <data name="&gt;&gt;m_cbDictType.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>2</value>
   </data>
   <data name="m_lblViewType.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -181,7 +238,7 @@
     <value>viewManagerGroupBox</value>
   </data>
   <data name="&gt;&gt;m_lblViewType.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>3</value>
   </data>
   <data name="m_linkManageViews.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -211,13 +268,13 @@
     <value>viewManagerGroupBox</value>
   </data>
   <data name="&gt;&gt;m_linkManageViews.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>4</value>
   </data>
   <data name="viewManagerGroupBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>6, 7</value>
   </data>
   <data name="viewManagerGroupBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>572, 70</value>
+    <value>624, 70</value>
   </data>
   <data name="viewManagerGroupBox.TabIndex" type="System.Int32, mscorlib">
     <value>33</value>
@@ -277,7 +334,7 @@
     <value>treeControl</value>
   </data>
   <data name="&gt;&gt;treeControl.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.XWorks.DictionaryConfigurationTreeControl, xWorks, Version=8.0.8.24262, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.XWorks.DictionaryConfigurationTreeControl, xWorks, Version=8.0.8.18800, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;treeControl.Parent" xml:space="preserve">
     <value>tree_Detail_Split.Panel1</value>
@@ -312,6 +369,9 @@
   <data name="m_preview.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
   </data>
+  <data name="m_preview.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 5</value>
+  </data>
   <data name="m_preview.Size" type="System.Drawing.Size, System.Drawing">
     <value>324, 101</value>
   </data>
@@ -322,7 +382,7 @@
     <value>m_preview</value>
   </data>
   <data name="&gt;&gt;m_preview.Type" xml:space="preserve">
-    <value>Palaso.UI.WindowsForms.HtmlBrowser.XWebBrowser, PalasoUIWindowsForms, Version=2.5.128.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Palaso.UI.WindowsForms.HtmlBrowser.XWebBrowser, PalasoUIWindowsForms, Version=2.5.129.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_preview.Parent" xml:space="preserve">
     <value>previewDetailSplit.Panel1</value>
@@ -423,6 +483,9 @@
   <data name="buttonLayoutPanel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
+  <data name="helpButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="helpButton.Location" type="System.Drawing.Point, System.Drawing">
     <value>549, 3</value>
   </data>
@@ -446,6 +509,9 @@
   </data>
   <data name="&gt;&gt;helpButton.ZOrder" xml:space="preserve">
     <value>0</value>
+  </data>
+  <data name="applyButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="applyButton.Location" type="System.Drawing.Point, System.Drawing">
     <value>468, 3</value>
@@ -471,6 +537,9 @@
   <data name="&gt;&gt;applyButton.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <data name="cancelButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="cancelButton.Location" type="System.Drawing.Point, System.Drawing">
     <value>387, 3</value>
   </data>
@@ -494,6 +563,9 @@
   </data>
   <data name="&gt;&gt;cancelButton.ZOrder" xml:space="preserve">
     <value>2</value>
+  </data>
+  <data name="okButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="okButton.Location" type="System.Drawing.Point, System.Drawing">
     <value>306, 3</value>
@@ -524,9 +596,6 @@
   </data>
   <data name="buttonLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 3</value>
-  </data>
-  <data name="buttonLayoutPanel.MinimumSize" type="System.Drawing.Size, System.Drawing">
-    <value>340, 25</value>
   </data>
   <data name="buttonLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
     <value>627, 37</value>
@@ -620,6 +689,9 @@
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>633, 687</value>
+  </data>
+  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>{0} Configuration Dialog</value>

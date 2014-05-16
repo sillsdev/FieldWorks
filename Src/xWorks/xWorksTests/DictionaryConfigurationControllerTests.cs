@@ -7,11 +7,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using NUnit.Framework;
+using Palaso.IO;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.FDOTests;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 using XCore;
 
@@ -733,6 +735,25 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		/// <summary>
+		/// Ensure the string that displays the publications associated with the current
+		/// dictionary configuration is correct.
+		/// </summary>
+		[Test]
+		public void GetThePublicationsForTheCurrentView()
+		{
+			var controller = new DictionaryConfigurationController() { _model = m_model };
+
+			//ensure this is handled gracefully when the publications have not been initialized.
+			Assert.AreEqual(controller.Publications, "");
+
+			m_model.Publications = new List<string> { "A" };
+			Assert.AreEqual(controller.Publications, "A");
+
+			m_model.Publications = new List<string> {"A","B"};
+			Assert.AreEqual(controller.Publications, "A, B");
+		}
+
 		[Test]
 		public void MergeCustomFieldsIntoDictionaryModel_DeletedFieldsAreRemoved()
 		{
@@ -821,6 +842,16 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			public void SetChoices(IEnumerable<string> choices)
+			{
+				;
+			}
+
+			public void ShowPublicationsForView(string publications)
+			{
+				;
+			}
+
+			public void SelectView(string view)
 			{
 				;
 			}
