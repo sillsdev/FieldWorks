@@ -339,15 +339,15 @@ namespace XAmpleManagedWrapper
 			// ortho
 			string sResult = m_ampleLoadControlFiles (m_setup, lpszAdCtl, lpszCdTable, null, null);
 			// INTX
-			ThrowIfError (sResult);
+			ThrowIfError (sResult, lpszAdCtl, lpszCdTable);
 
 			//LOAD ROOT DICTIONARIES
 			sResult = m_ampleLoadDictionary (m_setup, lpszDict, "u");
-			ThrowIfError (sResult);
+			ThrowIfError (sResult, lpszDict);
 
 			//LOAD GRAMMAR FILE
 			sResult = m_ampleLoadGrammarFile (m_setup, lpszGram);
-			ThrowIfError (sResult);
+			ThrowIfError (sResult, lpszGram);
 		}
 
 		public void SetParameter (string lspzName, string lspzValue)
@@ -400,7 +400,7 @@ namespace XAmpleManagedWrapper
 			throw new NotImplementedException ();
 		}
 
-		protected void ThrowIfError (string result)
+		protected void ThrowIfError (string result, params string[] filenames)
 		{
 			// REVIEW JohnH(RandyR):
 			// Isn't the none in the XML supposed to have quote marks around it
@@ -414,11 +414,12 @@ namespace XAmpleManagedWrapper
 				string t = Path.GetTempFileName ();
 				using (var stream = new StreamWriter(t))
 				{
-				stream.Write (result);
-				stream.Close ();
-				throw new ApplicationException (result);
+					stream.Write (result);
+					stream.Close ();
+					string message = filenames.Length == 0 ? result : string.Format("{0}; Files: {1}", result, string.Join(",", filenames));
+					throw new ApplicationException (message);
+				}
 			}
-		}
 		}
 
 		protected void CheckPtr (IntPtr p)
