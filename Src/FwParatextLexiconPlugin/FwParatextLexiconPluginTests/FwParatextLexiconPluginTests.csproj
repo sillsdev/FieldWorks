@@ -38,6 +38,10 @@
     <Reference Include="BasicUtils">
       <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
+    <Reference Include="BasicUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
+    </Reference>
     <Reference Include="COMInterfaces">
       <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
     </Reference>
@@ -64,6 +68,9 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\AssemblyInfoForTests.cs">
+      <Link>Properties\AssemblyInfoForTests.cs</Link>
+    </Compile>
     <Compile Include="DummyFdoUI.cs" />
     <Compile Include="FdoLexiconTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
