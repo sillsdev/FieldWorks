@@ -252,7 +252,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 						if (entry.AllSenses.Count == 1)
 						{
 							foreach (int ws in leSense.Sense.Gloss.AvailableWritingSystemIds)
-								leSense.Sense.Gloss.set_String(ws, null);
+								leSense.Sense.Gloss.set_String(ws, (ITsString) null);
 						}
 						else
 						{
