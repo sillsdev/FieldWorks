@@ -390,6 +390,195 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		[Test]
+		public void GenerateCssForConfiguration_CharStyleSubscriptWorks()
+		{
+			var style = GenerateStyle("subscript");
+			var fontInfo = new FontInfo();
+			fontInfo.m_superSub.ExplicitValue = FwSuperscriptVal.kssvSub;
+			style.SetWsStyle(fontInfo, Cache.DefaultVernWs);
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				Label = "Headword",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				Style = "subscript"
+			};
+
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { headwordNode };
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			//make sure that fontinfo with the subscript overrides made it into css
+			VerifyExtraFontInfoInCss(0, FwSuperscriptVal.kssvSub, FwUnderlineType.kuntNone, Color.Black, cssResult);
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_CharStyleSuperscriptWorks()
+		{
+			var style = GenerateStyle("superscript");
+			var fontInfo = new FontInfo();
+			fontInfo.m_superSub.ExplicitValue = FwSuperscriptVal.kssvSuper;
+			style.SetWsStyle(fontInfo, Cache.DefaultVernWs);
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				Label = "Headword",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				Style = "superscript"
+			};
+
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { headwordNode };
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			//make sure that fontinfo with the superscript overrides made it into css
+			VerifyExtraFontInfoInCss(0, FwSuperscriptVal.kssvSuper, FwUnderlineType.kuntNone, Color.Black, cssResult);
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_CharStyleBasicUnderlineWorks()
+		{
+			var style = GenerateStyle("underline");
+			var fontInfo = new FontInfo();
+			fontInfo.m_underline.ExplicitValue = FwUnderlineType.kuntSingle;
+			fontInfo.m_underlineColor.ExplicitValue = Color.HotPink;
+			style.SetWsStyle(fontInfo, Cache.DefaultVernWs);
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				Label = "Headword",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				Style = "underline"
+			};
+
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { headwordNode };
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			//make sure that fontinfo with the underline overrides made it into css
+			VerifyExtraFontInfoInCss(0, FwSuperscriptVal.kssvOff, FwUnderlineType.kuntSingle, Color.HotPink, cssResult);
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_CharStyleDoubleUnderlineWorks()
+		{
+			var style = GenerateStyle("doubleline");
+			var fontInfo = new FontInfo();
+			fontInfo.m_underline.ExplicitValue = FwUnderlineType.kuntDouble;
+			fontInfo.m_underlineColor.ExplicitValue = Color.Khaki;
+			style.SetWsStyle(fontInfo, Cache.DefaultVernWs);
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				Label = "Headword",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				Style = "doubleline"
+			};
+
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { headwordNode };
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			//make sure that fontinfo with the underline overrides made it into css
+			VerifyExtraFontInfoInCss(0, FwSuperscriptVal.kssvOff, FwUnderlineType.kuntDouble, Color.Khaki, cssResult);
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_CharStyleDashedUnderlineWorks()
+		{
+			var style = GenerateStyle("dashed");
+			var fontInfo = new FontInfo();
+			fontInfo.m_underline.ExplicitValue = FwUnderlineType.kuntDashed;
+			fontInfo.m_underlineColor.ExplicitValue = Color.Black;
+			style.SetWsStyle(fontInfo, Cache.DefaultVernWs);
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				Label = "Headword",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				Style = "dashed"
+			};
+
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { headwordNode };
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			//make sure that fontinfo with the underline overrides made it into css
+			VerifyExtraFontInfoInCss(0, FwSuperscriptVal.kssvOff, FwUnderlineType.kuntDashed, Color.Black, cssResult);
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_CharStyleStrikethroughWorks()
+		{
+			var style = GenerateStyle("strike");
+			var fontInfo = new FontInfo();
+			fontInfo.m_underline.ExplicitValue = FwUnderlineType.kuntStrikethrough;
+			fontInfo.m_underlineColor.ExplicitValue = Color.Black;
+			style.SetWsStyle(fontInfo, Cache.DefaultVernWs);
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				Label = "Headword",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				Style = "strike"
+			};
+
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { headwordNode };
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			//make sure that fontinfo with the underline overrides made it into css
+			VerifyExtraFontInfoInCss(0, FwSuperscriptVal.kssvOff, FwUnderlineType.kuntStrikethrough, Color.Black, cssResult);
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_CharStyleDottedUnderlineWorks()
+		{
+			var style = GenerateStyle("dotted");
+			var fontInfo = new FontInfo();
+			fontInfo.m_underline.ExplicitValue = FwUnderlineType.kuntDotted;
+			fontInfo.m_underlineColor.ExplicitValue = Color.Black;
+			style.SetWsStyle(fontInfo, Cache.DefaultVernWs);
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				Label = "Headword",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				Style = "dotted"
+			};
+
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { headwordNode };
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			//make sure that fontinfo with the underline overrides made it into css
+			VerifyExtraFontInfoInCss(0, FwSuperscriptVal.kssvOff, FwUnderlineType.kuntDotted, Color.Black, cssResult);
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_CharStyleDisableSuperWorks()
+		{
+			var style = GenerateStyle("notsosuper");
+			var fontInfo = new FontInfo();
+			fontInfo.m_superSub.ExplicitValue = FwSuperscriptVal.kssvOff;
+			style.SetWsStyle(fontInfo, Cache.DefaultVernWs);
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				Label = "Headword",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				Style = "notsosuper"
+			};
+
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { headwordNode };
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			//make sure that fontinfo with the superscript overrides made it into css
+			VerifyExtraFontInfoInCss(0, FwSuperscriptVal.kssvOff, FwUnderlineType.kuntNone, Color.Black, cssResult);
+		}
+
 		[TestFixtureSetUp]
 		protected void Init()
 		{
@@ -485,6 +674,88 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(css, Contains.Substring("font-style:" + (italic ? "italic" : "normal") + ";"), "font italic missing");
 			// Font sizes are stored as integers in the styles by FLEx and turned into pt values on export
 			Assert.That(css, Contains.Substring("font-size:" + (float)size / 1000 + "pt;"), "font size missing");
+		}
+
+		private void VerifyExtraFontInfoInCss(int offset, FwSuperscriptVal superscript,
+														  FwUnderlineType underline, Color underlineColor, string css)
+		{
+			switch(underline)
+			{
+				case (FwUnderlineType.kuntSingle):
+				{
+					Assert.That(css, Contains.Substring("text-decoration:underline;"), "underline not applied");
+					Assert.That(css, Contains.Substring("text-decoration-color:" + HtmlColor.FromRgb(underlineColor.R, underlineColor.G, underlineColor.B)),
+									"underline color missing");
+					break;
+				}
+				case (FwUnderlineType.kuntDashed):
+				{
+					Assert.That(css, Contains.Substring("border-bottom:1px dashed"), "dashed underline not applied");
+					Assert.That(css, Contains.Substring("border-bottom-color:" + HtmlColor.FromRgb(underlineColor.R, underlineColor.G, underlineColor.B)),
+									"underline color missing");
+					break;
+				}
+				case (FwUnderlineType.kuntDotted):
+				{
+					Assert.That(css, Contains.Substring("border-bottom:1px dotted"), "dotted underline not applied");
+					Assert.That(css, Contains.Substring("border-bottom-color:" + HtmlColor.FromRgb(underlineColor.R, underlineColor.G, underlineColor.B)),
+									"underline color missing");
+					break;
+				}
+				case (FwUnderlineType.kuntNone):
+				{
+					Assert.That(css, Is.Not.StringContaining("border-bottom:"), "underline should not have been applied");
+					Assert.That(css, Is.Not.StringContaining("text-decoration:underline"), "underline should not have been applied");
+					break;
+				}
+				case (FwUnderlineType.kuntStrikethrough):
+				{
+					Assert.That(css, Contains.Substring("text-decoration:line-through;"), "strike through not applied");
+					Assert.That(css, Contains.Substring("text-decoration-color:" + HtmlColor.FromRgb(underlineColor.R, underlineColor.G, underlineColor.B)),
+									"strike through color missing");
+					break;
+				}
+				case (FwUnderlineType.kuntDouble):
+				{
+					Assert.That(css, Contains.Substring("border-bottom:1px solid"), "double underline not applied");
+					Assert.That(css, Contains.Substring("text-decoration:underline;"), "double underline not applied");
+					Assert.That(css, Contains.Substring("text-decoration-color:" + HtmlColor.FromRgb(underlineColor.R, underlineColor.G, underlineColor.B)),
+									"underline color missing");
+					Assert.That(css, Contains.Substring("border-bottom-color:" + HtmlColor.FromRgb(underlineColor.R, underlineColor.G, underlineColor.B)),
+									"underline color missing");
+					break;
+				}
+				default:
+					Assert.Fail("Um, I don't know how to do that yet");
+					break;
+			}
+			if(offset != 0)
+			{
+				Assert.That(css, Contains.Substring("position:relative;"), "offset was not applied");
+				Assert.That(css, Contains.Substring("bottom:" + offset + ";"), "offset was not applied");
+			}
+			switch(superscript)
+			{
+				case(FwSuperscriptVal.kssvSub):
+				{
+					Assert.That(css, Contains.Substring("vertical-align:sub;"), "subscript was not applied");
+					break;
+				}
+				case (FwSuperscriptVal.kssvSuper):
+				{
+					Assert.That(css, Contains.Substring("vertical-align:super;"), "superscript was not applied");
+					break;
+				}
+				case (FwSuperscriptVal.kssvOff):
+				{
+					//superscript and subscript are disabled either by having the value of vertical-align:initial, or by having no vertical-align at all.
+					if(css.Contains("vertical-align"))
+					{
+						Assert.That(css, Contains.Substring("vertical-align:initial;"), "superscript was not disabled");
+					}
+					break;
+				}
+			}
 		}
 
 		private void VerifyParagraphBorderInCss(Color color, int leading, int trailing, int bottom, int top, string css)

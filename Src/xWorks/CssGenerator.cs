@@ -271,6 +271,8 @@ namespace SIL.FieldWorks.XWorks
 			AddInfoFromWsOrDefaultValue(wsFontInfo.Italic, defaultFontInfo.Italic, "font-style", "italic", "normal", declaration);
 			AddInfoFromWsOrDefaultValue(wsFontInfo.FontColor, defaultFontInfo.FontColor, "color", declaration);
 			AddInfoFromWsOrDefaultValue(wsFontInfo.BackColor, defaultFontInfo.BackColor, "background-color", declaration);
+			AddInfoFromWsOrDefaultValue(wsFontInfo.SuperSub, defaultFontInfo.SuperSub, "vertical-align", declaration);
+			AddInfoForUnderline(wsFontInfo, defaultFontInfo, declaration);
 		}
 
 		/// <summary>
@@ -287,18 +289,8 @@ namespace SIL.FieldWorks.XWorks
 																		string falseValue, StyleDeclaration declaration)
 		{
 			bool fontValue;
-			if(wsFontInfo.ValueIsSet)
-			{
-				fontValue = wsFontInfo.Value;
-			}
-			else if(defaultFontInfo.ValueIsSet)
-			{
-				fontValue = defaultFontInfo.Value;
-			}
-			else
-			{
+			if(!GetFontValue(wsFontInfo, defaultFontInfo, out fontValue))
 				return;
-			}
 			var fontProp = new Property(propName);
 			fontProp.Term = new PrimitiveTerm(UnitType.Ident, fontValue ? trueValue : falseValue);
 			declaration.Add(fontProp);
@@ -315,25 +307,14 @@ namespace SIL.FieldWorks.XWorks
 																		IStyleProp<Color> defaultFontInfo, string propName, StyleDeclaration declaration)
 		{
 			Color fontValue;
-			if(wsFontInfo.ValueIsSet)
-			{
-				fontValue = wsFontInfo.Value;
-			}
-			else if(defaultFontInfo.ValueIsSet)
-			{
-				fontValue = defaultFontInfo.Value;
-			}
-			else
-			{
+			if(!GetFontValue(wsFontInfo, defaultFontInfo, out fontValue))
 				return;
-			}
 			var fontProp = new Property(propName);
 			fontProp.Term = new PrimitiveTerm(UnitType.RGB,
 														 HtmlColor.FromRgba(fontValue.R, fontValue.G, fontValue.B,
 																				  fontValue.A).ToString());
 			declaration.Add(fontProp);
 		}
-
 
 		/// <summary>
 		/// Generates css from integer style values using writing system overrides where appropriate
@@ -348,21 +329,124 @@ namespace SIL.FieldWorks.XWorks
 																		StyleDeclaration declaration)
 		{
 			int fontValue;
-			if(wsFontInfo.ValueIsSet)
-			{
-				fontValue = wsFontInfo.Value;
-			}
-			else if(defaultFontInfo.ValueIsSet)
-			{
-				fontValue = defaultFontInfo.Value;
-			}
-			else
-			{
+			if(!GetFontValue(wsFontInfo, defaultFontInfo, out fontValue))
 				return;
-			}
 			var fontProp = new Property(propName);
 			fontProp.Term = new PrimitiveTerm(termType, (float)fontValue / 1000);
 			declaration.Add(fontProp);
+		}
+
+		/// <summary>
+		/// Generates css from SuperSub style values using writing system overrides where appropriate
+		/// </summary>
+		/// <param name="wsFontInfo"></param>
+		/// <param name="defaultFontInfo"></param>
+		/// <param name="propName"></param>
+		/// <param name="declaration"></param>
+		private static void AddInfoFromWsOrDefaultValue(IStyleProp<FwSuperscriptVal> wsFontInfo,
+																		IStyleProp<FwSuperscriptVal> defaultFontInfo, string propName, StyleDeclaration declaration)
+		{
+			FwSuperscriptVal fontValue;
+			if(!GetFontValue(wsFontInfo, defaultFontInfo, out fontValue))
+				return;
+			var fontProp = new Property(propName);
+			string subSuperVal = "inherit";
+			switch(fontValue)
+			{
+				case (FwSuperscriptVal.kssvSub):
+				{
+					subSuperVal = "sub";
+					break;
+				}
+				case (FwSuperscriptVal.kssvSuper):
+				{
+					subSuperVal = "super";
+					break;
+				}
+				case (FwSuperscriptVal.kssvOff):
+				{
+					subSuperVal = "initial";
+					break;
+				}
+			}
+			fontProp.Term = new PrimitiveTerm(UnitType.Ident, subSuperVal);
+			declaration.Add(fontProp);
+		}
+
+		private static void AddInfoForUnderline(FontInfo wsFont, ICharacterStyleInfo defaultFont, StyleDeclaration declaration)
+		{
+			FwUnderlineType underlineType;
+			if(!GetFontValue(wsFont.Underline, defaultFont.Underline, out underlineType))
+				return;
+			switch(underlineType)
+			{
+				case(FwUnderlineType.kuntDouble):
+				{
+					// use border to generate second underline then generate the standard underline
+					var fontProp = new Property("border-bottom");
+					var termList = new TermList();
+					termList.AddTerm(new PrimitiveTerm(UnitType.Pixel, 1));
+					termList.AddSeparator(TermList.TermSeparator.Space);
+					termList.AddTerm(new PrimitiveTerm(UnitType.Ident, "solid"));
+					fontProp.Term = termList;
+					declaration.Add(fontProp);
+					AddInfoFromWsOrDefaultValue(wsFont.UnderlineColor, defaultFont.UnderlineColor, "border-bottom-color", declaration);
+					goto case FwUnderlineType.kuntSingle; //fall through to single
+				}
+				case(FwUnderlineType.kuntSingle):
+				{
+					var fontProp = new Property("text-decoration");
+					fontProp.Term = new PrimitiveTerm(UnitType.Ident, "underline");
+					declaration.Add(fontProp);
+					AddInfoFromWsOrDefaultValue(wsFont.UnderlineColor, defaultFont.UnderlineColor, "text-decoration-color", declaration);
+					break;
+				}
+				case(FwUnderlineType.kuntStrikethrough):
+				{
+					var fontProp = new Property("text-decoration");
+					fontProp.Term = new PrimitiveTerm(UnitType.Ident, "line-through");
+					declaration.Add(fontProp);
+					AddInfoFromWsOrDefaultValue(wsFont.UnderlineColor, defaultFont.UnderlineColor, "text-decoration-color", declaration);
+					break;
+				}
+				case (FwUnderlineType.kuntDashed):
+				case (FwUnderlineType.kuntDotted):
+				{
+					// use border to generate a dotted or dashed underline
+					var fontProp = new Property("border-bottom");
+					var termList = new TermList();
+					termList.AddTerm(new PrimitiveTerm(UnitType.Pixel, 1));
+					termList.AddSeparator(TermList.TermSeparator.Space);
+					termList.AddTerm(new PrimitiveTerm(UnitType.Ident,
+																  underlineType == FwUnderlineType.kuntDashed ? "dashed" : "dotted"));
+					fontProp.Term = termList;
+					declaration.Add(fontProp);
+					AddInfoFromWsOrDefaultValue(wsFont.UnderlineColor, defaultFont.UnderlineColor, "border-bottom-color", declaration);
+					break;
+				}
+			}
+		}
+
+		/// <summary>
+		/// This method will set fontValue to the font value from the writing system info falling back to the
+		/// default info. It will return false if the value is not set in either info.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="wsFontInfo">writing system specific font info</param>
+		/// <param name="defaultFontInfo">default font info</param>
+		/// <param name="fontValue">the value retrieved from the given font infos</param>
+		/// <returns>true if fontValue was defined in one of the info objects</returns>
+		private static bool GetFontValue<T>(IStyleProp<T> wsFontInfo, IStyleProp<T> defaultFontInfo,
+													out T fontValue)
+		{
+			fontValue = default(T);
+			if(wsFontInfo.ValueIsSet)
+				fontValue = wsFontInfo.Value;
+			else if(defaultFontInfo.ValueIsSet)
+				fontValue = defaultFontInfo.Value;
+			else
+				return false;
+			return true;
 		}
 
 		/// <summary>
