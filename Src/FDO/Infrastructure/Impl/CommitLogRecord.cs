@@ -17,7 +17,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// A guid unique to one particular writer; used by each client to eliminate its own commits from queries.
 		/// </summary>
 		[ProtoMember(2)]
-		public int Source;
+		public Guid Source;
 		/// <summary>
 		/// Our IDs of the objects that were added.
 		/// </summary>

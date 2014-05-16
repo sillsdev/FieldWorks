@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
@@ -23,12 +24,15 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		private Mutex m_mutex;
 		private MemoryMappedFile m_commitLogMetadata;
 		private MemoryMappedFile m_commitLog;
-		private int m_slotIndex = -1;
+		private readonly Guid m_peerID;
+		private readonly Dictionary<int, Process> m_peerProcesses;
 
 		internal SharedXMLBackendProvider(FdoCache cache, IdentityMap identityMap, ICmObjectSurrogateFactory surrogateFactory, IFwMetaDataCacheManagedInternal mdc,
 			IDataMigrationManager dataMigrationManager, IFdoUI ui, IFdoDirectories dirs)
 			: base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager, ui, dirs)
 		{
+			m_peerProcesses = new Dictionary<int, Process>();
+			m_peerID = Guid.NewGuid();
 		}
 
 		internal int OtherApplicationsConnectedCount
@@ -41,7 +45,12 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					using (MemoryMappedViewStream stream = m_commitLogMetadata.CreateViewStream())
 					{
 						var metadata = Serializer.DeserializeWithLengthPrefix<CommitLogMetadata>(stream, PrefixStyle.Base128, 1);
-						return metadata.Slots.Count(s => s != -1) - 1;
+						if (CheckExitedPeerProcesses(metadata))
+						{
+							stream.Seek(0, SeekOrigin.Begin);
+							Serializer.SerializeWithLengthPrefix(stream, metadata, PrefixStyle.Base128, 1);
+						}
+						return metadata.Peers.Count - 1;
 					}
 				}
 				finally
@@ -68,28 +77,20 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					{
 						stream.Seek(0, SeekOrigin.Begin);
 						metadata = Serializer.DeserializeWithLengthPrefix<CommitLogMetadata>(stream, PrefixStyle.Base128, 1);
+						CheckExitedPeerProcesses(metadata);
 					}
 					else
 					{
-						metadata = new CommitLogMetadata { Slots = new int[8], Master = -1 };
-						for (int i = 0; i < metadata.Slots.Length; i++)
-							metadata.Slots[i] = -1;
+						metadata = CreateEmptyMetadata();
 					}
 
-					for (int i = 0; i < metadata.Slots.Length; i++)
-					{
-						if (metadata.Slots[i] == -1)
-						{
-							m_slotIndex = i;
-							metadata.Slots[i] = metadata.FileGeneration;
-							break;
-						}
-					}
+					using (Process curProcess = Process.GetCurrentProcess())
+						metadata.Peers[m_peerID] = new CommitLogPeer { ProcessID = curProcess.Id, Generation = metadata.FileGeneration };
 
-					if (metadata.Master == -1)
+					if (metadata.Master == Guid.Empty)
 					{
 						base.LockProject();
-						metadata.Master = m_slotIndex;
+						metadata.Master = m_peerID;
 					}
 
 					stream.Seek(0, SeekOrigin.Begin);
@@ -125,11 +126,29 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 						{
 							stream.Seek(0, SeekOrigin.Begin);
 							var metadata = Serializer.DeserializeWithLengthPrefix<CommitLogMetadata>(stream, PrefixStyle.Base128, 1);
-							metadata.Slots[m_slotIndex] = -1;
-							if (metadata.Master == m_slotIndex)
-								metadata.Master = -1;
+
+							if (HasLockFile)
+							{
+								// commit any unseen foreign changes
+								List<ICmObjectSurrogate> foreignNewbies;
+								List<ICmObjectSurrogate> foreignDirtballs;
+								List<ICmObjectId> foreignGoners;
+								if (GetUnseenForeignChanges(metadata, out foreignNewbies, out foreignDirtballs, out foreignGoners))
+								{
+									var newObjects = new HashSet<ICmObjectOrSurrogate>(foreignNewbies);
+									var editedObjects = new HashSet<ICmObjectOrSurrogate>(foreignDirtballs);
+									var removedObjects = new HashSet<ICmObjectId>(foreignGoners);
+
+									IEnumerable<CustomFieldInfo> fields;
+									if (HaveAnythingToCommit(newObjects, editedObjects, removedObjects, out fields) && (StartupVersionNumber == ModelVersion))
+										base.WriteCommitWork(new CommitWork(newObjects, editedObjects, removedObjects, fields));
+								}
+								// XML file is now totally up-to-date
+								metadata.FileGeneration = metadata.CurrentGeneration;
+							}
+							RemovePeer(metadata, m_peerID);
 #if __MonoCS__
-							delete = metadata.Slots.All(s => s == -1);
+							delete = metadata.Peers.Count == 0;
 #endif
 							stream.Seek(0, SeekOrigin.Begin);
 							Serializer.SerializeWithLengthPrefix(stream, metadata, PrefixStyle.Base128, 1);
@@ -158,13 +177,22 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				}
 			}
 
-			base.ShutdownInternal();
-
 			if (m_mutex != null)
 			{
 				m_mutex.Dispose();
 				m_mutex = null;
 			}
+
+			if (CommitThread != null)
+			{
+				CommitThread.Stop();
+				CommitThread.Dispose();
+				CommitThread = null;
+			}
+
+			foreach (Process peerProcess in m_peerProcesses.Values)
+				peerProcess.Close();
+			m_peerProcesses.Clear();
 		}
 
 		protected override void CreateInternal()
@@ -175,13 +203,11 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				throw new InvalidOperationException("Cannot create shared XML backend.");
 			try
 			{
-				CreateSharedMemory(createdNew);
-				var metadata = new CommitLogMetadata { Slots = new int[8] };
-				m_slotIndex = 0;
-				metadata.Master = 0;
-				metadata.Slots[0] = metadata.FileGeneration;
-				for (int i = 1; i < metadata.Slots.Length; i++)
-					metadata.Slots[i] = -1;
+				CreateSharedMemory(true);
+				CommitLogMetadata metadata = CreateEmptyMetadata();
+				metadata.Master = m_peerID;
+				using (Process curProcess = Process.GetCurrentProcess())
+					metadata.Peers[m_peerID] = new CommitLogPeer { ProcessID = curProcess.Id, Generation = metadata.FileGeneration };
 				using (MemoryMappedViewStream stream = m_commitLogMetadata.CreateViewStream())
 				{
 					Serializer.SerializeWithLengthPrefix(stream, metadata, PrefixStyle.Base128, 1);
@@ -193,6 +219,11 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			{
 				m_mutex.ReleaseMutex();
 			}
+		}
+
+		private static CommitLogMetadata CreateEmptyMetadata()
+		{
+			return new CommitLogMetadata { Peers = new Dictionary<Guid, CommitLogPeer>() };
 		}
 
 		private string MutexName
@@ -236,6 +267,63 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			return MemoryMappedFile.CreateOrOpen(name, capacity);
 		}
 
+		/// <summary>
+		/// Checks for peer processes that have exited unexpectedly and update the metadata accordingly.
+		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "The process is disposed later.")]
+		private bool CheckExitedPeerProcesses(CommitLogMetadata metadata)
+		{
+			bool changed = false;
+			var processesToRemove = new HashSet<Process>(m_peerProcesses.Values);
+			foreach (KeyValuePair<Guid, CommitLogPeer> kvp in metadata.Peers.ToArray())
+			{
+				if (kvp.Key == m_peerID)
+					continue;
+
+				Process process;
+				if (m_peerProcesses.TryGetValue(kvp.Value.ProcessID, out process))
+				{
+					if (process.HasExited)
+					{
+						RemovePeer(metadata, kvp.Key);
+						changed = true;
+					}
+					else
+					{
+						processesToRemove.Remove(process);
+					}
+				}
+				else
+				{
+					try
+					{
+						process = Process.GetProcessById(kvp.Value.ProcessID);
+						m_peerProcesses[kvp.Value.ProcessID] = process;
+					}
+					catch (ArgumentException)
+					{
+						RemovePeer(metadata, kvp.Key);
+						changed = true;
+					}
+				}
+			}
+
+			foreach (Process process in processesToRemove)
+			{
+				m_peerProcesses.Remove(process.Id);
+				process.Close();
+			}
+			return changed;
+		}
+
+		private static void RemovePeer(CommitLogMetadata metadata, Guid peerID)
+		{
+			metadata.Peers.Remove(peerID);
+			if (metadata.Master == peerID)
+				metadata.Master = Guid.Empty;
+		}
+
 		internal override void LockProject()
 		{
 			m_mutex.WaitOne();
@@ -245,9 +333,9 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				using (MemoryMappedViewStream stream = m_commitLogMetadata.CreateViewStream())
 				{
 					var metadata = Serializer.DeserializeWithLengthPrefix<CommitLogMetadata>(stream, PrefixStyle.Base128, 1);
-					if (metadata.Master == -1)
+					if (metadata.Master == Guid.Empty)
 					{
-						metadata.Master = m_slotIndex;
+						metadata.Master = m_peerID;
 						stream.Seek(0, SeekOrigin.Begin);
 						Serializer.SerializeWithLengthPrefix(stream, metadata, PrefixStyle.Base128, 1);
 					}
@@ -261,9 +349,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		internal override void UnlockProject()
 		{
-			if (m_commitLogMetadata == null)
-				return;
-
 			m_mutex.WaitOne();
 			try
 			{
@@ -275,9 +360,9 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					{
 						stream.Seek(0, SeekOrigin.Begin);
 						var metadata = Serializer.DeserializeWithLengthPrefix<CommitLogMetadata>(stream, PrefixStyle.Base128, 1);
-						if (metadata.Master == m_slotIndex)
+						if (metadata.Master == m_peerID)
 						{
-							metadata.Master = -1;
+							metadata.Master = Guid.Empty;
 							stream.Seek(0, SeekOrigin.Begin);
 							Serializer.SerializeWithLengthPrefix(stream, metadata, PrefixStyle.Base128, 1);
 						}
@@ -301,12 +386,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					metadata = Serializer.DeserializeWithLengthPrefix<CommitLogMetadata>(stream, PrefixStyle.Base128, 1);
 				}
 
-				if (metadata.Master == -1)
-				{
-					base.LockProject();
-					metadata.Master = m_slotIndex;
-				}
-
 				List<ICmObjectSurrogate> foreignNewbies;
 				List<ICmObjectSurrogate> foreignDirtballs;
 				List<ICmObjectId> foreignGoners;
@@ -322,6 +401,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 							var newObjects = new HashSet<ICmObjectOrSurrogate>(foreignNewbies);
 							var editedObjects = new HashSet<ICmObjectOrSurrogate>(foreignDirtballs);
 							var removedObjects = new HashSet<ICmObjectId>(foreignGoners);
+
 							IEnumerable<CustomFieldInfo> fields;
 							if (HaveAnythingToCommit(newObjects, editedObjects, removedObjects, out fields) && (StartupVersionNumber == ModelVersion))
 								PerformCommit(newObjects, editedObjects, removedObjects, fields);
@@ -334,6 +414,16 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					}
 				}
 
+				CheckExitedPeerProcesses(metadata);
+				if (metadata.Master == Guid.Empty)
+				{
+					// Check if the former master left the commit log and XML file in a consistent state. If not, we can't continue.
+					if (metadata.CurrentGeneration != metadata.FileGeneration)
+						return false;
+					base.LockProject();
+					metadata.Master = m_peerID;
+				}
+
 				IEnumerable<CustomFieldInfo> cfiList;
 				if (!HaveAnythingToCommit(newbies, dirtballs, goners, out cfiList) && (StartupVersionNumber == ModelVersion))
 					return true;
@@ -342,17 +432,15 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 				var commitRec = new CommitLogRecord
 					{
-						Source = m_slotIndex,
+						Source = m_peerID,
 						WriteGeneration = metadata.CurrentGeneration,
 						ObjectsDeleted = goners.Select(g => g.Guid).ToList(),
 						ObjectsAdded = newbies.Select(n => n.XMLBytes).ToList(),
 						ObjectsUpdated = dirtballs.Select(d => d.XMLBytes).ToList()
 					};
 
-				// we've seen our own change, and we use a semaphore to make sure there haven't been others since we checked.
-				metadata.Slots[m_slotIndex] = metadata.CurrentGeneration;
-
-				// TODO handle custom fields
+				// we've seen our own change
+				metadata.Peers[m_peerID].Generation = metadata.CurrentGeneration;
 
 				using (var buffer = new MemoryStream())
 				{
@@ -362,6 +450,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 					byte[] bytes = buffer.GetBuffer();
 					int offset = (metadata.Offset + metadata.Length) % CommitLogSize;
+					// check if the record can fit at the end of the commit log. If not, we wrap around to the beginning.
 					if (offset + buffer.Length > CommitLogSize)
 					{
 						metadata.Padding = CommitLogSize - offset;
@@ -403,7 +492,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				using (MemoryMappedViewStream stream = m_commitLogMetadata.CreateViewStream())
 				{
 					var metadata = Serializer.DeserializeWithLengthPrefix<CommitLogMetadata>(stream, PrefixStyle.Base128, 1);
-					metadata.FileGeneration = metadata.Slots[m_slotIndex];
+					metadata.FileGeneration = metadata.Peers[m_peerID].Generation;
 					stream.Seek(0, SeekOrigin.Begin);
 					Serializer.SerializeWithLengthPrefix(stream, metadata, PrefixStyle.Base128, 1);
 				}
@@ -423,9 +512,9 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			foreignDirtballs = new List<ICmObjectSurrogate>();
 			foreignGoners = new List<ICmObjectId>();
 
-			int startGeneration = metadata.Slots[m_slotIndex];
-			metadata.Slots[m_slotIndex] = metadata.CurrentGeneration;
-			int minGeneration = metadata.Slots.Where(g => g != -1).Min();
+			int startGeneration = metadata.Peers[m_peerID].Generation;
+			metadata.Peers[m_peerID].Generation = metadata.CurrentGeneration;
+			int minPeerGeneration = metadata.Peers.Values.Min(s => s.Generation);
 			var unseenCommits = new List<CommitLogRecord>();
 
 			int viewOffset = metadata.Offset;
@@ -441,15 +530,17 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 						while (stream.Position < viewLength)
 						{
 							var rec = Serializer.DeserializeWithLengthPrefix<CommitLogRecord>(stream, PrefixStyle.Base128, 1);
-							if (rec.WriteGeneration > startGeneration && rec.Source != m_slotIndex)
+							if (rec.WriteGeneration > startGeneration && rec.Source != m_peerID)
 								unseenCommits.Add(rec);
-							if (rec.WriteGeneration <= minGeneration)
+							// remove the record from the commit log once all peers have seen it and it has been written to disk
+							if (rec.WriteGeneration <= minPeerGeneration && rec.WriteGeneration <= metadata.FileGeneration)
 								metadata.Offset = viewOffset + (int) stream.Position;
 						}
 					}
 				}
 				curLength += viewLength;
 				metadata.Length -= metadata.Offset - viewOffset;
+				// check if we've hit the end of the commit log. If so, wrap around to the beginning.
 				if (metadata.Offset == CommitLogSize - metadata.Padding)
 				{
 					metadata.Length -= metadata.Padding;

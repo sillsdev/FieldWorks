@@ -1,4 +1,6 @@
-﻿using ProtoBuf;
+﻿using System;
+using System.Collections.Generic;
+using ProtoBuf;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 {
@@ -21,9 +23,19 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		public int Padding;
 
 		[ProtoMember(6)]
-		public int[] Slots;
+		public Dictionary<Guid, CommitLogPeer> Peers;
 
 		[ProtoMember(7)]
-		public int Master;
+		public Guid Master;
+	}
+
+	[ProtoContract]
+	internal class CommitLogPeer
+	{
+		[ProtoMember(1)]
+		public int Generation;
+
+		[ProtoMember(2)]
+		public int ProcessID;
 	}
 }

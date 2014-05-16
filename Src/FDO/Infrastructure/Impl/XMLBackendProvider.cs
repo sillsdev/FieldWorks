@@ -110,7 +110,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		#region Member variables
 		private DateTime m_lastWriteTime;
-		private ConsumerThread<int, CommitWork> m_thread;
 		private FileStream m_lockFile;
 		private bool m_needConversion; // communicates to MakeSurrogate that we're reading an old version.
 		private int m_startupVersionNumber;
@@ -141,6 +140,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		{
 			get { return m_startupVersionNumber; }
 		}
+
+		protected ConsumerThread<int, CommitWork> CommitThread { get; set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -332,11 +333,11 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		{
 			CompleteAllCommits();
 			// Make sure the commit thread is stopped. (FWR-3179)
-			if (m_thread != null)
+			if (CommitThread != null)
 			{
-				m_thread.StopOnIdle(); // CompleteAllCommits should wait until idle, but just in case...
-				m_thread.Dispose();
-				m_thread = null;
+				CommitThread.StopOnIdle(); // CompleteAllCommits should wait until idle, but just in case...
+				CommitThread.Dispose();
+				CommitThread = null;
 			}
 			UnlockProject();
 		}
@@ -465,17 +466,17 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		protected void PerformCommit(HashSet<ICmObjectOrSurrogate> newbies, HashSet<ICmObjectOrSurrogate> dirtballs, HashSet<ICmObjectId> goners,
 			IEnumerable<CustomFieldInfo> customFields)
 		{
-			if (m_thread == null || !m_thread.WaitForNextRequest())
+			if (CommitThread == null || !CommitThread.WaitForNextRequest())
 			{
 				// If thread is already dead, then WaitForNextRequest will return false, but we still have to call Dispose() on it.
-				if (m_thread != null)
-					m_thread.Dispose();
+				if (CommitThread != null)
+					CommitThread.Dispose();
 
-				m_thread = new ConsumerThread<int, CommitWork>(Work);
-				m_thread.Start();
+				CommitThread = new ConsumerThread<int, CommitWork>(Work);
+				CommitThread.Start();
 			}
 
-			m_thread.EnqueueWork(new CommitWork(newbies, dirtballs, goners, customFields));
+			CommitThread.EnqueueWork(new CommitWork(newbies, dirtballs, goners, customFields));
 		}
 
 		/// <summary>
@@ -484,8 +485,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		public override void CompleteAllCommits()
 		{
 			base.CompleteAllCommits();
-			if (m_thread != null)
-				m_thread.WaitUntilIdle();
+			if (CommitThread != null)
+				CommitThread.WaitUntilIdle();
 		}
 
 		private void ReportProblem(string message, string tempPath)
@@ -520,7 +521,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				else
 					workItem.Combine(curWorkItem);
 			}
-
 			if (workItem == null)
 				return;
 
