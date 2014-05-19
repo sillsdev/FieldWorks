@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.XWorks
 			Invalidate(true);
 		}
 
-		public void SetChoices(IEnumerable<string> choices)
+		public void SetChoices(IEnumerable<DictionaryConfigurationModel> choices)
 		{
 			m_cbDictConfig.Items.Clear();
 			if(choices != null)
@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.XWorks
 			m_txtPubsForConfig.Text = publications;
 		}
 
-		public void SelectConfiguration(string configuration)
+		public void SelectConfiguration(DictionaryConfigurationModel configuration)
 		{
 			m_cbDictConfig.SelectedItem = configuration;
 		}
@@ -111,7 +111,10 @@ namespace SIL.FieldWorks.XWorks
 
 		private void OnConfigurationChanged(object sender, EventArgs e)
 		{
-			SwitchConfiguration(sender, new SwitchConfigurationEventArgs { ConfigurationPicked = m_cbDictConfig.SelectedItem.ToString() });
+			SwitchConfiguration(sender, new SwitchConfigurationEventArgs
+			{
+				ConfigurationPicked = (DictionaryConfigurationModel)m_cbDictConfig.SelectedItem
+			});
 		}
 	}
 }

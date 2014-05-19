@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				_alternateConfigurations[choice.Key] = new DictionaryConfigurationModel(choice.Value, cache);
 			}
-			View.SetChoices(choices.Keys);
+			View.SetChoices(_alternateConfigurations.Values);
 		}
 
 		/// <summary>
@@ -285,7 +285,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 			};
 			View.SaveModel += SaveModelHandler;
-			view.SwitchConfiguration += (sender, args) => { _model = _alternateConfigurations[args.ConfigurationPicked]; RefreshView(); };
+			view.SwitchConfiguration += (sender, args) => { _model = args.ConfigurationPicked; RefreshView(); };
 
 			View.TreeControl.MoveUp += node => Reorder(node.Tag as ConfigurableDictionaryNode, Direction.Up);
 			View.TreeControl.MoveDown += node => Reorder(node.Tag as ConfigurableDictionaryNode, Direction.Down);
@@ -313,7 +313,7 @@ namespace SIL.FieldWorks.XWorks
 
 					if (!dictionaryNode.ChangeSuffix(renameDialog.NewSuffix, siblings))
 					{
-						MessageBox.Show("Failed to rename. Use a name that is not already in use.");
+						MessageBox.Show(xWorksStrings.FailedToRename);
 						return;
 					}
 				}
@@ -357,6 +357,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			SetAlternateDictionaryChoices(mediator);
 			var lastUsedConfiguration = mediator.PropertyTable.GetStringProperty("LastDictionaryConfiguration", "Root");
+			// REVIEW (Hasso) 2014.05: could we do this without a dictionary?--yes: combine with SetAltDictChoices, search in loop
 			_model = _alternateConfigurations.ContainsKey(lastUsedConfiguration)
 				? _alternateConfigurations[lastUsedConfiguration]
 				: _alternateConfigurations.Values.First();
@@ -364,8 +365,11 @@ namespace SIL.FieldWorks.XWorks
 
 		private void SaveModelHandler(object sender, EventArgs e)
 		{
-			_model.FilePath = GetProjectConfigLocationForPath(_model.FilePath, _mediator);
-			_model.Save();
+			foreach (var config in _alternateConfigurations.Values)
+			{
+				config.FilePath = GetProjectConfigLocationForPath(config.FilePath, _mediator);
+				config.Save();
+			}
 			RefreshView();
 		}
 
@@ -448,7 +452,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void SelectCurrentConfiguration()
 		{
-			View.SelectConfiguration(_model.Label);
+			View.SelectConfiguration(_model);
 		}
 
 		/// <summary>

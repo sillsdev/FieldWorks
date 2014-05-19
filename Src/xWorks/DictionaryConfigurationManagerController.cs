@@ -132,7 +132,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			var itemIndex = labelEditEventArgs.Item;
 			var item = _view.configurationsListView.Items[itemIndex];
-			var configuration = item.Tag as DictionaryConfigurationModel;
+			var configuration = (DictionaryConfigurationModel)item.Tag;
 			configuration.Label = newName;
 		}
 	}

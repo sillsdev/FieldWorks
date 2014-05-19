@@ -144,5 +144,10 @@ namespace SIL.FieldWorks.XWorks
 				SpecifyParents(node.Children);
 			}
 		}
+
+		public override string ToString()
+		{
+			return Label;
+		}
 	}
 }

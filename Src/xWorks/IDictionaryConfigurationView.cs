@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Sets the choices of configuration options in the view
 		/// </summary>
 		/// <param name="choices"></param>
-		void SetChoices(IEnumerable<string> choices);
+		void SetChoices(IEnumerable<DictionaryConfigurationModel> choices);
 
 		/// <summary>
 		/// Show the publications for the current dictionary configuration.
@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Select current dictionary configuration in the combo box
 		/// </summary>
 		/// <param name="configuration"></param>
-		void SelectConfiguration(String configuration);
+		void SelectConfiguration(DictionaryConfigurationModel configuration);
 	}
 
 	public delegate void SwitchConfigurationEvent(object sender, SwitchConfigurationEventArgs args);
@@ -71,6 +71,6 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public class SwitchConfigurationEventArgs
 	{
-		public string ConfigurationPicked { get; set; }
+		public DictionaryConfigurationModel ConfigurationPicked { get; set; }
 	}
 }

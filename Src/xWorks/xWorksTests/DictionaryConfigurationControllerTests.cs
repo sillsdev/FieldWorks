@@ -839,7 +839,7 @@ namespace SIL.FieldWorks.XWorks
 				;
 			}
 
-			public void SetChoices(IEnumerable<string> choices)
+			public void SetChoices(IEnumerable<DictionaryConfigurationModel> choices)
 			{
 				;
 			}
@@ -849,7 +849,7 @@ namespace SIL.FieldWorks.XWorks
 				;
 			}
 
-			public void SelectConfiguration(string configuration)
+			public void SelectConfiguration(DictionaryConfigurationModel configuration)
 			{
 				;
 			}

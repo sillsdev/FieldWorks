@@ -195,15 +195,6 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to rename. Use a name that is not already in use..
-        /// </summary>
-        internal static string DictionaryConfigurationController_Failed_to_rename {
-            get {
-                return ResourceManager.GetString("DictionaryConfigurationController_Failed_to_rename", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to You did not select a writing system that is valid for this database. Unless you have previously entered data in this database in this writing system, this field will never be shown..
         /// </summary>
         internal static string DidNotSelectValidWsForDb {
@@ -281,6 +272,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string FailedJump {
             get {
                 return ResourceManager.GetString("FailedJump", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to rename. Use a name that is not already in use..
+        /// </summary>
+        internal static string FailedToRename {
+            get {
+                return ResourceManager.GetString("FailedToRename", resourceCulture);
             }
         }
         
