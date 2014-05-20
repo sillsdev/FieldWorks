@@ -3,7 +3,7 @@
 	<!-- Items common to XAmple and HermitCrab -->
 
 	<xsl:key name="LexEntryInflTypeID" match="LexEntryInflType" use="@Id"/>
-	<xsl:key name="PrefixSlotsID" match="/M3Dump/PartsOfSpeech/PartOfSpeech/AffixTemplates/MoInflAffixTemplate/PrefixSlots" use="@Id"/>
+	<xsl:key name="PrefixSlotsID" match="/M3Dump/PartsOfSpeech/PartOfSpeech/AffixTemplates/MoInflAffixTemplate/PrefixSlots" use="@dst"/>
 
 	<xsl:variable name="LexEntryInflTypeSlots" select="/M3Dump/LexEntryInflTypes/LexEntryInflType/Slots"/>
 

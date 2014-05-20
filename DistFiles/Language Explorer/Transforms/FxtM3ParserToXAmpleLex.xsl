@@ -569,7 +569,7 @@ Main template
 \lx </xsl:text>
 			<xsl:value-of select="../@Id"/>
 			<xsl:variable name="sGloss">
-				<xsl:text>IrregInflFormInSlot</xsl:text>
+				<xsl:value-of select="$sIrregularlyInflectedFormInSlot"/>
 				<xsl:value-of select="@dst"/>
 			</xsl:variable>
 			<xsl:call-template name="Gloss">
@@ -613,7 +613,7 @@ Main template
 			<xsl:value-of select="../@Id"/>
 			<xsl:choose>
 				<xsl:when test="$fIsPrefix='Y'">
-					<xsl:text> +/ ... _ {</xsl:text>
+					<xsl:text> +/ _ ... {</xsl:text>
 					<xsl:value-of select="$sIrregularlyInflectedForm"/>
 					<xsl:value-of select="../@Id"/>
 					<xsl:text>}</xsl:text>
@@ -2032,7 +2032,7 @@ InflClass
 			</xsl:call-template>
 			<xsl:for-each select="$lexEntryRef/LexEntryInflType">
 				<xsl:variable name="lexEnryInflType" select="key('LexEntryInflTypeID',@dst)"/>
-				<xsl:if test="not($lexEnryInflType/Slots) and $lexEnryInflType/InflectionFeatures/FsFeatStruc">
+				<xsl:if test="$lexEnryInflType/InflectionFeatures/FsFeatStruc">
 					<xsl:text>
 \fd </xsl:text>
 					<xsl:value-of select="$sMSFS"/>
@@ -2043,6 +2043,7 @@ InflClass
 				<xsl:value-of select="$sIrregularlyInflectedForm"/>
 				<xsl:value-of select="$lexEnryInflType/@Id"/>
 			</xsl:for-each>
+			<xsl:text>&#xa;</xsl:text>
 		</xsl:if>
 	</xsl:template>
 	<!--

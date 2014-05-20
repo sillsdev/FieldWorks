@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Xml;
+using System.Linq;
 using System.Xml.XPath;
 using System.Xml.Xsl;
 
@@ -293,6 +294,8 @@ namespace SIL.FieldWorks.LexText.Controls
 						// is an irregularly inflected form
 						// get the MoStemMsa of its variant
 						var entry = obj as ILexEntry;
+						if (entry == null)
+							break;
 						if (entry.EntryRefsOS.Count > 0)
 						{
 							var index = ParseFiler.IndexOfLexEntryRef(attr.Value, indexOfPeriod);
@@ -300,6 +303,18 @@ namespace SIL.FieldWorks.LexText.Controls
 							var sense = FDO.DomainServices.MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
 							stemMsa = sense.MorphoSyntaxAnalysisRA as IMoStemMsa;
 							CreateStemMsaXmlElement(doc, morphNode, stemMsa);
+							// Handle any features of the variant type
+							var stemMsaNode = morphNode.SelectSingleNode("stemMsa");
+							foreach (var entryRef in entry.VariantEntryRefs)
+							{
+								var varTypes = entryRef.VariantEntryTypesRS;
+								foreach (var lexEntryType in varTypes)
+								{
+									var inflEntryType = lexEntryType as ILexEntryInflType;
+									if (inflEntryType != null)
+										CreateFeatureStructureNodes(doc, stemMsaNode, inflEntryType.InflFeatsOA, stemMsa.Hvo);
+								}
+							}
 						}
 						break;
 					case "LexEntryInflType":
