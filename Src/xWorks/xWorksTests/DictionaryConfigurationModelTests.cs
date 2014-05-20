@@ -281,7 +281,7 @@ namespace SIL.FieldWorks.XWorks
 		};
 
 		[Test]
-		public void Load_NoPublicationsLoadsAllPublications()
+		public void Load_NoPublicationsLoadsNoPublications()
 		{
 			// "Main Dictionary" was added by base class
 			ICmPossibility addedPublication = AddPublication("Another Dictionary");
@@ -296,11 +296,35 @@ namespace SIL.FieldWorks.XWorks
 					model = new DictionaryConfigurationModel(modelFile.Path, Cache);
 				}
 
-				Assert.IsNotEmpty(model.Publications);
-				Assert.AreEqual(2, model.Publications.Count);
-				Assert.AreEqual("Main Dictionary", model.Publications[0]);
-				Assert.AreEqual("Another Dictionary", model.Publications[1]);
+				Assert.IsEmpty(model.Publications, "Should have resulted in an empty set of publications for input XML: " + string.Join("",noPublicationsXml));
 			}
+
+			RemovePublication(addedPublication);
+		}
+
+		[Test]
+		public void Load_AllPublicationsFlagCausesAllPublicationsReported()
+		{
+			// "Main Dictionary" was added by base class
+			ICmPossibility addedPublication = AddPublication("Another Dictionary");
+
+			DictionaryConfigurationModel model;
+			using (var modelFile = new TempFile(new[]
+			{
+				XmlOpenTagsThruRoot,
+				"<Publications><Publication>Another Dictionary</Publication></Publications><AllPublications>true</AllPublications>",
+				XmlCloseTagsFromRoot
+			}))
+			{
+				// SUT
+				model = new DictionaryConfigurationModel(modelFile.Path, Cache);
+			}
+
+			Assert.That(model.AllPublications, Is.True, "Should have turned on AllPublications flag.");
+			Assert.IsNotEmpty(model.Publications);
+			Assert.AreEqual(2, model.Publications.Count);
+			Assert.AreEqual("Main Dictionary", model.Publications[0], "Should have reported this dictionary since AllPublications is enabled.");
+			Assert.AreEqual("Another Dictionary", model.Publications[1]);
 
 			RemovePublication(addedPublication);
 		}
@@ -327,7 +351,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void Load_NoRealPublicationLoadsAllPublications()
+		public void Load_NoRealPublicationLoadsNoPublications()
 		{
 			// "Main Dictionary" was added by base class
 
@@ -342,9 +366,7 @@ namespace SIL.FieldWorks.XWorks
 				model = new DictionaryConfigurationModel(modelFile.Path, Cache);
 			}
 
-			Assert.IsNotEmpty(model.Publications);
-			Assert.AreEqual(1, model.Publications.Count);
-			Assert.AreEqual("Main Dictionary", model.Publications[0]);
+			Assert.IsEmpty(model.Publications);
 		}
 
 		[Test]
@@ -658,6 +680,27 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 0);
 			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/Publications", 1);
 			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/Publications/Publication", 2);
+		}
+
+		[Test]
+		public void Save_ConfigWithAllPublicationsValidatesAgainstSchema()
+		{
+			var modelFile = Path.GetTempFileName();
+			var model = new DictionaryConfigurationModel
+			{
+				FilePath = modelFile,
+				Version = 0,
+				Label = "root",
+				Publications = new List<string> { "Main Dictionary" },
+				AllPublications = true,
+			};
+			//SUT
+			model.Save();
+			ValidateAgainstSchema(modelFile);
+			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 0);
+			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/AllPublications", 1);
+			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/Publications", 1);
+			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/Publications/Publication", 1);
 		}
 
 		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",

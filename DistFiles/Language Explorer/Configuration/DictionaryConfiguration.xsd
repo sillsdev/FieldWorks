@@ -18,6 +18,7 @@
 				</xs:sequence>
 				</xs:complexType>
 			  </xs:element>
+			  <xs:element name="AllPublications" minOccurs="0" maxOccurs="1" type="xs:boolean"/>
 		  </xs:sequence>
 		  <xs:attribute type="xs:string" name="name" use="required"/>
 		  <xs:attribute type="xs:integer" name="version" use="required"/>

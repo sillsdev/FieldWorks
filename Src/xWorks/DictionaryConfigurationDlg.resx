@@ -166,13 +166,13 @@
     <value>371, 14</value>
   </data>
   <data name="m_lblPubsForConfig.Size" type="System.Drawing.Size, System.Drawing">
-    <value>164, 13</value>
+    <value>167, 13</value>
   </data>
   <data name="m_lblPubsForConfig.TabIndex" type="System.Int32, mscorlib">
     <value>36</value>
   </data>
   <data name="m_lblPubsForConfig.Text" xml:space="preserve">
-    <value>Publications affected by this view</value>
+    <value>Publications affected by this view:</value>
   </data>
   <data name="&gt;&gt;m_lblPubsForConfig.Name" xml:space="preserve">
     <value>m_lblPubsForConfig</value>

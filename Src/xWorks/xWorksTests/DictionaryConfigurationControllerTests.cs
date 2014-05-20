@@ -743,13 +743,23 @@ namespace SIL.FieldWorks.XWorks
 			var controller = new DictionaryConfigurationController() { _model = m_model };
 
 			//ensure this is handled gracefully when the publications have not been initialized.
-			Assert.AreEqual(controller.Publications, "");
+			Assert.AreEqual(controller.AffectedPublications, xWorksStrings.ksNone1);
 
 			m_model.Publications = new List<string> { "A" };
-			Assert.AreEqual(controller.Publications, "A");
+			Assert.AreEqual(controller.AffectedPublications, "A");
 
 			m_model.Publications = new List<string> {"A","B"};
-			Assert.AreEqual(controller.Publications, "A, B");
+			Assert.AreEqual(controller.AffectedPublications, "A, B");
+		}
+
+		[Test]
+		public void DisplaysAllPublicationsIfSet()
+		{
+			var controller = new DictionaryConfigurationController { _model = m_model };
+			m_model.Publications = new List<string> { "A", "B" };
+			m_model.AllPublications = true;
+
+			Assert.That(controller.AffectedPublications, Is.EqualTo("All publications"), "Show that it's all-publications if so.");
 		}
 
 		[Test]

@@ -797,9 +797,12 @@ If you are not the one designated user who adds fields, or you are making some o
 
 (There is one other special case. If you are adding a temporary custom field for a special purpose and will delete it before you next Send/Receive, you may proceed safely.)</value>
   </data>
-	<data name="FailedToRename" xml:space="preserve">
+  <data name="FailedToRename" xml:space="preserve">
     <value>Failed to rename. Use a name that is not already in use.</value>
     <comment>String similar 'Failed to rename. Use a name that is not already in use'
 </comment>
+  </data>
+  <data name="Allpublications" xml:space="preserve">
+    <value>All publications</value>
   </data>
 </root>

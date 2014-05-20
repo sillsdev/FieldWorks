@@ -4,9 +4,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using Palaso.Linq;
+using SIL.FieldWorks.FwCoreDlgControls;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -27,6 +30,8 @@ namespace SIL.FieldWorks.XWorks
 		/// Set of the names of available dictionary publications in project.
 		/// </summary>
 		internal List<string> Publications;
+
+		private ListViewItem _allPublicationsItem;
 
 		/// <summary>
 		/// Get list of publications using a dictionary configuration.
@@ -81,6 +86,14 @@ namespace SIL.FieldWorks.XWorks
 			Configurations = configurations;
 			Publications = publications;
 
+			// Add special publication selection for All Publications.
+			_allPublicationsItem = new ListViewItem
+			{
+				Text = xWorksStrings.Allpublications,
+				Font = new Font(Control.DefaultFont, FontStyle.Italic),
+			};
+			_view.publicationsListView.Items.Add(_allPublicationsItem);
+
 			// Populate lists of configurations and publications
 			foreach (var configuration in Configurations)
 			{
@@ -93,12 +106,18 @@ namespace SIL.FieldWorks.XWorks
 				_view.publicationsListView.Items.Add(item);
 			}
 
-			// When a different dictionary configuration is selected, update which publications are checked.
 			_view.configurationsListView.SelectedIndexChanged += OnSelectConfiguration;
-
 			_view.configurationsListView.AfterLabelEdit += OnRenameConfiguration;
+			_view.publicationsListView.ItemChecked += OnCheckPublication;
+			_view.Shown += OnShowDialog;
+		}
 
-			// Select first configuration, and cause publications to be checked or unchecked.
+		/// <summary>
+		/// To set when the view is shown.
+		/// </summary>
+		private void OnShowDialog(object sender, EventArgs eventArgs)
+		{
+			// Select first configuration, and cause publications to be checked or unchecked. Done here since is not very successful when done in the constructor.
 			_view.configurationsListView.Items[0].Selected = true;
 		}
 
@@ -116,6 +135,20 @@ namespace SIL.FieldWorks.XWorks
 			{
 				publicationItem.Checked = associatedPublications.Contains(publicationItem.Text);
 			}
+			_allPublicationsItem.Checked = newConfiguration.AllPublications;
+		}
+
+		private void OnCheckPublication(object sender, ItemCheckedEventArgs itemCheckedEventArgs)
+		{
+			var publicationItem = itemCheckedEventArgs.Item;
+
+			// If "All publications" was checked, check all the publications.
+			if (publicationItem == _allPublicationsItem && _allPublicationsItem.Checked)
+				_view.publicationsListView.Items.Cast<ListViewItem>().ForEach(item => item.Checked = true);
+
+			// If a publication was unchecked, uncheck "All publications".
+			if (publicationItem != _allPublicationsItem && !publicationItem.Checked)
+				_allPublicationsItem.Checked = false;
 		}
 
 		/// <remarks>

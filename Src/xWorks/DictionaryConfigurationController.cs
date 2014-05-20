@@ -432,22 +432,27 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Get the PublicationTypes for the current View
-		/// and display them.
+		/// Display the list of publications configured by the current dictionary configuration.
 		/// </summary>
 		private void DisplayPublicationTypes()
 		{
-			View.ShowPublicationsForConfiguration(Publications);
+			View.ShowPublicationsForConfiguration(AffectedPublications);
 		}
 
-		public string Publications
+		/// <summary>
+		/// Friendly display string listing the publications affected by making changes to the current dictionary configuration.
+		/// </summary>
+		public string AffectedPublications
 		{
 			get
 			{
+				if (_model.AllPublications)
+					return xWorksStrings.Allpublications;
+
 				var strbldr = new StringBuilder();
 
 				if (_model.Publications == null || !_model.Publications.Any())
-					return "";
+					return xWorksStrings.ksNone1;
 				foreach (var pubType in _model.Publications)
 				{
 					strbldr.AppendFormat("{0}, ", pubType);

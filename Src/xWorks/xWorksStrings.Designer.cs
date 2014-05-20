@@ -97,6 +97,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to All publications.
+        /// </summary>
+        internal static string Allpublications {
+            get {
+                return ResourceManager.GetString("Allpublications", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All Vernacular then all Analysis Writing Systems.
         /// </summary>
         internal static string AllVernacularAnalysisWs {
