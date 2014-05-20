@@ -10,7 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -50,23 +49,23 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Available dictionary configurations (eg stem- and root-based)
 		/// </summary>
-		private Dictionary<string, DictionaryConfigurationModel> _alternateDictionaries;
+		private Dictionary<string, DictionaryConfigurationModel> _alternateConfigurations;
 
 		void SetAlternateDictionaryChoices(Mediator mediator)
 		{
 			var configurationType = DictionaryConfigurationListener.GetDictionaryConfigurationType(mediator);
 			// Figure out what alternate dictionaries are available (eg root-, stem-, ...)
-			// Populate _alternateDictionaries with available models.
+			// Populate _alternateConfigurations with available models.
 			// Populate view's list of alternate dictionaries with available choices.
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			var projectConfigDir = Path.Combine(DirectoryFinder.GetConfigSettingsDir(cache.ProjectId.ProjectFolder), configurationType);
 			var defaultConfigDir = Path.Combine(DirectoryFinder.DefaultConfigurations, configurationType);
 
 			var choices = ReadAlternateDictionaryChoices(defaultConfigDir, projectConfigDir);
-			_alternateDictionaries = new Dictionary<string, DictionaryConfigurationModel>();
+			_alternateConfigurations = new Dictionary<string, DictionaryConfigurationModel>();
 			foreach(var choice in choices)
 			{
-				_alternateDictionaries[choice.Key] = new DictionaryConfigurationModel(choice.Value, cache);
+				_alternateConfigurations[choice.Key] = new DictionaryConfigurationModel(choice.Value, cache);
 			}
 			View.SetChoices(choices.Keys);
 		}
@@ -276,17 +275,17 @@ namespace SIL.FieldWorks.XWorks
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			MergeCustomFieldsIntoDictionaryModel(cache, _model);
 			PopulateTreeView(mediator);
-			View.ManageViews += (sender, args) =>
+			View.ManageConfigurations += (sender, args) =>
 			{
 				using (var dialog = new DictionaryConfigurationManagerDlg())
 				{
 					var configurationManagerController = new DictionaryConfigurationManagerController(dialog,
-						_alternateDictionaries.Values.ToList(), _model.GetAllPublications(cache));
+						_alternateConfigurations.Values.ToList(), _model.GetAllPublications(cache));
 					dialog.ShowDialog(View as Form);
 				}
 			};
 			View.SaveModel += SaveModelHandler;
-			view.SwitchView += (sender, args) => { _model = _alternateDictionaries[args.ViewPicked]; RefreshView(); };
+			view.SwitchConfiguration += (sender, args) => { _model = _alternateConfigurations[args.ConfigurationPicked]; RefreshView(); };
 
 			View.TreeControl.MoveUp += node => Reorder(node.Tag as ConfigurableDictionaryNode, Direction.Up);
 			View.TreeControl.MoveDown += node => Reorder(node.Tag as ConfigurableDictionaryNode, Direction.Down);
@@ -351,17 +350,16 @@ namespace SIL.FieldWorks.XWorks
 
 				BuildAndShowOptions(node, mediator);
 			};
-			SelectCurrentView();
+			SelectCurrentConfiguration();
 		}
 
 		private void GetDictionaryChoices(Mediator mediator)
 		{
 			SetAlternateDictionaryChoices(mediator);
-			var lastUsedAlternateDictionary =
-				mediator.PropertyTable.GetStringProperty("LastDictionaryConfiguration", "Root");
-			_model = _alternateDictionaries.ContainsKey(lastUsedAlternateDictionary)
-				? _alternateDictionaries[lastUsedAlternateDictionary]
-				: _alternateDictionaries.Values.First();
+			var lastUsedConfiguration = mediator.PropertyTable.GetStringProperty("LastDictionaryConfiguration", "Root");
+			_model = _alternateConfigurations.ContainsKey(lastUsedConfiguration)
+				? _alternateConfigurations[lastUsedConfiguration]
+				: _alternateConfigurations.Values.First();
 		}
 
 		private void SaveModelHandler(object sender, EventArgs e)
@@ -428,7 +426,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void DisplayPublicationTypes()
 		{
-			View.ShowPublicationsForView(Publications);
+			View.ShowPublicationsForConfiguration(Publications);
 		}
 
 		public string Publications
@@ -448,9 +446,9 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private void SelectCurrentView()
+		private void SelectCurrentConfiguration()
 		{
-			View.SelectView(_model.Label);
+			View.SelectConfiguration(_model.Label);
 		}
 
 		/// <summary>

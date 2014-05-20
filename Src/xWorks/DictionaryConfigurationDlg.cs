@@ -5,10 +5,8 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Gecko;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 
 namespace SIL.FieldWorks.XWorks
@@ -19,9 +17,9 @@ namespace SIL.FieldWorks.XWorks
 		/// When manage views is clicked tell the controller to launch the dialog where different
 		/// dictionary configurations (or views) are managed.
 		/// </summary>
-		public event EventHandler ManageViews;
+		public event EventHandler ManageConfigurations;
 
-		public event SwitchViewEvent SwitchView;
+		public event SwitchConfigurationEvent SwitchConfiguration;
 
 		/// <summary>
 		/// When OK or Apply are clicked tell anyone who is listening to do their save.
@@ -34,7 +32,7 @@ namespace SIL.FieldWorks.XWorks
 			m_preview.Dock = DockStyle.Fill;
 			m_preview.Location = new Point(0, 0);
 			previewDetailSplit.Panel1.Controls.Add(m_preview);
-			manageViews_viewSplit.IsSplitterFixed = true;
+			manageConfigs_treeDetailButton_split.IsSplitterFixed = true;
 			treeDetail_Button_Split.IsSplitterFixed = true;
 		}
 
@@ -54,8 +52,6 @@ namespace SIL.FieldWorks.XWorks
 				previewDetailSplit.Panel2.Controls.Add(detailsView);
 				detailsView.Dock = DockStyle.Fill;
 				detailsView.Location = new Point(0, 0);
-
-				// TODO pH 2014.02: ensure adequate size
 			}
 		}
 
@@ -77,29 +73,29 @@ namespace SIL.FieldWorks.XWorks
 
 		public void SetChoices(IEnumerable<string> choices)
 		{
-			m_cbDictType.Items.Clear();
+			m_cbDictConfig.Items.Clear();
 			if(choices != null)
 			{
 				foreach(var choice in choices)
 				{
-					m_cbDictType.Items.Add(choice);
+					m_cbDictConfig.Items.Add(choice);
 				}
 			}
 		}
 
-		public void ShowPublicationsForView(String publications)
+		public void ShowPublicationsForConfiguration(String publications)
 		{
-			m_publicationsTxt.Text = publications;
+			m_txtPubsForConfig.Text = publications;
 		}
 
-		public void SelectView(string view)
+		public void SelectConfiguration(string configuration)
 		{
-			m_cbDictType.SelectedItem = view;
+			m_cbDictConfig.SelectedItem = configuration;
 		}
 
-		private void m_linkManageViews_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		private void m_linkManageConfigurations_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			ManageViews(sender, e);
+			ManageConfigurations(sender, e);
 		}
 
 		private void okButton_Click(object sender, EventArgs e)
@@ -113,9 +109,9 @@ namespace SIL.FieldWorks.XWorks
 			SaveModel(sender, e);
 		}
 
-		private void OnViewChanged(object sender, EventArgs e)
+		private void OnConfigurationChanged(object sender, EventArgs e)
 		{
-			SwitchView(sender, new SwitchViewEventArgs { ViewPicked = m_cbDictType.SelectedItem.ToString() });
+			SwitchConfiguration(sender, new SwitchConfigurationEventArgs { ConfigurationPicked = m_cbDictConfig.SelectedItem.ToString() });
 		}
 	}
 }

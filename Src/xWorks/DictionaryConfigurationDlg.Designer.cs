@@ -42,11 +42,13 @@ namespace SIL.FieldWorks.XWorks
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DictionaryConfigurationDlg));
-			this.manageViews_viewSplit = new System.Windows.Forms.SplitContainer();
-			this.viewManagerGroupBox = new System.Windows.Forms.GroupBox();
-			this.m_cbDictType = new System.Windows.Forms.ComboBox();
-			this.m_lblViewType = new System.Windows.Forms.Label();
-			this.m_linkManageViews = new System.Windows.Forms.LinkLabel();
+			this.manageConfigs_treeDetailButton_split = new System.Windows.Forms.SplitContainer();
+			this.m_grpConfigurationManagement = new System.Windows.Forms.GroupBox();
+			this.m_txtPubsForConfig = new System.Windows.Forms.TextBox();
+			this.m_lblPubsForConfig = new System.Windows.Forms.Label();
+			this.m_cbDictConfig = new System.Windows.Forms.ComboBox();
+			this.m_lblDictConfig = new System.Windows.Forms.Label();
+			this.m_linkManageConfigurations = new System.Windows.Forms.LinkLabel();
 			this.treeDetail_Button_Split = new System.Windows.Forms.SplitContainer();
 			this.tree_Detail_Split = new System.Windows.Forms.SplitContainer();
 			this.treeControl = new SIL.FieldWorks.XWorks.DictionaryConfigurationTreeControl();
@@ -57,13 +59,11 @@ namespace SIL.FieldWorks.XWorks
 			this.applyButton = new System.Windows.Forms.Button();
 			this.cancelButton = new System.Windows.Forms.Button();
 			this.okButton = new System.Windows.Forms.Button();
-			this.lblPubsForView = new System.Windows.Forms.Label();
-			this.m_publicationsTxt = new System.Windows.Forms.TextBox();
-			((System.ComponentModel.ISupportInitialize)(this.manageViews_viewSplit)).BeginInit();
-			this.manageViews_viewSplit.Panel1.SuspendLayout();
-			this.manageViews_viewSplit.Panel2.SuspendLayout();
-			this.manageViews_viewSplit.SuspendLayout();
-			this.viewManagerGroupBox.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.manageConfigs_treeDetailButton_split)).BeginInit();
+			this.manageConfigs_treeDetailButton_split.Panel1.SuspendLayout();
+			this.manageConfigs_treeDetailButton_split.Panel2.SuspendLayout();
+			this.manageConfigs_treeDetailButton_split.SuspendLayout();
+			this.m_grpConfigurationManagement.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.treeDetail_Button_Split)).BeginInit();
 			this.treeDetail_Button_Split.Panel1.SuspendLayout();
 			this.treeDetail_Button_Split.Panel2.SuspendLayout();
@@ -78,49 +78,61 @@ namespace SIL.FieldWorks.XWorks
 			this.buttonLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// manageViews_viewSplit
+			// manageConfigs_treeDetailButton_split
 			// 
-			resources.ApplyResources(this.manageViews_viewSplit, "manageViews_viewSplit");
-			this.manageViews_viewSplit.Name = "manageViews_viewSplit";
+			resources.ApplyResources(this.manageConfigs_treeDetailButton_split, "manageConfigs_treeDetailButton_split");
+			this.manageConfigs_treeDetailButton_split.Name = "manageConfigs_treeDetailButton_split";
 			// 
-			// manageViews_viewSplit.Panel1
+			// manageConfigs_treeDetailButton_split.Panel1
 			// 
-			this.manageViews_viewSplit.Panel1.Controls.Add(this.viewManagerGroupBox);
+			this.manageConfigs_treeDetailButton_split.Panel1.Controls.Add(this.m_grpConfigurationManagement);
 			// 
-			// manageViews_viewSplit.Panel2
+			// manageConfigs_treeDetailButton_split.Panel2
 			// 
-			this.manageViews_viewSplit.Panel2.Controls.Add(this.treeDetail_Button_Split);
+			this.manageConfigs_treeDetailButton_split.Panel2.Controls.Add(this.treeDetail_Button_Split);
 			// 
-			// viewManagerGroupBox
+			// m_grpConfigurationManagement
 			// 
-			this.viewManagerGroupBox.Controls.Add(this.m_publicationsTxt);
-			this.viewManagerGroupBox.Controls.Add(this.lblPubsForView);
-			this.viewManagerGroupBox.Controls.Add(this.m_cbDictType);
-			this.viewManagerGroupBox.Controls.Add(this.m_lblViewType);
-			this.viewManagerGroupBox.Controls.Add(this.m_linkManageViews);
-			resources.ApplyResources(this.viewManagerGroupBox, "viewManagerGroupBox");
-			this.viewManagerGroupBox.Name = "viewManagerGroupBox";
-			this.viewManagerGroupBox.TabStop = false;
+			this.m_grpConfigurationManagement.Controls.Add(this.m_txtPubsForConfig);
+			this.m_grpConfigurationManagement.Controls.Add(this.m_lblPubsForConfig);
+			this.m_grpConfigurationManagement.Controls.Add(this.m_cbDictConfig);
+			this.m_grpConfigurationManagement.Controls.Add(this.m_lblDictConfig);
+			this.m_grpConfigurationManagement.Controls.Add(this.m_linkManageConfigurations);
+			resources.ApplyResources(this.m_grpConfigurationManagement, "m_grpConfigurationManagement");
+			this.m_grpConfigurationManagement.Name = "m_grpConfigurationManagement";
+			this.m_grpConfigurationManagement.TabStop = false;
 			// 
-			// m_cbDictType
+			// m_txtPubsForConfig
 			// 
-			resources.ApplyResources(this.m_cbDictType, "m_cbDictType");
-			this.m_cbDictType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.m_cbDictType.FormattingEnabled = true;
-			this.m_cbDictType.Name = "m_cbDictType";
-			this.m_cbDictType.SelectedIndexChanged += new System.EventHandler(this.OnViewChanged);
+			this.m_txtPubsForConfig.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			resources.ApplyResources(this.m_txtPubsForConfig, "m_txtPubsForConfig");
+			this.m_txtPubsForConfig.Name = "m_txtPubsForConfig";
+			this.m_txtPubsForConfig.ReadOnly = true;
 			// 
-			// m_lblViewType
+			// m_lblPubsForConfig
 			// 
-			resources.ApplyResources(this.m_lblViewType, "m_lblViewType");
-			this.m_lblViewType.Name = "m_lblViewType";
+			resources.ApplyResources(this.m_lblPubsForConfig, "m_lblPubsForConfig");
+			this.m_lblPubsForConfig.Name = "m_lblPubsForConfig";
 			// 
-			// m_linkManageViews
+			// m_cbDictConfig
 			// 
-			resources.ApplyResources(this.m_linkManageViews, "m_linkManageViews");
-			this.m_linkManageViews.Name = "m_linkManageViews";
-			this.m_linkManageViews.TabStop = true;
-			this.m_linkManageViews.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.m_linkManageViews_LinkClicked);
+			resources.ApplyResources(this.m_cbDictConfig, "m_cbDictConfig");
+			this.m_cbDictConfig.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.m_cbDictConfig.FormattingEnabled = true;
+			this.m_cbDictConfig.Name = "m_cbDictConfig";
+			this.m_cbDictConfig.SelectedIndexChanged += new System.EventHandler(this.OnConfigurationChanged);
+			// 
+			// m_lblDictConfig
+			// 
+			resources.ApplyResources(this.m_lblDictConfig, "m_lblDictConfig");
+			this.m_lblDictConfig.Name = "m_lblDictConfig";
+			// 
+			// m_linkManageConfigurations
+			// 
+			resources.ApplyResources(this.m_linkManageConfigurations, "m_linkManageConfigurations");
+			this.m_linkManageConfigurations.Name = "m_linkManageConfigurations";
+			this.m_linkManageConfigurations.TabStop = true;
+			this.m_linkManageConfigurations.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.m_linkManageConfigurations_LinkClicked);
 			// 
 			// treeDetail_Button_Split
 			// 
@@ -169,8 +181,6 @@ namespace SIL.FieldWorks.XWorks
 			this.m_preview.IsWebBrowserContextMenuEnabled = false;
 			this.m_preview.Name = "m_preview";
 			this.m_preview.Url = new System.Uri("about:blank", System.UriKind.Absolute);
-			this.m_preview.Padding = new System.Windows.Forms.Padding(0, 0, 0, 5);
-			this.m_preview.Size = new System.Drawing.Size(320, 101);
 			// 
 			// buttonLayoutPanel
 			// 
@@ -208,34 +218,22 @@ namespace SIL.FieldWorks.XWorks
 			this.okButton.UseVisualStyleBackColor = true;
 			this.okButton.Click += new System.EventHandler(this.okButton_Click);
 			// 
-			// lblPubsForView
-			// 
-			resources.ApplyResources(this.lblPubsForView, "lblPubsForView");
-			this.lblPubsForView.Name = "lblPubsForView";
-			// 
-			// m_publicationsTxt
-			// 
-			this.m_publicationsTxt.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			resources.ApplyResources(this.m_publicationsTxt, "m_publicationsTxt");
-			this.m_publicationsTxt.Name = "m_publicationsTxt";
-			this.m_publicationsTxt.ReadOnly = true;
-			// 
 			// DictionaryConfigurationDlg
 			// 
 			this.AcceptButton = this.okButton;
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.cancelButton;
-			this.Controls.Add(this.manageViews_viewSplit);
+			this.Controls.Add(this.manageConfigs_treeDetailButton_split);
 			this.MinimizeBox = false;
 			this.Name = "DictionaryConfigurationDlg";
 			this.ShowIcon = false;
-			this.manageViews_viewSplit.Panel1.ResumeLayout(false);
-			this.manageViews_viewSplit.Panel2.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.manageViews_viewSplit)).EndInit();
-			this.manageViews_viewSplit.ResumeLayout(false);
-			this.viewManagerGroupBox.ResumeLayout(false);
-			this.viewManagerGroupBox.PerformLayout();
+			this.manageConfigs_treeDetailButton_split.Panel1.ResumeLayout(false);
+			this.manageConfigs_treeDetailButton_split.Panel2.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.manageConfigs_treeDetailButton_split)).EndInit();
+			this.manageConfigs_treeDetailButton_split.ResumeLayout(false);
+			this.m_grpConfigurationManagement.ResumeLayout(false);
+			this.m_grpConfigurationManagement.PerformLayout();
 			this.treeDetail_Button_Split.Panel1.ResumeLayout(false);
 			this.treeDetail_Button_Split.Panel2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.treeDetail_Button_Split)).EndInit();
@@ -254,12 +252,12 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion
 
-		private System.Windows.Forms.SplitContainer manageViews_viewSplit;
+		private System.Windows.Forms.SplitContainer manageConfigs_treeDetailButton_split;
 		private System.Windows.Forms.SplitContainer treeDetail_Button_Split;
-		private System.Windows.Forms.GroupBox viewManagerGroupBox;
-		private System.Windows.Forms.ComboBox m_cbDictType;
-		private System.Windows.Forms.Label m_lblViewType;
-		private System.Windows.Forms.LinkLabel m_linkManageViews;
+		private System.Windows.Forms.GroupBox m_grpConfigurationManagement;
+		private System.Windows.Forms.ComboBox m_cbDictConfig;
+		private System.Windows.Forms.Label m_lblDictConfig;
+		private System.Windows.Forms.LinkLabel m_linkManageConfigurations;
 		private System.Windows.Forms.SplitContainer tree_Detail_Split;
 		private System.Windows.Forms.FlowLayoutPanel buttonLayoutPanel;
 		private System.Windows.Forms.Button helpButton;
@@ -270,7 +268,7 @@ namespace SIL.FieldWorks.XWorks
 		private XWebBrowser m_preview;
 		private DictionaryConfigurationTreeControl treeControl;
 		private DetailsView detailsView;
-		private TextBox m_publicationsTxt;
-		private Label lblPubsForView;
+		private TextBox m_txtPubsForConfig;
+		private Label m_lblPubsForConfig;
 	}
 }

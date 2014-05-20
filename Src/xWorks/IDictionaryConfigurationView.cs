@@ -13,7 +13,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Tell the controller to launch the dialog where different dictionary configurations (or views) are managed.
 		/// </summary>
-		event EventHandler ManageViews;
+		event EventHandler ManageConfigurations;
 
 		/// <summary>
 		/// Tell the controller to save the model.
@@ -21,9 +21,9 @@ namespace SIL.FieldWorks.XWorks
 		event EventHandler SaveModel;
 
 		/// <summary>
-		/// Tell the controller that the user selected a different model(dictionary view)
+		/// Tell the controller that the user selected a different model (dictionary configuration)
 		/// </summary>
-		event SwitchViewEvent SwitchView;
+		event SwitchConfigurationEvent SwitchConfiguration;
 
 		/// <summary>
 		/// Gets the tree hierarchy control.
@@ -55,22 +55,22 @@ namespace SIL.FieldWorks.XWorks
 		/// Show the publications for the current dictionary configuration.
 		/// </summary>
 		/// <param name="publications"></param>
-		void ShowPublicationsForView(String publications);
+		void ShowPublicationsForConfiguration(String publications);
 
 		/// <summary>
 		/// Select current dictionary configuration in the combo box
 		/// </summary>
-		/// <param name="publications"></param>
-		void SelectView(String view);
+		/// <param name="configuration"></param>
+		void SelectConfiguration(String configuration);
 	}
 
-	public delegate void SwitchViewEvent(object sender, SwitchViewEventArgs args);
+	public delegate void SwitchConfigurationEvent(object sender, SwitchConfigurationEventArgs args);
 
 	/// <summary>
-	/// The arguments for a SwitchViewEvent. Includes the view selected as a property.
+	/// The arguments for a SwitchConfigurationEvent. Includes the configuration selected as a property.
 	/// </summary>
-	public class SwitchViewEventArgs
+	public class SwitchConfigurationEventArgs
 	{
-		public string ViewPicked { get; set; }
+		public string ConfigurationPicked { get; set; }
 	}
 }

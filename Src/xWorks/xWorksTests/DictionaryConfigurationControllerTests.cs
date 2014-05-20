@@ -7,13 +7,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using NUnit.Framework;
-using Palaso.IO;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 using XCore;
 
@@ -740,7 +738,7 @@ namespace SIL.FieldWorks.XWorks
 		/// dictionary configuration is correct.
 		/// </summary>
 		[Test]
-		public void GetThePublicationsForTheCurrentView()
+		public void GetThePublicationsForTheCurrentConfiguration()
 		{
 			var controller = new DictionaryConfigurationController() { _model = m_model };
 
@@ -846,12 +844,12 @@ namespace SIL.FieldWorks.XWorks
 				;
 			}
 
-			public void ShowPublicationsForView(string publications)
+			public void ShowPublicationsForConfiguration(string publications)
 			{
 				;
 			}
 
-			public void SelectView(string view)
+			public void SelectConfiguration(string configuration)
 			{
 				;
 			}
@@ -861,11 +859,11 @@ namespace SIL.FieldWorks.XWorks
 				m_treeControl.Dispose();
 			}
 #pragma warning disable 67
-			public event EventHandler ManageViews;
+			public event EventHandler ManageConfigurations;
 
 			public event EventHandler SaveModel;
 
-			public event SwitchViewEvent SwitchView;
+			public event SwitchConfigurationEvent SwitchConfiguration;
 #pragma warning restore 67
 		}
 

@@ -118,189 +118,189 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="manageViews_viewSplit.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+  <data name="manageConfigs_treeDetailButton_split.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="manageViews_viewSplit.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="manageConfigs_treeDetailButton_split.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
   </data>
-  <data name="manageViews_viewSplit.Orientation" type="System.Windows.Forms.Orientation, System.Windows.Forms">
+  <data name="manageConfigs_treeDetailButton_split.Orientation" type="System.Windows.Forms.Orientation, System.Windows.Forms">
     <value>Horizontal</value>
   </data>
-  <data name="m_publicationsTxt.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="m_txtPubsForConfig.Location" type="System.Drawing.Point, System.Drawing">
     <value>374, 30</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="m_publicationsTxt.Multiline" type="System.Boolean, mscorlib">
+  <data name="m_txtPubsForConfig.Multiline" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="m_publicationsTxt.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="m_txtPubsForConfig.Size" type="System.Drawing.Size, System.Drawing">
     <value>244, 34</value>
   </data>
-  <data name="m_publicationsTxt.TabIndex" type="System.Int32, mscorlib">
+  <data name="m_txtPubsForConfig.TabIndex" type="System.Int32, mscorlib">
     <value>37</value>
   </data>
-  <data name="m_publicationsTxt.Text" xml:space="preserve">
+  <data name="m_txtPubsForConfig.Text" xml:space="preserve">
     <value>Here are the views</value>
   </data>
-  <data name="&gt;&gt;m_publicationsTxt.Name" xml:space="preserve">
-    <value>m_publicationsTxt</value>
+  <data name="&gt;&gt;m_txtPubsForConfig.Name" xml:space="preserve">
+    <value>m_txtPubsForConfig</value>
   </data>
-  <data name="&gt;&gt;m_publicationsTxt.Type" xml:space="preserve">
+  <data name="&gt;&gt;m_txtPubsForConfig.Type" xml:space="preserve">
     <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;m_publicationsTxt.Parent" xml:space="preserve">
-    <value>viewManagerGroupBox</value>
+  <data name="&gt;&gt;m_txtPubsForConfig.Parent" xml:space="preserve">
+    <value>m_grpConfigurationManagement</value>
   </data>
-  <data name="&gt;&gt;m_publicationsTxt.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;m_txtPubsForConfig.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="lblPubsForView.AutoSize" type="System.Boolean, mscorlib">
+  <data name="m_lblPubsForConfig.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="lblPubsForView.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+  <data name="m_lblPubsForConfig.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="lblPubsForView.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="m_lblPubsForConfig.Location" type="System.Drawing.Point, System.Drawing">
     <value>371, 14</value>
   </data>
-  <data name="lblPubsForView.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="m_lblPubsForConfig.Size" type="System.Drawing.Size, System.Drawing">
     <value>164, 13</value>
   </data>
-  <data name="lblPubsForView.TabIndex" type="System.Int32, mscorlib">
+  <data name="m_lblPubsForConfig.TabIndex" type="System.Int32, mscorlib">
     <value>36</value>
   </data>
-  <data name="lblPubsForView.Text" xml:space="preserve">
+  <data name="m_lblPubsForConfig.Text" xml:space="preserve">
     <value>Publications affected by this view</value>
   </data>
-  <data name="&gt;&gt;lblPubsForView.Name" xml:space="preserve">
-    <value>lblPubsForView</value>
+  <data name="&gt;&gt;m_lblPubsForConfig.Name" xml:space="preserve">
+    <value>m_lblPubsForConfig</value>
   </data>
-  <data name="&gt;&gt;lblPubsForView.Type" xml:space="preserve">
+  <data name="&gt;&gt;m_lblPubsForConfig.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;lblPubsForView.Parent" xml:space="preserve">
-    <value>viewManagerGroupBox</value>
+  <data name="&gt;&gt;m_lblPubsForConfig.Parent" xml:space="preserve">
+    <value>m_grpConfigurationManagement</value>
   </data>
-  <data name="&gt;&gt;lblPubsForView.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;m_lblPubsForConfig.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="m_cbDictType.AccessibleName" xml:space="preserve">
-    <value>m_cbDictType</value>
+  <data name="m_cbDictConfig.AccessibleName" xml:space="preserve">
+    <value>m_cbDictConfig</value>
   </data>
-  <data name="m_cbDictType.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="m_cbDictConfig.Location" type="System.Drawing.Point, System.Drawing">
     <value>6, 34</value>
   </data>
-  <data name="m_cbDictType.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="m_cbDictConfig.Size" type="System.Drawing.Size, System.Drawing">
     <value>250, 21</value>
   </data>
-  <data name="m_cbDictType.TabIndex" type="System.Int32, mscorlib">
+  <data name="m_cbDictConfig.TabIndex" type="System.Int32, mscorlib">
     <value>33</value>
   </data>
-  <data name="&gt;&gt;m_cbDictType.Name" xml:space="preserve">
-    <value>m_cbDictType</value>
+  <data name="&gt;&gt;m_cbDictConfig.Name" xml:space="preserve">
+    <value>m_cbDictConfig</value>
   </data>
-  <data name="&gt;&gt;m_cbDictType.Type" xml:space="preserve">
+  <data name="&gt;&gt;m_cbDictConfig.Type" xml:space="preserve">
     <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;m_cbDictType.Parent" xml:space="preserve">
-    <value>viewManagerGroupBox</value>
+  <data name="&gt;&gt;m_cbDictConfig.Parent" xml:space="preserve">
+    <value>m_grpConfigurationManagement</value>
   </data>
-  <data name="&gt;&gt;m_cbDictType.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;m_cbDictConfig.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="m_lblViewType.AutoSize" type="System.Boolean, mscorlib">
+  <data name="m_lblDictConfig.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="m_lblViewType.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+  <data name="m_lblDictConfig.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="m_lblViewType.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="m_lblDictConfig.Location" type="System.Drawing.Point, System.Drawing">
     <value>6, 14</value>
   </data>
-  <data name="m_lblViewType.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="m_lblDictConfig.Size" type="System.Drawing.Size, System.Drawing">
     <value>148, 13</value>
   </data>
-  <data name="m_lblViewType.TabIndex" type="System.Int32, mscorlib">
+  <data name="m_lblDictConfig.TabIndex" type="System.Int32, mscorlib">
     <value>34</value>
   </data>
-  <data name="m_lblViewType.Text" xml:space="preserve">
+  <data name="m_lblDictConfig.Text" xml:space="preserve">
     <value>Choose the view to configure:</value>
   </data>
-  <data name="&gt;&gt;m_lblViewType.Name" xml:space="preserve">
-    <value>m_lblViewType</value>
+  <data name="&gt;&gt;m_lblDictConfig.Name" xml:space="preserve">
+    <value>m_lblDictConfig</value>
   </data>
-  <data name="&gt;&gt;m_lblViewType.Type" xml:space="preserve">
+  <data name="&gt;&gt;m_lblDictConfig.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;m_lblViewType.Parent" xml:space="preserve">
-    <value>viewManagerGroupBox</value>
+  <data name="&gt;&gt;m_lblDictConfig.Parent" xml:space="preserve">
+    <value>m_grpConfigurationManagement</value>
   </data>
-  <data name="&gt;&gt;m_lblViewType.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;m_lblDictConfig.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
-  <data name="m_linkManageViews.AutoSize" type="System.Boolean, mscorlib">
+  <data name="m_linkManageConfigurations.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="m_linkManageViews.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+  <data name="m_linkManageConfigurations.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="m_linkManageViews.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="m_linkManageConfigurations.Location" type="System.Drawing.Point, System.Drawing">
     <value>277, 45</value>
   </data>
-  <data name="m_linkManageViews.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="m_linkManageConfigurations.Size" type="System.Drawing.Size, System.Drawing">
     <value>77, 13</value>
   </data>
-  <data name="m_linkManageViews.TabIndex" type="System.Int32, mscorlib">
+  <data name="m_linkManageConfigurations.TabIndex" type="System.Int32, mscorlib">
     <value>35</value>
   </data>
-  <data name="m_linkManageViews.Text" xml:space="preserve">
+  <data name="m_linkManageConfigurations.Text" xml:space="preserve">
     <value>Manage Views</value>
   </data>
-  <data name="&gt;&gt;m_linkManageViews.Name" xml:space="preserve">
-    <value>m_linkManageViews</value>
+  <data name="&gt;&gt;m_linkManageConfigurations.Name" xml:space="preserve">
+    <value>m_linkManageConfigurations</value>
   </data>
-  <data name="&gt;&gt;m_linkManageViews.Type" xml:space="preserve">
+  <data name="&gt;&gt;m_linkManageConfigurations.Type" xml:space="preserve">
     <value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;m_linkManageViews.Parent" xml:space="preserve">
-    <value>viewManagerGroupBox</value>
+  <data name="&gt;&gt;m_linkManageConfigurations.Parent" xml:space="preserve">
+    <value>m_grpConfigurationManagement</value>
   </data>
-  <data name="&gt;&gt;m_linkManageViews.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;m_linkManageConfigurations.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
-  <data name="viewManagerGroupBox.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="m_grpConfigurationManagement.Location" type="System.Drawing.Point, System.Drawing">
     <value>6, 7</value>
   </data>
-  <data name="viewManagerGroupBox.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="m_grpConfigurationManagement.Size" type="System.Drawing.Size, System.Drawing">
     <value>624, 70</value>
   </data>
-  <data name="viewManagerGroupBox.TabIndex" type="System.Int32, mscorlib">
+  <data name="m_grpConfigurationManagement.TabIndex" type="System.Int32, mscorlib">
     <value>33</value>
   </data>
-  <data name="&gt;&gt;viewManagerGroupBox.Name" xml:space="preserve">
-    <value>viewManagerGroupBox</value>
+  <data name="&gt;&gt;m_grpConfigurationManagement.Name" xml:space="preserve">
+    <value>m_grpConfigurationManagement</value>
   </data>
-  <data name="&gt;&gt;viewManagerGroupBox.Type" xml:space="preserve">
+  <data name="&gt;&gt;m_grpConfigurationManagement.Type" xml:space="preserve">
     <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;viewManagerGroupBox.Parent" xml:space="preserve">
-    <value>manageViews_viewSplit.Panel1</value>
+  <data name="&gt;&gt;m_grpConfigurationManagement.Parent" xml:space="preserve">
+    <value>manageConfigs_treeDetailButton_split.Panel1</value>
   </data>
-  <data name="&gt;&gt;viewManagerGroupBox.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;m_grpConfigurationManagement.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="&gt;&gt;manageViews_viewSplit.Panel1.Name" xml:space="preserve">
-    <value>manageViews_viewSplit.Panel1</value>
+  <data name="&gt;&gt;manageConfigs_treeDetailButton_split.Panel1.Name" xml:space="preserve">
+    <value>manageConfigs_treeDetailButton_split.Panel1</value>
   </data>
-  <data name="&gt;&gt;manageViews_viewSplit.Panel1.Type" xml:space="preserve">
+  <data name="&gt;&gt;manageConfigs_treeDetailButton_split.Panel1.Type" xml:space="preserve">
     <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;manageViews_viewSplit.Panel1.Parent" xml:space="preserve">
-    <value>manageViews_viewSplit</value>
+  <data name="&gt;&gt;manageConfigs_treeDetailButton_split.Panel1.Parent" xml:space="preserve">
+    <value>manageConfigs_treeDetailButton_split</value>
   </data>
-  <data name="&gt;&gt;manageViews_viewSplit.Panel1.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;manageConfigs_treeDetailButton_split.Panel1.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <data name="treeDetail_Button_Split.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
@@ -334,7 +334,7 @@
     <value>treeControl</value>
   </data>
   <data name="&gt;&gt;treeControl.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.XWorks.DictionaryConfigurationTreeControl, xWorks, Version=8.0.8.18800, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.XWorks.DictionaryConfigurationTreeControl, xWorks, Version=8.0.8.24262, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;treeControl.Parent" xml:space="preserve">
     <value>tree_Detail_Split.Panel1</value>
@@ -382,7 +382,7 @@
     <value>m_preview</value>
   </data>
   <data name="&gt;&gt;m_preview.Type" xml:space="preserve">
-    <value>Palaso.UI.WindowsForms.HtmlBrowser.XWebBrowser, PalasoUIWindowsForms, Version=2.5.129.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Palaso.UI.WindowsForms.HtmlBrowser.XWebBrowser, PalasoUIWindowsForms, Version=2.5.132.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_preview.Parent" xml:space="preserve">
     <value>previewDetailSplit.Panel1</value>
@@ -643,42 +643,42 @@
     <value>System.Windows.Forms.SplitContainer, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;treeDetail_Button_Split.Parent" xml:space="preserve">
-    <value>manageViews_viewSplit.Panel2</value>
+    <value>manageConfigs_treeDetailButton_split.Panel2</value>
   </data>
   <data name="&gt;&gt;treeDetail_Button_Split.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="&gt;&gt;manageViews_viewSplit.Panel2.Name" xml:space="preserve">
-    <value>manageViews_viewSplit.Panel2</value>
+  <data name="&gt;&gt;manageConfigs_treeDetailButton_split.Panel2.Name" xml:space="preserve">
+    <value>manageConfigs_treeDetailButton_split.Panel2</value>
   </data>
-  <data name="&gt;&gt;manageViews_viewSplit.Panel2.Type" xml:space="preserve">
+  <data name="&gt;&gt;manageConfigs_treeDetailButton_split.Panel2.Type" xml:space="preserve">
     <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;manageViews_viewSplit.Panel2.Parent" xml:space="preserve">
-    <value>manageViews_viewSplit</value>
+  <data name="&gt;&gt;manageConfigs_treeDetailButton_split.Panel2.Parent" xml:space="preserve">
+    <value>manageConfigs_treeDetailButton_split</value>
   </data>
-  <data name="&gt;&gt;manageViews_viewSplit.Panel2.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;manageConfigs_treeDetailButton_split.Panel2.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="manageViews_viewSplit.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="manageConfigs_treeDetailButton_split.Size" type="System.Drawing.Size, System.Drawing">
     <value>633, 687</value>
   </data>
-  <data name="manageViews_viewSplit.SplitterDistance" type="System.Int32, mscorlib">
+  <data name="manageConfigs_treeDetailButton_split.SplitterDistance" type="System.Int32, mscorlib">
     <value>81</value>
   </data>
-  <data name="manageViews_viewSplit.TabIndex" type="System.Int32, mscorlib">
+  <data name="manageConfigs_treeDetailButton_split.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
-  <data name="&gt;&gt;manageViews_viewSplit.Name" xml:space="preserve">
-    <value>manageViews_viewSplit</value>
+  <data name="&gt;&gt;manageConfigs_treeDetailButton_split.Name" xml:space="preserve">
+    <value>manageConfigs_treeDetailButton_split</value>
   </data>
-  <data name="&gt;&gt;manageViews_viewSplit.Type" xml:space="preserve">
+  <data name="&gt;&gt;manageConfigs_treeDetailButton_split.Type" xml:space="preserve">
     <value>System.Windows.Forms.SplitContainer, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;manageViews_viewSplit.Parent" xml:space="preserve">
+  <data name="&gt;&gt;manageConfigs_treeDetailButton_split.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;manageViews_viewSplit.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;manageConfigs_treeDetailButton_split.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -689,9 +689,6 @@
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>633, 687</value>
-  </data>
-  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>{0} Configuration Dialog</value>
