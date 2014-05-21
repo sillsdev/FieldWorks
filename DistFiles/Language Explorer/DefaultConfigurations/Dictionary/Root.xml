@@ -18,7 +18,7 @@
             </WritingSystemOptions>
         </ConfigurationItem>
         <ConfigurationItem name="Homograph Number" after=" " isEnabled="false" field="HomographNumber"/>
-        <ConfigurationItem name="Pronunciations" between=", " after=" " isEnabled="true" field="PronunciationsOS">
+        <ConfigurationItem name="Pronunciations" between=", " after=" " isEnabled="true" field="PronunciationsOS" classNameOverride="pronunciations">
             <ConfigurationItem name="Pronunciation" before="[" between=" " after="]" isEnabled="true" field="Form">
                 <WritingSystemOptions writingSystemType="pronunciation" displayWSAbreviation="false">
                     <Option id="pronunciation" isEnabled="true"/>
@@ -26,7 +26,7 @@
             </ConfigurationItem>
             <ConfigurationItem name="CV Pattern" after=" " isEnabled="false" field="CVPattern"/>
             <ConfigurationItem name="Tone" after=" " isEnabled="false" field="Tone"/>
-            <ConfigurationItem name="Location" after=" " style="Dictionary-Contrasting" isEnabled="true" field="Location">
+            <ConfigurationItem name="Location" after=" " style="Dictionary-Contrasting" isEnabled="true" field="LocationRA">
                 <ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
                     <WritingSystemOptions writingSystemType="both" displayWSAbreviation="true">
                         <Option id="fr" isEnabled="true"/>
@@ -80,7 +80,7 @@
                 </ConfigurationItem>
                 <ConfigurationItem name="CV Pattern" after=" " isEnabled="false" field="CVPattern"/>
                 <ConfigurationItem name="Tone" after=" " isEnabled="false" field="Tone"/>
-                <ConfigurationItem name="Location" after=" " style="Dictionary-Contrasting" isEnabled="false" field="Location">
+                <ConfigurationItem name="Location" after=" " style="Dictionary-Contrasting" isEnabled="false" field="LocationRA">
                     <ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
                         <WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
                             <Option id="analysis" isEnabled="true"/>
@@ -312,7 +312,7 @@
 					</ConfigurationItem>
 					<ConfigurationItem name="CV Pattern" after=" " isEnabled="false" field="CVPattern"/>
 					<ConfigurationItem name="Tone" after=" " isEnabled="false" field="Tone"/>
-					<ConfigurationItem name="Location" after=" " style="Dictionary-Contrasting" isEnabled="false" field="Location">
+					<ConfigurationItem name="Location" after=" " style="Dictionary-Contrasting" isEnabled="false" field="LocationRA">
 						<ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
 							<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
 								<Option id="analysis" isEnabled="true"/>
@@ -646,7 +646,7 @@
 				</ConfigurationItem>
 				<ConfigurationItem name="CV Pattern" after=" " isEnabled="false" field="CVPattern"/>
 				<ConfigurationItem name="Tone" after=" " isEnabled="false" field="Tone"/>
-				<ConfigurationItem name="Location" after=" " style="Dictionary-Contrasting" isEnabled="true" field="Location">
+				<ConfigurationItem name="Location" after=" " style="Dictionary-Contrasting" isEnabled="true" field="LocationRA">
 					<ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
 						<WritingSystemOptions writingSystemType="both" displayWSAbreviation="true">
 							<Option id="fr" isEnabled="true"/>
@@ -700,7 +700,7 @@
 					</ConfigurationItem>
 					<ConfigurationItem name="CV Pattern" after=" " isEnabled="false" field="CVPattern"/>
 					<ConfigurationItem name="Tone" after=" " isEnabled="false" field="Tone"/>
-					<ConfigurationItem name="Location" after=" " style="Dictionary-Contrasting" isEnabled="false" field="Location">
+					<ConfigurationItem name="Location" after=" " style="Dictionary-Contrasting" isEnabled="false" field="LocationRA">
 						<ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
 							<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
 								<Option id="analysis" isEnabled="true"/>
@@ -932,7 +932,7 @@
 						</ConfigurationItem>
 						<ConfigurationItem name="CV Pattern" after=" " isEnabled="false" field="CVPattern"/>
 						<ConfigurationItem name="Tone" after=" " isEnabled="false" field="Tone"/>
-						<ConfigurationItem name="Location" after=" " style="Dictionary-Contrasting" isEnabled="false" field="Location">
+						<ConfigurationItem name="Location" after=" " style="Dictionary-Contrasting" isEnabled="false" field="LocationRA">
 							<ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
 								<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
 									<Option id="analysis" isEnabled="true"/>
@@ -1287,7 +1287,7 @@
             </ConfigurationItem>
             <ConfigurationItem name="CV Pattern" after=" " isEnabled="false" field="CVPattern"/>
             <ConfigurationItem name="Tone" after=" " isEnabled="false" field="Tone"/>
-            <ConfigurationItem name="Location" after=" " style="Dictionary-Contrasting" isEnabled="true" field="Location">
+            <ConfigurationItem name="Location" after=" " style="Dictionary-Contrasting" isEnabled="true" field="LocationRA">
                 <ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
                     <WritingSystemOptions writingSystemType="both" displayWSAbreviation="true">
                         <Option id="fr" isEnabled="true"/>
@@ -1341,7 +1341,7 @@
                 </ConfigurationItem>
                 <ConfigurationItem name="CV Pattern" after=" " isEnabled="false" field="CVPattern"/>
                 <ConfigurationItem name="Tone" after=" " isEnabled="false" field="Tone"/>
-                <ConfigurationItem name="Location" after=" " style="Dictionary-Contrasting" isEnabled="false" field="Location">
+                <ConfigurationItem name="Location" after=" " style="Dictionary-Contrasting" isEnabled="false" field="LocationRA">
                     <ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
                         <WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
                             <Option id="analysis" isEnabled="true"/>
@@ -1678,7 +1678,7 @@
 					</ConfigurationItem>
 					<ConfigurationItem name="CV Pattern" after=" " isEnabled="false" field="CVPattern"/>
 					<ConfigurationItem name="Tone" after=" " isEnabled="false" field="Tone"/>
-					<ConfigurationItem name="Location" after=" " style="Dictionary-Contrasting" isEnabled="false" field="Location">
+					<ConfigurationItem name="Location" after=" " style="Dictionary-Contrasting" isEnabled="false" field="LocationRA">
 						<ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
 							<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
 								<Option id="analysis" isEnabled="true"/>

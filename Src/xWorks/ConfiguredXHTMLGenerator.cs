@@ -144,8 +144,11 @@ namespace SIL.FieldWorks.XWorks
 				}
 				return;
 			}
-
-			if (propertyValue is ICmObject)
+			if(propertyValue is IMoForm)
+			{
+				GenerateXHTMLForMoForm(propertyValue as IMoForm, config, writer, cache);
+			}
+			else if (propertyValue is ICmObject)
 			{
 				GenerateXHTMLForICmObject(propertyValue as ICmObject, config, writer, cache);
 				return;
@@ -161,6 +164,18 @@ namespace SIL.FieldWorks.XWorks
 						GenerateXHTMLForFieldByReflection(propertyValue, child, writer, cache);
 					}
 				}
+			}
+		}
+
+		private static void GenerateXHTMLForMoForm(IMoForm moForm, ConfigurableDictionaryNode config, XmlWriter writer, FdoCache cache)
+		{
+			// Don't export if there is no such data
+			if(moForm == null)
+				return;
+			GenerateXHTMLForStrings(moForm.Form, config, writer, cache);
+			if(config.Children != null && config.Children.Any())
+			{
+				throw new NotImplementedException("Children for MoForm types not yet supported.");
 			}
 		}
 
@@ -209,12 +224,10 @@ namespace SIL.FieldWorks.XWorks
 			// Don't export if there is no such data
 			if (propertyValue == null)
 				return;
-
 			writer.WriteStartElement("span");
-			// Trim trailing "RA".
+			// Trim trailing "RA" or "OA".
 			var fieldDescription = CssGenerator.GetClassAttributeForConfig(config);
-			if (fieldDescription.EndsWith("ra"))
-				fieldDescription = fieldDescription.Remove(fieldDescription.Length - 2);
+			fieldDescription = fieldDescription.Remove(fieldDescription.Length - 2);
 			writer.WriteAttributeString("class", fieldDescription);
 
 			if (config.Children != null)
@@ -240,7 +253,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// chop the pluralization off the parent class
 			var collectionName = CssGenerator.GetClassAttributeForConfig(config);
-			writer.WriteAttributeString("class", collectionName.Substring(0, config.FieldDescription.Length - 1).ToLower());
+			writer.WriteAttributeString("class", collectionName.Substring(0, collectionName.Length - 1).ToLower());
 		}
 
 		/// <summary>

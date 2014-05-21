@@ -94,6 +94,91 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_LexemeFormConfigurationGeneratesCorrectResult()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexemeFormOA",
+				Label = "Lexeme Form",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "vernacular" }),
+				IsEnabled = true
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
+			var entry = CreateInterestingLexEntry();
+			//Fill in the LexemeForm
+			var morph = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+			entry.LexemeFormOA = morph;
+			morph.Form.set_String(wsFr, Cache.TsStrFactory.MakeString("LexemeFormTest", wsFr));
+			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				//SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, XHTMLWriter, Cache));
+				XHTMLWriter.Flush();
+				var frenchLexForm = "/div[@class='lexentry']/span[@class='lexemeformoa' and @lang='fr' and text()='LexemeFormTest']";
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(frenchLexForm, 1);
+			}
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_PronunciationLocationGeneratesCorrectResult()
+		{
+			var nameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name",
+				Label = "Name",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
+				IsEnabled = true
+			};
+			var locationNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LocationRA",
+				Label = "Spoken here",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { nameNode }
+			};
+			var pronunciationsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "PronunciationsOS",
+				ClassNameOverride = "Pronunciations",
+				Label = "Speak this",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { locationNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { pronunciationsNode },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
+			var entry = CreateInterestingLexEntry();
+			//Create and fill in the Location
+			var pronunciation = Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
+			entry.PronunciationsOS.Add(pronunciation);
+			var possListFactory = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>();
+			var possList1 = possListFactory.Create();
+			Cache.LangProject.LocationsOA = possList1;
+			var location = Cache.ServiceLocator.GetInstance<ICmLocationFactory>().Create();
+			possList1.PossibilitiesOS.Add(location);
+			location.Name.set_String(wsFr, Cache.TsStrFactory.MakeString("Here!", wsFr));
+			pronunciation.LocationRA = location;
+			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				//SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, XHTMLWriter, Cache));
+				XHTMLWriter.Flush();
+				var hereLocation = "/div[@class='lexentry']/span[@class='pronunciations']/span[@class='pronunciation']/span[@class='location']/span[@class='name' and @lang='fr' and text()='Here!']";
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(hereLocation, 1);
+			}
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_NoEnabledConfigurationsThrowsArgument()
 		{
 			var homographNum = new ConfigurableDictionaryNode
