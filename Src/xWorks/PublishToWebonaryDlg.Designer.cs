@@ -50,6 +50,7 @@ namespace SIL.FieldWorks.XWorks
 			this.configurationLabel = new System.Windows.Forms.Label();
 			this.publicationBox = new System.Windows.Forms.ComboBox();
 			this.configurationBox = new System.Windows.Forms.ComboBox();
+			this.showPasswordCheckBox = new System.Windows.Forms.CheckBox();
 			this.tableLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -71,6 +72,7 @@ namespace SIL.FieldWorks.XWorks
 			this.tableLayoutPanel.Controls.Add(this.configurationLabel, 0, 5);
 			this.tableLayoutPanel.Controls.Add(this.publicationBox, 1, 4);
 			this.tableLayoutPanel.Controls.Add(this.configurationBox, 1, 5);
+			this.tableLayoutPanel.Controls.Add(this.showPasswordCheckBox, 2, 3);
 			this.tableLayoutPanel.Name = "tableLayoutPanel";
 			// 
 			// explanationLabel
@@ -110,7 +112,6 @@ namespace SIL.FieldWorks.XWorks
 			// 
 			// webonaryPasswordTextbox
 			// 
-			this.tableLayoutPanel.SetColumnSpan(this.webonaryPasswordTextbox, 2);
 			resources.ApplyResources(this.webonaryPasswordTextbox, "webonaryPasswordTextbox");
 			this.webonaryPasswordTextbox.Name = "webonaryPasswordTextbox";
 			// 
@@ -169,6 +170,13 @@ namespace SIL.FieldWorks.XWorks
             resources.GetString("configurationBox.Items")});
 			this.configurationBox.Name = "configurationBox";
 			// 
+			// showPasswordCheckBox
+			// 
+			resources.ApplyResources(this.showPasswordCheckBox, "showPasswordCheckBox");
+			this.showPasswordCheckBox.Name = "showPasswordCheckBox";
+			this.showPasswordCheckBox.UseVisualStyleBackColor = true;
+			this.showPasswordCheckBox.CheckedChanged += new System.EventHandler(this.showPasswordCheckBox_CheckedChanged);
+			// 
 			// PublishToWebonaryDlg
 			// 
 			resources.ApplyResources(this, "$this");
@@ -199,5 +207,6 @@ namespace SIL.FieldWorks.XWorks
 		private System.Windows.Forms.Label configurationLabel;
 		private System.Windows.Forms.ComboBox publicationBox;
 		private System.Windows.Forms.ComboBox configurationBox;
+		private System.Windows.Forms.CheckBox showPasswordCheckBox;
 	}
 }
