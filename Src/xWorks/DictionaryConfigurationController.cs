@@ -134,7 +134,14 @@ namespace SIL.FieldWorks.XWorks
 
 			// Preserve treenode expansions
 			foreach (var expandedNode in expandedNodes)
-				FindTreeNode(expandedNode, tree.Nodes).Expand();
+			{
+				//If an expanded node is removed it is added to the expanedNodes list before
+				//the tree is rebuilt. Therefore when tree is rebuilt FindTreeNode returns null since
+				//it cannot find that node anymore.
+				var node = FindTreeNode(expandedNode, tree.Nodes);
+				if (node != null)
+					node.Expand();
+			}
 
 			if (nodeToSelect != null)
 				tree.SelectedNode = FindTreeNode(nodeToSelect, tree.Nodes);
