@@ -101,7 +101,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						   select m_cache.ServiceLocator.GetObject(hvo);
 
 			return new SimpleListChooser(m_persistProvider,
-				labels,
+				labels.OrderBy(ol => ol.Object.ShortName),
 				m_fieldName,
 				m_cache,
 				contents,

@@ -61,8 +61,11 @@
 \wc root
 \mp RootPOS2302
 \a creb {9216}
+\fd MSFS29
 \mp IrregInflForm5373
+\fd MSFS10186
 \mp IrregInflForm6652
+
 
 \lx 4157.0
 \g seek.pst.pl
@@ -70,8 +73,11 @@
 \wc root
 \mp RootPOS2302
 \a creb {9216}
+\fd MSFS29
 \mp IrregInflForm5373
+\fd MSFS10186
 \mp IrregInflForm6652
+
 \lx 700
 \g delme
 \c W/W
@@ -161,7 +167,9 @@
 \wc root
 \mp RootPOS2302
 \a brub {1299}
+\fd MSFS10337
 \mp IrregInflForm10063
+
 \lx 5266
 \g pl
 \c W/W
@@ -224,7 +232,9 @@
 \wc root
 \mp RootPOS2302
 \a blob {552}
+\fd MSFS29
 \mp IrregInflForm5373
+
 \lx 5218
 \g first phonological rule test
 \c W

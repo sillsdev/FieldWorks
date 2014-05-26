@@ -501,7 +501,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					}
 				}
 			}
-			var labels = ObjectLabel.CreateObjectLabels(Cache, candidates, null);
+			var labels = ObjectLabel.CreateObjectLabels(Cache, candidates.OrderBy(iafmsa => iafmsa.Owner.ShortName), null);
 			XCore.PersistenceProvider persistProvider = new PersistenceProvider(m_mediator.PropertyTable);
 			var aiForceMultipleChoices = new ICmObject[0];
 			var chooser = new SimpleListChooser(persistProvider, labels,

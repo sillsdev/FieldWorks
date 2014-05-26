@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				default:
 					throw new ApplicationException(String.Format("Invalid MSA type: {0}.", obj.GetType().Name));
 				case "MoStemMsa":
-					WriteStemMsaXmlElement(writer, (IMoStemMsa) obj);
+					WriteStemMsaXmlElement(writer, (IMoStemMsa) obj, Enumerable.Empty<ILexEntryRef>());
 					break;
 				case "MoInflAffMsa":
 					WriteInflectionClasses(writer, cache, int.Parse(formID, CultureInfo.InvariantCulture));
@@ -40,12 +40,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					// is an irregularly inflected form
 					// get the MoStemMsa of its variant
 					var entry = (ILexEntry) obj;
-					Debug.Assert(entry != null);
 					if (entry.EntryRefsOS.Count > 0)
 					{
-						var lexEntryRef = entry.EntryRefsOS[msaTuple.Item2];
-						var sense = MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
-						WriteStemMsaXmlElement(writer, (IMoStemMsa) sense.MorphoSyntaxAnalysisRA);
+						ILexEntryRef lexEntryRef = entry.EntryRefsOS[msaTuple.Item2];
+						ILexSense sense = MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
+						WriteStemMsaXmlElement(writer, (IMoStemMsa) sense.MorphoSyntaxAnalysisRA, entry.VariantEntryRefs);
 					}
 					break;
 				case "LexEntryInflType":
@@ -69,7 +68,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return pos != null && pos.RequiresInflection;
 		}
 
-		private static void WriteStemMsaXmlElement(XmlWriter writer, IMoStemMsa stemMsa)
+		private static void WriteStemMsaXmlElement(XmlWriter writer, IMoStemMsa stemMsa, IEnumerable<ILexEntryRef> variantEntryRefs)
 		{
 			writer.WriteStartElement("stemMsa");
 			WritePosXmlAttribute(writer, stemMsa.PartOfSpeechRA, "cat");
@@ -97,6 +96,15 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			WriteFeatureStructureNodes(writer, stemMsa.MsFeaturesOA, stemMsa.Hvo);
 			WriteProductivityRestrictionNodes(writer, stemMsa.ProdRestrictRC, "productivityRestriction");
 			WriteFromPosNodes(writer, stemMsa.FromPartsOfSpeechRC, "fromPartsOfSpeech");
+			foreach (ILexEntryRef entryRef in variantEntryRefs)
+			{
+				foreach (ILexEntryType lexEntryType in entryRef.VariantEntryTypesRS)
+				{
+					var inflEntryType = lexEntryType as ILexEntryInflType;
+					if (inflEntryType != null)
+						WriteFeatureStructureNodes(writer, inflEntryType.InflFeatsOA, stemMsa.Hvo);
+				}
+			}
 			writer.WriteEndElement(); //stemMsa
 		}
 
@@ -512,7 +520,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private static void WriteFeatureStructureFromHvoString(XmlWriter writer, FdoCache cache, string sFsHvo)
 		{
-			int fsHvo = Convert.ToInt32(sFsHvo);
+			int fsHvo = int.Parse(sFsHvo, CultureInfo.InvariantCulture);
 			var fsFeatStruc = (IFsFeatStruc) cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(fsHvo);
 			if (fsFeatStruc != null)
 				WriteFeatureStructureNodes(writer, fsFeatStruc, fsHvo);

@@ -6737,7 +6737,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				case PhNCSegmentsTags.kflidSegments:
 					return (from ps in m_cache.LangProject.PhonologicalDataOA.PhonemeSetsOS
 						   from ph in ps.PhonemesOC
-						   select ph).Cast<ICmObject>();
+						   select ph).Cast<ICmObject>().OrderBy(ph=>ph.ShortName);
 			}
 			return base.ReferenceTargetCandidates(flid);
 		}

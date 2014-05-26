@@ -26,6 +26,7 @@
    <xsl:variable name="sToMSFS" select="'ToMSFS'"/>
    <xsl:variable name="sInflectionFS" select="'InflectionFS'"/>
    <xsl:variable name="sIrregularlyInflectedForm" select="'IrregInflForm'"/>
-	<!-- ICA = InflClassAffix (inflectional class affix), but we need to avoid PC-PATR's 80 character limit -->
+   <xsl:variable name="sIrregularlyInflectedFormInSlot" select="'IrregInflFormInSlot'"/>
+   <!-- ICA = InflClassAffix (inflectional class affix), but we need to avoid PC-PATR's 80 character limit -->
 	<xsl:variable name="sInflClassAffix" select="'ICA'"/>
 </xsl:stylesheet>
