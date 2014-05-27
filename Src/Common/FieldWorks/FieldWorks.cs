@@ -170,7 +170,7 @@ namespace SIL.FieldWorks
 				}
 				else
 				{
-					xulRunnerLocation = Path.Combine(FileLocator.DirectoryOfApplicationOrSolution, "xulrunner");
+					xulRunnerLocation = Path.Combine(FileLocator.DirectoryOfTheApplicationExecutable, "xulrunner");
 					if (!Directory.Exists(xulRunnerLocation))
 						throw new ApplicationException("XULRunner needs to be installed to " + xulRunnerLocation);
 					if (!SetDllDirectory(xulRunnerLocation))
