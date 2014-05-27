@@ -707,7 +707,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				var output = new FwXmlOutput(writer, fDotrace, m_patr,
 					Path.Combine(m_outputDirectory, m_projectName + "patrlex.txt"), m_cache);
 				output.MorphAndLookupWord(m_loader.CurrentMorpher, form, true, selectTraceMorphs);
-				AddImpliedDataCheckerInfo(writer);
+				if (hvoWordform == 0)
+				{ // we are in TryAWord so we can do some extra checking
+					AddImpliedDataCheckerInfo(writer);
+				}
 				writer.WriteEndElement();
 			}
 			return sb.ToString();
