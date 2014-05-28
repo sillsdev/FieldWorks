@@ -1,0 +1,9 @@
+Verified+1: Jenkins CI <jenkins@sil.org>
+Verified-Linux+1: Jenkins CI <jenkins@sil.org>
+Code-Review+2: MarkS <marksvc@gmail.com>
+Code-Review+2: Rick MacLean <rick_maclean@sil.org>
+Submitted-by: Rick MacLean <rick_maclean@sil.org>
+Submitted-at: Wed, 28 May 2014 13:07:53 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/2075
+Project: FieldWorks
+Branch: refs/heads/feature/Dictionary
