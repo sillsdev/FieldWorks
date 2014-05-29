@@ -82,11 +82,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				case "reversalToolBulkEditReversalEntries":
 				case "reversalToolEditComplete":
-					return "Reversal Index";
+					return xWorksStrings.ReversalIndex;
 				case "lexiconBrowse":
 				case "lexiconDictionary":
 				case "lexiconEdit" :
-					return "Dictionary";
+					return xWorksStrings.Dictionary;
 				default:
 					return null;
 			}
@@ -103,7 +103,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var clerk = m_mediator.PropertyTable.GetValue("ActiveClerk", null) as RecordClerk;
 				var controller = new DictionaryConfigurationController(dlg, m_mediator, clerk != null ? clerk.CurrentObject : null);
-				var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+				dlg.Text = String.Format(xWorksStrings.ConfigureTitle, GetDictionaryConfigurationType(m_mediator));
 				dlg.ShowDialog(m_mediator.PropertyTable.GetValue("window") as IWin32Window);
 			}
 			m_mediator.SendMessage("MasterRefresh", null);

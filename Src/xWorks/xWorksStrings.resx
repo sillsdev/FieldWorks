@@ -805,4 +805,14 @@ If you are not the one designated user who adds fields, or you are making some o
   <data name="Allpublications" xml:space="preserve">
     <value>All publications</value>
   </data>
+  <data name="ConfigureTitle" xml:space="preserve">
+    <value>Configure {0}</value>
+    <comment>{0} is a type of configuration, like Dictionary or Reversal Index</comment>
+  </data>
+  <data name="Dictionary" xml:space="preserve">
+    <value>Dictionary</value>
+  </data>
+  <data name="ReversalIndex" xml:space="preserve">
+    <value>Reversal Index</value>
+  </data>
 </root>
