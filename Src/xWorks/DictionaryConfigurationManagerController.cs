@@ -127,7 +127,16 @@ namespace SIL.FieldWorks.XWorks
 		private void OnSelectConfiguration(object sender, EventArgs args)
 		{
 			if (_view.configurationsListView.SelectedIndices.Count < 1)
+			{
+				foreach (ListViewItem pubItem in _view.publicationsListView.Items)
+				{
+					pubItem.Checked = false;
+				}
+				_view.publicationsListView.Enabled = false;
 				return;
+			}
+
+			_view.publicationsListView.Enabled = true;
 			// MultiSelect is not enabled, so can just use the first selected item.
 			var newConfiguration = _view.configurationsListView.SelectedItems[0].Tag as DictionaryConfigurationModel;
 			var associatedPublications = GetPublications(newConfiguration);
