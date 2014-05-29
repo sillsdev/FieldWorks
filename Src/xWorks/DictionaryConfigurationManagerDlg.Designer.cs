@@ -116,6 +116,7 @@
 			this.mainTableLayoutPanel.SetRowSpan(this.configurationsListView, 3);
 			this.configurationsListView.UseCompatibleStateImageBehavior = false;
 			this.configurationsListView.View = System.Windows.Forms.View.List;
+			this.configurationsListView.KeyUp += new System.Windows.Forms.KeyEventHandler(this.ConfigurationsListViewKeyUp);
 			// 
 			// publicationsListView
 			// 

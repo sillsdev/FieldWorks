@@ -123,8 +123,8 @@ namespace SIL.FieldWorks.XWorks
 			_view.configurationsListView.SelectedIndexChanged += OnSelectConfiguration;
 			_view.configurationsListView.AfterLabelEdit += OnRenameConfiguration;
 			_view.publicationsListView.ItemChecked += OnCheckPublication;
-			_view.Shown += OnShowDialog;
 			_view.copyButton.Click += OnCopyConfiguration;
+			_view.Shown += OnShowDialog;
 		}
 
 		private void ReLoadConfigurations()
@@ -135,12 +135,9 @@ namespace SIL.FieldWorks.XWorks
 				Configurations.Select(configuration => new ListViewItem { Tag = configuration, Text = configuration.Label }).ToArray());
 		}
 
-		/// <summary>
-		/// To set when the view is shown.
-		/// </summary>
+		/// <summary>When the view is shown, select first configuration, which will cause publications to be checked or unchecked</summary>
 		private void OnShowDialog(object sender, EventArgs eventArgs)
 		{
-			// Select first configuration, and cause publications to be checked or unchecked. Done here since is not very successful when done in the constructor.
 			_view.configurationsListView.Items[0].Selected = true;
 		}
 
@@ -186,6 +183,9 @@ namespace SIL.FieldWorks.XWorks
 		/// </remarks>
 		private void OnRenameConfiguration(object sender, LabelEditEventArgs labelEditEventArgs)
 		{
+			// WinForms renames the ListViewItem by index *after* this EventHandler runs. We want absolute control over sorting and
+			// renaming, so "cancel" the event before doing anything.
+			labelEditEventArgs.CancelEdit = true;
 			var selectedItem = _view.configurationsListView.Items[labelEditEventArgs.Item];
 			if (RenameConfiguration(selectedItem, labelEditEventArgs))
 			{
@@ -195,10 +195,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// If the user chose a duplicate name, warn the user and leave the Item's text open for edit
 				MessageBox.Show(xWorksStrings.FailedToRename);
+				selectedItem.Text = labelEditEventArgs.Label;
 				selectedItem.BeginEdit();
-				// If the user makes multiple invalid attempts to rename in a row, WinForms will reset the label to the user's previous attempt.
-				// Prevent this:
-				labelEditEventArgs.CancelEdit = true;
 			}
 		}
 
@@ -215,7 +213,6 @@ namespace SIL.FieldWorks.XWorks
 				// - The user has pressed Enter or clicked away without making any changes (can usually be safely interpreted as a cancel)
 				// - Any of the above immediately after the warning to choose a unique name. It would require a fair amount of effort to distinguish
 				//   between these cases, so simply revert any edits
-				labelEditEventArgs.CancelEdit = true;
 				selectedItem.Text = selectedConfig.Label;
 			}
 			else if (Configurations.Any(config => config != selectedConfig && config.Label == labelEditEventArgs.Label))
