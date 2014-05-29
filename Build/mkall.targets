@@ -400,9 +400,9 @@
 					  LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.GeckoBrowserAdapter.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadFile Address="$(PalasoDownloadUrlMaster)/PalasoUIWindowsForms.GeckoBrowserAdapter.$(DebugInfo)"
 					  LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.GeckoBrowserAdapter.$(DebugInfo)" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(PalasoDownloadUrlMaster)/PalasoUIWindowsForms.GeckoFxWebBrowserAdapter.dll"
+		<DownloadFile Address="$(PalasoDownloadUrlMaster)/PalasoUIWindowsForms.GeckoBrowserAdapter.dll"
 					  LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.GeckoBrowserAdapter.dll" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(PalasoDownloadUrlMaster)/PalasoUIWindowsForms.GeckoFxWebBrowserAdapter.$(DebugInfo)"
+		<DownloadFile Address="$(PalasoDownloadUrlMaster)/PalasoUIWindowsForms.GeckoBrowserAdapter.$(DebugInfo)"
 					  LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.GeckoBrowserAdapter.$(DebugInfo)" Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Archiving.dll" LocalFilename="$(fwrt)/Downloads/SIL.Archiving.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Archiving.dll.config" LocalFilename="$(fwrt)/Downloads/SIL.Archiving.dll.config"/>
