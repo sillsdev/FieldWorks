@@ -100,6 +100,7 @@
 		  </choose>
 -->
 	</Target>
+	<!-- Only Windows has the xsltc tool for compiling XSLs -->
 	<PropertyGroup>
 		<ApplicationTransformsPath>..\Src\Transforms\Application</ApplicationTransformsPath>
 		<PresentationTransformsPath>..\Src\Transforms\Presentation</PresentationTransformsPath>

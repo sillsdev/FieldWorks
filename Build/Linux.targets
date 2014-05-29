@@ -230,6 +230,8 @@
 			FirstLine="3fb0fcd2-ac55-42a8-b580-73b89a2b6215 libManagedComBridge.so ManagedVwWindow.dll SIL.FieldWorks.Views.ManagedVwWindow"
 			SecondLine="8856396c-63a9-4bc7-ad47-87ec8b6ef5a4 libManagedComBridge.so"/>
 	</Target>
+
+	<!-- Mono doesn't have an XSL compiler so we just put the XSLs in a resource assembly -->
 	<Target Name="BuildLinuxXslAssemblies" Condition="'$(OS)'=='Unix'">
 		<CreateItem Include="$(fwrt)/Src/Transforms/Presentation/*.xsl">
 			<Output TaskParameter="Include" ItemName="PresentationXslFiles"/>
