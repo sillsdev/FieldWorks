@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -98,9 +95,13 @@ namespace SIL.FieldWorks.XWorks
 
 				beginningText = ConvertFinal(beginningText);
 
-				textbox.Text = beginningText + endingText;
-				textbox.SelectionStart = beginningText.Length;
+				//This assignment is done to handle situations where there are side effects impacting
+				//where the position of the cursor should end up.
+				textbox.Text = beginningText;
+				var newSelectionStart = textbox.Text.Length;
 				textbox.SelectionLength = originalSelectionLength;
+				textbox.Text = textbox.Text + endingText;
+				textbox.SelectionStart = newSelectionStart;
 			}
 		}
 	}

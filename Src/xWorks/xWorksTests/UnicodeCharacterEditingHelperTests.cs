@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 using NUnit.Framework;
+using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks
@@ -102,6 +104,114 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Assert.That(UnicodeCharacterEditingHelper.ConvertFinal("Some text here1234"), Is.EqualTo("Some text here\u1234"), "Should have detected final numbers and given a unicode character");
 			Assert.That(UnicodeCharacterEditingHelper.ConvertFinal("Some text here!"), Is.EqualTo("Some text here0021"), "Should have detected final non-number character and given four hex digits representing it");
+		}
+
+		[Test]
+		public void HandlerSetsIPCorrectlyWhenConvertToChar()
+		{
+			var keyEventArgs = new KeyEventArgs(Keys.Alt | Keys.X);
+			using (var textBox = new TextBox())
+			{
+				textBox.Text = "Some 1234text here";
+				textBox.SelectionStart = 9;
+
+				UnicodeCharacterEditingHelper.HandleKeyDown(textBox, keyEventArgs);
+				Assert.That(textBox.Text, Is.EqualTo("Some \u1234text here"),
+					"The string should have been converted to include the unicode character");
+				Assert.That(textBox.SelectionStart, Is.EqualTo(6),
+					"SelectionStart should have been moved back");
+			}
+		}
+
+		[Test]
+		public void HandlerSetsIPCorrectlyWhenConvertToCharAtEnd()
+		{
+			var keyEventArgs = new KeyEventArgs(Keys.Alt | Keys.X);
+			using (var textBox = new TextBox())
+			{
+				textBox.Text = "Some 1234";
+				textBox.SelectionStart = 9;
+
+				UnicodeCharacterEditingHelper.HandleKeyDown(textBox, keyEventArgs);
+				Assert.That(textBox.Text, Is.EqualTo("Some \u1234"),
+					"The string should have been converted to include the unicode character");
+				Assert.That(textBox.SelectionStart, Is.EqualTo(6),
+					"SelectionStart should have been moved back");
+			}
+		}
+
+		[Test]
+		public void HandlerSetsIPCorrectlyWhenConvertFromChar()
+		{
+			var keyEventArgs = new KeyEventArgs(Keys.Alt | Keys.X);
+			using (var textBox = new TextBox())
+			{
+				textBox.Text = "Some \u1234text here";
+				textBox.SelectionStart = 6;
+
+				UnicodeCharacterEditingHelper.HandleKeyDown(textBox, keyEventArgs);
+				Assert.That(textBox.Text, Is.EqualTo("Some 1234text here"),
+					"The string should have been converted the character back to numbers");
+				Assert.That(textBox.SelectionStart, Is.EqualTo(9),
+					"SelectionStart should have been moved forward");
+			}
+		}
+
+		[Test]
+		public void HandlerSetsIPCorrectlyWhenConvertFromCharAtEnd()
+		{
+			var keyEventArgs = new KeyEventArgs(Keys.Alt | Keys.X);
+			using (var textBox = new TextBox())
+			{
+				textBox.Text = "Some \u1234";
+				textBox.SelectionStart = 6;
+
+				UnicodeCharacterEditingHelper.HandleKeyDown(textBox, keyEventArgs);
+				Assert.That(textBox.Text, Is.EqualTo("Some 1234"),
+					"The string should have been converted the character back to numbers");
+				Assert.That(textBox.SelectionStart, Is.EqualTo(9),
+					"SelectionStart should have been moved forward");
+			}
+		}
+
+		/// <summary>
+		/// This test is ensuring 200F which is the Right to Left unicode character
+		/// gets converted to [RLM] and the cursor is positioned in the correct place.
+		/// </summary>
+		[Test]
+		public void ConvertRLM()
+		{
+			var keyEventArgs = new KeyEventArgs(Keys.Alt | Keys.X);
+			using (var textBox = new TextBox())
+			{
+				textBox.Text = "Some 200Ftext here";
+				textBox.TextChanged += SpecialCharacterHandling.RevealInvisibleCharacters;
+				textBox.SelectionStart = 9;
+
+				UnicodeCharacterEditingHelper.HandleKeyDown(textBox, keyEventArgs);
+				Assert.That(textBox.Text, Is.EqualTo("Some∙[RLM]text∙here"),
+					"The string should have been converted to 'Some∙[RLM]text∙here'");
+				Assert.That(textBox.SelectionStart, Is.EqualTo(10),
+					"SelectionStart should be positioned based on 200F converting to [RLM]");
+			}
+		}
+
+		[Test]
+		public void ConvertRLMAtEnd()
+		{
+			var keyEventArgs = new KeyEventArgs(Keys.Alt | Keys.X);
+			using (var textBox = new TextBox())
+			{
+				textBox.Text = "Blah 200F";
+				textBox.TextChanged += SpecialCharacterHandling.RevealInvisibleCharacters;
+				textBox.SelectionStart = 9;
+
+				UnicodeCharacterEditingHelper.HandleKeyDown(textBox, keyEventArgs);
+				Assert.That(textBox.Text, Is.EqualTo("Blah∙[RLM]"),
+					"The string should have been converted to include the character and then to visible characters");
+				Assert.That(textBox.SelectionStart, Is.EqualTo(10),
+					"SelectionStart should be positioned based on 200F ultimately converting to [RLM]");
+			}
 		}
 	}
 }
