@@ -100,11 +100,6 @@
 		  </choose>
 -->
 	</Target>
-	<Target Name="SxSManifests" Condition="'$(OS)'=='Windows_NT'" DependsOnTargets="FwKernel;GrEngine;Views">
-		<RegFree Executable="$(dir-outputBase)\FwKernel.dll" />
-		<RegFree Executable="$(dir-outputBase)\Views.dll" />
-		<RegFree Executable="$(dir-outputBase)\Graphite.dll" NoTypeLib="$(dir-outputBase)\Graphite.dll" />
-	</Target>
 	<PropertyGroup>
 		<ApplicationTransformsPath>..\Src\Transforms\Application</ApplicationTransformsPath>
 		<PresentationTransformsPath>..\Src\Transforms\Presentation</PresentationTransformsPath>

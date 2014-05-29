@@ -65,7 +65,7 @@
 		<Message Text="Finished building GenericLib."/>
 	</Target>
 
-	<Target Name="testGenericLib" DependsOnTargets="GenericLib">
+	<Target Name="testGenericLib" DependsOnTargets="GenericLib;FwKernel;Views;GrEngine">
 		<Make Condition="'$(OS)'=='Windows_NT'"
 				Makefile="$(fwrt)\Src\Generic\Test\testGenericLib.mak"
 				Configuration="$(config-capital)"
@@ -77,8 +77,7 @@
 				BuildRoot="$(fwrt)"
 				WorkingDirectory="$(fwrt)/Src/Generic/Test" ContinueOnError="true"/>
 		<RegFree Executable="$(dir-outputBase)\testGenericLib.exe"
-				Dlls="$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
-				NoTypeLib="$(dir-outputBase)\Graphite.dll"
+				DependentAssemblies="$(dir-outputBase)\FwKernel.manifest;$(dir-outputBase)\Graphite.manifest;$(dir-outputBase)\Views.manifest"
 				Condition="'$(OS)'=='Windows_NT'"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testGenericLib.exe -manifest $(dir-outputBase)\testGenericLib.exe.manifest"
 				Condition="'$(OS)'=='Windows_NT'"/>
@@ -103,6 +102,7 @@
 			Configuration="$(config-capital)" Target="$(make-target)"
 			BuildRoot="$(fwrt)"
 			WorkingDirectory="$(fwrt)/Src/Graphite/GrEngine"/>
+		<RegFree Executable="$(dir-outputBase)\Graphite.dll" NoTypeLib="$(dir-outputBase)\Graphite.dll" Output="$(dir-outputBase)\Graphite.manifest" />
 		<Message Text="Finished building GrEngine."/>
 	</Target>
 
@@ -118,10 +118,11 @@
 			Configuration="$(config-capital)" Target="$(make-target)"
 			BuildRoot="$(fwrt)"
 			WorkingDirectory="$(fwrt)/Src/Kernel"/>
+		<RegFree Executable="$(dir-outputBase)\FwKernel.dll" Output="$(dir-outputBase)\FwKernel.manifest" />
 		<Message Text="Finished building FwKernel."/>
 	</Target>
 
-	<Target Name="testFwKernel" DependsOnTargets="GenericLib;FwKernel">
+	<Target Name="testFwKernel" DependsOnTargets="GenericLib;FwKernel;Views;GrEngine">
 		<Make Condition="'$(OS)'=='Windows_NT'"
 				Makefile="$(fwrt)\Src\Kernel\Test\testFwKernel.mak"
 				Configuration="$(config-capital)"
@@ -133,8 +134,7 @@
 				BuildRoot="$(fwrt)"
 				WorkingDirectory="$(fwrt)/Src/Kernel/Test" ContinueOnError="true"/>
 		<RegFree Executable="$(dir-outputBase)\testFwKernel.exe"
-				Dlls="$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
-				NoTypeLib="$(dir-outputBase)\Graphite.dll"
+				DependentAssemblies="$(dir-outputBase)\FwKernel.manifest;$(dir-outputBase)\Graphite.manifest;$(dir-outputBase)\Views.manifest"
 				Condition="'$(OS)'=='Windows_NT'"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testFwKernel.exe -manifest $(dir-outputBase)\testFwKernel.exe.manifest"
 				Condition="'$(OS)'=='Windows_NT'"/>
@@ -173,10 +173,11 @@
 			Configuration="$(config-capital)" Target="$(make-target)"
 			BuildRoot="$(fwrt)"
 			WorkingDirectory="$(fwrt)/Src/views"/>
+		<RegFree Executable="$(dir-outputBase)\Views.dll" Output="$(dir-outputBase)\Views.manifest" />
 		<Message Text="Finished building Views."/>
 	</Target>
 
-	<Target Name="testViews" DependsOnTargets="GenericLib;Views;SimpleRootSite">
+	<Target Name="testViews" DependsOnTargets="GenericLib;Views;SimpleRootSite;FwKernel;GrEngine">
 		<Make Condition="'$(OS)'=='Windows_NT'"
 				Makefile="$(fwrt)\Src\views\Test\testViews.mak"
 				Configuration="$(config-capital)"
@@ -188,8 +189,7 @@
 				BuildRoot="$(fwrt)"
 				WorkingDirectory="$(fwrt)/Src/views/Test" ContinueOnError="true"/>
 		<RegFree Executable="$(dir-outputBase)\testViews.exe"
-				Dlls="$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
-				NoTypeLib="$(dir-outputBase)\Graphite.dll"
+				DependentAssemblies="$(dir-outputBase)\FwKernel.manifest;$(dir-outputBase)\Graphite.manifest;$(dir-outputBase)\Views.manifest"
 				Condition="'$(OS)'=='Windows_NT'"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testViews.exe -manifest $(dir-outputBase)\testViews.exe.manifest"
 				Condition="'$(OS)'=='Windows_NT'"/>

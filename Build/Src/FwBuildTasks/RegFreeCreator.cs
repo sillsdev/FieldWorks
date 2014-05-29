@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -52,6 +53,7 @@ namespace SIL.FieldWorks.Build.Tasks
 		private readonly Dictionary<string, XmlElement> _interfaceProxies = new Dictionary<string, XmlElement>();
 		private readonly Dictionary<Guid, string> _tlbGuids = new Dictionary<Guid, string>();
 		private readonly List<string> _nonExistingServers = new List<string>();
+		private readonly XmlNamespaceManager _nsManager;
 
 		private const string UrnSchema = "http://www.w3.org/2001/XMLSchema-instance";
 		private const string UrnAsmv1 = "urn:schemas-microsoft-com:asm.v1";
@@ -69,6 +71,7 @@ namespace SIL.FieldWorks.Build.Tasks
 		public RegFreeCreator(XmlDocument doc)
 		{
 			_doc = doc;
+			_nsManager = CreateNamespaceManager(_doc);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -76,15 +79,24 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// Initializes a new instance of the <see cref="RegFreeCreator"/> class.
 		/// </summary>
 		/// <param name="doc">The XML document.</param>
-		/// <param name="fDisplayWarnings">set to <c>true</c> to display warnings, otherwise
-		/// <c>false</c>.</param>
+		/// <param name="log"></param>
 		/// ------------------------------------------------------------------------------------
-		public RegFreeCreator(XmlDocument doc, TaskLoggingHelper Log): this(doc)
+		public RegFreeCreator(XmlDocument doc, TaskLoggingHelper log): this(doc)
 		{
-			this._log = Log;
+			_log = log;
 		}
 
 		#endregion
+
+		private static XmlNamespaceManager CreateNamespaceManager(XmlDocument doc)
+		{
+			var namespaceManager = new XmlNamespaceManager(doc.NameTable);
+			namespaceManager.AddNamespace("asmv1", UrnAsmv1);
+			namespaceManager.AddNamespace("asmv2", UrnAsmv2);
+			namespaceManager.AddNamespace("dsig", UrnDsig);
+			namespaceManager.AddNamespace("xsi", UrnSchema);
+			return namespaceManager;
+		}
 
 		///  ------------------------------------------------------------------------------------
 		///  <summary>
@@ -96,10 +108,8 @@ namespace SIL.FieldWorks.Build.Tasks
 		///  </list>
 		///  This method also adds the root element with all necessary namespaces.
 		///  </summary>
-		///  <param name="pathName">pathname of the file.</param>
-		/// <param name="isSxs"></param>
 		/// ------------------------------------------------------------------------------------
-		public XmlElement CreateExeInfo(string pathName, bool isSxs)
+		public XmlElement CreateExeInfo(string assemblyName, string assemblyVersion)
 		{
 			XmlElement elem = _doc.CreateElement("assembly", UrnAsmv1);
 			elem.SetAttribute("manifestVersion", "1.0");
@@ -109,35 +119,21 @@ namespace SIL.FieldWorks.Build.Tasks
 			elem.SetAttribute("xmlns:xsi", UrnSchema);
 			elem.SetAttribute("schemaLocation", UrnSchema, UrnAsmv1 + " assembly.adaptive.xsd");
 
-			XmlNode oldChild = _doc.SelectSingleNode("assembly");
+			XmlNode oldChild = _doc.SelectSingleNode("asmv1:assembly", _nsManager);
 			if (oldChild != null)
 				_doc.ReplaceChild(elem, oldChild);
 			else
 				_doc.AppendChild(elem);
 
-			// The C++ test programs won't run if an assemblyIdentity element exists.
-			string fileName = Path.GetFileName(pathName);
-			if (!fileName.StartsWith("test"))
+			if (!string.IsNullOrEmpty(assemblyName))
 			{
 				// <assemblyIdentity name="TE.exe" version="1.4.1.39149" type="win32" />
 				XmlElement assemblyIdentity = _doc.CreateElement("assemblyIdentity", UrnAsmv1);
-				if (isSxs)
-					fileName = Path.GetFileNameWithoutExtension(fileName) + ".sxs";
-				assemblyIdentity.SetAttribute("name", fileName);
-				// ReSharper disable EmptyGeneralCatchClause
-				try
-				{
-					FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(pathName);
-					assemblyIdentity.SetAttribute("version", versionInfo.FileVersion);
-				}
-				catch
-				{
-					// just ignore
-				}
-				// ReSharper restore EmptyGeneralCatchClause
+				assemblyIdentity.SetAttribute("name", assemblyName);
+				assemblyIdentity.SetAttribute("version", assemblyVersion);
 				assemblyIdentity.SetAttribute("type", "win32");
 
-				oldChild = elem.SelectSingleNode("assemblyIdentity");
+				oldChild = elem.SelectSingleNode("asmv1:assemblyIdentity", _nsManager);
 				if (oldChild != null)
 					elem.ReplaceChild(assemblyIdentity, oldChild);
 				else
@@ -197,16 +193,16 @@ namespace SIL.FieldWorks.Build.Tasks
 					elem.SetAttribute("helpdir", string.Empty);
 					elem.SetAttribute("resourceid", "0");
 					elem.SetAttribute("flags", flags);
-					oldChild = file.SelectSingleNode(string.Format("typelib[tlbid='{0}']",
-						libAttr.guid.ToString("B")));
+					oldChild = file.SelectSingleNode(string.Format("asmv1:typelib[asmv1:tlbid='{0}']",
+						libAttr.guid.ToString("B")), _nsManager);
 					if (oldChild != null)
 						file.ReplaceChild(elem, oldChild);
 					else
 						file.AppendChild(elem);
 				}
 
-				Debug.WriteLine(string.Format(@"typelib tlbid=""{0}"" version=""{1}.{2}"" helpdir="""" resourceid=""0"" flags=""{3}""",
-					libAttr.guid, libAttr.wMajorVerNum, libAttr.wMinorVerNum, flags));
+				Debug.WriteLine(@"typelib tlbid=""{0}"" version=""{1}.{2}"" helpdir="""" resourceid=""0"" flags=""{3}""",
+					libAttr.guid, libAttr.wMajorVerNum, libAttr.wMinorVerNum, flags);
 
 				int count = typeLib.GetTypeInfoCount();
 				_log.LogMessage(MessageImportance.Low, "\t\tTypelib has {0} types", count);
@@ -218,8 +214,8 @@ namespace SIL.FieldWorks.Build.Tasks
 					ProcessTypeInfo(parent, libAttr.guid, typeInfo);
 				}
 
-				oldChild = parent.SelectSingleNode(string.Format("file[name='{0}']",
-					Path.GetFileName(fileName)));
+				oldChild = parent.SelectSingleNode(string.Format("asmv1:file[asmv1:name='{0}']",
+					Path.GetFileName(fileName)), _nsManager);
 				if (oldChild != null)
 					parent.ReplaceChild(file, oldChild);
 				else
@@ -261,7 +257,7 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// ------------------------------------------------------------------------------------
 		public void ProcessClasses(XmlElement parent)
 		{
-			using (var regKeyClsid = Registry.CurrentUser.OpenSubKey(Tasks.RegHelper.TmpRegistryKeyHKCR + @"\CLSID"))
+			using (var regKeyClsid = Registry.CurrentUser.OpenSubKey(RegHelper.TmpRegistryKeyHKCR + @"\CLSID"))
 			{
 				if (regKeyClsid == null)
 				{
@@ -277,7 +273,7 @@ namespace SIL.FieldWorks.Build.Tasks
 					if (_coClasses.ContainsKey(clsId.ToLower()))
 						continue;
 
-					using (var regKeyClass = regKeyClsid.OpenSubKey(clsId))
+					using (RegistryKey regKeyClass = regKeyClsid.OpenSubKey(clsId))
 					{
 						var className = (string)regKeyClass.GetValue(string.Empty, string.Empty);
 						using (var regKeyInProcServer = regKeyClass.OpenSubKey("InProcServer32"))
@@ -304,7 +300,7 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// ------------------------------------------------------------------------------------
 		public void ProcessInterfaces(XmlElement root)
 		{
-			using (var regKeyBase = Registry.CurrentUser.OpenSubKey(Tasks.RegHelper.TmpRegistryKeyHKCR))
+			using (var regKeyBase = Registry.CurrentUser.OpenSubKey(RegHelper.TmpRegistryKeyHKCR))
 			using (var regKeyInterfaces = regKeyBase.OpenSubKey("Interface"))
 			{
 				if (regKeyInterfaces == null)
@@ -323,8 +319,7 @@ namespace SIL.FieldWorks.Build.Tasks
 							_log.LogError("no proxyStubClsid32 set for interface with iid {0}", interfaceIid);
 							continue;
 						}
-						Debug.WriteLine(string.Format("Interface {0} is {1}: {2} methods, proxy: {3}", interfaceIid,
-							interfaceName, numMethods, proxyStubClsId));
+						Debug.WriteLine("Interface {0} is {1}: {2} methods, proxy: {3}", interfaceIid, interfaceName, numMethods, proxyStubClsId);
 
 						if (!_coClasses.ContainsKey(proxyStubClsId))
 						{
@@ -358,21 +353,6 @@ namespace SIL.FieldWorks.Build.Tasks
 					}
 				}
 			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the child node. This is similar to XmlNode.SelectSingleNode which has the draw-
-		/// back that it doesn't work "live".
-		/// </summary>
-		/// <param name="parentNode">The parent node.</param>
-		/// <param name="childName">Name of the child.</param>
-		/// <returns>The child node, or <c>null</c> if no child with name
-		/// <paramref name="childName"/> exists.</returns>
-		/// ------------------------------------------------------------------------------------
-		private static XmlNode GetChildNode(XmlNode parentNode, string childName)
-		{
-			return parentNode.ChildNodes.Cast<XmlNode>().FirstOrDefault(child => child.Name == childName);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -481,6 +461,34 @@ namespace SIL.FieldWorks.Build.Tasks
 			AddFragmentInternal(parent, fileName, null);
 		}
 
+		public void AddDependentAssembly(XmlElement parent, string fileName)
+		{
+			var depAsmElem = (XmlElement) parent.SelectSingleNode(string.Format("asmv1:dependency/asmv1:dependentAssembly[@asmv2:codebase = '{0}']", Path.GetFileName(fileName)), _nsManager);
+			if (depAsmElem == null)
+			{
+				var depElem = _doc.CreateElement("dependency", UrnAsmv1);
+				parent.AppendChild(depElem);
+				depAsmElem = _doc.CreateElement("dependentAssembly", UrnAsmv1);
+				depElem.AppendChild(depAsmElem);
+				depAsmElem.SetAttribute("codebase", UrnAsmv2, Path.GetFileName(fileName));
+			}
+			var asmIdElem = (XmlElement) depAsmElem.SelectSingleNode("asmv1:assemblyIdentity", _nsManager);
+			if (asmIdElem == null)
+			{
+				asmIdElem = _doc.CreateElement("assemblyIdentity", UrnAsmv1);
+				depAsmElem.AppendChild(asmIdElem);
+			}
+
+			var depAsmManifestDoc = new XmlDocument();
+			depAsmManifestDoc.Load(fileName);
+			var depAsmNsManager = CreateNamespaceManager(depAsmManifestDoc);
+			var manifestAsmIdElem = (XmlElement) depAsmManifestDoc.SelectSingleNode("/asmv1:assembly/asmv1:assemblyIdentity", depAsmNsManager);
+			Debug.Assert(manifestAsmIdElem != null);
+			asmIdElem.SetAttribute("name", manifestAsmIdElem.GetAttribute("name"));
+			asmIdElem.SetAttribute("version", manifestAsmIdElem.GetAttribute("version"));
+			asmIdElem.SetAttribute("type", manifestAsmIdElem.GetAttribute("type"));
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Processes one type info. We get the necessary information from the type library
@@ -512,7 +520,7 @@ namespace SIL.FieldWorks.Build.Tasks
 
 					// Try to get the file element for the server
 					var bldr = new StringBuilder(255);
-					Tasks.RegHelper.GetLongPathName((string)inprocServer.GetValue(null), bldr, 255);
+					RegHelper.GetLongPathName((string)inprocServer.GetValue(null), bldr, 255);
 					string serverFullPath = bldr.ToString();
 					string server = Path.GetFileName(serverFullPath);
 					if (!File.Exists(serverFullPath) &&
@@ -598,6 +606,7 @@ namespace SIL.FieldWorks.Build.Tasks
 		private XmlElement GetOrCreateFileNode(XmlNode parent, string filePath)
 		{
 			string fileName = Path.GetFileName(filePath);
+			Debug.Assert(fileName != null);
 			if (_files.ContainsKey(fileName))
 				return _files[fileName];
 
@@ -609,7 +618,7 @@ namespace SIL.FieldWorks.Build.Tasks
 			if (fileInfo.Exists)
 			{
 				parent.AppendChild(file);
-				file.SetAttribute("size", "urn:schemas-microsoft-com:asm.v2", fileInfo.Length.ToString());
+				file.SetAttribute("size", "urn:schemas-microsoft-com:asm.v2", fileInfo.Length.ToString(CultureInfo.InvariantCulture));
 			}
 			_files.Add(fileName, file);
 			return file;
