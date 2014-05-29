@@ -5,11 +5,11 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
+using SIL.Utils;
 using Palaso.Linq;
-using SIL.FieldWorks.FwCoreDlgControls;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -19,7 +19,9 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	class DictionaryConfigurationManagerController
 	{
-		private DictionaryConfigurationManagerDlg _view;
+		private readonly DictionaryConfigurationManagerDlg _view;
+
+		private readonly string _projectConfigDir;
 
 		/// <summary>
 		/// Set of dictionary configurations (aka "views") in project.
@@ -31,14 +33,27 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal List<string> Publications;
 
-		private ListViewItem _allPublicationsItem;
+		private readonly ListViewItem _allPublicationsItem;
+
+		/// <summary>
+		/// The currently-selected item in the Configurations ListView, or null if none.
+		/// </summary>
+		private DictionaryConfigurationModel SelectedConfiguration
+		{
+			get
+			{
+				var selectedConfigurations = _view.configurationsListView.SelectedItems;
+				// MultiSelect is not enabled, so just use the first selected item.
+				return selectedConfigurations.Count < 1 ? null : (DictionaryConfigurationModel)selectedConfigurations[0].Tag;
+			}
+		}
 
 		/// <summary>
 		/// Get list of publications using a dictionary configuration.
 		/// </summary>
 		public List<string> GetPublications(DictionaryConfigurationModel dictionaryConfiguration)
 		{
-			if (dictionaryConfiguration==null)
+			if (dictionaryConfiguration == null)
 				throw new ArgumentNullException();
 			return dictionaryConfiguration.Publications;
 		}
@@ -76,15 +91,18 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// For unit tests.
 		/// </summary>
-		internal DictionaryConfigurationManagerController()
+		internal DictionaryConfigurationManagerController(string projectConfigDir)
 		{
+			_projectConfigDir = projectConfigDir;
 		}
 
-		public DictionaryConfigurationManagerController(DictionaryConfigurationManagerDlg view, List<DictionaryConfigurationModel> configurations, List<string> publications)
+		public DictionaryConfigurationManagerController(DictionaryConfigurationManagerDlg view,
+			List<DictionaryConfigurationModel> configurations, List<string> publications, string projectConfigDir)
 		{
 			_view = view;
 			Configurations = configurations;
 			Publications = publications;
+			_projectConfigDir = projectConfigDir;
 
 			// Add special publication selection for All Publications.
 			_allPublicationsItem = new ListViewItem
@@ -95,14 +113,10 @@ namespace SIL.FieldWorks.XWorks
 			_view.publicationsListView.Items.Add(_allPublicationsItem);
 
 			// Populate lists of configurations and publications
-			foreach (var configuration in Configurations)
-			{
-				var item = new ListViewItem {Tag = configuration, Text = configuration.Label};
-				_view.configurationsListView.Items.Add(item);
-			}
+			ReLoadConfigurations();
 			foreach (var publication in Publications)
 			{
-				var item = new ListViewItem {Text = publication};
+				var item = new ListViewItem { Text = publication };
 				_view.publicationsListView.Items.Add(item);
 			}
 
@@ -110,6 +124,15 @@ namespace SIL.FieldWorks.XWorks
 			_view.configurationsListView.AfterLabelEdit += OnRenameConfiguration;
 			_view.publicationsListView.ItemChecked += OnCheckPublication;
 			_view.Shown += OnShowDialog;
+			_view.copyButton.Click += OnCopyConfiguration;
+		}
+
+		private void ReLoadConfigurations()
+		{
+			Configurations.Sort((lhs, rhs) => string.Compare(lhs.Label, rhs.Label));
+			_view.configurationsListView.Items.Clear();
+			_view.configurationsListView.Items.AddRange(
+				Configurations.Select(configuration => new ListViewItem { Tag = configuration, Text = configuration.Label }).ToArray());
 		}
 
 		/// <summary>
@@ -126,7 +149,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void OnSelectConfiguration(object sender, EventArgs args)
 		{
-			if (_view.configurationsListView.SelectedIndices.Count < 1)
+			if (SelectedConfiguration == null)
 			{
 				foreach (ListViewItem pubItem in _view.publicationsListView.Items)
 				{
@@ -137,14 +160,12 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			_view.publicationsListView.Enabled = true;
-			// MultiSelect is not enabled, so can just use the first selected item.
-			var newConfiguration = _view.configurationsListView.SelectedItems[0].Tag as DictionaryConfigurationModel;
-			var associatedPublications = GetPublications(newConfiguration);
+			var associatedPublications = GetPublications(SelectedConfiguration);
 			foreach (ListViewItem publicationItem in _view.publicationsListView.Items)
 			{
 				publicationItem.Checked = associatedPublications.Contains(publicationItem.Text);
 			}
-			_allPublicationsItem.Checked = newConfiguration.AllPublications;
+			_allPublicationsItem.Checked = SelectedConfiguration.AllPublications;
 		}
 
 		private void OnCheckPublication(object sender, ItemCheckedEventArgs itemCheckedEventArgs)
@@ -165,17 +186,109 @@ namespace SIL.FieldWorks.XWorks
 		/// </remarks>
 		private void OnRenameConfiguration(object sender, LabelEditEventArgs labelEditEventArgs)
 		{
-			var newName = labelEditEventArgs.Label;
-			if (string.IsNullOrWhiteSpace(newName))
+			var selectedItem = _view.configurationsListView.Items[labelEditEventArgs.Item];
+			if (RenameConfiguration(selectedItem, labelEditEventArgs))
 			{
-				// newName may be 'null' if there was no change. In either case, don't allow renaming to null, empty, or whitespace.
-				labelEditEventArgs.CancelEdit = true;
-				return;
+				ReLoadConfigurations();
 			}
-			var itemIndex = labelEditEventArgs.Item;
-			var item = _view.configurationsListView.Items[itemIndex];
-			var configuration = (DictionaryConfigurationModel)item.Tag;
-			configuration.Label = newName;
+			else
+			{
+				// If the user chose a duplicate name, warn the user and leave the Item's text open for edit
+				MessageBox.Show(xWorksStrings.FailedToRename);
+				selectedItem.BeginEdit();
+				// If the user makes multiple invalid attempts to rename in a row, WinForms will reset the label to the user's previous attempt.
+				// Prevent this:
+				labelEditEventArgs.CancelEdit = true;
+			}
+		}
+
+		/// <summary>Verifies that the configuration is given a unique name; if not, displays a message and lets the user keep editing</summary>
+		/// <returns>true if the user chose a unique name or canceled; false if the user chose a duplicate name</returns>
+		internal bool RenameConfiguration(ListViewItem selectedItem, LabelEditEventArgs labelEditEventArgs)
+		{
+			var selectedConfig = (DictionaryConfigurationModel)selectedItem.Tag;
+			if (string.IsNullOrWhiteSpace(labelEditEventArgs.Label))
+			{
+				// labelEditEventArgs.Label may be null or whitespace in the following cases:
+				// - The user has pressed Escape (probably wants to cancel the edit)
+				// - The user has entered no meaningful text (might as well cancel)
+				// - The user has pressed Enter or clicked away without making any changes (can usually be safely interpreted as a cancel)
+				// - Any of the above immediately after the warning to choose a unique name. It would require a fair amount of effort to distinguish
+				//   between these cases, so simply revert any edits
+				labelEditEventArgs.CancelEdit = true;
+				selectedItem.Text = selectedConfig.Label;
+			}
+			else if (Configurations.Any(config => config != selectedConfig && config.Label == labelEditEventArgs.Label))
+			{
+				return false;
+			}
+			else
+			{
+				selectedConfig.Label = labelEditEventArgs.Label;
+			}
+
+			// At this point, the user has chosen a unique name.  See if we should generate the filename.
+			if (!File.Exists(selectedConfig.FilePath))
+				GenerateFilePath(selectedConfig);
+
+			return true;
+		}
+
+		/// <summary>Generates a unique file path for the configuration, based on its label</summary>
+		internal void GenerateFilePath(DictionaryConfigurationModel config)
+		{
+			var filePath = FormatFilePath(config.Label);
+			int i = 1;
+			while (Configurations.Any(conf => Path.GetFileName(filePath).Equals(Path.GetFileName(conf.FilePath))))
+			{
+				filePath = FormatFilePath(string.Format("{0}_{1}", config.Label, i++));
+			}
+			config.FilePath = filePath;
+		}
+
+		/// <summary>Removes illegal characters, appends project config path and extension</summary>
+		internal string FormatFilePath(string label)
+		{
+			return Path.Combine(_projectConfigDir,
+				MiscUtils.FilterForFileName(label, MiscUtils.FilenameFilterStrength.kFilterBackup) + DictionaryConfigurationModel.FileExtension);
+		}
+
+		private void OnCopyConfiguration(object sender, EventArgs e)
+		{
+			if (SelectedConfiguration == null)
+				return;
+
+			var newConfig = CopyConfiguration(SelectedConfiguration);
+
+			ReLoadConfigurations();
+
+			// present the new configuration for rename
+			var newConfigListViewItem = _view.configurationsListView.Items.Cast<ListViewItem>().First(item => item.Tag == newConfig);
+			newConfigListViewItem.EnsureVisible();
+			newConfigListViewItem.Selected = true;
+			newConfigListViewItem.BeginEdit();
+		}
+
+		/// <summary>Copies a Configuration and adds it to the list</summary>
+		internal DictionaryConfigurationModel CopyConfiguration(DictionaryConfigurationModel config)
+		{
+			// deep clone the selected configuration
+			var newConfig = config.DeepClone();
+
+			// generate a unique name (starting i=2 mimicks old behaviour)
+			var newName = "Copy of " + newConfig.Label;
+			int i = 2;
+			while (Configurations.Any(conf => conf.Label == newName))
+			{
+				newName = String.Format("Copy of {0} ({1})", newConfig.Label, i++);
+			}
+			newConfig.Label = newName;
+			newConfig.FilePath = null; // this will be set on the next rename, which will occur immediately
+
+			// update the configurations list
+			Configurations.Add(newConfig);
+
+			return newConfig;
 		}
 	}
 }

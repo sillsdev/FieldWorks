@@ -67,6 +67,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				_alternateConfigurations[choice.Key] = new DictionaryConfigurationModel(choice.Value, cache);
 			}
+			// TODO pH 2014.05: sort choices
 			View.SetChoices(_alternateConfigurations.Values);
 		}
 
@@ -77,17 +78,18 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="defaultPath"></param>
 		/// <param name="projectPath"></param>
 		/// <returns></returns>
+		/// REVIEW (Hasso) 2014.05: do we still need to return a dictionary if we're reading the configuration name from the file content?
 		internal Dictionary<string, string> ReadAlternateDictionaryChoices(string defaultPath, string projectPath)
 		{
 			var choices = new Dictionary<string, string>();
-			var defaultFiles = new List<string>(Directory.EnumerateFiles(defaultPath, "*.xml"));
+			var defaultFiles = new List<string>(Directory.EnumerateFiles(defaultPath, "*" + DictionaryConfigurationModel.FileExtension));
 			if(!Directory.Exists(projectPath))
 			{
 				Directory.CreateDirectory(projectPath);
 			}
 			else
 			{
-				foreach(var choice in Directory.EnumerateFiles(projectPath, "*.xml"))
+				foreach(var choice in Directory.EnumerateFiles(projectPath, "*" + DictionaryConfigurationModel.FileExtension))
 				{
 					choices[Path.GetFileNameWithoutExtension(choice)] = choice;
 				}
@@ -287,7 +289,8 @@ namespace SIL.FieldWorks.XWorks
 				using (var dialog = new DictionaryConfigurationManagerDlg())
 				{
 					var configurationManagerController = new DictionaryConfigurationManagerController(dialog,
-						_alternateConfigurations.Values.ToList(), _model.GetAllPublications(cache));
+						_alternateConfigurations.Values.ToList(), _model.GetAllPublications(cache),
+						DirectoryFinder.GetConfigSettingsDir(cache.ProjectId.ProjectFolder));
 					dialog.ShowDialog(View as Form);
 				}
 			};

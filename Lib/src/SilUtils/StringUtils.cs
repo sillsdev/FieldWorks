@@ -187,6 +187,7 @@ namespace SIL.Utils
 		/// Produce a version of the given name that can be used as a file name. This is done
 		/// by replacing characters that the current OS does not allow with underscores '_'.
 		/// </summary>
+		/// <remarks>If you need to replace characters disallowed by *any* OS, use <c>MiscUtils.FilterForFileName</c></remarks>
 		/// <param name="sName">Name to be filtered</param>
 		/// <returns>the filtered name</returns>
 		/// ------------------------------------------------------------------------------------

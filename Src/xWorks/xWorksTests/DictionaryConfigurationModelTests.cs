@@ -773,5 +773,39 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(childA.Parent, Is.EqualTo(rootNode), "Parent should have been set");
 			Assert.That(childB.Parent, Is.EqualTo(rootNode), "Parent should have been set");
 		}
+
+		[Test]
+		public void CanDeepClone()
+		{
+			var parentNode = new ConfigurableDictionaryNode();
+			var child = new ConfigurableDictionaryNode() { After = "after", IsEnabled = true, Parent = parentNode };
+			var grandchildNode = new ConfigurableDictionaryNode() { Before = "childBefore", Parent = child };
+			parentNode.Children = new List<ConfigurableDictionaryNode> { child };
+			child.Children = new List<ConfigurableDictionaryNode> { grandchildNode };
+			var model = new DictionaryConfigurationModel
+			{
+				FilePath = "C:/projects/<project>/configs/dictionary/*.xml", // existence is irrelevant for this test
+				Label = "Root",
+				Version = 4,
+				Parts = new List<ConfigurableDictionaryNode> { parentNode },
+				SharedItems = new List<ConfigurableDictionaryNode> { parentNode.DeepCloneUnderSameParent() },
+				Publications = new List<string> { "unabridged", "college", "urban colloquialisms" },
+			};
+
+			// SUT
+			var clone = model.DeepClone();
+
+			Assert.AreEqual(model.FilePath, clone.FilePath);
+			Assert.AreEqual(model.Label, clone.Label);
+			Assert.AreEqual(model.Version, clone.Version);
+			ConfigurableDictionaryNodeTests.VerifyDuplicationList(clone.Parts, model.Parts, null);
+			ConfigurableDictionaryNodeTests.VerifyDuplicationList(clone.SharedItems, model.SharedItems, null);
+			Assert.AreNotSame(model.Publications, clone.Publications);
+			Assert.AreEqual(model.Publications.Count, clone.Publications.Count);
+			for (int i = 0; i < model.Publications.Count; i++)
+			{
+				Assert.AreEqual(model.Publications[i], clone.Publications[i]);
+			}
+		}
 	}
 }

@@ -4,6 +4,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.FDOTests;
 
@@ -13,6 +16,8 @@ namespace SIL.FieldWorks.XWorks
 	class DictionaryConfigurationManagerControllerTests : MemoryOnlyBackendProviderTestBase
 	{
 		private DictionaryConfigurationManagerController _controller;
+
+		private readonly string _projectConfigPath = Path.GetTempPath();
 
 		[SetUp]
 		public void Setup()
@@ -29,7 +34,7 @@ namespace SIL.FieldWorks.XWorks
 				"publicationB"
 			};
 
-			_controller = new DictionaryConfigurationManagerController()
+			_controller = new DictionaryConfigurationManagerController(_projectConfigPath)
 			{
 				Configurations = configurations,
 				Publications = publications,
@@ -100,6 +105,138 @@ namespace SIL.FieldWorks.XWorks
 
 			Assert.That(_controller.Configurations[1].Publications, Contains.Item("publicationB"), "Should not have disassociated unrelated publication");
 			Assert.That(_controller.Configurations[1].Publications, Is.Not.Contains("publicationA"), "failed to disassociate");
+		}
+
+		[Test]
+		public void Rename_RevertsOnCancel()
+		{
+			var selectedConfig = _controller.Configurations[0];
+			var listViewItem = new ListViewItem { Tag = selectedConfig };
+			var oldLabel = selectedConfig.Label;
+
+			// SUT
+			Assert.True(_controller.RenameConfiguration(listViewItem, new LabelEditEventArgs(0, null)), "'Cancel' should complete successfully");
+
+			Assert.AreEqual(oldLabel, selectedConfig.Label, "Configuration should not have been renamed");
+			Assert.AreEqual(oldLabel, listViewItem.Text, "ListViewItem Text should have been reset");
+		}
+
+		[Test]
+		public void Rename_PreventsDuplicate()
+		{
+			var dupLabelArgs = new LabelEditEventArgs(0, "DuplicateLabel");
+			var configA = _controller.Configurations[0];
+			var configB = new DictionaryConfigurationModel { Label = "configuration2", Publications = new List<string>() };
+			_controller.RenameConfiguration(new ListViewItem { Tag = configA }, dupLabelArgs);
+			_controller.Configurations.Insert(0, configB);
+
+			// SUT
+			Assert.False(_controller.RenameConfiguration(new ListViewItem { Tag = configB }, dupLabelArgs), "Duplicate should return 'incomplete'");
+
+			Assert.AreEqual(dupLabelArgs.Label, configA.Label, "The first config should have been given the specified name");
+			Assert.AreNotEqual(dupLabelArgs.Label, configB.Label, "The second config should not have been given the same name");
+		}
+
+		[Test]
+		public void Rename_RenamesConfigAndFile()
+		{
+			const string newLabel = "NewLabel";
+			var selectedConfig = _controller.Configurations[0];
+			selectedConfig.FilePath = null;
+			// SUT
+			Assert.True(_controller.RenameConfiguration(new ListViewItem { Tag = selectedConfig }, new LabelEditEventArgs(0, newLabel)),
+				"Renaming a config to a unique name should complete successfully");
+			Assert.AreEqual(newLabel, selectedConfig.Label, "The configuration should have been renamed");
+			Assert.AreEqual(_controller.FormatFilePath(newLabel), selectedConfig.FilePath, "The FilePath should have been generated");
+		}
+
+		[Test]
+		public void GenerateFilePath()
+		{
+			var configToRename = new DictionaryConfigurationModel
+			{
+				Label = "configuration3", FilePath = null, Publications = new List<string>()
+			};
+			var conflictingConfigs = new List<DictionaryConfigurationModel>
+			{
+				new DictionaryConfigurationModel
+				{
+					Label = "conflicting file 3-0", FilePath = _controller.FormatFilePath("configuration3"), Publications = new List<string>()
+				},
+				new DictionaryConfigurationModel
+				{
+					Label = "conflicting file 3-1", FilePath = _controller.FormatFilePath("configuration3_1"), Publications = new List<string>()
+				},
+				new DictionaryConfigurationModel
+				{
+					Label = "conflicting file 3-2--in another directory to prove we can't accidentally mask unchanged default configurations",
+					FilePath = Path.Combine(Path.Combine(_projectConfigPath, "subdir"),
+						"configuration3_2" + DictionaryConfigurationModel.FileExtension),
+					Publications = new List<string>()
+				}
+			};
+			_controller.Configurations.Add(configToRename);
+			_controller.Configurations.AddRange(conflictingConfigs);
+
+			// SUT
+			_controller.GenerateFilePath(configToRename);
+
+			var newFilePath = configToRename.FilePath;
+			StringAssert.StartsWith(_projectConfigPath, newFilePath);
+			StringAssert.EndsWith(DictionaryConfigurationModel.FileExtension, newFilePath);
+			Assert.AreEqual(_controller.FormatFilePath("configuration3_3"), configToRename.FilePath, "The file path should be based on the label");
+			foreach (var config in conflictingConfigs)
+			{
+				Assert.AreNotEqual(Path.GetFileName(newFilePath), Path.GetFileName(config.FilePath), "File name should be unique");
+			}
+		}
+
+		[Test]
+		public void FormatFilePath()
+		{
+			var formattedFilePath = _controller.FormatFilePath("\nFile\\Name/With\"Chars<?>"); // SUT
+			StringAssert.StartsWith(_projectConfigPath, formattedFilePath);
+			StringAssert.EndsWith(DictionaryConfigurationModel.FileExtension, formattedFilePath);
+			StringAssert.DoesNotContain("\n", formattedFilePath);
+			StringAssert.DoesNotContain("\\", Path.GetFileName(formattedFilePath));
+			StringAssert.DoesNotContain("/", Path.GetFileName(formattedFilePath));
+			StringAssert.DoesNotContain("\"", formattedFilePath);
+			StringAssert.DoesNotContain("<", formattedFilePath);
+			StringAssert.DoesNotContain("?", formattedFilePath);
+			StringAssert.DoesNotContain(">", formattedFilePath);
+			StringAssert.Contains("File", formattedFilePath);
+			StringAssert.Contains("Name", formattedFilePath);
+			StringAssert.Contains("With", formattedFilePath);
+			StringAssert.Contains("Chars", formattedFilePath);
+		}
+
+		[Test]
+		public void CopyConfiguration()
+		{
+			// insert a series of "copied" configs
+			var pubs = new List<string> { "publicationA", "publicationB" };
+			var extantConfigs = new List<DictionaryConfigurationModel>
+			{
+				new DictionaryConfigurationModel { Label = "configuration4", Publications = pubs },
+				new DictionaryConfigurationModel { Label = "Copy of configuration4", Publications = new List<string>() },
+				new DictionaryConfigurationModel { Label = "Copy of configuration4 (1)", Publications = new List<string>() },
+				new DictionaryConfigurationModel { Label = "Copy of configuration4 (2)", Publications = new List<string>() }
+			};
+			_controller.Configurations.InsertRange(0, extantConfigs);
+
+			// SUT
+			var newConfig = _controller.CopyConfiguration(extantConfigs[0]);
+
+			Assert.AreEqual("Copy of configuration4 (3)", newConfig.Label, "The new label should be based on the original");
+			Assert.Contains(newConfig, _controller.Configurations, "The new config should have been added to the list");
+			Assert.AreEqual(1, _controller.Configurations.Count(conf => newConfig.Label.Equals(conf.Label)), "The label should be unique");
+
+			Assert.AreEqual(pubs.Count, newConfig.Publications.Count, "Publications were not copied");
+			for (int i = 0; i < pubs.Count; i++)
+			{
+				Assert.AreEqual(pubs[i], newConfig.Publications[i], "Publications were not copied");
+			}
+			Assert.IsNull(newConfig.FilePath, "Path should be null to signify that it should be generated on rename");
 		}
 	}
 }

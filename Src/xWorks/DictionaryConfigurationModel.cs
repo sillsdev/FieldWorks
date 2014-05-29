@@ -18,6 +18,8 @@ namespace SIL.FieldWorks.XWorks
 	[XmlRoot(ElementName = "DictionaryConfiguration")]
 	public class DictionaryConfigurationModel
 	{
+		public const string FileExtension = ".xml";
+
 		/// <summary>
 		/// Trees of dictionary elements
 		/// </summary>
@@ -132,6 +134,40 @@ namespace SIL.FieldWorks.XWorks
 		{
 			FilePath = path;
 			Load(cache);
+		}
+
+		/// <summary>Returns a deep clone of this DCM. Caller is responsible to choose a unique FilePath</summary>
+		public DictionaryConfigurationModel DeepClone()
+		{
+			var clone = new DictionaryConfigurationModel();
+
+			// Copy everything over at first, importantly handling strings, bools, and Parent.
+			var properties = typeof(DictionaryConfigurationModel).GetProperties();
+			foreach (var property in properties.Where(prop => prop.CanWrite)) // Skip any read-only properties
+			{
+				var originalValue = property.GetValue(this, null);
+				property.SetValue(clone, originalValue, null);
+			}
+
+			// Deep-clone Parts
+			if (Parts != null)
+			{
+				clone.Parts = Parts.Select(node => node.DeepCloneUnderSameParent()).ToList();
+			}
+
+			// Deep-clone SharedItems
+			if (SharedItems != null)
+			{
+				clone.SharedItems = SharedItems.Select(node => node.DeepCloneUnderSameParent()).ToList();
+			}
+
+			// Clone Publications
+			if (Publications != null)
+			{
+				clone.Publications = new List<string>(Publications);
+			}
+
+			return clone;
 		}
 
 		/// <summary>

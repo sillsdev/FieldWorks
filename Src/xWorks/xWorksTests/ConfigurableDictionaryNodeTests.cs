@@ -14,6 +14,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var parent = new ConfigurableDictionaryNode();
 			var child = new ConfigurableDictionaryNode() { After = "after", IsEnabled = true, Parent = parent };
+			parent.Children = new List<ConfigurableDictionaryNode> { child };
 			// SUT
 			var clone = child.DeepCloneUnderSameParent();
 			VerifyDuplication(clone, child);
@@ -25,7 +26,8 @@ namespace SIL.FieldWorks.XWorks
 			var parent = new ConfigurableDictionaryNode();
 			var child = new ConfigurableDictionaryNode() { After = "after", IsEnabled = true, Parent = parent };
 			var grandchild = new ConfigurableDictionaryNode() { Before = "childBefore", Parent = child };
-			child.Children = new List<ConfigurableDictionaryNode>() { grandchild };
+			parent.Children = new List<ConfigurableDictionaryNode> { child };
+			child.Children = new List<ConfigurableDictionaryNode> { grandchild };
 			// SUT
 			var clone = child.DeepCloneUnderSameParent();
 			VerifyDuplication(clone, child);
@@ -49,16 +51,29 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(clone.IsEnabled, Is.EqualTo(node.IsEnabled));
 			Assert.That(clone.Label, Is.EqualTo(node.Label));
 
-			if (node.Children != null)
+			VerifyDuplicationList(clone.Children, node.Children, clone);
+		}
+
+		internal static void VerifyDuplicationList(List<ConfigurableDictionaryNode> clone, List<ConfigurableDictionaryNode> list,
+			ConfigurableDictionaryNode cloneParent)
+		{
+			if (list == null)
 			{
-				Assert.That(clone.Children.Count, Is.EqualTo(node.Children.Count));
-				for (int childIndex = 0; childIndex < node.Children.Count; childIndex++)
+				Assert.IsNull(clone);
+				return;
+			}
+
+			Assert.That(clone.Count, Is.EqualTo(list.Count));
+			for (int childIndex = 0; childIndex < list.Count; childIndex++)
+			{
+				Assert.That(clone[childIndex].Label, Is.EqualTo(list[childIndex].Label));
+				VerifyDuplicationInner(clone[childIndex], list[childIndex]);
+				Assert.That(clone[childIndex], Is.Not.SameAs(list[childIndex]), "Didn't deep-clone");
+				Assert.That(clone[childIndex].Parent, Is.SameAs(cloneParent), "cloned children were not re-parented within deep-cloned object");
+				if (cloneParent != null)
 				{
-					Assert.That(clone.Children[childIndex].Label, Is.EqualTo(node.Children[childIndex].Label));
-					VerifyDuplicationInner(clone.Children[childIndex], node.Children[childIndex]);
-					Assert.That(clone.Children[childIndex], Is.Not.SameAs(node.Children[childIndex]), "Didn't deep-clone");
-					Assert.That(clone.Children[childIndex].Parent, Is.SameAs(clone), "cloned children were not re-parented within deep-cloned object");
-					Assert.That(clone.Children[childIndex].Parent, Is.Not.SameAs(node.Children[childIndex].Parent), "Cloned children should be pointing to different parent nodes than the original");
+					Assert.That(clone[childIndex].Parent, Is.Not.SameAs(list[childIndex].Parent),
+						"Cloned children should be pointing to different parent nodes than the original");
 				}
 			}
 		}
