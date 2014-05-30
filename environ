@@ -28,6 +28,8 @@ LD_LIBRARY_PATH="${BASE}/Output_${ARCH}/${BUILD}:\
 ${BASE}/Lib/src/icu/install${ARCH}/lib:\
 ${COM}/build${ARCH}/lib:\
 ${LD_LIBRARY_PATH}"
+# ensure we scan the default pkg-config directories (to pick up Geckofx for compiling)
+[ -z "$PKG_CONFIG_PATH" ] && PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig
 
 # Add packaged mono items to paths
 PATH="${MONO_SILPKGDIR}/mono/bin:${PATH}"
