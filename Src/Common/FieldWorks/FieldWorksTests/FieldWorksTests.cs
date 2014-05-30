@@ -144,14 +144,11 @@ namespace SIL.FieldWorks
 		public void EnsureValidLinkedFilesFolderCore_IfUsingDefaultDirAndItExists_DoesntCrashOrAnything()
 		{
 			EnsureValidLinkedFilesFolderCore_TestHelper(defaultFolder => {
-				var configuredFolder = defaultFolder;
-
 				// Make default linked files directory already exist
 				FileUtils.EnsureDirectoryExists(defaultFolder);
 
-				Assert.That(FileUtils.DirectoryExists(configuredFolder), Is.True, "Unit test not testing what it's supposed to");
 				// Not crash or anything
-				FieldWorks.EnsureValidLinkedFilesFolderCore(configuredFolder, defaultFolder);
+				Assert.DoesNotThrow(() => FieldWorks.EnsureValidLinkedFilesFolderCore(defaultFolder, defaultFolder));
 			});
 		}
 
