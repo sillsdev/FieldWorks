@@ -176,7 +176,7 @@ namespace SIL.FieldWorks.XWorks
 			// 
 			// webonaryUsernameTextbox
 			// 
-			this.settingsForWebonaryTableLayoutPanel.SetColumnSpan(this.webonaryUsernameTextbox, 4);
+			this.settingsForWebonaryTableLayoutPanel.SetColumnSpan(this.webonaryUsernameTextbox, 2);
 			resources.ApplyResources(this.webonaryUsernameTextbox, "webonaryUsernameTextbox");
 			this.webonaryUsernameTextbox.Name = "webonaryUsernameTextbox";
 			// 

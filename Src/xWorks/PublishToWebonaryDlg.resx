@@ -226,7 +226,7 @@
     <value>Vertical</value>
   </data>
   <data name="outputLogTextbox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>363, 94</value>
+    <value>363, 99</value>
   </data>
   <data name="outputLogTextbox.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
@@ -406,10 +406,10 @@
     <value>NoControl</value>
   </data>
   <data name="showPasswordCheckBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>216, 55</value>
+    <value>240, 55</value>
   </data>
   <data name="showPasswordCheckBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>138, 23</value>
+    <value>114, 23</value>
   </data>
   <data name="showPasswordCheckBox.TabIndex" type="System.Int32, mscorlib">
     <value>20</value>
@@ -433,13 +433,13 @@
     <value>Fill</value>
   </data>
   <data name="webonaryPasswordTextbox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>74, 55</value>
+    <value>82, 55</value>
   </data>
   <data name="webonaryPasswordTextbox.PasswordChar" type="System.Char, mscorlib" xml:space="preserve">
     <value>*</value>
   </data>
   <data name="webonaryPasswordTextbox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>136, 20</value>
+    <value>152, 20</value>
   </data>
   <data name="webonaryPasswordTextbox.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
@@ -460,10 +460,10 @@
     <value>Fill</value>
   </data>
   <data name="webonaryUsernameTextbox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>74, 29</value>
+    <value>82, 29</value>
   </data>
   <data name="webonaryUsernameTextbox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>280, 20</value>
+    <value>152, 20</value>
   </data>
   <data name="webonaryUsernameTextbox.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
@@ -484,13 +484,16 @@
     <value>Fill</value>
   </data>
   <data name="webonarySiteNameTextbox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>74, 3</value>
+    <value>82, 3</value>
   </data>
   <data name="webonarySiteNameTextbox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>136, 20</value>
+    <value>152, 20</value>
   </data>
   <data name="webonarySiteNameTextbox.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
+  </data>
+  <data name="webonarySiteNameTextbox.TextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
+    <value>Right</value>
   </data>
   <data name="&gt;&gt;webonarySiteNameTextbox.Name" xml:space="preserve">
     <value>webonarySiteNameTextbox</value>
@@ -517,7 +520,7 @@
     <value>3, 52</value>
   </data>
   <data name="passwordLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>65, 29</value>
+    <value>73, 29</value>
   </data>
   <data name="passwordLabel.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -553,7 +556,7 @@
     <value>3, 26</value>
   </data>
   <data name="usernameLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>65, 26</value>
+    <value>73, 26</value>
   </data>
   <data name="usernameLabel.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -589,7 +592,7 @@
     <value>3, 0</value>
   </data>
   <data name="siteNameLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>65, 26</value>
+    <value>73, 26</value>
   </data>
   <data name="siteNameLabel.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -625,10 +628,10 @@
     <value>Fill</value>
   </data>
   <data name="webonaryDomainLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>216, 0</value>
+    <value>240, 0</value>
   </data>
   <data name="webonaryDomainLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>138, 26</value>
+    <value>114, 26</value>
   </data>
   <data name="webonaryDomainLabel.TabIndex" type="System.Int32, mscorlib">
     <value>21</value>
@@ -679,7 +682,7 @@
     <value>0</value>
   </data>
   <data name="settingsForWebonaryTableLayoutPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="showPasswordCheckBox" Row="2" RowSpan="1" Column="3" ColumnSpan="2" /&gt;&lt;Control Name="webonaryPasswordTextbox" Row="2" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="webonaryUsernameTextbox" Row="1" RowSpan="1" Column="1" ColumnSpan="4" /&gt;&lt;Control Name="webonarySiteNameTextbox" Row="0" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="passwordLabel" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="usernameLabel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="siteNameLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="webonaryDomainLabel" Row="0" RowSpan="1" Column="3" ColumnSpan="2" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,20.0008,Percent,19.9988,Percent,19.9988,Percent,20.0008,Percent,20.0008" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="showPasswordCheckBox" Row="2" RowSpan="1" Column="3" ColumnSpan="2" /&gt;&lt;Control Name="webonaryPasswordTextbox" Row="2" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="webonaryUsernameTextbox" Row="1" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="webonarySiteNameTextbox" Row="0" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="passwordLabel" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="usernameLabel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="siteNameLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="webonaryDomainLabel" Row="0" RowSpan="1" Column="3" ColumnSpan="2" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,22.22331,Percent,22.22109,Percent,22.22109,Percent,22.22331,Percent,11.11121" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="webonarySettingsGroupbox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -718,7 +721,7 @@
     <value>6</value>
   </data>
   <data name="tableLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>369, 318</value>
+    <value>369, 336</value>
   </data>
   <data name="tableLayoutPanel.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -745,7 +748,7 @@
     <value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>369, 318</value>
+    <value>369, 336</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Publish to Webonary</value>
