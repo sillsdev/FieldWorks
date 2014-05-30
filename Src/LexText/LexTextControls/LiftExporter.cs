@@ -819,8 +819,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			w.Write("</illustration>");
 		}
 
-		// Path of every file we created (or deliberately overwrote) in ExportFile.
-		Set<string> m_filesCreated = new Set<string>();
+		// Dictionary containing the path of every file we created (or deliberately overwrote) in ExportFile.
+		// Indexed by the actual file path to a Tuple containing the relative file path and the full destination path.
+		Dictionary<string, Tuple<string, string>> m_filesCreated = new Dictionary<string, Tuple<string, string>>();
 
 		private string ExportFile(string internalPath, string actualPath, string liftFolderName, string expectRootFolder)
 		{
@@ -852,33 +853,38 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="actualPath"></param>
 		/// <param name="liftFolderName"></param>
 		/// <returns></returns>
-		private string ExportFile(string writePath1, string actualPath1, string liftFolderName)
+		private string ExportFile(string writePath, string actualPath, string liftFolderName)
 		{
+			//If the source file is the same and we already wrote it, there is no reason to make a copy with a mangled name
+			if(m_filesCreated.ContainsKey(actualPath))
+			{
+				return m_filesCreated[actualPath].Item2; //return the file we wrote last time we saw this path
+			}
 			// We are going to export the text of this to XML as NFC, so we want to write the file using a matching NFC name.
-			var writePath = Icu.Normalize(writePath1, Icu.UNormalizationMode.UNORM_NFC);
+			var safeWritePath = Icu.Normalize(writePath, Icu.UNormalizationMode.UNORM_NFC);
 			// Use as source any similar file that exists.
-			var actualPath = FileUtils.ActualFilePath(actualPath1);
-			if (ExportPicturesAndMedia && !String.IsNullOrEmpty(FolderPath) && FileUtils.FileExists(actualPath))
+			var safeSourcePath = FileUtils.ActualFilePath(actualPath);
+			if (ExportPicturesAndMedia && !String.IsNullOrEmpty(FolderPath) && FileUtils.FileExists(safeSourcePath))
 			{
 				var destFolder = Path.Combine(FolderPath, liftFolderName);
 				Directory.CreateDirectory(destFolder);
-				var destFilePath = Path.Combine(destFolder, writePath);
+				var destFilePath = Path.Combine(destFolder, safeWritePath);
 				int affix = 1;
-				var pathWithoutExt = Path.Combine(Path.GetDirectoryName(writePath), Path.GetFileNameWithoutExtension(writePath));
-				var ext = Path.GetExtension(writePath) ?? "";
-				while (m_filesCreated.Contains(destFilePath))
+				var pathWithoutExt = Path.Combine(Path.GetDirectoryName(safeWritePath), Path.GetFileNameWithoutExtension(safeWritePath));
+				var ext = Path.GetExtension(safeWritePath) ?? "";
+				while(m_filesCreated.Values.Any(i => i.Item1 == destFilePath))
 				{
 					// generate a new name
-					writePath = Path.ChangeExtension(pathWithoutExt + "_" + affix++, ext);
-					destFilePath = Path.Combine(destFolder, writePath);
+					safeWritePath = Path.ChangeExtension(pathWithoutExt + "_" + affix++, ext);
+					destFilePath = Path.Combine(destFolder, safeWritePath);
 				}
-				m_filesCreated.Add(destFilePath);
+				m_filesCreated[actualPath] = new Tuple<string, string>(destFilePath, safeWritePath);
 				// There may nevertheless be an existing file of that name, e.g., from an earlier export to the same location.
 				// We don't want to genereate mangled names and multiple copies in such cases, so we allow overwrite.
 				Directory.CreateDirectory(Path.GetDirectoryName(destFilePath));
-				File.Copy(actualPath, destFilePath, true);
+				File.Copy(safeSourcePath, destFilePath, true);
 			}
-			return writePath;
+			return safeWritePath;
 		}
 
 		private void ExportFile(TextWriter w, string internalPath, string actualPath, string liftFolderName, string expectRootFolder)
