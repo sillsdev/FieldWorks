@@ -159,185 +159,11 @@
   <data name="&gt;&gt;explanationLabel.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="siteNameLabel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="siteNameLabel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="siteNameLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 42</value>
-  </data>
-  <data name="siteNameLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>115, 26</value>
-  </data>
-  <data name="siteNameLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="siteNameLabel.Text" xml:space="preserve">
-    <value>Webonary site name:</value>
-  </data>
-  <data name="siteNameLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleLeft</value>
-  </data>
-  <data name="&gt;&gt;siteNameLabel.Name" xml:space="preserve">
-    <value>siteNameLabel</value>
-  </data>
-  <data name="&gt;&gt;siteNameLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;siteNameLabel.Parent" xml:space="preserve">
-    <value>tableLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;siteNameLabel.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="usernameLabel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="usernameLabel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="usernameLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 68</value>
-  </data>
-  <data name="usernameLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>115, 26</value>
-  </data>
-  <data name="usernameLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="usernameLabel.Text" xml:space="preserve">
-    <value>Webonary username:</value>
-  </data>
-  <data name="usernameLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleLeft</value>
-  </data>
-  <data name="&gt;&gt;usernameLabel.Name" xml:space="preserve">
-    <value>usernameLabel</value>
-  </data>
-  <data name="&gt;&gt;usernameLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;usernameLabel.Parent" xml:space="preserve">
-    <value>tableLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;usernameLabel.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="passwordLabel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="passwordLabel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="passwordLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 94</value>
-  </data>
-  <data name="passwordLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>115, 26</value>
-  </data>
-  <data name="passwordLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="passwordLabel.Text" xml:space="preserve">
-    <value>Webonary password:</value>
-  </data>
-  <data name="passwordLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleLeft</value>
-  </data>
-  <data name="&gt;&gt;passwordLabel.Name" xml:space="preserve">
-    <value>passwordLabel</value>
-  </data>
-  <data name="&gt;&gt;passwordLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;passwordLabel.Parent" xml:space="preserve">
-    <value>tableLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;passwordLabel.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="webonarySiteNameTextbox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="webonarySiteNameTextbox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>124, 45</value>
-  </data>
-  <data name="webonarySiteNameTextbox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>242, 20</value>
-  </data>
-  <data name="webonarySiteNameTextbox.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;webonarySiteNameTextbox.Name" xml:space="preserve">
-    <value>webonarySiteNameTextbox</value>
-  </data>
-  <data name="&gt;&gt;webonarySiteNameTextbox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;webonarySiteNameTextbox.Parent" xml:space="preserve">
-    <value>tableLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;webonarySiteNameTextbox.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="webonaryUsernameTextbox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="webonaryUsernameTextbox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>124, 71</value>
-  </data>
-  <data name="webonaryUsernameTextbox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>242, 20</value>
-  </data>
-  <data name="webonaryUsernameTextbox.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;webonaryUsernameTextbox.Name" xml:space="preserve">
-    <value>webonaryUsernameTextbox</value>
-  </data>
-  <data name="&gt;&gt;webonaryUsernameTextbox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;webonaryUsernameTextbox.Parent" xml:space="preserve">
-    <value>tableLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;webonaryUsernameTextbox.ZOrder" xml:space="preserve">
-    <value>5</value>
-  </data>
-  <data name="webonaryPasswordTextbox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="webonaryPasswordTextbox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>124, 97</value>
-  </data>
-  <data name="webonaryPasswordTextbox.PasswordChar" type="System.Char, mscorlib" xml:space="preserve">
-    <value>*</value>
-  </data>
-  <data name="webonaryPasswordTextbox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>115, 20</value>
-  </data>
-  <data name="webonaryPasswordTextbox.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;webonaryPasswordTextbox.Name" xml:space="preserve">
-    <value>webonaryPasswordTextbox</value>
-  </data>
-  <data name="&gt;&gt;webonaryPasswordTextbox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;webonaryPasswordTextbox.Parent" xml:space="preserve">
-    <value>tableLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;webonaryPasswordTextbox.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
   <data name="publishButton.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
   <data name="publishButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 177</value>
+    <value>3, 205</value>
   </data>
   <data name="publishButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>115, 23</value>
@@ -358,13 +184,13 @@
     <value>tableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;publishButton.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>1</value>
   </data>
   <data name="closeButton.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
   <data name="closeButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>124, 177</value>
+    <value>124, 205</value>
   </data>
   <data name="closeButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>115, 23</value>
@@ -385,13 +211,13 @@
     <value>tableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;closeButton.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>2</value>
   </data>
   <data name="outputLogTextbox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
   <data name="outputLogTextbox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 206</value>
+    <value>3, 234</value>
   </data>
   <data name="outputLogTextbox.Multiline" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -400,7 +226,7 @@
     <value>Vertical</value>
   </data>
   <data name="outputLogTextbox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>363, 77</value>
+    <value>363, 94</value>
   </data>
   <data name="outputLogTextbox.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
@@ -418,13 +244,13 @@
     <value>tableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;outputLogTextbox.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>3</value>
   </data>
   <data name="helpButton.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
   <data name="helpButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>245, 177</value>
+    <value>245, 205</value>
   </data>
   <data name="helpButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>121, 23</value>
@@ -445,7 +271,7 @@
     <value>tableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;helpButton.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>4</value>
   </data>
   <data name="publicationLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -454,7 +280,7 @@
     <value>Fill</value>
   </data>
   <data name="publicationLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 120</value>
+    <value>3, 148</value>
   </data>
   <data name="publicationLabel.Size" type="System.Drawing.Size, System.Drawing">
     <value>115, 27</value>
@@ -478,7 +304,7 @@
     <value>tableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;publicationLabel.ZOrder" xml:space="preserve">
-    <value>11</value>
+    <value>5</value>
   </data>
   <data name="configurationLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -487,7 +313,7 @@
     <value>Fill</value>
   </data>
   <data name="configurationLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 147</value>
+    <value>3, 175</value>
   </data>
   <data name="configurationLabel.Size" type="System.Drawing.Size, System.Drawing">
     <value>115, 27</value>
@@ -511,7 +337,7 @@
     <value>tableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;configurationLabel.ZOrder" xml:space="preserve">
-    <value>12</value>
+    <value>6</value>
   </data>
   <data name="publicationBox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -520,7 +346,7 @@
     <value>(Main Dictionary Entries)</value>
   </data>
   <data name="publicationBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>124, 123</value>
+    <value>124, 151</value>
   </data>
   <data name="publicationBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>242, 21</value>
@@ -538,7 +364,7 @@
     <value>tableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;publicationBox.ZOrder" xml:space="preserve">
-    <value>13</value>
+    <value>7</value>
   </data>
   <data name="configurationBox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -547,7 +373,7 @@
     <value>Stem-based</value>
   </data>
   <data name="configurationBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>124, 150</value>
+    <value>124, 178</value>
   </data>
   <data name="configurationBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>242, 21</value>
@@ -565,19 +391,28 @@
     <value>tableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;configurationBox.ZOrder" xml:space="preserve">
-    <value>14</value>
+    <value>8</value>
+  </data>
+  <data name="settingsForWebonaryTableLayoutPanel.ColumnCount" type="System.Int32, mscorlib">
+    <value>5</value>
   </data>
   <data name="showPasswordCheckBox.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
+  <data name="showPasswordCheckBox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="showPasswordCheckBox.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="showPasswordCheckBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>245, 97</value>
+    <value>216, 55</value>
   </data>
   <data name="showPasswordCheckBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>101, 17</value>
+    <value>138, 23</value>
   </data>
   <data name="showPasswordCheckBox.TabIndex" type="System.Int32, mscorlib">
-    <value>19</value>
+    <value>20</value>
   </data>
   <data name="showPasswordCheckBox.Text" xml:space="preserve">
     <value>Show password</value>
@@ -589,10 +424,250 @@
     <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;showPasswordCheckBox.Parent" xml:space="preserve">
-    <value>tableLayoutPanel</value>
+    <value>settingsForWebonaryTableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;showPasswordCheckBox.ZOrder" xml:space="preserve">
-    <value>15</value>
+    <value>0</value>
+  </data>
+  <data name="webonaryPasswordTextbox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="webonaryPasswordTextbox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>74, 55</value>
+  </data>
+  <data name="webonaryPasswordTextbox.PasswordChar" type="System.Char, mscorlib" xml:space="preserve">
+    <value>*</value>
+  </data>
+  <data name="webonaryPasswordTextbox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>136, 20</value>
+  </data>
+  <data name="webonaryPasswordTextbox.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;webonaryPasswordTextbox.Name" xml:space="preserve">
+    <value>webonaryPasswordTextbox</value>
+  </data>
+  <data name="&gt;&gt;webonaryPasswordTextbox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;webonaryPasswordTextbox.Parent" xml:space="preserve">
+    <value>settingsForWebonaryTableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;webonaryPasswordTextbox.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="webonaryUsernameTextbox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="webonaryUsernameTextbox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>74, 29</value>
+  </data>
+  <data name="webonaryUsernameTextbox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>280, 20</value>
+  </data>
+  <data name="webonaryUsernameTextbox.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="&gt;&gt;webonaryUsernameTextbox.Name" xml:space="preserve">
+    <value>webonaryUsernameTextbox</value>
+  </data>
+  <data name="&gt;&gt;webonaryUsernameTextbox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;webonaryUsernameTextbox.Parent" xml:space="preserve">
+    <value>settingsForWebonaryTableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;webonaryUsernameTextbox.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="webonarySiteNameTextbox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="webonarySiteNameTextbox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>74, 3</value>
+  </data>
+  <data name="webonarySiteNameTextbox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>280, 20</value>
+  </data>
+  <data name="webonarySiteNameTextbox.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;webonarySiteNameTextbox.Name" xml:space="preserve">
+    <value>webonarySiteNameTextbox</value>
+  </data>
+  <data name="&gt;&gt;webonarySiteNameTextbox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;webonarySiteNameTextbox.Parent" xml:space="preserve">
+    <value>settingsForWebonaryTableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;webonarySiteNameTextbox.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="passwordLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="passwordLabel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="passwordLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="passwordLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 52</value>
+  </data>
+  <data name="passwordLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 29</value>
+  </data>
+  <data name="passwordLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="passwordLabel.Text" xml:space="preserve">
+    <value>Password:</value>
+  </data>
+  <data name="passwordLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;passwordLabel.Name" xml:space="preserve">
+    <value>passwordLabel</value>
+  </data>
+  <data name="&gt;&gt;passwordLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;passwordLabel.Parent" xml:space="preserve">
+    <value>settingsForWebonaryTableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;passwordLabel.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="usernameLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="usernameLabel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="usernameLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="usernameLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 26</value>
+  </data>
+  <data name="usernameLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 26</value>
+  </data>
+  <data name="usernameLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="usernameLabel.Text" xml:space="preserve">
+    <value>Username:</value>
+  </data>
+  <data name="usernameLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;usernameLabel.Name" xml:space="preserve">
+    <value>usernameLabel</value>
+  </data>
+  <data name="&gt;&gt;usernameLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;usernameLabel.Parent" xml:space="preserve">
+    <value>settingsForWebonaryTableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;usernameLabel.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="siteNameLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="siteNameLabel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="siteNameLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="siteNameLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 0</value>
+  </data>
+  <data name="siteNameLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 26</value>
+  </data>
+  <data name="siteNameLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="siteNameLabel.Text" xml:space="preserve">
+    <value>Site name:</value>
+  </data>
+  <data name="siteNameLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;siteNameLabel.Name" xml:space="preserve">
+    <value>siteNameLabel</value>
+  </data>
+  <data name="&gt;&gt;siteNameLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;siteNameLabel.Parent" xml:space="preserve">
+    <value>settingsForWebonaryTableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;siteNameLabel.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="settingsForWebonaryTableLayoutPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="settingsForWebonaryTableLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 16</value>
+  </data>
+  <data name="settingsForWebonaryTableLayoutPanel.RowCount" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="settingsForWebonaryTableLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>357, 81</value>
+  </data>
+  <data name="settingsForWebonaryTableLayoutPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;settingsForWebonaryTableLayoutPanel.Name" xml:space="preserve">
+    <value>settingsForWebonaryTableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;settingsForWebonaryTableLayoutPanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;settingsForWebonaryTableLayoutPanel.Parent" xml:space="preserve">
+    <value>webonarySettingsGroupbox</value>
+  </data>
+  <data name="&gt;&gt;settingsForWebonaryTableLayoutPanel.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="settingsForWebonaryTableLayoutPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="showPasswordCheckBox" Row="2" RowSpan="1" Column="3" ColumnSpan="2" /&gt;&lt;Control Name="webonaryPasswordTextbox" Row="2" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="webonaryUsernameTextbox" Row="1" RowSpan="1" Column="1" ColumnSpan="4" /&gt;&lt;Control Name="webonarySiteNameTextbox" Row="0" RowSpan="1" Column="1" ColumnSpan="4" /&gt;&lt;Control Name="passwordLabel" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="usernameLabel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="siteNameLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,20.0008,Percent,19.9988,Percent,19.9988,Percent,20.0008,Percent,20.0008" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="webonarySettingsGroupbox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="webonarySettingsGroupbox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 45</value>
+  </data>
+  <data name="webonarySettingsGroupbox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>363, 100</value>
+  </data>
+  <data name="webonarySettingsGroupbox.TabIndex" type="System.Int32, mscorlib">
+    <value>20</value>
+  </data>
+  <data name="webonarySettingsGroupbox.Text" xml:space="preserve">
+    <value>Settings for Webonary site</value>
+  </data>
+  <data name="&gt;&gt;webonarySettingsGroupbox.Name" xml:space="preserve">
+    <value>webonarySettingsGroupbox</value>
+  </data>
+  <data name="&gt;&gt;webonarySettingsGroupbox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;webonarySettingsGroupbox.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;webonarySettingsGroupbox.ZOrder" xml:space="preserve">
+    <value>9</value>
   </data>
   <data name="tableLayoutPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -601,10 +676,10 @@
     <value>0, 0</value>
   </data>
   <data name="tableLayoutPanel.RowCount" type="System.Int32, mscorlib">
-    <value>8</value>
+    <value>6</value>
   </data>
   <data name="tableLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>369, 286</value>
+    <value>369, 318</value>
   </data>
   <data name="tableLayoutPanel.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -622,7 +697,7 @@
     <value>0</value>
   </data>
   <data name="tableLayoutPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="explanationLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="3" /&gt;&lt;Control Name="siteNameLabel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="usernameLabel" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="passwordLabel" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="webonarySiteNameTextbox" Row="1" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="webonaryUsernameTextbox" Row="2" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="webonaryPasswordTextbox" Row="3" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="publishButton" Row="6" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="closeButton" Row="6" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="outputLogTextbox" Row="7" RowSpan="1" Column="0" ColumnSpan="3" /&gt;&lt;Control Name="helpButton" Row="6" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="publicationLabel" Row="4" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="configurationLabel" Row="5" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="publicationBox" Row="4" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="configurationBox" Row="5" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="showPasswordCheckBox" Row="3" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,33,Percent,33,Percent,34" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="explanationLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="3" /&gt;&lt;Control Name="publishButton" Row="4" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="closeButton" Row="4" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="outputLogTextbox" Row="5" RowSpan="1" Column="0" ColumnSpan="3" /&gt;&lt;Control Name="helpButton" Row="4" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="publicationLabel" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="configurationLabel" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="publicationBox" Row="2" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="configurationBox" Row="3" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="webonarySettingsGroupbox" Row="1" RowSpan="1" Column="0" ColumnSpan="3" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,33,Percent,33,Percent,34" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,Absolute,20,Absolute,20,Absolute,20" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
@@ -631,7 +706,7 @@
     <value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>369, 286</value>
+    <value>369, 318</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Publish to Webonary</value>
