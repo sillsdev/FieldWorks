@@ -178,7 +178,6 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 		/// Import the file contents into the database represented by the FdoCache established
 		/// by the constructor.
 		/// </summary>
-		/// <returns>true if successful, false if an error occurs</returns>
 		/// ------------------------------------------------------------------------------------
 		public void ImportData(string sFilename, IProgress progress)
 		{
@@ -258,7 +257,6 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 		/// Import the text reader contents into the database represented by the FdoCache set
 		/// in the constructor.
 		/// </summary>
-		/// <returns>true if successful, false if an error occurs</returns>
 		/// ------------------------------------------------------------------------------------
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "xrdr is disposed when closed.")]
