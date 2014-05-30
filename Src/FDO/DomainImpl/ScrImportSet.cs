@@ -256,10 +256,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 		#endregion
 
-		#region Import Project Accessibility Methods
-
-		#endregion
-
 		#region Public Properties
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
