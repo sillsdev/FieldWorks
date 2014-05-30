@@ -3,94 +3,60 @@ using NUnit.Framework;
 
 namespace SIL.CoreImpl
 {
-		/// <summary>
-		/// Base class for testing CommonApplicationData. This base class deals with setting
-		/// and resetting the environment variable.
-		/// </summary>
-		public class GetCommonAppDataBaseTest
+	[TestFixture]
+	public class DirectoryFinderTests
+	{
+		private string m_previousEnvironment;
+
+		private void SetupEnvironment(string path)
 		{
-			private string PreviousEnvironment;
+			m_previousEnvironment = Environment.GetEnvironmentVariable("FW_CommonAppData");
+			DirectoryFinder.ResetStaticVars();
+			Environment.SetEnvironmentVariable("FW_CommonAppData", path);
+		}
 
-			/// <summary>
-			/// Setup the tests.
-			/// </summary>
-			[TestFixtureSetUp]
-			public void FixtureSetup()
+		private void ResetEnvironment()
+		{
+			Environment.SetEnvironmentVariable("FW_CommonAppData", m_previousEnvironment);
+		}
+
+		[Test]
+		public void GetFolderPath_NoEnvVariableSet()
+		{
+			try
 			{
-				DirectoryFinder.ResetStaticVars();
-				PreviousEnvironment = Environment.GetEnvironmentVariable("FW_CommonAppData");
-				var properties = (PropertyAttribute[])GetType().GetCustomAttributes(typeof(PropertyAttribute), true);
-				Assert.That(properties.Length, Is.GreaterThan(0));
-				Environment.SetEnvironmentVariable("FW_CommonAppData", (string)properties[0].Properties["Value"]);
+				SetupEnvironment(null);
+				string path = DirectoryFinder.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+#if __MonoCS__
+				Assert.That(path, Is.EqualTo("/var/lib/fieldworks"));
+#else
+				Assert.That(path, Is.EqualTo(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)));
+#endif
 			}
-
-			/// <summary>
-			/// Reset environment variable to previous value
-			/// </summary>
-			[TestFixtureTearDown]
-			public void FixtureTeardown()
+			finally
 			{
-				Environment.SetEnvironmentVariable("FW_CommonAppData", PreviousEnvironment);
+				ResetEnvironment();
 			}
 		}
 
-		/// <summary>
-		/// Tests the GetFolderPath method for CommonApplicationData when no environment variable
-		/// is set.
-		/// </summary>
-		[TestFixture]
-		[Property("Value", null)]
-		public class GetCommonAppDataNormalTests: GetCommonAppDataBaseTest
+		[Test]
+		public void GetFolderPath_EnvVariableSet()
 		{
-			/// <summary>Tests the GetFolderPath method for CommonApplicationData when no environment
-			/// variable is set</summary>
-			[Test]
-			[Platform(Include="Linux", Reason="Test is Linux specific")]
-			public void Linux()
+			try
 			{
-				Assert.AreEqual("/var/lib/fieldworks",
-					DirectoryFinder.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+				SetupEnvironment("/bla");
+				string path = DirectoryFinder.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+#if __MonoCS__
+				Assert.That(path, Is.EqualTo("/bla"));
+#else
+				Assert.That(path, Is.EqualTo(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)));
+#endif
 			}
-
-			/// <summary>Tests the GetFolderPath method for CommonApplicationData when no environment
-			/// variable is set</summary>
-			[Test]
-			[Platform(Exclude="Linux", Reason="Test is Windows specific")]
-			public void Windows()
+			finally
 			{
-				Assert.AreEqual(
-					Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-					DirectoryFinder.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+				ResetEnvironment();
 			}
 		}
 
-		/// <summary>
-		/// Tests the GetFolderPath method for CommonApplicationData when the environment variable
-		/// is set.
-		/// </summary>
-		[TestFixture]
-		[Property("Value", "/bla")]
-		public class GetCommonAppDataOverrideTests: GetCommonAppDataBaseTest
-		{
-			/// <summary>Tests the GetFolderPath method for CommonApplicationData when the environment
-			/// variable is set</summary>
-			[Test]
-			[Platform(Include="Linux", Reason="Test is Linux specific")]
-			public void Linux()
-			{
-				Assert.AreEqual("/bla",
-					DirectoryFinder.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
-			}
-
-			/// <summary>Tests the GetFolderPath method for CommonApplicationData when the environment
-			/// variable is set</summary>
-			[Test]
-			[Platform(Exclude="Linux", Reason="Test is Windows specific")]
-			public void Windows()
-			{
-				Assert.AreEqual(
-					Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-					DirectoryFinder.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
-			}
-		}
+	}
 }
