@@ -33,6 +33,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PublishToWebonaryDlg));
 			this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this.explanationLabel = new System.Windows.Forms.LinkLabel();
@@ -53,6 +54,8 @@ namespace SIL.FieldWorks.XWorks
 			this.passwordLabel = new System.Windows.Forms.Label();
 			this.usernameLabel = new System.Windows.Forms.Label();
 			this.siteNameLabel = new System.Windows.Forms.Label();
+			this.webonaryDomainLabel = new System.Windows.Forms.Label();
+			this.toolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.tableLayoutPanel.SuspendLayout();
 			this.webonarySettingsGroupbox.SuspendLayout();
 			this.settingsForWebonaryTableLayoutPanel.SuspendLayout();
@@ -154,6 +157,7 @@ namespace SIL.FieldWorks.XWorks
 			this.settingsForWebonaryTableLayoutPanel.Controls.Add(this.passwordLabel, 0, 2);
 			this.settingsForWebonaryTableLayoutPanel.Controls.Add(this.usernameLabel, 0, 1);
 			this.settingsForWebonaryTableLayoutPanel.Controls.Add(this.siteNameLabel, 0, 0);
+			this.settingsForWebonaryTableLayoutPanel.Controls.Add(this.webonaryDomainLabel, 3, 0);
 			this.settingsForWebonaryTableLayoutPanel.Name = "settingsForWebonaryTableLayoutPanel";
 			// 
 			// showPasswordCheckBox
@@ -178,7 +182,7 @@ namespace SIL.FieldWorks.XWorks
 			// 
 			// webonarySiteNameTextbox
 			// 
-			this.settingsForWebonaryTableLayoutPanel.SetColumnSpan(this.webonarySiteNameTextbox, 4);
+			this.settingsForWebonaryTableLayoutPanel.SetColumnSpan(this.webonarySiteNameTextbox, 2);
 			resources.ApplyResources(this.webonarySiteNameTextbox, "webonarySiteNameTextbox");
 			this.webonarySiteNameTextbox.Name = "webonarySiteNameTextbox";
 			// 
@@ -196,6 +200,13 @@ namespace SIL.FieldWorks.XWorks
 			// 
 			resources.ApplyResources(this.siteNameLabel, "siteNameLabel");
 			this.siteNameLabel.Name = "siteNameLabel";
+			this.toolTip.SetToolTip(this.siteNameLabel, resources.GetString("siteNameLabel.ToolTip"));
+			// 
+			// webonaryDomainLabel
+			// 
+			resources.ApplyResources(this.webonaryDomainLabel, "webonaryDomainLabel");
+			this.settingsForWebonaryTableLayoutPanel.SetColumnSpan(this.webonaryDomainLabel, 2);
+			this.webonaryDomainLabel.Name = "webonaryDomainLabel";
 			// 
 			// PublishToWebonaryDlg
 			// 
@@ -233,5 +244,7 @@ namespace SIL.FieldWorks.XWorks
 		private System.Windows.Forms.Label passwordLabel;
 		private System.Windows.Forms.Label usernameLabel;
 		private System.Windows.Forms.Label siteNameLabel;
+		private System.Windows.Forms.Label webonaryDomainLabel;
+		private System.Windows.Forms.ToolTip toolTip;
 	}
 }
