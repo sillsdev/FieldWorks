@@ -1771,7 +1771,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
-		public bool IsInUseAsChartColumn
+		public bool IsThisOrDescendantInUseAsChartColumn
 		{
 			get
 			{
@@ -1782,19 +1782,19 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				while (rootPossibility.Owner is CmPossibility)
 					rootPossibility = (CmPossibility) rootPossibility.Owner;
 				IDsChart chart = Services.GetInstance<IDsChartRepository>().InstancesWithTemplate(rootPossibility).FirstOrDefault();
-				return chart != null && GetIsInUseAsChartColumn();
+				return chart != null && GetIsThisOrDescendantInUseAsChartColumn();
 			}
 		}
 
-		private bool GetIsInUseAsChartColumn()
+		private bool GetIsThisOrDescendantInUseAsChartColumn()
 		{
 			var repo = Services.GetInstance<IConstituentChartCellPartRepository>();
 			if (repo.InstancesWithChartCellColumn(this).FirstOrDefault() != null)
 				return true;
-			return SubPossibilitiesOS.Cast<CmPossibility>().Any(poss => poss.GetIsInUseAsChartColumn());
+			return SubPossibilitiesOS.Cast<CmPossibility>().Any(poss => poss.GetIsThisOrDescendantInUseAsChartColumn());
 		}
 
-		public bool IsLastTextMarkupTag
+		public bool IsOnlyTextMarkupTag
 		{
 			get
 			{
@@ -1803,7 +1803,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					return false;
 
 				IFdoOwningSequence<ICmPossibility> tagTypes = tags.PossibilitiesOS;
-				return tagTypes.Count == 1 && Hvo == tagTypes[0].Hvo;
+				return tagTypes.Count == 1 && this == tagTypes[0];
 			}
 		}
 
@@ -1818,8 +1818,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				return base.CanDelete
-					&& !IsDefaultDiscourseTemplate && !IsInUseAsChartColumn
-					&& !IsLastTextMarkupTag
+					&& !IsDefaultDiscourseTemplate && !IsThisOrDescendantInUseAsChartColumn
+					&& !IsOnlyTextMarkupTag
 					&& (OwningList != Cache.LangProject.TextMarkupTagsOA || !Services.GetInstance<ITextTagRepository>().GetByTextMarkupTag(this).Any())
 					&& !IsProtected;
 			}

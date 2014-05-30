@@ -1675,7 +1675,7 @@ namespace SIL.FieldWorks.FdoUi
 				return false;
 			}
 
-			if (poss.IsInUseAsChartColumn)
+			if (poss.IsThisOrDescendantInUseAsChartColumn)
 			{
 				var rootPossibility = (ICmPossibility) Object;
 				while (rootPossibility.Owner is ICmPossibility)
@@ -1694,7 +1694,7 @@ namespace SIL.FieldWorks.FdoUi
 		private bool CanDeleteTextMarkupTag(out string msg)
 		{
 			var poss = (ICmPossibility) Object;
-			if (poss.IsLastTextMarkupTag)
+			if (poss.IsOnlyTextMarkupTag)
 			{
 				msg = FdoUiStrings.ksCantDeleteLastTagList;
 				return false;

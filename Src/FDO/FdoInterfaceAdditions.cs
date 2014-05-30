@@ -1664,12 +1664,12 @@ namespace SIL.FieldWorks.FDO
 		/// Return true if this or one of its children is in use as a Constituent chart column.
 		/// Most efficient to call this after checking that the root is a chart template.
 		/// </summary>
-		bool IsInUseAsChartColumn { get; }
+		bool IsThisOrDescendantInUseAsChartColumn { get; }
 
 		/// <summary>
-		/// Gets a value indicating whether this is the last text markup tag.
+		/// Gets a value indicating whether this is the only text markup tag.
 		/// </summary>
-		bool IsLastTextMarkupTag { get; }
+		bool IsOnlyTextMarkupTag { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
