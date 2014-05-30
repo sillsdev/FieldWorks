@@ -153,7 +153,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Returns the number of other users currently connected
 		/// </summary>
 		/// <param name="cache">The FDO cache.</param>
-		/// <returns>The number of other users currently connected</returns>
 		int CountOfOtherUsersConnected(FdoCache cache);
 	}
 	#endregion
