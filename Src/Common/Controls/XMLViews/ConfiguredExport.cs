@@ -647,7 +647,7 @@ namespace SIL.FieldWorks.Common.Controls
 				string icuLocale = Icu.GetName(sWs);
 				col = Icu.OpenCollator(icuLocale);
 			}
-			catch (Exception)
+			catch (IcuException)
 			{
 				return sFirst;
 			}

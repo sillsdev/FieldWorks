@@ -130,8 +130,10 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			return false;
 		}
 
-		private static readonly CharacterRange[] s_validCodepointRanges = new[] {
-			new CharacterRange {Start = "0000", End = "10FFFD"} };
+		private static readonly CharacterRange[] s_validCodepointRanges =
+			{
+				new CharacterRange {Start = "0000", End = "10FFFD"}
+			};
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -145,11 +147,12 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		}
 
 		// List of the ranges that are acceptable
-		private static readonly CharacterRange[] s_puaRanges = new[] {
-			new CharacterRange { Start = "E000", End = "F8FF" },
-			new CharacterRange { Start = "F0000", End = "FFFFD" },
-			new CharacterRange { Start = "100000", End = "10FFFD" }
-		};
+		private static readonly CharacterRange[] s_puaRanges =
+			{
+				new CharacterRange { Start = "E000", End = "F8FF" },
+				new CharacterRange { Start = "F0000", End = "FFFFD" },
+				new CharacterRange { Start = "100000", End = "10FFFD" }
+			};
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -172,11 +175,12 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		//    but that's not clear, so we're adding plane 16 as of September 15, 2005.  If
 		//    there's really a reason why plane 16 was not included here, remove it and
 		//    document the reason!
-		private static readonly CharacterRange[] s_customPuaRanges = new[] {
-			new CharacterRange { Start = "E000", End = "EFFF" },
-			new CharacterRange { Start = "F0000", End = "FFFFD" },
-			new CharacterRange { Start = "100000", End = "10FFFD"}
-		};
+		private static readonly CharacterRange[] s_customPuaRanges =
+			{
+				new CharacterRange { Start = "E000", End = "EFFF" },
+				new CharacterRange { Start = "F0000", End = "FFFFD" },
+				new CharacterRange { Start = "100000", End = "10FFFD"}
+			};
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -190,8 +194,10 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		}
 
 		// List of the ranges that are set aside for surrogates
-		private static readonly CharacterRange[] s_surrogateRanges = new[] {
-			new CharacterRange {Start = "D800", End = "DFFF"} };
+		private static readonly CharacterRange[] s_surrogateRanges =
+			{
+				new CharacterRange {Start = "D800", End = "DFFF"}
+			};
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -213,7 +219,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// ------------------------------------------------------------------------------------
 		public static void InitIcuDataDir()
 		{
-			System.Diagnostics.Debug.Assert(kIcuVersion == "_50", "Yo developers! We are using a different version of ICU. " +
+			Debug.Assert(kIcuVersion == "_50", "Yo developers! We are using a different version of ICU. " +
 				"Change UnicodeVersion to return the correct version, and then change this assertion so that it checks for the new version of kIcuVersion." +
 				"We had to do it this way because ICU can't tell us which version of Unicode it supports. " +
 				"If they add a method to do this in the future, then we can just make UnicodeVersion work by calling that method." +
@@ -644,7 +650,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// ------------------------------------------------------------------------------------
 		public static bool IsControl(string chr)
 		{
-			return (string.IsNullOrEmpty(chr) || chr.Length != 1 ? false : IsControl(chr[0]));
+			return (!string.IsNullOrEmpty(chr) && chr.Length == 1 && IsControl(chr[0]));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -685,7 +691,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// ------------------------------------------------------------------------------------
 		public static bool IsSpace(string chr)
 		{
-			return (string.IsNullOrEmpty(chr) || chr.Length != 1 ? false : IsSpace(chr[0]));
+			return (!string.IsNullOrEmpty(chr) && chr.Length == 1 && IsSpace(chr[0]));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -744,7 +750,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			string name;
 			UErrorCode error;
 			if (u_CharName(code, UCharNameChoice.U_UNICODE_CHAR_NAME, out name, out error) > 0 &&
-				error == UErrorCode.U_ZERO_ERROR)
+				IsSuccess(error))
 			{
 				return name;
 			}
@@ -887,20 +893,14 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// </summary>
 		/// <param name="locale">the locale to get the language code with </param>
 		/// <returns>the language code for the locale.</returns>
-		/// <exception cref="ArgumentException">Thrown if ICU method fails with an error.
-		/// </exception>
 		/// ------------------------------------------------------------------------------------
 		public static string GetLanguageCode(string locale)
 		{
 			string languageCode;
 			UErrorCode err;
 			GetLanguageCode(locale, out languageCode, out err);
-			if (err != UErrorCode.U_ZERO_ERROR)
-			{
-				throw new ArgumentException(
-					string.Format("ICU uloc_getLanguage with argument '{0}' failed with error {1}", locale, err),
-					"locale");
-			}
+			if (IsFailure(err))
+				throw new IcuException(string.Format("uloc_getLanguage() with argument '{0}' failed with error {1}", locale, err), err);
 			return languageCode;
 		}
 
@@ -996,20 +996,14 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// </summary>
 		/// <param name="locale">the locale to get the country code with </param>
 		/// <returns>The country code for the locale.</returns>
-		/// <exception cref="ArgumentException">Thrown if ICU method fails with an error.
-		/// </exception>
 		/// ------------------------------------------------------------------------------------
 		public static string GetCountryCode(string locale)
 		{
 			string countryCode;
 			UErrorCode err;
 			GetCountryCode(locale, out countryCode, out err);
-			if (err != UErrorCode.U_ZERO_ERROR)
-			{
-				throw new ArgumentException(
-					string.Format("ICU uloc_getCountry with argument '{0}' failed with error {1}", locale, err),
-					"locale");
-			}
+			if (IsFailure(err))
+				throw new IcuException(string.Format("uloc_getCountry() with argument '{0}' failed with error {1}", locale, err), err);
 			return countryCode;
 		}
 
@@ -1136,7 +1130,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			string displayName;
 			UErrorCode uerr;
 			GetDisplayName(localeID, uilocale, out displayName, out uerr);
-			if (uerr == UErrorCode.U_ZERO_ERROR)
+			if (IsSuccess(uerr))
 				return displayName;
 			return string.Empty;
 		}
@@ -1274,9 +1268,9 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			try
 			{
 				UErrorCode err;
-				int nResult = uloc_getName(localeID, resPtr, nSize, out err);
-				if (err > UErrorCode.U_ZERO_ERROR)
-					throw new Exception("uloc_getName failed with code " + err);
+				uloc_getName(localeID, resPtr, nSize, out err);
+				if (IsFailure(err))
+					throw new IcuException("uloc_getName() failed with code " + err, err);
 				return Marshal.PtrToStringAnsi(resPtr);
 			}
 			finally
@@ -1327,18 +1321,17 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			{
 				UErrorCode err;
 				int outLength = u_strToLower(resPtr, length, src, src.Length, locale, out err);
-				if (err > 0 && err != UErrorCode.U_BUFFER_OVERFLOW_ERROR)
-					throw new Exception("Icu.ToLower() failed with code " + err);
+				if (IsFailure(err) && err != UErrorCode.U_BUFFER_OVERFLOW_ERROR)
+					throw new IcuException("u_strToLower() failed with code " + err, err);
 				if (outLength > length)
 				{
-					err = UErrorCode.U_ZERO_ERROR; // ignore possible U_BUFFER_OVERFLOW_ERROR
 					Marshal.FreeCoTaskMem(resPtr);
 					length = outLength + 1;
 					resPtr = Marshal.AllocCoTaskMem(length * 2);
 					u_strToLower(resPtr, length, src, src.Length, locale, out err);
 				}
-				if (err > 0)
-					throw new Exception("Icu.ToLower() failed with code " + err);
+				if (IsFailure(err))
+					throw new IcuException("u_strToLower() failed with code " + err, err);
 
 				string result = Marshal.PtrToStringUni(resPtr);
 				// Strip any garbage left over at the end of the string.
@@ -1367,8 +1360,8 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		{
 			UErrorCode err;
 			IntPtr collator = ucol_open(string.IsNullOrEmpty(locale) ? null : Encoding.UTF8.GetBytes(locale), out err);
-			if (err > UErrorCode.U_ZERO_ERROR)
-				throw new Exception("ucol_open failed with code " + err);
+			if (IsFailure(err))
+				throw new IcuException("ucol_open() failed with code " + err, err);
 			return collator;
 		}
 
@@ -1447,56 +1440,6 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 		private static extern void ucol_close(IntPtr coll);
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Simple class to allow passing collation error info back to the caller of CheckRules.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public class CollationRuleErrorInfo
-		{
-			internal CollationRuleErrorInfo(UParseError parseError)
-			{
-				Line = parseError.line + 1;
-				Offset = parseError.offset + 1;
-				PreContext = parseError.preContext;
-				PostContext = parseError.postContext;
-			}
-
-			/// <summary>Line number (1-based) containing the error</summary>
-			public int Line { get; private set; }
-			/// <summary>Character offset (1-based) on Line where the error was detected</summary>
-			public int Offset { get; private set; }
-			/// <summary>Characters preceding the the error</summary>
-			public String PreContext { get; private set; }
-			/// <summary>Characters following the the error</summary>
-			public String PostContext { get; private set; }
-		}
-
-		/// <summary>
-		/// Collation rule exception
-		/// </summary>
-		public class CollationRuleException : Exception
-		{
-			private readonly CollationRuleErrorInfo m_errorInfo;
-
-			/// <summary>
-			/// Initializes a new instance of the <see cref="CollationRuleException"/> class.
-			/// </summary>
-			/// <param name="errorInfo">The error information.</param>
-			public CollationRuleException(CollationRuleErrorInfo errorInfo)
-			{
-				m_errorInfo = errorInfo;
-			}
-
-			/// <summary>
-			/// Gets the parse error information.
-			/// </summary>
-			public CollationRuleErrorInfo ErrorInfo
-			{
-				get { return m_errorInfo; }
-			}
-		}
-
 		/// <summary>
 		/// Opens the specified collation rules as a collator.
 		/// </summary>
@@ -1508,9 +1451,9 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			UParseError parseError;
 			IntPtr collator = ucol_openRules(rules, rules.Length, UColAttributeValue.UCOL_DEFAULT,
 				UColAttributeValue.UCOL_DEFAULT_STRENGTH, out parseError, out err);
-			if (err <= UErrorCode.U_ZERO_ERROR)
+			if (IsSuccess(err))
 				return collator;
-			throw new CollationRuleException(new CollationRuleErrorInfo(parseError));
+			throw new CollationRuleException(err, new CollationRuleErrorInfo(parseError));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1531,7 +1474,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 				UColAttributeValue.UCOL_DEFAULT_STRENGTH, out parseError, out err);
 			try
 			{
-				if (err == UErrorCode.U_ZERO_ERROR)
+				if (IsSuccess(err))
 					return null;
 
 				return new CollationRuleErrorInfo(parseError);
@@ -1611,14 +1554,14 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		{
 			UErrorCode err;
 			int size = ucol_getBound(sortKey, sortKey.Length, boundType, 1, result, result.Length, out err);
-			if (err > 0 && err != UErrorCode.U_BUFFER_OVERFLOW_ERROR)
-				throw new Exception("ucol_getBound failed with code " + err);
+			if (IsFailure(err) && err != UErrorCode.U_BUFFER_OVERFLOW_ERROR)
+				throw new IcuException("ucol_getBound() failed with code " + err, err);
 			if (size > result.Length)
 			{
 				result = new byte[size + 1];
 				ucol_getBound(sortKey, sortKey.Length, boundType, 1, result, result.Length, out err);
-				if (err > 0)
-					throw new Exception("ucol_getBound failed with code " + err);
+				if (IsFailure(err))
+					throw new IcuException("ucol_getBound() failed with code " + err, err);
 			}
 		}
 
@@ -1662,18 +1605,17 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			{
 				UErrorCode err;
 				int outLength = u_strToTitle(resPtr, length, src, src.Length, IntPtr.Zero, locale, out err);
-				if (err > 0 && err != UErrorCode.U_BUFFER_OVERFLOW_ERROR)
-					throw new Exception("Icu.ToTitle() failed with code " + err);
+				if (IsFailure(err) && err != UErrorCode.U_BUFFER_OVERFLOW_ERROR)
+					throw new IcuException("u_strToTitle() failed with code " + err, err);
 				if (outLength > length)
 				{
-					err = UErrorCode.U_ZERO_ERROR; // ignore possible U_BUFFER_OVERFLOW_ERROR
 					Marshal.FreeCoTaskMem(resPtr);
 					length = outLength + 1;
 					resPtr = Marshal.AllocCoTaskMem(length * 2);
 					u_strToTitle(resPtr, length, src, src.Length, IntPtr.Zero, locale, out err);
 				}
-				if (err > 0)
-					throw new Exception("Icu.ToTitle() failed with code " + err);
+				if (IsFailure(err))
+					throw new IcuException("u_strToTitle() failed with code " + err, err);
 
 				string result = Marshal.PtrToStringUni(resPtr);
 				if (result != null)
@@ -1710,8 +1652,8 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			{
 				UErrorCode err;
 				int outLength = u_strToUpper(resPtr, length, src, src.Length, locale, out err);
-				if (err > 0 && err != UErrorCode.U_BUFFER_OVERFLOW_ERROR)
-					throw new Exception("Icu.ToUpper() failed with code " + err);
+				if (IsFailure(err) && err != UErrorCode.U_BUFFER_OVERFLOW_ERROR)
+					throw new IcuException("u_strToUpper() failed with code " + err, err);
 				if (outLength > length)
 				{
 					err = UErrorCode.U_ZERO_ERROR; // ignore possible U_BUFFER_OVERFLOW_ERROR
@@ -1720,8 +1662,8 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 					resPtr = Marshal.AllocCoTaskMem(length * 2);
 					u_strToUpper(resPtr, length, src, src.Length, locale, out err);
 				}
-				if (err > 0)
-					throw new Exception("Icu.ToUpper() failed with code " + err);
+				if (IsFailure(err))
+					throw new IcuException("u_strToUpper() failed with code " + err, err);
 
 				string result = Marshal.PtrToStringUni(resPtr);
 				// Strip any garbage left over at the end of the string.
@@ -1794,8 +1736,8 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			{
 				UErrorCode err;
 				int outLength = unorm_normalize(src, src.Length, mode, 0, resPtr, length, out err);
-				if (err > 0 && err != UErrorCode.U_BUFFER_OVERFLOW_ERROR)
-					throw new Exception("Icu.Normalize() failed with code " + err);
+				if (IsFailure(err) && err != UErrorCode.U_BUFFER_OVERFLOW_ERROR)
+					throw new IcuException("unorm_normalize() failed with code " + err, err);
 				if (outLength >= length)
 				{
 					err = UErrorCode.U_ZERO_ERROR; // ignore possible U_BUFFER_OVERFLOW_ERROR
@@ -1804,8 +1746,8 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 					resPtr = Marshal.AllocCoTaskMem(length * 2);
 					unorm_normalize(src, src.Length, mode, 0, resPtr, length, out err);
 				}
-				if (err > 0)
-					throw new Exception("Icu.Normalize() failed with code " + err);
+				if (IsFailure(err))
+					throw new IcuException("unorm_normalize() failed with code " + err, err);
 
 				string result = Marshal.PtrToStringUni(resPtr);
 				// Strip any garbage left over at the end of the string.
@@ -1834,8 +1776,8 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 
 			UErrorCode err;
 			byte fIsNorm = unorm_isNormalize(src, src.Length, mode, out err);
-			if (err > 0)
-				throw new Exception("Icu.IsNormalized() failed with code " + err);
+			if (IsFailure(err))
+				throw new IcuException("unorm_isNormalize() failed with code " + err, err);
 			return fIsNorm != 0;
 		}
 
@@ -1949,8 +1891,8 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 
 			UErrorCode err;
 			IntPtr bi = ubrk_open(type, locale, text, text.Length, out err);
-			if (err > 0)
-				throw new Exception("ubrk_open failed with code " + err);
+			if (IsFailure(err))
+				throw new IcuException("ubrk_open() failed with code " + err, err);
 			var tokens = new List<string>();
 			int cur = ubrk_first(bi);
 			while (cur != UBRK_DONE)
@@ -1966,6 +1908,16 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		}
 
 		#endregion Break iterator
+
+		private static bool IsSuccess(UErrorCode errorCode)
+		{
+			return errorCode <= 0;
+		}
+
+		private static bool IsFailure(UErrorCode errorCode)
+		{
+			return errorCode > 0;
+		}
 
 		/**
 		 * Selector constants for u_charName().
@@ -2646,4 +2598,84 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 	}
 	// JT notes on how to pass arguments
 	// const char *: pass string.
+
+
+	/// <summary>
+	/// General ICU exception
+	/// </summary>
+	public class IcuException : Exception
+	{
+		private readonly Icu.UErrorCode m_errorCode;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="IcuException"/> class.
+		/// </summary>
+		/// <param name="message">The message.</param>
+		/// <param name="errorCode">The error code.</param>
+		public IcuException(string message, Icu.UErrorCode errorCode)
+			: base(message)
+		{
+			m_errorCode = errorCode;
+		}
+
+		/// <summary>
+		/// Gets the ICU error code.
+		/// </summary>
+		public Icu.UErrorCode ErrorCode
+		{
+			get { return m_errorCode; }
+		}
+	}
+
+	/// ------------------------------------------------------------------------------------
+	/// <summary>
+	/// Simple class to allow passing collation error info back to the caller of CheckRules.
+	/// </summary>
+	/// ------------------------------------------------------------------------------------
+	public class CollationRuleErrorInfo
+	{
+		internal CollationRuleErrorInfo(Icu.UParseError parseError)
+		{
+			Line = parseError.line + 1;
+			Offset = parseError.offset + 1;
+			PreContext = parseError.preContext;
+			PostContext = parseError.postContext;
+		}
+
+		/// <summary>Line number (1-based) containing the error</summary>
+		public int Line { get; private set; }
+		/// <summary>Character offset (1-based) on Line where the error was detected</summary>
+		public int Offset { get; private set; }
+		/// <summary>Characters preceding the the error</summary>
+		public String PreContext { get; private set; }
+		/// <summary>Characters following the the error</summary>
+		public String PostContext { get; private set; }
+	}
+
+	/// <summary>
+	/// Collation rule exception
+	/// </summary>
+	public class CollationRuleException : IcuException
+	{
+		private readonly CollationRuleErrorInfo m_errorInfo;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="CollationRuleException"/> class.
+		/// </summary>
+		/// <param name="errorCode">The ICU error code.</param>
+		/// <param name="errorInfo">The error information.</param>
+		public CollationRuleException(Icu.UErrorCode errorCode, CollationRuleErrorInfo errorInfo)
+			: base("Failed to parse collation rules.", errorCode)
+		{
+			m_errorInfo = errorInfo;
+		}
+
+		/// <summary>
+		/// Gets the parse error information.
+		/// </summary>
+		public CollationRuleErrorInfo ErrorInfo
+		{
+			get { return m_errorInfo; }
+		}
+	}
 }
