@@ -83,6 +83,19 @@ namespace SIL.FieldWorks.XWorks
 			_controller.AssociatePublication("publicationB", _controller.Configurations[1]);
 			Assert.That(_controller.Configurations[1].Publications, Contains.Item("publicationA"), "failed to associate");
 			Assert.That(_controller.Configurations[1].Publications, Contains.Item("publicationB"), "failed to associate");
+			Assert.That(_controller.Configurations[0].Publications, Is.Not.Contains("publicationB"),
+				"should not have associated configuration0 with publicationB");
+		}
+
+		[Test]
+		public void AssociatesPublicationOnlyOnce()
+		{
+			for (int i = 0; i < 3; i++)
+			{
+				// SUT
+				_controller.AssociatePublication("publicationA", _controller.Configurations[0]);
+			}
+			Assert.AreEqual(1, _controller.Configurations[0].Publications.Count(pub => pub.Equals("publicationA")), "associated too many times");
 		}
 
 		[Test]

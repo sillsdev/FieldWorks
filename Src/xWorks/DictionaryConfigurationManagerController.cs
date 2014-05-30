@@ -48,20 +48,16 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		/// <summary>
-		/// Get list of publications using a dictionary configuration.
-		/// </summary>
-		public List<string> GetPublications(DictionaryConfigurationModel dictionaryConfiguration)
+		/// <summary>Get list of publications using a dictionary configuration.</summary>
+		internal List<string> GetPublications(DictionaryConfigurationModel dictionaryConfiguration)
 		{
 			if (dictionaryConfiguration == null)
 				throw new ArgumentNullException();
 			return dictionaryConfiguration.Publications;
 		}
 
-		/// <summary>
-		/// Associate a publication with a dictionary configuration.
-		/// </summary>
-		public void AssociatePublication(string publication, DictionaryConfigurationModel configuration)
+		/// <summary>Associate a publication with a dictionary configuration.</summary>
+		internal void AssociatePublication(string publication, DictionaryConfigurationModel configuration)
 		{
 			if (configuration == null)
 				throw new ArgumentNullException();
@@ -70,13 +66,12 @@ namespace SIL.FieldWorks.XWorks
 			if (!Publications.Contains(publication))
 				throw new ArgumentOutOfRangeException();
 
-			configuration.Publications.Add(publication);
+			if (!configuration.Publications.Contains(publication))
+				configuration.Publications.Add(publication);
 		}
 
-		/// <summary>
-		/// Disassociate a publication from a dictionary configuration.
-		/// </summary>
-		public void DisassociatePublication(string publication, DictionaryConfigurationModel configuration)
+		/// <summary>Disassociate a publication from a dictionary configuration.</summary>
+		internal void DisassociatePublication(string publication, DictionaryConfigurationModel configuration)
 		{
 			if (publication == null)
 				throw new ArgumentNullException();
@@ -120,10 +115,6 @@ namespace SIL.FieldWorks.XWorks
 				_view.publicationsListView.Items.Add(item);
 			}
 
-			_view.configurationsListView.SelectedIndexChanged += OnSelectConfiguration;
-			_view.configurationsListView.AfterLabelEdit += OnRenameConfiguration;
-			_view.publicationsListView.ItemChecked += OnCheckPublication;
-			_view.copyButton.Click += OnCopyConfiguration;
 			_view.Shown += OnShowDialog;
 		}
 
@@ -135,9 +126,15 @@ namespace SIL.FieldWorks.XWorks
 				Configurations.Select(configuration => new ListViewItem { Tag = configuration, Text = configuration.Label }).ToArray());
 		}
 
-		/// <summary>When the view is shown, select first configuration, which will cause publications to be checked or unchecked</summary>
+		/// <summary>
+		/// When the view is shown, register EventHandlers and select first configuration, which will cause publications to be checked or unchecked
+		/// </summary>
 		private void OnShowDialog(object sender, EventArgs eventArgs)
 		{
+			_view.configurationsListView.SelectedIndexChanged += OnSelectConfiguration;
+			_view.configurationsListView.AfterLabelEdit += OnRenameConfiguration;
+			_view.publicationsListView.ItemChecked += OnCheckPublication;
+			_view.copyButton.Click += OnCopyConfiguration;
 			_view.configurationsListView.Items[0].Selected = true;
 		}
 
@@ -167,15 +164,29 @@ namespace SIL.FieldWorks.XWorks
 
 		private void OnCheckPublication(object sender, ItemCheckedEventArgs itemCheckedEventArgs)
 		{
+			if (SelectedConfiguration == null)
+				return;
+
 			var publicationItem = itemCheckedEventArgs.Item;
 
-			// If "All publications" was checked, check all the publications.
-			if (publicationItem == _allPublicationsItem && _allPublicationsItem.Checked)
-				_view.publicationsListView.Items.Cast<ListViewItem>().ForEach(item => item.Checked = true);
-
-			// If a publication was unchecked, uncheck "All publications".
-			if (publicationItem != _allPublicationsItem && !publicationItem.Checked)
-				_allPublicationsItem.Checked = false;
+			if (publicationItem == _allPublicationsItem)
+			{
+				SelectedConfiguration.AllPublications = publicationItem.Checked;
+				// If "All publications" was checked, check all the publications.
+				if (_allPublicationsItem.Checked)
+					_view.publicationsListView.Items.Cast<ListViewItem>().ForEach(item => item.Checked = true);
+			}
+			else // "normal" item, not AllPublications
+			{
+				if (publicationItem.Checked)
+					AssociatePublication(publicationItem.Text, SelectedConfiguration);
+				else
+				{
+					DisassociatePublication(publicationItem.Text, SelectedConfiguration);
+					// If a publication was unchecked, uncheck "All publications".
+					_allPublicationsItem.Checked = false;
+				}
+			}
 		}
 
 		/// <remarks>
