@@ -419,7 +419,7 @@ namespace SIL.FieldWorks
 
 			// Get the project the user wants to open and attempt to launch it.
 			ProjectId projectId = DetermineProject(appArgs);
-			if (projectId != null && ParatextHelper.GetAssociatedProject(projectId) != null)
+			if (projectId != null && IsSharedXmlBackendNeeded(projectId))
 				projectId.Type = FDOBackendProviderType.kSharedXML;
 
 			// s_projectId can be non-null if the user decided to restore a project from
@@ -439,6 +439,11 @@ namespace SIL.FieldWorks
 			}
 
 			return true;
+		}
+
+		private static bool IsSharedXmlBackendNeeded(ProjectId projectId)
+		{
+			return projectId.Type == FDOBackendProviderType.kXML && ParatextHelper.GetAssociatedProject(projectId) != null;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1789,7 +1794,7 @@ namespace SIL.FieldWorks
 				if (dlg.DialogResult == DialogResult.OK)
 				{
 					var projId = new ProjectId(dlg.Project, dlg.Server);
-					if (ParatextHelper.GetAssociatedProject(projId) != null)
+					if (IsSharedXmlBackendNeeded(projId))
 						projId.Type = FDOBackendProviderType.kSharedXML;
 					return projId;
 				}
