@@ -99,8 +99,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			// We need FieldWorks here to get the correct registry key HKLM\Software\SIL\FieldWorks.
 			// The default without this would be HKLM\Software\SIL\SIL FieldWorks, which breaks some tests.
 			RegistryHelper.ProductName = "FieldWorks";
-			ClientServerServices.SetCurrentToDb4OBackend(new DummyFdoUI(), FwDirectoryFinder.FdoDirectories,
-				() => FwDirectoryFinder.ProjectsDirectory == FwDirectoryFinder.ProjectsDirectoryLocalMachine);
+			FdoTestHelper.SetupClientServerServices();
 			m_cache = CreateCache();
 			m_actionHandler = m_cache.ServiceLocator.GetInstance<IActionHandler>();
 		}

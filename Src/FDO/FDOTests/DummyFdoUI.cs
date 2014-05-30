@@ -10,7 +10,7 @@ using SIL.Utils;
 namespace SIL.FieldWorks.FDO.FDOTests
 {
 	/// <summary>
-	/// Dummy implementation of FdoUserAction for unit tests
+	/// Dummy implementation of IFdoUI for unit tests
 	/// </summary>
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
 		Justification="m_threadHelper is a singleton and disposed by the SingletonsContainer")]

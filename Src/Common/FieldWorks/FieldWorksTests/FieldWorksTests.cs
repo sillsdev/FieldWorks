@@ -7,9 +7,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
@@ -29,8 +27,7 @@ namespace SIL.FieldWorks
 		{
 			base.FixtureSetup();
 
-			ClientServerServices.SetCurrentToDb4OBackend(new DummyFdoUI(), FwDirectoryFinder.FdoDirectories,
-				() => FwDirectoryFinder.ProjectsDirectory == FwDirectoryFinder.ProjectsDirectoryLocalMachine);
+			FdoTestHelper.SetupClientServerServices();
 		}
 
 		#region GetProjectMatchStatus tests
