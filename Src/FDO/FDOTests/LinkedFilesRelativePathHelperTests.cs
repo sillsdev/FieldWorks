@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			Assert.AreEqual(String.Format("%proj%{0}LinkedFiles", Path.DirectorySeparatorChar),
 				LinkedFilesRelativePathHelper.GetLinkedFilesRelativePathFromFullPath(FwDirectoryFinder.ProjectsDirectory, String.Format("%proj%{0}LinkedFiles", Path.DirectorySeparatorChar),
-					Path.Combine(FwDirectoryFinder.SourceDirectory, "FDO/FDOTests/BackupRestore/Project"),
+					Path.Combine(FwDirectoryFinder.SourceDirectory, "FDO", "FDOTests", "BackupRestore", "Project"),
 					"Project"));
 		}
 
@@ -49,9 +49,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void GetFullFilePathFromRelativeLFPath()
 		{
-			var linkedFilesRootDir = Path.Combine(Path.Combine(FwDirectoryFinder.ProjectsDirectory, "TestProject"), "LinkedFiles");
+			var linkedFilesRootDir = Path.Combine(FwDirectoryFinder.ProjectsDirectory, "TestProject", "LinkedFiles");
 			var fullLFPath = LinkedFilesRelativePathHelper.GetFullFilePathFromRelativeLFPath(String.Format("%lf%{0}AudioVisual{0}StarWars.mvi", Path.DirectorySeparatorChar), linkedFilesRootDir);
-			var audioVisualFile = Path.Combine(Path.Combine(linkedFilesRootDir, "AudioVisual"), "StarWars.mvi");
+			var audioVisualFile = Path.Combine(linkedFilesRootDir, "AudioVisual", "StarWars.mvi");
 			Assert.AreEqual(audioVisualFile, fullLFPath);
 
 			//if a fully rooted path is passed in the return value should be null.
@@ -69,8 +69,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void GetRelativeLFPathFromFullFilePath()
 		{
-			var linkedFilesRootDir = Path.Combine(Path.Combine(FwDirectoryFinder.ProjectsDirectory, "TestProject"), "LinkedFiles");
-			var audioVisualFile = Path.Combine(Path.Combine(linkedFilesRootDir, "AudioVisual"), "StarWars.mvi");
+			var linkedFilesRootDir = Path.Combine(FwDirectoryFinder.ProjectsDirectory, "TestProject", "LinkedFiles");
+			var audioVisualFile = Path.Combine(linkedFilesRootDir, "AudioVisual", "StarWars.mvi");
 			var relativeLFPath = LinkedFilesRelativePathHelper.GetRelativeLFPathFromFullFilePath(audioVisualFile, linkedFilesRootDir);
 			Assert.AreEqual(String.Format("%lf%{0}AudioVisual{0}StarWars.mvi", Path.DirectorySeparatorChar), relativeLFPath);
 
@@ -88,8 +88,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void GetRelativeLinkedFilesPath()
 		{
-			var linkedFilesRootDir = Path.Combine(Path.Combine(FwDirectoryFinder.ProjectsDirectory, "TestProject"), "LinkedFiles");
-			var audioVisualFile = Path.Combine(Path.Combine(linkedFilesRootDir, "AudioVisual"), "StarWars.mvi");
+			var linkedFilesRootDir = Path.Combine(FwDirectoryFinder.ProjectsDirectory, "TestProject", "LinkedFiles");
+			var audioVisualFile = Path.Combine(linkedFilesRootDir, "AudioVisual", "StarWars.mvi");
 			var relativeLFPath = LinkedFilesRelativePathHelper.GetRelativeLinkedFilesPath(audioVisualFile, linkedFilesRootDir);
 			Assert.True(String.Equals(String.Format("AudioVisual{0}StarWars.mvi", Path.DirectorySeparatorChar), relativeLFPath));
 
@@ -98,7 +98,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			relativeLFPath = LinkedFilesRelativePathHelper.GetRelativeLinkedFilesPath(pathNotUnderLinkedFiles, linkedFilesRootDir);
 			Assert.True(String.Equals(pathNotUnderLinkedFiles,relativeLFPath));
 			Assert.That(LinkedFilesRelativePathHelper.GetRelativeLinkedFilesPath(
-				"silfw:\\localhost\\link?app%3dflex%26database%3dc%3a%5cTestLangProj%5cTestLangProj.fwdata%26server%3d%26tool%3dnaturalClassedit%26guid%3d43c9ba97-2883-4f95-aa5d-ef9309e85025%26tag%3d",
+				"silfw://localhost/link?app%3dflex%26database%3dc%3a%5cTestLangProj%5cTestLangProj.fwdata%26server%3d%26tool%3dnaturalClassedit%26guid%3d43c9ba97-2883-4f95-aa5d-ef9309e85025%26tag%3d",
 				relativeLFPath), Is.Null, "hyperlinks should be left well alone!!");
 		}
 
@@ -110,9 +110,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void GetFullPathFromRelativeLFPath()
 		{
-			var linkedFilesRootDir = Path.Combine(Path.Combine(FwDirectoryFinder.ProjectsDirectory, "TestProject"), "LinkedFiles");
+			var linkedFilesRootDir = Path.Combine(FwDirectoryFinder.ProjectsDirectory, "TestProject", "LinkedFiles");
 			var fullLFPath = LinkedFilesRelativePathHelper.GetFullPathFromRelativeLFPath(String.Format("AudioVisual{0}StarWars.mvi", Path.DirectorySeparatorChar), linkedFilesRootDir);
-			var audioVisualFile = Path.Combine(Path.Combine(linkedFilesRootDir, "AudioVisual"), "StarWars.mvi");
+			var audioVisualFile = Path.Combine(linkedFilesRootDir, "AudioVisual", "StarWars.mvi");
 			Assert.AreEqual(audioVisualFile, fullLFPath);
 
 			//if a fully rooted path is passed in the return value should be the path that was passed in.
@@ -129,7 +129,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void GetFullPathFromRelativeLFPath_WithIllegalCharacters_ReturnsSpecialPath()
 		{
-			var linkedFilesRootDir = Path.Combine(Path.Combine(FwDirectoryFinder.ProjectsDirectory, "TestProject"), "LinkedFiles");
+			var linkedFilesRootDir = Path.Combine(FwDirectoryFinder.ProjectsDirectory, "TestProject", "LinkedFiles");
 			var fullLFPath = LinkedFilesRelativePathHelper.GetFullPathFromRelativeLFPath("1\";1\"", linkedFilesRootDir);
 			Assert.That(fullLFPath, Is.EqualTo(Path.Combine(linkedFilesRootDir,"__ILLEGALCHARS__")));
 		}
