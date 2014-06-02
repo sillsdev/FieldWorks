@@ -35,12 +35,27 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public string ErrorMessage { get; private set; }
 
 		/// <summary>
+		/// Indicates whether a conflicting save occurred.
+		/// </summary>
+		public bool ConflictingSaveOccurred { get; private set; }
+
+		/// <summary>
 		/// Check with user regarding conflicting changes
 		/// </summary>
 		/// <returns>True if user wishes to revert to saved state. False otherwise.</returns>
 		public bool ConflictingSave()
 		{
+			ConflictingSaveOccurred = true;
 			return true;
+		}
+
+		/// <summary>
+		/// Resets all testing metadata.
+		/// </summary>
+		public void Reset()
+		{
+			ConflictingSaveOccurred = false;
+			ErrorMessage = null;
 		}
 
 		/// <summary>

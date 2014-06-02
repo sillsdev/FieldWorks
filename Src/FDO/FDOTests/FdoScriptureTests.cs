@@ -2524,6 +2524,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void SavedVersion_BogusUnownedFootnoteORC()
 		{
+			var ui = (DummyFdoUI) Cache.ServiceLocator.GetInstance<IFdoUI>();
+			ui.Reset();
+
 			IStText titleText;
 			IScrBook hebrews = m_servloc.GetInstance<IScrBookFactory>().Create(58, out titleText);
 			IStTxtPara title = AddParaToMockedText(titleText, ScrStyleNames.MainBookTitle);
@@ -2589,10 +2592,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(StringUtils.kChObject, sOrc[0]);
 
 			// Expecting error to have been thrown in ScriptureServices.AdjustObjectsInArchivedBook, so now we make sure the error is the one expected.
-			var userAction = Cache.ServiceLocator.GetInstance<IFdoUI>();
-			Assert.IsTrue(userAction is DummyFdoUI);
-			string sWarningMessage = ((DummyFdoUI)userAction).ErrorMessage;
-			Assert.AreEqual("1 footnote(s) in HEB did not correspond to any owned footnotes in the vernacular text of that book. They have been moved to the end of the footnote sequence.", sWarningMessage);
+			Assert.AreEqual("1 footnote(s) in HEB did not correspond to any owned footnotes in the vernacular text of that book. They have been moved to the end of the footnote sequence.", ui.ErrorMessage);
 		}
 
 		/// ------------------------------------------------------------------------------------

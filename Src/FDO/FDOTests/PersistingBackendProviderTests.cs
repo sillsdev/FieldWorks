@@ -858,7 +858,6 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 				if (File.Exists(projectID.Path))
 					File.Delete(projectID.Path);
 			}
-
 			return BootstrapSystem(projectID, m_loadType);
 		}
 
@@ -1022,8 +1021,13 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 				{
 					entry1.CitationForm.set_String(Cache.DefaultVernWs, "citation");
 				});
+				var ui = (DummyFdoUI) Cache.ServiceLocator.GetInstance<IFdoUI>();
+				ui.Reset();
 				Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
-				Assert.That(entry1.CitationForm.VernacularDefaultWritingSystem.Text, Is.EqualTo(otherEntry1.CitationForm.VernacularDefaultWritingSystem.Text));
+				// the first in should win
+				Assert.That(entry1.CitationForm.VernacularDefaultWritingSystem.Text, Is.EqualTo("othercitation"));
+				// check that the user was prompted about conflicting changes
+				Assert.That(ui.ConflictingSaveOccurred, Is.True);
 			}
 		}
 
