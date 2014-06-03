@@ -255,7 +255,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		/// <summary>
 		/// Get changes we haven't seen. (This has a side effect of updating the record of which ones HAVE been seen.)
-		/// Returns true if there are any unseen foreign changes.
+		/// This method assumes that the commit lock has already been obtained. Returns true if there are any unseen foreign changes.
 		/// </summary>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification="Ext() returns a reference")]

@@ -4,6 +4,11 @@ using ProtoBuf;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 {
+	/// <summary>
+	/// A record that is used by the shared XML backend to record all information for a commit so that peers
+	/// can update their FDO instance appropriately. These records are serialized to the commit log memory
+	/// mapped file using protobuf-net.
+	/// </summary>
 	[ProtoContract]
 	internal struct CommitLogRecord
 	{
@@ -13,21 +18,25 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// </summary>
 		[ProtoMember(1)]
 		public int WriteGeneration;
+
 		/// <summary>
-		/// A guid unique to one particular writer; used by each client to eliminate its own commits from queries.
+		/// A guid unique to one particular peer; used by each peer to eliminate its own commits from queries.
 		/// </summary>
 		[ProtoMember(2)]
 		public Guid Source;
+
 		/// <summary>
 		/// Our IDs of the objects that were added.
 		/// </summary>
 		[ProtoMember(3)]
 		public List<byte[]> ObjectsAdded;
+
 		/// <summary>
 		/// Our IDs of the objects that were modified.
 		/// </summary>
 		[ProtoMember(4)]
 		public List<byte[]> ObjectsUpdated;
+
 		/// <summary>
 		/// Our IDs of the objects that were deleted.
 		/// </summary>
