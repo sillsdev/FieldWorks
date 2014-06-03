@@ -4,6 +4,7 @@
 	<UsingTask TaskName="Unitpp" AssemblyFile="FwBuildTasks.dll"/>
 	<UsingTask TaskName="RegisterForTests" AssemblyFile="FwBuildTasks.dll"/>
 	<UsingTask TaskName="DownloadFile" AssemblyFile="FwBuildTasks.dll"/>
+	<UsingTask TaskName="Unzip" AssemblyFile="FwBuildTasks.dll"/>
 
 	<!-- Make all of FieldWorks. -->
 	<Target Name="mkall" DependsOnTargets="initLinux;initWindows;LinuxRegistry;allCpp;allCsharp;CopyDlls;ensureTLBsUpToDate">
@@ -308,6 +309,7 @@
 		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt278/.lastSuccessful</IPCFrameworkDownloadUrl>
 		<!-- bt279 is the develop branch build of IPCFramework for Linux development. Update when appropriate. -->
 		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt279/.lastSuccessful</IPCFrameworkDownloadUrl>
+		<ProtoBufNetDownloadUrl>https://protobuf-net.googlecode.com/files/protobuf-net%20r668.zip</ProtoBufNetDownloadUrl>
 		<!-- Windows/.Net and Linux/Mono use different extensions for debug information files. -->
 		<DebugInfo Condition="'$(OS)'=='Unix'">dll.mdb</DebugInfo>
 		<DebugInfo Condition="'$(OS)'=='Windows_NT'">pdb</DebugInfo>
@@ -351,6 +353,11 @@
 
 		<Message Text="Downloading latest successful artifacts for IPCFramework."/>
 		<DownloadFile Address="$(IPCFrameworkDownloadUrl)/IPCFramework.dll" LocalFilename="$(fwrt)/Downloads/IPCFramework.dll"/>
+
+		<Message Text="Downloading protobuf-net." />
+		<DownloadFile Address="$(ProtoBufNetDownloadUrl)" LocalFilename="$(fwrt)/Downloads/protobuf-net.zip" />
+		<Unzip ZipFilename="$(fwrt)/Downloads/protobuf-net.zip" ToDir="$(fwrt)/Downloads/protobuf-net/" />
+		<Delete Files="$(fwrt)/Downloads/protobuf-net.zip" />
 	</Target>
 
 	<!-- item group for downloads, to allow easy copying -->
@@ -390,6 +397,8 @@
 		<DownloadedFiles Include="$(fwrt)/Downloads/NDesk.DBus.dll" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/NDesk.DBus.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Ionic.Zip.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/protobuf-net/Full/net30/protobuf-net.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/protobuf-net/Full/mono/protobuf-net.dll" Condition="'$(OS)'=='Unix'"/>
 	</ItemGroup>
 
 	<Target Name="CopyDlls" DependsOnTargets="downloadDlls">
