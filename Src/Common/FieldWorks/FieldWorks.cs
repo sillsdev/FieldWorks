@@ -3134,6 +3134,12 @@ namespace SIL.FieldWorks
 				}
 				throw;
 			}
+			catch (FdoDataMigrationForbiddenException)
+			{
+				// tell the user to close all other applications using this project
+				MessageBox.Show(ResourceHelper.GetResourceString("kstidDataMigrationProhibitedText"),
+					ResourceHelper.GetResourceString("kstidDataMigrationProhibitedCaption"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
 			finally
 			{
 				CloseSplashScreen();
