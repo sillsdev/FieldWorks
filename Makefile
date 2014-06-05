@@ -268,6 +268,10 @@ install-tree: fieldworks-flex.1.gz fieldworks-te.1.gz unicodechareditor.1.gz
 	done
 	# Handle the Converter files
 	mv $(DESTDIR)/usr/lib/fieldworks/{Converter.exe,ConvertLib.dll,ConverterConsole.exe} $(DESTDIR)/usr/share/fieldworks
+	# Remove geckofx DLLs since those are shipped in a separate package
+	rm -f $(DESTDIR)/usr/lib/fieldworks/Geckofx-Core.dll
+	rm -f $(DESTDIR)/usr/lib/fieldworks/Geckofx-Core.dll.config
+	rm -f $(DESTDIR)/usr/lib/fieldworks/Geckofx-Winforms.dll
 	# Remove unwanted items
 	rm -f $(DESTDIR)/usr/lib/fieldworks/DevComponents.DotNetBar.dll
 	case $(ARCH) in i686) OTHERWIDTH=64;; x86_64) OTHERWIDTH=32;; esac; \
