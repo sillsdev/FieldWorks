@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using FwRemoteDatabaseConnector;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -852,6 +853,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		/// ------------------------------------------------------------------------------------
 		protected override FdoCache CreateCache()
 		{
+			SharedXMLBackendProvider.CommitLogFileSize = 102400;
 			IProjectIdentifier projectID = ProjectID;
 			if (!m_internalRestart)
 			{
@@ -1059,6 +1061,58 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			Assert.That(Cache.ServiceLocator.GetInstance<ILexEntryRepository>().TryGetObject(otherEntryGuid1, out entry1), Is.True);
 			Assert.That(entry1.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("form1"));
 			Assert.That(entry1.SensesOS[0].Gloss.AnalysisDefaultWritingSystem.Text, Is.EqualTo("gloss1"));
+		}
+
+		/// <summary>
+		/// Tests wrapping around the internal commit log circular buffer.
+		/// </summary>
+		[Test]
+		public void WrapAroundCommitLogBuffer()
+		{
+			// totally reset project
+			SetupEverythingButBase();
+
+			// add some commit records to log, so that the log will wrap around
+			int i;
+			for (i = 0; i < 5; i++)
+			{
+				NonUndoableUnitOfWorkHelper.Do(Cache.ServiceLocator.ActionHandler, () =>
+				{
+					IMoMorphType stemType = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
+					ILexEntry entry1 = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(stemType, Cache.TsStrFactory.MakeString("form1", Cache.DefaultVernWs),
+						Cache.TsStrFactory.MakeString("gloss1", Cache.DefaultAnalWs), new SandboxGenericMSA());
+				});
+				Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+			}
+			Cache.ServiceLocator.GetInstance<IDataStorer>().CompleteAllCommits();
+			Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+			using (FdoCache otherCache = CreateOtherCache())
+			{
+				// add commit records until the log fills up
+				// once the log is full, we know that the internal buffer has wrapped around
+				while (true)
+				{
+					NonUndoableUnitOfWorkHelper.Do(Cache.ServiceLocator.ActionHandler, () =>
+					{
+						IMoMorphType stemType = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
+						ILexEntry entry1 = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(stemType, Cache.TsStrFactory.MakeString("form1", Cache.DefaultVernWs),
+							Cache.TsStrFactory.MakeString("gloss1", Cache.DefaultAnalWs), new SandboxGenericMSA());
+					});
+					try
+					{
+						Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+					}
+					catch (InvalidOperationException)
+					{
+						break;
+					}
+					i++;
+				}
+				// the other cache will now read the wrapped around commit log buffer
+				otherCache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+
+				Assert.That(otherCache.ServiceLocator.GetInstance<ILexEntryRepository>().GetHomographs("form1").Count, Is.EqualTo(i));
+			}
 		}
 	}
 }

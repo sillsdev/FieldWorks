@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 	internal class SharedXMLBackendProvider : XMLBackendProvider
 	{
 		private const int PageSize = 4096;
-		private const int CommitLogFileSize = 2500 * PageSize;
+		internal static int CommitLogFileSize = 2500 * PageSize;
 		private const int CommitLogMetadataFileSize = 1 * PageSize;
 
 		/// <summary>
@@ -637,12 +637,15 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				}
 			}
 
+			// if we have read everything to the end of the file, add padding to read length
+			if (startOffset + length == CommitLogFileSize - metadata.Padding)
+				length += metadata.Padding;
+
 			// check if we've purged all records up to the end of the file. If so, wrap around to the beginning.
 			if (metadata.LogOffset == CommitLogFileSize - metadata.Padding)
 			{
 				metadata.LogOffset = 0;
 				metadata.LogLength -= metadata.Padding;
-				length += metadata.Padding;
 				metadata.Padding = 0;
 			}
 
