@@ -159,7 +159,7 @@
                 <Option id="analysis" isEnabled="true"/>
             </WritingSystemOptions>
         </ConfigurationItem>
-        <ConfigurationItem name="Senses" between="  " after=" " isEnabled="true" field="Senses">
+        <ConfigurationItem name="Senses" between="  " after=" " isEnabled="true" field="SensesOS">
             <SenseOptions displayEachSenseInParagraph="false" senseParaStyle="Dictionary-Sense" numberStyle="bold" numberBefore="" numberAfter=") " numberingStyle="%O" numberFont="" numberSingleSense="false" showSingleGramInfoFirst="true"/>
             <ConfigurationItem name="Grammatical Info." after=" " style="Dictionary-Contrasting" isEnabled="true" field="MorphoSyntaxAnalysisRA">
 				<ConfigurationItem name="Gram Info (Name)" between=" " after=" " isEnabled="false" field="InterlinearNameTSS"/>

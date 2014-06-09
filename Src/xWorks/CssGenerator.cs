@@ -96,7 +96,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="configNode"></param>
 		/// <param name="baseSelection"></param>
 		/// <returns></returns>
-		private static IEnumerable<StyleRule> GenerateSelectorsFromNode(string parentInfo, ConfigurableDictionaryNode configNode, out string baseSelection)
+		private static IEnumerable<StyleRule> GenerateSelectorsFromNode(string parentInfo,
+																							 ConfigurableDictionaryNode configNode,
+																							 out string baseSelection)
 		{
 			var rules = new List<StyleRule>();
 			if(parentInfo == null)
@@ -128,7 +130,14 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		private static string SelectClassName(ConfigurableDictionaryNode configNode)
 		{
-			return "." + GetClassAttributeForConfig(configNode);
+			var type = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(configNode);
+			string collectionItem = String.Empty;
+			if(type == ConfiguredXHTMLGenerator.PropertyType.CollectionType)
+			{
+				collectionItem = GetClassAttributeForConfig(configNode);
+				collectionItem = " ." + collectionItem.Remove(collectionItem.Length - 1);
+			}
+			return "." + GetClassAttributeForConfig(configNode) + collectionItem;
 		}
 
 		/// <summary>

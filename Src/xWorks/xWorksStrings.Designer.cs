@@ -375,6 +375,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The root node in your configuration is invalid. The field attribute &apos;{0}&apos; must match a class name..
+        /// </summary>
+        internal static string InvalidRootConfigurationNode {
+            get {
+                return ResourceManager.GetString("InvalidRootConfigurationNode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid writing system.
         /// </summary>
         internal static string InvalidWritingSystem {

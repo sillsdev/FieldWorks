@@ -638,7 +638,7 @@ namespace SIL.FieldWorks.XWorks
 		public static string GetClassNameForTargetType(int fieldType,
 																		string lookupClass,
 																		string fieldName,
-																		IFwMetaDataCacheManaged metaDataCache)
+																		IFwMetaDataCache metaDataCache)
 		{
 			string className;
 			// These types in the FieldWorks model only point to or contain the class we are interested in, so we grab their destination class

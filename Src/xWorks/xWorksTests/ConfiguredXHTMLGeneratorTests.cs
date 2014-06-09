@@ -28,6 +28,13 @@ namespace SIL.FieldWorks.XWorks
 			XHTMLStringBuilder = new StringBuilder();
 		}
 
+		[TearDown]
+		public void ResetAssemblyFile()
+		{
+			// Specific tests override this, reset to Fdo.dll needed by most tests in the file
+			ConfiguredXHTMLGenerator.AssemblyFile = "FDO";
+		}
+
 		[Test]
 		public void GenerateXHTMLForEntry_NullArgsThrowArgumentNull()
 		{
@@ -79,6 +86,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry",
 				IsEnabled = true
 			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 			var entry = CreateInterestingLexEntry();
 			// The headword field is special it uses either Citation or LexemeForm if Citation isn't filled in
@@ -109,6 +117,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry",
 				IsEnabled = true
 			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {mainEntryNode});
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 			var entry = CreateInterestingLexEntry();
 			//Fill in the LexemeForm
@@ -156,6 +165,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry",
 				IsEnabled = true
 			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {mainEntryNode});
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 			var entry = CreateInterestingLexEntry();
 			//Create and fill in the Location
@@ -217,6 +227,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry",
 				IsEnabled = true
 			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
 			var entryOne = CreateInterestingLexEntry();
 			var entryTwo = CreateInterestingLexEntry();
 
@@ -264,6 +275,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry",
 				IsEnabled = true
 			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {mainEntryNode});
 			var testEntry = CreateInterestingLexEntry();
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
@@ -300,6 +312,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry",
 				IsEnabled = true
 			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {mainEntryNode});
 			var entryOne = CreateInterestingLexEntry();
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 			entryOne.CitationForm.set_String(wsFr, Cache.TsStrFactory.MakeString("FirstHeadword", wsFr));
@@ -405,6 +418,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry",
 				IsEnabled = true
 			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {mainEntryNode});
 			var entry = CreateInterestingLexEntry();
 
 			var sense = entry.SensesOS.First();
@@ -446,6 +460,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry",
 				IsEnabled = true
 			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {mainEntryNode});
 			var entry = CreateInterestingLexEntry();
 
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
@@ -491,6 +506,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry",
 				IsEnabled = true
 			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {mainEntryNode});
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 			var entry = CreateInterestingLexEntry();
 
@@ -548,6 +564,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry",
 				IsEnabled = true
 			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {mainEntryNode});
 			var entryOne = CreateInterestingLexEntry();
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
@@ -558,6 +575,218 @@ namespace SIL.FieldWorks.XWorks
 				const string senseWithdefinitionOrGloss = "//span[@class='sense']/span[@class='definitionorgloss' and text()='gloss']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(senseWithdefinitionOrGloss, 1);
 			}
+		}
+
+		[Test]
+		public void GetPropertyTypeForConfigurationNode_NullConfigurationNodeThrowsNullArgument()
+		{
+			// SUT
+			Assert.Throws<ArgumentNullException>(() => ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(null));
+		}
+
+		[Test]
+		public void GetPropertyTypeForConfigurationNode_RootMemberWorks()
+		{
+			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			var stringNode = new ConfigurableDictionaryNode { FieldDescription = "RootMember" };
+			var rootNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { stringNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {rootNode});
+			var result = ConfiguredXHTMLGenerator.PropertyType.InvalidProperty;
+			// SUT
+			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(stringNode));
+			Assert.That(result, Is.EqualTo(ConfiguredXHTMLGenerator.PropertyType.PrimitiveType));
+		}
+
+		[Test]
+		public void GetPropertyTypeForConfigurationNode_InterfacePropertyWorks()
+		{
+			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			var interfaceNode = new ConfigurableDictionaryNode { FieldDescription = "TestString" };
+			var memberNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "RootMember",
+				Children = new List<ConfigurableDictionaryNode> { interfaceNode }
+			};
+			var rootNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
+				Children = new List<ConfigurableDictionaryNode> { memberNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {rootNode});
+			var result = ConfiguredXHTMLGenerator.PropertyType.InvalidProperty;
+			// SUT
+			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(interfaceNode));
+			Assert.That(result, Is.EqualTo(ConfiguredXHTMLGenerator.PropertyType.PrimitiveType));
+		}
+
+		[Test]
+		public void GetPropertyTypeForConfigurationNode_FirstParentInterfacePropertyIsUsable()
+		{
+			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			var interfaceNode = new ConfigurableDictionaryNode { FieldDescription = "TestMoForm" };
+			var memberNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "RootMember",
+				Children = new List<ConfigurableDictionaryNode> { interfaceNode }
+			};
+			var rootNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
+				Children = new List<ConfigurableDictionaryNode> { memberNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {rootNode});
+			var result = ConfiguredXHTMLGenerator.PropertyType.InvalidProperty;
+			// SUT
+			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(interfaceNode));
+			Assert.That(result, Is.EqualTo(ConfiguredXHTMLGenerator.PropertyType.MoFormType));
+		}
+
+		[Test]
+		public void GetPropertyTypeForConfigurationNode_SecondParentInterfacePropertyIsUsable()
+		{
+			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			var interfaceNode = new ConfigurableDictionaryNode { FieldDescription = "TestIcmObject" };
+			var memberNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "RootMember",
+				Children = new List<ConfigurableDictionaryNode> { interfaceNode }
+			};
+			var rootNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
+				Children = new List<ConfigurableDictionaryNode> { memberNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {rootNode});
+			var result = ConfiguredXHTMLGenerator.PropertyType.InvalidProperty;
+			// SUT
+			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(interfaceNode));
+			Assert.That(result, Is.EqualTo(ConfiguredXHTMLGenerator.PropertyType.CmObjectType));
+		}
+
+		[Test]
+		public void GetPropertyTypeForConfigurationNode_GrandparentInterfacePropertyIsUsable()
+		{
+			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			var interfaceNode = new ConfigurableDictionaryNode { FieldDescription = "TestCollection" };
+			var memberNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "RootMember",
+				Children = new List<ConfigurableDictionaryNode> { interfaceNode }
+			};
+			var rootNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
+				Children = new List<ConfigurableDictionaryNode> { memberNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {rootNode});
+			var result = ConfiguredXHTMLGenerator.PropertyType.InvalidProperty;
+			// SUT
+			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(interfaceNode));
+			Assert.That(result, Is.EqualTo(ConfiguredXHTMLGenerator.PropertyType.CollectionType));
+		}
+
+		[Test]
+		public void GetPropertyTypeForConfigurationNode_NonInterfaceMemberIsUsable()
+		{
+			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			var stringNodeInClass = new ConfigurableDictionaryNode { FieldDescription = "TestNonInterfaceString" };
+			var memberNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ConcreteMember",
+				Children = new List<ConfigurableDictionaryNode> { stringNodeInClass }
+			};
+			var rootNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
+				Children = new List<ConfigurableDictionaryNode> { memberNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {rootNode});
+			var result = ConfiguredXHTMLGenerator.PropertyType.InvalidProperty;
+			// SUT
+			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(stringNodeInClass));
+			Assert.That(result, Is.EqualTo(ConfiguredXHTMLGenerator.PropertyType.PrimitiveType));
+		}
+
+		[Test]
+		public void GetPropertyTypeForConfigurationNode_InvalidChildDoesNotThrow()
+		{
+			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			var interfaceNode = new ConfigurableDictionaryNode { FieldDescription = "TestCollection" };
+			var memberNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ConcreteMember",
+				SubField = "TestNonInterfaceString",
+				Children = new List<ConfigurableDictionaryNode> { interfaceNode }
+			};
+			var rootNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
+				Children = new List<ConfigurableDictionaryNode> { memberNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {rootNode});
+			var result = ConfiguredXHTMLGenerator.PropertyType.PrimitiveType;
+			// SUT
+			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(interfaceNode));
+			Assert.That(result, Is.EqualTo(ConfiguredXHTMLGenerator.PropertyType.InvalidProperty));
+		}
+
+		[Test]
+		public void GetPropertyTypeForConfigurationNode_SubFieldWorks()
+		{
+			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			var memberNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ConcreteMember",
+				SubField = "TestNonInterfaceString"
+			};
+			var rootNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
+				Children = new List<ConfigurableDictionaryNode> { memberNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {rootNode});
+			var result = ConfiguredXHTMLGenerator.PropertyType.InvalidProperty;
+			// SUT
+			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(memberNode));
+			Assert.That(result, Is.EqualTo(ConfiguredXHTMLGenerator.PropertyType.PrimitiveType));
+		}
+
+		[Test]
+		public void GetPropertyTypeForConfigurationNode_InvalidSubFieldReturnsInvalidProperty()
+		{
+			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			var memberNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ConcreteMember",
+				SubField = "NonExistantSubField"
+			};
+			var rootNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
+				Children = new List<ConfigurableDictionaryNode> { memberNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { rootNode });
+			var result = ConfiguredXHTMLGenerator.PropertyType.PrimitiveType;
+			// SUT
+			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(memberNode));
+			Assert.That(result, Is.EqualTo(ConfiguredXHTMLGenerator.PropertyType.InvalidProperty));
+		}
+
+		[Test]
+		public void GetPropertyTypeForConfigurationNode_InvalidRootThrowsWithMessage()
+		{
+			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			var rootNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SIL.FieldWorks.XWorks.NonExistantClass",
+			};
+			// SUT
+			Assert.Throws<ArgumentException>(() => ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(rootNode)).Message.Contains(rootNode.FieldDescription);
 		}
 
 		private ILexEntry CreateInterestingLexEntry()
@@ -586,4 +815,37 @@ namespace SIL.FieldWorks.XWorks
 			return wsOptions;
 		}
 	}
+
+	#region Test classes and interfaces for testing the reflection code in GetPropertyTypeForConfigurationNode
+	class TestRootClass
+	{
+		public ITestInterface RootMember { get; set; }
+		public TestNonInterface ConcreteMember { get; set; }
+	}
+
+	interface ITestInterface : ITestBaseOne, ITestBaseTwo
+	{
+		String TestString { get; }
+	}
+
+	interface ITestBaseOne
+	{
+		IMoForm TestMoForm { get; }
+	}
+
+	interface ITestBaseTwo : ITestGrandParent
+	{
+		ICmObject TestIcmObject { get; }
+	}
+
+	class TestNonInterface
+	{
+		String TestNonInterfaceString { get; set; }
+	}
+
+	interface ITestGrandParent
+	{
+		Stack<TestRootClass> TestCollection { get; }
+	}
+	#endregion
 }

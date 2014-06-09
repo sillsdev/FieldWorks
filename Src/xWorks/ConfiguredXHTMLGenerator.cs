@@ -4,9 +4,11 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Xml;
 using SIL.CoreImpl;
@@ -23,8 +25,20 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public static class ConfiguredXHTMLGenerator
 	{
+		/// <summary>
+		/// The Assembly that the model Types should be loaded from. Allows test code to introduce a test model.
+		/// </summary>
+		internal static string AssemblyFile { get; set; }
 		private const string PublicIdentifier = @"-//W3C//DTD XHTML 1.1//EN";
 		private const string SystemIdentifier = @"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd";
+
+		/// <summary>
+		/// Static initializer setting the AssemblyFile to the default Fieldworks model dll.
+		/// </summary>
+		static ConfiguredXHTMLGenerator()
+		{
+			AssemblyFile = "FDO";
+		}
 
 		public static string GenerateEntryHtmlWithStyles(ICmObject entry, DictionaryConfigurationModel configuration, Mediator mediator)
 		{
@@ -136,25 +150,34 @@ namespace SIL.FieldWorks.XWorks
 				var subProp = subType.GetProperty(config.SubField);
 				propertyValue = subProp.GetValue(propertyValue, new object[] { });
 			}
-			if(IsCollectionType(propertyValue.GetType()))
+
+			switch(GetPropertyTypeForConfigurationNode(config))
 			{
-				if(!IsCollectionEmpty(propertyValue))
+				case(PropertyType.CollectionType):
 				{
-					GenerateXHTMLForCollection(propertyValue, config, writer, cache);
+					if(!IsCollectionEmpty(propertyValue))
+					{
+						GenerateXHTMLForCollection(propertyValue, config, writer, cache);
+					}
+					return;
 				}
-				return;
-			}
-			if(propertyValue is IMoForm)
-			{
-				GenerateXHTMLForMoForm(propertyValue as IMoForm, config, writer, cache);
-			}
-			else if (propertyValue is ICmObject)
-			{
-				GenerateXHTMLForICmObject(propertyValue as ICmObject, config, writer, cache);
-				return;
+				case(PropertyType.MoFormType):
+				{
+					GenerateXHTMLForMoForm(propertyValue as IMoForm, config, writer, cache);
+					return;
+				}
+				case(PropertyType.CmObjectType):
+				{
+					GenerateXHTMLForICmObject(propertyValue as ICmObject, config, writer, cache);
+					return;
+				}
+				default:
+				{
+					GenerateXHTMLForValue(propertyValue, config, writer, cache);
+					break;
+				}
 			}
 
-			GenerateXHTMLForValue(propertyValue, config, writer, cache);
 			if(config.Children != null)
 			{
 				foreach(var child in config.Children)
@@ -165,6 +188,132 @@ namespace SIL.FieldWorks.XWorks
 					}
 				}
 			}
+		}
+
+		internal enum PropertyType
+		{
+			CollectionType,
+			MoFormType,
+			CmObjectType,
+			PrimitiveType,
+			InvalidProperty
+		}
+
+		/// <summary>
+		/// This method will reflectively return the type that represents the given configuration node as
+		/// described by the ancestry and FieldDescription and SubField properties of each node in it.
+		/// </summary>
+		/// <param name="config"></param>
+		/// <returns></returns>
+		internal static PropertyType GetPropertyTypeForConfigurationNode(ConfigurableDictionaryNode config)
+		{
+			if(config == null)
+			{
+				throw new ArgumentNullException("config", "The configuration node must not be null.");
+			}
+			var lineage = new Stack<ConfigurableDictionaryNode>();
+			// Build a list of the direct line up to the top of the configuration
+			lineage.Push(config);
+			var next = config;
+			while(next.Parent != null)
+			{
+				next = next.Parent;
+				lineage.Push(next);
+			}
+			// pop off the root configuration and read the FieldDescription property to get our starting point
+			var assembly = Assembly.Load(AssemblyFile);
+			var rootNode = lineage.Pop();
+			var lookupType = assembly.GetType(rootNode.FieldDescription);
+			Type fieldType = null;
+			if(lookupType == null)
+			{
+				lookupType = assembly.GetType("SIL.FieldWorks.FDO.DomainImpl." + rootNode.FieldDescription);
+			}
+			if(lookupType == null)
+			{
+				throw new ArgumentException(String.Format(xWorksStrings.InvalidRootConfigurationNode, rootNode.FieldDescription));
+			}
+			// Traverse the configuration reflectively inspecting the types in parent to child order
+			foreach(var node in lineage)
+			{
+				var property = GetProperty(lookupType, node);
+				if(property != null)
+				{
+					fieldType = property.PropertyType;
+				}
+				else
+				{
+					return PropertyType.InvalidProperty;
+				}
+				if(IsCollectionType(fieldType))
+				{
+					// When a node points to a collection all the child nodes operate on individual items in the
+					// collection, so look them up in the type that the collection contains. e.g. IEnumerable<ILexEntry>
+					// gives ILexEntry and IFdoVector<ICmObject> gives ICmObject
+					lookupType = fieldType.GetGenericArguments()[0];
+				}
+				else
+				{
+					lookupType = fieldType;
+				}
+			}
+			if(fieldType == null)
+			{
+				return PropertyType.InvalidProperty;
+			}
+			if(IsCollectionType(fieldType))
+			{
+				return PropertyType.CollectionType;
+			}
+			if(typeof(IMoForm).IsAssignableFrom(fieldType))
+			{
+				return PropertyType.MoFormType;
+			}
+			if(typeof(ICmObject).IsAssignableFrom(fieldType))
+			{
+				return PropertyType.CmObjectType;
+			}
+			return PropertyType.PrimitiveType;
+		}
+
+		/// <summary>
+		/// Return the property info from a given class and node. Will check interface heirarchy for the property
+		/// if <code>lookupType</code> is an interface.
+		/// </summary>
+		/// <param name="lookupType"></param>
+		/// <param name="node"></param>
+		/// <returns></returns>
+		private static PropertyInfo GetProperty(Type lookupType, ConfigurableDictionaryNode node)
+		{
+			string propertyOfInterest;
+			PropertyInfo propInfo;
+			var typesToCheck = new Stack<Type>();
+			typesToCheck.Push(lookupType);
+			do
+			{
+				var current = typesToCheck.Pop();
+				propertyOfInterest = node.FieldDescription;
+				// if there is a SubField we need to use the type of the FieldDescription
+				// for the rest of this method so set current to the FieldDescription type.
+				if(node.SubField != null)
+				{
+					var property = current.GetProperty(node.FieldDescription);
+					propertyOfInterest = node.SubField;
+					if(property != null)
+					{
+						current = property.PropertyType;
+					}
+				}
+				propInfo = current.GetProperty(propertyOfInterest, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+				if(propInfo == null)
+				{
+					foreach(var i in current.GetInterfaces())
+					{
+						typesToCheck.Push(i);
+					}
+				}
+			} while(propInfo == null && typesToCheck.Count > 0);
+			return propInfo;
 		}
 
 		private static void GenerateXHTMLForMoForm(IMoForm moForm, ConfigurableDictionaryNode config, XmlWriter writer, FdoCache cache)
@@ -251,8 +400,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="writer"></param>
 		private static void WriteCollectionItemClassAttribute(ConfigurableDictionaryNode config, XmlWriter writer)
 		{
-			// chop the pluralization off the parent class
 			var collectionName = CssGenerator.GetClassAttributeForConfig(config);
+			// chop the pluralization off the parent class
 			writer.WriteAttributeString("class", collectionName.Substring(0, collectionName.Length - 1).ToLower());
 		}
 
@@ -264,7 +413,7 @@ namespace SIL.FieldWorks.XWorks
 		private static bool IsCollectionType(Type entryType)
 		{
 			//Some of our string types smell like collections but don't really act like them, so we handle them seperately
-			return !typeof(IMultiStringAccessor).IsAssignableFrom(entryType) &&
+			return !typeof(IMultiStringAccessor).IsAssignableFrom(entryType) && !typeof(String).IsAssignableFrom(entryType) &&
 				(typeof(IEnumerable).IsAssignableFrom(entryType) || typeof(IFdoVector).IsAssignableFrom(entryType));
 		}
 

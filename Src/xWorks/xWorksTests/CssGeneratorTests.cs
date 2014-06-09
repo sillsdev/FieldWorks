@@ -47,6 +47,12 @@ namespace SIL.FieldWorks.XWorks
 		private const int PadBottom = 30;
 		private const int FontSize = 10000;
 
+		[SetUp]
+		public void ResetAssemblyFile()
+		{
+			ConfiguredXHTMLGenerator.AssemblyFile = "FDO";
+		}
+
 		[Test]
 		public void GenerateCssForConfiguration_NullModelThrowsNullArgument()
 		{
@@ -57,16 +63,17 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateCssForConfiguration_SimpleConfigurationGeneratesValidCss()
 		{
 			var headwordNode = new ConfigurableDictionaryNode
-				{
-					FieldDescription = "HeadWord",
-					Label = "Headword",
-					DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" })
-				};
+			{
+				FieldDescription = "HeadWord",
+				Label = "Headword",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" })
+			};
 			var mainEntryNode = new ConfigurableDictionaryNode
-				{
-					Children = new List<ConfigurableDictionaryNode> { headwordNode },
-					FieldDescription = "LexEntry"
-				};
+			{
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				FieldDescription = "LexEntry"
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
 
 			var model = new DictionaryConfigurationModel();
 			model.Parts = new List<ConfigurableDictionaryNode> { mainEntryNode };
@@ -96,6 +103,7 @@ namespace SIL.FieldWorks.XWorks
 				Children = new List<ConfigurableDictionaryNode> { headwordNode },
 				FieldDescription = "LexEntry"
 			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
 
 			var model = new DictionaryConfigurationModel();
 			model.Parts = new List<ConfigurableDictionaryNode> { mainEntryNode };
@@ -170,10 +178,11 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_ConfigWithCharStyleWorks()
 		{
+			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
 			GenerateStyle("Dictionary-Headword");
 			var headwordNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "HeadWord",
+				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
 				Label = "Headword",
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
 				Style = "Dictionary-Headword"
@@ -189,6 +198,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_CharStyleWsOverrideWorks()
 		{
+			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
 			var style = GenerateStyle("WsStyleTest");
 			var fontInfo = new FontInfo();
 			fontInfo.m_italic.ExplicitValue = false; //override the italic value to false
@@ -196,7 +206,7 @@ namespace SIL.FieldWorks.XWorks
 			style.SetWsStyle(fontInfo, Cache.DefaultVernWs);
 			var headwordNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "HeadWord",
+				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
 				Label = "Headword",
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
 				Style = "WsStyleTest"
@@ -215,10 +225,12 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_ConfigWithParaStyleWorks()
 		{
+			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
 			GenerateParagraphStyle("Dictionary-Paragraph-Border");
 			var minorEntryNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "minor",
+				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
+				ClassNameOverride = "minor",
 				Label = "Minor Entry",
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
 				Style = "Dictionary-Paragraph-Border"
@@ -274,10 +286,12 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForStyleName_DefaultVernMagicConfigResultsInRealLanguageCss()
 		{
+			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
 			GenerateParagraphStyle("VernacularStyle");
 			var testNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "vernholder",
+				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
+				ClassNameOverride = "vernholder",
 				Label = "Vern Holder",
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "vernacular" }),
 				Style = "VernacularStyle"
@@ -295,10 +309,12 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForStyleName_DefaultAnalysisMagicConfigResultsInRealLanguageCss()
 		{
+			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
 			GenerateParagraphStyle("AnalysisStyle");
 			var testNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "analyHolder",
+				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
+				ClassNameOverride = "analyholder",
 				Label = "Analy Holder",
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "analysis" }),
 				Style = "AnalysisStyle"
@@ -317,18 +333,17 @@ namespace SIL.FieldWorks.XWorks
 		public void ClassMappingOverrides_ApplyAtRoot()
 		{
 			var testNode = new ConfigurableDictionaryNode
-				{
-					FieldDescription = "LexEntry",
-					Label = "Bow, Bolo, Ect",
-					IsEnabled = true,
-					ClassNameOverride = "Bolo",
-					Children = new List<ConfigurableDictionaryNode>()
-				};
+			{
+				FieldDescription = "LexEntry",
+				Label = "Bow, Bolo, Ect",
+				IsEnabled = true,
+				ClassNameOverride = "Bolo",
+				Children = new List<ConfigurableDictionaryNode>()
+			};
 			var model = new DictionaryConfigurationModel
-				{
-					Parts = new List<ConfigurableDictionaryNode> { testNode }
-				};
-			var testOverrides = new Dictionary<string, Dictionary<string, string>>();
+			{
+				Parts = new List<ConfigurableDictionaryNode> { testNode }
+			};
 			var factory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			var entry = factory.Create();
 			//SUT
@@ -391,15 +406,61 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void CssAndXhtmlMatchOnSenseCollectionItems()
+		{
+			var glossNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Gloss",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new [] { "en" }),
+				IsEnabled = true
+			};
+			var testSensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { glossNode }
+			};
+			var testEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { testSensesNode }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { testEntryNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {testEntryNode});
+			var factory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
+			var entry = factory.Create();
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			entry.SensesOS.Add(sense);
+			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			sense.Gloss.set_String(wsEn, Cache.TsStrFactory.MakeString("gloss", wsEn));
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.That(cssResult, Contains.Substring(".lexentry .senses .sense .gloss"));
+			var xhtmResult = new StringBuilder();
+			using(var XHTMLWriter = XmlWriter.Create(xhtmResult))
+			{
+				ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testEntryNode, XHTMLWriter, Cache);
+				XHTMLWriter.Flush();
+				const string positiveTest = "/*[@class='lexentry']/span[@class='senses']/span[@class='sense']/span[@class='gloss']";
+				AssertThatXmlIn.String(xhtmResult.ToString()).HasSpecifiedNumberOfMatchesForXpath(positiveTest, 1);
+			}
+		}
+
+		[Test]
 		public void GenerateCssForConfiguration_CharStyleSubscriptWorks()
 		{
+			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
 			var style = GenerateStyle("subscript");
 			var fontInfo = new FontInfo();
 			fontInfo.m_superSub.ExplicitValue = FwSuperscriptVal.kssvSub;
 			style.SetWsStyle(fontInfo, Cache.DefaultVernWs);
 			var headwordNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "HeadWord",
+				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
 				Label = "Headword",
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
 				Style = "subscript"
@@ -416,13 +477,14 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_CharStyleSuperscriptWorks()
 		{
+			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
 			var style = GenerateStyle("superscript");
 			var fontInfo = new FontInfo();
 			fontInfo.m_superSub.ExplicitValue = FwSuperscriptVal.kssvSuper;
 			style.SetWsStyle(fontInfo, Cache.DefaultVernWs);
 			var headwordNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "HeadWord",
+				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
 				Label = "Headword",
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
 				Style = "superscript"
@@ -439,6 +501,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_CharStyleBasicUnderlineWorks()
 		{
+			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
 			var style = GenerateStyle("underline");
 			var fontInfo = new FontInfo();
 			fontInfo.m_underline.ExplicitValue = FwUnderlineType.kuntSingle;
@@ -446,7 +509,7 @@ namespace SIL.FieldWorks.XWorks
 			style.SetWsStyle(fontInfo, Cache.DefaultVernWs);
 			var headwordNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "HeadWord",
+				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
 				Label = "Headword",
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
 				Style = "underline"
@@ -463,6 +526,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_CharStyleDoubleUnderlineWorks()
 		{
+			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
 			var style = GenerateStyle("doubleline");
 			var fontInfo = new FontInfo();
 			fontInfo.m_underline.ExplicitValue = FwUnderlineType.kuntDouble;
@@ -470,7 +534,7 @@ namespace SIL.FieldWorks.XWorks
 			style.SetWsStyle(fontInfo, Cache.DefaultVernWs);
 			var headwordNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "HeadWord",
+				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
 				Label = "Headword",
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
 				Style = "doubleline"
@@ -487,6 +551,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_CharStyleDashedUnderlineWorks()
 		{
+			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
 			var style = GenerateStyle("dashed");
 			var fontInfo = new FontInfo();
 			fontInfo.m_underline.ExplicitValue = FwUnderlineType.kuntDashed;
@@ -494,7 +559,7 @@ namespace SIL.FieldWorks.XWorks
 			style.SetWsStyle(fontInfo, Cache.DefaultVernWs);
 			var headwordNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "HeadWord",
+				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
 				Label = "Headword",
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
 				Style = "dashed"
@@ -511,6 +576,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_CharStyleStrikethroughWorks()
 		{
+			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
 			var style = GenerateStyle("strike");
 			var fontInfo = new FontInfo();
 			fontInfo.m_underline.ExplicitValue = FwUnderlineType.kuntStrikethrough;
@@ -518,7 +584,7 @@ namespace SIL.FieldWorks.XWorks
 			style.SetWsStyle(fontInfo, Cache.DefaultVernWs);
 			var headwordNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "HeadWord",
+				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
 				Label = "Headword",
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
 				Style = "strike"
@@ -535,6 +601,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_CharStyleDottedUnderlineWorks()
 		{
+			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
 			var style = GenerateStyle("dotted");
 			var fontInfo = new FontInfo();
 			fontInfo.m_underline.ExplicitValue = FwUnderlineType.kuntDotted;
@@ -542,7 +609,7 @@ namespace SIL.FieldWorks.XWorks
 			style.SetWsStyle(fontInfo, Cache.DefaultVernWs);
 			var headwordNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "HeadWord",
+				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
 				Label = "Headword",
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
 				Style = "dotted"
@@ -559,13 +626,14 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_CharStyleDisableSuperWorks()
 		{
+			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
 			var style = GenerateStyle("notsosuper");
 			var fontInfo = new FontInfo();
 			fontInfo.m_superSub.ExplicitValue = FwSuperscriptVal.kssvOff;
 			style.SetWsStyle(fontInfo, Cache.DefaultVernWs);
 			var headwordNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "HeadWord",
+				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
 				Label = "Headword",
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
 				Style = "notsosuper"
