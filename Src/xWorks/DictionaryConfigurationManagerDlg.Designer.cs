@@ -110,6 +110,7 @@
 			// configurationsListView
 			// 
 			resources.ApplyResources(this.configurationsListView, "configurationsListView");
+			this.configurationsListView.HideSelection = false;
 			this.configurationsListView.LabelEdit = true;
 			this.configurationsListView.MultiSelect = false;
 			this.configurationsListView.Name = "configurationsListView";
