@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -135,6 +136,7 @@ namespace SIL.FieldWorks.XWorks
 			_view.configurationsListView.AfterLabelEdit += OnRenameConfiguration;
 			_view.publicationsListView.ItemChecked += OnCheckPublication;
 			_view.copyButton.Click += OnCopyConfiguration;
+			_view.removeButton.Click += OnDeleteConfiguration;
 			_view.configurationsListView.Items[0].Selected = true;
 		}
 
@@ -297,6 +299,32 @@ namespace SIL.FieldWorks.XWorks
 			Configurations.Add(newConfig);
 
 			return newConfig;
+		}
+
+		/// <summary>
+		/// Remove configuration from list of configurations, and delete the corresponding XML file from disk.
+		/// </summary>
+		internal void DeleteConfiguration(DictionaryConfigurationModel configurationToDelete)
+		{
+			if (configurationToDelete == null)
+				throw new ArgumentNullException();
+			Configurations.Remove(configurationToDelete);
+			if (configurationToDelete.FilePath != null)
+				FileUtils.Delete(configurationToDelete.FilePath);
+		}
+
+		private void OnDeleteConfiguration(object sender, EventArgs eventArgs)
+		{
+			if (SelectedConfiguration == null)
+				return;
+
+			var message = string.Format(xWorksStrings.permanentlyDelete, SelectedConfiguration.Label);
+			var result = MessageBox.Show(message, xWorksStrings.Delete, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+			if (result != DialogResult.Yes)
+				return;
+
+			DeleteConfiguration(SelectedConfiguration);
+			ReLoadConfigurations();
 		}
 	}
 }

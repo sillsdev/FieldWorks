@@ -819,4 +819,11 @@ If you are not the one designated user who adds fields, or you are making some o
     <value>The root node in your configuration is invalid. The field attribute '{0}' must match a class name.</value>
     <comment>low priority for localizing, helpful to developers of dictionary configuration files, hopefully users will never see this.</comment>
   </data>
+	<data name="permanentlyDelete" xml:space="preserve">
+    <value>Are you sure that you want to permanently delete {0}?</value>
+    <comment>Where {0} will be the name of the thing to be deleted, such as a dictionary configuration.</comment>
+  </data>
+	<data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
 </root>

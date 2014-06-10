@@ -6,9 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.FDOTests;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -18,6 +20,20 @@ namespace SIL.FieldWorks.XWorks
 		private DictionaryConfigurationManagerController _controller;
 
 		private readonly string _projectConfigPath = Path.GetTempPath();
+
+		[TestFixtureSetUp]
+		public override void FixtureSetup()
+		{
+			base.FixtureSetup();
+			FileUtils.Manager.SetFileAdapter(new MockFileOS());
+		}
+
+		[TestFixtureTearDown]
+		public override void FixtureTeardown()
+		{
+			FileUtils.Manager.Reset();
+			base.FixtureTeardown();
+		}
 
 		[SetUp]
 		public void Setup()
@@ -250,6 +266,48 @@ namespace SIL.FieldWorks.XWorks
 				Assert.AreEqual(pubs[i], newConfig.Publications[i], "Publications were not copied");
 			}
 			Assert.IsNull(newConfig.FilePath, "Path should be null to signify that it should be generated on rename");
+		}
+
+		[Test]
+		public void DeleteConfigurationRemovesFromList()
+		{
+			var configurationToDelete = _controller.Configurations[0];
+			// SUT
+			_controller.DeleteConfiguration(configurationToDelete);
+
+			Assert.That(!_controller.Configurations.Contains(configurationToDelete), "Should have removed configuration from list of configurations");
+		}
+
+		[Test]
+		public void DeleteConfigurationRemovesFromDisk()
+		{
+			var configurationToDelete = _controller.Configurations[0];
+
+			_controller.GenerateFilePath(configurationToDelete);
+			var pathToConfiguration = configurationToDelete.FilePath;
+			FileUtils.WriteStringtoFile(pathToConfiguration, "file contents", Encoding.UTF8);
+			Assert.That(FileUtils.FileExists(pathToConfiguration), "Unit test not set up right");
+
+			// SUT
+			_controller.DeleteConfiguration(configurationToDelete);
+
+			Assert.That(!FileUtils.FileExists(pathToConfiguration), "File should have been deleted");
+		}
+
+		[Test]
+		public void DeleteConfigurationDoesNotCrashIfNullFilePath()
+		{
+			var configurationToDelete = _controller.Configurations[0];
+			Assert.That(configurationToDelete.FilePath, Is.Null, "Unit test not testing what it used to. Perhaps the code is smarter now.");
+
+			// SUT
+			Assert.DoesNotThrow(()=> _controller.DeleteConfiguration(configurationToDelete), "Don't crash if the FilePath isn't set for some reason.");
+		}
+
+		[Test]
+		public void DeleteConfigurationCrashesOnNullArgument()
+		{
+			Assert.Throws<ArgumentNullException>(() => _controller.DeleteConfiguration(null), "Failed to throw");
 		}
 	}
 }
