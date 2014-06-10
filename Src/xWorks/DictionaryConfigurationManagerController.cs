@@ -11,6 +11,7 @@ using System.Linq;
 using System.Windows.Forms;
 using SIL.Utils;
 using Palaso.Linq;
+using Utils.MessageBoxExLib;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -35,6 +36,8 @@ namespace SIL.FieldWorks.XWorks
 		internal List<string> Publications;
 
 		private readonly ListViewItem _allPublicationsItem;
+
+		private readonly MessageBoxEx _confirmDeletionDialog;
 
 		/// <summary>
 		/// The currently-selected item in the Configurations ListView, or null if none.
@@ -115,6 +118,12 @@ namespace SIL.FieldWorks.XWorks
 				var item = new ListViewItem { Text = publication };
 				_view.publicationsListView.Items.Add(item);
 			}
+
+			_confirmDeletionDialog = MessageBoxExManager.CreateMessageBox("deleteDictionaryConfiguration");
+			_confirmDeletionDialog.Icon = MessageBoxExIcon.Warning;
+			_confirmDeletionDialog.Caption = xWorksStrings.Delete;
+			_confirmDeletionDialog.AddButton(new MessageBoxExButton { IsCancelButton = false, Text = xWorksStrings.Delete, Value = "delete-requested" });
+			_confirmDeletionDialog.AddButton(MessageBoxExButtons.Cancel);
 
 			_view.Shown += OnShowDialog;
 		}
@@ -318,9 +327,10 @@ namespace SIL.FieldWorks.XWorks
 			if (SelectedConfiguration == null)
 				return;
 
-			var message = string.Format(xWorksStrings.permanentlyDelete, SelectedConfiguration.Label);
-			var result = MessageBox.Show(message, xWorksStrings.Delete, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-			if (result != DialogResult.Yes)
+			_confirmDeletionDialog.Text = string.Format(xWorksStrings.permanentlyDelete, SelectedConfiguration.Label);
+			var result = _confirmDeletionDialog.Show(_view);
+
+			if (result != "delete-requested")
 				return;
 
 			DeleteConfiguration(SelectedConfiguration);
