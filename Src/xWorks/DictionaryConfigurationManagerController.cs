@@ -316,7 +316,7 @@ namespace SIL.FieldWorks.XWorks
 		internal void DeleteConfiguration(DictionaryConfigurationModel configurationToDelete)
 		{
 			if (configurationToDelete == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException("configurationToDelete");
 			Configurations.Remove(configurationToDelete);
 			if (configurationToDelete.FilePath != null)
 				FileUtils.Delete(configurationToDelete.FilePath);
