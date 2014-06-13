@@ -346,10 +346,10 @@
 	</Target>
 
 	<PropertyGroup>
-		<!-- bt274 is the FLExBridgeBeta branch build of Chorus for Windows development. Update when appropriate. -->
-		<ChorusDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt274/.lastSuccessful</ChorusDownloadUrl>
-		<!-- bt285 is the FLExBridgeBeta branch build of Chorus for Linux development. Update when appropriate. -->
-		<ChorusDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt285/.lastSuccessful</ChorusDownloadUrl>
+		<!-- bt2 is the master branch build of Chorus for Windows development. Update when appropriate. -->
+		<ChorusDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt2/.lastSuccessful</ChorusDownloadUrl>
+		<!-- bt323 is the master branch build of Chorus for Linux development. Update when appropriate. -->
+		<ChorusDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt323/.lastSuccessful</ChorusDownloadUrl>
 		<!-- fwiw, bt273 is the FLExBridgeBeta branch build of Palaso for Windows development. Update when appropriate. -->
 		<PalasoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt273/.lastSuccessful</PalasoDownloadUrl>
 		<!-- fwiw, bt223 is the master build for Windows development. Using this temporarily to get XWebBrowser. When done with this temp solution, delete this one
@@ -433,7 +433,7 @@
 		<Message Text="Unzipping XULRunner." Condition="'$(OS)'=='Windows_NT'"/>
 		<Unzip ZipFilename="$(fwrt)/Downloads/xulrunner-29.0.en-US.win32.zip" ToDir="$(dir-outputBase)" Condition="'$(OS)'=='Windows_NT'"/>
 
-		<Message Text="Downloading latest successful artifacts from Chorus FLExBridgeBeta build."/>
+		<Message Text="Downloading latest successful artifacts from Chorus master build."/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/Autofac.dll" LocalFilename="$(fwrt)/Downloads/Autofac.dll"/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/Chorus.exe" LocalFilename="$(fwrt)/Downloads/Chorus.exe"/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/ChorusHub.exe" LocalFilename="$(fwrt)/Downloads/ChorusHub.exe" Condition="'$(OS)'=='Unix'"/>
