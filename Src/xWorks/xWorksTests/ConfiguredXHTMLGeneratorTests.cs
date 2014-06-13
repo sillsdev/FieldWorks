@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[TearDown]
-		public void ResetAssemblyFile()
+		public void ResetModelAssembly()
 		{
 			// Specific tests override this, reset to Fdo.dll needed by most tests in the file
 			ConfiguredXHTMLGenerator.AssemblyFile = "FDO";
@@ -154,7 +154,7 @@ namespace SIL.FieldWorks.XWorks
 			var pronunciationsNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "PronunciationsOS",
-				ClassNameOverride = "Pronunciations",
+				CSSClassNameOverride = "Pronunciations",
 				Label = "Speak this",
 				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { locationNode }
@@ -258,16 +258,13 @@ namespace SIL.FieldWorks.XWorks
 					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true }
 				}
 			};
-
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts, IsEnabled = true };
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Senses",
 				Label = "Senses",
 				IsEnabled = true,
-				Children = new List<ConfigurableDictionaryNode>
-				{
-					new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts, IsEnabled = true }
-				}
+				Children = new List<ConfigurableDictionaryNode> { glossNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{

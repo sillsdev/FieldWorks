@@ -127,7 +127,7 @@ namespace SIL.FieldWorks.XWorks
 		/// historical exports, or for other strong reasons which should be documented where the override is defined.
 		/// </summary>
 		[XmlAttribute(AttributeName = "classNameOverride")]
-		public string ClassNameOverride { get; set; }
+		public string CSSClassNameOverride { get; set; }
 
 		/// <summary>
 		/// Clone this node. Point to the same Parent object. Deep-clone Children and DictionaryNodeOptions.

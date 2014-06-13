@@ -332,7 +332,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Makes the target method accessible to XmlViews clients.
 		/// </summary>
 		[VirtualProperty(CellarPropertyType.MultiString)]
-		public VirtualStringAccessor MLPartOfSpeech
+		public ITsMultiString MLPartOfSpeech
 		{
 			get { return new VirtualStringAccessor(this, m_MLPartOfSpeechFlid, PartOfSpeechForWsTSS); }
 		}
@@ -341,7 +341,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Makes the target method accessible to XmlViews clients.
 		/// </summary>
 		[VirtualProperty(CellarPropertyType.MultiString)]
-		public VirtualStringAccessor MLInflectionClass
+		public ITsMultiString MLInflectionClass
 		{
 			get { return new VirtualStringAccessor(this, m_MLInflectionClassFlid, InflectionClassForWsTSS); }
 		}

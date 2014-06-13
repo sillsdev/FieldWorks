@@ -225,7 +225,7 @@ namespace SIL.FieldWorks.XWorks
 			var rootNode = lineage.Pop();
 			var lookupType = assembly.GetType(rootNode.FieldDescription);
 			Type fieldType = null;
-			if(lookupType == null)
+			if(lookupType == null) // If the FieldDescription didn't load prepend the default model namespace and try again
 			{
 				lookupType = assembly.GetType("SIL.FieldWorks.FDO.DomainImpl." + rootNode.FieldDescription);
 			}

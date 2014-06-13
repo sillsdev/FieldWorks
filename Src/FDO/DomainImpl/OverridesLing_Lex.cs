@@ -7961,6 +7961,20 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get { return Owner as LexRefType; }
 		}
 
+		[VirtualProperty(CellarPropertyType.ReferenceCollection, "SenseOrEntry")]
+		public IEnumerable<ISenseOrEntry> ConfigTargets
+		{
+			get
+			{
+				var wrappedTargets = new List<ISenseOrEntry>();
+				if(TargetsRS.Count > 0)
+				{
+					wrappedTargets.AddRange(TargetsRS.Select(target => new SenseOrEntry(target)));
+				}
+				return wrappedTargets;
+			}
+		}
+
 		/// <summary>
 		/// This supports a virtual property for displaying lexical references in a browse column.
 		/// See LT-4859 for justification.
@@ -9186,6 +9200,54 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				{
 					return this.Form.BestVernacularAnalysisAlternative;
 				}
+			}
+		}
+	}
+
+	internal class SenseOrEntry : ISenseOrEntry
+	{
+		public SenseOrEntry(ICmObject target)
+		{
+			Item = target;
+		}
+		private ICmObject Item { get; set; }
+
+		public ITsString HeadWord
+		{
+			get
+			{
+				var entry = Item as ILexEntry;
+				if(entry != null)
+				{
+					return entry.HeadWord;
+				}
+				return ((LexSense)Item).HeadWord;
+			}
+		}
+
+		public IMultiString SummaryDefinition
+		{
+			get
+			{
+				var entry = Item as ILexEntry;
+				if(entry != null)
+				{
+					return entry.SummaryDefinition;
+				}
+				return null;
+			}
+		}
+
+		public IMultiUnicode Gloss
+		{
+			get
+			{
+				var sense = Item as ILexSense;
+				if(sense != null)
+				{
+					return sense.Gloss;
+				}
+				return null;
 			}
 		}
 	}

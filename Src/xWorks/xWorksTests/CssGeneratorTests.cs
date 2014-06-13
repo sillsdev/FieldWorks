@@ -230,7 +230,7 @@ namespace SIL.FieldWorks.XWorks
 			var minorEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
-				ClassNameOverride = "minor",
+				CSSClassNameOverride = "minor",
 				Label = "Minor Entry",
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
 				Style = "Dictionary-Paragraph-Border"
@@ -291,7 +291,7 @@ namespace SIL.FieldWorks.XWorks
 			var testNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
-				ClassNameOverride = "vernholder",
+				CSSClassNameOverride = "vernholder",
 				Label = "Vern Holder",
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "vernacular" }),
 				Style = "VernacularStyle"
@@ -314,7 +314,7 @@ namespace SIL.FieldWorks.XWorks
 			var testNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
-				ClassNameOverride = "analyholder",
+				CSSClassNameOverride = "analyholder",
 				Label = "Analy Holder",
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "analysis" }),
 				Style = "AnalysisStyle"
@@ -337,7 +337,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry",
 				Label = "Bow, Bolo, Ect",
 				IsEnabled = true,
-				ClassNameOverride = "Bolo",
+				CSSClassNameOverride = "Bolo",
 				Children = new List<ConfigurableDictionaryNode>()
 			};
 			var model = new DictionaryConfigurationModel
@@ -368,7 +368,7 @@ namespace SIL.FieldWorks.XWorks
 			var testChildNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "HeadWord",
-				ClassNameOverride = "tailwind",
+				CSSClassNameOverride = "tailwind",
 				IsEnabled = true
 			};
 			var testParentNode = new ConfigurableDictionaryNode
@@ -645,6 +645,136 @@ namespace SIL.FieldWorks.XWorks
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			//make sure that fontinfo with the superscript overrides made it into css
 			VerifyExtraFontInfoInCss(0, FwSuperscriptVal.kssvOff, FwUnderlineType.kuntNone, Color.Black, cssResult);
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_GramInfoFieldsWork()
+		{
+			var pos = new ConfigurableDictionaryNode { FieldDescription = "MLPartOfSpeech" };
+			var inflectionClass = new ConfigurableDictionaryNode { FieldDescription = "MLInflectionClass" };
+			var slots = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Slots",
+				Children =
+					new List<ConfigurableDictionaryNode> {new ConfigurableDictionaryNode { FieldDescription = "Name" } }
+			};
+			var gramInfo = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MorphoSyntaxAnalysisRA",
+				Label = "Gram. Info.",
+				Children = new List<ConfigurableDictionaryNode> { pos, inflectionClass, slots }
+			};
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+				Label = "Senses",
+				Children = new List<ConfigurableDictionaryNode> { gramInfo }
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Label = "Main Entry",
+				Children = new List<ConfigurableDictionaryNode> { senses }
+			};
+
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { entry };
+			DictionaryConfigurationModel.SpecifyParents(model.Parts);
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.That(cssResult, Contains.Substring(".lexentry .senses .sense .morphosyntaxanalysisra .mlpartofspeech"));
+			Assert.That(cssResult, Contains.Substring(".lexentry .senses .sense .morphosyntaxanalysisra .mlinflectionclass"));
+			Assert.That(cssResult, Contains.Substring(".lexentry .senses .sense .morphosyntaxanalysisra .slots .slot .name"));
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_VariantPronunciationFormWorks()
+		{
+			var pronunciationForm = new ConfigurableDictionaryNode { FieldDescription = "Form" };
+			var pronunciations = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				SubField = "PronunciationsOS",
+				Label = "Variant Pronunciations",
+				CSSClassNameOverride = "Pronunciations",
+				Children = new List<ConfigurableDictionaryNode> { pronunciationForm }
+			};
+			var variantForms = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantFormEntryBackRefs",
+				Children = new List<ConfigurableDictionaryNode> { pronunciations }
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { variantForms }
+			};
+
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { entry };
+			DictionaryConfigurationModel.SpecifyParents(model.Parts);
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.That(cssResult, Contains.Substring(".lexentry .variantformentrybackrefs .variantformentrybackref .pronunciations .pronunciation .form"));
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_SenseComplexFormsNotSubEntriesHeadWord()
+		{
+			var form = new ConfigurableDictionaryNode { FieldDescription = "OwningEntry", SubField = "HeadWord", CSSClassNameOverride = "HeadWord"};
+			var complexformsnotsubentries = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ComplexFormsNotSubentries",
+				CSSClassNameOverride = "otherreferencedcomplexforms",
+				Children = new List<ConfigurableDictionaryNode> { form }
+			};
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				Children = new List<ConfigurableDictionaryNode> { complexformsnotsubentries }
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { senses }
+			};
+
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { entry };
+			DictionaryConfigurationModel.SpecifyParents(model.Parts);
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.That(cssResult, Contains.Substring(".lexentry .senses .sense .otherreferencedcomplexforms .otherreferencedcomplexform .headword"));
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_SenseSubEntriesHeadWord()
+		{
+			var form = new ConfigurableDictionaryNode { FieldDescription = "HeadWord" };
+			var subentries = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Subentries",
+				Children = new List<ConfigurableDictionaryNode> { form }
+			};
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				Children = new List<ConfigurableDictionaryNode> { subentries }
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { senses }
+			};
+
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { entry };
+			DictionaryConfigurationModel.SpecifyParents(model.Parts);
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.That(cssResult, Contains.Substring(".lexentry .senses .sense .subentries .subentrie .headword"));
 		}
 
 		[TestFixtureSetUp]

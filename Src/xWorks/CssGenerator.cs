@@ -151,9 +151,9 @@ namespace SIL.FieldWorks.XWorks
 			// write out the FieldDescription as the class name, and append a . followed by the SubField if it is defined.
 			var classAttribute = configNode.FieldDescription +
 										(String.IsNullOrEmpty(configNode.SubField) ? "" : ("." + configNode.SubField));
-			if(!String.IsNullOrEmpty(configNode.ClassNameOverride))
+			if(!String.IsNullOrEmpty(configNode.CSSClassNameOverride))
 			{
-					classAttribute = configNode.ClassNameOverride;
+					classAttribute = configNode.CSSClassNameOverride;
 			}
 			return classAttribute.ToLower();
 		}
