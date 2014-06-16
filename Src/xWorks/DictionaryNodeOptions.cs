@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Serialization;
 
 namespace SIL.FieldWorks.XWorks
@@ -15,7 +16,30 @@ namespace SIL.FieldWorks.XWorks
 	[XmlInclude(typeof(DictionaryNodeListOptions))]
 	[XmlInclude(typeof(DictionaryNodeWritingSystemOptions))]
 	[XmlInclude(typeof(DictionaryNodeComplexFormOptions))]
-	public abstract class DictionaryNodeOptions {}
+	public abstract class DictionaryNodeOptions
+	{
+		/// <summary>
+		/// Deeply clones all members of this <see cref="DictionaryNodeOptions"/>
+		/// </summary>
+		/// <returns>an identical but independent instance of this <see cref="DictionaryNodeOptions"/></returns>
+		public abstract DictionaryNodeOptions DeepClone();
+
+		/// <summary>
+		/// Clones all writable properties, importantly handling strings and primitives
+		/// </summary>
+		/// <param name="target"></param>
+		/// <returns><see cref="target"/>, as a convenience</returns>
+		protected virtual DictionaryNodeOptions DeepCloneInto(DictionaryNodeOptions target)
+		{
+			var properties = GetType().GetProperties();
+			foreach (var property in properties.Where(prop => prop.CanWrite)) // Skip any read-only properties
+			{
+				var originalValue = property.GetValue(this, null);
+				property.SetValue(target, originalValue, null);
+			}
+			return target;
+		}
+	}
 
 	/// <summary>Options for formatting Senses</summary>
 	public class DictionaryNodeSenseOptions : DictionaryNodeOptions
@@ -45,6 +69,11 @@ namespace SIL.FieldWorks.XWorks
 
 		[XmlAttribute(AttributeName = "displayEachSenseInParagraph")]
 		public bool DisplayEachSenseInAParagraph { get; set; }
+
+		public override DictionaryNodeOptions DeepClone()
+		{
+			return DeepCloneInto(new DictionaryNodeSenseOptions());
+		}
 	}
 
 	/// <summary>Options for selecting and ordering items in lists, including Custom Lists and WritingSystem lists</summary>
@@ -91,6 +120,24 @@ namespace SIL.FieldWorks.XWorks
 
 		[XmlElement(ElementName = "Option")]
 		public List<DictionaryNodeOption> Options { get; set; }
+
+		public override DictionaryNodeOptions DeepClone()
+		{
+			return DeepCloneInto(new DictionaryNodeListOptions());
+		}
+
+		protected override DictionaryNodeOptions DeepCloneInto(DictionaryNodeOptions target)
+		{
+			base.DeepCloneInto(target);
+
+			if (Options != null)
+				((DictionaryNodeListOptions)target).Options = Options.Select(dno => new DictionaryNodeOption
+				{
+					Id = dno.Id, IsEnabled = dno.IsEnabled
+				}).ToList();
+
+			return target;
+		}
 	}
 
 	/// <summary>Options for Referenced Complex Forms</summary>
@@ -98,6 +145,11 @@ namespace SIL.FieldWorks.XWorks
 	{
 		[XmlAttribute(AttributeName = "displayEachComplexFormInParagraph")]
 		public bool DisplayEachComplexFormInAParagraph { get; set; }
+
+		public override DictionaryNodeOptions DeepClone()
+		{
+			return DeepCloneInto(new DictionaryNodeComplexFormOptions());
+		}
 	}
 
 	/// <summary>Options for selecting and ordering WritingSystems</summary>
@@ -126,5 +178,23 @@ namespace SIL.FieldWorks.XWorks
 
 		[XmlElement(ElementName = "Option")]
 		public List<DictionaryNodeListOptions.DictionaryNodeOption> Options { get; set; }
+
+		public override DictionaryNodeOptions DeepClone()
+		{
+			return DeepCloneInto(new DictionaryNodeWritingSystemOptions());
+		}
+
+		protected override DictionaryNodeOptions DeepCloneInto(DictionaryNodeOptions target)
+		{
+			base.DeepCloneInto(target);
+
+			if (Options != null)
+				((DictionaryNodeWritingSystemOptions)target).Options = Options.Select(dno => new DictionaryNodeListOptions.DictionaryNodeOption
+				{
+					Id = dno.Id, IsEnabled = dno.IsEnabled
+				}).ToList();
+
+			return target;
+		}
 	}
 }

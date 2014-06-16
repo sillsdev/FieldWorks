@@ -265,6 +265,7 @@
     <Compile Include="DictionaryConfigurationModelTests.cs" />
     <Compile Include="DictionaryConfigViewerStub.cs" />
     <Compile Include="DictionaryDetailsControllerTests.cs" />
+    <Compile Include="DictionaryNodeOptionsTests.cs" />
     <Compile Include="DictionaryPublicationDecoratorTests.cs" />
     <Compile Include="ExportDialogTests.cs" />
     <Compile Include="GenericUITests.cs">

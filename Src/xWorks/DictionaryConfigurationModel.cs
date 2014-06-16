@@ -141,7 +141,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var clone = new DictionaryConfigurationModel();
 
-			// Copy everything over at first, importantly handling strings, bools, and Parent.
+			// Copy everything over at first, importantly handling strings and primitives.
 			var properties = typeof(DictionaryConfigurationModel).GetProperties();
 			foreach (var property in properties.Where(prop => prop.CanWrite)) // Skip any read-only properties
 			{
