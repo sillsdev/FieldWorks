@@ -117,7 +117,7 @@ namespace SIL.FieldWorks.XWorks
 			AssertListWasDeepCloned(orig.Options, clone.Options);
 		}
 
-		private void AssertListWasDeepCloned(List<DictionaryNodeListOptions.DictionaryNodeOption> orig,
+		internal static void AssertListWasDeepCloned(List<DictionaryNodeListOptions.DictionaryNodeOption> orig,
 			List<DictionaryNodeListOptions.DictionaryNodeOption> clone)
 		{
 			Assert.AreNotSame(orig, clone, "Not deep cloned; shallow cloned");

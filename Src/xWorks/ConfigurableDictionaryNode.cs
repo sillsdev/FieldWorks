@@ -161,7 +161,9 @@ namespace SIL.FieldWorks.XWorks
 				clone.Children = clonedChildren;
 			}
 
-			// TODO: Deep-clone DictionaryNodeOptions
+			// Deep-clone DictionaryNodeOptions
+			if (DictionaryNodeOptions != null)
+				clone.DictionaryNodeOptions = DictionaryNodeOptions.DeepClone();
 
 			return clone;
 		}

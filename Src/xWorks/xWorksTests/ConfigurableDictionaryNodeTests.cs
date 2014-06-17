@@ -13,7 +13,7 @@ namespace SIL.FieldWorks.XWorks
 		public void ChildlessCanDeepClone()
 		{
 			var parent = new ConfigurableDictionaryNode();
-			var child = new ConfigurableDictionaryNode() { After = "after", IsEnabled = true, Parent = parent };
+			var child = new ConfigurableDictionaryNode { After = "after", IsEnabled = true, SubField = "sub", IsCustomField = true, Parent = parent };
 			parent.Children = new List<ConfigurableDictionaryNode> { child };
 			// SUT
 			var clone = child.DeepCloneUnderSameParent();
@@ -23,11 +23,14 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void CanDeepClone()
 		{
+			var option = new DictionaryNodeListOptions.DictionaryNodeOption { Id = "option id", IsEnabled = true };
+			var options = new DictionaryNodeListOptions { Options = new List<DictionaryNodeListOptions.DictionaryNodeOption> { option } };
 			var parent = new ConfigurableDictionaryNode();
-			var child = new ConfigurableDictionaryNode() { After = "after", IsEnabled = true, Parent = parent };
-			var grandchild = new ConfigurableDictionaryNode() { Before = "childBefore", Parent = child };
+			var child = new ConfigurableDictionaryNode { Before = "before", IsEnabled = true,  CSSClassNameOverride = "class", Parent = parent };
+			var grandchild = new ConfigurableDictionaryNode { Between = "childBetween", FieldDescription = "FieldDesc", Parent = child };
+			var grandsibling = new ConfigurableDictionaryNode { DictionaryNodeOptions = options, Style = "stylish", LabelSuffix = "1", Parent = parent };
 			parent.Children = new List<ConfigurableDictionaryNode> { child };
-			child.Children = new List<ConfigurableDictionaryNode> { grandchild };
+			child.Children = new List<ConfigurableDictionaryNode> { grandchild, grandsibling };
 			// SUT
 			var clone = child.DeepCloneUnderSameParent();
 			VerifyDuplication(clone, child);
@@ -43,13 +46,32 @@ namespace SIL.FieldWorks.XWorks
 		private static void VerifyDuplicationInner(ConfigurableDictionaryNode clone, ConfigurableDictionaryNode node)
 		{
 			Assert.That(clone.FieldDescription, Is.EqualTo(node.FieldDescription));
+			Assert.That(clone.SubField, Is.EqualTo(node.SubField));
+			Assert.That(clone.CSSClassNameOverride, Is.EqualTo(node.CSSClassNameOverride));
 			Assert.That(clone.Style, Is.EqualTo(node.Style));
 			Assert.That(clone.Before, Is.EqualTo(node.Before));
 			Assert.That(clone.After, Is.EqualTo(node.After));
 			Assert.That(clone.Between, Is.EqualTo(node.Between));
-			Assert.That(clone.DictionaryNodeOptions, Is.EqualTo(node.DictionaryNodeOptions));
+			Assert.That(clone.ReferenceItem, Is.EqualTo(node.ReferenceItem));
 			Assert.That(clone.IsEnabled, Is.EqualTo(node.IsEnabled));
+			Assert.That(clone.IsCustomField, Is.EqualTo(node.IsCustomField));
 			Assert.That(clone.Label, Is.EqualTo(node.Label));
+			// Intentionally-omitted fields: IsDuplicate, LabelSuffix
+
+			if (node.DictionaryNodeOptions == null)
+			{
+				Assert.IsNull(clone.DictionaryNodeOptions);
+			}
+			else
+			{
+				Assert.AreNotSame(node.DictionaryNodeOptions, clone.DictionaryNodeOptions, "Didn't deep-clone");
+				if (node.DictionaryNodeOptions is DictionaryNodeListOptions)
+					DictionaryNodeOptionsTests.AssertListWasDeepCloned(((DictionaryNodeListOptions)node.DictionaryNodeOptions).Options,
+																		((DictionaryNodeListOptions)clone.DictionaryNodeOptions).Options);
+				else if (node.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions)
+					DictionaryNodeOptionsTests.AssertListWasDeepCloned(((DictionaryNodeWritingSystemOptions)node.DictionaryNodeOptions).Options,
+																		((DictionaryNodeWritingSystemOptions)clone.DictionaryNodeOptions).Options);
+			}
 
 			VerifyDuplicationList(clone.Children, node.Children, clone);
 		}
