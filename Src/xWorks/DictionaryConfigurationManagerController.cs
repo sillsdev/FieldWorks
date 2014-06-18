@@ -119,7 +119,8 @@ namespace SIL.FieldWorks.XWorks
 				_view.publicationsListView.Items.Add(item);
 			}
 
-			_confirmDeletionDialog = MessageBoxExManager.CreateMessageBox("deleteDictionaryConfiguration");
+			_confirmDeletionDialog = MessageBoxExManager.GetMessageBox("deleteDictionaryConfiguration") ??
+											 MessageBoxExManager.CreateMessageBox("deleteDictionaryConfiguration");
 			_confirmDeletionDialog.Icon = MessageBoxExIcon.Warning;
 			_confirmDeletionDialog.Caption = xWorksStrings.Delete;
 			_confirmDeletionDialog.AddButton(new MessageBoxExButton { IsCancelButton = false, Text = xWorksStrings.Delete, Value = "delete-requested" });
