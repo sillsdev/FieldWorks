@@ -174,9 +174,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Downloads\Palaso.dll</HintPath>
     </Reference>
-    <Reference Include="ParatextShared, Version=7.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ParatextShared, Version=7.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\DistFiles\ParatextShared.dll</HintPath>
+      <HintPath>..\..\Output\Debug\ParatextShared.dll</HintPath>
     </Reference>
     <Reference Include="PhraseTranslationHelper, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

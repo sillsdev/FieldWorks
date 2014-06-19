@@ -129,7 +129,7 @@
     </Reference>
     <Reference Include="ParatextShared, Version=7.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\DistFiles\ParatextShared.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\ParatextShared.dll</HintPath>
     </Reference>
     <Reference Include="PaToFdoInterfaces, Version=1.0.4031.20876, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

@@ -310,6 +310,7 @@
 		<!-- bt279 is the develop branch build of IPCFramework for Linux development. Update when appropriate. -->
 		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt279/.lastSuccessful</IPCFrameworkDownloadUrl>
 		<ProtoBufNetDownloadUrl>https://protobuf-net.googlecode.com/files/protobuf-net%20r668.zip</ProtoBufNetDownloadUrl>
+		<GoogleDriveDownloadUrl>https://drive.google.com/uc?export=download&amp;id=</GoogleDriveDownloadUrl>
 		<!-- Windows/.Net and Linux/Mono use different extensions for debug information files. -->
 		<DebugInfo Condition="'$(OS)'=='Unix'">dll.mdb</DebugInfo>
 		<DebugInfo Condition="'$(OS)'=='Windows_NT'">pdb</DebugInfo>
@@ -358,6 +359,15 @@
 		<DownloadFile Address="$(ProtoBufNetDownloadUrl)" LocalFilename="$(fwrt)/Downloads/protobuf-net.zip" />
 		<Unzip ZipFilename="$(fwrt)/Downloads/protobuf-net.zip" ToDir="$(fwrt)/Downloads/protobuf-net/" />
 		<Delete Files="$(fwrt)/Downloads/protobuf-net.zip" />
+
+		<Message Text="Downloading ParaTExt DLLs." />
+		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYNnFpV0pnV05hUWc" LocalFilename="$(fwrt)/Downloads/FormattedEditor.dll"/>
+		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYMnVBRUJlbXg3NTg" LocalFilename="$(fwrt)/Downloads/HelpSystem.dll"/>
+		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYNFdPUjR3RU9kVms" LocalFilename="$(fwrt)/Downloads/HtmlEditor.dll"/>
+		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYc1h5Ylc2cEpZR1U" LocalFilename="$(fwrt)/Downloads/NetLoc.dll"/>
+		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYZ0JDa210VzctVE0" LocalFilename="$(fwrt)/Downloads/Paratext.LexicalContracts.dll"/>
+		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYMnIwT3NXN2hZcFk" LocalFilename="$(fwrt)/Downloads/ParatextShared.dll"/>
+		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYUmQ3T292Tkpnd0k" LocalFilename="$(fwrt)/Downloads/Utilities.dll"/>
 	</Target>
 
 	<!-- item group for downloads, to allow easy copying -->
@@ -399,6 +409,13 @@
 		<DownloadedFiles Include="$(fwrt)/Downloads/Ionic.Zip.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/protobuf-net/Full/net30/protobuf-net.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/protobuf-net/Full/mono/protobuf-net.dll" Condition="'$(OS)'=='Unix'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/FormattedEditor.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/HelpSystem.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/HtmlEditor.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/NetLoc.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/Paratext.LexicalContracts.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/ParatextShared.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/Utilities.dll"/>
 	</ItemGroup>
 
 	<Target Name="CopyDlls" DependsOnTargets="downloadDlls">
@@ -421,9 +438,6 @@
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<Copy SourceFiles="$(fwrt)/DistFiles/Commons.Xml.Relaxng.dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
-		<!-- Needed for Flex to access projects from Paratext in the text chooser dialog. -->
-		<Copy SourceFiles="$(fwrt)/DistFiles/Utilities.dll" DestinationFolder="$(dir-outputBase)"
-				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 		<!-- ICU50 dlls -->
 		<Copy SourceFiles="$(fwrt)/DistFiles/icudt50.dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
@@ -433,15 +447,6 @@
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<Copy SourceFiles="$(fwrt)/DistFiles/icu.net.dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
-		<!-- Paratext dlls (ParatextShared.dll and Utilities.dll copy automatically during build) -->
-		<Copy SourceFiles="$(fwrt)/DistFiles/FormattedEditor.dll" DestinationFolder="$(dir-outputBase)"
-				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-		<Copy SourceFiles="$(fwrt)/DistFiles/HelpSystem.dll" DestinationFolder="$(dir-outputBase)"
-				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-		<Copy SourceFiles="$(fwrt)/DistFiles/HtmlEditor.dll" DestinationFolder="$(dir-outputBase)"
-				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-		<Copy SourceFiles="$(fwrt)/DistFiles/NetLoc.dll" DestinationFolder="$(dir-outputBase)"
-				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 		<!-- Hunspell dlls -->
 		<Copy SourceFiles="$(fwrt)/DistFiles/Windows/libhunspell.dll" DestinationFolder="$(dir-outputBase)"
 					SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
