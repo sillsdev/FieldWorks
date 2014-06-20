@@ -1075,6 +1075,38 @@ namespace LexTextControlsTests
 			VerifyExportRanges(xdocRangeFile);
 		}
 
+		/// <summary>
+		/// LT-15467 documents a Flex to WeSay S/R which had pronunciation audio files multiplying like bunny rabbits.
+		/// Make sure the export doesn't make new files when two different references point to the same file.
+		/// </summary>
+		[Test]
+		public void LiftExport_MultipleReferencesToSameMediaFileCausesNoDuplication()
+		{
+			using(var uowHelper = new NonUndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor))
+			{
+				var senseFactory = m_cache.ServiceLocator.GetInstance<ILexSenseFactory>();
+				var pronunciation = m_cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
+				var media = m_cache.ServiceLocator.GetInstance<ICmMediaFactory>().Create();
+				var pronunFile = m_cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+				m_entryIs.PronunciationsOS.Add(pronunciation);
+				pronunciation.MediaFilesOS.Add(media);
+				m_cache.LangProject.PicturesOC.First().FilesOC.Add(pronunFile); // maybe not quite appropriate, but has to be owned somewhere.
+				media.MediaFileRA = pronunFile;
+				var internalPath = Path.Combine(DirectoryFinder.ksMediaDir, kpronunciationFileName);
+				pronunFile.InternalPath = internalPath;
+				var exporter = new LiftExporter(m_cache);
+				var xdoc = new XmlDocument();
+				using(TextWriter w = new StringWriter())
+				{
+					exporter.ExportPicturesAndMedia = true;
+					exporter.ExportLift(w, LiftFolder);
+					xdoc.LoadXml(w.ToString());
+				}
+				VerifyAudio(kpronunciationFileName);
+				VerifyAudio(Path.GetFileNameWithoutExtension(kpronunciationFileName) + "_1" + Path.GetExtension(kpronunciationFileName), false);
+			}
+		}
+
 		[Test]
 		public void LiftExport_MultiParagraphWithAmpersandExports()
 		{
@@ -1608,10 +1640,13 @@ namespace LexTextControlsTests
 			VerifyAudio(kaudioFileName);
 		}
 
-		private void VerifyAudio(string audioFileName)
+		private void VerifyAudio(string audioFileName, bool exists = true)
 		{
 			var liftAudioFolder = Path.Combine(LiftFolder, "audio");
-			Assert.IsTrue(File.Exists(Path.Combine(liftAudioFolder, audioFileName)));
+			var filePath = Path.Combine(liftAudioFolder, audioFileName);
+			var failureMsg = String.Format("{0} should {1}have been found after export", filePath,
+													 exists ? "" : "not ");
+			Assert.AreEqual(exists, File.Exists(filePath), failureMsg);
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",

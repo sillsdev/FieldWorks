@@ -322,7 +322,7 @@ namespace SIL.Utils
 				return false;
 
 			if (String.IsNullOrEmpty(emailAddress))
-				emailAddress = "fieldworks_support@sil.org";
+				emailAddress = "Flex_Errors@sil.org";
 
 			// If the error has a message and a help link, then show that error
 			if (!string.IsNullOrEmpty(error.HelpLink) && error.HelpLink.IndexOf("::/") > 0 &&
