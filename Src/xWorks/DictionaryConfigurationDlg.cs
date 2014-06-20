@@ -59,10 +59,25 @@ namespace SIL.FieldWorks.XWorks
 		{
 			set
 			{
-				//The second parameter is only used if the string data in the first parameter is unusable but it must be
-				//set to a valid Uri
-				((GeckoWebBrowser)m_preview.NativeBrowser).LoadContent(value, "file:///c:/MayNotExist/doesnotmatter.html", "application/xhtml+xml");
-				m_preview.Refresh();
+				// Set the preview content when all else has settled, this is really here so that the preview displays properly on the
+				// initial dialog load. The GeckoWebBrowser is supposed to handle setting the content before it becomes visible, but it
+				// doesn't work
+				EventHandler refreshDelegate = null;
+				refreshDelegate = delegate(object sender, EventArgs e)
+				{
+					// Since we are handling this delayed the dialog may have been closed before we get around to it
+					if(!m_preview.IsDisposed)
+					{
+						// The second parameter is only used if the string data in the first parameter is unusable
+						// but it must be set to a valid Uri
+						((GeckoWebBrowser)m_preview.NativeBrowser).LoadContent(value,
+																								 "file:///c:/MayNotExist/doesnotmatter.html",
+																								 "application/xhtml+xml");
+						m_preview.Refresh();
+						Application.Idle -= refreshDelegate;
+					}
+				};
+				Application.Idle += refreshDelegate;
 			}
 		}
 
@@ -91,6 +106,10 @@ namespace SIL.FieldWorks.XWorks
 		public void SelectConfiguration(DictionaryConfigurationModel configuration)
 		{
 			m_cbDictConfig.SelectedItem = configuration;
+			if(treeControl.Tree.Nodes.Count > 0)
+			{
+				treeControl.Tree.Nodes[0].Expand();
+			}
 		}
 
 		private void m_linkManageConfigurations_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

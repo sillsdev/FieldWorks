@@ -177,7 +177,6 @@ namespace SIL.FieldWorks.XWorks
 			// m_preview
 			// 
 			resources.ApplyResources(this.m_preview, "m_preview");
-			this.m_preview.DocumentText = "<HTML></HTML>\0";
 			this.m_preview.IsWebBrowserContextMenuEnabled = false;
 			this.m_preview.Name = "m_preview";
 			this.m_preview.Url = new System.Uri("about:blank", System.UriKind.Absolute);

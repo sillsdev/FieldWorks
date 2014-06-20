@@ -325,7 +325,7 @@
     <value>0, 0</value>
   </data>
   <data name="treeControl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>305, 558</value>
+    <value>304, 558</value>
   </data>
   <data name="treeControl.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -448,10 +448,10 @@
     <value>1</value>
   </data>
   <data name="tree_Detail_Split.Size" type="System.Drawing.Size, System.Drawing">
-    <value>633, 558</value>
+    <value>632, 558</value>
   </data>
   <data name="tree_Detail_Split.SplitterDistance" type="System.Int32, mscorlib">
-    <value>305</value>
+    <value>304</value>
   </data>
   <data name="tree_Detail_Split.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -487,7 +487,7 @@
     <value>NoControl</value>
   </data>
   <data name="helpButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>549, 3</value>
+    <value>548, 3</value>
   </data>
   <data name="helpButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -514,7 +514,7 @@
     <value>NoControl</value>
   </data>
   <data name="applyButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>468, 3</value>
+    <value>467, 3</value>
   </data>
   <data name="applyButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -541,7 +541,7 @@
     <value>NoControl</value>
   </data>
   <data name="cancelButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>387, 3</value>
+    <value>386, 3</value>
   </data>
   <data name="cancelButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -568,7 +568,7 @@
     <value>NoControl</value>
   </data>
   <data name="okButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>306, 3</value>
+    <value>305, 3</value>
   </data>
   <data name="okButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -598,7 +598,7 @@
     <value>3, 3</value>
   </data>
   <data name="buttonLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>627, 37</value>
+    <value>626, 37</value>
   </data>
   <data name="buttonLayoutPanel.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -628,7 +628,7 @@
     <value>1</value>
   </data>
   <data name="treeDetail_Button_Split.Size" type="System.Drawing.Size, System.Drawing">
-    <value>633, 602</value>
+    <value>632, 602</value>
   </data>
   <data name="treeDetail_Button_Split.SplitterDistance" type="System.Int32, mscorlib">
     <value>558</value>
@@ -661,7 +661,7 @@
     <value>1</value>
   </data>
   <data name="manageConfigs_treeDetailButton_split.Size" type="System.Drawing.Size, System.Drawing">
-    <value>633, 687</value>
+    <value>632, 687</value>
   </data>
   <data name="manageConfigs_treeDetailButton_split.SplitterDistance" type="System.Int32, mscorlib">
     <value>81</value>
@@ -688,7 +688,13 @@
     <value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>633, 687</value>
+    <value>634, 687</value>
+  </data>
+  <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>350, 515</value>
+  </data>
+  <data name="$this.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 2, 0</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>{0} Configuration Dialog</value>
