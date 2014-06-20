@@ -1092,7 +1092,7 @@ namespace LexTextControlsTests
 				pronunciation.MediaFilesOS.Add(media);
 				m_cache.LangProject.PicturesOC.First().FilesOC.Add(pronunFile); // maybe not quite appropriate, but has to be owned somewhere.
 				media.MediaFileRA = pronunFile;
-				var internalPath = Path.Combine(DirectoryFinder.ksMediaDir, kpronunciationFileName);
+				var internalPath = Path.Combine(FdoFileHelper.ksMediaDir, kpronunciationFileName);
 				pronunFile.InternalPath = internalPath;
 				var exporter = new LiftExporter(m_cache);
 				var xdoc = new XmlDocument();

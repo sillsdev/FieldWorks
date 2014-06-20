@@ -103,7 +103,8 @@
 			Configuration="$(config-capital)" Target="$(make-target)"
 			BuildRoot="$(fwrt)"
 			WorkingDirectory="$(fwrt)/Src/Graphite/GrEngine"/>
-		<RegFree Executable="$(dir-outputBase)\Graphite.dll" NoTypeLib="$(dir-outputBase)\Graphite.dll" Output="$(dir-outputBase)\Graphite.manifest" />
+		<RegFree Executable="$(dir-outputBase)\Graphite.dll" NoTypeLib="$(dir-outputBase)\Graphite.dll" Output="$(dir-outputBase)\Graphite.manifest"
+			Condition="'$(OS)'=='Windows_NT'" />
 		<Message Text="Finished building GrEngine."/>
 	</Target>
 
@@ -119,7 +120,7 @@
 			Configuration="$(config-capital)" Target="$(make-target)"
 			BuildRoot="$(fwrt)"
 			WorkingDirectory="$(fwrt)/Src/Kernel"/>
-		<RegFree Executable="$(dir-outputBase)\FwKernel.dll" Output="$(dir-outputBase)\FwKernel.manifest" />
+		<RegFree Executable="$(dir-outputBase)\FwKernel.dll" Output="$(dir-outputBase)\FwKernel.manifest" Condition="'$(OS)'=='Windows_NT'" />
 		<Message Text="Finished building FwKernel."/>
 	</Target>
 
@@ -174,7 +175,7 @@
 			Configuration="$(config-capital)" Target="$(make-target)"
 			BuildRoot="$(fwrt)"
 			WorkingDirectory="$(fwrt)/Src/views"/>
-		<RegFree Executable="$(dir-outputBase)\Views.dll" Output="$(dir-outputBase)\Views.manifest" />
+		<RegFree Executable="$(dir-outputBase)\Views.dll" Output="$(dir-outputBase)\Views.manifest" Condition="'$(OS)'=='Windows_NT'" />
 		<Message Text="Finished building Views."/>
 	</Target>
 
