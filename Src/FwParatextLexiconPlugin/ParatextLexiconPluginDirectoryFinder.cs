@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Reflection;
 using Microsoft.Win32;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
@@ -69,12 +70,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		public static string CodeDirectory
 		{
-			get
-			{
-				string defaultDir = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), DirectoryFinder.CompanyName),
-					string.Format("FieldWorks {0}", FdoVersion));
-				return GetDirectory(RootCodeDir, defaultDir);
-			}
+			get { return GetDirectory(RootCodeDir, Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)); }
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
