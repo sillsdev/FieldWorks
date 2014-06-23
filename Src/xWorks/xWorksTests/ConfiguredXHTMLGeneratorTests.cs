@@ -575,6 +575,82 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_MLHeadWordVirtualPropWorks()
+		{
+			var wsOpts = new DictionaryNodeWritingSystemOptions
+			{
+				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				{
+					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "vernacular", IsEnabled = true }
+				}
+			};
+			const string headWord = "mlhw";
+			var mlHeadWordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				CSSClassNameOverride = headWord,
+				DictionaryNodeOptions = wsOpts,
+				IsEnabled = true
+			};
+			const string nters = "nters";
+			var nonTrivialRoots = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "NonTrivialEntryRoots",
+				DictionaryNodeOptions = wsOpts,
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { mlHeadWordNode },
+				CSSClassNameOverride = nters
+			};
+			var otherRefForms = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ComplexFormsNotSubentries",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { nonTrivialRoots },
+				CSSClassNameOverride = "cfns"
+			};
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				Label = "Senses",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { otherRefForms }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { senses },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			// Build up model that will allow for testing of the MLHeadword virtual property under
+			// the NonTrivialEntryRoots back reference field.
+			var entryOne = CreateInterestingLexEntry();
+			var entryTwo = CreateInterestingLexEntry();
+			var entryThree = CreateInterestingLexEntry();
+			const string entryThreeForm = "MLHW";
+			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
+			entryThree.CitationForm.set_String(wsFr, Cache.TsStrFactory.MakeString(entryThreeForm, wsFr));
+			var complexEntryRef = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
+			entryTwo.EntryRefsOS.Add(complexEntryRef);
+			complexEntryRef.RefType = LexEntryRefTags.krtComplexForm;
+			complexEntryRef.ComponentLexemesRS.Add(entryOne.SensesOS[0]);
+			complexEntryRef.ComponentLexemesRS.Add(entryThree);
+			complexEntryRef.PrimaryLexemesRS.Add(entryThree);
+			complexEntryRef.ShowComplexFormsInRS.Add(entryThree);
+			complexEntryRef.ShowComplexFormsInRS.Add(entryOne.SensesOS[0]);
+
+			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				// SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, XHTMLWriter, Cache));
+				XHTMLWriter.Flush();
+				var headwordMatch = String.Format("//span[@class='{0}']//span[@class='{1}' and text()='{2}']",
+															 nters, headWord, entryThreeForm);
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(headwordMatch, 1);
+			}
+		}
+
+		[Test]
 		public void GetPropertyTypeForConfigurationNode_NullConfigurationNodeThrowsNullArgument()
 		{
 			// SUT

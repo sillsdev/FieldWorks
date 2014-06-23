@@ -467,8 +467,12 @@
                     </WritingSystemOptions>
                 </ConfigurationItem>
                 <ConfigurationItem name="Subentry Under Reference" before=" (see under " between=", " after=") " style="Dictionary-CrossReferences" isEnabled="true" field="NonTrivialEntryRoots">
-					<ConfigurationItem name="Form" isEnabled="true" field="HeadWord"/>
-				</ConfigurationItem>
+                    <ConfigurationItem name="Form" isEnabled="true" field="MLHeadWord">
+                        <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+                            <Option id="analysis" isEnabled="true"/>
+                        </WritingSystemOptions>
+                    </ConfigurationItem>
+                </ConfigurationItem>
             </ConfigurationItem>
             <ConfigurationItem name="Subentries" style="Dictionary-Subentry" isEnabled="false" field="Subentries">
 				<ReferenceItem>LexEntry</ReferenceItem>
@@ -545,9 +549,13 @@
 					<Option id="analysis" isEnabled="true"/>
 				</WritingSystemOptions>
 			</ConfigurationItem>
-			<ConfigurationItem name="Subentry Under Reference" before=" (see under " between=", " after=") " style="Dictionary-CrossReferences" isEnabled="true" field="NonTrivialEntryRoots">
-				<ConfigurationItem name="Form" isEnabled="true" field="HeadWord"/>
-			</ConfigurationItem>
+            <ConfigurationItem name="Subentry Under Reference" before=" (see under " between=", " after=") " style="Dictionary-CrossReferences" isEnabled="true" field="NonTrivialEntryRoots">
+                <ConfigurationItem name="Form" isEnabled="true" field="MLHeadWord">
+                    <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+                        <Option id="analysis" isEnabled="true"/>
+                    </WritingSystemOptions>
+                </ConfigurationItem>
+            </ConfigurationItem>
 		</ConfigurationItem>
         <ConfigurationItem name="Pictures" between="  " after=" " style="Dictionary-Pictures" isEnabled="true" field="PicturesOfSenses">
             <ConfigurationItem name="Thumbnail" after=" " isEnabled="true" field="Thumbnail"/>
@@ -1032,9 +1040,13 @@
 							<Option id="analysis" isEnabled="true"/>
 						</WritingSystemOptions>
 					</ConfigurationItem>
-					<ConfigurationItem name="Subentry Under Reference" before=" (see under " between=", " after=") " style="Dictionary-CrossReferences" isEnabled="true" field="NonTrivialEntryRoots">
-						<ConfigurationItem name="Form" isEnabled="true" field="HeadWord"/>
-					</ConfigurationItem>
+                    <ConfigurationItem name="Subentry Under Reference" before=" (see under " between=", " after=") " style="Dictionary-CrossReferences" isEnabled="true" field="NonTrivialEntryRoots">
+                        <ConfigurationItem name="Form" isEnabled="true" field="MLHeadWord">
+                            <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+                                <Option id="analysis" isEnabled="true"/>
+                            </WritingSystemOptions>
+                        </ConfigurationItem>
+                    </ConfigurationItem>
 				</ConfigurationItem>
 				<ConfigurationItem name="Subentries" style="Dictionary-Subentry" isEnabled="false" field="Subentries">
 					<ReferenceItem>LexEntry</ReferenceItem>
@@ -1111,9 +1123,13 @@
 						<Option id="analysis" isEnabled="true"/>
 					</WritingSystemOptions>
 				</ConfigurationItem>
-				<ConfigurationItem name="Subentry Under Reference" before=" (see under " between=", " after=") " style="Dictionary-CrossReferences" isEnabled="true" field="NonTrivialEntryRoots">
-					<ConfigurationItem name="Form" isEnabled="true" field="HeadWord"/>
-				</ConfigurationItem>
+                <ConfigurationItem name="Subentry Under Reference" before=" (see under " between=", " after=") " style="Dictionary-CrossReferences" isEnabled="true" field="NonTrivialEntryRoots">
+                    <ConfigurationItem name="Form" isEnabled="true" field="MLHeadWord">
+                        <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+                            <Option id="analysis" isEnabled="true"/>
+                        </WritingSystemOptions>
+                    </ConfigurationItem>
+                </ConfigurationItem>
 			</ConfigurationItem>
 			<ConfigurationItem name="Pictures" between="  " after=" " style="Dictionary-Pictures" isEnabled="true" field="PicturesOfSenses">
 				<ConfigurationItem name="Thumbnail" after=" " isEnabled="true" field="Thumbnail"/>
@@ -1725,8 +1741,12 @@
                     </WritingSystemOptions>
                 </ConfigurationItem>
                 <ConfigurationItem name="Subentry Under Reference" before=" (see under " between=", " after=") " style="Dictionary-CrossReferences" isEnabled="true" field="NonTrivialEntryRoots">
-					<ConfigurationItem name="Form" isEnabled="true" field="HeadWord"/>
-				</ConfigurationItem>
+                    <ConfigurationItem name="Form" isEnabled="true" field="MLHeadWord">
+                        <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+                            <Option id="analysis" isEnabled="true"/>
+                        </WritingSystemOptions>
+                    </ConfigurationItem>
+                </ConfigurationItem>
             </ConfigurationItem>
             <ConfigurationItem name="Subentries" style="Dictionary-Subentry" isEnabled="false" field="Subentries">
 				<ReferenceItem>LexEntry</ReferenceItem>
@@ -1813,10 +1833,14 @@
 					<Option id="analysis" isEnabled="true"/>
 				</WritingSystemOptions>
 			</ConfigurationItem>
-			<ConfigurationItem name="Subentry Under Reference" before=" (see under " between=", " after=") " style="Dictionary-CrossReferences" isEnabled="true" field="NonTrivialEntryRoots">
-				<ConfigurationItem name="Form" isEnabled="true" field="HeadWord"/>
-			</ConfigurationItem>
-		</ConfigurationItem>
+            <ConfigurationItem name="Subentry Under Reference" before=" (see under " between=", " after=") " style="Dictionary-CrossReferences" isEnabled="true" field="NonTrivialEntryRoots">
+                <ConfigurationItem name="Form" isEnabled="true" field="MLHeadWord">
+                    <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+                        <Option id="analysis" isEnabled="true"/>
+                    </WritingSystemOptions>
+                </ConfigurationItem>
+            </ConfigurationItem>
+        </ConfigurationItem>
 	</ConfigurationItem>
 	<SharedItems/>
 	<AllPublications>true</AllPublications>

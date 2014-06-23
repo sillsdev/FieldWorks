@@ -173,7 +173,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				default:
 				{
-					GenerateXHTMLForValue(propertyValue, config, writer, cache);
+					GenerateXHTMLForValue(field, propertyValue, config, writer, cache);
 					break;
 				}
 			}
@@ -443,11 +443,12 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// This method generates XHTML content for a given object
 		/// </summary>
-		/// <param name="propertyValue"></param>
+		/// <param name="field">This is the object that owns the property, needed to look up writing system info for virtual string fields</param>
+		/// <param name="propertyValue">data to generate xhtml for</param>
 		/// <param name="config"></param>
 		/// <param name="writer"></param>
 		/// <param name="cache"></param>
-		private static void GenerateXHTMLForValue(object propertyValue, ConfigurableDictionaryNode config, XmlWriter writer, FdoCache cache)
+		private static void GenerateXHTMLForValue(object field, object propertyValue, ConfigurableDictionaryNode config, XmlWriter writer, FdoCache cache)
 		{
 			if(propertyValue is ITsString)
 			{
@@ -468,6 +469,10 @@ namespace SIL.FieldWorks.XWorks
 			else if(propertyValue is DateTime)
 			{
 				WriteElementContents(((DateTime)propertyValue).ToLongDateString(), config, writer);
+			}
+			else if(propertyValue is IMultiAccessorBase)
+			{
+				GenerateXHTMLForVirtualStrings((ICmObject)field, (IMultiAccessorBase)propertyValue, config, writer, cache);
 			}
 			else
 			{
@@ -520,24 +525,72 @@ namespace SIL.FieldWorks.XWorks
 					// use the method in the multi-string to get the right string and set wsId to the used one
 					bestString = multiStringAccessor.GetAlternativeOrBestTss(wsId, out wsId);
 				}
-				if(String.IsNullOrEmpty(bestString.Text))
+				GenerateWsPrefixAndString(config, writer, cache, wsOptions, wsId, bestString);
+			}
+		}
+
+		/// <summary>
+		/// This method will generate an XHTML span with a string for each selected writing system in the
+		/// DictionaryWritingSystemOptions of the configuration that also has data in the given IMultiAccessorBase
+		/// </summary>
+		/// <param name="owningObject">The object used to access the virtual property</param>
+		/// <param name="multiStringAccessor">Virtual Property Accessor</param>
+		/// <param name="config"></param>
+		/// <param name="writer"></param>
+		/// <param name="cache"></param>
+		private static void GenerateXHTMLForVirtualStrings(ICmObject owningObject, IMultiAccessorBase multiStringAccessor,
+																			ConfigurableDictionaryNode config, XmlWriter writer, FdoCache cache)
+		{
+			var wsOptions = config.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+			if(wsOptions == null)
+			{
+				throw new ArgumentException(@"Configuration nodes for MultiString fields should have WritingSystemOptions", "config");
+			}
+			foreach(var option in wsOptions.Options)
+			{
+				if(!option.IsEnabled)
 				{
 					continue;
 				}
-				if(wsOptions.DisplayWritingSystemAbbreviations)
+				var wsId = WritingSystemServices.GetMagicWsIdFromName(option.Id);
+				// The string for the specific wsId in the option, or the best string option in the accessor if the wsId is magic
+				if(wsId == 0)
 				{
-					writer.WriteStartElement("span");
-					writer.WriteStartAttribute("class", "writingsystemprefix");
-					var prefix = ((IWritingSystem)cache.WritingSystemFactory.get_EngineOrNull(wsId)).Abbreviation;
-					writer.WriteString(prefix);
-					writer.WriteEndElement();
+					// This is not a magic writing system, so grab the user requested string
+					wsId = cache.WritingSystemFactory.GetWsFromStr(option.Id);
 				}
+				else
+				{
+					var defaultWs = owningObject.Cache.WritingSystemFactory.get_EngineOrNull(owningObject.Cache.DefaultUserWs);
+					wsId = WritingSystemServices.InterpretWsLabel(owningObject.Cache, option.Id, (IWritingSystem)defaultWs,
+																					owningObject.Hvo, multiStringAccessor.Flid, (IWritingSystem)defaultWs);
+				}
+				var requestedString = multiStringAccessor.get_String(wsId);
+				GenerateWsPrefixAndString(config, writer, cache, wsOptions, wsId, requestedString);
+			}
+		}
+
+		private static void GenerateWsPrefixAndString(ConfigurableDictionaryNode config,
+																		 XmlWriter writer, FdoCache cache, DictionaryNodeWritingSystemOptions wsOptions,
+																		 int wsId, ITsString requestedString)
+		{
+			if(String.IsNullOrEmpty(requestedString.Text))
+			{
+				return;
+			}
+			if(wsOptions.DisplayWritingSystemAbbreviations)
+			{
 				writer.WriteStartElement("span");
-				WriteClassNameAttribute(writer, config);
-				var wsName = cache.WritingSystemFactory.get_EngineOrNull(wsId).Id;
-				GenerateXHTMLForString(bestString, config, writer, cache, wsName);
+				writer.WriteStartAttribute("class", "writingsystemprefix");
+				var prefix = ((IWritingSystem)cache.WritingSystemFactory.get_EngineOrNull(wsId)).Abbreviation;
+				writer.WriteString(prefix);
 				writer.WriteEndElement();
 			}
+			writer.WriteStartElement("span");
+			WriteClassNameAttribute(writer, config);
+			var wsName = cache.WritingSystemFactory.get_EngineOrNull(wsId).Id;
+			GenerateXHTMLForString(requestedString, config, writer, cache, wsName);
+			writer.WriteEndElement();
 		}
 
 		private static void GenerateXHTMLForString(ITsString fieldValue,
