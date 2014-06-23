@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			// For DB4o projects, we need to convert them over to XML. We can't put the
 			// converted project in the same directory so we convert them to a temporary
 			// directory (see FWR-2813).
-			DatabaseFolder = (originalProjType == FDOBackendProviderType.kXML) ? ProjectPath : Path.GetTempPath();
+			DatabaseFolder = (originalProjType == FDOBackendProviderType.kXML || originalProjType == FDOBackendProviderType.kSharedXML) ? ProjectPath : Path.GetTempPath();
 			DestinationFolder = destFolder;
 			BackupTime = DateTime.Now;
 		}
