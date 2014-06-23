@@ -60,15 +60,16 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		private void btnBrowse_Click(object sender, EventArgs e)
 		{
-			using (openFileDialog)
+			using (var openDialog = new OpenFileDialog())
 			{
-				DialogResult result = openFileDialog.ShowDialog();
-				if (result == DialogResult.OK)
+				openDialog.Filter = "Backup files|*.fwbackup|All files|*.*";
+				openDialog.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My FieldWorks", "Backups");
+				if (openDialog.ShowDialog() == DialogResult.OK)
 				{
-					m_restoreFileFullPath = openFileDialog.FileName;
+					m_restoreFileFullPath = openDialog.FileName;
 					if (SetupRestore())
 					{
-						labelSelectedBackupFile.Text = openFileDialog.SafeFileName;
+						labelSelectedBackupFile.Text = openDialog.SafeFileName;
 						textBoxProjectName.Text = m_restoreSettings.Backup.ProjectName;
 						textBoxProjectName.Enabled = true;
 					}
@@ -156,10 +157,12 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			}
 			else if (e is DirectoryNotFoundException)
 			{
-				MessageBox.Show(ActiveForm, e.Message, Strings.ksWarningCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				// this indicates that the project directory does not exist, just ignore
 			}
 			else
+			{
 				throw e;
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -196,13 +199,14 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		{
 			try
 			{
+				var backupSettings = new BackupFileSettings(m_restoreFileFullPath);
 				m_restoreSettings = new RestoreProjectSettings(ParatextLexiconPluginDirectoryFinder.ProjectsDirectory)
 					{
-						Backup = new BackupFileSettings(m_restoreFileFullPath),
-						IncludeConfigurationSettings = true,
-						IncludeLinkedFiles = true,
-						IncludeSupportingFiles = true,
-						IncludeSpellCheckAdditions = true,
+						Backup = backupSettings,
+						IncludeConfigurationSettings = backupSettings.IncludeConfigurationSettings,
+						IncludeLinkedFiles = backupSettings.IncludeLinkedFiles,
+						IncludeSupportingFiles = backupSettings.IncludeSupportingFiles,
+						IncludeSpellCheckAdditions = backupSettings.IncludeSpellCheckAdditions,
 						BackupOfExistingProjectRequested = false
 					};
 			}

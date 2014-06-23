@@ -26,7 +26,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			this.TableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.btnOk = new System.Windows.Forms.Button();
 			this.btnCancel = new System.Windows.Forms.Button();
-			this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.groupBoxRestore = new System.Windows.Forms.GroupBox();
 			this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
 			this.btnBrowse = new System.Windows.Forms.Button();
@@ -67,11 +66,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			resources.ApplyResources(this.btnCancel, "btnCancel");
 			this.btnCancel.Name = "btnCancel";
 			this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-			// 
-			// openFileDialog
-			// 
-			this.openFileDialog.FileName = "openFileDialog1";
-			resources.ApplyResources(this.openFileDialog, "openFileDialog");
 			// 
 			// groupBoxRestore
 			// 
@@ -191,7 +185,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		internal System.Windows.Forms.TableLayoutPanel TableLayoutPanel1;		
 		internal System.Windows.Forms.Button btnOk;
 		internal System.Windows.Forms.Button btnCancel;
-		private System.Windows.Forms.OpenFileDialog openFileDialog;
 		private System.Windows.Forms.GroupBox groupBoxRestore;
 		private System.Windows.Forms.Button btnBrowse;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
