@@ -126,7 +126,7 @@ namespace SIL.FieldWorks.XWorks
 		/// the css and xhtml generated at that node. This field is used to provide alternative class names either to match
 		/// historical exports, or for other strong reasons which should be documented where the override is defined.
 		/// </summary>
-		[XmlAttribute(AttributeName = "classNameOverride")]
+		[XmlAttribute(AttributeName = "cssClassNameOverride")]
 		public string CSSClassNameOverride { get; set; }
 
 		/// <summary>

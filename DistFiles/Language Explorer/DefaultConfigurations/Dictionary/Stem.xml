@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <DictionaryConfiguration name="Stem-based (complex forms as main entries)" version="1" lastModified="2014-05-29">
 	<!-- Main entries in the dictionary have historically been written out with class="entry" -->
-    <ConfigurationItem name="Main Entry" isEnabled="true" field="LexEntry" classNameOverride="entry">
+    <ConfigurationItem name="Main Entry" isEnabled="true" field="LexEntry" cssClassNameOverride="entry">
         <ConfigurationItem name="Headword" between=" " after="  " style="Dictionary-Headword" isEnabled="true" field="HeadWord">
             <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
                 <Option id="vernacular" isEnabled="true"/>
@@ -18,7 +18,7 @@
             </WritingSystemOptions>
         </ConfigurationItem>
         <ConfigurationItem name="Homograph Number" after=" " isEnabled="false" field="HomographNumber"/>
-        <ConfigurationItem name="Pronunciations" between=", " after=" " isEnabled="true" field="PronunciationsOS" classNameOverride="pronunciations">
+        <ConfigurationItem name="Pronunciations" between=", " after=" " isEnabled="true" field="PronunciationsOS" cssClassNameOverride="pronunciations">
             <ConfigurationItem name="Pronunciation" before="[" between=" " after="]" isEnabled="true" field="Form">
                 <WritingSystemOptions writingSystemType="pronunciation" displayWSAbreviation="false">
                     <Option id="pronunciation" isEnabled="true"/>
@@ -666,7 +666,7 @@
         </ConfigurationItem>
     </ConfigurationItem>
 	<!-- Minor entries in the dictionary have historically been written out with class="minorentry" -->
-	<ConfigurationItem name="Minor Entry" after=" " style="Dictionary-Minor" isEnabled="true" field="LexEntry" classNameOverride="minorentry">
+	<ConfigurationItem name="Minor Entry" after=" " style="Dictionary-Minor" isEnabled="true" field="LexEntry" cssClassNameOverride="minorentry">
 		<ListTypeOptions list="minor">
 			<Option isEnabled="true"  id="b0000000-c40e-433e-80b5-31da08771344"/>
 			<Option isEnabled="true"  id="024b62c9-93b3-41a0-ab19-587a0030219a"/>

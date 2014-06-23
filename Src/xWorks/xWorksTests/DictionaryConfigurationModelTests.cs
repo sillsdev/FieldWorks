@@ -386,13 +386,13 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void RootXMLFileValidatesAgainstSchema()
+		public void ShippedFilesValidateAgainstSchema()
 		{
-
-			var modelFile = Path.Combine(Path.Combine(Path.Combine(DirectoryFinder.FlexFolder, "DefaultConfigurations"), "Dictionary"),
-				"Root.xml");
-			//The file does not validate so needs to be corrected for this text to pass.
-			//ValidateAgainstSchema(modelFile);
+			var shippedConfigfolder = Path.Combine(DirectoryFinder.FlexFolder, "DefaultConfigurations", "Dictionary");
+			foreach(var shippedFile in Directory.EnumerateFiles(shippedConfigfolder, "*"+DictionaryConfigurationModel.FileExtension))
+			{
+				ValidateAgainstSchema(shippedFile);
+			}
 		}
 
 		[Test]
