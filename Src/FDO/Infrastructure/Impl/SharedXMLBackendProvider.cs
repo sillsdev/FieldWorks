@@ -197,7 +197,15 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			bool createdNew;
 			m_commitLogMutex = new Mutex(true, MutexName, out createdNew);
 			if (!createdNew)
+			{
+				// Mono does not close the named mutex handle until the process exits, this can cause problems
+				// for some unit tests, so we disable the following check for Mono
+#if !__MonoCS__
 				throw new InvalidOperationException("Cannot create shared XML backend.");
+#else
+				m_commitLogMutex.WaitOne();
+#endif
+			}
 			try
 			{
 				CreateSharedMemory(true);
