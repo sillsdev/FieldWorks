@@ -68,11 +68,12 @@ namespace SIL.FieldWorks.XWorks
 					// Since we are handling this delayed the dialog may have been closed before we get around to it
 					if(!m_preview.IsDisposed)
 					{
-						// The second parameter is only used if the string data in the first parameter is unusable
+						var browser = (GeckoWebBrowser)m_preview.NativeBrowser;
+						// Workaround to prevent the Gecko browser from stealing focus each time we set the PreviewData
+						browser.WebBrowserFocus.Deactivate();
+						// The second parameter is used only if the string data in the first parameter is unusable,
 						// but it must be set to a valid Uri
-						((GeckoWebBrowser)m_preview.NativeBrowser).LoadContent(value,
-																								 "file:///c:/MayNotExist/doesnotmatter.html",
-																								 "application/xhtml+xml");
+						browser.LoadContent(value, "file:///c:/MayNotExist/doesnotmatter.html", "application/xhtml+xml");
 						m_preview.Refresh();
 						Application.Idle -= refreshDelegate;
 					}
