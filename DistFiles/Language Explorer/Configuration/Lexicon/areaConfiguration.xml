@@ -232,15 +232,17 @@
 		<menu id="PaneBar-Dictionary" label="">
 		<!-- *** Put any alignment="right" menus in first. *** -->
 			<menu id="LexEntryPaneMenu" icon="MenuWidget" alignment="right">
-				<menu list="Layouts" inline="true" emptyAllowed="true"
+				<menu list="Configurations" inline="true" emptyAllowed="true"
 					  behavior="singlePropertyAtomicValue" property="DictionaryPublicationLayout"/>
 				<item label="-" translate="do not translate"/>
 				<item command="CmdConfigureDictionary"/>
 			</menu>
 			<menu id="LexEntryPaneMenu" icon="MenuWidget" alignment="left">
+				<item command="CmdShowAllPublications"/>
 				<menu list="Publications" inline="true" emptyAllowed="true"
 					  behavior="singlePropertyAtomicValue" property="SelectedPublication"/>
-				<item command="CmdShowAllPublications"/>
+				<item label="-" translate="do not translate"/> <!-- separator -->
+				<item command="CmdPublicationsJumpToDefault"/>
 			</menu>
 		</menu>
 		<menu id="PaneBar-ReversalEntryDetail" label="">

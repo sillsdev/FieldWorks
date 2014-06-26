@@ -433,6 +433,9 @@
     </Compile>
     <Compile Include="UnicodeCharacterEditingHelper.cs" />
     <Compile Include="WordsUsedOnlyElsewhereFilter.cs" />
+    <Compile Include="XhtmlDocView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="XmlDocConfigureDlg.cs">
       <SubType>Form</SubType>
     </Compile>

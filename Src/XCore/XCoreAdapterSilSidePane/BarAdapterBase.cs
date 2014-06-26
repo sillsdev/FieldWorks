@@ -252,6 +252,11 @@ namespace XCore
 		}
 		protected ToolStripItem CreateMenuItem(ChoiceBase choice, out bool reallyVisible)
 		{
+			if(choice is SeparatorChoice)
+			{
+				reallyVisible = true;
+				return new ToolStripSeparator();
+			}
 			UIItemDisplayProperties display = choice.GetDisplayProperties();
 			reallyVisible = display.Visible;
 

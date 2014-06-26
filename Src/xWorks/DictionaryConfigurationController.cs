@@ -375,6 +375,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void SaveModelHandler(object sender, EventArgs e)
 		{
+			_mediator.PropertyTable.SetProperty("DictionaryPublicationLayout", _model.FilePath, true);
 			foreach (var config in _alternateConfigurations.Values)
 			{
 				config.FilePath = GetProjectConfigLocationForPath(config.FilePath, _mediator);

@@ -46,28 +46,66 @@ namespace SIL.FieldWorks.XWorks
 													 DictionaryConfigurationListener.GetDictionaryConfigurationType(mediator));
 			var previewCssPath = Path.Combine(projectPath, "Preview.css");
 			var stringBuilder = new StringBuilder();
-			using(var XHTMLWriter = XmlWriter.Create(stringBuilder))
-			using(var CssWriter = new StreamWriter(previewCssPath, false))
+			using(var xhtmlWriter = XmlWriter.Create(stringBuilder))
+			using(var cssWriter = new StreamWriter(previewCssPath, false))
 			{
-				XHTMLWriter.WriteDocType("html", PublicIdentifier, null, null);
-				XHTMLWriter.WriteStartElement("html", "http://www.w3.org/1999/xhtml");
-				XHTMLWriter.WriteAttributeString("lang", "utf-8");
-				XHTMLWriter.WriteStartElement("head");
-				XHTMLWriter.WriteStartElement("link");
-				XHTMLWriter.WriteAttributeString("href", "file:///" + previewCssPath);
-				XHTMLWriter.WriteAttributeString("rel", "stylesheet");
-				XHTMLWriter.WriteEndElement();//</link>
-				XHTMLWriter.WriteEndElement(); //</head>
-				XHTMLWriter.WriteStartElement("body");
-				GenerateXHTMLForEntry(entry, configuration.Parts[0], XHTMLWriter, (FdoCache)mediator.PropertyTable.GetValue("cache"));
-				XHTMLWriter.WriteEndElement();//</body>
-				XHTMLWriter.WriteEndElement();//</html>
-				XHTMLWriter.Flush();
-				CssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, mediator));
-				CssWriter.Flush();
+				GenerateOpeningHtml(xhtmlWriter, previewCssPath);
+				GenerateXHTMLForEntry(entry, configuration.Parts[0], xhtmlWriter, (FdoCache)mediator.PropertyTable.GetValue("cache"));
+				GenerateClosingHtml(xhtmlWriter);
+				xhtmlWriter.Flush();
+				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, mediator));
+				cssWriter.Flush();
 			}
 
 			return stringBuilder.ToString();
+		}
+
+		private static void GenerateOpeningHtml(XmlWriter xhtmlWriter, string cssPath)
+		{
+			xhtmlWriter.WriteDocType("html", PublicIdentifier, null, null);
+			xhtmlWriter.WriteStartElement("html", "http://www.w3.org/1999/xhtml");
+			xhtmlWriter.WriteAttributeString("lang", "utf-8");
+			xhtmlWriter.WriteStartElement("head");
+			xhtmlWriter.WriteStartElement("link");
+			xhtmlWriter.WriteAttributeString("href", "file:///" + cssPath);
+			xhtmlWriter.WriteAttributeString("rel", "stylesheet");
+			xhtmlWriter.WriteEndElement(); //</link>
+			xhtmlWriter.WriteEndElement(); //</head>
+			xhtmlWriter.WriteStartElement("body");
+		}
+
+		private static void GenerateClosingHtml(XmlWriter xhtmlWriter)
+		{
+			xhtmlWriter.WriteEndElement(); //</body>
+			xhtmlWriter.WriteEndElement(); //</html>
+		}
+
+		/// <summary>
+		/// Saves the generated content into the given xhtml and css file paths for all the entries in
+		/// the given collection.
+		/// TODO: Generate letter headers based off of the writing system coalation
+		/// </summary>
+		public static void SavePublishedHtmlWithStyles(IEnumerable<int> entryHvos,
+																	  DictionaryConfigurationModel configuration,
+																	  Mediator mediator,
+																	  string xhtmlPath, string cssPath)
+		{
+			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			using(var xhtmlWriter = XmlWriter.Create(xhtmlPath))
+			using(var cssWriter = new StreamWriter(cssPath, false))
+			{
+				GenerateOpeningHtml(xhtmlWriter, cssPath);
+				foreach(var hvo in entryHvos)
+				{
+					var entry = cache.ServiceLocator.GetObject(hvo);
+					//TODO: handle minor entries with the minor entry config.
+					GenerateXHTMLForEntry(entry, configuration.Parts[0], xhtmlWriter, cache);
+				}
+				GenerateClosingHtml(xhtmlWriter);
+				xhtmlWriter.Flush();
+				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, mediator));
+				cssWriter.Flush();
+			}
 		}
 
 		/// <summary>

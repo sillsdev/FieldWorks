@@ -87,7 +87,7 @@ namespace XCore
 	/// it may be used for other things as well. It is used to create a ListChoiceItem which
 	/// in turn is used to create the real corresponding menu item.
 	/// </summary>
-	public struct ListItem : IComparable
+	public class ListItem : IComparable
 	{
 		public string label;
 
@@ -119,4 +119,12 @@ namespace XCore
 		}
 		#endregion
 	}
+
+	/// <summary>
+	/// Used to introduce a separator into a XCore.List
+	/// </summary>
+	public class SeparatorItem : ListItem
+	{
+	}
+
 }

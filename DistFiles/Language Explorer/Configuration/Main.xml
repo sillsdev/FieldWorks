@@ -183,6 +183,9 @@
 		<command id="CmdPOSJumpToDefault" label="Show in Category Edit" message="JumpToTool">
 			<parameters tool="posEdit" className="PartOfSpeech" ownerClass="LangProject" ownerField="PartsOfSpeech" />
 		</command>
+		<command id="CmdPublicationsJumpToDefault" label="Edit Publications" message="JumpToTool">
+			<parameters tool="publicationsEdit" className="ICmPossibility" ownerClass="LangProject" ownerField="PublicationTypes" />
+		</command>
 		<command id="CmdWordPOSJumpToDefault" label="Show Word Category in Category Edit" message="JumpToTool">
 			<parameters tool="posEdit" className="WordPartOfSpeech" ownerClass="LangProject" ownerField="PartsOfSpeech" />
 		</command>
