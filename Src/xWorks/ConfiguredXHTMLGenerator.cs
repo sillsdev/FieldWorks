@@ -42,6 +42,10 @@ namespace SIL.FieldWorks.XWorks
 
 		public static string GenerateEntryHtmlWithStyles(ICmObject entry, DictionaryConfigurationModel configuration, Mediator mediator)
 		{
+			if(entry == null)
+			{
+				throw new ArgumentNullException("entry");
+			}
 			var projectPath = Path.Combine(DirectoryFinder.GetConfigSettingsDir(entry.Cache.ProjectId.ProjectFolder),
 													 DictionaryConfigurationListener.GetDictionaryConfigurationType(mediator));
 			var previewCssPath = Path.Combine(projectPath, "Preview.css");

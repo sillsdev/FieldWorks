@@ -14,6 +14,7 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using XCore;
 
@@ -164,7 +165,7 @@ namespace SIL.FieldWorks.XWorks
 		private void RefreshPreview()
 		{
 			//_mediator should be null only for unit tests which don't need styles
-			if(_mediator != null)
+			if(_mediator != null && _previewEntry != null)
 			{
 				View.PreviewData = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(_previewEntry, _model, _mediator);
 			}
@@ -278,10 +279,11 @@ namespace SIL.FieldWorks.XWorks
 		public DictionaryConfigurationController(IDictionaryConfigurationView view, Mediator mediator, ICmObject previewEntry)
 		{
 			_mediator = mediator;
-			_previewEntry = previewEntry;
+			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			_previewEntry = previewEntry ?? GetDefaultEntryForType(DictionaryConfigurationListener.GetDictionaryConfigurationType(mediator),
+																					 cache);
 			View = view;
 			GetDictionaryChoices(mediator);
-			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			MergeCustomFieldsIntoDictionaryModel(cache, _model);
 			PopulateTreeView(mediator);
 			View.ManageConfigurations += (sender, args) =>
@@ -361,6 +363,32 @@ namespace SIL.FieldWorks.XWorks
 				BuildAndShowOptions(node, mediator);
 			};
 			SelectCurrentConfiguration();
+		}
+
+		/// <summary>
+		/// Returns a default entry for the given configuration type or null if the cache has no items for that type.
+		/// </summary>
+		internal static ICmObject GetDefaultEntryForType(string configurationType, FdoCache cache)
+		{
+			var serviceLocator = cache.ServiceLocator;
+			switch(configurationType)
+			{
+				case "Dictionary":
+				{
+					var entryRepo = serviceLocator.GetInstance<ILexEntryRepository>().AllInstances();
+					// try to find the first entry with a headword not equal to "???"
+					var entryWithHeadword = entryRepo.FirstOrDefault(entry => StringServices.DefaultHomographString() != entry.HeadWord.Text);
+					if(entryWithHeadword == null)
+					{
+						entryWithHeadword = entryRepo.FirstOrDefault();
+					}
+					return entryWithHeadword;
+				}
+				default :
+				{
+					throw new NotImplementedException(String.Format("Default entry for {0} type not implemented.", configurationType));
+				}
+			}
 		}
 
 		private void GetDictionaryChoices(Mediator mediator)

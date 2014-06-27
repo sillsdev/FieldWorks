@@ -171,7 +171,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			foreach(var configFile in configFiles)
 			{
-				using(var fileStream = new FileStream(configFile, FileMode.Open))
+				using(var fileStream = new FileStream(configFile, FileMode.Open, FileAccess.Read))
 				using(var reader = XmlReader.Create(fileStream))
 				{
 					do

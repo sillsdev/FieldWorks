@@ -862,6 +862,12 @@ namespace SIL.FieldWorks.XWorks
 			Assert.Throws<ArgumentException>(() => ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(rootNode)).Message.Contains(rootNode.FieldDescription);
 		}
 
+		[Test]
+		public void GenerateEntryHtmlWithStyles_NullEntryThrowsArgumentNull()
+		{
+			Assert.Throws<ArgumentNullException>(() => ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(null, new DictionaryConfigurationModel(), null));
+		}
+
 		private ILexEntry CreateInterestingLexEntry()
 		{
 			var factory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();

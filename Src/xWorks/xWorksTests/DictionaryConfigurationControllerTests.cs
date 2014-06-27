@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.CoreImpl;
@@ -18,7 +19,7 @@ using XCore;
 namespace SIL.FieldWorks.XWorks
 {
 	[TestFixture]
-	class DictionaryConfigurationControllerTests : MemoryOnlyBackendProviderTestBase
+	class DictionaryConfigurationControllerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private DictionaryConfigurationModel m_model;
 
@@ -830,6 +831,45 @@ namespace SIL.FieldWorks.XWorks
 				//SUT
 				Assert.DoesNotThrow(()=>DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(Cache, model));
 			}
+		}
+
+		[Test]
+		public void GetDefaultEntryForType_ReturnsNullWhenNoLexEntriesForDictionary()
+		{
+			//make sure cache has no LexEntry objects
+			Assert.True(!Cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances().Any());
+			// SUT
+			Assert.IsNull(DictionaryConfigurationController.GetDefaultEntryForType("Dictionary", Cache));
+		}
+
+		[Test]
+		public void GetDefaultEntryForType_ReturnsEntryWithoutHeadwordIfNoItemsHaveHeadwordsForDictionary()
+		{
+			var entryWithoutHeadword = CreateLexEntryWithoutHeadword();
+			// SUT
+			Assert.AreEqual(DictionaryConfigurationController.GetDefaultEntryForType("Dictionary", Cache), entryWithoutHeadword);
+		}
+
+		[Test]
+		public void GetDefaultEntryForType_ReturnsFirstItemWithHeadword()
+		{
+			CreateLexEntryWithoutHeadword();
+			var entryWithHeadword = CreateLexEntryWithHeadword();
+			// SUT
+			Assert.AreEqual(DictionaryConfigurationController.GetDefaultEntryForType("Dictionary", Cache), entryWithHeadword);
+		}
+
+		private ILexEntry CreateLexEntryWithoutHeadword()
+		{
+			return Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+		}
+
+		private ILexEntry CreateLexEntryWithHeadword()
+		{
+			var entryWithHeadword = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
+			entryWithHeadword.CitationForm.set_String(wsFr, Cache.TsStrFactory.MakeString("Headword", wsFr));
+			return entryWithHeadword;
 		}
 
 		private sealed class TestConfigurableDictionaryView : IDictionaryConfigurationView, IDisposable
