@@ -37,30 +37,30 @@ namespace SIL.FieldWorks.XWorks
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PublishToWebonaryDlg));
 			this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this.explanationLabel = new System.Windows.Forms.LinkLabel();
+			this.publishButton = new System.Windows.Forms.Button();
+			this.closeButton = new System.Windows.Forms.Button();
+			this.outputLogTextbox = new System.Windows.Forms.TextBox();
+			this.helpButton = new System.Windows.Forms.Button();
 			this.webonarySettingsGroupbox = new System.Windows.Forms.GroupBox();
 			this.settingsForWebonaryTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+			this.showPasswordCheckBox = new System.Windows.Forms.CheckBox();
 			this.webonaryPasswordTextbox = new System.Windows.Forms.TextBox();
 			this.webonaryUsernameTextbox = new System.Windows.Forms.TextBox();
 			this.webonarySiteNameTextbox = new System.Windows.Forms.TextBox();
 			this.passwordLabel = new System.Windows.Forms.Label();
 			this.usernameLabel = new System.Windows.Forms.Label();
 			this.siteNameLabel = new System.Windows.Forms.Label();
-			this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+			this.webonaryDomainLabel = new System.Windows.Forms.Label();
 			this.publicationGroupBox = new System.Windows.Forms.GroupBox();
 			this.publicationSelectionTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
-			this.publicationLabel = new System.Windows.Forms.Label();
-			this.configurationLabel = new System.Windows.Forms.Label();
-			this.publicationBox = new System.Windows.Forms.ComboBox();
 			this.configurationBox = new System.Windows.Forms.ComboBox();
+			this.publicationBox = new System.Windows.Forms.ComboBox();
+			this.configurationLabel = new System.Windows.Forms.Label();
+			this.publicationLabel = new System.Windows.Forms.Label();
 			this.reversalsLabel = new System.Windows.Forms.Label();
 			this.howManyPubsAlertLabel = new System.Windows.Forms.Label();
 			this.reversalsCheckedListBox = new System.Windows.Forms.CheckedListBox();
-			this.helpButton = new System.Windows.Forms.Button();
-			this.closeButton = new System.Windows.Forms.Button();
-			this.publishButton = new System.Windows.Forms.Button();
-			this.outputLogTextbox = new System.Windows.Forms.TextBox();
-			this.webonaryDomainLabel = new System.Windows.Forms.Label();
-			this.showPasswordCheckBox = new System.Windows.Forms.CheckBox();
+			this.toolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.tableLayoutPanel.SuspendLayout();
 			this.webonarySettingsGroupbox.SuspendLayout();
 			this.settingsForWebonaryTableLayoutPanel.SuspendLayout();
@@ -88,6 +88,32 @@ namespace SIL.FieldWorks.XWorks
 			this.explanationLabel.TabStop = true;
 			this.explanationLabel.UseCompatibleTextRendering = true;
 			// 
+			// publishButton
+			// 
+			resources.ApplyResources(this.publishButton, "publishButton");
+			this.publishButton.Name = "publishButton";
+			this.publishButton.UseVisualStyleBackColor = true;
+			this.publishButton.Click += new System.EventHandler(this.publishButton_Click);
+			// 
+			// closeButton
+			// 
+			resources.ApplyResources(this.closeButton, "closeButton");
+			this.closeButton.Name = "closeButton";
+			this.closeButton.UseVisualStyleBackColor = true;
+			// 
+			// outputLogTextbox
+			// 
+			this.tableLayoutPanel.SetColumnSpan(this.outputLogTextbox, 3);
+			resources.ApplyResources(this.outputLogTextbox, "outputLogTextbox");
+			this.outputLogTextbox.Name = "outputLogTextbox";
+			this.outputLogTextbox.ReadOnly = true;
+			// 
+			// helpButton
+			// 
+			resources.ApplyResources(this.helpButton, "helpButton");
+			this.helpButton.Name = "helpButton";
+			this.helpButton.UseVisualStyleBackColor = true;
+			// 
 			// webonarySettingsGroupbox
 			// 
 			this.tableLayoutPanel.SetColumnSpan(this.webonarySettingsGroupbox, 3);
@@ -108,6 +134,13 @@ namespace SIL.FieldWorks.XWorks
 			this.settingsForWebonaryTableLayoutPanel.Controls.Add(this.siteNameLabel, 0, 0);
 			this.settingsForWebonaryTableLayoutPanel.Controls.Add(this.webonaryDomainLabel, 2, 0);
 			this.settingsForWebonaryTableLayoutPanel.Name = "settingsForWebonaryTableLayoutPanel";
+			// 
+			// showPasswordCheckBox
+			// 
+			resources.ApplyResources(this.showPasswordCheckBox, "showPasswordCheckBox");
+			this.showPasswordCheckBox.Name = "showPasswordCheckBox";
+			this.showPasswordCheckBox.UseVisualStyleBackColor = true;
+			this.showPasswordCheckBox.CheckedChanged += new System.EventHandler(this.showPasswordCheckBox_CheckedChanged);
 			// 
 			// webonaryPasswordTextbox
 			// 
@@ -140,6 +173,11 @@ namespace SIL.FieldWorks.XWorks
 			this.siteNameLabel.Name = "siteNameLabel";
 			this.toolTip.SetToolTip(this.siteNameLabel, resources.GetString("siteNameLabel.ToolTip"));
 			// 
+			// webonaryDomainLabel
+			// 
+			resources.ApplyResources(this.webonaryDomainLabel, "webonaryDomainLabel");
+			this.webonaryDomainLabel.Name = "webonaryDomainLabel";
+			// 
 			// publicationGroupBox
 			// 
 			this.tableLayoutPanel.SetColumnSpan(this.publicationGroupBox, 3);
@@ -160,15 +198,13 @@ namespace SIL.FieldWorks.XWorks
 			this.publicationSelectionTableLayoutPanel.Controls.Add(this.reversalsCheckedListBox, 1, 2);
 			this.publicationSelectionTableLayoutPanel.Name = "publicationSelectionTableLayoutPanel";
 			// 
-			// publicationLabel
+			// configurationBox
 			// 
-			resources.ApplyResources(this.publicationLabel, "publicationLabel");
-			this.publicationLabel.Name = "publicationLabel";
-			// 
-			// configurationLabel
-			// 
-			resources.ApplyResources(this.configurationLabel, "configurationLabel");
-			this.configurationLabel.Name = "configurationLabel";
+			this.publicationSelectionTableLayoutPanel.SetColumnSpan(this.configurationBox, 2);
+			resources.ApplyResources(this.configurationBox, "configurationBox");
+			this.configurationBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.configurationBox.FormattingEnabled = true;
+			this.configurationBox.Name = "configurationBox";
 			// 
 			// publicationBox
 			// 
@@ -176,19 +212,17 @@ namespace SIL.FieldWorks.XWorks
 			resources.ApplyResources(this.publicationBox, "publicationBox");
 			this.publicationBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.publicationBox.FormattingEnabled = true;
-			this.publicationBox.Items.AddRange(new object[] {
-            resources.GetString("publicationBox.Items")});
 			this.publicationBox.Name = "publicationBox";
 			// 
-			// configurationBox
+			// configurationLabel
 			// 
-			this.publicationSelectionTableLayoutPanel.SetColumnSpan(this.configurationBox, 2);
-			resources.ApplyResources(this.configurationBox, "configurationBox");
-			this.configurationBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.configurationBox.FormattingEnabled = true;
-			this.configurationBox.Items.AddRange(new object[] {
-            resources.GetString("configurationBox.Items")});
-			this.configurationBox.Name = "configurationBox";
+			resources.ApplyResources(this.configurationLabel, "configurationLabel");
+			this.configurationLabel.Name = "configurationLabel";
+			// 
+			// publicationLabel
+			// 
+			resources.ApplyResources(this.publicationLabel, "publicationLabel");
+			this.publicationLabel.Name = "publicationLabel";
 			// 
 			// reversalsLabel
 			// 
@@ -207,43 +241,6 @@ namespace SIL.FieldWorks.XWorks
 			resources.ApplyResources(this.reversalsCheckedListBox, "reversalsCheckedListBox");
 			this.reversalsCheckedListBox.FormattingEnabled = true;
 			this.reversalsCheckedListBox.Name = "reversalsCheckedListBox";
-			// 
-			// helpButton
-			// 
-			resources.ApplyResources(this.helpButton, "helpButton");
-			this.helpButton.Name = "helpButton";
-			this.helpButton.UseVisualStyleBackColor = true;
-			// 
-			// closeButton
-			// 
-			resources.ApplyResources(this.closeButton, "closeButton");
-			this.closeButton.Name = "closeButton";
-			this.closeButton.UseVisualStyleBackColor = true;
-			// 
-			// publishButton
-			// 
-			resources.ApplyResources(this.publishButton, "publishButton");
-			this.publishButton.Name = "publishButton";
-			this.publishButton.UseVisualStyleBackColor = true;
-			// 
-			// outputLogTextbox
-			// 
-			this.tableLayoutPanel.SetColumnSpan(this.outputLogTextbox, 3);
-			resources.ApplyResources(this.outputLogTextbox, "outputLogTextbox");
-			this.outputLogTextbox.Name = "outputLogTextbox";
-			this.outputLogTextbox.ReadOnly = true;
-			// 
-			// webonaryDomainLabel
-			// 
-			resources.ApplyResources(this.webonaryDomainLabel, "webonaryDomainLabel");
-			this.webonaryDomainLabel.Name = "webonaryDomainLabel";
-			// 
-			// showPasswordCheckBox
-			// 
-			resources.ApplyResources(this.showPasswordCheckBox, "showPasswordCheckBox");
-			this.showPasswordCheckBox.Name = "showPasswordCheckBox";
-			this.showPasswordCheckBox.UseVisualStyleBackColor = true;
-			this.showPasswordCheckBox.CheckedChanged += new System.EventHandler(this.showPasswordCheckBox_CheckedChanged);
 			// 
 			// PublishToWebonaryDlg
 			// 

@@ -1214,9 +1214,12 @@ namespace SIL.FieldWorks.XWorks
 		public bool OnPublishToWebonary(object command)
 		{
 			CheckDisposed();
-
+			var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+			var reversals = cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances().Select(item => item.Name.BestAnalysisAlternative);
+			var publications =
+				cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p.Name.BestAnalysisAlternative.Text).ToList();
 			// show dialog
-			using (var dialog = new PublishToWebonaryDlg())
+			using (var dialog = new PublishToWebonaryDlg(reversals, new List<string>(), publications))
 			{
 				dialog.ShowDialog();
 			}
