@@ -9,8 +9,12 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using NUnit.Framework;
+using Palaso.IO;
+using Palaso.TestUtilities;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.Utils;
+using FileUtils = SIL.Utils.FileUtils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -26,6 +30,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			base.FixtureSetup();
 			FileUtils.Manager.SetFileAdapter(new MockFileOS());
+
+			FileUtils.EnsureDirectoryExists(Path.Combine(DirectoryFinder.DefaultConfigurations, "Dictionary"));
 		}
 
 		[TestFixtureTearDown]
@@ -54,6 +60,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Configurations = configurations,
 				Publications = publications,
+				_defaultConfigDir = Path.Combine(DirectoryFinder.DefaultConfigurations, "Dictionary")
 			};
 		}
 
@@ -308,6 +315,78 @@ namespace SIL.FieldWorks.XWorks
 		public void DeleteConfigurationCrashesOnNullArgument()
 		{
 			Assert.Throws<ArgumentNullException>(() => _controller.DeleteConfiguration(null), "Failed to throw");
+		}
+
+		[Test]
+		public void DeleteConfigurationResetsForShippedDefaultRatherThanDelete()
+		{
+			_controller.Cache = Cache;
+
+			var shippedConfigurationsPath = Path.Combine(DirectoryFinder.DefaultConfigurations, "Dictionary");
+			var shippedRootDefaultConfigurationPath = Path.Combine(shippedConfigurationsPath, "Root.xml");
+			FileUtils.WriteStringtoFile(shippedRootDefaultConfigurationPath, "shipped root default configuration file contents", Encoding.UTF8);
+
+			var configurationToDelete = _controller.Configurations[0];
+			configurationToDelete.FilePath = Path.Combine("whateverdir","Root.xml");
+			configurationToDelete.Label = "customizedLabel";
+
+			var pathToConfiguration = configurationToDelete.FilePath;
+			FileUtils.WriteStringtoFile(pathToConfiguration, "customized file contents", Encoding.UTF8);
+			Assert.That(FileUtils.FileExists(pathToConfiguration), "Unit test not set up right");
+
+			// SUT
+			_controller.DeleteConfiguration(configurationToDelete);
+
+			Assert.That(FileUtils.FileExists(pathToConfiguration), "File should still be there, not deleted.");
+			Assert.That(configurationToDelete.Label, Is.EqualTo("Root-based (complex forms as subentries)"), "Did not seem to reset configuration to shipped defaults.");
+			Assert.That(_controller.Configurations.Contains(configurationToDelete), Is.True, "Should still have the configuration in the list of configurations");
+
+			// Not asserting that the configurationToDelete.FilePath file contents are reset because that will happen later when it is saved.
+		}
+
+		[Test]
+		public void KnowsWhenNotAShippedDefault()
+		{
+			var configuration = new DictionaryConfigurationModel
+			{
+				Label = "configuration",
+				FilePath = Path.Combine("whateverdir", "somefile.xml")
+			};
+
+			// SUT
+			var claimsToBeDerived = _controller.IsConfigurationACustomizedShippedDefault(configuration);
+
+			Assert.That(claimsToBeDerived, Is.False, "Should not have reported this as a shipped default configuration.");
+		}
+
+		[Test]
+		public void NotAShippedDefaultIfNullFilePath()
+		{
+			var configuration = new DictionaryConfigurationModel
+			{
+				Label = "configuration",
+				FilePath = null
+			};
+
+			// SUT
+			var claimsToBeDerived = _controller.IsConfigurationACustomizedShippedDefault(configuration);
+
+			Assert.That(claimsToBeDerived, Is.False, "Should not have reported this as a shipped default configuration.");
+		}
+
+		[Test]
+		public void KnowsWhenIsAShippedDefault()
+		{
+			var configuration = new DictionaryConfigurationModel
+			{
+				Label = "configuration",
+				FilePath = Path.Combine("whateverdir", "Root.xml")
+			};
+
+			// SUT
+			var claimsToBeDerived = _controller.IsConfigurationACustomizedShippedDefault(configuration);
+
+			Assert.That(claimsToBeDerived, Is.True, "Should have reported this as a shipped default configuration.");
 		}
 	}
 }

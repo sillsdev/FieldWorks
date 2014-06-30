@@ -9,9 +9,16 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.FdoUi;
 using SIL.Utils;
 using Palaso.Linq;
 using Utils.MessageBoxExLib;
+using SIL.FieldWorks.Common.FwUtils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -22,8 +29,8 @@ namespace SIL.FieldWorks.XWorks
 	class DictionaryConfigurationManagerController
 	{
 		private readonly DictionaryConfigurationManagerDlg _view;
-
 		private readonly string _projectConfigDir;
+		internal string _defaultConfigDir;
 
 		/// <summary>
 		/// Set of dictionary configurations (aka "views") in project.
@@ -36,8 +43,8 @@ namespace SIL.FieldWorks.XWorks
 		internal List<string> Publications;
 
 		private readonly ListViewItem _allPublicationsItem;
-
-		private readonly MessageBoxEx _confirmDeletionDialog;
+		internal FdoCache Cache;
+		private Mediator _mediator;
 
 		/// <summary>
 		/// The currently-selected item in the Configurations ListView, or null if none.
@@ -95,13 +102,17 @@ namespace SIL.FieldWorks.XWorks
 			_projectConfigDir = projectConfigDir;
 		}
 
-		public DictionaryConfigurationManagerController(DictionaryConfigurationManagerDlg view,
-			List<DictionaryConfigurationModel> configurations, List<string> publications, string projectConfigDir)
+		public DictionaryConfigurationManagerController(DictionaryConfigurationManagerDlg view, Mediator mediator,
+			List<DictionaryConfigurationModel> configurations, List<string> publications, string projectConfigDir,
+			string defaultConfigDir)
 		{
 			_view = view;
 			Configurations = configurations;
 			Publications = publications;
 			_projectConfigDir = projectConfigDir;
+			_defaultConfigDir = defaultConfigDir;
+			_mediator = mediator;
+			Cache = (FdoCache) _mediator.PropertyTable.GetValue("cache");
 
 			// Add special publication selection for All Publications.
 			_allPublicationsItem = new ListViewItem
@@ -118,13 +129,6 @@ namespace SIL.FieldWorks.XWorks
 				var item = new ListViewItem { Text = publication };
 				_view.publicationsListView.Items.Add(item);
 			}
-
-			_confirmDeletionDialog = MessageBoxExManager.GetMessageBox("deleteDictionaryConfiguration") ??
-											 MessageBoxExManager.CreateMessageBox("deleteDictionaryConfiguration");
-			_confirmDeletionDialog.Icon = MessageBoxExIcon.Warning;
-			_confirmDeletionDialog.Caption = xWorksStrings.Delete;
-			_confirmDeletionDialog.AddButton(new MessageBoxExButton { IsCancelButton = false, Text = xWorksStrings.Delete, Value = "delete-requested" });
-			_confirmDeletionDialog.AddButton(MessageBoxExButtons.Cancel);
 
 			_view.Shown += OnShowDialog;
 		}
@@ -313,11 +317,28 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// Remove configuration from list of configurations, and delete the corresponding XML file from disk.
+		/// Unless the configuration is derived from a shipped default, in which case we'll just reset its data to the factory defaults.
 		/// </summary>
 		internal void DeleteConfiguration(DictionaryConfigurationModel configurationToDelete)
 		{
 			if (configurationToDelete == null)
 				throw new ArgumentNullException("configurationToDelete");
+
+			if (IsConfigurationACustomizedShippedDefault(configurationToDelete))
+			{
+				var origFilePath = configurationToDelete.FilePath;
+				var filenameOfFilePath = Path.GetFileName(origFilePath);
+
+				var pathToShippedFile = Path.Combine(_defaultConfigDir, filenameOfFilePath);
+
+				configurationToDelete.FilePath = pathToShippedFile;
+				// Recreate from shipped XML file.
+				configurationToDelete.Load(Cache);
+				configurationToDelete.FilePath = origFilePath;
+
+				return;
+			}
+
 			Configurations.Remove(configurationToDelete);
 			if (configurationToDelete.FilePath != null)
 				FileUtils.Delete(configurationToDelete.FilePath);
@@ -328,14 +349,41 @@ namespace SIL.FieldWorks.XWorks
 			if (SelectedConfiguration == null)
 				return;
 
-			_confirmDeletionDialog.Text = string.Format(xWorksStrings.permanentlyDelete, SelectedConfiguration.Label);
-			var result = _confirmDeletionDialog.Show(_view);
+			using (var dlg = new ConfirmDeleteObjectDlg(_mediator.HelpTopicProvider))
+			{
+				dlg.WindowTitle = xWorksStrings.Confirm;
+				var kindOfConfiguration = DictionaryConfigurationListener.GetDictionaryConfigurationType(_mediator);
+				dlg.TopBodyText = string.Format("{0} {1}: {2}", kindOfConfiguration,xWorksStrings.Configuration, SelectedConfiguration.Label);
 
-			if (result != "delete-requested")
-				return;
+				if (IsConfigurationACustomizedShippedDefault(SelectedConfiguration))
+				{
+					dlg.TopMessage = xWorksStrings.YouAreResetting;
+					dlg.BottomQuestion = xWorksStrings.WantContinue;
+					dlg.DeleteButtonText = xWorksStrings.Reset;
+				}
+
+				if (dlg.ShowDialog() != DialogResult.Yes)
+					return;
+			}
 
 			DeleteConfiguration(SelectedConfiguration);
 			ReLoadConfigurations();
 		}
+
+		/// <summary>
+		/// Whether a configuration is, or is a customization of, a shipped default configuration,
+		/// such as the shipped Root-based, Stem-based, or Bartholomew configurations.
+		/// </summary>
+		public bool IsConfigurationACustomizedShippedDefault(DictionaryConfigurationModel configuration)
+		{
+			if (configuration.FilePath == null)
+				return false;
+
+			var defaultConfigurationFiles = FileUtils.GetFilesInDirectory(_defaultConfigDir).Select(Path.GetFileName);
+
+			var filename = Path.GetFileName(configuration.FilePath);
+			return defaultConfigurationFiles.Contains(filename);
+		}
+
 	}
 }

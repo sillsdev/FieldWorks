@@ -306,9 +306,9 @@ namespace SIL.FieldWorks.XWorks
 			{
 				using (var dialog = new DictionaryConfigurationManagerDlg())
 				{
-					var configurationManagerController = new DictionaryConfigurationManagerController(dialog,
+					var configurationManagerController = new DictionaryConfigurationManagerController(dialog, _mediator,
 						_alternateConfigurations.Values.ToList(), _model.GetAllPublications(cache),
-						DirectoryFinder.GetConfigSettingsDir(cache.ProjectId.ProjectFolder));
+						_projectConfigDir, _defaultConfigDir);
 					dialog.ShowDialog(View as Form);
 				}
 			};

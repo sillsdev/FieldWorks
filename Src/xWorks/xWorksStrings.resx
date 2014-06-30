@@ -818,20 +818,31 @@ If you are not the one designated user who adds fields, or you are making some o
   <data name="AllEntriesPublication" xml:space="preserve">
     <value>$$all_entries$$</value>
     <comment>Do Not Translate</comment>
-  </data>  
+  </data>
   <data name="InvalidRootConfigurationNode" xml:space="preserve">
     <value>The root node in your configuration is invalid. The field attribute '{0}' must match a class name.</value>
     <comment>low priority for localizing, helpful to developers of dictionary configuration files, hopefully users will never see this.</comment>
   </data>
-  <data name="permanentlyDelete" xml:space="preserve">
-    <value>Are you sure that you want to permanently delete {0}?</value>
-    <comment>Where {0} will be the name of the thing to be deleted, such as a dictionary configuration.</comment>
-  </data>
-  <data name="Delete" xml:space="preserve">
-    <value>Delete</value>
-  </data>
-	<data name="NoConfigsMatchPub" xml:space="preserve">
+  <data name="NoConfigsMatchPub" xml:space="preserve">
     <value>No configurations match the current publication.</value>
     <comment>If a user selects a publication, but has deselected that publication from all their configurations, this will be the content of the dictionary preview pane.</comment>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Reset</value>
+    <comment>As in setting some settings back to what they were before customization.</comment>
+  </data>
+  <data name="YouAreResetting" xml:space="preserve">
+    <value>You are resetting the following to factory defaults:</value>
+  </data>
+  <data name="Configuration" xml:space="preserve">
+    <value>Configuration</value>
+    <comment>A generic description of a Dictionary Configuration or a Reversal Index Configuration.</comment>
+  </data>
+  <data name="WantContinue" xml:space="preserve">
+    <value>Do you want to continue?</value>
+    <comment>whether to continue with the resetting of a configuration</comment>
   </data>
 </root>
