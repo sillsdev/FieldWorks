@@ -10,12 +10,14 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Xml.Serialization;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -52,17 +54,28 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private Dictionary<string, DictionaryConfigurationModel> _alternateConfigurations;
 
-		void SetAlternateDictionaryChoices(Mediator mediator)
-		{
-			var configurationType = DictionaryConfigurationListener.GetDictionaryConfigurationType(mediator);
-			// Figure out what alternate dictionaries are available (eg root-, stem-, ...)
-			// Populate _alternateConfigurations with available models.
-			// Populate view's list of alternate dictionaries with available choices.
-			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
-			var projectConfigDir = Path.Combine(DirectoryFinder.GetConfigSettingsDir(cache.ProjectId.ProjectFolder), configurationType);
-			var defaultConfigDir = Path.Combine(DirectoryFinder.DefaultConfigurations, configurationType);
+		/// <summary>
+		/// Directory where configurations of the current type (Dictionary, Reversal, ...) are stored
+		/// for the project.
+		/// </summary>
+		private string _projectConfigDir;
 
-			var choices = ReadAlternateDictionaryChoices(defaultConfigDir, projectConfigDir);
+		/// <summary>
+		/// Directory where shipped default configurations of the current type (Dictionary, Reversal, ...)
+		/// are stored.
+		/// </summary>
+		internal string _defaultConfigDir;
+
+		/// <summary>
+		/// Figure out what alternate dictionaries are available (eg root-, stem-, ...)
+		/// Populate _alternateConfigurations with available models.
+		/// Populate view's list of alternate dictionaries with available choices.
+		/// </summary>
+		void SetAlternateDictionaryChoices()
+		{
+			var cache = (FdoCache)_mediator.PropertyTable.GetValue("cache");
+
+			var choices = ReadAlternateDictionaryChoices(_defaultConfigDir, _projectConfigDir);
 			_alternateConfigurations = new Dictionary<string, DictionaryConfigurationModel>();
 			foreach(var choice in choices)
 			{
@@ -283,7 +296,10 @@ namespace SIL.FieldWorks.XWorks
 			_previewEntry = previewEntry ?? GetDefaultEntryForType(DictionaryConfigurationListener.GetDictionaryConfigurationType(mediator),
 																					 cache);
 			View = view;
-			GetDictionaryChoices(mediator);
+			_projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(mediator);
+			_defaultConfigDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(mediator);
+			GetDictionaryChoices();
+
 			MergeCustomFieldsIntoDictionaryModel(cache, _model);
 			PopulateTreeView(mediator);
 			View.ManageConfigurations += (sender, args) =>
@@ -391,10 +407,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private void GetDictionaryChoices(Mediator mediator)
+		private void GetDictionaryChoices()
 		{
-			SetAlternateDictionaryChoices(mediator);
-			var lastUsedConfiguration = mediator.PropertyTable.GetStringProperty("LastDictionaryConfiguration", "Root");
+			SetAlternateDictionaryChoices();
+			var lastUsedConfiguration = _mediator.PropertyTable.GetStringProperty("LastDictionaryConfiguration", "Root");
 			// REVIEW (Hasso) 2014.05: could we do this without a dictionary?--yes: combine with SetAltDictChoices, search in loop
 			_model = _alternateConfigurations.ContainsKey(lastUsedConfiguration)
 				? _alternateConfigurations[lastUsedConfiguration]

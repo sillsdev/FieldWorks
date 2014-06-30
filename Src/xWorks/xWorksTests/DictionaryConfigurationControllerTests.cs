@@ -21,6 +21,7 @@ namespace SIL.FieldWorks.XWorks
 	[TestFixture]
 	class DictionaryConfigurationControllerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
+		#region Context
 		private DictionaryConfigurationModel m_model;
 
 		[SetUp]
@@ -34,6 +35,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 
 		}
+		#endregion
 
 		/// <summary>
 		/// This test verifies that PopulateTreeView builds a TreeView that has the same structure as the model it is based on
@@ -872,6 +874,7 @@ namespace SIL.FieldWorks.XWorks
 			return entryWithHeadword;
 		}
 
+		#region Context
 		private sealed class TestConfigurableDictionaryView : IDictionaryConfigurationView, IDisposable
 		{
 			private DictionaryConfigurationTreeControl m_treeControl = new DictionaryConfigurationTreeControl();
@@ -943,5 +946,6 @@ namespace SIL.FieldWorks.XWorks
 				m_customField.UpdateCustomField();
 			}
 		}
+		#endregion
 	}
 }
