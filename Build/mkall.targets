@@ -314,6 +314,7 @@
 		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt279/.lastSuccessful</IPCFrameworkDownloadUrl>
 		<ProtoBufNetDownloadUrl>https://protobuf-net.googlecode.com/files/protobuf-net%20r668.zip</ProtoBufNetDownloadUrl>
 		<GoogleDriveDownloadUrl>https://drive.google.com/uc?export=download&amp;id=</GoogleDriveDownloadUrl>
+		<HermitCrabDownloadUrl>http://build.palaso.org/guestAuth/repository/download/bt410/.lastSuccessful</HermitCrabDownloadUrl>
 		<!-- Windows/.Net and Linux/Mono use different extensions for debug information files. -->
 		<DebugInfo Condition="'$(OS)'=='Unix'">dll.mdb</DebugInfo>
 		<DebugInfo Condition="'$(OS)'=='Windows_NT'">pdb</DebugInfo>
@@ -369,6 +370,12 @@
 		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYZ0JDa210VzctVE0" LocalFilename="$(fwrt)/Downloads/Paratext.LexicalContracts.dll"/>
 		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYMnIwT3NXN2hZcFk" LocalFilename="$(fwrt)/Downloads/ParatextShared.dll"/>
 		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYUmQ3T292Tkpnd0k" LocalFilename="$(fwrt)/Downloads/Utilities.dll"/>
+
+		<Message Text="Downloading latest successful artifacts for HermitCrab." />
+		<DownloadFile Address="$(HermitCrabDownloadUrl)/QuickGraph.dll" LocalFilename="$(fwrt)/Downloads/QuickGraph.dll"/>
+		<DownloadFile Address="$(HermitCrabDownloadUrl)/SIL.Machine.dll" LocalFilename="$(fwrt)/Downloads/SIL.Machine.dll"/>
+		<DownloadFile Address="$(HermitCrabDownloadUrl)/SIL.Collections.dll" LocalFilename="$(fwrt)/Downloads/SIL.Collections.dll"/>
+		<DownloadFile Address="$(HermitCrabDownloadUrl)/SIL.HermitCrab.dll" LocalFilename="$(fwrt)/Downloads/SIL.HermitCrab.dll"/>
 	</Target>
 
 	<!-- item group for downloads, to allow easy copying -->
@@ -415,6 +422,10 @@
 		<DownloadedFiles Include="$(fwrt)/Downloads/Paratext.LexicalContracts.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/ParatextShared.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Utilities.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/QuickGraph.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Machine.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Collections.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.HermitCrab.dll"/>
 	</ItemGroup>
 
 	<Target Name="CopyDlls" DependsOnTargets="downloadDlls">
@@ -432,8 +443,6 @@
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Unix'"/>
 		<!-- Windows dynamically loaded libraries -->
 		<Copy SourceFiles="$(fwrt)/DistFiles/xample.dll" DestinationFolder="$(dir-outputBase)"
-				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
-		<Copy SourceFiles="$(fwrt)/DistFiles/Patr100.dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<Copy SourceFiles="$(fwrt)/DistFiles/Commons.Xml.Relaxng.dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>

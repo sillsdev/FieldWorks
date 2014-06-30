@@ -1104,4 +1104,12 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		IScrImportSet Create(string defaultParaCharsStyleName, string stylesPath);
 	}
+
+	public partial interface IPhBdryMarkerFactory
+	{
+		/// <summary>
+		/// Creates a boundary marker with the specified GUID.
+		/// </summary>
+		IPhBdryMarker Create(Guid guid, IPhPhonemeSet owner);
+	}
 }

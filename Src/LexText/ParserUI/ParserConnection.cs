@@ -83,7 +83,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="sForm">The word form to be parsed</param>
 		/// <param name="fDoTrace">whether a trace is to be run or not</param>
 		/// <param name="sSelectTraceMorphs">list of msa hvos to limit trace to </param>
-		public IAsyncResult BeginTryAWord(string sForm, bool fDoTrace, string sSelectTraceMorphs)
+		public IAsyncResult BeginTryAWord(string sForm, bool fDoTrace, int[] sSelectTraceMorphs)
 		{
 			CheckDisposed();
 

@@ -2668,4 +2668,23 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	}
 
 	#endregion
+
+	#region PhBdryMarkerFactory class
+
+	internal partial class PhBdryMarkerFactory
+	{
+		IPhBdryMarker IPhBdryMarkerFactory.Create(Guid guid, IPhPhonemeSet owner)
+		{
+			if (owner == null) throw new ArgumentNullException("owner");
+
+			int hvo = ((IDataReader) m_cache.ServiceLocator.GetInstance<IDataSetup>()).GetNextRealHvo();
+			int flid = m_cache.MetaDataCache.GetFieldId("PhPhonemeSet", "BoundaryMarkers", false);
+
+			var retval = new PhBdryMarker(m_cache, hvo, guid);
+			owner.BoundaryMarkersOC.Add(retval);
+			return retval;
+		}
+	}
+
+	#endregion
 }

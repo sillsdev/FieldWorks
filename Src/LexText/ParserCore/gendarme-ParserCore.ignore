@@ -14,3 +14,24 @@ R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
 T: SIL.FieldWorks.WordWorks.Parser.ParserUpdateEventArgs
 T: SIL.FieldWorks.WordWorks.Parser.ParserScheduler/ParserWork
 T: SIL.FieldWorks.WordWorks.Parser.HCParserWorker/FwXmlOutput
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# GetEnumerator() returns a reference
+M: System.Collections.IEnumerator SIL.FieldWorks.WordWorks.Parser.HCLoader/<GetInflAffMsaStemNames>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.WordWorks.Parser.HCLoader/<LoadAffixProcessAllomorphs>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.WordWorks.Parser.HCLoader/<GetAffixAllomorphEnvironments>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.WordWorks.Parser.HCLoader/<LoadReduplicationPatterns>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.WordWorks.Parser.HCLoader/<LoadReduplicationOutputActions>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.WordWorks.Parser.HCLoader/<DefaultCompoundingRules>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.WordWorks.Parser.HCLoader/<LoadExoCompoundingRule>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.WordWorks.Parser.HCLoader/<GetMetathesisGroupNames>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.WordWorks.Parser.HCLoader/<Permute>*`1::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.WordWorks.Parser.HCLoader/<AnyPlus>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.WordWorks.Parser.HCLoader/<AnyStar>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.WordWorks.Parser.HCLoader/<LoadPatternNodes>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.WordWorks.Parser.HCLoader/<TokenizeContext>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.WordWorks.Parser.HCLoader/<LoadAllPartsOfSpeech>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.WordWorks.Parser.HCLoader/<LoadAllInflClasses>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.WordWorks.Parser.HCLoader/<LoadMprFeatures>*::System.Collections.IEnumerable.GetEnumerator()

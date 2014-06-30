@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// </summary>
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
 		Justification="m_mediator is a reference")]
-	public class XAmpleTrace : ParserTrace
+	public class XAmpleTrace : IParserTrace
 	{
 		private static ParserTraceUITransform s_traceTransform;
 		private static ParserTraceUITransform TraceTransform
@@ -34,6 +34,17 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (s_traceTransform == null)
 					s_traceTransform = new ParserTraceUITransform("FormatXAmpleTrace");
 				return s_traceTransform;
+			}
+		}
+
+		private static ParserTraceUITransform s_parseTransform;
+		private static ParserTraceUITransform ParseTransform
+		{
+			get
+			{
+				if (s_parseTransform == null)
+					s_parseTransform = new ParserTraceUITransform("FormatXAmpleParse");
+				return s_parseTransform;
 			}
 		}
 
@@ -54,13 +65,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="result">XML string of the XAmple trace output</param>
 		/// <param name="isTrace"></param>
 		/// <returns>URL of the resulting HTML page</returns>
-		public override string CreateResultPage(XDocument result, bool isTrace)
+		public string CreateResultPage(XDocument result, bool isTrace)
 		{
 			ParserTraceUITransform transform;
 			string baseName;
 			if (isTrace)
 			{
-				WordGrammarDebugger = new XAmpleWordGrammarDebugger(m_mediator, result);
 				transform = TraceTransform;
 				baseName = "XAmpleTrace";
 			}

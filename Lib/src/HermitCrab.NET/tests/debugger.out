@@ -1,713 +1,0 @@
-(message (
- <hc6508 fname c:\data\hc\morpher\tests\debugger.in > ) )
-;Test tracing of most things.  (However, tracing of blocking is tested
-; in MRULES).
-(message (
- <hc6508 fname c:\data\hc\morpher\tests\startup.in > ) )
-;Generic startup file for morpher tests.
-;Open a new language for testing purposes (msg 6510):
-(message (
- <hc6510 lname Phonology Test Language > ) )
-;First a morpher_set command, which should result in msg 6502:
-(message (
- <hc6502 var_name '*pfeatures*' > ) )
-;Then we run three load_char_def_table commands, each of
-; which should result in a msg 6501:
-(message (
- <hc6501 table_name table1 > ) )
-(message (
- <hc6501 table_name table2 > ) )
-(message (
- <hc6501 table_name table3 > ) )
-;Now load the strata (msg 6502):
-(message (
- <hc6502 var_name '*strata*' > ) )
-;...and set their ctables (msg 6550):
-(message (
- <hc6550 sname morphophonemic ctable_name table3 > ) )
-(message (
- <hc6550 sname allophonic ctable_name table1 > ) )
-(message (
- <hc6550 sname '*surface*' ctable_name table1 > ) )
-;...their cyclicity (msg 6552):
-(message (
- <hc6552 sname morphophonemic > ) )
-(message (
- <hc6552 sname allophonic > ) )
-;...the order of their prules (msg 6555):
-(message (
- <hc6555 sname morphophonemic > ) )
-(message (
- <hc6555 sname allophonic > ) )
-;...and the order of the mrules (msg 6556):
-(message (
- <hc6556 sname morphophonemic > ) )
-(message (
- <hc6556 sname allophonic > ) )
-;Load in a dictionary file.  Two lex entries are purposely incorrect, and
-; will result in error msgs 6024 and 6009:
-(message (
- <hc6502 var_name '*quit_on_error*' > ) )
-ERROR:hc6024 --- <hc6024 lex_id 3 stratum nonesuch >
-ERROR:hc6009 --- <hc6009 char h string pHhut item 4 ctable_name table1 >
-(message (
- <hc6515 n 56 fname c:\data\hc\morpher\tests\diction.txt > ) )
-(message (
- <hc6502 var_name '*quit_on_error*' > ) )
-(message (
- <hc6521 fname c:\data\hc\morpher\tests\startup.in > ) )
-;Don't let abort make us quit:
-(message (
- <hc6502 var_name '*quit_on_error*' > ) )
-;Set tracing on all rules; should succeed (msg 6539)
-; even though we don't have any rules:
-(message (
- <hc6539  > ) )
-;Load the nat classes (msg 6541):
-(message (
- <hc6541 nat_class_name bilab_cons > ) )
-(message (
- <hc6541 nat_class_name alv_cons > ) )
-(message (
- <hc6541 nat_class_name asp > ) )
-(message (
- <hc6541 nat_class_name noncons > ) )
-;Then load some prules (msg 6505, twice):
-(message (
- <hc6505 rname rule1 > ) )
-(message (
- <hc6505 rname rule2 > ) )
-;List traced morpher rules, expect (() ()):
-(pretty_print (( ) ( ) ) )
-;Now set tracing on a nonexistent rule (error msg m6017):
-ERROR:hc6017 --- <hc6017 rname nonesuch >
-;Now run through the various options on tracing rules, checking each:
-;m6533:
-(message (
- <hc6533 rname rule1 > ) )
-;Test, expect (() (rule1)):
-(pretty_print (( ) (rule1 ) ) )
-;m6534:
-(message (
- <hc6534 rname rule1 > ) )
-;Test, expect ((rule1) ()):
-(pretty_print ((rule1 ) ( ) ) )
-;m6535:
-(message (
- <hc6535 rname rule1 > ) )
-;Test, expect ((rule1) (rule1)):
-(pretty_print ((rule1 ) (rule1 ) ) )
-;m6532:
-(message (
- <hc6532 rname rule1 > ) )
-;Test, expect (() ()):
-(pretty_print (( ) ( ) ) )
-;m6537:
-(message (
- <hc6537  > ) )
-;Test, expect (() (rule1 rule2)):
-(pretty_print (( ) (rule2 rule1 ) ) )
-;m6538:
-(message (
- <hc6538  > ) )
-;Test, expect ((rule1 rule2) ()):
-(pretty_print ((rule2 rule1 ) ( ) ) )
-;m6536:
-(message (
- <hc6536  > ) )
-;Test, expect (() ()):
-(pretty_print (( ) ( ) ) )
-;m6539 (on for all rules in both anal and synth mode, which is where we leave it):
-(message (
- <hc6539  > ) )
-;Test, expect ((rule1 rule2) (rule1 rule2)):
-(pretty_print ((rule2 rule1 ) (rule2 rule1 ) ) )
-;Now we morph a word; should see tracing of rules only:
-(pretty_print
- <trace sh pHit
-  cont (
-   <pua nm rule2
-	in  <lex sh pHit str allophonic >
-	out <lex sh pHit str allophonic >>
-   <pua nm rule1
-	in  <lex sh pHit str allophonic >
-	out <lex sh ppHit str allophonic >>
-   <pa nm rule1
-	in  <lex id 1 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >
-	out <lex id 1 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-   <pa nm rule2
-	in  <lex id 1 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >
-	out <lex id 1 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-   <pa nm rule1
-	in  <lex id 2 sh pit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >
-	out <lex id 2 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-   <pa nm rule2
-	in  <lex id 2 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >
-	out <lex id 2 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-   <pua nm rule2
-	in  <lex sh pit str morphophonemic >
-	out <lex sh pit str morphophonemic >>
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 1 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >
- <lex id 2 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) > ) )
-;Turn off tracing of rules:
-(message (
- <hc6536  > ) )
-;Now turn off tracing of lexical lookup (it's already off, but we should still
-; get msg m6528):
-(message (
- <hc6528  > ) )
-;Turn on tracing of lex lookup (m6527):
-(message (
- <hc6527  > ) )
-;Now we morph a word; should see tracing of lex lookup only:
-(pretty_print
- <trace sh pHit
-  cont (
-   <ll v <lex sh pHit str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh ppHit str allophonic >
-	cont (
-	 <sll real <lex id 1 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) > rf ( )
-	  cont (
-	  )
-	 >
-	 <sll real <lex id 2 sh pit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) > rf ( )
-	  cont (
-	  )
-	 >
-	)
-   >
-   <ll v <lex sh pit str morphophonemic >
-	cont (
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 1 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >
- <lex id 2 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) > ) )
-;Turn tracing of rules back on:
-(message (
- <hc6539  > ) )
-;Now we morph a word; should see tracing of lex lookup and rules both:
-(pretty_print
- <trace sh pHit
-  cont (
-   <ll v <lex sh pHit str '*surface*' >
-	cont (
-	)
-   >
-   <pua nm rule2
-	in  <lex sh pHit str allophonic >
-	out <lex sh pHit str allophonic >>
-   <pua nm rule1
-	in  <lex sh pHit str allophonic >
-	out <lex sh ppHit str allophonic >>
-   <ll v <lex sh ppHit str allophonic >
-	cont (
-	 <sll real <lex id 1 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) > rf ( )
-	  cont (
-	   <pa nm rule1
-		in  <lex id 1 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >
-		out <lex id 1 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-	   <pa nm rule2
-		in  <lex id 1 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >
-		out <lex id 1 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-	  )
-	 >
-	 <sll real <lex id 2 sh pit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) > rf ( )
-	  cont (
-	   <pa nm rule1
-		in  <lex id 2 sh pit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >
-		out <lex id 2 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-	   <pa nm rule2
-		in  <lex id 2 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >
-		out <lex id 2 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-	  )
-	 >
-	)
-   >
-   <pua nm rule2
-	in  <lex sh pit str morphophonemic >
-	out <lex sh pit str morphophonemic >>
-   <ll v <lex sh pit str morphophonemic >
-	cont (
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 1 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >
- <lex id 2 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) > ) )
-;Turn tracing of strata on (msg 6548):
-(message (
- <hc6548  > ) )
-;Morph a word; should see tracing of lex lookup, rules, and strata:
-(pretty_print
- <trace sh pHit
-  cont (
-   <ll v <lex sh pHit str '*surface*' >
-	cont (
-	)
-   >
-   <sua nm allophonic io in
-	lex <lex sh pHit str allophonic >
-	cont (
-	 <pua nm rule2
-	  in  <lex sh pHit str allophonic >
-	  out <lex sh pHit str allophonic >>
-	 <pua nm rule1
-	  in  <lex sh pHit str allophonic >
-	  out <lex sh ppHit str allophonic >>
-	 <ll v <lex sh ppHit str allophonic >
-	  cont (
-	   <sll real <lex id 1 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) > rf ( )
-		cont (
-		 <sa nm allophonic io in
-		  lex <lex id 1 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-		 <pa nm rule1
-		  in  <lex id 1 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >
-		  out <lex id 1 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-		 <pa nm rule2
-		  in  <lex id 1 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >
-		  out <lex id 1 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-		 <sa nm allophonic io out
-		  lex <lex id 1 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-		 <sa nm '*surface*' io in
-		  lex <lex id 1 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-		 <sa nm '*surface*' io out
-		  lex <lex id 1 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-		)
-	   >
-	   <sll real <lex id 2 sh pit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) > rf ( )
-		cont (
-		 <sa nm allophonic io in
-		  lex <lex id 2 sh pit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-		 <pa nm rule1
-		  in  <lex id 2 sh pit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >
-		  out <lex id 2 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-		 <pa nm rule2
-		  in  <lex id 2 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >
-		  out <lex id 2 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-		 <sa nm allophonic io out
-		  lex <lex id 2 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-		 <sa nm '*surface*' io in
-		  lex <lex id 2 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-		 <sa nm '*surface*' io out
-		  lex <lex id 2 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-		)
-	   >
-	  )
-	 >
-	 <sua nm allophonic io out
-	  lex <lex sh ppHit str allophonic >
-	  cont (
-	   <sua nm morphophonemic io in
-		lex <lex sh pit str morphophonemic >
-		cont (
-		 <pua nm rule2
-		  in  <lex sh pit str morphophonemic >
-		  out <lex sh pit str morphophonemic >>
-		 <ll v <lex sh pit str morphophonemic >
-		  cont (
-		  )
-		 >
-		 <sua nm morphophonemic io out
-		  lex <lex sh pit str morphophonemic >
-		  cont (
-		  )
-		 >
-		)
-	   >
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 1 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >
- <lex id 2 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) > ) )
-;Turn off tracing of input of rules:
-(message (
- <hc6502 var_name '*trace_inputs*' > ) )
-;Morph a word; should see tracing like before, except no "in" field on rules:
-(pretty_print
- <trace sh pHit
-  cont (
-   <ll v <lex sh pHit str '*surface*' >
-	cont (
-	)
-   >
-   <sua nm allophonic io in
-	lex <lex sh pHit str allophonic >
-	cont (
-	 <pua nm rule2
-	  out <lex sh pHit str allophonic >>
-	 <pua nm rule1
-	  out <lex sh ppHit str allophonic >>
-	 <ll v <lex sh ppHit str allophonic >
-	  cont (
-	   <sll real <lex id 1 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) > rf ( )
-		cont (
-		 <sa nm allophonic io in
-		  lex <lex id 1 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-		 <pa nm rule1
-		  out <lex id 1 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-		 <pa nm rule2
-		  out <lex id 1 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-		 <sa nm allophonic io out
-		  lex <lex id 1 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-		 <sa nm '*surface*' io in
-		  lex <lex id 1 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-		 <sa nm '*surface*' io out
-		  lex <lex id 1 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-		)
-	   >
-	   <sll real <lex id 2 sh pit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) > rf ( )
-		cont (
-		 <sa nm allophonic io in
-		  lex <lex id 2 sh pit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-		 <pa nm rule1
-		  out <lex id 2 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-		 <pa nm rule2
-		  out <lex id 2 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-		 <sa nm allophonic io out
-		  lex <lex id 2 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-		 <sa nm '*surface*' io in
-		  lex <lex id 2 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-		 <sa nm '*surface*' io out
-		  lex <lex id 2 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-		)
-	   >
-	  )
-	 >
-	 <sua nm allophonic io out
-	  lex <lex sh ppHit str allophonic >
-	  cont (
-	   <sua nm morphophonemic io in
-		lex <lex sh pit str morphophonemic >
-		cont (
-		 <pua nm rule2
-		  out <lex sh pit str morphophonemic >>
-		 <ll v <lex sh pit str morphophonemic >
-		  cont (
-		  )
-		 >
-		 <sua nm morphophonemic io out
-		  lex <lex sh pit str morphophonemic >
-		  cont (
-		  )
-		 >
-		)
-	   >
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 1 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >
- <lex id 2 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) > ) )
-;Resume tracing of input of rules:
-(message (
- <hc6502 var_name '*trace_inputs*' > ) )
-;Ff. should trigger error msg 6035 in middle of trace, but not abort tracing
-; (because *quit_on_error* is false):
-(pretty_print
- <trace sh sat
-  cont (
-   <ll v <lex sh sat str '*surface*' >
-	cont (
-	)
-   >
-   <sua nm allophonic io in
-	lex <lex sh sat str allophonic >
-	cont (
-	 <pua nm rule2
-	  in  <lex sh sat str allophonic >
-	  out <lex sh sat str allophonic >>
-	 <pua nm rule1
-	  in  <lex sh sat str allophonic >
-	  out <lex sh sat str allophonic >>
-	 <ll v <lex sh sat str allophonic >
-	  cont (
-	  )
-	 >
-	 <sua nm allophonic io out
-	  lex <lex sh sat str allophonic >
-	  cont (
-	   <sua nm morphophonemic io in
-		lex <lex sh saa�t str morphophonemic >
-		cont (
-		 <pua nm rule2
-		  in  <lex sh saa�t str morphophonemic >
-		  out <lex sh saa�t str morphophonemic >>
-		 <ll v <lex sh saa�t str morphophonemic >
-		  cont (
-		   <sll real <lex id 35 sh sat gl sat pos 'V' str morphophonemic > rf ( )
-			cont (
-			 <sa nm morphophonemic io in
-			  lex <lex id 35 sh sat gl sat pos 'V' str morphophonemic >>
-			 <pa nm rule2
-			  in  <lex id 35 sh sat gl sat pos 'V' str morphophonemic >
-			  out <lex id 35 sh sat gl sat pos 'V' str morphophonemic >>
-			 <sa nm morphophonemic io out
-			  lex <lex id 35 sh sat gl sat pos 'V' str morphophonemic >>
-			 <sa nm allophonic io in
-			  lex <lex id 35 sh sattH gl sat pos 'V' str allophonic >>
-			 <pa nm rule1
-			  in  <lex id 35 sh sattH gl sat pos 'V' str allophonic >
-			  out <lex id 35 sh sattH gl sat pos 'V' str allophonic >>
-			 <pa nm rule2
-			  in  <lex id 35 sh sattH gl sat pos 'V' str allophonic >
-			  out <lex id 35 sh sattH gl sat pos 'V' str allophonic >>
-			 <sa nm allophonic io out
-			  lex <lex id 35 sh sattH gl sat pos 'V' str allophonic >>
-			 <sa nm '*surface*' io in
-			  lex <lex id 35 sh sattH gl sat pos 'V' str '*surface*' >>
-ERROR:hc6035 --- <hc6035 features (voc - cons + vd - poa alveolar del_rel - strident - cont - nasal - ) table_name table1 ambiguous_xltn sattH >
-			)
-		   >
-		  )
-		 >
-		 <sua nm morphophonemic io out
-		  lex <lex sh saa�t str morphophonemic >
-		  cont (
-		  )
-		 >
-		)
-	   >
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-ERROR:hc6006 --- <hc6006 print_form sat >
-;Turn off display of glosses; 'gl' field should disappear:
-(message (
- <hc6502 var_name '*show_glosses*' > ) )
-(pretty_print
- <trace sh sat
-  cont (
-   <ll v <lex sh sat str '*surface*' >
-	cont (
-	)
-   >
-   <sua nm allophonic io in
-	lex <lex sh sat str allophonic >
-	cont (
-	 <pua nm rule2
-	  in  <lex sh sat str allophonic >
-	  out <lex sh sat str allophonic >>
-	 <pua nm rule1
-	  in  <lex sh sat str allophonic >
-	  out <lex sh sat str allophonic >>
-	 <ll v <lex sh sat str allophonic >
-	  cont (
-	  )
-	 >
-	 <sua nm allophonic io out
-	  lex <lex sh sat str allophonic >
-	  cont (
-	   <sua nm morphophonemic io in
-		lex <lex sh saa�t str morphophonemic >
-		cont (
-		 <pua nm rule2
-		  in  <lex sh saa�t str morphophonemic >
-		  out <lex sh saa�t str morphophonemic >>
-		 <ll v <lex sh saa�t str morphophonemic >
-		  cont (
-		   <sll real <lex id 35 sh sat pos 'V' str morphophonemic > rf ( )
-			cont (
-			 <sa nm morphophonemic io in
-			  lex <lex id 35 sh sat pos 'V' str morphophonemic >>
-			 <pa nm rule2
-			  in  <lex id 35 sh sat pos 'V' str morphophonemic >
-			  out <lex id 35 sh sat pos 'V' str morphophonemic >>
-			 <sa nm morphophonemic io out
-			  lex <lex id 35 sh sat pos 'V' str morphophonemic >>
-			 <sa nm allophonic io in
-			  lex <lex id 35 sh sattH pos 'V' str allophonic >>
-			 <pa nm rule1
-			  in  <lex id 35 sh sattH pos 'V' str allophonic >
-			  out <lex id 35 sh sattH pos 'V' str allophonic >>
-			 <pa nm rule2
-			  in  <lex id 35 sh sattH pos 'V' str allophonic >
-			  out <lex id 35 sh sattH pos 'V' str allophonic >>
-			 <sa nm allophonic io out
-			  lex <lex id 35 sh sattH pos 'V' str allophonic >>
-			 <sa nm '*surface*' io in
-			  lex <lex id 35 sh sattH pos 'V' str '*surface*' >>
-ERROR:hc6035 --- <hc6035 features (voc - cons + vd - poa alveolar del_rel - strident - cont - nasal - ) table_name table1 ambiguous_xltn sattH >
-			)
-		   >
-		  )
-		 >
-		 <sua nm morphophonemic io out
-		  lex <lex sh saa�t str morphophonemic >
-		  cont (
-		  )
-		 >
-		)
-	   >
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-ERROR:hc6006 --- <hc6006 print_form sat >
-;Turn all tracing off (msgs 6536, 6528, and 6545):
-(message (
- <hc6536  > ) )
-(message (
- <hc6528  > ) )
-(message (
- <hc6545  > ) )
-;Now we morph a word; should not see tracing:
-(pretty_print (word_analysis
- <lex id 1 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >
- <lex id 2 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) > ) )
-;Turn on tracing just for strata (msg 6548):
-(message (
- <hc6548  > ) )
-;Morph a word; should see tracing of strata only:
-(pretty_print
- <trace sh pHit
-  cont (
-   <sua nm allophonic io in
-	lex <lex sh pHit str allophonic >
-	cont (
-	 <sa nm allophonic io in
-	  lex <lex id 1 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-	 <sa nm allophonic io out
-	  lex <lex id 1 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-	 <sa nm '*surface*' io in
-	  lex <lex id 1 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-	 <sa nm '*surface*' io out
-	  lex <lex id 1 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-	 <sa nm allophonic io in
-	  lex <lex id 2 sh pit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-	 <sa nm allophonic io out
-	  lex <lex id 2 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-	 <sa nm '*surface*' io in
-	  lex <lex id 2 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-	 <sa nm '*surface*' io out
-	  lex <lex id 2 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-	 <sua nm allophonic io out
-	  lex <lex sh ppHit str allophonic >
-	  cont (
-	   <sua nm morphophonemic io in
-		lex <lex sh pit str morphophonemic >
-		cont (
-		 <sua nm morphophonemic io out
-		  lex <lex sh pit str morphophonemic >
-		  cont (
-		  )
-		 >
-		)
-	   >
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 1 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >
- <lex id 2 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) > ) )
-;Turn on tracing for strata during analysis (msg 6547):
-(message (
- <hc6547  > ) )
-;Morph a word; should see tracing of strata during analysis only:
-(pretty_print
- <trace sh pHit
-  cont (
-   <sua nm allophonic io in
-	lex <lex sh pHit str allophonic >
-	cont (
-	 <sua nm allophonic io out
-	  lex <lex sh ppHit str allophonic >
-	  cont (
-	   <sua nm morphophonemic io in
-		lex <lex sh pit str morphophonemic >
-		cont (
-		 <sua nm morphophonemic io out
-		  lex <lex sh pit str morphophonemic >
-		  cont (
-		  )
-		 >
-		)
-	   >
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 1 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >
- <lex id 2 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) > ) )
-;Turn on tracing for strata during synthesis (msg 6546):
-(message (
- <hc6546  > ) )
-;Morph a word; should see tracing of strata during synthesis only:
-(pretty_print
- <trace sh pHit
-  cont (
-   <sa nm allophonic io in
-	lex <lex id 1 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-   <sa nm allophonic io out
-	lex <lex id 1 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-   <sa nm '*surface*' io in
-	lex <lex id 1 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-   <sa nm '*surface*' io out
-	lex <lex id 1 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-   <sa nm allophonic io in
-	lex <lex id 2 sh pit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-   <sa nm allophonic io out
-	lex <lex id 2 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-   <sa nm '*surface*' io in
-	lex <lex id 2 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-   <sa nm '*surface*' io out
-	lex <lex id 2 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 1 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >
- <lex id 2 sh pHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) > ) )
-;Remove the rules:
-(message (
- <hc6506 rname rule1 > ) )
-(message (
- <hc6506 rname rule2 > ) )
-;...and the natural classes:
-(message (
- <hc6542 nat_class_name bilab_cons > ) )
-(message (
- <hc6542 nat_class_name alv_cons > ) )
-(message (
- <hc6542 nat_class_name asp > ) )
-(message (
- <hc6542 nat_class_name noncons > ) )
-;Done; morpher will now terminate
-(message (
- <hc6521 fname c:\data\hc\morpher\tests\debugger.in > ) )

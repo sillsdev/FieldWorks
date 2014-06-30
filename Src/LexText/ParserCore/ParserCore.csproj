@@ -145,10 +145,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\DistFiles\GAFAWSAnalysis.dll</HintPath>
     </Reference>
-    <Reference Include="HermitCrab, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Lib\debug\HermitCrab.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
@@ -156,6 +152,18 @@
     <Reference Include="PhonEnvValidator, Version=7.3.0.15150, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\PhonEnvValidator.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Collections, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\SIL.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.HermitCrab, Version=1.0.5294.2277, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\SIL.HermitCrab.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Machine, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\SIL.Machine.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -180,10 +188,6 @@
       <Name>XMLUtils</Name>
       <HintPath>..\..\..\Output\Debug\XMLUtils.dll</HintPath>
     </Reference>
-    <Reference Include="PatrParserWrapper">
-      <Name>PatrParserWrapper</Name>
-      <HintPath>..\..\..\Output\Debug\PatrParserWrapper.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs">
@@ -192,14 +196,14 @@
     <Compile Include="..\..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="FwXmlTraceManager.cs" />
+    <Compile Include="HCLoader.cs" />
     <Compile Include="HCParser.cs" />
     <Compile Include="InvalidReduplicationEnvironmentException.cs" />
     <Compile Include="IParser.cs" />
-    <Compile Include="M3ModelRetriever.cs">
+    <Compile Include="ParserModelChangeListener.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="M3ToHCTransformer.cs" />
-    <Compile Include="M3ToParserTransformerBase.cs" />
     <Compile Include="M3ToXAmpleTransformer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -212,7 +216,6 @@
       <DependentUpon>ParserCoreStrings.resx</DependentUpon>
     </Compile>
     <Compile Include="ParseResult.cs" />
-    <Compile Include="ParserHelper.cs" />
     <Compile Include="ParserScheduler.cs">
       <SubType>Code</SubType>
     </Compile>

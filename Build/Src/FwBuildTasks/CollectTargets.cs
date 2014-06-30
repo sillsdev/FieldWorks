@@ -491,6 +491,7 @@ namespace FwBuildTasks
 				case "FwControlsTests":					// ~19 sec
 				case "XMLViewsTests":					// ~15 sec (Mono 2/8/2013)\
 				case "ParserUITests":					// ~11 sec (overnight 4/10/13)
+				case "ParserCoreTests":
 					return 40000;
 				case "PhraseTranslationHelperTests":	// ~8 sec
 				case "CoreImplTests":					// ~9 sec

@@ -772,41 +772,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				return base.IsValidObject && (BeginObjectRA == null || BeginObjectRA.IsValidObject);
 			}
 		}
-
-		/// <summary>
-		/// Get or create a CmBaseAnnotation referring to an object and make sure it has a feature structure
-		/// </summary>
-		/// <param name="cache">The cache</param>
-		/// <param name="obj">The object the annotation refers to (BeginObject)</param>
-		/// <returns></returns>
-		public static ICmBaseAnnotation GetOrCreateFeatureStructBaseAnnotation(FdoCache cache, ICmObject obj)
-		{
-			var annoDefns = cache.LangProject.AnnotationDefsOA;
-			var annoDefn = annoDefns.FindOrCreatePossibility("FeatureStructure", cache.DefaultAnalWs) as ICmAnnotationDefn;
-			var annos = cache.LangProject.AnnotationsOC;
-			var fsAnnos = from anno in annos
-				where (anno.AnnotationTypeRA == annoDefn &&
-				anno is ICmBaseAnnotation &&
-				(anno as ICmBaseAnnotation).BeginObjectRA == obj)
-				select anno;
-			if (fsAnnos.Any())
-			{
-				var anno = fsAnnos.First() as ICmBaseAnnotation;
-				if (anno.FeaturesOA == null)
-				{
-					var fs1 = cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
-					anno.FeaturesOA = fs1;
-				}
-				return anno;
-			}
-			var newAnno = cache.ServiceLocator.GetInstance<ICmBaseAnnotationFactory>().Create();
-			annos.Add(newAnno);
-			newAnno.AnnotationTypeRA = annoDefn;
-			newAnno.BeginObjectRA = obj;
-			var fs = cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
-			newAnno.FeaturesOA = fs;
-			return newAnno;
-		}
 	}
 	#endregion
 

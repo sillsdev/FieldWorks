@@ -1,4 +1,0 @@
-# Gendarme filter file to suppress reporting of defects
-
-#-----------------------------------------------------------------------------------------------
-R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule

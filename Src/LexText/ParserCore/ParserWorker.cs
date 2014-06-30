@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					agent = cache.ServiceLocator.GetInstance<ICmAgentRepository>().GetObject(CmAgentTags.kguidAgentXAmpleParser);
 					break;
 				case "HC":
-					m_parser = new HCParser(cache, dataDir);
+					m_parser = new HCParser(cache);
 					agent = cache.ServiceLocator.GetInstance<ICmAgentRepository>().GetObject(CmAgentTags.kguidAgentHermitCrabParser);
 					break;
 				default:
@@ -97,7 +97,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// <param name="sForm">the word form to parse</param>
 		/// <param name="fDoTrace">whether or not to trace the parse</param>
 		/// <param name="sSelectTraceMorphs">list of msa hvos to limit trace to </param>
-		public void TryAWord(string sForm, bool fDoTrace, string sSelectTraceMorphs)
+		public void TryAWord(string sForm, bool fDoTrace, int[] sSelectTraceMorphs)
 		{
 			CheckDisposed();
 

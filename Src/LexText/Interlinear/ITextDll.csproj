@@ -161,11 +161,11 @@
     </Reference>
     <Reference Include="SIL.Collections, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Lib\debug\SIL.Collections.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\SIL.Collections.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Machine, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Lib\debug\SIL.Machine.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\SIL.Machine.dll</HintPath>
     </Reference>
     <Reference Include="SimpleRootSite, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>

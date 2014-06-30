@@ -1,3 +1,0 @@
-\w hi
-\c root
-\g greeting
