@@ -946,6 +946,6 @@ namespace SIL.FieldWorks.XWorks
 				m_customField.UpdateCustomField();
 			}
 		}
-		#endregion
+		#endregion // Context
 	}
 }
