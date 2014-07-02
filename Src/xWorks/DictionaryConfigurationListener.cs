@@ -104,25 +104,10 @@ namespace SIL.FieldWorks.XWorks
 		internal static string GetProjectConfigurationDirectory(Mediator mediator)
 		{
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
-			string lastDirectoryPart;
+			var lastDirectoryPart = GetInnermostConfigurationDirectory(mediator);
 
-			var toolName = mediator.PropertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null);
-			switch (toolName)
-			{
-				case "reversalToolBulkEditReversalEntries":
-				case "reversalToolEditComplete":
-					lastDirectoryPart = "ReversalIndex";
-					break;
-				case "lexiconBrowse":
-				case "lexiconDictionary":
-				case "lexiconEdit":
-					lastDirectoryPart = "Dictionary";
-					break;
-				default:
-					return null;
-			}
-
-			return Path.Combine(DirectoryFinder.GetConfigSettingsDir(cache.ProjectId.ProjectFolder), lastDirectoryPart);
+			return lastDirectoryPart == null
+				? null : Path.Combine(DirectoryFinder.GetConfigSettingsDir(cache.ProjectId.ProjectFolder), lastDirectoryPart);
 		}
 
 		/// <summary>
@@ -131,25 +116,29 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal static string GetDefaultConfigurationDirectory(Mediator mediator)
 		{
-			string lastDirectoryPart;
+			var lastDirectoryPart = GetInnermostConfigurationDirectory(mediator);
 
-			var toolName = mediator.PropertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null);
-			switch (toolName)
+			return lastDirectoryPart == null ? null : Path.Combine(DirectoryFinder.DefaultConfigurations, lastDirectoryPart);
+		}
+
+		/// <summary>
+		/// Get the name of the innermost directory name for configurations for the part of FLEx the user is
+		/// working in, such as Dictionary or Reversal Index.
+		/// </summary>
+		private static string GetInnermostConfigurationDirectory(Mediator mediator)
+		{
+			switch (mediator.PropertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null))
 			{
 				case "reversalToolBulkEditReversalEntries":
 				case "reversalToolEditComplete":
-					lastDirectoryPart = "ReversalIndex";
-					break;
+					return "ReversalIndex";
 				case "lexiconBrowse":
 				case "lexiconDictionary":
 				case "lexiconEdit":
-					lastDirectoryPart = "Dictionary";
-					break;
+					return "Dictionary";
 				default:
 					return null;
 			}
-
-			return Path.Combine(DirectoryFinder.DefaultConfigurations, lastDirectoryPart);
 		}
 
 		/// <summary>
