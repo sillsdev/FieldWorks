@@ -352,16 +352,17 @@ namespace SIL.FieldWorks.XWorks
 
 		private void OnDeleteConfiguration(object sender, EventArgs eventArgs)
 		{
-			if (SelectedConfiguration == null)
+			var configurationToDelete = SelectedConfiguration;
+			if (configurationToDelete == null)
 				return;
 
 			using (var dlg = new ConfirmDeleteObjectDlg(_mediator.HelpTopicProvider))
 			{
 				dlg.WindowTitle = xWorksStrings.Confirm;
 				var kindOfConfiguration = DictionaryConfigurationListener.GetDictionaryConfigurationType(_mediator);
-				dlg.TopBodyText = string.Format("{0} {1}: {2}", kindOfConfiguration,xWorksStrings.Configuration, SelectedConfiguration.Label);
+				dlg.TopBodyText = string.Format("{0} {1}: {2}", kindOfConfiguration, xWorksStrings.Configuration, configurationToDelete.Label);
 
-				if (IsConfigurationACustomizedShippedDefault(SelectedConfiguration))
+				if (IsConfigurationACustomizedShippedDefault(configurationToDelete))
 				{
 					dlg.TopMessage = xWorksStrings.YouAreResetting;
 					dlg.BottomQuestion = xWorksStrings.WantContinue;
@@ -372,8 +373,19 @@ namespace SIL.FieldWorks.XWorks
 					return;
 			}
 
-			DeleteConfiguration(SelectedConfiguration);
+			DeleteConfiguration(configurationToDelete);
 			ReLoadConfigurations();
+
+			// Re-select configuration that was reset, or select first configuration if we just deleted a
+			// configuration.
+			if (IsConfigurationACustomizedShippedDefault(configurationToDelete))
+			{
+				_view.configurationsListView.Items.Cast<ListViewItem>().First(item => item.Text == configurationToDelete.Label).Selected = true;
+			}
+			else
+			{
+				_view.configurationsListView.Items[0].Selected = true;
+			}
 		}
 
 		/// <summary>
