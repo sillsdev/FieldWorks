@@ -184,6 +184,9 @@ namespace SIL.FieldWorks.XWorks
 			var associatedPublications = GetPublications(SelectedConfiguration);
 			foreach (ListViewItem publicationItem in _view.publicationsListView.Items)
 			{
+				// Don't try processing the all-pubs item and get into a muddle.
+				if (publicationItem == _allPublicationsItem)
+					continue;
 				publicationItem.Checked = associatedPublications.Contains(publicationItem.Text);
 			}
 			_allPublicationsItem.Checked = SelectedConfiguration.AllPublications;
