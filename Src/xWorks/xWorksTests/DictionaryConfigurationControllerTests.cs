@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.XWorks
 				var dcc = new DictionaryConfigurationController {View = testView, _model = m_model};
 
 				//SUT
-				dcc.PopulateTreeView(null);
+				dcc.PopulateTreeView();
 
 				ValidateTreeForm(2, 5, dcc.View.TreeControl.Tree);
 			}
@@ -332,7 +332,7 @@ namespace SIL.FieldWorks.XWorks
 			var testUserFolder = Path.Combine(Path.GetTempPath(), userFolderName);
 			var controller = new DictionaryConfigurationController();
 			// SUT
-			Assert.DoesNotThrow(()=>controller.ReadAlternateDictionaryChoices(testDefaultFolder, testUserFolder), "A missing User location should not throw.");
+			Assert.DoesNotThrow(()=>controller.ListDictionaryConfigurationChoices(testDefaultFolder, testUserFolder), "A missing User location should not throw.");
 			Assert.IsTrue(Directory.Exists(testUserFolder), "A missing user configuration folder should be created.");
 		}
 
@@ -349,7 +349,7 @@ namespace SIL.FieldWorks.XWorks
 				Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
 			var controller = new DictionaryConfigurationController();
 			// SUT
-			var choices = controller.ReadAlternateDictionaryChoices(testDefaultFolder.FullName, testUserFolder.FullName);
+			var choices = controller.ListDictionaryConfigurationChoices(testDefaultFolder.FullName, testUserFolder.FullName);
 			Assert.IsTrue(choices.Count == 1, "xml configuration file in default directory was not read");
 		}
 
@@ -370,7 +370,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			var controller = new DictionaryConfigurationController();
 			// SUT
-			var choices = controller.ReadAlternateDictionaryChoices(testDefaultFolder.FullName, testUserFolder.FullName);
+			var choices = controller.ListDictionaryConfigurationChoices(testDefaultFolder.FullName, testUserFolder.FullName);
 			Assert.IsTrue(choices.Count == 2, "One of the configuration files was not listed");
 		}
 
@@ -391,9 +391,9 @@ namespace SIL.FieldWorks.XWorks
 			}
 			var controller = new DictionaryConfigurationController();
 			// SUT
-			var choices = controller.ReadAlternateDictionaryChoices(testDefaultFolder.FullName, testUserFolder.FullName);
+			var choices = controller.ListDictionaryConfigurationChoices(testDefaultFolder.FullName, testUserFolder.FullName);
 			Assert.IsTrue(choices.Count == 1, "Only the user configuration should be listed");
-			Assert.IsTrue(choices["Root"].Contains(testUserFolder.FullName), "The default overrode the user configuration.");
+			Assert.IsTrue(choices[0].Contains(testUserFolder.FullName), "The default overrode the user configuration.");
 		}
 
 		/// <summary/>

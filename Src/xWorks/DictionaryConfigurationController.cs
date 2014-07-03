@@ -10,14 +10,12 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using System.Xml.Serialization;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -52,7 +50,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Available dictionary configurations (eg stem- and root-based)
 		/// </summary>
-		private Dictionary<string, DictionaryConfigurationModel> _alternateConfigurations;
+		private List<DictionaryConfigurationModel> _dictionaryConfigurations;
 
 		/// <summary>
 		/// Directory where configurations of the current type (Dictionary, Reversal, ...) are stored
@@ -68,35 +66,33 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// Figure out what alternate dictionaries are available (eg root-, stem-, ...)
-		/// Populate _alternateConfigurations with available models.
+		/// Populate _dictionaryConfigurations with available models.
 		/// Populate view's list of alternate dictionaries with available choices.
 		/// </summary>
-		void SetAlternateDictionaryChoices()
+		void LoadDictionaryConfigurations()
 		{
 			var cache = (FdoCache)_mediator.PropertyTable.GetValue("cache");
 
-			var choices = ReadAlternateDictionaryChoices(_defaultConfigDir, _projectConfigDir);
-			_alternateConfigurations = new Dictionary<string, DictionaryConfigurationModel>();
-			foreach(var choice in choices)
-			{
-				_alternateConfigurations[choice.Key] = new DictionaryConfigurationModel(choice.Value, cache);
-			}
-			// TODO pH 2014.05: sort choices
-			View.SetChoices(_alternateConfigurations.Values);
+			var choices = ListDictionaryConfigurationChoices(_defaultConfigDir, _projectConfigDir);
+			_dictionaryConfigurations = choices.Select(choice => new DictionaryConfigurationModel(choice, cache)).ToList();
+			_dictionaryConfigurations.Sort((lhs, rhs) => string.Compare(lhs.Label, rhs.Label));
+			View.SetChoices(_dictionaryConfigurations);
 		}
 
 		/// <summary>
-		/// Loads a dictionary with the configuration choices from two folders with the project specific
-		/// configurations overriding the default configurations of the same name.
+		/// Loads a List of configuration choices from default and projcet folders.
+		/// Project-specific configurations override default configurations of the same (file)name.
 		/// </summary>
 		/// <param name="defaultPath"></param>
 		/// <param name="projectPath"></param>
 		/// <returns></returns>
-		/// REVIEW (Hasso) 2014.05: do we still need to return a dictionary if we're reading the configuration name from the file content?
-		internal Dictionary<string, string> ReadAlternateDictionaryChoices(string defaultPath, string projectPath)
+		internal List<string> ListDictionaryConfigurationChoices(string defaultPath, string projectPath)
 		{
 			var choices = new Dictionary<string, string>();
-			var defaultFiles = new List<string>(Directory.EnumerateFiles(defaultPath, "*" + DictionaryConfigurationModel.FileExtension));
+			foreach(var file in Directory.EnumerateFiles(defaultPath, "*" + DictionaryConfigurationModel.FileExtension))
+			{
+				choices[Path.GetFileNameWithoutExtension(file)] = file;
+			}
 			if(!Directory.Exists(projectPath))
 			{
 				Directory.CreateDirectory(projectPath);
@@ -108,21 +104,13 @@ namespace SIL.FieldWorks.XWorks
 					choices[Path.GetFileNameWithoutExtension(choice)] = choice;
 				}
 			}
-			foreach(var file in defaultFiles)
-			{
-				var niceName = Path.GetFileNameWithoutExtension(file);
-				if(!choices.ContainsKey(niceName))
-				{
-					choices[niceName] = file;
-				}
-			}
-			return choices;
+			return choices.Values.ToList();
 		}
 
 		/// <summary>
 		/// Populate dictionary elements tree, from model.
 		/// </summary>
-		internal void PopulateTreeView(Mediator mediator)
+		internal void PopulateTreeView()
 		{
 			RefreshView();
 		}
@@ -293,27 +281,37 @@ namespace SIL.FieldWorks.XWorks
 		{
 			_mediator = mediator;
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
-			_previewEntry = previewEntry ?? GetDefaultEntryForType(DictionaryConfigurationListener.GetDictionaryConfigurationType(mediator),
-																					 cache);
+			_previewEntry = previewEntry ?? GetDefaultEntryForType(DictionaryConfigurationListener.GetDictionaryConfigurationType(mediator), cache);
 			View = view;
 			_projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(mediator);
 			_defaultConfigDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(mediator);
-			GetDictionaryChoices();
-
+			LoadDictionaryConfigurations();
+			LoadLastDictionaryConfiguration();
 			MergeCustomFieldsIntoDictionaryModel(cache, _model);
-			PopulateTreeView(mediator);
+			PopulateTreeView();
 			View.ManageConfigurations += (sender, args) =>
 			{
+				// show the Configuration Manager dialog
 				using (var dialog = new DictionaryConfigurationManagerDlg())
 				{
 					var configurationManagerController = new DictionaryConfigurationManagerController(dialog, _mediator,
-						_alternateConfigurations.Values.ToList(), _model.GetAllPublications(cache),
-						_projectConfigDir, _defaultConfigDir);
+						_dictionaryConfigurations, _model.GetAllPublications(cache), _projectConfigDir, _defaultConfigDir);
 					dialog.ShowDialog(View as Form);
 				}
+
+				// Update our Views
+				View.SetChoices(_dictionaryConfigurations);
+				LoadLastDictionaryConfiguration();
+				RefreshView();
+				SelectCurrentConfiguration();
 			};
 			View.SaveModel += SaveModelHandler;
-			view.SwitchConfiguration += (sender, args) => { _model = args.ConfigurationPicked; RefreshView(); };
+			View.SwitchConfiguration += (sender, args) =>
+			{
+				_model = args.ConfigurationPicked;
+				_mediator.PropertyTable.SetProperty("LastDictionaryConfiguration", Path.GetFileNameWithoutExtension(_model.FilePath));
+				RefreshView();
+			};
 
 			View.TreeControl.MoveUp += node => Reorder(node.Tag as ConfigurableDictionaryNode, Direction.Up);
 			View.TreeControl.MoveDown += node => Reorder(node.Tag as ConfigurableDictionaryNode, Direction.Down);
@@ -407,20 +405,17 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private void GetDictionaryChoices()
+		private void LoadLastDictionaryConfiguration()
 		{
-			SetAlternateDictionaryChoices();
 			var lastUsedConfiguration = _mediator.PropertyTable.GetStringProperty("LastDictionaryConfiguration", "Root");
-			// REVIEW (Hasso) 2014.05: could we do this without a dictionary?--yes: combine with SetAltDictChoices, search in loop
-			_model = _alternateConfigurations.ContainsKey(lastUsedConfiguration)
-				? _alternateConfigurations[lastUsedConfiguration]
-				: _alternateConfigurations.Values.First();
+			_model = _dictionaryConfigurations.FirstOrDefault(config => Path.GetFileNameWithoutExtension(config.FilePath) == lastUsedConfiguration)
+				?? _dictionaryConfigurations.First();
 		}
 
 		private void SaveModelHandler(object sender, EventArgs e)
 		{
 			_mediator.PropertyTable.SetProperty("DictionaryPublicationLayout", _model.FilePath, true);
-			foreach (var config in _alternateConfigurations.Values)
+			foreach (var config in _dictionaryConfigurations)
 			{
 				config.FilePath = GetProjectConfigLocationForPath(config.FilePath, _mediator);
 				config.Save();

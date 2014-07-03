@@ -4,20 +4,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.Utils;
 using Palaso.Linq;
-using Utils.MessageBoxExLib;
-using SIL.FieldWorks.Common.FwUtils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -29,7 +23,11 @@ namespace SIL.FieldWorks.XWorks
 	class DictionaryConfigurationManagerController
 	{
 		private readonly DictionaryConfigurationManagerDlg _view;
-		private readonly string _projectConfigDir;
+
+		private readonly Mediator _mediator;
+		internal FdoCache Cache;
+
+		internal string _projectConfigDir;
 		internal string _defaultConfigDir;
 
 		/// <summary>
@@ -43,8 +41,6 @@ namespace SIL.FieldWorks.XWorks
 		internal List<string> Publications;
 
 		private readonly ListViewItem _allPublicationsItem;
-		internal FdoCache Cache;
-		private Mediator _mediator;
 
 		/// <summary>
 		/// The currently-selected item in the Configurations ListView, or null if none.
@@ -97,16 +93,13 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// For unit tests.
 		/// </summary>
-		internal DictionaryConfigurationManagerController(string projectConfigDir)
-		{
-			_projectConfigDir = projectConfigDir;
-		}
+		internal DictionaryConfigurationManagerController() {}
 
 		public DictionaryConfigurationManagerController(DictionaryConfigurationManagerDlg view, Mediator mediator,
-			List<DictionaryConfigurationModel> configurations, List<string> publications, string projectConfigDir,
-			string defaultConfigDir)
+			List<DictionaryConfigurationModel> configurations, List<string> publications, string projectConfigDir, string defaultConfigDir)
 		{
 			_view = view;
+			_mediator = mediator;
 			Configurations = configurations;
 			Publications = publications;
 			_projectConfigDir = projectConfigDir;
@@ -151,7 +144,20 @@ namespace SIL.FieldWorks.XWorks
 			_view.publicationsListView.ItemChecked += OnCheckPublication;
 			_view.copyButton.Click += OnCopyConfiguration;
 			_view.removeButton.Click += OnDeleteConfiguration;
-			_view.configurationsListView.Items[0].Selected = true;
+			_view.Closing += (sndr, e) =>
+			{
+				if (SelectedConfiguration != null)
+					_mediator.PropertyTable.SetProperty("LastDictionaryConfiguration",
+						Path.GetFileNameWithoutExtension(SelectedConfiguration.FilePath));
+			};
+
+			// Select the correct configuration
+			var selectedConfigIdx = Configurations.FindIndex(config => Path.GetFileNameWithoutExtension(config.FilePath)
+				== _mediator.PropertyTable.GetStringProperty("LastDictionaryConfiguration", "Root"));
+			if (selectedConfigIdx >= 0)
+				_view.configurationsListView.Items[selectedConfigIdx].Selected = true;
+			else
+				_view.configurationsListView.Items[0].Selected = true;
 		}
 
 		/// <summary>

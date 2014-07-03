@@ -9,8 +9,6 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using NUnit.Framework;
-using Palaso.IO;
-using Palaso.TestUtilities;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.Utils;
@@ -56,10 +54,12 @@ namespace SIL.FieldWorks.XWorks
 				"publicationB"
 			};
 
-			_controller = new DictionaryConfigurationManagerController(_projectConfigPath)
+			_controller = new DictionaryConfigurationManagerController
 			{
+				Cache = Cache,
 				Configurations = configurations,
 				Publications = publications,
+				_projectConfigDir = _projectConfigPath,
 				_defaultConfigDir = Path.Combine(DirectoryFinder.DefaultConfigurations, "Dictionary")
 			};
 		}
@@ -67,7 +67,6 @@ namespace SIL.FieldWorks.XWorks
 		[TearDown]
 		public void TearDown()
 		{
-
 		}
 
 		[Test]
@@ -320,8 +319,6 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void DeleteConfigurationResetsForShippedDefaultRatherThanDelete()
 		{
-			_controller.Cache = Cache;
-
 			var shippedConfigurationsPath = Path.Combine(DirectoryFinder.DefaultConfigurations, "Dictionary");
 			var shippedRootDefaultConfigurationPath = Path.Combine(shippedConfigurationsPath, "Root.xml");
 			FileUtils.WriteStringtoFile(shippedRootDefaultConfigurationPath, "shipped root default configuration file contents", Encoding.UTF8);
