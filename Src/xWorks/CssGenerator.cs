@@ -191,13 +191,13 @@ namespace SIL.FieldWorks.XWorks
 					declaration.Add(borderColor);
 				}
 				var borderLeft = new Property("border-left-width");
-				borderLeft.Term = new PrimitiveTerm(UnitType.Point, exportStyleInfo.BorderLeading);
+				borderLeft.Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(exportStyleInfo.BorderLeading));
 				var borderRight = new Property("border-right-width");
-				borderRight.Term = new PrimitiveTerm(UnitType.Point, exportStyleInfo.BorderTrailing);
+				borderRight.Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(exportStyleInfo.BorderTrailing));
 				var borderTop = new Property("border-top-width");
-				borderTop.Term = new PrimitiveTerm(UnitType.Point, exportStyleInfo.BorderTop);
+				borderTop.Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(exportStyleInfo.BorderTop));
 				var borderBottom = new Property("border-bottom-width");
-				borderBottom.Term = new PrimitiveTerm(UnitType.Point, exportStyleInfo.BorderBottom);
+				borderBottom.Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(exportStyleInfo.BorderBottom));
 				declaration.Add(borderLeft);
 				declaration.Add(borderRight);
 				declaration.Add(borderTop);
@@ -206,7 +206,7 @@ namespace SIL.FieldWorks.XWorks
 			if(exportStyleInfo.HasFirstLineIndent)
 			{
 				//Handles both first-line and hanging indent, hanging-indent will result in a negative text-indent value
-				declaration.Add(new Property("text-indent") { Term = new PrimitiveTerm(UnitType.Point, exportStyleInfo.FirstLineIndent) });
+				declaration.Add(new Property("text-indent") { Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(exportStyleInfo.FirstLineIndent)) });
 			}
 			if(exportStyleInfo.HasKeepTogether)
 			{
@@ -218,7 +218,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if(exportStyleInfo.HasLeadingIndent)
 			{
-				declaration.Add(new Property("padding-left") { Term = new PrimitiveTerm(UnitType.Point, exportStyleInfo.LeadingIndent) });
+				declaration.Add(new Property("padding-left") { Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(exportStyleInfo.LeadingIndent)) });
 			}
 			if(exportStyleInfo.HasLineSpacing)
 			{
@@ -230,26 +230,35 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else
 				{
-					lineHeight.Term = new PrimitiveTerm(UnitType.Point, exportStyleInfo.LineSpacing.m_lineHeight);
+					lineHeight.Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(exportStyleInfo.LineSpacing.m_lineHeight));
 				}
 				declaration.Add(lineHeight);
 			}
 			if(exportStyleInfo.HasSpaceAfter)
 			{
-				declaration.Add(new Property("padding-bottom") { Term = new PrimitiveTerm(UnitType.Point, exportStyleInfo.SpaceAfter) });
+				declaration.Add(new Property("padding-bottom") { Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(exportStyleInfo.SpaceAfter)) });
 			}
 			if(exportStyleInfo.HasSpaceBefore)
 			{
-				declaration.Add(new Property("padding-top") { Term = new PrimitiveTerm(UnitType.Point, exportStyleInfo.SpaceBefore) });
+				declaration.Add(new Property("padding-top") { Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(exportStyleInfo.SpaceBefore)) });
 			}
 			if(exportStyleInfo.HasTrailingIndent)
 			{
-				declaration.Add(new Property("padding-right") { Term = new PrimitiveTerm(UnitType.Point, exportStyleInfo.TrailingIndent) });
+				declaration.Add(new Property("padding-right") { Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(exportStyleInfo.TrailingIndent)) });
 			}
 
 			AddFontInfoCss(projectStyle, declaration, wsId);
 
 			return declaration;
+		}
+
+		/// <summary>
+		/// In the FwStyles values were stored in millipoints to avoid expensive floating point calculations in c++ code.
+		/// We need to convert these to points for use in css styles.
+		/// </summary>
+		private static float MilliPtToPt(int millipoints)
+		{
+			return (float)millipoints / 1000;
 		}
 
 		/// <summary>
@@ -341,7 +350,7 @@ namespace SIL.FieldWorks.XWorks
 			if(!GetFontValue(wsFontInfo, defaultFontInfo, out fontValue))
 				return;
 			var fontProp = new Property(propName);
-			fontProp.Term = new PrimitiveTerm(termType, (float)fontValue / 1000);
+			fontProp.Term = new PrimitiveTerm(termType, MilliPtToPt(fontValue));
 			declaration.Add(fontProp);
 		}
 

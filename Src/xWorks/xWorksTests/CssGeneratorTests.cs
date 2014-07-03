@@ -34,18 +34,19 @@ namespace SIL.FieldWorks.XWorks
 		private readonly string FontName = "foofoo";
 		private readonly Color BorderColor = Color.Red;
 		private StyleInfoTable m_owningTable;
-		private const int LineHeight = 2;
 		private const FwTextAlign ParagraphAlignment = FwTextAlign.ktalJustify;
 		private const bool FontBold = true;
 		private const bool FontItalic = true;
-		private const int BorderTrailing = 5;
-		private const int BorderTop = 20;
-		private const int BorderBottom = 10;
-		private const int LeadingIndent = 24;
-		private const int TrailingIndent = 48;
-		private const int PadTop = 15;
-		private const int PadBottom = 30;
-		private const int FontSize = 10000;
+		// Set these constants in MilliPoints since that is how the user values are stored in FwStyles
+		private const int LineHeight = 2 * 1000;
+		private const int BorderTrailing = 5 * 1000;
+		private const int BorderTop = 20 * 1000;
+		private const int BorderBottom = 10 * 1000;
+		private const int LeadingIndent = 24 * 1000;
+		private const int TrailingIndent = 48 * 1000;
+		private const int PadTop = 15 * 1000;
+		private const int PadBottom = 30 * 1000;
+		private const int FontSize = 10 * 1000;
 
 		[SetUp]
 		public void ResetAssemblyFile()
@@ -141,10 +142,11 @@ namespace SIL.FieldWorks.XWorks
 			GenerateParagraphStyle("Dictionary-Paragraph-Padding");
 			//SUT
 			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-Padding", CssGenerator.DefaultStyle, m_mediator);
-			Assert.That(styleDeclaration.ToString(), Contains.Substring("padding-left:" + LeadingIndent + "pt"));
-			Assert.That(styleDeclaration.ToString(), Contains.Substring("padding-right:" + TrailingIndent + "pt"));
-			Assert.That(styleDeclaration.ToString(), Contains.Substring("padding-top:" + PadTop + "pt"));
-			Assert.That(styleDeclaration.ToString(), Contains.Substring("padding-bottom:" + PadBottom + "pt"));
+			// Indent values are converted into pt values on export
+			Assert.That(styleDeclaration.ToString(), Contains.Substring("padding-left:" + LeadingIndent / 1000 + "pt"));
+			Assert.That(styleDeclaration.ToString(), Contains.Substring("padding-right:" + TrailingIndent / 1000 + "pt"));
+			Assert.That(styleDeclaration.ToString(), Contains.Substring("padding-top:" + PadTop / 1000 + "pt"));
+			Assert.That(styleDeclaration.ToString(), Contains.Substring("padding-bottom:" + PadBottom / 1000 + "pt"));
 		}
 
 		[Test]
@@ -169,7 +171,7 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateCssForStyleName_ParagraphAbsoluteLineSpacingWorks()
 		{
 			var style = GenerateParagraphStyle("Dictionary-Paragraph-Absolute");
-			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLineHeight, (int)FwTextPropVar.ktpvMilliPoint, 9);
+			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLineHeight, (int)FwTextPropVar.ktpvMilliPoint, 9 * 1000);
 			//SUT
 			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-Absolute", CssGenerator.DefaultStyle, m_mediator);
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("line-height:9pt;"));
@@ -870,7 +872,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(css, Contains.Substring("font-family:'" + fontName + "'"), "font name missing");
 			Assert.That(css, Contains.Substring("font-weight:" + (bold ? "bold" : "normal") + ";"), "font bold missing");
 			Assert.That(css, Contains.Substring("font-style:" + (italic ? "italic" : "normal") + ";"), "font italic missing");
-			// Font sizes are stored as integers in the styles by FLEx and turned into pt values on export
+			// Font sizes are stored as millipoint integers in the styles by FLEx and turned into pt values on export
 			Assert.That(css, Contains.Substring("font-size:" + (float)size / 1000 + "pt;"), "font size missing");
 		}
 
@@ -930,7 +932,8 @@ namespace SIL.FieldWorks.XWorks
 			if(offset != 0)
 			{
 				Assert.That(css, Contains.Substring("position:relative;"), "offset was not applied");
-				Assert.That(css, Contains.Substring("bottom:" + offset + ";"), "offset was not applied");
+				// Offsets are converted into pt values on export
+				Assert.That(css, Contains.Substring("bottom:" + offset / 1000 + ";"), "offset was not applied");
 			}
 			switch(superscript)
 			{
@@ -959,10 +962,11 @@ namespace SIL.FieldWorks.XWorks
 		private void VerifyParagraphBorderInCss(Color color, int leading, int trailing, int bottom, int top, string css)
 		{
 			Assert.That(css, Contains.Substring("border-color:" + HtmlColor.FromRgb(color.R, color.G, color.B)));
-			Assert.That(css, Contains.Substring("border-top-width:" + top + "pt"));
-			Assert.That(css, Contains.Substring("border-bottom-width:" + bottom + "pt"));
-			Assert.That(css, Contains.Substring("border-left-width:" + leading + "pt"));
-			Assert.That(css, Contains.Substring("border-right-width:" + trailing + "pt"));
+			// border widths are converted into pt values on export
+			Assert.That(css, Contains.Substring("border-top-width:" + top / 1000 + "pt"));
+			Assert.That(css, Contains.Substring("border-bottom-width:" + bottom / 1000 + "pt"));
+			Assert.That(css, Contains.Substring("border-left-width:" + leading / 1000 + "pt"));
+			Assert.That(css, Contains.Substring("border-right-width:" + trailing / 1000 + "pt"));
 		}
 	}
 
