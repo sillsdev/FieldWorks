@@ -161,7 +161,8 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		// Update which publications are checked in response to configuration selection.
+		/// Update which publications are checked in response to configuration selection.
+		/// Disable the copy and delete buttons if no configuration is selected.
 		/// </summary>
 		private void OnSelectConfiguration(object sender, EventArgs args)
 		{
@@ -172,10 +173,14 @@ namespace SIL.FieldWorks.XWorks
 					pubItem.Checked = false;
 				}
 				_view.publicationsListView.Enabled = false;
+				_view.copyButton.Enabled = false;
+				_view.removeButton.Enabled = false;
 				return;
 			}
 
 			_view.publicationsListView.Enabled = true;
+			_view.copyButton.Enabled = true;
+			_view.removeButton.Enabled = true;
 			var associatedPublications = GetPublications(SelectedConfiguration);
 			foreach (ListViewItem publicationItem in _view.publicationsListView.Items)
 			{
