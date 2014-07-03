@@ -416,9 +416,8 @@ namespace SIL.FieldWorks.XWorks
 			if (propertyValue == null)
 				return;
 			writer.WriteStartElement("span");
-			// Trim trailing "RA" or "OA".
+			// Rely on configuration to handle adjusting the classname for "RA" or "OA" model properties
 			var fieldDescription = CssGenerator.GetClassAttributeForConfig(config);
-			fieldDescription = fieldDescription.Remove(fieldDescription.Length - 2);
 			writer.WriteAttributeString("class", fieldDescription);
 
 			if (config.Children != null)
@@ -515,6 +514,18 @@ namespace SIL.FieldWorks.XWorks
 			else if(propertyValue is IMultiAccessorBase)
 			{
 				GenerateXHTMLForVirtualStrings((ICmObject)field, (IMultiAccessorBase)propertyValue, config, writer, cache);
+			}
+			else if(propertyValue is String)
+			{
+				var propValueString = (String)propertyValue;
+				if(!String.IsNullOrEmpty(propValueString))
+				{
+					// write out Strings something like: <span class="foo">Bar</span>
+					writer.WriteStartElement("span");
+					WriteClassNameAttribute(writer, config);
+					writer.WriteString(propValueString);
+					writer.WriteEndElement();
+				}
 			}
 			else
 			{

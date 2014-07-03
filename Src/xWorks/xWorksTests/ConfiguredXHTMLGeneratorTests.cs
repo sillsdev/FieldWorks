@@ -147,6 +147,7 @@ namespace SIL.FieldWorks.XWorks
 			var locationNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LocationRA",
+				CSSClassNameOverride = "Location",
 				Label = "Spoken here",
 				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { nameNode }
@@ -401,6 +402,7 @@ namespace SIL.FieldWorks.XWorks
 			var gramInfoNode = new ConfigurableDictionaryNode()
 			{
 				FieldDescription = "MorphoSyntaxAnalysisRA",
+				CSSClassNameOverride = "MorphoSyntaxAnalysis",
 				IsEnabled = true
 			};
 			var sensesNode = new ConfigurableDictionaryNode()
@@ -488,6 +490,7 @@ namespace SIL.FieldWorks.XWorks
 			var gramInfoNode = new ConfigurableDictionaryNode()
 			{
 				FieldDescription = "MorphoSyntaxAnalysisRA",
+				CSSClassNameOverride = "MorphoSyntaxAnalysis",
 				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode>{gramAbbrNode,gramNameNode}
 			};
@@ -647,6 +650,42 @@ namespace SIL.FieldWorks.XWorks
 				var headwordMatch = String.Format("//span[@class='{0}']//span[@class='{1}' and text()='{2}']",
 															 nters, headWord, entryThreeForm);
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(headwordMatch, 1);
+			}
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_EtymologySourceWorks()
+		{
+			//This test also proves to verify that .NET String properties can be generated
+			var etymology = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "EtymologyOA",
+				CSSClassNameOverride = "Etymology",
+				Label = "Etymology",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode>
+				{
+					new ConfigurableDictionaryNode { FieldDescription = "Source", IsEnabled = true }
+				}
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { etymology },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			var entryOne = CreateInterestingLexEntry();
+			entryOne.EtymologyOA = Cache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create();
+			entryOne.EtymologyOA.Source = "George";
+
+			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				//SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, XHTMLWriter, Cache));
+				XHTMLWriter.Flush();
+				const string etymologyWithGeorgeSource = "//span[@class='etymology']/span[@class='source' and text()='George']";
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(etymologyWithGeorgeSource, 1);
 			}
 		}
 

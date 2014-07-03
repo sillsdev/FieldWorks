@@ -104,7 +104,7 @@
                 </WritingSystemOptions>
             </ConfigurationItem>
         </ConfigurationItem>
-        <ConfigurationItem name="Etymology" before=" " after=" " isEnabled="true" field="EtymologyOA">
+        <ConfigurationItem name="Etymology" before=" " after=" " isEnabled="true" field="EtymologyOA" cssClassNameOverride="Etymology">
             <ConfigurationItem name="Etymological Form" between=" " after=" " isEnabled="true" field="Form">
                 <WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
                     <Option id="best vernoranal" isEnabled="true"/>
