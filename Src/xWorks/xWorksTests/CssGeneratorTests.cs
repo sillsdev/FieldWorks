@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2014 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -355,7 +359,7 @@ namespace SIL.FieldWorks.XWorks
 			var xhtmResult = new StringBuilder();
 			using(var XHTMLWriter = XmlWriter.Create(xhtmResult))
 			{
-				ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testNode, XHTMLWriter, Cache);
+				ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testNode, null, XHTMLWriter, Cache);
 				XHTMLWriter.Flush();
 				const string positiveTest = "//*[@class='bolo']";
 				const string negativeTest = "//*[@class='lexentry']";
@@ -398,7 +402,7 @@ namespace SIL.FieldWorks.XWorks
 			var xhtmResult = new StringBuilder();
 			using(var XHTMLWriter = XmlWriter.Create(xhtmResult))
 			{
-				ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testParentNode, XHTMLWriter, Cache);
+				ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testParentNode, null, XHTMLWriter, Cache);
 				XHTMLWriter.Flush();
 				const string positiveTest = "//*[@class='tailwind']";
 				const string negativeTest = "//*[@class='headword']";
@@ -445,7 +449,7 @@ namespace SIL.FieldWorks.XWorks
 			var xhtmResult = new StringBuilder();
 			using(var XHTMLWriter = XmlWriter.Create(xhtmResult))
 			{
-				ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testEntryNode, XHTMLWriter, Cache);
+				ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testEntryNode, null, XHTMLWriter, Cache);
 				XHTMLWriter.Flush();
 				const string positiveTest = "/*[@class='lexentry']/span[@class='senses']/span[@class='sense']/span[@class='gloss']";
 				AssertThatXmlIn.String(xhtmResult.ToString()).HasSpecifiedNumberOfMatchesForXpath(positiveTest, 1);

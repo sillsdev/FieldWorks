@@ -354,7 +354,7 @@ namespace SIL.FieldWorks.XWorks
 			Directory.CreateDirectory(Path.GetDirectoryName(basePath));
 			var xhtmlPath = basePath + ".xhtml";
 			var cssPath = basePath + ".css";
-			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToPublish, configuration, m_mediator, xhtmlPath, cssPath);
+			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToPublish, publicationDecorator, configuration, m_mediator, xhtmlPath, cssPath);
 			m_mainView.Url = new Uri(xhtmlPath);
 			m_mainView.Refresh(WebBrowserRefreshOption.Completely);
 		}

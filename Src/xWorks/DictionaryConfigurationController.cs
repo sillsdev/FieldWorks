@@ -168,7 +168,7 @@ namespace SIL.FieldWorks.XWorks
 			//_mediator should be null only for unit tests which don't need styles
 			if(_mediator != null && _previewEntry != null)
 			{
-				View.PreviewData = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(_previewEntry, _model, _mediator);
+				View.PreviewData = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(_previewEntry, _model, null, _mediator);
 			}
 		}
 

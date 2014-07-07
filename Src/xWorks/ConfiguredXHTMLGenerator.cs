@@ -40,11 +40,16 @@ namespace SIL.FieldWorks.XWorks
 			AssemblyFile = "FDO";
 		}
 
-		public static string GenerateEntryHtmlWithStyles(ICmObject entry, DictionaryConfigurationModel configuration, Mediator mediator)
+		public static string GenerateEntryHtmlWithStyles(ICmObject entry, DictionaryConfigurationModel configuration,
+																		 DictionaryPublicationDecorator pubDecorator, Mediator mediator)
 		{
 			if(entry == null)
 			{
 				throw new ArgumentNullException("entry");
+			}
+			if(pubDecorator == null)
+			{
+				throw new ArgumentException("pubDecorator");
 			}
 			var projectPath = Path.Combine(DirectoryFinder.GetConfigSettingsDir(entry.Cache.ProjectId.ProjectFolder),
 													 DictionaryConfigurationListener.GetDictionaryConfigurationType(mediator));
@@ -54,7 +59,7 @@ namespace SIL.FieldWorks.XWorks
 			using(var cssWriter = new StreamWriter(previewCssPath, false))
 			{
 				GenerateOpeningHtml(xhtmlWriter, previewCssPath);
-				GenerateXHTMLForEntry(entry, configuration.Parts[0], xhtmlWriter, (FdoCache)mediator.PropertyTable.GetValue("cache"));
+				GenerateXHTMLForEntry(entry, configuration.Parts[0], pubDecorator, xhtmlWriter, (FdoCache)mediator.PropertyTable.GetValue("cache"));
 				GenerateClosingHtml(xhtmlWriter);
 				xhtmlWriter.Flush();
 				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, mediator));
@@ -89,10 +94,7 @@ namespace SIL.FieldWorks.XWorks
 		/// the given collection.
 		/// TODO: Generate letter headers based off of the writing system coalation
 		/// </summary>
-		public static void SavePublishedHtmlWithStyles(IEnumerable<int> entryHvos,
-																	  DictionaryConfigurationModel configuration,
-																	  Mediator mediator,
-																	  string xhtmlPath, string cssPath)
+		public static void SavePublishedHtmlWithStyles(IEnumerable<int> entryHvos, DictionaryPublicationDecorator publicationDecorator, DictionaryConfigurationModel configuration, Mediator mediator, string xhtmlPath, string cssPath)
 		{
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			using(var xhtmlWriter = XmlWriter.Create(xhtmlPath))
@@ -103,7 +105,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					var entry = cache.ServiceLocator.GetObject(hvo);
 					//TODO: handle minor entries with the minor entry config.
-					GenerateXHTMLForEntry(entry, configuration.Parts[0], xhtmlWriter, cache);
+					GenerateXHTMLForEntry(entry, configuration.Parts[0], publicationDecorator, xhtmlWriter, cache);
 				}
 				GenerateClosingHtml(xhtmlWriter);
 				xhtmlWriter.Flush();
@@ -117,9 +119,10 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="entry"></param>
 		/// <param name="configuration"><remarks>this configuration node must match the entry type</remarks></param>
+		/// <param name="publicationDecorator"></param>
 		/// <param name="writer"></param>
 		/// <param name="cache"></param>
-		public static void GenerateXHTMLForEntry(ICmObject entry, ConfigurableDictionaryNode configuration, XmlWriter writer, FdoCache cache)
+		public static void GenerateXHTMLForEntry(ICmObject entry, ConfigurableDictionaryNode configuration, DictionaryPublicationDecorator publicationDecorator, XmlWriter writer, FdoCache cache)
 		{
 			if(writer == null || entry == null || configuration == null || cache == null)
 			{
@@ -143,7 +146,7 @@ namespace SIL.FieldWorks.XWorks
 			writer.WriteAttributeString("id", "hvo" + entry.Hvo);
 			foreach(var config in configuration.Children)
 			{
-				GenerateXHTMLForFieldByReflection(entry, config, writer, cache);
+				GenerateXHTMLForFieldByReflection(entry, config, publicationDecorator, writer, cache);
 			}
 			writer.WriteEndElement();
 		}
@@ -165,9 +168,10 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="field"></param>
 		/// <param name="config"></param>
+		/// <param name="publicationDecorator"></param>
 		/// <param name="writer"></param>
 		/// <param name="cache"></param>
-		private static void GenerateXHTMLForFieldByReflection(object field, ConfigurableDictionaryNode config, XmlWriter writer, FdoCache cache)
+		private static void GenerateXHTMLForFieldByReflection(object field, ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator, XmlWriter writer, FdoCache cache)
 		{
 			if(!config.IsEnabled)
 			{
@@ -199,7 +203,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					if(!IsCollectionEmpty(propertyValue))
 					{
-						GenerateXHTMLForCollection(propertyValue, config, writer, cache);
+						GenerateXHTMLForCollection(propertyValue, config, publicationDecorator, writer, cache);
 					}
 					return;
 				}
@@ -226,7 +230,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					if(child.IsEnabled)
 					{
-						GenerateXHTMLForFieldByReflection(propertyValue, child, writer, cache);
+						GenerateXHTMLForFieldByReflection(propertyValue, child, publicationDecorator, writer, cache);
 					}
 				}
 			}
@@ -375,9 +379,10 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="collectionField"></param>
 		/// <param name="config"></param>
+		/// <param name="publicationDecorator"></param>
 		/// <param name="writer"></param>
 		/// <param name="cache"></param>
-		private static void GenerateXHTMLForCollection(object collectionField, ConfigurableDictionaryNode config, XmlWriter writer, FdoCache cache)
+		private static void GenerateXHTMLForCollection(object collectionField, ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator, XmlWriter writer, FdoCache cache)
 		{
 			writer.WriteStartElement("span");
 			WriteClassNameAttribute(writer, config);
@@ -394,19 +399,34 @@ namespace SIL.FieldWorks.XWorks
 			{
 				throw new ArgumentException("The given field is not a recognized collection");
 			}
+			var isSingle = collection.Cast<object>().Count() == 1;
 			foreach(var item in collection)
 			{
+				GenerateSenseNumberSpanIfNeeded(config.DictionaryNodeOptions, writer, item, cache, publicationDecorator, isSingle);
 				writer.WriteStartElement("span");
 				WriteCollectionItemClassAttribute(config, writer);
 				if(config.Children != null)
 				{
 					foreach(var child in config.Children)
 					{
-						GenerateXHTMLForFieldByReflection(item, child, writer, cache);
+						GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, writer, cache);
 					}
 				}
 				writer.WriteEndElement();
 			}
+			writer.WriteEndElement();
+		}
+
+		private static void GenerateSenseNumberSpanIfNeeded(DictionaryNodeOptions dictionaryNodeOptions, XmlWriter writer,
+																			 object sense, FdoCache cache,
+																			 DictionaryPublicationDecorator publicationDecorator, bool isSingle)
+		{
+			var senseOptions = dictionaryNodeOptions as DictionaryNodeSenseOptions;
+			if(senseOptions == null || (isSingle && !senseOptions.NumberEvenASingleSense))
+				return;
+			writer.WriteStartElement("span");
+			writer.WriteAttributeString("class", "sensenumber");
+			writer.WriteString(cache.GetOutlineNumber((ICmObject)sense, LexSenseTags.kflidSenses, false, true, publicationDecorator));
 			writer.WriteEndElement();
 		}
 
@@ -419,14 +439,13 @@ namespace SIL.FieldWorks.XWorks
 			// Rely on configuration to handle adjusting the classname for "RA" or "OA" model properties
 			var fieldDescription = CssGenerator.GetClassAttributeForConfig(config);
 			writer.WriteAttributeString("class", fieldDescription);
-
 			if (config.Children != null)
 			{
 				foreach (var child in config.Children)
 				{
 					if (child.IsEnabled)
 					{
-						GenerateXHTMLForFieldByReflection(propertyValue, child, writer, cache);
+						GenerateXHTMLForFieldByReflection(propertyValue, child, null, writer, cache);
 					}
 				}
 			}
