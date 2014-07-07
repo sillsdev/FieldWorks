@@ -227,10 +227,14 @@ namespace SIL.FieldWorks.XWorks
 			// WinForms renames the ListViewItem by index *after* this EventHandler runs. We want absolute control over sorting and
 			// renaming, so "cancel" the event before doing anything.
 			labelEditEventArgs.CancelEdit = true;
+
 			var selectedItem = _view.configurationsListView.Items[labelEditEventArgs.Item];
 			if (RenameConfiguration(selectedItem, labelEditEventArgs))
 			{
 				ReLoadConfigurations();
+				// Re-select item that was just renamed, or not renamed, from the re-loaded list of configurations.
+				var newName = labelEditEventArgs.Label ?? selectedItem.Text;
+				_view.configurationsListView.Items.Cast<ListViewItem>().First(item => item.Text == newName).Selected = true;
 			}
 			else
 			{
