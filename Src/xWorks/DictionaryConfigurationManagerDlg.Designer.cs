@@ -41,6 +41,8 @@
 			this.closeButton = new System.Windows.Forms.Button();
 			this.configurationsListView = new System.Windows.Forms.ListView();
 			this.publicationsListView = new System.Windows.Forms.ListView();
+			this.configurationsExplanationLabel = new System.Windows.Forms.Label();
+			this.publicationsExplanationLabel = new System.Windows.Forms.Label();
 			this.mainTableLayoutPanel.SuspendLayout();
 			this.buttonTableLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
@@ -49,13 +51,15 @@
 			// 
 			resources.ApplyResources(this.mainTableLayoutPanel, "mainTableLayoutPanel");
 			this.mainTableLayoutPanel.Controls.Add(this.explanationLabel, 0, 0);
-			this.mainTableLayoutPanel.Controls.Add(this.configurationsListLabel, 0, 2);
-			this.mainTableLayoutPanel.Controls.Add(this.publicationsListLabel, 3, 2);
+			this.mainTableLayoutPanel.Controls.Add(this.configurationsListLabel, 0, 1);
+			this.mainTableLayoutPanel.Controls.Add(this.publicationsListLabel, 3, 1);
 			this.mainTableLayoutPanel.Controls.Add(this.copyButton, 1, 3);
 			this.mainTableLayoutPanel.Controls.Add(this.removeButton, 1, 4);
 			this.mainTableLayoutPanel.Controls.Add(this.buttonTableLayoutPanel, 3, 6);
 			this.mainTableLayoutPanel.Controls.Add(this.configurationsListView, 0, 3);
 			this.mainTableLayoutPanel.Controls.Add(this.publicationsListView, 3, 3);
+			this.mainTableLayoutPanel.Controls.Add(this.configurationsExplanationLabel, 0, 2);
+			this.mainTableLayoutPanel.Controls.Add(this.publicationsExplanationLabel, 3, 2);
 			this.mainTableLayoutPanel.Name = "mainTableLayoutPanel";
 			// 
 			// explanationLabel
@@ -110,6 +114,7 @@
 			// configurationsListView
 			// 
 			resources.ApplyResources(this.configurationsListView, "configurationsListView");
+			this.configurationsListView.FullRowSelect = true;
 			this.configurationsListView.HideSelection = false;
 			this.configurationsListView.LabelEdit = true;
 			this.configurationsListView.MultiSelect = false;
@@ -128,6 +133,16 @@
 			this.publicationsListView.UseCompatibleStateImageBehavior = false;
 			this.publicationsListView.View = System.Windows.Forms.View.List;
 			// 
+			// configurationsExplanationLabel
+			// 
+			resources.ApplyResources(this.configurationsExplanationLabel, "configurationsExplanationLabel");
+			this.configurationsExplanationLabel.Name = "configurationsExplanationLabel";
+			// 
+			// publicationsExplanationLabel
+			// 
+			resources.ApplyResources(this.publicationsExplanationLabel, "publicationsExplanationLabel");
+			this.publicationsExplanationLabel.Name = "publicationsExplanationLabel";
+			// 
 			// DictionaryConfigurationManagerDlg
 			// 
 			this.AcceptButton = this.closeButton;
@@ -135,6 +150,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.mainTableLayoutPanel);
 			this.Name = "DictionaryConfigurationManagerDlg";
+			this.ShowIcon = false;
 			this.mainTableLayoutPanel.ResumeLayout(false);
 			this.mainTableLayoutPanel.PerformLayout();
 			this.buttonTableLayoutPanel.ResumeLayout(false);
@@ -155,5 +171,7 @@
 		private System.Windows.Forms.Button helpButton;
 		private System.Windows.Forms.Button closeButton;
 		public System.Windows.Forms.ListView publicationsListView;
+		private System.Windows.Forms.Label configurationsExplanationLabel;
+		private System.Windows.Forms.Label publicationsExplanationLabel;
 	}
 }

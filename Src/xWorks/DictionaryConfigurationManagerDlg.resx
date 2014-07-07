@@ -132,8 +132,11 @@
   <data name="explanationLabel.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 0</value>
   </data>
+  <data name="explanationLabel.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 10</value>
+  </data>
   <data name="explanationLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>517, 26</value>
+    <value>517, 39</value>
   </data>
   <data name="explanationLabel.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -159,8 +162,11 @@
   <data name="configurationsListLabel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
+  <data name="configurationsListLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="configurationsListLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 36</value>
+    <value>3, 39</value>
   </data>
   <data name="configurationsListLabel.Size" type="System.Drawing.Size, System.Drawing">
     <value>231, 13</value>
@@ -189,8 +195,11 @@
   <data name="publicationsListLabel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
+  <data name="publicationsListLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="publicationsListLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>288, 36</value>
+    <value>288, 39</value>
   </data>
   <data name="publicationsListLabel.Size" type="System.Drawing.Size, System.Drawing">
     <value>232, 13</value>
@@ -199,7 +208,7 @@
     <value>2</value>
   </data>
   <data name="publicationsListLabel.Text" xml:space="preserve">
-    <value>Dictionary Publications</value>
+    <value>Publications</value>
   </data>
   <data name="&gt;&gt;publicationsListLabel.Name" xml:space="preserve">
     <value>publicationsListLabel</value>
@@ -234,8 +243,11 @@
         rVkE02c/J/XVNmjqcBztGXGLm6l9aFps6nDU/QRvWZb3GbmPtQAAAABJRU5ErkJggg==
 </value>
   </data>
+  <data name="copyButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="copyButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>240, 52</value>
+    <value>240, 81</value>
   </data>
   <data name="copyButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>32, 32</value>
@@ -275,8 +287,11 @@
         Jvfs+FWEgSCI5WuUzxjbqfd7tDp/phrxWo7nX6IovwHfkOQbPu4SaAAAAABJRU5ErkJggg==
 </value>
   </data>
+  <data name="removeButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="removeButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>240, 90</value>
+    <value>240, 119</value>
   </data>
   <data name="removeButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>32, 32</value>
@@ -387,10 +402,10 @@
     <value>Fill</value>
   </data>
   <data name="configurationsListView.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 52</value>
+    <value>3, 81</value>
   </data>
   <data name="configurationsListView.Size" type="System.Drawing.Size, System.Drawing">
-    <value>231, 233</value>
+    <value>231, 204</value>
   </data>
   <data name="configurationsListView.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -411,10 +426,10 @@
     <value>Fill</value>
   </data>
   <data name="publicationsListView.Location" type="System.Drawing.Point, System.Drawing">
-    <value>288, 52</value>
+    <value>288, 81</value>
   </data>
   <data name="publicationsListView.Size" type="System.Drawing.Size, System.Drawing">
-    <value>232, 233</value>
+    <value>232, 204</value>
   </data>
   <data name="publicationsListView.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -430,6 +445,66 @@
   </data>
   <data name="&gt;&gt;publicationsListView.ZOrder" xml:space="preserve">
     <value>7</value>
+  </data>
+  <data name="configurationsExplanationLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="configurationsExplanationLabel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="configurationsExplanationLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 52</value>
+  </data>
+  <data name="configurationsExplanationLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>231, 26</value>
+  </data>
+  <data name="configurationsExplanationLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>13</value>
+  </data>
+  <data name="configurationsExplanationLabel.Text" xml:space="preserve">
+    <value>Choose a configuration to modify.</value>
+  </data>
+  <data name="&gt;&gt;configurationsExplanationLabel.Name" xml:space="preserve">
+    <value>configurationsExplanationLabel</value>
+  </data>
+  <data name="&gt;&gt;configurationsExplanationLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;configurationsExplanationLabel.Parent" xml:space="preserve">
+    <value>mainTableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;configurationsExplanationLabel.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="publicationsExplanationLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="publicationsExplanationLabel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="publicationsExplanationLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>288, 52</value>
+  </data>
+  <data name="publicationsExplanationLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>232, 26</value>
+  </data>
+  <data name="publicationsExplanationLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>14</value>
+  </data>
+  <data name="publicationsExplanationLabel.Text" xml:space="preserve">
+    <value>Checked Publications are affected by the selected Configuration on the left.</value>
+  </data>
+  <data name="&gt;&gt;publicationsExplanationLabel.Name" xml:space="preserve">
+    <value>publicationsExplanationLabel</value>
+  </data>
+  <data name="&gt;&gt;publicationsExplanationLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;publicationsExplanationLabel.Parent" xml:space="preserve">
+    <value>mainTableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;publicationsExplanationLabel.ZOrder" xml:space="preserve">
+    <value>9</value>
   </data>
   <data name="mainTableLayoutPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -459,7 +534,7 @@
     <value>0</value>
   </data>
   <data name="mainTableLayoutPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="explanationLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="4" /&gt;&lt;Control Name="configurationsListLabel" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="publicationsListLabel" Row="2" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="copyButton" Row="3" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="removeButton" Row="4" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="buttonTableLayoutPanel" Row="6" RowSpan="1" Column="3" ColumnSpan="4" /&gt;&lt;Control Name="configurationsListView" Row="3" RowSpan="3" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="publicationsListView" Row="3" RowSpan="3" Column="3" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,50,Absolute,38,Absolute,10,Percent,50" /&gt;&lt;Rows Styles="AutoSize,0,Absolute,10,AutoSize,0,AutoSize,0,AutoSize,0,Percent,100,Absolute,0,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="explanationLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="4" /&gt;&lt;Control Name="configurationsListLabel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="publicationsListLabel" Row="1" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="copyButton" Row="3" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="removeButton" Row="4" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="buttonTableLayoutPanel" Row="6" RowSpan="1" Column="3" ColumnSpan="4" /&gt;&lt;Control Name="configurationsListView" Row="3" RowSpan="3" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="publicationsListView" Row="3" RowSpan="3" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="configurationsExplanationLabel" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="publicationsExplanationLabel" Row="2" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,50,Absolute,38,Absolute,10,Percent,50" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,Percent,100,Absolute,0,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
