@@ -111,7 +111,10 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private const string ConfigurationTemplate = "<?xml version='1.0' encoding='utf-8'?><DictionaryConfiguration name='AConfigPubtest'>" +
-		"<Publications></Publications><AllPublications>false</AllPublications></DictionaryConfiguration>";
+		"<Publications></Publications></DictionaryConfiguration>";
+		private const string ConfigurationTemplateWithAllPublications = "<?xml version='1.0' encoding='utf-8'?><DictionaryConfiguration name='AConfigPubtest' allPublications='true'>" +
+		"<Publications></Publications></DictionaryConfiguration>";
+
 
 		[Test]
 		public void SplitPublicationsByConfiguration_AllPublicationIsIn()
@@ -123,7 +126,7 @@ namespace SIL.FieldWorks.XWorks
 				var testPubName = Cache.TsStrFactory.MakeString("TestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
-				var allPubsConfig = ConfigurationTemplate.Replace(">false", ">true");
+				var allPubsConfig = ConfigurationTemplateWithAllPublications;
 				using(var docView = new TestXmlDocView())
 				using(var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(),
 																								  "AllPubsConf"+DictionaryConfigurationModel.FileExtension)))
@@ -212,7 +215,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			using(var helper = new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
 			{
-				var allPubsConfig = ConfigurationTemplate.Replace(">false", ">true");
+				var allPubsConfig = ConfigurationTemplateWithAllPublications;
 				using(var docView = new TestXmlDocView())
 				using(var tempConfigFile = TempFile.WithFilename(Path.Combine(Path.GetTempPath(),
 																								  "AllPubsConf"+DictionaryConfigurationModel.FileExtension)))

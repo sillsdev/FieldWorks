@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<DictionaryConfiguration name="Root-based (complex forms as subentries)" version="1" lastModified="2014-02-13">
+<DictionaryConfiguration name="Root-based (complex forms as subentries)" allPublications="true" version="1" lastModified="2014-02-13">
 	<!-- Main entries in the dictionary have historically been written out with class="entry" -->
     <ConfigurationItem name="Main Entry" isEnabled="true" field="LexEntry" cssClassNameOverride="entry">
         <ConfigurationItem name="Headword" between=" " after="  " style="Dictionary-Headword" isEnabled="true" field="HeadWord">
@@ -1843,5 +1843,4 @@
         </ConfigurationItem>
 	</ConfigurationItem>
 	<SharedItems/>
-	<AllPublications>true</AllPublications>
 </DictionaryConfiguration>

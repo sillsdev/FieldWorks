@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Whether all current and future publications should be used by this configuration.
 		/// </summary>
-		[XmlElement(ElementName = "AllPublications")]
+		[XmlAttribute(AttributeName = "allPublications")]
 		public bool AllPublications { get; set; }
 
 		/// <summary></summary>

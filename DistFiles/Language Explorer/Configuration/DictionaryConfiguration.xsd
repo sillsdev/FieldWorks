@@ -18,11 +18,11 @@
 				</xs:sequence>
 				</xs:complexType>
 			  </xs:element>
-			  <xs:element name="AllPublications" minOccurs="0" maxOccurs="1" type="xs:boolean"/>
 		  </xs:sequence>
 		  <xs:attribute type="xs:string" name="name" use="required"/>
 		  <xs:attribute type="xs:integer" name="version" use="required"/>
 		  <xs:attribute type="xs:date" name="lastModified"/>
+		  <xs:attribute type="xs:boolean" name="allPublications" use="optional"/>
 	 </xs:complexType>
 </xs:element>
 <xs:complexType name="ConfigurationItemType">

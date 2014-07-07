@@ -25,6 +25,8 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private const string XmlOpenTagsThruRoot = @"<?xml version=""1.0"" encoding=""utf-8""?>
 			<DictionaryConfiguration name=""Root"" version=""1"" lastModified=""2014-02-13"">";
+		private const string XmlOpenTagsThruRootWithAllPublications = @"<?xml version=""1.0"" encoding=""utf-8""?>
+			<DictionaryConfiguration allPublications=""true"" name=""Root"" version=""1"" lastModified=""2014-02-13"">";
 		private const string XmlOpenTagsThruHeadword =
 				XmlOpenTagsThruRoot +
 				@"<ConfigurationItem name=""Main Entry"" isEnabled=""true"" field=""LexEntry"">
@@ -311,8 +313,8 @@ namespace SIL.FieldWorks.XWorks
 			DictionaryConfigurationModel model;
 			using (var modelFile = new TempFile(new[]
 			{
-				XmlOpenTagsThruRoot,
-				"<Publications><Publication>Another Dictionary</Publication></Publications><AllPublications>true</AllPublications>",
+				XmlOpenTagsThruRootWithAllPublications,
+				"<Publications><Publication>Another Dictionary</Publication></Publications>",
 				XmlCloseTagsFromRoot
 			}))
 			{
@@ -708,7 +710,7 @@ namespace SIL.FieldWorks.XWorks
 			model.Save();
 			ValidateAgainstSchema(modelFile);
 			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 0);
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/AllPublications", 1);
+			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/@allPublications", 1);
 			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/Publications", 1);
 			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/Publications/Publication", 1);
 		}
