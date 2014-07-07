@@ -148,9 +148,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		internal static string GetClassAttributeForConfig(ConfigurableDictionaryNode configNode)
 		{
-			// write out the FieldDescription as the class name, and append a . followed by the SubField if it is defined.
+			// write out the FieldDescription as the class name, and append a '_' followed by the SubField if it is defined.
 			var classAttribute = configNode.FieldDescription +
-										(String.IsNullOrEmpty(configNode.SubField) ? "" : ("." + configNode.SubField));
+										(String.IsNullOrEmpty(configNode.SubField) ? "" : ("_" + configNode.SubField));
 			if(!String.IsNullOrEmpty(configNode.CSSClassNameOverride))
 			{
 					classAttribute = configNode.CSSClassNameOverride;

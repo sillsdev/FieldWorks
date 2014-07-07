@@ -779,6 +779,59 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(cssResult, Contains.Substring(".lexentry .senses .sense .subentries .subentrie .headword"));
 		}
 
+		/// <summary>
+		/// When there is no css override an underscore should be used to separate FieldDescription and SubField
+		/// </summary>
+		[Test]
+		public void ClassAttributeForConfig_SubFieldWithNoOverrideGivesCorrectClass()
+		{
+			var form = new ConfigurableDictionaryNode { FieldDescription = "OwningEntry", SubField = "HeadWord" };
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { form }
+			};
+
+			//SUT
+			var classAttribute = CssGenerator.GetClassAttributeForConfig(form);
+			Assert.That(classAttribute, Is.StringMatching("owningentry_headword"));
+		}
+
+		/// <summary>
+		/// When there is a css override the fielddescription should not appear in the css class name
+		/// </summary>
+		[Test]
+		public void ClassAttributeForConfig_SubFieldWithOverrideGivesCorrectClass()
+		{
+			var form = new ConfigurableDictionaryNode { FieldDescription = "OwningEntry", SubField = "Display", CSSClassNameOverride = "HeadWord"};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { form }
+			};
+
+			//SUT
+			var classAttribute = CssGenerator.GetClassAttributeForConfig(form);
+			// Should be headword and should definitely not have owningentry present.
+			Assert.That(classAttribute, Is.StringMatching("headword"));
+		}
+
+		/// <summary>
+		/// css class names are traditionally all lower case. This tests that we enforce that.
+		/// </summary>
+		[Test]
+		public void ClassAttributeForConfig_ClassNameIsToLowered()
+		{
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+			};
+
+			//SUT
+			var classAttribute = CssGenerator.GetClassAttributeForConfig(entry);
+			Assert.That(classAttribute, Is.StringMatching("lexentry"));
+		}
+
 		[TestFixtureSetUp]
 		protected void Init()
 		{
