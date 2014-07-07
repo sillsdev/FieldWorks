@@ -20,8 +20,10 @@ namespace SIL.FieldWorks.XWorks
 	class DictionaryConfigurationManagerControllerTests : MemoryOnlyBackendProviderTestBase
 	{
 		private DictionaryConfigurationManagerController _controller;
+		private List<DictionaryConfigurationModel> _configurations;
 
 		private readonly string _projectConfigPath = Path.GetTempPath();
+		private readonly string _defaultConfigPath = Path.Combine(DirectoryFinder.DefaultConfigurations, "Dictionary");
 
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
@@ -29,7 +31,7 @@ namespace SIL.FieldWorks.XWorks
 			base.FixtureSetup();
 			FileUtils.Manager.SetFileAdapter(new MockFileOS());
 
-			FileUtils.EnsureDirectoryExists(Path.Combine(DirectoryFinder.DefaultConfigurations, "Dictionary"));
+			FileUtils.EnsureDirectoryExists(_defaultConfigPath);
 		}
 
 		[TestFixtureTearDown]
@@ -42,7 +44,7 @@ namespace SIL.FieldWorks.XWorks
 		[SetUp]
 		public void Setup()
 		{
-			var configurations = new List<DictionaryConfigurationModel>
+			_configurations = new List<DictionaryConfigurationModel>
 			{
 				new DictionaryConfigurationModel { Label = "configuration0", Publications = new List<string>() },
 				new DictionaryConfigurationModel { Label = "configuration1", Publications = new List<string>() }
@@ -54,14 +56,7 @@ namespace SIL.FieldWorks.XWorks
 				"publicationB"
 			};
 
-			_controller = new DictionaryConfigurationManagerController
-			{
-				Cache = Cache,
-				Configurations = configurations,
-				Publications = publications,
-				_projectConfigDir = _projectConfigPath,
-				_defaultConfigDir = Path.Combine(DirectoryFinder.DefaultConfigurations, "Dictionary")
-			};
+			_controller = new DictionaryConfigurationManagerController(Cache, _configurations, publications, _projectConfigPath, _defaultConfigPath);
 		}
 
 		[TearDown]
@@ -72,9 +67,9 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GetPublication_UsesAssociations()
 		{
-			_controller.Configurations[0].Publications.Add("publicationA");
+			_configurations[0].Publications.Add("publicationA");
 			// SUT
-			var pubs = _controller.GetPublications(_controller.Configurations[0]);
+			var pubs = _controller.GetPublications(_configurations[0]);
 			Assert.That(pubs, Contains.Item("publicationA"));
 			Assert.That(pubs, Has.Count.EqualTo(1));
 
@@ -87,25 +82,25 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Assert.Throws<ArgumentNullException>(() => _controller.AssociatePublication(null, null), "No configuration to associate with");
 			Assert.Throws<ArgumentNullException>(() => _controller.AssociatePublication("publicationA", null), "No configuration to associate with");
-			Assert.Throws<ArgumentNullException>(() => _controller.AssociatePublication(null, _controller.Configurations[0]), "Don't allow trying to add null");
+			Assert.Throws<ArgumentNullException>(() => _controller.AssociatePublication(null, _configurations[0]), "Don't allow trying to add null");
 
-			Assert.Throws<ArgumentOutOfRangeException>(() => _controller.AssociatePublication("unknown publication", _controller.Configurations[0]), "Don't associate with an invalid/unknown publication");
+			Assert.Throws<ArgumentOutOfRangeException>(() => _controller.AssociatePublication("unknown publication", _configurations[0]), "Don't associate with an invalid/unknown publication");
 		}
 
 		[Test]
 		public void AssociatesPublication()
 		{
 			// SUT
-			_controller.AssociatePublication("publicationA", _controller.Configurations[0]);
-			Assert.That(_controller.Configurations[0].Publications, Contains.Item("publicationA"), "failed to associate");
-			Assert.That(_controller.Configurations[0].Publications, Is.Not.Contains("publicationB"), "should not have associated with publicationB");
+			_controller.AssociatePublication("publicationA", _configurations[0]);
+			Assert.That(_configurations[0].Publications, Contains.Item("publicationA"), "failed to associate");
+			Assert.That(_configurations[0].Publications, Is.Not.Contains("publicationB"), "should not have associated with publicationB");
 
 			// SUT
-			_controller.AssociatePublication("publicationA", _controller.Configurations[1]);
-			_controller.AssociatePublication("publicationB", _controller.Configurations[1]);
-			Assert.That(_controller.Configurations[1].Publications, Contains.Item("publicationA"), "failed to associate");
-			Assert.That(_controller.Configurations[1].Publications, Contains.Item("publicationB"), "failed to associate");
-			Assert.That(_controller.Configurations[0].Publications, Is.Not.Contains("publicationB"),
+			_controller.AssociatePublication("publicationA", _configurations[1]);
+			_controller.AssociatePublication("publicationB", _configurations[1]);
+			Assert.That(_configurations[1].Publications, Contains.Item("publicationA"), "failed to associate");
+			Assert.That(_configurations[1].Publications, Contains.Item("publicationB"), "failed to associate");
+			Assert.That(_configurations[0].Publications, Is.Not.Contains("publicationB"),
 				"should not have associated configuration0 with publicationB");
 		}
 
@@ -115,9 +110,9 @@ namespace SIL.FieldWorks.XWorks
 			for (int i = 0; i < 3; i++)
 			{
 				// SUT
-				_controller.AssociatePublication("publicationA", _controller.Configurations[0]);
+				_controller.AssociatePublication("publicationA", _configurations[0]);
 			}
-			Assert.AreEqual(1, _controller.Configurations[0].Publications.Count(pub => pub.Equals("publicationA")), "associated too many times");
+			Assert.AreEqual(1, _configurations[0].Publications.Count(pub => pub.Equals("publicationA")), "associated too many times");
 		}
 
 		[Test]
@@ -125,27 +120,27 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Assert.Throws<ArgumentNullException>(() => _controller.DisassociatePublication(null, null), "No configuration to disassociate. No publication to disassociate from.");
 			Assert.Throws<ArgumentNullException>(() => _controller.DisassociatePublication("publicationA", null), "No configuration");
-			Assert.Throws<ArgumentNullException>(() => _controller.DisassociatePublication(null, _controller.Configurations[0]), "No publication");
+			Assert.Throws<ArgumentNullException>(() => _controller.DisassociatePublication(null, _configurations[0]), "No publication");
 
-			Assert.Throws<ArgumentOutOfRangeException>(() => _controller.DisassociatePublication("unknown publication", _controller.Configurations[0]), "Don't try to operate using an invalid/unknown publication");
+			Assert.Throws<ArgumentOutOfRangeException>(() => _controller.DisassociatePublication("unknown publication", _configurations[0]), "Don't try to operate using an invalid/unknown publication");
 		}
 
 		[Test]
 		public void DisassociatesPublication()
 		{
-			_controller.AssociatePublication("publicationA", _controller.Configurations[1]);
-			_controller.AssociatePublication("publicationB", _controller.Configurations[1]);
+			_controller.AssociatePublication("publicationA", _configurations[1]);
+			_controller.AssociatePublication("publicationB", _configurations[1]);
 			// SUT
-			_controller.DisassociatePublication("publicationA", _controller.Configurations[1]);
+			_controller.DisassociatePublication("publicationA", _configurations[1]);
 
-			Assert.That(_controller.Configurations[1].Publications, Contains.Item("publicationB"), "Should not have disassociated unrelated publication");
-			Assert.That(_controller.Configurations[1].Publications, Is.Not.Contains("publicationA"), "failed to disassociate");
+			Assert.That(_configurations[1].Publications, Contains.Item("publicationB"), "Should not have disassociated unrelated publication");
+			Assert.That(_configurations[1].Publications, Is.Not.Contains("publicationA"), "failed to disassociate");
 		}
 
 		[Test]
 		public void Rename_RevertsOnCancel()
 		{
-			var selectedConfig = _controller.Configurations[0];
+			var selectedConfig = _configurations[0];
 			var listViewItem = new ListViewItem { Tag = selectedConfig };
 			var oldLabel = selectedConfig.Label;
 
@@ -160,10 +155,10 @@ namespace SIL.FieldWorks.XWorks
 		public void Rename_PreventsDuplicate()
 		{
 			var dupLabelArgs = new LabelEditEventArgs(0, "DuplicateLabel");
-			var configA = _controller.Configurations[0];
+			var configA = _configurations[0];
 			var configB = new DictionaryConfigurationModel { Label = "configuration2", Publications = new List<string>() };
 			_controller.RenameConfiguration(new ListViewItem { Tag = configA }, dupLabelArgs);
-			_controller.Configurations.Insert(0, configB);
+			_configurations.Insert(0, configB);
 
 			// SUT
 			Assert.False(_controller.RenameConfiguration(new ListViewItem { Tag = configB }, dupLabelArgs), "Duplicate should return 'incomplete'");
@@ -176,7 +171,7 @@ namespace SIL.FieldWorks.XWorks
 		public void Rename_RenamesConfigAndFile()
 		{
 			const string newLabel = "NewLabel";
-			var selectedConfig = _controller.Configurations[0];
+			var selectedConfig = _configurations[0];
 			selectedConfig.FilePath = null;
 			// SUT
 			Assert.True(_controller.RenameConfiguration(new ListViewItem { Tag = selectedConfig }, new LabelEditEventArgs(0, newLabel)),
@@ -210,8 +205,8 @@ namespace SIL.FieldWorks.XWorks
 					Publications = new List<string>()
 				}
 			};
-			_controller.Configurations.Add(configToRename);
-			_controller.Configurations.AddRange(conflictingConfigs);
+			_configurations.Add(configToRename);
+			_configurations.AddRange(conflictingConfigs);
 
 			// SUT
 			_controller.GenerateFilePath(configToRename);
@@ -257,14 +252,14 @@ namespace SIL.FieldWorks.XWorks
 				new DictionaryConfigurationModel { Label = "Copy of configuration4 (1)", Publications = new List<string>() },
 				new DictionaryConfigurationModel { Label = "Copy of configuration4 (2)", Publications = new List<string>() }
 			};
-			_controller.Configurations.InsertRange(0, extantConfigs);
+			_configurations.InsertRange(0, extantConfigs);
 
 			// SUT
 			var newConfig = _controller.CopyConfiguration(extantConfigs[0]);
 
 			Assert.AreEqual("Copy of configuration4 (3)", newConfig.Label, "The new label should be based on the original");
-			Assert.Contains(newConfig, _controller.Configurations, "The new config should have been added to the list");
-			Assert.AreEqual(1, _controller.Configurations.Count(conf => newConfig.Label.Equals(conf.Label)), "The label should be unique");
+			Assert.Contains(newConfig, _configurations, "The new config should have been added to the list");
+			Assert.AreEqual(1, _configurations.Count(conf => newConfig.Label.Equals(conf.Label)), "The label should be unique");
 
 			Assert.AreEqual(pubs.Count, newConfig.Publications.Count, "Publications were not copied");
 			for (int i = 0; i < pubs.Count; i++)
@@ -277,17 +272,17 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void DeleteConfigurationRemovesFromList()
 		{
-			var configurationToDelete = _controller.Configurations[0];
+			var configurationToDelete = _configurations[0];
 			// SUT
 			_controller.DeleteConfiguration(configurationToDelete);
 
-			Assert.That(!_controller.Configurations.Contains(configurationToDelete), "Should have removed configuration from list of configurations");
+			Assert.That(_configurations, Is.Not.Contains(configurationToDelete), "Should have removed configuration from list of configurations");
 		}
 
 		[Test]
 		public void DeleteConfigurationRemovesFromDisk()
 		{
-			var configurationToDelete = _controller.Configurations[0];
+			var configurationToDelete = _configurations[0];
 
 			_controller.GenerateFilePath(configurationToDelete);
 			var pathToConfiguration = configurationToDelete.FilePath;
@@ -303,7 +298,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void DeleteConfigurationDoesNotCrashIfNullFilePath()
 		{
-			var configurationToDelete = _controller.Configurations[0];
+			var configurationToDelete = _configurations[0];
 			Assert.That(configurationToDelete.FilePath, Is.Null, "Unit test not testing what it used to. Perhaps the code is smarter now.");
 
 			// SUT
@@ -319,11 +314,10 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void DeleteConfigurationResetsForShippedDefaultRatherThanDelete()
 		{
-			var shippedConfigurationsPath = Path.Combine(DirectoryFinder.DefaultConfigurations, "Dictionary");
-			var shippedRootDefaultConfigurationPath = Path.Combine(shippedConfigurationsPath, "Root.xml");
+			var shippedRootDefaultConfigurationPath = Path.Combine(_defaultConfigPath, "Root.xml");
 			FileUtils.WriteStringtoFile(shippedRootDefaultConfigurationPath, "shipped root default configuration file contents", Encoding.UTF8);
 
-			var configurationToDelete = _controller.Configurations[0];
+			var configurationToDelete = _configurations[0];
 			configurationToDelete.FilePath = Path.Combine("whateverdir","Root.xml");
 			configurationToDelete.Label = "customizedLabel";
 
@@ -336,7 +330,7 @@ namespace SIL.FieldWorks.XWorks
 
 			Assert.That(FileUtils.FileExists(pathToConfiguration), "File should still be there, not deleted.");
 			Assert.That(configurationToDelete.Label, Is.EqualTo("Root-based (complex forms as subentries)"), "Did not seem to reset configuration to shipped defaults.");
-			Assert.That(_controller.Configurations.Contains(configurationToDelete), Is.True, "Should still have the configuration in the list of configurations");
+			Assert.Contains(configurationToDelete, _configurations, "Should still have the configuration in the list of configurations");
 
 			// Not asserting that the configurationToDelete.FilePath file contents are reset because that will happen later when it is saved.
 		}

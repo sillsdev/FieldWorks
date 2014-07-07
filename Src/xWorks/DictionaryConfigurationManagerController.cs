@@ -25,20 +25,20 @@ namespace SIL.FieldWorks.XWorks
 		private readonly DictionaryConfigurationManagerDlg _view;
 
 		private readonly Mediator _mediator;
-		internal FdoCache Cache;
+		private readonly FdoCache _cache;
 
-		internal string _projectConfigDir;
-		internal string _defaultConfigDir;
+		private readonly string _projectConfigDir;
+		private readonly string _defaultConfigDir;
 
 		/// <summary>
 		/// Set of dictionary configurations (aka "views") in project.
 		/// </summary>
-		internal List<DictionaryConfigurationModel> Configurations;
+		private readonly List<DictionaryConfigurationModel> _configurations;
 
 		/// <summary>
 		/// Set of the names of available dictionary publications in project.
 		/// </summary>
-		internal List<string> Publications;
+		private readonly List<string> _publications;
 
 		private readonly ListViewItem _allPublicationsItem;
 
@@ -70,7 +70,7 @@ namespace SIL.FieldWorks.XWorks
 				throw new ArgumentNullException();
 			if (publication == null)
 				throw new ArgumentNullException();
-			if (!Publications.Contains(publication))
+			if (!_publications.Contains(publication))
 				throw new ArgumentOutOfRangeException();
 
 			if (!configuration.Publications.Contains(publication))
@@ -84,7 +84,7 @@ namespace SIL.FieldWorks.XWorks
 				throw new ArgumentNullException();
 			if (configuration == null)
 				throw new ArgumentNullException();
-			if (!Publications.Contains(publication))
+			if (!_publications.Contains(publication))
 				throw new ArgumentOutOfRangeException();
 
 			configuration.Publications.Remove(publication);
@@ -93,19 +93,27 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// For unit tests.
 		/// </summary>
-		internal DictionaryConfigurationManagerController() {}
+		internal DictionaryConfigurationManagerController(FdoCache cache,
+			List<DictionaryConfigurationModel> configurations, List<string> publications, string projectConfigDir, string defaultConfigDir)
+		{
+			_cache = cache;
+			_configurations = configurations;
+			_publications = publications;
+			_projectConfigDir = projectConfigDir;
+			_defaultConfigDir = defaultConfigDir;
+		}
 
 		public DictionaryConfigurationManagerController(DictionaryConfigurationManagerDlg view, Mediator mediator,
 			List<DictionaryConfigurationModel> configurations, List<string> publications, string projectConfigDir, string defaultConfigDir)
 		{
 			_view = view;
 			_mediator = mediator;
-			Configurations = configurations;
-			Publications = publications;
+			_configurations = configurations;
+			_publications = publications;
 			_projectConfigDir = projectConfigDir;
 			_defaultConfigDir = defaultConfigDir;
 			_mediator = mediator;
-			Cache = (FdoCache) _mediator.PropertyTable.GetValue("cache");
+			_cache = (FdoCache) _mediator.PropertyTable.GetValue("cache");
 
 			// Add special publication selection for All Publications.
 			_allPublicationsItem = new ListViewItem
@@ -117,7 +125,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// Populate lists of configurations and publications
 			ReLoadConfigurations();
-			foreach (var publication in Publications)
+			foreach (var publication in _publications)
 			{
 				var item = new ListViewItem { Text = publication };
 				_view.publicationsListView.Items.Add(item);
@@ -128,10 +136,10 @@ namespace SIL.FieldWorks.XWorks
 
 		private void ReLoadConfigurations()
 		{
-			Configurations.Sort((lhs, rhs) => string.Compare(lhs.Label, rhs.Label));
+			_configurations.Sort((lhs, rhs) => string.Compare(lhs.Label, rhs.Label));
 			_view.configurationsListView.Items.Clear();
 			_view.configurationsListView.Items.AddRange(
-				Configurations.Select(configuration => new ListViewItem { Tag = configuration, Text = configuration.Label }).ToArray());
+				_configurations.Select(configuration => new ListViewItem { Tag = configuration, Text = configuration.Label }).ToArray());
 		}
 
 		/// <summary>
@@ -152,7 +160,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 
 			// Select the correct configuration
-			var selectedConfigIdx = Configurations.FindIndex(config => Path.GetFileNameWithoutExtension(config.FilePath)
+			var selectedConfigIdx = _configurations.FindIndex(config => Path.GetFileNameWithoutExtension(config.FilePath)
 				== _mediator.PropertyTable.GetStringProperty("LastDictionaryConfiguration", "Root"));
 			if (selectedConfigIdx >= 0)
 				_view.configurationsListView.Items[selectedConfigIdx].Selected = true;
@@ -260,7 +268,7 @@ namespace SIL.FieldWorks.XWorks
 				//   between these cases, so simply revert any edits
 				selectedItem.Text = selectedConfig.Label;
 			}
-			else if (Configurations.Any(config => config != selectedConfig && config.Label == labelEditEventArgs.Label))
+			else if (_configurations.Any(config => config != selectedConfig && config.Label == labelEditEventArgs.Label))
 			{
 				return false;
 			}
@@ -281,7 +289,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var filePath = FormatFilePath(config.Label);
 			int i = 1;
-			while (Configurations.Any(conf => Path.GetFileName(filePath).Equals(Path.GetFileName(conf.FilePath))))
+			while (_configurations.Any(conf => Path.GetFileName(filePath).Equals(Path.GetFileName(conf.FilePath))))
 			{
 				filePath = FormatFilePath(string.Format("{0}_{1}", config.Label, i++));
 			}
@@ -320,7 +328,7 @@ namespace SIL.FieldWorks.XWorks
 			// generate a unique name (starting i=2 mimicks old behaviour)
 			var newName = "Copy of " + newConfig.Label;
 			int i = 2;
-			while (Configurations.Any(conf => conf.Label == newName))
+			while (_configurations.Any(conf => conf.Label == newName))
 			{
 				newName = String.Format("Copy of {0} ({1})", newConfig.Label, i++);
 			}
@@ -328,7 +336,7 @@ namespace SIL.FieldWorks.XWorks
 			newConfig.FilePath = null; // this will be set on the next rename, which will occur immediately
 
 			// update the configurations list
-			Configurations.Add(newConfig);
+			_configurations.Add(newConfig);
 
 			return newConfig;
 		}
@@ -351,13 +359,13 @@ namespace SIL.FieldWorks.XWorks
 
 				configurationToDelete.FilePath = pathToShippedFile;
 				// Recreate from shipped XML file.
-				configurationToDelete.Load(Cache);
+				configurationToDelete.Load(_cache);
 				configurationToDelete.FilePath = origFilePath;
 
 				return;
 			}
 
-			Configurations.Remove(configurationToDelete);
+			_configurations.Remove(configurationToDelete);
 			if (configurationToDelete.FilePath != null)
 				FileUtils.Delete(configurationToDelete.FilePath);
 		}
