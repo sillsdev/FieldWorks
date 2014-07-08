@@ -14,6 +14,8 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application;
+using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using XCore;
@@ -57,6 +59,11 @@ namespace SIL.FieldWorks.XWorks
 		/// for the project.
 		/// </summary>
 		private string _projectConfigDir;
+
+		/// <summary>
+		/// Publication decorator necessary to view sense numbers in the preview
+		/// </summary>
+		private DictionaryPublicationDecorator _allEntriesPublicationDecorator;
 
 		/// <summary>
 		/// Directory where shipped default configurations of the current type (Dictionary, Reversal, ...)
@@ -168,7 +175,7 @@ namespace SIL.FieldWorks.XWorks
 			//_mediator should be null only for unit tests which don't need styles
 			if(_mediator != null && _previewEntry != null)
 			{
-				View.PreviewData = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(_previewEntry, _model, null, _mediator);
+				View.PreviewData = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(_previewEntry, _model, _allEntriesPublicationDecorator, _mediator);
 			}
 		}
 
@@ -281,6 +288,10 @@ namespace SIL.FieldWorks.XWorks
 		{
 			_mediator = mediator;
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			_allEntriesPublicationDecorator = new DictionaryPublicationDecorator(cache,
+																										(ISilDataAccessManaged)cache.MainCacheAccessor,
+																										cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+
 			_previewEntry = previewEntry ?? GetDefaultEntryForType(DictionaryConfigurationListener.GetDictionaryConfigurationType(mediator), cache);
 			View = view;
 			_projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(mediator);
