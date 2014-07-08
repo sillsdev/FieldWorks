@@ -119,7 +119,7 @@
   </resheader>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="mainTableLayoutPanel.ColumnCount" type="System.Int32, mscorlib">
-    <value>4</value>
+    <value>2</value>
   </data>
   <data name="explanationLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -133,10 +133,10 @@
     <value>3, 0</value>
   </data>
   <data name="explanationLabel.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 3, 3, 10</value>
+    <value>6, 6, 6, 6</value>
   </data>
   <data name="explanationLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>517, 39</value>
+    <value>521, 38</value>
   </data>
   <data name="explanationLabel.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -156,169 +156,17 @@
   <data name="&gt;&gt;explanationLabel.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="configurationsListLabel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="configurationsListLabel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="configurationsListLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="configurationsListLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 39</value>
-  </data>
-  <data name="configurationsListLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>231, 13</value>
-  </data>
-  <data name="configurationsListLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="configurationsListLabel.Text" xml:space="preserve">
-    <value>Dictionary Configurations</value>
-  </data>
-  <data name="&gt;&gt;configurationsListLabel.Name" xml:space="preserve">
-    <value>configurationsListLabel</value>
-  </data>
-  <data name="&gt;&gt;configurationsListLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;configurationsListLabel.Parent" xml:space="preserve">
-    <value>mainTableLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;configurationsListLabel.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="publicationsListLabel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="publicationsListLabel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="publicationsListLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="publicationsListLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>288, 39</value>
-  </data>
-  <data name="publicationsListLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>232, 13</value>
-  </data>
-  <data name="publicationsListLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="publicationsListLabel.Text" xml:space="preserve">
-    <value>Publications</value>
-  </data>
-  <data name="&gt;&gt;publicationsListLabel.Name" xml:space="preserve">
-    <value>publicationsListLabel</value>
-  </data>
-  <data name="&gt;&gt;publicationsListLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;publicationsListLabel.Parent" xml:space="preserve">
-    <value>mainTableLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;publicationsListLabel.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="copyButton.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Top</value>
-  </data>
-  <data name="copyButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29m
-        dHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAABAdEVYdENvcHlyaWdodABDb3B5cmlnaHQgqSAyMDA1
-        IGFuZCBmb2xsb3dpbmcgeWVhcnMgRGV2Q29tcG9uZW50cyBMTEMyIOTwAAACg0lEQVQ4T32RS2gTURSG
-        Z+XCjeBaKK4UNxVd6EKYQu3KhYIotCAq+KQVlNpK62KUFmlx00W1FATFbnxULDUSKNYJFmu1pklMo+nb
-        mub9mEwmr3n+njuJIhp7mH8x957v/8+9l+OOT9btu+EWG3v9/6i+2y/Sfj23aZ14xz98L8EdBTwxwBcH
-        /AlgntTrtLC/LyFxJ6c3MWme40fdOXgJDhC0kAKWM8CaBHQ+trCrk0z6MxLX4vuPyakg/9pXQCAJLKYr
-        4A8ZCOeA2VUL424LUysWqE+oEn/V2XV+IlDCEsHfCd4geNIbRdd9F7pJN4dcEIZd2NL0SNx68LZQ1bYq
-        TXUuzk9+U+1kBsfzwKWe55j5EsFHfxSf5qOYDcTwmelrDC9dK2jpeuHZ3tBXNbmY5d8GdYQIjilAqgi0
-        3hnFSiiLpZCE1bCM9VgOGwkFkWQe/U99aB/6gNPCuGfHkQEyuVzkxQUDETpzsgBIJeDa3THE0wWsRWSE
-        4hWQ/SelIrzLKYjeMJ69CWLnsXs8x7VqvLho2ulpSpfLdPsDDshK2YajqTwSBKblEqRcGVlal/Mqprwh
-        7Gl+QAZtJhlY9tkzlK6oQPegE4WS9hvOEMzAXEFFvqjZezPzEew9M0IGVyzbQDUA3QQM0q3hCZRUHfFM
-        JZklKjaoo1TWUabm2WAMBy48YQaoIwl/avd5p6hqBlLZSrJS0FAkmIFsXaOkucUEDrWNkkGNarg6Jmi6
-        YY/O0tnIbCKV1nQa0TAteJaSoL7aBo3t42Rg2pem0LmLNDZL/gWblkWvkQT11TY4fP2VwBrt1OrIBsEm
-        rVkE02c/J/XVNmjqcBztGXGLm6l9aFps6nDU/QRvWZb3GbmPtQAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="copyButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="copyButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>240, 81</value>
-  </data>
-  <data name="copyButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>32, 32</value>
-  </data>
-  <data name="copyButton.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;copyButton.Name" xml:space="preserve">
-    <value>copyButton</value>
-  </data>
-  <data name="&gt;&gt;copyButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;copyButton.Parent" xml:space="preserve">
-    <value>mainTableLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;copyButton.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="removeButton.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Top</value>
-  </data>
-  <data name="removeButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29m
-        dHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAKWSURBVDhPlVNbSFRRFL2vc+6cc6/jjKOTlTqjpqaN
-        EQQGVmOTg1rNVJLlEFQSSKA1QqZNapCPnz4sFISgD6ms70gqMwh6QERkTAUFQVQY1F9Gfe/2OV1FE4I2
-        LO7dr8V+HeVv2eJmSiTLVqLZblX8/5eUE02pIJpxhpMu/GYjNMclfYuxTByHcZaT9EhRHjQxowV15tjV
-        Vmb4T3Kyo42RMOpuhCZ8CyKUXk4Gp/fvhQfNjdBu0RtYwQoRiBW1DmS4vo+v8sNYViZ0cHIZ7TkI1UmX
-        BFofJ4++jQ7D7GAfnF+Z/TPCSG0XJ23DOR54tmkjPF+/Dh4HAjBgmRBzGbsxhzrpkkDFCq7PdLRJgodN
-        cejh5OuFXB/MRMPwsroKJouD0G+7fiU5nYybegwrdDnpf1pIMlI9UlwAH3pPwcfO4zAV3Qrpxp3wumE7
-        3CwvgZRFP9VY5r4KqhVgPEeCJS0I6Fhy30TVBknwvvUQvD2wB+6hftqin8OcNmKMD7F0gPPikNi4ibkX
-        RxILBNfKCqHDok8qqB5CP3XinCyUeQOC4Bwm7sbqllQgWrgSXA0pTmYOMyOGcV4ElS1s81jieEg3J824
-        hVeT8QY5REEwVpQP46VBSSCGOFVSBGNeN5yzzC/tjPRgnq3U+jJUTLx1NbwZ0j0pmF/j7foInLDN+3g8
-        05fycxfW+DRYCBfdFiQYSSGBR4l4bTn9oRzP3LuhfkkgDklOnFNRrh8PpxMP6cdEXq48pKRF74RMo1JU
-        Lh8PBunHmBHB/mdH1wSg26JvahgVh5KFEBOnu0y97CgjLQlODoZMfS3a5JkvHqKOjL5KUy8NUb0Y/zPQ
-        Jvfs+FWEgSCI5WuUzxjbqfd7tDp/phrxWo7nX6IovwHfkOQbPu4SaAAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="removeButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="removeButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>240, 119</value>
-  </data>
-  <data name="removeButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>32, 32</value>
-  </data>
-  <data name="removeButton.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
-  </data>
-  <data name="&gt;&gt;removeButton.Name" xml:space="preserve">
-    <value>removeButton</value>
-  </data>
-  <data name="&gt;&gt;removeButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;removeButton.Parent" xml:space="preserve">
-    <value>mainTableLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;removeButton.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
   <data name="buttonTableLayoutPanel.ColumnCount" type="System.Int32, mscorlib">
     <value>2</value>
   </data>
   <data name="helpButton.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Right</value>
   </data>
+  <data name="helpButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="helpButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>439, 3</value>
+    <value>443, 3</value>
   </data>
   <data name="helpButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 25</value>
@@ -344,8 +192,11 @@
   <data name="closeButton.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Right</value>
   </data>
+  <data name="closeButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="closeButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>358, 3</value>
+    <value>362, 3</value>
   </data>
   <data name="closeButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 25</value>
@@ -372,13 +223,13 @@
     <value>Fill</value>
   </data>
   <data name="buttonTableLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 291</value>
+    <value>3, 372</value>
   </data>
   <data name="buttonTableLayoutPanel.RowCount" type="System.Int32, mscorlib">
     <value>1</value>
   </data>
   <data name="buttonTableLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>517, 31</value>
+    <value>521, 31</value>
   </data>
   <data name="buttonTableLayoutPanel.TabIndex" type="System.Int32, mscorlib">
     <value>12</value>
@@ -393,22 +244,25 @@
     <value>mainTableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;buttonTableLayoutPanel.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>1</value>
   </data>
   <data name="buttonTableLayoutPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
     <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="helpButton" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="closeButton" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100,AutoSize,0,Absolute,20" /&gt;&lt;Rows Styles="AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="configurationsTableLayoutPanel.ColumnCount" type="System.Int32, mscorlib">
+    <value>2</value>
   </data>
   <data name="configurationsListView.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
   <data name="configurationsListView.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 81</value>
+    <value>3, 33</value>
   </data>
   <data name="configurationsListView.Size" type="System.Drawing.Size, System.Drawing">
-    <value>231, 204</value>
+    <value>228, 270</value>
   </data>
   <data name="configurationsListView.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
+    <value>17</value>
   </data>
   <data name="&gt;&gt;configurationsListView.Name" xml:space="preserve">
     <value>configurationsListView</value>
@@ -417,34 +271,99 @@
     <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;configurationsListView.Parent" xml:space="preserve">
-    <value>mainTableLayoutPanel</value>
+    <value>configurationsTableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;configurationsListView.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>0</value>
   </data>
-  <data name="publicationsListView.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
+  <data name="removeButton.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Top</value>
   </data>
-  <data name="publicationsListView.Location" type="System.Drawing.Point, System.Drawing">
-    <value>288, 81</value>
+  <data name="removeButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29m
+        dHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAKWSURBVDhPlVNbSFRRFL2vc+6cc6/jjKOTlTqjpqaN
+        EQQGVmOTg1rNVJLlEFQSSKA1QqZNapCPnz4sFISgD6ms70gqMwh6QERkTAUFQVQY1F9Gfe/2OV1FE4I2
+        LO7dr8V+HeVv2eJmSiTLVqLZblX8/5eUE02pIJpxhpMu/GYjNMclfYuxTByHcZaT9EhRHjQxowV15tjV
+        Vmb4T3Kyo42RMOpuhCZ8CyKUXk4Gp/fvhQfNjdBu0RtYwQoRiBW1DmS4vo+v8sNYViZ0cHIZ7TkI1UmX
+        BFofJ4++jQ7D7GAfnF+Z/TPCSG0XJ23DOR54tmkjPF+/Dh4HAjBgmRBzGbsxhzrpkkDFCq7PdLRJgodN
+        cejh5OuFXB/MRMPwsroKJouD0G+7fiU5nYybegwrdDnpf1pIMlI9UlwAH3pPwcfO4zAV3Qrpxp3wumE7
+        3CwvgZRFP9VY5r4KqhVgPEeCJS0I6Fhy30TVBknwvvUQvD2wB+6hftqin8OcNmKMD7F0gPPikNi4ibkX
+        RxILBNfKCqHDok8qqB5CP3XinCyUeQOC4Bwm7sbqllQgWrgSXA0pTmYOMyOGcV4ElS1s81jieEg3J824
+        hVeT8QY5REEwVpQP46VBSSCGOFVSBGNeN5yzzC/tjPRgnq3U+jJUTLx1NbwZ0j0pmF/j7foInLDN+3g8
+        05fycxfW+DRYCBfdFiQYSSGBR4l4bTn9oRzP3LuhfkkgDklOnFNRrh8PpxMP6cdEXq48pKRF74RMo1JU
+        Lh8PBunHmBHB/mdH1wSg26JvahgVh5KFEBOnu0y97CgjLQlODoZMfS3a5JkvHqKOjL5KUy8NUb0Y/zPQ
+        Jvfs+FWEgSCI5WuUzxjbqfd7tDp/phrxWo7nX6IovwHfkOQbPu4SaAAAAABJRU5ErkJggg==
+</value>
   </data>
-  <data name="publicationsListView.Size" type="System.Drawing.Size, System.Drawing">
-    <value>232, 204</value>
+  <data name="removeButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
-  <data name="publicationsListView.TabIndex" type="System.Int32, mscorlib">
+  <data name="removeButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>237, 71</value>
+  </data>
+  <data name="removeButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>32, 32</value>
+  </data>
+  <data name="removeButton.TabIndex" type="System.Int32, mscorlib">
+    <value>16</value>
+  </data>
+  <data name="&gt;&gt;removeButton.Name" xml:space="preserve">
+    <value>removeButton</value>
+  </data>
+  <data name="&gt;&gt;removeButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;removeButton.Parent" xml:space="preserve">
+    <value>configurationsTableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;removeButton.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="copyButton.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Top</value>
+  </data>
+  <data name="copyButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29m
+        dHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAABAdEVYdENvcHlyaWdodABDb3B5cmlnaHQgqSAyMDA1
+        IGFuZCBmb2xsb3dpbmcgeWVhcnMgRGV2Q29tcG9uZW50cyBMTEMyIOTwAAACg0lEQVQ4T32RS2gTURSG
+        Z+XCjeBaKK4UNxVd6EKYQu3KhYIotCAq+KQVlNpK62KUFmlx00W1FATFbnxULDUSKNYJFmu1pklMo+nb
+        mub9mEwmr3n+njuJIhp7mH8x957v/8+9l+OOT9btu+EWG3v9/6i+2y/Sfj23aZ14xz98L8EdBTwxwBcH
+        /AlgntTrtLC/LyFxJ6c3MWme40fdOXgJDhC0kAKWM8CaBHQ+trCrk0z6MxLX4vuPyakg/9pXQCAJLKYr
+        4A8ZCOeA2VUL424LUysWqE+oEn/V2XV+IlDCEsHfCd4geNIbRdd9F7pJN4dcEIZd2NL0SNx68LZQ1bYq
+        TXUuzk9+U+1kBsfzwKWe55j5EsFHfxSf5qOYDcTwmelrDC9dK2jpeuHZ3tBXNbmY5d8GdYQIjilAqgi0
+        3hnFSiiLpZCE1bCM9VgOGwkFkWQe/U99aB/6gNPCuGfHkQEyuVzkxQUDETpzsgBIJeDa3THE0wWsRWSE
+        4hWQ/SelIrzLKYjeMJ69CWLnsXs8x7VqvLho2ulpSpfLdPsDDshK2YajqTwSBKblEqRcGVlal/Mqprwh
+        7Gl+QAZtJhlY9tkzlK6oQPegE4WS9hvOEMzAXEFFvqjZezPzEew9M0IGVyzbQDUA3QQM0q3hCZRUHfFM
+        JZklKjaoo1TWUabm2WAMBy48YQaoIwl/avd5p6hqBlLZSrJS0FAkmIFsXaOkucUEDrWNkkGNarg6Jmi6
+        YY/O0tnIbCKV1nQa0TAteJaSoL7aBo3t42Rg2pem0LmLNDZL/gWblkWvkQT11TY4fP2VwBrt1OrIBsEm
+        rVkE02c/J/XVNmjqcBztGXGLm6l9aFps6nDU/QRvWZb3GbmPtQAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="copyButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="copyButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>237, 33</value>
+  </data>
+  <data name="copyButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>32, 32</value>
+  </data>
+  <data name="copyButton.TabIndex" type="System.Int32, mscorlib">
+    <value>15</value>
+  </data>
+  <data name="&gt;&gt;copyButton.Name" xml:space="preserve">
+    <value>copyButton</value>
+  </data>
+  <data name="&gt;&gt;copyButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;copyButton.Parent" xml:space="preserve">
+    <value>configurationsTableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;copyButton.ZOrder" xml:space="preserve">
     <value>2</value>
-  </data>
-  <data name="&gt;&gt;publicationsListView.Name" xml:space="preserve">
-    <value>publicationsListView</value>
-  </data>
-  <data name="&gt;&gt;publicationsListView.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;publicationsListView.Parent" xml:space="preserve">
-    <value>mainTableLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;publicationsListView.ZOrder" xml:space="preserve">
-    <value>7</value>
   </data>
   <data name="configurationsExplanationLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -452,14 +371,17 @@
   <data name="configurationsExplanationLabel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
+  <data name="configurationsExplanationLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="configurationsExplanationLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 52</value>
+    <value>3, 0</value>
   </data>
   <data name="configurationsExplanationLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>231, 26</value>
+    <value>266, 30</value>
   </data>
   <data name="configurationsExplanationLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>13</value>
+    <value>14</value>
   </data>
   <data name="configurationsExplanationLabel.Text" xml:space="preserve">
     <value>Choose a configuration to modify.</value>
@@ -471,10 +393,94 @@
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;configurationsExplanationLabel.Parent" xml:space="preserve">
-    <value>mainTableLayoutPanel</value>
+    <value>configurationsTableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;configurationsExplanationLabel.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>3</value>
+  </data>
+  <data name="configurationsTableLayoutPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="configurationsTableLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 16</value>
+  </data>
+  <data name="configurationsTableLayoutPanel.RowCount" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="configurationsTableLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>272, 306</value>
+  </data>
+  <data name="configurationsTableLayoutPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;configurationsTableLayoutPanel.Name" xml:space="preserve">
+    <value>configurationsTableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;configurationsTableLayoutPanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;configurationsTableLayoutPanel.Parent" xml:space="preserve">
+    <value>configurationsGroupBox</value>
+  </data>
+  <data name="&gt;&gt;configurationsTableLayoutPanel.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="configurationsTableLayoutPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="configurationsListView" Row="1" RowSpan="3" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="removeButton" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="copyButton" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="configurationsExplanationLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100,Absolute,38,Absolute,20" /&gt;&lt;Rows Styles="Absolute,30,AutoSize,0,AutoSize,0,Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="configurationsGroupBox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="configurationsGroupBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 41</value>
+  </data>
+  <data name="configurationsGroupBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>278, 325</value>
+  </data>
+  <data name="configurationsGroupBox.TabIndex" type="System.Int32, mscorlib">
+    <value>15</value>
+  </data>
+  <data name="configurationsGroupBox.Text" xml:space="preserve">
+    <value>Dictionary Configurations</value>
+  </data>
+  <data name="&gt;&gt;configurationsGroupBox.Name" xml:space="preserve">
+    <value>configurationsGroupBox</value>
+  </data>
+  <data name="&gt;&gt;configurationsGroupBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;configurationsGroupBox.Parent" xml:space="preserve">
+    <value>mainTableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;configurationsGroupBox.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="publicationsTableLayoutPanel.ColumnCount" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="publicationsListView.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="publicationsListView.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 33</value>
+  </data>
+  <data name="publicationsListView.Size" type="System.Drawing.Size, System.Drawing">
+    <value>225, 270</value>
+  </data>
+  <data name="publicationsListView.TabIndex" type="System.Int32, mscorlib">
+    <value>16</value>
+  </data>
+  <data name="&gt;&gt;publicationsListView.Name" xml:space="preserve">
+    <value>publicationsListView</value>
+  </data>
+  <data name="&gt;&gt;publicationsListView.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;publicationsListView.Parent" xml:space="preserve">
+    <value>publicationsTableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;publicationsListView.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <data name="publicationsExplanationLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -482,14 +488,17 @@
   <data name="publicationsExplanationLabel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
+  <data name="publicationsExplanationLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="publicationsExplanationLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>288, 52</value>
+    <value>3, 0</value>
   </data>
   <data name="publicationsExplanationLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>232, 26</value>
+    <value>225, 30</value>
   </data>
   <data name="publicationsExplanationLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>14</value>
+    <value>15</value>
   </data>
   <data name="publicationsExplanationLabel.Text" xml:space="preserve">
     <value>Checked Publications are affected by the selected Configuration on the left.</value>
@@ -501,10 +510,67 @@
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;publicationsExplanationLabel.Parent" xml:space="preserve">
-    <value>mainTableLayoutPanel</value>
+    <value>publicationsTableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;publicationsExplanationLabel.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>1</value>
+  </data>
+  <data name="publicationsTableLayoutPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="publicationsTableLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 16</value>
+  </data>
+  <data name="publicationsTableLayoutPanel.RowCount" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="publicationsTableLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>231, 306</value>
+  </data>
+  <data name="publicationsTableLayoutPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;publicationsTableLayoutPanel.Name" xml:space="preserve">
+    <value>publicationsTableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;publicationsTableLayoutPanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;publicationsTableLayoutPanel.Parent" xml:space="preserve">
+    <value>publicationsGroupBox</value>
+  </data>
+  <data name="&gt;&gt;publicationsTableLayoutPanel.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="publicationsTableLayoutPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="publicationsListView" Row="1" RowSpan="3" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="publicationsExplanationLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100,Absolute,20" /&gt;&lt;Rows Styles="Absolute,30,Percent,100,Absolute,20,Absolute,20" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="publicationsGroupBox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="publicationsGroupBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>287, 41</value>
+  </data>
+  <data name="publicationsGroupBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>237, 325</value>
+  </data>
+  <data name="publicationsGroupBox.TabIndex" type="System.Int32, mscorlib">
+    <value>16</value>
+  </data>
+  <data name="publicationsGroupBox.Text" xml:space="preserve">
+    <value>Publications</value>
+  </data>
+  <data name="&gt;&gt;publicationsGroupBox.Name" xml:space="preserve">
+    <value>publicationsGroupBox</value>
+  </data>
+  <data name="&gt;&gt;publicationsGroupBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;publicationsGroupBox.Parent" xml:space="preserve">
+    <value>mainTableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;publicationsGroupBox.ZOrder" xml:space="preserve">
+    <value>3</value>
   </data>
   <data name="mainTableLayoutPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -513,10 +579,10 @@
     <value>0, 0</value>
   </data>
   <data name="mainTableLayoutPanel.RowCount" type="System.Int32, mscorlib">
-    <value>7</value>
+    <value>3</value>
   </data>
   <data name="mainTableLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>523, 325</value>
+    <value>527, 406</value>
   </data>
   <data name="mainTableLayoutPanel.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -534,7 +600,7 @@
     <value>0</value>
   </data>
   <data name="mainTableLayoutPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="explanationLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="4" /&gt;&lt;Control Name="configurationsListLabel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="publicationsListLabel" Row="1" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="copyButton" Row="3" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="removeButton" Row="4" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="buttonTableLayoutPanel" Row="6" RowSpan="1" Column="3" ColumnSpan="4" /&gt;&lt;Control Name="configurationsListView" Row="3" RowSpan="3" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="publicationsListView" Row="3" RowSpan="3" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="configurationsExplanationLabel" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="publicationsExplanationLabel" Row="2" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,50,Absolute,38,Absolute,10,Percent,50" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,Percent,100,Absolute,0,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="explanationLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;Control Name="buttonTableLayoutPanel" Row="2" RowSpan="1" Column="1" ColumnSpan="4" /&gt;&lt;Control Name="configurationsGroupBox" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="publicationsGroupBox" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,54,Percent,46" /&gt;&lt;Rows Styles="AutoSize,0,Percent,100,Absolute,0,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
@@ -543,7 +609,10 @@
     <value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>523, 325</value>
+    <value>527, 406</value>
+  </data>
+  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Dictionary Configuration Manager</value>
