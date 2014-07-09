@@ -5,6 +5,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Drawing;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
@@ -13,6 +15,9 @@ using SIL.FieldWorks.Common.COMInterfaces;
 
 namespace SIL.FieldWorks.XWorks
 {
+	/// <summary>
+	/// Dialog for publishing data to Webonary web site.
+	/// </summary>
 	public partial class PublishToWebonaryDlg : Form
 	{
 		// This value gets used by the microsoft encryption library to increase the complexity of the encryption
@@ -31,6 +36,11 @@ namespace SIL.FieldWorks.XWorks
 			PopulateConfigurationsList(configurations);
 			PopulatePublicationsList(publications);
 			LoadFromSettings();
+
+			// Start with output log area not shown by default
+			// When a user clicks Publish, it is revealed. This is done within the context of having a resizable table of controls, and having
+			// the output log area be the vertically growing control when a user increases the height of the dialog.
+			this.Shown += (sender, args) => { this.Height = tableLayoutPanel.Height - outputLogTextbox.Height; };
 		}
 
 		private void PopulatePublicationsList(IEnumerable<string> publications)
@@ -125,8 +135,19 @@ namespace SIL.FieldWorks.XWorks
 
 		private void publishButton_Click(object sender, EventArgs e)
 		{
-			SaveToSettings();
-			//TODO: publish
+			// TODO: Enable when doesn't crash: SaveToSettings();
+
+			// TODO: publish
+
+			// Increase height of form so the output log is shown.
+			// Account for situations where the user already increased the height of the form
+			// or maximized the form, and later reduces the height or unmaximizes the form
+			// after clicking Publish.
+
+			var allButTheLogRowHeight = this.tableLayoutPanel.GetRowHeights().Sum() - this.tableLayoutPanel.GetRowHeights().Last();
+			var fudge = this.Height - this.tableLayoutPanel.Height;
+			var minimumFormHeightToShowLog = allButTheLogRowHeight + this.outputLogTextbox.MinimumSize.Height + fudge;
+			this.MinimumSize = new Size(this.MinimumSize.Width, minimumFormHeightToShowLog);
 		}
 	}
 }

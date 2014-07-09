@@ -146,16 +146,19 @@ namespace SIL.FieldWorks.XWorks
 			// 
 			resources.ApplyResources(this.webonaryPasswordTextbox, "webonaryPasswordTextbox");
 			this.webonaryPasswordTextbox.Name = "webonaryPasswordTextbox";
+			this.toolTip.SetToolTip(this.webonaryPasswordTextbox, resources.GetString("webonaryPasswordTextbox.ToolTip"));
 			// 
 			// webonaryUsernameTextbox
 			// 
 			resources.ApplyResources(this.webonaryUsernameTextbox, "webonaryUsernameTextbox");
 			this.webonaryUsernameTextbox.Name = "webonaryUsernameTextbox";
+			this.toolTip.SetToolTip(this.webonaryUsernameTextbox, resources.GetString("webonaryUsernameTextbox.ToolTip"));
 			// 
 			// webonarySiteNameTextbox
 			// 
 			resources.ApplyResources(this.webonarySiteNameTextbox, "webonarySiteNameTextbox");
 			this.webonarySiteNameTextbox.Name = "webonarySiteNameTextbox";
+			this.toolTip.SetToolTip(this.webonarySiteNameTextbox, resources.GetString("webonarySiteNameTextbox.ToolTip"));
 			// 
 			// passwordLabel
 			// 
@@ -284,9 +287,9 @@ namespace SIL.FieldWorks.XWorks
 		private System.Windows.Forms.CheckedListBox reversalsCheckedListBox;
 		private System.Windows.Forms.Button publishButton;
 		private System.Windows.Forms.Button closeButton;
-		private System.Windows.Forms.TextBox outputLogTextbox;
 		private System.Windows.Forms.Button helpButton;
 		private System.Windows.Forms.CheckBox showPasswordCheckBox;
 		private System.Windows.Forms.Label webonaryDomainLabel;
+		private System.Windows.Forms.TextBox outputLogTextbox;
 	}
 }
