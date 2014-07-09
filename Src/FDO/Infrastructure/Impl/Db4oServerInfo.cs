@@ -23,7 +23,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.FieldWorks.FDO.DomainServices;
 using System.Runtime.Remoting.Channels;
-using SIL.Utils;
 
 namespace FwRemoteDatabaseConnector
 {
@@ -73,6 +72,7 @@ namespace FwRemoteDatabaseConnector
 		public Db4oServerInfo()
 		{
 			RemotingServer.ServerObject = this;
+			IsRunning = true;
 		}
 
 		internal void PopulateServerList()
@@ -471,6 +471,8 @@ namespace FwRemoteDatabaseConnector
 			m_allServers = null;
 		}
 
+		internal bool IsRunning { get; set; }
+
 		#endregion
 	}
 
@@ -511,7 +513,7 @@ namespace FwRemoteDatabaseConnector
 		public static void Start(string remotingTcpServerConfigFile, IFdoDirectories dirs, Func<bool> sharedProjectsGetter, Action<bool> sharedProjectsSetter)
 		{
 			// check if we are already running.
-			if (ServerObject != null)
+			if (ServerObject != null && ServerObject.IsRunning)
 				return;
 
 			Directories = dirs;
@@ -537,9 +539,16 @@ namespace FwRemoteDatabaseConnector
 				}
 			}
 
-			// TODO: currently running with no security
-			// TODO-Linux: security support has not been implemented in Mono
-			RemotingConfiguration.Configure(remotingTcpServerConfigFile, false);
+			if (ServerObject == null)
+			{
+				// TODO: currently running with no security
+				// TODO-Linux: security support has not been implemented in Mono
+				RemotingConfiguration.Configure(remotingTcpServerConfigFile, false);
+			}
+			else
+			{
+				ServerObject.IsRunning = true;
+			}
 		}
 
 		/// <summary>
@@ -551,7 +560,7 @@ namespace FwRemoteDatabaseConnector
 			if (ServerObject != null)
 			{
 				ServerObject.ShutdownAllServers();
-				ServerObject = null;
+				ServerObject.IsRunning = false;
 			}
 		}
 	}
