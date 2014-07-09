@@ -1,27 +1,17 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2014 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TeAnnotationXmlImport.cs
-// Responsibility: DavidO
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Globalization;
 using NUnit.Framework;
-using SIL.FieldWorks.TE;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Test.TestUtils;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
 using SIL.CoreImpl;
 using SIL.FieldWorks.TE.TeEditorialChecks;
 
@@ -128,7 +118,6 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
-		[SetCulture("en-US")]
 		public void SavingDeserializedAnnotationsToCache()
 		{
 			DateTime now = DateTime.Now;
@@ -138,9 +127,9 @@ namespace SIL.FieldWorks.TE.ImportTests
 			ann.BeginScrRef = "GEN 2:8";
 			ann.ResolutionStatus = NoteStatus.Closed;
 			ann.AnnotationTypeGuid = CmAnnotationDefnTags.kguidAnnTranslatorNote.ToString();
-			ann.DateTimeCreated = utcNow.ToString();
-			ann.DateTimeModified = utcNow.AddDays(1).ToString();
-			ann.DateTimeResolved = utcNow.AddDays(2).ToString();
+			ann.DateTimeCreated = utcNow.ToString(CultureInfo.InvariantCulture);
+			ann.DateTimeModified = utcNow.AddDays(1).ToString(CultureInfo.InvariantCulture);
+			ann.DateTimeResolved = utcNow.AddDays(2).ToString(CultureInfo.InvariantCulture);
 			ann.BeginObjGuid = m_paraObj.Guid;
 			ann.EndObjGuid = m_paraObj.Guid;
 			AddParasTo(ann.Discussion, "This is my", "discussion");
@@ -177,7 +166,6 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
-		[SetCulture("en-US")]
 		public void SavingDeserializedAnnotationsToCache_WithHyperlink()
 		{
 			DateTime now = DateTime.Now;
@@ -187,9 +175,9 @@ namespace SIL.FieldWorks.TE.ImportTests
 			ann.BeginScrRef = "GEN 2:8";
 			ann.ResolutionStatus = NoteStatus.Closed;
 			ann.AnnotationTypeGuid = CmAnnotationDefnTags.kguidAnnTranslatorNote.ToString();
-			ann.DateTimeCreated = utcNow.ToString();
-			ann.DateTimeModified = utcNow.AddDays(1).ToString();
-			ann.DateTimeResolved = utcNow.AddDays(2).ToString();
+			ann.DateTimeCreated = utcNow.ToString(CultureInfo.InvariantCulture);
+			ann.DateTimeModified = utcNow.AddDays(1).ToString(CultureInfo.InvariantCulture);
+			ann.DateTimeResolved = utcNow.AddDays(2).ToString(CultureInfo.InvariantCulture);
 			AddParasTo(ann.Discussion, "This is my", "discussion");
 			AddParasTo(ann.Resolution, "This is my", "resolution for", "the note");
 			AddParasTo(ann.Quote, "This is the", "quoted text");
@@ -230,7 +218,6 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
-		[SetCulture("en-US")]
 		public void SavingDeserializedAnnotationsToCache_WithCategories()
 		{
 			DateTime now = DateTime.Now;
@@ -240,8 +227,8 @@ namespace SIL.FieldWorks.TE.ImportTests
 			ann.BeginScrRef = "LEV 2:8";
 			ann.ResolutionStatus = NoteStatus.Open;
 			ann.AnnotationTypeGuid = CmAnnotationDefnTags.kguidAnnTranslatorNote.ToString();
-			ann.DateTimeCreated = utcNow.ToString();
-			ann.DateTimeModified = utcNow.AddDays(1).ToString();
+			ann.DateTimeCreated = utcNow.ToString(CultureInfo.InvariantCulture);
+			ann.DateTimeModified = utcNow.AddDays(1).ToString(CultureInfo.InvariantCulture);
 			AddParasTo(ann.Discussion, "This is my discussion");
 			AddParasTo(ann.Resolution, "This is my resolution for the note");
 			AddParasTo(ann.Quote, "This is the quoted text");
@@ -300,7 +287,6 @@ namespace SIL.FieldWorks.TE.ImportTests
 		public void SavingDeserializedAnnotationsToCache_WithResponses()
 		{
 			DateTime now = DateTime.Now;
-			DateTime utcNow = now.ToUniversalTime();
 
 			XmlScrNote ann = CreateNote();
 			ann.BeginScrRef = "EXO 2:8";
@@ -352,12 +338,8 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
-		[SetCulture("en-US")]
 		public void SavingDeserializedAnnotationsToCache_InvalidResolvedDate()
 		{
-#if __MonoCS__ // TODO-Linux: work around [SetCulture("en-US")] being ignored on mono
-			System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("en-US");
-#endif
 			DateTime now = DateTime.Now;
 			DateTime utcNow = now.ToUniversalTime();
 
@@ -365,8 +347,8 @@ namespace SIL.FieldWorks.TE.ImportTests
 			ann.BeginScrRef = "GEN 2:8";
 			ann.ResolutionStatus = NoteStatus.Closed;
 			ann.AnnotationTypeGuid = CmAnnotationDefnTags.kguidAnnTranslatorNote.ToString();
-			ann.DateTimeCreated = utcNow.ToString();
-			ann.DateTimeModified = utcNow.AddDays(1).ToString();
+			ann.DateTimeCreated = utcNow.ToString(CultureInfo.InvariantCulture);
+			ann.DateTimeModified = utcNow.AddDays(1).ToString(CultureInfo.InvariantCulture);
 			ann.DateTimeResolved = "0003-01-01 20:00:00.00";
 			AddParasTo(ann.Discussion, "This is my discussion");
 			AddParasTo(ann.Resolution, "This is my resolution for the note");
@@ -404,7 +386,6 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
-		[SetCulture("en-US")]
 		public void SavingDeserializedAnnotationsToCache_InvalidResolvedAndModifiedDate()
 		{
 			DateTime now = DateTime.Now;
@@ -414,7 +395,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			ann.BeginScrRef = "GEN 2:8";
 			ann.ResolutionStatus = NoteStatus.Closed;
 			ann.AnnotationTypeGuid = CmAnnotationDefnTags.kguidAnnTranslatorNote.ToString();
-			ann.DateTimeCreated = utcNow.ToString();
+			ann.DateTimeCreated = utcNow.ToString(CultureInfo.InvariantCulture);
 			ann.DateTimeModified = "0009-05-02 20:00:00.00";
 			ann.DateTimeResolved = "0003-01-01 20:00:00.00";
 			AddParasTo(ann.Discussion, "This is my discussion");
@@ -451,7 +432,6 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
-		[SetCulture("en-US")]
 		public void ExistingAnnotation_WithResponses()
 		{
 			IScrScriptureNote existingAnn =
@@ -466,15 +446,14 @@ namespace SIL.FieldWorks.TE.ImportTests
 			existingAnn.ResponsesOS.Add(exisingResponse2);
 			AddParasTo(exisingResponse2, "This is my second response");
 
-			DateTime now = DateTime.Now;
-			DateTime utcNow = now.ToUniversalTime();
+			DateTime utcCreated = existingAnn.DateCreated.ToUniversalTime();
 
 			XmlScrNote ann = CreateNote();
 			ann.BeginScrRef = "EXO 2:8";
 			ann.ResolutionStatus = NoteStatus.Open;
 			ann.AnnotationTypeGuid = CmAnnotationDefnTags.kguidAnnTranslatorNote.ToString();
-			ann.DateTimeCreated = utcNow.ToString();
-			ann.DateTimeModified = utcNow.AddDays(1).ToString();
+			ann.DateTimeCreated = utcCreated.ToString(CultureInfo.InvariantCulture);
+			ann.DateTimeModified = utcCreated.AddDays(1).ToString(CultureInfo.InvariantCulture);
 			AddParasTo(ann.Discussion, "This is my discussion");
 			XmlNoteResponse firstResponse = new XmlNoteResponse();
 			AddParasTo(firstResponse.Paragraphs, "This is my first response");
@@ -493,8 +472,8 @@ namespace SIL.FieldWorks.TE.ImportTests
 
 			IScrScriptureNote note = annotations.NotesOS[0];
 			Assert.AreEqual(NoteType.Translator, note.AnnotationType);
-			Assert.IsTrue(AreDateTimesClose(now, note.DateCreated));
-			Assert.IsTrue(AreDatesClose(now.AddDays(1), note.DateModified));
+			Assert.IsTrue(AreDateTimesClose(DateTime.Now, note.DateCreated));
+			Assert.IsTrue(AreDatesClose(DateTime.Now.AddDays(1), note.DateModified));
 			Assert.AreEqual(DateTime.MinValue, note.DateResolved);
 
 			IFdoOwningSequence<IStJournalText> responses = note.ResponsesOS;
@@ -525,15 +504,14 @@ namespace SIL.FieldWorks.TE.ImportTests
 			existingAnn.ResponsesOS.Add(exisingResponse2);
 			AddParasTo(exisingResponse2, "This is my second response");
 
-			DateTime now = DateTime.Now;
-			DateTime utcNow = now.ToUniversalTime();
+			DateTime utcCreated = existingAnn.DateCreated.ToUniversalTime();
 
 			XmlScrNote ann = CreateNote();
 			ann.BeginScrRef = "EXO 2:8";
 			ann.ResolutionStatus = NoteStatus.Open;
 			ann.AnnotationTypeGuid = CmAnnotationDefnTags.kguidAnnTranslatorNote.ToString();
-			// (The created and modified dates are now set as side effects when the note is
-			// created and when the fields in the note are modified.)
+			ann.DateTimeCreated = utcCreated.ToString(CultureInfo.InvariantCulture);
+			// (The modified date is now set as automatically when the fields in the note are modified.)
 			AddParasTo(ann.Discussion, "This is my discussion");
 			XmlNoteResponse firstResponse = new XmlNoteResponse();
 			AddParasTo(firstResponse.Paragraphs, "This is my first response");
@@ -555,8 +533,8 @@ namespace SIL.FieldWorks.TE.ImportTests
 
 			IScrScriptureNote note = annotations.NotesOS[0];
 			Assert.AreEqual(NoteType.Translator, note.AnnotationType);
-			Assert.IsTrue(AreDateTimesClose(now, note.DateCreated));
-			Assert.IsTrue(AreDateTimesClose(now, note.DateModified));
+			Assert.IsTrue(AreDateTimesClose(DateTime.Now, note.DateCreated));
+			Assert.IsTrue(AreDateTimesClose(DateTime.Now, note.DateModified));
 			Assert.AreEqual(DateTime.MinValue, note.DateResolved);
 
 			IFdoOwningSequence<IStJournalText> responses = note.ResponsesOS;
@@ -579,9 +557,9 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// ------------------------------------------------------------------------------------
 		private bool AreDateTimesClose(DateTime first, DateTime second)
 		{
-			TimeSpan twoSeconds = new TimeSpan(0, 0, 0, 5);
+			TimeSpan aFewSeconds = new TimeSpan(0, 0, 0, 5);
 			TimeSpan timeDifference = first - second;
-			return timeDifference.Duration() < twoSeconds;
+			return timeDifference.Duration() < aFewSeconds;
 		}
 
 		/// ------------------------------------------------------------------------------------
