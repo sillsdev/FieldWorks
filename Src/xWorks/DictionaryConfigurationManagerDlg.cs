@@ -12,6 +12,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			InitializeComponent();
 
+			// allow renaming via the keyboard
+			configurationsListView.KeyUp += ConfigurationsListViewKeyUp;
 			// Make the Configuration selection more obvious when the control loses focus (LT-15450).
 			configurationsListView.LostFocus += OnLostFocus;
 			configurationsListView.GotFocus += OnGotFocus;
