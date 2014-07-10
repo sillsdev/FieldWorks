@@ -113,6 +113,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				GenerateClosingHtml(xhtmlWriter);
 				xhtmlWriter.Flush();
+				cssWriter.Write(CssGenerator.GenerateLetterHeaderCss(mediator));
 				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, mediator));
 				cssWriter.Flush();
 			}
@@ -186,7 +187,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// This method will write out the class name attribute into the xhtml for the given configuration node
-		/// taking into account the current information in CssGenerator.ClassMappingOverrides
+		/// taking into account the current information in ClassNameOverrides
 		/// </summary>
 		/// <param name="writer"></param>
 		/// <param name="configNode">used to look up any mapping overrides</param>

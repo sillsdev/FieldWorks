@@ -222,7 +222,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// Generates a class name for the given configuration for use by Css and XHTML.
-		/// Uses any ClassMappingOverrides which apply to the given node
+		/// Uses SubField and CSSClassNameOverride attributes where found
 		/// </summary>
 		/// <param name="configNode"></param>
 		/// <returns></returns>
@@ -571,6 +571,20 @@ namespace SIL.FieldWorks.XWorks
 				default:
 					return "inherit";
 			}
+		}
+
+		public static string GenerateLetterHeaderCss(Mediator mediator)
+		{
+			var letHeadRule = new StyleRule { Value = ".letHead" };
+			letHeadRule.Declarations.Properties.Add(new Property("column-count") { Term = new PrimitiveTerm(UnitType.Number, 1)});
+			letHeadRule.Declarations.Properties.Add(new Property("clear") { Term = new PrimitiveTerm(UnitType.Ident, "both") });
+
+			var letterRule = new StyleRule { Value = ".letter" };
+			letterRule.Declarations.Properties.Add(new Property("text-align") { Term = new PrimitiveTerm(UnitType.Ident, "center") });
+			letterRule.Declarations.Properties.Add(new Property("width") { Term = new PrimitiveTerm(UnitType.Percentage, 100) });
+			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			letterRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet("Heading 1", cache.DefaultVernWs, mediator));
+			return letHeadRule.ToString(true) + Environment.NewLine + letterRule.ToString(true) + Environment.NewLine;
 		}
 	}
 }
