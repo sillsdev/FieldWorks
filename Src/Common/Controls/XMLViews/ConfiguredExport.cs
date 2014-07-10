@@ -553,7 +553,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private void WriteLetterHeadIfNeeded(string sEntry, string sWs)
 		{
-			string sLower = GetLeadChar(Icu.Normalize(sEntry, Icu.UNormalizationMode.UNORM_NFD), sWs);
+			string sLower = GetLeadChar(Icu.Normalize(sEntry, Icu.UNormalizationMode.UNORM_NFD), sWs, m_mapWsDigraphs, m_mapWsMapChars, m_mapWsIgnorables, m_cache);
 			string sTitle = Icu.ToTitle(sLower, sWs);
 			if (sTitle != m_schCurrent)
 			{
@@ -581,8 +581,16 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="sEntryNFD">The headword to be written next</param>
 		/// <param name="sWs">Name of the writing system</param>
+		/// <param name="wsDigraphMap">Map of writing system to digraphs already discovered for that ws</param>
+		/// <param name="wsCharEquivalentMap">Map of writing system to already discovered character equivalences for that ws</param>
+		/// <param name="wsIgnorableCharMap">Map of writing system to ignorable characters for that ws </param>
+		/// <param name="cache"></param>
 		/// <returns>The character sEntryNFD is being sorted under in the dictionary.</returns>
-		private string GetLeadChar(string sEntryNFD, string sWs)
+		public static string GetLeadChar(string sEntryNFD, string sWs,
+													Dictionary<string, Set<string>> wsDigraphMap,
+													Dictionary<string, Dictionary<string, string>> wsCharEquivalentMap,
+													Dictionary<string, Set<string>> wsIgnorableCharMap,
+													FdoCache cache)
 		{
 			if (string.IsNullOrEmpty(sEntryNFD))
 				return "";
@@ -590,7 +598,7 @@ namespace SIL.FieldWorks.Common.Controls
 			Dictionary<string, string> mapChars;
 			// List of characters to ignore in creating letter heads.
 			Set<string> chIgnoreList;
-			Set<string> sortChars = GetDigraphs(sWs, out mapChars, out chIgnoreList);
+			Set<string> sortChars = GetDigraphs(sWs, wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, cache, out mapChars, out chIgnoreList);
 			string sEntry = String.Empty;
 			if (chIgnoreList != null) // this list was built in GetDigraphs()
 			{
@@ -651,7 +659,7 @@ namespace SIL.FieldWorks.Common.Controls
 				if (ka.Length > 0 && ka[0] == 1)
 				{
 					string sT = sEntry.Substring(sFirst.Length);
-					return GetLeadChar(sT, sWs);
+					return GetLeadChar(sT, sWs, wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, cache);
 				}
 			}
 			finally
@@ -670,30 +678,54 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="chIgnoreSet">Set of characters to ignore</param>
 		/// <returns></returns>
 		internal Set<string> GetDigraphs(string sWs, out Dictionary<string, string> mapChars,
-			out Set<string> chIgnoreSet)
+													out Set<string> chIgnoreSet)
+		{
+			return GetDigraphs(sWs, m_mapWsDigraphs, m_mapWsMapChars, m_mapWsIgnorables, m_cache, out mapChars,
+									 out chIgnoreSet);
+		}
+
+		/// <summary>
+		/// Get the set of significant digraphs (multigraphs) for the writing system. At the
+		/// moment, these are derived from ICU sorting rules associated with the writing system.
+		/// </summary>
+		/// <param name="sWs">Name of writing system</param>
+		/// <param name="wsDigraphMap">Map of writing system to digraphs already discovered for that ws</param>
+		/// <param name="wsCharEquivalentMap">Map of writing system to already discovered character equivalences for that ws</param>
+		/// <param name="wsIgnorableCharMap">Map of writing system to ignorable characters for that ws </param>
+		/// <param name="cache"></param>
+		/// <param name="mapChars">Set of character equivalences</param>
+		/// <param name="chIgnoreSet">Set of characters to ignore</param>
+		/// <returns></returns>
+		internal static Set<string> GetDigraphs(string sWs,
+															 Dictionary<string, Set<string>> wsDigraphMap,
+															 Dictionary<string, Dictionary<string, string>> wsCharEquivalentMap,
+															 Dictionary<string, Set<string>> wsIgnorableCharMap,
+															 FdoCache cache,
+															 out Dictionary<string, string> mapChars,
+															 out Set<string> chIgnoreSet)
 		{
 			// Collect the digraph and character equivalence maps and the ignorable character set
 			// the first time through. There after, these maps and lists are just retrieved.
 			chIgnoreSet = new Set<string>(); // if ignorable chars get through they can become letter heads! LT-11172
 			Set<string> digraphs = null;
 			// Are the maps and ignorables already setup for the taking?
-			if (m_mapWsDigraphs.TryGetValue(sWs, out digraphs))
+			if (wsDigraphMap.TryGetValue(sWs, out digraphs))
 			{   // knows about ws, so already knows character equivalence classes
-				mapChars    = m_mapWsMapChars[sWs];
-				chIgnoreSet = m_mapWsIgnorables[sWs];
+				mapChars = wsCharEquivalentMap[sWs];
+				chIgnoreSet = wsIgnorableCharMap[sWs];
 				return digraphs;
 			}
 			digraphs = new Set<string>();
 			mapChars = new Dictionary<string, string>();
-			var ws = m_cache.ServiceLocator.WritingSystemManager.Get(sWs);
+			var ws = cache.ServiceLocator.WritingSystemManager.Get(sWs);
 			var sortRules = ws.SortRules;
 			var sortType = ws.SortUsing;
 
 			if (!String.IsNullOrEmpty(sortRules) && sortType == WritingSystemDefinition.SortRulesType.CustomICU)
 			{
 				// prime with empty ws in case all the rules affect only the ignore set
-				m_mapWsMapChars[sWs] = mapChars;
-				m_mapWsDigraphs[sWs] = digraphs;
+				wsCharEquivalentMap[sWs] = mapChars;
+				wsDigraphMap[sWs] = digraphs;
 				string[] individualRules = sortRules.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
 				for (int i = 0; i < individualRules.Length; ++i)
 				{
@@ -734,8 +766,8 @@ namespace SIL.FieldWorks.Common.Controls
 					var primaryParts = rule.Split('<');
 					foreach (var part in primaryParts)
 					{
-						BuildDigraphSet(part, sWs, m_mapWsDigraphs);
-						MapRuleCharsToPrimary(part, sWs, m_mapWsMapChars);
+						BuildDigraphSet(part, sWs, wsDigraphMap);
+						MapRuleCharsToPrimary(part, sWs, wsCharEquivalentMap);
 					}
 				}
 			}
@@ -745,20 +777,20 @@ namespace SIL.FieldWorks.Common.Controls
 				var primaryParts = rules.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 				foreach (var part in primaryParts)
 				{
-					BuildDigraphSet(part, sWs, m_mapWsDigraphs);
-					MapRuleCharsToPrimary(part, sWs, m_mapWsMapChars);
+					BuildDigraphSet(part, sWs, wsDigraphMap);
+					MapRuleCharsToPrimary(part, sWs, wsCharEquivalentMap);
 				}
 			}
 
 			// This at least prevents null reference and key not found exceptions.
 			// Possibly we should at least map the ASCII LC letters to UC.
 			Set<string> temp;
-			if (!m_mapWsDigraphs.TryGetValue(sWs, out temp))
-				m_mapWsDigraphs[sWs] = digraphs;
-			if (!m_mapWsMapChars.TryGetValue(sWs, out mapChars))
-				m_mapWsMapChars[sWs] = mapChars = new Dictionary<string, string>();
+			if (!wsDigraphMap.TryGetValue(sWs, out temp))
+				wsDigraphMap[sWs] = digraphs;
+			if (!wsCharEquivalentMap.TryGetValue(sWs, out mapChars))
+				wsCharEquivalentMap[sWs] = mapChars = new Dictionary<string, string>();
 
-			m_mapWsIgnorables.Add(sWs, chIgnoreSet);
+			wsIgnorableCharMap.Add(sWs, chIgnoreSet);
 			return digraphs;
 		}
 

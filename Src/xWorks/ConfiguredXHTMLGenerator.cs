@@ -13,9 +13,11 @@ using System.Text;
 using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -101,9 +103,11 @@ namespace SIL.FieldWorks.XWorks
 			using(var cssWriter = new StreamWriter(cssPath, false))
 			{
 				GenerateOpeningHtml(xhtmlWriter, cssPath);
+				string lastHeader = null;
 				foreach(var hvo in entryHvos)
 				{
 					var entry = cache.ServiceLocator.GetObject(hvo);
+					GenerateLetterHeaderIfNeeded(entry, ref lastHeader, xhtmlWriter, cache);
 					//TODO: handle minor entries with the minor entry config.
 					GenerateXHTMLForEntry(entry, configuration.Parts[0], publicationDecorator, xhtmlWriter, cache);
 				}
@@ -111,6 +115,35 @@ namespace SIL.FieldWorks.XWorks
 				xhtmlWriter.Flush();
 				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, mediator));
 				cssWriter.Flush();
+			}
+		}
+
+		internal static void GenerateLetterHeaderIfNeeded(ICmObject entry, ref string lastHeader, XmlWriter xhtmlWriter, FdoCache cache)
+		{
+			var lexEntry = entry as ILexEntry;
+			// If performance is an issue these dummy's can be stored between calls
+			var dummyOne = new Dictionary<string, Set<string>>();
+			var dummyTwo = new Dictionary<string, Dictionary<string, string>>();
+			var dummyThree = new Dictionary<string, Set<string>>();
+			var wsString = cache.WritingSystemFactory.GetStrFromWs(cache.DefaultVernWs);
+			var firstLetter = ConfiguredExport.GetLeadChar(lexEntry.HeadWord.Text, wsString,
+																		  dummyOne, dummyTwo, dummyThree, cache);
+			if(firstLetter != lastHeader && !String.IsNullOrEmpty(firstLetter))
+			{
+				var headerTextBuilder = new StringBuilder();
+				headerTextBuilder.Append(Icu.ToTitle(firstLetter, wsString));
+				headerTextBuilder.Append(' ');
+				headerTextBuilder.Append(firstLetter.Normalize());
+
+				xhtmlWriter.WriteStartElement("div");
+				xhtmlWriter.WriteAttributeString("class", "letHead");
+				xhtmlWriter.WriteStartElement("div");
+				xhtmlWriter.WriteAttributeString("class", "letter");
+				xhtmlWriter.WriteString(headerTextBuilder.ToString());
+				xhtmlWriter.WriteEndElement();
+				xhtmlWriter.WriteEndElement();
+
+				lastHeader = firstLetter;
 			}
 		}
 
