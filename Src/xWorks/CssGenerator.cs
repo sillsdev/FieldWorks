@@ -56,6 +56,14 @@ namespace SIL.FieldWorks.XWorks
 																			  Mediator mediator)
 		{
 			var rule = new StyleRule();
+			var senseOptions = configNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
+			if(senseOptions != null)
+			{
+				// Try to generate the css for the sense number before the baseSelection is updated because
+				// the sense number is a sibling of the sense element and we are normally applying styles to the
+				// children of collections.
+				GenerateCssFromSenseOptions(configNode, styleSheet, baseSelection, senseOptions);
+			}
 			var beforeAfterSelectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection);
 			rule.Value = baseSelection;
 			// if the configuration node defines a style then add all the rules generated from that style
@@ -66,18 +74,7 @@ namespace SIL.FieldWorks.XWorks
 				var wsOptions = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 				if(wsOptions != null)
 				{
-					var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
-					foreach(var ws in wsOptions.Options)
-					{
-						var possiblyMagic = WritingSystemServices.GetMagicWsIdFromName(ws.Id);
-						// if the writing system isn't a magic name just use it otherwise find the right one from the magic list
-						var wsIdString = possiblyMagic == 0 ? ws.Id : WritingSystemServices.GetWritingSystemList(cache, possiblyMagic, true).First().Id;
-						var wsId = cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(wsIdString);
-						var wsRule = new StyleRule();
-						wsRule.Value = baseSelection + String.Format("[lang|=\"{0}\"]", wsIdString);
-						wsRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(configNode.Style, wsId, mediator).Properties);
-						styleSheet.Rules.Add(wsRule);
-					}
+					GenerateCssFromWsOptions(configNode, wsOptions, styleSheet, baseSelection, mediator);
 				}
 			}
 			foreach(var selector in beforeAfterSelectors)
@@ -90,6 +87,85 @@ namespace SIL.FieldWorks.XWorks
 			foreach(var child in configNode.Children)
 			{
 				GenerateCssFromConfigurationNode(child, styleSheet, baseSelection, mediator);
+			}
+		}
+
+		private static void GenerateCssFromSenseOptions(ConfigurableDictionaryNode configNode,
+																		StyleSheet styleSheet, string baseSelection, DictionaryNodeSenseOptions senseOptions)
+		{
+			var senseNumberRule = new StyleRule();
+			// Not using SelectClassName here sense and sensenumber are siblings and the configNode is for the Senses collection.
+			// Select the base plus the node's unmodified class attribute and append the sensenumber matcher.
+			var senseNumberSelector = String.Format("{0} .{1} .sensenumber", baseSelection, GetClassAttributeForConfig(configNode));
+
+			senseNumberRule.Value = senseNumberSelector;
+			var senseNumberProps = senseNumberRule.Declarations.Properties;
+			if(!String.IsNullOrEmpty(senseOptions.NumberFont))
+			{
+				var fontFamily = new Property("font-family");
+				fontFamily.Term = new TermList(new PrimitiveTerm(UnitType.String, senseOptions.NumberFont),
+								 new PrimitiveTerm(UnitType.Ident, "serif"));
+				senseNumberProps.Add(fontFamily);
+			}
+			if(!String.IsNullOrEmpty(senseOptions.NumberStyle))
+			{
+				// The NumberStyle can be a combination of bold or italic or unbold(-bold) or unitalic(-italic)
+				if(senseOptions.NumberStyle.Contains("-bold"))
+				{
+					var fontWeight = new Property("font-weight");
+					fontWeight.Term = new PrimitiveTerm(UnitType.Ident, "normal");
+					senseNumberProps.Add(fontWeight);
+				}
+				else if(senseOptions.NumberStyle.Contains("bold"))
+				{
+					var fontWeight = new Property("font-weight");
+					fontWeight.Term = new PrimitiveTerm(UnitType.Ident, "bold");
+					senseNumberProps.Add(fontWeight);
+				}
+				if(senseOptions.NumberStyle.Contains("-italic"))
+				{
+					var fontStyle = new Property("font-style");
+					fontStyle.Term = new PrimitiveTerm(UnitType.Ident, "normal");
+					senseNumberProps.Add(fontStyle);
+				}
+				else if(senseOptions.NumberStyle.Contains("italic"))
+				{
+					var fontStyle = new Property("font-style");
+					fontStyle.Term = new PrimitiveTerm(UnitType.Ident, "italic");
+					senseNumberProps.Add(fontStyle);
+				}
+			}
+			styleSheet.Rules.Add(senseNumberRule);
+			if(!String.IsNullOrEmpty(senseOptions.BeforeNumber))
+			{
+				var beforeDeclaration = new StyleDeclaration();
+				beforeDeclaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, senseOptions.BeforeNumber) });
+				var beforeRule = new StyleRule(beforeDeclaration) { Value = senseNumberSelector + ":before" };
+				styleSheet.Rules.Add(beforeRule);
+			}
+			if(!String.IsNullOrEmpty(senseOptions.AfterNumber))
+			{
+				var afterDeclaration = new StyleDeclaration();
+				afterDeclaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, senseOptions.AfterNumber) });
+				var afterRule = new StyleRule(afterDeclaration) { Value = senseNumberSelector + ":after" };
+				styleSheet.Rules.Add(afterRule);
+			}
+		}
+
+		private static void GenerateCssFromWsOptions(ConfigurableDictionaryNode configNode, DictionaryNodeWritingSystemOptions wsOptions,
+																	StyleSheet styleSheet, string baseSelection, Mediator mediator)
+		{
+			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			foreach(var ws in wsOptions.Options)
+			{
+				var possiblyMagic = WritingSystemServices.GetMagicWsIdFromName(ws.Id);
+				// if the writing system isn't a magic name just use it otherwise find the right one from the magic list
+				var wsIdString = possiblyMagic == 0 ? ws.Id : WritingSystemServices.GetWritingSystemList(cache, possiblyMagic, true).First().Id;
+				var wsId = cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(wsIdString);
+				var wsRule = new StyleRule();
+				wsRule.Value = baseSelection + String.Format("[lang|=\"{0}\"]", wsIdString);
+				wsRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(configNode.Style, wsId, mediator).Properties);
+				styleSheet.Rules.Add(wsRule);
 			}
 		}
 
