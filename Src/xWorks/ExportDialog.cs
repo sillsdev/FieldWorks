@@ -1808,10 +1808,9 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void ProcessWebonaryExport()
 		{
-			var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
-			var reversals = cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances().Select(item => item.Name.BestAnalysisAlternative);
+			var reversals = m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances().Select(item => item.Name.BestAnalysisAlternative.Text);
 			var publications =
-				cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p.Name.BestAnalysisAlternative.Text).ToList();
+				m_cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p.Name.BestAnalysisAlternative.Text).ToList();
 			using(var dialog = new PublishToWebonaryDlg(reversals, new List<string>(), publications))
 			{
 				dialog.ShowDialog();

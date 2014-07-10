@@ -1215,7 +1215,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 			var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
-			var reversals = cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances().Select(item => item.Name.BestAnalysisAlternative);
+			var reversals = cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances().Select(item => item.Name.BestAnalysisAlternative.Text);
 			var publications =
 				cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p.Name.BestAnalysisAlternative.Text).ToList();
 			// show dialog

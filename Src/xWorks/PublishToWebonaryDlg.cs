@@ -11,7 +11,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
 using SIL.CoreImpl.Properties;
-using SIL.FieldWorks.Common.COMInterfaces;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -21,7 +20,7 @@ namespace SIL.FieldWorks.XWorks
 	public partial class PublishToWebonaryDlg : Form
 	{
 		// This value gets used by the microsoft encryption library to increase the complexity of the encryption
-		private const string m_entropyValue = @"61:3nj 42 rot13";
+		private const string EntropyValue = @"61:3nj 42 ebg68";
 
 		public PublishToWebonaryDlg()
 		{
@@ -29,7 +28,7 @@ namespace SIL.FieldWorks.XWorks
 			LoadFromSettings();
 		}
 
-		public PublishToWebonaryDlg(IEnumerable<ITsString> reversals, IEnumerable<string> configurations, IEnumerable<string> publications)
+		public PublishToWebonaryDlg(IEnumerable<string> reversals, IEnumerable<string> configurations, IEnumerable<string> publications)
 		{
 			InitializeComponent();
 			PopulateReversalsCheckboxList(reversals);
@@ -59,11 +58,11 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private void PopulateReversalsCheckboxList(IEnumerable<ITsString> reversals)
+		private void PopulateReversalsCheckboxList(IEnumerable<string> reversals)
 		{
 			foreach(var reversal in reversals)
 			{
-				reversalsCheckedListBox.Items.Add(reversal.Text);
+				reversalsCheckedListBox.Items.Add(reversal);
 			}
 		}
 
@@ -109,17 +108,21 @@ namespace SIL.FieldWorks.XWorks
 			Settings.Default.Save();
 		}
 
-		private string EncryptPassword(string encryptMe)
+		internal static string EncryptPassword(string encryptMe)
 		{
-			byte[] encryptedData = ProtectedData.Protect(Encoding.Unicode.GetBytes(encryptMe), Encoding.Unicode.GetBytes(m_entropyValue), DataProtectionScope.CurrentUser);
-			return Convert.ToBase64String(encryptedData);
+			if(!String.IsNullOrEmpty(encryptMe))
+			{
+				byte[] encryptedData = ProtectedData.Protect(Encoding.Unicode.GetBytes(encryptMe), Encoding.Unicode.GetBytes(EntropyValue), DataProtectionScope.CurrentUser);
+				return Convert.ToBase64String(encryptedData);
+			}
+			return encryptMe;
 		}
 
-		private string DecryptPassword(string decryptMe)
+		internal static string DecryptPassword(string decryptMe)
 		{
 			if(!String.IsNullOrEmpty(decryptMe))
 			{
-				byte[] decryptedData = ProtectedData.Unprotect(Convert.FromBase64String(decryptMe), Encoding.Unicode.GetBytes(m_entropyValue), DataProtectionScope.CurrentUser);
+				byte[] decryptedData = ProtectedData.Unprotect(Convert.FromBase64String(decryptMe), Encoding.Unicode.GetBytes(EntropyValue), DataProtectionScope.CurrentUser);
 				return Encoding.Unicode.GetString(decryptedData);
 			}
 			return decryptMe;
