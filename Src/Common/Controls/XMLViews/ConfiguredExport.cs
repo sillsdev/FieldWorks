@@ -553,7 +553,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private void WriteLetterHeadIfNeeded(string sEntry, string sWs)
 		{
-			string sLower = GetLeadChar(Icu.Normalize(sEntry, Icu.UNormalizationMode.UNORM_NFD), sWs, m_mapWsDigraphs, m_mapWsMapChars, m_mapWsIgnorables, m_cache);
+			string sLower = GetLeadChar(Icu.Normalize(sEntry, Icu.UNormalizationMode.UNORM_NFD), sWs);
 			string sTitle = Icu.ToTitle(sLower, sWs);
 			if (sTitle != m_schCurrent)
 			{
@@ -573,6 +573,16 @@ namespace SIL.FieldWorks.Common.Controls
 				m_writer.WriteLine("<div class=\"letData\">");
 				m_schCurrent = sTitle;
 			}
+		}
+
+		/// <summary>
+		/// Get the lead character, either a single character or a composite matching something
+		/// in the sort rules.  (We need to support multi-graph letters.  See LT-9244.)
+		/// </summary>
+		public string GetLeadChar(string sEntryNFD, string sWs)
+		{
+			return GetLeadChar(sEntryNFD, sWs, m_mapWsDigraphs, m_mapWsMapChars, m_mapWsIgnorables,
+									 m_cache);
 		}
 
 		/// <summary>
@@ -726,8 +736,8 @@ namespace SIL.FieldWorks.Common.Controls
 				// prime with empty ws in case all the rules affect only the ignore set
 				wsCharEquivalentMap[sWs] = mapChars;
 				wsDigraphMap[sWs] = digraphs;
-				string[] individualRules = sortRules.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
-				for (int i = 0; i < individualRules.Length; ++i)
+				var individualRules = sortRules.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
+				for (var i = 0; i < individualRules.Length; ++i)
 				{
 					var rule = individualRules[i];
 					RemoveICUEscapeChars(ref rule);
@@ -737,23 +747,7 @@ namespace SIL.FieldWorks.Common.Controls
 					// will be confused for digraphs with following characters.)))
 					if (rule.Contains("["))
 					{
-						const string endMarker = "ignorable] = ";
-						// parse out the ignorables and add them to the ignore list
-						int bracketEnd = rule.IndexOf(endMarker);
-						if (bracketEnd > -1)
-						{
-							bracketEnd += endMarker.Length; // skip over the search target
-							string[] chars = rule.Substring(bracketEnd).Split(new [ ] {" = "},
-																			   StringSplitOptions.RemoveEmptyEntries);
-							if (chars.Length > 0)
-							{
-								foreach (var ch in chars)
-								{
-									chIgnoreSet.Add(ch);
-								}
-							}
-						}
-						rule = rule.Substring(0, rule.IndexOf("["));
+						rule = ProcessAdvancedSyntacticalElements(chIgnoreSet, rule);
 					}
 					if (String.IsNullOrEmpty(rule.Trim()))
 						continue;
@@ -792,6 +786,44 @@ namespace SIL.FieldWorks.Common.Controls
 
 			wsIgnorableCharMap.Add(sWs, chIgnoreSet);
 			return digraphs;
+		}
+
+		private static string ProcessAdvancedSyntacticalElements(Set<string> chIgnoreSet, string rule)
+		{
+			const string ignorableEndMarker = "ignorable] = ";
+			const string beforeBegin = "[before ";
+			// parse out the ignorables and add them to the ignore list
+			int ignorableBracketEnd = rule.IndexOf(ignorableEndMarker);
+			if(ignorableBracketEnd > -1)
+			{
+				ignorableBracketEnd += ignorableEndMarker.Length; // skip over the search target
+				string[] chars = rule.Substring(ignorableBracketEnd).Split(new[] { " = " },
+																				  StringSplitOptions.RemoveEmptyEntries);
+				if(chars.Length > 0)
+				{
+					foreach(var ch in chars)
+						chIgnoreSet.Add(ch);
+				}
+				// the ignorable section could be at the end of other parts of a rule so strip it off the end
+				rule = rule.Substring(0, rule.IndexOf("["));
+			}
+			// check for before rules
+			var beforeBeginLoc = rule.IndexOf(beforeBegin);
+			if(beforeBeginLoc != -1)
+			{
+				const string primaryBeforeEnd = "1]";
+				// [before 1] is for handling of primary characters which this code is concerned with
+				// so we just strip it off and let the rest of the rule get processed.
+				var beforeEndLoc = rule.IndexOf(primaryBeforeEnd, beforeBeginLoc);
+				if(beforeEndLoc == -1)
+				{
+					// Either [before 2|3] which don't affect primary charactors or it's an invalid rule.
+					// In each case we should ignore this rule
+					return string.Empty;
+				}
+				rule = rule.Substring(0, beforeBeginLoc) + rule.Substring(beforeEndLoc + primaryBeforeEnd.Length);
+			}
+			return rule;
 		}
 
 		private static void MapRuleCharsToPrimary(string part, string ws, Dictionary<string, Dictionary<string, string>> wsToCharMap)
