@@ -331,6 +331,8 @@
 		<GeneratedFiles Include="$(fwrt)/Src/**/asserts.log"/>
 		<GeneratedFiles Include="$(fwrt)/Src/Common/COMInterfaces/FwKernel.cs"/>
 		<GeneratedFiles Include="$(fwrt)/Src/Common/COMInterfaces/Views.cs"/>
+		<GeneratedFiles Include="$(fwrt)/Src/FDO/DomainImpl/GeneratedFactoryImplementations.cs"/>
+		<GeneratedFiles Include="$(fwrt)/Src/FDO/DomainImpl/FDOGenerated.cs"/>
 	</ItemGroup>
 
 	<Target Name="CleanAll">
