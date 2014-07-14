@@ -368,7 +368,7 @@
 			<string field="$fieldName" ws="$wsName"/>
 		</part>
 		<part id="LexEntry-Jt-CustomSimpleStringForEntry_$fieldName" type="jtview">
-			<string field="$fieldName"/>
+			<string field="$fieldName" ws="$wsName"/>
 		</part>
 		<part id="LexEntry-Jt-CustomIntegerForEntry_$fieldName" type="jtview">
 			<int field="$fieldName"/>
