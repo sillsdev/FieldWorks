@@ -95,7 +95,7 @@ namespace LexTextControlsTests
 			if (Directory.Exists(LiftFolder))
 				Directory.Delete(LiftFolder, true);
 			Directory.CreateDirectory(LiftFolder);
-			var path = Path.Combine(LiftFolder, "LiftTest.lift");
+			var path = Path.Combine(LiftFolder, String.Format("LiftTest{0}.lift", new Random((int)DateTime.Now.Ticks).Next(1000)));
 			CreateLiftInputFile(path, data);
 			return path;
 		}
@@ -104,7 +104,7 @@ namespace LexTextControlsTests
 		{
 			LiftFolder = Path.Combine(Path.GetTempPath(), "xxyyTestLIFTImport");
 			Assert.True(Directory.Exists(LiftFolder));
-			var path = Path.Combine(LiftFolder, "LiftTest.lift-ranges");
+			var path = Path.Combine(LiftFolder, String.Format("LiftTest{0}.lift-ranges", new Random((int)DateTime.Now.Ticks).Next(1000)));
 			CreateLiftInputFile(path, data);
 			return path;
 		}
@@ -1906,44 +1906,6 @@ namespace LexTextControlsTests
 			VerifyCmPossibilityCustomFieldsData(entry);
 		}
 
-		private static readonly string[] s_inflectionLiftData = new[]
-		{
-			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
-			"<lift producer=\"SIL.FLEx 7.3.2.41302\" version=\"0.13\">",
-			"<header>",
-			"<fields/>",
-			"</header>",
-			"<entry dateCreated=\"2013-01-29T08:53:26Z\" dateModified=\"2013-01-29T08:10:28Z\" id=\"baba_aef5e807-c841-4f35-9591-c8a998dc2465\" guid=\"aef5e807-c841-4f35-9591-c8a998dc2465\">",
-			"<lexical-unit>",
-			"<form lang=\"fr\"><text>baba baba</text></form>",
-			"</lexical-unit>",
-			"<sense id=\"$guid2\" dateCreated=\"2013-01-29T08:55:26Z\" dateModified=\"2013-01-29T08:15:28Z\">",
-			"<gloss lang=\"en\"><text>dad</text></gloss>",
-			"</sense>",
-			"</entry>",
-			"</lift>"
-		};
-
-		private static readonly string[] s_inflectionLiftRangeData = new[]
-		{
-		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
-		"<!-- See http://code.google.com/p/lift-standard for more information on the format used here. -->",
-		"<lift-ranges>",
-		"<range id='inflection-feature'>",
-		@"<range-element guid=""21fb4fd5-278c-4530-b1ac-2755ced5b278"" id=""NounAgr"">",
-		@"<label>",
-		@"<form lang=""en""><text>noun agreement</text></form><form	lang=""pt""><text>concordancia nominal</text></form>",
-		@"</label>",
-		@"<abbrev><form lang=""en""><text>NounAgr</text></form><form lang=""pt""><text>NounAgr</text></form></abbrev>",
-		@"<trait	name=""catalog-source-id""	value=""cNounAgr""/>",
-		@"<trait	name=""display-to-right"" value=""False"" />",
-		@"<trait name=""show-in-gloss"" value=""False"" />",
-		@"<trait	name=""feature-definition-type"" value=""complex"" />",
-		@"</range-element>",
-		"</range>",
-		"</lift-ranges>"
-		};
-
 		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// LIFT Import:  test import of Custom Lists from the Ranges file.
@@ -1954,6 +1916,43 @@ namespace LexTextControlsTests
 		[Test]
 		public void TestLiftImport_InflectionFieldRangeDoesNotCauseError()
 		{
+			var inflectionLiftData = new[]
+			{
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+				"<lift producer=\"SIL.FLEx 7.3.2.41302\" version=\"0.13\">",
+				"<header>",
+				"<fields/>",
+				"</header>",
+				"<entry dateCreated=\"2013-01-29T08:53:26Z\" dateModified=\"2013-01-29T08:10:28Z\" id=\"baba_aef5e807-c841-4f35-9591-c8a998dc2465\" guid=\"aef5e807-c841-4f35-9591-c8a998dc2465\">",
+				"<lexical-unit>",
+				"<form lang=\"fr\"><text>baba baba</text></form>",
+				"</lexical-unit>",
+				"<sense id=\"$guid2\" dateCreated=\"2013-01-29T08:55:26Z\" dateModified=\"2013-01-29T08:15:28Z\">",
+				"<gloss lang=\"en\"><text>dad</text></gloss>",
+				"</sense>",
+				"</entry>",
+				"</lift>"
+			};
+
+			var inflectionLiftRangeData = new[]
+			{
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+			"<lift-ranges>",
+			"<range id='inflection-feature'>",
+			@"<range-element guid=""21fb4fd5-278c-4530-b1ac-2755ced5b278"" id=""NounAgr"">",
+			@"<label>",
+			@"<form lang=""en""><text>noun agreement</text></form><form	lang=""pt""><text>concordancia nominal</text></form>",
+			@"</label>",
+			@"<abbrev><form lang=""en""><text>NounAgr</text></form><form lang=""pt""><text>NounAgr</text></form></abbrev>",
+			@"<trait	name=""catalog-source-id""	value=""cNounAgr""/>",
+			@"<trait	name=""display-to-right"" value=""False"" />",
+			@"<trait name=""show-in-gloss"" value=""False"" />",
+			@"<trait	name=""feature-definition-type"" value=""complex"" />",
+			@"</range-element>",
+			"</range>",
+			"</lift-ranges>"
+			};
+
 			SetWritingSystems("fr");
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
@@ -1962,12 +1961,11 @@ namespace LexTextControlsTests
 			Assert.AreEqual(0, repoSense.Count);
 
 			//Creat the LIFT data file
-			var sOrigFile = CreateInputFile(s_inflectionLiftData);
+			var sOrigFile = CreateInputFile(inflectionLiftData);
 			//Create the LIFT ranges file
-			var sOrigRangesFile = CreateInputRangesFile(s_inflectionLiftRangeData);
+			var sOrigRangesFile = CreateInputRangesFile(inflectionLiftRangeData);
 
 			var logFile = TryImportWithRanges(sOrigFile, sOrigRangesFile, 1);
-//			VerifyListItem(Cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>());
 			File.Delete(sOrigFile);
 			File.Delete(sOrigRangesFile);
 			//Verify that no errors were encountered loading the inflection features range
@@ -1978,6 +1976,102 @@ namespace LexTextControlsTests
 
 			ILexEntry entry;
 			Assert.IsTrue(repoEntry.TryGetObject(new Guid("aef5e807-c841-4f35-9591-c8a998dc2465"), out entry));
+		}
+
+		/// <summary>
+		/// LT-15516: Blank reversal entries were multiplying on import. Blank entries should be removed during
+		/// an import.
+		/// </summary>
+		[Test]
+		public void TestLiftImport_BlankReversalsAreNotImported()
+		{
+			var liftDataWithEmptyReversal = new[]
+			{
+			@"<?xml version=""1.0"" encoding=""UTF-8"" ?>",
+			@"<lift producer=""SIL.FLEx 8.0.10.41831"" version=""0.13"">",
+			@"<entry id=""some entry_f543cf6b-5ce1-4bed-af4b-82760994890c"" guid=""f543cf6b-5ce1-4bed-af4b-82760994890c"">",
+			@"<lexical-unit>",
+			@"<form lang=""fr""><text>some entry</text></form>",
+			@"</lexical-unit>",
+			@"<trait  name=""morph-type"" value=""phrase""/>",
+			@"<relation type=""_component-lexeme"" ref="""">",
+			@"<trait name=""complex-form-type"" value=""""/>",
+			@"</relation>",
+			@"<sense id=""b4de1476-b432-46b6-97e3-c993ff0a2ff9"">",
+			@"<gloss lang=""en""><text>has a blank reversal</text></gloss>",
+			@"<reversal type=""en""></reversal>",
+			@"</sense>",
+			@"</entry>",
+			@"</lift>"
+			};
+			SetWritingSystems("fr");
+
+			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
+			Assert.AreEqual(0, repoEntry.Count);
+			Assert.AreEqual(0, repoSense.Count);
+
+			//Creat the LIFT data file
+			var liftFileWithBlankReversal = CreateInputFile(liftDataWithEmptyReversal);
+
+			var logFile = TryImport(liftFileWithBlankReversal, null, FlexLiftMerger.MergeStyle.MsKeepNew, 1);
+			File.Delete(liftFileWithBlankReversal);
+			//Verify that no errors were encountered loading the inflection features range
+			AssertThatXmlIn.File(logFile).HasNoMatchForXpath("//*[contains(., 'Error encountered processing ranges')]");
+			File.Delete(logFile);
+			Assert.AreEqual(1, repoEntry.Count);
+			Assert.AreEqual(1, repoSense.Count);
+			ILexSense sense;
+			Assert.IsTrue(repoSense.TryGetObject(new Guid("b4de1476-b432-46b6-97e3-c993ff0a2ff9"), out sense));
+			Assert.That(sense.ReversalEntriesRC.Count, Is.EqualTo(0), "Empty reversal should not have been imported.");
+		}
+
+		/// <summary>
+		/// Blank reversal entries were multiplying on import. Blank entries should be removed during
+		/// an import while still importing non-blank entries
+		/// </summary>
+		[Test]
+		public void TestLiftImport_BlankReversalsAreSkippedButNonBlanksAreImported()
+		{
+			var liftDataWithOneEmptyAndOneNonEmptyReversal = new[]
+			{
+			@"<?xml version=""1.0"" encoding=""UTF-8"" ?>",
+			@"<lift producer=""SIL.FLEx 8.0.10.41831"" version=""0.13"">",
+			@"<entry id=""some entry_f543cf6b-5ce1-4bed-af4b-82760994890c"" guid=""f543cf6b-5ce1-4bed-af4b-82760994890c"">",
+			@"<lexical-unit>",
+			@"<form lang=""fr""><text>some entry</text></form>",
+			@"</lexical-unit>",
+			@"<trait  name=""morph-type"" value=""phrase""/>",
+			@"<relation type=""_component-lexeme"" ref="""">",
+			@"<trait name=""complex-form-type"" value=""""/>",
+			@"</relation>",
+			@"<sense id=""b4de1476-b432-46b6-97e3-c993ff0a2ff9"">",
+			@"<gloss lang=""en""><text>has a blank reversal</text></gloss>",
+			@"<reversal type=""en""></reversal>",
+			@"<reversal type=""en""><form lang=""en""><text>Got one</text></form></reversal>",
+			@"</sense>",
+			@"</entry>",
+			@"</lift>"
+			};
+
+			SetWritingSystems("fr");
+
+			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
+			Assert.AreEqual(0, repoEntry.Count);
+			Assert.AreEqual(0, repoSense.Count);
+
+			//Creat the LIFT data file
+			var liftFileWithBlankAndNonBlankReversal = CreateInputFile(liftDataWithOneEmptyAndOneNonEmptyReversal);
+
+			var logFile = TryImport(liftFileWithBlankAndNonBlankReversal, null, FlexLiftMerger.MergeStyle.MsKeepNew, 1);
+			File.Delete(liftFileWithBlankAndNonBlankReversal);
+			File.Delete(logFile);
+			Assert.AreEqual(1, repoEntry.Count);
+			Assert.AreEqual(1, repoSense.Count);
+			ILexSense sense;
+			Assert.IsTrue(repoSense.TryGetObject(new Guid("b4de1476-b432-46b6-97e3-c993ff0a2ff9"), out sense));
+			Assert.That(sense.ReversalEntriesRC.Count, Is.EqualTo(1), "Empty reversal should not have been imported but non empty should.");
 		}
 
 		private void VerifyCmPossibilityLists()

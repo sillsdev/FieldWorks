@@ -5852,7 +5852,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			foreach (CmLiftReversal rev in sense.Reversals)
 			{
 				IReversalIndexEntry rie = ProcessReversal(rev);
-				if (rie != null && !ls.ReversalEntriesRC.Contains(rie))
+				if (rie != null && rie.ReversalForm.StringCount != 0 && !ls.ReversalEntriesRC.Contains(rie))
 					ls.ReversalEntriesRC.Add(rie);
 			}
 		}
