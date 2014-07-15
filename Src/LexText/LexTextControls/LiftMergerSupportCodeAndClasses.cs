@@ -1441,16 +1441,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (xdResidue != null)
 			{
 				StoreDatesInResidue(extensible, expl);
-				//foreach (LiftField field in expl.Fields)
-				//{
-				//    string sXml = CreateXmlForField(field);
-				//    InsertResidueContent(xdResidue, sXml);
-				//}
-				foreach (LiftTrait trait in expl.Traits)
-				{
-					string sXml = CreateXmlForTrait(trait);
-					InsertResidueContent(xdResidue, sXml);
-				}
 				foreach (LiftAnnotation ann in expl.Annotations)
 				{
 					string sXml = CreateXmlForAnnotation(ann);
