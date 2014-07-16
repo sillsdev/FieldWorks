@@ -140,23 +140,34 @@ namespace SIL.CoreImpl
 
 		/// <summary>
 		/// Used in restoring backups, copy the specified file, typically an exc, to the hunspell directory
-		/// (overwriting any existing one).
 		/// </summary>
-		/// <param name="path"></param>
-		public static void AddReplaceSpellingOverrideFile(string path)
+		/// <remarks>
+		/// Will not overwrite any existing files.
+		/// Exceptions for vernacular dictionaries are wiped out when the dictionary is initialized.
+		/// </remarks>
+		public static void AddAnySpellingExceptionsFromBackup(string backupPath)
 		{
-			var destPath = Path.Combine(GetSpellingDirectoryPath(), Path.GetFileName(path));
-			if (Path.GetExtension(path) == "dic")
+			AddAnySpellingExceptionsFromBackup(backupPath, GetSpellingDirectoryPath());
+		}
+
+		/// <summary/>
+		internal static void AddAnySpellingExceptionsFromBackup(string backupDictionaryPath, string destinationPath)
+		{
+			foreach(var file in Directory.GetFiles(backupDictionaryPath))
 			{
-				// For Hunspell, we only backup exc files.
-				// If a backup contains a dic file, it must be from Enchant.
-				// In Enchant days, we backed up a 'dic' file from a distinct directory where we stored overrides.
-				// Most likely, then, this file is actually a list of additions to the dictionary.
-				// Fortunately, we store exceptions the same way, except for file naming and location.
-				// So all we need do is fix the extension on the destination
-				GetExceptionFileName(destPath);
+				var destFilePath = Path.Combine(destinationPath, Path.GetFileName(file));
+				if(Path.GetExtension(file) == ".dic")
+				{
+					// For Hunspell, we only backup exc files.
+					// If a backup contains a dic file, it must be from Enchant.
+					// There is a possibility that there were exceptions there which should be copied
+					// but some enchant backups also containt a .exc file with exceptions.
+					continue;
+				}
+				// Copy to the hunspell directory, but do not overwrite.
+				// Currently these exceptions are only potentially useful for analysis language dictionaries - Jul 2014
+				File.Copy(file, destFilePath, false);
 			}
-			File.Copy(path, destPath, true);
 		}
 
 		private static bool IsValidDictionary(string path)

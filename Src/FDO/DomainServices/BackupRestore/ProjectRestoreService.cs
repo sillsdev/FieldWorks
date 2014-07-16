@@ -252,14 +252,12 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Copies the spelling override files from the restore location to the place where
-		/// our spelling engine expects to find them.
-		/// REVIEW: Should this be a move instead of a copy?
+		/// our spelling engine expects to find them. Does not overwrite.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		private void CopySpellingOverrideFilesFromBackupToLocal()
 		{
-			foreach (var file in Directory.GetFiles(m_restoreSettings.SpellingDictionariesPath))
-				SpellingHelper.AddReplaceSpellingOverrideFile(file);
+			SpellingHelper.AddAnySpellingExceptionsFromBackup(m_restoreSettings.SpellingDictionariesPath);
 		}
 
 		/// ------------------------------------------------------------------------------------
