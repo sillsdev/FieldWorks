@@ -793,9 +793,6 @@ Enter a shorter name.</value>
   <data name="kstidDeleteWritingSystemCaption" xml:space="preserve">
     <value>Delete Writing System</value>
   </data>
-  <data name="kstidDeleteWritingSystemText" xml:space="preserve">
-    <value>The writing system and all text in the writing system will be deleted permanently. Are you sure you wish to delete the writing system?</value>
-  </data>
   <data name="kstidMergeWritingSystems" xml:space="preserve">
     <value>"{0}" will be merged into "{1}", resulting in one writing system. Merging the data using this writing system could cause extensive changes to your data. We recommend that you back up your project before proceeding.</value>
   </data>
@@ -984,5 +981,11 @@ The error was:
   </data>
   <data name="ksFindServersError" xml:space="preserve">
     <value>Unable to search for remote servers.</value>
+  </data>
+  <data name="CancelDeleteWS" xml:space="preserve">
+    <value>Cancel Delete Writing System</value>
+  </data>
+  <data name="DataInWsWontBeDeleted" xml:space="preserve">
+    <value>The writing system {0} and all text in the writing system will no longer be deleted.</value>
   </data>
 </root>
