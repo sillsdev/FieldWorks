@@ -237,10 +237,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				_liftPathname = null;
 				return true;
 			}
-			if (!ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepBoth)) // Do merciful import.
-			{
-				LiftImportFailureServices.RegisterBasicImportFailure(_parentForm, Path.GetDirectoryName(_liftPathname));
-			}
+			 // Do merciful import.
+			ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepBoth);
 			_mediator.PropertyTable.SetProperty("LastBridgeUsed", "LiftBridge", PropertyTable.SettingsGroup.LocalSettings);
 			_mediator.BroadcastMessage("MasterRefresh", null);
 
@@ -816,27 +814,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			switch (previousImportStatus)
 			{
 				case ImportFailureStatus.BasicImportNeeded:
-					if (ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepBoth))
-					{
-						LiftImportFailureServices.ClearImportFailure(liftProjectDir);
-					}
-					else
-					{
-						LiftImportFailureServices.RegisterBasicImportFailure(_parentForm, liftProjectDir);
-						return true;
-					}
-					break;
+					return ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepBoth);
 				case ImportFailureStatus.StandardImportNeeded:
-					if (ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepOnlyNew))
-					{
-						LiftImportFailureServices.ClearImportFailure(liftProjectDir);
-					}
-					else
-					{
-						LiftImportFailureServices.RegisterStandardImportFailure(_parentForm, liftProjectDir);
-						return true;
-					}
-					break;
+					return ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepOnlyNew);
 				case ImportFailureStatus.NoImportNeeded:
 					// Nothing to do. :-)
 					break;
@@ -1015,12 +995,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				importer.Cache = cache;
 				importer._liftPathname = liftPath;
 				importer._parentForm = parentForm;
-				var importedCorrectly = importer.ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepBoth); // should be a new project
-				if (!importedCorrectly)
-				{
-					LiftImportFailureServices.RegisterBasicImportFailure(parentForm, Path.GetDirectoryName(liftPath));
-				}
-				return importedCorrectly;
+				return importer.ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepBoth); // should be a new project
 			}
 		}
 
@@ -1049,34 +1024,30 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					_progressDlg = progressDlg;
 					try
 					{
+						if(mergeStyle == FlexLiftMerger.MergeStyle.MsKeepBoth)
+						{
+							LiftImportFailureServices.RegisterBasicImportFailure(_parentForm, Path.GetDirectoryName(_liftPathname));
+						}
+						else
+						{
+							LiftImportFailureServices.RegisterStandardImportFailure(_parentForm, Path.GetDirectoryName(_liftPathname));
+						}
 						progressDlg.Title = ResourceHelper.GetResourceString("kstidImportLiftlexicon");
 						var logFile = (string)progressDlg.RunTask(true, ImportLiftLexicon, new object[] { _liftPathname, mergeStyle });
-						return logFile != null;
+						if(logFile != null)
+						{
+							LiftImportFailureServices.ClearImportFailure(Path.GetDirectoryName(_liftPathname));
+							return true;
+						}
+						return false;
 					}
 					catch (WorkerThreadException error)
 					{
 						// It appears to be an analyst issue to sort out how we should report this.
 						// LT-12340 however says we must report it somehow.
 						var sMsg = String.Format(LexEdStrings.kProblemImportWhileMerging, _liftPathname, error.InnerException.Message);
-						// RandyR says JohnH isn't excited about this approach to reporting an import error, that is, copy it to the
-						// clipboard (and presumably say something about it in kProblemImportWhileMerging).
-						// But it would be nice to get the details if it is a crash.
-						//try
-						//{
-						//    var bldr = new StringBuilder();
-						//    bldr.AppendFormat(Resources.kProblem, m_liftPathname);
-						//    bldr.AppendLine();
-						//    bldr.AppendLine(error.Message);
-						//    bldr.AppendLine();
-						//    bldr.AppendLine(error.StackTrace);
-						//    if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
-						//        ClipboardUtils.SetDataObject(bldr.ToString(), true);
-						//}
-						//catch
-						//{
-						//}
-						MessageBox.Show(sMsg, LexEdStrings.kProblemMerging,
-							MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+						MessageBox.Show(sMsg, LexEdStrings.kProblemMerging, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 						return false;
 					}
 					finally
