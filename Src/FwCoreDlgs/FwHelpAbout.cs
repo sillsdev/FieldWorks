@@ -200,6 +200,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			fieldWorksIcon.Name = "fieldWorksIcon";
 			fieldWorksIcon.TabStop = false;
 			//
+			// m_toolTip
+			//
+			m_toolTip.AutomaticDelay = 100;
+			m_toolTip.AutoPopDelay = 1000;
+			m_toolTip.InitialDelay = 100;
+			m_toolTip.ReshowDelay = 100;
+			//
 			// lblAvailableDiskSpace
 			//
 			resources.ApplyResources(this.lblAvailableDiskSpace, "lblAvailableDiskSpace");
@@ -209,13 +216,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			resources.ApplyResources(this.lblAvailableMemory, "lblAvailableMemory");
 			this.lblAvailableMemory.Name = "lblAvailableMemory";
-			//
-			// m_toolTip
-			//
-			m_toolTip.AutomaticDelay = 100;
-			m_toolTip.AutoPopDelay = 1000;
-			m_toolTip.InitialDelay = 100;
-			m_toolTip.ReshowDelay = 100;
 			//
 			// lblName
 			//

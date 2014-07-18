@@ -180,9 +180,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			// lblCopyright
 			//
-			resources.ApplyResources(this.lblCopyright, "lblCopyright");
 			this.lblCopyright.BackColor = System.Drawing.Color.Transparent;
 			this.lblCopyright.ForeColor = System.Drawing.Color.Black;
+			resources.ApplyResources(this.lblCopyright, "lblCopyright");
 			this.lblCopyright.Name = "lblCopyright";
 			//
 			// lblMessage
@@ -251,7 +251,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "RealSplashScreen";
-			this.Opacity = 0;
+			this.Opacity = 0D;
 			((System.ComponentModel.ISupportInitialize)(this.m_picSilLogo)).EndInit();
 			this.m_panel.ResumeLayout(false);
 			this.m_panel.PerformLayout();
