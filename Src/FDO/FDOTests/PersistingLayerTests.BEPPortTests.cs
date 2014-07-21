@@ -25,12 +25,8 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		/// <summary>Random number generator to prevent filename conflicts</summary>
 		private readonly Random m_random;
 
-		/// <summary>
-		/// Adds unique parameters prior to each test run. Should avoid any delayed file closes or deletes from one test causing
-		/// a subsequent test to fail.
-		/// </summary>
-		[SetUp]
-		public void Setup()
+		/// <summary/>
+		public BEPPortTests()
 		{
 			m_random = new Random((int)DateTime.Now.Ticks);
 		}
@@ -66,7 +62,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			switch (type)
 			{
 				case FDOBackendProviderType.kXML:
-					name = DirectoryFinder.GetXmlDataFileName("TLP" + nameSuffix);
+					name = FdoFileHelper.GetXmlDataFileName("TLP" + nameSuffix);
 					break;
 				case FDOBackendProviderType.kDb4oClientServer:
 					name = "TLPCS" + nameSuffix;
@@ -235,7 +231,6 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			// Set up data source
 			var projId = new TestProjectId(sourceBackendStartupParameters.ProjectId.Type,
 													sourceBackendStartupParameters.ProjectId.Path);
-			IThreadedProgress progressDlg = new DummyProgressDlg();
 			using (FdoCache sourceCache = FdoCache.CreateCacheWithNewBlankLangProj(
 				projId, "en", "fr", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories))
 			{
@@ -248,7 +243,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			}
 
 			// Migrate source data to new BEP.
-			progressDlg = new DummyProgressDlg();
+			IThreadedProgress progressDlg = new DummyProgressDlg();
 			using (var targetCache = FdoCache.CreateCacheWithNoLangProj(
 				new TestProjectId(targetBackendStartupParameters.ProjectId.Type, null), "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories))
 			{
