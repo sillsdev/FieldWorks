@@ -79,6 +79,51 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Guids changed..
+        /// </summary>
+        internal static string GoldEticGuidFixer_Guids_changed_Title {
+            get {
+                return ResourceManager.GetString("GoldEticGuidFixer_Guids_changed_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Some guids for parts of speech that did not match the GOLD standard were found and replaced..
+        /// </summary>
+        internal static string GoldEticGuidFixer_GuidsChangedContent {
+            get {
+                return ResourceManager.GetString("GoldEticGuidFixer_GuidsChangedContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use standard part of speech guids.
+        /// </summary>
+        internal static string GoldEticGuidFixer_Label {
+            get {
+                return ResourceManager.GetString("GoldEticGuidFixer_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No changes were necessary..
+        /// </summary>
+        internal static string GoldEticGuidFixer_NoChangeContent {
+            get {
+                return ResourceManager.GetString("GoldEticGuidFixer_NoChangeContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Guids changed..
+        /// </summary>
+        internal static string GoldEticGuidFixer_NoChangeTitle {
+            get {
+                return ResourceManager.GetString("GoldEticGuidFixer_NoChangeTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to basic.
         /// </summary>
         internal static string kBasicFailureFileContents {
@@ -257,15 +302,6 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         internal static string ksCannotRedoConvertVariants {
             get {
                 return ResourceManager.GetString("ksCannotRedoConvertVariants", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You cannot use &apos;Undo&apos; to cancel the effect of this utility. You would need to go back to a previously saved version of the database..
-        /// </summary>
-        internal static string ksCannotRedoReassignHomographs {
-            get {
-                return ResourceManager.GetString("ksCannotRedoReassignHomographs", resourceCulture);
             }
         }
         
@@ -601,6 +637,15 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         internal static string ksFindExampleSentenceDlgPreviewPaneTitle {
             get {
                 return ResourceManager.GetString("ksFindExampleSentenceDlgPreviewPaneTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You cannot use &apos;Undo&apos; to cancel the effect of this utility. You would need to go back to a previously saved version of the database..
+        /// </summary>
+        internal static string ksGenericUtilityCannotUndo {
+            get {
+                return ResourceManager.GetString("ksGenericUtilityCannotUndo", resourceCulture);
             }
         }
         
@@ -1428,6 +1473,15 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This utility will make the part of speech guids for the project match the GOLD standard..
+        /// </summary>
+        internal static string ksWhatIsSetPartOfSpeechGUIDsToGold {
+            get {
+                return ResourceManager.GetString("ksWhatIsSetPartOfSpeechGUIDsToGold", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Run this utility when you need to convert one or more of your existing variant types to be irregularly inflected form variant types.  When a variant type is an irregularly inflected form variant type, it has extra fields such as &apos;Append to Gloss&apos;, &apos;Inflection Features&apos;, and &apos;Slots.&apos;.
         /// </summary>
         internal static string ksWhenToConvertIrregularlyInflectedFormVariants {
@@ -1451,6 +1505,15 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         internal static string ksWhenToReassignHomographs {
             get {
                 return ResourceManager.GetString("ksWhenToReassignHomographs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to If this project was created before FieldWorks version 8.1 and you want to use the data as part of a multi-language query you should use this utility..
+        /// </summary>
+        internal static string ksWhenToSetPartOfSpeechGUIDsToGold {
+            get {
+                return ResourceManager.GetString("ksWhenToSetPartOfSpeechGUIDsToGold", resourceCulture);
             }
         }
         

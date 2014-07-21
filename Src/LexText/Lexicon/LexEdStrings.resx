@@ -138,7 +138,7 @@
     <value>Always visible</value>
     <comment>menu item</comment>
   </data>
-  <data name="ksCannotRedoReassignHomographs" xml:space="preserve">
+  <data name="ksGenericUtilityCannotUndo" xml:space="preserve">
     <value>You cannot use 'Undo' to cancel the effect of this utility. You would need to go back to a previously saved version of the database.</value>
   </data>
   <data name="ksCategoryToMergeInto" xml:space="preserve">
@@ -614,5 +614,31 @@ You may choose a different project name in FieldWorks Project Properties.</value
   </data>
   <data name="ksSendReceiveNotPermittedMultipleAppsText" xml:space="preserve">
     <value>Send/Receive cannot be performed when there are other applications using this project. Please close all other applications that are using this project before continuing.</value>
+  </data>
+  <data name="ksWhatIsSetPartOfSpeechGUIDsToGold" xml:space="preserve">
+    <value>This utility will make the part of speech guids for the project match the GOLD standard.</value>
+  </data>
+  <data name="ksWhenToSetPartOfSpeechGUIDsToGold" xml:space="preserve">
+    <value>If this project was created before FieldWorks version 8.1 and you want to use the data as part of a multi-language query you should use this utility.</value>
+  </data>
+	<data name="GoldEticGuidFixer_Guids_changed_Title" xml:space="preserve">
+    <value>Guids changed.</value>
+    <comment>MessageBox title when the utility looking for incorrect Part of speech guids found some.</comment>
+  </data>
+	<data name="GoldEticGuidFixer_NoChangeTitle" xml:space="preserve">
+    <value>No Guids changed.</value>
+    <comment>MessageBox title when the utility looking for incorrect Part of speech guids found nothing.</comment>
+  </data>
+	<data name="GoldEticGuidFixer_GuidsChangedContent" xml:space="preserve">
+    <value>Some guids for parts of speech that did not match the GOLD standard were found and replaced.</value>
+    <comment>Message box content for when the utility found guids and changed them.</comment>
+  </data>
+	<data name="GoldEticGuidFixer_NoChangeContent" xml:space="preserve">
+    <value>No changes were necessary.</value>
+    <comment>Message box content for when the utility found nothing to change.</comment>
+  </data>
+	<data name="GoldEticGuidFixer_Label" xml:space="preserve">
+    <value>Use standard part of speech guids</value>
+    <comment>Label shown in the tools utilities dialog for this utility.</comment>
   </data>
 </root>
