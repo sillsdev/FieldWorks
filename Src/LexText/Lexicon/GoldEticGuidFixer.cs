@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			Dialog.WhenDescription = LexEdStrings.ksWhenToSetPartOfSpeechGUIDsToGold;
 			Dialog.WhatDescription = LexEdStrings.ksWhatIsSetPartOfSpeechGUIDsToGold;
-			Dialog.WhatDescription = LexEdStrings.ksGenericUtilityCannotUndo;
+			Dialog.RedoDescription = LexEdStrings.ksGenericUtilityCannotUndo;
 		}
 
 		public void Process()

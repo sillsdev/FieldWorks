@@ -136,7 +136,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary>
-		/// Set the Redo Description substring.
+		/// Set the "Cautions" substring. (Keeping the legacy API)
 		/// </summary>
 		public string RedoDescription
 		{
@@ -223,6 +223,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					util.LoadUtilities();
 				}
 			}
+			m_clbUtilities.Sorted = true;
 			if (m_clbUtilities.Items.Count > 0)
 				m_clbUtilities.SelectedIndex = 0;
 		}
@@ -338,6 +339,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			using (var boldFont = new Font(currentFont.FontFamily, currentFont.Size, boldFontStyle))
 #endif
 			{
+				m_whatDescription = m_whenDescription = m_redoDescription = null;
 				((IUtility)m_clbUtilities.SelectedItem).OnSelection();
 				m_rtbDescription.Clear();
 				// What
