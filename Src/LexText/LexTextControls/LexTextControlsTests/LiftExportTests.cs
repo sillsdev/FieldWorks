@@ -15,6 +15,7 @@ using System.Xml;
 using NUnit.Framework;
 using Palaso.IO;
 using Palaso.Lift.Validation;
+using Palaso.TestUtilities;
 using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -39,7 +40,7 @@ namespace LexTextControlsTests
 	[TestFixture]
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
 		Justification="Unit test - Cache gets disposed in TearDown method")]
-	public class LiftExportTests : BaseTest
+	public class LiftExportTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private const string kbasePictureOfTestFileName = "Picture of Test";
 		private const string kpictureOfTestFileName = kbasePictureOfTestFileName + ".jpg"; // contents won't really be jpg
@@ -1881,6 +1882,29 @@ namespace LexTextControlsTests
 				xdoc.LoadXml(w.ToString());
 			}
 			VerifyCustomStText(xdoc);
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the Lift export of a custom StText field using the LiftExporter class.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void LiftExportRanges_PartOfSpeechCatalogIdIsExported()
+		{
+			var loader = new XmlList();
+			loader.ImportList(Cache.LangProject, "PartsOfSpeech", Path.Combine(FwDirectoryFinder.TemplateDirectory, "POS.xml"),
+									new DummyProgressDlg());
+			var servLoc = Cache.ServiceLocator;
+			var exporter = new LiftExporter(Cache);
+			var xdocRangeFile = new XmlDocument();
+			using(var w = new StringWriter())
+			{
+				// SUT
+				exporter.ExportLiftRanges(w);
+				xdocRangeFile.LoadXml(w.ToString());
+			}
+			AssertThatXmlIn.Dom(xdocRangeFile).HasAtLeastOneMatchForXpath("//range[@id='grammatical-info']/range-element/trait[@name='catalog-source-id']");
 		}
 
 		private int m_flidLongText;
