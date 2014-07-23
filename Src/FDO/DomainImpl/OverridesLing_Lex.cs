@@ -6692,6 +6692,46 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				m_cache.DomainDataByFlid.DeleteObj(ruleMapping.Hvo);
 			}
 		}
+		/// <summary>
+		/// Gets a TsString that represents this object as it could be used in a deletion
+		/// confirmation dialog.
+		/// </summary>
+		public override ITsString DeletionTextTSS
+		{
+			get
+			{
+				int userWs = m_cache.DefaultUserWs;
+				ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
+				tisb.Append(String.Format(Strings.ksDeleteNaturalClass, " "));
+				tisb.AppendTsString(ShortNameTSS);
+
+				Set<int> rules = new Set<int>();
+				foreach (var cmo in ReferringObjects)
+				{
+					var ctxt = cmo as IPhSimpleContextNC;
+					if (ctxt != null)
+					{
+						var apr = ctxt.Owner as IMoAffixProcess;
+						if (apr != null)
+							rules.Add(apr.Hvo);
+					}
+				}
+				int cnt = 1;
+				if (rules.Count > 0)
+				{
+					tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.DefaultUserWs);
+					tisb.Append("\x2028\x2028");
+					tisb.Append(Strings.ksNatClassUsedHere);
+					tisb.Append("\x2028");
+					if (rules.Count > 1)
+						tisb.Append(String.Format(Strings.ksUsedXTimesInAffixProcessRules, cnt, rules.Count));
+					else
+						tisb.Append(String.Format(Strings.ksUsedOnceInAffixProcessRules, cnt));
+				}
+				return tisb.GetString();
+			}
+		}
 	}
 
 	/// <summary>
@@ -6896,7 +6936,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					{
 						// if there are two natural classes with the same abbreviation, things
 						// can get in a state where there is no rule here.
-						if (ctxt.Rule != null)
+						if (ctxt.Rule != null && ctxt.Rule.ClassID != MoAffixProcessTags.kClassId)
 							rules.Add(ctxt.Rule.Hvo);
 					}
 				}
@@ -6911,6 +6951,32 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						tisb.Append(String.Format(Strings.ksUsedXTimesInRules, cnt, rules.Count));
 					else
 						tisb.Append(String.Format(Strings.ksUsedOnceInRules, cnt));
+				}
+				Set<int> aprrules = new Set<int>();
+				foreach (var cmo in ReferringObjects)
+				{
+					var ctxt = cmo as IPhSimpleContextNC;
+					if (ctxt != null)
+					{
+						var apr = ctxt.Owner as IMoAffixProcess;
+						if (apr != null)
+							aprrules.Add(apr.Hvo);
+					}
+				}
+				int aprcnt = rules.Count + 1;
+				if (aprrules.Count > 0)
+				{
+					tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.DefaultUserWs);
+					if (rules.Count == 0)
+					{
+						tisb.Append("\x2028\x2028");
+						tisb.Append(Strings.ksNatClassUsedHere);
+					}
+					tisb.Append("\x2028");
+					if (aprrules.Count > 1)
+						tisb.Append(String.Format(Strings.ksUsedXTimesInAffixProcessRules, aprcnt, aprrules.Count));
+					else
+						tisb.Append(String.Format(Strings.ksUsedOnceInAffixProcessRules, aprcnt));
 				}
 				string std = String.Format("[{0}]", Abbreviation.AnalysisDefaultWritingSystem.Text);
 				string indexed = String.Format("[{0}^", Abbreviation.AnalysisDefaultWritingSystem.Text);

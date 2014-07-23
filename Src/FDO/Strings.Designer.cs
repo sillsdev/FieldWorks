@@ -1947,6 +1947,15 @@ namespace SIL.FieldWorks.FDO {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0}. Being used 1 time by an affix process rule..
+        /// </summary>
+        internal static string ksUsedOnceInAffixProcessRules {
+            get {
+                return ResourceManager.GetString("ksUsedOnceInAffixProcessRules", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0}. Being used 1 time in your natural classes..
         /// </summary>
         internal static string ksUsedOnceInNatClasses {
@@ -1979,6 +1988,15 @@ namespace SIL.FieldWorks.FDO {
         internal static string ksUsedXTimesByAnalyses {
             get {
                 return ResourceManager.GetString("ksUsedXTimesByAnalyses", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}. Being used {1} times by affix process rules..
+        /// </summary>
+        internal static string ksUsedXTimesInAffixProcessRules {
+            get {
+                return ResourceManager.GetString("ksUsedXTimesInAffixProcessRules", resourceCulture);
             }
         }
         
