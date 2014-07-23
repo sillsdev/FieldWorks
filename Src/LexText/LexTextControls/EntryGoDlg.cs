@@ -94,7 +94,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_searchFieldGetter = new EntrySearchFieldGetter { AnalHvos = m_analHvos,
 				VernHvos = m_vernHvos, SearchWs = wsSearch };
 			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromMediator(mediator), mediator, configNode,
-				cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances().Cast<ICmObject>(), SearchType.Prefix,
+				cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances().Cast<ICmObject>(), SearchType.FullText,
 				m_searchFieldGetter.GetEntrySearchFields);
 		}
 
