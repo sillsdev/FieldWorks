@@ -1,0 +1,8 @@
+Verified+1: Jenkins CI <jenkins@sil.org>
+Verified-Linux+1: Jenkins CI <jenkins@sil.org>
+Code-Review+2: Eric Pyle <eric_pyle@sil.org>
+Submitted-by: Jason Naylor <jason.naylor@gmail.com>
+Submitted-at: Thu, 24 Jul 2014 21:50:45 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/2277
+Project: FieldWorks
+Branch: refs/heads/release/8.1
