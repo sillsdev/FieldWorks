@@ -302,6 +302,13 @@ namespace SIL.FieldWorks.FdoUi
 			}
 		}
 
+		// Currently only called from WCF (11/21/2013 - AP)
+		public static void DisplayEntry(FdoCache cache, Mediator mediatorIn,
+			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn, IWfiAnalysis wfa)
+		{
+			DisplayEntries(cache, null, mediatorIn, helpProvider, helpFileKey, tssWfIn, wfa);
+		}
+
 		internal static void DisplayEntries(FdoCache cache, IWin32Window owner, Mediator mediatorIn,
 			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn, IWfiAnalysis wfa)
 		{
@@ -459,6 +466,63 @@ namespace SIL.FieldWorks.FdoUi
 				XmlNode windowConfigurationNode = configuration.SelectSingleNode("window");
 				mediator.PropertyTable.SetProperty("WindowConfiguration", windowConfigurationNode);
 				mediator.PropertyTable.SetPropertyPersistence("WindowConfiguration", false);
+			}
+		}
+
+		// Currently only called from WCF (11/21/2013 - AP)
+		public static void DisplayRelatedEntries(FdoCache cache, Mediator mediatorIn,
+			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tss)
+		{
+			DisplayRelatedEntries(cache, null, mediatorIn, helpProvider, helpFileKey, tss, true);
+		}
+
+		/// ------------------------------------------------------------
+		/// <summary>
+		/// Assuming the selection can be expanded to a word and a corresponding LexEntry can
+		/// be found, show the related words dialog with the words related to the selected one.
+		/// </summary>
+		/// <param name="cache">The cache.</param>
+		/// <param name="owner">The owning window.</param>
+		/// <param name="mediatorIn">The mediator.</param>
+		/// <param name="helpProvider">The help provider.</param>
+		/// <param name="helpFileKey">The help file key.</param>
+		/// <param name="tssWf">The ITsString for the word form.</param>
+		/// <param name="hideInsertButton"></param>
+		/// ------------------------------------------------------------
+		// Currently only called from WCF (11/21/2013 - AP)
+		public static void DisplayRelatedEntries(FdoCache cache, IWin32Window owner,
+			Mediator mediatorIn, IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWf,
+			bool hideInsertButton)
+		{
+			if (tssWf == null || tssWf.Length == 0)
+				return;
+
+			using (LexEntryUi leui = FindEntryForWordform(cache, tssWf))
+			{
+				// This doesn't work as well (unless we do a commit) because it may not see current typing.
+				//LexEntryUi leui = LexEntryUi.FindEntryForWordform(cache, hvo, tag, ichMin, ichLim);
+				if (leui == null)
+				{
+					RelatedWords.ShowNotInDictMessage(owner);
+					return;
+				}
+				int hvoEntry = leui.Object.Hvo;
+				int[] domains;
+				int[] lexrels;
+				IVwCacheDa cdaTemp;
+				if (!RelatedWords.LoadDomainAndRelationInfo(cache, hvoEntry, out domains, out lexrels, out cdaTemp, owner))
+					return;
+				StringTable stOrig;
+				Mediator mediator;
+				IVwStylesheet styleSheet;
+				bool fRestore = EnsureFlexTypeSetup(cache, mediatorIn, out stOrig, out mediator, out styleSheet);
+				using (RelatedWords rw = new RelatedWords(cache, null, hvoEntry, domains, lexrels, cdaTemp, styleSheet,
+					mediatorIn, hideInsertButton))
+				{
+					rw.ShowDialog(owner);
+				}
+				if (fRestore)
+					mediator.StringTbl = stOrig;
 			}
 		}
 
