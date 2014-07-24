@@ -1880,7 +1880,7 @@ namespace LexTextControlsTests
 			Assert.AreEqual(0, repoEntry.Count);
 			Assert.AreEqual(0, repoSense.Count);
 
-			//Creat the LIFT data file
+			//Create the LIFT data file
 			var sOrigFile = CreateInputFile(s_LiftData7);
 			//Create the LIFT ranges file
 			var sOrigRangesFile = CreateInputRangesFile(s_LiftRangeData7);
@@ -1981,7 +1981,7 @@ namespace LexTextControlsTests
 			Assert.AreEqual(0, repoEntry.Count);
 			Assert.AreEqual(0, repoSense.Count);
 
-			//Creat the LIFT data file
+			//Create the LIFT data file
 			var sOrigFile = CreateInputFile(inflectionLiftData);
 			//Create the LIFT ranges file
 			var sOrigRangesFile = CreateInputRangesFile(inflectionLiftRangeData);
@@ -2032,7 +2032,7 @@ namespace LexTextControlsTests
 			Assert.AreEqual(0, repoEntry.Count);
 			Assert.AreEqual(0, repoSense.Count);
 
-			//Creat the LIFT data file
+			//Create the LIFT data file
 			var liftFileWithBlankReversal = CreateInputFile(liftDataWithEmptyReversal);
 
 			var logFile = TryImport(liftFileWithBlankReversal, null, FlexLiftMerger.MergeStyle.MsKeepNew, 1);
@@ -2082,17 +2082,60 @@ namespace LexTextControlsTests
 			Assert.AreEqual(0, repoEntry.Count);
 			Assert.AreEqual(0, repoSense.Count);
 
-			//Creat the LIFT data file
-			var liftFileWithBlankAndNonBlankReversal = CreateInputFile(liftDataWithOneEmptyAndOneNonEmptyReversal);
+			//Create the LIFT data file
+			var liftFileWithOneEmptyAndOneNonEmptyReversal = CreateInputFile(liftDataWithOneEmptyAndOneNonEmptyReversal);
 
-			var logFile = TryImport(liftFileWithBlankAndNonBlankReversal, null, FlexLiftMerger.MergeStyle.MsKeepNew, 1);
-			File.Delete(liftFileWithBlankAndNonBlankReversal);
+			var logFile = TryImport(liftFileWithOneEmptyAndOneNonEmptyReversal, null, FlexLiftMerger.MergeStyle.MsKeepNew, 1);
+			File.Delete(liftFileWithOneEmptyAndOneNonEmptyReversal);
 			File.Delete(logFile);
 			Assert.AreEqual(1, repoEntry.Count);
 			Assert.AreEqual(1, repoSense.Count);
 			ILexSense sense;
 			Assert.IsTrue(repoSense.TryGetObject(new Guid("b4de1476-b432-46b6-97e3-c993ff0a2ff9"), out sense));
 			Assert.That(sense.ReversalEntriesRC.Count, Is.EqualTo(1), "Empty reversal should not have been imported but non empty should.");
+		}
+
+		/// <summary>
+		/// LT-15516: Blank reversal entries were multiplying on import. Blank entries should be removed during
+		/// an import.
+		/// </summary>
+		[Test]
+		public void TestLiftImport_PronunciationLanguageAddedToPronunciationAndVernacularLists()
+		{
+			var liftDataWithIpaPronunciation = new[]
+			{
+			@"<?xml version=""1.0"" encoding=""UTF-8"" ?>",
+			@"<lift producer=""SIL.FLEx 8.0.10.41831"" version=""0.13"">",
+			@"<entry id=""some entry_f543cf6b-5ce1-4bed-af4b-82760994890c"" guid=""f543cf6b-5ce1-4bed-af4b-82760994890c"">",
+			@"<lexical-unit>",
+			@"<form lang=""fr""><text>some entry</text></form>",
+			@"</lexical-unit>",
+			@"<pronunciation>",
+			@"<form lang=""nbf-fonipa"">",
+			@"<text>ʕɑ³³</text>",
+			@"</form>",
+			@"</pronunciation>",
+			@"</entry>",
+			@"</lift>"
+			};
+			SetWritingSystems("fr");
+
+			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+			Assert.AreEqual(0, repoEntry.Count);
+			Assert.AreEqual(Cache.LangProject.CurrentPronunciationWritingSystems.Count, 0);
+			Assert.AreEqual(Cache.LangProject.VernacularWritingSystems.Count, 1);
+
+			//Create the LIFT data file
+			var liftFileWithIpaPronunciation = CreateInputFile(liftDataWithIpaPronunciation);
+
+			var logFile = TryImport(liftFileWithIpaPronunciation, null, FlexLiftMerger.MergeStyle.MsKeepNew, 1);
+			File.Delete(liftFileWithIpaPronunciation);
+			//Verify that the writing system was reported as added
+			AssertThatXmlIn.File(logFile).HasSpecifiedNumberOfMatchesForXpath("//li[contains(., 'Naxi (International Phonetic Alphabet) (nbf-fonipa)')]", 1);
+			File.Delete(logFile);
+			Assert.AreEqual(1, repoEntry.Count);
+			Assert.AreEqual(Cache.LangProject.CurrentPronunciationWritingSystems.Count, 1, "IPA from pronunciation was not added to pronunciation writing systems");
+			Assert.AreEqual(Cache.LangProject.VernacularWritingSystems.Count, 2, "IPA from pronunciation was not added to vernacular writing systems");
 		}
 
 		private void VerifyCmPossibilityLists()
@@ -2399,7 +2442,7 @@ namespace LexTextControlsTests
 			Assert.AreEqual(0, repoEntry.Count);
 			Assert.AreEqual(0, repoSense.Count);
 
-			//Creat the LIFT data file
+			//Create the LIFT data file
 			var sOrigFile = CreateInputFile(s_LiftDataLocations);
 			//Create the LIFT ranges file
 			var sOrigRangesFile = CreateInputRangesFile(s_LiftRangeDataLocations);
@@ -3281,7 +3324,7 @@ namespace LexTextControlsTests
 			var originalMainDictPubGuid = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0].Guid;
 			var importedPocketPubGuid = new Guid("9f699508-3773-4889-87ee-ca0dbd9e3736");
 
-			//Creat the LIFT data file
+			//Create the LIFT data file
 			var sOrigFile = CreateInputFile(s_PublicationTestData);
 			//Create the LIFT ranges file
 			var sOrigRangesFile = CreateInputRangesFile(s_PublicationLiftRangeData);
@@ -3394,7 +3437,7 @@ namespace LexTextControlsTests
 			lf.MorphTypeRA = phrase;
 			allo.MorphTypeRA = phrase;
 
-			//Creat the LIFT data file
+			//Create the LIFT data file
 			s_BadMorphTypeTestData[7] = s_BadMorphTypeTestData[7].Replace("$guid1", entry.Guid.ToString());
 			s_BadMorphTypeTestData[16] = s_BadMorphTypeTestData[16].Replace("$guid2", sense.Guid.ToString());
 			var sOrigFile = CreateInputFile(s_BadMorphTypeTestData);

@@ -3319,7 +3319,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			foreach (CmLiftPhonetic phon in entry.Pronunciations)
 			{
-				IgnoreNewWs();
+				AddNewWsToVernacular();
 				ILexPronunciation pron = CreateNewLexPronunciation();
 				le.PronunciationsOS.Add(pron);
 				MergeInMultiUnicode(pron.Form, LexPronunciationTags.kflidForm, phon.Form, pron.Guid);
@@ -3353,7 +3353,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void SavePronunciationWss(Dictionary<string, LiftString>.KeyCollection langs)
 		{
-			IgnoreNewWs();
+			AddNewWsToVernacular();
 			foreach (string lang in langs)
 			{
 				int ws = GetWsFromLiftLang(lang);
