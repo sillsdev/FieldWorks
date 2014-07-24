@@ -3518,6 +3518,177 @@ namespace LexTextControlsTests
 			Assert.That(example.LiftResidue, Is.StringContaining("totallyunknowntrait"));
 		}
 
+		[Test]
+		public void LiftImport_ExampleCustomFieldUpdatedDuringMerge()
+		{
+			var rangesWithStatusList = new[]
+			{
+				@"<?xml version=""1.0"" encoding=""UTF-8"" ?>",
+				@"<lift-ranges>",
+				@"<range id=""status"">",
+				@"<range-element id=""Confirmed"" guid=""bd80cd3e-ea5e-11de-9871-0013722f8dec"">",
+				@"<label>",
+				@"<form lang=""en""><text>Confirmed</text></form>",
+				@"</label>",
+				@"<abbrev>",
+				@"<form lang=""en""><text>Conf</text></form>",
+				@"</abbrev>",
+				@"</range-element>",
+				@"<range-element id=""Pending"" guid=""bd964254-ea5e-11de-8cdf-0013722f8dec"">",
+				@"<label>",
+				@"<form lang=""en""><text>Pending</text></form>",
+				@"</label>",
+				@"<abbrev>",
+				@"<form lang=""en""><text>Pend</text></form>",
+				@"</abbrev>",
+				@"</range-element>",
+				@"</range>",
+				@"</lift-ranges>"
+			};
+			var lifDataWithExampleWithPendingStatus = new[]
+			{
+				@"<?xml version=""1.0"" encoding=""UTF-8"" ?>",
+				@"<lift producer=""SIL.FLEx 8.0.10.41829"" version=""0.13"">",
+				@"<header>",
+				@"<ranges>",
+				@"<range id=""status"" href=""file://C:/Users/zook/Desktop/test/test.lift-ranges""/>",
+				@"</ranges>",
+				@"<fields>",
+				@"<field tag=""EntryStatus"">",
+				@"<form lang=""en""><text></text></form>",
+				@"<form lang=""qaa-x-spec""><text>Class=LexEntry; Type=ReferenceAtom; WsSelector=kwsAnal; DstCls=CmPossibility; range=status</text></form>",
+				@"</field>",
+				@"<field tag=""CustomExampleStatus"">",
+				@"<form lang=""en""><text></text></form>",
+				@"<form lang=""qaa-x-spec""><text>Class=LexExampleSentence; Type=ReferenceAtom; WsSelector=kwsAnal; DstCls=CmPossibility; range=status</text></form>",
+				@"</field>",
+				@"</fields>",
+				@"</header>",
+				@"<entry dateCreated=""2013-07-14T21:32:58Z"" dateModified=""2013-07-14T21:46:21Z"" id=""tester_edae30f5-49f0-4025-97ce-3a2022bf7fa3"" guid=""edae30f5-49f0-4025-97ce-3a2022bf7fa3"">",
+				@"<lexical-unit>",
+				@"<form lang=""fr""><text>tester</text></form>",
+				@"</lexical-unit>",
+				@"<trait  name=""morph-type"" value=""stem""/>",
+				@"<trait name=""EntryStatus"" value=""Pending""/>",
+				@"<sense id=""c1811b5c-aec1-42f7-87c2-6bbb4b76ff60"">",
+				@"<example source=""A reference"">",
+				@"<form lang=""fr""><text>An example sentence</text></form>",
+				@"<translation type=""Free translation"">",
+				@"<form lang=""en""><text>A translation</text></form>",
+				@"</translation>",
+				@"<note type=""reference"">",
+				@"<form lang=""en""><text>A reference</text></form>",
+				@"</note>",
+				@"<trait name=""CustomExampleStatus"" value=""Pending""/>",
+				@"</example>",
+				@"</sense>",
+				@"</entry>",
+				@"</lift>"
+			};
+			var lifDataWithExampleWithConfirmedStatus = new[]
+			{
+				@"<?xml version=""1.0"" encoding=""UTF-8"" ?>",
+				@"<lift producer=""SIL.FLEx 8.0.10.41829"" version=""0.13"">",
+				@"<header>",
+				@"<ranges>",
+				@"<range id=""status"" href=""file://C:/Users/zook/Desktop/test/test.lift-ranges""/>",
+				@"</ranges>",
+				@"<fields>",
+				@"<field tag=""EntryStatus"">",
+				@"<form lang=""en""><text></text></form>",
+				@"<form lang=""qaa-x-spec""><text>Class=LexEntry; Type=ReferenceAtom; WsSelector=kwsAnal; DstCls=CmPossibility; range=status</text></form>",
+				@"</field>",
+				@"<field tag=""CustomExampleStatus"">",
+				@"<form lang=""en""><text></text></form>",
+				@"<form lang=""qaa-x-spec""><text>Class=LexExampleSentence; Type=ReferenceAtom; WsSelector=kwsAnal; DstCls=CmPossibility; range=status</text></form>",
+				@"</field>",
+				@"</fields>",
+				@"</header>",
+				@"<entry dateCreated=""2014-07-14T21:32:58Z"" dateModified=""2014-07-14T21:46:21Z"" id=""tester_edae30f5-49f0-4025-97ce-3a2022bf7fa3"" guid=""edae30f5-49f0-4025-97ce-3a2022bf7fa3"">",
+				@"<lexical-unit>",
+				@"<form lang=""fr""><text>tester</text></form>",
+				@"</lexical-unit>",
+				@"<trait  name=""morph-type"" value=""stem""/>",
+				@"<trait name=""EntryStatus"" value=""Confirmed""/>",
+				@"<sense id=""c1811b5c-aec1-42f7-87c2-6bbb4b76ff60"">",
+				@"<example source=""A reference"">",
+				@"<form lang=""fr""><text>An example sentence</text></form>",
+				@"<translation type=""Free translation"">",
+				@"<form lang=""en""><text>A translation</text></form>",
+				@"</translation>",
+				@"<note type=""reference"">",
+				@"<form lang=""en""><text>A reference</text></form>",
+				@"</note>",
+				@"<trait name=""CustomExampleStatus"" value=""Confirmed""/>",
+				@"</example>",
+				@"</sense>",
+				@"</entry>",
+				@"</lift>"
+			};
+			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			var statusList = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().CreateUnowned("status", wsEn);
+			var confirmed = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(new Guid("bd80cd3e-ea5e-11de-9871-0013722f8dec"), statusList);
+			confirmed.Name.set_String(wsEn, Cache.TsStrFactory.MakeString("Confirmed", wsEn));
+			var pending = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(new Guid("bd964254-ea5e-11de-8cdf-0013722f8dec"), statusList);
+			pending.Name.set_String(wsEn, Cache.TsStrFactory.MakeString("Pending", wsEn));
+			var entryNew = new FieldDescription(Cache)
+			{
+				Type = CellarPropertyType.ReferenceAtomic,
+				Class = LexEntryTags.kClassId,
+				Name = "EntryStatus",
+				ListRootId = statusList.Guid
+			};
+			var exampleNew = new FieldDescription(Cache)
+			{
+				Type = CellarPropertyType.ReferenceAtomic,
+				Class = LexExampleSentenceTags.kClassId,
+				Name = "CustomExampleStatus",
+				ListRootId = statusList.Guid
+			};
+			entryNew.UpdateCustomField();
+			exampleNew.UpdateCustomField();
+			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
+			Assert.AreEqual(0, repoEntry.Count);
+			var rangeFile = CreateInputFile(rangesWithStatusList);
+			var pendingLiftFile = CreateInputFile(lifDataWithExampleWithPendingStatus);
+			// Verify basic import of custom field data matching existing custom list and items
+			TryImport(pendingLiftFile, rangeFile, FlexLiftMerger.MergeStyle.MsKeepBoth, 1);
+			Assert.AreEqual(1, repoEntry.Count);
+			Assert.AreEqual(1, repoSense.Count);
+			var entry = repoEntry.AllInstances().First();
+			var sense = repoSense.AllInstances().First();
+			Assert.AreEqual(1, sense.ExamplesOS.Count);
+			var example = sense.ExamplesOS[0];
+			var entryCustomData = new CustomFieldData()
+			{
+				CustomFieldname = "EntryStatus",
+				CustomFieldType = CellarPropertyType.ReferenceAtom,
+				cmPossibilityNameRA = "Pending"
+			};
+			var exampleCustomData = new CustomFieldData()
+			{
+				CustomFieldname = "CustomExampleStatus",
+				CustomFieldType = CellarPropertyType.ReferenceAtom,
+				cmPossibilityNameRA = "Pending"
+			};
+			VerifyCustomField(entry, entryCustomData, entryNew.Id);
+			VerifyCustomField(example, exampleCustomData, exampleNew.Id);
+			// SUT - Verify merging of changes to custom field data
+			var confirmedLiftFile = CreateInputFile(lifDataWithExampleWithConfirmedStatus);
+			TryImport(confirmedLiftFile, rangeFile, FlexLiftMerger.MergeStyle.MsKeepBoth, 1);
+			entry = repoEntry.AllInstances().First();
+			sense = repoSense.AllInstances().First();
+			Assert.AreEqual(1, sense.ExamplesOS.Count);
+			example = sense.ExamplesOS[0];
+			entryCustomData.cmPossibilityNameRA = "Confirmed";
+			exampleCustomData.cmPossibilityNameRA = "Confirmed";
+			Assert.AreEqual(1, repoEntry.Count);
+			Assert.AreEqual(1, repoSense.Count);
+			VerifyCustomField(entry, entryCustomData, entryNew.Id);
+			VerifyCustomField(example, exampleCustomData, exampleNew.Id);
+		}
+
 		private ILexEntry CreateSimpleStemEntry(string entryGuid, string form)
 		{
 			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(

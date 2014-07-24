@@ -3990,6 +3990,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				MergeInMultiString(les.Example, LexExampleSentenceTags.kflidExample, expl.Content, les.Guid);
 				MergeExampleTranslations(les, expl);
 				ProcessExampleNotes(les, expl);
+				ProcessExampleFields(les, expl);
+				ProcessExampleTraits(les, expl);
 				if (TsStringIsNullOrEmpty(les.Reference) && !String.IsNullOrEmpty(expl.Source))
 					les.Reference = m_cache.TsStrFactory.MakeString(expl.Source, m_cache.DefaultAnalWs);
 			}
