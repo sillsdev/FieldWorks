@@ -181,7 +181,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>
 		/// Handle the S/R "_Get Project from Colleague" menu option.
 		/// </summary>
-		public bool OnObtainAnyFlexBridgeProject(object commandObject, IFdoUI ui)
+		public bool OnObtainAnyFlexBridgeProject(object commandObject)
 		{
 			ObtainedProjectType obtainedProjectType;
 			var newprojectPathname = ObtainProjectMethod.ObtainProjectFromAnySource(_parentForm, _mediator.HelpTopicProvider,
