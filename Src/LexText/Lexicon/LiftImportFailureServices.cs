@@ -28,11 +28,29 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			// using the same LIFT file that had failed, before.
 			// If that re-try attempt also fails, the user will need to continue re-trying the import,
 			// until FLEx is fixed and can do the import.
-			MessageBox.Show(parentWindow, LexEdStrings.kFlexStandardImportFailureMessage, LexEdStrings.kFlexImportFailureTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
 			// Write out the failure notice.
 			var failurePathname = GetNoticePathname(baseLiftFolderDirectoryName);
 			File.WriteAllText(failurePathname, LexEdStrings.kStandardFailureFileContents);
+		}
+
+		internal static void DisplayLiftFailureNoticeIfNecessary(Form parentWindow,
+																					string baseLiftFolderDirectory)
+		{
+			var noticeFilePath = GetNoticePathname(baseLiftFolderDirectory);
+			if(File.Exists(noticeFilePath))
+			{
+				var contents = File.ReadAllText(noticeFilePath);
+				if(contents.Contains(LexEdStrings.kStandardFailureFileContents))
+				{
+					MessageBox.Show(parentWindow, LexEdStrings.kFlexStandardImportFailureMessage,
+										 LexEdStrings.kFlexImportFailureTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				}
+				else
+				{
+					MessageBox.Show(parentWindow, LexEdStrings.kBasicImportFailureMessage, LexEdStrings.kFlexImportFailureTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				}
+			}
 		}
 
 		internal static void RegisterBasicImportFailure(Form parentWindow, string baseLiftFolderDirectoryName)
@@ -43,7 +61,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			// using the same LIFT file that had failed, before.
 			// If that re-try attempt also fails, the user will need to continue re-trying the import,
 			// until FLEx is fixed and can do the import.
-			MessageBox.Show(parentWindow, LexEdStrings.kBasicImportFailureMessage, LexEdStrings.kFlexImportFailureTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
 			// Write out the failure notice.
 			var failurePathname = GetNoticePathname(baseLiftFolderDirectoryName);

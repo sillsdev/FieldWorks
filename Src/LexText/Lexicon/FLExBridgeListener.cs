@@ -830,13 +830,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var liftProjectDir = GetLiftRepositoryFolderFromFwProjectFolder(projectFolder);
 			if (dataChanged)
 			{
-				if (ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepOnlyNew))
+				if (!ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepOnlyNew))
 				{
-					LiftImportFailureServices.ClearImportFailure(_liftPathname);
-				}
-				else
-				{
-					LiftImportFailureServices.RegisterStandardImportFailure(_parentForm, liftProjectDir);
 					return false;
 				}
 
@@ -1039,6 +1034,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 							LiftImportFailureServices.ClearImportFailure(Path.GetDirectoryName(_liftPathname));
 							return true;
 						}
+						LiftImportFailureServices.DisplayLiftFailureNoticeIfNecessary(_parentForm, _liftPathname);
 						return false;
 					}
 					catch (WorkerThreadException error)
