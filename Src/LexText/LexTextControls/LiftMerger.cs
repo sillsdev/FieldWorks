@@ -5864,6 +5864,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			AddNewWsToAnalysis();
 			Dictionary<MuElement, List<IReversalIndexEntry>> mapToRIEs;
 			IReversalIndexEntry rie = null;
+			// Do not import blank reversal entries
+			if(rev.Form.IsEmpty)
+			{
+				return null;
+			}
 			if (rev.Main == null)
 			{
 				IReversalIndex riOwning = FindOrCreateReversalIndex(rev.Form, rev.Type);

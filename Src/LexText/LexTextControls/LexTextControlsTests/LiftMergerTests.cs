@@ -89,13 +89,15 @@ namespace LexTextControlsTests
 
 		private static string LiftFolder { get; set; }
 
+		private static readonly Random TestNameRandomizer = new Random((int)DateTime.Now.Ticks);
+
 		private static string CreateInputFile(IList<string> data)
 		{
 			LiftFolder = Path.Combine(Path.GetTempPath(), "xxyyTestLIFTImport");
 			if (Directory.Exists(LiftFolder))
 				Directory.Delete(LiftFolder, true);
 			Directory.CreateDirectory(LiftFolder);
-			var path = Path.Combine(LiftFolder, String.Format("LiftTest{0}.lift", new Random((int)DateTime.Now.Ticks).Next(1000)));
+			var path = Path.Combine(LiftFolder, String.Format("LiftTest{0}.lift", TestNameRandomizer.Next(1000)));
 			CreateLiftInputFile(path, data);
 			return path;
 		}
@@ -104,7 +106,7 @@ namespace LexTextControlsTests
 		{
 			LiftFolder = Path.Combine(Path.GetTempPath(), "xxyyTestLIFTImport");
 			Assert.True(Directory.Exists(LiftFolder));
-			var path = Path.Combine(LiftFolder, String.Format("LiftTest{0}.lift-ranges", new Random((int)DateTime.Now.Ticks).Next(1000)));
+			var path = Path.Combine(LiftFolder, String.Format("LiftTest{0}.lift-ranges", TestNameRandomizer.Next(1000)));
 			CreateLiftInputFile(path, data);
 			return path;
 		}
@@ -2031,6 +2033,7 @@ namespace LexTextControlsTests
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
 			Assert.AreEqual(0, repoEntry.Count);
 			Assert.AreEqual(0, repoSense.Count);
+			Assert.That(Cache.ServiceLocator.GetInstance<IReversalIndexEntryRepository>().Count, Is.EqualTo(0));
 
 			//Create the LIFT data file
 			var liftFileWithBlankReversal = CreateInputFile(liftDataWithEmptyReversal);
@@ -2045,6 +2048,7 @@ namespace LexTextControlsTests
 			ILexSense sense;
 			Assert.IsTrue(repoSense.TryGetObject(new Guid("b4de1476-b432-46b6-97e3-c993ff0a2ff9"), out sense));
 			Assert.That(sense.ReversalEntriesRC.Count, Is.EqualTo(0), "Empty reversal should not have been imported.");
+			Assert.That(Cache.ServiceLocator.GetInstance<IReversalIndexEntryRepository>().Count, Is.EqualTo(0));
 		}
 
 		/// <summary>
