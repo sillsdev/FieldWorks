@@ -375,6 +375,26 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The {0} you just selected as a complex or variant form of {1} is already saved as a component or variant of {1}. Which item is really a component of the other?
+        ///Delete the existing relationship before trying to add this one again..
+        /// </summary>
+        public static string ksComplexFormIsComponent {
+            get {
+                return ResourceManager.GetString("ksComplexFormIsComponent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The {0} you just selected as a component or variant of {1} is already saved as a complex or variant form of {1}! Which item is really a component of the other?
+        ///Delete the existing relationship before trying to add this one again..
+        /// </summary>
+        public static string ksComponentIsComponent {
+            get {
+                return ResourceManager.GetString("ksComponentIsComponent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Configuration settings.
         /// </summary>
         public static string ksConfigurationSettingsRestoreDlg {
@@ -452,6 +472,15 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         public static string ksEnterRE {
             get {
                 return ResourceManager.GetString("ksEnterRE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to entry.
+        /// </summary>
+        public static string ksEntry {
+            get {
+                return ResourceManager.GetString("ksEntry", resourceCulture);
             }
         }
         
@@ -1133,6 +1162,15 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         public static string ksSelectAvailFeatsForX {
             get {
                 return ResourceManager.GetString("ksSelectAvailFeatsForX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to sense.
+        /// </summary>
+        public static string ksSense {
+            get {
+                return ResourceManager.GetString("ksSense", resourceCulture);
             }
         }
         
@@ -2066,6 +2104,15 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         public static string ksWhenToUse {
             get {
                 return ResourceManager.GetString("ksWhenToUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Which item is really a component?.
+        /// </summary>
+        public static string ksWhichIsComponent {
+            get {
+                return ResourceManager.GetString("ksWhichIsComponent", resourceCulture);
             }
         }
         

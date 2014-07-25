@@ -351,26 +351,6 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The {0} you just selected as a complex form of {1} is already saved as a component of {1}. Which item is really a component of the other?
-        ///Delete the existing relationship before trying to add this one again..
-        /// </summary>
-        internal static string ksCompleFormIsComponent {
-            get {
-                return ResourceManager.GetString("ksCompleFormIsComponent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The {0} you just selected as a component of {1} already has {1} specified as one if its components! Which item is really a component of the other?
-        ///Delete the existing relationship before trying to add this one again..
-        /// </summary>
-        internal static string ksComponentIsComponent {
-            get {
-                return ResourceManager.GetString("ksComponentIsComponent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Warning!.
         /// </summary>
         internal static string ksConvertFormLoseCaption {
@@ -583,15 +563,6 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         internal static string ksEditX {
             get {
                 return ResourceManager.GetString("ksEditX", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to entry.
-        /// </summary>
-        internal static string ksEntry {
-            get {
-                return ResourceManager.GetString("ksEntry", resourceCulture);
             }
         }
         
@@ -1104,15 +1075,6 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to sense.
-        /// </summary>
-        internal static string ksSense {
-            get {
-                return ResourceManager.GetString("ksSense", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Senses.
         /// </summary>
         internal static string ksSenses {
@@ -1514,15 +1476,6 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         internal static string ksWhenToSetPartOfSpeechGUIDsToGold {
             get {
                 return ResourceManager.GetString("ksWhenToSetPartOfSpeechGUIDsToGold", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Which item is really a component?.
-        /// </summary>
-        internal static string ksWhichIsComponent {
-            get {
-                return ResourceManager.GetString("ksWhichIsComponent", resourceCulture);
             }
         }
     }

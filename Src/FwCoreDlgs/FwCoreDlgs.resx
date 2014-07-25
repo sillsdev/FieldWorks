@@ -988,4 +988,24 @@ The error was:
   <data name="DataInWsWontBeDeleted" xml:space="preserve">
     <value>The writing system {0} and all text in the writing system will no longer be deleted.</value>
   </data>
+  <data name="ksComplexFormIsComponent" xml:space="preserve">
+    <value>The {0} you just selected as a complex or variant form of {1} is already saved as a component or variant of {1}. Which item is really a component of the other?
+Delete the existing relationship before trying to add this one again.</value>
+    <comment>{0} is ksEntry or ksSense. {1} is a vernacular word.</comment>
+  </data>
+  <data name="ksComponentIsComponent" xml:space="preserve">
+    <value>The {0} you just selected as a component or variant of {1} is already saved as a complex or variant form of {1}! Which item is really a component of the other?
+Delete the existing relationship before trying to add this one again.</value>
+  </data>
+  <data name="ksEntry" xml:space="preserve">
+    <value>entry</value>
+    <comment>Occurs as {0} in ksComplexFormIsComponent or ksComponentIsComponent.</comment>
+  </data>
+  <data name="ksSense" xml:space="preserve">
+    <value>sense</value>
+    <comment>Occurs as {0} in ksComplexFormIsComponent or ksComponentIsComponent.</comment>
+  </data>
+  <data name="ksWhichIsComponent" xml:space="preserve">
+    <value>Which item is really a component?</value>
+  </data>
 </root>

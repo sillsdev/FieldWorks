@@ -338,6 +338,7 @@
     <Compile Include="MergeWritingSystemDlg.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="MessageBoxes.cs" />
     <Compile Include="MissingOldFieldWorksDlg.cs">
       <SubType>Form</SubType>
     </Compile>

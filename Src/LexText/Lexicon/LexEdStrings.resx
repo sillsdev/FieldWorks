@@ -464,26 +464,6 @@
   <data name="ksChooseVisibleComplexForms" xml:space="preserve">
     <value>Choose Complex Forms to display in Stem-based views</value>
   </data>
-  <data name="ksCompleFormIsComponent" xml:space="preserve">
-    <value>The {0} you just selected as a complex form of {1} is already saved as a component of {1}. Which item is really a component of the other?
-Delete the existing relationship before trying to add this one again.</value>
-    <comment>{0} is ksEntry or ksSense. {1} is a vernacular word.</comment>
-  </data>
-  <data name="ksComponentIsComponent" xml:space="preserve">
-    <value>The {0} you just selected as a component of {1} already has {1} specified as one if its components! Which item is really a component of the other?
-Delete the existing relationship before trying to add this one again.</value>
-  </data>
-  <data name="ksEntry" xml:space="preserve">
-    <value>entry</value>
-    <comment>Occurs as {0} in ksCompleFormIsComponent or ksComponentIsComponent.</comment>
-  </data>
-  <data name="ksSense" xml:space="preserve">
-    <value>sense</value>
-    <comment>Occurs as {0} in ksCompleFormIsComponent or ksComponentIsComponent.</comment>
-  </data>
-  <data name="ksWhichIsComponent" xml:space="preserve">
-    <value>Which item is really a component?</value>
-  </data>
   <data name="ksAddAComplexForm" xml:space="preserve">
     <value>Add a Complex Form...</value>
   </data>

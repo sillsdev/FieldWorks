@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2014 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -732,8 +732,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				yield return this;
 				foreach (var ler in EntryRefsOS)
 				{
-					if (ler.RefType != LexEntryRefTags.krtComplexForm)
-						continue; // Enhance JohnT: should we report circular variants also??
+					if (ler.RefType != LexEntryRefTags.krtComplexForm && ler.RefType != LexEntryRefTags.krtVariant)
+						continue;
 					foreach (var obj in ler.ComponentLexemesRS)
 					{
 						if (obj is ILexEntry)
@@ -8478,21 +8478,15 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			switch (e.Flid)
 			{
 				case LexEntryRefTags.kflidComponentLexemes:
-					var entry = e.ObjectAdded as ILexEntry;
-					if (entry == null)
-						entry = ((ILexSense)e.ObjectAdded).Entry;
+					var entry = e.ObjectAdded as ILexEntry ?? ((ILexSense)e.ObjectAdded).Entry;
 					if (entry.IsComponent((ILexEntry)Owner))
 					{
-						string exceptionStr;
-						if (entry.ShortName == "???")
+						var exceptionStr = String.Format(
+							"components can't have circular references. {1} See entry in LIFT file with LIFTId:     {0}{1}",
+							entry.LIFTid, System.Environment.NewLine);
+						if (entry.ShortName != "???")
 						{
-							exceptionStr = String.Format("components can't have circular references. {1} See entry in lift file with LIFTId:     {0}{1}",
-								entry.LIFTid, System.Environment.NewLine);
-						}
-						else
-						{
-							exceptionStr = String.Format("components can't have circular references. {2} See entry in lift file with LIFTId:     {0}{2}and Form:     {1}",
-								entry.LIFTid, entry.ShortName, System.Environment.NewLine);
+							exceptionStr += String.Format("and Form:     {0}", entry.ShortName);
 						}
 						throw new ArgumentException(exceptionStr);
 					}
