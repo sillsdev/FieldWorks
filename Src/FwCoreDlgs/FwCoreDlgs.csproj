@@ -228,6 +228,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\XMLUtils.dll</HintPath>
     </Reference>
+    <Reference Include="Mono.Posix" Condition="'$(OS)'=='Unix'" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\CommonAssemblyInfo.cs">
