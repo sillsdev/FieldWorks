@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				// get the MoStemMsa of its variant
 				if (msaAsLexEntry.EntryRefsOS.Count > 0)
 				{
-					ILexEntryRef lexEntryRef = msaAsLexEntry.EntryRefsOS[msaTuple.Item1];
+					ILexEntryRef lexEntryRef = msaAsLexEntry.EntryRefsOS[msaTuple.Item2];
 					ILexSense sense = MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
 					var inflType = (ILexEntryInflType)lexEntryRef.VariantEntryTypesRS[0];
 					morph = new ParseMorph(form, sense.MorphoSyntaxAnalysisRA, inflType);
