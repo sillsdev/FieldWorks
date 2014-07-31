@@ -282,31 +282,56 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			writer.WriteStartElement("DataIssues");
 			foreach (IPhNCSegments natClass in m_cache.LangProject.PhonologicalDataOA.NaturalClassesOS.OfType<IPhNCSegments>())
 			{
-				IFsFeatStruc fs = natClass.GetImpliedPhonologicalFeatures();
-				var predictedPhonemes = new HashSet<IPhPhoneme>(natClass.GetPredictedPhonemes(fs));
+				HashSet<IFsSymFeatVal> feats = GetImpliedPhonologicalFeatures(natClass);
+				var predictedPhonemes = new HashSet<IPhPhoneme>(m_cache.LangProject.PhonologicalDataOA.PhonemeSetsOS.SelectMany(ps => ps.PhonemesOC).Where(p => feats.IsSubsetOf(GetFeatures(p))));
 				if (!predictedPhonemes.SetEquals(natClass.SegmentsRC))
 				{
 					writer.WriteStartElement("NatClassPhonemeMismatch");
-					writer.WriteStartElement("ClassName");
-					writer.WriteString(natClass.Name.BestAnalysisAlternative.Text);
-					writer.WriteEndElement();
-					writer.WriteStartElement("ClassAbbeviation");
-					writer.WriteString(natClass.Abbreviation.BestAnalysisAlternative.Text);
-					writer.WriteEndElement();
-					writer.WriteStartElement("ImpliedPhonologicalFeatures");
-					writer.WriteString(fs.LongName);
-					writer.WriteEndElement();
-					writer.WriteStartElement("PredictedPhonemes");
-					writer.WriteString(string.Join(" ", predictedPhonemes.Select(p => p.Name.BestVernacularAlternative.Text)));
-					writer.WriteEndElement();
-					writer.WriteStartElement("ActualPhonemes");
-					writer.WriteString(string.Join(" ", natClass.SegmentsRC.Select(p => p.Name.BestVernacularAlternative.Text)));
-					writer.WriteEndElement();
-					writer.WriteEndElement();
+					writer.WriteElementString("ClassName", natClass.Name.BestAnalysisAlternative.Text);
+					writer.WriteElementString("ClassAbbeviation", natClass.Abbreviation.BestAnalysisAlternative.Text);
+					writer.WriteElementString("ImpliedPhonologicalFeatures", feats.Count == 0 ? "" : string.Format("[{0}]", string.Join(" ", feats.Select(v => string.Format("{0}:{1}", GetFeatureString(v), GetValueString(v))))));
+					writer.WriteElementString("PredictedPhonemes", string.Join(" ", predictedPhonemes.Select(p => p.Name.BestVernacularAlternative.Text)));
+					writer.WriteElementString("ActualPhonemes", string.Join(" ", natClass.SegmentsRC.Select(p => p.Name.BestVernacularAlternative.Text)));
 					writer.WriteEndElement();
 				}
 			}
 			writer.WriteEndElement();
+		}
+
+		private static HashSet<IFsSymFeatVal> GetImpliedPhonologicalFeatures(IPhNCSegments nc)
+		{
+			HashSet<IFsSymFeatVal> results = null;
+			foreach (IPhPhoneme phoneme in nc.SegmentsRC.Where(p => p.FeaturesOA != null && !p.FeaturesOA.IsEmpty))
+			{
+				IEnumerable<IFsSymFeatVal> values = GetFeatures(phoneme);
+				if (results == null)
+					results = new HashSet<IFsSymFeatVal>(values);
+				else
+					results.IntersectWith(values);
+			}
+			return results ?? new HashSet<IFsSymFeatVal>();
+		}
+
+		private static IEnumerable<IFsSymFeatVal> GetFeatures(IPhPhoneme phoneme)
+		{
+			return phoneme.FeaturesOA.FeatureSpecsOC.OfType<IFsClosedValue>().Select(cv => cv.ValueRA);
+		}
+
+		private static string GetFeatureString(IFsSymFeatVal value)
+		{
+			var feature = value.OwnerOfClass<IFsClosedFeature>();
+			string str = feature.Abbreviation.BestAnalysisAlternative.Text;
+			if (string.IsNullOrEmpty(str))
+				str = feature.Name.BestAnalysisAlternative.Text;
+			return str;
+		}
+
+		private static string GetValueString(IFsSymFeatVal value)
+		{
+			string str = value.Abbreviation.BestAnalysisAlternative.Text;
+			if (string.IsNullOrEmpty(str))
+				str = value.Name.BestAnalysisAlternative.Text;
+			return str;
 		}
 
 		private IEnumerable<PatrResult> ProcessPatr(IEnumerable<WordSynthesis> synthesisRecs, string patrlexPath, bool trace)

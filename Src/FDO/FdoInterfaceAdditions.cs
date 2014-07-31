@@ -5526,13 +5526,6 @@ namespace SIL.FieldWorks.FDO
 		/// Occurs when the basic IPA symbol property has changed.
 		/// </summary>
 		event EventHandler BasicIPASymbolChanged;
-
-		/// <summary>
-		/// Determine if the set of (phonological) features are compatible with the phoneme's features
-		/// </summary>
-		/// <param name="fs">The set of features to compare</param>
-		/// <returns>true if compatible</returns>
-		bool FeaturesAreCompatible(IFsFeatStruc fs);
 	}
 
 	/// <summary>
@@ -5741,34 +5734,6 @@ namespace SIL.FieldWorks.FDO
 		/// <param name="ctxt">The context.</param>
 		/// <returns>The structural change index.</returns>
 		int GetStrucChangeIndex(IPhSimpleContext ctxt);
-	}
-
-	/// <summary>
-	///
-	/// </summary>
-	public partial interface IPhNCSegments
-	{
-		/// <summary>
-		/// Perform set intersection on the phonological features on all phonemes in this class
-		/// </summary>
-		/// <param name="fs">A feature structure that is in the cache</param>
-		/// <returns>The feature structure containing the intersection</returns>
-		IFsFeatStruc SetIntersectionOfPhonemeFeatures(IFsFeatStruc fs);
-
-		/// <summary>
-		/// Gets the set of phonological features which are the intersection of the phonemes
-		/// in this class
-		/// </summary>
-		/// <returns>The intersected feature structure</returns>
-		IFsFeatStruc GetImpliedPhonologicalFeatures();
-
-		/// <summary>
-		/// Gets the the list of all the PhPhonemes which match the
-		/// intersection of the phonological features of the phonemes of this natural class.
-		/// </summary>
-		/// <param name="fs">the intersected feature structure</param>
-		/// <returns>the list of phonemes</returns>
-		IEnumerable<IPhPhoneme> GetPredictedPhonemes(IFsFeatStruc fs);
 	}
 
 	/// <summary>
