@@ -371,6 +371,7 @@
     <Compile Include="ScrSfFileListTests.cs" />
     <Compile Include="ScrTxtParaTests.cs" />
     <Compile Include="ScrVerseTests.cs" />
+    <Compile Include="SharedBackendServicesTests.cs" />
     <Compile Include="StFootnoteTests.cs" />
     <Compile Include="StringServicesTests.cs" />
     <Compile Include="StTextAnnotationNavigatorTests.cs" />
