@@ -402,14 +402,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 			if (hklm != null)
 			{
 				using (var oldProjectSharedSettingLocation = hklm.OpenSubKey(@"SOFTWARE\SIL\FieldWorks\7.0"))
-				using (var newProjectSharedSettingLocation = FieldWorksRegistryKey)
 				{
-					object projectSharedValue;
-					if (oldProjectSharedSettingLocation != null &&
-							RegistryHelper.RegEntryExists(oldProjectSharedSettingLocation, string.Empty, @"ProjectShared",
-																out projectSharedValue))
+					object oldProjectSharedValue, newProjectSharedValue;
+					if (oldProjectSharedSettingLocation != null
+						&& !RegistryHelper.RegEntryExists(FieldWorksRegistryKey, string.Empty, @"ProjectShared", out newProjectSharedValue)
+						&& RegistryHelper.RegEntryExists(oldProjectSharedSettingLocation, string.Empty, @"ProjectShared", out oldProjectSharedValue))
 					{
-						FieldWorksRegistryKey.SetValue(@"ProjectShared", projectSharedValue);
+						FieldWorksRegistryKey.SetValue(@"ProjectShared", oldProjectSharedValue);
 					}
 				}
 			}
