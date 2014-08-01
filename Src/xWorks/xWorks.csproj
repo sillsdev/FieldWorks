@@ -179,7 +179,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\DistFiles\NetSparkle.Net40.dll</HintPath>
     </Reference>
-    <Reference Include="Palaso, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <Reference Include="Palaso, Version=2.5.174.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Downloads\Palaso.dll</HintPath>
     </Reference>
