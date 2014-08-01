@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.TE
 			// are loaded
 			string dummy = ParatextHelper.ProjectsDirectory;
 			InitializeComponent();
-			m_textCollection.Setup(ScriptureViewSource.Instance);
+			m_textCollection.Setup(new ScriptureViewSource(true));
 		}
 
 		/// ------------------------------------------------------------------------------------
