@@ -11,6 +11,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using NUnit.Framework;
 using Paratext;
+using Paratext.LexicalClient;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -205,7 +206,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			scrText.Name = shortName;
 
 			if (!string.IsNullOrEmpty(associatedProject))
-				scrText.AssociatedLexicalProject = new AssociatedLexicalProject("FieldWorks", associatedProject);
+				scrText.AssociatedLexicalProject = new AssociatedLexicalProject(LexicalAppType.FieldWorks, associatedProject);
 			// Don't know how to implement a test involving baseProject now that BaseTranslation is gone from the PT API.
 			// However all clients I can find so far pass null.
 			if (!string.IsNullOrEmpty(baseProject))

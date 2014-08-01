@@ -274,7 +274,8 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 						// and non-Scripture items (not sure what these are).
 						// Most likely neither of these are necessary, but I'm preserving the behavior we had with 7.3,
 						// which did not have these arguments.
-						return ScrTextCollection.ScrTexts(true, true);
+						// We also filter out invalid ScrTexts, because there is a bug in Paratext that allows them to get through.
+						return ScrTextCollection.ScrTexts(true, true).Where(st => Directory.Exists(st.Directory));
 					}
 					catch (Exception e)
 					{
