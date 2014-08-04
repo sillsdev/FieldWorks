@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
@@ -191,11 +192,12 @@ namespace SIL.FieldWorks.LexText.Controls
 														LiftMultiText desc, LiftMultiText label, LiftMultiText abbrev, LiftMultiText revName, LiftMultiText revAbbrev, int refType)
 		{
 			ICmPossibility poss;
-			if(m_dictLexRefTypes.TryGetValue(relationTypeName.ToLowerInvariant(), out poss))
+			var normalizedRelTypeName = relationTypeName.Normalize().ToLowerInvariant();
+			if(m_dictLexRefTypes.TryGetValue(normalizedRelTypeName, out poss))
 			{
 				return;
 			}
-			if(m_dictRevLexRefTypes.TryGetValue(relationTypeName.ToLowerInvariant(), out poss))
+			if(m_dictRevLexRefTypes.TryGetValue(normalizedRelTypeName, out poss))
 			{
 				return;
 			}
@@ -219,7 +221,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				SetStringsFromLiftContents(revAbbrev, lrt.ReverseAbbreviation);
 				lrt.MappingType = refType;
 			}
-			m_dictLexRefTypes.Add(relationTypeName.ToLowerInvariant(), lrt);
+			m_dictLexRefTypes.Add(normalizedRelTypeName, lrt);
 			m_rgnewLexRefTypes.Add(lrt);
 
 		}

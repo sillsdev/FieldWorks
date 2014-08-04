@@ -3124,18 +3124,19 @@ namespace SIL.FieldWorks.LexText.Controls
 		private ICmPossibility GetRefTypeByNameOrReverseName(string sType)
 		{
 			ICmPossibility lrt;
-			m_dictLexRefTypes.TryGetValue(sType.ToLowerInvariant(), out lrt);
+			var normalizedTypeName = sType.Normalize().ToLowerInvariant();
+			m_dictLexRefTypes.TryGetValue(normalizedTypeName, out lrt);
 			if(lrt == null)
 			{
 				foreach(ILexRefType dictLexRefType in m_dictLexRefTypes.Values)
 				{
-					if(dictLexRefType.ReverseName.OccursInAnyAlternative(sType))
+					if(dictLexRefType.ReverseName.OccursInAnyAlternative(normalizedTypeName))
 					{
 						return dictLexRefType;
 					}
 				}
-				lrt = m_rgnewLexRefTypes.FirstOrDefault(x => x.Name.OccursInAnyAlternative(sType)) ??
-						m_rgnewLexRefTypes.FirstOrDefault(x => ((ILexRefType)x).ReverseName.OccursInAnyAlternative(sType));
+				lrt = m_rgnewLexRefTypes.FirstOrDefault(x => x.Name.OccursInAnyAlternative(normalizedTypeName)) ??
+						m_rgnewLexRefTypes.FirstOrDefault(x => ((ILexRefType)x).ReverseName.OccursInAnyAlternative(normalizedTypeName));
 			}
 			return lrt;
 		}
