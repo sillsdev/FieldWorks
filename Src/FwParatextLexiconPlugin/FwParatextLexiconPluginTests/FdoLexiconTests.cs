@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 						m_cache.LangProject.MorphologicalDataOA.ParserParameters = "<ParserParameters><XAmple><MaxNulls>1</MaxNulls><MaxPrefixes>5</MaxPrefixes><MaxInfixes>1</MaxInfixes><MaxSuffixes>5</MaxSuffixes><MaxInterfixes>0</MaxInterfixes><MaxAnalysesToReturn>10</MaxAnalysesToReturn></XAmple><ActiveParser>XAmple</ActiveParser></ParserParameters>";
 					});
 			}
-			m_lexicon = new FdoLexicon("Test", m_cache, m_cache.DefaultVernWs, m_activationContext);
+			m_lexicon = new FdoLexicon("Test", "FieldWorks:Test", m_cache, m_cache.DefaultVernWs, m_activationContext);
 		}
 
 		/// <summary>

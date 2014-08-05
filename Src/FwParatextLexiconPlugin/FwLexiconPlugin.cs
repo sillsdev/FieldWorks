@@ -51,20 +51,15 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		/// <returns></returns>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "FdoCache is diposed when the plugin is diposed.")]
-		public bool ValidateLexicalProject(string projectId, string langId)
+		public LexicalProjectValidationResult ValidateLexicalProject(string projectId, string langId)
 		{
 			using (m_activationContext.Activate())
 			{
 				lock (m_syncRoot)
 				{
-					FdoCache fdoCache = GetFdoCache(projectId);
-
-					if (fdoCache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Any(ws => ws.Id == langId))
-						return true;
-
-					DiscardFdoCache(fdoCache);
+					FdoCache fdoCache;
+					return TryGetFdoCache(projectId, langId, out fdoCache);
 				}
-				return false;
 			}
 		}
 
@@ -127,33 +122,37 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				{
 					FdoLexicon lexicon = m_lexiconCache[scrTextName];
 					m_lexiconCache.Remove(scrTextName);
-					m_lexiconCache.Insert(0, lexicon);
-					return lexicon;
+					if (lexicon.ProjectId == projectId)
+					{
+						m_lexiconCache.Insert(0, lexicon);
+						return lexicon;
+					}
+					DisposeFdoCacheIfUnused(lexicon.Cache);
 				}
 
-				FdoCache fdoCache = GetFdoCache(projectId);
-
-				IWritingSystem writingSystem;
-				if (!fdoCache.ServiceLocator.WritingSystemManager.TryGet(langId, out writingSystem))
-					throw new ArgumentException("Could not find a matching vernacular writing system.", "langId");
+				FdoCache fdoCache;
+				if (TryGetFdoCache(projectId, langId, out fdoCache) != LexicalProjectValidationResult.Success)
+					throw new ArgumentException("The specified project is invalid.");
 
 				if (m_lexiconCache.Count == CacheSize)
 				{
-					FdoLexicon oldLexicon = m_lexiconCache[CacheSize - 1];
+					FdoLexicon lexicon = m_lexiconCache[CacheSize - 1];
 					m_lexiconCache.RemoveAt(CacheSize - 1);
-
-					DiscardFdoCache(oldLexicon.Cache);
+					DisposeFdoCacheIfUnused(lexicon.Cache);
 				}
 
-				var newLexicon = new FdoLexicon(scrTextName, fdoCache, writingSystem.Handle, m_activationContext);
+				var newLexicon = new FdoLexicon(scrTextName, projectId, fdoCache, fdoCache.ServiceLocator.WritingSystemManager.GetWsFromStr(langId), m_activationContext);
 				m_lexiconCache.Insert(0, newLexicon);
 				return newLexicon;
 			}
 		}
 
-		private FdoCache GetFdoCache(string projectId)
+		private LexicalProjectValidationResult TryGetFdoCache(string projectId, string langId, out FdoCache fdoCache)
 		{
-			FdoCache fdoCache;
+			fdoCache = null;
+			if (string.IsNullOrEmpty(langId))
+				return LexicalProjectValidationResult.InvalidLanguage;
+
 			if (m_fdoCacheCache.Contains(projectId))
 			{
 				fdoCache = m_fdoCacheCache[projectId];
@@ -167,39 +166,46 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 					backendProviderType = FDOBackendProviderType.kDb4oClientServer;
 					path = Path.Combine(ParatextLexiconPluginDirectoryFinder.ProjectsDirectory, projectId, projectId + FdoFileHelper.ksFwDataDb4oFileExtension);
 					if (!File.Exists(path))
-						throw new LexiconUnavailableException("The associated Fieldworks project has been moved, renamed, or does not exist.");
+						return LexicalProjectValidationResult.ProjectDoesNotExist;
 				}
 
-				var progress = new ParatextLexiconPluginThreadedProgress(m_ui.SynchronizeInvoke) { IsIndeterminate = true, Title = string.Format("Opening {0}", projectId) };
-				fdoCache = (FdoCache) progress.RunTask(CreateFdoCache, new ParatextLexiconPluginProjectID(backendProviderType, path));
+				try
+				{
+					var progress = new ParatextLexiconPluginThreadedProgress(m_ui.SynchronizeInvoke) { IsIndeterminate = true, Title = string.Format("Opening {0}", projectId) };
+					fdoCache = FdoCache.CreateCacheFromExistingData(new ParatextLexiconPluginProjectID(backendProviderType, path), Thread.CurrentThread.CurrentUICulture.Name, m_ui,
+						ParatextLexiconPluginDirectoryFinder.FdoDirectories, progress, true);
+				}
+				catch (FdoDataMigrationForbiddenException)
+				{
+					return LexicalProjectValidationResult.IncompatibleVersion;
+				}
+				catch (FdoNewerVersionException)
+				{
+					return LexicalProjectValidationResult.IncompatibleVersion;
+				}
+				catch (FdoFileLockedException)
+				{
+					return LexicalProjectValidationResult.AccessDenied;
+				}
+				catch (StartupException)
+				{
+					return LexicalProjectValidationResult.UnknownError;
+				}
 
 				m_fdoCacheCache.Add(fdoCache);
 			}
-			return fdoCache;
+
+			if (fdoCache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.All(ws => ws.Id != langId))
+			{
+				DisposeFdoCacheIfUnused(fdoCache);
+				fdoCache = null;
+				return LexicalProjectValidationResult.InvalidLanguage;
+			}
+
+			return LexicalProjectValidationResult.Success;
 		}
 
-		private FdoCache CreateFdoCache(IThreadedProgress progress, object[] parameters)
-		{
-			var projectId = (ParatextLexiconPluginProjectID) parameters[0];
-			try
-			{
-				return FdoCache.CreateCacheFromExistingData(projectId, Thread.CurrentThread.CurrentUICulture.Name, m_ui, ParatextLexiconPluginDirectoryFinder.FdoDirectories, progress, true);
-			}
-			catch (FdoDataMigrationForbiddenException)
-			{
-				throw new LexiconUnavailableException("The current version of Paratext is not compatible with the associated Fieldworks lexicon.  Please open the lexicon using a compatible version of Fieldworks first.");
-			}
-			catch (FdoFileLockedException)
-			{
-				throw new LexiconUnavailableException("Paratext cannot currently access the lexicon. Please close FieldWorks.");
-			}
-			catch (StartupException se)
-			{
-				throw new LexiconUnavailableException(se.Message);
-			}
-		}
-
-		private void DiscardFdoCache(FdoCache fdoCache)
+		private void DisposeFdoCacheIfUnused(FdoCache fdoCache)
 		{
 			if (m_lexiconCache.All(lexicon => lexicon.Cache != fdoCache))
 			{
