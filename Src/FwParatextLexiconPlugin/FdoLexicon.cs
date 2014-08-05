@@ -31,10 +31,12 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		private readonly int m_defaultVernWs;
 		private PoorMansStemmer<string, char> m_stemmer;
 		private readonly ActivationContextHelper m_activationContext;
+		private readonly string m_projectId;
 
-		internal FdoLexicon(string scrTextName, FdoCache cache, int defaultVernWs, ActivationContextHelper activationContext)
+		internal FdoLexicon(string scrTextName, string projectId, FdoCache cache, int defaultVernWs, ActivationContextHelper activationContext)
 		{
 			m_scrTextName = scrTextName;
+			m_projectId = projectId;
 			m_cache = cache;
 			m_homographNumbers = new ConditionalWeakTable<ILexEntry, HomographNumber>();
 			m_cache.DomainDataByFlid.AddNotification(this);
@@ -46,6 +48,11 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		internal FdoCache Cache
 		{
 			get { return m_cache; }
+		}
+
+		internal string ProjectId
+		{
+			get { return m_projectId; }
 		}
 
 		internal ActivationContextHelper ActivationContext
