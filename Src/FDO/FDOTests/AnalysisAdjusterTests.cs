@@ -221,8 +221,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 							   };
 			//                                1         2         3         4         5         6         7         8         9
 			//                      0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-			adjuster.OldContents = "pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
-			adjuster.NewContents = " pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
+			adjuster.OldContents = "Pus yalola nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
+			adjuster.NewContents = " Pus yalola nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
 			adjuster.RunTest();
 		}
 		/// <summary>
@@ -290,8 +290,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 							   };
 			//                                1         2         3         4         5         6         7         8         9
 			//                      0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-			adjuster.OldContents = "pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
-			adjuster.NewContents = "pus yalola nihimbilira . nihimbilira pus yalola. hesyla nihimbilira.";
+			adjuster.OldContents = "Pus yalola nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
+			adjuster.NewContents = "Pus yalola nihimbilira . Nihimbilira pus yalola. Hesyla nihimbilira.";
 			adjuster.RunTest();
 		}
 
@@ -309,8 +309,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 							   };
 			//                                1         2         3         4         5         6         7         8         9
 			//                      0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-			adjuster.OldContents = "pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
-			adjuster.NewContents = "pu s yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
+			adjuster.OldContents = "Pus yalola nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
+			adjuster.NewContents = "Pu s yalola nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
 			adjuster.RunTest();
 		}
 
@@ -325,39 +325,38 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var adjuster = new AdjustmentVerifier(Cache);
 			//                                1         2         3         4         5         6         7         8         9
 			//                      0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-			adjuster.OldContents = "pus whatst nihimbilira.";
-			//adjuster.NewContents = "pus whatsthis nihimbilira.";
+			adjuster.OldContents = "Pus whatst nihimbilira.";
 			adjuster.ParseOldText(); // Now it has segments and wordforms.
 			var wfRepo = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
 			var badWordform = wfRepo.GetMatchingWordform(Cache.DefaultVernWs, "whatst");
-			// Simulate typing 's' on end of incomplete word
-			adjuster.OldContents = "pus whatsth nihimbilira.";
+			// Simulate typing 'h' on end of incomplete word
+			adjuster.OldContents = "Pus whatsth nihimbilira.";
 			// Assume test data has no other refs to "whatst".
 			Assert.IsFalse(badWordform.IsValidObject, "Should have deleted spurious wordform");
 
 			var saveWordform = wfRepo.GetMatchingWordform(Cache.DefaultVernWs, "whatsth");
 			saveWordform.SpellingStatus = (int)SpellingStatusStates.incorrect;
 			adjuster.OldFirstPara.ParseIsCurrent = true; // AnalysisAdjuster clears this, but need it true to run full adjuster
-			adjuster.OldContents = "pus whatsthi nihimbilira.";
+			adjuster.OldContents = "Pus whatsthi nihimbilira.";
 			Assert.IsTrue(saveWordform.IsValidObject, "Should not have deleted wordform marked incorrect");
 
 			saveWordform = wfRepo.GetMatchingWordform(Cache.DefaultVernWs, "whatsthi");
 			saveWordform.SpellingStatus = (int)SpellingStatusStates.correct;
 			adjuster.OldFirstPara.ParseIsCurrent = true; // AnalysisAdjuster clears this, but need it true to run full adjuster
-			adjuster.OldContents = "pus whatsthis nihimbilira.";
+			adjuster.OldContents = "Pus whatsthis nihimbilira.";
 			Assert.IsTrue(saveWordform.IsValidObject, "Should not have deleted wordform marked correct");
 
 			saveWordform = wfRepo.GetMatchingWordform(Cache.DefaultVernWs, "whatsthis");
 			var analysis = Cache.ServiceLocator.GetInstance<IWfiAnalysisFactory>().Create();
 			saveWordform.AnalysesOC.Add(analysis);
 			adjuster.OldFirstPara.ParseIsCurrent = true; // AnalysisAdjuster clears this, but need it true to run full adjuster
-			adjuster.OldContents = "pus whatsthisa nihimbilira.";
+			adjuster.OldContents = "Pus whatsthisa nihimbilira.";
 			Assert.IsTrue(saveWordform.IsValidObject, "Should not have deleted wordform with analysis");
 
 			saveWordform = wfRepo.GetMatchingWordform(Cache.DefaultVernWs, "whatsthisa");
 			adjuster.AddOldParagraph("More text containing whatsthisa.");
 			adjuster.ParseOldText();
-			adjuster.OldContents = "pus whatsthisall nihimbilira.";
+			adjuster.OldContents = "Pus whatsthisall nihimbilira.";
 			Assert.IsTrue(saveWordform.IsValidObject, "Should not have deleted wordform used elsewhere");
 		}
 
@@ -544,8 +543,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			};
 			//                                1         2         3         4         5         6         7         8         9
 			//                      0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-			adjuster.OldContents = "pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
-			adjuster.NewContents = "pus yalola nihimbilira? nihimbilira pus yalola. hesyla nihimbilira.";
+			adjuster.OldContents = "Pus yalola nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
+			adjuster.NewContents = "Pus yalola nihimbilira? Nihimbilira pus yalola. Hesyla nihimbilira.";
 			adjuster.RunTest();
 		}
 
@@ -636,12 +635,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Test that applying a writing system change across multiple segmemnts does not lose
-		/// any analyses. (FWR-3464)
+		/// Test that applying a writing system change across multiple segments does not lose any analyses. (FWR-3464)
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Ignore("Waiting on FWR-3464")]
 		public virtual void WSChangeInScripture()
 		{
 			Cache.LangProject.TranslatedScriptureOA = Cache.ServiceLocator.GetInstance<IScriptureFactory>().Create();
@@ -915,8 +912,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			};
 			//                                1         2         3         4         5         6         7         8         9
 			//                      0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-			adjuster.OldContents = "pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
-			adjuster.NewContents = "pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
+			adjuster.OldContents = "Pus yalola nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
+			adjuster.NewContents = "Pus yalola nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
 			adjuster.RunTest();
 		}
 
@@ -1029,8 +1026,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 							};
 			//                                1         2         3         4         5         6         7         8         9
 			//                      0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-			adjuster.OldContents = "pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
-			adjuster.NewContents = "pus yalola nihimbilira. pus yalola. hesyla nihimbilira.";
+			adjuster.OldContents = "Pus yalola nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
+			adjuster.NewContents = "Pus yalola nihimbilira. Pus yalola. Hesyla nihimbilira.";
 			adjuster.RunTest();
 		}
 
@@ -1067,8 +1064,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			};
 			//                                1         2         3         4         5         6         7         8         9
 			//                      0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-			adjuster.OldContents = "pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
-			adjuster.NewContents = "hesyla nihimbilira.";
+			adjuster.OldContents = "Pus yalola nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
+			adjuster.NewContents = "Hesyla nihimbilira.";
 			adjuster.RunTest();
 		}
 
@@ -1238,9 +1235,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			};
 			//                                1         2         3         4         5         6         7         8         9
 			//                      0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-			adjuster.OldContents = "pus yalola nihimbilira. nihimbilira pus yalola.";
-			adjuster.AddOldParagraph("sup layalo ranihimbili. Another sentence.");
-			adjuster.NewContents = "pus yalola nihimbilira. nihimbilira pus yalola.sup layalo ranihimbili. Another sentence.";
+			adjuster.OldContents = "Pus yalola nihimbilira. Nihimbilira pus yalola.";
+			adjuster.AddOldParagraph("Sup layalo ranihimbili. Another sentence.");
+			adjuster.NewContents = "Pus yalola nihimbilira. Nihimbilira pus yalola.Sup layalo ranihimbili. Another sentence.";
 			adjuster.ChangeMaker = text =>
 			{
 				var para0 = text[0];
@@ -1327,9 +1324,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			};
 			//                                1         2         3         4         5         6         7         8         9
 			//                      0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-			adjuster.OldContents = "pus yalola nihimbilira. nihimbilira pus yalola.";
+			adjuster.OldContents = "Pus yalola nihimbilira. Nihimbilira pus yalola.";
 			adjuster.NewContents = "New";
-			adjuster.AddNewParagraph("pus yalola nihimbilira. nihimbilira pus yalola.");
+			adjuster.AddNewParagraph("Pus yalola nihimbilira. Nihimbilira pus yalola.");
 			adjuster.ChangeMaker = text =>
 			{
 				var paraNew = text.InsertNewTextPara(0, null);
@@ -1352,17 +1349,17 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			};
 			//                                1         2         3         4         5         6         7         8         9
 			//                      0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-			adjuster.OldContents = "pus yalola nihimbilira. nihimbilira pus yalola.";
-			adjuster.NewContents = "New";
-			adjuster.AddNewParagraph("More new pus yalola nihimbilira. nihimbilira pus yalola.");
+			adjuster.OldContents = "pus yalola nihimbilira. Nihimbilira pus yalola.";
+			adjuster.NewContents = "new";
+			adjuster.AddNewParagraph("more new pus yalola nihimbilira. Nihimbilira pus yalola.");
 			adjuster.ChangeMaker = text =>
 			{
 
 				var para = text[0];
 				var paraNew = text.InsertNewTextPara(0, null);
-				paraNew.Contents = paraNew.Cache.TsStrFactory.MakeString("New", paraNew.Cache.DefaultVernWs);
+				paraNew.Contents = paraNew.Cache.TsStrFactory.MakeString("new", paraNew.Cache.DefaultVernWs);
 				para.Contents = para.Contents.Insert(0,
-													 para.Cache.TsStrFactory.MakeString("More new ",
+													 para.Cache.TsStrFactory.MakeString("more new ",
 																						para.Cache.DefaultVernWs));
 
 			};
@@ -1384,9 +1381,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			};
 			//                                1         2         3         4         5         6         7         8         9
 			//                      0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-			adjuster.OldContents = "pus yalola nihimbilira. nihimbilira pus yalola.";
+			adjuster.OldContents = "Pus yalola nihimbilira. Nihimbilira pus yalola.";
 			adjuster.AddOldParagraph("This paragraph will be split in two.");
-			adjuster.NewContents = "pus yalola nihimbilira. nihimbilira pus yalola.";
+			adjuster.NewContents = "Pus yalola nihimbilira. Nihimbilira pus yalola.";
 			string firstHalfOfSplit = "This paragraph will be split";
 			adjuster.AddNewParagraph(firstHalfOfSplit);
 			string secondHalfOfSplit = " in two.";
@@ -1420,8 +1417,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			};
 			//                                1         2         3         4         5         6         7         8         9
 			//                      0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-			adjuster.OldContents = "pus yalola nihimbilira. nihimbilira pus yalola.";
-			string firstHalfOfSplit = "pus yalola nihimbilira. nihimbilira pus yal";
+			adjuster.OldContents = "Pus yalola nihimbilira. Nihimbilira pus yalola.";
+			string firstHalfOfSplit = "Pus yalola nihimbilira. Nihimbilira pus yal";
 			adjuster.NewContents = firstHalfOfSplit;
 			string secondHalfOfSplit = "ola.";
 			adjuster.AddNewParagraph(secondHalfOfSplit);
@@ -1452,10 +1449,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			};
 			//                                1         2         3         4         5         6         7         8         9
 			//                      0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-			adjuster.OldContents = "pus yalola nihimbilira. nihimbilira pus yalola.";
-			string firstHalfOfSplit = "pus ";
+			adjuster.OldContents = "Pus yalola nihimbilira. Nihimbilira pus yalola.";
+			string firstHalfOfSplit = "Pus ";
 			adjuster.NewContents = firstHalfOfSplit;
-			string secondHalfOfSplit = "yalola nihimbilira. nihimbilira pus yalola.";
+			string secondHalfOfSplit = "yalola nihimbilira. Nihimbilira pus yalola.";
 			adjuster.AddNewParagraph(secondHalfOfSplit);
 			adjuster.ChangeMaker = text =>
 			{
@@ -1483,11 +1480,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			text.ContentsOA = stText;
 			var para = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 			stText.ParagraphsOS.Add(para);
-			para.Contents = Cache.TsStrFactory.MakeString("pus yalola nihimbilira. nihimbilira pus yalola.", Cache.DefaultVernWs);
+			para.Contents = Cache.TsStrFactory.MakeString("Pus yalola nihimbilira. Nihimbilira pus yalola.", Cache.DefaultVernWs);
 			var paraNew = stText.InsertNewTextPara(1, null);
 			para.SegmentsOS.Clear(); // get rid of analysis generated by side effects.
 			text.Cache.DomainDataByFlid.MoveString(para.Hvo, StTxtParaTags.kflidContents, 0,
-				"pus ".Length, para.Contents.Length,
+				"Pus ".Length, para.Contents.Length,
 				paraNew.Hvo, StTxtParaTags.kflidContents, 0, 0, true);
 		}
 
@@ -1506,8 +1503,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			};
 			//                                1         2         3         4         5         6         7         8         9
 			//                      0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-			adjuster.OldContents = "pus yalola nihimbilira. nihimbilira pus yalola.";
-			string firstHalfOfSplit = "pus yalola nihimbilira. nihimbilira pus yalola";
+			adjuster.OldContents = "Pus yalola nihimbilira. Nihimbilira pus yalola.";
+			string firstHalfOfSplit = "Pus yalola nihimbilira. Nihimbilira pus yalola";
 			adjuster.NewContents = firstHalfOfSplit;
 			string secondHalfOfSplit = ".";
 			adjuster.AddNewParagraph(secondHalfOfSplit);
@@ -1547,8 +1544,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			};
 			//                                1         2         3         4         5         6         7         8         9
 			//                      0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-			adjuster.OldContents = "pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
-			adjuster.NewContents = "tus ralola qihimbilirp. nihimbilira pus yalola. hesyla nihimbilira.";
+			adjuster.OldContents = "Pus yalola nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
+			adjuster.NewContents = "Tus ralola qihimbilirp. Nihimbilira pus yalola. Hesyla nihimbilira.";
 			adjuster.RunTest();
 		}
 
@@ -1565,8 +1562,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			};
 			//                                1         2         3         4         5         6         7         8         9
 			//                      0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-			adjuster.OldContents = "pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
-			adjuster.NewContents = "tus. ralola. qihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
+			adjuster.OldContents = "Pus yalola nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
+			adjuster.NewContents = "Tus. Ralola. Qihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
 			adjuster.RunTest();
 		}
 
@@ -1583,8 +1580,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			};
 			//                                1         2         3         4         5         6         7         8         9
 			//                      0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-			adjuster.OldContents = "puus yalolla nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
-			adjuster.NewContents = "teg. moerna. squestering. nihimbilira pus yalola. hesyla nihimbilira.";
+			adjuster.OldContents = "puus yalolla nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
+			adjuster.NewContents = "Teg. Moerna. Squestering. Nihimbilira pus yalola. Hesyla nihimbilira.";
 			adjuster.RunTest();
 		}
 
@@ -1602,8 +1599,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			};
 			//                                1         2         3         4         5         6         7         8         9
 			//                      0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-			adjuster.OldContents = "tus. ralola. qihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
-			adjuster.NewContents = "pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
+			adjuster.OldContents = "Tus. Ralola. Qihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
+			adjuster.NewContents = "Pus yalola nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
 			adjuster.RunTest();
 		}
 
@@ -1629,8 +1626,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			};
 			//                                1         2         3         4         5         6         7         8         9
 			//                      0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-			adjuster.OldContents = "pus. ralola. qihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
-			adjuster.NewContents = "pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
+			adjuster.OldContents = "Pus. Ralola. Qihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
+			adjuster.NewContents = "Pus yalola nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
 			adjuster.RunTest();
 		}
 
@@ -1651,8 +1648,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			};
 			//                                1         2         3         4         5         6         7         8         9
 			//                      0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-			adjuster.OldContents = "pus. ralola. qihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
-			adjuster.NewContents = "pus to. alata. nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
+			adjuster.OldContents = "Pus. Ralola. Qihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
+			adjuster.NewContents = "Pus to. Alata. Nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
 			adjuster.RunTest();
 		}
 
@@ -1669,8 +1666,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			};
 			//                                1         2         3         4         5         6         7         8         9
 			//                      0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-			adjuster.OldContents = "pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
-			adjuster.NewContents = "pus yalola nihimbilira. First new. Second new. nihimbilira pus yalola. hesyla nihimbilira.";
+			adjuster.OldContents = "Pus yalola nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
+			adjuster.NewContents = "Pus yalola nihimbilira. First new. Second new. Nihimbilira pus yalola. Hesyla nihimbilira.";
 			adjuster.RunTest();
 		}
 		#endregion
@@ -1686,12 +1683,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var adjuster = new AdjustmentVerifierPlusTags(Cache);
 			//                                1         2         3         4         5         6         7         8         9
 			//                      0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-			adjuster.OldContents = "pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
-			adjuster.NewContents = "pus yalola pus nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
+			adjuster.OldContents = "Pus yalola nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
+			adjuster.NewContents = "Pus yalola pus nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
 			const int i1stTag = 0;
 			const int i2ndTag = 1;
-			adjuster.m_oldTagSkels.Add(new TagSkeleton(0, 0, 0, i1stTag)); // 1st tag = "pus"
-			adjuster.m_oldTagSkels.Add(new TagSkeleton(0, 1, 2, i2ndTag)); // 2nd tag = "yalola nihimbilira"
+			adjuster.m_oldTagSkels.Add(new TagSkeleton(0, 0, 0, i1stTag)); // 1st tag = "Pus"
+			adjuster.m_oldTagSkels.Add(new TagSkeleton(0, 1, 2, i2ndTag)); // 2nd tag = "Yalola nihimbilira"
 			adjuster.m_newTagSkels.Add(new TagSkeleton(0, 0, 0, i1stTag)); // 1st tag should be unaffected by later edit
 			adjuster.m_newTagSkels.Add(new TagSkeleton(0, 1, 3, i2ndTag)); // 2nd tag gains a word; update EndAnalysisIndex
 			adjuster.RunTest();
@@ -1706,8 +1703,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var adjuster = new AdjustmentVerifierPlusTags(Cache);
 			//                                1         2         3         4         5         6         7         8         9
 			//                      0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-			adjuster.OldContents = "pus yalola pus nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
-			adjuster.NewContents = "pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
+			adjuster.OldContents = "Pus yalola pus nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
+			adjuster.NewContents = "Pus yalola nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
 			const int i1stTag = 1;
 			adjuster.m_oldTagSkels.Add(new TagSkeleton(0, 1, 3, i1stTag)); // tag = "yalola pus nihimbilira"
 			adjuster.m_newTagSkels.Add(new TagSkeleton(0, 1, 2, i1stTag)); // tag loses a word; update EndAnalysisIndex
@@ -1959,8 +1956,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var adjuster = new AdjustmentVerifierPlusTags(Cache);
 			//                                1         2         3         4         5         6         7         8         9
 			//                      0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-			adjuster.OldContents = "pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
-			adjuster.NewContents = "pus yalola nihimbilira. hesyla nihimbilira.";
+			adjuster.OldContents = "Pus yalola nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
+			adjuster.NewContents = "Pus yalola nihimbilira. Hesyla nihimbilira.";
 			const int i1stTag = 0;
 			const int i2ndTag = 1;
 			const int i3rdTag = 2;
@@ -1984,8 +1981,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var adjuster = new AdjustmentVerifierPlusTags(Cache);
 			//                                1         2         3         4         5         6         7         8         9
 			//                      0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-			adjuster.OldContents = "pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
-			adjuster.NewContents = "pus yalola nihimbilira. hesyla nihimbilira.";
+			adjuster.OldContents = "Pus yalola nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
+			adjuster.NewContents = "Pus yalola nihimbilira. Hesyla nihimbilira.";
 			const int i1stTag = 1;
 			adjuster.m_oldTagSkels.Add(new TagSkeleton(0, 2, 1, 0, i1stTag)); // tag covers more than deleted seg
 			adjuster.m_newTagSkels.Add(new TagSkeleton(0, 1, 1, 0, i1stTag)); // tag is unaffected (INDEX of EndSegment changes)
@@ -2002,8 +1999,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var adjuster = new AdjustmentVerifierPlusTags(Cache);
 			//                                1         2         3         4         5         6         7         8         9
 			//                      0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-			adjuster.OldContents = "pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
-			adjuster.NewContents = "pus yalola nihimbilira. hesyla nihimbilira.";
+			adjuster.OldContents = "Pus yalola nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
+			adjuster.NewContents = "Pus yalola nihimbilira. Hesyla nihimbilira.";
 			const int i1stTag = 1;
 			adjuster.m_oldTagSkels.Add(new TagSkeleton(1, 1, 2, i1stTag)); // tag covers NP within deleted seg
 			//adjuster.NewTagSkels.Add(new TagSkeleton(0, 1, 1, 0, i1stTag)); // tag should be deleted!
@@ -2020,8 +2017,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var adjuster = new AdjustmentVerifierPlusTags(Cache);
 			//                                1         2         3         4         5         6         7         8         9
 			//                      0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-			adjuster.OldContents = "pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
-			adjuster.NewContents = "pus yalola nihimbilira. hesyla nihimbilira.";
+			adjuster.OldContents = "Pus yalola nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
+			adjuster.NewContents = "Pus yalola nihimbilira. Hesyla nihimbilira.";
 			const int i2ndTag = 1;
 			adjuster.m_oldTagSkels.Add(new TagSkeleton(1, 2, 0, 0, i2ndTag)); // tag spans 2nd seg plus a word
 			adjuster.m_newTagSkels.Add(new TagSkeleton(1, 0, 0, i2ndTag)); // tag is now on one word in new 2nd seg (hesyla)
@@ -2039,8 +2036,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var adjuster = new AdjustmentVerifierPlusTags(Cache);
 			//                                1         2         3         4         5         6         7         8         9
 			//                      0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-			adjuster.OldContents = "pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
-			adjuster.NewContents = "pus yalola nihimbilira. hesyla nihimbilira.";
+			adjuster.OldContents = "Pus yalola nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
+			adjuster.NewContents = "Pus yalola nihimbilira. Hesyla nihimbilira.";
 			const int i1stTag = 0;
 			const int i2ndTag = 1;
 			adjuster.m_oldTagSkels.Add(new TagSkeleton(0, 0, 1, i1stTag)); // 1st tag labels NPhrase in 1st seg
@@ -2061,14 +2058,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public virtual void WithChart_InsertWordInternal()
 		{
 			var adjuster = new AdjustmentVerifierPlusChartCells(Cache);
-			adjuster.OldContents = "pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
-			adjuster.NewContents = "pus yalola pus nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
+			adjuster.OldContents = "Pus yalola nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
+			adjuster.NewContents = "Pus yalola pus nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
 			const int i1stRow = 0;
 			const int i1stCol = 3;
 			const int i2ndRow = 1;
 			const int i2ndCol = 1;
 			// update EndAnalysisIndex
-			adjuster.m_oldCellSkels.Add(new CellSkeleton(0, 0, 0, i1stRow, i1stCol)); // 1st cell = "pus"
+			adjuster.m_oldCellSkels.Add(new CellSkeleton(0, 0, 0, i1stRow, i1stCol)); // 1st cell = "Pus"
 			adjuster.m_oldCellSkels.Add(new CellSkeleton(0, 1, 2, i2ndRow, i2ndCol)); // 2nd cell = "yalola nihimbilira"
 			adjuster.m_newCellSkels.Add(new CellSkeleton(0, 0, 0, i1stRow, i1stCol)); // 1st cell should be unaffected by later edit
 			adjuster.m_newCellSkels.Add(new CellSkeleton(0, 1, 3, i2ndRow, i2ndCol)); // 2nd cell gains a word
@@ -2082,8 +2079,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public virtual void WithChart_DeleteWordInternal()
 		{
 			var adjuster = new AdjustmentVerifierPlusChartCells(Cache);
-			adjuster.OldContents = "pus yalola pus nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
-			adjuster.NewContents = "pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
+			adjuster.OldContents = "Pus yalola pus nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
+			adjuster.NewContents = "Pus yalola nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
 			const int i1stRow = 1;
 			const int i1stCol = 1;
 			// update EndAnalysisIndex
@@ -2371,8 +2368,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public virtual void WithChart_DeleteSegment()
 		{
 			var adjuster = new AdjustmentVerifierPlusChartCells(Cache);
-			adjuster.OldContents = "pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
-			adjuster.NewContents = "pus yalola nihimbilira. hesyla nihimbilira.";
+			adjuster.OldContents = "Pus yalola nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
+			adjuster.NewContents = "Pus yalola nihimbilira. Hesyla nihimbilira.";
 			const int i1stRow = 0;
 			const int i1stCol = 4;
 			const int i2ndRow = 0;
@@ -2403,8 +2400,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public virtual void WithChart_DeleteSegment_CoveringTag()
 		{
 			var adjuster = new AdjustmentVerifierPlusChartCells(Cache);
-			adjuster.OldContents = "pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
-			adjuster.NewContents = "pus yalola nihimbilira. hesyla nihimbilira.";
+			adjuster.OldContents = "Pus yalola nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
+			adjuster.NewContents = "Pus yalola nihimbilira. Hesyla nihimbilira.";
 			const int i1stRow = 0;
 			const int i1stCol = 3;
 			// cell covers more than deleted seg
@@ -2422,8 +2419,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public virtual void WithChart_DeleteSegment_InternalTag()
 		{
 			var adjuster = new AdjustmentVerifierPlusChartCells(Cache);
-			adjuster.OldContents = "pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
-			adjuster.NewContents = "pus yalola nihimbilira. hesyla nihimbilira.";
+			adjuster.OldContents = "Pus yalola nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
+			adjuster.NewContents = "Pus yalola nihimbilira. Hesyla nihimbilira.";
 			const int i1stRow = 0;
 			const int i1stCol = 4;
 			// cell covers NP within deleted seg
@@ -2441,8 +2438,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public virtual void WithChart_DeleteSegment_1stPartOfCell()
 		{
 			var adjuster = new AdjustmentVerifierPlusChartCells(Cache);
-			adjuster.OldContents = "pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
-			adjuster.NewContents = "pus yalola nihimbilira. hesyla nihimbilira.";
+			adjuster.OldContents = "Pus yalola nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
+			adjuster.NewContents = "Pus yalola nihimbilira. Hesyla nihimbilira.";
 			const int i2ndRow = 2;
 			const int i1stCol = 4;
 			// cell spans 2nd seg plus a word
@@ -2461,14 +2458,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public virtual void WithChart_DeleteSegmentBreak_CellEndsInDeletedSection()
 		{
 			var adjuster = new AdjustmentVerifierPlusChartCells(Cache);
-			adjuster.OldContents = "nihimbilira yalola. hesyla pus nihimbilira.";
-			adjuster.NewContents = "nihimbilira pus nihimbilira.";
+			adjuster.OldContents = "Nihimbilira yalola. Hesyla pus nihimbilira.";
+			adjuster.NewContents = "Nihimbilira pus nihimbilira.";
 			const int i2ndRow = 1;
 			const int iCol = 4;
-			// cell spans 1st and 2nd seg (nihimbilira yalola. hesyla)
+			// cell spans 1st and 2nd seg (nihimbilira yalola. Hesyla)
 			adjuster.m_oldCellSkels.Add(new CellSkeleton(
 				ibegSeg: 0, iendSeg: 1, ibegIndex: 0, iendIndex: 0, iRow: i2ndRow, iColumn: iCol));
-			// deleted text = "yalola. hesyla" = 3 analyses
+			// deleted text = "Yalola. Hesyla" = 3 analyses
 			// cell is now only on the first word in the one remaining seg (nihimbilira)
 			adjuster.m_newCellSkels.Add(new CellSkeleton(
 				iSeg: 0, ibegIndex: 0, iendIndex: 0, iRow: i2ndRow, iColumn: iCol));
@@ -2484,14 +2481,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public virtual void WithChart_DeleteSegmentBreak_CellBeginInDeletedSection()
 		{
 			var adjuster = new AdjustmentVerifierPlusChartCells(Cache);
-			adjuster.OldContents = "nihimbilira yalola. hesyla pus nihimbilira.";
-			adjuster.NewContents = "nihimbilira pus nihimbilira.";
+			adjuster.OldContents = "Nihimbilira yalola. Hesyla pus nihimbilira.";
+			adjuster.NewContents = "Nihimbilira pus nihimbilira.";
 			const int i2ndRow = 1;
 			const int iCol = 4;
-			// cell spans 1st and 2nd seg (yalola. hesyla pus nihimbilira)
+			// cell spans 1st and 2nd seg (yalola. Hesyla pus nihimbilira)
 			adjuster.m_oldCellSkels.Add(new CellSkeleton(
 				ibegSeg: 0, iendSeg: 1, ibegIndex: 1, iendIndex: 2, iRow: i2ndRow, iColumn: iCol));
-			// deleted text = "yalola. hesyla" = 3 analyses
+			// deleted text = "Yalola. Hesyla" = 3 analyses
 			// cell is now on two words in the one remaining seg (pus nihimbilira)
 			adjuster.m_newCellSkels.Add(new CellSkeleton(
 				iSeg: 0, ibegIndex: 1, iendIndex: 2, iRow: i2ndRow, iColumn: iCol));
@@ -2507,14 +2504,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public virtual void WithChart_DeleteSegmentBreakInsideOfCell()
 		{
 			var adjuster = new AdjustmentVerifierPlusChartCells(Cache);
-			adjuster.OldContents = "pus yalola nihimbilira. nihimbilira yalola. hesyla pus nihimbilira.";
-			adjuster.NewContents = "pus yalola nihimbilira. nihimbilira pus nihimbilira.";
+			adjuster.OldContents = "Pus yalola nihimbilira. Nihimbilira yalola. Hesyla pus nihimbilira.";
+			adjuster.NewContents = "Pus yalola nihimbilira. Nihimbilira pus nihimbilira.";
 			const int i2ndRow = 1;
 			const int iCol = 4;
-			// cell spans 2nd and 3rd seg (nihimbilira yalola. hesyla pus)
+			// cell spans 2nd and 3rd seg (nihimbilira yalola. Hesyla pus)
 			adjuster.m_oldCellSkels.Add(new CellSkeleton(
 				ibegSeg: 1, iendSeg: 2, ibegIndex: 0, iendIndex: 1, iRow: i2ndRow, iColumn: iCol));
-			// Deleted text = "yalola. hesyla" = 3 analyses
+			// Deleted text = "Yalola. Hesyla" = 3 analyses
 			// cell is now on two words in new 2nd seg (nihimbilira pus)
 			adjuster.m_newCellSkels.Add(new CellSkeleton(
 				iSeg: 1, ibegIndex: 0, iendIndex: 1, iRow: i2ndRow, iColumn: iCol));
@@ -2530,8 +2527,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public virtual void WithChart_ModInDifferentSegment()
 		{
 			var adjuster = new AdjustmentVerifierPlusChartCells(Cache);
-			adjuster.OldContents = "pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
-			adjuster.NewContents = "pus yalola nihimbilira. hesyla nihimbilira.";
+			adjuster.OldContents = "Pus yalola nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
+			adjuster.NewContents = "Pus yalola nihimbilira. Hesyla nihimbilira.";
 			const int i1stRow = 0;
 			const int i1stCol = 3;
 			const int i2ndRow = 1;
@@ -2556,8 +2553,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public virtual void WithChart_InsertWordsAndSegmentPunctuation()
 		{
 			var adjuster = new AdjustmentVerifierPlusChartCells(Cache);
-			adjuster.OldContents = "hesyla pus yalola, nihimbilira. hesyla nihimbilira.";
-			adjuster.NewContents = "hesyla new segment. Oddness pus yalola, nihimbilira. hesyla nihimbilira.";
+			adjuster.OldContents = "Hesyla pus yalola, nihimbilira. Hesyla nihimbilira.";
+			adjuster.NewContents = "Hesyla new segment. Oddness pus yalola, nihimbilira. Hesyla nihimbilira.";
 			const int i1stRow = 0;
 			const int i1stCol = 0;
 			const int i2ndRow = 1;
@@ -2646,8 +2643,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	///		};
 	///		//                                1         2         3         4         5         6         7         8         9
 	///		//                      0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-	///		adjuster.OldContents = "pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
-	///		adjuster.NewContents = "pus yalola nihimbilira. nihimbilira sup dup lup yalola. hesyla nihimbilira.";
+	///		adjuster.OldContents = "Pus yalola nihimbilira. Nihimbilira pus yalola. Hesyla nihimbilira.";
+	///		adjuster.NewContents = "Pus yalola nihimbilira. Nihimbilira sup dup lup yalola. Hesyla nihimbilira.";
 	///		adjuster.RunTest();
 	///
 	/// In the above, we are testing the effect of changing some text in the middle of a text that has one paragraph
