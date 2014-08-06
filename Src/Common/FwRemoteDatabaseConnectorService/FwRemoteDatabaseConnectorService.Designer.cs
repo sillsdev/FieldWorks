@@ -28,10 +28,10 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			//
+			// 
 			// FwRemoteDatabaseConnectorService
-			//
-			this.ServiceName = "Service1";
+			// 
+			this.ServiceName = "FwRemoteDatabaseConnectorService";
 
 		}
 

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 using System.ServiceProcess;
 using System.Threading;
@@ -56,16 +55,7 @@ namespace FwRemoteDatabaseConnectorService
 
 		protected override void OnStart(string[] args)
 		{
-			try
-			{
-				RemotingServer.Start(FwDirectoryFinder.RemotingTcpServerConfigFile, FwDirectoryFinder.FdoDirectories, GetSharedProject, SetSharedProject);
-			}
-			catch (Exception e)
-			{
-				// TODO: remove this debugging message.
-				System.Windows.Forms.MessageBox.Show(e.ToString());
-			}
-
+			RemotingServer.Start(FwDirectoryFinder.RemotingTcpServerConfigFile, FwDirectoryFinder.FdoDirectories, GetSharedProject, SetSharedProject);
 			m_clientListenerThread = new Thread(ThreadStartListenForClients);
 			m_clientListenerThread.Start();
 		}
