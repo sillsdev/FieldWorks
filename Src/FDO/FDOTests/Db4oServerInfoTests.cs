@@ -184,7 +184,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[SetUp]
 		public void StartFwRemoteDatabaseConnector()
 		{
-			FdoTestHelper.SetupClientServerServices();
+			FdoTestHelper.SetupStaticFdoProperties();
 			m_sharedProject = true;
 			RemotingServer.Start(FwDirectoryFinder.RemotingTcpServerConfigFile, FwDirectoryFinder.FdoDirectories, () => m_sharedProject, v => m_sharedProject = v);
 

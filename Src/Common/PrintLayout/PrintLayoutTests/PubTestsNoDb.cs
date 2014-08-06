@@ -7,7 +7,7 @@
 
 using System;
 using NUnit.Framework;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
@@ -184,7 +184,7 @@ namespace SIL.FieldWorks.Common.PrintLayout
 			m_pub.BaseLineSpacing = 0;
 			FwStyleSheet stylesheet = new FwStyleSheet();
 			stylesheet.Init(Cache, Cache.LangProject.TranslatedScriptureOA.Hvo,
-				ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+				ScriptureTags.kflidStyles);
 
 			using (DummyDivision divLayoutMgr = new DummyDivision(new DummyPrintConfigurer(Cache, null), 1))
 			{
@@ -217,7 +217,7 @@ namespace SIL.FieldWorks.Common.PrintLayout
 			m_pub.BaseLineSpacing = -11000;
 			FwStyleSheet stylesheet = new FwStyleSheet();
 			stylesheet.Init(Cache, Cache.LangProject.TranslatedScriptureOA.Hvo,
-				ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+				ScriptureTags.kflidStyles);
 
 			using (DummyDivision divLayoutMgr = new DummyDivision(new DummyPrintConfigurer(Cache, null), 1))
 			{

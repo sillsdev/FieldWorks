@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			FwDirectoryFinder.ProjectsDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 			Directory.CreateDirectory(FwDirectoryFinder.ProjectsDirectory);
 
-			FdoTestHelper.SetupClientServerServices();
+			FdoTestHelper.SetupStaticFdoProperties();
 
 			m_projectShared = false;
 			RemotingServer.Start(FwDirectoryFinder.RemotingTcpServerConfigFile, FwDirectoryFinder.FdoDirectories, () => m_projectShared, v => m_projectShared = v);

@@ -4696,7 +4696,7 @@ namespace SIL.FieldWorks.IText
 			if (!Focused)
 				return false;
 			display.Enabled = false;
-			display.Text = SIL.FieldWorks.Resources.ResourceHelper.DefaultParaCharsStyleName;
+			display.Text = StyleUtils.DefaultParaCharsStyleName;
 			return true;//we handled this, no need to ask anyone else.
 		}
 

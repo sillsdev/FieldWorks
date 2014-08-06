@@ -25,7 +25,7 @@ namespace SIL.FieldWorks
 		[SetUp]
 		public void SetUp()
 		{
-			FdoTestHelper.SetupClientServerServices();
+			FdoTestHelper.SetupStaticFdoProperties();
 		}
 
 		///--------------------------------------------------------------------------------------

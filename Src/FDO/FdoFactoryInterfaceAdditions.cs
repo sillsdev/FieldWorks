@@ -1096,12 +1096,4 @@ namespace SIL.FieldWorks.FDO
 		/// <returns>A new, unowned CmMediaURI with the given guid</returns>
 		ICmMediaURI Create(FdoCache cache, Guid guid);
 	}
-
-	public partial interface IScrImportSetFactory
-	{
-		/// <summary>
-		/// Creates a new scripture import settings with the default paragraph characters style name.
-		/// </summary>
-		IScrImportSet Create(string defaultParaCharsStyleName, string stylesPath);
-	}
 }

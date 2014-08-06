@@ -256,7 +256,7 @@ namespace SIL.FieldWorks.TE
 			m_cache = scr.Cache;
 
 			// Attempt to get the default import settings.
-			m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Unknown, ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
+			m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Unknown);
 			if (m_settings.ImportTypeEnum == TypeOfImport.Unknown)
 				m_settings.ImportTypeEnum = TypeOfImport.Paratext6;
 
@@ -2169,7 +2169,7 @@ namespace SIL.FieldWorks.TE
 		{
 			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_cache.ActionHandlerAccessor, () =>
 			{
-				m_settings = m_scr.FindOrCreateDefaultImportSettings(importType, ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
+				m_settings = m_scr.FindOrCreateDefaultImportSettings(importType);
 			});
 			InitializeScrImportSettings();
 		}

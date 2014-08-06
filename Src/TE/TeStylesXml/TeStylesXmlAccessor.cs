@@ -8,6 +8,7 @@
 using System;
 using System.IO;
 using System.Xml;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
@@ -15,7 +16,6 @@ using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using XCore;
 
@@ -496,7 +496,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		public static string GetHelpTopicForStyle(string styleName)
 		{
-			if (styleName == ResourceHelper.DefaultParaCharsStyleName)
+			if (styleName == StyleUtils.DefaultParaCharsStyleName)
 			{
 				return @"Redirect.htm#its:Using_Styles.chm::/Using_Styles/Styles_Grouped_by_Type/" +
 					"Special_Text_and_Character_Styles/Default_Paragraph_Characters_description.htm";

@@ -765,7 +765,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			if (m_stylesheet == null)
 			{
 				FwStyleSheet styles = new FwStyleSheet();
-				styles.Init(m_cache, m_cache.LangProject.Hvo, LangProjectTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+				styles.Init(m_cache, m_cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 				m_stylesheet = styles;
 			}
 			ShowSaveButtonOrNot();

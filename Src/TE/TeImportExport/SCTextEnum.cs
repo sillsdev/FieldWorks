@@ -558,7 +558,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						markerMapping.StyleName == ScrStyleNames.VerseNumber ||
 						markerMapping.StyleName == ScrStyleNames.ChapterNumber ||
 						(!markerMapping.IsInline && markerMapping.StyleName ==
-						ResourceHelper.DefaultParaCharsStyleName))
+						StyleUtils.DefaultParaCharsStyleName))
 					{
 						dataEncoding = GetEncodingConverterForMarkerDomain(markerMapping);
 					}
@@ -569,7 +569,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				// If the marker maps to a paragraph style or pertains to a non-default domain,
 				// then save the encoder as the current paragraph encoder
 				if (m_domain == ImportDomain.Main &&
-					((markerMapping.StyleName != ResourceHelper.DefaultParaCharsStyleName &&
+					((markerMapping.StyleName != StyleUtils.DefaultParaCharsStyleName &&
 					(markerMapping.Style == null || markerMapping.IsParagraphStyle)) ||
 					(markerMapping.Domain & ~MarkerDomain.Footnote) != MarkerDomain.Default))
 				{

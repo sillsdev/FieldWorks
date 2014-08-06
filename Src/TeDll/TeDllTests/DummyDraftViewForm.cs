@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -281,7 +282,7 @@ namespace SIL.FieldWorks.TE
 
 					ILangProject lgproj = Cache.LangProject;
 					IScripture scripture = lgproj.TranslatedScriptureOA;
-					m_styleSheet.Init(Cache, scripture.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+					m_styleSheet.Init(Cache, scripture.Hvo, ScriptureTags.kflidStyles);
 				}
 				return m_styleSheet;
 			}

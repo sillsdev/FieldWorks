@@ -12,11 +12,10 @@ using System.Linq;
 using NUnit.Framework;
 using Paratext;
 using Paratext.LexicalClient;
-using SIL.FieldWorks.Common.FwUtils;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Test.ProjectUnpacker;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
@@ -412,7 +411,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		[Test]
 		public void LoadParatextMappings_NullProjectName()
 		{
-			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create(ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
+			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
 			ParatextHelper.LoadProjectMappings(importSettings);
 			Assert.That(importSettings.ParatextScrProj, Is.Null);
 		}
@@ -429,8 +428,8 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			Unpacker.UnPackParatextTestProjects();
 
 			var stylesheet = new FwStyleSheet();
-			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
-			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create(ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
+			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
 			importSettings.ParatextScrProj = "KAM";
 			ParatextHelper.LoadProjectMappings(importSettings);
 
@@ -459,8 +458,8 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		public void LoadParatextMappings_MarkMappingsInUse()
 		{
 			var stylesheet = new FwStyleSheet();
-			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
-			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create(ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
+			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
 			importSettings.ParatextScrProj = "TEV";
 			ScrMappingList mappingList = importSettings.GetMappingListForDomain(ImportDomain.Main);
 			mappingList.Add(new ImportMappingInfo(@"\hahaha", @"\*hahaha", false,
@@ -494,8 +493,8 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		public void LoadParatextMappings_MissingEncodingFile()
 		{
 			var stylesheet = new FwStyleSheet();
-			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
-			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create(ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
+			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
 			importSettings.ParatextScrProj = "NEC";
 
 			Unpacker.UnPackMissingFileParatextTestProjects();
@@ -515,8 +514,8 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		public void LoadParatextMappings_MissingStyleFile()
 		{
 			FwStyleSheet stylesheet = new FwStyleSheet();
-			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
-			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create(ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
+			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
 			importSettings.ParatextScrProj = "NSF";
 
 			Unpacker.UnPackMissingFileParatextTestProjects();

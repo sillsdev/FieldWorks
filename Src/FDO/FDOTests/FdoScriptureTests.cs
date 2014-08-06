@@ -2932,7 +2932,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			AddScrStyle("Parallel Passage", ContextValues.Text, StructureValues.Heading, FunctionValues.Prose, false);
 			AddScrStyle("Line 1", ContextValues.Text, StructureValues.Body, FunctionValues.Prose, false);
 
-			m_stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+			m_stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
 
 			AddBookWithTwoSections(40, "Matthew");
 			m_philemon = AddBookWithTwoSections(57, "Philemon");

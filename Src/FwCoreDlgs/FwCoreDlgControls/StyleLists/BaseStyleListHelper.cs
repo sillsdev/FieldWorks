@@ -17,7 +17,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
@@ -742,7 +742,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				// If the list contains the default paragraph characters style then remove it
 				// from the list so it can be removed from the list while sorting.
 				StyleListItem defaultParaCharsStyle = itemsList.FirstOrDefault(
-					item => item.Name == ResourceHelper.DefaultParaCharsStyleName);
+					item => item.Name == StyleUtils.DefaultParaCharsStyleName);
 
 				if (defaultParaCharsStyle != null)
 					itemsList.Remove(defaultParaCharsStyle);
@@ -891,7 +891,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				m_styleItemList.Clear();
 
 			// Add an item for the Default Paragraph Characters pseudo style.
-			m_styleItemList.Add(ResourceHelper.DefaultParaCharsStyleName,
+			m_styleItemList.Add(StyleUtils.DefaultParaCharsStyleName,
 				StyleListItem.CreateDefaultParaCharItem());
 
 			foreach (BaseStyleInfo styleInfo in styleInfos)

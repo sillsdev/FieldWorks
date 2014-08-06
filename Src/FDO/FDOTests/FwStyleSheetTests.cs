@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
 			base.TestSetup();
 
 			m_styleSheet = new DummyFwStyleSheet();
-			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
 		}
 
 		/// ------------------------------------------------------------------------------------

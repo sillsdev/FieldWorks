@@ -63,5 +63,15 @@ namespace SIL.CoreImpl
 			tsPropsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, styleName);
 			return tsPropsBldr.GetTextProps();
 		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the name of the default para chars style.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public static string DefaultParaCharsStyleName
+		{
+			get { return CoreImplStrings.kstidDefaultParaChars; }
+		}
 	}
 }

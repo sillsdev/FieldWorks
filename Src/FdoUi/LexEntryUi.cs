@@ -448,7 +448,7 @@ namespace SIL.FieldWorks.FdoUi
 			// Get a style sheet for the Language Explorer, and store it in the
 			// (new) mediator.
 			FwStyleSheet styleSheet = new FwStyleSheet();
-			styleSheet.Init(cache, cache.LanguageProject.Hvo, LangProjectTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+			styleSheet.Init(cache, cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
 			mediator.PropertyTable.SetProperty("FwStyleSheet", styleSheet);
 			mediator.PropertyTable.SetPropertyPersistence("FwStyleSheet", false);
 			return styleSheet;

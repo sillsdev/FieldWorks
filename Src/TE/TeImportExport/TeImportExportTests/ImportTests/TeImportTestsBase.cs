@@ -84,14 +84,14 @@ namespace SIL.FieldWorks.TE.ImportTests
 			base.TestSetup();
 
 			m_styleSheet = new FwStyleSheet();
-			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
 			InitWsInfo();
 
 			DummyTeImporter.s_translatorNoteDefn = Cache.ServiceLocator.GetInstance<ICmAnnotationDefnRepository>().TranslatorAnnotationDefn;
 			DummyTeImporter.s_consultantNoteDefn = Cache.ServiceLocator.GetInstance<ICmAnnotationDefnRepository>().ConsultantAnnotationDefn;
 
 			m_titus = new BCVRef(56001001);
-			m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Other, ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
+			m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Other);
 			m_settings.StartRef = m_titus;
 			m_settings.EndRef = m_titus;
 			m_settings.ImportTranslation = true;

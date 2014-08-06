@@ -529,24 +529,6 @@ namespace SIL.FieldWorks.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Default Paragraph Characters.
-        /// </summary>
-        internal static string kstidDefaultParaChars {
-            get {
-                return ResourceManager.GetString("kstidDefaultParaChars", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The text will get its font properties from the paragraph to which it belongs.
-        /// </summary>
-        internal static string kstidDefaultParaCharsUsage {
-            get {
-                return ResourceManager.GetString("kstidDefaultParaCharsUsage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Default Pronunciation.
         /// </summary>
         internal static string kstidDefaultPron {

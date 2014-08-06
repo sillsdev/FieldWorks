@@ -9,6 +9,7 @@ using NUnit.Framework;
 using System.Drawing;
 using System.Text;
 using System.IO;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -572,7 +573,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 			m_fileName = FileUtils.GetTempFile("tmp");
 			m_styleSheet = new FwStyleSheet();
 			m_styleSheet.Init(Cache, Cache.LangProject.TranslatedScriptureOA.Hvo,
-				ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+				ScriptureTags.kflidStyles);
 		}
 
 		/// ------------------------------------------------------------------------------------

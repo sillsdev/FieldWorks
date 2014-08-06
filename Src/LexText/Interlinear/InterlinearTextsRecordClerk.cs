@@ -432,7 +432,7 @@ namespace SIL.FieldWorks.IText
 			IScripture scr = Cache.LangProject.TranslatedScriptureOA;
 			bool haveSomethingToImport = NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 				{
-					IScrImportSet importSettings = scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6, ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
+					IScrImportSet importSettings = scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6);
 					ScrText paratextProj = ParatextHelper.GetAssociatedProject(Cache.ProjectId);
 					importSettings.ParatextScrProj = paratextProj.Name;
 					importSettings.StartRef = new BCVRef(bookNum, 0, 0);
@@ -481,7 +481,7 @@ namespace SIL.FieldWorks.IText
 				if (m_stylesheet == null)
 				{
 					m_stylesheet = new FwStyleSheet();
-					m_stylesheet.Init(Cache, Cache.LangProject.TranslatedScriptureOA.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+					m_stylesheet.Init(Cache, Cache.LangProject.TranslatedScriptureOA.Hvo, ScriptureTags.kflidStyles);
 				}
 				return m_stylesheet;
 			}

@@ -7,7 +7,7 @@
 
 using System;
 using System.Diagnostics;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
@@ -156,7 +156,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			get
 			{
-				return IsDefaultParaCharsStyle ? ResourceHelper.DefaultParaCharsStyleName : m_styleInfo.Name;
+				return IsDefaultParaCharsStyle ? StyleUtils.DefaultParaCharsStyleName : m_styleInfo.Name;
 			}
 		}
 

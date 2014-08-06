@@ -12,6 +12,7 @@
 using System;
 using System.Diagnostics;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -253,7 +254,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			var styleSheet = new FwStyleSheet();
 
 			styleSheet.Init(Cache, m_scr.Hvo,
-				ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+				ScriptureTags.kflidStyles);
 
 			Debug.Assert(m_basicView == null, "m_basicView is not null.");
 

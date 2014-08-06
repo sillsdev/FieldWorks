@@ -287,6 +287,9 @@ namespace SIL.FieldWorks
 				ClientServerServices.SetCurrentToDb4OBackend(s_ui, FwDirectoryFinder.FdoDirectories,
 					() => FwDirectoryFinder.ProjectsDirectory == FwDirectoryFinder.ProjectsDirectoryLocalMachine);
 
+				// initialize the TE styles path so that ScrMappingList can load default styles
+				ScrMappingList.TeStylesPath = FwDirectoryFinder.TeStylesPath;
+
 				if (appArgs.ShowHelp)
 				{
 					ShowCommandLineHelp();

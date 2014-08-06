@@ -8,12 +8,11 @@
 using System;
 
 using NUnit.Framework;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Test.TestUtils;
@@ -44,7 +43,7 @@ namespace SIL.FieldWorks.TE
 		protected override void CreateTestData()
 		{
 			m_stylesheet = new FwStyleSheet();
-			m_stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+			m_stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
 
 			m_exodus = AddBookToMockedScripture(2, "Exodus");
 			AddTitleToMockedBook(m_exodus, "Exodus");
