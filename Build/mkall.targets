@@ -364,13 +364,23 @@
 		<Delete Files="$(fwrt)/Downloads/protobuf-net.zip" />
 
 		<Message Text="Downloading ParaTExt DLLs." />
-		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYNnFpV0pnV05hUWc" LocalFilename="$(fwrt)/Downloads/FormattedEditor.dll"/>
-		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYMnVBRUJlbXg3NTg" LocalFilename="$(fwrt)/Downloads/HelpSystem.dll"/>
-		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYNFdPUjR3RU9kVms" LocalFilename="$(fwrt)/Downloads/HtmlEditor.dll"/>
-		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYc1h5Ylc2cEpZR1U" LocalFilename="$(fwrt)/Downloads/NetLoc.dll"/>
 		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYZ0JDa210VzctVE0" LocalFilename="$(fwrt)/Downloads/Paratext.LexicalContracts.dll"/>
-		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYMnIwT3NXN2hZcFk" LocalFilename="$(fwrt)/Downloads/ParatextShared.dll"/>
-		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYUmQ3T292Tkpnd0k" LocalFilename="$(fwrt)/Downloads/Utilities.dll"/>
+		<!-- Windows downloads -->
+		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYdWdUR1JaT1lGRU0" LocalFilename="$(fwrt)/Downloads/geckofx-core-14.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYZVRYa0c4TnRaWkk" LocalFilename="$(fwrt)/Downloads/Geckofx-Winforms-14.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYUE1ueUZnRmFZX00" LocalFilename="$(fwrt)/Downloads/FormattedEditor.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYUG14SXRZM2EyWkE" LocalFilename="$(fwrt)/Downloads/HelpSystem.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYMmQ4MzI1ZXZwcVU" LocalFilename="$(fwrt)/Downloads/HtmlEditor.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYQW1hSWFQejJsOFk" LocalFilename="$(fwrt)/Downloads/NetLoc.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYM2FJLTVYVzFEUzQ" LocalFilename="$(fwrt)/Downloads/ParatextShared.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYdnBJVmd1dEowdVU" LocalFilename="$(fwrt)/Downloads/Utilities.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<!-- Linux downloads -->
+		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYb1MtM2V5aEJER1k" LocalFilename="$(fwrt)/Downloads/FormattedEditor.dll" Condition="'$(OS)'=='Unix'"/>
+		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYYXNfaXRFSDBtVkE" LocalFilename="$(fwrt)/Downloads/HelpSystem.dll" Condition="'$(OS)'=='Unix'"/>
+		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYOGVEbllIRGN1ZDQ" LocalFilename="$(fwrt)/Downloads/HtmlEditor.dll" Condition="'$(OS)'=='Unix'"/>
+		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYZ3BwZ2ZHSFJDemM" LocalFilename="$(fwrt)/Downloads/NetLoc.dll" Condition="'$(OS)'=='Unix'"/>
+		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYTVM0c1hFWkhlanM" LocalFilename="$(fwrt)/Downloads/ParatextShared.dll" Condition="'$(OS)'=='Unix'"/>
+		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYNkFiWEQ4QkEtTzA" LocalFilename="$(fwrt)/Downloads/Utilities.dll" Condition="'$(OS)'=='Unix'"/>
 	</Target>
 
 	<!-- item group for downloads, to allow easy copying -->
