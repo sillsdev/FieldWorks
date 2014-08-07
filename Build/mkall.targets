@@ -429,6 +429,8 @@
 		<DownloadedFiles Include="$(fwrt)/Downloads/Paratext.LexicalContracts.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/ParatextShared.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Utilities.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/geckofx-core-14.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/Geckofx-Winforms-14.dll" Condition="'$(OS)'=='Windows_NT'"/>
 	</ItemGroup>
 
 	<Target Name="CopyDlls" DependsOnTargets="downloadDlls">
