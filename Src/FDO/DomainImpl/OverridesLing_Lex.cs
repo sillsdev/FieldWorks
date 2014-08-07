@@ -19,6 +19,7 @@ using System.Linq;
 using System.Text;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Text.RegularExpressions;
 using System.Xml; // XMLWriter
 
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -6904,6 +6905,65 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				ncCtxt.PreRemovalSideEffects();
 				m_cache.DomainDataByFlid.DeleteObj(ncCtxt.Hvo);
+			}
+
+			foreach (var env in Services.GetInstance<IPhEnvironmentRepository>().AllInstances())
+			{
+				string envText = env.StringRepresentation.Text ?? "";
+				string naturalClassAbbr = Abbreviation.AnalysisDefaultWritingSystem.Text;
+				string standardNcReference = String.Format("[{0}]", naturalClassAbbr);
+				string indexed = String.Format("[{0}^", naturalClassAbbr);
+				string standardOptionalNcReference = "(" + standardNcReference + ")";
+				var analysisWs = m_cache.LangProject.DefaultAnalysisWritingSystem.Handle;
+
+				if (envText.Contains(standardOptionalNcReference))
+				{
+					//remove the natural class (and parentheses) from the environment
+					env.StringRepresentation = m_cache.TsStrFactory.MakeString(envText.Replace(standardOptionalNcReference, ""), analysisWs);
+				}
+				else if (envText.Contains(indexed))
+				{
+					//mark natural classes indexed in the environment "DELETED"
+					string patternForIndexedNaturalClass = @"\[" + Regex.Escape(naturalClassAbbr) + @"\^\d{1,2}\]"; //e.g. [C^1]
+					string newEnv = Regex.Replace(envText, patternForIndexedNaturalClass, "DELETED");
+					env.StringRepresentation = m_cache.TsStrFactory.MakeString(newEnv, analysisWs);
+
+					//mark them "DELETED" in the allomorph as well.
+					//MoAffixAllomorph:Form or MoStemAllomorph:Form which refers to the deleted environment
+
+					var vernWs = m_cache.LangProject.DefaultVernacularWritingSystem.Handle;
+
+					foreach (var refObj in env.ReferringObjects)
+					{
+						if (refObj is MoAffixAllomorph)
+						{
+							var affixAllomorphReferrer = refObj as MoAffixAllomorph;
+							var oldForm = affixAllomorphReferrer.Form.get_String(vernWs).Text;
+							if (oldForm != null)
+							{
+								string newForm = Regex.Replace(oldForm, patternForIndexedNaturalClass, "DELETED");
+								affixAllomorphReferrer.Form.set_String(vernWs,
+									m_cache.TsStrFactory.MakeString(newForm, vernWs));
+							}
+						}
+
+						if (refObj is MoStemAllomorph)
+						{
+							var stemAllomorphReferrer = refObj as MoStemAllomorph;
+							var oldForm = stemAllomorphReferrer.Form.get_String(vernWs).Text;
+							if (oldForm != null)
+							{
+								string newForm = Regex.Replace(oldForm, patternForIndexedNaturalClass, "DELETED");
+								stemAllomorphReferrer.Form.set_String(vernWs,
+									m_cache.TsStrFactory.MakeString(newForm, vernWs));
+							}
+						}
+					}
+				}
+				else if (envText.Contains(standardNcReference))
+				{
+					m_cache.DomainDataByFlid.DeleteObj(env.Hvo);
+				}
 			}
 		}
 	}
