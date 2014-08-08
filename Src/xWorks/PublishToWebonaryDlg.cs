@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Security.Cryptography;
@@ -35,6 +36,13 @@ namespace SIL.FieldWorks.XWorks
 			PopulateConfigurationsList(configurations);
 			PopulatePublicationsList(publications);
 			LoadFromSettings();
+
+			// When a link is clicked, open a web page to the URL.
+			explanationLabel.LinkClicked += (sender, args) =>
+			{
+				using (Process.Start(((LinkLabel) sender).Text.Substring(args.Link.Start, args.Link.Length)))
+				{};
+			};
 
 			// Start with output log area not shown by default
 			// When a user clicks Publish, it is revealed. This is done within the context of having a resizable table of controls, and having
