@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 			var uiLocale = wsMgr.Get(cache.DefaultUserWs).IcuLocale;
 			var projectId = cache.LanguageProject.ShortName;
 
-			var model = new RampArchivingDlgViewModel(Application.ProductName, title, projectId, GetFileDescription);
+			var model = new RampArchivingDlgViewModel(Application.ProductName, title, projectId, /*appSpecificArchivalProcessInfo:*/ string.Empty,	SetFilesToArchive(filesToArchive), GetFileDescription);
 
 			// image files should be labeled as Graphic rather than Photograph (the default).
 			model.ImagesArePhotographs = false;
@@ -103,8 +103,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 			}
 
 			// create the dialog
-			using (var dlg = new ArchivingDlg(model, localizationMgrId, string.Empty, dialogFont,
-				() => GetFilesToArchive(filesToArchive), new FormSettings()))
+			using (var dlg = new ArchivingDlg(model, localizationMgrId, dialogFont, new FormSettings()))
 			using (var reportingAdapter = new PalasoErrorReportingAdapter(dlg, mediator))
 			{
 				ErrorReport.SetErrorReporter(reportingAdapter);
@@ -252,19 +251,10 @@ namespace SIL.FieldWorks.XWorks.Archiving
 		/// to be included in the RAMP package.
 		/// </summary>
 		/// <param name="filesToArchive">The files to include</param>
-		/// <returns>Groups of files to archive and descriptive progress messages</returns>
 		/// ------------------------------------------------------------------------------------
-		private IDictionary<string, Tuple<IEnumerable<string>, string>> GetFilesToArchive(IEnumerable<string> filesToArchive)
+		private static Action<ArchivingDlgViewModel> SetFilesToArchive(IEnumerable<string> filesToArchive)
 		{
-			// Explanation:
-			//   IDictionary<string1, Tuple<IEnumerable<string2>, string3>>
-			//     string1 = group name or key (used for normalizing file names in the zip file)
-			//     string2 = file name (a list of the files in this group)
-			//     string3 = progress message (a progress message for this group)
-			var files = new Dictionary<string, Tuple<IEnumerable<string>, string>>();
-			files[string.Empty] = new Tuple<IEnumerable<string>, string>(filesToArchive,
-				ResourceHelper.GetResourceString("kstidAddingFwProject"));
-			return files;
+			return advModel => advModel.AddFileGroup(string.Empty, filesToArchive, ResourceHelper.GetResourceString("kstidAddingFwProject"));
 		}
 
 		private void GetCreateDateRange(FdoCache cache)

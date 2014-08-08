@@ -1136,6 +1136,28 @@ namespace SIL.FieldWorks.XWorks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Handle click on Archive With RAMP menu item
+		/// </summary>
+		/// <param name="command">Not used</param>
+		/// <returns>true (handled)</returns>
+		/// ------------------------------------------------------------------------------------
+		public bool OnArchiveWithRamp(object command)
+		{
+			CheckDisposed();
+
+			// show the RAMP dialog
+			var filesToArchive = m_app.FwManager.ArchiveProjectWithRamp(m_app, this);
+
+			// if there are no files to archive, return now.
+			if((filesToArchive == null) || (filesToArchive.Count == 0))
+				return true;
+
+			ReapRamp ramp = new ReapRamp();
+			return ramp.ArchiveNow(this, MainMenuStrip.Font, Icon, filesToArchive, m_mediator, m_app, Cache);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Update Archive With RAMP menu item
 		/// </summary>
 		/// <param name="args">the toolbar/menu item properties</param>
@@ -1165,29 +1187,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			display.Enabled = ReapRamp.Installed;
 			return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Handle click on Archive With RAMP menu item
-		/// </summary>
-		/// <param name="command">Not used</param>
-		/// <returns>true (handled)</returns>
-		/// ------------------------------------------------------------------------------------
-		public bool OnArchiveWithRamp(object command)
-		{
-			CheckDisposed();
-
-			// prompt the user to select or create a FieldWorks backup
-			var filesToArchive = m_app.FwManager.ArchiveProjectWithRamp(m_app, this);
-
-			// if there are no files to archive, return now.
-			if((filesToArchive == null) || (filesToArchive.Count == 0))
-				return true;
-
-			// show the RAMP dialog
-			ReapRamp ramp = new ReapRamp();
-			return ramp.ArchiveNow(this, MainMenuStrip.Font, Icon, filesToArchive, m_mediator, m_app, Cache);
 		}
 
 		/// ------------------------------------------------------------------------------------
