@@ -649,15 +649,7 @@ namespace SIL.FieldWorks.FdoUi
 			return null;
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="owner"></param>
-		/// <param name="tssWf"></param>
-		/// <param name="helpProvider"></param>
-		/// <param name="helpFileKey">string key to get the help file name</param>
-		/// ------------------------------------------------------------------------------------
+		/// <summary/>
 		public void ShowSummaryDialog(IWin32Window owner, ITsString tssWf,
 			IHelpTopicProvider helpProvider, string helpFileKey, IVwStylesheet styleSheet)
 		{
