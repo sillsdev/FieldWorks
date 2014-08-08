@@ -136,7 +136,7 @@ Main template
 									<xsl:when test="$componentLexEntry">
 										<xsl:for-each select="$componentLexEntry/MorphoSyntaxAnalysis">
 											<xsl:variable name="stemMsa" select="key('StemMsaID',@dst)"/>
-											<xsl:call-template name="OutputIrregularlyInflectedFormEntry">
+											<xsl:call-template name="OutputVariantEntry">
 												<xsl:with-param name="lexEntryRef" select="$lexEntryRef"/>
 												<xsl:with-param name="lexEntry" select="$lexEntry"/>
 												<xsl:with-param name="componentLexEntry" select="$componentLexEntry"/>
@@ -149,7 +149,7 @@ Main template
 										<!-- the component must refer to a sense -->
 										<xsl:variable name="componentSense" select="key('LexSenseID',@dst)"/>
 										<xsl:variable name="stemMsa" select="key('StemMsaID',$componentSense/@Msa)"/>
-										<xsl:call-template name="OutputIrregularlyInflectedFormEntry">
+										<xsl:call-template name="OutputVariantEntry">
 											<xsl:with-param name="lexEntryRef" select="$lexEntryRef"/>
 											<xsl:with-param name="lexEntry" select="$lexEntry"/>
 											<xsl:with-param name="sVariantOfGloss" select="$componentSense/Gloss"/>
@@ -1994,24 +1994,24 @@ InflClass
 	</xsl:template>
 	<!--
 		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-		OutputIrregularlyInflectedFormEntry
+		OutputVariantEntry
 		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	-->
-	<xsl:template name="OutputIrregularlyInflectedFormEntry">
+	<xsl:template name="OutputVariantEntry">
 		<xsl:param name="lexEntryRef"/>
 		<xsl:param name="lexEntry"/>
 		<xsl:param name="sVariantOfGloss"/>
 		<xsl:param name="stemMsa"/>
-		<xsl:if test="$lexEntryRef/LexEntryInflType">
+		<xsl:if test="$lexEntryRef/LexEntryType">
 			<xsl:text>
 
 \lx </xsl:text>
-			<xsl:call-template name="IdOfIrregularlyInflectedFormEntry">
+			<xsl:call-template name="IdOfVariantEntry">
 				<xsl:with-param name="lexEntry" select="$lexEntry"/>
 				<xsl:with-param name="lexEntryRef" select="$lexEntryRef"/>
 			</xsl:call-template>
 			<xsl:variable name="gloss">
-				<xsl:call-template name="GlossOfIrregularlyInflectedForm">
+				<xsl:call-template name="GlossOfVariant">
 					<xsl:with-param name="lexEntryRef" select="$lexEntryRef"/>
 					<xsl:with-param name="sVariantOfGloss" select="$sVariantOfGloss"/>
 				</xsl:call-template>
@@ -2030,18 +2030,20 @@ InflClass
 			<xsl:call-template name="DoStemMsaStemNamesAndAllos">
 				<xsl:with-param name="allos" select="$allos"/>
 			</xsl:call-template>
-			<xsl:for-each select="$lexEntryRef/LexEntryInflType">
-				<xsl:variable name="lexEnryInflType" select="key('LexEntryInflTypeID',@dst)"/>
-				<xsl:if test="$lexEnryInflType/InflectionFeatures/FsFeatStruc">
-					<xsl:text>
+			<xsl:for-each select="$lexEntryRef/LexEntryType">
+				<xsl:variable name="lexEntryInflType" select="key('LexEntryInflTypeID',@dst)"/>
+				<xsl:if test="$lexEntryInflType">
+					<xsl:if test="$lexEntryInflType/InflectionFeatures/FsFeatStruc">
+						<xsl:text>
 \fd </xsl:text>
-					<xsl:value-of select="$sMSFS"/>
-					<xsl:value-of select="$lexEnryInflType/InflectionFeatures/FsFeatStruc/@Id"/>
-				</xsl:if>
-				<xsl:text>
+						<xsl:value-of select="$sMSFS"/>
+						<xsl:value-of select="$lexEntryInflType/InflectionFeatures/FsFeatStruc/@Id"/>
+					</xsl:if>
+					<xsl:text>
 \mp </xsl:text>
-				<xsl:value-of select="$sIrregularlyInflectedForm"/>
-				<xsl:value-of select="$lexEnryInflType/@Id"/>
+					<xsl:value-of select="$sIrregularlyInflectedForm"/>
+					<xsl:value-of select="$lexEntryInflType/@Id"/>
+				</xsl:if>
 			</xsl:for-each>
 			<xsl:text>&#xa;</xsl:text>
 		</xsl:if>

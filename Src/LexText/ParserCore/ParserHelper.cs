@@ -49,9 +49,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			//       input for the parser in order to still get the Word Grammar to have something in any
 			//       required slots in affix templates.  The parser filer can ignore these.
 			// 3. <MSI DbRef="y"... and y is an hvo for a LexEntry.
-			//       The LexEntry is an irregularly inflected form for the first set of LexEntryRefs.
+			//       The LexEntry is a variant form for the first set of LexEntryRefs.
 			// 4. <MSI DbRef="y"... and y is an hvo for a LexEntry followed by a period and an index digit.
-			//       The LexEntry is an irregularly inflected form and the (non-zero) index indicates
+			//       The LexEntry is a variant form and the (non-zero) index indicates
 			//       which set of LexEntryRefs it is for.
 			ICmObject objForm;
 			if (!cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(int.Parse(formHvo), out objForm))
@@ -90,7 +90,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				{
 					ILexEntryRef lexEntryRef = msaAsLexEntry.EntryRefsOS[msaTuple.Item2];
 					ILexSense sense = MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
-					var inflType = (ILexEntryInflType)lexEntryRef.VariantEntryTypesRS[0];
+					var inflType = lexEntryRef.VariantEntryTypesRS[0] as ILexEntryInflType;
 					morph = new ParseMorph(form, sense.MorphoSyntaxAnalysisRA, inflType);
 					return true;
 				}

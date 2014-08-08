@@ -878,13 +878,13 @@
 		<LexemeForm dst="9216" MorphType="9404" />
 		<LexEntryRef>
 		  <ComponentLexeme dst="2667" />
-		  <LexEntryInflType dst="5373" />
-		  <LexEntryInflType dst="6652" />
+		  <LexEntryType dst="5373" />
+		  <LexEntryType dst="6652" />
 		</LexEntryRef>
 		<LexEntryRef>
 		  <ComponentLexeme dst="902" />
-		  <LexEntryInflType dst="5373" />
-		  <LexEntryInflType dst="6652" />
+		  <LexEntryType dst="5373" />
+		  <LexEntryType dst="6652" />
 		</LexEntryRef>
 	  </LexEntry>
 	  <LexEntry Id="4436">
@@ -954,7 +954,7 @@
 		<LexemeForm dst="1299" MorphType="9404" />
 		<LexEntryRef>
 		  <ComponentLexeme dst="2667" />
-		  <LexEntryInflType dst="10063" />
+		  <LexEntryType dst="10063" />
 		</LexEntryRef>
 	  </LexEntry>
 	  <LexEntry Id="8662">
@@ -994,7 +994,7 @@
 		<LexemeForm dst="552" MorphType="9404" />
 		<LexEntryRef>
 		  <ComponentLexeme dst="2276" />
-		  <LexEntryInflType dst="5373" />
+		  <LexEntryType dst="5373" />
 		</LexEntryRef>
 	  </LexEntry>
 	  <LexEntry Id="10313">
