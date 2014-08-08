@@ -166,7 +166,10 @@ namespace SIL.CoreImpl
 				}
 				// Copy to the hunspell directory, but do not overwrite.
 				// Currently these exceptions are only potentially useful for analysis language dictionaries - Jul 2014
-				File.Copy(file, destFilePath, false);
+				if(!File.Exists(destFilePath))
+				{
+					File.Copy(file, destFilePath);
+				}
 			}
 		}
 
