@@ -1811,7 +1811,7 @@ namespace SIL.FieldWorks.XWorks
 			var reversals = m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances().Select(item => item.Name.BestAnalysisAlternative.Text);
 			var publications =
 				m_cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p.Name.BestAnalysisAlternative.Text).ToList();
-			using(var dialog = new PublishToWebonaryDlg(reversals, new List<string>(), publications))
+			using(var dialog = new PublishToWebonaryDlg(reversals, new List<string>(), publications, m_mediator.HelpTopicProvider))
 			{
 				dialog.ShowDialog();
 			}

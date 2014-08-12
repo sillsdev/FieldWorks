@@ -12,6 +12,8 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
 using SIL.CoreImpl.Properties;
+using SIL.FieldWorks.Common.FwUtils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -20,6 +22,8 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public partial class PublishToWebonaryDlg : Form
 	{
+		private IHelpTopicProvider m_helpTopicProvider;
+
 		// This value gets used by the microsoft encryption library to increase the complexity of the encryption
 		private const string EntropyValue = @"61:3nj 42 ebg68";
 
@@ -29,13 +33,15 @@ namespace SIL.FieldWorks.XWorks
 			LoadFromSettings();
 		}
 
-		public PublishToWebonaryDlg(IEnumerable<string> reversals, IEnumerable<string> configurations, IEnumerable<string> publications)
+		public PublishToWebonaryDlg(IEnumerable<string> reversals, IEnumerable<string> configurations, IEnumerable<string> publications, IHelpTopicProvider helpTopicProvider)
 		{
 			InitializeComponent();
 			PopulateReversalsCheckboxList(reversals);
 			PopulateConfigurationsList(configurations);
 			PopulatePublicationsList(publications);
 			LoadFromSettings();
+
+			m_helpTopicProvider = helpTopicProvider;
 
 			// When a link is clicked, open a web page to the URL.
 			explanationLabel.LinkClicked += (sender, args) =>
@@ -159,6 +165,11 @@ namespace SIL.FieldWorks.XWorks
 			var fudge = this.Height - this.tableLayoutPanel.Height;
 			var minimumFormHeightToShowLog = allButTheLogRowHeight + this.outputLogTextbox.MinimumSize.Height + fudge;
 			this.MinimumSize = new Size(this.MinimumSize.Width, minimumFormHeightToShowLog);
+		}
+
+		private void helpButton_Click(object sender, EventArgs e)
+		{
+			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtpPublishToWebonary");
 		}
 	}
 }

@@ -1218,7 +1218,7 @@ namespace SIL.FieldWorks.XWorks
 			var publications =
 				cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p.Name.BestAnalysisAlternative.Text).ToList();
 			// show dialog
-			using (var dialog = new PublishToWebonaryDlg(reversals, new List<string>(), publications))
+			using (var dialog = new PublishToWebonaryDlg(reversals, new List<string>(), publications, Mediator.HelpTopicProvider))
 			{
 				dialog.ShowDialog();
 			}

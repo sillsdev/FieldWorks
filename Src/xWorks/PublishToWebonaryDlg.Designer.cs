@@ -114,6 +114,7 @@ namespace SIL.FieldWorks.XWorks
 			resources.ApplyResources(this.helpButton, "helpButton");
 			this.helpButton.Name = "helpButton";
 			this.helpButton.UseVisualStyleBackColor = true;
+			this.helpButton.Click += new System.EventHandler(this.helpButton_Click);
 			// 
 			// webonarySettingsGroupbox
 			// 
