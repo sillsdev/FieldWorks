@@ -2674,7 +2674,7 @@ namespace SIL.FieldWorks
 					// right away if we don't work with the process object. It might be better
 					// though to change the signature of OpenProjectWithNewProcess to return
 					// a boolean (true iff the link was successfully handled).
-					using (OpenProjectWithNewProcess(linkedProject, link.AppAbbrev, link.ToString()))
+					using (OpenProjectWithNewProcess(linkedProject, link.AppAbbrev, "-" + FwLinkArgs.kLink, link.ToString()))
 					{
 					}
 				}
