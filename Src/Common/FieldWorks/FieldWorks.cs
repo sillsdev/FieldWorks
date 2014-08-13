@@ -2663,6 +2663,8 @@ namespace SIL.FieldWorks
 			{
 				Debug.Assert(s_projectId != null, "We shouldn't try to handle a link request until an application is started");
 				ProjectId linkedProject = new ProjectId(link.DatabaseType, link.Database, link.Server);
+				if (IsSharedXmlBackendNeeded(linkedProject))
+					linkedProject.Type = FDOBackendProviderType.kSharedXML;
 				if (linkedProject.Equals(s_projectId))
 					FollowLink(link);
 				else if (!TryFindLinkHandler(link))
