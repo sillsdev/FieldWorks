@@ -2,6 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using SIL.FieldWorks.Common.Widgets;
+
 namespace SIL.FieldWorks.XWorks
 {
 	partial class PublishToWebonaryDlg
@@ -43,8 +45,7 @@ namespace SIL.FieldWorks.XWorks
 			this.helpButton = new System.Windows.Forms.Button();
 			this.webonarySettingsGroupbox = new System.Windows.Forms.GroupBox();
 			this.settingsForWebonaryTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
-			this.showPasswordCheckBox = new System.Windows.Forms.CheckBox();
-			this.webonaryPasswordTextbox = new System.Windows.Forms.TextBox();
+			this.webonaryPasswordTextbox = new SIL.FieldWorks.Common.Widgets.PasswordBox();
 			this.webonaryUsernameTextbox = new System.Windows.Forms.TextBox();
 			this.webonarySiteNameTextbox = new System.Windows.Forms.TextBox();
 			this.passwordLabel = new System.Windows.Forms.Label();
@@ -127,7 +128,6 @@ namespace SIL.FieldWorks.XWorks
 			// settingsForWebonaryTableLayoutPanel
 			// 
 			resources.ApplyResources(this.settingsForWebonaryTableLayoutPanel, "settingsForWebonaryTableLayoutPanel");
-			this.settingsForWebonaryTableLayoutPanel.Controls.Add(this.showPasswordCheckBox, 2, 2);
 			this.settingsForWebonaryTableLayoutPanel.Controls.Add(this.webonaryPasswordTextbox, 1, 2);
 			this.settingsForWebonaryTableLayoutPanel.Controls.Add(this.webonaryUsernameTextbox, 1, 1);
 			this.settingsForWebonaryTableLayoutPanel.Controls.Add(this.webonarySiteNameTextbox, 1, 0);
@@ -136,13 +136,6 @@ namespace SIL.FieldWorks.XWorks
 			this.settingsForWebonaryTableLayoutPanel.Controls.Add(this.siteNameLabel, 0, 0);
 			this.settingsForWebonaryTableLayoutPanel.Controls.Add(this.webonaryDomainLabel, 2, 0);
 			this.settingsForWebonaryTableLayoutPanel.Name = "settingsForWebonaryTableLayoutPanel";
-			// 
-			// showPasswordCheckBox
-			// 
-			resources.ApplyResources(this.showPasswordCheckBox, "showPasswordCheckBox");
-			this.showPasswordCheckBox.Name = "showPasswordCheckBox";
-			this.showPasswordCheckBox.UseVisualStyleBackColor = true;
-			this.showPasswordCheckBox.CheckedChanged += new System.EventHandler(this.showPasswordCheckBox_CheckedChanged);
 			// 
 			// webonaryPasswordTextbox
 			// 
@@ -272,7 +265,6 @@ namespace SIL.FieldWorks.XWorks
 		private System.Windows.Forms.LinkLabel explanationLabel;
 		private System.Windows.Forms.GroupBox webonarySettingsGroupbox;
 		private System.Windows.Forms.TableLayoutPanel settingsForWebonaryTableLayoutPanel;
-		private System.Windows.Forms.TextBox webonaryPasswordTextbox;
 		private System.Windows.Forms.TextBox webonaryUsernameTextbox;
 		private System.Windows.Forms.TextBox webonarySiteNameTextbox;
 		private System.Windows.Forms.Label passwordLabel;
@@ -291,8 +283,8 @@ namespace SIL.FieldWorks.XWorks
 		private System.Windows.Forms.Button publishButton;
 		private System.Windows.Forms.Button cancelButton;
 		private System.Windows.Forms.Button helpButton;
-		private System.Windows.Forms.CheckBox showPasswordCheckBox;
 		private System.Windows.Forms.Label webonaryDomainLabel;
 		private System.Windows.Forms.TextBox outputLogTextbox;
+		private PasswordBox webonaryPasswordTextbox;
 	}
 }

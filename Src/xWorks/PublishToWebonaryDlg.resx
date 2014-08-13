@@ -285,47 +285,11 @@
   <data name="settingsForWebonaryTableLayoutPanel.ColumnCount" type="System.Int32, mscorlib">
     <value>3</value>
   </data>
-  <data name="showPasswordCheckBox.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="showPasswordCheckBox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="showPasswordCheckBox.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="showPasswordCheckBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>272, 55</value>
-  </data>
-  <data name="showPasswordCheckBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>105, 23</value>
-  </data>
-  <data name="showPasswordCheckBox.TabIndex" type="System.Int32, mscorlib">
-    <value>20</value>
-  </data>
-  <data name="showPasswordCheckBox.Text" xml:space="preserve">
-    <value>Show password</value>
-  </data>
-  <data name="&gt;&gt;showPasswordCheckBox.Name" xml:space="preserve">
-    <value>showPasswordCheckBox</value>
-  </data>
-  <data name="&gt;&gt;showPasswordCheckBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;showPasswordCheckBox.Parent" xml:space="preserve">
-    <value>settingsForWebonaryTableLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;showPasswordCheckBox.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
   <data name="webonaryPasswordTextbox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
   <data name="webonaryPasswordTextbox.Location" type="System.Drawing.Point, System.Drawing">
     <value>86, 55</value>
-  </data>
-  <data name="webonaryPasswordTextbox.PasswordChar" type="System.Char, mscorlib" xml:space="preserve">
-    <value>*</value>
   </data>
   <data name="webonaryPasswordTextbox.Size" type="System.Drawing.Size, System.Drawing">
     <value>180, 20</value>
@@ -343,13 +307,13 @@
     <value>webonaryPasswordTextbox</value>
   </data>
   <data name="&gt;&gt;webonaryPasswordTextbox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>SIL.FieldWorks.Common.Widgets.PasswordBox, Widgets, Version=8.0.8.26053, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;webonaryPasswordTextbox.Parent" xml:space="preserve">
     <value>settingsForWebonaryTableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;webonaryPasswordTextbox.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>0</value>
   </data>
   <data name="webonaryUsernameTextbox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -376,7 +340,7 @@
     <value>settingsForWebonaryTableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;webonaryUsernameTextbox.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>1</value>
   </data>
   <data name="webonarySiteNameTextbox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -406,7 +370,7 @@
     <value>settingsForWebonaryTableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;webonarySiteNameTextbox.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>2</value>
   </data>
   <data name="passwordLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -442,7 +406,7 @@
     <value>settingsForWebonaryTableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;passwordLabel.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>3</value>
   </data>
   <data name="usernameLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -478,7 +442,7 @@
     <value>settingsForWebonaryTableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;usernameLabel.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>4</value>
   </data>
   <data name="siteNameLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -517,7 +481,7 @@
     <value>settingsForWebonaryTableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;siteNameLabel.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>5</value>
   </data>
   <data name="webonaryDomainLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -556,7 +520,7 @@
     <value>settingsForWebonaryTableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;webonaryDomainLabel.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>6</value>
   </data>
   <data name="settingsForWebonaryTableLayoutPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -586,7 +550,7 @@
     <value>0</value>
   </data>
   <data name="settingsForWebonaryTableLayoutPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="showPasswordCheckBox" Row="2" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="webonaryPasswordTextbox" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="webonaryUsernameTextbox" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="webonarySiteNameTextbox" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="passwordLabel" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="usernameLabel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="siteNameLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="webonaryDomainLabel" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,22,Percent,49,Percent,29" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="webonaryPasswordTextbox" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="webonaryUsernameTextbox" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="webonarySiteNameTextbox" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="passwordLabel" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="usernameLabel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="siteNameLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="webonaryDomainLabel" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,22,Percent,49,Percent,29" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="webonarySettingsGroupbox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>

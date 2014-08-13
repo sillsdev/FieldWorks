@@ -142,14 +142,6 @@ namespace SIL.FieldWorks.XWorks
 			return decryptMe;
 		}
 
-		private void showPasswordCheckBox_CheckedChanged(object sender, EventArgs e)
-		{
-			if (showPasswordCheckBox.Checked)
-				webonaryPasswordTextbox.PasswordChar = '\0';
-			else
-				webonaryPasswordTextbox.PasswordChar = '*';
-		}
-
 		private void publishButton_Click(object sender, EventArgs e)
 		{
 			// TODO: Enable when doesn't crash: SaveToSettings();
