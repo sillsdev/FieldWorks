@@ -72,7 +72,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return new IxCoreColleague[] { this };
 		}
 
-		public void Init(Mediator mediator, System.Xml.XmlNode configurationParameters)
+		public void Init(Mediator mediator, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
@@ -504,6 +504,18 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return true; // We dealt with it.
 		}
 
+		public bool OnWarnUserAboutFailedLiftImportIfNecessary(object param)
+		{
+			var liftFolder = GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder);
+			if(LiftImportFailureServices.GetFailureStatus(liftFolder) != ImportFailureStatus.NoImportNeeded)
+			{
+				MessageBox.Show(LexEdStrings.LiftSRFailureDetectedOnStartupMessage,
+									 LexEdStrings.LiftSRFailureDetectedOnStartupTitle,
+									 MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			}
+			return true;
+		}
+
 		private string GetFullProjectFileName()
 		{
 			var currentExtension = IsDb4oProject
@@ -799,7 +811,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// Reregisters an import failure, if needed, otherwise clears the token.
 		/// </summary>
 		/// <returns>'true' if the import failure continues, otherwise 'false'.</returns>
-		private bool RepeatPriorFailedImportIfNeeded()
+		internal bool RepeatPriorFailedImportIfNeeded()
 		{
 			var projectFolder = Cache.ProjectId.ProjectFolder;
 			var liftProjectDir = GetLiftRepositoryFolderFromFwProjectFolder(projectFolder);
@@ -814,9 +826,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			switch (previousImportStatus)
 			{
 				case ImportFailureStatus.BasicImportNeeded:
-					return ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepBoth);
+					return !ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepBoth);
 				case ImportFailureStatus.StandardImportNeeded:
-					return ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepOnlyNew);
+					return !ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepOnlyNew);
 				case ImportFailureStatus.NoImportNeeded:
 					// Nothing to do. :-)
 					break;
@@ -917,7 +929,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return true;
 		}
 
-		private static string GetLiftRepositoryFolderFromFwProjectFolder(string projectFolder)
+		internal static string GetLiftRepositoryFolderFromFwProjectFolder(string projectFolder)
 		{
 			var otherDir = Path.Combine(projectFolder, FdoFileHelper.OtherRepositories);
 			if (Directory.Exists(otherDir))
@@ -1021,11 +1033,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					{
 						if(mergeStyle == FlexLiftMerger.MergeStyle.MsKeepBoth)
 						{
-							LiftImportFailureServices.RegisterBasicImportFailure(_parentForm, Path.GetDirectoryName(_liftPathname));
+							LiftImportFailureServices.RegisterBasicImportFailure(Path.GetDirectoryName(_liftPathname));
 						}
 						else
 						{
-							LiftImportFailureServices.RegisterStandardImportFailure(_parentForm, Path.GetDirectoryName(_liftPathname));
+							LiftImportFailureServices.RegisterStandardImportFailure(Path.GetDirectoryName(_liftPathname));
 						}
 						progressDlg.Title = ResourceHelper.GetResourceString("kstidImportLiftlexicon");
 						var logFile = (string)progressDlg.RunTask(true, ImportLiftLexicon, new object[] { _liftPathname, mergeStyle });
@@ -1043,7 +1055,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						// LT-12340 however says we must report it somehow.
 						var sMsg = String.Format(LexEdStrings.kProblemImportWhileMerging, _liftPathname, error.InnerException.Message);
 
-						MessageBox.Show(sMsg, LexEdStrings.kProblemMerging, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						MessageBoxUtils.Show(sMsg, LexEdStrings.kProblemMerging, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 						return false;
 					}
 					finally

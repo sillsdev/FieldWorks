@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Windows.Forms;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -20,7 +21,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return fileContents.Contains(LexEdStrings.kBasicFailureFileContents) ? ImportFailureStatus.BasicImportNeeded : ImportFailureStatus.StandardImportNeeded;
 		}
 
-		internal static void RegisterStandardImportFailure(Form parentWindow, string baseLiftFolderDirectoryName)
+		internal static void RegisterStandardImportFailure(string baseLiftFolderDirectoryName)
 		{
 			// The results (of the FLEx import failure) will be that Lift Bridge will store the fact of the import failure,
 			// and then protect the repo from damage by another S/R by Flex
@@ -43,17 +44,17 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				var contents = File.ReadAllText(noticeFilePath);
 				if(contents.Contains(LexEdStrings.kStandardFailureFileContents))
 				{
-					MessageBox.Show(parentWindow, LexEdStrings.kFlexStandardImportFailureMessage,
+					MessageBoxUtils.Show(parentWindow, LexEdStrings.kFlexStandardImportFailureMessage,
 										 LexEdStrings.kFlexImportFailureTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				}
 				else
 				{
-					MessageBox.Show(parentWindow, LexEdStrings.kBasicImportFailureMessage, LexEdStrings.kFlexImportFailureTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					MessageBoxUtils.Show(parentWindow, LexEdStrings.kBasicImportFailureMessage, LexEdStrings.kFlexImportFailureTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				}
 			}
 		}
 
-		internal static void RegisterBasicImportFailure(Form parentWindow, string baseLiftFolderDirectoryName)
+		internal static void RegisterBasicImportFailure(string baseLiftFolderDirectoryName)
 		{
 			// The results (of the FLEx inital import failure) will be that Lift Bridge will store the fact of the import failure,
 			// and then protect the repo from damage by another S/R by Flex

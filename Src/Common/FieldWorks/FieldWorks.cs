@@ -438,6 +438,8 @@ namespace SIL.FieldWorks
 			// FieldWorks processes that are waiting on us be able to continue.
 			s_projectId = projectId;
 
+			WarnUserAboutFailedLiftImportIfNecessary(GetOrCreateApplication(appArgs));
+
 			if (s_noUserInterface)
 			{
 				// We should have a main window by now, so the help button on the dialog
@@ -446,6 +448,15 @@ namespace SIL.FieldWorks
 			}
 
 			return true;
+		}
+
+		private static void WarnUserAboutFailedLiftImportIfNecessary(FwApp fwApp)
+		{
+			var mainWindow = fwApp.ActiveMainWindow as IFwMainWnd;
+			if(mainWindow != null)
+			{
+				mainWindow.Mediator.SendMessage("WarnUserAboutFailedLiftImportIfNecessary", null);
+			}
 		}
 
 		private static bool IsSharedXmlBackendNeeded(ProjectId projectId)

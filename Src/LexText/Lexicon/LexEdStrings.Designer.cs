@@ -1478,5 +1478,23 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksWhenToSetPartOfSpeechGUIDsToGold", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your last Send/Receive Lexicon did not complete successfully. Any work you do before a successful S/R Lexicon will be lost. You should immediately retry S/R Lexicon. If it completes successfully, you can continue your work. If the S/R Lexicon continues to fail, contact flex_errors@sil.org for help before doing further work..
+        /// </summary>
+        internal static string LiftSRFailureDetectedOnStartupMessage {
+            get {
+                return ResourceManager.GetString("LiftSRFailureDetectedOnStartupMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed LIFT S/R Detected.
+        /// </summary>
+        internal static string LiftSRFailureDetectedOnStartupTitle {
+            get {
+                return ResourceManager.GetString("LiftSRFailureDetectedOnStartupTitle", resourceCulture);
+            }
+        }
     }
 }
