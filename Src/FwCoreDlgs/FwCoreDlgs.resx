@@ -487,7 +487,7 @@ It cannot be used in Bulk Edit operations.</value>
     <comment>message box header</comment>
   </data>
   <data name="ksRemovingEnWsMsg" xml:space="preserve">
-    <value>By removing the English writing system, some of your topics list items, may show "***" instead of their normal contents. For this reason, it is strongly recommended that you keep the English writing system active in your project. However, if you choose to remove English now and encounter problems viewing your topics list items, you may add English back at any time using the Add button.
+    <value>By removing the English writing system, some of your List items, may show "***" instead of their normal contents. For this reason, it is strongly recommended that you keep the English writing system active in your project. However, if you choose to remove English now and encounter problems viewing your List items, you may add English back at any time using the Add button.
 
 Do you want to remove English now?</value>
   </data>

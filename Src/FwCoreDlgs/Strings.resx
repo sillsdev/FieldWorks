@@ -121,13 +121,13 @@
     <value>Not advisable when other applications are using this project</value>
   </data>
   <data name="ksNotAdvisableOthersConnectedCaption" xml:space="preserve">
-    <value>Not advisable when other users connected</value>
+    <value>Not advisable when other users are connected</value>
   </data>
   <data name="ksOtherAppsUsingProjectCaption" xml:space="preserve">
-    <value>Take care - other applications are using this project</value>
+    <value>Take care: other applications are using this project.</value>
   </data>
   <data name="ksOthersConnectedCaption" xml:space="preserve">
-    <value>Take care - other users connected</value>
+    <value>Take care: other users are connected.</value>
   </data>
   <data name="ksWarnOnConfirmingSingleAppChanges" xml:space="preserve">
     <value>Saving changes in this dialog while this project is open in other applications may cause those applications to crash or malfunction.
