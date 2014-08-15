@@ -11,6 +11,7 @@ using System.Xml;
 using NUnit.Framework;
 using Palaso.TestUtilities;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
@@ -907,6 +908,28 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GetPropertyTypeForConfigurationNode_PictureFileReturnsCmPictureType()
+		{
+			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			var pictureFileNode = new ConfigurableDictionaryNode { FieldDescription = "PictureFileRA" };
+			var memberNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Picture",
+				Children = new List<ConfigurableDictionaryNode> { pictureFileNode }
+			};
+			var rootNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SIL.FieldWorks.XWorks.TestPictureClass",
+				Children = new List<ConfigurableDictionaryNode> { memberNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { rootNode });
+			var result = ConfiguredXHTMLGenerator.PropertyType.InvalidProperty;
+			// SUT
+			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(pictureFileNode));
+			Assert.That(result, Is.EqualTo(ConfiguredXHTMLGenerator.PropertyType.CmPictureType));
+		}
+
+		[Test]
 		public void GenerateEntryHtmlWithStyles_NullEntryThrowsArgumentNull()
 		{
 			Assert.Throws<ArgumentNullException>(() => ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(null, new DictionaryConfigurationModel(), null, null));
@@ -1104,7 +1127,15 @@ namespace SIL.FieldWorks.XWorks
 					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true }
 				}
 			};
-			var pictureNode = new ConfigurableDictionaryNode { FieldDescription = "PicturesOfSenses", IsEnabled = true };
+			var captionNode = new ConfigurableDictionaryNode { FieldDescription = "Caption", IsEnabled = true, DictionaryNodeOptions = wsOpts };
+			var thumbNailNode = new ConfigurableDictionaryNode { FieldDescription = "PictureFileRA", CSSClassNameOverride = "photo", IsEnabled = true };
+			var pictureNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "PicturesOfSenses",
+				IsEnabled = true,
+				CSSClassNameOverride = "Pictures",
+				Children = new List<ConfigurableDictionaryNode> { thumbNailNode, captionNode }
+			};
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Senses",
@@ -1136,9 +1167,70 @@ namespace SIL.FieldWorks.XWorks
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, XHTMLWriter, Cache));
 				XHTMLWriter.Flush();
-				const string oneSenseWithGlossOfGloss = "/div[@class='lexentry']/span[@class='picturesofsenses']";
+				const string oneSenseWithPicture = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img[@class='photo' and @id]";
+				const string oneSenseWithPictureCaption = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/span[@class='caption']";
 				//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
-				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithGlossOfGloss, 1);
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithPicture, 1);
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithPictureCaption, 1);
+			}
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_PictureWithNonUnicodePathLinksCorrectly()
+		{
+			var wsOpts = new DictionaryNodeWritingSystemOptions
+			{
+				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				{
+					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true }
+				}
+			};
+			var captionNode = new ConfigurableDictionaryNode { FieldDescription = "Caption", IsEnabled = true, DictionaryNodeOptions = wsOpts };
+			var thumbNailNode = new ConfigurableDictionaryNode { FieldDescription = "PictureFileRA", CSSClassNameOverride = "picture", IsEnabled = true };
+			var pictureNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "PicturesOfSenses",
+				IsEnabled = true,
+				CSSClassNameOverride = "Pictures",
+				Children = new List<ConfigurableDictionaryNode> { thumbNailNode, captionNode }
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+				Label = "Senses",
+				IsEnabled = true,
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { sensesNode, pictureNode },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			var testEntry = CreateInterestingLexEntry();
+			var sense = testEntry.SensesOS[0];
+			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
+			sense.PicturesOS.Add(sensePic);
+			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			sensePic.Caption.set_String(wsEn, Cache.TsStrFactory.MakeString("caption", wsEn));
+			var pic = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+			Cache.LangProject.MediaOC.Add(folder);
+			folder.FilesOC.Add(pic);
+			const string pathWithUtf8Char = "cave\u00E7on";
+			var decomposedPath = Icu.Normalize(pathWithUtf8Char, Icu.UNormalizationMode.UNORM_NFD);
+			var composedPath = Icu.Normalize(pathWithUtf8Char, Icu.UNormalizationMode.UNORM_NFC);
+			// Set the internal path to decomposed (which is what FLEx does when it loads data)
+			pic.InternalPath = decomposedPath;
+			sensePic.PictureFileRA = pic;
+
+			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				//SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, XHTMLWriter, Cache));
+				XHTMLWriter.Flush();
+				var pictureWithComposedPath = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img[contains(@src, '" + composedPath + "')]";
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(pictureWithComposedPath, 1);
 			}
 		}
 
@@ -1205,6 +1297,11 @@ namespace SIL.FieldWorks.XWorks
 	interface ITestGrandParent
 	{
 		Stack<TestRootClass> TestCollection { get; }
+	}
+
+	class TestPictureClass
+	{
+		public ICmPicture Picture { get; set; }
 	}
 	#endregion
 }

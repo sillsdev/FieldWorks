@@ -251,6 +251,11 @@ namespace SIL.FieldWorks.XWorks
 					GenerateXHTMLForICmObject(propertyValue as ICmObject, config, writer, cache);
 					return;
 				}
+				case (PropertyType.CmPictureType):
+				{
+					GenerateXHTMLForPicture(propertyValue as ICmFile, config, writer, cache);
+					return;
+				}
 				default:
 				{
 					GenerateXHTMLForValue(field, propertyValue, config, writer, cache);
@@ -270,11 +275,37 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		private static void GenerateXHTMLForPicture(ICmFile pictureFile, ConfigurableDictionaryNode config, XmlWriter writer, FdoCache cache)
+		{
+			writer.WriteStartElement("img");
+			writer.WriteAttributeString("class", CssGenerator.GetClassAttributeForConfig(config));
+			writer.WriteAttributeString("src", GenerateSrcAttributeFromFilePath(pictureFile));
+			writer.WriteAttributeString("id", "hvo" + pictureFile.Hvo);
+			writer.WriteEndElement();
+		}
+
+		/// <summary>
+		/// This method will generate a src attribute which will point to the given file from the xhtml.
+		/// TODO: It should return absolute paths when used in the Dictionary preview, but it should use relative paths for export.
+		/// </summary>
+		private static string GenerateSrcAttributeFromFilePath(ICmFile file)
+		{
+			var path = file.AbsoluteInternalPath;
+			if(Unicode.CheckForNonAsciiCharacters(path))
+			{
+				// Flex keeps the filename as NFD in memory because it is unicode. We need NFC to actually link to the file
+				path = Icu.Normalize(path, Icu.UNormalizationMode.UNORM_NFC);
+			}
+			return new Uri(path).ToString();
+		}
+
 		internal enum PropertyType
 		{
 			CollectionType,
 			MoFormType,
 			CmObjectType,
+			CmPictureType,
+			CmFileType,
 			PrimitiveType,
 			InvalidProperty
 		}
@@ -313,6 +344,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				throw new ArgumentException(String.Format(xWorksStrings.InvalidRootConfigurationNode, rootNode.FieldDescription));
 			}
+			Type lastParent = null;
 			// Traverse the configuration reflectively inspecting the types in parent to child order
 			foreach(var node in lineage)
 			{
@@ -334,6 +366,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else
 				{
+					lastParent = lookupType;
 					lookupType = fieldType;
 				}
 			}
@@ -344,6 +377,16 @@ namespace SIL.FieldWorks.XWorks
 			if(IsCollectionType(fieldType))
 			{
 				return PropertyType.CollectionType;
+			}
+			if(typeof(ICmFile).IsAssignableFrom(fieldType))
+			{
+				// If the a file is owned by a picture we want to return a picture type so that
+				// we can generate an image.
+				if(typeof(ICmPicture).IsAssignableFrom(lastParent))
+				{
+					return PropertyType.CmPictureType;
+				}
+				return PropertyType.CmFileType;
 			}
 			if(typeof(IMoForm).IsAssignableFrom(fieldType))
 			{
