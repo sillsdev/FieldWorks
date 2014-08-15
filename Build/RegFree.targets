@@ -5,11 +5,13 @@
 	<!-- This file is included in BuildInclude.targets for each of our EXEs which use our COM components.
 	It runs a custom task to create a manifest, then EXEC's a program to embed it in the EXE itself.
 	This allows our programs to run without registering our COM DLLs, which in turn allows different
-	versions of FieldWorks to coexist on the same computer. This is only relevant for Windows.-->
+	versions of FieldWorks to coexist on the same computer. This is only relevant for Windows.
+	Manifest files should have a different name from the dll to allow windows XP to load them.
+	See: "Registration-Free Activation of COM Components: A Walkthrough"(http://msdn.microsoft.com/en-us/library/ms973913.aspx) Aug 2014 -->
 	<ItemGroup>
-		<DependentAssemblies Include="$(OutDir)FwKernel.manifest"/>
-		<DependentAssemblies Include="$(OutDir)Views.manifest"/>
-		<DependentAssemblies Include="$(OutDir)Graphite.manifest"/>
+		<DependentAssemblies Include="$(OutDir)FwKernel.X.manifest"/>
+		<DependentAssemblies Include="$(OutDir)Views.X.manifest"/>
+		<DependentAssemblies Include="$(OutDir)Graphite.X.manifest"/>
 	</ItemGroup>
 	<ItemGroup>
 		<Fragments Include="$(OutDir)/../../DistFiles/*.fragment.manifest"/>
