@@ -16,6 +16,7 @@ namespace SIL.FieldWorks.XWorks
 	[XmlInclude(typeof(DictionaryNodeListOptions))]
 	[XmlInclude(typeof(DictionaryNodeWritingSystemOptions))]
 	[XmlInclude(typeof(DictionaryNodeComplexFormOptions))]
+	[XmlInclude(typeof(DictionaryNodePictureOptions))]
 	public abstract class DictionaryNodeOptions
 	{
 		/// <summary>
@@ -195,6 +196,43 @@ namespace SIL.FieldWorks.XWorks
 				}).ToList();
 
 			return target;
+		}
+	}
+
+	/// <summary>Options for formatting Pictures</summary>
+	public class DictionaryNodePictureOptions : DictionaryNodeOptions
+	{
+		public enum AlignmentType
+		{
+			// Since Right=0, it is the default selected if nothing is specified in the xml
+			[XmlEnum("right")]
+			Right = 0,
+			[XmlEnum("left")]
+			Left
+			//todo: add options for above and below entry
+		}
+
+		[XmlAttribute(AttributeName = "minimumHeight")]
+		public float MinimumHeight { get; set; }
+
+		[XmlAttribute(AttributeName = "minimumWidth")]
+		public float MinimumWidth { get; set; }
+
+		[XmlAttribute(AttributeName = "maximumHeight")]
+		public float MaximumHeight { get; set; }
+
+		[XmlAttribute(AttributeName = "maximumWidth")]
+		public float MaximumWidth { get; set; }
+
+		[XmlAttribute(AttributeName = "pictureLocation")]
+		public AlignmentType PictureLocation { get; set; }
+
+		[XmlAttribute(AttributeName = "stackPictures")]
+		public bool StackMultiplePictures { get; set; }
+
+		public override DictionaryNodeOptions DeepClone()
+		{
+			return DeepCloneInto(new DictionaryNodePictureOptions());
 		}
 	}
 }

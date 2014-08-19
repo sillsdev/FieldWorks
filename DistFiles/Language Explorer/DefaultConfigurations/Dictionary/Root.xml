@@ -558,6 +558,7 @@
             </ConfigurationItem>
 		</ConfigurationItem>
         <ConfigurationItem name="Pictures" between="  " after=" " style="Dictionary-Pictures" isEnabled="true" field="PicturesOfSenses" cssClassNameOverride="pictures">
+			<PictureOptions minimumHeight="0" maximumHeight="1" maximumWidth="0" minimumWidth="0" pictureLocation="right" stackPictures="false" />
             <ConfigurationItem name="Thumbnail" after=" " isEnabled="true" field="PictureFileRA"/>
             <ConfigurationItem name="Sense Number" after=" " isEnabled="true" field="SenseNumberTSS"/>
             <ConfigurationItem name="Caption" between=" " isEnabled="true" field="Caption">
@@ -1132,6 +1133,7 @@
                 </ConfigurationItem>
 			</ConfigurationItem>
 			<ConfigurationItem name="Pictures" between="  " after=" " style="Dictionary-Pictures" isEnabled="true" field="PicturesOfSenses" cssClassNameOverride="pictures">
+				<PictureOptions minimumHeight="0" maximumHeight="1" minimumWidth="0" maximumWidth="0" pictureLocation="right" stackPictures="false" />
 				<ConfigurationItem name="Thumbnail" after=" " isEnabled="true" field="PictureFileRA"/>
 				<ConfigurationItem name="Sense Number" after=" " isEnabled="true" field="SenseNumberTSS"/>
 				<ConfigurationItem name="Caption" between=" " isEnabled="true" field="Caption">

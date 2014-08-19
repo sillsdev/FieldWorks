@@ -561,6 +561,51 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void Save_ConfigWithPictureOptionsValidatesAgainstSchema()
+		{
+			var modelFile = Path.GetTempFileName();
+			const float maxHeight = 1.5f;
+			const float minHeight = 1;
+			const float maxWidth = 2.5f;
+			const float minWidth = 2;
+			var oneConfigNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				IsEnabled = true,
+				Before = "[",
+				FieldDescription = "LexEntry",
+				DictionaryNodeOptions = new DictionaryNodePictureOptions
+				{
+					StackMultiplePictures = true,
+					PictureLocation = DictionaryNodePictureOptions.AlignmentType.Left,
+					MaximumHeight = maxHeight,
+					MinimumHeight = minHeight,
+					MaximumWidth = maxWidth,
+					MinimumWidth = minWidth
+				}
+			};
+
+			var model = new DictionaryConfigurationModel
+			{
+				FilePath = modelFile,
+				Version = 0,
+				Label = "root",
+				Parts = new List<ConfigurableDictionaryNode> { oneConfigNode }
+			};
+			//SUT
+			model.Save();
+			ValidateAgainstSchema(modelFile);
+			const string matchConfigRoot = "/DictionaryConfiguration/ConfigurationItem";
+			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath(matchConfigRoot, 1);
+			const string matchPictureOptions = matchConfigRoot + "/PictureOptions";
+			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath(matchPictureOptions, 1);
+			var matchAllOptions = matchPictureOptions +
+			 String.Format("[@stackPictures='{0}' and @pictureLocation='{1}' and @maximumHeight='{2}' and @minimumHeight='{3}' and @maximumWidth='{4}' and @minimumWidth='{5}']",
+								"true", "left", maxHeight, minHeight, maxWidth, minWidth);
+			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath(matchAllOptions, 1);
+		}
+
+		[Test]
 		public void Save_ConfigWithSenseOptionsValidatesAgainstSchema()
 		{
 			var modelFile = Path.GetTempFileName();

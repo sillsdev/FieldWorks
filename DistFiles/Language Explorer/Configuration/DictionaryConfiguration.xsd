@@ -66,6 +66,19 @@
 				 <xs:attribute type="xs:boolean" name="showSingleGramInfoFirst"/>
 			</xs:complexType>
 		</xs:element>
+		<xs:element name="PictureOptions" minOccurs="0">
+			<xs:complexType>
+				 <!-- Width and height restrictions are stored in inches. -->
+				 <xs:attribute type="xs:float" name="minimumHeight" use="required"/>
+				 <xs:attribute type="xs:float" name="minimumWidth" use="required"/>
+				 <xs:attribute type="xs:float" name="maximumHeight" use="required"/>
+				 <xs:attribute type="xs:float" name="maximumWidth" use="required"/>
+				 <!-- Controls where the picture is placed in relation to the entry text. -->
+				 <xs:attribute type="alignmentType" name="pictureLocation" use="required"/>
+				 <!-- Controls if multiple pictures are placed above or beside each other. -->
+				 <xs:attribute type="xs:boolean" name="stackPictures" use="required"/>
+			</xs:complexType>
+		</xs:element>
 		<xs:choice minOccurs="0" maxOccurs="1">
 			<xs:element name="ConfigurationItem" type="ConfigurationItemType" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="ReferenceItem">
@@ -119,4 +132,12 @@
 		</xs:extension>
 	</xs:simpleContent>
 </xs:complexType>
+<xs:simpleType name="alignmentType">
+	 <xs:restriction base="xs:string">
+		  <xs:enumeration value="right"/>
+		  <xs:enumeration value="left"/>
+		  <xs:enumeration value="above"/>
+		  <xs:enumeration value="below"/>
+	 </xs:restriction>
+</xs:simpleType>
 </xs:schema>

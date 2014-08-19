@@ -100,6 +100,7 @@ namespace SIL.FieldWorks.XWorks
 		[XmlElement("ListTypeOptions", typeof(DictionaryNodeListOptions))]
 		[XmlElement("ComplexFormOptions", typeof(DictionaryNodeComplexFormOptions))]
 		[XmlElement("SenseOptions", typeof(DictionaryNodeSenseOptions))]
+		[XmlElement("PictureOptions", typeof(DictionaryNodePictureOptions))]
 		public DictionaryNodeOptions DictionaryNodeOptions { get; set; }
 
 		/// <summary>

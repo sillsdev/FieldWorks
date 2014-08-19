@@ -97,6 +97,10 @@ namespace SIL.FieldWorks.XWorks
 				{
 					LoadListOptions(Options as DictionaryNodeListOptions);
 				}
+				else if(Options is DictionaryNodePictureOptions)
+				{
+					// todo: loading options here once UX has been worked out
+				}
 				else
 				{
 					throw new ArgumentException("Unrecognised type of DictionaryNodeOptions");
