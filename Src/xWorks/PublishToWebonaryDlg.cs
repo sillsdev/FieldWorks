@@ -82,7 +82,11 @@ namespace SIL.FieldWorks.XWorks
 
 		private void LoadFromSettings()
 		{
-			webonaryPasswordTextbox.Text = DecryptPassword(Settings.Default.WebonaryPass);
+			if (!string.IsNullOrEmpty(Settings.Default.WebonaryPass))
+			{
+				rememberPasswordCheckbox.Checked = true;
+				webonaryPasswordTextbox.Text = DecryptPassword(Settings.Default.WebonaryPass);
+			}
 			webonaryUsernameTextbox.Text = Settings.Default.WebonaryUser;
 			webonarySiteNameTextbox.Text = Settings.Default.WebonarySite;
 			var reversals = Settings.Default.WebonaryReversals;
@@ -108,7 +112,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void SaveToSettings()
 		{
-			Settings.Default.WebonaryPass = EncryptPassword(webonaryPasswordTextbox.Text);
+			Settings.Default.WebonaryPass = rememberPasswordCheckbox.Checked ? EncryptPassword(webonaryPasswordTextbox.Text) : null;
 			Settings.Default.WebonaryUser = webonaryUsernameTextbox.Text;
 			Settings.Default.WebonarySite = webonarySiteNameTextbox.Text;
 			var reversals = new StringCollection();

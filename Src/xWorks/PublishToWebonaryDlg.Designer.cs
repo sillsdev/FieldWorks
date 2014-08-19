@@ -52,6 +52,7 @@ namespace SIL.FieldWorks.XWorks
 			this.usernameLabel = new System.Windows.Forms.Label();
 			this.siteNameLabel = new System.Windows.Forms.Label();
 			this.webonaryDomainLabel = new System.Windows.Forms.Label();
+			this.rememberPasswordCheckbox = new System.Windows.Forms.CheckBox();
 			this.publicationGroupBox = new System.Windows.Forms.GroupBox();
 			this.publicationSelectionTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this.configurationBox = new System.Windows.Forms.ComboBox();
@@ -135,6 +136,7 @@ namespace SIL.FieldWorks.XWorks
 			this.settingsForWebonaryTableLayoutPanel.Controls.Add(this.usernameLabel, 0, 1);
 			this.settingsForWebonaryTableLayoutPanel.Controls.Add(this.siteNameLabel, 0, 0);
 			this.settingsForWebonaryTableLayoutPanel.Controls.Add(this.webonaryDomainLabel, 2, 0);
+			this.settingsForWebonaryTableLayoutPanel.Controls.Add(this.rememberPasswordCheckbox, 2, 2);
 			this.settingsForWebonaryTableLayoutPanel.Name = "settingsForWebonaryTableLayoutPanel";
 			// 
 			// webonaryPasswordTextbox
@@ -175,6 +177,12 @@ namespace SIL.FieldWorks.XWorks
 			// 
 			resources.ApplyResources(this.webonaryDomainLabel, "webonaryDomainLabel");
 			this.webonaryDomainLabel.Name = "webonaryDomainLabel";
+			// 
+			// rememberPasswordCheckbox
+			// 
+			resources.ApplyResources(this.rememberPasswordCheckbox, "rememberPasswordCheckbox");
+			this.rememberPasswordCheckbox.Name = "rememberPasswordCheckbox";
+			this.rememberPasswordCheckbox.UseVisualStyleBackColor = true;
 			// 
 			// publicationGroupBox
 			// 
@@ -286,5 +294,6 @@ namespace SIL.FieldWorks.XWorks
 		private System.Windows.Forms.Label webonaryDomainLabel;
 		private System.Windows.Forms.TextBox outputLogTextbox;
 		private PasswordBox webonaryPasswordTextbox;
+		private System.Windows.Forms.CheckBox rememberPasswordCheckbox;
 	}
 }
