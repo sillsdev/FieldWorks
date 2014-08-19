@@ -475,7 +475,7 @@
 		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.Media.dll.mdb" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.Media.pdb" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.dll.config"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.dll.mdb" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.pdb" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.GeckoBrowserAdapter.dll"/>
