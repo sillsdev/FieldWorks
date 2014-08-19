@@ -2575,7 +2575,7 @@ namespace SIL.FieldWorks.Common.Controls
 			IPersistenceProvider persistenceProvider, Mediator mediator)
 		{
 			IEnumerable<ObjectLabel> labels = ObjectLabel.CreateObjectLabels(cache,
-				cache.LanguageProject.PhonologicalDataOA.NaturalClassesOS.OfType<IPhNCSegments>().Cast<ICmObject>(), "",
+				cache.LanguageProject.PhonologicalDataOA.NaturalClassesOS.Cast<ICmObject>(), "",
 				cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id);
 
 			using (var chooser = new ReallySimpleListChooser(persistenceProvider,
