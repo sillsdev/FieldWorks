@@ -284,7 +284,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForStyleName_CharStyleUnsetValuesAreNotExported()
 		{
-			var emptyCharStyle = GenerateEmptyStyle("EmptyChar");
+			GenerateEmptyStyle("EmptyChar");
 			var cssResult = CssGenerator.GenerateCssStyleFromFwStyleSheet("EmptyChar", CssGenerator.DefaultStyle, m_mediator);
 			Assert.AreEqual(cssResult.ToString().Trim(), String.Empty);
 		}
@@ -389,7 +389,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Parts = new List<ConfigurableDictionaryNode> { testParentNode }
 			};
-			var testOverrides = new Dictionary<string, Dictionary<string, string>>();
 			// Make a LexEntry with a headword so something is Generated
 			var factory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			var entry = factory.Create();
@@ -940,11 +939,6 @@ namespace SIL.FieldWorks.XWorks
 		public void ClassAttributeForConfig_SubFieldWithNoOverrideGivesCorrectClass()
 		{
 			var form = new ConfigurableDictionaryNode { FieldDescription = "OwningEntry", SubField = "HeadWord" };
-			var entry = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "LexEntry",
-				Children = new List<ConfigurableDictionaryNode> { form }
-			};
 
 			//SUT
 			var classAttribute = CssGenerator.GetClassAttributeForConfig(form);
@@ -958,11 +952,6 @@ namespace SIL.FieldWorks.XWorks
 		public void ClassAttributeForConfig_SubFieldWithOverrideGivesCorrectClass()
 		{
 			var form = new ConfigurableDictionaryNode { FieldDescription = "OwningEntry", SubField = "Display", CSSClassNameOverride = "HeadWord"};
-			var entry = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "LexEntry",
-				Children = new List<ConfigurableDictionaryNode> { form }
-			};
 
 			//SUT
 			var classAttribute = CssGenerator.GetClassAttributeForConfig(form);
