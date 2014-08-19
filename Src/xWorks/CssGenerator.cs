@@ -583,7 +583,7 @@ namespace SIL.FieldWorks.XWorks
 			letterRule.Declarations.Properties.Add(new Property("text-align") { Term = new PrimitiveTerm(UnitType.Ident, "center") });
 			letterRule.Declarations.Properties.Add(new Property("width") { Term = new PrimitiveTerm(UnitType.Percentage, 100) });
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
-			letterRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet("Heading 1", cache.DefaultVernWs, mediator));
+			letterRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet("Dictionary-LetterHeading", cache.DefaultVernWs, mediator));
 			return letHeadRule.ToString(true) + Environment.NewLine + letterRule.ToString(true) + Environment.NewLine;
 		}
 	}

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE Styles SYSTEM "../Styles.dtd">
 <!-- IMPORTANT NOTE TO MAINTAINERS
 	*********************************************************************************************
-	ANY change to this Stylesheet must be accompanied by the generation of a new version using
-	guidgen. Be sure to validate any changes against ../Styles.dtd.
+	ANY change to this Stylesheet must be accompanied by the generation of a new markup version
+	guid. Be sure to validate any changes against ../Styles.dtd.
 	*********************************************************************************************
 -->
-<Styles date="2011-04-01" DTDver="B44B0AE3-416D-4616-B4CA-C1DA9A56DD7F" label="Flex Dictionary">
-	<markup version="59D5D68E-8509-4E6D-854A-7480DAFD2A27">
+<Styles date="2014-08-19" DTDver="B8521229-70FB-4DD9-A022-434714B8DE4B" label="Flex Dictionary">
+	<markup version="02A5E4BA-BCC6-4871-89A0-D5A2C83A2C3A">
 		<!--
 		The 'Normal' entry is here mainly as a placeholder, so the DTD will allow things to be based on it.
 		Logically Normal should probably be internal, but it's 'general' in existing projects, and the
@@ -89,6 +89,12 @@
 			<font color="red" underline="strikethrough" underlineColor="red"/>
 		</tag>
 		<!-- These are only defined here, and this is the current main purpose of having this file -->
+		<tag id="Dictionary-LetterHeading" guid="DD807CAE-4B18-4354-934D-99632B663F9E" userlevel="1" context="internal" type="paragraph">
+			<usage wsId="en">Letter headings in the dictionary.</usage>
+			<help category="Flex_Dictionary_Styles"/>
+			<font bold="true" size="14 pt"/>
+			<paragraph basedOn="Normal" next="Normal" spaceBefore="12 pt" spaceAfter="3 pt"/>
+		</tag>
 		<tag id="Dictionary-Normal" guid="7A194E30-4C8C-4934-83AD-B12ECC47A768" userlevel="1" context="internalConfigureView" type="paragraph">
 			<usage wsId="en">Base style for everything in the Dictionary view.</usage>
 			<help category="Flex_Dictionary_Styles"/>
