@@ -975,6 +975,43 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(classAttribute, Is.StringMatching("lexentry"));
 		}
 
+		/// <summary>
+		/// The css for a picture is floated right and we want to clear the float at each entry.
+		/// </summary>
+		[Test]
+		public void GenerateCssForConfiguration_PictureCssIsGenerated()
+		{
+			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			var pictureFileNode = new ConfigurableDictionaryNode { FieldDescription = "PictureFileRA" };
+			var memberNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions = new DictionaryNodePictureOptions() { MaximumWidth = 1 },
+				FieldDescription = "Pictures",
+				Children = new List<ConfigurableDictionaryNode> { pictureFileNode }
+			};
+			var rootNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SIL.FieldWorks.XWorks.TestPictureClass",
+				CSSClassNameOverride = "testentry",
+				Children = new List<ConfigurableDictionaryNode> { memberNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { rootNode });
+
+			var config = new DictionaryConfigurationModel()
+				{
+					Parts = new List<ConfigurableDictionaryNode> { rootNode }
+				};
+
+			// SUT
+			var cssWithPictureRules = CssGenerator.GenerateCssFromConfiguration(config, m_mediator);
+			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.testentry.*picture.*{.*float:right.*}", RegexOptions.Singleline).Success,
+							  "picture not floated right");
+			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.testentry.*picture.*img.*{.*max-width:1in;.*}", RegexOptions.Singleline).Success,
+							  "css for image did not contain height contraint attribute");
+			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.testentry.*{.*clear:both.*}", RegexOptions.Singleline).Success,
+							  "float not cleared at entry");
+		}
+
 		[TestFixtureSetUp]
 		protected void Init()
 		{

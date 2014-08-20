@@ -64,6 +64,11 @@ namespace SIL.FieldWorks.XWorks
 				// children of collections.
 				GenerateCssFromSenseOptions(configNode, styleSheet, baseSelection, senseOptions);
 			}
+			var pictureOptions = configNode.DictionaryNodeOptions as DictionaryNodePictureOptions;
+			if(pictureOptions != null)
+			{
+				GenerateCssFromPictureOptions(configNode, pictureOptions, styleSheet, baseSelection, mediator);
+			}
 			var beforeAfterSelectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection);
 			rule.Value = baseSelection;
 			// if the configuration node defines a style then add all the rules generated from that style
@@ -77,8 +82,7 @@ namespace SIL.FieldWorks.XWorks
 					GenerateCssFromWsOptions(configNode, wsOptions, styleSheet, baseSelection, mediator);
 				}
 			}
-			foreach(var selector in beforeAfterSelectors)
-				styleSheet.Rules.Add(selector);
+			styleSheet.Rules.AddRange(beforeAfterSelectors);
 			styleSheet.Rules.Add(rule);
 
 			if(configNode.Children == null)
@@ -169,6 +173,61 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		private static void GenerateCssFromPictureOptions(ConfigurableDictionaryNode configNode, DictionaryNodePictureOptions pictureOptions,
+																		  StyleSheet styleSheet, string baseSelection, Mediator mediator)
+		{
+			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			var pictureAndCaptionRule = new StyleRule();
+			pictureAndCaptionRule.Value = baseSelection + " " + SelectClassName(configNode);
+
+			var pictureProps = pictureAndCaptionRule.Declarations.Properties;
+			pictureProps.Add(new Property("float") { Term = new PrimitiveTerm(UnitType.Ident, "right") });
+			pictureProps.Add(new Property("text-align") { Term = new PrimitiveTerm(UnitType.Ident, "center") });
+			var margin = new Property("margin");
+			margin.Term = new TermList(new PrimitiveTerm(UnitType.Point, 0),
+												new PrimitiveTerm(UnitType.Point, 0),
+												new PrimitiveTerm(UnitType.Point, 4),
+												new PrimitiveTerm(UnitType.Point, 4));
+			pictureProps.Add(margin);
+			pictureProps.Add(new Property("padding") { Term = new PrimitiveTerm(UnitType.Point, 2) });
+			pictureProps.Add(new Property("float")
+			{
+				Term = new PrimitiveTerm(UnitType.Ident, pictureOptions.PictureLocation.ToString().ToLowerInvariant())
+			});
+			styleSheet.Rules.Add(pictureAndCaptionRule);
+
+			var pictureRule = new StyleRule();
+			pictureRule.Value = pictureAndCaptionRule.Value + " img";
+			if(pictureOptions.MinimumHeight > 0)
+			{
+				pictureRule.Declarations.Properties.Add(new Property("min-height")
+				{
+					Term = new PrimitiveTerm(UnitType.Inch, pictureOptions.MinimumHeight)
+				});
+			}
+			if(pictureOptions.MaximumHeight > 0)
+			{
+				pictureRule.Declarations.Properties.Add(new Property("max-height")
+				{
+					Term = new PrimitiveTerm(UnitType.Inch, pictureOptions.MaximumHeight)
+				});
+			}
+			if(pictureOptions.MinimumWidth > 0)
+			{
+				pictureRule.Declarations.Properties.Add(new Property("min-width")
+				{
+					Term = new PrimitiveTerm(UnitType.Inch, pictureOptions.MinimumWidth)
+				});
+			}
+			if(pictureOptions.MaximumWidth > 0)
+			{
+				pictureRule.Declarations.Properties.Add(new Property("max-width")
+				{
+					Term = new PrimitiveTerm(UnitType.Inch, pictureOptions.MaximumWidth)
+				});
+			}
+			styleSheet.Rules.Add(pictureRule);
+		}
 		/// <summary>
 		/// This method will generate before and after rules if the configuration node requires them. It also generates the selector for the node
 		/// </summary>
@@ -182,7 +241,10 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var rules = new List<StyleRule>();
 			if(parentInfo == null)
+			{
 				baseSelection = SelectClassName(configNode);
+				GenerateFlowResetForBaseNode(baseSelection, rules);
+			}
 			else
 				baseSelection = parentInfo + " " + SelectClassName(configNode);
 			if(!String.IsNullOrEmpty(configNode.Before))
@@ -202,6 +264,14 @@ namespace SIL.FieldWorks.XWorks
 			return rules;
 		}
 
+		private static void GenerateFlowResetForBaseNode(string baseSelection, List<StyleRule> rules)
+		{
+			var flowResetRule = new StyleRule();
+			flowResetRule.Value = baseSelection;
+			flowResetRule.Declarations.Properties.Add(new Property("clear") { Term = new PrimitiveTerm(UnitType.Ident, "both")});
+			rules.Add(flowResetRule);
+		}
+
 		/// <summary>
 		/// Generates a selector for a class name that matches xhtml that is generated for the configNode.
 		/// e.g. '.entry' or '.sense'
@@ -211,13 +281,21 @@ namespace SIL.FieldWorks.XWorks
 		private static string SelectClassName(ConfigurableDictionaryNode configNode)
 		{
 			var type = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(configNode);
-			string collectionItem = String.Empty;
-			if(type == ConfiguredXHTMLGenerator.PropertyType.CollectionType)
+			switch(type)
 			{
-				collectionItem = GetClassAttributeForConfig(configNode);
-				collectionItem = " ." + collectionItem.Remove(collectionItem.Length - 1);
+				case ConfiguredXHTMLGenerator.PropertyType.CollectionType:
+				{
+					var collectionItem = GetClassAttributeForConfig(configNode);
+					collectionItem = " ." + collectionItem.Remove(collectionItem.Length - 1);
+					return "." + GetClassAttributeForConfig(configNode) + collectionItem;
+				}
+				case ConfiguredXHTMLGenerator.PropertyType.CmPictureType:
+				{
+					return " img"; // Pictures are written out as img tags
+				}
+				default:
+					return "." + GetClassAttributeForConfig(configNode);
 			}
-			return "." + GetClassAttributeForConfig(configNode) + collectionItem;
 		}
 
 		/// <summary>
@@ -576,7 +654,9 @@ namespace SIL.FieldWorks.XWorks
 		public static string GenerateLetterHeaderCss(Mediator mediator)
 		{
 			var letHeadRule = new StyleRule { Value = ".letHead" };
-			letHeadRule.Declarations.Properties.Add(new Property("column-count") { Term = new PrimitiveTerm(UnitType.Number, 1)});
+			letHeadRule.Declarations.Properties.Add(new Property("-moz-column-count") { Term = new PrimitiveTerm(UnitType.Number, 1) });
+			letHeadRule.Declarations.Properties.Add(new Property("-webkit-column-count") { Term = new PrimitiveTerm(UnitType.Number, 1) });
+			letHeadRule.Declarations.Properties.Add(new Property("column-count") { Term = new PrimitiveTerm(UnitType.Number, 1) });
 			letHeadRule.Declarations.Properties.Add(new Property("clear") { Term = new PrimitiveTerm(UnitType.Ident, "both") });
 
 			var letterRule = new StyleRule { Value = ".letter" };

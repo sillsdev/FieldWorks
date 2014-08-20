@@ -253,7 +253,15 @@ namespace SIL.FieldWorks.XWorks
 				}
 				case (PropertyType.CmPictureType):
 				{
-					GenerateXHTMLForPicture(propertyValue as ICmFile, config, writer, cache);
+					var fileProperty = propertyValue as ICmFile;
+					if(fileProperty != null)
+					{
+						GenerateXHTMLForPicture(fileProperty, config, writer, cache);
+					}
+					else
+					{
+						GenerateXHTMLForPictureCaption(propertyValue, config, writer, cache);
+					}
 					return;
 				}
 				default:
@@ -273,6 +281,22 @@ namespace SIL.FieldWorks.XWorks
 					}
 				}
 			}
+		}
+
+		private static void GenerateXHTMLForPictureCaption(object propertyValue, ConfigurableDictionaryNode config, XmlWriter writer, FdoCache cache)
+		{
+			writer.WriteStartElement("div");
+			writer.WriteAttributeString("class", CssGenerator.GetClassAttributeForConfig(config));
+			// todo: get sense numbers and captions into the same div and get rid of this if else
+			if(config.DictionaryNodeOptions != null)
+			{
+				GenerateXHTMLForStrings(propertyValue as IMultiString, config, writer, cache);
+			}
+			else
+			{
+				GenerateXHTMLForString(propertyValue as ITsString, config, writer, cache);
+			}
+			writer.WriteEndElement();
 		}
 
 		private static void GenerateXHTMLForPicture(ICmFile pictureFile, ConfigurableDictionaryNode config, XmlWriter writer, FdoCache cache)
@@ -309,6 +333,8 @@ namespace SIL.FieldWorks.XWorks
 			PrimitiveType,
 			InvalidProperty
 		}
+
+		private static Dictionary<ConfigurableDictionaryNode, PropertyType> _configNodeToTypeMap = new Dictionary<ConfigurableDictionaryNode, PropertyType>();
 
 		/// <summary>
 		/// This method will reflectively return the type that represents the given configuration node as
@@ -378,14 +404,12 @@ namespace SIL.FieldWorks.XWorks
 			{
 				return PropertyType.CollectionType;
 			}
+			if(typeof(ICmPicture).IsAssignableFrom(lastParent))
+			{
+				return PropertyType.CmPictureType;
+			}
 			if(typeof(ICmFile).IsAssignableFrom(fieldType))
 			{
-				// If the a file is owned by a picture we want to return a picture type so that
-				// we can generate an image.
-				if(typeof(ICmPicture).IsAssignableFrom(lastParent))
-				{
-					return PropertyType.CmPictureType;
-				}
 				return PropertyType.CmFileType;
 			}
 			if(typeof(IMoForm).IsAssignableFrom(fieldType))
@@ -480,7 +504,7 @@ namespace SIL.FieldWorks.XWorks
 			foreach(var item in collection)
 			{
 				GenerateSenseNumberSpanIfNeeded(config.DictionaryNodeOptions, writer, item, cache, publicationDecorator, isSingle);
-				writer.WriteStartElement("span");
+				writer.WriteStartElement(GetElementNameForProperty(config));
 				WriteCollectionItemClassAttribute(config, writer);
 				if(config.Children != null)
 				{
@@ -632,7 +656,7 @@ namespace SIL.FieldWorks.XWorks
 		private static void WriteElementContents(object propertyValue, ConfigurableDictionaryNode config,
 															  XmlWriter writer)
 		{
-			writer.WriteStartElement(GetElementNameForProperty(propertyValue, config));
+			writer.WriteStartElement(GetElementNameForProperty(config));
 			WriteClassNameAttribute(writer, config);
 			writer.WriteString(propertyValue.ToString());
 			writer.WriteEndElement();
@@ -754,17 +778,14 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// This method is intended to produce the xhtml element that we want for given configuration objects. It may prove to be unnecessary
-		/// upon an evaluation of the XHTML that the old export produced.
-		/// TODO: Figure out if we actually need this
+		/// This method is intended to produce the xhtml element that we want for given configuration objects.
 		/// </summary>
-		/// <param name="propertyValue"></param>
 		/// <param name="config"></param>
 		/// <returns></returns>
-		private static string GetElementNameForProperty(object propertyValue, ConfigurableDictionaryNode config)
+		private static string GetElementNameForProperty(ConfigurableDictionaryNode config)
 		{
 			//TODO: Improve this logic to deal with subentries if necessary
-			if(config.FieldDescription.Equals("LexEntry"))
+			if(config.FieldDescription.Equals("LexEntry") || config.DictionaryNodeOptions is DictionaryNodePictureOptions)
 			{
 				return "div";
 			}

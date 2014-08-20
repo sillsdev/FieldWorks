@@ -914,7 +914,8 @@ namespace SIL.FieldWorks.XWorks
 			var pictureFileNode = new ConfigurableDictionaryNode { FieldDescription = "PictureFileRA" };
 			var memberNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "Picture",
+				DictionaryNodeOptions = new DictionaryNodePictureOptions(),
+				FieldDescription = "Pictures",
 				Children = new List<ConfigurableDictionaryNode> { pictureFileNode }
 			};
 			var rootNode = new ConfigurableDictionaryNode
@@ -1131,6 +1132,7 @@ namespace SIL.FieldWorks.XWorks
 			var thumbNailNode = new ConfigurableDictionaryNode { FieldDescription = "PictureFileRA", CSSClassNameOverride = "photo", IsEnabled = true };
 			var pictureNode = new ConfigurableDictionaryNode
 			{
+				DictionaryNodeOptions = new DictionaryNodePictureOptions(),
 				FieldDescription = "PicturesOfSenses",
 				IsEnabled = true,
 				CSSClassNameOverride = "Pictures",
@@ -1167,8 +1169,8 @@ namespace SIL.FieldWorks.XWorks
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, XHTMLWriter, Cache));
 				XHTMLWriter.Flush();
-				const string oneSenseWithPicture = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img[@class='photo' and @id]";
-				const string oneSenseWithPictureCaption = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/span[@class='caption']";
+				const string oneSenseWithPicture = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/img[@class='photo' and @id]";
+				const string oneSenseWithPictureCaption = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/div[@class='caption']/span[text()='caption']";
 				//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithPicture, 1);
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithPictureCaption, 1);
@@ -1301,7 +1303,7 @@ namespace SIL.FieldWorks.XWorks
 
 	class TestPictureClass
 	{
-		public ICmPicture Picture { get; set; }
+		public IFdoList<ICmPicture> Pictures { get; set; }
 	}
 	#endregion
 }
