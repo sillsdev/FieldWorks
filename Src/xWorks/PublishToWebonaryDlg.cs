@@ -121,8 +121,10 @@ namespace SIL.FieldWorks.XWorks
 				reversals.Add(item.ToString());
 			}
 			Settings.Default.WebonaryReversals = reversals;
-			Settings.Default.WebonaryConfiguration = configurationBox.SelectedItem.ToString();
-			Settings.Default.WebonaryPublication = publicationBox.SelectedItem.ToString();
+			if (configurationBox.SelectedItem != null)
+				Settings.Default.WebonaryConfiguration = configurationBox.SelectedItem.ToString();
+			if (publicationBox.SelectedItem != null)
+				Settings.Default.WebonaryPublication = publicationBox.SelectedItem.ToString();
 			Settings.Default.Save();
 		}
 
@@ -148,7 +150,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void publishButton_Click(object sender, EventArgs e)
 		{
-			// TODO: Enable when doesn't crash: SaveToSettings();
+			SaveToSettings();
 
 			// TODO: publish
 

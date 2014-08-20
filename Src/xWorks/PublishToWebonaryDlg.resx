@@ -313,7 +313,7 @@
     <value>webonaryPasswordTextbox</value>
   </data>
   <data name="&gt;&gt;webonaryPasswordTextbox.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.PasswordBox, Widgets, Version=8.0.8.26192, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Widgets.PasswordBox, Widgets, Version=8.0.8.27721, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;webonaryPasswordTextbox.Parent" xml:space="preserve">
     <value>settingsForWebonaryTableLayoutPanel</value>
@@ -963,6 +963,9 @@
         kmyGhoaGhoaGhoaGhoaGhoaGhoaGhgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
 </value>
+  </data>
+  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
     <value>408, 349</value>
