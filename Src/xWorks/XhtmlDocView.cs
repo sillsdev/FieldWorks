@@ -10,6 +10,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using Palaso.UI.WindowsForms.HtmlBrowser;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
@@ -349,7 +350,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			var configuration = new DictionaryConfigurationModel(configurationFile, Cache);
 			publicationDecorator.Refresh();
-			var entriesToPublish = publicationDecorator.VecProp(Cache.LangProject.LexDbOA.Hvo, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+			var entriesToPublish = publicationDecorator.VecProp(Cache.LangProject.LexDbOA.Hvo,Clerk.VirtualFlid);
 			var basePath = Path.Combine(Path.GetTempPath(), "DictionaryPreview", Path.GetFileNameWithoutExtension(configurationFile));
 			Directory.CreateDirectory(Path.GetDirectoryName(basePath));
 			var xhtmlPath = basePath + ".xhtml";
@@ -394,9 +395,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if(m_pubDecorator == null)
 				{
-					m_pubDecorator = new DictionaryPublicationDecorator(Cache,
-																						 (ISilDataAccessManaged)Cache.MainCacheAccessor,
-																						 Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+					m_pubDecorator = new DictionaryPublicationDecorator(Cache, Clerk.VirtualListPublisher, Clerk.VirtualFlid);
 				}
 				var pubName = GetCurrentPublication();
 				if(xWorksStrings.AllEntriesPublication == pubName)
