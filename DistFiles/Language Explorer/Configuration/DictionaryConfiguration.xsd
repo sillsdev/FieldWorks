@@ -61,7 +61,6 @@
 				 <xs:attribute type="xs:string" name="numberBefore"/>
 				 <xs:attribute type="xs:string" name="numberAfter"/>
 				 <xs:attribute type="xs:string" name="numberingStyle"/>
-				 <xs:attribute type="xs:string" name="numberFont"/>
 				 <xs:attribute type="xs:boolean" name="numberSingleSense"/>
 				 <xs:attribute type="xs:boolean" name="showSingleGramInfoFirst"/>
 			</xs:complexType>

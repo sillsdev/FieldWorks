@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.XWorks
 				// Try to generate the css for the sense number before the baseSelection is updated because
 				// the sense number is a sibling of the sense element and we are normally applying styles to the
 				// children of collections.
-				GenerateCssFromSenseOptions(configNode, styleSheet, baseSelection, senseOptions);
+				GenerateCssFromSenseOptions(configNode, senseOptions, styleSheet, baseSelection, mediator);
 			}
 			var pictureOptions = configNode.DictionaryNodeOptions as DictionaryNodePictureOptions;
 			if(pictureOptions != null)
@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.XWorks
 			if(!String.IsNullOrEmpty(configNode.Style))
 			{
 				//Generate the rules for the default font info
-				rule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(configNode.Style, DefaultStyle, mediator).Properties);
+				rule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(configNode.Style, DefaultStyle, mediator));
 				var wsOptions = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 				if(wsOptions != null)
 				{
@@ -94,58 +94,27 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private static void GenerateCssFromSenseOptions(ConfigurableDictionaryNode configNode,
-																		StyleSheet styleSheet, string baseSelection, DictionaryNodeSenseOptions senseOptions)
+		private static void GenerateCssFromSenseOptions(ConfigurableDictionaryNode configNode, DictionaryNodeSenseOptions senseOptions,
+														StyleSheet styleSheet, string baseSelection, Mediator mediator)
 		{
 			var senseNumberRule = new StyleRule();
-			// Not using SelectClassName here sense and sensenumber are siblings and the configNode is for the Senses collection.
+			// Not using SelectClassName here; sense and sensenumber are siblings and the configNode is for the Senses collection.
 			// Select the base plus the node's unmodified class attribute and append the sensenumber matcher.
 			var senseNumberSelector = String.Format("{0} .{1} .sensenumber", baseSelection, GetClassAttributeForConfig(configNode));
 
 			senseNumberRule.Value = senseNumberSelector;
-			var senseNumberProps = senseNumberRule.Declarations.Properties;
-			if(!String.IsNullOrEmpty(senseOptions.NumberFont))
-			{
-				var fontFamily = new Property("font-family");
-				fontFamily.Term = new TermList(new PrimitiveTerm(UnitType.String, senseOptions.NumberFont),
-								 new PrimitiveTerm(UnitType.Ident, "serif"));
-				senseNumberProps.Add(fontFamily);
-			}
 			if(!String.IsNullOrEmpty(senseOptions.NumberStyle))
 			{
-				// The NumberStyle can be a combination of bold or italic or unbold(-bold) or unitalic(-italic)
-				if(senseOptions.NumberStyle.Contains("-bold"))
-				{
-					var fontWeight = new Property("font-weight");
-					fontWeight.Term = new PrimitiveTerm(UnitType.Ident, "normal");
-					senseNumberProps.Add(fontWeight);
-				}
-				else if(senseOptions.NumberStyle.Contains("bold"))
-				{
-					var fontWeight = new Property("font-weight");
-					fontWeight.Term = new PrimitiveTerm(UnitType.Ident, "bold");
-					senseNumberProps.Add(fontWeight);
-				}
-				if(senseOptions.NumberStyle.Contains("-italic"))
-				{
-					var fontStyle = new Property("font-style");
-					fontStyle.Term = new PrimitiveTerm(UnitType.Ident, "normal");
-					senseNumberProps.Add(fontStyle);
-				}
-				else if(senseOptions.NumberStyle.Contains("italic"))
-				{
-					var fontStyle = new Property("font-style");
-					fontStyle.Term = new PrimitiveTerm(UnitType.Ident, "italic");
-					senseNumberProps.Add(fontStyle);
-				}
+				senseNumberRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(senseOptions.NumberStyle, DefaultStyle, mediator));
 			}
 			styleSheet.Rules.Add(senseNumberRule);
 			if(!String.IsNullOrEmpty(senseOptions.BeforeNumber))
 			{
-				var beforeDeclaration = new StyleDeclaration();
-				beforeDeclaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, senseOptions.BeforeNumber) });
-				var beforeRule = new StyleRule(beforeDeclaration) { Value = senseNumberSelector + ":before" };
-				styleSheet.Rules.Add(beforeRule);
+				var beforeDeclaration = new StyleDeclaration
+				{
+					new Property("content") { Term = new PrimitiveTerm(UnitType.String, senseOptions.BeforeNumber) }
+				};
+				styleSheet.Rules.Add(new StyleRule(beforeDeclaration) { Value = senseNumberSelector + ":before" });
 			}
 			if(!String.IsNullOrEmpty(senseOptions.AfterNumber))
 			{
@@ -168,7 +137,7 @@ namespace SIL.FieldWorks.XWorks
 				var wsId = cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(wsIdString);
 				var wsRule = new StyleRule();
 				wsRule.Value = baseSelection + String.Format("[lang|=\"{0}\"]", wsIdString);
-				wsRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(configNode.Style, wsId, mediator).Properties);
+				wsRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(configNode.Style, wsId, mediator));
 				styleSheet.Rules.Add(wsRule);
 			}
 		}

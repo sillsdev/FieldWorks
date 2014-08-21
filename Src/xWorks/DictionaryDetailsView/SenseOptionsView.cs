@@ -30,8 +30,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			set
 			{
 				textBoxBefore.Enabled = textBoxAfter.Enabled = labelBefore.Enabled = labelAfter.Enabled = value;
-				checkBoxBold.Enabled = checkBoxItalic.Enabled = checkBoxNumberSingleSense.Enabled = value;
-				dropDownFont.Enabled = labelFont.Enabled = value;
+				dropDownStyle.Enabled = labelStyle.Enabled = checkBoxNumberSingleSense.Enabled = value;
 			}
 		}
 
@@ -77,46 +76,28 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			set { textBoxAfter.Text = value; }
 		}
 
-		internal CheckState Bold
+		/// <summary>Populate the Sense Number Style dropdown</summary>
+		public void SetStyles(List<StyleComboItem> styles, string selectedStyle)
 		{
-			get { return checkBoxBold.CheckState; }
-			set { checkBoxBold.CheckState = value; }
-		}
-
-		internal CheckState Italic
-		{
-			get { return checkBoxItalic.CheckState; }
-			set { checkBoxItalic.CheckState = value; }
-		}
-
-		/// <summary>Populate the Sense Number Font dropdown</summary>
-		internal List<string> NumberFonts
-		{
-			set
+			dropDownStyle.Items.Clear();
+			dropDownStyle.Items.AddRange(styles.ToArray());
+			dropDownStyle.SelectedIndex = 0; // default so we don't have a null item selected.  If there are 0 items, we have other problems.
+			for (int i = 0; i < styles.Count; ++i)
 			{
-				dropDownFont.Items.Clear();
-				dropDownFont.Items.AddRange(value.ToArray());
+				if (styles[i].Style != null && styles[i].Style.Name == selectedStyle)
+				{
+					dropDownStyle.SelectedIndex = i;
+					break;
+				}
 			}
 		}
 
-		internal string NumberFont
+		internal string NumberStyle
 		{
-			get { return (string)dropDownFont.SelectedItem; }
-			set
+			get
 			{
-				if (string.IsNullOrEmpty(value))
-				{
-					dropDownFont.SelectedIndex = 0;
-					return;
-				}
-				for (int i = 0; i < dropDownFont.Items.Count; i++)
-				{
-					if (dropDownFont.Items[i].Equals(value))
-					{
-						dropDownFont.SelectedIndex = i;
-						break;
-					}
-				}
+				var style = ((StyleComboItem)dropDownStyle.SelectedItem).Style;
+				return style != null ? style.Name : null;
 			}
 		}
 
@@ -163,22 +144,19 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			remove { checkBoxNumberSingleSense.CheckedChanged -= value; }
 		}
 
-		public event EventHandler NumberFontChanged
+		public event EventHandler NumberStyleChanged
 		{
-			add { dropDownFont.SelectedValueChanged += value; }
-			remove { dropDownFont.SelectedValueChanged -= value; }
+			add { dropDownStyle.SelectedValueChanged += value; }
+			remove { dropDownStyle.SelectedValueChanged -= value; }
 		}
 
-		public event EventHandler BoldChanged
-		{
-			add { checkBoxBold.CheckStateChanged += value; }
-			remove { checkBoxBold.CheckStateChanged -= value; }
-		}
+		private EventHandler ButtonStylesOnClick(EventHandler value) { return (sender, e) => value(dropDownStyle, e); }
 
-		public event EventHandler ItalicChanged
+		/// <summary>Fired when the Styles... button is clicked. Object sender is the Style ComboBox so it can be updated</summary>
+		public event EventHandler StyleButtonClick
 		{
-			add { checkBoxItalic.CheckStateChanged += value; }
-			remove { checkBoxItalic.CheckStateChanged -= value; }
+			add { buttonStyles.Click += ButtonStylesOnClick(value); }
+			remove { buttonStyles.Click -= ButtonStylesOnClick(value); }
 		}
 
 		public event EventHandler ShowGrammarFirstChanged

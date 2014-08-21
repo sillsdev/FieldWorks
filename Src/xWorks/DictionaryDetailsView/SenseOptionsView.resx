@@ -133,7 +133,7 @@
     <value>189, 17</value>
   </data>
   <data name="checkBoxSenseInPara.TabIndex" type="System.Int32, mscorlib">
-    <value>15</value>
+    <value>3</value>
   </data>
   <data name="checkBoxSenseInPara.Text" xml:space="preserve">
     <value>Display each sense in a paragraph</value>
@@ -163,7 +163,7 @@
     <value>299, 17</value>
   </data>
   <data name="checkBoxShowGrammarFirst.TabIndex" type="System.Int32, mscorlib">
-    <value>16</value>
+    <value>2</value>
   </data>
   <data name="checkBoxShowGrammarFirst.Text" xml:space="preserve">
     <value>If all senses share the grammatical information, show it first</value>
@@ -193,7 +193,7 @@
     <value>160, 17</value>
   </data>
   <data name="checkBoxNumberSingleSense.TabIndex" type="System.Int32, mscorlib">
-    <value>17</value>
+    <value>6</value>
   </data>
   <data name="checkBoxNumberSingleSense.Text" xml:space="preserve">
     <value>Number even a single sense</value>
@@ -208,91 +208,31 @@
     <value>groupBoxSenseNumber</value>
   </data>
   <data name="&gt;&gt;checkBoxNumberSingleSense.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="checkBoxBold.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Left</value>
-  </data>
-  <data name="checkBoxBold.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="checkBoxBold.Location" type="System.Drawing.Point, System.Drawing">
-    <value>214, 12</value>
-  </data>
-  <data name="checkBoxBold.Size" type="System.Drawing.Size, System.Drawing">
-    <value>47, 17</value>
-  </data>
-  <data name="checkBoxBold.TabIndex" type="System.Int32, mscorlib">
-    <value>13</value>
-  </data>
-  <data name="checkBoxBold.Text" xml:space="preserve">
-    <value>Bold</value>
-  </data>
-  <data name="&gt;&gt;checkBoxBold.Name" xml:space="preserve">
-    <value>checkBoxBold</value>
-  </data>
-  <data name="&gt;&gt;checkBoxBold.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;checkBoxBold.Parent" xml:space="preserve">
-    <value>groupBoxSenseNumber</value>
-  </data>
-  <data name="&gt;&gt;checkBoxBold.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="checkBoxItalic.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+  <data name="dropDownStyle.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left</value>
   </data>
-  <data name="checkBoxItalic.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="checkBoxItalic.Location" type="System.Drawing.Point, System.Drawing">
-    <value>214, 32</value>
-  </data>
-  <data name="checkBoxItalic.Size" type="System.Drawing.Size, System.Drawing">
-    <value>48, 17</value>
-  </data>
-  <data name="checkBoxItalic.TabIndex" type="System.Int32, mscorlib">
-    <value>14</value>
-  </data>
-  <data name="checkBoxItalic.Text" xml:space="preserve">
-    <value>Italic</value>
-  </data>
-  <data name="&gt;&gt;checkBoxItalic.Name" xml:space="preserve">
-    <value>checkBoxItalic</value>
-  </data>
-  <data name="&gt;&gt;checkBoxItalic.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;checkBoxItalic.Parent" xml:space="preserve">
-    <value>groupBoxSenseNumber</value>
-  </data>
-  <data name="&gt;&gt;checkBoxItalic.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="dropDownFont.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Left</value>
-  </data>
-  <data name="dropDownFont.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="dropDownStyle.Location" type="System.Drawing.Point, System.Drawing">
     <value>9, 32</value>
   </data>
-  <data name="dropDownFont.Size" type="System.Drawing.Size, System.Drawing">
-    <value>199, 21</value>
+  <data name="dropDownStyle.Size" type="System.Drawing.Size, System.Drawing">
+    <value>196, 21</value>
   </data>
-  <data name="dropDownFont.TabIndex" type="System.Int32, mscorlib">
-    <value>12</value>
+  <data name="dropDownStyle.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
   </data>
-  <data name="&gt;&gt;dropDownFont.Name" xml:space="preserve">
-    <value>dropDownFont</value>
+  <data name="&gt;&gt;dropDownStyle.Name" xml:space="preserve">
+    <value>dropDownStyle</value>
   </data>
-  <data name="&gt;&gt;dropDownFont.Type" xml:space="preserve">
+  <data name="&gt;&gt;dropDownStyle.Type" xml:space="preserve">
     <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;dropDownFont.Parent" xml:space="preserve">
+  <data name="&gt;&gt;dropDownStyle.Parent" xml:space="preserve">
     <value>groupBoxSenseNumber</value>
   </data>
-  <data name="&gt;&gt;dropDownFont.ZOrder" xml:space="preserve">
-    <value>0</value>
+  <data name="&gt;&gt;dropDownStyle.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
   <data name="dropDownNumberingStyle.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left</value>
@@ -304,7 +244,7 @@
     <value>121, 21</value>
   </data>
   <data name="dropDownNumberingStyle.TabIndex" type="System.Int32, mscorlib">
-    <value>11</value>
+    <value>4</value>
   </data>
   <data name="&gt;&gt;dropDownNumberingStyle.Name" xml:space="preserve">
     <value>dropDownNumberingStyle</value>
@@ -316,7 +256,7 @@
     <value>groupBoxSenseNumber</value>
   </data>
   <data name="&gt;&gt;dropDownNumberingStyle.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>5</value>
   </data>
   <data name="textBoxAfter.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left</value>
@@ -328,7 +268,7 @@
     <value>72, 20</value>
   </data>
   <data name="textBoxAfter.TabIndex" type="System.Int32, mscorlib">
-    <value>6</value>
+    <value>5</value>
   </data>
   <data name="&gt;&gt;textBoxAfter.Name" xml:space="preserve">
     <value>textBoxAfter</value>
@@ -340,7 +280,7 @@
     <value>groupBoxSenseNumber</value>
   </data>
   <data name="&gt;&gt;textBoxAfter.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>4</value>
   </data>
   <data name="textBoxBefore.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left</value>
@@ -352,7 +292,7 @@
     <value>72, 20</value>
   </data>
   <data name="textBoxBefore.TabIndex" type="System.Int32, mscorlib">
-    <value>5</value>
+    <value>3</value>
   </data>
   <data name="&gt;&gt;textBoxBefore.Name" xml:space="preserve">
     <value>textBoxBefore</value>
@@ -364,7 +304,7 @@
     <value>groupBoxSenseNumber</value>
   </data>
   <data name="&gt;&gt;textBoxBefore.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>3</value>
   </data>
   <data name="labelBefore.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left</value>
@@ -379,7 +319,7 @@
     <value>41, 13</value>
   </data>
   <data name="labelBefore.TabIndex" type="System.Int32, mscorlib">
-    <value>8</value>
+    <value>0</value>
   </data>
   <data name="labelBefore.Text" xml:space="preserve">
     <value>Before:</value>
@@ -394,7 +334,7 @@
     <value>groupBoxSenseNumber</value>
   </data>
   <data name="&gt;&gt;labelBefore.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>6</value>
   </data>
   <data name="labelAfter.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left</value>
@@ -409,7 +349,7 @@
     <value>32, 13</value>
   </data>
   <data name="labelAfter.TabIndex" type="System.Int32, mscorlib">
-    <value>10</value>
+    <value>0</value>
   </data>
   <data name="labelAfter.Text" xml:space="preserve">
     <value>After:</value>
@@ -424,37 +364,37 @@
     <value>groupBoxSenseNumber</value>
   </data>
   <data name="&gt;&gt;labelAfter.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>8</value>
   </data>
-  <data name="labelFont.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+  <data name="labelStyle.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left</value>
   </data>
-  <data name="labelFont.AutoSize" type="System.Boolean, mscorlib">
+  <data name="labelStyle.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="labelFont.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="labelStyle.Location" type="System.Drawing.Point, System.Drawing">
     <value>6, 16</value>
   </data>
-  <data name="labelFont.Size" type="System.Drawing.Size, System.Drawing">
-    <value>31, 13</value>
+  <data name="labelStyle.Size" type="System.Drawing.Size, System.Drawing">
+    <value>82, 13</value>
   </data>
-  <data name="labelFont.TabIndex" type="System.Int32, mscorlib">
-    <value>9</value>
+  <data name="labelStyle.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
   </data>
-  <data name="labelFont.Text" xml:space="preserve">
-    <value>Font:</value>
+  <data name="labelStyle.Text" xml:space="preserve">
+    <value>Character Style:</value>
   </data>
-  <data name="&gt;&gt;labelFont.Name" xml:space="preserve">
-    <value>labelFont</value>
+  <data name="&gt;&gt;labelStyle.Name" xml:space="preserve">
+    <value>labelStyle</value>
   </data>
-  <data name="&gt;&gt;labelFont.Type" xml:space="preserve">
+  <data name="&gt;&gt;labelStyle.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;labelFont.Parent" xml:space="preserve">
+  <data name="&gt;&gt;labelStyle.Parent" xml:space="preserve">
     <value>groupBoxSenseNumber</value>
   </data>
-  <data name="&gt;&gt;labelFont.ZOrder" xml:space="preserve">
-    <value>10</value>
+  <data name="&gt;&gt;labelStyle.ZOrder" xml:space="preserve">
+    <value>9</value>
   </data>
   <data name="labelNumberingStyle.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left</value>
@@ -469,7 +409,7 @@
     <value>87, 13</value>
   </data>
   <data name="labelNumberingStyle.TabIndex" type="System.Int32, mscorlib">
-    <value>7</value>
+    <value>0</value>
   </data>
   <data name="labelNumberingStyle.Text" xml:space="preserve">
     <value>Numbering Style:</value>
@@ -484,7 +424,34 @@
     <value>groupBoxSenseNumber</value>
   </data>
   <data name="&gt;&gt;labelNumberingStyle.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>7</value>
+  </data>
+  <data name="buttonStyles.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="buttonStyles.Location" type="System.Drawing.Point, System.Drawing">
+    <value>211, 32</value>
+  </data>
+  <data name="buttonStyles.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 21</value>
+  </data>
+  <data name="buttonStyles.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="buttonStyles.Text" xml:space="preserve">
+    <value>Styles...</value>
+  </data>
+  <data name="&gt;&gt;buttonStyles.Name" xml:space="preserve">
+    <value>buttonStyles</value>
+  </data>
+  <data name="&gt;&gt;buttonStyles.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonStyles.Parent" xml:space="preserve">
+    <value>groupBoxSenseNumber</value>
+  </data>
+  <data name="&gt;&gt;buttonStyles.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <data name="groupBoxSenseNumber.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 3</value>
@@ -493,7 +460,7 @@
     <value>300, 120</value>
   </data>
   <data name="groupBoxSenseNumber.TabIndex" type="System.Int32, mscorlib">
-    <value>18</value>
+    <value>1</value>
   </data>
   <data name="groupBoxSenseNumber.Text" xml:space="preserve">
     <value>Sense Number Configuration</value>

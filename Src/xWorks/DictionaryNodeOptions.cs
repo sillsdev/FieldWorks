@@ -55,12 +55,9 @@ namespace SIL.FieldWorks.XWorks
 		[XmlAttribute(AttributeName = "numberAfter")]
 		public string AfterNumber { get; set; }
 
-		// Whether the sense number should be bold and/or italic.
+		// Character Style applied to Sense Numbers
 		[XmlAttribute(AttributeName = "numberStyle")]
 		public string NumberStyle { get; set; }
-
-		[XmlAttribute(AttributeName = "numberFont")]
-		public string NumberFont { get; set; }
 
 		[XmlAttribute(AttributeName = "numberSingleSense")]
 		public bool NumberEvenASingleSense { get; set; }

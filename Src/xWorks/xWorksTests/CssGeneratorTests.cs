@@ -783,13 +783,15 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void GenerateCssForConfiguration_SenseNumberFontWorks()
+		public void GenerateCssForConfiguration_SenseNumberCharStyleWorks()
 		{
+			GenerateStyle("Dictionary-SenseNum");
+
 			var senses = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "Senses",
-				DictionaryNodeOptions = new DictionaryNodeSenseOptions { NumberFont = "impact" }
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { NumberStyle = "Dictionary-SenseNum" }
 			};
 			var entry = new ConfigurableDictionaryNode
 			{
@@ -797,113 +799,13 @@ namespace SIL.FieldWorks.XWorks
 				Children = new List<ConfigurableDictionaryNode> { senses }
 			};
 
-			var model = new DictionaryConfigurationModel();
-			model.Parts = new List<ConfigurableDictionaryNode> { entry };
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
 			DictionaryConfigurationModel.SpecifyParents(model.Parts);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry \.senses \.sensenumber.*\{.*font-family:'impact'.*}", RegexOptions.Singleline).Success,
-							  "Font was not applied to sense number selector.");
-		}
-
-		[Test]
-		public void GenerateCssForConfiguration_SenseNumberBoldWorks()
-		{
-			var senses = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "SensesOS",
-				CSSClassNameOverride = "Senses",
-				DictionaryNodeOptions = new DictionaryNodeSenseOptions { NumberStyle = "bold" }
-			};
-			var secondsenses = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "SensesOS",
-				CSSClassNameOverride = "SecondSenses",
-				DictionaryNodeOptions = new DictionaryNodeSenseOptions { NumberStyle = "-bold" }
-			};
-			var entry = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "LexEntry",
-				Children = new List<ConfigurableDictionaryNode> { senses, secondsenses }
-			};
-
-			var model = new DictionaryConfigurationModel();
-			model.Parts = new List<ConfigurableDictionaryNode> { entry };
-			DictionaryConfigurationModel.SpecifyParents(model.Parts);
-			// SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry \.senses \.sensenumber.*\{.*font-weight:bold;.*}", RegexOptions.Singleline).Success,
-							  "Bold style not applied to the sense number selector.");
-			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry \.secondsenses \.sensenumber.*\{.*font-weight:normal;.*}", RegexOptions.Singleline).Success,
-							  "Bold style not removed from the sense number selector.");
-		}
-
-		[Test]
-		public void GenerateCssForConfiguration_SenseNumberItalicWorks()
-		{
-			var senses = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "SensesOS",
-				CSSClassNameOverride = "Senses",
-				DictionaryNodeOptions = new DictionaryNodeSenseOptions { NumberStyle = "italic" }
-			};
-			var secondsenses = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "SensesOS",
-				CSSClassNameOverride = "SecondSenses",
-				DictionaryNodeOptions = new DictionaryNodeSenseOptions { NumberStyle = "-italic" }
-			};
-			var entry = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "LexEntry",
-				Children = new List<ConfigurableDictionaryNode> { senses, secondsenses }
-			};
-
-			var model = new DictionaryConfigurationModel();
-			model.Parts = new List<ConfigurableDictionaryNode> { entry };
-			DictionaryConfigurationModel.SpecifyParents(model.Parts);
-			// SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry \.senses \.sensenumber.*\{.*font-style:italic;.*}", RegexOptions.Singleline).Success,
-							  "Italic style not applied to the sense number selector.");
-			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry \.secondsenses \.sensenumber.*\{.*font-style:normal;.*}", RegexOptions.Singleline).Success,
-							  "Italic style not removed from the sense number selector.");
-		}
-
-		[Test]
-		public void GenerateCssForConfiguration_SenseNumberBoldAndItalicWorks()
-		{
-			var senses = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "SensesOS",
-				CSSClassNameOverride = "Senses",
-				DictionaryNodeOptions = new DictionaryNodeSenseOptions { NumberStyle = "bold italic" }
-			};
-			var secondsenses = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "SensesOS",
-				CSSClassNameOverride = "SecondSenses",
-				DictionaryNodeOptions = new DictionaryNodeSenseOptions { NumberStyle = "-italic -bold" }
-			};
-			var entry = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "LexEntry",
-				Children = new List<ConfigurableDictionaryNode> { senses, secondsenses }
-			};
-
-			var model = new DictionaryConfigurationModel();
-			model.Parts = new List<ConfigurableDictionaryNode> { entry };
-			DictionaryConfigurationModel.SpecifyParents(model.Parts);
-			// SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry \.senses \.sensenumber.*\{.*font-style:italic;.*}", RegexOptions.Singleline).Success,
-							  "Italic style not applied to the sense number selector when combined with bold.");
-			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry \.senses \.sensenumber.*\{.*font-weight:bold;.*}", RegexOptions.Singleline).Success,
-							  "Bold style not applied to the sense number selector when combined with italic.");
-			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry \.secondsenses \.sensenumber.*\{.*font-style:normal;.*}", RegexOptions.Singleline).Success,
-							  "Italic style not removed from the sense number selector when combined with bold.");
-			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry \.secondsenses \.sensenumber.*\{.*font-weight:normal;.*}", RegexOptions.Singleline).Success,
-							  "Bold style not removed from the sense number selector when combined with italic.");
+			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry \.senses \.sensenumber", RegexOptions.Singleline).Success,
+							  "sense number style selector was not generated.");
+			VerifyFontInfoInCss(FontColor, FontBGColor, FontName, FontBold, FontItalic, FontSize, cssResult);
 		}
 
 		[Test]

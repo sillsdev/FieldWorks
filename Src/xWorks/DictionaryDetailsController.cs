@@ -5,10 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
-using System.Drawing.Text;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.RootSites;
@@ -212,23 +209,6 @@ namespace SIL.FieldWorks.XWorks
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "senseOptionsView is disposed by its parent")]
 		private void LoadSenseOptions(DictionaryNodeSenseOptions senseOptions)
 		{
-			// parse style string
-			var bold = CheckState.Indeterminate;
-			var italic = CheckState.Indeterminate;
-			var style = senseOptions.NumberStyle;
-			if (!String.IsNullOrEmpty(style))
-			{
-				style = style.ToLowerInvariant();
-				if (style.IndexOf("-bold", StringComparison.Ordinal) >= 0)
-					bold = CheckState.Unchecked;
-				else if (style.IndexOf("bold", StringComparison.Ordinal) >= 0)
-					bold = CheckState.Checked;
-				if (style.IndexOf("-italic", StringComparison.Ordinal) >= 0)
-					italic = CheckState.Unchecked;
-				else if (style.IndexOf("italic", StringComparison.Ordinal) >= 0)
-					italic = CheckState.Checked;
-			}
-
 			// initialize SenseOptionsView
 			var senseOptionsView = new SenseOptionsView
 			{
@@ -236,16 +216,13 @@ namespace SIL.FieldWorks.XWorks
 				NumberingStyles = XmlVcDisplayVec.SupportedNumberingStyles, // load available list before setting value
 				NumberingStyle = senseOptions.NumberingStyle,
 				AfterText = senseOptions.AfterNumber,
-				Bold = bold,
-				Italic = italic,
-				NumberFonts = AvailableFonts, // load list of available fonts before setting NumberFont
-				NumberFont = senseOptions.NumberFont,
 				NumberSingleSense = senseOptions.NumberEvenASingleSense,
 				ShowGrammarFirst = senseOptions.ShowSharedGrammarInfoFirst,
 				SenseInPara = senseOptions.DisplayEachSenseInAParagraph,
 			};
 
-			// load paragraph Style
+			// load character Style (number) and paragraph Style (sense)
+			senseOptionsView.SetStyles(m_charStyles, senseOptions.NumberStyle);
 			View.SetStyles(m_paraStyles, m_node.Style, true);
 
 			// (dis)actviate appropriate parts of the view
@@ -256,11 +233,10 @@ namespace SIL.FieldWorks.XWorks
 			senseOptionsView.BeforeTextChanged += (sender, e) => { senseOptions.BeforeNumber = senseOptionsView.BeforeText; RefreshPreview(); };
 			senseOptionsView.NumberingStyleChanged += (sender, e) => SenseNumbingStyleChanged(senseOptions, senseOptionsView);
 			senseOptionsView.AfterTextChanged += (sender, e) => { senseOptions.AfterNumber = senseOptionsView.AfterText; RefreshPreview(); };
-			senseOptionsView.NumberFontChanged += (sender, e) => SenseNumFontChanged(senseOptions, senseOptionsView.NumberFont);
+			senseOptionsView.NumberStyleChanged += (sender, e) => { senseOptions.NumberStyle = senseOptionsView.NumberStyle; RefreshPreview(); };
 // ReSharper disable ImplicitlyCapturedClosure
 // Justification: senseOptions, senseOptionsView, and all of these lambda functions will all disappear at the same time.
-			senseOptionsView.BoldChanged += (sender, e) => SenseNumStyleChanged(senseOptionsView.Bold, senseOptionsView.Italic);
-			senseOptionsView.ItalicChanged += (sender, e) => SenseNumStyleChanged(senseOptionsView.Bold, senseOptionsView.Italic);
+			senseOptionsView.StyleButtonClick += (sender, e) => HandleStylesBtn((ComboBox)sender, senseOptionsView.NumberStyle);
 // ReSharper restore ImplicitlyCapturedClosure
 			senseOptionsView.NumberSingleSenseChanged += (sender, e) =>
 			{
@@ -431,21 +407,6 @@ namespace SIL.FieldWorks.XWorks
 					break;
 			}
 			return wsList;
-		}
-
-		private static List<string> AvailableFonts
-		{
-			get
-			{
-				var fonts = new List<string> { xWorksStrings.ksUnspecified };
-				using (var installedFontCollection = new InstalledFontCollection())
-				{
-					// The .NET framework is unforgiving of fonts that don't support the "regular" style, so we hide them.
-					fonts.AddRange(installedFontCollection.Families.Where(family => family.IsStyleAvailable(FontStyle.Regular))
-						.Select(family => family.Name));
-				}
-				return fonts;
-			}
 		}
 
 		private void LoadStylesLists()
@@ -640,7 +601,7 @@ namespace SIL.FieldWorks.XWorks
 				return yName == null ? 0 : -1;
 			if (yName == null)
 				return 1;
-			return String.Compare(xName, yName);
+			return String.Compare(xName, yName, StringComparison.InvariantCulture);
 		}
 		#endregion Load more-static parts
 		#endregion LoadModel
@@ -796,29 +757,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			senseOptions.NumberingStyle = senseOptionsView.NumberingStyle;
 			senseOptionsView.NumberMetaConfigEnabled = !string.IsNullOrEmpty(senseOptions.NumberingStyle);
-			RefreshPreview();
-		}
-
-		private void SenseNumStyleChanged(CheckState bold, CheckState italic)
-		{
-			var sbNumStyle = new StringBuilder();
-			if (bold == CheckState.Checked)
-				sbNumStyle.Append("bold");
-			else if (bold == CheckState.Unchecked)
-				sbNumStyle.Append("-bold");
-			if (bold != CheckState.Indeterminate && italic != CheckState.Indeterminate)
-				sbNumStyle.Append(" ");
-			if (italic == CheckState.Checked)
-				sbNumStyle.Append("italic");
-			else if (italic == CheckState.Unchecked)
-				sbNumStyle.Append("-italic");
-			((DictionaryNodeSenseOptions)Options).NumberStyle = sbNumStyle.ToString();
-			RefreshPreview();
-		}
-
-		private void SenseNumFontChanged(DictionaryNodeSenseOptions senseOptions, string font)
-		{
-			senseOptions.NumberFont = xWorksStrings.ksUnspecified.Equals(font) ? "" : font;
 			RefreshPreview();
 		}
 

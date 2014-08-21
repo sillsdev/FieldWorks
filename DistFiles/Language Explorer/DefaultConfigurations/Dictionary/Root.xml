@@ -160,7 +160,7 @@
             </WritingSystemOptions>
         </ConfigurationItem>
         <ConfigurationItem name="Senses" between="  " after=" " isEnabled="true" field="SensesOS">
-            <SenseOptions displayEachSenseInParagraph="false" senseParaStyle="Dictionary-Sense" numberStyle="bold" numberBefore="" numberAfter=") " numberingStyle="%O" numberFont="" numberSingleSense="false" showSingleGramInfoFirst="true"/>
+            <SenseOptions displayEachSenseInParagraph="false" senseParaStyle="Dictionary-Sense" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=") " numberingStyle="%O" numberSingleSense="false" showSingleGramInfoFirst="true"/>
             <ConfigurationItem name="Grammatical Info." after=" " style="Dictionary-Contrasting" isEnabled="true" field="MorphoSyntaxAnalysisRA">
 				<ConfigurationItem name="Gram Info (Name)" between=" " after=" " isEnabled="false" field="InterlinearNameTSS"/>
 				<ConfigurationItem name="Gram Info (Abbrev)" between=" " after=" " isEnabled="false" field="InterlinearAbbrTSS"/>
@@ -478,7 +478,7 @@
 				<ReferenceItem>LexEntry</ReferenceItem>
 			</ConfigurationItem>
             <ConfigurationItem name="Subsenses" between="  " after=" " isEnabled="true" field="SensesOS">
-                <SenseOptions displayEachSenseInParagraph="false" senseParaStyle="Dictionary-Sense" numberStyle="bold" numberBefore="" numberAfter=") " numberingStyle="%O" numberFont="" numberSingleSense="true" showSingleGramInfoFirst="false"/>
+                <SenseOptions displayEachSenseInParagraph="false" senseParaStyle="Dictionary-Sense" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=") " numberingStyle="%O" numberSingleSense="true" showSingleGramInfoFirst="false"/>
 				<ReferenceItem>LexSense</ReferenceItem>
             </ConfigurationItem>
         </ConfigurationItem>
@@ -735,7 +735,7 @@
 				</WritingSystemOptions>
 			</ConfigurationItem>
 			<ConfigurationItem name="Senses" between="  " after=" " isEnabled="true" field="SensesOS">
-				<SenseOptions displayEachSenseInParagraph="false" senseParaStyle="Dictionary-Sense" numberStyle="bold" numberBefore="" numberAfter=") " numberingStyle="%O" numberFont="" numberSingleSense="false" showSingleGramInfoFirst="true"/>
+				<SenseOptions displayEachSenseInParagraph="false" senseParaStyle="Dictionary-Sense" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=") " numberingStyle="%O" numberSingleSense="false" showSingleGramInfoFirst="true"/>
 				<ConfigurationItem name="Grammatical Info." after=" " style="Dictionary-Contrasting" isEnabled="true" field="MorphoSyntaxAnalysisRA">
 					<ConfigurationItem name="Gram Info (Name)" between=" " after=" " isEnabled="false" field="InterlinearNameTSS"/>
 					<ConfigurationItem name="Gram Info (Abbrev)" between=" " after=" " isEnabled="false" field="InterlinearAbbrTSS"/>
@@ -1053,7 +1053,7 @@
 					<ReferenceItem>LexEntry</ReferenceItem>
 				</ConfigurationItem>
 				<ConfigurationItem name="Subsenses" between="  " after=" " isEnabled="true" field="SensesOS">
-					<SenseOptions displayEachSenseInParagraph="false" senseParaStyle="Dictionary-Sense" numberStyle="bold" numberBefore="" numberAfter=") " numberingStyle="%O" numberFont="" numberSingleSense="true" showSingleGramInfoFirst="false"/>
+					<SenseOptions displayEachSenseInParagraph="false" senseParaStyle="Dictionary-Sense" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=") " numberingStyle="%O" numberSingleSense="true" showSingleGramInfoFirst="false"/>
 					<ReferenceItem>LexSense</ReferenceItem>
 				</ConfigurationItem>
 			</ConfigurationItem>
@@ -1436,7 +1436,7 @@
 			</WritingSystemOptions>
 		</ConfigurationItem>
         <ConfigurationItem name="Senses" between="  " after=" " isEnabled="true" field="SensesOS">
-            <SenseOptions displayEachSenseInParagraph="false" senseParaStyle="Dictionary-Sense" numberStyle="bold" numberBefore="" numberAfter=") " numberingStyle="%O" numberFont="" numberSingleSense="false" showSingleGramInfoFirst="true"/>
+            <SenseOptions displayEachSenseInParagraph="false" senseParaStyle="Dictionary-Sense" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=") " numberingStyle="%O" numberSingleSense="false" showSingleGramInfoFirst="true"/>
             <ConfigurationItem name="Grammatical Info." after=" " style="Dictionary-Contrasting" isEnabled="true" field="MorphoSyntaxAnalysisRA">
 				<ConfigurationItem name="Gram Info (Name)" between=" " after=" " isEnabled="false" field="InterlinearNameTSS"/>
 				<ConfigurationItem name="Gram Info (Abbrev)" between=" " after=" " isEnabled="false" field="InterlinearAbbrTSS"/>
@@ -1755,7 +1755,7 @@
 			</ConfigurationItem>
             <ConfigurationItem name="Subsenses" between="  " after=" " isEnabled="true" field="SensesOS">
 <!-- These SenseOptions might be necessary, the current ReferenceItem definition might not be sufficient -->
-<!--                <SenseOptions displayEachSenseInParagraph="false" senseParaStyle="Dictionary-Sense" numberStyle="bold" numberBefore="" numberAfter=") " numberingStyle="%O" numberFont="" numberSingleSense="true" showSingleGramInfoFirst="false"/> -->
+<!--                <SenseOptions displayEachSenseInParagraph="false" senseParaStyle="Dictionary-Sense" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=") " numberingStyle="%O" numberSingleSense="true" showSingleGramInfoFirst="false"/> -->
 				<ReferenceItem>LexSense</ReferenceItem>
             </ConfigurationItem>
         </ConfigurationItem>

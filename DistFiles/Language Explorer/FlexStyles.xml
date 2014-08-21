@@ -5,8 +5,8 @@
 	guid. Be sure to validate any changes against ../Styles.dtd.
 	*********************************************************************************************
 -->
-<Styles date="2014-08-19" DTDver="B8521229-70FB-4DD9-A022-434714B8DE4B" label="Flex Dictionary">
-	<markup version="02A5E4BA-BCC6-4871-89A0-D5A2C83A2C3A">
+<Styles date="2014-08-20" DTDver="B8521229-70FB-4DD9-A022-434714B8DE4B" label="Flex Dictionary">
+	<markup version="C0584FE8-A04E-401A-A115-264C9875EF2B">
 		<!--
 		The 'Normal' entry is here mainly as a placeholder, so the DTD will allow things to be based on it.
 		Logically Normal should probably be internal, but it's 'general' in existing projects, and the
@@ -112,6 +112,11 @@
 			<help category="Flex_Dictionary_Styles"/>
 			<font/>
 			<paragraph basedOn="Dictionary-Normal" indentLeft="45 pt" hanging="0 pt" spaceBefore="0 pt" firstLine="-18 pt"/>
+		</tag>
+		<tag id="Dictionary-SenseNumber" guid="164123A0-CA12-4C44-BD69-D5FB9D4B1A0B" userlevel="1" context="internalConfigureView" type="character">
+			<usage wsId="en">The number before each sense in an entry.</usage>
+			<help category="Flex_Dictionary_Styles"/>
+			<font bold="true"/>
 		</tag>
 		<tag id="Dictionary-Subentry" guid="90B94E23-3E77-4460-94FD-C1997ED9A81F" userlevel="1" context="internalConfigureView" type="paragraph">
 			<usage wsId="en">Each paragraph of Subentry information that is added to the entry if there are subentries.</usage>

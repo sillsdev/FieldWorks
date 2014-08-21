@@ -18,8 +18,7 @@ namespace SIL.FieldWorks.XWorks
 				BeforeNumber = "BeforeNumber",
 				NumberingStyle = "%O",
 				AfterNumber = "AfterNumber",
-				NumberStyle = "bold -italic",
-				NumberFont = "Charis SIL",
+				NumberStyle = "Dictionary-SenseNumber",
 				NumberEvenASingleSense = true,
 				ShowSharedGrammarInfoFirst = true,
 				DisplayEachSenseInAParagraph = true
@@ -35,7 +34,6 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual(orig.NumberingStyle, clone.NumberingStyle);
 			Assert.AreEqual(orig.AfterNumber, clone.AfterNumber);
 			Assert.AreEqual(orig.NumberStyle, clone.NumberStyle);
-			Assert.AreEqual(orig.NumberFont, clone.NumberFont);
 			Assert.AreEqual(orig.NumberEvenASingleSense, clone.NumberEvenASingleSense);
 			Assert.AreEqual(orig.ShowSharedGrammarInfoFirst, clone.ShowSharedGrammarInfoFirst);
 			Assert.AreEqual(orig.DisplayEachSenseInAParagraph, clone.DisplayEachSenseInAParagraph);
