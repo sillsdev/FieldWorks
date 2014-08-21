@@ -94,9 +94,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Saves the generated content into the given xhtml and css file paths for all the entries in
 		/// the given collection.
-		/// TODO: Generate letter headers based off of the writing system coalation
 		/// </summary>
-		public static void SavePublishedHtmlWithStyles(IEnumerable<int> entryHvos, DictionaryPublicationDecorator publicationDecorator, DictionaryConfigurationModel configuration, Mediator mediator, string xhtmlPath, string cssPath)
+		public static void SavePublishedHtmlWithStyles(IEnumerable<int> entryHvos, DictionaryPublicationDecorator publicationDecorator, DictionaryConfigurationModel configuration, Mediator mediator, string xhtmlPath, string cssPath, IThreadedProgress progress = null)
 		{
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			using(var xhtmlWriter = XmlWriter.Create(xhtmlPath))
@@ -110,6 +109,10 @@ namespace SIL.FieldWorks.XWorks
 					GenerateLetterHeaderIfNeeded(entry, ref lastHeader, xhtmlWriter, cache);
 					//TODO: handle minor entries with the minor entry config.
 					GenerateXHTMLForEntry(entry, configuration.Parts[0], publicationDecorator, xhtmlWriter, cache);
+					if(progress != null)
+					{
+						progress.Position++;
+					}
 				}
 				GenerateClosingHtml(xhtmlWriter);
 				xhtmlWriter.Flush();

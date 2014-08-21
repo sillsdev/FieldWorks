@@ -350,7 +350,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			var configuration = new DictionaryConfigurationModel(configurationFile, Cache);
 			publicationDecorator.Refresh();
-			var entriesToPublish = publicationDecorator.VecProp(Cache.LangProject.LexDbOA.Hvo,Clerk.VirtualFlid);
+			var entriesToPublish = publicationDecorator.VecProp(Cache.LangProject.LexDbOA.Hvo, Clerk.VirtualFlid);
 			var basePath = Path.Combine(Path.GetTempPath(), "DictionaryPreview", Path.GetFileNameWithoutExtension(configurationFile));
 			Directory.CreateDirectory(Path.GetDirectoryName(basePath));
 			var xhtmlPath = basePath + ".xhtml";
@@ -369,24 +369,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private string GetCurrentConfiguration()
 		{
-			string currentConfig = null;
-			// Since this is used in the display of the title and XWorksViews sometimes tries to display the title
-			// before full initialization (if this view is the one being displayed on startup) test the mediator before
-			// continuing.
-			if(m_mediator != null && m_mediator.PropertyTable != null)
-			{
-				currentConfig = m_mediator.PropertyTable.GetStringProperty("DictionaryPublicationLayout",
-																							String.Empty);
-				if(String.IsNullOrEmpty(currentConfig)) // No configuration type has yet been selected
-				{
-					currentConfig = Directory.EnumerateFiles(Path.Combine(DirectoryFinder.DefaultConfigurations, m_configObjectName),
-																		"*"+DictionaryConfigurationModel.FileExtension).First();
-					// Since it isn't helpful to have no configuration selected we will set it to the first shipped
-					// configuration until the user changes it.
-					m_mediator.PropertyTable.SetProperty("DictionaryPublicationLayout", currentConfig, true);
-				}
-			}
-			return currentConfig;
+			return DictionaryConfigurationListener.GetCurrentConfiguration(m_mediator, m_configObjectName);
 		}
 
 		public DictionaryPublicationDecorator PublicationDecorator

@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
@@ -175,6 +176,34 @@ namespace SIL.FieldWorks.XWorks
 				var areaChoice = m_mediator.PropertyTable.GetStringProperty("areaChoice", null);
 				return areaChoice == "lexicon";
 			}
+		}
+
+		/// <summary>
+		/// Returns the current configuration file
+		/// </summary>
+		/// <param name="mediator"></param>
+		/// <param name="configType"></param>
+		/// <returns></returns>
+		public static string GetCurrentConfiguration(Mediator mediator, string configType)
+		{
+			string currentConfig = null;
+			// Since this is used in the display of the title and XWorksViews sometimes tries to display the title
+			// before full initialization (if this view is the one being displayed on startup) test the mediator before
+			// continuing.
+			if(mediator != null && mediator.PropertyTable != null)
+			{
+				currentConfig = mediator.PropertyTable.GetStringProperty("DictionaryPublicationLayout",
+																							String.Empty);
+				if(String.IsNullOrEmpty(currentConfig)) // No configuration type has yet been selected
+				{
+					currentConfig = Directory.EnumerateFiles(Path.Combine(DirectoryFinder.DefaultConfigurations, configType),
+																		"*" + DictionaryConfigurationModel.FileExtension).First();
+					// Since it isn't helpful to have no configuration selected we will set it to the first shipped
+					// configuration until the user changes it.
+					mediator.PropertyTable.SetProperty("DictionaryPublicationLayout", currentConfig, true);
+				}
+			}
+			return currentConfig;
 		}
 	}
 }
