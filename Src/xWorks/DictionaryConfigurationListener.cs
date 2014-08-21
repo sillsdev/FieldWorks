@@ -104,11 +104,15 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal static string GetProjectConfigurationDirectory(Mediator mediator)
 		{
-			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			var lastDirectoryPart = GetInnermostConfigurationDirectory(mediator);
+			return GetProjectConfigurationDirectory(mediator, lastDirectoryPart);
+		}
 
-			return lastDirectoryPart == null
-				? null : Path.Combine(FdoFileHelper.GetConfigSettingsDir(cache.ProjectId.ProjectFolder), lastDirectoryPart);
+		/// <remarks>Useful for querying about an area of FLEx that the user is not in.</remarks>
+		internal static string GetProjectConfigurationDirectory(Mediator mediator, string area)
+		{
+			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			return area == null ? null : Path.Combine(FdoFileHelper.GetConfigSettingsDir(cache.ProjectId.ProjectFolder), area);
 		}
 
 		/// <summary>
@@ -118,9 +122,17 @@ namespace SIL.FieldWorks.XWorks
 		internal static string GetDefaultConfigurationDirectory(Mediator mediator)
 		{
 			var lastDirectoryPart = GetInnermostConfigurationDirectory(mediator);
-
-			return lastDirectoryPart == null ? null : Path.Combine(FwDirectoryFinder.DefaultConfigurations, lastDirectoryPart);
+			return GetDefaultConfigurationDirectory(lastDirectoryPart);
 		}
+
+		/// <remarks>Useful for querying about an area of FLEx that the user is not in.</remarks>
+		internal static string GetDefaultConfigurationDirectory(string area)
+		{
+			return area == null ? null : Path.Combine(FwDirectoryFinder.DefaultConfigurations, area);
+		}
+
+		internal static readonly string s_reversalIndexConfigurationDirectoryName = "ReversalIndex";
+		internal static readonly string s_dictionaryConfigurationDirectoryName = "Dictionary";
 
 		/// <summary>
 		/// Get the name of the innermost directory name for configurations for the part of FLEx the user is
@@ -132,11 +144,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				case "reversalToolBulkEditReversalEntries":
 				case "reversalToolEditComplete":
-					return "ReversalIndex";
+					return s_reversalIndexConfigurationDirectoryName;
 				case "lexiconBrowse":
 				case "lexiconDictionary":
 				case "lexiconEdit":
-					return "Dictionary";
+					return s_dictionaryConfigurationDirectoryName;
 				default:
 					return null;
 			}

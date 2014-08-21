@@ -78,11 +78,8 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		void LoadDictionaryConfigurations()
 		{
-			var cache = (FdoCache)_mediator.PropertyTable.GetValue("cache");
-
-			var choices = ListDictionaryConfigurationChoices(_defaultConfigDir, _projectConfigDir);
-			_dictionaryConfigurations = choices.Select(choice => new DictionaryConfigurationModel(choice, cache)).ToList();
-			_dictionaryConfigurations.Sort((lhs, rhs) => string.Compare(lhs.Label, rhs.Label));
+			var cache = (FdoCache) _mediator.PropertyTable.GetValue("cache");
+			_dictionaryConfigurations = GetDictionaryConfigurationModels(cache, _defaultConfigDir, _projectConfigDir);
 			View.SetChoices(_dictionaryConfigurations);
 		}
 
@@ -92,8 +89,9 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="defaultPath"></param>
 		/// <param name="projectPath"></param>
-		/// <returns></returns>
-		internal List<string> ListDictionaryConfigurationChoices(string defaultPath, string projectPath)
+		/// <seealso cref="XhtmlDocView.GatherBuiltInAndUserConfigurations()"/>
+		/// <returns>List of paths to configurations</returns>
+		internal static List<string> ListDictionaryConfigurationChoices(string defaultPath, string projectPath)
 		{
 			var choices = new Dictionary<string, string>();
 			foreach(var file in Directory.EnumerateFiles(defaultPath, "*" + DictionaryConfigurationModel.FileExtension))
@@ -112,6 +110,24 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 			return choices.Values.ToList();
+		}
+
+		/// <summary>
+		/// Get list of dictionary configuration labels from default and project-specific paths, skipping default/shipped configurations that are
+		/// superceded by project-specific configurations.
+		/// </summary>
+		public static List<string> GetListOfDictionaryConfigurationLabels(FdoCache cache, string defaultPath, string projectPath)
+		{
+			var configurationModels = GetDictionaryConfigurationModels(cache, defaultPath, projectPath);
+			return configurationModels.Select(model => model.Label).ToList();
+		}
+
+		private static List<DictionaryConfigurationModel> GetDictionaryConfigurationModels(FdoCache cache, string defaultPath, string projectPath)
+		{
+			var configurationPaths = ListDictionaryConfigurationChoices(defaultPath, projectPath);
+			var configurationModels = configurationPaths.Select(path => new DictionaryConfigurationModel(path, cache)).ToList();
+			configurationModels.Sort((lhs, rhs) => string.Compare(lhs.Label, rhs.Label));
+			return configurationModels;
 		}
 
 		/// <summary>

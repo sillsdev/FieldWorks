@@ -324,20 +324,19 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void ReadAlternateDictionaryChoices_MissingUserLocationIsCreated()
+		public void ListDictionaryConfigurationChoices_MissingUserLocationIsCreated()
 		{
 			var testDefaultFolder =
 				Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName())).FullName;
 			var userFolderName = Path.GetRandomFileName();
 			var testUserFolder = Path.Combine(Path.GetTempPath(), userFolderName);
-			var controller = new DictionaryConfigurationController();
 			// SUT
-			Assert.DoesNotThrow(()=>controller.ListDictionaryConfigurationChoices(testDefaultFolder, testUserFolder), "A missing User location should not throw.");
+			Assert.DoesNotThrow(() => DictionaryConfigurationController.ListDictionaryConfigurationChoices(testDefaultFolder, testUserFolder), "A missing User location should not throw.");
 			Assert.IsTrue(Directory.Exists(testUserFolder), "A missing user configuration folder should be created.");
 		}
 
 		[Test]
-		public void ReadAlternateDictionaryChoices_NoUserFilesUsesDefaults()
+		public void ListDictionaryConfigurationChoices_NoUserFilesUsesDefaults()
 		{
 			var testDefaultFolder =
 				Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
@@ -347,14 +346,13 @@ namespace SIL.FieldWorks.XWorks
 			}
 			var testUserFolder =
 				Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
-			var controller = new DictionaryConfigurationController();
 			// SUT
-			var choices = controller.ListDictionaryConfigurationChoices(testDefaultFolder.FullName, testUserFolder.FullName);
+			var choices = DictionaryConfigurationController.ListDictionaryConfigurationChoices(testDefaultFolder.FullName, testUserFolder.FullName);
 			Assert.IsTrue(choices.Count == 1, "xml configuration file in default directory was not read");
 		}
 
 		[Test]
-		public void ReadAlternateDictionaryChoices_BothDefaultsAndUserFilesAppear()
+		public void ListDictionaryConfigurationChoices_BothDefaultsAndUserFilesAppear()
 		{
 			var testDefaultFolder =
 				Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
@@ -368,14 +366,13 @@ namespace SIL.FieldWorks.XWorks
 			{
 				writer.Write("usertest");
 			}
-			var controller = new DictionaryConfigurationController();
 			// SUT
-			var choices = controller.ListDictionaryConfigurationChoices(testDefaultFolder.FullName, testUserFolder.FullName);
+			var choices = DictionaryConfigurationController.ListDictionaryConfigurationChoices(testDefaultFolder.FullName, testUserFolder.FullName);
 			Assert.IsTrue(choices.Count == 2, "One of the configuration files was not listed");
 		}
 
 		[Test]
-		public void ReadAlternateDictionaryChoices_UserFilesOfSameNameAsDefaultGetOneEntry()
+		public void ListDictionaryConfigurationChoices_UserFilesOfSameNameAsDefaultGetOneEntry()
 		{
 			var testDefaultFolder =
 				Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
@@ -389,11 +386,29 @@ namespace SIL.FieldWorks.XWorks
 			{
 				writer.Write("usertest");
 			}
-			var controller = new DictionaryConfigurationController();
 			// SUT
-			var choices = controller.ListDictionaryConfigurationChoices(testDefaultFolder.FullName, testUserFolder.FullName);
+			var choices = DictionaryConfigurationController.ListDictionaryConfigurationChoices(testDefaultFolder.FullName, testUserFolder.FullName);
 			Assert.IsTrue(choices.Count == 1, "Only the user configuration should be listed");
 			Assert.IsTrue(choices[0].Contains(testUserFolder.FullName), "The default overrode the user configuration.");
+		}
+
+		[Test]
+		public void GetListOfDictionaryConfigurationLabels_ListsLabels()
+		{
+			var testDefaultFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
+			var testUserFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
+			m_model.Label = "configurationALabel";
+			m_model.FilePath = Path.Combine(testDefaultFolder.FullName, "configurationA.xml");
+			m_model.Save();
+			m_model.Label = "configurationBLabel";
+			m_model.FilePath = Path.Combine(testUserFolder.FullName, "configurationB.xml");
+			m_model.Save();
+
+			// SUT
+			var labels = DictionaryConfigurationController.GetListOfDictionaryConfigurationLabels(Cache, testDefaultFolder.FullName, testUserFolder.FullName);
+			Assert.Contains("configurationALabel", labels, "missing a label");
+			Assert.Contains("configurationBLabel", labels, "missing a label");
+			Assert.That(labels.Count, Is.EqualTo(2), "unexpected label count");
 		}
 
 		/// <summary/>

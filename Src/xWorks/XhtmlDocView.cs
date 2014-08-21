@@ -144,6 +144,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Stores the configuration name as the key, and the file path as the value
 		/// User configuration files with the same name as a shipped configuration will trump the shipped
 		/// </summary>
+		/// <seealso cref="DictionaryConfigurationController.ListDictionaryConfigurationChoices()"/>
 		/// <returns></returns>
 		internal SortedDictionary<string, string> GatherBuiltInAndUserConfigurations()
 		{

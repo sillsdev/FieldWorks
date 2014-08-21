@@ -1228,17 +1228,26 @@ namespace SIL.FieldWorks.XWorks
 		public bool OnPublishToWebonary(object command)
 		{
 			CheckDisposed();
-			var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+			ShowPublishToWebonaryDialog(m_mediator);
+			return true;
+		}
+
+		internal static void ShowPublishToWebonaryDialog(Mediator mediator)
+		{
+			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+
 			var reversals = cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances().Select(item => item.Name.BestAnalysisAlternative.Text);
-			var publications =
-				cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p.Name.BestAnalysisAlternative.Text).ToList();
+			var publications = cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p.Name.BestAnalysisAlternative.Text).ToList();
+
+			var projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(mediator, DictionaryConfigurationListener.s_dictionaryConfigurationDirectoryName);
+			var defaultConfigDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(DictionaryConfigurationListener.s_dictionaryConfigurationDirectoryName);
+			var configurations = DictionaryConfigurationController.GetListOfDictionaryConfigurationLabels(cache, defaultConfigDir, projectConfigDir);
+
 			// show dialog
-			using (var dialog = new PublishToWebonaryDlg(reversals, new List<string>(), publications, Mediator.HelpTopicProvider))
+			using (var dialog = new PublishToWebonaryDlg(reversals, configurations, publications, mediator.HelpTopicProvider))
 			{
 				dialog.ShowDialog();
 			}
-
-			return true;
 		}
 
 
