@@ -495,7 +495,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// access the cached value.</remarks>
 		/// <returns><c>true</c> if the file is currently accessible</returns>
 		/// ------------------------------------------------------------------------------------
-		internal bool RecheckAccessibility()
+		public bool RecheckAccessibility()
 		{
 			if (IsReadable)
 				return IsStillReadable;

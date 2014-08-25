@@ -638,7 +638,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void CreateMockCache()
 		{
 			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(
-				new TestProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", "es", "en", new ThreadHelper());
+				new TestProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", "es", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories);
 
 			var xl = new XmlList();
 			using (var reader = new StringReader(XmlListTests.s_ksPartsOfSpeechXml))
@@ -667,7 +667,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[TearDown]
 		public void DestroyMockCache()
 		{
-			m_cache.ThreadHelper.Dispose();
 			m_cache.Dispose();
 			m_cache = null;
 		}

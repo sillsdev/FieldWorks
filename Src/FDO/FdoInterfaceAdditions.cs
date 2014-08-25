@@ -13,12 +13,9 @@
 using System;
 using System.Collections.Generic;
 using System.Xml;
-using System.Windows.Forms;
 using System.Collections;
-using System.Collections.Specialized;
 
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
@@ -878,17 +875,17 @@ namespace SIL.FieldWorks.FDO
 		/// <summary>
 		/// Resets the homograph numbers for all entries.
 		/// </summary>
-		void ResetHomographNumbers(ProgressBar progressBar);
+		void ResetHomographNumbers(IProgress progressBar);
 
 		/// <summary>
 		/// Allows user to convert LexEntryType to LexEntryInflType.
 		/// </summary>
-		void ConvertLexEntryInflTypes(ProgressBar progressBar, IEnumerable<ILexEntryType> list);
+		void ConvertLexEntryInflTypes(IProgress progressBar, IEnumerable<ILexEntryType> list);
 
 		/// <summary>
 		/// Allows user to convert LexEntryInflType to LexEntryType.
 		/// </summary>
-		void ConvertLexEntryTypes(ProgressBar progressBar, IEnumerable<ILexEntryType> list);
+		void ConvertLexEntryTypes(IProgress progressBar, IEnumerable<ILexEntryType> list);
 		/// <summary>
 		/// used when dumping the lexical database for the automated Parser
 		/// </summary>
@@ -1573,6 +1570,20 @@ namespace SIL.FieldWorks.FDO
 		/// <returns></returns>
 		IMoMorphSynAnalysis UpdateOrReplace(SandboxGenericMSA sandboxMsa);
 
+		/// <summary>
+		/// True if the MSA can safely be deleted once the given sense has been deleted
+		/// </summary>
+		/// <param name="lexSense"></param>
+		/// <returns></returns>
+		bool CanDeleteIfSenseDeleted(ILexSense lexSense);
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="ws">The ws.</param>
+		/// <returns></returns>
+		ITsString PartOfSpeechForWsTSS(int ws);
+
 		/// <summary/>
 		ITsMultiString MLPartOfSpeech { get; }
 
@@ -1708,11 +1719,20 @@ namespace SIL.FieldWorks.FDO
 		}
 
 		/// <summary>
-		/// If the recipient is a column in a chart that shouldn't be moved or deleted, report
-		/// accordingly and return true. Return false if OK to delete or move.
+		/// Gets a value indicating whether this is the default discourse template.
 		/// </summary>
-		/// <returns></returns>
-		bool CheckAndReportProtectedChartColumn();
+		bool IsDefaultDiscourseTemplate { get; }
+
+		/// <summary>
+		/// Return true if this or one of its children is in use as a Constituent chart column.
+		/// Most efficient to call this after checking that the root is a chart template.
+		/// </summary>
+		bool IsThisOrDescendantInUseAsChartColumn { get; }
+
+		/// <summary>
+		/// Gets a value indicating whether this is the only text markup tag.
+		/// </summary>
+		bool IsOnlyTextMarkupTag { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -4214,21 +4234,6 @@ namespace SIL.FieldWorks.FDO
 			set;
 		}
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Indicates whether the in-memory import projects/files are currently accessible from
-		/// this machine.
-		/// </summary>
-		/// <param name="thingsNotFound">A list of Paratext project IDs or file paths that
-		/// could not be found.</param>
-		/// <remarks>
-		/// For Paratext projects, this will only return true if all projects are accessible.
-		/// For Standard Format, this will return true if any of the files are accessible.
-		/// We think this might make sense, but we aren't sure why.
-		/// </remarks>
-		/// -----------------------------------------------------------------------------------
-		bool ImportProjectIsAccessible(out StringCollection thingsNotFound);
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets whether to import back translations
@@ -4400,20 +4405,6 @@ namespace SIL.FieldWorks.FDO
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets a list of books that exist for all of the files in this project.
-		/// </summary>
-		/// <returns>A List of integers representing 1-based canonical book numbers that exist
-		/// in any source represented by these import settings</returns>
-		/// <exception cref="NotSupportedException">If project is not a supported type</exception>
-		/// ------------------------------------------------------------------------------------
-		List<int> BooksForProject
-		{
-			get;
-		}
-
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Starting reference for the import; for now, we ignore the
 		/// chapter and verse since import will always start at the beginning of the book.
 		/// </summary>
@@ -4449,16 +4440,6 @@ namespace SIL.FieldWorks.FDO
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Sets the help file used in a message box if an error occurs.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		string HelpFile
-		{
-			set;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Sets the Overlapping File Resolver
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -4481,13 +4462,6 @@ namespace SIL.FieldWorks.FDO
 		{
 			get;
 		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Sets the StartRef and EndRef based on the requested canonical book numbers.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		void IncludeBooks(int startBook, int endBook, Paratext.ScrVers versification);
 	}
 
 	/// ----------------------------------------------------------------------------------------
@@ -5171,8 +5145,10 @@ namespace SIL.FieldWorks.FDO
 		/// one (which is probably the only one), or creates new settings if none exist.
 		/// </summary>
 		/// <param name="importType">type of import type to find.</param>
+		/// <param name="defaultParaCharsStyleName">The default paragraph characters style name.</param>
+		/// <param name="stylesPath"></param>
 		/// ------------------------------------------------------------------------------------
-		IScrImportSet FindOrCreateDefaultImportSettings(TypeOfImport importType);
+		IScrImportSet FindOrCreateDefaultImportSettings(TypeOfImport importType, string defaultParaCharsStyleName, string stylesPath);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// <returns></returns>
 		protected string ConfigurationFilePath(string fileRelativePath)
 		{
-			return Path.Combine(DirectoryFinder.FwSourceDirectory, fileRelativePath);
+			return Path.Combine(FwDirectoryFinder.SourceDirectory, fileRelativePath);
 		}
 
 		/// <summary>
@@ -543,7 +543,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				ITsString tssWordformBaseline = GetBaselineText(iSegment, iSegForm);
 				// Add any relevant 'other case' forms.
 				int nvar;
-				int ws = tssWordformBaseline.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out nvar); ;
+				int ws = tssWordformBaseline.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out nvar);
 				string locale = m_cache.ServiceLocator.WritingSystemManager.Get(ws).IcuLocale;
 				var cf = new CaseFunctions(locale);
 				switch (targetState)
@@ -2435,7 +2435,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			IWritingSystem wsObj = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			var validChars = ValidCharacters.Load(wsObj.ValidChars,
-				wsObj.DisplayLabel, null, null);
+				wsObj.DisplayLabel, null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			var fChangedSomething = false;
 			if (!validChars.IsWordForming('-'))
 			{

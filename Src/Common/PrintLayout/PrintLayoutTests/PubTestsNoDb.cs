@@ -6,15 +6,10 @@
 // Responsibility: TE Team
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
-using System.Windows.Forms;
-
 using NUnit.Framework;
 
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.PrintLayout;
+using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -189,7 +184,7 @@ namespace SIL.FieldWorks.Common.PrintLayout
 			m_pub.BaseLineSpacing = 0;
 			FwStyleSheet stylesheet = new FwStyleSheet();
 			stylesheet.Init(Cache, Cache.LangProject.TranslatedScriptureOA.Hvo,
-				ScriptureTags.kflidStyles);
+				ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 
 			using (DummyDivision divLayoutMgr = new DummyDivision(new DummyPrintConfigurer(Cache, null), 1))
 			{
@@ -222,7 +217,7 @@ namespace SIL.FieldWorks.Common.PrintLayout
 			m_pub.BaseLineSpacing = -11000;
 			FwStyleSheet stylesheet = new FwStyleSheet();
 			stylesheet.Init(Cache, Cache.LangProject.TranslatedScriptureOA.Hvo,
-				ScriptureTags.kflidStyles);
+				ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 
 			using (DummyDivision divLayoutMgr = new DummyDivision(new DummyPrintConfigurer(Cache, null), 1))
 			{

@@ -90,8 +90,9 @@
     <Reference Include="BasicUtils">
       <HintPath>..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
-    <Reference Include="FwResources">
-      <HintPath>..\..\Output\Debug\FwResources.dll</HintPath>
+    <Reference Include="protobuf-net, Version=2.0.0.668, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\protobuf-net.dll</HintPath>
     </Reference>
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -106,29 +107,16 @@
       <Name>COMInterfaces</Name>
       <HintPath>..\..\Output\Debug\COMInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.VisualBasic">
-      <Name>Microsoft.VisualBasic</Name>
-    </Reference>
     <Reference Include="PhonEnvValidator">
       <Name>PhonEnvValidator</Name>
       <HintPath>..\..\Output\Debug\PhonEnvValidator.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
-    </Reference>
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
-    <Reference Include="System.Windows.Forms">
-      <Name>System.Windows.Forms</Name>
-    </Reference>
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
-    </Reference>
-    <Reference Include="Utilities, Version=7.3.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\DistFiles\Utilities.dll</HintPath>
     </Reference>
     <Reference Include="XMLUtils">
       <Name>XMLUtils</Name>
@@ -146,12 +134,6 @@
     <Reference Include="Db4objects.Db4o.Linq">
       <HintPath>..\..\Output\Debug\Db4objects.Db4o.Linq.dll</HintPath>
     </Reference>
-    <Reference Include="ECInterfaces">
-      <HintPath>..\..\Output\Debug\ECInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="FwUtils">
-      <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
-    </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\..\Lib\debug\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
@@ -161,23 +143,14 @@
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="ParatextShared">
-      <HintPath>..\..\DistFiles\ParatextShared.dll</HintPath>
-    </Reference>
     <Reference Include="PhraseTranslationHelper">
       <HintPath>..\..\Output\Debug\PhraseTranslationHelper.dll</HintPath>
-    </Reference>
-    <Reference Include="Reporting">
-      <HintPath>..\..\Output\Debug\Reporting.dll</HintPath>
     </Reference>
     <Reference Include="ScrUtilsInterfaces">
       <HintPath>..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="SharedScrUtils">
       <HintPath>..\..\Output\Debug\SharedScrUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="SilEncConverters40">
-      <HintPath>..\..\Output\Debug\SilEncConverters40.dll</HintPath>
     </Reference>
     <Reference Include="StructureMap">
       <HintPath>..\..\DistFiles\StructureMap.dll</HintPath>
@@ -187,15 +160,6 @@
     </Reference>
     <Reference Include="SilUtils">
       <HintPath>..\..\Output\Debug\SilUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="Tamir.SharpSSH">
-      <HintPath>..\..\DistFiles\Tamir.SharpSSH.dll</HintPath>
-    </Reference>
-    <Reference Include="xCoreInterfaces">
-      <HintPath>..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="ZipUtils">
-      <HintPath>..\..\Output\Debug\ZipUtils.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -216,6 +180,13 @@
     <Compile Include="Application\IActionHandlerExtensions.cs" />
     <Compile Include="Application\ReferenceTracker.cs" />
     <Compile Include="CacheKey.cs" />
+    <Compile Include="DomainServices\SharedBackendServices.cs" />
+    <Compile Include="FdoDataMigrationForbiddenException.cs" />
+    <Compile Include="FdoFileLockedException.cs" />
+    <Compile Include="Infrastructure\Impl\CommitLogMetadata.cs" />
+    <Compile Include="Infrastructure\Impl\CommitLogRecord.cs" />
+    <Compile Include="Infrastructure\Impl\SharedXMLBackendProvider.cs" />
+    <Compile Include="LinkedFilesRelativePathHelper.cs" />
     <Compile Include="DomainImpl\AnalysisAdjuster.cs" />
     <Compile Include="DomainImpl\CmCell.cs" />
     <Compile Include="DomainImpl\CmFilter.cs" />
@@ -234,30 +205,12 @@
     <Compile Include="DomainServices\BackupRestore\BackupProjectSettings.cs" />
     <Compile Include="DomainServices\BackupRestore\BackupSettings.cs" />
     <Compile Include="DomainServices\BackupRestore\BackupFileSettings.cs" />
-    <Compile Include="DomainServices\BackupRestore\CantRestoreLinkedFilesToOriginalLocation.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DomainServices\BackupRestore\CantRestoreLinkedFilesToOriginalLocation.Designer.cs">
-      <DependentUpon>CantRestoreLinkedFilesToOriginalLocation.cs</DependentUpon>
-    </Compile>
     <Compile Include="DomainServices\BackupRestore\IBackupInfo.cs" />
-    <Compile Include="DomainServices\BackupRestore\FilesToRestoreAreOlder.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DomainServices\BackupRestore\FilesToRestoreAreOlder.Designer.cs">
-      <DependentUpon>FilesToRestoreAreOlder.cs</DependentUpon>
-    </Compile>
     <Compile Include="DomainServices\BackupRestore\ProjectBackupService.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DomainServices\BackupRestore\ProjectRestoreService.cs" />
     <Compile Include="DomainServices\BackupRestore\BackupFileRepository.cs" />
-    <Compile Include="DomainServices\BackupRestore\RestoreLinkedFilesToProjectsFolder.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DomainServices\BackupRestore\RestoreLinkedFilesToProjectsFolder.Designer.cs">
-      <DependentUpon>RestoreLinkedFilesToProjectsFolder.cs</DependentUpon>
-    </Compile>
     <Compile Include="DomainServices\BackupRestore\RestoreProjectSettings.cs" />
     <Compile Include="DomainServices\BaseStyleInfo.cs" />
     <Compile Include="DomainServices\BootstrapNewLanguageProject.cs" />
@@ -313,17 +266,10 @@
     <Compile Include="DomainServices\DataMigration\DataMigration7000066.cs" />
     <Compile Include="DomainServices\DataMigration\DataMigration7000067.cs" />
     <Compile Include="DomainServices\DataMigration\FdoDataMigrationManager.cs" />
-    <Compile Include="DomainServices\DataMigration\FWVersionTooOld.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DomainServices\DataMigration\FWVersionTooOld.Designer.cs">
-      <DependentUpon>FWVersionTooOld.cs</DependentUpon>
-    </Compile>
     <Compile Include="DomainServices\DataMigration\ImportFrom6_0.cs" />
     <Compile Include="DomainServices\Db4OServerFinder.cs" />
     <Compile Include="DomainServices\FootnoteLocationInfo.cs" />
     <Compile Include="DomainServices\FwProjectFinder.cs" />
-    <Compile Include="DomainServices\GlobalSettingServices.cs" />
     <Compile Include="DomainServices\M3ModelExportServices.cs" />
     <Compile Include="DomainServices\DataMigration\DataMigration7000010.cs" />
     <Compile Include="DomainServices\DataMigration\DataMigration7000008.cs" />
@@ -364,7 +310,6 @@
     <Compile Include="DomainServices\IScrImportFileInfo.cs" />
     <Compile Include="DomainServices\MorphServices.cs" />
     <Compile Include="DomainServices\ParaNodeMap.cs" />
-    <Compile Include="DomainServices\ParatextHelper.cs" />
     <Compile Include="DomainServices\ProjectLockingService.cs" />
     <Compile Include="DomainServices\ReferenceAdjusterService.cs" />
     <Compile Include="DomainServices\ReferenceTargetServices.cs" />
@@ -417,6 +362,13 @@
     <Compile Include="DomainImpl\OverridesLing_MoClasses.cs" />
     <Compile Include="DomainImpl\OverridesLing_Wfi.cs" />
     <Compile Include="FdoStructs.cs" />
+    <Compile Include="FdoFileHelper.cs" />
+    <Compile Include="IFdoDirectories.cs" />
+    <Compile Include="IFdoUI.cs" />
+    <Compile Include="IProjectIdentifier.cs" />
+    <Compile Include="FdoNewerVersionException.cs" />
+    <Compile Include="ProjectInfo.cs" />
+    <Compile Include="SilentFdoUI.cs" />
     <Compile Include="Infrastructure\FdoXmlServices.cs" />
     <Compile Include="Infrastructure\GenericUndoAction.cs" />
     <Compile Include="Infrastructure\Impl\ChangeReconciler.cs" />
@@ -425,18 +377,6 @@
     <Compile Include="Infrastructure\Impl\ClientServerBackendProvider.cs" />
     <Compile Include="Infrastructure\Impl\CmObjectId.cs" />
     <Compile Include="Infrastructure\Impl\CommitData.cs" />
-    <Compile Include="Infrastructure\Impl\ConflictingSaveDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Infrastructure\Impl\ConflictingSaveDlg.Designer.cs">
-      <DependentUpon>ConflictingSaveDlg.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\Impl\ConnectionLostDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Infrastructure\Impl\ConnectionLostDlg.Designer.cs">
-      <DependentUpon>ConnectionLostDlg.cs</DependentUpon>
-    </Compile>
     <Compile Include="Infrastructure\Impl\DataSortingService.cs" />
     <Compile Include="DomainServices\Db4OPorts.cs" />
     <Compile Include="Infrastructure\Impl\FdoInvertSet.cs" />
@@ -450,7 +390,6 @@
     <Compile Include="Infrastructure\Impl\PargraphCounterRepository.cs" />
     <Compile Include="Infrastructure\Impl\SimpleProjectId.cs" />
     <Compile Include="Infrastructure\Impl\UndoUpdateDictionaryAction.cs" />
-    <Compile Include="Infrastructure\Impl\UserActivityMonitor.cs" />
     <Compile Include="Infrastructure\IWorkerThreadReadHandler.cs" />
     <Compile Include="Infrastructure\UnitOfWorkHelper.cs" />
     <Compile Include="Infrastructure\WorkerThreadReadHelper.cs" />
@@ -557,33 +496,9 @@
       <LastGenOutput>AppStrings.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="DomainServices\BackupRestore\CantRestoreLinkedFilesToOriginalLocation.resx">
-      <DependentUpon>CantRestoreLinkedFilesToOriginalLocation.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DomainServices\BackupRestore\FilesToRestoreAreOlder.resx">
-      <DependentUpon>FilesToRestoreAreOlder.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DomainServices\BackupRestore\RestoreLinkedFilesToProjectsFolder.resx">
-      <DependentUpon>RestoreLinkedFilesToProjectsFolder.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DomainServices\DataMigration\FWVersionTooOld.resx">
-      <DependentUpon>FWVersionTooOld.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="DomainServices\ScrFdoResources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ScrFdoResources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Infrastructure\Impl\ConflictingSaveDlg.resx">
-      <DependentUpon>ConflictingSaveDlg.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Infrastructure\Impl\ConnectionLostDlg.resx">
-      <DependentUpon>ConnectionLostDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -627,7 +542,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="MasterFieldWorksModel.xsd" />
-    <None Include="Resources\question.ico" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CmTypes.txt" />

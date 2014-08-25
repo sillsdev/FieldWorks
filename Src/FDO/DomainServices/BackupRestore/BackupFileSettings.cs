@@ -10,9 +10,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using ICSharpCode.SharpZipLib;
 using ICSharpCode.SharpZipLib.Zip;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
-using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 
 namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
@@ -119,11 +117,11 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			m_supportingFiles = settings.IncludeSupportingFiles;
 			m_linkedFiles = settings.IncludeLinkedFiles;
 			m_projectName = settings.ProjectName;
-			m_projectPathPersisted = DirectoryFinder.GetPathWithoutRoot(settings.ProjectPath);
+			m_projectPathPersisted = FdoFileHelper.GetPathWithoutRoot(settings.ProjectPath);
 			m_spellCheckAdditions = settings.IncludeSpellCheckAdditions;
 			m_dbVersion = settings.DbVersion;
 			m_fwVersion = settings.FwVersion;
-			m_linkedFilesPathRelative = DirectoryFinderRelativePaths.GetLinkedFilesRelativePathFromFullPath(settings.LinkedFilesPath, settings.ProjectPath, settings.ProjectName);
+			m_linkedFilesPathRelative = LinkedFilesRelativePathHelper.GetLinkedFilesRelativePathFromFullPath(settings.ProjectsRootFolder, settings.LinkedFilesPath, settings.ProjectPath, settings.ProjectName);
 			m_linkedFilesPathActual = settings.LinkedFilesPath;
 			m_appAbbrev = settings.AppAbbrev;
 		}
@@ -224,8 +222,8 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			PopulateSettingsFromZipFileIfNeeded();
 			if (DbVersion > FDOBackendProvider.ModelVersion)
 			{
-				throw new InvalidBackupFileException(ResourceHelper.FormatResourceString(
-					"ksBackupFileCreatedByNewerFwVersion", m_sZipFileName, FwVersion));
+				throw new InvalidBackupFileException(string.Format(Strings.ksBackupFileCreatedByNewerFwVersion,
+					m_sZipFileName, FwVersion));
 			}
 		}
 		#endregion
@@ -321,7 +319,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		[DataMember]
 		public string AppAbbrev
 		{
-			get { PopulateSettingsFromZipFileIfNeeded(); return m_appAbbrev ?? FwUtils.ksFlexAbbrev; }
+			get { PopulateSettingsFromZipFileIfNeeded(); return m_appAbbrev; }
 			private set { m_appAbbrev = value; }
 		}
 
@@ -391,7 +389,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 				return;
 
 			string extension = Path.GetExtension(m_sZipFileName).ToLowerInvariant();
-			if (extension == FwFileExtensions.ksFw60BackupFileExtension)
+			if (extension == FdoFileHelper.ksFw60BackupFileExtension)
 			{
 				ProcessOldZipFile();
 				return;
@@ -417,32 +415,32 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 
 						if (String.IsNullOrEmpty(fileName))
 							continue;
-						if (fileName.Equals(DirectoryFinder.kBackupSettingsFilename))
+						if (fileName.Equals(FdoFileHelper.kBackupSettingsFilename))
 						{
 							if (foundBackupSettingsFile)
 								throw new InvalidOperationException("Zip file " + m_sZipFileName + " contained multiple " +
-									DirectoryFinder.kBackupSettingsFilename + " files.");
+									FdoFileHelper.kBackupSettingsFilename + " files.");
 							foundBackupSettingsFile = true;
 							InitializeFromStream(zipIn);
 						}
-						else if (Path.GetExtension(fileName) == FwFileExtensions.ksFwDataXmlFileExtension)
+						else if (Path.GetExtension(fileName) == FdoFileHelper.ksFwDataXmlFileExtension)
 						{
 							if (dataFileName != null)
 								throw new InvalidOperationException("Zip file " + m_sZipFileName +
 									" contained multiple project data files.");
 							dataFileName = fileName;
 						}
-						else if (!entry.Name.EndsWith("/") && entry.Name.Contains(DirectoryFinder.ksWritingSystemsDir + "/"))
+						else if (!entry.Name.EndsWith("/") && entry.Name.Contains(FdoFileHelper.ksWritingSystemsDir + "/"))
 							foundWritingSystemFiles = true;
 					}
 
 					if (!foundBackupSettingsFile)
 						throw new InvalidOperationException("Zip file " + m_sZipFileName + " did not contain the " +
-							DirectoryFinder.kBackupSettingsFilename + " file.");
+							FdoFileHelper.kBackupSettingsFilename + " file.");
 					if (m_projectName == null)
-						throw new InvalidOperationException(DirectoryFinder.kBackupSettingsFilename + " in " +
+						throw new InvalidOperationException(FdoFileHelper.kBackupSettingsFilename + " in " +
 							m_sZipFileName + " did not contain a project name.");
-					string expectedProjectFile = DirectoryFinder.GetXmlDataFileName(m_projectName);
+					string expectedProjectFile = FdoFileHelper.GetXmlDataFileName(m_projectName);
 					if (dataFileName == null || dataFileName != expectedProjectFile)
 						throw new InvalidOperationException("Zip file " + m_sZipFileName + " did not contain the " +
 							expectedProjectFile + " file.");
@@ -539,9 +537,9 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			m_backupTime = settings.BackupTime;
 			m_comment = settings.Comment;
 			m_projectName = settings.ProjectName;
-			m_linkedFilesPathRelative = DirectoryFinderRelativePaths.FixPathSlashesIfNeeded(settings.LinkedFilesPathRelativePersisted);
-			m_linkedFilesPathActual = DirectoryFinderRelativePaths.FixPathSlashesIfNeeded(settings.LinkedFilesPathActualPersisted);
-			m_projectPathPersisted = DirectoryFinderRelativePaths.FixPathSlashesIfNeeded(settings.ProjectPathPersisted);
+			m_linkedFilesPathRelative = LinkedFilesRelativePathHelper.FixPathSlashesIfNeeded(settings.LinkedFilesPathRelativePersisted);
+			m_linkedFilesPathActual = LinkedFilesRelativePathHelper.FixPathSlashesIfNeeded(settings.LinkedFilesPathActualPersisted);
+			m_projectPathPersisted = LinkedFilesRelativePathHelper.FixPathSlashesIfNeeded(settings.ProjectPathPersisted);
 			m_configurationSettings = settings.IncludeConfigurationSettings;
 			m_linkedFiles = settings.IncludeLinkedFiles;
 			m_supportingFiles = settings.IncludeSupportingFiles;
@@ -570,7 +568,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// <param name="inner">The inner exception</param>
 		/// ------------------------------------------------------------------------------------
 		public InvalidBackupFileException(string zipFile, Exception inner) :
-			base(ResourceHelper.GetResourceString("ksInvalidFwBackupFile") + Environment.NewLine + zipFile, inner)
+			base(Strings.ksInvalidFwBackupFile + Environment.NewLine + zipFile, inner)
 		{
 		}
 

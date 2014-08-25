@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -25,12 +26,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// The repo may be a lift or full FW repo, but it can be from any source source, as long as the code can create an FW project from it.
 		/// </summary>
 		/// <returns>Null if the operation was cancelled or otherwise did not work. The full pathname of an fwdata file, if it did work.</returns>
-		public static string ObtainProjectFromAnySource(Form parent, IHelpTopicProvider helpTopicProvider,
-			out ObtainedProjectType obtainedProjectType)
+		public static string ObtainProjectFromAnySource(Form parent, IHelpTopicProvider helpTopicProvider, out ObtainedProjectType obtainedProjectType)
 		{
 			bool dummy;
 			string fwdataFileFullPathname;
-			var success = FLExBridgeHelper.LaunchFieldworksBridge(DirectoryFinder.ProjectsDirectory, null, FLExBridgeHelper.Obtain, null,
+			var success = FLExBridgeHelper.LaunchFieldworksBridge(FwDirectoryFinder.ProjectsDirectory, null, FLExBridgeHelper.Obtain, null,
 				FDOBackendProvider.ModelVersion, "0.13", null, out dummy, out fwdataFileFullPathname);
 			if (!success)
 			{
@@ -95,34 +95,25 @@ namespace SIL.FieldWorks.Common.Controls
 			var anthroListFile = ReflectionHelper.CallStaticMethod(@"FwCoreDlgs.dll", @"SIL.FieldWorks.FwCoreDlgs.FwCheckAnthroListDlg",
 					@"PickAnthroList", parent, null, helpTopicProvider);
 
-			// Do NOT dispose of the thread helper until we dispose of the cache...
-			// CreateProjectTask makes it the thread helper of the FdoCache that it creates and returns,
-			// and we must NOT dispose of the cache's thread helper until after we import the lexicon.
-			// We will actually dispose it twice, most likely, since disposing the cache will dispose it;
-			// but this is harmless.
-			using (var helper = new ThreadHelper())
+			using (var progressDlg = new ProgressDialogWithTask(parent))
 			{
-				using (var progressDlg = new ProgressDialogWithTask(parent, helper))
-				{
-					progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
-					progressDlg.Title = FwControls.ksCreatingLiftProject;
-					var cacheReceiver = new FdoCache[1]; // a clumsy way of handling an out parameter, consistent with RunTask
-					projectPath = (string)progressDlg.RunTask(true, CreateProjectTask,
-						new object[] { liftPath, helper, anthroListFile, cacheReceiver });
-					cache = cacheReceiver[0];
-				}
-
-				// this is a horrible way to invoke this, but the current project organization does not allow us to reference
-				// the LexEdDll project, nor is there any straightforward way to move the code we need into some project we can
-				// reference, or any obviously suitable project to move it to without creating other References loops.
-				// One nasty reflection call seems less technical debt than creating an otherwise unnecessary project.
-				// (It puts up its own progress dialog.)
-				ReflectionHelper.CallStaticMethod(@"LexEdDll.dll", @"SIL.FieldWorks.XWorks.LexEd.FLExBridgeListener",
-					@"ImportObtainedLexicon", cache, liftPath, parent);
-
-				ProjectLockingService.UnlockCurrentProject(cache); // finish all saves and completely write the file so we can proceed to open it
-				cache.Dispose();
+				progressDlg.Title = FwControls.ksCreatingLiftProject;
+				var cacheReceiver = new FdoCache[1]; // a clumsy way of handling an out parameter, consistent with RunTask
+				projectPath = (string)progressDlg.RunTask(true, CreateProjectTask,
+					new[] { liftPath, parent, anthroListFile, cacheReceiver });
+				cache = cacheReceiver[0];
 			}
+
+			// this is a horrible way to invoke this, but the current project organization does not allow us to reference
+			// the LexEdDll project, nor is there any straightforward way to move the code we need into some project we can
+			// reference, or any obviously suitable project to move it to without creating other References loops.
+			// One nasty reflection call seems less technical debt than creating an otherwise unnecessary project.
+			// (It puts up its own progress dialog.)
+			ReflectionHelper.CallStaticMethod(@"LexEdDll.dll", @"SIL.FieldWorks.XWorks.LexEd.FLExBridgeListener",
+				@"ImportObtainedLexicon", cache, liftPath, parent);
+
+			ProjectLockingService.UnlockCurrentProject(cache); // finish all saves and completely write the file so we can proceed to open it
+			cache.Dispose();
 
 			return projectPath;
 		}
@@ -137,21 +128,21 @@ namespace SIL.FieldWorks.Common.Controls
 		private static object CreateProjectTask(IThreadedProgress progress, object[] parameters)
 		{
 			// Get required parameters. Ideally these would just be the signature of the method, but RunTask requires object[].
-			var liftPathname = (string)parameters[0];
-			var helper = (ThreadHelper)parameters[1];
-			var anthroFile = (string)parameters[2];
-			var cacheReceiver = (FdoCache[])parameters[3];
+			var liftPathname = (string) parameters[0];
+			var synchronizeInvoke = (ISynchronizeInvoke) parameters[1];
+			var anthroFile = (string) parameters[2];
+			var cacheReceiver = (FdoCache[]) parameters[3];
 
 			IWritingSystem wsVern, wsAnalysis;
 			RetrieveDefaultWritingSystemsFromLift(liftPathname, out wsVern, out wsAnalysis);
 
 			string projectPath = FdoCache.CreateNewLangProj(progress,
 				Directory.GetParent(Path.GetDirectoryName(liftPathname)).Parent.Name, // Get the new Flex project name from the Lift pathname.
-				helper, wsAnalysis, wsVern, null, null, null, anthroFile);
+				FwDirectoryFinder.FdoDirectories, synchronizeInvoke, wsAnalysis, wsVern, null, null, null, anthroFile);
 
 			// This is a temporary cache, just to do the import, and AFAIK we have no access to the current
 			// user WS. So create it as "English". Put it in the array to return to the caller.
-			cacheReceiver[0] = FdoCache.CreateCacheFromLocalProjectFile(projectPath, "en", progress);
+			cacheReceiver[0] = FdoCache.CreateCacheFromLocalProjectFile(projectPath, "en", new SilentFdoUI(synchronizeInvoke), FwDirectoryFinder.FdoDirectories, progress);
 			return projectPath;
 		}
 
@@ -163,8 +154,7 @@ namespace SIL.FieldWorks.Common.Controls
 				string vernWsId, analysisWsId;
 				using (var reader = XmlReader.Create(liftReader))
 					RetrieveDefaultWritingSystemIdsFromLift(reader, out vernWsId, out analysisWsId);
-				var wsManager = new PalasoWritingSystemManager(
-					new GlobalFileWritingSystemStore(DirectoryFinder.GlobalWritingSystemStoreDirectory));
+				var wsManager = new PalasoWritingSystemManager(new GlobalFileWritingSystemStore());
 				wsManager.GetOrSet(vernWsId, out wsVern);
 				wsManager.GetOrSet(analysisWsId, out wsAnalysis);
 			}

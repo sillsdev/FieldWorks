@@ -9,7 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FdoUi;
+using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.Utils;
 using Palaso.Linq;
 using XCore;

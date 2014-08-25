@@ -157,7 +157,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 
 			// Create the DTO repository.
 			IDomainObjectDTORepository repoDto = new DomainObjectDtoRepository(7000041, dtos, mockMDC,
-				FileUtils.ChangePathToPlatform("C:\\WW\\DistFiles\\Projects\\TokPisin"));
+				FileUtils.ChangePathToPlatform("C:\\WW\\DistFiles\\Projects\\TokPisin"), FwDirectoryFinder.FdoDirectories);
 
 			// Do Migration
 			m_dataMigrationManager.PerformMigration(repoDto, 7000042, new DummyProgressDlg());

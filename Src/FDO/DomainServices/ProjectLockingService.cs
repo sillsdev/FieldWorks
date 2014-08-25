@@ -17,12 +17,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			// Make sure any changes we want backup are saved.
 			var ds = cache.ServiceLocator.GetInstance<IDataStorer>() as XMLBackendProvider;
 			if (ds != null)
-			{
-				// REVIEW (EberhardB): I'm not sure this works as intended: XMLBackendProvider.LockProject
-				// returns a FileStream, but XMLBackendProvider.UnlockProject works on a private
-				// variable.
-				using (XMLBackendProvider.LockProject(cache.ProjectId.Path)) { }
-			}
+				ds.LockProject();
 		}
 
 		/// <summary>

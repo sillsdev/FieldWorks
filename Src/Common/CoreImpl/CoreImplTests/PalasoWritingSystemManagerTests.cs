@@ -28,9 +28,9 @@ namespace SIL.CoreImpl
 		{
 			public TestPalasoWritingSystemManager(IFwWritingSystemStore store) : base(store) {}
 
-			public string NewLocalKeyboardsUnionLocalStore()
+			public string TestUnionSettingsKeyboardsWithLocalStore()
 			{
-				return base.LocalKeyboardsUnionLocalStore();
+				return base.UnionSettingsKeyboardsWithLocalStore();
 			}
 		}
 
@@ -102,6 +102,8 @@ namespace SIL.CoreImpl
 		/// <summary>
 		/// Tests to make sure that the special fw extensions of ldml aren't duplicated when round tripping.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		[Test]
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
@@ -495,7 +497,7 @@ namespace SIL.CoreImpl
 			var wsm = new TestPalasoWritingSystemManager(localStore);
 
 			// SUT
-			var resultXml = wsm.NewLocalKeyboardsUnionLocalStore();
+			var resultXml = wsm.TestUnionSettingsKeyboardsWithLocalStore();
 
 			// Parse resulting string into XElements
 			var root = XElement.Parse(resultXml);

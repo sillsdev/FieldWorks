@@ -3,6 +3,7 @@ using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 
 namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
@@ -95,7 +96,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 
 			var mockMDC = SetupMDC();
 
-			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000012, dtos, mockMDC, null);
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000012, dtos, mockMDC, null, FwDirectoryFinder.FdoDirectories);
 			return dtoRepos;
 		}
 

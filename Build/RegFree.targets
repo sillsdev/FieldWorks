@@ -7,17 +7,15 @@
 	This allows our programs to run without registering our COM DLLs, which in turn allows different
 	versions of FieldWorks to coexist on the same computer. This is only relevant for Windows.-->
 	<ItemGroup>
-		<Dlls Include="$(OutDir)FwKernel.dll"/>
-		<Dlls Include="$(OutDir)Views.dll"/>
-		<Dlls Include="$(OutDir)Language.dll"/>
-		<Dlls Include="$(OutDir)Graphite.dll"/>
+		<DependentAssemblies Include="$(OutDir)FwKernel.manifest"/>
+		<DependentAssemblies Include="$(OutDir)Views.manifest"/>
+		<DependentAssemblies Include="$(OutDir)Graphite.manifest"/>
 	</ItemGroup>
 	<ItemGroup>
 		<Fragments Include="$(OutDir)/../../DistFiles/*.fragment.manifest"/>
 	</ItemGroup>
-	<Target Name="CreateManifest" Condition="'$(OS)'=='Windows_NT'" Inputs="@(Dlls)" Outputs="$(Executable).manifest">
-		<RegFree Executable="$(Executable)" Dlls="@(Dlls)" Fragments="@(Fragments)"
-			NoTypeLib="$(OutDir)Graphite.dll" />
+	<Target Name="CreateManifest" Condition="'$(OS)'=='Windows_NT'" Inputs="@(DependentAssemblies)" Outputs="$(Executable).manifest">
+		<RegFree Executable="$(Executable)" DependentAssemblies="@(DependentAssemblies)" Fragments="@(Fragments)" />
 	</Target>
 	<Target Name="AttachManifest" Condition="'$(OS)'=='Windows_NT'" DependsOnTargets="CreateManifest">
 		<Exec Command="mt.exe -outputresource:$(Executable) -manifest $(Executable).manifest"/>

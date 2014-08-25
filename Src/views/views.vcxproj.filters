@@ -123,6 +123,7 @@
     <None Include="Views.def" />
     <None Include="Views.idh" />
     <None Include="Views.mak" />
+    <None Include="Makefile" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Views.rc" />

@@ -19,6 +19,7 @@ using System.Text;
 using System.Windows.Forms;
 
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.FieldWorks.Resources;
 
@@ -55,11 +56,11 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 			internal ProjectItem(string name)
 			{
 				m_name = name;
-				string dir = Path.Combine(DirectoryFinder.ProjectsDirectory, name);
+				string dir = Path.Combine(FwDirectoryFinder.ProjectsDirectory, name);
 				if (Directory.Exists(dir))
 				{
-					if (File.Exists(Path.Combine(dir, name + FwFileExtensions.ksFwDataXmlFileExtension)) ||
-						File.Exists(Path.Combine(dir, name + FwFileExtensions.ksFwDataDb4oFileExtension)))
+					if (File.Exists(Path.Combine(dir, name + FdoFileHelper.ksFwDataXmlFileExtension)) ||
+						File.Exists(Path.Combine(dir, name + FdoFileHelper.ksFwDataDb4oFileExtension)))
 					{
 						m_fExists = true;
 					}
@@ -144,7 +145,6 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 			: this()
 		{
 			m_importer = importer;
-			m_importer.ParentForm = this;
 			m_projects = projects;
 			m_fAutoClose = fAutoClose;
 			if (m_fAutoClose)
@@ -216,70 +216,78 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 		private MigrateStatus ConvertProject(string proj)
 		{
 			bool fOk;
-			string dbName = proj;
-			// 1. Check database version number.  If >= 200260, goto step 4.
-			int version =  GetDbVersion(proj);
-			if (version < 200260)
+			try
 			{
-				// 2. Make a temporary copy of the project.
-				// 3. Migrate that temporary copy.
-				if (m_fTempMigrationDbExists)
+				string dbName = proj;
+				// 1. Check database version number.  If >= 200260, goto step 4.
+				int version =  GetDbVersion(proj);
+				if (version < 200260)
 				{
-					fOk = m_importer.DeleteTempDatabase();
+					// 2. Make a temporary copy of the project.
+					// 3. Migrate that temporary copy.
+					if (m_fTempMigrationDbExists)
+					{
+						fOk = m_importer.DeleteTempDatabase();
+						if (!fOk)
+							return MigrateStatus.Failed;
+						m_fTempMigrationDbExists = false;
+					}
+					string msg = String.Format(Properties.Resources.ksCreatingATemporaryCopy, proj);
+					string sErrorMsgFmt = String.Format(Properties.Resources.ksCreatingATemporaryCopyFailed,
+						proj, "{0}", "{1}");
+					fOk = m_importer.CopyToTempDatabase(proj, msg, sErrorMsgFmt);
 					if (!fOk)
 						return MigrateStatus.Failed;
-					m_fTempMigrationDbExists = false;
+					m_fTempMigrationDbExists = true;
+					string msg2 = String.Format(Properties.Resources.ksMigratingTheCopy, proj);
+					string errMsgFmt2 = String.Format(Properties.Resources.ksMigratingTheCopyFailed,
+						proj, "{0}", "{1}");
+					fOk = m_importer.MigrateTempDatabase(msg2, errMsgFmt2);
+					if (!fOk)
+						return MigrateStatus.Failed;
+					dbName = ImportFrom6_0.TempDatabaseName;
 				}
-				string msg = String.Format(Properties.Resources.ksCreatingATemporaryCopy, proj);
-				string sErrorMsgFmt = String.Format(Properties.Resources.ksCreatingATemporaryCopyFailed,
-					proj, "{0}", "{1}");
-				fOk = m_importer.CopyToTempDatabase(proj, msg, sErrorMsgFmt);
-				if (!fOk)
-					return MigrateStatus.Failed;
-				m_fTempMigrationDbExists = true;
-				string msg2 = String.Format(Properties.Resources.ksMigratingTheCopy, proj);
-				string errMsgFmt2 = String.Format(Properties.Resources.ksMigratingTheCopyFailed,
-					proj, "{0}", "{1}");
-				fOk = m_importer.MigrateTempDatabase(msg2, errMsgFmt2);
-				if (!fOk)
-					return MigrateStatus.Failed;
-				dbName = ImportFrom6_0.TempDatabaseName;
-			}
-			// 4. Dump XML for project (or for the temporary project copy)
-			string projDir = Path.Combine(DirectoryFinder.ProjectsDirectory, proj);
-			string projName = proj;
-			if (Directory.Exists(projDir))
-			{
-				using (var dlg = new ExistingProjectDlg(proj))
+				// 4. Dump XML for project (or for the temporary project copy)
+				string projDir = Path.Combine(FwDirectoryFinder.ProjectsDirectory, proj);
+				string projName = proj;
+				if (Directory.Exists(projDir))
 				{
-					if (dlg.ShowDialog(this) == DialogResult.Cancel)
-						return MigrateStatus.Canceled;
-					projName = dlg.TargetProjectName;
+					using (var dlg = new ExistingProjectDlg(proj))
+					{
+						if (dlg.ShowDialog(this) == DialogResult.Cancel)
+							return MigrateStatus.Canceled;
+						projName = dlg.TargetProjectName;
+					}
+					projDir = Path.Combine(FwDirectoryFinder.ProjectsDirectory, projName);
+					if (!Directory.Exists(projDir))
+						Directory.CreateDirectory(projDir);
 				}
-				projDir = Path.Combine(DirectoryFinder.ProjectsDirectory, projName);
-				if (!Directory.Exists(projDir))
+				else
+				{
 					Directory.CreateDirectory(projDir);
+				}
+				string projXml = Path.Combine(projDir, "tempProj.xml");
+				string msgDump = String.Format(Properties.Resources.ksWritingFw60XML, proj);
+				string msgDumpErrorFmt = String.Format(Properties.Resources.ksWritingFw60XMLFailed,
+					proj, "{0}", "{1}");
+				if (dbName != proj)
+				{
+					msgDump = String.Format(Properties.Resources.ksWritingCopyAsFw60XML, proj); ;
+					msgDumpErrorFmt = String.Format(Properties.Resources.ksWritingCopyAsFw60XMLFailed,
+					proj, "{0}", "{1}");
+				}
+				fOk = m_importer.DumpDatabaseAsXml(dbName, projXml, msgDump, msgDumpErrorFmt);
+				if (!fOk)
+					return MigrateStatus.Failed;
+				// 5. Convert FW 6.0 XML to FW 7.0 XML
+				string projFile = Path.Combine(projDir, projName + FdoFileHelper.ksFwDataXmlFileExtension);
+				fOk = m_importer.ImportFrom6_0Xml(projXml, projDir, projFile);
 			}
-			else
+			catch (CannotConvertException e)
 			{
-				Directory.CreateDirectory(projDir);
+				fOk = false;
+				MessageBox.Show(e.Message, Properties.Resources.ksCannotConvert);
 			}
-			string projXml = Path.Combine(projDir, "tempProj.xml");
-			string msgDump = String.Format(Properties.Resources.ksWritingFw60XML, proj);
-			string msgDumpErrorFmt = String.Format(Properties.Resources.ksWritingFw60XMLFailed,
-				proj, "{0}", "{1}");
-			if (dbName != proj)
-			{
-				msgDump = String.Format(Properties.Resources.ksWritingCopyAsFw60XML, proj); ;
-				msgDumpErrorFmt = String.Format(Properties.Resources.ksWritingCopyAsFw60XMLFailed,
-				proj, "{0}", "{1}");
-			}
-			fOk = m_importer.DumpDatabaseAsXml(dbName, projXml, msgDump, msgDumpErrorFmt);
-			if (!fOk)
-				return MigrateStatus.Failed;
-			// 5. Convert FW 6.0 XML to FW 7.0 XML
-			string projFile = Path.Combine(projDir, projName + FwFileExtensions.ksFwDataXmlFileExtension);
-			fOk = m_importer.ImportFrom6_0Xml(projXml, projDir, projFile);
 			return fOk ? MigrateStatus.OK : MigrateStatus.Failed;
 		}
 
@@ -326,7 +334,7 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
-			string helpFile = Path.Combine(DirectoryFinder.FWCodeDirectory,
+			string helpFile = Path.Combine(FwDirectoryFinder.CodeDirectory,
 				"Helps\\FieldWorks_Language_Explorer_Help.chm");
 			string helpTopic = "/Overview/Migrate_FieldWorks_6.0.4_(or_earlier)_Projects.htm";
 			Help.ShowHelp(new Label(), helpFile, helpTopic);

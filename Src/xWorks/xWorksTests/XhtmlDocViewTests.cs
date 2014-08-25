@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.XWorks
 				docView.SetMediator(m_mediator);
 				// SUT
 				var fileListFromResults = docView.GatherBuiltInAndUserConfigurations().Values;
-				var shippedFileList = Directory.EnumerateFiles(Path.Combine(DirectoryFinder.DefaultConfigurations, "Dictionary"));
+				var shippedFileList = Directory.EnumerateFiles(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary"));
 				CollectionAssert.AreEquivalent(fileListFromResults, shippedFileList);
 			}
 		}
@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.XWorks
 				docView.SetConfigObjectName("Dictionary");
 				docView.SetMediator(m_mediator);
 				var projectDictionaryConfigs =
-					Path.Combine(DirectoryFinder.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder),
+					Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder),
 									 "Dictionary");
 				Directory.CreateDirectory(projectDictionaryConfigs);
 				using(var tempConfigFile = TempFile.WithFilename(Path.Combine(projectDictionaryConfigs,
@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.XWorks
 											"<?xml version='1.0' encoding='utf-8'?><DictionaryConfiguration name='New User Config'/>");
 					// SUT
 					var fileListFromResults = docView.GatherBuiltInAndUserConfigurations().Values;
-					var shippedFileList = Directory.EnumerateFiles(Path.Combine(DirectoryFinder.DefaultConfigurations, "Dictionary"));
+					var shippedFileList = Directory.EnumerateFiles(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary"));
 					// all the shipped configs are in the return list
 					CollectionAssert.IsSubsetOf(shippedFileList, fileListFromResults);
 					// new user configuration is present in results
@@ -80,7 +80,7 @@ namespace SIL.FieldWorks.XWorks
 				docView.SetConfigObjectName("Dictionary");
 				docView.SetMediator(m_mediator);
 				var projectDictionaryConfigs =
-					Path.Combine(DirectoryFinder.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder),
+					Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder),
 									 "Dictionary");
 				Directory.CreateDirectory(projectDictionaryConfigs);
 				using(var tempConfigFile = TempFile.WithFilename(Path.Combine(projectDictionaryConfigs,
@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					string firstShippedConfigName;
 					var shippedFileList =
-						Directory.EnumerateFiles(Path.Combine(DirectoryFinder.DefaultConfigurations, "Dictionary"));
+						Directory.EnumerateFiles(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary"));
 					var fileList = shippedFileList.ToArray();
 					using(var stream = new FileStream(fileList.First(), FileMode.Open))
 					{
@@ -407,11 +407,11 @@ namespace SIL.FieldWorks.XWorks
 				{
 					docView.SetConfigObjectName("Dictionary");
 					docView.SetMediator(m_mediator);
-					var projConfigs = Path.Combine(DirectoryFinder.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder),
+					var projConfigs = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder),
 															 "Dictionary");
 					Directory.CreateDirectory(projConfigs);
 					// override every shipped config with a config that does not have the TestPub publication
-					var shippedFileList = Directory.EnumerateFiles(Path.Combine(DirectoryFinder.DefaultConfigurations, "Dictionary"));
+					var shippedFileList = Directory.EnumerateFiles(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary"));
 					var overrideCount = 0;
 					foreach(var shippedFile in shippedFileList)
 					{
@@ -459,7 +459,7 @@ namespace SIL.FieldWorks.XWorks
 				//Change the name for the matching config so that our two user configs don't conflict with each other
 				var matchingConfig = ConfigurationTemplate.Replace("</Publications>",
 																					"<Publication>TestPub</Publication></Publications>").Replace("AConfigPub", "AAConfigPub");
-				var dictionaryConfigPath = Path.Combine(DirectoryFinder.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "Dictionary");
+				var dictionaryConfigPath = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "Dictionary");
 				using(var docView = new TestXmlDocView())
 				using(var nonMatchedConfigFile = TempFile.WithFilename(Path.Combine(dictionaryConfigPath,
 																								  "NoMatch"+DictionaryConfigurationModel.FileExtension)))
@@ -495,7 +495,7 @@ namespace SIL.FieldWorks.XWorks
 		protected override void Init()
 		{
 			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
-			m_configFilePath = Path.Combine(DirectoryFinder.FWCodeDirectory, m_application.DefaultConfigurationPathname);
+			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
 			m_window = new MockFwXWindow(m_application, m_configFilePath);
 			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
 			m_mediator = m_window.Mediator;

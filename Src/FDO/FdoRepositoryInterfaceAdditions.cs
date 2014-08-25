@@ -12,10 +12,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO
 {
@@ -417,7 +417,7 @@ namespace SIL.FieldWorks.FDO
 		/// <summary>
 		/// Clear the list of homograph information
 		/// </summary>
-		void ResetHomographs(ProgressBar progressBar);
+		void ResetHomographs(IProgress progressBar);
 
 		/// <summary>
 		/// Return a list of all the homographs of the specified form.
@@ -431,10 +431,30 @@ namespace SIL.FieldWorks.FDO
 		List<ILexEntry> CollectHomographs(string sForm, IMoMorphType morphType);
 
 		/// <summary>
-		/// Maps the specified morph type onto a canonical one that should be used in comparing two
+		/// Maps the specified morph type onto a canonical ordering that should be used in comparing two
 		/// entries to see whether they are homographs.
 		/// </summary>
-		IMoMorphType HomographMorphType(FdoCache cache, IMoMorphType morphType);
+		int HomographMorphOrder(FdoCache cache, IMoMorphType morphType);
+
+		/// <summary>
+		/// Find the list of LexEntry objects which conceivably match the given wordform.
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="tssWf"></param>
+		/// <param name="wfa"></param>
+		/// <param name="duplicates"></param>
+		/// <returns></returns>
+		List<ILexEntry> FindEntriesForWordform(FdoCache cache, ITsString tssWf, IWfiAnalysis wfa, ref bool duplicates);
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Find wordform given a cache and the string.
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="tssWf"></param>
+		/// <returns></returns>
+		/// ------------------------------------------------------------------------------------
+		ILexEntry FindEntryForWordform(FdoCache cache, ITsString tssWf);
 	}
 
 	internal interface ILexEntryRepositoryInternal
@@ -642,5 +662,13 @@ namespace SIL.FieldWorks.FDO
 		/// <param name="bookId">The canonical number (1-based) of the desired book</param>
 		/// <returns>The annotations for the requested book</returns>
 		IScrBookAnnotations InstanceForBook(int bookId);
+	}
+
+	public partial interface ITextTagRepository
+	{
+		/// <summary>
+		/// Gets all text tags that reference the specified text markup tag.
+		/// </summary>
+		IEnumerable<ITextTag> GetByTextMarkupTag(ICmPossibility tag);
 	}
 }

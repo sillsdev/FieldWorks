@@ -24,12 +24,16 @@ else
 	OPTIMIZATIONS = -O3
 endif
 
+GRAPHITE_SRC = $(SRC)/Graphite
+GRFW_SRC = $(GRAPHITE_SRC)/FwOnly
+GRUTIL_LIB = $(GRAPHITE_SRC)/lib
+TTFUTIL_LIB = $(GRAPHITE_SRC)/TtfUtil
+VIEWS_LIB = $(VIEWS_SRC)/lib
+
 PACKAGES = gdk-2.0 gtkmm-2.4 gdkmm-2.4 cairomm-1.0 pangomm-1.4
 
-LANGUAGETEST_SRC = $(LANGUAGE_SRC)/Test
-
-INCLUDES := -I$(KERNEL_SRC) -I$(KERNEL_SRC)/Test -I$(CELLAR_SRC) \
-	-I$(GENERIC_SRC) -I$(APPCORE_SRC) -I$(DEBUGPROCS_SRC) \
+INCLUDES := -I$(KERNEL_SRC) -I$(KERNEL_SRC)/Test -I$(CELLAR_SRC) -I$(GENERIC_SRC) -I$(APPCORE_SRC) -I$(DEBUGPROCS_SRC)
+INCLUDES := $(INCLUDES) -I$(GRUTIL_LIB) -I$(TTFUTIL_LIB) -I$(VIEWS_SRC) -I$(VIEWS_LIB) -I$(GRFW_SRC)
 
 INCLUDES := \
 	$(shell icu-config --cppflags) \
@@ -40,7 +44,6 @@ INCLUDES := \
 	-I$(WIN32MORE_INC) \
 	-I$(COM_INC) \
 	-I$(WIN32BASE_INC) \
-	-I$(LANGUAGETEST_SRC) \
 	$(shell pkg-config --cflags $(PACKAGES)) \
 
 LDLIBS := \
@@ -77,8 +80,16 @@ FWKERNEL_OBJ := \
 	$(KERNEL_OBJ)/TextServ.o \
 	$(KERNEL_OBJ)/TsMultiStr.o \
 	$(KERNEL_OBJ)/ActionHandler.o \
+	$(KERNEL_OBJ)/LgUnicodeCollater.o \
+	$(KERNEL_OBJ)/RomRenderEngine.o \
+	$(KERNEL_OBJ)/RomRenderSegment.o \
+	$(KERNEL_OBJ)/LgSimpleEngines.o \
+	$(KERNEL_OBJ)/LgIcuCharPropEngine.o \
+	$(KERNEL_OBJ)/LgKeymanHandler.o \
+	$(KERNEL_OBJ)/LocaleIndex.o \
 	$(GENERIC_OBJ)/ModuleEntry.o \
 	$(GENERIC_OBJ)/TextProps1.o \
+	$(KERNEL_OBJ)/FwXml.o \
 
 #Run make in the directory of each library
 $(LINK_LIBS) $(FWKERNEL_OBJ)::
@@ -108,12 +119,16 @@ COLLECT=$(BUILD_ROOT)/Bin/CollectUnit++Tests.sh Kernel
 
 
 $(INT_DIR)/Collection.cpp: testFwKernel.h \
-	$(LANGUAGETEST_SRC)/MockLgWritingSystemFactory.h\
-	$(LANGUAGETEST_SRC)/MockLgWritingSystem.h\
 	TestUndoStack.h \
 	TestTsStrBldr.h \
 	TestTsString.h \
 	TestTsPropsBldr.h \
-	TestTsTextProps.h
+	TestTsTextProps.h \
+	MockLgWritingSystemFactory.h \
+	MockLgWritingSystem.h \
+	TestLgCollatingEngine.h \
+	TestLgIcuCharPropEngine.h \
+	TestRomRenderEngine.h \
+	RenderEngineTestBase.h
 	@echo Collecting tests for testFwKernel
 	$(COLLECT) $^ $@

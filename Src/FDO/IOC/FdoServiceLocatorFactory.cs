@@ -14,7 +14,6 @@ using System.Runtime.InteropServices;
 using Microsoft.Practices.ServiceLocation;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Application.Impl;
 using SIL.FieldWorks.FDO.DomainImpl;
@@ -22,6 +21,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
+using SIL.Utils;
 using StructureMap;
 using StructureMap.Configuration.DSL;
 using StructureMap.Pipeline;
@@ -36,16 +36,20 @@ namespace SIL.FieldWorks.FDO.IOC
 	internal sealed partial class FdoServiceLocatorFactory : IServiceLocatorBootstrapper
 	{
 		private readonly FDOBackendProviderType m_backendProviderType;
+		private readonly IFdoUI m_ui;
+		private readonly IFdoDirectories m_dirs;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="backendProviderType">Type of backend provider to create.</param>
-		/// ------------------------------------------------------------------------------------
-		internal FdoServiceLocatorFactory(FDOBackendProviderType backendProviderType)
+		/// <param name="ui">The UI service.</param>
+		/// <param name="dirs">The directories service.</param>
+		internal FdoServiceLocatorFactory(FDOBackendProviderType backendProviderType, IFdoUI ui, IFdoDirectories dirs)
 		{
 			m_backendProviderType = backendProviderType;
+			m_ui = ui;
+			m_dirs = dirs;
 		}
 
 		#region Implementation of IServiceLocatorBootstrapper
@@ -171,6 +175,12 @@ namespace SIL.FieldWorks.FDO.IOC
 						.LifecycleIs(new SingletonLifecycle())
 						.Use<MemoryOnlyBackendProvider>();
 					break;
+				case FDOBackendProviderType.kSharedXML:
+					registry
+						.For<IDataSetup>()
+						.LifecycleIs(new SingletonLifecycle())
+						.Use<SharedXMLBackendProvider>();
+					break;
 			}
 			// Register two additional interfaces of the BEP, which are injected into other services.
 			registry
@@ -233,7 +243,7 @@ namespace SIL.FieldWorks.FDO.IOC
 			registry
 				.For<IWritingSystemManager>()
 				.LifecycleIs(new SingletonLifecycle())
-				.Use(() => FwUtils.CreateWritingSystemManager());
+				.Use(() => new PalasoWritingSystemManager {TemplateFolder = m_dirs.TemplateDirectory});
 			registry
 				.For<ILgWritingSystemFactory>()
 				.Use(c => (ILgWritingSystemFactory)c.GetInstance<IWritingSystemManager>());
@@ -241,6 +251,14 @@ namespace SIL.FieldWorks.FDO.IOC
 			registry
 				.For<IWritingSystemContainer>()
 				.Use(c => c.GetInstance<ILangProjectRepository>().Singleton);
+
+			registry
+				.For<IFdoUI>()
+				.Use(m_ui);
+
+			registry
+				.For<IFdoDirectories>()
+				.Use(m_dirs);
 
 			// =================================================================================
 			// Don't add COM object to the registry. StructureMap does not properly release COM

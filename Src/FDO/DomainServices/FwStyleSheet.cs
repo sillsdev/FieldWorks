@@ -26,7 +26,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.Resources;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainServices
@@ -115,7 +114,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			/// --------------------------------------------------------------------------------
 			/// <summary>
-			/// Initializes a new instance of the <see cref="T:StyleInfoCollection"/> class.
+			/// Initializes a new instance of the <see cref="StyleInfoCollection"/> class.
 			/// </summary>
 			/// --------------------------------------------------------------------------------
 			public StyleInfoCollection()
@@ -152,6 +151,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <summary>The field ID of the owner(m_hvoStylesOwner)'s collection of StStyles.</summary>
 		private int m_tagStylesList;
 		private FwStyleSheet m_styleSheetWithUiStyle;
+		private string m_defaultParaCharsStyleName;
 
 		/// <summary>Collection of styles</summary>
 		protected StyleInfoCollection m_StyleInfos;
@@ -184,7 +184,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					else
 					{
 						m_styleSheetWithUiStyle = new FwStyleSheet();
-						m_styleSheetWithUiStyle.Init(Cache, Cache.LangProject.Hvo, LangProjectTags.kflidStyles);
+						m_styleSheetWithUiStyle.Init(Cache, Cache.LangProject.Hvo, LangProjectTags.kflidStyles, m_defaultParaCharsStyleName);
 					}
 				}
 				return m_styleSheetWithUiStyle;
@@ -259,19 +259,21 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		#endregion
 
 		#region Constructor, Init, Load
-		/// --------------------------------------------------------------------------------------------
-		/// <summary>
-		///	FwStyleSheet.Init() sets the FdoCache, the hvo of the owning object, and the tag
-		///	specifying the owner's property which holds the collection of StStyle objects.
-		///	Then the internal collections are loaded.
-		/// </summary>
+
+		///  --------------------------------------------------------------------------------------------
+		///  <summary>
+		/// 	FwStyleSheet.Init() sets the FdoCache, the hvo of the owning object, and the tag
+		/// 	specifying the owner's property which holds the collection of StStyle objects.
+		/// 	Then the internal collections are loaded.
+		///  </summary>
 		///
-		/// <param name="cache">the FDO cache</param>
-		/// <param name="hvoStylesOwner">the owning object</param>
-		/// <param name="tagStylesList">the owner(hvoStylesOwner)'s field ID which holds the collection
-		///  of StStyle objects</param>
+		///  <param name="cache">the FDO cache</param>
+		///  <param name="hvoStylesOwner">the owning object</param>
+		///  <param name="tagStylesList">the owner(hvoStylesOwner)'s field ID which holds the collection
+		///   of StStyle objects</param>
+		/// <param name="defaultParaCharsStyleName">The default paragraph characters style name.</param>
 		/// --------------------------------------------------------------------------------------------
-		public void Init(FdoCache cache, int hvoStylesOwner, int tagStylesList)
+		public void Init(FdoCache cache, int hvoStylesOwner, int tagStylesList, string defaultParaCharsStyleName)
 		{
 			m_fdoCache = cache;
 			m_hvoStylesOwner = hvoStylesOwner;
@@ -462,7 +464,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (style != null)
 				return (int)style.Type;
 
-			if (sName == kstrDefaultCharStyle || sName == ResourceHelper.DefaultParaCharsStyleName)
+			if (sName == kstrDefaultCharStyle || sName == m_defaultParaCharsStyleName)
 				return (int)StyleType.kstCharacter;
 
 			return 0; //ThrowInternalError(E_INVALIDARG);
@@ -926,7 +928,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			// that the property store does not implement IVwPropertyStore. See FWR-1918.
 			// Some more sophisticated trick may be needed if it is ever the case that the stylesheet
 			// is NOT created on the main UI thread.
-			return m_fdoCache.ThreadHelper.Invoke(() => GetChrps(ws, ttp, wsf));
+			return m_fdoCache.ServiceLocator.GetInstance<IFdoUI>().SynchronizeInvoke.Invoke(() => GetChrps(ws, ttp, wsf));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -992,10 +994,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// called for a style already known to exist in the stylesheet.
 		/// </summary>
 		/// <param name="styleInfoTable">The style info table, containing 0 or more new styles</param>
-		/// <param name="applicationName">Name of the application calling this (or whatever
-		/// string you want to appear in a message box if we happen to show one).</param>
 		/// ------------------------------------------------------------------------------------
-		public void CheckForDuplicates(StyleInfoTable styleInfoTable, string applicationName)
+		public void CheckForDuplicates(StyleInfoTable styleInfoTable)
 		{
 			bool fStylesheetReloaded = false;
 
@@ -1022,11 +1022,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 							basedOn.Structure != style.Structure ||
 							basedOn.Function != style.Function)
 						{
-							string sMsg = string.Format(
-								ResourceHelper.GetResourceString("kstidIncompatibleStyleExists"),
-								style.Name);
-							MessageBoxUtils.Show(sMsg, applicationName);
 							styleInfo.IsValid = false;
+							throw new IncompatibleStyleExistsException(string.Format(
+								Strings.ksIncompatibleStyleExists,
+								style.Name));
 						}
 						else
 						{
@@ -1582,5 +1581,19 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			throw new InvalidOperationException("Cannot delete styles using an in-memory stylesheet");
 		}
 		#endregion
+	}
+
+	/// <summary>
+	/// Exception for handling case when an incompatible style already exists
+	/// </summary>
+	public class IncompatibleStyleExistsException : Exception
+	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="IncompatibleStyleExistsException"/> class.
+		/// </summary>
+		/// <param name="message">The message that describes the error.</param>
+		public IncompatibleStyleExistsException(string message) : base(message)
+		{
+		}
 	}
 }

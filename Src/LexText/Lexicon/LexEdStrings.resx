@@ -609,4 +609,10 @@ Please use a name that only contains ASCII characters.
 You may choose a different project name in FieldWorks Project Properties.</value>
     <comment>used when only non-Ascii characters are found in the project name on Send/Receive.</comment>
   </data>
+  <data name="ksSendReceiveNotPermittedMultipleAppsCaption" xml:space="preserve">
+    <value>Send/Receive not permitted</value>
+  </data>
+  <data name="ksSendReceiveNotPermittedMultipleAppsText" xml:space="preserve">
+    <value>Send/Receive cannot be performed when there are other applications using this project. Please close all other applications that are using this project before continuing.</value>
+  </data>
 </root>

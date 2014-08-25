@@ -600,7 +600,7 @@
     <comment>caption to go with ksInterlinImportFailed</comment>
   </data>
   <data name="ksInterlinImportFailed" xml:space="preserve">
-    <value>Interlinear Import failed. Are you sure you are importing a file in FLExText interlinear format? Word and Open Office/Libre Office docs cannot yet be imported:</value>
+    <value>Interlinear Import failed. Are you sure you are importing a file in FLExText interlinear format? Word, Open Office, and Libre Office docs cannot yet be imported.</value>
   </data>
   <data name="ksCannotLaunchX" xml:space="preserve">
     <value>Sorry, could not launch {0}.</value>
@@ -869,7 +869,7 @@ Click "Cancel" to abort this import.</value>
     <comment>Label for Force Rechecking Word Breaks item in Utility dialog</comment>
   </data>
   <data name="ksClearParseIsCurrentDoes" xml:space="preserve">
-    <value>This utility clears an internal flag that FLEx uses to track whether a text's analysis is up-to-date. The effect will be that each text is reparsed into words the next time this information is needed. Work you have done analyzing texts will not be affected, except possibly where word alignment is actually wrong. You may see a longer delay than usual the next time you want a concordance.</value>
+    <value>This utility is intended to be used for fixing incorrect word alignment. A bug in some releases of FLEx 7 could cause this to happen when the Respeller was used. This will clear the flag that FLEx uses to determine if a parse is current. It should not affect the work you have done in analyzing texts other than repairing broken tokenization but it may update unconfirmed parser analyses.</value>
     <comment>Help text for Force Rechecking Word Breaks utility dialog item.</comment>
   </data>
   <data name="ksParseIsCurrentWarning" xml:space="preserve">

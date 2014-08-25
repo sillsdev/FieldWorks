@@ -181,7 +181,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>
 		/// Handle the S/R "_Get Project from Colleague" menu option.
 		/// </summary>
-		public bool OnObtainAnyFlexBridgeProject(object commandObject)
+		public bool OnObtainAnyFlexBridgeProject(object commandObject, IFdoUI ui)
 		{
 			ObtainedProjectType obtainedProjectType;
 			var newprojectPathname = ObtainProjectMethod.ObtainProjectFromAnySource(_parentForm, _mediator.HelpTopicProvider,
@@ -294,11 +294,23 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						var sLinkedFilesRootDir = app.Cache.LangProject.LinkedFilesRootDir;
 						NonUndoableUnitOfWorkHelper.Do(app.Cache.ActionHandlerAccessor, () =>
 						{
-							app.Cache.LangProject.LinkedFilesRootDir = DirectoryFinder.GetDefaultLinkedFilesDir(
+							app.Cache.LangProject.LinkedFilesRootDir = FdoFileHelper.GetDefaultLinkedFilesDir(
 								app.Cache.ProjectId.ProjectFolder);
 						});
 						app.UpdateExternalLinks(sLinkedFilesRootDir);
 					}
+				}
+			}
+			// Make sure that there aren't multiple applications accessing the project
+			// It is possible for a user to start up an application that accesses the
+			// project after this check, but the application should not interfere with
+			// the S/R operation.
+			while (SharedBackendServices.AreMultipleApplicationsConnected(Cache))
+			{
+				if (ThreadHelper.ShowMessageBox(null, LexEdStrings.ksSendReceiveNotPermittedMultipleAppsText,
+					LexEdStrings.ksSendReceiveNotPermittedMultipleAppsCaption, MessageBoxButtons.RetryCancel, MessageBoxIcon.Warning) == DialogResult.Cancel)
+				{
+					return true;
 				}
 			}
 			StopParser();
@@ -322,7 +334,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var projectFolder = Cache.ProjectId.ProjectFolder;
 			var savedState = PrepareToDetectMainConflicts(projectFolder);
 			string dummy;
-			var fullProjectFileName = Path.Combine(projectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension);
+			var fullProjectFileName = Path.Combine(projectFolder, Cache.ProjectId.Name + FdoFileHelper.ksFwDataXmlFileExtension);
 			bool dataChanged;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(fullProjectFileName, SendReceiveUser,
 																  FLExBridgeHelper.SendReceive,
@@ -356,7 +368,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private bool LinkedFilesLocationIsDefault()
 		{
-			var defaultLinkedFilesFolder = DirectoryFinder.GetDefaultLinkedFilesDir(Cache.ServiceLocator.DataSetup.ProjectId.ProjectFolder);
+			var defaultLinkedFilesFolder = FdoFileHelper.GetDefaultLinkedFilesDir(Cache.ServiceLocator.DataSetup.ProjectId.ProjectFolder);
 			if (!defaultLinkedFilesFolder.Equals(Cache.LanguageProject.LinkedFilesRootDir))
 				return false;
 			else
@@ -393,7 +405,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private static bool IsConfiguredForLiftSR(string folder)
 		{
-			var otherRepoPath = Path.Combine(folder, FLExBridgeHelper.OtherRepositories);
+			var otherRepoPath = Path.Combine(folder, FdoFileHelper.OtherRepositories);
 			if (!Directory.Exists(otherRepoPath))
 				return false;
 			var liftFolder = Directory.EnumerateDirectories(otherRepoPath, "*_LIFT").FirstOrDefault();
@@ -497,8 +509,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private string GetFullProjectFileName()
 		{
 			var currentExtension = IsDb4oProject
-				? FwFileExtensions.ksFwDataDb4oFileExtension
-				: FwFileExtensions.ksFwDataXmlFileExtension;
+				? FdoFileHelper.ksFwDataDb4oFileExtension
+				: FdoFileHelper.ksFwDataXmlFileExtension;
 			return Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + currentExtension);
 		}
 
@@ -633,7 +645,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			bool dummy1;
 			string dummy2;
 			FLExBridgeHelper.FLExJumpUrlChanged += JumpToFlexObject;
-			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
+			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FdoFileHelper.ksFwDataXmlFileExtension),
 								   SendReceiveUser,
 								   FLExBridgeHelper.ConflictViewer,
 								   null, FDOBackendProvider.ModelVersion, "0.13", null,
@@ -932,7 +944,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private static string GetLiftRepositoryFolderFromFwProjectFolder(string projectFolder)
 		{
-			var otherDir = Path.Combine(projectFolder, FLExBridgeHelper.OtherRepositories);
+			var otherDir = Path.Combine(projectFolder, FdoFileHelper.OtherRepositories);
 			if (Directory.Exists(otherDir))
 			{
 				var extantOtherFolders = Directory.GetDirectories(otherDir);
@@ -942,7 +954,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 
 			var flexProjName = Path.GetFileName(projectFolder);
-			return Path.Combine(projectFolder, FLExBridgeHelper.OtherRepositories, flexProjName + '_' + FLExBridgeHelper.LIFT);
+			return Path.Combine(projectFolder, FdoFileHelper.OtherRepositories, flexProjName + '_' + FLExBridgeHelper.LIFT);
 		}
 
 		void OnDumperSetProgressMessage(object sender, ProgressMessageArgs e)
@@ -1032,11 +1044,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			using (new WaitCursor(_parentForm))
 			{
-				using (var helper = new ThreadHelper()) // not _cache.ThreadHelper, which might be for a different thread
-				using (var progressDlg = new ProgressDialogWithTask(_parentForm, helper))
+				using (var progressDlg = new ProgressDialogWithTask(_parentForm))
 				{
 					_progressDlg = progressDlg;
-					progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
 					try
 					{
 						progressDlg.Title = ResourceHelper.GetResourceString("kstidImportLiftlexicon");
@@ -1180,11 +1190,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			using (new WaitCursor(_parentForm))
 			{
-				using (var helper = new ThreadHelper()) // not _cache.ThreadHelper, which might be for a different thread
-				using (var progressDlg = new ProgressDialogWithTask(_parentForm, helper))
+				using (var progressDlg = new ProgressDialogWithTask(_parentForm))
 				{
 					_progressDlg = progressDlg;
-					progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
 					try
 					{
 						progressDlg.Title = ResourceHelper.GetResourceString("kstidExportLiftLexicon");
@@ -1404,7 +1412,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				{
 					// Continuing straight on from here renames the db on disk, but not in the cache, apparently
 					// Try a more indirect approach...
-					var fullProjectFileName = Path.Combine(projectFolder, revisedProjName + FwFileExtensions.ksFwDataXmlFileExtension);
+					var fullProjectFileName = Path.Combine(projectFolder, revisedProjName + FdoFileHelper.ksFwDataXmlFileExtension);
 					var tempWindow = RefreshCacheWindowAndAll(app, fullProjectFileName);
 					tempWindow.Mediator.SendMessageDefered("FLExBridge", null);
 					// to hopefully come back here after resetting things
@@ -1487,7 +1495,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private static bool CheckForExistingFileName(string projectFolder, string revisedFileName)
 		{
-			if (File.Exists(Path.Combine(projectFolder, revisedFileName + FwFileExtensions.ksFwDataXmlFileExtension)))
+			if (File.Exists(Path.Combine(projectFolder, revisedFileName + FdoFileHelper.ksFwDataXmlFileExtension)))
 			{
 				MessageBox.Show(
 					LexEdStrings.ksExistingProjectName, LexEdStrings.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -1538,7 +1546,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			foreach (var file in Directory.GetFiles(path, "*.ChorusNotes", SearchOption.AllDirectories))
 			{
 				// TODO: Test to see if one conflict tool can do both FLEx and LIFT conflicts.
-				if (file.Contains(FLExBridgeHelper.OtherRepositories))
+				if (file.Contains(FdoFileHelper.OtherRepositories))
 					continue; // Skip them, since they are part of some other repository.
 
 				long oldLength;
@@ -1560,7 +1568,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var result = new Dictionary<string, long>();
 			foreach (var file in Directory.GetFiles(projectFolder, "*.ChorusNotes", SearchOption.AllDirectories))
 			{
-				if (file.Contains(FLExBridgeHelper.OtherRepositories))
+				if (file.Contains(FdoFileHelper.OtherRepositories))
 					continue; // Skip them, since they are part of some other repository.
 
 				result[file] = new FileInfo(file).Length;

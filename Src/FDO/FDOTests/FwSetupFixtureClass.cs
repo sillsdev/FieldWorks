@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using NUnit.Framework;
+using SIL.FieldWorks.FDO.FDOTests;
 using SIL.Utils;
 
 namespace SIL.FieldWorks
@@ -24,6 +25,7 @@ namespace SIL.FieldWorks
 		[SetUp]
 		public void SetUp()
 		{
+			FdoTestHelper.SetupClientServerServices();
 		}
 
 		///--------------------------------------------------------------------------------------

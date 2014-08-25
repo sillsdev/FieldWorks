@@ -16,6 +16,7 @@ using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
+using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.TE
@@ -71,7 +72,7 @@ namespace SIL.FieldWorks.TE
 		/// -------------------------------------------------------------------------------------
 		protected override string ResourceName
 		{
-			get { return Path.GetFileNameWithoutExtension(DirectoryFinder.kTeStylesFilename); }
+			get { return Path.GetFileNameWithoutExtension(FwDirectoryFinder.kTeStylesFilename); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -220,7 +221,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="helpTopicProvider">A Help topic provider that can serve up a help topic
 		/// that only exists in TE Help.</param>
 		/// -------------------------------------------------------------------------------------
-		public static void EnsureCurrentStylesheet(FdoCache cache, IProgress progressDlg,
+		public static void EnsureCurrentStylesheet(FdoCache cache, IThreadedProgress progressDlg,
 			IHelpTopicProvider helpTopicProvider)
 		{
 			TeStylesXmlAccessor acc = new TeStylesXmlAccessor(cache.LangProject.TranslatedScriptureOA);

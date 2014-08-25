@@ -15,6 +15,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using System.IO;
 using System.Collections;
+using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.FixData
 {
@@ -34,9 +35,9 @@ namespace SIL.FieldWorks.FixData
 		{
 			InitializeComponent();
 			m_btnFixLinks.Enabled = false;
-			string ext = Resources.FwFileExtensions.ksFwDataXmlFileExtension;
+			string ext = FdoFileHelper.ksFwDataXmlFileExtension;
 			string lockext = ext + ".lock";
-			foreach (var dir in Directory.GetDirectories(DirectoryFinder.ProjectsDirectory))
+			foreach (var dir in Directory.GetDirectories(FwDirectoryFinder.ProjectsDirectory))
 			{
 				string basename = Path.GetFileName(dir);
 				string datafile = Path.Combine(dir, basename + ext);

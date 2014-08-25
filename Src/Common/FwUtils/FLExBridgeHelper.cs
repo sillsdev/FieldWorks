@@ -120,13 +120,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		#endregion End of available '-v' parameter options:
 
-		// The two paths of a path that locate the Lift repository within a FLEx project.
 		/// <summary>
-		/// constant for locating the nested lift repository (part 1 of 2)
-		/// </summary>
-		public const string OtherRepositories = @"OtherRepositories";
-		/// <summary>
-		/// constant for locating the nested lift repository (part 2 of 2)
+		/// constant for locating the nested lift repository (within the "OtherRepositories" path of a project).
+		/// See also SIL.FieldWorks.FDO.FdoFileHelper.OtherRepositories
 		/// </summary>
 		public const string LIFT = @"LIFT";
 
@@ -195,7 +191,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			if (!String.IsNullOrEmpty(projectFolder))
 			{    // can S/R multiple projects simultaneously
 				AddArg(ref args, "-p", projectFolder);
-				if (projectFolder != DirectoryFinder.ProjectsDirectory)
+				if (projectFolder != FwDirectoryFinder.ProjectsDirectory)
 					_sFwProjectName = Path.GetFileNameWithoutExtension(projectFolder); // REVIEW (Hasso) 2014.01: this variable is never read
 			}
 
@@ -212,7 +208,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 
 			// Add two paths: to FW projDir & FW apps folder. Then, FB won't have to look in a zillion registry entries
-			AddArg(ref args, "-projDir", DirectoryFinder.ProjectsDirectory);
+			AddArg(ref args, "-projDir", FwDirectoryFinder.ProjectsDirectory);
 			AddArg(ref args, "-fwAppsDir", FieldWorksAppsDir);
 			// Tell Flex Bridge which model version of data are expected by FLEx.
 			AddArg(ref args, "-fwmodel", fwmodelVersionNumber.ToString());
@@ -350,7 +346,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns></returns>
 		public static string FullFieldWorksBridgePath()
 		{
-			return Path.Combine(DirectoryFinder.FlexBridgeFolder, FLExBridgeName);
+			return Path.Combine(FwDirectoryFinder.FlexBridgeFolder, FLExBridgeName);
 		}
 
 		/// <summary>

@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 {
@@ -39,7 +40,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 			m_backupProjectView = backupProjectView;
 
 			//Older projects might not have this folder so when launching the backup dialog we want to create it.
-			Directory.CreateDirectory(DirectoryFinder.GetSupportingFilesDir(m_cache.ProjectId.ProjectFolder));
+			Directory.CreateDirectory(FdoFileHelper.GetSupportingFilesDir(m_cache.ProjectId.ProjectFolder));
 		}
 
 		///<summary>
@@ -49,8 +50,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		{
 			get
 			{
-				return Path.Combine(DirectoryFinder.GetBackupSettingsDir(m_cache.ProjectId.ProjectFolder),
-					DirectoryFinder.kBackupSettingsFilename);
+				return Path.Combine(FdoFileHelper.GetBackupSettingsDir(m_cache.ProjectId.ProjectFolder),
+					FdoFileHelper.kBackupSettingsFilename);
 			}
 		}
 
@@ -61,7 +62,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		{
 			get
 			{
-				var supportingFilesFolder = DirectoryFinder.GetSupportingFilesDir(m_cache.ProjectId.ProjectFolder);
+				var supportingFilesFolder = FdoFileHelper.GetSupportingFilesDir(m_cache.ProjectId.ProjectFolder);
 				var files = ProjectBackupService.GenerateFileListFolderAndSubfolders(supportingFilesFolder);
 				if (files.Count > 0)
 					return true;
@@ -80,7 +81,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// ------------------------------------------------------------------------------------
 		internal bool FileNameProblems(Form messageBoxOwner)
 		{
-			BackupProjectSettings settings = new BackupProjectSettings(m_cache, m_backupProjectView);
+			BackupProjectSettings settings = new BackupProjectSettings(m_cache, m_backupProjectView, FwDirectoryFinder.DefaultBackupDirectory);
 			settings.DestinationFolder = m_backupProjectView.DestinationFolder;
 			if (settings.AdjustedComment.Trim() != settings.Comment.TrimEnd())
 			{
@@ -115,12 +116,20 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// ------------------------------------------------------------------------------------
 		internal string BackupProject(IThreadedProgress progressDlg)
 		{
-			BackupProjectSettings settings = new BackupProjectSettings(m_cache, m_backupProjectView);
+			BackupProjectSettings settings = new BackupProjectSettings(m_cache, m_backupProjectView, FwDirectoryFinder.DefaultBackupDirectory);
 			settings.DestinationFolder = m_backupProjectView.DestinationFolder;
 			settings.AppAbbrev = m_appAbbrev;
 
 			ProjectBackupService backupService = new ProjectBackupService(m_cache, settings);
-			return backupService.BackupProject(progressDlg);
+			string backupFile;
+			if (!backupService.BackupProject(progressDlg, out backupFile))
+			{
+				string msg = string.Format(FwCoreDlgs.ksCouldNotBackupSomeFiles, backupService.FailedFiles.ToString(", ", Path.GetFileName));
+				if (MessageBox.Show(msg, FwCoreDlgs.ksWarning, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+					File.Delete(backupFile);
+				backupFile = null;
+			}
+			return backupFile;
 		}
 	}
 }

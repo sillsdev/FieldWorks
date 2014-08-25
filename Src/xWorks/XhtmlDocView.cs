@@ -148,11 +148,11 @@ namespace SIL.FieldWorks.XWorks
 		internal SortedDictionary<string, string> GatherBuiltInAndUserConfigurations()
 		{
 			var configurations = new SortedDictionary<string, string>();
-			var defaultConfigs = Directory.EnumerateFiles(Path.Combine(DirectoryFinder.DefaultConfigurations, m_configObjectName),
+			var defaultConfigs = Directory.EnumerateFiles(Path.Combine(FwDirectoryFinder.DefaultConfigurations, m_configObjectName),
 																			"*" + DictionaryConfigurationModel.FileExtension);
 			// for every configuration file in the DefaultConfigurations folder add an entry
 			AddOrOverrideConfiguration(defaultConfigs, configurations);
-			var projectConfigPath = Path.Combine(DirectoryFinder.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder),
+			var projectConfigPath = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder),
 																m_configObjectName);
 			if(Directory.Exists(projectConfigPath))
 			{

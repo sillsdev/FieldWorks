@@ -334,7 +334,7 @@ namespace SIL.FieldWorks.Common.Framework
 			if (m_cache == null)
 				throw new Exception("Cache not yet intialized.");
 
-			StyleSheet.Init(m_cache, hvoStylesOwner, tagStylesList);
+			StyleSheet.Init(m_cache, hvoStylesOwner, tagStylesList, ResourceHelper.DefaultParaCharsStyleName);
 			InitStyleComboBox();
 		}
 
@@ -347,7 +347,7 @@ namespace SIL.FieldWorks.Common.Framework
 		protected void ReSynchStyleSheet()
 		{
 			Debug.Assert(StyleSheet != null);
-			StyleSheet.Init(m_cache, StyleSheet.RootObjectHvo, StyleSheet.StyleListTag);
+			StyleSheet.Init(m_cache, StyleSheet.RootObjectHvo, StyleSheet.StyleListTag, ResourceHelper.DefaultParaCharsStyleName);
 			InitStyleComboBox();
 		}
 		#endregion
@@ -409,7 +409,7 @@ namespace SIL.FieldWorks.Common.Framework
 			// Use this to initialize combo box items.
 			m_tmAdapter.InitializeComboItem += InitializeToolBarCombos;
 
-			string sMenuToolBarDefinition = Path.Combine(DirectoryFinder.FWCodeDirectory, "FwTMDefinition.xml");
+			string sMenuToolBarDefinition = Path.Combine(FwDirectoryFinder.CodeDirectory, "FwTMDefinition.xml");
 
 			m_tmAdapter.Initialize(this, AdapterContentControl, m_mediator, m_app.ProjectSpecificSettingsKey.ToString(),
 				new string[] { sMenuToolBarDefinition, GetAppSpecificMenuToolBarDefinition() });

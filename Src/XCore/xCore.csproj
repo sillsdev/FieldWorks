@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -98,6 +98,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
+    <Reference Include="FDO, Version=8.0.6.21122, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\FDO.dll</HintPath>
+    </Reference>
+    <Reference Include="CoreImpl, Version=8.0.6.32239, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\CoreImpl.dll</HintPath>
+    </Reference>
     <Reference Include="FwUtils, Version=6.1.0.16975, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
@@ -145,14 +153,14 @@
     </Reference>
     <Reference Condition="'$(OS)'=='Unix'" Include="geckofx-core">
       <HintPath>\usr\lib\cli\geckofx-29\Geckofx-Core.dll</HintPath>
-	</Reference>
+    </Reference>
     <Reference Condition="'$(OS)'=='Unix'" Include="Geckofx-Winforms-29">
       <HintPath>\usr\lib\cli\geckofx-29\Geckofx-Winforms.dll</HintPath>
-	</Reference>
+    </Reference>
     <None Condition="'$(OS)'=='Unix'" Include="\usr\lib\cli\geckofx-29\Geckofx-Core.dll.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-	</ItemGroup>
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
@@ -176,6 +184,7 @@
     <Compile Include="IconHolder.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="ImageCollection.cs" />
     <Compile Include="ImageContent.cs">
       <SubType>UserControl</SubType>
     </Compile>

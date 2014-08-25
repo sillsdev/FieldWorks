@@ -13,13 +13,13 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Xml; // XMLWriter
-using System.Drawing;
 
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Application;
@@ -29,9 +29,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Validation;
 using SIL.CoreImpl;
-using Sharpen.Util;
-
-// XmlUtils
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {
@@ -238,29 +235,29 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <summary>
 		/// Allows user to convert LexEntryType to LexEntryInflType.
 		/// </summary>
-		public void ConvertLexEntryInflTypes(ProgressBar progressBar, IEnumerable<ILexEntryType> list)
+		public void ConvertLexEntryInflTypes(IProgress progressBar, IEnumerable<ILexEntryType> list)
 		{
 			progressBar.Minimum = 0;
 			progressBar.Maximum = list.Count();
-			progressBar.Step = 1;
+			progressBar.StepSize = 1;
 			foreach (var lexEntryType in list)
 			{
 				var leitFactory = m_cache.ServiceLocator.GetInstance<ILexEntryInflTypeFactory>();
 				var leit = leitFactory.Create();
 				leit.ConvertLexEntryType(lexEntryType);
 				lexEntryType.Delete();
-				progressBar.PerformStep();
+				progressBar.Step(1);
 			}
 		}
 
 		/// <summary>
 		/// Allows user to convert LexEntryInflType to LexEntryType.
 		/// </summary>
-		public void ConvertLexEntryTypes(ProgressBar progressBar, IEnumerable<ILexEntryType> list)
+		public void ConvertLexEntryTypes(IProgress progressBar, IEnumerable<ILexEntryType> list)
 		{
 			progressBar.Minimum = 0;
 			progressBar.Maximum = list.Count();
-			progressBar.Step = 1;
+			progressBar.StepSize = 1;
 			foreach (var lexEntryInflType in list)
 			{
 				var leit = lexEntryInflType as ILexEntryInflType;
@@ -271,20 +268,20 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					lexEntryType.ConvertLexEntryType(leit);
 					leit.Delete();
 				}
-				progressBar.PerformStep();
+				progressBar.Step(1);
 			}
 		}
 
 		/// <summary>
 		/// Resets the homograph numbers for all entries but can take a null progress bar.
 		/// </summary>
-		public void ResetHomographNumbers(ProgressBar progressBar)
+		public void ResetHomographNumbers(IProgress progressBar)
 		{
 			if (progressBar != null)
 			{
 				progressBar.Minimum = 0;
 				progressBar.Maximum = Entries.Count();
-				progressBar.Step = 1;
+				progressBar.StepSize = 1;
 			}
 			var processedEntryIds = new List<int>();
 			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Strings.ksUndoResetHomographs, Strings.ksRedoResetHomographs, Cache.ActionHandlerAccessor,
@@ -295,7 +292,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						if (processedEntryIds.Contains(le.Hvo))
 						{
 							if (progressBar != null)
-								progressBar.PerformStep();
+								progressBar.Step(1);
 							continue;
 						}
 
@@ -313,7 +310,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						{
 							processedEntryIds.Add(homograph.Hvo);
 							if (progressBar != null)
-								progressBar.PerformStep();
+								progressBar.Step(1);
 						}
 					}
 				});
@@ -1052,6 +1049,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				SensesChangedPosition(e.Index);
 				NumberOfSensesChanged(true);
 				UpdateMorphoSyntaxAnalysesOfLexEntryRefs();
+
+				var sourceLexEntry = e.PreviousOwner as ILexEntry;
+				if (sourceLexEntry != null && !Equals(sourceLexEntry))
+					UpdateReferencesForSenseMove(sourceLexEntry, this, SensesOS[e.Index]);
 			}
 					break;
 				case LexEntryTags.kflidAlternateForms:
@@ -1397,18 +1398,20 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (mapOldToNewMsa.Keys.Count == 0)
 				return;
 
+			// Must move mb reference first.  Otherwise the MSA may be deleted already
+			// since a mb reference alone will not keep the MSA from being deleted (LT-14740)
+			foreach (var mb in Services.GetInstance<IWfiMorphBundleRepository>().AllInstances())
+			{
+				IMoMorphSynAnalysis newMsa;
+				if (mb.MsaRA != null && mapOldToNewMsa.TryGetValue(mb.MsaRA, out newMsa))
+					mb.MsaRA = newMsa;
+			}
+
 			foreach (var sense in AllSenses)
 			{
 				IMoMorphSynAnalysis newMsa;
 				if (sense.MorphoSyntaxAnalysisRA != null && mapOldToNewMsa.TryGetValue(sense.MorphoSyntaxAnalysisRA, out newMsa))
 					sense.MorphoSyntaxAnalysisRA = newMsa;
-			}
-
-			foreach (var mb in Services.GetInstance<IWfiMorphBundleRepository>().AllInstances())
-			{
-				IMoMorphSynAnalysis newMsa;
-				if (mb.MsaRA != null &&  mapOldToNewMsa.TryGetValue(mb.MsaRA, out newMsa))
-					mb.MsaRA = newMsa;
 			}
 
 			foreach (var adhocProhib in Services.GetInstance<IMoMorphAdhocProhibRepository>().AllInstances())
@@ -1566,38 +1569,89 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						if (EtymologyOA != null)
 							CopyObject<ILexEtymology>.CloneFdoObject(EtymologyOA, newEtymology => leNew.EtymologyOA = newEtymology);
 
-						var msaCorrespondence = new Dictionary<IMoMorphSynAnalysis, IMoMorphSynAnalysis>(4);
-						(leNew as LexEntry).ReplaceMsasForSense(ls, msaCorrespondence);
-						foreach (var sense in ls.AllSenses)
-						{
-							foreach (var source in sense.ReferringObjects)
-							{
-								var mb = source as WfiMorphBundle;
-								if (mb == null || mb.MorphRA == null)
-									continue;
-								if (mb.MorphRA == LexemeFormOA)
-								{
-									mb.MorphRA = leNew.LexemeFormOA;
-								}
-								else // point to the corresponding allomorph
-								{
-									//if the referringObject is a variant then index will be -1
-									var index = AlternateFormsOS.IndexOf(mb.MorphRA);
-									if (index >= 0)
-										mb.MorphRA = leNew.AlternateFormsOS[index];
-									else
-									{
-										//Clear out the morph bundle where the morph was pointing to a variant
-										//that references the old entry which no longer holds this sense.
-										mb.MorphRA = null;
-										mb.MsaRA = null;
-										mb.SenseRA = null;
-									}
-								}
-							}
-						}
+						UpdateReferencesForSenseMove(this, leNew, ls);
+
 						leNew.SensesOS.Add(ls); // moves it
 					});
+		}
+
+		public static void UpdateReferencesForSenseMove(ILexEntry leSource, ILexEntry leTarget, ILexSense ls)
+		{
+			var msaCorrespondence = new Dictionary<IMoMorphSynAnalysis, IMoMorphSynAnalysis>(4);
+			(leTarget as LexEntry).ReplaceMsasForSense(ls, msaCorrespondence);
+			foreach (var sense in ls.AllSenses)
+			{
+				foreach (var source in sense.ReferringObjects)
+				{
+					var mb = source as WfiMorphBundle;
+					if (mb == null || mb.MorphRA == null)
+						continue;
+					if (leSource.LexemeFormOA == mb.MorphRA || leSource.AlternateFormsOS.Contains(mb.MorphRA))
+					{
+						IMoForm sourceAllomorph = mb.MorphRA;
+						mb.MorphRA = null;
+						foreach(IMoForm targetAllomorph in leTarget.AllAllomorphs)
+						{
+							if(IsMatchingAllomorph(sourceAllomorph, targetAllomorph))
+							{
+								mb.MorphRA = targetAllomorph;
+								break;
+							}
+						}
+						// The failover case is to create a matching allomorph in the target entry
+						if(mb.MorphRA == null)
+						{
+							mb.MorphRA = CreateMatchingAllomorphInTargetEntry(leTarget, sourceAllomorph);
+						}
+					}
+					else
+					{
+						//Clear out the morph bundle where the morph was pointing to a variant
+						//that references the old entry which no longer holds this sense.
+						mb.MorphRA = null;
+						mb.MsaRA = null;
+						mb.SenseRA = null;
+					}
+				}
+			}
+		}
+
+		internal static IMoForm CreateMatchingAllomorphInTargetEntry(ILexEntry leTarget, IMoForm sourceAllomorph)
+		{
+			IMoForm newForm = null;
+			CopyObject<IMoForm>.CloneFdoObject(sourceAllomorph,
+														  created =>
+															{
+																leTarget.AlternateFormsOS.Add(created);
+																newForm = created;
+															});
+			return newForm;
+		}
+
+		/// <summary>
+		/// True if there is at least one writing system for which both IMoForms have the same text and
+		/// the texts match for each writing system for which both IMoForms have text.
+		/// Writing systems with no text for either IMoForm are ignored.
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="target"></param>
+		/// <returns></returns>
+		private static bool IsMatchingAllomorph(IMoForm source, IMoForm target)
+		{
+			bool found = false;
+			foreach (var ws in source.Form.AvailableWritingSystemIds)
+			{
+				string sourceForm = source.Form.get_String(ws).Text;
+				if (string.IsNullOrEmpty(sourceForm))
+					continue;
+				string targetForm = target.Form.get_String(ws).Text;
+				if (string.IsNullOrEmpty(targetForm))
+					continue;
+				found = true;
+				if (!sourceForm.Equals(targetForm, StringComparison.Ordinal))
+					return false;
+			}
+			return found;
 		}
 
 		/// <summary>
@@ -1937,12 +1991,12 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		private void UpdateHomographs(string oldHf, string newHf, IMoMorphType oldType1, IMoMorphType newType1)
 		{
 			var repo = Services.GetInstance<ILexEntryRepository>();
-			var newType = repo.HomographMorphType(Cache, newType1);
-			var oldType = repo.HomographMorphType(Cache, oldType1);
+			var newMo = repo.HomographMorphOrder(Cache, newType1);
+			var oldMo = repo.HomographMorphOrder(Cache, oldType1);
 			// This is deliberately obtained before updating, so it usually does NOT include this.
 			// However it might in one case: where the homograph cache had not previously been built.
 			var newHomographs = repo.GetHomographs(newHf)
-				.Where(le => repo.HomographMorphType(Cache, le.PrimaryMorphType) == newType).ToList();
+				.Where(le => repo.HomographMorphOrder(Cache, le.PrimaryMorphType) == newMo).ToList();
 			newHomographs.Sort((first, second) => first.HomographNumber.CompareTo(second.HomographNumber));
 
 			// When the homograph form is not set: it is empty, or entirely non-word forming characters
@@ -1964,7 +2018,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					newHomographs[i].HomographNumber = (newHomographs.Count == 1 ? 0 : i + 1);
 				return;
 			}
-			if (oldHf == newHf && oldType == newType)
+			if (oldHf == newHf && oldMo == newMo)
 				return;  // no significant change; e.g. change from stem to root, or no type to stem
 
 			// At some point AFTER we get the two lists we must fix the cache in the repository.
@@ -1974,7 +2028,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 			// OldHomographs should not include this, since something changed.
 			var oldHomographs = repo.GetHomographs(oldHf)
-				.Where(le => repo.HomographMorphType(Cache, le.PrimaryMorphType) == oldType).ToList();
+				.Where(le => repo.HomographMorphOrder(Cache, le.PrimaryMorphType) == oldMo).ToList();
 			oldHomographs.Sort((first, second) => first.HomographNumber.CompareTo(second.HomographNumber));
 
 			// Fix old homographs, if any (may not have old ones if had no previous CF or LF).
@@ -4466,21 +4520,38 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				var tisb = TsIncStrBldrClass.Create();
-				tisb.SetIntPropValues((int) FwTextPropType.ktptEditable,
+				var deleteTextTssBuilder = TsIncStrBldrClass.Create();
+				deleteTextTssBuilder.SetIntPropValues((int) FwTextPropType.ktptEditable,
 					(int) FwTextPropVar.ktpvEnum,
 					(int) TptEditable.ktptNotEditable);
 				var userWs = m_cache.WritingSystemFactory.UserWs;
-				tisb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, userWs);
-				tisb.Append(String.Format(Strings.ksDeleteLexSense, " "));
-				tisb.AppendTsString(ShortNameTSS);
+				deleteTextTssBuilder.SetIntPropValues((int) FwTextPropType.ktptWs, 0, userWs);
+				deleteTextTssBuilder.Append(String.Format(Strings.ksDeleteLexSense, " "));
+				deleteTextTssBuilder.AppendTsString(ShortNameTSS);
 
 				var lmeCount = 0;
 				var lseCount = 0;
 				var servLoc = Cache.ServiceLocator;
 
-				var bundles = servLoc.GetInstance<IWfiMorphBundleRepository>().AllInstances();
-				var mbCount = (bundles.Where(bundle => bundle.SenseRA == this)).Count();
+				int mbCount = 0;
+				int textCount = 0;
+				int msaCount = 0;
+				int msaTextCount = 0;
+				var bundles = servLoc.GetInstance<IWfiMorphBundleRepository>().AllInstances().Where(bundle => bundle.SenseRA == this);
+				foreach (IWfiMorphBundle bundle in bundles)
+				{
+					mbCount++;
+					if (bundle.MsaRA != null && bundle.MsaRA.ComponentsRS != null && bundle.MsaRA.Equals(MorphoSyntaxAnalysisRA))
+						msaCount++;
+					var analysis = bundle.Owner as IWfiAnalysis;
+					if (analysis != null)
+					{
+						int textOccurences = analysis.Wordform.OccurrencesInTexts.Distinct().Sum(seg => seg.GetOccurrencesOfAnalysis(analysis, int.MaxValue, true).Count);
+						textCount += textOccurences;
+						if (bundle.MsaRA != null && bundle.MsaRA.ComponentsRS != null && bundle.MsaRA.Equals(MorphoSyntaxAnalysisRA))
+							msaTextCount += textOccurences;
+					}
+				}
 
 				var entries = servLoc.GetInstance<ILexEntryRepository>().AllInstances();
 				lmeCount = (entries.Where(e => e.MainEntriesOrSensesRS.Contains(this))).Count();
@@ -4495,41 +4566,80 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				var cnt = 1;
 				var warningMsg = String.Format("\x2028\x2028{0}", Strings.ksSenseUsedHere);
 				var wantMainWarningLine = true;
+				var msaWarningMsg = String.Format("\x2028\x2028{0}", Strings.ksMsaWhichWouldBeDeletedUsedHere);
+				var wantMsaWarningLine = true;
 				if (mbCount > 0)
 				{
-					tisb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, userWs);
-					tisb.Append(warningMsg);
-					tisb.Append(StringUtils.kChHardLB.ToString());
+					deleteTextTssBuilder.SetIntPropValues((int) FwTextPropType.ktptWs, 0, userWs);
+					deleteTextTssBuilder.Append(warningMsg);
+					deleteTextTssBuilder.Append(StringUtils.kChHardLB.ToString(CultureInfo.InvariantCulture));
 					if (mbCount > 1)
-						tisb.Append(String.Format(Strings.ksIsUsedXTimesInAnalyses, cnt++, mbCount));
+						deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedXTimesInAnalyses, cnt++, mbCount));
 					else
-						tisb.Append(String.Format(Strings.ksIsUsedOnceInAnalyses, cnt++));
+						deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedOnceInAnalyses, cnt++));
+					wantMainWarningLine = false;
+				}
+				if (textCount > 0)
+				{
+					deleteTextTssBuilder.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
+					if (wantMainWarningLine)
+						deleteTextTssBuilder.Append(warningMsg);
+					deleteTextTssBuilder.Append(StringUtils.kChHardLB.ToString(CultureInfo.InvariantCulture));
+					if (textCount > 1)
+						deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedXTimesInTexts, cnt++, textCount));
+					else
+						deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedOnceInTexts, cnt++));
 					wantMainWarningLine = false;
 				}
 				if (lmeCount > 0)
 				{
-					tisb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, userWs);
+					deleteTextTssBuilder.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 					if (wantMainWarningLine)
-						tisb.Append(warningMsg);
-					tisb.Append(StringUtils.kChHardLB.ToString());
+						deleteTextTssBuilder.Append(warningMsg);
+					deleteTextTssBuilder.Append(StringUtils.kChHardLB.ToString(CultureInfo.InvariantCulture));
 					if (lmeCount > 1)
-						tisb.Append(String.Format(Strings.ksIsUsedXTimesByEntries, cnt++, lmeCount));
+						deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedXTimesByEntries, cnt++, lmeCount));
 					else
-						tisb.Append(String.Format(Strings.ksIsUsedOnceByEntries, cnt++));
+						deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedOnceByEntries, cnt++));
 					wantMainWarningLine = false;
 				}
 				if (lseCount > 0)
 				{
-					tisb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, userWs);
+					deleteTextTssBuilder.SetIntPropValues((int) FwTextPropType.ktptWs, 0, userWs);
 					if (wantMainWarningLine)
-						tisb.Append(warningMsg);
-					tisb.Append(StringUtils.kChHardLB.ToString());
+						deleteTextTssBuilder.Append(warningMsg);
+					deleteTextTssBuilder.Append(StringUtils.kChHardLB.ToString(CultureInfo.InvariantCulture));
 					if (lseCount > 1)
-						tisb.Append(String.Format(Strings.ksIsUsedXTimesBySubentries, cnt++, lseCount));
+						deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedXTimesBySubentries, cnt++, lseCount));
 					else
-						tisb.Append(String.Format(Strings.ksIsUsedOnceBySubentries, cnt++));
+						deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedOnceBySubentries, cnt++));
 				}
-				return tisb.GetString();
+				if (MorphoSyntaxAnalysisRA != null && MorphoSyntaxAnalysisRA.CanDeleteIfSenseDeleted(this))
+				{
+					if (msaCount > 0)
+					{
+						deleteTextTssBuilder.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
+						deleteTextTssBuilder.Append(msaWarningMsg);
+						deleteTextTssBuilder.Append(StringUtils.kChHardLB.ToString(CultureInfo.InvariantCulture));
+						if (msaCount > 1)
+							deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedXTimesInAnalyses, cnt++, msaCount));
+						else
+							deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedOnceInAnalyses, cnt++));
+						wantMsaWarningLine = false;
+					}
+					if (msaTextCount > 0)
+					{
+						deleteTextTssBuilder.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
+						if (wantMsaWarningLine)
+							deleteTextTssBuilder.Append(msaWarningMsg);
+						deleteTextTssBuilder.Append(StringUtils.kChHardLB.ToString(CultureInfo.InvariantCulture));
+						if (msaTextCount > 1)
+							deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedXTimesInTexts, cnt++, msaTextCount));
+						else
+							deleteTextTssBuilder.Append(String.Format(Strings.ksIsUsedOnceInTexts, cnt++));
+					}
+				}
+				return deleteTextTssBuilder.GetString();
 			}
 		}
 
@@ -6600,6 +6710,46 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				m_cache.DomainDataByFlid.DeleteObj(ruleMapping.Hvo);
 			}
 		}
+		/// <summary>
+		/// Gets a TsString that represents this object as it could be used in a deletion
+		/// confirmation dialog.
+		/// </summary>
+		public override ITsString DeletionTextTSS
+		{
+			get
+			{
+				int userWs = m_cache.DefaultUserWs;
+				ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
+				tisb.Append(String.Format(Strings.ksDeleteNaturalClass, " "));
+				tisb.AppendTsString(ShortNameTSS);
+
+				Set<int> rules = new Set<int>();
+				foreach (var cmo in ReferringObjects)
+				{
+					var ctxt = cmo as IPhSimpleContextNC;
+					if (ctxt != null)
+					{
+						var apr = ctxt.Owner as IMoAffixProcess;
+						if (apr != null)
+							rules.Add(apr.Hvo);
+					}
+				}
+				int cnt = 1;
+				if (rules.Count > 0)
+				{
+					tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.DefaultUserWs);
+					tisb.Append("\x2028\x2028");
+					tisb.Append(Strings.ksNatClassUsedHere);
+					tisb.Append("\x2028");
+					if (rules.Count > 1)
+						tisb.Append(String.Format(Strings.ksUsedXTimesInAffixProcessRules, cnt, rules.Count));
+					else
+						tisb.Append(String.Format(Strings.ksUsedOnceInAffixProcessRules, cnt));
+				}
+				return tisb.GetString();
+			}
+		}
 	}
 
 	/// <summary>
@@ -6645,7 +6795,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				case PhNCSegmentsTags.kflidSegments:
 					return (from ps in m_cache.LangProject.PhonologicalDataOA.PhonemeSetsOS
 						   from ph in ps.PhonemesOC
-						   select ph).Cast<ICmObject>();
+						   select ph).Cast<ICmObject>().OrderBy(ph=>ph.ShortName);
 			}
 			return base.ReferenceTargetCandidates(flid);
 		}
@@ -6689,13 +6839,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <returns>The feature structure containing the intersection</returns>
 		public IFsFeatStruc SetIntersectionOfPhonemeFeatures(IFsFeatStruc fs)
 		{
-			fs.FeatureSpecsOC.Clear();
 			var comparer = new FsClosedValue.FsClosedValueComparer();
 			HashSet<IFsClosedValue> hashSetMaster = null;
 			var hashSetCurrent = new HashSet<IFsClosedValue>(comparer);
 			foreach (var phoneme in SegmentsRC)
 			{
 				var pfs = phoneme.FeaturesOA;
+				if (pfs == null)
+					continue;
 				if (pfs.FeatureSpecsOC.Any())
 				{
 					hashSetCurrent.Clear();
@@ -6722,16 +6873,39 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 			if (hashSetMaster != null)
 			{
+				// Collect the old contents of fs for potential removal
+				var featuresToRemove = new HashSet<IFsClosedValue>(comparer);
+				foreach(IFsClosedValue feature in fs.FeatureSpecsOC)
+				{
+					featuresToRemove.Add(feature);
+				}
 				foreach (var masterValue in hashSetMaster)
 				{
+					// if a matching feature was present before we will leave it
+					if(featuresToRemove.Contains(masterValue))
+					{
+						featuresToRemove.Remove(masterValue);
+						continue;
+					}
+					// otherwise we add it
 					var closedValue = m_cache.ServiceLocator.GetInstance<IFsClosedValueFactory>().Create();
 					fs.FeatureSpecsOC.Add(closedValue);
 					closedValue.FeatureRA = masterValue.FeatureRA;
 					closedValue.ValueRA = masterValue.ValueRA;
 				}
+				foreach(var goner in featuresToRemove)
+				{
+					fs.FeatureSpecsOC.Remove(goner);
+				}
+			}
+			else
+			{
+				// if there were no entries for hashSetMaster then we should clear out the old contents
+				fs.FeatureSpecsOC.Clear();
 			}
 			return fs;
 		}
+
 		protected override void OnBeforeObjectDeleted()
 		{
 			base.OnBeforeObjectDeleted();
@@ -6780,7 +6954,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					{
 						// if there are two natural classes with the same abbreviation, things
 						// can get in a state where there is no rule here.
-						if (ctxt.Rule != null)
+						if (ctxt.Rule != null && ctxt.Rule.ClassID != MoAffixProcessTags.kClassId)
 							rules.Add(ctxt.Rule.Hvo);
 					}
 				}
@@ -6795,6 +6969,32 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						tisb.Append(String.Format(Strings.ksUsedXTimesInRules, cnt, rules.Count));
 					else
 						tisb.Append(String.Format(Strings.ksUsedOnceInRules, cnt));
+				}
+				Set<int> aprrules = new Set<int>();
+				foreach (var cmo in ReferringObjects)
+				{
+					var ctxt = cmo as IPhSimpleContextNC;
+					if (ctxt != null)
+					{
+						var apr = ctxt.Owner as IMoAffixProcess;
+						if (apr != null)
+							aprrules.Add(apr.Hvo);
+					}
+				}
+				int aprcnt = rules.Count + 1;
+				if (aprrules.Count > 0)
+				{
+					tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.DefaultUserWs);
+					if (rules.Count == 0)
+					{
+						tisb.Append("\x2028\x2028");
+						tisb.Append(Strings.ksNatClassUsedHere);
+					}
+					tisb.Append("\x2028");
+					if (aprrules.Count > 1)
+						tisb.Append(String.Format(Strings.ksUsedXTimesInAffixProcessRules, aprcnt, aprrules.Count));
+					else
+						tisb.Append(String.Format(Strings.ksUsedOnceInAffixProcessRules, aprcnt));
 				}
 				string std = String.Format("[{0}]", Abbreviation.AnalysisDefaultWritingSystem.Text);
 				string indexed = String.Format("[{0}^", Abbreviation.AnalysisDefaultWritingSystem.Text);

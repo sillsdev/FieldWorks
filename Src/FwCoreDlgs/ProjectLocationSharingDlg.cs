@@ -59,7 +59,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				m_tbCurrentProjectPath.Text = cache.ProjectId.Path;
 			}
-			m_tbProjectsFolder.Text = DirectoryFinder.ProjectsDirectory;
+			m_tbProjectsFolder.Text = FwDirectoryFinder.ProjectsDirectory;
 			// We can only change the folder if sharing is INITIALLY turned off.
 			m_tbProjectsFolder.Enabled = !m_cbShareMyProjects.Checked;
 			m_btnBrowseProjectFolder.Enabled = !m_cbShareMyProjects.Checked;
@@ -76,7 +76,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (Directory.Exists(m_tbProjectsFolder.Text))
 			{
 				var newFolder = m_tbProjectsFolder.Text;
-				var oldFolder = DirectoryFinder.ProjectsDirectory;
+				var oldFolder = FwDirectoryFinder.ProjectsDirectory;
 				if (!MiscUtils.IsUnix)
 				{
 					newFolder = newFolder.ToLowerInvariant();
@@ -91,7 +91,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					string path = m_tbProjectsFolder.Text;
 					// If it contains a settings directory, assume it's a project settings folder...possibly settings for a remote project.
-					if (Directory.Exists(Path.Combine(path, DirectoryFinder.ksConfigurationSettingsDir)))
+					if (Directory.Exists(Path.Combine(path, FdoFileHelper.ksConfigurationSettingsDir)))
 					{
 						m_btnOK.Enabled = false;
 						return;
@@ -219,7 +219,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private void m_btnBrowseProjectFolder_Click(object sender, EventArgs e)
 		{
-			string defaultPath = DirectoryFinder.ProjectsDirectory;
+			string defaultPath = FwDirectoryFinder.ProjectsDirectory;
 
 			using (var fldrBrowse = new FolderBrowserDialogAdapter())
 			{
@@ -281,14 +281,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// If we just turned it on, and it was on to start with, changing the project directory is not allowed;
 			// revert any changes that have been made to that.
 			if (m_cbShareMyProjects.Checked && ClientServerServices.Current.Local.ShareMyProjects)
-				m_tbProjectsFolder.Text = DirectoryFinder.ProjectsDirectory;
+				m_tbProjectsFolder.Text = FwDirectoryFinder.ProjectsDirectory;
 			// Sharing can only be turned on if these directories are the same, because of complications when the ProjectsDirectory
 			// seen by FieldWorks is different from the one seen by the FwRemoteDatabaseConnectorService.
-			if (m_cbShareMyProjects.Checked && DirectoryFinder.ProjectsDirectory != DirectoryFinder.ProjectsDirectoryLocalMachine)
+			if (m_cbShareMyProjects.Checked && FwDirectoryFinder.ProjectsDirectory != FwDirectoryFinder.ProjectsDirectoryLocalMachine)
 			{
 				MessageBox.Show(this,
-					string.Format(FwCoreDlgs.ksCantShareDiffProjectFolders, DirectoryFinder.ProjectsDirectory,
-						DirectoryFinder.ProjectsDirectoryLocalMachine),
+					string.Format(FwCoreDlgs.ksCantShareDiffProjectFolders, FwDirectoryFinder.ProjectsDirectory,
+						FwDirectoryFinder.ProjectsDirectoryLocalMachine),
 						FwCoreDlgs.ksCantShare);
 				m_cbShareMyProjects.Checked = false;
 			}

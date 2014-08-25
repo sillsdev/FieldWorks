@@ -175,6 +175,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\RootSite.dll</HintPath>
     </Reference>
+    <Reference Include="ScriptureUtils, Version=8.0.9.31119, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\ScriptureUtils.dll</HintPath>
+    </Reference>
     <Reference Include="SharedScrUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SharedScrUtils.dll</HintPath>
@@ -297,6 +301,7 @@
     <Compile Include="ChooserTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="ClientServerServicesHelper.cs" />
     <Compile Include="CnvtrPropertiesCtrl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -440,6 +445,12 @@
     </Compile>
     <Compile Include="RegexHelperMenu.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="SharedBackendServicesHelper.cs" />
+    <Compile Include="Strings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
     <Compile Include="UtilityDlg.cs">
       <SubType>Form</SubType>
@@ -612,6 +623,11 @@
     </EmbeddedResource>
     <EmbeddedResource Include="RealSplashScreen.resx">
       <DependentUpon>RealSplashScreen.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Strings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="UtilityDlg.resx">

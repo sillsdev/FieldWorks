@@ -9,18 +9,12 @@
 // </remarks>
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
-using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
@@ -76,14 +70,14 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			string persistedLinkedFilesRootDir;
 			if (linkedFilesRootDirElement == null)
 			{
-				persistedLinkedFilesRootDir = Path.Combine(domainObjectDtoRepository.ProjectFolder, DirectoryFinder.ksLinkedFilesDir);
+				persistedLinkedFilesRootDir = Path.Combine(domainObjectDtoRepository.ProjectFolder, FdoFileHelper.ksLinkedFilesDir);
 			}
 			else
 			{
 				persistedLinkedFilesRootDir = linkedFilesRootDirElement.Value;
 			}
-			var linkedFilesRootDir = DirectoryFinderRelativePaths.GetLinkedFilesFullPathFromRelativePath(persistedLinkedFilesRootDir,
-				domainObjectDtoRepository.ProjectFolder);
+			var linkedFilesRootDir = LinkedFilesRelativePathHelper.GetLinkedFilesFullPathFromRelativePath(domainObjectDtoRepository.Directories.ProjectsDirectory,
+				persistedLinkedFilesRootDir, domainObjectDtoRepository.ProjectFolder);
 
 			//-------------------------------------------------
 			var langProjectGuid = langProjElement.Attribute("guid").Value;
@@ -221,7 +215,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 							var filePath = FileUtils.ChangeWindowsPathIfLinux(externalLinkAttributeForThisRun.Value);
 							//Check the path and if it is a rooted path which is relative to the LinkedFilesRootDir
 							//then we will have to confirm that is was changed to a relative path after the migration.
-							var fileAsRelativePath = DirectoryFinderRelativePaths.GetRelativeLinkedFilesPath(filePath,
+							var fileAsRelativePath = LinkedFilesRelativePathHelper.GetRelativeLinkedFilesPath(filePath,
 																											 linkedFilesRootDir);
 							//Save the file paths so they can be turned into CmFiles
 							filePathsInTsStrings.Add(fileAsRelativePath);

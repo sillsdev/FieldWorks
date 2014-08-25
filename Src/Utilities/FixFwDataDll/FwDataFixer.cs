@@ -11,7 +11,10 @@ using System.Xml.Linq;
 using System.Collections.Generic;
 using System.Xml;
 using System.IO;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FixData
 {
@@ -173,8 +176,7 @@ namespace SIL.FieldWorks.FixData
 				xw.Close();
 			}
 
-			var bakfile = Path.ChangeExtension(m_filename,
-				Resources.FwFileExtensions.ksFwDataFallbackFileExtension);
+			var bakfile = Path.ChangeExtension(m_filename, FdoFileHelper.ksFwDataFallbackFileExtension);
 			if (File.Exists(bakfile))
 				File.Delete(bakfile);
 			File.Move(m_filename, bakfile);

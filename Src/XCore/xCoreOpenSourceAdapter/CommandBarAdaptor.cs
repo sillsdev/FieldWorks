@@ -9,8 +9,8 @@ namespace XCore
 	public abstract class CommandBarAdaptor: IDisposable
 	{
 		protected Form m_window;
-		protected ImageCollection m_smallImages;
-		protected ImageCollection m_largeImages;
+		protected IImageCollection m_smallImages;
+		protected IImageCollection m_largeImages;
 		protected CommandBarManager m_commandBarManager = new CommandBarManager();
 
 		public CommandBarAdaptor()

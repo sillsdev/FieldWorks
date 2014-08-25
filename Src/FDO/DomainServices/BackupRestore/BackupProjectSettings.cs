@@ -7,11 +7,9 @@
 
 using System;
 using System.IO;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using System.Reflection;
-using SIL.FieldWorks.Resources;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
@@ -23,17 +21,19 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 	public class BackupProjectSettings : BackupSettings
 	{
 		#region Constructors
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// <param name="backupInfo">The backup info.</param>
+		/// <param name="destFolder">The destination folder.</param>
 		/// ------------------------------------------------------------------------------------
-		public BackupProjectSettings(FdoCache cache, IBackupInfo backupInfo) :
+		public BackupProjectSettings(FdoCache cache, IBackupInfo backupInfo, string destFolder) :
 			this(Path.GetDirectoryName(cache.ProjectId.ProjectFolder), cache.ProjectId.Name,
 			cache.LanguageProject.LinkedFilesRootDir, cache.ProjectId.SharedProjectFolder,
-			cache.ProjectId.Type)
+			cache.ProjectId.Type, destFolder)
 		{
 			if (backupInfo != null)
 			{
@@ -57,19 +57,20 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// <param name="sharedProjectFolder">A possibly alternate project path that
 		/// should be used for things that should be shared.</param>
 		/// <param name="originalProjType">Type of the project before converting for backup.</param>
+		/// <param name="destFolder">The destination folder.</param>
 		/// ------------------------------------------------------------------------------------
 		protected BackupProjectSettings(string projectsRootFolder, string projectName,
-			string linkedFilesPath, string sharedProjectFolder, FDOBackendProviderType originalProjType) :
+			string linkedFilesPath, string sharedProjectFolder, FDOBackendProviderType originalProjType, string destFolder) :
 			base(projectsRootFolder, linkedFilesPath, sharedProjectFolder)
 		{
 			ProjectName = projectName;
 			DbVersion = FDOBackendProvider.ModelVersion;
-			FwVersion = new FwVersionInfoProvider(Assembly.GetExecutingAssembly(), false).FieldWorksVersion;
+			FwVersion = new VersionInfoProvider(Assembly.GetExecutingAssembly(), false).MajorVersion;
 			// For DB4o projects, we need to convert them over to XML. We can't put the
 			// converted project in the same directory so we convert them to a temporary
 			// directory (see FWR-2813).
-			DatabaseFolder = (originalProjType == FDOBackendProviderType.kXML) ? ProjectPath : Path.GetTempPath();
-			DestinationFolder = DirectoryFinder.DefaultBackupDirectory;
+			DatabaseFolder = (originalProjType == FDOBackendProviderType.kXML || originalProjType == FDOBackendProviderType.kSharedXML) ? ProjectPath : Path.GetTempPath();
+			DestinationFolder = destFolder;
 			BackupTime = DateTime.Now;
 		}
 		#endregion
@@ -149,7 +150,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		private string MakeBackupFileName(string comment)
 		{
 			return ProjectName + " " + BackupTime.ToString(ksBackupDateFormat) +
-				   comment + FwFileExtensions.ksFwBackupFileExtension;
+				   comment + FdoFileHelper.ksFwBackupFileExtension;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -161,8 +162,8 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		{
 			get
 			{
-				return Path.Combine(DirectoryFinder.GetBackupSettingsDir(ProjectPath),
-					DirectoryFinder.kBackupSettingsFilename);
+				return Path.Combine(FdoFileHelper.GetBackupSettingsDir(ProjectPath),
+					FdoFileHelper.kBackupSettingsFilename);
 			}
 		}
 		#endregion

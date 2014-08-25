@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.TE
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
 		public static bool Initialize(FdoCache cache, FwApp app,
-			IProgress progressDlg)
+			IThreadedProgress progressDlg)
 		{
 			TeScrInitializer scrInitializer = new TeScrInitializer(cache);
 			scrInitializer.m_app = app;
@@ -125,7 +125,7 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// --------------------------------------------------------------------------------
 		public static void EnsureProjectComponentsValid(FdoCache cache, FwApp app,
-			IProgress existingProgressDlg)
+			IThreadedProgress existingProgressDlg)
 		{
 			EnsureProjectValid(cache, app, existingProgressDlg);
 
@@ -224,7 +224,7 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// <returns>true if data loaded successfully; false, otherwise</returns>
 		/// -------------------------------------------------------------------------------------
-		protected bool Initialize(IProgress progressDlg)
+		protected bool Initialize(IThreadedProgress progressDlg)
 		{
 			if (m_scr != null)
 			{
@@ -241,23 +241,20 @@ namespace SIL.FieldWorks.TE
 				}
 			}
 
-			using (var dlg = new ProgressDialogWithTask(progressDlg))
+			try
 			{
-				try
+				progressDlg.RunTask(InitializeScriptureProject);
+			}
+			catch (WorkerThreadException e)
+			{
+				while (m_cache.DomainDataByFlid.GetActionHandler().CanUndo())
 				{
-					dlg.RunTask(InitializeScriptureProject);
+					UndoResult ures = m_cache.DomainDataByFlid.GetActionHandler().Undo();
+					// Enhance JohnT: make use of ures?
 				}
-				catch (WorkerThreadException e)
-				{
-					while (m_cache.DomainDataByFlid.GetActionHandler().CanUndo())
-					{
-						UndoResult ures = m_cache.DomainDataByFlid.GetActionHandler().Undo();
-						// Enhance JohnT: make use of ures?
-					}
-					MessageBox.Show(Form.ActiveForm, e.InnerException.Message, FwUtils.ksTeAppName,
-						MessageBoxButtons.OK, MessageBoxIcon.Error);
-					return false;
-				}
+				MessageBox.Show(Form.ActiveForm, e.InnerException.Message, FwUtils.ksTeAppName,
+					MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return false;
 			}
 			return true;
 		}

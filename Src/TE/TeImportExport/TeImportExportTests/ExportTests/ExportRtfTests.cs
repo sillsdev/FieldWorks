@@ -12,6 +12,7 @@ using System.IO;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.FDOTests;
+using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -571,7 +572,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 			m_fileName = FileUtils.GetTempFile("tmp");
 			m_styleSheet = new FwStyleSheet();
 			m_styleSheet.Init(Cache, Cache.LangProject.TranslatedScriptureOA.Hvo,
-				ScriptureTags.kflidStyles);
+				ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 		}
 
 		/// ------------------------------------------------------------------------------------

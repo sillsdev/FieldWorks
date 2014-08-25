@@ -73,7 +73,7 @@
       <inflMsa cat="259" catAbbr="n" slot="15005" slotAbbr="Inflection" slotOptional="false" />
     </morph>
   </resultSoFar>
-  <seq step="Try to build a Full analysis node on an uninflected Stem node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to build a Full analysis node on an uninflected Stem node.">
     <full syncat="259" syncatAbbr="n" requiresInfl="+" inflected="-">
       <stem syncat="259" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="+">
         <fs id="15013">
@@ -147,7 +147,7 @@
       <inflMsa cat="259" catAbbr="n" slot="15005" slotAbbr="Inflection" slotOptional="false" />
     </morph>
   </seq>
-  <seq step="Try to apply inflectional template 'template for test'.  The result will be a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to apply inflectional template 'template for test'.  The result will be a Full analysis node.">
     <full syncat="259" syncatAbbr="n" requiresInfl="-" inflected="+">
       <failure>The inflectional affix allomorph '-ms (INFL): infl' is conditioned to only occur when the inflected form it attaches to has certain features, but the inflected form does not have them.  The required features the affix must be inflected for are: [nagr:[gen:m&#x20;num:sg]].  The inflected features for this inflected form are: [nagr:[gen:m&#x20;num:pl]].</failure>
       <fs id="UnificationOf(15013andUnificationOf(15013andEmpty))">
@@ -168,7 +168,7 @@
         </feature>
       </fs><stem syncat="259" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="+"><fs id="15013"><feature><name>nagr</name><value><fs id="0"><feature><name>gen</name><value>m</value></feature><feature><name>num</name><value>pl</value></feature></fs></value></feature></fs><morph alloid="15014" morphname="15013" type="root" wordType="root"><shortName>mp (masc.pl): mp</shortName><alloform>mp</alloform><gloss>masc.pl</gloss><citationForm>mp</citationForm><stemMsa cat="259" catAbbr="n" inflClass="0" requiresInfl="+"><fs id="15013"><feature><name>nagr</name><value><fs id="0"><feature><name>gen</name><value>m</value></feature><feature><name>num</name><value>pl</value></feature></fs></value></feature></fs></stemMsa></morph></stem><morph alloid="14994" morphname="14992" type="sfx" wordType="15005"><shortName>-ms (INFL): infl</shortName><alloform>-ms</alloform><affixAlloFeats><fs id="15039"><feature><name>nagr</name><value><fs id="0"><feature><name>gen</name><value>m</value></feature><feature><name>num</name><value>sg</value></feature></fs></value></feature></fs></affixAlloFeats><gloss>INFL</gloss><citationForm>infl</citationForm><inflMsa cat="259" catAbbr="n" slot="15005" slotAbbr="Inflection" slotOptional="false" /></morph></full>
   </seq>
-  <seq step="Try to apply inflectional template 'possessed'.  The result will be a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to apply inflectional template 'possessed'.  The result will be a Full analysis node.">
     <full syncat="259" syncatAbbr="n" requiresInfl="-" inflected="+">
       <fs id="UnificationOf(15013andEmpty)">
         <feature>
@@ -259,7 +259,7 @@
       <inflMsa cat="259" catAbbr="n" slot="15005" slotAbbr="Inflection" slotOptional="false" />
     </morph>
   </seq>
-  <seq step="Try to apply inflectional template 'Tense/Aspect'.  The result will be a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to apply inflectional template 'Tense/Aspect'.  The result will be a Full analysis node.">
     <full syncat="259" syncatAbbr="n" requiresInfl="-" inflected="+">
       <failure>The  category (v) of the inflectional template "Tense/Aspect" is incompatible with the category (n) of the stem.</failure>
       <fs id="UnificationOf(15013andEmpty)">
@@ -351,7 +351,7 @@
       <inflMsa cat="259" catAbbr="n" slot="15005" slotAbbr="Inflection" slotOptional="false" />
     </morph>
   </seq>
-  <seq step="Try to apply inflectional template 'Non-final'.  The result will be a Stem analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to apply inflectional template 'Non-final'.  The result will be a Stem analysis node.">
     <stem syncat="259" syncatAbbr="n" requiresInfl="+" inflected="-" blocksInflection="+">
       <failure>The  category (v) of the inflectional template "Non-final" is incompatible with the category (n) of the stem.</failure>
       <fs id="UnificationOf(15013andEmpty)">

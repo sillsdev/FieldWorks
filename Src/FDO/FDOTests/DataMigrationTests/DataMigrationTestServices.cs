@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		/// ------------------------------------------------------------------------------------
 		internal static HashSet<DomainObjectDTO> ParseProjectFile(string filename)
 		{
-			var testDataPath = Path.Combine(DirectoryFinder.FwSourceDirectory, "FDO/FDOTests/TestData");
+			var testDataPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "FDO/FDOTests/TestData");
 			var lpElement = XElement.Load(Path.Combine(testDataPath, filename));
 			return new HashSet<DomainObjectDTO>(
 				from elem in lpElement.Elements("rt")

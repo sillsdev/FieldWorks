@@ -7,8 +7,10 @@
 
 using System.Collections.Generic;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using Rhino.Mocks;
+using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SILUBS.SharedScrUtils;
@@ -25,7 +27,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	{
 		#region data members
 		private IOverlappingFileResolver m_resolver;
-		private ScrMappingList m_mappingList = new ScrMappingList(MappingSet.Main, null);
+		private ScrMappingList m_mappingList = new ScrMappingList(MappingSet.Main, null, ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
 		private ScrSfFileList m_fileList;
 		private List<IScrImportFileInfo> m_expectedRemovedFiles;
 		private int m_callCountForVerifyFileRemoved;

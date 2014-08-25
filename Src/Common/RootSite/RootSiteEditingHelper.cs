@@ -548,7 +548,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			// in response to that. There's also a chance we'll never get a selection, but that
 			// might be okay, too, in some views.
 			// Also, need to use Invoke, since this may be running on a progress thread.
-			Cache.ThreadHelper.Invoke(() =>
+			Control.Invoke(() =>
 			{
 				IVwRootBox rootb = EditedRootBox;
 				RootSite site = null;

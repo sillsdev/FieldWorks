@@ -1,48 +1,73 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-	<Filter Include="Source Files">
-	  <UniqueIdentifier>{5623374b-c87b-4ab3-8249-2e420565a567}</UniqueIdentifier>
-	  <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm</Extensions>
-	</Filter>
-	<Filter Include="Header Files">
-	  <UniqueIdentifier>{fb936a20-a6fe-4029-878f-768c6cba0d0a}</UniqueIdentifier>
-	  <Extensions>h;hpp;hxx;hm;inl;inc</Extensions>
-	</Filter>
-	<Filter Include="Resource Files">
-	  <UniqueIdentifier>{70ed67c2-a166-44ac-9670-273d82fe0b04}</UniqueIdentifier>
-	  <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
-	</Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{5623374b-c87b-4ab3-8249-2e420565a567}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{fb936a20-a6fe-4029-878f-768c6cba0d0a}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{70ed67c2-a166-44ac-9670-273d82fe0b04}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-	<ClCompile Include="Collection.cpp">
-	  <Filter>Source Files</Filter>
-	</ClCompile>
-	<ClCompile Include="testFwKernel.cpp">
-	  <Filter>Source Files</Filter>
-	</ClCompile>
+    <ClCompile Include="Collection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="testFwKernel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-	<ClInclude Include="testFwKernel.h">
-	  <Filter>Header Files</Filter>
-	</ClInclude>
-	<ClInclude Include="TestTsPropsBldr.h">
-	  <Filter>Header Files</Filter>
-	</ClInclude>
-	<ClInclude Include="TestTsStrBldr.h">
-	  <Filter>Header Files</Filter>
-	</ClInclude>
-	<ClInclude Include="TestTsString.h">
-	  <Filter>Header Files</Filter>
-	</ClInclude>
-	<ClInclude Include="TestTsTextProps.h">
-	  <Filter>Header Files</Filter>
-	</ClInclude>
-	<ClInclude Include="TestUndoStack.h">
-	  <Filter>Header Files</Filter>
-	</ClInclude>
+    <ClInclude Include="testFwKernel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestTsPropsBldr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestTsStrBldr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestTsString.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestTsTextProps.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestUndoStack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MockLgWritingSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MockLgWritingSystemFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderEngineTestBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestLgCollatingEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestLgIcuCharPropEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestRegexMatcher.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestRomRenderEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestUniscribeEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-	<None Include="testFwKernel.mak" />
+    <None Include="testFwKernel.mak" />
+    <None Include="Makefile" />
   </ItemGroup>
 </Project>

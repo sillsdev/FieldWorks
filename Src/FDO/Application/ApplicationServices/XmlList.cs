@@ -17,7 +17,6 @@ using System.Xml;
 
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 
@@ -57,15 +56,8 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 #if DEBUG
 			DateTime dtBegin = DateTime.Now;
 #endif
-			try
-			{
-				using (var reader = new StreamReader(sFile, Encoding.UTF8))
-					ImportList(owner, sFieldName, reader, progress);
-			}
-			catch (Exception e)
-			{
-				MessageBoxUtils.Show(e.Message);
-			}
+			using (var reader = new StreamReader(sFile, Encoding.UTF8))
+				ImportList(owner, sFieldName, reader, progress);
 #if DEBUG
 			DateTime dtEnd = DateTime.Now;
 			TimeSpan span = new TimeSpan(dtEnd.Ticks - dtBegin.Ticks);
@@ -83,110 +75,103 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			m_wsf = m_cache.WritingSystemFactory;
 			m_progress = progress;
 
-			try
-			{
-				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_cache.ActionHandlerAccessor, () =>
+			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_cache.ActionHandlerAccessor, () =>
+				{
+					int flidList = m_mdc.GetFieldId(owner.ClassName, sFieldName, true);
+					if (flidList == 0)
+						throw new Exception(String.Format("Invalid list fieldname (programming error): {0}", sFieldName));
+					using (var xrdr = XmlReader.Create(reader))
 					{
-						int flidList = m_mdc.GetFieldId(owner.ClassName, sFieldName, true);
-						if (flidList == 0)
-							throw new Exception(String.Format("Invalid list fieldname (programming error): {0}", sFieldName));
-						using (var xrdr = XmlReader.Create(reader))
+						xrdr.MoveToContent();
+						if (xrdr.Name != owner.ClassName)
+							throw new Exception(String.Format("Unexpected outer element: {0}", xrdr.Name));
+
+						if (!xrdr.ReadToDescendant(sFieldName))
+							throw new Exception(String.Format("Unexpected second element: {0}", xrdr.Name));
+
+						if (!xrdr.ReadToDescendant("CmPossibilityList"))
+							throw new Exception(String.Format("Unexpected third element: {0}", xrdr.Name));
+
+						ICmPossibilityList list;
+						int hvo = m_cache.MainCacheAccessor.get_ObjectProp(owner.Hvo, flidList);
+						if (hvo == 0)
+							hvo = m_cache.MainCacheAccessor.MakeNewObject(CmPossibilityListTags.kClassId, owner.Hvo, flidList, -2);
+						ICmPossibilityListRepository repo = m_cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>();
+						list = repo.GetObject(hvo);
+						string sItemClassName = "CmPossibility";
+						xrdr.Read();
+						while (xrdr.Depth == 3)
 						{
 							xrdr.MoveToContent();
-							if (xrdr.Name != owner.ClassName)
-								throw new Exception(String.Format("Unexpected outer element: {0}", xrdr.Name));
-
-							if (!xrdr.ReadToDescendant(sFieldName))
-								throw new Exception(String.Format("Unexpected second element: {0}", xrdr.Name));
-
-							if (!xrdr.ReadToDescendant("CmPossibilityList"))
-								throw new Exception(String.Format("Unexpected third element: {0}", xrdr.Name));
-
-							ICmPossibilityList list;
-							int hvo = m_cache.MainCacheAccessor.get_ObjectProp(owner.Hvo, flidList);
-							if (hvo == 0)
-								hvo = m_cache.MainCacheAccessor.MakeNewObject(CmPossibilityListTags.kClassId, owner.Hvo, flidList, -2);
-							ICmPossibilityListRepository repo = m_cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>();
-							list = repo.GetObject(hvo);
-							string sItemClassName = "CmPossibility";
-							xrdr.Read();
-							while (xrdr.Depth == 3)
+							if (xrdr.Depth < 3)
+								break;
+							switch (xrdr.Name)
 							{
-								xrdr.MoveToContent();
-								if (xrdr.Depth < 3)
+								case "Description":
+									SetMultiStringFromXml(xrdr, list.Description);
 									break;
-								switch (xrdr.Name)
-								{
-									case "Description":
-										SetMultiStringFromXml(xrdr, list.Description);
-										break;
-									case "Name":
-										SetMultiUnicodeFromXml(xrdr, list.Name);
-										break;
-									case "Abbreviation":
-										SetMultiUnicodeFromXml(xrdr, list.Abbreviation);
-										break;
-									case "Depth":
-										list.Depth = ReadIntFromXml(xrdr);
-										break;
-									case "DisplayOption":
-										list.DisplayOption = ReadIntFromXml(xrdr);
-										break;
-									case "HelpFile":
-										list.HelpFile = ReadUnicodeFromXml(xrdr);
-										break;
-									case "IsClosed":
-										list.IsClosed = ReadBoolFromXml(xrdr);
-										break;
-									case "IsSorted":
-										list.IsSorted = ReadBoolFromXml(xrdr);
-										break;
-									case "IsVernacular":
-										list.IsVernacular = ReadBoolFromXml(xrdr);
-										break;
-									case "ItemClsid":
-										list.ItemClsid = ReadIntFromXml(xrdr);
-										sItemClassName = m_mdc.GetClassName(list.ItemClsid);
-										break;
-									case "ListVersion":
-										list.ListVersion = ReadGuidFromXml(xrdr);
-										break;
-									case "PreventChoiceAboveLevel":
-										list.PreventChoiceAboveLevel = ReadIntFromXml(xrdr);
-										break;
-									case "PreventDuplicates":
-										list.PreventDuplicates = ReadBoolFromXml(xrdr);
-										break;
-									case "PreventNodeChoices":
-										list.PreventNodeChoices = ReadBoolFromXml(xrdr);
-										break;
-									case "UseExtendedFields":
-										list.UseExtendedFields = ReadBoolFromXml(xrdr);
-										break;
-									case "WsSelector":
-										list.WsSelector = ReadIntFromXml(xrdr);
-										break;
-									case "Possibilities":
-										LoadPossibilitiesFromXml(xrdr, list, sItemClassName);
-										break;
-									case "HeaderFooterSets":
-										throw new Exception("We don't (yet?) handle HeaderFooterSets for CmPossibilityList (programming issue)");
-									case "Publications":
-										throw new Exception("We don't (yet?) handle Publications for CmPossibilityList (programming issue)");
-									default:
-										throw new Exception(String.Format("Unknown field element in CmPossibilityList: {0}", xrdr.Name));
-								}
+								case "Name":
+									SetMultiUnicodeFromXml(xrdr, list.Name);
+									break;
+								case "Abbreviation":
+									SetMultiUnicodeFromXml(xrdr, list.Abbreviation);
+									break;
+								case "Depth":
+									list.Depth = ReadIntFromXml(xrdr);
+									break;
+								case "DisplayOption":
+									list.DisplayOption = ReadIntFromXml(xrdr);
+									break;
+								case "HelpFile":
+									list.HelpFile = ReadUnicodeFromXml(xrdr);
+									break;
+								case "IsClosed":
+									list.IsClosed = ReadBoolFromXml(xrdr);
+									break;
+								case "IsSorted":
+									list.IsSorted = ReadBoolFromXml(xrdr);
+									break;
+								case "IsVernacular":
+									list.IsVernacular = ReadBoolFromXml(xrdr);
+									break;
+								case "ItemClsid":
+									list.ItemClsid = ReadIntFromXml(xrdr);
+									sItemClassName = m_mdc.GetClassName(list.ItemClsid);
+									break;
+								case "ListVersion":
+									list.ListVersion = ReadGuidFromXml(xrdr);
+									break;
+								case "PreventChoiceAboveLevel":
+									list.PreventChoiceAboveLevel = ReadIntFromXml(xrdr);
+									break;
+								case "PreventDuplicates":
+									list.PreventDuplicates = ReadBoolFromXml(xrdr);
+									break;
+								case "PreventNodeChoices":
+									list.PreventNodeChoices = ReadBoolFromXml(xrdr);
+									break;
+								case "UseExtendedFields":
+									list.UseExtendedFields = ReadBoolFromXml(xrdr);
+									break;
+								case "WsSelector":
+									list.WsSelector = ReadIntFromXml(xrdr);
+									break;
+								case "Possibilities":
+									LoadPossibilitiesFromXml(xrdr, list, sItemClassName);
+									break;
+								case "HeaderFooterSets":
+									throw new Exception("We don't (yet?) handle HeaderFooterSets for CmPossibilityList (programming issue)");
+								case "Publications":
+									throw new Exception("We don't (yet?) handle Publications for CmPossibilityList (programming issue)");
+								default:
+									throw new Exception(String.Format("Unknown field element in CmPossibilityList: {0}", xrdr.Name));
 							}
-							xrdr.Close();
-							if (m_mapRelatedDomains.Count > 0)
-								SetRelatedDomainsLinks();
 						}
-					});
-			}
-			catch (Exception e)
-			{
-				MessageBoxUtils.Show(e.Message);
-			}
+						xrdr.Close();
+						if (m_mapRelatedDomains.Count > 0)
+							SetRelatedDomainsLinks();
+					}
+				});
 		}
 
 		Guid EnsureGuid(Guid guid)

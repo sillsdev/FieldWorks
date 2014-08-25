@@ -70,5 +70,13 @@ namespace SIL.FieldWorks.FdoUi
 			return base.IsAcceptableContextToJump(toolCurrent, toolTarget);
 		}
 
+		public override bool CanDelete(out string cannotDeleteMsg)
+		{
+			if (base.CanDelete(out cannotDeleteMsg))
+				return true;
+			cannotDeleteMsg = FdoUiStrings.ksCannotDeleteWordform;
+			return false;
+		}
+
 	}
 }

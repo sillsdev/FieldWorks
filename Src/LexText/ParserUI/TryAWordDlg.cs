@@ -20,9 +20,11 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using System.Text;
+using System.Xml.Linq;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.WordWorks.Parser;
 using SIL.Utils;
 using XCore;
 using SIL.FieldWorks.Common.FwUtils;
@@ -529,16 +531,27 @@ namespace SIL.FieldWorks.LexText.Controls
 				m_parserListener.DisconnectFromParser();
 				m_statusLabel.Text = ParserStoppedMessage();
 				m_tryItButton.Enabled = true;
-				var app = (IApp) m_mediator.PropertyTable.GetValue("App");
-				ErrorReporter.ReportException(ex, app.SettingsKey, app.SupportEmailAddress, this, false);
+				var iree = ex as InvalidReduplicationEnvironmentException;
+				if (iree != null)
+				{
+					string msg = String.Format(ParserUIStrings.ksHermitCrabReduplicationProblem, iree.Morpheme,
+						iree.Message);
+					MessageBox.Show(this, msg, ParserUIStrings.ksBadAffixForm,
+							MessageBoxButtons.OK, MessageBoxIcon.Error);
+				}
+				else
+				{
+					var app = (IApp) m_mediator.PropertyTable.GetValue("App");
+					ErrorReporter.ReportException(ex, app.SettingsKey, app.SupportEmailAddress, this, false);
+				}
 				return;
 			}
 
 			if (m_tryAWordResult != null && m_tryAWordResult.IsCompleted)
 			{
-				var message = (string) m_tryAWordResult.AsyncState;
+				var result = (XDocument) m_tryAWordResult.AsyncState;
 				string sOutput;
-				if (!message.TrimStart().StartsWith("<"))
+				if (result == null)
 				{
 					// It's an error message.
 					sOutput = Path.GetTempFileName();
@@ -546,15 +559,14 @@ namespace SIL.FieldWorks.LexText.Controls
 					{
 						writer.WriteLine("<!DOCTYPE html>");
 						writer.WriteLine("<body>");
-						writer.WriteLine(message);
+						writer.WriteLine(ParserUIStrings.ksDidNotParse);
 						writer.WriteLine("</body>");
 						writer.WriteLine("</html>");
-						writer.Close();
 					}
 				}
 				else
 				{
-					sOutput = m_webPageInteractor.ParserTrace.CreateResultPage(message);
+					sOutput = m_webPageInteractor.ParserTrace.CreateResultPage(result, DoTrace);
 				}
 				m_htmlControl.URL = sOutput;
 				m_tryAWordResult = null;
@@ -598,7 +610,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		private static string TransformPath
 		{
-			get { return DirectoryFinder.GetFWCodeSubDirectory(@"Language Explorer/Configuration/Words/Analyses/TraceParse"); }
+			get { return FwDirectoryFinder.GetCodeSubDirectory(@"Language Explorer/Configuration/Words/Analyses/TraceParse"); }
 		}
 
 		private void m_buttonHelp_Click(object sender, EventArgs e)

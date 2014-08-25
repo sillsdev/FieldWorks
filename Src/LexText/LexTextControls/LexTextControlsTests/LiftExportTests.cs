@@ -13,6 +13,8 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using NUnit.Framework;
+using Palaso.IO;
+using Palaso.Lift.Validation;
 using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -21,6 +23,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
@@ -452,7 +455,6 @@ namespace LexTextControlsTests
 			"</LexDb>" + Environment.NewLine;
 
 		private FdoCache m_cache;
-		private ThreadHelper m_ThreadHelper;
 		private readonly Dictionary<string, ICmSemanticDomain> m_mapSemanticDomains =
 			new Dictionary<string, ICmSemanticDomain>();
 		private readonly Dictionary<string, IPartOfSpeech> m_mapPartsOfSpeech =
@@ -483,10 +485,9 @@ namespace LexTextControlsTests
 			var mockProjectName = "xxyyzProjectFolderForLIFTTest";
 			MockProjectFolder = Path.Combine(Path.GetTempPath(), mockProjectName);
 			var mockProjectPath = Path.Combine(MockProjectFolder, mockProjectName + ".fwdata");
-			m_ThreadHelper = new ThreadHelper();
 			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(
-				new TestProjectId(FDOBackendProviderType.kMemoryOnly, mockProjectPath), "en", "fr", "en", m_ThreadHelper);
-			MockLinkedFilesFolder = Path.Combine(MockProjectFolder, DirectoryFinder.ksLinkedFilesDir);
+				new TestProjectId(FDOBackendProviderType.kMemoryOnly, mockProjectPath), "en", "fr", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories);
+			MockLinkedFilesFolder = Path.Combine(MockProjectFolder, FdoFileHelper.ksLinkedFilesDir);
 			Directory.CreateDirectory(MockLinkedFilesFolder);
 			//m_cache.LangProject.LinkedFilesRootDir = MockLinkedFilesFolder; this is already the default.
 
@@ -511,6 +512,19 @@ namespace LexTextControlsTests
 			CreatePublicationsList();
 
 			AddLexEntries();
+			CreateDirectoryForTest();
+		}
+
+		private void CreateDirectoryForTest()
+		{
+			LiftFolder = Path.Combine(Path.GetTempPath(), Path.Combine("LiftExportTests", Path.GetRandomFileName()));
+			Directory.CreateDirectory(LiftFolder);
+		}
+
+		private void DestroyTestDirectory()
+		{
+			if(Directory.Exists(LiftFolder))
+				Directory.Delete(LiftFolder, true);
 		}
 
 		private void CreatePartsOfSpeechPossibilityList()
@@ -595,7 +609,7 @@ namespace LexTextControlsTests
 					var tssDefn = m_cache.TsStrFactory.MakeString("Definition for sense.\x2028Another para of defn", m_cache.DefaultAnalWs);
 					var bldr = tssDefn.GetBldr();
 					int len = bldr.Length;
-					var otherFileFolder = Path.Combine(MockLinkedFilesFolder, DirectoryFinder.ksOtherLinkedFilesDir);
+					var otherFileFolder = Path.Combine(MockLinkedFilesFolder, FdoFileHelper.ksOtherLinkedFilesDir);
 					var otherFilePath = Path.Combine(otherFileFolder, kotherLinkedFileName);
 					CreateDummyFile(otherFilePath);
 					var mockStyle = new MockStyle() { Name = "hyperlink" };
@@ -652,7 +666,7 @@ namespace LexTextControlsTests
 					MakePicture(picFolder, m_tempPictureFilePath);
 
 					// See if we can export audio writing system stuff.
-					var audioFolderPath = Path.Combine(MockLinkedFilesFolder, DirectoryFinder.ksMediaDir);
+					var audioFolderPath = Path.Combine(MockLinkedFilesFolder, FdoFileHelper.ksMediaDir);
 					CreateDummyFile(Path.Combine(audioFolderPath, kaudioFileName));
 					m_entryTest.SensesOS[0].Definition.set_String(m_audioWsCode, kaudioFileName);
 
@@ -675,7 +689,7 @@ namespace LexTextControlsTests
 					var pronunFile = m_cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
 					picFolder.FilesOC.Add(pronunFile); // maybe not quite appropriate, but has to be owned somewhere.
 					media.MediaFileRA = pronunFile;
-					pronunFile.InternalPath = Path.Combine(DirectoryFinder.ksMediaDir, kpronunciationFileName);
+					pronunFile.InternalPath = Path.Combine(FdoFileHelper.ksMediaDir, kpronunciationFileName);
 
 					// We should be able to export LexEntryRefs. BaseForm is a special case.
 					var entryUn = entryFact.Create("un", "not", new SandboxGenericMSA() { MsaType = MsaType.kDeriv });
@@ -941,6 +955,19 @@ namespace LexTextControlsTests
 			m_cache.DomainDataByFlid.SetMultiStringAlt(hvo, fd.Id, m_cache.DefaultVernWs, tss);
 		}
 
+		private void AddCustomFieldMultiParaText(FieldDescription fd, int hvo)
+		{
+			var text = m_cache.ServiceLocator.GetInstance<ITextFactory>().Create();
+			var stText = m_cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
+			m_cache.LangProject.Texts.Add(text);
+			text.ContentsOA = stText;
+			var para = stText.AddNewTextPara("normal");
+			var seg = m_cache.ServiceLocator.GetInstance<ISegmentFactory>().Create();
+			para.Contents =
+				m_cache.TsStrFactory.MakeString("MultiString Analysis ws string & ampersand check", m_cache.DefaultAnalWs);
+			m_cache.DomainDataByFlid.SetObjProp(hvo, fd.Id, stText.Hvo);
+		}
+
 		private void AddCustomFieldInAllomorph()
 		{
 			//Create Allomorph
@@ -1014,8 +1041,7 @@ namespace LexTextControlsTests
 			Directory.Delete(MockLinkedFilesFolder, true);
 			m_cache.Dispose();
 			m_cache = null;
-			m_ThreadHelper.Dispose();
-			m_ThreadHelper = null;
+			DestroyTestDirectory();
 		}
 
 		#endregion
@@ -1031,9 +1057,6 @@ namespace LexTextControlsTests
 		public void LiftExport()
 		{
 			var exporter = new LiftExporter(m_cache);
-			LiftFolder = Path.Combine(Path.GetTempPath(), "xxyyTestLIFTExport");
-			if (Directory.Exists(LiftFolder))
-				Directory.Delete(LiftFolder, true);
 			var xdoc = new XmlDocument();
 			using (TextWriter w = new StringWriter())
 			{
@@ -1050,6 +1073,60 @@ namespace LexTextControlsTests
 				xdocRangeFile.LoadXml(w.ToString());
 			}
 			VerifyExportRanges(xdocRangeFile);
+		}
+
+		/// <summary>
+		/// LT-15467 documents a Flex to WeSay S/R which had pronunciation audio files multiplying like bunny rabbits.
+		/// Make sure the export doesn't make new files when two different references point to the same file.
+		/// </summary>
+		[Test]
+		public void LiftExport_MultipleReferencesToSameMediaFileCausesNoDuplication()
+		{
+			using(var uowHelper = new NonUndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor))
+			{
+				var senseFactory = m_cache.ServiceLocator.GetInstance<ILexSenseFactory>();
+				var pronunciation = m_cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
+				var media = m_cache.ServiceLocator.GetInstance<ICmMediaFactory>().Create();
+				var pronunFile = m_cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+				m_entryIs.PronunciationsOS.Add(pronunciation);
+				pronunciation.MediaFilesOS.Add(media);
+				m_cache.LangProject.PicturesOC.First().FilesOC.Add(pronunFile); // maybe not quite appropriate, but has to be owned somewhere.
+				media.MediaFileRA = pronunFile;
+				var internalPath = Path.Combine(FdoFileHelper.ksMediaDir, kpronunciationFileName);
+				pronunFile.InternalPath = internalPath;
+				var exporter = new LiftExporter(m_cache);
+				var xdoc = new XmlDocument();
+				using(TextWriter w = new StringWriter())
+				{
+					exporter.ExportPicturesAndMedia = true;
+					exporter.ExportLift(w, LiftFolder);
+					xdoc.LoadXml(w.ToString());
+				}
+				VerifyAudio(kpronunciationFileName);
+				VerifyAudio(Path.GetFileNameWithoutExtension(kpronunciationFileName) + "_1" + Path.GetExtension(kpronunciationFileName), false);
+			}
+		}
+
+		[Test]
+		public void LiftExport_MultiParagraphWithAmpersandExports()
+		{
+			using(var uowhelper = new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor, "undothis"))
+			{
+				var fd = MakeCustomField("MultiParaOnLexEntry", LexEntryTags.kClassId,
+									 WritingSystemServices.kwsVernAnals, CustomFieldType.MultiparagraphText, Guid.Empty);
+				m_customFieldEntryIds.Add(fd.Id);
+				AddCustomFieldMultiParaText(fd, m_entryTest.Hvo);
+				var exporter = new LiftExporter(m_cache);
+				var xdoc = new XmlDocument();
+				var liftFilePath = Path.Combine(LiftFolder, "test.lift");
+				using(var liftFile = File.Create(liftFilePath))
+				using(TextWriter w = new StreamWriter(liftFile))
+				{
+					exporter.ExportPicturesAndMedia = false;
+					exporter.ExportLift(w, LiftFolder);
+				}
+				Assert.DoesNotThrow(() => Validator.CheckLiftWithPossibleThrow(liftFilePath));
+			}
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
@@ -1563,10 +1640,13 @@ namespace LexTextControlsTests
 			VerifyAudio(kaudioFileName);
 		}
 
-		private void VerifyAudio(string audioFileName)
+		private void VerifyAudio(string audioFileName, bool exists = true)
 		{
 			var liftAudioFolder = Path.Combine(LiftFolder, "audio");
-			Assert.IsTrue(File.Exists(Path.Combine(liftAudioFolder, audioFileName)));
+			var filePath = Path.Combine(liftAudioFolder, audioFileName);
+			var failureMsg = String.Format("{0} should {1}have been found after export", filePath,
+													 exists ? "" : "not ");
+			Assert.AreEqual(exists, File.Exists(filePath), failureMsg);
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
@@ -1792,9 +1872,6 @@ namespace LexTextControlsTests
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, AddStTextCustomFieldAndData);
 
 			var exporter = new LiftExporter(m_cache);
-			LiftFolder = Path.Combine(Path.GetTempPath(), "xxyyTestLIFTExport");
-			if (Directory.Exists(LiftFolder))
-				Directory.Delete(LiftFolder, true);
 			var xdoc = new XmlDocument();
 			xdoc.PreserveWhitespace = true;
 			using (TextWriter w = new StringWriter())

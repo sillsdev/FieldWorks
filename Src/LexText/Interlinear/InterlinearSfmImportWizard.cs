@@ -517,7 +517,7 @@ namespace SIL.FieldWorks.IText
 			SaveSettings();
 			if (string.IsNullOrEmpty(m_fileListBox.Text))
 				return;
-			using (var dlg = new ProgressDialogWithTask(this, m_cache.ThreadHelper))
+			using (var dlg = new ProgressDialogWithTask(this))
 			{
 				dlg.AllowCancel = false;
 				dlg.Minimum = 0;
@@ -667,7 +667,7 @@ namespace SIL.FieldWorks.IText
 		private string GetDefaultInputSettingsPath()
 		{
 			string path;
-			string sRootDir = DirectoryFinder.FWCodeDirectory;
+			string sRootDir = FwDirectoryFinder.CodeDirectory;
 			string sTransformDir;
 			if (!sRootDir.EndsWith(Path.DirectorySeparatorChar.ToString()))
 				sRootDir += Path.DirectorySeparatorChar;

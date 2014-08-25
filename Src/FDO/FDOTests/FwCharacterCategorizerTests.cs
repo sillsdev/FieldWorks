@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 
@@ -51,7 +52,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				"<ValidCharacters><WordForming>a\uFFFCb\uFFFCc\uFFFCd\uFFFCe</WordForming>" +
 				"<Numeric>1\uFFFC2\uFFFC3\uFFFC4\uFFFC5</Numeric>" +
 				"<Other>'\uFFFC-\uFFFC#</Other>" +
-				"</ValidCharacters>", "Test WS", null, null);
+				"</ValidCharacters>", "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			ILgCharacterPropertyEngine lgCharPropEngineEn = Cache.WritingSystemFactory.get_CharPropEngine(
 				m_wsEn);
 
@@ -73,7 +74,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				"<ValidCharacters><WordForming>a\uFFFCb\uFFFCc\uFFFCd\uFFFCe\uFFFC.</WordForming>" +
 				"<Numeric>1\uFFFC2\uFFFC3\uFFFC4\uFFFC5</Numeric>" +
 				"<Other>'\uFFFC-\uFFFC#</Other>" +
-				"</ValidCharacters>", "Test WS", null, null);
+				"</ValidCharacters>", "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			ILgCharacterPropertyEngine lgCharPropEngineEn = Cache.WritingSystemFactory.get_CharPropEngine(
 				m_wsEn);
 
@@ -100,7 +101,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				"<ValidCharacters><WordForming>a\uFFFCb\uFFFCc</WordForming>" +
 				"<Numeric>1\uFFFC2\uFFFC3\uFFFC4\uFFFC5</Numeric>" +
 				"<Other>-\uFFFCU+0020</Other>" +
-				"</ValidCharacters>", "Test WS", null, null);
+				"</ValidCharacters>", "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			var english = Cache.ServiceLocator.WritingSystemManager.Get("en");
 			var lgCharPropEngineEn = Cache.WritingSystemFactory.get_CharPropEngine(english.Handle);
 
@@ -126,7 +127,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				"<ValidCharacters><WordForming>a\uFFFCb\uFFFCc</WordForming>" +
 				"<Numeric>1\uFFFC2\uFFFC3\uFFFC4\uFFFC5</Numeric>" +
 				"<Other>-\uFFFCU+0020</Other>" +
-				"</ValidCharacters>", "Test WS", null, null);
+				"</ValidCharacters>", "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			var english = Cache.ServiceLocator.WritingSystemManager.Get("en");
 			var lgCharPropEngineEn = Cache.WritingSystemFactory.get_CharPropEngine(
 				english.Handle);
@@ -152,7 +153,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				"<ValidCharacters><WordForming>a\uFFFCb\uFFFCc\uFFFCd\uFFFCe</WordForming>" +
 				"<Numeric>1\uFFFC2\uFFFC3\uFFFC4\uFFFC5</Numeric>" +
 				"<Other>'\uFFFC-\uFFFC#</Other>" +
-				"</ValidCharacters>", "Test WS", null, null);
+				"</ValidCharacters>", "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			ILgCharacterPropertyEngine lgCharPropEngineEn = Cache.WritingSystemFactory.get_CharPropEngine(
 				m_wsEn);
 

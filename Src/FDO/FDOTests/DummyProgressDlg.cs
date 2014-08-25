@@ -91,6 +91,15 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public int Maximum { get; set; }
 
 		/// <summary>
+		/// Gets an object to be used for ensuring that required tasks are invoked on the main
+		/// UI thread.
+		/// </summary>
+		public ISynchronizeInvoke SynchronizeInvoke
+		{
+			get { return m_threadHelper; }
+		}
+
+		/// <summary>
 		/// Gets or sets a value indicating whether the task has been canceled.
 		/// </summary>
 		/// <value>
@@ -107,6 +116,15 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public Form Form
 		{
 			get { return null; }
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether this progress is indeterminate.
+		/// </summary>
+		public bool IsIndeterminate
+		{
+			get { return false; }
+			set { }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -154,29 +172,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public object RunTask(Func<IThreadedProgress, object[], object> backgroundTask, params object[] parameters)
 		{
 			return backgroundTask(this, parameters);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets a thread helper used for ensuring that required tasks are invoked on the main
-		/// UI thread.
-		/// </summary>
-		/// <value>null</value>
-		/// ------------------------------------------------------------------------------------
-		public ThreadHelper ThreadHelper
-		{
-			get { return m_threadHelper; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets or sets the progress bar style.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public ProgressBarStyle ProgressBarStyle
-		{
-			get { return ProgressBarStyle.Continuous; }
-			set { }
 		}
 
 		#endregion

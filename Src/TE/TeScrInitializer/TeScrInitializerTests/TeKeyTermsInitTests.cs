@@ -19,6 +19,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
 using System.Text;
+using SIL.Utils;
 using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.TE
@@ -212,7 +213,7 @@ namespace SIL.FieldWorks.TE
 		public void ReadValidBiblicalTermsXmlFile()
 		{
 			BiblicalTermsList list = DummyTeKeyTermsInit.CallDeserializeBiblicalTermsFile(
-				Path.Combine(DirectoryFinder.TeFolder, "BiblicalTerms.xml"));
+				Path.Combine(FwDirectoryFinder.TeFolder, "BiblicalTerms.xml"));
 			Assert.AreEqual(9600 - 5001 + 1829, list.KeyTerms.Count, "Wrong number of terms read. (Note: Terms 1829-5000 don't exist.)");
 			for (int i = 0; i < list.KeyTerms.Count; i++)
 				Assert.AreEqual(i + ((i < 1828) ? 1 : 3173), list.KeyTerms[i].Id);
@@ -290,7 +291,7 @@ namespace SIL.FieldWorks.TE
 		public void ReadBogusBiblicalTermsXmlFile()
 		{
 			DummyTeKeyTermsInit.CallDeserializeBiblicalTermsFile(
-				Path.Combine(DirectoryFinder.TeFolder, "BiblicalTermsEn.xml"));
+				Path.Combine(FwDirectoryFinder.TeFolder, "BiblicalTermsEn.xml"));
 		}
 		#endregion
 
@@ -306,10 +307,10 @@ namespace SIL.FieldWorks.TE
 		{
 			Assert.AreEqual(m_wsEn,
 				TeKeyTermsInit.GetWsFromLocFile(Cache.LanguageWritingSystemFactoryAccessor,
-				Path.Combine(DirectoryFinder.TeFolder, "BiblicalTerms-en.xml")));
+				Path.Combine(FwDirectoryFinder.TeFolder, "BiblicalTerms-en.xml")));
 			Assert.AreEqual(0,
 				TeKeyTermsInit.GetWsFromLocFile(Cache.LanguageWritingSystemFactoryAccessor,
-				Path.Combine(DirectoryFinder.TeFolder, "BiblicalTerms-q2z.xml")));
+				Path.Combine(FwDirectoryFinder.TeFolder, "BiblicalTerms-q2z.xml")));
 		}
 		#endregion
 

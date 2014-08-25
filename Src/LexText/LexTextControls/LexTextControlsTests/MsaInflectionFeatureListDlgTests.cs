@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			// Set up the xml fs description
 			XmlDocument doc = new XmlDocument();
-			string sFileDir = Path.Combine(SIL.FieldWorks.Common.FwUtils.DirectoryFinder.FwSourceDirectory,
+			string sFileDir = Path.Combine(SIL.FieldWorks.Common.FwUtils.FwDirectoryFinder.SourceDirectory,
 				Path.Combine(@"FDO", Path.Combine(@"FDOTests", @"TestData")));
 			string sFile = Path.Combine(sFileDir, "FeatureSystem2.xml");
 
@@ -104,7 +104,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			// Set up the xml fs description
 			XmlDocument doc = new XmlDocument();
-			string sFileDir = Path.Combine(SIL.FieldWorks.Common.FwUtils.DirectoryFinder.FwSourceDirectory,
+			string sFileDir = Path.Combine(SIL.FieldWorks.Common.FwUtils.FwDirectoryFinder.SourceDirectory,
 										   Path.Combine(@"FDO", Path.Combine(@"FDOTests", @"TestData")));
 			string sFile = Path.Combine(sFileDir, "FeatureSystem2.xml");
 			doc.Load(sFile);

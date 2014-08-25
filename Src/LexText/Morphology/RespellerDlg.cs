@@ -128,7 +128,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					m_cache = wf.Cache;
 					m_srcwfiWordform = wf;
 					// Get the parameter node.
-					var path = Path.Combine(DirectoryFinder.GetFWCodeSubDirectory(
+					var path = Path.Combine(FwDirectoryFinder.GetCodeSubDirectory(
 						Path.Combine(FwUtils.ksFlexAppName, Path.Combine("Configuration", "Words"))), "areaConfiguration.xml");
 					var doc = XWindow.LoadConfigurationWithIncludes(path, true);
 					var paramNode = doc.DocumentElement.SelectSingleNode("listeners/listener[@class=\"SIL.FieldWorks.XWorks.MorphologyEditor.RespellerDlgListener\"]/parameters");
@@ -148,7 +148,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					//// Enhance JohnT: possibly these three lines (also copied) are not needed.
 					//mediator.PropertyTable.SetProperty("DocumentName", GetMainWindowCaption(cache));
 					//mediator.PropertyTable.SetPropertyPersistence("DocumentName", false);
-					mediator.PathVariables["{DISTFILES}"] = DirectoryFinder.FWCodeDirectory;
+					mediator.PathVariables["{DISTFILES}"] = FwDirectoryFinder.CodeDirectory;
 					mediator.PropertyTable.RestoreFromFile(mediator.PropertyTable.GlobalSettingsId);
 					mediator.PropertyTable.RestoreFromFile(mediator.PropertyTable.LocalSettingsId);
 					//progressState.SetMilestone();
@@ -156,7 +156,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					mediator.PropertyTable.SetProperty("window", dlg.Owner);
 					mediator.PropertyTable.SetPropertyPersistence("window", false);
 
-					string directoryContainingConfiguration = Path.Combine(DirectoryFinder.FlexFolder, "Configuration");
+					string directoryContainingConfiguration = Path.Combine(FwDirectoryFinder.FlexFolder, "Configuration");
 					StringTable table = new StringTable(directoryContainingConfiguration);
 					mediator.StringTbl = table;
 					mediator.FeedbackInfoProvider = (IFeedbackInfoProvider)app;
@@ -1522,7 +1522,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			BuildChangedParasInfo();
 
 			if (m_changedParas.Count < 10)
+			{
 				CoreDoIt(null, mediator);
+			}
 			else
 			{
 				using (var dlg = new ProgressDialogWorkingOn())
@@ -1556,6 +1558,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				String.Format(MEStrings.ksRedoChangeSpelling, m_oldSpelling, NewSpelling)))
 			{
 				IWfiWordform wfOld = FindOrCreateWordform(m_oldSpelling, m_vernWs);
+				var originalOccurencesInTexts = wfOld.OccurrencesInTexts.ToList(); // At all levels.
 				IWfiWordform wfNew = FindOrCreateWordform(NewSpelling, m_vernWs);
 				SetOldOccurrencesOfWordforms(flidOccurrences, wfOld, wfNew);
 				UpdateProgress(progress);
@@ -1573,24 +1576,48 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					progress.WorkingOnText = MEStrings.ksDealingAnalyses;
 				UpdateProgress(progress);
 
-				UpdateProgress(progress);
-
 				// Compute new occurrence lists, save and cache
 				SetNewOccurrencesOfWordforms(progress);
 				UpdateProgress(progress);
 
 				// Deal with analyses.
 				if (wfOld.IsValidObject && CopyAnalyses)
-					CopyAnalysesToNewWordform(wfOld, wfNew);
+				{
+					// Note: "originalOccurencesInTexts" may have fewer segments, after the call, as they can be removed.
+					CopyAnalysesToNewWordform(originalOccurencesInTexts, wfOld, wfNew);
+				}
 				UpdateProgress(progress);
 				if (AllChanged)
 				{
 					SpellingHelper.SetSpellingStatus(m_oldSpelling, m_vernWs,
 						m_cache.LanguageWritingSystemFactoryAccessor, false);
 					if (wfOld.IsValidObject)
+					{
 						ProcessAnalysesAndLexEntries(progress, wfOld, wfNew);
+					}
 					UpdateProgress(progress);
 				}
+
+				// Only mess with shifting if it was only a case diff in wf, but no changes were made in paragraphs.
+				// Regular spelling changes will trigger re-tokenization of para, otherwise
+				if (PreserveCase)
+				{
+					// Move pointers in segments to new WF, if the segment references the original WF.
+					foreach (var segment in originalOccurencesInTexts)
+					{
+						if (!m_changedParas.ContainsKey(segment.Owner.Hvo))
+							continue; // Skip shifting it for items that were not checked
+
+						var wfIdx = segment.AnalysesRS.IndexOf(wfOld);
+						while (wfIdx > -1)
+						{
+							segment.AnalysesRS.RemoveAt(wfIdx);
+							segment.AnalysesRS.Insert(wfIdx, wfNew);
+							wfIdx = segment.AnalysesRS.IndexOf(wfOld);
+						}
+					}
+				}
+
 				// The timing of this is rather crucial. During the work above, we may (if this is invoked from a
 				// wordform concordance) detect that the current occurrence is no longer valid (since we change the spelling
 				// and that wordform no longer occurs in that position). This leads to reloading the list and broadcasting
@@ -1603,7 +1630,14 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				// to update the ConcDecorator state, then close the UOW which triggers other PropChanged effects.
 				// We have to use SendMessage so the ConcDecorator gets that updated before the Clerk using it
 				// tries to re-read the list.
-				mediator.SendMessage("ItemDataModified", wfOld);
+				if (wfOld.CanDelete)
+				{
+					wfOld.Delete();
+				}
+				else
+				{
+					mediator.SendMessage("ItemDataModified", wfOld);
+				}
 				mediator.SendMessage("ItemDataModified", wfNew);
 
 				uuow.RollBack = false;
@@ -1677,22 +1711,61 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				m_cache.LanguageWritingSystemFactoryAccessor, true);
 		}
 
-		private void CopyAnalysesToNewWordform(IWfiWordform wfOld, IWfiWordform wfNew)
+		private void CopyAnalysesToNewWordform(ICollection<ISegment> originalOccurencesInTexts, IWfiWordform wfOld, IWfiWordform wfNew)
 		{
-			foreach (IWfiAnalysis analysis in wfOld.AnalysesOC)
+			var shiftedSegments = new List<ISegment>(originalOccurencesInTexts.Count);
+			foreach (IWfiAnalysis oldAnalysis in wfOld.AnalysesOC)
 			{
 				// Only copy approved analyses.
-				if (analysis.GetAgentOpinion(m_cache.LangProject.DefaultUserAgent) != Opinions.approves)
+				if (oldAnalysis.GetAgentOpinion(m_cache.LangProject.DefaultUserAgent) != Opinions.approves)
 					continue;
+
 				IWfiAnalysis newAnalysis = FactWfiAnal.Create();
 				wfNew.AnalysesOC.Add(newAnalysis);
-				foreach (IWfiGloss gloss in analysis.MeaningsOC)
+				foreach (var segment in originalOccurencesInTexts)
+				{
+					if (!m_changedParas.ContainsKey(segment.Owner.Hvo))
+						continue; // Skip shifting it for items that were not checked
+
+					var analysisIdx = segment.AnalysesRS.IndexOf(oldAnalysis);
+					while (analysisIdx > -1)
+					{
+						shiftedSegments.Add(segment);
+						segment.AnalysesRS.RemoveAt(analysisIdx);
+						segment.AnalysesRS.Insert(analysisIdx, newAnalysis);
+						analysisIdx = segment.AnalysesRS.IndexOf(oldAnalysis);
+					}
+				}
+				foreach (var shiftedSegment in shiftedSegments)
+				{
+					originalOccurencesInTexts.Remove(shiftedSegment);
+				}
+				shiftedSegments.Clear();
+				foreach (IWfiGloss oldGloss in oldAnalysis.MeaningsOC)
 				{
 					IWfiGloss newGloss = FactWfiGloss.Create();
 					newAnalysis.MeaningsOC.Add(newGloss);
-					newGloss.Form.CopyAlternatives(gloss.Form);
+					newGloss.Form.CopyAlternatives(oldGloss.Form);
+					foreach (var segment in originalOccurencesInTexts)
+					{
+						if (!m_changedParas.ContainsKey(segment.Owner.Hvo))
+							continue; // Skip shifting it for items that were not checked
+
+						var glossIdx = segment.AnalysesRS.IndexOf(oldGloss);
+						while (glossIdx > -1)
+						{
+							shiftedSegments.Add(segment);
+							segment.AnalysesRS.RemoveAt(glossIdx);
+							segment.AnalysesRS.Insert(glossIdx, newGloss);
+							glossIdx = segment.AnalysesRS.IndexOf(oldGloss);
+						}
+					}
 				}
-				foreach (IWfiMorphBundle bundle in analysis.MorphBundlesOS)
+				foreach (var shiftedSegment in shiftedSegments)
+				{
+					originalOccurencesInTexts.Remove(shiftedSegment);
+				}
+				foreach (IWfiMorphBundle bundle in oldAnalysis.MorphBundlesOS)
 				{
 					IWfiMorphBundle newBundle = FactWfiMB.Create();
 					newAnalysis.MorphBundlesOS.Add(newBundle);
@@ -1724,7 +1797,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				foreach (IWfiAnalysis goner in wfOld.AnalysesOC)
 				{
 					if (goner.MorphBundlesOS.Count > 1)
+					{
 						goners.Add(goner);
+				}
 				}
 				foreach (IWfiAnalysis goner in goners)
 				{
@@ -1738,21 +1813,21 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				// Change LE allo on single morpheme anals.
 				foreach (IWfiAnalysis update in wfOld.AnalysesOC)
 				{
-					if (update.MorphBundlesOS.Count == 1)
+					if (update.MorphBundlesOS.Count != 1)
+						continue; // Skip any with zero or more than one.
+
+					IWfiMorphBundle mb = update.MorphBundlesOS[0];
+					ITsString tss = mb.Form.get_String(m_vernWs);
+					string srcForm = tss.Text;
+					if (srcForm != null)
 					{
-						IWfiMorphBundle mb = update.MorphBundlesOS[0];
-						ITsString tss = mb.Form.get_String(m_vernWs);
-						string srcForm = tss.Text;
-						if (srcForm != null)
-						{
-							// Change morph bundle form.
-							mb.Form.set_String(m_vernWs, NewSpelling);
-						}
-						IMoForm mf = mb.MorphRA;
-						if (mf != null)
-						{
-							mf.Form.set_String(m_vernWs, NewSpelling);
-						}
+						// Change morph bundle form.
+						mb.Form.set_String(m_vernWs, NewSpelling);
+					}
+					IMoForm mf = mb.MorphRA;
+					if (mf != null)
+					{
+						mf.Form.set_String(m_vernWs, NewSpelling);
 					}
 				}
 			}
@@ -2130,7 +2205,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 
 		/// <summary>
-		/// Make additional fake occurrenes for where the wordform occurs in captions.
+		/// Make additional fake occurrences for where the wordform occurs in captions.
 		/// </summary>
 		protected override void AddAdditionalOccurrences(int hvoWf, Dictionary<int, IParaFragment> occurrences, ref int nextId, List<int> valuesList)
 		{

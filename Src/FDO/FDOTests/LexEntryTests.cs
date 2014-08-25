@@ -15,7 +15,6 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.CoreTests;
 using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using System.Collections.Generic;
 
@@ -214,6 +213,129 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var mbBankStream = waBankStream.MorphBundlesOS[0];
 			Assert.That(mbBankStream.MsaRA, Is.EqualTo(msaNewNoun), "The MSA for the stream analysis should be the new one");
 			Assert.That(mbBankStream.MorphRA, Is.EqualTo(newEntry.AlternateFormsOS[1]), "The morph for the stream analysis should be the new allomorph");
+		}
+
+		/// <summary>
+		/// Ensure references are corrected when moving a sense between two existing entries
+		/// </summary>
+		[Test]
+		public void MorphBundleRefsFixedWhenSenseMovedToExistingEntry()
+		{
+			// All these null assignments are redundant, but the compiler does not know that the Do block will be executed.
+			ILexEntry bankNSource = null;
+			ILexEntry bankNTarget = null;
+			ILexEntry bankV = null;
+			ILexSense bankMoney = null;
+			ILexSense bankRiver = null;
+			ILexSense bankTilt = null;
+			ILexSense bankCreek = null;
+			ILexSense bankStream = null;
+			ILexSense bankBrook = null;
+			IPartOfSpeech posNoun = null;
+			IPartOfSpeech posVerb = null;
+			IPartOfSpeech posCommonNoun = null;
+			IMoMorphSynAnalysis msaVerb = null;
+			IMoMorphSynAnalysis msaNoun = null;
+			IMoMorphSynAnalysis msaCommonNoun = null;
+			IWfiWordform wfBank = null;
+			IWfiAnalysis waBankMoney = null;
+			IWfiAnalysis waBankRiver = null;
+			IWfiAnalysis waBankTilt = null;
+			IWfiAnalysis waBankCreek = null;
+			IWfiAnalysis waBankStream = null;
+			IWfiAnalysis waBankBrook = null;
+			IMoForm baank = null;
+			IMoForm baaank = null;
+			IMoForm originalMbBankBrook = null;
+
+			UndoableUnitOfWorkHelper.Do("undoit", "doit", Cache.ActionHandlerAccessor,
+				() =>
+				{
+					if (Cache.LangProject.PartsOfSpeechOA == null)
+						Cache.LangProject.PartsOfSpeechOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+					posVerb = MakePartOfSpeech("Verb");
+					posNoun = MakePartOfSpeech("Noun");
+					posCommonNoun = MakePartOfSpeech("Common Noun"); // better perhaps to make owned by Noun, but doesn't affect this test
+
+					bankNSource = MakeEntry("bank", "money", posNoun);
+					bankNTarget = MakeEntry("bank", "river.side", posNoun);
+					bankV = MakeEntry("bank", "Tilt", posVerb);
+					bankMoney = bankNSource.SensesOS[0];
+					bankTilt = bankV.SensesOS[0];
+					msaNoun = bankMoney.MorphoSyntaxAnalysisRA;
+					bankRiver = MakeSense(bankNSource, "river");
+					bankRiver.MorphoSyntaxAnalysisRA = msaNoun;
+					bankCreek = MakeSenseWithNewMsa(bankRiver, "creek", posCommonNoun);
+					bankStream = MakeSense(bankRiver, "stream");
+					bankStream.MorphoSyntaxAnalysisRA = msaNoun;
+					bankBrook = MakeSense(bankRiver, "brook");
+					bankBrook.MorphoSyntaxAnalysisRA = msaNoun;
+
+					msaVerb = bankTilt.MorphoSyntaxAnalysisRA;
+					msaCommonNoun = bankCreek.MorphoSyntaxAnalysisRA;
+
+					MakeAllomorph(bankNTarget, "baank");
+					baank = MakeAllomorph(bankNSource, "baank");
+					baaank = MakeAllomorph(bankNSource, "baaank");
+
+					wfBank = MakeWordform("bank");
+					waBankCreek = MakeAnalysis(wfBank, bankCreek);
+					waBankRiver = MakeAnalysis(wfBank, bankRiver);
+					waBankTilt = MakeAnalysis(wfBank, bankTilt);
+					waBankMoney = MakeAnalysis(wfBank, bankMoney);
+					waBankStream = MakeAnalysis(wfBank, bankStream);
+					waBankStream.MorphBundlesOS[0].MorphRA = baank;
+					waBankBrook = MakeAnalysis(wfBank, bankBrook);
+					waBankBrook.MorphBundlesOS[0].MorphRA = baaank;
+					originalMbBankBrook = baaank;
+
+					bankNSource.CitationForm.VernacularDefaultWritingSystem = MakeVernString("cf");
+					bankNSource.Bibliography.AnalysisDefaultWritingSystem = MakeAnalysisString("biblio");
+					bankNSource.Comment.AnalysisDefaultWritingSystem = MakeAnalysisString("comment");
+
+					var indexOfSenseToMove = bankNSource.SensesOS.IndexOf(bankRiver);
+
+					// The task we're testing.
+					Cache.DomainDataByFlid.MoveOwnSeq(bankNSource.Hvo, LexEntryTags.kflidSenses, indexOfSenseToMove, indexOfSenseToMove,
+						bankNTarget.Hvo, LexEntryTags.kflidSenses, bankNTarget.SensesOS.Count);
+				});
+
+			var targetEntry = bankRiver.Entry;
+			Assert.That(targetEntry, Is.Not.EqualTo(bankNSource), "moved sense should have new owner");
+			Assert.That(bankNSource.SensesOS.Count, Is.EqualTo(1), "old entry should have lost a sense");
+			Assert.That(bankNSource.SensesOS[0], Is.EqualTo(bankMoney), "remaining sense should be the one that was not moved");
+			Assert.That(bankRiver.SensesOS[0], Is.EqualTo(bankCreek), "the subsense should have moved too");
+			Assert.That(bankNSource.MorphoSyntaxAnalysesOC.Count, Is.EqualTo(1), "the old entry should now only need one MSA");
+			Assert.That(bankNSource.MorphoSyntaxAnalysesOC.First(), Is.EqualTo(msaNoun), "the old entry should keep the Noun MSA");
+
+			var msaNewNoun = bankRiver.MorphoSyntaxAnalysisRA as MoStemMsa;
+			Assert.That(msaNewNoun, Is.Not.EqualTo(msaNoun), "the moved sense should not be pointing to the old MSA");
+			Assert.That(msaNewNoun.Owner, Is.EqualTo(targetEntry), "River's msa's owner shoud be the right entry");
+			Assert.That(msaNewNoun.PartOfSpeechRA, Is.EqualTo(posNoun), "the new MSA for River should point at the POS for Noun");
+
+			var msaNewCommon = bankCreek.MorphoSyntaxAnalysisRA as MoStemMsa;
+			Assert.That(msaNewCommon.PartOfSpeechRA, Is.EqualTo(posCommonNoun), "RiverCreek should have a corresponding MSA");
+			Assert.That(msaNewCommon.Owner, Is.EqualTo(targetEntry), "RiverCreek's msa's owner shoud be the right entry");
+
+			var mbBankRiver = waBankRiver.MorphBundlesOS[0];
+			Assert.That(mbBankRiver.MsaRA, Is.EqualTo(msaNewNoun), "The MSA for the river analysis should be the new one");
+			Assert.That(mbBankRiver.MorphRA, Is.EqualTo(targetEntry.LexemeFormOA), "The morph for the river analysis should be the new one");
+
+			var mbBankCreek = waBankCreek.MorphBundlesOS[0];
+			Assert.That(mbBankCreek.MsaRA, Is.EqualTo(msaNewCommon), "The MSA for the creek analysis should be the new one");
+			Assert.That(mbBankCreek.MorphRA, Is.EqualTo(targetEntry.LexemeFormOA), "The morph for the creek analysis should be the new one");
+
+			var mbBaankStream = waBankStream.MorphBundlesOS[0];
+			Assert.That(mbBaankStream.MsaRA, Is.EqualTo(msaNewNoun), "The MSA for the stream analysis should be the new one");
+			Assert.That(mbBaankStream.MorphRA, Is.EqualTo(targetEntry.AlternateFormsOS[0]), "The morph for the stream analysis should be the new allomorph");
+
+			var mbBankBrook = waBankBrook.MorphBundlesOS[0];
+			Assert.That(mbBankBrook.MsaRA, Is.EqualTo(msaNewNoun), "The MSA for the brook analysis should be the new one");
+			CollectionAssert.Contains(targetEntry.AlternateFormsOS, mbBankBrook.MorphRA, "The allomorph is not present in the new entry.");
+			Assert.AreEqual(originalMbBankBrook.GetType(), mbBankBrook.MorphRA.GetType(), "The allomorph in the new entry isn't the same type as the original");
+			Assert.AreEqual(originalMbBankBrook.GetFormWithMarkers(GetVernWs(0)),
+								 mbBankBrook.MorphRA.GetFormWithMarkers(GetVernWs(0)),
+								 "The allomorph in the new entry doesn't have the same form as the original");
 		}
 
 		IWfiWordform MakeWordform(string form)

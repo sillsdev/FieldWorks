@@ -10,9 +10,9 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using Palaso.Reporting;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FixData;
 using Palaso.UI.WindowsForms.HotSpot;
+using SIL.Utils;
 
 namespace FixFwData
 {
@@ -77,11 +77,10 @@ namespace FixFwData
 			public int StepSize { get; set; }
 			public int Minimum { get; set; }
 			public int Maximum { get; set; }
-			public Form Form { get; private set; }
-
-			public ProgressBarStyle ProgressBarStyle
+			public ISynchronizeInvoke SynchronizeInvoke { get; private set; }
+			public bool IsIndeterminate
 			{
-				get { return ProgressBarStyle.Continuous; }
+				get { return false; }
 				set { }
 			}
 
@@ -110,11 +109,6 @@ namespace FixFwData
 			private void Dispose(bool fDisposing)
 			{
 				System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + ". *******");
-
-				if (Form != null && !Form.IsDisposed)
-				{
-					Form.Dispose();
-				}
 			}
 			#endregion
 		}

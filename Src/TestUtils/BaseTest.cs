@@ -13,7 +13,6 @@ using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Test.TestUtils
 {

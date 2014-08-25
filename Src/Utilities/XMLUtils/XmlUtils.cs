@@ -10,24 +10,18 @@
 // This makes available some utilities for handling XML Nodes
 // </remarks>
 // --------------------------------------------------------------------------------------------
-//We're changing to using libxslt (wrapped in the LibXslt class) on Linux/Mono.
-//#if __MonoCS__
-//#define UsingDotNetTransforms
-//#endif
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Xml;
 using System.Globalization;
 using System.Xml.Serialization;
-using System.Windows.Forms;
-#if __MonoCS__
 using System.Xml.Xsl;
-#endif
 
 namespace SIL.Utils
 {
@@ -36,13 +30,6 @@ namespace SIL.Utils
 	/// </summary>
 	public class XmlUtils
 	{
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		public XmlUtils()
-		{
-		}
-
 		/// <summary>
 		/// Returns true if value of attrName is 'true' or 'yes' (case ignored)
 		/// </summary>
@@ -100,7 +87,7 @@ namespace SIL.Utils
 		{
 			string input = GetManditoryAttributeValue(node, attrName);
 			string[] vals = input.Split(',');
-			int[] result = new int[vals.Length];
+			var result = new int[vals.Length];
 			for (int i = 0; i < vals.Length; i++)
 				result[i] = Int32.Parse(vals[i], CultureInfo.InvariantCulture);
 			return result;
@@ -116,7 +103,7 @@ namespace SIL.Utils
 		{
 			string input = GetManditoryAttributeValue(node, attrName);
 			string[] vals = input.Split(',');
-			uint[] result = new uint[vals.Length];
+			var result = new uint[vals.Length];
 			for (int i = 0; i < vals.Length; i++)
 				result[i] = UInt32.Parse(vals[i]);
 			return result;
@@ -129,12 +116,12 @@ namespace SIL.Utils
 		/// <returns></returns>
 		public static string MakeIntegerListValue(int[] vals)
 		{
-			StringBuilder builder = new StringBuilder(vals.Length * 7); // enough unless VERY big numbers
+			var builder = new StringBuilder(vals.Length * 7); // enough unless VERY big numbers
 			for (int i = 0; i < vals.Length; i++)
 			{
 				if (i != 0)
 					builder.Append(",");
-				builder.Append(vals[i].ToString());
+				builder.Append(vals[i].ToString(CultureInfo.InvariantCulture));
 			}
 			return builder.ToString();
 		}
@@ -146,12 +133,12 @@ namespace SIL.Utils
 		/// <returns></returns>
 		public static string MakeListValue(List<int> vals)
 		{
-			StringBuilder builder = new StringBuilder(vals.Count * 7); // enough unless VERY big numbers
+			var builder = new StringBuilder(vals.Count * 7); // enough unless VERY big numbers
 			for (int i = 0; i < vals.Count; i++)
 			{
 				if (i != 0)
 					builder.Append(",");
-				builder.Append(vals[i].ToString());
+				builder.Append(vals[i].ToString(CultureInfo.InvariantCulture));
 			}
 			return builder.ToString();
 		}
@@ -163,12 +150,12 @@ namespace SIL.Utils
 		/// <returns></returns>
 		public static string MakeListValue(List<uint> vals)
 		{
-			StringBuilder builder = new StringBuilder(vals.Count * 7); // enough unless VERY big numbers
+			var builder = new StringBuilder(vals.Count * 7); // enough unless VERY big numbers
 			for (int i = 0; i < vals.Count; i++)
 			{
 				if (i != 0)
 					builder.Append(",");
-				builder.Append(vals[i].ToString());
+				builder.Append(vals[i].ToString(CultureInfo.InvariantCulture));
 			}
 			return builder.ToString();
 		}
@@ -205,7 +192,7 @@ namespace SIL.Utils
 		/// <returns>The value of the attribute, or null, if not found.</returns>
 		public static string GetAttributeValue(XmlNode node, string attrName)
 		{
-			return XmlUtils.GetOptionalAttributeValue(node, attrName);
+			return GetOptionalAttributeValue(node, attrName);
 		}
 
 		/// <summary>
@@ -224,6 +211,7 @@ namespace SIL.Utils
 		/// </summary>
 		/// <param name="node">The XmlNode to look in.</param>
 		/// <param name="attrName">The attribute to find.</param>
+		/// <param name="defaultString"></param>
 		/// <returns>The value of the attribute, or null, if not found.</returns>
 		public static string GetOptionalAttributeValue(XmlNode node, string attrName, string defaultString)
 		{
@@ -251,8 +239,7 @@ namespace SIL.Utils
 			string sValue = GetOptionalAttributeValue(node, attrName, defaultString);
 			if (tbl == null)
 				return sValue;
-			else
-				return tbl.LocalizeAttributeValue(sValue);
+			return tbl.LocalizeAttributeValue(sValue);
 		}
 
 		/// <summary>
@@ -287,7 +274,7 @@ namespace SIL.Utils
 		/// </exception>
 		public static string GetManditoryAttributeValue(XmlNode node, string attrName)
 		{
-			string retval = XmlUtils.GetOptionalAttributeValue(node, attrName, null);
+			string retval = GetOptionalAttributeValue(node, attrName, null);
 			if (retval == null)
 			{
 				throw new ApplicationException("The attribute'"
@@ -327,8 +314,7 @@ namespace SIL.Utils
 		/// Append an attribute with the specified name and value to parent.
 		/// </summary>
 		/// <param name="parent"></param>
-		/// <param name="attrName"></param>
-		/// <param name="attrVal"></param>
+		/// <param name="elementName"></param>
 		public static XmlElement AppendElement(XmlNode parent, string elementName)
 		{
 			XmlElement xe = parent.OwnerDocument.CreateElement(elementName);
@@ -410,11 +396,9 @@ namespace SIL.Utils
 				// If we finished both lists we got a match.
 				return ichild1 == node1.ChildNodes.Count && ichild2 == node2.ChildNodes.Count;
 			}
-			else
-			{
-				// both lists are null
-				return true;
-			}
+
+			// both lists are null
+			return true;
 		}
 
 		/// <summary>
@@ -430,36 +414,6 @@ namespace SIL.Utils
 				if (!(child is XmlComment))
 					return child;
 			return null;
-		}
-		/// <summary>
-		/// Apply an XSLT transform on a DOM to produce a resulting file
-		/// </summary>
-		/// <param name="sTransformName">full path name of the XSLT transform</param>
-		/// <param name="inputDOM">XmlDocument DOM containing input to be transformed</param>
-		/// <param name="sOutputName">full path of the resulting output file</param>
-		public static void TransformDomToFile(string sTransformName, XmlDocument inputDOM, string sOutputName)
-		{
-			string sTempInput = FileUtils.GetTempFile("xml");
-			try
-			{
-				inputDOM.Save(sTempInput);
-				TransformFileToFile(sTransformName, sTempInput, sOutputName);
-			}
-			finally
-			{
-				if (File.Exists(sTempInput))
-					File.Delete(sTempInput);
-			}
-		}
-		/// <summary>
-		/// Apply an XSLT transform on a file to produce a resulting file
-		/// </summary>
-		/// <param name="sTransformName">full path name of the XSLT transform</param>
-		/// <param name="sInputPath">full path of the input file</param>
-		/// <param name="sOutputName">full path of the resulting output file</param>
-		public static void TransformFileToFile(string sTransformName, string sInputPath, string sOutputName)
-		{
-			TransformFileToFile(sTransformName, null, sInputPath, sOutputName);
 		}
 
 		/// <summary>
@@ -549,7 +503,7 @@ namespace SIL.Utils
 					{
 						char c = sOutput[i];
 						string sReplace = String.Format("&#x{0:X};", (int)c);
-						sOutput = sOutput.Replace(c.ToString(), sReplace);
+						sOutput = sOutput.Replace(c.ToString(CultureInfo.InvariantCulture), sReplace);
 						i += (sReplace.Length - 1);		// skip over the replacement string.
 					}
 				}
@@ -652,7 +606,7 @@ namespace SIL.Utils
 			int index = 0;
 			foreach (XmlNode node in nodes)
 			{
-				if (XmlUtils.NodesMatch(node, target))
+				if (NodesMatch(node, target))
 					return index;
 				index++;
 			}
@@ -675,10 +629,8 @@ namespace SIL.Utils
 				XmlNode clonedOwner = node.OwnerDocument.CloneNode(true);
 				return clonedOwner.SelectSingleNode(xpath);
 			}
-			else
-			{
-				return node.CloneNode(true);
-			}
+
+			return node.CloneNode(true);
 		}
 
 		#region Serialize/Deserialize
@@ -760,12 +712,12 @@ namespace SIL.Utils
 		/// </summary>
 		/// <param name="methodName"></param>
 		/// <returns></returns>
-		public static System.Reflection.MethodInfo GetStaticMethod(XmlNode node, string sAssemblyAttr, string sClassAttr,
-			string sMethodName, out System.Type typeFound)
+		public static MethodInfo GetStaticMethod(XmlNode node, string sAssemblyAttr, string sClassAttr,
+			string sMethodName, out Type typeFound)
 		{
-			string sAssemblyName = XmlUtils.GetAttributeValue(node, sAssemblyAttr);
-			string sClassName = XmlUtils.GetAttributeValue(node, sClassAttr);
-			System.Reflection.MethodInfo mi = GetStaticMethod(sAssemblyName, sClassName, sMethodName,
+			string sAssemblyName = GetAttributeValue(node, sAssemblyAttr);
+			string sClassName = GetAttributeValue(node, sClassAttr);
+			MethodInfo mi = GetStaticMethod(sAssemblyName, sClassName, sMethodName,
 				"node " + node.OuterXml, out typeFound);
 			return mi;
 		}
@@ -777,18 +729,18 @@ namespace SIL.Utils
 		/// <returns></returns>
 		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
 			Justification="See TODO-Linux comment")]
-		public static System.Reflection.MethodInfo GetStaticMethod(string sAssemblyName, string sClassName,
-			string sMethodName, string sContext, out System.Type typeFound)
+		public static MethodInfo GetStaticMethod(string sAssemblyName, string sClassName,
+			string sMethodName, string sContext, out Type typeFound)
 		{
 			typeFound = null;
-			System.Reflection.Assembly assemblyFound = null;
+			Assembly assemblyFound;
 			try
 			{
-				string baseDir = System.IO.Path.GetDirectoryName(
-					System.Reflection.Assembly.GetExecutingAssembly().CodeBase).
+				string baseDir = Path.GetDirectoryName(
+					Assembly.GetExecutingAssembly().CodeBase).
 					Substring(MiscUtils.IsUnix ? 5 : 6);
-				assemblyFound = System.Reflection.Assembly.LoadFrom(
-					System.IO.Path.Combine(baseDir, sAssemblyName));
+				assemblyFound = Assembly.LoadFrom(
+					Path.Combine(baseDir, sAssemblyName));
 			}
 			catch (Exception error)
 			{
@@ -810,7 +762,7 @@ namespace SIL.Utils
 			// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
 			// is marked with [MonoTODO] and might not work as expected in 4.0.
 			Debug.Assert(typeFound != null);
-			System.Reflection.MethodInfo mi = null;
+			MethodInfo mi;
 			try
 			{
 				mi = typeFound.GetMethod(sMethodName);
@@ -829,236 +781,6 @@ namespace SIL.Utils
 			string sResult = "GetStaticMethod() could not find the " + sMainMsg +
 				" while processing " + sContext;
 			return sResult;
-		}
-
-		/// <summary>
-		/// Apply an XSLT transform on a file to produce a resulting file
-		/// </summary>
-		/// <param name="sTransformName">full path name of the XSLT transform</param>
-		/// <param name="parameterList">list of parameters to pass to the transform</param>
-		/// <param name="sInputPath">full path of the input file</param>
-		/// <param name="sOutputName">full path of the resulting output file</param>
-		public static void TransformFileToFile(string sTransformName, XSLParameter[] parameterList, string sInputPath, string sOutputName)
-		{
-#if DEBUG
-			Debug.WriteLine("Transform: " + sTransformName + " input file: " + sInputPath);
-			DateTime start = DateTime.Now;
-			Debug.WriteLine("\tStarting at: " + start.TimeOfDay.ToString());
-#endif
-#if UsingDotNetTransforms
-			// set up transform
-			XslCompiledTransform transformer = new XslCompiledTransform();
-			transformer.Load(sTransformName);
-
-			// add any parameters
-			XsltArgumentList args;
-			AddParameters(out args, parameterList);
-
-			// setup output file
-			using (var writer = File.CreateText(sOutputName))
-			{
-				// load input file
-				using (var reader = new XmlTextReader(sInputPath))
-				{
-#if !__MonoCS__
-					reader.DtdProcessing = DtdProcessing.Parse;
-#else
-					reader.ProhibitDtd = false;
-#endif
-					reader.EntityHandling = EntityHandling.ExpandEntities;
-
-					// Apply transform
-					transformer.Transform(reader, args, writer);
-				}
-			}
-#else // not UsingDotNetTransforms
-#if __MonoCS__
-			if (parameterList != null)
-			{
-				foreach(XSLParameter rParam in parameterList)
-				{
-					// Following is a specially recognized parameter name
-					if (rParam.Name == "prmSDateTime")
-					{
-						rParam.Value = GetCurrentDateTime();
-					}
-				}
-			}
-			SIL.Utils.LibXslt.TransformFileToFile(sTransformName, parameterList, sInputPath, sOutputName);
-#else
-			//.Net framework XML transform is still slower than something like MSXML2
-			// (this is so especially for transforms using xsl:key).
-			MSXML2.XSLTemplate60Class xslt = new MSXML2.XSLTemplate60Class();
-			MSXML2.FreeThreadedDOMDocument60Class xslDoc = new
-				MSXML2.FreeThreadedDOMDocument60Class();
-			MSXML2.DOMDocument60Class xmlDoc = new MSXML2.DOMDocument60Class();
-			MSXML2.IXSLProcessor xslProc;
-
-			xslDoc.async = false;
-			xslDoc.setProperty("ResolveExternals", true);
-			xslDoc.setProperty("ProhibitDTD", false);
-			xslDoc.setProperty("AllowDocumentFunction", true); // MSXSL 6 defaults to false
-			xslDoc.load(sTransformName);
-			xslt.stylesheet = xslDoc;
-			xmlDoc.setProperty("ResolveExternals", true);
-			xmlDoc.setProperty("ProhibitDTD", false);
-			xmlDoc.async = false;
-			var fOk = xmlDoc.load(sInputPath);
-			if (!fOk)
-			{
-				var msg = String.Format(XmlUtilsStrings.ksXmlFileIsInvalid, sInputPath);
-				MessageBox.Show(msg, XmlUtilsStrings.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-			}
-			xslProc = xslt.createProcessor();
-			xslProc.input = xmlDoc;
-			AddParameters(parameterList, xslProc);
-			xslProc.transform();
-			using (StreamWriter sr = File.CreateText(sOutputName))
-			{
-				sr.Write(xslProc.output);
-				sr.Close();
-			}
-#endif // __MonoCS__
-#endif // UsingDotNetTransforms
-#if DEBUG
-			DateTime end = DateTime.Now;
-			Debug.WriteLine("\tEnding at: " + end.TimeOfDay.ToString());
-			System.TimeSpan diff = end.Subtract(start);
-			Debug.WriteLine("\tProcess took: " + diff.ToString() + " " + sOutputName);
-#endif
-		}
-
-#if UsingDotNetTransforms
-		static private void AddParameters(out XsltArgumentList args, XSLParameter[] parameterList)
-		{
-			args = new XsltArgumentList();
-			if (parameterList != null)
-			{
-				foreach(XSLParameter rParam in parameterList)
-				{
-					// Following is a specially recognized parameter name
-					if (rParam.Name == "prmSDateTime")
-					{
-						args.AddParam(rParam.Name, "", GetCurrentDateTime());
-					}
-					else
-						args.AddParam(rParam.Name, "", rParam.Value);
-				}
-			}
-		}
-#else
-#if !__MonoCS__
-		/// <summary>
-		/// Add parameters to a transform
-		/// </summary>
-		/// <param name="parameterList"></param>
-		/// <param name="xslProc"></param>
-		private static void AddParameters(XSLParameter[] parameterList, MSXML2.IXSLProcessor xslProc)
-		{
-			if (parameterList != null)
-			{
-				foreach(XSLParameter rParam in parameterList)
-				{
-					// Following is a specially recognized parameter name
-					if (rParam.Name == "prmSDateTime")
-					{
-						xslProc.addParameter(rParam.Name, GetCurrentDateTime(), "");
-					}
-					else
-						xslProc.addParameter(rParam.Name, rParam.Value, "");
-				}
-			}
-		}
-#endif
-#endif // UsingDotNetTransforms
-		/// <summary>
-		/// Are we using the .Net XSLT transforms?
-		/// </summary>
-		/// <returns>true if we're using .Net XSLT transforms
-		/// false if we're using MSXML2 or LibXslt</returns>
-		public static bool UsingDotNetTransforms()
-		{
-#if UsingDotNetTransforms
-			return true;
-#else
-			return false;
-#endif
-		}
-
-		/// <summary>
-		/// Are we using the Microsoft's MSXML2 XSLT transforms?
-		/// </summary>
-		/// <returns>true if we're using MSXML2 XSLT transforms
-		/// false if we're using .Net or LibXslt</returns>
-		public static bool UsingMSXML2Transforms()
-		{
-#if UsingDotNetTransforms
-			return false;
-#else
-#if __MonoCS__
-			return false;
-#else
-			return true;
-#endif
-#endif
-		}
-
-		/// <summary>
-		/// Are we using the libxslt.so XSLT transforms?
-		/// </summary>
-		/// <returns>true if we're using libxslt.so transforms
-		/// false if we're using MSXML2 or .Net</returns>
-		public static bool UsingLibXsltTransforms()
-		{
-#if UsingDotNetTransforms
-			return false;
-#else
-#if __MonoCS__
-			return true;
-#else
-			return false;
-#endif
-#endif
-		}
-
-		private static string GetCurrentDateTime()
-		{
-			DateTime now;
-			now = DateTime.Now;
-			return (now.ToShortDateString() + " " + now.ToLongTimeString());
-		}
-		/// <summary>
-		/// A class that represents a parameter of an XSL stylesheet.
-		/// </summary>
-		public class XSLParameter
-		{
-			/// <summary>
-			/// Parameter name.
-			/// </summary>
-			private string m_name;
-
-			/// <summary>
-			/// Parameter value.
-			/// </summary>
-			private string m_value;
-
-			public XSLParameter(string sName, string sValue)
-			{
-				m_name = sName;
-				m_value = sValue;
-			}
-
-			public string Name
-			{
-				get { return m_name; }
-				set { m_name = value; }
-			}
-
-			public string Value
-			{
-				get { return m_value; }
-				set { m_value = value; }
-			}
 		}
 
 		/// <summary>
@@ -1088,6 +810,59 @@ namespace SIL.Utils
 			}
 			return fSuccessfulVisit;
 		}
+
+		public static XslCompiledTransform CreateTransform(string xslName, string assemblyName)
+		{
+			var transform = new XslCompiledTransform();
+#if !__MonoCS__
+			// Assumes the XSL has been precompiled.  xslName is the name of the precompiled class
+			Type type = Type.GetType(xslName + "," + assemblyName);
+			Debug.Assert(type != null);
+			transform.Load(type);
+#else
+			Assembly transformAssembly = Assembly.Load(assemblyName);
+			using (Stream stream = transformAssembly.GetManifestResourceStream(xslName + ".xsl"))
+			{
+				Debug.Assert(stream != null);
+				using (XmlReader reader = XmlReader.Create(stream))
+					transform.Load(reader, new XsltSettings(true, false), new XmlResourceResolver(transformAssembly));
+			}
+#endif
+			return transform;
+		}
+
+#if __MonoCS__
+		private class XmlResourceResolver : XmlUrlResolver
+		{
+			private readonly Assembly m_assembly;
+
+			public XmlResourceResolver(Assembly assembly)
+			{
+				m_assembly = assembly;
+			}
+
+			public override Uri ResolveUri(Uri baseUri, string relativeUri)
+			{
+				if (baseUri == null)
+					return new Uri(string.Format("res://{0}", relativeUri));
+				return base.ResolveUri(baseUri, relativeUri);
+			}
+
+			public override object GetEntity(Uri absoluteUri, string role, Type ofObjectToReturn)
+			{
+				switch (absoluteUri.Scheme)
+				{
+				case "res":
+					return m_assembly.GetManifestResourceStream(absoluteUri.OriginalString.Substring(6));
+
+				default:
+					// Handle file:// and http://
+					// requests from the XmlUrlResolver base class
+					return base.GetEntity(absoluteUri, role, ofObjectToReturn);
+				}
+			}
+		}
+#endif
 	}
 
 	/// <summary>

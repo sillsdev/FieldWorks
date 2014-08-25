@@ -901,10 +901,6 @@ only in multiple-paragraph fields like 'Description'</value>
     <value>Updating: '{0}' ...</value>
     <comment>This is the status message for the progress dialog used when creating factory (default) styles. (Creating styles requires up to four passes. The message is for the second pass.)</comment>
   </data>
-  <data name="kstidNoWritingSystems" xml:space="preserve">
-    <value>FieldWorks project has no current {0} writing systems.</value>
-    <comment>Message box displayed if count of current vernacular/analysis writing systems is 0. (parameter is either verncaular or analysis)</comment>
-  </data>
   <data name="kstidWarning" xml:space="preserve">
     <value>Warning</value>
     <comment>Title for warning message box</comment>
@@ -928,9 +924,6 @@ only in multiple-paragraph fields like 'Description'</value>
   <data name="kstidAllVernAnal" xml:space="preserve">
     <value>All Vernacular and Analysis</value>
   </data>
-  <data name="kstidAnalysis" xml:space="preserve">
-    <value>analysis</value>
-  </data>
   <data name="kstidBestAnal" xml:space="preserve">
     <value>Best Analysis</value>
   </data>
@@ -952,9 +945,6 @@ only in multiple-paragraph fields like 'Description'</value>
   <data name="kstidDefaultVern" xml:space="preserve">
     <value>Default Vernacular</value>
   </data>
-  <data name="kstidVernacular" xml:space="preserve">
-    <value>vernacular</value>
-  </data>
   <data name="kstidNoFilterItemName" xml:space="preserve">
     <value>No Filter</value>
     <comment>The name for the no filters menu item</comment>
@@ -967,17 +957,8 @@ only in multiple-paragraph fields like 'Description'</value>
     <value>...</value>
     <comment>ellipsis - mark showing missing words, "more to come", or more info than is displayed.</comment>
   </data>
-  <data name="kstidScriptureFootnote" xml:space="preserve">
-    <value>Footnote</value>
-  </data>
-  <data name="kstidScriptureSectionIntroduction" xml:space="preserve">
-    <value>Introduction({0})</value>
-  </data>
   <data name="kstidScriptureIntro" xml:space="preserve">
     <value>Introduction</value>
-  </data>
-  <data name="kstidScriptureTitle" xml:space="preserve">
-    <value>Title</value>
   </data>
   <data name="kstidPaperSizeA4" xml:space="preserve">
     <value>A4</value>
@@ -1010,10 +991,6 @@ only in multiple-paragraph fields like 'Description'</value>
   <data name="kstidGutterTooBig" xml:space="preserve">
     <value>The gutter is too big for the publication page to fit on the selected paper size.</value>
     <comment>error message from Page Setup dialog</comment>
-  </data>
-  <data name="kstidIncompatibleStyleExists" xml:space="preserve">
-    <value>Style {0} could not be added because an incompatible style with the same name already exists.</value>
-    <comment>Error message when someone adds a style that has been added on another machine that is incompatible (e.g. because of different context, structure, etc).</comment>
   </data>
   <data name="kstidParatextLanguageFiles" xml:space="preserve">
     <value>Paratext Language Files</value>
@@ -1361,16 +1338,6 @@ FieldWorks ReadMe for help in this area.</value>
     <value>FieldWorks Project Files</value>
     <comment>Used in the list of file types in file open dialogs</comment>
   </data>
-  <data name="ksInvalidFwBackupFile" xml:space="preserve">
-    <value>File is not a valid FieldWorks backup:</value>
-  </data>
-  <data name="ksBackupFileCreatedByNewerFwVersion" xml:space="preserve">
-    <value>Backup file contains a version of the project which was created using a newer version of FieldWorks:
-{0}
-
-To restore from this backup, install version {1} of FieldWorks.
-</value>
-  </data>
   <data name="ksRestoreFailed" xml:space="preserve">
     <value>Unable to restore.</value>
   </data>
@@ -1444,5 +1411,18 @@ To restore from this backup, install version {1} of FieldWorks.
   <data name="kstidAddingFwProject" xml:space="preserve">
     <value>Adding FieldWorks project</value>
     <comment>Used in Archive with RAMP dialog box</comment>
+  </data>
+  <data name="ksNeedToJoinFwGroup" xml:space="preserve">
+    <value>FieldWorks has encountered a problem setting up the writing systems. It may be that you need to first log out and then back in. If that doesn't fix it, you can also try asking an administrator to add you to the fieldworks group by using the command: $ sudo adduser 'yourusername' fieldworks</value>
+    <comment>Used in Linux version if the user forgets to logout and back in after New Install.</comment>
+  </data>
+  <data name="kstidScriptureTitle" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="kstidDataMigrationProhibitedCaption" xml:space="preserve">
+    <value>Error migrating project</value>
+  </data>
+  <data name="kstidDataMigrationProhibitedText" xml:space="preserve">
+    <value>This project cannot be migrated to a newer version. Please shutdown all other applications that are currently using this project and try opening the project again.</value>
   </data>
 </root>

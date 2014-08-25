@@ -1,4 +1,5 @@
 // Resources used by generic code
+#include "GenericResource.h"
 
 // TODO DevLeader(JohnT): move these out of AppCore; include this file everywhere it's needed.
 STRINGTABLE DISCARDABLE

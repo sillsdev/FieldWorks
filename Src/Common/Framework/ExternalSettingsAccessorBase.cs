@@ -148,7 +148,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		/// <param name="progressDlg">The progress dialog if one is already up.</param>
 		/// ------------------------------------------------------------------------------------
-		public void EnsureCurrentResource(IProgress progressDlg)
+		public void EnsureCurrentResource(IThreadedProgress progressDlg)
 		{
 			var doc = LoadDoc();
 			Guid newVersion;
@@ -166,13 +166,7 @@ namespace SIL.FieldWorks.Common.Framework
 			// Re-load the factory settings if they are not at current version.
 			if (IsResourceOutdated(ResourceName, newVersion))
 			{
-				if (progressDlg is IThreadedProgress)
-					ProcessResources((IThreadedProgress)progressDlg, doc);
-				else
-				{
-					using (var dlg = new ProgressDialogWithTask(progressDlg))
-						ProcessResources(dlg, doc);
-				}
+				ProcessResources(progressDlg, doc);
 #if DEBUG
 				Debug.Assert(m_fVersionUpdated);
 #endif
@@ -188,7 +182,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// (i.e., IsResourceOutdated returns <c>false</c> for ResourceName.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected virtual void EnsureCurrentLocalizations(IProgress progressDlg)
+		protected virtual void EnsureCurrentLocalizations(IThreadedProgress progressDlg)
 		{
 			// Default is a no-op
 		}

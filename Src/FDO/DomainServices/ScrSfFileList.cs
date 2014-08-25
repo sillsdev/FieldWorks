@@ -10,10 +10,8 @@ using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Windows.Forms;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SILUBS.SharedScrUtils;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {
@@ -81,7 +79,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="resolver">An Overlapping File Resolver</param>
 		/// ------------------------------------------------------------------------------------
 		public ScrSfFileList(IOverlappingFileResolver resolver)
-			: base()
 		{
 			m_resolver = resolver;
 		}
@@ -99,13 +96,12 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// in the middle of lines. (Toolbox dictates that fields tagged with backslash markers
 		/// must start on a new line, but Paratext considers all backslashes in the data to be
 		/// SF markers.)</param>
-		/// <param name="helpFile">The path of the application help file.</param>
 		/// ------------------------------------------------------------------------------------
 		public ScrSfFileList(IScrImportSFFiles source, ScrMappingList mappingList,
-			ImportDomain importDomain, bool scanInlineBackslashMarkers, string helpFile)
+			ImportDomain importDomain, bool scanInlineBackslashMarkers)
 			: this(null)
 		{
-			List<ICmFile> deleteList = new List<ICmFile>();
+			var deleteList = new List<ICmFile>();
 			// Load the files into an in-memory list
 			foreach (ICmFile file in source.FilesOC)
 			{
@@ -117,8 +113,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				}
 				catch (ScriptureUtilsException e)
 				{
-					MessageBoxUtils.Show(string.Format(ScrFdoResources.kstidImportBadFile, e.Message), "", MessageBoxButtons.OK,
-						MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, 0, helpFile, HelpNavigator.Topic, e.HelpTopic);
+					var userAction = source.Services.GetInstance<IFdoUI>();
+					userAction.DisplayMessage(MessageType.Error, string.Format(ScrFdoResources.kstidImportBadFile, e.Message), Strings.ksErrorCaption, e.HelpTopic);
 					deleteList.Add(file);
 				}
 			}

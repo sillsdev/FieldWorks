@@ -390,7 +390,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void ShippedFilesValidateAgainstSchema()
 		{
-			var shippedConfigfolder = Path.Combine(DirectoryFinder.FlexFolder, "DefaultConfigurations", "Dictionary");
+			var shippedConfigfolder = Path.Combine(FwDirectoryFinder.FlexFolder, "DefaultConfigurations", "Dictionary");
 			foreach(var shippedFile in Directory.EnumerateFiles(shippedConfigfolder, "*"+DictionaryConfigurationModel.FileExtension))
 			{
 				ValidateAgainstSchema(shippedFile);
@@ -764,7 +764,7 @@ namespace SIL.FieldWorks.XWorks
 							  Justification = "Certain types can't be validated. e.g. xs:byte, otherwise implemented enough for us")]
 		private static void ValidateAgainstSchema(string xmlFile)
 		{
-			var schemaLocation = Path.Combine(Path.Combine(DirectoryFinder.FlexFolder, "Configuration"), "DictionaryConfiguration.xsd");
+			var schemaLocation = Path.Combine(Path.Combine(FwDirectoryFinder.FlexFolder, "Configuration"), "DictionaryConfiguration.xsd");
 			var schemas = new XmlSchemaSet();
 			using(var reader = XmlReader.Create(schemaLocation))
 			{

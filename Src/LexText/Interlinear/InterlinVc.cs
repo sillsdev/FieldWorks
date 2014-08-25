@@ -585,12 +585,16 @@ namespace SIL.FieldWorks.IText
 			vwenv.set_IntProperty((int)FwTextPropType.ktptBackColor,
 				(int)FwTextPropVar.ktpvDefault,
 				bgColor);
+			UsingGuess = true;
 		}
 
 		private void SetGuessing(IVwEnv vwenv)
 		{
 			SetGuessing(vwenv, ApprovedGuessColor);
+			UsingGuess = true;
 		}
+
+		private bool UsingGuess { get; set; }
 
 		/// <summary>
 		/// Get a guess for the given word or analysis.
@@ -1494,7 +1498,7 @@ namespace SIL.FieldWorks.IText
 							vwenv.NoteDependency(new[] { hvo }, new[] { WfiMorphBundleTags.kflidSense }, 1);
 							if (wmb.SenseRA == null)
 							{
-								if (ShowDefaultSense && wmb.DefaultSense != null)
+								if (ShowDefaultSense && wmb.DefaultSense != null && UsingGuess)
 								{
 									flid = wmb.Cache.MetaDataCacheAccessor.GetFieldId2(WfiMorphBundleTags.kClassId,
 										"DefaultSense", false);

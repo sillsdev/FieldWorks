@@ -12,6 +12,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FdoUi;
+using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
 using XCore;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -143,7 +144,7 @@ namespace SIL.FieldWorks.IText
 				{
 					m_flexStylesheet = m_styleSheet; // remember the default.
 					var stylesheet = new FwStyleSheet();
-					stylesheet.Init(Cache, Cache.LangProject.TranslatedScriptureOA.Hvo, ScriptureTags.kflidStyles);
+					stylesheet.Init(Cache, Cache.LangProject.TranslatedScriptureOA.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 					m_teStylesheet = stylesheet;
 				}
 				wantedStylesheet = m_teStylesheet;

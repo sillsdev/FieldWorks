@@ -3,13 +3,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using System.Threading;
-using System.Xml;
 using System.Collections.Generic;
-using System.Xml.Linq;
 using Palaso.WritingSystems;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 
 namespace SIL.CoreImpl
@@ -28,11 +26,46 @@ namespace SIL.CoreImpl
 		/// <summary>
 		/// Initializes a new instance of the <see cref="GlobalFileWritingSystemStore"/> class.
 		/// </summary>
+		public GlobalFileWritingSystemStore()
+			: this(DirectoryFinder.GlobalWritingSystemStoreDirectory)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="GlobalFileWritingSystemStore"/> class.
+		/// </summary>
 		/// <param name="path">The path.</param>
-		public GlobalFileWritingSystemStore(string path)
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="Offending code is not executed on Linux")]
+		internal GlobalFileWritingSystemStore(string path)
 		{
 			m_path = path;
-			Directory.CreateDirectory(m_path);
+			if (!Directory.Exists(m_path))
+			{
+				DirectoryInfo di;
+
+				// Provides FW on Linux multi-user access. Overrides the system
+				// umask and creates the directory with the permissions "775".
+				// The "fieldworks" group was created outside the app during
+				// configuration of the package which allows group access.
+				using(new FileModeOverride())
+				{
+					di = Directory.CreateDirectory(m_path);
+				}
+
+				if (!MiscUtils.IsUnix)
+				{
+					// NOTE: GetAccessControl/ModifyAccessRule/SetAccessControl is not implemented in Mono
+					DirectorySecurity ds = di.GetAccessControl();
+					var sid = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
+					AccessRule rule = new FileSystemAccessRule(sid, FileSystemRights.Write | FileSystemRights.ReadAndExecute
+						| FileSystemRights.Modify, InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit,
+						PropagationFlags.InheritOnly, AccessControlType.Allow);
+					bool modified;
+					ds.ModifyAccessRule(AccessControlModification.Add, rule, out modified);
+					di.SetAccessControl(ds);
+				}
+			}
 			m_mutex = SingletonsContainer.Get(typeof(Mutex).FullName + m_path,
 				() => new Mutex(false, m_path.Replace('\\', '_').Replace('/', '_')));
 		}

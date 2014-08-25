@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using Rhino.Mocks;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -24,6 +25,7 @@ using SilEncConverters40;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Test.TestUtils;
+using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.TE
 {
@@ -292,7 +294,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		protected override void CreateTestData()
 		{
-			m_settings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
+			m_settings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create(ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
 			Cache.LangProject.TranslatedScriptureOA.ImportSettingsOC.Add(m_settings);
 			m_settings.ImportTypeEnum = TypeOfImport.Other;
 			m_converters = null;

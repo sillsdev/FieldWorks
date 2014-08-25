@@ -379,7 +379,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (hadError)
 			{
 				// Tell the user that something bad happened
-				ErrorReporter.ReportException(new Exception("Error during resegmentation"), null, null, null, false);
+				cache.ServiceLocator.GetInstance<IFdoUI>().ReportException(new Exception("Error during resegmentation"), false);
 			}
 		}
 

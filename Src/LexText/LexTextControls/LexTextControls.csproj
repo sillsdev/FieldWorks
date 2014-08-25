@@ -241,10 +241,10 @@
     </Reference>
     <Reference Condition="'$(OS)'=='Unix'" Include="geckofx-core">
       <HintPath>\usr\lib\cli\geckofx-29\Geckofx-Core.dll</HintPath>
-	</Reference>
+    </Reference>
     <Reference Condition="'$(OS)'=='Unix'" Include="Geckofx-Winforms-29">
       <HintPath>\usr\lib\cli\geckofx-29\Geckofx-Winforms.dll</HintPath>
-	</Reference>
+    </Reference>
     <None Condition="'$(OS)'=='Unix'" Include="\usr\lib\cli\geckofx-29\Geckofx-Core.dll.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

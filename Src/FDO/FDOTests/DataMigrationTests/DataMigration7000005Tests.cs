@@ -3,6 +3,7 @@ using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 
 namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
@@ -44,7 +45,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			mockMDC.AddClass(13, "RnAnalysis", "RnGenericRec", new List<string>());
 			mockMDC.AddClass(14, "CmPerson", "CmPossibility", new List<string>());
 			mockMDC.AddClass(15, "CmAnthroItem", "CmPossibility", new List<string>());
-			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000004, dtos, mockMDC, null);
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000004, dtos, mockMDC, null, FwDirectoryFinder.FdoDirectories);
 			m_dataMigrationManager.PerformMigration(dtoRepos, 7000005, new DummyProgressDlg());
 
 			var nbkDto = dtoRepos.AllInstancesSansSubclasses("RnResearchNbk").First();

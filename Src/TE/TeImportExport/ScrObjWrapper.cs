@@ -410,7 +410,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		public List<int> BooksPresent
 		{
-			get { return m_settings.BooksForProject; }
+			get { return m_settings.BooksForProject(); }
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -16,6 +16,7 @@ using System.Reflection;
 using System.Resources;
 using System.Text;
 using System.Windows.Forms;
+using SIL.FieldWorks.FDO;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Resources
@@ -167,10 +168,10 @@ namespace SIL.FieldWorks.Resources
 			s_fileFilterExtensions[FileFilterType.InterlinearSfm] = "*.db; *.sfm; *.sf; *.it; *.itx; *.txt";
 			s_fileFilterExtensions[FileFilterType.ShoeboxProjectFiles] = "*.prj";
 			s_fileFilterExtensions[FileFilterType.FieldWorksProjectFiles] =
-				"*" + FwFileExtensions.ksFwDataXmlFileExtension + "; *" + FwFileExtensions.ksFwDataDb4oFileExtension;
-			s_fileFilterExtensions[FileFilterType.FieldWorksBackupFiles] = "*" + FwFileExtensions.ksFwBackupFileExtension;
+				"*" + FdoFileHelper.ksFwDataXmlFileExtension + "; *" + FdoFileHelper.ksFwDataDb4oFileExtension;
+			s_fileFilterExtensions[FileFilterType.FieldWorksBackupFiles] = "*" + FdoFileHelper.ksFwBackupFileExtension;
 			s_fileFilterExtensions[FileFilterType.FieldWorksAllBackupFiles] = String.Format("*{0}; *{1}; *.xml",
-				FwFileExtensions.ksFwBackupFileExtension, FwFileExtensions.ksFw60BackupFileExtension);
+				FdoFileHelper.ksFwBackupFileExtension, FdoFileHelper.ksFw60BackupFileExtension);
 			s_fileFilterExtensions[FileFilterType.FieldWorksTranslatedLists] = "*.xml; *.zip";
 			s_fileFilterExtensions[FileFilterType.OXEKT] = "*" + FwFileExtensions.ksOpenXmlForExchangingKeyTerms;
 			s_fileFilterExtensions[FileFilterType.FLExText] = "*" + FwFileExtensions.ksFLexText;

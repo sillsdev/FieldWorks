@@ -128,6 +128,10 @@
       <Name>Framework</Name>
       <HintPath>..\..\..\..\Output\Debug\Framework.dll</HintPath>
     </Reference>
+    <Reference Include="FwResources, Version=8.0.6.26892, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\FwResources.dll</HintPath>
+    </Reference>
     <Reference Include="FwUtils">
       <Name>FwUtils</Name>
       <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.Utils;
 
@@ -54,7 +55,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			mockMDC.AddClass(10, "CmFile", "CmObject", new List<string>());
 			//-------------------+++++++++++++++++++++++++=
 
-			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000028, dtos, mockMDC, @"C:\FwWW\DistFiles\Projects\Sena 3");
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000028, dtos, mockMDC, @"C:\FwWW\DistFiles\Projects\Sena 3", FwDirectoryFinder.FdoDirectories);
 
 			//Get the Element <rt guid="b8bdad3d-9006-46f0-83e8-ae1d1726f2ad" class="LangProject">
 			var langProjDto = dtoRepos.AllInstancesSansSubclasses("LangProject").First();

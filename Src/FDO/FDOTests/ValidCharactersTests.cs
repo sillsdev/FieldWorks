@@ -123,7 +123,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void InitializeFromOldValidCharsList()
 		{
-			var validChars = ValidCharacters.Load(" a b c d . 1 2 3", "Test WS", null, null);
+			var validChars = ValidCharacters.Load(" a b c d . 1 2 3", "Test WS", null, null, FwDirectoryFinder.CodeDirectory);
 			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
 			Assert.AreEqual(4, validCharsW.WordFormingCharacters.Count);
 			Assert.IsTrue(validCharsW.WordFormingCharacters.Contains("a"));
@@ -161,7 +161,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				"<Numeric>4\uFFFC5</Numeric>" +
 				"<Other>,\uFFFC!\uFFFC*</Other>" +
 				"</ValidCharacters>";
-			var validChars = ValidCharacters.Load(sXml, "Test WS", null, null);
+			var validChars = ValidCharacters.Load(sXml, "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
 			Assert.AreEqual(4, validCharsW.WordFormingCharacters.Count);
 			Assert.IsTrue(validCharsW.WordFormingCharacters.Contains("e"));
@@ -191,7 +191,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				"<Numeric />" +
 				"<Other />" +
 				"</ValidCharacters>";
-			var validChars = ValidCharacters.Load(sXml, "Test WS", null, RememberError);
+			var validChars = ValidCharacters.Load(sXml, "Test WS", null, RememberError, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
 			Assert.AreEqual(0, validCharsW.WordFormingCharacters.Count);
 			Assert.AreEqual(0, validCharsW.NumericCharacters.Count);
@@ -209,7 +209,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void InitializeFromXml_ValidNull()
 		{
-			var validChars = ValidCharacters.Load(null, "Test WS", null, RememberError);
+			var validChars = ValidCharacters.Load(null, "Test WS", null, RememberError, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
 			Assert.AreEqual(0, validCharsW.WordFormingCharacters.Count);
 			Assert.AreEqual(0, validCharsW.NumericCharacters.Count);
@@ -225,7 +225,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void InitializeFromXml_ValidEmptyString()
 		{
-			var validChars = ValidCharacters.Load(String.Empty, "Test WS", null, RememberError);
+			var validChars = ValidCharacters.Load(String.Empty, "Test WS", null, RememberError, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
 			Assert.AreEqual(0, validCharsW.WordFormingCharacters.Count);
 			Assert.AreEqual(0, validCharsW.NumericCharacters.Count);
@@ -246,7 +246,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				"<Numeric></Numeric>" +
 				"<Other>\u2028</Other>" +
 				"</ValidCharacters>";
-			var validChars = ValidCharacters.Load(sXml, "Test WS", null, null);
+			var validChars = ValidCharacters.Load(sXml, "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
 			Assert.AreEqual(1, validCharsW.OtherCharacters.Count);
 			Assert.IsTrue(validCharsW.OtherCharacters.Contains("\u2028"));
@@ -269,7 +269,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				"<Numeric/>4\uFFFC5" +
 				"<Other>,\uFFFC!\uFFFC*</Other>" +
 				"</ValidCharacters>";
-			var validChars = ValidCharacters.Load(ws, null);
+			var validChars = ValidCharacters.Load(ws, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
 			Assert.AreEqual(4, validCharsW.WordFormingCharacters.Count);
 			Assert.IsTrue(validCharsW.WordFormingCharacters.Contains("e"));
@@ -299,7 +299,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				"<Other>,\uFFFC!\uFFFC*</Other>" +
 				"</ValidCharacters>";
 
-			var validChars = ValidCharacters.Load(ws, RememberError);
+			var validChars = ValidCharacters.Load(ws, RememberError, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			VerifyDefaultWordFormingCharacters(validChars);
 
 			Assert.AreEqual("Invalid ValidChars field while loading the English (United States) writing system:" +
@@ -323,7 +323,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				"<Other></Other>" +
 				"</ValidCharacters>";
 
-			var validChars = ValidCharacters.Load(ws, RememberError);
+			var validChars = ValidCharacters.Load(ws, RememberError, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			VerifyDefaultWordFormingCharacters(validChars);
 			Assert.AreEqual("Invalid ValidChars field while loading the English (United States) writing system. " +
 							"The following characters are invalid:" +
@@ -347,7 +347,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				"<Other></Other>" +
 				"</ValidCharacters>";
 
-			var validChars = ValidCharacters.Load(ws, RememberError);
+			var validChars = ValidCharacters.Load(ws, RememberError, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			VerifyDefaultWordFormingCharacters(validChars);
 			Assert.AreEqual("Invalid ValidChars field while loading the English (United States) writing system. " +
 							"The following characters are invalid:" +
@@ -371,7 +371,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				"<Other></Other>" +
 				"</ValidCharacters>";
 
-			var validChars = ValidCharacters.Load(ws, RememberError);
+			var validChars = ValidCharacters.Load(ws, RememberError, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
 			Assert.AreEqual(2, validCharsW.WordFormingCharacters.Count);
 			Assert.IsTrue(validCharsW.WordFormingCharacters.Contains("g"));
@@ -401,7 +401,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				"<Numeric></Numeric>" +
 				"<Other>'</Other>" +
 				"</ValidCharacters>";
-			var validChars = ValidCharacters.Load(sXml, "Test WS", null, null);
+			var validChars = ValidCharacters.Load(sXml, "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
 			Assert.AreEqual(1, validCharsW.WordFormingCharacters.Count);
 			Assert.IsTrue(validCharsW.WordFormingCharacters.Contains("'"));
@@ -422,7 +422,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				"<Numeric>1</Numeric>" +
 				"<Other></Other>" +
 				"</ValidCharacters>";
-			var validChars = ValidCharacters.Load(sXml, "Test WS", null, null);
+			var validChars = ValidCharacters.Load(sXml, "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
 			Assert.AreEqual(1, validCharsW.WordFormingCharacters.Count);
 			Assert.IsTrue(validCharsW.WordFormingCharacters.Contains("1"));
@@ -443,7 +443,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				"<Numeric>1</Numeric>" +
 				"<Other>1</Other>" +
 				"</ValidCharacters>";
-			var validChars = ValidCharacters.Load(sXml, "Test WS", null, null);
+			var validChars = ValidCharacters.Load(sXml, "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
 			Assert.AreEqual(0, validCharsW.WordFormingCharacters.Count);
 			Assert.AreEqual(1, validCharsW.NumericCharacters.Count);
@@ -464,7 +464,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				"<Numeric>4\uFFFC4</Numeric>" +
 				"<Other>'\uFFFC'</Other>" +
 				"</ValidCharacters>";
-			var validChars = ValidCharacters.Load(sXml, "Test WS", null, null);
+			var validChars = ValidCharacters.Load(sXml, "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
 			Assert.AreEqual(1, validCharsW.WordFormingCharacters.Count);
 			Assert.IsTrue(validCharsW.WordFormingCharacters.Contains("a"));
@@ -482,7 +482,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void InitializeFromNullString()
 		{
-			var validChars = ValidCharacters.Load(string.Empty, "Test WS", null, null);
+			var validChars = ValidCharacters.Load(string.Empty, "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
 			Assert.AreEqual(0, validCharsW.WordFormingCharacters.Count);
 			Assert.AreEqual(0, validCharsW.NumericCharacters.Count);
@@ -500,7 +500,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void AddCharacter_Duplicate()
 		{
-			var validChars = ValidCharacters.Load(string.Empty, "Test WS", null, null);
+			var validChars = ValidCharacters.Load(string.Empty, "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
 			validChars.AddCharacter("a");
 			validChars.AddCharacter("a");
@@ -528,7 +528,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				"<Numeric/>" +
 				"<Other>{</Other>" +
 				"</ValidCharacters>";
-			var validChars = ValidCharacters.Load(sXml, "Test WS", null, null);
+			var validChars = ValidCharacters.Load(sXml, "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
 			Assert.AreEqual(2, validCharsW.WordFormingCharacters.Count);
 			Assert.AreEqual(0, validCharsW.NumericCharacters.Count);
@@ -555,7 +555,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void AddCharacter_SuperscriptedToneNumber()
 		{
-			var validChars = ValidCharacters.Load(string.Empty, "Test WS", null, null);
+			var validChars = ValidCharacters.Load(string.Empty, "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
 			validChars.AddCharacter("\u00b9");
 			validChars.AddCharacter("\u2079");
@@ -574,7 +574,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void GetNaturalCharType()
 		{
-			var validChars = ValidCharacters.Load(string.Empty, "Test WS", null, null);
+			var validChars = ValidCharacters.Load(string.Empty, "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			DummyCharPropEngine cpe = new DummyCharPropEngine();
 			ReflectionHelper.SetField(validChars, "m_cpe", cpe);
 			Assert.AreEqual(ValidCharacterType.WordForming,
@@ -601,7 +601,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				"<ValidCharacters><WordForming>a\uFFFCb\uFFFCc\uFFFCd\uFFFCe\uFFFC#</WordForming>" +
 				"<Numeric></Numeric>" +
 				"<Other></Other>" +
-				"</ValidCharacters>", "Test WS", null, null);
+				"</ValidCharacters>", "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			Assert.IsTrue(validChars.IsWordForming('#'));
 			//Assert.IsTrue(validChars.IsWordForming("#"));
 		}
@@ -614,7 +614,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void SortAfterAddSingles()
 		{
-			var validChars = ValidCharacters.Load(string.Empty, "Test WS", null, null);
+			var validChars = ValidCharacters.Load(string.Empty, "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			IWritingSystem ws = m_wsManager.Create("en");
 			validChars.InitSortComparer(ws);
 			validChars.AddCharacter("z");
@@ -636,7 +636,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void SortAfterAddRange()
 		{
-			var validChars = ValidCharacters.Load(string.Empty, "Test WS", null, null);
+			var validChars = ValidCharacters.Load(string.Empty, "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			IWritingSystem ws = m_wsManager.Create("en");
 			validChars.InitSortComparer(ws);
 			var list = new List<string>(new[] { "z", "c", "t", "b", "8", "7", "6", "5" });

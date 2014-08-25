@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.IO;
+using System.Linq;
 using FwRemoteDatabaseConnector;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -15,6 +15,7 @@ using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 {
@@ -187,6 +188,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			lp.EthnologueCode = newEthCode;
 			// CellarPropertyType.String:
 			var le = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			Guid leGuid = le.Guid;
 			var irOriginalValue = Cache.TsStrFactory.MakeString("<import & residue>",
 																Cache.WritingSystemFactory.UserWs);
 			le.ImportResidue = irOriginalValue;
@@ -276,10 +278,11 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			// Check Unicode
 			Assert.AreEqual(newEthCode, lp.EthnologueCode, "Wrong Unicode value restored.");
 			// Check string (ITsString)
-			var irRestoredValue = lp.LexDbOA.Entries.ToArray()[0].ImportResidue;
+			le = Cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(leGuid);
+			var irRestoredValue = le.ImportResidue;
 			var xmlRestoredValue = TsStringUtils.GetXmlRep(irRestoredValue, Cache.WritingSystemFactory, Cache.WritingSystemFactory.UserWs, true);
 			Assert.AreEqual(xmlOriginalValue, xmlRestoredValue, "Wrong ITsString value restored.");
-			var irRestoredBlankValue = lp.LexDbOA.Entries.ToArray()[0].Comment.get_String(Cache.WritingSystemFactory.UserWs);
+			var irRestoredBlankValue = le.Comment.get_String(Cache.WritingSystemFactory.UserWs);
 			var xmlRestoredBlankValue = TsStringUtils.GetXmlRep(irRestoredBlankValue, Cache.WritingSystemFactory, Cache.WritingSystemFactory.UserWs, true);
 			Assert.AreEqual(xmlOriginalBlankValue, xmlRestoredBlankValue, "Wrong ITsString value restored for blank string.");
 			// ITsTextProps
@@ -414,7 +417,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		public void RenameDatabaseTest()
 		{
 			string sOrigName = Cache.ProjectId.Name;
-			string newProjectDir = Path.Combine(DirectoryFinder.ProjectsDirectory, NewProjectName);
+			string newProjectDir = Path.Combine(FwDirectoryFinder.ProjectsDirectory, NewProjectName);
 			if (Cache.ProjectId.Type != FDOBackendProviderType.kMemoryOnly && Directory.Exists(newProjectDir))
 			{
 				// make sure database doesn't exist before running the test
@@ -519,7 +522,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 				while (true)
 				{
 					_randomProjectName = "TestLangProjCS" + Path.GetFileNameWithoutExtension(Path.GetRandomFileName());
-					var projectDir = Path.Combine(DirectoryFinder.ProjectsDirectory, _randomProjectName);
+					var projectDir = Path.Combine(FwDirectoryFinder.ProjectsDirectory, _randomProjectName);
 					if (!Directory.Exists(projectDir))
 					{
 						_projectDir = projectDir;
@@ -537,7 +540,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		/// ------------------------------------------------------------------------------------
 		public override void FixtureSetup()
 		{
-			RemotingServer.Start();
+			RemotingServer.Start(FwDirectoryFinder.RemotingTcpServerConfigFile, FwDirectoryFinder.FdoDirectories, () => false, v => {});
 			base.FixtureSetup();
 		}
 
@@ -562,8 +565,8 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		/// ------------------------------------------------------------------------------------
 		protected override void CheckAdditionalStuffAfterFirstRename()
 		{
-			Assert.AreEqual(Path.Combine(Path.Combine(DirectoryFinder.ProjectsDirectory, NewProjectName),
-				DirectoryFinder.GetDb4oDataFileName(NewProjectName)), Cache.ProjectId.Path);
+			Assert.AreEqual(Path.Combine(Path.Combine(FwDirectoryFinder.ProjectsDirectory, NewProjectName),
+				FdoFileHelper.GetDb4oDataFileName(NewProjectName)), Cache.ProjectId.Path);
 		}
 	}
 
@@ -576,6 +579,8 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 	[TestFixture]
 	public sealed class XMLTests : PersistingBackendProviderTestBase
 	{
+		private const string kClosingTag = "</languageproject>";
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Override to create and load a very basic cache.
@@ -584,8 +589,8 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		protected override FdoCache CreateCache()
 		{
 			const string projName = "TestLangProj-test";
-			string filename = Path.Combine(DirectoryFinder.ProjectsDirectory,
-				Path.Combine(projName, DirectoryFinder.GetXmlDataFileName(projName)));
+			string filename = Path.Combine(FwDirectoryFinder.ProjectsDirectory,
+				Path.Combine(projName, FdoFileHelper.GetXmlDataFileName(projName)));
 			if (!m_internalRestart)
 			{
 				if (File.Exists(filename))
@@ -605,7 +610,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		[Ignore("There is a timing problem with this test - project file may not exist becuase background thread is doing commit.")]
 		public void OnlyOneCacheAllowed()
 		{
-			string filename = DirectoryFinder.GetXmlDataFileName("TestLangProj");
+			string filename = FdoFileHelper.GetXmlDataFileName("TestLangProj");
 			Assert.True(File.Exists(filename), "Test XML file not found");
 			using (FdoCache cache = OpenExistingFile(filename))
 				Assert.Fail("Able to open XML file that is already open");
@@ -614,7 +619,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		private FdoCache OpenExistingFile(string filename)
 		{
 			return FdoCache.CreateCacheFromExistingData(
-				new TestProjectId(FDOBackendProviderType.kXMLWithMemoryOnlyWsMgr, filename), "en", new DummyProgressDlg());
+				new TestProjectId(FDOBackendProviderType.kXMLWithMemoryOnlyWsMgr, filename), "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new DummyProgressDlg());
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -624,8 +629,8 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		/// ------------------------------------------------------------------------------------
 		protected override void CheckAdditionalStuffAfterFirstRename()
 		{
-			Assert.AreEqual(Path.Combine(Path.Combine(DirectoryFinder.ProjectsDirectory, NewProjectName),
-				DirectoryFinder.GetXmlDataFileName(NewProjectName)), Cache.ProjectId.Path);
+			Assert.AreEqual(Path.Combine(Path.Combine(FwDirectoryFinder.ProjectsDirectory, NewProjectName),
+				FdoFileHelper.GetXmlDataFileName(NewProjectName)), Cache.ProjectId.Path);
 		}
 
 		/// <summary>
@@ -633,10 +638,10 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		/// throw an Exception.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(FwStartupException))]
+		[ExpectedException(typeof(StartupException))]
 		public void CorruptedXMLFileTest()
 		{
-			var testDataPath = Path.Combine(DirectoryFinder.FwSourceDirectory, "FDO/FDOTests/TestData");
+			var testDataPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "FDO/FDOTests/TestData");
 			var projName = Path.Combine(testDataPath, "CorruptedXMLFileTest.fwdata");
 
 			// MockXMLBackendProvider implements IDisposable therefore we need the "using".
@@ -644,7 +649,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			using (var xmlBep = new MockXMLBackendProvider(Cache, projName))
 			{
 				// Should throw an XMLException, but this will be caught and because there's
-				// no .bak file, an FwStartupException will be thrown instead.
+				// no .bak file, an StartupException will be thrown instead.
 				xmlBep.Startup();
 			}
 		}
@@ -663,7 +668,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			string testFileName = String.Empty;
 			try
 			{
-				var testDataPath = Path.Combine(DirectoryFinder.FwSourceDirectory, "FDO/FDOTests/BackupRestore/BackupTestProject");
+				var testDataPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "FDO/FDOTests/BackupRestore/BackupTestProject");
 				var projName = Path.Combine(testDataPath, "BackupTestProject.fwdata");
 				testFileName = Path.GetTempFileName();
 				// If we leave the extension as .tmp, we get a sharing violation when the
@@ -692,7 +697,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		[Test]
 		public void SlightlyCorruptedXMLFileTest()
 		{
-			var testDataPath = Path.Combine(DirectoryFinder.FwSourceDirectory, "FDO/FDOTests/TestData");
+			var testDataPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "FDO/FDOTests/TestData");
 			var projName = Path.Combine(testDataPath, "SlightlyCorruptedXMLFile.fwdata");
 
 			// MockXMLBackendProvider implements IDisposable therefore we need the "using".
@@ -711,7 +716,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		[Test]
 		public void XMLFileWithDuplicateGuidsTest()
 		{
-			var testDataPath = Path.Combine(DirectoryFinder.FwSourceDirectory, "FDO/FDOTests/TestData");
+			var testDataPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "FDO/FDOTests/TestData");
 			var projName = Path.Combine(testDataPath, "DuplicateGuids.fwdata");
 
 			// MockXMLBackendProvider implements IDisposable therefore we need the "using".
@@ -729,6 +734,42 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 				Assert.That(xmlBep.ListOfDuplicateGuids.Contains("a4a759b4-5a10-4d7a-80a3-accf5bd840b1, classname: PartOfSpeech"), "The guid a4a759b4-5a10-4d7a-80a3-accf5bd840b1 should have been found as a duplicate.");
 				Assert.That(xmlBep.ListOfDuplicateGuids.Contains("a5311f3b-ff98-47d2-8ece-b1aca03a8bbd, classname: PartOfSpeech"), "The guid a5311f3b-ff98-47d2-8ece-b1aca03a8bbd should have been found as a duplicate.");
 				Assert.That(xmlBep.ListOfDuplicateGuids.Contains("f1ac9eab-5f8c-41cf-b234-e53405aaaac5, classname: PartOfSpeech"), "The guid f1ac9eab-5f8c-41cf-b234-e53405aaaac5 should have been found as a duplicate.");
+			}
+		}
+
+		/// <summary>
+		/// Tests that we successfully handle a closing tag which spans the buffer boundary.
+		/// </summary>
+		[Test]
+		public void ClosingTagSpansBufferTest()
+		{
+			int numCharsInClosingTag = kClosingTag.Length;
+			string testDataPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "FDO/FDOTests/TestData", "ClosingTagSpansBuffer.fwdata");
+			var numCharsInFile = (int) new FileInfo(testDataPath).Length;
+
+			// Try each edge case
+			int bufferSize = numCharsInFile - numCharsInClosingTag;
+			Assert.DoesNotThrow(() => RunElementReaderWithSpecifiedBufferSize(testDataPath, bufferSize),
+				"Final buffer starts with beginning of closing tag - edge case not handled");
+
+			bufferSize = numCharsInFile - numCharsInClosingTag + 1;
+			Assert.DoesNotThrow(() => RunElementReaderWithSpecifiedBufferSize(testDataPath, bufferSize),
+				"Penultimate buffer ends with beginning of closing tag - edge case not handled");
+
+			bufferSize = numCharsInFile - 1;
+			Assert.DoesNotThrow(() => RunElementReaderWithSpecifiedBufferSize(testDataPath, bufferSize),
+				"Final buffer starts with end of closing tag - edge case not handled");
+
+			bufferSize = numCharsInFile;
+			Assert.DoesNotThrow(() => RunElementReaderWithSpecifiedBufferSize(testDataPath, bufferSize),
+				"Penultimate buffer ends with end of closing tag - edge case not handled");
+		}
+
+		private void RunElementReaderWithSpecifiedBufferSize(string projPath, int bufferSize)
+		{
+			using (var er = new ElementReader("<rt ", kClosingTag, projPath, bytes => { }, bufferSize))
+			{
+				er.Run();
 			}
 		}
 	}
@@ -750,7 +791,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		public MockXMLBackendProvider(FdoCache cache, string projName):
 			base(cache, new IdentityMap((IFwMetaDataCacheManaged)cache.MetaDataCache),
 			new CmObjectSurrogateFactory(cache), (IFwMetaDataCacheManagedInternal)cache.MetaDataCache,
-			new FdoDataMigrationManager())
+			new FdoDataMigrationManager(), new DummyFdoUI(), FwDirectoryFinder.FdoDirectories)
 		{
 			Project = projName;
 			Cache = cache;
@@ -769,7 +810,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			ProjectId = new TestProjectId(FDOBackendProviderType.kXML, Project);
 			// This will throw an UnauthorizedAccessException because of the
 			// StartupInternalWithDataMigrationIfNeeded() override below
-			StartupExtantLanguageProject(ProjectId, false, new DummyProgressDlg());
+			StartupExtantLanguageProject(ProjectId, false, new DummyProgressDlg(), false);
 		}
 
 		/// <summary/>
@@ -790,9 +831,288 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		{
 		}
 
-		protected override void StartupInternalWithDataMigrationIfNeeded(IThreadedProgress progressDlg)
+		protected override void StartupInternalWithDataMigrationIfNeeded(IThreadedProgress progressDlg, bool forbidDataMigration)
 		{
 			throw new UnauthorizedAccessException();
+		}
+	}
+
+	/// ----------------------------------------------------------------------------------------
+	/// <summary>
+	/// Base class for testing the FdoCache with the FDOBackendProviderType.kSharedXML
+	/// backend provider.
+	/// </summary>
+	/// ----------------------------------------------------------------------------------------
+	[TestFixture]
+	public sealed class SharedXMLTests : PersistingBackendProviderTestBase
+	{
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Override to create and load a very basic cache.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		protected override FdoCache CreateCache()
+		{
+			SharedXMLBackendProvider.CommitLogFileSize = 102400;
+			IProjectIdentifier projectID = ProjectID;
+			if (!m_internalRestart)
+			{
+				if (File.Exists(projectID.Path))
+					File.Delete(projectID.Path);
+			}
+			return BootstrapSystem(projectID, m_loadType);
+		}
+
+		private IProjectIdentifier ProjectID
+		{
+			get
+			{
+				const string projName = "TestLangProj-test";
+				string filename = Path.Combine(FwDirectoryFinder.ProjectsDirectory,
+					Path.Combine(projName, FdoFileHelper.GetXmlDataFileName(projName)));
+				return new TestProjectId(FDOBackendProviderType.kSharedXMLWithMemoryOnlyWsMgr, filename);
+			}
+		}
+
+		private FdoCache CreateOtherCache()
+		{
+			FdoCache retval = FdoCache.CreateCacheFromExistingData(ProjectID, "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new DummyProgressDlg());
+			var dataSetup = retval.ServiceLocator.GetInstance<IDataSetup>();
+			dataSetup.LoadDomain(m_loadType);
+			return retval;
+		}
+
+		/// <summary>
+		/// Tests sequential changes by two caches on the same project.
+		/// </summary>
+		[Test]
+		public void SequentialChanges()
+		{
+			Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+			Cache.ServiceLocator.GetInstance<IDataStorer>().CompleteAllCommits();
+			using (FdoCache otherCache = CreateOtherCache())
+			{
+				ILexEntry entry1 = null;
+				NonUndoableUnitOfWorkHelper.Do(Cache.ServiceLocator.ActionHandler, () =>
+				{
+					IMoMorphType stemType = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
+					entry1 = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(stemType, Cache.TsStrFactory.MakeString("form1", Cache.DefaultVernWs),
+						Cache.TsStrFactory.MakeString("gloss1", Cache.DefaultAnalWs), new SandboxGenericMSA());
+				});
+				Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+
+				ILexEntry otherEntry1;
+				Assert.That(otherCache.ServiceLocator.GetInstance<ILexEntryRepository>().TryGetObject(entry1.Guid, out otherEntry1), Is.False);
+				otherCache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+
+				Assert.That(otherCache.ServiceLocator.GetInstance<ILexEntryRepository>().TryGetObject(entry1.Guid, out otherEntry1), Is.True);
+				Assert.That(otherEntry1.LexemeFormOA.ShortName, Is.EqualTo(entry1.LexemeFormOA.ShortName));
+				Assert.That(otherEntry1.SensesOS[0].ShortName, Is.EqualTo(entry1.SensesOS[0].ShortName));
+
+				ILexEntry otherEntry2 = null;
+				NonUndoableUnitOfWorkHelper.Do(otherCache.ServiceLocator.ActionHandler, () =>
+				{
+					IMoMorphType stemType = otherCache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
+					otherEntry2 = otherCache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(stemType, otherCache.TsStrFactory.MakeString("form2", otherCache.DefaultVernWs),
+						otherCache.TsStrFactory.MakeString("gloss2", otherCache.DefaultAnalWs), new SandboxGenericMSA());
+				});
+				otherCache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+
+				ILexEntry entry2;
+				Assert.That(Cache.ServiceLocator.GetInstance<ILexEntryRepository>().TryGetObject(otherEntry2.Guid, out entry2), Is.False);
+				Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+
+				Assert.That(Cache.ServiceLocator.GetInstance<ILexEntryRepository>().TryGetObject(otherEntry2.Guid, out entry2), Is.True);
+				Assert.That(entry2.LexemeFormOA.ShortName, Is.EqualTo(otherEntry2.LexemeFormOA.ShortName));
+				Assert.That(entry2.SensesOS[0].ShortName, Is.EqualTo(otherEntry2.SensesOS[0].ShortName));
+			}
+		}
+
+		/// <summary>
+		/// Tests simultaneous changes by two caches on the same project.
+		/// </summary>
+		[Test]
+		public void SimultaneousChanges()
+		{
+			Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+			Cache.ServiceLocator.GetInstance<IDataStorer>().CompleteAllCommits();
+			using (FdoCache otherCache = CreateOtherCache())
+			{
+				ILexEntry entry1 = null;
+				NonUndoableUnitOfWorkHelper.Do(Cache.ServiceLocator.ActionHandler, () =>
+				{
+					IMoMorphType stemType = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
+					entry1 = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(stemType, Cache.TsStrFactory.MakeString("form1", Cache.DefaultVernWs),
+						Cache.TsStrFactory.MakeString("gloss1", Cache.DefaultAnalWs), new SandboxGenericMSA());
+				});
+
+				ILexEntry otherEntry2 = null;
+				NonUndoableUnitOfWorkHelper.Do(otherCache.ServiceLocator.ActionHandler, () =>
+				{
+					IMoMorphType stemType = otherCache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
+					otherEntry2 = otherCache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(stemType, otherCache.TsStrFactory.MakeString("form2", otherCache.DefaultVernWs),
+						otherCache.TsStrFactory.MakeString("gloss2", otherCache.DefaultAnalWs), new SandboxGenericMSA());
+				});
+
+				Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+
+				ILexEntry otherEntry1;
+				Assert.That(otherCache.ServiceLocator.GetInstance<ILexEntryRepository>().TryGetObject(entry1.Guid, out otherEntry1), Is.False);
+				otherCache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+
+				ILexEntry entry2;
+				Assert.That(Cache.ServiceLocator.GetInstance<ILexEntryRepository>().TryGetObject(otherEntry2.Guid, out entry2), Is.False);
+				Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+
+				Assert.That(otherCache.ServiceLocator.GetInstance<ILexEntryRepository>().TryGetObject(entry1.Guid, out otherEntry1), Is.True);
+				Assert.That(otherEntry1.LexemeFormOA.ShortName, Is.EqualTo(entry1.LexemeFormOA.ShortName));
+				Assert.That(otherEntry1.SensesOS[0].ShortName, Is.EqualTo(entry1.SensesOS[0].ShortName));
+
+				Assert.That(Cache.ServiceLocator.GetInstance<ILexEntryRepository>().TryGetObject(otherEntry2.Guid, out entry2), Is.True);
+				Assert.That(entry2.LexemeFormOA.ShortName, Is.EqualTo(otherEntry2.LexemeFormOA.ShortName));
+				Assert.That(entry2.SensesOS[0].ShortName, Is.EqualTo(otherEntry2.SensesOS[0].ShortName));
+			}
+		}
+
+		/// <summary>
+		/// Tests that renaming the project is not allowed when there are multiple caches using the same project.
+		/// </summary>
+		[Test]
+		public void RenameDatabaseNotAllowedWhenMultipleCaches()
+		{
+			Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+			Cache.ServiceLocator.GetInstance<IDataStorer>().CompleteAllCommits();
+			using (FdoCache otherCache = CreateOtherCache())
+			{
+				Assert.That(Cache.RenameDatabase("NewName"), Is.False);
+				Assert.That(otherCache.RenameDatabase("NewName"), Is.False);
+			}
+			Assert.That(Cache.RenameDatabase("NewName"), Is.True);
+			Assert.That(Cache.RenameDatabase("TestLangProj-test"), Is.True);
+		}
+
+		/// <summary>
+		/// Tests conflicting changes by two caches on the same project.
+		/// </summary>
+		[Test]
+		public void ConflictingChanges()
+		{
+			Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+			Cache.ServiceLocator.GetInstance<IDataStorer>().CompleteAllCommits();
+			using (FdoCache otherCache = CreateOtherCache())
+			{
+				ILexEntry entry1 = null;
+				NonUndoableUnitOfWorkHelper.Do(Cache.ServiceLocator.ActionHandler, () =>
+				{
+					IMoMorphType stemType = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
+					entry1 = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(stemType, Cache.TsStrFactory.MakeString("form1", Cache.DefaultVernWs),
+						Cache.TsStrFactory.MakeString("gloss1", Cache.DefaultAnalWs), new SandboxGenericMSA());
+				});
+				Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+				otherCache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+
+				ILexEntry otherEntry1;
+				Assert.That(otherCache.ServiceLocator.GetInstance<ILexEntryRepository>().TryGetObject(entry1.Guid, out otherEntry1), Is.True);
+				NonUndoableUnitOfWorkHelper.Do(otherCache.ServiceLocator.ActionHandler, () =>
+				{
+					otherEntry1.CitationForm.set_String(otherCache.DefaultVernWs, "othercitation");
+				});
+				otherCache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+
+				NonUndoableUnitOfWorkHelper.Do(Cache.ServiceLocator.ActionHandler, () =>
+				{
+					entry1.CitationForm.set_String(Cache.DefaultVernWs, "citation");
+				});
+				var ui = (DummyFdoUI) Cache.ServiceLocator.GetInstance<IFdoUI>();
+				ui.Reset();
+				Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+				// the first in should win
+				Assert.That(entry1.CitationForm.VernacularDefaultWritingSystem.Text, Is.EqualTo("othercitation"));
+				// check that the user was prompted about conflicting changes
+				Assert.That(ui.ConflictingSaveOccurred, Is.True);
+			}
+		}
+
+		/// <summary>
+		/// Tests shutting down the master cache and letting the slave take over.
+		/// </summary>
+		[Test]
+		public void SwitchMasters()
+		{
+			Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+			Cache.ServiceLocator.GetInstance<IDataStorer>().CompleteAllCommits();
+			Guid otherEntryGuid1;
+			using (FdoCache otherCache = CreateOtherCache())
+			{
+				DisposeEverythingButBase();
+				ILexEntry otherEntry1 = null;
+				NonUndoableUnitOfWorkHelper.Do(otherCache.ServiceLocator.ActionHandler, () =>
+				{
+					IMoMorphType stemType = otherCache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
+					otherEntry1 = otherCache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(stemType, otherCache.TsStrFactory.MakeString("form1", otherCache.DefaultVernWs),
+						otherCache.TsStrFactory.MakeString("gloss1", otherCache.DefaultAnalWs), new SandboxGenericMSA());
+				});
+				otherEntryGuid1 = otherEntry1.Guid;
+				otherCache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+			}
+
+			RestartCache(false);
+			ILexEntry entry1;
+			Assert.That(Cache.ServiceLocator.GetInstance<ILexEntryRepository>().TryGetObject(otherEntryGuid1, out entry1), Is.True);
+			Assert.That(entry1.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("form1"));
+			Assert.That(entry1.SensesOS[0].Gloss.AnalysisDefaultWritingSystem.Text, Is.EqualTo("gloss1"));
+		}
+
+		/// <summary>
+		/// Tests wrapping around the internal commit log circular buffer.
+		/// </summary>
+		[Test]
+		public void WrapAroundCommitLogBuffer()
+		{
+			// totally reset project
+			SetupEverythingButBase();
+
+			// add some commit records to log, so that the log will wrap around
+			int i;
+			for (i = 0; i < 5; i++)
+			{
+				NonUndoableUnitOfWorkHelper.Do(Cache.ServiceLocator.ActionHandler, () =>
+				{
+					IMoMorphType stemType = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
+					ILexEntry entry1 = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(stemType, Cache.TsStrFactory.MakeString("form1", Cache.DefaultVernWs),
+						Cache.TsStrFactory.MakeString("gloss1", Cache.DefaultAnalWs), new SandboxGenericMSA());
+				});
+				Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+			}
+			Cache.ServiceLocator.GetInstance<IDataStorer>().CompleteAllCommits();
+			Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+			using (FdoCache otherCache = CreateOtherCache())
+			{
+				// add commit records until the log fills up
+				// once the log is full, we know that the internal buffer has wrapped around
+				while (true)
+				{
+					NonUndoableUnitOfWorkHelper.Do(Cache.ServiceLocator.ActionHandler, () =>
+					{
+						IMoMorphType stemType = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
+						ILexEntry entry1 = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(stemType, Cache.TsStrFactory.MakeString("form1", Cache.DefaultVernWs),
+							Cache.TsStrFactory.MakeString("gloss1", Cache.DefaultAnalWs), new SandboxGenericMSA());
+					});
+					try
+					{
+						Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+					}
+					catch (InvalidOperationException)
+					{
+						break;
+					}
+					i++;
+				}
+				// the other cache will now read the wrapped around commit log buffer
+				otherCache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+
+				Assert.That(otherCache.ServiceLocator.GetInstance<ILexEntryRepository>().GetHomographs("form1").Count, Is.EqualTo(i));
+			}
 		}
 	}
 }

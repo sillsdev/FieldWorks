@@ -79,6 +79,15 @@ namespace SIL.HermitCrab {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Excluded.
+        /// </summary>
+        internal static string kstidExcludedMorphCooccurrence {
+            get {
+                return ResourceManager.GetString("kstidExcludedMorphCooccurrence", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; field is not defined in &apos;{1}&apos; {2}..
         /// </summary>
         internal static string kstidFieldNotDefined {
@@ -250,6 +259,15 @@ namespace SIL.HermitCrab {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Required.
+        /// </summary>
+        internal static string kstidRequiredMorphCooccurrence1 {
+            get {
+                return ResourceManager.GetString("kstidRequiredMorphCooccurrence1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Simultaneous phonological rule ordering is currently not supported..
         /// </summary>
         internal static string kstidSimultOrderNotSupported {
@@ -291,6 +309,15 @@ namespace SIL.HermitCrab {
         internal static string kstidTraceLexLookup {
             get {
                 return ResourceManager.GetString("kstidTraceLexLookup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Morpheme Co-occurrence blocked [Type: {0}, Usage:{1},  Others:{2}, Adjacency:{3}].
+        /// </summary>
+        internal static string kstidTraceMorphemeCooccurrence {
+            get {
+                return ResourceManager.GetString("kstidTraceMorphemeCooccurrence", resourceCulture);
             }
         }
         

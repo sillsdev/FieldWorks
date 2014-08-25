@@ -303,7 +303,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 						AppendItem(tmp, FwCoreDlgControls.kstidSchema, scheme.ToString());
 					}
 					if (m_bulletInfo.Value.FontInfo.IsAnyExplicit)
-						AppendItem(tmp, m_bulletInfo.Value.FontInfo.ToString());
+						AppendItem(tmp, m_bulletInfo.Value.FontInfo.ToString(false));
 				}
 				else
 				{
@@ -321,7 +321,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 							GetNumberSchemeNameForType(m_bulletInfo.Value.m_numberScheme));
 					}
 					if (m_bulletInfo.Value.FontInfo.IsAnyExplicit)
-						AppendItem(tmp, m_bulletInfo.Value.FontInfo.ToString());
+						AppendItem(tmp, m_bulletInfo.Value.FontInfo.ToString(false));
 				}
 
 				if (tmp.Length > 0)
@@ -374,7 +374,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 					var ws = m_style.Cache.ServiceLocator.WritingSystemManager.Get(wsInfo.Key);
 					text.Append(ws.DisplayLabel);
 					text.Append(": ");
-					text.Append(wsInfo.Value.ToString());
+					text.Append(wsInfo.Value.ToString(false));
 					text.AppendLine();
 				}
 			}

@@ -21,7 +21,7 @@ namespace unitpp
 #ifdef WIN32
 		ModuleEntry::DllMain(0, DLL_PROCESS_ATTACH);
 #endif
-		CoInitialize(NULL);
+		CheckHr(::OleInitialize(NULL));
 		RedirectRegistry();
 		StrUtil::InitIcuDataDir();
 	}
@@ -30,6 +30,13 @@ namespace unitpp
 #ifdef WIN32
 		ModuleEntry::DllMain(0, DLL_PROCESS_DETACH);
 #endif
-		CoUninitialize();
+		::OleUninitialize();
 	}
+}
+
+namespace TestFwKernel
+{
+	int g_wsEng = 0;
+	int g_wsTest = 0;
+	int g_wsTest2 = 0;
 }

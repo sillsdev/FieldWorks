@@ -139,7 +139,7 @@ namespace SIL.FieldWorks.TE
 			List<int> booksPresent = null;
 			try
 			{
-				booksPresent = m_importSettings.BooksForProject;
+				booksPresent = m_importSettings.BooksForProject();
 			}
 			catch
 			{
@@ -479,8 +479,8 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		private void InitializeStartAndEndRefControls()
 		{
-			scrPsgFrom.Initialize(StartRef.Book, m_importSettings.BooksForProject.ToArray());
-			scrPsgTo.Initialize(EndRef.Book, m_importSettings.BooksForProject.ToArray());
+			scrPsgFrom.Initialize(StartRef.Book, m_importSettings.BooksForProject().ToArray());
+			scrPsgTo.Initialize(EndRef.Book, m_importSettings.BooksForProject().ToArray());
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -599,8 +599,12 @@ namespace SIL.FieldWorks.TE
 		{
 			get
 			{
-				if (m_importSettings != null && m_importSettings.BooksForProject.Count > 0)
-					return m_importSettings.BooksForProject[0];
+				if (m_importSettings != null)
+				{
+					List<int> books = m_importSettings.BooksForProject();
+					if (books.Count > 0)
+						return books[0];
+				}
 
 				return ScrReference.StartOfBible(m_scr.Versification).Book;
 			}
@@ -615,8 +619,12 @@ namespace SIL.FieldWorks.TE
 		{
 			get
 			{
-				if (m_importSettings != null && m_importSettings.BooksForProject.Count > 0)
-					return m_importSettings.BooksForProject[m_importSettings.BooksForProject.Count - 1];
+				if (m_importSettings != null)
+				{
+					List<int> books = m_importSettings.BooksForProject();
+					if (books.Count > 0)
+						return books[books.Count - 1];
+				}
 
 				return ScrReference.EndOfBible(m_scr.Versification).Book;
 			}

@@ -21,7 +21,6 @@ using System.Xml;
 
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils; // Needed for Set class.
-using SIL.FieldWorks.Common.FwUtils; // for LanguageDefinitionFactory
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl;
@@ -82,7 +81,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Return LinkedFilesRootDir if explicitly set, otherwise FWDataDirectory.
+		/// Return LinkedFilesRootDir if explicitly set, otherwise DataDirectory.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[ModelProperty(CellarPropertyType.Unicode, 6001042, "string")]
@@ -91,14 +90,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				return String.IsNullOrEmpty(LinkedFilesRootDir_Generated)
-					? Path.Combine(m_cache.ProjectId.SharedProjectFolder, DirectoryFinder.ksLinkedFilesDir)
-					: DirectoryFinderRelativePaths.GetLinkedFilesFullPathFromRelativePath(LinkedFilesRootDir_Generated,
-						m_cache.ProjectId.SharedProjectFolder);
+					? Path.Combine(m_cache.ProjectId.SharedProjectFolder, FdoFileHelper.ksLinkedFilesDir)
+					: LinkedFilesRelativePathHelper.GetLinkedFilesFullPathFromRelativePath(Services.GetInstance<IFdoDirectories>().ProjectsDirectory,
+					LinkedFilesRootDir_Generated, m_cache.ProjectId.SharedProjectFolder);
 			}
 			set
 			{
-				string relativePath = DirectoryFinderRelativePaths.GetLinkedFilesRelativePathFromFullPath(value,
-					m_cache.ProjectId.SharedProjectFolder, ShortName);
+				string relativePath = LinkedFilesRelativePathHelper.GetLinkedFilesRelativePathFromFullPath(Services.GetInstance<IFdoDirectories>().ProjectsDirectory,
+					value, m_cache.ProjectId.SharedProjectFolder, ShortName);
 
 				LinkedFilesRootDir_Generated = relativePath;
 			}
@@ -144,7 +143,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 				// Get regular texts.
 
-				if (FwUtils.IsOkToDisplayScriptureIfPresent && TranslatedScriptureOA != null)
+				if (TranslatedScriptureOA != null)
 				{
 					// TE installed, so also get them from Sripture.
 					foreach (var book in TranslatedScriptureOA.ScriptureBooksOS)

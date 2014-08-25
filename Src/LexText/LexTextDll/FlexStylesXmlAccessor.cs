@@ -2,6 +2,7 @@ using System;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.LexText
 {
@@ -38,7 +39,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// -------------------------------------------------------------------------------------
 		/// <summary>
 		/// Required implementation of abstract method gives name of the Flex styles sheet
-		/// resource</summary>
+		/// resource
 		/// </summary>
 		/// -------------------------------------------------------------------------------------
 		protected override string ResourceName
@@ -101,7 +102,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// <param name="lp">The language project</param>
 		/// <param name="progressDlg">The progress dialog.</param>
 		/// ------------------------------------------------------------------------------------
-		public static void EnsureCurrentStylesheet(ILangProject lp, IProgress progressDlg)
+		public static void EnsureCurrentStylesheet(ILangProject lp, IThreadedProgress progressDlg)
 		{
 			// We don't need to establish a NonUndoableUnitOfWork here because caller has already
 			// done it and if not, the internal code of StylesXmlAccessor will do it for us.

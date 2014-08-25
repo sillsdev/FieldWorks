@@ -349,7 +349,7 @@ namespace SIL.FieldWorks.XWorks
 																					(ISilDataAccessManaged)Cache.MainCacheAccessor,
 																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			string defaultRoot =
-				Path.Combine(Path.Combine(DirectoryFinder.DefaultConfigurations, "Dictionary"), "Root.xml");
+				Path.Combine(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary"), "Root.xml");
 			var entry = CreateInterestingLexEntry();
 			var dictionaryModel = new DictionaryConfigurationModel(defaultRoot, Cache);
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))

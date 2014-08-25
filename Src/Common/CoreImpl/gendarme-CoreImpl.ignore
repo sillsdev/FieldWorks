@@ -7,3 +7,5 @@ R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
 M: System.Collections.IEnumerator SIL.CoreImpl.KernelExtensions/<GetAllEmbeddedObjectGuids>*::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SIL.CoreImpl.KernelExtensions/<Runs>*::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SIL.CoreImpl.TsRunPart/<Words>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.CoreImpl.StringSearcher`1/SortKeyIndex/<GetItems>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.CoreImpl.StringSearcher`1/<GetWsStrings>*::System.Collections.IEnumerable.GetEnumerator()

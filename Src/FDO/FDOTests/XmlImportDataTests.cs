@@ -21,7 +21,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Test.TestUtils;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -48,7 +47,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			m_now = DateTime.Now;
 			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(
-				new TestProjectId(FDOBackendProviderType.kMemoryOnly, "MemoryOnly.mem"), "en", "fr", "en", new ThreadHelper());
+				new TestProjectId(FDOBackendProviderType.kMemoryOnly, "MemoryOnly.mem"), "en", "fr", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories);
 			IDataSetup dataSetup = m_cache.ServiceLocator.GetInstance<IDataSetup>();
 			dataSetup.LoadDomain(BackendBulkLoadDomain.All);
 			if (m_cache.LangProject != null)
@@ -76,7 +75,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			if (m_cache != null)
 			{
-				m_cache.ThreadHelper.Dispose();
 				m_cache.Dispose();
 				m_cache = null;
 			}
@@ -161,8 +159,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(0, m_cache.LangProject.AnthroListOA.PossibilitiesOS.Count);
 			Assert.AreEqual(0, m_cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Count);
 			Assert.AreEqual(0, m_cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Count);
-			bool fOk = xid.ImportData(rdr, new StringWriter(sbLog), null);
-			Assert.IsTrue(fOk, "Import of one lexical entry succeeded.");
+			xid.ImportData(rdr, new StringWriter(sbLog), null);
 			DateTime dtLexNew = m_cache.LangProject.LexDbOA.DateCreated;
 			DateTime dt2 = new DateTime(1995, 12, 19, 10, 31, 25);
 			Assert.AreEqual(dt2, dtLexNew, "LexDb DateCreated changed to reflect import value.");
@@ -385,8 +382,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				))
 			{
 			StringBuilder sbLog = new StringBuilder();
-			bool fOk = xid.ImportData(rdr, new StringWriter(sbLog), null);
-			Assert.IsTrue(fOk, "Import of one LexEntry, one RreversalIndexEntry, and two WfiWordforms succeeded.");
+			xid.ImportData(rdr, new StringWriter(sbLog), null);
 			IWritingSystem wsEn = m_cache.ServiceLocator.WritingSystemManager.Get("en");
 			Assert.AreEqual(1, m_cache.LangProject.LexDbOA.ReversalIndexesOC.Count);
 			IReversalIndex revIdx = m_cache.LangProject.LexDbOA.ReversalIndexesOC.ToArray()[0];
@@ -497,7 +493,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void ImportData3()
 		{
 			XmlImportData xid = new XmlImportData(m_cache);
-			string sFwSrcDir = DirectoryFinder.FwSourceDirectory;
+			string sFwSrcDir = FwDirectoryFinder.SourceDirectory;
 			using (var rdr = new StringReader(
 				"<FwDatabase>" + Environment.NewLine +
 				"<LangProject>" + Environment.NewLine +
@@ -868,8 +864,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				))
 			{
 			StringBuilder sbLog = new StringBuilder();
-			bool fOk = xid.ImportData(rdr, new StringWriter(sbLog), null);
-			Assert.IsTrue(fOk, "Import of a bunch of stuff succeeded.");
+			xid.ImportData(rdr, new StringWriter(sbLog), null);
 			int wsEn = m_cache.WritingSystemFactory.GetWsFromStr("en");
 			int wsAme = m_cache.WritingSystemFactory.GetWsFromStr("qaa-x-ame");
 			Assert.AreEqual(0, m_cache.LangProject.LexDbOA.ReversalIndexesOC.Count);
@@ -1023,7 +1018,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		private void CheckFirstEntry(ILexEntry le, int wsEn, int wsAme)
 		{
-			string sFwSrcDir = DirectoryFinder.FwSourceDirectory;
+			string sFwSrcDir = FwDirectoryFinder.SourceDirectory;
 			Assert.AreEqual(1, le.LexemeFormOA.Form.StringCount);
 			Assert.AreEqual("an", le.LexemeFormOA.Form.get_String(wsAme).Text);
 			Assert.AreEqual("root", le.LexemeFormOA.MorphTypeRA.Name.get_String(wsEn).Text);
@@ -1373,8 +1368,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(0, m_cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Count);
 			Assert.AreEqual(0, m_cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Count);
 			StringBuilder sbLog = new StringBuilder();
-			bool fOk = xid.ImportData(rdr, new StringWriter(sbLog), null);
-			Assert.IsTrue(fOk, "Import of one lexical entry succeeded.");
+			xid.ImportData(rdr, new StringWriter(sbLog), null);
 			Assert.AreEqual(1, m_cache.LangProject.LexDbOA.Entries.Count());
 			ILexEntry le = m_cache.LangProject.LexDbOA.Entries.ToArray()[0];
 			int wsKal = m_cache.WritingSystemFactory.GetWsFromStr("qaa-x-kal");

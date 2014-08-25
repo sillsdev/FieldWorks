@@ -10,9 +10,7 @@ using FwRemoteDatabaseConnector;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Test.TestUtils;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -180,16 +178,15 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	{
 		// Get created a fresh for each unit test
 		private Db4oServerInfo m_db4OServerInfo;
-		private DummyFwRegistryHelper m_helper;
+		private bool m_sharedProject;
 
 		///<summary></summary>
 		[SetUp]
 		public void StartFwRemoteDatabaseConnector()
 		{
-			m_helper = new DummyFwRegistryHelper();
-			FwRegistryHelper.Manager.SetRegistryHelper(m_helper);
-			m_helper.DeleteAllSubTreesIfPresent();
-			RemotingServer.Start();
+			FdoTestHelper.SetupClientServerServices();
+			m_sharedProject = true;
+			RemotingServer.Start(FwDirectoryFinder.RemotingTcpServerConfigFile, FwDirectoryFinder.FdoDirectories, () => m_sharedProject, v => m_sharedProject = v);
 
 			var connectString = String.Format("tcp://{0}:{1}/FwRemoteDatabaseConnector.Db4oServerInfo",
 				"localhost", Db4OPorts.ServerPort);
@@ -200,7 +197,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[TearDown]
 		public void StopFwRemoteDatabaseConnector()
 		{
-			FwRegistryHelper.Manager.Reset();
 			m_db4OServerInfo = null;
 			RemotingServer.Stop();
 		}
@@ -209,13 +205,13 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void ListServers_UnknownNumberOfServers_ReturnsAllServersInProjectsDirectory()
 		{
-			int projectsCount = Directory.GetFiles(DirectoryFinder.ProjectsDirectory, "*" + FwFileExtensions.ksFwDataDb4oFileExtension,
+			int projectsCount = Directory.GetFiles(FwDirectoryFinder.ProjectsDirectory, "*" + FdoFileHelper.ksFwDataDb4oFileExtension,
 				SearchOption.AllDirectories).Count();
 
 			m_db4OServerInfo.RefreshServerList();
 
 			Assert.AreEqual(projectsCount, m_db4OServerInfo.ListServers().Count(),
-				String.Format("ListServer should return all the db4o projects in the DirectoryFinder.ProjectsDirectory : {0}", DirectoryFinder.ProjectsDirectory));
+				String.Format("ListServer should return all the db4o projects in the FwDirectoryFinder.ProjectsDirectory : {0}", FwDirectoryFinder.ProjectsDirectory));
 		}
 
 		///<summary></summary>
@@ -434,66 +430,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void IsLocalHost_NonLocalHost_ReturnsFalse()
 		{
 			Assert.IsFalse(m_db4OServerInfo.IsLocalHost("MyRemoteHost"));
-		}
-
-		/// <summary>
-		/// Tests how ProjectShared key was migrated from version 7.
-		/// </summary>
-		[Test]
-		public void AreProjectsSharedInternal_7Unset_NotMigrated()
-		{
-			// Setup
-			using(var version7Key = m_helper.SetupVersion7Settings())
-			{
-				// SUT
-				object dummy = Db4oServerInfo.AreProjectsShared_Internal;
-
-				// Verification
-				// Verify that the version 8 ProjectShared key is missing.
-				Assert.IsFalse(RegistryHelper.RegEntryExists(FwRegistryHelper.FieldWorksRegistryKey, null, "ProjectShared", out dummy));
-			}
-		}
-
-		/// <summary>
-		/// Tests how ProjectShared key was migrated from version 7.
-		/// </summary>
-		[Test]
-		public void AreProjectsSharedInternal_7UnsetDespiteExistingPath_NotMigrated()
-		{
-			// Setup
-			using(m_helper.SetupVersion7ProjectSharedSettingLocation())
-			using(var version7Key = m_helper.SetupVersion7Settings())
-			{
-				// SUT
-				object dummy = Db4oServerInfo.AreProjectsShared_Internal;
-
-				// Verification
-				// Verify that the version 8 ProjectShared key is missing.
-				Assert.IsFalse(RegistryHelper.RegEntryExists(FwRegistryHelper.FieldWorksRegistryKey, null, "ProjectShared", out dummy));
-			}
-		}
-
-		/// <summary>
-		/// Tests how ProjectShared key was migrated from version 7.
-		/// </summary>
-		[Test]
-		public void AreProjectsSharedInternal_7Set_Migrated()
-		{
-			// Setup
-			using(m_helper.SetupVersion7ProjectSharedSetting())
-			using(var version7Key = m_helper.SetupVersion7Settings())
-			{
-				object projectsSharedValue;
-				// Verify that the version 8 ProjectShared key is missing before migration
-				Assert.IsFalse(RegistryHelper.RegEntryExists(FwRegistryHelper.FieldWorksRegistryKey, null, "ProjectShared", out projectsSharedValue));
-				// SUT
-				projectsSharedValue = Db4oServerInfo.AreProjectsShared_Internal;
-
-				// Verification
-				// Verify that the version 8 ProjectShared key is set after migration.
-				Assert.IsTrue(RegistryHelper.RegEntryExists(FwRegistryHelper.FieldWorksRegistryKey, null, "ProjectShared", out projectsSharedValue));
-				Assert.IsTrue(bool.Parse((string)projectsSharedValue));
-			}
 		}
 	}
 }

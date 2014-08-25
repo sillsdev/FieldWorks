@@ -5,7 +5,6 @@ using System.Linq;
 using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.Utils;
 
@@ -652,6 +651,16 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			/// Gather the lists of modified etc. objects that must be saved. (This is put in the interface just for testing.)
 			/// </summary>
 			public void GatherChanges(HashSet<ICmObjectId> newbies, HashSet<ICmObjectOrSurrogate> dirtballs, HashSet<ICmObjectId> goners)
+			{
+				throw new NotImplementedException();
+			}
+
+			public IReconcileChanges CreateReconciler(List<ICmObjectSurrogate> foreignNewbies, List<ICmObjectSurrogate> foreignDirtballs, List<ICmObjectId> foreignGoners)
+			{
+				throw new NotImplementedException();
+			}
+
+			public void ConflictingChanges(IReconcileChanges pendingReconciliation)
 			{
 				throw new NotImplementedException();
 			}

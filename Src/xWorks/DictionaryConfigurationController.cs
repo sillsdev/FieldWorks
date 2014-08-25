@@ -437,13 +437,13 @@ namespace SIL.FieldWorks.XWorks
 		internal string GetProjectConfigLocationForPath(string filePath, Mediator mediator)
 		{
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
-			var projectConfigDir = DirectoryFinder.GetConfigSettingsDir(cache.ProjectId.ProjectFolder);
+			var projectConfigDir = FdoFileHelper.GetConfigSettingsDir(cache.ProjectId.ProjectFolder);
 			if(filePath.StartsWith(projectConfigDir))
 			{
 				return filePath;
 			}
 			var detailedConfig =
-				filePath.Substring(DirectoryFinder.DefaultConfigurations.Length + 1);
+				filePath.Substring(FwDirectoryFinder.DefaultConfigurations.Length + 1);
 			return Path.Combine(projectConfigDir, detailedConfig);
 		}
 

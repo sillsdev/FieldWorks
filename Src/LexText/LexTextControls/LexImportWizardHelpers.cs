@@ -566,7 +566,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		public void UpdateLexFieldsWithCustomFields(Sfm2Xml.ILexImportFields customFields)
 		{
 			m_LexFields = customFields as Sfm2Xml.LexImportFields;
-			string sRootDir = m_rootDir;	// SIL.Utils.DirectoryFinder.FWCodeDirectory;
+			string sRootDir = m_rootDir;	// SIL.Utils.FwDirectoryFinder.CodeDirectory;
 			if (!sRootDir.EndsWith(Path.DirectorySeparatorChar.ToString()))
 				sRootDir += Path.DirectorySeparatorChar;
 			string sImportFields = sRootDir + String.Format("Language Explorer{0}Import{0}ImportFields.xml", Path.DirectorySeparatorChar);
@@ -598,7 +598,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_DataInfo = new Sfm2Xml.SfmFileReader(m_dataFile);
 
 			// read in the Lex Import Fields
-			string sRootDir = SIL.Utils.DirectoryFinder.FWCodeDirectory;
+			string sRootDir = SIL.Utils.FwDirectoryFinder.CodeDirectory;
 			if (!sRootDir.EndsWith("\\"))
 				sRootDir += "\\";
 			string sImportFileds = sRootDir + "Language Explorer\\Import\\ImportFields.xml";

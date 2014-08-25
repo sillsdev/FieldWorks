@@ -6,11 +6,12 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Windows.Forms;
+using System.Timers;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.Common.FwUtils;
-using Timer = System.Windows.Forms.Timer;
+using SIL.Utils;
+using Timer = System.Timers.Timer;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 {
@@ -88,20 +89,19 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		}
 		public event EventHandler<SaveEventArgs> OnSave;
 
-		private readonly UserActivityMonitor m_monitor;
 		private DateTime m_lastSave = DateTime.Now;
 		private readonly Timer m_saveTimer = new Timer();
 
-		private bool m_fInSaveInternal = false;
+		private bool m_fInSaveInternal;
 
 		/// <summary>
 		/// Non-null if a Save has failed due to conflicting changes (client-server only).
 		/// No further Saves can be attempted until Refresh allows these changes to be reconciled.
 		/// </summary>
 		private IReconcileChanges m_pendingReconciliation;
-
 		private readonly IDataStorer m_dataStorer;
 		private readonly IdentityMap m_identityMap;
+		private readonly IFdoUI m_ui;
 		internal ICmObjectRepositoryInternal ObjectRepository
 		{
 			get;
@@ -150,24 +150,26 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		internal UnitOfWorkService(IDataStorer dataStorer, IdentityMap identityMap, ICmObjectRepositoryInternal objectRepository)
+		internal UnitOfWorkService(IDataStorer dataStorer, IdentityMap identityMap, ICmObjectRepositoryInternal objectRepository, IFdoUI ui)
 		{
 			if (dataStorer == null) throw new ArgumentNullException("dataStorer");
 			if (identityMap == null) throw new ArgumentNullException("identityMap");
 			if (objectRepository == null) throw new ArgumentNullException("objectRepository");
+			if (ui == null) throw new ArgumentNullException("ui");
 
 			m_dataStorer = dataStorer;
 			m_identityMap = identityMap;
 			ObjectRepository = objectRepository;
+			m_ui = ui;
 			CurrentProcessingState = FdoBusinessTransactionState.ReadyForBeginTask;
 			NonUndoableStack = (UndoStack)CreateUndoStack();
 			// Make a separate stack as the initial default. This should be mainly used in tests.
 			// It serves to keep undoable UOWs separate from non-undoable ones, the only things ever put on the NonUndoableStack.
 			m_currentUndoStack = m_activeUndoStack = (UndoStack)CreateUndoStack();
-			m_monitor = new UserActivityMonitor();
-			System.Windows.Forms.Application.AddMessageFilter(m_monitor);
+
+			m_saveTimer.SynchronizingObject = ui.SynchronizeInvoke;
 			m_saveTimer.Interval = 1000;
-			m_saveTimer.Tick += SaveOnIdle;
+			m_saveTimer.Elapsed += SaveOnIdle;
 			m_saveTimer.Start();
 		}
 
@@ -216,7 +218,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		}
 		#endregion
 
-		void SaveOnIdle(object sender, EventArgs e)
+		void SaveOnIdle(object sender, ElapsedEventArgs e)
 		{
 			lock (this)
 			{
@@ -241,7 +243,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				if (DateTime.Now - m_lastSave < TimeSpan.FromSeconds(10.0))
 					return;
 				// Nor if it's been less than 2s since the user did something. We don't want to interrupt continuous activity.
-				if (DateTime.Now - m_monitor.LastActivityTime < TimeSpan.FromSeconds(2.0))
+				if (DateTime.Now - m_ui.LastActivityTime < TimeSpan.FromSeconds(2.0))
 					return;
 
 				SaveInternal();
@@ -299,7 +301,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				bool fWaitForCommitLock = false;
 				if (newbies.Count != 0 || dirtballs.Count != 0 || goners.Count != 0)
 				{
-					fWaitForCommitLock = true;
 					// raise the OnSave event: something nontrivial is being saved.
 					bool undoable = false;
 					foreach (var stack in m_undoStacks)
@@ -315,32 +316,11 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 						(from id in newbies
 						 select (ICmObjectOrSurrogate)repo.GetObject(id)).Where(x => x != null));
 
-				if (m_dataStorer is IClientServerDataManager)
+
+				if (m_pendingReconciliation != null)
 				{
-					if (m_pendingReconciliation != null)
-					{
-						ShowConflictingSaveDialogBox();
-						return; // Don't try to save the changes we just reverted!
-					}
-					List<ICmObjectSurrogate> foreignNewbies;
-					List<ICmObjectSurrogate> foreignDirtballs;
-					List<ICmObjectId> foreignGoners;
-					var csm = (IClientServerDataManager)m_dataStorer;
-					while (csm.GetUnseenForeignChanges(out foreignNewbies, out foreignDirtballs, out foreignGoners, fWaitForCommitLock))
-					{
-						var reconciler = Reconciler(foreignNewbies, foreignDirtballs, foreignGoners);
-						if (reconciler.OkToReconcileChanges())
-						{
-							reconciler.ReconcileForeignChanges();
-							// And continue looping, in case there are by now MORE foreign changes!
-						}
-						else
-						{
-							m_pendingReconciliation = reconciler;
-							ShowConflictingSaveDialogBox();
-							return;
-						}
-					}
+					GetUserInputOnConflictingSave();
+					return; // Don't try to save the changes we just reverted!
 				}
 
 				// let the BEP determine if a commit should occur or not
@@ -349,7 +329,14 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					// TODO: What happens if BEP was not able to commit?
 					throw new InvalidOperationException("Could not save the data for some reason.");
 				}
-				foreach (var stack in m_undoStacks)
+				// the BEP might have found a conflicting change during the commit
+				if (m_pendingReconciliation != null)
+				{
+					GetUserInputOnConflictingSave();
+					return;
+				}
+
+				foreach (UndoStack stack in m_undoStacks)
 					stack.RecordSaved();
 			}
 			finally
@@ -358,28 +345,28 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			}
 		}
 
+		public void ConflictingChanges(IReconcileChanges pendingReconciliation)
+		{
+			m_pendingReconciliation = pendingReconciliation;
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Shows the conflicting save dialog box.
-		/// ENHANCE (TimS): We should not be showing a dialog box at this level. If we
-		/// really need to show it here, we should pass in the owning form instead of relying on
-		/// Form.ActiveForm since it can return null if no .Net forms have focus.
+		/// Gets user input on conflicting save
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void ShowConflictingSaveDialogBox()
+		private void GetUserInputOnConflictingSave()
 		{
-			using (ConflictingSaveDlg dlg = new ConflictingSaveDlg())
+			if (m_ui.ConflictingSave())
 			{
-			DialogResult result = dlg.ShowDialog(Form.ActiveForm);
-				if (result != DialogResult.OK)
-			RevertToSavedState();
+				RevertToSavedState();
 			}
 		}
 
 		private void RaiseSave(bool undoable)
 		{
 			if (OnSave != null)
-				OnSave(this, new SaveEventArgs() {UndoableChanges = undoable, Cache = ((CmObjectRepository)ObjectRepository).Cache});
+				OnSave(this, new SaveEventArgs {UndoableChanges = undoable, Cache = ((CmObjectRepository)ObjectRepository).Cache});
 		}
 
 		/// <summary>
@@ -434,7 +421,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// <summary>
 		/// A hook for testing.
 		/// </summary>
-		internal IReconcileChanges Reconciler( List<ICmObjectSurrogate> foreignNewbies,
+		public IReconcileChanges CreateReconciler( List<ICmObjectSurrogate> foreignNewbies,
 			List<ICmObjectSurrogate> foreignDirtballs, List<ICmObjectId> foreignGoners)
 		{
 			return new ChangeReconciler(this, foreignNewbies, foreignDirtballs, foreignGoners);
@@ -528,23 +515,28 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			// This is very likely to modify the UI, so if the UOW is not being done on the UI thread, we need
 			// to do at least this part on that thread. One known case is a task being done in the background
 			// thread of ProgressDialogWithTask.
-			((CmObjectRepository)ObjectRepository).Cache.ThreadHelper.Invoke(() =>
+			IVwNotifyChange[] subscribers = m_changeWatchers.ToArray();
+			ChangeInformation[] changes = subscribers.Length == 0 ? changesEnum.Where(ci => ci.HasNotifier).ToArray() : changesEnum.ToArray();
+			if (changes.Length == 0)
+				return;
+
+			m_ui.SynchronizeInvoke.Invoke(() =>
 			{
-				var subscribers = m_changeWatchers.ToArray();
-				var changes = changesEnum.ToList();
-				foreach (var sub in subscribers)
+				foreach (IVwNotifyChange sub in subscribers)
 				{
-					if (sub is IBulkPropChanged)
-						((IBulkPropChanged)sub).BeginBroadcastingChanges(changes.Count);
+					var bulkPropChanged = sub as IBulkPropChanged;
+					if (bulkPropChanged != null)
+						bulkPropChanged.BeginBroadcastingChanges(changes.Length);
 				}
 				foreach (ChangeInformation change in changes)
 				{
 					change.BroadcastChanges(SubscriberCanReceivePropChangeCallDelegate, subscribers);
 				}
-				foreach (var sub in subscribers)
+				foreach (IVwNotifyChange sub in subscribers)
 				{
-					if (sub is IBulkPropChanged)
-						((IBulkPropChanged)sub).EndBroadcastingChanges();
+					var bulkPropChanged = sub as IBulkPropChanged;
+					if (bulkPropChanged != null)
+						bulkPropChanged.EndBroadcastingChanges();
 				}
 			});
 		}
@@ -941,7 +933,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// <returns></returns>
 		public IActionHandler CreateUndoStack()
 		{
-			var result = new UndoStack(this);
+			var result = new UndoStack(this, m_ui);
 			m_undoStacks.Add(result);
 			return result;
 		}
@@ -1071,6 +1063,11 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 			m_cvIns = cvIns;
 			m_cvDel = cvDel;
 			m_notifier = notifier;
+		}
+
+		internal bool HasNotifier
+		{
+			get { return m_notifier != null; }
 		}
 
 		internal void BroadcastChanges(SubscriberCanReceivePropChangeCallDelegate subscriberChecker, IVwNotifyChange[] subscribers)

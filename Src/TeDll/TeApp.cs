@@ -12,7 +12,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Windows.Forms;
 using Microsoft.Win32;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
@@ -86,7 +86,7 @@ namespace SIL.FieldWorks.TE
 			base.DoApplicationInitialization(progressDlg);
 			CleanupRegistry();
 			CleanupOldFiles();
-			ScrReference.InitializeVersification(DirectoryFinder.TeFolder, false);
+			ScrReference.InitializeVersification(FwDirectoryFinder.TeFolder, false);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -159,7 +159,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="progressDlg">The progress dialog.</param>
 		/// <returns>True if the initialize was successful, false otherwise</returns>
 		/// ------------------------------------------------------------------------------------
-		public override bool InitCacheForApp(IProgress progressDlg)
+		public override bool InitCacheForApp(IThreadedProgress progressDlg)
 		{
 			if (!TeScrInitializer.Initialize(Cache, this, progressDlg))
 				return false;
@@ -195,7 +195,7 @@ namespace SIL.FieldWorks.TE
 #if !__MonoCS__
 		private static string WorkspaceLocation()
 		{
-			return Path.Combine(DirectoryFinder.ProjectsDirectory, WorkspaceFile);
+			return Path.Combine(FwDirectoryFinder.ProjectsDirectory, WorkspaceFile);
 		}
 #endif
 
@@ -277,7 +277,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		public override string ProductExecutableFile
 		{
-			get { return DirectoryFinder.TeExe; }
+			get { return FwDirectoryFinder.TeExe; }
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -397,7 +397,7 @@ namespace SIL.FieldWorks.TE
 			foreach (Form wnd in MainWindows)
 			{
 				if (!wnd.Enabled && wnd is FwMainWnd)
-					throw new FwStartupException(Properties.Resources.kstidProjectLocked);
+					throw new StartupException(Properties.Resources.kstidProjectLocked);
 			}
 			return NewTeMainWnd(wndCopyFrom);
 		}

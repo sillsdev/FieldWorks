@@ -15,9 +15,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.Validation;
 using SIL.Utils;
@@ -1242,7 +1240,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// <summary>
 		/// Clear the list of homograph information
 		/// </summary>
-		public void ResetHomographs(ProgressBar progressBar)
+		public void ResetHomographs(IProgress progressBar)
 		{
 			m_homographInfo = null; // GetHomographs() will rebuild the homograph list
 			Cache.LanguageProject.LexDbOA.ResetHomographNumbers(progressBar);
@@ -1385,7 +1383,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			Debug.Assert(cache != null);
 			var rgHomographs = new List<ILexEntry>();
 
-			morphType = HomographMorphType(cache, morphType);
+			var morphOrder = HomographMorphOrder(cache, morphType);
 
 			foreach (var le in entries)
 				{
@@ -1399,7 +1397,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 						var types = le.MorphTypes;
 						foreach (var mmt in types)
 						{
-							if (HomographMorphType(cache, mmt) == morphType)
+							if (HomographMorphOrder(cache, mmt) == morphOrder)
 							{
 								rgHomographs.Add(le);
 								// Only add it once, even if it has multiple morph type matches.
@@ -1419,24 +1417,199 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// Maps the specified morph type onto a canonical one that should be used in comparing two
 		/// entries to see whether they are homographs.
 		/// </summary>
-		public IMoMorphType HomographMorphType(FdoCache cache, IMoMorphType morphType)
+		public int HomographMorphOrder(FdoCache cache, IMoMorphType morphType)
 		{
-			IMoMorphTypeRepository morphTypeRep = cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>();
-			// TODO: what about entries with mixed morph types?
-			// Treat stems and roots as equivalent, bound or unbound, as well as entries with no
-			// idea what they are.
-			if (morphType == null ||
-				morphType.Guid == MoMorphTypeTags.kguidMorphBoundRoot ||
-					morphType.Guid == MoMorphTypeTags.kguidMorphBoundStem ||
-						morphType.Guid == MoMorphTypeTags.kguidMorphRoot ||
-							morphType.Guid == MoMorphTypeTags.kguidMorphParticle ||
-								morphType.Guid == MoMorphTypeTags.kguidMorphPhrase ||
-									morphType.Guid == MoMorphTypeTags.kguidMorphDiscontiguousPhrase ||
-										morphType.Guid == MoMorphTypeTags.kguidMorphClitic)
+			// Treat unknown type as stem.
+			if (morphType == null)
 			{
-				morphType = morphTypeRep.GetObject(MoMorphTypeTags.kguidMorphStem);
+				IMoMorphTypeRepository morphTypeRep =
+					cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>();
+				return morphTypeRep.GetObject(MoMorphTypeTags.kguidMorphStem).SecondaryOrder;
 			}
-			return morphType;
+			return morphType.SecondaryOrder;
+		}
+
+		/// <summary>
+		/// Find the list of LexEntry objects which conceivably match the given wordform.
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="tssWf"></param>
+		/// <param name="wfa"></param>
+		/// <param name="duplicates"></param>
+		/// <returns></returns>
+		public List<ILexEntry> FindEntriesForWordform(FdoCache cache, ITsString tssWf, IWfiAnalysis wfa, ref bool duplicates)
+		{
+			var entries = FindEntriesForWordformWorker(cache, tssWf, wfa, ref duplicates);
+
+			// if we do not find a match for the word then try converting it to lowercase and see if there
+			// is an entry in the lexicon for the Wordform in lowercase. This is needed for occurences of
+			// words which are capitalized at the beginning of sentences.  LT-7444 RickM
+			if (entries == null || entries.Count == 0)
+			{
+				//We need to be careful when converting to lowercase therefore use Icu.ToLower()
+				//get the WS of the tsString
+				int wsWf = TsStringUtils.GetWsAtOffset(tssWf, 0);
+				//use that to get the locale for the WS, which is used for
+				string wsLocale = cache.ServiceLocator.WritingSystemManager.Get(wsWf).IcuLocale;
+				string sLower = Icu.ToLower(tssWf.Text, wsLocale);
+				ITsTextProps ttp = tssWf.get_PropertiesAt(0);
+				ITsStrFactory tsf = TsStrFactoryClass.Create();
+				tssWf = tsf.MakeStringWithPropsRgch(sLower, sLower.Length, ttp);
+				entries = FindEntriesForWordformWorker(cache, tssWf, wfa, ref duplicates);
+			}
+			return entries;
+		}
+
+		public List<ILexEntry> FindEntriesForWordformWorker(FdoCache cache, ITsString tssWf, IWfiAnalysis wfa, ref bool duplicates)
+		{
+			if (tssWf == null)
+				return new List<ILexEntry>();
+
+			string wf = tssWf.Text;
+			if (string.IsNullOrEmpty(wf))
+				return new List<ILexEntry>();
+
+			int wsVern = TsStringUtils.GetWsAtOffset(tssWf, 0);
+
+			var entries = new Set<ILexEntry>();
+
+			// Get the entries from the matching wordform.
+			// Get matching wordform.
+			IWfiWordform[] matchingWordforms = cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances()
+				.Where(wrdfrm => wrdfrm.Form.get_String(wsVern).Text == wf).ToArray();
+
+			duplicates = matchingWordforms.Length > 1;
+
+			if (matchingWordforms.Length > 0)
+			{
+				if (wfa != null && matchingWordforms[0].AnalysesOC.Contains(wfa))
+				{
+					entries.AddRange(wfa.MorphBundlesOS
+							.Where(mb => mb.MorphRA != null)
+							.Select(mb => mb.MorphRA.OwnerOfClass<ILexEntry>()));
+				}
+				else
+				{
+					foreach (IWfiAnalysis analysis in matchingWordforms[0].AnalysesOC.Where(a => a.ApprovalStatusIcon == (int) Opinions.approves))
+					{
+						entries.AddRange(analysis.MorphBundlesOS
+							.Where(mb => mb.MorphRA != null)
+							.Select(mb => mb.MorphRA.OwnerOfClass<ILexEntry>()));
+					}
+				}
+			}
+			// Get the entries from the matching MoForms.
+			entries.AddRange(
+				cache.ServiceLocator.GetInstance<IMoFormRepository>().AllInstances()
+				.Where(mf => mf.Form.get_String(wsVern) != null && mf.Form.get_String(wsVern).Text == wf)
+				.Select(mf => mf.OwnerOfClass<ILexEntry>()));
+
+			// Get the entries from the citation form
+			entries.AddRange(
+				cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances()
+				.Where(entry => entry.CitationForm.get_String(wsVern) != null && entry.CitationForm.get_String(wsVern).Text == wf));
+
+			// Put the enrties in a List and sort it by the HomographNumber.
+			var retval = new List<ILexEntry>(entries);
+			retval.Sort(CompareEntriesByHomographNumber);
+			return retval;
+		}
+
+		private int CompareEntriesByHomographNumber(ILexEntry x, ILexEntry y)
+		{
+			return x == null
+					? (y == null ? 0 /* Both are null, so are equal */ : -1 /* x not being null is grater than y which is null */)
+					: (y == null
+						? 1 /* y being null is greater than x which is not null */
+						: (x.HomographNumber == y.HomographNumber
+							? 0 /* Neither are null, and homograph numbers are the same, so they are equal */
+							: (x.HomographNumber > y.HomographNumber
+								? 1 /* x is greater than x */
+								: -1 /* x is less than y */)));
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Find wordform given a cache and the string.
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="tssWf"></param>
+		/// <returns></returns>
+		/// ------------------------------------------------------------------------------------
+		public ILexEntry FindEntryForWordform(FdoCache cache, ITsString tssWf)
+		{
+			if (tssWf == null || tssWf.Length == 0)
+				return null;
+
+			var wsVern = TsStringUtils.GetWsAtOffset(tssWf, 0);
+			var icuEngine = cache.LanguageWritingSystemFactoryAccessor.get_CharPropEngine(wsVern);
+			var wf = icuEngine.ToLower(tssWf.Text);
+			ILexEntry matchingEntry = null;
+
+			// Check for Lexeme form.
+			matchingEntry = (
+				from e in cache.LanguageProject.LexDbOA.Entries
+				where e.LexemeFormOA != null && GetLowercaseStringFromMultiUnicodeSafely(icuEngine, e.LexemeFormOA.Form, wsVern) == wf
+				orderby e.HomographNumber
+				select e
+				).FirstOrDefault();
+
+			// Check for Citation form.
+			if (matchingEntry == null)
+				matchingEntry = (
+					from e in cache.LanguageProject.LexDbOA.Entries
+					where GetLowercaseStringFromMultiUnicodeSafely(icuEngine, e.CitationForm, wsVern) == wf
+					orderby e.HomographNumber
+					select e
+					).FirstOrDefault();
+
+			// Check for Alternate forms.
+			if (matchingEntry == null)
+				matchingEntry = (
+					from e in cache.LanguageProject.LexDbOA.Entries
+					where (
+						from af in e.AlternateFormsOS
+						where GetLowercaseStringFromMultiUnicodeSafely(icuEngine, af.Form, wsVern) == wf
+						select af
+						).FirstOrDefault() != null
+					orderby e.HomographNumber
+					select e
+					).FirstOrDefault();
+
+			// Look for the most commonly used analysis of the wordform.
+			if (matchingEntry == null)
+			{
+				IWfiWordform wordform;
+				if (cache.ServiceLocator.GetInstance<IWfiWordformRepository>().TryGetObject(tssWf, out wordform))
+				{
+					var guesser = new AnalysisGuessServices(cache);
+					var guess = guesser.GetBestGuess(wordform);
+					var analysis = guess as IWfiAnalysis;
+					if (guess is IWfiGloss)
+						analysis = guess.Owner as IWfiAnalysis;
+					if (analysis != null)
+					{
+						matchingEntry =
+							(from mb in analysis.MorphBundlesOS
+							 where mb.MorphRA is IMoStemAllomorph
+							 select mb.MorphRA.Owner).FirstOrDefault() as ILexEntry;
+					}
+				}
+			}
+
+			return matchingEntry;
+		}
+
+		private string GetLowercaseStringFromMultiUnicodeSafely(ILgCharacterPropertyEngine icuEngine, IMultiUnicode form, int ws)
+		{
+			if (form == null)
+				return string.Empty;
+
+			var formTsstring = form.get_String(ws);
+			if (formTsstring == null || formTsstring.Length == 0)
+				return string.Empty;
+
+			return icuEngine.ToLower(formTsstring.Text);
 		}
 	}
 	#endregion
@@ -1729,6 +1902,18 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				if (pub.Name == name)
 					return pub;
 			return null;
+		}
+	}
+	#endregion
+
+	#region TextTagRepository class
+	internal partial class TextTagRepository
+	{
+		public IEnumerable<ITextTag> GetByTextMarkupTag(ICmPossibility tag)
+		{
+			var tags = new HashSet<ICmPossibility> {tag};
+			tags.UnionWith(tag.SubPossibilitiesOS);
+			return AllInstances().Where(ttag => tags.Contains(ttag.TagRA));
 		}
 	}
 	#endregion

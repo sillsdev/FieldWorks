@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_helpTopicProvider = helpTopicProvider;
 
 			helpProvider = new HelpProvider();
-			helpProvider.HelpNamespace = DirectoryFinder.FWCodeDirectory + m_helpTopicProvider.GetHelpString("UserHelpFile");
+			helpProvider.HelpNamespace = FwDirectoryFinder.CodeDirectory + m_helpTopicProvider.GetHelpString("UserHelpFile");
 			helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 
@@ -194,7 +194,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// <parameters title="FieldWorks Project Utilities" filename="Language Explorer\Configuration\UtilityCatalogInclude.xml"/>
 			this.Text = XmlUtils.GetLocalizedAttributeValue(mediator.StringTbl, configurationParameters,
 				"title", "FieldWorks Project Utilities");
-			string utilsPathname = Path.Combine(DirectoryFinder.FWCodeDirectory,
+			string utilsPathname = Path.Combine(FwDirectoryFinder.CodeDirectory,
 			XmlUtils.GetManditoryAttributeValue(configurationParameters, "filename"));
 			// Get the folder path:
 			string utilsFolderName = Path.GetDirectoryName(utilsPathname);

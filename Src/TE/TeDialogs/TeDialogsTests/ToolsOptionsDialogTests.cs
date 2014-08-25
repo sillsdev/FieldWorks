@@ -13,6 +13,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using NUnit.Framework;
 using SIL.FieldWorks.Test.TestUtils;
+using SIL.Utils;
 using XCore;
 using SIL.CoreImpl;
 using System.Collections.Generic;
@@ -99,7 +100,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="progressDlg">The progress dialog.</param>
 		/// <returns>True if the initialization was successful, false otherwise</returns>
 		/// ------------------------------------------------------------------------------------
-		public override bool InitCacheForApp(IProgress progressDlg)
+		public override bool InitCacheForApp(IThreadedProgress progressDlg)
 		{
 			throw new NotImplementedException();
 		}

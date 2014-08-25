@@ -32,7 +32,7 @@ namespace XCore
 		{
 		}
 
-		public System.Windows.Forms.Control Init (System.Windows.Forms.Form window,  ImageCollection smallImages, ImageCollection largeImages, Mediator mediator)
+		public System.Windows.Forms.Control Init (System.Windows.Forms.Form window,  IImageCollection smallImages, IImageCollection largeImages, Mediator mediator)
 		{
 			m_window = window;
 			m_smallImages = smallImages; m_largeImages = largeImages;

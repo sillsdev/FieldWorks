@@ -61,9 +61,6 @@ Main template
 		 </languages>
 		 <types>
 			<xsl:call-template name="CommonTypes"/>
-			<type id="tGrammaticalGloss" font-variant="small-caps"/>
-			<type id="tWordPos"/>
-			<type id="tLiteralTranslation"/>
 		 </types>
 	  </lingPaper>
    </xsl:template>

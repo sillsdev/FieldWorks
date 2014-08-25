@@ -1,165 +1,143 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Xml;
+using System.Xml.Linq;
 using System.Xml.XPath;
 using System.Xml.Xsl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
-	public abstract class WordGrammarDebugger : ParserTraceBase
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="m_cache and m_mediator are references")]
+	public abstract class WordGrammarDebugger
 	{
+		private static ParserTraceUITransform s_pageTransform;
+		private static ParserTraceUITransform PageTransform
+		{
+			get
+			{
+				if (s_pageTransform == null)
+					s_pageTransform = new ParserTraceUITransform("FormatXAmpleWordGrammarDebuggerResult");
+				return s_pageTransform;
+			}
+		}
+
 		/// <summary>
 		/// Word Grammar step stack
 		/// </summary>
-		protected Stack<WordGrammarStepPair> m_XmlHtmlStack;
+		private readonly Stack<Tuple<XDocument, string>> m_xmlHtmlStack;
 
-		protected const string m_ksWordGrammarDebugger = "WordGrammarDebugger";
-
-		public WordGrammarDebugger()
-		{
-		}
 		/// <summary>
-		/// The real deal
+		/// the latest word grammar debugging step xml document
 		/// </summary>
-		/// <param name="mediator"></param>
-		public WordGrammarDebugger(Mediator mediator)
-			: base(mediator)
-		{
-			m_XmlHtmlStack = new Stack<WordGrammarStepPair>();
-		}
+		private XDocument m_wordGrammarDebuggerXml;
 
+		private readonly XslCompiledTransform m_intermediateTransform;
+		private readonly Mediator m_mediator;
+		private readonly FdoCache m_cache;
+
+		protected WordGrammarDebugger(Mediator mediator)
+		{
+			m_mediator = mediator;
+			m_cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
+			m_xmlHtmlStack = new Stack<Tuple<XDocument, string>>();
+			m_intermediateTransform = new XslCompiledTransform();
+			m_intermediateTransform.Load(Path.Combine(Path.GetTempPath(), m_cache.ProjectId.Name + "XAmpleWordGrammarDebugger.xsl"), new XsltSettings(true, false), new XmlUrlResolver());
+		}
 
 		/// <summary>
 		/// Initialize what is needed to perform the word grammar debugging and
 		/// produce an html page showing the results
 		/// </summary>
-		/// <param name="sNodeId">Id of the node to use</param>
-		/// <param name="sForm">the wordform being tried</param>
+		/// <param name="nodeId">Id of the node to use</param>
+		/// <param name="form">the wordform being tried</param>
+		/// <param name="lastUrl"></param>
 		/// <returns>temporary html file showing the results of the first step</returns>
-		public string SetUpWordGrammarDebuggerPage(string sNodeId, string sForm, string sLastURL)
+		public string SetUpWordGrammarDebuggerPage(string nodeId, string form, string lastUrl)
 		{
-			m_XmlHtmlStack.Push(new WordGrammarStepPair(null, sLastURL));
-			string sInitialAnalysisXml = CreateAnalysisXml(sNodeId, sForm);
-			string sHtmlPage = CreateWordDebuggerPage(sInitialAnalysisXml);
-			return sHtmlPage;
+			m_xmlHtmlStack.Push(Tuple.Create((XDocument) null, lastUrl));
+			var doc = new XDocument();
+			using (XmlWriter writer = doc.CreateWriter())
+				CreateAnalysisXml(writer, nodeId, form);
+			return CreateWordDebuggerPage(doc);
 		}
+
 		/// <summary>
 		/// Perform another step in the word grammar debugging process and
 		/// produce an html page showing the results
 		/// </summary>
-		/// <param name="sNodeId">Id of the selected node to use</param>
+		/// <param name="nodeId">Id of the selected node to use</param>
+		/// <param name="form"></param>
+		/// <param name="lastUrl"></param>
 		/// <returns>temporary html file showing the results of the next step</returns>
-		public string PerformAnotherWordGrammarDebuggerStepPage(string sNodeId, string sForm, string sLastURL)
+		public string PerformAnotherWordGrammarDebuggerStepPage(string nodeId, string form, string lastUrl)
 		{
-			m_XmlHtmlStack.Push(new WordGrammarStepPair(m_sWordGrammarDebuggerXmlFile, sLastURL));
-			string sNextXml = CreateSelectedWordGrammarXml(sNodeId, sForm);
-			string sHtmlPage = CreateWordDebuggerPage(sNextXml);
-			return sHtmlPage;
+			m_xmlHtmlStack.Push(Tuple.Create(m_wordGrammarDebuggerXml, lastUrl));
+			var doc = new XDocument();
+			using (XmlWriter writer = doc.CreateWriter())
+				CreateSelectedWordGrammarXml(writer, nodeId, form);
+			return CreateWordDebuggerPage(doc);
 		}
+
 		public string PopWordGrammarStack()
 		{
-			WordGrammarStepPair wgsp;
-			if (m_XmlHtmlStack.Count > 0)
+			if (m_xmlHtmlStack.Count > 0)
 			{
-				wgsp = m_XmlHtmlStack.Pop(); // get the previous one
-				m_sWordGrammarDebuggerXmlFile = wgsp.XmlFile;
-				return wgsp.HtmlFile;
+				Tuple<XDocument, string> wgsp = m_xmlHtmlStack.Pop();
+				m_wordGrammarDebuggerXml = wgsp.Item1;
+				return wgsp.Item2;
 			}
 			return "unknown";
 		}
-		protected string CreateAnalysisXml(string sNodeId, string sForm)
-		{
-			string sResult;
-			if (m_parseResult != null)
-			{
-				XmlDocument doc = new XmlDocument();
-				XmlNode wordNode = CreateXmlElement(doc, "word", doc);
-				XmlNode formNode = CreateXmlElement(doc, "form", wordNode);
-				formNode.InnerXml = sForm;
-				XmlNode seqNode = CreateXmlElement(doc, "seq", wordNode);
 
-				// following for debugging as needed
-				sResult = CreateTempFile("ParseResult", "xml");
-				m_parseResult.Save(sResult);
-				CreateMorphNodes(doc, seqNode, sNodeId);
-
-				sResult = CreateTempFile(CreateWordGrammarDebuggerFileName(), "xml");
-				doc.Save(sResult);
-			}
-			else
-				sResult = "error!";
-			return sResult;
-		}
-		private string CreateSelectedWordGrammarXml(string sNodeId, string sForm)
+		private void CreateAnalysisXml(XmlWriter writer, string nodeId, string form)
 		{
-			string sResult;
-			if (m_sWordGrammarDebuggerXmlFile != null)
-			{
-				XmlDocument lastDoc = new XmlDocument();
-				lastDoc.Load(m_sWordGrammarDebuggerXmlFile);
-				XmlDocument doc = new XmlDocument();
-				XmlNode wordNode = CreateXmlElement(doc, "word", doc);
-				XmlNode formNode = CreateXmlElement(doc, "form", wordNode);
-				formNode.InnerXml = sForm;
-				// Find the sNode'th seq node
-				string sSelect = "//seq[position()='" + sNodeId + "']";
-				XmlNode selectedSeqNode = lastDoc.SelectSingleNode(sSelect);
-				// create the "result so far node"
-				XmlNode resultSoFarNode = CreateXmlElement(doc, "resultSoFar", wordNode);
-				resultSoFarNode.InnerXml = selectedSeqNode.InnerXml;
-				// create the seq node
-				XmlNode seqNode = CreateXmlElement(doc, "seq", wordNode);
-				seqNode.InnerXml = selectedSeqNode.InnerXml;
-				// save result
-				sResult = CreateTempFile("SelectedWordGrammarXml", "xml");
-				doc.Save(sResult);
-			}
-			else
-				sResult = "error!";
-			return sResult;
+			writer.WriteStartElement("word");
+			writer.WriteElementString("form", form);
+			writer.WriteStartElement("seq");
+
+			WriteMorphNodes(writer, nodeId);
+
+			writer.WriteEndElement();
+			writer.WriteEndElement();
 		}
 
-		private string CreateWordDebuggerPage(string sXmlFile)
+		protected abstract void WriteMorphNodes(XmlWriter writer, string nodeId);
+
+		private void CreateSelectedWordGrammarXml(XmlWriter writer, string nodeId, string form)
+		{
+			writer.WriteStartElement("word");
+			writer.WriteElementString("form", form);
+
+			// Find the sNode'th seq node
+			Debug.Assert(m_wordGrammarDebuggerXml.Root != null);
+			XElement selectedSeqNode = m_wordGrammarDebuggerXml.Root.Elements("seq").ElementAt(int.Parse(nodeId, CultureInfo.InvariantCulture) - 1);
+			// create the "result so far node"
+			writer.WriteStartElement("resultSoFar");
+			foreach (XElement child in selectedSeqNode.Elements())
+				child.WriteTo(writer);
+			writer.WriteEndElement();
+			// create the seq node
+			selectedSeqNode.WriteTo(writer);
+			writer.WriteEndElement();
+		}
+
+		private string CreateWordDebuggerPage(XDocument xmlDoc)
 		{
 			// apply word grammar step transform file
-			string sXmlOutput = TransformToXml(sXmlFile);
-			m_sWordGrammarDebuggerXmlFile = sXmlOutput;
+			var output = new XDocument();
+			using (XmlWriter writer = output.CreateWriter())
+				m_intermediateTransform.Transform(xmlDoc.CreateNavigator(), writer);
+			m_wordGrammarDebuggerXml = output;
 			// format the result
-			string sOutput = TransformToHtml(sXmlOutput);
-			return sOutput;
-		}
-
-		private string CreateWordGrammarDebuggerFileName()
-		{
-			string sDepthLevel = m_XmlHtmlStack.Count.ToString();
-			return m_ksWordGrammarDebugger + sDepthLevel;
-		}
-
-		protected string TransformToHtml(string sInputFile)
-		{
-			var args = new List<XmlUtils.XSLParameter>();
-			string sOutput = TransformToHtml(sInputFile, CreateWordGrammarDebuggerFileName(),
-									  "FormatXAmpleWordGrammarDebuggerResult.xsl", args);
-			return sOutput;
-		}
-		private string TransformToXml(string sInputFile)
-		{
-			// Don't overwrite the input file before transforming it! (why +"A" on the next line)
-			string sOutput = CreateTempFile(CreateWordGrammarDebuggerFileName()+"A", "xml");
-			string sName = m_sDataBaseName + "XAmpleWordGrammarDebugger" + ".xsl";
-			string sTransform = Path.Combine(Path.GetDirectoryName(sOutput), sName);
-			XmlUtils.TransformFileToFile(sTransform, new XmlUtils.XSLParameter[0], sInputFile, sOutput);
-			return sOutput;
+			return PageTransform.Transform(m_mediator, output, "WordGrammarDebugger" + m_xmlHtmlStack.Count);
 		}
 	}
 }

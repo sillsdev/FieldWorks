@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.TE
 		/// -------------------------------------------------------------------------------------
 		protected override string ResourceFilePathFromFwInstall
 		{
-			get { return Path.Combine(DirectoryFinder.ksTeFolderName, ResourceFileName); }
+			get { return Path.Combine(FwDirectoryFinder.ksTeFolderName, ResourceFileName); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -117,7 +117,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="existingProgressDlg">The existing progress dialog, if any.</param>
 		/// ------------------------------------------------------------------------------------
 		public static void EnsureCurrentKeyTerms(ILangProject lp, FwApp app,
-			IProgress existingProgressDlg)
+			IThreadedProgress existingProgressDlg)
 		{
 			TeKeyTermsInit keyTermsInit = new TeKeyTermsInit(lp.TranslatedScriptureOA, app);
 			keyTermsInit.EnsureCurrentResource(existingProgressDlg);
@@ -152,7 +152,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		protected override BiblicalTermsList LoadDoc()
 		{
-			return DeserializeBiblicalTermsFile(Path.Combine(DirectoryFinder.FWCodeDirectory,
+			return DeserializeBiblicalTermsFile(Path.Combine(FwDirectoryFinder.CodeDirectory,
 				ResourceFilePathFromFwInstall));
 		}
 
@@ -297,7 +297,7 @@ namespace SIL.FieldWorks.TE
 		/// analysis writing systems are up-to-date.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected override void EnsureCurrentLocalizations(IProgress progressDlg)
+		protected override void EnsureCurrentLocalizations(IThreadedProgress progressDlg)
 		{
 			string locale = Cache.WritingSystemFactory.GetStrFromWs(Cache.DefaultUserWs);
 			EnsureCurrentLocalization(locale, null, progressDlg);
@@ -314,10 +314,9 @@ namespace SIL.FieldWorks.TE
 		/// of the progress dialog box - can be null if progress dialog is supplied).</param>
 		/// <param name="existingProgressDlg">The existing progress dialog box if any.</param>
 		/// ------------------------------------------------------------------------------------
-		private void EnsureCurrentLocalization(string locale, Form caller,
-			IProgress existingProgressDlg)
+		private void EnsureCurrentLocalization(string locale, Form caller, IThreadedProgress existingProgressDlg)
 		{
-			string localizationFile = DirectoryFinder.GetKeyTermsLocFilename(locale);
+			string localizationFile = FwDirectoryFinder.GetKeyTermsLocFilename(locale);
 			if (!FileUtils.FileExists(localizationFile))
 				return; // There is no localization available for this locale, so we're as current as we're going to get.
 
@@ -337,21 +336,7 @@ namespace SIL.FieldWorks.TE
 			{
 				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_servLoc.GetInstance<IActionHandler>(),
 					() => {
-						if (existingProgressDlg is IThreadedProgress)
-							((IThreadedProgress)existingProgressDlg).RunTask(true, UpdateLocalization, loc, locale);
-						else if (existingProgressDlg != null)
-						{
-							using (ProgressDialogWithTask dlg = new ProgressDialogWithTask(existingProgressDlg))
-								dlg.RunTask(true, UpdateLocalization, loc, locale);
-						}
-						else
-						{
-							using (ProgressDialogWithTask dlg = new ProgressDialogWithTask(caller, m_scr.Cache.ThreadHelper))
-							{
-								dlg.AllowCancel = false;
-								dlg.RunTask(true, UpdateLocalization, loc, locale);
-							}
-						}
+						existingProgressDlg.RunTask(true, UpdateLocalization, loc, locale);
 						SetNewResourceVersion(resourceName, loc.Version);
 					});
 			}
@@ -609,7 +594,7 @@ namespace SIL.FieldWorks.TE
 		protected virtual List<BiblicalTermsLocalization> GetLocalizations()
 		{
 			int defaultUserWs = m_scr.Cache.DefaultUserWs;
-			string[] locFiles = DirectoryFinder.KeyTermsLocalizationFiles;
+			string[] locFiles = FwDirectoryFinder.KeyTermsLocalizationFiles;
 			List<BiblicalTermsLocalization> localizations =
 				new List<BiblicalTermsLocalization>(locFiles.Length);
 			bool fFoundDefaultLoc = false;
@@ -630,7 +615,7 @@ namespace SIL.FieldWorks.TE
 			if (!fFoundDefaultLoc || localizations.Count == 0)
 			{
 				string icuLocale = m_wsf.GetStrFromWs(defaultUserWs);
-				string message = String.Format("File {0} is missing", DirectoryFinder.GetKeyTermsLocFilename(icuLocale));
+				string message = String.Format("File {0} is missing", FwDirectoryFinder.GetKeyTermsLocFilename(icuLocale));
 				Debug.Fail(message);
 				Logger.WriteEvent(message);
 				if (icuLocale == "en" || localizations.Count == 0)
@@ -654,7 +639,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		public static int GetWsFromLocFile(ILgWritingSystemFactory wsf, string localizationFile)
 		{
-			return wsf.GetWsFromStr(DirectoryFinder.GetLocaleFromKeyTermsLocFile(localizationFile));
+			return wsf.GetWsFromStr(FwDirectoryFinder.GetLocaleFromKeyTermsLocFile(localizationFile));
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -181,7 +181,7 @@
 				transduce="LexEntry.$fieldName"/>
 	</generate>
 	<generate class="LexEntry" fieldType="simplestring" restrictions="customOnly">
-		<column layout="CustomSimpleStringForEntry_$fieldName" label="$label" common="true" cansortbylength="true" visibility="menu"
+		<column layout="CustomSimpleStringForEntry_$fieldName" label="$label" ws="$wsName" common="true" cansortbylength="true" visibility="menu"
 				transduce="LexEntry.$fieldName"/>
 	</generate>
 	<generate class="LexEntry" fieldType="integer" restrictions="customOnly">

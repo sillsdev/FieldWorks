@@ -9,9 +9,10 @@ using System;
 using System.IO;
 using System.Text;
 using NUnit.Framework;
-using SIL.FieldWorks.Test.TestUtils;
-using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.FieldWorks.Test.TestUtils;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
@@ -24,7 +25,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class ScrImportFileInfoTests: SIL.FieldWorks.Test.TestUtils.BaseTest
+	public class ScrImportFileInfoTests : BaseTest
 	{
 		#region class DummyScrImportFileInfo
 		/// ------------------------------------------------------------------------------------
@@ -122,7 +123,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[SetUp]
 		public void Init()
 		{
-			m_mappingList = new ScrMappingList(MappingSet.Main, null);
+			m_mappingList = new ScrMappingList(MappingSet.Main, null, ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
 			m_factory = new ScrImportFileInfoFactory();
 			m_fileOs = new MockFileOS();
 			FileUtils.Manager.SetFileAdapter(m_fileOs);

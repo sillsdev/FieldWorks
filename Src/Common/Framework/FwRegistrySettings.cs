@@ -334,7 +334,7 @@ namespace SIL.FieldWorks.Common.Framework
 			ErrorReporter.AddProperty("AutoOpenLastEditedProjectSetting", AutoOpenLastEditedProject.ToString());
 			ErrorReporter.AddProperty("DisableSplashScreenSetting", DisableSplashScreenSetting.ToString());
 			ErrorReporter.AddProperty("MeasurementUnitSetting", ((MsrSysType)MeasurementUnitSetting).ToString());
-			ErrorReporter.AddProperty("BackupDirectorySetting", DirectoryFinder.DefaultBackupDirectory);
+			ErrorReporter.AddProperty("BackupDirectorySetting", FwDirectoryFinder.DefaultBackupDirectory);
 		}
 	}
 }

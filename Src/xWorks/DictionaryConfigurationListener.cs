@@ -108,7 +108,7 @@ namespace SIL.FieldWorks.XWorks
 			var lastDirectoryPart = GetInnermostConfigurationDirectory(mediator);
 
 			return lastDirectoryPart == null
-				? null : Path.Combine(DirectoryFinder.GetConfigSettingsDir(cache.ProjectId.ProjectFolder), lastDirectoryPart);
+				? null : Path.Combine(FdoFileHelper.GetConfigSettingsDir(cache.ProjectId.ProjectFolder), lastDirectoryPart);
 		}
 
 		/// <summary>
@@ -119,7 +119,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var lastDirectoryPart = GetInnermostConfigurationDirectory(mediator);
 
-			return lastDirectoryPart == null ? null : Path.Combine(DirectoryFinder.DefaultConfigurations, lastDirectoryPart);
+			return lastDirectoryPart == null ? null : Path.Combine(FwDirectoryFinder.DefaultConfigurations, lastDirectoryPart);
 		}
 
 		/// <summary>
@@ -196,7 +196,7 @@ namespace SIL.FieldWorks.XWorks
 																							String.Empty);
 				if(String.IsNullOrEmpty(currentConfig)) // No configuration type has yet been selected
 				{
-					currentConfig = Directory.EnumerateFiles(Path.Combine(DirectoryFinder.DefaultConfigurations, configType),
+					currentConfig = Directory.EnumerateFiles(Path.Combine(FwDirectoryFinder.DefaultConfigurations, configType),
 																		"*" + DictionaryConfigurationModel.FileExtension).First();
 					// Since it isn't helpful to have no configuration selected we will set it to the first shipped
 					// configuration until the user changes it.

@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 #endif
 		private XslCompiledTransform m_xslShowInfoTransform;
 		private XmlDocument m_xmlShowInfoDoc;
-		private readonly string m_sHelpHtm = Path.Combine(DirectoryFinder.FWCodeDirectory, String.Format("Language Explorer{0}MGA{0}Help.htm", Path.DirectorySeparatorChar));
+		private readonly string m_sHelpHtm = Path.Combine(FwDirectoryFinder.CodeDirectory, String.Format("Language Explorer{0}MGA{0}Help.htm", Path.DirectorySeparatorChar));
 
 		/// <summary>
 		/// Constructor.
@@ -74,7 +74,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 		{
 			// init transform used in help panel
 			m_xslShowInfoTransform = new XslCompiledTransform();
-			string sXsltFile = Path.Combine(DirectoryFinder.FWCodeDirectory, String.Format("Language Explorer{0}MGA{0}MGAShowInfo.xsl", Path.DirectorySeparatorChar));
+			string sXsltFile = Path.Combine(FwDirectoryFinder.CodeDirectory, String.Format("Language Explorer{0}MGA{0}MGAShowInfo.xsl", Path.DirectorySeparatorChar));
 			m_xslShowInfoTransform.Load(sXsltFile);
 
 			// init XmlDoc, too

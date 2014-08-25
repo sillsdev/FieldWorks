@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			mockMDC.AddClass(9, "CmFolder", "CmObject", new List<string>());
 			mockMDC.AddClass(10, "CmFile", "CmObject", new List<string>());
 			IDomainObjectDTORepository repoDto = new DomainObjectDtoRepository(7000033, dtos, mockMDC,
-				Path.GetTempPath());
+				Path.GetTempPath(), FwDirectoryFinder.FdoDirectories);
 
 			// Do the migration.
 			m_dataMigrationManager.PerformMigration(repoDto, 7000034, new DummyProgressDlg());

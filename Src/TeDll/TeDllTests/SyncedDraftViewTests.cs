@@ -10,6 +10,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.TE.DraftViews
 {
@@ -63,7 +64,7 @@ namespace SIL.FieldWorks.TE.DraftViews
 				(int)FwTextPropVar.ktpvMilliPoint, 20);
 			titleMain.Rules = propBldr.GetTextProps();
 			m_draftForm.StyleSheet.Init(Cache, m_scr.Hvo,
-				ScriptureTags.kflidStyles);
+				ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 
 			m_group.RefreshDisplay();
 			m_draftView.PerformLayout();

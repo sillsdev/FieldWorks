@@ -1,4 +1,12 @@
-﻿namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
+﻿using System;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
+using System.Windows.Forms;
+using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
+using SIL.Utils;
+
+namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 {
 	/// <summary>
 	///
@@ -8,7 +16,7 @@
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.IContainer components = null;
+		private IContainer components = null;
 
 		/// <summary>
 		/// Clean up any resources being used.
@@ -16,7 +24,7 @@
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (disposing)
 			{
 				if (m_openFileDlg != null)
@@ -36,52 +44,52 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.Windows.Forms.Button m_btnHelp;
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RestoreProjectDlg));
-			System.Windows.Forms.Button m_btnCancel;
-			System.Windows.Forms.Label label2;
-			System.Windows.Forms.Label label3;
-			System.Windows.Forms.Label label4;
-			System.Windows.Forms.Label label5;
-			System.Windows.Forms.Label label13;
-			System.Windows.Forms.Label label16;
-			this.m_btnBrowse = new System.Windows.Forms.Button();
-			this.m_txtOtherProjectName = new System.Windows.Forms.TextBox();
-			this.m_configurationSettings = new System.Windows.Forms.CheckBox();
-			this.m_linkedFiles = new System.Windows.Forms.CheckBox();
-			this.m_supportingFiles = new System.Windows.Forms.CheckBox();
-			this.m_gbAlsoRestore = new System.Windows.Forms.GroupBox();
-			this.m_spellCheckAdditions = new System.Windows.Forms.CheckBox();
-			this.m_btnOk = new System.Windows.Forms.Button();
-			this.m_lblOtherBackupIncludes = new System.Windows.Forms.Label();
-			this.m_gbBackupProperties = new System.Windows.Forms.GroupBox();
-			this.m_pnlDefaultBackupFolder = new System.Windows.Forms.Panel();
-			this.m_lstVersions = new System.Windows.Forms.ListView();
-			this.colDate = new System.Windows.Forms.ColumnHeader();
-			this.colComment = new System.Windows.Forms.ColumnHeader();
-			this.m_cboProjects = new System.Windows.Forms.ComboBox();
-			this.m_lblDefaultBackupIncludes = new System.Windows.Forms.Label();
-			this.label14 = new System.Windows.Forms.Label();
-			this.m_pnlAnotherLocation = new System.Windows.Forms.Panel();
-			this.m_lblBackupComment = new System.Windows.Forms.Label();
-			this.m_lblBackupZipFile = new System.Windows.Forms.Label();
-			this.m_lblBackupDate = new System.Windows.Forms.Label();
-			this.m_lblBackupProjectName = new System.Windows.Forms.Label();
-			this.label6 = new System.Windows.Forms.Label();
-			this.m_gbRestoreAs = new System.Windows.Forms.GroupBox();
-			this.m_rdoUseOriginalName = new System.Windows.Forms.RadioButton();
-			this.m_rdoRestoreToName = new System.Windows.Forms.RadioButton();
-			this.m_rdoDefaultFolder = new System.Windows.Forms.RadioButton();
-			this.m_rdoAnotherLocation = new System.Windows.Forms.RadioButton();
-			this.label1 = new System.Windows.Forms.Label();
-			m_btnHelp = new System.Windows.Forms.Button();
-			m_btnCancel = new System.Windows.Forms.Button();
-			label2 = new System.Windows.Forms.Label();
-			label3 = new System.Windows.Forms.Label();
-			label4 = new System.Windows.Forms.Label();
-			label5 = new System.Windows.Forms.Label();
-			label13 = new System.Windows.Forms.Label();
-			label16 = new System.Windows.Forms.Label();
+			Button m_btnHelp;
+			ComponentResourceManager resources = new ComponentResourceManager(typeof(RestoreProjectDlg));
+			Button m_btnCancel;
+			Label label2;
+			Label label3;
+			Label label4;
+			Label label5;
+			Label label13;
+			Label label16;
+			this.m_btnBrowse = new Button();
+			this.m_txtOtherProjectName = new TextBox();
+			this.m_configurationSettings = new CheckBox();
+			this.m_linkedFiles = new CheckBox();
+			this.m_supportingFiles = new CheckBox();
+			this.m_gbAlsoRestore = new GroupBox();
+			this.m_spellCheckAdditions = new CheckBox();
+			this.m_btnOk = new Button();
+			this.m_lblOtherBackupIncludes = new Label();
+			this.m_gbBackupProperties = new GroupBox();
+			this.m_pnlDefaultBackupFolder = new Panel();
+			this.m_lstVersions = new ListView();
+			this.colDate = new ColumnHeader();
+			this.colComment = new ColumnHeader();
+			this.m_cboProjects = new ComboBox();
+			this.m_lblDefaultBackupIncludes = new Label();
+			this.label14 = new Label();
+			this.m_pnlAnotherLocation = new Panel();
+			this.m_lblBackupComment = new Label();
+			this.m_lblBackupZipFile = new Label();
+			this.m_lblBackupDate = new Label();
+			this.m_lblBackupProjectName = new Label();
+			this.label6 = new Label();
+			this.m_gbRestoreAs = new GroupBox();
+			this.m_rdoUseOriginalName = new RadioButton();
+			this.m_rdoRestoreToName = new RadioButton();
+			this.m_rdoDefaultFolder = new RadioButton();
+			this.m_rdoAnotherLocation = new RadioButton();
+			this.label1 = new Label();
+			m_btnHelp = new Button();
+			m_btnCancel = new Button();
+			label2 = new Label();
+			label3 = new Label();
+			label4 = new Label();
+			label5 = new Label();
+			label13 = new Label();
+			label16 = new Label();
 			this.m_gbAlsoRestore.SuspendLayout();
 			this.m_gbBackupProperties.SuspendLayout();
 			this.m_pnlDefaultBackupFolder.SuspendLayout();
@@ -94,12 +102,12 @@
 			resources.ApplyResources(m_btnHelp, "m_btnHelp");
 			m_btnHelp.Name = "m_btnHelp";
 			m_btnHelp.UseVisualStyleBackColor = true;
-			m_btnHelp.Click += new System.EventHandler(this.m_btnHelp_Click);
+			m_btnHelp.Click += new EventHandler(this.m_btnHelp_Click);
 			//
 			// m_btnCancel
 			//
 			resources.ApplyResources(m_btnCancel, "m_btnCancel");
-			m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			m_btnCancel.DialogResult = DialogResult.Cancel;
 			m_btnCancel.Name = "m_btnCancel";
 			m_btnCancel.UseVisualStyleBackColor = true;
 			//
@@ -138,7 +146,7 @@
 			resources.ApplyResources(this.m_btnBrowse, "m_btnBrowse");
 			this.m_btnBrowse.Name = "m_btnBrowse";
 			this.m_btnBrowse.UseVisualStyleBackColor = true;
-			this.m_btnBrowse.Click += new System.EventHandler(this.m_btnBrowse_Click);
+			this.m_btnBrowse.Click += new EventHandler(this.m_btnBrowse_Click);
 			//
 			// m_txtOtherProjectName
 			//
@@ -184,7 +192,7 @@
 			resources.ApplyResources(this.m_btnOk, "m_btnOk");
 			this.m_btnOk.Name = "m_btnOk";
 			this.m_btnOk.UseVisualStyleBackColor = true;
-			this.m_btnOk.Click += new System.EventHandler(this.m_btnOk_Click);
+			this.m_btnOk.Click += new EventHandler(this.m_btnOk_Click);
 			//
 			// m_lblOtherBackupIncludes
 			//
@@ -213,19 +221,19 @@
 			// m_lstVersions
 			//
 			resources.ApplyResources(this.m_lstVersions, "m_lstVersions");
-			this.m_lstVersions.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+			this.m_lstVersions.Columns.AddRange(new ColumnHeader[] {
 			this.colDate,
 			this.colComment});
 			this.m_lstVersions.FullRowSelect = true;
-			this.m_lstVersions.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+			this.m_lstVersions.HeaderStyle = ColumnHeaderStyle.None;
 			this.m_lstVersions.HideSelection = false;
 			this.m_lstVersions.MultiSelect = false;
 			this.m_lstVersions.Name = "m_lstVersions";
 			this.m_lstVersions.ShowGroups = false;
 			this.m_lstVersions.UseCompatibleStateImageBehavior = false;
-			this.m_lstVersions.View = System.Windows.Forms.View.Details;
-			this.m_lstVersions.SelectedIndexChanged += new System.EventHandler(this.m_lstVersions_SelectedIndexChanged);
-			this.m_lstVersions.SizeChanged += new System.EventHandler(this.m_lstVersions_SizeChanged);
+			this.m_lstVersions.View = View.Details;
+			this.m_lstVersions.SelectedIndexChanged += new EventHandler(this.m_lstVersions_SelectedIndexChanged);
+			this.m_lstVersions.SizeChanged += new EventHandler(this.m_lstVersions_SizeChanged);
 			//
 			// colDate
 			//
@@ -238,10 +246,10 @@
 			// m_cboProjects
 			//
 			resources.ApplyResources(this.m_cboProjects, "m_cboProjects");
-			this.m_cboProjects.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.m_cboProjects.DropDownStyle = ComboBoxStyle.DropDownList;
 			this.m_cboProjects.FormattingEnabled = true;
 			this.m_cboProjects.Name = "m_cboProjects";
-			this.m_cboProjects.SelectedIndexChanged += new System.EventHandler(this.m_cboProjects_SelectedIndexChanged);
+			this.m_cboProjects.SelectedIndexChanged += new EventHandler(this.m_cboProjects_SelectedIndexChanged);
 			//
 			// m_lblDefaultBackupIncludes
 			//
@@ -316,7 +324,7 @@
 			this.m_rdoRestoreToName.Name = "m_rdoRestoreToName";
 			this.m_rdoRestoreToName.TabStop = true;
 			this.m_rdoRestoreToName.UseVisualStyleBackColor = true;
-			this.m_rdoRestoreToName.CheckedChanged += new System.EventHandler(this.m_rdoRestoreToName_CheckedChanged);
+			this.m_rdoRestoreToName.CheckedChanged += new EventHandler(this.m_rdoRestoreToName_CheckedChanged);
 			//
 			// m_rdoDefaultFolder
 			//
@@ -325,7 +333,7 @@
 			this.m_rdoDefaultFolder.Name = "m_rdoDefaultFolder";
 			this.m_rdoDefaultFolder.TabStop = true;
 			this.m_rdoDefaultFolder.UseVisualStyleBackColor = true;
-			this.m_rdoDefaultFolder.CheckedChanged += new System.EventHandler(this.m_rdoDefaultFolder_CheckedChanged);
+			this.m_rdoDefaultFolder.CheckedChanged += new EventHandler(this.m_rdoDefaultFolder_CheckedChanged);
 			//
 			// m_rdoAnotherLocation
 			//
@@ -342,7 +350,7 @@
 			//
 			this.AcceptButton = this.m_btnOk;
 			resources.ApplyResources(this, "$this");
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoScaleMode = AutoScaleMode.Font;
 			this.CancelButton = m_btnCancel;
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.m_gbRestoreAs);
@@ -375,34 +383,34 @@
 
 		#endregion
 
-		private System.Windows.Forms.Button m_btnBrowse;
-		private System.Windows.Forms.TextBox m_txtOtherProjectName;
-		private System.Windows.Forms.CheckBox m_configurationSettings;
-		private System.Windows.Forms.CheckBox m_linkedFiles;
-		private System.Windows.Forms.CheckBox m_supportingFiles;
-		private System.Windows.Forms.GroupBox m_gbAlsoRestore;
-		private System.Windows.Forms.Button m_btnOk;
-		private System.Windows.Forms.Label m_lblOtherBackupIncludes;
-		private System.Windows.Forms.GroupBox m_gbBackupProperties;
-		private System.Windows.Forms.CheckBox m_spellCheckAdditions;
-		private System.Windows.Forms.GroupBox m_gbRestoreAs;
-		private System.Windows.Forms.RadioButton m_rdoUseOriginalName;
-		private System.Windows.Forms.RadioButton m_rdoRestoreToName;
-		private System.Windows.Forms.RadioButton m_rdoDefaultFolder;
-		private System.Windows.Forms.RadioButton m_rdoAnotherLocation;
-		private System.Windows.Forms.Label label6;
-		private System.Windows.Forms.Label m_lblBackupComment;
-		private System.Windows.Forms.Label m_lblBackupDate;
-		private System.Windows.Forms.Label m_lblBackupProjectName;
-		private System.Windows.Forms.Label m_lblBackupZipFile;
-		private System.Windows.Forms.Panel m_pnlAnotherLocation;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Panel m_pnlDefaultBackupFolder;
-		private System.Windows.Forms.Label m_lblDefaultBackupIncludes;
-		private System.Windows.Forms.Label label14;
-		private System.Windows.Forms.ComboBox m_cboProjects;
-		private System.Windows.Forms.ListView m_lstVersions;
-		private System.Windows.Forms.ColumnHeader colDate;
-		private System.Windows.Forms.ColumnHeader colComment;
+		private Button m_btnBrowse;
+		private TextBox m_txtOtherProjectName;
+		private CheckBox m_configurationSettings;
+		private CheckBox m_linkedFiles;
+		private CheckBox m_supportingFiles;
+		private GroupBox m_gbAlsoRestore;
+		private Button m_btnOk;
+		private Label m_lblOtherBackupIncludes;
+		private GroupBox m_gbBackupProperties;
+		private CheckBox m_spellCheckAdditions;
+		private GroupBox m_gbRestoreAs;
+		private RadioButton m_rdoUseOriginalName;
+		private RadioButton m_rdoRestoreToName;
+		private RadioButton m_rdoDefaultFolder;
+		private RadioButton m_rdoAnotherLocation;
+		private Label label6;
+		private Label m_lblBackupComment;
+		private Label m_lblBackupDate;
+		private Label m_lblBackupProjectName;
+		private Label m_lblBackupZipFile;
+		private Panel m_pnlAnotherLocation;
+		private Label label1;
+		private Panel m_pnlDefaultBackupFolder;
+		private Label m_lblDefaultBackupIncludes;
+		private Label label14;
+		private ComboBox m_cboProjects;
+		private ListView m_lstVersions;
+		private ColumnHeader colDate;
+		private ColumnHeader colComment;
 	}
 }

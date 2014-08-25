@@ -1,42 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Diagnostics;
 using System.Xml;
+using System.Xml.Linq;
+using System.Linq;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
 	public class XAmpleWordGrammarDebugger : WordGrammarDebugger
 	{
-		public XAmpleWordGrammarDebugger()
-		{ }
+		private readonly XDocument m_parseResult;
 
-		public XAmpleWordGrammarDebugger(Mediator mediator, XmlDocument parseResult)
+		public XAmpleWordGrammarDebugger(Mediator mediator, XDocument parseResult)
 			: base(mediator)
 		{
 			m_parseResult = parseResult;
 		}
 
-		protected override void CreateMorphNodes(XmlDocument doc, XmlNode seqNode, string sNodeId)
+		protected override void WriteMorphNodes(XmlWriter writer, string nodeId)
 		{
-			string s = "//failure[@id=\"" + sNodeId + "\"]/ancestor::parseNode[morph][1]/morph";
-			XmlNode node = m_parseResult.SelectSingleNode(s);
-			if (node != null)
+			XElement failureElem = m_parseResult.Descendants("failure").FirstOrDefault(e => ((string) e.Attribute("id")) == nodeId);
+			if (failureElem != null)
 			{
-				CreateMorphNode(doc, seqNode, node);
+				foreach (XElement parseNodeElem in failureElem.Ancestors("parseNode").Where(e => e.Element("morph") != null).Reverse())
+				{
+					XElement morphElem = parseNodeElem.Element("morph");
+					Debug.Assert(morphElem != null);
+					morphElem.WriteTo(writer);
+				}
 			}
 		}
-		private void CreateMorphNode(XmlDocument doc, XmlNode seqNode, XmlNode node)
-		{
-			// get the <morph> element closest up the chain to node
-			XmlNode morph = node.SelectSingleNode("../ancestor::parseNode[morph][1]/morph");
-			if (morph != null)
-			{
-				CreateMorphNode(doc, seqNode, morph);
-			}
-			CreateMorphXmlElement(doc, seqNode, node);
-		}
-
 	}
 }

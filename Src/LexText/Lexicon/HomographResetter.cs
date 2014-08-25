@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Linq;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FwCoreDlgs;
 using System.Windows.Forms;
 
@@ -94,7 +95,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						cache.LanguageProject.HomographWs = defaultVernacularWsId;
 					});
 			}
-			cache.LanguageProject.LexDbOA.ResetHomographNumbers(m_dlg.ProgressBar);
+			cache.LanguageProject.LexDbOA.ResetHomographNumbers(new ProgressBarWrapper(m_dlg.ProgressBar));
 		}
 
 		/// <summary>

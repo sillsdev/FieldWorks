@@ -101,7 +101,7 @@ namespace SIL.FieldWorks.TE
 		/// <summary></summary>
 		protected IScripture m_scr;
 
-		/// <summary>Either <see cref="T:lvScrMappings"/> or <see cref="T:lvAnnotationMappings"/></summary>
+		/// <summary>Either <see cref="lvScrMappings"/> or <see cref="lvAnnotationMappings"/></summary>
 		protected FwListView m_lvCurrentMappingList;
 		/// <summary>Either m_btnAddScrMapping or m_btnAddAnnotMapping</summary>
 		protected Button m_btnCurrentAddButton;
@@ -256,7 +256,7 @@ namespace SIL.FieldWorks.TE
 			m_cache = scr.Cache;
 
 			// Attempt to get the default import settings.
-			m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Unknown);
+			m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Unknown, ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
 			if (m_settings.ImportTypeEnum == TypeOfImport.Unknown)
 				m_settings.ImportTypeEnum = TypeOfImport.Paratext6;
 
@@ -1155,6 +1155,7 @@ namespace SIL.FieldWorks.TE
 			ScrText assocProj = ParatextHelper.GetAssociatedProject(m_cache.ProjectId);
 			//Ignore the case that there is information already in the combobox.
 			//Solution for TE - 4441)
+			bool loadMappings = false;
 			if (cboPTLangProj.Items.Count == 0)
 			{
 				if (assocProj != null)
@@ -1163,6 +1164,7 @@ namespace SIL.FieldWorks.TE
 					cboPTLangProj.Items.Add(assocProj);
 					cboPTLangProj.SelectedIndex = 0;
 					cboPTLangProj.Enabled = false;
+					loadMappings = true;
 				}
 				else
 				{
@@ -1181,6 +1183,7 @@ namespace SIL.FieldWorks.TE
 						cboPTBackTrans.Items.Add(btText);
 					cboPTBackTrans.SelectedIndex = 0;
 					cboPTBackTrans.Enabled = (btProjects.Count() > 1);
+					loadMappings = true;
 				}
 				else
 				{
@@ -1198,6 +1201,9 @@ namespace SIL.FieldWorks.TE
 				cboPTTransNotes.Items.Add(s_noneProject);
 				LoadParatextProjectCombo(cboPTTransNotes, m_settings.ParatextNotesProj);
 			}
+
+			if (loadMappings)
+				ParatextHelper.LoadProjectMappings(m_settings);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1243,10 +1249,12 @@ namespace SIL.FieldWorks.TE
 			// The projects will only be assigned if the project can be loaded (part of the set
 			// property).
 			m_settings.ParatextScrProj = GetPTShortName(cboPTLangProj);
-			CheckProjectCombo(m_settings.ParatextScrProj, cboPTLangProj, ImportDomain.Main);
 			m_settings.ParatextBTProj = GetPTShortName(cboPTBackTrans);
-			CheckProjectCombo(m_settings.ParatextBTProj, cboPTBackTrans, ImportDomain.BackTrans);
 			m_settings.ParatextNotesProj = GetPTShortName(cboPTTransNotes);
+			ParatextHelper.LoadProjectMappings(m_settings);
+
+			CheckProjectCombo(m_settings.ParatextScrProj, cboPTLangProj, ImportDomain.Main);
+			CheckProjectCombo(m_settings.ParatextBTProj, cboPTBackTrans, ImportDomain.BackTrans);
 			CheckProjectCombo(m_settings.ParatextNotesProj, cboPTTransNotes,
 				ImportDomain.Annotations);
 
@@ -1951,7 +1959,7 @@ namespace SIL.FieldWorks.TE
 		/// Handles the Click event of the m_btnNext control.
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:EventArgs"/> instance containing the event
+		/// <param name="e">The <see cref="EventArgs"/> instance containing the event
 		/// data.</param>
 		/// ------------------------------------------------------------------------------------
 		protected void m_btnNext_Click(object sender, EventArgs e)
@@ -1993,7 +2001,7 @@ namespace SIL.FieldWorks.TE
 		/// Handles the Click event of the m_btnBack control.
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:EventArgs"/> instance containing the event
+		/// <param name="e">The <see cref="EventArgs"/> instance containing the event
 		/// data.</param>
 		/// ------------------------------------------------------------------------------------
 		protected void m_btnBack_Click(object sender, EventArgs e)
@@ -2113,7 +2121,7 @@ namespace SIL.FieldWorks.TE
 		/// Handles the CheckedChanged event of the rbParatext6 control (Paratext 6 radio button).
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:EventArgs"/> instance containing the event
+		/// <param name="e">The <see cref="EventArgs"/> instance containing the event
 		/// data.</param>
 		/// ------------------------------------------------------------------------------------
 		private void rbParatext6_CheckedChanged(object sender, EventArgs e)
@@ -2127,7 +2135,7 @@ namespace SIL.FieldWorks.TE
 		/// Handles the CheckedChanged event of the rbParatext5 control (Paratext 5 radio button).
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:EventArgs"/> instance containing the event
+		/// <param name="e">The <see cref="EventArgs"/> instance containing the event
 		/// data.</param>
 		/// ------------------------------------------------------------------------------------
 		private void rbParatext5_CheckedChanged(object sender, EventArgs e)
@@ -2141,7 +2149,7 @@ namespace SIL.FieldWorks.TE
 		/// Handles the CheckedChanged event of the rbOther control (Other USFM radio button).
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:EventArgs"/> instance containing the event
+		/// <param name="e">The <see cref="EventArgs"/> instance containing the event
 		/// data.</param>
 		/// ------------------------------------------------------------------------------------
 		private void rbOther_CheckedChanged(object sender, EventArgs e)
@@ -2161,7 +2169,7 @@ namespace SIL.FieldWorks.TE
 		{
 			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_cache.ActionHandlerAccessor, () =>
 			{
-				m_settings = m_scr.FindOrCreateDefaultImportSettings(importType);
+				m_settings = m_scr.FindOrCreateDefaultImportSettings(importType, ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
 			});
 			InitializeScrImportSettings();
 		}

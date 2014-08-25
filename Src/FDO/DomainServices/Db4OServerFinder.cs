@@ -6,6 +6,7 @@
 // Responsibility: FW Team
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -18,6 +19,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	/// In a separate thread, finds any DB4o servers on the network.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
+	[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+		Justification = "m_hostListenerSocket is disposed when closed.")]
 	internal class Db4OServerFinder
 	{
 		#region Data members
@@ -26,10 +29,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		private readonly int HostDiscoveryBroadcastReplyPort = Db4OPorts.ReplyPort;
 
 		private readonly Thread m_hostListenerThread;
-		private volatile Socket m_hostListenerSocket;
+		private Socket m_hostListenerSocket;
 		private readonly object m_syncRoot = new object();
 		private readonly Action<string> m_foundServerCallback;
-		private readonly Action m_onCompletedCallback;
 		#endregion
 
 		#region Constructor
@@ -39,12 +41,14 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// </summary>
 		/// <param name="foundServerCallback">The method to call when a server is found
 		/// (string parameter is the IP address of the found server)</param>
-		/// <param name="onCompletedCallback">Callback to run when the search is completed.</param>
 		/// ------------------------------------------------------------------------------------
-		public Db4OServerFinder(Action<string> foundServerCallback, Action onCompletedCallback)
+		public Db4OServerFinder(Action<string> foundServerCallback)
 		{
 			m_foundServerCallback = foundServerCallback;
-			m_onCompletedCallback = onCompletedCallback;
+
+			m_hostListenerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp) {Blocking = false};
+			EndPoint ep = new IPEndPoint(IPAddress.Any, HostDiscoveryBroadcastReplyPort);
+			m_hostListenerSocket.Bind(ep);
 
 			// Start the thread that collects responses from our broadcast.
 			m_hostListenerThread = new Thread(ThreadStartListenForServers);
@@ -63,11 +67,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		private void BroadcastToFindHosts()
 		{
-			// Ensure the thread is listening before doing the broadcast
-			// as it could return before we are listening for it.
-			while (m_hostListenerThread.IsAlive && (m_hostListenerSocket == null || !m_hostListenerSocket.IsBound))
-				Thread.Sleep(80);
-
 			// On Windows 7, this silently fails if the computer isn't connected to the network.
 			// On Windows XP, it eventually (after timeout?) throws a SocketException "A socket
 			// operation was attempted to an unreachable host".
@@ -76,11 +75,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				// Send the broadcast.
 				using (Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
 				{
-				sock.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, 1);
-				EndPoint iep = new IPEndPoint(IPAddress.Broadcast, HostDiscoveryBroadcastPort);
+					sock.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, 1);
+					EndPoint iep = new IPEndPoint(IPAddress.Broadcast, HostDiscoveryBroadcastPort);
 
-				sock.SendTo(new byte[] { 0 }, iep);
-			}
+					sock.SendTo(new byte[] { 0 }, iep);
+				}
 			}
 			catch (SocketException)
 			{
@@ -96,54 +95,44 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		private void ThreadStartListenForServers()
 		{
-			m_hostListenerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 			try
 			{
-			m_hostListenerSocket.Blocking = false;
-			EndPoint ep = new IPEndPoint(IPAddress.Any, HostDiscoveryBroadcastReplyPort);
-			try
-			{
-				m_hostListenerSocket.Bind(ep);
-			}
-			catch (SocketException e)
-			{
-				MessageBoxUtils.Show(String.Format("Unable to bind to port {0} because {1}", HostDiscoveryBroadcastReplyPort, e));
-				return;
-			}
-
-			byte[] data = new byte[1024];
-			int cVainAttempts = 0;
-			while (true) // keep listening until thread is killed.
-			{
-				int recv = 0;
-				lock (m_syncRoot)
+				byte[] data = new byte[1024];
+				int cVainAttempts = 0;
+				while (true) // keep listening until thread is killed.
 				{
-					if (m_hostListenerSocket == null) // another thread can set this to null.
-						break;
-					if (m_hostListenerSocket.Available > 0)
-						ExceptionHelper.LogAndIgnoreErrors(() => recv = m_hostListenerSocket.ReceiveFrom(data, ref ep));
-				}
-				if (recv > 0)
-				{
+					EndPoint ep = new IPEndPoint(IPAddress.Any, 0);
+					int recv = 0;
 					lock (m_syncRoot)
-						m_foundServerCallback(((IPEndPoint)ep).Address.ToString());
-					cVainAttempts = 0;
+					{
+						if (m_hostListenerSocket == null) // another thread can set this to null.
+							break;
+						if (m_hostListenerSocket.Available > 0)
+							ExceptionHelper.LogAndIgnoreErrors(() => recv = m_hostListenerSocket.ReceiveFrom(data, ref ep));
+					}
+					if (recv > 0)
+					{
+						lock (m_syncRoot)
+							m_foundServerCallback(((IPEndPoint)ep).Address.ToString());
+						cVainAttempts = 0;
+					}
+					else
+					{
+						if (cVainAttempts++ > 50)
+							break; // if no server has pinged us for 5 seconds, let's hang it up.
+						Thread.Sleep(100);
+					}
 				}
-				else
-				{
-					if (cVainAttempts++ > 50)
-						break; // if no server has pinged us for 5 seconds, let's hang it up.
-					Thread.Sleep(100);
-				}
-			}
-
-			if (m_hostListenerSocket != null && m_onCompletedCallback != null)
-				m_onCompletedCallback();
 			}
 			finally
 			{
-			CloseSocket();
+				CloseSocket();
+			}
 		}
+
+		public bool IsCompleted
+		{
+			get { return !m_hostListenerThread.IsAlive; }
 		}
 
 		/// ------------------------------------------------------------------------------------

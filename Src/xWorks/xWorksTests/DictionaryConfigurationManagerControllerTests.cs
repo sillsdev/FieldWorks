@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.XWorks
 		private List<DictionaryConfigurationModel> _configurations;
 
 		private readonly string _projectConfigPath = Path.GetTempPath();
-		private readonly string _defaultConfigPath = Path.Combine(DirectoryFinder.DefaultConfigurations, "Dictionary");
+		private readonly string _defaultConfigPath = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary");
 
 		[TestFixtureSetUp]
 		public override void FixtureSetup()

@@ -16,6 +16,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.TE
@@ -71,7 +72,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="cache">The cache</param>
 		/// <param name="existingProgressDlg">The existing progress dialog, if any.</param>
 		/// ------------------------------------------------------------------------------------
-		public static void EnsureFactoryScrBookRefs(FdoCache cache, IProgress existingProgressDlg)
+		public static void EnsureFactoryScrBookRefs(FdoCache cache, IThreadedProgress existingProgressDlg)
 		{
 			TeScrBookRefsInit scrRefInit = new TeScrBookRefsInit(cache);
 			scrRefInit.EnsureCurrentResource(existingProgressDlg);

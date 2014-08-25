@@ -194,28 +194,9 @@
   <data name="ksUnknown" xml:space="preserve">
     <value>Unknown</value>
   </data>
-  <data name="ksUnknownAllomorph" xml:space="preserve">
-    <value>Unknown Allomorph!</value>
-  </data>
-  <data name="ksUnknownCitationForm" xml:space="preserve">
-    <value>Unknown CitationForm!</value>
-  </data>
-  <data name="ksUnknownGloss" xml:space="preserve">
-    <value>Unknown Gloss!</value>
-  </data>
-  <data name="ksUnknownMorpheme" xml:space="preserve">
-    <value>Unknown Morpheme!</value>
-  </data>
-  <data name="ksUnknownNaturalClass" xml:space="preserve">
-    <value>Unknown Natural Class!</value>
-  </data>
   <data name="ksUpdate" xml:space="preserve">
     <value>Update</value>
     <comment>related to ParserCoreStrings.ksUpdateX</comment>
-  </data>
-  <data name="ksX_Y_Z" xml:space="preserve">
-    <value>{0} ({1}): {2}</value>
-    <comment>{0} is the lexical form, {1} is the gloss, {2} is the citation form</comment>
   </data>
   <data name="ksXmlNotWellFormed" xml:space="preserve">
     <value>The XML is not well-formed; you need to correct it and try again.</value>
@@ -251,12 +232,18 @@
     <value>, </value>
     <comment>Separator to use between multiple slot names when an irregularly inflected form variant fills two or more inflectional affix slots</comment>
   </data>
-  <data name="ksIrregularlyInflectedFormNullAffix" xml:space="preserve">
-    <value>Automatically generated null affix for the {0} irregularly inflected form</value>
-    <comment>Content used when showing the details of a parse in Try a Word for these inflectional affix slot fillers.  {0} is the Name of the irregularly inflected form variant type.</comment>
-  </data>
   <data name="ksDoNotUseDefaultCompoundRules" xml:space="preserve">
     <value>NoDefaultCompounding</value>
     <comment>If true, no default compounding rules will be used.  (Do Not Localize)</comment>
+  </data>
+  <data name="ksBadAffixForm" xml:space="preserve">
+    <value>Bad Affix Form</value>
+    <comment>Caption that goes with ksHermitCrabReduplicationProblem</comment>
+  </data>
+  <data name="ksHermitCrabReduplicationProblem" xml:space="preserve">
+    <value>The Hermit Crab parser cannot currently run, because the morpheme "{0}" has an invalid reduplication environment. The problem is {1}.</value>
+  </data>
+  <data name="ksDidNotParse" xml:space="preserve">
+    <value>Parse was not attempted because of errors in the lexical data</value>
   </data>
 </root>

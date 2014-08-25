@@ -13,6 +13,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -430,7 +431,7 @@ namespace SIL.FieldWorks.TE
 
 			ILangProject lgproj = Cache.LangProject;
 			IScripture scripture = lgproj.TranslatedScriptureOA;
-			styleSheet.Init(Cache, scripture.Hvo, ScriptureTags.kflidStyles);
+			styleSheet.Init(Cache, scripture.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 
 			m_footnoteView = new DummyFootnoteView(Cache);
 			m_footnoteView.Anchor = AnchorStyles.Top | AnchorStyles.Left |

@@ -325,6 +325,7 @@
     <Compile Include="DictionaryDetailsView\SpecialCharacterHandling.cs" />
     <Compile Include="IDictionaryConfigurationView.cs" />
     <Compile Include="DictionaryNodeOptions.cs" />
+    <Compile Include="GlobalSettingServices.cs" />
     <Compile Include="PalasoErrorReportingAdapter.cs" />
     <Compile Include="ConcDecorator.cs" />
     <Compile Include="CustomListDlg.cs">

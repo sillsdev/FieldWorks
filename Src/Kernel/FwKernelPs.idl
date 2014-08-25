@@ -18,5 +18,5 @@ import "ocidl.idl";
 
 #include "FwKernel.idh"
 #include "TextServ.idh"
-#include "Render.idh"		// for Language DLL
+#include "Render.idh"
 #include "Language.idh"

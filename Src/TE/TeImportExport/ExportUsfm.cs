@@ -501,7 +501,7 @@ namespace SIL.FieldWorks.TE
 		#region Constructor
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ExportUsfm"/> class.
+		/// Initializes a new instance of the <see cref="ExportUsfm"/> class.
 		/// </summary>
 		/// <param name="cache">FDO cache to use for export</param>
 		/// <param name="filter">book filter to determine which books to export</param>
@@ -519,7 +519,7 @@ namespace SIL.FieldWorks.TE
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ExportUsfm"/> class.
+		/// Initializes a new instance of the <see cref="ExportUsfm"/> class.
 		/// </summary>
 		/// <param name="cache">FDO cache to use for export</param>
 		/// <param name="filter">book filter to determine which books to export</param>
@@ -628,7 +628,7 @@ namespace SIL.FieldWorks.TE
 				}
 			}
 
-			using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(dialogOwner, m_cache.ThreadHelper))
+			using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(dialogOwner))
 			{
 				try
 				{
@@ -3276,7 +3276,7 @@ namespace SIL.FieldWorks.TE
 		protected virtual void LoadStyleTables()
 		{
 			XmlDocument doc = new XmlDocument();
-			doc.Load(DirectoryFinder.TeStylesPath);
+			doc.Load(FwDirectoryFinder.TeStylesPath);
 			foreach (XmlElement elem in doc.SelectNodes("/Styles/markup/tag"))
 			{
 				string styleName = elem.Attributes.GetNamedItem("id").InnerText.Replace("_", " ");
@@ -3576,7 +3576,7 @@ namespace SIL.FieldWorks.TE
 			string verseFile = Path.Combine(m_paratextProjFolder, versificationName);
 			if (!File.Exists(verseFile))
 			{
-				string sourceVerseFile = Path.Combine(DirectoryFinder.TeFolder, versificationName);
+				string sourceVerseFile = Path.Combine(FwDirectoryFinder.TeFolder, versificationName);
 				try
 				{
 					File.Copy(sourceVerseFile, verseFile);
@@ -3596,7 +3596,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		protected virtual void ReadUsfmStyFile()
 		{
-			m_UsfmStyFileAccessor.ReadStylesheet(Path.Combine(DirectoryFinder.TeFolder, "usfm.sty"));
+			m_UsfmStyFileAccessor.ReadStylesheet(Path.Combine(FwDirectoryFinder.TeFolder, "usfm.sty"));
 		}
 
 		/// ------------------------------------------------------------------------------------

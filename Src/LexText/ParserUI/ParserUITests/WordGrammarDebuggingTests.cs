@@ -5,16 +5,11 @@
 // File: WordGrammarDebuggingTests.cs
 // Responsibility:
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Text;
-using System.Xml;
-#if __MonoCS__
 using System.Xml.Linq;
-#endif
 using System.Xml.XPath;
 using System.Xml.Xsl;
 
@@ -37,15 +32,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	public class WordGrammarDebuggingTests : BaseTest
 	{
 		private XPathDocument m_doc;
-#if __MonoCS__
-		private IntPtr m_masterTransform;
-		private IntPtr m_resultTransform;
-		private IntPtr m_resultTransformNoCompoundRules;
-		private IntPtr m_resultTransformStemNames;
-		private IntPtr m_resultTransformAffixAlloFeats;
-		private IntPtr m_UnificationViaXsltTransform;
-		private IntPtr m_SameSlotTwiceTransform;
-#else
+
 		private XslCompiledTransform m_masterTransform;
 		private XslCompiledTransform m_resultTransform;
 		private XslCompiledTransform m_resultTransformNoCompoundRules;
@@ -53,16 +40,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		private XslCompiledTransform m_resultTransformAffixAlloFeats;
 		private XslCompiledTransform m_UnificationViaXsltTransform;
 		private XslCompiledTransform m_SameSlotTwiceTransform;
-#endif
 
 		/// <summary>
 		/// Location of test files
 		/// </summary>
 		protected string m_sTestPath;
-		/// <summary></summary>
-		protected string m_sTransformPath;
-		/// <summary></summary>
-		protected string m_sMasterTransform;
 		/// <summary></summary>
 		protected string m_sResultTransform;
 		/// <summary></summary>
@@ -80,9 +62,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary></summary>
 		protected string m_sM3FXTDumpAffixAlloFeats;
 		/// <summary>Set to true to be able to debug into stylesheets</summary>
-		private bool m_fDebug;
+		private readonly bool m_fDebug;
 		/// <summary>path to the standard directory for temporary files.</summary>
-		private string m_sTempPath;
+		private readonly string m_sTempPath;
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:WordGrammarDebuggingTests"/> class.
@@ -108,21 +90,19 @@ namespace SIL.FieldWorks.LexText.Controls
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
-			m_sTestPath = Path.Combine(DirectoryFinder.FwSourceDirectory,
+			m_sTestPath = Path.Combine(FwDirectoryFinder.SourceDirectory,
 				"LexText/ParserUI/ParserUITests/WordGrammarDebuggingInputsAndResults");
-			m_sTransformPath = Path.Combine(DirectoryFinder.FWCodeDirectory,
-				"Language Explorer/Transforms");
 
 			SetUpMasterTransform();
-			CreateResultTransform("M3FXTDump.xml", ref m_sResultTransform);
+			CreateResultTransform("M3FXTDump.xml", out m_sResultTransform);
 			SetUpResultTransform(m_sResultTransform, out m_resultTransform);
 			SetUpUnificationViaXsltTransform();
 			SetUpSameSlotTwiceTransform();
-			CreateResultTransform("M3FXTDumpNoCompoundRules.xml", ref m_sResultTransformNoCompoundRules);
+			CreateResultTransform("M3FXTDumpNoCompoundRules.xml", out m_sResultTransformNoCompoundRules);
 			SetUpResultTransform(m_sResultTransformNoCompoundRules, out m_resultTransformNoCompoundRules);
-			CreateResultTransform("M3FXTDumpStemNames.xml", ref m_sResultTransformStemNames);
+			CreateResultTransform("M3FXTDumpStemNames.xml", out m_sResultTransformStemNames);
 			SetUpResultTransform(m_sResultTransformStemNames, out m_resultTransformStemNames);
-			CreateResultTransform("M3FXTDumpAffixAlloFeats.xml", ref m_sResultTransformAffixAlloFeats);
+			CreateResultTransform("M3FXTDumpAffixAlloFeats.xml", out m_sResultTransformAffixAlloFeats);
 			SetUpResultTransform(m_sResultTransformAffixAlloFeats, out m_resultTransformAffixAlloFeats);
 		}
 
@@ -146,43 +126,6 @@ namespace SIL.FieldWorks.LexText.Controls
 				File.Delete(Path.Combine(m_sTempPath, "UnifyTwoFeatureStructures.xsl"));
 			if (File.Exists(Path.Combine(m_sTempPath, "TestUnificationViaXSLT-Linux.xsl")))
 				File.Delete(Path.Combine(m_sTempPath, "TestUnificationViaXSLT-Linux.xsl"));
-#if __MonoCS__
-			if (m_masterTransform != IntPtr.Zero)
-			{
-				SIL.Utils.LibXslt.FreeCompiledTransform(m_masterTransform);
-				m_masterTransform = IntPtr.Zero;
-			}
-			if (m_resultTransform != IntPtr.Zero)
-			{
-				SIL.Utils.LibXslt.FreeCompiledTransform(m_resultTransform);
-				m_resultTransform = IntPtr.Zero;
-			}
-			if (m_resultTransformNoCompoundRules != IntPtr.Zero)
-			{
-				SIL.Utils.LibXslt.FreeCompiledTransform(m_resultTransformNoCompoundRules);
-				m_resultTransformNoCompoundRules = IntPtr.Zero;
-			}
-			if (m_resultTransformStemNames != IntPtr.Zero)
-			{
-				SIL.Utils.LibXslt.FreeCompiledTransform(m_resultTransformStemNames);
-				m_resultTransformStemNames = IntPtr.Zero;
-			}
-			if (m_resultTransformAffixAlloFeats != IntPtr.Zero)
-			{
-				SIL.Utils.LibXslt.FreeCompiledTransform(m_resultTransformAffixAlloFeats);
-				m_resultTransformAffixAlloFeats = IntPtr.Zero;
-			}
-			if (m_UnificationViaXsltTransform != IntPtr.Zero)
-			{
-				SIL.Utils.LibXslt.FreeCompiledTransform(m_UnificationViaXsltTransform);
-				m_UnificationViaXsltTransform = IntPtr.Zero;
-			}
-			if (m_SameSlotTwiceTransform != IntPtr.Zero)
-			{
-				SIL.Utils.LibXslt.FreeCompiledTransform(m_SameSlotTwiceTransform);
-				m_SameSlotTwiceTransform = IntPtr.Zero;
-			}
-#endif
 			base.FixtureTeardown();
 		}
 
@@ -197,10 +140,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			resultTransform = new XslCompiledTransform(m_fDebug);
 			resultTransform.Load(sResultTransform);
 		}
-		private void SetUpResultTransform(string sResultTransform, out IntPtr resultTransform)
-		{
-			resultTransform = SIL.Utils.LibXslt.CompileTransform(sResultTransform);
-		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -209,27 +148,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// ------------------------------------------------------------------------------------
 		private void SetUpUnificationViaXsltTransform()
 		{
-#if __MonoCS__
-			// TestUnificationViaXSLT.xsl contains an xsl:include href value that chokes libxslt.
-			// (libxslt apparently doesn't like .. leading off a file path.)
-			if (!File.Exists(Path.Combine(m_sTempPath, "UnifyTwoFeatureStructures.xsl")))
-			{
-				File.Copy(Path.Combine(m_sTransformPath, "UnifyTwoFeatureStructures.xsl"),
-						  Path.Combine(m_sTempPath, "UnifyTwoFeatureStructures.xsl"));
-			}
-			if (!File.Exists(Path.Combine(m_sTempPath, "TestUnificationViaXSLT-Linux.xsl")))
-			{
-				File.Copy(Path.Combine(Path.GetDirectoryName(m_sTestPath), "TestUnificationViaXSLT-Linux.xsl"),
-						  Path.Combine(m_sTempPath, "TestUnificationViaXSLT-Linux.xsl"));
-			}
-			string sUnificationViaXsltTransform = Path.Combine(m_sTempPath, "TestUnificationViaXSLT-Linux.xsl");
-			SetUpResultTransform(sUnificationViaXsltTransform, out m_UnificationViaXsltTransform);
-#else
 			m_UnificationViaXsltTransform = new XslCompiledTransform(m_fDebug);
 			string sUnificationViaXsltTransform = Path.Combine(m_sTestPath,
 				"../TestUnificationViaXSLT.xsl");
 			m_UnificationViaXsltTransform.Load(sUnificationViaXsltTransform);
-#endif
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -239,18 +161,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// ------------------------------------------------------------------------------------
 		private void SetUpSameSlotTwiceTransform()
 		{
-#if __MonoCS__
-			// TLPSameSlotTwiceWordGrammarDebugger.xsl contains a namespace declaration for
-			// auto-ns1 that is Microsoft-specific.
-			string sSameSlotTwiceTransform = Path.Combine(m_sTestPath,
-				"TLPSameSlotTwiceWordGrammarDebugger-Linux.xsl");
-			SetUpResultTransform(sSameSlotTwiceTransform, out m_SameSlotTwiceTransform);
-#else
-			m_SameSlotTwiceTransform = new XslCompiledTransform(m_fDebug);
 			string sSameSlotTwiceTransform = Path.Combine(m_sTestPath,
 				@"TLPSameSlotTwiceWordGrammarDebugger.xsl");
+			m_SameSlotTwiceTransform = new XslCompiledTransform(m_fDebug);
 			m_SameSlotTwiceTransform.Load(sSameSlotTwiceTransform);
-#endif
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -258,12 +172,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Creates a result transform.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void CreateResultTransform(string sFXTDumpFile, ref string sResultTransform)
+		private void CreateResultTransform(string fxtDumpFile, out string resultTransform)
 		{
-			sResultTransform = FileUtils.GetTempFile("xsl");
-			string sFXTDump = Path.Combine(m_sTestPath, sFXTDumpFile);
-			SIL.Utils.XmlUtils.TransformFileToFile(m_sMasterTransform, sFXTDump,
-				sResultTransform);
+			resultTransform = FileUtils.GetTempFile("xsl");
+			string fxtDump = Path.Combine(m_sTestPath, fxtDumpFile);
+			using (var writer = new StreamWriter(resultTransform))
+				m_masterTransform.Transform(fxtDump, null, writer);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -273,14 +187,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// ------------------------------------------------------------------------------------
 		private void SetUpMasterTransform()
 		{
-			m_sMasterTransform = Path.Combine(m_sTransformPath,
-				"FxtM3ParserToXAmpleWordGrammarDebuggingXSLT.xsl");
-#if __MonoCS__
-			m_masterTransform = SIL.Utils.LibXslt.CompileTransform(m_sMasterTransform);
-#else
-			m_masterTransform = new XslCompiledTransform();
-			m_masterTransform.Load(m_sMasterTransform);
-#endif
+			m_masterTransform = XmlUtils.CreateTransform("FxtM3ParserToXAmpleWordGrammarDebuggingXSLT", "ApplicationTransforms");
 		}
 		#endregion
 
@@ -305,52 +212,20 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="sExpectedOutput">The expected output filename.</param>
 		/// <param name="transform">The transform.</param>
 		/// ------------------------------------------------------------------------------------
-		private void ApplyTransform(string sInputFile, string sExpectedOutput,
-			XslCompiledTransform transform)
-		{
-			ApplyTransform(sInputFile, sExpectedOutput, transform, true);
-		}
-		private void ApplyTransform(string sInputFile, string sExpectedOutput,
-			IntPtr transform)
-		{
-			ApplyTransform(sInputFile, sExpectedOutput, transform, true);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Applies the transform.
-		/// </summary>
-		/// <param name="sInputFile">The input file filename.</param>
-		/// <param name="sExpectedOutput">The expected output filename.</param>
-		/// <param name="transform">The transform.</param>
-		/// <param name="fFixMsxslNameSpace">remove Msxsl namespace</param>
-		/// ------------------------------------------------------------------------------------
-		private void ApplyTransform(string sInputFile, string sExpectedOutput,
-			XslCompiledTransform transform, bool fFixMsxslNameSpace)
+		private void ApplyTransform(string sInputFile, string sExpectedOutput, XslCompiledTransform transform)
 		{
 			string sInput = Path.Combine(m_sTestPath, sInputFile);
 			m_doc = new XPathDocument(sInput);
 			string sOutput = FileUtils.GetTempFile("xml");
-			using (StreamWriter result = new StreamWriter(sOutput))
+			using (var result = new StreamWriter(sOutput))
 			{
 				transform.Transform(m_doc, null, result);
 				result.Close();
 				string sExpectedResult = Path.Combine(m_sTestPath, sExpectedOutput);
-				CheckXmlEquals(sExpectedResult, sOutput, fFixMsxslNameSpace);
+				CheckXmlEquals(sExpectedResult, sOutput);
 				// by deleting it here instead of a finally block, when it fails, we can see what the result is.
 				File.Delete(sOutput);
 			}
-		}
-		private void ApplyTransform(string sInputFile, string sExpectedOutput,
-			IntPtr transform, bool fFixMsxslNameSpace)
-		{
-			string sInput = Path.Combine(m_sTestPath, sInputFile);
-			string sOutput = FileUtils.GetTempFile("xml");
-			SIL.Utils.LibXslt.TransformFileToFile(transform, sInput, sOutput);
-			string sExpectedResult = Path.Combine(m_sTestPath, sExpectedOutput);
-			CheckXmlEquals(sExpectedResult, sOutput, fFixMsxslNameSpace);
-			// by deleting it here instead of a finally block, when it fails, we can see what the result is.
-			File.Delete(sOutput);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -359,40 +234,24 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="sExpectedResultFile">The expected result filename.</param>
 		/// <param name="sActualResultFile">The actual result filename.</param>
-		/// <param name="fFixMsxslNameSpace">remove Msxsl namespace</param>
 		/// ------------------------------------------------------------------------------------
-		private void CheckXmlEquals(string sExpectedResultFile, string sActualResultFile, bool fFixMsxslNameSpace)
+		private void CheckXmlEquals(string sExpectedResultFile, string sActualResultFile)
 		{
 			string sExpected, sActual;
-			using (StreamReader expected = new StreamReader(sExpectedResultFile))
+			using (var expected = new StreamReader(sExpectedResultFile))
 				sExpected = expected.ReadToEnd();
-			using (StreamReader actual = new StreamReader(sActualResultFile))
+			using (var actual = new StreamReader(sActualResultFile))
 				sActual = actual.ReadToEnd();
-			StringBuilder sb = new StringBuilder();
+			var sb = new StringBuilder();
 			sb.Append("Expected file was ");
 			sb.AppendLine(sExpectedResultFile);
 			sb.Append("Actual file was ");
 			sb.AppendLine(sActualResultFile);
-#if __MonoCS__
-			// REVIEW: Perhaps we should always use the fancy compare method using XElement objects?
-			if (fFixMsxslNameSpace)
-				sActual = sActual.Replace(" xmlns:auto-ns1=\"urn:schemas-microsoft-com:xslt\"", "");
+
 			XElement xeActual = XElement.Parse(sActual, LoadOptions.None);
 			XElement xeExpected = XElement.Parse(sExpected, LoadOptions.None);
 			bool ok = XmlHelper.EqualXml(xeExpected, xeActual, sb);
 			Assert.IsTrue(ok, sb.ToString());
-#else
-			if (fFixMsxslNameSpace)
-			{
-				string sFixMsxslNameSpace =
-					sActual.Replace(" xmlns:auto-ns1=\"urn:schemas-microsoft-com:xslt\"", "");
-				Assert.AreEqual(sExpected, sFixMsxslNameSpace, sb.ToString());
-			}
-			else
-			{
-				Assert.AreEqual(sExpected, sActual, sb.ToString());
-			}
-#endif
 		}
 		#endregion
 
@@ -660,21 +519,21 @@ namespace SIL.FieldWorks.LexText.Controls
 		public void AffixAllomorphConditionedByFeatures()
 		{
 			// an inflectional affix allomorph has features and parse succeeds
-			DoWordGrammarDebuggerSteps("msmsAffixAlloFeats", 3, m_resultTransformAffixAlloFeats);
+			DoWordGrammarDebuggerSteps("msmsAffixAlloFeats", 3);
 			// an inflectional affix allomorph has features and parse fails
-			DoWordGrammarDebuggerSteps("mpmsAffixAlloFeats", 2, m_resultTransformAffixAlloFeats);
+			DoWordGrammarDebuggerSteps("mpmsAffixAlloFeats", 2);
 			// an inflectional affix allomorph without features is in an entry that has features and parse succeeds
-			DoWordGrammarDebuggerSteps("fsinflAffixAlloFeats", 3, m_resultTransformAffixAlloFeats);
+			DoWordGrammarDebuggerSteps("fsinflAffixAlloFeats", 3);
 			// an inflectional affix allomorph without features is in an entry that has features and parse fails
-			DoWordGrammarDebuggerSteps("msinflAffixAlloFeats", 2, m_resultTransformAffixAlloFeats);
+			DoWordGrammarDebuggerSteps("msinflAffixAlloFeats", 2);
 			// a derivational affix allomorph has features and parse succeeds
-			DoWordGrammarDebuggerSteps("fsfstovAffixAlloFeats", 3, m_resultTransformAffixAlloFeats);
+			DoWordGrammarDebuggerSteps("fsfstovAffixAlloFeats", 3);
 			// a derivational affix allomorph has features and parse fails
-			DoWordGrammarDebuggerSteps("fpfstovAffixAlloFeats", 2, m_resultTransformAffixAlloFeats);
+			DoWordGrammarDebuggerSteps("fpfstovAffixAlloFeats", 2);
 			// a derivational affix allomorph without features is in an entry that has features and parse succeeds
-			DoWordGrammarDebuggerSteps("fpfptovAffixAlloFeats", 3, m_resultTransformAffixAlloFeats);
+			DoWordGrammarDebuggerSteps("fpfptovAffixAlloFeats", 3);
 			// a derivational affix allomorph without features is in an entry that has features and parse fails
-			DoWordGrammarDebuggerSteps("fsfptovAffixAlloFeats", 2, m_resultTransformAffixAlloFeats);
+			DoWordGrammarDebuggerSteps("fsfptovAffixAlloFeats", 2);
 		}
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -685,44 +544,35 @@ namespace SIL.FieldWorks.LexText.Controls
 		public void StemNames()
 		{
 			// stem name is set and parse succeeds
-			DoWordGrammarDebuggerSteps("niyuyiywusaStemNameSet", 3, m_resultTransformStemNames);
+			DoWordGrammarDebuggerSteps("niyuyiywusaStemNameSet", 3);
 			// stem name is set but no features in regions and parse succeeds
-			DoWordGrammarDebuggerSteps("niyumamwupeStemNameSetNoFs", 3, m_resultTransformStemNames);
+			DoWordGrammarDebuggerSteps("niyumamwupeStemNameSetNoFs", 3);
 			// stem name is set and parse fails
-			DoWordGrammarDebuggerSteps("niyuyiywupeStemNameFail", 3, m_resultTransformStemNames);
+			DoWordGrammarDebuggerSteps("niyuyiywupeStemNameFail", 3);
 			// stem name not set (but other allomorph in lex entry is) and it succeeds
-			DoWordGrammarDebuggerSteps("niyuwowwupeStemNameNotSet", 3, m_resultTransformStemNames);
+			DoWordGrammarDebuggerSteps("niyuwowwupeStemNameNotSet", 3);
 			// stem name not set (but other allomorph in lex entry is) and it fails
-			DoWordGrammarDebuggerSteps("niyuhohwusaStemNameNotSetFail", 3, m_resultTransformStemNames);
+			DoWordGrammarDebuggerSteps("niyuhohwusaStemNameNotSetFail", 3);
 			// stem name not set (but two other allomorps in lex entry are) and it fails
-			DoWordGrammarDebuggerSteps("niyuwowwukoStemNameNotSetMultiFail", 3, m_resultTransformStemNames);
+			DoWordGrammarDebuggerSteps("niyuwowwukoStemNameNotSetMultiFail", 3);
 			// stem name set and has two FsFeatStrucs and it succeeds
-			DoWordGrammarDebuggerSteps("timikikwusaStemNameSetMultiFs", 3, m_resultTransformStemNames);
+			DoWordGrammarDebuggerSteps("timikikwusaStemNameSetMultiFs", 3);
 			// stem name set and has two FsFeatStrucs and it fails
-			DoWordGrammarDebuggerSteps("timikikwupeStemNameSetMultiFsFail", 3, m_resultTransformStemNames);
+			DoWordGrammarDebuggerSteps("timikikwupeStemNameSetMultiFsFail", 3);
 			// stem name is set, has compound and parse succeeds
-			DoWordGrammarDebuggerSteps("niyuyiyximuwusaStemNameSetCompound", 5, m_resultTransformStemNames);
+			DoWordGrammarDebuggerSteps("niyuyiyximuwusaStemNameSetCompound", 5);
 			// stem name not set (but other allomorph in lex entry is), has compound and it fails
-			DoWordGrammarDebuggerSteps("niyuyiyximuwupeStemNameNotSetCompoundFail", 5, m_resultTransformStemNames);
+			DoWordGrammarDebuggerSteps("niyuyiyximuwupeStemNameNotSetCompoundFail", 5);
 		}
 
 		// These methods have a seeming bug in them: the transform argument is not used,
 		// but rather a hard-coded transform.  However, the test output obviously comes
 		// from applying the hard-coded transform, so fixing this requires knowing what
 		// the proper output is for the given data and the proper (other) transform.
-		private void DoWordGrammarDebuggerSteps(string sName, int count, XslCompiledTransform transform)
+		private void DoWordGrammarDebuggerSteps(string sName, int count)
 		{
 			for (int i = 0; i < count; i++)
-				ApplyTransform(sName + "Step0" + i.ToString() + ".xml", sName + "Step0" + i.ToString() + "Result.xml", m_resultTransformStemNames, false);
-		}
-		private void DoWordGrammarDebuggerSteps(string sName, int count, IntPtr transform)
-		{
-			for (int i = 0; i < count; i++)
-			{
-				var inputName = String.Format("{0}Step0{1}.xml", sName, i);
-				var outputName = String.Format("{0}Step0{1}Result.xml", sName, i);
-				ApplyTransform(inputName, outputName, m_resultTransformStemNames, false);
-			}
+				ApplyTransform(sName + "Step0" + i.ToString(CultureInfo.InvariantCulture) + ".xml", sName + "Step0" + i.ToString(CultureInfo.InvariantCulture) + "Result.xml", m_resultTransformStemNames);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -731,7 +581,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		public void UnificationViaXSLT()
+		public void UnificationViaXslt()
 		{
 			ApplyTransform("TestFeatureStructureUnification.xml",
 				"TestFeatureStructureUnification.xml", m_UnificationViaXsltTransform);

@@ -14,7 +14,7 @@ using System.Text;
 using System.Xml;
 
 using NUnit.Framework;
-
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
@@ -26,6 +26,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.TE.TeEditorialChecks;
+using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.TE.ImportTests
 {
@@ -94,7 +95,8 @@ namespace SIL.FieldWorks.TE.ImportTests
 			// part of the normal undoable work.
 			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
 			{
-				InstalledScriptureChecks.GetChecks(new ScrChecksDataSource(m_scr.Cache));
+				InstalledScriptureChecks.GetChecks(new ScrChecksDataSource(m_scr.Cache,
+					ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"), FwDirectoryFinder.LegacyWordformingCharOverridesFile));
 			});
 		}
 
@@ -115,7 +117,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			base.TestSetup();
 
 			m_styleSheet = new FwStyleSheet();
-			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 			InitWsInfo();
 			m_actionHandler.EndUndoTask(); // Import expects to handle undo
 

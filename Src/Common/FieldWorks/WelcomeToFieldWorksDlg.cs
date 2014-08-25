@@ -8,9 +8,9 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
-using Palaso.Reporting;
-using SIL.CoreImpl.Properties;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using XCore;
@@ -71,7 +71,7 @@ namespace SIL.FieldWorks
 		/// <param name="showReportingRow">True (usually only on the first run) when we want to show the first-time warning about
 		/// sending google analytics information</param>
 		/// ------------------------------------------------------------------------------------
-		public WelcomeToFieldWorksDlg(IHelpTopicProvider helpTopicProvider, string appAbbrev, FwStartupException exception, bool showReportingRow)
+		public WelcomeToFieldWorksDlg(IHelpTopicProvider helpTopicProvider, string appAbbrev, StartupException exception, bool showReportingRow)
 		{
 			m_appAbbrev = appAbbrev;
 			InitializeComponent();
@@ -102,7 +102,7 @@ namespace SIL.FieldWorks
 
 			m_helpTopicProvider = helpTopicProvider;
 			helpProvider = new HelpProvider();
-			helpProvider.HelpNamespace = DirectoryFinder.FWCodeDirectory + m_helpTopicProvider.GetHelpString("UserHelpFile");
+			helpProvider.HelpNamespace = FwDirectoryFinder.CodeDirectory + m_helpTopicProvider.GetHelpString("UserHelpFile");
 			helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(m_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			receiveButton.Enabled =

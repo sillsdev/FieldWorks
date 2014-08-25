@@ -133,7 +133,7 @@ namespace XCore
 			if (groupId != null)
 			{
 				XWindow window = (XWindow)m_mediator.PropertyTable.GetValue("window");
-				SIL.Utils.ImageCollection small = (SIL.Utils.ImageCollection)m_mediator.PropertyTable.GetValue("smallImages");
+				ImageCollection small = (ImageCollection)m_mediator.PropertyTable.GetValue("smallImages");
 				paneBar.Init(small, (IUIMenuAdapter)window.MenuAdapter, m_mediator);
 			}
 			ReloadPaneBar(paneBar);

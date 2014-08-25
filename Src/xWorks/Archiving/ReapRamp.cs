@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 		public bool ArchiveNow(Form owner, Font dialogFont, Icon localizationDialogIcon,
 			IEnumerable<string> filesToArchive, Mediator mediator, FwApp thisapp, FdoCache cache)
 		{
-			var viProvider = new FwVersionInfoProvider(Assembly.LoadFile(thisapp.ProductExecutableFile), false);
+			var viProvider = new VersionInfoProvider(Assembly.LoadFile(thisapp.ProductExecutableFile), false);
 			var wsMgr = cache.ServiceLocator.GetInstance<IWritingSystemManager>();
 			var appName = thisapp.ApplicationName;
 			var title = cache.LanguageProject.ShortName;
@@ -93,8 +93,8 @@ namespace SIL.FieldWorks.XWorks.Archiving
 				s_localizationMgr = LocalizationManager.Create(
 					uiLocale,
 					localizationMgrId, viProvider.ProductName, viProvider.NumericAppVersion,
-					DirectoryFinder.GetFWCodeSubDirectory("ArchivingLocalizations"),
-					DirectoryFinder.CommonAppDataFolder(appName),
+					FwDirectoryFinder.GetCodeSubDirectory("ArchivingLocalizations"),
+					Path.Combine(Application.CompanyName, appName),
 					localizationDialogIcon, "FLExDevteam@sil.org", "SIL.Archiving");
 			}
 			else
@@ -127,7 +127,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 		{
 			// TODO: Extend to supply "relationship" also (source, presentation or supporting)
 
-			if (Path.GetExtension(file) == FwFileExtensions.ksFwBackupFileExtension)
+			if (Path.GetExtension(file) == FdoFileHelper.ksFwBackupFileExtension)
 				return "FieldWorks backup";
 			if (Path.GetExtension(file) == FwFileExtensions.ksLexiconInterchangeFormat)
 				return "Lexical Interchange Format Standard file";
@@ -242,7 +242,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 				datasetExtent.AppendLineFormat("{0} Text{1}", new object[] { cTexts, (cTexts == 1) ? "" : "s" }, delimiter);
 
 			if (datasetExtent.Length > 0)
-				model.SetDatasetExtent(datasetExtent.ToString() + ".");
+				model.SetDatasetExtent(datasetExtent + ".");
 		}
 
 		/// ------------------------------------------------------------------------------------

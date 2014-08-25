@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
-using SIL.FieldWorks.Test.TestUtils;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -47,13 +43,13 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void GetMagicStringAlt_TestFirstAnaly()
 		{
 			IWritingSystem frWs;
-			WritingSystemServices.FindOrCreateWritingSystem(Cache, "fr", false, false, out frWs);
+			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "fr", false, false, out frWs);
 			var frId = frWs.Handle;
 			IWritingSystem enWs;
-			WritingSystemServices.FindOrCreateWritingSystem(Cache, "en", false, false, out enWs);
+			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "en", false, false, out enWs);
 			var enId = enWs.Handle;
 			IWritingSystem ptWs;
-			WritingSystemServices.FindOrCreateWritingSystem(Cache, "pt", false, false, out ptWs);
+			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "pt", false, false, out ptWs);
 			var ptId = ptWs.Handle;
 			Cache.LangProject.CurrentAnalysisWritingSystems.Clear();
 			Cache.LangProject.AddToCurrentAnalysisWritingSystems(frWs);
@@ -87,26 +83,26 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void GetMagicStringAlt_TestFirstVernOrAnaly()
 		{
 			IWritingSystem senWs;
-			WritingSystemServices.FindOrCreateWritingSystem(Cache, "sen", false, false, out senWs);
+			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "sen", false, false, out senWs);
 			var senId = senWs.Handle;
 			IWritingSystem mluWs;
-			WritingSystemServices.FindOrCreateWritingSystem(Cache, "mlu", false, false, out mluWs);
+			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "mlu", false, false, out mluWs);
 			var mluId = mluWs.Handle;
 			IWritingSystem sekWs;
-			WritingSystemServices.FindOrCreateWritingSystem(Cache, "sek", false, false, out sekWs);
+			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "sek", false, false, out sekWs);
 			var sekId = sekWs.Handle;
 			Cache.LangProject.CurrentVernacularWritingSystems.Clear();
 			Cache.LangProject.AddToCurrentVernacularWritingSystems(mluWs);
 			Cache.LangProject.AddToCurrentVernacularWritingSystems(senWs);
 			Cache.LangProject.VernacularWritingSystems.Add(sekWs);
 			IWritingSystem frWs;
-			WritingSystemServices.FindOrCreateWritingSystem(Cache, "fr", false, false, out frWs);
+			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "fr", false, false, out frWs);
 			var frId = frWs.Handle;
 			IWritingSystem enWs;
-			WritingSystemServices.FindOrCreateWritingSystem(Cache, "en", false, false, out enWs);
+			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "en", false, false, out enWs);
 			var enId = enWs.Handle;
 			IWritingSystem ptWs;
-			WritingSystemServices.FindOrCreateWritingSystem(Cache, "pt", false, false, out ptWs);
+			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "pt", false, false, out ptWs);
 			var ptId = ptWs.Handle;
 			Cache.LangProject.CurrentAnalysisWritingSystems.Clear();
 			Cache.LangProject.AddToCurrentAnalysisWritingSystems(frWs);
@@ -157,13 +153,13 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void GetMagicStringAlt_TestFirstVern()
 		{
 			IWritingSystem mluWs;
-			WritingSystemServices.FindOrCreateWritingSystem(Cache, "mlu", false, false, out mluWs);
+			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "mlu", false, false, out mluWs);
 			var mluId = mluWs.Handle;
 			IWritingSystem senWs;
-			WritingSystemServices.FindOrCreateWritingSystem(Cache, "sen", false, false, out senWs);
+			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "sen", false, false, out senWs);
 			var senId = senWs.Handle;
 			IWritingSystem sekWs;
-			WritingSystemServices.FindOrCreateWritingSystem(Cache, "sek", false, false, out sekWs);
+			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "sek", false, false, out sekWs);
 			var sekId = sekWs.Handle;
 			Cache.LangProject.CurrentVernacularWritingSystems.Clear();
 			Cache.LangProject.AddToCurrentVernacularWritingSystems(mluWs);
@@ -195,10 +191,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void GetMagicStringAlt_TestFirstPronunciation()
 		{
 			IWritingSystem mluWs;
-			WritingSystemServices.FindOrCreateWritingSystem(Cache, "mlu", false, false, out mluWs);
+			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "mlu", false, false, out mluWs);
 			var mluId = mluWs.Handle;
 			IWritingSystem senWs;
-			WritingSystemServices.FindOrCreateWritingSystem(Cache, "sen", false, false, out senWs);
+			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "sen", false, false, out senWs);
 			var senId = senWs.Handle;
 			Cache.LangProject.CurrentPronunciationWritingSystems.Clear();
 			Cache.LangProject.CurrentPronunciationWritingSystems.Add(mluWs);
@@ -225,7 +221,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void FindOrCreateSomeWritingSystem_Converts_x_unk_To_qaa_x_unk()
 		{
 			IWritingSystem ws;
-			Assert.That(WritingSystemServices.FindOrCreateSomeWritingSystem(Cache, "x-unk", true, false, out ws), Is.False);
+			Assert.That(WritingSystemServices.FindOrCreateSomeWritingSystem(Cache, null, "x-unk", true, false, out ws), Is.False);
 			Assert.That(ws.Id, Is.EqualTo("qaa-x-unk"));
 		}
 
@@ -238,7 +234,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void FindOrCreateSomeWritingSystem_Converts_Fr_Tech_30Oct_To_qaa_x_Fr_Tech_30Oct()
 		{
 			IWritingSystem ws;
-			Assert.That(WritingSystemServices.FindOrCreateSomeWritingSystem(Cache, "Fr-Tech 30Oct", true, false, out ws), Is.False);
+			Assert.That(WritingSystemServices.FindOrCreateSomeWritingSystem(Cache, null, "Fr-Tech 30Oct", true, false, out ws), Is.False);
 			Assert.That(ws.Id, Is.EqualTo("qaa-x-Fr-Tech30Oc")); //8 characters is the maximum allowed for a part.
 		}
 
@@ -249,7 +245,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void FindOrCreateSomeWritingSystem_Converts_x_To_qaa_x_qaa()
 		{
 			IWritingSystem ws;
-			Assert.That(WritingSystemServices.FindOrCreateSomeWritingSystem(Cache, "x", true, false, out ws), Is.False);
+			Assert.That(WritingSystemServices.FindOrCreateSomeWritingSystem(Cache, null, "x", true, false, out ws), Is.False);
 			Assert.That(ws.Id, Is.EqualTo("qaa-x-qaa"));
 		}
 		/// <summary>
@@ -284,7 +280,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			var entry0 = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			IWritingSystem newWs;
-			var ws = WritingSystemServices.FindOrCreateWritingSystem(Cache, "en-NO", true, false, out newWs);
+			var ws = WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "en-NO", true, false, out newWs);
 			// A string property NOT using the WS we will change.
 			entry0.ImportResidue = Cache.TsStrFactory.MakeString("hello", Cache.DefaultAnalWs);
 			// A multilingual one using the WS.
@@ -348,9 +344,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			var entry1 = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			IWritingSystem fromWs;
-			WritingSystemServices.FindOrCreateWritingSystem(Cache, "en-NO", true, false, out fromWs);
+			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "en-NO", true, false, out fromWs);
 			IWritingSystem toWs;
-			WritingSystemServices.FindOrCreateWritingSystem(Cache, "en-SO", true, false, out toWs);
+			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "en-SO", true, false, out toWs);
 			EnsureAnalysisWs(new [] {fromWs, toWs});
 			var sense1 = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			entry1.SensesOS.Add(sense1);
@@ -385,9 +381,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void MergeWritingSystem_ConvertsStyleDefinition()
 		{
 			IWritingSystem fromWs;
-			WritingSystemServices.FindOrCreateWritingSystem(Cache, "en-NO", true, false, out fromWs);
+			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "en-NO", true, false, out fromWs);
 			IWritingSystem toWs;
-			WritingSystemServices.FindOrCreateWritingSystem(Cache, "en-SO", true, false, out toWs);
+			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "en-SO", true, false, out toWs);
 			EnsureAnalysisWs(new [] { fromWs, toWs });
 
 			var style1 = Cache.ServiceLocator.GetInstance<IStStyleFactory>().Create();
@@ -416,9 +412,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void MergeWritingSystemWithStyleDefnForToWs_DoesNotConvertStyleDefinition()
 		{
 			IWritingSystem fromWs;
-			WritingSystemServices.FindOrCreateWritingSystem(Cache, "en-NO", true, false, out fromWs);
+			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "en-NO", true, false, out fromWs);
 			IWritingSystem toWs;
-			WritingSystemServices.FindOrCreateWritingSystem(Cache, "en-SO", true, false, out toWs);
+			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "en-SO", true, false, out toWs);
 			EnsureAnalysisWs(new[] { fromWs, toWs });
 
 			var style1 = Cache.ServiceLocator.GetInstance<IStStyleFactory>().Create();
@@ -453,9 +449,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void MergeWritingSystem_ConvertsLiftResidue()
 		{
 			IWritingSystem fromWs;
-			WritingSystemServices.FindOrCreateWritingSystem(Cache, "en-NO", true, false, out fromWs);
+			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "en-NO", true, false, out fromWs);
 			IWritingSystem toWs;
-			WritingSystemServices.FindOrCreateWritingSystem(Cache, "en-SO", true, false, out toWs);
+			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "en-SO", true, false, out toWs);
 			EnsureAnalysisWs(new[] { fromWs, toWs });
 
 			var entry1 = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
@@ -482,7 +478,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.DoesNotThrow(() =>
 				{
 					IWritingSystem fromWs;
-					WritingSystemServices.FindOrCreateWritingSystem(Cache, "sen", false, true, out fromWs);
+					WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "sen", false, true, out fromWs);
 					Cache.LangProject.DefaultVernacularWritingSystem = fromWs;
 					fromWs.Collator.GetSortKey("boom");
 				});

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -8,7 +7,6 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Schema;
 using NUnit.Framework;
-using Palaso.TestUtilities;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -77,7 +75,7 @@ namespace SIL.FieldWorks.IText
 		{
 			var settings = new XmlReaderSettings {ValidationType = ValidationType.Schema};
 
-			string p = Path.Combine(DirectoryFinder.FlexFolder, @"Export Templates/Interlinear");
+			string p = Path.Combine(FwDirectoryFinder.FlexFolder, @"Export Templates/Interlinear");
 			string file = Path.Combine(p, "FlexInterlinear.xsd");
 			settings.Schemas.Add("", file);
 			//settings.ValidationEventHandler += ValidationCallBack;
@@ -317,7 +315,7 @@ namespace SIL.FieldWorks.IText
 		[Test]
 		public void ValidateFlexTextFile()
 		{
-			string path = Path.Combine(DirectoryFinder.FwSourceDirectory, @"LexText/Interlinear/ITextDllTests/FlexTextImport");
+			string path = Path.Combine(FwDirectoryFinder.SourceDirectory, @"LexText/Interlinear/ITextDllTests/FlexTextImport");
 			string file = Path.Combine(path, "FlexTextExportOutput.flextext");
 			XmlDocument doc = new XmlDocument();
 			doc.Load(file);
@@ -329,7 +327,7 @@ namespace SIL.FieldWorks.IText
 		[Test]
 		public void ImportParatextExportBasic()
 		{
-			string path = Path.Combine(DirectoryFinder.FwSourceDirectory, @"LexText/Interlinear/ITextDllTests/FlexTextImport");
+			string path = Path.Combine(FwDirectoryFinder.SourceDirectory, @"LexText/Interlinear/ITextDllTests/FlexTextImport");
 			string file = Path.Combine(path, "FlexTextExportOutput.flextext");
 			using (var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read))
 			{
@@ -678,13 +676,14 @@ namespace SIL.FieldWorks.IText
 		[Test]
 		public void TestImportFullELANData()
 		{
-			string xml = "<document><interlinear-text guid=\"AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA\">" +
-			"<item type=\"title\" lang=\"en\">wordspace</item>" +
-			"<item type=\"title-abbreviation\" lang=\"en\">ws</item>" +
-			"<paragraphs><paragraph><phrases><phrase media-file=\"FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF\" guid=\"BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB\" begin-time-offset=\"1\" end-time-offset=\"2\">" +
-			"<item type=\"text\">This is a test with text.</item><word>This</word></phrase></phrases></paragraph></paragraphs>" +
-			"<languages><language lang=\"en\" font=\"latin\" vernacular=\"false\"/></languages>" +
-			"<media-files offset-type=\"milliseconds\"><media guid=\"FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF\" location=\"file:\\\\test.wav\"/></media-files></interlinear-text></document>";
+			const string xml = "<document><interlinear-text guid=\"AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA\">" +
+				"<item type=\"title\" lang=\"en\">wordspace</item>" +
+				"<item type=\"title-abbreviation\" lang=\"en\">ws</item>" +
+				"<paragraphs><paragraph><phrases>" +
+				"<phrase media-file=\"FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF\" guid=\"BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB\" begin-time-offset=\"1\" end-time-offset=\"2\">" +
+				"<item type=\"text\">This is a test with text.</item><word>This</word></phrase></phrases></paragraph></paragraphs>" +
+				"<languages><language lang=\"en\" font=\"latin\" vernacular=\"false\"/></languages>" +
+				@"<media-files offset-type=""milliseconds""><media guid=""FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"" location=""file:\\test.wav""/></media-files></interlinear-text></document>";
 
 			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
 			FDO.IText text = null;
@@ -698,7 +697,7 @@ namespace SIL.FieldWorks.IText
 					Assert.True(imported.ContentsOA.ParagraphsOS.Count > 0, "Paragraph was not imported as text content.");
 					var para = imported.ContentsOA[0];
 					Assert.NotNull(para, "The imported paragraph is null?");
-					Assert.True(para.SegmentsOS[0].Guid.ToString().ToUpper().Equals("BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB"), "Segment guid not maintained on import.");
+					Assert.AreEqual(new Guid("BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB"), para.SegmentsOS[0].Guid, "Segment guid not maintained on import.");
 					VerifyMediaLink(imported);
 				}
 			}
@@ -707,34 +706,114 @@ namespace SIL.FieldWorks.IText
 		[Test]
 		public void TestImportMergeInELANData()
 		{
-			string firstxml = "<document><interlinear-text guid=\"AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA\"><item type=\"title\" lang=\"en\">wordspace</item>" +
+			const string firstxml = "<document><interlinear-text guid=\"AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA\"><item type=\"title\" lang=\"en\">wordspace</item>" +
 				"<item type=\"title-abbreviation\" lang=\"en\">ws</item><paragraphs><paragraph><phrases><phrase guid=\"BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB\">" +
 				"<word guid=\"CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC\"><item type=\"txt\" lang=\"fr\">Word</item></word></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
-			string secondxml = "<document><interlinear-text guid=\"AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA\"><item type=\"title\" lang=\"en\">wordspace</item>" +
-				"<item type=\"title-abbreviation\" lang=\"en\">ws</item><paragraphs><paragraph><phrases><phrase guid=\"BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB\"  media-file=\"FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF\"  begin-time-offset=\"1\" end-time-offset=\"2\">" +
+			// Contains all of the original contents of firstxml, plus a media file
+			const string secondxml = "<document><interlinear-text guid=\"AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA\"><item type=\"title\" lang=\"en\">wordspace</item>" +
+				"<item type=\"title-abbreviation\" lang=\"en\">ws</item><paragraphs><paragraph><phrases>" +
+				"<phrase guid=\"BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB\" media-file=\"FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF\" begin-time-offset=\"1\" end-time-offset=\"2\">" +
 				"<word guid=\"CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC\"><item type=\"txt\" lang=\"fr\">Word</item></word></phrase></phrases></paragraph></paragraphs>" +
-				"<media-files offset-type=\"milliseconds\"><media guid=\"FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF\" location=\"file:\\\\test.wav\"/></media-files></interlinear-text></document>";
+				@"<media-files offset-type=""milliseconds""><media guid=""FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"" location=""file:\\test.wav""/></media-files></interlinear-text></document>";
 
-			LinguaLinksImport li = new LLIMergeExtension(Cache, null, null);
+			var li = new LLIMergeExtension(Cache, null, null);
 			FDO.IText text = null;
 			using (var firstStream = new MemoryStream(Encoding.ASCII.GetBytes(firstxml.ToCharArray())))
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), firstStream, 0, ref text);
-				Assert.True(text.Guid.ToString().ToUpper().Equals("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"), "Guid not maintained during import.");
+				Assert.AreEqual(0, li.NumTimesDlgShown, "The user should not have been prompted to merge on the initial import.");
+				Assert.AreEqual(new Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"), text.Guid, "Guid not maintained during import.");
 				using (var secondStream = new MemoryStream(Encoding.ASCII.GetBytes(secondxml.ToCharArray())))
 				{
 					li.ImportInterlinear(new DummyProgressDlg(), secondStream, 0, ref text);
-					Assert.True(text.Guid.ToString().ToUpper().Equals("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"), "Guid not maintained during import.");
-					Assert.True(Cache.LanguageProject.Texts.Count == 1, "Second text not merged with the first.");
-					Assert.True(text.ContentsOA.ParagraphsOS.Count == 1 && text.ContentsOA[0].SegmentsOS.Count == 1, "Segments from second import not merged with the first.");
+					Assert.AreEqual(1, li.NumTimesDlgShown, "The user should have been prompted to merge the text with the same Guid.");
+					Assert.AreEqual(new Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"), text.Guid, "Guid not maintained during import.");
+					Assert.AreEqual(1, Cache.LanguageProject.Texts.Count, "Second text not merged with the first.");
+					Assert.AreEqual(1, text.ContentsOA.ParagraphsOS.Count, "Paragraph from second import not merged with the first.");
+					Assert.AreEqual(1, text.ContentsOA[0].SegmentsOS.Count, "Segment from second import not merged with the first.");
 					VerifyMediaLink(text);
+					var mediaContainerGuid = text.MediaFilesOA.Guid;
+					Assert.AreEqual(new Guid("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"), text.MediaFilesOA.MediaURIsOC.First().Guid,
+						"Guid not maintained during import.");
+					Assert.AreEqual(@"file:\\test.wav", text.MediaFilesOA.MediaURIsOC.First().MediaURI, "URI was not imported correctly.");
+					using (var thirdStream = new MemoryStream(Encoding.ASCII.GetBytes(secondxml.Replace("test.wav", "retest.wav").ToCharArray())))
+					{
+						li.ImportInterlinear(new DummyProgressDlg(), thirdStream, 0, ref text);
+						Assert.AreEqual(2, li.NumTimesDlgShown, "The user should have been prompted again to merge the text with the same Guid.");
+						Assert.AreEqual(new Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"), text.Guid, "Guid not maintained during import.");
+						Assert.AreEqual(1, Cache.LanguageProject.Texts.Count, "Duplicate text not merged with extant.");
+						Assert.AreEqual(1, text.ContentsOA.ParagraphsOS.Count, "Paragraph from third import not merged with the extant.");
+						Assert.AreEqual(1, text.ContentsOA[0].SegmentsOS.Count, "Segment from third import not merged with the extant.");
+						VerifyMediaLink(text);
+						Assert.AreEqual(mediaContainerGuid, text.MediaFilesOA.Guid, "Merging should not replace the media container.");
+						Assert.AreEqual(new Guid("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"), text.MediaFilesOA.MediaURIsOC.First().Guid,
+							"Guid not maintained during import.");
+						Assert.AreEqual(@"file:\\retest.wav", text.MediaFilesOA.MediaURIsOC.First().MediaURI, "URI was not updated.");
+					}
 				}
 			}
 		}
 
+		[Test]
+		public void TestImportTwiceWithoutMerge()
+		{
+			const string importxml = "<document><interlinear-text guid=\"AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA\"><item type=\"title\" lang=\"en\">wordspace</item>" +
+				"<item type=\"title-abbreviation\" lang=\"en\">ws</item><paragraphs><paragraph><phrases>" +
+				"<phrase guid=\"BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB\" media-file=\"FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF\" begin-time-offset=\"1\" end-time-offset=\"2\">" +
+				"<word guid=\"CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC\"><item type=\"txt\" lang=\"fr\">Word</item></word></phrase></phrases></paragraph></paragraphs>" +
+				@"<media-files offset-type=""milliseconds""><media guid=""FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"" location=""file:\\test.wav""/></media-files></interlinear-text></document>";
+
+			var li = new LLINomergeExtension(Cache, null, null);
+			FDO.IText firstText = null;
+			FDO.IText secondText = null;
+			using (var firstStream = new MemoryStream(Encoding.ASCII.GetBytes(importxml.ToCharArray())))
+			{
+				li.ImportInterlinear(new DummyProgressDlg(), firstStream, 0, ref firstText);
+				Assert.AreEqual(0, li.NumTimesDlgShown, "The user should not have been prompted to merge on the initial import.");
+				Assert.AreEqual(new Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"), firstText.Guid, "Guid not maintained during import.");
+				Assert.AreEqual(1, Cache.LanguageProject.Texts.Count, "Text not imported properly.");
+				Assert.AreEqual(1, firstText.ContentsOA.ParagraphsOS.Count, "Text not imported properly.");
+				Assert.AreEqual(1, firstText.ContentsOA[0].SegmentsOS.Count, "Text not imported properly.");
+				//Assert.AreEqual("TODO: B", firstText.ContentsOA.ParagraphsOS.);
+				VerifyMediaLink(firstText);
+				var mediaContainerGuid = firstText.MediaFilesOA.Guid;
+				Assert.AreEqual(new Guid("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"), firstText.MediaFilesOA.MediaURIsOC.First().Guid,
+					"Guid not maintained during import.");
+				Assert.AreEqual(@"file:\\test.wav", firstText.MediaFilesOA.MediaURIsOC.First().MediaURI, "URI was not imported correctly.");
+				using (var secondStream = new MemoryStream(Encoding.ASCII.GetBytes(importxml.Replace("test.wav", "retest.wav").ToCharArray())))
+				{
+					li.ImportInterlinear(new DummyProgressDlg(), secondStream, 0, ref secondText);
+					Assert.AreEqual(1, li.NumTimesDlgShown, "The user should have been prompted to merge the text with the same Guid.");
+					Assert.AreEqual(2, Cache.LanguageProject.Texts.Count, "We imported twice and didn't merge; there should be two texts.");
+
+					Assert.AreEqual(new Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"), firstText.Guid, "First text should remain unchanged.");
+					Assert.AreEqual(1, firstText.ContentsOA.ParagraphsOS.Count, "First text should remain unchanged.");
+					Assert.AreEqual(1, firstText.ContentsOA[0].SegmentsOS.Count, "First text should remain unchanged.");
+					VerifyMediaLink(firstText);
+					Assert.AreEqual(mediaContainerGuid, firstText.MediaFilesOA.Guid, "First text should remain unchanged.");
+					Assert.AreEqual(new Guid("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"), firstText.MediaFilesOA.MediaURIsOC.First().Guid,
+						"First text should remain unchanged.");
+					Assert.AreEqual(@"file:\\test.wav", firstText.MediaFilesOA.MediaURIsOC.First().MediaURI, "First text should remain unchanged.");
+
+					Assert.AreNotEqual(new Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"), secondText.Guid, "Second text should have a unique Guid.");
+					Assert.AreEqual(1, secondText.ContentsOA.ParagraphsOS.Count, "Second text not imported properly.");
+					Assert.AreEqual(1, secondText.ContentsOA[0].SegmentsOS.Count, "Second text not imported properly.");
+					VerifyMediaLink(secondText);
+					Assert.AreNotEqual(mediaContainerGuid, secondText.MediaFilesOA.Guid, "Second text's media container should have a unique Guid.");
+					Assert.AreNotEqual(new Guid("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"), secondText.MediaFilesOA.MediaURIsOC.First().Guid,
+						"Second text's media URI should have a unique Guid.");
+					Assert.AreEqual(@"file:\\retest.wav", secondText.MediaFilesOA.MediaURIsOC.First().MediaURI, "URI was not imported correctly.");
+				}
+			}
+		}
+
+		/// <summary>LinguaLinksImport for testing the choice to merge, without actually showing the dialog during unit tests</summary>
 		internal class LLIMergeExtension : LinguaLinksImport
 		{
+			/// <summary/>
+			public int NumTimesDlgShown { get; private set; }
+
 			/// ------------------------------------------------------------------------------------
 			/// <summary>
 			/// Initializes a new instance of the <see cref="LinguaLinksImport"/> class.
@@ -745,11 +824,32 @@ namespace SIL.FieldWorks.IText
 			/// ------------------------------------------------------------------------------------
 			public LLIMergeExtension(FdoCache cache, string tempDir, string rootDir) : base(cache, tempDir, rootDir)
 			{
+				NumTimesDlgShown = 0;
 			}
 
 			protected override DialogResult ShowPossibleMergeDialog(IThreadedProgress progress)
 			{
+				NumTimesDlgShown++;
 				return DialogResult.Yes;
+			}
+		}
+
+		/// <summary>LinguaLinksImport for testing the choice NOT to merge, without actually showing the dialog during unit tests</summary>
+		internal class LLINomergeExtension : LinguaLinksImport
+		{
+			/// <summary/>
+			public int NumTimesDlgShown { get; private set; }
+
+			/// <summary/>
+			public LLINomergeExtension(FdoCache cache, string tempDir, string rootDir) : base(cache, tempDir, rootDir)
+			{
+				NumTimesDlgShown = 0;
+			}
+
+			protected override DialogResult ShowPossibleMergeDialog(IThreadedProgress progress)
+			{
+				NumTimesDlgShown++;
+				return DialogResult.No;
 			}
 		}
 
@@ -815,14 +915,14 @@ namespace SIL.FieldWorks.IText
 			var mediaFilesContainer = imported.MediaFilesOA;
 			var para = imported.ContentsOA[0];
 			Assert.NotNull(mediaFilesContainer, "Media Files not being imported.");
-			Assert.True(mediaFilesContainer.MediaURIsOC.Count == 1, "Media file not imported.");
+			Assert.AreEqual(1, mediaFilesContainer.MediaURIsOC.Count, "Media file not imported.");
 			using (var enumerator = para.SegmentsOS.GetEnumerator())
 			{
 				enumerator.MoveNext();
 				var seg = enumerator.Current;
-				Assert.True(seg.BeginTimeOffset.Equals("1"), "Begin offset not imported correctly");
-				Assert.True(seg.EndTimeOffset.Equals("2"), "End offset not imported correctly");
-				Assert.True(seg.MediaURIRA == mediaFilesContainer.MediaURIsOC.First(), "Media not correctly linked to segment.");
+				Assert.AreEqual("1", seg.BeginTimeOffset, "Begin offset not imported correctly");
+				Assert.AreEqual("2", seg.EndTimeOffset, "End offset not imported correctly");
+				Assert.AreEqual(seg.MediaURIRA, mediaFilesContainer.MediaURIsOC.First(), "Media not correctly linked to segment.");
 			}
 		}
 	}

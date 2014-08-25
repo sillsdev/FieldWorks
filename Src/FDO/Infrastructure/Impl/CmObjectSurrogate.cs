@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.Utils;
 using System.Threading;
@@ -548,11 +547,9 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					const int nLines = 40;
 					if (lines.Length > nLines)
 						msg = String.Join("\n", lines.Take(nLines).ToArray()) + "\n...";
-					m_cache.ThreadHelper.Invoke(() =>
-					{
-						MessageBox.Show(null, msg, Strings.ksErrorCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);
-						ErrorReporter.ReportException(new Exception(fullMsg, e), null, null, null, true);
-					});
+					var userAction = m_cache.ServiceLocator.GetInstance<IFdoUI>();
+					userAction.DisplayMessage(MessageType.Error, msg, Strings.ksErrorCaption, null);
+					userAction.ReportException(new Exception(fullMsg, e), true);
 				}
 				return m_object;
 			}

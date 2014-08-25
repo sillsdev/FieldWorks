@@ -137,6 +137,10 @@
       <Name>FwPrintLayoutComponentsTests</Name>
       <HintPath>..\..\..\..\Output\Debug\FwPrintLayoutComponentsTests.dll</HintPath>
     </Reference>
+    <Reference Include="FwResources, Version=8.0.6.26892, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\FwResources.dll</HintPath>
+    </Reference>
     <Reference Include="FwUtils, Version=6.0.0.29419, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
@@ -219,7 +223,9 @@
     <Compile Include="TePrintLayoutTests.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="TextScalingTests.cs" />
+    <Compile Include="TextScalingTests.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

@@ -17,6 +17,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -252,7 +253,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			var styleSheet = new FwStyleSheet();
 
 			styleSheet.Init(Cache, m_scr.Hvo,
-				ScriptureTags.kflidStyles);
+				ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 
 			Debug.Assert(m_basicView == null, "m_basicView is not null.");
 

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Web.Configuration;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
 using System.Collections.Generic;
 using System.IO;
@@ -53,7 +54,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		public RestoreProjectPresenter(RestoreProjectDlg restoreProjectView,
 			string defaultProjectName) : this(restoreProjectView)
 		{
-			m_backupFiles = new BackupFileRepository();
+			m_backupFiles = new BackupFileRepository(FwDirectoryFinder.DefaultBackupDirectory);
 			m_defaultProjectName = defaultProjectName;
 			m_fEmptyProjectName = false;
 		}

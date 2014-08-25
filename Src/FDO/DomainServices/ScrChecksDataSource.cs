@@ -13,7 +13,6 @@ using System.Diagnostics;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.Utils;
 using SILUBS.SharedScrUtils;
-using SIL.FieldWorks.Resources;
 using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.FDO.DomainServices
@@ -46,6 +45,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		private readonly FdoCache m_cache;
 		private readonly IScripture m_scr;
 		private readonly string m_styleSheetFileName;
+		private readonly string m_punctWhitespaceChar;
+		private readonly string m_legacyOverridesFile;
 
 		private static StyleMarkupInfo s_styleMarkupInfo = null;
 
@@ -56,26 +57,32 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ScrChecksDataSource"/> class.
+		/// Initializes a new instance of the <see cref="ScrChecksDataSource"/> class.
 		/// </summary>
 		/// <param name="cache">The cache.</param>
+		/// <param name="punctWhitespaceChar"></param>
+		/// <param name="legacyOverridesFile"></param>
 		/// ------------------------------------------------------------------------------------
-		public ScrChecksDataSource(FdoCache cache) : this(cache, null)
+		public ScrChecksDataSource(FdoCache cache, string punctWhitespaceChar, string legacyOverridesFile) : this(cache, punctWhitespaceChar, legacyOverridesFile, null)
 		{
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ScrChecksDataSource"/> class.
+		/// Initializes a new instance of the <see cref="ScrChecksDataSource"/> class.
 		/// </summary>
 		/// <param name="cache">The cache.</param>
+		/// <param name="punctWhitespaceChar"></param>
+		/// <param name="legacyOverridesFile"></param>
 		/// <param name="styleSheetFileName">Path to the stylesheet definition XML file</param>
 		/// ------------------------------------------------------------------------------------
-		public ScrChecksDataSource(FdoCache cache, string styleSheetFileName)
+		public ScrChecksDataSource(FdoCache cache, string punctWhitespaceChar, string legacyOverridesFile, string styleSheetFileName)
 		{
 			m_cache = cache;
 			m_scr = cache.LangProject.TranslatedScriptureOA;
+			m_punctWhitespaceChar = punctWhitespaceChar;
 			m_styleSheetFileName = styleSheetFileName;
+			m_legacyOverridesFile = legacyOverridesFile;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -169,7 +176,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					return "Intermediate";
 
 				case "PunctWhitespaceChar":
-					return ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar").Substring(0, 1);
+					return m_punctWhitespaceChar.Substring(0, 1);
 
 				case "MatchedPairs":
 					return ws.MatchedPairs;
@@ -698,7 +705,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				return bldr.ToString();
 			}
 
-			var validChars = ValidCharacters.Load(ws, LoadException ?? NoErrorReport);
+			var validChars = ValidCharacters.Load(ws, LoadException ?? NoErrorReport, m_legacyOverridesFile);
 			return (validChars != null ? validChars.SpaceDelimitedList : string.Empty);
 		}
 
@@ -713,7 +720,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			{
 				// Get the writing system and valid characters list
 				return ValidCharacters.Load(m_cache.ServiceLocator.WritingSystemManager.Get(m_cache.DefaultVernWs),
-					LoadException ?? NoErrorReport);
+					LoadException ?? NoErrorReport, m_legacyOverridesFile);
 			}
 		}
 

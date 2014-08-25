@@ -7,7 +7,6 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Common.FwUtils;
 
 // Add additional methods/properties to domain object in FdoInterfaceAdditions.cs.
 // Add new interfaces to the FdoInterfaceDeclarations file.

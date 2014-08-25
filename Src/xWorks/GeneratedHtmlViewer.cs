@@ -21,6 +21,7 @@ using System.Reflection;
 using System.IO;
 using System.Resources;
 using System.Text;
+using System.Xml.Xsl;
 using Microsoft.Win32;
 using SIL.FieldWorks.FDO.DomainServices;
 using XCore;
@@ -125,6 +126,8 @@ namespace SIL.FieldWorks.XWorks
 		private const string m_ksHtmlFilePath = "HtmlFilePath";
 		private const string m_ksAlsoSaveFilePath = "AlsoSaveFilePath";
 
+		private readonly Dictionary<string, XslCompiledTransform> m_transforms = new Dictionary<string, XslCompiledTransform>();
+
 		#endregion // Data Members
 
 		#region Properties
@@ -134,14 +137,23 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private static string TransformPath
 		{
-			get { return Path.Combine(DirectoryFinder.FlexFolder, "Transforms"); }
+			get { return Path.Combine(FwDirectoryFinder.FlexFolder, "Transforms"); }
 		}
+
+		/// <summary>
+		/// Path to Export Templates
+		/// </summary>
+		private static string ExportTemplatePath
+		{
+			get { return Path.Combine(FwDirectoryFinder.FlexFolder, "Export Templates"); }
+		}
+
 		/// <summary>
 		/// Path to utility html files
 		/// </summary>
 		private static string UtilityHtmlPath
 		{
-			get { return Path.Combine(DirectoryFinder.FlexFolder, "GeneratedHtmlViewer"); }
+			get { return Path.Combine(FwDirectoryFinder.FlexFolder, "GeneratedHtmlViewer"); }
 		}
 
 		/// <summary>
@@ -247,13 +259,13 @@ namespace SIL.FieldWorks.XWorks
 			RegistryKey regkey = RegistryKey;
 			if (regkey != null)
 			{
-				m_sHtmlFileName = (string)regkey.GetValue(m_ksHtmlFilePath, Path.Combine(DirectoryFinder.FWCodeDirectory, InitialDocument));
+				m_sHtmlFileName = (string)regkey.GetValue(m_ksHtmlFilePath, Path.Combine(FwDirectoryFinder.CodeDirectory, InitialDocument));
 				m_sAlsoSaveFileName = (string)regkey.GetValue(m_ksAlsoSaveFilePath, "");
 				regkey.Close();
 			}
 			if (!File.Exists(m_sHtmlFileName))
 			{
-				m_sHtmlFileName = Path.Combine(DirectoryFinder.FWCodeDirectory, InitialDocument);
+				m_sHtmlFileName = Path.Combine(FwDirectoryFinder.CodeDirectory, InitialDocument);
 				//DisableButtons();
 			}
 		}
@@ -347,7 +359,7 @@ namespace SIL.FieldWorks.XWorks
 				return false; // we sure can't handle it; should we throw?
 			string whatToSave = param.Item1;
 			string outPath = param.Item2;
-			string sXsltFiles = param.Item3;
+			string xsltFiles = param.Item3;
 			string directory = Path.GetDirectoryName(outPath);
 			if (!Directory.Exists(directory))
 			{
@@ -359,23 +371,30 @@ namespace SIL.FieldWorks.XWorks
 					case "GrammarSketchXLingPaper":
 							if (File.Exists(m_sAlsoSaveFileName))
 							{
-								string sInputFile = m_sAlsoSaveFileName;
-								if (!string.IsNullOrEmpty(sXsltFiles))
+								string inputFile = m_sAlsoSaveFileName;
+								if (!string.IsNullOrEmpty(xsltFiles))
 								{
-									string sNewFileName = Path.GetFileNameWithoutExtension(outPath);
-									string sTempFileName = Path.Combine(Path.GetTempPath(), sNewFileName);
-									string sOutputFile = sTempFileName;
-									XmlUtils.XSLParameter[] parameterList = null;
-									string[] rgsXslts = sXsltFiles.Split(new[] { ';' });
+									string newFileName = Path.GetFileNameWithoutExtension(outPath);
+									string tempFileName = Path.Combine(Path.GetTempPath(), newFileName);
+									string outputFile = tempFileName;
+									string[] rgsXslts = xsltFiles.Split(new[] { ';' });
 									int cXslts = rgsXslts.GetLength(0);
-									for (int ix = 0; ix < cXslts; ++ix)
+									for (int i = 0; i < cXslts; ++i)
 									{
-											sOutputFile = sOutputFile + (ix + 1);
-											XmlUtils.TransformFileToFile(Path.Combine(TransformPath, rgsXslts[ix]), parameterList, sInputFile, sOutputFile + ".xml");
-											sInputFile = sOutputFile + ".xml";
+										outputFile = outputFile + (i + 1);
+										XslCompiledTransform transform = GetTransformFromFile(Path.Combine(ExportTemplatePath, rgsXslts[i]));
+										#if !__MonoCS__
+										var xmlReaderSettings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
+										#else
+										var xmlReaderSettings = new XmlReaderSettings { ProhibitDtd = false };
+										#endif
+										using (var writer = new StreamWriter(outputFile + ".xml"))
+										using (var reader = XmlReader.Create(inputFile, xmlReaderSettings))
+											transform.Transform(reader, null, writer);
+										inputFile = outputFile + ".xml";
 									}
 								}
-								CopyFile(sInputFile, outPath);
+								CopyFile(inputFile, outPath);
 								return true;
 							}
 						break;
@@ -567,7 +586,7 @@ namespace SIL.FieldWorks.XWorks
 		private void ShowGeneratingPage()
 		{
 			// this doesn't work for some reason...
-			m_sHtmlFileName = Path.Combine(DirectoryFinder.FWCodeDirectory, GeneratingDocument);
+			m_sHtmlFileName = Path.Combine(FwDirectoryFinder.CodeDirectory, GeneratingDocument);
 			ShowSketch();
 		}
 
@@ -594,31 +613,65 @@ namespace SIL.FieldWorks.XWorks
 			m_sHtmlFileName = sLastFile;
 		}
 
-		private string ApplyTransform(string sInputFile, XmlNode node, ProgressDialogWorkingOn dlg)
+		private string ApplyTransform(string inputFile, XmlNode node, ProgressDialogWorkingOn dlg)
 		{
-			string sProgressPrompt = XmlUtils.GetManditoryAttributeValue(node, "progressPrompt");
-			UpdateProgress(sProgressPrompt, dlg);
-			string sXslt = XmlUtils.GetManditoryAttributeValue(node, "file");
-			string sOutputFile = Path.Combine(m_outputDirectory, Cache.ProjectId.Name + sXslt + "Result." + GetExtensionFromNode(node));
+			string progressPrompt = XmlUtils.GetManditoryAttributeValue(node, "progressPrompt");
+			UpdateProgress(progressPrompt, dlg);
+			string stylesheetName = XmlUtils.GetManditoryAttributeValue(node, "stylesheetName");
+			string stylesheetAssembly = XmlUtils.GetManditoryAttributeValue(node, "stylesheetAssembly");
+			string outputFile = Path.Combine(m_outputDirectory, Cache.ProjectId.Name + stylesheetName + "Result." + GetExtensionFromNode(node));
 
-			XmlUtils.XSLParameter[] parameterList = CreateParameterList(node);
+			XsltArgumentList argumentList = CreateParameterList(node);
 			IWritingSystemContainer wsContainer = Cache.ServiceLocator.WritingSystems;
-			if (parameterList != null)
+
+			if (argumentList.GetParam("prmVernacularFontSize", "") != null)
 			{
-				foreach (XmlUtils.XSLParameter param in parameterList)
-				{
-					if (param.Name == "prmVernacularFontSize")
-					{
-						param.Value = GetNormalStyleFontSize(wsContainer.DefaultVernacularWritingSystem.Handle);
-					}
-					if (param.Name == "prmGlossFontSize")
-					{
-						param.Value = GetNormalStyleFontSize(wsContainer.DefaultAnalysisWritingSystem.Handle);
-					}
-				}
+				argumentList.RemoveParam("prmVernacularFontSize", "");
+				argumentList.AddParam("prmVernacularFontSize", "", GetNormalStyleFontSize(wsContainer.DefaultVernacularWritingSystem.Handle));
 			}
-			XmlUtils.TransformFileToFile(Path.Combine(TransformPath, sXslt), parameterList, sInputFile, sOutputFile);
-			return sOutputFile;
+			if (argumentList.GetParam("prmGlossFontSize", "") != null)
+			{
+				argumentList.RemoveParam("prmGlossFontSize", "");
+				argumentList.AddParam("prmGlossFontSize", "", GetNormalStyleFontSize(wsContainer.DefaultAnalysisWritingSystem.Handle));
+			}
+
+#if !__MonoCS__
+			var xmlReaderSettings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
+#else
+			var xmlReaderSettings = new XmlReaderSettings { ProhibitDtd = false };
+#endif
+			using (var writer = new StreamWriter(outputFile))
+			using (var reader = XmlReader.Create(inputFile, xmlReaderSettings))
+				GetTransform(stylesheetName, stylesheetAssembly).Transform(reader, argumentList, writer);
+			return outputFile;
+		}
+
+		private XslCompiledTransform GetTransform(string xslName, string xslAssembly)
+		{
+			XslCompiledTransform transform;
+			if (!m_transforms.TryGetValue(xslName, out transform))
+			{
+				transform = XmlUtils.CreateTransform(xslName, xslAssembly);
+				m_transforms[xslName] = transform;
+			}
+
+			return transform;
+		}
+
+		private XslCompiledTransform GetTransformFromFile(string xslPath)
+		{
+			lock (m_transforms)
+			{
+				XslCompiledTransform transform;
+				m_transforms.TryGetValue(xslPath, out transform);
+				if (transform != null)
+					return transform;
+
+				transform = new XslCompiledTransform();
+				transform.Load(xslPath);
+				m_transforms.Add(xslPath, transform);
+				return transform;
+			}
 		}
 
 		private string GetNormalStyleFontSize(int ws)
@@ -628,9 +681,9 @@ namespace SIL.FieldWorks.XWorks
 				return myFont.Size + "pt";
 		}
 
-		private static XmlUtils.XSLParameter[] CreateParameterList(XmlNode node)
+		private static XsltArgumentList CreateParameterList(XmlNode node)
 		{
-			XmlUtils.XSLParameter[] parameterList = null;
+			XsltArgumentList parameterList = new XsltArgumentList();
 			foreach (XmlNode rNode in node.ChildNodes)
 			{
 				if (rNode.Name == "xsltParameters")
@@ -638,29 +691,28 @@ namespace SIL.FieldWorks.XWorks
 					int cParams = CountParams(rNode);
 					if (cParams > 0)
 					{
-						parameterList = GetParameters(cParams, rNode);
+						parameterList = GetParameters(rNode);
+						break;
 					}
 				}
 			}
 			return parameterList;
 		}
 
-		private static XmlUtils.XSLParameter[] GetParameters(int cParams, XmlNode rNode)
+		private static XsltArgumentList GetParameters(XmlNode rNode)
 		{
-			var parameterList = new XmlUtils.XSLParameter[cParams];
-			int i = 0;
+			var parameterList = new XsltArgumentList();
 			foreach (XmlNode rParamNode in rNode.ChildNodes)
 			{
 				if (rParamNode.Name == "param")
 				{
-					string sName = XmlUtils.GetManditoryAttributeValue(rParamNode, "name");
-					string sValue = XmlUtils.GetManditoryAttributeValue(rParamNode, "value");
-					if (sValue == "TransformDirectory")
+					string name = XmlUtils.GetManditoryAttributeValue(rParamNode, "name");
+					string value = XmlUtils.GetManditoryAttributeValue(rParamNode, "value");
+					if (value == "TransformDirectory")
 					{
-						sValue = TransformPath.Replace("\\", "/");
+						value = TransformPath.Replace("\\", "/");
 					}
-					parameterList[i] = new XmlUtils.XSLParameter(sName, sValue);
-					i++;
+					parameterList.AddParam(name, "", value);
 				}
 			}
 			return parameterList;

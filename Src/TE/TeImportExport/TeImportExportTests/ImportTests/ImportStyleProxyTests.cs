@@ -19,6 +19,7 @@ using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.ScriptureUtils;
@@ -52,7 +53,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			// Force load of styles
 			IScripture scr = Cache.LangProject.TranslatedScriptureOA;
 			Assert.IsTrue(scr.StylesOC.Count > 0);
-			m_styleSheet.Init(Cache, scr.Hvo, ScriptureTags.kflidStyles);
+			m_styleSheet.Init(Cache, scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 		}
 
 		/// ------------------------------------------------------------------------------------

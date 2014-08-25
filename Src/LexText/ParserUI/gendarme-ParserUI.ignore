@@ -24,3 +24,12 @@ R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
 T: SIL.FieldWorks.LexText.Controls.ParserTraceBase
 T: SIL.FieldWorks.LexText.Controls.WebPageInteractor
 T: SIL.FieldWorks.LexText.Controls.WordImporter
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Portability.NewLineLiteralRule
+
+#generated code
+T: FormatHCTrace
+T: FormatXAmpleParse
+T: FormatXAmpleTrace
+T: FormatXAmpleWordGrammarDebuggerResult

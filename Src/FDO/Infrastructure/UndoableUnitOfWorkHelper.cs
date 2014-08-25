@@ -7,7 +7,6 @@
 
 using System;
 using SIL.FieldWorks.Common.COMInterfaces;
-using XCore;
 
 namespace SIL.FieldWorks.FDO.Infrastructure
 {
@@ -77,17 +76,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 		public static void Do(string undoText, string redoText, ICmObject obj, Action task)
 		{
 			Do(undoText, redoText, obj.Cache.ServiceLocator.GetInstance<IActionHandler>(), task);
-		}
-
-		/// <summary>
-		/// Perform the specified task, making it an undoable task in the action handler
-		/// associated with the input ICmObject, with the labels determined by the command. The task will
-		/// automatically be begun and ended if all goes well, and rolled back if an exception
-		/// is thrown. (The exception will then be rethrown.)
-		/// </summary>
-		public static void Do(Command command, ICmObject obj, Action task)
-		{
-			Do(command.UndoText, command.RedoText, obj, task);
 		}
 
 		/// ------------------------------------------------------------------------------------

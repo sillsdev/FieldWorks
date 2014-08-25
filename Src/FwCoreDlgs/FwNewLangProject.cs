@@ -19,6 +19,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Drawing;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using XCore;
 using SIL.FieldWorks.Common.RootSites;
@@ -141,7 +142,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			InitializeComponent();
 			AccessibleName = GetType().Name;
-			m_wsManager = new PalasoWritingSystemManager(new GlobalFileWritingSystemStore(DirectoryFinder.GlobalWritingSystemStoreDirectory));
+			m_wsManager = new PalasoWritingSystemManager(new GlobalFileWritingSystemStore());
 #if __MonoCS__
 			FixLabelFont(m_lblTip);
 			FixLabelFont(m_lblAnalysisWrtSys);
@@ -515,7 +516,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Project with this name already exists?
 			try
 			{
-				m_projInfo = ProjectInfo.GetProjectInfoByName(ProjectName);
+				m_projInfo = ProjectInfo.GetProjectInfoByName(FwDirectoryFinder.ProjectsDirectory, ProjectName);
 			}
 			catch (IOException ex)
 			{
@@ -660,13 +661,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			try
 			{
-				using (var progressDlg = new ProgressDialogWithTask(this, null))
+				using (var progressDlg = new ProgressDialogWithTask(this))
 				{
 					progressDlg.Title = string.Format(FwCoreDlgs.kstidCreateLangProjCaption, ProjectName);
 					string anthroFile = null;
 					if (DisplayUi) // Prevents dialogs from showing during unit tests.
 					{
-						anthroFile = FwCheckAnthroListDlg.PickAnthroList(progressDlg.Form, null, m_helpTopicProvider);
+						anthroFile = FwCheckAnthroListDlg.PickAnthroList(null, m_helpTopicProvider);
 					}
 					using (new WaitCursor())
 					{
@@ -676,8 +677,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 						using (var threadHelper = new ThreadHelper())
 						{
-							m_dbFile = (string) progressDlg.RunTask(DisplayUi, FdoCache.CreateNewLangProj,
-																	ProjectName, threadHelper, m_cbAnalWrtSys.SelectedItem,
+
+							m_dbFile = (string)progressDlg.RunTask(DisplayUi, FdoCache.CreateNewLangProj,
+																	ProjectName, FwDirectoryFinder.FdoDirectories, threadHelper, m_cbAnalWrtSys.SelectedItem,
 																	m_cbVernWrtSys.SelectedItem,
 																	((PalasoWritingSystem)m_wsManager.UserWritingSystem).RFC5646,
 																	m_newAnalysisWss, m_newVernWss, anthroFile);
@@ -688,7 +690,22 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			catch (WorkerThreadException wex)
 			{
 				Exception e = wex.InnerException;
-				if (e.GetBaseException() is PathTooLongException)
+				if (e is UnauthorizedAccessException)
+				{
+					if (MiscUtils.IsUnix)
+					{
+						// Tell Mono user he/she needs to logout and log back in
+						MessageBox.Show(ResourceHelper.GetResourceString("ksNeedToJoinFwGroup"));
+					}
+					else
+					{
+						MessageBox.Show(string.Format(FwCoreDlgs.kstidErrorNewDb, e.Message),
+							FwUtils.ksSuiteName);
+					}
+					m_fIgnoreClose = true;
+					DialogResult = DialogResult.Cancel;
+				}
+				else if (e.GetBaseException() is PathTooLongException)
 				{
 					Show();
 					m_fIgnoreClose = true;
@@ -703,7 +720,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					m_fIgnoreClose = true;
 					DialogResult = DialogResult.Cancel;
 				}
-				else if (e is FwStartupException)
+				else if (e is StartupException)
 				{
 					MessageBox.Show(string.Format(FwCoreDlgs.kstidErrorNewDb, e.Message),
 						FwUtils.ksSuiteName);
@@ -780,7 +797,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public static bool CheckProjectDirectory(Form f, IHelpTopicProvider helpTopicProvider)
 		{
 			string warning = null;
-			string dataDirectory = DirectoryFinder.ProjectsDirectory;
+			string dataDirectory = FwDirectoryFinder.ProjectsDirectory;
 
 			// Get the database directory attributes:
 			var dir = new DirectoryInfo(dataDirectory);
@@ -795,17 +812,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					if (dlg.ShowDialog(f) != DialogResult.OK)
 						return false; // can't go on.
-					if (DirectoryFinder.ProjectsDirectoryLocalMachine == dlg.ProjectsFolder)
+					if (FwDirectoryFinder.ProjectsDirectoryLocalMachine == dlg.ProjectsFolder)
 					{
 						//Remove the user override since they reset to the default.
-						DirectoryFinder.ProjectsDirectory = null;
+						FwDirectoryFinder.ProjectsDirectory = null;
 					}
 					else
 					{
-						DirectoryFinder.ProjectsDirectory = dlg.ProjectsFolder;
+						FwDirectoryFinder.ProjectsDirectory = dlg.ProjectsFolder;
 					}
 				}
-				dataDirectory = DirectoryFinder.ProjectsDirectory;
+				dataDirectory = FwDirectoryFinder.ProjectsDirectory;
 				dir = new DirectoryInfo(dataDirectory);
 				// loop on the offchance it didn't get created.
 			}
@@ -881,7 +898,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			// Make sure our manager knows about any writing systems in the template folder.
 			// In pathological cases where no projects have been installed these might not be in the global store.
-			foreach (var templateLangFile in Directory.GetFiles(DirectoryFinder.TemplateDirectory, @"*.ldml"))
+			foreach (var templateLangFile in Directory.GetFiles(FwDirectoryFinder.TemplateDirectory, @"*.ldml"))
 			{
 				var id = Path.GetFileNameWithoutExtension(templateLangFile);
 				IWritingSystem dummy;

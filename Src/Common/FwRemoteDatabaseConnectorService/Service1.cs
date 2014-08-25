@@ -4,12 +4,15 @@ using System.Net.Sockets;
 using System.ServiceProcess;
 using System.Threading;
 using FwRemoteDatabaseConnector;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace FwRemoteDatabaseConnectorService
 {
 	public partial class FwRemoteDatabaseConnectorService : ServiceBase
 	{
+		private const string ksSharedProjectKey = "ProjectShared";
+
 		private Thread m_clientListenerThread;
 		private Socket m_clientListenerSocket;
 
@@ -55,7 +58,7 @@ namespace FwRemoteDatabaseConnectorService
 		{
 			try
 			{
-				RemotingServer.Start();
+				RemotingServer.Start(FwDirectoryFinder.RemotingTcpServerConfigFile, FwDirectoryFinder.FdoDirectories, GetSharedProject, SetSharedProject);
 			}
 			catch (Exception e)
 			{
@@ -65,6 +68,19 @@ namespace FwRemoteDatabaseConnectorService
 
 			m_clientListenerThread = new Thread(ThreadStartListenForClients);
 			m_clientListenerThread.Start();
+		}
+
+		private static bool GetSharedProject()
+		{
+			bool result;
+			FwRegistryHelper.MigrateVersion7ValueIfNeeded();
+			var value = FwRegistryHelper.FieldWorksRegistryKey.GetValue(ksSharedProjectKey, "false");
+			return (bool.TryParse((string)value, out result) && result);
+		}
+
+		private static void SetSharedProject(bool v)
+		{
+			FwRegistryHelper.FieldWorksRegistryKey.SetValue(ksSharedProjectKey, v);
 		}
 
 		protected override void OnStop()

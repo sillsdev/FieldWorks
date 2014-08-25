@@ -35,16 +35,20 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
+using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.PaObjects;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.LexicalProvider;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using XCore;
 using SIL.CoreImpl;
 using ConfigurationException = SIL.Utils.ConfigurationException;
@@ -54,6 +58,7 @@ using SIL.CoreImpl.Properties;
 using FileUtils = SIL.Utils.FileUtils;
 #if !__MonoCS__
 using NetSparkle;
+
 #endif
 
 [assembly:SuppressMessage("Gendarme.Rules.Portability", "ExitCodeIsLimitedOnUnixRule",
@@ -123,6 +128,7 @@ namespace SIL.FieldWorks
 		// true if we have no previous reporting settings, typically the first time a version of FLEx that
 		// supports usage reporting has been run.
 		private static bool s_noPreviousReportingSettings;
+		private static IFdoUI s_ui;
 		#endregion
 
 		#region Main Method and Initialization Methods
@@ -251,6 +257,8 @@ namespace SIL.FieldWorks
 				s_noUserInterface = appArgs.NoUserInterface;
 				s_appServerMode = appArgs.AppServerMode;
 
+				s_ui = new FwFdoUI(GetHelpTopicProvider(appArgs.AppAbbrev), s_threadHelper);
+
 				if (Settings.Default.CallUpgrade)
 				{
 					Settings.Default.Upgrade();
@@ -293,6 +301,10 @@ namespace SIL.FieldWorks
 				// e.g. the first time the user runs FW8, we need to copy a bunch of registry keys
 				// from HKCU/Software/SIL/FieldWorks/7.0 -> FieldWorks/8.
 				FwRegistryHelper.UpgradeUserSettingsIfNeeded();
+
+				// initialize client-server services to use Db4O backend
+				ClientServerServices.SetCurrentToDb4OBackend(s_ui, FwDirectoryFinder.FdoDirectories,
+					() => FwDirectoryFinder.ProjectsDirectory == FwDirectoryFinder.ProjectsDirectoryLocalMachine);
 
 				if (appArgs.ShowHelp)
 				{
@@ -428,6 +440,9 @@ namespace SIL.FieldWorks
 
 			// Get the project the user wants to open and attempt to launch it.
 			ProjectId projectId = DetermineProject(appArgs);
+			if (projectId != null && IsSharedXmlBackendNeeded(projectId))
+				projectId.Type = FDOBackendProviderType.kSharedXML;
+
 			// s_projectId can be non-null if the user decided to restore a project from
 			// the Welcome to Fieldworks dialog. (FWR-2146)
 			if (s_projectId == null && !LaunchProject(appArgs, ref projectId))
@@ -445,6 +460,11 @@ namespace SIL.FieldWorks
 			}
 
 			return true;
+		}
+
+		private static bool IsSharedXmlBackendNeeded(ProjectId projectId)
+		{
+			return projectId.Type == FDOBackendProviderType.kXML && ParatextHelper.GetAssociatedProject(projectId) != null;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -485,7 +505,7 @@ namespace SIL.FieldWorks
 			// There is no need to re-show the dialog since the user has already chosen
 			// the options and confirmed to overwrite any existing database.
 			Logger.WriteEvent("Restoring project: " + appArgs.BackupFile);
-			RestoreProjectSettings restoreSettings = new RestoreProjectSettings(appArgs.Database,
+			RestoreProjectSettings restoreSettings = new RestoreProjectSettings(FwDirectoryFinder.ProjectsDirectory, appArgs.Database,
 				appArgs.BackupFile, appArgs.RestoreOptions);
 			RestoreCurrentProject(new FwRestoreProjectSettings(appArgs.AppAbbrev, restoreSettings), null);
 		}
@@ -809,15 +829,62 @@ namespace SIL.FieldWorks
 
 			WriteSplashScreen(string.Format(Properties.Resources.kstidLoadingProject, projectId.UiName));
 			Form owner = s_splashScreen != null ? s_splashScreen.Form : Form.ActiveForm;
-			using (var progressDlg = new ProgressDialogWithTask(owner, s_threadHelper))
+			using (var progressDlg = new ProgressDialogWithTask(owner))
 			{
-				FdoCache cache = FdoCache.CreateCacheFromExistingData(projectId, s_sWsUser, progressDlg);
-			cache.ProjectNameChanged += ProjectNameChanged;
-			cache.ServiceLocator.GetInstance<IUndoStackManager>().OnSave += FieldWorks_OnSave;
+				FdoCache cache = FdoCache.CreateCacheFromExistingData(projectId, s_sWsUser, s_ui, FwDirectoryFinder.FdoDirectories, progressDlg);
+				EnsureValidLinkedFilesFolder(cache);
+				cache.ProjectNameChanged += ProjectNameChanged;
+				cache.ServiceLocator.GetInstance<IUndoStackManager>().OnSave += FieldWorks_OnSave;
 
-			SetupErrorPropertiesNeedingCache(cache);
-			return cache;
+				SetupErrorPropertiesNeedingCache(cache);
+				return cache;
+			}
 		}
+
+		/// <summary>
+		/// Ensure a valid folder for LangProject.LinkedFilesRootDir.  When moving projects
+		/// between systems, the stored value may become hopelessly invalid.  See FWNX-1005
+		/// for an example of the havoc than can ensue.
+		/// </summary>
+		/// <remarks>This method gets called when we open the FDO cache.</remarks>
+		private static void EnsureValidLinkedFilesFolder(FdoCache cache)
+		{
+			if (MiscUtils.RunningTests)
+				return;
+
+			var linkedFilesFolder = cache.LangProject.LinkedFilesRootDir;
+			var defaultFolder = FdoFileHelper.GetDefaultLinkedFilesDir(cache.ProjectId.ProjectFolder);
+			EnsureValidLinkedFilesFolderCore(linkedFilesFolder, defaultFolder);
+
+			if (!Directory.Exists(linkedFilesFolder))
+			{
+				if (!Directory.Exists(defaultFolder))
+					defaultFolder = cache.ProjectId.ProjectFolder;
+				MessageBox.Show(String.Format(Properties.Resources.ksInvalidLinkedFilesFolder, linkedFilesFolder), Properties.Resources.ksErrorCaption);
+				while (!Directory.Exists(linkedFilesFolder))
+				{
+					using (var folderBrowserDlg = new FolderBrowserDialogAdapter())
+					{
+						folderBrowserDlg.Description = Properties.Resources.ksLinkedFilesFolder;
+						folderBrowserDlg.RootFolder = Environment.SpecialFolder.Desktop;
+						folderBrowserDlg.SelectedPath = defaultFolder;
+						if (folderBrowserDlg.ShowDialog() == DialogResult.OK)
+							linkedFilesFolder = folderBrowserDlg.SelectedPath;
+					}
+				}
+				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(cache.ActionHandlerAccessor, () =>
+					{ cache.LangProject.LinkedFilesRootDir = linkedFilesFolder; });
+			}
+		}
+
+		/// <summary>
+		/// Just make the directory if it's the default.
+		/// See FWNX-1092, LT-14491.
+		/// </summary>
+		internal static void EnsureValidLinkedFilesFolderCore(string linkedFilesFolder, string defaultLinkedFilesFolder)
+		{
+			if (linkedFilesFolder == defaultLinkedFilesFolder)
+				FileUtils.EnsureDirectoryExists(defaultLinkedFilesFolder);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1204,7 +1271,7 @@ namespace SIL.FieldWorks
 			// If we try to use command-line arguments and it fails, we will use the Welcome dialog
 			// to help the user figure out what to do next.
 			var projId = new ProjectId(args.DatabaseType, args.Database, args.Server);
-			FwStartupException projectOpenError;
+			StartupException projectOpenError;
 			if (TryCommandLineOption(projId, out projectOpenError))
 				return projId;
 
@@ -1227,7 +1294,7 @@ namespace SIL.FieldWorks
 			else if (previousStartupStatus == StartupStatus.Failed && !string.IsNullOrEmpty(latestProject))
 			{
 				// The previous project failed to open, so notify the user.
-				projectOpenError = new FwStartupException(String.Format(
+				projectOpenError = new StartupException(String.Format(
 					Properties.Resources.kstidUnableToOpenLastProject, app.ApplicationName,
 					latestProject));
 			}
@@ -1261,10 +1328,10 @@ namespace SIL.FieldWorks
 				if (!File.Exists(projId.Path))
 				{
 					string altProject;
-					if (Path.GetExtension(latestProject) == FwFileExtensions.ksFwDataXmlFileExtension)
-						altProject = Path.ChangeExtension(latestProject, FwFileExtensions.ksFwDataDb4oFileExtension);
+					if (Path.GetExtension(latestProject) == FdoFileHelper.ksFwDataXmlFileExtension)
+						altProject = Path.ChangeExtension(latestProject, FdoFileHelper.ksFwDataDb4oFileExtension);
 					else
-						altProject = Path.ChangeExtension(latestProject, FwFileExtensions.ksFwDataXmlFileExtension);
+						altProject = Path.ChangeExtension(latestProject, FdoFileHelper.ksFwDataXmlFileExtension);
 					projId = new ProjectId(altProject, latestServer);
 				}
 			}
@@ -1279,15 +1346,15 @@ namespace SIL.FieldWorks
 		/// <param name="projId"></param>
 		/// <param name="exception"></param>
 		/// <returns></returns>
-		private static bool TryCommandLineOption(ProjectId projId, out FwStartupException exception)
+		private static bool TryCommandLineOption(ProjectId projId, out StartupException exception)
 		{
 			exception = null;
 			if (string.IsNullOrEmpty(projId.Name))
 				return false;
 			var ex = projId.GetExceptionIfInvalid();
-			if (ex is FwStartupException)
+			if (ex is StartupException)
 			{
-				exception = (FwStartupException) ex;
+				exception = (StartupException) ex;
 				return false; // Invalid command-line arguments supplied.
 			}
 			if (ex == null)
@@ -1338,7 +1405,7 @@ namespace SIL.FieldWorks
 				{
 					return InitializeFirstApp(app, projectId);
 				}
-				catch (FwStartupException e)
+				catch (StartupException e)
 				{
 					if (s_cache != null)
 					{
@@ -1542,7 +1609,7 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification="startingApp is a reference")]
-		private static ProjectId ShowWelcomeDialog(FwAppArgs args, FwApp startingApp, ProjectId lastProjectId, FwStartupException exception)
+		private static ProjectId ShowWelcomeDialog(FwAppArgs args, FwApp startingApp, ProjectId lastProjectId, StartupException exception)
 		{
 			CloseSplashScreen();
 
@@ -1631,7 +1698,7 @@ namespace SIL.FieldWorks
 								if (projectToTry != null)
 									projectToTry.AssertValid();
 							}
-							catch (FwStartupException e)
+							catch (StartupException e)
 							{
 								exception = e;
 							}
@@ -1744,7 +1811,16 @@ namespace SIL.FieldWorks
 							PropertyTable.SettingsGroup.LocalSettings);
 					}
 				}
-				return dlg.DialogResult != DialogResult.OK ? null : new ProjectId(dlg.Project, dlg.Server);
+
+				if (dlg.DialogResult == DialogResult.OK)
+				{
+					var projId = new ProjectId(dlg.Project, dlg.Server);
+					if (IsSharedXmlBackendNeeded(projId))
+						projId.Type = FDOBackendProviderType.kSharedXML;
+					return projId;
+				}
+
+				return null;
 			}
 		}
 
@@ -1852,7 +1928,7 @@ namespace SIL.FieldWorks
 		internal static void RestoreProject(Form dialogOwner, string backupFile)
 		{
 			BackupFileSettings settings = null;
-			if (!ProjectRestoreService.HandleRestoreFileErrors(null, FwUtils.ksSuiteName, backupFile,
+			if (!RestoreProjectDlg.HandleRestoreFileErrors(null, FwUtils.ksSuiteName, backupFile,
 				() => settings = new BackupFileSettings(backupFile, true)))
 			{
 				return;
@@ -1930,7 +2006,7 @@ namespace SIL.FieldWorks
 				return;
 			string projectPath = fwApp.Cache.ProjectId.Path;
 			string parentDirectory = Path.GetDirectoryName(fwApp.Cache.ProjectId.ProjectFolder);
-			string projectsDirectory = DirectoryFinder.ProjectsDirectory;
+			string projectsDirectory = FwDirectoryFinder.ProjectsDirectory;
 				if (!MiscUtils.IsUnix)
 				{
 					parentDirectory = parentDirectory.ToLowerInvariant();
@@ -1944,7 +2020,7 @@ namespace SIL.FieldWorks
 				if (!ClientServerServices.Current.Local.ShareMyProjects)
 					UpdateProjectsLocation(dlg.ProjectsFolder, fwApp, projectPath);
 					if (!MiscUtils.IsUnix)
-						projectsDirectory = DirectoryFinder.ProjectsDirectory.ToLowerInvariant();
+						projectsDirectory = FwDirectoryFinder.ProjectsDirectory.ToLowerInvariant();
 				if (UpdateProjectsSharing(true, dialogOwner, fwApp, projectPath, parentDirectory, projectsDirectory))
 				{
 					using (var dlgShare = new ShareProjectsFolderDlg())
@@ -1990,7 +2066,7 @@ namespace SIL.FieldWorks
 			{
 				// We aren't going to convert this one, so no complication to just switching it.
 				// Both these setters check and do nothing if not changed.
-				using (var progressDlg = new ProgressDialogWithTask(null, s_threadHelper))
+				using (var progressDlg = new ProgressDialogWithTask(s_threadHelper))
 				{
 					return ClientServerServices.Current.Local.SetProjectSharing(fShareProjects, progressDlg);
 				}
@@ -1999,7 +2075,7 @@ namespace SIL.FieldWorks
 			bool fSuccess = false;
 			ExecuteWithAllFwProcessesShutDown(GetCommandLineAbbrevForAppName(fwApp.ApplicationName), () =>
 			{
-				using (var progressDlg = new ProgressDialogWithTask(null, s_threadHelper))
+				using (var progressDlg = new ProgressDialogWithTask(s_threadHelper))
 				{
 					fSuccess = ClientServerServices.Current.Local.SetProjectSharing(fShareProjects, progressDlg);
 				}
@@ -2019,7 +2095,7 @@ namespace SIL.FieldWorks
 		private static void UpdateProjectsLocation(string newFolderForProjects, FwApp fwApp,
 			string projectPath)
 		{
-			if (newFolderForProjects == null || newFolderForProjects == DirectoryFinder.ProjectsDirectory ||
+			if (newFolderForProjects == null || newFolderForProjects == FwDirectoryFinder.ProjectsDirectory ||
 				!FileUtils.EnsureDirectoryExists(newFolderForProjects))
 				return;
 
@@ -2028,10 +2104,10 @@ namespace SIL.FieldWorks
 			{
 				fMoveFiles = dlg.ShowDialog(fwApp.ActiveMainWindow) == DialogResult.Yes;
 			}
-			string oldFolderForProjects = DirectoryFinder.ProjectsDirectory;
+			string oldFolderForProjects = FwDirectoryFinder.ProjectsDirectory;
 			try
 			{
-				DirectoryFinder.ProjectsDirectory = newFolderForProjects;
+				FwDirectoryFinder.ProjectsDirectory = newFolderForProjects;
 			}
 			catch (Exception)
 			{
@@ -2147,7 +2223,7 @@ namespace SIL.FieldWorks
 		{
 			List<string> rgErrors = new List<string>();
 			bool fCopy = MustCopyFoldersAndFiles(oldFolderForProjects, newFolderForProjects);
-			using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(null, s_threadHelper))
+			using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(s_threadHelper))
 			{
 				string[] subDirs = Directory.GetDirectories(oldFolderForProjects);
 				progressDlg.Maximum = subDirs.Length;
@@ -2236,7 +2312,7 @@ namespace SIL.FieldWorks
 			{
 				if (projectPath.StartsWith(oldFolderForProjects))
 				{
-					// This is perhaps a temporary workaround.  On Linux, DirectoryFinder.ProjectsDirectory
+					// This is perhaps a temporary workaround.  On Linux, FwDirectoryFinder.ProjectsDirectory
 					// isn't returning the updated value, but rather the original value.  This seems to
 					// last for the duration of the program, but if you exit and restart the program, it
 					// gets the correct (updated) value!?
@@ -2267,12 +2343,12 @@ namespace SIL.FieldWorks
 		{
 			var projectName = Path.GetFileName(projectFolder);
 			// If it contains a matching fwdata file it is a project folder.
-			var projectFileName = Path.ChangeExtension(Path.Combine(projectFolder, projectName), FwFileExtensions.ksFwDataXmlFileExtension);
+			var projectFileName = Path.ChangeExtension(Path.Combine(projectFolder, projectName), FdoFileHelper.ksFwDataXmlFileExtension);
 			if(File.Exists(projectFileName))
 				return true;
 			// Just in case some project didn't get converted back to fwdata before we ask this question,
 			// allow folders containing fwdb files, too.
-			projectFileName = Path.ChangeExtension(projectFileName, FwFileExtensions.ksFwDataDb4oFileExtension);
+			projectFileName = Path.ChangeExtension(projectFileName, FdoFileHelper.ksFwDataDb4oFileExtension);
 			if (File.Exists(projectFileName))
 				return true;
 			return false;
@@ -2280,7 +2356,7 @@ namespace SIL.FieldWorks
 
 		private static bool IsFieldWorksSettingsFolder(string projectFolder)
 		{
-			var settingsDir = Path.Combine(projectFolder, DirectoryFinder.ksConfigurationSettingsDir);
+			var settingsDir = Path.Combine(projectFolder, FdoFileHelper.ksConfigurationSettingsDir);
 			if (Directory.Exists(settingsDir))
 				return true;
 			return false;
@@ -2342,7 +2418,7 @@ namespace SIL.FieldWorks
 					// TODO (TimS): We should probably put FW into single process mode for these
 					// migrations. It would probably be very bad to have two processes attempting to
 					// do migrations at the same time.
-					ProcessStartInfo info = new ProcessStartInfo(DirectoryFinder.MigrateSqlDbsExe);
+					ProcessStartInfo info = new ProcessStartInfo(FwDirectoryFinder.MigrateSqlDbsExe);
 					info.UseShellExecute = false;
 					using (Process proc = Process.Start(info))
 					{
@@ -2464,16 +2540,19 @@ namespace SIL.FieldWorks
 					retry = false;
 					try
 					{
-						ProjectRestoreService restoreService = new ProjectRestoreService(restoreSettings.Settings,
-						GetHelpTopicProvider(restoreSettings.FwAppCommandLineAbbrev));
+						var restoreService = new ProjectRestoreService(restoreSettings.Settings, s_ui, FwDirectoryFinder.ConverterConsoleExe, FwDirectoryFinder.DbExe);
 						Logger.WriteEvent("Restoring from " + restoreSettings.Settings.Backup.File);
-						if (ProjectRestoreService.HandleRestoreFileErrors(null, ResourceHelper.GetResourceString("ksRestoreFailed"),
+						if (RestoreProjectDlg.HandleRestoreFileErrors(null, ResourceHelper.GetResourceString("ksRestoreFailed"),
 							restoreSettings.Settings.Backup.File, () => DoRestore(restoreService)))
 						{
 							s_LinkDirChangedTo = restoreService.LinkDirChangedTo;
 							return s_projectId ??
 								new ProjectId(ClientServerServices.Current.Local.IdForLocalProject(restoreSettings.Settings.ProjectName), null);
 						}
+					}
+					catch (CannotConvertException e)
+					{
+						MessageBoxUtils.Show(e.Message, ResourceHelper.GetResourceString("ksRestoreFailed"));
 					}
 					catch (MissingOldFwException e)
 					{
@@ -2485,6 +2564,7 @@ namespace SIL.FieldWorks
 					}
 					catch (FailedFwRestoreException e)
 					{
+						MessageBoxUtils.Show(Properties.Resources.ksRestoringOldFwBackupFailed, Properties.Resources.ksFailed);
 					}
 				}
 				while (retry);
@@ -2501,7 +2581,7 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		private static void DoRestore(ProjectRestoreService restoreService)
 		{
-			using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(null, s_threadHelper))
+			using (var progressDlg = new ProgressDialogWithTask(s_threadHelper))
 				restoreService.RestoreProject(progressDlg);
 		}
 
@@ -2522,20 +2602,26 @@ namespace SIL.FieldWorks
 		private static bool BackupProjectForRestore(FwRestoreProjectSettings restoreSettings,
 			FdoCache existingCache, Form dialogOwner)
 		{
-			using (var progressDlg = new ProgressDialogWithTask(dialogOwner, s_threadHelper))
+			using (var progressDlg = new ProgressDialogWithTask(dialogOwner))
 			{
 				FdoCache cache = existingCache ?? FdoCache.CreateCacheFromExistingData(
 					new ProjectId(restoreSettings.Settings.FullProjectPath, null),
-					s_sWsUser, progressDlg);
+					s_sWsUser, s_ui, FwDirectoryFinder.FdoDirectories, progressDlg);
 
 				try
 				{
-					BackupProjectSettings settings = new BackupProjectSettings(cache, restoreSettings.Settings);
-					settings.DestinationFolder = DirectoryFinder.DefaultBackupDirectory;
+					BackupProjectSettings settings = new BackupProjectSettings(cache, restoreSettings.Settings, FwDirectoryFinder.DefaultBackupDirectory);
+					settings.DestinationFolder = FwDirectoryFinder.DefaultBackupDirectory;
 					settings.AppAbbrev = restoreSettings.FwAppCommandLineAbbrev;
 
 					ProjectBackupService backupService = new ProjectBackupService(cache, settings);
-					backupService.BackupProject(progressDlg);
+					string backupFile;
+					if (!backupService.BackupProject(progressDlg, out backupFile))
+					{
+						string msg = string.Format(FwCoreDlgs.FwCoreDlgs.ksCouldNotBackupSomeFiles, backupService.FailedFiles.ToString(", ", Path.GetFileName));
+						if (MessageBox.Show(msg, FwCoreDlgs.FwCoreDlgs.ksWarning, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+							File.Delete(backupFile);
+					}
 				}
 				catch (FwBackupException e)
 				{
@@ -2698,7 +2784,7 @@ namespace SIL.FieldWorks
 				if (oldDir == null)
 				{
 					// e.g. "C:\\ProgramData\\SIL\\FieldWorks"
-					oldDir = DirectoryFinder.CommonAppDataFolder("SIL/FieldWorks");
+					oldDir = DirectoryFinder.CommonAppDataFolder("FieldWorks");
 				}
 				oldDir = oldDir.TrimEnd(new [] {Path.PathSeparator});
 				var newDir = app.Cache.LangProject.LinkedFilesRootDir;
@@ -2742,7 +2828,7 @@ namespace SIL.FieldWorks
 			var sLinkedFilesRootDir = app.Cache.LangProject.LinkedFilesRootDir;
 			NonUndoableUnitOfWorkHelper.Do(app.Cache.ActionHandlerAccessor, () =>
 			{
-				app.Cache.LangProject.LinkedFilesRootDir = DirectoryFinder.GetDefaultLinkedFilesDir(
+				app.Cache.LangProject.LinkedFilesRootDir = FdoFileHelper.GetDefaultLinkedFilesDir(
 					app.Cache.ProjectId.ProjectFolder);
 			});
 			app.UpdateExternalLinks(sLinkedFilesRootDir);
@@ -2815,7 +2901,7 @@ namespace SIL.FieldWorks
 				// so just record it now as the active one.
 				s_activeMainWnd = (IFwMainWnd)fwMainWindow;
 			}
-			catch (FwStartupException ex)
+			catch (StartupException ex)
 			{
 				// REVIEW: Can this actually happen when just creating a new main window?
 				CloseSplashScreen();
@@ -2894,7 +2980,7 @@ namespace SIL.FieldWorks
 				if (s_appServerMode)
 				{
 					// Make sure the cache is initialized for the application.
-					using (ProgressDialogWithTask dlg = new ProgressDialogWithTask(null, s_threadHelper))
+					using (ProgressDialogWithTask dlg = new ProgressDialogWithTask(s_threadHelper))
 						InitializeApp(app, dlg);
 					return;
 				}
@@ -2922,7 +3008,7 @@ namespace SIL.FieldWorks
 				else
 				{
 					// Make sure the cache is initialized for the application
-					using (ProgressDialogWithTask dlg = new ProgressDialogWithTask(otherApp.ActiveMainWindow, s_threadHelper))
+					using (var dlg = new ProgressDialogWithTask(otherApp.ActiveMainWindow))
 						InitializeApp(app, dlg);
 				}
 			});
@@ -2950,7 +3036,7 @@ namespace SIL.FieldWorks
 				{
 					if (s_teApp == null)
 					{
-						s_teApp = (FwApp)DynamicLoader.CreateObject(DirectoryFinder.TeDll,
+						s_teApp = (FwApp)DynamicLoader.CreateObject(FwDirectoryFinder.TeDll,
 							FwUtils.ksFullTeAppObjectName, s_fwManager, GetHelpTopicProvider(appAbbrev), args);
 						s_teAppKey = s_teApp.SettingsKey;
 					}
@@ -2963,7 +3049,7 @@ namespace SIL.FieldWorks
 				{
 					if (s_flexApp == null)
 					{
-						s_flexApp = (FwApp)DynamicLoader.CreateObject(DirectoryFinder.FlexDll,
+						s_flexApp = (FwApp)DynamicLoader.CreateObject(FwDirectoryFinder.FlexDll,
 							FwUtils.ksFullFlexAppObjectName, s_fwManager, GetHelpTopicProvider(appAbbrev), args);
 						s_flexAppKey = s_flexApp.SettingsKey;
 					}
@@ -3049,7 +3135,7 @@ namespace SIL.FieldWorks
 					sparkle.AboutToExitForInstallerRun += delegate(object sender, CancelEventArgs args)
 						{
 							CloseAllMainWindows();
-							if(app.ActiveMainWindow != null)
+							if (app.ActiveMainWindow != null)
 							{
 								args.Cancel = true;
 							}
@@ -3059,6 +3145,21 @@ namespace SIL.FieldWorks
 #endif
 					return true;
 				}
+			}
+			catch (UnauthorizedAccessException uae)
+			{
+				if (MiscUtils.IsUnix)
+				{
+					// Tell Mono user he/she needs to logout and log back in
+					MessageBox.Show(ResourceHelper.GetResourceString("ksNeedToJoinFwGroup"));
+				}
+				throw;
+			}
+			catch (FdoDataMigrationForbiddenException)
+			{
+				// tell the user to close all other applications using this project
+				MessageBox.Show(ResourceHelper.GetResourceString("kstidDataMigrationProhibitedText"),
+					ResourceHelper.GetResourceString("kstidDataMigrationProhibitedCaption"), MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 			finally
 			{
@@ -3077,7 +3178,7 @@ namespace SIL.FieldWorks
 		/// <param name="progressDlg">The progress dialog.</param>
 		/// <returns>True if the application was started successfully, false otherwise</returns>
 		/// ------------------------------------------------------------------------------------
-		private static bool InitializeApp(FwApp app, IProgress progressDlg)
+		private static bool InitializeApp(FwApp app, IThreadedProgress progressDlg)
 		{
 			using (new DataUpdateMonitor(null, "Application Initialization"))
 				app.DoApplicationInitialization(progressDlg);
@@ -3091,13 +3192,13 @@ namespace SIL.FieldWorks
 				try
 				{
 					if (!app.InitCacheForApp(progressDlg))
-						throw new FwStartupException(Properties.Resources.kstidCacheInitFailure);
+						throw new StartupException(Properties.Resources.kstidCacheInitFailure);
 				}
 				catch (Exception e)
 				{
-					if (e is FwStartupException)
+					if (e is StartupException)
 						throw;
-					throw new FwStartupException(Properties.Resources.kstidCacheInitFailure, e, true);
+					throw new StartupException(Properties.Resources.kstidCacheInitFailure, e, true);
 				}
 				undoHelper.RollBack = false;
 			}
@@ -3107,11 +3208,11 @@ namespace SIL.FieldWorks
 				if (progressDlg != null)
 				{
 					progressDlg.Message = String.Format(Properties.Resources.kstidSaving, s_cache.ProjectId.UiName);
-					progressDlg.ProgressBarStyle = ProgressBarStyle.Marquee;
+					progressDlg.IsIndeterminate = true;
 				}
 				s_cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
 				if (progressDlg != null)
-					progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
+					progressDlg.IsIndeterminate = false;
 			}
 
 			return CreateAndInitNewMainWindow(app, true, null, false);
@@ -3210,7 +3311,7 @@ namespace SIL.FieldWorks
 			if (!Directory.Exists(projectFolder))
 				return FwUtils.ksFlexAbbrev; // got to do something
 
-			var settingsFolder = Path.Combine(projectFolder, DirectoryFinder.ksConfigurationSettingsDir);
+			var settingsFolder = Path.Combine(projectFolder, FdoFileHelper.ksConfigurationSettingsDir);
 			if (!Directory.Exists(settingsFolder))
 				return FwUtils.ksFlexAbbrev; // no settings at all, take the default.
 
@@ -3234,7 +3335,7 @@ namespace SIL.FieldWorks
 			if (s_flexApp != null && s_teApp != null)
 				return; // this isn't the last one to shut down, not time to record.
 
-			var settingsFolder = Path.Combine(Cache.ProjectId.ProjectFolder, DirectoryFinder.ksConfigurationSettingsDir);
+			var settingsFolder = Path.Combine(Cache.ProjectId.ProjectFolder, FdoFileHelper.ksConfigurationSettingsDir);
 			var teMarkerPath = Path.Combine(settingsFolder, ksTeOpenMarkerFileName);
 			try
 			{
@@ -3553,10 +3654,10 @@ namespace SIL.FieldWorks
 			if ((appAbbrev.Equals(FwUtils.ksTeAbbrev, StringComparison.InvariantCultureIgnoreCase) && FwUtils.IsTEInstalled) ||
 				!FwUtils.IsFlexInstalled)
 			{
-				return s_teApp ?? (IHelpTopicProvider)DynamicLoader.CreateObject(DirectoryFinder.TeDll,
+				return s_teApp ?? (IHelpTopicProvider)DynamicLoader.CreateObject(FwDirectoryFinder.TeDll,
 					"SIL.FieldWorks.TE.TeHelpTopicProvider");
 			}
-			return s_flexApp ?? (IHelpTopicProvider)DynamicLoader.CreateObject(DirectoryFinder.FlexDll,
+			return s_flexApp ?? (IHelpTopicProvider)DynamicLoader.CreateObject(FwDirectoryFinder.FlexDll,
 				"SIL.FieldWorks.XWorks.LexText.FlexHelpTopicProvider");
 		}
 
@@ -3861,12 +3962,12 @@ namespace SIL.FieldWorks
 			{
 				DataUpdateMonitor.ClearSemaphore();
 
-				using (var progressDlg = new ProgressDialogWithTask(null, s_threadHelper))
+				using (var progressDlg = new ProgressDialogWithTask(s_threadHelper))
 				{
 					progressDlg.Title = string.Format(ResourceHelper.GetResourceString("kstidShutdownCaption"),
 						s_cache.ProjectId.UiName);
 					progressDlg.AllowCancel = false;
-					progressDlg.ProgressBarStyle = ProgressBarStyle.Marquee;
+					progressDlg.IsIndeterminate = true;
 					var stackMgr = s_cache.ServiceLocator.GetInstance<IUndoStackManager>();
 					if (stackMgr.HasUnsavedChanges)
 						progressDlg.RunTask(true, CommitAndDisposeCache);

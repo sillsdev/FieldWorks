@@ -81,13 +81,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 			if (gloss != null)
 			{
-				if (gloss.Length > 256)
-				{
-					MessageBoxUtils.Show(Strings.ksTruncatingGloss, Strings.ksWarning,
-														System.Windows.Forms.MessageBoxButtons.OK,
-														System.Windows.Forms.MessageBoxIcon.Warning);
-					gloss = gloss.Substring(0, 256);
-				}
 				sense.Gloss.set_String(gloss.get_WritingSystemAt(0), gloss);
 			}
 			return sense;
@@ -2660,5 +2653,19 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			return newby;
 		}
 	}
+	#endregion
+
+	#region ScrImportSetFactory class
+
+	internal partial class ScrImportSetFactory
+	{
+		public IScrImportSet Create(string defaultParaCharsStyleName, string stylesPath)
+		{
+			var settings = new ScrImportSet(defaultParaCharsStyleName, stylesPath);
+			((ICmObjectInternal) settings).InitializeNewOwnerlessCmObject(m_cache);
+			return settings;
+		}
+	}
+
 	#endregion
 }

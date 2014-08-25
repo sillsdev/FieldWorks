@@ -305,7 +305,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			if (m_helpTopicProvider != null) // Will be null when running tests
 			{
-				helpProvider.HelpNamespace = DirectoryFinder.FWCodeDirectory +
+				helpProvider.HelpNamespace = FwDirectoryFinder.CodeDirectory +
 					m_helpTopicProvider.GetHelpString("UserHelpFile");
 			}
 

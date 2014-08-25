@@ -12,7 +12,6 @@ using Palaso.WritingSystems.Collation;
 using Palaso.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 {
@@ -124,7 +123,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			foreach (DomainObjectDTO dto in domainObjectDtoRepository.AllInstances())
 				UpdateStringsAndProps(domainObjectDtoRepository, dto, referencedWsIds);
 
-			var localStoreFolder = Path.Combine(domainObjectDtoRepository.ProjectFolder, DirectoryFinder.ksWritingSystemsDir);
+			var localStoreFolder = Path.Combine(domainObjectDtoRepository.ProjectFolder, FdoFileHelper.ksWritingSystemsDir);
 
 			// If any writing systems that project needs don't already exist as LDML files,
 			// create them, either by copying relevant data from a shipping LDML file, or by
@@ -152,7 +151,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 						// FieldWorks 6 data directory, and this is looking in the FW 7 one. No one has complained
 						// so we decided not to try to fix it for the new implementation of the migration.
 
-						//string langDefPath = Path.Combine(DirectoryFinder.GetFWDataSubDirectory("Languages"),
+						//string langDefPath = Path.Combine(FwDirectoryFinder.GetDataSubDirectory("Languages"),
 						//    Path.ChangeExtension(langTag, "xml"));
 						//if (File.Exists(langDefPath))
 						//    FillWritingSystemFromLangDef(XElement.Load(langDefPath), ws);

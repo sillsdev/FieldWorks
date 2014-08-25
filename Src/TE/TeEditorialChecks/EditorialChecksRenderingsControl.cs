@@ -600,7 +600,7 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 				using (new WaitCursor(Parent))
 				{
 					// Get the valid characters from the database
-					ValidCharacters validChars = ValidCharacters.Load(ws, ValidCharsLoadException);
+					ValidCharacters validChars = ValidCharacters.Load(ws, ValidCharsLoadException, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 					if (validChars != null)
 					{
 						validChars.AddCharacter(addedCharError.MyNote.CitedText);
@@ -822,7 +822,7 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 		private List<string> GetValidCharacters()
 		{
 			IWritingSystem ws = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
-			ValidCharacters validChars = ValidCharacters.Load(ws, ValidCharsLoadException);
+			ValidCharacters validChars = ValidCharacters.Load(ws, ValidCharsLoadException, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			return (validChars != null ? validChars.AllCharacters : null);
 		}
 

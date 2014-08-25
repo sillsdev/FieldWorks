@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 using SIL.FieldWorks.Common.Controls;
@@ -345,11 +346,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				// Set the Application label to the name of the app
 				if (m_productExecutableAssembly != null)
 				{
-					FwVersionInfoProvider viProvider = new FwVersionInfoProvider(m_productExecutableAssembly, m_fDisplaySILInfo);
+					VersionInfoProvider viProvider = new VersionInfoProvider(m_productExecutableAssembly, m_fDisplaySILInfo);
 					lblProductName.Text = viProvider.ProductName;
 					Text = lblProductName.Text;
 					lblAppVersion.Text = viProvider.ApplicationVersion;
-					lblFwVersion.Text = viProvider.FieldWorksVersion;
+					lblFwVersion.Text = viProvider.MajorVersion;
 					lblCopyright.Text = viProvider.CopyrightString + Environment.NewLine + viProvider.LicenseString;
 				}
 			}
@@ -482,6 +483,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
+		/// <summary>
+		/// Gets an object to be used for ensuring that required tasks are invoked on the main
+		/// UI thread.
+		/// </summary>
+		public ISynchronizeInvoke SynchronizeInvoke
+		{
+			get { return this; }
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the form displaying the progress (used for message box owners, etc). If the progress
@@ -493,18 +503,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			get { return this; }
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets the style of the ProgressBar.
+		/// Gets or sets a value indicating whether this progress is indeterminate.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public ProgressBarStyle ProgressBarStyle
+		public bool IsIndeterminate
 		{
-			get { return marqueeGif.Visible ? ProgressBarStyle.Marquee : ProgressBarStyle.Continuous; }
-			set
-			{
-				marqueeGif.Visible = (value == ProgressBarStyle.Marquee);
-			}
+			get { return marqueeGif.Visible; }
+			set { marqueeGif.Visible = value; }
 		}
 
 		/// ------------------------------------------------------------------------------------

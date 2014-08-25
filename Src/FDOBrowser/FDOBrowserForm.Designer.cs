@@ -26,11 +26,8 @@ namespace FDOBrowser
 					m_cache.ServiceLocator.GetInstance<IActionHandler>().Commit();
 					m_cache.Dispose();
 				}
-				if (m_ThreadHelper != null)
-					m_ThreadHelper.Dispose();
 			}
 			m_cache = null; // Don't try to use it again
-			m_ThreadHelper = null;
 			base.Dispose(disposing);
 		}
 

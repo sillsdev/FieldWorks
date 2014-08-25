@@ -243,103 +243,71 @@ namespace SIL.HermitCrab
 		/// Gets a value that indicates whether this instance is valid. It ensures that this instance
 		/// contains all of the required head features and that all of the morphs are valid.
 		/// </summary>
-		/// <value><c>true</c> if this instance is valid, otherwise <c>false</c>.</value>
-		internal bool IsValid
+		/// <returns><c>true</c> if this instance is valid, otherwise <c>false</c>.</returns>
+		internal bool IsValid(TraceManager trace)
 		{
-			get
+			foreach (Feature feature in m_obligHeadFeatures)
 			{
-				foreach (Feature feature in m_obligHeadFeatures)
-				{
-					if (!m_headFeatures.ContainsFeature(feature))
-						return false;
-				}
-
-				if (!IsMorphsValid)
+				if (!m_headFeatures.ContainsFeature(feature))
 					return false;
-
-				return true;
 			}
+
+			if (!IsMorphsValid(trace))
+				return false;
+
+			return true;
 		}
 
 		/// <summary>
 		/// Gets a value indicating whether all of the morphs in this word synthesis are valid. It checks
 		/// environments and allomorph/morpheme co-occurrence rules.
 		/// </summary>
-		/// <value>
-		/// 	<c>true</c> if all morphs are valid, otherwise <c>false</c>.
-		/// </value>
-		internal bool IsMorphsValid
+		/// <returns>
+		///     <c>true</c> if all morphs are valid, otherwise <c>false</c>.
+		/// </returns>
+		internal bool IsMorphsValid(TraceManager trace)
 		{
-			get
+			foreach (Morph morph in m_morphs)
 			{
-				foreach (Morph morph in m_morphs)
+				if (morph.Allomorph.ExcludedEnvironments != null || morph.Allomorph.RequiredEnvironments != null)
 				{
-					if (morph.Allomorph.ExcludedEnvironments != null || morph.Allomorph.RequiredEnvironments != null)
+					// get the left and right context nodes for this morph
+					PhoneticShapeNode leftNode = null;
+					for (PhoneticShapeNode node = m_shape.Begin; node != m_shape.Last; node = node.Next)
 					{
-						// get the left and right context nodes for this morph
-						PhoneticShapeNode leftNode = null;
-						for (PhoneticShapeNode node = m_shape.Begin; node != m_shape.Last; node = node.Next)
+						if (node.Partition == morph.Partition)
 						{
-							if (node.Partition == morph.Partition)
-							{
-								leftNode = node.Prev;
-								break;
-							}
+							leftNode = node.Prev;
+							break;
 						}
-						PhoneticShapeNode rightNode = null;
-						for (PhoneticShapeNode node = m_shape.End; node != m_shape.First; node = node.Prev)
+					}
+					PhoneticShapeNode rightNode = null;
+					for (PhoneticShapeNode node = m_shape.End; node != m_shape.First; node = node.Prev)
+					{
+						if (node.Partition == morph.Partition)
 						{
-							if (node.Partition == morph.Partition)
-							{
-								rightNode = node.Next;
-								break;
-							}
+							rightNode = node.Next;
+							break;
 						}
+					}
 
-						// excluded environments
-						if (morph.Allomorph.ExcludedEnvironments != null)
+					// excluded environments
+					if (morph.Allomorph.ExcludedEnvironments != null)
+					{
+						foreach (Environment env in morph.Allomorph.ExcludedEnvironments)
 						{
-							foreach (Environment env in morph.Allomorph.ExcludedEnvironments)
-							{
-								if (env.IsMatch(leftNode, rightNode, ModeType.SYNTHESIS))
-									return false;
-							}
-						}
-
-						// required environments
-						if (morph.Allomorph.RequiredEnvironments != null)
-						{
-							bool match = false;
-							foreach (Environment env in morph.Allomorph.RequiredEnvironments)
-							{
-								if (env.IsMatch(leftNode, rightNode, ModeType.SYNTHESIS))
-								{
-									match = true;
-									break;
-								}
-							}
-							if (!match)
+							if (env.IsMatch(leftNode, rightNode, ModeType.SYNTHESIS))
 								return false;
 						}
 					}
 
-					// excluded morpheme co-occurrences
-					if (morph.Allomorph.Morpheme.ExcludedMorphemeCoOccurrences != null)
-					{
-						foreach (MorphCoOccurrence coOccur in morph.Allomorph.Morpheme.ExcludedMorphemeCoOccurrences)
-						{
-							if (coOccur.CoOccurs(m_morphs, morph.Allomorph.Morpheme))
-								return false;
-						}
-					}
-
-					// required morpheme co-occurrences
-					if (morph.Allomorph.Morpheme.RequiredMorphemeCoOccurrences != null)
+					// required environments
+					if (morph.Allomorph.RequiredEnvironments != null)
 					{
 						bool match = false;
-						foreach (MorphCoOccurrence coOccur in morph.Allomorph.Morpheme.RequiredMorphemeCoOccurrences)
+						foreach (Environment env in morph.Allomorph.RequiredEnvironments)
 						{
-							if (coOccur.CoOccurs(m_morphs, morph.Allomorph.Morpheme))
+							if (env.IsMatch(leftNode, rightNode, ModeType.SYNTHESIS))
 							{
 								match = true;
 								break;
@@ -348,36 +316,91 @@ namespace SIL.HermitCrab
 						if (!match)
 							return false;
 					}
-
-					// excluded allomorph co-occurrences
-					if (morph.Allomorph.ExcludedAllomorphCoOccurrences != null)
-					{
-						foreach (MorphCoOccurrence coOccur in morph.Allomorph.ExcludedAllomorphCoOccurrences)
-						{
-							if (coOccur.CoOccurs(m_morphs, morph.Allomorph))
-								return false;
-						}
-					}
-
-					// required allomorph co-occurrences
-					if (morph.Allomorph.RequiredAllomorphCoOccurrences != null)
-					{
-						bool match = false;
-						foreach (MorphCoOccurrence coOccur in morph.Allomorph.RequiredAllomorphCoOccurrences)
-						{
-							if (coOccur.CoOccurs(m_morphs, morph.Allomorph))
-							{
-								match = true;
-								break;
-							}
-						}
-						if (!match)
-							return false;
-					}
-
 				}
-				return true;
+
+				// excluded morpheme co-occurrences
+				if (morph.Allomorph.Morpheme.ExcludedMorphemeCoOccurrences != null)
+				{
+					foreach (MorphCoOccurrence coOccur in morph.Allomorph.Morpheme.ExcludedMorphemeCoOccurrences)
+					{
+						if (coOccur.CoOccurs(m_morphs, morph.Allomorph.Morpheme))
+						{
+							if (trace != null)
+							{
+								trace.MorphCooccurrenceRuleFailed(coOccur, HCStrings.kstidExcludedMorphCooccurrence, this);
+							}
+							return false;
+						}
+					}
+				}
+
+				// required morpheme co-occurrences
+				if (morph.Allomorph.Morpheme.RequiredMorphemeCoOccurrences != null)
+				{
+					bool match = false;
+					foreach (MorphCoOccurrence coOccur in morph.Allomorph.Morpheme.RequiredMorphemeCoOccurrences)
+					{
+						if (coOccur.CoOccurs(m_morphs, morph.Allomorph.Morpheme))
+						{
+							match = true;
+							break;
+						}
+					}
+					if (!match)
+					{
+						if (trace != null)
+						{
+							foreach (MorphCoOccurrence coOccur in morph.Allomorph.RequiredAllomorphCoOccurrences)
+							{
+								trace.MorphCooccurrenceRuleFailed(coOccur, HCStrings.kstidRequiredMorphCooccurrence1, this);
+							}
+						}
+						return false;
+					}
+				}
+
+				// excluded allomorph co-occurrences
+				if (morph.Allomorph.ExcludedAllomorphCoOccurrences != null)
+				{
+					foreach (MorphCoOccurrence coOccur in morph.Allomorph.ExcludedAllomorphCoOccurrences)
+					{
+						if (coOccur.CoOccurs(m_morphs, morph.Allomorph))
+						{
+							if (trace != null)
+							{
+								trace.MorphCooccurrenceRuleFailed(coOccur, HCStrings.kstidExcludedMorphCooccurrence, this);
+							}
+							return false;
+						}
+					}
+				}
+
+				// required allomorph co-occurrences
+				if (morph.Allomorph.RequiredAllomorphCoOccurrences != null)
+				{
+					bool match = false;
+					foreach (MorphCoOccurrence coOccur in morph.Allomorph.RequiredAllomorphCoOccurrences)
+					{
+						if (coOccur.CoOccurs(m_morphs, morph.Allomorph))
+						{
+							match = true;
+							break;
+						}
+					}
+					if (!match)
+					{
+						if (trace != null)
+						{
+							foreach (MorphCoOccurrence coOccur in morph.Allomorph.RequiredAllomorphCoOccurrences)
+							{
+								trace.MorphCooccurrenceRuleFailed(coOccur, HCStrings.kstidRequiredMorphCooccurrence1, this);
+							}
+						}
+						return false;
+					}
+				}
 			}
+			return true;
 		}
 
 		/// <summary>

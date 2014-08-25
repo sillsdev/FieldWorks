@@ -16,8 +16,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
+using Microsoft.Win32;
 using Palaso.WritingSystems.Migration;
 using Palaso.WritingSystems.Migration.WritingSystemsLdmlV0To1Migration;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
@@ -70,42 +72,49 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 			}
 			RegistryHelper.ProductName = "FieldWorks";	// needed to access proper registry values
 
-			if (s_fMigrateChars || s_fAutoClose)
-			{
-				try
-				{
-					string location = Assembly.GetExecutingAssembly().Location;
-					string program = Path.Combine(Path.GetDirectoryName(location), "UnicodeCharEditor.exe");
-					using (Process proc = Process.Start(program, "-i"))
-					{
-						proc.WaitForExit();
-					}
-				}
-				catch (Exception e)
-				{
-					if (s_fDebug)
-					{
-						var msg = String.Format("Cannot migrate the custom character definitions:{1}{0}",
-							e.Message, Environment.NewLine);
-						MessageBox.Show(msg);
-					}
-				}
-			}
+			if (s_fMigrateChars && s_fDebug)
+				MessageBox.Show("Warning: MigrateSqlDbs called with no-longer valid argument, '-chars'. Run 'UnicodeCharEditor -i' instead.");
 
 			// TE-9422. If we had an older version of FW7 installed, ldml files are < verion 2, so will cause
 			// a crash if we don't migrate the files to version 2 before opening a project with the current version.
-			var globalWsFolder = DirectoryFinder.GlobalWritingSystemStoreDirectory;
+			string globalWsFolder = DirectoryFinder.GlobalWritingSystemStoreDirectory;
 			var globalMigrator = new LdmlInFolderWritingSystemRepositoryMigrator(globalWsFolder, NoteMigration);
 			globalMigrator.Migrate();
 
-			using (var progressDlg = new ProgressDialogWithTask(null, new ThreadHelper()))
+			using (var threadHelper = new ThreadHelper())
+			using (var progressDlg = new ProgressDialogWithTask(threadHelper))
 			{
-				ImportFrom6_0 importer = new ImportFrom6_0(progressDlg, s_fDebug);
+				ImportFrom6_0 importer = new ImportFrom6_0(progressDlg, FwDirectoryFinder.ConverterConsoleExe, FwDirectoryFinder.DbExe, s_fDebug);
 				if (!importer.IsFwSqlServerInstalled())
 					return -1;
 				string version;
 				if (!importer.IsValidOldFwInstalled(out version))
+				{
+					if (!String.IsNullOrEmpty(version) && version.CompareTo("5.4") < 0)
+					{
+						string launchesFlex = "0";
+						string launchesTE = "0";
+						if (RegistryHelper.KeyExists(FwRegistryHelper.FieldWorksRegistryKey, "Language Explorer"))
+						{
+							using (RegistryKey keyFlex = FwRegistryHelper.FieldWorksRegistryKey.CreateSubKey("Language Explorer"))
+								launchesFlex = keyFlex.GetValue("launches", "0") as string;
+						}
+						if (RegistryHelper.KeyExists(FwRegistryHelper.FieldWorksRegistryKey, FwSubKey.TE))
+						{
+							using (RegistryKey keyTE = FwRegistryHelper.FieldWorksRegistryKey.CreateSubKey(FwSubKey.TE))
+								launchesTE = keyTE.GetValue("launches", "0") as string;
+						}
+						if (launchesFlex == "0" && launchesTE == "0")
+						{
+							FwRegistryHelper.FieldWorksRegistryKey.SetValue("MigrationTo7Needed", "true");
+						}
+						using (var dlg = new FWVersionTooOld(version))
+						{
+							dlg.ShowDialog();
+						}
+					}
 					return -1;
+				}
 				List<string> projects = GetProjectList();
 				if (projects.Count > 0)
 				{

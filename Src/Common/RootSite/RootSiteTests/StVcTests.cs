@@ -14,6 +14,7 @@ using NUnit.Framework;
 
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -298,7 +299,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			footnote.FootnoteMarker = Cache.TsStrFactory.MakeString("a", Cache.WritingSystemFactory.GetWsFromStr("en"));
 			// Prepare the test by creating a footnote view
 			FwStyleSheet styleSheet = new FwStyleSheet();
-			styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+			styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 
 			using (DummyFootnoteView footnoteView = new DummyFootnoteView(Cache))
 			{
@@ -362,7 +363,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			translation.Translation.set_String(analWs, TsStringHelper.MakeTSS("abcde", analWs));
 
 			FwStyleSheet styleSheet = new FwStyleSheet();
-			styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+			styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 
 			// Prepare the test by creating a footnote view
 			using (DummyFootnoteView footnoteView = new DummyFootnoteView(Cache, true))
@@ -399,7 +400,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			// Prepare the test by creating a footnote view
 			FwStyleSheet styleSheet = new FwStyleSheet();
-			styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+			styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 
 			using (Form form = new Form())
 			using (DummyFootnoteView footnoteView = new DummyFootnoteView(Cache))

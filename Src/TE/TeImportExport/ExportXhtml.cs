@@ -171,7 +171,7 @@ namespace SIL.FieldWorks.TE
 			m_xhtml.WriteXhtmlEnding();
 			m_writer.Close();
 
-			string sXsltFile = Path.Combine(DirectoryFinder.TeFolder, "XhtmlExport.xsl");
+			string sXsltFile = Path.Combine(FwDirectoryFinder.TeFolder, "XhtmlExport.xsl");
 			string sTempFile1 = m_fileName + "-1";
 			if (FileUtils.IsFileReadable(sTempFile1))
 				FileUtils.Delete(sTempFile1);
@@ -202,7 +202,7 @@ namespace SIL.FieldWorks.TE
 			int sectionCount = 0;
 			for (int i = 0; i < m_bookFilter.BookCount; i++)
 				sectionCount += m_bookFilter.GetBook(i).SectionsOS.Count;
-			using (var progressDlg = new ProgressDialogWithTask(dialogOwner, m_cache.ThreadHelper))
+			using (var progressDlg = new ProgressDialogWithTask(dialogOwner))
 			{
 				progressDlg.Minimum = 0;
 				progressDlg.Maximum = sectionCount;

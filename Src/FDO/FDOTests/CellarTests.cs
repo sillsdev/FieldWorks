@@ -491,7 +491,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
 
 			// Set up the xml fs description
 			XmlDocument doc = new XmlDocument();
-			string sFileDir = Path.Combine(DirectoryFinder.FwSourceDirectory, @"FDO/FDOTests/TestData");
+			string sFileDir = Path.Combine(FwDirectoryFinder.SourceDirectory, @"FDO/FDOTests/TestData");
 			string sFile = Path.Combine(sFileDir, "FeatureSystem2.xml");
 
 			doc.Load(sFile);

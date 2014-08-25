@@ -95,11 +95,23 @@
     <Reference Include="FDO, Version=7.0.1.26814, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="FwUtils, Version=8.0.9.31046, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
+    </Reference>
     <Reference Include="ManagedLgIcuCollator, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\ManagedLgIcuCollator.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="ParatextShared, Version=7.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\ParatextShared.dll</HintPath>
+    </Reference>
+    <Reference Include="ScriptureUtils, Version=8.0.9.31119, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\ScriptureUtils.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -127,17 +139,11 @@
     <Reference Include="FwResources">
       <HintPath>..\..\..\..\Output\Debug\FwResources.dll</HintPath>
     </Reference>
-    <Reference Include="FwUtils">
-      <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
-    </Reference>
     <Reference Include="SilUtils">
       <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
     <Reference Include="Palaso">
       <HintPath>..\..\..\..\Downloads\Palaso.dll</HintPath>
-    </Reference>
-    <Reference Include="ParatextShared">
-      <HintPath>..\..\..\..\DistFiles\ParatextShared.dll</HintPath>
     </Reference>
     <Reference Include="ScrUtilsInterfaces">
       <HintPath>..\..\..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>

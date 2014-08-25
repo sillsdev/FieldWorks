@@ -8,10 +8,9 @@
 using System;
 using System.Diagnostics;
 using System.Net;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using System.Runtime.Serialization;
 using SIL.FieldWorks.Common.FwUtils;
@@ -39,7 +38,7 @@ namespace SIL.FieldWorks
 
 		#region Member variables
 		private string m_path;
-		private readonly FDOBackendProviderType m_type;
+		private FDOBackendProviderType m_type;
 		private readonly string m_serverName;
 		#endregion
 
@@ -147,6 +146,7 @@ namespace SIL.FieldWorks
 		public FDOBackendProviderType Type
 		{
 			get { return m_type; }
+			set { m_type = value; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -193,7 +193,7 @@ namespace SIL.FieldWorks
 		{
 			get
 			{
-				return !IsLocal || (DirectoryFinder.IsSubFolderOfProjectsDirectory(ProjectFolder) &&
+				return !IsLocal || (FwDirectoryFinder.IsSubFolderOfProjectsDirectory(ProjectFolder) &&
 					SysPath.GetExtension(m_path) == ClientServerServices.Current.Local.DefaultBackendType.GetExtension()) ?
 					Name : m_path;
 			}
@@ -241,7 +241,7 @@ namespace SIL.FieldWorks
 			get
 			{
 				return IsLocal ? SysPath.GetDirectoryName(m_path) :
-					SysPath.Combine(SysPath.Combine(DirectoryFinder.ProjectsDirectory, ServerName), Name);
+					SysPath.Combine(SysPath.Combine(FwDirectoryFinder.ProjectsDirectory, ServerName), Name);
 			}
 		}
 
@@ -259,7 +259,7 @@ namespace SIL.FieldWorks
 					return ProjectFolder;
 				// TODO-Linux FWNX-446: Implement alternative way of getting path to shared folder
 				// Currently assumes projects also exist in the local Project Directory.
-				string baseDir = (MiscUtils.IsUnix) ? DirectoryFinder.ProjectsDirectory :
+				string baseDir = (MiscUtils.IsUnix) ? FwDirectoryFinder.ProjectsDirectory :
 					@"\\" + ServerName + @"\Projects";
 				return SysPath.Combine(baseDir, Name);
 			}
@@ -315,7 +315,8 @@ namespace SIL.FieldWorks
 						}
 						return string.Format(Properties.Resources.ksProjectNameAndServerFmt, Name, hostName);
 					case FDOBackendProviderType.kXML:
-						return (SysPath.GetExtension(Path) != FwFileExtensions.ksFwDataXmlFileExtension) ?
+					case FDOBackendProviderType.kSharedXML:
+						return (SysPath.GetExtension(Path) != FdoFileHelper.ksFwDataXmlFileExtension) ?
 							SysPath.GetFileName(Path) : Name;
 					case FDOBackendProviderType.kInvalid:
 						return string.Empty;
@@ -339,7 +340,7 @@ namespace SIL.FieldWorks
 				var ex = GetExceptionIfInvalid();
 				if (ex == null)
 					return true;
-				if (ex is FwStartupException)
+				if (ex is StartupException)
 					return false;
 				// something totally unexpected that we don't know how to handle happened.
 				// Don't suppress it.
@@ -375,7 +376,7 @@ namespace SIL.FieldWorks
 		///
 		/// here.
 		/// </summary>
-		/// <exception cref="FwStartupException">If invalid (e.g., project Name is not set, the
+		/// <exception cref="StartupException">If invalid (e.g., project Name is not set, the
 		/// XML file can not be found, etc.)</exception>
 		/// ------------------------------------------------------------------------------------
 		public void AssertValid()
@@ -396,7 +397,7 @@ namespace SIL.FieldWorks
 		internal Exception GetExceptionIfInvalid()
 		{
 			if (string.IsNullOrEmpty(Name))
-				return new FwStartupException(Properties.Resources.kstidNoProjectName, false);
+				return new StartupException(Properties.Resources.kstidNoProjectName, false);
 
 			switch (Type)
 			{
@@ -407,7 +408,7 @@ namespace SIL.FieldWorks
 					}
 					catch (SocketException e)
 					{
-						return new FwStartupException(String.Format(Properties.Resources.kstidInvalidServer, ServerName, e.Message), e);
+						return new StartupException(String.Format(Properties.Resources.kstidInvalidServer, ServerName, e.Message), e);
 					}
 					catch (Exception ex)
 					{
@@ -415,11 +416,12 @@ namespace SIL.FieldWorks
 					}
 					break;
 				case FDOBackendProviderType.kXML:
+				case FDOBackendProviderType.kSharedXML:
 					if (!FileUtils.SimilarFileExists(Path))
-						return new FwStartupException(string.Format(Properties.Resources.kstidFileNotFound, Path));
+						return new StartupException(string.Format(Properties.Resources.kstidFileNotFound, Path));
 					break;
 				case FDOBackendProviderType.kInvalid:
-					return new FwStartupException(Properties.Resources.kstidInvalidFwProjType);
+					return new StartupException(Properties.Resources.kstidInvalidFwProjType);
 				default:
 					return new NotImplementedException("Unknown type of project.");
 			}
@@ -427,7 +429,7 @@ namespace SIL.FieldWorks
 			// Check this after checking for other valid information (e.g. if the server is
 			// not available, we want to show that error, not this error).
 			if (!FileUtils.DirectoryExists(SharedProjectFolder))
-				return new FwStartupException(String.Format(Properties.Resources.kstidCannotAccessProjectPath, SharedProjectFolder));
+				return new StartupException(String.Format(Properties.Resources.kstidCannotAccessProjectPath, SharedProjectFolder));
 			return null; // valid
 		}
 
@@ -524,12 +526,12 @@ namespace SIL.FieldWorks
 			switch (type)
 			{
 				case FDOBackendProviderType.kXML:
-					ext = FwFileExtensions.ksFwDataXmlFileExtension;
+					ext = FdoFileHelper.ksFwDataXmlFileExtension;
 					break;
 				case FDOBackendProviderType.kDb4oClientServer:
 					if (!IsServerLocal(server))
 						return name;
-					ext = FwFileExtensions.ksFwDataDb4oFileExtension;
+					ext = FdoFileHelper.ksFwDataDb4oFileExtension;
 					break;
 				default:
 					return name;
@@ -538,7 +540,7 @@ namespace SIL.FieldWorks
 			if (!SysPath.IsPathRooted(name))
 			{
 				string sProjName = (SysPath.GetExtension(name) == ext) ? SysPath.GetFileNameWithoutExtension(name) : name;
-				name = SysPath.Combine(SysPath.Combine(DirectoryFinder.ProjectsDirectory, sProjName), name);
+				name = SysPath.Combine(SysPath.Combine(FwDirectoryFinder.ProjectsDirectory, sProjName), name);
 			}
 			// If the file doesn't have the expected extension and exists with the extension or
 			// does not exist without it, we add the expected extension.
@@ -578,9 +580,9 @@ namespace SIL.FieldWorks
 				switch (ext)  // Includes period.
 				{
 					case ".db4o": // for historical purposes
-					case FwFileExtensions.ksFwDataDb4oFileExtension:
+					case FdoFileHelper.ksFwDataDb4oFileExtension:
 						return FDOBackendProviderType.kDb4oClientServer;
-					case FwFileExtensions.ksFwDataXmlFileExtension:
+					case FdoFileHelper.ksFwDataXmlFileExtension:
 						return FDOBackendProviderType.kXML;
 				}
 			}

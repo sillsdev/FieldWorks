@@ -555,24 +555,6 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sorry, FieldWorks cannot delete this item..
-        /// </summary>
-        internal static string ksCannotDeleteItem {
-            get {
-                return ResourceManager.GetString("ksCannotDeleteItem", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Sorry, FieldWorks cannot delete this wordform because it occurs in your texts..
-        /// </summary>
-        internal static string ksCannotWordform {
-            get {
-                return ResourceManager.GetString("ksCannotWordform", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to You cannot demote a list of Text Markup Tags into another list..
         /// </summary>
         internal static string ksCantDemoteTagList {
@@ -776,6 +758,24 @@ namespace SIL.FieldWorks.XWorks {
         internal static string ksCustomFieldMatchesNonCustomField {
             get {
                 return ResourceManager.GetString("ksCustomFieldMatchesNonCustomField", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot Add Custom Fields.
+        /// </summary>
+        internal static string ksCustomFieldsCanNotBeAddedDueToOtherAppsCaption {
+            get {
+                return ResourceManager.GetString("ksCustomFieldsCanNotBeAddedDueToOtherAppsCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Custom Fields cannot be added when there is more than one application using this project..
+        /// </summary>
+        internal static string ksCustomFieldsCanNotBeAddedDueToOtherAppsText {
+            get {
+                return ResourceManager.GetString("ksCustomFieldsCanNotBeAddedDueToOtherAppsText", resourceCulture);
             }
         }
         

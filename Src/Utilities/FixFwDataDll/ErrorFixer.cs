@@ -5,10 +5,9 @@
 // File: LinkFixer.cs
 // Responsibility: mcconnel
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FwCoreDlgs;
 using System.Windows.Forms;
 using System.IO;
@@ -99,19 +98,19 @@ namespace SIL.FieldWorks.FixData
 					if (dlg.ShowDialog(m_dlg) == DialogResult.OK)
 					{
 						string pathname = Path.Combine(
-							Path.Combine(DirectoryFinder.ProjectsDirectory, dlg.SelectedProject),
-							dlg.SelectedProject + Resources.FwFileExtensions.ksFwDataXmlFileExtension);
+							Path.Combine(FwDirectoryFinder.ProjectsDirectory, dlg.SelectedProject),
+							dlg.SelectedProject + FdoFileHelper.ksFwDataXmlFileExtension);
 						if (File.Exists(pathname))
 						{
 							using (new WaitCursor(m_dlg))
 							{
-								using (var progressDlg = new ProgressDialogWithTask(m_dlg, null))
+								using (var progressDlg = new ProgressDialogWithTask(m_dlg))
 								{
 									string fixes = (string)progressDlg.RunTask(true, FixDataFile, pathname);
 									if (fixes.Length > 0)
 									{
 										MessageBox.Show(fixes, Strings.ksErrorsFoundOrFixed);
-										File.WriteAllText(pathname.Replace(Resources.FwFileExtensions.ksFwDataXmlFileExtension, "fixes"), fixes);
+										File.WriteAllText(pathname.Replace(FdoFileHelper.ksFwDataXmlFileExtension, "fixes"), fixes);
 									}
 								}
 							}

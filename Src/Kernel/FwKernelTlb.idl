@@ -19,6 +19,6 @@ DeclareLibrary(FwKernelLib, 1.0, "FieldWorks Kernel", F1EF76E0-BE04-11d3-8D9A-00
 {
 	#include "FwKernel.idh"
 	#include "TextServ.idh"
-	#include "Render.idh"			// Language DLL stuff
+	#include "Render.idh"
 	#include "Language.idh"
 };

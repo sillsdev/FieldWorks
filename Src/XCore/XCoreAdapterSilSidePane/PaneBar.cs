@@ -98,7 +98,7 @@ namespace XCore
 	/// </summary>
 	public class PaneBar : System.Windows.Forms.UserControl, IPaneBar, IxCoreColleague
 	{
-		private ImageCollection m_smallImages;
+		private IImageCollection m_smallImages;
 		private IUIMenuAdapter m_menuBarAdapter;
 
 
@@ -261,7 +261,7 @@ namespace XCore
 		/// <param name="smallImages"></param>
 		/// <param name="mediator"></param>
 		/// <returns></returns>
-		public void  Init (ImageCollection smallImages, IUIMenuAdapter menuBarAdapter, Mediator mediator)
+		public void  Init (IImageCollection smallImages, IUIMenuAdapter menuBarAdapter, Mediator mediator)
 		{
 			m_mediator = mediator;
 			mediator.AddColleague(this);

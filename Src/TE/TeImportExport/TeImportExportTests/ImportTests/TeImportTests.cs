@@ -11,9 +11,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 using NUnit.Framework;
-
-using Rhino.Mocks;
-
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
@@ -46,7 +43,6 @@ namespace SIL.FieldWorks.TE.ImportTests
 		public static ICmAnnotationDefn s_translatorNoteDefn = null;
 		/// <summary>Tests can set this to simulate importing a sequence of segments</summary>
 		public List<string> m_SegmentMarkers = null;
-		private static IParatextHelper s_mockParatextHelper;
 
 		#region Constructors
 		/// ------------------------------------------------------------------------------------
@@ -102,12 +98,6 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// ------------------------------------------------------------------------------------
 		static public void MakeParatextTestSettings(IScrImportSet settings)
 		{
-			// Setup mocked Paratext projects
-			s_mockParatextHelper = MockRepository.GenerateMock<IParatextHelper>();
-			ParatextHelper.Manager.SetParatextHelperAdapter(s_mockParatextHelper);
-			s_mockParatextHelper.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Anything,
-				Arg<ScrMappingList>.Is.Anything, Arg<ImportDomain>.Is.Anything)).Return(true);
-
 			settings.ImportTypeEnum = TypeOfImport.Paratext6;
 			settings.ParatextScrProj = "TEV";
 			settings.ParatextBTProj = "KAM";
@@ -873,7 +863,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:DummyUndoImportManager"/> class.
+		/// Initializes a new instance of the <see cref="DummyUndoImportManager"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public DummyUndoImportManager(FdoTestBase testBase) :
@@ -894,7 +884,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:SOWNoSegException"/> class.
+		/// Initializes a new instance of the <see cref="SOWNoSegException"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public SOWNoSegException()
@@ -4841,7 +4831,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 				{
 					if (picture != null)
 					{
-						FileUtils.Delete(Path.Combine(DirectoryFinder.FWDataDirectory,
+						FileUtils.Delete(Path.Combine(FwDirectoryFinder.DataDirectory,
 							picture.PictureFileRA.InternalPath));
 					}
 				}

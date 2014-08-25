@@ -1,10 +1,9 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
 using NUnit.Framework;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 
 namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
@@ -56,7 +55,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			var mockMDC = new MockMDCForDataMigration();
 			mockMDC.AddClass(1, "CmObject", null, new List<string> { "UserViewField" });
 			mockMDC.AddClass(2, "UserViewField", "CmObject", new List<string>());
-			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000011, dtos, mockMDC, null);
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000011, dtos, mockMDC, null, FwDirectoryFinder.FdoDirectories);
 
 			Assert.AreEqual(40, dtoRepos.AllInstancesWithSubclasses("UserViewField").Count());
 

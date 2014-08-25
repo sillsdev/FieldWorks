@@ -8,15 +8,12 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Text; // StringBuilder
 using System.Xml; // XMLWriter
 using System.Diagnostics;
 using System.IO;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.Application;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -1761,51 +1758,53 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			return tss;
 		}
 
-		/// <summary>
-		/// Return true if this or one of its children is in use as a Constituent chart column.
-		/// Most efficient to call this after checking that the root is a chart template.
-		/// </summary>
-		/// <returns></returns>
-		bool ThisOrChildIsInUseAsChartColumn()
+		public bool IsDefaultDiscourseTemplate
+		{
+			get
+			{
+				ICmPossibilityList ccTempl = Cache.LangProject.DiscourseDataOA.ConstChartTemplOA;
+				if (OwningList != ccTempl)
+					return false;
+
+				IFdoOwningSequence<ICmPossibility> discourseTemplates = ccTempl.PossibilitiesOS;
+				return discourseTemplates.Count == 1 && Hvo == discourseTemplates[0].Hvo;
+			}
+		}
+
+		public bool IsThisOrDescendantInUseAsChartColumn
+		{
+			get
+			{
+				if (OwningList != Cache.LangProject.DiscourseDataOA.ConstChartTemplOA)
+					return false;
+
+				CmPossibility rootPossibility = this;
+				while (rootPossibility.Owner is CmPossibility)
+					rootPossibility = (CmPossibility) rootPossibility.Owner;
+				IDsChart chart = Services.GetInstance<IDsChartRepository>().InstancesWithTemplate(rootPossibility).FirstOrDefault();
+				return chart != null && GetIsThisOrDescendantInUseAsChartColumn();
+			}
+		}
+
+		private bool GetIsThisOrDescendantInUseAsChartColumn()
 		{
 			var repo = Services.GetInstance<IConstituentChartCellPartRepository>();
 			if (repo.InstancesWithChartCellColumn(this).FirstOrDefault() != null)
 				return true;
-			foreach (var poss in SubPossibilitiesOS)
-				if (((CmPossibility)poss).ThisOrChildIsInUseAsChartColumn())
-					return true;
-			return false;
+			return SubPossibilitiesOS.Cast<CmPossibility>().Any(poss => poss.GetIsThisOrDescendantInUseAsChartColumn());
 		}
 
-		/// <summary>
-		/// If the recipient is a column in a chart that shouldn't be moved or promoted or deleted, report
-		/// accordingly and return true. Return false if OK to delete or move.
-		/// </summary>
-		/// <returns></returns>
-		public bool CheckAndReportProtectedChartColumn()
+		public bool IsOnlyTextMarkupTag
 		{
-			var discourseTemplates = m_cache.LangProject.DiscourseDataOA.ConstChartTemplOA.PossibilitiesOS;
-			if (discourseTemplates.Count == 1 && Hvo == discourseTemplates[0].Hvo)
+			get
 			{
-				MessageBoxUtils.Show(Strings.ksCantDeleteDefaultDiscourseTemplate, Strings.ksWarning,
-					MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				return true;
+				ICmPossibilityList tags = Cache.LangProject.TextMarkupTagsOA;
+				if (OwningList != tags)
+					return false;
+
+				IFdoOwningSequence<ICmPossibility> tagTypes = tags.PossibilitiesOS;
+				return tagTypes.Count == 1 && this == tagTypes[0];
 			}
-			ICmPossibility rootPossibility = this;
-			while (rootPossibility.Owner is CmPossibility)
-				rootPossibility = (CmPossibility)rootPossibility.Owner;
-			var chart =
-				rootPossibility.Services.GetInstance<IDsChartRepository>().InstancesWithTemplate(rootPossibility).
-					FirstOrDefault();
-			if (chart != null && ThisOrChildIsInUseAsChartColumn())
-			{
-				string textName = (chart as DsConstChart).BasedOnRA.Title.BestAnalysisVernacularAlternative.Text;
-				// This is an actual column; it's a problem if it has instances
-				string msg = string.Format(Strings.ksCantModifyTemplateInUse, textName);
-				MessageBoxUtils.Show(msg, Strings.ksErrorCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);
-				return true;
-			}
-			return false;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1818,24 +1817,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				if (!base.CanDelete)
-					return false;
-				var lp = Cache.LangProject;
-				if (OwningList == lp.DiscourseDataOA.ConstChartTemplOA &&
-					CheckAndReportProtectedChartColumn())
-					return false;
-				if (OwningList == lp.TextMarkupTagsOA &&
-					CheckAndReportUsedMarkupTag())
-					return false;
-				if (IsProtected == false)
-					return true;
-				var information = Strings.ksRequiredItem;
-				MessageBoxUtils.Show(
-					information,
-					"",
-					System.Windows.Forms.MessageBoxButtons.OK,
-					System.Windows.Forms.MessageBoxIcon.Information);
-				return false;
+				return base.CanDelete
+					&& !IsDefaultDiscourseTemplate && !IsThisOrDescendantInUseAsChartColumn
+					&& !IsOnlyTextMarkupTag
+					&& (OwningList != Cache.LangProject.TextMarkupTagsOA || !Services.GetInstance<ITextTagRepository>().GetByTextMarkupTag(this).Any())
+					&& !IsProtected;
 			}
 		}
 
@@ -1869,67 +1855,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			MoveIfNeeded(objSrc as ICmPossibility);
 
 			base.MergeObject(objSrc, fLoseNoStringData);
-		}
-
-		/// <summary>
-		/// If the recipient is a Tagging possibility that is used in a TextTag object (which shouldn't
-		/// exist unless used in a text, it shouldn't be deleted.
-		/// Report accordingly and return true. Return false if OK to delete.
-		/// </summary>
-		/// <returns>TRUE if there is a problem!</returns>
-		public bool CheckAndReportUsedMarkupTag()
-		{
-			var tagTypes = m_cache.LangProject.TextMarkupTagsOA.PossibilitiesOS.ToHvoArray();
-			if (tagTypes.Length == 1 && Hvo == tagTypes[0])
-			{
-				MessageBoxUtils.Show(Strings.ksCantDeleteLastTagList, Strings.ksWarning,
-					MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				return true;
-			}
-
-			// Check for subpossibilities that might be in use too!
-			List<int> hvoArray = new List<int>();
-			hvoArray.Add(Hvo);
-			var subArray = SubPossibilitiesOS.ToHvoArray();
-			if (subArray.Length > 0)
-			{
-				// The presence of SubPossibilities means that this is a tag type
-				// (if we're in that list), so we need to check all of the SubPossibilities
-				// to see if they are used.
-				hvoArray.AddRange(subArray);
-			}
-			// Look in TextTag repo for one (or more) with this possibility label.
-			// If used report and return true, otherwise return false.
-			var repo = Cache.ServiceLocator.GetInstance<ITextTagRepository>();
-			var used = (from tag in repo.AllInstances()
-					   where hvoArray.Contains(tag.TagRA.Hvo)
-					   select tag).ToArray();
-			var cUsed = used.Length;
-			if (cUsed == 0)
-				return false;
-			// Try to get a nice title.
-			var msg = GetCorrectErrorMessage(used[0]);
-			MessageBox.Show(msg, Strings.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-			return true;
-		}
-
-		private string GetCorrectErrorMessage(ITextTag usedTag)
-		{
-			// Try to get a nice title.
-			string textName = null;
-			if (usedTag != null && usedTag.BeginSegmentRA != null)
-			{
-				var ws = Cache.LangProject.DefaultWsForMagicWs(WritingSystemServices.kwsFirstAnalOrVern);
-				var text = usedTag.BeginSegmentRA.Owner.Owner as IStText;
-				textName = text.Title.get_String(ws).Text;
-			if (String.IsNullOrEmpty(textName))
-					textName = text.ShortName;
-		}
-			var msg = string.Format(
-				(SubPossibilitiesOS.Count == 0) ?
-				Strings.ksCantDeleteMarkupTagInUse : Strings.ksCantDeleteMarkupTypeInUse,
-				textName);
-			return msg;
 		}
 	}
 	#endregion
@@ -2082,7 +2007,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				if (value == null)
 					throw new ArgumentNullException("value");
 
-				string srcFilename = DirectoryFinderRelativePaths.GetRelativeLinkedFilesPath(value, m_cache.LangProject.LinkedFilesRootDir);
+				string srcFilename = LinkedFilesRelativePathHelper.GetRelativeLinkedFilesPath(value, m_cache.LangProject.LinkedFilesRootDir);
 
 				InternalPath_Generated = srcFilename;
 			}
@@ -2113,7 +2038,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				string internalPath = InternalPath;
 				if (String.IsNullOrEmpty(internalPath))
 					internalPath = DomainObjectServices.EmptyFileName;
-				return DirectoryFinderRelativePaths.GetFullPathFromRelativeLFPath(internalPath, m_cache.LangProject.LinkedFilesRootDir);
+				return LinkedFilesRelativePathHelper.GetFullPathFromRelativeLFPath(internalPath, m_cache.LangProject.LinkedFilesRootDir);
 			}
 		}
 

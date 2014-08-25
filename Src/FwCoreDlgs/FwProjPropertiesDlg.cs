@@ -180,7 +180,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				txtExtLnkEdit.Enabled = false;
 			}
 
-			m_defaultLinkedFilesFolder = DirectoryFinder.GetDefaultLinkedFilesDir(m_cache.ServiceLocator.DataSetup.ProjectId.ProjectFolder);
+			m_defaultLinkedFilesFolder = FdoFileHelper.GetDefaultLinkedFilesDir(m_cache.ServiceLocator.DataSetup.ProjectId.ProjectFolder);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -970,7 +970,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				return;
 			}
 
-			if (!ClientServerServices.Current.WarnOnConfirmingSingleUserChanges(m_cache)) //if Anything changed, check and warn about DB4o
+			if (!ClientServerServicesHelper.WarnOnConfirmingSingleUserChanges(m_cache)) //if Anything changed, check and warn about DB4o
+			{
+				NotifyProjectPropsChangedAndClose(); //The user changed something, but when warned decided against it, so do not save just quit
+				return;
+			}
+			if (!SharedBackendServicesHelper.WarnOnConfirmingSingleUserChanges(m_cache)) //if Anything changed, check and warn about other apps
 			{
 				NotifyProjectPropsChangedAndClose(); //The user changed something, but when warned decided against it, so do not save just quit
 				return;
@@ -1446,7 +1451,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private string HandleLinkedFilesPathDoesNotExist(string linkedFilesPath)
 		{
 
-			var defaultLinkedFilesPath = DirectoryFinder.GetDefaultLinkedFilesDir(m_cache.ProjectId.ProjectFolder);
+			var defaultLinkedFilesPath = FdoFileHelper.GetDefaultLinkedFilesDir(m_cache.ProjectId.ProjectFolder);
 			if (!Directory.Exists(linkedFilesPath) && linkedFilesPath.Equals(defaultLinkedFilesPath))
 			{
 				//if the path points to the default location but does not exist then create it.

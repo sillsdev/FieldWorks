@@ -11,7 +11,6 @@ using System.Threading;
 using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -74,7 +73,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		public static string MarkTextInBldrAsHyperlink(ITsStrBldr strBldr, int ichStart,
 			int ichLim, string url, IStStyle linkStyle, string linkedFilesRootDir)
 		{
-			var relativeUrl = DirectoryFinderRelativePaths.GetRelativeLinkedFilesPath(url, linkedFilesRootDir);
+			var relativeUrl = LinkedFilesRelativePathHelper.GetRelativeLinkedFilesPath(url, linkedFilesRootDir);
 			if (string.IsNullOrEmpty(relativeUrl))
 			{
 				MarkTextInBldrAsHyperlink(strBldr, ichStart, ichLim, url, linkStyle);

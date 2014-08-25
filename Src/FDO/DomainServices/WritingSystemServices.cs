@@ -1281,12 +1281,13 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// to the requested collection(s).
 		/// </summary>
 		/// <param name="cache">The cache.</param>
+		/// <param name="templateDir">The template directory.</param>
 		/// <param name="identifier">The identifier.</param>
 		/// <param name="addAnalWss">if set to <c>true</c> ***new*** writing systems will be added to the list of analysis writing systems.</param>
 		/// <param name="addVernWss">if set to <c>true</c> ***new*** writing systems will be added to the list of vernacular writing systems.</param>
 		/// <param name="ws">The writing system.</param>
 		/// <returns>true if the writing system already exists, false if it had to be created</returns>
-		public static bool FindOrCreateWritingSystem(FdoCache cache, string identifier, bool addAnalWss, bool addVernWss, out IWritingSystem ws)
+		public static bool FindOrCreateWritingSystem(FdoCache cache, string templateDir, string identifier, bool addAnalWss, bool addVernWss, out IWritingSystem ws)
 		{
 			if (cache.ServiceLocator.WritingSystemManager.GetOrSet(identifier, out ws))
 				return true;
@@ -1298,7 +1299,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			// If the new writing system is one for which we have localized versions of lists, import them.
 			// We can't easily put up a progress dialog here, because the code is in a project we can't reference.
 			// However this routine is used in relatively long operations anyway so there should already be some kind of progress bar.
-			XmlTranslatedLists.ImportTranslatedListsForWs(identifier, cache, null);
+			if (templateDir != null)
+				XmlTranslatedLists.ImportTranslatedListsForWs(identifier, cache, templateDir, null);
 			return false;
 		}
 
@@ -1309,7 +1311,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// systems if the appropriate flag is set.
 		/// </summary>
 		/// <returns>true if the writing system already exists, false if it had to be created</returns>
-		public static bool FindOrCreateSomeWritingSystem(FdoCache cache, string identifier, bool addAnalWss, bool addVernWss, out IWritingSystem ws)
+		public static bool FindOrCreateSomeWritingSystem(FdoCache cache, string templateDir, string identifier, bool addAnalWss, bool addVernWss, out IWritingSystem ws)
 		{
 			if (cache.ServiceLocator.WritingSystemManager.TryGet(identifier, out ws))
 				return true;
@@ -1320,12 +1322,12 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (LangTagUtils.GetSubtags(identifier, out languageSubtag, out scriptSubtag, out regionSubtag, out variantSubtag))
 			{
 				// It's a good identifier; we can do this straightforwardly.
-				return FindOrCreateWritingSystem(cache, identifier, addAnalWss, addVernWss, out ws);
+				return FindOrCreateWritingSystem(cache, templateDir, identifier, addAnalWss, addVernWss, out ws);
 			}
 			// See if we can convert an old-style identifier to a new one.
 			string newIdentifier = LangTagUtils.ToLangTag(identifier);
 			if (LangTagUtils.GetSubtags(identifier, out languageSubtag, out scriptSubtag, out regionSubtag, out variantSubtag))
-				return FindOrCreateWritingSystem(cache, newIdentifier, addAnalWss, addVernWss, out ws);
+				return FindOrCreateWritingSystem(cache, templateDir, newIdentifier, addAnalWss, addVernWss, out ws);
 
 			// No, it's nothing we know how to deal with. Get drastic.
 
@@ -1344,7 +1346,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				parts = new [] {"qaa"}.Concat(parts); // Can't start with x, we always use qaa for unknown WS.
 			newIdentifier = parts.Aggregate((first, second) => first + "-" + second);
 			// This should now qualify as a private-use writing system identifier.
-			return FindOrCreateWritingSystem(cache, newIdentifier, addAnalWss, addVernWss, out ws);
+			return FindOrCreateWritingSystem(cache, templateDir, newIdentifier, addAnalWss, addVernWss, out ws);
 		}
 
 		/// <summary>

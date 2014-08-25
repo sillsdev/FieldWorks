@@ -19,13 +19,10 @@ using System.Runtime.Remoting.Channels.Tcp;
 using System.Security;
 using System.Threading;
 using Db4objects.Db4o;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
-using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.FDO.DomainServices;
 using System.Runtime.Remoting.Channels;
-using SIL.Utils;
 
 namespace FwRemoteDatabaseConnector
 {
@@ -34,8 +31,6 @@ namespace FwRemoteDatabaseConnector
 	/// </summary>
 	public class Db4oServerInfo : MarshalByRefObject
 	{
-		private const string ksSharedProjectKey = "ProjectShared";
-
 		/// <summary>
 		/// Stores the filenames of all the db40 Servers
 		/// </summary>
@@ -76,28 +71,27 @@ namespace FwRemoteDatabaseConnector
 		/// <summary></summary>
 		public Db4oServerInfo()
 		{
-			// We need FieldWorks here to get the correct registry key HKLM\Software\SIL\FieldWorks.
-			// The default without this would be HKLM\Software\SIL\SIL FieldWorks,
-			// which breaks FwRemoteDatabaseConnectorService.exe.
-			SIL.Utils.RegistryHelper.ProductName = "FieldWorks";
 			RemotingServer.ServerObject = this;
+			IsRunning = true;
 		}
 
 		internal void PopulateServerList()
 		{
 			m_allServers = new List<string>();
 
-			if (!Directory.Exists(DirectoryFinder.ProjectsDirectory))
-				throw new DirectoryNotFoundException(String.Format(Strings.ksWarningProjectFolderNotFoundOnServer, DirectoryFinder.ProjectsDirectory));
+			string projectsDir = RemotingServer.Directories.ProjectsDirectory;
 
-			string[] files = Directory.GetFiles(DirectoryFinder.ProjectsDirectory, "*" + FwFileExtensions.ksFwDataDb4oFileExtension);
+			if (!Directory.Exists(projectsDir))
+				throw new DirectoryNotFoundException(String.Format(Strings.ksWarningProjectFolderNotFoundOnServer, projectsDir));
+
+			string[] files = Directory.GetFiles(projectsDir, "*" + FdoFileHelper.ksFwDataDb4oFileExtension);
 			m_allServers.AddRange(files);
 
 			// search sub dirs
-			string[] dirs = Directory.GetDirectories(DirectoryFinder.ProjectsDirectory);
+			string[] dirs = Directory.GetDirectories(projectsDir);
 			foreach (var dir in dirs)
 			{
-				files = Directory.GetFiles(dir, "*" + FwFileExtensions.ksFwDataDb4oFileExtension);
+				files = Directory.GetFiles(dir, "*" + FdoFileHelper.ksFwDataDb4oFileExtension);
 				m_allServers.AddRange(files);
 			}
 		}
@@ -167,7 +161,7 @@ namespace FwRemoteDatabaseConnector
 		public string[] ListServers()
 		{
 			// Only show Projects/Servers if Projects are shared.
-			if (!AreProjectsShared_Internal)
+			if (!RemotingServer.SharedProjectsGetter())
 				return Enumerable.Empty<string>().ToArray();
 
 			if (m_allServers == null)
@@ -195,8 +189,8 @@ namespace FwRemoteDatabaseConnector
 		/// ------------------------------------------------------------------------------------
 		public void CreateServerFile(string projectName)
 		{
-			string projectDir = Path.Combine(DirectoryFinder.ProjectsDirectory, projectName);
-			string newFilename = Path.Combine(projectDir, DirectoryFinder.GetDb4oDataFileName(projectName));
+			string projectDir = Path.Combine(RemotingServer.Directories.ProjectsDirectory, projectName);
+			string newFilename = Path.Combine(projectDir, FdoFileHelper.GetDb4oDataFileName(projectName));
 
 			// Ensure directory exists.
 			Directory.CreateDirectory(projectDir);
@@ -358,7 +352,7 @@ namespace FwRemoteDatabaseConnector
 		public bool AreProjectShared()
 		{
 			EnsureClientIsLocalHost();
-			return AreProjectsShared_Internal;
+			return RemotingServer.SharedProjectsGetter();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -373,64 +367,7 @@ namespace FwRemoteDatabaseConnector
 		public void ShareProjects(bool enableSharingOfProjects)
 		{
 			EnsureClientIsLocalHost();
-			AreProjectsShared_Internal = enableSharingOfProjects;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets a value indicating whether projects are shared.
-		/// </summary>
-		/// <remarks>Internal method to facilitate testing. Tests can't use public setter
-		/// because that would actually do the conversion. Since this value is used only
-		/// temporarily during a test, there is no point in trying to set it on HKLM;
-		/// that only causes confusion if tests are sometimes run with admin privilege
-		/// and sometimes not.</remarks>
-		/// ------------------------------------------------------------------------------------
-		internal static bool AreProjectsShared_Internal
-		{
-			get
-			{
-				bool result;
-				object value;
-				RegistryHelper.RegEntryExists(FwRegistryHelper.FieldWorksRegistryKey, string.Empty, ksSharedProjectKey,
-																	 out value);
-				if(value == null)
-				{
-					value = MigrateVersion7Value();
-				}
-				return (bool.TryParse((string)value, out result) && result);
-			}
-			set
-			{
-					FwRegistryHelper.FieldWorksRegistryKey.SetValue(
-						ksSharedProjectKey, value);
-			}
-		}
-
-		/// <summary>
-		/// Migrate the ProjectShared value stored in HKLM in version 7 into the HKCU (.Default since this will be run as system)
-		/// </summary>
-		/// <returns></returns>
-		private static object MigrateVersion7Value()
-		{
-			// Guard for some broken Windows machines having trouble accessing HKLM (LT-15158).
-			var hklm = FwRegistryHelper.LocalMachineHive;
-			if(hklm != null)
-			{
-				using(var oldProjectSharedSettingLocation = hklm.OpenSubKey(@"SOFTWARE\SIL\FieldWorks\7.0"))
-				using(var newProjectSharedSettingLocation = FwRegistryHelper.FieldWorksRegistryKey)
-				{
-					object projectSharedValue;
-					if(oldProjectSharedSettingLocation != null &&
-							RegistryHelper.RegEntryExists(oldProjectSharedSettingLocation, string.Empty, @"ProjectShared",
-																out projectSharedValue))
-					{
-						FwRegistryHelper.FieldWorksRegistryKey.SetValue(@"ProjectShared", projectSharedValue);
-						return projectSharedValue;
-					}
-				}
-			}
-			return @"False";
+			RemotingServer.SharedProjectsSetter(enableSharingOfProjects);
 		}
 
 		/// <summary>
@@ -534,6 +471,8 @@ namespace FwRemoteDatabaseConnector
 			m_allServers = null;
 		}
 
+		internal bool IsRunning { get; set; }
+
 		#endregion
 	}
 
@@ -552,15 +491,34 @@ namespace FwRemoteDatabaseConnector
 		}
 
 		/// <summary>
+		/// This delegate is used to retrieve the projects directory.
+		/// </summary>
+		internal static IFdoDirectories Directories { get; private set; }
+
+		/// <summary>
+		/// Gets the shared projects getter.
+		/// </summary>
+		internal static Func<bool> SharedProjectsGetter { get; private set; }
+
+		/// <summary>
+		/// Gets the shared projects setter.
+		/// </summary>
+		internal static Action<bool> SharedProjectsSetter { get; private set; }
+
+			/// <summary>
 		/// Start an instance of the .NET remoting server.
 		/// </summary>
 		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
 			Justification="Added TODO-Linux")]
-		public static void Start()
+		public static void Start(string remotingTcpServerConfigFile, IFdoDirectories dirs, Func<bool> sharedProjectsGetter, Action<bool> sharedProjectsSetter)
 		{
 			// check if we are already running.
-			if (ServerObject != null)
+			if (ServerObject != null && ServerObject.IsRunning)
 				return;
+
+			Directories = dirs;
+			SharedProjectsGetter = sharedProjectsGetter;
+			SharedProjectsSetter = sharedProjectsSetter;
 
 			if (ChannelServices.RegisteredChannels.Length > 0)
 			{
@@ -581,9 +539,16 @@ namespace FwRemoteDatabaseConnector
 				}
 			}
 
-			// TODO: currently running with no security
-			// TODO-Linux: security support has not been implemented in Mono
-			RemotingConfiguration.Configure(DirectoryFinder.RemotingTcpServerConfigFile, false);
+			if (ServerObject == null)
+			{
+				// TODO: currently running with no security
+				// TODO-Linux: security support has not been implemented in Mono
+				RemotingConfiguration.Configure(remotingTcpServerConfigFile, false);
+			}
+			else
+			{
+				ServerObject.IsRunning = true;
+			}
 		}
 
 		/// <summary>
@@ -593,7 +558,10 @@ namespace FwRemoteDatabaseConnector
 		public static void Stop()
 		{
 			if (ServerObject != null)
+			{
 				ServerObject.ShutdownAllServers();
+				ServerObject.IsRunning = false;
+			}
 		}
 	}
 }

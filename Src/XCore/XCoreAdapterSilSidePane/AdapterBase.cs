@@ -44,11 +44,11 @@ namespace XCore
 		/// <summary>
 		/// Collection of small images.
 		/// </summary>
-		protected ImageCollection m_smallImages;
+		protected IImageCollection m_smallImages;
 		/// <summary>
 		/// Collection of large images.
 		/// </summary>
-		protected ImageCollection m_largeImages;
+		protected IImageCollection m_largeImages;
 		/// <summary>
 		/// The subclass specific main control that is given back to the adapter library client.
 		/// </summary>
@@ -127,7 +127,7 @@ namespace XCore
 		/// <param name="mediator">XCore Mediator.</param>
 		/// <returns>A Control for use by client.</returns>
 		public virtual System.Windows.Forms.Control Init(System.Windows.Forms.Form window,
-			ImageCollection smallImages, ImageCollection largeImages, Mediator mediator)
+			IImageCollection smallImages, IImageCollection largeImages, Mediator mediator)
 		{
 			m_window = window;
 			m_smallImages = smallImages;

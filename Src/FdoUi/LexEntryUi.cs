@@ -19,6 +19,8 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.FdoUi.Dialogs;
+using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.FieldWorks.LexText.Controls;
 using XCore;
@@ -101,76 +103,18 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="tssWf"></param>
 		/// <param name="wfa"></param>
 		/// <returns></returns>
-		public static List<ILexEntry> FindEntriesForWordform(FdoCache cache, ITsString tssWf, IWfiAnalysis wfa)
+		public static List<ILexEntry> FindEntriesForWordformUI(FdoCache cache, ITsString tssWf, IWfiAnalysis wfa)
 		{
-			if (tssWf == null)
-				return new List<ILexEntry>();
+			bool duplicates = false;
+			List<ILexEntry> retval = cache.ServiceLocator.GetInstance<ILexEntryRepository>().FindEntriesForWordform(cache, tssWf, wfa, ref duplicates);
 
-			var wf = tssWf.Text;
-			if (string.IsNullOrEmpty(wf))
-				return new List<ILexEntry>();
-
-			var wsVern = TsStringUtils.GetWsAtOffset(tssWf, 0);
-
-			var entries = new Set<ILexEntry>();
-
-			// Get the entries from the matching wordform.
-			// Get matching wordform.
-			var matchingWordforms = cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances()
-				.Where(wrdfrm => wrdfrm.Form.get_String(wsVern).Text == wf);
-			if (matchingWordforms.Count() > 1)
+			if (duplicates)
 			{
 				MessageBox.Show(Form.ActiveForm,
-					string.Format(FdoUiStrings.ksDuplicateWordformsMsg, wf),
+					string.Format(FdoUiStrings.ksDuplicateWordformsMsg, tssWf.Text),
 					FdoUiStrings.ksDuplicateWordformsCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
-			if (matchingWordforms.Count() > 0)
-			{
-				if (wfa != null && matchingWordforms.First().AnalysesOC.Contains(wfa))
-				{
-					entries.AddRange(wfa.MorphBundlesOS
-							.Where(mb => mb.MsaRA != null)
-							.Select(mb => mb.MsaRA.Owner as ILexEntry));
-				}
-				else
-				{
-					foreach (var analysis in matchingWordforms.First().AnalysesOC)
-					{
-						entries.AddRange(analysis.MorphBundlesOS
-							.Where(mb => mb.MsaRA != null)
-							.Select(mb => mb.MsaRA.Owner as ILexEntry));
-					}
-				}
-			}
-			// Get the entries from the matching MoForms.
-			entries.AddRange(
-				cache.ServiceLocator.GetInstance<IMoFormRepository>().AllInstances()
-				.Cast<IMoForm>()
-				.Where(mf => mf.Form.get_String(wsVern) != null && mf.Form.get_String(wsVern).Text == wf)
-				.Select(mf => mf.Owner as ILexEntry));
-
-			// Get the entries from the citation form
-			entries.AddRange(
-				cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances()
-				.Cast<ILexEntry>()
-				.Where(entry => entry.CitationForm.get_String(wsVern) != null && entry.CitationForm.get_String(wsVern).Text == wf));
-
-			// Put the enrties in a List and sort it by the HomographNumber.
-			var retval = new List<ILexEntry>(entries.ToArray());
-			retval.Sort(CompareEntriesByHomographNumber);
 			return retval;
-		}
-
-		private static string GetLowercaseStringFromMultiUnicodeSafely(ILgCharacterPropertyEngine icuEngine, IMultiUnicode form, int ws)
-		{
-			if (form == null)
-				return string.Empty;
-
-			var formTsstring = form.get_String(ws);
-			if (formTsstring == null || formTsstring.Length == 0)
-				return string.Empty;
-
-			return icuEngine.ToLower(formTsstring.Text);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -183,65 +127,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// ------------------------------------------------------------------------------------
 		public static LexEntryUi FindEntryForWordform(FdoCache cache, ITsString tssWf)
 		{
-			if (tssWf == null || tssWf.Length == 0)
-				return null;
-
-			var wsVern = TsStringUtils.GetWsAtOffset(tssWf, 0);
-			var icuEngine = cache.LanguageWritingSystemFactoryAccessor.get_CharPropEngine(wsVern);
-			var wf = icuEngine.ToLower(tssWf.Text);
-			ILexEntry matchingEntry = null;
-
-			// Check for Lexeme form.
-			matchingEntry = (
-				from e in cache.LanguageProject.LexDbOA.Entries
-				where e.LexemeFormOA != null && GetLowercaseStringFromMultiUnicodeSafely(icuEngine, e.LexemeFormOA.Form, wsVern) == wf
-				orderby e.HomographNumber
-				select e
-				).FirstOrDefault();
-
-			// Check for Citation form.
-			if (matchingEntry == null)
-				matchingEntry = (
-					from e in cache.LanguageProject.LexDbOA.Entries
-					where GetLowercaseStringFromMultiUnicodeSafely(icuEngine, e.CitationForm, wsVern) == wf
-					orderby e.HomographNumber
-					select e
-					).FirstOrDefault();
-
-			// Check for Alternate forms.
-			if (matchingEntry == null)
-				matchingEntry =(
-					from e in cache.LanguageProject.LexDbOA.Entries
-					where (
-						from af in e.AlternateFormsOS
-						where GetLowercaseStringFromMultiUnicodeSafely(icuEngine, af.Form, wsVern) == wf
-						select af
-						).FirstOrDefault() != null
-					orderby e.HomographNumber
-					select e
-					).FirstOrDefault();
-
-			// Look for the most commonly used analysis of the wordform.
-			if (matchingEntry == null)
-			{
-				IWfiWordform wordform;
-				if (cache.ServiceLocator.GetInstance<IWfiWordformRepository>().TryGetObject(tssWf, out wordform))
-				{
-					var guesser = new AnalysisGuessServices(cache);
-					var guess = guesser.GetBestGuess(wordform);
-					var analysis = guess as IWfiAnalysis;
-					if (guess is IWfiGloss)
-						analysis = guess.Owner as IWfiAnalysis;
-					if (analysis != null)
-					{
-						matchingEntry =
-							(from mb in analysis.MorphBundlesOS
-							 where mb.MorphRA is IMoStemAllomorph
-							 select mb.MorphRA.Owner).FirstOrDefault() as ILexEntry;
-					}
-				}
-			}
-
+			ILexEntry matchingEntry = cache.ServiceLocator.GetInstance<ILexEntryRepository>().FindEntryForWordform(cache, tssWf);
 			return matchingEntry == null ? null : new LexEntryUi(matchingEntry);
 		}
 
@@ -281,7 +167,7 @@ namespace SIL.FieldWorks.FdoUi
 			}
 			if (fRestoreStringTable || stOrig == null)
 			{
-				string dir = Path.Combine(DirectoryFinder.FlexFolder, "Configuration");
+				string dir = Path.Combine(FwDirectoryFinder.FlexFolder, "Configuration");
 				mediator.StringTbl = new StringTable(dir);
 			}
 			return mediator;
@@ -416,6 +302,7 @@ namespace SIL.FieldWorks.FdoUi
 			}
 		}
 
+		// Currently only called from WCF (11/21/2013 - AP)
 		public static void DisplayEntry(FdoCache cache, Mediator mediatorIn,
 			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn, IWfiAnalysis wfa)
 		{
@@ -426,24 +313,7 @@ namespace SIL.FieldWorks.FdoUi
 			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn, IWfiAnalysis wfa)
 		{
 			ITsString tssWf = tssWfIn;
-			var entries = FindEntriesForWordform(cache, tssWf, wfa);
-
-			// if we do not find a match for the word then try converting it to lowercase and see if there
-			// is an entry in the lexicon for the Wordform in lowercase. This is needed for occurences of
-			// words which are capitalized at the beginning of sentences.  LT-7444 RickM
-			if (entries == null || entries.Count == 0)
-			{
-				//We need to be careful when converting to lowercase therefore use Icu.ToLower()
-				//get the WS of the tsString
-				int wsWf = TsStringUtils.GetWsAtOffset(tssWf, 0);
-				//use that to get the locale for the WS, which is used for
-				string wsLocale = cache.ServiceLocator.WritingSystemManager.Get(wsWf).IcuLocale;
-				string sLower = Icu.ToLower(tssWf.Text, wsLocale);
-				ITsTextProps ttp = tssWf.get_PropertiesAt(0);
-				ITsStrFactory tsf = TsStrFactoryClass.Create();
-				tssWf = tsf.MakeStringWithPropsRgch(sLower, sLower.Length, ttp);
-				entries = FindEntriesForWordform(cache, tssWf, wfa);
-			}
+			var entries = FindEntriesForWordformUI(cache, tssWf, wfa);
 
 			StringTable stOrig;
 			Mediator mediator;
@@ -578,7 +448,7 @@ namespace SIL.FieldWorks.FdoUi
 			// Get a style sheet for the Language Explorer, and store it in the
 			// (new) mediator.
 			FwStyleSheet styleSheet = new FwStyleSheet();
-			styleSheet.Init(cache, cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
+			styleSheet.Init(cache, cache.LanguageProject.Hvo, LangProjectTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
 			mediator.PropertyTable.SetProperty("FwStyleSheet", styleSheet);
 			mediator.PropertyTable.SetPropertyPersistence("FwStyleSheet", false);
 			return styleSheet;
@@ -589,7 +459,7 @@ namespace SIL.FieldWorks.FdoUi
 			XmlNode xnWindow = (XmlNode)mediator.PropertyTable.GetValue("WindowConfiguration");
 			if (xnWindow == null)
 			{
-				string configFile = DirectoryFinder.GetFWCodeFile("Language Explorer/Configuration/Main.xml");
+				string configFile = FwDirectoryFinder.GetCodeFile("Language Explorer/Configuration/Main.xml");
 				// This can be called from TE...in that case, we don't complain about missing include
 				// files (true argument) but just trust that we put enough in the installer to make it work.
 				XmlDocument configuration = XWindow.LoadConfigurationWithIncludes(configFile, true);
@@ -599,6 +469,7 @@ namespace SIL.FieldWorks.FdoUi
 			}
 		}
 
+		// Currently only called from WCF (11/21/2013 - AP)
 		public static void DisplayRelatedEntries(FdoCache cache, Mediator mediatorIn,
 			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tss)
 		{
@@ -616,7 +487,9 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="helpProvider">The help provider.</param>
 		/// <param name="helpFileKey">The help file key.</param>
 		/// <param name="tssWf">The ITsString for the word form.</param>
+		/// <param name="hideInsertButton"></param>
 		/// ------------------------------------------------------------
+		// Currently only called from WCF (11/21/2013 - AP)
 		public static void DisplayRelatedEntries(FdoCache cache, IWin32Window owner,
 			Mediator mediatorIn, IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWf,
 			bool hideInsertButton)
@@ -721,7 +594,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// ------------------------------------------------------------------------------------
 		public static string FlexConfigFile
 		{
-			get { return DirectoryFinder.GetFWCodeFile(@"Language Explorer/Configuration/Main.xml"); }
+			get { return FwDirectoryFinder.GetCodeFile(@"Language Explorer/Configuration/Main.xml"); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -823,19 +696,6 @@ namespace SIL.FieldWorks.FdoUi
 			return LexEntryTags.kClassId == specifiedClsid || base.ShouldDisplayMenuForClass(specifiedClsid, display);
 		}
 
-
-		private static int CompareEntriesByHomographNumber(ILexEntry x, ILexEntry y)
-		{
-			return x == null
-					? (y == null ? 0 /* Both are null, so are equal */ : -1 /* x not being null is grater than y which is null */)
-					: (y == null
-						? 1 /* y being null is greater than x which is not null */
-						: (x.HomographNumber == y.HomographNumber
-							? 0 /* Neither are null, and homograph numbers are the same, so they are equal */
-							: (x.HomographNumber > y.HomographNumber
-								? 1 /* x is greater than x */
-								: -1 /* x is less than y */)));
-		}
 	}
 
 	/// ----------------------------------------------------------------------------------------

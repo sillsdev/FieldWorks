@@ -258,7 +258,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			GenerateStyle("Dictionary-Headword");
 			string defaultRoot =
-				Path.Combine(Path.Combine(DirectoryFinder.DefaultConfigurations, "Dictionary"), "Root.xml");
+				Path.Combine(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary"), "Root.xml");
 			var model = new DictionaryConfigurationModel(defaultRoot, Cache);
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			var parser = new ExCSS.Parser();
@@ -919,7 +919,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			FwRegistrySettings.Init();
 			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
-			m_configFilePath = Path.Combine(DirectoryFinder.FWCodeDirectory, m_application.DefaultConfigurationPathname);
+			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
 			m_window = new MockFwXWindow(m_application, m_configFilePath);
 			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
 			m_mediator = m_window.Mediator;

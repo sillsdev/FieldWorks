@@ -4,6 +4,7 @@
 	<UsingTask TaskName="Unitpp" AssemblyFile="FwBuildTasks.dll"/>
 	<UsingTask TaskName="RegisterForTests" AssemblyFile="FwBuildTasks.dll"/>
 	<UsingTask TaskName="DownloadFile" AssemblyFile="FwBuildTasks.dll"/>
+	<UsingTask TaskName="Unzip" AssemblyFile="FwBuildTasks.dll"/>
 
 	<!-- Make all of FieldWorks. -->
 	<Target Name="mkall" DependsOnTargets="initLinux;initWindows;LinuxRegistry;allCpp;allCsharp;CopyDlls;ensureTLBsUpToDate">
@@ -14,13 +15,13 @@
 		<GenerateNUnitReports Condition="'$(action)'=='test'" ReportFiles="@(NUnitReportFiles)"/>
 	</Target>
 
-	<Target Name="allCpp" DependsOnTargets="DebugProcs;GenericLib;testGenericLib;FwKernel;testFwKernel;Language;testLanguage;Views;testViews;GrEngine">
+	<Target Name="allCpp" DependsOnTargets="DebugProcs;GenericLib;testGenericLib;FwKernel;testFwKernel;Views;testViews;GrEngine">
 		<CreateItem Include="$(dir-outputBase)/*.compmap">
 			<Output TaskParameter="Include" ItemName="CompMapFiles"/>
 		</CreateItem>
 		<CatenateFiles SourceFiles="@(CompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
 	</Target>
-	<Target Name="allCppNoTest" DependsOnTargets="DebugProcs;GenericLib;FwKernel;Language;Views;GrEngine">
+	<Target Name="allCppNoTest" DependsOnTargets="DebugProcs;GenericLib;FwKernel;Views;GrEngine">
 		<CreateItem Include="$(dir-outputBase)/*.compmap">
 			<Output TaskParameter="Include" ItemName="CompMapFiles"/>
 		</CreateItem>
@@ -30,10 +31,10 @@
 	<ItemGroup>
 		<Fragments Include="$(dir-fwdistfiles)/*.fragment.manifest"/>
 	</ItemGroup>
-	<Target Name="regFreeCpp" DependsOnTargets="FwKernel;Language;GrEngine;Views"
-		AfterTargets="FwKernel;Language;GrEngine;Views" Condition="'$(OS)'=='Windows_NT'">
+	<Target Name="regFreeCpp" DependsOnTargets="FwKernel;GrEngine;Views"
+		AfterTargets="FwKernel;GrEngine;Views" Condition="'$(OS)'=='Windows_NT'">
 		<RegFree Executable="$(dir-outputBase)/FwKernel.dll" Output="$(dir-outputBase)/FieldWorks.Tests.manifest"
-			Dlls="$(dir-outputBase)/FwKernel.dll;$(dir-outputBase)/Language.dll;$(dir-outputBase)/Graphite.dll;$(dir-outputBase)/Views.dll"
+			Dlls="$(dir-outputBase)/FwKernel.dll;$(dir-outputBase)/Graphite.dll;$(dir-outputBase)/Views.dll"
 			Fragments="@(Fragments)" NoTypeLib="$(dir-outputBase)/Graphite.dll"/>
 	</Target>
 
@@ -65,7 +66,7 @@
 		<Message Text="Finished building GenericLib."/>
 	</Target>
 
-	<Target Name="testGenericLib" DependsOnTargets="GenericLib">
+	<Target Name="testGenericLib" DependsOnTargets="GenericLib;FwKernel;Views;GrEngine">
 		<Make Condition="'$(OS)'=='Windows_NT'"
 				Makefile="$(fwrt)\Src\Generic\Test\testGenericLib.mak"
 				Configuration="$(config-capital)"
@@ -77,8 +78,7 @@
 				BuildRoot="$(fwrt)"
 				WorkingDirectory="$(fwrt)/Src/Generic/Test" ContinueOnError="true"/>
 		<RegFree Executable="$(dir-outputBase)\testGenericLib.exe"
-				Dlls="$(dir-outputBase)\Language.dll;$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
-				NoTypeLib="$(dir-outputBase)\Graphite.dll"
+				DependentAssemblies="$(dir-outputBase)\FwKernel.manifest;$(dir-outputBase)\Graphite.manifest;$(dir-outputBase)\Views.manifest"
 				Condition="'$(OS)'=='Windows_NT'"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testGenericLib.exe -manifest $(dir-outputBase)\testGenericLib.exe.manifest"
 				Condition="'$(OS)'=='Windows_NT'"/>
@@ -103,10 +103,12 @@
 			Configuration="$(config-capital)" Target="$(make-target)"
 			BuildRoot="$(fwrt)"
 			WorkingDirectory="$(fwrt)/Src/Graphite/GrEngine"/>
+		<RegFree Executable="$(dir-outputBase)\Graphite.dll" NoTypeLib="$(dir-outputBase)\Graphite.dll" Output="$(dir-outputBase)\Graphite.manifest"
+			Condition="'$(OS)'=='Windows_NT'" />
 		<Message Text="Finished building GrEngine."/>
 	</Target>
 
-	<Target Name="FwKernel" DependsOnTargets="GenericLib;GenerateCellarConstants;AppCore;createCompMaps">
+	<Target Name="FwKernel" DependsOnTargets="GenericLib;GenerateCellarConstants;AppCore;createCompMaps;ManagedLgIcuCollator">
 		<Message Text="FwKernel make-target='$(make-target)'"/>
 		<Make Condition="'$(OS)'=='Windows_NT'"
 			Makefile="$(fwrt)\Src\Kernel\FwKernel.mak"
@@ -118,10 +120,11 @@
 			Configuration="$(config-capital)" Target="$(make-target)"
 			BuildRoot="$(fwrt)"
 			WorkingDirectory="$(fwrt)/Src/Kernel"/>
+		<RegFree Executable="$(dir-outputBase)\FwKernel.dll" Output="$(dir-outputBase)\FwKernel.manifest" Condition="'$(OS)'=='Windows_NT'" />
 		<Message Text="Finished building FwKernel."/>
 	</Target>
 
-	<Target Name="testFwKernel" DependsOnTargets="GenericLib;FwKernel">
+	<Target Name="testFwKernel" DependsOnTargets="GenericLib;FwKernel;Views;GrEngine">
 		<Make Condition="'$(OS)'=='Windows_NT'"
 				Makefile="$(fwrt)\Src\Kernel\Test\testFwKernel.mak"
 				Configuration="$(config-capital)"
@@ -133,8 +136,7 @@
 				BuildRoot="$(fwrt)"
 				WorkingDirectory="$(fwrt)/Src/Kernel/Test" ContinueOnError="true"/>
 		<RegFree Executable="$(dir-outputBase)\testFwKernel.exe"
-				Dlls="$(dir-outputBase)\Language.dll;$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
-				NoTypeLib="$(dir-outputBase)\Graphite.dll"
+				DependentAssemblies="$(dir-outputBase)\FwKernel.manifest;$(dir-outputBase)\Graphite.manifest;$(dir-outputBase)\Views.manifest"
 				Condition="'$(OS)'=='Windows_NT'"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testFwKernel.exe -manifest $(dir-outputBase)\testFwKernel.exe.manifest"
 				Condition="'$(OS)'=='Windows_NT'"/>
@@ -162,52 +164,7 @@
 		<Message Text="Finished building AppCore."/>
 	</Target>
 
-	<Target Name="Language" DependsOnTargets="GenericLib;FwKernel;ManagedLgIcuCollator;GenerateCellarConstants">
-		<Make Condition="'$(OS)'=='Windows_NT'"
-			Makefile="$(fwrt)\Src\Language\Language.mak"
-			Configuration="$(config-capital)"
-			BuildRoot="$(fwrt)"
-			WorkingDirectory="$(fwrt)\Src\Language"/>
-		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
-			Makefile="$(fwrt)/Src/Language/Makefile"
-			Configuration="$(config-capital)" Target="$(make-target)"
-			BuildRoot="$(fwrt)"
-			WorkingDirectory="$(fwrt)/Src/Language"/>
-		<Message Text="Finished building Language."/>
-	</Target>
-
-	<Target Name="testLanguage" DependsOnTargets="GenericLib;Language;FwKernel;Views;GrEngine">
-		<Make Condition="'$(OS)'=='Windows_NT'"
-				Makefile="$(fwrt)\Src\Language\Test\testLanguage.mak"
-				Configuration="$(config-capital)"
-				BuildRoot="$(fwrt)"
-				WorkingDirectory="$(fwrt)\Bin"/>
-		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
-				Makefile="$(fwrt)/Src/Language/Test/Makefile"
-				Configuration="$(config-capital)" Target="$(make-target)"
-				BuildRoot="$(fwrt)"
-				WorkingDirectory="$(fwrt)/Src/Language/Test" ContinueOnError="true"/>
-		<RegFree Executable="$(dir-outputBase)\testLanguage.exe"
-				Dlls="$(dir-outputBase)\Language.dll;$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
-				NoTypeLib="$(dir-outputBase)\Graphite.dll"
-				Condition="'$(OS)'=='Windows_NT'"/>
-		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testLanguage.exe -manifest $(dir-outputBase)\testLanguage.exe.manifest"
-				Condition="'$(OS)'=='Windows_NT'"/>
-		<CreateItem Include="$(dir-outputBase)/*.compmap">
-			<Output TaskParameter="Include" ItemName="LanguageCompMapFiles"/>
-		</CreateItem>
-		<CatenateFiles SourceFiles="@(LanguageCompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
-		<Unitpp Condition="'$(action)'=='test'"
-				FixturePath="$(dir-outputBase)/testLanguage"
-				FudgeFactor="$(timeoutFudgeFactor)"
-				Timeout="60000">
-			<Output TaskParameter="FailedSuites" ItemName="FailedSuites"/>
-		</Unitpp>
-		<Message Text="Finished building testLanguage." Condition="'$(action)'!='test'"/>
-		<Message Text="Finished building testLanguage and running tests." Condition="'$(action)'=='test'"/>
-	</Target>
-
-	<Target Name="Views" DependsOnTargets="GenericLib;Language;GenerateCellarConstants">
+	<Target Name="Views" DependsOnTargets="GenericLib;FwKernel;GenerateCellarConstants">
 		<Make Condition="'$(OS)'=='Windows_NT'"
 			Makefile="$(fwrt)\Src\views\Views.mak"
 			Configuration="$(config-capital)"
@@ -218,10 +175,11 @@
 			Configuration="$(config-capital)" Target="$(make-target)"
 			BuildRoot="$(fwrt)"
 			WorkingDirectory="$(fwrt)/Src/views"/>
+		<RegFree Executable="$(dir-outputBase)\Views.dll" Output="$(dir-outputBase)\Views.manifest" Condition="'$(OS)'=='Windows_NT'" />
 		<Message Text="Finished building Views."/>
 	</Target>
 
-	<Target Name="testViews" DependsOnTargets="GenericLib;Views;SimpleRootSite">
+	<Target Name="testViews" DependsOnTargets="GenericLib;Views;SimpleRootSite;FwKernel;GrEngine">
 		<Make Condition="'$(OS)'=='Windows_NT'"
 				Makefile="$(fwrt)\Src\views\Test\testViews.mak"
 				Configuration="$(config-capital)"
@@ -233,8 +191,7 @@
 				BuildRoot="$(fwrt)"
 				WorkingDirectory="$(fwrt)/Src/views/Test" ContinueOnError="true"/>
 		<RegFree Executable="$(dir-outputBase)\testViews.exe"
-				Dlls="$(dir-outputBase)\Language.dll;$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
-				NoTypeLib="$(dir-outputBase)\Graphite.dll"
+				DependentAssemblies="$(dir-outputBase)\FwKernel.manifest;$(dir-outputBase)\Graphite.manifest;$(dir-outputBase)\Views.manifest"
 				Condition="'$(OS)'=='Windows_NT'"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testViews.exe -manifest $(dir-outputBase)\testViews.exe.manifest"
 				Condition="'$(OS)'=='Windows_NT'"/>
@@ -288,12 +245,6 @@
 		<SetEnvVar Variable="OBJ_DIR" Value="$(dir-fwobj)" />
 		<SetEnvVar Variable="BUILD4UX" Value="$(build4ux)"/>
 		<SetEnvVar Variable="ANAL_TYPE" Value="performance" Condition="'$(performance)'=='true'"/>
-		<Make Condition="'$(OS)'=='Windows_NT'"
-				Makefile="$(fwrt)\Src\Language\Language.mak"
-				Configuration="$(config-capital)"
-				Target="dirs $(dir-fwoutputCommon)\LanguageTlb.tlb"
-				BuildRoot="$(fwrt)"
-				WorkingDirectory="$(fwrt)"/>
 		<Make Condition="'$(OS)'=='Windows_NT'"
 				Makefile="$(fwrt)\Src\Kernel\FwKernel.mak"
 				Configuration="$(config-capital)"
@@ -373,6 +324,8 @@
 		<IcuDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt398/.lastSuccessful</IcuDownloadUrl>
 		<!-- bt281 is the master branch build of icucil for linux development. Update when appropriate. -->
 		<IcuDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt281/.lastSuccessful</IcuDownloadUrl>
+		<ProtoBufNetDownloadUrl>https://protobuf-net.googlecode.com/files/protobuf-net%20r668.zip</ProtoBufNetDownloadUrl>
+		<GoogleDriveDownloadUrl>https://drive.google.com/uc?export=download&amp;id=</GoogleDriveDownloadUrl>
 		<!-- Windows/.Net and Linux/Mono use different extensions for debug information files. -->
 		<DebugInfo Condition="'$(OS)'=='Unix'">dll.mdb</DebugInfo>
 		<DebugInfo Condition="'$(OS)'=='Windows_NT'">pdb</DebugInfo>
@@ -451,6 +404,18 @@
 		<Message Text="Downloading latest successful artifacts for ICU."/>
 		<DownloadFile Address="$(IcuDownloadUrl)/icu.net.dll" LocalFilename="$(fwrt)/Downloads/icu.net.dll"/>
 		<DownloadFile Address="$(IcuDownloadUrl)/icu.net.dll.config" LocalFilename="$(fwrt)/Downloads/icu.net.dll.config" Condition="'$(OS)'=='Unix'"/>
+
+		<Message Text="Downloading protobuf-net." />
+		<DownloadFile Address="$(ProtoBufNetDownloadUrl)" LocalFilename="$(fwrt)/Downloads/protobuf-net.zip" />
+
+		<Message Text="Downloading ParaTExt DLLs." />
+		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYNnFpV0pnV05hUWc" LocalFilename="$(fwrt)/Downloads/FormattedEditor.dll"/>
+		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYMnVBRUJlbXg3NTg" LocalFilename="$(fwrt)/Downloads/HelpSystem.dll"/>
+		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYNFdPUjR3RU9kVms" LocalFilename="$(fwrt)/Downloads/HtmlEditor.dll"/>
+		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYc1h5Ylc2cEpZR1U" LocalFilename="$(fwrt)/Downloads/NetLoc.dll"/>
+		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYZ0JDa210VzctVE0" LocalFilename="$(fwrt)/Downloads/Paratext.LexicalContracts.dll"/>
+		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYMnIwT3NXN2hZcFk" LocalFilename="$(fwrt)/Downloads/ParatextShared.dll"/>
+		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYUmQ3T292Tkpnd0k" LocalFilename="$(fwrt)/Downloads/Utilities.dll"/>
 	</Target>
 
 	<!-- item group for downloads, to allow easy copying -->
@@ -503,6 +468,13 @@
 		<DownloadedFiles Include="$(fwrt)/Downloads/NDesk.DBus.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Ionic.Zip.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/taglib-sharp.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/FormattedEditor.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/HelpSystem.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/HtmlEditor.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/NetLoc.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/Paratext.LexicalContracts.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/ParatextShared.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/Utilities.dll"/>
 	</ItemGroup>
 
 	<Target Name="CopyDlls" DependsOnTargets="downloadDlls">
@@ -523,9 +495,8 @@
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<Copy SourceFiles="$(fwrt)/DistFiles/Patr100.dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
-		<!-- Needed for Flex to access projects from Paratext in the text chooser dialog. -->
-		<Copy SourceFiles="$(fwrt)/DistFiles/Utilities.dll" DestinationFolder="$(dir-outputBase)"
-				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+		<Copy SourceFiles="$(fwrt)/DistFiles/Commons.Xml.Relaxng.dll" DestinationFolder="$(dir-outputBase)"
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<!-- ICU50 dlls -->
 		<Copy SourceFiles="$(fwrt)/DistFiles/icudt50.dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
@@ -535,12 +506,19 @@
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<!-- Hunspell dlls -->
 		<Copy SourceFiles="$(fwrt)/DistFiles/Windows/libhunspell.dll" DestinationFolder="$(dir-outputBase)"
-					SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 
 		<Copy SourceFiles="$(fwrt)/DistFiles/Windows/icutu50.dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<Copy SourceFiles="$(fwrt)/DistFiles/Windows/gennorm2.exe" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+		<!-- protobuf-net dlls -->
+		<Unzip ZipFilename="$(fwrt)/Downloads/protobuf-net.zip" ToDir="$(fwrt)/Downloads/protobuf-net/" />
+		<Copy SourceFiles="$(fwrt)/Downloads/protobuf-net/Full/net30/protobuf-net.dll" DestinationFolder="$(dir-outputBase)"
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+		<Copy SourceFiles="$(fwrt)/Downloads/protobuf-net/Full/mono/protobuf-net.dll" DestinationFolder="$(dir-outputBase)"
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Unix'"/>
+		<RemoveDir Directories="$(fwrt)/Downloads/protobuf-net/" />
 		<!-- Copy the downloaded artifacts -->
 		<Copy SourceFiles="@(DownloadedFiles)" DestinationFolder="$(dir-outputBase)"
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>

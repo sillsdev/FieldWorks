@@ -162,7 +162,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void LoadMasterCategories(Set<IPartOfSpeech> posSet)
 		{
 			XmlDocument doc = new XmlDocument();
-			doc.Load(Path.Combine(DirectoryFinder.TemplateDirectory, "GOLDEtic.xml"));
+			doc.Load(Path.Combine(FwDirectoryFinder.TemplateDirectory, "GOLDEtic.xml"));
 			XmlElement root = doc.DocumentElement;
 			AddNodes(posSet, root.SelectNodes("/eticPOSList/item"), m_tvMasterList.Nodes, m_cache);
 
