@@ -290,6 +290,7 @@
     <Compile Include="DictionaryConfigurationManagerDlg.Designer.cs">
       <DependentUpon>DictionaryConfigurationManagerDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="DictionaryConfigurationMigrator.cs" />
     <Compile Include="DictionaryConfigurationNodeRenameDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -326,6 +327,8 @@
     <Compile Include="IDictionaryConfigurationView.cs" />
     <Compile Include="DictionaryNodeOptions.cs" />
     <Compile Include="GlobalSettingServices.cs" />
+    <Compile Include="ILayoutConverter.cs" />
+    <Compile Include="LegacyConfigurationUtils.cs" />
     <Compile Include="PalasoErrorReportingAdapter.cs" />
     <Compile Include="ConcDecorator.cs" />
     <Compile Include="CustomListDlg.cs">

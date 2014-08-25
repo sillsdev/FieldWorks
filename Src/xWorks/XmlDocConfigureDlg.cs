@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.XWorks
 	/// hideConfig="true" attributes added to a couple of part refs just to make the node tree look
 	/// nicer to the users.
 	/// </summary>
-	public partial class XmlDocConfigureDlg : Form, IFWDisposable
+	public partial class XmlDocConfigureDlg : Form, IFWDisposable, ILayoutConverter
 	{
 		XmlNode m_configurationParameters;
 		string m_defaultRootLayoutName;
@@ -133,122 +133,6 @@ namespace SIL.FieldWorks.XWorks
 			internal bool Hidden
 			{
 				get { return m_fHidden; }
-			}
-		}
-		/// <summary>
-		/// This class provides a stack of nodes that represent a level (possibly hidden) in
-		/// displaying the configuration tree.
-		/// </summary>
-		protected class LayoutLevels
-		{
-			private readonly List<PartCaller> m_stackCallers = new List<PartCaller>();
-
-			/// <summary>
-			/// Add a set of nodes that represent a level in the tree (possibly hidden).
-			/// </summary>
-			public void Push(XmlNode partref, XmlNode layout)
-			{
-				m_stackCallers.Add(new PartCaller(layout, partref));
-			}
-
-			/// <summary>
-			/// Remove the most recent set of nodes that represent a (possibly hidden) level.
-			/// </summary>
-			public void Pop()
-			{
-				if (m_stackCallers.Count > 0)
-					m_stackCallers.RemoveAt(m_stackCallers.Count - 1);
-			}
-
-			/// <summary>
-			/// Get the most recent part (ref=) node.
-			/// </summary>
-			public XmlNode PartRef
-			{
-				get
-				{
-					return m_stackCallers.Count > 0 ? m_stackCallers[m_stackCallers.Count - 1].PartRef : null;
-				}
-			}
-
-			/// <summary>
-			/// Get the most recent layout node.
-			/// </summary>
-			public XmlNode Layout
-			{
-				get
-				{
-					return m_stackCallers.Count > 0 ? m_stackCallers[m_stackCallers.Count - 1].Layout : null;
-				}
-			}
-
-			/// <summary>
-			/// If the most recent part (ref=) node was "hidden", get the oldest part (ref=)
-			/// on the stack that was hidden.  (This allows multiple levels of hiddenness.)
-			/// </summary>
-			public XmlNode HiddenPartRef
-			{
-				get
-				{
-					if (m_stackCallers.Count > 0)
-					{
-						XmlNode xnHidden = null;
-						for (var i = m_stackCallers.Count - 1; i >= 0; --i)
-						{
-							if (m_stackCallers[i].Hidden)
-								xnHidden = m_stackCallers[i].PartRef;
-					else
-								return xnHidden;
-						}
-						return xnHidden;
-					}
-						return null;
-				}
-			}
-
-			/// <summary>
-			/// If the most recent part (ref=) node was "hidden", get the oldest corresponding
-			/// layout on the stack that was hidden.  (This allows multiple levels of
-			/// hiddenness.)
-			/// </summary>
-			public XmlNode HiddenLayout
-			{
-				get
-				{
-					if (m_stackCallers.Count > 0)
-					{
-						XmlNode xnHidden = null;
-						for (var i = m_stackCallers.Count - 1; i >= 0; --i)
-						{
-							if (m_stackCallers[i].Hidden)
-								xnHidden = m_stackCallers[i].Layout;
-					else
-								return xnHidden;
-						}
-						return xnHidden;
-					}
-						return null;
-				}
-			}
-
-			/// <summary>
-			/// Return the complete list of "hidden" part (ref=)  and layoutnodes, oldest first.
-			/// </summary>
-			internal List<PartCaller> HiddenPartCallers
-			{
-				get
-				{
-					List<PartCaller> retval = null;
-					for (var i = m_stackCallers.Count - 1; i >= 0; --i)
-					{
-						if (!m_stackCallers[i].Hidden)
-							break;
-						if (retval == null)
-							retval = new List<PartCaller>();
-						retval.Insert(0, m_stackCallers[i]);
-					}
-					return retval;
-				}
 			}
 		}
 
@@ -393,7 +277,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (String.IsNullOrEmpty(sLayoutType))
 				sLayoutType = m_defaultRootLayoutName;
-			CreateComboAndTreeItems(sLayoutType);
+
+			var configureLayouts = XmlUtils.FindNode(m_configurationParameters, "configureLayouts");
+			LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(configureLayouts, this);
+			SetSelectedDictionaryTypeItem(sLayoutType);
 
 			// Restore the location and size from last time we called this dialog.
 			if (m_mediator != null && m_mediator.PropertyTable != null)
@@ -416,62 +303,8 @@ namespace SIL.FieldWorks.XWorks
 			SetStylesLists();
 		}
 
-		private void CreateComboAndTreeItems(string sLayoutType)
+		private void SetSelectedDictionaryTypeItem(string sLayoutType)
 		{
-			var configureLayouts = XmlUtils.FindNode(m_configurationParameters, "configureLayouts");
-			var layoutTypes = new List<XmlNode>();
-			layoutTypes.AddRange(configureLayouts.ChildNodes.OfType<XmlNode>().Where(x => x.Name == "layoutType"));
-			Debug.Assert(layoutTypes.Count > 0);
-			var xnConfig = layoutTypes[0].SelectSingleNode("configure");
-			Debug.Assert(xnConfig != null);
-			var configClass = XmlUtils.GetManditoryAttributeValue(xnConfig, "class");
-			foreach (var xn in m_layouts.GetLayoutTypes())
-			{
-				var xnConfigure = xn.SelectSingleNode("configure");
-				if (XmlUtils.GetManditoryAttributeValue(xnConfigure, "class") == configClass)
-					layoutTypes.Add(xn);
-			}
-			foreach (var xnLayoutType in layoutTypes)
-			{
-				if (xnLayoutType is XmlComment || xnLayoutType.Name != "layoutType")
-					continue;
-				string sLabel = XmlUtils.GetAttributeValue(xnLayoutType, "label");
-				if (sLabel == "$wsName")
-				{
-					string sLayout = XmlUtils.GetAttributeValue(xnLayoutType, "layout");
-					Debug.Assert(sLayout.EndsWith("-$ws"));
-					bool fReversalIndex = true;
-					foreach (XmlNode config in xnLayoutType.ChildNodes)
-					{
-						if (config is XmlComment || config.Name != "configure")
-							continue;
-						string sClass = XmlUtils.GetAttributeValue(config, "class");
-						if (sClass != "ReversalIndexEntry")
-						{
-							fReversalIndex = false;
-							break;
-						}
-					}
-					if (!fReversalIndex)
-						continue;
-					foreach (IReversalIndex ri in m_cache.LangProject.LexDbOA.CurrentReversalIndices)
-					{
-						IWritingSystem ws = m_cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem);
-						string sWsTag = ws.Id;
-						m_layouts.ExpandWsTaggedNodes(sWsTag);	// just in case we have a new index.
-						// Create a copy of the layoutType node for the specific writing system.
-						XmlNode xnRealLayout = CreateWsSpecficLayoutType(xnLayoutType,
-							ws.DisplayLabel, sLayout.Replace("$ws", sWsTag), sWsTag);
-						List<LayoutTreeNode> rgltnStyle = BuildLayoutTree(xnRealLayout);
-						m_cbDictType.Items.Add(new LayoutTypeComboItem(xnRealLayout, rgltnStyle));
-					}
-				}
-				else
-				{
-					List<LayoutTreeNode> rgltnStyle = BuildLayoutTree(xnLayoutType);
-					m_cbDictType.Items.Add(new LayoutTypeComboItem(xnLayoutType, rgltnStyle));
-				}
-			}
 			int idx = -1;
 			for (int i = 0; i < m_cbDictType.Items.Count; ++i)
 			{
@@ -485,43 +318,6 @@ namespace SIL.FieldWorks.XWorks
 			if (idx < 0)
 				idx = 0;
 			m_cbDictType.SelectedIndex = idx;
-		}
-
-		private static XmlNode CreateWsSpecficLayoutType(XmlNode xnLayoutType, string sWsLabel,
-			string sWsLayout, string sWsTag)
-		{
-			XmlNode xnRealLayout = xnLayoutType.Clone();
-			if (xnRealLayout.Attributes != null)
-			{
-			xnRealLayout.Attributes["label"].Value = sWsLabel;
-			xnRealLayout.Attributes["layout"].Value = sWsLayout;
-			foreach (XmlNode config in xnRealLayout.ChildNodes)
-			{
-				if (config is XmlComment || config.Name != "configure")
-					continue;
-				string sInternalLayout = XmlUtils.GetAttributeValue(config, "layout");
-				Debug.Assert(sInternalLayout.EndsWith("-$ws"));
-					if (config.Attributes != null)
-				config.Attributes["layout"].Value = sInternalLayout.Replace("$ws", sWsTag);
-			}
-			}
-			return xnRealLayout;
-		}
-
-		private List<LayoutTreeNode> BuildLayoutTree(XmlNode xnLayoutType)
-		{   // configure LayoutType via its child configure nodes
-			List<LayoutTreeNode> rgltn = new List<LayoutTreeNode>();
-			foreach (XmlNode config in xnLayoutType.ChildNodes)
-			{   // expects a configure element
-				if (config is XmlComment || config.Name != "configure")
-					continue;
-				var ltn = BuildMainLayout(config);
-				if (XmlUtils.GetOptionalBooleanAttributeValue(config, "hideConfig", false))
-					rgltn.AddRange(ltn.Nodes.Cast<LayoutTreeNode>());
-				else
-					rgltn.Add(ltn);
-			}
-			return rgltn;
 		}
 
 		private void SetStylesLists()
@@ -546,120 +342,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 			m_rgCharStyles.Sort();
 			m_rgParaStyles.Sort();
-		}
-
-		private LayoutTreeNode BuildMainLayout(XmlNode config)
-		{   // builds control tree nodes based on a configure element
-			LayoutTreeNode ltn = new LayoutTreeNode(config, m_stringTbl, null);
-			ltn.OriginalIndex = m_tvParts.Nodes.Count;
-			string className = ltn.ClassName;
-			string layoutName = ltn.LayoutName;
-			XmlNode layout = m_layouts.GetElement("layout", new[] { className, "jtview", layoutName, null });
-			if (layout == null)
-				throw new Exception("Cannot configure layout " + layoutName + " of class " + className + " because it does not exist");
-			ltn.ParentLayout = layout;	// not really the parent layout, but the parent of this node's children
-			string sVisible = XmlUtils.GetAttributeValue(layout, "visibility");
-			ltn.Checked = sVisible != "never";
-			AddChildNodes(layout, ltn, ltn.Nodes.Count);
-			ltn.OriginalNumberOfSubnodes = ltn.Nodes.Count;
-			return ltn;
-		}
-
-		private void AddChildNodes(XmlNode layout, LayoutTreeNode ltnParent, int iStart)
-		{
-			bool fMerging = iStart < ltnParent.Nodes.Count;
-			int iNode = iStart;
-			string className = XmlUtils.GetManditoryAttributeValue(layout, "class");
-			List<XmlNode> nodes = PartGenerator.GetGeneratedChildren(layout, m_cache,
-				new[] { "ref", "label" });
-			foreach (XmlNode node in nodes)
-			{
-				XmlNode subLayout;
-				if (node.Name == "sublayout")
-				{
-					Debug.Assert(!fMerging);
-					string subLayoutName = XmlUtils.GetOptionalAttributeValue(node, "name", null);
-					if (subLayoutName == null)
-					{
-						subLayout = node; // a sublayout lacking a name contains the part refs directly.
-					}
-					else
-					{
-						subLayout = m_layouts.GetElement("layout",
-							new[] { className, "jtview", subLayoutName, null });
-					}
-					if (subLayout != null)
-						AddChildNodes(subLayout, ltnParent, ltnParent.Nodes.Count);
-				}
-				else if (node.Name == "part")
-				{
-					// Check whether this node has already been added to this parent.  Don't add
-					// it if it's already there!
-					LayoutTreeNode ltnOld = FindMatchingNode(ltnParent, node);
-					if (ltnOld != null)
-						continue;
-					string sRef = XmlUtils.GetManditoryAttributeValue(node, "ref");
-					XmlNode part = m_parts.GetElement("part",
-					new[] { className + "-Jt-" + sRef });
-					if (part == null && sRef != "$child")
-						continue;
-					bool fHide = XmlUtils.GetOptionalBooleanAttributeValue(node, "hideConfig", false);
-					LayoutTreeNode ltn;
-					var cOrig = 0;
-					if (!fHide)
-					{
-						ltn = new LayoutTreeNode(node, m_stringTbl, className)
-							{
-								OriginalIndex = ltnParent.Nodes.Count,
-								ParentLayout = layout,
-								HiddenNode = m_levels.HiddenPartRef,
-								HiddenNodeLayout = m_levels.HiddenLayout
-							};
-						if (!String.IsNullOrEmpty(ltn.LexRelType))
-							FixLexRelationTypeList(ltn);
-						if (!String.IsNullOrEmpty(ltn.EntryType))
-							FixEntryTypeList(ltn, ltnParent.LayoutName);
-						//if (fMerging)
-							//((LayoutTreeNode)ltnParent.Nodes[iNode]).MergedNodes.Add(ltn);
-						//else
-							ltnParent.Nodes.Add(ltn);
-					}
-					else
-					{
-						Debug.Assert(!fMerging);
-						ltn = ltnParent;
-						cOrig = ltn.Nodes.Count;
-						if (className == "StTxtPara")
-						{
-							ltnParent.HiddenChildLayout = layout;
-							ltnParent.HiddenChild = node;
-						}
-					}
-					try
-					{
-						m_levels.Push(node, layout);
-						var fOldAdding = ltn.AddingSubnodes;
-						ltn.AddingSubnodes = true;
-						if (part != null)
-							ProcessChildNodes(part.ChildNodes, className, ltn);
-						ltn.OriginalNumberOfSubnodes = ltn.Nodes.Count;
-						ltn.AddingSubnodes = fOldAdding;
-						if (fHide)
-						{
-							var cNew = ltn.Nodes.Count - cOrig;
-							var msg = String.Format("{0} nodes for a hidden PartRef ({1})!", cNew, node.OuterXml);
-							//Debug.Assert(cNew <= 1, msg);
-							//if (cNew > 1)
-							//    Debug.WriteLine(msg);
-						}
-					}
-					finally
-					{
-						m_levels.Pop();
-					}
-					++iNode;
-				}
-			}
 		}
 
 		class GuidAndSubClass
@@ -695,7 +377,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private void FixLexRelationTypeList(LayoutTreeNode ltn)
+		public void BuildRelationTypeList(LayoutTreeNode ltn)
 		{
 			// Get the canonical list from the project.
 			if (m_rgRelationTypes == null)
@@ -712,6 +394,7 @@ namespace SIL.FieldWorks.XWorks
 				var lrt = (ILexRefType)poss;
 				if (ltn.LexRelType == "sense")
 				{
+					// skip entry relations when looking at a sense configuration
 					if (lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair ||
 						lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryCollection ||
 						lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryPair ||
@@ -723,6 +406,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else
 				{
+					// skip sense relations when looking at an entry configuration
 					if (lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair ||
 						lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseCollection ||
 						lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtSensePair ||
@@ -800,7 +484,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private void FixEntryTypeList(LayoutTreeNode ltn, string parentLayoutName)
+		public void BuildEntryTypeList(LayoutTreeNode ltn, string parentLayoutName)
 		{
 			// Add any new types to our ordered list (or fill in an empty list).
 			var setGuidsFromXml = new Set<Guid>(ltn.EntryTypeList.Select(info => info.ItemGuid));
@@ -969,228 +653,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 			return list;
 		}
-
-		private LayoutTreeNode FindMatchingNode(LayoutTreeNode ltn, XmlNode node)
-		{
-			if (ltn == null || node == null)
-				return null;
-			foreach (LayoutTreeNode ltnSub in ltn.Nodes)
-			{
-				if (NodesMatch(ltnSub.Configuration, node))
-					return ltnSub;
-			}
-			return FindMatchingNode(ltn.Parent as LayoutTreeNode, node);
-		}
-
-		private static bool NodesMatch(XmlNode first, XmlNode second)
-		{
-			if (first.Name != second.Name)
-				return false;
-			if((first.Attributes == null) && (second.Attributes != null))
-				return false;
-			if(first.Attributes == null)
-			{
-				return ChildNodesMatch(first.ChildNodes, second.ChildNodes);
-			}
-			if(first.Attributes.Count != second.Attributes.Count)
-			{
-				return false;
-			}
-
-			var firstAtSet = new SortedList<string, string>();
-			var secondAtSet = new SortedList<string, string>();
-			for (int i = 0; i < first.Attributes.Count; ++i)
-			{
-				firstAtSet.Add(first.Attributes[i].Name, first.Attributes[i].Value);
-				secondAtSet.Add(second.Attributes[i].Name, second.Attributes[i].Value);
-			}
-			using (var firstIter = firstAtSet.GetEnumerator())
-			using (var secondIter = secondAtSet.GetEnumerator())
-			{
-				for(;firstIter.MoveNext() && secondIter.MoveNext();)
-				{
-					if(!firstIter.Current.Equals(secondIter.Current))
-						return false;
-				}
-				return true;
-			}
-		}
-
-		/// <summary>
-		/// This method should sort the node lists and call NodesMatch with each pair.
-		/// </summary>
-		/// <param name="firstNodeList"></param>
-		/// <param name="secondNodeList"></param>
-		/// <returns></returns>
-		private static bool ChildNodesMatch(XmlNodeList firstNodeList, XmlNodeList secondNodeList)
-		{
-			if (firstNodeList.Count != secondNodeList.Count)
-				return false;
-			var firstAtSet = new SortedList<string, XmlNode>();
-			var secondAtSet = new SortedList<string, XmlNode>();
-			for (int i = 0; i < firstNodeList.Count; ++i)
-			{
-				firstAtSet.Add(firstNodeList[i].Name, firstNodeList[i]);
-				secondAtSet.Add(secondNodeList[i].Name, secondNodeList[i]);
-			}
-			using (var firstIter = firstAtSet.GetEnumerator())
-			using (var secondIter = secondAtSet.GetEnumerator())
-			{
-				for (; firstIter.MoveNext() && secondIter.MoveNext(); )
-				{
-					if (!NodesMatch(firstIter.Current.Value, secondIter.Current.Value))
-						return false;
-				}
-				return true;
-			}
-		}
-
-		/// <summary>
-		/// Walk the tree of child nodes, storing information for each &lt;obj&gt; or &lt;seq&gt;
-		/// node.
-		/// </summary>
-		/// <param name="xmlNodeList"></param>
-		/// <param name="className"></param>
-		/// <param name="ltn"></param>
-		private void ProcessChildNodes(XmlNodeList xmlNodeList, string className, LayoutTreeNode ltn)
-		{
-			foreach (XmlNode xn in xmlNodeList)
-			{
-				if (xn is XmlComment)
-					continue;
-				if (xn.Name == "obj" || xn.Name == "seq" || xn.Name == "objlocal")
-				{
-					StoreChildNodeInfo(xn, className, ltn);
-				}
-				else
-				{
-					ProcessChildNodes(xn.ChildNodes, className, ltn);
-				}
-			}
-		}
-
-		private void StoreChildNodeInfo(XmlNode xn, string className, LayoutTreeNode ltn)
-		{
-			string sField = XmlUtils.GetManditoryAttributeValue(xn, "field");
-			XmlNode xnCaller = m_levels.PartRef;
-			if (xnCaller == null)
-				xnCaller = ltn.Configuration;
-			bool hideConfig = xnCaller == null ? false : XmlUtils.GetOptionalBooleanAttributeValue(xnCaller, "hideConfig", false);
-			// Insert any special configuration appropriate for this property...unless the caller is hidden, in which case,
-			// we don't want to configure it at all.
-			if (!ltn.IsTopLevel && !hideConfig)
-			{
-				if (sField == "Senses" && (ltn.ClassName == "LexEntry" || ltn.ClassName == "LexSense"))
-				{
-					ltn.ShowSenseConfig = true;
-				}
-				else if (sField == "ReferringSenses" && ltn.ClassName == "ReversalIndexEntry")
-				{
-					ltn.ShowSenseConfig = true;
-				}
-				if (sField == "MorphoSyntaxAnalysis" && ltn.ClassName == "LexSense")
-				{
-					ltn.ShowGramInfoConfig = true;
-				}
-				if (sField == "VisibleComplexFormBackRefs" || sField == "ComplexFormsNotSubentries")
-				{
-					//The existence of the attribute is important for this setting, not its value!
-					var sShowAsIndentedPara = XmlUtils.GetAttributeValue(ltn.Configuration, "showasindentedpara");
-					ltn.ShowComplexFormParaConfig = !String.IsNullOrEmpty(sShowAsIndentedPara);
-				}
-			}
-			bool fRecurse = XmlUtils.GetOptionalBooleanAttributeValue(ltn.Configuration, "recurseConfig", true);
-			if (!fRecurse)
-			{
-				// We don't want to recurse forever just because senses have subsenses, which
-				// can have subsenses, which can ...
-				// Or because entries have subentries (in root type layouts)...
-				ltn.UseParentConfig = true;
-				return;
-			}
-			string sLayout = XmlVc.GetLayoutName(xn, xnCaller);
-			int clidDst = 0;
-			string sClass = null;
-			string sTargetClasses = null;
-			try
-			{
-				// Failure should be fairly unusual, but, for example, part MoForm-Jt-FormEnvPub attempts to display
-				// the property PhoneEnv inside an if that checks that the MoForm is one of the subclasses that has
-				// the PhoneEnv property. MoForm itself does not.
-				if (!((FDO.Infrastructure.IFwMetaDataCacheManaged)m_cache.DomainDataByFlid.MetaDataCache).FieldExists(className, sField, true))
-					return;
-				int flid = m_cache.DomainDataByFlid.MetaDataCache.GetFieldId(className, sField, true);
-				CellarPropertyType type = (CellarPropertyType)m_cache.DomainDataByFlid.MetaDataCache.GetFieldType(flid);
-				Debug.Assert(type >= CellarPropertyType.MinObj);
-				if (type >= CellarPropertyType.MinObj)
-				{
-					sTargetClasses = XmlUtils.GetOptionalAttributeValue(xn, "targetclasses");
-					clidDst = m_mdc.GetDstClsId(flid);
-					if (clidDst == 0)
-						sClass = XmlUtils.GetOptionalAttributeValue(xn, "targetclass");
-					else
-						sClass = m_mdc.GetClassName(clidDst);
-					if (clidDst == StParaTags.kClassId)
-					{
-						string sClassT = XmlUtils.GetOptionalAttributeValue(xn, "targetclass");
-						if (!String.IsNullOrEmpty(sClassT))
-							sClass = sClassT;
-					}
-				}
-			}
-			catch
-			{
-				return;
-			}
-			if (clidDst == MoFormTags.kClassId && !sLayout.StartsWith("publi"))
-				return;	// ignore the layouts used by the LexEntry-Jt-Headword part.
-			if (String.IsNullOrEmpty(sLayout) || String.IsNullOrEmpty(sClass))
-				return;
-			if (sTargetClasses == null)
-				sTargetClasses = sClass;
-			string[] rgsClasses = sTargetClasses.Split(new[] { ',', ' ' },
-				StringSplitOptions.RemoveEmptyEntries);
-			XmlNode subLayout = null;
-			if (rgsClasses.Length > 0)
-				subLayout = m_layouts.GetElement("layout", new[] { rgsClasses[0], "jtview", sLayout, null });
-
-			if (subLayout != null)
-			{
-				int iStart = ltn.Nodes.Count;
-				int cNodes = subLayout.ChildNodes.Count;
-				AddChildNodes(subLayout, ltn, iStart);
-
-				bool fRepeatedConfig = XmlUtils.GetOptionalBooleanAttributeValue(xn, "repeatedConfig", false);
-				if (fRepeatedConfig)
-					return;		// repeats an earlier part element (probably as a result of <if>s)
-				for (int i = 1; i < rgsClasses.Length; i++)
-				{
-					XmlNode mergedLayout = m_layouts.GetElement("layout",
-						new[] { rgsClasses[i], "jtview", sLayout, null });
-					if (mergedLayout != null && mergedLayout.ChildNodes.Count == cNodes)
-					{
-						AddChildNodes(mergedLayout, ltn, iStart);
-					}
-				}
-			}
-			else
-			{
-				// The "layout" in a part node can actually refer directly to another part, so check
-				// for that possibility.
-				var subPart = m_parts.GetElement("part", new[] { rgsClasses[0] + "-Jt-" + sLayout }) ??
-							  m_parts.GetElement("part", new[] { className + "-Jt-" + sLayout });
-				if (subPart == null && !sLayout.EndsWith("-en"))
-				{
-					// Complain if we can't find either a layout or a part, and the name isn't tagged
-					// for a writing system.  (We check only for English, being lazy.)
-					var msg = String.Format("Missing jtview layout for class=\"{0}\" name=\"{1}\"",
-						rgsClasses[0], sLayout);
-					Debug.Assert(subLayout != null, msg);
-					//Debug.WriteLine(msg);
-				}
-			}
-		}
-
 		#endregion // Constructor, Initialization, etc.
 
 		/// <summary>
@@ -1468,7 +930,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			if (duplicates.Count > 0)
-				AddChildNodes(duplicates[0], ltnDup, 0);
+				LegacyConfigurationUtils.AddChildNodes(duplicates[0], ltnDup, 0, this);
 			ltnDup.IsNew = true;
 			MarkLayoutTreeNodesAsNew(ltnDup.Nodes.OfType<LayoutTreeNode>());
 
@@ -1719,7 +1181,8 @@ namespace SIL.FieldWorks.XWorks
 				var selLayout = selItem == null ? null : selItem.LayoutName;
 				m_cbDictType.Items.Clear();
 				m_tvParts.Nodes.Clear();
-				CreateComboAndTreeItems(m_defaultRootLayoutName);
+				var configureLayouts = XmlUtils.FindNode(m_configurationParameters, "configureLayouts");
+				LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(configureLayouts, this);
 				if (selItem != null)
 				{
 					// try to select the same view.
@@ -4094,7 +3557,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 				set
 				{
-					Debug.Assert(m_idxOrig == -1 || m_idxOrig == value);
 					if (m_idxOrig == -1)
 						m_idxOrig = value;
 				}
@@ -5019,7 +4481,7 @@ namespace SIL.FieldWorks.XWorks
 				UpdateLayoutName(xn, "layout", code);
 				MakeSuffixLayout(code, layoutName, className);
 			}
-			var rgltn = BuildLayoutTree(xnNewConfig);
+			var rgltn = LegacyConfigurationUtils.BuildLayoutTree(xnNewConfig, this);
 			MarkLayoutTreeNodesAsNew(rgltn);
 			m_cbDictType.Items.Add(new LayoutTypeComboItem(xnNewConfig, rgltn));
 		}
@@ -5222,6 +4684,161 @@ namespace SIL.FieldWorks.XWorks
 		private void m_linkConfigureHomograph_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			m_mediator.SendMessage("ConfigureHomographs", this);
+		}
+
+		#region ILayoutConverter methods
+		public void AddDictionaryTypeItem(XmlNode xnRealLayout, List<LayoutTreeNode> configTree)
+		{
+			m_cbDictType.Items.Add(new LayoutTypeComboItem(xnRealLayout, configTree));
+		}
+
+		public IEnumerable<XmlNode> GetLayoutTypes()
+		{
+			return m_layouts.GetLayoutTypes();
+		}
+
+		public FdoCache Cache { get { return m_cache; } }
+
+		public StringTable StringTable { get { return m_stringTbl; } }
+
+		public LayoutLevels LayoutLevels { get { return m_levels; } }
+
+		public void ExpandWsTaggedNodes(string sWsTag)
+		{
+			m_layouts.ExpandWsTaggedNodes(sWsTag);
+		}
+
+		public void SetOriginalIndexForNode(LayoutTreeNode mainLayoutNode)
+		{
+			mainLayoutNode.OriginalIndex = m_tvParts.Nodes.Count;
+		}
+
+		public XmlNode GetLayoutElement(string className, string layoutName)
+		{
+			return LegacyConfigurationUtils.GetLayoutElement(m_layouts, className, layoutName);
+		}
+
+		public XmlNode GetPartElement(string className, string sRef)
+		{
+			return LegacyConfigurationUtils.GetPartElement(m_parts, className, sRef);
+		}
+		#endregion
+	}
+
+	/// <summary>
+	/// This class provides a stack of nodes that represent a level (possibly hidden) in
+	/// displaying the configuration tree.
+	/// </summary>
+	public class LayoutLevels
+	{
+		private readonly List<XmlDocConfigureDlg.PartCaller> m_stackCallers = new List<XmlDocConfigureDlg.PartCaller>();
+
+		/// <summary>
+		/// Add a set of nodes that represent a level in the tree (possibly hidden).
+		/// </summary>
+		public void Push(XmlNode partref, XmlNode layout)
+		{
+			m_stackCallers.Add(new XmlDocConfigureDlg.PartCaller(layout, partref));
+		}
+
+		/// <summary>
+		/// Remove the most recent set of nodes that represent a (possibly hidden) level.
+		/// </summary>
+		public void Pop()
+		{
+			if (m_stackCallers.Count > 0)
+				m_stackCallers.RemoveAt(m_stackCallers.Count - 1);
+		}
+
+		/// <summary>
+		/// Get the most recent part (ref=) node.
+		/// </summary>
+		public XmlNode PartRef
+		{
+			get
+			{
+				return m_stackCallers.Count > 0 ? m_stackCallers[m_stackCallers.Count - 1].PartRef : null;
+			}
+		}
+
+		/// <summary>
+		/// Get the most recent layout node.
+		/// </summary>
+		public XmlNode Layout
+		{
+			get
+			{
+				return m_stackCallers.Count > 0 ? m_stackCallers[m_stackCallers.Count - 1].Layout : null;
+			}
+		}
+
+		/// <summary>
+		/// If the most recent part (ref=) node was "hidden", get the oldest part (ref=)
+		/// on the stack that was hidden.  (This allows multiple levels of hiddenness.)
+		/// </summary>
+		public XmlNode HiddenPartRef
+		{
+			get
+			{
+				if (m_stackCallers.Count > 0)
+				{
+					XmlNode xnHidden = null;
+					for (var i = m_stackCallers.Count - 1; i >= 0; --i)
+					{
+						if (m_stackCallers[i].Hidden)
+							xnHidden = m_stackCallers[i].PartRef;
+						else
+							return xnHidden;
+					}
+					return xnHidden;
+				}
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// If the most recent part (ref=) node was "hidden", get the oldest corresponding
+		/// layout on the stack that was hidden.  (This allows multiple levels of
+		/// hiddenness.)
+		/// </summary>
+		public XmlNode HiddenLayout
+		{
+			get
+			{
+				if (m_stackCallers.Count > 0)
+				{
+					XmlNode xnHidden = null;
+					for (var i = m_stackCallers.Count - 1; i >= 0; --i)
+					{
+						if (m_stackCallers[i].Hidden)
+							xnHidden = m_stackCallers[i].Layout;
+						else
+							return xnHidden;
+					}
+					return xnHidden;
+				}
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// Return the complete list of "hidden" part (ref=)  and layoutnodes, oldest first.
+		/// </summary>
+		internal List<XmlDocConfigureDlg.PartCaller> HiddenPartCallers
+		{
+			get
+			{
+				List<XmlDocConfigureDlg.PartCaller> retval = null;
+				for (var i = m_stackCallers.Count - 1; i >= 0; --i)
+				{
+					if (!m_stackCallers[i].Hidden)
+						break;
+					if (retval == null)
+						retval = new List<XmlDocConfigureDlg.PartCaller>();
+					retval.Insert(0, m_stackCallers[i]);
+				}
+				return retval;
+			}
 		}
 	}
 }
