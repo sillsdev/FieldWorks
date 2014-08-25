@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// Copyright (c) 2014 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.IO;
-using System.Linq;
-using System.Text;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
