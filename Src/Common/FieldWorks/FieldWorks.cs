@@ -47,6 +47,7 @@ using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.PaObjects;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.LexicalProvider;
+using SIL.FieldWorks.XWorks;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
 using XCore;
@@ -2900,6 +2901,11 @@ namespace SIL.FieldWorks
 				// It seems to get activated before we connect the Activate event. But it IS active by now;
 				// so just record it now as the active one.
 				s_activeMainWnd = (IFwMainWnd)fwMainWindow;
+				using(new DataUpdateMonitor(fwMainWindow, "Migrationg Dictionary Configuration Settings"))
+				{
+					var configMigrator = new DictionaryConfigurationMigrator(s_activeMainWnd.Mediator);
+					configMigrator.MigrateOldConfigurationsIfNeeeded();
+				}
 			}
 			catch (StartupException ex)
 			{

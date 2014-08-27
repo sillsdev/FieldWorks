@@ -17,7 +17,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// This method is called when the entire layout has been converted a tree of LayoutTreeNodes
 		/// </summary>
-		void AddDictionaryTypeItem(XmlNode xnRealLayout, List<XmlDocConfigureDlg.LayoutTreeNode> configTree);
+		void AddDictionaryTypeItem(XmlNode layoutNode, List<XmlDocConfigureDlg.LayoutTreeNode> oldNodes);
 
 		/// <summary>
 		/// Returns the configuration nodes for all layout types

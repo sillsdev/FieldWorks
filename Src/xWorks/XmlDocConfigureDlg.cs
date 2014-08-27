@@ -3289,6 +3289,7 @@ namespace SIL.FieldWorks.XWorks
 			public string ClassName
 			{
 				get { return m_sClassName; }
+				internal set { m_sClassName = value; }
 			}
 
 			public string FlowType
@@ -4687,9 +4688,9 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		#region ILayoutConverter methods
-		public void AddDictionaryTypeItem(XmlNode xnRealLayout, List<LayoutTreeNode> configTree)
+		public void AddDictionaryTypeItem(XmlNode layoutNode, List<LayoutTreeNode> oldNodes)
 		{
-			m_cbDictType.Items.Add(new LayoutTypeComboItem(xnRealLayout, configTree));
+			m_cbDictType.Items.Add(new LayoutTypeComboItem(layoutNode, oldNodes));
 		}
 
 		public IEnumerable<XmlNode> GetLayoutTypes()

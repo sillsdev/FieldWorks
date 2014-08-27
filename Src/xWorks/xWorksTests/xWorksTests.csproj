@@ -263,6 +263,7 @@
     <Compile Include="DictionaryConfigurationControllerTests.cs" />
     <Compile Include="DictionaryConfigurationListenerTests.cs" />
     <Compile Include="DictionaryConfigurationManagerControllerTests.cs" />
+    <Compile Include="DictionaryConfigurationMigratorTests.cs" />
     <Compile Include="DictionaryConfigurationModelTests.cs" />
     <Compile Include="DictionaryConfigViewerStub.cs" />
     <Compile Include="DictionaryDetailsControllerTests.cs" />
