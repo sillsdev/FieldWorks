@@ -754,6 +754,32 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateCssForConfiguration_ComplexFormsEachInOwnParagraph()
+		{
+			var form = new ConfigurableDictionaryNode { FieldDescription = "OwningEntry", SubField = "HeadWord", CSSClassNameOverride = "HeadWord" };
+			var complexForms = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ComplexFormsNotSubentries",
+				CSSClassNameOverride = "complexforms",
+				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = true },
+				Children = new List<ConfigurableDictionaryNode> { form }
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { complexForms }
+			};
+
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { entry };
+			DictionaryConfigurationModel.SpecifyParents(model.Parts);
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.That(cssResult, Contains.Substring(".lexentry .complexforms .complexform .headword"));
+			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry\s*\.complexforms\s*\.complexform{.*display\s*:\s*block;.*}", RegexOptions.Singleline).Success);
+		}
+
+		[Test]
 		public void GenerateCssForConfiguration_SenseSubEntriesHeadWord()
 		{
 			var form = new ConfigurableDictionaryNode { FieldDescription = "HeadWord" };
@@ -780,6 +806,32 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			Assert.That(cssResult, Contains.Substring(".lexentry .senses .sense .subentries .subentrie .headword"));
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_SenseDisplayInParaWorks()
+		{
+			var gloss = new ConfigurableDictionaryNode { FieldDescription = "Gloss" };
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true },
+				Children = new List<ConfigurableDictionaryNode> { gloss }
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { senses }
+			};
+
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { entry };
+			DictionaryConfigurationModel.SpecifyParents(model.Parts);
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.That(cssResult, Contains.Substring(".lexentry .senses .sense .gloss"));
+			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry\s*\.senses\s*>\s*\.sensecontent\s*{.*display\s*:\s*block;.*}", RegexOptions.Singleline).Success);
 		}
 
 		[Test]

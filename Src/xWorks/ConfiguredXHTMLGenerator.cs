@@ -538,26 +538,45 @@ namespace SIL.FieldWorks.XWorks
 			var isSingle = collection.Cast<object>().Count() == 1;
 			foreach(var item in collection)
 			{
-				GenerateSenseNumberSpanIfNeeded(config.DictionaryNodeOptions, writer, item, cache, publicationDecorator, isSingle);
-				writer.WriteStartElement(GetElementNameForProperty(config));
-				WriteCollectionItemClassAttribute(config, writer);
-				if(config.Children != null)
-				{
-					foreach(var child in config.Children)
-					{
-						GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, writer, cache);
-					}
-				}
-				writer.WriteEndElement();
+				GenerateCollectionItemContent(config, publicationDecorator, writer, cache, item, isSingle);
 			}
 			writer.WriteEndElement();
 		}
 
-		private static void GenerateSenseNumberSpanIfNeeded(DictionaryNodeOptions dictionaryNodeOptions, XmlWriter writer,
+		private static void GenerateCollectionItemContent(ConfigurableDictionaryNode config,
+																		  DictionaryPublicationDecorator publicationDecorator, XmlWriter writer,
+																		  FdoCache cache, object item, bool isSingle)
+		{
+			// if we are working with senses start wrapping element and write out the sense number sibling item if necessary
+			if(config.DictionaryNodeOptions is DictionaryNodeSenseOptions)
+			{
+				// Wrap the number and sense combination in a sensecontent span so that can both be affected by DisplayEachSenseInParagraph
+				writer.WriteStartElement("span");
+				writer.WriteAttributeString("class", "sensecontent");
+				GenerateSenseNumberSpanIfNeeded(config.DictionaryNodeOptions as DictionaryNodeSenseOptions, writer, item, cache,
+														  publicationDecorator, isSingle);
+			}
+
+			writer.WriteStartElement(GetElementNameForProperty(config));
+			WriteCollectionItemClassAttribute(config, writer);
+			if(config.Children != null)
+			{
+				foreach(var child in config.Children)
+					GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, writer, cache);
+			}
+			writer.WriteEndElement();
+
+			// close out the sense wrapping
+			if(config.DictionaryNodeOptions is DictionaryNodeSenseOptions)
+			{
+				writer.WriteEndElement();
+			}
+		}
+
+		private static void GenerateSenseNumberSpanIfNeeded(DictionaryNodeSenseOptions senseOptions, XmlWriter writer,
 																			 object sense, FdoCache cache,
 																			 DictionaryPublicationDecorator publicationDecorator, bool isSingle)
 		{
-			var senseOptions = dictionaryNodeOptions as DictionaryNodeSenseOptions;
 			if(senseOptions == null || (isSingle && !senseOptions.NumberEvenASingleSense))
 				return;
 			writer.WriteStartElement("span");

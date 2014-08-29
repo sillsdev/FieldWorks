@@ -61,8 +61,16 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// Try to generate the css for the sense number before the baseSelection is updated because
 				// the sense number is a sibling of the sense element and we are normally applying styles to the
-				// children of collections.
+				// children of collections. Also set display:block on span
 				GenerateCssFromSenseOptions(configNode, senseOptions, styleSheet, baseSelection, mediator);
+			}
+			var complexFormOpts = configNode.DictionaryNodeOptions as DictionaryNodeComplexFormOptions;
+			if(complexFormOpts != null)
+			{
+				// Try to generate the css for the sense number before the baseSelection is updated because
+				// the sense number is a sibling of the sense element and we are normally applying styles to the
+				// children of collections.
+				GenerateCssFromComplexFormOptions(configNode, complexFormOpts, styleSheet, baseSelection);
 			}
 			var pictureOptions = configNode.DictionaryNodeOptions as DictionaryNodePictureOptions;
 			if(pictureOptions != null)
@@ -122,6 +130,30 @@ namespace SIL.FieldWorks.XWorks
 				afterDeclaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, senseOptions.AfterNumber) });
 				var afterRule = new StyleRule(afterDeclaration) { Value = senseNumberSelector + ":after" };
 				styleSheet.Rules.Add(afterRule);
+			}
+			if(senseOptions.DisplayEachSenseInAParagraph)
+			{
+				var blockDeclaration = new StyleDeclaration();
+				blockDeclaration.Add(new Property("display") { Term = new PrimitiveTerm(UnitType.Ident, "block")});
+				var blockRule = new StyleRule(blockDeclaration)
+				{
+					Value = String.Format("{0} .{1}> .sensecontent", baseSelection, GetClassAttributeForConfig(configNode))
+				};
+				styleSheet.Rules.Add(blockRule);
+			}
+		}
+
+		private static void GenerateCssFromComplexFormOptions(ConfigurableDictionaryNode configNode, DictionaryNodeComplexFormOptions complexFormOpts, StyleSheet styleSheet, string baseSelection)
+		{
+			if(complexFormOpts.DisplayEachComplexFormInAParagraph)
+			{
+				var blockDeclaration = new StyleDeclaration();
+				blockDeclaration.Add(new Property("display") { Term = new PrimitiveTerm(UnitType.Ident, "block") });
+				var blockRule = new StyleRule(blockDeclaration)
+				{
+					Value = baseSelection + " " + SelectClassName(configNode)
+				};
+				styleSheet.Rules.Add(blockRule);
 			}
 		}
 
