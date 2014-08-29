@@ -834,6 +834,30 @@ namespace SIL.FieldWorks.XWorks
 							  "After content not applied to the sense number selector.");
 		}
 
+		[Test]
+		public void GenerateCssForConfiguration_BetweenWorks()
+		{
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				Between = ","
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { senses }
+			};
+
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { entry };
+			DictionaryConfigurationModel.SpecifyParents(model.Parts);
+			// SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry\s*\.senses>\s*\.sense\s*\+\s*\.sense:before{.*content:','.*}", RegexOptions.Singleline).Success,
+							  "Between selector not generated.");
+		}
+
 		/// <summary>
 		/// When there is no css override an underscore should be used to separate FieldDescription and SubField
 		/// </summary>

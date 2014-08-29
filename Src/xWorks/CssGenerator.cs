@@ -200,22 +200,36 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// This method will generate before and after rules if the configuration node requires them. It also generates the selector for the node
 		/// </summary>
-		/// <param name="parentInfo"></param>
+		/// <param name="parentSelector"></param>
 		/// <param name="configNode"></param>
 		/// <param name="baseSelection"></param>
 		/// <returns></returns>
-		private static IEnumerable<StyleRule> GenerateSelectorsFromNode(string parentInfo,
+		private static IEnumerable<StyleRule> GenerateSelectorsFromNode(string parentSelector,
 																							 ConfigurableDictionaryNode configNode,
 																							 out string baseSelection)
 		{
 			var rules = new List<StyleRule>();
-			if(parentInfo == null)
+			if(parentSelector == null)
 			{
 				baseSelection = SelectClassName(configNode);
 				GenerateFlowResetForBaseNode(baseSelection, rules);
 			}
 			else
-				baseSelection = parentInfo + " " + SelectClassName(configNode);
+			{
+				if(!String.IsNullOrEmpty(configNode.Between))
+				{
+					// content is generated before each item which follows an item of the same name
+					// eg. .complexformrefs>.complexformref + .complexformref:before { content: "," }
+					var dec = new StyleDeclaration();
+					dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, configNode.Between) });
+					var collectionSelector = "." + GetClassAttributeForConfig(configNode);
+					var itemSelector = GetSelectorForCollectionItem(configNode);
+					var betweenSelector = String.Format("{0} {1}>{2}+{2}:before", parentSelector, collectionSelector, itemSelector);
+					var betweenRule = new StyleRule(dec) { Value = betweenSelector };
+					rules.Add(betweenRule);
+				}
+				baseSelection = parentSelector + " " + SelectClassName(configNode);
+			}
 			if(!String.IsNullOrEmpty(configNode.Before))
 			{
 				var dec = new StyleDeclaration();
@@ -254,9 +268,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				case ConfiguredXHTMLGenerator.PropertyType.CollectionType:
 				{
-					var collectionItem = GetClassAttributeForConfig(configNode);
-					collectionItem = " ." + collectionItem.Remove(collectionItem.Length - 1);
-					return "." + GetClassAttributeForConfig(configNode) + collectionItem;
+					// for collections we generate a css selector to match each item e.g '.senses .sense'
+					return "." + GetClassAttributeForConfig(configNode) + GetSelectorForCollectionItem(configNode);
 				}
 				case ConfiguredXHTMLGenerator.PropertyType.CmPictureType:
 				{
@@ -265,6 +278,13 @@ namespace SIL.FieldWorks.XWorks
 				default:
 					return "." + GetClassAttributeForConfig(configNode);
 			}
+		}
+
+		private static string GetSelectorForCollectionItem(ConfigurableDictionaryNode configNode)
+		{
+			var collectionItem = GetClassAttributeForConfig(configNode);
+			collectionItem = " ." + collectionItem.Remove(collectionItem.Length - 1);
+			return collectionItem;
 		}
 
 		/// <summary>
