@@ -636,25 +636,28 @@ namespace SIL.FieldWorks.XWorks
 
 		private static void MergeCustomFieldLists(ConfigurableDictionaryNode parent, List<ConfigurableDictionaryNode> customFieldNodes)
 		{
+			// Set the parent on the customFieldNodes (needed for Contains and to make any new fields valid when added)
+			foreach(var customField in customFieldNodes)
+			{
+				customField.Parent = parent;
+			}
 			var children = parent.Children;
 			// Traverse through the children from end to beginning removing any custom fields that no longer exist.
 			for(var i = children.Count - 1; i >= 0; --i)
 			{
 				var configNode = children[i];
-				if(configNode.IsCustomField && !customFieldNodes.Contains(configNode))
+				if(!configNode.IsCustomField)
+					continue;
+				if(!customFieldNodes.Contains(configNode))
 				{
-					children.Remove(configNode);
+					children.Remove(configNode); // field no longer exists
 				}
-				if(configNode.IsCustomField && customFieldNodes.Contains(configNode))
+				else
 				{
-					customFieldNodes.Remove(configNode);
+					customFieldNodes.Remove(configNode); // field found
 				}
 			}
 			// Then add any custom fields that don't yet exist in the children configurationList to the end.
-			foreach(var customField in customFieldNodes)
-			{
-				customField.Parent = parent;
-			}
 			children.AddRange(customFieldNodes);
 		}
 

@@ -194,6 +194,41 @@ namespace SIL.FieldWorks.XWorks
 
 		///<summary/>
 		[Test]
+		public void ConvertLayoutTreeNodeToConfigNode_WritingSystemOptionsTwoLanguagesWork()
+		{
+			var nodeWithWs = new XmlDocConfigureDlg.LayoutTreeNode { WsType = "vernacular", WsLabel = "fr, hi" };
+			ConfigurableDictionaryNode configNode = null;
+			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
+			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
+			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
+			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular);
+			Assert.IsNotNull(wsOpts.Options, "two languages did not result in ws options being created");
+			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "fr"), "French choice was not migrated.");
+			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "hi"), "hi choice was not migrated.");
+		}
+
+		///<summary/>
+		[Test]
+		public void ConvertLayoutTreeNodeToConfigNode_WritingSystemOptionsWsAbbreviationWorks()
+		{
+			var nodeWithWs = new XmlDocConfigureDlg.LayoutTreeNode { WsType = "vernacular", WsLabel = "fr", ShowWsLabels = true };
+			ConfigurableDictionaryNode configNode = null;
+
+			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
+			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
+			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
+			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+			Assert.IsTrue(wsOpts.DisplayWritingSystemAbbreviations, "ShowWsLabels true value did not convert into DisplayWritingSystemAbbreviation");
+			nodeWithWs.ShowWsLabels = false;
+
+			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
+			wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+			Assert.IsFalse(wsOpts.DisplayWritingSystemAbbreviations, "ShowWsLabels false value did not convert into DisplayWritingSystemAbbreviation");
+		}
+
+		///<summary/>
+		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_DupStringInfoIsConverted()
 		{
 			var duplicateNode = new XmlDocConfigureDlg.LayoutTreeNode { DupString = "1", IsDuplicate = true };
@@ -216,11 +251,138 @@ namespace SIL.FieldWorks.XWorks
 			var childNode = new XmlDocConfigureDlg.LayoutTreeNode { Label = "Child" };
 			parentNode.Nodes.Add(childNode);
 			ConfigurableDictionaryNode configNode = null;
+
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(parentNode));
 			Assert.AreEqual(configNode.Label, parentNode.Label);
 			Assert.IsNotNull(configNode.Children);
 			Assert.AreEqual(configNode.Children.Count, 1);
 			Assert.AreEqual(configNode.Children[0].Label, childNode.Label);
+		}
+
+		///<summary/>
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_FieldFromMatchIsUsed()
+		{
+			var oldParentNode = new ConfigurableDictionaryNode { Label = "Parent" };
+			var oldChildNode = new ConfigurableDictionaryNode { Label = "Child" };
+			oldParentNode.Children = new List<ConfigurableDictionaryNode> { oldChildNode };
+			var oldModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { oldParentNode } };
+			const string parentField = "ParentDescription";
+			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent", FieldDescription = parentField};
+			const string childField = "ChildDescription";
+			var baseChildNode = new ConfigurableDictionaryNode { Label = "Child", FieldDescription = childField };
+			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode };
+			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
+
+			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(oldModel, baseModel));
+			Assert.AreEqual(oldModel.Parts[0].FieldDescription, parentField, "Field description for parent node not migrated");
+			Assert.AreEqual(oldModel.Parts[0].Children[0].FieldDescription, childField, "Field description for child not migrated");
+		}
+
+		///<summary/>
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_CopyOfNodeGetsValueFromBase()
+		{
+			var oldParentNode = new ConfigurableDictionaryNode { Label = "Parent" };
+			// make oldChildNode look like a copy of a Child node which is not represented in the test.
+			var oldChildNode = new ConfigurableDictionaryNode { Label = "Child", LabelSuffix = "1"};
+			oldParentNode.Children = new List<ConfigurableDictionaryNode> { oldChildNode };
+			var oldModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { oldParentNode } };
+			const string parentField = "ParentDescription";
+			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent", FieldDescription = parentField };
+			const string childField = "ChildDescription";
+			var baseChildNode = new ConfigurableDictionaryNode { Label = "Child", FieldDescription = childField };
+			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode };
+			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
+
+			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(oldModel, baseModel));
+			Assert.AreEqual(oldModel.Parts[0].Children[0].FieldDescription, childField, "Field description for copy of child not migrated");
+		}
+
+		///<summary/>
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_TwoCopiesBothGetValueFromBase()
+		{
+			var oldParentNode = new ConfigurableDictionaryNode { Label = "Parent" };
+			var oldChildNode = new ConfigurableDictionaryNode { Label = "Child" };
+			var oldChildNodeCopy1 = new ConfigurableDictionaryNode { Label = "Child", LabelSuffix = "1" };
+			var oldChildNodeCopy2 = new ConfigurableDictionaryNode { Label = "Child", LabelSuffix = "2" };
+			oldParentNode.Children = new List<ConfigurableDictionaryNode> { oldChildNode, oldChildNodeCopy1, oldChildNodeCopy2 };
+			var oldModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { oldParentNode } };
+			const string parentField = "ParentDescription";
+			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent", FieldDescription = parentField };
+			const string childField = "ChildDescription";
+			var baseChildNode = new ConfigurableDictionaryNode { Label = "Child", FieldDescription = childField };
+			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode };
+			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
+
+			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(oldModel, baseModel));
+			Assert.AreEqual(oldModel.Parts[0].Children.Count, 3, "The copied children did not get migrated");
+			Assert.AreEqual(oldModel.Parts[0].Children[0].FieldDescription, childField, "Field description for copy of child not migrated");
+			Assert.AreEqual(oldModel.Parts[0].Children[1].FieldDescription, childField, "Field description for copy of child not migrated");
+			Assert.AreEqual(oldModel.Parts[0].Children[2].FieldDescription, childField, "Field description for copy of child not migrated");
+		}
+
+		///<summary/>
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_NewNodeFromBaseIsMerged()
+		{
+			var oldParentNode = new ConfigurableDictionaryNode { Label = "Parent" };
+			var oldChildNode = new ConfigurableDictionaryNode { Label = "Child" };
+			oldParentNode.Children = new List<ConfigurableDictionaryNode> { oldChildNode };
+			var oldModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { oldParentNode } };
+			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent" };
+			var baseChildNode = new ConfigurableDictionaryNode { Label = "Child" };
+			var baseChildNodeTwo = new ConfigurableDictionaryNode { Label = "Child2" };
+			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode, baseChildNodeTwo };
+			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
+
+			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(oldModel, baseModel));
+			Assert.AreEqual(oldModel.Parts[0].Children.Count, 2, "New node from base was not merged");
+			Assert.AreEqual(oldModel.Parts[0].Children[0].Label, "Child", "new node inserted out of order");
+			Assert.AreEqual(oldModel.Parts[0].Children[1].Label, "Child2", "New node from base was not merged properly");
+		}
+
+		///<summary/>
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_OrderFromOldModelIsRetained()
+		{
+			var oldParentNode = new ConfigurableDictionaryNode { Label = "Parent" };
+			var oldChildNode = new ConfigurableDictionaryNode { Label = "Child" };
+			var oldChildNodeTwo = new ConfigurableDictionaryNode { Label = "Child2" };
+			oldParentNode.Children = new List<ConfigurableDictionaryNode> { oldChildNodeTwo, oldChildNode };
+			var oldModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { oldParentNode } };
+			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent" };
+			var baseChildNode = new ConfigurableDictionaryNode { Label = "Child" };
+			var baseChildNodeTwo = new ConfigurableDictionaryNode { Label = "Child2" };
+			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode, baseChildNodeTwo };
+			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
+
+			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(oldModel, baseModel));
+			Assert.AreEqual(oldModel.Parts[0].Children.Count, 2, "Nodes incorrectly merged");
+			Assert.AreEqual(oldModel.Parts[0].Children[0].Label, oldChildNodeTwo.Label, "order of old model was not retained");
+			Assert.AreEqual(oldModel.Parts[0].Children[1].Label, oldChildNode.Label, "Nodes incorrectly merged");
+		}
+
+		///<summary/>
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_UnmatchedNodeFromOldModelIsCustom()
+		{
+			var oldParentNode = new ConfigurableDictionaryNode { Label = "Parent" };
+			var customNode = new ConfigurableDictionaryNode { Label = "Custom" };
+			var oldChild = new ConfigurableDictionaryNode { Label = "Child" };
+			oldParentNode.Children = new List<ConfigurableDictionaryNode> { customNode, oldChild };
+			var oldModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { oldParentNode } };
+			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent" };
+			var baseChildNode = new ConfigurableDictionaryNode { Label = "Child" };
+			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode };
+			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
+
+			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(oldModel, baseModel));
+			Assert.AreEqual(oldModel.Parts[0].Children.Count, 2, "Nodes incorrectly merged");
+			Assert.AreEqual(oldModel.Parts[0].Children[0].Label, customNode.Label, "order of old model was not retained");
+			Assert.IsFalse(oldChild.IsCustomField, "Child node which is matched should not be a custom field");
+			Assert.IsTrue(customNode.IsCustomField, "The unmatched 'Custom' node should have been marked as a custom field");
 		}
 	}
 }

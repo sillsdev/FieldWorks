@@ -50,12 +50,12 @@ namespace SIL.FieldWorks.XWorks
 			{
 				configNodeList.Add(ConvertLayoutTreeNodeToConfigNode(node));
 			}
-			var model = new DictionaryConfigurationModel();
-			model.Parts = configNodeList;
-			model.Label = label;
-			model.Version = -1;
-			MergeConfigWithNewDefaults(layout, model);
-			model.Save();
+			var convertedModel = new DictionaryConfigurationModel();
+			convertedModel.Parts = configNodeList;
+			convertedModel.Label = label;
+			convertedModel.Version = -1;
+			CopyNewDefaultsIntoConvertedModel(layout, convertedModel);
+			convertedModel.Save();
 		}
 
 		public void MigrateOldConfigurationsIfNeeeded()
@@ -74,10 +74,15 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private void MergeConfigWithNewDefaults(string layout, DictionaryConfigurationModel model)
+		/// <summary>
+		/// This method will take a skeleton model which has been already converted from LayoutTreeNodes
+		/// and fill in data that we did not convert for some reason. It will use the current shipping
+		/// default model for the layout which the old model used. (eg. publishStem)
+		/// </summary>
+		private void CopyNewDefaultsIntoConvertedModel(string layout, DictionaryConfigurationModel convertedModel)
 		{
-			DictionaryConfigurationModel baseModel;
-			if(model.Version == -1)
+			DictionaryConfigurationModel currentDefaultModel;
+			if(convertedModel.Version == -1)
 			{
 				const string extension = DictionaryConfigurationModel.FileExtension;
 				var defaultPath = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(m_mediator);
@@ -90,14 +95,14 @@ namespace SIL.FieldWorks.XWorks
 				{
 					case "publishStem":
 					{
-						model.FilePath = Path.Combine(projectConfigBasePath, "Dictionary", defaultStemName);
-						baseModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultStemName), Cache);
+						convertedModel.FilePath = Path.Combine(projectConfigBasePath, "Dictionary", defaultStemName);
+						currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultStemName), Cache);
 						break;
 					}
 					case "publishRoot":
 					{
-						model.FilePath = Path.Combine(projectConfigBasePath, "Dictionary", defaultRootName);
-						baseModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultRootName), Cache);
+						convertedModel.FilePath = Path.Combine(projectConfigBasePath, "Dictionary", defaultRootName);
+						currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultRootName), Cache);
 						break;
 					}
 					case "publishReversal" :
@@ -106,18 +111,21 @@ namespace SIL.FieldWorks.XWorks
 					}
 					default :
 					{
+						// If a user copied an old configuration FLEx appended '#' followed by a unique integer to the layout name.
+						// We will write out the new configuration to a file which uses what the user named it but preserving the integer
+						// as a potential customer support aid.
 						var customSuffixIndex = layout.IndexOf('#');
 						if(customSuffixIndex > 0 && layout.StartsWith("publishStem"))
 						{
-							var customFileName = String.Format("{0}-Stem-{1}{2}", model.Label, layout.Substring(customSuffixIndex), extension);
-							model.FilePath = Path.Combine(projectConfigBasePath, "Dictionary", customFileName);
-							baseModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultStemName), Cache);
+							var customFileName = String.Format("{0}-Stem-{1}{2}", convertedModel.Label, layout.Substring(customSuffixIndex), extension);
+							convertedModel.FilePath = Path.Combine(projectConfigBasePath, "Dictionary", customFileName);
+							currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultStemName), Cache);
 						}
 						else if(customSuffixIndex > 0 && layout.StartsWith("publishRoot"))
 						{
-							var customFileName = String.Format("{0}-Root-{1}{2}", model.Label, layout.Substring(customSuffixIndex), extension);
-							model.FilePath = Path.Combine(projectConfigBasePath, "Dictionary", customFileName);
-							baseModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultRootName), Cache);
+							var customFileName = String.Format("{0}-Root-{1}{2}", convertedModel.Label, layout.Substring(customSuffixIndex), extension);
+							convertedModel.FilePath = Path.Combine(projectConfigBasePath, "Dictionary", customFileName);
+							currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultRootName), Cache);
 						}
 						else // probably a reversal index for a specific language
 						{
@@ -126,8 +134,87 @@ namespace SIL.FieldWorks.XWorks
 						break;
 					}
 				}
-				Directory.CreateDirectory(Path.GetDirectoryName(model.FilePath));
+				Directory.CreateDirectory(Path.GetDirectoryName(convertedModel.FilePath));
+				CopyNewDefaultsIntoConvertedModel(convertedModel, currentDefaultModel);
 			}
+		}
+
+		internal void CopyNewDefaultsIntoConvertedModel(DictionaryConfigurationModel convertedModel, DictionaryConfigurationModel currentDefaultModel)
+		{
+			CopyDefaultsIntoConfigNode(convertedModel.Parts[0], currentDefaultModel.Parts[0], convertedModel.Version);
+			for(var i = 1; i < convertedModel.Parts.Count; ++i)
+			{
+				// Any copies of the minor entry node in the model we are converting should use the defaults from the minor entry node
+				CopyDefaultsIntoConfigNode(convertedModel.Parts[i], currentDefaultModel.Parts[1], convertedModel.Version);
+			}
+		}
+
+		/// <summary>
+		/// This method will copy values that were not converted (eg. FieldDescription and SubField) from the current default node
+		/// into the converted node and add any children that are new in the current defaults to the converted node. The order of children
+		/// in the converted node is maintained.
+		/// </summary>
+		private void CopyDefaultsIntoConfigNode(ConfigurableDictionaryNode convertedNode, ConfigurableDictionaryNode currentDefaultNode, int version)
+		{
+			if(convertedNode.Label != currentDefaultNode.Label)
+			{
+				throw new ArgumentException("Can not merge two nodes that do not match.");
+			}
+			convertedNode.FieldDescription = currentDefaultNode.FieldDescription;
+			convertedNode.SubField = currentDefaultNode.SubField;
+			// if the base has children and we don't they need to be added
+			if(convertedNode.Children == null && currentDefaultNode.Children != null &&
+				currentDefaultNode.Children.Count > 0)
+			{
+				convertedNode.Children = new List<ConfigurableDictionaryNode>(currentDefaultNode.Children);
+				return;
+			}
+			// if there are child lists to merge then merge them
+			if(convertedNode.Children != null && currentDefaultNode.Children != null)
+			{
+				var currentDefaultChildren = new List<ConfigurableDictionaryNode>(currentDefaultNode.Children);
+				var matchedChildren = new List<ConfigurableDictionaryNode>();
+				foreach(var child in convertedNode.Children)
+				{
+					var matchFromBase = FindMatchingChild(child, currentDefaultChildren, matchedChildren);
+					if(matchFromBase != null)
+					{
+						CopyDefaultsIntoConfigNode(child, matchFromBase, version);
+					}
+					else
+					{
+						// This node does not match anything in the shipping defaults.
+						// It is probably a custom field in which case the label should match the FieldDescription.
+						child.FieldDescription = child.Label;
+						child.IsCustomField = true;
+					}
+				}
+				//remove all the matches from default list
+				currentDefaultChildren.RemoveAll(matchedChildren.Contains);
+				foreach(var newChild in currentDefaultChildren)
+				{
+					convertedNode.Children.Add(newChild);
+				}
+			}
+			else if(convertedNode.Children != null) // if we have children and the base doesn't
+			{
+				throw new Exception("These nodes are not likely to match the convertedModel.");
+			}
+		}
+
+		/// <summary>
+		/// Matches a child node based off of the labels removes it from the given list and returns it. Otherwise returns null.
+		/// </summary>
+		private ConfigurableDictionaryNode FindMatchingChild(ConfigurableDictionaryNode child,
+			IEnumerable<ConfigurableDictionaryNode> currentDefaultChildren, List<ConfigurableDictionaryNode> matchedChildren)
+		{
+			var matchingChild = currentDefaultChildren.FirstOrDefault(baseChild => child.Label == baseChild.Label);
+			if(matchingChild != null)
+			{
+				matchedChildren.Add(matchingChild);
+				return matchingChild;
+			}
+			return null;
 		}
 
 		/// <summary>
