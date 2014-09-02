@@ -9,7 +9,10 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using XCore;
 
@@ -287,8 +290,120 @@ namespace SIL.FieldWorks.XWorks
 					Options = MigrateWsOptions(node.WsLabel)
 				};
 			}
-			//todo: Handle list options, sense options, any other options
+			if(node.ShowSenseConfig)
+			{
+				string before = null, style = null, after = null;
+				if(!String.IsNullOrEmpty(node.Number))
+				{
+					node.SplitNumberFormat(out before, out style, out after);
+				}
+				options = new DictionaryNodeSenseOptions
+				{
+					DisplayEachSenseInAParagraph = node.ShowSenseAsPara,
+					ShowSharedGrammarInfoFirst = node.ShowSingleGramInfoFirst,
+					NumberEvenASingleSense = node.NumberSingleSense,
+					BeforeNumber = before,
+					AfterNumber = after,
+					NumberingStyle = style,
+					NumberStyle = GenerateNumberStyleFromLayoutTreeNode(node)
+				};
+			}
+			//todo: Handle list options - any other options
 			return options;
+		}
+
+		private string GenerateNumberStyleFromLayoutTreeNode(XmlDocConfigureDlg.LayoutTreeNode node)
+		{
+			var styleSheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+			const string senseNumberStyleBase = "Dictionary-SenseNumber";
+			var senseNumberStyleName = senseNumberStyleBase;
+			var matchedOrCreated = false;
+			var styleNumberSuffix = 1;
+			do
+			{
+				if(styleSheet.FindStyle(senseNumberStyleName) == null)
+				{
+					var senseNumberStyle = Cache.ServiceLocator.GetInstance<IStStyleFactory>().Create();
+					Cache.LangProject.StylesOC.Add(senseNumberStyle);
+					senseNumberStyle.Name = senseNumberStyleName;
+					senseNumberStyle.Type = StyleType.kstCharacter;
+					senseNumberStyle.UserLevel = 1;
+					senseNumberStyle.IsBuiltIn = false;
+					var propsBldr = TsPropsBldrClass.Create();
+					propsBldr.SetStrPropValue((int)FwTextPropType.ktptFontFamily, node.NumFont);
+					if(!String.IsNullOrEmpty(node.NumStyle))
+					{
+						if(node.NumStyle.Contains("-bold"))
+						{
+							propsBldr.SetIntPropValues((int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvOff);
+						}
+						else if(node.NumStyle.Contains("bold"))
+						{
+							propsBldr.SetIntPropValues((int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
+						}
+						if(node.NumStyle.Contains("-italic"))
+						{
+							propsBldr.SetIntPropValues((int)FwTextPropType.ktptItalic, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvOff);
+						}
+						else if(node.NumStyle.Contains("italic"))
+						{
+							propsBldr.SetIntPropValues((int)FwTextPropType.ktptItalic, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
+						}
+						senseNumberStyle.Rules = propsBldr.GetTextProps();
+					}
+					styleSheet.PutStyle(senseNumberStyleName, "Used for configuring some sense numbers in the dictionary",
+						senseNumberStyle.Hvo, 0, 0, (int)StyleType.kstCharacter, false, false, propsBldr.GetTextProps());
+					matchedOrCreated = true;
+				}
+				else if(LayoutOptionsMatchStyle(styleSheet.Styles[senseNumberStyleName], node))
+				{
+					matchedOrCreated = true;
+				}
+				else
+				{
+					senseNumberStyleName = String.Format("{0}-{1}", senseNumberStyleBase, ++styleNumberSuffix);
+				}
+			} while(!matchedOrCreated);
+			return senseNumberStyleName;
+		}
+
+		private bool LayoutOptionsMatchStyle(BaseStyleInfo style, XmlDocConfigureDlg.LayoutTreeNode node)
+		{
+			// if the style isn't even a character style
+			if(!style.IsCharacterStyle)
+			{
+				return false;
+			}
+			var fontInfo = style.DefaultCharacterStyleInfo;
+			// if nothing about bold or italic are in the node but there is information in the style
+			if(String.IsNullOrEmpty(node.NumStyle) && (fontInfo.Bold.ValueIsSet || fontInfo.Italic.ValueIsSet))
+			{
+				return false;
+			}
+			// if we have bold or italic info in the node but it doesn't match the style
+			if(!String.IsNullOrEmpty(node.NumStyle) &&
+				((node.NumStyle.Contains("-bold") && fontInfo.Bold.ValueIsSet && fontInfo.Bold.Value) ||
+				 (!node.NumStyle.Contains("-bold") && node.NumStyle.Contains("bold") && fontInfo.Bold.ValueIsSet && !fontInfo.Bold.Value) ||
+				 (node.NumStyle.Contains("bold") && !fontInfo.Bold.ValueIsSet) ||
+				 (!node.NumStyle.Contains("bold") && fontInfo.Bold.ValueIsSet) ||
+				 (node.NumStyle.Contains("-italic") && fontInfo.Italic.ValueIsSet && fontInfo.Italic.Value) ||
+				 (!node.NumStyle.Contains("-italic") && node.NumStyle.Contains("italic") && fontInfo.Italic.ValueIsSet && !fontInfo.Italic.Value) ||
+				 (node.NumStyle.Contains("italic") && !fontInfo.Italic.ValueIsSet) ||
+				 (!node.NumStyle.Contains("italic") && fontInfo.Italic.ValueIsSet)))
+			{
+				return false;
+			}
+			// if the font doesn't match
+			if(String.IsNullOrEmpty(node.NumFont) && fontInfo.FontName.ValueIsSet || // node value is empty but fontInfo isn't
+				!String.IsNullOrEmpty(node.NumFont) && !fontInfo.FontName.ValueIsSet || // fontinfo is empty but node value isn't
+				(fontInfo.FontName.ValueIsSet && String.Compare(node.NumFont, fontInfo.FontName.Value, StringComparison.Ordinal) != 0))
+			{
+				// node value was empty but fontInfo isn't or
+				// fontInfo was empty but node value wasn't or
+				// both strings had content but it didn't match
+				return false;
+			}
+			return true;
 		}
 
 		private List<DictionaryNodeListOptions.DictionaryNodeOption> MigrateWsOptions(string wsLabel)

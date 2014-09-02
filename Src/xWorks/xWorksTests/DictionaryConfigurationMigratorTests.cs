@@ -8,6 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Xml;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
@@ -261,7 +262,204 @@ namespace SIL.FieldWorks.XWorks
 
 		///<summary/>
 		[Test]
-		public void CopyNewDefaultsIntoConvertedModel_FieldFromMatchIsUsed()
+		public void ConvertLayoutTreeNodeToConfigNode_SenseNumberStyleIsAddedAndUsed()
+		{
+			var senseNumberNode = new XmlDocConfigureDlg.LayoutTreeNode
+			{
+				Label = "Parent",
+				NumFont = "arial",
+				NumStyle = "bold -italic",
+				ShowSenseConfig = true
+			};
+			ConfigurableDictionaryNode configNode = null;
+			const string styleName = "Dictionary-SenseNumber";
+			var senseStyle = m_styleSheet.FindStyle(styleName);
+			Assert.IsNull(senseStyle, "Sense number should not exist before conversion for a valid test.");
+
+			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode));
+			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, styleName);
+			senseStyle = m_styleSheet.FindStyle(styleName);
+			Assert.IsNotNull(senseStyle, "Sense number should have been created by the migrator.");
+			var usefulStyle = m_styleSheet.Styles[styleName];
+			Assert.IsTrue(usefulStyle.DefaultCharacterStyleInfo.Bold.Value, "bold was not turned on in the created style.");
+			Assert.IsFalse(usefulStyle.DefaultCharacterStyleInfo.Italic.Value, "italic was not turned off in the created style.");
+			Assert.AreEqual(usefulStyle.DefaultCharacterStyleInfo.FontName.Value, "arial", "arial font not used");
+			DeleteStyleSheet(styleName);
+		}
+
+		///<summary/>
+		[Test]
+		public void ConvertLayoutTreeNodeToConfigNode_SenseConfigsWithDifferingStylesMakeTwoStyles()
+		{
+			var senseNumberNode = new XmlDocConfigureDlg.LayoutTreeNode
+			{
+				Label = "Parent",
+				NumFont = "arial",
+				NumStyle = "bold -italic",
+				ShowSenseConfig = true
+			};
+			var senseNumberNode2 = new XmlDocConfigureDlg.LayoutTreeNode
+			{
+				Label = "Parent",
+				NumFont = "arial",
+				NumStyle = "bold",
+				ShowSenseConfig = true
+			};
+			ConfigurableDictionaryNode configNode = null;
+			const string styleName = "Dictionary-SenseNumber";
+			const string styleName2 = "Dictionary-SenseNumber-2";
+			var senseStyle = m_styleSheet.FindStyle(styleName);
+			var senseStyle2 = m_styleSheet.FindStyle(styleName2);
+			Assert.IsNull(senseStyle, "Sense number style should not exist before conversion for a valid test.");
+			Assert.IsNull(senseStyle2, "Second sense number style should not exist before conversion for a valid test.");
+
+			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode));
+			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, styleName);
+			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode2));
+			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, styleName2);
+			senseStyle = m_styleSheet.FindStyle(styleName);
+			senseStyle2 = m_styleSheet.FindStyle(styleName2);
+			Assert.IsNotNull(senseStyle, "Sense number should have been created by the migrator.");
+			Assert.IsNotNull(senseStyle2, "Sense number should have been created by the migrator.");
+			var usefulStyle = m_styleSheet.Styles[styleName];
+			Assert.IsTrue(usefulStyle.DefaultCharacterStyleInfo.Bold.Value, "bold was not turned on in the created style.");
+			Assert.IsFalse(usefulStyle.DefaultCharacterStyleInfo.Italic.Value, "italic was not turned off in the created style.");
+			Assert.AreEqual(usefulStyle.DefaultCharacterStyleInfo.FontName.Value, "arial", "arial font not used");
+			usefulStyle = m_styleSheet.Styles[styleName2];
+			Assert.IsTrue(usefulStyle.DefaultCharacterStyleInfo.Bold.Value, "bold was not turned on in the created style.");
+			Assert.IsFalse(usefulStyle.DefaultCharacterStyleInfo.Italic.ValueIsSet, "italic should not have been set in the created style.");
+			Assert.AreEqual(usefulStyle.DefaultCharacterStyleInfo.FontName.Value, "arial", "arial font not used");
+			DeleteStyleSheet(styleName);
+			DeleteStyleSheet(styleName2);
+		}
+
+		///<summary/>
+		[Test]
+		public void ConvertLayoutTreeNodeToConfigNode_AllDifferentNumStylesResultInNewStyleSheets()
+		{
+			var senseNumberOptions = new [] { "-bold -italic", "bold italic", "bold", "italic", "-bold italic", "bold -italic" };
+			var senseNumberNode = new XmlDocConfigureDlg.LayoutTreeNode
+			{
+				Label = "Parent",
+				NumFont = "arial",
+				ShowSenseConfig = true
+			};
+			ConfigurableDictionaryNode configNode = null;
+			const string styleName = "Dictionary-SenseNumber";
+			var lastStyleName = String.Format("Dictionary-SenseNumber-{0}", 1 + senseNumberOptions.Length);
+			var senseStyle = m_styleSheet.FindStyle(styleName);
+			var senseStyle2 = m_styleSheet.FindStyle(lastStyleName);
+			Assert.IsNull(senseStyle, "Sense number style should not exist before conversion for a valid test.");
+			Assert.IsNull(senseStyle2, "Second sense number style should not exist before conversion for a valid test.");
+
+			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode));
+			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, styleName);
+			foreach(var option in senseNumberOptions)
+			{
+				senseNumberNode.NumStyle = option;
+				Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode));
+			}
+			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, lastStyleName);
+			DeleteStyleSheet(styleName);
+			for(var i = 2; i < 2 + senseNumberOptions.Length; i++) // Delete all the created dictionary styles
+				DeleteStyleSheet(String.Format("Dictionary-SenseNumber-{0}", i));
+		}
+
+		///<summary/>
+		[Test]
+		public void ConvertLayoutTreeNodeToConfigNode_AllDifferentNumStylesMatchThemselves()
+		{
+			var senseNumberOptions = new[] { "-bold -italic", "bold italic", "bold", "italic", "-bold italic", "bold -italic", "" };
+			var senseNumberNode = new XmlDocConfigureDlg.LayoutTreeNode
+			{
+				Label = "Parent",
+				NumFont = "arial",
+				ShowSenseConfig = true
+			};
+			ConfigurableDictionaryNode configNode = null;
+			const string styleName = "Dictionary-SenseNumber";
+			var senseStyle = m_styleSheet.FindStyle(styleName);
+			const string styleName2 = "Dictionary-SenseNumber-2";
+			var senseStyle2 = m_styleSheet.FindStyle(styleName2);
+			Assert.IsNull(senseStyle, "Sense number style should not exist before conversion for a valid test.");
+			Assert.IsNull(senseStyle2, "A second sense number style should not exist before conversion for a valid test.");
+
+			foreach(var option in senseNumberOptions)
+			{
+				senseNumberNode.NumStyle = option;
+				Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode));
+				Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode));
+				senseStyle2 = m_styleSheet.FindStyle(styleName2);
+				DeleteStyleSheet(styleName);
+				Assert.IsNull(senseStyle2, "A duplicate sense number style should not have been created converting the same node twice.");
+			}
+		}
+
+		///<summary/>
+		[Test]
+		public void ConvertLayoutTreeNodeToConfigNode_SenseConfigsWithDifferentFontsMakeTwoStyles()
+		{
+			var senseNumberNode = new XmlDocConfigureDlg.LayoutTreeNode
+			{
+				Label = "Parent",
+				NumFont = "arial",
+				ShowSenseConfig = true
+			};
+			var senseNumberNode2 = new XmlDocConfigureDlg.LayoutTreeNode
+			{
+				Label = "Parent",
+				NumFont = "notarial",
+				ShowSenseConfig = true
+			};
+			ConfigurableDictionaryNode configNode = null;
+			const string styleName = "Dictionary-SenseNumber";
+			const string styleName2 = "Dictionary-SenseNumber-2";
+			var senseStyle = m_styleSheet.FindStyle(styleName);
+			var senseStyle2 = m_styleSheet.FindStyle(styleName2);
+			Assert.IsNull(senseStyle, "Sense number style should not exist before conversion for a valid test.");
+			Assert.IsNull(senseStyle2, "Second sense number style should not exist before conversion for a valid test.");
+
+			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode));
+			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, styleName);
+			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode2));
+			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, styleName2);
+			senseStyle = m_styleSheet.FindStyle(styleName);
+			senseStyle2 = m_styleSheet.FindStyle(styleName2);
+			Assert.IsNotNull(senseStyle, "Sense number should have been created by the migrator.");
+			Assert.IsNotNull(senseStyle2, "Sense number should have been created by the migrator.");
+			var usefulStyle = m_styleSheet.Styles[styleName];
+			Assert.AreEqual(usefulStyle.DefaultCharacterStyleInfo.FontName.Value, "arial", "arial font not used");
+			usefulStyle = m_styleSheet.Styles[styleName2];
+			Assert.AreEqual(usefulStyle.DefaultCharacterStyleInfo.FontName.Value, "notarial", "notarial font not used in second style");
+			DeleteStyleSheet(styleName);
+			DeleteStyleSheet(styleName2);
+		}
+
+		///<summary/>
+		[Test]
+		public void ConvertLayoutTreeNodeToConfigNode_SenseOptionsAreMigrated()
+		{
+			var senseNumberNode = new XmlDocConfigureDlg.LayoutTreeNode
+			{
+				Label = "Parent",
+				Number = "(%O)",
+				NumberSingleSense = true,
+				ShowSenseConfig = true
+			};
+			ConfigurableDictionaryNode configNode = null;
+			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode));
+			var senseOptions = configNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
+			Assert.NotNull(senseOptions);
+			Assert.IsTrue(senseOptions.NumberEvenASingleSense);
+			Assert.AreEqual("(", senseOptions.BeforeNumber);
+			Assert.AreEqual(")", senseOptions.AfterNumber);
+			Assert.AreEqual("%O", senseOptions.NumberingStyle);
+			DeleteStyleSheet("Dictionary-SenseNumber");
+		}
+
+		///<summary/>
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_FieldDescriptionIsMigrated()
 		{
 			var oldParentNode = new ConfigurableDictionaryNode { Label = "Parent" };
 			var oldChildNode = new ConfigurableDictionaryNode { Label = "Child" };
@@ -383,6 +581,15 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual(oldModel.Parts[0].Children[0].Label, customNode.Label, "order of old model was not retained");
 			Assert.IsFalse(oldChild.IsCustomField, "Child node which is matched should not be a custom field");
 			Assert.IsTrue(customNode.IsCustomField, "The unmatched 'Custom' node should have been marked as a custom field");
+		}
+
+		private void DeleteStyleSheet(string styleName)
+		{
+			var style = m_styleSheet.FindStyle(styleName);
+			if(style != null)
+			{
+				m_styleSheet.Delete(style.Hvo);
+			}
 		}
 	}
 }

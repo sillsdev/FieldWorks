@@ -320,7 +320,6 @@ namespace SIL.FieldWorks.XWorks
 			if(!styleSheet.Styles.Contains(styleName))
 				throw new ArgumentException(@"given stylename not found in the FwStyleSheet", styleName);
 			BaseStyleInfo projectStyle = styleSheet.Styles[styleName];
-			var props = styleSheet.GetStyleRgch(0, styleName);
 			var exportStyleInfo = new ExportStyleInfo(projectStyle);
 			if(exportStyleInfo.HasAlignment)
 			{
