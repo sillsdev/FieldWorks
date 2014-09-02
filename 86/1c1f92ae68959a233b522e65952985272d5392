@@ -1,0 +1,8 @@
+Verified+1: Jenkins CI <jenkins@sil.org>
+Verified-Linux+1: Jenkins CI <jenkins@sil.org>
+Code-Review+2: Damien Daspit <damien_daspit@sil.org>
+Submitted-by: Damien Daspit <damien_daspit@sil.org>
+Submitted-at: Tue, 02 Sep 2014 04:07:05 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/2377
+Project: FieldWorks
+Branch: refs/heads/develop
