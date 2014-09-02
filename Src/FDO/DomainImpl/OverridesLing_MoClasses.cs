@@ -14,11 +14,9 @@ using System;
 using System.Linq;
 using System.Diagnostics;
 using System.Text;
-using System.Collections;
 using System.Collections.Generic;
 using System.Xml; // XMLWriter
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;

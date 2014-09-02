@@ -30,8 +30,8 @@ namespace XCore
 	/// </summary>
 	public class SidebarAdapter: IUIAdapter, IDisposable
 	{
-		protected ImageCollection m_smallImages;
-		protected ImageCollection m_largeImages;
+		protected IImageCollection m_smallImages;
+		protected IImageCollection m_largeImages;
 		protected OutlookBar m_bar;
 		protected Mediator m_mediator;
 
@@ -133,7 +133,7 @@ namespace XCore
 			}
 		}
 
-		public System.Windows.Forms.Control Init(System.Windows.Forms.Form window, ImageCollection smallImages, ImageCollection largeImages, Mediator mediator)
+		public System.Windows.Forms.Control Init(System.Windows.Forms.Form window, IImageCollection smallImages, IImageCollection largeImages, Mediator mediator)
 		{
 			m_mediator = mediator;
 			m_smallImages= smallImages;

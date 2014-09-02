@@ -14,7 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using NUnit.Framework;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Test.TestUtils;
@@ -107,7 +107,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void CreateNewLangProject()
 		{
 			const string dbName = "Maileingwij2025";
-			string storePath = DirectoryFinder.GetWritingSystemDir(Path.Combine(DirectoryFinder.ProjectsDirectory, dbName));
+			string storePath = FdoFileHelper.GetWritingSystemDir(Path.Combine(FwDirectoryFinder.ProjectsDirectory, dbName));
 			string sharedStorePath = DirectoryFinder.GlobalWritingSystemStoreDirectory;
 
 			using (var dlg = new DummyFwNewLangProject())
@@ -126,7 +126,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					// despite of the name is DummyProgressDlg no real dialog (doesn't derive from Control), so
 					// we don't need a 'using'
 					cache = FdoCache.CreateCacheFromExistingData(
-						new TestProjectId(FDOBackendProviderType.kXML, DbFilename(dbName)), "en", new DummyProgressDlg());
+						new TestProjectId(FDOBackendProviderType.kXML, DbFilename(dbName)), "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new DummyProgressDlg());
 					CheckInitialSetOfPartsOfSpeech(cache);
 
 					Assert.AreEqual(1, cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Count);
@@ -351,12 +351,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private static string DbDirectory(string dbName)
 		{
-			return Path.Combine(DirectoryFinder.ProjectsDirectory, dbName);
+			return Path.Combine(FwDirectoryFinder.ProjectsDirectory, dbName);
 		}
 
 		private static string DbFilename(string dbName)
 		{
-			return Path.Combine(DbDirectory(dbName), DirectoryFinder.GetXmlDataFileName(dbName));
+			return Path.Combine(DbDirectory(dbName), FdoFileHelper.GetXmlDataFileName(dbName));
 		}
 
 		/// ------------------------------------------------------------------------------------

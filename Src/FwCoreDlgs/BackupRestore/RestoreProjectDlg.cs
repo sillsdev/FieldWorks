@@ -16,7 +16,6 @@ using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
 using XCore;
-using System.Diagnostics;
 
 namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 {
@@ -25,6 +24,42 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 	/// </summary>
 	public partial class RestoreProjectDlg : Form
 	{
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Performs the requested actions and handles any IO or zip error by reporting them to
+		/// the user. (Intended for operations that deal directly with a backup zip file.
+		/// </summary>
+		/// <param name="parentWindow">The parent window to use when reporting an error (can be
+		/// null).</param>
+		/// <param name="caption">Used in title bar of message box when reporting an error
+		/// (typically the name of the application).
+		/// </param>
+		/// <param name="zipFilename">The backup zip filename.</param>
+		/// <param name="action">The action to perform.</param>
+		/// <returns>
+		/// 	<c>true</c> if successful (no exception caught); <c>false</c> otherwise
+		/// </returns>
+		/// ------------------------------------------------------------------------------------
+		public static bool HandleRestoreFileErrors(IWin32Window parentWindow, string caption, string zipFilename, Action action)
+		{
+			try
+			{
+				action();
+			}
+			catch (Exception error)
+			{
+				if (error is IOException || error is InvalidBackupFileException ||
+					error is UnauthorizedAccessException)
+				{
+					Logger.WriteError(error);
+					MessageBoxUtils.Show(parentWindow, error.Message, caption, MessageBoxButtons.OK, MessageBoxIcon.Information);
+					return false;
+				}
+				throw;
+			}
+			return true;
+		}
+
 		#region Data members
 		private readonly string m_appName;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
@@ -94,17 +129,17 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		{
 			m_appName = appName;
 			m_helpTopicProvider = helpTopicProvider;
-			m_lblOtherBackupIncludes.Text = string.Empty;
-			m_lblDefaultBackupIncludes.Text = string.Empty;
-			m_lblBackupZipFile.Text = string.Empty;
-			m_lblBackupProjectName.Text = string.Empty;
-			m_lblBackupDate.Text = string.Empty;
-			m_lblBackupComment.Text = string.Empty;
+			m_lblOtherBackupIncludes.Text = String.Empty;
+			m_lblDefaultBackupIncludes.Text = String.Empty;
+			m_lblBackupZipFile.Text = String.Empty;
+			m_lblBackupProjectName.Text = String.Empty;
+			m_lblBackupDate.Text = String.Empty;
+			m_lblBackupComment.Text = String.Empty;
 			m_fmtUseOriginalName = m_rdoUseOriginalName.Text;
 			m_rdoUseOriginalName.Text = String.Format(m_fmtUseOriginalName, String.Empty);
-			m_settings = new RestoreProjectSettings();
-			m_txtOtherProjectName.KeyPress += new KeyPressEventHandler(m_txtOtherProjectName_KeyPress);
-			m_txtOtherProjectName.TextChanged += new EventHandler(m_txtOtherProjectName_TextChanged);
+			m_settings = new RestoreProjectSettings(FwDirectoryFinder.ProjectsDirectory);
+			m_txtOtherProjectName.KeyPress += m_txtOtherProjectName_KeyPress;
+			m_txtOtherProjectName.TextChanged += m_txtOtherProjectName_TextChanged;
 			GetIllegalProjectNameChars();
 		}
 
@@ -250,7 +285,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 			{
 				m_openFileDlg = new OpenFileDialogAdapter();
 				m_openFileDlg.CheckFileExists = true;
-				m_openFileDlg.InitialDirectory = DirectoryFinder.DefaultBackupDirectory;
+				m_openFileDlg.InitialDirectory = FwDirectoryFinder.DefaultBackupDirectory;
 				m_openFileDlg.RestoreDirectory = true;
 				m_openFileDlg.Title = FwCoreDlgs.ksFindBackupFileDialogTitle;
 				m_openFileDlg.ValidateNames = true;
@@ -288,7 +323,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 				return;
 			}
 
-			if (ProjectRestoreService.HandleRestoreFileErrors(this, m_appName, BackupZipFile,
+			if (HandleRestoreFileErrors(this, m_appName, BackupZipFile,
 				() => BackupFileSettings = new BackupFileSettings(BackupZipFile, true)))
 			{
 				SetOriginalNameFromSettings();

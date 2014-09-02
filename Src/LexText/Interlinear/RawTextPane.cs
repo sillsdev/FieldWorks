@@ -12,6 +12,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FdoUi;
+using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
 using XCore;
 using SIL.FieldWorks.FDO.Infrastructure;

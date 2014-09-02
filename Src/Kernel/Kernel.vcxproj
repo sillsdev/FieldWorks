@@ -1,105 +1,138 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-	<ProjectConfiguration Include="Debug|Win32">
-	  <Configuration>Debug</Configuration>
-	  <Platform>Win32</Platform>
-	</ProjectConfiguration>
-	<ProjectConfiguration Include="Release|Win32">
-	  <Configuration>Release</Configuration>
-	  <Platform>Win32</Platform>
-	</ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-	<ProjectName>FwKernel</ProjectName>
-	<ProjectGuid>{6396B488-4D34-48B2-8639-EEB90707405B}</ProjectGuid>
-	<RootNamespace>FwKernel</RootNamespace>
-	<SccProjectName></SccProjectName>
-	<SccLocalPath></SccLocalPath>
-	<SccProvider></SccProvider>
-	<Keyword>MakeFileProj</Keyword>
+    <ProjectName>FwKernel</ProjectName>
+    <ProjectGuid>{6396B488-4D34-48B2-8639-EEB90707405B}</ProjectGuid>
+    <RootNamespace>FwKernel</RootNamespace>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccProvider>
+    </SccProvider>
+    <Keyword>MakeFileProj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-	<ConfigurationType>Makefile</ConfigurationType>
+    <ConfigurationType>Makefile</ConfigurationType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-	<ConfigurationType>Makefile</ConfigurationType>
+    <ConfigurationType>Makefile</ConfigurationType>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
-	<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-	<Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
-	<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-	<Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-	<_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-	<OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)\..\..\Output\Debug\</OutDir>
-	<IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)\..\..\obj\Debug\</IntDir>
-	<NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\bin\mkfwk</NMakeBuildCommandLine>
-	<NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\bin\mkfwk cc</NMakeReBuildCommandLine>
-	<NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
-	<NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">FwKernel.dll</NMakeOutput>
-	<NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-	<NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
-	<NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
-	<NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
-	<NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
-	<OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</OutDir>
-	<IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</IntDir>
-	<NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\bin\mkfwk r</NMakeBuildCommandLine>
-	<NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\bin\mkfwk r cc</NMakeReBuildCommandLine>
-	<NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
-	<NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Kernel.exe</NMakeOutput>
-	<NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-	<NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
-	<NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
-	<NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
-	<NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)\..\..\Output\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)\..\..\obj\Debug\</IntDir>
+    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\bin\mkfwk</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\bin\mkfwk cc</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">FwKernel.dll</NMakeOutput>
+    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</IntDir>
+    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\bin\mkfwk r</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\bin\mkfwk r cc</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Kernel.exe</NMakeOutput>
+    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
-	<ClCompile Include="ActionHandler.cpp" />
-	<ClCompile Include="DebugReport.cpp" />
-	<ClCompile Include="dlldatax.c" />
-	<ClCompile Include="TextServ.cpp" />
-	<ClCompile Include="TsMultiStr.cpp" />
-	<ClCompile Include="TsPropsFactory.cpp" />
-	<ClCompile Include="TsStrFactory.cpp" />
-	<ClCompile Include="TsString.cpp" />
-	<ClCompile Include="TsTextProps.cpp" />
+    <ClCompile Include="ActionHandler.cpp" />
+    <ClCompile Include="DebugReport.cpp" />
+    <ClCompile Include="dlldatax.c" />
+    <ClCompile Include="LgIcuCharPropEngine.cpp" />
+    <ClCompile Include="LgIcuWrappers.cpp" />
+    <ClCompile Include="LgKeymanHandler.cpp" />
+    <ClCompile Include="LgNumericEngine.cpp" />
+    <ClCompile Include="LgSimpleEngines.cpp" />
+    <ClCompile Include="LocaleIndex.cpp" />
+    <ClCompile Include="RegexMatcherWrapper.cpp" />
+    <ClCompile Include="RomRenderEngine.cpp" />
+    <ClCompile Include="RomRenderSegment.cpp" />
+    <ClCompile Include="TextServ.cpp" />
+    <ClCompile Include="TsMultiStr.cpp" />
+    <ClCompile Include="TsPropsFactory.cpp" />
+    <ClCompile Include="TsStrFactory.cpp" />
+    <ClCompile Include="TsString.cpp" />
+    <ClCompile Include="TsTextProps.cpp" />
+    <ClCompile Include="UniscribeEngine.cpp" />
+    <ClCompile Include="UniscribeLinux.cpp" />
+    <ClCompile Include="UniscribeSegment.cpp" />
   </ItemGroup>
   <ItemGroup>
-	<None Include="FwKernel.def" />
-	<None Include="FwKernel.idh" />
-	<None Include="FwKernel.mak" />
-	<None Include="TextServ.idh" />
+    <None Include="FwKernel.def" />
+    <None Include="FwKernel.idh" />
+    <None Include="FwKernel.mak" />
+    <None Include="Language.idh" />
+    <None Include="Makefile" />
+    <None Include="Render.idh" />
+    <None Include="TextServ.idh" />
   </ItemGroup>
   <ItemGroup>
-	<Midl Include="FwKernelPs.idl" />
-	<Midl Include="FwKernelTlb.idl" />
+    <Midl Include="FwKernelPs.idl" />
+    <Midl Include="FwKernelTlb.idl" />
   </ItemGroup>
   <ItemGroup>
-	<ClInclude Include="ActionHandler.h" />
-	<ClInclude Include="DebugReport.h" />
-	<ClInclude Include="IcuCleanupManager.h" />
-	<ClInclude Include="Main.h" />
-	<ClInclude Include="TextServ.h" />
-	<ClInclude Include="TsMultiStr.h" />
-	<ClInclude Include="TsPropsFactory.h" />
-	<ClInclude Include="TsStrFactory.h" />
-	<ClInclude Include="TsString.h" />
-	<ClInclude Include="TsTextProps.h" />
+    <ClInclude Include="ActionHandler.h" />
+    <ClInclude Include="DebugReport.h" />
+    <ClInclude Include="IcuCleanupManager.h" />
+    <ClInclude Include="LangResource.h" />
+    <ClInclude Include="LgIcuCharPropEngine.h" />
+    <ClInclude Include="LgIcuCharPropertyInit.h" />
+    <ClInclude Include="LgIcuWrappers.h" />
+    <ClInclude Include="LgKeymanHandler.h" />
+    <ClInclude Include="LgNumericEngine.h" />
+    <ClInclude Include="LgSimpleEngines.h" />
+    <ClInclude Include="LgUnicodeCollateInit.h" />
+    <ClInclude Include="LgUnicodeCollater.h" />
+    <ClInclude Include="LocaleIndex.h" />
+    <ClInclude Include="Main.h" />
+    <ClInclude Include="RegexMatcherWrapper.h" />
+    <ClInclude Include="RomRenderEngine.h" />
+    <ClInclude Include="RomRenderSegment.h" />
+    <ClInclude Include="TextServ.h" />
+    <ClInclude Include="TsMultiStr.h" />
+    <ClInclude Include="TsPropsFactory.h" />
+    <ClInclude Include="TsStrFactory.h" />
+    <ClInclude Include="TsString.h" />
+    <ClInclude Include="TsTextProps.h" />
+    <ClInclude Include="UniscribeEngine.h" />
+    <ClInclude Include="UniscribeLinux.h" />
   </ItemGroup>
   <ItemGroup>
-	<ResourceCompile Include="FwKernel.rc" />
+    <ResourceCompile Include="FwKernel.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

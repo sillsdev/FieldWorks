@@ -127,6 +127,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\PalasoUIWindowsForms.dll</HintPath>
     </Reference>
+    <Reference Include="ParatextShared, Version=7.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\ParatextShared.dll</HintPath>
+    </Reference>
     <Reference Include="PaToFdoInterfaces, Version=1.0.4031.20876, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\DistFiles\PaToFdoInterfaces.dll</HintPath>
@@ -138,6 +142,10 @@
     <Reference Include="RootSite, Version=6.1.1.19944, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\RootSite.dll</HintPath>
+    </Reference>
+    <Reference Include="ScriptureUtils, Version=8.0.9.21108, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\ScriptureUtils.dll</HintPath>
     </Reference>
     <Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

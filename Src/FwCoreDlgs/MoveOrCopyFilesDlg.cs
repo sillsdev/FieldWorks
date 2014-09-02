@@ -207,7 +207,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_sHelpTopic = sHelpTopic;
 			if (m_helpTopicProvider != null)
 			{
-				this.m_helpProvider.HelpNamespace = Path.Combine(DirectoryFinder.FWCodeDirectory,
+				this.m_helpProvider.HelpNamespace = Path.Combine(FwDirectoryFinder.CodeDirectory,
 					m_helpTopicProvider.GetHelpString("UserHelpFile"));
 				this.m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(m_sHelpTopic));
 				this.m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
@@ -314,7 +314,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			IHelpTopicProvider helpTopicProvider, bool isLocal)
 		{
 			return MoveCopyOrLeaveFile(sFile,
-				Path.Combine(sRootDirLinkedFiles, DirectoryFinder.ksMediaDir),
+				Path.Combine(sRootDirLinkedFiles, FdoFileHelper.ksMediaDir),
 				sRootDirLinkedFiles,
 				helpTopicProvider, isLocal);
 		}
@@ -339,7 +339,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			IHelpTopicProvider helpTopicProvider, bool isLocal)
 		{
 			return MoveCopyOrLeaveFile(sFile,
-				Path.Combine(sRootDirLinkedFiles, DirectoryFinder.ksOtherLinkedFilesDir),
+				Path.Combine(sRootDirLinkedFiles, FdoFileHelper.ksOtherLinkedFilesDir),
 				sRootDirLinkedFiles,
 				helpTopicProvider, isLocal);
 		}

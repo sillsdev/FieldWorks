@@ -17,6 +17,7 @@ using System.Runtime.Remoting;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
@@ -96,7 +97,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="bounds">The initial client bounds of the dialog.</param>
 		/// <param name="splitterPosition">The initial splitter position.</param>
 		/// ------------------------------------------------------------------------------------
-		public ChooseLangProjectDialog(Rectangle bounds, int splitterPosition) : this(null, false)
+		public ChooseLangProjectDialog(Rectangle bounds, int splitterPosition)
+			: this(null, false)
 		{
 			m_initialBounds = bounds;
 			m_initialSplitterPosition = splitterPosition;
@@ -115,7 +117,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </param>
 		/// ------------------------------------------------------------------------------------
 		public ChooseLangProjectDialog(IHelpTopicProvider helpTopicProvider,
-			bool openToAssosiateFwProject) : this()
+			bool openToAssosiateFwProject)
+			: this()
 		{
 			m_helpTopicProvider = helpTopicProvider;
 
@@ -220,8 +223,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				}
 			}
 
-			// Asynchronously search for other Servers.
-			ClientServerServices.Current.BeginFindServers(AddHost1);
+			try
+			{
+				// Asynchronously search for other Servers.
+				ClientServerServices.Current.BeginFindServers(AddHost1);
+			}
+			catch (Exception)
+			{
+				MessageBox.Show(FwCoreDlgs.ksFindServersError, FwCoreDlgs.ksError, MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
 
 			m_lstLanguageProjects.SelectedIndexChanged += LanguageProjectsListSelectedIndexChanged;
 
@@ -272,9 +282,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				return false;
 			}
 
-			// store the HostName -> ipaddress mapping.
-			m_hostIpAddressMap[entry.HostName] = ipAddress;
-
 			AddHostInternal(entry);
 
 			return true;
@@ -298,6 +305,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Simple check for host already present by name.
 			if (IsDisposed || m_networkNeighborhood.Nodes.ContainsKey((entry.HostName)))
 				return;
+
+			// Handle misbehaving host entries who have no ipaddress
+			if(!entry.AddressList.Any())
+				return;
+			// store the HostName -> ipaddress mapping.
+			m_hostIpAddressMap[entry.HostName] = entry.AddressList[0].ToString();
 
 			// if list of associated addresses in entry matches list of associated addresses of any item in hostsTreeView
 			// then ignore as its the same host.
@@ -486,12 +499,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (m_hostsTreeView.SelectedNode == m_localhostNode)
 			{
 				Project = ((LanguageProjectInfo)m_lstLanguageProjects.SelectedItem).FullName;
-				if (Project.EndsWith(FwFileExtensions.ksFwDataFallbackFileExtension))
+				if (Project.EndsWith(FdoFileHelper.ksFwDataFallbackFileExtension))
 				{
 					// The user chose a .bak file, only possible when the fwdata file is missing.
 					// Rename it and open it.
 					string bakFileName = Project;
-					Project = Path.ChangeExtension(bakFileName, FwFileExtensions.ksFwDataXmlFileExtension);
+					Project = Path.ChangeExtension(bakFileName, FdoFileHelper.ksFwDataXmlFileExtension);
 					try
 					{
 						File.Move(bakFileName, Project);
@@ -519,7 +532,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private string HostsFileName
 		{
-			get { return Path.Combine(DirectoryFinder.ProjectsDirectory, "HostsManuallyConnected.txt"); }
+			get { return Path.Combine(FwDirectoryFinder.ProjectsDirectory, "HostsManuallyConnected.txt"); }
 		}
 
 		private void AddHostButtonClick(object sender, EventArgs e)
@@ -539,7 +552,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				Hide();
 				dlg.CheckFileExists = true;
-				dlg.InitialDirectory = DirectoryFinder.ProjectsDirectory;
+				dlg.InitialDirectory = FwDirectoryFinder.ProjectsDirectory;
 				dlg.RestoreDirectory = true;
 				dlg.Title = FwCoreDlgs.ksChooseLangProjectDialogTitle;
 				dlg.ValidateNames = true;

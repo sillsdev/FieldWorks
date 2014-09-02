@@ -151,7 +151,7 @@ namespace SIL.FieldWorks.Common.Framework
 
 		#region abstract members of SIL.FieldWorks.Common.Framework.FwApp
 		/// <summary/>
-		public override bool InitCacheForApp(IProgress progressDlg)
+		public override bool InitCacheForApp(IThreadedProgress progressDlg)
 		{
 			throw new System.NotImplementedException();
 		}

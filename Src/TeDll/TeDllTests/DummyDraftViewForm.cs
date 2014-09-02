@@ -10,12 +10,14 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
+using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 

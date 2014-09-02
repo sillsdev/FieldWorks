@@ -214,6 +214,15 @@ namespace SIL.FieldWorks.FDO {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to analysis.
+        /// </summary>
+        internal static string ksAnalysis {
+            get {
+                return ResourceManager.GetString("ksAnalysis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Anth.
         /// </summary>
         internal static string ksAnth {
@@ -259,20 +268,24 @@ namespace SIL.FieldWorks.FDO {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Background is {0}.
-        /// </summary>
-        internal static string ksBackgroundIsX {
-            get {
-                return ResourceManager.GetString("ksBackgroundIsX", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Writing out backup file....
         /// </summary>
         internal static string ksBackupClosing {
             get {
                 return ResourceManager.GetString("ksBackupClosing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Backup file contains a version of the project which was created using a newer version of FieldWorks:
+        ///{0}
+        ///
+        ///To restore from this backup, install version {1} of FieldWorks.
+        ///.
+        /// </summary>
+        internal static string ksBackupFileCreatedByNewerFwVersion {
+            get {
+                return ResourceManager.GetString("ksBackupFileCreatedByNewerFwVersion", resourceCulture);
             }
         }
         
@@ -362,15 +375,6 @@ namespace SIL.FieldWorks.FDO {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Bold.
-        /// </summary>
-        internal static string ksBold {
-            get {
-                return ResourceManager.GetString("ksBold", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Could not connect to server. Check that {0} is running on the remote server and that any firewalls are configured to allow connections to it..
         /// </summary>
         internal static string ksCannotConnectToServer {
@@ -436,42 +440,6 @@ namespace SIL.FieldWorks.FDO {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The default discourse chart template cannot be deleted, moved or promoted..
-        /// </summary>
-        internal static string ksCantDeleteDefaultDiscourseTemplate {
-            get {
-                return ResourceManager.GetString("ksCantDeleteDefaultDiscourseTemplate", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The last remaining Text Markup tag list cannot be deleted..
-        /// </summary>
-        internal static string ksCantDeleteLastTagList {
-            get {
-                return ResourceManager.GetString("ksCantDeleteLastTagList", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You cannot delete a Text Markup tag when there are texts using the tag. One such text using this tag is {0}..
-        /// </summary>
-        internal static string ksCantDeleteMarkupTagInUse {
-            get {
-                return ResourceManager.GetString("ksCantDeleteMarkupTagInUse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You cannot delete a Text Markup type when there are texts using its tags. One such text using this type of tag is {0}..
-        /// </summary>
-        internal static string ksCantDeleteMarkupTypeInUse {
-            get {
-                return ResourceManager.GetString("ksCantDeleteMarkupTypeInUse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to This part of a chart template cannot be moved or deleted, because it or one of its children is in use in one or more charts (e.g., {0})..
         /// </summary>
         internal static string ksCantModifyTemplateInUse {
@@ -513,24 +481,6 @@ namespace SIL.FieldWorks.FDO {
         internal static string ksCliticNoCatInfo {
             get {
                 return ResourceManager.GetString("ksCliticNoCatInfo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} Strikethrough.
-        /// </summary>
-        internal static string ksColorStrikethrough {
-            get {
-                return ResourceManager.GetString("ksColorStrikethrough", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} Underline.
-        /// </summary>
-        internal static string ksColorUnderline {
-            get {
-                return ResourceManager.GetString("ksColorUnderline", resourceCulture);
             }
         }
         
@@ -621,33 +571,6 @@ namespace SIL.FieldWorks.FDO {
         internal static string ksConvertingToShared {
             get {
                 return ResourceManager.GetString("ksConvertingToShared", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to FieldWorks was not able to back up some of the files used by this project. Do you want to keep the backup anyway? The files not backed up were {0}.
-        /// </summary>
-        internal static string ksCouldNotBackupSomeFiles {
-            get {
-                return ResourceManager.GetString("ksCouldNotBackupSomeFiles", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Dashed {0} Underline.
-        /// </summary>
-        internal static string ksDashedColorUnderline {
-            get {
-                return ResourceManager.GetString("ksDashedColorUnderline", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Dashed Underline.
-        /// </summary>
-        internal static string ksDashedUnderline {
-            get {
-                return ResourceManager.GetString("ksDashedUnderline", resourceCulture);
             }
         }
         
@@ -904,42 +827,6 @@ namespace SIL.FieldWorks.FDO {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Dotted {0} Underline.
-        /// </summary>
-        internal static string ksDottedColorUnderline {
-            get {
-                return ResourceManager.GetString("ksDottedColorUnderline", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Dotted Underline.
-        /// </summary>
-        internal static string ksDottedUnderline {
-            get {
-                return ResourceManager.GetString("ksDottedUnderline", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Double {0} Underline.
-        /// </summary>
-        internal static string ksDoubleColorUnderline {
-            get {
-                return ResourceManager.GetString("ksDoubleColorUnderline", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Double Underline.
-        /// </summary>
-        internal static string ksDoubleUnderline {
-            get {
-                return ResourceManager.GetString("ksDoubleUnderline", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to There are duplicate guids in this project..
         /// </summary>
         internal static string ksDuplicateGuidsMsg1 {
@@ -1086,15 +973,6 @@ namespace SIL.FieldWorks.FDO {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed.
-        /// </summary>
-        internal static string ksFailed {
-            get {
-                return ResourceManager.GetString("ksFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Failed to start server:
         ///{0}.
         /// </summary>
@@ -1129,6 +1007,15 @@ namespace SIL.FieldWorks.FDO {
         internal static string ksHomographLimits {
             get {
                 return ResourceManager.GetString("ksHomographLimits", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Style {0} could not be added because an incompatible style with the same name already exists..
+        /// </summary>
+        internal static string ksIncompatibleStyleExists {
+            get {
+                return ResourceManager.GetString("ksIncompatibleStyleExists", resourceCulture);
             }
         }
         
@@ -1196,11 +1083,11 @@ namespace SIL.FieldWorks.FDO {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} is not a valid directory for linked files. Please select a valid directory..
+        ///   Looks up a localized string similar to File is not a valid FieldWorks backup:.
         /// </summary>
-        internal static string ksInvalidLinkedFilesFolder {
+        internal static string ksInvalidFwBackupFile {
             get {
-                return ResourceManager.GetString("ksInvalidLinkedFilesFolder", resourceCulture);
+                return ResourceManager.GetString("ksInvalidFwBackupFile", resourceCulture);
             }
         }
         
@@ -1412,15 +1299,6 @@ namespace SIL.FieldWorks.FDO {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Italic.
-        /// </summary>
-        internal static string ksItalic {
-            get {
-                return ResourceManager.GetString("ksItalic", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to lexeme form.
         /// </summary>
         internal static string ksLexemeForm {
@@ -1448,15 +1326,6 @@ namespace SIL.FieldWorks.FDO {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Linked Files Folder.
-        /// </summary>
-        internal static string ksLinkedFilesFolder {
-            get {
-                return ResourceManager.GetString("ksLinkedFilesFolder", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to , .
         /// </summary>
         internal static string ksListSep {
@@ -1471,15 +1340,6 @@ namespace SIL.FieldWorks.FDO {
         internal static string ksLocalConnectorServiceNotStarted {
             get {
                 return ResourceManager.GetString("ksLocalConnectorServiceNotStarted", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Lowered by {0} pt.
-        /// </summary>
-        internal static string ksLoweredXpt {
-            get {
-                return ResourceManager.GetString("ksLoweredXpt", resourceCulture);
             }
         }
         
@@ -1619,24 +1479,6 @@ namespace SIL.FieldWorks.FDO {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to FieldWorks has encountered a problem setting up the writing systems. It may be that you need to first log out and then back in. If that doesn&apos;t fix it, you can also try asking an administrator to add you to the fieldworks group by using the command: $ sudo adduser &apos;yourusername&apos; fieldworks.
-        /// </summary>
-        internal static string ksNeedToJoinFwGroup {
-            get {
-                return ResourceManager.GetString("ksNeedToJoinFwGroup", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No ({0}) Underline.
-        /// </summary>
-        internal static string ksNoColorUnderline {
-            get {
-                return ResourceManager.GetString("ksNoColorUnderline", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to No explanation available..
         /// </summary>
         internal static string ksNoExplanation {
@@ -1651,33 +1493,6 @@ namespace SIL.FieldWorks.FDO {
         internal static string ksNoForm {
             get {
                 return ResourceManager.GetString("ksNoForm", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No Super/Subscript.
-        /// </summary>
-        internal static string ksNoSuperSubscript {
-            get {
-                return ResourceManager.GetString("ksNoSuperSubscript", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Not advisable when other users connected.
-        /// </summary>
-        internal static string ksNotAdvisableOthersConnectedCaption {
-            get {
-                return ResourceManager.GetString("ksNotAdvisableOthersConnectedCaption", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Not Bold.
-        /// </summary>
-        internal static string ksNotBold {
-            get {
-                return ResourceManager.GetString("ksNotBold", resourceCulture);
             }
         }
         
@@ -1709,24 +1524,6 @@ namespace SIL.FieldWorks.FDO {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Not Italic.
-        /// </summary>
-        internal static string ksNotItalic {
-            get {
-                return ResourceManager.GetString("ksNotItalic", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Not Raised/Lowered.
-        /// </summary>
-        internal static string ksNotRaisedLowered {
-            get {
-                return ResourceManager.GetString("ksNotRaisedLowered", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Not redoable.
         /// </summary>
         internal static string ksNotRedoable {
@@ -1754,11 +1551,11 @@ namespace SIL.FieldWorks.FDO {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No Underline.
+        ///   Looks up a localized string similar to FieldWorks project has no current {0} writing systems..
         /// </summary>
-        internal static string ksNoUnderline {
+        internal static string ksNoWritingSystems {
             get {
-                return ResourceManager.GetString("ksNoUnderline", resourceCulture);
+                return ResourceManager.GetString("ksNoWritingSystems", resourceCulture);
             }
         }
         
@@ -1786,15 +1583,6 @@ namespace SIL.FieldWorks.FDO {
         internal static string ksOtherClientsAreWriting {
             get {
                 return ResourceManager.GetString("ksOtherClientsAreWriting", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Take care - other users connected.
-        /// </summary>
-        internal static string ksOthersConnectedCaption {
-            get {
-                return ResourceManager.GetString("ksOthersConnectedCaption", resourceCulture);
             }
         }
         
@@ -1889,15 +1677,6 @@ namespace SIL.FieldWorks.FDO {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Raised by {0} pt.
-        /// </summary>
-        internal static string ksRaisedXpt {
-            get {
-                return ResourceManager.GetString("ksRaisedXpt", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Redo Create Entry.
         /// </summary>
         internal static string ksRedoCreateEntry {
@@ -1952,15 +1731,6 @@ namespace SIL.FieldWorks.FDO {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Restoring from an old FieldWorks backup failed..
-        /// </summary>
-        internal static string ksRestoringOldFwBackupFailed {
-            get {
-                return ResourceManager.GetString("ksRestoringOldFwBackupFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Restoring {0} to a temporary project.
         /// </summary>
         internal static string ksRestoringToTempProject {
@@ -1984,6 +1754,33 @@ namespace SIL.FieldWorks.FDO {
         internal static string ksReversalIndexPOSListName {
             get {
                 return ResourceManager.GetString("ksReversalIndexPOSListName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Footnote.
+        /// </summary>
+        internal static string ksScriptureFootnote {
+            get {
+                return ResourceManager.GetString("ksScriptureFootnote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Introduction({0}).
+        /// </summary>
+        internal static string ksScriptureSectionIntroduction {
+            get {
+                return ResourceManager.GetString("ksScriptureSectionIntroduction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Title.
+        /// </summary>
+        internal static string ksScriptureTitle {
+            get {
+                return ResourceManager.GetString("ksScriptureTitle", resourceCulture);
             }
         }
         
@@ -2015,24 +1812,6 @@ namespace SIL.FieldWorks.FDO {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Single {0} Underline.
-        /// </summary>
-        internal static string ksSingleColorUnderline {
-            get {
-                return ResourceManager.GetString("ksSingleColorUnderline", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Single Underline.
-        /// </summary>
-        internal static string ksSingleUnderline {
-            get {
-                return ResourceManager.GetString("ksSingleUnderline", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to ***.
         /// </summary>
         internal static string ksStars {
@@ -2047,51 +1826,6 @@ namespace SIL.FieldWorks.FDO {
         internal static string ksStemNoCatInfo {
             get {
                 return ResourceManager.GetString("ksStemNoCatInfo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Strikethrough.
-        /// </summary>
-        internal static string ksStrikethrough {
-            get {
-                return ResourceManager.GetString("ksStrikethrough", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Subscript.
-        /// </summary>
-        internal static string ksSubscript {
-            get {
-                return ResourceManager.GetString("ksSubscript", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Superscript.
-        /// </summary>
-        internal static string ksSuperscript {
-            get {
-                return ResourceManager.GetString("ksSuperscript", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Text is {0}.
-        /// </summary>
-        internal static string ksTextIsX {
-            get {
-                return ResourceManager.GetString("ksTextIsX", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Text is {0} on {1}.
-        /// </summary>
-        internal static string ksTextIsXonY {
-            get {
-                return ResourceManager.GetString("ksTextIsXonY", resourceCulture);
             }
         }
         
@@ -2213,6 +1947,15 @@ namespace SIL.FieldWorks.FDO {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0}. Being used 1 time by an affix process rule..
+        /// </summary>
+        internal static string ksUsedOnceInAffixProcessRules {
+            get {
+                return ResourceManager.GetString("ksUsedOnceInAffixProcessRules", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0}. Being used 1 time in your natural classes..
         /// </summary>
         internal static string ksUsedOnceInNatClasses {
@@ -2249,6 +1992,15 @@ namespace SIL.FieldWorks.FDO {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0}. Being used {1} times by affix process rules..
+        /// </summary>
+        internal static string ksUsedXTimesInAffixProcessRules {
+            get {
+                return ResourceManager.GetString("ksUsedXTimesInAffixProcessRules", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0}. Being used {1} times in your natural classes..
         /// </summary>
         internal static string ksUsedXTimesInNatClasses {
@@ -2267,11 +2019,11 @@ namespace SIL.FieldWorks.FDO {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Warning.
+        ///   Looks up a localized string similar to vernacular.
         /// </summary>
-        internal static string ksWarning {
+        internal static string ksVernacular {
             get {
-                return ResourceManager.GetString("ksWarning", resourceCulture);
+                return ResourceManager.GetString("ksVernacular", resourceCulture);
             }
         }
         
@@ -2299,32 +2051,6 @@ namespace SIL.FieldWorks.FDO {
         internal static string ksWarningProjectFolderNotFoundOnServer {
             get {
                 return ResourceManager.GetString("ksWarningProjectFolderNotFoundOnServer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Number of other users: {0}
-        ///When saving changes in this dialog with other users connected, FieldWorks may crash or malfunction for those users.
-        ///
-        ///Do you want to make the changes anyway?.
-        /// </summary>
-        internal static string ksWarnOnConfirmingSingleUserChanges {
-            get {
-                return ResourceManager.GetString("ksWarnOnConfirmingSingleUserChanges", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Number of other users: {0}
-        ///The menu command you selected will open a dialog box. If you change any selections or settings in the dialog box, other users who have this project open on their computers will have problems.
-        ///
-        ///If you will only look at selections and settings, click OK.
-        ///
-        ///If you need to make changes, tell the other users to close this project before you continue, or click Cancel..
-        /// </summary>
-        internal static string ksWarnOnOpeningSingleUserDialog {
-            get {
-                return ResourceManager.GetString("ksWarnOnOpeningSingleUserDialog", resourceCulture);
             }
         }
         
@@ -2381,15 +2107,6 @@ namespace SIL.FieldWorks.FDO {
         internal static string ksWritingTempCopyAsFw60XMLFailed {
             get {
                 return ResourceManager.GetString("ksWritingTempCopyAsFw60XMLFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} pt.
-        /// </summary>
-        internal static string ksXPt {
-            get {
-                return ResourceManager.GetString("ksXPt", resourceCulture);
             }
         }
         

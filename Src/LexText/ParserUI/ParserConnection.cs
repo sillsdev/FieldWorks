@@ -7,7 +7,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
+using System.Xml.Linq;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.WordWorks.Parser;
 using SIL.Utils;
@@ -23,7 +26,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private string m_activity;
 		private string m_notificationMessage;
-		private string m_traceResult;
+		private XDocument m_traceResult;
 		private readonly ManualResetEvent m_event = new ManualResetEvent(false);
 
 		private readonly object m_syncRoot = new object();
@@ -35,7 +38,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		public ParserConnection(FdoCache cache, IdleQueue idleQueue)
 		{
 			m_activity = "";
-			m_scheduler = new ParserScheduler(cache, idleQueue);
+			m_scheduler = new ParserScheduler(cache, idleQueue, Path.Combine(FwDirectoryFinder.CodeDirectory, FwDirectoryFinder.ksFlexFolderName));
 			m_scheduler.ParserUpdateVerbose += ParserUpdateHandlerForPolling;
 		}
 
@@ -217,7 +220,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				lock (SyncRoot)
 				{
-					string res = m_traceResult;
+					XDocument res = m_traceResult;
 					m_traceResult = null;
 					return res;
 				}

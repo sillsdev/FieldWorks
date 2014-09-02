@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2014 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -6,14 +6,13 @@
 // Responsibility: TE Team
 
 using System;
-using System.Drawing;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 
-using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -23,7 +22,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// FW Splash Screen
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class FwSplashScreen : IProgress, IDisposable
+	public class FwSplashScreen : IThreadedProgress, IDisposable
 	{
 		#region Events
 		event CancelEventHandler IProgress.Canceling
@@ -373,6 +372,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			set {  }
 		}
 
+		/// <summary>
+		/// Gets an object to be used for ensuring that required tasks are invoked on the main
+		/// UI thread.
+		/// </summary>
+		public ISynchronizeInvoke SynchronizeInvoke
+		{
+			get { return m_splashScreen; }
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the progress as a form (used for message box owners, etc).
@@ -383,25 +391,24 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			get { return m_splashScreen; }
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets the style of the ProgressBar.
+		/// Gets or sets a value indicating whether this progress is indeterminate.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public ProgressBarStyle ProgressBarStyle
+		public bool IsIndeterminate
 		{
 			get
 			{
 				if (m_splashScreen.InvokeRequired)
-					return (ProgressBarStyle)m_splashScreen.Invoke((Func<ProgressBarStyle>)(() => m_splashScreen.ProgressBarStyle));
-				return m_splashScreen.ProgressBarStyle;
+					return (bool) m_splashScreen.Invoke((Func<bool>)(() => m_splashScreen.IsIndeterminate));
+				return m_splashScreen.IsIndeterminate;
 			}
+
 			set
 			{
 				if (m_splashScreen.InvokeRequired)
-					m_splashScreen.Invoke((Action<ProgressBarStyle>)(style => m_splashScreen.ProgressBarStyle = style), value);
+					m_splashScreen.Invoke((Action<bool>)(b => m_splashScreen.IsIndeterminate = b), value);
 				else
-					m_splashScreen.ProgressBarStyle = value;
+					m_splashScreen.IsIndeterminate = value;
 			}
 		}
 
@@ -443,6 +450,51 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_splashScreen.Show();
 #endif
 			}
+		}
+		#endregion
+
+		#region IThreadedProgress implementation
+
+		/// <summary>
+		/// Gets a value indicating whether the task has been canceled.
+		/// </summary>
+		public bool Canceled
+		{
+			get { return false; }
+		}
+
+		/// <summary>
+		/// If progress dialog is already showing, we run the background task using it (without
+		/// creating a separate thread). Otherwise we display a new progress dialog as a modal
+		/// dialog and start the background task in a separate thread.
+		/// </summary>
+		/// <param name="backgroundTask">The background task.</param>
+		/// <param name="parameters">The paramters that will be passed to the background task</param>
+		/// <returns>
+		/// The return value from the background thread.
+		/// </returns>
+		/// ------------------------------------------------------------------------------------
+		/// ------------------------------------------------------------------------------------
+		public object RunTask(Func<IThreadedProgress, object[], object> backgroundTask, params object[] parameters)
+		{
+			return RunTask(true, backgroundTask, parameters);
+		}
+
+		/// <summary>
+		/// Displays the progress dialog as a modal dialog and starts the background task.
+		/// </summary>
+		/// <param name="fDisplayUi">set to <c>true</c> to display the progress dialog,
+		/// <c>false</c> to run without UI.</param>
+		/// <param name="backgroundTask">The background task.</param>
+		/// <param name="parameters">The paramters that will be passed to the background task</param>
+		/// <returns>
+		/// The return value from the background thread.
+		/// </returns>
+		/// ------------------------------------------------------------------------------------
+		/// ------------------------------------------------------------------------------------
+		public object RunTask(bool fDisplayUi, Func<IThreadedProgress, object[], object> backgroundTask, params object[] parameters)
+		{
+			return backgroundTask(this, parameters);
 		}
 		#endregion
 	}

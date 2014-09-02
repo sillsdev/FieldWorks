@@ -8,9 +8,11 @@
 using System;
 using System.IO;
 using NUnit.Framework;
-
+using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
+using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.Test.ProjectUnpacker;

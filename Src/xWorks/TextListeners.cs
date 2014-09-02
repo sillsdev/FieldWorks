@@ -427,7 +427,7 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 
 			display.Enabled = false;
-			display.Text = SIL.FieldWorks.Resources.ResourceHelper.DefaultParaCharsStyleName;
+			display.Text = StyleUtils.DefaultParaCharsStyleName;
 
 			return false;		// we get called before the rootsite, so let them have a say.
 		}

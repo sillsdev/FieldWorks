@@ -34,3 +34,4 @@ M: System.Void SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests.BEPPortTests::P
 M: System.Void SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests.BEPPortTests::PortAllBEPsTestsUsingAnUnopenedSource()
 M: System.Collections.IEnumerator SIL.FieldWorks.FDO.FDOTests.ArrayBasedOwningSequence`1::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SIL.FieldWorks.FDO.FDOTests.ArrayBasedOwningCollection`1::System.Collections.IEnumerable.GetEnumerator()
+M: System.Void SIL.FieldWorks.FDO.FDOTests.GoldEticTests::AllPOSTemplatePossibilityItemsMatchGoldEticStandard()

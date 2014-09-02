@@ -15,7 +15,7 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 
 using NUnit.Framework;
-
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 
 namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 
 			var mockMdc = SetupMdc();
 
-			IDomainObjectDTORepository repoDTO = new DomainObjectDtoRepository(7000015, dtos, mockMdc, null);
+			IDomainObjectDTORepository repoDTO = new DomainObjectDtoRepository(7000015, dtos, mockMdc, null, FwDirectoryFinder.FdoDirectories);
 
 			// SUT: Do the migration.
 			m_dataMigrationManager.PerformMigration(repoDTO, 7000016, new DummyProgressDlg());
@@ -117,7 +117,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 												@"<rt class='CmPossibilityList' guid='D9D55B12-EA5E-11DE-95EF-0013722F8DEC' ownerguid='D739CBEA-EA5E-11DE-85BE-0013722F8DEC'></rt>")
 						};
 			var mockMdc = SetupMdc();
-			IDomainObjectDTORepository repoDto = new DomainObjectDtoRepository(7000015, dtos, mockMdc, null);
+			IDomainObjectDTORepository repoDto = new DomainObjectDtoRepository(7000015, dtos, mockMdc, null, FwDirectoryFinder.FdoDirectories);
 			// SUT: Do the migration.
 			m_dataMigrationManager.PerformMigration(repoDto, 7000016, new DummyProgressDlg());
 			// Verification Phase

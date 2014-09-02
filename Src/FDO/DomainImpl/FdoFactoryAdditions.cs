@@ -81,13 +81,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 			if (gloss != null)
 			{
-				if (gloss.Length > 256)
-				{
-					MessageBoxUtils.Show(Strings.ksTruncatingGloss, Strings.ksWarning,
-														System.Windows.Forms.MessageBoxButtons.OK,
-														System.Windows.Forms.MessageBoxIcon.Warning);
-					gloss = gloss.Substring(0, 256);
-				}
 				sense.Gloss.set_String(gloss.get_WritingSystemAt(0), gloss);
 			}
 			return sense;

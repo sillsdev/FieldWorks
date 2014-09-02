@@ -368,7 +368,7 @@
 			<string field="$fieldName" ws="$wsName"/>
 		</part>
 		<part id="LexEntry-Jt-CustomSimpleStringForEntry_$fieldName" type="jtview">
-			<string field="$fieldName"/>
+			<string field="$fieldName" ws="$wsName"/>
 		</part>
 		<part id="LexEntry-Jt-CustomIntegerForEntry_$fieldName" type="jtview">
 			<int field="$fieldName"/>
@@ -780,14 +780,13 @@
 		</part>
 		<!--										   -->
 		<!-- Parts for MatchingEntriesBrowser		   -->
-		<!-- (needed to enable sorting - see LT-10293) -->
 		<!--										   -->
 		<part id="LexEntry-Jt-EntryHeadwordForFindEntry" type="jtview">
 			<span>
 				<properties>
 					<editable value="false"/>
 				</properties>
-				<string field="MLHeadWord" ws="vernacular"/>
+				<string field="MLHeadWord" ws="$ws=best vernoranal"/>
 			</span>
 		</part>
 		<part id="LexEntry-Jt-LexemeFormForFindEntry" type="jtview">
@@ -796,7 +795,7 @@
 					<editable value="false"/>
 				</properties>
 				<obj field="LexemeForm" layout="empty">
-					<string field="Form" ws="$ws=vernacular"/>
+					<string field="Form" ws="$ws=best vernoranal"/>
 				</obj>
 			</span>
 		</part>
@@ -805,7 +804,7 @@
 				<properties>
 					<editable value="false"/>
 				</properties>
-				<string field="CitationForm" ws="$ws=vernacular"/>
+				<string field="CitationForm" ws="$ws=best vernoranal"/>
 			</span>
 		</part>
 		<part id="LexEntry-Jt-AllomorphsForFindEntry" type="jtview">
@@ -814,7 +813,7 @@
 					<editable value="false"/>
 				</properties>
 				<seq field="AlternateForms" layout="empty" sep=", " frag="true"><!-- flag not to split into multiple items when sorted on -->
-					<string field="Form" ws="$ws=vernacular"/>
+					<string field="Form" ws="$ws=best vernoranal"/>
 				</seq>
 			</span>
 		</part>
@@ -824,11 +823,33 @@
 					<editable value="false"/>
 				</properties>
 				<seq field="Senses" layout="empty" sep=", " frag="true"><!-- flag not to split into multiple items when sorted on -->
-					<string field="Gloss" ws="$ws=analysis"/>
+					<string field="Gloss" ws="$ws=best analorvern"/>
 				</seq>
 			</span>
 		</part>
-	</bin>
+    <part id="LexEntry-Jt-ReversalsForFindEntry" type="jtview">
+      <span>
+        <properties>
+          <editable value="false"/>
+        </properties>
+        <seq field="Senses" layout="empty" sep=", " frag="true"><!-- flag not to split into multiple items when sorted on -->
+          <seq field="ReversalEntries" layout="empty" sep=", " frag="true">
+		    <string field="ReversalForm" ws="$ws=best analorvern"/>
+		  </seq>
+        </seq>
+      </span>
+    </part>
+    <part id="LexEntry-Jt-DefinitionsForFindEntry" type="jtview">
+      <span>
+        <properties>
+          <editable value="false"/>
+        </properties>
+        <seq field="Senses" layout="empty" sep=", " frag="true"><!-- flag not to split into multiple items when sorted on -->
+          <string field="Definition" ws="$ws=best analorvern"/>
+        </seq>
+      </span>
+    </part>
+  </bin>
 
 	<bin class="LexEtymology">
 		<part id="LexEtymology-Detail-FormAllWs" type="Detail">

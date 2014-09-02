@@ -10,12 +10,8 @@ using System.Diagnostics;
 using System.IO;
 using System.ServiceProcess;
 using System.Text;
-using System.Windows.Forms;
 using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.Win32;
-
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Resources;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
@@ -45,29 +41,28 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		bool m_fHaveSqlServer;
 		bool m_fHaveOldFieldWorks;
 
+		private readonly string m_converterConsolePath;
 		readonly bool m_fVerboseDebug;
 		private readonly IThreadedProgress m_progressDlg;
 		#endregion
-
-		/// <summary>
-		/// provides parent form for progress dialog
-		/// </summary>
-		public Form ParentForm { get; set; }
 
 		#region Constructors
 		/// <summary>
 		/// Constructor for run-time debugging.
 		/// </summary>
-		public ImportFrom6_0(IThreadedProgress progressDlg, bool fDebug)
+		public ImportFrom6_0(IThreadedProgress progressDlg, string converterConsolePath, string dbPath, bool fDebug)
 		{
 			m_progressDlg = progressDlg;
+			m_converterConsolePath = converterConsolePath;
+			m_dbPath = dbPath;
 			m_fVerboseDebug = fDebug;
 		}
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public ImportFrom6_0(IThreadedProgress progressDlg) : this(progressDlg, false)
+		public ImportFrom6_0(IThreadedProgress progressDlg, string converterConsolePath, string dbPath)
+			: this(progressDlg, converterConsolePath, dbPath, false)
 		{
 		}
 		#endregion
@@ -75,22 +70,17 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		/// <summary>
 		/// Do the import of the specified zip or XML file. Return true if successful and the caller should open the database.
 		/// </summary>
-		public bool Import(string pathname, string projectName, out string projectFile)
+		public bool Import(string pathname, string projectName, string destFolder, out string projectFile)
 		{
-			var destFolder = DirectoryFinder.ProjectsDirectory;
 			var folderName = Path.Combine(destFolder, projectName);
-			projectFile = Path.Combine(folderName, projectName + FwFileExtensions.ksFwDataXmlFileExtension);
+			projectFile = Path.Combine(folderName, projectName + FdoFileHelper.ksFwDataXmlFileExtension);
 			string extension = Path.GetExtension(pathname);
 			if (extension != null)
 				extension = extension.ToLowerInvariant();
 			if (extension == ".xml")
 			{
 				if (!IsValid6_0Xml(pathname))
-				{
-					MessageBoxUtils.Show(m_progressDlg.Form, Strings.ksBackupXMLFileTooOld,
-						Strings.ksCannotConvert);
-					return false;
-				}
+					throw new CannotConvertException(Strings.ksBackupXMLFileTooOld);
 				var result1 = ImportFrom6_0Xml(pathname, folderName, projectFile);
 				return result1;
 			}
@@ -109,7 +99,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 						if (fCreateFolder)
 							Directory.CreateDirectory(folderName);
 						string message = String.Format(Strings.ksExtractingFromZip, Path.GetFileName(entry.Name));
-						if (!UnzipFile(zipFile, entry, message, out tempPath))
+						if (!UnzipFile(destFolder, zipFile, entry, message, out tempPath))
 						{
 							return false;
 						}
@@ -126,9 +116,16 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 							else
 								continue;
 						}
-						// Next step is to run the converter. It should be in the same directory as FDO.dll
-						var result = ImportFrom6_0Xml(tempPath, folderName, projectFile);
-						File.Delete(tempPath);
+						bool result;
+						try
+						{
+							// Next step is to run the converter. It should be in the same directory as FDO.dll
+							result = ImportFrom6_0Xml(tempPath, folderName, projectFile);
+						}
+						finally
+						{
+							File.Delete(tempPath);
+						}
 						return result;
 					}
 					if (entry.Name.ToLowerInvariant().EndsWith(".bak") && entry.IsFile)
@@ -139,10 +136,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 					}
 				}
 				if (!fHasBak)
-				{
-					MessageBoxUtils.Show(m_progressDlg.Form, Strings.ksZipNotFieldWorksBackup, Strings.ksCannotConvert);
-					return false;
-				}
+					throw new CannotConvertException(Strings.ksZipNotFieldWorksBackup);
 				if (HaveFwSqlServer && HaveOldFieldWorks)
 				{
 					foreach (ZipEntry entry in zipFile)
@@ -151,7 +145,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 						{
 							string tempPath;
 							string message = String.Format(Strings.ksExtractingFromZip, Path.GetFileName(entry.Name));
-							if (!UnzipFile(zipFile, entry, message, out tempPath))
+							if (!UnzipFile(destFolder, zipFile, entry, message, out tempPath))
 							{
 								return false;
 							}
@@ -176,32 +170,37 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 							proj, "{0}", "{1}");
 							if (!DumpDatabaseAsXml(TempDatabaseName, tempXmlPath, msg3, errMsgFmt3))
 								return false;
-							// Next step is to run the converter. It should be in the same directory as FDO.dll
-							var result = ImportFrom6_0Xml(tempXmlPath, folderName, projectFile);
-							File.Delete(tempXmlPath);
-							DeleteTempDatabase();
+
+							bool result;
+							try
+							{
+								// Next step is to run the converter. It should be in the same directory as FDO.dll
+								result = ImportFrom6_0Xml(tempXmlPath, folderName, projectFile);
+							}
+							finally
+							{
+								File.Delete(tempXmlPath);
+								DeleteTempDatabase();
+							}
 							return result;
 						}
 					}
 					// Should never get here, but ...
-					MessageBoxUtils.Show(m_progressDlg.Form, Strings.ksZipNotFieldWorksBackup, Strings.ksCannotConvert);
+					throw new CannotConvertException(Strings.ksZipNotFieldWorksBackup);
 				}
 				return false;
 			}
 		}
 
-		private bool UnzipFile(ZipFile zipFile, ZipEntry entry, string message, out string tempPath)
+		private bool UnzipFile(string folderName, ZipFile zipFile, ZipEntry entry, string message, out string tempPath)
 		{
-			string folderName = DirectoryFinder.ProjectsDirectory;
 			if (!Directory.Exists(folderName))
 				Directory.CreateDirectory(folderName);
 			// We will extract the file to here.
 			tempPath = Path.Combine(folderName, entry.Name);
 			using (var stream = zipFile.GetInputStream(entry))
 			{
-				var form = ParentForm ?? Form.ActiveForm;
 				m_progressDlg.Title = Strings.ksConverting;
-				m_progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
 				m_progressDlg.Maximum = (int)entry.Size;
 				if (File.Exists(tempPath))
 					File.Delete(tempPath);	// if we tried and failed earlier, try again.
@@ -254,7 +253,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			catch (Exception)
 			{
 				if (m_fVerboseDebug)
-					MessageBoxUtils.Show("The FieldWorks installation of SQL Server (MSSQL$SILFW) does not exist.",
+					Debug.WriteLine("The FieldWorks installation of SQL Server (MSSQL$SILFW) does not exist.",
 						"DEBUG!");
 				return false;	// The FieldWorks installation of SQL Server isn't available
 			}
@@ -279,7 +278,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 					if (clsidKey == null)
 					{
 						if (m_fVerboseDebug)
-							MessageBoxUtils.Show("Unable to open the CLSID registry subkey????", "DEBUG!");
+							Debug.WriteLine("Unable to open the CLSID registry subkey????");
 						return false;
 					}
 					// check for registered class id for FwXmlData.
@@ -287,7 +286,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 					if (cellarPath == null)
 					{
 						if (m_fVerboseDebug)
-							MessageBoxUtils.Show("FwCellar.dll is not registered.", "DEBUG!");
+							Debug.WriteLine("FwCellar.dll is not registered.", "DEBUG!");
 						return false;
 					}
 					// check for registered class id for MigrateData.
@@ -295,7 +294,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 					if (migratePath == null)
 					{
 						if (m_fVerboseDebug)
-							MessageBoxUtils.Show("MigrateData.dll is not registered.", "DEBUG!");
+							Debug.WriteLine("MigrateData.dll is not registered.", "DEBUG!");
 						return false;
 					}
 					// check for registered class id for LgWritingSystemFactory.
@@ -303,7 +302,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 					if (languagePath == null)
 					{
 						if (m_fVerboseDebug)
-							MessageBoxUtils.Show("Language.dll is not registered.", "DEBUG!");
+							Debug.WriteLine("Language.dll is not registered.", "DEBUG!");
 						return false;
 					}
 					// check for registered class id for TsStrFactory.
@@ -311,7 +310,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 					if (kernelPath == null)
 					{
 						if (m_fVerboseDebug)
-							MessageBoxUtils.Show("FwKernel.dll is not registered.", "DEBUG!");
+							Debug.WriteLine("FwKernel.dll is not registered.", "DEBUG!");
 						return false;
 					}
 					// check for registered class id for OleDbEncap.
@@ -319,7 +318,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 					if (dbaccessPath == null)
 					{
 						if (m_fVerboseDebug)
-							MessageBoxUtils.Show("DbAccess.dll is not registered.", "DEBUG!");
+							Debug.WriteLine("DbAccess.dll is not registered.", "DEBUG!");
 						return false;
 					}
 					// Get (and save) the path to dumpxml.exe.
@@ -337,7 +336,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 							if (!File.Exists(m_dumpxmlPath))
 							{
 								if (m_fVerboseDebug)
-									MessageBoxUtils.Show("Cannot find dumpxml.exe in the old FieldWorks installation.", "DEBUG!");
+									Debug.WriteLine("Cannot find dumpxml.exe in the old FieldWorks installation.", "DEBUG!");
 								return false;
 							}
 						}
@@ -352,15 +351,14 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 						if (!File.Exists(scriptPath))
 						{
 							if (m_fVerboseDebug)
-								MessageBoxUtils.Show("Cannot find DataMigration\\200259To200260.sql in the old FieldWorks installation.", "DEBUG!");
+								Debug.WriteLine("Cannot find DataMigration\\200259To200260.sql in the old FieldWorks installation.", "DEBUG!");
 							return false;
 						}
 					}
-					m_dbPath = Path.Combine(DirectoryFinder.GetFWCodeSubDirectory("MSSQLMigration"), "db.exe");
 					if (!File.Exists(m_dbPath))
 					{
 						if (m_fVerboseDebug)
-							MessageBoxUtils.Show("Cannot find MSSQLMigration\\db.exe in the FieldWorks 7.0 or later installation.", "DEBUG!");
+							Debug.WriteLine("Cannot find MSSQLMigration\\db.exe in the FieldWorks 7.0 or later installation.", "DEBUG!");
 						return false;
 					}
 					return true;
@@ -373,7 +371,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 					string msg = String.Format(
 						"An exception was thrown while checking for an old version of FieldWorks:{1}{0}",
 						e.Message, Environment.NewLine);
-					MessageBoxUtils.Show(msg, "DEBUG!");
+					Debug.WriteLine(msg, "DEBUG!");
 				}
 			}
 			return false;
@@ -395,7 +393,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 						if (m_fVerboseDebug)
 						{
 							string msg = String.Format("Nonexistent file for a registered COM DLL: {0}", dllPath);
-							MessageBox.Show(msg, "DEBUG!");
+							Debug.WriteLine(msg, "DEBUG!");
 						}
 						return null;
 					}
@@ -411,40 +409,17 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 						{
 							string msg = String.Format("Multiple versions found in the registered COM DLLs: {0} and {1} [{2}]",
 								version, fileVersion, dllPath);
-							MessageBoxUtils.Show(msg, "DEBUG!");
+							Debug.WriteLine(msg, "DEBUG!");
 						}
 						return null; // don't want a mix of versions!!
 					}
 					if (String.IsNullOrEmpty(version) || version.CompareTo("5.4") < 0 || version.CompareTo("6.1") >= 0)
 					{
-						if (!String.IsNullOrEmpty(version) && version.CompareTo("5.4") < 0)
-						{
-							using (FWVersionTooOld dlg = new FWVersionTooOld(version))
-							{
-								dlg.ShowDialog();
-							}
-							string launchesFlex = "0";
-							string launchesTE = "0";
-							if (RegistryHelper.KeyExists(FwRegistryHelper.FieldWorksRegistryKey, "Language Explorer"))
-							{
-								using (RegistryKey keyFlex = FwRegistryHelper.FieldWorksRegistryKey.CreateSubKey("Language Explorer"))
-									launchesFlex = keyFlex.GetValue("launches", "0") as string;
-							}
-							if (RegistryHelper.KeyExists(FwRegistryHelper.FieldWorksRegistryKey, FwSubKey.TE))
-							{
-								using (RegistryKey keyTE = FwRegistryHelper.FieldWorksRegistryKey.CreateSubKey(FwSubKey.TE))
-									launchesTE = keyTE.GetValue("launches", "0") as string;
-							}
-							if (launchesFlex == "0" && launchesTE == "0")
-							{
-								FwRegistryHelper.FieldWorksRegistryKey.SetValue("MigrationTo7Needed", "true");
-							}
-						}
-						else if (m_fVerboseDebug)
+						if (m_fVerboseDebug)
 						{
 							string msg = String.Format("Invalid version found in a registered COM DLL: {0} [{1}]",
 								version, dllPath);
-							MessageBox.Show(msg, "DEBUG!");
+							Debug.WriteLine(msg, "DEBUG!");
 						}
 						return null;
 					}
@@ -525,7 +500,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		{
 			using (var process = CreateAndInitProcess(m_dbPath, args))
 			{
-				m_progressDlg.ProgressBarStyle = ProgressBarStyle.Marquee; // Can't get actual progress from external program
+				m_progressDlg.IsIndeterminate = true; // Can't get actual progress from external program
 				m_progressDlg.Title = Strings.ksConverting;
 				if (!(bool)m_progressDlg.RunTask(true, ProcessFile, process, progressMsg))
 				{
@@ -535,8 +510,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				if (process.ExitCode != 0 || !string.IsNullOrEmpty(m_errorMessages))
 				{
 					var msg = string.Format(errorMsgFmt, process.ExitCode, m_errorMessages);
-					MessageBoxUtils.Show(m_progressDlg.Form, msg, Strings.ksCannotConvert);
-					return false;
+					throw new CannotConvertException(msg);
 				}
 				return true;
 			}
@@ -551,7 +525,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		{
 			using (var process = CreateAndInitProcess(m_dumpxmlPath, "-d \"" + dbName + "\" -o \"" + tempXmlPath + '"'))
 			{
-				m_progressDlg.ProgressBarStyle = ProgressBarStyle.Marquee; // Can't get actual progress from external program
+				m_progressDlg.IsIndeterminate = true; // Can't get actual progress from external program
 				m_progressDlg.Title = Strings.ksConverting;
 				if (!(bool)m_progressDlg.RunTask(true, ProcessFile, process, progressMsg))
 				{
@@ -561,8 +535,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				if (process.ExitCode != 0 || !string.IsNullOrEmpty(m_errorMessages))
 				{
 					var msg = string.Format(errorMsgFmt, process.ExitCode, m_errorMessages);
-					MessageBoxUtils.Show(m_progressDlg.Form, msg, Strings.ksCannotConvert);
-					return false;
+					throw new CannotConvertException(msg);
 				}
 				return true;
 			}
@@ -663,11 +636,9 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 					File.Delete(replacedProj);
 				File.Move(projectFile, replacedProj);
 			}
-			using (var process = CreateAndInitProcess(
-				Path.Combine(DirectoryFinder.FWCodeDirectory, "ConverterConsole.exe"),
-				'"' + pathname + "\" \"" + projectFile + '"'))
+			using (var process = CreateAndInitProcess(m_converterConsolePath, '"' + pathname + "\" \"" + projectFile + '"'))
 			{
-				m_progressDlg.ProgressBarStyle = ProgressBarStyle.Marquee; // Can't get actual progress from external program
+				m_progressDlg.IsIndeterminate = true; // Can't get actual progress from external program
 				m_progressDlg.Title = Strings.ksConverting;
 				string message = String.Format(Strings.ksConvertingFile, Path.GetFileNameWithoutExtension(projectFile));
 				if (!(bool)m_progressDlg.RunTask(true, ProcessFile, process, message))
@@ -678,19 +649,12 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				else if (process.ExitCode != 0 || !String.IsNullOrEmpty(m_errorMessages))
 				{
 					message = String.Format(Strings.ksConversionProcessFailed, process.ExitCode, m_errorMessages);
-					// ENHANCE (TimS): We should not be showing a message box at this level. If we
-					// really need to show it here, we should pass in the owning form instead of relying on
-					// Form.ActiveForm since it can return null if no .Net forms have focus.
-					MessageBoxUtils.Show(Form.ActiveForm, message, Strings.ksCannotConvert);
-					retval = false;
+					BackOutCleanUp(projectFile, fCreateFolder, folderName, replacedProj);
+					throw new CannotConvertException(message);
 				}
 				if (retval == false)
 				{
-					File.Delete(projectFile);
-					if (fCreateFolder)
-						Directory.Delete(folderName);
-					else if (replacedProj != null)
-						File.Move(replacedProj, projectFile);
+					BackOutCleanUp(projectFile, fCreateFolder, folderName, replacedProj);
 				}
 				else
 				{
@@ -713,6 +677,15 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				}
 				return retval;
 			}
+		}
+
+		private void BackOutCleanUp(string projectFile, bool fCreateFolder, string folderName, string replacedProj)
+		{
+			File.Delete(projectFile);
+			if (fCreateFolder)
+				Directory.Delete(folderName);
+			else if (replacedProj != null)
+				File.Move(replacedProj, projectFile);
 		}
 
 		/// <summary>
@@ -806,4 +779,25 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				m_stdoutBldr.AppendLine(e.Data);
 		}
 	}
+
+	#region class CannotConvertException
+	/// ----------------------------------------------------------------------------------------
+	/// <summary>
+	/// Exception type to encapsulate a problem while running the conversion
+	/// </summary>
+	/// ----------------------------------------------------------------------------------------
+	public class CannotConvertException : Exception
+	{
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Initializes a new instance of the <see cref="CannotConvertException"/> class.
+		/// </summary>
+		/// <param name="message">The message.</param>
+		/// ------------------------------------------------------------------------------------
+		public CannotConvertException(string message)
+			: base(message)
+		{
+		}
+	}
+	#endregion
 }

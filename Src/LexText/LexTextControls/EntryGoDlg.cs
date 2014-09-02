@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2014 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -7,7 +11,6 @@ using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -91,7 +94,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_searchFieldGetter = new EntrySearchFieldGetter { AnalHvos = m_analHvos,
 				VernHvos = m_vernHvos, SearchWs = wsSearch };
 			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromMediator(mediator), mediator, configNode,
-				cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances().Cast<ICmObject>(), SearchType.Prefix,
+				cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances().Cast<ICmObject>(), SearchType.FullText,
 				m_searchFieldGetter.GetEntrySearchFields);
 		}
 
@@ -140,14 +143,11 @@ namespace SIL.FieldWorks.LexText.Controls
 				var selectedWs = (IWritingSystem) m_cbWritingSystems.SelectedItem;
 				int wsSelHvo = selectedWs != null ? selectedWs.Handle : 0;
 
-				string form, gloss;
-				int vernWs, analWs;
-				if (!GetSearchKey(wsSelHvo, searchKey, out form, out vernWs, out gloss, out analWs))
+				if (!m_vernHvos.Contains(wsSelHvo) && !m_analHvos.Contains(wsSelHvo))
 				{
-					int ws = TsStringUtils.GetWsAtOffset(m_tbForm.Tss, 0);
-					if (!GetSearchKey(ws, searchKey, out form, out vernWs, out gloss, out analWs))
+					wsSelHvo = TsStringUtils.GetWsAtOffset(m_tbForm.Tss, 0);
+					if (!m_vernHvos.Contains(wsSelHvo) && !m_analHvos.Contains(wsSelHvo))
 						return;
-					wsSelHvo = ws;
 				}
 
 				if (m_oldSearchKey == searchKey && m_oldSearchWs == wsSelHvo)
@@ -163,18 +163,20 @@ namespace SIL.FieldWorks.LexText.Controls
 				m_oldSearchKey = searchKey;
 				m_oldSearchWs = wsSelHvo;
 
+				// SearchFields must be added both here and in EntrySearchFieldGetter.GetEntrySearchFields
 				var fields = new List<SearchField>();
-				if (form != null)
+				var tssKey = m_tsf.MakeString(searchKey, wsSelHvo);
+				if (m_vernHvos.Contains(wsSelHvo))
 				{
-					ITsString tssForm = m_tsf.MakeString(form, vernWs);
-					fields.Add(new SearchField(LexEntryTags.kflidCitationForm, tssForm));
-					fields.Add(new SearchField(LexEntryTags.kflidLexemeForm, tssForm));
-					fields.Add(new SearchField(LexEntryTags.kflidAlternateForms, tssForm));
+					fields.Add(new SearchField(LexEntryTags.kflidCitationForm, tssKey));
+					fields.Add(new SearchField(LexEntryTags.kflidLexemeForm, tssKey));
+					fields.Add(new SearchField(LexEntryTags.kflidAlternateForms, tssKey));
 				}
-				if (gloss != null)
+				if (m_analHvos.Contains(wsSelHvo))
 				{
-					ITsString tssGloss = m_tsf.MakeString(gloss, analWs);
-					fields.Add(new SearchField(LexSenseTags.kflidGloss, tssGloss));
+					fields.Add(new SearchField(LexSenseTags.kflidGloss, tssKey));
+					fields.Add(new SearchField(LexSenseTags.kflidReversalEntries, tssKey));
+					fields.Add(new SearchField(LexSenseTags.kflidDefinition, tssKey));
 				}
 
 				if (!Controls.Contains(m_searchAnimation))
@@ -195,39 +197,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			m_matchingObjectsBrowser.Reset();
 			base.m_cbWritingSystems_SelectedIndexChanged(sender, e);
-		}
-
-		private bool GetSearchKey(int ws, string searchKey, out string form, out int vernWs, out string gloss, out int analWs)
-		{
-			form = gloss = null;
-			vernWs = analWs = 0;
-
-			bool isVernWs = m_vernHvos.Contains(ws);
-			bool isAnalWs = m_analHvos.Contains(ws);
-			if (isVernWs && isAnalWs)
-			{
-				// Ambiguous, so search both.
-				vernWs = ws;
-				analWs = ws;
-				form = searchKey;
-				gloss = searchKey;
-			}
-			else if (isVernWs)
-			{
-				vernWs = ws;
-				form = searchKey;
-			}
-			else if (isAnalWs)
-			{
-				analWs = ws;
-				gloss = searchKey;
-			}
-			else
-			{
-				return false;
-			}
-
-			return true;
 		}
 
 		private class EntrySearchFieldGetter
@@ -269,6 +238,15 @@ namespace SIL.FieldWorks.LexText.Controls
 						var gloss = sense.Gloss.StringOrNull(SearchWs);
 						if (gloss != null && gloss.Length > 0)
 							yield return new SearchField(LexSenseTags.kflidGloss, gloss);
+						var dffn = sense.Definition.StringOrNull(SearchWs);
+						if (dffn != null && dffn.Length > 0)
+							yield return new SearchField(LexSenseTags.kflidDefinition, dffn);
+						foreach (var revEntry in sense.ReversalEntriesRC)
+						{
+							var revForm = revEntry.ReversalForm.StringOrNull(SearchWs);
+							if (revForm != null && revForm.Length > 0)
+								yield return new SearchField(LexSenseTags.kflidReversalEntries, revForm);
+						}
 					}
 				}
 			}

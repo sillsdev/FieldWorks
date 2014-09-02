@@ -10,15 +10,9 @@
 
 using System;
 using System.Diagnostics;
-using System.Xml;
 using System.Text;
-using System.Collections.Generic;
-
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.FDO.DomainImpl

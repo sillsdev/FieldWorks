@@ -114,6 +114,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
     </Reference>
+    <Reference Include="FDO, Version=8.0.6.24704, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
+    </Reference>
     <Reference Include="FwResources">
       <Name>FwResources</Name>
       <HintPath>..\..\..\Output\Debug\FwResources.dll</HintPath>
@@ -122,10 +126,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\IPCFramework.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
-    </Reference>
     <Reference Include="Palaso, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\Palaso.dll</HintPath>
@@ -133,10 +133,6 @@
     <Reference Include="Palaso.Lift, Version=1.9.16.1, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\Palaso.Lift.dll</HintPath>
-    </Reference>
-    <Reference Include="ParatextShared, Version=7.2.8.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\DistFiles\ParatextShared.dll</HintPath>
     </Reference>
     <Reference Include="SharedScrUtils, Version=7.0.1.18991, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -174,17 +170,12 @@
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="CaseFunctions.cs" />
     <Compile Include="ConsoleProgress.cs" />
     <Compile Include="FLExBridgeHelper.cs" />
     <Compile Include="IFocusablePanePortion.cs" />
-    <Compile Include="IProjectIdentifier.cs" />
-    <Compile Include="ISpellEngine.cs" />
-    <Compile Include="IThreadedProgress.cs" />
-    <Compile Include="DirectoryFinder.cs" />
+    <Compile Include="FwDirectoryFinder.cs" />
     <Compile Include="FwLinkArgs.cs" />
     <Compile Include="FwRegistryHelper.cs" />
-    <Compile Include="FwStartupException.cs" />
     <Compile Include="FwSubKey.cs" />
     <Compile Include="FwUtils.cs" />
     <Compile Include="FwUtilsStrings.Designer.cs">
@@ -192,31 +183,19 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>FwUtilsStrings.resx</DependentUpon>
     </Compile>
-    <Compile Include="FwVersionInfoProvider.cs" />
-    <Compile Include="GenDate.cs" />
     <Compile Include="InstallationException.cs" />
-    <Compile Include="IProgress.cs" />
     <Compile Include="IProjectSpecificSettingsKeyProvider.cs" />
-    <Compile Include="IServiceLocatorBootstrapper.cs" />
     <Compile Include="LayoutKeyUtils.cs" />
     <Compile Include="MeasurementUtils.cs" />
     <Compile Include="Folders.cs" />
     <Compile Include="ParagraphCorrelation.cs" />
     <Compile Include="PictureHolder.cs" />
     <Compile Include="ProgressMessageArgs.cs" />
-    <Compile Include="ProjectInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="SearchTimer.cs" />
     <Compile Include="SelectionEvents.cs" />
     <Compile Include="ShowHelp.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SilTime.cs" />
-    <Compile Include="SpellEngine.cs" />
-    <Compile Include="SpellingHelper.cs" />
-    <Compile Include="StringIgnoreCaseComparer.cs" />
-    <Compile Include="StringSearcher.cs" />
     <Compile Include="ValidationProgress.cs" />
     <Compile Include="ExemplarCharactersHelper.cs">
     </Compile>

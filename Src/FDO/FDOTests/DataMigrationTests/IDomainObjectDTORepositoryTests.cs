@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.FieldWorks.FDO.Infrastructure;
 
@@ -45,7 +46,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void NulldtosParamTest()
 		{
-			new DomainObjectDtoRepository(1, null, m_mdc, null);
+			new DomainObjectDtoRepository(1, null, m_mdc, null, FwDirectoryFinder.FdoDirectories);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -58,7 +59,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		public void NullmdcParamTest()
 		{
 			new DomainObjectDtoRepository(1, new HashSet<DomainObjectDTO>(),
-										  null, null);
+										  null, null, FwDirectoryFinder.FdoDirectories);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -74,7 +75,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 				1,
 				new HashSet<DomainObjectDTO>(),
 				m_mdc,
-				null);
+				null, FwDirectoryFinder.FdoDirectories);
 			dtoRepos.GetDTO(Guid.NewGuid().ToString());
 		}
 
@@ -91,7 +92,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			const string lpGuid = "9719A466-2240-4DEA-9722-9FE0746A30A6";
 			var lpDto = CreatoDTO(dtos, lpGuid, "LangProject", null);
 			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(1, dtos,
-																				m_mdc, null);
+																				m_mdc, null, FwDirectoryFinder.FdoDirectories);
 			var resultDto = dtoRepos.GetDTO(lpGuid);
 			Assert.AreSame(lpDto, resultDto, "Wrong DTO.");
 		}
@@ -109,7 +110,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			const string lpGuid = "9719A466-2240-4DEA-9722-9FE0746A30A6";
 			CreatoDTO(dtos, lpGuid, "LangProject", null);
 			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(1, dtos,
-																				m_mdc, null);
+																				m_mdc, null, FwDirectoryFinder.FdoDirectories);
 			DomainObjectDTO dto;
 			var retval = dtoRepos.TryGetValue(Guid.NewGuid().ToString().ToLower(), out dto);
 			Assert.IsNull(dto, "Oops.It does exist.");
@@ -147,7 +148,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			const string lpGuid = "9719A466-2240-4DEA-9722-9FE0746A30A6";
 			CreatoDTO(dtos, lpGuid, "LangProject", null);
 			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(1, dtos,
-																				m_mdc, null);
+																				m_mdc, null, FwDirectoryFinder.FdoDirectories);
 			var result = new List<DomainObjectDTO>(dtoRepos.AllInstancesSansSubclasses("CmObject"));
 			Assert.AreEqual(0, result.Count, "Wrong number of DTOs (expected 0).");
 			result = new List<DomainObjectDTO>(dtoRepos.AllInstancesSansSubclasses("LangProject"));
@@ -169,7 +170,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			const string lexDbGuid = "6C84F84A-5B99-4CF5-A7D5-A308DDC604E0";
 			CreatoDTO(dtos, lexDbGuid, "LexDb", null);
 			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(1, dtos,
-																				m_mdc, null);
+																				m_mdc, null, FwDirectoryFinder.FdoDirectories);
 			var result = new List<DomainObjectDTO>(dtoRepos.AllInstancesWithSubclasses("CmObject"));
 			Assert.AreEqual(2, result.Count, "Wrong number of DTOs (expected 2).");
 		}
@@ -189,7 +190,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			const string lexDbGuid = "6C84F84A-5B99-4CF5-A7D5-A308DDC604E0";
 			var ldbDto = CreatoDTO(dtos, lexDbGuid, "LexDb", lpGuid);
 			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(1, dtos,
-																				m_mdc, null);
+																				m_mdc, null, FwDirectoryFinder.FdoDirectories);
 
 			Assert.IsNull(dtoRepos.GetOwningDTO(lpDto), "LP has owner?");
 			var ldbOwner = dtoRepos.GetOwningDTO(ldbDto);
@@ -212,7 +213,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			const string lexDbGuid = "6C84F84A-5B99-4CF5-A7D5-A308DDC604E0";
 			CreatoDTO(dtos, lexDbGuid, "LexDb", null);
 			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(1, dtos,
-																				m_mdc, null);
+																				m_mdc, null, FwDirectoryFinder.FdoDirectories);
 
 			// Create new DTO and add it.
 			var newGuid = Guid.NewGuid();
@@ -236,7 +237,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			const string lpGuid = "9719A466-2240-4DEA-9722-9FE0746A30A6";
 			var lpDto = CreatoDTO(dtos, lpGuid, "LangProject", null);
 			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(1, dtos,
-																				m_mdc, null);
+																				m_mdc, null, FwDirectoryFinder.FdoDirectories);
 
 			dtoRepos.Remove(lpDto);
 			Assert.IsTrue(((DomainObjectDtoRepository)dtoRepos).Goners.Contains(lpDto), "Goner not in goners set.");
@@ -265,7 +266,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			const string lpGuid = "9719A466-2240-4DEA-9722-9FE0746A30A6";
 			var lpDto = CreatoDTO(dtos, lpGuid, "LangProject", null);
 			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(1, dtos,
-																				m_mdc, null);
+																				m_mdc, null, FwDirectoryFinder.FdoDirectories);
 
 			dtoRepos.Update(lpDto);
 			Assert.IsTrue(((DomainObjectDtoRepository)dtoRepos).Dirtballs.Contains(lpDto), "Dirty DTO not in dirtball set.");
@@ -285,7 +286,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			const string lpGuid = "9719A466-2240-4DEA-9722-9FE0746A30A6";
 			CreatoDTO(dtos, lpGuid, "LangProject", null);
 			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(1, dtos,
-																				m_mdc, null);
+																				m_mdc, null, FwDirectoryFinder.FdoDirectories);
 
 			var newGuid = Guid.NewGuid();
 			var newby = new DomainObjectDTO(newGuid.ToString(), "LexEntry", "<rt />");

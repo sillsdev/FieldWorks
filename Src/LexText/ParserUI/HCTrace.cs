@@ -1,105 +1,58 @@
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Xml;
-using SIL.Utils;
+using System.Xml.Linq;
+using System.Xml.Xsl;
+using SIL.FieldWorks.FDO;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="m_cache and m_mediator are references")]
 	public class HCTrace : ParserTrace
 	{
-		/// <summary>
-		/// Temp File names
-		/// </summary>
-		const string m_ksHCParse = "HCParse";
-		const string m_ksHCTrace = "HCTrace";
-
-		/// <summary>
-		/// For testing
-		/// </summary>
-		public HCTrace()
+		private static ParserTraceUITransform s_traceTransform;
+		private static ParserTraceUITransform TraceTransform
 		{
+			get
+			{
+				if (s_traceTransform == null)
+					s_traceTransform = new ParserTraceUITransform("FormatHCTrace");
+				return s_traceTransform;
+			}
 		}
+
+		private readonly Mediator m_mediator;
+		private readonly FdoCache m_cache;
+
 		/// <summary>
 		/// The real deal
 		/// </summary>
 		/// <param name="mediator"></param>
 		public HCTrace(Mediator mediator)
-			: base(mediator)
 		{
-			m_sParse = m_ksHCParse;
-			m_sTrace = m_ksHCTrace;
-			m_sFormatParse = "FormatXAmpleParse.xsl"; // the XAmple one works fine with Hermit Crab parse output
-			m_sFormatTrace = "FormatHCTrace.xsl";
-
+			m_mediator = mediator;
+			m_cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
 		}
 
-		/// <summary>
-		/// Initialize what is needed to perform the word grammar debugging and
-		/// produce an html page showing the results
-		/// </summary>
-		/// <param name="sNodeId">Id of the node to use</param>
-		/// <param name="sForm">the wordform being tried</param>
-		/// <param name="sLastURL"></param>
-		/// <returns>temporary html file showing the results of the first step</returns>
-		public override string SetUpWordGrammarDebuggerPage(string sNodeId, string sForm, string sLastURL)
+		public override string CreateResultPage(XDocument result, bool isTrace)
 		{
-			m_wordGrammarDebugger = new HCWordGrammarDebugger(m_mediator, m_parseResult);
-			return m_wordGrammarDebugger.SetUpWordGrammarDebuggerPage(sNodeId, sForm, sLastURL);
-		}
-
-		public override string CreateResultPage(string result)
-		{
-			bool fIsTrace = result.Contains("<Trace>");
-
-			m_parseResult = new XmlDocument();
-			m_parseResult.LoadXml(result);
-			ConvertHvosToStrings(fIsTrace);
-
-			AddMsaNodes(false);
-
-			string sInput = CreateTempFile(m_sTrace, "xml");
-			m_parseResult.Save(sInput);
-
-			TransformKind kind = (fIsTrace ? TransformKind.kcptTrace : TransformKind.kcptParse);
-			string sOutput = TransformToHtml(sInput, kind);
-			return sOutput;
-		}
-
-		private void ConvertHvosToStrings(bool fIsTrace)
-		{
-			if (fIsTrace)
+			ParserTraceUITransform transform;
+			string baseName;
+			if (isTrace)
 			{
-				ConvertMorphs(m_parseResult, "//RuleAllomorph/Morph | //RootAllomorph/Morph | //Morphs/Morph | //Others/Allomorph/Morph", false);
-				//ConvertMorphs(doc, "//WordGrammarAttempt/Morphs", true);
+				WordGrammarDebugger = new HCWordGrammarDebugger(m_mediator, result);
+				transform = TraceTransform;
+				baseName = "HCTrace";
 			}
 			else
 			{
-				ConvertMorphs(m_parseResult, "//Morphs/Morph", false);
+				transform = ParseTransform;
+				baseName = "HCParse";
 			}
-		}
-
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		protected override void CreateMorphNodes(XmlDocument doc, XmlNode seqNode, string sNodeId)
-		{
-			string s = "//WordGrammarAttempt[Id=\"" + sNodeId + "\"]";
-			XmlNode node = m_parseResult.SelectSingleNode(s);
-			if (node != null)
-			{
-				XmlNodeList morphs = node.SelectNodes("Morphs");
-				foreach (XmlNode morph in morphs)
-				{
-					CreateMorphXmlElement(doc, seqNode, morph);
-				}
-			}
-		}
-
-		protected override void AddParserSpecificArguments(List<XmlUtils.XSLParameter> args)
-		{
-			string sLoadErrorFile = Path.Combine(Path.GetTempPath(), m_sDataBaseName + "HCLoadErrors.xml");
-			args.Add(new XmlUtils.XSLParameter("prmHCTraceLoadErrorFile", sLoadErrorFile));
+			var args = new XsltArgumentList();
+			args.AddParam("prmHCTraceLoadErrorFile", "", Path.Combine(Path.GetTempPath(), m_cache.ProjectId.Name + "HCLoadErrors.xml"));
+			return transform.Transform(m_mediator, result, baseName, args);
 		}
 	}
 }

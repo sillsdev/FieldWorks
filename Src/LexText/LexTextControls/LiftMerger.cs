@@ -386,7 +386,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void LoadCategoryCatalog()
 		{
-			string sPath = System.IO.Path.Combine(DirectoryFinder.FWCodeDirectory,
+			string sPath = System.IO.Path.Combine(FwDirectoryFinder.CodeDirectory,
 				"Templates/GOLDEtic.xml");
 			XmlDocument xd = new XmlDocument();
 			xd.Load(sPath);
@@ -1236,6 +1236,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		private void FinishMergingComplexFeatDefn(IFsComplexFeature featComplex, string sComplexType)
 		{
+			if (sComplexType == null)
+				return;		// The user didn't give a type -- see LT-15112.
 			if (featComplex.TypeRA == null ||
 				m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew)
 			{
@@ -3317,7 +3319,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			foreach (CmLiftPhonetic phon in entry.Pronunciations)
 			{
-				IgnoreNewWs();
+				AddNewWsToVernacular();
 				ILexPronunciation pron = CreateNewLexPronunciation();
 				le.PronunciationsOS.Add(pron);
 				MergeInMultiUnicode(pron.Form, LexPronunciationTags.kflidForm, phon.Form, pron.Guid);
@@ -3351,7 +3353,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void SavePronunciationWss(Dictionary<string, LiftString>.KeyCollection langs)
 		{
-			IgnoreNewWs();
+			AddNewWsToVernacular();
 			foreach (string lang in langs)
 			{
 				int ws = GetWsFromLiftLang(lang);
@@ -3377,7 +3379,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// give up and store relative path Pictures/filename (even though it doesn't exist)
 			string sPath = Path.Combine(Path.GetDirectoryName(m_sLiftFile),
 				String.Format("audio{0}{1}", Path.DirectorySeparatorChar, sFile));
-			sPath = CopyFileToLinkedFiles(sFile, sPath, DirectoryFinder.ksMediaDir);
+			sPath = CopyFileToLinkedFiles(sFile, sPath, FdoFileHelper.ksMediaDir);
 			if (!File.Exists(sPath) && !String.IsNullOrEmpty(m_cache.LangProject.LinkedFilesRootDir))
 			{
 				sPath = Path.Combine(m_cache.LangProject.LinkedFilesRootDir, sFile);
@@ -3387,9 +3389,9 @@ namespace SIL.FieldWorks.LexText.Controls
 						String.Format("Media{0}{1}", Path.DirectorySeparatorChar, sFile));
 					if (!File.Exists(sPath))
 					{
-						sPath = Path.Combine(DirectoryFinder.FWDataDirectory, sFile);
+						sPath = Path.Combine(FwDirectoryFinder.DataDirectory, sFile);
 						if (!File.Exists(sPath))
-							sPath = Path.Combine(DirectoryFinder.FWDataDirectory,
+							sPath = Path.Combine(FwDirectoryFinder.DataDirectory,
 								String.Format("Media{0}{1}", Path.DirectorySeparatorChar, sFile));
 					}
 				}
@@ -3988,6 +3990,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				MergeInMultiString(les.Example, LexExampleSentenceTags.kflidExample, expl.Content, les.Guid);
 				MergeExampleTranslations(les, expl);
 				ProcessExampleNotes(les, expl);
+				ProcessExampleFields(les, expl);
+				ProcessExampleTraits(les, expl);
 				if (TsStringIsNullOrEmpty(les.Reference) && !String.IsNullOrEmpty(expl.Source))
 					les.Reference = m_cache.TsStrFactory.MakeString(expl.Source, m_cache.DefaultAnalWs);
 			}
@@ -5604,7 +5608,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			string sPath = Path.Combine(Path.GetDirectoryName(m_sLiftFile),
 				String.Format("pictures{0}{1}", Path.DirectorySeparatorChar, ssFile));
-			sPath = CopyFileToLinkedFiles(ssFile, sPath, DirectoryFinder.ksPicturesDir);
+			sPath = CopyFileToLinkedFiles(ssFile, sPath, FdoFileHelper.ksPicturesDir);
 			if (!File.Exists(sPath) && !String.IsNullOrEmpty(m_cache.LangProject.LinkedFilesRootDir))
 			{
 				sPath = Path.Combine(m_cache.LangProject.LinkedFilesRootDir, sFile);
@@ -5614,9 +5618,9 @@ namespace SIL.FieldWorks.LexText.Controls
 						String.Format("Pictures{0}{1}", Path.DirectorySeparatorChar, sFile));
 					if (!File.Exists(sPath))
 					{
-						sPath = Path.Combine(DirectoryFinder.FWDataDirectory, sFile);
+						sPath = Path.Combine(FwDirectoryFinder.DataDirectory, sFile);
 						if (!File.Exists(sPath))
-							sPath = Path.Combine(DirectoryFinder.FWDataDirectory,
+							sPath = Path.Combine(FwDirectoryFinder.DataDirectory,
 								String.Format("Pictures{0}{1}", Path.DirectorySeparatorChar, sFile));
 					}
 				}
@@ -5850,7 +5854,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			foreach (CmLiftReversal rev in sense.Reversals)
 			{
 				IReversalIndexEntry rie = ProcessReversal(rev);
-				if (rie != null && !ls.ReversalEntriesRC.Contains(rie))
+				if (rie != null && rie.ReversalForm.StringCount != 0 && !ls.ReversalEntriesRC.Contains(rie))
 					ls.ReversalEntriesRC.Add(rie);
 			}
 		}
@@ -5860,6 +5864,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			AddNewWsToAnalysis();
 			Dictionary<MuElement, List<IReversalIndexEntry>> mapToRIEs;
 			IReversalIndexEntry rie = null;
+			// Do not import blank reversal entries
+			if(rev.Form.IsEmpty)
+			{
+				return null;
+			}
 			if (rev.Main == null)
 			{
 				IReversalIndex riOwning = FindOrCreateReversalIndex(rev.Form, rev.Type);

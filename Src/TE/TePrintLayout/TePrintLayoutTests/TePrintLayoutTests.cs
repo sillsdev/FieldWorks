@@ -15,12 +15,14 @@ using System.Drawing;
 using System.Windows.Forms;
 
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.PrintLayout;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.TE
 {

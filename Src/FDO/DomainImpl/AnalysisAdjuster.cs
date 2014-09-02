@@ -1280,7 +1280,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				if (vernWid > -1 && m_wordFinder.IsWordforming(m_trailingTokens[i].Item1))
 				{
 					IWfiWordform wf;
-					if (!wwfRepo.TryGetObject(token, out wf))
+					if (!wwfRepo.TryGetObject(token, true, out wf))
 					{
 						wf = wwfFactory.Create(token.ToWsOnlyString());
 					}

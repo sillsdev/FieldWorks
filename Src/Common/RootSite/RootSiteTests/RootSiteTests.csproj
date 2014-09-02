@@ -83,7 +83,7 @@
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
-    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <NoWarn>168,169,219,414,649,1635,1702,1701,1591,1685</NoWarn>
     <Optimize>true</Optimize>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
@@ -126,6 +126,10 @@
     <Reference Include="FDOTests">
       <Name>FDOTests</Name>
       <HintPath>..\..\..\..\Output\Debug\FDOTests.dll</HintPath>
+    </Reference>
+    <Reference Include="FwResources, Version=8.0.6.26892, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\FwResources.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

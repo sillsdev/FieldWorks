@@ -77,7 +77,7 @@ namespace SIL.FieldWorks.Discourse
 				try
 				{
 					ExportPhase1(out exporter, outPath);
-					var rootDir = DirectoryFinder.FWCodeDirectory;
+					var rootDir = FwDirectoryFinder.CodeDirectory;
 					var transform = XmlUtils.GetOptionalAttributeValue(ddNode, "transform", "");
 					var sTransformPath = Path.Combine(rootDir,
 						String.Format("Language Explorer{0}Export Templates{0}Discourse",

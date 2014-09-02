@@ -199,7 +199,7 @@ Suggestion: Add a field to Word Analyses view in which a regular expression can 
     <value>Please email this report to the development team: {0}</value>
   </data>
   <data name="kstidradEmail" xml:space="preserve">
-    <value>&amp;Open an email containing this message using the default email client</value>
+    <value>&amp;Open an email containing this message using the default email client.</value>
   </data>
   <data name="kstidradSelf" xml:space="preserve">
     <value>&amp;Copy this information to the clipboard and I will paste it into an email message myself.</value>
@@ -231,6 +231,6 @@ Thank you.</value>
     <value>Please send us the email below so we can fix the data for you.</value>
   </data>
   <data name="kstidSeriousProblemCaption" xml:space="preserve">
-    <value>Your Project Requires Technical Clean-up</value>
+    <value>Your Project Requires Technical Cleanup</value>
   </data>
 </root>

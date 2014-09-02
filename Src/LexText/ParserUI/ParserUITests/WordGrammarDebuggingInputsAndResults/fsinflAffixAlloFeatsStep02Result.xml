@@ -118,7 +118,7 @@
       <derivMsa fromCat="259" fromCatAbbr="n" toCat="258" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
     </morph>
   </resultSoFar>
-  <seq step="Try to build an Orthographic Word node on a Word, including any clitics." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to build an Orthographic Word node on a Word, including any clitics.">
     <orthographicWord>
       <word syncat="259" syncatAbbr="n">
         <full syncat="259" syncatAbbr="n" requiresInfl="-" inflected="+">

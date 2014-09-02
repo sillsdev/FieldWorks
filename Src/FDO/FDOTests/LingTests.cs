@@ -16,11 +16,13 @@ using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.FDOTests.CellarTests;
 using SIL.FieldWorks.FDO.Validation;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
+using SIL.FieldWorks.FdoUi;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.FDOTests.LingTests
@@ -2470,11 +2472,13 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 
 			using (var progressBar = new ProgressBar())
 			{
+				IProgress progressBarWrapper = new ProgressBarWrapper(progressBar);
+
 				var itemsToChange = new List<ILexEntryType>();
 				itemsToChange.Add(lexEntryType1);
 				itemsToChange.Add(lexEntryType1Sub1);
 
-				Cache.LangProject.LexDbOA.ConvertLexEntryInflTypes(progressBar, itemsToChange);
+				Cache.LangProject.LexDbOA.ConvertLexEntryInflTypes(progressBarWrapper, itemsToChange);
 				var leit1 = ler1.VariantEntryTypesRS[0];
 				Assert.AreEqual(LexEntryInflTypeTags.kClassId, leit1.ClassID, "first lex entry type of first entry should be irregularly inflected form");
 				leit1 = ler1.VariantEntryTypesRS[1];
@@ -2525,11 +2529,13 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 
 			using (var progressBar = new ProgressBar())
 			{
+				IProgress progressBarWrapper = new ProgressBarWrapper(progressBar);
+
 				var itemsToChange = new List<ILexEntryType>();
 				itemsToChange.Add(lexEntryInflType1);
 				itemsToChange.Add(lexEntryInflType1Sub1);
 
-				Cache.LangProject.LexDbOA.ConvertLexEntryTypes(progressBar, itemsToChange);
+				Cache.LangProject.LexDbOA.ConvertLexEntryTypes(progressBarWrapper, itemsToChange);
 				var let1 = ler1.VariantEntryTypesRS[0];
 				Assert.AreEqual(LexEntryTypeTags.kClassId, let1.ClassID, "first lex entry type of first entry should be variant");
 				let1 = ler1.VariantEntryTypesRS[1];

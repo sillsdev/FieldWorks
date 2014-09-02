@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -23,80 +22,13 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 	[TestFixture]
 	public sealed class BEPPortTests: BaseTest
 	{
-		/// <summary>
-		/// Gets the current architecture (i686 or x86_64 on Linux, or
-		/// Win on Windows)
-		/// </summary>
-		private static string Architecture
+		/// <summary>Random number generator to prevent filename conflicts</summary>
+		private readonly Random m_random;
+
+		/// <summary/>
+		public BEPPortTests()
 		{
-			get
-			{
-				if (Environment.OSVersion.Platform == PlatformID.Unix)
-				{
-					// Unix - return output from 'uname -m'
-					using (Process process = new Process())
-					{
-						process.StartInfo.FileName = "uname";
-						process.StartInfo.Arguments = "-m";
-						process.StartInfo.UseShellExecute = false;
-						process.StartInfo.CreateNoWindow = true;
-						process.StartInfo.RedirectStandardOutput = true;
-						process.Start();
-
-						string architecture = process.StandardOutput.ReadToEnd().Trim();
-
-						process.StandardOutput.Close();
-						process.Close();
-						return architecture;
-					}
-				}
-				return "Win";
-			}
-		}
-
-		/// <summary>
-		/// Set up parameters for both source and target databases for use in PortAllBEPsTestsUsingAnAlreadyOpenedSource
-		/// </summary>
-		private List<BackendStartupParameter> m_sourceInfo;
-		private List<BackendStartupParameter> m_targetInfo;
-
-		/// <summary>Database backends used for testing</summary>
-		public enum TestBackends
-		{
-			/// <summary>XML based database backend</summary>
-			Xml,
-			/// <summary>Memory based database backend</summary>
-			Memory,
-			/// <summary>Db4o based database backend</summary>
-			Db4o
-		}
-
-		/// <summary>
-		/// Adds unique parameters prior to each test run. Should avoid any delayed file closes or deletes from one test causing
-		/// a subsequent test to fail.
-		/// </summary>
-		[SetUp]
-		public void Setup()
-		{
-			var randomFileExtension = new Random((int)DateTime.Now.Ticks).Next(1000).ToString();
-			m_sourceInfo = new List<BackendStartupParameter>
-				{
-					new BackendStartupParameter(true, BackendBulkLoadDomain.All,
-												new TestProjectId(FDOBackendProviderType.kXML, DirectoryFinder.GetXmlDataFileName("TLP" + randomFileExtension))),
-					new BackendStartupParameter(true, BackendBulkLoadDomain.All,
-												new TestProjectId(FDOBackendProviderType.kMemoryOnly, null)),
-					new BackendStartupParameter(true, BackendBulkLoadDomain.All,
-												new TestProjectId(FDOBackendProviderType.kDb4oClientServer, "TLPCS" + randomFileExtension))
-				};
-			m_targetInfo = new List<BackendStartupParameter>
-				{
-					new BackendStartupParameter(true, BackendBulkLoadDomain.All,
-												new TestProjectId(FDOBackendProviderType.kXML, DirectoryFinder.GetXmlDataFileName("TLP_New" + randomFileExtension))),
-					new BackendStartupParameter(true, BackendBulkLoadDomain.All,
-												new TestProjectId(FDOBackendProviderType.kMemoryOnly, null)),
-					new BackendStartupParameter(true, BackendBulkLoadDomain.All,
-												new TestProjectId(FDOBackendProviderType.kDb4oClientServer, "TLPCS_New" + randomFileExtension))
-				};
+			m_random = new Random((int)DateTime.Now.Ticks);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -106,7 +38,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		/// ------------------------------------------------------------------------------------
 		public override void FixtureSetup()
 		{
-			RemotingServer.Start();
+			RemotingServer.Start(FwDirectoryFinder.RemotingTcpServerConfigFile, FwDirectoryFinder.FdoDirectories, () => false, v => {});
 			base.FixtureSetup();
 		}
 
@@ -123,6 +55,24 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 
 		#region Non-test methods.
 
+		private BackendStartupParameter GenerateBackendStartupParameters(bool isTarget, FDOBackendProviderType type)
+		{
+			var nameSuffix = (isTarget ? "_New" : "") + m_random.Next(1000);
+			string name = null;
+			switch (type)
+			{
+				case FDOBackendProviderType.kXML:
+					name = FdoFileHelper.GetXmlDataFileName("TLP" + nameSuffix);
+					break;
+				case FDOBackendProviderType.kDb4oClientServer:
+					name = "TLPCS" + nameSuffix;
+					break;
+				//case FDOBackendProviderType.kMemoryOnly: name = null;
+			}
+
+			return new BackendStartupParameter(true, BackendBulkLoadDomain.All, new TestProjectId(type, name));
+		}
+
 		/// <summary>
 		/// Actually do the test between the source data in 'sourceGuids'
 		/// and the target data in 'targetCache'.
@@ -134,9 +84,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			var allTargetObjects = GetAllCmObjects(targetCache);
 			foreach (var obj in allTargetObjects)
 				Assert.IsTrue(sourceGuids.Contains(obj.Guid), "Missing guid in target DB.: " + obj.Guid);
-			var targetGuids = new List<Guid>();
-			foreach (var obj in allTargetObjects)
-				targetGuids.Add(obj.Guid);
+			var targetGuids = allTargetObjects.Select(obj => obj.Guid).ToList();
 			foreach (var guid in sourceGuids)
 			{
 				Assert.IsTrue(targetGuids.Contains(guid), "Missing guid in source DB.: " + guid);
@@ -206,36 +154,35 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "source/targetDataSetup are singletons; disposed by service locator")]
 		public void PortAllBEPsTestsUsingAnAlreadyOpenedSource(
-			[Values(TestBackends.Xml, TestBackends.Memory, TestBackends.Db4o)] TestBackends iSource,
-			[Values(TestBackends.Xml, TestBackends.Memory, TestBackends.Db4o)] TestBackends iTarget)
+			[Values(FDOBackendProviderType.kXML, FDOBackendProviderType.kDb4oClientServer, FDOBackendProviderType.kMemoryOnly)]
+			FDOBackendProviderType sourceType,
+			[Values(FDOBackendProviderType.kXML, FDOBackendProviderType.kDb4oClientServer, FDOBackendProviderType.kMemoryOnly)]
+			FDOBackendProviderType targetType)
 		{
-			var sourceBackendStartupParameters = m_sourceInfo[(int)iSource];
-			var targetBackendStartupParameters = m_targetInfo[(int)iTarget];
+			var sourceBackendStartupParameters = GenerateBackendStartupParameters(false, sourceType);
+			var targetBackendStartupParameters = GenerateBackendStartupParameters(true, targetType);
 
 			DeleteDatabase(sourceBackendStartupParameters);
 
 			// Set up data source, but only do it once.
 			var sourceGuids = new List<Guid>();
-			using (var threadHelper = new ThreadHelper())
 			using (var sourceCache = FdoCache.CreateCacheWithNewBlankLangProj(
 				new TestProjectId(sourceBackendStartupParameters.ProjectId.Type,
-								sourceBackendStartupParameters.ProjectId.Path), "en", "fr", "en", threadHelper))
+								sourceBackendStartupParameters.ProjectId.Path), "en", "fr", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories))
 			{
 				// BEP is a singleton, so we shouldn't call Dispose on it. This will be done
 				// by service locator.
 				var sourceDataSetup = GetMainBEPInterface(sourceCache);
 				// The source is created ex nihilo.
 				sourceDataSetup.LoadDomain(sourceBackendStartupParameters.BulkLoadDomain);
-				foreach (var obj in GetAllCmObjects(sourceCache))
-					sourceGuids.Add(obj.Guid); // Collect up all source Guids.
+				sourceGuids.AddRange(GetAllCmObjects(sourceCache).Select(obj => obj.Guid)); // Collect all source Guids
 
 				DeleteDatabase(targetBackendStartupParameters);
 
 				// Migrate source data to new BEP.
-				using (var otherThreadHelper = new ThreadHelper())
 				using (var targetCache = FdoCache.CreateCacheCopy(
 					new TestProjectId(targetBackendStartupParameters.ProjectId.Type,
-									targetBackendStartupParameters.ProjectId.Path), "en", sourceCache, otherThreadHelper))
+									targetBackendStartupParameters.ProjectId.Path), "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, sourceCache))
 				{
 					// BEP is a singleton, so we shouldn't call Dispose on it. This will be done
 					// by service locator.
@@ -265,14 +212,16 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "source/targetDataSetup are singletons; disposed by service locator")]
 		public void PortAllBEPsTestsUsingAnUnopenedSource(
-			[Values(TestBackends.Xml, TestBackends.Db4o)] TestBackends iSource,
-			[Values(TestBackends.Xml, TestBackends.Memory, TestBackends.Db4o)] TestBackends iTarget)
+			[Values(FDOBackendProviderType.kXML, FDOBackendProviderType.kDb4oClientServer)]
+			FDOBackendProviderType sourceType,
+			[Values(FDOBackendProviderType.kXML, FDOBackendProviderType.kDb4oClientServer, FDOBackendProviderType.kMemoryOnly)]
+			FDOBackendProviderType targetType)
 		{
 			var path = Path.Combine(Path.GetTempPath(), "FieldWorksTest");
 			if (!Directory.Exists(path))
 				Directory.CreateDirectory(path);
-			var sourceBackendStartupParameters = m_sourceInfo[(int)iSource];
-			var targetBackendStartupParameters = m_targetInfo[(int)iTarget];
+			var sourceBackendStartupParameters = GenerateBackendStartupParameters(false, sourceType);
+			var targetBackendStartupParameters = GenerateBackendStartupParameters(true, targetType);
 
 			var sourceGuids = new List<Guid>();
 
@@ -280,25 +229,23 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			DeleteDatabase(targetBackendStartupParameters);
 
 			// Set up data source
-			TestProjectId projId = new TestProjectId(sourceBackendStartupParameters.ProjectId.Type,
+			var projId = new TestProjectId(sourceBackendStartupParameters.ProjectId.Type,
 													sourceBackendStartupParameters.ProjectId.Path);
-			IThreadedProgress progressDlg = new DummyProgressDlg();
 			using (FdoCache sourceCache = FdoCache.CreateCacheWithNewBlankLangProj(
-				projId, "en", "fr", "en", progressDlg.ThreadHelper))
+				projId, "en", "fr", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories))
 			{
 				// BEP is a singleton, so we shouldn't call Dispose on it. This will be done
 				// by service locator.
 				var sourceDataSetup = GetMainBEPInterface(sourceCache);
 				sourceCache.ServiceLocator.GetInstance<IUndoStackManager>().Save(); // persist the new db so we can reopen it.
 				sourceDataSetup.LoadDomain(BackendBulkLoadDomain.All);
-				foreach (var obj in GetAllCmObjects(sourceCache))
-					sourceGuids.Add(obj.Guid); // Collect up all source Guids.
+				sourceGuids.AddRange(GetAllCmObjects(sourceCache).Select(obj => obj.Guid)); // Collect all source Guids
 			}
 
 			// Migrate source data to new BEP.
-			progressDlg = new DummyProgressDlg();
+			IThreadedProgress progressDlg = new DummyProgressDlg();
 			using (var targetCache = FdoCache.CreateCacheWithNoLangProj(
-				new TestProjectId(targetBackendStartupParameters.ProjectId.Type, null), "en", progressDlg.ThreadHelper))
+				new TestProjectId(targetBackendStartupParameters.ProjectId.Type, null), "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories))
 			{
 				// BEP is a singleton, so we shouldn't call Dispose on it. This will be done
 				// by service locator.

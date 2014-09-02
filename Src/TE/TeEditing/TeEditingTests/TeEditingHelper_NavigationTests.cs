@@ -7,13 +7,14 @@
 
 using System.Diagnostics;
 using NUnit.Framework;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.Resources;
 using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.TE.TeEditingHelpers

@@ -2448,7 +2448,7 @@ namespace SIL.FieldWorks.TE
 				string sDescription = tokens[0];
 				string srcFilename = tokens[1];
 				if (String.IsNullOrEmpty(srcFilename))
-					srcFilename = Path.Combine(DirectoryFinder.FWCodeDirectory, "MissingPictureInImport.bmp");
+					srcFilename = Path.Combine(FwDirectoryFinder.CodeDirectory, "MissingPictureInImport.bmp");
 				string sLayoutPos = tokens[2];
 				string sLocationRange = tokens[3];
 				string sCopyright = tokens[4];
@@ -4019,7 +4019,7 @@ namespace SIL.FieldWorks.TE
 				(int)FwTextPropType.ktptNamedStyle);
 
 			if (sCharStyle == null)
-				sCharStyle = ResourceHelper.GetResourceString("kstidDefaultParaChars");
+				sCharStyle = StyleUtils.DefaultParaCharsStyleName;
 
 			throw new ScriptureUtilsException(
 				SUE_ErrorCode.BackTransTextNotPartOfParagraph,
@@ -4461,7 +4461,7 @@ namespace SIL.FieldWorks.TE
 				else
 					ws = -1;
 			}
-			if (styleName == ResourceHelper.DefaultParaCharsStyleName && !mapping.IsExcluded)
+			if (styleName == StyleUtils.DefaultParaCharsStyleName && !mapping.IsExcluded)
 			{
 				// Any marker that maps to "Default Paragraph Characters" should be
 				// treated like an end marker.

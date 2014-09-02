@@ -70,7 +70,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void get_Last_Backup()
 		{
-			BackupFileRepository backups = new BackupFileRepository();
+			BackupFileRepository backups = new BackupFileRepository(FwDirectoryFinder.DefaultBackupDirectory);
 			var projName = backups.AvailableProjectNames.FirstOrDefault(s => s == m_cache.ProjectId.Name);
 
 			if (!string.IsNullOrEmpty(projName))

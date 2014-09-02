@@ -15,6 +15,7 @@ using System.Xml;
 using NUnit.Framework;
 using Palaso.IO;
 using Palaso.Lift.Validation;
+using Palaso.TestUtilities;
 using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -23,6 +24,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
@@ -38,7 +40,7 @@ namespace LexTextControlsTests
 	[TestFixture]
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
 		Justification="Unit test - Cache gets disposed in TearDown method")]
-	public class LiftExportTests : BaseTest
+	public class LiftExportTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private const string kbasePictureOfTestFileName = "Picture of Test";
 		private const string kpictureOfTestFileName = kbasePictureOfTestFileName + ".jpg"; // contents won't really be jpg
@@ -290,7 +292,7 @@ namespace LexTextControlsTests
 			"<Name><AUni ws=\"en\">Parts Of Speech</AUni></Name>" + Environment.NewLine +
 			"<Abbreviation><AUni ws=\"en\">Pos</AUni></Abbreviation>" + Environment.NewLine +
 			"<Possibilities>" + Environment.NewLine +
-				"<PartOfSpeech>" + Environment.NewLine +
+				"<PartOfSpeech guid=\"46e4fe08-ffa0-4c8b-bf98-2c56f38904d9\">" + Environment.NewLine +
 				"<Name><AUni ws=\"en\">Adverb</AUni></Name>" + Environment.NewLine +
 				"<Abbreviation><AUni ws=\"en\">adv</AUni></Abbreviation>" + Environment.NewLine +
 				"<Description>" + Environment.NewLine +
@@ -301,7 +303,7 @@ namespace LexTextControlsTests
 				"<CatalogSourceId><Uni>Adverb</Uni></CatalogSourceId>" + Environment.NewLine +
 				"</PartOfSpeech>" + Environment.NewLine +
 
-				"<PartOfSpeech>" + Environment.NewLine +
+				"<PartOfSpeech guid=\"a8e41fd3-e343-4c7c-aa05-01ea3dd5cfb5\">" + Environment.NewLine +
 				"<Name><AUni ws=\"en\">Noun</AUni></Name>" + Environment.NewLine +
 				"<Abbreviation><AUni ws=\"en\">n</AUni></Abbreviation>" + Environment.NewLine +
 				"<Description>" + Environment.NewLine +
@@ -312,7 +314,7 @@ namespace LexTextControlsTests
 				"<CatalogSourceId><Uni>Noun</Uni></CatalogSourceId>" + Environment.NewLine +
 				"</PartOfSpeech>" + Environment.NewLine +
 
-				"<PartOfSpeech>" + Environment.NewLine +
+				"<PartOfSpeech guid=\"a4fc78d6-7591-4fb3-8edd-82f10ae3739d\">" + Environment.NewLine +
 				"<Name><AUni ws=\"en\">Pro-form</AUni></Name>" + Environment.NewLine +
 				"<Abbreviation><AUni ws=\"en\">pro-form</AUni></Abbreviation>" + Environment.NewLine +
 				"<Description>" + Environment.NewLine +
@@ -322,7 +324,7 @@ namespace LexTextControlsTests
 				"</Description>" + Environment.NewLine +
 				"<CatalogSourceId><Uni>Pro-form</Uni></CatalogSourceId>" + Environment.NewLine +
 					"<SubPossibilities>" + Environment.NewLine +
-						"<PartOfSpeech>" + Environment.NewLine +
+						"<PartOfSpeech guid=\"a3274cfd-225f-45fd-8851-a7b1a1e1037a\">" + Environment.NewLine +
 						"<Name><AUni ws=\"en\">Pronoun</AUni></Name>" + Environment.NewLine +
 						"<Abbreviation><AUni ws=\"en\">pro</AUni></Abbreviation>" + Environment.NewLine +
 						"<Description>" + Environment.NewLine +
@@ -335,7 +337,7 @@ namespace LexTextControlsTests
 					"</SubPossibilities>" + Environment.NewLine +
 				"</PartOfSpeech>" + Environment.NewLine +
 
-				"<PartOfSpeech>" + Environment.NewLine +
+				"<PartOfSpeech guid=\"86ff66f6-0774-407a-a0dc-3eeaf873daf7\">" + Environment.NewLine +
 				"<Name><AUni ws=\"en\">Verb</AUni></Name>" + Environment.NewLine +
 				"<Abbreviation><AUni ws=\"en\">v</AUni></Abbreviation>" + Environment.NewLine +
 				"<Description>" + Environment.NewLine +
@@ -454,7 +456,6 @@ namespace LexTextControlsTests
 			"</LexDb>" + Environment.NewLine;
 
 		private FdoCache m_cache;
-		private ThreadHelper m_ThreadHelper;
 		private readonly Dictionary<string, ICmSemanticDomain> m_mapSemanticDomains =
 			new Dictionary<string, ICmSemanticDomain>();
 		private readonly Dictionary<string, IPartOfSpeech> m_mapPartsOfSpeech =
@@ -485,10 +486,9 @@ namespace LexTextControlsTests
 			var mockProjectName = "xxyyzProjectFolderForLIFTTest";
 			MockProjectFolder = Path.Combine(Path.GetTempPath(), mockProjectName);
 			var mockProjectPath = Path.Combine(MockProjectFolder, mockProjectName + ".fwdata");
-			m_ThreadHelper = new ThreadHelper();
 			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(
-				new TestProjectId(FDOBackendProviderType.kMemoryOnly, mockProjectPath), "en", "fr", "en", m_ThreadHelper);
-			MockLinkedFilesFolder = Path.Combine(MockProjectFolder, DirectoryFinder.ksLinkedFilesDir);
+				new TestProjectId(FDOBackendProviderType.kMemoryOnly, mockProjectPath), "en", "fr", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories);
+			MockLinkedFilesFolder = Path.Combine(MockProjectFolder, FdoFileHelper.ksLinkedFilesDir);
 			Directory.CreateDirectory(MockLinkedFilesFolder);
 			//m_cache.LangProject.LinkedFilesRootDir = MockLinkedFilesFolder; this is already the default.
 
@@ -610,7 +610,7 @@ namespace LexTextControlsTests
 					var tssDefn = m_cache.TsStrFactory.MakeString("Definition for sense.\x2028Another para of defn", m_cache.DefaultAnalWs);
 					var bldr = tssDefn.GetBldr();
 					int len = bldr.Length;
-					var otherFileFolder = Path.Combine(MockLinkedFilesFolder, DirectoryFinder.ksOtherLinkedFilesDir);
+					var otherFileFolder = Path.Combine(MockLinkedFilesFolder, FdoFileHelper.ksOtherLinkedFilesDir);
 					var otherFilePath = Path.Combine(otherFileFolder, kotherLinkedFileName);
 					CreateDummyFile(otherFilePath);
 					var mockStyle = new MockStyle() { Name = "hyperlink" };
@@ -667,7 +667,7 @@ namespace LexTextControlsTests
 					MakePicture(picFolder, m_tempPictureFilePath);
 
 					// See if we can export audio writing system stuff.
-					var audioFolderPath = Path.Combine(MockLinkedFilesFolder, DirectoryFinder.ksMediaDir);
+					var audioFolderPath = Path.Combine(MockLinkedFilesFolder, FdoFileHelper.ksMediaDir);
 					CreateDummyFile(Path.Combine(audioFolderPath, kaudioFileName));
 					m_entryTest.SensesOS[0].Definition.set_String(m_audioWsCode, kaudioFileName);
 
@@ -690,7 +690,7 @@ namespace LexTextControlsTests
 					var pronunFile = m_cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
 					picFolder.FilesOC.Add(pronunFile); // maybe not quite appropriate, but has to be owned somewhere.
 					media.MediaFileRA = pronunFile;
-					pronunFile.InternalPath = Path.Combine(DirectoryFinder.ksMediaDir, kpronunciationFileName);
+					pronunFile.InternalPath = Path.Combine(FdoFileHelper.ksMediaDir, kpronunciationFileName);
 
 					// We should be able to export LexEntryRefs. BaseForm is a special case.
 					var entryUn = entryFact.Create("un", "not", new SandboxGenericMSA() { MsaType = MsaType.kDeriv });
@@ -1042,8 +1042,6 @@ namespace LexTextControlsTests
 			Directory.Delete(MockLinkedFilesFolder, true);
 			m_cache.Dispose();
 			m_cache = null;
-			m_ThreadHelper.Dispose();
-			m_ThreadHelper = null;
 			DestroyTestDirectory();
 		}
 
@@ -1076,6 +1074,38 @@ namespace LexTextControlsTests
 				xdocRangeFile.LoadXml(w.ToString());
 			}
 			VerifyExportRanges(xdocRangeFile);
+		}
+
+		/// <summary>
+		/// LT-15467 documents a Flex to WeSay S/R which had pronunciation audio files multiplying like bunny rabbits.
+		/// Make sure the export doesn't make new files when two different references point to the same file.
+		/// </summary>
+		[Test]
+		public void LiftExport_MultipleReferencesToSameMediaFileCausesNoDuplication()
+		{
+			using(var uowHelper = new NonUndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor))
+			{
+				var senseFactory = m_cache.ServiceLocator.GetInstance<ILexSenseFactory>();
+				var pronunciation = m_cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
+				var media = m_cache.ServiceLocator.GetInstance<ICmMediaFactory>().Create();
+				var pronunFile = m_cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+				m_entryIs.PronunciationsOS.Add(pronunciation);
+				pronunciation.MediaFilesOS.Add(media);
+				m_cache.LangProject.PicturesOC.First().FilesOC.Add(pronunFile); // maybe not quite appropriate, but has to be owned somewhere.
+				media.MediaFileRA = pronunFile;
+				var internalPath = Path.Combine(FdoFileHelper.ksMediaDir, kpronunciationFileName);
+				pronunFile.InternalPath = internalPath;
+				var exporter = new LiftExporter(m_cache);
+				var xdoc = new XmlDocument();
+				using(TextWriter w = new StringWriter())
+				{
+					exporter.ExportPicturesAndMedia = true;
+					exporter.ExportLift(w, LiftFolder);
+					xdoc.LoadXml(w.ToString());
+				}
+				VerifyAudio(kpronunciationFileName);
+				VerifyAudio(Path.GetFileNameWithoutExtension(kpronunciationFileName) + "_1" + Path.GetExtension(kpronunciationFileName), false);
+			}
 		}
 
 		[Test]
@@ -1611,10 +1641,13 @@ namespace LexTextControlsTests
 			VerifyAudio(kaudioFileName);
 		}
 
-		private void VerifyAudio(string audioFileName)
+		private void VerifyAudio(string audioFileName, bool exists = true)
 		{
 			var liftAudioFolder = Path.Combine(LiftFolder, "audio");
-			Assert.IsTrue(File.Exists(Path.Combine(liftAudioFolder, audioFileName)));
+			var filePath = Path.Combine(liftAudioFolder, audioFileName);
+			var failureMsg = String.Format("{0} should {1}have been found after export", filePath,
+													 exists ? "" : "not ");
+			Assert.AreEqual(exists, File.Exists(filePath), failureMsg);
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
@@ -1849,6 +1882,29 @@ namespace LexTextControlsTests
 				xdoc.LoadXml(w.ToString());
 			}
 			VerifyCustomStText(xdoc);
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the Lift export of a custom StText field using the LiftExporter class.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void LiftExportRanges_PartOfSpeechCatalogIdIsExported()
+		{
+			var loader = new XmlList();
+			loader.ImportList(Cache.LangProject, "PartsOfSpeech", Path.Combine(FwDirectoryFinder.TemplateDirectory, "POS.xml"),
+									new DummyProgressDlg());
+			var servLoc = Cache.ServiceLocator;
+			var exporter = new LiftExporter(Cache);
+			var xdocRangeFile = new XmlDocument();
+			using(var w = new StringWriter())
+			{
+				// SUT
+				exporter.ExportLiftRanges(w);
+				xdocRangeFile.LoadXml(w.ToString());
+			}
+			AssertThatXmlIn.Dom(xdocRangeFile).HasAtLeastOneMatchForXpath("//range[@id='grammatical-info']/range-element/trait[@name='catalog-source-id']");
 		}
 
 		private int m_flidLongText;

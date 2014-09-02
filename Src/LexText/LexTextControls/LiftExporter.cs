@@ -307,7 +307,7 @@ namespace SIL.FieldWorks.LexText.Controls
 									var internalPath = tssString.Text;
 									// usually this will be unchanged, but it is pathologically possible that the file name conflicts.
 									var exportedForm = ExportFile(internalPath,
-										Path.Combine(DirectoryFinder.GetMediaDir(m_cache.LangProject.LinkedFilesRootDir), internalPath),
+										Path.Combine(FdoFileHelper.GetMediaDir(m_cache.LangProject.LinkedFilesRootDir), internalPath),
 										"audio");
 									if (internalPath != exportedForm)
 										tssString = m_cache.TsStrFactory.MakeString(exportedForm, ws);
@@ -536,7 +536,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				return;
 			w.Write("<media href=\"");
 			ExportFile(w, file.MediaFileRA.InternalPath, file.MediaFileRA.AbsoluteInternalPath, "audio",
-				DirectoryFinder.ksMediaDir);
+				FdoFileHelper.ksMediaDir);
 			//if (file.MediaFileRA != null)
 			//    w.Write(XmlUtils.MakeSafeXmlAttribute(Path.GetFileName(file.MediaFileRA.InternalPath)));
 			w.WriteLine("\">");
@@ -812,15 +812,16 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (picture.PictureFileRA != null)
 			{
 				ExportFile(w, picture.PictureFileRA.InternalPath, picture.PictureFileRA.AbsoluteInternalPath,
-					"pictures", DirectoryFinder.ksPicturesDir);
+					"pictures", FdoFileHelper.ksPicturesDir);
 			}
 			w.WriteLine("\">");
 			WriteAllForms(w, "label", null, "form", picture.Caption);
 			w.Write("</illustration>");
 		}
 
-		// Path of every file we created (or deliberately overwrote) in ExportFile.
-		Set<string> m_filesCreated = new Set<string>();
+		// Dictionary containing the path of every file we created (or deliberately overwrote) in ExportFile.
+		// Indexed by the actual file path to a Tuple containing the relative file path and the full destination path.
+		Dictionary<string, Tuple<string, string>> m_filesCreated = new Dictionary<string, Tuple<string, string>>();
 
 		private string ExportFile(string internalPath, string actualPath, string liftFolderName, string expectRootFolder)
 		{
@@ -852,33 +853,38 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="actualPath"></param>
 		/// <param name="liftFolderName"></param>
 		/// <returns></returns>
-		private string ExportFile(string writePath1, string actualPath1, string liftFolderName)
+		private string ExportFile(string writePath, string actualPath, string liftFolderName)
 		{
+			//If the source file is the same and we already wrote it, there is no reason to make a copy with a mangled name
+			if(m_filesCreated.ContainsKey(actualPath))
+			{
+				return m_filesCreated[actualPath].Item2; //return the file we wrote last time we saw this path
+			}
 			// We are going to export the text of this to XML as NFC, so we want to write the file using a matching NFC name.
-			var writePath = Icu.Normalize(writePath1, Icu.UNormalizationMode.UNORM_NFC);
+			var safeWritePath = Icu.Normalize(writePath, Icu.UNormalizationMode.UNORM_NFC);
 			// Use as source any similar file that exists.
-			var actualPath = FileUtils.ActualFilePath(actualPath1);
-			if (ExportPicturesAndMedia && !String.IsNullOrEmpty(FolderPath) && FileUtils.FileExists(actualPath))
+			var safeSourcePath = FileUtils.ActualFilePath(actualPath);
+			if (ExportPicturesAndMedia && !String.IsNullOrEmpty(FolderPath) && FileUtils.FileExists(safeSourcePath))
 			{
 				var destFolder = Path.Combine(FolderPath, liftFolderName);
 				Directory.CreateDirectory(destFolder);
-				var destFilePath = Path.Combine(destFolder, writePath);
+				var destFilePath = Path.Combine(destFolder, safeWritePath);
 				int affix = 1;
-				var pathWithoutExt = Path.Combine(Path.GetDirectoryName(writePath), Path.GetFileNameWithoutExtension(writePath));
-				var ext = Path.GetExtension(writePath) ?? "";
-				while (m_filesCreated.Contains(destFilePath))
+				var pathWithoutExt = Path.Combine(Path.GetDirectoryName(safeWritePath), Path.GetFileNameWithoutExtension(safeWritePath));
+				var ext = Path.GetExtension(safeWritePath) ?? "";
+				while(m_filesCreated.Values.Any(i => i.Item1 == destFilePath))
 				{
 					// generate a new name
-					writePath = Path.ChangeExtension(pathWithoutExt + "_" + affix++, ext);
-					destFilePath = Path.Combine(destFolder, writePath);
+					safeWritePath = Path.ChangeExtension(pathWithoutExt + "_" + affix++, ext);
+					destFilePath = Path.Combine(destFolder, safeWritePath);
 				}
-				m_filesCreated.Add(destFilePath);
+				m_filesCreated[actualPath] = new Tuple<string, string>(destFilePath, safeWritePath);
 				// There may nevertheless be an existing file of that name, e.g., from an earlier export to the same location.
 				// We don't want to genereate mangled names and multiple copies in such cases, so we allow overwrite.
 				Directory.CreateDirectory(Path.GetDirectoryName(destFilePath));
-				File.Copy(actualPath, destFilePath, true);
+				File.Copy(safeSourcePath, destFilePath, true);
 			}
-			return writePath;
+			return safeWritePath;
 		}
 
 		private void ExportFile(TextWriter w, string internalPath, string actualPath, string liftFolderName, string expectRootFolder)
@@ -1349,7 +1355,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					var internalPath = sForm;
 					// usually this will be unchanged, but it is pathologically possible that the file name conflicts.
 					sForm = ExportFile(internalPath,
-						Path.Combine(DirectoryFinder.GetMediaDir(m_cache.LangProject.LinkedFilesRootDir), internalPath),
+						Path.Combine(FdoFileHelper.GetMediaDir(m_cache.LangProject.LinkedFilesRootDir), internalPath),
 						"audio");
 				}
 				w.WriteLine("<{0} lang=\"{1}\"><text>{2}</text></{0}>", elementName,
@@ -1400,7 +1406,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				var internalPath = alt.Form.get_String(ws).Text;
 				// usually this will be unchanged, but it is pathologically possible that the file name conflicts.
 				var writePath = ExportFile(internalPath,
-					Path.Combine(DirectoryFinder.GetMediaDir(m_cache.LangProject.LinkedFilesRootDir), internalPath),
+					Path.Combine(FdoFileHelper.GetMediaDir(m_cache.LangProject.LinkedFilesRootDir), internalPath),
 					"audio");
 				return writePath;
 			}
@@ -1467,7 +1473,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					var internalPath = tssVal.Text == null ? "" : tssVal.Text;
 					// usually this will be unchanged, but it is pathologically possible that the file name conflicts.
 					var writePath = ExportFile(internalPath,
-						Path.Combine(DirectoryFinder.GetMediaDir(m_cache.LangProject.LinkedFilesRootDir), internalPath),
+						Path.Combine(FdoFileHelper.GetMediaDir(m_cache.LangProject.LinkedFilesRootDir), internalPath),
 						"audio");
 					return XmlUtils.MakeSafeXml(writePath);
 				}
@@ -1538,7 +1544,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					var absPath = destination;
 					if (!Path.IsPathRooted(destination))
 						absPath = Path.Combine(m_cache.LangProject.LinkedFilesRootDir, destination);
-					var writePath = ExportFile(destination, absPath, "others", DirectoryFinder.ksOtherLinkedFilesDir);
+					var writePath = ExportFile(destination, absPath, "others", FdoFileHelper.ksOtherLinkedFilesDir);
 					// We force the file to be in the "others" directory, but in this case we include "others" in the URL,
 					// so it will actually work as a URL relative to the LIFT file.
 					bldr.AppendFormat(" href=\"file://others/{0}\"", XmlUtils.MakeSafeXmlAttribute(writePath.Replace('\\', '/')));
@@ -1719,6 +1725,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			WriteAllForms(w, "description", null, "form", pos.Description);
 			foreach (var inflFeat in pos.InflectableFeatsRC)
 				WriteTrait(w, "inflectable-feat", inflFeat.Abbreviation, m_wsBestAnalVern);
+			w.WriteLine("<trait name=\"catalog-source-id\" value=\"{0}\"/>",
+											 MakeSafeAndNormalizedAttribute(pos.CatalogSourceId));
 			w.WriteLine("</range-element>");
 		}
 

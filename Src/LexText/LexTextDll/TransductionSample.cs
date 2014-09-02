@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			using (Process p = new Process())
 			{
 				p.StartInfo.FileName = "python";
-				string dir = DirectoryFinder.GetFWCodeSubDirectory("/Language Explorer/UserScripts");
+				string dir = FwDirectoryFinder.GetCodeSubDirectory("/Language Explorer/UserScripts");
 				p.StartInfo.Arguments = System.IO.Path.Combine(dir, "TransduceCitationForms.py ") + " " + arguments;
 				p.StartInfo.RedirectStandardOutput = true;
 				p.StartInfo.UseShellExecute = false;

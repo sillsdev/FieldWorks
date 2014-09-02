@@ -128,7 +128,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					m_cache = wf.Cache;
 					m_srcwfiWordform = wf;
 					// Get the parameter node.
-					var path = Path.Combine(DirectoryFinder.GetFWCodeSubDirectory(
+					var path = Path.Combine(FwDirectoryFinder.GetCodeSubDirectory(
 						Path.Combine(FwUtils.ksFlexAppName, Path.Combine("Configuration", "Words"))), "areaConfiguration.xml");
 					var doc = XWindow.LoadConfigurationWithIncludes(path, true);
 					var paramNode = doc.DocumentElement.SelectSingleNode("listeners/listener[@class=\"SIL.FieldWorks.XWorks.MorphologyEditor.RespellerDlgListener\"]/parameters");
@@ -148,7 +148,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					//// Enhance JohnT: possibly these three lines (also copied) are not needed.
 					//mediator.PropertyTable.SetProperty("DocumentName", GetMainWindowCaption(cache));
 					//mediator.PropertyTable.SetPropertyPersistence("DocumentName", false);
-					mediator.PathVariables["{DISTFILES}"] = DirectoryFinder.FWCodeDirectory;
+					mediator.PathVariables["{DISTFILES}"] = FwDirectoryFinder.CodeDirectory;
 					mediator.PropertyTable.RestoreFromFile(mediator.PropertyTable.GlobalSettingsId);
 					mediator.PropertyTable.RestoreFromFile(mediator.PropertyTable.LocalSettingsId);
 					//progressState.SetMilestone();
@@ -156,7 +156,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					mediator.PropertyTable.SetProperty("window", dlg.Owner);
 					mediator.PropertyTable.SetPropertyPersistence("window", false);
 
-					string directoryContainingConfiguration = Path.Combine(DirectoryFinder.FlexFolder, "Configuration");
+					string directoryContainingConfiguration = Path.Combine(FwDirectoryFinder.FlexFolder, "Configuration");
 					StringTable table = new StringTable(directoryContainingConfiguration);
 					mediator.StringTbl = table;
 					mediator.FeedbackInfoProvider = (IFeedbackInfoProvider)app;

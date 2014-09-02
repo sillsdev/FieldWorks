@@ -10,18 +10,15 @@
 // Implements FdoTestBase, the base class for the FDO tests
 // </remarks>
 
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 using SIL.CoreImpl;
-using SIL.FieldWorks.FDO.Infrastructure.Impl;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -101,7 +98,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				DisposeEverythingButBase();
 			// We need FieldWorks here to get the correct registry key HKLM\Software\SIL\FieldWorks.
 			// The default without this would be HKLM\Software\SIL\SIL FieldWorks, which breaks some tests.
-			SIL.Utils.RegistryHelper.ProductName = "FieldWorks";
+			RegistryHelper.ProductName = "FieldWorks";
+			FdoTestHelper.SetupStaticFdoProperties();
 			m_cache = CreateCache();
 			m_actionHandler = m_cache.ServiceLocator.GetInstance<IActionHandler>();
 		}
@@ -125,11 +123,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		protected void DisposeEverythingButBase()
 		{
 			if (m_cache != null)
-			{
-				if (m_cache.ThreadHelper != null)
-					m_cache.ThreadHelper.Dispose();
 				m_cache.Dispose();
-			}
 			m_cache = null;
 			m_actionHandler = null;
 		}
@@ -176,9 +170,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// <returns>a working FdoCache</returns>
 		protected FdoCache BootstrapSystem(IProjectIdentifier projectId, BackendBulkLoadDomain loadType)
 		{
-			// This thread helper will be disposed in FixtureTeardown along with the cache.
-			var retval = m_internalRestart ? FdoCache.CreateCacheFromExistingData(projectId, "en", new DummyProgressDlg()) :
-				FdoCache.CreateCacheWithNewBlankLangProj(projectId, "en", "fr", "en", new ThreadHelper());
+			var retval = m_internalRestart ? FdoCache.CreateCacheFromExistingData(projectId, "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new DummyProgressDlg()) :
+				FdoCache.CreateCacheWithNewBlankLangProj(projectId, "en", "fr", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories);
 			var dataSetup = retval.ServiceLocator.GetInstance<IDataSetup>();
 			dataSetup.LoadDomain(loadType);
 			return retval;

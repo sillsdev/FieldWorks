@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FwCoreDlgs;
+using SIL.FieldWorks.Resources;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls

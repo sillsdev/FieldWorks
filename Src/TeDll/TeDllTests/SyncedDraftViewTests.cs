@@ -6,10 +6,12 @@
 // Responsibility: TE Team
 // --------------------------------------------------------------------------------------------
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.TE.DraftViews
 {

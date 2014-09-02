@@ -17,7 +17,6 @@ using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SILUBS.SharedScrUtils;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainImpl;
 
 namespace SIL.FieldWorks.FDO.DomainServices
@@ -30,35 +29,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	{
 		/// <summary>Book marker</summary>
 		public static readonly string kMarkerBook = @"\id";
-		/// <summary>Delegate to report a non-fatal "warning" message</summary>
-		private static Action<string> ReportWarning;
 
 		internal const char kKeyTokenSeparator = '\uffff';
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes the <see cref="ScriptureServices"/> class.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		static ScriptureServices()
-		{
-			InitializeWarningHandler();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes the delegate for reporting warnings.
-		/// </summary>
-		/// <remarks>This needs to be a separate method because it is called by reflection in
-		/// test(s).</remarks>
-		/// ------------------------------------------------------------------------------------
-		private static void InitializeWarningHandler()
-		{
-			ReportWarning = sMsg =>
-			{
-				ErrorReporter.ReportException(new Exception(sMsg), null, null, null, false);
-			};
-		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -453,7 +425,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			ITsTextProps ttp;
 			ITsPropsBldr propsBldr;
 			int iFootnote = 0;
-			var pictureRepo = book.Cache.ServiceLocator.GetInstance<ICmPictureRepository>();
+			IFdoServiceLocator serviceLocator = book.Cache.ServiceLocator;
+			var pictureRepo = serviceLocator.GetInstance<ICmPictureRepository>();
 			foreach (IScrTxtPara revPara in archivedBook.Paragraphs)
 			{
 				//TODO: TE-5082 Duplicate code! The following should call or use common code with
@@ -498,7 +471,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 											BCVRef.MakeReferenceString(startRef, endRef, ":", "-") + " with guid " + guid +
 											" does not have a corresponding footnote object owned by " + book.BookId +
 											" or refers to a footnote that is owned by another ORC that occurs earlier.";
-										ReportWarning(sMsg);
+										serviceLocator.GetInstance<IFdoUI>().ReportException(new Exception(sMsg), false);
 										break;
 									}
 									Logger.WriteEvent("Footnotes out of order in " + book.BookId + ". Expected footnote with guid " + guid +
@@ -552,7 +525,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			{
 				string sMsg = (archivedBook.FootnotesOS.Count -  iFootnote) + " footnote(s) in " +
 					book.BookId + " did not correspond to any owned footnotes in the vernacular text of that book. They have been moved to the end of the footnote sequence.";
-				ReportWarning(sMsg);
+				serviceLocator.GetInstance<IFdoUI>().ReportException(new Exception(sMsg), false);
 			}
 		}
 
@@ -2346,49 +2319,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			cmFile.InternalPath = srcFile;
 
 			return cmFile;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Copy source file to a unique file in FW\pictures directory.
-		/// </summary>
-		/// <param name="srcFilename">The path to the original filename (an internal copy will
-		/// be made in this method)</param>
-		/// <param name="dstSubdir">The subfolder of the FW Data directory in which the
-		/// internal copy of the file should be created, if necessary (no backslashes needed)
-		/// </param>
-		/// <returns>Destination file path, relative to the FW data directory, or ".__NONE__"
-		/// if source file doesn't exist.
-		/// </returns>
-		/// ------------------------------------------------------------------------------------
-		public static string CopyFileToInternal(string srcFilename, string dstSubdir)
-		{
-			string srcFilenameCorrected;
-			if (!FileUtils.TrySimilarFileExists(srcFilename, out srcFilenameCorrected))
-				return EmptyFileName;
-
-			var strDestFolder = Path.Combine(DirectoryFinder.FWDataDirectory, dstSubdir);
-			if (!Directory.Exists(strDestFolder))
-				Directory.CreateDirectory(strDestFolder);
-
-			var strDestFileRelPath = Path.Combine(dstSubdir, Path.GetFileName(srcFilenameCorrected));
-			var strDestFileAbsPath = Path.Combine(DirectoryFinder.FWDataDirectory, strDestFileRelPath);
-
-			// (The case-independent comparison is valid only for Microsoft Windows.)
-			if (srcFilenameCorrected.Equals(strDestFileAbsPath, StringComparison.OrdinalIgnoreCase))
-				return strDestFileRelPath;	// don't copy files already in internal directory.
-
-			var strFile = Path.GetFileNameWithoutExtension(srcFilenameCorrected);
-			var strExt = Path.GetExtension(srcFilenameCorrected);
-			var iQual = 0;
-			while (FileUtils.FileExists(strDestFileAbsPath))
-			{
-				iQual++;
-				strDestFileRelPath = Path.Combine(dstSubdir, strFile + iQual + strExt);
-				strDestFileAbsPath = Path.Combine(DirectoryFinder.FWDataDirectory, strDestFileRelPath);
-			}
-			File.Copy(srcFilenameCorrected, strDestFileAbsPath);
-			return strDestFileRelPath;
 		}
 
 		/// ------------------------------------------------------------------------------------

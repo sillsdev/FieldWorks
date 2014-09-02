@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.Common.Controls
 			: base(cache, objList, helpTopicProvider)
 		{
 			m_bookImporter = importer;
-			using (var progressDlg = new ProgressDialogWithTask(null, cache.ThreadHelper))
+			using (var progressDlg = new ProgressDialogWithTask(this))
 			{
 				// This somewhat duplicates some logic in FieldWorks.GetHelpTopicProvider, but it feels
 				// wrong to reference the main exe even though I can't find an actual circular dependency.
@@ -52,12 +52,12 @@ namespace SIL.FieldWorks.Common.Controls
 				IHelpTopicProvider helpProvider;
 				if (FwUtils.FwUtils.IsTEInstalled)
 				{
-					helpProvider = (IHelpTopicProvider) DynamicLoader.CreateObject(DirectoryFinder.TeDll,
+					helpProvider = (IHelpTopicProvider) DynamicLoader.CreateObject(FwDirectoryFinder.TeDll,
 						"SIL.FieldWorks.TE.TeHelpTopicProvider");
 				}
 				else
 				{
-					helpProvider = (IHelpTopicProvider)DynamicLoader.CreateObject(DirectoryFinder.FlexDll,
+					helpProvider = (IHelpTopicProvider)DynamicLoader.CreateObject(FwDirectoryFinder.FlexDll,
 						"SIL.FieldWorks.XWorks.LexText.FlexHelpTopicProvider");
 				}
 				NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () =>

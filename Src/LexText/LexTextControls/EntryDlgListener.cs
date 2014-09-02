@@ -1,13 +1,9 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2014 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File: EntryDlgListener.cs
 // Responsibility: Randy Regnier
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Diagnostics;
@@ -229,7 +225,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				Debug.Assert(cache != null);
 				dlg.SetDlgInfo(cache, null, m_mediator);
 				dlg.SetHelpTopic("khtpFindLexicalEntry");
-				if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+				if (dlg.ShowDialog() == DialogResult.OK)
 					m_mediator.BroadcastMessageUntilHandled("JumpToRecord", dlg.SelectedObject.Hvo);
 			}
 			return true;

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using SIL.Utils;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.FDO.Infrastructure
 {
@@ -43,7 +42,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 		/// <param name="fBootstrapSystem">True to bootstrap the existing system, false to skip that
 		/// step</param>
 		/// <param name="progressDlg">The progress dialog box</param>
-		void StartupExtantLanguageProject(IProjectIdentifier projectId, bool fBootstrapSystem, IThreadedProgress progressDlg);
+		/// <param name="forbidDataMigration">True if the application forbids data migration</param>
+		void StartupExtantLanguageProject(IProjectIdentifier projectId, bool fBootstrapSystem, IThreadedProgress progressDlg, bool forbidDataMigration);
 
 		/// <summary>
 		/// Create a new LanguageProject for the BEP with the given parameters.
@@ -261,19 +261,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 	/// </summary>
 	internal interface IClientServerDataManager
 	{
-		/// <summary>
-		/// Get any changes we haven't previously seen which other clients have made to our database.
-		/// </summary>
-		/// <param name="foreignNewbies">New objects created on the other client</param>
-		/// <param name="foreignDirtballs">Object we know about modified on the other client.</param>
-		/// <param name="foreignGoners">objects we know about deleted by the other client.</param>
-		/// <param name="fGetCommitLock">if true, we intend to Commit; if there are no conflicts, lock
-		/// until commit. (If there are conflicts, we don't lock till we reconciled.)</param>
-		/// <returns>true if there are any foreign changes</returns>
-		bool GetUnseenForeignChanges(out List<ICmObjectSurrogate> foreignNewbies,
-			out List<ICmObjectSurrogate> foreignDirtballs,
-			out List<ICmObjectId> foreignGoners, bool fGetCommitLock);
-
 		/// <summary>
 		/// Return a string (typically at or near shutdown) which may be passed back to NewObjectsSinceVersion.
 		/// </summary>

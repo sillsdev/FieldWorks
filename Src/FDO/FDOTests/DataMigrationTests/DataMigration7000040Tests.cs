@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Web;
 using System.Xml.Linq;
 using System.Xml.XPath;
@@ -40,7 +39,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			mockMDC.AddClass(3, "LexEntry", "CmObject", new List<string>());
 
 			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000039, dtos, mockMDC,
-				FileUtils.ChangePathToPlatform("C:\\WW\\DistFiles\\Projects\\TokPisin"));
+				FileUtils.ChangePathToPlatform("C:\\WW\\DistFiles\\Projects\\TokPisin"), FwDirectoryFinder.FdoDirectories);
 			// Do Migration
 			m_dataMigrationManager.PerformMigration(dtoRepos, 7000040, new DummyProgressDlg());
 

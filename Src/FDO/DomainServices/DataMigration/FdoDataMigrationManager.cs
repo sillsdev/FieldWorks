@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
-using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 {
@@ -175,7 +174,6 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 								  currentDataStoreModelVersion, updateToVersion));
 
 			progressDlg.Title = Strings.ksDataMigrationCaption;
-			progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
 			progressDlg.AllowCancel = false;
 			progressDlg.Minimum = 0;
 			progressDlg.Maximum = (updateToVersion - currentDataStoreModelVersion) + 1;

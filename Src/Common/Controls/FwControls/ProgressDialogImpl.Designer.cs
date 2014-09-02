@@ -49,29 +49,30 @@ namespace SIL.FieldWorks.Common.Controls
 			this.progressBar = new System.Windows.Forms.ProgressBar();
 			this.btnCancel = new System.Windows.Forms.Button();
 			this.SuspendLayout();
-			//
+			// 
 			// lblStatusMessage
-			//
+			// 
 			this.lblStatusMessage.AutoEllipsis = true;
 			resources.ApplyResources(this.lblStatusMessage, "lblStatusMessage");
 			this.lblStatusMessage.Name = "lblStatusMessage";
-			//
+			// 
 			// progressBar
-			//
+			// 
 			resources.ApplyResources(this.progressBar, "progressBar");
 			this.progressBar.Name = "progressBar";
 			this.progressBar.Step = 1;
-			//
+			this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+			// 
 			// btnCancel
-			//
+			// 
 			this.btnCancel.Cursor = System.Windows.Forms.Cursors.Arrow;
 			this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			resources.ApplyResources(this.btnCancel, "btnCancel");
 			this.btnCancel.Name = "btnCancel";
 			this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-			//
+			// 
 			// ProgressDialogImpl
-			//
+			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.btnCancel;

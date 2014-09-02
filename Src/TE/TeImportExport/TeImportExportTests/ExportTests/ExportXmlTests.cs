@@ -14,6 +14,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.Test.TestUtils;

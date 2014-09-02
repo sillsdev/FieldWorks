@@ -161,7 +161,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		public void SetDlginfo(IFsFeatureSystem featSys, Mediator mediator, bool launchedFromInsertMenu)
 		{
 			// default to inflection features
-			string sXmlFile = Path.Combine(DirectoryFinder.FWCodeDirectory, String.Format("Language Explorer{0}MGA{0}GlossLists{0}EticGlossList.xml", Path.DirectorySeparatorChar));
+			string sXmlFile = Path.Combine(FwDirectoryFinder.CodeDirectory, String.Format("Language Explorer{0}MGA{0}GlossLists{0}EticGlossList.xml", Path.DirectorySeparatorChar));
 			SetDlginfo(featSys, mediator, launchedFromInsertMenu, "masterInflFeatListDlg", sXmlFile);
 		}
 

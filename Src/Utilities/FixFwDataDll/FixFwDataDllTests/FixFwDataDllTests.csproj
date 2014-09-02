@@ -72,6 +72,10 @@
     <Compile Include="FwDataFixerTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="BasicUtils, Version=8.0.6.27271, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
+    </Reference>
     <Reference Include="BasicUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>

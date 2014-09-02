@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// <returns></returns>
 		protected string ConfigurationFilePath(string fileRelativePath)
 		{
-			return Path.Combine(DirectoryFinder.FwSourceDirectory, fileRelativePath);
+			return Path.Combine(FwDirectoryFinder.SourceDirectory, fileRelativePath);
 		}
 
 		/// <summary>
@@ -543,7 +543,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				ITsString tssWordformBaseline = GetBaselineText(iSegment, iSegForm);
 				// Add any relevant 'other case' forms.
 				int nvar;
-				int ws = tssWordformBaseline.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out nvar); ;
+				int ws = tssWordformBaseline.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out nvar);
 				string locale = m_cache.ServiceLocator.WritingSystemManager.Get(ws).IcuLocale;
 				var cf = new CaseFunctions(locale);
 				switch (targetState)
@@ -2435,7 +2435,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			IWritingSystem wsObj = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			var validChars = ValidCharacters.Load(wsObj.ValidChars,
-				wsObj.DisplayLabel, null, null);
+				wsObj.DisplayLabel, null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			var fChangedSomething = false;
 			if (!validChars.IsWordForming('-'))
 			{
@@ -2548,7 +2548,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			return result;
 		}
 
-		enum Text1ParaIndex {
+		/// <summary>Indices for paragraphs used in these tests</summary>
+		public enum Text1ParaIndex {
 			/// <summary>
 			/// xxxpus xxxyalola xxxnihimbilira. xxxnihimbilira xxxpus xxxyalola. xxxhesyla xxxnihimbilira.
 			/// </summary>
@@ -2578,65 +2579,22 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// <summary>
 		/// The actual paragraphs are built from ParagraphParserTestTexts.xml. ParagraphContents is simply for auditing.
 		/// </summary>
-		string[] ParagraphContents = new string[] {
-													  // Paragraph 0 - simple segments
-													  "xxxpus xxxyalola xxxnihimbilira. xxxnihimbilira xxxpus xxxyalola. xxxhesyla xxxnihimbilira.",
-													  // Paragraph 1 - empty paragraph
-													  "",
-													  // Paragraph 2 - complex punctuation
-													  "xxxnihimbiligu  xxxyaloni, xxxkasani & xxxnihimbilibi... \"xxxnihimbilira (xxxpus) xxxkasani.\"! ! ! xxxpus",
-													  // Paragraph 3 - complex wordforms.
-													  "xxxnihimbili'gu xxxyaloni. xxxkasani1xxxpus xxxnihimbilibi 123. xxxnihimbilira xxxpus-kola xxxkasani.",
-													  // Paragraph 4 - mixed case.
-													  "Xxxpus xxxyalola xxxnihimbilira. Xxxnihimbilira xxxpus Xxxyalola. Xxxhesyla XXXNIHIMBILIRA.",
-													  // Paragraph 5 - multiple vernacular writing systems.
-													  "xxxpus xxes xxxnihimbilira. xxfr xxen xxxnihimbilira xxxpus xxde. xxkal xxkal xxxxhesyla xxxxhesyla.",
-													  // Paragraph 6 - PhraseWordforms.
-													  "xxxpus xxxyalola xxxnihimbilira. xxxpus xxxyalola xxxhesyla xxxnihimbilira. xxxpus xxxyalola xxxnihimbilira."
-												  };
-
-		private Dictionary<string, int> BuildExpectedOccurrences()
-		{
-			IWritingSystemManager wsManager = Cache.ServiceLocator.WritingSystemManager;
-			int wsXkal = wsManager.GetWsFromStr("xkal");
-			int wsEn = wsManager.GetWsFromStr("en");
-			int wsFr = wsManager.GetWsFromStr("fr");
-			int wsEs = wsManager.GetWsFromStr("es");
-			int wsDe = wsManager.GetWsFromStr("de");
-
-			Dictionary<string, int> expectedOccurrences = new Dictionary<string, int>();
-			// paragraph 1 - simple
-			expectedOccurrences["xxxpus" + wsXkal.ToString()] = 11;
-			expectedOccurrences["xxxyalola" + wsXkal.ToString()] = 6;
-			expectedOccurrences["xxxnihimbilira" + wsXkal.ToString()] = 11;
-			// paragraph 2 - complex punctuation
-			expectedOccurrences["xxxhesyla" + wsXkal.ToString()] = 2;
-			expectedOccurrences["xxxnihimbiligu" + wsXkal.ToString()] = 1;
-			expectedOccurrences["xxxyaloni" + wsXkal.ToString()] = 2;
-			expectedOccurrences["xxxkasani" + wsXkal.ToString()] = 4;
-			expectedOccurrences["xxxnihimbilibi" + wsXkal.ToString()] = 2;
-			// paragraph 3 - complex wordform
-			expectedOccurrences["xxxnihimbili'gu" + wsXkal.ToString()] = 1;
-			expectedOccurrences["xxxpus-kola" + wsXkal.ToString()] = 1;
-			// paragraph 4 - mixed case
-			expectedOccurrences["Xxxpus" + wsXkal.ToString()] = 1;
-			expectedOccurrences["Xxxnihimbilira" + wsXkal.ToString()] = 1;
-			expectedOccurrences["Xxxyalola" + wsXkal.ToString()] = 1;
-			expectedOccurrences["Xxxhesyla" + wsXkal.ToString()] = 1;
-			expectedOccurrences["XXXNIHIMBILIRA" + wsXkal.ToString()] = 1;
-			// paragraph 5 - multiple writing
-			expectedOccurrences["xxes" + wsEs.ToString()] = 1;
-			expectedOccurrences["xxfr" + wsFr.ToString()] = 1;
-			expectedOccurrences["xxen" + wsEn.ToString()] = 1;
-			expectedOccurrences["xxde" + wsDe.ToString()] = 1;
-			expectedOccurrences["xxkal" + wsDe.ToString()] = 1;
-			expectedOccurrences["xxkal" + wsXkal.ToString()] = 1;
-			// xxxxhesyla: Kalaba (xkal)
-			// xxxxhesyla: German (de)
-			expectedOccurrences["xxxxhesyla" + wsXkal.ToString()] = 1;
-			expectedOccurrences["xxxxhesyla" + wsDe.ToString()] = 1;
-			return expectedOccurrences;
-		}
+		readonly string[] ParagraphContents = {
+			// Paragraph 0 - simple segments
+			"xxxpus xxxyalola xxxnihimbilira. xxxnihimbilira xxxpus xxxyalola. xxxhesyla xxxnihimbilira.",
+			// Paragraph 1 - empty paragraph
+			"",
+			// Paragraph 2 - complex punctuation
+			"xxxnihimbiligu  xxxyaloni, xxxkasani & xxxnihimbilibi... \"xxxnihimbilira (xxxpus) xxxkasani.\"! ! ! xxxpus",
+			// Paragraph 3 - complex wordforms.
+			"xxxnihimbili'gu xxxyaloni. xxxkasani1xxxpus xxxnihimbilibi 123. xxxnihimbilira xxxpus-kola xxxkasani.",
+			// Paragraph 4 - mixed case.
+			"Xxxpus xxxyalola xxxnihimbilira. Xxxnihimbilira xxxpus Xxxyalola. Xxxhesyla XXXNIHIMBILIRA.",
+			// Paragraph 5 - multiple vernacular writing systems.
+			"xxxpus xxes xxxnihimbilira. xxfr xxen xxxnihimbilira xxxpus xxde. xxkal xxkal xxxxhesyla xxxxhesyla.",
+			// Paragraph 6 - PhraseWordforms.
+			"xxxpus xxxyalola xxxnihimbilira. xxxpus xxxyalola xxxhesyla xxxnihimbilira. xxxpus xxxyalola xxxnihimbilira."
+		};
 
 		/// <summary>
 		/// This checks that our TextBuilder and ParagraphBuilder build texts like we expect.
@@ -2672,37 +2630,15 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		}
 
 		/// <summary>
-		/// Test the annotations for empty paragraph.
+		/// Test the annotations for most paragraphs.
 		/// </summary>
 		[Test]
-		public void NoAnalyses_NoEdits_EmptyParagraph()
+		public void NoAnalyses_NoEdits(
+			[Values(Text1ParaIndex.EmptyParagraph, Text1ParaIndex.SimpleSegmentPara, Text1ParaIndex.ComplexPunctuations,
+				Text1ParaIndex.MixedCases, Text1ParaIndex.MultipleWritingSystems)] Text1ParaIndex paraIdx)
 		{
-			ParagraphBuilder pb = new ParagraphBuilder(m_textsDefn, m_text1, (int)Text1ParaIndex.EmptyParagraph);
-			ParagraphAnnotatorForParagraphBuilder tapb = new ParagraphAnnotatorForParagraphBuilder(pb);
-			pb.ParseParagraph();
-			tapb.ValidateAnnotations();
-		}
-
-		/// <summary>
-		/// Test the annotations for simple segment paragraph.
-		/// </summary>
-		[Test]
-		public void NoAnalyses_NoEdits_SimpleSegmentParagraph()
-		{
-			ParagraphBuilder pb = new ParagraphBuilder(m_textsDefn, m_text1, (int)Text1ParaIndex.SimpleSegmentPara);
-			ParagraphAnnotatorForParagraphBuilder tapb = new ParagraphAnnotatorForParagraphBuilder(pb);
-			pb.ParseParagraph();
-			tapb.ValidateAnnotations();
-		}
-
-		/// <summary>
-		/// Test the annotations for complex punctuation paragraph.
-		/// </summary>
-		[Test]
-		public void NoAnalyses_NoEdits_ComplexPunctuationParagraph()
-		{
-			ParagraphBuilder pb = new ParagraphBuilder(m_textsDefn, m_text1, (int)Text1ParaIndex.ComplexPunctuations);
-			ParagraphAnnotatorForParagraphBuilder tapb = new ParagraphAnnotatorForParagraphBuilder(pb);
+			var pb = new ParagraphBuilder(m_textsDefn, m_text1, (int)paraIdx);
+			var tapb = new ParagraphAnnotatorForParagraphBuilder(pb);
 			pb.ParseParagraph();
 			tapb.ValidateAnnotations();
 		}
@@ -2714,34 +2650,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void NoAnalyses_NoEdits_ComplexWordformsParagraph()
 		{
 			SetupOldWordformingOverrides();
-
-			ParagraphBuilder pb = new ParagraphBuilder(m_textsDefn, m_text1, (int)Text1ParaIndex.ComplexWordforms);
-			ParagraphAnnotatorForParagraphBuilder tapb = new ParagraphAnnotatorForParagraphBuilder(pb);
-			pb.ParseParagraph();
-			tapb.ValidateAnnotations();
-		}
-
-		/// <summary>
-		/// Test the annotations for mixed case wordform paragraph.
-		/// </summary>
-		[Test]
-		public void NoAnalyses_NoEdits_MixedCaseWordformsParagraph()
-		{
-			ParagraphBuilder pb = new ParagraphBuilder(m_textsDefn, m_text1, (int)Text1ParaIndex.MixedCases);
-			ParagraphAnnotatorForParagraphBuilder tapb = new ParagraphAnnotatorForParagraphBuilder(pb);
-			pb.ParseParagraph();
-			tapb.ValidateAnnotations();
-		}
-
-		/// <summary>
-		/// Test the annotations for mixed case wordform paragraph.
-		/// </summary>
-		[Test]
-		public void NoAnalyses_NoEdits_MultipleWritingSystemsParagraph()
-		{
-			// For now, just make sure we can build the text and parse it.
-			ParagraphBuilder pb = new ParagraphBuilder(m_textsDefn, m_text1, (int)Text1ParaIndex.MultipleWritingSystems);
-			pb.ParseParagraph();
+			NoAnalyses_NoEdits(Text1ParaIndex.ComplexWordforms);
 		}
 
 		/// <summary>
@@ -2754,9 +2663,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void NoAnalyses_NoEdits_PhraseWordforms()
 		{
 			// 1. Setup Tests with a basic phrase
-			IList<int[]> secondaryPathsToJoinWords = new List<int[]>();
-			IList<int[]> secondaryPathsToBreakPhrases = new List<int[]>();
-
 			ParagraphBuilder pb = new ParagraphBuilder(m_textsDefn, m_text1, (int) Text1ParaIndex.PhraseWordforms);
 
 			// first do a basic phrase (without secondary phrases (guesses))
@@ -2846,6 +2752,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// <summary>
 		/// Add a new ws alternative to an existing wordform.
 		/// Then add another alternative that already has an existing hvo.
+		/// TODO 2012.01
 		/// </summary>
 		[Ignore("LT-10147: Need to do this when we get more serious about merging wordform information.")]
 		[Test]
@@ -3254,15 +3161,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			actualAnalysis_xxxpus1_1 = tapb.GetAnalysis(1, 1);
 			Assert.AreEqual(gloss_xxxpus1_1, actualAnalysis_xxxpus1_1);
 			tapb.ValidateAnnotations();
-			//SparseAnalyses_SimpleEdits_SimpleSegmentParagraph_DuplicateWordforms_RemoveSegment_LT5376()
-			//SparseAnalyses_SimpleEdits_SimpleSegmentParagraph_DuplicateWordforms_AddWhitespace_LT5313()
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		[Test]
-		[Ignore("See LT-5376 for details.")]
 		public void SparseAnalyses_SimpleEdits_SimpleSegmentParagraph_DuplicateWordforms_RemoveSegment_LT5376()
 		{
 			// First set sparse analyses on wordforms that have multiple occurrences.
@@ -3295,9 +3197,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var gloss0_1 = tapb.SetDefaultWordGloss(0, 1, out gloss);   // xxxyalola 1
 			var gloss1_1 = tapb.SetDefaultWordGloss(1, 1, out gloss);   // xxxpus 2
 			var gloss2_1 = tapb.SetDefaultWordGloss(2, 1, out gloss);   // xxxnihimbilira 3
-			var occ0_1_beforeSpace = pb.GetExpectedAnalysis(0, 1);
-			var occ1_1_beforeSpace = pb.GetExpectedAnalysis(1, 1);
-			var occ2_1_beforeSpace = pb.GetExpectedAnalysis(2, 1);
+
 			tapb.ValidateAnnotations(); // precondition testing.
 			// Append whitespace in the text, and see if the analyses still show up in the right place
 			// (cf. LT-5313).
@@ -3355,6 +3255,30 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(gloss_xxxnihimbilira2_1, tapb.GetAnalysis(2, 1));
 			// validate the rest of the stuff.
 			tapb.ValidateAnnotations();
+		}
+
+		/// <summary>
+		/// Tests that ambiguous-cased (segment-initial) words prefer matching extant lowercase WF's to creating new.
+		/// Simple: xxxpus xxxyalola xxxnihimbilira. xxxnihimbilira xxxpus xxxyalola. xxxhesyla xxxnihimbilira.
+		/// Mixed:  Xxxpus xxxyalola xxxnihimbilira. Xxxnihimbilira xxxpus Xxxyalola. Xxxhesyla XXXNIHIMBILIRA.
+		/// </summary>
+		[Test]
+		public void SegmentInitialUppercaseWordMatchesLowercaseWordform()
+		{
+			// prepopulate lowercase Wordforms
+			new ParagraphBuilder(m_textsDefn, m_text1, (int)Text1ParaIndex.SimpleSegmentPara).ParseParagraph();
+
+			// Build and parse paragraph
+			var pb = new ParagraphBuilder(m_textsDefn, m_text1, (int)Text1ParaIndex.MixedCases);
+			var tapb = new ParagraphAnnotatorForParagraphBuilder(pb);
+			pb.ParseParagraph();
+
+			// Verify WF's are reused across case iff appropriate:
+			Assert.AreEqual(   tapb.GetAnalysis(0, 0), tapb.GetAnalysis(1, 1), "Initial Xxxpus should have been interpreted as sentence case");
+			Assert.AreNotEqual(tapb.GetAnalysis(0, 1), tapb.GetAnalysis(1, 2), "Mid-sentence Xxxyalola should not match lowercase WF");
+			Assert.AreNotEqual(tapb.GetAnalysis(0, 2), tapb.GetAnalysis(1, 0),
+				"Congratulations! You fixed it! Please Assert.AreEqual with this message: xxxnihimbilira should have been reused for segment initial.");
+			Assert.AreNotEqual(tapb.GetAnalysis(0, 2), tapb.GetAnalysis(2, 1), "XXXNIHIMBILIRA should have been given its own all-caps WF");
 		}
 
 		/// <summary>

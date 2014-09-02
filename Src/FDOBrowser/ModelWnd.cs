@@ -5,10 +5,12 @@ using System.Linq;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FdoUi;
 using SIL.Utils;
 using WeifenLuo.WinFormsUI.Docking;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
+using XCore;
 
 namespace FDOBrowser
 {
@@ -29,7 +31,7 @@ namespace FDOBrowser
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ModelWnd"/> class.
+		/// Initializes a new instance of the <see cref="ModelWnd"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public ModelWnd()
@@ -40,7 +42,7 @@ namespace FDOBrowser
 			m_lvModel.Font = SystemFonts.MenuFont;
 
 			// Add model browsing cache (no data, just model browsing).
-			m_cache = FdoCache.CreateCacheWithNoLangProj(new BrowserProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", new ThreadHelper());
+			m_cache = FdoCache.CreateCacheWithNoLangProj(new BrowserProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", new SilentFdoUI(this), FwDirectoryFinder.FdoDirectories);
 			m_mdc = (IFwMetaDataCacheManaged)m_cache.MainCacheAccessor.MetaDataCache;
 			PopulateModelTree();
 
@@ -71,7 +73,7 @@ namespace FDOBrowser
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ModelWnd"/> class.
+		/// Initializes a new instance of the <see cref="ModelWnd"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public ModelWnd(ToolStripStatusLabel statuslabel) : this()

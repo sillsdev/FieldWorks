@@ -197,35 +197,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 					return false;
 				}
 			}
-
-			/// <summary>
-			/// LT-14787 Database displays error about inaccessible Paratext projects
-			/// If there is a registry value for this but the folder is not there we need to return false because
-			/// paratext is not installed correctly. Also if there is no registry entry for this then return false.
-			/// </summary>
-			public bool ParatextSettingsDirectoryExists()
-			{
-				var regValue = ParatextSettingsDirectory();
-				return !String.IsNullOrEmpty(regValue) && Directory.Exists(regValue);
-			}
-
-			/// <summary>
-			/// Returns the path to the Paratext settings (projects) directory as specified in the registry
-			/// ENHANCE (Hasso) 2013.09: added this to expose the directory for Unix users, because trying to get it from ScrTextCollections
-			/// always returns null on Unix.  This is really a Paratext problem, and this method may have no benefit.
-			/// </summary>
-			public string ParatextSettingsDirectory()
-			{
-				using (var paratextKey = Registry.LocalMachine.OpenSubKey("Software\\ScrChecks\\1.0\\Settings_Directory"))
-				{
-					if (paratextKey != null)
-					{
-						var keyName = paratextKey.ToString();
-						return Registry.GetValue(keyName, "", "") as string;
-					}
-				}
-				return null;
-			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -390,28 +361,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
-		/// If there is a registry value for this but the folder is not there we need to return false because
-		/// paratext is not installed correctly. Also if there is no registry entry for this then return false.
-		/// </summary>
-		public static bool ParatextSettingsDirectoryExists()
-		{
-			return RegistryHelperImpl.ParatextSettingsDirectoryExists();
-		}
-
-		/// <summary>
-		/// Returns the path to the Paratext settings (projects) directory as specified in the registry
-		/// ENHANCE (Hasso) 2013.09: added this to expose the directory for Unix users, because trying to get it from ScrTextCollections
-		/// always returns null on Unix.  This is really a Paratext problem, and this method may have no benefit.
-		/// </summary>
-		public static string ParatextSettingsDirectory()
-		{
-			return RegistryHelperImpl.ParatextSettingsDirectory();
-		}
-
-		/// <summary>
 		/// E.g. the first time the user runs FW8, we need to copy a bunch of registry keys
 		/// from HKCU/Software/SIL/FieldWorks/7.0 -> FieldWorks/8.
-		/// Also copy HKEY_LOCAL_MACHINE\SOFTWARE\SIL\FieldWorks\7.0 ProjectShared (LT-15154).
 		/// </summary>
 		public static void UpgradeUserSettingsIfNeeded()
 		{
@@ -433,11 +384,33 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 				// After copying everything delete the old key
 				FieldWorksVersionlessRegistryKey.DeleteSubKeyTree(OldFieldWorksRegistryKeyNameVersion7);
-				// Don't delete old ProjectShared since it is in HKLM and we would need admin privileges.
 			}
 			catch (SecurityException se)
 			{
 				// What to do here? Punt!
+			}
+		}
+
+		/// <summary>
+		/// Migrate the ProjectShared value stored in HKLM in version 7 into the HKCU (.Default since this will be run as system)
+		/// </summary>
+		/// <returns></returns>
+		public static void MigrateVersion7ValueIfNeeded()
+		{
+			// Guard for some broken Windows machines having trouble accessing HKLM (LT-15158).
+			var hklm = LocalMachineHive;
+			if (hklm != null)
+			{
+				using (var oldProjectSharedSettingLocation = hklm.OpenSubKey(@"SOFTWARE\SIL\FieldWorks\7.0"))
+				{
+					object oldProjectSharedValue, newProjectSharedValue;
+					if (oldProjectSharedSettingLocation != null
+						&& !RegistryHelper.RegEntryExists(FieldWorksRegistryKey, string.Empty, @"ProjectShared", out newProjectSharedValue)
+						&& RegistryHelper.RegEntryExists(oldProjectSharedSettingLocation, string.Empty, @"ProjectShared", out oldProjectSharedValue))
+					{
+						FieldWorksRegistryKey.SetValue(@"ProjectShared", oldProjectSharedValue);
+					}
+				}
 			}
 		}
 

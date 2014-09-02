@@ -12,8 +12,6 @@ using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 
@@ -66,9 +64,9 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 		[Test]
 		public void NoBackupFilesAvailable()
 		{
-			m_fileOs.ExistingDirectories.Add(DirectoryFinder.DefaultBackupDirectory);
+			m_fileOs.ExistingDirectories.Add(FwDirectoryFinder.DefaultBackupDirectory);
 
-			BackupFileRepository repo = new BackupFileRepository();
+			BackupFileRepository repo = new BackupFileRepository(FwDirectoryFinder.DefaultBackupDirectory);
 			Assert.AreEqual(0, repo.AvailableProjectNames.Count());
 			Assert.Throws(typeof(KeyNotFoundException), () => repo.GetAvailableVersions("monkey"));
 			Assert.Throws(typeof(KeyNotFoundException), () => repo.GetBackupFile("monkey", DateTime.Now, false));
@@ -93,7 +91,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			string backupFileName2 = backupSettings.ZipFileName;
 			m_fileOs.AddExistingFile(backupFileName2);
 
-			BackupFileRepository repo = new BackupFileRepository();
+			BackupFileRepository repo = new BackupFileRepository(FwDirectoryFinder.DefaultBackupDirectory);
 			Assert.AreEqual(1, repo.AvailableProjectNames.Count());
 			Assert.AreEqual(2, repo.GetAvailableVersions("Floozy").Count());
 			Assert.AreEqual(backupFileName2, repo.GetBackupFile("Floozy", backupSettings.BackupTime, false).File);
@@ -122,7 +120,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			string backupFileName2 = backupSettings.ZipFileName;
 			m_fileOs.AddExistingFile(backupFileName2);
 
-			BackupFileRepository repo = new BackupFileRepository();
+			BackupFileRepository repo = new BackupFileRepository(FwDirectoryFinder.DefaultBackupDirectory);
 			BackupFileSettings invalidFileSettings = repo.GetMostRecentBackup("Floozy");
 			BackupFileSettings validFileSettings = repo.GetBackupFile("Floozy", backupSettings.BackupTime, false);
 			ReflectionHelper.SetProperty(validFileSettings, "ProjectName", "Floozy"); // Force it to think it's already loaded and happy.
@@ -158,7 +156,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			string backupFileName3 = backupSettings.ZipFileName;
 			m_fileOs.AddExistingFile(backupFileName3);
 
-			BackupFileRepository repo = new BackupFileRepository();
+			BackupFileRepository repo = new BackupFileRepository(FwDirectoryFinder.DefaultBackupDirectory);
 			Assert.AreEqual(2, repo.AvailableProjectNames.Count());
 			Assert.AreEqual(2, repo.GetAvailableVersions("AAA").Count());
 			Assert.AreEqual(1, repo.GetAvailableVersions("ZZZ").Count());
@@ -184,11 +182,11 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 		{
 			DummyBackupProjectSettings backupSettings = new DummyBackupProjectSettings("monkey",
 				"Floozy", null, FDOBackendProviderType.kXML);
-			string backupFileName1 = Path.Combine(DirectoryFinder.DefaultBackupDirectory,
-				Path.ChangeExtension("Floozy 2010-8-21-0506", FwFileExtensions.ksFwBackupFileExtension));
+			string backupFileName1 = Path.Combine(FwDirectoryFinder.DefaultBackupDirectory,
+				Path.ChangeExtension("Floozy 2010-8-21-0506", FdoFileHelper.ksFwBackupFileExtension));
 			m_fileOs.AddExistingFile(backupFileName1);
 
-			BackupFileRepository repo = new BackupFileRepository();
+			BackupFileRepository repo = new BackupFileRepository(FwDirectoryFinder.DefaultBackupDirectory);
 			Assert.AreEqual(1, repo.AvailableProjectNames.Count());
 			Assert.AreEqual(1, repo.GetAvailableVersions("Floozy").Count());
 			Assert.AreEqual(backupFileName1, repo.GetMostRecentBackup("Floozy").File);

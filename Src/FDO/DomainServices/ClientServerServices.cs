@@ -15,12 +15,9 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
-using System.Windows.Forms;
 using FwRemoteDatabaseConnector;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
-using SIL.FieldWorks.Resources;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainServices
@@ -44,25 +41,16 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes the <see cref="ClientServerServices"/> class.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		static ClientServerServices()
-		{
-			SetCurrentToDefaultBackend();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// This is the implementation for the static constructor. It is in a separate method
 		/// to allow tests to reset it (using reflection).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private static void SetCurrentToDefaultBackend()
+		public static void SetCurrentToDb4OBackend(IFdoUI ui, IFdoDirectories dirs,
+			Func<bool> usingDefaultProjectsDirAccessor)
 		{
 			// This is the "one line" that should need to be changed to configure a different backend :-).
 			// Typically a new implementation of IClientServerServices will be needed, as well as the backend itself.
-			Current = new Db4OClientServerServices();
+			Current = new Db4OClientServerServices(ui, dirs, usingDefaultProjectsDirAccessor);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -74,8 +62,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			switch (type)
 			{
-				case FDOBackendProviderType.kDb4oClientServer: return FwFileExtensions.ksFwDataDb4oFileExtension;
-				case FDOBackendProviderType.kXML: return FwFileExtensions.ksFwDataXmlFileExtension;
+				case FDOBackendProviderType.kDb4oClientServer: return FdoFileHelper.ksFwDataDb4oFileExtension;
+				case FDOBackendProviderType.kXML: return FdoFileHelper.ksFwDataXmlFileExtension;
 				default: throw new InvalidEnumArgumentException("type", (int)type, typeof(FDOBackendProviderType));
 			}
 		}
@@ -162,22 +150,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		IDisposable GetExclusiveModeToken(FdoCache cache, string id);
 
 		/// <summary>
-		/// Display a warning indicating that it may be dangerous to change things that the user has just
-		/// asked to change when other users are connected. The warning should only be shown if, in fact,
-		/// other users are currently connected. The dialog may contain some information about the other
-		/// users that are connected. Return true to continue, false to discard the changes. This is typically
-		/// called in response to clicking an OK button in a dialog which changes dangerous user settings.
+		/// Returns the number of other users currently connected
 		/// </summary>
-		/// <returns></returns>
-		bool WarnOnConfirmingSingleUserChanges(FdoCache cache);
-		/// <summary>
-		/// Display a warning indicating that it may be dangerous to change things in the dialog that
-		/// is about to open when other users are connected. The warning should only be shown if, in fact,
-		/// other users are currently connected. The dialog may contain some information about the other
-		/// users that are connected. Return true to continue, false to cancel opening the dialog.
-		/// </summary>
-		/// <returns></returns>
-		bool WarnOnOpeningSingleUserDialog(FdoCache cache);
+		/// <param name="cache">The FDO cache.</param>
+		int CountOfOtherUsersConnected(FdoCache cache);
 	}
 	#endregion
 
@@ -294,15 +270,17 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		private const char ksServerHostSeperatorChar = ':';
 		private Db4OServerFinder m_serverFinder;
 		private FwProjectFinder m_projectFinder;
+		private readonly IFdoDirectories m_dirs;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Db4OClientServerServices"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal Db4OClientServerServices()
+		internal Db4OClientServerServices(IFdoUI ui, IFdoDirectories dirs, Func<bool> usingDefaultProjectsDirAccessor)
 		{
-			Local = new Db4OLocalClientServerServices();
+			m_dirs = dirs;
+			Local = new Db4OLocalClientServerServices(ui, dirs, usingDefaultProjectsDirAccessor);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -316,9 +294,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		public void BeginFindServers(Action<string> foundServer)
 		{
-			if (m_serverFinder != null)
+			if (m_serverFinder != null && !m_serverFinder.IsCompleted)
 				throw new InvalidOperationException("Can not start a new find servers before the previous one finishes.");
-			m_serverFinder = new Db4OServerFinder(foundServer, () => m_serverFinder = null);
+			m_serverFinder = new Db4OServerFinder(foundServer);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -354,7 +332,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (m_projectFinder != null)
 				throw new InvalidOperationException("Can not start a new find projects before the previous one finishes.");
 			m_projectFinder = new FwProjectFinder(host, foundProject, () => m_projectFinder = null,
-				exceptionCallback, showLocalProjects);
+				exceptionCallback, showLocalProjects, m_dirs.ProjectsDirectory);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -468,7 +446,12 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			return null;
 		}
 
-		int CountOfOtherUsersConnected(FdoCache cache)
+		/// <summary>
+		/// Returns the number of other users currently connected
+		/// </summary>
+		/// <param name="cache">The FDO cache.</param>
+		/// <returns>The number of other users currently connected</returns>
+		public int CountOfOtherUsersConnected(FdoCache cache)
 		{
 			if (cache == null) // Can happen when creating a new project when editing the WS properties. (FWR-2981)
 				return 0;
@@ -480,41 +463,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			var projectName = bep.ProjectId.Name;
 			var otherUsers = ListConnectedClients(serverName, projectName);
 			return otherUsers.Length - 1; // Assume this is connected!
-		}
-
-		/// <summary>
-		/// Display a warning indicating that it may be dangerous to change things that the user has just
-		/// asked to change when other users are connected. The warning should only be shown if, in fact,
-		/// other users are currently connected. The dialog may contain some information about the other
-		/// users that are connected. Return true to continue, false to discard the changes. This is typically
-		/// called in response to clicking an OK button in a dialog which changes dangerous user settings.
-		/// </summary>
-		/// <returns></returns>
-		public bool WarnOnConfirmingSingleUserChanges(FdoCache cache)
-		{
-			var others = CountOfOtherUsersConnected(cache);
-			if (others == 0)
-				return true;
-			var msg = string.Format(Strings.ksWarnOnConfirmingSingleUserChanges.Replace("\\n", Environment.NewLine), others);
-			return ThreadHelper.ShowMessageBox(null, msg, Strings.ksNotAdvisableOthersConnectedCaption,
-				MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
-		}
-
-		/// <summary>
-		/// Display a warning indicating that it may be dangerous to change things in the dialog that
-		/// is about to open when other users are connected. The warning should only be shown if, in fact,
-		/// other users are currently connected. The dialog may contain some information about the other
-		/// users that are connected. Return true to continue, false to cancel opening the dialog.
-		/// </summary>
-		/// <returns></returns>
-		public bool WarnOnOpeningSingleUserDialog(FdoCache cache)
-		{
-			var others = CountOfOtherUsersConnected(cache);
-			if (others == 0)
-				return true;
-			var msg = string.Format(Strings.ksWarnOnOpeningSingleUserDialog.Replace("\\n", Environment.NewLine), others);
-			return ThreadHelper.ShowMessageBox(null, msg, Strings.ksOthersConnectedCaption,
-				MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.OK;
 		}
 
 		#region TrivialDisposable class
@@ -571,6 +519,16 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	{
 		internal const string kLocalService = "localhost";
 		internal const string ksDoNotShareProjectTxt = "do_not_share_project.txt";
+		private readonly Func<bool> m_usingDefaultProjectsDirAccessor;
+		private readonly IFdoUI m_ui;
+		private readonly IFdoDirectories m_dirs;
+
+		public Db4OLocalClientServerServices(IFdoUI ui, IFdoDirectories dirs, Func<bool> usingDefaultProjectsDirAccessor)
+		{
+			m_ui = ui;
+			m_dirs = dirs;
+			m_usingDefaultProjectsDirAccessor = usingDefaultProjectsDirAccessor;
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -592,7 +550,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						// their personal projects directory. I'm not sure whether such a user will even see that the
 						// first user has turned on sharing. But in any case, the second user (who did not turn sharing on,
 						// and has their own projects folder) will just go on seeing their own unshared projects.
-						&& DirectoryFinder.ProjectsDirectory == DirectoryFinder.ProjectsDirectoryLocalMachine;
+						&& m_usingDefaultProjectsDirAccessor();
 				}
 				catch (SocketException)
 				{
@@ -622,10 +580,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				{
 				}
 			}
-			while ((serverInfo == null && ThreadHelper.ShowMessageBox(progress.Form,
-				string.Format(Strings.ksLocalConnectorServiceNotStarted, "FwRemoteDatabaseConnectorService"),
-				fShare ? Strings.ksConvertingToShared : Strings.ksConvertingToNonShared,
-				MessageBoxButtons.RetryCancel, MessageBoxIcon.None) == DialogResult.Retry));
+			while (serverInfo == null &&
+				m_ui.Retry(string.Format(Strings.ksLocalConnectorServiceNotStarted, "FwRemoteDatabaseConnectorService"),
+				fShare ? Strings.ksConvertingToShared : Strings.ksConvertingToNonShared));
 
 			if (serverInfo == null || serverInfo.AreProjectShared() == fShare)
 				return false;
@@ -679,7 +636,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// </summary>
 		/// <returns>false if clients are still connected.</returns>
 		/// ------------------------------------------------------------------------------------
-		private static bool EnsureNoClientsAreConnected()
+		private bool EnsureNoClientsAreConnected()
 		{
 			var localService = LocalDb4OServerInfoConnection;
 			if (localService == null)
@@ -694,8 +651,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					connectedClientsMsg.AppendFormat("{2}{0} : {1}", client, Dns.GetHostEntry(client).HostName, Environment.NewLine);
 				}
 
-				if (MessageBoxUtils.Show(String.Format(Strings.ksAllProjectsMustDisconnectClients, connectedClientsMsg),
-					Strings.ksAllProjectsMustDisconnectCaption, MessageBoxButtons.RetryCancel) == DialogResult.Cancel)
+				if (!m_ui.Retry(String.Format(Strings.ksAllProjectsMustDisconnectClients, connectedClientsMsg),
+					Strings.ksAllProjectsMustDisconnectCaption))
 					return false;
 
 				connectedClients = localService.ListConnectedClients();
@@ -712,11 +669,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// TODO: prevent new connections while in this shutdown phase.
 		/// TODO: as an enhancement connected clients could be messaged and asked to disconnect.
 		/// </summary>
-		/// <param name="messageBoxOwner">The message box owner.</param>
 		/// <param name="projectName">project name.</param>
 		/// <returns>false if clients are still connected.</returns>
 		/// ------------------------------------------------------------------------------------
-		private static bool EnsureNoClientsAreConnected(Form messageBoxOwner, string projectName)
+		private bool EnsureNoClientsAreConnected(string projectName)
 		{
 			Db4oServerInfo localService = LocalDb4OServerInfoConnection;
 			if (localService == null)
@@ -728,7 +684,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				foreach (string client in connectedClients)
 					connectedClientsMsg.AppendFormat("{2}{0} : {1}", client, Dns.GetHostEntry(client).HostName, Environment.NewLine);
 
-				if (WarnOfOtherConnectedClients(messageBoxOwner, projectName, connectedClientsMsg.ToString()) == DialogResult.Cancel)
+				if (!WarnOfOtherConnectedClients(projectName, connectedClientsMsg.ToString()))
 					return false;
 
 				connectedClients = localService.ListConnectedClients(projectName);
@@ -741,18 +697,16 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <summary>
 		/// Warns the of other connected clients.
 		/// </summary>
-		/// <param name="messageBoxOwner">The message box owner.</param>
 		/// <param name="projectName">Name of the project.</param>
 		/// <param name="connectedClientsMsg">The message to show about the connected clients.
 		/// </param>
 		/// ------------------------------------------------------------------------------------
-		private static DialogResult WarnOfOtherConnectedClients(Form messageBoxOwner,
-			string projectName, string connectedClientsMsg)
+		private bool WarnOfOtherConnectedClients(string projectName, string connectedClientsMsg)
 		{
 			var msg = String.Format(Strings.ksMustDisconnectClients, projectName, connectedClientsMsg);
 			var caption = String.Format(Strings.ksMustDisconnectCaption, projectName);
-			return ThreadHelper.ShowMessageBox(messageBoxOwner, msg, caption,
-				MessageBoxButtons.RetryCancel, MessageBoxIcon.None);
+
+			return m_ui.Retry(msg, caption);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -769,19 +723,17 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 			progressDlg.Title = Strings.ksConvertingToNonShared;
 			progressDlg.AllowCancel = false;
-			progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
-			progressDlg.Maximum = Directory.GetDirectories(DirectoryFinder.ProjectsDirectory).Count();
+			progressDlg.Maximum = Directory.GetDirectories(m_dirs.ProjectsDirectory).Count();
 			progressDlg.RunTask(true, ConvertAllProjectsToXmlTask);
-
 			return true;
 		}
 
 		private object ConvertAllProjectsToXmlTask(IThreadedProgress progress, object[] args)
 		{
-			foreach (var projectFolder in Directory.GetDirectories(DirectoryFinder.ProjectsDirectory))
+			foreach (string projectFolder in Directory.GetDirectories(m_dirs.ProjectsDirectory))
 			{
 				var projectName = Path.GetFileName(projectFolder);
-				var projectPath = Path.Combine(projectFolder, DirectoryFinder.GetDb4oDataFileName(projectName));
+				var projectPath = Path.Combine(projectFolder, FdoFileHelper.GetDb4oDataFileName(projectName));
 				progress.Message = Path.GetFileNameWithoutExtension(projectPath);
 				if (File.Exists(projectPath))
 				{
@@ -790,8 +742,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						// The zero in the object array is for db4o and causes it not to open a port.
 						// This is fine since we aren't yet trying to start up on this restored database.
 						// The null says we are creating the file on the local host.
-						using (var tempCache = FdoCache.CreateCacheFromExistingData(
-							new SimpleProjectId(FDOBackendProviderType.kDb4oClientServer, projectPath), "en", progress))
+						using (FdoCache tempCache = FdoCache.CreateCacheFromExistingData(
+							new SimpleProjectId(FDOBackendProviderType.kDb4oClientServer, projectPath), "en", new SilentFdoUI(progress.SynchronizeInvoke),
+							m_dirs, progress))
 						{
 							CopyToXmlFile(tempCache, tempCache.ProjectId.ProjectFolder);
 						// Enhance JohnT: how can we tell this succeeded?
@@ -800,7 +753,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					}
 					catch (Exception e)
 					{
-						ReportConversionError(progress.Form, projectPath, e);
+						ReportConversionError(projectPath, e);
 					}
 				}
 				progress.Step(1);
@@ -818,8 +771,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			progressDlg.Title = Strings.ksConvertingToShared;
 			progressDlg.AllowCancel = false;
-			progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
-			progressDlg.Maximum = Directory.GetDirectories(DirectoryFinder.ProjectsDirectory).Count();
+			progressDlg.Maximum = Directory.GetDirectories(m_dirs.ProjectsDirectory).Count();
 			return (bool)progressDlg.RunTask(true, ConvertAllProjectsToDb4o);
 		}
 
@@ -828,10 +780,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			for (; ; )
 			{
 				string projects = "";
-				foreach (var projectFolder in Directory.GetDirectories(DirectoryFinder.ProjectsDirectory))
+				foreach (string projectFolder in Directory.GetDirectories(m_dirs.ProjectsDirectory))
 				{
 					var projectName = Path.GetFileName(projectFolder);
-					var projectPath = Path.Combine(projectFolder, DirectoryFinder.GetXmlDataFileName(projectName));
+					var projectPath = Path.Combine(projectFolder, FdoFileHelper.GetXmlDataFileName(projectName));
 					var suppressPath = Path.Combine(projectFolder, ksDoNotShareProjectTxt);
 					if (!File.Exists(projectPath) || File.Exists(suppressPath))
 						continue; // not going to convert, it isn't a problem.
@@ -841,37 +793,36 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				if (projects.Length == 0)
 					break;
 				projects = projects.Substring(0, projects.Length - ", ".Length);
-				// ENHANCE (TimS): Showing a message box at this level is not a good idea.
-				if (ThreadHelper.ShowMessageBox(progress.Form, string.Format(Strings.ksMustCloseProjectsToShare, projects),
-					Strings.ksConvertingToShared, MessageBoxButtons.RetryCancel, MessageBoxIcon.None) != DialogResult.Retry)
+
+				if (!m_ui.Retry(string.Format(Strings.ksMustCloseProjectsToShare, projects), Strings.ksConvertingToShared))
 					return false;
 			}
-			foreach (string projectFolder in Directory.GetDirectories(DirectoryFinder.ProjectsDirectory))
+			foreach (string projectFolder in Directory.GetDirectories(m_dirs.ProjectsDirectory))
 			{
 				string projectName = Path.GetFileName(projectFolder);
-				string projectPath = Path.Combine(projectFolder, DirectoryFinder.GetXmlDataFileName(projectName));
+				string projectPath = Path.Combine(projectFolder, FdoFileHelper.GetXmlDataFileName(projectName));
 				var suppressPath = Path.Combine(projectFolder, ksDoNotShareProjectTxt);
 				progress.Message = Path.GetFileNameWithoutExtension(projectPath);
 				if (File.Exists(projectPath) && !File.Exists(suppressPath))
 				{
-				try
-				{
+					try
+					{
 						ConvertToDb4oBackendIfNeeded(progress, projectPath);
-				}
-				catch (Exception e)
-				{
-						ReportConversionError(progress.Form, projectPath, e);
-				}
+					}
+					catch (Exception e)
+					{
+						ReportConversionError(projectPath, e);
+					}
 				}
 				progress.Step(1);
 			}
 			return true;
 		}
 
-		private static void ReportConversionError(Form messageBoxOwner, string projectPath, Exception e)
+		private void ReportConversionError(string projectPath, Exception e)
 		{
 			string message;
-			if (e is FwNewerVersionException)
+			if (e is FdoNewerVersionException)
 			{
 				message = string.Format(Strings.ksConvertFailedNewerVersion, Path.GetFileName(projectPath),
 				Path.GetDirectoryName(projectPath));
@@ -881,8 +832,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				message = string.Format(Strings.ksConvertFailedDetails, Path.GetFileName(projectPath),
 					Path.GetDirectoryName(projectPath), e.Message);
 			}
-			ThreadHelper.ShowMessageBox(messageBoxOwner, message, Strings.ksCannotConvert,
-				MessageBoxButtons.OK, MessageBoxIcon.Error);
+			m_ui.DisplayMessage(MessageType.Error, message, Strings.ksCannotConvert, null);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -901,27 +851,26 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			if (!ShareMyProjects)
 				return xmlFilename; // no conversion needed.
-			string desiredPath = Path.ChangeExtension(xmlFilename, FwFileExtensions.ksFwDataDb4oFileExtension);
-			if (!EnsureNoClientsAreConnected(progressDlg.Form, Path.GetFileNameWithoutExtension(desiredPath)))
+			string desiredPath = Path.ChangeExtension(xmlFilename, FdoFileHelper.ksFwDataDb4oFileExtension);
+			if (!EnsureNoClientsAreConnected(Path.GetFileNameWithoutExtension(desiredPath)))
 				return null; // fail
 
 			try
 			{
-			using (var tempCache = FdoCache.CreateCacheFromExistingData(
-					new SimpleProjectId(FDOBackendProviderType.kXML, xmlFilename), "en", progressDlg))
-			{
-
-			// The zero in the object array is for db4o and causes it not to open a port.
-			// This is fine since we aren't yet trying to start up on this restored database.
-			// The null says we are creating the file on the local host.
-				using (var copyCache = FdoCache.CreateCacheCopy(
-						new SimpleProjectId(FDOBackendProviderType.kDb4oClientServer, desiredPath), "en", tempCache, progressDlg.ThreadHelper))
+				using (FdoCache tempCache = FdoCache.CreateCacheFromExistingData(new SimpleProjectId(FDOBackendProviderType.kXML, xmlFilename),
+					"en", new SilentFdoUI(progressDlg.SynchronizeInvoke), m_dirs, progressDlg))
 				{
-			copyCache.ServiceLocator.GetInstance<IDataStorer>().Commit(new HashSet<ICmObjectOrSurrogate>(),
-				new HashSet<ICmObjectOrSurrogate>(), new HashSet<ICmObjectId>());
-			// Enhance JohnT: how can we tell this succeeded?
+
+				// The zero in the object array is for db4o and causes it not to open a port.
+				// This is fine since we aren't yet trying to start up on this restored database.
+				// The null says we are creating the file on the local host.
+					using (FdoCache copyCache = FdoCache.CreateCacheCopy(new SimpleProjectId(FDOBackendProviderType.kDb4oClientServer, desiredPath),
+						"en", new SilentFdoUI(progressDlg.SynchronizeInvoke), m_dirs, tempCache))
+					{
+						copyCache.ServiceLocator.GetInstance<IDataStorer>().Commit(new HashSet<ICmObjectOrSurrogate>(), new HashSet<ICmObjectOrSurrogate>(), new HashSet<ICmObjectId>());
+						// Enhance JohnT: how can we tell this succeeded?
+					}
 				}
-			}
 			}
 			catch (Exception)
 			{
@@ -951,19 +900,19 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (dataStorer is XMLBackendProvider)
 				return null; // already XML, no new file created.
 
-			var newFilePath = Path.Combine(destDir, DirectoryFinder.GetXmlDataFileName(source.ProjectId.Name));
+			var newFilePath = Path.Combine(destDir, FdoFileHelper.GetXmlDataFileName(source.ProjectId.Name));
 			if (File.Exists(newFilePath))
 				File.Delete(newFilePath); // Can't create a new file with FDO if the file already exists.
 			try
 			{
-				using (var copyCache = FdoCache.CreateCacheCopy(
-					new SimpleProjectId(FDOBackendProviderType.kXML, newFilePath), "en", source, source.ThreadHelper))
+				using (FdoCache copyCache = FdoCache.CreateCacheCopy(new SimpleProjectId(FDOBackendProviderType.kXML, newFilePath),
+					"en", new SilentFdoUI(source.ServiceLocator.GetInstance<IFdoUI>().SynchronizeInvoke), m_dirs, source))
 				{
-				copyCache.ServiceLocator.GetInstance<IDataStorer>().Commit(
-					new HashSet<ICmObjectOrSurrogate>(),
-					new HashSet<ICmObjectOrSurrogate>(),
-					new HashSet<ICmObjectId>());
-				// Enhance JohnT: how can we tell this succeeded?
+					copyCache.ServiceLocator.GetInstance<IDataStorer>().Commit(
+						new HashSet<ICmObjectOrSurrogate>(),
+						new HashSet<ICmObjectOrSurrogate>(),
+						new HashSet<ICmObjectId>());
+					// Enhance JohnT: how can we tell this succeeded?
 					return newFilePath;
 				}
 			}
@@ -985,7 +934,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			// Project Name must not have an extension. Can't use ChangeExtension because
 			// the project name might contain some other period.
 			Debug.Assert(!projectName.EndsWith(".fwdata") && !projectName.EndsWith(".fwdb"));
-			string projectDirectory = Path.Combine(DirectoryFinder.ProjectsDirectory, projectName);
+			string projectDirectory = Path.Combine(m_dirs.ProjectsDirectory, projectName);
 			var result = Path.Combine(projectDirectory, projectName + DefaultBackendType.GetExtension());
 			if (!File.Exists(result))
 			{

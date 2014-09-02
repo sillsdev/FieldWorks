@@ -9,11 +9,14 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
 using SIL.Utils;
+using SILUBS.SharedScrUtils;
 using XCore;
 
 namespace SIL.FieldWorks.IText
@@ -432,7 +435,9 @@ namespace SIL.FieldWorks.IText
 					IScrImportSet importSettings = scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6);
 					ScrText paratextProj = ParatextHelper.GetAssociatedProject(Cache.ProjectId);
 					importSettings.ParatextScrProj = paratextProj.Name;
-					importSettings.IncludeBooks(bookNum, bookNum, paratextProj.Versification);
+					importSettings.StartRef = new BCVRef(bookNum, 0, 0);
+					int chapter = paratextProj.Versification.LastChapter(bookNum);
+					importSettings.EndRef = new BCVRef(bookNum, chapter, paratextProj.Versification.LastVerse(bookNum, chapter));
 					if (!importBt)
 					{
 						importSettings.ImportTranslation = true;
@@ -451,6 +456,7 @@ namespace SIL.FieldWorks.IText
 						importSettings.ImportTranslation = false;
 						importSettings.ImportBackTranslation = true;
 					}
+					ParatextHelper.LoadProjectMappings(importSettings);
 					return true;
 				});
 

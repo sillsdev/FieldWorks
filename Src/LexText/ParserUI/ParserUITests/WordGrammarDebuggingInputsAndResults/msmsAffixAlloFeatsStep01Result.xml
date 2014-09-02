@@ -80,7 +80,7 @@
       <derivMsa fromCat="259" fromCatAbbr="n" toCat="258" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
     </morph>
   </resultSoFar>
-  <seq step="Try to build a Word analysis node on a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to build a Word analysis node on a Full analysis node.">
     <word syncat="259" syncatAbbr="n">
       <failure>The category 'n' requires inflection, but there was no inflection.</failure>
       <full syncat="259" syncatAbbr="n" requiresInfl="+" inflected="-">
@@ -164,7 +164,7 @@
       <derivMsa fromCat="259" fromCatAbbr="n" toCat="258" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
     </morph>
   </seq>
-  <seq step="Try to build a Word analysis node on a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to build a Word analysis node on a Full analysis node.">
     <word syncat="259" syncatAbbr="n">
       <full syncat="259" syncatAbbr="n" requiresInfl="-" inflected="+">
         <fs id="UnificationOf(14988andUnificationOf(14988andEmpty))">

@@ -11,6 +11,7 @@ using System.Linq;
 using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 
 namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
@@ -56,7 +57,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			mockMdc.AddField(++currentFlid, "NewTimeProperty", CellarPropertyType.Time, 0);
 
 			var dtos = DataMigrationTestServices.ParseProjectFile("DataMigration7000066_RegularPropertyMagnet.xml");
-			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000065, dtos, mockMdc, null);
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000065, dtos, mockMdc, null, FwDirectoryFinder.FdoDirectories);
 
 			m_dataMigrationManager.PerformMigration(dtoRepos, 7000066, new DummyProgressDlg());
 
@@ -120,7 +121,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			mockMdc.AddField(++currentFlid, "NewTimeProperty", CellarPropertyType.Time, 0);
 
 			var dtos = DataMigrationTestServices.ParseProjectFile("DataMigration7000066_RegularPropertyMagnet.xml");
-			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000065, dtos, mockMdc, null);
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000065, dtos, mockMdc, null, FwDirectoryFinder.FdoDirectories);
 
 			m_dataMigrationManager.PerformMigration(dtoRepos, 7000066, new DummyProgressDlg());
 
@@ -184,7 +185,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			var missingTimeFlid = mockMdc.AddCustomField("CustomPropertyMagnet", "NewTimeProperty", CellarPropertyType.Time, 0);
 
 			var dtos = DataMigrationTestServices.ParseProjectFile("DataMigration7000066_CustomPropertyMagnet.xml");
-			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000065, dtos, mockMdc, null);
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000065, dtos, mockMdc, null, FwDirectoryFinder.FdoDirectories);
 
 			m_dataMigrationManager.PerformMigration(dtoRepos, 7000066, new DummyProgressDlg());
 
@@ -242,7 +243,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			var missingTimeFlid = mockMdc.AddCustomField("CmObject", "NewTimeProperty", CellarPropertyType.Time, 0);
 
 			var dtos = DataMigrationTestServices.ParseProjectFile("DataMigration7000066_CustomPropertyMagnet.xml");
-			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000065, dtos, mockMdc, null);
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000065, dtos, mockMdc, null, FwDirectoryFinder.FdoDirectories);
 
 			m_dataMigrationManager.PerformMigration(dtoRepos, 7000066, new DummyProgressDlg());
 

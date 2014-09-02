@@ -10,10 +10,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Xml;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {
@@ -37,6 +36,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		private static Dictionary<string, string> s_defaultExclusions = new Dictionary<string, string>();
 		#endregion
 
+		/// <summary>
+		/// Gets or sets the TE styles path.
+		/// </summary>
+		public static string TeStylesPath { get; set; }
+
 		#region public static readonly members
 		/// <summary>Book marker</summary>
 		public static readonly string MarkerBook = @"\id";
@@ -47,6 +51,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		#endregion
 
 		#region Constructor
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ScrMappingList"/> class.
@@ -412,6 +417,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			get { return m_stylesheet; }
 			set { m_stylesheet = value; }
 		}
+
 		#endregion
 
 		#region Private methods
@@ -422,10 +428,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		private static void ReadDefaultMappings()
+		private void ReadDefaultMappings()
 		{
 			XmlDocument doc = new XmlDocument();
-			doc.Load(DirectoryFinder.TeStylesPath);
+			doc.Load(TeStylesPath);
 			XmlNode mappingNode = doc.SelectSingleNode("Styles/ImportMappingSets/ImportMapping[@name='TE Default']");
 			foreach (XmlNode mapNode in mappingNode.SelectNodes("mapping"))
 			{
@@ -520,12 +526,12 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 					case "DefaultParagraphCharacters":
 						target = MappingTargetType.TEStyle;
-						styleName = ResourceHelper.DefaultParaCharsStyleName;
+						styleName = StyleUtils.DefaultParaCharsStyleName;
 						return true;
 
 					case "DefaultFootnoteCharacters":
 						target = MappingTargetType.TEStyle;
-						styleName = ResourceHelper.DefaultParaCharsStyleName;
+						styleName = StyleUtils.DefaultParaCharsStyleName;
 						markerDomain = MarkerDomain.Footnote;
 						return true;
 				}

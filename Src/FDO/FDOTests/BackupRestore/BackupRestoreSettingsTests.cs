@@ -11,9 +11,6 @@ using NUnit.Framework;
 
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Resources;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 {
@@ -33,7 +30,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 		/// ------------------------------------------------------------------------------------
 		internal DummyBackupProjectSettings(string projectsRootFolder, string projectName, string linkedFilesRootDir,
 			FDOBackendProviderType originalProjType) :
-			base(projectsRootFolder, projectName, linkedFilesRootDir, null, originalProjType)
+			base(projectsRootFolder, projectName, linkedFilesRootDir, null, originalProjType, FwDirectoryFinder.DefaultBackupDirectory)
 		{
 		}
 	}
@@ -53,7 +50,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 		[Test]
 		public void DefaultRestoreSettings()
 		{
-			var settings = new RestoreProjectSettings();
+			var settings = new RestoreProjectSettings(FwDirectoryFinder.ProjectsDirectory);
 
 			Assert.IsNull(settings.Backup);
 			Assert.True(string.IsNullOrEmpty(settings.ProjectName));
@@ -73,13 +70,13 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 		[Test]
 		public void RestoreProjectSettings_VerifyExistenceOfProject()
 		{
-			string restoreTestsZipFileDir = Path.Combine(DirectoryFinder.FwSourceDirectory,
+			string restoreTestsZipFileDir = Path.Combine(FwDirectoryFinder.SourceDirectory,
 				"FDO/FDOTests/BackupRestore/RestoreServiceTestsZipFileDir");
 
-			RestoreProjectSettings restoreSettings = new RestoreProjectSettings()
+			RestoreProjectSettings restoreSettings = new RestoreProjectSettings(FwDirectoryFinder.ProjectsDirectory)
 			{
 				Backup = new BackupFileSettings(Path.Combine(restoreTestsZipFileDir,
-					Path.ChangeExtension("TestRestoreFWProject", FwFileExtensions.ksFwBackupFileExtension))),
+					Path.ChangeExtension("TestRestoreFWProject", FdoFileHelper.ksFwBackupFileExtension))),
 				IncludeConfigurationSettings = false,
 				IncludeLinkedFiles = false,
 				IncludeSupportingFiles = true,
@@ -89,7 +86,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			};
 
 			ProjectRestoreServiceTests.RemoveAnyFilesAndFoldersCreatedByTests(restoreSettings);
-			ProjectRestoreService restoreProjectService = new ProjectRestoreService(restoreSettings);
+			ProjectRestoreService restoreProjectService = new ProjectRestoreService(restoreSettings, new DummyFdoUI(),
+				FwDirectoryFinder.ConverterConsoleExe, FwDirectoryFinder.DbExe);
 
 			Assert.False(restoreSettings.ProjectExists, "Project exists but it should not.");
 
@@ -113,13 +111,13 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 		[Test]
 		public void RestoreProjectSettings_VerifyExistenceOfHgRepo()
 		{
-			string restoreTestsZipFileDir = Path.Combine(DirectoryFinder.FwSourceDirectory,
+			string restoreTestsZipFileDir = Path.Combine(FwDirectoryFinder.SourceDirectory,
 				"FDO/FDOTests/BackupRestore/RestoreServiceTestsZipFileDir");
 
-			RestoreProjectSettings restoreSettings = new RestoreProjectSettings()
+			RestoreProjectSettings restoreSettings = new RestoreProjectSettings(FwDirectoryFinder.ProjectsDirectory)
 			{
 				Backup = new BackupFileSettings(Path.Combine(restoreTestsZipFileDir,
-					Path.ChangeExtension("TestRestoreFWProject", FwFileExtensions.ksFwBackupFileExtension))),
+					Path.ChangeExtension("TestRestoreFWProject", FdoFileHelper.ksFwBackupFileExtension))),
 				IncludeConfigurationSettings = false,
 				IncludeLinkedFiles = false,
 				IncludeSupportingFiles = true,
@@ -128,7 +126,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 				BackupOfExistingProjectRequested = false,
 			};
 
-			ProjectRestoreService restoreProjectService = new ProjectRestoreService(restoreSettings);
+			ProjectRestoreService restoreProjectService = new ProjectRestoreService(restoreSettings, new DummyFdoUI(),
+				FwDirectoryFinder.ConverterConsoleExe, FwDirectoryFinder.DbExe);
 
 			try
 			{
@@ -137,7 +136,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 				Assert.True(restoreSettings.ProjectExists, "Project does not exist but it should.");
 				Assert.False(restoreSettings.UsingSendReceive, "Project is using S/R but it should not be.");
 
-				string otherReposDir = Path.Combine(restoreSettings.ProjectPath, FLExBridgeHelper.OtherRepositories);
+				string otherReposDir = Path.Combine(restoreSettings.ProjectPath, FdoFileHelper.OtherRepositories);
 
 				// Create a non-repository folder in OtherRepositories and verify the project is not using Send/Receive
 				Directory.CreateDirectory(Path.Combine(otherReposDir, "NotARepo_LIFT", "RandomSubdir"));
@@ -167,7 +166,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 		[Test]
 		public void RestoreProjectSettings_CommandLineOptions()
 		{
-			RestoreProjectSettings settings = new RestoreProjectSettings();
+			RestoreProjectSettings settings = new RestoreProjectSettings(FwDirectoryFinder.ProjectsDirectory);
 			Assert.AreEqual(string.Empty, settings.CommandLineOptions);
 			settings.IncludeConfigurationSettings = true;
 			Assert.AreEqual("c", settings.CommandLineOptions.ToLower());
@@ -194,15 +193,15 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 		[Test]
 		public void RestoreProjectSettings_CreateFromCommandLineOptions()
 		{
-			RestoreProjectSettings settings = new RestoreProjectSettings("project", "notThere.fwbackup", string.Empty);
+			RestoreProjectSettings settings = new RestoreProjectSettings(FwDirectoryFinder.ProjectsDirectory, "project", "notThere.fwbackup", string.Empty);
 			CheckSettings(settings, false, false, false, false);
-			settings = new RestoreProjectSettings("project", "notThere.fwbackup", "fl");
+			settings = new RestoreProjectSettings(FwDirectoryFinder.ProjectsDirectory, "project", "notThere.fwbackup", "fl");
 			CheckSettings(settings, false, true, true, false);
-			settings = new RestoreProjectSettings("project", "notThere.fwbackup", "cls");
+			settings = new RestoreProjectSettings(FwDirectoryFinder.ProjectsDirectory, "project", "notThere.fwbackup", "cls");
 			CheckSettings(settings, true, false, true, true);
-			settings = new RestoreProjectSettings("project", "notThere.fwbackup", "cfls");
+			settings = new RestoreProjectSettings(FwDirectoryFinder.ProjectsDirectory, "project", "notThere.fwbackup", "cfls");
 			CheckSettings(settings, true, true, true, true);
-			settings = new RestoreProjectSettings("project", "notThere.fwbackup", "CFLS");
+			settings = new RestoreProjectSettings(FwDirectoryFinder.ProjectsDirectory, "project", "notThere.fwbackup", "CFLS");
 			CheckSettings(settings, true, true, true, true);
 		}
 
@@ -216,8 +215,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 		[Test]
 		public void BackupFileSettings_InitializeFromZipfileMetadata()
 		{
-			string zipFilePath = Path.Combine(Path.Combine(DirectoryFinder.FwSourceDirectory, "FDO/FDOTests/BackupRestore/RestoreProjectPresenterTests"),
-				Path.ChangeExtension("RestoreProjectPresenterTests", FwFileExtensions.ksFwBackupFileExtension));
+			string zipFilePath = Path.Combine(Path.Combine(FwDirectoryFinder.SourceDirectory, "FDO/FDOTests/BackupRestore/RestoreProjectPresenterTests"),
+				Path.ChangeExtension("RestoreProjectPresenterTests", FdoFileHelper.ksFwBackupFileExtension));
 
 			BackupFileSettings backupSettings = new BackupFileSettings(zipFilePath);
 			Assert.AreEqual("BackupOnlyCoreFiles", backupSettings.Comment);
@@ -240,7 +239,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 		public void BackupProjectSettings_DefaultValues()
 		{
 			var settings = new DummyBackupProjectSettings("whatever", "Blah", null, FDOBackendProviderType.kXML);
-			Assert.AreEqual(DirectoryFinder.DefaultBackupDirectory, settings.DestinationFolder);
+			Assert.AreEqual(FwDirectoryFinder.DefaultBackupDirectory, settings.DestinationFolder);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -252,7 +251,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 		public void BackupProjectSettings_Values()
 		{
 			var backupSettings = new DummyBackupProjectSettings(
-				Path.Combine(DirectoryFinder.FwSourceDirectory, "FDO/FDOTests/BackupRestore"),
+				Path.Combine(FwDirectoryFinder.SourceDirectory, "FDO/FDOTests/BackupRestore"),
 				"FieldWorksLanguageProject", null, FDOBackendProviderType.kXML)
 				{
 					Comment = "Test comment",
@@ -277,7 +276,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 		public void BackupFileSettings_SerializationAndDeserialization()
 		{
 			var backupSettings = new DummyBackupProjectSettings(
-				Path.Combine(DirectoryFinder.FwSourceDirectory, "FDO/FDOTests/BackupRestore"),
+				Path.Combine(FwDirectoryFinder.SourceDirectory, "FDO/FDOTests/BackupRestore"),
 				"FieldWorksLanguageProject", null, FDOBackendProviderType.kXML)
 									{
 										Comment = "Test comment",

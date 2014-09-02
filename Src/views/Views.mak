@@ -117,8 +117,8 @@ ARG_SRCDIR=$(AFCORE_SRC)
 #$(OBJ_ALL): $(TLB_ALL)
 
 # because of importlib statements, must build lower TLB's before higher.
-$(COM_OUT_DIR)\LanguageTlb.tlb: $(COM_OUT_DIR)\LanguageTlb.idl
+$(COM_OUT_DIR)\FwKernelTlb.tlb: $(COM_OUT_DIR)\FwKernelTlb.idl
 
-$(COM_OUT_DIR)\ViewsTlb.tlb: $(COM_OUT_DIR)\LanguageTlb.tlb
+$(COM_OUT_DIR)\ViewsTlb.tlb: $(COM_OUT_DIR)\FwKernelTlb.tlb
 
 # === Custom Targets ===

@@ -7,13 +7,11 @@
 
 using System;
 using System.IO;
-using System.Text;
 using System.Threading;
 using NUnit.Framework;
 
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
-using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using FwRemoteDatabaseConnector;
 
@@ -28,26 +26,18 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 	{
 		private ProjectRestoreService m_restoreProjectService;
 		private RestoreProjectSettings m_restoreSettings;
-		private bool m_fResetSharedProjectValue;
 		/// <summary>Setup for db4o client server tests.</summary>
 		[TestFixtureSetUp]
 		public void Init()
 		{
 			// Allow db4o client server unit test to work without running the window service.
-			RemotingServer.Start();
-			if (Db4oServerInfo.AreProjectsShared_Internal)
-			{
-				m_fResetSharedProjectValue = true;
-				Db4oServerInfo.AreProjectsShared_Internal = false;
-			}
+			RemotingServer.Start(FwDirectoryFinder.RemotingTcpServerConfigFile, FwDirectoryFinder.FdoDirectories, () => false, v => {});
 		}
 
 		/// <summary>Stop db4o client server.</summary>
 		[TestFixtureTearDown]
 		public void UnInit()
 		{
-			if (m_fResetSharedProjectValue)
-				Db4oServerInfo.AreProjectsShared_Internal = m_fResetSharedProjectValue;
 			RemotingServer.Stop();
 		}
 
@@ -57,13 +47,13 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 		[SetUp]
 		public void Initialize()
 		{
-			var restoreTestsZipFileDir = Path.Combine(DirectoryFinder.FwSourceDirectory, "FDO", "FDOTests",
+			var restoreTestsZipFileDir = Path.Combine(FwDirectoryFinder.SourceDirectory, "FDO", "FDOTests",
 				"BackupRestore","RestoreServiceTestsZipFileDir");
 
-			m_restoreSettings = new RestoreProjectSettings()
+			m_restoreSettings = new RestoreProjectSettings(FwDirectoryFinder.ProjectsDirectory)
 			{
 				Backup = new BackupFileSettings(Path.Combine(restoreTestsZipFileDir,
-					Path.ChangeExtension("TestRestoreFWProject", FwFileExtensions.ksFwBackupFileExtension))),
+					Path.ChangeExtension("TestRestoreFWProject", FdoFileHelper.ksFwBackupFileExtension))),
 				IncludeConfigurationSettings = false,
 				IncludeLinkedFiles = false,
 				IncludeSupportingFiles = false,
@@ -91,7 +81,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 		{
 			m_restoreSettings.ProjectName = "TestRestoreFWProject 01";
 
-			m_restoreProjectService = new ProjectRestoreService(m_restoreSettings);
+			m_restoreProjectService = new ProjectRestoreService(m_restoreSettings, new DummyFdoUI(),
+				FwDirectoryFinder.ConverterConsoleExe, FwDirectoryFinder.DbExe);
 
 			m_restoreProjectService.RestoreProject(new DummyProgressDlg());
 
@@ -107,7 +98,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 		{
 			m_restoreSettings.ProjectName = "TestRestoreFWProject 01";
 			m_restoreSettings.IncludeConfigurationSettings = true;
-			m_restoreProjectService = new ProjectRestoreService(m_restoreSettings);
+			m_restoreProjectService = new ProjectRestoreService(m_restoreSettings, new DummyFdoUI(),
+				FwDirectoryFinder.ConverterConsoleExe, FwDirectoryFinder.DbExe);
 
 			m_restoreProjectService.RestoreProject(new DummyProgressDlg());
 
@@ -214,7 +206,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 
 		private string GetFullVersionOfRelativeNonStdDir(string nonStdLinkedFilesDir)
 		{
-			return Path.Combine(Directory.GetParent(DirectoryFinder.FwSourceDirectory).ToString(), nonStdLinkedFilesDir);
+			return Path.Combine(Directory.GetParent(FwDirectoryFinder.SourceDirectory).ToString(), nonStdLinkedFilesDir);
 		}
 
 		/// <summary>
@@ -228,14 +220,15 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			IThreadedProgress progressDlg = new DummyProgressDlg();
 			m_restoreSettings.IncludeConfigurationSettings = false;
 
-			m_restoreProjectService = new ProjectRestoreService(m_restoreSettings);
+			m_restoreProjectService = new ProjectRestoreService(m_restoreSettings, new DummyFdoUI(),
+				FwDirectoryFinder.ConverterConsoleExe, FwDirectoryFinder.DbExe);
 
 			//Restore the project once and do not delete it so that we can restore the project over the previous one.
 			m_restoreProjectService.RestoreProject(progressDlg);
 
 			string restoreProjectDirectory = m_restoreSettings.ProjectPath;
-			VerifyFileExists(restoreProjectDirectory, DirectoryFinder.GetXmlDataFileName("TestRestoreFWProject"));
-			var dateTimeTicksOfFirstFile = GetLastWriteTimeOfRestoredFile(restoreProjectDirectory, DirectoryFinder.GetXmlDataFileName("TestRestoreFWProject"));
+			VerifyFileExists(restoreProjectDirectory, FdoFileHelper.GetXmlDataFileName("TestRestoreFWProject"));
+			var dateTimeTicksOfFirstFile = GetLastWriteTimeOfRestoredFile(restoreProjectDirectory, FdoFileHelper.GetXmlDataFileName("TestRestoreFWProject"));
 
 			// Linux filesystem modification time precision can be to the second, so wait a moment.
 			if (MiscUtils.IsUnix)
@@ -249,7 +242,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			//Now do another restore then verify that the two files are not the same by comparing the LastWriteTime values.
 			m_restoreProjectService.RestoreProject(progressDlg);
 
-			var dateTimeTicksOfSecondFile = GetLastWriteTimeOfRestoredFile(restoreProjectDirectory, DirectoryFinder.GetXmlDataFileName("TestRestoreFWProject"));
+			var dateTimeTicksOfSecondFile = GetLastWriteTimeOfRestoredFile(restoreProjectDirectory, FdoFileHelper.GetXmlDataFileName("TestRestoreFWProject"));
 			Assert.True(dateTimeTicksOfSecondFile.Equals(dateTimeTicksOfFirstFile), "The dates and times of the files should be the same since they are set to the timestamp of the file in the zip file.");
 
 			VerifyManditoryFilesUnzippedAndDeleteThem();
@@ -284,7 +277,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 
 		internal static void RemoveAnyFilesAndFoldersCreatedByTests(RestoreProjectSettings settings)
 		{
-			RemoveAllFilesFromFolderAndSubfolders(DirectoryFinder.GetBackupSettingsDir(settings.ProjectPath));
+			RemoveAllFilesFromFolderAndSubfolders(FdoFileHelper.GetBackupSettingsDir(settings.ProjectPath));
 			RemoveAllFilesFromFolderAndSubfolders(settings.ProjectSupportingFilesPath);
 			RemoveAllFilesFromFolderAndSubfolders(settings.FlexConfigurationSettingsPath);
 			RemoveAllFilesFromFolderAndSubfolders(settings.PicturesPath);
@@ -292,7 +285,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			RemoveAllFilesFromFolderAndSubfolders(settings.OtherExternalFilesPath);
 			RemoveAllFilesFromFolderAndSubfolders(settings.LinkedFilesPath);
 			RemoveAllFilesFromFolderAndSubfolders(settings.WritingSystemStorePath);
-			RemoveAllFilesFromFolderAndSubfolders(Path.Combine(settings.ProjectPath, DirectoryFinder.ksSortSequenceTempDir));
+			RemoveAllFilesFromFolderAndSubfolders(Path.Combine(settings.ProjectPath, FdoFileHelper.ksSortSequenceTempDir));
 
 			//Remove this one last of all because the other folders need to be removed first.
 			RemoveAllFilesFromFolderAndSubfolders(settings.ProjectPath);

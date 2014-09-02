@@ -238,6 +238,9 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		private bool m_fSuppressNextWritingSystemHvoChanged;
 		private bool m_fSuppressNextBestStyleNameChanged;
+
+		/// <summary>Flag to prevent reentrancy while setting keyboard.</summary>
+		private bool m_fSettingKeyboards;
 		#endregion
 
 		#region Enumerations
@@ -2925,9 +2928,14 @@ namespace SIL.FieldWorks.Common.RootSites
 				return;
 			}
 
+			if (m_fSettingKeyboards)
+				return;
+
 			try
 			{
-				var palasoWs = ((IWritingSystemManager)WritingSystemFactory).Get(ws.Handle) as IWritingSystemDefinition;
+				m_fSettingKeyboards = true;
+				var palasoWs = ((IWritingSystemManager)WritingSystemFactory).Get(ws.Handle)
+					as IWritingSystemDefinition;
 				if (palasoWs != null && palasoWs.LocalKeyboard != null)
 					palasoWs.LocalKeyboard.Activate();
 			}
@@ -2937,6 +2945,10 @@ namespace SIL.FieldWorks.Common.RootSites
 				//	ws.WritingSystem + "(" + ws.IcuLocale +
 				//	") -> ActivateDefaultKeyboard() in catch block");
 				ActivateDefaultKeyboard();
+			}
+			finally
+			{
+				m_fSettingKeyboards = false;
 			}
 		}
 

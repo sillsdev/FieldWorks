@@ -119,7 +119,7 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 			pnlButtons.ClientSizeChanged += pnlButtons_ClientSizeChanged;
 
 			m_cache = cache;
-			m_chkDataSource = new ScrChecksDataSource(cache, DirectoryFinder.TeStylesPath);
+			m_chkDataSource = new ScrChecksDataSource(cache, FwDirectoryFinder.TeStylesPath, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 
 			m_bookFilter = bookFilter;
 			m_bookFilter.FilterChanged += OnBookFilterChanged;
@@ -1118,7 +1118,7 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 		{
 			get
 			{
-				ValidCharacters valChars = ValidCharacters.Load(CurrVernWritingSystem, ReportLoadException);
+				ValidCharacters valChars = ValidCharacters.Load(CurrVernWritingSystem, ReportLoadException, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 				return valChars.WordformingLetterCount <= 3;
 			}
 		}

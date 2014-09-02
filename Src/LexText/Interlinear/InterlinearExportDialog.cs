@@ -145,7 +145,7 @@ namespace SIL.FieldWorks.IText
 				try
 				{
 					ExportPhase1(mode, out exporter, outPath);
-					string rootDir = DirectoryFinder.FWCodeDirectory;
+					string rootDir = FwDirectoryFinder.CodeDirectory;
 					string transform = XmlUtils.GetOptionalAttributeValue(ddNode, "transform", "");
 					string sTransformPath = Path.Combine(rootDir,
 							String.Format("Language Explorer{0}Export Templates{0}Interlinear",

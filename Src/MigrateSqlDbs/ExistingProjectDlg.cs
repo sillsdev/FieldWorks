@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 			m_rdoUseOriginalName.Text = String.Format(m_fmtUseOriginal, project);
 			m_projectName = project;
 			// Generate an unused project name based on the one given.
-			string destFolder = DirectoryFinder.ProjectsDirectory;
+			string destFolder = FwDirectoryFinder.ProjectsDirectory;
 			int num = 0;
 			string proj;
 			string folderName;
@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
-			string helpFile = Path.Combine(DirectoryFinder.FWCodeDirectory,
+			string helpFile = Path.Combine(FwDirectoryFinder.CodeDirectory,
 				"Helps\\FieldWorks_Language_Explorer_Help.chm");
 			string helpTopic = "/Overview/Migrate_FieldWorks_6.0.4_(or_earlier)_Projects.htm";
 			Help.ShowHelp(new Label(), helpFile, helpTopic);

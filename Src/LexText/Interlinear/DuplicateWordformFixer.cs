@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FwCoreDlgs;
 
 namespace SIL.FieldWorks.IText
@@ -62,7 +59,7 @@ namespace SIL.FieldWorks.IText
 			var cache = (FdoCache)m_dlg.Mediator.PropertyTable.GetValue("cache");
 			string failures = null;
 			UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoMergeWordforms, ITextStrings.ksRedoMergeWordforms, cache.ActionHandlerAccessor,
-				() => failures = WfiWordformServices.FixDuplicates(cache, m_dlg.ProgressBar));
+				() => failures = WfiWordformServices.FixDuplicates(cache, new ProgressBarWrapper(m_dlg.ProgressBar)));
 			if (!string.IsNullOrEmpty(failures))
 			{
 				MessageBox.Show(m_dlg, string.Format(ITextStrings.ksWordformMergeFailures, failures), ITextStrings.ksWarning,

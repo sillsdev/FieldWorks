@@ -136,7 +136,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			TokenGrid = tokenGrid;
 
 			if (FwUtils.IsOkToDisplayScriptureIfPresent)
-				m_scrChecksDllFile = DirectoryFinder.BasicEditorialChecksDll;
+				m_scrChecksDllFile = FwDirectoryFinder.BasicEditorialChecksDll;
 
 			if (m_ws != null)
 			{
@@ -328,7 +328,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				// Get the writing system and valid characters list
 				if (m_wsContainer.DefaultVernacularWritingSystem == null)
 					return null;
-				return ValidCharacters.Load(m_wsContainer.DefaultVernacularWritingSystem, LoadException);
+				return ValidCharacters.Load(m_wsContainer.DefaultVernacularWritingSystem, LoadException, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			}
 		}
 
@@ -636,11 +636,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private List<TextTokenSubstring> ReadTEScripture()
 		{
-			var scrDataSource = new ScrChecksDataSource(m_cache, DirectoryFinder.TeStylesPath);
+			var scrDataSource = new ScrChecksDataSource(m_cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"),
+				FwDirectoryFinder.LegacyWordformingCharOverridesFile, FwDirectoryFinder.TeStylesPath);
 
 			scrDataSource.LoadException += scrDataSource_LoadException;
 
-			IScrCheckInventory scrCharInventoryBldr = CreateScrCharInventoryBldr(DirectoryFinder.BasicEditorialChecksDll,
+			IScrCheckInventory scrCharInventoryBldr = CreateScrCharInventoryBldr(FwDirectoryFinder.BasicEditorialChecksDll,
 				scrDataSource, m_checkToRun == CheckType.Punctuation ?
 				"SILUBS.ScriptureChecks.PunctuationCheck" : "SILUBS.ScriptureChecks.CharactersCheck");
 
@@ -783,7 +784,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ContextInfo"/> class.
+		/// Initializes a new instance of the <see cref="ContextInfo"/> class.
 		/// </summary>
 		/// <param name="pattern">The punctuation pattern.</param>
 		/// <param name="tts">The TextTokenSubstring.</param>
@@ -795,7 +796,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ContextInfo"/> class.
+		/// Initializes a new instance of the <see cref="ContextInfo"/> class.
 		/// </summary>
 		/// <param name="chr">The character or pattern to which this context applies.</param>
 		/// <param name="tts">The TextTokenSubstring.</param>
@@ -807,7 +808,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ContextInfo"/> class.
+		/// Initializes a new instance of the <see cref="ContextInfo"/> class.
 		/// </summary>
 		/// <param name="pattern">The punctuation pattern.</param>
 		/// <param name="offset">The offset.</param>
@@ -836,7 +837,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ContextInfo"/> class.
+		/// Initializes a new instance of the <see cref="ContextInfo"/> class.
 		/// </summary>
 		/// <param name="chr">The character or pattern to which this context applies.</param>
 		/// <param name="offset">The offset.</param>
@@ -850,7 +851,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ContextInfo"/> class.
+		/// Initializes a new instance of the <see cref="ContextInfo"/> class.
 		/// </summary>
 		/// <param name="chr">The character or pattern to which this context applies.</param>
 		/// <param name="offset">The offset (can be negative!).</param>
@@ -944,7 +945,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ContextGrid"/> class.
+		/// Initializes a new instance of the <see cref="ContextGrid"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public ContextGrid()

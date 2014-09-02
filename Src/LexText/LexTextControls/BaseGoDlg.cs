@@ -1,13 +1,9 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2014 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File: BaseGoDlg.cs
 // Responsibility: Randy Regnier
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
@@ -28,9 +24,7 @@ using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
-	/// <summary>
-	/// Summary description for BaseGoDlg.
-	/// </summary>
+	/// <summary/>
 	public class BaseGoDlg : Form, IFWDisposable
 	{
 		#region	Data members
@@ -568,7 +562,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="searchKey"></param>
 		protected virtual void ResetMatches(string searchKey)
 		{
-			// override
+			// override // REVIEW (Hasso) 2014.07: should be abstract
 		}
 
 		protected void ResetForm()

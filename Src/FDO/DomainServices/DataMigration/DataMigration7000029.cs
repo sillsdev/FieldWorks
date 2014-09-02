@@ -9,15 +9,10 @@
 // </remarks>
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Linq;
 using System.Xml.XPath;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.DomainImpl;
 
 namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 {
@@ -70,14 +65,14 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			string persistedLinkedFilesRootDir;
 			if (linkedFilesRootDirElement == null)
 			{
-				persistedLinkedFilesRootDir = Path.Combine(domainObjectDtoRepository.ProjectFolder, DirectoryFinder.ksLinkedFilesDir);
+				persistedLinkedFilesRootDir = Path.Combine(domainObjectDtoRepository.ProjectFolder, FdoFileHelper.ksLinkedFilesDir);
 			}
 			else
 			{
 				persistedLinkedFilesRootDir = linkedFilesRootDirElement.Value;
 			}
-			var linkedFilesRootDir = DirectoryFinderRelativePaths.GetLinkedFilesFullPathFromRelativePath(persistedLinkedFilesRootDir,
-				domainObjectDtoRepository.ProjectFolder);
+			var linkedFilesRootDir = LinkedFilesRelativePathHelper.GetLinkedFilesFullPathFromRelativePath(domainObjectDtoRepository.Directories.ProjectsDirectory,
+				persistedLinkedFilesRootDir, domainObjectDtoRepository.ProjectFolder);
 			//Get the Elements  for class="CmFile"
 			var CmFileDtosBeforeMigration = domainObjectDtoRepository.AllInstancesSansSubclasses("CmFile");
 
@@ -85,7 +80,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			{
 				XElement cmFileXML = XElement.Parse(fileDto.Xml);
 				var filePath = cmFileXML.XPathSelectElement("InternalPath").XPathSelectElement("Uni").Value;
-				var fileAsRelativePath = DirectoryFinderRelativePaths.GetRelativeLinkedFilesPath(filePath,
+				var fileAsRelativePath = LinkedFilesRelativePathHelper.GetRelativeLinkedFilesPath(filePath,
 																								 linkedFilesRootDir);
 				//If these two strings do not match then a full path was converted to a LinkedFiles relative path
 				//so replace the path in the CmFile object.

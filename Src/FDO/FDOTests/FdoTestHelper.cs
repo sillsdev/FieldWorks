@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using SIL.FieldWorks.Common.COMInterfaces;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
 using SIL.Utils;
@@ -409,6 +410,16 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string sObjData = props.GetStrPropValue((int)FwTextPropType.ktptObjData);
 			Assert.AreEqual(Convert.ToChar((int)FwObjDataTypes.kodtExternalPathName), sObjData[0]);
 			Assert.AreEqual(sUrl, sObjData.Substring(1));
+		}
+
+		/// <summary>
+		/// Setup static FDO properties
+		/// </summary>
+		public static void SetupStaticFdoProperties()
+		{
+			ClientServerServices.SetCurrentToDb4OBackend(new DummyFdoUI(), FwDirectoryFinder.FdoDirectories,
+				() => FwDirectoryFinder.ProjectsDirectory == FwDirectoryFinder.ProjectsDirectoryLocalMachine);
+			ScrMappingList.TeStylesPath = FwDirectoryFinder.TeStylesPath;
 		}
 	}
 }

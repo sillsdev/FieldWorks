@@ -318,7 +318,7 @@ namespace SIL.FieldWorks.XWorks
 			string path = null;
 			if (app != null) // if configFile in FwXApp == null
 			{
-				path = DirectoryFinder.GetConfigSettingsDir(app.Cache.ProjectId.ProjectFolder);
+				path = FdoFileHelper.GetConfigSettingsDir(app.Cache.ProjectId.ProjectFolder);
 				Directory.CreateDirectory(path);
 			}
 			m_mediator.PropertyTable.UserSettingDirectory = path;
@@ -386,6 +386,21 @@ namespace SIL.FieldWorks.XWorks
 			m_viewHelper = new ActiveViewHelper(this);
 			LoadUI(configFile);
 
+			if (!Mediator.PropertyTable.GetBoolProperty("DidAutomaticParseIsCurrentReset", false))
+			{
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
+					() =>
+					{
+						var paraRepo = Cache.ServiceLocator.GetInstance<IStTxtParaRepository>();
+						foreach (var para in paraRepo.AllInstances().Where(para => para.ParseIsCurrent))
+						{
+							para.ParseIsCurrent = false;
+						}
+					});
+				Mediator.PropertyTable.SetProperty("DidAutomaticParseIsCurrentReset", true);
+				Mediator.PropertyTable.SetPropertyPersistence("DidAutomaticParseIsCurrentReset", true);
+			}
+
 			m_viewHelper.ActiveViewChanged += new EventHandler<EventArgs>(ActiveViewChanged);
 		}
 
@@ -413,7 +428,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected override void DiscardProperties()
 		{
-			var tempDirectory = Path.Combine(Cache.ProjectId.ProjectFolder, DirectoryFinder.ksSortSequenceTempDir);
+			var tempDirectory = Path.Combine(Cache.ProjectId.ProjectFolder, FdoFileHelper.ksSortSequenceTempDir);
 			foreach (var pathname in Directory.GetFiles(tempDirectory, "*.fwss"))
 			{
 				File.Delete(pathname);
@@ -547,7 +562,7 @@ namespace SIL.FieldWorks.XWorks
 			Mediator.PropertyTable.SetPropertyPersistence("cache", false);
 			Mediator.PropertyTable.SetProperty("DocumentName", GetProjectName(cache));
 			Mediator.PropertyTable.SetPropertyPersistence("DocumentName", false);
-			Mediator.PathVariables["{DISTFILES}"] = DirectoryFinder.FWCodeDirectory;
+			Mediator.PathVariables["{DISTFILES}"] = FwDirectoryFinder.CodeDirectory;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1224,8 +1239,11 @@ namespace SIL.FieldWorks.XWorks
 		/// ------------------------------------------------------------------------------------
 		private void LaunchProjPropertiesDlg(bool startOnWSPage)
 		{
-			if (!ClientServerServices.Current.WarnOnOpeningSingleUserDialog(Cache))
+			if (!ClientServerServicesHelper.WarnOnOpeningSingleUserDialog(Cache))
 				return;
+			if (!SharedBackendServicesHelper.WarnOnOpeningSingleUserDialog(Cache))
+				return;
+
 			FdoCache cache = Cache;
 			bool fDbRenamed = false;
 			string sProject = cache.ProjectId.Name;
@@ -1913,7 +1931,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void ImportTranslatedLists(string filename)
 		{
-			using (var dlg = new ProgressDialogWithTask(this, Cache.ThreadHelper))
+			using (var dlg = new ProgressDialogWithTask(this))
 			{
 				dlg.AllowCancel = true;
 				dlg.Maximum = 200;

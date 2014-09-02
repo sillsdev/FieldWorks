@@ -8,6 +8,7 @@
 using NUnit.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
+using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;

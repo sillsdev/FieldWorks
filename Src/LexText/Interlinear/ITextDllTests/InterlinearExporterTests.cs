@@ -361,7 +361,7 @@ namespace SIL.FieldWorks.IText
 			{
 				var settings = new XmlReaderSettings { ValidationType = ValidationType.Schema };
 
-				string p = Path.Combine(DirectoryFinder.FlexFolder, Path.Combine("Export Templates", "Interlinear"));
+				string p = Path.Combine(FwDirectoryFinder.FlexFolder, Path.Combine("Export Templates", "Interlinear"));
 				string file = Path.Combine(p, "FlexInterlinear.xsd");
 				settings.Schemas.Add("", file);
 				exportedDoc.Schemas.Add("", new Uri(file).AbsoluteUri);
@@ -887,7 +887,7 @@ namespace SIL.FieldWorks.IText
 			}
 			private string CombineFilenameWithExportFolders(string filename)
 			{
-				string p = Path.Combine(DirectoryFinder.FlexFolder, Path.Combine("Export Templates", "Interlinear"));
+				string p = Path.Combine(FwDirectoryFinder.FlexFolder, Path.Combine("Export Templates", "Interlinear"));
 				return Path.Combine(p, filename);
 			}
 
@@ -1026,7 +1026,7 @@ namespace SIL.FieldWorks.IText
 				//validate export xml against schema
 				var settings = new XmlReaderSettings { ValidationType = ValidationType.Schema };
 
-				string p = Path.Combine(DirectoryFinder.FlexFolder, Path.Combine("Export Templates", "Interlinear"));
+				string p = Path.Combine(FwDirectoryFinder.FlexFolder, Path.Combine("Export Templates", "Interlinear"));
 				string file = Path.Combine(p, "FlexInterlinear.xsd");
 				settings.Schemas.Add("", file);
 				exportedDoc.Schemas.Add("", new Uri(file).AbsoluteUri);

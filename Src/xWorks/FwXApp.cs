@@ -272,9 +272,9 @@ namespace SIL.FieldWorks.XWorks
 				configFile = m_appArgs.ConfigFile;
 			else
 			{
-				configFile = DirectoryFinder.GetFWCodeFile(DefaultConfigurationPathname);
+				configFile = FwDirectoryFinder.GetCodeFile(DefaultConfigurationPathname);
 				//					configFile = (string)SettingsKey.GetValue("LatestConfigurationFile",
-				//						Path.Combine(DirectoryFinder.FWCodeDirectory,
+				//						Path.Combine(FwDirectoryFinder.CodeDirectory,
 				//						DefaultConfigurationPathname));
 				if (!File.Exists(configFile))
 					configFile = null;
@@ -349,7 +349,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			base.DoApplicationInitialization(progressDlg);
 			if (FwUtils.IsOkToDisplayScriptureIfPresent)
-				ScrReference.InitializeVersification(DirectoryFinder.TeFolder, false);
+				ScrReference.InitializeVersification(FwDirectoryFinder.TeFolder, false);
 
 			//usage report - Unnecessary now that we are doing Google Analytics reporting
 			//Improvement idea: should we do a special analytics ping for the 10 or 40 launches?

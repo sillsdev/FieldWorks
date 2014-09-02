@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Security;
 using NUnit.Framework;
 
@@ -16,8 +17,15 @@ namespace SIL.Utils.Attributes
 	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class |
 		AttributeTargets.Interface)]
 	[SuppressUnmanagedCodeSecurity]
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="m_activationContext and m_currentActivation are disposed in AfterTest method")]
 	public class CreateComObjectsFromManifestAttribute : TestActionAttribute
 	{
+#if !__MonoCS__
+		private ActivationContextHelper m_activationContext;
+		private IDisposable m_currentActivation;
+#endif
+
 		/// <summary/>
 		public override ActionTargets Targets
 		{
@@ -30,7 +38,8 @@ namespace SIL.Utils.Attributes
 			base.BeforeTest(testDetails);
 
 #if !__MonoCS__
-			ManifestHelper.CreateActivationContext();
+			m_activationContext = new ActivationContextHelper("FieldWorks.Tests.manifest");
+			m_currentActivation = m_activationContext.Activate();
 #endif
 		}
 
@@ -38,7 +47,8 @@ namespace SIL.Utils.Attributes
 		public override void AfterTest(TestDetails testDetails)
 		{
 #if !__MonoCS__
-			ManifestHelper.DestroyActivationContext();
+			m_currentActivation.Dispose();
+			m_activationContext.Dispose();
 #endif
 
 			base.AfterTest(testDetails);

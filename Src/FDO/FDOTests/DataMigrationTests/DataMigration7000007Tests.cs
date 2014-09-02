@@ -3,6 +3,7 @@ using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 
 namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
@@ -35,7 +36,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			mockMDC.AddClass(7, "StTxtPara", "StPara", new List<string>());
 			mockMDC.AddClass(9, "StFootnote", "StText", new List<string> {"ScrFootnote"});
 			mockMDC.AddClass(10, "ScrFootnote", "StFootnote", new List<string>());
-			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000006, dtos, mockMDC, null);
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000006, dtos, mockMDC, null, FwDirectoryFinder.FdoDirectories);
 			m_dataMigrationManager.PerformMigration(dtoRepos, 7000007, new DummyProgressDlg());
 
 			var ScrInpDto = dtoRepos.AllInstancesSansSubclasses("ScrImportSet").First();

@@ -4352,9 +4352,9 @@ namespace SIL.FieldWorks.TE
 				{
 					diffType = DifferenceType.CharStyleDifference;
 					if (sCharStyleName1 == null)
-						sCharStyleName1 = ResourceHelper.DefaultParaCharsStyleName;
+						sCharStyleName1 = StyleUtils.DefaultParaCharsStyleName;
 					if (sCharStyleName2 == null)
-						sCharStyleName2 = ResourceHelper.DefaultParaCharsStyleName;
+						sCharStyleName2 = StyleUtils.DefaultParaCharsStyleName;
 				}
 
 				int var;
@@ -6692,7 +6692,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		public void RecalculateDifferences(Form owner)
 		{
-			using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(owner, Cache.ThreadHelper))
+			using (var progressDlg = new ProgressDialogWithTask(owner))
 			{
 				progressDlg.Title = DlgResources.ResourceString("kstidCompareCaption");
 				progressDlg.Message = TeDiffViewResources.kstidRecalculateDiff;

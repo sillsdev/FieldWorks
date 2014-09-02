@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Web;
 using System.Xml.Linq;
 using System.Xml.XPath;
@@ -40,7 +39,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			mockMDC.AddClass(16, "StTxtPara", "StPara", new List<string>());
 
 			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000036, dtos, mockMDC,
-				FileUtils.ChangePathToPlatform("C:\\WW\\DistFiles\\Projects\\TokPisin"));
+				FileUtils.ChangePathToPlatform("C:\\WW\\DistFiles\\Projects\\TokPisin"), FwDirectoryFinder.FdoDirectories);
 			// Check that the version is correct.
 			Assert.AreEqual(7000036, dtoRepos.CurrentModelVersion, "Wrong original version.");
 			// Collect the link values that shouldn't change.

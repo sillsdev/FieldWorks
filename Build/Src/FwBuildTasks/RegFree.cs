@@ -15,7 +15,8 @@
 // </remarks>
 // ---------------------------------------------------------------------------------------------
 using System;
-using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Principal;
@@ -103,6 +104,12 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// ------------------------------------------------------------------------------------
 		public ITaskItem[] AsIs { get; set; }
 
+		/// <summary>
+		/// Gets or sets the dependent assemblies. Currently, this only accepts paths to assembly
+		/// manifests.
+		/// </summary>
+		public ITaskItem[] DependentAssemblies { get; set; }
+
 		private bool? m_IsAdmin;
 		private bool UserIsAdmin
 		{
@@ -128,7 +135,14 @@ namespace SIL.FieldWorks.Build.Tasks
 			Log.LogMessage(MessageImportance.Normal, "RegFree processing {0}",
 				Path.GetFileName(Executable));
 
-			var manifestFile = string.IsNullOrEmpty(Output) ? Executable + ".manifest" : Output;
+			StringCollection dllPaths = IdlImp.GetFilesFrom(Dlls);
+			if (dllPaths.Count == 0)
+			{
+				string ext = Path.GetExtension(Executable);
+				if (ext != null && ext.Equals(".dll", StringComparison.InvariantCultureIgnoreCase))
+					dllPaths.Add(Executable);
+			}
+			string manifestFile = string.IsNullOrEmpty(Output) ? Executable + ".manifest" : Output;
 
 			try
 			{
@@ -145,7 +159,6 @@ namespace SIL.FieldWorks.Build.Tasks
 				{
 					regHelper.RedirectRegistry(!UserIsAdmin);
 					var creator = new RegFreeCreator(doc, Log);
-					var dllPaths = IdlImp.GetFilesFrom(Dlls);
 					var filesToRemove = dllPaths.Cast<string>().Where(fileName => !File.Exists(fileName)).ToList();
 					foreach (var file in filesToRemove)
 						dllPaths.Remove(file);
@@ -164,7 +177,23 @@ namespace SIL.FieldWorks.Build.Tasks
 						}
 					}
 
-					XmlElement root = creator.CreateExeInfo(Executable);
+					string assemblyName = Path.GetFileNameWithoutExtension(manifestFile);
+					Debug.Assert(assemblyName != null);
+					// The C++ test programs won't run if an assemblyIdentity element exists.
+					//if (assemblyName.StartsWith("test"))
+					//	assemblyName = null;
+					string assemblyVersion = null;
+					try
+					{
+						assemblyVersion = FileVersionInfo.GetVersionInfo(Executable).FileVersion;
+					}
+					catch
+					{
+						// just ignore
+					}
+					if (string.IsNullOrEmpty(assemblyVersion))
+						assemblyVersion = "1.0.0.0";
+					XmlElement root = creator.CreateExeInfo(assemblyName, assemblyVersion);
 					foreach (string fileName in dllPaths)
 					{
 						if (NoTypeLib.Count(f => f.ItemSpec == fileName) != 0)
@@ -185,6 +214,12 @@ namespace SIL.FieldWorks.Build.Tasks
 					{
 						Log.LogMessage(MessageImportance.Low, "\tAdding as-is fragment {0}", Path.GetFileName(fragmentName));
 						creator.AddAsIs(root, fragmentName);
+					}
+
+					foreach (string assemblyFileName in IdlImp.GetFilesFrom(DependentAssemblies))
+					{
+						Log.LogMessage(MessageImportance.Low, "\tAdding dependent assembly {0}", Path.GetFileName(assemblyFileName));
+						creator.AddDependentAssembly(root, assemblyFileName);
 					}
 
 					var settings = new XmlWriterSettings

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Xml;
+﻿using System.Linq;
 using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -30,7 +28,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			IFwMetaDataCacheManaged mockMdc = DataMigrationTests7000020.SetupMdc();
 
 			IDomainObjectDTORepository repoDto = new DomainObjectDtoRepository(7000032, dtos, mockMdc,
-				Path.GetTempPath());
+				Path.GetTempPath(), FwDirectoryFinder.FdoDirectories);
 
 			var projectFolder = repoDto.ProjectFolder;
 			var projectName = Path.GetFileNameWithoutExtension(projectFolder);

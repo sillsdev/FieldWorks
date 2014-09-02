@@ -245,7 +245,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						{
 							string sPath = Path.Combine(Path.GetDirectoryName(m_sLiftFile),
 								String.Format("audio{0}{1}", Path.DirectorySeparatorChar, form));
-							CopyFileToLinkedFiles(form, sPath, DirectoryFinder.ksMediaDir);
+							CopyFileToLinkedFiles(form, sPath, FdoFileHelper.ksMediaDir);
 						}
 						else
 						{
@@ -329,7 +329,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						{
 							string sPath = Path.Combine(Path.GetDirectoryName(m_sLiftFile),
 								String.Format("audio{0}{1}", Path.DirectorySeparatorChar, tss.Text));
-							CopyFileToLinkedFiles(tss.Text, sPath, DirectoryFinder.ksMediaDir);
+							CopyFileToLinkedFiles(tss.Text, sPath, FdoFileHelper.ksMediaDir);
 						}
 					}
 				}
@@ -373,7 +373,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						|| linkPath.StartsWith("others" + Path.DirectorySeparatorChar))
 					{
 						linkPath = CopyFileToLinkedFiles(linkPath.Substring("others/".Length), sPath,
-							DirectoryFinder.ksOtherLinkedFilesDir);
+							FdoFileHelper.ksOtherLinkedFilesDir);
 					}
 					char chOdt = Convert.ToChar((int)FwObjDataTypes.kodtExternalPathName);
 					string sRef = chOdt.ToString() + linkPath;
@@ -462,7 +462,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (m_mapLangWs.TryGetValue(key, out hvo))
 				return hvo;
 			IWritingSystem ws;
-			if (!WritingSystemServices.FindOrCreateSomeWritingSystem(m_cache, key,
+			if (!WritingSystemServices.FindOrCreateSomeWritingSystem(m_cache, FwDirectoryFinder.TemplateDirectory, key,
 				m_fAddNewWsToAnal, m_fAddNewWsToVern, out ws))
 			{
 				m_addedWss.Add(ws);
@@ -1441,16 +1441,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (xdResidue != null)
 			{
 				StoreDatesInResidue(extensible, expl);
-				//foreach (LiftField field in expl.Fields)
-				//{
-				//    string sXml = CreateXmlForField(field);
-				//    InsertResidueContent(xdResidue, sXml);
-				//}
-				foreach (LiftTrait trait in expl.Traits)
-				{
-					string sXml = CreateXmlForTrait(trait);
-					InsertResidueContent(xdResidue, sXml);
-				}
 				foreach (LiftAnnotation ann in expl.Annotations)
 				{
 					string sXml = CreateXmlForAnnotation(ann);
@@ -3134,18 +3124,19 @@ namespace SIL.FieldWorks.LexText.Controls
 		private ICmPossibility GetRefTypeByNameOrReverseName(string sType)
 		{
 			ICmPossibility lrt;
-			m_dictLexRefTypes.TryGetValue(sType.ToLowerInvariant(), out lrt);
+			var normalizedTypeName = sType.Normalize().ToLowerInvariant();
+			m_dictLexRefTypes.TryGetValue(normalizedTypeName, out lrt);
 			if(lrt == null)
 			{
 				foreach(ILexRefType dictLexRefType in m_dictLexRefTypes.Values)
 				{
-					if(dictLexRefType.ReverseName.OccursInAnyAlternative(sType))
+					if(dictLexRefType.ReverseName.OccursInAnyAlternative(normalizedTypeName))
 					{
 						return dictLexRefType;
 					}
 				}
-				lrt = m_rgnewLexRefTypes.FirstOrDefault(x => x.Name.OccursInAnyAlternative(sType)) ??
-						m_rgnewLexRefTypes.FirstOrDefault(x => ((ILexRefType)x).ReverseName.OccursInAnyAlternative(sType));
+				lrt = m_rgnewLexRefTypes.FirstOrDefault(x => x.Name.OccursInAnyAlternative(normalizedTypeName)) ??
+						m_rgnewLexRefTypes.FirstOrDefault(x => ((ILexRefType)x).ReverseName.OccursInAnyAlternative(normalizedTypeName));
 			}
 			return lrt;
 		}

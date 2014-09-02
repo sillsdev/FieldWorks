@@ -1,16 +1,21 @@
-﻿// Copyright (c) 2011-2013 SIL International
-// This software is licensed under the LGPL, version 2.1 or later
-// (http://www.gnu.org/licenses/lgpl-2.1.html)
+﻿// ---------------------------------------------------------------------------------------------
+#region // Copyright (c) 2011, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2011' company='SIL International'>
+//		Copyright (c) 2011, SIL International. All Rights Reserved.
+//
+//		Distributable under the terms of either the Common Public License or the
+//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
+// </copyright>
+#endregion
 //
 // File: LexicalProviderImpl.cs
 // Responsibility: FW Team
 //
 // <remarks>
 // </remarks>
-
+// ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.ServiceModel;
@@ -184,7 +189,7 @@ namespace SIL.FieldWorks.LexicalProvider
 
 							IMoMorphType morphType = GetMorphTypeForLexemeType(lexeme.Type);
 							ITsString tssForm = TsStringUtils.MakeTss(sForm, m_cache.DefaultVernWs);
-							m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(morphType, tssForm, (ITsString)null, msa);
+							m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(morphType, tssForm, (ITsString) null, msa);
 							break;
 						}
 					}
@@ -235,7 +240,7 @@ namespace SIL.FieldWorks.LexicalProvider
 							}
 
 							ILexSense newSense = m_cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create(
-								dbEntry, new SandboxGenericMSA(), (ITsString)null);
+								dbEntry, new SandboxGenericMSA(), (ITsString) null);
 							guid = newSense.Guid.ToString();
 							break;
 						}

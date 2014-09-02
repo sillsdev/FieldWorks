@@ -176,7 +176,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// ------------------------------------------------------------------------------------
 		public override string ProductExecutableFile
 		{
-			get { return DirectoryFinder.FlexExe; }
+			get { return FwDirectoryFinder.FlexExe; }
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -557,7 +557,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		{
 			CheckDisposed();
 
-			string path = String.Format(DirectoryFinder.FWCodeDirectory +
+			string path = String.Format(FwDirectoryFinder.CodeDirectory +
 				"{0}Helps{0}Language Explorer{0}Training{0}Technical Notes on LinguaLinks Database Import.pdf",
 				Path.DirectorySeparatorChar);
 
@@ -572,7 +572,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		{
 			CheckDisposed();
 
-			string path = String.Format(DirectoryFinder.FWCodeDirectory +
+			string path = String.Format(FwDirectoryFinder.CodeDirectory +
 				"{0}Helps{0}Language Explorer{0}Training{0}Technical Notes on Interlinear Import.pdf",
 				Path.DirectorySeparatorChar);
 
@@ -587,7 +587,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		{
 			CheckDisposed();
 
-			string path = String.Format(DirectoryFinder.FWCodeDirectory +
+			string path = String.Format(FwDirectoryFinder.CodeDirectory +
 				"{0}Helps{0}Language Explorer{0}Training{0}Technical Notes on SFM Database Import.pdf",
 				Path.DirectorySeparatorChar);
 
@@ -602,7 +602,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		{
 			CheckDisposed();
 
-			string path = String.Format(DirectoryFinder.FWCodeDirectory +
+			string path = String.Format(FwDirectoryFinder.CodeDirectory +
 				"{0}Helps{0}Language Explorer{0}Training{0}Technical Notes on FieldWorks Send-Receive.pdf",
 				Path.DirectorySeparatorChar);
 
@@ -625,7 +625,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			XCore.Command command = (XCore.Command)commandObject;
 			string fileName = SIL.Utils.XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "file");
 			fileName = fileName.Replace('\\', Path.DirectorySeparatorChar);
-			string path = String.Format(DirectoryFinder.FWCodeDirectory +
+			string path = String.Format(FwDirectoryFinder.CodeDirectory +
 				"{0}Helps{0}Language Explorer{0}Training{0}" + fileName, Path.DirectorySeparatorChar);
 
 			OpenDocument(path, (e) => {
@@ -648,7 +648,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			XCore.Command command = (XCore.Command)commandObject;
 			string fileName = SIL.Utils.XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "file");
 			fileName = fileName.Replace('\\', Path.DirectorySeparatorChar);
-			string path = String.Format(DirectoryFinder.FWCodeDirectory +
+			string path = String.Format(FwDirectoryFinder.CodeDirectory +
 				"{0}Helps{0}Language Explorer{0}Training{0}" + fileName, Path.DirectorySeparatorChar);
 
 			OpenDocument(path, (e) => {
@@ -670,7 +670,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			XCore.Command command = (XCore.Command)commandObject;
 			string fileName = SIL.Utils.XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "file");
 			fileName = fileName.Replace('\\', Path.DirectorySeparatorChar);
-			string path = String.Format(DirectoryFinder.FWCodeDirectory + "{0}Helps{0}" + fileName,
+			string path = String.Format(FwDirectoryFinder.CodeDirectory + "{0}Helps{0}" + fileName,
 				Path.DirectorySeparatorChar);
 
 			OpenDocument(path, (e) => {
@@ -686,7 +686,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 
 			try
 			{
-				string pathMovies = String.Format(DirectoryFinder.FWCodeDirectory +
+				string pathMovies = String.Format(FwDirectoryFinder.CodeDirectory +
 					"{0}Language Explorer{0}Movies{0}Demo Movies.html",
 					Path.DirectorySeparatorChar);
 
@@ -702,7 +702,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 					else
 					{
 						// User probably does not have movies. Try to launch the "no movies" web page:
-						string pathNoMovies = String.Format(DirectoryFinder.FWCodeDirectory +
+						string pathNoMovies = String.Format(FwDirectoryFinder.CodeDirectory +
 							"{0}Language Explorer{0}Movies{0}notfound.html",
 							Path.DirectorySeparatorChar);
 
@@ -725,7 +725,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			{
 				// Some other unforeseen error:
 				MessageBox.Show(null, String.Format(LexTextStrings.ksErrorCannotLaunchMovies,
-					String.Format(DirectoryFinder.FWCodeDirectory + "{0}Language Explorer{0}Movies",
+					String.Format(FwDirectoryFinder.CodeDirectory + "{0}Language Explorer{0}Movies",
 					Path.DirectorySeparatorChar)), LexTextStrings.ksError);
 			}
 			return true;
@@ -735,7 +735,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		{
 			CheckDisposed();
 
-			string path = String.Format(DirectoryFinder.FWCodeDirectory +
+			string path = String.Format(FwDirectoryFinder.CodeDirectory +
 				"{0}Helps{0}WW-ConceptualIntro{0}ConceptualIntroduction.htm",
 				Path.DirectorySeparatorChar);
 
@@ -801,7 +801,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// </summary>
 		/// <param name="progressDlg">The progress dialog.</param>
 		/// <returns>True if the initialize was successful, false otherwise</returns>
-		public override bool InitCacheForApp(IProgress progressDlg)
+		public override bool InitCacheForApp(IThreadedProgress progressDlg)
 		{
 			Cache.ServiceLocator.DataSetup.LoadDomainAsync(BackendBulkLoadDomain.All);
 			AddDefaultWordformingOverridesIfNeeded();
@@ -836,7 +836,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 				string validCharsSrc = wsObj.ValidChars;
 				if (!ValidCharacters.IsNewValidCharsString(validCharsSrc))
 				{
-					ValidCharacters valChars = ValidCharacters.Load(wsObj, LoadException);
+					ValidCharacters valChars = ValidCharacters.Load(wsObj, LoadException, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 					valChars.AddDefaultWordformingCharOverrides();
 					wsObj.ValidChars = valChars.XmlString;
 				}

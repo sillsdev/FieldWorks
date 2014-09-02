@@ -253,9 +253,9 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				// Selecting node(s) changed something, so save it so that the UI doesn't become
 				// unresponsive
-				using (var progressDlg = new ProgressDialogWithTask(this, m_cache.ThreadHelper))
+				using (var progressDlg = new ProgressDialogWithTask(this))
 				{
-					progressDlg.ProgressBarStyle = ProgressBarStyle.Marquee;
+					progressDlg.IsIndeterminate = true;
 					progressDlg.Title = Text;
 					progressDlg.Message = ResourceHelper.GetResourceString("kstidSavingChanges");
 					progressDlg.RunTask((progDlg, parms) =>
@@ -276,7 +276,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
-		protected override void m_btnHelp_Click(object sender, System.EventArgs e)
+		protected override void m_btnHelp_Click(object sender, EventArgs e)
 		{
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, m_helpTopicId);
 		}

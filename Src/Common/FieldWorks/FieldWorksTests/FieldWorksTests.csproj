@@ -72,9 +72,17 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\COMInterfacesTests.dll</HintPath>
     </Reference>
+    <Reference Include="CoreImpl, Version=8.0.6.31180, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+    </Reference>
     <Reference Include="FDO, Version=6.1.1.20134, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\FDO.dll</HintPath>
+    </Reference>
+    <Reference Include="FDOTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\FDOTests.dll</HintPath>
     </Reference>
     <Reference Include="FieldWorks, Version=6.1.1.19073, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

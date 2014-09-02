@@ -68,7 +68,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			// ProjectInfo.AllProjects doesn't set the InUse flag, which is why we
 			// pass a list of open projects to the dialog constructor.
-			List<ProjectInfo> projectList = ProjectInfo.AllProjects;
+			List<ProjectInfo> projectList = ProjectInfo.GetAllProjects(FwDirectoryFinder.ProjectsDirectory);
 			foreach (ProjectInfo info in projectList.Where(info => projectsOpen.Contains(info.DatabaseName)))
 				info.InUse = true;
 			return projectList;
@@ -266,7 +266,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				itemsToDelete.Add(info);
 			foreach (ProjectInfo info in itemsToDelete)
 			{
-				string folder = Path.Combine(DirectoryFinder.ProjectsDirectory, info.DatabaseName);
+				string folder = Path.Combine(FwDirectoryFinder.ProjectsDirectory, info.DatabaseName);
 				bool fExtraData = CheckForExtraData(info, folder);
 				string msg;
 				MessageBoxButtons buttons;
@@ -293,25 +293,25 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					}
 					else
 					{
-						string path = Path.Combine(folder, info.DatabaseName + FwFileExtensions.ksFwDataXmlFileExtension);
+						string path = Path.Combine(folder, info.DatabaseName + FdoFileHelper.ksFwDataXmlFileExtension);
 						if (File.Exists(path))
 							File.Delete(path);
-						path = Path.ChangeExtension(path, FwFileExtensions.ksFwDataDb4oFileExtension);
+						path = Path.ChangeExtension(path, FdoFileHelper.ksFwDataDb4oFileExtension);
 						if (File.Exists(path))
 							File.Delete(path);
-						path = Path.ChangeExtension(path, FwFileExtensions.ksFwDataFallbackFileExtension);
+						path = Path.ChangeExtension(path, FdoFileHelper.ksFwDataFallbackFileExtension);
 						if (File.Exists(path))
 							File.Delete(path);
-						path = Path.Combine(folder, DirectoryFinder.ksWritingSystemsDir);
+						path = Path.Combine(folder, FdoFileHelper.ksWritingSystemsDir);
 						if (Directory.Exists(path))
 							Directory.Delete(path, true);
-						path = Path.Combine(folder, DirectoryFinder.ksBackupSettingsDir);
+						path = Path.Combine(folder, FdoFileHelper.ksBackupSettingsDir);
 						if (Directory.Exists(path))
 							Directory.Delete(path, true);
-						path = Path.Combine(folder, DirectoryFinder.ksConfigurationSettingsDir);
+						path = Path.Combine(folder, FdoFileHelper.ksConfigurationSettingsDir);
 						if (Directory.Exists(path))
 							Directory.Delete(path, true);
-						path = Path.Combine(folder, DirectoryFinder.ksSortSequenceTempDir);
+						path = Path.Combine(folder, FdoFileHelper.ksSortSequenceTempDir);
 						if (Directory.Exists(path))
 							Directory.Delete(path, true);
 						string[] folders = Directory.GetDirectories(folder);
@@ -339,10 +339,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			foreach (string dir in folders)
 			{
 				string name = Path.GetFileName(dir);
-				if (name == DirectoryFinder.ksWritingSystemsDir ||
-					name == DirectoryFinder.ksBackupSettingsDir ||
-					name == DirectoryFinder.ksConfigurationSettingsDir ||
-					name == DirectoryFinder.ksSortSequenceTempDir)
+				if (name == FdoFileHelper.ksWritingSystemsDir ||
+					name == FdoFileHelper.ksBackupSettingsDir ||
+					name == FdoFileHelper.ksConfigurationSettingsDir ||
+					name == FdoFileHelper.ksSortSequenceTempDir)
 				{
 					continue;
 				}
@@ -355,9 +355,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			foreach (string filepath in files)
 			{
 				string file = Path.GetFileName(filepath);
-				if (file != info.DatabaseName + FwFileExtensions.ksFwDataXmlFileExtension &&
-					file != info.DatabaseName + FwFileExtensions.ksFwDataDb4oFileExtension &&
-					file != info.DatabaseName + FwFileExtensions.ksFwDataFallbackFileExtension)
+				if (file != info.DatabaseName + FdoFileHelper.ksFwDataXmlFileExtension &&
+					file != info.DatabaseName + FdoFileHelper.ksFwDataDb4oFileExtension &&
+					file != info.DatabaseName + FdoFileHelper.ksFwDataFallbackFileExtension)
 				{
 					return true;
 				}

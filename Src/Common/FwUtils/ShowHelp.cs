@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// try to get a path to the help file.
 			try
 			{
-				helpFile = DirectoryFinder.FWCodeDirectory +
+				helpFile = FwDirectoryFinder.CodeDirectory +
 					helpTopicProvider.GetHelpString(helpFileKey);
 			}
 			catch

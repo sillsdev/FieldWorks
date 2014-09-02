@@ -702,7 +702,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 
 			openFileDialog = new OpenFileDialogAdapter();
 
-			m_sStdImportMap = String.Format(DirectoryFinder.FWCodeDirectory +
+			m_sStdImportMap = String.Format(FwDirectoryFinder.CodeDirectory +
 				"{0}Language Explorer{0}Import{0}NotesImport.map", Path.DirectorySeparatorChar);
 			m_ExtraButtonLeft = m_btnBack.Left - (m_btnCancel.Width + kdxpCancelHelpButtonGap);
 			m_OriginalCancelButtonLeft = m_btnCancel.Left;
@@ -2360,7 +2360,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 						m_sSfmDataFile);
 				else
 					m_viewProcess = Process.Start(
-						Path.Combine(DirectoryFinder.FWCodeDirectory, "ZEdit.exe"),
+						Path.Combine(FwDirectoryFinder.CodeDirectory, "ZEdit.exe"),
 						m_sSfmDataFile);
 			}
 		}
@@ -2466,12 +2466,11 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		{
 			using (new WaitCursor(this))
 			{
-				using (var progressDlg = new ProgressDialogWithTask(this, m_cache.ThreadHelper))
+				using (var progressDlg = new ProgressDialogWithTask(this))
 				{
 					progressDlg.Minimum = 0;
 					progressDlg.Maximum = 100;
 					progressDlg.AllowCancel = true;
-					progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
 					progressDlg.Restartable = true;
 					progressDlg.Title = String.Format(LexTextControls.ksImportingFrom0, m_sSfmDataFile);
 					m_sLogFile = (string)progressDlg.RunTask(true, ImportStdFmtFile,
@@ -2709,7 +2708,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			//var isNetscape = typeof window != 'undefined' && typeof window.netscape != 'undefined' && typeof window.netscape.security != 'undefined' && typeof window.opera != 'object';
 			sw.WriteLine("function zedit (filename, line)");
 			sw.WriteLine("{");
-			string sProg = Path.Combine(DirectoryFinder.FWCodeDirectory, "zedit.exe");
+			string sProg = Path.Combine(FwDirectoryFinder.CodeDirectory, "zedit.exe");
 			sw.WriteLine("    var prog = \"{0}\";", sProg.Replace("\\", "\\\\"));
 			sw.WriteLine("    var zeditfailed = true;");
 			sw.WriteLine("    if (navigator.platform == 'Win32')");

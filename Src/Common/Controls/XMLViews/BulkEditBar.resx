@@ -1037,30 +1037,6 @@
   <data name="&gt;&gt;m_transduceTab.ZOrder" xml:space="preserve">
 	<value>3</value>
   </data>
-  <data name="m_findReplaceSummaryLabel.Font" type="System.Drawing.Font, System.Drawing">
-	<value>Microsoft Sans Serif, 12pt, style=Bold</value>
-  </data>
-  <data name="m_findReplaceSummaryLabel.Location" type="System.Drawing.Point, System.Drawing">
-	<value>275, 72</value>
-  </data>
-  <data name="m_findReplaceSummaryLabel.Size" type="System.Drawing.Size, System.Drawing">
-	<value>215, 56</value>
-  </data>
-  <data name="m_findReplaceSummaryLabel.TabIndex" type="System.Int32, mscorlib">
-	<value>17</value>
-  </data>
-  <data name="&gt;&gt;m_findReplaceSummaryLabel.Name" xml:space="preserve">
-	<value>m_findReplaceSummaryLabel</value>
-  </data>
-  <data name="&gt;&gt;m_findReplaceSummaryLabel.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_findReplaceSummaryLabel.Parent" xml:space="preserve">
-	<value>m_findReplaceTab</value>
-  </data>
-  <data name="&gt;&gt;m_findReplaceSummaryLabel.ZOrder" xml:space="preserve">
-	<value>0</value>
-  </data>
   <data name="m_findReplaceSetupButton.Location" type="System.Drawing.Point, System.Drawing">
 	<value>175, 72</value>
   </data>
@@ -1395,8 +1371,5 @@
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
 	<value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="m_findReplaceSummaryLabel.Text" xml:space="preserve">
-	<value />
   </data>
 </root>

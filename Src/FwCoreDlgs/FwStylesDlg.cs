@@ -10,7 +10,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -585,7 +585,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						if (style.IsBuiltIn)
 							styles.Add(style.Name);
 					}
-					styles.Add(ResourceHelper.DefaultParaCharsStyleName);
+					styles.Add(StyleUtils.DefaultParaCharsStyleName);
 					break;
 
 				case 3: // dictionary -- use current table of styles to obtain names
@@ -594,7 +594,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						if (!style.StartsWith("Dictionary") && !style.StartsWith("Classified"))
 							styles.Add(style);
 					}
-					styles.Add(ResourceHelper.DefaultParaCharsStyleName);
+					styles.Add(StyleUtils.DefaultParaCharsStyleName);
 					break;
 			}
 			return styles;
@@ -808,9 +808,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						UpdateChanges(styleInfo);
 					}
 
-					// Check to make sure new styles are not going to result in duplicates
-					// in the database
-					m_styleSheet.CheckForDuplicates(m_styleTable, m_app.ApplicationName);
+					try
+					{
+						// Check to make sure new styles are not going to result in duplicates
+						// in the database
+						m_styleSheet.CheckForDuplicates(m_styleTable);
+					}
+					catch (IncompatibleStyleExistsException isee)
+					{
+						MessageBoxUtils.Show(isee.Message, m_app.ApplicationName);
+					}
 
 					foreach (StyleInfo style in m_styleTable.Values)
 					{

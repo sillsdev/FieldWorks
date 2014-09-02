@@ -9,6 +9,7 @@ COM=$(dirname "${BASE}")/libcom/COM
 ARCH=$(uname -m)
 [ -z "$BUILD" ] && BUILD=Debug
 [ -z "$MONO_PREFIX" ] && MONO_PREFIX=/usr/local
+[ -z "$MONO_SILPKGDIR" ] && MONO_SILPKGDIR=/usr/lib/fieldworks
 
 # Dependency locations
 # search for xulrunner and geckofx, select the best, and add its location to LD_LIBRARY_PATH
@@ -27,12 +28,14 @@ LD_LIBRARY_PATH="${BASE}/Output_${ARCH}/${BUILD}:\
 ${BASE}/Lib/src/icu/install${ARCH}/lib:\
 ${COM}/build${ARCH}/lib:\
 ${LD_LIBRARY_PATH}"
+# ensure we scan the default pkg-config directories (to pick up Geckofx for compiling)
+[ -z "$PKG_CONFIG_PATH" ] && PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig
 
 # Add packaged mono items to paths
-PATH="/usr/lib/fieldworks/mono/bin:${PATH}"
-LD_LIBRARY_PATH="/usr/lib/fieldworks/mono/lib:${LD_LIBRARY_PATH}"
-PKG_CONFIG_PATH="/usr/lib/fieldworks/mono/lib/pkgconfig:${PKG_CONFIG_PATH}"
-MONO_GAC_PREFIX="/usr/lib/fieldworks/mono:/usr:/usr/local"
+PATH="${MONO_SILPKGDIR}/mono/bin:${PATH}"
+LD_LIBRARY_PATH="${MONO_SILPKGDIR}/mono/lib:${LD_LIBRARY_PATH}"
+PKG_CONFIG_PATH="${MONO_SILPKGDIR}/mono/lib/pkgconfig:${PKG_CONFIG_PATH}"
+MONO_GAC_PREFIX="${MONO_SILPKGDIR}/mono:/usr:${MONO_PREFIX}"
 
 if [ "$RUNMODE" != "PACKAGE" ]
 then

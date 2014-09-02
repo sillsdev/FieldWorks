@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -121,7 +122,7 @@ namespace SIL.FieldWorks.IText
 			//get the writing system from the cache
 			IWritingSystem ws = (IWritingSystem)m_cache.WritingSystemFactory.get_EngineOrNull(wsID);
 			//get the ValidCharacters for the writing system.
-			ValidCharacters vc = ws != null ? ValidCharacters.Load(ws, (ArgumentException e)=> { }) : null;
+			ValidCharacters vc = ws != null ? ValidCharacters.Load(ws, e => { }, FwDirectoryFinder.CodeDirectory) : null;
 			//split the text on everything found in the OtherCharacters section
 			string[] distinctPhrases = vc != null ? txt.Split(vc.OtherCharacters.ToArray(), StringSplitOptions.None) //ws info was good, use it
 												  : Regex.Replace(txt, "\\p{P}", ".").Split('.'); //bad ws info, replace all punct with . and split on .

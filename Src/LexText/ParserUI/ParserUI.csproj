@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -149,6 +149,10 @@
       <Name>ParserCore</Name>
       <HintPath>..\..\..\Output\Debug\ParserCore.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationTransforms, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\PresentationTransforms.dll</HintPath>
+    </Reference>
     <Reference Include="Reporting, Version=1.0.3852.22149, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\Output\Debug\Reporting.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -159,10 +163,10 @@
     </Reference>
     <Reference Condition="'$(OS)'=='Unix'" Include="geckofx-core-14">
       <HintPath>\usr\lib\cli\geckofx-14.0.1\geckofx-core-14.dll</HintPath>
-	</Reference>
+    </Reference>
     <Reference Condition="'$(OS)'=='Unix'" Include="Geckofx-Winforms-14">
       <HintPath>\usr\lib\cli\geckofx-14.0.1\Geckofx-Winforms-14.dll</HintPath>
-	</Reference>
+    </Reference>
     <None Condition="'$(OS)'=='Unix'" Include="\usr\lib\cli\geckofx-14.0.1\geckofx-core-14.dll.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -187,6 +191,7 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="Widgets">
       <Name>Widgets</Name>
       <HintPath>..\..\..\Output\Debug\Widgets.dll</HintPath>
@@ -235,7 +240,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ParserTrace.cs" />
-    <Compile Include="ParserTraceBase.cs" />
+    <Compile Include="ParserTraceUITransform.cs" />
     <Compile Include="ParserUIStrings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

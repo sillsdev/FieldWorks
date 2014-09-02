@@ -1834,7 +1834,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void InitOutputFiles()
 		{
-			string sRootDir = DirectoryFinder.FWCodeDirectory;
+			string sRootDir = FwDirectoryFinder.CodeDirectory;
 			string sTransformDir;
 			if (!sRootDir.EndsWith(Path.DirectorySeparatorChar.ToString()))
 				sRootDir += Path.DirectorySeparatorChar;
@@ -1917,7 +1917,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			SaveSettings();
 
-			using (var dlg = new ProgressDialogWithTask(this, m_cache.ThreadHelper))
+			using (var dlg = new ProgressDialogWithTask(this))
 			{
 				dlg.AllowCancel = true;
 				dlg.Maximum = 200;
@@ -1925,7 +1925,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					int startPhase = GetDictionaryFileAsPhaseFileNumber();	// see if starting with phase file
 					// XSLT files
-					string sTransformDir = Path.Combine(DirectoryFinder.FWCodeDirectory,
+					string sTransformDir = Path.Combine(FwDirectoryFinder.CodeDirectory,
 						String.Format("Language Explorer{0}Import{0}", Path.DirectorySeparatorChar));
 
 					LexImport lexImport = new LexImport(m_cache, m_sTempDir, sTransformDir);
@@ -2223,7 +2223,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						m_dirtyInputFile = false;
 						m_dirtyMapFile = false;
 						string topAnalysisWS = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(m_cache.DefaultAnalWs);
-						m_MappingMgr = new MarkerPresenter( /*m_cache,*/DirectoryFinder.FWCodeDirectory,
+						m_MappingMgr = new MarkerPresenter( /*m_cache,*/FwDirectoryFinder.CodeDirectory,
 							LexImportWizard.Wizard().GetUILanguages(),
 							topAnalysisWS,
 							m_SettingsFileName.Text,

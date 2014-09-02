@@ -9,7 +9,6 @@
 
 /* This class may well replace ClientServerBackend, which currently is used only by the MySQL classes */
 
-using System.Collections.Generic;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
@@ -20,16 +19,10 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			IdentityMap identityMap,
 			ICmObjectSurrogateFactory surrogateFactory,
 			IFwMetaDataCacheManagedInternal mdc,
-			IDataMigrationManager dataMigrationManager) : base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager)
+			IDataMigrationManager dataMigrationManager,
+			IFdoUI ui, IFdoDirectories dirs) : base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager, ui, dirs)
 		{
 		}
-
-		/// <summary>
-		/// Get changes we haven't seen.
-		/// </summary>
-		public abstract bool GetUnseenForeignChanges(out List<ICmObjectSurrogate> foreignNewbies,
-			out List<ICmObjectSurrogate> foreignDirtballs,
-			out List<ICmObjectId> foreignGoners, bool fGetCommitLock);
 
 		public abstract string VersionStamp { get; }
 		public abstract bool NewObjectsSinceVersion(string versionStamp, string classname);

@@ -2,10 +2,11 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 
 	<UsingTask TaskName="CheckAdminPrivilege" AssemblyFile="FwBuildTasks.dll" Condition="'$(OS)'=='Windows_NT'"/>
+	<UsingTask TaskName="RegFree" AssemblyFile="FwBuildTasks.dll"/>
 
 	<!-- call preparatory Windows targets -->
 	<Target Name="initWindows" Condition="'$(OS)'=='Windows_NT'"
-			DependsOnTargets="Initialize;EncConvertersDlls;CopyOtherDlls">
+			DependsOnTargets="Initialize;EncConvertersDlls;CopyOtherDlls;BuildWindowsXslAssemblies">
 	</Target>
 
 	<ItemGroup>
@@ -99,5 +100,13 @@
 		  </choose>
 -->
 	</Target>
-
+	<!-- Only Windows has the xsltc tool for compiling XSLs -->
+	<PropertyGroup>
+		<ApplicationTransformsPath>..\Src\Transforms\Application</ApplicationTransformsPath>
+		<PresentationTransformsPath>..\Src\Transforms\Presentation</PresentationTransformsPath>
+	</PropertyGroup>
+	<Target Name="BuildWindowsXslAssemblies" Condition="'$(OS)'=='Windows_NT'">
+		<Exec Command="xsltc /settings:document /out:$(dir-outputBase)\ApplicationTransforms.dll $(ApplicationTransformsPath)\FxtM3MorphologySketch.xsl $(ApplicationTransformsPath)\FxtM3ParserToGAFAWS.xsl $(ApplicationTransformsPath)\FxtM3ParserToHCInput.xsl $(ApplicationTransformsPath)\FxtM3ParserToToXAmpleGrammar.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleADCtl.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleLex.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleWordGrammarDebuggingXSLT.xsl" />
+		<Exec Command="xsltc /settings:document /out:$(dir-outputBase)\PresentationTransforms.dll $(PresentationTransformsPath)\FormatHCTrace.xsl $(PresentationTransformsPath)\FormatXAmpleParse.xsl $(PresentationTransformsPath)\FormatXAmpleTrace.xsl $(PresentationTransformsPath)\FormatXAmpleWordGrammarDebuggerResult.xsl $(PresentationTransformsPath)\XLingPap1.xsl" />
+	</Target>
 </Project>

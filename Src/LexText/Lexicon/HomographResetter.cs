@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Linq;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FwCoreDlgs;
 using System.Windows.Forms;
 
@@ -62,7 +63,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			Debug.Assert(m_dlg != null);
 			m_dlg.WhenDescription = LexEdStrings.ksWhenToReassignHomographs;
 			m_dlg.WhatDescription = LexEdStrings.ksWhatIsReassignHomographs;
-			m_dlg.RedoDescription = LexEdStrings.ksCannotRedoReassignHomographs;
+			m_dlg.RedoDescription = LexEdStrings.ksGenericUtilityCannotUndo;
 		}
 
 		/// <summary>
@@ -94,7 +95,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						cache.LanguageProject.HomographWs = defaultVernacularWsId;
 					});
 			}
-			cache.LanguageProject.LexDbOA.ResetHomographNumbers(m_dlg.ProgressBar);
+			cache.LanguageProject.LexDbOA.ResetHomographNumbers(new ProgressBarWrapper(m_dlg.ProgressBar));
 		}
 
 		/// <summary>

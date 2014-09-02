@@ -13,7 +13,7 @@ using System.IO;
 using System.Linq;
 
 using NUnit.Framework;
-
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.FieldWorks.FDO.Infrastructure;
 
@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			IFwMetaDataCacheManaged mockMdc = SetupMdc();
 
 			IDomainObjectDTORepository repoDto = new DomainObjectDtoRepository(7000019, dtos, mockMdc,
-				Path.GetTempPath());
+				Path.GetTempPath(), FwDirectoryFinder.FdoDirectories);
 
 			// Initial check that data was read properly.
 			var cObjects = repoDto.AllInstances().Count();

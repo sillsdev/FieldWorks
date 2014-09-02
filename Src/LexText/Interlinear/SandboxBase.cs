@@ -1892,8 +1892,22 @@ namespace SIL.FieldWorks.IText
 				var hvoSbForm = m_caches.DataAccess.get_ObjectProp(hvoMorph, ktagSbMorphForm);
 				foreach (var ws in otherWritingSystemsForMorphForm)
 				{
-					m_caches.DataAccess.SetMultiStringAlt(hvoSbForm, ktagSbNamedObjName, ws,
-						defFormReal.Form.get_String(ws));
+					try
+					{
+						m_caches.DataAccess.SetMultiStringAlt(hvoSbForm, ktagSbNamedObjName, ws,
+							defFormReal.Form.get_String(ws));
+					}
+					catch (Exception e)
+					{
+						if (e is ArgumentException &&
+							e.Message.StartsWith("Magic writing system invalid in string"))
+						{
+							// probably using TryAWord and the ws is WritingSystemServices.kwsFirstVern
+							// is OK so continue (yes, this is a hack)
+							continue;
+						}
+						throw;
+					}
 				}
 			}
 			var le = defFormReal.Owner as ILexEntry;
@@ -4682,7 +4696,7 @@ namespace SIL.FieldWorks.IText
 			if (!Focused)
 				return false;
 			display.Enabled = false;
-			display.Text = SIL.FieldWorks.Resources.ResourceHelper.DefaultParaCharsStyleName;
+			display.Text = StyleUtils.DefaultParaCharsStyleName;
 			return true;//we handled this, no need to ask anyone else.
 		}
 

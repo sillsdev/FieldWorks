@@ -239,7 +239,7 @@ namespace SIL.CoreImpl
 					foreach (WritingSystemDefinition wsDef in m_localStore.WritingSystemsNewerIn(m_globalStore.AllWritingSystems))
 					{
 						m_localStore.LastChecked(wsDef.Id, wsDef.DateModified);
-						results.Add((IWritingSystem)wsDef);
+						results.Add((IWritingSystem)wsDef); // REVIEW Hasso 2013.12: add only if not equal?
 					}
 					return results;
 				}
@@ -669,7 +669,7 @@ namespace SIL.CoreImpl
 					}
 				}
 				m_localStore.Save();
-				Settings.Default.LocalKeyboards = LocalKeyboardsUnionLocalStore();
+				Settings.Default.LocalKeyboards = UnionSettingsKeyboardsWithLocalStore();
 				Settings.Default.Save();
 			}
 		}
@@ -678,7 +678,7 @@ namespace SIL.CoreImpl
 		/// Performs the Union of Settings.Default.LocalKeyboards and m_localStore.LocalKeyboardSettings and returns the result as an XML string.
 		/// Protected for tests.
 		/// </summary>
-		protected string LocalKeyboardsUnionLocalStore()
+		protected string UnionSettingsKeyboardsWithLocalStore()
 		{
 			if (string.IsNullOrWhiteSpace(Settings.Default.LocalKeyboards))
 			{

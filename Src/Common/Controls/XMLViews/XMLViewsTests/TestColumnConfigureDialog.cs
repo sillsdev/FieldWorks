@@ -11,6 +11,7 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 using XCore;
@@ -30,7 +31,7 @@ namespace XMLViewsTests
 			m_mediator = new Mediator();
 			m_mediator.StringTbl = new StringTable("../../DistFiles/Language Explorer/Configuration");
 			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(
-				new TestProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", "en", "en", new ThreadHelper());
+				new TestProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", "en", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories);
 			m_mediator.PropertyTable.SetProperty("cache", m_cache);
 		}
 
@@ -38,7 +39,6 @@ namespace XMLViewsTests
 		public void TearDown()
 		{
 			m_mediator.Dispose();
-			m_cache.ThreadHelper.Dispose();
 			m_cache.Dispose();
 		}
 

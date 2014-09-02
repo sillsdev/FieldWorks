@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2013 SIL International
+﻿// Copyright (c) 2004-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -3212,7 +3212,7 @@ namespace SIL.FieldWorks.Common.PrintLayout
 			CheckDisposed();
 
 			IVwRootBox focusedRootBox = FocusedRootBox;
-			using (var dialog = new ProgressDialogWithTask(FindForm(), Cache.ThreadHelper))
+			using (var dialog = new ProgressDialogWithTask(FindForm()))
 			{
 				dialog.CancelButtonText = ResourceHelper.GetResourceString("kstidUpdatePageBreakButtonText");
 				dialog.Title = ResourceHelper.GetResourceString("kstidUpdatePageBreakWindowCaption");

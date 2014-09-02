@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
@@ -26,7 +24,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		{
 
 			var projectFolder = Path.GetTempPath();
-			var settingsFolder = Path.Combine(projectFolder, DirectoryFinder.ksConfigurationSettingsDir);
+			var settingsFolder = Path.Combine(projectFolder, FdoFileHelper.ksConfigurationSettingsDir);
 			var sampleLayout = Path.Combine(settingsFolder, "Test_Layouts.xml");
 			var otherFile = Path.Combine(settingsFolder, "other.xml");
 			var newLayoutPath = Path.Combine(settingsFolder, "Test.fwlayout");
@@ -40,7 +38,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 
 			var mockMDC = new MockMDCForDataMigration(); // no classes to migrate here
 			var dtos = new HashSet<DomainObjectDTO>(); // no objects to migrate
-			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000059, dtos, mockMDC, projectFolder);
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000059, dtos, mockMDC, projectFolder, FwDirectoryFinder.FdoDirectories);
 			// Do the migration.
 			m_dataMigrationManager.PerformMigration(dtoRepos, 7000060, new DummyProgressDlg());
 

@@ -277,7 +277,7 @@ namespace SIL.FieldWorks.TE
 			else
 			{
 				// TODO-Linux: Help is not implemented in Mono
-				MessageBox.Show(m_progressDialog.Form, e.Message,
+				MessageBox.Show(e.Message,
 					ScriptureUtilsException.GetResourceString("kstidImportErrorCaption"),
 					MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, 0,
 					m_helpTopicProvider.HelpFile, HelpNavigator.Topic, e.HelpTopic);
@@ -300,7 +300,7 @@ namespace SIL.FieldWorks.TE
 			}
 			else
 			{
-				MessageBox.Show(m_progressDialog.Form, message,
+				MessageBox.Show(message,
 					ScriptureUtilsException.GetResourceString("kstidImportErrorCaption"));
 			}
 		}
@@ -325,7 +325,7 @@ namespace SIL.FieldWorks.TE
 					string sMsg = string.Format(TeResourceHelper.GetResourceString("kstidConfirmStopImport"),
 												m_importer.PrevBook);
 
-					if (MessageBox.Show(m_progressDialog.Form, sMsg, FwUtils.ksTeAppName,
+					if (MessageBox.Show(sMsg, FwUtils.ksTeAppName,
 										MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
 					{
 						// the user does not wish to cancel the import, so cancel the event

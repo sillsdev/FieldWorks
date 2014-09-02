@@ -11,12 +11,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.Utils;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 {
@@ -27,7 +26,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 	internal class XMLBackendProvider : FDOBackendProvider
 	{
 		#region CommitWork class
-		class CommitWork
+		protected class CommitWork
 		{
 			public CommitWork(HashSet<ICmObjectOrSurrogate> newbies,
 				HashSet<ICmObjectOrSurrogate> dirtballs, HashSet<ICmObjectId> goners, IEnumerable<CustomFieldInfo> customFields)
@@ -111,7 +110,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		#region Member variables
 		private DateTime m_lastWriteTime;
-		private ConsumerThread<int, CommitWork> m_thread;
 		private FileStream m_lockFile;
 		private bool m_needConversion; // communicates to MakeSurrogate that we're reading an old version.
 		private int m_startupVersionNumber;
@@ -123,8 +121,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// </summary>
 		internal XMLBackendProvider(FdoCache cache, IdentityMap identityMap,
 			ICmObjectSurrogateFactory surrogateFactory, IFwMetaDataCacheManagedInternal mdc,
-			IDataMigrationManager dataMigrationManager) :
-			base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager)
+			IDataMigrationManager dataMigrationManager, IFdoUI ui, IFdoDirectories dirs) :
+			base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager, ui, dirs)
 		{
 		}
 
@@ -133,27 +131,17 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			get { return m_listOfDuplicateGuids; }
 		}
 
-		protected override void Dispose(bool disposing)
+		protected bool HasLockFile
 		{
-			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + "******************");
-			if (IsDisposed)
-				return;
-
-			if (disposing)
-			{
-				CompleteAllCommits();
-				// Make sure the commit thread is stopped. (FWR-3179)
-				if (m_thread != null)
-				{
-					m_thread.StopOnIdle(); // CompleteAllCommits should wait until idle, but just in case...
-					m_thread.Dispose();
-				}
-				UnlockProject();
-			}
-			m_thread = null;
-
-			base.Dispose(disposing);
+			get { return m_lockFile != null; }
 		}
+
+		protected int StartupVersionNumber
+		{
+			get { return m_startupVersionNumber; }
+		}
+
+		protected ConsumerThread<int, CommitWork> CommitThread { get; set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -164,7 +152,12 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// ------------------------------------------------------------------------------------
 		protected override int StartupInternal(int currentModelVersion)
 		{
-			BasicInit();
+			LockProject();
+			return ReadInSurrogates(currentModelVersion);
+		}
+
+		protected int ReadInSurrogates(int currentModelVersion)
+		{
 			for (; ; ) // Loop is used to retry if we get a corrupt file and restore backup.
 			{
 				var fileSize = new FileInfo(ProjectId.Path).Length;
@@ -303,7 +296,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					sb.AppendLine(String.Format(Strings.ksDuplicateGuidsMsg2, guid));
 					sb.AppendLine();
 				}
-				ErrorReporter.ReportDuplicateGuids(FwRegistryHelper.FieldWorksRegistryKey, "FLExErrors@sil.org", null, sb.ToString());
+				m_cache.ServiceLocator.GetInstance<IFdoUI>().ReportDuplicateGuids(sb.ToString());
 			}
 		}
 
@@ -338,6 +331,15 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// </summary>
 		protected override void ShutdownInternal()
 		{
+			CompleteAllCommits();
+			// Make sure the commit thread is stopped. (FWR-3179)
+			if (CommitThread != null)
+			{
+				CommitThread.StopOnIdle(); // CompleteAllCommits should wait until idle, but just in case...
+				CommitThread.Dispose();
+				CommitThread = null;
+			}
+			UnlockProject();
 		}
 
 		private void OfferToRestore(string message)
@@ -345,11 +347,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			string backupFilePath = Path.ChangeExtension(ProjectId.Path, "bak");
 			if (File.Exists(backupFilePath))
 			{
-				if (ThreadHelper.ShowMessageBox(null,
-					String.Format(Properties.Resources.kstidOfferToRestore, ProjectId.Path, File.GetLastWriteTime(ProjectId.Path),
-					backupFilePath, File.GetLastWriteTime(backupFilePath)),
-					Properties.Resources.kstidProblemOpeningFile, MessageBoxButtons.YesNo,
-					MessageBoxIcon.Error) == DialogResult.Yes)
+				if (m_ui.OfferToRestore(ProjectId.Path, backupFilePath))
 				{
 					string badFilePath = Path.ChangeExtension(ProjectId.Path, "bad");
 					if (File.Exists(badFilePath))
@@ -362,20 +360,20 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			}
 			// No backup, or the user didn't want to try. Show Unable to Open Project dialog box.
 			UnlockProject();
-			throw new FwStartupException(message);
+			throw new StartupException(message);
 		}
 
-		private void BasicInit()
+		internal virtual void LockProject()
 		{
-			m_lastWriteTime = File.GetLastWriteTimeUtc(ProjectId.Path);
 			try
 			{
 				m_lockFile = LockProject(ProjectId.Path);
 			}
 			catch (IOException e)
 			{
-				throw new FwStartupException(String.Format(Properties.Resources.kstidLockFileLocked, ProjectId.Name), e, true);
+				throw new FdoFileLockedException(String.Format(Properties.Resources.kstidLockFileLocked, ProjectId.Name), e, true);
 			}
+			m_lastWriteTime = File.GetLastWriteTimeUtc(ProjectId.Path);
 		}
 
 		public static bool IsFileLocked(string projectPath)
@@ -399,7 +397,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			return File.Open(projectPath + ".lock", FileMode.OpenOrCreate, FileAccess.Write, FileShare.None);
 		}
 
-		internal void UnlockProject()
+		internal virtual void UnlockProject()
 		{
 			if (m_lockFile != null)
 			{
@@ -416,7 +414,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		//protected override void RestoreWithoutMigration(string xmlBepPathname)
 		//{
 		//    // Copy original file to backup.
-		//    var bakPathname = m_databasePath + FwFileExtensions.ksFwDataFallbackFileExtension;
+		//    var bakPathname = m_databasePath + FdoFileHelper.ksFwDataFallbackFileExtension;
 		//    if (File.Exists(bakPathname))
 		//        File.Delete(bakPathname);
 		//    File.Copy(m_databasePath, bakPathname);
@@ -436,7 +434,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			// Make sure the directory exists
 			if (!String.IsNullOrEmpty(ProjectId.ProjectFolder) && !Directory.Exists(ProjectId.ProjectFolder))
 				Directory.CreateDirectory(ProjectId.ProjectFolder);
-			BasicInit();
 
 			if (File.Exists(ProjectId.Path))
 				throw new InvalidOperationException(ProjectId.Path + " already exists.");
@@ -444,7 +441,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			var doc = new XDocument(new XElement("languageproject",
 				new XAttribute("version", m_modelVersionOverride.ToString()))); // Include current model version number.
 			doc.Save(ProjectId.Path, SaveOptions.None);
-			m_lastWriteTime = File.GetLastWriteTimeUtc(ProjectId.Path);
+			LockProject();
 		}
 
 		#region IDataStorer implementation
@@ -461,19 +458,25 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			if (!HaveAnythingToCommit(newbies, dirtballs, goners, out cfiList) && (m_startupVersionNumber == ModelVersion))
 				return true;
 
-			if (m_thread == null || !m_thread.WaitForNextRequest())
-			{
-				// If thread is already dead, then WaitForNextRequest will return false, but we still have to call Dispose() on it.
-				if (m_thread != null)
-					m_thread.Dispose();
-
-				m_thread = new ConsumerThread<int, CommitWork>(Work);
-				m_thread.Start();
-			}
-
-			m_thread.EnqueueWork(new CommitWork(newbies, dirtballs, goners, cfiList));
+			PerformCommit(newbies, dirtballs, goners, cfiList);
 
 			return base.Commit(newbies, dirtballs, goners);
+		}
+
+		protected void PerformCommit(HashSet<ICmObjectOrSurrogate> newbies, HashSet<ICmObjectOrSurrogate> dirtballs, HashSet<ICmObjectId> goners,
+			IEnumerable<CustomFieldInfo> customFields)
+		{
+			if (CommitThread == null || !CommitThread.WaitForNextRequest())
+			{
+				// If thread is already dead, then WaitForNextRequest will return false, but we still have to call Dispose() on it.
+				if (CommitThread != null)
+					CommitThread.Dispose();
+
+				CommitThread = new ConsumerThread<int, CommitWork>(Work);
+				CommitThread.Start();
+			}
+
+			CommitThread.EnqueueWork(new CommitWork(newbies, dirtballs, goners, customFields));
 		}
 
 		/// <summary>
@@ -482,11 +485,11 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		public override void CompleteAllCommits()
 		{
 			base.CompleteAllCommits();
-			if (m_thread != null)
-				m_thread.WaitUntilIdle();
+			if (CommitThread != null)
+				CommitThread.WaitUntilIdle();
 		}
 
-		private static void ReportProblem(string message, string tempPath)
+		private void ReportProblem(string message, string tempPath)
 		{
 			if (File.Exists(tempPath))
 			{
@@ -499,8 +502,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					// Can't even clean up. Sigh.
 				}
 			}
-			ThreadHelper.ShowMessageBox(null, message, Strings.ksProblemWritingFile,
-				MessageBoxButtons.OK, MessageBoxIcon.Error);
+			m_ui.DisplayMessage(MessageType.Error, message, Strings.ksProblemWritingFile, null);
 		}
 
 		/// <summary>
@@ -519,10 +521,15 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				else
 					workItem.Combine(curWorkItem);
 			}
-
 			if (workItem == null)
 				return;
 
+			WriteCommitWork(workItem);
+			m_startupVersionNumber = m_modelVersionOverride;
+		}
+
+		protected virtual void WriteCommitWork(CommitWork workItem)
+		{
 			// Check m_lastWriteTime against current mod time,
 			// to see if anyone else modified it, while we weren't watching.
 			// Can't lock the file, so it is possible someone could be ill-behaved and have modified it.
@@ -666,7 +673,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				ReportProblem(String.Format(Strings.ksCannotSave, ProjectId.Path, e.Message), tempPathname);
 			}
 			CopyTempFileToOriginal(fUseLocalTempFile, ProjectId.Path, tempPathname);
-			m_startupVersionNumber = m_modelVersionOverride;
 		}
 
 		private void CopyTempFileToOriginal(bool fUseLocalTempFile, string mainPathname, string tempPathname)
@@ -739,9 +745,9 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// ------------------------------------------------------------------------------------
 		public override bool RenameDatabase(string sNewProjectName)
 		{
-			bool projectIsInDefaultLocation = DirectoryFinder.IsSubFolderOfProjectsDirectory(ProjectId.ProjectFolder);
+			bool projectIsInDefaultLocation = Path.GetDirectoryName(ProjectId.ProjectFolder) == m_dirs.ProjectsDirectory;
 			string sNewProjectFolder = projectIsInDefaultLocation ?
-				Path.Combine(DirectoryFinder.ProjectsDirectory, sNewProjectName) : ProjectId.ProjectFolder;
+				Path.Combine(m_dirs.ProjectsDirectory, sNewProjectName) : ProjectId.ProjectFolder;
 			if (FileUtils.NonEmptyDirectoryExists(sNewProjectFolder))
 				return false; // Destination directory already exists
 
@@ -758,7 +764,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				ProjectId.Path = newFile;
 
 				m_stopLoadDomain = true;
-				m_lockFile = LockProject(newFile);
+				LockProject();
 			}
 			catch
 			{
@@ -1120,7 +1126,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// <summary/>
 		protected virtual void Dispose(bool fDisposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (fDisposing && !IsDisposed)
 			{
 				// dispose managed and unmanaged objects

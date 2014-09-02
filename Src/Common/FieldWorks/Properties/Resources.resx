@@ -327,4 +327,12 @@ We have sometimes seen cases where installing other software leaves the machine 
 We don't know why this happens. If you have any idea what recently changed on your computer to cause it, please pass this on to the developers.</value>
     <comment>This message should never be seen. Some users however have gotten into a weird state we don't understand where they have to run-as-administrator in order to access required local-machine keys.</comment>
   </data>
+  <data name="ksInvalidLinkedFilesFolder" xml:space="preserve">
+    <value>{0} is not a valid directory for linked files. Please select a valid directory.</value>
+    <comment>Error message for accessing an invalid LangProject.LinkedFilesRootDir value</comment>
+  </data>
+  <data name="ksLinkedFilesFolder" xml:space="preserve">
+    <value>Linked Files Folder</value>
+    <comment>Caption for folder dialog, when setting a new LangProject.LinkedFilesRootDir value</comment>
+  </data>
 </root>

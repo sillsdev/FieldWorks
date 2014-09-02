@@ -12,6 +12,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.IText.FlexInterlinModel;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.IText
 {
@@ -37,7 +38,7 @@ namespace SIL.FieldWorks.IText
 		private static DialogResult ShowDialogAboveProgressbar(IThreadedProgress progress,
 			string text, string title, MessageBoxButtons buttons)
 		{
-			return MessageBox.Show(progress.Form,
+			return MessageBox.Show(
 				text,
 				title,
 				buttons,
@@ -489,7 +490,7 @@ namespace SIL.FieldWorks.IText
 							//we need to invoke the dialog on the main thread so we can use the progress dialog as the parent.
 							//otherwise the message box can be displayed behind everything
 							var instructions = GetInstructions(interlinText, writingSystem.LanguageName, ITextStrings.ksImportVernacLangMissing);
-							IAsyncResult asyncResult = progress.ThreadHelper.BeginInvoke(new ShowDialogAboveProgressbarDelegate(ShowDialogAboveProgressbar),
+							IAsyncResult asyncResult = progress.SynchronizeInvoke.BeginInvoke(new ShowDialogAboveProgressbarDelegate(ShowDialogAboveProgressbar),
 																		 new object[]
 																			{
 																				progress,
@@ -497,7 +498,7 @@ namespace SIL.FieldWorks.IText
 																				ITextStrings.ksImportVernacLangMissingTitle,
 																				MessageBoxButtons.OKCancel
 																			});
-							result = (DialogResult)progress.ThreadHelper.EndInvoke(asyncResult);
+							result = (DialogResult)progress.SynchronizeInvoke.EndInvoke(asyncResult);
 							if (result == DialogResult.OK)
 							{
 								cache.LanguageProject.AddToCurrentVernacularWritingSystems((IWritingSystem)writingSystem);
@@ -514,7 +515,7 @@ namespace SIL.FieldWorks.IText
 						{
 							var instructions = GetInstructions(interlinText, writingSystem.LanguageName,
 															   ITextStrings.ksImportAnalysisLangMissing);
-							IAsyncResult asyncResult = progress.ThreadHelper.BeginInvoke(new ShowDialogAboveProgressbarDelegate(ShowDialogAboveProgressbar),
+							IAsyncResult asyncResult = progress.SynchronizeInvoke.BeginInvoke(new ShowDialogAboveProgressbarDelegate(ShowDialogAboveProgressbar),
 																		 new object[]
 																			{
 																				progress,
@@ -522,14 +523,14 @@ namespace SIL.FieldWorks.IText
 																				ITextStrings.ksImportAnalysisLangMissingTitle,
 																				MessageBoxButtons.OKCancel
 																			});
-							result = (DialogResult)progress.ThreadHelper.EndInvoke(asyncResult);
+							result = (DialogResult)progress.SynchronizeInvoke.EndInvoke(asyncResult);
 							//alert the user
 							if (result == DialogResult.OK)
 							{
 								//alert the user
 								cache.LanguageProject.AddToCurrentAnalysisWritingSystems((IWritingSystem)writingSystem);
 								// We already have progress indications up.
-								XmlTranslatedLists.ImportTranslatedListsForWs(writingSystem.Id, cache, null);
+								XmlTranslatedLists.ImportTranslatedListsForWs(writingSystem.Id, cache, FwDirectoryFinder.TemplateDirectory, null);
 							}
 							else if (result == DialogResult.Cancel)
 							{
@@ -632,7 +633,7 @@ namespace SIL.FieldWorks.IText
 			catch (ArgumentException e)
 			{
 				IWritingSystem ws;
-				WritingSystemServices.FindOrCreateSomeWritingSystem(cache, lang.lang,
+				WritingSystemServices.FindOrCreateSomeWritingSystem(cache, FwDirectoryFinder.TemplateDirectory, lang.lang,
 					!fIsVernacular, fIsVernacular, out ws);
 				writingSystem = ws;
 				s_wsMapper.Add(lang.lang, writingSystem); // old id string -> new langWs mapping

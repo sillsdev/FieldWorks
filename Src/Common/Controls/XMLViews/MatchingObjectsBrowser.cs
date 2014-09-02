@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2014 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -17,53 +21,27 @@ using System.Collections;
 
 namespace SIL.FieldWorks.Common.Controls
 {
-	/// <summary>
-	///
-	/// </summary>
+	/// <summary>Struct pairing a field ID with a TsString</summary>
 	public struct SearchField
 	{
 		private readonly int m_flid;
 		private readonly ITsString m_tss;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="SearchField"/> struct.
-		/// </summary>
-		/// <param name="flid">The flid.</param>
-		/// <param name="tss">The string.</param>
+		/// <summary/>
 		public SearchField(int flid, ITsString tss)
 		{
 			m_flid = flid;
 			m_tss = tss;
 		}
 
-		/// <summary>
-		/// Gets the flid.
-		/// </summary>
-		/// <value>The flid.</value>
-		public int Flid
-		{
-			get
-			{
-				return m_flid;
-			}
-		}
+		/// <summary/>
+		public int Flid { get { return m_flid; } }
 
-		/// <summary>
-		/// Gets the string.
-		/// </summary>
-		/// <value>The string.</value>
-		public ITsString String
-		{
-			get
-			{
-				return m_tss;
-			}
-		}
+		/// <summary/>
+		public ITsString String { get { return m_tss; } }
 	}
 
-	/// <summary>
-	///
-	/// </summary>
+	/// <summary/>
 	public class MatchingObjectsBrowser : UserControl, IFWDisposable
 	{
 		#region Events
@@ -233,7 +211,9 @@ namespace SIL.FieldWorks.Common.Controls
 					return;
 				if (firstSearchStr == null)
 					firstSearchStr = field.String;
-				results.UnionWith(m_searcher.Search(field.Flid, field.String));
+				// Searching on a lone punctation mark using SearchType.FullText returns null instead of an empty IEnumerable.
+				// Pass an empty array to avoid an ArgumentNullException.
+				results.UnionWith(m_searcher.Search(field.Flid, field.String) ?? new ICmObject[0]);
 			}
 
 			if (filters != null)
@@ -241,9 +221,10 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (ShouldAbort())
 				return;
-			// The following fixes LT-10293.
+			// if the firstSearchStr is null we can't get its writing system
+			// if the cache is null the writing system of the search is now meaningless (the dialog for the results is likely gone)
 			RecordSorter sorter = null;
-			if (firstSearchStr != null)
+			if (firstSearchStr != null && m_cache != null)
 			{
 				int ws = firstSearchStr.get_WritingSystemAt(0);
 				bool isVern = m_cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Contains(ws);
@@ -406,9 +387,13 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private void UpdateResults(int[] hvos)
 		{
-			int count = hvos.Length;
-			int prevIndex = m_bvMatches.SelectedIndex;
-			int prevHvo = prevIndex == -1 ? 0 : m_bvMatches.AllItems[prevIndex];
+			// If m_bvMatches is disposed this would not go well.
+			// The UpdateResults was probably triggered by an event left on the idle queue after this control was disposed, so skip it.
+			if(m_bvMatches.IsDisposed)
+				return;
+			var count = hvos.Length;
+			var prevIndex = m_bvMatches.SelectedIndex;
+			var prevHvo = prevIndex == -1 ? 0 : m_bvMatches.AllItems[prevIndex];
 			m_listPublisher.CacheVecProp(m_cache.LanguageProject.LexDbOA.Hvo, hvos);
 			TabStop = count > 0;
 			// Disable the list so that it doesn't steal the focus (LT-9481)

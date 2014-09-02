@@ -81,6 +81,10 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ApplicationTransforms, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\ApplicationTransforms.dll</HintPath>
+    </Reference>
     <Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
@@ -112,7 +116,7 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <Reference Include="System.Xml.Linq" Condition="'$(OS)'=='Unix'"/>
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="TestUtils, Version=6.1.1.25180, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
@@ -125,9 +129,6 @@
   <ItemGroup>
     <Compile Include="..\..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
-    </Compile>
-    <Compile Include="ConvertFailuresTests.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="WordGrammarDebuggingTests.cs">
       <SubType>Code</SubType>

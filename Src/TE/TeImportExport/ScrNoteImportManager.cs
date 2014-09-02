@@ -12,7 +12,9 @@ using System;
 using System.Collections.Generic;
 
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.Resources;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.TE.TeEditorialChecks;
 using System.Diagnostics;
@@ -137,7 +139,8 @@ namespace SIL.FieldWorks.TE
 
 			// This creates the annotation types for installed checks.
 			SortedList<ScrCheckKey, IScriptureCheck> chks =
-				InstalledScriptureChecks.GetChecks(new ScrChecksDataSource(s_scr.Cache));
+				InstalledScriptureChecks.GetChecks(new ScrChecksDataSource(s_scr.Cache,
+					ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"), FwDirectoryFinder.LegacyWordformingCharOverridesFile));
 
 			if (chks != null)
 			{

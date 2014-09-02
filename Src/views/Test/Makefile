@@ -18,7 +18,7 @@ VIEWS_LIB	= $(VIEWS_OBJ)/lib
 GRENG   = $(SRC)/Graphite/lib
 GRFW    = $(SRC)/Graphite/FwOnly
 
-LANGUAGETEST_SRC = $(LANGUAGE_SRC)/Test
+KERNELTEST_SRC = $(KERNEL_SRC)/Test
 
 DEFINES := -DGR_FW -DVIEWSDLL -DSUPPRESS_FW_EXCEPTION_HANDLING \
 	-D_VW_GRAPHICS_DEBUG -DVIEWSTEST -DWIN32_KEY_VALUES=1
@@ -34,7 +34,7 @@ PACKAGES = glib-2.0 gtk+-2.0 glibmm-2.4 gtkmm-2.4 gdkmm-2.4 cairomm-1.0 pangomm-
 
 INCLUDES := -I$(VIEWS_SRC) -I$(VIEWS_SRC)/lib -I$(VIEWS_SRC)/Test \
 		-I$(GENERIC_SRC) -I$(APPCORE_SRC) -I$(CELLAR_SRC) -I$(KERNEL_SRC) \
-		-I$(LANGUAGE_SRC) -I$(GRENG) -I$(GRFW) -I$(DBACCESS_SRC) -I$(LANGUAGETEST_SRC)\
+		-I$(GRENG) -I$(GRFW) -I$(KERNELTEST_SRC)\
 
 INCLUDES := \
 	$(shell icu-config --cppflags) \
@@ -132,8 +132,8 @@ $(INT_DIR)/Collection.cpp: \
 	DummyBaseVc.h \
 	DummyRootsite.h \
 	testViews.h \
-	$(LANGUAGETEST_SRC)/MockLgWritingSystemFactory.h \
-	$(LANGUAGETEST_SRC)/MockLgWritingSystem.h \
+	$(KERNELTEST_SRC)/MockLgWritingSystemFactory.h \
+	$(KERNELTEST_SRC)/MockLgWritingSystem.h \
 	TestNotifier.h \
 	TestLayoutPage.h \
 	TestVwTxtSrc.h \

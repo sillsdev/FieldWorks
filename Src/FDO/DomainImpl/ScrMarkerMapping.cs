@@ -5,16 +5,8 @@
 // File: ScrMarkerMapping.cs
 // Responsibility: TE Team
 
-using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Diagnostics;
-
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {
@@ -61,7 +53,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (Target == (int)MappingTargetType.DefaultParaChars)
 			{
 				return new ImportMappingInfo(BeginMarker, EndMarker, Excluded,
-					MappingTargetType.TEStyle, domain, ResourceHelper.DefaultParaCharsStyleName,
+					MappingTargetType.TEStyle, domain, StyleUtils.DefaultParaCharsStyleName,
 					WritingSystem, NoteTypeRA);
 			}
 

@@ -96,7 +96,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (string.IsNullOrEmpty(wsName))
 				throw new ArgumentException("Writing system name must not be null or empty.", "wsName");
 
-			m_validChars = ValidCharacters.Load(m_ws, LoadException);
+			m_validChars = ValidCharacters.Load(m_ws, LoadException, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			m_matchedPairList = MatchedPairList.Load(m_ws.MatchedPairs, wsName);
 			m_patternList = PuncPatternsList.Load(m_ws.PunctuationPatterns, wsName);
 			m_chrPropEng = LgIcuCharPropEngineClass.Create();
@@ -861,7 +861,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void UpdateValidCharactersList()
 		{
 			bool validCharsUpdated = false;
-			ValidCharacters validChars = ValidCharacters.Load(m_ws, LoadException);
+			ValidCharacters validChars = ValidCharacters.Load(m_ws, LoadException, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			if (validChars == null)
 				return;
 
@@ -1497,7 +1497,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		internal static string s_customName = Properties.Resources.kstidCustomQuotationMarksName;
 
 		private static string s_file =
-			Path.Combine(DirectoryFinder.FWCodeDirectory, "QuotationLanguages.xml");
+			Path.Combine(FwDirectoryFinder.CodeDirectory, "QuotationLanguages.xml");
 
 		private QuotationLang m_customItem;
 

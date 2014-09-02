@@ -12,6 +12,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.FieldWorks.Filters;
 using XCore;
 using SIL.FieldWorks.FdoUi;
@@ -479,8 +480,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			get
 			{
-				var path = Path.Combine(Path.Combine(Path.Combine(Path.Combine(DirectoryFinder.FWCodeDirectory,
-																			   DirectoryFinder.ksFlexFolderName),
+				var path = Path.Combine(Path.Combine(Path.Combine(Path.Combine(FwDirectoryFinder.CodeDirectory,
+																			   FwDirectoryFinder.ksFlexFolderName),
 																  @"Configuration"),
 													 @"Lexicon"),
 										@"ReversalEntriesBulkEdit");

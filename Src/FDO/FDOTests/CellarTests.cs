@@ -14,8 +14,6 @@ using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using System.Xml;
 using System.IO;
 using SIL.FieldWorks.Common.FwUtils;
@@ -491,7 +489,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
 
 			// Set up the xml fs description
 			XmlDocument doc = new XmlDocument();
-			string sFileDir = Path.Combine(DirectoryFinder.FwSourceDirectory, @"FDO/FDOTests/TestData");
+			string sFileDir = Path.Combine(FwDirectoryFinder.SourceDirectory, @"FDO/FDOTests/TestData");
 			string sFile = Path.Combine(sFileDir, "FeatureSystem2.xml");
 
 			doc.Load(sFile);
@@ -687,29 +685,6 @@ namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
 			Assert.AreEqual("[asp:aor sbj:[gen:n num:sg pers:1]]", featStruct.LongNameSorted, "Incorrect LongNameSorted for merged feature struture");
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests adding closed features to feature system and to a feature structure
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void FeatureStructBaseAnnotation()
-		{
-			ILangProject lp = Cache.LangProject;
-
-			var natClass = Cache.ServiceLocator.GetInstance<IPhNCSegmentsFactory>().Create();
-			Cache.LangProject.PhonologicalDataOA.NaturalClassesOS.Add(natClass);
-			// initial invocation should create a new annotation
-			var anno = CmBaseAnnotation.GetOrCreateFeatureStructBaseAnnotation(Cache, natClass);
-			Assert.NotNull(anno, "Expect annotation to be found or created; should not be null");
-			Assert.NotNull(anno.FeaturesOA, "Expect annotation to have a feature structure");
-			Assert.AreEqual(natClass, anno.BeginObjectRA, "Expect the annotation object to be the natural class");
-
-			// second invocation should find first annotation
-			var anno2 = CmBaseAnnotation.GetOrCreateFeatureStructBaseAnnotation(Cache, natClass);
-			Assert.AreEqual(anno, anno2, "Expect second invocation to find the first annotation");
-		}
-
 		/// <summary>
 		/// Tests of CmAgent.SetAgentOpinion.
 		/// Note that this does not verify doing and undoing.
@@ -887,18 +862,6 @@ namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
 			natClass.SegmentsRC.Add(phonemeM);
 			natClass.SegmentsRC.Add(phonemeP);
 			natClass.SegmentsRC.Add(phonemeB);
-
-			var anno = CmBaseAnnotation.GetOrCreateFeatureStructBaseAnnotation(Cache, natClass);
-			var fs = natClass.SetIntersectionOfPhonemeFeatures(anno.FeaturesOA);
-			Assert.AreEqual(1, fs.FeatureSpecsOC.Count, "Expect one feature after intersection");
-			Assert.AreEqual("[cons:+]", fs.LongName, "Expect [cons:+]");
-
-			// ==================================
-			// Test phoneme feature compatibility
-			// ==================================
-			Assert.True(phonemeM.FeaturesAreCompatible(null), "Expect true if the feature structure is null");
-			Assert.True(phonemeM.FeaturesAreCompatible(fs), "Expect true because m is cons:+");
-			Assert.False(phonemeM.FeaturesAreCompatible(fsB), "Expect false because m is son:+ while b is son:-");
 		}
 
 		private static void CheckFeatureAndItsValues(string sFeatureName, IFsClosedFeature closedf)

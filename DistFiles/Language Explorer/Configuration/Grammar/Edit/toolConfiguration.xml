@@ -401,7 +401,7 @@
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.GrammarSketchDataRetriever"/>
 					</retriever>
 					<transforms>
-						<transform progressPrompt="Processing data, step 1 of 2" file="FxtM3MorphologySketch.xsl" ext="xml" saveResult="true" saveResultPrompt="Also save as an XLingPaper file" replaceDOCTYPE="lingPaper PUBLIC &quot;-//XMLmind//DTD XLingPap//EN&quot; &quot;XLingPap.dtd&quot;">
+						<transform progressPrompt="Processing data, step 1 of 2" stylesheetName="FxtM3MorphologySketch" stylesheetAssembly="ApplicationTransforms" ext="xml" saveResult="true" saveResultPrompt="Also save as an XLingPaper file" replaceDOCTYPE="lingPaper PUBLIC &quot;-//XMLmind//DTD XLingPap//EN&quot; &quot;XLingPap.dtd&quot;">
 							<xsltParameters>
 								<!-- the value of "TransformDirectory" is a special key the FxtViewer.dll knows about -->
 								<param name="sWordWorksTransformPath" value="TransformDirectory"/>
@@ -419,7 +419,7 @@
 								<param name="prmGlossFontSize" value="fake"/>
 							</xsltParameters>
 						</transform>
-						<transform progressPrompt="Processing data, step 2 of 2" file="XLingPap1.xsl" ext="htm"/>
+						<transform progressPrompt="Processing data, step 2 of 2" stylesheetName="XLingPap1" stylesheetAssembly="PresentationTransforms" ext="htm"/>
 					</transforms>
 				</parameters>
 			</control>

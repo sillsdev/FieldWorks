@@ -263,7 +263,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				m_wsLabel = ws;
 				var sWs = m_cache.WritingSystemFactory.GetStrFromWs(ws);
 				IWritingSystem wsys;
-				WritingSystemServices.FindOrCreateWritingSystem(m_cache, sWs, false, false, out wsys);
+				WritingSystemServices.FindOrCreateWritingSystem(m_cache, FwDirectoryFinder.TemplateDirectory, sWs, false, false, out wsys);
 				var result = wsys.Abbreviation;
 				if (string.IsNullOrEmpty(result))
 					result = "??";

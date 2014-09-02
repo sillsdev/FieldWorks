@@ -1,3 +1,7 @@
+// Copyright (c) 2014 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,9 +18,9 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -141,6 +145,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					case "ComplexFormEntries":
 						using (var dlg = new EntryGoDlg())
 						{
+							dlg.StartingEntry = m_obj as ILexEntry ?? (m_obj as ILexSense).Entry;
 							dlg.SetDlgInfo(m_cache, null, m_mediator);
 							String str = ShowHelp.RemoveSpaces(Slice.Label);
 							dlg.SetHelpTopic("khtpChooseComplexFormEntryOrSense-" + str);
@@ -155,7 +160,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 								}
 								catch (ArgumentException)
 								{
-									ReportComponentFailure((ILexEntry) dlg.SelectedObject, m_obj, false);
+									MessageBoxes.ReportLexEntryCircularReference((ILexEntry) dlg.SelectedObject, m_obj, false);
 								}
 							}
 						}
@@ -218,20 +223,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					SetItems(chosenObjects);
 				}
 			}
-		}
-
-		/// <summary>
-		/// Report failure to make target a component of parent. If startedFromComplex is true, the user is looking
-		/// at parent, and tried to make target a component. Otherwise, the user is looking at target, and
-		/// tried to make parent a complex form.
-		/// </summary>
-		internal static void ReportComponentFailure(ILexEntry parent, ICmObject target, bool startedFromComplex)
-		{
-			var itemString = target is ILexEntry ? LexEdStrings.ksEntry : LexEdStrings.ksSense;
-			var msgTemplate = startedFromComplex ? LexEdStrings.ksComponentIsComponent : LexEdStrings.ksCompleFormIsComponent;
-			var startedFrom = startedFromComplex ? parent.HeadWord.Text : target.ShortName;
-			var msg = string.Format(msgTemplate, itemString, startedFrom);
-			MessageBox.Show(Form.ActiveForm, msg, LexEdStrings.ksWhichIsComponent, MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 
 		/// <summary>
@@ -334,7 +325,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				}
 				catch (ArgumentException)
 				{
-					ReportComponentFailure((ILexEntry)m_obj.Owner, obj, true);
+					MessageBoxes.ReportLexEntryCircularReference((ILexEntry)m_obj.Owner, obj, true);
 				}
 			}
 		}
@@ -401,7 +392,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 								}
 								catch (ArgumentException)
 								{
-									EntrySequenceReferenceLauncher.ReportComponentFailure((ILexEntry) m_lexEntryRef.Owner, obj, true);
+									MessageBoxes.ReportLexEntryCircularReference((ILexEntry) m_lexEntryRef.Owner, obj, true);
 								}
 							}
 						}
@@ -471,7 +462,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						}
 						catch (ArgumentException)
 						{
-							EntrySequenceReferenceLauncher.ReportComponentFailure((ILexEntry)dlg.SelectedObject, m_lexEntry, false);
+							MessageBoxes.ReportLexEntryCircularReference((ILexEntry)dlg.SelectedObject, m_lexEntry, false);
 						}
 					}
 				}

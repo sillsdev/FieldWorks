@@ -7,7 +7,7 @@ namespace XCore
 			set;
 		}
 
-		void  Init (SIL.Utils.ImageCollection smallImages,  IUIMenuAdapter menuBarAdapter, Mediator mediator);
+		void  Init (IImageCollection smallImages,  IUIMenuAdapter menuBarAdapter, Mediator mediator);
 
 		void RefreshPane();
 

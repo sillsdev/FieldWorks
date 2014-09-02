@@ -305,7 +305,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			if (m_helpTopicProvider != null) // Will be null when running tests
 			{
-				helpProvider.HelpNamespace = DirectoryFinder.FWCodeDirectory +
+				helpProvider.HelpNamespace = FwDirectoryFinder.CodeDirectory +
 					m_helpTopicProvider.GetHelpString("UserHelpFile");
 			}
 
@@ -2322,7 +2322,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			mnuItem.Checked = (sSelectedStyle == string.Empty);
 			mnuStyle.MenuItems.Add(mnuItem);
 
-			mnuItem = new MenuItem(ResourceHelper.DefaultParaCharsStyleName, clickEvent);
+			mnuItem = new MenuItem(StyleUtils.DefaultParaCharsStyleName, clickEvent);
 			mnuItem.Checked = (sSelectedStyle == FwStyleSheet.kstrDefaultCharStyle);
 			mnuStyle.MenuItems.Add(mnuItem);
 
@@ -2373,7 +2373,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Apply the specified style to the current selection
 			if (sStyle.ToLowerInvariant() == FwCoreDlgs.kstidNoStyle.ToLowerInvariant())
 				sStyle = null;
-			else if (sStyle.ToLowerInvariant() == ResourceHelper.DefaultParaCharsStyleName.ToLowerInvariant())
+			else if (sStyle.ToLowerInvariant() == StyleUtils.DefaultParaCharsStyleName.ToLowerInvariant())
 				sStyle = FwStyleSheet.kstrDefaultCharStyle;
 			fwTextBox.ApplyStyle(sStyle);
 			SetFormatLabels();
@@ -2464,7 +2464,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (prevStyleName == null)
 				prevStyleName = string.Empty;
 			else if (prevStyleName == FwStyleSheet.kstrDefaultCharStyle)
-				prevStyleName = ResourceHelper.DefaultParaCharsStyleName;
+				prevStyleName = StyleUtils.DefaultParaCharsStyleName;
 
 			Debug.Assert(prevWs > 0, "We should always have a writing system");
 

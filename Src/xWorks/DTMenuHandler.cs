@@ -1193,7 +1193,7 @@ namespace SIL.FieldWorks.XWorks
 			var ent = m_dataEntryForm.Root as ILexEntry;
 			if (ent != null)
 			{
-				UndoableUnitOfWorkHelper.Do(command, ent,
+				UndoableUnitOfWorkHelper.Do(command.UndoText, command.RedoText, ent,
 					() =>
 						{
 							var ler = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();

@@ -6,11 +6,9 @@
 // Responsibility: Randy Regnier
 // Last reviewed: never
 
-using System;
+
 using System.Collections.Generic;
-using System.IO;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 {
@@ -23,8 +21,9 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		internal MemoryOnlyBackendProvider(FdoCache cache, IdentityMap identityMap, ICmObjectSurrogateFactory surrogateFactory, IFwMetaDataCacheManagedInternal mdc, IDataMigrationManager dataMigrationManager)
-			: base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager)
+		internal MemoryOnlyBackendProvider(FdoCache cache, IdentityMap identityMap, ICmObjectSurrogateFactory surrogateFactory,
+			IFwMetaDataCacheManagedInternal mdc, IDataMigrationManager dataMigrationManager, IFdoUI ui, IFdoDirectories dirs)
+			: base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager, ui, dirs)
 		{
 		}
 

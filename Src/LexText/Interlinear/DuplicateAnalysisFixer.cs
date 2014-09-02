@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.FieldWorks.IText;
 
 namespace SIL.FieldWorks.IText
 {
@@ -68,7 +63,7 @@ namespace SIL.FieldWorks.IText
 			var cache = (FdoCache) m_dlg.Mediator.PropertyTable.GetValue("cache");
 			UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoMergeAnalyses, ITextStrings.ksRedoMergeAnalyses,
 				cache.ActionHandlerAccessor,
-				() => WfiWordformServices.MergeDuplicateAnalyses(cache, m_dlg.ProgressBar));
+				() => WfiWordformServices.MergeDuplicateAnalyses(cache, new ProgressBarWrapper(m_dlg.ProgressBar)));
 		}
 	}
 }

@@ -40,6 +40,7 @@ using System.Xml;
 using System.Collections.Generic;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
@@ -1487,26 +1488,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				using (CmObjectUi uiObj = CmObjectUi.MakeUi(thingToDelete))
 				{
-					if (thingToDelete.CanDelete)
-					{
+					string cannotDeleteMsg;
+					if (uiObj.CanDelete(out cannotDeleteMsg))
 						dlg.SetDlgInfo(uiObj, Cache, m_mediator);
-					}
 					else
-					{
-						ITsString tssNote;
-						switch (thingToDelete.ClassID)
-						{
-							case WfiWordformTags.kClassId:
-								tssNote = Cache.TsStrFactory.MakeString(xWorksStrings.ksCannotWordform,
-									Cache.DefaultUserWs);
-								break;
-							default:
-								tssNote = Cache.TsStrFactory.MakeString(xWorksStrings.ksCannotDeleteItem,
-									Cache.DefaultUserWs);
-								break;
-						}
-						dlg.SetDlgInfo(uiObj, Cache, m_mediator, tssNote);
-					}
+						dlg.SetDlgInfo(uiObj, Cache, m_mediator, Cache.TsStrFactory.MakeString(cannotDeleteMsg, Cache.DefaultUserWs));
 				}
 				var window = (Form) m_mediator.PropertyTable.GetValue("window");
 				if (doingAutomatedTest ||

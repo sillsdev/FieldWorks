@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using XCore;
 using SIL.Utils;
@@ -578,6 +579,12 @@ namespace SIL.FieldWorks.XWorks
 			{
 				MessageBoxUtils.Show(ParentForm, xWorksStrings.ksCustomFieldsCanNotBeAddedDueToRemoteClientsText,
 					xWorksStrings.ksCustomFieldsCanNotBeAddedDueToRemoteClientsCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				return true;
+			}
+			if (SharedBackendServices.AreMultipleApplicationsConnected(Cache))
+			{
+				MessageBoxUtils.Show(ParentForm, xWorksStrings.ksCustomFieldsCanNotBeAddedDueToOtherAppsText,
+					xWorksStrings.ksCustomFieldsCanNotBeAddedDueToOtherAppsCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return true;
 			}
 

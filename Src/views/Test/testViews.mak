@@ -19,10 +19,10 @@ GENERIC_SRC=$(BUILD_ROOT)\Src\Generic
 APPCORE_SRC=$(BUILD_ROOT)\Src\AppCore
 GRENG_LIB_SRC=$(BUILD_ROOT)\Src\Graphite\lib
 GRFW_SRC=$(BUILD_ROOT)\Src\Graphite\FwOnly
-LANGUAGETEST_SRC=$(BUILD_ROOT)\Src\Language\Test
+FWKERNELTEST_SRC=$(BUILD_ROOT)\Src\Kernel\Test
 
 # Set the USER_INCLUDE environment variable.
-UI=$(UNITPP_INC);$(VIEWSTEST_SRC);$(VIEWS_SRC);$(VIEWS_LIB_SRC);$(GENERIC_SRC);$(APPCORE_SRC);$(GRENG_LIB_SRC);$(GRFW_SRC);$(LANGUAGETEST_SRC)
+UI=$(UNITPP_INC);$(VIEWSTEST_SRC);$(VIEWS_SRC);$(VIEWS_LIB_SRC);$(GENERIC_SRC);$(APPCORE_SRC);$(GRENG_LIB_SRC);$(GRFW_SRC);$(FWKERNELTEST_SRC)
 
 !IF "$(USER_INCLUDE)"!=""
 USER_INCLUDE=$(UI);$(USER_INCLUDE)
@@ -108,8 +108,8 @@ $(INT_DIR)\genpch\Collection.obj: $(VIEWSTEST_SRC)\Collection.cpp
 
 $(VIEWSTEST_SRC)\Collection.cpp: $(VIEWSTEST_SRC)\DummyBaseVc.h $(VIEWSTEST_SRC)\DummyRootsite.h\
  $(VIEWSTEST_SRC)\testViews.h\
- $(LANGUAGETEST_SRC)\MockLgWritingSystemFactory.h\
- $(LANGUAGETEST_SRC)\MockLgWritingSystem.h\
+ $(FWKERNELTEST_SRC)\MockLgWritingSystemFactory.h\
+ $(FWKERNELTEST_SRC)\MockLgWritingSystem.h\
  $(VIEWSTEST_SRC)\TestNotifier.h\
  $(VIEWSTEST_SRC)\TestLayoutPage.h\
  $(VIEWSTEST_SRC)\TestVirtualHandlers.h\

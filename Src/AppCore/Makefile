@@ -13,7 +13,11 @@ BUILD_PRODUCT = $(APPCORE_NAME)
 include $(BUILD_ROOT)/Bld/_init.mak.lnx
 
 AFLIB_SRC = $(APPCORE_SRC)/AfLib
-CELLAR_SRC = $(SRC)/Cellar
+GRAPHITE_SRC = $(SRC)/Graphite
+GRFW_SRC = $(GRAPHITE_SRC)/FwOnly
+GRUTIL_LIB = $(GRAPHITE_SRC)/lib
+TTFUTIL_LIB = $(GRAPHITE_SRC)/TtfUtil
+VIEWS_LIB = $(VIEWS_SRC)/lib
 
 PACKAGES = glib-2.0 gtk+-2.0 glibmm-2.4 gtkmm-2.4 cairomm-1.0
 
@@ -22,12 +26,12 @@ ifeq ($(BUILD_CONFIG),Debug)
 	DEFINES  := $(DEFINES) -D_DEBUG
 endif
 
-
 # Make sure AfLib is first, as we want to get the Main.h from there,
 # not any of the others (e.g., in Views)
 INCLUDES := -I$(AFLIB_SRC) -I$(GENERIC_SRC) -I$(APPCORE_SRC) -I$(TEXT_SRC) -I$(DEBUGPROCS_SRC)
 
-INCLUDES := $(INCLUDES) -I$(KERNEL_SRC) -I$(DBACCESS_SRC)
+INCLUDES := $(INCLUDES) -I$(KERNEL_SRC)
+INCLUDES := $(INCLUDES) -I$(GRUTIL_LIB) -I$(TTFUTIL_LIB) -I$(VIEWS_SRC) -I$(VIEWS_LIB) -I$(GRFW_SRC)
 
 INCLUDES := $(INCLUDES) \
 	-I$(FWINCLUDE) \

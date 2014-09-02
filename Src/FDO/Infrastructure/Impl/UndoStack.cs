@@ -6,12 +6,10 @@
 // Responsibility: Randy Regnier
 
 using System;
-using System.Collections;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Linq;
-using System.Threading;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Application;
 using SIL.Utils;
@@ -96,17 +94,19 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		private bool m_createMarkIfNeeded;
 		internal FdoUnitOfWork m_currentBundle;
 		private readonly UnitOfWorkService m_uowService;
+		private readonly IFdoUI m_ui;
 		// Positive values count unsaved bundles in m_undoBundles.
 		// Negative values count unsaved bundles in m_redoBundles, that is, things Undone since the last Save.
 		private int m_countUnsavedBundles;
 
-		private List<Action> m_actionsToDoAtEndOfPropChanged = new List<Action>();
+		private readonly List<Action> m_actionsToDoAtEndOfPropChanged = new List<Action>();
 		#endregion
 
 		#region Constructor
-		public UndoStack(UnitOfWorkService uowService)
+		public UndoStack(UnitOfWorkService uowService, IFdoUI ui)
 		{
 			m_uowService = uowService;
+			m_ui = ui;
 			m_undoBundles = new Stack<FdoUnitOfWork>();
 			m_redoBundles = new Stack<FdoUnitOfWork>();
 			m_currentBundle = null;
@@ -313,10 +313,10 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 						dmObj.UpdateDateModified();
 				}
 				// Update the project DateModified, but only once every 2 minutes at most.
-				if (m_currentBundle.DirtyObjects.Count() > 0)
+				if (m_currentBundle.DirtyObjects.Any())
 				{
-					LangProject proj = m_currentBundle.DirtyObjects.ElementAt(0).Cache.LangProject as LangProject;
-					TimeSpan span = new TimeSpan(DateTime.Now.Ticks - proj.DateModified.Ticks);
+					var proj = (LangProject) m_currentBundle.DirtyObjects.ElementAt(0).Cache.LangProject;
+					var span = new TimeSpan(DateTime.Now.Ticks - proj.DateModified.Ticks);
 					if (span.Minutes >= 2 || m_currentBundle.DirtyObjects.Contains(proj))
 						proj.UpdateDateModifiedInternal();
 				}
@@ -369,22 +369,25 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// ------------------------------------------------------------------------------------
 		private void DoTasksForEndOfPropChanged(FdoUnitOfWork uow, bool fromUndoRedo)
 		{
-			((CmObjectRepository)m_uowService.ObjectRepository).Cache.ThreadHelper.Invoke(() =>
-				{
-					if (!fromUndoRedo)
+			var tasks = new List<Action>();
+			if (!fromUndoRedo)
+			{
+				// These notifications must be sent only once.
+				// In particular they must not be sent again if one of the tasks in the list makes a new UOW.
+				// Since this method will execute at the end of such a task, we must make sure that there is
+				// a fresh m_actionsToDoAtEndOfPropChanged for any such UOW so it will not see our list.
+				tasks.AddRange(m_actionsToDoAtEndOfPropChanged);
+				m_actionsToDoAtEndOfPropChanged.Clear();
+			}
+			tasks.AddRange(uow.ActionsToDoAtEndOfPropChanged);
+			if (tasks.Count > 0)
+			{
+				m_ui.SynchronizeInvoke.Invoke(() =>
 					{
-						// These notifications must be sent only once.
-						// In particular they must not be sent again if one of the tasks in the list makes a new UOW.
-						// Since this method will execute at the end of such a task, we must make sure that there is
-						// a fresh m_actionsToDoAtEndOfPropChanged for any such UOW so it will not see our list.
-						var temp = m_actionsToDoAtEndOfPropChanged;
-						m_actionsToDoAtEndOfPropChanged = new List<Action>();
-						foreach (var task in temp)
+						foreach (Action task in tasks)
 							task();
-					}
-					foreach (var task in uow.ActionsToDoAtEndOfPropChanged)
-						task();
-				});
+					});
+			}
 		}
 
 		/// <summary>
@@ -819,7 +822,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			bool fActionsCollapsed = false;
 			if (m_undoBundles.Count > markIndex)
 			{
-				FdoUndoableUnitOfWork newUow = new FdoUndoableUnitOfWork(m_uowService, bstrUndo, bstrRedo);
+				var newUow = new FdoUndoableUnitOfWork(m_uowService, bstrUndo, bstrRedo);
 
 				while (m_undoBundles.Count > markIndex)
 					newUow.InsertActionsFrom(PopUndoStack());

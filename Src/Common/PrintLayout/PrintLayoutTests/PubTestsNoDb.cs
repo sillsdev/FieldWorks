@@ -6,15 +6,10 @@
 // Responsibility: TE Team
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
-using System.Windows.Forms;
-
 using NUnit.Framework;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.PrintLayout;
+using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;

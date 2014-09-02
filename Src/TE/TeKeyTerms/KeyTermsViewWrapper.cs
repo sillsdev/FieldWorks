@@ -343,7 +343,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		public void UpdateKeyTermEquivalents()
 		{
-			using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(ParentForm, m_cache.ThreadHelper))
+			using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(ParentForm))
 			{
 				progressDlg.Title = TeResourceHelper.GetResourceString("kstidUpdateKeyTermEquivalentsProgressCaption");
 				progressDlg.AllowCancel = false;

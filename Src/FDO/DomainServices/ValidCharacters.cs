@@ -7,13 +7,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.IO;
 using System.Xml;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 using System.Xml.Serialization;
 using SIL.CoreImpl;
@@ -93,6 +91,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		private List<string> m_OtherCharacters;
 		private ILgCharacterPropertyEngine m_cpe;
 		private TsStringComparer m_comparer;
+		private string m_legacyOverridesFile;
 
 		#endregion
 
@@ -119,6 +118,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		}
 
 		#region Methods and Properties to load and initialize the class
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Loads the valid characters from the specified language definition into a new
@@ -127,13 +127,14 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="ws">The writing system.</param>
 		/// <param name="exceptionHandler">The exception handler to use if valid character data
 		/// cannot be loaded.</param>
+		/// <param name="legacyOverridesFile"></param>
 		/// <returns>A <see cref="ValidCharacters"/> initialized with the valid characters data
 		/// from the language definition.</returns>
 		/// ------------------------------------------------------------------------------------
-		public static ValidCharacters Load(IWritingSystem ws, LoadExceptionDelegate exceptionHandler)
+		public static ValidCharacters Load(IWritingSystem ws, LoadExceptionDelegate exceptionHandler, string legacyOverridesFile)
 		{
 			ValidCharacters validChars = Load(ws.ValidChars, ws.DisplayLabel, ws,
-				exceptionHandler);
+				exceptionHandler, legacyOverridesFile);
 			if (validChars != null)
 				validChars.InitSortComparer(ws);
 
@@ -150,10 +151,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="ws">The writing system</param>
 		/// <param name="exceptionHandler">The exception handler to use if valid character data
 		/// cannot be loaded.</param>
+		/// <param name="legacyOverridesFile"></param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
 		public static ValidCharacters Load(string xmlSrc, string wsName,
-			IWritingSystem ws, LoadExceptionDelegate exceptionHandler)
+			IWritingSystem ws, LoadExceptionDelegate exceptionHandler, string legacyOverridesFile)
 		{
 			Exception e;
 			var validChars = XmlSerializationHelper.DeserializeFromString<ValidCharacters>(xmlSrc, out e);
@@ -161,7 +163,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			bool fTryOldStyleList = false;
 
 			if (validChars != null)
+			{
 				validChars.LoadException += exceptionHandler;
+			}
 			else
 			{
 				validChars = new ValidCharacters();
@@ -171,14 +175,14 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				if (!fTryOldStyleList && !String.IsNullOrEmpty(xmlSrc))
 				{
 					var bldr = new StringBuilder();
-					bldr.AppendFormat("Invalid ValidChars field while loading the {0} writing system:",
-					wsName);
+					bldr.AppendFormat("Invalid ValidChars field while loading the {0} writing system:", wsName);
 					bldr.Append(Environment.NewLine);
 					bldr.Append("\t");
 					bldr.Append(xmlSrc);
 					validChars.ReportError(new ArgumentException(bldr.ToString(), "xmlSrc", e));
 				}
 			}
+			validChars.m_legacyOverridesFile = legacyOverridesFile;
 
 			List<string> invalidChars = validChars.Init();
 
@@ -284,15 +288,13 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Gets the default word forming overrides.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private static IEnumerable<string> DefaultWordFormingOverrides
+		private IEnumerable<string> DefaultWordFormingOverrides
 		{
 			get
 			{
 				if (s_fTestingMode)
 					return s_defaultWordformingChars;
-				string legacyOverrides = Path.Combine(DirectoryFinder.FWCodeDirectory,
-					"WordFormingCharOverrides.xml");
-				return ParseLegacyWordFormingCharOverrides(legacyOverrides) ??
+				return ParseLegacyWordFormingCharOverrides(m_legacyOverridesFile) ??
 					(IEnumerable<string>)s_defaultWordformingChars;
 			}
 		}

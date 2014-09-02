@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Reflection;
 using System.Xml.Serialization;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO;
-using System.Collections;
 using System.IO;
 using SIL.Utils;
 
@@ -139,15 +137,16 @@ namespace FDOBrowser
 			if (s_allFDOClassNames != null)
 				return;
 
-			using (FdoCache cache = FdoCache.CreateCacheWithNoLangProj(new BrowserProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", null))
+			using (var threadHelper = new ThreadHelper())
+			using (FdoCache cache = FdoCache.CreateCacheWithNoLangProj(new BrowserProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", new SilentFdoUI(threadHelper), FwDirectoryFinder.FdoDirectories))
 			{
-			IFwMetaDataCacheManaged mdc = (IFwMetaDataCacheManaged)cache.MainCacheAccessor.MetaDataCache;
-			s_allFDOClassNames = new List<string>();
+				IFwMetaDataCacheManaged mdc = (IFwMetaDataCacheManaged)cache.MainCacheAccessor.MetaDataCache;
+				s_allFDOClassNames = new List<string>();
 
-			foreach (int clsid in mdc.GetClassIds())
-				s_allFDOClassNames.Add(mdc.GetClassName(clsid));
+				foreach (int clsid in mdc.GetClassIds())
+					s_allFDOClassNames.Add(mdc.GetClassName(clsid));
 
-			s_allFDOClassNames.Sort((x, y) => x.CompareTo(y));
+				s_allFDOClassNames.Sort((x, y) => x.CompareTo(y));
 			}
 		}
 

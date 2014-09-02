@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="existingProgressDlg">The existing progress dialog, if any.</param>
 		/// ------------------------------------------------------------------------------------
 		public static void EnsureFactoryPublications(ILangProject lp,
-			IProgress existingProgressDlg)
+			IThreadedProgress existingProgressDlg)
 		{
 			TePublicationsInit pubInit = new TePublicationsInit(lp.TranslatedScriptureOA);
 			pubInit.EnsureCurrentResource(existingProgressDlg);
@@ -773,7 +773,7 @@ namespace SIL.FieldWorks.TE
 		/// -------------------------------------------------------------------------------------
 		protected override string ResourceFilePathFromFwInstall
 		{
-			get { return Path.DirectorySeparatorChar + DirectoryFinder.ksTeFolderName +
+			get { return Path.DirectorySeparatorChar + FwDirectoryFinder.ksTeFolderName +
 				Path.DirectorySeparatorChar + ResourceFileName; }
 		}
 

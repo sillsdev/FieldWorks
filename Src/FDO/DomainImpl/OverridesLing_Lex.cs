@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2014 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -13,15 +13,14 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Windows.Forms.VisualStyles;
+using System.Text.RegularExpressions;
 using System.Xml; // XMLWriter
-using System.Drawing;
 
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Application;
@@ -31,9 +30,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Validation;
 using SIL.CoreImpl;
-using Sharpen.Util;
-
-// XmlUtils
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {
@@ -240,29 +236,29 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <summary>
 		/// Allows user to convert LexEntryType to LexEntryInflType.
 		/// </summary>
-		public void ConvertLexEntryInflTypes(ProgressBar progressBar, IEnumerable<ILexEntryType> list)
+		public void ConvertLexEntryInflTypes(IProgress progressBar, IEnumerable<ILexEntryType> list)
 		{
 			progressBar.Minimum = 0;
 			progressBar.Maximum = list.Count();
-			progressBar.Step = 1;
+			progressBar.StepSize = 1;
 			foreach (var lexEntryType in list)
 			{
 				var leitFactory = m_cache.ServiceLocator.GetInstance<ILexEntryInflTypeFactory>();
 				var leit = leitFactory.Create();
 				leit.ConvertLexEntryType(lexEntryType);
 				lexEntryType.Delete();
-				progressBar.PerformStep();
+				progressBar.Step(1);
 			}
 		}
 
 		/// <summary>
 		/// Allows user to convert LexEntryInflType to LexEntryType.
 		/// </summary>
-		public void ConvertLexEntryTypes(ProgressBar progressBar, IEnumerable<ILexEntryType> list)
+		public void ConvertLexEntryTypes(IProgress progressBar, IEnumerable<ILexEntryType> list)
 		{
 			progressBar.Minimum = 0;
 			progressBar.Maximum = list.Count();
-			progressBar.Step = 1;
+			progressBar.StepSize = 1;
 			foreach (var lexEntryInflType in list)
 			{
 				var leit = lexEntryInflType as ILexEntryInflType;
@@ -273,20 +269,20 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					lexEntryType.ConvertLexEntryType(leit);
 					leit.Delete();
 				}
-				progressBar.PerformStep();
+				progressBar.Step(1);
 			}
 		}
 
 		/// <summary>
 		/// Resets the homograph numbers for all entries but can take a null progress bar.
 		/// </summary>
-		public void ResetHomographNumbers(ProgressBar progressBar)
+		public void ResetHomographNumbers(IProgress progressBar)
 		{
 			if (progressBar != null)
 			{
 				progressBar.Minimum = 0;
 				progressBar.Maximum = Entries.Count();
-				progressBar.Step = 1;
+				progressBar.StepSize = 1;
 			}
 			var processedEntryIds = new List<int>();
 			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Strings.ksUndoResetHomographs, Strings.ksRedoResetHomographs, Cache.ActionHandlerAccessor,
@@ -297,7 +293,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						if (processedEntryIds.Contains(le.Hvo))
 						{
 							if (progressBar != null)
-								progressBar.PerformStep();
+								progressBar.Step(1);
 							continue;
 						}
 
@@ -315,7 +311,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						{
 							processedEntryIds.Add(homograph.Hvo);
 							if (progressBar != null)
-								progressBar.PerformStep();
+								progressBar.Step(1);
 						}
 					}
 				});
@@ -737,8 +733,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				yield return this;
 				foreach (var ler in EntryRefsOS)
 				{
-					if (ler.RefType != LexEntryRefTags.krtComplexForm)
-						continue; // Enhance JohnT: should we report circular variants also??
+					if (ler.RefType != LexEntryRefTags.krtComplexForm && ler.RefType != LexEntryRefTags.krtVariant)
+						continue;
 					foreach (var obj in ler.ComponentLexemesRS)
 					{
 						if (obj is ILexEntry)
@@ -6564,48 +6560,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					m_cache.DomainDataByFlid.DeleteObj(segCtxt.Hvo);
 			}
 		}
-
-		/// <summary>
-		/// Determine if the set of (phonological) features are compatible with the phoneme's features
-		/// </summary>
-		/// <param name="fs">The set of features to compare</param>
-		/// <returns>true if compatible</returns>
-		public bool FeaturesAreCompatible(IFsFeatStruc fs)
-		{
-			if (fs == null)
-				return true;
-			if (!fs.FeatureSpecsOC.Any())
-				return true;
-			if (FeaturesOA == null)
-				return true;
-			if (!FeaturesOA.FeatureSpecsOC.Any())
-				return true;
-
-			var comparer = new FsClosedValue.FsClosedValueComparer();
-			var hashSetPhoneme = new HashSet<IFsClosedValue>(comparer);
-			var hashSetFeats = new HashSet<IFsClosedValue>(comparer);
-			foreach (var featureSpecification in FeaturesOA.FeatureSpecsOC)
-			{
-				var closed = featureSpecification as IFsClosedValue;
-				if (closed != null)
-					hashSetPhoneme.Add(closed);
-			}
-			foreach (var featureSpecification in fs.FeatureSpecsOC)
-			{
-				var closed = featureSpecification as IFsClosedValue;
-				if (closed != null)
-					hashSetFeats.Add(closed);
-			}
-
-			hashSetFeats.IntersectWith(hashSetPhoneme);
-
-			if (hashSetFeats.Count == fs.FeatureSpecsOC.Count)
-			{
-				return true;
-			}
-
-			return false;
-		}
 	}
 
 	/// <summary>
@@ -6697,6 +6651,46 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				m_cache.DomainDataByFlid.DeleteObj(ruleMapping.Hvo);
 			}
 		}
+		/// <summary>
+		/// Gets a TsString that represents this object as it could be used in a deletion
+		/// confirmation dialog.
+		/// </summary>
+		public override ITsString DeletionTextTSS
+		{
+			get
+			{
+				int userWs = m_cache.DefaultUserWs;
+				ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
+				tisb.Append(String.Format(Strings.ksDeleteNaturalClass, " "));
+				tisb.AppendTsString(ShortNameTSS);
+
+				Set<int> rules = new Set<int>();
+				foreach (var cmo in ReferringObjects)
+				{
+					var ctxt = cmo as IPhSimpleContextNC;
+					if (ctxt != null)
+					{
+						var apr = ctxt.Owner as IMoAffixProcess;
+						if (apr != null)
+							rules.Add(apr.Hvo);
+					}
+				}
+				int cnt = 1;
+				if (rules.Count > 0)
+				{
+					tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.DefaultUserWs);
+					tisb.Append("\x2028\x2028");
+					tisb.Append(Strings.ksNatClassUsedHere);
+					tisb.Append("\x2028");
+					if (rules.Count > 1)
+						tisb.Append(String.Format(Strings.ksUsedXTimesInAffixProcessRules, cnt, rules.Count));
+					else
+						tisb.Append(String.Format(Strings.ksUsedOnceInAffixProcessRules, cnt));
+				}
+				return tisb.GetString();
+			}
+		}
 	}
 
 	/// <summary>
@@ -6742,133 +6736,23 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				case PhNCSegmentsTags.kflidSegments:
 					return (from ps in m_cache.LangProject.PhonologicalDataOA.PhonemeSetsOS
 						   from ph in ps.PhonemesOC
-						   select ph).Cast<ICmObject>();
+						   select ph).Cast<ICmObject>().OrderBy(ph=>ph.ShortName);
 			}
 			return base.ReferenceTargetCandidates(flid);
-		}
-
-		/// <summary>
-		/// Gets the the list of all the PhPhonemes which match the
-		/// intersection of the phonological features of the phonemes of this natural class.
-		/// </summary>
-		/// <param name="fs">the intersected feature structure</param>
-		/// <returns>the list of phonemes</returns>
-		public IEnumerable<IPhPhoneme> GetPredictedPhonemes(IFsFeatStruc fs)
-		{
-			return from ps in m_cache.LangProject.PhonologicalDataOA.PhonemeSetsOS
-				   from ph in ps.PhonemesOC
-				   where ph.FeaturesAreCompatible(fs)
-				   select ph;
-		}
-
-		/// <summary>
-		/// Gets the set of phonological features which are the intersection of the phonemes
-		/// in this class
-		/// </summary>
-		/// <returns>The intersected feature structure</returns>
-		public IFsFeatStruc GetImpliedPhonologicalFeatures()
-		{
-			IFsFeatStruc fs = null;
-			NonUndoableUnitOfWorkHelper.
-				Do(m_cache.ServiceLocator.GetInstance<IActionHandler>(),
-				   () =>
-				   {
-					   var anno = CmBaseAnnotation.GetOrCreateFeatureStructBaseAnnotation(m_cache, this);
-					   fs = SetIntersectionOfPhonemeFeatures(anno.FeaturesOA);
-				   });
-
-			return fs;
-		}
-		/// <summary>
-		/// Perform set intersection on the phonological features on all phonemes in this class
-		/// </summary>
-		/// <param name="fs">A feature structure that is in the cache</param>
-		/// <returns>The feature structure containing the intersection</returns>
-		public IFsFeatStruc SetIntersectionOfPhonemeFeatures(IFsFeatStruc fs)
-		{
-			var comparer = new FsClosedValue.FsClosedValueComparer();
-			HashSet<IFsClosedValue> hashSetMaster = null;
-			var hashSetCurrent = new HashSet<IFsClosedValue>(comparer);
-			foreach (var phoneme in SegmentsRC)
-			{
-				var pfs = phoneme.FeaturesOA;
-				if (pfs == null)
-					continue;
-				if (pfs.FeatureSpecsOC.Any())
-				{
-					hashSetCurrent.Clear();
-					foreach (var featureSpecification in pfs.FeatureSpecsOC)
-					{
-						var closed = featureSpecification as IFsClosedValue;
-						if (closed != null)
-							hashSetCurrent.Add(closed);
-					}
-					if (hashSetMaster == null)
-					{
-						hashSetMaster = new HashSet<IFsClosedValue>(comparer);
-						foreach (var closed in hashSetCurrent)
-						{
-							hashSetMaster.Add(closed);
-						}
-					}
-					else
-					{
-						hashSetMaster.IntersectWith(hashSetCurrent);
-					}
-				}
-			}
-
-			if (hashSetMaster != null)
-			{
-				// Collect the old contents of fs for potential removal
-				var featuresToRemove = new HashSet<IFsClosedValue>(comparer);
-				foreach(IFsClosedValue feature in fs.FeatureSpecsOC)
-				{
-					featuresToRemove.Add(feature);
-				}
-				foreach (var masterValue in hashSetMaster)
-				{
-					// if a matching feature was present before we will leave it
-					if(featuresToRemove.Contains(masterValue))
-					{
-						featuresToRemove.Remove(masterValue);
-						continue;
-					}
-					// otherwise we add it
-					var closedValue = m_cache.ServiceLocator.GetInstance<IFsClosedValueFactory>().Create();
-					fs.FeatureSpecsOC.Add(closedValue);
-					closedValue.FeatureRA = masterValue.FeatureRA;
-					closedValue.ValueRA = masterValue.ValueRA;
-				}
-				foreach(var goner in featuresToRemove)
-				{
-					fs.FeatureSpecsOC.Remove(goner);
-				}
-			}
-			else
-			{
-				// if there were no entries for hashSetMaster then we should clear out the old contents
-				fs.FeatureSpecsOC.Clear();
-			}
-			return fs;
 		}
 
 		protected override void OnBeforeObjectDeleted()
 		{
 			base.OnBeforeObjectDeleted();
 
-			var annoDefns = m_cache.LangProject.AnnotationDefsOA;
-			var annoDefn = annoDefns.FindOrCreatePossibility("FeatureStructure", m_cache.DefaultAnalWs) as ICmAnnotationDefn;
-			var annos = m_cache.LangProject.AnnotationsOC;
-			var fsAnnos = from anno in annos
-				where (anno.AnnotationTypeRA == annoDefn &&
-				anno is ICmBaseAnnotation &&
-				(anno as ICmBaseAnnotation).BeginObjectRA == this)
-				select anno;
-			if (fsAnnos.Any())
+			// remove feature structure annotation if it exists
+			// these are no longer used, but old projects might still have them
+			var annoDefn = (ICmAnnotationDefn) m_cache.LangProject.AnnotationDefsOA.PossibilitiesOS.FirstOrDefault(p => p.Abbreviation.get_String(m_cache.DefaultAnalWs).Text == "FeatureStructure");
+			if (annoDefn != null)
 			{
-				var anno = fsAnnos.First() as ICmBaseAnnotation;
-				m_cache.DomainDataByFlid.DeleteObj(anno.Hvo);
+				ICmBaseAnnotation fsAnno = annoDefn.ReferringObjects.OfType<ICmBaseAnnotation>().FirstOrDefault(a => a.AnnotationTypeRA == annoDefn && a.BeginObjectRA == this);
+				if (fsAnno != null)
+					m_cache.DomainDataByFlid.DeleteObj(fsAnno.Hvo);
 			}
 		}
 
@@ -6901,7 +6785,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					{
 						// if there are two natural classes with the same abbreviation, things
 						// can get in a state where there is no rule here.
-						if (ctxt.Rule != null)
+						if (ctxt.Rule != null && ctxt.Rule.ClassID != MoAffixProcessTags.kClassId)
 							rules.Add(ctxt.Rule.Hvo);
 					}
 				}
@@ -6916,6 +6800,32 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						tisb.Append(String.Format(Strings.ksUsedXTimesInRules, cnt, rules.Count));
 					else
 						tisb.Append(String.Format(Strings.ksUsedOnceInRules, cnt));
+				}
+				Set<int> aprrules = new Set<int>();
+				foreach (var cmo in ReferringObjects)
+				{
+					var ctxt = cmo as IPhSimpleContextNC;
+					if (ctxt != null)
+					{
+						var apr = ctxt.Owner as IMoAffixProcess;
+						if (apr != null)
+							aprrules.Add(apr.Hvo);
+					}
+				}
+				int aprcnt = rules.Count + 1;
+				if (aprrules.Count > 0)
+				{
+					tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.DefaultUserWs);
+					if (rules.Count == 0)
+					{
+						tisb.Append("\x2028\x2028");
+						tisb.Append(Strings.ksNatClassUsedHere);
+					}
+					tisb.Append("\x2028");
+					if (aprrules.Count > 1)
+						tisb.Append(String.Format(Strings.ksUsedXTimesInAffixProcessRules, aprcnt, aprrules.Count));
+					else
+						tisb.Append(String.Format(Strings.ksUsedOnceInAffixProcessRules, aprcnt));
 				}
 				string std = String.Format("[{0}]", Abbreviation.AnalysisDefaultWritingSystem.Text);
 				string indexed = String.Format("[{0}^", Abbreviation.AnalysisDefaultWritingSystem.Text);
@@ -6995,6 +6905,65 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				ncCtxt.PreRemovalSideEffects();
 				m_cache.DomainDataByFlid.DeleteObj(ncCtxt.Hvo);
+			}
+
+			foreach (var env in Services.GetInstance<IPhEnvironmentRepository>().AllInstances())
+			{
+				string envText = env.StringRepresentation.Text ?? "";
+				string naturalClassAbbr = Abbreviation.AnalysisDefaultWritingSystem.Text;
+				string standardNcReference = String.Format("[{0}]", naturalClassAbbr);
+				string indexed = String.Format("[{0}^", naturalClassAbbr);
+				string standardOptionalNcReference = "(" + standardNcReference + ")";
+				var analysisWs = m_cache.LangProject.DefaultAnalysisWritingSystem.Handle;
+
+				if (envText.Contains(standardOptionalNcReference))
+				{
+					//remove the natural class (and parentheses) from the environment
+					env.StringRepresentation = m_cache.TsStrFactory.MakeString(envText.Replace(standardOptionalNcReference, ""), analysisWs);
+				}
+				else if (envText.Contains(indexed))
+				{
+					//mark natural classes indexed in the environment "DELETED"
+					string patternForIndexedNaturalClass = @"\[" + Regex.Escape(naturalClassAbbr) + @"\^\d{1,2}\]"; //e.g. [C^1]
+					string newEnv = Regex.Replace(envText, patternForIndexedNaturalClass, "DELETED");
+					env.StringRepresentation = m_cache.TsStrFactory.MakeString(newEnv, analysisWs);
+
+					//mark them "DELETED" in the allomorph as well.
+					//MoAffixAllomorph:Form or MoStemAllomorph:Form which refers to the deleted environment
+
+					var vernWs = m_cache.LangProject.DefaultVernacularWritingSystem.Handle;
+
+					foreach (var refObj in env.ReferringObjects)
+					{
+						if (refObj is MoAffixAllomorph)
+						{
+							var affixAllomorphReferrer = refObj as MoAffixAllomorph;
+							var oldForm = affixAllomorphReferrer.Form.get_String(vernWs).Text;
+							if (oldForm != null)
+							{
+								string newForm = Regex.Replace(oldForm, patternForIndexedNaturalClass, "DELETED");
+								affixAllomorphReferrer.Form.set_String(vernWs,
+									m_cache.TsStrFactory.MakeString(newForm, vernWs));
+							}
+						}
+
+						if (refObj is MoStemAllomorph)
+						{
+							var stemAllomorphReferrer = refObj as MoStemAllomorph;
+							var oldForm = stemAllomorphReferrer.Form.get_String(vernWs).Text;
+							if (oldForm != null)
+							{
+								string newForm = Regex.Replace(oldForm, patternForIndexedNaturalClass, "DELETED");
+								stemAllomorphReferrer.Form.set_String(vernWs,
+									m_cache.TsStrFactory.MakeString(newForm, vernWs));
+							}
+						}
+					}
+				}
+				else if (envText.Contains(standardNcReference))
+				{
+					m_cache.DomainDataByFlid.DeleteObj(env.Hvo);
+				}
 			}
 		}
 	}
@@ -8417,21 +8386,15 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			switch (e.Flid)
 			{
 				case LexEntryRefTags.kflidComponentLexemes:
-					var entry = e.ObjectAdded as ILexEntry;
-					if (entry == null)
-						entry = ((ILexSense)e.ObjectAdded).Entry;
+					var entry = e.ObjectAdded as ILexEntry ?? ((ILexSense)e.ObjectAdded).Entry;
 					if (entry.IsComponent((ILexEntry)Owner))
 					{
-						string exceptionStr;
-						if (entry.ShortName == "???")
+						var exceptionStr = String.Format(
+							"components can't have circular references. {1} See entry in LIFT file with LIFTId:     {0}{1}",
+							entry.LIFTid, System.Environment.NewLine);
+						if (entry.ShortName != "???")
 						{
-							exceptionStr = String.Format("components can't have circular references. {1} See entry in lift file with LIFTId:     {0}{1}",
-								entry.LIFTid, System.Environment.NewLine);
-						}
-						else
-						{
-							exceptionStr = String.Format("components can't have circular references. {2} See entry in lift file with LIFTId:     {0}{2}and Form:     {1}",
-								entry.LIFTid, entry.ShortName, System.Environment.NewLine);
+							exceptionStr += String.Format("and Form:     {0}", entry.ShortName);
 						}
 						throw new ArgumentException(exceptionStr);
 					}

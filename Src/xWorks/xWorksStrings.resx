@@ -561,12 +561,6 @@ Are you SURE you want to delete the field {2}?</value>
     <value>Duplicate List Name</value>
     <comment>used by AddListDlg</comment>
   </data>
-  <data name="ksCannotWordform" xml:space="preserve">
-    <value>Sorry, FieldWorks cannot delete this wordform because it occurs in your texts.</value>
-  </data>
-  <data name="ksCannotDeleteItem" xml:space="preserve">
-    <value>Sorry, FieldWorks cannot delete this item.</value>
-  </data>
   <data name="ksUndoInsertMedia" xml:space="preserve">
     <value>Undo Insert Media</value>
   </data>
@@ -793,5 +787,11 @@ Adding custom fields can safely be done with less trouble. The important thing i
 If you are not the one designated user who adds fields, or you are making some other kind of change and have not yet had your team do step 1, PLEASE do not continue!
 
 (There is one other special case. If you are adding a temporary custom field for a special purpose and will delete it before you next Send/Receive, you may proceed safely.)</value>
+  </data>
+  <data name="ksCustomFieldsCanNotBeAddedDueToOtherAppsCaption" xml:space="preserve">
+    <value>Cannot Add Custom Fields</value>
+  </data>
+  <data name="ksCustomFieldsCanNotBeAddedDueToOtherAppsText" xml:space="preserve">
+    <value>Custom Fields cannot be added when there is more than one application using this project.</value>
   </data>
 </root>

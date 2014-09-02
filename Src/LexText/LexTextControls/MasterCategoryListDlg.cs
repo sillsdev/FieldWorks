@@ -162,7 +162,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void LoadMasterCategories(Set<IPartOfSpeech> posSet)
 		{
 			XmlDocument doc = new XmlDocument();
-			doc.Load(Path.Combine(DirectoryFinder.TemplateDirectory, "GOLDEtic.xml"));
+			doc.Load(Path.Combine(FwDirectoryFinder.TemplateDirectory, "GOLDEtic.xml"));
 			XmlElement root = doc.DocumentElement;
 			AddNodes(posSet, root.SelectNodes("/eticPOSList/item"), m_tvMasterList.Nodes, m_cache);
 
@@ -553,7 +553,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			public static MasterCategory Create(Set<IPartOfSpeech> posSet, XmlNode node, FdoCache cache)
 			{
 				/*
-				<item type="category" id="adjective">
+				<item type="category" id="Adjective" guid="30d07580-5052-4d91-bc24-469b8b2d7df9">
 					<abbrev ws="en">adj</abbrev>
 					<term ws="en">adjective</term>
 					<def ws="en">An adjective is a part of speech whose members modify nouns. An adjective specifies the attributes of a noun referent. Note: this is one case among many. Adjectives are a class of modifiers.</def>

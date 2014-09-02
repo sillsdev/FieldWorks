@@ -72,7 +72,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return new IxCoreColleague[] { this };
 		}
 
-		public void Init(Mediator mediator, System.Xml.XmlNode configurationParameters)
+		public void Init(Mediator mediator, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
@@ -237,10 +237,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				_liftPathname = null;
 				return true;
 			}
-			if (!ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepBoth)) // Do merciful import.
-			{
-				LiftImportFailureServices.RegisterBasicImportFailure(_parentForm, Path.GetDirectoryName(_liftPathname));
-			}
+			 // Do merciful import.
+			ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepBoth);
 			_mediator.PropertyTable.SetProperty("LastBridgeUsed", "LiftBridge", PropertyTable.SettingsGroup.LocalSettings);
 			_mediator.BroadcastMessage("MasterRefresh", null);
 
@@ -294,11 +292,23 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						var sLinkedFilesRootDir = app.Cache.LangProject.LinkedFilesRootDir;
 						NonUndoableUnitOfWorkHelper.Do(app.Cache.ActionHandlerAccessor, () =>
 						{
-							app.Cache.LangProject.LinkedFilesRootDir = DirectoryFinder.GetDefaultLinkedFilesDir(
+							app.Cache.LangProject.LinkedFilesRootDir = FdoFileHelper.GetDefaultLinkedFilesDir(
 								app.Cache.ProjectId.ProjectFolder);
 						});
 						app.UpdateExternalLinks(sLinkedFilesRootDir);
 					}
+				}
+			}
+			// Make sure that there aren't multiple applications accessing the project
+			// It is possible for a user to start up an application that accesses the
+			// project after this check, but the application should not interfere with
+			// the S/R operation.
+			while (SharedBackendServices.AreMultipleApplicationsConnected(Cache))
+			{
+				if (ThreadHelper.ShowMessageBox(null, LexEdStrings.ksSendReceiveNotPermittedMultipleAppsText,
+					LexEdStrings.ksSendReceiveNotPermittedMultipleAppsCaption, MessageBoxButtons.RetryCancel, MessageBoxIcon.Warning) == DialogResult.Cancel)
+				{
+					return true;
 				}
 			}
 			StopParser();
@@ -322,7 +332,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var projectFolder = Cache.ProjectId.ProjectFolder;
 			var savedState = PrepareToDetectMainConflicts(projectFolder);
 			string dummy;
-			var fullProjectFileName = Path.Combine(projectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension);
+			var fullProjectFileName = Path.Combine(projectFolder, Cache.ProjectId.Name + FdoFileHelper.ksFwDataXmlFileExtension);
 			bool dataChanged;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(fullProjectFileName, SendReceiveUser,
 																  FLExBridgeHelper.SendReceive,
@@ -356,7 +366,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private bool LinkedFilesLocationIsDefault()
 		{
-			var defaultLinkedFilesFolder = DirectoryFinder.GetDefaultLinkedFilesDir(Cache.ServiceLocator.DataSetup.ProjectId.ProjectFolder);
+			var defaultLinkedFilesFolder = FdoFileHelper.GetDefaultLinkedFilesDir(Cache.ServiceLocator.DataSetup.ProjectId.ProjectFolder);
 			if (!defaultLinkedFilesFolder.Equals(Cache.LanguageProject.LinkedFilesRootDir))
 				return false;
 			else
@@ -393,7 +403,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private static bool IsConfiguredForLiftSR(string folder)
 		{
-			var otherRepoPath = Path.Combine(folder, FLExBridgeHelper.OtherRepositories);
+			var otherRepoPath = Path.Combine(folder, FdoFileHelper.OtherRepositories);
 			if (!Directory.Exists(otherRepoPath))
 				return false;
 			var liftFolder = Directory.EnumerateDirectories(otherRepoPath, "*_LIFT").FirstOrDefault();
@@ -494,11 +504,23 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return true; // We dealt with it.
 		}
 
+		public bool OnWarnUserAboutFailedLiftImportIfNecessary(object param)
+		{
+			var liftFolder = GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder);
+			if(LiftImportFailureServices.GetFailureStatus(liftFolder) != ImportFailureStatus.NoImportNeeded)
+			{
+				MessageBox.Show(LexEdStrings.LiftSRFailureDetectedOnStartupMessage,
+									 LexEdStrings.LiftSRFailureDetectedOnStartupTitle,
+									 MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			}
+			return true;
+		}
+
 		private string GetFullProjectFileName()
 		{
 			var currentExtension = IsDb4oProject
-				? FwFileExtensions.ksFwDataDb4oFileExtension
-				: FwFileExtensions.ksFwDataXmlFileExtension;
+				? FdoFileHelper.ksFwDataDb4oFileExtension
+				: FdoFileHelper.ksFwDataXmlFileExtension;
 			return Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + currentExtension);
 		}
 
@@ -633,7 +655,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			bool dummy1;
 			string dummy2;
 			FLExBridgeHelper.FLExJumpUrlChanged += JumpToFlexObject;
-			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
+			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FdoFileHelper.ksFwDataXmlFileExtension),
 								   SendReceiveUser,
 								   FLExBridgeHelper.ConflictViewer,
 								   null, FDOBackendProvider.ModelVersion, "0.13", null,
@@ -789,7 +811,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// Reregisters an import failure, if needed, otherwise clears the token.
 		/// </summary>
 		/// <returns>'true' if the import failure continues, otherwise 'false'.</returns>
-		private bool RepeatPriorFailedImportIfNeeded()
+		internal bool RepeatPriorFailedImportIfNeeded()
 		{
 			var projectFolder = Cache.ProjectId.ProjectFolder;
 			var liftProjectDir = GetLiftRepositoryFolderFromFwProjectFolder(projectFolder);
@@ -804,27 +826,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			switch (previousImportStatus)
 			{
 				case ImportFailureStatus.BasicImportNeeded:
-					if (ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepBoth))
-					{
-						LiftImportFailureServices.ClearImportFailure(liftProjectDir);
-					}
-					else
-					{
-						LiftImportFailureServices.RegisterBasicImportFailure(_parentForm, liftProjectDir);
-						return true;
-					}
-					break;
+					return !ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepBoth);
 				case ImportFailureStatus.StandardImportNeeded:
-					if (ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepOnlyNew))
-					{
-						LiftImportFailureServices.ClearImportFailure(liftProjectDir);
-					}
-					else
-					{
-						LiftImportFailureServices.RegisterStandardImportFailure(_parentForm, liftProjectDir);
-						return true;
-					}
-					break;
+					return !ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepOnlyNew);
 				case ImportFailureStatus.NoImportNeeded:
 					// Nothing to do. :-)
 					break;
@@ -838,13 +842,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var liftProjectDir = GetLiftRepositoryFolderFromFwProjectFolder(projectFolder);
 			if (dataChanged)
 			{
-				if (ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepOnlyNew))
+				if (!ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepOnlyNew))
 				{
-					LiftImportFailureServices.ClearImportFailure(_liftPathname);
-				}
-				else
-				{
-					LiftImportFailureServices.RegisterStandardImportFailure(_parentForm, liftProjectDir);
 					return false;
 				}
 
@@ -930,9 +929,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return true;
 		}
 
-		private static string GetLiftRepositoryFolderFromFwProjectFolder(string projectFolder)
+		internal static string GetLiftRepositoryFolderFromFwProjectFolder(string projectFolder)
 		{
-			var otherDir = Path.Combine(projectFolder, FLExBridgeHelper.OtherRepositories);
+			var otherDir = Path.Combine(projectFolder, FdoFileHelper.OtherRepositories);
 			if (Directory.Exists(otherDir))
 			{
 				var extantOtherFolders = Directory.GetDirectories(otherDir);
@@ -942,7 +941,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 
 			var flexProjName = Path.GetFileName(projectFolder);
-			return Path.Combine(projectFolder, FLExBridgeHelper.OtherRepositories, flexProjName + '_' + FLExBridgeHelper.LIFT);
+			return Path.Combine(projectFolder, FdoFileHelper.OtherRepositories, flexProjName + '_' + FLExBridgeHelper.LIFT);
 		}
 
 		void OnDumperSetProgressMessage(object sender, ProgressMessageArgs e)
@@ -1003,12 +1002,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				importer.Cache = cache;
 				importer._liftPathname = liftPath;
 				importer._parentForm = parentForm;
-				var importedCorrectly = importer.ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepBoth); // should be a new project
-				if (!importedCorrectly)
-				{
-					LiftImportFailureServices.RegisterBasicImportFailure(parentForm, Path.GetDirectoryName(liftPath));
-				}
-				return importedCorrectly;
+				return importer.ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepBoth); // should be a new project
 			}
 		}
 
@@ -1032,41 +1026,36 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			using (new WaitCursor(_parentForm))
 			{
-				using (var helper = new ThreadHelper()) // not _cache.ThreadHelper, which might be for a different thread
-				using (var progressDlg = new ProgressDialogWithTask(_parentForm, helper))
+				using (var progressDlg = new ProgressDialogWithTask(_parentForm))
 				{
 					_progressDlg = progressDlg;
-					progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
 					try
 					{
+						if(mergeStyle == FlexLiftMerger.MergeStyle.MsKeepBoth)
+						{
+							LiftImportFailureServices.RegisterBasicImportFailure(Path.GetDirectoryName(_liftPathname));
+						}
+						else
+						{
+							LiftImportFailureServices.RegisterStandardImportFailure(Path.GetDirectoryName(_liftPathname));
+						}
 						progressDlg.Title = ResourceHelper.GetResourceString("kstidImportLiftlexicon");
 						var logFile = (string)progressDlg.RunTask(true, ImportLiftLexicon, new object[] { _liftPathname, mergeStyle });
-						return logFile != null;
+						if(logFile != null)
+						{
+							LiftImportFailureServices.ClearImportFailure(Path.GetDirectoryName(_liftPathname));
+							return true;
+						}
+						LiftImportFailureServices.DisplayLiftFailureNoticeIfNecessary(_parentForm, _liftPathname);
+						return false;
 					}
 					catch (WorkerThreadException error)
 					{
 						// It appears to be an analyst issue to sort out how we should report this.
 						// LT-12340 however says we must report it somehow.
 						var sMsg = String.Format(LexEdStrings.kProblemImportWhileMerging, _liftPathname, error.InnerException.Message);
-						// RandyR says JohnH isn't excited about this approach to reporting an import error, that is, copy it to the
-						// clipboard (and presumably say something about it in kProblemImportWhileMerging).
-						// But it would be nice to get the details if it is a crash.
-						//try
-						//{
-						//    var bldr = new StringBuilder();
-						//    bldr.AppendFormat(Resources.kProblem, m_liftPathname);
-						//    bldr.AppendLine();
-						//    bldr.AppendLine(error.Message);
-						//    bldr.AppendLine();
-						//    bldr.AppendLine(error.StackTrace);
-						//    if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
-						//        ClipboardUtils.SetDataObject(bldr.ToString(), true);
-						//}
-						//catch
-						//{
-						//}
-						MessageBox.Show(sMsg, LexEdStrings.kProblemMerging,
-							MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+						MessageBoxUtils.Show(sMsg, LexEdStrings.kProblemMerging, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 						return false;
 					}
 					finally
@@ -1180,11 +1169,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			using (new WaitCursor(_parentForm))
 			{
-				using (var helper = new ThreadHelper()) // not _cache.ThreadHelper, which might be for a different thread
-				using (var progressDlg = new ProgressDialogWithTask(_parentForm, helper))
+				using (var progressDlg = new ProgressDialogWithTask(_parentForm))
 				{
 					_progressDlg = progressDlg;
-					progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
 					try
 					{
 						progressDlg.Title = ResourceHelper.GetResourceString("kstidExportLiftLexicon");
@@ -1404,7 +1391,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				{
 					// Continuing straight on from here renames the db on disk, but not in the cache, apparently
 					// Try a more indirect approach...
-					var fullProjectFileName = Path.Combine(projectFolder, revisedProjName + FwFileExtensions.ksFwDataXmlFileExtension);
+					var fullProjectFileName = Path.Combine(projectFolder, revisedProjName + FdoFileHelper.ksFwDataXmlFileExtension);
 					var tempWindow = RefreshCacheWindowAndAll(app, fullProjectFileName);
 					tempWindow.Mediator.SendMessageDefered("FLExBridge", null);
 					// to hopefully come back here after resetting things
@@ -1487,7 +1474,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private static bool CheckForExistingFileName(string projectFolder, string revisedFileName)
 		{
-			if (File.Exists(Path.Combine(projectFolder, revisedFileName + FwFileExtensions.ksFwDataXmlFileExtension)))
+			if (File.Exists(Path.Combine(projectFolder, revisedFileName + FdoFileHelper.ksFwDataXmlFileExtension)))
 			{
 				MessageBox.Show(
 					LexEdStrings.ksExistingProjectName, LexEdStrings.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -1538,7 +1525,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			foreach (var file in Directory.GetFiles(path, "*.ChorusNotes", SearchOption.AllDirectories))
 			{
 				// TODO: Test to see if one conflict tool can do both FLEx and LIFT conflicts.
-				if (file.Contains(FLExBridgeHelper.OtherRepositories))
+				if (file.Contains(FdoFileHelper.OtherRepositories))
 					continue; // Skip them, since they are part of some other repository.
 
 				long oldLength;
@@ -1560,7 +1547,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var result = new Dictionary<string, long>();
 			foreach (var file in Directory.GetFiles(projectFolder, "*.ChorusNotes", SearchOption.AllDirectories))
 			{
-				if (file.Contains(FLExBridgeHelper.OtherRepositories))
+				if (file.Contains(FdoFileHelper.OtherRepositories))
 					continue; // Skip them, since they are part of some other repository.
 
 				result[file] = new FileInfo(file).Length;

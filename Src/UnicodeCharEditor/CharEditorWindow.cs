@@ -514,7 +514,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// </summary>
 		public string HelpFile
 		{
-			get { return Path.Combine(DirectoryFinder.FWCodeDirectory, GetHelpString("UserHelpFile")); }
+			get { return Path.Combine(FwDirectoryFinder.CodeDirectory, GetHelpString("UserHelpFile")); }
 		}
 
 		#endregion

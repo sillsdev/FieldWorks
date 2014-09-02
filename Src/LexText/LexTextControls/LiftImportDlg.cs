@@ -158,12 +158,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			using (new WaitCursor(this))
 			{
-				using (var progressDlg = new ProgressDialogWithTask(this, m_cache.ThreadHelper))
+				using (var progressDlg = new ProgressDialogWithTask(this))
 				{
 					progressDlg.Minimum = 0;
 					progressDlg.Maximum = 100;
 					progressDlg.AllowCancel = true;
-					progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
 					progressDlg.Restartable = true;
 					progressDlg.Title = String.Format(LexTextControls.ksImportingFrom0, tbPath.Text);
 					try
@@ -283,7 +282,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
 						ClipboardUtils.SetDataObject(bldr.ToString(), true);
 					else
-						progressDlg.ThreadHelper.Invoke(() => ClipboardUtils.SetDataObject(bldr.ToString(), true));
+						progressDlg.SynchronizeInvoke.Invoke(() => ClipboardUtils.SetDataObject(bldr.ToString(), true));
 						SIL.Utils.Logger.WriteEvent(bldr.ToString());
 				}
 				catch

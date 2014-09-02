@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <word>
   <form>fpfptov</form>
-  <seq step="Try to build a Stem node on a root." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to build a Stem node on a root.">
     <stem syncat="259" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="+">
       <fs id="15033">
         <feature>
@@ -82,7 +82,7 @@
       <derivMsa fromCat="259" fromCatAbbr="n" toCat="258" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
     </morph>
   </seq>
-  <seq step="Try to build a Partial analysis node on a root where the category of the root is unknown (i.e. unmarked)." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to build a Partial analysis node on a root where the category of the root is unknown (i.e. unmarked).">
     <partial syncat="259" syncatAbbr="n">
       <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'n'.</failure>
       <morph alloid="15032" morphname="15033" type="root" wordType="root">

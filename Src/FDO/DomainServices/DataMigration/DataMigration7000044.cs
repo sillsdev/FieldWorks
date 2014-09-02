@@ -15,7 +15,7 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using Palaso.WritingSystems.Migration;
 using Palaso.WritingSystems.Migration.WritingSystemsLdmlV0To1Migration;
-using SIL.FieldWorks.Common.FwUtils;
+using SIL.CoreImpl;
 using System;
 
 namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				globalMigrator.Migrate();
 			}
 
-			var ldmlFolder = Path.Combine(repoDto.ProjectFolder, DirectoryFinder.ksWritingSystemsDir);
+			var ldmlFolder = Path.Combine(repoDto.ProjectFolder, FdoFileHelper.ksWritingSystemsDir);
 			var migrator = new LdmlInFolderWritingSystemRepositoryMigrator(ldmlFolder, NoteMigration);
 			migrator.Migrate();
 			UpdateTags(repoDto);
@@ -156,7 +156,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			lpChanged |= UpdateAttr(langProj, "VernWss");
 			if (lpChanged)
 				DataMigrationServices.UpdateDTO(repoDto, langProjDto, langProj.ToString());
-			var settingsFolder = Path.Combine(repoDto.ProjectFolder, DirectoryFinder.ksConfigurationSettingsDir);
+			var settingsFolder = Path.Combine(repoDto.ProjectFolder, FdoFileHelper.ksConfigurationSettingsDir);
 			if (Directory.Exists(settingsFolder))
 			{
 				m_tagMap["$wsname"] = "$wsname"; // should never be changed.

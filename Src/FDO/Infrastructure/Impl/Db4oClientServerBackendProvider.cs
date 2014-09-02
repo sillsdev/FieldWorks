@@ -16,7 +16,6 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Runtime.Remoting;
 using System.Threading;
-using System.Windows.Forms;
 using Db4objects.Db4o;
 using Db4objects.Db4o.Config;
 using Db4objects.Db4o.Config.Encoding;
@@ -24,7 +23,7 @@ using Db4objects.Db4o.CS;
 using Db4objects.Db4o.CS.Config;
 using Db4objects.Db4o.Linq;
 using FwRemoteDatabaseConnector;
-using SIL.FieldWorks.Common.FwUtils;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.Utils;
@@ -85,13 +84,17 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// <param name="surrogateFactory"></param>
 		/// <param name="mdc"></param>
 		/// <param name="dataMigrationManager"></param>
+		/// <param name="ui"></param>
+		/// <param name="dirs"></param>
 		public Db4oClientServerBackendProvider(
 			FdoCache cache,
 			IdentityMap identityMap,
 			ICmObjectSurrogateFactory surrogateFactory,
 			IFwMetaDataCacheManagedInternal mdc,
-			IDataMigrationManager dataMigrationManager)
-			: base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager)
+			IDataMigrationManager dataMigrationManager,
+			IFdoUI ui,
+			IFdoDirectories dirs)
+			: base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager, ui, dirs)
 		{
 		}
 
@@ -239,7 +242,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			}
 			catch (SocketException e)
 			{
-				throw new FwStartupException(string.Format(Strings.ksCannotConnectToServer, "FwRemoteDatabaseConnectorService"), e);
+				throw new StartupException(string.Format(Strings.ksCannotConnectToServer, "FwRemoteDatabaseConnectorService"), e);
 			}
 			finally
 			{
@@ -252,13 +255,13 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		/// <summary>
 		/// Get changes we haven't seen. (This has a side effect of updating the record of which ones HAVE been seen.)
-		/// Returns true if there are any unseen foreign changes.
+		/// This method assumes that the commit lock has already been obtained. Returns true if there are any unseen foreign changes.
 		/// </summary>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification="Ext() returns a reference")]
-		public override bool GetUnseenForeignChanges(out List<ICmObjectSurrogate> foreignNewbies,
+		private bool GetUnseenForeignChanges(out List<ICmObjectSurrogate> foreignNewbies,
 			out List<ICmObjectSurrogate> foreignDirtballs,
-			out List<ICmObjectId> foreignGoners, bool fWaitForCommitLock)
+			out List<ICmObjectId> foreignGoners)
 		{
 			foreignNewbies = new List<ICmObjectSurrogate>();
 			foreignDirtballs = new List<ICmObjectSurrogate>();
@@ -275,8 +278,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 			try
 			{
-				if (!GetCommitLock(fWaitForCommitLock))
-					return false;
 				var unseenCommits = (from CommitData cd in m_dbStore
 									 where cd.WriteGeneration > m_lastWriteGenerationSeen && cd.Source != m_mySourceTag
 									 select cd).ToList();
@@ -346,16 +347,12 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			{
 
 				if (ResumeDb4oConnectionAskingUser())
-					return GetUnseenForeignChanges(out foreignNewbies, out foreignDirtballs, out foreignGoners, fWaitForCommitLock);
+					return GetUnseenForeignChanges(out foreignNewbies, out foreignDirtballs, out foreignGoners);
 
 				StopClient();
 				// get back to a consistant state.
 				m_lastWriteGenerationSeen = startingWriteGeneration;
 				throw new NonRecoverableConnectionLostException();
-			}
-			finally
-			{
-				ReleaseCommitLock();
 			}
 		}
 
@@ -389,14 +386,34 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				}
 			}
 
-			IEnumerable<CustomFieldInfo> cfiList;
-			bool anyModifiedCustomFields;
-			if (!HaveAnythingToCommit(newbies, dirtballs, goners, out anyModifiedCustomFields, out cfiList))
+			if (!GetCommitLock(newbies.Count != 0 || dirtballs.Count != 0 || goners.Count != 0))
 				return true;
-
-			GetCommitLock(true);
 			try
 			{
+				List<ICmObjectSurrogate> foreignNewbies;
+				List<ICmObjectSurrogate> foreignDirtballs;
+				List<ICmObjectId> foreignGoners;
+				if (GetUnseenForeignChanges(out foreignNewbies, out foreignDirtballs, out foreignGoners))
+				{
+					IUnitOfWorkService uowService = ((IServiceLocatorInternal) m_cache.ServiceLocator).UnitOfWorkService;
+					IReconcileChanges reconciler = uowService.CreateReconciler(foreignNewbies, foreignDirtballs, foreignGoners);
+					if (reconciler.OkToReconcileChanges())
+					{
+						reconciler.ReconcileForeignChanges();
+						// And continue looping, in case there are by now MORE foreign changes!
+					}
+					else
+					{
+						uowService.ConflictingChanges(reconciler);
+						return true;
+					}
+				}
+
+				IEnumerable<CustomFieldInfo> cfiList;
+				bool anyModifiedCustomFields;
+				if (!HaveAnythingToCommit(newbies, dirtballs, goners, out anyModifiedCustomFields, out cfiList))
+					return true;
+
 				var commitData = new CommitData { Source = m_mySourceTag };
 				int objectAddedIndex = 0;
 				commitData.ObjectsDeleted = (from item in goners select item.Guid).ToArray();
@@ -517,10 +534,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			while (!m_dbStore.Ext().SetSemaphore(kCommitLock, 3000))
 			{
 				if (fWaitForCommitLock)
-				{
-					ThreadHelper.ShowMessageBox(null, Strings.ksOtherClientsAreWriting, Strings.ksShortDelayCaption,
-												MessageBoxButtons.OK, MessageBoxIcon.None);
-				}
+					m_ui.DisplayMessage(MessageType.Info, Strings.ksOtherClientsAreWriting, Strings.ksShortDelayCaption, null);
 				else
 					return false;
 			}
@@ -555,7 +569,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			}
 			catch (SocketException e)
 			{
-				throw new FwStartupException(string.Format(Strings.ksCannotConnectToServer, "FwRemoteDatabaseConnectorService"), e);
+				throw new StartupException(string.Format(Strings.ksCannotConnectToServer, "FwRemoteDatabaseConnectorService"), e);
 			}
 			catch (Exception err)
 			{
@@ -581,7 +595,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			if (!ProjectId.IsLocal)
 				throw new InvalidOperationException("Renaming a database needs to be done on the local machine");
 
-			string sNewProjectFolder = Path.Combine(DirectoryFinder.ProjectsDirectory, sNewProjectName);
+			string sNewProjectFolder = Path.Combine(m_dirs.ProjectsDirectory, sNewProjectName);
 			if (FileUtils.NonEmptyDirectoryExists(sNewProjectFolder))
 				return false;
 
@@ -603,9 +617,9 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				return false;
 			}
 
-			string oldProjectFolder = Path.Combine(DirectoryFinder.ProjectsDirectory, ProjectId.Name);
-			string oldFile = Path.Combine(sNewProjectFolder, DirectoryFinder.GetDb4oDataFileName(ProjectId.Name));
-			string newFile = Path.Combine(sNewProjectFolder, DirectoryFinder.GetDb4oDataFileName(sNewProjectName));
+			string oldProjectFolder = Path.Combine(m_dirs.ProjectsDirectory, ProjectId.Name);
+			string oldFile = Path.Combine(sNewProjectFolder, FdoFileHelper.GetDb4oDataFileName(ProjectId.Name));
+			string newFile = Path.Combine(sNewProjectFolder, FdoFileHelper.GetDb4oDataFileName(sNewProjectName));
 
 			try
 			{
@@ -619,7 +633,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				try { Directory.Move(sNewProjectFolder, oldProjectFolder); }
 				catch
 				{ }
-				;
 
 				return false;
 			}
@@ -679,19 +692,19 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				if (!info.StartServer(ProjectId.Name, out port, out exceptionFromStartingServer))
 				{
 					// failed to start server
-					throw new FwStartupException(String.Format(Strings.ksFailedToStartServer,
+					throw new StartupException(String.Format(Strings.ksFailedToStartServer,
 							exceptionFromStartingServer.Message), exceptionFromStartingServer);
 				}
 				m_port = port;
 			}
 			catch (SocketException e)
 			{
-				throw new FwStartupException(string.Format(Strings.ksCannotConnectToServer, "FwRemoteDatabaseConnectorService"), e);
+				throw new StartupException(string.Format(Strings.ksCannotConnectToServer, "FwRemoteDatabaseConnectorService"), e);
 			}
 			catch (RemotingException e)
 			{
 				// on Mono we get a RemotingException instead of a SocketException
-				throw new FwStartupException(string.Format(Strings.ksCannotConnectToServer, "FwRemoteDatabaseConnectorService"), e);
+				throw new StartupException(string.Format(Strings.ksCannotConnectToServer, "FwRemoteDatabaseConnectorService"), e);
 			}
 		}
 
@@ -741,24 +754,18 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					return true;
 			}
 
-			// It's useful to have this MessageBox handling here, as it allows reconnecting a dropped connection.
-			// Handling this at the application layer would require either recreating FdoCache or
-			// adding interface methods to expose resuming a dropped connection.
-			using (var dlg = new ConnectionLostDlg())
+			while (m_ui.ConnectionLost())
 			{
-				while (dlg.ShowDialog() == DialogResult.Yes)
-				{
-					// if re-connection failed allow user to keep retrying as many times as they want.
-					if (ResumeDb4oConnection())
-						break;
-				}
-
-				if (m_dbStore == null)
-					System.Windows.Forms.Application.Exit();
-
-				// return true if connection re-established
-				return (m_dbStore != null);
+				// if re-connection failed allow user to keep retrying as many times as they want.
+				if (ResumeDb4oConnection())
+					break;
 			}
+
+			if (m_dbStore == null)
+				m_ui.Exit();
+
+			// return true if connection re-established
+			return (m_dbStore != null);
 		}
 
 		internal static Db4oServerInfo GetDb4OServerInfo(string host, int port)

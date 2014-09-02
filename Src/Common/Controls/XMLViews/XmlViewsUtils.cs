@@ -959,7 +959,7 @@ namespace SIL.FieldWorks.Common.Controls
 					CellarPropertyType itype = (CellarPropertyType)sda.MetaDataCache.GetFieldType(flid);
 					if (itype == CellarPropertyType.Time)
 					{
-						DateTime dt = FwUtils.SilTime.GetTimeProperty(sda, hvo, flid);
+						DateTime dt = SilTime.GetTimeProperty(sda, hvo, flid);
 						return new[] {DateTimeCompString(dt)};
 					}
 					else

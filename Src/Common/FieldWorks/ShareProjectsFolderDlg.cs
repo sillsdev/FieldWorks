@@ -28,7 +28,7 @@ namespace SIL.FieldWorks
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ShareProjectsFolderDlg"/> class.
+		/// Initializes a new instance of the <see cref="ShareProjectsFolderDlg"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public ShareProjectsFolderDlg()
@@ -39,7 +39,7 @@ namespace SIL.FieldWorks
 		private void m_btnViewFolder_Click(object sender, EventArgs e)
 		{
 			// This fires up Windows Explorer, showing the owner of the projects folder.
-			using (Process.Start(Path.GetDirectoryName(DirectoryFinder.ProjectsDirectory)))
+			using (Process.Start(Path.GetDirectoryName(FwDirectoryFinder.ProjectsDirectory)))
 			{
 			}
 		}

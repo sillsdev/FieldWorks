@@ -180,7 +180,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				txtExtLnkEdit.Enabled = false;
 			}
 
-			m_defaultLinkedFilesFolder = DirectoryFinder.GetDefaultLinkedFilesDir(m_cache.ServiceLocator.DataSetup.ProjectId.ProjectFolder);
+			m_defaultLinkedFilesFolder = FdoFileHelper.GetDefaultLinkedFilesDir(m_cache.ServiceLocator.DataSetup.ProjectId.ProjectFolder);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -970,7 +970,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				return;
 			}
 
-			if (!ClientServerServices.Current.WarnOnConfirmingSingleUserChanges(m_cache)) //if Anything changed, check and warn about DB4o
+			if (!ClientServerServicesHelper.WarnOnConfirmingSingleUserChanges(m_cache)) //if Anything changed, check and warn about DB4o
+			{
+				NotifyProjectPropsChangedAndClose(); //The user changed something, but when warned decided against it, so do not save just quit
+				return;
+			}
+			if (!SharedBackendServicesHelper.WarnOnConfirmingSingleUserChanges(m_cache)) //if Anything changed, check and warn about other apps
 			{
 				NotifyProjectPropsChangedAndClose(); //The user changed something, but when warned decided against it, so do not save just quit
 				return;
@@ -1446,7 +1451,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private string HandleLinkedFilesPathDoesNotExist(string linkedFilesPath)
 		{
 
-			var defaultLinkedFilesPath = DirectoryFinder.GetDefaultLinkedFilesDir(m_cache.ProjectId.ProjectFolder);
+			var defaultLinkedFilesPath = FdoFileHelper.GetDefaultLinkedFilesDir(m_cache.ProjectId.ProjectFolder);
 			if (!Directory.Exists(linkedFilesPath) && linkedFilesPath.Equals(defaultLinkedFilesPath))
 			{
 				//if the path points to the default location but does not exist then create it.
@@ -1550,6 +1555,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					// the writing system is global so create a new writing system based on it
 					ws = m_cache.ServiceLocator.WritingSystemManager.CreateFrom(ws);
 				AddWsToList(ws, list);
+
+				// If the user had requested to delete this writing system, remove it from the deletion queue
+				if (m_deletedWritingSystems.Remove(ws))
+				{
+					MessageBox.Show(String.Format(FwCoreDlgs.DataInWsWontBeDeleted, ws), FwCoreDlgs.CancelDeleteWS);
+				}
 			}
 			else
 			{
@@ -1570,48 +1581,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		private void m_lstVernWs_ItemCheck(object sender, ItemCheckEventArgs e)
 		{
-			// Don't allow the last item to be unchecked
-			// Leaving incase desired for future GUI changes
-			//			if (m_lstVernWs.CheckedItems.Count == 1 && e.NewValue == CheckState.Unchecked)
-			//			{
-			//				e.NewValue = CheckState.Checked;
-			//				return;	// no change to the ok button status
-			//			}
-
-			bool OkToExit = false;
-			if (m_lstAnalWs.CheckedItems.Count >= 1)
-			{
-				if (e.NewValue == CheckState.Checked || m_lstVernWs.CheckedItems.Count > 1)
-					OkToExit = true;
-			}
-			m_btnOK.Enabled = OkToExit;
+			m_btnOK.Enabled = (m_lstAnalWs.CheckedItems.Count >= 1 && (e.NewValue == CheckState.Checked || m_lstVernWs.CheckedItems.Count > 1));
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		private void m_lstAnalWs_ItemCheck(object sender, ItemCheckEventArgs e)
 		{
-			bool OkToExit = false;
-			if (m_lstVernWs.CheckedItems.Count >= 1)
-			{
-				if (e.NewValue == CheckState.Checked || m_lstAnalWs.CheckedItems.Count > 1)
-					OkToExit = true;
-			}
-			m_btnOK.Enabled = OkToExit;
+			m_btnOK.Enabled = (m_lstVernWs.CheckedItems.Count >= 1 && (e.NewValue == CheckState.Checked || m_lstAnalWs.CheckedItems.Count > 1));
 		}
 
 		private void WritingSystemListBox_MouseDown(object sender, MouseEventArgs e)
@@ -1652,15 +1629,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			DeleteListItem(m_lstAnalWs.Focused ? m_lstAnalWs : m_lstVernWs);
 		}
-
-		#endregion
+		#endregion Misc. Events
 
 		#region Private/protected methods
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void UpdateOKButton()
 		{
 			m_btnOK.Enabled = (m_lstVernWs.CheckedItems.Count >= 1 &&
@@ -1729,13 +1700,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			else if (list.Items.Count == 0)
 			{
-				// user deleted all the items in the list so disable the OK button
+				// user deleted all the items in the list so disable the list's buttons
 				(list == m_lstAnalWs ? m_btnDelAnalWs : m_btnDelVernWs).Enabled = false;
 				(list == m_lstAnalWs ? m_btnModifyAnalWs : m_btnModifyVernWs).Enabled = false;
 				(list == m_lstAnalWs ? m_btnAnalMoveUp : m_btnVernMoveUp).Enabled = false;
 				(list == m_lstAnalWs ? m_btnAnalMoveDown : m_btnVernMoveDown).Enabled = false;
 			}
-			UpdateOKButton();	// only OK to exit if each one has a checked ws
+			UpdateOKButton(); // OK to exit only if each one has a checked ws
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1791,6 +1762,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void DeleteListItem(CheckedListBox list)
 		{
+			// If the writing system is in the other list as well, simply hide it silently.
+			var otherList = list == m_lstAnalWs ? m_lstVernWs : m_lstAnalWs;
+			if (otherList.Items.Contains(GetCurrentSelectedWs(list)))
+			{
+				HideListItem(list);
+				return;
+			}
+
 			using (var dlg = new DeleteWritingSystemWarningDialog())
 			{
 				dlg.SetWsName(GetCurrentSelectedWs(list).ToString());

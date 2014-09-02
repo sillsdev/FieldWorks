@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		#region Constructors
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:InheritableStyleProp&lt;T&gt;"/>
+		/// Initializes a new instance of the <see cref="InheritableStyleProp&lt;T&gt;"/>
 		/// class for an inherited property (value not set).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -66,7 +66,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:InheritableStyleProp&lt;T&gt;"/>
+		/// Initializes a new instance of the <see cref="InheritableStyleProp&lt;T&gt;"/>
 		/// class for a non-inherited (explicit) property.
 		/// </summary>
 		/// <param name="value">The (explict) value of the property.</param>
@@ -392,7 +392,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:BorderInfo"/> class.
+		/// Initializes a new instance of the <see cref="BorderThicknesses"/> class.
 		/// </summary>
 		/// <param name="leading">The thickness of leading border in millipoints</param>
 		/// <param name="trailing">The thickness of trailing border in millipoints</param>
@@ -458,7 +458,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:LineHeightInfo"/> class.
+		/// Initializes a new instance of the <see cref="LineHeightInfo"/> class.
 		/// </summary>
 		/// <param name="lineSpacing">The line spacing.</param>
 		/// <param name="fLineSpacingRelative">if set to <c>true</c> line spacing will be
@@ -496,7 +496,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:IntPropInfo"/> class.
+		/// Initializes a new instance of the <see cref="IntPropInfo"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public IntPropInfo()
@@ -505,7 +505,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:IntPropInfo"/> class.
+		/// Initializes a new instance of the <see cref="IntPropInfo"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public IntPropInfo(int textPropType, int value)
@@ -515,7 +515,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:IntPropInfo"/> class.
+		/// Initializes a new instance of the <see cref="IntPropInfo"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public IntPropInfo(int textPropType, int value, int variant)
@@ -670,7 +670,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		#region Constructors
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:BaseStyleInfo"/> class.
+		/// Initializes a new instance of the <see cref="BaseStyleInfo"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public BaseStyleInfo()
@@ -681,7 +681,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:BaseStyleInfo"/> class from a copy.
+		/// Initializes a new instance of the <see cref="BaseStyleInfo"/> class from a copy.
 		/// This constructor is used to make a new copy of a style with a different name.
 		/// </summary>
 		/// <param name="copyFrom">The copy from.</param>
@@ -747,7 +747,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:BaseStyleInfo"/> class based on a FW
+		/// Initializes a new instance of the <see cref="BaseStyleInfo"/> class based on a FW
 		/// style. It will load style overrides for forceStyleInfo even if it is not in any
 		/// current list.
 		/// </summary>
@@ -763,7 +763,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:BaseStyleInfo"/> class based on a FW
+		/// Initializes a new instance of the <see cref="BaseStyleInfo"/> class based on a FW
 		/// style.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -785,7 +785,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:BaseStyleInfo"/> class.
+		/// Initializes a new instance of the <see cref="BaseStyleInfo"/> class.
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// <remarks>This constructor is used to create a new style.</remarks>

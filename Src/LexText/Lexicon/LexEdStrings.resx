@@ -138,7 +138,7 @@
     <value>Always visible</value>
     <comment>menu item</comment>
   </data>
-  <data name="ksCannotRedoReassignHomographs" xml:space="preserve">
+  <data name="ksGenericUtilityCannotUndo" xml:space="preserve">
     <value>You cannot use 'Undo' to cancel the effect of this utility. You would need to go back to a previously saved version of the database.</value>
   </data>
   <data name="ksCategoryToMergeInto" xml:space="preserve">
@@ -464,26 +464,6 @@
   <data name="ksChooseVisibleComplexForms" xml:space="preserve">
     <value>Choose Complex Forms to display in Stem-based views</value>
   </data>
-  <data name="ksCompleFormIsComponent" xml:space="preserve">
-    <value>The {0} you just selected as a complex form of {1} is already saved as a component of {1}. Which item is really a component of the other?
-Delete the existing relationship before trying to add this one again.</value>
-    <comment>{0} is ksEntry or ksSense. {1} is a vernacular word.</comment>
-  </data>
-  <data name="ksComponentIsComponent" xml:space="preserve">
-    <value>The {0} you just selected as a component of {1} already has {1} specified as one if its components! Which item is really a component of the other?
-Delete the existing relationship before trying to add this one again.</value>
-  </data>
-  <data name="ksEntry" xml:space="preserve">
-    <value>entry</value>
-    <comment>Occurs as {0} in ksCompleFormIsComponent or ksComponentIsComponent.</comment>
-  </data>
-  <data name="ksSense" xml:space="preserve">
-    <value>sense</value>
-    <comment>Occurs as {0} in ksCompleFormIsComponent or ksComponentIsComponent.</comment>
-  </data>
-  <data name="ksWhichIsComponent" xml:space="preserve">
-    <value>Which item is really a component?</value>
-  </data>
   <data name="ksAddAComplexForm" xml:space="preserve">
     <value>Add a Complex Form...</value>
   </data>
@@ -570,43 +550,81 @@ Delete the existing relationship before trying to add this one again.</value>
     <value>FLEx was not able to import the changes received. FLEx Bridge will protect its shared LIFT data from loss by requiring a retry of the import, until it is successful. Retry attempts will start with the next LIFT Send/Receive attempt. Sorry for the inconvenience, but a new version of FLEx will likely be required in order to continue using LIFT Send/Receive.</value>
   </data>
   <data name="ksExistingProjectName" xml:space="preserve">
-    <value>That project already exists. You'll need to choose a different name in Project Properties.</value>
+    <value>That project already exists. Please choose a different name in Project Properties.</value>
   </data>
   <data name="ksNonAsciiProjectNameWarning" xml:space="preserve">
-    <value>The current Project name contains one or more non-ASCII characters. This currently prevents use of the Send/Receive project function.
+    <value>The current project name contains one or more non-ASCII characters. This currently prevents use of the Send/Receive Project function.
 {0} is a name that will work.
 You may choose a different project name in FieldWorks Project Properties.
 Click 'OK' to change the name of your project and continue with Send/Receive.
 Click 'Cancel' to cancel Send/Receive.</value>
-    <comment>used when non-Ascii characters are found in the project name</comment>
+    <comment>Used when some non-ASCII characters are found in the project name</comment>
   </data>
   <data name="kStandardFailureFileContents" xml:space="preserve">
     <value>standard</value>
   </data>
   <data name="ksWarning" xml:space="preserve">
     <value>Warning</value>
-    <comment>used for dialog caption when project name has non-Ascii characters</comment>
+    <comment>Used for dialog caption when project name has non-ASCII characters</comment>
   </data>
   <data name="FLExBridgeListener_UndoExport_Error_exporting_LIFT" xml:space="preserve">
-    <value>Error exporting LIFT data could not complete Send/Receive</value>
-    <comment>Message displayed if an error occurred unexpectedly during the Send/Receive lift while the export of the LIFT data was going on.
+    <value>Error exporting LIFT data; could not complete Send/Receive</value>
+    <comment>Message displayed if an error occurred during "Send/Receive Lexicon" while the export of the LIFT data was going on.
 </comment>
   </data>
   <data name="FLExBridgeListener_UndoExport_LIFT_Export_failed_Title" xml:space="preserve">
     <value>LIFT Export failed</value>
-    <comment>Title of message box displayed if an error occurred unexpectedly during the Send/Receive lift while the export of the LIFT data was going on.
+    <comment>Title of message box displayed if an error occurred during the Send/Receive lift while the export of the LIFT data was going on.
 </comment>
   </data>
   <data name="kProjectAlreadyHasLiftRepo" xml:space="preserve">
-    <value>This project has already been linked to a Lexicon (LIFT) repository. It is not possible to use Get and Merge with another Lexicon repository.</value>
+    <value>This project has already been linked to a Lexicon (LIFT) repository. It is not possible to Get and Merge with another Lexicon repository.</value>
   </data>
   <data name="kCannotDoGetAndMergeAgain" xml:space="preserve">
     <value>Second Get and Merge not possible</value>
   </data>
   <data name="ksAllNonAsciiProjectNameWarning" xml:space="preserve">
-    <value>The current Project name contains non-ASCII characters. This currently prevents use of the Send/Receive project function.
+    <value>The current project name contains non-ASCII characters. This currently prevents use of the Send/Receive Project function.
 Please use a name that only contains ASCII characters.
 You may choose a different project name in FieldWorks Project Properties.</value>
-    <comment>used when only non-Ascii characters are found in the project name on Send/Receive.</comment>
+    <comment>Used when only non-ASCII characters are found in the project name on Send/Receive.</comment>
+  </data>
+  <data name="ksSendReceiveNotPermittedMultipleAppsCaption" xml:space="preserve">
+    <value>Send/Receive not permitted</value>
+  </data>
+  <data name="ksSendReceiveNotPermittedMultipleAppsText" xml:space="preserve">
+    <value>Send/Receive cannot be performed when there are other applications using this project. Please close all other applications that are using this project before continuing.</value>
+  </data>
+  <data name="ksWhatIsSetPartOfSpeechGUIDsToGold" xml:space="preserve">
+    <value>This utility will make the Part of Speech GUIDs for the project match the GOLD standard.</value>
+  </data>
+  <data name="ksWhenToSetPartOfSpeechGUIDsToGold" xml:space="preserve">
+    <value>If this project was created before FieldWorks version 8.1 and you want to use the data as part of a multi-language query, use this utility to standardize the internal identifiers (GUIDs).</value>
+  </data>
+	<data name="GoldEticGuidFixer_Guids_changed_Title" xml:space="preserve">
+    <value>GUIDs changed</value>
+    <comment>MessageBox title when the utility looking for incorrect Part of Speech GUIDs found some.</comment>
+  </data>
+	<data name="GoldEticGuidFixer_NoChangeTitle" xml:space="preserve">
+    <value>No GUIDs changed</value>
+    <comment>MessageBox title when the utility looking for incorrect Part of Speech GUIDs found nothing.</comment>
+  </data>
+	<data name="GoldEticGuidFixer_GuidsChangedContent" xml:space="preserve">
+    <value>Some GUIDs for Parts of Speech that did not match the GOLD standard were found and replaced.</value>
+    <comment>Message box content for when the utility found GUIDs and changed them.</comment>
+  </data>
+	<data name="GoldEticGuidFixer_NoChangeContent" xml:space="preserve">
+    <value>No changes were necessary.</value>
+    <comment>Message box content for when the POS GUID utility found nothing to change.</comment>
+  </data>
+	<data name="GoldEticGuidFixer_Label" xml:space="preserve">
+    <value>Use standard Part of Speech GUIDs</value>
+    <comment>Label shown in the Tools:Utilities dialog for the POS GUID utility.</comment>
+  </data>
+	<data name="LiftSRFailureDetectedOnStartupMessage" xml:space="preserve">
+    <value>Your last Send/Receive Lexicon did not complete successfully. Any work you do before a successful S/R Lexicon will be lost. You should immediately retry S/R Lexicon. If it completes successfully, you can continue your work. If the S/R Lexicon continues to fail, contact flex_errors@sil.org for help before doing further work.</value>
+  </data>
+	<data name="LiftSRFailureDetectedOnStartupTitle" xml:space="preserve">
+    <value>Failed LIFT S/R Detected</value>
   </data>
 </root>

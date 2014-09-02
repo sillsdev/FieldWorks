@@ -13,7 +13,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using SIL.PaToFdoInterfaces;
@@ -52,7 +51,7 @@ namespace SIL.FieldWorks.PaObjects
 		/// <summary/>
 		protected virtual void Dispose(bool fDisposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().ToString() + " *******");
+			Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + " *******");
 			if (fDisposing && !IsDisposed)
 			{
 				// dispose managed and unmanaged objects
@@ -240,7 +239,7 @@ namespace SIL.FieldWorks.PaObjects
 		/// ------------------------------------------------------------------------------------
 		public IEnumerable<IPaLexEntry> LexEntries
 		{
-			get { return m_lexEntries.Cast<IPaLexEntry>(); }
+			get { return m_lexEntries; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -250,7 +249,7 @@ namespace SIL.FieldWorks.PaObjects
 		/// ------------------------------------------------------------------------------------
 		public IEnumerable<IPaWritingSystem> WritingSystems
 		{
-			get { return m_writingSystems.Cast<IPaWritingSystem>(); }
+			get { return m_writingSystems; }
 		}
 
 		#endregion

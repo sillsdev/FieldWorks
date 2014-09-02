@@ -146,10 +146,10 @@ namespace SIL.FieldWorks.LexText.Controls
 					}
 				}
 				m_pluginsUpdated = pluginsToInstall.Count > 0 || pluginsToUninstall.Count > 0;
-				string basePluginPath = DirectoryFinder.GetFWCodeSubDirectory(@"Language Explorer\Configuration\Available Plugins");
+				string basePluginPath = FwDirectoryFinder.GetCodeSubDirectory(@"Language Explorer\Configuration\Available Plugins");
 				// The extension XML files should be stored in the data area, not in the code area.
 				// This reduces the need for users to have administrative privileges.
-				string baseExtensionPath = Path.Combine(DirectoryFinder.FWDataDirectory, @"Language Explorer\Configuration");
+				string baseExtensionPath = Path.Combine(FwDirectoryFinder.DataDirectory, @"Language Explorer\Configuration");
 				// Really do the install now.
 				foreach (XmlDocument managerDoc in pluginsToInstall)
 				{
@@ -175,7 +175,7 @@ namespace SIL.FieldWorks.LexText.Controls
 							// Eat copy exception.
 						}
 					}
-					string fwInstallDir = DirectoryFinder.FWCodeDirectory;
+					string fwInstallDir = FwDirectoryFinder.CodeDirectory;
 					foreach (XmlNode dllNode in managerNode.SelectNodes("dlls/file"))
 					{
 						string filename = dllNode.Attributes["name"].Value;
@@ -255,12 +255,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_userInterfaceChooser.Init(m_sUserWs);
 
 			// Populate Plugins tab page list.
-			var baseConfigPath = DirectoryFinder.GetFWCodeSubDirectory(
+			var baseConfigPath = FwDirectoryFinder.GetCodeSubDirectory(
 				Path.Combine("Language Explorer", "Configuration"));
 			string basePluginPath = Path.Combine(baseConfigPath, "Available Plugins");
 			// The extension XML files should be stored in the data area, not in the code area.
 			// This reduces the need for users to have administrative privileges.
-			string baseExtensionPath = Path.Combine(DirectoryFinder.FWDataDirectory,
+			string baseExtensionPath = Path.Combine(FwDirectoryFinder.DataDirectory,
 				Path.Combine("Language Explorer", "Configuration"));
 			foreach (string dir in Directory.GetDirectories(basePluginPath))
 			{

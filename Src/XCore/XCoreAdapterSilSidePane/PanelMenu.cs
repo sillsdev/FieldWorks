@@ -10,12 +10,12 @@ namespace XCore
 
 	class PanelMenu : PanelEx
 	{
-		private ImageCollection m_images;
+		private IImageCollection m_images;
 		private IUIMenuAdapter m_menuBarAdapter;
 		private XCore.ChoiceGroup m_group;
 
 
-		public PanelMenu(XCore.ChoiceGroup group, ImageCollection images, XCore.IUIMenuAdapter menuBarAdapter):base()
+		public PanelMenu(XCore.ChoiceGroup group, IImageCollection images, XCore.IUIMenuAdapter menuBarAdapter):base()
 		{
 			m_group = group;
 			m_images = images;

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Xml.Linq;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 
 namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
@@ -35,7 +36,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			mockMDC.AddClass(6, "Text", "CmMajorObject", new List<string>());
 			mockMDC.AddClass(7, "RnGenericRec", "CmObject", new List<string> ());
 
-			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000058, dtos, mockMDC, null);
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000058, dtos, mockMDC, null, FwDirectoryFinder.FdoDirectories);
 
 			m_dataMigrationManager.PerformMigration(dtoRepos, 7000059, new DummyProgressDlg());
 

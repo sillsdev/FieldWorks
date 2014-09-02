@@ -28,7 +28,7 @@ namespace XCore
 		{
 			SimpleResolver resolver = new SimpleResolver();
 
-			string source = DirectoryFinder.FwSourceDirectory;
+			string source = FwDirectoryFinder.SourceDirectory;
 			string path = System.IO.Path.Combine(source, @"Utilities/XMLUtils/XMLUtilsTests");
 			if (!System.IO.Directory.Exists(path))
 			{

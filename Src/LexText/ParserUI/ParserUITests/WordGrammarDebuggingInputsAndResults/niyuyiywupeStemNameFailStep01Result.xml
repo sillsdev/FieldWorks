@@ -44,7 +44,7 @@
       <inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false" />
     </morph>
   </resultSoFar>
-  <seq step="Try to build a Stem node by appending a derivational suffix to another Stem node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to build a Stem node by appending a derivational suffix to another Stem node.">
     <morph type="pfx" wordType="181">
       <shortName>ni- (1SgSubj): ni</shortName>
       <alloform>ni-</alloform>
@@ -90,7 +90,7 @@
       <inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false" />
     </morph>
   </seq>
-  <seq step="Try to build a Full analysis node on an uninflected Stem node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to build a Full analysis node on an uninflected Stem node.">
     <morph type="pfx" wordType="181">
       <shortName>ni- (1SgSubj): ni</shortName>
       <alloform>ni-</alloform>
@@ -135,7 +135,7 @@
       <inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false" />
     </morph>
   </seq>
-  <seq step="Try to apply inflectional template 'Possessed noun'.  The result will be a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to apply inflectional template 'Possessed noun'.  The result will be a Full analysis node.">
     <morph type="pfx" wordType="181">
       <shortName>ni- (1SgSubj): ni</shortName>
       <alloform>ni-</alloform>
@@ -170,7 +170,7 @@
       <inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false" />
     </morph>
   </seq>
-  <seq step="Try to apply inflectional template 'test stem name features'.  The result will be a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to apply inflectional template 'test stem name features'.  The result will be a Full analysis node.">
     <morph type="pfx" wordType="181">
       <shortName>ni- (1SgSubj): ni</shortName>
       <alloform>ni-</alloform>
@@ -205,7 +205,7 @@
       <inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false" />
     </morph>
   </seq>
-  <seq step="Try to apply inflectional template 'Intransitive verb'.  The result will be a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to apply inflectional template 'Intransitive verb'.  The result will be a Full analysis node.">
     <morph type="pfx" wordType="181">
       <shortName>ni- (1SgSubj): ni</shortName>
       <alloform>ni-</alloform>
@@ -252,7 +252,7 @@
       <inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false" />
     </morph>
   </seq>
-  <seq step="Try to apply inflectional template 'Stative verb'.  The result will be a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to apply inflectional template 'Stative verb'.  The result will be a Full analysis node.">
     <morph type="pfx" wordType="181">
       <shortName>ni- (1SgSubj): ni</shortName>
       <alloform>ni-</alloform>
@@ -299,7 +299,7 @@
       <inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false" />
     </morph>
   </seq>
-  <seq step="Try to apply inflectional template 'Transitive verb'.  The result will be a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to apply inflectional template 'Transitive verb'.  The result will be a Full analysis node.">
     <full syncat="168" syncatAbbr="trans" requiresInfl="-" inflected="+">
       <morph type="pfx" wordType="181">
         <shortName>ni- (1SgSubj): ni</shortName>
@@ -345,7 +345,7 @@
       <inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false" />
     </morph>
   </seq>
-  <seq step="Try to apply inflectional template 'Bitransitive verb'.  The result will be a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to apply inflectional template 'Bitransitive verb'.  The result will be a Full analysis node.">
     <full syncat="168" syncatAbbr="trans" requiresInfl="-" inflected="+">
       <failure>The  category (bitrans) of the inflectional template "Bitransitive verb" is incompatible with the category (trans) of the stem.</failure>
       <morph type="pfx" wordType="181">

@@ -268,7 +268,7 @@ namespace SIL.FieldWorks.XWorks
 			//(This extension is also known to ProjectRestoreService.RestoreFrom7_0AndNewerBackup.)
 			// Also to FwXWindow.DiscardProperties().
 			var filenameWithExt = Path.ChangeExtension(filename, "fwss");
-			var tempDirectory = Path.Combine(cache.ProjectId.ProjectFolder, DirectoryFinder.ksSortSequenceTempDir);
+			var tempDirectory = Path.Combine(cache.ProjectId.ProjectFolder, FdoFileHelper.ksSortSequenceTempDir);
 			if (!Directory.Exists(tempDirectory))
 				Directory.CreateDirectory(tempDirectory);
 			return Path.Combine(tempDirectory, filenameWithExt);

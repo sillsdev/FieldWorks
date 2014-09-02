@@ -3,6 +3,7 @@ using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 
 namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
@@ -47,7 +48,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			mockMDC.AddClass(9, "LexEntry", "CmObject", new List<string>());
 			mockMDC.AddClass(10, "LexSense", "CmObject", new List<string>());
 			mockMDC.AddClass(11, "CmPossibility", "CmObject", new List<string>());
-			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000023, dtos, mockMDC, null);
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000023, dtos, mockMDC, null, FwDirectoryFinder.FdoDirectories);
 			m_dataMigrationManager.PerformMigration(dtoRepos, 7000024, new DummyProgressDlg());
 
 			//This object should contain a 'Status' property
@@ -233,7 +234,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			mockMDC.AddClass(5, "RnResearchNbk", "CmMajorObject", new List<string>());
 			mockMDC.AddClass(6, "RnGenericRec", "CmObject", new List<string>());
 
-			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000023, dtos, mockMDC, null);
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000023, dtos, mockMDC, null, FwDirectoryFinder.FdoDirectories);
 			m_dataMigrationManager.PerformMigration(dtoRepos, 7000024, new DummyProgressDlg());
 
 			//This object should contain a 'Status' property

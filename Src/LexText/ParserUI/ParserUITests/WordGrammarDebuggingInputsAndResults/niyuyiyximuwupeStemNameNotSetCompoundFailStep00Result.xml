@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <word>
   <form>niyuyiyximuwupe</form>
-  <seq step="Try to build a Stem node on a root." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to build a Stem node on a root.">
     <morph type="pfx" wordType="181">
       <shortName>ni- (1SgSubj): ni</shortName>
       <alloform>ni-</alloform>
@@ -60,7 +60,7 @@
       </inflMsa>
     </morph>
   </seq>
-  <seq step="Try to build a Partial analysis node on a root where the category of the root is unknown (i.e. unmarked)." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to build a Partial analysis node on a root where the category of the root is unknown (i.e. unmarked).">
     <morph type="pfx" wordType="181">
       <shortName>ni- (1SgSubj): ni</shortName>
       <alloform>ni-</alloform>
@@ -120,7 +120,7 @@
       </inflMsa>
     </morph>
   </seq>
-  <seq step="Try to build a Stem node on a root." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to build a Stem node on a root.">
     <morph type="pfx" wordType="181">
       <shortName>ni- (1SgSubj): ni</shortName>
       <alloform>ni-</alloform>
@@ -180,7 +180,7 @@
       </inflMsa>
     </morph>
   </seq>
-  <seq step="Try to build a Partial analysis node on a root where the category of the root is unknown (i.e. unmarked)." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to build a Partial analysis node on a root where the category of the root is unknown (i.e. unmarked).">
     <morph type="pfx" wordType="181">
       <shortName>ni- (1SgSubj): ni</shortName>
       <alloform>ni-</alloform>
@@ -241,7 +241,7 @@
       </inflMsa>
     </morph>
   </seq>
-  <seq step="Try to build a Stem node on a root." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to build a Stem node on a root.">
     <morph type="pfx" wordType="181">
       <shortName>ni- (1SgSubj): ni</shortName>
       <alloform>ni-</alloform>
@@ -301,7 +301,7 @@
       </inflMsa>
     </morph>
   </seq>
-  <seq step="Try to build a Partial analysis node on a root where the category of the root is unknown (i.e. unmarked)." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to build a Partial analysis node on a root where the category of the root is unknown (i.e. unmarked).">
     <morph type="pfx" wordType="181">
       <shortName>ni- (1SgSubj): ni</shortName>
       <alloform>ni-</alloform>
@@ -361,7 +361,7 @@
       </inflMsa>
     </morph>
   </seq>
-  <seq step="Try to build a Stem node by appending a derivational suffix to another Stem node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to build a Stem node by appending a derivational suffix to another Stem node.">
     <morph type="pfx" wordType="181">
       <shortName>ni- (1SgSubj): ni</shortName>
       <alloform>ni-</alloform>
@@ -421,7 +421,7 @@
       </inflMsa>
     </morph>
   </seq>
-  <seq step="Try to build a Stem node on a root." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to build a Stem node on a root.">
     <morph type="pfx" wordType="181">
       <shortName>ni- (1SgSubj): ni</shortName>
       <alloform>ni-</alloform>
@@ -482,7 +482,7 @@
       </inflMsa>
     </morph>
   </seq>
-  <seq step="Try to build a Partial analysis node on a root where the category of the root is unknown (i.e. unmarked)." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+  <seq step="Try to build a Partial analysis node on a root where the category of the root is unknown (i.e. unmarked).">
     <morph type="pfx" wordType="181">
       <shortName>ni- (1SgSubj): ni</shortName>
       <alloform>ni-</alloform>

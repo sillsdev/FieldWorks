@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		#region Fixture Setup and Teardown
 		internal static StringTable GenerateStringTable()
 		{
-			string configurationDir = Path.Combine(DirectoryFinder.FWCodeDirectory,
+			string configurationDir = Path.Combine(FwDirectoryFinder.CodeDirectory,
 				@"Language Explorer/Configuration");
 			var stringTable = new SIL.Utils.StringTable(configurationDir);
 
@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		internal static Inventory GenerateParts()
 		{
-			string partDirectory = Path.Combine(DirectoryFinder.FwSourceDirectory,
+			string partDirectory = Path.Combine(FwDirectoryFinder.SourceDirectory,
 				@"Common/Controls/DetailControls/DetailControlsTests");
 
 			var keyAttrs = new Dictionary<string, string[]>();
@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		internal static Inventory GenerateLayouts()
 		{
-			string partDirectory = Path.Combine(DirectoryFinder.FwSourceDirectory,
+			string partDirectory = Path.Combine(FwDirectoryFinder.SourceDirectory,
 				@"Common/Controls/DetailControls/DetailControlsTests");
 
 			Dictionary<string, string[]> keyAttrs = new Dictionary<string, string[]>();

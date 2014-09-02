@@ -21,6 +21,105 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	[TestFixture]
 	public class StringServicesTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
+		/// <summary/>
+		[Test]
+		public void StringServices_CrawlRunsCanDeleteFromBeginning()
+		{
+			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
+			var tssFactory = Cache.TsStrFactory;
+			var begin = tssFactory.MakeString("beginning", wsEn);
+			var end = tssFactory.MakeString("end", wsFr);
+			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			tisb.AppendTsString(begin);
+			tisb.AppendTsString(end);
+			ITsString result = null;
+			Assert.DoesNotThrow(()=>result = StringServices.CrawlRuns(tisb.GetString(), run => run.get_WritingSystemAt(0) == wsEn ? null : run));
+			Assert.That(result.Text, Is.StringMatching("end"));
+		}
+
+		/// <summary/>
+		[Test]
+		public void StringServices_CrawlRunsCanDeleteAllRuns()
+		{
+			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			var tssFactory = Cache.TsStrFactory;
+			var begin = tssFactory.MakeString("beginning", wsEn);
+			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			tisb.AppendTsString(begin);
+			ITsString result = null;
+			Assert.DoesNotThrow(() => result = StringServices.CrawlRuns(tisb.GetString(), run => run.get_WritingSystemAt(0) == wsEn ? null : run));
+			Assert.That(result, Is.Null);
+		}
+
+		/// <summary/>
+		[Test]
+		public void StringServices_CrawlRunsCanDeleteFromEnd()
+		{
+			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
+			var tssFactory = Cache.TsStrFactory;
+			var begin = tssFactory.MakeString("beginning", wsEn);
+			var end = tssFactory.MakeString("end", wsFr);
+			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			tisb.AppendTsString(begin);
+			tisb.AppendTsString(end);
+			ITsString result = null;
+			Assert.DoesNotThrow(() => result = StringServices.CrawlRuns(tisb.GetString(), run => run.get_WritingSystemAt(0) == wsFr ? null : run));
+			Assert.That(result.Text, Is.StringMatching("beginning"));
+		}
+
+		/// <summary/>
+		[Test]
+		public void StringServices_CrawlRunsCanDeleteFromMiddle()
+		{
+			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
+			var tssFactory = Cache.TsStrFactory;
+			var begin = tssFactory.MakeString("beginning", wsEn);
+			var middle = tssFactory.MakeString("middle", wsFr);
+			var end = tssFactory.MakeString("end", wsEn);
+			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			tisb.AppendTsString(begin);
+			tisb.AppendTsString(middle);
+			tisb.AppendTsString(end);
+			ITsString result = null;
+			Assert.DoesNotThrow(() => result = StringServices.CrawlRuns(tisb.GetString(), run => run.get_WritingSystemAt(0) == wsFr ? null : run));
+			Assert.That(result.Text, Is.StringMatching("beginningend"));
+		}
+
+		/// <summary/>
+		[Test]
+		public void StringServices_CrawlRunsCanSuccessfullyDoNothing()
+		{
+			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
+			var tssFactory = Cache.TsStrFactory;
+			var begin = tssFactory.MakeString("beginning", wsEn);
+			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			tisb.AppendTsString(begin);
+			ITsString result = null;
+			Assert.DoesNotThrow(() => result = StringServices.CrawlRuns(tisb.GetString(), run => run.get_WritingSystemAt(0) == wsFr ? null : run));
+			Assert.That(result.Text, Is.StringMatching("beginning"));
+		}
+
+		/// <summary/>
+		[Test]
+		public void StringServices_CrawlRunsCanSuccessfullyDoNothingWithMultipleRuns()
+		{
+			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
+			var tssFactory = Cache.TsStrFactory;
+			var begin = tssFactory.MakeString("beginning", wsEn);
+			var end = tssFactory.MakeString("end", wsEn);
+			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			tisb.AppendTsString(begin);
+			tisb.AppendTsString(end);
+			ITsString result = null;
+			Assert.DoesNotThrow(() => result = StringServices.CrawlRuns(tisb.GetString(), run => run.get_WritingSystemAt(0) == wsFr ? null : run));
+			Assert.That(result.Text, Is.StringMatching("beginningend"));
+		}
+
 		/// <summary>
 		/// Tests correct operation of StringServices.MergeStyles.
 		/// </summary>

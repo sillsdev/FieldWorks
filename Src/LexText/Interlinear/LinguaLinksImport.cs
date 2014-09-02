@@ -24,6 +24,7 @@ using SIL.FieldWorks.FDO;
 using ECInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.IText.FlexInterlinModel;
+using SIL.Utils;
 using SilEncConverters40;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using System.Xml.Serialization;
@@ -451,7 +452,7 @@ namespace SIL.FieldWorks.IText
 		virtual protected DialogResult ShowPossibleMergeDialog(IThreadedProgress progress)
 		{							//we need to invoke the dialog on the main thread so we can use the progress dialog as the parent.
 			//otherwise the message box can be displayed behind everything
-			IAsyncResult asyncResult = progress.ThreadHelper.BeginInvoke(new ShowDialogAboveProgressbarDelegate(ShowDialogAboveProgressbar),
+			IAsyncResult asyncResult = progress.SynchronizeInvoke.BeginInvoke(new ShowDialogAboveProgressbarDelegate(ShowDialogAboveProgressbar),
 																		 new object[]
 																			{
 																				progress,
@@ -459,7 +460,7 @@ namespace SIL.FieldWorks.IText
 																				ITextStrings.ksAskMergeInterlinearTextTitle,
 																				MessageBoxButtons.YesNo
 																			});
-			return (DialogResult)progress.ThreadHelper.EndInvoke(asyncResult);
+			return (DialogResult)progress.SynchronizeInvoke.EndInvoke(asyncResult);
 		}
 
 		private static ITsString GetSpaceAdjustedPunctString(ILgWritingSystemFactory wsFactory, ITsStrFactory tsStrFactory,
@@ -1561,14 +1562,15 @@ namespace SIL.FieldWorks.IText
 			try
 			{
 				XmlImportData xid = new XmlImportData(m_cache);
-				return xid.ImportData(m_nextInput, m_progress);
+				xid.ImportData(m_nextInput, m_progress);
+				return true;
 			}
 			catch
 			{
 				string sLogFile = Path.Combine(m_sTempDir, m_nextInput);
 				ReportError(string.Format(ITextStrings.ksFailedLoadingLL,
 					m_LinguaLinksXmlFileName, m_cache.ProjectId.Name,
-					System.Environment.NewLine, sLogFile),
+					Environment.NewLine, sLogFile),
 					ITextStrings.ksLLImportFailed);
 				return false;
 			}

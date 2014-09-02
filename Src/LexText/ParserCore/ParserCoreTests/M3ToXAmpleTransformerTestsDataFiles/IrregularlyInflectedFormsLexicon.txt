@@ -1,0 +1,290 @@
+
+\lx 10737
+\g ***
+\c W
+\wc root
+\mp RootPOS0
+\a mainone {4901}
+ 
+\lx 9872
+\g seek
+\c W
+\wc root
+\mp RootPOS2302
+\a seek {6965}
+ 
+\lx 5213
+\g tree foundation
+\c W
+\wc root
+\mp RootPOS2302
+\a root {7176}
+ 
+\lx 256
+\g INF
+\c W/W
+\o -31999 -1
+\wc prefix
+\a kə {6757}
+\eType prefix
+ 
+\lx 3193
+\g believe
+\c W
+\wc root
+\mp RootPOS2302
+\a believe {2297}
+ 
+\lx 471
+\g pres
+\c W/W
+\o NaN NaN 
+\wc 6930
+\mcc 471 +/ {IrregInflForm5373} ... ~_
+\mcc 471 +/ {IrregInflForm10063} ... ~_
+\fd InflectionFS6700
+\a su {1660}
+\eType suffix
+ 
+\lx 1542
+\g 1s
+\c W/W
+\o -NaN -NaN 
+\wc 1230
+\a di {8707}
+\eType prefix
+ 
+
+\lx 4157
+\g believe.pst.pl
+\c W
+\wc root
+\mp RootPOS2302
+\a creb {9216}
+\fd MSFS29
+\mp IrregInflForm5373
+\fd MSFS10186
+\mp IrregInflForm6652
+
+
+\lx 4157.0
+\g seek.pst.pl
+\c W
+\wc root
+\mp RootPOS2302
+\a creb {9216}
+\fd MSFS29
+\mp IrregInflForm5373
+\fd MSFS10186
+\mp IrregInflForm6652
+
+\lx 700
+\g delme
+\c W/W
+\o 1 31999
+\wc  suffix
+\fd FromPOS2302
+\a -delma {9016} MSEnvFS6306
+\a delme {99} MSEnvFS302
+\eType suffix
+ 
+\lx 3887
+\g Subjunctive
+\c W/W
+\o NaN NaN 
+\wc 10880
+\fd InflectionFS2737
+\a wo {10513}
+\eType suffix
+ 
+\lx 8748
+\g deleteme sometime
+\c W
+\wc root
+\mp RootPOS2302
+\mp InflClass8422
+\fd MSFS3707
+\a testenvironmentcode {1281} /a_b  | /a_b 
+		
+ 
+\lx 6001
+\g 1
+\c W/W
+\o -NaN -NaN 
+\wc 1230
+\a pa {8617}
+\eType prefix
+ 
+\lx 10494
+\g Past
+\c W/W
+\o NaN NaN 
+\wc 6930
+\mcc 10494 +/ {IrregInflForm5373} ... ~_
+\mcc 10494 +/ {IrregInflForm10063} ... ~_
+\fd InflectionFS4341
+\a ed {7010}
+\eType suffix
+ 
+\lx 6493
+\g RDP
+\c W/W
+\o 1
+\wc 
+\eType
+\fd FromPOS2302
+ 
+\lx 1546
+\g PL
+\c W/W
+\o NaN NaN 
+\wc 5211
+\mcc 1546 +/ {IrregInflForm6652} ... ~_
+\fd InflectionFS5572
+\a s {4199}
+\eType suffix
+ 
+\lx 7625
+\g DISTR
+\c W/W
+\o 1
+\wc derivSfx
+\a ər {5494}
+\eType suffix
+\fd FromPOS2302
+ 
+\lx 3951
+\g borrow
+\c W
+\wc root
+\mp RootPOS2302
+\a bos {9892}
+ 
+
+\lx 8236
+\g believe.prs
+\c W
+\wc root
+\mp RootPOS2302
+\a brub {1299}
+\fd MSFS10337
+\mp IrregInflForm10063
+
+\lx 5266
+\g pl
+\c W/W
+\o -31999 -1
+\wc  prefix
+\fd FromPOS3249
+\fd InflectionFS7174
+\a more {6393}
+\eType prefix
+ 
+\lx 7841
+\g Interrog
+\c W/W
+\o NaN NaN 
+\wc 10880
+\a go {1226}
+\eType suffix
+ 
+\lx 5524
+\g delme
+\c W/W
+\wc enclitic
+\eType suffix
+\o 32000
+\a ba {2614}
+\mp Enclitic
+
+\lx 5524
+\g delme
+\c Prt
+\wc clitic
+\a ba {2614}
+\fd CliticPOS0
+ 
+\lx 4664
+\g first sense
+\c W
+\wc root
+\mp RootPOS2302
+\a twosenses {7647}
+ 
+\lx 9089
+\g first sense
+\c W
+\wc root
+\mp RootPOS3249
+\a twosenses {7647}
+ 
+\lx 7259
+\g shine
+\c W
+\wc root
+\mp RootPOS2302
+\a mot {9698}
+ 
+
+\lx 10257
+\g second sense.pst
+\c W
+\wc root
+\mp RootPOS2302
+\a blob {552}
+\fd MSFS29
+\mp IrregInflForm5373
+
+\lx 5218
+\g first phonological rule test
+\c W
+\wc root
+\mp RootPOS2302
+\a bieg {3226}
+ 
+\lx 3854
+\g 2
+\c W/W
+\o 1 31999
+\wc 
+\fd FromPOS2302
+\eType
+ 
+\lx 3334
+\g NC
+\c W/W
+\o -31999 -1
+\wc  prefix
+\fd FromPOS2302
+\a po {4094}
+\eType prefix
+ 
+
+\lx 5373
+\g IrregInflFormInSlot6930
+\c W/W
+\wc 6930
+\a 0 {5373}
+\eType suffix
+\fd MSFS29
+\mcc 5373 +/ {IrregInflForm5373} ... _ 
+
+
+\lx 6652
+\g IrregInflFormInSlot5211
+\c W/W
+\wc 5211
+\a 0 {6652}
+\eType suffix
+\fd MSFS10186
+\mcc 6652 +/ {IrregInflForm6652} ... _ 
+
+
+\lx 10063
+\g IrregInflFormInSlot6930
+\c W/W
+\wc 6930
+\a 0 {10063}
+\eType suffix
+\fd MSFS10337
+\mcc 10063 +/ {IrregInflForm10063} ... _ 

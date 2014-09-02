@@ -169,10 +169,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\Palaso.dll</HintPath>
     </Reference>
-    <Reference Include="ParatextShared, Version=7.2.8.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\DistFiles\ParatextShared.dll</HintPath>
-    </Reference>
     <Reference Include="PhonEnvValidator, Version=3.2.0.9, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\PhonEnvValidator.dll</HintPath>
@@ -299,12 +295,14 @@
     <Compile Include="DataSortingServiceTests.cs" />
     <Compile Include="DataStoreInitializationServicesTests.cs" />
     <Compile Include="Db4oServerInfoTests.cs" />
+    <Compile Include="DummyFdoUI.cs" />
     <Compile Include="DummyProgressDlg.cs" />
     <Compile Include="DuplicateAnalysisFixerTests.cs" />
     <Compile Include="DuplicateWordformFixerTests.cs" />
     <Compile Include="FdoFactoryAdditionsTests.cs" />
     <Compile Include="FeatureSystemTests.cs" />
     <Compile Include="FwSetupFixtureClass.cs" />
+    <Compile Include="GoldEticTests.cs" />
     <Compile Include="Ling_WfiTests.cs" />
     <Compile Include="CmCellTests.cs" />
     <Compile Include="CmFilterTests.cs" />
@@ -330,6 +328,7 @@
     <Compile Include="FilteredScrBooksTests.cs" />
     <Compile Include="LangProjectTests.cs" />
     <Compile Include="CmSemanticDomainRepositoryTests.cs" />
+    <Compile Include="LinkedFilesRelativePathHelperTests.cs" />
     <Compile Include="MergeObjectsTests.cs" />
     <Compile Include="NotebookTests.cs" />
     <Compile Include="ParaNodeMapTests.cs" />
@@ -352,7 +351,6 @@
     <Compile Include="LexSenseTests.cs" />
     <Compile Include="LingTests.cs" />
     <Compile Include="ParagraphParserTests.cs" />
-    <Compile Include="ParatextHelperTests.cs" />
     <Compile Include="PersistingLayerTests.BEPPortTests.cs" />
     <Compile Include="PropChangedTests.cs" />
     <Compile Include="ReferenceAdjusterServiceTests.cs" />
@@ -373,6 +371,7 @@
     <Compile Include="ScrSfFileListTests.cs" />
     <Compile Include="ScrTxtParaTests.cs" />
     <Compile Include="ScrVerseTests.cs" />
+    <Compile Include="SharedBackendServicesTests.cs" />
     <Compile Include="StFootnoteTests.cs" />
     <Compile Include="StringServicesTests.cs" />
     <Compile Include="StTextAnnotationNavigatorTests.cs" />
@@ -381,6 +380,7 @@
     <Compile Include="StTxtParaTests.cs" />
     <Compile Include="StyleInfoTableTests.cs" />
     <Compile Include="TestBigSorting.cs" />
+    <Compile Include="TestProjectId.cs" />
     <Compile Include="UowHelperTests.cs" />
     <Compile Include="ValidationTests.cs" />
     <Compile Include="ValidCharactersTests.cs" />
@@ -563,6 +563,12 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\FdoUi\FdoUi.csproj">
+      <Project>{7B119B65-DD6F-4AFB-BBA3-682DC084FB33}</Project>
+      <Name>FdoUi</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

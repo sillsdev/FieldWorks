@@ -46,7 +46,7 @@ namespace XCore
 		/// <param name="smallImages"></param>
 		/// <param name="mediator"></param>
 		/// <returns></returns>
-		public void  Init (SIL.Utils.ImageCollection smallImages,  IUIMenuAdapter menuBarAdapter, Mediator mediator)
+		public void  Init (IImageCollection smallImages,  IUIMenuAdapter menuBarAdapter, Mediator mediator)
 		{
 		}
 

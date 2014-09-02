@@ -9,7 +9,9 @@ using System;
 using System.IO;
 using NUnit.Framework;
 using Rhino.Mocks;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
@@ -44,17 +46,6 @@ namespace SIL.FieldWorks
 			m_localCsSvcs = MockRepository.GenerateStub<ILocalClientServerServices>();
 			clientSvcs.Stub(x => x.Local).Return(m_localCsSvcs);
 			m_localCsSvcs.Stub(cs => cs.DefaultBackendType).Do(new Func<FDOBackendProviderType>( () => m_defaultBepType));
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Fixture teardown.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public override void FixtureTeardown()
-		{
-			base.FixtureTeardown();
-			ReflectionHelper.CallMethod(typeof(ClientServerServices), "SetCurrentToDefaultBackend");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -119,7 +110,7 @@ namespace SIL.FieldWorks
 		public void IsValid_NullType()
 		{
 			const string sProjectName = "monkey";
-			string sFile = DirectoryFinder.GetXmlDataFileName(sProjectName);
+			string sFile = FdoFileHelper.GetXmlDataFileName(sProjectName);
 			m_mockFileOs.AddExistingFile(GetXmlProjectFilename(sProjectName));
 			ProjectId proj = new ProjectId(null, sFile, null);
 			Assert.AreEqual(FDOBackendProviderType.kXML, proj.Type);
@@ -147,7 +138,7 @@ namespace SIL.FieldWorks
 		public void IsValid_XML_True()
 		{
 			const string sProjectName = "monkey";
-			string sFile = DirectoryFinder.GetXmlDataFileName(sProjectName);
+			string sFile = FdoFileHelper.GetXmlDataFileName(sProjectName);
 			m_mockFileOs.AddExistingFile(GetXmlProjectFilename(sProjectName));
 			ProjectId proj = new ProjectId("xml", sFile, null);
 			Assert.IsTrue(proj.IsValid);
@@ -193,8 +184,8 @@ namespace SIL.FieldWorks
 		public void CleanUpNameForType_Default_onlyName()
 		{
 			m_defaultBepType = FDOBackendProviderType.kDb4oClientServer;
-			string expectedPath = Path.Combine(Path.Combine(DirectoryFinder.ProjectsDirectory, "ape"),
-				DirectoryFinder.GetDb4oDataFileName("ape"));
+			string expectedPath = Path.Combine(Path.Combine(FwDirectoryFinder.ProjectsDirectory, "ape"),
+				FdoFileHelper.GetDb4oDataFileName("ape"));
 			m_localCsSvcs.Stub(cs => cs.IdForLocalProject("ape")).Return(expectedPath);
 			m_mockFileOs.AddExistingFile(expectedPath);
 
@@ -214,7 +205,7 @@ namespace SIL.FieldWorks
 		[Test]
 		public void CleanUpNameForType_Default_NameWithPeriod_Exists()
 		{
-			string expectedPath = Path.Combine(Path.Combine(DirectoryFinder.ProjectsDirectory, "my.monkey"), "my.monkey");
+			string expectedPath = Path.Combine(Path.Combine(FwDirectoryFinder.ProjectsDirectory, "my.monkey"), "my.monkey");
 			m_localCsSvcs.Stub(cs => cs.IdForLocalProject("my.monkey")).Return(expectedPath);
 			m_mockFileOs.AddExistingFile(expectedPath);
 
@@ -234,8 +225,8 @@ namespace SIL.FieldWorks
 		[Test]
 		public void CleanUpNameForType_XML_NameWithPeriod_FilesWithAndWithoutExtensionExist()
 		{
-			string myMonkeyProjectFolder = Path.Combine(DirectoryFinder.ProjectsDirectory, "my.monkey");
-			string expectedPath = Path.Combine(myMonkeyProjectFolder, DirectoryFinder.GetXmlDataFileName("my.monkey"));
+			string myMonkeyProjectFolder = Path.Combine(FwDirectoryFinder.ProjectsDirectory, "my.monkey");
+			string expectedPath = Path.Combine(myMonkeyProjectFolder, FdoFileHelper.GetXmlDataFileName("my.monkey"));
 			m_mockFileOs.AddExistingFile(expectedPath);
 			m_mockFileOs.AddExistingFile(Path.Combine(myMonkeyProjectFolder, "my.monkey"));
 
@@ -259,7 +250,7 @@ namespace SIL.FieldWorks
 			string expectedPath = GetXmlProjectFilename(projectName);
 			m_mockFileOs.AddExistingFile(expectedPath);
 
-			var proj = new ProjectId(DirectoryFinder.GetXmlDataFileName(projectName), null);
+			var proj = new ProjectId(FdoFileHelper.GetXmlDataFileName(projectName), null);
 			Assert.AreEqual(expectedPath, proj.Path);
 			Assert.AreEqual(FDOBackendProviderType.kXML, proj.Type);
 			Assert.IsTrue(proj.IsValid);
@@ -295,7 +286,7 @@ namespace SIL.FieldWorks
 			string expectedPath = GetXmlProjectFilename("monkey");
 			m_mockFileOs.AddExistingFile(expectedPath);
 
-			var proj = new ProjectId(DirectoryFinder.GetXmlDataFileName("monkey"), null);
+			var proj = new ProjectId(FdoFileHelper.GetXmlDataFileName("monkey"), null);
 			Assert.AreEqual(expectedPath, proj.Path);
 			Assert.AreEqual(FDOBackendProviderType.kXML, proj.Type);
 			Assert.IsTrue(proj.IsValid);
@@ -310,7 +301,7 @@ namespace SIL.FieldWorks
 		[Test]
 		public void CleanUpNameForType_XML_FullPath()
 		{
-			string expectedPath = Path.Combine(DirectoryFinder.ProjectsDirectory, DirectoryFinder.GetXmlDataFileName("monkey"));
+			string expectedPath = Path.Combine(FwDirectoryFinder.ProjectsDirectory, FdoFileHelper.GetXmlDataFileName("monkey"));
 			m_mockFileOs.AddExistingFile(expectedPath);
 
 			var proj = new ProjectId(expectedPath, null);
@@ -329,8 +320,8 @@ namespace SIL.FieldWorks
 		[Ignore("Not sure what this would be useful for or if this would be the desired behavior.")]
 		public void CleanUpNameForType_XML_RelativePath()
 		{
-			string relativePath = Path.Combine("primate", DirectoryFinder.GetXmlDataFileName("monkey"));
-			string expectedPath = Path.Combine(DirectoryFinder.ProjectsDirectory, relativePath);
+			string relativePath = Path.Combine("primate", FdoFileHelper.GetXmlDataFileName("monkey"));
+			string expectedPath = Path.Combine(FwDirectoryFinder.ProjectsDirectory, relativePath);
 			m_mockFileOs.AddExistingFile(expectedPath);
 
 			ProjectId proj = new ProjectId(relativePath, null);
@@ -352,7 +343,7 @@ namespace SIL.FieldWorks
 			string projFile = GetXmlProjectFilename("monkey");
 			m_mockFileOs.AddExistingFile(projFile);
 
-			var proj = new ProjectId(DirectoryFinder.GetXmlDataFileName("monkey"), null);
+			var proj = new ProjectId(FdoFileHelper.GetXmlDataFileName("monkey"), null);
 			proj.AssertValid(); // no exception should be thrown here for a valid project.
 		}
 
@@ -371,7 +362,7 @@ namespace SIL.FieldWorks
 				proj.AssertValid();
 				Assert.Fail("FwStartupException expected");
 			}
-			catch (FwStartupException exception)
+			catch (StartupException exception)
 			{
 				Assert.IsFalse(exception.ReportToUser);
 			}
@@ -386,13 +377,13 @@ namespace SIL.FieldWorks
 		[Test]
 		public void AssertValid_Invalid_FileNotFound()
 		{
-			var proj = new ProjectId(DirectoryFinder.GetXmlDataFileName("notfound"), null);
+			var proj = new ProjectId(FdoFileHelper.GetXmlDataFileName("notfound"), null);
 			try
 			{
 				proj.AssertValid();
 				Assert.Fail("FwStartupException expected");
 			}
-			catch (FwStartupException exception)
+			catch (StartupException exception)
 			{
 				Assert.IsTrue(exception.ReportToUser);
 			}
@@ -407,13 +398,13 @@ namespace SIL.FieldWorks
 		[Test]
 		public void AssertValid_InvalidProjectType()
 		{
-			var proj = new ProjectId(FDOBackendProviderType.kInvalid, DirectoryFinder.GetXmlDataFileName("invalid"), null);
+			var proj = new ProjectId(FDOBackendProviderType.kInvalid, FdoFileHelper.GetXmlDataFileName("invalid"), null);
 			try
 			{
 				proj.AssertValid();
 				Assert.Fail("FwStartupException expected");
 			}
-			catch (FwStartupException exception)
+			catch (StartupException exception)
 			{
 				Assert.IsTrue(exception.ReportToUser);
 			}
@@ -428,13 +419,13 @@ namespace SIL.FieldWorks
 		[Test]
 		public void AssertValid_Invalid_SharedFolderNotFound()
 		{
-			var proj = new ProjectId(DirectoryFinder.GetDb4oDataFileName("monkey"), FwLinkArgs.kLocalHost);
+			var proj = new ProjectId(FdoFileHelper.GetDb4oDataFileName("monkey"), FwLinkArgs.kLocalHost);
 			try
 			{
 				proj.AssertValid();
 				Assert.Fail("FwStartupException expected");
 			}
-			catch (FwStartupException exception)
+			catch (StartupException exception)
 			{
 				Assert.IsTrue(exception.ReportToUser);
 			}
@@ -451,12 +442,12 @@ namespace SIL.FieldWorks
 		[Test]
 		public void CheckProperties()
 		{
-			string expectedProjectDir = Path.Combine(DirectoryFinder.ProjectsDirectory, "SomeTest");
+			string expectedProjectDir = Path.Combine(FwDirectoryFinder.ProjectsDirectory, "SomeTest");
 			m_mockFileOs.ExistingDirectories.Add(expectedProjectDir);
 
 			const string type = "db4ocs";
 			const string host = "127.0.0.1";
-			string filename = DirectoryFinder.GetDb4oDataFileName("SomeTest");
+			string filename = FdoFileHelper.GetDb4oDataFileName("SomeTest");
 
 			var proj = new ProjectId(type, filename, host);
 			proj.AssertValid();
@@ -475,13 +466,13 @@ namespace SIL.FieldWorks
 		[Test]
 		public void NameAndPath()
 		{
-			string myProjectFolder = Path.Combine(DirectoryFinder.ProjectsDirectory, "My.Project");
+			string myProjectFolder = Path.Combine(FwDirectoryFinder.ProjectsDirectory, "My.Project");
 			ProjectId projId = new ProjectId(FDOBackendProviderType.kXML, "My.Project", null);
-			Assert.AreEqual(Path.Combine(myProjectFolder, DirectoryFinder.GetXmlDataFileName("My.Project")), projId.Path);
+			Assert.AreEqual(Path.Combine(myProjectFolder, FdoFileHelper.GetXmlDataFileName("My.Project")), projId.Path);
 			Assert.AreEqual("My.Project", projId.Name);
 
 			projId = new ProjectId(FDOBackendProviderType.kDb4oClientServer, "My.Project", null);
-			Assert.AreEqual(Path.Combine(myProjectFolder, DirectoryFinder.GetDb4oDataFileName("My.Project")), projId.Path);
+			Assert.AreEqual(Path.Combine(myProjectFolder, FdoFileHelper.GetDb4oDataFileName("My.Project")), projId.Path);
 			Assert.AreEqual("My.Project", projId.Name);
 		}
 
@@ -497,8 +488,8 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		public static string GetXmlProjectFilename(string projectName)
 		{
-			return Path.Combine(Path.Combine(DirectoryFinder.ProjectsDirectory, projectName),
-				DirectoryFinder.GetXmlDataFileName(projectName));
+			return Path.Combine(Path.Combine(FwDirectoryFinder.ProjectsDirectory, projectName),
+				FdoFileHelper.GetXmlDataFileName(projectName));
 		}
 		#endregion
 	}

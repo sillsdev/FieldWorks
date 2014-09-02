@@ -12,7 +12,7 @@ using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using System.Windows.Forms;
-using XCore;
+using SIL.Utils;
 
 namespace SIL.FieldWorks
 {

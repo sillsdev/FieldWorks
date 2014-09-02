@@ -23,6 +23,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.Utils;
 using XCore;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Common.FwUtils;
@@ -468,7 +469,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="progressDlg">The progress dialog.</param>
 		/// <returns>True if the initialization was successful, false otherwise</returns>
 		/// ------------------------------------------------------------------------------------
-		public override bool InitCacheForApp(IProgress progressDlg)
+		public override bool InitCacheForApp(IThreadedProgress progressDlg)
 		{
 			return true;
 		}
@@ -549,7 +550,7 @@ namespace SIL.FieldWorks.XWorks
 			FwRegistrySettings.Init();
 			Init(); // subclass version must create and set m_application
 
-			m_configFilePath = Path.Combine(DirectoryFinder.FWCodeDirectory, m_application.DefaultConfigurationPathname);
+			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
 
 			// Setup for possibility loading [GetPossibilityOrCreateOne()]
 			// and test data creation
