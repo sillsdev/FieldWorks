@@ -14,7 +14,6 @@ using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
@@ -32,7 +31,6 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal static string AssemblyFile { get; set; }
 		private const string PublicIdentifier = @"-//W3C//DTD XHTML 1.1//EN";
-		private const string SystemIdentifier = @"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd";
 
 		/// <summary>
 		/// Static initializer setting the AssemblyFile to the default Fieldworks model dll.
@@ -42,6 +40,10 @@ namespace SIL.FieldWorks.XWorks
 			AssemblyFile = "FDO";
 		}
 
+		/// <summary>
+		/// Generates self-contained XHTML for a single entry for, eg, the preview panes in Lexicon Edit and the Dictionary Config dialog
+		/// </summary>
+		/// <returns>The HTML as a string</returns>
 		public static string GenerateEntryHtmlWithStyles(ICmObject entry, DictionaryConfigurationModel configuration,
 																		 DictionaryPublicationDecorator pubDecorator, Mediator mediator)
 		{
@@ -57,13 +59,13 @@ namespace SIL.FieldWorks.XWorks
 													 DictionaryConfigurationListener.GetDictionaryConfigurationType(mediator));
 			var previewCssPath = Path.Combine(projectPath, "Preview.css");
 			var stringBuilder = new StringBuilder();
-			using(var xhtmlWriter = XmlWriter.Create(stringBuilder))
+			using(var writer = XmlWriter.Create(stringBuilder))
 			using(var cssWriter = new StreamWriter(previewCssPath, false))
 			{
-				GenerateOpeningHtml(xhtmlWriter, previewCssPath);
-				GenerateXHTMLForEntry(entry, configuration.Parts[0], pubDecorator, xhtmlWriter, (FdoCache)mediator.PropertyTable.GetValue("cache"));
-				GenerateClosingHtml(xhtmlWriter);
-				xhtmlWriter.Flush();
+				GenerateOpeningHtml(writer, previewCssPath);
+				GenerateXHTMLForEntry(entry, configuration, pubDecorator, writer, (FdoCache)mediator.PropertyTable.GetValue("cache"));
+				GenerateClosingHtml(writer);
+				writer.Flush();
 				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, mediator));
 				cssWriter.Flush();
 			}
@@ -106,9 +108,9 @@ namespace SIL.FieldWorks.XWorks
 				foreach(var hvo in entryHvos)
 				{
 					var entry = cache.ServiceLocator.GetObject(hvo);
+					// TODO pH 2014.08: generate only if entry is published (confignode enabled, pubAsMinor, selected complex- or variant-form type)
 					GenerateLetterHeaderIfNeeded(entry, ref lastHeader, xhtmlWriter, cache);
-					//TODO: handle minor entries with the minor entry config.
-					GenerateXHTMLForEntry(entry, configuration.Parts[0], publicationDecorator, xhtmlWriter, cache);
+					GenerateXHTMLForEntry(entry, configuration, publicationDecorator, xhtmlWriter, cache);
 					if(progress != null)
 					{
 						progress.Position++;
@@ -153,13 +155,46 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// Generating the xhtml representation for the given ICmObject using the given configuration to select which data to write out
+		/// If it is a Dictionary Main Entry or non-Dictionary entry, uses the first configuration.
+		/// If it is a Minor Entry, first checks whether the entry should be published as a Minor Entry; then, generates XHTML for each applicable
+		/// Minor Entry configuration.
 		/// </summary>
+		/// <param name="entry"></param>
+		/// <param name="configuration"></param>
+		/// <param name="publicationDecorator"></param>
+		/// <param name="writer"></param>
+		/// <param name="cache"></param>
+		public static void GenerateXHTMLForEntry(ICmObject entry, DictionaryConfigurationModel configuration,
+			DictionaryPublicationDecorator publicationDecorator, XmlWriter writer, FdoCache cache)
+		{
+				if (IsMinorEntry(entry))
+				{
+					if (((ILexEntry)entry).PublishAsMinorEntry)
+						for (var i = 1; i < configuration.Parts.Count; i++)
+							GenerateXHTMLForEntry(entry, configuration.Parts[i], publicationDecorator, writer, cache);
+							// TODO pH 2014.08: determine whether each config is applicable (FormType is checked in the Minor Entry Options)
+				}
+				else
+				{
+					GenerateXHTMLForEntry(entry, configuration.Parts[0], publicationDecorator, writer, cache);
+				}
+		}
+
+		internal static bool IsMinorEntry(ICmObject entry)
+		{
+			// owning an ILexEntryRef denotes a minor entry (Complex* or Variant Form)
+			return entry is ILexEntry && ((ILexEntry)entry).EntryRefsOS.Any();
+			// TODO pH 2014.08: *Owning a LexEntryRef denotes a minor entry only in those configs that display complex forms as subentries
+			// TODO				(Root, Bart, and their descendants) or if the reftype is Variant Form
+		}
+
+		/// <summary>Generates XHTML for an ICmObject for a specific ConfigurableDictionaryNode</summary>
 		/// <param name="entry"></param>
 		/// <param name="configuration"><remarks>this configuration node must match the entry type</remarks></param>
 		/// <param name="publicationDecorator"></param>
 		/// <param name="writer"></param>
 		/// <param name="cache"></param>
-		public static void GenerateXHTMLForEntry(ICmObject entry, ConfigurableDictionaryNode configuration, DictionaryPublicationDecorator publicationDecorator, XmlWriter writer, FdoCache cache)
+		internal static void GenerateXHTMLForEntry(ICmObject entry, ConfigurableDictionaryNode configuration, DictionaryPublicationDecorator publicationDecorator, XmlWriter writer, FdoCache cache)
 		{
 			if(writer == null || entry == null || configuration == null || cache == null)
 			{
@@ -175,7 +210,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if(!configuration.IsEnabled)
 			{
-				throw new ArgumentException(@"You must use an enabled configuration node to get any content.", @"configuration");
+				return;
 			}
 
 			writer.WriteStartElement("div");
@@ -185,7 +220,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				GenerateXHTMLForFieldByReflection(entry, config, publicationDecorator, writer, cache);
 			}
-			writer.WriteEndElement();
+			writer.WriteEndElement(); // </div>
 		}
 
 		/// <summary>
@@ -278,10 +313,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				foreach(var child in config.Children)
 				{
-					if(child.IsEnabled)
-					{
-						GenerateXHTMLForFieldByReflection(propertyValue, child, publicationDecorator, writer, cache);
-					}
+					GenerateXHTMLForFieldByReflection(propertyValue, child, publicationDecorator, writer, cache);
 				}
 			}
 		}

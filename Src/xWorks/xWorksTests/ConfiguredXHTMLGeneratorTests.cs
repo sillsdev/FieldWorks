@@ -12,18 +12,74 @@ using NUnit.Framework;
 using Palaso.TestUtilities;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.FDOTests;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
+	// ReSharper disable InconsistentNaming
 	[TestFixture]
-	class ConfiguredXHTMLGeneratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
+	class ConfiguredXHTMLGeneratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase, IDisposable
 	{
+		private FwXApp m_application;
+		private FwXWindow m_window;
+		private Mediator m_mediator;
+
 		StringBuilder XHTMLStringBuilder { get; set; }
+
+		[TestFixtureSetUp]
+		public override void FixtureSetup()
+		{
+			base.FixtureSetup();
+
+			FwRegistrySettings.Init();
+			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
+			var m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
+			m_window = new MockFwXWindow(m_application, m_configFilePath);
+			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
+			m_mediator = m_window.Mediator;
+
+			m_mediator.PropertyTable.SetProperty("ToolForAreaNamed_lexicon", "lexiconDictionary");
+			Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/");
+		}
+
+		[TestFixtureTearDown]
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+			Dispose();
+		}
+
+		#region disposal
+		protected virtual void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (disposing)
+			{
+				if (m_application != null)
+					m_application.Dispose();
+				if (m_window != null)
+					m_window.Dispose();
+				if (m_mediator != null)
+					m_mediator.Dispose();
+			}
+		}
+
+		~ConfiguredXHTMLGeneratorTests()
+		{
+			Dispose(false);
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+		}
+		#endregion disposal
 
 		[SetUp]
 		public void SetupExportVariables()
@@ -48,7 +104,7 @@ namespace SIL.FieldWorks.XWorks
 				var entry = factory.Create();
 				//SUT
 				Assert.Throws(typeof(ArgumentNullException), () => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(null, mainEntryNode, null, XHTMLWriter, Cache));
-				Assert.Throws(typeof(ArgumentNullException), () => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, null, null, XHTMLWriter, Cache));
+				Assert.Throws(typeof(ArgumentNullException), () => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry((ICmObject)entry, (ConfigurableDictionaryNode)null, null, XHTMLWriter, Cache));
 				Assert.Throws(typeof(ArgumentNullException), () => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, null, Cache));
 				Assert.Throws(typeof(ArgumentNullException), () => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, XHTMLWriter, null));
 			}
@@ -58,8 +114,7 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateXHTMLForEntry_BadConfigurationThrows()
 		{
 			var mainEntryNode = new ConfigurableDictionaryNode();
-			var factory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
-			var entry = factory.Create();
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				//Test a blank main node description
@@ -90,10 +145,8 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true
 			};
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
-			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 			var entry = CreateInterestingLexEntry();
-			// The headword field is special it uses either Citation or LexemeForm if Citation isn't filled in
-			entry.CitationForm.set_String(wsFr, Cache.TsStrFactory.MakeString("HeadWordTest", wsFr));
+			AddHeadwordToEntry(entry, "HeadWordTest");
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				//SUT
@@ -193,7 +246,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void GenerateXHTMLForEntry_NoEnabledConfigurationsThrowsArgument()
+		public void GenerateXHTMLForEntry_NoEnabledConfigurationsWritesNothing()
 		{
 			var homographNum = new ConfigurableDictionaryNode
 			{
@@ -204,15 +257,16 @@ namespace SIL.FieldWorks.XWorks
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { homographNum },
-				FieldDescription = "LexEntry"
+				FieldDescription = "LexEntry",
+				IsEnabled = false
 			};
 			var entryOne = CreateInterestingLexEntry();
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				//SUT
-				Assert.That(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, XHTMLWriter,Cache),
-								Throws.InstanceOf<ArgumentException>().With.Message.Contains("must use an enabled configuration node"));
+				ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, XHTMLWriter,Cache);
+				Assert.IsEmpty(XHTMLStringBuilder.ToString(), "Should not have generated anything for a disabled node");
 			}
 		}
 
@@ -315,10 +369,9 @@ namespace SIL.FieldWorks.XWorks
 			};
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {mainEntryNode});
 			var entryOne = CreateInterestingLexEntry();
-			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-			entryOne.CitationForm.set_String(wsFr, Cache.TsStrFactory.MakeString("FirstHeadword", wsFr));
+			AddHeadwordToEntry(entryOne, "FirstHeadword");
 			var entryTwo = CreateInterestingLexEntry();
-			entryTwo.CitationForm.set_String(wsFr, Cache.TsStrFactory.MakeString("SecondHeadword", wsFr));
+			AddHeadwordToEntry(entryTwo, "SecondHeadword");
 			entryTwo.SensesOS.Clear();
 			var entryOneId = entryOne.Hvo;
 			var entryTwoId = entryTwo.Hvo;
@@ -637,8 +690,7 @@ namespace SIL.FieldWorks.XWorks
 			var entryTwo = CreateInterestingLexEntry();
 			var entryThree = CreateInterestingLexEntry();
 			const string entryThreeForm = "MLHW";
-			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-			entryThree.CitationForm.set_String(wsFr, Cache.TsStrFactory.MakeString(entryThreeForm, wsFr));
+			AddHeadwordToEntry(entryThree, entryThreeForm);
 			var complexEntryRef = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
 			entryTwo.EntryRefsOS.Add(complexEntryRef);
 			complexEntryRef.RefType = LexEntryRefTags.krtComplexForm;
@@ -931,9 +983,65 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void IsMinorEntry_ReturnsTrueForMinorEntry()
+		{
+			var mainEntry = CreateInterestingLexEntry();
+			var minorEntry = CreateInterestingLexEntry();
+			CreateLexEntryRef(mainEntry, minorEntry);
+			// SUT
+			Assert.That(ConfiguredXHTMLGenerator.IsMinorEntry(minorEntry));
+		}
+
+		[Test]
+		public void IsMinorEntry_ReturnsFalseWhenNotAMinorEntry()
+		{
+			var mainEntry = CreateInterestingLexEntry();
+			var minorEntry = CreateInterestingLexEntry();
+			CreateLexEntryRef(mainEntry, minorEntry);
+			// SUT
+			Assert.False(ConfiguredXHTMLGenerator.IsMinorEntry(mainEntry));
+			Assert.False(ConfiguredXHTMLGenerator.IsMinorEntry(Cache.ServiceLocator.GetInstance<IReversalIndexEntryFactory>().Create()));
+		}
+
+		[Test]
 		public void GenerateEntryHtmlWithStyles_NullEntryThrowsArgumentNull()
 		{
 			Assert.Throws<ArgumentNullException>(() => ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(null, new DictionaryConfigurationModel(), null, null));
+		}
+
+		[Test]
+		public void GenerateEntryHtmlWithStyles_MinorEntryUsesMinorEntryFormatting()
+		{
+			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
+																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+			var configModel = CreateInterestingConfigurationModel();
+			var mainEntry = CreateInterestingLexEntry();
+			var minorEntry = CreateInterestingLexEntry();
+			CreateLexEntryRef(mainEntry, minorEntry);
+			SetPublishAsMinorEntry(mainEntry, true);
+			//SUT
+			var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(minorEntry, configModel, pubDecorator, m_mediator);
+			// this test relies on specific test data from CreateInterestingConfigurationModel
+			const string xpath = "/html/body/div[@class='minorentry']/span[@class='entry']";
+			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(xpath, 2);
+		}
+
+		[Test]
+		public void GenerateEntryHtmlWithStyles_DoesNotShowHiddenMinorEntries()
+		{
+			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
+																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+			var configModel = CreateInterestingConfigurationModel();
+			var mainEntry = CreateInterestingLexEntry();
+			var minorEntry = CreateInterestingLexEntry();
+			CreateLexEntryRef(mainEntry, minorEntry);
+			SetPublishAsMinorEntry(minorEntry, false);
+
+			//SUT
+			var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(minorEntry, configModel, pubDecorator, m_mediator);
+			// this test relies on specific test data from CreateInterestingConfigurationModel
+			const string xpath = "/div[@class='minorentry']/span[@class='entry']";
+			AssertThatXmlIn.String(xhtml).HasNoMatchForXpath(xpath);
 		}
 
 		[Test]
@@ -1236,6 +1344,40 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		/// <summary>Creates a DictionaryConfigurationModel with one Main and two Minor Entry nodes, all with enabled HeadWord children</summary>
+		private static DictionaryConfigurationModel CreateInterestingConfigurationModel()
+		{
+			var mainHeadwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				Label = "Headword",
+				CSSClassNameOverride = "entry",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
+				Before = "MainEntry: ",
+				IsEnabled = true
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			var minorEntryNode = mainEntryNode.DeepCloneUnderSameParent();
+			minorEntryNode.CSSClassNameOverride = "minorentry";
+			minorEntryNode.Before = "MinorEntry: ";
+
+			var minorSecondNode = minorEntryNode.DeepCloneUnderSameParent();
+			minorSecondNode.Before = "HalfStep: ";
+
+			return new DictionaryConfigurationModel
+			{
+				AllPublications = true,
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode, minorEntryNode, minorSecondNode }
+			};
+		}
+
 		private ILexEntry CreateInterestingLexEntry()
 		{
 			var factory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
@@ -1245,11 +1387,22 @@ namespace SIL.FieldWorks.XWorks
 			Cache.LangProject.AddToCurrentVernacularWritingSystems(
 				Cache.WritingSystemFactory.get_Engine("fr") as IWritingSystem);
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-			entry.CitationForm.set_String(wsFr, Cache.TsStrFactory.MakeString("Citation", wsFr));
+			AddHeadwordToEntry(entry, "Citation");
 			entry.Comment.set_String(wsEn, Cache.TsStrFactory.MakeString("Comment", wsEn));
 			AddSenseToEntry(entry, "gloss");
 			return entry;
+		}
+
+		private void CreateLexEntryRef(ILexEntry main, ILexEntry subForm)
+		{
+			// create variant type
+			var owningList = Cache.LangProject.LexDbOA.VariantEntryTypesOA;
+			Assert.IsNotNull(owningList, "No VariantEntryTypes property on Lexicon object.");
+			var ws = Cache.DefaultAnalWs;
+			var varType = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(new Guid(), owningList);
+			varType.Name.set_String(ws, "Crazy Variant");
+
+			subForm.MakeVariantOf(main, varType as ILexEntryType);
 		}
 
 		private void AddSenseToEntry(ILexEntry entry, string gloss)
@@ -1259,6 +1412,19 @@ namespace SIL.FieldWorks.XWorks
 			var sense = senseFactory.Create();
 			entry.SensesOS.Add(sense);
 			sense.Gloss.set_String(wsEn, Cache.TsStrFactory.MakeString(gloss, wsEn));
+		}
+
+		private void AddHeadwordToEntry(ILexEntry entry, string gloss)
+		{
+			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
+			// The headword field is special: it uses Citation if available, or LexemeForm if Citation isn't filled in
+			entry.CitationForm.set_String(wsFr, Cache.TsStrFactory.MakeString(gloss, wsFr));
+		}
+
+		private static void SetPublishAsMinorEntry(ILexEntry entry, bool publish)
+		{
+			foreach (var ler in entry.EntryRefsOS)
+				ler.HideMinorEntry = publish ? 0 : 1;
 		}
 
 		public static DictionaryNodeOptions GetWsOptionsForLanguages(string[] languages)
