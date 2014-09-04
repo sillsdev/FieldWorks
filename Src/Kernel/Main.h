@@ -38,39 +38,24 @@ Last reviewed:
 #include <memory>
 #endif
 
-using std::min;
-using std::max;
+#include <algorithm>
+#include <vector>
+
+// We want to use std::min and std::max(for portability), so we have to undef min/max which
+// are defined in WinDef.h
+#undef min
+#undef max
+using namespace std;
 
 /***********************************************************************************************
 	Interfaces.
 ***********************************************************************************************/
 #include "FwKernelTlb.h"
 
-// Special interface mainly used for Graphite engine not defined in an IDH.
-#include "../Graphite/GrEngine/ITraceControl.h"
-#ifndef ITraceControlPtr // for portability I don't think this header defines this.
-	DEFINE_COM_PTR(ITraceControl);
-#endif
-
 /***********************************************************************************************
 	Implementations.
 ***********************************************************************************************/
 #include "LangResource.h"
-
-// For interfacing with Graphite engines:
-namespace gr {
-typedef unsigned char utf8;
-typedef wchar_t utf16;
-typedef unsigned long int utf32;
-#define UtfType LgUtfForm
-}
-// defined in TtSfnt_en.h - but this avoids including all of TtfUtil in the Language.dll
-#define tag_Silf 0x666c6953
-#include "GrResult.h"
-#include "GrUtil.h"
-#include "ITextSource.h"
-#include "IGrJustifier.h"
-#include "FwGr.h"
 
 using namespace fwutil;	// Rect and Point classes
 
@@ -149,6 +134,8 @@ class RomRenderEngine;
 DEFINE_COM_PTR(RomRenderEngine);
 class UniscribeEngine;
 DEFINE_COM_PTR(UniscribeEngine);
+class GraphiteEngine;
+DEFINE_COM_PTR(GraphiteEngine);
 #include "RomRenderSegment.h"
 #include "RomRenderEngine.h"
 #include "LgSimpleEngines.h"
@@ -158,6 +145,8 @@ DEFINE_COM_PTR(UniscribeEngine);
 #endif
 #include "UniscribeSegment.h"
 #include "UniscribeEngine.h"
+#include "GraphiteSegment.h"
+#include "GraphiteEngine.h"
 #include "RegexMatcherWrapper.h"
 
 // Other tools

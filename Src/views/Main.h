@@ -28,12 +28,6 @@ Description:
 #undef max
 using namespace std;
 
-// We want to use std::min and std::max(for portability), so we have to undef min/max which
-// are defined in WinDef.h
-#undef min
-#undef max
-using namespace std;
-
 /* ---------------------
 If you want to show colored boxes around the boxes uncomment the following define:
 ----------------------*/
@@ -177,16 +171,7 @@ class GrEngine;
 #include "VwBaseVirtualHandler.h"
 #include "VwCacheDa.h"
 #include "VwOverlay.h"
-#include "GrResult.h"
-#include "ITextSource.h"
-#include "IGrJustifier.h"
-#include "GrTxtSrc.h"
-#include "GrJustifier.h"
-#include "GraphiteProcess.h"
-#include "FwGraphiteProcess.h"
-#include "FwGr.h"
 #include "VwGraphics.h"
-#include "VwJustifier.h"
 #include "VwPropertyStore.h"
 #include "VwTxtSrc.h"
 #include "VwPrintContext.h"

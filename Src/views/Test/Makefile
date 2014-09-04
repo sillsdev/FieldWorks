@@ -15,8 +15,6 @@ UNIT = $(FWINCLUDE)/unit++
 LIB_UNIT = $(BUILD_ROOT)/Lib/src/unit++/build$(ARCH)
 
 VIEWS_LIB	= $(VIEWS_OBJ)/lib
-GRENG   = $(SRC)/Graphite/lib
-GRFW    = $(SRC)/Graphite/FwOnly
 
 KERNELTEST_SRC = $(KERNEL_SRC)/Test
 
@@ -34,7 +32,7 @@ PACKAGES = glib-2.0 gtk+-2.0 glibmm-2.4 gtkmm-2.4 gdkmm-2.4 cairomm-1.0 pangomm-
 
 INCLUDES := -I$(VIEWS_SRC) -I$(VIEWS_SRC)/lib -I$(VIEWS_SRC)/Test \
 		-I$(GENERIC_SRC) -I$(APPCORE_SRC) -I$(CELLAR_SRC) -I$(KERNEL_SRC) \
-		-I$(GRENG) -I$(GRFW) -I$(KERNELTEST_SRC)\
+		-I$(KERNELTEST_SRC)\
 
 INCLUDES := \
 	$(shell icu-config --cppflags) \
@@ -91,13 +89,10 @@ VIEWS_OBJS = \
 	$(VIEWS_OBJ)/VwTextBoxes.o \
 	$(VIEWS_OBJ)/VwTxtSrc.o \
 	$(VIEWS_LIB)/DisplayCapsInfo.o \
-	$(VIEWS_LIB)/GrJustifier.o \
-	$(VIEWS_LIB)/GrTxtSrc.o \
 	$(VIEWS_LIB)/VwBaseDataAccess.o \
 	$(VIEWS_LIB)/VwBaseVirtualHandler.o \
 	$(VIEWS_LIB)/VwCacheDa.o \
 	$(VIEWS_LIB)/VwColor.o \
-	$(VIEWS_LIB)/VwJustifier.o \
 	$(VIEWS_LIB)/VwUndo.o \
 	$(GENERIC_OBJ)/ModuleEntry.o \
 

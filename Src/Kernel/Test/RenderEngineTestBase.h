@@ -265,6 +265,7 @@ namespace TestFwKernel
 		pchrp->ttvItalic = kttvOff;
 		pchrp->dympHeight = 14000;		// 14pt.
 		wcscpy_s(pchrp->szFontVar, 32, StrUni(L"").Chars());
+		wcscpy_s(pchrp->szFaceName, 32, StrUni(L"<default font>").Chars());
 
 		if (ich < 1000)
 		{
@@ -272,7 +273,6 @@ namespace TestFwKernel
 				pchrp->ws = m_vws[0];
 			else
 				pchrp->ws = 0;
-			wcscpy_s(pchrp->szFaceName, 32, StrUni(L"Lucida Console").Chars());
 			*pichMin = 0;
 			*pichLim = m_stu.Length() < 1000 ? m_stu.Length() : 1000;
 		}
@@ -282,7 +282,6 @@ namespace TestFwKernel
 				pchrp->ws = m_vws[1];
 			else
 				pchrp->ws = g_wsTest;
-			wcscpy_s(pchrp->szFaceName, 32, StrUni(L"Lucida Sans Unicode").Chars());
 			*pichMin = 1000;
 			*pichLim = m_stu.Length() < 2000 ? m_stu.Length() : 2000;
 		}
@@ -292,7 +291,6 @@ namespace TestFwKernel
 				pchrp->ws = m_vws[2];
 			else
 				pchrp->ws = g_wsTest2;
-			wcscpy_s(pchrp->szFaceName, 32, StrUni(L"Times New Roman").Chars());
 			*pichMin = 2000;
 			*pichLim = m_stu.Length();
 		}
@@ -613,18 +611,25 @@ namespace TestFwKernel
 			m_qwsf.Attach(NewObj MockLgWritingSystemFactory);
 			ILgWritingSystemPtr qws;
 			SmartBstr sbstr;
+			SmartBstr fontStr;
 
 			sbstr.Assign(kszEng);
 			m_qwsf->get_Engine(sbstr, &qws);
+			fontStr.Assign(L"Lucida Console");
+			qws->put_DefaultFontName(fontStr);
 			qws->get_Handle(&g_wsEng);
 
 			sbstr.Assign(kszTest);
 			m_qwsf->get_Engine(sbstr, &qws);
+			fontStr.Assign(L"Lucida Sans Unicode");
+			qws->put_DefaultFontName(fontStr);
 			qws->get_Handle(&g_wsTest);
 
 			sbstr.Assign(kszTest2);
 			m_qwsf->get_Engine(sbstr, &qws);
-			qws->get_Handle(&g_wsTest);
+			fontStr.Assign(L"Times New Roman");
+			qws->put_DefaultFontName(fontStr);
+			qws->get_Handle(&g_wsTest2);
 		}
 		virtual void Teardown()
 		{

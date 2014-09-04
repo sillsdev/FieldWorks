@@ -49,8 +49,8 @@
     <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\bin\mkfwk cc</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
     <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">FwKernel.dll</NMakeOutput>
-    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">DEBUG;WIN32;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\Generic;..\..\Output\Common;..\views\lib;..\Graphite\lib;..\Cellar;..\AppCore;..\..\Include;..\DebugProcs;..\..\Lib\src\graphite2\include;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
     <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
     <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
     <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
@@ -72,6 +72,8 @@
     <ClCompile Include="ActionHandler.cpp" />
     <ClCompile Include="DebugReport.cpp" />
     <ClCompile Include="dlldatax.c" />
+    <ClCompile Include="GraphiteEngine.cpp" />
+    <ClCompile Include="GraphiteSegment.cpp" />
     <ClCompile Include="LgIcuCharPropEngine.cpp" />
     <ClCompile Include="LgIcuWrappers.cpp" />
     <ClCompile Include="LgKeymanHandler.cpp" />
@@ -107,6 +109,8 @@
   <ItemGroup>
     <ClInclude Include="ActionHandler.h" />
     <ClInclude Include="DebugReport.h" />
+    <ClInclude Include="GraphiteEngine.h" />
+    <ClInclude Include="GraphiteSegment.h" />
     <ClInclude Include="IcuCleanupManager.h" />
     <ClInclude Include="LangResource.h" />
     <ClInclude Include="LgIcuCharPropEngine.h" />
@@ -130,6 +134,7 @@
     <ClInclude Include="TsTextProps.h" />
     <ClInclude Include="UniscribeEngine.h" />
     <ClInclude Include="UniscribeLinux.h" />
+    <ClInclude Include="UniscribeSegment.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="FwKernel.rc" />

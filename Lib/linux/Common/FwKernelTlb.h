@@ -4,9 +4,9 @@
 
 
  /* File created by MIDL compiler version 7.00.0555 */
-/* at Thu Jan 23 11:04:42 2014
+/* at Tue Sep 30 16:04:47 2014
  */
-/* Compiler settings for C:\fwrepo\fw\Output\Common\FwKernelTlb.idl:
+/* Compiler settings for C:\develop\fwrepo\fw\Output\Common\FwKernelTlb.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 7.00.0555 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
@@ -281,18 +281,6 @@ typedef interface IVwJustifier IVwJustifier;
 #endif 	/* __IVwJustifier_FWD_DEFINED__ */
 
 
-#ifndef __VwJustifier_FWD_DEFINED__
-#define __VwJustifier_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class VwJustifier VwJustifier;
-#else
-typedef struct VwJustifier VwJustifier;
-#endif /* __cplusplus */
-
-#endif 	/* __VwJustifier_FWD_DEFINED__ */
-
-
 #ifndef __ILgSegment_FWD_DEFINED__
 #define __ILgSegment_FWD_DEFINED__
 typedef interface ILgSegment ILgSegment;
@@ -329,34 +317,22 @@ typedef struct UniscribeEngine UniscribeEngine;
 #endif 	/* __UniscribeEngine_FWD_DEFINED__ */
 
 
-#ifndef __FwGrEngine_FWD_DEFINED__
-#define __FwGrEngine_FWD_DEFINED__
+#ifndef __GraphiteEngine_FWD_DEFINED__
+#define __GraphiteEngine_FWD_DEFINED__
 
 #ifdef __cplusplus
-typedef class FwGrEngine FwGrEngine;
+typedef class GraphiteEngine GraphiteEngine;
 #else
-typedef struct FwGrEngine FwGrEngine;
+typedef struct GraphiteEngine GraphiteEngine;
 #endif /* __cplusplus */
 
-#endif 	/* __FwGrEngine_FWD_DEFINED__ */
+#endif 	/* __GraphiteEngine_FWD_DEFINED__ */
 
 
 #ifndef __IRenderingFeatures_FWD_DEFINED__
 #define __IRenderingFeatures_FWD_DEFINED__
 typedef interface IRenderingFeatures IRenderingFeatures;
 #endif 	/* __IRenderingFeatures_FWD_DEFINED__ */
-
-
-#ifndef __FwGraphiteProcess_FWD_DEFINED__
-#define __FwGraphiteProcess_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class FwGraphiteProcess FwGraphiteProcess;
-#else
-typedef struct FwGraphiteProcess FwGraphiteProcess;
-#endif /* __cplusplus */
-
-#endif 	/* __FwGraphiteProcess_FWD_DEFINED__ */
 
 
 #ifndef __ILgCharacterPropertyEngine_FWD_DEFINED__
@@ -1184,6 +1160,13 @@ typedef /* [public][public] */ struct __MIDL___MIDL_itf_FwKernelTlb_0001_0079_00
     ScriptDirCode sdcOuter;
     } 	LgParaRenderProps;
 
+typedef /* [public][public] */ struct __MIDL___MIDL_itf_FwKernelTlb_0001_0079_0003
+    {
+    OLECHAR glyphIndex;
+    int x;
+    int y;
+    } 	GlyphInfo;
+
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 ISimpleInit
 ,
@@ -1213,11 +1196,6 @@ GENERIC_DECLARE_SMART_INTERFACE_PTR(
 IVwJustifier
 ,
 22D5E030-5239-4924-BF1B-6B4F2CBBABA5
-);
-ATTACH_GUID_TO_CLASS(class,
-D3E3ADB7-94CB-443B-BB8F-82A03BF850F3
-,
-VwJustifier
 );
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 ILgSegment
@@ -1252,9 +1230,9 @@ ATTACH_GUID_TO_CLASS(class,
 UniscribeEngine
 );
 ATTACH_GUID_TO_CLASS(class,
-F39F9433-F05A-4A19-8D1E-3C55DD607633
+62EBEEBF-14EA-43D9-A27A-EF013E14145A
 ,
-FwGrEngine
+GraphiteEngine
 );
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 IRenderingFeatures
@@ -1265,11 +1243,6 @@ GENERIC_DECLARE_SMART_INTERFACE_PTR(
 IJustifyingRenderer
 ,
 1141174B-923F-4C43-BA43-8A326B76A3F2
-);
-ATTACH_GUID_TO_CLASS(class,
-B56AEFB9-96B4-4415-8415-64CBF3826704
-,
-FwGraphiteProcess
 );
 
 
@@ -5327,14 +5300,11 @@ TsMultiString;
             /* [size_is][in] */ const OLECHAR *prgch,
             /* [in] */ int xStretch) = 0;
         
-        virtual HRESULT STDMETHODCALLTYPE DrawTextExt( 
+        virtual HRESULT STDMETHODCALLTYPE DrawGlyphs( 
             /* [in] */ int x,
             /* [in] */ int y,
-            /* [in] */ int cch,
-            /* [size_is][in] */ const OLECHAR *prgchw,
-            /* [in] */ UINT uOptions,
-            /* [in] */ const RECT *prect,
-            /* [in] */ int *prgdx) = 0;
+            /* [in] */ int cgi,
+            /* [size_is][in] */ const GlyphInfo *prggi) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE GetTextExtent( 
             /* [in] */ int cch,
@@ -5369,14 +5339,8 @@ TsMultiString;
         
         virtual HRESULT STDMETHODCALLTYPE GetFontData( 
             /* [in] */ int nTableId,
-            /* [out] */ int *pcbTableSz,
-            /* [retval][out] */ BSTR *pbstrTableData) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetFontDataRgch( 
-            /* [in] */ int nTableId,
-            /* [out] */ int *pcbTableSz,
-            /* [size_is][out] */ OLECHAR *prgch,
-            /* [in] */ int cchMax) = 0;
+            /* [out][in] */ int *pcbTableSz,
+            /* [size_is][out] */ BYTE *prgb) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE XYFromGlyphPoint( 
             /* [in] */ int chw,
@@ -5519,15 +5483,12 @@ TsMultiString;
             /* [size_is][in] */ const OLECHAR *prgch,
             /* [in] */ int xStretch);
         
-        HRESULT ( STDMETHODCALLTYPE *DrawTextExt )( 
+        HRESULT ( STDMETHODCALLTYPE *DrawGlyphs )( 
             IVwGraphics * This,
             /* [in] */ int x,
             /* [in] */ int y,
-            /* [in] */ int cch,
-            /* [size_is][in] */ const OLECHAR *prgchw,
-            /* [in] */ UINT uOptions,
-            /* [in] */ const RECT *prect,
-            /* [in] */ int *prgdx);
+            /* [in] */ int cgi,
+            /* [size_is][in] */ const GlyphInfo *prggi);
         
         HRESULT ( STDMETHODCALLTYPE *GetTextExtent )( 
             IVwGraphics * This,
@@ -5568,15 +5529,8 @@ TsMultiString;
         HRESULT ( STDMETHODCALLTYPE *GetFontData )( 
             IVwGraphics * This,
             /* [in] */ int nTableId,
-            /* [out] */ int *pcbTableSz,
-            /* [retval][out] */ BSTR *pbstrTableData);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetFontDataRgch )( 
-            IVwGraphics * This,
-            /* [in] */ int nTableId,
-            /* [out] */ int *pcbTableSz,
-            /* [size_is][out] */ OLECHAR *prgch,
-            /* [in] */ int cchMax);
+            /* [out][in] */ int *pcbTableSz,
+            /* [size_is][out] */ BYTE *prgb);
         
         HRESULT ( STDMETHODCALLTYPE *XYFromGlyphPoint )( 
             IVwGraphics * This,
@@ -5715,8 +5669,8 @@ TsMultiString;
 #define IVwGraphics_DrawText(This,x,y,cch,prgch,xStretch)	\
     ( (This)->lpVtbl -> DrawText(This,x,y,cch,prgch,xStretch) ) 
 
-#define IVwGraphics_DrawTextExt(This,x,y,cch,prgchw,uOptions,prect,prgdx)	\
-    ( (This)->lpVtbl -> DrawTextExt(This,x,y,cch,prgchw,uOptions,prect,prgdx) ) 
+#define IVwGraphics_DrawGlyphs(This,x,y,cgi,prggi)	\
+    ( (This)->lpVtbl -> DrawGlyphs(This,x,y,cgi,prggi) ) 
 
 #define IVwGraphics_GetTextExtent(This,cch,prgch,px,py)	\
     ( (This)->lpVtbl -> GetTextExtent(This,cch,prgch,px,py) ) 
@@ -5733,11 +5687,8 @@ TsMultiString;
 #define IVwGraphics_GetGlyphMetrics(This,chw,psBoundingWidth,pyBoundingHeight,pxBoundingX,pyBoundingY,pxAdvanceX,pyAdvanceY)	\
     ( (This)->lpVtbl -> GetGlyphMetrics(This,chw,psBoundingWidth,pyBoundingHeight,pxBoundingX,pyBoundingY,pxAdvanceX,pyAdvanceY) ) 
 
-#define IVwGraphics_GetFontData(This,nTableId,pcbTableSz,pbstrTableData)	\
-    ( (This)->lpVtbl -> GetFontData(This,nTableId,pcbTableSz,pbstrTableData) ) 
-
-#define IVwGraphics_GetFontDataRgch(This,nTableId,pcbTableSz,prgch,cchMax)	\
-    ( (This)->lpVtbl -> GetFontDataRgch(This,nTableId,pcbTableSz,prgch,cchMax) ) 
+#define IVwGraphics_GetFontData(This,nTableId,pcbTableSz,prgb)	\
+    ( (This)->lpVtbl -> GetFontData(This,nTableId,pcbTableSz,prgb) ) 
 
 #define IVwGraphics_XYFromGlyphPoint(This,chw,nPoint,pxRet,pyRet)	\
     ( (This)->lpVtbl -> XYFromGlyphPoint(This,chw,nPoint,pxRet,pyRet) ) 
@@ -6128,15 +6079,12 @@ TsMultiString;
             /* [size_is][in] */ const OLECHAR *prgch,
             /* [in] */ int xStretch);
         
-        HRESULT ( STDMETHODCALLTYPE *DrawTextExt )( 
+        HRESULT ( STDMETHODCALLTYPE *DrawGlyphs )( 
             IVwGraphicsWin32 * This,
             /* [in] */ int x,
             /* [in] */ int y,
-            /* [in] */ int cch,
-            /* [size_is][in] */ const OLECHAR *prgchw,
-            /* [in] */ UINT uOptions,
-            /* [in] */ const RECT *prect,
-            /* [in] */ int *prgdx);
+            /* [in] */ int cgi,
+            /* [size_is][in] */ const GlyphInfo *prggi);
         
         HRESULT ( STDMETHODCALLTYPE *GetTextExtent )( 
             IVwGraphicsWin32 * This,
@@ -6177,15 +6125,8 @@ TsMultiString;
         HRESULT ( STDMETHODCALLTYPE *GetFontData )( 
             IVwGraphicsWin32 * This,
             /* [in] */ int nTableId,
-            /* [out] */ int *pcbTableSz,
-            /* [retval][out] */ BSTR *pbstrTableData);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetFontDataRgch )( 
-            IVwGraphicsWin32 * This,
-            /* [in] */ int nTableId,
-            /* [out] */ int *pcbTableSz,
-            /* [size_is][out] */ OLECHAR *prgch,
-            /* [in] */ int cchMax);
+            /* [out][in] */ int *pcbTableSz,
+            /* [size_is][out] */ BYTE *prgb);
         
         HRESULT ( STDMETHODCALLTYPE *XYFromGlyphPoint )( 
             IVwGraphicsWin32 * This,
@@ -6344,8 +6285,8 @@ TsMultiString;
 #define IVwGraphicsWin32_DrawText(This,x,y,cch,prgch,xStretch)	\
     ( (This)->lpVtbl -> DrawText(This,x,y,cch,prgch,xStretch) ) 
 
-#define IVwGraphicsWin32_DrawTextExt(This,x,y,cch,prgchw,uOptions,prect,prgdx)	\
-    ( (This)->lpVtbl -> DrawTextExt(This,x,y,cch,prgchw,uOptions,prect,prgdx) ) 
+#define IVwGraphicsWin32_DrawGlyphs(This,x,y,cgi,prggi)	\
+    ( (This)->lpVtbl -> DrawGlyphs(This,x,y,cgi,prggi) ) 
 
 #define IVwGraphicsWin32_GetTextExtent(This,cch,prgch,px,py)	\
     ( (This)->lpVtbl -> GetTextExtent(This,cch,prgch,px,py) ) 
@@ -6362,11 +6303,8 @@ TsMultiString;
 #define IVwGraphicsWin32_GetGlyphMetrics(This,chw,psBoundingWidth,pyBoundingHeight,pxBoundingX,pyBoundingY,pxAdvanceX,pyAdvanceY)	\
     ( (This)->lpVtbl -> GetGlyphMetrics(This,chw,psBoundingWidth,pyBoundingHeight,pxBoundingX,pyBoundingY,pxAdvanceX,pyAdvanceY) ) 
 
-#define IVwGraphicsWin32_GetFontData(This,nTableId,pcbTableSz,pbstrTableData)	\
-    ( (This)->lpVtbl -> GetFontData(This,nTableId,pcbTableSz,pbstrTableData) ) 
-
-#define IVwGraphicsWin32_GetFontDataRgch(This,nTableId,pcbTableSz,prgch,cchMax)	\
-    ( (This)->lpVtbl -> GetFontDataRgch(This,nTableId,pcbTableSz,prgch,cchMax) ) 
+#define IVwGraphicsWin32_GetFontData(This,nTableId,pcbTableSz,prgb)	\
+    ( (This)->lpVtbl -> GetFontData(This,nTableId,pcbTableSz,prgb) ) 
 
 #define IVwGraphicsWin32_XYFromGlyphPoint(This,chw,nPoint,pxRet,pyRet)	\
     ( (This)->lpVtbl -> XYFromGlyphPoint(This,chw,nPoint,pxRet,pyRet) ) 
@@ -6831,14 +6769,6 @@ VwGraphicsWin32;
 
 #endif 	/* __IVwJustifier_INTERFACE_DEFINED__ */
 
-
-#define CLSID_VwJustifier __uuidof(VwJustifier)
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("D3E3ADB7-94CB-443B-BB8F-82A03BF850F3")
-VwJustifier;
-#endif
 
 #ifndef __ILgSegment_INTERFACE_DEFINED__
 #define __ILgSegment_INTERFACE_DEFINED__
@@ -7710,12 +7640,12 @@ class DECLSPEC_UUID("1287735C-3CAD-41CD-986C-39D7C0DF0314")
 UniscribeEngine;
 #endif
 
-#define CLSID_FwGrEngine __uuidof(FwGrEngine)
+#define CLSID_GraphiteEngine __uuidof(GraphiteEngine)
 
 #ifdef __cplusplus
 
-class DECLSPEC_UUID("F39F9433-F05A-4A19-8D1E-3C55DD607633")
-FwGrEngine;
+class DECLSPEC_UUID("62EBEEBF-14EA-43D9-A27A-EF013E14145A")
+GraphiteEngine;
 #endif
 
 #ifndef __IRenderingFeatures_INTERFACE_DEFINED__
@@ -7848,14 +7778,6 @@ FwGrEngine;
 
 #endif 	/* __IRenderingFeatures_INTERFACE_DEFINED__ */
 
-
-#define CLSID_FwGraphiteProcess __uuidof(FwGraphiteProcess)
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("B56AEFB9-96B4-4415-8415-64CBF3826704")
-FwGraphiteProcess;
-#endif
 
 #ifndef __ILgCharacterPropertyEngine_INTERFACE_DEFINED__
 #define __ILgCharacterPropertyEngine_INTERFACE_DEFINED__

@@ -9,6 +9,8 @@ BUILD_PRODUCT=testFwKernel
 BUILD_EXTENSION=exe
 BUILD_REGSVR=0
 
+DEFS=$(DEFS) /DGRAPHITE2_STATIC
+
 !INCLUDE "$(BUILD_ROOT)\bld\_init.mak"
 
 UNITPP_INC=$(BUILD_ROOT)\Include\unit++
@@ -18,18 +20,16 @@ GENERIC_SRC=$(BUILD_ROOT)\Src\Generic
 APPCORE_SRC=$(BUILD_ROOT)\Src\AppCore
 DEBUGPROCS_SRC=$(BUILD_ROOT)\src\DebugProcs
 CELLAR_SRC=$(BUILD_ROOT)\Src\Cellar
-GRUTIL_LIB=$(BUILD_ROOT)\Src\Graphite\lib
-TTFUTIL_LIB=$(BUILD_ROOT)\Src\Graphite\TtfUtil
 VIEWS_LIB=$(BUILD_ROOT)\Src\Views\lib
-GRFW_SRC=$(BUILD_ROOT)\Src\Graphite\FwOnly
+GR2_INC=$(BUILD_ROOT)\Lib\src\graphite2\include
 
 # Set the USER_INCLUDE environment variable.
-UI=$(UNITPP_INC);$(FWKERNELTEST_SRC);$(FWKERNEL_SRC);$(GENERIC_SRC);$(APPCORE_SRC);$(DEBUGPROCS_SRC);$(CELLAR_SRC)
+UI=$(UNITPP_INC);$(FWKERNELTEST_SRC);$(FWKERNEL_SRC);$(GENERIC_SRC);$(APPCORE_SRC);$(DEBUGPROCS_SRC);$(CELLAR_SRC);$(VIEWS_LIB);$(GR2_INC)
 
 !IF "$(USER_INCLUDE)"!=""
-USER_INCLUDE=$(UI);$(USER_INCLUDE);$(GRUTIL_LIB);$(TTFUTIL_LIB);$(VIEWS_LIB);$(GRFW_SRC)
+USER_INCLUDE=$(UI);$(USER_INCLUDE)
 !ELSE
-USER_INCLUDE=$(UI);$(GRUTIL_LIB);$(TTFUTIL_LIB);$(VIEWS_LIB);$(GRFW_SRC)
+USER_INCLUDE=$(UI)
 !ENDIF
 
 !INCLUDE "$(BUILD_ROOT)\bld\_init.mak"
@@ -42,7 +42,7 @@ RCFILE=FwKernel.rc
 
 LINK_OPTS=$(LINK_OPTS:/subsystem:windows=/subsystem:console) /LIBPATH:"$(BUILD_ROOT)\Lib\$(BUILD_CONFIG)"
 CPPUNIT_LIBS=unit++.lib
-LINK_LIBS=$(CPPUNIT_LIBS) Generic.lib xmlparse.lib Usp10.lib $(LINK_LIBS)
+LINK_LIBS=$(CPPUNIT_LIBS) Generic.lib xmlparse.lib Usp10.lib graphite2.lib $(LINK_LIBS)
 
 # === Object Lists ===
 
@@ -63,6 +63,8 @@ OBJ_KERNELTESTSUITE=\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\UniscribeSegment.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\RomRenderEngine.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\RomRenderSegment.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\GraphiteEngine.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\GraphiteSegment.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\LgSimpleEngines.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\LgIcuCharPropEngine.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\LgUnicodeCollater.obj\
@@ -107,6 +109,7 @@ $(FWKERNELTEST_SRC)\Collection.cpp: $(FWKERNELTEST_SRC)\testFwKernel.h\
  $(FWKERNELTEST_SRC)\TestLgIcuCharPropEngine.h\
  $(FWKERNELTEST_SRC)\TestUniscribeEngine.h\
  $(FWKERNELTEST_SRC)\TestRomRenderEngine.h\
+ $(FWKERNELTEST_SRC)\TestGraphiteEngine.h\
  $(FWKERNELTEST_SRC)\RenderEngineTestBase.h
 	$(DISPLAY) Collecting tests for $(BUILD_PRODUCT).$(BUILD_EXTENSION)
 	$(COLLECT) $** $(FWKERNELTEST_SRC)\Collection.cpp

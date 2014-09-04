@@ -5,6 +5,7 @@
 	<UsingTask TaskName="RegisterForTests" AssemblyFile="FwBuildTasks.dll"/>
 	<UsingTask TaskName="DownloadFile" AssemblyFile="FwBuildTasks.dll"/>
 	<UsingTask TaskName="Unzip" AssemblyFile="FwBuildTasks.dll"/>
+	<UsingTask TaskName="ForceDelete" AssemblyFile="FwBuildTasks.dll"/>
 
 	<!-- Make all of FieldWorks. -->
 	<Target Name="mkall" DependsOnTargets="initLinux;initWindows;LinuxRegistry;allCpp;allCsharp;CopyDlls;ensureTLBsUpToDate">
@@ -15,13 +16,13 @@
 		<GenerateNUnitReports Condition="'$(action)'=='test'" ReportFiles="@(NUnitReportFiles)"/>
 	</Target>
 
-	<Target Name="allCpp" DependsOnTargets="DebugProcs;GenericLib;testGenericLib;FwKernel;testFwKernel;Views;testViews;GrEngine">
+	<Target Name="allCpp" DependsOnTargets="DebugProcs;GenericLib;testGenericLib;FwKernel;testFwKernel;Views;testViews">
 		<CreateItem Include="$(dir-outputBase)/*.compmap">
 			<Output TaskParameter="Include" ItemName="CompMapFiles"/>
 		</CreateItem>
 		<CatenateFiles SourceFiles="@(CompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
 	</Target>
-	<Target Name="allCppNoTest" DependsOnTargets="DebugProcs;GenericLib;FwKernel;Views;GrEngine">
+	<Target Name="allCppNoTest" DependsOnTargets="DebugProcs;GenericLib;FwKernel;Views">
 		<CreateItem Include="$(dir-outputBase)/*.compmap">
 			<Output TaskParameter="Include" ItemName="CompMapFiles"/>
 		</CreateItem>
@@ -31,11 +32,11 @@
 	<ItemGroup>
 		<Fragments Include="$(dir-fwdistfiles)/*.fragment.manifest"/>
 	</ItemGroup>
-	<Target Name="regFreeCpp" DependsOnTargets="FwKernel;GrEngine;Views"
-		AfterTargets="FwKernel;GrEngine;Views" Condition="'$(OS)'=='Windows_NT'">
+	<Target Name="regFreeCpp" DependsOnTargets="FwKernel;Views"
+		AfterTargets="FwKernel;Views" Condition="'$(OS)'=='Windows_NT'">
 		<RegFree Executable="$(dir-outputBase)/FwKernel.dll" Output="$(dir-outputBase)/FieldWorks.Tests.manifest"
-			Dlls="$(dir-outputBase)/FwKernel.dll;$(dir-outputBase)/Graphite.dll;$(dir-outputBase)/Views.dll"
-			Fragments="@(Fragments)" NoTypeLib="$(dir-outputBase)/Graphite.dll"/>
+			Dlls="$(dir-outputBase)/FwKernel.dll;$(dir-outputBase)/Views.dll"
+			Fragments="@(Fragments)"/>
 	</Target>
 
 	<Target Name="DebugProcs" DependsOnTargets="initLinux;initWindows">
@@ -66,7 +67,7 @@
 		<Message Text="Finished building GenericLib."/>
 	</Target>
 
-	<Target Name="testGenericLib" DependsOnTargets="GenericLib;FwKernel;Views;GrEngine">
+	<Target Name="testGenericLib" DependsOnTargets="GenericLib;FwKernel;Views">
 		<Make Condition="'$(OS)'=='Windows_NT'"
 				Makefile="$(fwrt)\Src\Generic\Test\testGenericLib.mak"
 				Configuration="$(config-capital)"
@@ -78,7 +79,7 @@
 				BuildRoot="$(fwrt)"
 				WorkingDirectory="$(fwrt)/Src/Generic/Test" ContinueOnError="true"/>
 		<RegFree Executable="$(dir-outputBase)\testGenericLib.exe"
-				DependentAssemblies="$(dir-outputBase)\FwKernel.X.manifest;$(dir-outputBase)\Graphite.X.manifest;$(dir-outputBase)\Views.X.manifest"
+				DependentAssemblies="$(dir-outputBase)\FwKernel.X.manifest;$(dir-outputBase)\Views.X.manifest"
 				Condition="'$(OS)'=='Windows_NT'"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testGenericLib.exe -manifest $(dir-outputBase)\testGenericLib.exe.manifest"
 				Condition="'$(OS)'=='Windows_NT'"/>
@@ -90,22 +91,6 @@
 		</Unitpp>
 		<Message Text="Finished building testGenericLib." Condition="'$(action)'!='test'"/>
 		<Message Text="Finished building testGenericLib and running tests." Condition="'$(action)'=='test'"/>
-	</Target>
-
-	<Target Name="GrEngine" DependsOnTargets="GenericLib;FwKernel;Views">
-		<Make Condition="'$(OS)'=='Windows_NT'"
-			Makefile="$(fwrt)\Src\Graphite\GrEngine\GrEngine.mak"
-			Configuration="$(config-capital)"
-			BuildRoot="$(fwrt)"
-			WorkingDirectory="$(fwrt)\Src\Graphite\GrEngine"/>
-		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
-			Makefile="$(fwrt)/Src/Graphite/GrEngine/Makefile"
-			Configuration="$(config-capital)" Target="$(make-target)"
-			BuildRoot="$(fwrt)"
-			WorkingDirectory="$(fwrt)/Src/Graphite/GrEngine"/>
-		<RegFree Executable="$(dir-outputBase)\Graphite.dll" NoTypeLib="$(dir-outputBase)\Graphite.dll" Output="$(dir-outputBase)\Graphite.X.manifest"
-			Condition="'$(OS)'=='Windows_NT'" />
-		<Message Text="Finished building GrEngine."/>
 	</Target>
 
 	<Target Name="FwKernel" DependsOnTargets="GenericLib;GenerateCellarConstants;AppCore;createCompMaps;ManagedLgIcuCollator">
@@ -124,7 +109,7 @@
 		<Message Text="Finished building FwKernel."/>
 	</Target>
 
-	<Target Name="testFwKernel" DependsOnTargets="GenericLib;FwKernel;Views;GrEngine">
+	<Target Name="testFwKernel" DependsOnTargets="GenericLib;FwKernel;Views">
 		<Make Condition="'$(OS)'=='Windows_NT'"
 				Makefile="$(fwrt)\Src\Kernel\Test\testFwKernel.mak"
 				Configuration="$(config-capital)"
@@ -136,7 +121,7 @@
 				BuildRoot="$(fwrt)"
 				WorkingDirectory="$(fwrt)/Src/Kernel/Test" ContinueOnError="true"/>
 		<RegFree Executable="$(dir-outputBase)\testFwKernel.exe"
-				DependentAssemblies="$(dir-outputBase)\FwKernel.X.manifest;$(dir-outputBase)\Graphite.X.manifest;$(dir-outputBase)\Views.X.manifest"
+				DependentAssemblies="$(dir-outputBase)\FwKernel.X.manifest;$(dir-outputBase)\Views.X.manifest"
 				Condition="'$(OS)'=='Windows_NT'"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testFwKernel.exe -manifest $(dir-outputBase)\testFwKernel.exe.manifest"
 				Condition="'$(OS)'=='Windows_NT'"/>
@@ -179,7 +164,7 @@
 		<Message Text="Finished building Views."/>
 	</Target>
 
-	<Target Name="testViews" DependsOnTargets="GenericLib;Views;SimpleRootSite;FwKernel;GrEngine">
+	<Target Name="testViews" DependsOnTargets="GenericLib;Views;SimpleRootSite;FwKernel">
 		<Make Condition="'$(OS)'=='Windows_NT'"
 				Makefile="$(fwrt)\Src\views\Test\testViews.mak"
 				Configuration="$(config-capital)"
@@ -191,7 +176,7 @@
 				BuildRoot="$(fwrt)"
 				WorkingDirectory="$(fwrt)/Src/views/Test" ContinueOnError="true"/>
 		<RegFree Executable="$(dir-outputBase)\testViews.exe"
-				DependentAssemblies="$(dir-outputBase)\FwKernel.X.manifest;$(dir-outputBase)\Graphite.X.manifest;$(dir-outputBase)\Views.X.manifest"
+				DependentAssemblies="$(dir-outputBase)\FwKernel.X.manifest;$(dir-outputBase)\Views.X.manifest"
 				Condition="'$(OS)'=='Windows_NT'"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testViews.exe -manifest $(dir-outputBase)\testViews.exe.manifest"
 				Condition="'$(OS)'=='Windows_NT'"/>
@@ -274,8 +259,6 @@
 			fail on failed tests -->
 		<Warning Condition="'@(FailedSuites)'!=''" Text="The following projects had failing tests: @(FailedSuites)" />
 	</Target>
-
-	<UsingTask TaskName="ForceDelete" AssemblyFile="FwBuildTasks.dll"/>
 
 	<ItemGroup>
 		<GeneratedFiles Include="$(fwrt)/Src/**/Collection.cpp"/>
@@ -481,9 +464,7 @@
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<Copy SourceFiles="$(fwrt)/Downloads/protobuf-net/Full/mono/protobuf-net.dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Unix'"/>
-		<!-- Manually delete directory contents in Linux until upgrade xbuild to include fix in mono.git 7c4e365 -->
-		<Exec Command="rm -rf $(fwrt)/Downloads/protobuf-net/*" Condition="'$(OS)'=='Unix'"/>
-		<RemoveDir Directories="$(fwrt)/Downloads/protobuf-net/" />
+		<ForceDelete Files="$(fwrt)/Downloads/protobuf-net/" />
 		<!-- Copy the downloaded artifacts -->
 		<Copy SourceFiles="@(DownloadedFiles)" DestinationFolder="$(dir-outputBase)"
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>

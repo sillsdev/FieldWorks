@@ -34,8 +34,13 @@ Original location: Src/views/lib/VwGraphics.cpp
 #include <vector>
 
 #include <pango/pangocairo.h>
+#include <pango/pangofc-font.h>
 /* includes gdiplus namespace - contains internal structures from mono gdi-plus implementation*/
 #include "GdiPlusMono.h"
+
+#include <ft2build.h>
+#include FT_FREETYPE_H
+#include FT_TRUETYPE_TABLES_H
 
 #include <assert.h>
 
@@ -1293,6 +1298,175 @@ HRESULT VwGraphicsCairo::GetTextStyleContext(HDC * pContext)
 	END_COM_METHOD(g_fact, IID_IVwGraphics);
 }
 
+/*----------------------------------------------------------------------------------------------
+	Draw a list of glyphs at the specified position. The y value corresponds to the baseline of
+	the glyphs. Each glyph specifies a vertical and horizontal offset from the original
+	position. The glyphs should be in visual order.
+----------------------------------------------------------------------------------------------*/
+HRESULT VwGraphicsCairo::DrawGlyphs(int x, int y, int cgi, const GlyphInfo* prggi)
+{
+#if DEBUG
+	if (m_loggingFile != NULL)
+	{
+		fprintf(m_loggingFile, "DrawGlyphs %p %d %d %d {", this, x, y, cgi);
+		for (int i = 0; i < cgi; i++)
+		{
+			if (i != 0)
+				fprintf(m_loggingFile, " ");
+			fprintf(m_loggingFile, "{%d %d %d}", prggi[i].glyphIndex, prggi[i].x, prggi[i].y);
+		}
+		fprintf(m_loggingFile, "}\n");
+		fflush(m_loggingFile);
+	}
+#endif
+ BEGIN_COM_METHOD;
+	RECT rcClip;
+	MyGetClipRect(&rcClip);
+	// First, see if the text to be drawn is above or below the current clipping rectangle
+	if (y > rcClip.bottom || y + (m_chrp.dympHeight * GetYInch() / kdzmpInch) < rcClip.top) {
+		return S_OK;
+	}
+
+	CheckDc();
+
+	int pangoX, pangoY; // store the offset that pango uses to draw text.
+	int ascent;
+	int descent;
+	FontAscentAndDescent(&ascent, &descent);
+	int fontHeight = ascent + descent;
+
+	// Only draw text thats in the clipping region, by setting a cairo clipping region.
+	m_ctxt->reset_clip();
+	m_ctxt->rectangle(rcClip.left, rcClip.top, rcClip.right - rcClip.left, rcClip.bottom - rcClip.top);
+	m_ctxt->clip();
+
+	if (m_fontMapForFontContext == NULL)
+		m_fontMapForFontContext = pango_cairo_font_map_get_default();
+
+	if (m_fontContext == NULL)
+		m_fontContext = pango_font_map_create_context(m_fontMapForFontContext);
+
+	PangoFont* font = pango_context_load_font(m_fontContext, m_pangoFontDescription);
+
+	PangoGlyphString * glyphs = pango_glyph_string_new();
+	pango_glyph_string_set_size(glyphs, cgi);
+
+	for (int i = 0; i < cgi; i++)
+	{
+		glyphs->glyphs[i].glyph = prggi[i].glyphIndex;
+		glyphs->glyphs[i].geometry.width = 0;
+		glyphs->glyphs[i].geometry.x_offset = prggi[i].x * PANGO_SCALE;
+		glyphs->glyphs[i].geometry.y_offset = (prggi[i].y + ascent) * PANGO_SCALE;
+	}
+
+	// Draw background if required
+	if (!m_textBackColor.m_transparent)
+	{
+		SetCairoColor(m_ctxt, &m_textBackColor);
+
+		PangoRectangle rect;
+		pango_glyph_string_extents(glyphs, font, NULL, &rect);
+
+		m_ctxt->rectangle(x, y, rect.width, rect.height);
+
+		m_ctxt->fill();
+	}
+
+	if (!m_textColor.m_transparent)
+	{
+		SetCairoColor(m_ctxt, &m_textColor);
+		m_ctxt->move_to(x, y);
+
+		pango_cairo_show_glyph_string(m_ctxt.operator->()->cobj(), font, glyphs);
+	}
+
+	pango_glyph_string_free(glyphs);
+	g_object_unref(font);
+
+	// Undo the cairo clipping region.
+	m_ctxt->reset_clip();
+	END_COM_METHOD(g_fact, IID_IVwGraphics);
+}
+
+HRESULT VwGraphicsCairo::GetTextLeadWidth(int cch, const OLECHAR * prgch, int ich, int dxStretch,
+		int * pdx)
+{
+#if DEBUG
+	if (m_loggingFile != NULL)
+	{
+		UnicodeString8 text(prgch, (int)cch);
+		fprintf(m_loggingFile, "GetTextLeadWidth %p %d \"%s\" %d %d\n", this, cch, text.c_str(), ich, dxStretch);
+		fflush(m_loggingFile);
+	}
+#endif
+ BEGIN_COM_METHOD;
+
+	int x = 0, y = 0;
+	GetTextExtent(ich, prgch, &x, &y);
+	if (dxStretch)
+	{
+		// TODO-Linux: Review - get the break char from the font.
+		//
+		const OLECHAR BreakChar = ' ';
+		double cbrk = 0;
+		double cbrkPrev = 0;
+		const OLECHAR * pch = prgch;
+		for (int i = 0; i < cch; i++, pch++)
+		{
+
+			if (*pch == BreakChar)
+			{
+				cbrk++;
+				if (i < ich)
+					cbrkPrev++;
+			}
+		}
+		if (!cbrkPrev)
+		{
+			// justification can't alter things
+			*pdx = x;
+			return S_OK;
+		}
+		int dxStetchPrev = ((double)dxStretch) * cbrkPrev / cbrk; // even distribution of extra space
+		*pdx = x + dxStetchPrev;
+		return S_OK;
+	}
+	else
+	{
+		*pdx = x;
+		return S_OK;
+	}
+
+	return S_OK;
+ END_COM_METHOD(g_fact, IID_IVwGraphics);
+}
+
+HRESULT VwGraphicsCairo::GetFontData(int nTableId, int* pcbTableSz, BYTE* prgb)
+{
+#if DEBUG
+	if (m_loggingFile != NULL)
+	{
+		fprintf(m_loggingFile, "GetFontData %p %d %d\n", this, nTableId, *pcbTableSz);
+		fflush(m_loggingFile);
+	}
+#endif
+ BEGIN_COM_METHOD;
+	if (m_fontMapForFontContext == NULL)
+		m_fontMapForFontContext = pango_cairo_font_map_get_default();
+
+	if (m_fontContext == NULL)
+		m_fontContext = pango_font_map_create_context (m_fontMapForFontContext);
+
+	PangoFcFont * font = (PangoFcFont *) pango_context_load_font(m_fontContext, m_pangoFontDescription);
+	FT_Face ftface = pango_fc_font_lock_face(font);
+	FT_ULong length = *pcbTableSz;
+	FT_Load_Sfnt_Table(ftface, nTableId, 0, prgb, &length);
+	*pcbTableSz = length;
+	pango_fc_font_unlock_face(font);
+	g_object_unref(font);
+ END_COM_METHOD(g_fact, IID_IVwGraphics);
+}
+
 /***********************************************************************************************
 	Utility methods
 ***********************************************************************************************/
@@ -1380,66 +1554,6 @@ bool VwGraphicsCairo::rectIntersect(RECT* a, RECT* b) {
 }
 
 // Unused in FieldWorks
-HRESULT VwGraphicsCairo::DrawTextExt(int, int, int, const OLECHAR *, UINT, const RECT *, int *)
-{
-	BEGIN_COM_METHOD;
-		ThrowHr(E_NOTIMPL);
-	END_COM_METHOD(g_fact, IID_IVwGraphics);
-}
-
-HRESULT VwGraphicsCairo::GetTextLeadWidth(int cch, const OLECHAR * prgch, int ich, int dxStretch,
-		int * pdx)
-{
-#if DEBUG
-	if (m_loggingFile != NULL)
-	{
-		UnicodeString8 text(prgch, (int)cch);
-		fprintf(m_loggingFile, "GetTextLeadWidth %p %d \"%s\" %d %d\n", this, cch, text.c_str(), ich, dxStretch);
-		fflush(m_loggingFile);
-	}
-#endif
- BEGIN_COM_METHOD;
-
-	int x = 0, y = 0;
-	GetTextExtent(ich, prgch, &x, &y);
-	if (dxStretch)
-	{
-		// TODO-Linux: Review - get the break char from the font.
-		//
-		const OLECHAR BreakChar = ' ';
-		double cbrk = 0;
-		double cbrkPrev = 0;
-		const OLECHAR * pch = prgch;
-		for (int i = 0; i < cch; i++, pch++)
-		{
-
-			if (*pch == BreakChar)
-			{
-				cbrk++;
-				if (i < ich)
-					cbrkPrev++;
-			}
-		}
-		if (!cbrkPrev)
-		{
-			// justification can't alter things
-			*pdx = x;
-			return S_OK;
-		}
-		int dxStetchPrev = ((double)dxStretch) * cbrkPrev / cbrk; // even distribution of extra space
-		*pdx = x + dxStetchPrev;
-		return S_OK;
-	}
-	else
-	{
-		*pdx = x;
-		return S_OK;
-	}
-
-	return S_OK;
- END_COM_METHOD(g_fact, IID_IVwGraphics);
-}
-
 HRESULT VwGraphicsCairo::GetFontEmSquare(int * pxyFontEmSquare)
 {
  BEGIN_COM_METHOD;
@@ -1449,18 +1563,6 @@ HRESULT VwGraphicsCairo::GetFontEmSquare(int * pxyFontEmSquare)
 HRESULT VwGraphicsCairo::GetGlyphMetrics(int chw,
 	int * psBoundingWidth, int * pyBoundingHeight,
 	int * pxBoundingX, int * pyBoundingY, int * pxAdvanceX, int * pyAdvanceY)
-{
- BEGIN_COM_METHOD;
-	ThrowHr(E_NOTIMPL);
- END_COM_METHOD(g_fact, IID_IVwGraphics);
-}
-HRESULT VwGraphicsCairo::GetFontData(int nTableId, int * pcbTableSz, BSTR * pbstrTableData)
-{
- BEGIN_COM_METHOD;
-	ThrowHr(E_NOTIMPL);
- END_COM_METHOD(g_fact, IID_IVwGraphics);
-}
-HRESULT VwGraphicsCairo::GetFontDataRgch(int nTableId, int * pcbTableSz, OLECHAR * prgch, int cchMax)
 {
  BEGIN_COM_METHOD;
 	ThrowHr(E_NOTIMPL);

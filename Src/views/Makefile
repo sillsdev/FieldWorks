@@ -7,8 +7,6 @@ OUTPUT  = $(FWOUTPUT)
 INCLUDE = $(FWINCLUDE)
 
 COMMONDLGS_SRC = $(SRC)/CommonCOMDlgs
-GRENG_LIB_SRC  = $(SRC)/Graphite/lib
-GRFW_SRC       = $(SRC)/Graphite/FwOnly
 TLB_SRC        = $(OUTPUT)/Common
 
 # -I$(AFCORE_SRC)
@@ -29,7 +27,7 @@ INCLUDES := \
 	$(shell icu-config --cppflags) \
 	-I. -Ilib \
 	-I$(GENERIC_SRC) -I$(APPCORE_SRC) -I$(DEBUGPROCS_SRC) \
-	-I$(COMMONDLGS_SRC) -I$(GRENG_LIB_SRC) -I$(GRFW_SRC) \
+	-I$(COMMONDLGS_SRC) \
 	-I$(TLB_SRC) -I$(INCLUDE) \
 	-I$(WIN32MORE_INC) \
 	-I$(COM_INC) \
@@ -85,14 +83,11 @@ OBJS = \
 	$(INT_DIR)/VwTextBoxes.o \
 	$(INT_DIR)/VwTxtSrc.o \
 	$(INT_DIR)/VwInvertedViews.o \
-	$(INT_DIR)/lib/GrJustifier.o \
-	$(INT_DIR)/lib/GrTxtSrc.o \
 	$(INT_DIR)/lib/VwBaseDataAccess.o \
 	$(INT_DIR)/lib/VwBaseVirtualHandler.o \
 	$(INT_DIR)/lib/VwCacheDa.o \
 	$(INT_DIR)/lib/VwColor.o \
 	$(INT_DIR)/lib/VwGraphicsCairo.o \
-	$(INT_DIR)/lib/VwJustifier.o \
 	$(INT_DIR)/lib/VwUndo.o \
 	$(INT_DIR)/lib/DisplayCapsInfo.o \
 

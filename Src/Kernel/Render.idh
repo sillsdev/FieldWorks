@@ -219,6 +219,13 @@ Description:
 		ScriptDirCode sdcOuter;		// basic document/field/?? directionality.
 	} LgParaRenderProps;	// Hungarian: parp
 
+	typedef struct
+	{
+		OLECHAR glyphIndex;
+		int x;
+		int y;
+	} GlyphInfo;
+
 	/*------------------------------------------------------------------------------------------
 		Interface for a simple approach to initializing a class by passing it a raw data buffer.
 		Primarily for classes intended to be instantiated via an IClassInitMoniker object.
@@ -304,14 +311,11 @@ Description:
 			[in] int cch,
 			[in, size_is(cch)] const OLECHAR * prgch,
 			[in] int xStretch); // make the string this much wider than natural
-		HRESULT DrawTextExt(
+		HRESULT DrawGlyphs(
 			[in] int x,
 			[in] int y,
-			[in] int cch,
-			[in, size_is(cch)] const OLECHAR * prgchw,
-			[in] UINT uOptions,
-			[in] const RECT * prect,
-			[in] int * prgdx);
+			[in] int cgi,
+			[in, size_is(cgi)] const GlyphInfo * prggi);
 		HRESULT GetTextExtent(
 			[in] int cch,
 			[in, size_is(cch)] const OLECHAR * prgch,
@@ -344,13 +348,8 @@ Description:
 		// Return TrueType table data from font file selected in the dc.
 		HRESULT GetFontData(
 			[in] int nTableId,
-			[out] int * pcbTableSz,
-			[out, retval] BSTR * pbstrTableData);
-		HRESULT GetFontDataRgch(
-			[in] int nTableId,
-			[out] int * pcbTableSz,
-			[out, size_is(cchMax)] OLECHAR * prgch,
-			[in] int cchMax);
+			[in, out] int * pcbTableSz,
+			[out, size_is(*pcbTableSz)] BYTE * prgb);
 		HRESULT XYFromGlyphPoint(
 			[in] int chw,
 			[in] int nPoint,
@@ -634,13 +633,6 @@ Description:
 //			[out] float * pdxShrink,
 //			[out] LgLineBreak * plbToTry);
 	};
-
-	#ifndef NO_COCLASSES
-	DeclareCoClass(VwJustifier, D3E3ADB7-94CB-443B-BB8F-82A03BF850F3)
-	{
-		interface IVwJustifier;
-	};
-	#endif
 
 	/*******************************************************************************************
 		Interface ILgSegment
@@ -1109,7 +1101,7 @@ Description:
 	{
 		interface IRenderEngine;
 	};
-	DeclareCoClass(FwGrEngine, F39F9433-F05A-4A19-8D1E-3C55DD607633)
+	DeclareCoClass(GraphiteEngine, 62EBEEBF-14EA-43D9-A27A-EF013E14145A)
 	{
 		interface IRenderEngine;
 	};
@@ -1192,15 +1184,6 @@ Description:
 			[in] int nLevel,				// justification level
 			[in] int value);				// attribute value
 	};
-
-
-	#ifndef NO_COCLASSES
-	DeclareCoClass(FwGraphiteProcess, B56AEFB9-96B4-4415-8415-64CBF3826704)
-	{
-		interface IJustifyingRenderer;
-	};
-	#endif // !NO_COCLASSES
-
 
 #if 0 // tentative ideas for a general-purpose line layout component.
 	/*******************************************************************************************

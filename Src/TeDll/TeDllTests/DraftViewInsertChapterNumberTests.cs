@@ -327,16 +327,29 @@ namespace SIL.FieldWorks.TE.DraftViews
 		/// <summary>
 		///
 		/// </summary>
-		/// <param name="nTableId"></param>
-		/// <param name="_cbTableSz"></param>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="cgi"></param>
+		/// <param name="_rggi"></param>
 		/// <returns></returns>
 		/// --------------------------------------------------------------------------------
-		public string GetFontData(int nTableId, out int _cbTableSz)
+		public void DrawGlyphs(int x, int y, int cgi, GlyphInfo[] _rggi)
 		{
+			// TODO:  Add DummyGraphics.DrawGlyphs implementation
+		}
 
+		/// --------------------------------------------------------------------------------
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="nTableId"></param>
+		/// <param name="_cbTableSz"></param>
+		/// <param name="_rgb"></param>
+		/// <returns></returns>
+		/// --------------------------------------------------------------------------------
+		public void GetFontData(int nTableId, ref int _cbTableSz, ArrayPtr _rgb)
+		{
 			// TODO:  Add DummyGraphics.GetFontData implementation
-			_cbTableSz = 0;
-			return null;
 		}
 
 		/// --------------------------------------------------------------------------------
@@ -402,22 +415,6 @@ namespace SIL.FieldWorks.TE.DraftViews
 			// TODO:  Add DummyGraphics.XYFromGlyphPoint implementation
 			_xRet = 0;
 			_yRet = 0;
-		}
-
-		/// --------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="nTableId"></param>
-		/// <param name="_cbTableSz"></param>
-		/// <param name="_rgch"></param>
-		/// <param name="cchMax"></param>
-		/// --------------------------------------------------------------------------------
-		public void GetFontDataRgch(int nTableId, out int _cbTableSz, ArrayPtr _rgch, int cchMax)
-		{
-
-			// TODO:  Add DummyGraphics.GetFontDataRgch implementation
-			_cbTableSz = 0;
 		}
 
 		/// --------------------------------------------------------------------------------
@@ -632,24 +629,6 @@ namespace SIL.FieldWorks.TE.DraftViews
 			_yBoundingY = 0;
 			_xAdvanceX = 0;
 			_yAdvanceY = 0;
-		}
-
-		/// --------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <param name="cch"></param>
-		/// <param name="_rgchw"></param>
-		/// <param name="uOptions"></param>
-		/// <param name="_rect"></param>
-		/// <param name="_rgdx"></param>
-		/// --------------------------------------------------------------------------------
-		public void DrawTextExt(int x, int y, int cch, string _rgchw, uint uOptions, ref Rect _rect, int _rgdx)
-		{
-
-			// TODO:  Add DummyGraphics.DrawTextExt implementation
 		}
 
 		/// --------------------------------------------------------------------------------

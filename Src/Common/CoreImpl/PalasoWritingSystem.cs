@@ -128,45 +128,39 @@ namespace SIL.CoreImpl
 				}
 
 				bool graphiteFont = false;
-				if (!MiscUtils.IsUnix) // TODO-Linux: UniscribeEngine and GraphiteEngine(FWNX-84) not yet ported
+				if (m_isGraphiteEnabled && FontHasGraphiteTables(vg))
 				{
-					if (m_isGraphiteEnabled && FontHasGraphiteTables(vg))
-					{
-						renderEngine = CreateRenderEngine(FwGrEngineClass.Create);
+					renderEngine = CreateRenderEngine(GraphiteEngineClass.Create);
 
-						string fontFeatures = null;
-						if (realFontName == DefaultFontName)
-							fontFeatures = DefaultFontFeatures;
-						try
-						{
-							renderEngine.InitRenderer(vg, fontFeatures);
-							graphiteFont = true;
-						}
-						catch
-						{
-							graphiteFont = false;
-						}
+					string fontFeatures = null;
+					if (realFontName == DefaultFontName)
+						fontFeatures = DefaultFontFeatures;
+					try
+					{
+						renderEngine.InitRenderer(vg, fontFeatures);
+						graphiteFont = true;
 					}
-
-					if (!graphiteFont)
+					catch
 					{
-						if (m_uniscribeEngine == null)
-						{
-							m_uniscribeEngine = CreateRenderEngine(UniscribeEngineClass.Create);
-						}
-						renderEngine = m_uniscribeEngine;
+						graphiteFont = false;
 					}
 				}
-				else
+
+				if (!graphiteFont)
 				{
-					// default to the UniscribeEngine unless ROMAN environment variable is set.
-					if (Environment.GetEnvironmentVariable("ROMAN") == null)
+					if (!MiscUtils.IsUnix)
 					{
-						renderEngine = CreateRenderEngine(UniscribeEngineClass.Create);
+						if (m_uniscribeEngine == null)
+							m_uniscribeEngine = CreateRenderEngine(UniscribeEngineClass.Create);
+						renderEngine = m_uniscribeEngine;
 					}
 					else
 					{
-						renderEngine = CreateRenderEngine(RomRenderEngineClass.Create);
+						// default to the UniscribeEngine unless ROMAN environment variable is set.
+						if (Environment.GetEnvironmentVariable("ROMAN") == null)
+							renderEngine = CreateRenderEngine(UniscribeEngineClass.Create);
+						else
+							renderEngine = CreateRenderEngine(RomRenderEngineClass.Create);
 					}
 				}
 
@@ -1254,9 +1248,9 @@ namespace SIL.CoreImpl
 
 		private static bool FontHasGraphiteTables(IVwGraphics vg)
 		{
-			const int tag_Silf = 0x666c6953;
-			int tblSize;
-			vg.GetFontData(tag_Silf, out tblSize);
+			const int tag_Silf = 0x53696c66;
+			int tblSize = 0;
+			vg.GetFontData(tag_Silf, ref tblSize, null);
 			return tblSize > 0;
 		}
 

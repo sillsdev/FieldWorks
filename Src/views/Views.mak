@@ -16,11 +16,9 @@ GENERIC_SRC=$(BUILD_ROOT)\Src\Generic
 VIEWS_LIB_SRC=$(BUILD_ROOT)\Src\Views\Lib
 AFCORE_SRC=$(BUILD_ROOT)\Src\AppCore
 COMMONDLGS_SRC=$(BUILD_ROOT)\Src\CommonCOMDlgs
-GRENG_LIB_SRC=$(BUILD_ROOT)\Src\Graphite\lib
-GRFW_SRC=$(BUILD_ROOT)\Src\Graphite\FwOnly
 
 # Set the USER_INCLUDE environment variable.
-UI=$(VIEWS_SRC);$(VIEWS_LIB_SRC);$(GENERIC_SRC);$(AFCORE_SRC);$(COMMONDLGS_SRC);$(GRENG_LIB_SRC);$(GRFW_SRC)
+UI=$(VIEWS_SRC);$(VIEWS_LIB_SRC);$(GENERIC_SRC);$(AFCORE_SRC);$(COMMONDLGS_SRC)
 
 !IF "$(USER_INCLUDE)"!=""
 USER_INCLUDE=$(UI);$(USER_INCLUDE);
@@ -57,11 +55,8 @@ OBJ_VIEWS=\
 	$(INT_DIR)\autopch\VwNotifier.obj\
 	$(INT_DIR)\autopch\VwSelection.obj\
 	$(INT_DIR)\autopch\VwTableBox.obj\
-	$(INT_DIR)\autopch\GrTxtSrc.obj\
-	$(INT_DIR)\autopch\GrJustifier.obj\
 	$(INT_DIR)\autopch\VwGraphics.obj\
 	$(INT_DIR)\autopch\VwTxtSrc.obj\
-	$(INT_DIR)\autopch\VwJustifier.obj\
 	$(INT_DIR)\autopch\ModuleEntry.obj\
 	$(INT_DIR)\autopch\AfColorTable.obj\
 	$(INT_DIR)\autopch\AfGfx.obj\

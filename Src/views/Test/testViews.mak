@@ -17,12 +17,10 @@ VIEWS_LIB_SRC=$(BUILD_ROOT)\Src\Views\Lib
 VIEWSTEST_SRC=$(BUILD_ROOT)\Src\Views\Test
 GENERIC_SRC=$(BUILD_ROOT)\Src\Generic
 APPCORE_SRC=$(BUILD_ROOT)\Src\AppCore
-GRENG_LIB_SRC=$(BUILD_ROOT)\Src\Graphite\lib
-GRFW_SRC=$(BUILD_ROOT)\Src\Graphite\FwOnly
 FWKERNELTEST_SRC=$(BUILD_ROOT)\Src\Kernel\Test
 
 # Set the USER_INCLUDE environment variable.
-UI=$(UNITPP_INC);$(VIEWSTEST_SRC);$(VIEWS_SRC);$(VIEWS_LIB_SRC);$(GENERIC_SRC);$(APPCORE_SRC);$(GRENG_LIB_SRC);$(GRFW_SRC);$(FWKERNELTEST_SRC)
+UI=$(UNITPP_INC);$(VIEWSTEST_SRC);$(VIEWS_SRC);$(VIEWS_LIB_SRC);$(GENERIC_SRC);$(APPCORE_SRC);$(FWKERNELTEST_SRC)
 
 !IF "$(USER_INCLUDE)"!=""
 USER_INCLUDE=$(UI);$(USER_INCLUDE)
@@ -58,12 +56,8 @@ OBJ_VIEWSTESTSUITE=\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwNotifier.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwSelection.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwTableBox.obj\
-#	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\GrGraphics.obj\
-	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\GrTxtSrc.obj\
-	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\GrJustifier.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwGraphics.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwTxtSrc.obj\
-	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwJustifier.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\AfColorTable.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\AfGfx.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwPrintContext.obj\

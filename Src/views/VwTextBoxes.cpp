@@ -897,7 +897,7 @@ public:  // we can make anything public since the whole class is private to this
 	IRenderEnginePtr m_qre;		// rendering engine for ich last passed to
 	LgCharRenderProps m_chrp;	// props of ich last passed to
 
-	VwJustifierPtr m_qvjus;		// justification agent
+	IVwJustifierPtr m_qvjus;		// justification agent
 
 	LgLineBreak m_lbNormalBreak;  // hyphenating or word breaking
 
@@ -1383,10 +1383,7 @@ public:  // we can make anything public since the whole class is private to this
 		m_pvpbox->SetSemiTagging(m_fSemiTagging);
 		pvpbox->ComputeTagHeights(pvg, m_pxvo, m_dypInch, m_dyTagAbove, m_dyTagBelow);
 
-		if (m_pvpbox->Style()->ParaAlign() == ktalJustify)
-			m_qvjus.Attach(NewObj VwJustifier);
-		else
-			m_qvjus = NULL;
+		m_qvjus = NULL;
 		if (m_clines == 0 && !fGotBulletsOrNumbers)
 			InitDropCaps();
 	}
@@ -3231,7 +3228,6 @@ public:  // we can make anything public since the whole class is private to this
 		switch(tal)
 		{
 		case ktalJustify:
-			Assert(m_qvjus);
 			fJustify = Justify(); // false on last line
 			// For right-to-left paragraphs, the last line is right-justified.
 			// Note that we must not use dxAlignMentAdjust here, because that was computed

@@ -304,7 +304,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			}
 		}
 
-#if !__MonoCS__
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Fonts the has graphite tables.
@@ -318,13 +317,13 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			try
 			{
-				using (HoldDummyGraphics hdg = new HoldDummyGraphics(fontName, fBold, fItalic, this))
+				using (var hdg = new HoldDummyGraphics(fontName, fBold, fItalic, this))
 				{
 					// Ask it whether that font has the main Graphite data table. If it does,
 					// we assume it is a Graphite font.
-					int tblSize;
-					const int tag_Silf = 0x666c6953;
-					hdg.m_vwGraphics.GetFontData(tag_Silf, out tblSize);
+					int tblSize = 0;
+					const int tag_Silf = 0x53696c66;
+					hdg.m_vwGraphics.GetFontData(tag_Silf, ref tblSize, null);
 					if (tblSize > 0)
 						return true;
 				}
@@ -375,7 +374,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				return false;
 			}
 		}
-#endif
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Setups the font features.
@@ -385,12 +384,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			CheckDisposed();
 
-#if __MonoCS__
-			// TODO-Linux: Neither Graphite or UniscribeEngine Avaliable
-			m_featureEngine = null;
-			return;
-#else
-			if (m_fontName == null || m_fontName == "")
+			if (string.IsNullOrEmpty(m_fontName))
 			{
 				Enabled = false;
 				m_isGraphiteFont = false;
@@ -399,7 +393,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			IRenderEngine renderer;
 			if (FontHasGraphiteTables(m_fontName, false, false))
 			{
-				renderer = FwGrEngineClass.Create();
+				renderer = GraphiteEngineClass.Create();
 				m_isGraphiteFont = true;
 			}
 			else
@@ -408,40 +402,39 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				m_isGraphiteFont = false;
 			}
 			renderer.WritingSystemFactory = m_wsf;
-			using (HoldDummyGraphics hdg = new HoldDummyGraphics(m_fontName, false, false, this))
+			using (var hdg = new HoldDummyGraphics(m_fontName, false, false, this))
 			{
-			renderer.InitRenderer(hdg.m_vwGraphics, m_fontFeatures);
-			m_featureEngine = renderer as IRenderingFeatures;
-			if (m_featureEngine == null)
-			{
-				Enabled = false;
-				return;
-			}
-			int cfid;
-			m_featureEngine.GetFeatureIDs(0, null, out cfid);
-			if (cfid == 0)
-			{
-				Enabled = false;
-				return;
-			}
-			if (cfid == 1)
-			{
-				// What if it's the dummy built-in graphite feature that we ignore?
-				// Get the list of features (only 1).
-				using (ArrayPtr idsM = MarshalEx.ArrayToNative<int>(cfid))
+				renderer.InitRenderer(hdg.m_vwGraphics, m_fontFeatures);
+				m_featureEngine = renderer as IRenderingFeatures;
+				if (m_featureEngine == null)
 				{
-					m_featureEngine.GetFeatureIDs(cfid, idsM, out cfid);
-					int [] ids = MarshalEx.NativeToArray<int>(idsM, cfid);
-					if (ids[0] == kGrLangFeature)
+					Enabled = false;
+					return;
+				}
+				int cfid;
+				m_featureEngine.GetFeatureIDs(0, null, out cfid);
+				if (cfid == 0)
+				{
+					Enabled = false;
+					return;
+				}
+				if (cfid == 1)
+				{
+					// What if it's the dummy built-in graphite feature that we ignore?
+					// Get the list of features (only 1).
+					using (ArrayPtr idsM = MarshalEx.ArrayToNative<int>(cfid))
 					{
-						Enabled = false;
-						return;
+						m_featureEngine.GetFeatureIDs(cfid, idsM, out cfid);
+						int [] ids = MarshalEx.NativeToArray<int>(idsM, cfid);
+						if (ids[0] == kGrLangFeature)
+						{
+							Enabled = false;
+							return;
+						}
 					}
 				}
+				Enabled = true;
 			}
-			Enabled = true;
-			}
-#endif
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -6,7 +6,7 @@
 
 	<!-- call preparatory Windows targets -->
 	<Target Name="initWindows" Condition="'$(OS)'=='Windows_NT'"
-			DependsOnTargets="Initialize;EncConvertersDlls;CopyOtherDlls;BuildWindowsXslAssemblies">
+			DependsOnTargets="Initialize;EncConvertersDlls;CopyOtherDlls;BuildWindowsXslAssemblies;graphite2Windows">
 	</Target>
 
 	<ItemGroup>
@@ -108,5 +108,16 @@
 	<Target Name="BuildWindowsXslAssemblies" Condition="'$(OS)'=='Windows_NT'">
 		<Exec Command="xsltc /settings:document /out:$(dir-outputBase)\ApplicationTransforms.dll $(ApplicationTransformsPath)\FxtM3MorphologySketch.xsl $(ApplicationTransformsPath)\FxtM3ParserToGAFAWS.xsl $(ApplicationTransformsPath)\FxtM3ParserToToXAmpleGrammar.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleADCtl.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleLex.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleWordGrammarDebuggingXSLT.xsl" />
 		<Exec Command="xsltc /settings:document /out:$(dir-outputBase)\PresentationTransforms.dll $(PresentationTransformsPath)\FormatHCTrace.xsl $(PresentationTransformsPath)\FormatXAmpleParse.xsl $(PresentationTransformsPath)\FormatXAmpleTrace.xsl $(PresentationTransformsPath)\FormatXAmpleWordGrammarDebuggerResult.xsl $(PresentationTransformsPath)\XLingPap1.xsl" />
+	</Target>
+
+	<ItemGroup>
+		<Graphite2Sources Include="$(fwrt)\Lib\src\graphite2\src\*.*" Condition="'$(OS)'=='Windows_NT'"/>
+	</ItemGroup>
+	<Target Name="graphite2Windows" Inputs="@(Graphite2Sources)" Outputs="$(fwrt)\Lib\$(config-lower)\graphite2.lib" Condition="'$(OS)'=='Windows_NT'">
+		<Make Makefile="$(fwrt)\Lib\src\graphite2\graphite2.mak"
+				Configuration="$(config-capital)"
+				BuildRoot="$(fwrt)"
+				WorkingDirectory="$(fwrt)\Lib\src\graphite2"/>
+		<Message Text="Finished building graphite2."/>
 	</Target>
 </Project>

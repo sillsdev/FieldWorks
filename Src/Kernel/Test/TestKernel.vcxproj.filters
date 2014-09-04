@@ -65,6 +65,9 @@
     <ClInclude Include="TestUniscribeEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TestGraphiteEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="testFwKernel.mak" />

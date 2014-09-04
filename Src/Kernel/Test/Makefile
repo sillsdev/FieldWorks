@@ -15,7 +15,7 @@ include $(BUILD_ROOT)/Bld/_init.mak.lnx
 UNIT = $(FWINCLUDE)/unit++
 LIB_UNIT = $(BUILD_ROOT)/Lib/src/unit++/build$(ARCH)
 
-DEFINES := -DGR_FW -DVIEWSDLL -DSUPPRESS_FW_EXCEPTION_HANDLING
+DEFINES := -DVIEWSDLL -DSUPPRESS_FW_EXCEPTION_HANDLING -DGRAPHITE2_STATIC
 
 ifeq ($(BUILD_CONFIG),Debug)
 	DEFINES  := $(DEFINES) -D_DEBUG
@@ -24,16 +24,13 @@ else
 	OPTIMIZATIONS = -O3
 endif
 
-GRAPHITE_SRC = $(SRC)/Graphite
-GRFW_SRC = $(GRAPHITE_SRC)/FwOnly
-GRUTIL_LIB = $(GRAPHITE_SRC)/lib
-TTFUTIL_LIB = $(GRAPHITE_SRC)/TtfUtil
 VIEWS_LIB = $(VIEWS_SRC)/lib
+GR2_INC = $(BUILD_ROOT)/Lib/src/graphite2/include
 
 PACKAGES = gdk-2.0 gtkmm-2.4 gdkmm-2.4 cairomm-1.0 pangomm-1.4
 
 INCLUDES := -I$(KERNEL_SRC) -I$(KERNEL_SRC)/Test -I$(CELLAR_SRC) -I$(GENERIC_SRC) -I$(APPCORE_SRC) -I$(DEBUGPROCS_SRC)
-INCLUDES := $(INCLUDES) -I$(GRUTIL_LIB) -I$(TTFUTIL_LIB) -I$(VIEWS_SRC) -I$(VIEWS_LIB) -I$(GRFW_SRC)
+INCLUDES := $(INCLUDES) -I$(VIEWS_SRC) -I$(VIEWS_LIB) -I$(GR2_INC)
 
 INCLUDES := \
 	$(shell icu-config --cppflags) \
@@ -67,6 +64,7 @@ LINK_LIBS := \
 	$(OUT_DIR)/libGeneric.a \
 	$(OUT_DIR)/libDebugProcs.a \
 	$(OUT_DIR)/libAppCore.a \
+	$(BUILD_ROOT)/Lib/linux/$(BUILD_CONFIG)/libgraphite2.a \
 	$(COM_OUT_DIR)/libFwKernelTlb.a
 
 all: $(OUT_DIR)/testFwKernel
@@ -83,6 +81,8 @@ FWKERNEL_OBJ := \
 	$(KERNEL_OBJ)/LgUnicodeCollater.o \
 	$(KERNEL_OBJ)/RomRenderEngine.o \
 	$(KERNEL_OBJ)/RomRenderSegment.o \
+	$(KERNEL_OBJ)/GraphiteEngine.o \
+	$(KERNEL_OBJ)/GraphiteSegment.o \
 	$(KERNEL_OBJ)/LgSimpleEngines.o \
 	$(KERNEL_OBJ)/LgIcuCharPropEngine.o \
 	$(KERNEL_OBJ)/LgKeymanHandler.o \
@@ -129,6 +129,7 @@ $(INT_DIR)/Collection.cpp: testFwKernel.h \
 	TestLgCollatingEngine.h \
 	TestLgIcuCharPropEngine.h \
 	TestRomRenderEngine.h \
+	TestGraphiteEngine.h \
 	RenderEngineTestBase.h
 	@echo Collecting tests for testFwKernel
 	$(COLLECT) $^ $@

@@ -47,8 +47,8 @@
     <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\bin\mkfwk-tst.bat DONTRUN cc</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\bin\mkfwk-tst.bat DONTRUN ec</NMakeCleanCommandLine>
     <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\output\debug\testFwKernel.exe</NMakeOutput>
-    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">DEBUG;WIN32;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..;..\..\Generic;..\..\..\Output\Common;..\..\views\lib;..\..\Graphite\lib;..\..\Cellar;..\..\AppCore;..\..\..\Include;..\..\DebugProcs;..\..\..\Include\unit++;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
     <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
     <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
     <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
@@ -75,6 +75,7 @@
     <ClInclude Include="MockLgWritingSystemFactory.h" />
     <ClInclude Include="RenderEngineTestBase.h" />
     <ClInclude Include="testFwKernel.h" />
+    <ClInclude Include="TestGraphiteEngine.h" />
     <ClInclude Include="TestLgCollatingEngine.h" />
     <ClInclude Include="TestLgIcuCharPropEngine.h" />
     <ClInclude Include="TestRegexMatcher.h" />

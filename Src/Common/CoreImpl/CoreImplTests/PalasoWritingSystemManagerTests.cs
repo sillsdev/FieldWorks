@@ -382,7 +382,7 @@ namespace SIL.CoreImpl
 					engine = wsManager.get_RendererFromChrp(gm.VwGraphics, ref chrp);
 					Assert.IsNotNull(engine);
 					Assert.AreSame(wsManager, engine.WritingSystemFactory);
-					Assert.IsInstanceOf(typeof(FwGrEngine), engine);
+					Assert.IsInstanceOf(typeof(GraphiteEngine), engine);
 					wsManager.Save();
 				}
 				finally

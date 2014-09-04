@@ -536,9 +536,11 @@ STDMETHODIMP VwGraphics::DrawText(int x, int y, int cch, const OLECHAR * prgch, 
 		// Should we do something about not assigning stretch to runs with no
 		// break characters?
 	}
-	BOOL fOK = ::ExtTextOutW(m_hdc, x, y,
+	// MSDN says that ExtTextOut cannot render more than 8192 characters, so we just cut it off if it is too long
+	// ENHANCE: call this multiple times if the string is too long
+	BOOL fOK = ::ExtTextOut(m_hdc, x, y,
 		0, 0,			// no extra clipping
-		prgch, cch,
+		prgch, min(cch, 8192),
 		0);				// no special character spacing
 	if (!fOK)
 	{
@@ -548,7 +550,7 @@ STDMETHODIMP VwGraphics::DrawText(int x, int y, int cch, const OLECHAR * prgch, 
 		// does not complete drawing the string which we asked it to, and returns FALSE. But,
 		// getting no gle indicates that in fact nothing is wrong.
 		if (gle != 0)
-			ThrowInternalError(E_UNEXPECTED, "ExtTextOutW failed");
+			ThrowInternalError(E_UNEXPECTED, "ExtTextOut failed");
 	}
 	if (nStretch)
 	{
@@ -567,73 +569,59 @@ STDMETHODIMP VwGraphics::DrawText(int x, int y, int cch, const OLECHAR * prgch, 
 }
 
 /*----------------------------------------------------------------------------------------------
-	Draw a list of glyphs that are all positioned vertically the same relative to the baseline,
-	given their offsets from each other.
+	Draw a list of glyphs at the specified position. The y value corresponds to the baseline of
+	the glyphs. Each glyph specifies a vertical and horizontal offset from the original
+	position. The glyphs should be in visual order.
 ----------------------------------------------------------------------------------------------*/
-STDMETHODIMP VwGraphics::DrawTextExt(int x, int y, int cch, const OLECHAR __RPC_FAR * prgchw,
-	UINT uOptions, const RECT __RPC_FAR * pRect, int __RPC_FAR * prgdx)
+STDMETHODIMP VwGraphics::DrawGlyphs(int x, int y, int cgi, const GlyphInfo * prggi)
 {
 	BEGIN_COM_METHOD;
-	ChkComArrayArg(prgchw, cch);
-	ChkComArgPtrN(pRect);
-	ChkComArgPtrN(prgdx);
-
-	//return (HRESULT)GrGraphics::DrawTextExt(x, y, cch, prgchw, uOptions, pRect, prgdx);
-
-	if (prgdx == NULL)
-	{
-		Assert(cch <= 1);
-		if (cch > 1)
-			ThrowInternalError(E_UNEXPECTED);
-	}
-	else
-	{
-		ChkGrArrayArg(prgdx, cch);
-	}
+	ChkComArrayArg(prggi, cgi);
 
 #ifdef BASELINE
 	if (m_fFile)
 	{
-		RECT rect;
-		StrAnsi staChar;
-		staChar.Assign(prggid, cch);
-		StrAnsi stargdx("{");
-		for (int i = 0; i < cgid; i++)	{
-			if (i == cch-1)
-				stargdx.FormatAppend("%d}", *(prgdx + i));
-			else
-				stargdx.FormatAppend("%d,", *(prgdx + i));
+		StrAnsi stargi;
+		for (int i = 0; i < cgi; i++)
+		{
+			if (i != 0)
+				stargdx.Append(", ");
+			stargdx.FormatAppend("{%d, %d, %d}", prggi[i].glyphIndex, prggi[i].x, prggi[i].y);
 		}
-		if (pRect)
-			rect = *pRect;
-		else	{
-			rect.left = 0;
-			rect.top = 0;
-			rect.right = 0;
-			rect.bottom = 0;
-		}
-		m_psts->OutputFormat("DrawTextExt(%d, %d, %d, \"%s\", %d, {%d, %d, %d, %d}, \"%s\")\n", x, y, cgid,
-			staChar.Chars(), uOptions, rect.left, rect.top, rect.right, rect.bottom,
-			stargdx.Chars());
+		m_psts->OutputFormat("DrawGlyphs(%d, %d, %d, {%s})\n", x, y, cgi, stargi.Chars());
 	}
 	if (m_fDraw)
 	{
 #endif
+		CheckDc();
 
-	CheckDc();
+		// check whether the text is visible, at least vertically
+		RECT rectClip;
+		MyGetClipRect(&rectClip);
+		if (y > rectClip.bottom)
+			return S_OK;
+		if (y < rectClip.top - 10000)	// ENHANCE: correct if we support 500+ pt fonts
+			return S_OK;
 
-	// check whether the text is visible, at least vertically
-	RECT rectClip;
-	MyGetClipRect(&rectClip);
-	if (y > rectClip.bottom)
-		return S_OK;
-	if (y < rectClip.top - 10000)	// ENHANCE: correct if we support 500+ pt fonts
-		return S_OK;
+		// converts the x and y offsets to deltas between glyphs
+		OLECHAR* glyphs = new OLECHAR[cgi];
+		int* deltas = new int[cgi * 2];
+		for (int i = 0; i < cgi; i++)
+		{
+			glyphs[i] = prggi[i].glyphIndex;
+			deltas[i * 2] = i == cgi - 1 ? 0 : prggi[i + 1].x - prggi[i].x;
+			deltas[(i * 2) + 1] = i == cgi - 1 ? 0 : prggi[i + 1].y - prggi[i].y;
+		}
 
-	// must explicitly call W API so get wide version on Win 9x
-	if (!::ExtTextOutW(m_hdc, x, y, uOptions, pRect, prgchw, cch, prgdx))
-		ThrowInternalError(E_UNEXPECTED, "ExtTextOutW failed");
+		// MSDN says that ExtTextOut cannot render more than 8192 characters, so we just cut it off if it is too long
+		// ENHANCE: call this multiple times if the string is too long
+		BOOL res = ::ExtTextOut(m_hdc, x, y, ETO_GLYPH_INDEX | ETO_PDY, NULL, glyphs, min(cgi, 8192), deltas);
 
+		delete[] glyphs;
+		delete[] deltas;
+
+		if (!res)
+			ThrowInternalError(E_UNEXPECTED, "ExtTextOut failed");
 #ifdef BASELINE
 	}
 #endif
@@ -859,95 +847,26 @@ STDMETHODIMP VwGraphics::GetGlyphMetrics(int chw,
 	Get the data from a table in the font.  Return S_FALSE if the table does not exist, setting
 	*pcbTableSz to zero.
 ----------------------------------------------------------------------------------------------*/
-STDMETHODIMP VwGraphics::GetFontData(int nTableId, int * pcbTableSz, BSTR * pbstrTableData)
+STDMETHODIMP VwGraphics::GetFontData(int nTableId, int * pcbTableSz, BYTE * prgb)
 {
 	BEGIN_COM_METHOD;
 	ChkComArgPtr(pcbTableSz);
-	ChkComOutPtr(pbstrTableData);
+	ChkComArrayArg(prgb, *pcbTableSz);
 
-	HRESULT hr = S_OK;
+	// The nTableID is in native (little-endian) byte order, but the GDI methods expects big-endian.
+	DWORD tableName = (nTableId & 0x000000FF) << 24;
+	tableName += (nTableId & 0x0000FF00) << 8;
+	tableName += (nTableId & 0x00FF0000) >> 8;
+	tableName += (nTableId & 0xFF000000) >> 24;
 
-	//HRESULT hr = (HRESULT)GrGraphics::GetFontData(nTableId, pcbTableSz, NULL, 0);
-
-	DWORD cbTableSz = ::GetFontData(m_hdcMeasure, nTableId, 0, NULL, 0);
+	DWORD cbTableSz = ::GetFontData(m_hdcMeasure, tableName, 0, prgb, *pcbTableSz);
 	if (GDI_ERROR == cbTableSz)
 	{
 		// No such table in the font, or the table is empty.
 		*pcbTableSz = 0;
 		return S_FALSE;
 	}
-
-	byte * prgb = NewObj byte[cbTableSz];
-	if (!prgb)
-		return E_OUTOFMEMORY;
-
-	//hr = (HRESULT)GrGraphics::GetFontData(nTableId, pcbTableSz, pb, *pcbTableSz);
-
-	*pcbTableSz = ::GetFontData(m_hdcMeasure, nTableId, 0, (void *)prgb, cbTableSz);
-	if (*pcbTableSz == GDI_ERROR)
-		hr = E_UNEXPECTED;
-
-	if (FAILED(hr))
-	{
-		delete[] prgb;
-		*pbstrTableData = NULL;
-		ThrowInternalError(hr, "GetFontData failed");
-	}
-
-	*pbstrTableData = ::SysAllocStringLen((OLECHAR*)prgb,
-		(*pcbTableSz + isizeof(OLECHAR) - 1) / isizeof(OLECHAR));
-	delete[] prgb;
-	if (!*pbstrTableData)
-		return E_OUTOFMEMORY;
-
-	END_COM_METHOD(g_fact, IID_IVwGraphics);
-}
-
-/*----------------------------------------------------------------------------------------------
-	Get the data from a table in the font. This is a version that is more convenient to
-	use for Graphite, because it avoids converting between BSTR and OLECHAR*.
-
-	TODO: avoid duplicate code with GetFontData.
-----------------------------------------------------------------------------------------------*/
-STDMETHODIMP VwGraphics::GetFontDataRgch(int nTableId, int * pcbTableSz,
-	OLECHAR * prgch, int cchMax)
-{
-	BEGIN_COM_METHOD;
-	ChkComArgPtr(pcbTableSz);
-	ChkComArrayArg(prgch, cchMax);
-
-	//return (HRESULT)GrGraphics::GetFontData(nTableId, pcbTableSz,
-	//	(byte *)prgch, (cchMax * isizeof(OLECHAR)));
-
-	//HRESULT hr = (HRESULT)GrGraphics::GetFontData(nTableId, pcbTableSz, NULL, 0);
-
-	HRESULT hr = S_OK;
-
-	DWORD cbTableSz = ::GetFontData(m_hdcMeasure, nTableId, 0, NULL, 0);
-	if (GDI_ERROR == cbTableSz)
-	{
-		// No such table in the font, or the table is empty.
-		*pcbTableSz = 0;
-		return S_FALSE;
-	}
-
-	byte * prgb = NewObj byte[*pcbTableSz];
-	if (!*prgb)
-		return E_OUTOFMEMORY;
-
-	//hr = (HRESULT)GrGraphics::GetFontData(nTableId, pcbTableSz, pb, *pcbTableSz);
-
-	*pcbTableSz = -1;
-
-	if (::GetFontData(m_hdcMeasure, nTableId, 0, (void *)prgb, cbTableSz) == GDI_ERROR)
-		hr = E_UNEXPECTED;
-
-	if (FAILED(hr))
-	{
-		delete[] prgb;
-		*prgch = NULL;
-		ThrowInternalError(hr, "GetFontData failed");
-	}
+	*pcbTableSz = cbTableSz;
 
 	END_COM_METHOD(g_fact, IID_IVwGraphics);
 }
@@ -1273,16 +1192,6 @@ STDMETHODIMP VwGraphics::SetupGraphics(LgCharRenderProps * pchrp)
 {
 	BEGIN_COM_METHOD;
 	ChkComArgPtr(pchrp);
-	ChkGrArgPtr(pchrp);
-
-	//return (HRESULT)GrGraphics::SetupGraphics(pchrp);
-		ChkGrArgPtr(pchrp);
-#ifdef BASELINE
-//	if (m_fFile)
-//		m_psts->OutputFormat("SetupGraphics(ptr) fItalic: %d, fBold: %d, dympHeight"
-//			": %d, szFaceName: \"%s\", clrFore: %d, clrBack: %d\n", pchrp->fItalic,
-//			pchrp->fBold, pchrp->dympHeight, pchrp->szFaceName, pchrp->clrFore, pchrp->clrBack);
-#endif
 
 	const int cbFontOffset = offsetof(LgCharRenderProps, ttvBold);
 	// if the info related to choosing HFONT is different, make a new HFONT

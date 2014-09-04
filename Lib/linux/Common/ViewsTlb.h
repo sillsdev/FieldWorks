@@ -4,9 +4,9 @@
 
 
  /* File created by MIDL compiler version 7.00.0555 */
-/* at Thu Jan 23 11:04:44 2014
+/* at Tue Sep 30 16:04:47 2014
  */
-/* Compiler settings for C:\fwrepo\fw\Output\Common\ViewsTlb.idl:
+/* Compiler settings for C:\develop\fwrepo\fw\Output\Common\ViewsTlb.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 7.00.0555 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 

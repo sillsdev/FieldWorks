@@ -114,3 +114,8 @@ DistFiles/ReleaseData/
 !Lib/Windows/Release
 !Lib/linux/Debug
 !Lib/linux/Release
+
+Lib/debug/graphite2.lib
+Lib/release/graphite2.lib
+Lib/linux/Debug/libgraphite2.a
+Lib/linux/Release/libgraphite2.a

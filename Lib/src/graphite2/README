@@ -1,0 +1,3 @@
+This directory contains the Graphite2 library from http://hg.palaso.org/graphitedev
+Current version derived from upstream changeset 86a7b87b703a
+See update.sh for update procedure.

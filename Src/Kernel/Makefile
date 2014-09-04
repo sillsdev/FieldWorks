@@ -12,7 +12,7 @@ include $(BUILD_ROOT)/Bld/_names.mak
 BUILD_PRODUCT = $(KERNEL_NAME)
 include $(BUILD_ROOT)/Bld/_init.mak.lnx
 
-DEFINES := $(DEFINES) -DGR_FW -DWIN32_KEY_VALUES=1
+DEFINES := $(DEFINES) -DWIN32_KEY_VALUES=1 -DGRAPHITE2_STATIC
 
 ifeq ($(BUILD_CONFIG),Debug)
 	DEBUG_LIBS = $(OUT_DIR)/libDebugProcs.a
@@ -23,16 +23,13 @@ else
 	OPTIMIZATIONS = -O3
 endif
 
-GRAPHITE_SRC = $(SRC)/Graphite
-GRFW_SRC = $(GRAPHITE_SRC)/FwOnly
-GRUTIL_LIB = $(GRAPHITE_SRC)/lib
-TTFUTIL_LIB = $(GRAPHITE_SRC)/TtfUtil
 VIEWS_LIB = $(VIEWS_SRC)/lib
+GR2_INC = $(BUILD_ROOT)/Lib/src/graphite2/include
 
 PACKAGES = glib-2.0 gtk+-2.0 glibmm-2.4 gtkmm-2.4 cairomm-1.0 pangomm-1.4
 
 INCLUDES := -I$(KERNEL_SRC) -I$(CELLAR_SRC) -I$(GENERIC_SRC) -I$(APPCORE_SRC) $(DEBUG_INCLUDES)
-INCLUDES := $(INCLUDES) -I$(GRUTIL_LIB) -I$(TTFUTIL_LIB) -I$(VIEWS_SRC) -I$(VIEWS_LIB) -I$(GRFW_SRC)
+INCLUDES := $(INCLUDES) -I$(VIEWS_SRC) -I$(VIEWS_LIB) -I$(GR2_INC)
 
 INCLUDES := $(shell icu-config --cppflags) \
 	$(INCLUDES) \
@@ -63,6 +60,7 @@ LINK_LIBS := \
 	$(LINK_LIBS) \
 	$(COM_OUT_DIR)/libFwKernelTlb.a \
 	$(OUT_DIR)/libGeneric.a \
+	$(BUILD_ROOT)/Lib/linux/$(BUILD_CONFIG)/libgraphite2.a \
 	$(DEBUG_LIBS) \
 
 # === Object Lists ===
@@ -86,6 +84,8 @@ OBJ_FWKERNEL = \
 	$(INT_DIR)/UniscribeLinux.o \
 	$(INT_DIR)/UniscribeSegment.o \
 	$(INT_DIR)/UniscribeEngine.o \
+	$(INT_DIR)/GraphiteSegment.o \
+	$(INT_DIR)/GraphiteEngine.o \
 	$(INT_DIR)/RomRenderEngine.o \
 	$(INT_DIR)/RomRenderSegment.o \
 	$(INT_DIR)/FwXml.o \

@@ -341,7 +341,7 @@ int VwPropertyStore::AdjustedLineHeight(VwPropertyStore * pzvpsLeaf, int * pdymp
 	HFONT hfont;
 	hfont = AfGdi::CreateFontIndirect(&lf);
 	if (!hfont)
-		ThrowHr(WarnHr(gr::kresFail));
+		ThrowHr(WarnHr(E_FAIL));
 
 	AfGdi::SelectObjectFont(hdc, hfont);
 

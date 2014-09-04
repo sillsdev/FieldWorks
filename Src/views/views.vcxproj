@@ -93,19 +93,10 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="lib\FwGr.h" />
-    <ClInclude Include="lib\GrGraphics.h" />
-    <ClInclude Include="lib\GrJustifier.h" />
-    <ClInclude Include="lib\GrResult.h" />
-    <ClInclude Include="lib\GrTxtSrc.h" />
-    <ClInclude Include="lib\IGrGraphics.h" />
-    <ClInclude Include="lib\IGrGraphicsDrawing.h" />
-    <ClInclude Include="lib\IGrGraphicsFont.h" />
     <ClInclude Include="lib\VwBaseDataAccess.h" />
     <ClInclude Include="lib\VwBaseVc.h" />
     <ClInclude Include="lib\VwCacheDa.h" />
     <ClInclude Include="lib\VwGraphics.h" />
-    <ClInclude Include="lib\VwJustifier.h" />
     <ClInclude Include="lib\VwUndo.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="lib\UtilView.h" />
@@ -129,14 +120,10 @@
     <ClInclude Include="VwTxtSrc.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="lib\GrGraphics.cpp" />
-    <ClCompile Include="lib\GrJustifier.cpp" />
-    <ClCompile Include="lib\GrTxtSrc.cpp" />
     <ClCompile Include="lib\VwBaseDataAccess.cpp" />
     <ClCompile Include="lib\VwBaseVc.cpp" />
     <ClCompile Include="lib\VwCacheDa.cpp" />
     <ClCompile Include="lib\VwGraphics.cpp" />
-    <ClCompile Include="lib\VwJustifier.cpp" />
     <ClCompile Include="lib\VwUndo.cpp" />
     <ClCompile Include="dlldatax.c" />
     <ClCompile Include="ExplicitInstantiation.cpp" />
