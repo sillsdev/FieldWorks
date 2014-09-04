@@ -248,7 +248,7 @@ namespace SIL.FieldWorks.XWorks
 		private bool ProjectHasNewReversalConfigs()
 		{
 			//todo: Implement reversal configuration migration.
-			return false;
+			return true;
 			//var newReversalConfigLoc = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)), "Reversals");
 			//return !Directory.Exists(newReversalConfigLoc);
 		}
