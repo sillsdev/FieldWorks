@@ -6,6 +6,7 @@
 // Responsibility: TE Team
 // --------------------------------------------------------------------------------------------
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
@@ -64,7 +65,7 @@ namespace SIL.FieldWorks.TE.DraftViews
 				(int)FwTextPropVar.ktpvMilliPoint, 20);
 			titleMain.Rules = propBldr.GetTextProps();
 			m_draftForm.StyleSheet.Init(Cache, m_scr.Hvo,
-				ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+				ScriptureTags.kflidStyles);
 
 			m_group.RefreshDisplay();
 			m_draftView.PerformLayout();

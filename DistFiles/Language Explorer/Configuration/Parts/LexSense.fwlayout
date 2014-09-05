@@ -6,6 +6,7 @@
 	<part ref="HeavySummary" param="Summary" collapsedLayout="SummaryCollapsed" expansion="expanded" menu="mnuDataTree-Sense" hotlinks="mnuDataTree-Sense-Hotlinks" notifyVirtual="LexSenseOutline">
 		<indent>
 			<part ref="GlossAllA"/>
+			<part ref="ReversalEntries"   visibility="ifdata" />
 			<part ref="DefinitionAllA"/>
 			<part ref="MsaCombo"/>
 			<part ref="ComplexFormEntries" visibility="ifdata"/>
@@ -26,7 +27,6 @@
 			<part ref="SocioLinguisticsNoteAllA" label="Sociolinguistics Note"   visibility="ifdata" />
 			<part ref="Source"   visibility="ifdata" />
 			<part ref="UsageTypes"   visibility="ifdata" />
-			<part ref="ReversalEntries"   visibility="ifdata" />
 			<part ref="SenseType"   visibility="ifdata" />
 			<part ref="DomainTypes"   visibility="ifdata" />
 			<part ref="PublishIn"   visibility="ifdata" />

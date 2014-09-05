@@ -15,6 +15,7 @@ using System.Drawing;
 using System.Windows.Forms;
 
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.PrintLayout;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -701,7 +702,7 @@ namespace SIL.FieldWorks.TE
 
 			FwStyleSheet styleSheet = new FwStyleSheet();
 			styleSheet.Init(Cache, Cache.LangProject.TranslatedScriptureOA.Hvo,
-				ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+				ScriptureTags.kflidStyles);
 
 			FootnoteVc footnoteVc = new FootnoteVc(TeStVc.LayoutViewTarget.targetPrint, -1);
 			footnoteVc.Cache = Cache;

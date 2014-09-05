@@ -1,4 +1,8 @@
 #!/bin/bash
+# Copyright (c) 2014 SIL International
+# This software is licensed under the LGPL, version 2.1 or later
+# (http://www.gnu.org/licenses/lgpl-2.1.html)
+#
 # see http://standards.freedesktop.org/basedir-spec/basedir-spec-0.6.html for standard
 # locations and environment variables
 
@@ -65,12 +69,14 @@ CopyRegistryKey()
 	cd "$FW_LIB"; RUNMODE="INSTALLED" . environ; cd "$OLDPWD"
 
 	# If there aren't registry keys yet, set some defaults
-	if [ ! -d "${FW_CONFIG}/registry/LocalMachine/software/sil" ]; then
+	if [ ! -d "${FW_CONFIG}/registry/LocalMachine/software/sil/fieldworks" ]; then
 		echo "# Setting configuration"
 
 		# REVIEW these were taken from nant setup registry may not be correct for an install.
-		mono "${WRITEKEY}" LM "Software/SIL/EncodingConverterRepository" "Registry" "${FW_CONFIG}/SIL/Repository/mappingRegistry.xml"
-		mono "${WRITEKEY}" LM "Software/SIL/EncodingConverterRepository" "MoveRepositoryTo" "${FW_CONFIG}/MoveRepositoryTo"
+		if [ ! -d "${FW_CONFIG}/registry/LocalMachine/software/sil/encodingconverterrepository" ]; then
+			mono "${WRITEKEY}" LM "Software/SIL/EncodingConverterRepository" "Registry" "${FW_CONFIG}/SIL/Repository/mappingRegistry.xml"
+			mono "${WRITEKEY}" LM "Software/SIL/EncodingConverterRepository" "MoveRepositoryTo" "${FW_CONFIG}/MoveRepositoryTo"
+		fi
 		mono "${WRITEKEY}" LM "Software/Microsoft/.NETFramework/AssemblyFolders" "Primary Interop Assemblies" "$FW_LIB"
 		mono "${WRITEKEY}" LM "Software/SIL" "InitIcu" "1"
 		mono "${WRITEKEY}" LM "Software/SIL/FieldWorks" "InstallLanguageUseLog" "False"

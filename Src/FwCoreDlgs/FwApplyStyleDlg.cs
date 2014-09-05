@@ -8,7 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
@@ -83,7 +83,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_styleTable = new StyleInfoTable(normalStyleName,
 				cache.ServiceLocator.WritingSystemManager);
 			m_styleSheet = new FwStyleSheet();
-			m_styleSheet.Init(cache, hvoStylesOwner, stylesTag, ResourceHelper.DefaultParaCharsStyleName);
+			m_styleSheet.Init(cache, hvoStylesOwner, stylesTag);
 			m_styleListHelper = new StyleListBoxHelper(m_lstStyles);
 			m_styleListHelper.ShowInternalStyles = false;
 		}
@@ -114,7 +114,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				if (m_charStyleName != null)
 					m_styleListHelper.SelectedStyleName = m_charStyleName;
 				else
-					m_styleListHelper.SelectedStyleName = ResourceHelper.DefaultParaCharsStyleName;
+					m_styleListHelper.SelectedStyleName = StyleUtils.DefaultParaCharsStyleName;
 			}
 		}
 

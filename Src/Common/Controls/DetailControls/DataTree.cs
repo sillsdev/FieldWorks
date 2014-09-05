@@ -511,7 +511,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				{
 					m_styleSheet = new FwStyleSheet();
 					m_styleSheet.Init(m_cache, m_cache.LanguageProject.Hvo,
-						LangProjectTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+						LangProjectTags.kflidStyles);
 				}
 				return m_styleSheet;
 			}

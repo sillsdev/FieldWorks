@@ -1725,6 +1725,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			WriteAllForms(w, "description", null, "form", pos.Description);
 			foreach (var inflFeat in pos.InflectableFeatsRC)
 				WriteTrait(w, "inflectable-feat", inflFeat.Abbreviation, m_wsBestAnalVern);
+			w.WriteLine("<trait name=\"catalog-source-id\" value=\"{0}\"/>",
+											 MakeSafeAndNormalizedAttribute(pos.CatalogSourceId));
 			w.WriteLine("</range-element>");
 		}
 

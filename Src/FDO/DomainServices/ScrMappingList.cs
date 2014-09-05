@@ -10,6 +10,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Xml;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
 
@@ -30,13 +31,15 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 		private IVwStylesheet m_stylesheet;
 
-		private readonly string m_defaultParaCharsStyleName;
-		private readonly string m_stylesPath;
-
 		private static Dictionary<string, string> s_defaultMappings = new Dictionary<string, string>();
 		private static Dictionary<string, string> s_defaultProperties = new Dictionary<string, string>();
 		private static Dictionary<string, string> s_defaultExclusions = new Dictionary<string, string>();
 		#endregion
+
+		/// <summary>
+		/// Gets or sets the TE styles path.
+		/// </summary>
+		public static string TeStylesPath { get; set; }
 
 		#region public static readonly members
 		/// <summary>Book marker</summary>
@@ -56,16 +59,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="mappingSet">Indicates which type of mapping group this list represents
 		/// </param>
 		/// <param name="stylesheet">The stylesheet</param>
-		/// <param name="defaultParaCharsStyleName"></param>
-		/// <param name="stylesPath"></param>
 		/// ------------------------------------------------------------------------------------
-		public ScrMappingList(MappingSet mappingSet, IVwStylesheet stylesheet, string defaultParaCharsStyleName,
-			string stylesPath)
+		public ScrMappingList(MappingSet mappingSet, IVwStylesheet stylesheet)
 		{
 			m_mappingSet = mappingSet;
 			m_stylesheet = stylesheet;
-			m_defaultParaCharsStyleName = defaultParaCharsStyleName;
-			m_stylesPath = stylesPath;
 		}
 		#endregion
 
@@ -433,7 +431,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		private void ReadDefaultMappings()
 		{
 			XmlDocument doc = new XmlDocument();
-			doc.Load(m_stylesPath);
+			doc.Load(TeStylesPath);
 			XmlNode mappingNode = doc.SelectSingleNode("Styles/ImportMappingSets/ImportMapping[@name='TE Default']");
 			foreach (XmlNode mapNode in mappingNode.SelectNodes("mapping"))
 			{
@@ -528,12 +526,12 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 					case "DefaultParagraphCharacters":
 						target = MappingTargetType.TEStyle;
-						styleName = m_defaultParaCharsStyleName;
+						styleName = StyleUtils.DefaultParaCharsStyleName;
 						return true;
 
 					case "DefaultFootnoteCharacters":
 						target = MappingTargetType.TEStyle;
-						styleName = m_defaultParaCharsStyleName;
+						styleName = StyleUtils.DefaultParaCharsStyleName;
 						markerDomain = MarkerDomain.Footnote;
 						return true;
 				}

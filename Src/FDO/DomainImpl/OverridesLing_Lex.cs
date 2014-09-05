@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2014 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -19,6 +19,7 @@ using System.Linq;
 using System.Text;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Text.RegularExpressions;
 using System.Xml; // XMLWriter
 
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -732,8 +733,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				yield return this;
 				foreach (var ler in EntryRefsOS)
 				{
-					if (ler.RefType != LexEntryRefTags.krtComplexForm)
-						continue; // Enhance JohnT: should we report circular variants also??
+					if (ler.RefType != LexEntryRefTags.krtComplexForm && ler.RefType != LexEntryRefTags.krtVariant)
+						continue;
 					foreach (var obj in ler.ComponentLexemesRS)
 					{
 						if (obj is ILexEntry)
@@ -6905,6 +6906,65 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				ncCtxt.PreRemovalSideEffects();
 				m_cache.DomainDataByFlid.DeleteObj(ncCtxt.Hvo);
 			}
+
+			foreach (var env in Services.GetInstance<IPhEnvironmentRepository>().AllInstances())
+			{
+				string envText = env.StringRepresentation.Text ?? "";
+				string naturalClassAbbr = Abbreviation.AnalysisDefaultWritingSystem.Text;
+				string standardNcReference = String.Format("[{0}]", naturalClassAbbr);
+				string indexed = String.Format("[{0}^", naturalClassAbbr);
+				string standardOptionalNcReference = "(" + standardNcReference + ")";
+				var analysisWs = m_cache.LangProject.DefaultAnalysisWritingSystem.Handle;
+
+				if (envText.Contains(standardOptionalNcReference))
+				{
+					//remove the natural class (and parentheses) from the environment
+					env.StringRepresentation = m_cache.TsStrFactory.MakeString(envText.Replace(standardOptionalNcReference, ""), analysisWs);
+				}
+				else if (envText.Contains(indexed))
+				{
+					//mark natural classes indexed in the environment "DELETED"
+					string patternForIndexedNaturalClass = @"\[" + Regex.Escape(naturalClassAbbr) + @"\^\d{1,2}\]"; //e.g. [C^1]
+					string newEnv = Regex.Replace(envText, patternForIndexedNaturalClass, "DELETED");
+					env.StringRepresentation = m_cache.TsStrFactory.MakeString(newEnv, analysisWs);
+
+					//mark them "DELETED" in the allomorph as well.
+					//MoAffixAllomorph:Form or MoStemAllomorph:Form which refers to the deleted environment
+
+					var vernWs = m_cache.LangProject.DefaultVernacularWritingSystem.Handle;
+
+					foreach (var refObj in env.ReferringObjects)
+					{
+						if (refObj is MoAffixAllomorph)
+						{
+							var affixAllomorphReferrer = refObj as MoAffixAllomorph;
+							var oldForm = affixAllomorphReferrer.Form.get_String(vernWs).Text;
+							if (oldForm != null)
+							{
+								string newForm = Regex.Replace(oldForm, patternForIndexedNaturalClass, "DELETED");
+								affixAllomorphReferrer.Form.set_String(vernWs,
+									m_cache.TsStrFactory.MakeString(newForm, vernWs));
+							}
+						}
+
+						if (refObj is MoStemAllomorph)
+						{
+							var stemAllomorphReferrer = refObj as MoStemAllomorph;
+							var oldForm = stemAllomorphReferrer.Form.get_String(vernWs).Text;
+							if (oldForm != null)
+							{
+								string newForm = Regex.Replace(oldForm, patternForIndexedNaturalClass, "DELETED");
+								stemAllomorphReferrer.Form.set_String(vernWs,
+									m_cache.TsStrFactory.MakeString(newForm, vernWs));
+							}
+						}
+					}
+				}
+				else if (envText.Contains(standardNcReference))
+				{
+					m_cache.DomainDataByFlid.DeleteObj(env.Hvo);
+				}
+			}
 		}
 	}
 
@@ -8326,21 +8386,15 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			switch (e.Flid)
 			{
 				case LexEntryRefTags.kflidComponentLexemes:
-					var entry = e.ObjectAdded as ILexEntry;
-					if (entry == null)
-						entry = ((ILexSense)e.ObjectAdded).Entry;
+					var entry = e.ObjectAdded as ILexEntry ?? ((ILexSense)e.ObjectAdded).Entry;
 					if (entry.IsComponent((ILexEntry)Owner))
 					{
-						string exceptionStr;
-						if (entry.ShortName == "???")
+						var exceptionStr = String.Format(
+							"components can't have circular references. {1} See entry in LIFT file with LIFTId:     {0}{1}",
+							entry.LIFTid, System.Environment.NewLine);
+						if (entry.ShortName != "???")
 						{
-							exceptionStr = String.Format("components can't have circular references. {1} See entry in lift file with LIFTId:     {0}{1}",
-								entry.LIFTid, System.Environment.NewLine);
-						}
-						else
-						{
-							exceptionStr = String.Format("components can't have circular references. {2} See entry in lift file with LIFTId:     {0}{2}and Form:     {1}",
-								entry.LIFTid, entry.ShortName, System.Environment.NewLine);
+							exceptionStr += String.Format("and Form:     {0}", entry.ShortName);
 						}
 						throw new ArgumentException(exceptionStr);
 					}

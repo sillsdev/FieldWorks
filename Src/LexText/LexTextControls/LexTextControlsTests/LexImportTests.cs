@@ -194,6 +194,24 @@ namespace LexTextControlsTests
 			DoImport(sfmDataWithMinorBeforeMainEntryLinks, MakeDefaultFields(), 2);
 		}
 
+		private string sfmDataWithBlankPosFollowingRealPos =
+@"\lx a
+\ps n
+\sn
+\de thing one
+\ps
+\sn
+\de non-thing one ";
+		[Test]
+		public void ImportBlankPsAfterNonBlank_DoesNotDropBlankPosAndDupPrevious()
+		{
+			DoImport(sfmDataWithBlankPosFollowingRealPos, MakeDefaultFields(), 1);
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances().First();
+			Assert.AreEqual(2, entry.SensesOS.Count(), "Import should have resulted in two senses");
+			Assert.AreEqual(entry.SensesOS[0].MorphoSyntaxAnalysisRA.PosFieldName, "n");
+			Assert.AreNotEqual(entry.SensesOS[1].MorphoSyntaxAnalysisRA.PosFieldName, "n");
+		}
+
 		/// <summary>
 		/// This messy process simulates what the real import wizard does to import a string like input,
 		/// with the given field mappings, and verifies that it produces the expected number of new lexEntries.

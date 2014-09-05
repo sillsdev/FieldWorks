@@ -13,6 +13,7 @@ using System.Collections;
 using System.Windows.Forms;
 using System.Diagnostics;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
@@ -66,7 +67,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				m_lp.StylesOC);
 			m_styleSheet = new FwStyleSheet();
 			m_styleSheet.Init(Cache, m_lp.Hvo,
-				LangProjectTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+				LangProjectTags.kflidStyles);
 
 			Debug.Assert(m_stylesComboBox == null, "m_stylesComboBox is not null.");
 			//if (m_stylesComboBox != null)
@@ -130,7 +131,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			}
 
 			// Now check for the Default Paragraph Characters psuedo-style style.
-			i = m_stylesComboBox.FindStringExact(ResourceHelper.DefaultParaCharsStyleName);
+			i = m_stylesComboBox.FindStringExact(StyleUtils.DefaultParaCharsStyleName);
 			Assert.IsTrue(i > -1);
 			styleCountExpected++; // Add one for this psuedo-style
 			Assert.AreEqual(StyleType.kstCharacter,

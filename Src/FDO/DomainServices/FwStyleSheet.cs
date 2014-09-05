@@ -24,6 +24,7 @@ using System.Drawing;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Application;
 using SIL.Utils;
@@ -151,7 +152,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <summary>The field ID of the owner(m_hvoStylesOwner)'s collection of StStyles.</summary>
 		private int m_tagStylesList;
 		private FwStyleSheet m_styleSheetWithUiStyle;
-		private string m_defaultParaCharsStyleName;
 
 		/// <summary>Collection of styles</summary>
 		protected StyleInfoCollection m_StyleInfos;
@@ -184,7 +184,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					else
 					{
 						m_styleSheetWithUiStyle = new FwStyleSheet();
-						m_styleSheetWithUiStyle.Init(Cache, Cache.LangProject.Hvo, LangProjectTags.kflidStyles, m_defaultParaCharsStyleName);
+						m_styleSheetWithUiStyle.Init(Cache, Cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 					}
 				}
 				return m_styleSheetWithUiStyle;
@@ -259,21 +259,18 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		#endregion
 
 		#region Constructor, Init, Load
-
-		///  --------------------------------------------------------------------------------------------
-		///  <summary>
-		/// 	FwStyleSheet.Init() sets the FdoCache, the hvo of the owning object, and the tag
-		/// 	specifying the owner's property which holds the collection of StStyle objects.
-		/// 	Then the internal collections are loaded.
-		///  </summary>
-		///
-		///  <param name="cache">the FDO cache</param>
-		///  <param name="hvoStylesOwner">the owning object</param>
-		///  <param name="tagStylesList">the owner(hvoStylesOwner)'s field ID which holds the collection
-		///   of StStyle objects</param>
-		/// <param name="defaultParaCharsStyleName">The default paragraph characters style name.</param>
+		///   --------------------------------------------------------------------------------------------
+		///   <summary>
+		///  	FwStyleSheet.Init() sets the FdoCache, the hvo of the owning object, and the tag
+		///  	specifying the owner's property which holds the collection of StStyle objects.
+		///  	Then the internal collections are loaded.
+		///   </summary>
+		/// <param name="cache">the FDO cache</param>
+		/// <param name="hvoStylesOwner">the owning object</param>
+		/// <param name="tagStylesList">the owner(hvoStylesOwner)'s field ID which holds the collection
+		///     of StStyle objects</param>
 		/// --------------------------------------------------------------------------------------------
-		public void Init(FdoCache cache, int hvoStylesOwner, int tagStylesList, string defaultParaCharsStyleName)
+		public void Init(FdoCache cache, int hvoStylesOwner, int tagStylesList)
 		{
 			m_fdoCache = cache;
 			m_hvoStylesOwner = hvoStylesOwner;
@@ -464,7 +461,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (style != null)
 				return (int)style.Type;
 
-			if (sName == kstrDefaultCharStyle || sName == m_defaultParaCharsStyleName)
+			if (sName == kstrDefaultCharStyle || sName == StyleUtils.DefaultParaCharsStyleName)
 				return (int)StyleType.kstCharacter;
 
 			return 0; //ThrowInternalError(E_INVALIDARG);

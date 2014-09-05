@@ -7,7 +7,7 @@
 
 using System.Diagnostics;
 using NUnit.Framework;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
@@ -135,7 +135,7 @@ namespace SIL.FieldWorks.TE.TeEditingHelpers
 			base.TestSetup();
 
 			FwStyleSheet styleSheet = new FwStyleSheet();
-			styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+			styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
 
 			Debug.Assert(m_draftView == null);
 			m_draftView = new TeDummyBasicView();

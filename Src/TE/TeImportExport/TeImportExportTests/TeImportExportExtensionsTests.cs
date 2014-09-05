@@ -2,13 +2,10 @@
 using System.IO;
 using System.Text;
 using NUnit.Framework;
-using Rhino.Mocks;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Resources;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.TE
@@ -29,7 +26,8 @@ namespace SIL.FieldWorks.TE
 		[Test]
 		public void AddFileAndCheckAccessibility_Locked()
 		{
-			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create(ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
+			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
+			Cache.LanguageProject.TranslatedScriptureOA.ImportSettingsOC.Add(importSettings);
 			importSettings.ImportTypeEnum = TypeOfImport.Other;
 
 			var fileOs = new MockFileOS();
@@ -61,11 +59,11 @@ namespace SIL.FieldWorks.TE
 		[Test]
 		public void ImportProjectIsAccessible_Paratext6()
 		{
-			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create(ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
+			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
+			Cache.LanguageProject.TranslatedScriptureOA.ImportSettingsOC.Add(importSettings);
 			importSettings.ImportTypeEnum = TypeOfImport.Paratext6;
 
 			var fileOs = new MockFileOS();
-			var mockParatextHelper = MockRepository.GenerateMock<IParatextHelper>();
 			MockParatextHelper ptHelper = null;
 			try
 			{
@@ -107,7 +105,8 @@ namespace SIL.FieldWorks.TE
 		[Test]
 		public void ImportProjectIsAccessible_Paratext5()
 		{
-			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create(ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
+			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
+			Cache.LanguageProject.TranslatedScriptureOA.ImportSettingsOC.Add(importSettings);
 			importSettings.ImportTypeEnum = TypeOfImport.Paratext5;
 			ImportProjectIsAccessible_helper(importSettings);
 		}
@@ -120,7 +119,8 @@ namespace SIL.FieldWorks.TE
 		[Test]
 		public void ImportProjectIsAccessible_Other()
 		{
-			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create(ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
+			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
+			Cache.LanguageProject.TranslatedScriptureOA.ImportSettingsOC.Add(importSettings);
 			importSettings.ImportTypeEnum = TypeOfImport.Other;
 			ImportProjectIsAccessible_helper(importSettings);
 		}

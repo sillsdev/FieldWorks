@@ -380,7 +380,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			display.Enabled = CanApplyStyle;
 			var style = BestSelectionStyle;
 			if (String.IsNullOrEmpty(style))
-				style = ResourceHelper.DefaultParaCharsStyleName;
+				style = StyleUtils.DefaultParaCharsStyleName;
 			display.Text = style;
 			return true;		// we handled this, no need to ask anyone else.
 		}
@@ -456,7 +456,7 @@ namespace SIL.FieldWorks.Common.RootSites
 										if (String.IsNullOrEmpty(charStyleName) && flidAnchor == (int)StTxtParaTags.kflidContents)
 											bestStyle = paraStyleName;
 										else if (charStyleName == string.Empty)
-											bestStyle = ResourceHelper.DefaultParaCharsStyleName;
+											bestStyle = StyleUtils.DefaultParaCharsStyleName;
 										else if (charStyleName == null)
 											bestStyle = String.Empty;
 										else
@@ -535,7 +535,7 @@ namespace SIL.FieldWorks.Common.RootSites
 						null);
 				}
 			}
-			string nameDefault = ResourceHelper.DefaultParaCharsStyleName;
+			string nameDefault = StyleUtils.DefaultParaCharsStyleName;
 			display.List.Add(nameDefault, nameDefault, charImage, null);
 			display.List.Sort();
 		}

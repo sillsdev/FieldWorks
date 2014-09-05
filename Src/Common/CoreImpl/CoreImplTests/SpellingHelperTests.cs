@@ -3,7 +3,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using SIL.Utils;
+using Palaso.IO;
+using FileUtils = SIL.Utils.FileUtils;
 
 namespace SIL.CoreImpl
 {
@@ -284,6 +285,25 @@ namespace SIL.CoreImpl
 			var suggestions = dict.Suggest("badd");
 			Assert.That(suggestions.Count, Is.GreaterThanOrEqualTo(1));
 			Assert.That(suggestions.First(), Is.EqualTo("bad"));
+		}
+
+		[Test]
+		public void EnchantDictionaryMigrated()
+		{
+			// make temp folder with enchant dictionary in it
+			var outputFolder = Path.Combine(Path.GetTempPath(), "EnchantDictionaryMigrationTestOut");
+			var inputFolder = Path.Combine(Path.GetTempPath(), "EnchantDictionaryMigrationTestIn");
+			DirectoryUtilities.DeleteDirectoryRobust(outputFolder);
+			DirectoryUtilities.DeleteDirectoryRobust(inputFolder);
+			Directory.CreateDirectory(outputFolder);
+			Directory.CreateDirectory(inputFolder);
+			File.AppendAllText(Path.Combine(inputFolder, "test.dic"), "nil");
+			File.AppendAllText(Path.Combine(inputFolder, "test.exc"), "nil");
+			// SUT
+			Assert.DoesNotThrow(()=>SpellingHelper.AddAnySpellingExceptionsFromBackup(inputFolder, outputFolder));
+			// Verify that the correct files were copied
+			Assert.True(File.Exists(Path.Combine(outputFolder, "test.exc")), "The exception file should have been copied.");
+			Assert.False(File.Exists(Path.Combine(outputFolder, "test.dic")), "The .dic file should not have been copied.");
 		}
 	}
 }

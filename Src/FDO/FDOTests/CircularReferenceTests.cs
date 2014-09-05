@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿// Copyright (c) 2014 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.FieldWorks.FDO.Infrastructure;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -24,10 +23,16 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.That(kick.IsComponent(kick), Is.True, "entry should be considered a component of itself");
 
 			var kickBucket = MakeEntry("kick the bucket", "die");
-			var ler = MakeComplexFormLexEntryRef(kickBucket);
+			var ler = MakeLexEntryRef(kickBucket, LexEntryRefTags.krtComplexForm);
 			ler.ComponentLexemesRS.Add(kick);
 			Assert.That(kickBucket.IsComponent(kick), Is.True, "direct entry component should be found");
 			Assert.That(kick.IsComponent(kickBucket), Is.False, "complex form is not component of its component");
+
+			var kickCan = MakeEntry("kick the can", "die");
+			var varRef = MakeLexEntryRef(kickCan, LexEntryRefTags.krtVariant);
+			varRef.ComponentLexemesRS.Add(kickBucket);
+			Assert.That(kickCan.IsComponent(kickBucket), Is.True, "direct entry component should be found");
+			Assert.That(kickBucket.IsComponent(kickCan), Is.False, "complex form is not component of its component");
 
 			var run = MakeEntry("run", "move fast by foot"); // unrelated to anything.
 			Assert.That(kickBucket.IsComponent(run), Is.False, "unrelated entry is not a component");
@@ -68,18 +73,18 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		private ILexEntry MakeCompound(string lf, string gloss, ICmObject[] components)
 		{
 			var result = MakeEntry(lf, gloss);
-			var ler = MakeComplexFormLexEntryRef(result);
+			var ler = MakeLexEntryRef(result, LexEntryRefTags.krtComplexForm);
 			foreach (var obj in components)
 				ler.ComponentLexemesRS.Add(obj);
 			return result;
 		}
 
-		private ILexEntryRef MakeComplexFormLexEntryRef(ILexEntry ownerEntry)
+		private ILexEntryRef MakeLexEntryRef(ILexEntry ownerEntry, int refType)
 		{
 			ILexEntryRef result = null;
 			result = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
 			ownerEntry.EntryRefsOS.Add(result);
-			result.RefType = LexEntryRefTags.krtComplexForm;
+			result.RefType = refType;
 			return result;
 		}
 

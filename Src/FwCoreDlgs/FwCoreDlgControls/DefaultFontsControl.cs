@@ -291,7 +291,11 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			string oldFont = m_ws.DefaultFontName;
 			if (oldFont != m_defaultFontComboBox.Text)
 			{
-				m_ws.DefaultFontName = m_defaultFontComboBox.Text;
+				// Finding a font missing should not result in persisting a font name change
+				if(String.Format(FwCoreDlgControls.kstidMissingFontFmt, oldFont) != m_defaultFontComboBox.Text)
+				{
+					m_ws.DefaultFontName = m_defaultFontComboBox.Text;
+				}
 				m_ws.DefaultFontFeatures = "";
 				m_defaultFontFeaturesButton.FontName = m_defaultFontComboBox.Text;
 				m_defaultFontFeaturesButton.FontFeatures = "";

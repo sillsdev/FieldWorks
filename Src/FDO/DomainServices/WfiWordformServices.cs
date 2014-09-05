@@ -74,16 +74,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		public static IWfiWordform FindOrCreateWordform(FdoCache cache, string form, IWritingSystem ws)
 		{
 			Debug.Assert(!string.IsNullOrEmpty(form));
-
-			ITsString tssForm = CreateWordformTss(form, ws.Handle);
-			IWfiWordform wf;
-
-			if (!cache.ServiceLocator.GetInstance<IWfiWordformRepository>().TryGetObject(tssForm, out wf))
-			{
-				// Give up looking for one, and just make a new one.
-				wf = cache.ServiceLocator.GetInstance<IWfiWordformFactory>().Create(tssForm);
-			}
-			return wf;
+			return FindOrCreateWordform(cache, CreateWordformTss(form, ws.Handle));
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -544,7 +544,7 @@ namespace SIL.FieldWorks.Common.Framework
 					RefreshCharStyleComboBoxList(currentContext, rootsite);
 				}
 				if (charStyleName == string.Empty)
-					charStyleName = ResourceHelper.DefaultParaCharsStyleName;
+					charStyleName = StyleUtils.DefaultParaCharsStyleName;
 				if (charStyleName == null)
 					charStyleName = string.Empty;
 				if (CharStyleListHelper.SelectedStyleName != charStyleName)

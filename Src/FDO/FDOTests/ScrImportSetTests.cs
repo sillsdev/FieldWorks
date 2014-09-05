@@ -11,10 +11,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using NUnit.Framework;
 using Rhino.Mocks;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SILUBS.SharedScrUtils;
 
@@ -136,7 +134,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			base.TestSetup();
 
-			m_importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create(ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
+			m_importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
 			m_scr.ImportSettingsOC.Add(m_importSettings);
 			m_translatorNoteDefn = Cache.ServiceLocator.GetInstance<ICmAnnotationDefnRepository>().TranslatorAnnotationDefn;
 			m_consultantNoteDefn = Cache.ServiceLocator.GetInstance<ICmAnnotationDefnRepository>().ConsultantAnnotationDefn;

@@ -1,8 +1,10 @@
+// Copyright (c) 2014 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Windows.Forms;
 using System.Xml;
 using System.Diagnostics;
@@ -10,13 +12,14 @@ using System.IO;
 
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.COMInterfaces;
 using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
 	/// <summary>
-	/// Summary description for UtilityDlg.
+	/// This dialog presents the users with the list of utilities defined in 'Language Explorer\Configuration\UtilityCatalogInclude.xml'
+	/// These utilities must implement the IUtility class and can set several labels in the dialog to explain the conditions where they
+	/// are needed and their behavior.
 	/// </summary>
 	public class UtilityDlg : Form, IFWDisposable
 	{
@@ -24,17 +27,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private string m_whenDescription;
 		private string m_whatDescription;
 		private string m_redoDescription;
-		private System.Windows.Forms.CheckedListBox m_clbUtilities;
-		private System.Windows.Forms.RichTextBox m_rtbDescription;
-		private System.Windows.Forms.ProgressBar m_progressBar;
-		private System.Windows.Forms.Label m_lSteps;
+		private CheckedListBox m_clbUtilities;
+		private RichTextBox m_rtbDescription;
+		private ProgressBar m_progressBar;
+		private Label m_lSteps;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
 		private const string s_helpTopic = "khtpProjectUtilities";
-		private System.Windows.Forms.HelpProvider helpProvider;
+		private HelpProvider helpProvider;
 		private Button m_btnRunUtils;
 		private Label label1;
 		private Label label2;
@@ -63,11 +66,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 
 			// The standard localization doesn't seem to be working, so do it explicitly here.
-			label1.Text = SIL.FieldWorks.FwCoreDlgs.FwCoreDlgs.ksUtilities;
-			label2.Text = SIL.FieldWorks.FwCoreDlgs.FwCoreDlgs.ksDescription;
-			m_btnHelp.Text = SIL.FieldWorks.FwCoreDlgs.FwCoreDlgs.ksHelp;
-			m_btnClose.Text = SIL.FieldWorks.FwCoreDlgs.FwCoreDlgs.ks_Close;
-			m_btnRunUtils.Text = SIL.FieldWorks.FwCoreDlgs.FwCoreDlgs.ksRunUtilities;
+			label1.Text = FwCoreDlgs.ksUtilities;
+			label2.Text = FwCoreDlgs.ksDescription;
+			m_btnHelp.Text = FwCoreDlgs.ksHelp;
+			m_btnClose.Text = FwCoreDlgs.ks_Close;
+			m_btnRunUtils.Text = FwCoreDlgs.ksRunUtilities;
 		}
 
 		/// <summary>
@@ -133,7 +136,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary>
-		/// Set the Redo Description substring.
+		/// Set the "Cautions" substring. (Keeping the legacy API)
 		/// </summary>
 		public string RedoDescription
 		{
@@ -220,6 +223,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					util.LoadUtilities();
 				}
 			}
+			m_clbUtilities.Sorted = true;
 			if (m_clbUtilities.Items.Count > 0)
 				m_clbUtilities.SelectedIndex = 0;
 		}
@@ -324,17 +328,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void m_clbUtilities_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
-			System.Drawing.Font currentFont = m_rtbDescription.SelectionFont;
+			var currentFont = m_rtbDescription.SelectionFont;
 #if __MonoCS__
 			// Creating the bold equivalent of the current font doesn't seem to work in Mono,
 			// as we crash shortly due to failures in GDIPlus.GdipMeasureString() using that
 			// font.
 			var boldFont = currentFont;
 #else
-			System.Drawing.FontStyle boldFontStyle = FontStyle.Bold;
-			using (System.Drawing.Font boldFont = new Font(currentFont.FontFamily, currentFont.Size, boldFontStyle))
+			var boldFontStyle = FontStyle.Bold;
+			using (var boldFont = new Font(currentFont.FontFamily, currentFont.Size, boldFontStyle))
 #endif
 			{
+				m_whatDescription = m_whenDescription = m_redoDescription = null;
 				((IUtility)m_clbUtilities.SelectedItem).OnSelection();
 				m_rtbDescription.Clear();
 				// What
@@ -406,19 +411,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		private void m_btnClose_Click(object sender, System.EventArgs e)
+		private void m_btnClose_Click(object sender, EventArgs e)
 		{
 			Close();
 		}
 
-		private void m_clbUtilities_ItemCheck(object sender, System.Windows.Forms.ItemCheckEventArgs e)
+		private void m_clbUtilities_ItemCheck(object sender, ItemCheckEventArgs e)
 		{
 			int cnt = m_clbUtilities.CheckedItems.Count;
 			cnt = (e.NewValue == CheckState.Checked) ? cnt + 1 : cnt - 1;
 			m_btnRunUtils.Enabled = cnt > 0;
 		}
 
-		private void m_btnHelp_Click(object sender, System.EventArgs e)
+		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, s_helpTopic);
 		}

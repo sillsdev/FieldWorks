@@ -10,7 +10,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
@@ -895,7 +895,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// ------------------------------------------------------------------------------------
 		public void SaveBasedOn(string basedOnStyle)
 		{
-			if (basedOnStyle == ResourceHelper.DefaultParaCharsStyleName || basedOnStyle == string.Empty)
+			if (basedOnStyle == StyleUtils.DefaultParaCharsStyleName || basedOnStyle == string.Empty)
 				basedOnStyle = null;
 
 			if (basedOnStyle != m_basedOnStyleName)
@@ -913,7 +913,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// ------------------------------------------------------------------------------------
 		public void SaveFollowing(string followingStyle)
 		{
-			if (followingStyle == ResourceHelper.DefaultParaCharsStyleName || followingStyle == string.Empty)
+			if (followingStyle == StyleUtils.DefaultParaCharsStyleName || followingStyle == string.Empty)
 				followingStyle = null;
 
 			if (followingStyle != m_nextStyleName)

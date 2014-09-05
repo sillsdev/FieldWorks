@@ -678,7 +678,32 @@ namespace SIL.FieldWorks.Common.Controls
 				refs.Sort(SortHvoByIndex);
 				return refs.Select(t => t.RefHvo).ToArray();
 			}
+			// If we are processing a collection of LexEntry objects this is a subentries collection and it needs to be filtered by
+			// the type info for the LexEntryRef which is storing the subentry
+			if(objs[0].ClassID == LexEntryTags.kClassId &&
+				(m_mapGuidToComplexRefInfo != null || m_mapGuidToVariantRefInfo != null))
+			{
+				var originalIndex = 0;
+				var refs = (from le in objs.OfType<ILexEntry>()
+								let info = GetTypeInfoForSubEntry(le)
+								where info != null
+								select new HvoAndIndex {RefHvo = le.Hvo, Index = info.Index, OriginalIndex = ++originalIndex}).ToList();
+				// Now, sort the list according to the order given by the information stored in
+				// m_mapGuidToComplexRefInfo and return the new array of hvos.
+				refs.Sort(SortHvoByIndex);
+				return refs.Select(t => t.RefHvo).ToArray();
+			}
 			return hvos;
+		}
+
+		private ItemTypeInfo GetTypeInfoForSubEntry(ILexEntry entry)
+		{
+			if(entry.EntryRefsOS.Count() == 1)
+			{
+				var lexRef = entry.EntryRefsOS.First();
+				return GetTypeInfoForEntryRef(lexRef);
+			}
+			return null;
 		}
 
 		private ItemTypeInfo GetTypeInfoForEntryRef(ILexEntryRef ler)

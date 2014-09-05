@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using NUnit.Framework;
 using Paratext;
 using Rhino.Mocks;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
@@ -472,10 +473,10 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 		/// ------------------------------------------------------------------------------------
 		protected override void CreateTestData()
 		{
-			m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Other, ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
+			m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Other);
 
 			m_styleSheet = new FwStyleSheet();
-			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
 		}
 
 		/// ---------------------------------------------------------------------------------

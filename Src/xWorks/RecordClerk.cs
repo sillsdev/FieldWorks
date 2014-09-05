@@ -1471,6 +1471,13 @@ namespace SIL.FieldWorks.XWorks
 			if (CurrentObjectHvo == 0)
 				return true;
 
+			// Don't allow an object to be deleted if it shouldn't be deleted.
+			if (!CanDelete())
+			{
+				ReportCannotDelete();
+				return true;
+			}
+
 			//when we are doing an automated test, we don't know how to click the "yes" button, so
 			//look into the property table to see if there is a property controlling what we should do.
 			var doingAutomatedTest = m_mediator.PropertyTable.GetBoolProperty("DoingAutomatedTest", false);

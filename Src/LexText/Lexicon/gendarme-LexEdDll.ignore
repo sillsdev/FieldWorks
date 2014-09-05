@@ -42,3 +42,4 @@ R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
 
 # Reference only
 T: SIL.FieldWorks.XWorks.LexEd.HomographResetter
+T: SIL.FieldWorks.XWorks.LexEd.GoldEticGuidFixer

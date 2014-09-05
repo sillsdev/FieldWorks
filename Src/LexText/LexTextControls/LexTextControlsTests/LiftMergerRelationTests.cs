@@ -1490,7 +1490,6 @@ namespace LexTextControlsTests
 
 			var entryRepo = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var senseRepo = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
-			var refTypeRepo = Cache.ServiceLocator.GetInstance<ILexRefTypeRepository>();
 
 			var sOrigFile = CreateInputFile(twoEntryWithVariantComplexFormLift);
 			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 2);
@@ -1543,7 +1542,6 @@ namespace LexTextControlsTests
 
 			var entryRepo = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var senseRepo = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
-			var refTypeRepo = Cache.ServiceLocator.GetInstance<ILexRefTypeRepository>();
 
 			var sOrigFile = CreateInputFile(twoEntryWithVariantComplexFormLift);
 			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 2);
@@ -1603,7 +1601,6 @@ namespace LexTextControlsTests
 
 			var entryRepo = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var senseRepo = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
-			var refTypeRepo = Cache.ServiceLocator.GetInstance<ILexRefTypeRepository>();
 
 			var sOrigFile = CreateInputFile(twoEntryWithVariantComplexFormLift);
 			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 2);
@@ -1684,7 +1681,6 @@ namespace LexTextControlsTests
 
 			var entryRepo = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var senseRepo = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
-			var refTypeRepo = Cache.ServiceLocator.GetInstance<ILexRefTypeRepository>();
 
 			var sOrigFile = CreateInputFile(twoEntryWithDerivativeComplexFormLift);
 			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 2);
@@ -1699,6 +1695,70 @@ namespace LexTextControlsTests
 			Assert.AreEqual(0, aEntry.ComplexFormEntries.Count(), "ComplexFormEntry was not deleted during lift import.");
 			Assert.AreEqual(1, eEntry.VariantEntryRefs.Count(), "An empty VariantEntryRef should have resulted from the import");
 			Assert.AreEqual(0, aEntry.VariantFormEntries.Count(), "An empty VariantEntryRef should have resulted from the import");
+		}
+
+		[Test]
+		public void TestImportLexRefType_NonAsciiCharactersDoNotCauseDuplication()
+		{
+			var unNormalizedOmega = '\u2126';
+			var normalizedOmega = '\u03A9';
+			//ranges file with defining a custom EntryCollection type using a non-normalized unicode character in the name
+			var liftRangeWithNonAsciiRelation = new[]
+			{
+				"<?xml version='1.0' encoding='UTF-8'?>",
+				"<lift-ranges>",
+				"<range id='lexical-relation'>",
+				"<range-element id='Test" + unNormalizedOmega + "' guid='b7862f14-ea5e-11de-8d47-0013722f8dec'>",
+				"<label>",
+				"<form lang='en'><text>One</text></form>",
+				"<form lang='fr'><text>deux</text></form>",
+				"</label>",
+				"<abbrev>",
+				"<form lang='en'><text>o.</text></form>",
+				"<form lang='fr'><text>d.</text></form>",
+				"</abbrev>",
+				"<trait name='referenceType' value='" + (int)LexRefTypeTags.MappingTypes.kmtEntryCollection + "'/>",
+				"</range-element>",
+				"</range>",
+				"</lift-ranges>"
+			};
+
+			var liftWithSenseUsingNonAsciiRelation = new[]
+			{
+				"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
+				"<lift producer=\"SIL.FLEx 8.1.0\" version=\"0.13\">",
+				"  <header>",
+				"    <fields>",
+				"    </fields>",
+				"  </header>",
+				"<entry id='cold_97b8a20d-9989-430d-8a20-2f95592d60cb' guid='97b8a20d-9989-430d-8a20-2f95592d60cb'>",
+				"<lexical-unit>",
+				"<form lang='en'><text>cold</text></form>",
+				"</lexical-unit>",
+				"<trait  name='morph-type' value='stem'/>",
+				"<sense id='57f884c0-0df2-43bf-8ba7-c70b2a208cf1'>",
+				"<gloss lang='en'><text>cold</text></gloss>",
+				"<relation type='Test" + unNormalizedOmega + "' ref='97b8a20d-9989-430d-8a20-2f95592d60cb' order='1'/>",
+				"</sense>",
+				"</entry>",
+				"</lift>"
+			};
+
+			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			var entryRepo = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+			var senseRepo = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
+			var refTypeRepo = Cache.ServiceLocator.GetInstance<ILexRefTypeRepository>();
+			var refTypeFactory = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>();
+			var testType = refTypeFactory.Create(new Guid("b7862f14-ea5e-11de-8d47-0013722f8dec"), null);
+			testType.Name.set_String(wsEn, Cache.TsStrFactory.MakeString("Test" + normalizedOmega, wsEn));
+			testType.Abbreviation.set_String(wsEn, Cache.TsStrFactory.MakeString("test", wsEn));
+			Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(testType);
+			var refTypeCountBeforeImport = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Count;
+			var liftFile = CreateInputFile(liftWithSenseUsingNonAsciiRelation);
+			var rangeFile = CreateInputRangesFile(liftRangeWithNonAsciiRelation);
+			// SUT
+			var logFile = TryImport(liftFile, rangeFile, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 1);
+			Assert.AreEqual(refTypeCountBeforeImport, Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Count, "Relation duplicated on import");
 		}
 	}
 }

@@ -487,4 +487,8 @@
     <value>{0} pt</value>
     <comment>size in "points"</comment>
   </data>
+  <data name="kstidDefaultParaCharsUsage" xml:space="preserve">
+    <value>The text will get its font properties from the paragraph to which it belongs</value>
+    <comment>Usage information for Default Paragraph Characters</comment>
+  </data>
 </root>

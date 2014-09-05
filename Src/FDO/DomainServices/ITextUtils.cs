@@ -1125,7 +1125,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			ITsString tssWordText = tssWordTextIn.ToWsOnlyString();
 			// First see if we can find a real annotation we can reuse for the wordform or alternative case.
-			IWfiWordform wf = null;
+			IWfiWordform wf;
 			IAnalysis analysis;
 			TryReuseAnalysis(tssWordText, ichMin, ichLim, iWfAnalysis, out wf, out tssWordAnn, out analysis);
 			if (tssWordAnn.Length == 0)
@@ -1142,13 +1142,12 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				}
 			}
 
-			if (analysis == null)
-			{
-				// couldn't find an existing annotation to use, so try to create one.
-				wf = FindOrCreateWordform(tssWordAnn);
-				analysis = wf;
-			}
-			return analysis;
+			// When searching for existing Wordforms, include lower-case forms when the beginning index is 0 or 1
+			// (in case of leading quote etc (one but not two), but still safe for one-letter initial word).
+			var isFirstWord = ichMin < 2;
+
+			// if we couldn't find an existing annotation to use, try to create one.
+			return analysis ?? FindOrCreateWordform(tssWordAnn, isFirstWord);
 		}
 
 		/// <summary>
@@ -1229,21 +1228,15 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			return tssWordText.Length < tssPhrase.Length;
 		}
 
-		private IWfiWordform FindOrCreateWordform(ITsString tssWordAnn)
+		private IWfiWordform FindOrCreateWordform(ITsString tssWordAnn, bool includeLowerCaseForm)
 		{
 			// give preference to alternative case forms that have exact annotation offset matches.
 			IWfiWordform wf;
-			if (m_wfr.TryGetObject(tssWordAnn, out wf))
+			if (!m_wfr.TryGetObject(tssWordAnn, includeLowerCaseForm, out wf))
 			{
-				return wf;
+					wf = m_wordfactory.Create(tssWordAnn);
 			}
-			else
-			{
-				//Debug.Assert((m_wfi as WordformInventory).SuspendUpdatingConcordanceWordforms == this.RebuildingConcordanceWordforms,
-				//	"Make sure that the WordformInventory is still in sync with us RebuildingConcordanceWordforms");
-				// allows ParserConnection to generate Analyses.
-				return m_wordfactory.Create(tssWordAnn);
-			}
+			return wf;
 		}
 
 #if PROFILING

@@ -478,7 +478,7 @@
 	<value>1</value>
   </data>
   <data name="label2.Text" xml:space="preserve">
-	<value>Using this tool, you can import the baseline of texts as well as any free-form text annotations such as free translations, if texts have been marked up with standard format markers. After importing, you will need to re-insert any morpheme breaks, and redo other aspects of interlinearization.</value>
+	<value>Using this tool, you can import the Baseline of texts as well as any free-form text annotations (such as free translations or notes), if the texts have been marked up with standard format markers. After importing, you will need to re-insert any morpheme breaks, and redo other aspects of interlinearization.</value>
   </data>
   <data name="&gt;&gt;label2.Name" xml:space="preserve">
 	<value>label2</value>

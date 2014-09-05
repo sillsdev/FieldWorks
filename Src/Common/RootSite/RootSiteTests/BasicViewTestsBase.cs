@@ -11,6 +11,7 @@
 // --------------------------------------------------------------------------------------------
 using System.Diagnostics;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -56,7 +57,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			base.TestSetup();
 
 			var styleSheet = new FwStyleSheet();
-			styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+			styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
 
 			Debug.Assert(m_basicView == null, "m_basicView is not null.");
 			//if (m_basicView != null)

@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			Debug.Assert(m_dlg != null);
 			m_dlg.WhenDescription = LexEdStrings.ksWhenToReassignHomographs;
 			m_dlg.WhatDescription = LexEdStrings.ksWhatIsReassignHomographs;
-			m_dlg.RedoDescription = LexEdStrings.ksCannotRedoReassignHomographs;
+			m_dlg.RedoDescription = LexEdStrings.ksGenericUtilityCannotUndo;
 		}
 
 		/// <summary>

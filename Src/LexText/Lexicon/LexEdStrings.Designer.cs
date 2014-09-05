@@ -79,6 +79,51 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Guids changed..
+        /// </summary>
+        internal static string GoldEticGuidFixer_Guids_changed_Title {
+            get {
+                return ResourceManager.GetString("GoldEticGuidFixer_Guids_changed_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Some guids for parts of speech that did not match the GOLD standard were found and replaced..
+        /// </summary>
+        internal static string GoldEticGuidFixer_GuidsChangedContent {
+            get {
+                return ResourceManager.GetString("GoldEticGuidFixer_GuidsChangedContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use standard part of speech guids.
+        /// </summary>
+        internal static string GoldEticGuidFixer_Label {
+            get {
+                return ResourceManager.GetString("GoldEticGuidFixer_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No changes were necessary..
+        /// </summary>
+        internal static string GoldEticGuidFixer_NoChangeContent {
+            get {
+                return ResourceManager.GetString("GoldEticGuidFixer_NoChangeContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Guids changed..
+        /// </summary>
+        internal static string GoldEticGuidFixer_NoChangeTitle {
+            get {
+                return ResourceManager.GetString("GoldEticGuidFixer_NoChangeTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to basic.
         /// </summary>
         internal static string kBasicFailureFileContents {
@@ -261,15 +306,6 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You cannot use &apos;Undo&apos; to cancel the effect of this utility. You would need to go back to a previously saved version of the database..
-        /// </summary>
-        internal static string ksCannotRedoReassignHomographs {
-            get {
-                return ResourceManager.GetString("ksCannotRedoReassignHomographs", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Category to merge into.
         /// </summary>
         internal static string ksCategoryToMergeInto {
@@ -311,26 +347,6 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         internal static string ksChooseWhereToShowSubentry {
             get {
                 return ResourceManager.GetString("ksChooseWhereToShowSubentry", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The {0} you just selected as a complex form of {1} is already saved as a component of {1}. Which item is really a component of the other?
-        ///Delete the existing relationship before trying to add this one again..
-        /// </summary>
-        internal static string ksCompleFormIsComponent {
-            get {
-                return ResourceManager.GetString("ksCompleFormIsComponent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The {0} you just selected as a component of {1} already has {1} specified as one if its components! Which item is really a component of the other?
-        ///Delete the existing relationship before trying to add this one again..
-        /// </summary>
-        internal static string ksComponentIsComponent {
-            get {
-                return ResourceManager.GetString("ksComponentIsComponent", resourceCulture);
             }
         }
         
@@ -551,15 +567,6 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to entry.
-        /// </summary>
-        internal static string ksEntry {
-            get {
-                return ResourceManager.GetString("ksEntry", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to That project already exists. You&apos;ll need to choose a different name in Project Properties..
         /// </summary>
         internal static string ksExistingProjectName {
@@ -601,6 +608,15 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         internal static string ksFindExampleSentenceDlgPreviewPaneTitle {
             get {
                 return ResourceManager.GetString("ksFindExampleSentenceDlgPreviewPaneTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You cannot use &apos;Undo&apos; to cancel the effect of this utility. You would need to go back to a previously saved version of the database..
+        /// </summary>
+        internal static string ksGenericUtilityCannotUndo {
+            get {
+                return ResourceManager.GetString("ksGenericUtilityCannotUndo", resourceCulture);
             }
         }
         
@@ -1059,15 +1075,6 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to sense.
-        /// </summary>
-        internal static string ksSense {
-            get {
-                return ResourceManager.GetString("ksSense", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Senses.
         /// </summary>
         internal static string ksSenses {
@@ -1428,6 +1435,15 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This utility will make the part of speech guids for the project match the GOLD standard..
+        /// </summary>
+        internal static string ksWhatIsSetPartOfSpeechGUIDsToGold {
+            get {
+                return ResourceManager.GetString("ksWhatIsSetPartOfSpeechGUIDsToGold", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Run this utility when you need to convert one or more of your existing variant types to be irregularly inflected form variant types.  When a variant type is an irregularly inflected form variant type, it has extra fields such as &apos;Append to Gloss&apos;, &apos;Inflection Features&apos;, and &apos;Slots.&apos;.
         /// </summary>
         internal static string ksWhenToConvertIrregularlyInflectedFormVariants {
@@ -1455,11 +1471,29 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Which item is really a component?.
+        ///   Looks up a localized string similar to If this project was created before FieldWorks version 8.1 and you want to use the data as part of a multi-language query you should use this utility..
         /// </summary>
-        internal static string ksWhichIsComponent {
+        internal static string ksWhenToSetPartOfSpeechGUIDsToGold {
             get {
-                return ResourceManager.GetString("ksWhichIsComponent", resourceCulture);
+                return ResourceManager.GetString("ksWhenToSetPartOfSpeechGUIDsToGold", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your last Send/Receive Lexicon did not complete successfully. Any work you do before a successful S/R Lexicon will be lost. You should immediately retry S/R Lexicon. If it completes successfully, you can continue your work. If the S/R Lexicon continues to fail, contact flex_errors@sil.org for help before doing further work..
+        /// </summary>
+        internal static string LiftSRFailureDetectedOnStartupMessage {
+            get {
+                return ResourceManager.GetString("LiftSRFailureDetectedOnStartupMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed LIFT S/R Detected.
+        /// </summary>
+        internal static string LiftSRFailureDetectedOnStartupTitle {
+            get {
+                return ResourceManager.GetString("LiftSRFailureDetectedOnStartupTitle", resourceCulture);
             }
         }
     }

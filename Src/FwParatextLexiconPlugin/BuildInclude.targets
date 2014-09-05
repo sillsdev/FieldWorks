@@ -2,6 +2,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 	<UsingTask TaskName="RegFree" AssemblyFile="../../Build/FwBuildTasks.dll" Condition="'$(OS)'=='Windows_NT'"/>
 	<Target Name="AfterBuild" Condition="'$(OS)'=='Windows_NT'">
-		<RegFree Executable="$(OutDir)FwParatextLexiconPlugin.dll" DependentAssemblies="$(OutDir)FwKernel.manifest" />
+		<RegFree Executable="$(OutDir)FwParatextLexiconPlugin.dll" DependentAssemblies="$(OutDir)FwKernel.X.manifest" />
 	</Target>
 </Project>

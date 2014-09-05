@@ -1,6 +1,10 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Reflection;
 using System.Xml;
 using NUnit.Framework;
+using SIL.FieldWorks.FDO;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -124,6 +128,32 @@ namespace SIL.FieldWorks.Common.Controls
 				Assert.That(vernWs, Is.EqualTo("fr"));
 				Assert.That(analysisWs, Is.EqualTo("en"));
 			}
+		}
+
+		/// <summary/>
+		[Test]
+		public void CallPickAnthro_PickAnthroListCanBeFound()
+		{
+			var flags = (BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
+			var type = ReflectionHelper.GetType(ObtainProjectMethod.PickAnthroDll,
+															ObtainProjectMethod.PickAnthroClass);
+			Assert.NotNull(type, "Class used for PickAnthroList moved.");
+			var method = type.GetMethod(ObtainProjectMethod.PickAnthroMethod,
+												 new [] { typeof(String), typeof(XCore.IHelpTopicProvider) });
+			Assert.NotNull(method, "Method name changed, or parameters changed.");
+		}
+
+		/// <summary/>
+		[Test]
+		public void CallImportObtainedLexicon_ImportObtainedLexiconCanBeFound()
+		{
+			var flags = (BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
+			var type = ReflectionHelper.GetType(ObtainProjectMethod.ImportLexiconDll,
+															ObtainProjectMethod.ImportLexiconClass);
+			Assert.NotNull(type, "Class used for ImportObtainedLexicon moved.");
+			var method = type.GetMethod(ObtainProjectMethod.ImportLexiconMethod,
+												 new[] { typeof(FdoCache), typeof(string), typeof(System.Windows.Forms.Form) });
+			Assert.NotNull(method, "Method name changed, or parameters changed.");
 		}
 	}
 }

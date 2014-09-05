@@ -89,13 +89,15 @@ namespace LexTextControlsTests
 
 		private static string LiftFolder { get; set; }
 
+		private static readonly Random TestNameRandomizer = new Random((int)DateTime.Now.Ticks);
+
 		private static string CreateInputFile(IList<string> data)
 		{
 			LiftFolder = Path.Combine(Path.GetTempPath(), "xxyyTestLIFTImport");
 			if (Directory.Exists(LiftFolder))
 				Directory.Delete(LiftFolder, true);
 			Directory.CreateDirectory(LiftFolder);
-			var path = Path.Combine(LiftFolder, String.Format("LiftTest{0}.lift", new Random((int)DateTime.Now.Ticks).Next(1000)));
+			var path = Path.Combine(LiftFolder, String.Format("LiftTest{0}.lift", TestNameRandomizer.Next(1000)));
 			CreateLiftInputFile(path, data);
 			return path;
 		}
@@ -104,7 +106,7 @@ namespace LexTextControlsTests
 		{
 			LiftFolder = Path.Combine(Path.GetTempPath(), "xxyyTestLIFTImport");
 			Assert.True(Directory.Exists(LiftFolder));
-			var path = Path.Combine(LiftFolder, String.Format("LiftTest{0}.lift-ranges", new Random((int)DateTime.Now.Ticks).Next(1000)));
+			var path = Path.Combine(LiftFolder, String.Format("LiftTest{0}.lift-ranges", TestNameRandomizer.Next(1000)));
 			CreateLiftInputFile(path, data);
 			return path;
 		}
@@ -1433,7 +1435,13 @@ namespace LexTextControlsTests
 			VerifyCustomFieldsSense(sense0);
 			//===================================================================================
 			var example = sense0.ExamplesOS[0];
-			VerifyCustomFieldsExample(example);
+			var customData = new CustomFieldData()
+			{
+				CustomFieldname = "CustmFldExample Int",
+				CustomFieldType = CellarPropertyType.Integer,
+				IntegerValue = 24
+			};
+			VerifyCustomFieldExample(example, customData);
 			//==================================Allomorph Custom Field Test===== MultiString
 			var form = entry.AlternateFormsOS[0];
 			VerifyCustomFieldsAllomorph(form);
@@ -1489,16 +1497,10 @@ namespace LexTextControlsTests
 			VerifyCustomField(obj, customData, m_customFieldAllomorphsIds["CustmFldAllomorph Int"]);
 		}
 
-		private void VerifyCustomFieldsExample(ICmObject obj)
+		private void VerifyCustomFieldExample(ILexExampleSentence obj, CustomFieldData expectedData)
 		{
 			m_customFieldExampleSentencesIds = GetCustomFlidsOfObject(obj);
-			var customData = new CustomFieldData()
-			{
-				CustomFieldname = "CustmFldExample Int",
-				CustomFieldType = CellarPropertyType.Integer,
-				IntegerValue = 24
-			};
-			VerifyCustomField(obj, customData, m_customFieldExampleSentencesIds["CustmFldExample Int"]);
+			VerifyCustomField(obj, expectedData, m_customFieldExampleSentencesIds[expectedData.CustomFieldname]);
 		}
 
 		private Dictionary<String, int> GetCustomFlidsOfObject(ICmObject obj)
@@ -1522,6 +1524,21 @@ namespace LexTextControlsTests
 
 		private void VerifyCustomField(ICmObject obj, CustomFieldData fieldData, int flid)
 		{
+			if(obj is ILexEntry)
+			{
+				var entry = (ILexEntry)obj;
+				Assert.That(entry.LiftResidue, Is.Not.StringContaining(fieldData.CustomFieldname));
+			}
+			if(obj is ILexSense)
+			{
+				var sense = (ILexSense)obj;
+				Assert.That(sense.LiftResidue, Is.Not.StringContaining(fieldData.CustomFieldname));
+			}
+			if(obj is ILexExampleSentence)
+			{
+				var example = (ILexExampleSentence)obj;
+				Assert.That(example.LiftResidue, Is.Not.StringContaining(fieldData.CustomFieldname));
+			}
 			var mdc = Cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged;
 			Assert.IsNotNull(mdc);
 			var sda = Cache.DomainDataByFlid as ISilDataAccessManaged;
@@ -1773,7 +1790,16 @@ namespace LexTextControlsTests
 				"</description>",
 				"</range-element>",
 			"</range>",
-
+			"<range id=\"status\" guid=\"aa99df69-9418-4d37-b9e8-f0b10c696675\">",
+				"<range-element id=\"Pending\" guid=\"66705eee-d7db-47c6-964c-973d5830566c\">",
+				"<label>",
+				"<form lang=\"en\"><text>Pending</text></form>",
+				"</label>",
+				"<description>",
+				"<form lang=\"en\"><text>Not done</text></form>",
+				"</description>",
+				"</range-element>",
+			"</range>",
 			"</lift-ranges>"
 		};
 
@@ -1783,70 +1809,58 @@ namespace LexTextControlsTests
 			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
 			"<header>",
 			"<ranges>",
-				"<range id=\"semantic-domain-ddp4\" href=\"file://C:/Users/maclean.DALLAS/Documents/My FieldWorks/LIFT-CustomFlds New/LIFT-CustomFlds New.lift-ranges\"/>",
-				"<range id=\"CustomCmPossibiltyList\" href=\"file://C:/Users/maclean/Documents/My FieldWorks/LIFT Export customList/LIFT Export customList.lift-ranges\"/>",
-				"<range id=\"CustomList Number2 \" href=\"file://C:/Users/maclean/Documents/My FieldWorks/LIFT Export customList/LIFT Export customList.lift-ranges\"/>",
+				"<range id=\"semantic-domain-ddp4\" href=\"file://C:/junk.lift-ranges\"/>",
+				"<range id=\"CustomCmPossibiltyList\" href=\"file://C:/junk.lift-ranges\"/>",
+				"<range id=\"CustomList Number2 \" href=\"file://C:/junk.lift-ranges\"/>",
+				"<range id=\"status\" href=\"file://C:/junk.lift-ranges\"/>",
 			"</ranges>",
 			"<fields>",
-			"<field tag=\"cv-pattern\">",
-			"<form lang=\"en\"><text>This records the syllable pattern for a LexPronunciation in FieldWorks.</text></form>",
-			"</field>",
-			"<field tag=\"tone\">",
-			"<form lang=\"en\"><text>This records the tone information for a LexPronunciation in FieldWorks.</text></form>",
-			"</field>",
-			"<field tag=\"comment\">",
-			"<form lang=\"en\"><text>This records a comment (note) in a LexEtymology in FieldWorks.</text></form>",
-			"</field>",
+			@"<field tag=""ExampleStatus"">",
+			@"<form lang=""en""><text></text></form>",
+			@"<form lang=""qaa-x-spec""><text>Class=LexExampleSentence; Type=ReferenceAtom; WsSelector=kwsAnal; DstCls=CmPossibility; range=status</text></form>",
+			@"</field>",
 			"<field tag=\"import-residue\">",
 			"<form lang=\"en\"><text>This records residue left over from importing a standard format file into FieldWorks (or LinguaLinks).</text></form>",
 			"</field>",
-			"<field tag=\"literal-meaning\">",
-			"<form lang=\"en\"><text>This field is used to store a literal meaning of the entry.  Typically, this field is necessary only for a compound or an idiom where the meaning of the whole is different from the sum of its parts.</text></form>",
+			"<field tag=\"CustomFld ListSingle\">",
+			"<form lang=\"en\"><text></text></form>",
+			"<form lang=\"qaa-x-spec\"><text>Class=LexEntry; Type=ReferenceAtomic; DstCls=CmPossibility; range=semantic-domain-ddp4</text></form>",
 			"</field>",
-			"<field tag=\"summary-definition\">",
-			"<form lang=\"en\"><text>A summary definition (located at the entry level in the Entry pane) is a general definition summarizing all the senses of a primary entry. It has no theoretical value; its use is solely pragmatic.</text></form>",
+			"<field tag=\"CustomFld ListMulti\">",
+			"<form lang=\"en\"><text></text></form>",
+			"<form lang=\"qaa-x-spec\"><text>Class=LexEntry; Type=ReferenceCollection; DstCls=CmPossibility; range=semantic-domain-ddp4</text></form>",
 			"</field>",
-			"<field tag=\"scientific-name\">",
-			"<form lang=\"en\"><text>This field stores the scientific name pertinent to the current sense.</text></form>",
+			"<field tag=\"CustomFld CmPossibilityCustomList\">",
+			"<form lang=\"en\"><text></text></form>",
+			"<form lang=\"qaa-x-spec\"><text>Class=LexEntry; Type=ReferenceAtomic; DstCls=CmPossibility; range=CustomCmPossibiltyList</text></form>",
 			"</field>",
-
-				"<field tag=\"CustomFld ListSingle\">",
-				"<form lang=\"en\"><text></text></form>",
-				"<form lang=\"qaa-x-spec\"><text>Class=LexEntry; Type=ReferenceAtomic; DstCls=CmPossibility; range=semantic-domain-ddp4</text></form>",
-				"</field>",
-				"<field tag=\"CustomFld ListMulti\">",
-				"<form lang=\"en\"><text></text></form>",
-				"<form lang=\"qaa-x-spec\"><text>Class=LexEntry; Type=ReferenceCollection; DstCls=CmPossibility; range=semantic-domain-ddp4</text></form>",
-				"</field>",
-
-					"<field tag=\"CustomFld CmPossibilityCustomList\">",
-					"<form lang=\"en\"><text></text></form>",
-					"<form lang=\"qaa-x-spec\"><text>Class=LexEntry; Type=ReferenceAtomic; DstCls=CmPossibility; range=CustomCmPossibiltyList</text></form>",
-					"</field>",
-					"<field tag=\"CustomFld CustomList2\">",
-					"<form lang=\"en\"><text>This is to ensure we import correctly.</text></form>",
-					"<form lang=\"qaa-x-spec\"><text>Class=LexEntry; Type=ReferenceAtomic; DstCls=CmPossibility; range=CustomList Number2 </text></form>",
-					"</field>",
-
+			"<field tag=\"CustomFld CustomList2\">",
+			"<form lang=\"en\"><text>This is to ensure we import correctly.</text></form>",
+			"<form lang=\"qaa-x-spec\"><text>Class=LexEntry; Type=ReferenceAtomic; DstCls=CmPossibility; range=CustomList Number2 </text></form>",
+			"</field>",
 			"</fields>",
 			"</header>",
 			"<entry dateCreated=\"2011-05-31T21:21:28Z\" dateModified=\"2011-06-06T20:03:42Z\" id=\"Baba_aef5e807-c841-4f35-9591-c8a998dc2465\" guid=\"aef5e807-c841-4f35-9591-c8a998dc2465\">",
 			"<lexical-unit>",
 			"<form lang=\"fr\"><text>Baba</text></form>",
 			"</lexical-unit>",
-					"<trait  name=\"morph-type\" value=\"stem\"/>",
-					"<trait name=\"CustomFld ListSingle\" value=\"Reptile\"/>",
-					"<trait name=\"CustomFld ListMulti\" value=\"Universe, creation\"/>",
-					"<trait name=\"CustomFld ListMulti\" value=\"Sun\"/>",
-						"<trait name=\"CustomFld CmPossibilityCustomList\" value=\"list item 1\"/>",
-						"<trait name=\"CustomFld CustomList2\" value=\"cstm list item 2\"/>",
+			"<trait  name=\"morph-type\" value=\"stem\"/>",
+			"<trait name=\"CustomFld ListSingle\" value=\"Reptile\"/>",
+			"<trait name=\"CustomFld ListMulti\" value=\"Universe, creation\"/>",
+			"<trait name=\"CustomFld ListMulti\" value=\"Sun\"/>",
+			"<trait name=\"CustomFld CmPossibilityCustomList\" value=\"list item 1\"/>",
+			"<trait name=\"CustomFld CustomList2\" value=\"cstm list item 2\"/>",
 			"<sense id=\"5741255b-0563-49e0-8839-98bdb8c73f48\">",
 			"<grammatical-info value=\"NounFamily\">",
 			"</grammatical-info>",
 			"<gloss lang=\"en\"><text>Papi</text></gloss>",
+			@"<example>",
+			@"<form lang=""fr""><text>a complex example</text></form>",
+			@"<trait name=""do-not-publish-in"" value=""School Dictionary""/>",
+			@"<trait name=""ExampleStatus"" value=""Pending""/>",
+			@"</example>",
 			"</sense>",
 			"</entry>",
-
 			"</lift>"
 		};
 
@@ -1864,10 +1878,11 @@ namespace LexTextControlsTests
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
+			Cache.LangProject.StatusOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
 			Assert.AreEqual(0, repoEntry.Count);
 			Assert.AreEqual(0, repoSense.Count);
 
-			//Creat the LIFT data file
+			//Create the LIFT data file
 			var sOrigFile = CreateInputFile(s_LiftData7);
 			//Create the LIFT ranges file
 			var sOrigRangesFile = CreateInputRangesFile(s_LiftRangeData7);
@@ -1899,11 +1914,19 @@ namespace LexTextControlsTests
 			// ReSharper restore PossibleNullReferenceException
 			Assert.AreEqual("Papi", sense0.Gloss.AnalysisDefaultWritingSystem.Text);
 
+			// Verify example was imported
+			Assert.AreEqual(1, sense0.ExamplesOS.Count, "Example not imported correctly.");
+
 			VerifyCmPossibilityLists();
-
 			VerifyCmPossibilityCustomFields(entry);
-
 			VerifyCmPossibilityCustomFieldsData(entry);
+			var customData = new CustomFieldData()
+			{
+				CustomFieldname = "ExampleStatus",
+				CustomFieldType = CellarPropertyType.ReferenceAtomic,
+				cmPossibilityNameRA = "Pending"
+			};
+			VerifyCustomFieldExample(sense0.ExamplesOS[0], customData);
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -1941,9 +1964,9 @@ namespace LexTextControlsTests
 			"<range id='inflection-feature'>",
 			@"<range-element guid=""21fb4fd5-278c-4530-b1ac-2755ced5b278"" id=""NounAgr"">",
 			@"<label>",
-			@"<form lang=""en""><text>noun agreement</text></form><form	lang=""pt""><text>concordancia nominal</text></form>",
+			@"<form lang=""en""><text>noun agreement</text></form>",
 			@"</label>",
-			@"<abbrev><form lang=""en""><text>NounAgr</text></form><form lang=""pt""><text>NounAgr</text></form></abbrev>",
+			@"<abbrev><form lang=""en""><text>NounAgr</text></form></abbrev>",
 			@"<trait	name=""catalog-source-id""	value=""cNounAgr""/>",
 			@"<trait	name=""display-to-right"" value=""False"" />",
 			@"<trait name=""show-in-gloss"" value=""False"" />",
@@ -1960,7 +1983,7 @@ namespace LexTextControlsTests
 			Assert.AreEqual(0, repoEntry.Count);
 			Assert.AreEqual(0, repoSense.Count);
 
-			//Creat the LIFT data file
+			//Create the LIFT data file
 			var sOrigFile = CreateInputFile(inflectionLiftData);
 			//Create the LIFT ranges file
 			var sOrigRangesFile = CreateInputRangesFile(inflectionLiftRangeData);
@@ -2010,8 +2033,9 @@ namespace LexTextControlsTests
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
 			Assert.AreEqual(0, repoEntry.Count);
 			Assert.AreEqual(0, repoSense.Count);
+			Assert.That(Cache.ServiceLocator.GetInstance<IReversalIndexEntryRepository>().Count, Is.EqualTo(0));
 
-			//Creat the LIFT data file
+			//Create the LIFT data file
 			var liftFileWithBlankReversal = CreateInputFile(liftDataWithEmptyReversal);
 
 			var logFile = TryImport(liftFileWithBlankReversal, null, FlexLiftMerger.MergeStyle.MsKeepNew, 1);
@@ -2024,6 +2048,7 @@ namespace LexTextControlsTests
 			ILexSense sense;
 			Assert.IsTrue(repoSense.TryGetObject(new Guid("b4de1476-b432-46b6-97e3-c993ff0a2ff9"), out sense));
 			Assert.That(sense.ReversalEntriesRC.Count, Is.EqualTo(0), "Empty reversal should not have been imported.");
+			Assert.That(Cache.ServiceLocator.GetInstance<IReversalIndexEntryRepository>().Count, Is.EqualTo(0));
 		}
 
 		/// <summary>
@@ -2061,17 +2086,60 @@ namespace LexTextControlsTests
 			Assert.AreEqual(0, repoEntry.Count);
 			Assert.AreEqual(0, repoSense.Count);
 
-			//Creat the LIFT data file
-			var liftFileWithBlankAndNonBlankReversal = CreateInputFile(liftDataWithOneEmptyAndOneNonEmptyReversal);
+			//Create the LIFT data file
+			var liftFileWithOneEmptyAndOneNonEmptyReversal = CreateInputFile(liftDataWithOneEmptyAndOneNonEmptyReversal);
 
-			var logFile = TryImport(liftFileWithBlankAndNonBlankReversal, null, FlexLiftMerger.MergeStyle.MsKeepNew, 1);
-			File.Delete(liftFileWithBlankAndNonBlankReversal);
+			var logFile = TryImport(liftFileWithOneEmptyAndOneNonEmptyReversal, null, FlexLiftMerger.MergeStyle.MsKeepNew, 1);
+			File.Delete(liftFileWithOneEmptyAndOneNonEmptyReversal);
 			File.Delete(logFile);
 			Assert.AreEqual(1, repoEntry.Count);
 			Assert.AreEqual(1, repoSense.Count);
 			ILexSense sense;
 			Assert.IsTrue(repoSense.TryGetObject(new Guid("b4de1476-b432-46b6-97e3-c993ff0a2ff9"), out sense));
 			Assert.That(sense.ReversalEntriesRC.Count, Is.EqualTo(1), "Empty reversal should not have been imported but non empty should.");
+		}
+
+		/// <summary>
+		/// LT-15516: Blank reversal entries were multiplying on import. Blank entries should be removed during
+		/// an import.
+		/// </summary>
+		[Test]
+		public void TestLiftImport_PronunciationLanguageAddedToPronunciationAndVernacularLists()
+		{
+			var liftDataWithIpaPronunciation = new[]
+			{
+			@"<?xml version=""1.0"" encoding=""UTF-8"" ?>",
+			@"<lift producer=""SIL.FLEx 8.0.10.41831"" version=""0.13"">",
+			@"<entry id=""some entry_f543cf6b-5ce1-4bed-af4b-82760994890c"" guid=""f543cf6b-5ce1-4bed-af4b-82760994890c"">",
+			@"<lexical-unit>",
+			@"<form lang=""fr""><text>some entry</text></form>",
+			@"</lexical-unit>",
+			@"<pronunciation>",
+			@"<form lang=""nbf-fonipa"">",
+			@"<text>ʕɑ³³</text>",
+			@"</form>",
+			@"</pronunciation>",
+			@"</entry>",
+			@"</lift>"
+			};
+			SetWritingSystems("fr");
+
+			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+			Assert.AreEqual(0, repoEntry.Count);
+			Assert.AreEqual(Cache.LangProject.CurrentPronunciationWritingSystems.Count, 0);
+			Assert.AreEqual(Cache.LangProject.VernacularWritingSystems.Count, 1);
+
+			//Create the LIFT data file
+			var liftFileWithIpaPronunciation = CreateInputFile(liftDataWithIpaPronunciation);
+
+			var logFile = TryImport(liftFileWithIpaPronunciation, null, FlexLiftMerger.MergeStyle.MsKeepNew, 1);
+			File.Delete(liftFileWithIpaPronunciation);
+			//Verify that the writing system was reported as added
+			AssertThatXmlIn.File(logFile).HasSpecifiedNumberOfMatchesForXpath("//li[contains(., 'Naxi (International Phonetic Alphabet) (nbf-fonipa)')]", 1);
+			File.Delete(logFile);
+			Assert.AreEqual(1, repoEntry.Count);
+			Assert.AreEqual(Cache.LangProject.CurrentPronunciationWritingSystems.Count, 1, "IPA from pronunciation was not added to pronunciation writing systems");
+			Assert.AreEqual(Cache.LangProject.VernacularWritingSystems.Count, 2, "IPA from pronunciation was not added to vernacular writing systems");
 		}
 
 		private void VerifyCmPossibilityLists()
@@ -2141,7 +2209,6 @@ namespace LexTextControlsTests
 		private void VerifyCmPossibilityCustomFields(ILexEntry entry)
 		{
 			m_mdc = Cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged;
-			Assert.IsNotNull(m_mdc);
 			var repo = Cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>();
 
 			//Store mapping between Possibility List names and their guids. This is used to verify that
@@ -2379,7 +2446,7 @@ namespace LexTextControlsTests
 			Assert.AreEqual(0, repoEntry.Count);
 			Assert.AreEqual(0, repoSense.Count);
 
-			//Creat the LIFT data file
+			//Create the LIFT data file
 			var sOrigFile = CreateInputFile(s_LiftDataLocations);
 			//Create the LIFT ranges file
 			var sOrigRangesFile = CreateInputRangesFile(s_LiftRangeDataLocations);
@@ -3261,7 +3328,7 @@ namespace LexTextControlsTests
 			var originalMainDictPubGuid = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0].Guid;
 			var importedPocketPubGuid = new Guid("9f699508-3773-4889-87ee-ca0dbd9e3736");
 
-			//Creat the LIFT data file
+			//Create the LIFT data file
 			var sOrigFile = CreateInputFile(s_PublicationTestData);
 			//Create the LIFT ranges file
 			var sOrigRangesFile = CreateInputRangesFile(s_PublicationLiftRangeData);
@@ -3311,6 +3378,7 @@ namespace LexTextControlsTests
 										  select pub.Name.AnalysisDefaultWritingSystem.Text).ToList();
 			Assert.IsTrue(examplePublications.Contains("Main Dictionary"));
 			Assert.IsTrue(examplePublications.Contains("Pocket"));
+			Assert.That(example0.LiftResidue, Is.Not.StringContaining("do-not-publish-in"));
 		}
 
 		static private readonly string[] s_BadMorphTypeTestData = new[]
@@ -3373,7 +3441,7 @@ namespace LexTextControlsTests
 			lf.MorphTypeRA = phrase;
 			allo.MorphTypeRA = phrase;
 
-			//Creat the LIFT data file
+			//Create the LIFT data file
 			s_BadMorphTypeTestData[7] = s_BadMorphTypeTestData[7].Replace("$guid1", entry.Guid.ToString());
 			s_BadMorphTypeTestData[16] = s_BadMorphTypeTestData[16].Replace("$guid2", sense.Guid.ToString());
 			var sOrigFile = CreateInputFile(s_BadMorphTypeTestData);
@@ -3460,6 +3528,212 @@ namespace LexTextControlsTests
 			Assert.AreEqual(0, repoSense.Count, "Created some unnecessary senses.");
 			var repoPronunciation = Cache.ServiceLocator.GetInstance<ILexPronunciationRepository>();
 			Assert.AreEqual(5, repoPronunciation.Count, "Wrong number of remaining LexPronunciation objects");
+		}
+
+		[Test]
+		public void LiftImport_UnknownExampleTraitCreatesResidue()
+		{
+
+			var lifDataWithExampleWithUnnkownTrait = new []
+			{
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
+			"<header>",
+			"<ranges/>",
+			"<fields/>",
+			"</header>",
+			"<entry dateCreated=\"2011-03-01T18:09:46Z\" dateModified=\"2011-03-01T18:30:07Z\" guid=\"ecfbe958-36a1-4b82-bb69-ca5210355400\" id=\"hombre_ecfbe958-36a1-4b82-bb69-ca5210355400\">",
+			"<sense id=\"hombre_f63f1ccf-3d50-417e-8024-035d999d48bc\">",
+			"<example>",
+			"<form lang=\"en\"><text>Example Sentence</text></form>",
+			"<trait name=\"totallyunknowntrait\" value=\"Who are you?\"/>",
+			"</example>",
+			"</sense>",
+			"</entry>",
+			"</lift>"
+			};
+			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
+			Assert.AreEqual(0, repoSense.Count);
+			var file = CreateInputFile(lifDataWithExampleWithUnnkownTrait);
+			// SUT
+			TryImport(file, null, FlexLiftMerger.MergeStyle.MsKeepBoth, 1);
+			Assert.AreEqual(1, repoSense.Count);
+			var sense = repoSense.AllInstances().First();
+			Assert.AreEqual(1, sense.ExamplesOS.Count);
+			var example = sense.ExamplesOS[0];
+			// Important assertion
+			Assert.That(example.LiftResidue, Is.StringContaining("totallyunknowntrait"));
+		}
+
+		[Test]
+		public void LiftImport_ExampleCustomFieldUpdatedDuringMerge()
+		{
+			var rangesWithStatusList = new[]
+			{
+				@"<?xml version=""1.0"" encoding=""UTF-8"" ?>",
+				@"<lift-ranges>",
+				@"<range id=""status"">",
+				@"<range-element id=""Confirmed"" guid=""bd80cd3e-ea5e-11de-9871-0013722f8dec"">",
+				@"<label>",
+				@"<form lang=""en""><text>Confirmed</text></form>",
+				@"</label>",
+				@"<abbrev>",
+				@"<form lang=""en""><text>Conf</text></form>",
+				@"</abbrev>",
+				@"</range-element>",
+				@"<range-element id=""Pending"" guid=""bd964254-ea5e-11de-8cdf-0013722f8dec"">",
+				@"<label>",
+				@"<form lang=""en""><text>Pending</text></form>",
+				@"</label>",
+				@"<abbrev>",
+				@"<form lang=""en""><text>Pend</text></form>",
+				@"</abbrev>",
+				@"</range-element>",
+				@"</range>",
+				@"</lift-ranges>"
+			};
+			var lifDataWithExampleWithPendingStatus = new[]
+			{
+				@"<?xml version=""1.0"" encoding=""UTF-8"" ?>",
+				@"<lift producer=""SIL.FLEx 8.0.10.41829"" version=""0.13"">",
+				@"<header>",
+				@"<ranges>",
+				@"<range id=""status"" href=""file://C:/Users/zook/Desktop/test/test.lift-ranges""/>",
+				@"</ranges>",
+				@"<fields>",
+				@"<field tag=""EntryStatus"">",
+				@"<form lang=""en""><text></text></form>",
+				@"<form lang=""qaa-x-spec""><text>Class=LexEntry; Type=ReferenceAtom; WsSelector=kwsAnal; DstCls=CmPossibility; range=status</text></form>",
+				@"</field>",
+				@"<field tag=""CustomExampleStatus"">",
+				@"<form lang=""en""><text></text></form>",
+				@"<form lang=""qaa-x-spec""><text>Class=LexExampleSentence; Type=ReferenceAtom; WsSelector=kwsAnal; DstCls=CmPossibility; range=status</text></form>",
+				@"</field>",
+				@"</fields>",
+				@"</header>",
+				@"<entry dateCreated=""2013-07-14T21:32:58Z"" dateModified=""2013-07-14T21:46:21Z"" id=""tester_edae30f5-49f0-4025-97ce-3a2022bf7fa3"" guid=""edae30f5-49f0-4025-97ce-3a2022bf7fa3"">",
+				@"<lexical-unit>",
+				@"<form lang=""fr""><text>tester</text></form>",
+				@"</lexical-unit>",
+				@"<trait  name=""morph-type"" value=""stem""/>",
+				@"<trait name=""EntryStatus"" value=""Pending""/>",
+				@"<sense id=""c1811b5c-aec1-42f7-87c2-6bbb4b76ff60"">",
+				@"<example source=""A reference"">",
+				@"<form lang=""fr""><text>An example sentence</text></form>",
+				@"<translation type=""Free translation"">",
+				@"<form lang=""en""><text>A translation</text></form>",
+				@"</translation>",
+				@"<note type=""reference"">",
+				@"<form lang=""en""><text>A reference</text></form>",
+				@"</note>",
+				@"<trait name=""CustomExampleStatus"" value=""Pending""/>",
+				@"</example>",
+				@"</sense>",
+				@"</entry>",
+				@"</lift>"
+			};
+			var lifDataWithExampleWithConfirmedStatus = new[]
+			{
+				@"<?xml version=""1.0"" encoding=""UTF-8"" ?>",
+				@"<lift producer=""SIL.FLEx 8.0.10.41829"" version=""0.13"">",
+				@"<header>",
+				@"<ranges>",
+				@"<range id=""status"" href=""file://C:/Users/zook/Desktop/test/test.lift-ranges""/>",
+				@"</ranges>",
+				@"<fields>",
+				@"<field tag=""EntryStatus"">",
+				@"<form lang=""en""><text></text></form>",
+				@"<form lang=""qaa-x-spec""><text>Class=LexEntry; Type=ReferenceAtom; WsSelector=kwsAnal; DstCls=CmPossibility; range=status</text></form>",
+				@"</field>",
+				@"<field tag=""CustomExampleStatus"">",
+				@"<form lang=""en""><text></text></form>",
+				@"<form lang=""qaa-x-spec""><text>Class=LexExampleSentence; Type=ReferenceAtom; WsSelector=kwsAnal; DstCls=CmPossibility; range=status</text></form>",
+				@"</field>",
+				@"</fields>",
+				@"</header>",
+				@"<entry dateCreated=""2014-07-14T21:32:58Z"" dateModified=""2014-07-14T21:46:21Z"" id=""tester_edae30f5-49f0-4025-97ce-3a2022bf7fa3"" guid=""edae30f5-49f0-4025-97ce-3a2022bf7fa3"">",
+				@"<lexical-unit>",
+				@"<form lang=""fr""><text>tester</text></form>",
+				@"</lexical-unit>",
+				@"<trait  name=""morph-type"" value=""stem""/>",
+				@"<trait name=""EntryStatus"" value=""Confirmed""/>",
+				@"<sense id=""c1811b5c-aec1-42f7-87c2-6bbb4b76ff60"">",
+				@"<example source=""A reference"">",
+				@"<form lang=""fr""><text>An example sentence</text></form>",
+				@"<translation type=""Free translation"">",
+				@"<form lang=""en""><text>A translation</text></form>",
+				@"</translation>",
+				@"<note type=""reference"">",
+				@"<form lang=""en""><text>A reference</text></form>",
+				@"</note>",
+				@"<trait name=""CustomExampleStatus"" value=""Confirmed""/>",
+				@"</example>",
+				@"</sense>",
+				@"</entry>",
+				@"</lift>"
+			};
+			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			var statusList = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().CreateUnowned("status", wsEn);
+			var confirmed = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(new Guid("bd80cd3e-ea5e-11de-9871-0013722f8dec"), statusList);
+			confirmed.Name.set_String(wsEn, Cache.TsStrFactory.MakeString("Confirmed", wsEn));
+			var pending = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(new Guid("bd964254-ea5e-11de-8cdf-0013722f8dec"), statusList);
+			pending.Name.set_String(wsEn, Cache.TsStrFactory.MakeString("Pending", wsEn));
+			var entryNew = new FieldDescription(Cache)
+			{
+				Type = CellarPropertyType.ReferenceAtomic,
+				Class = LexEntryTags.kClassId,
+				Name = "EntryStatus",
+				ListRootId = statusList.Guid
+			};
+			var exampleNew = new FieldDescription(Cache)
+			{
+				Type = CellarPropertyType.ReferenceAtomic,
+				Class = LexExampleSentenceTags.kClassId,
+				Name = "CustomExampleStatus",
+				ListRootId = statusList.Guid
+			};
+			entryNew.UpdateCustomField();
+			exampleNew.UpdateCustomField();
+			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
+			Assert.AreEqual(0, repoEntry.Count);
+			var rangeFile = CreateInputFile(rangesWithStatusList);
+			var pendingLiftFile = CreateInputFile(lifDataWithExampleWithPendingStatus);
+			// Verify basic import of custom field data matching existing custom list and items
+			TryImport(pendingLiftFile, rangeFile, FlexLiftMerger.MergeStyle.MsKeepBoth, 1);
+			Assert.AreEqual(1, repoEntry.Count);
+			Assert.AreEqual(1, repoSense.Count);
+			var entry = repoEntry.AllInstances().First();
+			var sense = repoSense.AllInstances().First();
+			Assert.AreEqual(1, sense.ExamplesOS.Count);
+			var example = sense.ExamplesOS[0];
+			var entryCustomData = new CustomFieldData()
+			{
+				CustomFieldname = "EntryStatus",
+				CustomFieldType = CellarPropertyType.ReferenceAtom,
+				cmPossibilityNameRA = "Pending"
+			};
+			var exampleCustomData = new CustomFieldData()
+			{
+				CustomFieldname = "CustomExampleStatus",
+				CustomFieldType = CellarPropertyType.ReferenceAtom,
+				cmPossibilityNameRA = "Pending"
+			};
+			VerifyCustomField(entry, entryCustomData, entryNew.Id);
+			VerifyCustomField(example, exampleCustomData, exampleNew.Id);
+			// SUT - Verify merging of changes to custom field data
+			var confirmedLiftFile = CreateInputFile(lifDataWithExampleWithConfirmedStatus);
+			TryImport(confirmedLiftFile, rangeFile, FlexLiftMerger.MergeStyle.MsKeepBoth, 1);
+			entry = repoEntry.AllInstances().First();
+			sense = repoSense.AllInstances().First();
+			Assert.AreEqual(1, sense.ExamplesOS.Count);
+			example = sense.ExamplesOS[0];
+			entryCustomData.cmPossibilityNameRA = "Confirmed";
+			exampleCustomData.cmPossibilityNameRA = "Confirmed";
+			Assert.AreEqual(1, repoEntry.Count);
+			Assert.AreEqual(1, repoSense.Count);
+			VerifyCustomField(entry, entryCustomData, entryNew.Id);
+			VerifyCustomField(example, exampleCustomData, exampleNew.Id);
 		}
 
 		private ILexEntry CreateSimpleStemEntry(string entryGuid, string form)

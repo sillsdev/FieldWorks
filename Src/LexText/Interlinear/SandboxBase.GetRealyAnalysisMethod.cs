@@ -118,7 +118,7 @@ namespace SIL.FieldWorks.IText
 				{
 					IWfiWordform wf;
 					// first see if we can find a matching form
-					if (wfRepository.TryGetObject(m_tssForm, out wf))
+					if (wfRepository.TryGetObject(m_tssForm, false, out wf))
 						m_wf = wf;
 					else
 					{

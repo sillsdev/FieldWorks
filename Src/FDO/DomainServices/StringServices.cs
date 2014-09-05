@@ -811,20 +811,13 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			{
 				int ichMin, ichLim;
 				str.GetBoundsOfRun(i, out ichMin, out ichLim);
-				ITsString oldRun = str.GetSubstring(ichMin, ichLim);
-				ITsString newRun = runModifier(oldRun);
+				var oldRun = str.GetSubstring(ichMin, ichLim);
+				var newRun = runModifier(oldRun);
+				modified = modified || newRun != oldRun;
 				if (newRun != null)
 				{
-					if (modified || newRun != oldRun)
-					{
-						tisb.AppendTsString(newRun);
-						modified = true;
-					}
+					tisb.AppendTsString(newRun);
 					empty = false;
-				}
-				else
-				{
-					modified = true;
 				}
 			}
 

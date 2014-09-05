@@ -13,7 +13,7 @@ using System;
 using System.Diagnostics;
 
 using NUnit.Framework;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			// Force load of styles
 			IScripture scr = Cache.LangProject.TranslatedScriptureOA;
 			Assert.IsTrue(scr.StylesOC.Count > 0);
-			m_styleSheet.Init(Cache, scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+			m_styleSheet.Init(Cache, scr.Hvo, ScriptureTags.kflidStyles);
 		}
 
 		/// ------------------------------------------------------------------------------------

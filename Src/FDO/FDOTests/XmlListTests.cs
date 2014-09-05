@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			"        <AUni ws=\"en\">Pos</AUni>" + Environment.NewLine +
 			"      </Abbreviation>" + Environment.NewLine +
 			"      <Possibilities>" + Environment.NewLine +
-			"        <PartOfSpeech>" + Environment.NewLine +
+			"        <PartOfSpeech guid=\"46e4fe08-ffa0-4c8b-bf98-2c56f38904d9\">" + Environment.NewLine +
 			"          <ForeColor><Integer val=\"6303632\"/></ForeColor>" + Environment.NewLine +
 			"          <BackColor><Integer val=\"-1073741824\"/></BackColor>" + Environment.NewLine +
 			"          <UnderColor><Integer val=\"-1073741824\"/></UnderColor>" + Environment.NewLine +
@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			"          </Description>" + Environment.NewLine +
 			"          <CatalogSourceId><Uni>Adverb</Uni></CatalogSourceId>" + Environment.NewLine +
 			"        </PartOfSpeech>" + Environment.NewLine +
-			"        <PartOfSpeech>" + Environment.NewLine +
+			"        <PartOfSpeech guid=\"a8e41fd3-e343-4c7c-aa05-01ea3dd5cfb5\">" + Environment.NewLine +
 			"          <ForeColor><Integer val=\"6303632\"/></ForeColor>" + Environment.NewLine +
 			"          <BackColor><Integer val=\"-1073741824\"/></BackColor>" + Environment.NewLine +
 			"          <UnderColor><Integer val=\"-1073741824\"/></UnderColor>" + Environment.NewLine +
@@ -91,7 +91,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			"          </Description>" + Environment.NewLine +
 			"          <CatalogSourceId><Uni>Noun</Uni></CatalogSourceId>" + Environment.NewLine +
 			"          <SubPossibilities>" +
-			"            <PartOfSpeech>" + Environment.NewLine +
+			"            <PartOfSpeech guid=\"a3274cfd-225f-45fd-8851-a7b1a1e1037a\">" + Environment.NewLine +
 			"              <Name>" + Environment.NewLine +
 			"                <AUni ws=\"en\">Nominal</AUni>" + Environment.NewLine +
 			"                <AUni ws=\"es\">Nominal</AUni>" + Environment.NewLine +
@@ -112,7 +112,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			"              </Description>" + Environment.NewLine +
 			"              <CatalogSourceId><Uni>Nominal</Uni></CatalogSourceId>" + Environment.NewLine +
 			"              <SubPossibilities>" +
-			"                <PartOfSpeech>" + Environment.NewLine +
+			"                <PartOfSpeech guid=\"a4fc78d6-7591-4fb3-8edd-82f10ae3739d\">" + Environment.NewLine +
 			"                  <Name>" + Environment.NewLine +
 			"                    <AUni ws=\"en\">Gerund</AUni>" + Environment.NewLine +
 			"                    <AUni ws=\"fr\">Gérundif</AUni>" + Environment.NewLine +
@@ -130,7 +130,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			"                </PartOfSpeech>" + Environment.NewLine +
 			"              </SubPossibilities>" +
 			"            </PartOfSpeech>" + Environment.NewLine +
-			"            <PartOfSpeech>" + Environment.NewLine +
+			"            <PartOfSpeech guid=\"86ff66f6-0774-407a-a0dc-3eeaf873daf7\">" + Environment.NewLine +
 			"              <Name>" + Environment.NewLine +
 			"                <AUni ws=\"en\">Substantive</AUni>" + Environment.NewLine +
 			"                <AUni ws=\"fr\">Substantif</AUni>" + Environment.NewLine +

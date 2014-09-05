@@ -144,7 +144,7 @@ namespace SIL.FieldWorks.IText
 				{
 					m_flexStylesheet = m_styleSheet; // remember the default.
 					var stylesheet = new FwStyleSheet();
-					stylesheet.Init(Cache, Cache.LangProject.TranslatedScriptureOA.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+					stylesheet.Init(Cache, Cache.LangProject.TranslatedScriptureOA.Hvo, ScriptureTags.kflidStyles);
 					m_teStylesheet = stylesheet;
 				}
 				wantedStylesheet = m_teStylesheet;

@@ -468,10 +468,10 @@ namespace FwBuildTasks
 					return 420000;
 				case "FwCoreDlgsTests":		// ~122 sec
 				case "TeDllTests":			// ~122 sec (Mono 2/8/2013)
+				case "TeImportExportTests":	// ~90 sec
 					return 240000;
 				case "DiffViewTests":		// ~55 sec
 				case "MGATests":			// ~72 sec
-				case "TeImportExportTests":	// ~90 sec
 					return 150000;
 				case "PrintLayoutTests":	// ~22 sec
 				case "ITextDllTests":		// ~26 sec

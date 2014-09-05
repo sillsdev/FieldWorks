@@ -28,8 +28,16 @@
 					</p>
 					<ul>
 						<xsl:for-each select="$HCLoadErrors">
+							<xsl:variable name="soFarAfter">The phoneme(s) found so far are '</xsl:variable>
+							<xsl:variable name="soFarBefore">'.</xsl:variable>
+							<xsl:variable name="sPhonemesFoundSoFar" select="substring-before(substring-after(., $soFarAfter), $soFarBefore)"/>
+							<xsl:variable name="wholeAfter">Failure to translate shape '</xsl:variable>
+							<xsl:variable name="partAfter">: '</xsl:variable>
+							<xsl:variable name="partBefore">'.</xsl:variable>
 							<xsl:choose>
 								<xsl:when test="@type = 'invalid-shape'">
+									<xsl:variable name="wholeBefore">' of lexical entry </xsl:variable>
+									<xsl:variable name="sFormWithPlusSigns" select="substring-before(substring-after(., $wholeAfter), $wholeBefore)"/>
 									<xsl:call-template name="ShowLoadErrorMessage">
 										<xsl:with-param name="sForm" select="translate(Form, '+', '')"/>
 										<xsl:with-param name="iCharNum" select="Position + 1"/>
@@ -71,7 +79,7 @@
 			<xsl:value-of select="$iCharNum"/>
 			<xsl:text> -- that is, in the part of the form "</xsl:text>
 			<xsl:value-of select="$sFormPart"/>
-			<xsl:text>". Please make sure all phonemes in the form have been defined. The Hermit Crab parser will ignore this entry until it is fixed. </xsl:text>
+			<xsl:text>". Please make sure all phonemes in the form have been defined. The Hermit Crab parser will ignore this entry until it is fixed.</xsl:text>
 			<span style="cursor:hand; text-decoration:underline">
 				<xsl:attribute name="onclick">
 					<xsl:text>JumpToToolBasedOnHvo(</xsl:text>

@@ -9,6 +9,7 @@ using System;
 using System.IO;
 using System.Text;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Common.ScriptureUtils;
@@ -123,7 +124,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[SetUp]
 		public void Init()
 		{
-			m_mappingList = new ScrMappingList(MappingSet.Main, null, ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
+			m_mappingList = new ScrMappingList(MappingSet.Main, null);
 			m_factory = new ScrImportFileInfoFactory();
 			m_fileOs = new MockFileOS();
 			FileUtils.Manager.SetFileAdapter(m_fileOs);

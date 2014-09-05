@@ -8,18 +8,14 @@
 // <remarks>
 // </remarks>
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using NUnit.Framework;
 using System.Linq;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.TE
 {
@@ -100,7 +96,7 @@ namespace SIL.FieldWorks.TE
 			AddSectionHeadParaToSection(section, "Section Heading", ScrStyleNames.SectionHead);
 
 			m_stylesheet = new FwStyleSheet();
-			m_stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+			m_stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
 		}
 		#endregion
 

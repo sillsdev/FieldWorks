@@ -15,6 +15,7 @@ using System.Xml;
 using NUnit.Framework;
 using Palaso.IO;
 using Palaso.Lift.Validation;
+using Palaso.TestUtilities;
 using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -39,7 +40,7 @@ namespace LexTextControlsTests
 	[TestFixture]
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
 		Justification="Unit test - Cache gets disposed in TearDown method")]
-	public class LiftExportTests : BaseTest
+	public class LiftExportTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private const string kbasePictureOfTestFileName = "Picture of Test";
 		private const string kpictureOfTestFileName = kbasePictureOfTestFileName + ".jpg"; // contents won't really be jpg
@@ -291,7 +292,7 @@ namespace LexTextControlsTests
 			"<Name><AUni ws=\"en\">Parts Of Speech</AUni></Name>" + Environment.NewLine +
 			"<Abbreviation><AUni ws=\"en\">Pos</AUni></Abbreviation>" + Environment.NewLine +
 			"<Possibilities>" + Environment.NewLine +
-				"<PartOfSpeech>" + Environment.NewLine +
+				"<PartOfSpeech guid=\"46e4fe08-ffa0-4c8b-bf98-2c56f38904d9\">" + Environment.NewLine +
 				"<Name><AUni ws=\"en\">Adverb</AUni></Name>" + Environment.NewLine +
 				"<Abbreviation><AUni ws=\"en\">adv</AUni></Abbreviation>" + Environment.NewLine +
 				"<Description>" + Environment.NewLine +
@@ -302,7 +303,7 @@ namespace LexTextControlsTests
 				"<CatalogSourceId><Uni>Adverb</Uni></CatalogSourceId>" + Environment.NewLine +
 				"</PartOfSpeech>" + Environment.NewLine +
 
-				"<PartOfSpeech>" + Environment.NewLine +
+				"<PartOfSpeech guid=\"a8e41fd3-e343-4c7c-aa05-01ea3dd5cfb5\">" + Environment.NewLine +
 				"<Name><AUni ws=\"en\">Noun</AUni></Name>" + Environment.NewLine +
 				"<Abbreviation><AUni ws=\"en\">n</AUni></Abbreviation>" + Environment.NewLine +
 				"<Description>" + Environment.NewLine +
@@ -313,7 +314,7 @@ namespace LexTextControlsTests
 				"<CatalogSourceId><Uni>Noun</Uni></CatalogSourceId>" + Environment.NewLine +
 				"</PartOfSpeech>" + Environment.NewLine +
 
-				"<PartOfSpeech>" + Environment.NewLine +
+				"<PartOfSpeech guid=\"a4fc78d6-7591-4fb3-8edd-82f10ae3739d\">" + Environment.NewLine +
 				"<Name><AUni ws=\"en\">Pro-form</AUni></Name>" + Environment.NewLine +
 				"<Abbreviation><AUni ws=\"en\">pro-form</AUni></Abbreviation>" + Environment.NewLine +
 				"<Description>" + Environment.NewLine +
@@ -323,7 +324,7 @@ namespace LexTextControlsTests
 				"</Description>" + Environment.NewLine +
 				"<CatalogSourceId><Uni>Pro-form</Uni></CatalogSourceId>" + Environment.NewLine +
 					"<SubPossibilities>" + Environment.NewLine +
-						"<PartOfSpeech>" + Environment.NewLine +
+						"<PartOfSpeech guid=\"a3274cfd-225f-45fd-8851-a7b1a1e1037a\">" + Environment.NewLine +
 						"<Name><AUni ws=\"en\">Pronoun</AUni></Name>" + Environment.NewLine +
 						"<Abbreviation><AUni ws=\"en\">pro</AUni></Abbreviation>" + Environment.NewLine +
 						"<Description>" + Environment.NewLine +
@@ -336,7 +337,7 @@ namespace LexTextControlsTests
 					"</SubPossibilities>" + Environment.NewLine +
 				"</PartOfSpeech>" + Environment.NewLine +
 
-				"<PartOfSpeech>" + Environment.NewLine +
+				"<PartOfSpeech guid=\"86ff66f6-0774-407a-a0dc-3eeaf873daf7\">" + Environment.NewLine +
 				"<Name><AUni ws=\"en\">Verb</AUni></Name>" + Environment.NewLine +
 				"<Abbreviation><AUni ws=\"en\">v</AUni></Abbreviation>" + Environment.NewLine +
 				"<Description>" + Environment.NewLine +
@@ -1881,6 +1882,29 @@ namespace LexTextControlsTests
 				xdoc.LoadXml(w.ToString());
 			}
 			VerifyCustomStText(xdoc);
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the Lift export of a custom StText field using the LiftExporter class.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void LiftExportRanges_PartOfSpeechCatalogIdIsExported()
+		{
+			var loader = new XmlList();
+			loader.ImportList(Cache.LangProject, "PartsOfSpeech", Path.Combine(FwDirectoryFinder.TemplateDirectory, "POS.xml"),
+									new DummyProgressDlg());
+			var servLoc = Cache.ServiceLocator;
+			var exporter = new LiftExporter(Cache);
+			var xdocRangeFile = new XmlDocument();
+			using(var w = new StringWriter())
+			{
+				// SUT
+				exporter.ExportLiftRanges(w);
+				xdocRangeFile.LoadXml(w.ToString());
+			}
+			AssertThatXmlIn.Dom(xdocRangeFile).HasAtLeastOneMatchForXpath("//range[@id='grammatical-info']/range-element/trait[@name='catalog-source-id']");
 		}
 
 		private int m_flidLongText;

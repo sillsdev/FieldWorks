@@ -88,35 +88,57 @@ namespace SIL.FieldWorks.Common.Controls
 			string projectPath;
 			FdoCache cache;
 
-			// this is a horrible way to invoke this, but the current project organization does not allow us to reference
-			// the FwCoreDlgs project, nor is there any straightforward way to move the code we need into some project we can
-			// reference, or any obviously suitable project to move it to without creating other References loops.
-			// One nasty reflection call seems less technical debt than creating an otherwise unnecessary project.
-			var anthroListFile = ReflectionHelper.CallStaticMethod(@"FwCoreDlgs.dll", @"SIL.FieldWorks.FwCoreDlgs.FwCheckAnthroListDlg",
-					@"PickAnthroList", parent, null, helpTopicProvider);
+			var anthroListFile = CallPickAnthroList(helpTopicProvider);
 
 			using (var progressDlg = new ProgressDialogWithTask(parent))
 			{
 				progressDlg.Title = FwControls.ksCreatingLiftProject;
 				var cacheReceiver = new FdoCache[1]; // a clumsy way of handling an out parameter, consistent with RunTask
 				projectPath = (string)progressDlg.RunTask(true, CreateProjectTask,
-					new[] { liftPath, parent, anthroListFile, cacheReceiver });
+					new object[] { liftPath, parent, anthroListFile, cacheReceiver });
 				cache = cacheReceiver[0];
 			}
 
-			// this is a horrible way to invoke this, but the current project organization does not allow us to reference
-			// the LexEdDll project, nor is there any straightforward way to move the code we need into some project we can
-			// reference, or any obviously suitable project to move it to without creating other References loops.
-			// One nasty reflection call seems less technical debt than creating an otherwise unnecessary project.
-			// (It puts up its own progress dialog.)
-			ReflectionHelper.CallStaticMethod(@"LexEdDll.dll", @"SIL.FieldWorks.XWorks.LexEd.FLExBridgeListener",
-				@"ImportObtainedLexicon", cache, liftPath, parent);
+			CallImportObtainedLexicon(cache, liftPath, parent);
 
 			ProjectLockingService.UnlockCurrentProject(cache); // finish all saves and completely write the file so we can proceed to open it
 			cache.Dispose();
 
 			return projectPath;
 		}
+
+		#region Reflective Methods And Supporting Constants
+
+		internal const string PickAnthroDll = @"FwCoreDlgs.dll";
+		internal const string PickAnthroClass = @"SIL.FieldWorks.FwCoreDlgs.FwCheckAnthroListDlg";
+		internal const string PickAnthroMethod = @"PickAnthroList";
+
+		internal static string CallPickAnthroList(IHelpTopicProvider helpTopicProvider)
+		{
+			// this is a horrible way to invoke this, but the current project organization does not allow us to reference
+			// the FwCoreDlgs project, nor is there any straightforward way to move the code we need into some project we can
+			// reference, or any obviously suitable project to move it to without creating other References loops.
+			// nasty reflection calls seems less technical debt than creating an otherwise unnecessary project.
+			return (string)ReflectionHelper.CallStaticMethod(PickAnthroDll, PickAnthroClass,
+				PickAnthroMethod, null, helpTopicProvider);
+		}
+
+		internal const string ImportLexiconDll = @"LexEdDll.dll";
+		internal const string ImportLexiconClass = @"SIL.FieldWorks.XWorks.LexEd.FLExBridgeListener";
+		internal const string ImportLexiconMethod = @"ImportObtainedLexicon";
+
+		internal static void CallImportObtainedLexicon(FdoCache cache, string liftPath, Form parent)
+		{
+			// this is a horrible way to invoke this, but the current project organization does not allow us to reference
+			// the LexEdDll project, nor is there any straightforward way to move the code we need into some project we can
+			// reference, or any obviously suitable project to move it to without creating other References loops.
+			// nasty reflections call seems less technical debt than creating an otherwise unnecessary project.
+			// (It puts up its own progress dialog.)
+			ReflectionHelper.CallStaticMethod(ImportLexiconDll, ImportLexiconClass,
+				ImportLexiconMethod, cache, liftPath, parent);
+		}
+
+		#endregion
 
 		/// <summary>
 		/// Method with signature required by ProgressDialogWithTask.RunTask to create the project (and a cache for it)

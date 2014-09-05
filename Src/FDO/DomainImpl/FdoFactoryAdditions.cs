@@ -2655,20 +2655,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	}
 	#endregion
 
-	#region ScrImportSetFactory class
-
-	internal partial class ScrImportSetFactory
-	{
-		public IScrImportSet Create(string defaultParaCharsStyleName, string stylesPath)
-		{
-			var settings = new ScrImportSet(defaultParaCharsStyleName, stylesPath);
-			((ICmObjectInternal) settings).InitializeNewOwnerlessCmObject(m_cache);
-			return settings;
-		}
-	}
-
-	#endregion
-
 	#region PhBdryMarkerFactory class
 
 	internal partial class PhBdryMarkerFactory

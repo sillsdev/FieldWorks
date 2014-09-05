@@ -2575,7 +2575,9 @@ namespace Sfm2Xml
 				Log.AddSFMNoData(currentSfm);
 			// Per LT-11134 we want to generate the element for the main lex field even if it is empty.
 			// This allows us to import an entry with no form and keep POS information.
-			if (strTemp.Length > 0 || cfd.MeaningID == "lex")
+			// Per LT-10739 we want to generate the element for POS even if it is empty, so that we do
+			// not incorrectly duplicate the pos information for previous senses.
+			if (strTemp.Length > 0 || cfd.MeaningID == "lex" || cfd.MeaningID == "pos")
 			{
 				// use the xml safe name
 				xmlOutput.WriteStartElement(cfd.SFMxmlSafe);

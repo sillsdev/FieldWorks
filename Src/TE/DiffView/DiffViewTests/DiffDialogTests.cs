@@ -603,7 +603,7 @@ namespace SIL.FieldWorks.TE
 			}
 
 			m_styleSheet = new FwStyleSheet();
-			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
 
 			Debug.Assert(m_dlg == null, "m_dlg is not null.");
 			//if (m_dlg != null)
@@ -1600,7 +1600,7 @@ namespace SIL.FieldWorks.TE
 			m_bookMerger = new DummyBookMerger(Cache, null, m_philemonRev);
 
 			m_styleSheet = new FwStyleSheet();
-			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
 
 			Debug.Assert(m_dlg == null, "m_dlg is not null.");
 			//if (m_dlg != null)

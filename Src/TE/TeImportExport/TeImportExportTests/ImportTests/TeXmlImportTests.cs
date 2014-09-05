@@ -117,7 +117,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			base.TestSetup();
 
 			m_styleSheet = new FwStyleSheet();
-			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
 			InitWsInfo();
 			m_actionHandler.EndUndoTask(); // Import expects to handle undo
 

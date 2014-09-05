@@ -1308,14 +1308,6 @@ FieldWorks ReadMe for help in this area.</value>
     <value>&lt;default font&gt;</value>
     <comment>Used in Font combo box</comment>
   </data>
-  <data name="kstidDefaultParaChars" xml:space="preserve">
-    <value>Default Paragraph Characters</value>
-    <comment>style name used for the "Default Paragraph Characters" pseudo-style</comment>
-  </data>
-  <data name="kstidDefaultParaCharsUsage" xml:space="preserve">
-    <value>The text will get its font properties from the paragraph to which it belongs</value>
-    <comment>Usage information for Default Paragraph Characters</comment>
-  </data>
   <data name="kstidInvalidPathwayInstallation" xml:space="preserve">
     <value>Pathway is not installed correctly. Please re-run the Pathway installer and repair your installation.</value>
     <comment>Message when Pathway DLLs are missing.</comment>
@@ -1397,7 +1389,7 @@ FieldWorks ReadMe for help in this area.</value>
     <comment>Error message when paste is disallowed</comment>
   </data>
   <data name="ksNoGuidOnFactoryStyle" xml:space="preserve">
-    <value>No guid attribute on factory style [{0}]</value>
+    <value>No GUID attribute on factory style [{0}]</value>
     <comment>Message for Invalid Installation of factory styles</comment>
   </data>
   <data name="kstidChangeHomographNumberWs" xml:space="preserve">
@@ -1414,7 +1406,7 @@ FieldWorks ReadMe for help in this area.</value>
   </data>
   <data name="ksNeedToJoinFwGroup" xml:space="preserve">
     <value>FieldWorks has encountered a problem setting up the writing systems. It may be that you need to first log out and then back in. If that doesn't fix it, you can also try asking an administrator to add you to the fieldworks group by using the command: $ sudo adduser 'yourusername' fieldworks</value>
-    <comment>Used in Linux version if the user forgets to logout and back in after New Install.</comment>
+    <comment>Used in Linux version if the user forgets to log out and back in after a new install.</comment>
   </data>
   <data name="kstidScriptureTitle" xml:space="preserve">
     <value>Title</value>
@@ -1423,6 +1415,6 @@ FieldWorks ReadMe for help in this area.</value>
     <value>Error migrating project</value>
   </data>
   <data name="kstidDataMigrationProhibitedText" xml:space="preserve">
-    <value>This project cannot be migrated to a newer version. Please shutdown all other applications that are currently using this project and try opening the project again.</value>
+    <value>This project cannot be migrated to a newer version. Please shut down all other applications that are currently using this project and try opening the project again.</value>
   </data>
 </root>

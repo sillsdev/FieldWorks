@@ -114,6 +114,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
     </Reference>
+    <Reference Include="FDO, Version=8.1.0.24760, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Output\Debug\FDO.dll</HintPath>
+    </Reference>
     <Reference Include="FwControls">
       <Name>FwControls</Name>
       <HintPath>..\..\..\..\..\Output\Debug\FwControls.dll</HintPath>
@@ -121,6 +125,10 @@
     <Reference Include="FwUtils, Version=6.1.1.28067, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="LexEdDll, Version=8.1.0.28599, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Output\Debug\LexEdDll.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <Name>nunit.framework</Name>
@@ -143,6 +151,10 @@
     <Reference Include="TestUtils, Version=5.3.0.27814, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="xCoreInterfaces, Version=8.1.0.24758, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

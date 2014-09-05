@@ -4745,7 +4745,7 @@ namespace SIL.FieldWorks.Common.PrintLayout
 				}
 
 				printLayoutStylesheet.Init(m_cache, m_origStylesheet.RootObjectHvo,
-					m_origStylesheet.StyleListTag, ResourceHelper.DefaultParaCharsStyleName);
+					m_origStylesheet.StyleListTag);
 			}
 		}
 
