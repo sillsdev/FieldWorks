@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2013 SIL International
+// Copyright (c) 2008-2014 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -693,7 +693,8 @@ namespace SIL.FieldWorks.FDO
 		ILexRefType OwnerType { get; }
 
 		/// <summary>
-		/// Virtual property for configuration, wraps target collection objects in read only interface.
+		/// Virtual property for configuration, wraps <see cref="TargetsRS"/> collection objects in read only interface
+		/// that exposes certain LexSense- and LexEntry-specific fields.
 		/// </summary>
 		IEnumerable<ISenseOrEntry> ConfigTargets { get; }
 	}
