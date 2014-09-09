@@ -202,7 +202,7 @@
 	<value>Data</value>
   </data>
   <data name="columnHeader1.Width" type="System.Int32, mscorlib">
-	<value>110</value>
+	<value>150</value>
   </data>
   <data name="columnHeader2.Text" xml:space="preserve">
 	<value>Format</value>

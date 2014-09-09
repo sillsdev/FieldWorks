@@ -17,7 +17,7 @@
 	#			  2013/05/28 jt - ensure only one abbreviation output (in correct WS)
 	#							- integrated into git; recommend we stop tracking changes here
 	# Copyright:   (c) 2012-2013 SIL International
-	# Licence:	 <LPGL>
+	# License:	 <LGPL>
 	################################################################-->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	version="1.0">
