@@ -20,6 +20,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.Utils;
+using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.PaObjects
 {
@@ -28,6 +29,18 @@ namespace SIL.FieldWorks.PaObjects
 	{
 		private List<PaWritingSystem> m_writingSystems;
 		private List<PaLexEntry> m_lexEntries;
+
+		#region constructors
+		/// <summary>
+		/// Contstructor is required to initialize ClientServerServices
+		/// </summary>
+		public PaLexicalInfo()
+		{
+			// need to call this iniitialization routine to allow the ChooseLangProjectDialog can be used
+			ClientServerServices.SetCurrentToDb4OBackend(null, FwDirectoryFinder.FdoDirectories,
+				() => FwDirectoryFinder.ProjectsDirectory == FwDirectoryFinder.ProjectsDirectoryLocalMachine);
+		}
+		#endregion
 
 		#region Disposable stuff
 		#if DEBUG
