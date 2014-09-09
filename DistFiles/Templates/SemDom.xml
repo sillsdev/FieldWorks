@@ -20270,14 +20270,6 @@
 <AUni ws="en">compromise</AUni>
 </ExampleWords>
 </CmDomainQ>
-<CmDomainQ>
-<Question>
-<AUni ws="en">(8) What words refer to when two people disagree?</AUni>
-</Question>
-<ExampleWords>
-<AUni ws="en">disagree, disagreement, think differently, dissent, contest (v), </AUni>
-</ExampleWords>
-</CmDomainQ>
 </Questions>
 <SubPossibilities>
 <CmSemanticDomain guid="1D5C798B-0F2D-49F2-BDE6-CBCF2EF8FD02">
@@ -58550,7 +58542,7 @@
 </CmDomainQ>
 <CmDomainQ>
 <Question>
-<AUni ws="en">(6) What kinds of rooms are there in a church?</AUni>
+<AUni ws="en">(6) What kinds of rooms are there in a religious building (church, mosque, synagogue, temple)?</AUni>
 </Question>
 <ExampleWords>
 <AUni ws="en">foyer, sanctuary, meeting hall, worship center, baptistery, classroom, pastor's study, vestibule, belfry, choir loft, balcony</AUni>
