@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template format="html" type="semanticDomains" datatype="html" xslt="SemDomQuestDepthFirst.xsl">
+	<FxtDocumentDescription dataLabel="Semantic Domain (Specific First) Worksheets" formatLabel="DOC" defaultExtension="doc" filter="DOC files (*.doc)|*.doc|All files (*.*)|*.*">
+   Export Semantic Domain worksheets in a form suitable for use in Rapid Word Collection workshops. 
+   Each page begins with a topic, with the more specific topics in a domain coming before the general ones. 
+   (Note: internally, this document is HTML. However, we give it a .doc extension so that Word will be the default program to open it.)
+	</FxtDocumentDescription>
+</template>
