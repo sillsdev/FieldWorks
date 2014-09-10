@@ -9,6 +9,7 @@ using System.IO;
 using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
@@ -226,6 +227,95 @@ namespace SIL.FieldWorks.XWorks
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
 			wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 			Assert.IsFalse(wsOpts.DisplayWritingSystemAbbreviations, "ShowWsLabels false value did not convert into DisplayWritingSystemAbbreviation");
+		}
+
+		///<summary/>
+		[Test]
+		public void ConvertLayoutTreeNodeToConfigNode_ListOptionsEnabledLexRelationWorks()
+		{
+			const string enabledGuid = "+a0000000-1000-b000-2000-c00000000000";
+			var nodeWithSequence = new XmlDocConfigureDlg.LayoutTreeNode { LexRelType = "entry", RelTypeList = LexReferenceInfo.CreateListFromStorageString(enabledGuid) };
+			ConfigurableDictionaryNode configNode = null;
+
+			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithSequence));
+			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a LexReferenceInfo");
+			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeListOptions, "List system options node not created");
+			var lexRelationOptions = configNode.DictionaryNodeOptions as DictionaryNodeListOptions;
+			Assert.AreEqual(lexRelationOptions.Options.Count, 1);
+			Assert.AreEqual(lexRelationOptions.Options[0].Id, enabledGuid.Substring(1));
+			Assert.IsTrue(lexRelationOptions.Options[0].IsEnabled);
+		}
+
+		///<summary/>
+		[Test]
+		public void ConvertLayoutTreeNodeToConfigNode_ListOptionsDisabledLexRelationWorks()
+		{
+			const string disabledGuid = "-a0000000-1000-b000-2000-c00000000000";
+			var nodeWithSequence = new XmlDocConfigureDlg.LayoutTreeNode { LexRelType = "entry", RelTypeList = LexReferenceInfo.CreateListFromStorageString(disabledGuid) };
+			ConfigurableDictionaryNode configNode = null;
+
+			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithSequence));
+			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a LexReferenceInfo");
+			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeListOptions, "List system options node not created");
+			var lexRelationOptions = configNode.DictionaryNodeOptions as DictionaryNodeListOptions;
+			Assert.AreEqual(lexRelationOptions.Options.Count, 1);
+			Assert.AreEqual(lexRelationOptions.Options[0].Id, disabledGuid.Substring(1));
+			Assert.IsFalse(lexRelationOptions.Options[0].IsEnabled);
+		}
+
+		///<summary>Test that a list with two guids migrates both items and keeps their order</summary>
+		[Test]
+		public void ConvertLayoutTreeNodeToConfigNode_ListOptionsMultipleItemsWorks()
+		{
+			const string enabledGuid = "b0000000-2000-b000-2000-c00000000000";
+			const string disabledGuid = "a0000000-1000-b000-2000-c00000000000";
+			var guidList = String.Format("+{0},-{1}", enabledGuid, disabledGuid);
+			var nodeWithSequence = new XmlDocConfigureDlg.LayoutTreeNode { LexRelType = "entry", RelTypeList = LexReferenceInfo.CreateListFromStorageString(guidList) };
+			ConfigurableDictionaryNode configNode = null;
+
+			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithSequence));
+			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a LexReferenceInfo");
+			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeListOptions, "List system options node not created");
+			var lexRelationOptions = configNode.DictionaryNodeOptions as DictionaryNodeListOptions;
+			Assert.AreEqual(lexRelationOptions.Options.Count, 2);
+			Assert.AreEqual(lexRelationOptions.Options[0].Id, enabledGuid);
+			Assert.IsTrue(lexRelationOptions.Options[0].IsEnabled);
+			Assert.AreEqual(lexRelationOptions.Options[1].Id, disabledGuid);
+			Assert.IsFalse(lexRelationOptions.Options[1].IsEnabled);
+		}
+
+		///<summary/>
+		[Test]
+		public void ConvertLayoutTreeNodeToConfigNode_ListOptionsEnabledLexEntryTypeWorks()
+		{
+			const string enabledGuid = "+a0000000-1000-b000-2000-c00000000000";
+			var nodeWithSequence = new XmlDocConfigureDlg.LayoutTreeNode { EntryType = "sense", EntryTypeList = ItemTypeInfo.CreateListFromStorageString(enabledGuid) };
+			ConfigurableDictionaryNode configNode = null;
+
+			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithSequence));
+			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for the treenode");
+			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeListOptions, "List system options node not created");
+			var lexRelationOptions = configNode.DictionaryNodeOptions as DictionaryNodeListOptions;
+			Assert.AreEqual(lexRelationOptions.Options.Count, 1);
+			Assert.AreEqual(lexRelationOptions.Options[0].Id, enabledGuid.Substring(1));
+			Assert.IsTrue(lexRelationOptions.Options[0].IsEnabled);
+		}
+
+		///<summary/>
+		[Test]
+		public void ConvertLayoutTreeNodeToConfigNode_ListOptionsDisabledLexEntryTypeWorks()
+		{
+			const string disabledGuid = "-a0000000-1000-b000-2000-c00000000000";
+			var nodeWithSequence = new XmlDocConfigureDlg.LayoutTreeNode { EntryType = "variant", EntryTypeList = ItemTypeInfo.CreateListFromStorageString(disabledGuid) };
+			ConfigurableDictionaryNode configNode = null;
+
+			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithSequence));
+			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for the treenode");
+			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeListOptions, "List system options node not created");
+			var lexRelationOptions = configNode.DictionaryNodeOptions as DictionaryNodeListOptions;
+			Assert.AreEqual(lexRelationOptions.Options.Count, 1);
+			Assert.AreEqual(lexRelationOptions.Options[0].Id, disabledGuid.Substring(1));
+			Assert.IsFalse(lexRelationOptions.Options[0].IsEnabled);
 		}
 
 		///<summary/>

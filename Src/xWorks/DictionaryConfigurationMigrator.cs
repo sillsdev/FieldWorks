@@ -7,8 +7,10 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
@@ -28,6 +30,7 @@ namespace SIL.FieldWorks.XWorks
 		private readonly Inventory m_layoutInventory;
 		private readonly Inventory m_partInventory;
 		private Mediator m_mediator;
+		private SimpleLogger m_logger = new SimpleLogger();
 
 		public DictionaryConfigurationMigrator(Mediator mediator)
 		{
@@ -48,6 +51,8 @@ namespace SIL.FieldWorks.XWorks
 			//</layoutType>
 			var label = XmlUtils.GetManditoryAttributeValue(layoutNode, "label");
 			var layout = XmlUtils.GetManditoryAttributeValue(layoutNode, "layout");
+			m_logger.WriteLine(String.Format("Migrating old fwlayout and parts config: '{0}' - {1}.", label, layout));
+			m_logger.IncreaseIndent();
 			var configNodeList = new List<ConfigurableDictionaryNode>();
 			foreach(var node in oldNodes)
 			{
@@ -59,22 +64,29 @@ namespace SIL.FieldWorks.XWorks
 			convertedModel.Version = -1;
 			CopyNewDefaultsIntoConvertedModel(layout, convertedModel);
 			convertedModel.Save();
+			m_logger.DecreaseIndent();
 		}
 
 		public void MigrateOldConfigurationsIfNeeeded()
 		{
+			var versionProvider = new VersionInfoProvider(Assembly.GetExecutingAssembly(), true);
 			if(!ProjectHasNewDictionaryConfigs())
 			{
+				m_logger.WriteLine(String.Format("{0}: Dictionary configurations were found in need of migration. - {1}",
+										 versionProvider.ApplicationVersion, DateTime.Now.ToString("yyyy MMM h:mm:ss")));
 				var configureLayouts = GetConfigureLayoutsNodeForTool("lexiconDictionary");
 
 				LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(configureLayouts, this);
 			}
 			if(!ProjectHasNewReversalConfigs())
 			{
+				m_logger.WriteLine(String.Format("{0}: Reversal configurations were found in need of migration. - {1}",
+										 versionProvider.ApplicationVersion, DateTime.Now.ToString("yyyy MMM h:mm:ss")));
 				var configureLayouts = GetConfigureLayoutsNodeForTool("reversalToolEditComplete");
 
 				LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(configureLayouts, this);
 			}
+			File.AppendAllText(Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_mediator), "ConfigMigrationLog.txt"), m_logger.Content);
 		}
 
 		/// <summary>
@@ -84,6 +96,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void CopyNewDefaultsIntoConvertedModel(string layout, DictionaryConfigurationModel convertedModel)
 		{
+			DictionaryConfigurationModel.SpecifyParents(convertedModel.Parts);
 			DictionaryConfigurationModel currentDefaultModel;
 			if(convertedModel.Version == -1)
 			{
@@ -91,9 +104,7 @@ namespace SIL.FieldWorks.XWorks
 				var defaultPath = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(m_mediator);
 				const string defaultStemName = "Stem" + extension;
 				const string defaultRootName = "Root" + extension;
-//				var projectConfigBasePath = FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
-// todo: Use the real path when the migration is more functional.
-				var projectConfigBasePath = Path.Combine(Path.GetTempPath(), "ConfigMigrationTesting");
+				var projectConfigBasePath = FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
 				switch(layout)
 				{
 					case "publishStem":
@@ -179,6 +190,14 @@ namespace SIL.FieldWorks.XWorks
 				var matchedChildren = new List<ConfigurableDictionaryNode>();
 				foreach(var child in convertedNode.Children)
 				{
+					var pathStringTonode = BuildPathStringFromNode(child);
+					if(version == -1) // Some configuration nodes had name changes in the new verison
+					{
+						if(child.Label == "Components" && child.Parent.Label == "Component References")
+						{
+							child.Label = "Referenced Entries";
+						}
+					}
 					var matchFromBase = FindMatchingChild(child, currentDefaultChildren, matchedChildren);
 					if(matchFromBase != null)
 					{
@@ -186,6 +205,7 @@ namespace SIL.FieldWorks.XWorks
 					}
 					else
 					{
+						m_logger.WriteLine(String.Format("Could not match '{0}' treating as custom.", pathStringTonode));
 						// This node does not match anything in the shipping defaults.
 						// It is probably a custom field in which case the label should match the FieldDescription.
 						child.FieldDescription = child.Label;
@@ -196,6 +216,7 @@ namespace SIL.FieldWorks.XWorks
 				currentDefaultChildren.RemoveAll(matchedChildren.Contains);
 				foreach(var newChild in currentDefaultChildren)
 				{
+					m_logger.WriteLine(String.Format("'{0}' was not in the old version adding from default config.", BuildPathStringFromNode(newChild)));
 					convertedNode.Children.Add(newChild);
 				}
 			}
@@ -203,6 +224,18 @@ namespace SIL.FieldWorks.XWorks
 			{
 				throw new Exception("These nodes are not likely to match the convertedModel.");
 			}
+		}
+
+		private string BuildPathStringFromNode(ConfigurableDictionaryNode child)
+		{
+			var path = child.DisplayLabel;
+			var node = child;
+			while(node.Parent != null)
+			{
+				path = node.Parent.DisplayLabel+"->"+path;
+				node = node.Parent;
+			}
+			return path;
 		}
 
 		/// <summary>
@@ -242,7 +275,7 @@ namespace SIL.FieldWorks.XWorks
 		private bool ProjectHasNewDictionaryConfigs()
 		{
 			var newDictionaryConfigLoc = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)), "Dictionary");
-			return Directory.Exists(newDictionaryConfigLoc);
+			return Directory.Exists(newDictionaryConfigLoc) && Directory.EnumerateFiles(newDictionaryConfigLoc, DictionaryConfigurationModel.FileExtension).Any();
 		}
 
 		private bool ProjectHasNewReversalConfigs()
@@ -308,8 +341,36 @@ namespace SIL.FieldWorks.XWorks
 					NumberStyle = GenerateNumberStyleFromLayoutTreeNode(node)
 				};
 			}
-			//todo: Handle list options - any other options
+			if(!String.IsNullOrEmpty(node.LexRelType))
+			{
+				options = new DictionaryNodeListOptions();
+				SetListOptionsProperties(node.LexRelType, node.LexRelTypeSequence, (DictionaryNodeListOptions)options);
+			}
+			if(!String.IsNullOrEmpty(node.EntryType))
+			{
+				if(node.EntryType == "complex")
+				{
+					options = new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = node.ShowComplexFormPara };
+				}
+				else
+				{
+					options = new DictionaryNodeListOptions();
+				}
+				SetListOptionsProperties(node.EntryType, node.EntryTypeSequence, (DictionaryNodeListOptions)options);
+			}
 			return options;
+		}
+
+		private void SetListOptionsProperties(string type, string sequence, DictionaryNodeListOptions options)
+		{
+			options.Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>();
+			options.ListId = (DictionaryNodeListOptions.ListIds)Enum.Parse(typeof(DictionaryNodeListOptions.ListIds), type, true);
+			// Create a list of dictionary node options from a string of the format "+guid,-guid,+guid"
+			options.Options.AddRange(sequence.Split(',').Select(id => new DictionaryNodeListOptions.DictionaryNodeOption
+																							{
+																								IsEnabled = id.StartsWith("+"),
+																								Id = id.Trim(new[] { '+', '-', ' ' })
+																							}));
 		}
 
 		private string GenerateNumberStyleFromLayoutTreeNode(XmlDocConfigureDlg.LayoutTreeNode node)

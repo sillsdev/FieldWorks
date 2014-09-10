@@ -3319,8 +3319,8 @@ namespace SIL.FieldWorks.XWorks
 				set { m_fShowSenseConfig = value; }
 			}
 
-			public string LexRelType { get; private set; }
-			public List<LexReferenceInfo> RelTypeList { get; private set; }
+			public string LexRelType { get; internal set; }
+			public List<LexReferenceInfo> RelTypeList { get; internal set; }
 
 			public string LexRelTypeSequence
 			{
@@ -3339,8 +3339,8 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
-			public string EntryType { get; private set; }
-			public List<ItemTypeInfo> EntryTypeList { get; private set; }
+			public string EntryType { get; internal set; }
+			public List<ItemTypeInfo> EntryTypeList { get; internal set; }
 
 			public string EntryTypeSequence
 			{
