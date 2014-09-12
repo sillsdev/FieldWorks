@@ -516,8 +516,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			foreach (IPhEnvironment env in allo.PhoneEnvRC.Where(e => m_envValidator.Recognize(e.StringRepresentation.Text)))
 			{
 				Tuple<string, string> contexts = SplitEnvironment(env);
-				hcAllo.RequiredEnvironments.Add(new AllomorphEnvironment(m_spanFactory, LoadEnvironmentPattern(contexts.Item1),
-					LoadEnvironmentPattern(contexts.Item2)) {Name = env.StringRepresentation.Text});
+				hcAllo.RequiredEnvironments.Add(new AllomorphEnvironment(m_spanFactory, LoadEnvironmentPattern(contexts.Item1, true),
+					LoadEnvironmentPattern(contexts.Item2, false)) {Name = env.StringRepresentation.Text});
 			}
 
 			if (allo.StemNameRA != null)
@@ -836,7 +836,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					pattern.Children.AddRange(LoadPatternNodes(prefixContexts.Item2));
 
 					if (!string.IsNullOrEmpty(prefixContexts.Item1))
-						leftEnvPattern = LoadEnvironmentPattern(prefixContexts.Item1);
+						leftEnvPattern = LoadEnvironmentPattern(prefixContexts.Item1, true);
 				}
 				pattern.Children.AddRange(AnyStar());
 				if (suffixEnv != null)
@@ -846,7 +846,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					pattern.Children.Add(SuffixNull());
 
 					if (!string.IsNullOrEmpty(suffixContexts.Item2))
-						rightEnvPattern = LoadEnvironmentPattern(suffixContexts.Item2);
+						rightEnvPattern = LoadEnvironmentPattern(suffixContexts.Item2, false);
 				}
 			}
 			pattern.Freeze();
@@ -857,7 +857,16 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			hcAllo.Rhs.Add(new InsertShape(m_table, "+" + FormatForm(suffixAllo.Form.VernacularDefaultWritingSystem.Text)));
 
 			if (leftEnvPattern != null || rightEnvPattern != null)
-				hcAllo.RequiredEnvironments.Add(new AllomorphEnvironment(m_spanFactory, leftEnvPattern, rightEnvPattern));
+			{
+				string name;
+				if (leftEnvPattern != null && rightEnvPattern == null)
+					name = prefixEnv.StringRepresentation.Text;
+				else if (leftEnvPattern == null)
+					name = suffixEnv.StringRepresentation.Text;
+				else
+					name = string.Format("{0}, {1}", prefixEnv.StringRepresentation.Text, suffixEnv.StringRepresentation.Text);
+				hcAllo.RequiredEnvironments.Add(new AllomorphEnvironment(m_spanFactory, leftEnvPattern, rightEnvPattern) {Name = name});
+			}
 
 			hcAllo.Properties["ID"] = prefixAllo.Hvo;
 			hcAllo.Properties["ID2"] = suffixAllo.Hvo;
@@ -1073,7 +1082,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						hcAllo.Rhs.Add(new InsertShape(m_table, "+" + FormatForm(form)));
 
 						if (!string.IsNullOrEmpty(contexts.Item2))
-							hcAllo.RequiredEnvironments.Add(new AllomorphEnvironment(m_spanFactory, null, LoadEnvironmentPattern(contexts.Item2)));
+							hcAllo.RequiredEnvironments.Add(new AllomorphEnvironment(m_spanFactory, null, LoadEnvironmentPattern(contexts.Item2, false)) {Name = env.StringRepresentation.Text});
 						break;
 
 					case MoMorphTypeTags.kMorphPrefix:
@@ -1100,7 +1109,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						hcAllo.Rhs.Add(new CopyFromInput("stem"));
 
 						if (!string.IsNullOrEmpty(contexts.Item1))
-							hcAllo.RequiredEnvironments.Add(new AllomorphEnvironment(m_spanFactory, LoadEnvironmentPattern(contexts.Item1), null));
+							hcAllo.RequiredEnvironments.Add(new AllomorphEnvironment(m_spanFactory, LoadEnvironmentPattern(contexts.Item1, true), null) {Name = env.StringRepresentation.Text});
 						break;
 				}
 			}
@@ -1629,16 +1638,16 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return Tuple.Create(contexts[0].Trim(), contexts[1].Trim());
 		}
 
-		private Pattern<Word, ShapeNode> LoadEnvironmentPattern(string patternStr)
+		private Pattern<Word, ShapeNode> LoadEnvironmentPattern(string patternStr, bool left)
 		{
 			if (string.IsNullOrEmpty(patternStr))
 				return null;
 
 			var pattern = new Pattern<Word, ShapeNode>();
-			if (patternStr.StartsWith("#"))
+			if (left && patternStr.StartsWith("#"))
 				pattern.Children.Add(new Constraint<Word, ShapeNode>(HCFeatureSystem.LeftSideAnchor));
 			pattern.Children.AddRange(LoadPatternNodes(patternStr));
-			if (patternStr.EndsWith("#"))
+			if (!left && patternStr.EndsWith("#"))
 				pattern.Children.Add(new Constraint<Word, ShapeNode>(HCFeatureSystem.RightSideAnchor));
 			pattern.Freeze();
 			return pattern;

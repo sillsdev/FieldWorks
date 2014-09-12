@@ -364,7 +364,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphSuffix, "ɯd", "gloss", new SandboxGenericMSA {MsaType = MsaType.kUnclassified});
 			var allo = (IMoAffixAllomorph) entry.LexemeFormOA;
-			allo.PhoneEnvRC.Add(AddEnvironment("/ [V] _ [V]#"));
+			allo.PhoneEnvRC.Add(AddEnvironment("/ [V] _ #"));
 			allo.PhoneEnvRC.Add(AddEnvironment("/ #[C] _ [C]"));
 			allo.MsEnvFeaturesOA = Cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
 			CreateFeatStruc(Cache.LanguageProject.MsFeatureSystemOA, m_inflType, allo.MsEnvFeaturesOA, new FS {{"tense", "pres"}});
@@ -378,14 +378,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			AffixProcessAllomorph hcAllo = rule.Allomorphs[0];
 			Assert.That(hcAllo.Lhs.Select(p => p.ToString()), Is.EqualTo(new[] {AnyStar + VowelFS + SuffixNull}));
 			Assert.That(hcAllo.Rhs.Select(a => a.ToString()), Is.EqualTo(new[] {"<stem>", "+ɯd"}));
-			Assert.That(hcAllo.RequiredEnvironments.Select(e => e.ToString()), Is.EquivalentTo(new[] {"/ _ " + VowelFS + RightAnchorFS}));
+			Assert.That(hcAllo.RequiredEnvironments.Select(e => e.ToEnvString()), Is.EquivalentTo(new[] {"/ _ " + RightAnchorFS}));
 			Assert.That(hcAllo.RequiredMprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"inflClass"}));
 			Assert.That(hcAllo.RequiredSyntacticFeatureStruct.ToString(), Is.EqualTo("[Head:[tense:pres]]"));
 
 			hcAllo = rule.Allomorphs[1];
 			Assert.That(hcAllo.Lhs.Select(p => p.ToString()), Is.EqualTo(new[] {PrefixNull + ConsFS + SuffixNull}));
 			Assert.That(hcAllo.Rhs.Select(a => a.ToString()), Is.EqualTo(new[] {"<stem>", "+ɯd"}));
-			Assert.That(hcAllo.RequiredEnvironments.Select(e => e.ToString()), Is.EquivalentTo(new[] {"/ _ " + ConsFS}));
+			Assert.That(hcAllo.RequiredEnvironments.Select(e => e.ToEnvString()), Is.EquivalentTo(new[] {"/ _ " + ConsFS}));
 			Assert.That(hcAllo.RequiredMprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"inflClass"}));
 			Assert.That(hcAllo.RequiredSyntacticFeatureStruct.ToString(), Is.EqualTo("[Head:[tense:pres]]"));
 		}
@@ -511,7 +511,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			AffixProcessAllomorph hcAllo = rule.Allomorphs[0];
 			Assert.That(hcAllo.Lhs.Select(p => p.ToString()), Is.EqualTo(new[] {PrefixNull + ConsFS + AnyStar + VowelFS + SuffixNull}));
 			Assert.That(hcAllo.Rhs.Select(a => a.ToString()), Is.EqualTo(new[] {"d+", "<stem>", "+t"}));
-			Assert.That(hcAllo.RequiredEnvironments.Select(e => e.ToString()), Is.EquivalentTo(new[] {"/ " + LeftAnchorFS + ConsFS + " _ " + VowelFS}));
+			Assert.That(hcAllo.RequiredEnvironments.Select(e => e.ToEnvString()), Is.EquivalentTo(new[] {"/ " + LeftAnchorFS + ConsFS + " _ " + VowelFS}));
 		}
 
 		[Test]
