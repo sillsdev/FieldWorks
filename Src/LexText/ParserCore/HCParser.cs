@@ -175,7 +175,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				foreach (var affix in m_cache.ServiceLocator.GetInstance<IMoAffixAllomorphRepository>().AllInstances())
 				{
 					string form = affix.Form.VernacularDefaultWritingSystem.Text;
-					if (String.IsNullOrEmpty(form) || !form.Contains("["))
+					if (String.IsNullOrEmpty(form) || form == "[...]" || !form.Contains("["))
 						continue;
 					string environment = "/_" + form;
 					// A form containing a reduplication expression should look like an environment
