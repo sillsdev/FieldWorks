@@ -14,19 +14,19 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine.
-  # config.vm.network "forwarded_port", guest: 80, host: 8080
+  #config.vm.network "forwarded_port", guest: 80, host: 8080
 
   # increase memory and cpu settings
   config.vm.provider "virtualbox" do |v|
 	v.memory = 1024
 	v.cpus = 2
 	# Uncomment the v.gui line to gain access to this box through VirtualBox
-#	v.gui = true
+	#v.gui = true
   end
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
- config.vm.network "private_network", ip: "192.168.33.10"
+  config.vm.network "private_network", ip: "192.168.33.10"
 
   # Share an additional folder to the guest VM. The first argument is
   # the path on the host to the actual folder. The second argument is
