@@ -3698,6 +3698,16 @@ namespace SIL.FieldWorks
 			ErrorReporter.AddProperty("CurrentDirectory", Environment.CurrentDirectory);
 			ErrorReporter.AddProperty("MachineName", Environment.MachineName);
 			ErrorReporter.AddProperty("OSVersion", Environment.OSVersion.ToString());
+			ErrorReporter.AddProperty("OSRelease", Palaso.Reporting.ErrorReport.GetOperatingSystemLabel());
+			if (MiscUtils.IsUnix)
+			{
+				var packageVersions = LinuxPackageUtils.FindInstalledPackages("fieldworks-applications*");
+				if (packageVersions.Count() > 0)
+				{
+					var packageVersion = packageVersions.First();
+					ErrorReporter.AddProperty("PackageVersion", string.Format("{0} {1}", packageVersion.Key, packageVersion.Value));
+				}
+			}
 			ErrorReporter.AddProperty("CLR version", Environment.Version.ToString());
 			ulong mem = MiscUtils.GetPhysicalMemoryBytes() / 1048576;
 			ErrorReporter.AddProperty("PhysicalMemory", mem + " Mb");
