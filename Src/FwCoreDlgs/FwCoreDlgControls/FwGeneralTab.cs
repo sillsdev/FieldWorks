@@ -16,7 +16,7 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.Utils;
@@ -253,9 +253,9 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// ------------------------------------------------------------------------------------
 		private void FillForDefaultParagraphCharacters()
 		{
-			m_txtStyleName.Text = ResourceHelper.DefaultParaCharsStyleName;
+			m_txtStyleName.Text = StyleUtils.DefaultParaCharsStyleName;
 			m_txtStyleName.Enabled = false;
-			m_txtStyleUsage.Text = ResourceHelper.GetResourceString("kstidDefaultParaCharsStyleUsage");
+			m_txtStyleUsage.Text = FwCoreDlgControls.kstidDefaultParaCharsUsage;
 			m_txtStyleUsage.ReadOnly = true;
 			m_lblStyleType.Text = FwCoreDlgControls.kstidCharacterStyleText;
 			m_cboBasedOn.SelectedIndex = -1;
@@ -277,7 +277,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 			// If this is a character style then put in "Default Paragraph Characters"
 			if (styleInfo.IsCharacterStyle)
-				m_cboBasedOn.Items.Add(ResourceHelper.DefaultParaCharsStyleName);
+				m_cboBasedOn.Items.Add(StyleUtils.DefaultParaCharsStyleName);
 
 			// Add all of the styles that are not myself or any style that derives from me and
 			// have the same context as me

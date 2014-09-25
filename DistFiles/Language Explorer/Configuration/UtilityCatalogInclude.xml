@@ -9,4 +9,5 @@
 	<utility assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.DeleteEntriesSensesWithoutInterlinearization"/>
 	<utility assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.LexEntryInflTypeConverter"/>
 	<utility assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.LexEntryTypeConverter"/>
+	<utility assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.GoldEticGuidFixer"/>
 </utilityCatalog>

@@ -17,6 +17,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// </summary>
 		public static bool AreMultipleApplicationsConnected(FdoCache cache)
 		{
+			if (cache == null) // Can happen when creating a new project and adding a new writing system. (LT-15624)
+				return false;
+
 			var sharedBep = cache.ServiceLocator.GetInstance<IDataStorer>() as SharedXMLBackendProvider;
 			if (sharedBep != null)
 				return sharedBep.OtherApplicationsConnectedCount > 0;

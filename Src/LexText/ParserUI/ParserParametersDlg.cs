@@ -13,15 +13,13 @@
 // </remarks>
 
 using System;
-using System.Drawing;
-using System.Collections;
-using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using System.Data;
-using System.Diagnostics;
-
-using SIL.FieldWorks.Common.Framework;
+using System.Xml.Linq;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using XCore;
@@ -33,36 +31,41 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// </summary>
 	public class ParserParametersDlg : Form, IFWDisposable
 	{
+		private const string HelpTopic = "khtpParserParamters";
+
+		private const string HC = "HC";
+		private const string DelReapps = "DelReapps";
+		private const string NotOnClitics = "NotOnClitics";
+		private const string NoDefaultCompounding = "NoDefaultCompounding";
+
+		private const string XAmple = "XAmple";
+		private const string MaxNulls = "MaxNulls";
+		private const string MaxPrefixes = "MaxPrefixes";
+		private const string MaxSuffixes = "MaxSuffixes";
+		private const string MaxInfixes = "MaxInfixes";
+		private const string MaxInterfixes = "MaxInterfixes";
+		private const string MaxRoots = "MaxRoots";
+		private const string MaxAnalysesToReturn = "MaxAnalysesToReturn";
+
 		#region Data members
 
 		/// <summary>
 		/// member strings
 		/// </summary>
-#pragma warning disable 0414
-		private string m_sXmlErrorText = "The XML is not well-formed; you need to correct it and try again.";
-		private string m_sXmlErrorCaption = "Ill-formed XML";
 		private string m_sXmlParameters;
-#pragma warning restore 0414
 
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private Container components = null;
+		private readonly IHelpTopicProvider m_helpTopicProvider;
+		private Label m_label1;
+		private Label m_label2;
+		private Button m_btnOk;
+		private Button m_btnCancel;
+		private Button m_btnHelp;
+		private DataGrid m_dataGrid1;
 
-		private IHelpTopicProvider m_helpTopicProvider;
-		private Label label1;
-		private Label label2;
-		private Button btnOK;
-		private Button btnCancel;
-		private Button btnHelp;
-		private DataGrid dataGrid1;
+		private DataGrid m_dataGrid2;
+		private Label m_label3;
 
-		private const string s_helpTopic = "khtpParserParamters";
-		private HelpProvider helpProvider;
-		private DataGrid dataGrid2;
-		private Label label3;
-
-		private DataSet m_dsParserParameters = null;
+		private DataSet m_dsParserParameters;
 
 		#endregion Data members
 
@@ -72,37 +75,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			AccessibleName = GetType().Name;
 		}
 
-		public ParserParametersDlg(IHelpTopicProvider helpTopicProvider) :
-			this(ParserUIStrings.ksXmlNotWellFormed, ParserUIStrings.ksIllFormedXml, helpTopicProvider)
+		public ParserParametersDlg(IHelpTopicProvider helpTopicProvider) : this()
 		{
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// To allow one to pass in mediated string table values for the XML error message
-		/// </summary>
-		/// <param name="sXmlErrorText">The s XML error text.</param>
-		/// <param name="sXmlErrorCaption">The s XML error caption.</param>
-		/// <param name="helpTopicProvider">The help topic provider.</param>
-		/// ------------------------------------------------------------------------------------
-		public ParserParametersDlg(string sXmlErrorText, string sXmlErrorCaption,
-			IHelpTopicProvider helpTopicProvider) : this()
-		{
-			m_sXmlErrorText = sXmlErrorText;
-			m_sXmlErrorCaption = sXmlErrorCaption;
 			m_helpTopicProvider = helpTopicProvider;
-
-			helpProvider = new HelpProvider();
-			helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
-			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
-			helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
-			helpProvider.SetShowHelp(this, true);
 		}
 
 		/// <summary>
 		///Get or set the parser parameters XML text
 		///</summary>
-		public string XMLRep
+		public string XmlRep
 		{
 			get
 			{
@@ -134,19 +115,20 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
 
-			if( disposing )
+			if (disposing)
 			{
-				if(components != null)
+				if (m_dsParserParameters != null)
 				{
-					components.Dispose();
+					m_dsParserParameters.Dispose();
+					m_dsParserParameters = null;
 				}
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#region Windows Form Designer generated code
@@ -157,173 +139,157 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ParserParametersDlg));
-			this.label1 = new System.Windows.Forms.Label();
-			this.label2 = new System.Windows.Forms.Label();
-			this.btnOK = new System.Windows.Forms.Button();
-			this.btnCancel = new System.Windows.Forms.Button();
-			this.dataGrid1 = new System.Windows.Forms.DataGrid();
-			this.btnHelp = new System.Windows.Forms.Button();
-			this.dataGrid2 = new System.Windows.Forms.DataGrid();
-			this.label3 = new System.Windows.Forms.Label();
-			((System.ComponentModel.ISupportInitialize)(this.dataGrid1)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.dataGrid2)).BeginInit();
+			this.m_label1 = new System.Windows.Forms.Label();
+			this.m_label2 = new System.Windows.Forms.Label();
+			this.m_btnOk = new System.Windows.Forms.Button();
+			this.m_btnCancel = new System.Windows.Forms.Button();
+			this.m_dataGrid1 = new System.Windows.Forms.DataGrid();
+			this.m_btnHelp = new System.Windows.Forms.Button();
+			this.m_dataGrid2 = new System.Windows.Forms.DataGrid();
+			this.m_label3 = new System.Windows.Forms.Label();
+			((System.ComponentModel.ISupportInitialize)(this.m_dataGrid1)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.m_dataGrid2)).BeginInit();
 			this.SuspendLayout();
 			//
 			// label1
 			//
-			resources.ApplyResources(this.label1, "label1");
-			this.label1.Name = "label1";
+			resources.ApplyResources(this.m_label1, "m_label1");
+			this.m_label1.Name = "m_label1";
 			//
 			// label2
 			//
-			resources.ApplyResources(this.label2, "label2");
-			this.label2.Name = "label2";
+			resources.ApplyResources(this.m_label2, "m_label2");
+			this.m_label2.Name = "m_label2";
 			//
 			// btnOK
 			//
-			this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			resources.ApplyResources(this.btnOK, "btnOK");
-			this.btnOK.Name = "btnOK";
-			this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
+			this.m_btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
+			resources.ApplyResources(this.m_btnOk, "m_btnOk");
+			this.m_btnOk.Name = "m_btnOk";
+			this.m_btnOk.Click += new System.EventHandler(this.btnOK_Click);
 			//
 			// btnCancel
 			//
-			this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			resources.ApplyResources(this.btnCancel, "btnCancel");
-			this.btnCancel.Name = "btnCancel";
+			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			resources.ApplyResources(this.m_btnCancel, "m_btnCancel");
+			this.m_btnCancel.Name = "m_btnCancel";
 			//
 			// dataGrid1
 			//
-			resources.ApplyResources(this.dataGrid1, "dataGrid1");
-			this.dataGrid1.DataMember = global::SIL.FieldWorks.LexText.Controls.ParserUIStrings.ksIdle_;
-			this.dataGrid1.HeaderForeColor = System.Drawing.SystemColors.ControlText;
-			this.dataGrid1.Name = "dataGrid1";
+			resources.ApplyResources(this.m_dataGrid1, "m_dataGrid1");
+			this.m_dataGrid1.DataMember = global::SIL.FieldWorks.LexText.Controls.ParserUIStrings.ksIdle_;
+			this.m_dataGrid1.HeaderForeColor = System.Drawing.SystemColors.ControlText;
+			this.m_dataGrid1.Name = "m_dataGrid1";
 			//
 			// btnHelp
 			//
-			resources.ApplyResources(this.btnHelp, "btnHelp");
-			this.btnHelp.Name = "btnHelp";
-			this.btnHelp.UseVisualStyleBackColor = true;
-			this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
+			resources.ApplyResources(this.m_btnHelp, "m_btnHelp");
+			this.m_btnHelp.Name = "m_btnHelp";
+			this.m_btnHelp.UseVisualStyleBackColor = true;
+			this.m_btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
 			//
 			// dataGrid2
 			//
-			resources.ApplyResources(this.dataGrid2, "dataGrid2");
-			this.dataGrid2.DataMember = global::SIL.FieldWorks.LexText.Controls.ParserUIStrings.ksIdle_;
-			this.dataGrid2.HeaderForeColor = System.Drawing.SystemColors.ControlText;
-			this.dataGrid2.Name = "dataGrid2";
+			resources.ApplyResources(this.m_dataGrid2, "m_dataGrid2");
+			this.m_dataGrid2.DataMember = global::SIL.FieldWorks.LexText.Controls.ParserUIStrings.ksIdle_;
+			this.m_dataGrid2.HeaderForeColor = System.Drawing.SystemColors.ControlText;
+			this.m_dataGrid2.Name = "m_dataGrid2";
 			//
 			// label3
 			//
-			resources.ApplyResources(this.label3, "label3");
-			this.label3.Name = "label3";
+			resources.ApplyResources(this.m_label3, "m_label3");
+			this.m_label3.Name = "m_label3";
 			//
 			// ParserParametersDlg
 			//
-			this.AcceptButton = this.btnOK;
+			this.AcceptButton = this.m_btnOk;
 			resources.ApplyResources(this, "$this");
-			this.CancelButton = this.btnCancel;
-			this.Controls.Add(this.label3);
-			this.Controls.Add(this.dataGrid2);
-			this.Controls.Add(this.btnHelp);
-			this.Controls.Add(this.dataGrid1);
-			this.Controls.Add(this.btnCancel);
-			this.Controls.Add(this.btnOK);
-			this.Controls.Add(this.label2);
-			this.Controls.Add(this.label1);
+			this.CancelButton = this.m_btnCancel;
+			this.Controls.Add(this.m_label3);
+			this.Controls.Add(this.m_dataGrid2);
+			this.Controls.Add(this.m_btnHelp);
+			this.Controls.Add(this.m_dataGrid1);
+			this.Controls.Add(this.m_btnCancel);
+			this.Controls.Add(this.m_btnOk);
+			this.Controls.Add(this.m_label2);
+			this.Controls.Add(this.m_label1);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.Name = "ParserParametersDlg";
-			((System.ComponentModel.ISupportInitialize)(this.dataGrid1)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.dataGrid2)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.m_dataGrid1)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.m_dataGrid2)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
 		}
 		#endregion
 
-		void btnHelp_Click(object sender, EventArgs e)
+		private void btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_helpTopicProvider, s_helpTopic);
+			ShowHelp.ShowHelpTopic(m_helpTopicProvider, HelpTopic);
 		}
 
-		private void btnOK_Click(object sender, System.EventArgs e)
+		private void btnOK_Click(object sender, EventArgs e)
 		{
-			XmlDocument newDoc = new XmlDocument();
-			newDoc.LoadXml(m_dsParserParameters.GetXml());
-			XmlDocument oldDoc = new XmlDocument();
-			oldDoc.LoadXml(XMLRep);
-			XmlNode oldParserNode = oldDoc.SelectSingleNode("/ParserParameters/ActiveParser");
-			if (oldParserNode != null)
+			XElement newParserParamsElem = XElement.Parse(m_dsParserParameters.GetXml());
+			XElement oldParserParamsElem = XElement.Parse(XmlRep);
+			newParserParamsElem.Add(oldParserParamsElem.Element("ActiveParser"));
+			XmlRep = newParserParamsElem.ToString();
+			ValidateValues(newParserParamsElem);
+		}
+
+		private void ValidateValues(XElement elem)
+		{
+			EnforceValidValue(elem, XAmple, MaxNulls, 0, 10, false);
+			EnforceValidValue(elem, XAmple, MaxPrefixes, 0, 25, false);
+			EnforceValidValue(elem, XAmple, MaxSuffixes, 0, 25, false);
+			EnforceValidValue(elem, XAmple, MaxInfixes, 0, 7, false);
+			EnforceValidValue(elem, XAmple, MaxInterfixes, 0, 7, false);
+			EnforceValidValue(elem, XAmple, MaxRoots, 0, 10, false);
+			EnforceValidValue(elem, XAmple, MaxAnalysesToReturn, -1, 10000, true);
+
+			EnforceValidValue(elem, HC, DelReapps, 0, 10, false);
+		}
+
+		private void EnforceValidValue(XElement elem, string parser, string item, int min, int max, bool useMinIfZero)
+		{
+			XElement valueElem = elem.Elements(parser).Elements(item).FirstOrDefault();
+			if (valueElem != null)
 			{
-				XmlNode paramsNode = newDoc.SelectSingleNode("/ParserParameters");
-				XmlNode newParserNode = newDoc.CreateElement("ActiveParser");
-				paramsNode.AppendChild(newParserNode);
-				newParserNode.InnerText = oldParserNode.InnerText;
-			}
-			XMLRep = newDoc.OuterXml;
-			ValidateValues(newDoc);
-		}
-
-		private void ValidateValues(XmlDocument doc)
-		{
-			const string ksXAmpleXPath = "/ParserParameters/XAmple/";
-			EnforceValidValue(doc, ksXAmpleXPath, "MaxNulls", 0, 10);
-			EnforceValidValue(doc, ksXAmpleXPath, "MaxPrefixes", 0, 25);
-			EnforceValidValue(doc, ksXAmpleXPath, "MaxSuffixes", 0, 25);
-			EnforceValidValue(doc, ksXAmpleXPath, "MaxInfixes", 0, 7);
-			EnforceValidValue(doc, ksXAmpleXPath, "MaxInterfixes", 0, 7);
-			EnforceValidValue(doc, ksXAmpleXPath, "MaxRoots", 0, 10);
-			EnforceValidValue(doc, ksXAmpleXPath, "MaxAnalysesToReturn", -1, 10000, true);
-
-			const string ksHCXPath = "/ParserParameters/HC/";
-			EnforceValidValue(doc, ksHCXPath, "DelReapps", 0, 10);
-		}
-
-		private void EnforceValidValue(XmlDocument doc, string sXPath, string sItem, int iMin, int iMax)
-		{
-			EnforceValidValue(doc, sXPath, sItem, iMin, iMax, false);
-		}
-
-		private void EnforceValidValue(XmlDocument doc, string sXPath, string sItem, int iMin, int iMax, bool fUseMinIfZero)
-		{
-			XmlNode node = doc.SelectSingleNode(sXPath + sItem);
-			if (node != null)
-			{
-				int val = Convert.ToInt32(node.InnerText);
-				if (val < iMin || (fUseMinIfZero && val == 0))
+				var val = (int) valueElem;
+				if (val < min || (useMinIfZero && val == 0))
 				{
-					node.InnerText = iMin.ToString();
-					XMLRep = doc.OuterXml;
-					ReportChangeOfValue(sItem, val, iMin, iMin, iMax);
+					valueElem.SetValue(min);
+					XmlRep = elem.ToString();
+					ReportChangeOfValue(item, val, min, min, max);
 				}
-				else if (val > iMax)
+				else if (val > max)
 				{
-					node.InnerText = iMax.ToString();
-					XMLRep = doc.OuterXml;
-					ReportChangeOfValue(sItem, val, iMax, iMin, iMax);
+					valueElem.SetValue(max);
+					XmlRep = elem.ToString();
+					ReportChangeOfValue(item, val, max, min, max);
 				}
 			}
 		}
 
-		private void ReportChangeOfValue(string sItem, int value, int iNew, int iMin, int iMax)
+		private void ReportChangeOfValue(string item, int value, int newValue, int min, int max)
 		{
-			string sMessage = String.Format(ParserUIStrings.ksChangedValueReport, sItem, value, iNew, iMin, iMax);
+			string sMessage = String.Format(ParserUIStrings.ksChangedValueReport, item, value, newValue, min, max);
 			MessageBox.Show(sMessage, ParserUIStrings.ksChangeValueDialogTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 		}
+
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		/// <param name="wp">Strings used for various items in this dialog.</param>
-		public void SetDlgInfo(string sTitle, string sOKButton, string parserParameters)
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="m_dsParserParameters gets disposed in Dispose()")]
+		public void SetDlgInfo(string title, string parserParameters)
 		{
 			CheckDisposed();
 
-			XMLRep = parserParameters;
-			Text = sTitle;
-			btnOK.Text = sOKButton;
+			XmlRep = parserParameters;
+			Text = title;
 
-			m_dsParserParameters = new DataSet();
-			m_dsParserParameters.DataSetName = "ParserParameters";
+			m_dsParserParameters = new DataSet { DataSetName = "ParserParameters" };
 
 			DataTable tblXAmple = CreateXAmpleDataTable();
 			m_dsParserParameters.Tables.Add(tblXAmple);
@@ -332,58 +298,67 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			LoadParserData(m_dsParserParameters);
 
-			PopulateDataGrid(dataGrid1, "XAmple");
-			PopulateDataGrid(dataGrid2, "HC");
-			if (m_dsParserParameters.Tables["HC"].Rows[0][ParserUIStrings.ksMaxDelReapps] == DBNull.Value)
-				m_dsParserParameters.Tables["HC"].Rows[0][ParserUIStrings.ksMaxDelReapps] = 0;
+			PopulateDataGrid(m_dataGrid1, XAmple);
+			PopulateDataGrid(m_dataGrid2, HC);
+			m_dataGrid2.TableStyles[0].GridColumnStyles[2].Width = 130;
 		}
 
 		private void LoadParserData(DataSet dsParserParameters)
 		{
-			using (System.IO.StringReader xmlSR = new System.IO.StringReader(XMLRep))
-				dsParserParameters.ReadXml(xmlSR, XmlReadMode.IgnoreSchema);
+			var parserParamsElem = XElement.Parse(XmlRep);
+			// set default values for HC
+			XElement hcElem = parserParamsElem.Element(HC);
+			if (hcElem == null)
+			{
+				hcElem = new XElement(HC);
+				parserParamsElem.Add(hcElem);
+			}
+			if (hcElem.Element(DelReapps) == null)
+				hcElem.Add(new XElement(DelReapps, 0));
+			if (hcElem.Element(NoDefaultCompounding) == null)
+				hcElem.Add(new XElement(NoDefaultCompounding, false));
+			if (hcElem.Element(NotOnClitics) == null)
+				hcElem.Add(new XElement(NotOnClitics, true));
+
+			using (XmlReader reader = parserParamsElem.CreateReader())
+				dsParserParameters.ReadXml(reader, XmlReadMode.IgnoreSchema);
 		}
 
 		private void PopulateDataGrid(DataGrid dataGrid, string parser)
 		{
-			if (m_dsParserParameters.Tables[parser].Rows.Count == 0)
-			{
-				DataRow row = m_dsParserParameters.Tables[parser].NewRow();
-				m_dsParserParameters.Tables[parser].Rows.Add(row);
-			}
-
 			dataGrid.SetDataBinding(m_dsParserParameters, parser);
 
 			DataView view = CreateDataView(m_dsParserParameters.Tables[parser]);
 			dataGrid.DataSource = view;
+			dataGrid.TableStyles.Add(new DataGridTableStyle { MappingName = parser, RowHeadersVisible = false, AllowSorting = false });
+			foreach (DataGridBoolColumn col in dataGrid.TableStyles[0].GridColumnStyles.OfType<DataGridBoolColumn>())
+				col.AllowNull = false;
 		}
 
 		private DataView CreateDataView(DataTable table)
 		{
-			DataView view = new DataView(table);
-			view.AllowNew = false;
-			return view;
+			return new DataView(table) { AllowNew = false };
 		}
 
 		private DataTable CreateXAmpleDataTable()
 		{
-			DataTable tblXAmple = new DataTable("XAmple");
-			tblXAmple.Columns.Add(ParserUIStrings.ksMaxNulls, typeof(int));
-			tblXAmple.Columns.Add(ParserUIStrings.ksMaxPrefixes, typeof(int));
-			tblXAmple.Columns.Add(ParserUIStrings.ksMaxInfixes, typeof(int));
-			tblXAmple.Columns.Add(ParserUIStrings.ksMaxRoots, typeof(int));
-			tblXAmple.Columns.Add(ParserUIStrings.ksMaxSuffixes, typeof(int));
-			tblXAmple.Columns.Add(ParserUIStrings.ksMaxInterfixes, typeof(int));
-			tblXAmple.Columns.Add(ParserUIStrings.ksMaxAnalysesToReturn, typeof(int));
+			var tblXAmple = new DataTable(XAmple);
+			tblXAmple.Columns.Add(MaxNulls, typeof(int));
+			tblXAmple.Columns.Add(MaxPrefixes, typeof(int));
+			tblXAmple.Columns.Add(MaxInfixes, typeof(int));
+			tblXAmple.Columns.Add(MaxRoots, typeof(int));
+			tblXAmple.Columns.Add(MaxSuffixes, typeof(int));
+			tblXAmple.Columns.Add(MaxInterfixes, typeof(int));
+			tblXAmple.Columns.Add(MaxAnalysesToReturn, typeof(int));
 			return tblXAmple;
 		}
 
 		private DataTable CreateHCDataTable()
 		{
-			DataTable tblHC = new DataTable("HC");
-			tblHC.Columns.Add(ParserUIStrings.ksMaxDelReapps, typeof(int));
-			tblHC.Columns.Add(ParserUIStrings.ksRulesDoNotApplyOnClitics, typeof(bool));
-			tblHC.Columns.Add(ParserUIStrings.ksDoNotUseDefaultCompoundRules, typeof(bool));
+			var tblHC = new DataTable(HC);
+			tblHC.Columns.Add(DelReapps, typeof(int));
+			tblHC.Columns.Add(NotOnClitics, typeof(bool));
+			tblHC.Columns.Add(NoDefaultCompounding, typeof(bool));
 			return tblHC;
 		}
 	}

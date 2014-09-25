@@ -340,8 +340,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						 select new XElement("LexEntryRef",
 							 from componentLexemes in lexEntryRef.ComponentLexemesRS
 							 select ExportItemAsReference(componentLexemes, "ComponentLexeme"),
-						from lexEntryInflType in lexEntryRef.VariantEntryTypesRS
-							select ExportItemAsReference(lexEntryInflType, "LexEntryInflType"))));
+						from lexEntryType in lexEntryRef.VariantEntryTypesRS
+							select ExportItemAsReference(lexEntryType, "LexEntryType"))));
 		}
 
 		private static XElement ExportMsas(IServiceLocator servLoc)

@@ -7,15 +7,19 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
+#if __MonoCS__
+using Mono.Unix;
+#endif
 using XCore;
-using System.IO;
-using System.Collections.Generic;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -73,37 +77,37 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			m_cbShareMyProjects.Enabled = false;
 			m_btnOK.Enabled = true;
-			if (Directory.Exists(m_tbProjectsFolder.Text))
+			if(Directory.Exists(m_tbProjectsFolder.Text))
 			{
 				var newFolder = m_tbProjectsFolder.Text;
 				var oldFolder = FwDirectoryFinder.ProjectsDirectory;
-				if (!MiscUtils.IsUnix)
+				if(!MiscUtils.IsUnix)
 				{
 					newFolder = newFolder.ToLowerInvariant();
 					oldFolder = oldFolder.ToLowerInvariant();
 				}
-				if (newFolder == oldFolder)
+				if(newFolder == oldFolder)
 				{
 					// The original directory is presumably always ok.
 					m_btnOK.Enabled = true;
 				}
-				else if (newFolder.StartsWith(oldFolder))
+				else if(newFolder.StartsWith(oldFolder))
 				{
 					string path = m_tbProjectsFolder.Text;
 					// If it contains a settings directory, assume it's a project settings folder...possibly settings for a remote project.
-					if (Directory.Exists(Path.Combine(path, FdoFileHelper.ksConfigurationSettingsDir)))
+					if(Directory.Exists(Path.Combine(path, FdoFileHelper.ksConfigurationSettingsDir)))
 					{
 						m_btnOK.Enabled = false;
 						return;
 					}
-					while (path.Length > 3)
+					while(path.Length > 3)
 					{
-						foreach (string file in Directory.GetFiles(path))
+						foreach(string file in Directory.GetFiles(path))
 						{
 							string filename = file;
-							if (!MiscUtils.IsUnix)
+							if(!MiscUtils.IsUnix)
 								filename = filename.ToLowerInvariant();
-							if (filename.EndsWith(".fwdata") || filename.EndsWith(".fwdb"))
+							if(filename.EndsWith(".fwdata") || filename.EndsWith(".fwdb"))
 							{
 								m_btnOK.Enabled = false;
 								return;
@@ -114,98 +118,81 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				}
 				else
 				{
-					if (MiscUtils.IsUnix)
-					{
-						// This may not be adequate for a port to the Macintosh, but should work for most
-						// flavors of Linux/Unix/BSD/etc.
-						List<string> invalidPaths = new List<string>();
-						invalidPaths.Add("/bin");
-						invalidPaths.Add("/boot");
-						invalidPaths.Add("/cdrom");
-						invalidPaths.Add("/dev");
-						invalidPaths.Add("/etc");
-						invalidPaths.Add("/lib");
-						invalidPaths.Add("/lost+found");
-						invalidPaths.Add("/opt");
-						invalidPaths.Add("/proc");
-						invalidPaths.Add("/root");
-						invalidPaths.Add("/sbin");
-						invalidPaths.Add("/selinux");
-						invalidPaths.Add("/srv");
-						invalidPaths.Add("/sys");
-						invalidPaths.Add("/tmp");
-						invalidPaths.Add("/usr");
-						invalidPaths.Add("/var");
-
-						// DriveInfo.GetDrives() is only implemented on Linux (which is ok here).
-						// TODO-Linux: IsReady always returns true on Mono.
-						foreach (DriveInfo d in DriveInfo.GetDrives())
-						{
-							if (!d.IsReady || d.AvailableFreeSpace == 0)
-							{
-								if (!invalidPaths.Contains(d.Name))
-									invalidPaths.Add(d.Name);
-								continue;
-							}
-							switch (d.DriveType)
-							{
-							case DriveType.Fixed:
-							case DriveType.Network:
-							case DriveType.Removable:
-								// These are the reasonable drives to accept data.  The mount point may be
-								// excluded due to the list above, but otherwise we'll assume they're
-								// acceptable.
-								break;
-							default:
-								if (!invalidPaths.Contains(d.Name))
-									invalidPaths.Add(d.Name);
-								break;
-							}
-						}
-						// Should the list omit any of those listed above (thus allowing that as a valid destination?
-						// Should we allow something like /usr/local/share/FieldWorks?  (which would require a fancier
-						// check for an exception to the exceptions?)
-						foreach (string badpath in invalidPaths)
-						{
-							// DriveInfo.GetDrives() sets Name to be "/", which adds it to invalidPath.
-							// Therefore, we need another test to get the OkButton to stay enabled.
-							if (newFolder.StartsWith(badpath) && badpath != "/" || newFolder == "/")
-							{
-								m_btnOK.Enabled = false;
-								return;
-							}
-						}
-					}
-					else
-					{
-						string path = m_tbProjectsFolder.Text.ToLowerInvariant();
-						List<string> invalidPaths = new List<string>();
-						invalidPaths.Add(Environment.GetFolderPath(Environment.SpecialFolder.Programs));
-						invalidPaths.Add(Environment.GetFolderPath(Environment.SpecialFolder.Startup));
-						invalidPaths.Add(Environment.GetFolderPath(Environment.SpecialFolder.System));
-
-						string sysdir = Path.GetDirectoryName(Environment.SystemDirectory);
-						string root = Path.GetPathRoot(sysdir);
-						string sysdirParent = Path.GetDirectoryName(sysdir);
-						if (sysdirParent == root)
-							invalidPaths.Add(sysdir);
-						else
-							invalidPaths.Add(sysdirParent);
-						string progfiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-						if (progfiles.EndsWith(" (x86)"))
-							progfiles = progfiles.Remove(progfiles.Length - 6);
-						invalidPaths.Add(progfiles);
-						foreach (string badpath in invalidPaths)
-						{
-							if (path.StartsWith(badpath.ToLowerInvariant()))
-							{
-								m_btnOK.Enabled = false;
-								return;
-							}
-						}
-					}
+					m_btnOK.Enabled = DirectoryIsSuitable(newFolder);
 				}
 			}
+			else
+			{
+				m_btnOK.Enabled = DirectoryIsSuitable(m_tbProjectsFolder.Text);
+			}
+		}
+
+		/// <summary>
+		/// Verifies that the user has security permissions to write to the given folder, as well as basic file system read and write permissions
+		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification = "MiscUtils.IsUnix used to avoid calling missing file access libraries on Mono")]
+		private bool DirectoryIsSuitable(string folderToTest)
+		{
+			// A directory with invalid characters isn't suitable
+			string pathToTest = null;
+			try
+			{
+				pathToTest = Path.GetFullPath(folderToTest);
+			}
+			catch(Exception)
+			{
+				return false;
+			}
+			// A directory doesn't have to exist yet to be suitable but if the root directory isn't suitable that's not good
+			while(!Directory.Exists(pathToTest))
+			{
+				if(String.IsNullOrEmpty(pathToTest.Trim()))
+					return false;
+				pathToTest = Path.GetDirectoryName(pathToTest);
+			}
+			if(!MiscUtils.IsUnix)
+			{
+				// Check the OS file permissions for the folder
+				var accessControlList = Directory.GetAccessControl(pathToTest);
+				var accessRules = accessControlList.GetAccessRules(true, true, typeof(SecurityIdentifier));
+				var readAllowed = false;
+				var writeAllowed = false;
+				foreach(FileSystemAccessRule rule in accessRules)
+				{
+					//If we find one that matches the identity we are looking for
+					using(var currentUserIdentity = WindowsIdentity.GetCurrent())
+					{
+						var userName = currentUserIdentity.User.Value;
+						if(
+							rule.IdentityReference.Value.Equals(userName, StringComparison.CurrentCultureIgnoreCase) ||
+						currentUserIdentity.Groups.Contains(rule.IdentityReference))
+						{
+							if((FileSystemRights.Read & rule.FileSystemRights) == FileSystemRights.Read)
+							{
+								if(rule.AccessControlType == AccessControlType.Allow)
+									readAllowed = true;
+								if(rule.AccessControlType == AccessControlType.Deny)
+									return false;
+							}
+							if((FileSystemRights.Write & rule.FileSystemRights) == FileSystemRights.Write)
+							{
+								if(rule.AccessControlType == AccessControlType.Allow)
+									writeAllowed = true;
+								if(rule.AccessControlType == AccessControlType.Deny)
+									return false;
+							}
+						}
+					}
+					return readAllowed && writeAllowed;
+				}
+			}
+#if __MonoCS__
+			var ufi = new UnixDirectoryInfo(pathToTest);
+			return (ufi.CanAccess(Mono.Unix.Native.AccessModes.R_OK) && ufi.CanAccess(Mono.Unix.Native.AccessModes.W_OK)); // accessible for writing
+#else
+			return false; // unreachable in practice
+#endif
 		}
 
 		/// ------------------------------------------------------------------------------------

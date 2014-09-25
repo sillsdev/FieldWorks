@@ -174,7 +174,8 @@ namespace SIL.CoreImpl
 						copyRight = kDefaultCopyrightString;
 					}
 				}
-				return copyRight.Replace("(c)", "©");
+				// 00a9 is the copyright sign
+				return copyRight.Replace("(c)", "\u00a9");
 			}
 		}
 

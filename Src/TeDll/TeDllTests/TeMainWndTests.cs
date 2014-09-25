@@ -13,7 +13,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.Linq;
 using NUnit.Framework;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
@@ -83,7 +83,7 @@ namespace SIL.FieldWorks.TE
 				{
 					ILangProject lgproj = Cache.LangProject;
 					IScripture scripture = lgproj.TranslatedScriptureOA;
-					m_StyleSheet.Init(Cache, scripture.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+					m_StyleSheet.Init(Cache, scripture.Hvo, ScriptureTags.kflidStyles);
 				}
 				return m_StyleSheet;
 			}

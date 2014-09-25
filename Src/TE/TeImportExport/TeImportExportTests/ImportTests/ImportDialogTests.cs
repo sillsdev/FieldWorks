@@ -5,6 +5,7 @@
 // File: ImportDialogTests.cs
 // --------------------------------------------------------------------------------------------
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -96,7 +97,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			FileUtils.Manager.SetFileAdapter(m_mockFileOs);
 			string fileGen = m_mockFileOs.MakeSfFile("GEN", @"\c 1");
 			string fileRev = m_mockFileOs.MakeSfFile("REV", @"\c 1");
-			m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Other, ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
+			m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Other);
 			m_settings.AddFile(fileGen, ImportDomain.Main, null, null);
 			m_settings.AddFile(fileRev, ImportDomain.Main, null, null);
 			m_dlg = new DummyImportDialog(null, Cache, m_settings);

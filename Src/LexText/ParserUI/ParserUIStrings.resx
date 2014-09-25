@@ -117,9 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ks_OK" xml:space="preserve">
-    <value>&amp;OK</value>
-  </data>
   <data name="ksChangedValueReport" xml:space="preserve">
     <value>Changed value for {0} from {1} to {2}.  The value must be between {3} and {4}, inclusive.</value>
     <comment>{0} is the name of the item, {1} is the value the user gave, {2} is the newly changed value, {3} is the minimum allowed value, {4} is the maximum allowed value.</comment>
@@ -134,10 +131,6 @@
   <data name="ksIdle_" xml:space="preserve">
     <value />
   </data>
-  <data name="ksIllFormedXml" xml:space="preserve">
-    <value>Ill-formed XML</value>
-    <comment>caption for message box</comment>
-  </data>
   <data name="ksImportedFromFilesX" xml:space="preserve">
     <value>Created by importing the words from files: {0}</value>
   </data>
@@ -146,34 +139,6 @@
   </data>
   <data name="ksLoadingFilesForWordSetX" xml:space="preserve">
     <value>Loading Files for Word Set {0}</value>
-  </data>
-  <data name="ksMaxAnalysesToReturn" xml:space="preserve">
-    <value>MaxAnalysesToReturn</value>
-    <comment>column header, must be unique; Max is short for Maximum number of ...  (Do Not Localize)</comment>
-  </data>
-  <data name="ksMaxInfixes" xml:space="preserve">
-    <value>MaxInfixes</value>
-    <comment>column header, must be unique; Max is short for Maximum number of ...  (Do Not Localize)</comment>
-  </data>
-  <data name="ksMaxInterfixes" xml:space="preserve">
-    <value>MaxInterfixes</value>
-    <comment>column header, must be unique; Max is short for Maximum number of ...  (Do Not Localize)</comment>
-  </data>
-  <data name="ksMaxNulls" xml:space="preserve">
-    <value>MaxNulls</value>
-    <comment>column header, must be unique; Max is short for Maximum number of ...  (Do Not Localize)</comment>
-  </data>
-  <data name="ksMaxPrefixes" xml:space="preserve">
-    <value>MaxPrefixes</value>
-    <comment>column header, must be unique; Max is short for Maximum number of ...  (Do Not Localize)</comment>
-  </data>
-  <data name="ksMaxRoots" xml:space="preserve">
-    <value>MaxRoots</value>
-    <comment>column header, must be unique; Max is short for Maximum number of ...  (Do Not Localize)</comment>
-  </data>
-  <data name="ksMaxSuffixes" xml:space="preserve">
-    <value>MaxSuffixes</value>
-    <comment>column header, must be unique; Max is short for Maximum number of ...  (Do Not Localize)</comment>
   </data>
   <data name="ksNoFiles" xml:space="preserve">
     <value>No files</value>
@@ -198,13 +163,6 @@
     <value>Update</value>
     <comment>related to ParserCoreStrings.ksUpdateX</comment>
   </data>
-  <data name="ksXmlNotWellFormed" xml:space="preserve">
-    <value>The XML is not well-formed; you need to correct it and try again.</value>
-  </data>
-  <data name="ksMaxDelReapps" xml:space="preserve">
-    <value>DelReapps</value>
-    <comment>(Do Not Localize)</comment>
-  </data>
   <data name="ksUndoEditingParserParameters" xml:space="preserve">
     <value>Undo Editing Parser Parameters</value>
   </data>
@@ -224,17 +182,9 @@
   <data name="ksUndoClearParserAnalyses" xml:space="preserve">
     <value>Undo Clear Selected Word Parser Analyses</value>
   </data>
-  <data name="ksRulesDoNotApplyOnClitics" xml:space="preserve">
-    <value>NotOnClitics</value>
-    <comment>If true, the set of phonological rules will not be applied to clitics; if false, the rules will be applied to clitics.  (This value defaults to true, so we have to use this negative sense to get the default to be 'rules do not apply to clitics' because that was how Hermit Crab worked before we made this parameter available.)  (Do Not Localize)</comment>
-  </data>
   <data name="ksSlotNameSeparator" xml:space="preserve">
     <value>, </value>
     <comment>Separator to use between multiple slot names when an irregularly inflected form variant fills two or more inflectional affix slots</comment>
-  </data>
-  <data name="ksDoNotUseDefaultCompoundRules" xml:space="preserve">
-    <value>NoDefaultCompounding</value>
-    <comment>If true, no default compounding rules will be used.  (Do Not Localize)</comment>
   </data>
   <data name="ksBadAffixForm" xml:space="preserve">
     <value>Bad Affix Form</value>

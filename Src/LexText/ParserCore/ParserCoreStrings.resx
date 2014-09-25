@@ -129,12 +129,6 @@
   <data name="ksHCDefaultErrorMsg" xml:space="preserve">
     <value>The parser gave the following cryptic message (you may need to contact FieldWorks support to know what it means): {0}</value>
   </data>
-  <data name="ksHCInvalidEntryShape" xml:space="preserve">
-    <value>The phoneme {0} of lexical entry {1} is not defined.  Please make sure all phonemes in all allomorphs of all entries have been defined.</value>
-  </data>
-  <data name="ksHCInvalidRuleShape" xml:space="preserve">
-    <value>The phoneme {0} of affix {1} is not defined.  Please make sure all phonemes in all allomorphs of all affixes have been defined.</value>
-  </data>
   <data name="ksHCInvalidWordform" xml:space="preserve">
     <value>There is at least one undefined phoneme in the word '{0}'. The following phonemes were parsed: '{3}'.  The problem begins with character/diacritic number {1} – that is, in the part of the word '{2}'.  Please make sure all phonemes in the word have been defined.</value>
   </data>

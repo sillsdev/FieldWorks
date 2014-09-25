@@ -1,12 +1,17 @@
+// Copyright (c) 2014 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.FwCoreDlgs;
 using SIL.Utils;
 using XCore;
 using SIL.CoreImpl;
@@ -205,37 +210,44 @@ namespace SIL.FieldWorks.LexText.Controls
 			GetVariantAndComponentAndSelectedEntryType(out variant, out componentLexeme, out selectedEntryType);
 
 			ILexEntryRef matchingEntryRef = FindMatchingEntryRef(variant, componentLexeme, selectedEntryType);
-			UndoableUnitOfWorkHelper.Do(LexTextControls.ksUndoAddVariant, LexTextControls.ksRedoAddVariant,
-				m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+			try
 			{
-				if (matchingEntryRef != null)
+				UndoableUnitOfWorkHelper.Do(LexTextControls.ksUndoAddVariant, LexTextControls.ksRedoAddVariant,
+					m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 				{
-					// we found a matching ComponentLexeme. See if we can find the selected type.
-					// if the selected type does not yet exist, add it.
-					if (selectedEntryType != null &&
-						!matchingEntryRef.VariantEntryTypesRS.Contains(selectedEntryType))
+					if (matchingEntryRef != null)
 					{
-						matchingEntryRef.VariantEntryTypesRS.Add(selectedEntryType);
-					}
+						// we found a matching ComponentLexeme. See if we can find the selected type.
+						// if the selected type does not yet exist, add it.
+						if (selectedEntryType != null &&
+							!matchingEntryRef.VariantEntryTypesRS.Contains(selectedEntryType))
+						{
+							matchingEntryRef.VariantEntryTypesRS.Add(selectedEntryType);
+						}
 
-					m_variantEntryRefResult = matchingEntryRef;
-					m_fNewlyCreatedVariantEntryRef = false;
-				}
-				else
-				{
-					// otherwise we need to create a new LexEntryRef.
-					m_fNewlyCreatedVariantEntryRef = true;
-					if (variant != null)
-					{
-						m_variantEntryRefResult = variant.MakeVariantOf(componentLexeme, selectedEntryType);
+						m_variantEntryRefResult = matchingEntryRef;
+						m_fNewlyCreatedVariantEntryRef = false;
 					}
 					else
 					{
-						m_variantEntryRefResult = componentLexeme.CreateVariantEntryAndBackRef(selectedEntryType,
-							m_tssVariantLexemeForm);
+						// otherwise we need to create a new LexEntryRef.
+						m_fNewlyCreatedVariantEntryRef = true;
+						if (variant != null)
+						{
+							m_variantEntryRefResult = variant.MakeVariantOf(componentLexeme, selectedEntryType);
+						}
+						else
+						{
+							m_variantEntryRefResult = componentLexeme.CreateVariantEntryAndBackRef(selectedEntryType,
+								m_tssVariantLexemeForm);
+						}
 					}
-				}
-			});
+				});
+			}
+			catch (ArgumentException)
+			{
+				MessageBoxes.ReportLexEntryCircularReference((ILexEntry)componentLexeme, variant, false);
+			}
 		}
 
 		/// <summary>

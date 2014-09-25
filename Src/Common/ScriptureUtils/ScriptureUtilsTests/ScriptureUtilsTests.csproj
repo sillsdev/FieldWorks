@@ -118,6 +118,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\COMInterfacesTests.dll</HintPath>
     </Reference>
+    <Reference Include="CoreImpl, Version=8.1.0.30951, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+    </Reference>
     <Reference Include="FDO, Version=8.0.9.25086, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\FDO.dll</HintPath>

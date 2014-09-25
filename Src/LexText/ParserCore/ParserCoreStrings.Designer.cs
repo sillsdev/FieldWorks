@@ -97,24 +97,6 @@ namespace SIL.FieldWorks.WordWorks.Parser {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The phoneme {0} of lexical entry {1} is not defined.  Please make sure all phonemes in all allomorphs of all entries have been defined..
-        /// </summary>
-        internal static string ksHCInvalidEntryShape {
-            get {
-                return ResourceManager.GetString("ksHCInvalidEntryShape", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The phoneme {0} of affix {1} is not defined.  Please make sure all phonemes in all allomorphs of all affixes have been defined..
-        /// </summary>
-        internal static string ksHCInvalidRuleShape {
-            get {
-                return ResourceManager.GetString("ksHCInvalidRuleShape", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to There is at least one undefined phoneme in the word &apos;{0}&apos;. The following phonemes were parsed: &apos;{3}&apos;.  The problem begins with character/diacritic number {1} – that is, in the part of the word &apos;{2}&apos;.  Please make sure all phonemes in the word have been defined..
         /// </summary>
         internal static string ksHCInvalidWordform {

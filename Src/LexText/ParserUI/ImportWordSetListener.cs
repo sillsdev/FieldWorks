@@ -239,10 +239,6 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		#endregion Data members
 
-		public ParserParametersListener()
-		{
-		}
-
 		#region IDisposable & Co. implementation
 		// Region last reviewed: never
 
@@ -389,23 +385,22 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			CheckDisposed();
 
-			FdoCache cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+			var cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
 			if (cache == null)
 				throw new ArgumentException("no cache!");
 
-			using (ParserParametersDlg dlg = new ParserParametersDlg(m_mediator.HelpTopicProvider))
+			using (var dlg = new ParserParametersDlg(m_mediator.HelpTopicProvider))
 			{
 				IMoMorphData md = cache.LangProject.MorphologicalDataOA;
-				dlg.SetDlgInfo(ParserUIStrings.ksParserParameters, ParserUIStrings.ks_OK,
-					md.ParserParameters);
+				dlg.SetDlgInfo(ParserUIStrings.ksParserParameters, md.ParserParameters);
 				if (dlg.ShowDialog((XWindow)m_mediator.PropertyTable.GetValue("window")) == DialogResult.OK)
 				{
-					using (UndoableUnitOfWorkHelper helper = new UndoableUnitOfWorkHelper(
+					using (var helper = new UndoableUnitOfWorkHelper(
 						cache.ActionHandlerAccessor,
 						ParserUIStrings.ksUndoEditingParserParameters,
 						ParserUIStrings.ksRedoEditingParserParameters))
 					{
-						md.ParserParameters = dlg.XMLRep;
+						md.ParserParameters = dlg.XmlRep;
 						helper.RollBack = false;
 					}
 				}

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Xml.Linq;
 
 namespace SIL.FieldWorks.WordWorks.Parser
@@ -17,6 +18,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		XDocument ParseWordXml(string word);
 
-		XDocument TraceWordXml(string word, string selectTraceMorphs);
+		XDocument TraceWordXml(string word, IEnumerable<int> selectTraceMorphs);
 	}
 }

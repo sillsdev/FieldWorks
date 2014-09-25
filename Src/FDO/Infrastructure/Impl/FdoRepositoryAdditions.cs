@@ -768,28 +768,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 	#region WfiWordformRepository class
 	internal partial class WfiWordformRepository : IWfiWordformRepositoryInternal
 	{
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="tssForm"></param>
-		/// <param name="fIncludeLowerCaseForm"></param>
-		/// <param name="wf"></param>
-		/// <returns></returns>
-		public bool TryGetObject(ITsString tssForm, bool fIncludeLowerCaseForm, out IWfiWordform wf)
-		{
-			if (!TryGetObject(tssForm, out wf) && fIncludeLowerCaseForm)
-			{
-				int ws = TsStringUtils.GetWsAtOffset(tssForm, 0);
-				// try finding a lowercase version.
-				var cf = new CaseFunctions(m_cache.ServiceLocator.WritingSystemManager.Get(ws).IcuLocale);
-				string lcForm = cf.ToLower(tssForm.Text);
-				// we only want to look up the lower case form, if the given form was not already lowercased.
-				if (lcForm != tssForm.Text)
-					TryGetObject(TsStringUtils.MakeTss(lcForm, ws), false, out wf);
-			}
-			return wf != null;
-		}
-
 		private readonly Dictionary<int, Dictionary<string, IWfiWordform>> m_wordformFromForm = new Dictionary<int, Dictionary<string, IWfiWordform>>();
 
 		/// <summary>
@@ -857,6 +835,22 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			{
 				phrases.Remove(possiblePhrase);
 			}
+		}
+
+		/// <summary>Find the Wordform that has the specified form (in the WS of the first character of the target).</summary>
+		public bool TryGetObject(ITsString tssForm, bool fIncludeLowerCaseForm, out IWfiWordform wf)
+		{
+			if (!TryGetObject(tssForm, out wf) && fIncludeLowerCaseForm)
+			{
+				int ws = TsStringUtils.GetWsAtOffset(tssForm, 0);
+				// try finding a lowercase version.
+				var cf = new CaseFunctions(m_cache.ServiceLocator.WritingSystemManager.Get(ws).IcuLocale);
+				string lcForm = cf.ToLower(tssForm.Text);
+				// we want to look up the lower case form only if the given form was not already lowercased.
+				if (lcForm != tssForm.Text)
+					TryGetObject(TsStringUtils.MakeTss(lcForm, ws), false, out wf);
+			}
+			return wf != null;
 		}
 
 		/// <summary>
@@ -1576,7 +1570,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					select e
 					).FirstOrDefault();
 
-			// Look for the most commonly used analysis of the wordform.
+			// Look for the most-commonly-used analysis of the wordform.
 			if (matchingEntry == null)
 			{
 				IWfiWordform wordform;

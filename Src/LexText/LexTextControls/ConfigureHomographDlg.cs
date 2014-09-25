@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
@@ -158,7 +159,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					m_app.Synchronize(SyncMsg.ksyncStyle);
 					FwStyleSheet stylesheet = new FwStyleSheet();
-					stylesheet.Init(m_cache, m_cache.LangProject.Hvo, LangProjectTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+					stylesheet.Init(m_cache, m_cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 					m_stylesheet = stylesheet;
 				}
 			}

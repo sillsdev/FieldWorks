@@ -115,6 +115,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// Verify that the version 8 ProjectShared key is set after migration.
 				Assert.IsTrue(RegistryHelper.RegEntryExists(FwRegistryHelper.FieldWorksRegistryKey, null, "ProjectShared", out projectsSharedValue));
 				Assert.IsTrue(bool.Parse((string)projectsSharedValue));
+
+				FwRegistryHelper.FieldWorksRegistryKey.SetValue("ProjectShared", "False");
+
+				FwRegistryHelper.MigrateVersion7ValueIfNeeded();
+
+				// Verification
+				// Verify that the version 7 ProjectShared value has not been migrated again.
+				Assert.IsTrue(RegistryHelper.RegEntryExists(FwRegistryHelper.FieldWorksRegistryKey, null, "ProjectShared", out projectsSharedValue));
+				Assert.IsFalse(bool.Parse((string)projectsSharedValue));
 			}
 		}
 	}

@@ -124,6 +124,18 @@
       <Name>ParserCore</Name>
       <HintPath>..\..\..\..\Output\Debug\ParserCore.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.Collections, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\SIL.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.HermitCrab, Version=1.0.5340.4370, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\SIL.HermitCrab.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Machine, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\SIL.Machine.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -146,9 +158,8 @@
     <Compile Include="..\..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
+    <Compile Include="HCLoaderTests.cs" />
     <Compile Include="XAmpleParserTests.cs" />
-    <Compile Include="HelperTests.cs" />
-    <Compile Include="UpdateParserDataTests.cs" />
     <Compile Include="M3ToXAmpleTransformerTests.cs">
       <SubType>Code</SubType>
     </Compile>

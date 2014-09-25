@@ -27,7 +27,7 @@ namespace SIL.FieldWorks
 		{
 			base.FixtureSetup();
 
-			FdoTestHelper.SetupClientServerServices();
+			FdoTestHelper.SetupStaticFdoProperties();
 		}
 
 		#region GetProjectMatchStatus tests

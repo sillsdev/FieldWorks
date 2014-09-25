@@ -9,7 +9,7 @@ namespace SIL.FieldWorks.LexText.Controls
 {
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
 		Justification="m_cache and m_mediator are references")]
-	public class HCTrace : ParserTrace
+	public class HCTrace : IParserTrace
 	{
 		private static ParserTraceUITransform s_traceTransform;
 		private static ParserTraceUITransform TraceTransform
@@ -35,24 +35,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
 		}
 
-		public override string CreateResultPage(XDocument result, bool isTrace)
+		public string CreateResultPage(XDocument result, bool isTrace)
 		{
-			ParserTraceUITransform transform;
-			string baseName;
-			if (isTrace)
-			{
-				WordGrammarDebugger = new HCWordGrammarDebugger(m_mediator, result);
-				transform = TraceTransform;
-				baseName = "HCTrace";
-			}
-			else
-			{
-				transform = ParseTransform;
-				baseName = "HCParse";
-			}
 			var args = new XsltArgumentList();
 			args.AddParam("prmHCTraceLoadErrorFile", "", Path.Combine(Path.GetTempPath(), m_cache.ProjectId.Name + "HCLoadErrors.xml"));
-			return transform.Transform(m_mediator, result, baseName, args);
+			args.AddParam("prmShowTrace", "", isTrace.ToString().ToLowerInvariant());
+			return TraceTransform.Transform(m_mediator, result, isTrace ? "HCTrace" : "HCParse", args);
 		}
 	}
 }

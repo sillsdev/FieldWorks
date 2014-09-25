@@ -14,7 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
@@ -281,7 +281,7 @@ namespace SIL.FieldWorks.TE
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 			{
 				importSettings =
-					scr.FindOrCreateDefaultImportSettings(TypeOfImport.Unknown, ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
+					scr.FindOrCreateDefaultImportSettings(TypeOfImport.Unknown);
 			});
 			importSettings.StyleSheet = m_styleSheet;
 

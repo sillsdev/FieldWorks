@@ -1742,6 +1742,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 					Assert.DoesNotThrow(() => entry.ReplaceObsoleteMsas(new List<IMoMorphSynAnalysis> { msa }));
 				});
 		}
+
 		/// <summary>
 		/// Tests the various paths through the indicated method.
 		/// </summary>
@@ -1828,6 +1829,195 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			// (about 7 options) it is not suitable.
 			// Also about four varieties of affix MSA can be converted to stem.
 
+		}
+
+		/// <summary/>
+		[Test]
+		public void DeletingNaturalClass_RemovesOptionalUseFromEnvironment()
+		{
+			UndoableUnitOfWorkHelper.Do("undo", "redo", m_actionHandler,
+				() =>
+				{
+					var services = Cache.ServiceLocator;
+					var analysisWs = Cache.LangProject.DefaultAnalysisWritingSystem.Handle;
+
+					// Create natural class with useful abbreviation
+					var naturalClass = services.GetInstance<IPhNCFeaturesFactory>().Create();
+					Cache.LangProject.PhonologicalDataOA.NaturalClassesOS.Add(naturalClass);
+					naturalClass.Abbreviation.set_String(analysisWs,
+						Cache.TsStrFactory.MakeString("V", analysisWs));
+
+					// Create an entry
+					var entry = MakeEntry();
+					var stemAllomorph = services.GetInstance<IMoStemAllomorphFactory>().Create();
+					entry.LexemeFormOA = stemAllomorph;
+
+					// Add environment to entry with natural class abbreviation present but optional
+					var environment = services.GetInstance<IPhEnvironmentFactory>().Create();
+					Cache.LangProject.PhonologicalDataOA.EnvironmentsOS.Add(environment);
+					stemAllomorph.PhoneEnvRC.Add(environment);
+					environment.StringRepresentation = Cache.TsStrFactory.MakeString(@"\_([V])[C][V]",
+						analysisWs);
+
+					// SUT
+					naturalClass.Delete();
+
+					// Assert that it is no longer in the environment
+					Assert.That(environment.StringRepresentation.Text, Is.StringContaining(@"\_[C][V]"));
+				});
+		}
+
+		/// <summary/>
+		[Test]
+		public void DeletingNaturalClass_ReplacesIndexedUseWithDeletedStringInEnvironment()
+		{
+			//stem allomorph
+			UndoableUnitOfWorkHelper.Do("undo", "redo", m_actionHandler,
+				() =>
+				{
+					var services = Cache.ServiceLocator;
+					var analysisWs = Cache.LangProject.DefaultAnalysisWritingSystem.Handle;
+					var vernWs = Cache.LangProject.DefaultVernacularWritingSystem.Handle;
+
+					// Create natural class with useful abbreviation
+					var naturalClass = services.GetInstance<IPhNCFeaturesFactory>().Create();
+					Cache.LangProject.PhonologicalDataOA.NaturalClassesOS.Add(naturalClass);
+					naturalClass.Abbreviation.set_String(analysisWs,
+						Cache.TsStrFactory.MakeString("V", analysisWs));
+
+					// Create an entry
+					var entry = MakeEntry();
+					var stemAllomorph = services.GetInstance<IMoStemAllomorphFactory>().Create();
+					entry.LexemeFormOA = stemAllomorph;
+					stemAllomorph.Form.set_String(vernWs, Cache.TsStrFactory.MakeString("[C^1][V^1]", vernWs));
+
+					// Add environment to entry with natural class abbreviation present and indexed
+					var environment = services.GetInstance<IPhEnvironmentFactory>().Create();
+					Cache.LangProject.PhonologicalDataOA.EnvironmentsOS.Add(environment);
+					stemAllomorph.PhoneEnvRC.Add(environment);
+					environment.StringRepresentation = Cache.TsStrFactory.MakeString(@"\_[C^1][V^1]",
+						analysisWs);
+
+					// SUT
+					naturalClass.Delete();
+
+					// Assert that it is no longer in the environment
+					Assert.That(environment.StringRepresentation.Text, Is.StringContaining(@"\_[C^1]DELETED"));
+				});
+		}
+
+		/// <summary/>
+		[Test]
+		public void DeletingNaturalClass_ReplacesIndexedUseWithDeletedStringInStemAllomorph()
+		{
+			//stem allomorph
+			UndoableUnitOfWorkHelper.Do("undo", "redo", m_actionHandler,
+				() =>
+				{
+					var services = Cache.ServiceLocator;
+					var analysisWs = Cache.LangProject.DefaultAnalysisWritingSystem.Handle;
+					var vernWs = Cache.LangProject.DefaultVernacularWritingSystem.Handle;
+
+					// Create natural class with useful abbreviation
+					var naturalClass = services.GetInstance<IPhNCFeaturesFactory>().Create();
+					Cache.LangProject.PhonologicalDataOA.NaturalClassesOS.Add(naturalClass);
+					naturalClass.Abbreviation.set_String(analysisWs,
+						Cache.TsStrFactory.MakeString("V", analysisWs));
+
+					// Create an entry
+					var entry = MakeEntry();
+					var stemAllomorph = services.GetInstance<IMoStemAllomorphFactory>().Create();
+					entry.LexemeFormOA = stemAllomorph;
+					stemAllomorph.Form.set_String(vernWs, Cache.TsStrFactory.MakeString("[C^1][V^1]", vernWs));
+
+					// Add environment to entry with natural class abbreviation present and indexed
+					var environment = services.GetInstance<IPhEnvironmentFactory>().Create();
+					Cache.LangProject.PhonologicalDataOA.EnvironmentsOS.Add(environment);
+					stemAllomorph.PhoneEnvRC.Add(environment);
+					environment.StringRepresentation = Cache.TsStrFactory.MakeString(@"\_[C^1][V^1]",
+						analysisWs);
+
+					// SUT
+					naturalClass.Delete();
+
+					// Assert that it is no longer in the allomorph
+					Assert.That(stemAllomorph.Form.get_String(vernWs).Text, Is.StringContaining(@"[C^1]DELETED"));
+				});
+		}
+
+		/// <summary/>
+		[Test]
+		public void DeletingNaturalClass_ReplacesIndexedUseWithDeletedStringInAffixAllomorph()
+		{
+			//affix allomorph
+			UndoableUnitOfWorkHelper.Do("undo", "redo", m_actionHandler,
+				() =>
+				{
+					var services = Cache.ServiceLocator;
+					var analysisWs = Cache.LangProject.DefaultAnalysisWritingSystem.Handle;
+					var vernWs = Cache.LangProject.DefaultVernacularWritingSystem.Handle;
+
+					// Create natural class with useful abbreviation
+					var naturalClass = services.GetInstance<IPhNCFeaturesFactory>().Create();
+					Cache.LangProject.PhonologicalDataOA.NaturalClassesOS.Add(naturalClass);
+					naturalClass.Abbreviation.set_String(analysisWs,
+						Cache.TsStrFactory.MakeString("V", analysisWs));
+
+					// Create an entry
+					var entry = MakeEntry();
+					var affixAllomorph = services.GetInstance<IMoAffixAllomorphFactory>().Create();
+					entry.LexemeFormOA = affixAllomorph;
+					affixAllomorph.Form.set_String(vernWs, Cache.TsStrFactory.MakeString("[C^1][V^1]", vernWs));
+
+					// Add environment to entry with natural class abbreviation present and indexed
+					var environment = services.GetInstance<IPhEnvironmentFactory>().Create();
+					Cache.LangProject.PhonologicalDataOA.EnvironmentsOS.Add(environment);
+					affixAllomorph.PhoneEnvRC.Add(environment);
+					environment.StringRepresentation = Cache.TsStrFactory.MakeString(@"\_[C^1][V^1]",
+						analysisWs);
+
+					// SUT
+					naturalClass.Delete();
+
+					// Assert that it is no longer in the allomorph
+					Assert.That(affixAllomorph.Form.get_String(vernWs).Text, Is.StringContaining(@"[C^1]DELETED"));
+				});
+		}
+
+		/// <summary/>
+		[Test]
+		public void DeletingNaturalClass_DeletesEnvironmentWithNonOptionalUse()
+		{
+			UndoableUnitOfWorkHelper.Do("undo", "redo", m_actionHandler,
+				() =>
+				{
+					var services = Cache.ServiceLocator;
+					var analysisWs = Cache.LangProject.DefaultAnalysisWritingSystem.Handle;
+
+					// Create natural class with useful abbreviation
+					var naturalClass = services.GetInstance<IPhNCFeaturesFactory>().Create();
+					Cache.LangProject.PhonologicalDataOA.NaturalClassesOS.Add(naturalClass);
+					naturalClass.Abbreviation.set_String(analysisWs,
+						Cache.TsStrFactory.MakeString("V", analysisWs));
+
+					// Create an entry
+					var entry = MakeEntry();
+					var stemAllomorph = services.GetInstance<IMoStemAllomorphFactory>().Create();
+					entry.LexemeFormOA = stemAllomorph;
+
+					// Add environment to entry with natural class abbreviation present
+					var environment = services.GetInstance<IPhEnvironmentFactory>().Create();
+					Cache.LangProject.PhonologicalDataOA.EnvironmentsOS.Add(environment);
+					stemAllomorph.PhoneEnvRC.Add(environment);
+					environment.StringRepresentation = Cache.TsStrFactory.MakeString(@"\_[C][V]",
+						analysisWs);
+
+					// SUT
+					naturalClass.Delete();
+
+					// Assert that the environment is gone.
+					CollectionAssert.DoesNotContain(Cache.LangProject.PhonologicalDataOA.EnvironmentsOS, environment);
+				});
 		}
 	}
 }

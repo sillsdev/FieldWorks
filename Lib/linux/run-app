@@ -6,7 +6,53 @@ scriptdir=$(dirname "$0")
 prefix=$(cd "$scriptdir/../.."; /bin/pwd)
 lib=$prefix/lib/fieldworks
 share=$prefix/share/fieldworks
-sharedWs=/var/lib/fieldworks/SIL/WritingSystemStore
+sharedWsRoot=/var/lib/fieldworks
+sharedWs=$sharedWsRoot/SIL/WritingSystemStore
+
+# Test for write permissions in global writing system store.
+# If things are not set right, tell the user about it, erring on the side of
+# giving them more information than less, to help them solve it.
+# Test /var/lib/fieldworks not /var/lib/fieldworks/SIL/WritingSystemStore because the latter might not exist on the first run.
+# See FWNX-1420.
+# Note to power users: Upgrading Flex will result in permissions of the contents
+# of /var/lib/fieldworks being reset to being group-owned by fieldworks, g+w, and directories setgid,
+# as performed by fieldworks-applications.postinst.
+if [ $(find $sharedWsRoot -not -writable -print | wc -l) -gt 0 ]
+then
+	user_in_fieldworks_group_now="$(groups|grep -w fieldworks)"
+	user_in_fieldworks_group_at_all="$(id $(whoami) -Gn|grep -w fieldworks)"
+	additional_text=""
+	if [ -z "$user_in_fieldworks_group_now" -a -n "$user_in_fieldworks_group_at_all" ]; then
+		additional_text="It appears that this is the situation. Log out or reboot and then run FieldWorks again.
+
+"
+	elif [ -z "$user_in_fieldworks_group_at_all" ]; then
+		additional_text="But it appears that your user account has not been added to the fieldworks group.
+"
+	elif [ -n "$user_in_fieldworks_group_now" ]; then
+		more_text="
+However, your user is correctly in the fieldworks group but there are still write-permission
+problems in $sharedWsRoot. Perhaps the permissions were customized after installation.
+If so, have your computer administrator log in and fix the permissions by launching Terminal
+and executing:
+
+    sudo dpkg-reconfigure fieldworks-applications"
+	fi
+
+	zenity --error --no-wrap --text="This software cannot be run.
+
+Missing write permissions on essential files or directories in $sharedWsRoot.
+
+If you just installed FieldWorks, or were just added to the fieldworks group,
+you will receive this error until you log out or reboot.
+${additional_text}If you have already tried logging out or rebooting, then you need to
+have a computer administrator add your user to the fieldworks group. To do this, have the
+computer administrator log in, launch Terminal, and execute the following command:
+
+    sudo adduser $(whoami) fieldworks
+$more_text"
+	exit 1
+fi
 
 "$share/setup-user"
 
@@ -21,17 +67,6 @@ To do this, launch Synaptic. Search for fieldworks-applications. Click 'fieldwor
 
 You can also reconfigure the package from the commandline by running:
 \tsudo dpkg-reconfigure fieldworks-applications"
-	exit 1
-fi
-
-# test for write permissions in global writing system store
-if [ $(find $sharedWs -not -writable -print | wc -l) -gt 0 ]
-then
-	zenity --error --text="\
-This software cannot be run.
-
-Missing write permissions on essential files or directories in
-$sharedWs."
 	exit 1
 fi
 

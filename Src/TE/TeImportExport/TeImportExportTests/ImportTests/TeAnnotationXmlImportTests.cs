@@ -82,7 +82,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			base.TestSetup();
 
 			m_stylesheet = new FwStyleSheet();
-			m_stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+			m_stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
 
 			StyleProxyListManager.Initialize(m_stylesheet);
 		}

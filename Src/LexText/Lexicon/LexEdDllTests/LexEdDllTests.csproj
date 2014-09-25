@@ -61,6 +61,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\FDOTests.dll</HintPath>
     </Reference>
+    <Reference Include="FwUtils, Version=8.1.0.24240, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
+    </Reference>
     <Reference Include="LexEdDll">
       <HintPath>..\..\..\..\Output\Debug\LexEdDll.dll</HintPath>
     </Reference>
@@ -90,10 +94,17 @@
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
     <Compile Include="FlexBridgeListenerTests.cs" />
+    <Compile Include="GoldEticGuidFixerTests.cs" />
     <Compile Include="LexReferenceTreeRootLauncherTests.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\FwCoreDlgs\FwCoreDlgs.csproj">
+      <Project>{17090FC0-6BDA-409A-A99A-5AE7F35647ED}</Project>
+      <Name>FwCoreDlgs</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -14,7 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Microsoft.Win32;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
@@ -905,7 +905,7 @@ namespace SIL.FieldWorks.TE
 			{
 				string styleName = (fIsCurr) ? baseDiff.StyleNameCurr : baseDiff.StyleNameRev;
 				if (styleName == null)
-					styleName = ResourceHelper.DefaultParaCharsStyleName;
+					styleName = StyleUtils.DefaultParaCharsStyleName;
 				labelText = AppendLabel(labelText, styleName);
 			}
 			else if ((diffType & DifferenceType.WritingSystemDifference) != 0)

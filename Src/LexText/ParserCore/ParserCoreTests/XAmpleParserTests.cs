@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2013 SIL International
+﻿// Copyright (c) 2003-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -84,6 +84,27 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			var test = (string) elem.Attribute("test");
 			Assert.That(test, Is.EqualTo(expected));
+		}
+
+		[Test]
+		public void ConvertNameToUseAnsiCharactersTest()
+		{
+			// plain, simple ASCII
+			string name = "abc 123";
+			string convertedName = XAmpleParser.ConvertNameToUseAnsiCharacters(name);
+			Assert.AreEqual("abc 123", convertedName);
+			// Using upper ANSI characters as well as ASCII
+			name = "ÿýúadctl";
+			convertedName = XAmpleParser.ConvertNameToUseAnsiCharacters(name);
+			Assert.AreEqual("ÿýúadctl", convertedName);
+			// Using characters just above ANSI as well as ASCII
+			name = "ąćălex";
+			convertedName = XAmpleParser.ConvertNameToUseAnsiCharacters(name);
+			Assert.AreEqual("010501070103lex", convertedName);
+			// Using Cyrillic characters as well as ASCII
+			name = "Английский для семинараgram";
+			convertedName = XAmpleParser.ConvertNameToUseAnsiCharacters(name);
+			Assert.AreEqual("0410043D0433043B043804390441043A04380439 0434043B044F 04410435043C0438043D043004400430gram", convertedName);
 		}
 	}
 }

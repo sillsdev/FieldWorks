@@ -206,9 +206,8 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 							poss = m_factSemDom.Create(EnsureGuid(guid), owner) as ICmPossibility;
 							break;
 						case "PartOfSpeech":
-							Debug.Assert(guid == Guid.Empty);
-							poss = m_factPOS.Create() as ICmPossibility;
-							owner.PossibilitiesOS.Add(poss);
+							Debug.Assert(guid != Guid.Empty);
+							poss = m_factPOS.Create(guid, owner);
 							break;
 						default:
 							// TODO: implement other subclasses of CmPossibility?
@@ -498,9 +497,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 							break;
 						case "PartOfSpeech":
 							Debug.Assert(owner is IPartOfSpeech);
-							Debug.Assert(guid == Guid.Empty);
-							poss = m_factPOS.Create() as ICmPossibility;
-							owner.SubPossibilitiesOS.Add(poss);
+							poss = m_factPOS.Create(guid, (IPartOfSpeech)owner);
 							break;
 						default:
 							// TODO: implement the other subclasses of CmPossibility?

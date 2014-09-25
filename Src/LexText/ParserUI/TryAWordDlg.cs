@@ -12,14 +12,13 @@
 // </remarks>
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
-using System.Text;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
@@ -76,6 +75,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private IAsyncResult m_tryAWordResult;
 
 		private WebPageInteractor m_webPageInteractor;
+		private IParserTrace m_trace;
 
 		#endregion Data members
 
@@ -120,13 +120,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_htmlControl.Browser.ObjectForScripting = m_webPageInteractor;
 #endif
 
-			// HermitCrab does not currently support selected tracing
-			/*if (m_cache.LangProject.MorphologicalDataOA.ActiveParser == "HC")
-			{
-				m_parserCanDoSelectMorphs = false;
-				m_doSelectMorphsCheckBox.Enabled = false;
-			}
-*/
 			// No such thing as FwApp.App now: if(FwApp.App != null) // Could be null during testing
 			if (m_mediator.HelpTopicProvider != null) // trying this
 			{
@@ -425,15 +418,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				string sWord = CleanUpWord();
 				// check to see if limiting trace and, if so, if all morphs have msas
-				string selectedTraceMorphs;
+				int[] selectedTraceMorphs;
 				if (GetSelectedTraceMorphs(out selectedTraceMorphs))
 				{
 					// Display a "processing" message (and include info on how to improve the results)
 					m_htmlControl.URL = Path.Combine(TransformPath, "WhileTracing.htm");
 					sWord = sWord.Replace(' ', '.'); // LT-7334 to allow for phrases; do this at the last minute
 					m_parserListener.Connection.TryAWordDialogIsRunning = true; // make sure this is set properly
-					if (m_webPageInteractor != null)
-						m_webPageInteractor.ParserTrace = CreateParserTrace();
 					m_tryAWordResult = m_parserListener.Connection.BeginTryAWord(sWord, DoTrace, selectedTraceMorphs);
 					// waiting for result, so disable Try It button
 					m_tryItButton.Enabled = false;
@@ -441,16 +432,42 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private ParserTrace CreateParserTrace()
+		private void CreateResultPage(XDocument result)
 		{
-			switch (m_cache.LanguageProject.MorphologicalDataOA.ActiveParser)
+			string sOutput;
+			if (result == null)
 			{
-				case "XAmple":
-					return new XAmpleTrace(m_mediator);
-				case "HC":
-					return new HCTrace(m_mediator);
+				// It's an error message.
+				sOutput = Path.GetTempFileName();
+				using (var writer = new StreamWriter(sOutput))
+				{
+					writer.WriteLine("<!DOCTYPE html>");
+					writer.WriteLine("<body>");
+					writer.WriteLine(ParserUIStrings.ksDidNotParse);
+					writer.WriteLine("</body>");
+					writer.WriteLine("</html>");
+				}
 			}
-			return null;
+			else
+			{
+				IParserTrace trace = null;
+				switch (m_cache.LanguageProject.MorphologicalDataOA.ActiveParser)
+				{
+					case "XAmple":
+						trace = new XAmpleTrace(m_mediator);
+						m_webPageInteractor.WordGrammarDebugger = new XAmpleWordGrammarDebugger(m_mediator, result);
+						break;
+					case "HC":
+						trace = new HCTrace(m_mediator);
+						m_webPageInteractor.WordGrammarDebugger = null;
+						break;
+				}
+
+				Debug.Assert(trace != null);
+
+				sOutput = trace.CreateResultPage(result, DoTrace);
+			}
+			m_htmlControl.URL = sOutput;
 		}
 
 		private string CleanUpWord()
@@ -469,23 +486,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private bool GetSelectedTraceMorphs(out string selectedTraceMorphs)
+		private bool GetSelectedTraceMorphs(out int[] selectedTraceMorphs)
 		{
 			selectedTraceMorphs = null;
 			if (DoTrace && DoManualParse)
 			{
-				List<int> msas = m_rootsite.MsaList;
-				var sb = new StringBuilder();
-				foreach (int msa in msas)
-				{
-					sb.Append(msa.ToString());
-					sb.Append(" ");
-				}
-				if (sb.Length > 0)
-				{
-					selectedTraceMorphs = sb.ToString();
-				}
-				if (selectedTraceMorphs != null && (selectedTraceMorphs.StartsWith("0 ") || selectedTraceMorphs.Contains(" 0 ")))
+				selectedTraceMorphs = m_rootsite.MsaList.ToArray();
+				if (selectedTraceMorphs.Any(hvo => hvo == 0))
 				{
 					MessageBox.Show(GetString("NoLexInfoForMorphsMessage"), GetString("NoLexInfoForMorphsCaption"),
 						MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -550,25 +557,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (m_tryAWordResult != null && m_tryAWordResult.IsCompleted)
 			{
 				var result = (XDocument) m_tryAWordResult.AsyncState;
-				string sOutput;
-				if (result == null)
-				{
-					// It's an error message.
-					sOutput = Path.GetTempFileName();
-					using (var writer = new StreamWriter(sOutput))
-					{
-						writer.WriteLine("<!DOCTYPE html>");
-						writer.WriteLine("<body>");
-						writer.WriteLine(ParserUIStrings.ksDidNotParse);
-						writer.WriteLine("</body>");
-						writer.WriteLine("</html>");
-					}
-				}
-				else
-				{
-					sOutput = m_webPageInteractor.ParserTrace.CreateResultPage(result, DoTrace);
-				}
-				m_htmlControl.URL = sOutput;
+				CreateResultPage(result);
 				m_tryAWordResult = null;
 				// got result so enable Try It button
 				m_tryItButton.Enabled = true;

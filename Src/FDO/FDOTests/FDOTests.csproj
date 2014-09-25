@@ -302,6 +302,7 @@
     <Compile Include="FdoFactoryAdditionsTests.cs" />
     <Compile Include="FeatureSystemTests.cs" />
     <Compile Include="FwSetupFixtureClass.cs" />
+    <Compile Include="GoldEticTests.cs" />
     <Compile Include="Ling_WfiTests.cs" />
     <Compile Include="CmCellTests.cs" />
     <Compile Include="CmFilterTests.cs" />
@@ -370,6 +371,7 @@
     <Compile Include="ScrSfFileListTests.cs" />
     <Compile Include="ScrTxtParaTests.cs" />
     <Compile Include="ScrVerseTests.cs" />
+    <Compile Include="SharedBackendServicesTests.cs" />
     <Compile Include="StFootnoteTests.cs" />
     <Compile Include="StringServicesTests.cs" />
     <Compile Include="StTextAnnotationNavigatorTests.cs" />

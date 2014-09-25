@@ -307,6 +307,9 @@ namespace SIL.FieldWorks
 				ClientServerServices.SetCurrentToDb4OBackend(s_ui, FwDirectoryFinder.FdoDirectories,
 					() => FwDirectoryFinder.ProjectsDirectory == FwDirectoryFinder.ProjectsDirectoryLocalMachine);
 
+				// initialize the TE styles path so that ScrMappingList can load default styles
+				ScrMappingList.TeStylesPath = FwDirectoryFinder.TeStylesPath;
+
 				if (appArgs.ShowHelp)
 				{
 					ShowCommandLineHelp();
@@ -453,6 +456,8 @@ namespace SIL.FieldWorks
 			// FieldWorks processes that are waiting on us be able to continue.
 			s_projectId = projectId;
 
+			WarnUserAboutFailedLiftImportIfNecessary(GetOrCreateApplication(appArgs));
+
 			if (s_noUserInterface)
 			{
 				// We should have a main window by now, so the help button on the dialog
@@ -461,6 +466,15 @@ namespace SIL.FieldWorks
 			}
 
 			return true;
+		}
+
+		private static void WarnUserAboutFailedLiftImportIfNecessary(FwApp fwApp)
+		{
+			var mainWindow = fwApp.ActiveMainWindow as IFwMainWnd;
+			if(mainWindow != null)
+			{
+				mainWindow.Mediator.SendMessage("WarnUserAboutFailedLiftImportIfNecessary", null);
+			}
 		}
 
 		private static bool IsSharedXmlBackendNeeded(ProjectId projectId)
@@ -2678,6 +2692,8 @@ namespace SIL.FieldWorks
 			{
 				Debug.Assert(s_projectId != null, "We shouldn't try to handle a link request until an application is started");
 				ProjectId linkedProject = new ProjectId(link.DatabaseType, link.Database, link.Server);
+				if (IsSharedXmlBackendNeeded(linkedProject))
+					linkedProject.Type = FDOBackendProviderType.kSharedXML;
 				if (linkedProject.Equals(s_projectId))
 					FollowLink(link);
 				else if (!TryFindLinkHandler(link))
@@ -2689,7 +2705,7 @@ namespace SIL.FieldWorks
 					// right away if we don't work with the process object. It might be better
 					// though to change the signature of OpenProjectWithNewProcess to return
 					// a boolean (true iff the link was successfully handled).
-					using (OpenProjectWithNewProcess(linkedProject, link.AppAbbrev, link.ToString()))
+					using (OpenProjectWithNewProcess(linkedProject, link.AppAbbrev, "-" + FwLinkArgs.kLink, link.ToString()))
 					{
 					}
 				}

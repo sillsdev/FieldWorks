@@ -468,10 +468,8 @@ namespace SIL.FieldWorks
 			ProjectId projB = obj as ProjectId;
 			if (projB == null)
 				throw new ArgumentException("Argument is not a ProjectId.", "obj");
-			return (Type == projB.Type && ProjectInfo.ProjectsAreSame(Handle, projB.Handle) &&
-				((ServerName == null && projB.ServerName == null) ||
-				(ServerName != null && projB.ServerName != null &&
-				ServerName.Equals(projB.ServerName, StringComparison.InvariantCultureIgnoreCase))));
+			return (Type == projB.Type && ProjectInfo.ProjectsAreSame(Handle, projB.Handle)
+					&& string.Equals(ServerName, projB.ServerName, StringComparison.InvariantCultureIgnoreCase));
 		}
 
 		/// ------------------------------------------------------------------------------------

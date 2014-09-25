@@ -61,15 +61,6 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &amp;OK.
-        /// </summary>
-        internal static string ks_OK {
-            get {
-                return ResourceManager.GetString("ks_OK", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Bad Affix Form.
         /// </summary>
         internal static string ksBadAffixForm {
@@ -115,15 +106,6 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to NoDefaultCompounding.
-        /// </summary>
-        internal static string ksDoNotUseDefaultCompoundRules {
-            get {
-                return ResourceManager.GetString("ksDoNotUseDefaultCompoundRules", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The Hermit Crab parser cannot currently run, because the morpheme &quot;{0}&quot; has an invalid reduplication environment. The problem is {1}..
         /// </summary>
         internal static string ksHermitCrabReduplicationProblem {
@@ -138,15 +120,6 @@ namespace SIL.FieldWorks.LexText.Controls {
         internal static string ksIdle_ {
             get {
                 return ResourceManager.GetString("ksIdle_", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Ill-formed XML.
-        /// </summary>
-        internal static string ksIllFormedXml {
-            get {
-                return ResourceManager.GetString("ksIllFormedXml", resourceCulture);
             }
         }
         
@@ -174,78 +147,6 @@ namespace SIL.FieldWorks.LexText.Controls {
         internal static string ksLoadingFilesForWordSetX {
             get {
                 return ResourceManager.GetString("ksLoadingFilesForWordSetX", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to MaxAnalysesToReturn.
-        /// </summary>
-        internal static string ksMaxAnalysesToReturn {
-            get {
-                return ResourceManager.GetString("ksMaxAnalysesToReturn", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to DelReapps.
-        /// </summary>
-        internal static string ksMaxDelReapps {
-            get {
-                return ResourceManager.GetString("ksMaxDelReapps", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to MaxInfixes.
-        /// </summary>
-        internal static string ksMaxInfixes {
-            get {
-                return ResourceManager.GetString("ksMaxInfixes", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to MaxInterfixes.
-        /// </summary>
-        internal static string ksMaxInterfixes {
-            get {
-                return ResourceManager.GetString("ksMaxInterfixes", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to MaxNulls.
-        /// </summary>
-        internal static string ksMaxNulls {
-            get {
-                return ResourceManager.GetString("ksMaxNulls", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to MaxPrefixes.
-        /// </summary>
-        internal static string ksMaxPrefixes {
-            get {
-                return ResourceManager.GetString("ksMaxPrefixes", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to MaxRoots.
-        /// </summary>
-        internal static string ksMaxRoots {
-            get {
-                return ResourceManager.GetString("ksMaxRoots", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to MaxSuffixes.
-        /// </summary>
-        internal static string ksMaxSuffixes {
-            get {
-                return ResourceManager.GetString("ksMaxSuffixes", resourceCulture);
             }
         }
         
@@ -331,15 +232,6 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to NotOnClitics.
-        /// </summary>
-        internal static string ksRulesDoNotApplyOnClitics {
-            get {
-                return ResourceManager.GetString("ksRulesDoNotApplyOnClitics", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to , .
         /// </summary>
         internal static string ksSlotNameSeparator {
@@ -381,15 +273,6 @@ namespace SIL.FieldWorks.LexText.Controls {
         internal static string ksUpdate {
             get {
                 return ResourceManager.GetString("ksUpdate", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The XML is not well-formed; you need to correct it and try again..
-        /// </summary>
-        internal static string ksXmlNotWellFormed {
-            get {
-                return ResourceManager.GetString("ksXmlNotWellFormed", resourceCulture);
             }
         }
     }

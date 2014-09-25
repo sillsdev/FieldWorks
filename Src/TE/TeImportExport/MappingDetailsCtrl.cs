@@ -471,7 +471,7 @@ namespace SIL.FieldWorks.TE
 
 				StyleListItem styleItem = (StyleListItem)lbStyles.SelectedItem;
 				if (styleItem.Type != StyleType.kstCharacter ||
-					m_mapping.StyleName == ResourceHelper.DefaultParaCharsStyleName)
+					m_mapping.StyleName == StyleUtils.DefaultParaCharsStyleName)
 				{
 					if (rbtnFootnotes.Checked)
 						m_mapping.Domain = MarkerDomain.Footnote;

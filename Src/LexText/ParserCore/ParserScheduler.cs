@@ -72,9 +72,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			private readonly string m_tryAWord;
 			private readonly bool m_doTrace;
-			private readonly string m_selectTraceMorphs;
+			private readonly int[] m_selectTraceMorphs;
 
-			public TryAWordWork(ParserScheduler scheduler, string tryAWord, bool doTrace, string selectTraceMorphs)
+			public TryAWordWork(ParserScheduler scheduler, string tryAWord, bool doTrace, int[] selectTraceMorphs)
 				: base(scheduler, ParserPriority.TryAWord)
 			{
 				m_tryAWord = tryAWord;
@@ -274,7 +274,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// <param name="form"></param>
 		/// <param name="fDoTrace">whether or not to trace the parse</param>
 		/// <param name="sSelectTraceMorphs">list of msa hvos to limit trace to </param>
-		public void ScheduleOneWordformForTryAWord(string form, bool fDoTrace, string sSelectTraceMorphs)
+		public void ScheduleOneWordformForTryAWord(string form, bool fDoTrace, int[] sSelectTraceMorphs)
 		{
 			CheckDisposed();
 

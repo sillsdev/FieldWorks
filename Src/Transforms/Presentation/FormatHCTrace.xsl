@@ -31,7 +31,9 @@ Preamble
 	<xsl:param name="prmVernacularRTL">
 		<xsl:text>N</xsl:text>
 	</xsl:param>
-	<xsl:param name="prmHCTraceNoOutput" select="'*None*'"/>
+	<xsl:param name="prmShowTrace">
+		<xsl:text>true</xsl:text>
+	</xsl:param>
 	<!-- Variables -->
 	<xsl:variable name="selectedMorphs" select="/Wordform/selectedMorphs"/>
 	<xsl:variable name="analysisPhonologicalRules" select="/Wordform/Trace/WordAnalysisTrace/PhonologicalRuleAnalysisTrace"/>
@@ -73,12 +75,14 @@ Main template
 							<xsl:text>; font-family:</xsl:text>
 							<xsl:value-of select="$prmVernacularFont"/>
 						</xsl:attribute>
-						<xsl:value-of select="translate(@Form,'.',' ')"/>
+						<xsl:value-of select="translate(@form,'.',' ')"/>
 					</span>
 					<xsl:text>.</xsl:text>
 				</h1>
 				<xsl:call-template name="ResultSection"/>
-				<xsl:call-template name="TraceSection"/>
+				<xsl:if test="$prmShowTrace = 'true'">
+					<xsl:call-template name="TraceSection"/>
+				</xsl:if>
 			</body>
 		</html>
 	</xsl:template>
@@ -91,16 +95,23 @@ Main template
 	-->
 	<xsl:template name="DetermineIfMoreToShow">
 		<xsl:param name="traceRoot"/>
-		<xsl:variable name="analysisAffixes" select="$traceRoot/MorphologicalRuleAnalysisTrace[Output!=$prmHCTraceNoOutput and starts-with(MorphologicalRule/@id, 'mrule')]"/>
-		<xsl:variable name="synthesisAffixes" select="$traceRoot/MorphologicalRuleSynthesisTrace[Output!=$prmHCTraceNoOutput and starts-with(MorphologicalRule/@id, 'mrule')]"/>
-		<xsl:variable name="analysisCompoundRules" select="$traceRoot/MorphologicalRuleAnalysisTrace[Output!=$prmHCTraceNoOutput and starts-with(MorphologicalRule/@id, 'comp')]"/>
-		<xsl:variable name="synthesisCompoundRules" select="$traceRoot/MorphologicalRuleSynthesisTrace[Output!=$prmHCTraceNoOutput and starts-with(MorphologicalRule/@id, 'comp')]"/>
-		<xsl:variable name="synthesizedWords" select="$traceRoot/LexLookupTrace/WordSynthesisTrace"/>
-		<xsl:variable name="phonologicalRules" select="$traceRoot[name()='PhonologicalRuleSynthesisTrace']"/>
-		<xsl:variable name="parseNodes" select="$analysisAffixes | $synthesisAffixes | $analysisCompoundRules | $synthesisCompoundRules | $synthesizedWords | $phonologicalRules"/>
-		<xsl:if test="$parseNodes">
-			<xsl:text>Y</xsl:text>
-		</xsl:if>
+		<xsl:choose>
+			<xsl:when test="$traceRoot[name() = 'ParseCompleteTrace']">
+				<!-- The parse is complete, so there is no more to show. -->
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:variable name="analysisAffixes" select="$traceRoot/MorphologicalRuleAnalysisTrace[MorphologicalRule/@type = 'affix']"/>
+				<xsl:variable name="synthesisAffixes" select="$traceRoot/MorphologicalRuleSynthesisTrace[MorphologicalRule/@type = 'affix']"/>
+				<xsl:variable name="analysisCompoundRules" select="$traceRoot/MorphologicalRuleAnalysisTrace[MorphologicalRule/@type = 'compound']"/>
+				<xsl:variable name="synthesisCompoundRules" select="$traceRoot/MorphologicalRuleSynthesisTrace[MorphologicalRule/@type = 'compound']"/>
+				<xsl:variable name="synthesizedWords" select="$traceRoot/LexLookupTrace/WordSynthesisTrace"/>
+				<xsl:variable name="parseCompleteTraces" select="$traceRoot/ParseCompleteTrace"/>
+				<xsl:variable name="parseNodes" select="$analysisAffixes | $synthesisAffixes | $analysisCompoundRules | $synthesisCompoundRules | $synthesizedWords | $parseCompleteTraces"/>
+				<xsl:if test="$parseNodes">
+					<xsl:text>Y</xsl:text>
+				</xsl:if>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 	<!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -123,19 +134,8 @@ GetAnalysisFont
 		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	-->
 	<xsl:template name="GetSuccessOrFailureColor">
-		<xsl:variable name="bSuccess">
-			<xsl:for-each select="descendant::ReportSuccessTrace">
-				<xsl:variable name="reportSuccessID" select="Result/@id"/>
-				<xsl:if test="$reportSuccessID">
-					<xsl:variable name="wordGrammarSuccess" select="/Wordform/WordGrammarTrace/WordGrammarAttempt[Id=$reportSuccessID]"/>
-					<xsl:if test="$wordGrammarSuccess/@success='true'">
-						<xsl:text>Y</xsl:text>
-					</xsl:if>
-				</xsl:if>
-			</xsl:for-each>
-		</xsl:variable>
 		<xsl:choose>
-			<xsl:when test="string-length($bSuccess) != 0">
+			<xsl:when test="descendant-or-self::ParseCompleteTrace[@success = 'true']">
 				<xsl:value-of select="$sSuccessColor"/>
 			</xsl:when>
 			<xsl:otherwise>
@@ -191,7 +191,7 @@ ResultSection
 	<xsl:template name="ResultSection">
 		<h2>Result</h2>
 		<xsl:choose>
-			<xsl:when test="/Wordform/WfiAnalysis/Morphs">
+			<xsl:when test="/Wordform/Analysis">
 				<p>
 					<xsl:text>This word parsed successfully.  The following are the sequences of allomorphs that succeeded:</xsl:text>
 				</p>
@@ -201,9 +201,6 @@ ResultSection
 					</xsl:if>
 					<xsl:call-template name="ShowSuccessfulAnalyses"/>
 				</div>
-				<xsl:call-template name="ShowAnyLoadErrors"/>
-				<xsl:call-template name="ShowAnyDataIssues"/>
-				<xsl:call-template name="UseShowDetailsButton"/>
 			</xsl:when>
 			<xsl:otherwise>
 				<p>
@@ -227,11 +224,10 @@ ResultSection
 						</span>
 					</p>
 				</xsl:if>
-				<xsl:call-template name="ShowAnyLoadErrors"/>
-				<xsl:call-template name="ShowAnyDataIssues"/>
-				<xsl:call-template name="UseShowDetailsButton"/>
 			</xsl:otherwise>
 		</xsl:choose>
+		<xsl:call-template name="ShowAnyLoadErrors"/>
+		<xsl:call-template name="ShowAnyDataIssues"/>
 	</xsl:template>
 	<!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -241,69 +237,102 @@ ShowMsaInfo
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 -->
 	<xsl:template name="ShowMsaInfo">
-		<xsl:param name="morph"/>
-		<xsl:for-each select="$morph">
-			<xsl:variable name="form" select="../MoForm"/>
+		<xsl:param name="msa"/>
+		<xsl:for-each select="$msa">
+			<xsl:variable name="form" select=".."/>
 			<span>
 				<xsl:attribute name="style">
 					<xsl:text>; font-size:smaller</xsl:text>
 				</xsl:attribute>
 				<xsl:choose>
-					<xsl:when test="$form/@wordType='root'">
+					<xsl:when test="@type = 'infl'">
 						<xsl:text>Category = </xsl:text>
 						<span>
 							<xsl:attribute name="style">
 								<xsl:call-template name="GetAnalysisFont"/>
 							</xsl:attribute>
-							<xsl:value-of select="stemMsa/@catAbbr"/>
+							<xsl:choose>
+								<xsl:when test="Category">
+									<xsl:value-of select="Category"/>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:text>??</xsl:text>
+								</xsl:otherwise>
+							</xsl:choose>
 						</span>
-						<xsl:if test="stemMsa/@inflClassAbbr != ''">
-							<xsl:text>; Inflection class = </xsl:text>
-							<span>
-								<xsl:attribute name="style">
-									<xsl:call-template name="GetAnalysisFont"/>
-								</xsl:attribute>
-								<xsl:value-of select="stemMsa/@inflClassAbbr"/>
-							</span>
-						</xsl:if>
+						<xsl:choose>
+							<xsl:when test="Slot">
+								<xsl:text>; Slot = </xsl:text>
+								<xsl:if test="Slot/@optional='true'">
+									<xsl:text>(</xsl:text>
+								</xsl:if>
+								<span>
+									<xsl:attribute name="style">
+										<xsl:call-template name="GetAnalysisFont"/>
+									</xsl:attribute>
+									<xsl:value-of select="Slot"/>
+								</span>
+								<xsl:if test="Slot/@optional='true'">
+									<xsl:text>)</xsl:text>
+								</xsl:if>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:text>; Unspecified slot or category</xsl:text>
+							</xsl:otherwise>
+						</xsl:choose>
 					</xsl:when>
-					<xsl:when test="contains($form/@wordType,'deriv')">
+					<xsl:when test="@type ='deriv'">
 						<xsl:text>From category = </xsl:text>
 						<span>
 							<xsl:attribute name="style">
 								<xsl:call-template name="GetAnalysisFont"/>
 							</xsl:attribute>
-							<xsl:value-of select="derivMsa/@fromCatAbbr"/>
+							<xsl:choose>
+								<xsl:when test="FromCategory">
+									<xsl:value-of select="FromCategory"/>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:text>??</xsl:text>
+								</xsl:otherwise>
+							</xsl:choose>
 						</span>
 						<xsl:text>; To category = </xsl:text>
 						<span>
 							<xsl:attribute name="style">
 								<xsl:call-template name="GetAnalysisFont"/>
 							</xsl:attribute>
-							<xsl:value-of select="derivMsa/@toCatAbbr"/>
+							<xsl:choose>
+								<xsl:when test="ToCategory">
+									<xsl:value-of select="ToCategory"/>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:text>??</xsl:text>
+								</xsl:otherwise>
+							</xsl:choose>
 						</span>
-						<xsl:if test="derivMsa/@toInflClassAbbr!=''">
+						<xsl:if test="ToInflClass">
 							<xsl:text>; To inflection class = </xsl:text>
 							<span>
 								<xsl:attribute name="style">
 									<xsl:call-template name="GetAnalysisFont"/>
 								</xsl:attribute>
-								<xsl:value-of select="derivMsa/@toInflClassAbbr"/>
+								<xsl:value-of select="ToInflClass"/>
 							</span>
 						</xsl:if>
 					</xsl:when>
-					<xsl:when test="$form/@wordType='prefix' or $form/@wordType='suffix'">
+					<xsl:when test="@type = 'unclass'">
 						<xsl:text>unclassified affix</xsl:text>
-						<xsl:if test="unclassMsa/@fromCatAbbr">
+						<xsl:if test="Category">
 							<span>
 								<xsl:attribute name="style">
 									<xsl:call-template name="GetAnalysisFont"/>
 								</xsl:attribute>
-								<xsl:value-of select="unclassMsa/@fromCatAbbr"/>
+								<text> </text>
+								<xsl:value-of select="Category"/>
 							</span>
 						</xsl:if>
 					</xsl:when>
-					<xsl:when test="$form/@wordType='proclitic' or $form/@wordType='enclitic'">
+					<xsl:when test="$form/@type = 'proclitic' or $form/@type = 'enclitic'">
 						<xsl:value-of select="$form/@wordType"/>
 						<xsl:if test="stemMsa/@cat!=0">
 							<xsl:text>; Category = </xsl:text>
@@ -311,19 +340,30 @@ ShowMsaInfo
 								<xsl:attribute name="style">
 									<xsl:call-template name="GetAnalysisFont"/>
 								</xsl:attribute>
-								<xsl:value-of select="stemMsa/@catAbbr"/>
-								<xsl:text>; Attaches to: </xsl:text>
-								<xsl:variable name="fromPOSes" select="stemMsa/fromPartsOfSpeech"/>
 								<xsl:choose>
-									<xsl:when test="$fromPOSes">
-										<xsl:for-each select="$fromPOSes">
+									<xsl:when test="Category">
+										<xsl:value-of select="Category"/>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:text>??</xsl:text>
+									</xsl:otherwise>
+								</xsl:choose>
+								<xsl:text>; Attaches to: </xsl:text>
+								<xsl:choose>
+									<xsl:when test="FromCategories">
+										<xsl:for-each select="FromCategories/Category">
 											<xsl:if test="position() &gt; 1">
 												<xsl:text>, </xsl:text>
 												<xsl:if test="position() = last()">
 													<xsl:text>or </xsl:text>
 												</xsl:if>
 											</xsl:if>
-											<xsl:value-of select="@fromCatAbbr"/>
+											<span>
+												<xsl:attribute name="style">
+													<xsl:call-template name="GetAnalysisFont"/>
+												</xsl:attribute>
+												<xsl:value-of select="."/>
+											</span>
 										</xsl:for-each>
 									</xsl:when>
 									<xsl:otherwise>
@@ -333,47 +373,43 @@ ShowMsaInfo
 							</span>
 						</xsl:if>
 					</xsl:when>
-					<xsl:when test="$form/@wordType='clitic'">
+					<xsl:when test="$form/@type = 'clitic'">
 						<xsl:text>clitic</xsl:text>
-						<xsl:if test="stemMsa/@cat!=0">
+						<xsl:if test="Category">
 							<xsl:text>; Category = </xsl:text>
 							<span>
 								<xsl:attribute name="style">
 									<xsl:call-template name="GetAnalysisFont"/>
 								</xsl:attribute>
-								<xsl:value-of select="stemMsa/@catAbbr"/>
+								<xsl:value-of select="Category"/>
 							</span>
 						</xsl:if>
 					</xsl:when>
 					<xsl:otherwise>
-						<!-- an inflectional affix -->
+						<!-- stem or root -->
 						<xsl:text>Category = </xsl:text>
 						<span>
 							<xsl:attribute name="style">
 								<xsl:call-template name="GetAnalysisFont"/>
 							</xsl:attribute>
-							<xsl:value-of select="inflMsa/@catAbbr"/>
+							<xsl:choose>
+								<xsl:when test="Category">
+									<xsl:value-of select="Category"/>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:text>??</xsl:text>
+								</xsl:otherwise>
+							</xsl:choose>
 						</span>
-						<xsl:text>; Slot = </xsl:text>
-						<xsl:choose>
-							<xsl:when test="inflMsa/@slotAbbr!='??'">
-								<xsl:if test="inflMsa/@slotOptional='true'">
-									<xsl:text>(</xsl:text>
-								</xsl:if>
-								<span>
-									<xsl:attribute name="style">
-										<xsl:call-template name="GetAnalysisFont"/>
-									</xsl:attribute>
-									<xsl:value-of select="inflMsa/@slotAbbr"/>
-								</span>
-								<xsl:if test="inflMsa/@slotOptional='true'">
-									<xsl:text>)</xsl:text>
-								</xsl:if>
-							</xsl:when>
-							<xsl:otherwise>
-								<xsl:text>; Unspecified slot or category</xsl:text>
-							</xsl:otherwise>
-						</xsl:choose>
+						<xsl:if test="InflClass">
+							<xsl:text>; Inflection class = </xsl:text>
+							<span>
+								<xsl:attribute name="style">
+									<xsl:call-template name="GetAnalysisFont"/>
+								</xsl:attribute>
+								<xsl:value-of select="InflClass"/>
+							</span>
+						</xsl:if>
 					</xsl:otherwise>
 				</xsl:choose>
 			</span>
@@ -571,203 +607,267 @@ function Toggle(node, path, imgOffset)
 		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	-->
 	<xsl:template name="ShowAnyFailure">
-		<!-- HC trace currently does not report any failures, but we can show word grammar failures -->
-		<xsl:variable name="reportSuccessID">
-			<xsl:choose>
-				<xsl:when test="name()='PhonologicalRuleSynthesisTrace'">
-					<xsl:value-of select="following-sibling::ReportSuccessTrace[1]/Result/@id"/>
-				</xsl:when>
-				<xsl:when test="name()='MorphologicalRuleSynthesisTrace'">
-					<xsl:value-of select="ReportSuccessTrace[1]/Result/@id"/>
-				</xsl:when>
-			</xsl:choose>
+		<xsl:variable name="moreToShow">
+			<xsl:call-template name="DetermineIfMoreToShow">
+				<xsl:with-param name="traceRoot" select="."/>
+			</xsl:call-template>
 		</xsl:variable>
-		<xsl:if test="$reportSuccessID">
-			<xsl:variable name="wordGrammarSuccess" select="/Wordform/WordGrammarTrace/WordGrammarAttempt[Id=$reportSuccessID]"/>
-			<xsl:variable name="reportFailure">
-				<xsl:if test="$wordGrammarSuccess/@success='false'">
-					<xsl:choose>
-						<xsl:when test="$analysisPhonologicalRules">
-							<xsl:if test="name()='PhonologicalRuleSynthesisTrace'">
-								<xsl:text>Y</xsl:text>
-							</xsl:if>
-						</xsl:when>
-						<xsl:otherwise>
-							<xsl:text>Y</xsl:text>
-						</xsl:otherwise>
-					</xsl:choose>
-				</xsl:if>
-			</xsl:variable>
-			<xsl:if test="$reportFailure='Y'">
+		<xsl:choose>
+			<xsl:when test="name() = 'MorphologicalRuleSynthesisTrace' and not(FailureReason) and $moreToShow != 'Y'">
 				<span style="unicode-bidi:embed">
 					<xsl:attribute name="style">
 						<xsl:text>color:</xsl:text>
 						<xsl:value-of select="$sFailureColor"/>
 						<xsl:text>; font-size:smaller</xsl:text>
 					</xsl:attribute>
-					<xsl:text>&#xa0;&#xa0;(Reason: </xsl:text>
-					<xsl:text>Word grammar failed&#xa0;&#xa0;</xsl:text>
-					<input type="button" value="Tell me more" name="BWGDetails" id="ShowWGDetailsButton" style="width: 100px; height: 26px">
-						<xsl:attribute name="onclick">
-							<xsl:text>ButtonShowWGDetails(</xsl:text>
-							<xsl:choose>
-								<xsl:when test="$wordGrammarSuccess/Id">"<xsl:value-of select="$wordGrammarSuccess/Id"/>"</xsl:when>
-								<xsl:otherwise>
-									<xsl:text>0</xsl:text>
-								</xsl:otherwise>
-							</xsl:choose>
-							<xsl:text>)</xsl:text>
-						</xsl:attribute>
-					</input>
-					<xsl:text>&#xa0;&#xa0;</xsl:text>
-					<xsl:text>)</xsl:text>
+					<xsl:text>&#xa0;&#xa0;(Reason: This is a duplicate parse and has been pruned.)</xsl:text>
 				</span>
-			</xsl:if>
-		</xsl:if>
-		<xsl:for-each select="MorphCooccurrenceRuleFailed">
-			<span style="unicode-bidi:embed">
-				<xsl:attribute name="style">
-					<xsl:text>color:</xsl:text>
-					<xsl:value-of select="$sFailureColor"/>
-					<xsl:text>; font-size:smaller</xsl:text>
-				</xsl:attribute>
-			<xsl:choose>
-				<xsl:when test="Usage='Excluded'">
-					<!-- is an ad hoc rule -->
-					<xsl:text>&#xa0;&#xa0;(Reason: </xsl:text>
-					<xsl:variable name="sType">
-					<xsl:choose>
-						<xsl:when test="Type='MORPHEME'">
-							<xsl:text>Morpheme</xsl:text>
-						</xsl:when>
-						<xsl:otherwise>
-							<xsl:text>Allomorph</xsl:text>
-						</xsl:otherwise>
-					</xsl:choose>
-					</xsl:variable>
-					<xsl:text> ad hoc rule failed.  This </xsl:text>
-					<xsl:value-of select="translate($sType,'AM','am')"/>
-					<xsl:text> cannot occur </xsl:text>
-					<xsl:choose>
-						<xsl:when test="Adjacency='ADJACENT_TO_RIGHT'">
-							<xsl:text>adjacent before</xsl:text>
-						</xsl:when>
-						<xsl:when test="Adjacency='ADJACENT_TO_LEFT'">
-							<xsl:text>adjacent after</xsl:text>
-						</xsl:when>
-						<xsl:when test="Adjacency='SOMEWHERE_TO_RIGHT'">
-							<xsl:text>somewhere before</xsl:text>
-						</xsl:when>
-						<xsl:when test="Adjacency='SOMEWHERE_TO_LEFT'">
-							<xsl:text>somewhere after</xsl:text>
-						</xsl:when>
-						<xsl:otherwise>
-							<xsl:text>anywhere around</xsl:text>
-						</xsl:otherwise>
-					</xsl:choose>
-					<xsl:variable name="others" select="Others/Morpheme | Others/Allomorph"/>
-					<xsl:choose>
-						<xsl:when test="count($others) &gt; 1">
-							<xsl:text> these other items: </xsl:text>
-						</xsl:when>
-						<xsl:otherwise>
-							<xsl:text> this other item: </xsl:text>
-						</xsl:otherwise>
-					</xsl:choose>
-					<xsl:for-each select="Others/Morpheme">
-						<span>
-							<xsl:attribute name="onclick">
-								<xsl:text>JumpToToolBasedOnHvo(</xsl:text>
-								<xsl:value-of select="substring(@id,4)"/>
-								<xsl:text>)</xsl:text>
-							</xsl:attribute>
-							<xsl:attribute name="onmousemove">
-								<xsl:text>MouseMove()</xsl:text>
-							</xsl:attribute>
-							<xsl:value-of select="Gloss"/>
-						</span>
-						<xsl:if test="count(following-sibling::*)!=0">
-							<xsl:text>, </xsl:text>
-						</xsl:if>
-					</xsl:for-each>
-					<xsl:for-each select="Others/Allomorph">
-						<span>
-							<xsl:attribute name="onclick">
-								<xsl:text>JumpToToolBasedOnHvo(</xsl:text>
-								<xsl:value-of select="Morph/MoForm/@DbRef"/>
-								<xsl:text>)</xsl:text>
-							</xsl:attribute>
-							<xsl:attribute name="onmousemove">
-								<xsl:text>MouseMove()</xsl:text>
-							</xsl:attribute>
-							<xsl:value-of select="Morph/shortName"/>
-						</span>
-						<xsl:if test="count(following-sibling::*)!=0">
-							<xsl:text>, </xsl:text>
-						</xsl:if>
-					</xsl:for-each>
-					<xsl:text>.)</xsl:text>
-				</xsl:when>
-			</xsl:choose>
-			</span>
-		</xsl:for-each>
-	</xsl:template>
-	<!--
-		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-		ShowAnySuccess
-		Show a success message if this is at end of word and a success
-		Parameters: none
-		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-	-->
-	<xsl:template name="ShowAnySuccess">
-		<xsl:variable name="reportSuccess">
-			<xsl:variable name="reportSuccessID">
-				<xsl:choose>
-					<xsl:when test="name()='PhonologicalRuleSynthesisTrace'">
-						<xsl:value-of select="following-sibling::ReportSuccessTrace[1]/Result/@id"/>
-					</xsl:when>
-					<xsl:when test="name()='MorphologicalRuleSynthesisTrace'">
-						<xsl:value-of select="ReportSuccessTrace[1]/Result/@id"/>
-					</xsl:when>
-				</xsl:choose>
-			</xsl:variable>
-			<xsl:if test="$reportSuccessID">
-				<xsl:variable name="wordGrammarSuccess" select="/Wordform/WordGrammarTrace/WordGrammarAttempt[Id=$reportSuccessID]"/>
-				<xsl:if test="$wordGrammarSuccess/@success='true'">
-					<xsl:choose>
-						<xsl:when test="$analysisPhonologicalRules">
-							<xsl:if test="name()='PhonologicalRuleSynthesisTrace'">
-								<xsl:text>Y</xsl:text>
-							</xsl:if>
-						</xsl:when>
-						<xsl:otherwise>
-							<xsl:text>Y</xsl:text>
-						</xsl:otherwise>
-					</xsl:choose>
-				</xsl:if>
-			</xsl:if>
-		</xsl:variable>
-		<xsl:if test="$reportSuccess='Y'">
-			<span>
-				<xsl:attribute name="style">
-					<xsl:text>color:</xsl:text>
-					<xsl:value-of select="$sSuccessColor"/>
-					<xsl:text>; font-size:smaller;</xsl:text>
-					<xsl:if test="$prmVernacularRTL='Y'">
-						<xsl:text>direction:ltr</xsl:text>
-					</xsl:if>
-				</xsl:attribute>
-				<xsl:choose>
-					<xsl:when test="$prmVernacularRTL='Y'">
-						<!-- NB: no exclamation mark when right-to-left because it comes out at the wrong spot -->
-						<xsl:text>(Parse succeeded)&#xa0;&#xa0;</xsl:text>
-					</xsl:when>
-					<xsl:otherwise>
-						<xsl:text>&#xa0;&#xa0;(Parse succeeded!)</xsl:text>
-					</xsl:otherwise>
-				</xsl:choose>
-			</span>
-		</xsl:if>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:for-each select="FailureReason">
+					<span style="unicode-bidi:embed">
+						<xsl:attribute name="style">
+							<xsl:text>color:</xsl:text>
+							<xsl:value-of select="$sFailureColor"/>
+							<xsl:text>; font-size:smaller</xsl:text>
+						</xsl:attribute>
+						<xsl:text>&#xa0;&#xa0;(Reason: </xsl:text>
+						<xsl:choose>
+							<xsl:when test="@type = 'adhocProhibitionRule'">
+								<xsl:text>Ad-hoc prohibition rule failed.  The </xsl:text>
+								<xsl:value-of select="translate(RuleType,'AM','am')"/>
+								<xsl:text>, </xsl:text>
+								<xsl:if test="Allomorph">
+									<span>
+										<xsl:attribute name="style">
+											<xsl:text>cursor:pointer</xsl:text>
+											<xsl:call-template name="GetVernacularFont"/>
+										</xsl:attribute>
+										<xsl:attribute name="onclick">
+											<xsl:text>JumpToToolBasedOnHvo(</xsl:text>
+											<xsl:value-of select="Allomorph/@id"/>
+											<xsl:text>)</xsl:text>
+										</xsl:attribute>
+										<xsl:attribute name="onmousemove">
+											<xsl:text>MouseMove()</xsl:text>
+										</xsl:attribute>
+										<xsl:value-of select="Allomorph/LongName"/>
+									</span>
+								</xsl:if>
+								<xsl:if test="Morpheme">
+									<span style="cursor:pointer;">
+										<xsl:attribute name="onclick">
+											<xsl:text>JumpToToolBasedOnHvo(</xsl:text>
+											<xsl:value-of select="KeyMorpheme/@id"/>
+											<xsl:text>)</xsl:text>
+										</xsl:attribute>
+										<xsl:attribute name="onmousemove">
+											<xsl:text>MouseMove()</xsl:text>
+										</xsl:attribute>
+										<xsl:value-of select="Morpheme/Gloss"/>
+									</span>
+								</xsl:if>
+								<xsl:text>, cannot occur </xsl:text>
+								<xsl:choose>
+									<xsl:when test="Adjacency='AdjacentToRight'">
+										<xsl:text>adjacent before</xsl:text>
+									</xsl:when>
+									<xsl:when test="Adjacency='AdjacentToLeft'">
+										<xsl:text>adjacent after</xsl:text>
+									</xsl:when>
+									<xsl:when test="Adjacency='SomewhereToRight'">
+										<xsl:text>somewhere before</xsl:text>
+									</xsl:when>
+									<xsl:when test="Adjacency='SomewhereToLeft'">
+										<xsl:text>somewhere after</xsl:text>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:text>anywhere around</xsl:text>
+									</xsl:otherwise>
+								</xsl:choose>
+								<xsl:variable name="others" select="Others/Morpheme | Others/Allomorph"/>
+								<xsl:choose>
+									<xsl:when test="count($others) &gt; 1">
+										<xsl:text> these items: </xsl:text>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:text> this item: </xsl:text>
+									</xsl:otherwise>
+								</xsl:choose>
+								<xsl:for-each select="Others/Morpheme">
+									<span style="cursor:pointer;">
+										<xsl:attribute name="onclick">
+											<xsl:text>JumpToToolBasedOnHvo(</xsl:text>
+											<xsl:value-of select="@id"/>
+											<xsl:text>)</xsl:text>
+										</xsl:attribute>
+										<xsl:attribute name="onmousemove">
+											<xsl:text>MouseMove()</xsl:text>
+										</xsl:attribute>
+										<xsl:value-of select="Gloss"/>
+									</span>
+									<xsl:if test="count(following-sibling::*)!=0">
+										<xsl:text>, </xsl:text>
+									</xsl:if>
+								</xsl:for-each>
+								<xsl:for-each select="Others/Allomorph">
+									<span>
+										<xsl:attribute name="style">
+											<xsl:text>cursor:pointer</xsl:text>
+											<xsl:call-template name="GetVernacularFont"/>
+										</xsl:attribute>
+										<xsl:attribute name="onclick">
+											<xsl:text>JumpToToolBasedOnHvo(</xsl:text>
+											<xsl:value-of select="@id"/>
+											<xsl:text>)</xsl:text>
+										</xsl:attribute>
+										<xsl:attribute name="onmousemove">
+											<xsl:text>MouseMove()</xsl:text>
+										</xsl:attribute>
+										<xsl:value-of select="LongName"/>
+									</span>
+									<xsl:if test="count(following-sibling::*)!=0">
+										<xsl:text>, </xsl:text>
+									</xsl:if>
+								</xsl:for-each>
+								<xsl:text>.</xsl:text>
+							</xsl:when>
+							<xsl:when test="@type = 'formMismatch'">
+								<xsl:text>The synthesized surface form does not match the input word.</xsl:text>
+							</xsl:when>
+							<xsl:when test="@type = 'boundStem'">
+								<xsl:text>A bound stem or root was found completely by itself. These must have at least one other morpheme present.</xsl:text>
+							</xsl:when>
+							<xsl:when test="@type = 'disjunctiveAllomorph'">
+								<xsl:text>The valid parse '</xsl:text>
+								<span>
+									<xsl:attribute name="style">
+										<xsl:call-template name="GetVernacularFont"/>
+									</xsl:attribute>
+									<xsl:value-of select="Word"/>
+								</span>
+								<xsl:text>' takes precedence over this parse.</xsl:text>
+							</xsl:when>
+							<xsl:when test="@type = 'affixInflFeats'">
+								<xsl:text>The parse's inflection features '</xsl:text>
+								<xsl:value-of select="InflFeatures"/>
+								<xsl:text>' conflict with the following features required by the allomorph '</xsl:text>
+								<span>
+									<xsl:attribute name="style">
+										<xsl:text>cursor:pointer</xsl:text>
+										<xsl:call-template name="GetVernacularFont"/>
+									</xsl:attribute>
+									<xsl:attribute name="onclick">
+										<xsl:text>JumpToToolBasedOnHvo(</xsl:text>
+										<xsl:value-of select="Allomorph/@id"/>
+										<xsl:text>)</xsl:text>
+									</xsl:attribute>
+									<xsl:attribute name="onmousemove">
+										<xsl:text>MouseMove()</xsl:text>
+									</xsl:attribute>
+									<xsl:value-of select="Allomorph/LongName"/>
+								</span>
+								<xsl:text>': </xsl:text>
+								<xsl:value-of select="RequiredInflFeatures"/>
+								<xsl:text>.</xsl:text>
+							</xsl:when>
+							<xsl:when test="@type = 'stemName'">
+								<xsl:text>The allomorph '</xsl:text>
+								<span>
+									<xsl:attribute name="style">
+										<xsl:text>cursor:pointer</xsl:text>
+										<xsl:call-template name="GetVernacularFont"/>
+									</xsl:attribute>
+									<xsl:attribute name="onclick">
+										<xsl:text>JumpToToolBasedOnHvo(</xsl:text>
+										<xsl:value-of select="Allomorph/@id"/>
+										<xsl:text>)</xsl:text>
+									</xsl:attribute>
+									<xsl:attribute name="onmousemove">
+										<xsl:text>MouseMove()</xsl:text>
+									</xsl:attribute>
+									<xsl:value-of select="Allomorph/LongName"/>
+								</span>
+								<xsl:text>' has a stem name of '</xsl:text>
+								<xsl:value-of select="StemName"/>
+								<xsl:text>', therefore it requires some inflectional affixes with inflection features for that stem name, but there aren't any such inflectional affixes.</xsl:text>
+							</xsl:when>
+							<xsl:when test="@type = 'environment'">
+								<xsl:choose>
+									<xsl:when test="Allomorph">
+										<xsl:text>Environment incorrect for allomorph '</xsl:text>
+										<span>
+											<xsl:attribute name="style">
+												<xsl:text>cursor:pointer</xsl:text>
+												<xsl:call-template name="GetVernacularFont"/>
+											</xsl:attribute>
+											<xsl:attribute name="onclick">
+												<xsl:text>JumpToToolBasedOnHvo(</xsl:text>
+												<xsl:value-of select="Allomorph/@id"/>
+												<xsl:text>)</xsl:text>
+											</xsl:attribute>
+											<xsl:attribute name="onmousemove">
+												<xsl:text>MouseMove()</xsl:text>
+											</xsl:attribute>
+											<xsl:value-of select="Allomorph/LongName"/>
+										</span>
+										<xsl:text>': </xsl:text>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:text>Environment incorrect: </xsl:text>
+									</xsl:otherwise>
+								</xsl:choose>
+								<xsl:for-each select="Environment">
+									<span>
+										<xsl:attribute name="style">
+											<xsl:call-template name="GetVernacularFont"/>
+										</xsl:attribute>
+										<xsl:value-of select="."/>
+									</span>
+									<xsl:if test="count(following-sibling::*)!=0">
+										<xsl:text>, </xsl:text>
+									</xsl:if>
+								</xsl:for-each>
+								<xsl:text>.</xsl:text>
+							</xsl:when>
+							<xsl:when test="@type = 'affixProcess'">
+								<xsl:text>The synthesized form does not match the input side of this affix process rule.</xsl:text>
+							</xsl:when>
+							<xsl:when test="@type = 'inflFeats'">
+								<xsl:text>The parse's inflection features '</xsl:text>
+								<xsl:value-of select="InflFeatures"/>
+								<xsl:text>' conflict with the following required features: </xsl:text>
+								<xsl:value-of select="RequiredInflFeatures"/>
+								<xsl:text>.</xsl:text>
+							</xsl:when>
+							<xsl:when test="@type = 'fromStemName'">
+								<xsl:text>The stem/root does not have the stem name '</xsl:text>
+								<xsl:value-of select="StemName"/>
+								<xsl:text>'.</xsl:text>
+							</xsl:when>
+							<xsl:when test="@type = 'mprFeatures'">
+								<xsl:call-template name="ShowMprFeatureFailure">
+									<xsl:with-param name="reason" select="."/>
+								</xsl:call-template>
+							</xsl:when>
+							<xsl:when test="@type = 'requiredInflType'">
+								<xsl:text>This null affix can only attach to an irregulary inflected form.</xsl:text>
+							</xsl:when>
+							<xsl:when test="@type = 'excludedInflType'">
+								<xsl:text>This affix cannot attach to an irregularly inflected form.</xsl:text>
+							</xsl:when>
+							<xsl:when test="@type = 'partialParse'">
+								<xsl:text>This parse does not include all analyzed morphemes.</xsl:text>
+							</xsl:when>
+							<xsl:when test="@type = 'nonFinalTemplate'">
+								<xsl:text>Further derivation is required after a non-final template.</xsl:text>
+							</xsl:when>
+						</xsl:choose>
+						<xsl:text>)</xsl:text>
+					</span>
+				</xsl:for-each>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 	<!--
 		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -778,26 +878,9 @@ function Toggle(node, path, imgOffset)
 	-->
 	<xsl:template name="ShowIcon">
 		<xsl:variable name="bUsePlus">
-			<xsl:choose>
-				<xsl:when test="name()='WordSynthesisTrace'">
-					<xsl:call-template name="DetermineIfMoreToShow">
-						<xsl:with-param name="traceRoot" select="."/>
-					</xsl:call-template>
-				</xsl:when>
-				<xsl:when test="name()='MorphologicalRuleSynthesisTrace' and PhonologicalRuleSynthesisTrace">
-					<xsl:call-template name="DetermineIfMoreToShow">
-						<xsl:with-param name="traceRoot" select="PhonologicalRuleSynthesisTrace[1]"/>
-					</xsl:call-template>
-				</xsl:when>
-				<xsl:when test="name()='PhonologicalRuleSynthesisTrace'">
-					<!-- do nothing; we're done -->
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:call-template name="DetermineIfMoreToShow">
-						<xsl:with-param name="traceRoot" select="."/>
-					</xsl:call-template>
-				</xsl:otherwise>
-			</xsl:choose>
+			<xsl:call-template name="DetermineIfMoreToShow">
+				<xsl:with-param name="traceRoot" select="."/>
+			</xsl:call-template>
 		</xsl:variable>
 		<xsl:variable name="sIcon">
 			<xsl:choose>
@@ -876,7 +959,7 @@ ShowMorph
 		<span class="interblock">
 			<table cellpadding="0" cellspacing="0">
 				<xsl:attribute name="style">
-					<xsl:text>color:</xsl:text>
+					<xsl:text>cursor:pointer;color:</xsl:text>
 					<xsl:call-template name="GetSuccessOrFailureColor"/>
 					<xsl:if test="$prmVernacularRTL='Y'">
 						<xsl:text>; text-align:right;</xsl:text>
@@ -884,28 +967,7 @@ ShowMorph
 				</xsl:attribute>
 				<xsl:attribute name="onclick">
 					<xsl:text>JumpToToolBasedOnHvo(</xsl:text>
-					<xsl:choose>
-						<xsl:when test="name()='WordSynthesisTrace'">
-							<xsl:value-of select="RootAllomorph/Morph/MoForm/@DbRef"/>
-						</xsl:when>
-						<xsl:when test="(name()='MorphologicalRuleAnalysisTrace' or name()='MorphologicalRuleSynthesisTrace') and starts-with(MorphologicalRule/@id, 'comp')">
-							<xsl:choose>
-								<xsl:when test="@id='compRight' or @id='compLeft'">
-									<!--  this is a default rule, so there is nothing in the database that corresponds to it -->
-									<xsl:text>0</xsl:text>
-								</xsl:when>
-								<xsl:when test="contains(MorphologicalRule/@id,'_')">
-									<xsl:value-of select="substring-before(substring-after(MorphologicalRule/@id, 'comp'),'_')" />
-								</xsl:when>
-								<xsl:otherwise>
-									<xsl:value-of select="substring-after(MorphologicalRule/@id, 'comp')" />
-								</xsl:otherwise>
-							</xsl:choose>
-						</xsl:when>
-						<xsl:otherwise>
-							<xsl:value-of select="RuleAllomorph/Morph/MoForm/@DbRef"/>
-						</xsl:otherwise>
-					</xsl:choose>
+					<xsl:value-of select="Allomorph/@id"/>
 					<xsl:text>)</xsl:text>
 				</xsl:attribute>
 				<xsl:attribute name="onmousemove">
@@ -925,20 +987,10 @@ ShowMorph
 							<xsl:call-template name="GetVernacularFont"/>
 						</xsl:attribute>
 						<xsl:choose>
-							<xsl:when test="name()='WordSynthesisTrace'">
-								<xsl:value-of select="RootAllomorph/Morph/alloform"/>
-							</xsl:when>
-							<xsl:when test="(name()='MorphologicalRuleAnalysisTrace' or name()='MorphologicalRuleSynthesisTrace') and starts-with(MorphologicalRule/@id, 'comp')">
+							<xsl:when test="MorphologicalRule/@type = 'compound'">
 							</xsl:when>
 							<xsl:otherwise>
-								<xsl:choose>
-									<xsl:when test="count(RuleAllomorph/Morph/MoForm) > 1">
-										<xsl:value-of select="RuleAllomorph/Morph/citationForm"/>
-									</xsl:when>
-									<xsl:otherwise>
-										<xsl:value-of select="RuleAllomorph/Morph/alloform"/>
-									</xsl:otherwise>
-								</xsl:choose>
+								<xsl:value-of select="Allomorph/Form"/>
 							</xsl:otherwise>
 						</xsl:choose>
 					</td>
@@ -953,14 +1005,11 @@ ShowMorph
 						</xsl:attribute>
 						<!-- citationForm -->
 						<xsl:choose>
-							<xsl:when test="name()='WordSynthesisTrace'">
-								<xsl:value-of select="RootAllomorph/Morph/citationForm"/>
-							</xsl:when>
-							<xsl:when test="(name()='MorphologicalRuleAnalysisTrace' or name()='MorphologicalRuleSynthesisTrace') and starts-with(MorphologicalRule/@id, 'comp')">
+							<xsl:when test="MorphologicalRule/@type = 'compound'">
 								<xsl:text>Compound rule</xsl:text>
 							</xsl:when>
 							<xsl:otherwise>
-								<xsl:value-of select="RuleAllomorph/Morph/citationForm"/>
+								<xsl:value-of select="Allomorph/Morpheme/HeadWord"/>
 							</xsl:otherwise>
 						</xsl:choose>
 					</td>
@@ -974,14 +1023,11 @@ ShowMorph
 							<xsl:call-template name="GetAnalysisFont"/>
 						</xsl:attribute>
 						<xsl:choose>
-							<xsl:when test="name()='WordSynthesisTrace'">
-								<xsl:value-of select="RootAllomorph/Morph/gloss"/>
-							</xsl:when>
-							<xsl:when test="(name()='MorphologicalRuleAnalysisTrace' or name()='MorphologicalRuleSynthesisTrace') and starts-with(MorphologicalRule/@id, 'comp')">
-								<xsl:value-of select="MorphologicalRule/Description"/>
+							<xsl:when test="MorphologicalRule/@type = 'compound'">
+								<xsl:value-of select="MorphologicalRule"/>
 							</xsl:when>
 							<xsl:otherwise>
-								<xsl:value-of select="RuleAllomorph/Morph/gloss"/>
+								<xsl:value-of select="Allomorph/Morpheme/Gloss"/>
 							</xsl:otherwise>
 						</xsl:choose>
 					</td>
@@ -992,16 +1038,12 @@ ShowMorph
 							<xsl:attribute name="style">direction:ltr</xsl:attribute>
 						</xsl:if>
 						<xsl:choose>
-							<xsl:when test="name()='WordSynthesisTrace'">
-								<xsl:call-template name="ShowMsaInfo">
-									<xsl:with-param name="morph" select="RootAllomorph/Morph/MSI"/>
-								</xsl:call-template>
-							</xsl:when>
-							<xsl:when test="(name()='MorphologicalRuleAnalysisTrace' or name()='MorphologicalRuleSynthesisTrace') and starts-with(MorphologicalRule/@id, 'comp')">
+							<xsl:when test="MorphologicalRule/@type = 'compound'">
+								<!-- Compound rules are not morphemes -->
 							</xsl:when>
 							<xsl:otherwise>
 								<xsl:call-template name="ShowMsaInfo">
-									<xsl:with-param name="morph" select="RuleAllomorph/Morph/MSI"/>
+									<xsl:with-param name="msa" select="Allomorph/Morpheme"/>
 								</xsl:call-template>
 							</xsl:otherwise>
 						</xsl:choose>
@@ -1059,7 +1101,7 @@ ShowMorph
 		<span class="interblock">
 			<table cellpadding="0" cellspacing="0">
 				<xsl:attribute name="style">
-					<xsl:text>color:</xsl:text>
+					<xsl:text>cursor:pointer;color:</xsl:text>
 					<xsl:value-of select="$sSuccessColor"/>
 					<xsl:if test="$prmVernacularRTL='Y'">
 						<xsl:text>; text-align:right;</xsl:text>
@@ -1067,7 +1109,7 @@ ShowMorph
 				</xsl:attribute>
 				<xsl:attribute name="onclick">
 					<xsl:text>JumpToToolBasedOnHvo(</xsl:text>
-					<xsl:value-of select="MoForm/@DbRef"/>
+					<xsl:value-of select="@id"/>
 					<xsl:text>)</xsl:text>
 				</xsl:attribute>
 				<xsl:attribute name="onmousemove">
@@ -1081,7 +1123,7 @@ ShowMorph
 							</xsl:if>
 							<xsl:call-template name="GetVernacularFont"/>
 						</xsl:attribute>
-						<xsl:value-of select="alloform"/>
+						<xsl:value-of select="Form"/>
 					</td>
 				</tr>
 				<tr>
@@ -1092,7 +1134,7 @@ ShowMorph
 							</xsl:if>
 							<xsl:call-template name="GetVernacularFont"/>
 						</xsl:attribute>
-						<xsl:value-of select="citationForm"/>
+						<xsl:value-of select="Morpheme/HeadWord"/>
 					</td>
 				</tr>
 				<tr>
@@ -1103,10 +1145,9 @@ ShowMorph
 							</xsl:if>
 							<xsl:call-template name="GetAnalysisFont"/>
 						</xsl:attribute>
-						<xsl:variable name="sGloss" select="gloss"/>
 						<xsl:choose>
-							<xsl:when test="string-length($sGloss) &gt; 0">
-								<xsl:value-of select="$sGloss"/>
+							<xsl:when test="string-length(Morpheme/Gloss) &gt; 0">
+								<xsl:value-of select="Morpheme/Gloss"/>
 							</xsl:when>
 							<xsl:otherwise>
 								<xsl:text>&#xa0;</xsl:text>
@@ -1120,7 +1161,7 @@ ShowMorph
 							<xsl:attribute name="style">direction:ltr</xsl:attribute>
 						</xsl:if>
 						<xsl:call-template name="ShowMsaInfo">
-							<xsl:with-param name="morph" select="MSI"/>
+							<xsl:with-param name="msa" select="Morpheme"/>
 						</xsl:call-template>
 					</td>
 				</tr>
@@ -1136,13 +1177,6 @@ ShowMorph
 	-->
 	<xsl:template name="ShowPhonologicalRules">
 		<xsl:param name="phonologicalRules"/>
-		<xsl:variable name="fHaveBlocker">
-			<xsl:choose>
-				<xsl:when test="$phonologicalRules/PhonologicalRuleSynthesisRequiredPOSTrace">Y</xsl:when>
-				<xsl:when test="$phonologicalRules/PhonologicalRuleSynthesisMPRFeaturesTrace">Y</xsl:when>
-				<xsl:otherwise>N</xsl:otherwise>
-			</xsl:choose>
-		</xsl:variable>
 		<table border="1">
 			<tr>
 				<th>Input</th>
@@ -1155,31 +1189,31 @@ ShowMorph
 					</xsl:attribute>
 					<xsl:value-of select="$phonologicalRules[1]/Input"/>
 				</td>
-				<xsl:if test="$fHaveBlocker='Y'">
+				<xsl:if test="$phonologicalRules/FailureReason">
 					<th>Rule not applied because...</th>
 				</xsl:if>
 			</tr>
 			<xsl:for-each select="$phonologicalRules">
 				<tr>
-					<th>
+					<th style="cursor:pointer;">
 						<xsl:attribute name="onclick">
 							<xsl:text>JumpToToolBasedOnHvo(</xsl:text>
-							<xsl:value-of select="substring-after(PhonologicalRule/@id, 'prule')"/>
+							<xsl:value-of select="PhonologicalRule/@id"/>
 							<xsl:text>)</xsl:text>
 						</xsl:attribute>
 						<xsl:attribute name="onmousemove">
 							<xsl:text>MouseMove()</xsl:text>
 						</xsl:attribute>
 						<xsl:choose>
-							<xsl:when test="string-length(normalize-space(PhonologicalRule/Description)) &gt; 0">
+							<xsl:when test="string-length(normalize-space(PhonologicalRule)) &gt; 0">
 								<xsl:choose>
-									<xsl:when test="PhonologicalRuleSynthesisRequiredPOSTrace or PhonologicalRuleSynthesisMPRFeaturesTrace">
+									<xsl:when test="FailureReason">
 										<span style="color:gray">
-											<xsl:value-of select="normalize-space(PhonologicalRule/Description)"/>
+											<xsl:value-of select="normalize-space(PhonologicalRule)"/>
 										</span>
 									</xsl:when>
 									<xsl:otherwise>
-										<xsl:value-of select="normalize-space(PhonologicalRule/Description)"/>
+										<xsl:value-of select="normalize-space(PhonologicalRule)"/>
 									</xsl:otherwise>
 								</xsl:choose>
 							</xsl:when>
@@ -1198,76 +1232,93 @@ ShowMorph
 						</xsl:attribute>
 						<xsl:value-of select="Output"/>
 					</td>
-					<xsl:if test="$fHaveBlocker='Y'">
+					<xsl:if test="$phonologicalRules/FailureReason">
 						<td>
-					<xsl:choose>
-						<xsl:when test="PhonologicalRuleSynthesisRequiredPOSTrace">
-							<xsl:text>The stem's category is </xsl:text>
-							<xsl:value-of select="PhonologicalRuleSynthesisRequiredPOSTrace/PhonologicalRuleStemPOS/Description"/>
-							<xsl:text>, but this rule only applies when the stem's category is </xsl:text>
-							<xsl:for-each select="PhonologicalRuleSynthesisRequiredPOSTrace/PhonologicalRuleRequiredPOSes/PhonologicalRuleRequiredPOS">
-								<xsl:value-of select="Description"/>
-								<xsl:call-template name="OutputListPunctuation">
-									<xsl:with-param name="sConjunction" select="' or '"/>
-									<xsl:with-param name="sFinalPunctuation" select="'.'"/>
-								</xsl:call-template>
-							</xsl:for-each>
-						</xsl:when>
-						<xsl:otherwise>
 							<xsl:choose>
-								<xsl:when test="PhonologicalRuleSynthesisMPRFeaturesTrace">
-									<xsl:choose>
-										<xsl:when test="PhonologicalRuleSynthesisMPRFeaturesTrace/PhonologicalRuleMPRFeatures/PhonologicalRuleMPRFeature">
-											<xsl:text>The stem has the following properties:</xsl:text>
-											<xsl:for-each select="PhonologicalRuleSynthesisMPRFeaturesTrace/PhonologicalRuleMPRFeatures/PhonologicalRuleMPRFeature">
-												<xsl:value-of select="Description"/>
-												<xsl:call-template name="OutputListPunctuation">
-													<xsl:with-param name="sConjunction" select="' and '"/>
-													<xsl:with-param name="sFinalPunctuation" select="','"/>
-												</xsl:call-template>
-											</xsl:for-each>
-										</xsl:when>
-										<xsl:otherwise>
-											<xsl:text>The stem does not have any special properties,</xsl:text>
-										</xsl:otherwise>
-									</xsl:choose>
-									<xsl:choose>
-										<xsl:when test="PhonologicalRuleSynthesisMPRFeaturesTrace/@type='required'">
-											<xsl:text> but this rule only applies when the stem has the following properties: </xsl:text>
-										</xsl:when>
-										<xsl:otherwise>
-											<xsl:text> but this rule only applies when the stem has none of the following properties: </xsl:text>
-										</xsl:otherwise>
-									</xsl:choose>
-									<xsl:for-each select="PhonologicalRuleSynthesisMPRFeaturesTrace/PhonologicalRuleConstrainingMPRFeatrues/PhonologicalRuleMPRFeature">
-										<xsl:value-of select="Description"/>
+								<xsl:when test="FailureReason/@type = 'category'">
+									<xsl:text>The stem's category is </xsl:text>
+									<xsl:value-of select="FailureReason/Category"/>
+									<xsl:text>, but this rule only applies when the stem's category is </xsl:text>
+									<xsl:for-each select="FailureReason/RequiredCategories/Category">
+										<xsl:value-of select="."/>
 										<xsl:call-template name="OutputListPunctuation">
-											<xsl:with-param name="sConjunction">
-												<xsl:choose>
-													<xsl:when test="../../@type='required'">
-														<xsl:text> and </xsl:text>
-													</xsl:when>
-													<xsl:otherwise>
-														<xsl:text> or </xsl:text>
-													</xsl:otherwise>
-												</xsl:choose>
-											</xsl:with-param>
+											<xsl:with-param name="sConjunction" select="' or '"/>
 											<xsl:with-param name="sFinalPunctuation" select="'.'"/>
 										</xsl:call-template>
 									</xsl:for-each>
 								</xsl:when>
-								<xsl:otherwise>
-									<xsl:text>&#xa0;</xsl:text>
-								</xsl:otherwise>
+								<xsl:when test="FailureReason/@type = 'mprFeatures'">
+									<xsl:call-template name="ShowMprFeatureFailure">
+										<xsl:with-param name="reason" select="FailureReason"/>
+									</xsl:call-template>
+								</xsl:when>
 							</xsl:choose>
-						</xsl:otherwise>
-					</xsl:choose>
 						</td>
 					</xsl:if>
 				</tr>
 			</xsl:for-each>
 		</table>
 	</xsl:template>
+
+	<xsl:template name="ShowMprFeatureFailure">
+		<xsl:param name="reason"/>
+		<xsl:variable name="featureTypeStr">
+			<xsl:choose>
+				<xsl:when test="$reason/Group = 'inflClasses'">
+					<xsl:text>inflection classes</xsl:text>
+				</xsl:when>
+				<xsl:when test="$reason/Group = 'exceptionFeatures'">
+					<xsl:text>exception features</xsl:text>
+				</xsl:when>
+			</xsl:choose>
+		</xsl:variable>
+		<xsl:choose>
+			<xsl:when test="$reason/MprFeatures/MprFeature">
+				<xsl:text>The stem has the following </xsl:text>
+				<xsl:value-of select="$featureTypeStr"/>
+				<xsl:text>: </xsl:text>
+				<xsl:for-each select="FailureReason/MprFeatures/MprFeature">
+					<xsl:value-of select="."/>
+					<xsl:call-template name="OutputListPunctuation">
+						<xsl:with-param name="sConjunction" select="' and '"/>
+						<xsl:with-param name="sFinalPunctuation" select="','"/>
+					</xsl:call-template>
+				</xsl:for-each>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:text>The stem does not have any </xsl:text>
+				<xsl:value-of select="$featureTypeStr"/>
+				<xsl:text>,</xsl:text>
+			</xsl:otherwise>
+		</xsl:choose>
+		<xsl:choose>
+			<xsl:when test="$reason/MatchType = 'required'">
+				<xsl:text> but this rule only applies when the stem has the following </xsl:text>
+			</xsl:when>
+			<xsl:when test="$reason/MatchType = 'excluded'">
+				<xsl:text> but this rule only applies when the stem has none of the following </xsl:text>
+			</xsl:when>
+		</xsl:choose>
+		<xsl:value-of select="$featureTypeStr"/>
+		<xsl:text>: </xsl:text>
+		<xsl:for-each select="$reason/ConstrainingMprFeatrues/MprFeature">
+			<xsl:value-of select="."/>
+			<xsl:call-template name="OutputListPunctuation">
+				<xsl:with-param name="sConjunction">
+					<xsl:choose>
+						<xsl:when test="$reason/MatchType = 'required'">
+							<xsl:text> and </xsl:text>
+						</xsl:when>
+						<xsl:when test="$reason/MatchType = 'excluded'">
+							<xsl:text> or </xsl:text>
+						</xsl:when>
+					</xsl:choose>
+				</xsl:with-param>
+				<xsl:with-param name="sFinalPunctuation" select="'.'"/>
+			</xsl:call-template>
+		</xsl:for-each>
+	</xsl:template>
+
 	<!--
 		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 		ShowSuccessfulAnalyses
@@ -1276,8 +1327,8 @@ ShowMorph
 		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	-->
 	<xsl:template name="ShowSuccessfulAnalyses">
-		<table border="0" style="cursor:pointer;">
-			<xsl:for-each select="/Wordform/WfiAnalysis/Morphs">
+		<table border="0">
+			<xsl:for-each select="/Wordform/Analysis">
 				<xsl:call-template name="ShowSuccessfulAnalysis"/>
 			</xsl:for-each>
 		</table>
@@ -1296,37 +1347,14 @@ ShowMorph
 					<tr>
 						<!-- Note: do not need to do any re-ordering for RTL; the browser does it. -->
 						<xsl:for-each select="Morph">
-
-							<xsl:if test="not(lexEntryInflType)">
-								<!-- This is one of the null allomorphs we create when building the
-									input for the parser in order to still get the Word Grammar to have something in any
-									required slots in affix templates. -->
-								<td valign="top">
-									<xsl:call-template name="ShowMorphSuccess"/>
-								</td>
-							</xsl:if>
+							<td valign="top">
+								<xsl:call-template name="ShowMorphSuccess"/>
+							</td>
 						</xsl:for-each>
 					</tr>
 				</table>
 			</td>
 		</tr>
-	</xsl:template>
-
-	<xsl:template name="ShowOutput">
-		<xsl:if test="name()='MorphologicalRuleAnalysisTrace' or name()='MorphologicalRuleSynthesisTrace'">
-			<span>
-				<xsl:attribute name="style">
-					<xsl:text>color:</xsl:text>
-					<xsl:call-template name="GetSuccessOrFailureColor"/>
-					<xsl:text>; font-size:smaller;</xsl:text>
-					<xsl:if test="$prmVernacularRTL='Y'">
-						<xsl:text>direction:ltr</xsl:text>
-					</xsl:if>
-				</xsl:attribute>
-				<xsl:text>Output: </xsl:text>
-				<xsl:value-of select="Output"/>
-			</span>
-		</xsl:if>
 	</xsl:template>
 
 	<!--
@@ -1340,21 +1368,21 @@ ShowMorph
 		<xsl:param name="traceRoot"/>
 		<xsl:param name="curTemplate"/>
 
-		<xsl:variable name="analysisAffixes" select="$traceRoot/MorphologicalRuleAnalysisTrace[Output!=$prmHCTraceNoOutput and starts-with(MorphologicalRule/@id, 'mrule')]"/>
-		<xsl:variable name="synthesisAffixes" select="$traceRoot/MorphologicalRuleSynthesisTrace[Output!=$prmHCTraceNoOutput and starts-with(MorphologicalRule/@id, 'mrule')]"/>
-		<xsl:variable name="analysisCompoundRules" select="$traceRoot/MorphologicalRuleAnalysisTrace[Output!=$prmHCTraceNoOutput and starts-with(MorphologicalRule/@id, 'comp')]"/>
-		<xsl:variable name="synthesisCompoundRules" select="$traceRoot/MorphologicalRuleSynthesisTrace[Output!=$prmHCTraceNoOutput and starts-with(MorphologicalRule/@id, 'comp')]"/>
+		<xsl:variable name="analysisAffixes" select="$traceRoot/MorphologicalRuleAnalysisTrace[MorphologicalRule/@type = 'affix']"/>
+		<xsl:variable name="synthesisAffixes" select="$traceRoot/MorphologicalRuleSynthesisTrace[MorphologicalRule/@type = 'affix']"/>
+		<xsl:variable name="analysisCompoundRules" select="$traceRoot/MorphologicalRuleAnalysisTrace[MorphologicalRule/@type = 'compound']"/>
+		<xsl:variable name="synthesisCompoundRules" select="$traceRoot/MorphologicalRuleSynthesisTrace[MorphologicalRule/@type = 'compound']"/>
 		<xsl:variable name="synthesizedWords" select="$traceRoot/LexLookupTrace/WordSynthesisTrace"/>
-		<xsl:variable name="phonologicalRules" select="$traceRoot[name()='PhonologicalRuleSynthesisTrace']"/>
+		<xsl:variable name="parseCompleteTraces" select="$traceRoot/ParseCompleteTrace"/>
 
-		<xsl:variable name="parseNodes" select="$analysisAffixes | $synthesisAffixes | $analysisCompoundRules | $synthesisCompoundRules | $synthesizedWords | $phonologicalRules"/>
+		<xsl:variable name="parseNodes" select="$analysisAffixes | $synthesisAffixes | $analysisCompoundRules | $synthesisCompoundRules | $synthesizedWords | $parseCompleteTraces"/>
 		<xsl:if test="$parseNodes">
 			<xsl:for-each select="$parseNodes">
 				<xsl:variable name="lastTemplateTrace" select="(preceding-sibling::*[name()='TemplateAnalysisTraceIn' or name()='TemplateSynthesisTraceIn' or name()='TemplateAnalysisTraceOut' or name()='TemplateSynthesisTraceOut'])[position() = last()]"/>
 				<xsl:variable name="template">
 					<xsl:choose>
 						<xsl:when test="name($lastTemplateTrace) = 'TemplateAnalysisTraceIn' or name($lastTemplateTrace) = 'TemplateSynthesisTraceIn'">
-							<xsl:value-of select="$lastTemplateTrace/AffixTemplate/Description"/>
+							<xsl:value-of select="$lastTemplateTrace/AffixTemplate"/>
 						</xsl:when>
 						<xsl:when test="name($lastTemplateTrace) = 'TemplateAnalysisTraceOut' or name($lastTemplateTrace) = 'TemplateSynthesisTraceOut'">
 							<xsl:text></xsl:text>
@@ -1364,38 +1392,109 @@ ShowMorph
 						</xsl:otherwise>
 					</xsl:choose>
 				</xsl:variable>
-				 <table border="0" style="cursor:pointer;">
+				 <table border="0">
 					<tr>
 						<td width="10"/>
 						<td style="border:solid; border-width:thin;">
 							<a>
 								<xsl:call-template name="ShowIcon"/>
 								<table cellpadding="0pt" cellspacing="0pt">
-									<tr>
-										<td valign="top">
-											<xsl:choose>
-												<xsl:when test="name()='PhonologicalRuleSynthesisTrace'">
-													<xsl:variable name="synthesisPhonologicalRules" select=". | following-sibling::PhonologicalRuleSynthesisTrace"/>
-													<xsl:if test="$synthesisPhonologicalRules">
+									<xsl:choose>
+										<xsl:when test="name() = 'ParseCompleteTrace'">
+											<xsl:if test="../PhonologicalRuleSynthesisTrace">
+												<tr>
+													<td valign="top" colspan="2">
+														<xsl:attribute name="style">
+															<xsl:text>color:</xsl:text>
+															<xsl:call-template name="GetSuccessOrFailureColor"/>
+														</xsl:attribute>
 														<xsl:text>Phonological rules applied:</xsl:text>
 														<xsl:call-template name="ShowPhonologicalRules">
-															<xsl:with-param name="phonologicalRules" select="$synthesisPhonologicalRules"/>
+															<xsl:with-param name="phonologicalRules" select="../PhonologicalRuleSynthesisTrace"/>
 														</xsl:call-template>
-													</xsl:if>
-												</xsl:when>
-												<xsl:otherwise>
+													</td>
+												</tr>
+											</xsl:if>
+											<tr>
+												<td valign="top" colspan="2">
+													<xsl:attribute name="style">
+														<xsl:text>color:</xsl:text>
+														<xsl:call-template name="GetSuccessOrFailureColor"/>
+													</xsl:attribute>
+													<xsl:text>Parse completed.</xsl:text>
+												</td>
+											</tr>
+											<tr>
+												<td valign="top">
+													<span class="interblock">
+														<table cellpadding="0" cellspacing="0">
+															<xsl:attribute name="style">
+																<xsl:text>color:</xsl:text>
+																<xsl:call-template name="GetSuccessOrFailureColor"/>
+																<xsl:if test="$prmVernacularRTL='Y'">
+																	<xsl:text>; text-align:right;</xsl:text>
+																</xsl:if>
+															</xsl:attribute>
+															<tr>
+																<td>
+																	<xsl:attribute name="style">
+																		<xsl:if test="$prmVernacularRTL='Y'">
+																			<xsl:text>direction:rtl</xsl:text>
+																		</xsl:if>
+																		<xsl:text>; font-size:smaller</xsl:text>
+																	</xsl:attribute>
+																	<xsl:text>Result = </xsl:text>
+																	<span>
+																		<xsl:attribute name="style">
+																			<xsl:call-template name="GetVernacularFont"/>
+																		</xsl:attribute>
+																		<xsl:value-of select="Result"/>
+																	</span>
+																</td>
+															</tr>
+															<xsl:if test="@success = 'true'">
+																<tr>
+																	<td>
+																		<xsl:attribute name="style">
+																			<xsl:if test="$prmVernacularRTL='Y'">
+																				<xsl:text>direction:ltr</xsl:text>
+																			</xsl:if>
+																			<xsl:text>; font-size:smaller</xsl:text>
+																		</xsl:attribute>
+																		<xsl:choose>
+																			<xsl:when test="$prmVernacularRTL='Y'">
+																				<!-- NB: no exclamation mark when right-to-left because it comes out at the wrong spot -->
+																				<xsl:text>(Parse succeeded)&#xa0;&#xa0;</xsl:text>
+																			</xsl:when>
+																			<xsl:otherwise>
+																				<xsl:text>&#xa0;&#xa0;(Parse succeeded!)</xsl:text>
+																			</xsl:otherwise>
+																		</xsl:choose>
+																	</td>
+																</tr>
+															</xsl:if>
+														</table>
+													</span>
+												</td>
+												<td valign="top">
+													<xsl:call-template name="ShowAnyFailure"/>
+												</td>
+											</tr>
+										</xsl:when>
+										<xsl:otherwise>
+											<tr>
+												<td valign="top">
 													<xsl:call-template name="ShowMorph">
 														<xsl:with-param name="curTemplate" select="normalize-space($template)"/>
 													</xsl:call-template>
-												</xsl:otherwise>
-											</xsl:choose>
-										</td>
-										<td valign="top">
-											<xsl:call-template name="ShowAnyFailure"/>
-										</td>
-									</tr>
+												</td>
+												<td valign="top">
+													<xsl:call-template name="ShowAnyFailure"/>
+												</td>
+											</tr>
+										</xsl:otherwise>
+									</xsl:choose>
 								</table>
-								<xsl:call-template name="ShowAnySuccess"/>
 							</a>
 							<div>
 								<xsl:attribute name="style">
@@ -1414,17 +1513,8 @@ ShowMorph
 											<xsl:with-param name="traceRoot" select="."/>
 										</xsl:call-template>
 									</xsl:when>
-									<xsl:when test="name()='MorphologicalRuleSynthesisTrace' and PhonologicalRuleSynthesisTrace">
-										<xsl:call-template name="ShowTracePath">
-											<xsl:with-param name="traceRoot" select="."/>
-											<xsl:with-param name="curTemplate" select="$template"/>
-										</xsl:call-template>
-										<xsl:call-template name="ShowTracePath">
-											<xsl:with-param name="traceRoot" select="PhonologicalRuleSynthesisTrace[1]"/>
-										</xsl:call-template>
-									</xsl:when>
-									<xsl:when test="name()='PhonologicalRuleSynthesisTrace'">
-										<!-- do nothing; we're done -->
+									<xsl:when test="name() = 'ParseCompleteTrace'">
+										<!-- The parse is complete, so there are no more records. -->
 									</xsl:when>
 									<xsl:otherwise>
 										<xsl:call-template name="ShowTracePath">
@@ -1448,6 +1538,7 @@ ShowMorph
 		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	-->
 	<xsl:template name="TraceSection">
+		<xsl:call-template name="UseShowDetailsButton"/>
 		<div id="TraceSection" style="display:block">
 			<h2>Parsing Details</h2>
 			<p>
@@ -1467,7 +1558,6 @@ ShowMorph
 					</xsl:attribute>
 					<xsl:text>red</xsl:text>
 				</span>
-				<!-- HC does not offer reasons (yet)
 				<xsl:text> does not have a path to a successful parse (i.e. this path failed to produce a successful parse).  The reason for the failure is shown at the end of a line as </xsl:text>
 				<span>
 					<xsl:attribute name="style">
@@ -1478,8 +1568,6 @@ ShowMorph
 					<xsl:text>(Reason: XXX)</xsl:text>
 				</span>
 				<xsl:text>, where XXX is the reason.  Sometimes you have to follow a path to find a reason. </xsl:text>
-				-->
-				<xsl:text> does not have a path to a successful parse (i.e. this path failed to produce a successful parse). </xsl:text>
 			</p>
 			<p>
 				<xsl:text>This particular parser works as follows:</xsl:text>

@@ -1,3158 +1,0 @@
-(message (
- <hc6508 fname c:\data\hc\morpher\tests\mrules.in > ) )
-;Test morpher rules.
-; Most of the tests are contained in separate files, which are loaded individually.
-(message (
- <hc6508 fname c:\data\hc\morpher\tests\startup.in > ) )
-;Generic startup file for morpher tests.
-;Open a new language for testing purposes (msg 6510):
-(message (
- <hc6510 lname Phonology Test Language > ) )
-;First a morpher_set command, which should result in msg 6502:
-(message (
- <hc6502 var_name '*pfeatures*' > ) )
-;Then we run three load_char_def_table commands, each of
-; which should result in a msg 6501:
-(message (
- <hc6501 table_name table1 > ) )
-(message (
- <hc6501 table_name table2 > ) )
-(message (
- <hc6501 table_name table3 > ) )
-;Now load the strata (msg 6502):
-(message (
- <hc6502 var_name '*strata*' > ) )
-;...and set their ctables (msg 6550):
-(message (
- <hc6550 sname morphophonemic ctable_name table3 > ) )
-(message (
- <hc6550 sname allophonic ctable_name table1 > ) )
-(message (
- <hc6550 sname '*surface*' ctable_name table1 > ) )
-;...their cyclicity (msg 6552):
-(message (
- <hc6552 sname morphophonemic > ) )
-(message (
- <hc6552 sname allophonic > ) )
-;...the order of their prules (msg 6555):
-(message (
- <hc6555 sname morphophonemic > ) )
-(message (
- <hc6555 sname allophonic > ) )
-;...and the order of the mrules (msg 6556):
-(message (
- <hc6556 sname morphophonemic > ) )
-(message (
- <hc6556 sname allophonic > ) )
-;Load in a dictionary file.  Two lex entries are purposely incorrect, and
-; will result in error msgs 6024 and 6009:
-(message (
- <hc6502 var_name '*quit_on_error*' > ) )
-ERROR:hc6024 --- <hc6024 lex_id 3 stratum nonesuch >
-ERROR:hc6009 --- <hc6009 char h string pHhut item 4 ctable_name table1 >
-(message (
- <hc6515 n 56 fname c:\data\hc\morpher\tests\diction.txt > ) )
-(message (
- <hc6502 var_name '*quit_on_error*' > ) )
-(message (
- <hc6521 fname c:\data\hc\morpher\tests\startup.in > ) )
-;Don't let errors stop us:
-(message (
- <hc6502 var_name '*quit_on_error*' > ) )
-(message (
- <hc6508 fname c:\data\hc\morpher\tests\morphsyn.in > ) )
-;A file of morphological rules testing morphosyntactic properties of the
-; rules, such as part of speech, subcategorization and blocking.
-(message (
- <hc6541 nat_class_name null > ) )
-;
-;First rule: specify both input and output POS:
-(message (
- <hc6505 rname s_suffix > ) )
-;Trace:
-(message (
- <hc6535 rname s_suffix > ) )
-;Morph, rule should change POS from V to N:
-(pretty_print
- <trace sh sags
-  cont (
-   <mua nm s_suffix
-	in  <lex sh saa∑gs str morphophonemic >
-	out <lex sh saa∑g pos 'V' str morphophonemic >
-	cont (
-	 <ma nm s_suffix
-	  in  <lex id 32 sh sag gl sag pos 'V' str morphophonemic >
-	  out <lex id 32 sh sags gl sag NMLZ pos 'N' mrs (s_suffix ) str morphophonemic >>
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 32 sh sags gl sag NMLZ pos 'N' mrs (s_suffix ) str '*surface*' > ) )
-;
-;Second rule: specify only input POS:
-(message (
- <hc6504 rname s_suffix > ) )
-;Morph, rule should leave POS as V:
-(pretty_print
- <trace sh sags
-  cont (
-   <mua nm s_suffix
-	in  <lex sh saa∑gs str morphophonemic >
-	out <lex sh saa∑g pos 'V' str morphophonemic >
-	cont (
-	 <ma nm s_suffix
-	  in  <lex id 32 sh sag gl sag pos 'V' str morphophonemic >
-	  out <lex id 32 sh sags gl sag 3.SG pos 'V' mrs (s_suffix ) str morphophonemic >>
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 32 sh sags gl sag 3.SG pos 'V' mrs (s_suffix ) str '*surface*' > ) )
-;
-;Third rule: specify only output POS:
-(message (
- <hc6504 rname s_suffix > ) )
-;Morph, rule should change POS from V to N:
-(pretty_print
- <trace sh sags
-  cont (
-   <mua nm s_suffix
-	in  <lex sh saa∑gs str morphophonemic >
-	out <lex sh saa∑g str morphophonemic >
-	cont (
-	 <ma nm s_suffix
-	  in  <lex id 32 sh sag gl sag pos 'V' str morphophonemic >
-	  out <lex id 32 sh sags gl sag NMLZ pos 'N' mrs (s_suffix ) str morphophonemic >>
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 32 sh sags gl sag NMLZ pos 'N' mrs (s_suffix ) str '*surface*' > ) )
-;
-;Fourth rule: no POS specification:
-(message (
- <hc6504 rname s_suffix > ) )
-;Morph, rule should leave POS unchanged as V:
-(pretty_print
- <trace sh sags
-  cont (
-   <mua nm s_suffix
-	in  <lex sh saa∑gs str morphophonemic >
-	out <lex sh saa∑g str morphophonemic >
-	cont (
-	 <ma nm s_suffix
-	  in  <lex id 32 sh sag gl sag pos 'V' str morphophonemic >
-	  out <lex id 32 sh sags gl sag 3.SG pos 'V' mrs (s_suffix ) str morphophonemic >>
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 32 sh sags gl sag 3.SG pos 'V' mrs (s_suffix ) str '*surface*' > ) )
-;Now test blocking.  Revise the rule to specify output Head Feats:
-(message (
- <hc6504 rname s_suffix > ) )
-;Trace blocking:
-(message (
- <hc6529  > ) )
-;Morph, should get nothing (i.e. error 6006), because it's blocked:
-(pretty_print
- <trace sh sid
-  cont (
-   <mua nm s_suffix
-	in  <lex sh sid str morphophonemic >
-	out <lex sh si pos 'V' str morphophonemic >
-	cont (
-	 <ma nm s_suffix
-	  in  <lex id bl1 sh si fam 'SEE' pos 'V' str morphophonemic >
-	  out <lex id bl1 sh sid fam 'SEE' gl ? NMLZ pos 'V' mrs (s_suffix ) str morphophonemic hf (tense (past ) ) >>
-	 <block type rule bl <lex id bl2 sh sau fam 'SEE' pos 'V' str morphophonemic hf (tense (past ) ) >>
-	)
-   >
-  )
- >
-)
-ERROR:hc6006 --- <hc6006 print_form sid >
-;Turn off tracing of blocking:
-(message (
- <hc6530  > ) )
-;Remove the rule (msg 6506):
-(message (
- <hc6506 rname s_suffix > ) )
-;And the natural classes (msg 6542):
-(message (
- <hc6542 nat_class_name null > ) )
-(message (
- <hc6521 fname c:\data\hc\morpher\tests\morphsyn.in > ) )
-(message (
- <hc6508 fname c:\data\hc\morpher\tests\percolat.in > ) )
-;Test percolation of Head and Foot features.  We use the following
-; lex entries:
-;                  Head Feats
-;             ---------------------
-; Perc0         (           num (pl))
-; Perc1         (pers (1)   num (pl))
-; Perc2         (pers (3)   num (pl))
-; Perc3         (pers (2 3) num (pl))
-; Perc4         (pers (1 3) num (pl))
-; ...and rules:
-;              Req'd Head Feats        (Assigned) Head Feats
-;             ----------------------------------------------
-; Rule1A      (pers (2))               (pers (2))
-; Rule1B      (pers (2 3))             (pers (2))
-; Rule2A      (pers (2))               (pers (3))
-; Rule2B      (pers (2 3))             (pers (3))
-; Rule3       (pers (4))               (pers (3))
-; Rule4A      (pers (2))                ---
-; Rule4B      (pers (2 3))              ---
-;
-;The head features expected in the output Lex Entries are as follows
-; (num (pl) is expected in every case where there is a valid output;
-; "*" indicates no output is expected):
-;              Perc0         Perc1      Perc2        Perc3        Perc4
-;             -------------------------------------------------------------
-; Rule1A      (pers (2))       *          *        (pers (2))       *
-; Rule1B      (pers (2))       *     (pers (2))    (pers (2))    (pers (2))
-; Rule2A      (pers (3))       *          *        (pers (3))       *
-; Rule2B      (pers (3))       *     (pers (3))    (pers (3))    (pers (3))
-; Rule3       (pers (3))       *          *           *             *
-; Rule4A      (pers (2))       *          *        (pers (2))       *
-; Rule4B      (pers (2 3))     *     (pers (3))    (pers (2 3))  (pers (3))
-(message (
- <hc6541 nat_class_name null > ) )
-;Rule1A
-(message (
- <hc6505 rname 'Rule1A' > ) )
-;Morph, expect 2x ambig, output head feats (pers (2) num (pl)):
-(pretty_print (word_analysis
- <lex id Perc0 sh ssagz gl ssag 3SG pos 'V' mrs ('Rule1A' ) str '*surface*' hf (num (pl ) pers (2 ) ) >
- <lex id Perc3 sh ssagz gl ssag 3SG pos 'V' mrs ('Rule1A' ) str '*surface*' hf (num (pl ) pers (2 ) ) > ) )
-;Replace Rule1A with Rule1B:
-(message (
- <hc6506 rname 'Rule1A' > ) )
-(message (
- <hc6505 rname 'Rule1B' > ) )
-;Morph, expect 4x ambig, output head feats (pers (2) num (pl)):
-(pretty_print (word_analysis
- <lex id Perc0 sh ssagz gl ssag 3SG pos 'V' mrs ('Rule1B' ) str '*surface*' hf (num (pl ) pers (2 ) ) >
- <lex id Perc2 sh ssagz gl ssag 3SG pos 'V' mrs ('Rule1B' ) str '*surface*' hf (num (pl ) pers (2 ) ) >
- <lex id Perc3 sh ssagz gl ssag 3SG pos 'V' mrs ('Rule1B' ) str '*surface*' hf (num (pl ) pers (2 ) ) >
- <lex id Perc4 sh ssagz gl ssag 3SG pos 'V' mrs ('Rule1B' ) str '*surface*' hf (num (pl ) pers (2 ) ) > ) )
-;Replace Rule1B with Rule2A:
-(message (
- <hc6506 rname 'Rule1B' > ) )
-(message (
- <hc6505 rname 'Rule2A' > ) )
-;Morph, expect 2x ambig, output head feats (pers (3) num (pl)):
-(pretty_print (word_analysis
- <lex id Perc0 sh ssagz gl ssag 3SG pos 'V' mrs ('Rule2A' ) str '*surface*' hf (num (pl ) pers (3 ) ) >
- <lex id Perc3 sh ssagz gl ssag 3SG pos 'V' mrs ('Rule2A' ) str '*surface*' hf (num (pl ) pers (3 ) ) > ) )
-;Replace Rule2A with Rule2B:
-(message (
- <hc6506 rname 'Rule2A' > ) )
-(message (
- <hc6505 rname 'Rule2B' > ) )
-;Morph, expect 4x ambig, output head feats (pers (3) num (pl)):
-(pretty_print (word_analysis
- <lex id Perc0 sh ssagz gl ssag 3SG pos 'V' mrs ('Rule2B' ) str '*surface*' hf (num (pl ) pers (3 ) ) >
- <lex id Perc2 sh ssagz gl ssag 3SG pos 'V' mrs ('Rule2B' ) str '*surface*' hf (num (pl ) pers (3 ) ) >
- <lex id Perc3 sh ssagz gl ssag 3SG pos 'V' mrs ('Rule2B' ) str '*surface*' hf (num (pl ) pers (3 ) ) >
- <lex id Perc4 sh ssagz gl ssag 3SG pos 'V' mrs ('Rule2B' ) str '*surface*' hf (num (pl ) pers (3 ) ) > ) )
-;Replace Rule2B with Rule3:
-(message (
- <hc6506 rname 'Rule2B' > ) )
-(message (
- <hc6505 rname 'Rule3' > ) )
-;Morph, expect 1x ambig, output head feats (pers (3) num (pl)):
-(pretty_print (word_analysis
- <lex id Perc0 sh ssagz gl ssag 3SG pos 'V' mrs ('Rule3' ) str '*surface*' hf (num (pl ) pers (3 ) ) > ) )
-;Replace Rule3 with Rule4A:
-(message (
- <hc6506 rname 'Rule3' > ) )
-(message (
- <hc6505 rname 'Rule4A' > ) )
-;Morph, expect 2x ambig, output head feats (pers (2) num (pl)):
-(pretty_print (word_analysis
- <lex id Perc0 sh ssagz gl ssag 3SG pos 'V' mrs ('Rule4A' ) str '*surface*' hf (pers (2 ) num (pl ) ) >
- <lex id Perc3 sh ssagz gl ssag 3SG pos 'V' mrs ('Rule4A' ) str '*surface*' hf (pers (2 ) num (pl ) ) > ) )
-;Replace Rule4A with Rule4B:
-(message (
- <hc6506 rname 'Rule4A' > ) )
-(message (
- <hc6505 rname 'Rule4B' > ) )
-;Morph, expect 4x ambig, output two answers with head feats (pers (2 3) num (pl))
-; and two with  (pers (3) num (pl)):
-(pretty_print (word_analysis
- <lex id Perc0 sh ssagz gl ssag 3SG pos 'V' mrs ('Rule4B' ) str '*surface*' hf (pers (2 3 ) num (pl ) ) >
- <lex id Perc2 sh ssagz gl ssag 3SG pos 'V' mrs ('Rule4B' ) str '*surface*' hf (pers (3 ) num (pl ) ) >
- <lex id Perc3 sh ssagz gl ssag 3SG pos 'V' mrs ('Rule4B' ) str '*surface*' hf (pers (2 3 ) num (pl ) ) >
- <lex id Perc4 sh ssagz gl ssag 3SG pos 'V' mrs ('Rule4B' ) str '*surface*' hf (pers (3 ) num (pl ) ) > ) )
-;Remove the last rule:
-(message (
- <hc6506 rname 'Rule4B' > ) )
-;And the natural classes (msg 6542):
-(message (
- <hc6542 nat_class_name null > ) )
-(message (
- <hc6521 fname c:\data\hc\morpher\tests\percolat.in > ) )
-(message (
- <hc6508 fname c:\data\hc\morpher\tests\rzrules.in > ) )
-;Test REALIZATIONAL RULES during analysis.
-;First load some nat classes (msg 6541):
-(message (
- <hc6541 nat_class_name null > ) )
-(message (
- <hc6541 nat_class_name 'C' > ) )
-(message (
- <hc6541 nat_class_name 'V' > ) )
-(message (
- <hc6541 nat_class_name alv_stop > ) )
-(message (
- <hc6541 nat_class_name voiceless_c > ) )
-(message (
- <hc6541 nat_class_name labiodental > ) )
-(message (
- <hc6541 nat_class_name voiced > ) )
-(message (
- <hc6541 nat_class_name strident > ) )
-;Load two simple realizational rules (msg 6505, twice).
-; English -ed suffix:
-(message (
- <hc6505 rname ed_suffix > ) )
-;English -s suffix:
-(message (
- <hc6505 rname s_suffix > ) )
-;The above two rules will belong to a single slot; the following rule will
-; belong to a different slot:
-(message (
- <hc6505 rname evidential > ) )
-;Now define an inflectional template for the above rules:
-(message (
- <hc6565 sname morphophonemic > ) )
-;Turn on some tracing:
-(message (
- <hc6539  > ) )
-(message (
- <hc6548  > ) )
-(message (
- <hc6529  > ) )
-(message (
- <hc6527  > ) )
-;Test, one suffix, expect one parse:
-(pretty_print
- <trace sh sagd
-  cont (
-   <ll v <lex sh sagd str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh sagd str allophonic >
-	cont (
-	)
-   >
-   <tua nm verb io in rf ( )
-	lex <lex sh saa∑gd str morphophonemic >
-	cont (
-	 <tua nm verb io out rf ( )
-	  lex <lex sh saa∑gd pos 'V' str morphophonemic >
-	  cont (
-	   <ll v <lex sh saa∑gd pos 'V' str morphophonemic >
-		cont (
-		)
-	   >
-	  )
-	 >
-	 <mua nm ed_suffix
-	  in  <lex sh saa∑gd str morphophonemic >
-	  out <lex sh saa∑g str morphophonemic >
-	  cont (
-	   <tua nm verb io out rf (tense (past ) )
-		lex <lex sh saa∑g pos 'V' str morphophonemic >
-		cont (
-		 <ll v <lex sh saa∑g pos 'V' str morphophonemic >
-		  cont (
-		   <sll real <lex id 32 sh sag gl sag pos 'V' str morphophonemic > rf (tense (past ) )
-			cont (
-			 <ta nm verb io in
-			  lex <lex id 32 sh sag gl sag pos 'V' str morphophonemic >>
-			 <ma nm ed_suffix
-			  in  <lex id 32 sh sag gl sag pos 'V' str morphophonemic >
-			  out <lex id 32 sh sagd gl sag PAST pos 'V' mrs (ed_suffix ) str morphophonemic hf (tense (past ) ) >>
-			 <ta nm verb io out
-			  lex <lex id 32 sh sagd gl sag PAST pos 'V' mrs (ed_suffix ) str morphophonemic hf (tense (past ) ) >>
-			)
-		   >
-		  )
-		 >
-		)
-	   >
-	  )
-	 >
-	)
-   >
-   <ll v <lex sh saa∑gd str morphophonemic >
-	cont (
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 32 sh sagd gl sag PAST pos 'V' mrs (ed_suffix ) str '*surface*' hf (tense (past ) ) > ) )
-;Test with two suffixes, expect one parse:
-(pretty_print
- <trace sh sagdv
-  cont (
-   <ll v <lex sh sagdv str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh sagdv str allophonic >
-	cont (
-	)
-   >
-   <tua nm verb io in rf ( )
-	lex <lex sh saa∑gdv str morphophonemic >
-	cont (
-	 <tua nm verb io out rf ( )
-	  lex <lex sh saa∑gdv pos 'V' str morphophonemic >
-	  cont (
-	   <ll v <lex sh saa∑gdv pos 'V' str morphophonemic >
-		cont (
-		)
-	   >
-	  )
-	 >
-	 <mua nm evidential
-	  in  <lex sh saa∑gdv str morphophonemic >
-	  out <lex sh saa∑gd str morphophonemic >
-	  cont (
-	   <tua nm verb io out rf (evidential (witnessed ) )
-		lex <lex sh saa∑gd pos 'V' str morphophonemic >
-		cont (
-		 <ll v <lex sh saa∑gd pos 'V' str morphophonemic >
-		  cont (
-		  )
-		 >
-		)
-	   >
-	   <mua nm ed_suffix
-		in  <lex sh saa∑gd str morphophonemic >
-		out <lex sh saa∑g str morphophonemic >
-		cont (
-		 <tua nm verb io out rf (tense (past ) evidential (witnessed ) )
-		  lex <lex sh saa∑g pos 'V' str morphophonemic >
-		  cont (
-		   <ll v <lex sh saa∑g pos 'V' str morphophonemic >
-			cont (
-			 <sll real <lex id 32 sh sag gl sag pos 'V' str morphophonemic > rf (tense (past ) evidential (witnessed ) )
-			  cont (
-			   <ta nm verb io in
-				lex <lex id 32 sh sag gl sag pos 'V' str morphophonemic >>
-			   <ma nm ed_suffix
-				in  <lex id 32 sh sag gl sag pos 'V' str morphophonemic >
-				out <lex id 32 sh sagd gl sag PAST pos 'V' mrs (ed_suffix ) str morphophonemic hf (tense (past ) ) >>
-			   <ma nm evidential
-				in  <lex id 32 sh sagd gl sag PAST pos 'V' mrs (ed_suffix ) str morphophonemic hf (tense (past ) ) >
-				out <lex id 32 sh sagdv gl sag PAST WIT pos 'V' mrs (ed_suffix evidential ) str morphophonemic hf (tense (past ) evidential (witnessed ) ) >>
-			   <ta nm verb io out
-				lex <lex id 32 sh sagdv gl sag PAST WIT pos 'V' mrs (ed_suffix evidential ) str morphophonemic hf (tense (past ) evidential (witnessed ) ) >>
-			  )
-			 >
-			)
-		   >
-		  )
-		 >
-		)
-	   >
-	  )
-	 >
-	)
-   >
-   <ll v <lex sh saa∑gdv str morphophonemic >
-	cont (
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 32 sh sagdv gl sag PAST WIT pos 'V' mrs (ed_suffix evidential ) str '*surface*' hf (tense (past ) evidential (witnessed ) ) > ) )
-;Test with an irregular (blocking) form.  First test should fail, because
-; the form we're parsing is blocked:
-(pretty_print
- <trace sh sid
-  cont (
-   <ll v <lex sh sid str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh sid str allophonic >
-	cont (
-	)
-   >
-   <tua nm verb io in rf ( )
-	lex <lex sh sid str morphophonemic >
-	cont (
-	 <tua nm verb io out rf ( )
-	  lex <lex sh sid pos 'V' str morphophonemic >
-	  cont (
-	   <ll v <lex sh sid pos 'V' str morphophonemic >
-		cont (
-		)
-	   >
-	  )
-	 >
-	 <mua nm ed_suffix
-	  in  <lex sh sid str morphophonemic >
-	  out <lex sh si str morphophonemic >
-	  cont (
-	   <tua nm verb io out rf (tense (past ) )
-		lex <lex sh si pos 'V' str morphophonemic >
-		cont (
-		 <ll v <lex sh si pos 'V' str morphophonemic >
-		  cont (
-		   <sll real <lex id bl1 sh si fam 'SEE' pos 'V' str morphophonemic > rf (tense (past ) )
-			cont (
-			 <block type template bl <lex id bl2 sh sau fam 'SEE' pos 'V' str morphophonemic hf (tense (past ) ) >>
-			 <ta nm verb io in
-			  lex <lex id bl2 sh sau fam 'SEE' pos 'V' str morphophonemic hf (tense (past ) ) >>
-			 <ta nm verb io out
-			  lex <lex id bl2 sh sau fam 'SEE' pos 'V' str morphophonemic hf (tense (past ) ) >>
-			)
-		   >
-		  )
-		 >
-		)
-	   >
-	  )
-	 >
-	)
-   >
-   <ll v <lex sh sid str morphophonemic >
-	cont (
-	)
-   >
-  )
- >
-)
-ERROR:hc6006 --- <hc6006 print_form sid >
-;Next test should succeed (it is the blocking form), one parse:
-(pretty_print
- <trace sh sau
-  cont (
-   <ll v <lex sh sau str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh sau str allophonic >
-	cont (
-	)
-   >
-   <tua nm verb io in rf ( )
-	lex <lex sh saa∑u str morphophonemic >
-	cont (
-	 <tua nm verb io out rf ( )
-	  lex <lex sh saa∑u pos 'V' str morphophonemic >
-	  cont (
-	   <ll v <lex sh saa∑u pos 'V' str morphophonemic >
-		cont (
-		 <sll real <lex id bl2 sh sau fam 'SEE' pos 'V' str morphophonemic hf (tense (past ) ) > rf ( )
-		  cont (
-		   <ta nm verb io in
-			lex <lex id bl2 sh sau fam 'SEE' pos 'V' str morphophonemic hf (tense (past ) ) >>
-		   <ta nm verb io out
-			lex <lex id bl2 sh sau fam 'SEE' pos 'V' str morphophonemic hf (tense (past ) ) >>
-		  )
-		 >
-		)
-	   >
-	  )
-	 >
-	)
-   >
-   <ll v <lex sh saa∑u str morphophonemic >
-	cont (
-	 <sll real <lex id bl2 sh sau fam 'SEE' pos 'V' str morphophonemic hf (tense (past ) ) > rf ( )
-	  cont (
-duplicate_analysis
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id bl2 sh sau fam 'SEE' pos 'V' str '*surface*' hf (tense (past ) ) > ) )
-;Revise the evidential so its features intersect those of the pres tns suffix:
-(message (
- <hc6504 rname evidential > ) )
-;Test with both suffixes, expect one parse:
-(pretty_print
- <trace sh sagzv
-  cont (
-   <ll v <lex sh sagzv str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh sagzv str allophonic >
-	cont (
-	)
-   >
-   <tua nm verb io in rf ( )
-	lex <lex sh saa∑gzv str morphophonemic >
-	cont (
-	 <tua nm verb io out rf ( )
-	  lex <lex sh saa∑gzv pos 'V' str morphophonemic >
-	  cont (
-	   <ll v <lex sh saa∑gzv pos 'V' str morphophonemic >
-		cont (
-		)
-	   >
-	  )
-	 >
-	 <mua nm evidential
-	  in  <lex sh saa∑gzv str morphophonemic >
-	  out <lex sh saa∑gz str morphophonemic >
-	  cont (
-	   <tua nm verb io out rf (evidential (witnessed ) tense (pres ) )
-		lex <lex sh saa∑gz pos 'V' str morphophonemic >
-		cont (
-		 <ll v <lex sh saa∑gz pos 'V' str morphophonemic >
-		  cont (
-		  )
-		 >
-		)
-	   >
-	   <mua nm s_suffix
-		in  <lex sh saa∑gz str morphophonemic >
-	   >
-	   <mua nm s_suffix
-		in  <lex sh saa∑gz str morphophonemic >
-		out <lex sh saa∑g str morphophonemic >
-		cont (
-		 <tua nm verb io out rf (pers (3 ) tense (pres ) evidential (witnessed ) tense (pres ) )
-		  lex <lex sh saa∑g pos 'V' str morphophonemic >
-		  cont (
-		   <ll v <lex sh saa∑g pos 'V' str morphophonemic >
-			cont (
-			 <sll real <lex id 32 sh sag gl sag pos 'V' str morphophonemic > rf (pers (3 ) tense (pres ) evidential (witnessed ) tense (pres ) )
-			  cont (
-			   <ta nm verb io in
-				lex <lex id 32 sh sag gl sag pos 'V' str morphophonemic >>
-			   <ma nm s_suffix
-				in  <lex id 32 sh sag gl sag pos 'V' str morphophonemic >
-				out <lex id 32 sh sagz gl sag 3SG pos 'V' mrs (s_suffix ) str morphophonemic hf (pers (3 ) tense (pres ) ) >>
-			   <ma nm evidential
-				in  <lex id 32 sh sagz gl sag 3SG pos 'V' mrs (s_suffix ) str morphophonemic hf (pers (3 ) tense (pres ) ) >
-				out <lex id 32 sh sagzv gl sag 3SG WIT pos 'V' mrs (s_suffix evidential ) str morphophonemic hf (pers (3 ) evidential (witnessed ) tense (pres ) ) >>
-			   <ta nm verb io out
-				lex <lex id 32 sh sagzv gl sag 3SG WIT pos 'V' mrs (s_suffix evidential ) str morphophonemic hf (pers (3 ) evidential (witnessed ) tense (pres ) ) >>
-			  )
-			 >
-			)
-		   >
-		  )
-		 >
-		)
-	   >
-	  )
-	 >
-	)
-   >
-   <ll v <lex sh saa∑gzv str morphophonemic >
-	cont (
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 32 sh sagzv gl sag 3SG WIT pos 'V' mrs (s_suffix evidential ) str '*surface*' hf (pers (3 ) evidential (witnessed ) tense (pres ) ) > ) )
-;Turn off tracing:
-(message (
- <hc6536  > ) )
-(message (
- <hc6545  > ) )
-(message (
- <hc6530  > ) )
-(message (
- <hc6528  > ) )
-;...remove the rules (msg 6506):
-(message (
- <hc6506 rname ed_suffix > ) )
-(message (
- <hc6506 rname s_suffix > ) )
-(message (
- <hc6506 rname evidential > ) )
-;...and the templates:
-(message (
- <hc6565 sname morphophonemic > ) )
-;And remove the natural classes (msg 6542):
-(message (
- <hc6542 nat_class_name null > ) )
-(message (
- <hc6542 nat_class_name 'C' > ) )
-(message (
- <hc6542 nat_class_name 'V' > ) )
-(message (
- <hc6542 nat_class_name alv_stop > ) )
-(message (
- <hc6542 nat_class_name voiceless_c > ) )
-(message (
- <hc6542 nat_class_name labiodental > ) )
-(message (
- <hc6542 nat_class_name voiced > ) )
-(message (
- <hc6542 nat_class_name strident > ) )
-(message (
- <hc6521 fname c:\data\hc\morpher\tests\rzrules.in > ) )
-(message (
- <hc6508 fname c:\data\hc\morpher\tests\suffix.in > ) )
-;A file of simple suffix rules
-(message (
- <hc6541 nat_class_name null > ) )
-(message (
- <hc6541 nat_class_name 'C' > ) )
-(message (
- <hc6541 nat_class_name alv_stop > ) )
-(message (
- <hc6541 nat_class_name voiceless_c > ) )
-(message (
- <hc6541 nat_class_name labiodental > ) )
-(message (
- <hc6541 nat_class_name voiced > ) )
-(message (
- <hc6541 nat_class_name strident > ) )
-(message (
- <hc6541 nat_class_name cons > ) )
-(message (
- <hc6541 nat_class_name unasp > ) )
-(message (
- <hc6541 nat_class_name d > ) )
-;Load two mrules (msg 6505, twice):
-; English -s suffix: "Ås" after strident C (that's a barred i), "s" after other voiceless C,
-; "z" otherwise.
-(message (
- <hc6505 rname s_suffix > ) )
-; English -ed suffix: "Åd" (= barred-i + d) after t or d, "t" after other voiceless C,
-; "d" otherwise.  We'll put in a bdry marker this time.  (Note that the third subrule uses a natural class,
-; instead of a string + char table; this is to test the use of natural classes in the output.)
-; In the first subrule, we arbitrarily leave the two contexts "unbundled".
-(message (
- <hc6505 rname ed_suffix > ) )
-; t -> th / C__
-; This rule needed to ensure that the "t" of the suffix becomes unambiguously xlatable
-(message (
- <hc6505 rname rule1 > ) )
-;We'll trace the mrules, to watch their application (msg 6535, 2x):
-(message (
- <hc6535 rname s_suffix > ) )
-(message (
- <hc6535 rname ed_suffix > ) )
-;Also trace lex lookup:
-(message (
- <hc6527  > ) )
-;Now we morph a few words; each should be unambiguous:
-(pretty_print
- <trace sh sagz
-  cont (
-   <ll v <lex sh sagz str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh sagz str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh saa∑gz str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm s_suffix
-	in  <lex sh saa∑gz str morphophonemic >
-	out <lex sh saa∑g pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh saa∑g pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 32 sh sag gl sag pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm s_suffix
-		  in  <lex id 32 sh sag gl sag pos 'V' str morphophonemic >
-		  out <lex id 32 sh sagz gl sag 3SG pos 'V' mrs (s_suffix ) str morphophonemic hf (pers (3 ) ) >>
-		)
-	   >
-	  )
-	 >
-	)
-   >
-   <mua nm ed_suffix
-	in  <lex sh saa∑gz str morphophonemic >
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 32 sh sagz gl sag 3SG pos 'V' mrs (s_suffix ) str '*surface*' hf (pers (3 ) ) > ) )
-(pretty_print
- <trace sh sagd
-  cont (
-   <ll v <lex sh sagd str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh sagd str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh saa∑gd str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm ed_suffix
-	in  <lex sh saa∑gd str morphophonemic >
-	out <lex sh saa∑g pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh saa∑g pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 32 sh sag gl sag pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm ed_suffix
-		  in  <lex id 32 sh sag gl sag pos 'V' str morphophonemic >
-		  out <lex id 32 sh sag+d gl sag PAST pos 'V' mrs (ed_suffix ) str morphophonemic hf (tense (past ) ) >>
-		)
-	   >
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 32 sh sagd gl sag PAST pos 'V' mrs (ed_suffix ) str '*surface*' hf (tense (past ) ) > ) )
-(pretty_print
- <trace sh sasÅz
-  cont (
-   <ll v <lex sh sasÅz str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh sasÅz str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh saa∑sÅz str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm s_suffix
-	in  <lex sh saa∑sÅz str morphophonemic >
-	out <lex sh saa∑s pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh saa∑s pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 33 sh sas gl sas pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm s_suffix
-		  in  <lex id 33 sh sas gl sas pos 'V' str morphophonemic >
-		  out <lex id 33 sh sasÅz gl sas 3SG pos 'V' mrs (s_suffix ) str morphophonemic hf (pers (3 ) ) >>
-		)
-	   >
-	  )
-	 >
-	)
-   >
-   <mua nm s_suffix
-	in  <lex sh saa∑sÅz str morphophonemic >
-	out <lex sh saa∑sÅ pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh saa∑sÅ pos 'V' str morphophonemic >
-	  cont (
-	  )
-	 >
-	)
-   >
-   <mua nm ed_suffix
-	in  <lex sh saa∑sÅz str morphophonemic >
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 33 sh sasÅz gl sas 3SG pos 'V' mrs (s_suffix ) str '*surface*' hf (pers (3 ) ) > ) )
-(pretty_print
- <trace sh sast
-  cont (
-   <ll v <lex sh sast str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh sasttH str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh saa∑st str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm ed_suffix
-	in  <lex sh saa∑st str morphophonemic >
-	out <lex sh saa∑s pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh saa∑s pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 33 sh sas gl sas pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm ed_suffix
-		  in  <lex id 33 sh sas gl sas pos 'V' str morphophonemic >
-		  out <lex id 33 sh sas+t gl sas PAST pos 'V' mrs (ed_suffix ) str morphophonemic hf (tense (past ) ) >>
-		)
-	   >
-	  )
-	 >
-	 <mua nm s_suffix
-	  in  <lex sh saa∑s pos 'V' str morphophonemic >
-	 >
-	)
-   >
-   <mua nm ed_suffix
-	in  <lex sh saa∑st str morphophonemic >
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 33 sh sast gl sas PAST pos 'V' mrs (ed_suffix ) str '*surface*' hf (tense (past ) ) > ) )
-(pretty_print
- <trace sh sazd
-  cont (
-   <ll v <lex sh sazd str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh sazd str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh saa∑zd str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm ed_suffix
-	in  <lex sh saa∑zd str morphophonemic >
-	out <lex sh saa∑z pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh saa∑z pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 34 sh saz gl saz pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm ed_suffix
-		  in  <lex id 34 sh saz gl saz pos 'V' str morphophonemic >
-		  out <lex id 34 sh saz+d gl saz PAST pos 'V' mrs (ed_suffix ) str morphophonemic hf (tense (past ) ) >>
-		)
-	   >
-	  )
-	 >
-	 <mua nm s_suffix
-	  in  <lex sh saa∑z pos 'V' str morphophonemic >
-	  out <lex sh saa∑ pos 'V' str morphophonemic >
-	  cont (
-	   <ll v <lex sh saa∑ pos 'V' str morphophonemic >
-		cont (
-		)
-	   >
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 34 sh sazd gl saz PAST pos 'V' mrs (ed_suffix ) str '*surface*' hf (tense (past ) ) > ) )
-;The following words should fail to morph:
-(pretty_print
- <trace sh sagÅs
-  cont (
-   <ll v <lex sh sagÅs str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh sagÅs str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh saa∑gÅs str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm s_suffix
-	in  <lex sh saa∑gÅs str morphophonemic >
-   >
-   <mua nm ed_suffix
-	in  <lex sh saa∑gÅs str morphophonemic >
-   >
-  )
- >
-)
-ERROR:hc6006 --- <hc6006 print_form sagÅs >
-(pretty_print
- <trace sh sags
-  cont (
-   <ll v <lex sh sags str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh sags str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh saa∑gs str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm s_suffix
-	in  <lex sh saa∑gs str morphophonemic >
-   >
-   <mua nm ed_suffix
-	in  <lex sh saa∑gs str morphophonemic >
-   >
-  )
- >
-)
-ERROR:hc6006 --- <hc6006 print_form sags >
-(pretty_print
- <trace sh sasz
-  cont (
-   <ll v <lex sh sasz str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh sasz str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh saa∑sz str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm s_suffix
-	in  <lex sh saa∑sz str morphophonemic >
-	out <lex sh saa∑s pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh saa∑s pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 33 sh sas gl sas pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm s_suffix
-		  in  <lex id 33 sh sas gl sas pos 'V' str morphophonemic >
-		  out <lex id 33 sh sasÅz gl sas 3SG pos 'V' mrs (s_suffix ) str morphophonemic hf (pers (3 ) ) >>
-		)
-	   >
-	  )
-	 >
-	)
-   >
-   <mua nm ed_suffix
-	in  <lex sh saa∑sz str morphophonemic >
-   >
-  )
- >
-)
-ERROR:hc6006 --- <hc6006 print_form sasz >
-(pretty_print
- <trace sh sass
-  cont (
-   <ll v <lex sh sass str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh sass str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh saa∑ss str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm s_suffix
-	in  <lex sh saa∑ss str morphophonemic >
-	out <lex sh saa∑s pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh saa∑s pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 33 sh sas gl sas pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm s_suffix
-		  in  <lex id 33 sh sas gl sas pos 'V' str morphophonemic >
-		  out <lex id 33 sh sasÅz gl sas 3SG pos 'V' mrs (s_suffix ) str morphophonemic hf (pers (3 ) ) >>
-		)
-	   >
-	  )
-	 >
-	)
-   >
-   <mua nm ed_suffix
-	in  <lex sh saa∑ss str morphophonemic >
-   >
-  )
- >
-)
-ERROR:hc6006 --- <hc6006 print_form sass >
-(pretty_print
- <trace sh satÅs
-  cont (
-   <ll v <lex sh satÅs str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh satÅs str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh saa∑tÅs str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm s_suffix
-	in  <lex sh saa∑tÅs str morphophonemic >
-   >
-   <mua nm ed_suffix
-	in  <lex sh saa∑tÅs str morphophonemic >
-   >
-  )
- >
-)
-ERROR:hc6006 --- <hc6006 print_form satÅs >
-(pretty_print
- <trace sh satz
-  cont (
-   <ll v <lex sh satz str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh satz str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh saa∑tz str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm s_suffix
-	in  <lex sh saa∑tz str morphophonemic >
-	out <lex sh saa∑t pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh saa∑t pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 35 sh sat gl sat pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm s_suffix
-		  in  <lex id 35 sh sat gl sat pos 'V' str morphophonemic >
-		  out <lex id 35 sh sats gl sat 3SG pos 'V' mrs (s_suffix ) str morphophonemic hf (pers (3 ) ) >>
-ERROR:hc6035 --- <hc6035 features (voc - cons + vd - poa alveolar del_rel - strident - cont - nasal - ) table_name table1 ambiguous_xltn sattHs >
-		)
-	   >
-	  )
-	 >
-	)
-   >
-   <mua nm ed_suffix
-	in  <lex sh saa∑tz str morphophonemic >
-   >
-  )
- >
-)
-ERROR:hc6006 --- <hc6006 print_form satz >
-;Now load a revised version of the ed_suffix rule, which uses alpha vars to
-; collapse two subrules into one:
-(message (
- <hc6504 rname ed_suffix > ) )
-;Test it (each word should be unambiguous):
-(pretty_print
- <trace sh sagd
-  cont (
-   <ll v <lex sh sagd str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh sagd str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh saa∑gd str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm ed_suffix
-	in  <lex sh saa∑gd str morphophonemic >
-	out <lex sh saa∑g pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh saa∑g pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 32 sh sag gl sag pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm ed_suffix
-		  in  <lex id 32 sh sag gl sag pos 'V' str morphophonemic >
-		  out <lex id 32 sh sagd gl sag PAST pos 'V' mrs (ed_suffix ) str morphophonemic hf (tense (past ) ) >>
-		)
-	   >
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 32 sh sagd gl sag PAST pos 'V' mrs (ed_suffix ) str '*surface*' hf (tense (past ) ) > ) )
-(pretty_print
- <trace sh sast
-  cont (
-   <ll v <lex sh sast str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh sasttH str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh saa∑st str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm ed_suffix
-	in  <lex sh saa∑st str morphophonemic >
-	out <lex sh saa∑s pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh saa∑s pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 33 sh sas gl sas pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm ed_suffix
-		  in  <lex id 33 sh sas gl sas pos 'V' str morphophonemic >
-		  out <lex id 33 sh sast gl sas PAST pos 'V' mrs (ed_suffix ) str morphophonemic hf (tense (past ) ) >>
-		)
-	   >
-	  )
-	 >
-	 <mua nm s_suffix
-	  in  <lex sh saa∑s pos 'V' str morphophonemic >
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 33 sh sast gl sas PAST pos 'V' mrs (ed_suffix ) str '*surface*' hf (tense (past ) ) > ) )
-(pretty_print
- <trace sh sazd
-  cont (
-   <ll v <lex sh sazd str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh sazd str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh saa∑zd str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm ed_suffix
-	in  <lex sh saa∑zd str morphophonemic >
-	out <lex sh saa∑z pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh saa∑z pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 34 sh saz gl saz pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm ed_suffix
-		  in  <lex id 34 sh saz gl saz pos 'V' str morphophonemic >
-		  out <lex id 34 sh sazd gl saz PAST pos 'V' mrs (ed_suffix ) str morphophonemic hf (tense (past ) ) >>
-		)
-	   >
-	  )
-	 >
-	 <mua nm s_suffix
-	  in  <lex sh saa∑z pos 'V' str morphophonemic >
-	  out <lex sh saa∑ pos 'V' str morphophonemic >
-	  cont (
-	   <ll v <lex sh saa∑ pos 'V' str morphophonemic >
-		cont (
-		)
-	   >
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 34 sh sazd gl saz PAST pos 'V' mrs (ed_suffix ) str '*surface*' hf (tense (past ) ) > ) )
-;Now we'll remove those rules (msg 6506):
-(message (
- <hc6506 rname s_suffix > ) )
-(message (
- <hc6506 rname ed_suffix > ) )
-;Remove the phonological rule we loaded at the beginning:
-(message (
- <hc6506 rname rule1 > ) )
-;And the natural classes (msg 6542):
-(message (
- <hc6542 nat_class_name null > ) )
-(message (
- <hc6542 nat_class_name alv_stop > ) )
-(message (
- <hc6542 nat_class_name voiceless_c > ) )
-(message (
- <hc6542 nat_class_name labiodental > ) )
-(message (
- <hc6542 nat_class_name voiced > ) )
-(message (
- <hc6542 nat_class_name strident > ) )
-(message (
- <hc6542 nat_class_name cons > ) )
-(message (
- <hc6542 nat_class_name unasp > ) )
-(message (
- <hc6521 fname c:\data\hc\morpher\tests\suffix.in > ) )
-(message (
- <hc6508 fname c:\data\hc\morpher\tests\prefix.in > ) )
-;A file of simple prefix rules
-(message (
- <hc6541 nat_class_name null > ) )
-(message (
- <hc6541 nat_class_name alv_stop > ) )
-(message (
- <hc6541 nat_class_name voiceless_c > ) )
-(message (
- <hc6541 nat_class_name labiodental > ) )
-(message (
- <hc6541 nat_class_name voiced > ) )
-(message (
- <hc6541 nat_class_name strident > ) )
-(message (
- <hc6541 nat_class_name voiceless_stop > ) )
-(message (
- <hc6541 nat_class_name cons > ) )
-(message (
- <hc6541 nat_class_name vowel > ) )
-(message (
- <hc6541 nat_class_name low_vowel > ) )
-; Note that the above is unique to "a" in table1, but ambiguous
-; between "a" and "a∑" in table3.
-(message (
- <hc6541 nat_class_name unasp > ) )
-;Load two mrules (msg 6505, twice):
-; Like English -s suffix, but prefix:
-; "zi" before strident C, "s" before other voiceless C, "z" otherwise
-(message (
- <hc6505 rname s_prefix > ) )
-; Like English -ed suffix, but prefix:
-; "di+" before t or d, "t+" before other voiceless C, "d+" otherwise.  (Note the bdry marker.)
-(message (
- <hc6505 rname ed_prefix > ) )
-; /p t k/ -> [p t k]
-; This rule needed to ensure that /ptk/ become unambiguously xlatable
-; (note: no environ, just a feature filling rule)
-(message (
- <hc6505 rname aspiration > ) )
-;We'll trace the mrules, to watch their application (msg 6535, 2x):
-(message (
- <hc6535 rname s_prefix > ) )
-(message (
- <hc6535 rname ed_prefix > ) )
-;Also trace lex lookup:
-(message (
- <hc6527  > ) )
-;Now we morph a few words; each should be unambiguous:
-(pretty_print
- <trace sh zisag
-  cont (
-   <ll v <lex sh zisag str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh zisag str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh zisaa∑g str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm s_prefix
-	in  <lex sh zisaa∑g str morphophonemic >
-	out <lex sh saa∑g pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh saa∑g pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 32 sh sag gl sag pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm s_prefix
-		  in  <lex id 32 sh sag gl sag pos 'V' str morphophonemic >
-		  out <lex id 32 sh zisag gl sag 3SG pos 'V' mrs (s_prefix ) str morphophonemic hf (pers (3 ) ) >>
-		)
-	   >
-	  )
-	 >
-	)
-   >
-   <mua nm s_prefix
-	in  <lex sh zisaa∑g str morphophonemic >
-	out <lex sh isaa∑g pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh isaa∑g pos 'V' str morphophonemic >
-	  cont (
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 32 sh zisag gl sag 3SG pos 'V' mrs (s_prefix ) str '*surface*' hf (pers (3 ) ) > ) )
-(pretty_print
- <trace sh stag
-  cont (
-   <ll v <lex sh stag str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh sttHag str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh staa∑g str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm s_prefix
-	in  <lex sh staa∑g str morphophonemic >
-	out <lex sh taa∑g pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh taa∑g pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 47 sh tag gl tag pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm s_prefix
-		  in  <lex id 47 sh tag gl tag pos 'V' str morphophonemic >
-		  out <lex id 47 sh stag gl tag 3SG pos 'V' mrs (s_prefix ) str morphophonemic hf (pers (3 ) ) >>
-		)
-	   >
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 47 sh stag gl tag 3SG pos 'V' mrs (s_prefix ) str '*surface*' hf (pers (3 ) ) > ) )
-(pretty_print
- <trace sh zabba
-  cont (
-   <ll v <lex sh zabba str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh zabba str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh zaa∑bbaa∑ str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm s_prefix
-	in  <lex sh zaa∑bbaa∑ str morphophonemic >
-	out <lex sh aa∑bbaa∑ pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh aa∑bbaa∑ pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 39 sh ab+ba pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm s_prefix
-		  in  <lex id 39 sh ab+ba pos 'V' str morphophonemic >
-		  out <lex id 39 sh zab+ba gl ? 3SG pos 'V' mrs (s_prefix ) str morphophonemic hf (pers (3 ) ) >>
-		)
-	   >
-	   <sll real <lex id 40 sh abba pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm s_prefix
-		  in  <lex id 40 sh abba pos 'V' str morphophonemic >
-		  out <lex id 40 sh zabba gl ? 3SG pos 'V' mrs (s_prefix ) str morphophonemic hf (pers (3 ) ) >>
-		)
-	   >
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 39 sh zabba gl ? 3SG pos 'V' mrs (s_prefix ) str '*surface*' hf (pers (3 ) ) >
- <lex id 40 sh zabba gl ? 3SG pos 'V' mrs (s_prefix ) str '*surface*' hf (pers (3 ) ) > ) )
-(pretty_print
- <trace sh ditag
-  cont (
-   <ll v <lex sh ditag str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh dittHag str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh ditaa∑g str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm ed_prefix
-	in  <lex sh ditaa∑g str morphophonemic >
-	out <lex sh taa∑g pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh taa∑g pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 47 sh tag gl tag pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm ed_prefix
-		  in  <lex id 47 sh tag gl tag pos 'V' str morphophonemic >
-		  out <lex id 47 sh di+tag gl tag PAST pos 'V' mrs (ed_prefix ) str morphophonemic hf (tense (past ) ) >>
-		)
-	   >
-	  )
-	 >
-	)
-   >
-   <mua nm ed_prefix
-	in  <lex sh ditaa∑g str morphophonemic >
-	out <lex sh itaa∑g pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh itaa∑g pos 'V' str morphophonemic >
-	  cont (
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 47 sh ditag gl tag PAST pos 'V' mrs (ed_prefix ) str '*surface*' hf (tense (past ) ) > ) )
-(pretty_print
- <trace sh tpag
-  cont (
-   <ll v <lex sh tpag str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh ttHppHag str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh tpaa∑g str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm ed_prefix
-	in  <lex sh tpaa∑g str morphophonemic >
-	out <lex sh paa∑g pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh paa∑g pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 48 sh pag gl pag pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm ed_prefix
-		  in  <lex id 48 sh pag gl pag pos 'V' str morphophonemic >
-		  out <lex id 48 sh t+pag gl pag PAST pos 'V' mrs (ed_prefix ) str morphophonemic hf (tense (past ) ) >>
-		)
-	   >
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 48 sh tpag gl pag PAST pos 'V' mrs (ed_prefix ) str '*surface*' hf (tense (past ) ) > ) )
-;Next word is 2x ambiguous (two stems identical except for bdry marker):
-(pretty_print
- <trace sh dabba
-  cont (
-   <ll v <lex sh dabba str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh dabba str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh daa∑bbaa∑ str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm ed_prefix
-	in  <lex sh daa∑bbaa∑ str morphophonemic >
-	out <lex sh aa∑bbaa∑ pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh aa∑bbaa∑ pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 39 sh ab+ba pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm ed_prefix
-		  in  <lex id 39 sh ab+ba pos 'V' str morphophonemic >
-		  out <lex id 39 sh d+ab+ba gl ? PAST pos 'V' mrs (ed_prefix ) str morphophonemic hf (tense (past ) ) >>
-		)
-	   >
-	   <sll real <lex id 40 sh abba pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm ed_prefix
-		  in  <lex id 40 sh abba pos 'V' str morphophonemic >
-		  out <lex id 40 sh d+abba gl ? PAST pos 'V' mrs (ed_prefix ) str morphophonemic hf (tense (past ) ) >>
-		)
-	   >
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 39 sh dabba gl ? PAST pos 'V' mrs (ed_prefix ) str '*surface*' hf (tense (past ) ) >
- <lex id 40 sh dabba gl ? PAST pos 'V' mrs (ed_prefix ) str '*surface*' hf (tense (past ) ) > ) )
-;The following words should fail to morph:
-(pretty_print
- <trace sh zitag
-  cont (
-   <ll v <lex sh zitag str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh zittHag str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh zitaa∑g str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm s_prefix
-	in  <lex sh zitaa∑g str morphophonemic >
-   >
-   <mua nm s_prefix
-	in  <lex sh zitaa∑g str morphophonemic >
-	out <lex sh itaa∑g pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh itaa∑g pos 'V' str morphophonemic >
-	  cont (
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-ERROR:hc6006 --- <hc6006 print_form zitag >
-(pretty_print
- <trace sh sabba
-  cont (
-   <ll v <lex sh sabba str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh sabba str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh saa∑bbaa∑ str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm s_prefix
-	in  <lex sh saa∑bbaa∑ str morphophonemic >
-   >
-  )
- >
-)
-ERROR:hc6006 --- <hc6006 print_form sabba >
-(pretty_print
- <trace sh ztag
-  cont (
-   <ll v <lex sh ztag str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh zttHag str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh ztaa∑g str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm s_prefix
-	in  <lex sh ztaa∑g str morphophonemic >
-	out <lex sh taa∑g pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh taa∑g pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 47 sh tag gl tag pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm s_prefix
-		  in  <lex id 47 sh tag gl tag pos 'V' str morphophonemic >
-		  out <lex id 47 sh stag gl tag 3SG pos 'V' mrs (s_prefix ) str morphophonemic hf (pers (3 ) ) >>
-		)
-	   >
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-ERROR:hc6006 --- <hc6006 print_form ztag >
-(pretty_print
- <trace sh disag
-  cont (
-   <ll v <lex sh disag str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh disag str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh disaa∑g str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm ed_prefix
-	in  <lex sh disaa∑g str morphophonemic >
-   >
-   <mua nm ed_prefix
-	in  <lex sh disaa∑g str morphophonemic >
-	out <lex sh isaa∑g pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh isaa∑g pos 'V' str morphophonemic >
-	  cont (
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-ERROR:hc6006 --- <hc6006 print_form disag >
-(pretty_print
- <trace sh tabba
-  cont (
-   <ll v <lex sh tabba str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh ttHabba str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh taa∑bbaa∑ str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm ed_prefix
-	in  <lex sh taa∑bbaa∑ str morphophonemic >
-   >
-  )
- >
-)
-ERROR:hc6006 --- <hc6006 print_form tabba >
-(pretty_print
- <trace sh dtag
-  cont (
-   <ll v <lex sh dtag str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh dttHag str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh dtaa∑g str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm ed_prefix
-	in  <lex sh dtaa∑g str morphophonemic >
-	out <lex sh taa∑g pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh taa∑g pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 47 sh tag gl tag pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm ed_prefix
-		  in  <lex id 47 sh tag gl tag pos 'V' str morphophonemic >
-		  out <lex id 47 sh di+tag gl tag PAST pos 'V' mrs (ed_prefix ) str morphophonemic hf (tense (past ) ) >>
-		)
-	   >
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-ERROR:hc6006 --- <hc6006 print_form dtag >
-;Now test with alpha variables:
-(message (
- <hc6504 rname ed_prefix > ) )
-;Test; each word should be unambiguous:
-(pretty_print
- <trace sh ditag
-  cont (
-   <ll v <lex sh ditag str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh dittHag str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh ditaa∑g str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm ed_prefix
-	in  <lex sh ditaa∑g str morphophonemic >
-	out <lex sh taa∑g pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh taa∑g pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 47 sh tag gl tag pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm ed_prefix
-		  in  <lex id 47 sh tag gl tag pos 'V' str morphophonemic >
-		  out <lex id 47 sh di+tag gl tag PAST pos 'V' mrs (ed_prefix ) str morphophonemic hf (tense (past ) ) >>
-		)
-	   >
-	  )
-	 >
-	)
-   >
-   <mua nm ed_prefix
-	in  <lex sh ditaa∑g str morphophonemic >
-	out <lex sh itaa∑g pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh itaa∑g pos 'V' str morphophonemic >
-	  cont (
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 47 sh ditag gl tag PAST pos 'V' mrs (ed_prefix ) str '*surface*' hf (tense (past ) ) > ) )
-(pretty_print
- <trace sh tpag
-  cont (
-   <ll v <lex sh tpag str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh ttHppHag str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh tpaa∑g str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm ed_prefix
-	in  <lex sh tpaa∑g str morphophonemic >
-	out <lex sh paa∑g pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh paa∑g pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 48 sh pag gl pag pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm ed_prefix
-		  in  <lex id 48 sh pag gl pag pos 'V' str morphophonemic >
-		  out <lex id 48 sh tpag gl pag PAST pos 'V' mrs (ed_prefix ) str morphophonemic hf (tense (past ) ) >>
-		)
-	   >
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 48 sh tpag gl pag PAST pos 'V' mrs (ed_prefix ) str '*surface*' hf (tense (past ) ) > ) )
-(pretty_print
- <trace sh dabba
-  cont (
-   <ll v <lex sh dabba str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh dabba str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh daa∑bbaa∑ str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm ed_prefix
-	in  <lex sh daa∑bbaa∑ str morphophonemic >
-	out <lex sh aa∑bbaa∑ pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh aa∑bbaa∑ pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 39 sh ab+ba pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm ed_prefix
-		  in  <lex id 39 sh ab+ba pos 'V' str morphophonemic >
-		  out <lex id 39 sh dab+ba gl ? PAST pos 'V' mrs (ed_prefix ) str morphophonemic hf (tense (past ) ) >>
-		)
-	   >
-	   <sll real <lex id 40 sh abba pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm ed_prefix
-		  in  <lex id 40 sh abba pos 'V' str morphophonemic >
-		  out <lex id 40 sh dabba gl ? PAST pos 'V' mrs (ed_prefix ) str morphophonemic hf (tense (past ) ) >>
-		)
-	   >
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 39 sh dabba gl ? PAST pos 'V' mrs (ed_prefix ) str '*surface*' hf (tense (past ) ) >
- <lex id 40 sh dabba gl ? PAST pos 'V' mrs (ed_prefix ) str '*surface*' hf (tense (past ) ) > ) )
-;Next version of the rule adds a prefix which causes deletion of the first V
-; of the stem (exercising the "untruncate" code in MRULE.ARI).  A crucial
-; test is the ATR harmony; note that the vowel causing the harmony will be
-; ambiguous for the ATR feature during analysis (because the "a" comes from
-; table1 in STARTUP.IN), but unambiguous during synthesis (because that "a"
-; comes from table3).  An earlier version of HC couldn't handle the ambiguity
-; during analysis...
-(message (
- <hc6504 rname ed_prefix > ) )
-;Test; should be unambiguous:
-(pretty_print
- <trace sh masg
-  cont (
-   <ll v <lex sh masg str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh masg str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh maa∑sg str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm ed_prefix
-	in  <lex sh maa∑sg str morphophonemic >
-	out <lex sh saa∑g pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh saa∑g pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 32 sh sag gl sag pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm ed_prefix
-		  in  <lex id 32 sh sag gl sag pos 'V' str morphophonemic >
-		  out <lex id 32 sh masg gl sag PAST pos 'V' mrs (ed_prefix ) str morphophonemic hf (tense (past ) ) >>
-		)
-	   >
-	  )
-	 >
-	 <mua nm s_prefix
-	  in  <lex sh saa∑g pos 'V' str morphophonemic >
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 32 sh masg gl sag PAST pos 'V' mrs (ed_prefix ) str '*surface*' hf (tense (past ) ) > ) )
-;Now we'll remove the rules (msg 6506):
-(message (
- <hc6506 rname s_prefix > ) )
-(message (
- <hc6506 rname ed_prefix > ) )
-(message (
- <hc6506 rname aspiration > ) )
-;And the natural classes (msg 6542):
-(message (
- <hc6542 nat_class_name null > ) )
-(message (
- <hc6542 nat_class_name alv_stop > ) )
-(message (
- <hc6542 nat_class_name voiceless_c > ) )
-(message (
- <hc6542 nat_class_name labiodental > ) )
-(message (
- <hc6542 nat_class_name voiced > ) )
-(message (
- <hc6542 nat_class_name strident > ) )
-(message (
- <hc6542 nat_class_name voiceless_stop > ) )
-(message (
- <hc6542 nat_class_name cons > ) )
-(message (
- <hc6542 nat_class_name vowel > ) )
-(message (
- <hc6542 nat_class_name unasp > ) )
-(message (
- <hc6521 fname c:\data\hc\morpher\tests\prefix.in > ) )
-(message (
- <hc6508 fname c:\data\hc\morpher\tests\infix.in > ) )
-;A file of simple infix rules
-(message (
- <hc6541 nat_class_name cons > ) )
-(message (
- <hc6541 nat_class_name voiceless_stop > ) )
-(message (
- <hc6541 nat_class_name unasp > ) )
-;Load some mrules (msg 6505):
-;Based on Arabic, using some data from Spencer "Morphological Theory" pg. 134f
-; (examples 5.1 and 5.2; the patterns in 5.4 would take us into reduplication)
-; with triliteral roots.  Note that the imperfective rules are at the same time
-; prefixes and infixes.
-; Perfective active: CaCaC
-(message (
- <hc6505 rname perf_act > ) )
-;Perfective passive: CuCiC
-(message (
- <hc6505 rname perf_pass > ) )
-;Imperfective active: aCCuC
-(message (
- <hc6505 rname imperf_act > ) )
-;Imperfective passive: uCCaC
-; We arbitrarily leave the first two pieces of the input "unbundled", for testing.
-(message (
- <hc6505 rname imperf_pass > ) )
-;...And a phonological rule, to ensure that /ptk/ become unambiguously xlatable:
-; /p t k/ -> [p t k]
-; (note: no environ, just a feature filling rule)
-(message (
- <hc6505 rname aspiration > ) )
-;We'll trace the mrules, to watch their application (msg 6535, 4x):
-(message (
- <hc6535 rname perf_act > ) )
-(message (
- <hc6535 rname perf_pass > ) )
-(message (
- <hc6535 rname imperf_act > ) )
-(message (
- <hc6535 rname imperf_pass > ) )
-;Also trace lex lookup:
-(message (
- <hc6527  > ) )
-;Now we morph a few words; each should be unambiguous:
-(pretty_print
- <trace sh katab
-  cont (
-   <ll v <lex sh katab str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh kkHattHab str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh kaa∑taa∑b str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm perf_act
-	in  <lex sh kaa∑taa∑b str morphophonemic >
-	out <lex sh ktb pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh ktb pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 49 sh ktb gl write pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm perf_act
-		  in  <lex id 49 sh ktb gl write pos 'V' str morphophonemic >
-		  out <lex id 49 sh katab gl write PER.ACT pos 'V' mrs (perf_act ) str morphophonemic hf (aspect (perf ) mood (active ) ) >>
-		)
-	   >
-	  )
-	 >
-	)
-   >
-   <mua nm perf_pass
-	in  <lex sh kaa∑taa∑b str morphophonemic >
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 49 sh katab gl write PER.ACT pos 'V' mrs (perf_act ) str '*surface*' hf (aspect (perf ) mood (active ) ) > ) )
-(pretty_print
- <trace sh kutib
-  cont (
-   <ll v <lex sh kutib str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh kkHuttHib str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh kutib str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm perf_act
-	in  <lex sh kutib str morphophonemic >
-   >
-   <mua nm perf_pass
-	in  <lex sh kutib str morphophonemic >
-	out <lex sh ktb pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh ktb pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 49 sh ktb gl write pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm perf_pass
-		  in  <lex id 49 sh ktb gl write pos 'V' str morphophonemic >
-		  out <lex id 49 sh kutib gl write PER.PSV pos 'V' mrs (perf_pass ) str morphophonemic hf (aspect (perf ) mood (passive ) ) >>
-		)
-	   >
-	  )
-	 >
-	 <mua nm perf_act
-	  in  <lex sh ktb pos 'V' str morphophonemic >
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 49 sh kutib gl write PER.PSV pos 'V' mrs (perf_pass ) str '*surface*' hf (aspect (perf ) mood (passive ) ) > ) )
-(pretty_print
- <trace sh aktub
-  cont (
-   <ll v <lex sh aktub str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh akkHttHub str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh aa∑ktub str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm imperf_act
-	in  <lex sh aa∑ktub str morphophonemic >
-	out <lex sh ktb pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh ktb pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 49 sh ktb gl write pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm imperf_act
-		  in  <lex id 49 sh ktb gl write pos 'V' str morphophonemic >
-		  out <lex id 49 sh aktub gl write IMPF.ACT pos 'V' mrs (imperf_act ) str morphophonemic hf (aspect (impf ) mood (active ) ) >>
-		)
-	   >
-	  )
-	 >
-	 <mua nm perf_act
-	  in  <lex sh ktb pos 'V' str morphophonemic >
-	 >
-	 <mua nm perf_pass
-	  in  <lex sh ktb pos 'V' str morphophonemic >
-	 >
-	)
-   >
-   <mua nm perf_act
-	in  <lex sh aa∑ktub str morphophonemic >
-   >
-   <mua nm perf_pass
-	in  <lex sh aa∑ktub str morphophonemic >
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 49 sh aktub gl write IMPF.ACT pos 'V' mrs (imperf_act ) str '*surface*' hf (aspect (impf ) mood (active ) ) > ) )
-(pretty_print
- <trace sh uktab
-  cont (
-   <ll v <lex sh uktab str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh ukkHttHab str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh uktaa∑b str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm imperf_pass
-	in  <lex sh uktaa∑b str morphophonemic >
-	out <lex sh ktb pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh ktb pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 49 sh ktb gl write pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm imperf_pass
-		  in  <lex id 49 sh ktb gl write pos 'V' str morphophonemic >
-		  out <lex id 49 sh uktab gl write IMPF.PSV pos 'V' mrs (imperf_pass ) str morphophonemic hf (aspect (impf ) mood (passive ) ) >>
-		)
-	   >
-	  )
-	 >
-	 <mua nm perf_act
-	  in  <lex sh ktb pos 'V' str morphophonemic >
-	 >
-	 <mua nm perf_pass
-	  in  <lex sh ktb pos 'V' str morphophonemic >
-	 >
-	)
-   >
-   <mua nm perf_act
-	in  <lex sh uktaa∑b str morphophonemic >
-   >
-   <mua nm perf_pass
-	in  <lex sh uktaa∑b str morphophonemic >
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 49 sh uktab gl write IMPF.PSV pos 'V' mrs (imperf_pass ) str '*surface*' hf (aspect (impf ) mood (passive ) ) > ) )
-;Now we'll remove those rules (msg 6506):
-(message (
- <hc6506 rname perf_act > ) )
-(message (
- <hc6506 rname perf_pass > ) )
-(message (
- <hc6506 rname imperf_act > ) )
-(message (
- <hc6506 rname imperf_pass > ) )
-(message (
- <hc6506 rname aspiration > ) )
-;And the natural classes (msg 6542):
-(message (
- <hc6542 nat_class_name cons > ) )
-(message (
- <hc6542 nat_class_name voiceless_stop > ) )
-(message (
- <hc6542 nat_class_name unasp > ) )
-(message (
- <hc6521 fname c:\data\hc\morpher\tests\infix.in > ) )
-(message (
- <hc6508 fname c:\data\hc\morpher\tests\simulfix.in > ) )
-;A file of simulfix rules.
-(message (
- <hc6541 nat_class_name null > ) )
-(message (
- <hc6540 nat_class_name 'C' > ) )
-(message (
- <hc6541 nat_class_name 'V' > ) )
-(message (
- <hc6541 nat_class_name voiced > ) )
-(message (
- <hc6541 nat_class_name nonround > ) )
-(message (
- <hc6541 nat_class_name p > ) )
-;A simulfix on the last segment of the stem:
-; voices a word-final voiced bilabial stop
-(message (
- <hc6505 rname simulfix > ) )
-;We'll trace the rule, to watch its application (msg 6535):
-(message (
- <hc6535 rname simulfix > ) )
-;Also trace lex lookup:
-(message (
- <hc6527  > ) )
-;Now test (1x ambiguity):
-(pretty_print
- <trace sh pib
-  cont (
-   <ll v <lex sh pib str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh pib str allophonic >
-	cont (
-	)
-   >
-   <mua nm simulfix
-	in  <lex sh pib str allophonic >
-	out <lex sh pippHb pos 'V' str allophonic >
-	cont (
-	 <ll v <lex sh pippHb pos 'V' str allophonic >
-	  cont (
-	   <sll real <lex id 41 sh pip pos 'V' str allophonic > rf ( )
-		cont (
-		 <ma nm simulfix
-		  in  <lex id 41 sh pip pos 'V' str allophonic >
-		  out <lex id 41 sh pib gl ? SIMUL pos 'V' mrs (simulfix ) str allophonic hf (pers (3 ) ) >>
-		)
-	   >
-	  )
-	 >
-	 <ll v <lex sh pipb pos 'V' str morphophonemic >
-	  cont (
-	  )
-	 >
-	)
-   >
-   <ll v <lex sh pib str morphophonemic >
-	cont (
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 41 sh pib gl ? SIMUL pos 'V' mrs (simulfix ) str '*surface*' hf (pers (3 ) ) > ) )
-;Now revise the rule so the simulfix is on the first segment of the stem:
-(message (
- <hc6504 rname simulfix > ) )
-;Test (1x ambiguity):
-(pretty_print
- <trace sh bip
-  cont (
-   <ll v <lex sh bip str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh bip str allophonic >
-	cont (
-	)
-   >
-   <mua nm simulfix
-	in  <lex sh bip str allophonic >
-	out <lex sh ppHbip pos 'V' str allophonic >
-	cont (
-	 <ll v <lex sh ppHbip pos 'V' str allophonic >
-	  cont (
-	   <sll real <lex id 41 sh pip pos 'V' str allophonic > rf ( )
-		cont (
-		 <ma nm simulfix
-		  in  <lex id 41 sh pip pos 'V' str allophonic >
-		  out <lex id 41 sh bip gl ? SIMUL pos 'V' mrs (simulfix ) str allophonic hf (pers (3 ) ) >>
-		)
-	   >
-	  )
-	 >
-	 <ll v <lex sh pbip pos 'V' str morphophonemic >
-	  cont (
-	  )
-	 >
-	)
-   >
-   <ll v <lex sh bip str morphophonemic >
-	cont (
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 41 sh bip gl ? SIMUL pos 'V' mrs (simulfix ) str '*surface*' hf (pers (3 ) ) > ) )
-;And revise the rule so the simulfix consists in unrounding the first vowel,
-; which in the example happens to be word-internal (since we've already tested
-; word-initial and word-final simulfixes).
-; (Hey, nobody said these rules need to be realistic!)
-(message (
- <hc6504 rname simulfix > ) )
-;Test (1x ambiguity):
-(pretty_print
- <trace sh bÅpu
-  cont (
-   <ll v <lex sh bÅpu str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh bÅpu str allophonic >
-	cont (
-	)
-   >
-   <mua nm simulfix
-	in  <lex sh bÅpu str allophonic >
-	out <lex sh buÅpu pos 'N' str allophonic >
-	cont (
-	 <ll v <lex sh buÅpu pos 'N' str allophonic >
-	  cont (
-	   <sll real <lex id 46 sh bupu pos 'N' str allophonic > rf ( )
-		cont (
-		 <ma nm simulfix
-		  in  <lex id 46 sh bupu pos 'N' str allophonic >
-		  out <lex id 46 sh bÅpu gl ? SIMUL pos 'N' mrs (simulfix ) str allophonic hf (pers (3 ) ) >>
-		)
-	   >
-	  )
-	 >
-	 <ll v <lex sh buÅpu pos 'N' str morphophonemic >
-	  cont (
-	  )
-	 >
-	)
-   >
-   <ll v <lex sh bÅpu str morphophonemic >
-	cont (
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 46 sh bÅpu gl ? SIMUL pos 'N' mrs (simulfix ) str '*surface*' hf (pers (3 ) ) > ) )
-;Finally, revise the rule so the simulfix consists in unrounding a series of
-; vowels (which might be one representation of a long vowel).
-(message (
- <hc6504 rname simulfix > ) )
-;Test (1x ambiguity):
-(pretty_print
- <trace sh sÅÅpu
-  cont (
-   <ll v <lex sh sÅÅpu str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh sÅÅpu str allophonic >
-	cont (
-	)
-   >
-   <mua nm simulfix
-	in  <lex sh sÅÅpu str allophonic >
-	out <lex sh suÅuÅpu pos 'N' str allophonic >
-	cont (
-	 <ll v <lex sh suÅuÅpu pos 'N' str allophonic >
-	  cont (
-	   <sll real <lex id 50 sh suupu pos 'N' str allophonic > rf ( )
-		cont (
-		 <ma nm simulfix
-		  in  <lex id 50 sh suupu pos 'N' str allophonic >
-		  out <lex id 50 sh sÅÅpu gl ? SIMUL pos 'N' mrs (simulfix ) str allophonic hf (pers (3 ) ) >>
-		)
-	   >
-	  )
-	 >
-	 <ll v <lex sh suÅuÅpu pos 'N' str morphophonemic >
-	  cont (
-	  )
-	 >
-	)
-   >
-   <ll v <lex sh sÅÅpu str morphophonemic >
-	cont (
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 50 sh sÅÅpu gl ? SIMUL pos 'N' mrs (simulfix ) str '*surface*' hf (pers (3 ) ) > ) )
-;Now remove the rule (msg 6506):
-(message (
- <hc6506 rname simulfix > ) )
-;And the natural classes (msg 6542):
-(message (
- <hc6542 nat_class_name null > ) )
-(message (
- <hc6542 nat_class_name 'C' > ) )
-(message (
- <hc6542 nat_class_name 'V' > ) )
-(message (
- <hc6542 nat_class_name voiced > ) )
-(message (
- <hc6542 nat_class_name nonround > ) )
-(message (
- <hc6542 nat_class_name p > ) )
-(message (
- <hc6521 fname c:\data\hc\morpher\tests\simulfix.in > ) )
-(message (
- <hc6508 fname c:\data\hc\morpher\tests\redup.in > ) )
-;Test reduplication.
-(message (
- <hc6541 nat_class_name null > ) )
-(message (
- <hc6541 nat_class_name 'C' > ) )
-(message (
- <hc6541 nat_class_name 'V' > ) )
-(message (
- <hc6541 nat_class_name voiced > ) )
-(message (
- <hc6541 nat_class_name affricate > ) )
-;Load a mrule (msg 6505):
-;Reduplicate the first CV of the word:
-(message (
- <hc6505 rname redup > ) )
-;Trace it (msg 6535):
-(message (
- <hc6535 rname redup > ) )
-;Also trace lex lookup:
-(message (
- <hc6527  > ) )
-;Now test:
-(pretty_print
- <trace sh sasag
-  cont (
-   <ll v <lex sh sasag str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh sasag str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh saa∑saa∑g str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm redup
-	in  <lex sh saa∑saa∑g str morphophonemic >
-	out <lex sh saa∑g pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh saa∑g pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 32 sh sag gl sag pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm redup
-		  in  <lex id 32 sh sag gl sag pos 'V' str morphophonemic >
-		  out <lex id 32 sh sasag gl sag RED pos 'V' mrs (redup ) str morphophonemic hf (pers (3 ) ) >>
-		)
-	   >
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 32 sh sasag gl sag RED pos 'V' mrs (redup ) str '*surface*' hf (pers (3 ) ) > ) )
-;Add a prule, which will apply after redup to slightly alter the output by
-; modifying part of the stem.
-; s --> [+vd] / V__V
-; The result is that the reduplicated piece won't be quite identical to
-; the part of the stem on which it was based:
-(message (
- <hc6505 rname voicing > ) )
-;Test:
-(pretty_print
- <trace sh sazag
-  cont (
-   <ll v <lex sh sazag str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh saszag str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh saa∑szaa∑g str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm redup
-	in  <lex sh saa∑szaa∑g str morphophonemic >
-	out <lex sh szaa∑g pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh szaa∑g pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 32 sh sag gl sag pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm redup
-		  in  <lex id 32 sh sag gl sag pos 'V' str morphophonemic >
-		  out <lex id 32 sh sasag gl sag RED pos 'V' mrs (redup ) str morphophonemic hf (pers (3 ) ) >>
-		)
-	   >
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 32 sh sazag gl sag RED pos 'V' mrs (redup ) str '*surface*' hf (pers (3 ) ) > ) )
-;Add another prule, which will also apply after redup, but will modify
-; the reduplicated morpheme instead:
-; s --> [+del_rel] / #__
-(message (
- <hc6505 rname affrication > ) )
-;Test:
-(pretty_print
- <trace sh tsazag
-  cont (
-   <ll v <lex sh tsazag str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh tssaszag str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh tssaa∑szaa∑g str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm redup
-	in  <lex sh tssaa∑szaa∑g str morphophonemic >
-	out <lex sh szaa∑g pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh szaa∑g pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 32 sh sag gl sag pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm redup
-		  in  <lex id 32 sh sag gl sag pos 'V' str morphophonemic >
-		  out <lex id 32 sh sasag gl sag RED pos 'V' mrs (redup ) str morphophonemic hf (pers (3 ) ) >>
-		)
-	   >
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 32 sh tsazag gl sag RED pos 'V' mrs (redup ) str '*surface*' hf (pers (3 ) ) > ) )
-;Modify the reduplication rule to reduplicate the last VC (probably not realistic,
-; but who cares?)
-(message (
- <hc6504 rname redup > ) )
-;Test:
-(pretty_print
- <trace sh tsagag
-  cont (
-   <ll v <lex sh tsagag str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh tssagag str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh tssaa∑gaa∑g str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm redup
-	in  <lex sh tssaa∑gaa∑g str morphophonemic >
-	out <lex sh tssaa∑g pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh tssaa∑g pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 32 sh sag gl sag pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm redup
-		  in  <lex id 32 sh sag gl sag pos 'V' str morphophonemic >
-		  out <lex id 32 sh sagag gl sag RED pos 'V' mrs (redup ) str morphophonemic hf (pers (3 ) ) >>
-		)
-	   >
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 32 sh tsagag gl sag RED pos 'V' mrs (redup ) str '*surface*' hf (pers (3 ) ) > ) )
-;Tidy things up a bit by removing the prules:
-(message (
- <hc6506 rname voicing > ) )
-(message (
- <hc6506 rname affrication > ) )
-;Modify the reduplication rule to be total reduplication of a CVC stem,
-; but only the CVC part of a larger stem:
-(message (
- <hc6504 rname redup > ) )
-;Test, first with a CVC stem:
-(pretty_print
- <trace sh sagsag
-  cont (
-   <ll v <lex sh sagsag str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh sagsag str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh saa∑gsaa∑g str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm redup
-	in  <lex sh saa∑gsaa∑g str morphophonemic >
-	out <lex sh saa∑g pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh saa∑g pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 32 sh sag gl sag pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm redup
-		  in  <lex id 32 sh sag gl sag pos 'V' str morphophonemic >
-		  out <lex id 32 sh sagsag gl sag RED pos 'V' mrs (redup ) str morphophonemic hf (pers (3 ) ) >>
-		)
-	   >
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 32 sh sagsag gl sag RED pos 'V' mrs (redup ) str '*surface*' hf (pers (3 ) ) > ) )
-;...and with a larger stem:
-(pretty_print
- <trace sh sasibudbud
-  cont (
-   <ll v <lex sh sasibudbud str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh sasibudbud str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh saa∑sibudbud str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm redup
-	in  <lex sh saa∑sibudbud str morphophonemic >
-	out <lex sh saa∑sibud pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh saa∑sibud pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 38 sh sasibud pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm redup
-		  in  <lex id 38 sh sasibud pos 'V' str morphophonemic >
-		  out <lex id 38 sh sasibudbud gl ? RED pos 'V' mrs (redup ) str morphophonemic hf (pers (3 ) ) >>
-		)
-	   >
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 38 sh sasibudbud gl ? RED pos 'V' mrs (redup ) str '*surface*' hf (pers (3 ) ) > ) )
-;Now restore the previous version of the reduplication rule:
-(message (
- <hc6504 rname redup > ) )
-;Add a deletion rule to modify the stem, and see if we can still match:
-; g --> 0 / V__V (like Turkish)
-(message (
- <hc6505 rname g_delete > ) )
-;Test:
-(pretty_print
- <trace sh saag
-  cont (
-   <ll v <lex sh saag str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh sagag str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh saa∑gaa∑g str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm redup
-	in  <lex sh saa∑gaa∑g str morphophonemic >
-	out <lex sh saa∑g pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh saa∑g pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 32 sh sag gl sag pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm redup
-		  in  <lex id 32 sh sag gl sag pos 'V' str morphophonemic >
-		  out <lex id 32 sh sagag gl sag RED pos 'V' mrs (redup ) str morphophonemic hf (pers (3 ) ) >>
-		)
-	   >
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 32 sh saag gl sag RED pos 'V' mrs (redup ) str '*surface*' hf (pers (3 ) ) > ) )
-;Modify the deletion rule to do it to the reduplicated part, rather than
-; to the stem:
-(message (
- <hc6504 rname g_delete > ) )
-;Test:
-(pretty_print
- <trace sh saga
-  cont (
-   <ll v <lex sh saga str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh sagag str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh saa∑gaa∑g str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm redup
-	in  <lex sh saa∑gaa∑g str morphophonemic >
-	out <lex sh saa∑g pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh saa∑g pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 32 sh sag gl sag pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm redup
-		  in  <lex id 32 sh sag gl sag pos 'V' str morphophonemic >
-		  out <lex id 32 sh sagag gl sag RED pos 'V' mrs (redup ) str morphophonemic hf (pers (3 ) ) >>
-		)
-	   >
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 32 sh saga gl sag RED pos 'V' mrs (redup ) str '*surface*' hf (pers (3 ) ) > ) )
-;Remove remaining rules (msg 6506):
-(message (
- <hc6506 rname redup > ) )
-(message (
- <hc6506 rname g_delete > ) )
-;...and the natural classes (msg 6542):
-(message (
- <hc6542 nat_class_name null > ) )
-(message (
- <hc6542 nat_class_name 'C' > ) )
-(message (
- <hc6542 nat_class_name 'V' > ) )
-(message (
- <hc6542 nat_class_name voiced > ) )
-(message (
- <hc6542 nat_class_name affricate > ) )
-(message (
- <hc6521 fname c:\data\hc\morpher\tests\redup.in > ) )
-(message (
- <hc6508 fname c:\data\hc\morpher\tests\truncate.in > ) )
-;A file of truncation rules.
-(message (
- <hc6541 nat_class_name null > ) )
-(message (
- <hc6541 nat_class_name fricative > ) )
-(message (
- <hc6541 nat_class_name velar_stop > ) )
-;Load a truncation rule which deletes a single seg on the right (msg 6505):
-(message (
- <hc6505 rname truncate > ) )
-;Trace the rule (msg 6535):
-(message (
- <hc6535 rname truncate > ) )
-;Also trace lex lookup:
-(message (
- <hc6527  > ) )
-;Test:
-(pretty_print
- <trace sh sa
-  cont (
-   <ll v <lex sh sa str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh sa str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh saa∑ str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm truncate
-	in  <lex sh saa∑ str morphophonemic >
-	out <lex sh saa∑g pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh saa∑g pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 32 sh sag gl sag pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm truncate
-		  in  <lex id 32 sh sag gl sag pos 'V' str morphophonemic >
-		  out <lex id 32 sh sa gl sag 3SG pos 'V' mrs (truncate ) str morphophonemic hf (pers (3 ) ) >>
-		)
-	   >
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 32 sh sa gl sag 3SG pos 'V' mrs (truncate ) str '*surface*' hf (pers (3 ) ) > ) )
-;Revise to delete the left-most seg:
-(message (
- <hc6504 rname truncate > ) )
-;Test:
-(pretty_print
- <trace sh ag
-  cont (
-   <ll v <lex sh ag str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh ag str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh aa∑g str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm truncate
-	in  <lex sh aa∑g str morphophonemic >
-	out <lex sh saa∑g pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh saa∑g pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 32 sh sag gl sag pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm truncate
-		  in  <lex id 32 sh sag gl sag pos 'V' str morphophonemic >
-		  out <lex id 32 sh ag gl sag 3SG pos 'V' mrs (truncate ) str morphophonemic hf (pers (3 ) ) >>
-		)
-	   >
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 32 sh ag gl sag 3SG pos 'V' mrs (truncate ) str '*surface*' hf (pers (3 ) ) > ) )
-;Revise to delete a natural class:
-(message (
- <hc6504 rname truncate > ) )
-;Test:
-(pretty_print
- <trace sh ag
-  cont (
-   <ll v <lex sh ag str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh ag str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh aa∑g str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm truncate
-	in  <lex sh aa∑g str morphophonemic >
-	out <lex sh szfvaa∑g pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh szfvaa∑g pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 32 sh sag gl sag pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm truncate
-		  in  <lex id 32 sh sag gl sag pos 'V' str morphophonemic >
-		  out <lex id 32 sh ag gl sag 3SG pos 'V' mrs (truncate ) str morphophonemic hf (pers (3 ) ) >>
-		)
-	   >
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 32 sh ag gl sag 3SG pos 'V' mrs (truncate ) str '*surface*' hf (pers (3 ) ) > ) )
-;Revise to delete a natural class on the right:
-(message (
- <hc6504 rname truncate > ) )
-;Test:
-(pretty_print
- <trace sh sa
-  cont (
-   <ll v <lex sh sa str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh sa str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh saa∑ str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm truncate
-	in  <lex sh saa∑ str morphophonemic >
-	out <lex sh saa∑kgÍ pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh saa∑kgÍ pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 32 sh sag gl sag pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm truncate
-		  in  <lex id 32 sh sag gl sag pos 'V' str morphophonemic >
-		  out <lex id 32 sh sa gl sag 3SG pos 'V' mrs (truncate ) str morphophonemic hf (pers (3 ) ) >>
-		)
-	   >
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 32 sh sa gl sag 3SG pos 'V' mrs (truncate ) str '*surface*' hf (pers (3 ) ) > ) )
-;Revise to delete an optional sequence (we also attach a prefix,
-; so as to make unapplication unambiguous):
-(message (
- <hc6504 rname truncate > ) )
-;In first test, rule should (un-)truncate an initial s:
-(pretty_print
- <trace sh gas
-  cont (
-   <ll v <lex sh gas str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh gas str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh gaa∑s str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm truncate
-	in  <lex sh gaa∑s str morphophonemic >
-	out <lex sh saa∑s pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh saa∑s pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 33 sh sas gl sas pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm truncate
-		  in  <lex id 33 sh sas gl sas pos 'V' str morphophonemic >
-		  out <lex id 33 sh gas gl sas 3SG pos 'V' mrs (truncate ) str morphophonemic >>
-		)
-	   >
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 33 sh gas gl sas 3SG pos 'V' mrs (truncate ) str '*surface*' > ) )
-;In the second test, rule should unapply vacuously:
-(pretty_print
- <trace sh gbubibi
-  cont (
-   <ll v <lex sh gbubibi str '*surface*' >
-	cont (
-	)
-   >
-   <ll v <lex sh gbubibi str allophonic >
-	cont (
-	)
-   >
-   <ll v <lex sh gbubibi str morphophonemic >
-	cont (
-	)
-   >
-   <mua nm truncate
-	in  <lex sh gbubibi str morphophonemic >
-	out <lex sh sbubibi pos 'V' str morphophonemic >
-	cont (
-	 <ll v <lex sh sbubibi pos 'V' str morphophonemic >
-	  cont (
-	   <sll real <lex id 42 sh bubibi pos 'V' str morphophonemic > rf ( )
-		cont (
-		 <ma nm truncate
-		  in  <lex id 42 sh bubibi pos 'V' str morphophonemic >
-		  out <lex id 42 sh gbubibi gl ? 3SG pos 'V' mrs (truncate ) str morphophonemic >>
-		)
-	   >
-	  )
-	 >
-	)
-   >
-  )
- >
-)
-(pretty_print (word_analysis
- <lex id 42 sh gbubibi gl ? 3SG pos 'V' mrs (truncate ) str '*surface*' > ) )
-;Remove the rule (msg 6506):
-(message (
- <hc6506 rname truncate > ) )
-;And the natural classes (msg 6542):
-(message (
- <hc6542 nat_class_name null > ) )
-(message (
- <hc6542 nat_class_name fricative > ) )
-(message (
- <hc6542 nat_class_name velar_stop > ) )
-(message (
- <hc6521 fname c:\data\hc\morpher\tests\truncate.in > ) )
-(message (
- <hc6521 fname c:\data\hc\morpher\tests\mrules.in > ) )

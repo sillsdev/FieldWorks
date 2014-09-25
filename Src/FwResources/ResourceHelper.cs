@@ -854,21 +854,6 @@ namespace SIL.FieldWorks.Resources
 
 			return FileUtils.FileDialogFilterCaseInsensitiveCombinations(filter);
 		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the name of the default para chars style.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static string DefaultParaCharsStyleName
-		{
-			get
-			{
-				if (s_defParaChars == null)
-					s_defParaChars = GetResourceString("kstidDefaultParaChars");
-				return s_defParaChars;
-			}
-		}
 		#endregion
 	}
 }

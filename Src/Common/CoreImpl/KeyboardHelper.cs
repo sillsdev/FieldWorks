@@ -99,7 +99,15 @@ namespace SIL.CoreImpl
 				{
 					if (MiscUtils.IsUnix)
 						return "";
-					string sKeymanKbd = m_keymanHandler.ActiveKeyboardName;
+					string sKeymanKbd = null;
+					try
+					{
+						sKeymanKbd = m_keymanHandler.ActiveKeyboardName;
+					}
+					catch(COMException)
+					{
+						Logger.WriteEvent("COMException thrown trying to access the ActiveKeyboardName. Bad Keyman installation?");
+					}
 
 					// This constant '(None)' can not be localized until the C++ version is localized.
 					// Even then they should use the same resource.

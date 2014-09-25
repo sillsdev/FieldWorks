@@ -14,10 +14,16 @@ namespace SIL.FieldWorks.WordWorks.Parser
 {
 	internal static class ParserXmlWriterExtensions
 	{
+		private static Tuple<int, int> ProcessMsaHvo(string msaHvo)
+		{
+			string[] msaHvoParts = msaHvo.Split('.');
+			return Tuple.Create(int.Parse(msaHvoParts[0]), msaHvoParts.Length == 2 ? int.Parse(msaHvoParts[1]) : 0);
+		}
+
 		public static void WriteMsaElement(this XmlWriter writer, FdoCache cache, string formID, string msaID, string type, string wordType)
 		{
 			// Irregulary inflected forms can have a combination MSA hvo: the LexEntry hvo, a period, and an index to the LexEntryRef
-			Tuple<int, int> msaTuple = ParserHelper.ProcessMsaHvo(msaID);
+			Tuple<int, int> msaTuple = ProcessMsaHvo(msaID);
 			ICmObject obj = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(msaTuple.Item1);
 			switch (obj.GetType().Name)
 			{
@@ -318,7 +324,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				int iFirstSpace = shortName.IndexOf(" (", StringComparison.Ordinal);
 				int iLastSpace = shortName.LastIndexOf("):", StringComparison.Ordinal) + 2;
 				alloform = shortName.Substring(0, iFirstSpace);
-				Tuple<int, int> msaTuple = ParserHelper.ProcessMsaHvo(msaID);
+				Tuple<int, int> msaTuple = ProcessMsaHvo(msaID);
 				ICmObject msaObj = cache.ServiceLocator.GetObject(msaTuple.Item1);
 				if (msaObj.ClassID == LexEntryTags.kClassId)
 				{

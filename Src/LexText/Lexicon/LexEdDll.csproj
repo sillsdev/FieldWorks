@@ -313,6 +313,7 @@
     <Compile Include="FindExampleSentenceDlg.Designer.cs">
       <DependentUpon>FindExampleSentenceDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="GoldEticGuidFixer.cs" />
     <Compile Include="HomographResetter.cs">
       <SubType>Code</SubType>
     </Compile>

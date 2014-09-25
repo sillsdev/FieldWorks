@@ -148,7 +148,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			m_xv.TabIndex = 0;
 			Controls.Add(m_xv);
 			m_xv.Height = panel1.Location.Y - m_xv.Location.Y;
-			m_xv.Width = this.Width - 9;
+			m_xv.Width = this.Width - 15; // Changed from magic to more magic on 8/8/2014
 			m_xv.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
 			m_xv.EditingHelper.DefaultCursor = Cursors.Arrow;
 			m_xv.EditingHelper.VwSelectionChanged += new EventHandler<VwSelectionArgs>(m_xv_VwSelectionChanged);
@@ -277,6 +277,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			var sda = new ObjectListPublisher(cache.DomainDataByFlid as ISilDataAccessManaged, kflidEntriesFound);
 			int hvoRoot = RootHvo;
 			sda.CacheVecProp(hvoRoot, rghvoEntries.ToArray());
+			//TODO: Make this method return a GeckoBrowser control, and generate the content here.
 			// The name of this property must match the property used by the publishFound layout.
 			sda.SetOwningPropInfo(LexDbTags.kflidClass, "LexDb", "EntriesFound");
 

@@ -413,12 +413,13 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		}
 
 		/// <summary>
-		/// Sets up the client server services.
+		/// Setup static FDO properties
 		/// </summary>
-		public static void SetupClientServerServices()
+		public static void SetupStaticFdoProperties()
 		{
 			ClientServerServices.SetCurrentToDb4OBackend(new DummyFdoUI(), FwDirectoryFinder.FdoDirectories,
 				() => FwDirectoryFinder.ProjectsDirectory == FwDirectoryFinder.ProjectsDirectoryLocalMachine);
+			ScrMappingList.TeStylesPath = FwDirectoryFinder.TeStylesPath;
 		}
 	}
 }

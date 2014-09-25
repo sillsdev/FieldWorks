@@ -1,18 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// Copyright (c) 2014 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
-using Microsoft.Practices.ServiceLocation;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -133,8 +135,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 			catch (ArgumentException)
 			{
-				EntrySequenceReferenceLauncher.ReportComponentFailure((ILexEntry)m_obj, newObj, true);
-				return;
+				MessageBoxes.ReportLexEntryCircularReference((ILexEntry)m_obj, newObj, true);
 			}
 		}
 

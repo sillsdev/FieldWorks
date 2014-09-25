@@ -7,11 +7,11 @@
 // --------------------------------------------------------------------------------------------
 using System.Collections.Generic;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -615,7 +615,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			base.FixtureSetup();
 
 			m_styleSheet = new FwStyleSheet();
-			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
 
 			// By default, use auto-generated footnote markers for import tests.
 			m_scr.FootnoteMarkerType = FootnoteMarkerTypes.AutoFootnoteMarker;
@@ -624,7 +624,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 
 			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
 			{
-				m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Unknown, ResourceHelper.DefaultParaCharsStyleName, FwDirectoryFinder.TeStylesPath);
+				m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Unknown);
 				DummyTeImporter.MakeSFImportTestSettings(m_settings);
 			});
 		}

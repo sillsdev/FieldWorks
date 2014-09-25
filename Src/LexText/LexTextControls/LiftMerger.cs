@@ -3319,7 +3319,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			foreach (CmLiftPhonetic phon in entry.Pronunciations)
 			{
-				IgnoreNewWs();
+				AddNewWsToVernacular();
 				ILexPronunciation pron = CreateNewLexPronunciation();
 				le.PronunciationsOS.Add(pron);
 				MergeInMultiUnicode(pron.Form, LexPronunciationTags.kflidForm, phon.Form, pron.Guid);
@@ -3353,7 +3353,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void SavePronunciationWss(Dictionary<string, LiftString>.KeyCollection langs)
 		{
-			IgnoreNewWs();
+			AddNewWsToVernacular();
 			foreach (string lang in langs)
 			{
 				int ws = GetWsFromLiftLang(lang);
@@ -3990,6 +3990,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				MergeInMultiString(les.Example, LexExampleSentenceTags.kflidExample, expl.Content, les.Guid);
 				MergeExampleTranslations(les, expl);
 				ProcessExampleNotes(les, expl);
+				ProcessExampleFields(les, expl);
+				ProcessExampleTraits(les, expl);
 				if (TsStringIsNullOrEmpty(les.Reference) && !String.IsNullOrEmpty(expl.Source))
 					les.Reference = m_cache.TsStrFactory.MakeString(expl.Source, m_cache.DefaultAnalWs);
 			}
@@ -5862,6 +5864,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			AddNewWsToAnalysis();
 			Dictionary<MuElement, List<IReversalIndexEntry>> mapToRIEs;
 			IReversalIndexEntry rie = null;
+			// Do not import blank reversal entries
+			if(rev.Form.IsEmpty)
+			{
+				return null;
+			}
 			if (rev.Main == null)
 			{
 				IReversalIndex riOwning = FindOrCreateReversalIndex(rev.Form, rev.Type);

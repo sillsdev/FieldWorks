@@ -28,29 +28,33 @@
 		GlossOfIrregularlyInflectedForm
 		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	-->
-	<xsl:template name="GlossOfIrregularlyInflectedForm">
+	<xsl:template name="GlossOfVariant">
 		<xsl:param name="lexEntryRef"/>
 		<xsl:param name="sVariantOfGloss"/>
-		<xsl:for-each select="$lexEntryRef/LexEntryInflType">
-			<xsl:variable name="lexEnryInflType" select="key('LexEntryInflTypeID',@dst)"/>
-			<xsl:call-template name="GlossAddition">
-				<xsl:with-param name="addition" select="$lexEnryInflType/GlossPrepend"/>
-			</xsl:call-template>
+		<xsl:for-each select="$lexEntryRef/LexEntryType">
+			<xsl:variable name="lexEntryInflType" select="key('LexEntryInflTypeID',@dst)"/>
+			<xsl:if test="$lexEntryInflType">
+				<xsl:call-template name="GlossAddition">
+					<xsl:with-param name="addition" select="$lexEntryInflType/GlossPrepend"/>
+				</xsl:call-template>
+			</xsl:if>
 		</xsl:for-each>
 		<xsl:value-of select="$sVariantOfGloss"/>
-		<xsl:for-each select="$lexEntryRef/LexEntryInflType">
-			<xsl:variable name="lexEnryInflType" select="key('LexEntryInflTypeID',@dst)"/>
-			<xsl:call-template name="GlossAddition">
-				<xsl:with-param name="addition" select="$lexEnryInflType/GlossAppend"/>
-			</xsl:call-template>
+		<xsl:for-each select="$lexEntryRef/LexEntryType">
+			<xsl:variable name="lexEntryInflType" select="key('LexEntryInflTypeID',@dst)"/>
+			<xsl:if test="$lexEntryInflType">
+				<xsl:call-template name="GlossAddition">
+					<xsl:with-param name="addition" select="$lexEntryInflType/GlossAppend"/>
+				</xsl:call-template>
+			</xsl:if>
 		</xsl:for-each>
 	</xsl:template>
 	<!--
 		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-		IdOfIrregularlyInflectedFormEntry
+		IdOfVariantEntry
 		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	-->
-	<xsl:template name="IdOfIrregularlyInflectedFormEntry">
+	<xsl:template name="IdOfVariantEntry">
 		<xsl:param name="lexEntry"/>
 		<xsl:param name="lexEntryRef"/>
 		<xsl:param name="msa"/>

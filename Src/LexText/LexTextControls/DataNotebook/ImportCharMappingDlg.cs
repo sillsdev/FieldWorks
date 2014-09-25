@@ -142,7 +142,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 				{
 					m_app.Synchronize(SyncMsg.ksyncStyle);
 					FwStyleSheet stylesheet = new FwStyleSheet();
-					stylesheet.Init(m_cache, m_cache.LangProject.Hvo, LangProjectTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+					stylesheet.Init(m_cache, m_cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 					m_stylesheet = stylesheet;
 				}
 				string stySel = null;

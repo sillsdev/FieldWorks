@@ -3,17 +3,20 @@
 *.h	diff=cpp
 *.idh	diff=cpp
 
-*.csproj -whitespace
-*.resx -whitespace
-*.Designer.cs -whitespace
-*.vdproj -whitespace
 *.config -whitespace
-*.settings -whitespace
+*.csproj -whitespace
+*.Designer.cs -whitespace
+*.patch -whitespace
 *.ReSharper -whitespace
+*.resx -whitespace
+*.settings -whitespace
+*.svg -whitespace
 *.vcxproj -whitespace
 *.vcxproj.filters -whitespace
-*.patch -whitespace
-*.svg -whitespace
+*.vdproj -whitespace
 *.xml -whitespace
 changelog -whitespace
+FwHelpAbout.cs -whitespace
 LICENSE -whitespace
+RealSplashScreen.cs -whitespace
+run-app -whitespace

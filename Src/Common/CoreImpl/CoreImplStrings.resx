@@ -161,4 +161,8 @@
   <data name="variants" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources/lsr-variant-utf8.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="kstidDefaultParaChars" xml:space="preserve">
+    <value>Default Paragraph Characters</value>
+    <comment>style name used for the "Default Paragraph Characters" pseudo-style</comment>
+  </data>
 </root>

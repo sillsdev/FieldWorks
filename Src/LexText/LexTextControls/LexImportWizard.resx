@@ -2117,10 +2117,10 @@ To begin importing, click Finish.</value>
 	<value>640, 473</value>
   </data>
   <data name="$this.StepNames" xml:space="preserve">
-	<value>Overview &amp; Backup</value>
+	<value>Overview &amp; backup</value>
   </data>
   <data name="$this.StepNames1" xml:space="preserve">
-	<value>File &amp; Settings</value>
+	<value>File &amp; settings</value>
   </data>
   <data name="$this.StepNames2" xml:space="preserve">
 	<value>Language mapping</value>

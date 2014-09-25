@@ -2655,15 +2655,20 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	}
 	#endregion
 
-	#region ScrImportSetFactory class
+	#region PhBdryMarkerFactory class
 
-	internal partial class ScrImportSetFactory
+	internal partial class PhBdryMarkerFactory
 	{
-		public IScrImportSet Create(string defaultParaCharsStyleName, string stylesPath)
+		IPhBdryMarker IPhBdryMarkerFactory.Create(Guid guid, IPhPhonemeSet owner)
 		{
-			var settings = new ScrImportSet(defaultParaCharsStyleName, stylesPath);
-			((ICmObjectInternal) settings).InitializeNewOwnerlessCmObject(m_cache);
-			return settings;
+			if (owner == null) throw new ArgumentNullException("owner");
+
+			int hvo = ((IDataReader) m_cache.ServiceLocator.GetInstance<IDataSetup>()).GetNextRealHvo();
+			int flid = m_cache.MetaDataCache.GetFieldId("PhPhonemeSet", "BoundaryMarkers", false);
+
+			var retval = new PhBdryMarker(m_cache, hvo, guid);
+			owner.BoundaryMarkersOC.Add(retval);
+			return retval;
 		}
 	}
 

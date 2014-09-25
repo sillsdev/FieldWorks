@@ -1097,11 +1097,11 @@ namespace SIL.FieldWorks.FDO
 		ICmMediaURI Create(FdoCache cache, Guid guid);
 	}
 
-	public partial interface IScrImportSetFactory
+	public partial interface IPhBdryMarkerFactory
 	{
 		/// <summary>
-		/// Creates a new scripture import settings with the default paragraph characters style name.
+		/// Creates a boundary marker with the specified GUID.
 		/// </summary>
-		IScrImportSet Create(string defaultParaCharsStyleName, string stylesPath);
+		IPhBdryMarker Create(Guid guid, IPhPhonemeSet owner);
 	}
 }

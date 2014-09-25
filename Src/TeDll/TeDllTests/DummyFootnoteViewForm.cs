@@ -9,6 +9,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Controls;
@@ -431,7 +432,7 @@ namespace SIL.FieldWorks.TE
 
 			ILangProject lgproj = Cache.LangProject;
 			IScripture scripture = lgproj.TranslatedScriptureOA;
-			styleSheet.Init(Cache, scripture.Hvo, ScriptureTags.kflidStyles, ResourceHelper.DefaultParaCharsStyleName);
+			styleSheet.Init(Cache, scripture.Hvo, ScriptureTags.kflidStyles);
 
 			m_footnoteView = new DummyFootnoteView(Cache);
 			m_footnoteView.Anchor = AnchorStyles.Top | AnchorStyles.Left |

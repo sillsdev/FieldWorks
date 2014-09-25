@@ -8,6 +8,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using XAmpleManagedWrapper;
@@ -21,9 +22,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private XAmpleWrapper m_xample;
 		private readonly string m_dataDir;
 		private readonly FdoCache m_cache;
-		private M3ParserModelRetriever m_retriever;
+		private ParserModelChangeListener m_changeListener;
 		private readonly M3ToXAmpleTransformer m_transformer;
 		private readonly string m_database;
+		private bool m_forceUpdate;
 
 		public XAmpleParser(FdoCache cache, string dataDir)
 		{
@@ -31,48 +33,87 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_xample = new XAmpleWrapper();
 			m_xample.Init();
 			m_dataDir = dataDir;
-			m_retriever = new M3ParserModelRetriever(m_cache);
-			m_database = ParserHelper.ConvertNameToUseAnsiCharacters(m_cache.ProjectId.Name);
+			m_changeListener = new ParserModelChangeListener(m_cache);
+			m_database = ConvertNameToUseAnsiCharacters(m_cache.ProjectId.Name);
 			m_transformer = new M3ToXAmpleTransformer(m_database);
+			m_forceUpdate = true;
+		}
+
+		/// <summary>
+		/// Convert any characters in the name which are higher than 0x00FF to hex.
+		/// Neither XAmple nor PC-PATR can read a file name containing letters above 0x00FF.
+		/// </summary>
+		/// <param name="originalName">The original name to be converted</param>
+		/// <returns>Converted name</returns>
+		internal static string ConvertNameToUseAnsiCharacters(string originalName)
+		{
+			var sb = new StringBuilder();
+			char[] letters = originalName.ToCharArray();
+			foreach (var letter in letters)
+			{
+				int value = Convert.ToInt32(letter);
+				if (value > 255)
+				{
+					string hex = value.ToString("X4");
+					sb.Append(hex);
+				}
+				else
+				{
+					sb.Append(letter);
+				}
+			}
+			return sb.ToString();
 		}
 
 		public bool IsUpToDate()
 		{
-			return !m_retriever.Updated;
+			return !m_changeListener.ModelChanged;
 		}
 
 		public void Update()
 		{
 			CheckDisposed();
 
-			XDocument model, template;
-			if (!m_retriever.RetrieveModel(out model, out template))
-				return;
-
-			// PrepareTemplatesForXAmpleFiles adds orderclass elements to MoInflAffixSlot elements
-			m_transformer.PrepareTemplatesForXAmpleFiles(model, template);
-
-			m_transformer.MakeAmpleFiles(model);
-
-			int maxAnalCount = 20;
-			XElement maxAnalCountElem = model.Elements("M3Dump").Elements("ParserParameters").Elements("XAmple").Elements("MaxAnalysesToReturn").FirstOrDefault();
-			if (maxAnalCountElem != null)
+			if (m_changeListener.Reset() || m_forceUpdate)
 			{
-				maxAnalCount = (int) maxAnalCountElem;
-				if (maxAnalCount < 1)
-					maxAnalCount = -1;
+				XDocument model, template;
+				// According to the fxt template files, GAFAWS is NFC, all others are NFD.
+				using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
+				{
+					ILangProject lp = m_cache.LanguageProject;
+					// 1. Export lexicon and/or grammar.
+					model = M3ModelExportServices.ExportGrammarAndLexicon(lp);
+
+					// 2. Export GAFAWS data.
+					template = M3ModelExportServices.ExportGafaws(lp.PartsOfSpeechOA.PossibilitiesOS);
+				}
+
+				// PrepareTemplatesForXAmpleFiles adds orderclass elements to MoInflAffixSlot elements
+				m_transformer.PrepareTemplatesForXAmpleFiles(model, template);
+
+				m_transformer.MakeAmpleFiles(model);
+
+				int maxAnalCount = 20;
+				XElement maxAnalCountElem = model.Elements("M3Dump").Elements("ParserParameters").Elements("XAmple").Elements("MaxAnalysesToReturn").FirstOrDefault();
+				if (maxAnalCountElem != null)
+				{
+					maxAnalCount = (int) maxAnalCountElem;
+					if (maxAnalCount < 1)
+						maxAnalCount = -1;
+				}
+
+				m_xample.SetParameter("MaxAnalysesToReturn", maxAnalCount.ToString(CultureInfo.InvariantCulture));
+
+				m_xample.LoadFiles(Path.Combine(m_dataDir, "Configuration", "Grammar"), Path.GetTempPath(), m_database);
+				m_forceUpdate = false;
 			}
-
-			m_xample.SetParameter("MaxAnalysesToReturn", maxAnalCount.ToString(CultureInfo.InvariantCulture));
-
-			m_xample.LoadFiles(Path.Combine(m_dataDir, "Configuration", "Grammar"), Path.GetTempPath(), m_database);
 		}
 
 		public void Reset()
 		{
 			CheckDisposed();
 
-			m_retriever.Reset();
+			m_forceUpdate = true;
 		}
 
 		public ParseResult ParseWord(string word)
@@ -116,7 +157,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					foreach (XElement morphElem in analysisElem.Descendants("Morph"))
 					{
 						ParseMorph morph;
-						if (!ParserHelper.TryCreateParseMorph(m_cache, morphElem, out morph))
+						if (!TryCreateParseMorph(m_cache, morphElem, out morph))
 						{
 							skip = true;
 							break;
@@ -132,6 +173,85 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 
 			return result;
+		}
+
+		private static bool TryCreateParseMorph(FdoCache cache, XElement morphElem, out ParseMorph morph)
+		{
+			XElement formElement = morphElem.Element("MoForm");
+			Debug.Assert(formElement != null);
+			var formHvo = (string) formElement.Attribute("DbRef");
+
+			XElement msiElement = morphElem.Element("MSI");
+			Debug.Assert(msiElement != null);
+			var msaHvo = (string) msiElement.Attribute("DbRef");
+
+			// Normally, the hvo for MoForm is a MoForm and the hvo for MSI is an MSA
+			// There are four exceptions, though, when an irregularly inflected form is involved:
+			// 1. <MoForm DbRef="x"... and x is an hvo for a LexEntryInflType.
+			//       This is one of the null allomorphs we create when building the
+			//       input for the parser in order to still get the Word Grammar to have something in any
+			//       required slots in affix templates.  The parser filer can ignore these.
+			// 2. <MSI DbRef="y"... and y is an hvo for a LexEntryInflType.
+			//       This is one of the null allomorphs we create when building the
+			//       input for the parser in order to still get the Word Grammar to have something in any
+			//       required slots in affix templates.  The parser filer can ignore these.
+			// 3. <MSI DbRef="y"... and y is an hvo for a LexEntry.
+			//       The LexEntry is a variant form for the first set of LexEntryRefs.
+			// 4. <MSI DbRef="y"... and y is an hvo for a LexEntry followed by a period and an index digit.
+			//       The LexEntry is a variant form and the (non-zero) index indicates
+			//       which set of LexEntryRefs it is for.
+			ICmObject objForm;
+			if (!cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(int.Parse(formHvo), out objForm))
+			{
+				morph = null;
+				return false;
+			}
+			var form = objForm as IMoForm;
+			if (form == null)
+			{
+				morph = null;
+				return true;
+			}
+
+			// Irregulary inflected forms can have a combination MSA hvo: the LexEntry hvo, a period, and an index to the LexEntryRef
+			Tuple<int, int> msaTuple = ProcessMsaHvo(msaHvo);
+			ICmObject objMsa;
+			if (!cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(msaTuple.Item1, out objMsa))
+			{
+				morph = null;
+				return false;
+			}
+			var msa = objMsa as IMoMorphSynAnalysis;
+			if (msa != null)
+			{
+				morph = new ParseMorph(form, msa);
+				return true;
+			}
+
+			var msaAsLexEntry = objMsa as ILexEntry;
+			if (msaAsLexEntry != null)
+			{
+				// is an irregularly inflected form
+				// get the MoStemMsa of its variant
+				if (msaAsLexEntry.EntryRefsOS.Count > 0)
+				{
+					ILexEntryRef lexEntryRef = msaAsLexEntry.EntryRefsOS[msaTuple.Item2];
+					ILexSense sense = MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
+					var inflType = lexEntryRef.VariantEntryTypesRS[0] as ILexEntryInflType;
+					morph = new ParseMorph(form, sense.MorphoSyntaxAnalysisRA, inflType);
+					return true;
+				}
+			}
+
+			// if it is anything else, we ignore it
+			morph = null;
+			return true;
+		}
+
+		private static Tuple<int, int> ProcessMsaHvo(string msaHvo)
+		{
+			string[] msaHvoParts = msaHvo.Split('.');
+			return Tuple.Create(int.Parse(msaHvoParts[0]), msaHvoParts.Length == 2 ? int.Parse(msaHvoParts[1]) : 0);
 		}
 
 		public XDocument ParseWordXml(string word)
@@ -172,11 +292,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return doc;
 		}
 
-		public XDocument TraceWordXml(string word, string selectTraceMorphs)
+		public XDocument TraceWordXml(string word, IEnumerable<int> selectTraceMorphs)
 		{
 			CheckDisposed();
 
-			var sb = new StringBuilder(m_xample.TraceWord(word, selectTraceMorphs));
+			var sb = new StringBuilder(m_xample.TraceWord(word, selectTraceMorphs == null ? null : string.Join(" ", selectTraceMorphs)));
 			sb.Remove(0, 47);
 			sb.Replace("&rsqb;", "]");
 			while (sb[sb.Length - 1] == '\x0')
@@ -305,10 +425,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				m_xample = null;
 			}
 
-			if (m_retriever != null)
+			if (m_changeListener != null)
 			{
-				m_retriever.Dispose();
-				m_retriever = null;
+				m_changeListener.Dispose();
+				m_changeListener = null;
 			}
 		}
 	}

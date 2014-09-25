@@ -509,7 +509,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 					m_parser = new XAmpleParser(m_cache, parserDataDir);
 					break;
 				case "HC":
-					m_parser = new HCParser(m_cache, parserDataDir);
+					m_parser = new HCParser(m_cache);
 					break;
 				default:
 					throw new InvalidOperationException("The language project is set to use an unrecognized parser.");

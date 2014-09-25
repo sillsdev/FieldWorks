@@ -108,7 +108,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Set the current parser to use when tracing
 		/// </summary>
-		public ParserTrace ParserTrace { get; set; }
+		public XAmpleWordGrammarDebugger WordGrammarDebugger { get; set; }
 
 		/// <summary>
 		/// Have the main FLEx window jump to the appropriate item
@@ -178,7 +178,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		public void ShowWordGrammarDetail(string sNodeId)
 		{
 			string sForm = AdjustForm(m_tbWordForm.Text);
-			m_htmlControl.URL = ParserTrace.WordGrammarDebugger.SetUpWordGrammarDebuggerPage(sNodeId, sForm, m_htmlControl.URL);
+			m_htmlControl.URL = WordGrammarDebugger.SetUpWordGrammarDebuggerPage(sNodeId, sForm, m_htmlControl.URL);
 		}
 		/// <summary>
 		/// Try another pass in the Word Grammar Debugger
@@ -187,7 +187,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		public void TryWordGrammarAgain(string sNodeId)
 		{
 			string sForm = AdjustForm(m_tbWordForm.Text);
-			m_htmlControl.URL = ParserTrace.WordGrammarDebugger.PerformAnotherWordGrammarDebuggerStepPage(sNodeId, sForm, m_htmlControl.URL);
+			m_htmlControl.URL = WordGrammarDebugger.PerformAnotherWordGrammarDebuggerStepPage(sNodeId, sForm, m_htmlControl.URL);
 		}
 		/// <summary>
 		/// Back up a page in the Word Grammar Debugger
@@ -199,7 +199,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </remarks>
 		public void GoToPreviousWordGrammarPage()
 		{
-			m_htmlControl.URL = ParserTrace.WordGrammarDebugger.PopWordGrammarStack();
+			m_htmlControl.URL = WordGrammarDebugger.PopWordGrammarStack();
 		}
 		/// <summary>
 		/// Modify the content of the form to use entities when needed

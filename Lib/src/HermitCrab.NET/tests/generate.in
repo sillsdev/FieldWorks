@@ -1,6 +1,0 @@
-;Test generate_word (which allows the user to test the rules in
-; synthesis mode, using either existing lex entries, or ones he makes up).
-
-;Now go to the test files themselves:
-(morpher_input_from_file message c:\data\hc\morpher\tests\genmrule.in)
-(morpher_input_from_file message c:\data\hc\morpher\tests\genrz.in)

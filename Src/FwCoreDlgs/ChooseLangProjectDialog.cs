@@ -306,6 +306,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (IsDisposed || m_networkNeighborhood.Nodes.ContainsKey((entry.HostName)) || entry.AddressList.Length == 0)
 				return;
 
+			// Handle misbehaving host entries who have no ipaddress
+			if(!entry.AddressList.Any())
+				return;
 			// store the HostName -> ipaddress mapping.
 			m_hostIpAddressMap[entry.HostName] = entry.AddressList[0].ToString();
 

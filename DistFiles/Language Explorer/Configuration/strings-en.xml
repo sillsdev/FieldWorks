@@ -290,7 +290,7 @@
 	  <group id="RemoveParserAnalyses">
 		<string id="Label" txt="Remove Parser approved analyses"/>
 		<string id="WhenDescription" txt="Run this utility when you think there are problems of any kind with the analyses that are returned by the parser, or when you simply want to remove all parser approved analyses."/>
-		<string id="WhatDescription" txt="This utility removes all parser approved analyses from the system. It does not remove analyses that are approved/disapproved of by a human being, however. "/>
+		<string id="WhatDescription" txt="This utility removes all parser approved analyses from the system. It does not remove analyses that are approved/disapproved of by a human user, however. "/>
 		<string id="RedoDescription" txt="You cannot use 'Undo' to cancel the effect of this utility. You can restore current parser approved analyses by simply running the parser on your words again."/>
 	  </group>
 	  <group id="NaturalClassChooser">

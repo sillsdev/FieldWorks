@@ -84,12 +84,14 @@
 			<guicontrol id="matchingEntries">
 				<parameters id="lexentryMatchList" listItemsClass="LexEntry" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" altTitleId="LexEntry-Plural" editable="false">
 					<columns>
-						<column label="Headword" sortmethod="FullSortKey" ws="$ws=vernacular" editable="false" width="96000" layout="EntryHeadwordForFindEntry"/>
-						<column label="Lexeme Form" visibility="menu" common="true" sortmethod="MorphSortKey" ws="$ws=vernacular" editable="false" layout="LexemeFormForFindEntry"/>
-						<column label="Citation Form" visibility="menu" sortmethod="CitationFormSortKey" ws="$ws=vernacular" editable="false" layout="CitationFormForFindEntry"/>
-						<column label="Allomorphs" editable="false" width="96000" ws="$ws=vernacular" layout="AllomorphsForFindEntry"/>
+						<column label="Headword" sortmethod="FullSortKey" ws="$ws=best vernoranal" editable="false" width="68000" layout="EntryHeadwordForFindEntry"/>
+						<column label="Lexeme Form" visibility="menu" common="true" sortmethod="MorphSortKey" ws="$ws=best vernoranal" editable="false" layout="LexemeFormForFindEntry"/>
+						<column label="Allomorphs" visibility="menu" width="36000" editable="false" ws="$ws=best vernoranal" layout="AllomorphsForFindEntry"/>
 						<column label="Morph Type" visibility="menu" editable="false" field="LexEntry.LexemeForm" subfield="MoForm.MorphType" list="LexDb.MorphTypes" layout="MorphTypeofEntry"/>
-						<column label="Glosses" editable="false" width="96000" ws="$ws=analysis" layout="GlossesForFindEntry"/>
+						<column label="Citation Form" visibility="menu" sortmethod="CitationFormSortKey" ws="$ws=best vernoranal" editable="false" layout="CitationFormForFindEntry"/>
+						<column label="Glosses" editable="false" width="68000" ws="$ws=best analorvern" layout="GlossesForFindEntry"/>
+						<column label="Reversals" width="68000" editable="false" ws="$ws=best analorvern" layout="ReversalsForFindEntry"/>
+						<column label="Definitions" editable="false" width="68000" ws="$ws=best analorvern" layout="DefinitionsForFindEntry"/>
 						<column headerlabel="Grammatical Info." label="Grammatical Info. (Full)" visibility="menu" multipara="true" layout="MsasOfSenses" chooserFilter="external" editable="false">
 							<dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.EntryPosFilter"/>
 						</column>

@@ -13,6 +13,7 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using System.Xml.Xsl;
 using System.Linq;
+using SIL.Utils;
 using SIL.WordWorks.GAFAWS.PositionAnalysis;
 
 namespace SIL.FieldWorks.WordWorks.Parser
@@ -21,12 +22,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	/// Given an XML file representing an instance of a M3 grammar model,
 	/// transforms it into the format needed by XAmple.
 	/// </summary>
-	internal class M3ToXAmpleTransformer : M3ToParserTransformerBase
+	internal class M3ToXAmpleTransformer
 	{
 		private XslCompiledTransform m_gafawsTransform;
 		private XslCompiledTransform m_adctlTransform;
 		private XslCompiledTransform m_lexTransform;
 		private readonly string m_database;
+		private XslCompiledTransform m_grammarTransform;
+		private XslCompiledTransform m_grammarDebuggingTransform;
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
@@ -65,6 +68,26 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				if (m_lexTransform == null)
 					m_lexTransform = CreateTransform("FxtM3ParserToXAmpleLex");
 				return m_lexTransform;
+			}
+		}
+
+		private XslCompiledTransform GrammarTransform
+		{
+			get
+			{
+				if (m_grammarTransform == null)
+					m_grammarTransform = CreateTransform("FxtM3ParserToToXAmpleGrammar");
+				return m_grammarTransform;
+			}
+		}
+
+		private XslCompiledTransform GrammarDebuggingTransform
+		{
+			get
+			{
+				if (m_grammarDebuggingTransform == null)
+					m_grammarDebuggingTransform = CreateTransform("FxtM3ParserToXAmpleWordGrammarDebuggingXSLT");
+				return m_grammarDebuggingTransform;
 			}
 		}
 
@@ -108,6 +131,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			string gafawsInputFile = Path.Combine(Path.GetTempPath(), gafawsFile);
 			return pa.Process(gafawsInputFile);
 		}
+
 		/// <summary>
 		/// transform the POS that has templates to GAFAWS format
 		/// </summary>
@@ -135,6 +159,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			using (var writer = new StreamWriter(Path.Combine(Path.GetTempPath(), m_database + "lex.txt")))
 				LexTransform.Transform(model.CreateNavigator(), null, writer);
+		}
+
+		private XslCompiledTransform CreateTransform(string xslName)
+		{
+			return XmlUtils.CreateTransform(xslName, "ApplicationTransforms");
 		}
 	}
 }
