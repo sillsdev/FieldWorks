@@ -6,6 +6,7 @@ using System.Windows.Forms;
 
 using SIL.Utils;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -95,53 +96,6 @@ namespace SIL.FieldWorks.Common.Controls
 			ColumnReordered += HandleColumnReordered;
 		}
 
-		#region Support for context menu on header
-
-		private const int WM_CONTEXTMENU = 0x007B;
-
-		/// <summary>
-		/// Override of WndProc to handle the context menu on column headers.
-		/// Necessary because ListView eats almost all mouse events, and does not provide any that can be used to handling right
-		/// clicks in the header.
-		/// </summary>
-		/// <param name="m"></param>
-		protected override void WndProc(ref Message m)
-		{
-			switch (m.Msg)
-			{
-				case WM_CONTEXTMENU:
-					Point pointClicked = PointToClient(MousePosition);
-					int index = GetColumnIndexFromMousePosition(pointClicked);
-					if (index >= 0)
-					{
-						OnColumnRightClick(index, pointClicked);
-					}
-					break;
-				default:
-					base.WndProc(ref m);
-					break;
-			}
-		}
-
-		private int GetColumnIndexFromMousePosition(Point pt)
-		{
-			int width = 0;
-			for (int col = 0; col < Columns.Count; ++col)
-			{
-				width += Columns[col].Width;
-				// Review: is there some way we can check for a valid pt.Y value?
-				// It's probably okay as is, since the body of the list view intercepts
-				// mouse clicks before they get here.
-				if (pt.X <= width)
-				{
-					return col;
-				}
-			}
-			return -1;
-		}
-
-		#endregion
-
 		/// <summary>
 		/// Get the columns in the order they display. This is USUALLY the same as the order of items in Columns,
 		/// but when the user drags a column to re-order it, the system does not re-order the Columns
@@ -215,6 +169,121 @@ namespace SIL.FieldWorks.Common.Controls
 			m_bv.OrderForColumnsDisplay = m_orderForColumnsDisplay;
 
 		}
+
+		#region Support for context menu and column size on header
+
+		private const int WM_CONTEXTMENU = 0x007B;
+		private const int WM_NOTIFY = 0x004E;
+
+		[StructLayout(LayoutKind.Sequential)]
+		private struct NMHDR
+		{
+			/// <summary>
+			/// The HWND from
+			/// </summary>
+			public IntPtr hwndFrom;
+			/// <summary>
+			/// The identifier from
+			/// </summary>
+			public int idFrom;
+			/// <summary>
+			/// The code
+			/// </summary>
+			public int code;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		private struct NMHEADER
+		{
+			/// <summary>
+			/// The HWND from
+			/// </summary>
+			public NMHDR hdr;
+			/// <summary>
+			/// The identifier from
+			/// </summary>
+			public int iItem;
+			/// <summary>
+			/// The code
+			/// </summary>
+			public int iButton;
+
+			/// <summary>
+			/// The pitem
+			/// </summary>
+			public IntPtr pitem;
+		}
+
+		/// <summary>
+		/// Override of WndProc to handle the context menu or column resize on column headers.
+		/// Necessary because ListView eats almost all mouse events, and does not provide any that can be used to handling right
+		/// clicks in the header.
+		/// Also couldn't use class wizard to handle WM_NOTIFY because it won't add HDN_ITEMCLICKA and HDN_DIVIDERDBLCLICKW
+		/// </summary>
+		/// <param name="m">The Windows Message to process</param>
+		protected override void WndProc(ref Message m)
+		{
+			switch (m.Msg)
+			{
+				case WM_CONTEXTMENU:
+					Point pointClicked = PointToClient(MousePosition);
+					int index = GetColumnIndexFromMousePosition(pointClicked);
+					if (index >= 0)
+					{
+						OnColumnRightClick(index, pointClicked);
+					}
+					break;
+				case WM_NOTIFY:
+					var nm = (NMHDR)m.GetLParam(typeof(NMHDR));
+
+					// Notification names: standard, ANSI (A), and Unicode (W)
+					const int HDN_FIRST = 0 - 300;
+					const int HDN_DIVIDERDBLCLICKA = HDN_FIRST - 5;
+					const int HDN_DIVIDERDBLCLICKW = HDN_FIRST - 25;
+
+					// Handle notifications for header column divider
+					if (nm.code == HDN_DIVIDERDBLCLICKA || nm.code == HDN_DIVIDERDBLCLICKW)
+					{
+						// Resize the column based on the header width and then pass that size to AutoResizeColumn.
+						// nmheader.iItem is in the original column order, but the resizes are done in display order.
+						var nmheader = (NMHEADER)m.GetLParam(typeof(NMHEADER));
+						int inDisplayOrder = m_orderForColumnsDisplay[nmheader.iItem];
+						AutoResizeColumn(inDisplayOrder, ColumnHeaderAutoResizeStyle.HeaderSize);
+
+						int headerWidth = ColumnsInDisplayOrder[inDisplayOrder].Width;
+						m_bv.AdjustColumnWidthToMatchContents(inDisplayOrder, headerWidth);
+					}
+					// Handle all other notifications
+					else
+					{
+						base.WndProc(ref m);
+					}
+					break;
+				default:
+					base.WndProc(ref m);
+					break;
+			}
+		}
+
+		private int GetColumnIndexFromMousePosition(Point pt)
+		{
+			int width = 0;
+			for (int col = 0; col < Columns.Count; ++col)
+			{
+				width += Columns[col].Width;
+				// Review: is there some way we can check for a valid pt.Y value?
+				// It's probably okay as is, since the body of the list view intercepts
+				// mouse clicks before they get here.
+				if (pt.X <= width)
+				{
+					return col;
+				}
+			}
+			return -1;
+		}
+
+		#endregion
+
 
 #if __MonoCS__ // FWNX-224
 		internal void HandleColumnClick (object sender, ColumnClickEventArgs e)
