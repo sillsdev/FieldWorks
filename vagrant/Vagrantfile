@@ -10,7 +10,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Every Vagrant virtual environment requires a box to build off of.
   config.vm.box = "webonary_precise_64.box"
-  #config.vm.box_url = "https://googledrive.com/host/0BwTQrVjXe5wbYWZJd0dLMmZhVGs/precise_64_webonary_zend.box"
+  #config.vm.box_url = "https://googledrive.com/host/0B2yTCHCWBxi3MjEwS0Zrb1p4bm8/webonary_precise_64.box"
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine.
