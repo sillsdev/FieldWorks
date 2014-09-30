@@ -593,9 +593,9 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			if (m_printLayout == null)
+			if (m_printLayout == null || Clerk.CurrentObject == null)
 				return false;
-			// Don't bother; this edit view does not specify a print layout.
+			// Don't bother; this edit view does not specify a print layout, or there's nothing to print.
 
 			var area = m_mediator.PropertyTable.GetStringProperty("areaChoice", null);
 			string toolId;
