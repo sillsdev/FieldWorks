@@ -1925,19 +1925,22 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private FeatureStruct LoadFeatureStruct(IFsFeatStruc fs, FeatureSystem featSys)
 		{
 			var hcFS = new FeatureStruct();
-			foreach (IFsFeatureSpecification value in fs.FeatureSpecsOC)
+			if (fs != null)
 			{
-				var closedValue = value as IFsClosedValue;
-				if (closedValue != null)
+				foreach (IFsFeatureSpecification value in fs.FeatureSpecsOC)
 				{
-					var hcFeature = featSys.GetFeature<SymbolicFeature>(closedValue.FeatureRA.Guid.ToString());
-					hcFS.AddValue(hcFeature, hcFeature.PossibleSymbols[closedValue.ValueRA.Guid.ToString()]);
-				}
-				else
-				{
-					var complexValue = (IFsComplexValue) value;
-					var hcFeature = featSys.GetFeature<ComplexFeature>(complexValue.FeatureRA.Guid.ToString());
-					hcFS.AddValue(hcFeature, LoadFeatureStruct((IFsFeatStruc) complexValue.ValueOA, featSys));
+					var closedValue = value as IFsClosedValue;
+					if (closedValue != null)
+					{
+						var hcFeature = featSys.GetFeature<SymbolicFeature>(closedValue.FeatureRA.Guid.ToString());
+						hcFS.AddValue(hcFeature, hcFeature.PossibleSymbols[closedValue.ValueRA.Guid.ToString()]);
+					}
+					else
+					{
+						var complexValue = (IFsComplexValue) value;
+						var hcFeature = featSys.GetFeature<ComplexFeature>(complexValue.FeatureRA.Guid.ToString());
+						hcFS.AddValue(hcFeature, LoadFeatureStruct((IFsFeatStruc) complexValue.ValueOA, featSys));
+					}
 				}
 			}
 			return hcFS;
