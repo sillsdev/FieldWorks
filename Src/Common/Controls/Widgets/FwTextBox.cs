@@ -1371,29 +1371,19 @@ namespace SIL.FieldWorks.Common.Widgets
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Get a value determining if all writing systems in the pasted string are in this
-		/// project. If so, we will keep the writing system formatting. Otherwise, we will
-		/// use the destination writing system (at the selection). We don't want to add new
-		/// writing systems from a paste into an FwTextBox.
+		/// Text boxes should only ever use the destination writing system.
 		/// </summary>
 		/// <param name="wsf">writing system factory containing the writing systems in the
 		/// pasted ITsString</param>
-		/// <param name="destWs">[out] The destination writing system (writing system used at
-		/// the selection).</param>
+		/// <param name="destWs">[out] The destination writing system.</param>
 		/// <returns>
 		/// 	an indication of how the paste should be handled.
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
 		public override PasteStatus DeterminePasteWs(ILgWritingSystemFactory wsf, out int destWs)
 		{
-			// Determine writing system at selection (destination for paste).
-			destWs = 0;
-			if (CurrentSelection != null)
-				destWs = CurrentSelection.GetWritingSystem(SelectionHelper.SelLimitType.Anchor);
-			if (destWs <= 0)
-				destWs = m_innerFwTextBox.WritingSystemCode;
-
-			return AllWritingSystemsDefined(wsf) ? PasteStatus.PreserveWs : PasteStatus.UseDestWs;
+			destWs = m_innerFwTextBox.WritingSystemCode;
+			return PasteStatus.UseDestWs;
 		}
 
 	}
