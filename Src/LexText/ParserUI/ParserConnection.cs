@@ -133,13 +133,13 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		protected override void DisposeManagedResources()
 		{
-				// Remove event handlers.
-				m_scheduler.ParserUpdateVerbose -= ParserUpdateHandlerForPolling;
-				m_scheduler.Dispose();
+			// Remove event handlers.
+			m_scheduler.ParserUpdateVerbose -= ParserUpdateHandlerForPolling;
+			m_scheduler.Dispose();
 
-				m_event.Close();
-				((IDisposable)m_event).Dispose();
-			}
+			m_event.Close();
+			((IDisposable)m_event).Dispose();
+		}
 
 		/// <summary>
 		/// </summary>

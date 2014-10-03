@@ -1248,7 +1248,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					exporter.ExportLiftRanges(stringWriter);
 					File.WriteAllText(outPathRanges, stringWriter.ToString());
 				}
-				LiftSorter.SortLiftRangesFile(outPathRanges);
+				LiftSorter.SortLiftRangesFiles(outPathRanges);
 
 				if (File.Exists(FlexNotesPath))
 				{
