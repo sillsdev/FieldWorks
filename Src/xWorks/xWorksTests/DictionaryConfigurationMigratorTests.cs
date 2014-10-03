@@ -7,12 +7,14 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Xml;
+using Palaso.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using NUnit.Framework;
@@ -671,6 +673,46 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual(oldModel.Parts[0].Children[0].Label, customNode.Label, "order of old model was not retained");
 			Assert.IsFalse(oldChild.IsCustomField, "Child node which is matched should not be a custom field");
 			Assert.IsTrue(customNode.IsCustomField, "The unmatched 'Custom' node should have been marked as a custom field");
+		}
+
+		///<summary/>
+		[Test]
+		public void ProjectHasNewDictionaryConfigs_ReturnsTrueIfAny()
+		{
+			var newDictConfigLoc = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)), "Dictionary");
+			Directory.CreateDirectory(newDictConfigLoc);
+			File.AppendAllText(Path.Combine(newDictConfigLoc, "SomeConfig" + DictionaryConfigurationModel.FileExtension), "Foo");
+			Assert.True(m_migrator.ProjectHasNewDictionaryConfigs()); // SUT
+		}
+
+		///<summary/>
+		[Test]
+		public void ProjectHasNewDictionaryConfigs_ReturnsFalseIfNone()
+		{
+			var newDictConfigLoc = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)), "Dictionary");
+			Directory.CreateDirectory(newDictConfigLoc);
+			Directory.EnumerateFiles(newDictConfigLoc).ForEach(File.Delete);
+			Assert.False(m_migrator.ProjectHasNewDictionaryConfigs()); // SUT
+		}
+
+		///<summary/>
+		[Test]
+		public void ProjectHasNewReversalConfigs_ReturnsTrueIfAny()
+		{
+			var newReversalConfigLoc = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)), "Reversals");
+			Directory.CreateDirectory(newReversalConfigLoc);
+			File.AppendAllText(Path.Combine(newReversalConfigLoc, "SomeConfig" + DictionaryConfigurationModel.FileExtension), "Bar");
+			Assert.That(m_migrator.ProjectHasNewReversalConfigs()); // SUT
+		}
+
+		///<summary/>
+		[Test]
+		public void ProjectHasNewReversalConfigs_ReturnsFalseIfNone()
+		{
+			var newReversalConfigLoc = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)), "Reversals");
+			Directory.CreateDirectory(newReversalConfigLoc);
+			Directory.EnumerateFiles(newReversalConfigLoc).ForEach(File.Delete);
+			Assert.That(m_migrator.ProjectHasNewReversalConfigs(), "Horray, you've implemented the method!"); // SUT
 		}
 
 		private void DeleteStyleSheet(string styleName)

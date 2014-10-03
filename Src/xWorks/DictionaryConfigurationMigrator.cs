@@ -67,6 +67,9 @@ namespace SIL.FieldWorks.XWorks
 			m_logger.DecreaseIndent();
 		}
 
+		/// <summary>
+		/// Migrates old dictionary and reversal configurations if there are not already new dictionary and reversal configurations.
+		/// </summary>
 		public void MigrateOldConfigurationsIfNeeeded()
 		{
 			var versionProvider = new VersionInfoProvider(Assembly.GetExecutingAssembly(), true);
@@ -87,6 +90,40 @@ namespace SIL.FieldWorks.XWorks
 				LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(configureLayouts, this);
 			}
 			File.AppendAllText(Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_mediator), "ConfigMigrationLog.txt"), m_logger.Content);
+		}
+
+		/// <summary>
+		/// Loads the xml configuration for the given tool and returns its configureLayouts child.
+		/// </summary>
+		private XmlNode GetConfigureLayoutsNodeForTool(string tool)
+		{
+			var collector = new XmlNode[1];
+			var parameter = new Tuple<string, string, XmlNode[]>("lexicon", tool,
+																				  collector);
+			m_mediator.SendMessage("GetContentControlParameters", parameter);
+			var controlNode = collector[0];
+			var dynLoaderNode = controlNode.SelectSingleNode("dynamicloaderinfo");
+			var contentAssemblyPath = XmlUtils.GetAttributeValue(dynLoaderNode, "assemblyPath");
+			var contentClass = XmlUtils.GetAttributeValue(dynLoaderNode, "class");
+			var control = (Control)DynamicLoader.CreateObject(contentAssemblyPath, contentClass); // REVIEW (Hasso) 2014.10: this var is never used
+			var parameters = controlNode.SelectSingleNode("parameters");
+			var configureLayouts = XmlUtils.FindNode(parameters, "configureLayouts");
+			return configureLayouts;
+		}
+
+		internal bool ProjectHasNewDictionaryConfigs()
+		{
+			var newDictionaryConfigLoc = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)), "Dictionary");
+			return Directory.Exists(newDictionaryConfigLoc)
+				&& Directory.EnumerateFiles(newDictionaryConfigLoc, "*" + DictionaryConfigurationModel.FileExtension).Any();
+		}
+
+		internal bool ProjectHasNewReversalConfigs()
+		{
+			//todo: Implement reversal configuration migration.
+			return true;
+			//var newReversalConfigLoc = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)), "Reversals");
+			//return Directory.Exists(newReversalConfigLoc);
 		}
 
 		/// <summary>
@@ -251,39 +288,6 @@ namespace SIL.FieldWorks.XWorks
 				return matchingChild;
 			}
 			return null;
-		}
-
-		/// <summary>
-		/// Loads the xml configuration for the given tool and returns its configureLayouts child.
-		/// </summary>
-		private XmlNode GetConfigureLayoutsNodeForTool(string tool)
-		{
-			var collector = new XmlNode[1];
-			var parameter = new Tuple<string, string, XmlNode[]>("lexicon", tool,
-																				  collector);
-			m_mediator.SendMessage("GetContentControlParameters", parameter);
-			var controlNode = collector[0];
-			var dynLoaderNode = controlNode.SelectSingleNode("dynamicloaderinfo");
-			var contentAssemblyPath = XmlUtils.GetAttributeValue(dynLoaderNode, "assemblyPath");
-			var contentClass = XmlUtils.GetAttributeValue(dynLoaderNode, "class");
-			var mainControl = (Control)DynamicLoader.CreateObject(contentAssemblyPath, contentClass);
-			var parameters = controlNode.SelectSingleNode("parameters");
-			var configureLayouts = XmlUtils.FindNode(parameters, "configureLayouts");
-			return configureLayouts;
-		}
-
-		private bool ProjectHasNewDictionaryConfigs()
-		{
-			var newDictionaryConfigLoc = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)), "Dictionary");
-			return Directory.Exists(newDictionaryConfigLoc) && Directory.EnumerateFiles(newDictionaryConfigLoc, DictionaryConfigurationModel.FileExtension).Any();
-		}
-
-		private bool ProjectHasNewReversalConfigs()
-		{
-			//todo: Implement reversal configuration migration.
-			return true;
-			//var newReversalConfigLoc = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)), "Reversals");
-			//return !Directory.Exists(newReversalConfigLoc);
 		}
 
 		internal ConfigurableDictionaryNode ConvertLayoutTreeNodeToConfigNode(XmlDocConfigureDlg.LayoutTreeNode node)
