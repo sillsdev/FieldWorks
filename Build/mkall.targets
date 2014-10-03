@@ -300,20 +300,20 @@
 
 	<PropertyGroup>
 		<!-- bt274 is the FLExBridgeBeta branch build of Chorus for Windows development. Update when appropriate. -->
-		<ChorusDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt274/8.1.0.tcbuildtag</ChorusDownloadUrl>
+		<ChorusDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt274/8.1.1.tcbuildtag</ChorusDownloadUrl>
 		<!-- bt285 is the FLExBridgeBeta branch build of Chorus for Linux development. Update when appropriate. -->
-		<ChorusDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt285/8.1.0.tcbuildtag</ChorusDownloadUrl>
+		<ChorusDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt285/8.1.1.tcbuildtag</ChorusDownloadUrl>
 		<!-- fwiw, bt273 is the FLExBridgeBeta branch build of Palaso for Windows development. Update when appropriate. -->
-		<PalasoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt273/8.1.0.tcbuildtag</PalasoDownloadUrl>
+		<PalasoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt273/8.1.1.tcbuildtag</PalasoDownloadUrl>
 		<!-- fwiw, bt284 is the FLExBridgeBeta branch build of Palaso for Linux development. Update when appropriate. -->
-		<PalasoDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt284/8.1.0.tcbuildtag</PalasoDownloadUrl>
+		<PalasoDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt284/8.1.1.tcbuildtag</PalasoDownloadUrl>
 		<!--Todo: use PalasoDownloadUrl, when it refers to somewhere that has the IPCFramework.-->
 		<!-- bt278 is the develop branch build of IPCFramework for Windows development. Update when appropriate. -->
-		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt278/8.1.0.tcbuildtag</IPCFrameworkDownloadUrl>
+		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt278/8.1.1.tcbuildtag</IPCFrameworkDownloadUrl>
 		<!-- bt279 is the develop branch build of IPCFramework for Linux development. Update when appropriate. -->
-		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt279/8.1.0.tcbuildtag</IPCFrameworkDownloadUrl>
+		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt279/8.1.1.tcbuildtag</IPCFrameworkDownloadUrl>
 		<ProtoBufNetDownloadUrl>https://protobuf-net.googlecode.com/files/protobuf-net%20r668.zip</ProtoBufNetDownloadUrl>
-		<GoogleDriveDownloadUrl>https://drive.google.com/uc?export=download&amp;id=</GoogleDriveDownloadUrl>
+		<DownloadsSilOrgDownloadUrl>http://downloads.sil.org/BuildDlls/FW8.1/</DownloadsSilOrgDownloadUrl>
 		<!-- Windows/.Net and Linux/Mono use different extensions for debug information files. -->
 		<DebugInfo Condition="'$(OS)'=='Unix'">dll.mdb</DebugInfo>
 		<DebugInfo Condition="'$(OS)'=='Windows_NT'">pdb</DebugInfo>
@@ -321,7 +321,7 @@
 
 	<Target Name="downloadDlls">
 		<MakeDir Directories="$(fwrt)/Downloads"/>
-		<Message Text="Downloading 8.1.0 tagged artifacts from Palaso [FLExBridgeBeta] build."/>
+		<Message Text="Downloading 8.1.1 tagged artifacts from Palaso [FLExBridgeBeta] build."/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.dll" LocalFilename="$(fwrt)/Downloads/Palaso.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.dll.config" LocalFilename="$(fwrt)/Downloads/Palaso.dll.config"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/Palaso.$(DebugInfo)"/>
@@ -348,14 +348,14 @@
 		<DownloadFile Address="$(PalasoDownloadUrl)/NDesk.DBus.dll.config" LocalFilename="$(fwrt)/Downloads/NDesk.DBus.dll.config"
 					  Condition="'$(OS)'=='Unix'"/>
 
-		<Message Text="Downloading 8.1.0 tagged artifacts from Chorus FLExBridgeBeta build."/>
+		<Message Text="Downloading 8.1.1 tagged artifacts from Chorus FLExBridgeBeta build."/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/Autofac.dll" LocalFilename="$(fwrt)/Downloads/Autofac.dll"/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/Chorus.exe" LocalFilename="$(fwrt)/Downloads/Chorus.exe"/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/ChorusHub.exe" LocalFilename="$(fwrt)/Downloads/ChorusHub.exe" Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/LibChorus.dll" LocalFilename="$(fwrt)/Downloads/LibChorus.dll"/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/Vulcan.Uczniowie.HelpProvider.dll" LocalFilename="$(fwrt)/Downloads/Vulcan.Uczniowie.HelpProvider.dll"/>
 
-		<Message Text="Downloading 8.1.0 tagged artifacts for IPCFramework."/>
+		<Message Text="Downloading 8.1.1 tagged artifacts for IPCFramework."/>
 		<DownloadFile Address="$(IPCFrameworkDownloadUrl)/IPCFramework.dll" LocalFilename="$(fwrt)/Downloads/IPCFramework.dll"/>
 
 		<Message Text="Downloading protobuf-net." />
@@ -364,23 +364,23 @@
 		<Delete Files="$(fwrt)/Downloads/protobuf-net.zip" />
 
 		<Message Text="Downloading ParaTExt DLLs." />
-		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYZ0JDa210VzctVE0" LocalFilename="$(fwrt)/Downloads/Paratext.LexicalContracts.dll"/>
+		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Paratext.LexicalContracts.dll" LocalFilename="$(fwrt)/Downloads/Paratext.LexicalContracts.dll"/>
 		<!-- Windows downloads -->
-		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYdWdUR1JaT1lGRU0" LocalFilename="$(fwrt)/Downloads/geckofx-core-14.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYZVRYa0c4TnRaWkk" LocalFilename="$(fwrt)/Downloads/Geckofx-Winforms-14.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYUE1ueUZnRmFZX00" LocalFilename="$(fwrt)/Downloads/FormattedEditor.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYUG14SXRZM2EyWkE" LocalFilename="$(fwrt)/Downloads/HelpSystem.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYMmQ4MzI1ZXZwcVU" LocalFilename="$(fwrt)/Downloads/HtmlEditor.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYQW1hSWFQejJsOFk" LocalFilename="$(fwrt)/Downloads/NetLoc.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYM2FJLTVYVzFEUzQ" LocalFilename="$(fwrt)/Downloads/ParatextShared.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYdnBJVmd1dEowdVU" LocalFilename="$(fwrt)/Downloads/Utilities.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Windows/geckofx-core-14.dll" LocalFilename="$(fwrt)/Downloads/geckofx-core-14.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Windows/Geckofx-Winforms-14.dll" LocalFilename="$(fwrt)/Downloads/Geckofx-Winforms-14.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Windows/FormattedEditor.dll" LocalFilename="$(fwrt)/Downloads/FormattedEditor.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Windows/HelpSystem.dll" LocalFilename="$(fwrt)/Downloads/HelpSystem.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Windows/HtmlEditor.dll" LocalFilename="$(fwrt)/Downloads/HtmlEditor.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Windows/NetLoc.dll" LocalFilename="$(fwrt)/Downloads/NetLoc.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Windows/ParatextShared.dll" LocalFilename="$(fwrt)/Downloads/ParatextShared.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Windows/Utilities.dll" LocalFilename="$(fwrt)/Downloads/Utilities.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<!-- Linux downloads -->
-		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYb1MtM2V5aEJER1k" LocalFilename="$(fwrt)/Downloads/FormattedEditor.dll" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYYXNfaXRFSDBtVkE" LocalFilename="$(fwrt)/Downloads/HelpSystem.dll" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYOGVEbllIRGN1ZDQ" LocalFilename="$(fwrt)/Downloads/HtmlEditor.dll" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYZ3BwZ2ZHSFJDemM" LocalFilename="$(fwrt)/Downloads/NetLoc.dll" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYTVM0c1hFWkhlanM" LocalFilename="$(fwrt)/Downloads/ParatextShared.dll" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(GoogleDriveDownloadUrl)0B-6uL5yOBvRYNkFiWEQ4QkEtTzA" LocalFilename="$(fwrt)/Downloads/Utilities.dll" Condition="'$(OS)'=='Unix'"/>
+		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Linux/FormattedEditor.dll" LocalFilename="$(fwrt)/Downloads/FormattedEditor.dll" Condition="'$(OS)'=='Unix'"/>
+		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Linux/HelpSystem.dll" LocalFilename="$(fwrt)/Downloads/HelpSystem.dll" Condition="'$(OS)'=='Unix'"/>
+		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Linux/HtmlEditor.dll" LocalFilename="$(fwrt)/Downloads/HtmlEditor.dll" Condition="'$(OS)'=='Unix'"/>
+		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Linux/NetLoc.dll" LocalFilename="$(fwrt)/Downloads/NetLoc.dll" Condition="'$(OS)'=='Unix'"/>
+		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Linux/ParatextShared.dll" LocalFilename="$(fwrt)/Downloads/ParatextShared.dll" Condition="'$(OS)'=='Unix'"/>
+		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Linux/Utilities.dll" LocalFilename="$(fwrt)/Downloads/Utilities.dll" Condition="'$(OS)'=='Unix'"/>
 	</Target>
 
 	<!-- item group for downloads, to allow easy copying -->
