@@ -109,8 +109,9 @@ namespace SIL.FieldWorks.XWorks
 				// There is nothing to configure on the Main Entry itself
 				View.Visible = false;
 			}
-			else if (m_node.FieldDescription != null && m_node.FieldDescription.StartsWith("MorphoSyntaxAnalysis")) // optional suffix RA
+			else if ("MorphoSyntaxAnalysisRA".Equals(m_node.FieldDescription) && m_node.Parent.DictionaryNodeOptions is DictionaryNodeSenseOptions)
 			{
+				// Special Grammatical Info. options are needed only if the parent is Senses.
 				LoadGrammaticalInfoOptions();
 			}
 			// else, show only the default details (style, before, between, after)

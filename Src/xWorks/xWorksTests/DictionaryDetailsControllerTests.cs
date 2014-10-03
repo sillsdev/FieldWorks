@@ -208,7 +208,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var childGramarNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "MorphoSyntaxAnalysis",
+				FieldDescription = "MorphoSyntaxAnalysisRA",
 				Parent = parentSenseNode
 			};
 			parentSenseNode.Children = new List<ConfigurableDictionaryNode>{ childGramarNode };
@@ -220,6 +220,25 @@ namespace SIL.FieldWorks.XWorks
 
 				Assert.False(parentSenseOptions.ShowSharedGrammarInfoFirst, "ShowSharedGrammarInfoFirst should have been updated");
 			}
+		}
+
+		[Test]
+		public void ShowGrammaticalInfo_DoesNotCrashForNonSense()
+		{
+			var parentComplexFormsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Referenced Complex Forms",
+				DictionaryNodeOptions = null
+			};
+			var childGramarNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MorphoSyntaxAnalysisRA",
+				Parent = parentComplexFormsNode
+			};
+			parentComplexFormsNode.Children = new List<ConfigurableDictionaryNode>{ childGramarNode };
+
+			// SUT is constructor.  `using ... .View` to ensure disposal
+			Assert.DoesNotThrow(() => { using(new DictionaryDetailsController(childGramarNode, m_mediator).View) {} });
 		}
 		#endregion Sense tests
 
