@@ -244,14 +244,10 @@ namespace SIL.FieldWorks.Common.Controls
 					// Handle notifications for header column divider
 					if (nm.code == HDN_DIVIDERDBLCLICKA || nm.code == HDN_DIVIDERDBLCLICKW)
 					{
-						// Resize the column based on the header width and then pass that size to AutoResizeColumn.
 						// nmheader.iItem is in the original column order, but the resizes are done in display order.
 						var nmheader = (NMHEADER)m.GetLParam(typeof(NMHEADER));
 						int inDisplayOrder = m_orderForColumnsDisplay[nmheader.iItem];
-						AutoResizeColumn(inDisplayOrder, ColumnHeaderAutoResizeStyle.HeaderSize);
-
-						int headerWidth = ColumnsInDisplayOrder[inDisplayOrder].Width;
-						m_bv.AdjustColumnWidthToMatchContents(inDisplayOrder, headerWidth);
+						m_bv.AdjustColumnWidthToMatchContents(inDisplayOrder);
 					}
 					// Handle all other notifications
 					else
