@@ -2047,10 +2047,10 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
-		/// Adjust column width to the maximum size between header width and content width
+		/// Adjust column width to the content width
 		/// References are in display order.
 		/// </summary>
-		internal void AdjustColumnWidthToMatchContents(int icolLvHeaderToAdjust, int headerWidth)
+		internal void AdjustColumnWidthToMatchContents(int icolLvHeaderToAdjust)
 		{
 			if (m_xbv.Vc.HasSelectColumn && icolLvHeaderToAdjust == 0)
 				return; // don't auto-size a select column.
@@ -2064,7 +2064,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				using (OneColumnXmlBrowseView xbv = new OneColumnXmlBrowseView(this, icolLvHeaderToAdjust))
 				{
-					maxStringWidth = Math.Max(xbv.GetMaxCellContentsWidth(), headerWidth);
+					maxStringWidth = xbv.GetMaxCellContentsWidth();
 				}
 			}
 			// adjust column header widths
