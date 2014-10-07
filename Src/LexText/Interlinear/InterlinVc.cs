@@ -594,7 +594,7 @@ namespace SIL.FieldWorks.IText
 			UsingGuess = true;
 		}
 
-		private bool UsingGuess { get; set; }
+		public bool UsingGuess { get; set; }
 
 		/// <summary>
 		/// Get a guess for the given word or analysis.
