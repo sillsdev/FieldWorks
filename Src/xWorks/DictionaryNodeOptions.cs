@@ -45,6 +45,10 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>Options for formatting Senses</summary>
 	public class DictionaryNodeSenseOptions : DictionaryNodeOptions
 	{
+		// Character Style applied to Sense Numbers
+		[XmlAttribute(AttributeName = "numberStyle")]
+		public string NumberStyle { get; set; }
+
 		[XmlAttribute(AttributeName = "numberBefore")]
 		public string BeforeNumber { get; set; }
 
@@ -54,10 +58,6 @@ namespace SIL.FieldWorks.XWorks
 
 		[XmlAttribute(AttributeName = "numberAfter")]
 		public string AfterNumber { get; set; }
-
-		// Character Style applied to Sense Numbers
-		[XmlAttribute(AttributeName = "numberStyle")]
-		public string NumberStyle { get; set; }
 
 		[XmlAttribute(AttributeName = "numberSingleSense")]
 		public bool NumberEvenASingleSense { get; set; }

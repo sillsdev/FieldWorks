@@ -609,13 +609,22 @@ namespace SIL.FieldWorks.XWorks
 		public void Save_ConfigWithSenseOptionsValidatesAgainstSchema()
 		{
 			var modelFile = Path.GetTempFileName();
+			var senseOptions = new DictionaryNodeSenseOptions
+			{
+				NumberStyle = "Some-Style",
+				BeforeNumber = "(",
+				AfterNumber = ")",
+				NumberingStyle = "%O",
+				DisplayEachSenseInAParagraph = true
+			};
 			var oneConfigNode = new ConfigurableDictionaryNode
 			{
 				Label = "Main Entry",
 				IsEnabled = true,
 				Before = "[",
 				FieldDescription = "LexEntry",
-				DictionaryNodeOptions = new DictionaryNodeSenseOptions()
+				Style = "Some-Style",
+				DictionaryNodeOptions = senseOptions
 			};
 
 			var model = new DictionaryConfigurationModel
@@ -760,6 +769,49 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/Publications/Publication", 1);
 		}
 
+		[Test]
+		public void Save_RealConfigValidatesAgainstSchema()
+		{
+			var modelFile = Path.GetTempFileName();
+			var shippedConfigfolder = Path.Combine(FwDirectoryFinder.FlexFolder, "DefaultConfigurations", "Dictionary");
+			var sampleShippedFile = Directory.EnumerateFiles(shippedConfigfolder, "*" + DictionaryConfigurationModel.FileExtension).First();
+			var model = new DictionaryConfigurationModel(sampleShippedFile, Cache) { FilePath = modelFile };
+			model.Parts[1].DuplicateAmongSiblings(model.Parts);
+			// SUT
+			model.Save();
+			ValidateAgainstSchema(modelFile);
+		}
+
+		[Test]
+		public void Save_PrettyPrints()
+		{
+			var modelFile = Path.GetTempFileName();
+			var oneConfigNode = new ConfigurableDictionaryNode
+			{
+				Label = "Entry",
+				FieldDescription = "LexEntry",
+				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions
+				{
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					{
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id = "1f6ae209-141a-40db-983c-bee93af0ca3c" }
+					}
+				}
+			};
+
+			var model = new DictionaryConfigurationModel
+			{
+				FilePath = modelFile,
+				Version = 0,
+				Label = "root",
+				Parts = new List<ConfigurableDictionaryNode> { oneConfigNode }
+			};
+			//SUT
+			model.Save();
+			ValidateAgainstSchema(modelFile);
+			StringAssert.Contains("      ", File.ReadAllText(modelFile), "Currently expecting default intent style: two spaces");
+			StringAssert.Contains(Environment.NewLine, File.ReadAllText(modelFile), "Configuration XML should not all be on one line");
+		}
 		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
 							  Justification = "Certain types can't be validated. e.g. xs:byte, otherwise implemented enough for us")]
 		private static void ValidateAgainstSchema(string xmlFile)

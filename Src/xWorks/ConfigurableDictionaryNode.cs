@@ -14,24 +14,6 @@ namespace SIL.FieldWorks.XWorks
 	public class ConfigurableDictionaryNode
 	{
 		/// <summary>
-		/// Additional information directing this configuration to a sub field, or property of a field, in the FieldWorks model
-		/// </summary>
-		[XmlAttribute(AttributeName = "subField")]
-		public string SubField { get; set; }
-
-		/// <summary>
-		/// Information about the field in the FieldWorks model that this node is configuring
-		/// </summary>
-		[XmlAttribute(AttributeName = "field")]
-		public string FieldDescription { get; set; }
-
-		/// <summary>
-		/// The style to apply to the data configured by this node
-		/// </summary>
-		[XmlAttribute(AttributeName = "style")]
-		public string Style { get; set; }
-
-		/// <summary>
 		/// The label to display for this node
 		/// </summary>
 		[XmlAttribute(AttributeName = "name")]
@@ -58,52 +40,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// String to apply before the content configured by this node
-		/// </summary>
-		[XmlAttribute(AttributeName = "before")]
-		public string Before { get; set; }
-
-		/// <summary>
-		/// String to apply after the content configured by this node
-		/// </summary>
-		[XmlAttribute(AttributeName = "after")]
-		public string After { get; set; }
-
-		/// <summary>
-		/// String to apply between content items configured by this node (only applicable to lists)
-		/// </summary>
-		[XmlAttribute(AttributeName = "between")]
-		public string Between { get; set; }
-
-		/// <summary>
-		/// Parent of this node, or null.
-		/// </summary>
-		[XmlIgnore]
-		public ConfigurableDictionaryNode Parent { get; internal set; }
-
-		/// <summary>
-		/// Reference to a shared configuration node or null.
-		/// </summary>
-		[XmlElement("ReferenceItem")]
-		public string ReferenceItem { get; set; }
-
-		/// <summary>
-		/// Ordered list of nodes contained by this configurable node
-		/// </summary>
-		[XmlElement(ElementName = "ConfigurationItem")]
-		public List<ConfigurableDictionaryNode> Children { get; set; }
-
-		/// <summary>
-		/// Type specific configuration options for this configurable node;
-		/// </summary>
-		[XmlElement("WritingSystemOptions", typeof(DictionaryNodeWritingSystemOptions))]
-		[XmlElement("ListTypeOptions", typeof(DictionaryNodeListOptions))]
-		[XmlElement("ComplexFormOptions", typeof(DictionaryNodeComplexFormOptions))]
-		[XmlElement("SenseOptions", typeof(DictionaryNodeSenseOptions))]
-		[XmlElement("PictureOptions", typeof(DictionaryNodePictureOptions))]
-		public DictionaryNodeOptions DictionaryNodeOptions { get; set; }
-
-		/// <summary>
 		/// Whether this element of dictionary data is to shown as part of the dictionary.
 		/// </summary>
 		[XmlAttribute(AttributeName = "isEnabled")]
@@ -121,6 +57,41 @@ namespace SIL.FieldWorks.XWorks
 		[XmlAttribute(AttributeName = "isCustomField")]
 		public bool IsCustomField { get; set; }
 
+		/// <summary>
+		/// The style to apply to the data configured by this node
+		/// </summary>
+		[XmlAttribute(AttributeName = "style")]
+		public string Style { get; set; }
+
+		/// <summary>
+		/// String to apply before the content configured by this node
+		/// </summary>
+		[XmlAttribute(AttributeName = "before")]
+		public string Before { get; set; }
+
+		/// <summary>
+		/// String to apply between content items configured by this node (only applicable to lists)
+		/// </summary>
+		[XmlAttribute(AttributeName = "between")]
+		public string Between { get; set; }
+
+		/// <summary>
+		/// String to apply after the content configured by this node
+		/// </summary>
+		[XmlAttribute(AttributeName = "after")]
+		public string After { get; set; }
+
+		/// <summary>
+		/// Information about the field in the FieldWorks model that this node is configuring
+		/// </summary>
+		[XmlAttribute(AttributeName = "field")]
+		public string FieldDescription { get; set; }
+
+		/// <summary>
+		/// Additional information directing this configuration to a sub field, or property of a field, in the FieldWorks model
+		/// </summary>
+		[XmlAttribute(AttributeName = "subField")]
+		public string SubField { get; set; }
 
 		/// <summary>
 		/// Normally the FieldDescription in a ConfigurationNode will be directly used as the class name for
@@ -129,6 +100,34 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		[XmlAttribute(AttributeName = "cssClassNameOverride")]
 		public string CSSClassNameOverride { get; set; }
+
+		/// <summary>
+		/// Type specific configuration options for this configurable node;
+		/// </summary>
+		[XmlElement("WritingSystemOptions", typeof(DictionaryNodeWritingSystemOptions))]
+		[XmlElement("ListTypeOptions", typeof(DictionaryNodeListOptions))]
+		[XmlElement("ComplexFormOptions", typeof(DictionaryNodeComplexFormOptions))]
+		[XmlElement("SenseOptions", typeof(DictionaryNodeSenseOptions))]
+		[XmlElement("PictureOptions", typeof(DictionaryNodePictureOptions))]
+		public DictionaryNodeOptions DictionaryNodeOptions { get; set; }
+
+		/// <summary>
+		/// Ordered list of nodes contained by this configurable node
+		/// </summary>
+		[XmlElement(ElementName = "ConfigurationItem")]
+		public List<ConfigurableDictionaryNode> Children { get; set; }
+
+		/// <summary>
+		/// Parent of this node, or null.
+		/// </summary>
+		[XmlIgnore]
+		public ConfigurableDictionaryNode Parent { get; internal set; }
+
+		/// <summary>
+		/// Reference to a shared configuration node or null.
+		/// </summary>
+		[XmlElement("ReferenceItem")]
+		public string ReferenceItem { get; set; }
 
 		/// <summary>
 		/// Clone this node. Point to the same Parent object. Deep-clone Children and DictionaryNodeOptions.

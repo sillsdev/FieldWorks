@@ -34,25 +34,19 @@ namespace SIL.FieldWorks.XWorks
 		public List<ConfigurableDictionaryNode> SharedItems { get; set; }
 
 		/// <summary>
-		/// File where data is stored
-		/// </summary>
-		[XmlIgnore]
-		public string FilePath { get; set; }
-
-		/// <summary>
 		/// Name of this dictionary configuration. eg "Stem-based"
 		/// </summary>
 		[XmlAttribute(AttributeName = "name")]
 		public string Label { get; set; }
-
-		[XmlAttribute(AttributeName = "lastModified", DataType = "date")]
-		public DateTime LastModified { get; set; }
 
 		/// <summary>
 		/// The version of the DictionaryConfigurationModel for use in data migration ect.
 		/// </summary>
 		[XmlAttribute(AttributeName = "version")]
 		public int Version { get; set; }
+
+		[XmlAttribute(AttributeName = "lastModified", DataType = "date")]
+		public DateTime LastModified { get; set; }
 
 		/// <summary>
 		/// Publications for which this view applies. <seealso cref="AllPublications"/>
@@ -67,12 +61,19 @@ namespace SIL.FieldWorks.XWorks
 		[XmlAttribute(AttributeName = "allPublications")]
 		public bool AllPublications { get; set; }
 
+		/// <summary>
+		/// File where data is stored
+		/// </summary>
+		[XmlIgnore]
+		public string FilePath { get; set; }
+
 		/// <summary></summary>
 		public void Save()
 		{
 			LastModified = DateTime.Now;
 			var serializer = new XmlSerializer(typeof(DictionaryConfigurationModel));
-			using(var writer = XmlWriter.Create(FilePath))
+			var settings = new XmlWriterSettings { Indent = true };
+			using(var writer = XmlWriter.Create(FilePath, settings))
 			{
 				serializer.Serialize(writer, this);
 			}

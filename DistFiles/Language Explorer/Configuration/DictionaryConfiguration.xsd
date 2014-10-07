@@ -1,81 +1,80 @@
 <?xml version="1.0"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified">
 <xs:element name="DictionaryConfiguration">
-	 <xs:complexType>
-		  <xs:sequence>
-				<xs:element name="ConfigurationItem" type="ConfigurationItemType" maxOccurs="unbounded" minOccurs="0"/>
-			  <xs:element name="SharedItems" minOccurs="0" maxOccurs="1">
+	<xs:complexType>
+		<xs:sequence>
+			<xs:element name="ConfigurationItem" type="ConfigurationItemType" maxOccurs="unbounded" minOccurs="0"/>
+			<xs:element name="SharedItems" minOccurs="0" maxOccurs="1">
 				<xs:complexType>
-				<xs:sequence>
-				  <xs:element name="ConfigurationItem" type="ConfigurationItemType" maxOccurs="unbounded" minOccurs="0"/>
-				</xs:sequence>
+					<xs:sequence>
+						<xs:element name="ConfigurationItem" type="ConfigurationItemType" maxOccurs="unbounded" minOccurs="0"/>
+					</xs:sequence>
 				</xs:complexType>
-			  </xs:element>
-			  <xs:element name="Publications" minOccurs="0" maxOccurs="1">
+			</xs:element>
+			<xs:element name="Publications" minOccurs="0" maxOccurs="1">
 				<xs:complexType>
-				<xs:sequence>
-				  <xs:element name="Publication" minOccurs="0" maxOccurs="unbounded"/>
-				</xs:sequence>
+					<xs:sequence>
+						<xs:element name="Publication" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
 				</xs:complexType>
-			  </xs:element>
-		  </xs:sequence>
-		  <xs:attribute type="xs:string" name="name" use="required"/>
-		  <xs:attribute type="xs:integer" name="version" use="required"/>
-		  <xs:attribute type="xs:date" name="lastModified"/>
-		  <xs:attribute type="xs:boolean" name="allPublications" use="optional"/>
-	 </xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute type="xs:string" name="name" use="required"/>
+		<xs:attribute type="xs:integer" name="version" use="required"/>
+		<xs:attribute type="xs:date" name="lastModified"/>
+		<xs:attribute type="xs:boolean" name="allPublications" use="optional"/>
+	</xs:complexType>
 </xs:element>
 <xs:complexType name="ConfigurationItemType">
 	<xs:sequence>
 		<xs:element name="WritingSystemOptions" minOccurs="0">
 			<xs:complexType>
-				 <xs:sequence>
-					  <xs:element name="Option" type="OptionListItemType" maxOccurs="unbounded" minOccurs="0"/>
-				 </xs:sequence>
-				 <xs:attribute type="writingSystemType" name="writingSystemType" use="required"/>
-				 <xs:attribute type="xs:boolean" name="displayWSAbreviation" use="optional"/>
+				<xs:sequence>
+					<xs:element name="Option" type="OptionListItemType" maxOccurs="unbounded" minOccurs="0"/>
+				</xs:sequence>
+				<xs:attribute type="writingSystemType" name="writingSystemType" use="required"/>
+				<xs:attribute type="xs:boolean" name="displayWSAbreviation" use="optional"/>
 			</xs:complexType>
 		</xs:element>
 		<xs:element name="ListTypeOptions" minOccurs="0">
 			<xs:complexType>
-				 <xs:sequence>
-					  <xs:element name="Option" type="OptionListItemType" maxOccurs="unbounded" minOccurs="0"/>
-				 </xs:sequence>
-				 <xs:attribute type="listIdType" name="list" use="required"/>
+				<xs:sequence>
+					<xs:element name="Option" type="OptionListItemType" maxOccurs="unbounded" minOccurs="0"/>
+				</xs:sequence>
+				<xs:attribute type="listIdType" name="list" use="required"/>
 			</xs:complexType>
 		</xs:element>
 		<xs:element name="ComplexFormOptions" minOccurs="0">
-				<xs:complexType>
-					 <xs:sequence>
-						  <xs:element name="Option" type="OptionListItemType" maxOccurs="unbounded" minOccurs="0"/>
-					 </xs:sequence>
-					 <xs:attribute type="listIdType" name="list" use="optional"/>
-					 <xs:attribute type="xs:boolean" name="displayEachComplexFormInParagraph" use="optional"/>
-				</xs:complexType>
+			<xs:complexType>
+				<xs:sequence>
+					<xs:element name="Option" type="OptionListItemType" maxOccurs="unbounded" minOccurs="0"/>
+				</xs:sequence>
+				<xs:attribute type="listIdType" name="list" use="optional"/>
+				<xs:attribute type="xs:boolean" name="displayEachComplexFormInParagraph" use="optional"/>
+			</xs:complexType>
 		</xs:element>
 		<xs:element name="SenseOptions" minOccurs="0">
 			<xs:complexType>
-				 <xs:attribute type="xs:boolean" name="displayEachSenseInParagraph"/>
-				 <xs:attribute type="xs:string" name="senseParaStyle"/>
-				 <xs:attribute type="xs:string" name="numberStyle"/>
-				 <xs:attribute type="xs:string" name="numberBefore"/>
-				 <xs:attribute type="xs:string" name="numberAfter"/>
-				 <xs:attribute type="xs:string" name="numberingStyle"/>
-				 <xs:attribute type="xs:boolean" name="numberSingleSense"/>
-				 <xs:attribute type="xs:boolean" name="showSingleGramInfoFirst"/>
+				<xs:attribute type="xs:string" name="numberStyle"/>
+				<xs:attribute type="xs:string" name="numberBefore"/>
+				<xs:attribute type="xs:string" name="numberingStyle"/>
+				<xs:attribute type="xs:string" name="numberAfter"/>
+				<xs:attribute type="xs:boolean" name="numberSingleSense"/>
+				<xs:attribute type="xs:boolean" name="showSingleGramInfoFirst"/>
+				<xs:attribute type="xs:boolean" name="displayEachSenseInParagraph"/>
 			</xs:complexType>
 		</xs:element>
 		<xs:element name="PictureOptions" minOccurs="0">
 			<xs:complexType>
-				 <!-- Width and height restrictions are stored in inches. -->
-				 <xs:attribute type="xs:float" name="minimumHeight" use="required"/>
-				 <xs:attribute type="xs:float" name="minimumWidth" use="required"/>
-				 <xs:attribute type="xs:float" name="maximumHeight" use="required"/>
-				 <xs:attribute type="xs:float" name="maximumWidth" use="required"/>
-				 <!-- Controls where the picture is placed in relation to the entry text. -->
-				 <xs:attribute type="alignmentType" name="pictureLocation" use="required"/>
-				 <!-- Controls if multiple pictures are placed above or beside each other. -->
-				 <xs:attribute type="xs:boolean" name="stackPictures" use="required"/>
+				<!-- Width and height restrictions are stored in inches. -->
+				<xs:attribute type="xs:float" name="minimumHeight" use="required"/>
+				<xs:attribute type="xs:float" name="minimumWidth" use="required"/>
+				<xs:attribute type="xs:float" name="maximumHeight" use="required"/>
+				<xs:attribute type="xs:float" name="maximumWidth" use="required"/>
+				<!-- Controls where the picture is placed in relation to the entry text. -->
+				<xs:attribute type="alignmentType" name="pictureLocation" use="required"/>
+				<!-- Controls if multiple pictures are placed above or beside each other. -->
+				<xs:attribute type="xs:boolean" name="stackPictures" use="required"/>
 			</xs:complexType>
 		</xs:element>
 		<xs:choice minOccurs="0" maxOccurs="1">
@@ -91,37 +90,37 @@
 	</xs:sequence>
 	<xs:attribute type="xs:string" name="name" use="required"/>
 	<xs:attribute type="xs:string" name="nameSuffix" use="optional"/>
-	<xs:attribute type="xs:string" name="field" use="required"/>
-	<xs:attribute type="xs:string" name="subField" use="optional"/>
 	<xs:attribute type="xs:boolean" name="isEnabled" use="required"/>
 	<xs:attribute type="xs:boolean" name="isDuplicate" use="optional"/>
 	<xs:attribute type="xs:boolean" name="isCustomField" use="optional"/>
-	<xs:attribute type="xs:string" name="cssClassNameOverride" use="optional"/>
 	<xs:attributeGroup ref="itemStyle"/>
+	<xs:attribute type="xs:string" name="field" use="required"/>
+	<xs:attribute type="xs:string" name="subField" use="optional"/>
+	<xs:attribute type="xs:string" name="cssClassNameOverride" use="optional"/>
 </xs:complexType>
 <xs:attributeGroup name="itemStyle">
-	 <xs:attribute type="xs:string" name="style" use="optional"/>
-	 <xs:attribute type="xs:string" name="before" use="optional"/>
-	 <xs:attribute type="xs:string" name="after" use="optional"/>
-	 <xs:attribute type="xs:string" name="between" use="optional"/>
+	<xs:attribute type="xs:string" name="style" use="optional"/>
+	<xs:attribute type="xs:string" name="before" use="optional"/>
+	<xs:attribute type="xs:string" name="between" use="optional"/>
+	<xs:attribute type="xs:string" name="after" use="optional"/>
 </xs:attributeGroup>
 <xs:simpleType name="writingSystemType">
-	 <xs:restriction base="xs:string">
-		  <xs:enumeration value="vernacular"/>
-		  <xs:enumeration value="analysis"/>
-		  <xs:enumeration value="both"/>
-		  <xs:enumeration value="pronunciation"/>
-	 </xs:restriction>
+	<xs:restriction base="xs:string">
+		<xs:enumeration value="vernacular"/>
+		<xs:enumeration value="analysis"/>
+		<xs:enumeration value="both"/>
+		<xs:enumeration value="pronunciation"/>
+	</xs:restriction>
 </xs:simpleType>
 <xs:simpleType name="listIdType">
-	 <xs:restriction base="xs:string">
-		  <xs:enumeration value="none"/>
-		  <xs:enumeration value="minor"/>
-		  <xs:enumeration value="complex"/>
-		  <xs:enumeration value="variant"/>
-		  <xs:enumeration value="sense"/>
-		  <xs:enumeration value="entry"/>
-	 </xs:restriction>
+	<xs:restriction base="xs:string">
+		<xs:enumeration value="none"/>
+		<xs:enumeration value="minor"/>
+		<xs:enumeration value="complex"/>
+		<xs:enumeration value="variant"/>
+		<xs:enumeration value="sense"/>
+		<xs:enumeration value="entry"/>
+	</xs:restriction>
 </xs:simpleType>
 <xs:complexType name="OptionListItemType">
 	<xs:simpleContent>
@@ -132,11 +131,11 @@
 	</xs:simpleContent>
 </xs:complexType>
 <xs:simpleType name="alignmentType">
-	 <xs:restriction base="xs:string">
-		  <xs:enumeration value="right"/>
-		  <xs:enumeration value="left"/>
-		  <xs:enumeration value="above"/>
-		  <xs:enumeration value="below"/>
-	 </xs:restriction>
+	<xs:restriction base="xs:string">
+		<xs:enumeration value="right"/>
+		<xs:enumeration value="left"/>
+		<xs:enumeration value="above"/>
+		<xs:enumeration value="below"/>
+	</xs:restriction>
 </xs:simpleType>
 </xs:schema>
