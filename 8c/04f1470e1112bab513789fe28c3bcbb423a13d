@@ -1,0 +1,8 @@
+Verified+1: Jenkins CI <jenkins@sil.org>
+Verified-Linux+1: Jenkins CI <jenkins@sil.org>
+Code-Review+2: Jason Naylor <jason.naylor@gmail.com>
+Submitted-by: Damien Daspit <damien_daspit@sil.org>
+Submitted-at: Wed, 08 Oct 2014 03:34:17 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/2484
+Project: FieldWorks
+Branch: refs/heads/hotfix/8.1.2
