@@ -2536,7 +2536,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					var bldr = new StringBuilder();
 					bldr.Append("The LIFT file you are importing has entries with 'Component' or 'Variant' references to lexical entries that ");
 					bldr.Append("were not exported to the LIFT file. ");
-					bldr.Append("Therefore, these references (components or variants) will being excluded from this import.  ");
+					bldr.Append("Therefore, these references (components or variants) will be excluded from this import.  ");
 					bldr.AppendLine();
 					bldr.AppendLine();
 					bldr.Append("This is probably a result of doing a Filtered Lexicon LIFT export. Instead, a Full Lexicon LIFT export should been done ");
