@@ -15,6 +15,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using XCore;
 
@@ -73,23 +74,32 @@ namespace SIL.FieldWorks.XWorks
 		public void MigrateOldConfigurationsIfNeeeded()
 		{
 			var versionProvider = new VersionInfoProvider(Assembly.GetExecutingAssembly(), true);
-			if(!ProjectHasNewDictionaryConfigs())
+			if (!ProjectHasNewDictionaryConfigs())
 			{
 				m_logger.WriteLine(String.Format("{0}: Dictionary configurations were found in need of migration. - {1}",
-										 versionProvider.ApplicationVersion, DateTime.Now.ToString("yyyy MMM h:mm:ss")));
-				var configureLayouts = GetConfigureLayoutsNodeForTool("lexiconDictionary");
-
-				LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(configureLayouts, this);
+					versionProvider.ApplicationVersion, DateTime.Now.ToString("yyyy MMM d h:mm:ss")));
+				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
+					"Undo Migrate old Dictionary Configurations", "Redo Migrate old Dictionary Configurations", Cache.ActionHandlerAccessor,
+					() =>
+					{
+						var configureLayouts = GetConfigureLayoutsNodeForTool("lexiconDictionary");
+						LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(configureLayouts, this);
+					});
 			}
-			if(!ProjectHasNewReversalConfigs())
+			if (!ProjectHasNewReversalConfigs())
 			{
 				m_logger.WriteLine(String.Format("{0}: Reversal configurations were found in need of migration. - {1}",
-										 versionProvider.ApplicationVersion, DateTime.Now.ToString("yyyy MMM h:mm:ss")));
-				var configureLayouts = GetConfigureLayoutsNodeForTool("reversalToolEditComplete");
-
-				LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(configureLayouts, this);
+					versionProvider.ApplicationVersion, DateTime.Now.ToString("yyyy MMM d h:mm:ss")));
+				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
+					"Undo Migrate old Reversal Configurations", "Redo Migrate old Reversal Configurations", Cache.ActionHandlerAccessor,
+					() =>
+					{
+						var configureLayouts = GetConfigureLayoutsNodeForTool("reversalToolEditComplete");
+						LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(configureLayouts, this);
+					});
 			}
-			File.AppendAllText(Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_mediator), "ConfigMigrationLog.txt"), m_logger.Content);
+			File.AppendAllText(Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_mediator), "ConfigMigrationLog.txt"),
+				m_logger.Content);
 		}
 
 		/// <summary>
