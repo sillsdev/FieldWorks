@@ -398,6 +398,7 @@
     <Compile Include="NotebookExportDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="PublishToWebonaryController.cs" />
     <Compile Include="PublishToWebonaryDlg.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -278,6 +278,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="MacroListenerTests.cs" />
+    <Compile Include="PublishToWebonaryControllerTests.cs" />
     <Compile Include="PublishToWebonaryDlgTests.cs" />
     <Compile Include="UnicodeCharacterEditingHelperTests.cs" />
     <Compile Include="WordsUsedOnlyElsewhereFilterTests.cs" />
