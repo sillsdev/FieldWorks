@@ -9,6 +9,8 @@ using System.IO;
 using Ionic.Zip;
 using SIL.FieldWorks.FDO;
 using XCore;
+using System.Net;
+using System.Text;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -28,7 +30,6 @@ namespace SIL.FieldWorks.XWorks
 		public FdoCache Cache { private get; set; }
 
 		public Mediator Mediator { private get; set; }
-
 
 		public void PopulateReversalsCheckboxList(IPublishToWebonaryView publishToWebonaryView)
 		{
@@ -96,9 +97,36 @@ namespace SIL.FieldWorks.XWorks
 			//TODO:Actually export the reversal content into the temp directory
 		}
 
-		private void UploadToWebonary(string zipFileToUpload)
+		internal static void UploadToWebonary(string zipFileToUpload, IPublishToWebonaryView view)
 		{
-			//TODO:Actually upload
+			if (zipFileToUpload == null)
+				throw new ArgumentNullException("zipFileToUpload");
+			if (view == null)
+				throw new ArgumentNullException("view");
+
+			view.UpdateStatus("Connecting to Webonary.");
+			//TODO use specified site rather than test site on test server
+			var targetURI = "http://192.168.33.10/test/wp-json/webonary/import";
+			using (var client = new WebClient())
+			{
+				var credentials = string.Format("{0}:{1}", view.UserName, view.Password);
+				client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(new UTF8Encoding().GetBytes(credentials)));
+
+				var response = client.UploadFile(targetURI, zipFileToUpload);
+				var responseText = System.Text.Encoding.ASCII.GetString(response);
+				if (responseText.Contains("Wrong username or password"))
+					view.UpdateStatus("Error: Wrong username or password");
+				if (responseText.Contains("User doesn't have permission to import data"))
+					view.UpdateStatus("Error: User doesn't have permission to import data");
+				if (responseText.Contains("zip file extracted successfully"))
+					view.UpdateStatus("Upload successful. " +
+						"Preparing your data for publication. " +
+						"This may take several minutes to a few hours depending on the size of your dictionary. " +
+						"You will receive an email when the process is complete. " +
+						"You can examine the progress on the admin page of your Webonary site. "+
+						"You may now safely close this dialog.");
+				view.UpdateStatus(string.Format("Response from server: {0}{1}", responseText, Environment.NewLine));
+			}
 		}
 
 		private void ExportOtherFilesContent(string tempDirectoryToCompress, object outputLogTextbox)
@@ -108,6 +136,38 @@ namespace SIL.FieldWorks.XWorks
 
 		public void PublishToWebonary(IPublishToWebonaryView view)
 		{
+			view.UpdateStatus("Publishing to Webonary.");
+
+			if (view.SiteName == null)
+			{
+				view.UpdateStatus("Error: No site name specified.");
+				return;
+			}
+
+			if (view.UserName == null)
+			{
+				view.UpdateStatus("Error: No username specified.");
+				return;
+			}
+
+			if (view.Password == null)
+			{
+				view.UpdateStatus("Error: No Password specified.");
+				return;
+			}
+
+			if (view.Publication == null)
+			{
+				view.UpdateStatus("Error: No Publication specified.");
+				return;
+			}
+
+			if (view.Configuration == null)
+			{
+				view.UpdateStatus("Error: No Configuration specified.");
+				return;
+			}
+
 			var tempDirectoryToCompress = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 			var zipFileToUpload = Path.Combine(Path.GetTempPath(), Path.GetTempFileName());
 			Directory.CreateDirectory(tempDirectoryToCompress);
@@ -115,7 +175,7 @@ namespace SIL.FieldWorks.XWorks
 			ExportReversalContent(tempDirectoryToCompress, view);
 			ExportOtherFilesContent(tempDirectoryToCompress, view);
 			CompressExportedFiles(tempDirectoryToCompress, zipFileToUpload, view);
-			UploadToWebonary(zipFileToUpload);
+			UploadToWebonary(zipFileToUpload, view);
 		}
 	}
 }

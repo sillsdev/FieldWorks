@@ -204,5 +204,8 @@ namespace SIL.FieldWorks.XWorks
 		void PopulateReversalsCheckboxList(IEnumerable<string> reversals);
 		string Configuration { get; }
 		string Publication { get; }
+		string SiteName { get; }
+		string UserName { get; }
+		string Password { get; }
 	}
 }

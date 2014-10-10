@@ -30,6 +30,7 @@ namespace SIL.FieldWorks.XWorks
 		private StyleInfoTable m_owningTable;
 		private RecordClerk m_Clerk;
 
+		#region Environment
 		[TestFixtureSetUp]
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "Clerk disposed in TearDown")]
 		public override void FixtureSetup()
@@ -109,40 +110,27 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Dispose(true);
 		}
-
 		#endregion disposal
+		#endregion Environment
 
 		[Test]
+		[Category("ByHand")] // ByHand since uses local webonary instance
 		public void PublishToWebonaryUsesViewConfigAndPub()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
-			var controller = new PublishToWebonaryController { Cache = Cache, Mediator = m_mediator };
-			var mockView = new MockWebonaryDlg();
-			var config = mockView.Configuration = "Test Config";
-			var pub = mockView.Publication = "Test publication";
-			var testConfig = new Dictionary<string, DictionaryConfigurationModel>();
-			controller.Configurations = testConfig;
-			testConfig["Test Config"] = new DictionaryConfigurationModel
-			{
-				Parts = new List<ConfigurableDictionaryNode> {
-					new ConfigurableDictionaryNode { FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass"}
-				}
-			};
+			var controller = SetUpDictionary();
+			var mockView = SetUpView();
 			//SUT
 			Assert.DoesNotThrow(() => controller.PublishToWebonary(mockView));
-			Assert.That(!String.IsNullOrEmpty(mockView.StatusStrings.Find(s => s.Contains(pub) && s.Contains(config))));
+			Assert.That(!String.IsNullOrEmpty(mockView.StatusStrings.Find(s => s.Contains(mockView.Publication) && s.Contains(mockView.Configuration))));
 		}
 
 		[Test]
+		[Category("ByHand")] // ByHand since uses local webonary instance
 		public void PublishToWebonaryExportsXhtmlAndCss()
 		{
 			ConfiguredXHTMLGenerator.AssemblyFile = "FDO";
 			var controller = new PublishToWebonaryController { Cache = Cache, Mediator = m_mediator };
-			var mockView = new MockWebonaryDlg
-				{
-					Configuration = "Test Config",
-					Publication = "Test publication"
-				};
+			var mockView = SetUpView();
 			var testConfig = new Dictionary<string, DictionaryConfigurationModel>();
 			controller.Configurations = testConfig;
 			// Build model sufficient to generate xhtml and css
@@ -173,14 +161,64 @@ namespace SIL.FieldWorks.XWorks
 			entry.CitationForm.set_String(wsFr, Cache.TsStrFactory.MakeString("Headword", wsFr));
 			//SUT
 			Assert.DoesNotThrow(() => controller.PublishToWebonary(mockView));
+
 			// The names of the files being sent to webonary are listed while logging the zip
 			Assert.That(!String.IsNullOrEmpty(mockView.StatusStrings.Find(s => s.Contains("configured.xhtml"))), "xhtml not logged as compressed");
 			Assert.That(!String.IsNullOrEmpty(mockView.StatusStrings.Find(s => s.Contains("configured.css"))), "css not logged as compressed");
 		}
-		
+
+		/// <summary>
+		/// Just give an error if not all the info is supplied rather than crashing.
+		/// </summary>
+		[Test]
+		[Category("ByHand")] // ByHand since uses local webonary instance
+		public void PublishToWebonaryDoesNotCrashWithoutAllItsInfo()
+		{
+			var controller = SetUpDictionary();
+			var view = SetUpView();
+
+			view.SiteName = "site";
+			view.UserName = "user";
+			view.Password = "password";
+			view.Publication = "Test publication";
+			view.Configuration = "Test Config";
+
+			Assert.DoesNotThrow(()=>controller.PublishToWebonary(view));
+			Assert.That(!String.IsNullOrEmpty(view.StatusStrings.Find(s => s.Contains("Publishing"))), "Inform that the process has started");
+			view.SiteName = null;
+			Assert.DoesNotThrow(()=>controller.PublishToWebonary(view));
+			view.SiteName="site";
+			view.UserName=null;
+			Assert.DoesNotThrow(()=>controller.PublishToWebonary(view));
+			view.UserName="user";
+			view.Password=null;
+			Assert.DoesNotThrow(()=>controller.PublishToWebonary(view));
+			view.Password="password";
+			view.Publication = null;
+			Assert.DoesNotThrow(()=>controller.PublishToWebonary(view));
+			view.Publication = "Test publication";
+			view.Configuration=null;
+			Assert.DoesNotThrow(()=>controller.PublishToWebonary(view));
+		}
+
+		[Test]
+		[Ignore("Until get working. Doesn't seem to put together the right kind of data to not get an error yet.")]
+		[Category("ByHand")] // ByHand since uses local webonary instance
+		public void PublishToWebonaryCanCompleteWithoutError()
+		{
+			var controller = SetUpDictionary();
+			var mockView = SetUpView();
+			mockView.UserName = "webonary";
+			mockView.Password = "webonary";
+			//SUT
+			Assert.DoesNotThrow(() => controller.PublishToWebonary(mockView));
+			mockView.StatusStrings.ForEach(Console.WriteLine);
+			Assert.That(String.IsNullOrEmpty(mockView.StatusStrings.Find(s => s.Contains("Error") || s.Contains("ERROR") || s.Contains("error"))));
+		}
+
 		#region Test connection to local Webonary instance
 		[Test]
-		[Category("ByHand")]
+		[Category("ByHand")] // ByHand since uses local webonary instance
 		public void CanConnectAtAll()
 		{
 			using (var client = new WebClient())
@@ -191,24 +229,25 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		[Category("ByHand")]
+		[Category("ByHand")] // ByHand since uses local webonary instance
 		public void CanAuthenticate()
 		{
 			using (var client = new WebClient())
 			{
-				client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(new UTF8Encoding().GetBytes("username:password")));
+				client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(new UTF8Encoding().GetBytes("webonary:webonary")));
 				var responseText = ConnectAndUpload(client);
-				Assert.That(responseText, Is.Not.StringContaining("You are not logged in."));
+				Assert.That(responseText, Is.Not.StringContaining("authentication failed"));
+				Assert.That(responseText, Is.Not.StringContaining("Wrong username or password"));
 			}
 		}
 
 		[Test]
-		[Category("ByHand")]
+		[Category("ByHand")] // ByHand since uses local webonary instance
 		public void ZipFileExtracts()
 		{
 			using (var client = new WebClient())
 			{
-				client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(new UTF8Encoding().GetBytes("username:password")));
+				client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(new UTF8Encoding().GetBytes("webonary:webonary")));
 				var responseText = ConnectAndUpload(client);
 				Assert.That(responseText, Is.StringContaining("extracted successfully"));
 			}
@@ -226,6 +265,101 @@ namespace SIL.FieldWorks.XWorks
 			return responseText;
 		}
 		#endregion
+
+		[Test]
+		public void UploadToWebonaryThrowsOnNullInput()
+		{
+			var view = new MockWebonaryDlg();
+			Assert.Throws<ArgumentNullException>(()=>PublishToWebonaryController.UploadToWebonary(null, view));
+			Assert.Throws<ArgumentNullException>(()=>PublishToWebonaryController.UploadToWebonary("notNull", null));
+		}
+
+		[Test]
+		[Category("ByHand")] // ByHand since uses local webonary instance
+		public void UploadToWebonaryReportsFailedAuthentication()
+		{
+			var view = new MockWebonaryDlg()
+			{
+				UserName = "nouser",
+				Password = "nopassword"
+			};
+			PublishToWebonaryController.UploadToWebonary("../../Src/xWorks/xWorksTests/lubwisi-d-new.zip", view);
+			Assert.That(!String.IsNullOrEmpty(view.StatusStrings.Find(s => s.Contains("Error: Wrong username or password"))));
+		}
+
+		[Test]
+		[Category("ByHand")] // ByHand since uses local webonary instance
+		public void UploadToWebonaryReportsLackingPermissionsToUpload()
+		{
+			var view = new MockWebonaryDlg()
+			{
+				UserName = "software",
+				Password = "4APItesting"
+			};
+			PublishToWebonaryController.UploadToWebonary("../../Src/xWorks/xWorksTests/lubwisi-d-new.zip", view);
+			Assert.That(!String.IsNullOrEmpty(view.StatusStrings.Find(s => s.Contains("Error: User doesn't have permission to import data"))));
+		}
+
+		[Test]
+		[Category("ByHand")] // ByHand since uses local webonary instance
+		public void UploadToWebonaryReportsSuccess()
+		{
+			var view = new MockWebonaryDlg()
+			{
+				UserName = "webonary",
+				Password = "webonary"
+			};
+			PublishToWebonaryController.UploadToWebonary("../../Src/xWorks/xWorksTests/lubwisi-d-new.zip", view);
+			Assert.That(!String.IsNullOrEmpty(view.StatusStrings.Find(s => s.Contains("Upload successful."))));
+		}
+
+		[Test]
+		[Category("ByHand")] // ByHand since uses local webonary instance
+		public void UploadToWebonaryReportsErrorsInProcessingData()
+		{
+			var view = new MockWebonaryDlg()
+			{
+				UserName = "webonary",
+				Password = "webonary"
+			};
+			// Contains a filename in the zip that isn't correct, so no data will be found by webonary.
+			PublishToWebonaryController.UploadToWebonary("../../Src/xWorks/xWorksTests/lubwisi-d-new-bad.zip", view);
+			Assert.That(!String.IsNullOrEmpty(view.StatusStrings.Find(s => s.Contains("ERROR: No headwords found."))));
+		}
+
+		#region Helpers
+		/// <summary>
+		/// Helper.
+		/// </summary>
+		public MockWebonaryDlg SetUpView()
+		{
+			return new MockWebonaryDlg() {
+				SiteName = "site",
+				UserName = "user",
+				Password = "password",
+				Publication = "Test publication",
+				Configuration = "Test Config"
+			};
+		}
+
+		/// <summary>
+		/// Helper.
+		/// </summary>
+		public PublishToWebonaryController SetUpDictionary()
+		{
+			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			var controller = new PublishToWebonaryController { Cache = Cache, Mediator = m_mediator };
+
+			var testConfig = new Dictionary<string, DictionaryConfigurationModel>();
+			controller.Configurations = testConfig;
+			testConfig["Test Config"] = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> {
+					new ConfigurableDictionaryNode { FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass"}
+				}
+			};
+			return controller;
+		}
 
 		internal class MockWebonaryDlg : IPublishToWebonaryView
 		{
@@ -253,6 +387,10 @@ namespace SIL.FieldWorks.XWorks
 
 			public string Configuration { get;  set; }
 			public string Publication { get;  set; }
+			public string SiteName { get; set; }
+			public string UserName { get; set; }
+			public string Password { get; set; }
 		}
+		#endregion
 	}
 }
