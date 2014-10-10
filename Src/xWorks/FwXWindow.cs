@@ -429,10 +429,7 @@ namespace SIL.FieldWorks.XWorks
 		protected override void DiscardProperties()
 		{
 			var tempDirectory = Path.Combine(Cache.ProjectId.ProjectFolder, FdoFileHelper.ksSortSequenceTempDir);
-			foreach (var pathname in Directory.GetFiles(tempDirectory, "*.fwss"))
-			{
-				File.Delete(pathname);
-			}
+			Palaso.IO.DirectoryUtilities.DeleteDirectoryRobust(tempDirectory);
 		}
 
 		public void ClearInvalidatedStoredData()
