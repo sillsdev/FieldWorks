@@ -378,23 +378,27 @@ STDMETHODIMP GraphiteEngine::FindBreakPoint(
 	bool extraSlot = false;
 	while (i < segmentLen)
 	{
-		LgCharRenderProps runChrp;
-		CheckHr(pts->GetCharProps(ichMinSeg + i, &runChrp, &ichMinRun, &ichLimRun));
-		if (runChrp.ws != ws)
+		// no need to check for chrp changes on the first character
+		if (i > 0)
 		{
-			// change in writing system so break
-			est = kestWsBreak;
-			segmentLen = i;
-			break;
-		}
-		else if (i != 0)
-		{
-			// change in chrp so break
-			est = kestOkayBreak;
-			segmentLen = i;
-			// we need to check if this is good break
-			extraSlot = true;
-			break;
+			LgCharRenderProps runChrp;
+			CheckHr(pts->GetCharProps(ichMinSeg + i, &runChrp, &ichMinRun, &ichLimRun));
+			if (runChrp.ws != ws)
+			{
+				// change in writing system so break
+				est = kestWsBreak;
+				segmentLen = i;
+				break;
+			}
+			else
+			{
+				// change in chrp so break
+				est = kestOkayBreak;
+				segmentLen = i;
+				// we need to check if this is good break
+				extraSlot = true;
+				break;
+			}
 		}
 
 		for (; i < min(ichLimRun, ichLimBacktrack) - ichMinSeg; i++)
@@ -560,7 +564,7 @@ STDMETHODIMP GraphiteEngine::FindBreakPoint(
 	*pdichLimSeg = segmentLen;
 	*pest = est;
 
-	if (ichMinSeg < ichLimBacktrack && breakSlot == gr_seg_first_slot(segment))
+	if (segmentLen > 0 && ichMinSeg < ichLimBacktrack && breakSlot == gr_seg_first_slot(segment))
 	{
 		// Views expects a NULL segment when a non-zero length segment was requested and nothing fit
 		*ppsegRet = NULL;
