@@ -74,7 +74,7 @@ namespace SIL.FieldWorks.XWorks
 		public void MigrateOldConfigurationsIfNeeded()
 		{
 			var versionProvider = new VersionInfoProvider(Assembly.GetExecutingAssembly(), true);
-			if (!ProjectHasNewDictionaryConfigs())
+			if (DictionaryConfigsNeedMigrating())
 			{
 				m_logger.WriteLine(String.Format("{0}: Dictionary configurations were found in need of migration. - {1}",
 					versionProvider.ApplicationVersion, DateTime.Now.ToString("yyyy MMM d h:mm:ss")));
@@ -86,7 +86,7 @@ namespace SIL.FieldWorks.XWorks
 						LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(configureLayouts, this);
 					});
 			}
-			if (!ProjectHasNewReversalConfigs())
+			if (ReversalConfigsNeedMigrating())
 			{
 				m_logger.WriteLine(String.Format("{0}: Reversal configurations were found in need of migration. - {1}",
 					versionProvider.ApplicationVersion, DateTime.Now.ToString("yyyy MMM d h:mm:ss")));
@@ -121,17 +121,26 @@ namespace SIL.FieldWorks.XWorks
 			return configureLayouts;
 		}
 
-		internal bool ProjectHasNewDictionaryConfigs()
+		internal bool DictionaryConfigsNeedMigrating()
 		{
-			var newDictionaryConfigLoc = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)), "Dictionary");
-			return Directory.Exists(newDictionaryConfigLoc)
-				&& Directory.EnumerateFiles(newDictionaryConfigLoc, "*" + DictionaryConfigurationModel.FileExtension).Any();
+			// If the project already has up to date configurations then we don't need to migrate
+			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
+			var newDictionaryConfigLoc = Path.Combine(configSettingsDir, "Dictionary");
+			if(Directory.Exists(newDictionaryConfigLoc) &&
+				Directory.EnumerateFiles(newDictionaryConfigLoc, "*"+DictionaryConfigurationModel.FileExtension).Any())
+			{
+				return false;
+			}
+			// If the project has old configurations we need to migrate them, if it doesn't there is nothing worth migrating.
+			// Note: This will return true if the user configured only reversal indexes, but that is not a likely real world case
+			return Directory.Exists(configSettingsDir) &&
+					 Directory.EnumerateFiles(configSettingsDir, "*.fwlayout").Any();
 		}
 
-		internal bool ProjectHasNewReversalConfigs()
+		internal bool ReversalConfigsNeedMigrating()
 		{
 			//todo: Implement reversal configuration migration.
-			return true;
+			return false;
 			//var newReversalConfigLoc = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)), "Reversals");
 			//return Directory.Exists(newReversalConfigLoc);
 		}

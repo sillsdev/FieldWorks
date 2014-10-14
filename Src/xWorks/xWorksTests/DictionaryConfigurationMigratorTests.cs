@@ -677,42 +677,57 @@ namespace SIL.FieldWorks.XWorks
 
 		///<summary/>
 		[Test]
-		public void ProjectHasNewDictionaryConfigs_ReturnsTrueIfAny()
+		public void DictionaryConfigsNeedMigrating_ReturnsFalseIfNewConfigsExist()
 		{
 			var newDictConfigLoc = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)), "Dictionary");
 			Directory.CreateDirectory(newDictConfigLoc);
 			File.AppendAllText(Path.Combine(newDictConfigLoc, "SomeConfig" + DictionaryConfigurationModel.FileExtension), "Foo");
-			Assert.True(m_migrator.ProjectHasNewDictionaryConfigs()); // SUT
+			Assert.That(!m_migrator.DictionaryConfigsNeedMigrating(), "If current configs exist no migration should be needed."); // SUT
+			Palaso.IO.DirectoryUtilities.DeleteDirectoryRobust(newDictConfigLoc);
 		}
 
 		///<summary/>
 		[Test]
-		public void ProjectHasNewDictionaryConfigs_ReturnsFalseIfNone()
+		public void DictionaryConfigsNeedMigrating_ReturnsFalseIfNoNewConfigsAndNoOldConfigs()
 		{
 			var newDictConfigLoc = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)), "Dictionary");
 			Directory.CreateDirectory(newDictConfigLoc);
 			Directory.EnumerateFiles(newDictConfigLoc).ForEach(File.Delete);
-			Assert.False(m_migrator.ProjectHasNewDictionaryConfigs()); // SUT
+			Assert.That(!m_migrator.DictionaryConfigsNeedMigrating(), "With no new or old configs no migration should be needed."); // SUT
+			Palaso.IO.DirectoryUtilities.DeleteDirectoryRobust(newDictConfigLoc);
 		}
 
 		///<summary/>
 		[Test]
-		public void ProjectHasNewReversalConfigs_ReturnsTrueIfAny()
+		public void DictionaryConfigsNeedMigrating_ReturnsTrueIfNoNewConfigsAndOneOldConfig()
+		{
+			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
+			var newDictConfigLoc = Path.Combine(configSettingsDir, "Dictionary");
+			Directory.CreateDirectory(newDictConfigLoc);
+			Directory.EnumerateFiles(newDictConfigLoc).ForEach(File.Delete);
+			File.AppendAllText(Path.Combine(configSettingsDir, "SomeConfig.fwlayout"), "LayoutFoo");
+			Assert.That(m_migrator.DictionaryConfigsNeedMigrating(), "There is an old config, a migration is needed."); // SUT
+			Palaso.IO.DirectoryUtilities.DeleteDirectoryRobust(newDictConfigLoc);
+		}
+
+		///<summary/>
+		[Test]
+		public void ReversalConfigsNeedMigrating_ReturnsTrueIfAny()
 		{
 			var newReversalConfigLoc = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)), "Reversals");
 			Directory.CreateDirectory(newReversalConfigLoc);
 			File.AppendAllText(Path.Combine(newReversalConfigLoc, "SomeConfig" + DictionaryConfigurationModel.FileExtension), "Bar");
-			Assert.That(m_migrator.ProjectHasNewReversalConfigs()); // SUT
+			Assert.That(!m_migrator.ReversalConfigsNeedMigrating()); // SUT
 		}
 
 		///<summary/>
 		[Test]
-		public void ProjectHasNewReversalConfigs_ReturnsFalseIfNone()
+		public void ReversalConfigsNeedMigrating_ReturnsFalseIfNone()
 		{
 			var newReversalConfigLoc = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)), "Reversals");
 			Directory.CreateDirectory(newReversalConfigLoc);
 			Directory.EnumerateFiles(newReversalConfigLoc).ForEach(File.Delete);
-			Assert.That(m_migrator.ProjectHasNewReversalConfigs(), "Horray, you've implemented the method!"); // SUT
+			Assert.That(!m_migrator.ReversalConfigsNeedMigrating(), "Horray, you've implemented the method!"); // SUT
 		}
 
 		private void DeleteStyleSheet(string styleName)
