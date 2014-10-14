@@ -405,10 +405,12 @@ namespace SIL.FieldWorks.XWorks
 			m_model.Save();
 
 			// SUT
-			var labels = DictionaryConfigurationController.GetListOfDictionaryConfigurationLabels(Cache, testDefaultFolder.FullName, testUserFolder.FullName);
-			Assert.Contains("configurationALabel", labels, "missing a label");
-			Assert.Contains("configurationBLabel", labels, "missing a label");
+			var labels = DictionaryConfigurationController.GetDictionaryConfigurationLabels(Cache, testDefaultFolder.FullName, testUserFolder.FullName);
+			Assert.Contains("configurationALabel", labels.Keys, "missing a label");
+			Assert.Contains("configurationBLabel", labels.Keys, "missing a label");
 			Assert.That(labels.Count, Is.EqualTo(2), "unexpected label count");
+			Assert.That(labels["configurationALabel"].FilePath, Is.StringContaining("configurationA.xml"), "missing a file name");
+			Assert.That(labels["configurationBLabel"].FilePath, Is.StringContaining("configurationB.xml"), "missing a file name");
 		}
 
 		/// <summary/>

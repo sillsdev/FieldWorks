@@ -160,6 +160,10 @@
     <Reference Include="Geckofx-Winforms">
       <HintPath>..\..\Downloads\Geckofx-Winforms.dll</HintPath>
     </Reference>
+    <Reference Include="Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\Ionic.Zip.dll</HintPath>
+    </Reference>
     <Reference Include="L10NSharp, Version=1.1.4981.28556, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\L10NSharp.dll</HintPath>

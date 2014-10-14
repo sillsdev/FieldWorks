@@ -142,6 +142,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Compressing data before sending to Webonary..
+        /// </summary>
+        internal static string BeginCompressingDataForWebonary {
+            get {
+                return ResourceManager.GetString("BeginCompressingDataForWebonary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Choose Sound or Movie File.
         /// </summary>
         internal static string ChooseSoundOrMovieFile {
@@ -312,6 +321,24 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Exporting entries for the {0} publication using the {1} configuration.
+        /// </summary>
+        internal static string ExportingEntriesToWebonary {
+            get {
+                return ResourceManager.GetString("ExportingEntriesToWebonary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export of lexicon completed..
+        /// </summary>
+        internal static string ExportingEntriesToWebonaryCompleted {
+            get {
+                return ResourceManager.GetString("ExportingEntriesToWebonaryCompleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Export to {0}.
         /// </summary>
         internal static string ExportTo0 {
@@ -353,6 +380,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string Filtered {
             get {
                 return ResourceManager.GetString("Filtered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Compression complete..
+        /// </summary>
+        internal static string FinishedCompressingDataForWebonary {
+            get {
+                return ResourceManager.GetString("FinishedCompressingDataForWebonary", resourceCulture);
             }
         }
         
@@ -1766,6 +1802,16 @@ namespace SIL.FieldWorks.XWorks {
         internal static string Promote {
             get {
                 return ResourceManager.GetString("Promote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exporting entries for the {0} publication using the {1} configuration.
+        /// </summary>
+        internal static string PublishToWebonaryController_ExportDictionaryContent_Exporting_entries_for_the__0__publication_using_the__1__configuration {
+            get {
+                return ResourceManager.GetString("PublishToWebonaryController_ExportDictionaryContent_Exporting_entries_for_the__0_" +
+                        "_publication_using_the__1__configuration", resourceCulture);
             }
         }
         

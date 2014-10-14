@@ -20,12 +20,14 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// Dialog for publishing data to Webonary web site.
 	/// </summary>
-	public partial class PublishToWebonaryDlg : Form
+	public partial class PublishToWebonaryDlg : Form, IPublishToWebonaryView
 	{
 		private IHelpTopicProvider m_helpTopicProvider;
 
 		// This value gets used by the microsoft encryption library to increase the complexity of the encryption
 		private const string EntropyValue = @"61:3nj 42 ebg68";
+
+		private PublishToWebonaryController m_controller;
 
 		public PublishToWebonaryDlg()
 		{
@@ -33,12 +35,13 @@ namespace SIL.FieldWorks.XWorks
 			LoadFromSettings();
 		}
 
-		public PublishToWebonaryDlg(IEnumerable<string> reversals, IEnumerable<string> configurations, IEnumerable<string> publications, IHelpTopicProvider helpTopicProvider)
+		public PublishToWebonaryDlg(PublishToWebonaryController controller, IHelpTopicProvider helpTopicProvider)
 		{
 			InitializeComponent();
-			PopulateReversalsCheckboxList(reversals);
-			PopulateConfigurationsList(configurations);
-			PopulatePublicationsList(publications);
+			m_controller = controller;
+			controller.PopulateReversalsCheckboxList(this);
+			controller.PopulateConfigurationsList(this);
+			controller.PopulatePublicationsList(this);
 			LoadFromSettings();
 
 			m_helpTopicProvider = helpTopicProvider;
@@ -56,7 +59,7 @@ namespace SIL.FieldWorks.XWorks
 			this.Shown += (sender, args) => { this.Height = tableLayoutPanel.Height - outputLogTextbox.Height; };
 		}
 
-		private void PopulatePublicationsList(IEnumerable<string> publications)
+		public void PopulatePublicationsList(IEnumerable<string> publications)
 		{
 			foreach(var pub in publications)
 			{
@@ -64,7 +67,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private void PopulateConfigurationsList(IEnumerable<string> configurations)
+		public void PopulateConfigurationsList(IEnumerable<string> configurations)
 		{
 			foreach(var config in configurations)
 			{
@@ -72,13 +75,26 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private void PopulateReversalsCheckboxList(IEnumerable<string> reversals)
+		public void PopulateReversalsCheckboxList(IEnumerable<string> reversals)
 		{
 			foreach(var reversal in reversals)
 			{
 				reversalsCheckedListBox.Items.Add(reversal);
 			}
 		}
+
+		public string Configuration { get { return configurationBox.SelectedItem.ToString(); } }
+		public string Publication { get { return publicationBox.SelectedItem.ToString(); } }
+		public List<string> Reversals
+		{
+			get
+			{
+				return (from object item in reversalsCheckedListBox.CheckedItems select item.ToString()).ToList();
+			}
+		}
+		public string UserName { get { return webonaryUsernameTextbox.Text; } }
+		public string Password { get { return webonaryPasswordTextbox.Text; } }
+		public string SiteName { get { return webonarySiteNameTextbox.Text; } }
 
 		private void LoadFromSettings()
 		{
@@ -152,8 +168,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			SaveToSettings();
 
-			// TODO: publish
-
 			// Increase height of form so the output log is shown.
 			// Account for situations where the user already increased the height of the form
 			// or maximized the form, and later reduces the height or unmaximizes the form
@@ -163,11 +177,32 @@ namespace SIL.FieldWorks.XWorks
 			var fudge = this.Height - this.tableLayoutPanel.Height;
 			var minimumFormHeightToShowLog = allButTheLogRowHeight + this.outputLogTextbox.MinimumSize.Height + fudge;
 			this.MinimumSize = new Size(this.MinimumSize.Width, minimumFormHeightToShowLog);
+
+			m_controller.PublishToWebonary(this);
 		}
+
 
 		private void helpButton_Click(object sender, EventArgs e)
 		{
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtpPublishToWebonary");
 		}
+
+		public void UpdateStatus(string statusString)
+		{
+			outputLogTextbox.Text += Environment.NewLine + statusString;
+		}
+	}
+
+	/// <summary>
+	/// Interface for controller to interact with the dialog
+	/// </summary>
+	public interface IPublishToWebonaryView
+	{
+		void UpdateStatus(string statusString);
+		void PopulatePublicationsList(IEnumerable<string> publications);
+		void PopulateConfigurationsList(IEnumerable<string> configurations);
+		void PopulateReversalsCheckboxList(IEnumerable<string> reversals);
+		string Configuration { get; }
+		string Publication { get; }
 	}
 }

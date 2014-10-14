@@ -1241,10 +1241,18 @@ namespace SIL.FieldWorks.XWorks
 
 			var projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(mediator, DictionaryConfigurationListener.s_dictionaryConfigurationDirectoryName);
 			var defaultConfigDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(DictionaryConfigurationListener.s_dictionaryConfigurationDirectoryName);
-			var configurations = DictionaryConfigurationController.GetListOfDictionaryConfigurationLabels(cache, defaultConfigDir, projectConfigDir);
+			var configurations = DictionaryConfigurationController.GetDictionaryConfigurationLabels(cache, defaultConfigDir, projectConfigDir);
 
 			// show dialog
-			using (var dialog = new PublishToWebonaryDlg(reversals, configurations, publications, mediator.HelpTopicProvider))
+			var controller = new PublishToWebonaryController()
+			{
+				Reversals = reversals,
+				Configurations = configurations,
+				Publications = publications,
+				Cache = cache,
+				Mediator = mediator
+			};
+			using (var dialog = new PublishToWebonaryDlg(controller, mediator.HelpTopicProvider))
 			{
 				dialog.ShowDialog();
 			}

@@ -845,4 +845,24 @@ If you are not the one designated user who adds fields, or you are making some o
     <value>Do you want to continue?</value>
     <comment>whether to continue with the resetting of a configuration</comment>
   </data>
+	<data name="PublishToWebonaryController_ExportDictionaryContent_Exporting_entries_for_the__0__publication_using_the__1__configuration" xml:space="preserve">
+    <value>Exporting entries for the {0} publication using the {1} configuration</value>
+    <comment>Displayed in the log when exporting to webonary</comment>
+  </data>
+	<data name="ExportingEntriesToWebonary" xml:space="preserve">
+    <value>Exporting entries for the {0} publication using the {1} configuration</value>
+    <comment>Displayed in the log box when exporting to Webonary</comment>
+  </data>
+	<data name="ExportingEntriesToWebonaryCompleted" xml:space="preserve">
+    <value>Export of lexicon completed.</value>
+    <comment>Displayed in the log box when exporting to Webonary after all entries are exported</comment>
+  </data>
+	<data name="BeginCompressingDataForWebonary" xml:space="preserve">
+    <value>Compressing data before sending to Webonary.</value>
+    <comment>Displayed in the log box of PublishToWebonaryDlg when data is being zipped up.</comment>
+  </data>
+	<data name="FinishedCompressingDataForWebonary" xml:space="preserve">
+    <value>Compression complete.</value>
+    <comment>Displayed in the PublishToWebonaryDlg log box</comment>
+  </data>
 </root>

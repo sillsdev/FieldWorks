@@ -874,5 +874,36 @@ namespace SIL.FieldWorks.XWorks
 			// paranoid fallback to first option of the list in case there are no enabled options
 			return wsOptions.Options[0].Id;
 		}
+
+		public static DictionaryPublicationDecorator GetPublicationDecoratorAndEntries(Mediator mediator, out int[] entriesToSave)
+		{
+			var cache = mediator.PropertyTable.GetValue("cache") as FdoCache;
+			if(cache == null)
+			{
+				throw new ArgumentException(@"Mediator had no cache", "mediator");
+			}
+			var clerk = mediator.PropertyTable.GetValue("ActiveClerk", null) as RecordClerk;
+			if(clerk == null)
+			{
+				throw new ArgumentException(@"Mediator had no clerk", "mediator");
+			}
+
+			ICmPossibility currentPublication;
+			var currentPublicationString = mediator.PropertyTable.GetStringProperty("SelectedPublication", xWorksStrings.AllEntriesPublication);
+			if(currentPublicationString == xWorksStrings.AllEntriesPublication)
+			{
+				currentPublication = null;
+			}
+			else
+			{
+				currentPublication =
+					(from item in cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS
+					 where item.Name.UserDefaultWritingSystem.Text == currentPublicationString
+					 select item).FirstOrDefault();
+			}
+			var decorator = new DictionaryPublicationDecorator(cache, clerk.VirtualListPublisher, clerk.VirtualFlid, currentPublication);
+			entriesToSave = decorator.VecProp(cache.LangProject.LexDbOA.Hvo, clerk.VirtualFlid);
+			return decorator;
+		}
 	}
 }

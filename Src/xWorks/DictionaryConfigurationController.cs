@@ -113,13 +113,18 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Get list of dictionary configuration labels from default and project-specific paths, skipping default/shipped configurations that are
-		/// superceded by project-specific configurations.
+		/// Return dictionary configurations from default and project-specific paths, skipping default/shipped configurations that are
+		/// superceded by project-specific configurations. Keys are labels, values are the models.
 		/// </summary>
-		public static List<string> GetListOfDictionaryConfigurationLabels(FdoCache cache, string defaultPath, string projectPath)
+		public static Dictionary<string, DictionaryConfigurationModel> GetDictionaryConfigurationLabels(FdoCache cache, string defaultPath, string projectPath)
 		{
 			var configurationModels = GetDictionaryConfigurationModels(cache, defaultPath, projectPath);
-			return configurationModels.Select(model => model.Label).ToList();
+			var labelToFileDictionary = new Dictionary<string, DictionaryConfigurationModel>();
+			foreach(var model in configurationModels)
+			{
+				labelToFileDictionary[model.Label] = model;
+			}
+			return labelToFileDictionary;
 		}
 
 		private static List<DictionaryConfigurationModel> GetDictionaryConfigurationModels(FdoCache cache, string defaultPath, string projectPath)

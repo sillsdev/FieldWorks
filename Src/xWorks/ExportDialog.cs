@@ -850,22 +850,12 @@ namespace SIL.FieldWorks.XWorks
 			var xhtmlPath = (string)args[0];
 			var cssPath = Path.Combine(Path.GetDirectoryName(xhtmlPath), Path.GetFileNameWithoutExtension(xhtmlPath) + ".css");
 			var configType = (string)args[1];
-			var publicationDecorator = new DictionaryPublicationDecorator(m_cache, m_clerk.VirtualListPublisher, m_clerk.VirtualFlid, GetCurrentPublicationItem());
-			var entriesToSave = publicationDecorator.VecProp(m_cache.LangProject.LexDbOA.Hvo, m_clerk.VirtualFlid);
+			int[] entriesToSave;
+			var publicationDecorator = ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_mediator, out entriesToSave);
 			progress.Maximum = entriesToSave.Length;
 			var configuration = new DictionaryConfigurationModel(DictionaryConfigurationListener.GetCurrentConfiguration(m_mediator, configType), m_cache);
 			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToSave, publicationDecorator, configuration, m_mediator, xhtmlPath, cssPath, progress);
 			return null;
-		}
-
-		private ICmPossibility GetCurrentPublicationItem()
-		{
-			var currentPublication = m_mediator.PropertyTable.GetStringProperty("SelectedPublication", xWorksStrings.AllEntriesPublication);
-			if(currentPublication == xWorksStrings.AllEntriesPublication)
-				return null;
-			return (from item in m_cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS
-					  where item.Name.UserDefaultWritingSystem.Text == currentPublication
-					  select item).FirstOrDefault();
 		}
 
 		private object ExportGrammarSketch(IThreadedProgress progress, object[] args)
