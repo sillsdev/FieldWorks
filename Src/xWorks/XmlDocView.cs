@@ -906,7 +906,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			// See if the main owning object has changed.
-			if (clerk.OwningObject.Hvo != m_hvoOwner)
+			if (clerk.OwningObject != null && clerk.OwningObject.Hvo != m_hvoOwner)
 			{
 				m_hvoOwner = clerk.OwningObject.Hvo;
 				m_mainView.ResetRoot(m_hvoOwner);
@@ -1184,7 +1184,11 @@ namespace SIL.FieldWorks.XWorks
 				if (clerk.RequestedLoadWhileSuppressed)
 					clerk.UpdateList(false);
 				m_fakeFlid = clerk.VirtualFlid;
-				m_hvoOwner = clerk.OwningObject.Hvo;
+				if (clerk.OwningObject != null)
+				{
+					m_hvoOwner = clerk.OwningObject.Hvo;
+				}
+
 				if (!clerk.SetCurrentFromRelatedClerk())
 				{
 					// retrieve persisted clerk index and set it.
