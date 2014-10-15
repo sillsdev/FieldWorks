@@ -4722,7 +4722,7 @@ void VwParagraphBox::ReplaceStrings(IVwGraphics * pvg, int itssMin, int itssLim,
 	int cLinesToSave = 0;
 	bool fComplete = true; // Do we need to do a complete relayout? Assume so unless special conditions apply.
 	bool fForceComplete = false;
-	VwBox * pboxStartReplace;
+	VwBox * pboxStartReplace = NULL;
 	VwBox * pboxStartReplacePrev;
 	int dyStartReplace;
 	int dyStartReplacePrev;

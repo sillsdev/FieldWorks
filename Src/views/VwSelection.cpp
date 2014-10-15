@@ -1546,7 +1546,7 @@ STDMETHODIMP VwTextSelection::GetSelectionProps(int cttpMax, ITsTextProps ** prg
 	// Loop over all boxes involved
 	VwBox * pboxCurr = m_pvpbox;
 	VwParagraphBox * pvpboxLast = m_pvpbox;
-	VwParagraphBox * pvpboxCurr;
+	VwParagraphBox * pvpboxCurr = NULL;
 	int ichStart = m_ichAnchor;
 	int ichEnd = 0;
 	if (m_pvpboxEnd)
@@ -6175,7 +6175,7 @@ public:
 			// a separate line in the result.
 			VwBox * pboxCurr = m_pvwsel->m_pvpbox;
 			m_pvpboxLast = m_pvwsel->m_pvpbox;
-			VwParagraphBox * pvpboxCurr;
+			VwParagraphBox * pvpboxCurr = NULL;
 			m_ichStart = m_pvwsel->m_ichAnchor;
 			m_ichLim = m_pvwsel->m_ichEnd;
 			if (m_pvwsel->m_pvpboxEnd)

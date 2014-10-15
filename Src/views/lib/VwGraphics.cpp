@@ -911,7 +911,7 @@ STDMETHODIMP VwGraphics::XYFromGlyphPoint(int chw, int nPoint, int * pxRet, int 
 	//int dyPixPerInch = ::GetDeviceCaps(m_hdcMeasure, LOGPIXELSY);
 
 	TTPOLYGONHEADER * pPolyHdr;
-	TTPOLYCURVE * pPolyCurve;
+	TTPOLYCURVE * pPolyCurve = NULL;
 	pPolyHdr = (TTPOLYGONHEADER *)pGlyphData;
 	int nCurPoint;
 	nCurPoint = 0;

@@ -205,7 +205,7 @@ STDMETHODIMP ResourceStream::Seek(LARGE_INTEGER dlibMove, DWORD dwOrigin,
 	long cbLow = dlibMove.LowPart;
 	if (cbHigh != -(cbLow < 0))
 		ThrowHr(WarnHr(STG_E_INVALIDPARAMETER));
-	byte * pbNew;
+	byte * pbNew = NULL;
 	switch (dwOrigin)
 	{
 	case STREAM_SEEK_SET:

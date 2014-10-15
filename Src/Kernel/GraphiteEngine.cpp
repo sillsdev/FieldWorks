@@ -435,7 +435,7 @@ STDMETHODIMP GraphiteEngine::FindBreakPoint(
 	CheckHr(pvg->get_YUnitsPerInch(&dpiY));
 
 	gr_font* font = gr_make_font(float(MulDiv(chrp.dympHeight, dpiY, kdzmpInch)), m_face);
-	gr_segment* segment;
+	gr_segment* segment = NULL;
 	if (font != NULL)
 		segment = gr_make_seg(font, m_face, 0, m_featureValues, gr_utf16, segStr, segmentLen + (extraSlot ? 1 : 0), fParaRtoL ? gr_rtl : 0);
 	if (segment == NULL && font != NULL)

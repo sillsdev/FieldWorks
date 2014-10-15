@@ -6,7 +6,7 @@
 
 	<!-- call preparatory Windows targets -->
 	<Target Name="initWindows" Condition="'$(OS)'=='Windows_NT'"
-			DependsOnTargets="Initialize;EncConvertersDlls;CopyOtherDlls;BuildWindowsXslAssemblies;graphite2Windows">
+			DependsOnTargets="Initialize;EncConvertersDlls;CopyOtherDlls;BuildWindowsXslAssemblies;graphite2Windows;Unit++">
 	</Target>
 
 	<ItemGroup>
@@ -17,6 +17,14 @@
 			  DestinationFolder="$(dir-outputBase)"
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
 			  Condition="'$(action)'!='clean'"/>
+	</Target>
+
+	<ItemGroup>
+		<UnitSources Include="$(fwrt)\Lib\src\unit++\*.*" Condition="'$(OS)'=='Windows_NT'"/>
+	</ItemGroup>
+	<Target Name="Unit++" Inputs="@(UnitSources)" Outputs="$(fwrt)\Lib\$(config-lower)\unit++.lib" Condition="'$(OS)'=='Windows_NT'">
+		<MSBuild Projects="$(fwrt)\Lib\src\unit++\VS\unit++.vcxproj"
+			Properties="Configuration=$(config-capital)"/>
 	</Target>
 
 	<!-- Copy the EncodingConverters files, registering them on Windows -->
