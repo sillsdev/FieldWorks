@@ -126,7 +126,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					// despite of the name is DummyProgressDlg no real dialog (doesn't derive from Control), so
 					// we don't need a 'using'
 					cache = FdoCache.CreateCacheFromExistingData(
-						new TestProjectId(FDOBackendProviderType.kXML, DbFilename(dbName)), "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new DummyProgressDlg());
+						new TestProjectId(FDOBackendProviderType.kXML, DbFilename(dbName)), "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories,
+						new FdoSettings(), new DummyProgressDlg());
 					CheckInitialSetOfPartsOfSpeech(cache);
 
 					Assert.AreEqual(1, cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Count);

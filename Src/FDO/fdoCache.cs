@@ -85,13 +85,14 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		/// <param name="projectId">Identifies the new project to create.</param>
 		/// <param name="userWsIcuLocale">The ICU locale of the default user WS.</param>
-		/// <param name="ui"></param>
-		/// <param name="dirs"></param>
+		/// <param name="ui">The UI service.</param>
+		/// <param name="dirs">The directories service.</param>
+		/// <param name="settings">The FDO settings.</param>
 		/// ------------------------------------------------------------------------------------
 		public static FdoCache CreateCacheWithNoLangProj(IProjectIdentifier projectId,
-			string userWsIcuLocale, IFdoUI ui, IFdoDirectories dirs)
+			string userWsIcuLocale, IFdoUI ui, IFdoDirectories dirs, FdoSettings settings)
 		{
-			FdoCache createdCache = CreateCacheInternal(projectId, ui, dirs);
+			FdoCache createdCache = CreateCacheInternal(projectId, ui, dirs, settings);
 			createdCache.FullyInitializedAndReadyToRock = true;
 			return createdCache;
 		}
@@ -111,14 +112,15 @@ namespace SIL.FieldWorks.FDO
 		/// system.</param>
 		/// <param name="userWsIcuLocale">The ICU locale of the default user writing
 		/// system.</param>
-		/// <param name="ui"></param>
-		/// <param name="dirs"></param>
+		/// <param name="ui">The UI service.</param>
+		/// <param name="dirs">The directories service.</param>
+		/// <param name="settings">The FDO settings.</param>
 		/// ------------------------------------------------------------------------------------
 		public static FdoCache CreateCacheWithNewBlankLangProj(IProjectIdentifier projectId,
 			string analWsIcuLocale, string vernWsIcuLocale, string userWsIcuLocale,
-			IFdoUI ui, IFdoDirectories dirs)
+			IFdoUI ui, IFdoDirectories dirs, FdoSettings settings)
 		{
-			FdoCache createdCache = CreateCacheInternal(projectId, userWsIcuLocale, ui, dirs,
+			FdoCache createdCache = CreateCacheInternal(projectId, userWsIcuLocale, ui, dirs, settings,
 				dataSetup => dataSetup.CreateNewLanguageProject(projectId));
 			NonUndoableUnitOfWorkHelper.Do(createdCache.ActionHandlerAccessor, () =>
 			{
@@ -137,33 +139,16 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		/// <param name="projectId">Identifies the project to load.</param>
 		/// <param name="userWsIcuLocale">The ICU locale of the default user WS.</param>
-		/// <param name="ui"></param>
-		/// <param name="dirs"></param>
+		/// <param name="ui">The UI service.</param>
+		/// <param name="dirs">The directories service.</param>
+		/// <param name="settings">The FDO settings.</param>
 		/// <param name="progressDlg">The progress dialog box</param>
 		/// ------------------------------------------------------------------------------------
 		public static FdoCache CreateCacheFromExistingData(IProjectIdentifier projectId,
-			string userWsIcuLocale, IFdoUI ui, IFdoDirectories dirs, IThreadedProgress progressDlg)
+			string userWsIcuLocale, IFdoUI ui, IFdoDirectories dirs, FdoSettings settings, IThreadedProgress progressDlg)
 		{
-			return CreateCacheFromExistingData(projectId, userWsIcuLocale, ui, dirs, progressDlg, false);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Creates a new FdoCache that uses a specified data provider type that loads the
-		/// language project data from an existing source.
-		/// </summary>
-		/// <param name="projectId">Identifies the project to load.</param>
-		/// <param name="userWsIcuLocale">The ICU locale of the default user WS.</param>
-		/// <param name="ui"></param>
-		/// <param name="dirs"></param>
-		/// <param name="progressDlg">The progress dialog box</param>
-		/// <param name="forbidDataMigration">True if data migration is forbidden by the application</param>
-		/// ------------------------------------------------------------------------------------
-		public static FdoCache CreateCacheFromExistingData(IProjectIdentifier projectId,
-			string userWsIcuLocale, IFdoUI ui, IFdoDirectories dirs, IThreadedProgress progressDlg, bool forbidDataMigration)
-		{
-			return CreateCacheInternal(projectId, userWsIcuLocale, ui, dirs,
-				dataSetup => dataSetup.StartupExtantLanguageProject(projectId, true, progressDlg, forbidDataMigration),
+			return CreateCacheInternal(projectId, userWsIcuLocale, ui, dirs, settings,
+				dataSetup => dataSetup.StartupExtantLanguageProject(projectId, true, progressDlg),
 				cache => cache.Initialize());
 		}
 
@@ -174,16 +159,17 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		/// <param name="projectPath"></param>
 		/// <param name="userWsIcuLocale"></param>
-		/// <param name="ui"></param>
-		/// <param name="dirs"></param>
+		/// <param name="ui">The UI service.</param>
+		/// <param name="dirs">The directories service.</param>
+		/// <param name="settings">The FDO settings.</param>
 		/// <param name="progressDlg">The progress dialog box</param>
 		/// ------------------------------------------------------------------------------------
 		public static FdoCache CreateCacheFromLocalProjectFile(string projectPath,
-			string userWsIcuLocale, IFdoUI ui, IFdoDirectories dirs, IThreadedProgress progressDlg)
+			string userWsIcuLocale, IFdoUI ui, IFdoDirectories dirs, FdoSettings settings, IThreadedProgress progressDlg)
 		{
 			var projectId = new SimpleProjectId(FDOBackendProviderType.kXML, projectPath);
-			return CreateCacheInternal(projectId, userWsIcuLocale, ui, dirs,
-				dataSetup => dataSetup.StartupExtantLanguageProject(projectId, true, progressDlg, false),
+			return CreateCacheInternal(projectId, userWsIcuLocale, ui, dirs, settings,
+				dataSetup => dataSetup.StartupExtantLanguageProject(projectId, true, progressDlg),
 				cache => cache.Initialize());
 		}
 
@@ -194,14 +180,15 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		/// <param name="projectId">Identifies the project to create (i.e., the copy).</param>
 		/// <param name="userWsIcuLocale">The ICU locale of the default user WS.</param>
-		/// <param name="ui"></param>
-		/// <param name="dirs"></param>
+		/// <param name="ui">The UI service.</param>
+		/// <param name="dirs">The directories service.</param>
+		/// <param name="settings">The FDO settings.</param>
 		/// <param name="sourceCache">The FdoCache to copy</param>
 		/// ------------------------------------------------------------------------------------
 		public static FdoCache CreateCacheCopy(IProjectIdentifier projectId,
-			string userWsIcuLocale, IFdoUI ui, IFdoDirectories dirs, FdoCache sourceCache)
+			string userWsIcuLocale, IFdoUI ui, IFdoDirectories dirs, FdoSettings settings, FdoCache sourceCache)
 		{
-			return CreateCacheInternal(projectId, userWsIcuLocale, ui, dirs,
+			return CreateCacheInternal(projectId, userWsIcuLocale, ui, dirs, settings,
 				dataSetup => dataSetup.InitializeFromSource(projectId, sourceCache));
 		}
 
@@ -210,18 +197,20 @@ namespace SIL.FieldWorks.FDO
 		/// Creates a new FdoCache that uses a specified data provider.
 		/// </summary>
 		/// <param name="projectId">Identifies the project to create or load.</param>
-		/// <param name="ui"></param>
-		/// <param name="dirs"></param>
+		/// <param name="ui">The UI service.</param>
+		/// <param name="dirs">The directories service.</param>
+		/// <param name="settings">The FDO settings.</param>
 		/// ------------------------------------------------------------------------------------
-		private static FdoCache CreateCacheInternal(IProjectIdentifier projectId, IFdoUI ui, IFdoDirectories dirs)
+		private static FdoCache CreateCacheInternal(IProjectIdentifier projectId, IFdoUI ui, IFdoDirectories dirs, FdoSettings settings)
 		{
+			settings.Freeze();
 			FDOBackendProviderType providerType = projectId.Type;
 			if (providerType == FDOBackendProviderType.kXMLWithMemoryOnlyWsMgr)
 				providerType = FDOBackendProviderType.kXML;
 			if (providerType == FDOBackendProviderType.kSharedXMLWithMemoryOnlyWsMgr)
 				providerType = FDOBackendProviderType.kSharedXML;
 
-			var iocFactory = new FdoServiceLocatorFactory(providerType, ui, dirs);
+			var iocFactory = new FdoServiceLocatorFactory(providerType, ui, dirs, settings);
 			var servLoc = (IFdoServiceLocator)iocFactory.CreateServiceLocator();
 			var createdCache = servLoc.GetInstance<FdoCache>();
 			createdCache.m_serviceLocator = servLoc;
@@ -235,14 +224,15 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		/// <param name="projectId">Identifies the project to create or load.</param>
 		/// <param name="userWsIcuLocale">The ICU locale of the default user WS.</param>
-		/// <param name="ui"></param>
-		/// <param name="dirs"></param>
+		/// <param name="ui">The UI service.</param>
+		/// <param name="dirs">The directories service.</param>
+		/// <param name="settings">The FDO settings.</param>
 		/// <param name="doThe">The data setup action to perform.</param>
 		/// ------------------------------------------------------------------------------------
 		private static FdoCache CreateCacheInternal(IProjectIdentifier projectId,
-			string userWsIcuLocale, IFdoUI ui, IFdoDirectories dirs, Action<IDataSetup> doThe)
+			string userWsIcuLocale, IFdoUI ui, IFdoDirectories dirs, FdoSettings settings, Action<IDataSetup> doThe)
 		{
-			return CreateCacheInternal(projectId, userWsIcuLocale, ui, dirs, doThe, null);
+			return CreateCacheInternal(projectId, userWsIcuLocale, ui, dirs, settings, doThe, null);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -251,21 +241,22 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		/// <param name="projectId">Identifies the project to create or load.</param>
 		/// <param name="userWsIcuLocale">The ICU locale of the default user WS.</param>
-		/// <param name="ui"></param>
-		/// <param name="dirs"></param>
+		/// <param name="ui">The UI service.</param>
+		/// <param name="dirs">The directories service.</param>
+		/// <param name="settings">The FDO settings.</param>
 		/// <param name="doThe">The data setup action to perform.</param>
 		/// <param name="initialize">The initialization step to perfrom (can be null).</param>
 		/// <returns>The newly created cache</returns>
 		/// ------------------------------------------------------------------------------------
 		private static FdoCache CreateCacheInternal(IProjectIdentifier projectId,
-			string userWsIcuLocale, IFdoUI ui, IFdoDirectories dirs, Action<IDataSetup> doThe,
+			string userWsIcuLocale, IFdoUI ui, IFdoDirectories dirs, FdoSettings settings, Action<IDataSetup> doThe,
 			Action<FdoCache> initialize)
 		{
 			FDOBackendProviderType providerType = projectId.Type;
 			bool useMemoryWsManager = (providerType == FDOBackendProviderType.kMemoryOnly
 				|| providerType == FDOBackendProviderType.kXMLWithMemoryOnlyWsMgr
 				|| providerType == FDOBackendProviderType.kSharedXMLWithMemoryOnlyWsMgr);
-			FdoCache createdCache = CreateCacheInternal(projectId, ui, dirs);
+			FdoCache createdCache = CreateCacheInternal(projectId, ui, dirs, settings);
 
 			// Init backend data provider
 			var dataSetup = createdCache.ServiceLocator.GetInstance<IDataSetup>();
@@ -397,8 +388,8 @@ namespace SIL.FieldWorks.FDO
 			}
 
 			var projectId = new SimpleProjectId(FDOBackendProviderType.kXML, dbFileName);
-			using (FdoCache cache = CreateCacheInternal(projectId, userIcuLocale, new SilentFdoUI(synchronizeInvoke), dirs,
-				dataSetup => dataSetup.StartupExtantLanguageProject(projectId, true, progressDlg, false)))
+			using (FdoCache cache = CreateCacheInternal(projectId, userIcuLocale, new SilentFdoUI(synchronizeInvoke), dirs, new FdoSettings(),
+				dataSetup => dataSetup.StartupExtantLanguageProject(projectId, true, progressDlg)))
 			{
 				if (progressDlg != null)
 				{

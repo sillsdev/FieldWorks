@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			base.FixtureSetup();
 
 			var projectId = new TestProjectId(FDOBackendProviderType.kMemoryOnly, "Test.fwdata");
-			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(projectId, "en", "fr", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories);
+			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(projectId, "en", "fr", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new FdoSettings());
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor,
 				() => m_cache.LangProject.MorphologicalDataOA.ParserParameters = "<ParserParameters><XAmple><MaxNulls>1</MaxNulls><MaxPrefixes>5</MaxPrefixes><MaxInfixes>1</MaxInfixes><MaxSuffixes>5</MaxSuffixes><MaxInterfixes>0</MaxInterfixes><MaxAnalysesToReturn>10</MaxAnalysesToReturn></XAmple><ActiveParser>XAmple</ActiveParser></ParserParameters>");
 			m_retriever = new M3ParserModelRetriever(m_cache);

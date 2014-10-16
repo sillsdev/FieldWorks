@@ -164,7 +164,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			// This is a temporary cache, just to do the import, and AFAIK we have no access to the current
 			// user WS. So create it as "English". Put it in the array to return to the caller.
-			cacheReceiver[0] = FdoCache.CreateCacheFromLocalProjectFile(projectPath, "en", new SilentFdoUI(synchronizeInvoke), FwDirectoryFinder.FdoDirectories, progress);
+			cacheReceiver[0] = FdoCache.CreateCacheFromLocalProjectFile(projectPath, "en", new SilentFdoUI(synchronizeInvoke), FwDirectoryFinder.FdoDirectories, new FdoSettings(), progress);
 			return projectPath;
 		}
 

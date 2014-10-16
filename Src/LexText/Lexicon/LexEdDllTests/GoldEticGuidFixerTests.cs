@@ -22,7 +22,7 @@ namespace LexEdDllTests
 		public void TestSetup()
 		{
 			Cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-																			 "en", "fr", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories);
+																			 "en", "fr", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new FdoSettings());
 			var loader = new XmlList();
 			loader.ImportList(Cache.LangProject, "PartsOfSpeech", Path.Combine(FwDirectoryFinder.TemplateDirectory, "POS.xml"),
 									new DummyProgressDlg());

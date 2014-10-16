@@ -379,12 +379,12 @@ namespace FDOBrowser
 
 				var ui = new FwFdoUI(this, this);
 				if (isMemoryBEP)
-					m_cache = FdoCache.CreateCacheWithNewBlankLangProj(new BrowserProjectId(bepType, null), "en", "en", "en", ui, FwDirectoryFinder.FdoDirectories);
+					m_cache = FdoCache.CreateCacheWithNewBlankLangProj(new BrowserProjectId(bepType, null), "en", "en", "en", ui, FwDirectoryFinder.FdoDirectories, new FdoSettings());
 				else
 				{
 					using (var progressDlg = new ProgressDialogWithTask(this))
 					{
-						m_cache = FdoCache.CreateCacheFromExistingData(new BrowserProjectId(bepType, fileName), "en", ui, FwDirectoryFinder.FdoDirectories, progressDlg);
+						m_cache = FdoCache.CreateCacheFromExistingData(new BrowserProjectId(bepType, fileName), "en", ui, FwDirectoryFinder.FdoDirectories, new FdoSettings(), progressDlg);
 					}
 				}
 			   // var v = m_cache.

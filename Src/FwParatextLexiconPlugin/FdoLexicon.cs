@@ -288,7 +288,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		public bool CanOpenInLexicon
 		{
-			get { return ParatextLexiconPluginDirectoryFinder.IsFieldWorksInstalled; }
+			get { return ParatextLexiconPluginRegistryHelper.IsFieldWorksInstalled; }
 		}
 
 		public void OpenInLexicon(Lexeme lexeme)
