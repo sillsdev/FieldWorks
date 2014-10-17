@@ -1,6 +1,3 @@
 #!/bin/bash
-set -e -o pipefail
-cd "$(dirname "$0")"/..
-. environ
-cd Build
-xbuild "$@"
+
+"$(dirname "$0")"/run-in-environ xbuild "$@"
