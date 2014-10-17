@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Migrates old dictionary and reversal configurations if there are not already new dictionary and reversal configurations.
 		/// </summary>
-		public void MigrateOldConfigurationsIfNeeeded()
+		public void MigrateOldConfigurationsIfNeeded()
 		{
 			var versionProvider = new VersionInfoProvider(Assembly.GetExecutingAssembly(), true);
 			if (!ProjectHasNewDictionaryConfigs())

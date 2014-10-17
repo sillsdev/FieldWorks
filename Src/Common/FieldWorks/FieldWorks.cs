@@ -2920,7 +2920,7 @@ namespace SIL.FieldWorks
 				using(new DataUpdateMonitor(fwMainWindow, "Migrationg Dictionary Configuration Settings"))
 				{
 					var configMigrator = new DictionaryConfigurationMigrator(s_activeMainWnd.Mediator);
-					configMigrator.MigrateOldConfigurationsIfNeeeded();
+					configMigrator.MigrateOldConfigurationsIfNeeded();
 				}
 			}
 			catch (StartupException ex)
