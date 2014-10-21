@@ -232,15 +232,12 @@
 	</Target>
 
 	<!-- Mono doesn't have an XSL compiler so we just put the XSLs in a resource assembly -->
-	<Target Name="BuildLinuxXslAssemblies" Condition="'$(OS)'=='Unix'">
-		<CreateItem Include="$(fwrt)/Src/Transforms/Presentation/*.xsl">
-			<Output TaskParameter="Include" ItemName="PresentationXslFiles"/>
-		</CreateItem>
+	<ItemGroup>
+		<PresentationXslFiles Include="$(fwrt)/Src/Transforms/Presentation/*.xsl" Condition="'$(OS)'=='Unix'"/>
+		<ApplicationXslFiles Include="$(fwrt)/Src/Transforms/Application/*.xsl" Condition="'$(OS)'=='Unix'"/>
+	</ItemGroup>
+	<Target Name="BuildLinuxXslAssemblies" Inputs="@(PresentationXslFiles);@(ApplicationXslFiles)" Outputs="$(dir-outputBase)/PresentationTransforms.dll;$(dir-outputBase)/ApplicationTransforms.dll" Condition="'$(OS)'=='Unix'">
 		<Csc TargetType="library" OutputAssembly="$(dir-outputBase)/PresentationTransforms.dll" Optimize="true" Platform="AnyCPU" Resources="@(PresentationXslFiles)" />
-
-		<CreateItem Include="$(fwrt)/Src/Transforms/Application/*.xsl">
-			<Output TaskParameter="Include" ItemName="ApplicationXslFiles"/>
-		</CreateItem>
 		<Csc TargetType="library" OutputAssembly="$(dir-outputBase)/ApplicationTransforms.dll" Optimize="true" Platform="AnyCPU" Resources="@(ApplicationXslFiles)" />
 	</Target>
 

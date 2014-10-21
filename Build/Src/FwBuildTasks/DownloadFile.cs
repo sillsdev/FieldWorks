@@ -1,10 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
-
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
@@ -56,7 +52,12 @@ namespace SIL.FieldWorks.Build.Tasks
 			var read = DoDownloadFile(Address, LocalFilename, Username, Password, out success);
 
 			if (success)
-				Log.LogMessage(MessageImportance.Low, "{0} bytes written", read);
+			{
+				if (read == 0)
+					Log.LogMessage(MessageImportance.Normal, "The local file {0} is up-to-date.", LocalFilename);
+				else
+					Log.LogMessage(MessageImportance.Low, "{0} bytes written", read);
+			}
 			else
 			{
 				if (File.Exists(LocalFilename))
@@ -84,7 +85,7 @@ namespace SIL.FieldWorks.Build.Tasks
 			// be referenced in the finally block
 			Stream remoteStream = null;
 			Stream localStream = null;
-			WebResponse response = null;
+			HttpWebResponse response = null;
 
 			// Use a try/catch/finally block as both the WebRequest and Stream
 			// classes throw exceptions upon error
@@ -106,7 +107,11 @@ namespace SIL.FieldWorks.Build.Tasks
 
 				// Send the request to the server and retrieve the
 				// WebResponse object
-				response = request.GetResponse();
+				response = (HttpWebResponse) request.GetResponse();
+
+				if (File.Exists(localFilename) && response.LastModified <= File.GetLastWriteTime(localFilename))
+					return bytesProcessed;
+
 				// Once the WebResponse object has been retrieved,
 				// get the stream object associated with the response's data
 				remoteStream = response.GetResponseStream();

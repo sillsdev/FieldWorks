@@ -102,10 +102,14 @@
 	</Target>
 	<!-- Only Windows has the xsltc tool for compiling XSLs -->
 	<PropertyGroup>
-		<ApplicationTransformsPath>..\Src\Transforms\Application</ApplicationTransformsPath>
-		<PresentationTransformsPath>..\Src\Transforms\Presentation</PresentationTransformsPath>
+		<ApplicationTransformsPath>$(fwrt)\Src\Transforms\Application</ApplicationTransformsPath>
+		<PresentationTransformsPath>$(fwrt)\Src\Transforms\Presentation</PresentationTransformsPath>
 	</PropertyGroup>
-	<Target Name="BuildWindowsXslAssemblies" Condition="'$(OS)'=='Windows_NT'">
+	<ItemGroup>
+		<ApplicationTransforms Include="$(ApplicationTransformsPath)\*.xsl" Condition="'$(OS)'=='Windows_NT'"/>
+		<PresentationTransforms Include="$(PresentationTransformsPath)\*.xsl" Condition="'$(OS)'=='Windows_NT'"/>
+	</ItemGroup>
+	<Target Name="BuildWindowsXslAssemblies" Inputs="@(ApplicationTransforms);@(PresentationTransforms)" Outputs="$(dir-outputBase)\ApplicationTransforms.dll;$(dir-outputBase)\PresentationTransforms.dll" Condition="'$(OS)'=='Windows_NT'">
 		<Exec Command="xsltc /settings:document /out:$(dir-outputBase)\ApplicationTransforms.dll $(ApplicationTransformsPath)\FxtM3MorphologySketch.xsl $(ApplicationTransformsPath)\FxtM3ParserToGAFAWS.xsl $(ApplicationTransformsPath)\FxtM3ParserToToXAmpleGrammar.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleADCtl.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleLex.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleWordGrammarDebuggingXSLT.xsl" />
 		<Exec Command="xsltc /settings:document /out:$(dir-outputBase)\PresentationTransforms.dll $(PresentationTransformsPath)\FormatHCTrace.xsl $(PresentationTransformsPath)\FormatXAmpleParse.xsl $(PresentationTransformsPath)\FormatXAmpleTrace.xsl $(PresentationTransformsPath)\FormatXAmpleWordGrammarDebuggerResult.xsl $(PresentationTransformsPath)\XLingPap1.xsl" />
 	</Target>
