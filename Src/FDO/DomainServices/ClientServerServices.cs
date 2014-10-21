@@ -45,12 +45,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// to allow tests to reset it (using reflection).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public static void SetCurrentToDb4OBackend(IFdoUI ui, IFdoDirectories dirs,
-			Func<bool> usingDefaultProjectsDirAccessor)
+		public static void SetCurrentToDb4OBackend(IFdoUI ui, IFdoDirectories dirs)
 		{
 			// This is the "one line" that should need to be changed to configure a different backend :-).
 			// Typically a new implementation of IClientServerServices will be needed, as well as the backend itself.
-			Current = new Db4OClientServerServices(ui, dirs, usingDefaultProjectsDirAccessor);
+			Current = new Db4OClientServerServices(ui, dirs);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -267,7 +266,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	/// </summary>
 	internal class Db4OClientServerServices : IClientServerServices
 	{
-		private const char ksServerHostSeperatorChar = ':';
 		private Db4OServerFinder m_serverFinder;
 		private FwProjectFinder m_projectFinder;
 		private readonly IFdoDirectories m_dirs;
@@ -277,10 +275,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Initializes a new instance of the <see cref="Db4OClientServerServices"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal Db4OClientServerServices(IFdoUI ui, IFdoDirectories dirs, Func<bool> usingDefaultProjectsDirAccessor)
+		internal Db4OClientServerServices(IFdoUI ui, IFdoDirectories dirs)
 		{
 			m_dirs = dirs;
-			Local = new Db4OLocalClientServerServices(ui, dirs, usingDefaultProjectsDirAccessor);
+			Local = new Db4OLocalClientServerServices(ui, dirs);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -519,15 +517,13 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	{
 		internal const string kLocalService = "localhost";
 		internal const string ksDoNotShareProjectTxt = "do_not_share_project.txt";
-		private readonly Func<bool> m_usingDefaultProjectsDirAccessor;
 		private readonly IFdoUI m_ui;
 		private readonly IFdoDirectories m_dirs;
 
-		public Db4OLocalClientServerServices(IFdoUI ui, IFdoDirectories dirs, Func<bool> usingDefaultProjectsDirAccessor)
+		public Db4OLocalClientServerServices(IFdoUI ui, IFdoDirectories dirs)
 		{
 			m_ui = ui;
 			m_dirs = dirs;
-			m_usingDefaultProjectsDirAccessor = usingDefaultProjectsDirAccessor;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -550,7 +546,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						// their personal projects directory. I'm not sure whether such a user will even see that the
 						// first user has turned on sharing. But in any case, the second user (who did not turn sharing on,
 						// and has their own projects folder) will just go on seeing their own unshared projects.
-						&& m_usingDefaultProjectsDirAccessor();
+						&& m_dirs.ProjectsDirectory == m_dirs.DefaultProjectsDirectory;
 				}
 				catch (SocketException)
 				{

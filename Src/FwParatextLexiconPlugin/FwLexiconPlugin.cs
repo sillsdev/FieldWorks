@@ -39,8 +39,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			// initialize client-server services to use Db4O backend for FDO
 			m_ui = new ParatextLexiconPluginFdoUI(m_activationContext);
 			var dirs = ParatextLexiconPluginDirectoryFinder.FdoDirectories;
-			ClientServerServices.SetCurrentToDb4OBackend(m_ui, dirs,
-				() => dirs.ProjectsDirectory == ParatextLexiconPluginDirectoryFinder.ProjectsDirectoryLocalMachine);
+			ClientServerServices.SetCurrentToDb4OBackend(m_ui, dirs);
 		}
 
 		/// <summary>

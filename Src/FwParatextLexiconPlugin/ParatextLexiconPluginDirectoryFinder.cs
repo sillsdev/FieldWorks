@@ -129,13 +129,19 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		private class ParatextLexiconPluginFdoDirectories : IFdoDirectories
 		{
-			public string ProjectsDirectory
+			string IFdoDirectories.ProjectsDirectory
 			{
-				get { return ParatextLexiconPluginDirectoryFinder.ProjectsDirectory; }
+				get { return ProjectsDirectory; }
 			}
-			public string TemplateDirectory
+
+			string IFdoDirectories.DefaultProjectsDirectory
 			{
-				get { return ParatextLexiconPluginDirectoryFinder.TemplateDirectory; }
+				get { return ProjectsDirectoryLocalMachine; }
+			}
+
+			string IFdoDirectories.TemplateDirectory
+			{
+				get { return TemplateDirectory; }
 			}
 		}
 	}

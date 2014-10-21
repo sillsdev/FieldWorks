@@ -284,8 +284,7 @@ namespace SIL.FieldWorks
 				FwRegistryHelper.UpgradeUserSettingsIfNeeded();
 
 				// initialize client-server services to use Db4O backend
-				ClientServerServices.SetCurrentToDb4OBackend(s_ui, FwDirectoryFinder.FdoDirectories,
-					() => FwDirectoryFinder.ProjectsDirectory == FwDirectoryFinder.ProjectsDirectoryLocalMachine);
+				ClientServerServices.SetCurrentToDb4OBackend(s_ui, FwDirectoryFinder.FdoDirectories);
 
 				// initialize the TE styles path so that ScrMappingList can load default styles
 				ScrMappingList.TeStylesPath = FwDirectoryFinder.TeStylesPath;

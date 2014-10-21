@@ -37,8 +37,7 @@ namespace SIL.FieldWorks.PaObjects
 		public PaLexicalInfo()
 		{
 			// need to call this iniitialization routine to allow the ChooseLangProjectDialog can be used
-			ClientServerServices.SetCurrentToDb4OBackend(null, FwDirectoryFinder.FdoDirectories,
-				() => FwDirectoryFinder.ProjectsDirectory == FwDirectoryFinder.ProjectsDirectoryLocalMachine);
+			ClientServerServices.SetCurrentToDb4OBackend(null, FwDirectoryFinder.FdoDirectories);
 		}
 		#endregion
 

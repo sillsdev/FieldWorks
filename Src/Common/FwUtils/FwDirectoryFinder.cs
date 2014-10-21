@@ -684,14 +684,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 			/// <summary>
 			/// Gets the projects directory.
 			/// </summary>
-			public string ProjectsDirectory
+			string IFdoDirectories.ProjectsDirectory
 			{
-				get { return FwDirectoryFinder.ProjectsDirectory; }
+				get { return ProjectsDirectory; }
 			}
 
-			public string TemplateDirectory
+			string IFdoDirectories.DefaultProjectsDirectory
 			{
-				get { return FwDirectoryFinder.TemplateDirectory; }
+				get { return ProjectsDirectoryLocalMachine; }
+			}
+
+			string IFdoDirectories.TemplateDirectory
+			{
+				get { return TemplateDirectory; }
 			}
 		}
 	}

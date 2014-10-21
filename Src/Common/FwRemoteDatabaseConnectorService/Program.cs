@@ -19,7 +19,7 @@ namespace FwRemoteDatabaseConnectorService
 			RegistryHelper.ProductName = "FieldWorks";
 
 			ClientServerServices.SetCurrentToDb4OBackend(new SilentFdoUI(new SingleThreadedSynchronizeInvoke()),
-				FwDirectoryFinder.FdoDirectories, () => FwDirectoryFinder.ProjectsDirectory == FwDirectoryFinder.ProjectsDirectoryLocalMachine);
+				FwDirectoryFinder.FdoDirectories);
 
 			ServiceBase[] ServicesToRun;
 			ServicesToRun = new ServiceBase[]

@@ -11,6 +11,11 @@
 		string ProjectsDirectory { get; }
 
 		/// <summary>
+		/// Gets the default projects directory.
+		/// </summary>
+		string DefaultProjectsDirectory { get; }
+
+		/// <summary>
 		/// Gets the template directory.
 		/// </summary>
 		string TemplateDirectory { get; }
