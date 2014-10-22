@@ -279,7 +279,7 @@
     </Compile>
     <Compile Include="MacroListenerTests.cs" />
     <Compile Include="PublishToWebonaryControllerTests.cs" />
-    <Compile Include="PublishToWebonaryDlgTests.cs" />
+    <Compile Include="PublishToWebonaryModelTests.cs" />
     <Compile Include="UnicodeCharacterEditingHelperTests.cs" />
     <Compile Include="WordsUsedOnlyElsewhereFilterTests.cs" />
     <Compile Include="XmlDocConfigureDlgTests.cs" />

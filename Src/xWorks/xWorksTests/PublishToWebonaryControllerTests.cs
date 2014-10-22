@@ -117,23 +117,23 @@ namespace SIL.FieldWorks.XWorks
 		[Category("ByHand")] // ByHand since uses local webonary instance
 		public void PublishToWebonaryUsesViewConfigAndPub()
 		{
-			var controller = SetUpControllerAndConfiguration();
+			var controller = SetUpController();
 			var mockView = SetUpView();
 			//SUT
-			Assert.DoesNotThrow(() => controller.PublishToWebonary(mockView));
-			Assert.That(!String.IsNullOrEmpty(mockView.StatusStrings.Find(s => s.Contains(mockView.Publication) && s.Contains(mockView.Configuration))));
+			Assert.DoesNotThrow(() => controller.PublishToWebonary(mockView.Model, mockView));
+			Assert.That(!String.IsNullOrEmpty(mockView.StatusStrings.Find(s => s.Contains(mockView.Model.SelectedPublication) && s.Contains(mockView.Model.SelectedConfiguration))));
 		}
 
 		[Test]
 		[Category("ByHand")] // ByHand since uses local webonary instance
 		public void PublishToWebonaryExportsXhtmlAndCss()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "FDO";
 			var controller = new PublishToWebonaryController { Cache = Cache, Mediator = m_mediator };
 			var mockView = SetUpView();
 			var testConfig = new Dictionary<string, DictionaryConfigurationModel>();
-			controller.Configurations = testConfig;
+			mockView.Model.Configurations = testConfig;
 			// Build model sufficient to generate xhtml and css
+			ConfiguredXHTMLGenerator.AssemblyFile = "FDO";
 			var model = new DictionaryConfigurationModel();
 			model.Parts = new List<ConfigurableDictionaryNode>();
 			var mainHeadwordNode = new ConfigurableDictionaryNode
@@ -160,7 +160,7 @@ namespace SIL.FieldWorks.XWorks
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 			entry.CitationForm.set_String(wsFr, Cache.TsStrFactory.MakeString("Headword", wsFr));
 			//SUT
-			Assert.DoesNotThrow(() => controller.PublishToWebonary(mockView));
+			Assert.DoesNotThrow(() => controller.PublishToWebonary(mockView.Model, mockView));
 
 			// The names of the files being sent to webonary are listed while logging the zip
 			Assert.That(!String.IsNullOrEmpty(mockView.StatusStrings.Find(s => s.Contains("configured.xhtml"))), "xhtml not logged as compressed");
@@ -174,31 +174,26 @@ namespace SIL.FieldWorks.XWorks
 		[Category("ByHand")] // ByHand since uses local webonary instance
 		public void PublishToWebonaryDoesNotCrashWithoutAllItsInfo()
 		{
-			var controller = SetUpControllerAndConfiguration();
+			var controller = SetUpController();
 			var view = SetUpView();
+			var model = view.Model;
 
-			view.SiteName = "site";
-			view.UserName = "user";
-			view.Password = "password";
-			view.Publication = "Test publication";
-			view.Configuration = "Test Config";
-
-			Assert.DoesNotThrow(()=>controller.PublishToWebonary(view));
+			Assert.DoesNotThrow(()=>controller.PublishToWebonary(model, view));
 			Assert.That(!String.IsNullOrEmpty(view.StatusStrings.Find(s => s.Contains("Publishing"))), "Inform that the process has started");
-			view.SiteName = null;
-			Assert.DoesNotThrow(()=>controller.PublishToWebonary(view));
-			view.SiteName="site";
-			view.UserName=null;
-			Assert.DoesNotThrow(()=>controller.PublishToWebonary(view));
-			view.UserName="user";
-			view.Password=null;
-			Assert.DoesNotThrow(()=>controller.PublishToWebonary(view));
-			view.Password="password";
-			view.Publication = null;
-			Assert.DoesNotThrow(()=>controller.PublishToWebonary(view));
-			view.Publication = "Test publication";
-			view.Configuration=null;
-			Assert.DoesNotThrow(()=>controller.PublishToWebonary(view));
+			model.SiteName = null;
+			Assert.DoesNotThrow(()=>controller.PublishToWebonary(model, view));
+			model.SiteName="site";
+			model.UserName=null;
+			Assert.DoesNotThrow(()=>controller.PublishToWebonary(model, view));
+			model.UserName="user";
+			model.Password=null;
+			Assert.DoesNotThrow(()=>controller.PublishToWebonary(model, view));
+			model.Password="password";
+			model.SelectedPublication = null;
+			Assert.DoesNotThrow(()=>controller.PublishToWebonary(model, view));
+			model.SelectedPublication = "Test publication";
+			model.SelectedConfiguration=null;
+			Assert.DoesNotThrow(()=>controller.PublishToWebonary(model, view));
 		}
 
 		[Test]
@@ -206,12 +201,13 @@ namespace SIL.FieldWorks.XWorks
 		[Category("ByHand")] // ByHand since uses local webonary instance
 		public void PublishToWebonaryCanCompleteWithoutError()
 		{
-			var controller = SetUpControllerAndConfiguration();
+			var controller = SetUpController();
 			var mockView = SetUpView();
-			mockView.UserName = "webonary";
-			mockView.Password = "webonary";
+			var model = mockView.Model;
+			model.UserName = "webonary";
+			model.Password = "webonary";
 			//SUT
-			Assert.DoesNotThrow(() => controller.PublishToWebonary(mockView));
+			Assert.DoesNotThrow(() => controller.PublishToWebonary(model, mockView));
 			mockView.StatusStrings.ForEach(Console.WriteLine); // Remove this output line once this test works.
 			Assert.That(String.IsNullOrEmpty(mockView.StatusStrings.Find(s => s.Contains("Error") || s.Contains("ERROR") || s.Contains("error"))));
 		}
@@ -272,8 +268,10 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var controller = new MockPublishToWebonaryController();
 			var view = new MockWebonaryDlg();
-			Assert.Throws<ArgumentNullException>(()=>controller.UploadToWebonary(null, view));
-			Assert.Throws<ArgumentNullException>(()=>controller.UploadToWebonary("notNull", null));
+			var model = new PublishToWebonaryModel(m_mediator);
+			Assert.Throws<ArgumentNullException>(() => controller.UploadToWebonary(null, model, view));
+			Assert.Throws<ArgumentNullException>(() => controller.UploadToWebonary("notNull", null, view));
+			Assert.Throws<ArgumentNullException>(() => controller.UploadToWebonary("notNull", model, null));
 		}
 
 		[Test]
@@ -283,10 +281,13 @@ namespace SIL.FieldWorks.XWorks
 			var controller = new MockPublishToWebonaryController();
 			var view = new MockWebonaryDlg()
 			{
-				UserName = "nouser",
-				Password = "nopassword"
+				Model = new PublishToWebonaryModel(m_mediator)
+				{
+					UserName = "nouser",
+					Password = "nopassword"
+				}
 			};
-			controller.UploadToWebonary("../../Src/xWorks/xWorksTests/lubwisi-d-new.zip", view);
+			controller.UploadToWebonary("../../Src/xWorks/xWorksTests/lubwisi-d-new.zip", view.Model, view);
 			Assert.That(!String.IsNullOrEmpty(view.StatusStrings.Find(s => s.Contains("Error: Wrong username or password"))));
 		}
 
@@ -297,10 +298,13 @@ namespace SIL.FieldWorks.XWorks
 			var controller = new MockPublishToWebonaryController();
 			var view = new MockWebonaryDlg()
 			{
-				UserName = "software",
-				Password = "4APItesting"
+				Model = new PublishToWebonaryModel(m_mediator)
+				{
+					UserName = "software",
+					Password = "4APItesting"
+				}
 			};
-			controller.UploadToWebonary("../../Src/xWorks/xWorksTests/lubwisi-d-new.zip", view);
+			controller.UploadToWebonary("../../Src/xWorks/xWorksTests/lubwisi-d-new.zip", view.Model, view);
 			Assert.That(!String.IsNullOrEmpty(view.StatusStrings.Find(s => s.Contains("Error: User doesn't have permission to import data"))));
 		}
 
@@ -311,10 +315,13 @@ namespace SIL.FieldWorks.XWorks
 			var controller = new MockPublishToWebonaryController();
 			var view = new MockWebonaryDlg()
 			{
-				UserName = "webonary",
-				Password = "webonary"
+				Model = new PublishToWebonaryModel(m_mediator)
+				{
+					UserName = "webonary",
+					Password = "webonary"
+				}
 			};
-			controller.UploadToWebonary("../../Src/xWorks/xWorksTests/lubwisi-d-new.zip", view);
+			controller.UploadToWebonary("../../Src/xWorks/xWorksTests/lubwisi-d-new.zip", view.Model, view);
 			Assert.That(!String.IsNullOrEmpty(view.StatusStrings.Find(s => s.Contains("Upload successful."))));
 		}
 
@@ -325,11 +332,14 @@ namespace SIL.FieldWorks.XWorks
 			var controller = new MockPublishToWebonaryController();
 			var view = new MockWebonaryDlg()
 			{
-				UserName = "webonary",
-				Password = "webonary"
+				Model = new PublishToWebonaryModel(m_mediator)
+				{
+					UserName = "webonary",
+					Password = "webonary"
+				}
 			};
 			// Contains a filename in the zip that isn't correct, so no data will be found by webonary.
-			controller.UploadToWebonary("../../Src/xWorks/xWorksTests/lubwisi-d-new-bad.zip", view);
+			controller.UploadToWebonary("../../Src/xWorks/xWorksTests/lubwisi-d-new-bad.zip", view.Model, view);
 			Assert.That(!String.IsNullOrEmpty(view.StatusStrings.Find(s => s.Contains("ERROR: No headwords found."))));
 		}
 
@@ -348,13 +358,13 @@ namespace SIL.FieldWorks.XWorks
 			var filepath = "../../Src/xWorks/xWorksTests/lubwisi-d-new.zip";
 
 			controller.UploadURI = "http://nameresolutionfailure.local/import.php";
-			Assert.DoesNotThrow(()=>controller.UploadToWebonary(filepath, view));
+			Assert.DoesNotThrow(()=>controller.UploadToWebonary(filepath, view.Model, view));
 			Assert.That(!String.IsNullOrEmpty(view.StatusStrings.Find(s => s.Contains("An error occurred uploading your data:"))));
 			controller.UploadURI = "http://localhost:12345/import/connectfailure.php";
-			Assert.DoesNotThrow(()=>controller.UploadToWebonary(filepath, view));
+			Assert.DoesNotThrow(() => controller.UploadToWebonary(filepath, view.Model, view));
 			Assert.That(!String.IsNullOrEmpty(view.StatusStrings.Find(s => s.Contains("An error occurred uploading your data:"))));
 			controller.UploadURI = "http://192.168.0.1/import/requesttimedout.php";
-			Assert.DoesNotThrow(()=>controller.UploadToWebonary(filepath, view));
+			Assert.DoesNotThrow(() => controller.UploadToWebonary(filepath, view.Model, view));
 			Assert.That(!String.IsNullOrEmpty(view.StatusStrings.Find(s => s.Contains("An error occurred uploading your data:"))));
 		}
 
@@ -364,32 +374,43 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public MockWebonaryDlg SetUpView()
 		{
-			return new MockWebonaryDlg() {
-				SiteName = "site",
-				UserName = "user",
-				Password = "password",
-				Publication = "Test publication",
-				Configuration = "Test Config"
+			return new MockWebonaryDlg {
+				Model = SetUpModel()
 			};
 		}
 
 		/// <summary>
 		/// Helper.
 		/// </summary>
-		public PublishToWebonaryController SetUpControllerAndConfiguration()
+		public PublishToWebonaryModel SetUpModel()
 		{
 			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
-			var controller = new PublishToWebonaryController { Cache = Cache, Mediator = m_mediator };
 
 			var testConfig = new Dictionary<string, DictionaryConfigurationModel>();
-			controller.Configurations = testConfig;
 			testConfig["Test Config"] = new DictionaryConfigurationModel
 			{
 				Parts = new List<ConfigurableDictionaryNode> {
 					new ConfigurableDictionaryNode { FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass"}
 				}
 			};
-			return controller;
+
+			return new PublishToWebonaryModel(m_mediator)
+			{
+				SiteName = "site",
+				UserName = "user",
+				Password = "password",
+				SelectedPublication = "Test publication",
+				SelectedConfiguration = "Test Config",
+				Configurations = testConfig
+			};
+		}
+
+		/// <summary>
+		/// Helper.
+		/// </summary>
+		public PublishToWebonaryController SetUpController()
+		{
+			return new PublishToWebonaryController { Cache = Cache, Mediator = m_mediator };
 		}
 
 		internal class MockWebonaryDlg : IPublishToWebonaryView
@@ -416,11 +437,7 @@ namespace SIL.FieldWorks.XWorks
 				;
 			}
 
-			public string Configuration { get;  set; }
-			public string Publication { get;  set; }
-			public string SiteName { get; set; }
-			public string UserName { get; set; }
-			public string Password { get; set; }
+			public PublishToWebonaryModel Model { get; set; }
 		}
 
 		public class MockPublishToWebonaryController : PublishToWebonaryController

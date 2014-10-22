@@ -7,7 +7,7 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
-#pragma warning disable 1591 // Hand-added to satisfy compiler. Redo when regenerated. Yuck.
+
 namespace SIL.CoreImpl.Properties {
     
     
@@ -16,7 +16,8 @@ namespace SIL.CoreImpl.Properties {
     public sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
-        
+
+		 /// <summary/>
         public static Settings Default {
             get {
                 return defaultInstance;

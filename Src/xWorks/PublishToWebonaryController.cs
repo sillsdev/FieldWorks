@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Ionic.Zip;
@@ -21,42 +20,22 @@ namespace SIL.FieldWorks.XWorks
 		Justification="Cache and Mediator are references")]
 	public class PublishToWebonaryController
 	{
-		public IEnumerable<string> Reversals { private get; set; }
-
-		public Dictionary<string, DictionaryConfigurationModel> Configurations { private get; set; }
-
-		public List<string> Publications { private get; set; }
-
 		public FdoCache Cache { private get; set; }
 
 		public Mediator Mediator { private get; set; }
 
-		public void PopulateReversalsCheckboxList(IPublishToWebonaryView publishToWebonaryView)
-		{
-			publishToWebonaryView.PopulateReversalsCheckboxList(Reversals);
-		}
-
-		public void PopulateConfigurationsList(IPublishToWebonaryView publishToWebonaryView)
-		{
-			publishToWebonaryView.PopulateConfigurationsList(Configurations.Keys);
-		}
-
-		public void PopulatePublicationsList(IPublishToWebonaryView publishToWebonaryView)
-		{
-			publishToWebonaryView.PopulatePublicationsList(Publications);
-		}
 
 		/// <summary>
 		/// Exports the dictionary xhtml and css for the publication and configuration that the user had selected in the dialog.
 		/// </summary>
-		private void ExportDictionaryContent(string tempDirectoryToCompress, IPublishToWebonaryView webonaryView)
+		private void ExportDictionaryContent(string tempDirectoryToCompress, PublishToWebonaryModel model, IPublishToWebonaryView webonaryView)
 		{
-			webonaryView.UpdateStatus(String.Format(xWorksStrings.ExportingEntriesToWebonary, webonaryView.Publication, webonaryView.Configuration));
+			webonaryView.UpdateStatus(String.Format(xWorksStrings.ExportingEntriesToWebonary, model.SelectedPublication, model.SelectedConfiguration));
 			var xhtmlPath = Path.Combine(tempDirectoryToCompress, "configured.xhtml");
 			var cssPath = Path.Combine(tempDirectoryToCompress, "configured.css");
 			int[] entriesToSave;
 			var publicationDecorator = ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(Mediator, out entriesToSave);
-			var configuration = Configurations[webonaryView.Configuration];
+			var configuration = model.Configurations[model.SelectedConfiguration];
 			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToSave, publicationDecorator, configuration, Mediator, xhtmlPath, cssPath, null);
 			webonaryView.UpdateStatus(xWorksStrings.ExportingEntriesToWebonaryCompleted);
 		}
@@ -92,7 +71,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Exports the reversal xhtml and css for the reversals that the user had selected in the dialog
 		/// </summary>
-		private void ExportReversalContent(string tempDirectoryToCompress, IPublishToWebonaryView logTextbox)
+		private void ExportReversalContent(string tempDirectoryToCompress, PublishToWebonaryModel textbox, IPublishToWebonaryView logTextbox)
 		{
 			//TODO:Actually export the reversal content into the temp directory
 		}
@@ -109,18 +88,20 @@ namespace SIL.FieldWorks.XWorks
 			return targetURI;
 		}
 
-		internal void UploadToWebonary(string zipFileToUpload, IPublishToWebonaryView view)
+		internal void UploadToWebonary(string zipFileToUpload, PublishToWebonaryModel model, IPublishToWebonaryView view)
 		{
 			if (zipFileToUpload == null)
 				throw new ArgumentNullException("zipFileToUpload");
+			if(model == null)
+				throw new ArgumentNullException("model");
 			if (view == null)
 				throw new ArgumentNullException("view");
 
 			view.UpdateStatus("Connecting to Webonary.");
-			var targetURI = DestinationURI(view.SiteName);
+			var targetURI = DestinationURI(model.SiteName);
 			using (var client = new WebClient())
 			{
-				var credentials = string.Format("{0}:{1}", view.UserName, view.Password);
+				var credentials = string.Format("{0}:{1}", model.UserName, model.Password);
 				client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(new UTF8Encoding().GetBytes(credentials)));
 
 				byte[] response = null;
@@ -160,40 +141,40 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private void ExportOtherFilesContent(string tempDirectoryToCompress, object outputLogTextbox)
+		private void ExportOtherFilesContent(string tempDirectoryToCompress, PublishToWebonaryModel logTextbox, object outputLogTextbox)
 		{
 			//TODO:Copy the user selected other files into the temp directory
 		}
 
-		public void PublishToWebonary(IPublishToWebonaryView view)
+		public void PublishToWebonary(PublishToWebonaryModel model, IPublishToWebonaryView view)
 		{
 			view.UpdateStatus("Publishing to Webonary.");
 
-			if (view.SiteName == null)
+			if(model.SiteName == null)
 			{
 				view.UpdateStatus("Error: No site name specified.");
 				return;
 			}
 
-			if (view.UserName == null)
+			if(model.UserName == null)
 			{
 				view.UpdateStatus("Error: No username specified.");
 				return;
 			}
 
-			if (view.Password == null)
+			if(model.Password == null)
 			{
 				view.UpdateStatus("Error: No Password specified.");
 				return;
 			}
 
-			if (view.Publication == null)
+			if(model.SelectedPublication == null)
 			{
 				view.UpdateStatus("Error: No Publication specified.");
 				return;
 			}
 
-			if (view.Configuration == null)
+			if(model.SelectedConfiguration == null)
 			{
 				view.UpdateStatus("Error: No Configuration specified.");
 				return;
@@ -202,11 +183,11 @@ namespace SIL.FieldWorks.XWorks
 			var tempDirectoryToCompress = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 			var zipFileToUpload = Path.Combine(Path.GetTempPath(), Path.GetTempFileName());
 			Directory.CreateDirectory(tempDirectoryToCompress);
-			ExportDictionaryContent(tempDirectoryToCompress, view);
-			ExportReversalContent(tempDirectoryToCompress, view);
-			ExportOtherFilesContent(tempDirectoryToCompress, view);
+			ExportDictionaryContent(tempDirectoryToCompress, model, view);
+			ExportReversalContent(tempDirectoryToCompress, model, view);
+			ExportOtherFilesContent(tempDirectoryToCompress, model, view);
 			CompressExportedFiles(tempDirectoryToCompress, zipFileToUpload, view);
-			UploadToWebonary(zipFileToUpload, view);
+			UploadToWebonary(zipFileToUpload, model, view);
 		}
 	}
 }

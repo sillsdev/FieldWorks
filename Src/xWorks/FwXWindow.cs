@@ -1241,15 +1241,18 @@ namespace SIL.FieldWorks.XWorks
 			var configurations = DictionaryConfigurationController.GetDictionaryConfigurationLabels(cache, defaultConfigDir, projectConfigDir);
 
 			// show dialog
-			var controller = new PublishToWebonaryController()
+			var controller = new PublishToWebonaryController
 			{
-				Reversals = reversals,
-				Configurations = configurations,
-				Publications = publications,
 				Cache = cache,
 				Mediator = mediator
 			};
-			using (var dialog = new PublishToWebonaryDlg(controller, mediator))
+			var model = new PublishToWebonaryModel(mediator)
+			{
+				Reversals = reversals,
+				Configurations = configurations,
+				Publications = publications
+			};
+			using (var dialog = new PublishToWebonaryDlg(controller, model, mediator))
 			{
 				dialog.ShowDialog();
 			}

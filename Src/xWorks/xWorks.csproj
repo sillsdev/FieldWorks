@@ -409,6 +409,7 @@
     <Compile Include="PublishToWebonaryDlg.Designer.cs">
       <DependentUpon>PublishToWebonaryDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="PublishToWebonaryModel.cs" />
     <Compile Include="SemanticDomainRdeTreeBarHandler.cs" />
     <Compile Include="RecordBarListHandler.cs">
       <SubType>Code</SubType>

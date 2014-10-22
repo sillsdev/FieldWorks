@@ -7,20 +7,20 @@ using NUnit.Framework;
 namespace SIL.FieldWorks.XWorks
 {
 	[TestFixture]
-	class PublishToWebonaryDlgTests
+	class PublishToWebonaryModelTests
 	{
 		[Test]
 		public void EncryptPassword_NullAndEmptyDoNotCrash()
 		{
-			Assert.DoesNotThrow(() => PublishToWebonaryDlg.EncryptPassword(null));
-			Assert.DoesNotThrow(() => PublishToWebonaryDlg.EncryptPassword(string.Empty));
+			Assert.DoesNotThrow(() => PublishToWebonaryModel.EncryptPassword(null));
+			Assert.DoesNotThrow(() => PublishToWebonaryModel.EncryptPassword(string.Empty));
 		}
 
 		[Test]
 		public void DecryptPassword_NullAndEmptyDoNotCrash()
 		{
-			Assert.DoesNotThrow(() => PublishToWebonaryDlg.DecryptPassword(null));
-			Assert.DoesNotThrow(() => PublishToWebonaryDlg.DecryptPassword(string.Empty));
+			Assert.DoesNotThrow(() => PublishToWebonaryModel.DecryptPassword(null));
+			Assert.DoesNotThrow(() => PublishToWebonaryModel.DecryptPassword(string.Empty));
 		}
 	}
 }
