@@ -705,8 +705,12 @@ namespace SIL.FieldWorks.XWorks
 			var newDictConfigLoc = Path.Combine(configSettingsDir, "Dictionary");
 			Directory.CreateDirectory(newDictConfigLoc);
 			Directory.EnumerateFiles(newDictConfigLoc).ForEach(File.Delete);
-			File.AppendAllText(Path.Combine(configSettingsDir, "SomeConfig.fwlayout"), "LayoutFoo");
-			Assert.That(m_migrator.DictionaryConfigsNeedMigrating(), "There is an old config, a migration is needed."); // SUT
+			var tempFwLayoutPath = Path.Combine(configSettingsDir, "SomeConfig.fwlayout");
+			using(var tempFwLayout = Palaso.IO.TempFile.WithFilename(tempFwLayoutPath))
+			{
+				File.AppendAllText(tempFwLayoutPath, "LayoutFoo");
+				Assert.That(m_migrator.DictionaryConfigsNeedMigrating(), "There is an old config, a migration is needed."); // SUT
+			}
 			Palaso.IO.DirectoryUtilities.DeleteDirectoryRobust(newDictConfigLoc);
 		}
 
