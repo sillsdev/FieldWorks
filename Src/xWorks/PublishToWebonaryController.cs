@@ -97,7 +97,19 @@ namespace SIL.FieldWorks.XWorks
 			//TODO:Actually export the reversal content into the temp directory
 		}
 
-		internal static void UploadToWebonary(string zipFileToUpload, IPublishToWebonaryView view)
+		/// <summary>
+		/// Return upload URI, based on siteName.
+		/// </summary>
+		internal virtual string DestinationURI(string siteName)
+		{
+			// TODO use specified site with respect to webonary domain, rather than using value
+			// for current testing. eg $siteName.webonary.org/something or
+			// www.webonary.org/$sitename/wp-json/something .
+			var targetURI = "http://192.168.33.10/test/wp-json/webonary/import";
+			return targetURI;
+		}
+
+		internal void UploadToWebonary(string zipFileToUpload, IPublishToWebonaryView view)
 		{
 			if (zipFileToUpload == null)
 				throw new ArgumentNullException("zipFileToUpload");
@@ -105,27 +117,46 @@ namespace SIL.FieldWorks.XWorks
 				throw new ArgumentNullException("view");
 
 			view.UpdateStatus("Connecting to Webonary.");
-			//TODO use specified site rather than test site on test server
-			var targetURI = "http://192.168.33.10/test/wp-json/webonary/import";
+			var targetURI = DestinationURI(view.SiteName);
 			using (var client = new WebClient())
 			{
 				var credentials = string.Format("{0}:{1}", view.UserName, view.Password);
 				client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(new UTF8Encoding().GetBytes(credentials)));
 
-				var response = client.UploadFile(targetURI, zipFileToUpload);
+				byte[] response = null;
+				try
+				{
+					response = client.UploadFile(targetURI, zipFileToUpload);
+				}
+				catch (WebException e)
+				{
+					view.UpdateStatus(string.Format("An error occurred uploading your data: {0}", e.Message));
+					return;
+				}
 				var responseText = System.Text.Encoding.ASCII.GetString(response);
+
+				if (responseText.Contains("Upload successful"))
+				{
+					if (responseText.IndexOf("error", StringComparison.OrdinalIgnoreCase) < 0)
+					{
+						view.UpdateStatus("Upload successful. " +
+							"Preparing your data for publication. " +
+							"This may take several minutes to a few hours depending on the size of your dictionary. " +
+							"You will receive an email when the process is complete. " +
+							"You can examine the progress on the admin page of your Webonary site. "+
+							"You may now safely close this dialog.");
+						return;
+					}
+
+					view.UpdateStatus("The upload was successful, however there were errors.");
+				}
+
 				if (responseText.Contains("Wrong username or password"))
 					view.UpdateStatus("Error: Wrong username or password");
 				if (responseText.Contains("User doesn't have permission to import data"))
 					view.UpdateStatus("Error: User doesn't have permission to import data");
-				if (responseText.Contains("zip file extracted successfully"))
-					view.UpdateStatus("Upload successful. " +
-						"Preparing your data for publication. " +
-						"This may take several minutes to a few hours depending on the size of your dictionary. " +
-						"You will receive an email when the process is complete. " +
-						"You can examine the progress on the admin page of your Webonary site. "+
-						"You may now safely close this dialog.");
-				view.UpdateStatus(string.Format("Response from server: {0}{1}", responseText, Environment.NewLine));
+
+				view.UpdateStatus(string.Format("Response from server:{0}{1}{0}", Environment.NewLine, responseText));
 			}
 		}
 

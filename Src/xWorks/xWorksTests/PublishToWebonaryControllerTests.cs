@@ -117,7 +117,7 @@ namespace SIL.FieldWorks.XWorks
 		[Category("ByHand")] // ByHand since uses local webonary instance
 		public void PublishToWebonaryUsesViewConfigAndPub()
 		{
-			var controller = SetUpDictionary();
+			var controller = SetUpControllerAndConfiguration();
 			var mockView = SetUpView();
 			//SUT
 			Assert.DoesNotThrow(() => controller.PublishToWebonary(mockView));
@@ -174,7 +174,7 @@ namespace SIL.FieldWorks.XWorks
 		[Category("ByHand")] // ByHand since uses local webonary instance
 		public void PublishToWebonaryDoesNotCrashWithoutAllItsInfo()
 		{
-			var controller = SetUpDictionary();
+			var controller = SetUpControllerAndConfiguration();
 			var view = SetUpView();
 
 			view.SiteName = "site";
@@ -206,13 +206,13 @@ namespace SIL.FieldWorks.XWorks
 		[Category("ByHand")] // ByHand since uses local webonary instance
 		public void PublishToWebonaryCanCompleteWithoutError()
 		{
-			var controller = SetUpDictionary();
+			var controller = SetUpControllerAndConfiguration();
 			var mockView = SetUpView();
 			mockView.UserName = "webonary";
 			mockView.Password = "webonary";
 			//SUT
 			Assert.DoesNotThrow(() => controller.PublishToWebonary(mockView));
-			mockView.StatusStrings.ForEach(Console.WriteLine);
+			mockView.StatusStrings.ForEach(Console.WriteLine); // Remove this output line once this test works.
 			Assert.That(String.IsNullOrEmpty(mockView.StatusStrings.Find(s => s.Contains("Error") || s.Contains("ERROR") || s.Contains("error"))));
 		}
 
@@ -223,8 +223,9 @@ namespace SIL.FieldWorks.XWorks
 		{
 			using (var client = new WebClient())
 			{
-				var responseText = ConnectAndUpload(client);
-				Assert.That(responseText, Contains.Substring("returnedData"));
+				string responseText = null;
+				Assert.DoesNotThrow(()=>{responseText = ConnectAndUpload(client);});
+				Assert.That(responseText, Contains.Substring("username"),"Should get some sort of response from server, like an error message about authenticating.");
 			}
 		}
 
@@ -269,21 +270,23 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void UploadToWebonaryThrowsOnNullInput()
 		{
+			var controller = new MockPublishToWebonaryController();
 			var view = new MockWebonaryDlg();
-			Assert.Throws<ArgumentNullException>(()=>PublishToWebonaryController.UploadToWebonary(null, view));
-			Assert.Throws<ArgumentNullException>(()=>PublishToWebonaryController.UploadToWebonary("notNull", null));
+			Assert.Throws<ArgumentNullException>(()=>controller.UploadToWebonary(null, view));
+			Assert.Throws<ArgumentNullException>(()=>controller.UploadToWebonary("notNull", null));
 		}
 
 		[Test]
 		[Category("ByHand")] // ByHand since uses local webonary instance
 		public void UploadToWebonaryReportsFailedAuthentication()
 		{
+			var controller = new MockPublishToWebonaryController();
 			var view = new MockWebonaryDlg()
 			{
 				UserName = "nouser",
 				Password = "nopassword"
 			};
-			PublishToWebonaryController.UploadToWebonary("../../Src/xWorks/xWorksTests/lubwisi-d-new.zip", view);
+			controller.UploadToWebonary("../../Src/xWorks/xWorksTests/lubwisi-d-new.zip", view);
 			Assert.That(!String.IsNullOrEmpty(view.StatusStrings.Find(s => s.Contains("Error: Wrong username or password"))));
 		}
 
@@ -291,12 +294,13 @@ namespace SIL.FieldWorks.XWorks
 		[Category("ByHand")] // ByHand since uses local webonary instance
 		public void UploadToWebonaryReportsLackingPermissionsToUpload()
 		{
+			var controller = new MockPublishToWebonaryController();
 			var view = new MockWebonaryDlg()
 			{
 				UserName = "software",
 				Password = "4APItesting"
 			};
-			PublishToWebonaryController.UploadToWebonary("../../Src/xWorks/xWorksTests/lubwisi-d-new.zip", view);
+			controller.UploadToWebonary("../../Src/xWorks/xWorksTests/lubwisi-d-new.zip", view);
 			Assert.That(!String.IsNullOrEmpty(view.StatusStrings.Find(s => s.Contains("Error: User doesn't have permission to import data"))));
 		}
 
@@ -304,12 +308,13 @@ namespace SIL.FieldWorks.XWorks
 		[Category("ByHand")] // ByHand since uses local webonary instance
 		public void UploadToWebonaryReportsSuccess()
 		{
+			var controller = new MockPublishToWebonaryController();
 			var view = new MockWebonaryDlg()
 			{
 				UserName = "webonary",
 				Password = "webonary"
 			};
-			PublishToWebonaryController.UploadToWebonary("../../Src/xWorks/xWorksTests/lubwisi-d-new.zip", view);
+			controller.UploadToWebonary("../../Src/xWorks/xWorksTests/lubwisi-d-new.zip", view);
 			Assert.That(!String.IsNullOrEmpty(view.StatusStrings.Find(s => s.Contains("Upload successful."))));
 		}
 
@@ -317,14 +322,40 @@ namespace SIL.FieldWorks.XWorks
 		[Category("ByHand")] // ByHand since uses local webonary instance
 		public void UploadToWebonaryReportsErrorsInProcessingData()
 		{
+			var controller = new MockPublishToWebonaryController();
 			var view = new MockWebonaryDlg()
 			{
 				UserName = "webonary",
 				Password = "webonary"
 			};
 			// Contains a filename in the zip that isn't correct, so no data will be found by webonary.
-			PublishToWebonaryController.UploadToWebonary("../../Src/xWorks/xWorksTests/lubwisi-d-new-bad.zip", view);
+			controller.UploadToWebonary("../../Src/xWorks/xWorksTests/lubwisi-d-new-bad.zip", view);
 			Assert.That(!String.IsNullOrEmpty(view.StatusStrings.Find(s => s.Contains("ERROR: No headwords found."))));
+		}
+
+		/// <summary>
+		/// Does not crash. Reports error in upload.
+		/// Marked ByHand since I don't want the build servers poking around on
+		/// places on the network like this, and it also takes a few minutes to timeout.
+		/// </summary>
+		[Test]
+		[Category("ByHand")]
+		[Ignore("Takes too long to timeout. Enable if want to test.")]
+		public void UploadToWebonaryHandlesNetworkErrors()
+		{
+			var controller = new MockPublishToWebonaryController();
+			var view = new MockWebonaryDlg();
+			var filepath = "../../Src/xWorks/xWorksTests/lubwisi-d-new.zip";
+
+			controller.UploadURI = "http://nameresolutionfailure.local/import.php";
+			Assert.DoesNotThrow(()=>controller.UploadToWebonary(filepath, view));
+			Assert.That(!String.IsNullOrEmpty(view.StatusStrings.Find(s => s.Contains("An error occurred uploading your data:"))));
+			controller.UploadURI = "http://localhost:12345/import/connectfailure.php";
+			Assert.DoesNotThrow(()=>controller.UploadToWebonary(filepath, view));
+			Assert.That(!String.IsNullOrEmpty(view.StatusStrings.Find(s => s.Contains("An error occurred uploading your data:"))));
+			controller.UploadURI = "http://192.168.0.1/import/requesttimedout.php";
+			Assert.DoesNotThrow(()=>controller.UploadToWebonary(filepath, view));
+			Assert.That(!String.IsNullOrEmpty(view.StatusStrings.Find(s => s.Contains("An error occurred uploading your data:"))));
 		}
 
 		#region Helpers
@@ -345,7 +376,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Helper.
 		/// </summary>
-		public PublishToWebonaryController SetUpDictionary()
+		public PublishToWebonaryController SetUpControllerAndConfiguration()
 		{
 			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
 			var controller = new PublishToWebonaryController { Cache = Cache, Mediator = m_mediator };
@@ -390,6 +421,23 @@ namespace SIL.FieldWorks.XWorks
 			public string SiteName { get; set; }
 			public string UserName { get; set; }
 			public string Password { get; set; }
+		}
+
+		public class MockPublishToWebonaryController : PublishToWebonaryController
+		{
+			/// <summary>
+			/// URI to upload data to.
+			/// </summary>
+			public string UploadURI;
+
+			public MockPublishToWebonaryController() : base()
+			{
+			}
+
+			internal override string DestinationURI(string siteName)
+			{
+				return UploadURI ?? "http://192.168.33.10/test/wp-json/webonary/import";
+			}
 		}
 		#endregion
 	}
