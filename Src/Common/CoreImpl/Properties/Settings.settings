@@ -29,17 +29,5 @@
     <Setting Name="WebonaryPass" Description="stores last password for webonary export" Provider="Palaso.Settings.CrossPlatformSettingsProvider" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="WebonarySite" Description="stores last used site for webonary export" Provider="Palaso.Settings.CrossPlatformSettingsProvider" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="WebonaryReversals" Description="stores last used reversal indexes in webonary export" Provider="Palaso.Settings.CrossPlatformSettingsProvider" Type="System.Collections.Specialized.StringCollection" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="WebonaryConfiguration" Description="The last configuration selected for webonary export" Provider="Palaso.Settings.CrossPlatformSettingsProvider" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="WebonaryPublication" Description="The last publication selected for webonary export" Provider="Palaso.Settings.CrossPlatformSettingsProvider" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
   </Settings>
 </SettingsFile>

@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
@@ -26,8 +25,21 @@ namespace SIL.FieldWorks.XWorks
 
 		// This value gets used by the microsoft encryption library to increase the complexity of the encryption
 		private const string EntropyValue = @"61:3nj 42 ebg68";
+		private const string WebonarySite = "WebonarySite_ProjectSetting";
+		private const string WebonaryReversals = "WebonaryReversals_ProjectSetting";
+		private const string WebonaryPublication = "WebonaryPublication_ProjectSetting";
+		private const string WebonaryConfiguration = "WebonaryConfiguration_ProjectSetting";
+		/// <summary>
+		/// Unicode line break character (will never appear in a reversal config name)
+		/// </summary>
+		private const char Separator = '\u2028';
 
 		private PublishToWebonaryController m_controller;
+
+		/// <summary>
+		/// Needed to get the HelpTopicProvider and to save project specific settings
+		/// </summary>
+		protected Mediator Mediator { get; set; }
 
 		public PublishToWebonaryDlg()
 		{
@@ -35,16 +47,17 @@ namespace SIL.FieldWorks.XWorks
 			LoadFromSettings();
 		}
 
-		public PublishToWebonaryDlg(PublishToWebonaryController controller, IHelpTopicProvider helpTopicProvider)
+		public PublishToWebonaryDlg(PublishToWebonaryController controller, Mediator mediator)
 		{
 			InitializeComponent();
 			m_controller = controller;
 			controller.PopulateReversalsCheckboxList(this);
 			controller.PopulateConfigurationsList(this);
 			controller.PopulatePublicationsList(this);
+			Mediator = mediator;
 			LoadFromSettings();
 
-			m_helpTopicProvider = helpTopicProvider;
+			m_helpTopicProvider = mediator.HelpTopicProvider;
 
 			// When a link is clicked, open a web page to the URL.
 			explanationLabel.LinkClicked += (sender, args) =>
@@ -104,44 +117,93 @@ namespace SIL.FieldWorks.XWorks
 				webonaryPasswordTextbox.Text = DecryptPassword(Settings.Default.WebonaryPass);
 			}
 			webonaryUsernameTextbox.Text = Settings.Default.WebonaryUser;
-			webonarySiteNameTextbox.Text = Settings.Default.WebonarySite;
-			var reversals = Settings.Default.WebonaryReversals;
-			//Check every reversal in the list that was in the settings
-			if(reversals != null)
+			if(Mediator != null)
 			{
-				for(var i = 0; i < reversalsCheckedListBox.Items.Count; ++i)
+				var projectSettings = Mediator.PropertyTable;
+				webonarySiteNameTextbox.Text = projectSettings.GetStringProperty(WebonarySite, null);
+				var reversals = SplitReversalSettingString(projectSettings.GetStringProperty(WebonaryReversals, null));
+				//Check every reversal in the list that was in the settings
+				if(reversals != null)
 				{
-					if(reversals.Contains(reversalsCheckedListBox.Items[i].ToString()))
+					for(var i = 0; i < reversalsCheckedListBox.Items.Count; ++i)
 					{
-						reversalsCheckedListBox.SetItemChecked(i, true);
+						if(reversals.Contains(reversalsCheckedListBox.Items[i].ToString()))
+						{
+							reversalsCheckedListBox.SetItemChecked(i, true);
+						}
 					}
 				}
-			}
-			var savedConfig = Settings.Default.WebonaryConfiguration;
-			if(!String.IsNullOrEmpty(savedConfig))
-				configurationBox.SelectedItem = savedConfig;
+				var savedConfig = projectSettings.GetStringProperty(WebonaryConfiguration, null);
+				if(!String.IsNullOrEmpty(savedConfig))
+				{
+					configurationBox.SelectedItem = savedConfig;
+				}
+				else
+				{
+					configurationBox.SelectedIndex = 0;
+				}
 
-			var savedPub = Settings.Default.WebonaryPublication;
-			if(!String.IsNullOrEmpty(savedPub))
-				publicationBox.SelectedItem = savedPub;
+				var savedPub = projectSettings.GetStringProperty(WebonaryPublication, null);
+				if(!String.IsNullOrEmpty(savedPub))
+				{
+					publicationBox.SelectedItem = savedPub;
+				}
+				else
+				{
+					publicationBox.SelectedIndex = 0;
+				}
+			}
 		}
 
 		private void SaveToSettings()
 		{
 			Settings.Default.WebonaryPass = rememberPasswordCheckbox.Checked ? EncryptPassword(webonaryPasswordTextbox.Text) : null;
 			Settings.Default.WebonaryUser = webonaryUsernameTextbox.Text;
-			Settings.Default.WebonarySite = webonarySiteNameTextbox.Text;
-			var reversals = new StringCollection();
-			foreach(var item in reversalsCheckedListBox.CheckedItems)
+
+			var projectSettings = Mediator.PropertyTable;
+			projectSettings.SetProperty(WebonarySite, webonarySiteNameTextbox.Text, false);
+			projectSettings.SetPropertyPersistence(WebonarySite, true);
+			projectSettings.SetProperty(WebonaryReversals, CombineReversalSettingStrings(reversalsCheckedListBox.CheckedItems), false);
+			projectSettings.SetPropertyPersistence(WebonaryReversals, true);
+			if(configurationBox.SelectedItem != null)
 			{
-				reversals.Add(item.ToString());
+				projectSettings.SetProperty(WebonaryConfiguration, configurationBox.SelectedItem.ToString(), false);
+				projectSettings.SetPropertyPersistence(WebonaryConfiguration, true);
 			}
-			Settings.Default.WebonaryReversals = reversals;
-			if (configurationBox.SelectedItem != null)
-				Settings.Default.WebonaryConfiguration = configurationBox.SelectedItem.ToString();
-			if (publicationBox.SelectedItem != null)
-				Settings.Default.WebonaryPublication = publicationBox.SelectedItem.ToString();
+			if(publicationBox.SelectedItem != null)
+			{
+				projectSettings.SetProperty(WebonaryPublication, publicationBox.SelectedItem.ToString(), false);
+				projectSettings.SetPropertyPersistence(WebonaryPublication, true);
+			}
+			projectSettings.SaveGlobalSettings();
 			Settings.Default.Save();
+		}
+
+		/// <summary>
+		/// We don't have code to persist collections of strings in the project settings, so we'll combine our list into
+		/// a single string and split it.
+		/// </summary>
+		private string CombineReversalSettingStrings(CheckedListBox.CheckedItemCollection checkedItems)
+		{
+			var stringSettingBldr = new StringBuilder();
+			foreach(var item in checkedItems)
+			{
+				stringSettingBldr.Append(item);
+				stringSettingBldr.Append(Separator); // use a unicode line break as a seperator character
+			}
+			return stringSettingBldr.ToString();
+		}
+
+		/// <summary>
+		/// This method will split the given reversal string and return the resulting list
+		/// </summary>
+		private IEnumerable<string> SplitReversalSettingString(string savedReversalList)
+		{
+			if(!String.IsNullOrEmpty(savedReversalList))
+			{
+				return savedReversalList.Split(new [] {Separator}, StringSplitOptions.RemoveEmptyEntries);
+			}
+			return null;
 		}
 
 		internal static string EncryptPassword(string encryptMe)

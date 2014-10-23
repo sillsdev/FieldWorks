@@ -1249,7 +1249,7 @@ namespace SIL.FieldWorks.XWorks
 				Cache = cache,
 				Mediator = mediator
 			};
-			using (var dialog = new PublishToWebonaryDlg(controller, mediator.HelpTopicProvider))
+			using (var dialog = new PublishToWebonaryDlg(controller, mediator))
 			{
 				dialog.ShowDialog();
 			}
