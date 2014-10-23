@@ -428,7 +428,7 @@ namespace SIL.FieldWorks.XWorks
 			/// <summary>
 			/// URI to upload data to.
 			/// </summary>
-			public string UploadURI;
+			public string UploadURI { get; set; }
 
 			public MockPublishToWebonaryController() : base()
 			{

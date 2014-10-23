@@ -148,7 +148,7 @@ namespace SIL.FieldWorks.XWorks
 						return;
 					}
 
-					view.UpdateStatus("The upload was successful, however there were errors.");
+					view.UpdateStatus("The upload was successful; however, there were errors processing your data.");
 				}
 
 				if (responseText.Contains("Wrong username or password"))
