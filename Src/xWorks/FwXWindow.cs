@@ -1827,7 +1827,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="paraStyleName">Name of the initially selected paragraph style.</param>
 		/// <param name="charStyleName">Name of the initially selected character style.</param>
 		/// <param name="setPropsToFactorySettings">Delegate to set style info properties back
-		/// to the default facotry settings</param>
+		/// to the default factory settings</param>
 		/// <returns>true if refresh should be called to reload the cache</returns>
 		/// ------------------------------------------------------------------------------------
 		public bool ShowStylesDialog(string paraStyleName, string charStyleName,
