@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.XWorks
 			this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this.explanationLabel = new System.Windows.Forms.LinkLabel();
 			this.publishButton = new System.Windows.Forms.Button();
-			this.cancelButton = new System.Windows.Forms.Button();
+			this.closeButton = new System.Windows.Forms.Button();
 			this.outputLogTextbox = new System.Windows.Forms.TextBox();
 			this.helpButton = new System.Windows.Forms.Button();
 			this.webonarySettingsGroupbox = new System.Windows.Forms.GroupBox();
@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.XWorks
 			resources.ApplyResources(this.tableLayoutPanel, "tableLayoutPanel");
 			this.tableLayoutPanel.Controls.Add(this.explanationLabel, 0, 0);
 			this.tableLayoutPanel.Controls.Add(this.publishButton, 0, 5);
-			this.tableLayoutPanel.Controls.Add(this.cancelButton, 1, 5);
+			this.tableLayoutPanel.Controls.Add(this.closeButton, 1, 5);
 			this.tableLayoutPanel.Controls.Add(this.outputLogTextbox, 0, 6);
 			this.tableLayoutPanel.Controls.Add(this.helpButton, 2, 5);
 			this.tableLayoutPanel.Controls.Add(this.webonarySettingsGroupbox, 0, 1);
@@ -97,12 +97,13 @@ namespace SIL.FieldWorks.XWorks
 			this.publishButton.UseVisualStyleBackColor = true;
 			this.publishButton.Click += new System.EventHandler(this.publishButton_Click);
 			// 
-			// cancelButton
+			// closeButton
 			// 
-			this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			resources.ApplyResources(this.cancelButton, "cancelButton");
-			this.cancelButton.Name = "cancelButton";
-			this.cancelButton.UseVisualStyleBackColor = true;
+			this.closeButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			resources.ApplyResources(this.closeButton, "closeButton");
+			this.closeButton.Name = "closeButton";
+			this.closeButton.UseVisualStyleBackColor = true;
+			this.closeButton.Click += new System.EventHandler(this.closeButton_Click);
 			// 
 			// outputLogTextbox
 			// 
@@ -252,7 +253,7 @@ namespace SIL.FieldWorks.XWorks
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.CancelButton = this.cancelButton;
+			this.CancelButton = this.closeButton;
 			this.Controls.Add(this.tableLayoutPanel);
 			this.Name = "PublishToWebonaryDlg";
 			this.tableLayoutPanel.ResumeLayout(false);
@@ -289,7 +290,7 @@ namespace SIL.FieldWorks.XWorks
 		private System.Windows.Forms.Label howManyPubsAlertLabel;
 		private System.Windows.Forms.CheckedListBox reversalsCheckedListBox;
 		private System.Windows.Forms.Button publishButton;
-		private System.Windows.Forms.Button cancelButton;
+		private System.Windows.Forms.Button closeButton;
 		private System.Windows.Forms.Button helpButton;
 		private System.Windows.Forms.Label webonaryDomainLabel;
 		private System.Windows.Forms.TextBox outputLogTextbox;
