@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
@@ -13,6 +14,11 @@ namespace SIL.FieldWorks.XWorks
 	[XmlType (AnonymousType = false, TypeName = @"ConfigurationItem")]
 	public class ConfigurableDictionaryNode
 	{
+		public override String ToString()
+		{
+			return DisplayLabel;
+		}
+
 		/// <summary>
 		/// The label to display for this node
 		/// </summary>
