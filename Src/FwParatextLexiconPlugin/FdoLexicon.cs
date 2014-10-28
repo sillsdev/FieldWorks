@@ -480,12 +480,9 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				return null;
 
 			if (!m_parser.IsUpToDate())
-			{
 				m_parser.Update();
-				//ProgressUtils.Execute(Localizer.Str("Updating Data for Parser"), CancelModes.NonCancelable, () => m_parser.Update() );
-			}
 
-			ParseResult parseResult = m_parser.ParseWord(wordForm);
+			ParseResult parseResult = m_parser.ParseWord(wordForm.Replace(' ', '.'));
 			if (parseResult != null && parseResult.Analyses != null && parseResult.Analyses.Any())
 			{
 				foreach (ParseMorph morph in parseResult.Analyses.First().Morphs)
