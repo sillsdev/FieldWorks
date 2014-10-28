@@ -98,7 +98,7 @@ namespace SIL.FieldWorks.XWorks
 						LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(configureLayouts, this);
 					});
 			}
-			if(!String.IsNullOrEmpty(m_logger.Content))
+			if(m_logger.HasContent)
 			{
 				var configurationDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_mediator,
 					DictionaryConfigurationListener.s_dictionaryConfigurationDirectoryName);
