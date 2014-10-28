@@ -322,7 +322,8 @@ namespace SIL.FieldWorks.XWorks
 				}
 			};
 			controller.UploadToWebonary("../../Src/xWorks/xWorksTests/lubwisi-d-new.zip", view.Model, view);
-			Assert.That(!String.IsNullOrEmpty(view.StatusStrings.Find(s => s.Contains("Upload successful."))));
+			//view.StatusStrings.ForEach(Console.WriteLine); // Debugging output
+			Assert.That(!String.IsNullOrEmpty(view.StatusStrings.Find(s => s.Contains("Upload successful"))));
 		}
 
 		[Test]
@@ -340,7 +341,8 @@ namespace SIL.FieldWorks.XWorks
 			};
 			// Contains a filename in the zip that isn't correct, so no data will be found by webonary.
 			controller.UploadToWebonary("../../Src/xWorks/xWorksTests/lubwisi-d-new-bad.zip", view.Model, view);
-			Assert.That(!String.IsNullOrEmpty(view.StatusStrings.Find(s => s.Contains("ERROR: No headwords found."))));
+			//view.StatusStrings.ForEach(Console.WriteLine); // Debugging output
+			Assert.That(!String.IsNullOrEmpty(view.StatusStrings.Find(s => s.IndexOf("Error", StringComparison.OrdinalIgnoreCase) >= 0)), "Should be an error reported");
 		}
 
 		/// <summary>
