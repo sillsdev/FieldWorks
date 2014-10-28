@@ -305,7 +305,7 @@
 
 	<Target Name="downloadDlls">
 		<MakeDir Directories="$(fwrt)/Downloads"/>
-		<Message Text="Downloading 8.1.1 tagged artifacts from Palaso [FLExBridgeBeta] build."/>
+		<Message Text="Downloading latest successful artifacts from Palaso [FLExBridgeBeta] build."/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.dll" LocalFilename="$(fwrt)/Downloads/Palaso.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.dll.config" LocalFilename="$(fwrt)/Downloads/Palaso.dll.config"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/Palaso.$(DebugInfo)"/>
@@ -332,14 +332,14 @@
 		<DownloadFile Address="$(PalasoDownloadUrl)/NDesk.DBus.dll.config" LocalFilename="$(fwrt)/Downloads/NDesk.DBus.dll.config"
 					  Condition="'$(OS)'=='Unix'"/>
 
-		<Message Text="Downloading 8.1.1 tagged artifacts from Chorus FLExBridgeBeta build."/>
+		<Message Text="Downloading latest successful artifacts from Chorus FLExBridgeBeta build."/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/Autofac.dll" LocalFilename="$(fwrt)/Downloads/Autofac.dll"/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/Chorus.exe" LocalFilename="$(fwrt)/Downloads/Chorus.exe"/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/ChorusHub.exe" LocalFilename="$(fwrt)/Downloads/ChorusHub.exe" Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/LibChorus.dll" LocalFilename="$(fwrt)/Downloads/LibChorus.dll"/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/Vulcan.Uczniowie.HelpProvider.dll" LocalFilename="$(fwrt)/Downloads/Vulcan.Uczniowie.HelpProvider.dll"/>
 
-		<Message Text="Downloading 8.1.1 tagged artifacts for IPCFramework."/>
+		<Message Text="Downloading latest successful artifacts for IPCFramework."/>
 		<DownloadFile Address="$(IPCFrameworkDownloadUrl)/IPCFramework.dll" LocalFilename="$(fwrt)/Downloads/IPCFramework.dll"/>
 
 		<Message Text="Downloading protobuf-net." />

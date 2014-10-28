@@ -86,6 +86,7 @@ namespace SIL.FieldWorks.Build.Tasks
 			Stream remoteStream = null;
 			Stream localStream = null;
 			HttpWebResponse response = null;
+			DateTime lastModified = DateTime.Now;
 
 			// Use a try/catch/finally block as both the WebRequest and Stream
 			// classes throw exceptions upon error
@@ -109,7 +110,8 @@ namespace SIL.FieldWorks.Build.Tasks
 				// WebResponse object
 				response = (HttpWebResponse) request.GetResponse();
 
-				if (File.Exists(localFilename) && response.LastModified <= File.GetLastWriteTime(localFilename))
+				lastModified = response.LastModified;
+				if (File.Exists(localFilename) && lastModified == File.GetLastWriteTime(localFilename))
 					return bytesProcessed;
 
 				// Once the WebResponse object has been retrieved,
@@ -181,7 +183,12 @@ namespace SIL.FieldWorks.Build.Tasks
 				// is thrown at some point
 				if (response != null) response.Close();
 				if (remoteStream != null) remoteStream.Close();
-				if (localStream != null) localStream.Close();
+				if (localStream != null)
+				{
+					localStream.Close();
+					var fi = new FileInfo(localFilename);
+					fi.LastWriteTime = lastModified;
+				}
 			}
 
 			// Return total bytes processed to caller.
