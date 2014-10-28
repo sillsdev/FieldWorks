@@ -208,10 +208,8 @@ namespace SIL.FieldWorks.XWorks
 																							String.Empty);
 				if(String.IsNullOrEmpty(currentConfig)) // No configuration type has yet been selected
 				{
-					currentConfig = Directory.EnumerateFiles(Path.Combine(FwDirectoryFinder.DefaultConfigurations, configType),
-																		"*" + DictionaryConfigurationModel.FileExtension).First();
-					// Since it isn't helpful to have no configuration selected we will set it to the first shipped
-					// configuration until the user changes it.
+					// Select the default Root configuration if no configuration has been selected
+					currentConfig = Path.Combine(FwDirectoryFinder.DefaultConfigurations, configType, "Root" + DictionaryConfigurationModel.FileExtension);
 					mediator.PropertyTable.SetProperty("DictionaryPublicationLayout", currentConfig, true);
 				}
 			}
