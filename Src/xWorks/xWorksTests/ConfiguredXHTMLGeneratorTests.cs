@@ -526,8 +526,44 @@ namespace SIL.FieldWorks.XWorks
 				// SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, XHTMLWriter, Cache));
 				XHTMLWriter.Flush();
-				var gramInfoPath = "/div[@class='entry']/span[@class='senses']/span[@class='sense']/span[@class='morphosyntaxanalysis']";
+				const string gramInfoPath = "/div[@class='lexentry']/span[@class='senses']/span[@class='sense']/span[@class='morphosyntaxanalysis']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(gramInfoPath, 0);
+			}
+		}
+
+		/// <summary>
+		/// If the dictionary configuration specifies to export scientific category, but there is no data in the field to export, don't write a span.
+		/// </summary>
+		[Test]
+		public void GenerateXHTMLForEntry_DoesNotMakeSpanForTSStringIfNoData()
+		{
+			var scientificName = new ConfigurableDictionaryNode()
+			{
+				FieldDescription = "ScientificName",
+				IsEnabled = true
+			};
+			var sensesNode = new ConfigurableDictionaryNode()
+			{
+				FieldDescription = "Senses",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { scientificName }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { sensesNode },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			var entry = CreateInterestingLexEntry();
+
+			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				// SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, XHTMLWriter, Cache));
+				XHTMLWriter.Flush();
+				const string scientificCatPath = "/div[@class='lexentry']/span[@class='senses']/span[@class='sense']/span[@class='scientificname']";
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(scientificCatPath, 0);
 			}
 		}
 

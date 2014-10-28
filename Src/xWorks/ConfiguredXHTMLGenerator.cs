@@ -667,10 +667,13 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if(propertyValue is ITsString)
 			{
-				writer.WriteStartElement("span");
-				WriteClassNameAttribute(writer, config);
-				GenerateXHTMLForString((ITsString)propertyValue, config, writer, cache);
-				writer.WriteEndElement();
+				if(!TsStringUtils.IsNullOrEmpty((ITsString)propertyValue))
+				{
+					writer.WriteStartElement("span");
+					WriteClassNameAttribute(writer, config);
+					GenerateXHTMLForString((ITsString)propertyValue, config, writer, cache);
+					writer.WriteEndElement();
+				}
 			}
 			else if(propertyValue is IMultiStringAccessor)
 			{
