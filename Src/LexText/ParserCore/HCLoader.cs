@@ -101,7 +101,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			LoadFeatureSystem(m_cache.LanguageProject.PhFeatureSystemOA, m_language.PhoneticFeatureSystem);
 
-			LoadSymbolTable(m_cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS[0], m_language.PhoneticFeatureSystem);
+			LoadSymbolTable(m_cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS[0]);
 
 			foreach (IMoStemName stemName in m_cache.ServiceLocator.GetInstance<IMoStemNameRepository>().AllInstances())
 			{
@@ -2049,13 +2049,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			hcFeatSys.Freeze();
 		}
 
-		private void LoadSymbolTable(IPhPhonemeSet phonemeSet, FeatureSystem featSys)
+		private void LoadSymbolTable(IPhPhonemeSet phonemeSet)
 		{
 			m_table = new SymbolTable(m_spanFactory) { Name = phonemeSet.Name.BestAnalysisAlternative.Text };
 			foreach (IPhPhoneme phoneme in phonemeSet.PhonemesOC)
 			{
 				FeatureStruct fs = null;
-				if (featSys.Count > 0)
+				if (phoneme.FeaturesOA != null && phoneme.FeaturesOA.FeatureSpecsOC.Count > 0)
 				{
 					fs = LoadFeatureStruct(phoneme.FeaturesOA, m_language.PhoneticFeatureSystem);
 					fs.AddValue(HCFeatureSystem.Type, HCFeatureSystem.Segment);
