@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
+using Palaso.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Widgets;
@@ -41,31 +42,6 @@ namespace SIL.FieldWorks.XWorks
 			LayoutLevels = new LayoutLevels();
 			m_layoutInventory = Inventory.GetInventory("layouts", Cache.ProjectId.Name);
 			m_partInventory = Inventory.GetInventory("parts", Cache.ProjectId.Name);
-		}
-
-		public void AddDictionaryTypeItem(XmlNode layoutNode, List<XmlDocConfigureDlg.LayoutTreeNode> oldNodes)
-		{
-			// layoutNode is expected to look similar to:
-			//<layoutType label="Stem-based (complex forms as main entries)" layout="publishStem">
-			//<configure class="LexEntry" label="Main Entry" layout="publishStemEntry" />
-			//<configure class="LexEntry" label="Minor Entry" layout="publishStemMinorEntry" hideConfig="true" />
-			//</layoutType>
-			var label = XmlUtils.GetManditoryAttributeValue(layoutNode, "label");
-			var layout = XmlUtils.GetManditoryAttributeValue(layoutNode, "layout");
-			m_logger.WriteLine(String.Format("Migrating old fwlayout and parts config: '{0}' - {1}.", label, layout));
-			m_logger.IncreaseIndent();
-			var configNodeList = new List<ConfigurableDictionaryNode>();
-			foreach(var node in oldNodes)
-			{
-				configNodeList.Add(ConvertLayoutTreeNodeToConfigNode(node));
-			}
-			var convertedModel = new DictionaryConfigurationModel();
-			convertedModel.Parts = configNodeList;
-			convertedModel.Label = label;
-			convertedModel.Version = -1;
-			CopyNewDefaultsIntoConvertedModel(layout, convertedModel);
-			convertedModel.Save();
-			m_logger.DecreaseIndent();
 		}
 
 		/// <summary>
@@ -150,6 +126,26 @@ namespace SIL.FieldWorks.XWorks
 			//return Directory.Exists(newReversalConfigLoc);
 		}
 
+		/// <summary>ILayoutConverter implementation</summary>
+		public void AddDictionaryTypeItem(XmlNode layoutNode, List<XmlDocConfigureDlg.LayoutTreeNode> oldNodes)
+		{
+			// layoutNode is expected to look similar to:
+			//<layoutType label="Stem-based (complex forms as main entries)" layout="publishStem">
+			//<configure class="LexEntry" label="Main Entry" layout="publishStemEntry" />
+			//<configure class="LexEntry" label="Minor Entry" layout="publishStemMinorEntry" hideConfig="true" />
+			//</layoutType>
+			var label = XmlUtils.GetManditoryAttributeValue(layoutNode, "label");
+			var layout = XmlUtils.GetManditoryAttributeValue(layoutNode, "layout");
+			m_logger.WriteLine(String.Format("Migrating old fwlayout and parts config: '{0}' - {1}.", label, layout));
+			m_logger.IncreaseIndent();
+			var configNodeList = oldNodes.Select(ConvertLayoutTreeNodeToConfigNode).ToList();
+			var convertedModel = new DictionaryConfigurationModel { Parts = configNodeList, Label = label, Version = -1 };
+			DictionaryConfigurationModel.SpecifyParents(convertedModel.Parts);
+			CopyNewDefaultsIntoConvertedModel(layout, convertedModel);
+			convertedModel.Save();
+			m_logger.DecreaseIndent();
+		}
+
 		/// <summary>
 		/// This method will take a skeleton model which has been already converted from LayoutTreeNodes
 		/// and fill in data that we did not convert for some reason. It will use the current shipping
@@ -157,10 +153,9 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void CopyNewDefaultsIntoConvertedModel(string layout, DictionaryConfigurationModel convertedModel)
 		{
-			DictionaryConfigurationModel.SpecifyParents(convertedModel.Parts);
-			DictionaryConfigurationModel currentDefaultModel;
 			if(convertedModel.Version == -1)
 			{
+				DictionaryConfigurationModel currentDefaultModel;
 				const string extension = DictionaryConfigurationModel.FileExtension;
 				var defaultPath = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(m_mediator);
 				const string defaultStemName = "Stem" + extension;
@@ -233,7 +228,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if(convertedNode.Label != currentDefaultNode.Label)
 			{
-				throw new ArgumentException("Can not merge two nodes that do not match.");
+				throw new ArgumentException("Cannot merge two nodes that do not match.");
 			}
 			convertedNode.FieldDescription = currentDefaultNode.FieldDescription;
 			convertedNode.SubField = currentDefaultNode.SubField;
@@ -249,35 +244,47 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var currentDefaultChildren = new List<ConfigurableDictionaryNode>(currentDefaultNode.Children);
 				var matchedChildren = new List<ConfigurableDictionaryNode>();
-				foreach(var child in convertedNode.Children)
+				for (var i = 0; i < convertedNode.Children.Count; i++)
 				{
-					var pathStringTonode = BuildPathStringFromNode(child);
-					if(version == -1) // Some configuration nodes had name changes in the new verison
+					var child = convertedNode.Children[i];
+					var pathStringToNode = BuildPathStringFromNode(child);
+					if (version == -1) // Some configuration nodes had name changes in the new verison
 					{
-						if(child.Label == "Components" && child.Parent.Label == "Component References")
-						{
+						if (child.Label == "Components" && child.Parent.Label == "Component References")
 							child.Label = "Referenced Entries";
-						}
 					}
-					var matchFromBase = FindMatchingChild(child, currentDefaultChildren, matchedChildren);
-					if(matchFromBase != null)
-					{
+					// Attempt to find a matching node from the current default model from which to copy defaults
+					ConfigurableDictionaryNode matchFromBase;
+					if (TryGetMatchingNode(child.Label, currentDefaultChildren, matchedChildren, out matchFromBase))
 						CopyDefaultsIntoConfigNode(child, matchFromBase, version);
+					else if (child.Label.Equals("Referenced Complex Forms") // Root's RCF's are split into Subentries and Others (only Root has Subs)
+								&& TryGetMatchingNode("Subentries", currentDefaultChildren, matchedChildren, out matchFromBase))
+					{
+						m_logger.WriteLine(String.Format(
+							"'{0}' will be restructured into 'Subentries' and 'Other Referenced Complex Forms' to match the root-based defaults",
+							pathStringToNode));
+						m_logger.IncreaseIndent();
+						ConfigurableDictionaryNode sensesFromBase;
+						TryGetMatchingNode("Senses", matchFromBase.Children, new List<ConfigurableDictionaryNode>(), out sensesFromBase);
+						SplitReferencedComplexFormsIntoSubentriesAndOthers(child, sensesFromBase);
+						m_logger.DecreaseIndent();
+						i--; // Try to match this one again
 					}
 					else
 					{
-						m_logger.WriteLine(String.Format("Could not match '{0}' treating as custom.", pathStringTonode));
 						// This node does not match anything in the shipping defaults.
 						// It is probably a custom field in which case the label should match the FieldDescription.
-						child.FieldDescription = child.Label;
-						child.IsCustomField = true;
+						m_logger.WriteLine(String.Format("Could not match '{0}'; treating as custom.", pathStringToNode));
+						m_logger.IncreaseIndent();
+						SetupCustomField(child);
+						m_logger.DecreaseIndent();
 					}
 				}
 				//remove all the matches from default list
 				currentDefaultChildren.RemoveAll(matchedChildren.Contains);
 				foreach(var newChild in currentDefaultChildren)
 				{
-					m_logger.WriteLine(String.Format("'{0}' was not in the old version adding from default config.", BuildPathStringFromNode(newChild)));
+					m_logger.WriteLine(String.Format("'{0}' was not in the old version; adding from default config.", BuildPathStringFromNode(newChild)));
 					convertedNode.Children.Add(newChild);
 				}
 			}
@@ -287,7 +294,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private string BuildPathStringFromNode(ConfigurableDictionaryNode child)
+		internal static string BuildPathStringFromNode(ConfigurableDictionaryNode child)
 		{
 			var path = child.DisplayLabel;
 			var node = child;
@@ -299,19 +306,97 @@ namespace SIL.FieldWorks.XWorks
 			return path;
 		}
 
-		/// <summary>
-		/// Matches a child node based off of the labels removes it from the given list and returns it. Otherwise returns null.
-		/// </summary>
-		private ConfigurableDictionaryNode FindMatchingChild(ConfigurableDictionaryNode child,
-			IEnumerable<ConfigurableDictionaryNode> currentDefaultChildren, List<ConfigurableDictionaryNode> matchedChildren)
+		/// <summary>Attempts to find and return a node from the currentDefaultChildren whose Label matches childLabel.</summary>
+		/// <returns>true if successful</returns>
+		private static bool TryGetMatchingNode(string childLabel,
+			IEnumerable<ConfigurableDictionaryNode> currentDefaultChildren, List<ConfigurableDictionaryNode> matchedChildren,
+			out ConfigurableDictionaryNode matchFromCurrentDefault)
 		{
-			var matchingChild = currentDefaultChildren.FirstOrDefault(baseChild => child.Label == baseChild.Label);
-			if(matchingChild != null)
+			matchFromCurrentDefault = currentDefaultChildren.FirstOrDefault(baseChild => childLabel == baseChild.Label);
+			if(matchFromCurrentDefault != null)
 			{
-				matchedChildren.Add(matchingChild);
-				return matchingChild;
+				matchedChildren.Add(matchFromCurrentDefault);
+				return true;
 			}
-			return null;
+			return false;
+		}
+
+		/// <summary>
+		/// Splits 'Referenced Complex Forms' into 'Other Referenced Complex Forms' and 'Subentries', if necessary, restructuring some nodes
+		/// under 'Subentries->Senses'.
+		/// This is necessary because, the Root-based (Complex Forms as Subentries) configuration distinguisesh between Subentries and
+		/// 'Other Referenced Complex Forms'; however, in the old configurations, there were a few plain old 'Referenced Complex Forms' nodes,
+		/// similar to those in the Stem-based (Complex Forms as Main Entries) configuration.  So we need to restructure users' configurations
+		/// to match the new, proper configurations.
+		/// </summary>
+		internal void SplitReferencedComplexFormsIntoSubentriesAndOthers(ConfigurableDictionaryNode convertedRcfNode,
+			ConfigurableDictionaryNode currentDefaultSenseChild)
+		{
+			// Split RCF's into ORCF's and Subentries
+			var subentriesNode = convertedRcfNode.DuplicateAmongSiblings();
+			convertedRcfNode.Label = "Other Referenced Complex Forms";
+			subentriesNode.Label = "Subentries";
+			subentriesNode.LabelSuffix = convertedRcfNode.LabelSuffix;
+			subentriesNode.IsDuplicate = convertedRcfNode.IsDuplicate;
+
+			// Set up Other Referenced Complex Forms
+			convertedRcfNode.DictionaryNodeOptions = null; // "Other" Referenced Complex Forms don't have Options.
+			convertedRcfNode.Children.RemoveAll( // ORCF's also don't have these children.
+				node => (new[] { "Grammatical Info.", "Definition (or Gloss)", "Subentry Under Reference" }).Contains(node.Label));
+
+			// Set up Subentries
+			if (currentDefaultSenseChild == null)
+			{
+				m_logger.WriteLine(String.Format("Default '{0}' is childless; removing all children--incl. custom fields--from the converted model.",
+					BuildPathStringFromNode(subentriesNode)));
+				subentriesNode.Children = null;
+			}
+			else
+			{
+				m_logger.WriteLine(String.Format("Found '{0}' in the default model; restructuring some of its converted siblings thereunder.",
+					BuildPathStringFromNode(currentDefaultSenseChild)));
+
+				// Copy the default Senses node into Subentries's Children so we don't modify the original
+				currentDefaultSenseChild = currentDefaultSenseChild.DuplicateAmongSiblings(subentriesNode.Children);
+				currentDefaultSenseChild.LabelSuffix = null;
+				currentDefaultSenseChild.IsDuplicate = false;
+
+				// Complex Form and Comment are not used anywhere in Subentries
+				subentriesNode.Children.RemoveAll(node => (new[] { "Complex Form", "Comment" }).Contains(node.Label));
+
+				// Grammatical Info., Definition (or Gloss), and Example Sentences, become children of Senses under Subentries
+				var labelsToMoveToSenses = new[] { "Grammatical Info.", "Definition (or Gloss)", "Example Sentences" };
+				var nodesToMoveToSenses = subentriesNode.Children.FindAll(node => labelsToMoveToSenses.Contains(node.Label));
+				subentriesNode.Children.RemoveAll(nodesToMoveToSenses.Contains);
+				nodesToMoveToSenses.Where(node => node.Label.Equals("Example Sentences")).ForEach(node => node.Label = "Examples");
+				labelsToMoveToSenses[2] = "Examples";
+				foreach (var label in labelsToMoveToSenses)
+				{
+					var defaultNode = currentDefaultSenseChild.Children.Find(node => node.Label.Equals(label));
+					var index = currentDefaultSenseChild.Children.IndexOf(defaultNode);
+					currentDefaultSenseChild.Children.RemoveAt(index);
+					currentDefaultSenseChild.Children.InsertRange(index, nodesToMoveToSenses.Where(node => node.Label.Equals(label)));
+				}
+				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { subentriesNode });
+
+				// Subentries->Complex Form Type->Reverse Abbreviation has been renamed to Abbreviation
+				subentriesNode.Children.Where(node => node.Label.Equals("Complex Form Type")).SelectMany(cfTypeNode =>
+					cfTypeNode.Children.Where(node => node.Label.Equals("Reverse Abbreviation"))).ForEach(node => node.Label = "Abbreviation");
+			}
+		}
+
+		private void SetupCustomField(ConfigurableDictionaryNode node)
+		{
+			node.FieldDescription = node.Label;
+			node.IsCustomField = true;
+			if (node.Children != null)
+			{
+				foreach (var child in node.Children)
+				{
+					m_logger.WriteLine(String.Format("Treating '{0}' as custom.", BuildPathStringFromNode(child)));
+					SetupCustomField(child);
+				}
+			}
 		}
 
 		internal ConfigurableDictionaryNode ConvertLayoutTreeNodeToConfigNode(XmlDocConfigureDlg.LayoutTreeNode node)

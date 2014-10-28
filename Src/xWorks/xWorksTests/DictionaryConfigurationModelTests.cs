@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.XWorks
 	[TestFixture]
 	class DictionaryConfigurationModelTests : MemoryOnlyBackendProviderTestBase
 	{
-		private const string XmlOpenTagsThruRoot = @"<?xml version=""1.0"" encoding=""utf-8""?>
+		internal const string XmlOpenTagsThruRoot = @"<?xml version=""1.0"" encoding=""utf-8""?>
 			<DictionaryConfiguration name=""Root"" version=""1"" lastModified=""2014-02-13"">";
 		private const string XmlOpenTagsThruRootWithAllPublications = @"<?xml version=""1.0"" encoding=""utf-8""?>
 			<DictionaryConfiguration allPublications=""true"" name=""Root"" version=""1"" lastModified=""2014-02-13"">";
@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.XWorks
 				</ConfigurationItem>
 				<SharedItems/>" +
 			XmlCloseTagsFromRoot;
-		private const string XmlCloseTagsFromRoot = @"</DictionaryConfiguration>";
+		internal const string XmlCloseTagsFromRoot = @"</DictionaryConfiguration>";
 
 		[Test]
 		public void Load_LoadsBasicsAndDetails()
