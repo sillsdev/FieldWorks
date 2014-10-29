@@ -67,12 +67,12 @@
           </WritingSystemOptions>
         </ConfigurationItem>
       </ConfigurationItem>
-      <ConfigurationItem name="Variant Form" between=", " isEnabled="true" subField="HeadWord" field="OwningEntry">
+      <ConfigurationItem name="Variant Form" between=", " isEnabled="true" field="OwningEntry" subField="HeadWord">
         <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
           <Option id="vernacular" isEnabled="true"/>
         </WritingSystemOptions>
       </ConfigurationItem>
-      <ConfigurationItem name="Variant Pronunciations" before=" " between=", " isEnabled="false" subField="PronunciationsOS" field="OwningEntry" cssClassNameOverride="variantpronunciations">
+      <ConfigurationItem name="Variant Pronunciations" before=" " between=", " isEnabled="false" field="OwningEntry"  subField="PronunciationsOS" cssClassNameOverride="variantpronunciations">
         <ConfigurationItem name="Pronunciation" before="[" between=" " after="]" isEnabled="true" field="Form">
           <WritingSystemOptions writingSystemType="pronunciation" displayWSAbreviation="false">
             <Option id="pronunciation" isEnabled="true"/>
@@ -98,7 +98,7 @@
           <Option id="analysis" isEnabled="true"/>
         </WritingSystemOptions>
       </ConfigurationItem>
-      <ConfigurationItem name="Summary Definition" between=" " after=" " isEnabled="true" subField="SummaryDefinition" field="OwningEntry">
+      <ConfigurationItem name="Summary Definition" between=" " after=" " isEnabled="true" field="OwningEntry" subField="SummaryDefinition">
         <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
           <Option id="analysis" isEnabled="true"/>
         </WritingSystemOptions>
@@ -299,12 +299,12 @@
             </WritingSystemOptions>
           </ConfigurationItem>
         </ConfigurationItem>
-        <ConfigurationItem name="Variant Form" between=", " isEnabled="true" subField="HeadWord" field="OwningEntry">
+        <ConfigurationItem name="Variant Form" between=", " isEnabled="true" field="OwningEntry" subField="HeadWord">
           <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
             <Option id="vernacular" isEnabled="true"/>
           </WritingSystemOptions>
         </ConfigurationItem>
-        <ConfigurationItem name="Variant Pronunciations" before=" " between=", " isEnabled="false" subField="PronunciationsOS" field="OwningEntry" cssClassNameOverride="variantpronunciations">
+        <ConfigurationItem name="Variant Pronunciations" before=" " between=", " isEnabled="false" field="OwningEntry"  subField="PronunciationsOS" cssClassNameOverride="variantpronunciations">
           <ConfigurationItem name="Pronunciation" before="[" between=" " after="]" isEnabled="true" field="Form">
             <WritingSystemOptions writingSystemType="pronunciation" displayWSAbreviation="false">
               <Option id="pronunciation" isEnabled="true"/>
@@ -330,7 +330,7 @@
             <Option id="analysis" isEnabled="true"/>
           </WritingSystemOptions>
         </ConfigurationItem>
-        <ConfigurationItem name="Summary Definition" between=" " after=" " isEnabled="true" subField="SummaryDefinition" field="OwningEntry">
+        <ConfigurationItem name="Summary Definition" between=" " after=" " isEnabled="true" field="OwningEntry" subField="SummaryDefinition">
           <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
             <Option id="analysis" isEnabled="true"/>
           </WritingSystemOptions>
@@ -708,12 +708,12 @@
             </WritingSystemOptions>
           </ConfigurationItem>
         </ConfigurationItem>
-        <ConfigurationItem name="Variant Form" between=", " isEnabled="true" subField="HeadWord" field="OwningEntry">
+        <ConfigurationItem name="Variant Form" between=", " isEnabled="true" field="OwningEntry" subField="HeadWord">
           <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
             <Option id="vernacular" isEnabled="true"/>
           </WritingSystemOptions>
         </ConfigurationItem>
-        <ConfigurationItem name="Variant Pronunciations" before=" " between=", " isEnabled="false" subField="PronunciationsOS" field="OwningEntry" cssClassNameOverride="variantpronunciations">
+        <ConfigurationItem name="Variant Pronunciations" before=" " between=", " isEnabled="false" field="OwningEntry"  subField="PronunciationsOS" cssClassNameOverride="variantpronunciations">
           <ConfigurationItem name="Pronunciation" before="[" between=" " after="]" isEnabled="true" field="Form">
             <WritingSystemOptions writingSystemType="pronunciation" displayWSAbreviation="false">
               <Option id="pronunciation" isEnabled="true"/>
@@ -739,7 +739,7 @@
             <Option id="analysis" isEnabled="true"/>
           </WritingSystemOptions>
         </ConfigurationItem>
-        <ConfigurationItem name="Summary Definition" between=" " after=" " isEnabled="true" subField="SummaryDefinition" field="OwningEntry">
+        <ConfigurationItem name="Summary Definition" between=" " after=" " isEnabled="true" field="OwningEntry" subField="SummaryDefinition">
           <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
             <Option id="analysis" isEnabled="true"/>
           </WritingSystemOptions>
@@ -940,12 +940,12 @@
               </WritingSystemOptions>
             </ConfigurationItem>
           </ConfigurationItem>
-          <ConfigurationItem name="Variant Form" between=", " isEnabled="true" subField="HeadWord" field="OwningEntry">
+          <ConfigurationItem name="Variant Form" between=", " isEnabled="true" field="OwningEntry" subField="HeadWord">
             <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
               <Option id="vernacular" isEnabled="true"/>
             </WritingSystemOptions>
           </ConfigurationItem>
-          <ConfigurationItem name="Variant Pronunciations" before=" " between=", " isEnabled="false" subField="PronunciationsOS" field="OwningEntry" cssClassNameOverride="variantpronunciations">
+          <ConfigurationItem name="Variant Pronunciations" before=" " between=", " isEnabled="false" field="OwningEntry"  subField="PronunciationsOS" cssClassNameOverride="variantpronunciations">
             <ConfigurationItem name="Pronunciation" before="[" between=" " after="]" isEnabled="true" field="Form">
               <WritingSystemOptions writingSystemType="pronunciation" displayWSAbreviation="false">
                 <Option id="pronunciation" isEnabled="true"/>
@@ -971,7 +971,7 @@
               <Option id="analysis" isEnabled="true"/>
             </WritingSystemOptions>
           </ConfigurationItem>
-          <ConfigurationItem name="Summary Definition" between=" " after=" " isEnabled="true" subField="SummaryDefinition" field="OwningEntry">
+          <ConfigurationItem name="Summary Definition" between=" " after=" " isEnabled="true" field="OwningEntry" subField="SummaryDefinition">
             <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
               <Option id="analysis" isEnabled="true"/>
             </WritingSystemOptions>
@@ -1331,12 +1331,12 @@
           </WritingSystemOptions>
         </ConfigurationItem>
       </ConfigurationItem>
-      <ConfigurationItem name="Variant Form" between=", " isEnabled="true" subField="HeadWord" field="OwningEntry">
+      <ConfigurationItem name="Variant Form" between=", " isEnabled="true" field="OwningEntry" subField="HeadWord">
         <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
           <Option id="vernacular" isEnabled="true"/>
         </WritingSystemOptions>
       </ConfigurationItem>
-      <ConfigurationItem name="Variant Pronunciations" before=" " between=", " isEnabled="false" subField="PronunciationsOS" field="OwningEntry" cssClassNameOverride="variantpronunciations">
+      <ConfigurationItem name="Variant Pronunciations" before=" " between=", " isEnabled="false" field="OwningEntry"  subField="PronunciationsOS" cssClassNameOverride="variantpronunciations">
         <ConfigurationItem name="Pronunciation" before="[" between=" " after="]" isEnabled="true" field="Form">
           <WritingSystemOptions writingSystemType="pronunciation" displayWSAbreviation="false">
             <Option id="pronunciation" isEnabled="true"/>
@@ -1362,7 +1362,7 @@
           <Option id="analysis" isEnabled="true"/>
         </WritingSystemOptions>
       </ConfigurationItem>
-      <ConfigurationItem name="Summary Definition" between=" " after=" " isEnabled="true" subField="SummaryDefinition" field="OwningEntry">
+      <ConfigurationItem name="Summary Definition" between=" " after=" " isEnabled="true" field="OwningEntry" subField="SummaryDefinition">
         <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
           <Option id="analysis" isEnabled="true"/>
         </WritingSystemOptions>
@@ -1668,12 +1668,12 @@
             </WritingSystemOptions>
           </ConfigurationItem>
         </ConfigurationItem>
-        <ConfigurationItem name="Variant Form" between=", " isEnabled="true" subField="HeadWord" field="OwningEntry">
+        <ConfigurationItem name="Variant Form" between=", " isEnabled="true" field="OwningEntry" subField="HeadWord">
           <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
             <Option id="vernacular" isEnabled="true"/>
           </WritingSystemOptions>
         </ConfigurationItem>
-        <ConfigurationItem name="Variant Pronunciations" before=" " between=", " isEnabled="false" subField="PronunciationsOS" field="OwningEntry" cssClassNameOverride="variantpronunciations">
+        <ConfigurationItem name="Variant Pronunciations" before=" " between=", " isEnabled="false" field="OwningEntry"  subField="PronunciationsOS" cssClassNameOverride="variantpronunciations">
           <ConfigurationItem name="Pronunciation" before="[" between=" " after="]" isEnabled="true" field="Form">
             <WritingSystemOptions writingSystemType="pronunciation" displayWSAbreviation="false">
               <Option id="pronunciation" isEnabled="true"/>
@@ -1699,7 +1699,7 @@
             <Option id="analysis" isEnabled="true"/>
           </WritingSystemOptions>
         </ConfigurationItem>
-        <ConfigurationItem name="Summary Definition" between=" " after=" " isEnabled="true" subField="SummaryDefinition" field="OwningEntry">
+        <ConfigurationItem name="Summary Definition" between=" " after=" " isEnabled="true" field="OwningEntry" subField="SummaryDefinition">
           <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
             <Option id="analysis" isEnabled="true"/>
           </WritingSystemOptions>
@@ -2068,12 +2068,12 @@
             </WritingSystemOptions>
           </ConfigurationItem>
         </ConfigurationItem>
-        <ConfigurationItem name="Variant Form" between=", " isEnabled="true" subField="HeadWord" field="OwningEntry">
+        <ConfigurationItem name="Variant Form" between=", " isEnabled="true" field="OwningEntry" subField="HeadWord">
           <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
             <Option id="vernacular" isEnabled="true"/>
           </WritingSystemOptions>
         </ConfigurationItem>
-        <ConfigurationItem name="Variant Pronunciations" before=" " between=", " isEnabled="false" subField="PronunciationsOS" field="OwningEntry" cssClassNameOverride="variantpronunciations">
+        <ConfigurationItem name="Variant Pronunciations" before=" " between=", " isEnabled="false" field="OwningEntry"  subField="PronunciationsOS" cssClassNameOverride="variantpronunciations">
           <ConfigurationItem name="Pronunciation" before="[" between=" " after="]" isEnabled="true" field="Form">
             <WritingSystemOptions writingSystemType="pronunciation" displayWSAbreviation="false">
               <Option id="pronunciation" isEnabled="true"/>
@@ -2099,7 +2099,7 @@
             <Option id="analysis" isEnabled="true"/>
           </WritingSystemOptions>
         </ConfigurationItem>
-        <ConfigurationItem name="Summary Definition" between=" " after=" " isEnabled="true" subField="SummaryDefinition" field="OwningEntry">
+        <ConfigurationItem name="Summary Definition" between=" " after=" " isEnabled="true" field="OwningEntry" subField="SummaryDefinition">
           <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
             <Option id="analysis" isEnabled="true"/>
           </WritingSystemOptions>
@@ -2300,12 +2300,12 @@
               </WritingSystemOptions>
             </ConfigurationItem>
           </ConfigurationItem>
-          <ConfigurationItem name="Variant Form" between=", " isEnabled="true" subField="HeadWord" field="OwningEntry">
+          <ConfigurationItem name="Variant Form" between=", " isEnabled="true" field="OwningEntry" subField="HeadWord">
             <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
               <Option id="vernacular" isEnabled="true"/>
             </WritingSystemOptions>
           </ConfigurationItem>
-          <ConfigurationItem name="Variant Pronunciations" before=" " between=", " isEnabled="false" subField="PronunciationsOS" field="OwningEntry" cssClassNameOverride="variantpronunciations">
+          <ConfigurationItem name="Variant Pronunciations" before=" " between=", " isEnabled="false" field="OwningEntry"  subField="PronunciationsOS" cssClassNameOverride="variantpronunciations">
             <ConfigurationItem name="Pronunciation" before="[" between=" " after="]" isEnabled="true" field="Form">
               <WritingSystemOptions writingSystemType="pronunciation" displayWSAbreviation="false">
                 <Option id="pronunciation" isEnabled="true"/>
@@ -2331,7 +2331,7 @@
               <Option id="analysis" isEnabled="true"/>
             </WritingSystemOptions>
           </ConfigurationItem>
-          <ConfigurationItem name="Summary Definition" between=" " after=" " isEnabled="true" subField="SummaryDefinition" field="OwningEntry">
+          <ConfigurationItem name="Summary Definition" between=" " after=" " isEnabled="true" field="OwningEntry" subField="SummaryDefinition">
             <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
               <Option id="analysis" isEnabled="true"/>
             </WritingSystemOptions>
