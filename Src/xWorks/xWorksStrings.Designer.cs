@@ -169,6 +169,24 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Check All Children.
+        /// </summary>
+        internal static string ConfigurationTreeControl_CheckAllChildren {
+            get {
+                return ResourceManager.GetString("ConfigurationTreeControl_CheckAllChildren", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Uncheck All Children.
+        /// </summary>
+        internal static string ConfigurationTreeControl_UnCheckAllChildren {
+            get {
+                return ResourceManager.GetString("ConfigurationTreeControl_UnCheckAllChildren", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Configure {0}.
         /// </summary>
         internal static string ConfigureTitle {

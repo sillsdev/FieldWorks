@@ -62,6 +62,7 @@ namespace SIL.FieldWorks.XWorks
 			this.tree.HideSelection = false;
 			this.tree.Name = "tree";
 			this.tableLayoutPanel.SetRowSpan(this.tree, 5);
+			this.tree.Click += new System.EventHandler(this.TreeClick);
 			// 
 			// moveUp
 			// 

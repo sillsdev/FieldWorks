@@ -899,6 +899,47 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual(DictionaryConfigurationController.GetDefaultEntryForType("Dictionary", Cache), entryWithHeadword);
 		}
 
+		[Test]
+		public void EnableNodeAndDescendants_EnablesNodeWithNoChildren()
+		{
+			var node = new ConfigurableDictionaryNode { IsEnabled = false };
+			Assert.DoesNotThrow(() => DictionaryConfigurationController.EnableNodeAndDescendants(node));
+			Assert.IsTrue(node.IsEnabled);
+		}
+
+		[Test]
+		public void DisableNodeAndDescendants_UnchecksNodeWithNoChildren()
+		{
+			var node = new ConfigurableDictionaryNode { IsEnabled = true };
+			Assert.DoesNotThrow(() => DictionaryConfigurationController.DisableNodeAndDescendants(node));
+			Assert.IsFalse(node.IsEnabled);
+		}
+
+		[Test]
+		public void EnableNodeAndDescendants_ChecksToGrandChildren()
+		{
+			var grandchild = new ConfigurableDictionaryNode { IsEnabled = false };
+			var child = new ConfigurableDictionaryNode { IsEnabled = false, Children = new List<ConfigurableDictionaryNode> { grandchild } };
+			var node = new ConfigurableDictionaryNode { IsEnabled = false, Children = new List<ConfigurableDictionaryNode> { child } };
+			Assert.DoesNotThrow(() => DictionaryConfigurationController.EnableNodeAndDescendants(node));
+			Assert.IsTrue(node.IsEnabled);
+			Assert.IsTrue(child.IsEnabled);
+			Assert.IsTrue(grandchild.IsEnabled);
+		}
+
+		[Test]
+		public void DisableNodeAndDescendants_UnChecksGrandChildren()
+		{
+			var grandchild = new ConfigurableDictionaryNode { IsEnabled = true };
+			var child = new ConfigurableDictionaryNode { IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { grandchild } };
+			var node = new ConfigurableDictionaryNode { IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { child } };
+			Assert.DoesNotThrow(() => DictionaryConfigurationController.DisableNodeAndDescendants(node));
+			Assert.IsFalse(node.IsEnabled);
+			Assert.IsFalse(child.IsEnabled);
+			Assert.IsFalse(grandchild.IsEnabled);
+		}
+
+
 		private ILexEntry CreateLexEntryWithoutHeadword()
 		{
 			return Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();

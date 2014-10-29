@@ -2,14 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
 using System.Windows.Forms;
 
 namespace SIL.FieldWorks.XWorks
@@ -45,6 +37,18 @@ namespace SIL.FieldWorks.XWorks
 		/// Event when a TreeNode is requested to be renamed.
 		/// </summary>
 		public event TreeNodeEventHandler Rename;
+
+		/// <summary>
+		/// Event when a user askes to CheckAll treenode children
+		/// </summary>
+		public event TreeNodeEventHandler CheckAll;
+
+		/// <summary>
+		/// Event when a user askes to UnCheckAll treenode children
+		/// </summary>
+		public event TreeNodeEventHandler UnCheckAll;
+
+		private readonly ContextMenuStrip m_CtrlRightClickMenu;
 
 		/// <summary>
 		/// Tree of TreeNodes.
@@ -112,6 +116,57 @@ namespace SIL.FieldWorks.XWorks
 				if (Rename != null)
 					Rename(tree.SelectedNode);
 			};
+
+			// Create the ContextMenuStrip.
+			m_CtrlRightClickMenu = new ContextMenuStrip();
+			// Create the checkall and uncheckall items
+			var checkAllItem = new ToolStripMenuItem
+			{
+				Text = xWorksStrings.ConfigurationTreeControl_CheckAllChildren,
+				DisplayStyle = ToolStripItemDisplayStyle.Text
+			};
+			var uncheckAllItem = new ToolStripMenuItem
+			{
+				Text = xWorksStrings.ConfigurationTreeControl_UnCheckAllChildren,
+				DisplayStyle = ToolStripItemDisplayStyle.Text
+			};
+			m_CtrlRightClickMenu.Items.AddRange(new ToolStripItem[] { checkAllItem, uncheckAllItem });
+			// If the user selects one of the items perform the action and select the node they right clicked on
+			m_CtrlRightClickMenu.ItemClicked += (menu, args) =>
+			{
+				var selectedNode = (TreeNode)m_CtrlRightClickMenu.Tag;
+				if(args.ClickedItem.Text == xWorksStrings.ConfigurationTreeControl_CheckAllChildren &&
+						CheckAll != null)
+				{
+					tree.SelectedNode = selectedNode;
+					CheckAll(selectedNode);
+				}
+				if(args.ClickedItem.Text == xWorksStrings.ConfigurationTreeControl_UnCheckAllChildren &&
+						UnCheckAll != null)
+				{
+					tree.SelectedNode = selectedNode;
+					UnCheckAll(selectedNode);
+				}
+			};
+		}
+
+		private void TreeClick(object sender, System.EventArgs e)
+		{
+			var buttonArgs = e as MouseEventArgs;
+			if(buttonArgs == null)
+				return;
+			if(buttonArgs.Button == MouseButtons.Right && (ModifierKeys & Keys.Control) == Keys.Control)
+			{
+				// store the node under the mouse click
+				var selectedNode = tree.GetNodeAt(buttonArgs.X, buttonArgs.Y);
+				if(selectedNode != null)
+				{
+					// pass the node under the mouse click through the menu item
+					m_CtrlRightClickMenu.Tag = selectedNode;
+					// show the menu
+					m_CtrlRightClickMenu.Show(tree, buttonArgs.Location);
+				}
+			}
 		}
 	}
 }

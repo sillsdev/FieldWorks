@@ -415,6 +415,16 @@ namespace SIL.FieldWorks.XWorks
 
 				BuildAndShowOptions(node, mediator);
 			};
+			View.TreeControl.CheckAll += treeNode =>
+			{
+				EnableNodeAndDescendants(treeNode.Tag as ConfigurableDictionaryNode);
+				RefreshView();
+			};
+			View.TreeControl.UnCheckAll += treeNode =>
+			{
+				DisableNodeAndDescendants(treeNode.Tag as ConfigurableDictionaryNode);
+				RefreshView();
+			};
 			SelectCurrentConfiguration();
 		}
 
@@ -798,6 +808,30 @@ namespace SIL.FieldWorks.XWorks
 					return new DictionaryNodeListOptions();
 			}
 			return null;
+		}
+
+		public static void EnableNodeAndDescendants(ConfigurableDictionaryNode node)
+		{
+			SetIsEnabledForSubTree(node, true);
+		}
+
+		public static void DisableNodeAndDescendants(ConfigurableDictionaryNode node)
+		{
+			SetIsEnabledForSubTree(node, false);
+		}
+
+		private static void SetIsEnabledForSubTree(ConfigurableDictionaryNode node, bool isEnabled)
+		{
+			if(node == null)
+				return;
+			node.IsEnabled = isEnabled;
+			if(node.Children != null)
+			{
+				foreach(var child in node.Children)
+				{
+					SetIsEnabledForSubTree(child, isEnabled);
+				}
+			}
 		}
 	}
 }
