@@ -30,6 +30,12 @@ namespace SIL.FieldWorks.XWorks
 		/// The Assembly that the model Types should be loaded from. Allows test code to introduce a test model.
 		/// </summary>
 		internal static string AssemblyFile { get; set; }
+
+		/// <summary>
+		/// Map of the Assembly to the file name, so that different tests can use different models
+		/// </summary>
+		internal static Dictionary<string, Assembly> AssemblyMap = new Dictionary<string, Assembly>();
+
 		private const string PublicIdentifier = @"-//W3C//DTD XHTML 1.1//EN";
 
 		/// <summary>
@@ -379,58 +385,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		internal static PropertyType GetPropertyTypeForConfigurationNode(ConfigurableDictionaryNode config)
 		{
-			if(config == null)
-			{
-				throw new ArgumentNullException("config", "The configuration node must not be null.");
-			}
-			var lineage = new Stack<ConfigurableDictionaryNode>();
-			// Build a list of the direct line up to the top of the configuration
-			lineage.Push(config);
-			var next = config;
-			while(next.Parent != null)
-			{
-				next = next.Parent;
-				lineage.Push(next);
-			}
-			// pop off the root configuration and read the FieldDescription property to get our starting point
-			var assembly = Assembly.Load(AssemblyFile);
-			var rootNode = lineage.Pop();
-			var lookupType = assembly.GetType(rootNode.FieldDescription);
-			Type fieldType = null;
-			if(lookupType == null) // If the FieldDescription didn't load prepend the default model namespace and try again
-			{
-				lookupType = assembly.GetType("SIL.FieldWorks.FDO.DomainImpl." + rootNode.FieldDescription);
-			}
-			if(lookupType == null)
-			{
-				throw new ArgumentException(String.Format(xWorksStrings.InvalidRootConfigurationNode, rootNode.FieldDescription));
-			}
-			Type lastParent = null;
-			// Traverse the configuration reflectively inspecting the types in parent to child order
-			foreach(var node in lineage)
-			{
-				var property = GetProperty(lookupType, node);
-				if(property != null)
-				{
-					fieldType = property.PropertyType;
-				}
-				else
-				{
-					return PropertyType.InvalidProperty;
-				}
-				if(IsCollectionType(fieldType))
-				{
-					// When a node points to a collection all the child nodes operate on individual items in the
-					// collection, so look them up in the type that the collection contains. e.g. IEnumerable<ILexEntry>
-					// gives ILexEntry and IFdoVector<ICmObject> gives ICmObject
-					lookupType = fieldType.GetGenericArguments()[0];
-				}
-				else
-				{
-					lastParent = lookupType;
-					lookupType = fieldType;
-				}
-			}
+			Type parentType;
+			var fieldType = GetTypeForConfigurationNode(config, out parentType);
 			if(fieldType == null)
 			{
 				return PropertyType.InvalidProperty;
@@ -439,7 +395,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				return PropertyType.CollectionType;
 			}
-			if(typeof(ICmPicture).IsAssignableFrom(lastParent))
+			if(typeof(ICmPicture).IsAssignableFrom(parentType))
 			{
 				return PropertyType.CmPictureType;
 			}
@@ -456,6 +412,76 @@ namespace SIL.FieldWorks.XWorks
 				return PropertyType.CmObjectType;
 			}
 			return PropertyType.PrimitiveType;
+		}
+
+		internal static Type GetTypeForConfigurationNode(ConfigurableDictionaryNode config, out Type parentType)
+		{
+			if(config == null)
+			{
+				throw new ArgumentNullException("config", "The configuration node must not be null.");
+			}
+			parentType = null;
+			var lineage = new Stack<ConfigurableDictionaryNode>();
+			// Build a list of the direct line up to the top of the configuration
+			lineage.Push(config);
+			var next = config;
+			while(next.Parent != null)
+			{
+				next = next.Parent;
+				lineage.Push(next);
+			}
+			// pop off the root configuration and read the FieldDescription property to get our starting point
+			var assembly = GetAssemblyForFile(AssemblyFile);
+			var rootNode = lineage.Pop();
+			var lookupType = assembly.GetType(rootNode.FieldDescription);
+			Type fieldType = null;
+			if(lookupType == null) // If the FieldDescription didn't load prepend the default model namespace and try again
+			{
+				lookupType = assembly.GetType("SIL.FieldWorks.FDO.DomainImpl." + rootNode.FieldDescription);
+			}
+			if(lookupType == null)
+			{
+				throw new ArgumentException(String.Format(xWorksStrings.InvalidRootConfigurationNode, rootNode.FieldDescription));
+			}
+			// Traverse the configuration reflectively inspecting the types in parent to child order
+			foreach(var node in lineage)
+			{
+				var property = GetProperty(lookupType, node);
+				if(property != null)
+				{
+					fieldType = property.PropertyType;
+				}
+				else
+				{
+					return null;
+				}
+				if(IsCollectionType(fieldType))
+				{
+					// When a node points to a collection all the child nodes operate on individual items in the
+					// collection, so look them up in the type that the collection contains. e.g. IEnumerable<ILexEntry>
+					// gives ILexEntry and IFdoVector<ICmObject> gives ICmObject
+					lookupType = fieldType.GetGenericArguments()[0];
+				}
+				else
+				{
+					parentType = lookupType;
+					lookupType = fieldType;
+				}
+			}
+			return fieldType;
+		}
+
+		/// <summary>
+		/// Loading an assembly is expensive so we cache the assembly once it has been loaded
+		/// for enahanced performance.
+		/// </summary>
+		private static Assembly GetAssemblyForFile(string assemblyFile)
+		{
+			if(!AssemblyMap.ContainsKey(assemblyFile))
+			{
+				AssemblyMap[assemblyFile] = Assembly.Load(AssemblyFile);
+			}
+			return AssemblyMap[assemblyFile];
 		}
 
 		/// <summary>

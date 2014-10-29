@@ -136,7 +136,9 @@ namespace SIL.FieldWorks.XWorks
 			};
 
 			// Find and add available and selected Writing Systems
-			var selectedWSs = wsOptions.Options.Where(ws => ws.IsEnabled).ToList();
+			var wsOptionsList = wsOptions.Options ??
+									  new List<DictionaryNodeListOptions.DictionaryNodeOption>();
+			var selectedWSs = wsOptionsList.Where(ws => ws.IsEnabled).ToList();
 			var availableWSs = GetCurrentWritingSystems(wsOptions.WsType);
 
 			bool atLeastOneWsChecked = false;
@@ -290,13 +292,13 @@ namespace SIL.FieldWorks.XWorks
 			else
 			{
 				string label;
-				var savedOptions = listOptions.Options = listOptions.Options ?? new List<DictionaryNodeListOptions.DictionaryNodeOption>();
+				var savedListOptions = listOptions.Options ?? new List<DictionaryNodeListOptions.DictionaryNodeOption>();
 				var availableOptions = GetListItemsAndLabel(listOptions.ListId, out label);
 				listOptionsView.ListViewLabel = label;
 
 				// Insert saved items in their saved order, with their saved check-state
 				int insertionIdx = 0;
-				foreach (var optn in savedOptions)
+				foreach(var optn in savedListOptions)
 				{
 					var savedItem = availableOptions.FirstOrDefault(item => optn.Id.Equals((item.Tag)));
 					if (savedItem != null && availableOptions.Remove(savedItem))
@@ -692,20 +694,19 @@ namespace SIL.FieldWorks.XWorks
 
 		private void SerializeListOptionsAndRefreshPreview(ListView.ListViewItemCollection items)
 		{
-			List<DictionaryNodeListOptions.DictionaryNodeOption> options;
-			if (Options is DictionaryNodeWritingSystemOptions)
-				options = (Options as DictionaryNodeWritingSystemOptions).Options;
-			else if (Options is DictionaryNodeListOptions)
-				options = (Options as DictionaryNodeListOptions).Options;
-			else
-				throw new InvalidCastException("Options could not be cast to WS- or ListOptions type.");
-
-			options.Clear();
-			options.AddRange(items.Cast<ListViewItem>().Select(item => new DictionaryNodeListOptions.DictionaryNodeOption
+			// build a collection of DictionaryNodeOptions out of the collection from the ListView
+			var options = items.Cast<ListViewItem>().Select(item => new DictionaryNodeListOptions.DictionaryNodeOption
 			{
 				Id = item.Tag is int ? WritingSystemServices.GetMagicWsNameFromId((int)item.Tag) : (string)item.Tag,
 				IsEnabled = item.Checked
-			}));
+			}).ToList();
+
+			if(Options is DictionaryNodeWritingSystemOptions)
+				(Options as DictionaryNodeWritingSystemOptions).Options = options;
+			else if(Options is DictionaryNodeListOptions)
+				(Options as DictionaryNodeListOptions).Options = options;
+			else
+				throw new InvalidCastException("Options could not be cast to WS- or ListOptions type.");
 
 			RefreshPreview();
 		}

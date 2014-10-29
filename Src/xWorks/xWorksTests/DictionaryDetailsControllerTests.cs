@@ -197,6 +197,23 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void LoadNode_MissingWsOptionListDoesNotThrow()
+		{
+			// Load character styles
+			var node = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+				{
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis
+				}
+			};
+			DictionaryDetailsController controller = null;
+			// SUT - controller constructor calls LoadNode
+			Assert.DoesNotThrow(()=> { controller = new DictionaryDetailsController(node, m_mediator); });
+			controller.View.Dispose();
+		}
+
+		[Test]
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "ListOptionsView is disposed by its parent")]
 		public void ShowGrammaticalInfo_LinksToSense()
 		{

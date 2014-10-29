@@ -602,6 +602,26 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GetCustomFieldsForType_PossibilityListFieldGetsChildren()
+		{
+			using(var cf = new CustomFieldForTest(Cache, "CustomListItem", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+								 CellarPropertyType.OwningAtomic, Cache.LanguageProject.LocationsOA.Guid))
+			{
+				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache,
+																														  "LexEntry");
+				CollectionAssert.IsNotEmpty(customFieldNodes, "The custom field configuration node was not inserted for a PossibilityListReference");
+				Assert.AreEqual(customFieldNodes[0].Label, "CustomListItem", "Custom field did not get inserted correctly.");
+				CollectionAssert.IsNotEmpty(customFieldNodes[0].Children, "ListItem Child nodes not created");
+				Assert.AreEqual(2, customFieldNodes[0].Children.Count, "custom list type nodes should get a child for Name and Abbreviation");
+				CollectionAssert.IsNotEmpty(customFieldNodes[0].Children.Where(t => t.Label == "Name" && t.IsCustomField),
+					"No Custom Name node found on possibility list custom node");
+				CollectionAssert.IsNotEmpty(customFieldNodes[0].Children.Where(t => t.Label == "Abbreviation" && t.IsCustomField),
+					"No Custom Abbreviation node found on possibility list custom node");
+				Assert.IsNotNull(customFieldNodes[0].Children[0].DictionaryNodeOptions as DictionaryNodeWritingSystemOptions, "No writing system node on possibility list custom node");
+			}
+		}
+
+		[Test]
 		public void GetCustomFieldsForType_SenseCustomFieldIsRepresented()
 		{
 			using(var cf = new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("LexSense"), 0,
@@ -816,12 +836,12 @@ namespace SIL.FieldWorks.XWorks
 				var examplesNode = new ConfigurableDictionaryNode()
 				{
 					Label = "Example Sentences",
-					FieldDescription = "Examples"
+					FieldDescription = "ExamplesOS"
 				};
 				var senseNode = new ConfigurableDictionaryNode()
 				{
 					Label = "Senses",
-					FieldDescription = "Senses",
+					FieldDescription = "SensesOS",
 					Children = new List<ConfigurableDictionaryNode> { examplesNode }
 				};
 				var entryNode = new ConfigurableDictionaryNode
@@ -831,6 +851,7 @@ namespace SIL.FieldWorks.XWorks
 					Children = new List<ConfigurableDictionaryNode> { senseNode }
 				};
 				model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
+				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { entryNode });
 
 				//SUT
 				DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(Cache, model);
