@@ -321,15 +321,18 @@ namespace SIL.FieldWorks.XWorks
 			Assert.IsFalse(lexRelationOptions.Options[0].IsEnabled);
 		}
 
-		///<summary/>
+		/// <summary>
+		/// A XmlDocConfigureDlg.LayoutTreeNode.Label includes the suffix. A ConfigurableDictionaryNode.Label does not.
+		/// </summary>
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_DupStringInfoIsConverted()
 		{
-			var duplicateNode = new XmlDocConfigureDlg.LayoutTreeNode { DupString = "1", IsDuplicate = true };
+			var duplicateNode = new XmlDocConfigureDlg.LayoutTreeNode { DupString = "1", IsDuplicate = true, Label = "A b c (1)" };
 			ConfigurableDictionaryNode configNode = null;
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(duplicateNode));
 			Assert.IsTrue(configNode.IsDuplicate, "Duplicate node not marked as duplicate.");
 			Assert.AreEqual(configNode.LabelSuffix, duplicateNode.DupString, "number appended to old duplicates not migrated to label suffix");
+			Assert.That(configNode.Label, Is.EqualTo("A b c"), "should not have a suffix on ConfigurableDictionaryNode.Label");
 
 			var originalNode = new XmlDocConfigureDlg.LayoutTreeNode { IsDuplicate = false };
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(originalNode));

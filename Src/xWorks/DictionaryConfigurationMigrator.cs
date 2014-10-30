@@ -413,6 +413,14 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = node.Checked,
 				DictionaryNodeOptions = CreateOptionsFromLayoutTreeNode(node)
 			};
+
+			// ConfigurableDictionaryNode.Label properties don't include the suffix like XmlDocConfigureDlg.LayoutTreeNode.Label properties do.
+			if (convertedNode.IsDuplicate)
+			{
+				var fullSuffix = string.Format(" ({0})", convertedNode.LabelSuffix);
+				convertedNode.Label = convertedNode.Label.Remove(convertedNode.Label.Length - fullSuffix.Length);
+			}
+
 			if(node.Nodes.Count > 0)
 			{
 				convertedNode.Children = new List<ConfigurableDictionaryNode>();
