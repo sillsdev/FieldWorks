@@ -259,8 +259,18 @@ namespace SIL.FieldWorks.XWorks
 			object propertyValue = null;
 			if(config.IsCustomField)
 			{
-				// TODO: Get the class name string to use dynamically so that fields on sense, example sentence, and allomorph work
-				var customFieldFlid = cache.MetaDataCacheAccessor.GetFieldId("LexEntry", config.FieldDescription, false);
+				var customFieldOwnerClassName = GetClassNameForCustomFieldParent(config);
+				int customFieldFlid;
+				try
+				{
+					customFieldFlid = cache.MetaDataCacheAccessor.GetFieldId(customFieldOwnerClassName, config.FieldDescription, false);
+				}
+				catch(FDOInvalidFieldException)
+				{
+					var usefulMessage = String.Format("The custom field {0} could not be found in the class {1} for the node labelled {2}",
+						config.FieldDescription, customFieldOwnerClassName, config.Parent.Label);
+					throw new ArgumentException(usefulMessage, "config");
+				}
 				if(customFieldFlid != 0)
 				{
 					var customFieldType = cache.MetaDataCacheAccessor.GetFieldType(customFieldFlid);
@@ -388,6 +398,28 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		/// <summary>
+		/// This method will return the string representing the class name for the parent
+		/// node of a configuration item representing a custom field.
+		/// </summary>
+		private static string GetClassNameForCustomFieldParent(ConfigurableDictionaryNode customFieldNode)
+		{
+			Type unneeded;
+			// If the parent node of the custom field represents a collection calling GetTypeForConfigurationNode
+			// with the parent node returns the collection type. We want the item in that type.
+			var parentNodeType = GetTypeForConfigurationNode(customFieldNode.Parent, out unneeded);
+			if(IsCollectionType(parentNodeType))
+			{
+				parentNodeType = parentNodeType.GetGenericArguments()[0];
+			}
+			if(parentNodeType.IsInterface)
+			{
+				// Strip off the interface designation since custom fields are added to concrete classes
+				return parentNodeType.Name.Substring(1);
+			}
+			return parentNodeType.Name;
+		}
+
 		private static void GenerateXHTMLForPossibility(object propertyValue,ConfigurableDictionaryNode config,
 			DictionaryPublicationDecorator publicationDecorator, XmlWriter writer, FdoCache cache)
 		{
@@ -506,6 +538,12 @@ namespace SIL.FieldWorks.XWorks
 			return PropertyType.PrimitiveType;
 		}
 
+		/// <summary>
+		/// This method will return the Type that represents the data in the given configuration node.
+		/// </summary>
+		/// <param name="config">This node and it's lineage will be used to find the type</param>
+		/// <param name="parentType">This will be set to the type of the parent of config which is sometimes useful to the callers</param>
+		/// <returns></returns>
 		internal static Type GetTypeForConfigurationNode(ConfigurableDictionaryNode config, out Type parentType)
 		{
 			if(config == null)
@@ -526,7 +564,6 @@ namespace SIL.FieldWorks.XWorks
 			var assembly = GetAssemblyForFile(AssemblyFile);
 			var rootNode = lineage.Pop();
 			var lookupType = assembly.GetType(rootNode.FieldDescription);
-			Type fieldType = null;
 			if(lookupType == null) // If the FieldDescription didn't load prepend the default model namespace and try again
 			{
 				lookupType = assembly.GetType("SIL.FieldWorks.FDO.DomainImpl." + rootNode.FieldDescription);
@@ -535,6 +572,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				throw new ArgumentException(String.Format(xWorksStrings.InvalidRootConfigurationNode, rootNode.FieldDescription));
 			}
+			var fieldType = lookupType;
+
 			// Traverse the configuration reflectively inspecting the types in parent to child order
 			foreach(var node in lineage)
 			{

@@ -1418,6 +1418,152 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_StringCustomFieldOnSenseGeneratesContent()
+		{
+			using(var customField = new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexSense"), 0,
+			 CellarPropertyType.String, Guid.Empty))
+			{
+				var customFieldNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "CustomString",
+					Label = "Custom String",
+					IsEnabled = true,
+					IsCustomField = true
+				};
+				var senseNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "SensesOS",
+					IsEnabled = true,
+					Children = new List<ConfigurableDictionaryNode> { customFieldNode },
+					CSSClassNameOverride = "es"
+				};
+				var mainEntryNode = new ConfigurableDictionaryNode
+				{
+					Children = new List<ConfigurableDictionaryNode> { senseNode },
+					FieldDescription = "LexEntry",
+					IsEnabled = true,
+					CSSClassNameOverride = "l"
+				};
+				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+				var testEntry = CreateInterestingLexEntry();
+				const string customData = @"I am custom sense data";
+				var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+				var testSence = testEntry.SensesOS[0];
+
+				// Set custom field data
+				Cache.MainCacheAccessor.SetString(testSence.Hvo, customField.Flid, Cache.TsStrFactory.MakeString(customData, wsEn));
+				using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+				{
+					//SUT
+					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, XHTMLWriter, Cache));
+					XHTMLWriter.Flush();
+					var customDataPath = String.Format("/div[@class='l']/span[@class='es']/span[@class='e']/span[@class='customstring' and text()='{0}']", customData);
+					AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
+				}
+			}
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_StringCustomFieldOnExampleGeneratesContent()
+		{
+			using(var customField = new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexExampleSentence"), 0,
+			 CellarPropertyType.String, Guid.Empty))
+			{
+				var customFieldNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "CustomString",
+					Label = "Custom String",
+					IsEnabled = true,
+					IsCustomField = true
+				};
+				var exampleNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "ExamplesOS",
+					IsEnabled = true,
+					Children = new List<ConfigurableDictionaryNode> { customFieldNode },
+					CSSClassNameOverride = "xs"
+				};
+				var senseNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "SensesOS",
+					IsEnabled = true,
+					Children = new List<ConfigurableDictionaryNode> { exampleNode },
+					CSSClassNameOverride = "es"
+				};
+				var mainEntryNode = new ConfigurableDictionaryNode
+				{
+					Children = new List<ConfigurableDictionaryNode> { senseNode },
+					FieldDescription = "LexEntry",
+					IsEnabled = true,
+					CSSClassNameOverride = "l"
+				};
+				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+				var testEntry = CreateInterestingLexEntry();
+				const string customData = @"I am custom example data";
+				var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+				var testSense = testEntry.SensesOS[0];
+				var exampleSentence = AddExampleToSense(testSense, @"I'm an example");
+
+				// Set custom field data
+				Cache.MainCacheAccessor.SetString(exampleSentence.Hvo, customField.Flid, Cache.TsStrFactory.MakeString(customData, wsEn));
+				using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+				{
+					//SUT
+					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, XHTMLWriter, Cache));
+					XHTMLWriter.Flush();
+					var customDataPath = String.Format("/div[@class='l']/span[@class='es']//span[@class='xs']/span[@class='x']/span[@class='customstring' and text()='{0}']", customData);
+					AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
+				}
+			}
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_StringCustomFieldOnAllomorphGeneratesContent()
+		{
+			using(var customField = new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("MoForm"), 0,
+			 CellarPropertyType.String, Guid.Empty))
+			{
+				var customFieldNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "CustomString",
+					Label = "Custom String",
+					IsEnabled = true,
+					IsCustomField = true
+				};
+				var senseNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "AlternateFormsOS",
+					IsEnabled = true,
+					Children = new List<ConfigurableDictionaryNode> { customFieldNode },
+					CSSClassNameOverride = "as"
+				};
+				var mainEntryNode = new ConfigurableDictionaryNode
+				{
+					Children = new List<ConfigurableDictionaryNode> { senseNode },
+					FieldDescription = "LexEntry",
+					IsEnabled = true,
+					CSSClassNameOverride = "l"
+				};
+				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+				var testEntry = CreateInterestingLexEntry();
+				const string customData = @"I am custom morph data";
+				var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+				var allomorph = AddAllomorphToEntry(testEntry);
+
+				// Set custom field data
+				Cache.MainCacheAccessor.SetString(allomorph.Hvo, customField.Flid, Cache.TsStrFactory.MakeString(customData, wsEn));
+				using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+				{
+					//SUT
+					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, XHTMLWriter, Cache));
+					XHTMLWriter.Flush();
+					var customDataPath = String.Format("/div[@class='l']/span[@class='as']/span[@class='a']/span[@class='customstring' and text()='{0}']", customData);
+					AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
+				}
+			}
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_MultiStringCustomFieldGeneratesContent()
 		{
 			using(var customField = new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
@@ -1655,6 +1801,24 @@ namespace SIL.FieldWorks.XWorks
 			var sense = senseFactory.Create();
 			entry.SensesOS.Add(sense);
 			sense.Gloss.set_String(wsEn, Cache.TsStrFactory.MakeString(gloss, wsEn));
+		}
+
+		private ILexExampleSentence AddExampleToSense(ILexSense sense, string content)
+		{
+			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			var exampleFact = Cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>();
+			var example = exampleFact.Create(new Guid(), sense);
+			example.Example.set_String(wsEn, Cache.TsStrFactory.MakeString(content, wsEn));
+			return example;
+		}
+
+		private IMoForm AddAllomorphToEntry(ILexEntry entry)
+		{
+			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			var morphFact = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>();
+			var morph = morphFact.Create();
+			entry.AlternateFormsOS.Add(morph);
+			return morph;
 		}
 
 		private void AddHeadwordToEntry(ILexEntry entry, string gloss)
