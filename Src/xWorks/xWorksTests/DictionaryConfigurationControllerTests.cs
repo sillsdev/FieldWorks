@@ -591,7 +591,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GetCustomFieldsForType_EntryCustomFieldIsRepresented()
 		{
-				using(var cf = new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+			using(var cf = new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
 									 CellarPropertyType.MultiString, Guid.Empty))
 			{
 				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache,
@@ -997,33 +997,6 @@ namespace SIL.FieldWorks.XWorks
 
 			public event SwitchConfigurationEvent SwitchConfiguration;
 #pragma warning restore 67
-		}
-
-		/// <summary>
-		/// Creates and removes a custom field, designed for using statement
-		/// </summary>
-		private sealed class CustomFieldForTest : IDisposable
-		{
-			private FieldDescription m_customField;
-			public CustomFieldForTest(FdoCache cache, string customFieldName, int classId, int ws,
-											  CellarPropertyType fieldType, Guid listGuid)
-			{
-				m_customField = new FieldDescription(cache)
-				{
-					Userlabel = customFieldName,
-					HelpString = string.Empty,
-					Class = classId,
-					ListRootId = listGuid,
-					Type = fieldType,
-				};
-				m_customField.UpdateCustomField();
-			}
-
-			public void Dispose()
-			{
-				m_customField.MarkForDeletion = true;
-				m_customField.UpdateCustomField();
-			}
 		}
 		#endregion // Context
 	}

@@ -10,6 +10,7 @@
 // Implements FdoTestBase, the base class for the FDO tests
 // </remarks>
 
+using System;
 using System.IO;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -175,6 +176,44 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var dataSetup = retval.ServiceLocator.GetInstance<IDataSetup>();
 			dataSetup.LoadDomain(loadType);
 			return retval;
+		}
+
+		/// <summary>
+		/// Creates and removes a custom field, designed for using statement
+		/// </summary>
+		protected sealed class CustomFieldForTest : IDisposable
+		{
+			private FieldDescription m_customField;
+			/// <summary>
+			/// Constructs a custom field using the given arguments and adds it into the Cache.
+			/// </summary>
+			public CustomFieldForTest(FdoCache cache, string customFieldName, int classId, int ws,
+											  CellarPropertyType fieldType, Guid listGuid)
+			{
+				m_customField = new FieldDescription(cache)
+					{
+						Userlabel = customFieldName,
+						HelpString = String.Empty,
+						Class = classId,
+						ListRootId = listGuid,
+						Type = fieldType,
+					};
+				m_customField.UpdateCustomField();
+			}
+
+			/// <summary>
+			/// Return the custom field flid
+			/// </summary>
+			public int Flid { get { return m_customField.Id; } }
+
+			/// <summary>
+			/// Removes the custom field from the cache
+			/// </summary>
+			public void Dispose()
+			{
+				m_customField.MarkForDeletion = true;
+				m_customField.UpdateCustomField();
+			}
 		}
 	}
 	#endregion

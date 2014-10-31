@@ -1380,6 +1380,213 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		[Test]
+		public void GenerateXHTMLForEntry_StringCustomFieldGeneratesContent()
+		{
+			using(var customField = new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+			 CellarPropertyType.String, Guid.Empty))
+			{
+				var customFieldNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "CustomString",
+					Label = "Custom String",
+					IsEnabled = true,
+					IsCustomField = true
+				};
+				var mainEntryNode = new ConfigurableDictionaryNode
+				{
+					Children = new List<ConfigurableDictionaryNode> { customFieldNode },
+					FieldDescription = "LexEntry",
+					IsEnabled = true
+				};
+				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+				var testEntry = CreateInterestingLexEntry();
+				const string customData = @"I am custom data";
+				var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+
+				// Set custom field data
+				Cache.MainCacheAccessor.SetString(testEntry.Hvo, customField.Flid, Cache.TsStrFactory.MakeString(customData, wsEn));
+				using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+				{
+					//SUT
+					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, XHTMLWriter, Cache));
+					XHTMLWriter.Flush();
+					var customDataPath = String.Format("/div[@class='lexentry']/span[@class='customstring' and text()='{0}']", customData);
+					AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
+				}
+			}
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_MultiStringCustomFieldGeneratesContent()
+		{
+			using(var customField = new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+			 CellarPropertyType.MultiString, Guid.Empty))
+			{
+				var customFieldNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "CustomString",
+					Label = "Custom String",
+					IsEnabled = true,
+					IsCustomField = true,
+					DictionaryNodeOptions = GetWsOptionsForLanguages(new [] { "en" })
+				};
+				var mainEntryNode = new ConfigurableDictionaryNode
+				{
+					Children = new List<ConfigurableDictionaryNode> { customFieldNode },
+					FieldDescription = "LexEntry",
+					IsEnabled = true
+				};
+				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+				var testEntry = CreateInterestingLexEntry();
+				const string customData = @"I am custom data";
+				var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+
+				// Set custom field data
+				Cache.MainCacheAccessor.SetMultiStringAlt(testEntry.Hvo, customField.Flid, wsEn, Cache.TsStrFactory.MakeString(customData, wsEn));
+				using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+				{
+					//SUT
+					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, XHTMLWriter, Cache));
+					XHTMLWriter.Flush();
+					var customDataPath = String.Format("/div[@class='lexentry']/span[@class='customstring' and text()='{0}']", customData);
+					AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
+				}
+			}
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_ListItemCustomFieldGeneratesContent()
+		{
+			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			var possibilityItem = Cache.LanguageProject.LocationsOA.FindOrCreatePossibility("Djbuti", wsEn);
+			possibilityItem.Name.set_String(wsEn, "Djbuti");
+
+			using(var customField = new CustomFieldForTest(Cache, "CustomListItem", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+					CellarPropertyType.OwningAtomic, Cache.LanguageProject.LocationsOA.Guid))
+			{
+				var nameNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "Name", IsEnabled = true,
+					DictionaryNodeOptions = GetWsOptionsForLanguages(new[]{ "en" })
+				};
+				var customFieldNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "CustomListItem",
+					Label = "Custom List Item",
+					IsEnabled = true,
+					IsCustomField = true,
+					Children = new List<ConfigurableDictionaryNode> { nameNode }
+				};
+				var mainEntryNode = new ConfigurableDictionaryNode
+				{
+					Children = new List<ConfigurableDictionaryNode> { customFieldNode },
+					FieldDescription = "LexEntry",
+					IsEnabled = true
+				};
+				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+				var testEntry = CreateInterestingLexEntry();
+				var customData = possibilityItem;
+
+				// Set custom field data
+				Cache.MainCacheAccessor.SetObjProp(testEntry.Hvo, customField.Flid, possibilityItem.Hvo);
+				using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+				{
+					//SUT
+					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, XHTMLWriter, Cache));
+					XHTMLWriter.Flush();
+					var customDataPath = String.Format("/div[@class='lexentry']/span[@class='customlistitem']/span[@class='name' and text()='Djbuti']");
+					AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
+				}
+			}
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_MultiListItemCustomFieldGeneratesContent()
+		{
+			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			var possibilityItem1 = Cache.LanguageProject.LocationsOA.FindOrCreatePossibility("Dallas", wsEn);
+			var possibilityItem2 = Cache.LanguageProject.LocationsOA.FindOrCreatePossibility("Barcelona", wsEn);
+			possibilityItem1.Name.set_String(wsEn, "Dallas");
+			possibilityItem2.Name.set_String(wsEn, "Barcelona");
+
+			using(var customField = new CustomFieldForTest(Cache, "CustomListItems", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+					CellarPropertyType.ReferenceSequence, Cache.LanguageProject.LocationsOA.Guid))
+			{
+				var nameNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "Name",
+					IsEnabled = true,
+					DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+				};
+				var customFieldNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "CustomListItems",
+					Label = "Custom List Items",
+					IsEnabled = true,
+					IsCustomField = true,
+					Children = new List<ConfigurableDictionaryNode> { nameNode }
+				};
+				var mainEntryNode = new ConfigurableDictionaryNode
+				{
+					Children = new List<ConfigurableDictionaryNode> { customFieldNode },
+					FieldDescription = "LexEntry",
+					IsEnabled = true
+				};
+				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+				var testEntry = CreateInterestingLexEntry();
+
+				// Set custom field data
+				Cache.MainCacheAccessor.Replace(testEntry.Hvo, customField.Flid, 0, 0, new [] {possibilityItem1.Hvo, possibilityItem2.Hvo}, 2);
+				using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+				{
+					//SUT
+					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, XHTMLWriter, Cache));
+					XHTMLWriter.Flush();
+					var customDataPath1 = String.Format("/div[@class='lexentry']/span[@class='customlistitems']/span[@class='customlistitem']/span[@class='name' and text()='Dallas']");
+					var customDataPath2 = String.Format("/div[@class='lexentry']/span[@class='customlistitems']/span[@class='customlistitem']/span[@class='name' and text()='Barcelona']");
+					AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(customDataPath1, 1);
+					AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(customDataPath2, 1);
+				}
+			}
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_DateCustomFieldGeneratesContent()
+		{
+			using(var customField = new CustomFieldForTest(Cache, "CustomDate", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+			 CellarPropertyType.Time, Guid.Empty))
+			{
+				var customFieldNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "CustomDate",
+					Label = "Custom Date",
+					IsEnabled = true,
+					IsCustomField = true
+				};
+				var mainEntryNode = new ConfigurableDictionaryNode
+				{
+					Children = new List<ConfigurableDictionaryNode> { customFieldNode },
+					FieldDescription = "LexEntry",
+					IsEnabled = true
+				};
+				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+				var testEntry = CreateInterestingLexEntry();
+				var customData = DateTime.Now;
+
+				// Set custom field data
+				SilTime.SetTimeProperty(Cache.MainCacheAccessor, testEntry.Hvo, customField.Flid, customData);
+				using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+				{
+					//SUT
+					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, XHTMLWriter, Cache));
+					XHTMLWriter.Flush();
+					var customDataPath = String.Format("/div[@class='lexentry']/span[@class='customdate' and text()='{0}']", customData.ToLongDateString());
+					AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
+				}
+			}
+		}
+
 		/// <summary>Creates a DictionaryConfigurationModel with one Main and two Minor Entry nodes, all with enabled HeadWord children</summary>
 		private static DictionaryConfigurationModel CreateInterestingConfigurationModel()
 		{

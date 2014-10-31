@@ -256,13 +256,70 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			}
 			var entryType = field.GetType();
-			var property = entryType.GetProperty(config.FieldDescription);
-			if(property == null)
+			object propertyValue = null;
+			if(config.IsCustomField)
 			{
-				Debug.WriteLine("Issue with finding {0}", (object)config.FieldDescription);
-				return;
+				// TODO: Get the class name string to use dynamically so that fields on sense, example sentence, and allomorph work
+				var customFieldFlid = cache.MetaDataCacheAccessor.GetFieldId("LexEntry", config.FieldDescription, false);
+				if(customFieldFlid != 0)
+				{
+					var customFieldType = cache.MetaDataCacheAccessor.GetFieldType(customFieldFlid);
+					switch(customFieldType)
+					{
+						case (int)CellarPropertyType.ReferenceSequence:
+						case (int)CellarPropertyType.OwningSequence:
+						{
+							var sda = cache.MainCacheAccessor;
+							// This method returns the hvo of the object pointed to
+							var chvo = sda.get_VecSize(((ICmObject)field).Hvo, customFieldFlid);
+							int[] contents;
+							using(var arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
+							{
+								sda.VecProp(((ICmObject)field).Hvo, customFieldFlid, chvo, out chvo, arrayPtr);
+								contents = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
+							}
+							// if the hvo is invalid set propertyValue to null otherwise get the object
+							propertyValue = contents.Select(id => cache.LangProject.Services.GetObject(id));
+							break;
+						}
+						case (int)CellarPropertyType.ReferenceAtomic:
+						case (int)CellarPropertyType.OwningAtomic:
+						{
+							// This method returns the hvo of the object pointed to
+							propertyValue = cache.MainCacheAccessor.get_ObjectProp(((ICmObject)field).Hvo, customFieldFlid);
+							// if the hvo is invalid set propertyValue to null otherwise get the object
+							propertyValue = (int)propertyValue > 0 ? cache.LangProject.Services.GetObject((int)propertyValue) : null;
+							break;
+						}
+						case (int)CellarPropertyType.Time:
+						{
+							propertyValue = SilTime.ConvertFromSilTime(cache.MainCacheAccessor.get_TimeProp(((ICmObject)field).Hvo, customFieldFlid));
+							break;
+						}
+						case (int)CellarPropertyType.MultiUnicode:
+						case (int)CellarPropertyType.MultiString:
+						{
+							propertyValue = cache.MainCacheAccessor.get_MultiStringProp(((ICmObject)field).Hvo, customFieldFlid);
+							break;
+						}
+						case (int)CellarPropertyType.String:
+						{
+							propertyValue = cache.MainCacheAccessor.get_StringProp(((ICmObject)field).Hvo, customFieldFlid);
+							break;
+						}
+					}
+				}
 			}
-			var propertyValue = property.GetValue(field, new object[] { });
+			else
+			{
+				var property = entryType.GetProperty(config.FieldDescription);
+				if(property == null)
+				{
+					Debug.WriteLine("Issue with finding {0}", (object)config.FieldDescription);
+					return;
+				}
+				propertyValue = property.GetValue(field, new object[] { });
+			}
 			// If the property value is null there is nothing to generate
 			if(propertyValue == null)
 			{
@@ -274,8 +331,10 @@ namespace SIL.FieldWorks.XWorks
 				var subProp = subType.GetProperty(config.SubField);
 				propertyValue = subProp.GetValue(propertyValue, new object[] { });
 			}
-
-			switch(GetPropertyTypeForConfigurationNode(config))
+			var typeForNode = config.IsCustomField
+										? GetPropertyTypeFromReflectedTypes(propertyValue.GetType(), null)
+										: GetPropertyTypeForConfigurationNode(config);
+			switch(typeForNode)
 			{
 				case(PropertyType.CollectionType):
 				{
@@ -308,6 +367,11 @@ namespace SIL.FieldWorks.XWorks
 					}
 					return;
 				}
+				case(PropertyType.CmPossibility):
+				{
+					GenerateXHTMLForPossibility(propertyValue, config, publicationDecorator, writer, cache);
+					return;
+				}
 				default:
 				{
 					GenerateXHTMLForValue(field, propertyValue, config, writer, cache);
@@ -321,6 +385,24 @@ namespace SIL.FieldWorks.XWorks
 				{
 					GenerateXHTMLForFieldByReflection(propertyValue, child, publicationDecorator, writer, cache);
 				}
+			}
+		}
+
+		private static void GenerateXHTMLForPossibility(object propertyValue,ConfigurableDictionaryNode config,
+			DictionaryPublicationDecorator publicationDecorator, XmlWriter writer, FdoCache cache)
+		{
+			if(config.Children.Any(node => node.IsEnabled))
+			{
+				writer.WriteStartElement("span");
+				writer.WriteAttributeString("class", CssGenerator.GetClassAttributeForConfig(config));
+				if(config.Children != null)
+				{
+					foreach(var child in config.Children)
+					{
+						GenerateXHTMLForFieldByReflection(propertyValue, child, publicationDecorator, writer, cache);
+					}
+				}
+				writer.WriteEndElement();
 			}
 		}
 
@@ -371,6 +453,7 @@ namespace SIL.FieldWorks.XWorks
 			CmObjectType,
 			CmPictureType,
 			CmFileType,
+			CmPossibility,
 			PrimitiveType,
 			InvalidProperty
 		}
@@ -387,6 +470,11 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Type parentType;
 			var fieldType = GetTypeForConfigurationNode(config, out parentType);
+			return GetPropertyTypeFromReflectedTypes(fieldType, parentType);
+		}
+
+		private static PropertyType GetPropertyTypeFromReflectedTypes(Type fieldType, Type parentType)
+		{
 			if(fieldType == null)
 			{
 				return PropertyType.InvalidProperty;
@@ -406,6 +494,10 @@ namespace SIL.FieldWorks.XWorks
 			if(typeof(IMoForm).IsAssignableFrom(fieldType))
 			{
 				return PropertyType.MoFormType;
+			}
+			if(typeof(ICmPossibility).IsAssignableFrom(fieldType))
+			{
+				return PropertyType.CmPossibility;
 			}
 			if(typeof(ICmObject).IsAssignableFrom(fieldType))
 			{
