@@ -331,13 +331,28 @@ namespace SIL.FieldWorks.XWorks
 			ConfigurableDictionaryNode configNode = null;
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(duplicateNode));
 			Assert.IsTrue(configNode.IsDuplicate, "Duplicate node not marked as duplicate.");
-			Assert.AreEqual(configNode.LabelSuffix, duplicateNode.DupString, "number appended to old duplicates not migrated to label suffix");
+			Assert.AreEqual(duplicateNode.DupString, configNode.LabelSuffix, "number appended to old duplicates not migrated to label suffix");
 			Assert.That(configNode.Label, Is.EqualTo("A b c"), "should not have a suffix on ConfigurableDictionaryNode.Label");
 
 			var originalNode = new XmlDocConfigureDlg.LayoutTreeNode { IsDuplicate = false };
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(originalNode));
 			Assert.IsFalse(configNode.IsDuplicate, "node should not have been marked as a duplicate");
 			Assert.IsTrue(String.IsNullOrEmpty(configNode.LabelSuffix), "suffix should be empty.");
+		}
+
+		/// <summary>
+		/// A XmlDocConfigureDlg.LayoutTreeNode that is a duplicate of a duplicate will have a DupString of the form "1-2" but
+		/// a Label of the form "Foo (2)", where "1" was the DupString of the first duplicate.
+		/// </summary>
+		[Test]
+		public void ConvertLayoutTreeNodeToConfigNode_DupStringInfoIsConvertedForDuplicateOfDuplicate()
+		{
+			var duplicateNode = new XmlDocConfigureDlg.LayoutTreeNode { DupString = "1-2", IsDuplicate = true, Label = "A b c (2)" };
+			ConfigurableDictionaryNode configNode = null;
+			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(duplicateNode));
+			Assert.IsTrue(configNode.IsDuplicate, "Duplicate node not marked as duplicate.");
+			Assert.AreEqual("2", configNode.LabelSuffix, "incorrect suffix migrated");
+			Assert.That(configNode.Label, Is.EqualTo("A b c"), "should not have a suffix on ConfigurableDictionaryNode.Label");
 		}
 
 		///<summary/>

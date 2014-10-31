@@ -417,8 +417,13 @@ namespace SIL.FieldWorks.XWorks
 			// ConfigurableDictionaryNode.Label properties don't include the suffix like XmlDocConfigureDlg.LayoutTreeNode.Label properties do.
 			if (convertedNode.IsDuplicate)
 			{
-				var fullSuffix = string.Format(" ({0})", convertedNode.LabelSuffix);
-				convertedNode.Label = convertedNode.Label.Remove(convertedNode.Label.Length - fullSuffix.Length);
+				// XmlDocConfigureDlg.LayoutTreeNode's that are duplicates of duplicates will have a set of suffixes
+				// in the DupString property, separated by hyphens. The last one is what we want.
+				var i = convertedNode.LabelSuffix.LastIndexOf("-", System.StringComparison.Ordinal);
+				if (i >= 0)
+					convertedNode.LabelSuffix = convertedNode.LabelSuffix.Substring(i + 1);
+				var suffixNotation = string.Format(" ({0})", convertedNode.LabelSuffix);
+				convertedNode.Label = convertedNode.Label.Remove(convertedNode.Label.Length - suffixNotation.Length);
 			}
 
 			if(node.Nodes.Count > 0)
