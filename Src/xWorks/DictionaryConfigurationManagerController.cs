@@ -41,6 +41,7 @@ namespace SIL.FieldWorks.XWorks
 		private readonly List<string> _publications;
 
 		private readonly ListViewItem _allPublicationsItem;
+		private DictionaryConfigurationModel _currentConfig;
 
 		/// <summary>
 		/// The currently-selected item in the Configurations ListView, or null if none.
@@ -54,6 +55,11 @@ namespace SIL.FieldWorks.XWorks
 				return selectedConfigurations.Count < 1 ? null : (DictionaryConfigurationModel)selectedConfigurations[0].Tag;
 			}
 		}
+
+		/// <summary>
+		/// Event fired when the DictionaryConfigurationManager dialog is closed
+		/// </summary>
+		public event Action<DictionaryConfigurationModel> Finished;
 
 		/// <summary>Get list of publications using a dictionary configuration.</summary>
 		internal List<string> GetPublications(DictionaryConfigurationModel dictionaryConfiguration)
@@ -104,16 +110,12 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		public DictionaryConfigurationManagerController(DictionaryConfigurationManagerDlg view, Mediator mediator,
-			List<DictionaryConfigurationModel> configurations, List<string> publications, string projectConfigDir, string defaultConfigDir)
+			List<DictionaryConfigurationModel> configurations, List<string> publications, string projectConfigDir, string defaultConfigDir, DictionaryConfigurationModel currentConfig) :
+			this((FdoCache)mediator.PropertyTable.GetValue("cache"), configurations, publications, projectConfigDir, defaultConfigDir)
 		{
 			_view = view;
 			_mediator = mediator;
-			_configurations = configurations;
-			_publications = publications;
-			_projectConfigDir = projectConfigDir;
-			_defaultConfigDir = defaultConfigDir;
-			_mediator = mediator;
-			_cache = (FdoCache) _mediator.PropertyTable.GetValue("cache");
+			_currentConfig = currentConfig;
 
 			// Add special publication selection for All Publications.
 			_allPublicationsItem = new ListViewItem
@@ -155,14 +157,13 @@ namespace SIL.FieldWorks.XWorks
 			_view.Closing += (sndr, e) =>
 			{
 				if (SelectedConfiguration != null)
-					_mediator.PropertyTable.SetProperty("LastDictionaryConfiguration",
-						Path.GetFileNameWithoutExtension(SelectedConfiguration.FilePath));
+					Finished(SelectedConfiguration);
 			};
 
 			// Select the correct configuration
-			var selectedConfigIdx = _configurations.FindIndex(config => Path.GetFileNameWithoutExtension(config.FilePath)
-				== _mediator.PropertyTable.GetStringProperty("LastDictionaryConfiguration", "Root"));
-			if (selectedConfigIdx >= 0)
+
+			var selectedConfigIdx = _configurations.FindIndex(config => config == _currentConfig);
+			if(selectedConfigIdx >= 0)
 				_view.configurationsListView.Items[selectedConfigIdx].Selected = true;
 			else
 				_view.configurationsListView.Items[0].Selected = true;
@@ -422,6 +423,5 @@ namespace SIL.FieldWorks.XWorks
 			var filename = Path.GetFileName(configuration.FilePath);
 			return defaultConfigurationFiles.Contains(filename);
 		}
-
 	}
 }

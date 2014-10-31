@@ -4,11 +4,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using SIL.CoreImpl;
@@ -333,13 +331,13 @@ namespace SIL.FieldWorks.XWorks
 				using (var dialog = new DictionaryConfigurationManagerDlg())
 				{
 					var configurationManagerController = new DictionaryConfigurationManagerController(dialog, _mediator,
-						_dictionaryConfigurations, _model.GetAllPublications(cache), _projectConfigDir, _defaultConfigDir);
+						_dictionaryConfigurations, _model.GetAllPublications(cache), _projectConfigDir, _defaultConfigDir, _model);
+					configurationManagerController.Finished += SelectModelFromManager;
 					dialog.ShowDialog(View as Form);
 				}
 
 				// Update our Views
 				View.SetChoices(_dictionaryConfigurations);
-				LoadLastDictionaryConfiguration();
 				MergeCustomFieldsIntoDictionaryModel(cache, _model);
 				RefreshView();
 				SelectCurrentConfiguration();
@@ -348,7 +346,6 @@ namespace SIL.FieldWorks.XWorks
 			View.SwitchConfiguration += (sender, args) =>
 			{
 				_model = args.ConfigurationPicked;
-				_mediator.PropertyTable.SetProperty("LastDictionaryConfiguration", Path.GetFileNameWithoutExtension(_model.FilePath));
 				RefreshView();
 			};
 
@@ -428,6 +425,12 @@ namespace SIL.FieldWorks.XWorks
 			SelectCurrentConfiguration();
 		}
 
+		public void SelectModelFromManager(DictionaryConfigurationModel model)
+		{
+			_model = model;
+			SelectCurrentConfiguration();
+		}
+
 		/// <summary>
 		/// Returns a default entry for the given configuration type or null if the cache has no items for that type.
 		/// </summary>
@@ -456,8 +459,8 @@ namespace SIL.FieldWorks.XWorks
 
 		private void LoadLastDictionaryConfiguration()
 		{
-			var lastUsedConfiguration = _mediator.PropertyTable.GetStringProperty("LastDictionaryConfiguration", "Root");
-			_model = _dictionaryConfigurations.FirstOrDefault(config => Path.GetFileNameWithoutExtension(config.FilePath) == lastUsedConfiguration)
+			var lastUsedConfiguration = _mediator.PropertyTable.GetStringProperty("DictionaryPublicationLayout", null);
+			_model = _dictionaryConfigurations.FirstOrDefault(config => config.FilePath == lastUsedConfiguration)
 				?? _dictionaryConfigurations.First();
 		}
 
