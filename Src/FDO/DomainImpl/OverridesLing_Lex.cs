@@ -8979,7 +8979,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// This is a virtual property.  It returns the list of ids for all the example
+		/// This is a virtual property.  It returns the list all the example
 		/// sentences owned by top-level senses owned by the owner of this LexEntryRef.
 		/// Enhance JohnT: implement automatic update when senses or examples change.
 		/// </summary>

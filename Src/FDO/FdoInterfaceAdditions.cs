@@ -650,6 +650,9 @@ namespace SIL.FieldWorks.FDO
 		/// Accessor for the entry that owns this ILexEntryRef
 		/// </summary>
 		ILexEntry OwningEntry { get; }
+
+		/// <returns>this.Owner.SensesOS.ExamplesOS</returns>
+		IEnumerable<ILexExampleSentence> ExampleSentences { get; }
 	}
 
 	public partial interface ILexReference
@@ -1161,10 +1164,7 @@ namespace SIL.FieldWorks.FDO
 		/// ------------------------------------------------------------------------------------
 		IEnumerable<ILexEntry> Subentries { get; }
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <returns></returns>
+		/// <summary/>
 		IMoMorphSynAnalysis FindOrCreateDefaultMsa();
 
 		/// <summary>
@@ -1182,10 +1182,7 @@ namespace SIL.FieldWorks.FDO
 			get;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="ls"></param>
+		/// <summary/>
 		void MoveSenseToCopy(ILexSense ls);
 
 		/// <summary>
@@ -1206,73 +1203,55 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		IFdoSet<ICmPossibility> ShowMainEntryIn { get; }
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		string CitationFormWithAffixType
 		{
 			get;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		string HomographForm
 		{
 			get;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		string HomographFormKey
 		{
 			get;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		ITsString HeadWord
 		{
 			get;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		IMoMorphType PrimaryMorphType
 		{
 			get;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		bool IsMorphTypesMixed
 		{
 			get;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		List<IMoMorphType> MorphTypes
 		{
 			get;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		IMoForm[] AllAllomorphs
 		{
 			get;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		List<ILexSense> AllSenses
 		{
 			get;

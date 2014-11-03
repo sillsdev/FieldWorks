@@ -94,6 +94,8 @@ namespace SIL.FieldWorks.XWorks
 			ConfiguredXHTMLGenerator.AssemblyFile = "FDO";
 		}
 
+		const string xpathThruSense = "/div[@class='lexentry']/span[@class='senses']/span[@class='sense']";
+
 		[Test]
 		public void GenerateXHTMLForEntry_NullArgsThrowArgumentNull()
 		{
@@ -340,7 +342,7 @@ namespace SIL.FieldWorks.XWorks
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, XHTMLWriter, Cache));
 				XHTMLWriter.Flush();
-				const string oneSenseWithGlossOfGloss = "/div[@class='lexentry']/span[@class='senses']/span[@class='sense']/span[@lang='en' and text()='gloss']";
+				const string oneSenseWithGlossOfGloss = xpathThruSense + "/span[@lang='en' and text()='gloss']";
 				//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithGlossOfGloss, 1);
 			}
@@ -492,7 +494,7 @@ namespace SIL.FieldWorks.XWorks
 				// SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, XHTMLWriter, Cache));
 				XHTMLWriter.Flush();
-				const string gramInfoPath = "/div[@class='lexentry']/span[@class='senses']/span[@class='sense']/span[@class='morphosyntaxanalysis']";
+				const string gramInfoPath = xpathThruSense + "/span[@class='morphosyntaxanalysis']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(gramInfoPath, 1);
 			}
 		}
@@ -528,7 +530,7 @@ namespace SIL.FieldWorks.XWorks
 				// SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, XHTMLWriter, Cache));
 				XHTMLWriter.Flush();
-				const string gramInfoPath = "/div[@class='lexentry']/span[@class='senses']/span[@class='sense']/span[@class='morphosyntaxanalysis']";
+				const string gramInfoPath = xpathThruSense + "/span[@class='morphosyntaxanalysis']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(gramInfoPath, 0);
 			}
 		}
@@ -564,7 +566,7 @@ namespace SIL.FieldWorks.XWorks
 				// SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, XHTMLWriter, Cache));
 				XHTMLWriter.Flush();
-				const string scientificCatPath = "/div[@class='lexentry']/span[@class='senses']/span[@class='sense']/span[@class='scientificname']";
+				const string scientificCatPath = xpathThruSense + "/span[@class='scientificname']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(scientificCatPath, 0);
 			}
 		}
@@ -628,8 +630,8 @@ namespace SIL.FieldWorks.XWorks
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, XHTMLWriter, Cache));
 				XHTMLWriter.Flush();
 
-				const string gramAbbr = "/div[@class='lexentry']/span[@class='senses']/span[@class='sense']/span[@class='morphosyntaxanalysis']/span[@class='interlinearabbrtss' and @lang='fr' and text()='Blah:Any']";
-				const string gramName = "/div[@class='lexentry']/span[@class='senses']/span[@class='sense']/span[@class='morphosyntaxanalysis']/span[@class='interlinearnametss' and @lang='fr' and text()='Blah:Any']";
+				const string gramAbbr = xpathThruSense + "/span[@class='morphosyntaxanalysis']/span[@class='interlinearabbrtss' and @lang='fr' and text()='Blah:Any']";
+				const string gramName = xpathThruSense + "/span[@class='morphosyntaxanalysis']/span[@class='interlinearnametss' and @lang='fr' and text()='Blah:Any']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(gramAbbr, 1);
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(gramName, 1);
 			}
@@ -1211,6 +1213,110 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		public void GenerateXHTMLForEntry_ExampleAndTranslationAreGenerated()
+		{
+			var translationNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Translation", IsEnabled = true, DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+			};
+			var translationsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "TranslationsOC", CSSClassNameOverride = "translations", IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { translationNode }
+			};
+			var exampleNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Example", IsEnabled = true, DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var examplesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ExamplesOS", CSSClassNameOverride = "examples", IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { exampleNode, translationsNode }
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS", CSSClassNameOverride = "senses", IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { examplesNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { sensesNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			const string example = "Example Sentence On Entry";
+			const string translation = "Translation of the Example";
+			var testEntry = CreateInterestingLexEntry();
+			AddExampleToSense(testEntry.SensesOS[0], example, translation);
+
+
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				//SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, XHTMLWriter, Cache));
+				XHTMLWriter.Flush();
+				const string xpathThruExample = xpathThruSense + "/span[@class='examples']/span[@class='example']";
+				var oneSenseWithExample = String.Format(xpathThruExample + "/span[@lang='fr' and text()='{0}']", example);
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithExample, 1);
+				var oneExampleSentenceTranslation = String.Format(
+					xpathThruExample + "/span[@class='translations']/span[@class='translation']/span[@lang='en' and text()='{0}']", translation);
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(oneExampleSentenceTranslation, 1);
+			}
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_ExampleSentenceAndTranslationAreGenerated()
+		{
+			var translationNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Translation", IsEnabled = true, DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+			};
+			var translationsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "TranslationsOC", CSSClassNameOverride = "translations", IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { translationNode }
+			};
+			var exampleNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Example", IsEnabled = true, DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var examplesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ExampleSentences", IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { exampleNode, translationsNode }
+			};
+			var otherRcfsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantFormEntryBackRefs", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { examplesNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { otherRcfsNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			const string example = "Example Sentence On Variant Form";
+			const string translation = "Translation of the Sentence";
+			var mainEntry = CreateInterestingLexEntry();
+			var minorEntry = CreateInterestingLexEntry();
+			CreateLexEntryRef(mainEntry, minorEntry);
+			AddExampleToSense(minorEntry.SensesOS[0], example, translation);
+
+
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				//SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, XHTMLWriter, Cache));
+				XHTMLWriter.Flush();
+				const string xpathThruExampleSentence = "/div[@class='lexentry']/span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']/span[@class='examplesentences']/span[@class='examplesentence']";
+				var oneSenseWithExample = String.Format(xpathThruExampleSentence + "/span[@lang='fr' and text()='{0}']", example);
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithExample, 1);
+				var oneExampleSentenceTranslation = String.Format(
+					xpathThruExampleSentence + "/span[@class='translations']/span[@class='translation']/span[@lang='en' and text()='{0}']", translation);
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(oneExampleSentenceTranslation, 1);
+			}
+		}
+
 		[Test]
 		public void GenerateLetterHeaderIfNeeded_GeneratesHeaderIfNoPreviousHeader()
 		{
@@ -1784,9 +1890,9 @@ namespace SIL.FieldWorks.XWorks
 			return entry;
 		}
 
+		/// <summary>Makes one entry a Variant of another</summary>
 		private void CreateLexEntryRef(ILexEntry main, ILexEntry subForm)
 		{
-			// create variant type
 			var owningList = Cache.LangProject.LexDbOA.VariantEntryTypesOA;
 			Assert.IsNotNull(owningList, "No VariantEntryTypes property on Lexicon object.");
 			var ws = Cache.DefaultAnalWs;
@@ -1805,12 +1911,20 @@ namespace SIL.FieldWorks.XWorks
 			sense.Gloss.set_String(wsEn, Cache.TsStrFactory.MakeString(gloss, wsEn));
 		}
 
-		private ILexExampleSentence AddExampleToSense(ILexSense sense, string content)
+		private ILexExampleSentence AddExampleToSense(ILexSense sense, string content, string translation = null)
 		{
-			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 			var exampleFact = Cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>();
 			var example = exampleFact.Create(new Guid(), sense);
-			example.Example.set_String(wsEn, Cache.TsStrFactory.MakeString(content, wsEn));
+			example.Example.set_String(wsFr, Cache.TsStrFactory.MakeString(content, wsFr));
+			if (translation != null)
+			{
+				var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+				var type = Cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranFreeTranslation);
+				var cmTranslation = Cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(example, type);
+				cmTranslation.Translation.set_String(wsEn, Cache.TsStrFactory.MakeString(translation, wsEn));
+				example.TranslationsOC.Add(cmTranslation);
+			}
 			return example;
 		}
 

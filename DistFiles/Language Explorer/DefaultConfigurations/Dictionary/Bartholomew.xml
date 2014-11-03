@@ -136,7 +136,7 @@
             <Option id="all vernacular" isEnabled="true" />
           </WritingSystemOptions>
         </ConfigurationItem>
-        <ConfigurationItem name="Translations" isEnabled="true" isDuplicate="false" isCustomField="false" before="" between="" after="" field="TranslationsRC" cssClassNameOverride="translations">
+        <ConfigurationItem name="Translations" isEnabled="true" isDuplicate="false" isCustomField="false" before="" between="" after="" field="TranslationsOC" cssClassNameOverride="translations">
           <ConfigurationItem name="Type" isEnabled="false" isDuplicate="false" isCustomField="false" before="" after=" " field="TypeRA" cssClassNameOverride="type">
             <ConfigurationItem name="Abbreviation" isEnabled="false" isDuplicate="false" isCustomField="false" before="" between=" " after="" field="Abbreviation">
               <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -368,7 +368,7 @@
             <Option id="analysis" isEnabled="true" />
           </WritingSystemOptions>
         </ConfigurationItem>
-        <ConfigurationItem name="Example Sentences" isEnabled="false" isDuplicate="false" isCustomField="false" before="" between="" after="" field="OwningEntry" subField="ExampleSentences">
+        <ConfigurationItem name="Example Sentences" isEnabled="false" isDuplicate="false" isCustomField="false" before="" between="" after="" field="ExampleSentences">
           <ConfigurationItem name="Example" isEnabled="true" isDuplicate="false" isCustomField="false" style="Dictionary-Vernacular" before="" between=" " after=" " field="Example">
             <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
               <Option id="all vernacular" isEnabled="true" />
@@ -693,7 +693,7 @@
           <Option id="analysis" isEnabled="true" />
         </WritingSystemOptions>
       </ConfigurationItem>
-      <ConfigurationItem name="Example Sentences" isEnabled="false" isDuplicate="false" isCustomField="false" before="" between="" after="" field="OwningEntry" subField="ExampleSentences">
+      <ConfigurationItem name="Example Sentences" isEnabled="false" isDuplicate="false" isCustomField="false" before="" between="" after="" field="ExampleSentences">
         <ConfigurationItem name="Example" isEnabled="true" isDuplicate="false" isCustomField="false" style="Dictionary-Vernacular" before="" between=" " after=" " field="Example">
           <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
             <Option id="all vernacular" isEnabled="true" />
@@ -1153,13 +1153,13 @@
             <Option id="analysis" isEnabled="true" />
           </WritingSystemOptions>
         </ConfigurationItem>
-        <ConfigurationItem name="Example Sentences" isEnabled="false" isDuplicate="false" isCustomField="false" before="" between="" after="" field="OwningEntry" subField="ExampleSentences">
+        <ConfigurationItem name="Example Sentences" isEnabled="false" isDuplicate="false" isCustomField="false" before="" between="" after="" field="ExampleSentences">
           <ConfigurationItem name="Example" isEnabled="true" isDuplicate="false" isCustomField="false" style="Dictionary-Vernacular" before="" between=" " after=" " field="Example">
             <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
               <Option id="all vernacular" isEnabled="true" />
             </WritingSystemOptions>
           </ConfigurationItem>
-          <ConfigurationItem name="Translations" isEnabled="true" isDuplicate="false" isCustomField="false" before="" between="" after="" field="Translations">
+          <ConfigurationItem name="Translations" isEnabled="true" isDuplicate="false" isCustomField="false" before="" between="" after="" field="TranslationsOC" cssClassNameOverride="translations">
             <ConfigurationItem name="Type" isEnabled="false" isDuplicate="false" isCustomField="false" before="" after=" " field="Type">
               <ConfigurationItem name="Abbreviation" isEnabled="false" isDuplicate="false" isCustomField="false" before="" between=" " after="" field="Abbreviation">
                 <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -1431,7 +1431,7 @@
           <Option id="analysis" isEnabled="true" />
         </WritingSystemOptions>
       </ConfigurationItem>
-      <ConfigurationItem name="Example Sentences" isEnabled="false" isDuplicate="false" isCustomField="false" before="" between="" after="" field="OwningEntry" subField="ExampleSentences">
+      <ConfigurationItem name="Example Sentences" isEnabled="false" isDuplicate="false" isCustomField="false" before="" between="" after="" field="ExampleSentences">
         <ConfigurationItem name="Example" isEnabled="true" isDuplicate="false" isCustomField="false" style="Dictionary-Vernacular" before="" between=" " after=" " field="Example">
           <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
             <Option id="all vernacular" isEnabled="true" />
