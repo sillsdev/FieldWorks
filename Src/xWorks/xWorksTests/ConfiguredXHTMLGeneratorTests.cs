@@ -104,7 +104,7 @@ namespace SIL.FieldWorks.XWorks
 				var entry = factory.Create();
 				//SUT
 				Assert.Throws(typeof(ArgumentNullException), () => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(null, mainEntryNode, null, XHTMLWriter, Cache));
-				Assert.Throws(typeof(ArgumentNullException), () => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry((ICmObject)entry, (ConfigurableDictionaryNode)null, null, XHTMLWriter, Cache));
+				Assert.Throws(typeof(ArgumentNullException), () => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, (ConfigurableDictionaryNode)null, null, XHTMLWriter, Cache));
 				Assert.Throws(typeof(ArgumentNullException), () => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, null, Cache));
 				Assert.Throws(typeof(ArgumentNullException), () => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, XHTMLWriter, null));
 			}
@@ -117,6 +117,7 @@ namespace SIL.FieldWorks.XWorks
 			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
+// ReSharper disable AccessToDisposedClosure // Justification: Assert calls lambdas immediately, so XHTMLWriter is not used after being disposed
 				//Test a blank main node description
 				//SUT
 				Assert.That(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, XHTMLWriter, Cache),
@@ -125,6 +126,7 @@ namespace SIL.FieldWorks.XWorks
 				//Test a configuration with a valid but incorrect type
 				Assert.That(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, XHTMLWriter, Cache),
 					Throws.InstanceOf<ArgumentException>().With.Message.Contains("doesn't configure this type"));
+// ReSharper restore AccessToDisposedClosure
 			}
 		}
 
@@ -152,7 +154,7 @@ namespace SIL.FieldWorks.XWorks
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, XHTMLWriter, Cache));
 				XHTMLWriter.Flush();
-				var frenchHeadwordOfHeadwordTest = "/div[@class='lexentry']/span[@class='headword' and @lang='fr' and text()='HeadWordTest']";
+				const string frenchHeadwordOfHeadwordTest = "/div[@class='lexentry']/span[@class='headword' and @lang='fr' and text()='HeadWordTest']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(frenchHeadwordOfHeadwordTest, 1);
 			}
 		}
@@ -185,7 +187,7 @@ namespace SIL.FieldWorks.XWorks
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, XHTMLWriter, Cache));
 				XHTMLWriter.Flush();
-				var frenchLexForm = "/div[@class='lexentry']/span[@class='lexemeformoa' and @lang='fr' and text()='LexemeFormTest']";
+				const string frenchLexForm = "/div[@class='lexentry']/span[@class='lexemeformoa' and @lang='fr' and text()='LexemeFormTest']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(frenchLexForm, 1);
 			}
 		}
@@ -240,7 +242,7 @@ namespace SIL.FieldWorks.XWorks
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, XHTMLWriter, Cache));
 				XHTMLWriter.Flush();
-				var hereLocation = "/div[@class='lexentry']/span[@class='pronunciations']/span[@class='pronunciation']/span[@class='location']/span[@class='name' and @lang='fr' and text()='Here!']";
+				const string hereLocation = "/div[@class='lexentry']/span[@class='pronunciations']/span[@class='pronunciation']/span[@class='location']/span[@class='name' and @lang='fr' and text()='Here!']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(hereLocation, 1);
 			}
 		}
@@ -458,13 +460,13 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_MakesSpanForRA()
 		{
-			var gramInfoNode = new ConfigurableDictionaryNode()
+			var gramInfoNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MorphoSyntaxAnalysisRA",
 				CSSClassNameOverride = "MorphoSyntaxAnalysis",
 				IsEnabled = true
 			};
-			var sensesNode = new ConfigurableDictionaryNode()
+			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Senses",
 				IsEnabled = true,
@@ -490,7 +492,7 @@ namespace SIL.FieldWorks.XWorks
 				// SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, XHTMLWriter, Cache));
 				XHTMLWriter.Flush();
-				var gramInfoPath = "/div[@class='lexentry']/span[@class='senses']/span[@class='sense']/span[@class='morphosyntaxanalysis']";
+				const string gramInfoPath = "/div[@class='lexentry']/span[@class='senses']/span[@class='sense']/span[@class='morphosyntaxanalysis']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(gramInfoPath, 1);
 			}
 		}
@@ -501,12 +503,12 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_DoesNotMakeSpanForRAIfNoData()
 		{
-			var gramInfoNode = new ConfigurableDictionaryNode()
+			var gramInfoNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MorphoSyntaxAnalysisRA",
 				IsEnabled = true
 			};
-			var sensesNode = new ConfigurableDictionaryNode()
+			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Senses",
 				IsEnabled = true,
@@ -537,12 +539,12 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_DoesNotMakeSpanForTSStringIfNoData()
 		{
-			var scientificName = new ConfigurableDictionaryNode()
+			var scientificName = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ScientificName",
 				IsEnabled = true
 			};
-			var sensesNode = new ConfigurableDictionaryNode()
+			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Senses",
 				IsEnabled = true,
@@ -570,26 +572,26 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_SupportsGramAbbrChildOfMSARA()
 		{
-			var gramAbbrNode = new ConfigurableDictionaryNode()
+			var gramAbbrNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "InterlinearAbbrTSS",
 				IsEnabled = true,
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
 			};
-			var gramNameNode = new ConfigurableDictionaryNode()
+			var gramNameNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "InterlinearNameTSS",
 				IsEnabled = true,
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
 			};
-			var gramInfoNode = new ConfigurableDictionaryNode()
+			var gramInfoNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MorphoSyntaxAnalysisRA",
 				CSSClassNameOverride = "MorphoSyntaxAnalysis",
 				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode>{gramAbbrNode,gramNameNode}
 			};
-			var sensesNode = new ConfigurableDictionaryNode()
+			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Senses",
 				IsEnabled = true,
@@ -626,8 +628,8 @@ namespace SIL.FieldWorks.XWorks
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, XHTMLWriter, Cache));
 				XHTMLWriter.Flush();
 
-				var gramAbbr = "/div[@class='lexentry']/span[@class='senses']/span[@class='sense']/span[@class='morphosyntaxanalysis']/span[@class='interlinearabbrtss' and @lang='fr' and text()='Blah:Any']";
-				var gramName = "/div[@class='lexentry']/span[@class='senses']/span[@class='sense']/span[@class='morphosyntaxanalysis']/span[@class='interlinearnametss' and @lang='fr' and text()='Blah:Any']";
+				const string gramAbbr = "/div[@class='lexentry']/span[@class='senses']/span[@class='sense']/span[@class='morphosyntaxanalysis']/span[@class='interlinearabbrtss' and @lang='fr' and text()='Blah:Any']";
+				const string gramName = "/div[@class='lexentry']/span[@class='senses']/span[@class='sense']/span[@class='morphosyntaxanalysis']/span[@class='interlinearnametss' and @lang='fr' and text()='Blah:Any']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(gramAbbr, 1);
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(gramName, 1);
 			}
@@ -992,7 +994,8 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "SIL.FieldWorks.XWorks.NonExistantClass",
 			};
 			// SUT
-			Assert.Throws<ArgumentException>(() => ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(rootNode)).Message.Contains(rootNode.FieldDescription);
+			Assert.That(() => ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(rootNode),
+				Throws.InstanceOf<ArgumentException>().With.Message.Contains(rootNode.FieldDescription));
 		}
 
 		[Test]
@@ -1142,7 +1145,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "Senses",
-				DictionaryNodeOptions = new DictionaryNodeSenseOptions() { NumberEvenASingleSense = false },
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { NumberEvenASingleSense = false },
 				Children = new List<ConfigurableDictionaryNode> { glossNode },
 				IsEnabled = true
 			};
@@ -1258,7 +1261,7 @@ namespace SIL.FieldWorks.XWorks
 				const string letterHeaderToMatch = "//div[@class='letHead']/div[@class='letter' and text()='C c']";
 				const string proveOnlyOneHeader = "//div[@class='letHead']/div[@class='letter']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(letterHeaderToMatch, 1);
-				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(letterHeaderToMatch, 1);
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(proveOnlyOneHeader, 1);
 			}
 		}
 
@@ -1632,7 +1635,6 @@ namespace SIL.FieldWorks.XWorks
 				};
 				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
 				var testEntry = CreateInterestingLexEntry();
-				var customData = possibilityItem;
 
 				// Set custom field data
 				Cache.MainCacheAccessor.SetObjProp(testEntry.Hvo, customField.Flid, possibilityItem.Hvo);
@@ -1814,7 +1816,6 @@ namespace SIL.FieldWorks.XWorks
 
 		private IMoForm AddAllomorphToEntry(ILexEntry entry)
 		{
-			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			var morphFact = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>();
 			var morph = morphFact.Create();
 			entry.AlternateFormsOS.Add(morph);
@@ -1836,8 +1837,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public static DictionaryNodeOptions GetWsOptionsForLanguages(string[] languages)
 		{
-			var wsOptions = new DictionaryNodeWritingSystemOptions();
-			wsOptions.Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(languages);
+			var wsOptions = new DictionaryNodeWritingSystemOptions { Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(languages) };
 			return wsOptions;
 		}
 	}
@@ -1866,7 +1866,9 @@ namespace SIL.FieldWorks.XWorks
 
 	class TestNonInterface
 	{
+// ReSharper disable UnusedMember.Local // Justification: called by reflection
 		String TestNonInterfaceString { get; set; }
+// ReSharper restore UnusedMember.Local
 	}
 
 	interface ITestGrandParent

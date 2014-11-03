@@ -405,8 +405,8 @@ namespace SIL.FieldWorks.XWorks
 		private static string GetClassNameForCustomFieldParent(ConfigurableDictionaryNode customFieldNode)
 		{
 			Type unneeded;
-			// If the parent node of the custom field represents a collection calling GetTypeForConfigurationNode
-			// with the parent node returns the collection type. We want the item in that type.
+			// If the parent node of the custom field represents a collection, calling GetTypeForConfigurationNode
+			// with the parent node returns the collection type. We want the type of the elements in the collection.
 			var parentNodeType = GetTypeForConfigurationNode(customFieldNode.Parent, out unneeded);
 			if(IsCollectionType(parentNodeType))
 			{
