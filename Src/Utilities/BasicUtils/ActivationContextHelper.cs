@@ -58,8 +58,8 @@ namespace SIL.Utils
 			// test runner like Resharper 8 which does not set the current directory to the one containing the DLLs.
 			// Note that we have to use CodeBase here because NUnit runs the tests from a shadow copy directory
 			// that doesn't contain the manifest file.
-			var uri = new Uri(Assembly.GetExecutingAssembly().CodeBase);
-			string location = Path.GetDirectoryName(uri.AbsolutePath);
+			string path = new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath;
+			string location = Path.GetDirectoryName(path);
 			var context = new ActCtx
 				{
 					cbSize = Marshal.SizeOf(typeof(ActCtx)),
