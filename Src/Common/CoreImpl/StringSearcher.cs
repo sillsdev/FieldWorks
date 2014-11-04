@@ -184,7 +184,7 @@ namespace SIL.CoreImpl
 					break;
 
 				case SearchType.FullText:
-					foreach (string token in m_tokenizer(wsId, text))
+					foreach (string token in RemoveWhitespaceAndPunctTokens(m_tokenizer(wsId, text)))
 						index.Add(m_sortKeySelector(wsId, token), item);
 					break;
 			}
@@ -248,7 +248,7 @@ namespace SIL.CoreImpl
 
 				case SearchType.FullText:
 					IEnumerable<T> results = null;
-					string[] tokens = m_tokenizer(wsId, text).ToArray();
+					string[] tokens = RemoveWhitespaceAndPunctTokens(m_tokenizer(wsId, text)).ToArray();
 					for (int i = 0; i < tokens.Length; i++)
 					{
 						byte[] sortKey = m_sortKeySelector(wsId, tokens[i]);
@@ -269,6 +269,11 @@ namespace SIL.CoreImpl
 			}
 
 			return null;
+		}
+
+		private static IEnumerable<string> RemoveWhitespaceAndPunctTokens(IEnumerable<string> tokens)
+		{
+			return tokens.Where(t => !t.All(c => Icu.IsSpace(c) || Icu.IsPunct(c)));
 		}
 
 		/// <summary>
