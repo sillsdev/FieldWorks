@@ -1839,7 +1839,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		[DllImport(kIcuUcDllName, EntryPoint = "ubrk_open" + kIcuVersion,
 			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 		private static extern IntPtr ubrk_open(UBreakIteratorType type, string locale,
-			string text, int textLength, out UErrorCode errorCode);
+			IntPtr text, int textLength, out UErrorCode errorCode);
 
 		/// <summary>
 		/// Close a UBreakIterator.
@@ -1877,8 +1877,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		private static extern int ubrk_getRuleStatus(IntPtr bi);
 
 		/// <summary>
-		/// Splits the specified text along the specified type of boundaries. Spaces and punctuations
-		/// are not returned.
+		/// Splits the specified text along the specified type of boundaries.
 		/// </summary>
 		/// <param name="type">The type.</param>
 		/// <param name="locale">The locale.</param>
@@ -1889,22 +1888,30 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			if (string.IsNullOrEmpty(text))
 				return Enumerable.Empty<string>();
 
-			UErrorCode err;
-			IntPtr bi = ubrk_open(type, locale, text, text.Length, out err);
-			if (IsFailure(err))
-				throw new IcuException("ubrk_open() failed with code " + err, err);
-			var tokens = new List<string>();
-			int cur = ubrk_first(bi);
-			while (cur != UBRK_DONE)
+			// ensure that the unmanaged string exists during the entire lifetime of the break iterator
+			IntPtr textPtr = Marshal.StringToHGlobalUni(text);
+			try
 			{
-				int next = ubrk_next(bi);
-				int status = ubrk_getRuleStatus(bi);
-				if (next != UBRK_DONE && (status < UBRK_WORD_NONE || status >= UBRK_WORD_NONE_LIMIT))
-					tokens.Add(text.Substring(cur, next - cur));
-				cur = next;
+				UErrorCode err;
+				IntPtr bi = ubrk_open(type, locale, textPtr, -1, out err);
+				if (IsFailure(err))
+					throw new IcuException("ubrk_open() failed with code " + err, err);
+				var tokens = new List<string>();
+				int cur = ubrk_first(bi);
+				while (cur != UBRK_DONE)
+				{
+					int next = ubrk_next(bi);
+					if (next != UBRK_DONE)
+						tokens.Add(text.Substring(cur, next - cur));
+					cur = next;
+				}
+				ubrk_close(bi);
+				return tokens;
 			}
-			ubrk_close(bi);
-			return tokens;
+			finally
+			{
+				Marshal.FreeHGlobal(textPtr);
+			}
 		}
 
 		#endregion Break iterator

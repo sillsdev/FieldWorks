@@ -128,5 +128,19 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			Assert.AreEqual("te\u0301st", normalizedString);
 			Assert.IsTrue(normalizedString.IsNormalized(NormalizationForm.FormD));
 		}
+
+		/// <summary>
+		/// Tests the Split method.
+		/// </summary>
+		[Test]
+		public void Split()
+		{
+			Assert.That(Icu.Split(Icu.UBreakIteratorType.UBRK_WORD, "en", "word"), Is.EqualTo(new[] {"word"}));
+			Assert.That(Icu.Split(Icu.UBreakIteratorType.UBRK_WORD, "en", "This is some text, and some more text."),
+				Is.EqualTo(new[] {"This", " ", "is", " ", "some", " ", "text", ",", " ", "and", " ", "some", " ", "more", " ", "text", "."}));
+			Assert.That(Icu.Split(Icu.UBreakIteratorType.UBRK_SENTENCE, "en", "Sentence one. Sentence two."), Is.EqualTo(new[] {"Sentence one. ", "Sentence two."}));
+			Assert.That(Icu.Split(Icu.UBreakIteratorType.UBRK_CHARACTER, "en", "word"), Is.EqualTo(new[] {"w", "o", "r", "d"}));
+			Assert.That(Icu.Split(Icu.UBreakIteratorType.UBRK_LINE, "en", "This is some hyphenated-text."), Is.EqualTo(new[] {"This ", "is ", "some ", "hyphenated-", "text."}));
+		}
 	}
 }
