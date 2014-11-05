@@ -826,6 +826,35 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void MergeCustomFieldsIntoDictionaryModel_DeletedFieldsOnCollectionsAreRemoved()
+		{
+			var model = new DictionaryConfigurationModel();
+			var customNode = new ConfigurableDictionaryNode()
+			{
+				Label = "CustomString",
+				FieldDescription = "CustomString",
+				IsCustomField = true
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+				{
+					Label = "Senses",
+					FieldDescription = "SensesOS",
+					Children = new List<ConfigurableDictionaryNode> { customNode }
+				};
+			var entryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
+			};
+			model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
+			DictionaryConfigurationModel.SpecifyParents(model.Parts);
+			//SUT
+			DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(Cache, model);
+			Assert.AreEqual(0, model.Parts[0].Children[0].Children.Count, "The custom field in the model should have been removed since it isn't in the project(cache)");
+		}
+
+		[Test]
 		public void MergeCustomFieldsIntoDictionaryModel_ExampleCustomFieldIsRepresented()
 		{
 			using(var cf = new CustomFieldForTest(Cache, "CustomCollection",

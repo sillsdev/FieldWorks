@@ -632,17 +632,14 @@ namespace SIL.FieldWorks.XWorks
 						lookupClass = lookupClass.GetGenericArguments()[0];
 					}
 				}
-				if(lookupClass != null && classToCustomFields.ContainsKey(lookupClass.Name))
+				if(lookupClass != null)
 				{
 					var fieldsForType = GetCustomFieldsForType(cache, lookupClass.Name, classToCustomFields);
-					if(fieldsForType.Count > 0)
+					if(configNode.Children == null)
 					{
-						if(configNode.Children == null)
-						{
-							configNode.Children = new List<ConfigurableDictionaryNode>();
-						}
-						MergeCustomFieldLists(configNode, fieldsForType);
+						configNode.Children = new List<ConfigurableDictionaryNode>();
 					}
+					MergeCustomFieldLists(configNode, fieldsForType);
 				}
 				// recurse into the rest of the dictionary model
 				MergeCustomFieldsIntoDictionaryModel(cache, configNode.Children);
