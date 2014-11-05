@@ -325,7 +325,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Splits 'Referenced Complex Forms' into 'Other Referenced Complex Forms' and 'Subentries', if necessary, restructuring some nodes
 		/// under 'Subentries->Senses'.
-		/// This is necessary because, the Root-based (Complex Forms as Subentries) configuration distinguisesh between Subentries and
+		/// This is necessary because, the Root-based (Complex Forms as Subentries) configuration distinguishes between Subentries and
 		/// 'Other Referenced Complex Forms'; however, in the old configurations, there were a few plain old 'Referenced Complex Forms' nodes,
 		/// similar to those in the Stem-based (Complex Forms as Main Entries) configuration.  So we need to restructure users' configurations
 		/// to match the new, proper configurations.
@@ -485,6 +485,12 @@ namespace SIL.FieldWorks.XWorks
 				}
 				SetListOptionsProperties(node.EntryType, node.EntryTypeSequence, (DictionaryNodeListOptions)options);
 			}
+
+			if (node.PartName == "LexEntry-Jt-RootSubentriesConfig")
+			{
+				options = new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = true };
+			}
+
 			return options;
 		}
 

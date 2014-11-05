@@ -3281,7 +3281,7 @@ namespace SIL.FieldWorks.XWorks
 				get { return m_sLayoutName; }
 			}
 
-			public string PartName
+			virtual public string PartName
 			{
 				get { return m_sPartName; }
 			}

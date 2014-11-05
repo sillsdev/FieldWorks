@@ -287,6 +287,21 @@ namespace SIL.FieldWorks.XWorks
 			Assert.IsFalse(lexRelationOptions.Options[1].IsEnabled);
 		}
 
+		///<summary>Subentries node should have "Display .. in a Paragraph" checked (LT-15834).</summary>
+		[Test]
+		public void ConvertLayoutTreeNodeToConfigNode_DisplaySubentriesInParagraph()
+		{
+			var node = new MockLayoutTreeNode {m_partName = "LexEntry-Jt-RootSubentriesConfig"};
+			ConfigurableDictionaryNode configNode = null;
+
+			configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(node);
+			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created");
+
+			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeComplexFormOptions, "wrong type");
+			var options = configNode.DictionaryNodeOptions as DictionaryNodeComplexFormOptions;
+			Assert.IsTrue(options.DisplayEachComplexFormInAParagraph, "Did not set");
+		}
+
 		///<summary/>
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_ListOptionsEnabledLexEntryTypeWorks()
@@ -1154,13 +1169,25 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(!m_migrator.ReversalConfigsNeedMigrating(), "Horray, you've implemented the method!"); // SUT
 		}
 
+		#region Helper
 		private void DeleteStyleSheet(string styleName)
 		{
 			var style = m_styleSheet.FindStyle(styleName);
-			if(style != null)
+			if (style != null)
 			{
 				m_styleSheet.Delete(style.Hvo);
 			}
 		}
+
+		public class MockLayoutTreeNode : XmlDocConfigureDlg.LayoutTreeNode
+		{
+			public string m_partName;
+
+			public override string PartName
+			{
+				get { return m_partName; }
+			}
+		}
+		#endregion Helper
 	}
 }
