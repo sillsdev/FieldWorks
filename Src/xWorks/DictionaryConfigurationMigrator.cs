@@ -231,6 +231,7 @@ namespace SIL.FieldWorks.XWorks
 				throw new ArgumentException("Cannot merge two nodes that do not match.");
 			}
 			convertedNode.FieldDescription = currentDefaultNode.FieldDescription;
+			convertedNode.CSSClassNameOverride = currentDefaultNode.CSSClassNameOverride;
 			convertedNode.SubField = currentDefaultNode.SubField;
 			// if the base has children and we don't they need to be added
 			if(convertedNode.Children == null && currentDefaultNode.Children != null &&

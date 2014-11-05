@@ -590,6 +590,26 @@ namespace SIL.FieldWorks.XWorks
 
 		///<summary/>
 		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_CSSClassOverrideIsMigrated()
+		{
+			var convertedParentNode = new ConfigurableDictionaryNode { Label = "Parent" };
+			var convertedChildNode = new ConfigurableDictionaryNode { Label = "Child" };
+			convertedParentNode.Children = new List<ConfigurableDictionaryNode> { convertedChildNode };
+			var convertedModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { convertedParentNode } };
+			const string parentOverride = "dad";
+			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent", CSSClassNameOverride = parentOverride };
+			const string childOverride = "johnboy";
+			var baseChildNode = new ConfigurableDictionaryNode { Label = "Child", CSSClassNameOverride = childOverride };
+			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode };
+			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
+
+			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
+			Assert.AreEqual(convertedModel.Parts[0].CSSClassNameOverride, parentOverride, "CssClassNameOverride for parent node not migrated");
+			Assert.AreEqual(convertedModel.Parts[0].Children[0].CSSClassNameOverride, childOverride, "CssClassNameOverride for child not migrated");
+		}
+
+		///<summary/>
+		[Test]
 		public void CopyNewDefaultsIntoConvertedModel_CopyOfNodeGetsValueFromBase()
 		{
 			var convertedParentNode = new ConfigurableDictionaryNode { Label = "Parent" };
