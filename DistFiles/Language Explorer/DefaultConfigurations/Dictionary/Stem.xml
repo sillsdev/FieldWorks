@@ -488,8 +488,7 @@
           </WritingSystemOptions>
         </ConfigurationItem>
       </ConfigurationItem>
-      <!-- TODO: FIXME: ComplexFormsNotSubentries is probably not the right field to be using here (and throughout) -->
-      <ConfigurationItem name="Referenced Complex Forms" between=" " after=" " isEnabled="true" field="ComplexFormsNotSubentries">
+      <ConfigurationItem name="Referenced Complex Forms" between=" " after=" " isEnabled="true" field="VisibleComplexFormBackRefs">
         <ConfigurationItem name="Complex Form Type" after=" " isEnabled="true" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
           <ConfigurationItem name="Reverse Abbreviation" between=" " isEnabled="true" field="Abbreviation">
             <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -590,7 +589,7 @@
     </ConfigurationItem>
     <ConfigurationItem name="Date Created" before=" created on: " isEnabled="false" field="DateCreated"/>
     <ConfigurationItem name="Date Modified" before=" modified on: " isEnabled="false" field="DateModified"/>
-    <ConfigurationItem name="Referenced Complex Forms" between=" " after=" " isEnabled="true" field="ComplexFormsNotSubentries">
+    <ConfigurationItem name="Referenced Complex Forms" between=" " after=" " isEnabled="true" field="VisibleComplexFormBackRefs">
       <ConfigurationItem name="Complex Form Type" after=" " isEnabled="true" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
         <ConfigurationItem name="Reverse Abbreviation" between=" " isEnabled="true" field="Abbreviation">
           <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -1127,7 +1126,7 @@
       </ConfigurationItem>
       <ConfigurationItem name="Scientific Name" after=" " isEnabled="true" field="ScientificName"/>
       <ConfigurationItem name="Source" after=" " isEnabled="false" field="Source"/>
-      <ConfigurationItem name="Referenced Complex Forms" between=" " after=" " isEnabled="true" field="ComplexFormsNotSubentries">
+      <ConfigurationItem name="Referenced Complex Forms" between=" " after=" " isEnabled="true" field="VisibleComplexFormBackRefs">
         <ConfigurationItem name="Complex Form Type" after=" " isEnabled="true" field="ComplexEntryTypes">
           <ConfigurationItem name="Reverse Abbreviation" between=" " isEnabled="true" field="Abbreviation">
             <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -1288,7 +1287,7 @@
     </ConfigurationItem>
     <ConfigurationItem name="Date Created" before=" created on: " isEnabled="false" field="DateCreated"/>
     <ConfigurationItem name="Date Modified" before=" modified on: " isEnabled="false" field="DateModified"/>
-    <ConfigurationItem name="Referenced Complex Forms" before=" " between=", " after=" " isEnabled="true" field="ComplexFormsNotSubentries">
+    <ConfigurationItem name="Referenced Complex Forms" before=" " between=", " after=" " isEnabled="true" field="VisibleComplexFormBackRefs">
       <ComplexFormOptions list="complex" displayEachComplexFormInParagraph="true">
         <Option isEnabled="true"  id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
         <Option isEnabled="true"  id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>

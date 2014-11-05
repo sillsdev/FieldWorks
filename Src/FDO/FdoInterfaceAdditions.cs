@@ -1056,6 +1056,12 @@ namespace SIL.FieldWorks.FDO
 		IMultiStringAccessor DefinitionOrGloss { get; }
 
 		/// <summary>
+		/// This is a backreference (virtual) property.  It returns the list of all the LexEntryRef
+		/// objects that refer to this LexSense in ShowComplexFormIn  and are complex forms.
+		/// </summary>
+		IEnumerable<ILexEntryRef> VisibleComplexFormBackRefs { get; }
+
+		/// <summary>
 		/// This returns a subset of VisibleComplexFormBackRefs, specifically those that are NOT also subentries.
 		/// </summary>
 		IEnumerable<ILexEntryRef> ComplexFormsNotSubentries { get; }
@@ -1398,6 +1404,13 @@ namespace SIL.FieldWorks.FDO
 		/// This is a virtual, backreference property.
 		/// </summary>
 		List<ILexReference> MinimalLexReferences { get; }
+
+		/// <summary>
+		/// This is a backreference (virtual) property.  It returns the list of all the LexEntryRef
+		/// objects that refer to this LexEntry in ShowComplexFormIn  and are complex forms.
+		/// </summary>
+		IEnumerable<ILexEntryRef> VisibleComplexFormBackRefs { get; }
+
 		/// <summary>
 		/// This returns a subset of VisibleComplexFormBackRefs, specifically those that are NOT also subentries.
 		/// </summary>

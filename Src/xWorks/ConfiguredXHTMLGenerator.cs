@@ -780,13 +780,11 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// This method is used to determine if we need to iterate through a property and generate xhtml for each item
 		/// </summary>
-		/// <param name="entryType"></param>
-		/// <returns></returns>
-		private static bool IsCollectionType(Type entryType)
+		internal static bool IsCollectionType(Type entryType)
 		{
-			//Some of our string types smell like collections but don't really act like them, so we handle them seperately
-			return !typeof(IMultiStringAccessor).IsAssignableFrom(entryType) && !typeof(String).IsAssignableFrom(entryType) &&
-				(typeof(IEnumerable).IsAssignableFrom(entryType) || typeof(IFdoVector).IsAssignableFrom(entryType));
+			// The collections we test here are generic collection types (e.g. IEnumerable<T>). Note: This (and other code) does not work for arrays.
+			// We do have at least one collection type with at least two generic arguments; hence `> 0` instead of `== 1`
+			return (entryType.GetGenericArguments().Length > 0);
 		}
 
 		/// <summary>
@@ -809,7 +807,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				return ((IFdoVector)collection).ToHvoArray().Length == 0;
 			}
-			throw new ArgumentException(@"Can not test something that isn't a collection", "collection");
+			throw new ArgumentException(@"Cannot test something that isn't a collection", "collection");
 		}
 
 		/// <summary>

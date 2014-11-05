@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Xml;
 using NUnit.Framework;
@@ -1028,7 +1029,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var mainEntry = CreateInterestingLexEntry();
 			var minorEntry = CreateInterestingLexEntry();
-			CreateLexEntryRef(mainEntry, minorEntry);
+			CreateVariantForm(mainEntry, minorEntry);
 			// SUT
 			Assert.That(ConfiguredXHTMLGenerator.IsMinorEntry(minorEntry));
 		}
@@ -1038,7 +1039,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var mainEntry = CreateInterestingLexEntry();
 			var minorEntry = CreateInterestingLexEntry();
-			CreateLexEntryRef(mainEntry, minorEntry);
+			CreateVariantForm(mainEntry, minorEntry);
 			// SUT
 			Assert.False(ConfiguredXHTMLGenerator.IsMinorEntry(mainEntry));
 			Assert.False(ConfiguredXHTMLGenerator.IsMinorEntry(Cache.ServiceLocator.GetInstance<IReversalIndexEntryFactory>().Create()));
@@ -1058,7 +1059,7 @@ namespace SIL.FieldWorks.XWorks
 			var configModel = CreateInterestingConfigurationModel();
 			var mainEntry = CreateInterestingLexEntry();
 			var minorEntry = CreateInterestingLexEntry();
-			CreateLexEntryRef(mainEntry, minorEntry);
+			CreateVariantForm(mainEntry, minorEntry);
 			SetPublishAsMinorEntry(mainEntry, true);
 			//SUT
 			var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(minorEntry, configModel, pubDecorator, m_mediator);
@@ -1075,7 +1076,7 @@ namespace SIL.FieldWorks.XWorks
 			var configModel = CreateInterestingConfigurationModel();
 			var mainEntry = CreateInterestingLexEntry();
 			var minorEntry = CreateInterestingLexEntry();
-			CreateLexEntryRef(mainEntry, minorEntry);
+			CreateVariantForm(mainEntry, minorEntry);
 			SetPublishAsMinorEntry(minorEntry, false);
 
 			//SUT
@@ -1249,7 +1250,6 @@ namespace SIL.FieldWorks.XWorks
 			var testEntry = CreateInterestingLexEntry();
 			AddExampleToSense(testEntry.SensesOS[0], example, translation);
 
-
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				//SUT
@@ -1287,7 +1287,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var otherRcfsNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "VariantFormEntryBackRefs", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { examplesNode }
+				FieldDescription = "ComplexFormsNotSubentries", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { examplesNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
@@ -1299,21 +1299,93 @@ namespace SIL.FieldWorks.XWorks
 			const string translation = "Translation of the Sentence";
 			var mainEntry = CreateInterestingLexEntry();
 			var minorEntry = CreateInterestingLexEntry();
-			CreateLexEntryRef(mainEntry, minorEntry);
+			CreateComplexForm(mainEntry, minorEntry, false);
 			AddExampleToSense(minorEntry.SensesOS[0], example, translation);
-
 
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, XHTMLWriter, Cache));
 				XHTMLWriter.Flush();
-				const string xpathThruExampleSentence = "/div[@class='lexentry']/span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']/span[@class='examplesentences']/span[@class='examplesentence']";
+				const string xpathThruExampleSentence = "/div[@class='lexentry']/span[@class='complexformsnotsubentries']/span[@class='complexformsnotsubentrie']/span[@class='examplesentences']/span[@class='examplesentence']";
 				var oneSenseWithExample = String.Format(xpathThruExampleSentence + "/span[@lang='fr' and text()='{0}']", example);
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithExample, 1);
 				var oneExampleSentenceTranslation = String.Format(
 					xpathThruExampleSentence + "/span[@class='translations']/span[@class='translation']/span[@lang='en' and text()='{0}']", translation);
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(oneExampleSentenceTranslation, 1);
+			}
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_ReferencedComplexFormsIncludesSubentriesAndOtherReferencedComplexForms()
+		{
+			var complexFormNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry", SubField = "MLHeadWord", IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new [] { "fr" })
+			};
+			var rcfsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VisibleComplexFormBackRefs", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { complexFormNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { rcfsNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			var mainEntry = CreateInterestingLexEntry();
+			var otherReferencedComplexForm = CreateInterestingLexEntry();
+			var subentry = CreateInterestingLexEntry();
+			CreateComplexForm(mainEntry, subentry, true);
+			CreateComplexForm(mainEntry, otherReferencedComplexForm, false);
+
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				//SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, XHTMLWriter, Cache));
+				XHTMLWriter.Flush();
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(
+					"/div[@class='lexentry']/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@lang='fr']", 2);
+			}
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_ReferencedComplexFormsUnderSensesIncludesSubentriesAndOtherReferencedComplexForms()
+		{
+			var complexFormNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry", SubField = "MLHeadWord", IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new [] { "fr" })
+			};
+			var rcfsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VisibleComplexFormBackRefs",IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { complexFormNode }
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS", CSSClassNameOverride = "senses", IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { rcfsNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { sensesNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			var mainEntry = CreateInterestingLexEntry();
+			var otherReferencedComplexForm = CreateInterestingLexEntry();
+			var subentry = CreateInterestingLexEntry();
+			CreateComplexForm(mainEntry.SensesOS[0], subentry, true);
+			CreateComplexForm(mainEntry.SensesOS[0], otherReferencedComplexForm, false);
+
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				//SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, XHTMLWriter, Cache));
+				XHTMLWriter.Flush();
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(
+					xpathThruSense + "/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@lang='fr']", 2);
 			}
 		}
 
@@ -1841,6 +1913,24 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		[Test]
+		public void IsCollectionType()
+		{
+			var assembly = Assembly.Load(ConfiguredXHTMLGenerator.AssemblyFile);
+			Assert.True(ConfiguredXHTMLGenerator.IsCollectionType(typeof(IEnumerable<>)));
+			Assert.True(ConfiguredXHTMLGenerator.IsCollectionType(typeof(IFdoOwningSequence<>)));
+			Assert.True(ConfiguredXHTMLGenerator.IsCollectionType(typeof(IFdoReferenceCollection<>)));
+			var twoParamImplOfIFdoVector =
+				assembly.GetType("SIL.FieldWorks.FDO.DomainImpl.ScrTxtPara").GetNestedType("OwningSequenceWrapper`2", BindingFlags.NonPublic);
+			Assert.True(ConfiguredXHTMLGenerator.IsCollectionType(twoParamImplOfIFdoVector));
+
+			// Strings and MultiStrings, while enumerable, are not collections as we define them for the purpose of publishing data as XHTML
+			Assert.False(ConfiguredXHTMLGenerator.IsCollectionType(typeof(string)));
+			Assert.False(ConfiguredXHTMLGenerator.IsCollectionType(typeof(ITsString)));
+			Assert.False(ConfiguredXHTMLGenerator.IsCollectionType(typeof(IMultiStringAccessor)));
+			Assert.False(ConfiguredXHTMLGenerator.IsCollectionType(assembly.GetType("SIL.FieldWorks.FDO.DomainImpl.VirtualStringAccessor")));
+		}
+
 		/// <summary>Creates a DictionaryConfigurationModel with one Main and two Minor Entry nodes, all with enabled HeadWord children</summary>
 		private static DictionaryConfigurationModel CreateInterestingConfigurationModel()
 		{
@@ -1890,8 +1980,7 @@ namespace SIL.FieldWorks.XWorks
 			return entry;
 		}
 
-		/// <summary>Makes one entry a Variant of another</summary>
-		private void CreateLexEntryRef(ILexEntry main, ILexEntry subForm)
+		private void CreateVariantForm(ILexEntry main, ILexEntry variantForm)
 		{
 			var owningList = Cache.LangProject.LexDbOA.VariantEntryTypesOA;
 			Assert.IsNotNull(owningList, "No VariantEntryTypes property on Lexicon object.");
@@ -1899,7 +1988,19 @@ namespace SIL.FieldWorks.XWorks
 			var varType = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(new Guid(), owningList);
 			varType.Name.set_String(ws, "Crazy Variant");
 
-			subForm.MakeVariantOf(main, varType as ILexEntryType);
+			variantForm.MakeVariantOf(main, varType as ILexEntryType);
+		}
+
+		private void CreateComplexForm(ICmObject main, ILexEntry complexForm, bool subentry)
+		{
+			var complexEntryRef = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
+			complexForm.EntryRefsOS.Add(complexEntryRef);
+			complexEntryRef.RefType = LexEntryRefTags.krtComplexForm;
+			complexEntryRef.ComponentLexemesRS.Add(main);
+			if (subentry)
+				complexEntryRef.PrimaryLexemesRS.Add(main);
+			else
+				complexEntryRef.ShowComplexFormsInRS.Add(main);
 		}
 
 		private void AddSenseToEntry(ILexEntry entry, string gloss)
@@ -1936,11 +2037,11 @@ namespace SIL.FieldWorks.XWorks
 			return morph;
 		}
 
-		private void AddHeadwordToEntry(ILexEntry entry, string gloss)
+		private void AddHeadwordToEntry(ILexEntry entry, string headword)
 		{
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 			// The headword field is special: it uses Citation if available, or LexemeForm if Citation isn't filled in
-			entry.CitationForm.set_String(wsFr, Cache.TsStrFactory.MakeString(gloss, wsFr));
+			entry.CitationForm.set_String(wsFr, Cache.TsStrFactory.MakeString(headword, wsFr));
 		}
 
 		private static void SetPublishAsMinorEntry(ILexEntry entry, bool publish)

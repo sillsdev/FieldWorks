@@ -340,7 +340,7 @@
           </WritingSystemOptions>
         </ConfigurationItem>
       </ConfigurationItem>
-      <ConfigurationItem name="Referenced Complex Forms" isEnabled="false" isDuplicate="false" isCustomField="false" before="" between=" " after=" " field="ComplexFormsNotSubentries">
+      <ConfigurationItem name="Referenced Complex Forms" isEnabled="false" isDuplicate="false" isCustomField="false" before="" between=" " after=" " field="VisibleComplexFormBackRefs">
         <ConfigurationItem name="Complex Form Type" isEnabled="true" isDuplicate="false" isCustomField="false" before="" after=" " field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
           <ConfigurationItem name="Reverse Abbreviation" isEnabled="true" isDuplicate="false" isCustomField="false" before="" between=" " after="" field="Abbreviation">
             <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -636,7 +636,7 @@
     </ConfigurationItem>
     <ConfigurationItem name="Date Created" isEnabled="false" isDuplicate="false" isCustomField="false" before="created on: " after=" " field="DateCreated" />
     <ConfigurationItem name="Date Modified" isEnabled="false" isDuplicate="false" isCustomField="false" before="modified on: " after=" " field="DateModified" />
-    <ConfigurationItem name="Referenced Complex Forms" isEnabled="true" isDuplicate="false" isCustomField="false" style="Dictionary-Subentry" before="" between=", " after=" " field="ComplexFormsNotSubentries">
+    <ConfigurationItem name="Referenced Complex Forms" isEnabled="true" isDuplicate="false" isCustomField="false" style="Dictionary-Subentry" before="" between=", " after=" " field="VisibleComplexFormBackRefs">
       <ComplexFormOptions list="complex" displayEachComplexFormInParagraph="true">
         <Option id="" isEnabled="false" />
       </ComplexFormOptions>
@@ -1125,7 +1125,7 @@
           </WritingSystemOptions>
         </ConfigurationItem>
       </ConfigurationItem>
-      <ConfigurationItem name="Referenced Complex Forms" isEnabled="false" isDuplicate="false" isCustomField="false" before="" between=" " after=" " field="ComplexFormsNotSubentries">
+      <ConfigurationItem name="Referenced Complex Forms" isEnabled="false" isDuplicate="false" isCustomField="false" before="" between=" " after=" " field="VisibleComplexFormBackRefs">
         <ConfigurationItem name="Complex Form Type" isEnabled="true" isDuplicate="false" isCustomField="false" before="" after=" " field="ComplexEntryTypes">
           <ConfigurationItem name="Reverse Abbreviation" isEnabled="true" isDuplicate="false" isCustomField="false" before="" between=" " after="" field="Abbreviation">
             <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -1369,7 +1369,7 @@
     </ConfigurationItem>
     <ConfigurationItem name="Date Created" isEnabled="false" isDuplicate="false" isCustomField="false" before=" created on: " after="" field="DateCreated" />
     <ConfigurationItem name="Date Modified" isEnabled="false" isDuplicate="false" isCustomField="false" before=" modified on: " after="" field="DateModified" />
-    <ConfigurationItem name="Referenced Complex Forms" isEnabled="false" isDuplicate="false" isCustomField="false" before=" " between=", " after=" " field="ComplexFormsNotSubentries">
+    <ConfigurationItem name="Referenced Complex Forms" isEnabled="false" isDuplicate="false" isCustomField="false" before=" " between=", " after=" " field="VisibleComplexFormBackRefs">
       <ComplexFormOptions list="complex" displayEachComplexFormInParagraph="false">
         <Option id="" isEnabled="false" />
       </ComplexFormOptions>

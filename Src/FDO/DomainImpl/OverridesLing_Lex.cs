@@ -972,9 +972,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// This is a backreference (virtual) property.  It returns the list of ids for all the
-		/// LexEntryRef objects that refer to this LexEntry in ShowComplexFormIn  and are complex
-		/// forms.
+		/// This is a backreference (virtual) property.  It returns the list of all the LexEntryRef
+		/// objects that refer to this LexEntry in ShowComplexFormIn  and are complex forms.
 		/// Enhance JohnT: Generate PropChanged on this for changes to any of
 		///     LexEntry.EntryRefs, LexEntryRef.RefType, LexEntryRef.PrimaryEntryOrSense,
 		///     or anything that affects GetVariantEntryRefsWithMainEntryOrSense.
@@ -4463,9 +4462,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// This is a backreference (virtual) property.  It returns the list of ids for all the
-		/// LexEntryRef objects that refer to this LexSense in ShowComplexFormIn  and are complex
-		/// forms.
+		/// This is a backreference (virtual) property.  It returns the list of all the LexEntryRef
+		/// objects that refer to this LexSense in ShowComplexFormIn  and are complex forms.
 		/// Enhance JohnT: Generate PropChanged on this for changes to any of
 		///     LexEntry.EntryRefs, LexEntryRef.RefType, LexEntryRef.PrimaryEntryOrSense,
 		///     or anything that affects GetVariantEntryRefsWithMainEntryOrSense.

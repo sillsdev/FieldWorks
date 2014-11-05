@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		public override String ToString()
 		{
-			return DisplayLabel;
+			return DisplayLabel ?? FieldDescription + (SubField == null ? "" : "_" + SubField);
 		}
 
 		/// <summary>
