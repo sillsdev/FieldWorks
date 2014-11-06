@@ -183,6 +183,7 @@
     <Compile Include="DomainServices\SharedBackendServices.cs" />
     <Compile Include="FdoDataMigrationForbiddenException.cs" />
     <Compile Include="FdoFileLockedException.cs" />
+    <Compile Include="FdoSettings.cs" />
     <Compile Include="Infrastructure\Impl\CommitLogMetadata.cs" />
     <Compile Include="Infrastructure\Impl\CommitLogRecord.cs" />
     <Compile Include="Infrastructure\Impl\SharedXMLBackendProvider.cs" />

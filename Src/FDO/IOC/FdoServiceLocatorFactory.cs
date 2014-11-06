@@ -38,6 +38,7 @@ namespace SIL.FieldWorks.FDO.IOC
 		private readonly FDOBackendProviderType m_backendProviderType;
 		private readonly IFdoUI m_ui;
 		private readonly IFdoDirectories m_dirs;
+		private readonly FdoSettings m_settings;
 
 		/// <summary>
 		/// Constructor
@@ -45,11 +46,13 @@ namespace SIL.FieldWorks.FDO.IOC
 		/// <param name="backendProviderType">Type of backend provider to create.</param>
 		/// <param name="ui">The UI service.</param>
 		/// <param name="dirs">The directories service.</param>
-		internal FdoServiceLocatorFactory(FDOBackendProviderType backendProviderType, IFdoUI ui, IFdoDirectories dirs)
+		/// <param name="settings">The FDO settings.</param>
+		internal FdoServiceLocatorFactory(FDOBackendProviderType backendProviderType, IFdoUI ui, IFdoDirectories dirs, FdoSettings settings)
 		{
 			m_backendProviderType = backendProviderType;
 			m_ui = ui;
 			m_dirs = dirs;
+			m_settings = settings;
 		}
 
 		#region Implementation of IServiceLocatorBootstrapper
@@ -259,6 +262,10 @@ namespace SIL.FieldWorks.FDO.IOC
 			registry
 				.For<IFdoDirectories>()
 				.Use(m_dirs);
+
+			registry
+				.For<FdoSettings>()
+				.Use(m_settings);
 
 			// =================================================================================
 			// Don't add COM object to the registry. StructureMap does not properly release COM

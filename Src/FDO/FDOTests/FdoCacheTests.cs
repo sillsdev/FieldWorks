@@ -144,7 +144,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 				using (var threadHelper = new ThreadHelper())
 					dbFileName = FdoCache.CreateNewLangProj(new DummyProgressDlg(), dbName, FwDirectoryFinder.FdoDirectories, threadHelper);
 
-				using (var cache = FdoCache.CreateCacheFromLocalProjectFile(dbFileName, "en", m_ui, FwDirectoryFinder.FdoDirectories, new DummyProgressDlg()))
+				using (var cache = FdoCache.CreateCacheFromLocalProjectFile(dbFileName, "en", m_ui, FwDirectoryFinder.FdoDirectories, new FdoSettings(), new DummyProgressDlg()))
 				{
 					Assert.AreEqual(Strings.ksAnthropologyCategories, cache.LangProject.AnthroListOA.Name.UiString,
 						"Anthropology Categories list was not properly initialized.");
@@ -214,7 +214,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		{
 			using (
 				var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-																	 "en", "fr", "en", m_ui, FwDirectoryFinder.FdoDirectories))
+																	 "en", "fr", "en", m_ui, FwDirectoryFinder.FdoDirectories, new FdoSettings()))
 			{
 				var wsFr = cache.DefaultVernWs;
 				Assert.That(cache.LangProject.DefaultVernacularWritingSystem.Handle, Is.EqualTo(wsFr));
@@ -247,7 +247,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		{
 			using (
 				var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-																	 "en", "fr", "en", m_ui, FwDirectoryFinder.FdoDirectories))
+																	 "en", "fr", "en", m_ui, FwDirectoryFinder.FdoDirectories, new FdoSettings()))
 			{
 				var wsEn = cache.DefaultAnalWs;
 				Assert.That(cache.LangProject.DefaultAnalysisWritingSystem.Handle, Is.EqualTo(wsEn));
@@ -281,7 +281,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		{
 			using (
 				var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-																	 "en", "fr", "en", m_ui, FwDirectoryFinder.FdoDirectories))
+																	 "en", "fr", "en", m_ui, FwDirectoryFinder.FdoDirectories, new FdoSettings()))
 			{
 				var wsFr = cache.DefaultPronunciationWs;
 				Assert.That(cache.LangProject.DefaultPronunciationWritingSystem.Handle, Is.EqualTo(wsFr));
@@ -342,7 +342,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		{
 			// This can't be in the minimalist class, because it disposes the cache.
 			var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-																	"en", "fr", "en", m_ui, FwDirectoryFinder.FdoDirectories);
+																	"en", "fr", "en", m_ui, FwDirectoryFinder.FdoDirectories, new FdoSettings());
 			// Init backend data provider
 			var dataSetup = cache.ServiceLocator.GetInstance<IDataSetup>();
 			dataSetup.LoadDomain(BackendBulkLoadDomain.All);
@@ -358,7 +358,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		{
 			// This can't be in the minimalist class, because it disposes the cache.
 			var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-																	"en", "fr", "en", m_ui, FwDirectoryFinder.FdoDirectories);
+																	"en", "fr", "en", m_ui, FwDirectoryFinder.FdoDirectories, new FdoSettings());
 			// Init backend data provider
 			var dataSetup = cache.ServiceLocator.GetInstance<IDataSetup>();
 			dataSetup.LoadDomain(BackendBulkLoadDomain.All);
@@ -374,7 +374,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		public void CacheDisposedForFDOObject()
 		{
 			var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-																	"en", "fr", "en", m_ui, FwDirectoryFinder.FdoDirectories);
+																	"en", "fr", "en", m_ui, FwDirectoryFinder.FdoDirectories, new FdoSettings());
 			// Init backend data provider
 			var dataSetup = cache.ServiceLocator.GetInstance<IDataSetup>();
 			dataSetup.LoadDomain(BackendBulkLoadDomain.All);
@@ -390,7 +390,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		public void FDOObjectDeleted()
 		{
 			using (var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-				"en", "fr", "en", m_ui, FwDirectoryFinder.FdoDirectories))
+				"en", "fr", "en", m_ui, FwDirectoryFinder.FdoDirectories, new FdoSettings()))
 			{
 				// Init backend data provider
 				var dataSetup = cache.ServiceLocator.GetInstance<IDataSetup>();
@@ -413,7 +413,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		{
 			using (
 				var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-																	 "en", "fr", "en", m_ui, FwDirectoryFinder.FdoDirectories))
+																	 "en", "fr", "en", m_ui, FwDirectoryFinder.FdoDirectories, new FdoSettings()))
 			{
 				Assert.AreEqual(0, cache.NumberOfRemoteClients);
 			}

@@ -827,7 +827,7 @@ namespace SIL.FieldWorks
 			Form owner = s_splashScreen != null ? s_splashScreen.Form : Form.ActiveForm;
 			using (var progressDlg = new ProgressDialogWithTask(owner))
 			{
-				FdoCache cache = FdoCache.CreateCacheFromExistingData(projectId, s_sWsUser, s_ui, FwDirectoryFinder.FdoDirectories, progressDlg);
+				FdoCache cache = FdoCache.CreateCacheFromExistingData(projectId, s_sWsUser, s_ui, FwDirectoryFinder.FdoDirectories, CreateFdoSettings(), progressDlg);
 				EnsureValidLinkedFilesFolder(cache);
 				cache.ProjectNameChanged += ProjectNameChanged;
 				cache.ServiceLocator.GetInstance<IUndoStackManager>().OnSave += FieldWorks_OnSave;
@@ -2602,15 +2602,15 @@ namespace SIL.FieldWorks
 			{
 				FdoCache cache = existingCache ?? FdoCache.CreateCacheFromExistingData(
 					new ProjectId(restoreSettings.Settings.FullProjectPath, null),
-					s_sWsUser, s_ui, FwDirectoryFinder.FdoDirectories, progressDlg);
+					s_sWsUser, s_ui, FwDirectoryFinder.FdoDirectories, CreateFdoSettings(), progressDlg);
 
 				try
 				{
-					BackupProjectSettings settings = new BackupProjectSettings(cache, restoreSettings.Settings, FwDirectoryFinder.DefaultBackupDirectory);
-					settings.DestinationFolder = FwDirectoryFinder.DefaultBackupDirectory;
-					settings.AppAbbrev = restoreSettings.FwAppCommandLineAbbrev;
+					var backupSettings = new BackupProjectSettings(cache, restoreSettings.Settings, FwDirectoryFinder.DefaultBackupDirectory);
+					backupSettings.DestinationFolder = FwDirectoryFinder.DefaultBackupDirectory;
+					backupSettings.AppAbbrev = restoreSettings.FwAppCommandLineAbbrev;
 
-					ProjectBackupService backupService = new ProjectBackupService(cache, settings);
+					var backupService = new ProjectBackupService(cache, backupSettings);
 					string backupFile;
 					if (!backupService.BackupProject(progressDlg, out backupFile))
 					{
@@ -2637,6 +2637,18 @@ namespace SIL.FieldWorks
 				}
 			}
 			return true;
+		}
+
+		private static FdoSettings CreateFdoSettings()
+		{
+			var settings = new FdoSettings();
+			using (RegistryKey fwKey = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine)
+			{
+				var sharedXMLBackendCommitLogSize = (int) fwKey.GetValue("SharedXMLBackendCommitLogSize", 0);
+				if (sharedXMLBackendCommitLogSize > 0)
+					settings.SharedXMLBackendCommitLogSize = sharedXMLBackendCommitLogSize;
+			}
+			return settings;
 		}
 
 		/// ------------------------------------------------------------------------------------

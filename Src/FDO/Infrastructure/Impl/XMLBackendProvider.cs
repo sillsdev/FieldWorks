@@ -121,8 +121,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// </summary>
 		internal XMLBackendProvider(FdoCache cache, IdentityMap identityMap,
 			ICmObjectSurrogateFactory surrogateFactory, IFwMetaDataCacheManagedInternal mdc,
-			IDataMigrationManager dataMigrationManager, IFdoUI ui, IFdoDirectories dirs) :
-			base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager, ui, dirs)
+			IDataMigrationManager dataMigrationManager, IFdoUI ui, IFdoDirectories dirs, FdoSettings settings) :
+			base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager, ui, dirs, settings)
 		{
 		}
 

@@ -167,11 +167,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// </summary>
 		/// <param name="projectId"></param>
 		/// <param name="loadType"></param>
+		/// <param name="settings"></param>
 		/// <returns>a working FdoCache</returns>
-		protected FdoCache BootstrapSystem(IProjectIdentifier projectId, BackendBulkLoadDomain loadType)
+		protected FdoCache BootstrapSystem(IProjectIdentifier projectId, BackendBulkLoadDomain loadType, FdoSettings settings)
 		{
-			var retval = m_internalRestart ? FdoCache.CreateCacheFromExistingData(projectId, "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new DummyProgressDlg()) :
-				FdoCache.CreateCacheWithNewBlankLangProj(projectId, "en", "fr", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories);
+			var retval = m_internalRestart ? FdoCache.CreateCacheFromExistingData(projectId, "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, settings, new DummyProgressDlg()) :
+				FdoCache.CreateCacheWithNewBlankLangProj(projectId, "en", "fr", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, settings);
 			var dataSetup = retval.ServiceLocator.GetInstance<IDataSetup>();
 			dataSetup.LoadDomain(loadType);
 			return retval;
@@ -196,7 +197,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			// Make a dummy random file so tests work correctly
 			string projectPath = Path.GetFullPath(Path.GetRandomFileName());
-			return BootstrapSystem(new TestProjectId(FDOBackendProviderType.kMemoryOnly, projectPath), BackendBulkLoadDomain.All);
+			return BootstrapSystem(new TestProjectId(FDOBackendProviderType.kMemoryOnly, projectPath), BackendBulkLoadDomain.All, new FdoSettings());
 		}
 
 		/// <summary>
