@@ -24,8 +24,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 	/// </summary>
 	internal class SharedXMLBackendProvider : XMLBackendProvider
 	{
-		private const int PageSize = 4096;
-		internal static int CommitLogFileSize = 2500 * PageSize;
+		internal const int PageSize = 4096;
 		private const int CommitLogMetadataFileSize = 1 * PageSize;
 
 		/// <summary>
@@ -38,8 +37,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		private readonly Dictionary<int, Process> m_peerProcesses;
 
 		internal SharedXMLBackendProvider(FdoCache cache, IdentityMap identityMap, ICmObjectSurrogateFactory surrogateFactory, IFwMetaDataCacheManagedInternal mdc,
-			IDataMigrationManager dataMigrationManager, IFdoUI ui, IFdoDirectories dirs)
-			: base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager, ui, dirs)
+			IDataMigrationManager dataMigrationManager, IFdoUI ui, IFdoDirectories dirs, FdoSettings settings)
+			: base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager, ui, dirs, settings)
 		{
 			m_peerProcesses = new Dictionary<int, Process>();
 			m_peerID = Guid.NewGuid();
@@ -107,6 +106,13 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			{
 				m_commitLogMutex.ReleaseMutex();
 			}
+		}
+
+		protected override void OnCacheDisposing(object sender, EventArgs e)
+		{
+			// we need to shutdown before the rest of the cache disposes because the shutdown might need to access the cache
+			ShutdownInternal();
+			base.OnCacheDisposing(sender, e);
 		}
 
 		protected override void ShutdownInternal()
@@ -270,7 +276,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		private void CreateSharedMemory(bool createdNew)
 		{
 			m_commitLogMetadata = CreateOrOpen(CommitLogMetadataName, CommitLogMetadataFileSize, createdNew);
-			m_commitLog = CreateOrOpen(CommitLogName, CommitLogFileSize, createdNew);
+			m_commitLog = CreateOrOpen(CommitLogName, m_settings.SharedXMLBackendCommitLogSize, createdNew);
 		}
 
 		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
@@ -444,7 +450,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				{
 					// Check if the former master left the commit log and XML file in a consistent state. If not, we can't continue.
 					if (metadata.CurrentGeneration != metadata.FileGeneration)
-						return false;
+						throw new InvalidOperationException("The commit log and XML file are in an inconsistent state.");
 					base.LockProject();
 					metadata.Master = m_peerID;
 				}
@@ -453,44 +459,54 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				if (!HaveAnythingToCommit(newbies, dirtballs, goners, out cfiList) && (StartupVersionNumber == ModelVersion))
 					return true;
 
-				metadata.CurrentGeneration++;
-
 				var commitRec = new CommitLogRecord
 					{
 						Source = m_peerID,
-						WriteGeneration = metadata.CurrentGeneration,
+						WriteGeneration = metadata.CurrentGeneration + 1,
 						ObjectsDeleted = goners.Select(g => g.Guid).ToList(),
 						ObjectsAdded = newbies.Select(n => n.XMLBytes).ToList(),
 						ObjectsUpdated = dirtballs.Select(d => d.XMLBytes).ToList()
 					};
 
-				// we've seen our own change
-				metadata.Peers[m_peerID].Generation = metadata.CurrentGeneration;
-
 				using (var buffer = new MemoryStream())
 				{
 					Serializer.SerializeWithLengthPrefix(buffer, commitRec, PrefixStyle.Base128, 1);
-					if (metadata.LogLength + buffer.Length > CommitLogFileSize)
-						return false;
-
-					byte[] bytes = buffer.GetBuffer();
-					int commitRecOffset = (metadata.LogOffset + metadata.LogLength) % CommitLogFileSize;
-					// check if the record can fit at the end of the commit log. If not, we wrap around to the beginning.
-					if (commitRecOffset + buffer.Length > CommitLogFileSize)
+					if (metadata.LogLength + buffer.Length > m_settings.SharedXMLBackendCommitLogSize)
 					{
-						metadata.Padding = CommitLogFileSize - commitRecOffset;
-						metadata.LogLength += metadata.Padding;
-						commitRecOffset = 0;
+						// if this peer is the master, then just skip this commit
+						// other peers will not be able to continue when it cannot find the missing commit, but
+						// the master peer can keep going
+						if (metadata.Master != m_peerID)
+							throw new InvalidOperationException("The current commit cannot be written to the commit log, because it is full.");
 					}
-					using (MemoryMappedViewStream stream = m_commitLog.CreateViewStream(commitRecOffset, buffer.Length))
+					else
 					{
-						stream.Write(bytes, 0, (int) buffer.Length);
-						metadata.LogLength += (int) buffer.Length;
+						byte[] bytes = buffer.GetBuffer();
+						int commitRecOffset = (metadata.LogOffset + metadata.LogLength) % m_settings.SharedXMLBackendCommitLogSize;
+						// check if the record can fit at the end of the commit log. If not, we wrap around to the beginning.
+						if (commitRecOffset + buffer.Length > m_settings.SharedXMLBackendCommitLogSize)
+						{
+							if (metadata.LogLength == 0)
+								metadata.LogOffset = 0;
+							else
+								metadata.Padding = m_settings.SharedXMLBackendCommitLogSize - commitRecOffset;
+							metadata.LogLength += metadata.Padding;
+							commitRecOffset = 0;
+						}
+						using (MemoryMappedViewStream stream = m_commitLog.CreateViewStream(commitRecOffset, buffer.Length))
+						{
+							stream.Write(bytes, 0, (int) buffer.Length);
+							metadata.LogLength += (int) buffer.Length;
+						}
 					}
 				}
 
 				if (metadata.Master == m_peerID)
 					PerformCommit(newbies, dirtballs, goners, cfiList);
+
+				metadata.CurrentGeneration++;
+				// we've seen our own change
+				metadata.Peers[m_peerID].Generation = metadata.CurrentGeneration;
 
 				return true;
 			}
@@ -551,7 +567,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 			int bytesRemaining = metadata.LogLength;
 			// read all records up to the end of the file or the end of the log, whichever comes first
-			int length = Math.Min(metadata.LogLength, CommitLogFileSize - metadata.LogOffset - metadata.Padding);
+			int length = Math.Min(metadata.LogLength, m_settings.SharedXMLBackendCommitLogSize - metadata.LogOffset - metadata.Padding);
 			bytesRemaining -= ReadUnseenCommitRecords(metadata, minPeerGeneration, metadata.LogOffset, length, unseenCommitRecs);
 			// if there are bytes remaining, it means that we hit the end of the file, so we need to wrap around to the beginning
 			if (bytesRemaining > 0)
@@ -560,6 +576,11 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 			if (unseenCommitRecs.Count == 0)
 				return false;
+
+			// check if there was enough room in the commit log for the last peer to write its commit
+			// if it was not able, then we cannot continue, because we will be out-of-sync
+			if (unseenCommitRecs[unseenCommitRecs.Count - 1].WriteGeneration < metadata.CurrentGeneration)
+				throw new InvalidOperationException("The most recent unseen commit could not be found.");
 
 			var idFactory = m_cache.ServiceLocator.GetInstance<ICmObjectIdFactory>();
 
@@ -588,7 +609,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				{
 					foreach (byte[] dirtballXml in commitRec.ObjectsUpdated)
 					{
-						ICmObjectSurrogate dirtballSurrogate = surrogateFactory.Create(DataSortingService.Utf8.GetString(dirtballXml));
+						ICmObjectSurrogate dirtballSurrogate = surrogateFactory.Create(dirtballXml);
 						// This shouldn't be necessary; if a previous foreign transaction deleted it, it
 						// should not show up as a dirtball in a later transaction until it has shown up as a newby.
 						// goners.Remove(dirtball);
@@ -602,7 +623,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				{
 					foreach (byte[] newbyXml in commitRec.ObjectsAdded)
 					{
-						ICmObjectSurrogate newObj = surrogateFactory.Create(DataSortingService.Utf8.GetString(newbyXml));
+						ICmObjectSurrogate newObj = surrogateFactory.Create(newbyXml);
 						if (goners.Remove(newObj.Guid))
 						{
 							// an object which an earlier transaction deleted is being re-created.
@@ -646,11 +667,11 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			}
 
 			// if we have read everything to the end of the file, add padding to read length
-			if (startOffset + length == CommitLogFileSize - metadata.Padding)
+			if (startOffset + length == m_settings.SharedXMLBackendCommitLogSize - metadata.Padding)
 				length += metadata.Padding;
 
 			// check if we've purged all records up to the end of the file. If so, wrap around to the beginning.
-			if (metadata.LogOffset == CommitLogFileSize - metadata.Padding)
+			if (metadata.LogOffset == m_settings.SharedXMLBackendCommitLogSize - metadata.Padding)
 			{
 				metadata.LogOffset = 0;
 				metadata.LogLength -= metadata.Padding;

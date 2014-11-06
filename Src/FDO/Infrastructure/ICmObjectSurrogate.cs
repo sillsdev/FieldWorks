@@ -93,6 +93,12 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 		/// Create a surrogate from the data store.
 		/// This gets the full XML string of the object from the BEP.
 		/// </summary>
+		ICmObjectSurrogate Create(byte[] xmlData);
+
+		/// <summary>
+		/// Create a surrogate from the data store.
+		/// This gets the full XML string of the object from the BEP.
+		/// </summary>
 		ICmObjectSurrogate Create(Guid guid, string classname, string xmlData);
 
 		/// <summary>

@@ -481,7 +481,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		/// <returns>An FdoCache that has only the basic data in it.</returns>
 		protected override FdoCache CreateCache()
 		{
-			return BootstrapSystem(new TestProjectId(FDOBackendProviderType.kMemoryOnly, "MemoryOnly.mem"), m_loadType);
+			return BootstrapSystem(new TestProjectId(FDOBackendProviderType.kMemoryOnly, "MemoryOnly.mem"), m_loadType, new FdoSettings());
 		}
 
 		/// <summary>
@@ -530,7 +530,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 					}
 				}
 			}
-			return BootstrapSystem(new TestProjectId(FDOBackendProviderType.kDb4oClientServer, _randomProjectName), m_loadType);
+			return BootstrapSystem(new TestProjectId(FDOBackendProviderType.kDb4oClientServer, _randomProjectName), m_loadType, new FdoSettings());
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -597,7 +597,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 					File.Delete(filename);
 			}
 
-			return BootstrapSystem(new TestProjectId(FDOBackendProviderType.kXMLWithMemoryOnlyWsMgr, filename), m_loadType);
+			return BootstrapSystem(new TestProjectId(FDOBackendProviderType.kXMLWithMemoryOnlyWsMgr, filename), m_loadType, new FdoSettings());
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -619,7 +619,8 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		private FdoCache OpenExistingFile(string filename)
 		{
 			return FdoCache.CreateCacheFromExistingData(
-				new TestProjectId(FDOBackendProviderType.kXMLWithMemoryOnlyWsMgr, filename), "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new DummyProgressDlg());
+				new TestProjectId(FDOBackendProviderType.kXMLWithMemoryOnlyWsMgr, filename), "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories,
+				new FdoSettings(), new DummyProgressDlg());
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -791,7 +792,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		public MockXMLBackendProvider(FdoCache cache, string projName):
 			base(cache, new IdentityMap((IFwMetaDataCacheManaged)cache.MetaDataCache),
 			new CmObjectSurrogateFactory(cache), (IFwMetaDataCacheManagedInternal)cache.MetaDataCache,
-			new FdoDataMigrationManager(), new DummyFdoUI(), FwDirectoryFinder.FdoDirectories)
+			new FdoDataMigrationManager(), new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new FdoSettings())
 		{
 			Project = projName;
 			Cache = cache;
@@ -810,7 +811,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			ProjectId = new TestProjectId(FDOBackendProviderType.kXML, Project);
 			// This will throw an UnauthorizedAccessException because of the
 			// StartupInternalWithDataMigrationIfNeeded() override below
-			StartupExtantLanguageProject(ProjectId, false, new DummyProgressDlg(), false);
+			StartupExtantLanguageProject(ProjectId, false, new DummyProgressDlg());
 		}
 
 		/// <summary/>
@@ -831,7 +832,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		{
 		}
 
-		protected override void StartupInternalWithDataMigrationIfNeeded(IThreadedProgress progressDlg, bool forbidDataMigration)
+		protected override void StartupInternalWithDataMigrationIfNeeded(IThreadedProgress progressDlg)
 		{
 			throw new UnauthorizedAccessException();
 		}
@@ -853,14 +854,13 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		/// ------------------------------------------------------------------------------------
 		protected override FdoCache CreateCache()
 		{
-			SharedXMLBackendProvider.CommitLogFileSize = 102400;
 			IProjectIdentifier projectID = ProjectID;
 			if (!m_internalRestart)
 			{
 				if (File.Exists(projectID.Path))
 					File.Delete(projectID.Path);
 			}
-			return BootstrapSystem(projectID, m_loadType);
+			return BootstrapSystem(projectID, m_loadType, new FdoSettings {SharedXMLBackendCommitLogSize = 102400});
 		}
 
 		private IProjectIdentifier ProjectID
@@ -876,7 +876,8 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 
 		private FdoCache CreateOtherCache()
 		{
-			FdoCache retval = FdoCache.CreateCacheFromExistingData(ProjectID, "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new DummyProgressDlg());
+			FdoCache retval = FdoCache.CreateCacheFromExistingData(ProjectID, "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories,
+				new FdoSettings {SharedXMLBackendCommitLogSize = 102400}, new DummyProgressDlg());
 			var dataSetup = retval.ServiceLocator.GetInstance<IDataSetup>();
 			dataSetup.LoadDomain(m_loadType);
 			return retval;
@@ -1069,9 +1070,9 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		[Test]
 		public void WrapAroundCommitLogBuffer()
 		{
-			// totally reset project
-			SetupEverythingButBase();
-
+			Cache.ServiceLocator.GetInstance<IDataStorer>().CompleteAllCommits();
+			Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+			int form1Count = Cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetHomographs("form1").Count;
 			// add some commit records to log, so that the log will wrap around
 			int i;
 			for (i = 0; i < 5; i++)
@@ -1088,9 +1089,8 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
 			using (FdoCache otherCache = CreateOtherCache())
 			{
-				// add commit records until the log fills up
-				// once the log is full, we know that the internal buffer has wrapped around
-				while (true)
+				// this should be enough data to cause the commit log to wrap around
+				for (; i < 65; i++)
 				{
 					NonUndoableUnitOfWorkHelper.Do(Cache.ServiceLocator.ActionHandler, () =>
 					{
@@ -1098,20 +1098,69 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 						ILexEntry entry1 = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(stemType, Cache.TsStrFactory.MakeString("form1", Cache.DefaultVernWs),
 							Cache.TsStrFactory.MakeString("gloss1", Cache.DefaultAnalWs), new SandboxGenericMSA());
 					});
-					try
-					{
-						Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
-					}
-					catch (InvalidOperationException)
-					{
-						break;
-					}
-					i++;
+					Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
 				}
 				// the other cache will now read the wrapped around commit log buffer
 				otherCache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
 
-				Assert.That(otherCache.ServiceLocator.GetInstance<ILexEntryRepository>().GetHomographs("form1").Count, Is.EqualTo(i));
+				Assert.That(otherCache.ServiceLocator.GetInstance<ILexEntryRepository>().GetHomographs("form1").Count, Is.EqualTo(form1Count + i));
+			}
+		}
+
+		/// <summary>
+		/// Tests the behavior when the master peer fills up the commit log.
+		/// </summary>
+		[Test]
+		public void FullCommitLogOnMaster()
+		{
+			Cache.ServiceLocator.GetInstance<IDataStorer>().CompleteAllCommits();
+			Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+
+			using (FdoCache otherCache = CreateOtherCache())
+			{
+				// this should be enough data to fill up the commit log
+				for (int i = 0; i < 100; i++)
+				{
+					NonUndoableUnitOfWorkHelper.Do(Cache.ServiceLocator.ActionHandler, () =>
+					{
+						IMoMorphType stemType = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
+						ILexEntry entry1 = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(stemType, Cache.TsStrFactory.MakeString("form1", Cache.DefaultVernWs),
+							Cache.TsStrFactory.MakeString("gloss1", Cache.DefaultAnalWs), new SandboxGenericMSA());
+					});
+					// the master won't throw an exception when the commit log is full
+					Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+				}
+
+				// the slave should throw an exception when it realizes there are missing commits in the commit log
+				Assert.Throws<InvalidOperationException>(() => otherCache.ServiceLocator.GetInstance<IUndoStackManager>().Save());
+			}
+		}
+
+		/// <summary>
+		/// Tests the behavior when a slave peer fills up the commit log.
+		/// </summary>
+		[Test]
+		public void FullCommitLogOnSlave()
+		{
+			Cache.ServiceLocator.GetInstance<IDataStorer>().CompleteAllCommits();
+			Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+
+			using (FdoCache otherCache = CreateOtherCache())
+			{
+				Assert.Throws<InvalidOperationException>(() =>
+				{
+					// this should be enough data to fill up the commit log
+					for (int i = 0; i < 100; i++)
+					{
+						NonUndoableUnitOfWorkHelper.Do(otherCache.ServiceLocator.ActionHandler, () =>
+						{
+							IMoMorphType stemType = otherCache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
+							ILexEntry entry1 = otherCache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(stemType, otherCache.TsStrFactory.MakeString("form1", otherCache.DefaultVernWs),
+								otherCache.TsStrFactory.MakeString("gloss1", otherCache.DefaultAnalWs), new SandboxGenericMSA());
+						});
+						otherCache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+					}
+				});
 			}
 		}
 	}

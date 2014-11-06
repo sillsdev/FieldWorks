@@ -744,7 +744,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						// The null says we are creating the file on the local host.
 						using (FdoCache tempCache = FdoCache.CreateCacheFromExistingData(
 							new SimpleProjectId(FDOBackendProviderType.kDb4oClientServer, projectPath), "en", new SilentFdoUI(progress.SynchronizeInvoke),
-							m_dirs, progress))
+							m_dirs, new FdoSettings(), progress))
 						{
 							CopyToXmlFile(tempCache, tempCache.ProjectId.ProjectFolder);
 						// Enhance JohnT: how can we tell this succeeded?
@@ -858,14 +858,14 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			try
 			{
 				using (FdoCache tempCache = FdoCache.CreateCacheFromExistingData(new SimpleProjectId(FDOBackendProviderType.kXML, xmlFilename),
-					"en", new SilentFdoUI(progressDlg.SynchronizeInvoke), m_dirs, progressDlg))
+					"en", new SilentFdoUI(progressDlg.SynchronizeInvoke), m_dirs, new FdoSettings(), progressDlg))
 				{
 
 				// The zero in the object array is for db4o and causes it not to open a port.
 				// This is fine since we aren't yet trying to start up on this restored database.
 				// The null says we are creating the file on the local host.
 					using (FdoCache copyCache = FdoCache.CreateCacheCopy(new SimpleProjectId(FDOBackendProviderType.kDb4oClientServer, desiredPath),
-						"en", new SilentFdoUI(progressDlg.SynchronizeInvoke), m_dirs, tempCache))
+						"en", new SilentFdoUI(progressDlg.SynchronizeInvoke), m_dirs, new FdoSettings(), tempCache))
 					{
 						copyCache.ServiceLocator.GetInstance<IDataStorer>().Commit(new HashSet<ICmObjectOrSurrogate>(), new HashSet<ICmObjectOrSurrogate>(), new HashSet<ICmObjectId>());
 						// Enhance JohnT: how can we tell this succeeded?
@@ -906,7 +906,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			try
 			{
 				using (FdoCache copyCache = FdoCache.CreateCacheCopy(new SimpleProjectId(FDOBackendProviderType.kXML, newFilePath),
-					"en", new SilentFdoUI(source.ServiceLocator.GetInstance<IFdoUI>().SynchronizeInvoke), m_dirs, source))
+					"en", new SilentFdoUI(source.ServiceLocator.GetInstance<IFdoUI>().SynchronizeInvoke), m_dirs, new FdoSettings(), source))
 				{
 					copyCache.ServiceLocator.GetInstance<IDataStorer>().Commit(
 						new HashSet<ICmObjectOrSurrogate>(),

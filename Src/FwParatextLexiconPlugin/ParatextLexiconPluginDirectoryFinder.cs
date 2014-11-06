@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using Microsoft.Win32;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
@@ -13,19 +11,12 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 	{
 		private static readonly IFdoDirectories s_fdoDirs = new ParatextLexiconPluginFdoDirectories();
 
-		static ParatextLexiconPluginDirectoryFinder()
-		{
-			RegistryHelper.CompanyName = DirectoryFinder.CompanyName;
-			RegistryHelper.ProductName = ProductName;
-		}
-
 		private const string ProjectsDir = "ProjectsDir";
-		private const string ProductName = "FieldWorks";
 		private const string RootDataDir = "RootDataDir";
 		private const string RootCodeDir = "RootCodeDir";
 		private const string Projects = "Projects";
 		private const string Templates = "Templates";
-		private const string FdoVersion = "8";
+		private const string FieldWorksDir = "FieldWorks";
 
 		public static string ProjectsDirectory
 		{
@@ -42,17 +33,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			get { return Path.Combine(CodeDirectory, Templates); }
 		}
 
-		public static bool IsFieldWorksInstalled
-		{
-			get
-			{
-				using (RegistryKey machineKey = FieldWorksRegistryKeyLocalMachine)
-				{
-					return machineKey != null;
-				}
-			}
-		}
-
 		public static IFdoDirectories FdoDirectories
 		{
 			get { return s_fdoDirs; }
@@ -60,12 +40,12 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		public static string DataDirectory
 		{
-			get { return GetDirectory(RootDataDir, DirectoryFinder.CommonAppDataFolder(ProductName)); }
+			get { return GetDirectory(RootDataDir, DirectoryFinder.CommonAppDataFolder(FieldWorksDir)); }
 		}
 
 		public static string DataDirectoryLocalMachine
 		{
-			get { return GetDirectoryLocalMachine(RootDataDir, DirectoryFinder.CommonAppDataFolder(ProductName)); }
+			get { return GetDirectoryLocalMachine(RootDataDir, DirectoryFinder.CommonAppDataFolder(FieldWorksDir)); }
 		}
 
 		public static string CodeDirectory
@@ -73,24 +53,10 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			get { return GetDirectory(RootCodeDir, Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)); }
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Disposed in caller.")]
-		private static RegistryKey FieldWorksRegistryKey
-		{
-			get { return RegistryHelper.SettingsKey(FdoVersion); }
-		}
-
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Disposed in caller.")]
-		private static RegistryKey FieldWorksRegistryKeyLocalMachine
-		{
-			get { return RegistryHelper.SettingsKeyLocalMachine(FdoVersion); }
-		}
-
 		private static string GetDirectory(string registryValue, string defaultDir)
 		{
-			using (RegistryKey userKey = FieldWorksRegistryKey)
-			using (RegistryKey machineKey = FieldWorksRegistryKeyLocalMachine)
+			using (RegistryKey userKey = ParatextLexiconPluginRegistryHelper.FieldWorksRegistryKey)
+			using (RegistryKey machineKey = ParatextLexiconPluginRegistryHelper.FieldWorksRegistryKeyLocalMachine)
 			{
 				var registryKey = userKey;
 				if (userKey == null || userKey.GetValue(registryValue) == null)
@@ -121,7 +87,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		private static string GetDirectoryLocalMachine(string registryValue, string defaultDir)
 		{
-			using (RegistryKey machineKey = FieldWorksRegistryKeyLocalMachine)
+			using (RegistryKey machineKey = ParatextLexiconPluginRegistryHelper.FieldWorksRegistryKeyLocalMachine)
 			{
 				return GetDirectory(machineKey, registryValue, defaultDir);
 			}
@@ -133,6 +99,12 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			{
 				get { return ParatextLexiconPluginDirectoryFinder.ProjectsDirectory; }
 			}
+
+			public string DefaultProjectsDirectory
+			{
+				get { return ProjectsDirectoryLocalMachine; }
+			}
+
 			public string TemplateDirectory
 			{
 				get { return ParatextLexiconPluginDirectoryFinder.TemplateDirectory; }

@@ -2046,7 +2046,10 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-
+		/// <summary>
+		/// Adjust column width to the content width
+		/// References are in display order.
+		/// </summary>
 		internal void AdjustColumnWidthToMatchContents(int icolLvHeaderToAdjust)
 		{
 			if (m_xbv.Vc.HasSelectColumn && icolLvHeaderToAdjust == 0)

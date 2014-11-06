@@ -26,11 +26,9 @@ namespace SIL.FieldWorks.IText
 			var segments = new Dictionary<ISegment, List<Annotation<ShapeNode>>>();
 			foreach (ISegment segment in m_para.SegmentsOS)
 			{
-				string segID = segment.Hvo.ToString(CultureInfo.InvariantCulture);
 				var annotations = new List<Annotation<ShapeNode>>();
 				foreach (Tuple<IAnalysis, int, int> analysis in segment.GetAnalysesAndOffsets())
 				{
-					string anaID = analysis.Item1.Hvo.ToString(CultureInfo.InvariantCulture);
 					var wordform = analysis.Item1 as IWfiWordform;
 					if (wordform != null)
 					{
@@ -145,10 +143,19 @@ namespace SIL.FieldWorks.IText
 									wordFS.AddValue(strFeat, gloss.Form.get_String(ws).Text);
 							}
 						}
-						Annotation<ShapeNode> ann = m_shape.Annotations.Add(analysisStart, m_shape.Last, wordFS);
+						Annotation<ShapeNode> ann;
+						if (analysisStart != null)
+						{
+							ann = m_shape.Annotations.Add(analysisStart, m_shape.Last, wordFS);
+							m_shape.Add(FeatureStruct.New(featSys).Symbol("bdry").Symbol("wordBdry").Value);
+						}
+						else
+						{
+							ShapeNode node = m_shape.Add(wordFS);
+							ann = node.Annotation;
+						}
 						ann.Data = analysis;
 						annotations.Add(ann);
-						m_shape.Add(FeatureStruct.New(featSys).Symbol("bdry").Symbol("wordBdry").Value);
 					}
 				}
 

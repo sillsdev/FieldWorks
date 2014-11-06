@@ -8,6 +8,7 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.Collections;
 using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.Matching;
@@ -93,28 +94,30 @@ namespace SIL.FieldWorks.IText
 					Description = "Tag"
 				});
 
-			m_featSys.Add(new ComplexFeature("infl") {Description = "Infl"});
+			m_featSys.Add(new ComplexFeature("infl") {Description = "Infl", DefaultValue = FeatureStruct.New().Value});
 			foreach (IFsFeatDefn feature in m_cache.LangProject.MsFeatureSystemOA.FeaturesOC)
 			{
 				var complexFeat = feature as IFsComplexFeature;
 				if (complexFeat != null)
 				{
-					m_featSys.Add(new ComplexFeature(complexFeat.Hvo.ToString(CultureInfo.InvariantCulture)) {Description = complexFeat.Abbreviation.BestAnalysisAlternative.Text});
+					m_featSys.Add(new ComplexFeature(complexFeat.Hvo.ToString(CultureInfo.InvariantCulture)) {Description = complexFeat.Abbreviation.BestAnalysisAlternative.Text, DefaultValue = FeatureStruct.New().Value});
 				}
 				else
 				{
 					var closedFeat = (IFsClosedFeature) feature;
 					m_featSys.Add(new SymbolicFeature(closedFeat.Hvo.ToString(CultureInfo.InvariantCulture), closedFeat.ValuesOC.Select(sym =>
-						new FeatureSymbol(sym.Hvo.ToString(CultureInfo.InvariantCulture), sym.Abbreviation.BestAnalysisAlternative.Text)))
+						new FeatureSymbol(sym.Hvo.ToString(CultureInfo.InvariantCulture), sym.Abbreviation.BestAnalysisAlternative.Text))
+						.Concat(new FeatureSymbol(closedFeat.Hvo.ToString(CultureInfo.InvariantCulture) + "_us", "unspecified")))
 						{
-							Description = closedFeat.Abbreviation.BestAnalysisAlternative.Text
+							Description = closedFeat.Abbreviation.BestAnalysisAlternative.Text,
+							DefaultSymbolID = closedFeat.Hvo.ToString(CultureInfo.InvariantCulture) + "_us"
 						});
 				}
 			}
 
 			var pattern = new Pattern<ComplexConcParagraphData, ShapeNode>();
 			pattern.Children.Add(m_root.GeneratePattern(m_featSys));
-			m_matcher = new Matcher<ComplexConcParagraphData, ShapeNode>(m_spanFactory, pattern);
+			m_matcher = new Matcher<ComplexConcParagraphData, ShapeNode>(m_spanFactory, pattern, new MatcherSettings<ShapeNode> {UseDefaults = true});
 		}
 
 		public IEnumerable<IParaFragment> Search(IStText text)

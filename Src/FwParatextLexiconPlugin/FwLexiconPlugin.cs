@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using Microsoft.Win32;
 using Paratext.LexicalContracts;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
@@ -169,11 +170,19 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 						return LexicalProjectValidationResult.ProjectDoesNotExist;
 				}
 
+				var settings = new FdoSettings {DisableDataMigration = true};
+				using (RegistryKey fwKey = ParatextLexiconPluginRegistryHelper.FieldWorksRegistryKeyLocalMachine)
+				{
+					var sharedXMLBackendCommitLogSize = (int) fwKey.GetValue("SharedXMLBackendCommitLogSize", 0);
+					if (sharedXMLBackendCommitLogSize > 0)
+						settings.SharedXMLBackendCommitLogSize = sharedXMLBackendCommitLogSize;
+				}
+
 				try
 				{
 					var progress = new ParatextLexiconPluginThreadedProgress(m_ui.SynchronizeInvoke) { IsIndeterminate = true, Title = string.Format("Opening {0}", projectId) };
 					fdoCache = FdoCache.CreateCacheFromExistingData(new ParatextLexiconPluginProjectID(backendProviderType, path), Thread.CurrentThread.CurrentUICulture.Name, m_ui,
-						ParatextLexiconPluginDirectoryFinder.FdoDirectories, progress, true);
+						ParatextLexiconPluginDirectoryFinder.FdoDirectories, settings, progress);
 				}
 				catch (FdoDataMigrationForbiddenException)
 				{

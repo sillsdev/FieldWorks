@@ -42,13 +42,14 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		private readonly object m_syncRoot = new object();
 		protected volatile bool m_stopLoadDomain;
 		protected readonly IFdoDirectories m_dirs;
+		protected readonly FdoSettings m_settings;
 
 		/// <summary>
 		///
 		/// </summary>
 		protected FDOBackendProvider(FdoCache cache, IdentityMap identityMap,
 			ICmObjectSurrogateFactory surrogateFactory, IFwMetaDataCacheManagedInternal mdc, IDataMigrationManager dataMigrationManager,
-			IFdoUI ui, IFdoDirectories dirs)
+			IFdoUI ui, IFdoDirectories dirs, FdoSettings settings)
 		{
 			if (cache == null) throw new ArgumentNullException("cache");
 			if (identityMap == null) throw new ArgumentNullException("identityMap");
@@ -56,6 +57,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			if (dataMigrationManager == null) throw new ArgumentNullException("dataMigrationManager");
 			if (ui == null) throw new ArgumentNullException("ui");
 			if (dirs == null) throw new ArgumentNullException("dirs");
+			if (settings == null) throw new ArgumentNullException("settings");
 
 			m_cache = cache;
 			m_cache.Disposing += OnCacheDisposing;
@@ -65,6 +67,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			m_dataMigrationManager = dataMigrationManager;
 			m_ui = ui;
 			m_dirs = dirs;
+			m_settings = settings;
 		}
 
 
@@ -175,7 +178,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		private void OnCacheDisposing(object sender, EventArgs e)
+		protected virtual void OnCacheDisposing(object sender, EventArgs e)
 		{
 			ShutdownRunningThreads();
 		}
@@ -350,7 +353,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// <summary>
 		/// Protected for testing (see MockXMLBackendProvider)
 		/// </summary>
-		protected virtual void StartupInternalWithDataMigrationIfNeeded(IThreadedProgress progressDlg, bool forbidDataMigration)
+		protected virtual void StartupInternalWithDataMigrationIfNeeded(IThreadedProgress progressDlg)
 		{
 			var currentDataStoreVersion = StartupInternal(ModelVersion);
 
@@ -360,7 +363,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			if (currentDataStoreVersion == ModelVersion)
 				return;
 
-			if (forbidDataMigration)
+			if (m_settings.DisableDataMigration)
 				throw new FdoDataMigrationForbiddenException();
 
 			// See if migration involves real data migration(s).
@@ -741,15 +744,14 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// <param name="fBootstrapSystem">True to bootstrap the existing system, false to skip
 		/// that step</param>
 		/// <param name="progressDlg">The progress dialog box</param>
-		/// <param name="forbidDataMigration">True if the application forbids a data migration</param>
 		/// ------------------------------------------------------------------------------------
 		public void StartupExtantLanguageProject(IProjectIdentifier projectId, bool fBootstrapSystem,
-			IThreadedProgress progressDlg, bool forbidDataMigration)
+			IThreadedProgress progressDlg)
 		{
 			ProjectId = projectId;
 			try
 			{
-				StartupInternalWithDataMigrationIfNeeded(progressDlg, forbidDataMigration);
+				StartupInternalWithDataMigrationIfNeeded(progressDlg);
 				InitializeWritingSystemManager();
 				if (fBootstrapSystem)
 					BootstrapExtantSystem();
@@ -813,7 +815,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 			// 3. Startup source BEP, but without instantiating any FDO objects (surrogates, are loaded).
 			using (FdoCache sourceCache = FdoCache.CreateCacheFromExistingData(sourceDataStore.ProjectId,
-				userWsIcuLocale, m_ui, m_cache.ServiceLocator.GetInstance<IFdoDirectories>(), progressDlg))
+				userWsIcuLocale, m_ui, m_dirs, m_settings, progressDlg))
 			{
 				// 4. Do the port.
 				var sourceCacheServLoc = sourceCache.ServiceLocator;
