@@ -495,8 +495,8 @@
         </ConfigurationItem>
         <ConfigurationItem name="Subentry Under Reference" before=" (see under " between=", " after=") " style="Dictionary-CrossReferences" isEnabled="true" field="NonTrivialEntryRoots">
           <ConfigurationItem name="Form" isEnabled="true" field="MLHeadWord">
-            <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-              <Option id="analysis" isEnabled="true"/>
+            <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+              <Option id="vernacular" isEnabled="true"/>
             </WritingSystemOptions>
           </ConfigurationItem>
         </ConfigurationItem>
@@ -605,8 +605,8 @@
       </ConfigurationItem>
       <ConfigurationItem name="Subentry Under Reference" before=" (see under " between=", " after=") " style="Dictionary-CrossReferences" isEnabled="true" field="NonTrivialEntryRoots">
         <ConfigurationItem name="Form" isEnabled="true" field="MLHeadWord">
-          <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-            <Option id="analysis" isEnabled="true"/>
+          <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+            <Option id="vernacular" isEnabled="true"/>
           </WritingSystemOptions>
         </ConfigurationItem>
       </ConfigurationItem>
@@ -1136,8 +1136,8 @@
           </ConfigurationItem>
           <ConfigurationItem name="Subentry Under Reference" before=" (see under " between=", " after=") " style="Dictionary-CrossReferences" isEnabled="true" field="NonTrivialEntryRoots">
             <ConfigurationItem name="Form" isEnabled="true" field="MLHeadWord">
-              <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-                <Option id="analysis" isEnabled="true"/>
+              <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+                <Option id="vernacular" isEnabled="true"/>
               </WritingSystemOptions>
             </ConfigurationItem>
           </ConfigurationItem>
@@ -1219,8 +1219,8 @@
         </ConfigurationItem>
         <ConfigurationItem name="Subentry Under Reference" before=" (see under " between=", " after=") " style="Dictionary-CrossReferences" isEnabled="true" field="NonTrivialEntryRoots">
           <ConfigurationItem name="Form" isEnabled="true" field="MLHeadWord">
-            <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-              <Option id="analysis" isEnabled="true"/>
+            <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+              <Option id="vernacular" isEnabled="true"/>
             </WritingSystemOptions>
           </ConfigurationItem>
         </ConfigurationItem>
@@ -1513,9 +1513,11 @@
         </WritingSystemOptions>
       </ConfigurationItem>
       <ConfigurationItem name="Subentry Under" before=", see under " between=", " isEnabled="true" field="NonTrivialEntryRoots">
-        <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
-          <Option id="vernacular" isEnabled="true"/>
-        </WritingSystemOptions>
+        <ConfigurationItem name="Form" isEnabled="true" field="MLHeadWord">
+          <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+            <Option id="vernacular" isEnabled="true"/>
+          </WritingSystemOptions>
+        </ConfigurationItem>
       </ConfigurationItem>
     </ConfigurationItem>
     <ConfigurationItem name="Summary Definition" before=" " between=" " after=" " isEnabled="true" field="SummaryDefinition">
@@ -1864,8 +1866,8 @@
         </ConfigurationItem>
         <ConfigurationItem name="Subentry Under Reference" before=" (see under " between=", " after=") " style="Dictionary-CrossReferences" isEnabled="true" field="NonTrivialEntryRoots">
           <ConfigurationItem name="Form" isEnabled="true" field="MLHeadWord">
-            <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-              <Option id="analysis" isEnabled="true"/>
+            <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+              <Option id="vernacular" isEnabled="true"/>
             </WritingSystemOptions>
           </ConfigurationItem>
         </ConfigurationItem>
@@ -1975,8 +1977,8 @@
       </ConfigurationItem>
       <ConfigurationItem name="Subentry Under Reference" before=" (see under " between=", " after=") " style="Dictionary-CrossReferences" isEnabled="true" field="NonTrivialEntryRoots">
         <ConfigurationItem name="Form" isEnabled="true" field="MLHeadWord">
-          <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-            <Option id="analysis" isEnabled="true"/>
+          <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+            <Option id="vernacular" isEnabled="true"/>
           </WritingSystemOptions>
         </ConfigurationItem>
       </ConfigurationItem>
@@ -2496,8 +2498,8 @@
           </ConfigurationItem>
           <ConfigurationItem name="Subentry Under Reference" before=" (see under " between=", " after=") " style="Dictionary-CrossReferences" isEnabled="true" field="NonTrivialEntryRoots">
             <ConfigurationItem name="Form" isEnabled="true" field="MLHeadWord">
-              <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-                <Option id="analysis" isEnabled="true"/>
+              <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+                <Option id="vernacular" isEnabled="true"/>
               </WritingSystemOptions>
             </ConfigurationItem>
           </ConfigurationItem>
@@ -2579,8 +2581,8 @@
         </ConfigurationItem>
         <ConfigurationItem name="Subentry Under Reference" before=" (see under " between=", " after=") " style="Dictionary-CrossReferences" isEnabled="true" field="NonTrivialEntryRoots">
           <ConfigurationItem name="Form" isEnabled="true" field="MLHeadWord">
-            <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-              <Option id="analysis" isEnabled="true"/>
+            <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+              <Option id="vernacular" isEnabled="true"/>
             </WritingSystemOptions>
           </ConfigurationItem>
         </ConfigurationItem>
