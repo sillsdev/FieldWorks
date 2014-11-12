@@ -6,7 +6,7 @@
  version="-1"
  lastModified="2014-10-08"
  allPublications="false">
-  <ConfigurationItem name="Main Entry" isEnabled="true" isDuplicate="false" isCustomField="false" field="LexEntry">
+  <ConfigurationItem name="Main Entry" isEnabled="true" isDuplicate="false" isCustomField="false" field="LexEntry" cssClassNameOverride="entry">
     <ConfigurationItem name="Headword" isEnabled="true" isDuplicate="false" isCustomField="false" style="Dictionary-Headword" before="" between=" " after="  " field="HeadWord">
       <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
         <Option id="vernacular" isEnabled="true" />
@@ -734,7 +734,7 @@
     <ConfigurationItem name="Brief Description" isEnabled="false" isDuplicate="false" isCustomField="true" field="Descripción breve" />
     <ConfigurationItem name="Variant Region" isEnabled="false" isDuplicate="false" isCustomField="true" field="Región de la variante "/>
   </ConfigurationItem>
-  <ConfigurationItem name="Minor Entry" isEnabled="true" isDuplicate="false" isCustomField="false" style="Dictionary-Minor" before="" after=" " field="LexEntry">
+  <ConfigurationItem name="Minor Entry" isEnabled="true" isDuplicate="false" isCustomField="false" style="Dictionary-Minor" before="" after=" " field="LexEntry" cssClassNameOverride="minorentry">
     <ListTypeOptions list="minor">
       <Option id="" isEnabled="false" />
     </ListTypeOptions>
