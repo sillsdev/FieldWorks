@@ -20,3 +20,6 @@ R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
 
 # Unit test. Disposed in tear down method
 M: System.Void XMLViewsTests.TestColumnConfigureDialog::SetUp()
+
+# IEnumerator reference
+M: System.Collections.IEnumerator XMLViewsTests.SearchEngineTests/LexEntrySearchEngine/<GetStrings>*::System.Collections.IEnumerable.GetEnumerator()

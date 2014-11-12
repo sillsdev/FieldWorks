@@ -162,6 +162,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_btnInsert.Text = LexTextControls.ks_Create_;
 			m_wsLabel.Text = LexTextControls.ks_WritingSystem_;
 			m_objectsLabel.Text = LexTextControls.ksLexicalEntries;
+			m_oldSearchKey = string.Empty;
 		}
 
 		/// <summary>
@@ -203,7 +204,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
@@ -274,7 +275,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			SetupBasicTextProperties(wp);
 
 			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
-			InitializeMatchingObjects(cache, mediator);
 			// Set font, writing system factory, and writing system code for the Lexical Form
 			// edit box.  Also set an empty string with the proper writing system.
 			m_tbForm.Font = new Font(cache.ServiceLocator.WritingSystemManager.Get(ws).DefaultFontName, 10);
@@ -327,6 +327,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// we've set WSF on all the controls.
 			m_cbWritingSystems.SelectedIndexChanged += m_cbWritingSystems_SelectedIndexChanged;
 
+			InitializeMatchingObjects(cache, mediator);
 
 			// Adjust things if the form box needs to grow to accommodate its style.
 			int oldHeight = m_tbForm.Height;
@@ -558,11 +559,20 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// Reset the list of matching items.
+		/// This is not abstract so that this form can be opened in the Windows Forms Designer.
 		/// </summary>
-		/// <param name="searchKey"></param>
 		protected virtual void ResetMatches(string searchKey)
 		{
-			// override // REVIEW (Hasso) 2014.07: should be abstract
+			// override
+		}
+
+		protected void StartSearchAnimation()
+		{
+			if (!Controls.Contains(m_searchAnimation))
+			{
+				Controls.Add(m_searchAnimation);
+				m_searchAnimation.BringToFront();
+			}
 		}
 
 		protected void ResetForm()
@@ -711,6 +721,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_matchingObjectsBrowser.TabStop = false;
 			this.m_matchingObjectsBrowser.SelectionChanged += new FwSelectionChangedEventHandler(this.m_matchingObjects_SelectionChanged);
 			this.m_matchingObjectsBrowser.SelectionMade += new FwSelectionChangedEventHandler(this.m_matchingObjectsBrowser_SelectionMade);
+			this.m_matchingObjectsBrowser.SearchCompleted += new EventHandler(this.m_matchingObjectsBrowser_SearchCompleted);
 			//
 			// BaseGoDlg
 			//
@@ -753,7 +764,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			int selLen = m_tbForm.SelectionLength;
 			int addToSelection;
 			string fixedText = AdjustText(out addToSelection);
-			int selLocation = fixedText.Length;
+
 			ResetMatches(fixedText);
 			// Even if AdjustText didn't move the selection, it may have changed the text,
 			// which has a side effect in a text box of selecting all of it. We don't want that here,
@@ -838,6 +849,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			DialogResult = DialogResult.OK;
 			Close();
+		}
+
+		private void m_matchingObjectsBrowser_SearchCompleted(object sender, EventArgs e)
+		{
+			if (Controls.Contains(m_searchAnimation))
+				Controls.Remove(m_searchAnimation);
 		}
 
 		private bool m_fTbFormHasBeenFocused;

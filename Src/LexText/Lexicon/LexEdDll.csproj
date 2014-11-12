@@ -430,6 +430,7 @@
     <Compile Include="ReversalEntryGoDlg.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="ReversalEntryGoSearchEngine.cs" />
     <Compile Include="ReversalEntryPOS.cs" />
     <Compile Include="ReversalIndexEntryChangeHandler.cs">
       <SubType>Code</SubType>

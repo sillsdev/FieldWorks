@@ -1,12 +1,10 @@
-using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using XCore;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Common.Controls;
@@ -45,25 +43,25 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		#region Other methods
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "searchEngine is disposed by the mediator.")]
 		protected override void InitializeMatchingObjects(FdoCache cache, Mediator mediator)
 		{
-			var xnWindow = (XmlNode)m_mediator.PropertyTable.GetValue("WindowConfiguration");
+			var xnWindow = (XmlNode) m_mediator.PropertyTable.GetValue("WindowConfiguration");
 			var configNode = xnWindow.SelectSingleNode("controls/parameters/guicontrol[@id=\"WordformsBrowseView\"]/parameters");
-			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromMediator(mediator), mediator, configNode,
-				cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances().Cast<ICmObject>(), SearchType.Prefix,
-				GetWordformSearchFields);
-		}
 
-		private IEnumerable<SearchField> GetWordformSearchFields(ICmObject obj)
-		{
-			var wf = (IWfiWordform)obj;
+			SearchEngine searchEngine = SearchEngine.Get(mediator, "WordformGoSearchEngine", () => new WordformGoSearchEngine(cache));
+
+			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromMediator(mediator), mediator, configNode,
+				searchEngine);
+
+			// start building index
 			var wsObj = (IWritingSystem) m_cbWritingSystems.SelectedItem;
-			var ws = wsObj != null ? wsObj.Handle : m_oldSearchWs;
-			if (m_vernHvos.Contains(ws))
+			if (wsObj != null)
 			{
-				var form = wf.Form.StringOrNull(ws);
-				if (form != null && form.Length > 0)
-					yield return new SearchField(WfiWordformTags.kflidForm, form);
+				ITsString tssForm = m_tsf.MakeString(string.Empty, wsObj.Handle);
+				var field = new SearchField(WfiWordformTags.kflidForm, tssForm);
+				m_matchingObjectsBrowser.SearchAsync(new[] { field });
 			}
 		}
 
@@ -73,51 +71,33 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <param name="searchKey"></param>
 		protected override void ResetMatches(string searchKey)
 		{
-			using (new WaitCursor(this))
+			var wsObj = (IWritingSystem) m_cbWritingSystems.SelectedItem;
+			int wsSelHvo = wsObj != null ? wsObj.Handle : 0;
+
+			string form;
+			int vernWs;
+			if (!GetSearchKey(wsSelHvo, searchKey, out form, out vernWs))
 			{
-				var wsObj = (IWritingSystem) m_cbWritingSystems.SelectedItem;
-				var wsSelHvo = wsObj != null ? wsObj.Handle : 0;
-
-				string form;
-				int vernWs;
-				if (!GetSearchKey(wsSelHvo, searchKey, out form, out vernWs))
-				{
-					var ws = TsStringUtils.GetWsAtOffset(m_tbForm.Tss, 0);
-					if (!GetSearchKey(ws, searchKey, out form, out vernWs))
-						return;
-					wsSelHvo = ws;
-				}
-
-				if (m_oldSearchKey == searchKey && m_oldSearchWs == wsSelHvo)
-					return; // Nothing new to do, so skip it.
-				if (m_oldSearchWs != wsSelHvo)
-				{
-					m_matchingObjectsBrowser.Reset();
-				}
-
-				// disable Go button until we rebuild our match list.
-				m_btnOK.Enabled = false;
-				m_oldSearchKey = searchKey;
-				m_oldSearchWs = wsSelHvo;
-
-				var fields = new List<SearchField>();
-				if (form != null)
-				{
-					var tssForm = m_tsf.MakeString(form, vernWs);
-					fields.Add(new SearchField(WfiWordformTags.kflidForm, tssForm));
-				}
-
-				if (!Controls.Contains(m_searchAnimation))
-				{
-					Controls.Add(m_searchAnimation);
-					m_searchAnimation.BringToFront();
-				}
-
-				m_matchingObjectsBrowser.Search(fields, null);
-
-				if (Controls.Contains(m_searchAnimation))
-					Controls.Remove(m_searchAnimation);
+				var ws = TsStringUtils.GetWsAtOffset(m_tbForm.Tss, 0);
+				if (!GetSearchKey(ws, searchKey, out form, out vernWs))
+					return;
+				wsSelHvo = ws;
 			}
+
+			if (m_oldSearchKey == searchKey && m_oldSearchWs == wsSelHvo)
+				return; // Nothing new to do, so skip it.
+
+			if (m_oldSearchKey != string.Empty || searchKey != string.Empty)
+				StartSearchAnimation();
+
+			// disable Go button until we rebuild our match list.
+			m_btnOK.Enabled = false;
+			m_oldSearchKey = searchKey;
+			m_oldSearchWs = wsSelHvo;
+
+			ITsString tssForm = m_tsf.MakeString(form ?? string.Empty, vernWs);
+			var field = new SearchField(WfiWordformTags.kflidForm, tssForm);
+			m_matchingObjectsBrowser.SearchAsync(new[] { field });
 		}
 
 		private bool GetSearchKey(int ws, string searchKey, out string form, out int vernWs)
