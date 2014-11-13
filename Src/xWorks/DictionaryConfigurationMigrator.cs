@@ -233,7 +233,14 @@ namespace SIL.FieldWorks.XWorks
 			convertedNode.FieldDescription = currentDefaultNode.FieldDescription;
 			convertedNode.CSSClassNameOverride = currentDefaultNode.CSSClassNameOverride;
 			convertedNode.SubField = currentDefaultNode.SubField;
-			// if the base has children and we don't they need to be added
+
+			if(version == -1 && IsReferencedEntriesNode(convertedNode))
+			{
+				ConvertReferencedEntries(convertedNode, currentDefaultNode);
+				return;
+			}
+
+			// if the new defaults have children and we don't they need to be added
 			if(convertedNode.Children == null && currentDefaultNode.Children != null &&
 				currentDefaultNode.Children.Count > 0)
 			{
@@ -293,6 +300,59 @@ namespace SIL.FieldWorks.XWorks
 			{
 				throw new Exception("These nodes are not likely to match the convertedModel.");
 			}
+		}
+
+		/// <summary>
+		/// The new defaults made the following changes to this section of the old configuration (LT-15801):
+		/// Removed Referenced Sense Headword from the configuration tree.
+		///	Whether the target is a whole entry or a specific sense, show the Headword if "Referenced Headword" is checked.
+		/// Remove Summary Definition.
+		/// Change "Gloss" to "Gloss (or Summary Definition)".
+		///	If the target is a specific sense, show that sense's gloss.
+		///	If the target is a whole entry show the Summary Definition for the entry (if there is one)
+		/// The IsEnabled property on the new nodes will be the logical or of the two old node values
+		/// </summary>
+		private void ConvertReferencedEntries(ConfigurableDictionaryNode convertedNode, ConfigurableDictionaryNode defaultNode)
+		{
+			var newChildren = new List<ConfigurableDictionaryNode>(defaultNode.Children);
+			var newHeadword = newChildren.First(child => child.Label == "Referenced Headword");
+			var oldHeadwordNode = convertedNode.Children.First(child => child.Label == "Referenced Headword");
+			var oldSenseHeadwordNode = convertedNode.Children.First(child => child.Label == "Referenced Sense Headword");
+			newHeadword.IsEnabled = oldHeadwordNode.IsEnabled || oldSenseHeadwordNode.IsEnabled;
+			newHeadword.Before = !String.IsNullOrEmpty(oldHeadwordNode.Before) ? oldHeadwordNode.Before : oldSenseHeadwordNode.Before;
+			newHeadword.Between = !String.IsNullOrEmpty(oldHeadwordNode.Between) ? oldHeadwordNode.Between : oldSenseHeadwordNode.Between;
+			newHeadword.After = !String.IsNullOrEmpty(oldHeadwordNode.After) ? oldHeadwordNode.After : oldSenseHeadwordNode.After;
+			// Set the new Headword options based off the old headword (or old sense headword) settings
+			var oldOptions = oldHeadwordNode.DictionaryNodeOptions ?? oldSenseHeadwordNode.DictionaryNodeOptions;
+			if(oldHeadwordNode.DictionaryNodeOptions != null)
+			{
+				newHeadword.DictionaryNodeOptions = oldOptions.DeepClone();
+			}
+
+			var newGloss = newChildren.First(child => child.Label == "Gloss (or Summary Definition)");
+			var oldSummaryNode = convertedNode.Children.First(child => child.Label == "Summary Definition");
+			var oldGlossNode = convertedNode.Children.First(child => child.Label == "Gloss");
+			newGloss.IsEnabled = oldSummaryNode.IsEnabled || oldGlossNode.IsEnabled;
+			newGloss.Before = !String.IsNullOrEmpty(oldGlossNode.Before) ? oldGlossNode.Before : oldSummaryNode.Before;
+			newGloss.Between = !String.IsNullOrEmpty(oldGlossNode.Between) ? oldGlossNode.Between : oldSummaryNode.Between;
+			newGloss.After = !String.IsNullOrEmpty(oldGlossNode.After) ? oldGlossNode.After : oldSummaryNode.After;
+			// Set the new gloss options based off the old summary definition (or old gloss) settings
+			oldOptions = oldSummaryNode.DictionaryNodeOptions ?? oldGlossNode.DictionaryNodeOptions;
+			if(oldHeadwordNode.DictionaryNodeOptions != null)
+			{
+				newGloss.DictionaryNodeOptions = oldOptions.DeepClone();
+			}
+
+			if(convertedNode.Children.Count != 4)
+			{
+				m_logger.WriteLine(String.Format("{0} had children (probably duplicates) that were not migrated.", BuildPathStringFromNode(convertedNode)));
+			}
+			convertedNode.Children = newChildren;
+		}
+
+		private bool IsReferencedEntriesNode(ConfigurableDictionaryNode convertedNode)
+		{
+			return convertedNode.Label == "Referenced Entries";
 		}
 
 		internal static string BuildPathStringFromNode(ConfigurableDictionaryNode child)

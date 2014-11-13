@@ -653,6 +653,14 @@ namespace SIL.FieldWorks.FDO
 
 		/// <returns>this.Owner.SensesOS.ExamplesOS</returns>
 		IEnumerable<ILexExampleSentence> ExampleSentences { get; }
+
+
+
+		/// <summary>
+		/// Virtual property for configuration, wraps <see cref="ComponentLexemesRS"/> collection objects in read only interface
+		/// that exposes certain LexSense- and LexEntry-specific fields.
+		/// </summary>
+		IEnumerable<ISenseOrEntry> ConfigReferencedEntries { get; }
 	}
 
 	public partial interface ILexReference
@@ -5891,5 +5899,10 @@ namespace SIL.FieldWorks.FDO
 		/// The Gloss property if wrapping LexSense, or null for LexEntry
 		/// </summary>
 		IMultiUnicode Gloss { get; }
+
+		/// <summary>
+		/// Returns the SummaryDefinition on Entry, or DefinitionOrGloss on Sense
+		/// </summary>
+		IMultiAccessorBase DefinitionOrGloss { get; }
 	}
 }

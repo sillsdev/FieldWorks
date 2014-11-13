@@ -573,23 +573,13 @@
           </WritingSystemOptions>
         </ConfigurationItem>
       </ConfigurationItem>
-      <ConfigurationItem name="Referenced Entries" isEnabled="true" isDuplicate="false" isCustomField="false" before="" between=", " after="" field="ComponentLexemesRS" cssClassNameOverride="referencedentries">
+      <ConfigurationItem name="Referenced Entries" isEnabled="true" isDuplicate="false" isCustomField="false" before="" between=", " after="" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
         <ConfigurationItem name="Referenced Headword" isEnabled="true" isDuplicate="false" isCustomField="false" style="Classified-Headword" before="" between=" " after="" field="HeadWord">
           <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
             <Option id="vernacular" isEnabled="true" />
           </WritingSystemOptions>
         </ConfigurationItem>
-        <ConfigurationItem name="Summary Definition" isEnabled="false" isDuplicate="false" isCustomField="false" before=" " between=" " after="" field="SummaryDefinition">
-          <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-            <Option id="analysis" isEnabled="true" />
-          </WritingSystemOptions>
-        </ConfigurationItem>
-        <ConfigurationItem name="Referenced Sense" isEnabled="true" isDuplicate="false" isCustomField="false" style="Classified-Headword" before="" between=" " after="" field="HeadWord">
-          <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
-            <Option id="vernacular" isEnabled="true" />
-          </WritingSystemOptions>
-        </ConfigurationItem>
-        <ConfigurationItem name="Gloss" isEnabled="false" isDuplicate="false" isCustomField="false" before=" " between=" " after="" field="Gloss">
+        <ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="false" isDuplicate="false" isCustomField="false" before=" " between=" " after="" field="DefinitionOrGloss">
           <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
             <Option id="analysis" isEnabled="true" />
           </WritingSystemOptions>
@@ -814,25 +804,15 @@
           </WritingSystemOptions>
         </ConfigurationItem>
       </ConfigurationItem>
-      <ConfigurationItem name="Referenced Entries" isEnabled="true" isDuplicate="false" isCustomField="false" before=" " between=", " after="" field="ComponentLexemesRS" cssClassNameOverride="referencedentries">
-        <ConfigurationItem name="Referenced Headword" isEnabled="true" isDuplicate="false" isCustomField="false" style="Classified-Headword" before="" between=" " after="" field="HeadWord">
+      <ConfigurationItem name="Referenced Entries" isEnabled="true" isDuplicate="false" isCustomField="false" before=" " between=", " after="" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
+        <ConfigurationItem name="Referenced Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="SenseHeadWord">
           <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
-            <Option id="vernacular" isEnabled="true" />
+            <Option id="vernacular" isEnabled="true"/>
           </WritingSystemOptions>
         </ConfigurationItem>
-        <ConfigurationItem name="Summary Definition" isEnabled="false" isDuplicate="false" isCustomField="false" before=" " between=" " after="" field="SummaryDefinition">
+        <ConfigurationItem name="Gloss (or Summary Definition)" before=" " between=" " isEnabled="true" field="DefinitionOrGloss">
           <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-            <Option id="analysis" isEnabled="true" />
-          </WritingSystemOptions>
-        </ConfigurationItem>
-        <ConfigurationItem name="Referenced Sense Headword" isEnabled="true" isDuplicate="false" isCustomField="false" before="" between=" " after="" field="HeadWord">
-          <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
-            <Option id="vernacular" isEnabled="true" />
-          </WritingSystemOptions>
-        </ConfigurationItem>
-        <ConfigurationItem name="Gloss" isEnabled="true" isDuplicate="false" isCustomField="false" before=" " between=" " after="" field="Gloss">
-          <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-            <Option id="all analysis" isEnabled="true" />
+            <Option id="analysis" isEnabled="true"/>
           </WritingSystemOptions>
         </ConfigurationItem>
       </ConfigurationItem>

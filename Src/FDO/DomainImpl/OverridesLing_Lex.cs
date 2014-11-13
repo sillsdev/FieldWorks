@@ -8990,6 +8990,23 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				return from sense in ((ILexEntry) Owner).SensesOS from example in sense.ExamplesOS select example;
 			}
 		}
+
+		/// <summary>
+		/// Virtual property for configuration, wraps <see cref="ComponentLexemesRS"/> collection objects in read only interface
+		/// that exposes certain LexSense- and LexEntry-specific fields.
+		/// </summary>
+		public IEnumerable<ISenseOrEntry> ConfigReferencedEntries
+		{
+			get
+			{
+				var wrappedTargets = new List<ISenseOrEntry>();
+				if(ComponentLexemesRS.Count > 0)
+				{
+					wrappedTargets.AddRange(ComponentLexemesRS.Select(target => new SenseOrEntry(target)));
+				}
+				return wrappedTargets;
+			}
+		}
 	}
 
 	/// <summary>
@@ -9342,6 +9359,24 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
+				var sense = Item as ILexSense;
+				if(sense != null)
+				{
+					return sense.Gloss;
+				}
+				return null;
+			}
+		}
+
+		public IMultiAccessorBase DefinitionOrGloss
+		{
+			get
+			{
+				var entry = Item as ILexEntry;
+				if(entry != null)
+				{
+					return entry.SummaryDefinition;
+				}
 				var sense = Item as ILexSense;
 				if(sense != null)
 				{

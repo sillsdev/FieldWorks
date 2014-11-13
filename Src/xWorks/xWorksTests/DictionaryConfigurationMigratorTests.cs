@@ -756,6 +756,179 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual(customChild.Label, customChild.FieldDescription, "Custom nodes' Labels and Fields should match");
 		}
 
+		#region Minor Entry Componenents Referenced Entries Tests
+		private const string HwBefore = "H.before";
+		private const string GlsBefore = "G.before";
+		private const string HwAfter = "H.after";
+		private const string GlsAfter = "G.after";
+		private const string HwBetween = "H.between";
+		private const string GlsBetween = "G.between";
+
+		private DictionaryConfigurationModel BuildConvertedReferenceEntryNodes(bool enableHeadword,
+			bool enableSummaryDef, bool enableSenseHeadWord, bool enableGloss)
+		{
+			var headWord = new ConfigurableDictionaryNode { Label = "Referenced Headword", IsEnabled = enableHeadword, Before = HwBefore};
+			var summaryDef = new ConfigurableDictionaryNode { Label = "Summary Definition", IsEnabled = enableSummaryDef, Before = GlsBefore};
+			var senseHeadWord = new ConfigurableDictionaryNode { Label = "Referenced Sense Headword", IsEnabled = enableSenseHeadWord, Between = HwBetween, After = HwAfter };
+			var gloss = new ConfigurableDictionaryNode { Label = "Gloss", IsEnabled = enableGloss, Between = GlsBetween, After = GlsAfter};
+			var referencedEntriesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Entries",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { headWord, summaryDef, senseHeadWord, gloss }
+			};
+			var componentsNode = new ConfigurableDictionaryNode
+			{
+				Label = "Components",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { referencedEntriesNode }
+			};
+			var minorEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Minor Entry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { componentsNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {minorEntryNode});
+
+			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { minorEntryNode }, Version = -1 };
+		}
+
+		private DictionaryConfigurationModel BuildCurrentDefaultReferenceEntryNodes(bool enableHeadWord,
+			bool enableGloss)
+		{
+			var headWord = new ConfigurableDictionaryNode { Label = "Referenced Headword", IsEnabled = enableHeadWord, FieldDescription = "HeadWord"};
+			var gloss = new ConfigurableDictionaryNode { Label = "Gloss (or Summary Definition)", IsEnabled = enableGloss, FieldDescription = "DefinitionOrGloss"};
+			var referencedEntriesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ConfigReferencedEntries",
+				Label = "Referenced Entries",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { headWord, gloss }
+			};
+			var componentsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ComplexFormEntryRefs",
+				Label = "Components",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { referencedEntriesNode }
+			};
+			var minorEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Label = "Minor Entry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { componentsNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { minorEntryNode });
+
+			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { minorEntryNode } };
+		}
+
+		///<summary/>
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_MinorEntryComponentsReferencedEntriesChanged()
+		{
+			const string refEntriesPath = "//ConfigurationItem[@name='Minor Entry']/ConfigurationItem[@name='Components']/ConfigurationItem[@name='Referenced Entries']/";
+			using(var convertedModelFile = new TempFile())
+			{
+				var convertedMinorEntry = BuildConvertedReferenceEntryNodes(true, true, true, true);
+				convertedMinorEntry.FilePath = convertedModelFile.Path;
+				var defaultMinorEntry = BuildCurrentDefaultReferenceEntryNodes(true, true);
+
+				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedMinorEntry, defaultMinorEntry);
+				convertedMinorEntry.Save();
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(refEntriesPath + "ConfigurationItem[@name='Referenced Sense Headword']");
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(refEntriesPath + "ConfigurationItem[@name='Gloss']");
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(refEntriesPath + "ConfigurationItem[@name='Summary Definition']");
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(refEntriesPath + "ConfigurationItem[@name='Referenced Headword']", 1);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(refEntriesPath + "ConfigurationItem[@name='Gloss (or Summary Definition)']", 1);
+			}
+		}
+		///<summary/>
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_MinorEntryComponentsBeforeAfterBetweenMigrated()
+		{
+			using(var convertedModelFile = new TempFile())
+			{
+				var convertedMinorEntry = BuildConvertedReferenceEntryNodes(true, true, true, true);
+				convertedMinorEntry.FilePath = convertedModelFile.Path;
+				var defaultMinorEntry = BuildCurrentDefaultReferenceEntryNodes(true, true);
+
+				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedMinorEntry, defaultMinorEntry);
+				string cssResults = null;
+				Assert.DoesNotThrow(()=>cssResults = CssGenerator.GenerateCssFromConfiguration(convertedMinorEntry, m_mediator));
+				Assert.That(cssResults, Is.StringContaining(HwBefore));
+				Assert.That(cssResults, Is.StringContaining(HwBetween));
+				Assert.That(cssResults, Is.StringContaining(HwAfter));
+				Assert.That(cssResults, Is.StringContaining(GlsBefore));
+				Assert.That(cssResults, Is.StringContaining(GlsBetween));
+				Assert.That(cssResults, Is.StringContaining(GlsAfter));
+			}
+		}
+
+		///<summary/>
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_MinorEntryComponentsHeadwordChecksMigrated()
+		{
+			const string refEntriesPath = "//ConfigurationItem[@name='Minor Entry']/ConfigurationItem[@name='Components']/ConfigurationItem[@name='Referenced Entries']/";
+			using(var convertedModelFile = new TempFile())
+			{
+				var convertedMinorEntry = BuildConvertedReferenceEntryNodes(true, false, false, false);
+				convertedMinorEntry.FilePath = convertedModelFile.Path;
+				var defaultMinorEntry = BuildCurrentDefaultReferenceEntryNodes(false, false);
+				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedMinorEntry, defaultMinorEntry);
+				convertedMinorEntry.Save();
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(refEntriesPath + "ConfigurationItem[@name='Referenced Headword' and @isEnabled='true']", 1);
+
+				convertedMinorEntry = BuildConvertedReferenceEntryNodes(false, false, false, false);
+				convertedMinorEntry.FilePath = convertedModelFile.Path;
+				defaultMinorEntry = BuildCurrentDefaultReferenceEntryNodes(true, false);
+				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedMinorEntry, defaultMinorEntry);
+				convertedMinorEntry.Save();
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(refEntriesPath + "ConfigurationItem[@name='Referenced Headword' and @isEnabled='false']", 1);
+
+				convertedMinorEntry = BuildConvertedReferenceEntryNodes(false, false, true, false);
+				convertedMinorEntry.FilePath = convertedModelFile.Path;
+				defaultMinorEntry = BuildCurrentDefaultReferenceEntryNodes(false, false);
+				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedMinorEntry, defaultMinorEntry);
+				convertedMinorEntry.Save();
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(refEntriesPath + "ConfigurationItem[@name='Referenced Headword' and @isEnabled='true']", 1);
+			}
+		}
+
+		///<summary/>
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_MinorEntryComponentsGlossChecksMigrated()
+		{
+			const string refEntriesPath = "//ConfigurationItem[@name='Minor Entry']/ConfigurationItem[@name='Components']/ConfigurationItem[@name='Referenced Entries']/";
+			using(var convertedModelFile = new TempFile())
+			{
+				var convertedMinorEntry = BuildConvertedReferenceEntryNodes(false, true, false, false);
+				convertedMinorEntry.FilePath = convertedModelFile.Path;
+				var defaultMinorEntry = BuildCurrentDefaultReferenceEntryNodes(false, false);
+				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedMinorEntry, defaultMinorEntry);
+				convertedMinorEntry.Save();
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(refEntriesPath + "ConfigurationItem[@name='Gloss (or Summary Definition)' and @isEnabled='true']", 1);
+
+				convertedMinorEntry = BuildConvertedReferenceEntryNodes(false, false, false, false);
+				convertedMinorEntry.FilePath = convertedModelFile.Path;
+				defaultMinorEntry = BuildCurrentDefaultReferenceEntryNodes(false, true);
+				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedMinorEntry, defaultMinorEntry);
+				convertedMinorEntry.Save();
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(refEntriesPath + "ConfigurationItem[@name='Gloss (or Summary Definition)' and @isEnabled='false']", 1);
+
+				convertedMinorEntry = BuildConvertedReferenceEntryNodes(false, false, false, true);
+				convertedMinorEntry.FilePath = convertedModelFile.Path;
+				defaultMinorEntry = BuildCurrentDefaultReferenceEntryNodes(false, false);
+				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedMinorEntry, defaultMinorEntry);
+				convertedMinorEntry.Save();
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(refEntriesPath + "ConfigurationItem[@name='Gloss (or Summary Definition)' and @isEnabled='true']", 1);
+			}
+		}
+
+		#endregion
+
 		#region Split Referenced Complex Forms
 		/// <remarks>
 		/// It takes 0.2 seconds to save this model to a temp file and load it

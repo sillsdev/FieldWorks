@@ -171,23 +171,13 @@
           </WritingSystemOptions>
         </ConfigurationItem>
       </ConfigurationItem>
-      <ConfigurationItem name="Referenced Entries" before=" " between=", " isEnabled="true" field="ComponentLexemesRS" cssClassNameOverride="referencedentries">
+      <ConfigurationItem name="Referenced Entries" before=" " between=", " isEnabled="true" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
         <ConfigurationItem name="Referenced Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWord">
           <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
             <Option id="vernacular" isEnabled="true"/>
           </WritingSystemOptions>
         </ConfigurationItem>
-        <ConfigurationItem name="Summary Definition" before=" " between=" " isEnabled="true" field="SummaryDefinition">
-          <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-            <Option id="analysis" isEnabled="true"/>
-          </WritingSystemOptions>
-        </ConfigurationItem>
-        <ConfigurationItem name="Referenced Sense" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWord">
-          <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
-            <Option id="vernacular" isEnabled="true"/>
-          </WritingSystemOptions>
-        </ConfigurationItem>
-        <ConfigurationItem name="Gloss" before=" " between=" " isEnabled="false" field="Gloss">
+        <ConfigurationItem name="Gloss (or Summary Definition)" before=" " between=" " isEnabled="false" field="DefinitionOrGloss">
           <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
             <Option id="all analysis" isEnabled="true"/>
           </WritingSystemOptions>
@@ -869,23 +859,13 @@
           </WritingSystemOptions>
         </ConfigurationItem>
       </ConfigurationItem>
-      <ConfigurationItem name="Referenced Entries" before=" " between=", " isEnabled="true" field="ComponentLexemesRS" cssClassNameOverride="referencedentries">
+      <ConfigurationItem name="Referenced Entries" before=" " between=", " isEnabled="true" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
         <ConfigurationItem name="Referenced Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWord">
           <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
             <Option id="vernacular" isEnabled="true"/>
           </WritingSystemOptions>
         </ConfigurationItem>
-        <ConfigurationItem name="Summary Definition" before=" " between=" " isEnabled="true" field="SummaryDefinition">
-          <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-            <Option id="analysis" isEnabled="true"/>
-          </WritingSystemOptions>
-        </ConfigurationItem>
-        <ConfigurationItem name="Referenced Sense Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWord">
-          <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
-            <Option id="vernacular" isEnabled="true"/>
-          </WritingSystemOptions>
-        </ConfigurationItem>
-        <ConfigurationItem name="Gloss" before=" " between=" " isEnabled="false" field="Gloss">
+        <ConfigurationItem name="Gloss (or Summary Definition)" before=" " between=" " isEnabled="false" field="DefinitionOrGloss">
           <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
             <Option id="all analysis" isEnabled="true"/>
           </WritingSystemOptions>
