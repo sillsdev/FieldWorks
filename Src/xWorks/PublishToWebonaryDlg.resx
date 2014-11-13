@@ -136,7 +136,10 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="explanationLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 0</value>
+    <value>3, 3</value>
+  </data>
+  <data name="explanationLabel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3,3,3,0</value>
   </data>
   <data name="explanationLabel.Size" type="System.Drawing.Size, System.Drawing">
     <value>386, 17</value>
@@ -148,7 +151,7 @@
     <value>To apply for an account at Webonary, please visit http://www.webonary.org/.</value>
   </data>
   <data name="explanationLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleLeft</value>
+    <value>TopLeft</value>
   </data>
   <data name="&gt;&gt;explanationLabel.Name" xml:space="preserve">
     <value>explanationLabel</value>
