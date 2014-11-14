@@ -44,8 +44,8 @@
 	  </part>
 	  <part ref="PublicationSection" label="Publication Settings" menu="mnuDataTree-Help" hotlinks="mnuDataTree-Help">
 		<indent>
-			<part ref="PublishIn"   visibility="ifdata" />
-			<part ref="ShowMainEntryIn" label="Show As Headword In" visibility="ifdata" />
+			<part ref="PublishIn"   visibility="always" />
+			<part ref="ShowMainEntryIn" label="Show As Headword In" visibility="always" />
 			<part ref="EntryRefs" param="Publication" visibility="ifdata"/>
 			<part ref="ShowMinorEntry"/>
 			<part ref="Subentries" visibility="ifdata"/>
