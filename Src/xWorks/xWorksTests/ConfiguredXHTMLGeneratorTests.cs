@@ -8,7 +8,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
+using NMock.Constraints;
 using NUnit.Framework;
 using Palaso.TestUtilities;
 using SIL.CoreImpl;
@@ -19,6 +21,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.FDOTests;
+using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -98,6 +101,18 @@ namespace SIL.FieldWorks.XWorks
 		const string xpathThruSense = "/div[@class='lexentry']/span[@class='senses']/span[@class='sense']";
 
 		[Test]
+		public void GeneratorSettings_NullArgsThrowArgumentNull()
+		{
+			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				// ReSharper disable AccessToDisposedClosure // Justification: Assert calls lambdas immediately, so XHTMLWriter is not used after being disposed
+				Assert.Throws(typeof(ArgumentNullException), () => new ConfiguredXHTMLGenerator.GeneratorSettings(null, XHTMLWriter, false, false, null));
+				Assert.Throws(typeof(ArgumentNullException), () => new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, null, false, false, null));
+				// ReSharper restore AccessToDisposedClosure
+			}
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_NullArgsThrowArgumentNull()
 		{
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
@@ -105,11 +120,11 @@ namespace SIL.FieldWorks.XWorks
 				var mainEntryNode = new ConfigurableDictionaryNode();
 				var factory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 				var entry = factory.Create();
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 				//SUT
-				Assert.Throws(typeof(ArgumentNullException), () => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(null, mainEntryNode, null, XHTMLWriter, Cache));
-				Assert.Throws(typeof(ArgumentNullException), () => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, (ConfigurableDictionaryNode)null, null, XHTMLWriter, Cache));
-				Assert.Throws(typeof(ArgumentNullException), () => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, null, Cache));
-				Assert.Throws(typeof(ArgumentNullException), () => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, XHTMLWriter, null));
+				Assert.Throws(typeof(ArgumentNullException), () => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(null, mainEntryNode, null, settings));
+				Assert.Throws(typeof(ArgumentNullException), () => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, (ConfigurableDictionaryNode)null, null, settings));
+				Assert.Throws(typeof(ArgumentNullException), () => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, null));
 			}
 		}
 
@@ -120,14 +135,15 @@ namespace SIL.FieldWorks.XWorks
 			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 // ReSharper disable AccessToDisposedClosure // Justification: Assert calls lambdas immediately, so XHTMLWriter is not used after being disposed
 				//Test a blank main node description
 				//SUT
-				Assert.That(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, XHTMLWriter, Cache),
+				Assert.That(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings),
 					Throws.InstanceOf<ArgumentException>().With.Message.Contains("Invalid configuration"));
 				mainEntryNode.FieldDescription = "LexSense";
 				//Test a configuration with a valid but incorrect type
-				Assert.That(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, XHTMLWriter, Cache),
+				Assert.That(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings),
 					Throws.InstanceOf<ArgumentException>().With.Message.Contains("doesn't configure this type"));
 // ReSharper restore AccessToDisposedClosure
 			}
@@ -154,8 +170,9 @@ namespace SIL.FieldWorks.XWorks
 			AddHeadwordToEntry(entry, "HeadWordTest");
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 				//SUT
-				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, XHTMLWriter, Cache));
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
 				const string frenchHeadwordOfHeadwordTest = "/div[@class='lexentry']/span[@class='headword' and @lang='fr' and text()='HeadWordTest']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(frenchHeadwordOfHeadwordTest, 1);
@@ -187,8 +204,9 @@ namespace SIL.FieldWorks.XWorks
 			morph.Form.set_String(wsFr, Cache.TsStrFactory.MakeString("LexemeFormTest", wsFr));
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 				//SUT
-				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, XHTMLWriter, Cache));
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
 				const string frenchLexForm = "/div[@class='lexentry']/span[@class='lexemeformoa' and @lang='fr' and text()='LexemeFormTest']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(frenchLexForm, 1);
@@ -242,8 +260,9 @@ namespace SIL.FieldWorks.XWorks
 			pronunciation.LocationRA = location;
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 				//SUT
-				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, XHTMLWriter, Cache));
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
 				const string hereLocation = "/div[@class='lexentry']/span[@class='pronunciations']/span[@class='pronunciation']/span[@class='location']/span[@class='name' and @lang='fr' and text()='Here!']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(hereLocation, 1);
@@ -269,8 +288,9 @@ namespace SIL.FieldWorks.XWorks
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 				//SUT
-				ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, XHTMLWriter,Cache);
+				ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
 				Assert.IsEmpty(XHTMLStringBuilder.ToString(), "Should not have generated anything for a disabled node");
 			}
 		}
@@ -296,12 +316,11 @@ namespace SIL.FieldWorks.XWorks
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 				XHTMLWriter.WriteStartElement("TESTWRAPPER"); //keep the xml valid (single root element)
 				//SUT
-				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, XHTMLWriter,
-																								Cache));
-				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryTwo, mainEntryNode, null, XHTMLWriter,
-																								Cache));
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings));
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryTwo, mainEntryNode, null, settings));
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
 				var entryWithHomograph = "/TESTWRAPPER/div[@class='lexentry']/span[@class='homographnumber' and text()='1']";
@@ -340,8 +359,9 @@ namespace SIL.FieldWorks.XWorks
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 				//SUT
-				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, XHTMLWriter, Cache));
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
 				const string oneSenseWithGlossOfGloss = xpathThruSense + "/span[@lang='en' and text()='gloss']";
 				//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
@@ -383,12 +403,11 @@ namespace SIL.FieldWorks.XWorks
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 				XHTMLWriter.WriteStartElement("TESTWRAPPER"); //keep the xml valid (single root element)
 				//SUT
-				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, XHTMLWriter,
-																							  Cache));
-				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryTwo, mainEntryNode, null, XHTMLWriter,
-																							  Cache));
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings));
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryTwo, mainEntryNode, null, settings));
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
 				var entryOneHasSensesSpan = "/TESTWRAPPER/div[@class='lexentry' and @id='hvo" + entryOneId + "']/span[@class='senses']";
@@ -412,8 +431,9 @@ namespace SIL.FieldWorks.XWorks
 			var dictionaryModel = new DictionaryConfigurationModel(defaultRoot, Cache);
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 				//SUT
-				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, dictionaryModel.Parts[0], pubDecorator, XHTMLWriter, Cache));
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, dictionaryModel.Parts[0], pubDecorator, settings));
 				XHTMLWriter.Flush();
 				var entryExists = "/div[@class='entry' and @id='hvo" + entry.Hvo + "']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(entryExists, 1);
@@ -450,8 +470,9 @@ namespace SIL.FieldWorks.XWorks
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 				//SUT
-				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, XHTMLWriter, Cache));
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
 				const string sensesThatShouldNotBe = "/div[@class='entry']/span[@class='senses']";
 				const string headwordThatShouldNotBe = "//span[@class='gloss']";
@@ -492,8 +513,9 @@ namespace SIL.FieldWorks.XWorks
 
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 				// SUT
-				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, XHTMLWriter, Cache));
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
 				const string gramInfoPath = xpathThruSense + "/span[@class='morphosyntaxanalysis']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(gramInfoPath, 1);
@@ -528,8 +550,9 @@ namespace SIL.FieldWorks.XWorks
 
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 				// SUT
-				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, XHTMLWriter, Cache));
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
 				const string gramInfoPath = xpathThruSense + "/span[@class='morphosyntaxanalysis']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(gramInfoPath, 0);
@@ -564,8 +587,9 @@ namespace SIL.FieldWorks.XWorks
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 				// SUT
-				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, XHTMLWriter, Cache));
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
 				const string scientificCatPath = xpathThruSense + "/span[@class='scientificname']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(scientificCatPath, 0);
@@ -627,8 +651,9 @@ namespace SIL.FieldWorks.XWorks
 
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 				// SUT
-				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, XHTMLWriter, Cache));
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
 
 				const string gramAbbr = xpathThruSense + "/span[@class='morphosyntaxanalysis']/span[@class='interlinearabbrtss' and @lang='fr' and text()='Blah:Any']";
@@ -669,8 +694,9 @@ namespace SIL.FieldWorks.XWorks
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 				//SUT
-				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, XHTMLWriter, Cache));
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
 				const string senseWithdefinitionOrGloss = "//span[@class='sense']/span[@class='definitionorgloss' and text()='gloss']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(senseWithdefinitionOrGloss, 1);
@@ -743,8 +769,9 @@ namespace SIL.FieldWorks.XWorks
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 				// SUT
-				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, XHTMLWriter, Cache));
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
 				var headwordMatch = String.Format("//span[@class='{0}']//span[@class='{1}' and text()='{2}']",
 															 nters, headWord, entryThreeForm);
@@ -780,8 +807,9 @@ namespace SIL.FieldWorks.XWorks
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 				//SUT
-				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, XHTMLWriter, Cache));
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
 				const string etymologyWithGeorgeSource = "//span[@class='etymology']/span[@class='source' and text()='George']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(etymologyWithGeorgeSource, 1);
@@ -1119,8 +1147,9 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseToEntry(testEntry, "second gloss");
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 				//SUT
-				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, XHTMLWriter, Cache));
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings));
 				XHTMLWriter.Flush();
 				const string senseNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]/span[@lang='en' and text()='gloss']";
 				const string senseNumberTwo = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2']]/span[@lang='en' and text()='second gloss']";
@@ -1163,8 +1192,9 @@ namespace SIL.FieldWorks.XWorks
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 				// SUT
-				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, XHTMLWriter, Cache));
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings));
 				XHTMLWriter.Flush();
 				const string senseNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]/span[@lang='en' and text()='gloss']";
 				// This assert is dependent on the specific entry data created in CreateInterestingLexEntry
@@ -1205,8 +1235,9 @@ namespace SIL.FieldWorks.XWorks
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 				// SUT
-				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, XHTMLWriter, Cache));
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings));
 				XHTMLWriter.Flush();
 				const string senseNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]/span[@lang='en' and text()='gloss']";
 				// This assert is dependent on the specific entry data created in CreateInterestingLexEntry
@@ -1252,8 +1283,9 @@ namespace SIL.FieldWorks.XWorks
 
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 				//SUT
-				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, XHTMLWriter, Cache));
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
 				const string xpathThruExample = xpathThruSense + "/span[@class='examples']/span[@class='example']";
 				var oneSenseWithExample = String.Format(xpathThruExample + "/span[@lang='fr' and text()='{0}']", example);
@@ -1304,8 +1336,9 @@ namespace SIL.FieldWorks.XWorks
 
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 				//SUT
-				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, XHTMLWriter, Cache));
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
 				const string xpathThruExampleSentence = "/div[@class='lexentry']/span[@class='complexformsnotsubentries']/span[@class='complexformsnotsubentrie']/span[@class='examplesentences']/span[@class='examplesentence']";
 				var oneSenseWithExample = String.Format(xpathThruExampleSentence + "/span[@lang='fr' and text()='{0}']", example);
@@ -1342,8 +1375,9 @@ namespace SIL.FieldWorks.XWorks
 
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 				//SUT
-				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, XHTMLWriter, Cache));
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(
 					"/div[@class='lexentry']/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@lang='fr']", 2);
@@ -1381,8 +1415,9 @@ namespace SIL.FieldWorks.XWorks
 
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 				//SUT
-				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, XHTMLWriter, Cache));
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(
 					xpathThruSense + "/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@lang='fr']", 2);
@@ -1491,8 +1526,9 @@ namespace SIL.FieldWorks.XWorks
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 				//SUT
-				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, XHTMLWriter, Cache));
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
 				const string oneSenseWithPicture = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/img[@class='photo' and @id]";
 				const string oneSenseWithPictureCaption = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/div[@class='caption']/span[text()='caption']";
@@ -1505,34 +1541,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_PictureWithNonUnicodePathLinksCorrectly()
 		{
-			var wsOpts = new DictionaryNodeWritingSystemOptions
-			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true }
-				}
-			};
-			var captionNode = new ConfigurableDictionaryNode { FieldDescription = "Caption", IsEnabled = true, DictionaryNodeOptions = wsOpts };
-			var thumbNailNode = new ConfigurableDictionaryNode { FieldDescription = "PictureFileRA", CSSClassNameOverride = "picture", IsEnabled = true };
-			var pictureNode = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "PicturesOfSenses",
-				IsEnabled = true,
-				CSSClassNameOverride = "Pictures",
-				Children = new List<ConfigurableDictionaryNode> { thumbNailNode, captionNode }
-			};
-			var sensesNode = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "Senses",
-				Label = "Senses",
-				IsEnabled = true,
-			};
-			var mainEntryNode = new ConfigurableDictionaryNode
-			{
-				Children = new List<ConfigurableDictionaryNode> { sensesNode, pictureNode },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
-			};
+			var mainEntryNode = CreatePictureModel();
 			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
 			var testEntry = CreateInterestingLexEntry();
 			var sense = testEntry.SensesOS[0];
@@ -1553,11 +1562,170 @@ namespace SIL.FieldWorks.XWorks
 
 			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
+				// generates a src attribute with an absolute file path
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 				//SUT
-				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, XHTMLWriter, Cache));
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
 				var pictureWithComposedPath = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img[contains(@src, '" + composedPath + "')]";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(pictureWithComposedPath, 1);
+			}
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_PictureCopiedAndRelativePathUsed()
+		{
+			var mainEntryNode = CreatePictureModel();
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			var testEntry = CreateInterestingLexEntry();
+			var sense = testEntry.SensesOS[0];
+			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
+			sense.PicturesOS.Add(sensePic);
+			var pic = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+			Cache.LangProject.MediaOC.Add(folder);
+			folder.FilesOC.Add(pic);
+			var filePath = Path.GetTempFileName();
+			// Write a couple of jpeg header bytes (for no particular reason)
+			File.WriteAllBytes(filePath, new byte[] { 0xFF, 0xE0, 0x0, 0x0});
+			pic.InternalPath = filePath;
+			sensePic.PictureFileRA = pic;
+
+			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var tempFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "ConfigDictPictureExportTest"));
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, true, true, tempFolder.FullName);
+				//SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
+				XHTMLWriter.Flush();
+				var pictureRelativePath = Path.Combine("pictures", Path.GetFileName(filePath));
+				var pictureWithComposedPath = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img[starts-with(@src, '" + pictureRelativePath + "')]";
+				if (!MiscUtils.IsUnix)
+					AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(pictureWithComposedPath, 1);
+				// that src starts with a string, and escaping any Windows path separators
+				AssertRegex(XHTMLStringBuilder.ToString(), string.Format("src=\"{0}[^\"]*\"", pictureRelativePath.Replace(@"\", @"\\")), 1);
+				Assert.IsTrue(File.Exists(Path.Combine(tempFolder.Name, "pictures", filePath)));
+				Palaso.IO.DirectoryUtilities.DeleteDirectoryRobust(tempFolder.FullName);
+			}
+			File.Delete(filePath);
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_TwoDifferentFilesGetTwoDifferentResults()
+		{
+			var mainEntryNode = CreatePictureModel();
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			var testEntry = CreateInterestingLexEntry();
+			AddSenseToEntry(testEntry, "second");
+			var sense = testEntry.SensesOS[0];
+			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
+			sense.PicturesOS.Add(sensePic);
+			var pic = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+			var sense2 = testEntry.SensesOS[1];
+			var sensePic2 = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
+			sense2.PicturesOS.Add(sensePic2);
+			var pic2 = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+			var folder2 = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+			Cache.LangProject.MediaOC.Add(folder);
+			Cache.LangProject.MediaOC.Add(folder2);
+			folder.FilesOC.Add(pic);
+			folder2.FilesOC.Add(pic2);
+			var fileName = Path.GetRandomFileName();
+			var tempPath1 = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+			Directory.CreateDirectory(tempPath1);
+			var tempPath2 = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+			Directory.CreateDirectory(tempPath2);
+			// Write a couple of jpeg header bytes (for no particular reason)
+			var filePath1 = Path.Combine(tempPath1, fileName);
+			File.WriteAllBytes(filePath1, new byte[] { 0xFF, 0xE0, 0x0, 0x0, 0x1 });
+			var filePath2 = Path.Combine(tempPath2, fileName);
+			File.WriteAllBytes(filePath2, new byte[] { 0xFF, 0xE0, 0x0, 0x0, 0x2 });
+			pic.InternalPath = filePath1;
+			pic2.InternalPath = filePath2;
+			sensePic.PictureFileRA = pic;
+			sensePic2.PictureFileRA = pic2;
+
+			var tempFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "ConfigDictPictureExportTest"));
+			try
+			{
+				using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+				{
+					var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, true, true, tempFolder.FullName);
+					//SUT
+					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
+					XHTMLWriter.Flush();
+					var pictureRelativePath = Path.Combine("pictures", Path.GetFileName(fileName));
+					var pictureWithComposedPath = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img[contains(@src, '" + pictureRelativePath + "')]";
+					if (!MiscUtils.IsUnix)
+						AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(pictureWithComposedPath, 1);
+					// that src contains a string, and escaping any Windows path separators
+					AssertRegex(XHTMLStringBuilder.ToString(), string.Format("src=\"[^\"]*{0}[^\"]*\"", pictureRelativePath.Replace(@"\", @"\\")), 1);
+					// The second file with the same name should have had something appended to the end of the filename but the initial filename should match both entries
+					var filenameWithoutExtension = Path.GetFileNameWithoutExtension(pictureRelativePath);
+					var pictureStartsWith ="/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img[contains(@src, '" +filenameWithoutExtension + "')]";
+					if (!MiscUtils.IsUnix)
+						AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(pictureStartsWith, 2);
+					// that src contains a string
+					AssertRegex(XHTMLStringBuilder.ToString(), string.Format("src=\"[^\"]*{0}[^\"]*\"", filenameWithoutExtension), 2);
+					Assert.AreEqual(2, Directory.EnumerateFiles(Path.Combine(tempFolder.FullName, "pictures")).Count(), "Wrong number of pictures copied.");
+				}
+			}
+			finally
+			{
+				Palaso.IO.DirectoryUtilities.DeleteDirectoryRobust(tempFolder.FullName);
+				File.Delete(filePath1);
+				File.Delete(filePath2);
+			}
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_TwoDifferentLinksToTheSamefileWorks()
+		{
+			var mainEntryNode = CreatePictureModel();
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			var testEntry = CreateInterestingLexEntry();
+			AddSenseToEntry(testEntry, "second");
+			var sense = testEntry.SensesOS[0];
+			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
+			sense.PicturesOS.Add(sensePic);
+			var pic = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+			var sense2 = testEntry.SensesOS[1];
+			var sensePic2 = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
+			sense2.PicturesOS.Add(sensePic2);
+			Cache.LangProject.MediaOC.Add(folder);
+			folder.FilesOC.Add(pic);
+			var fileName = Path.GetTempFileName();
+			// Write a couple of jpeg header bytes (for no particular reason)
+			File.WriteAllBytes(fileName, new byte[] { 0xFF, 0xE0, 0x0, 0x0, 0x1 });
+			pic.InternalPath = fileName;
+			sensePic.PictureFileRA = pic;
+			sensePic2.PictureFileRA = pic;
+
+			var tempFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "ConfigDictPictureExportTest"));
+			try
+			{
+				using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+				{
+					var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, true, true, tempFolder.FullName);
+					//SUT
+					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
+					XHTMLWriter.Flush();
+					var pictureRelativePath = Path.Combine("pictures", Path.GetFileName(fileName));
+					var pictureWithComposedPath = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img[contains(@src, '" + pictureRelativePath + "')]";
+					if (!MiscUtils.IsUnix)
+						AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(pictureWithComposedPath, 2);
+					// that src starts with string, and escaping Windows directory separators
+					AssertRegex(XHTMLStringBuilder.ToString(), string.Format("src=\"{0}[^\"]*\"", pictureRelativePath.Replace(@"\",@"\\")), 2);
+					// The second file reference should not have resulted in a copy
+					Assert.AreEqual(Directory.EnumerateFiles(Path.Combine(tempFolder.FullName, "pictures")).Count(), 1, "Wrong number of pictures copied.");
+				}
+			}
+			finally
+			{
+				Palaso.IO.DirectoryUtilities.DeleteDirectoryRobust(tempFolder.FullName);
+				File.Delete(fileName);
 			}
 		}
 
@@ -1589,8 +1757,9 @@ namespace SIL.FieldWorks.XWorks
 				Cache.MainCacheAccessor.SetString(testEntry.Hvo, customField.Flid, Cache.TsStrFactory.MakeString(customData, wsEn));
 				using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 				{
+					var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 					//SUT
-					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, XHTMLWriter, Cache));
+					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 					XHTMLWriter.Flush();
 					var customDataPath = String.Format("/div[@class='lexentry']/span[@class='customstring' and text()='{0}']", customData);
 					AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
@@ -1635,8 +1804,9 @@ namespace SIL.FieldWorks.XWorks
 				Cache.MainCacheAccessor.SetString(testSence.Hvo, customField.Flid, Cache.TsStrFactory.MakeString(customData, wsEn));
 				using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 				{
+					var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 					//SUT
-					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, XHTMLWriter, Cache));
+					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 					XHTMLWriter.Flush();
 					var customDataPath = String.Format("/div[@class='l']/span[@class='es']/span[@class='e']/span[@class='customstring' and text()='{0}']", customData);
 					AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
@@ -1689,8 +1859,9 @@ namespace SIL.FieldWorks.XWorks
 				Cache.MainCacheAccessor.SetString(exampleSentence.Hvo, customField.Flid, Cache.TsStrFactory.MakeString(customData, wsEn));
 				using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 				{
+					var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 					//SUT
-					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, XHTMLWriter, Cache));
+					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 					XHTMLWriter.Flush();
 					var customDataPath = String.Format("/div[@class='l']/span[@class='es']//span[@class='xs']/span[@class='x']/span[@class='customstring' and text()='{0}']", customData);
 					AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
@@ -1735,8 +1906,9 @@ namespace SIL.FieldWorks.XWorks
 				Cache.MainCacheAccessor.SetString(allomorph.Hvo, customField.Flid, Cache.TsStrFactory.MakeString(customData, wsEn));
 				using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 				{
+					var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 					//SUT
-					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, XHTMLWriter, Cache));
+					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 					XHTMLWriter.Flush();
 					var customDataPath = String.Format("/div[@class='l']/span[@class='as']/span[@class='a']/span[@class='customstring' and text()='{0}']", customData);
 					AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
@@ -1773,8 +1945,9 @@ namespace SIL.FieldWorks.XWorks
 				Cache.MainCacheAccessor.SetMultiStringAlt(testEntry.Hvo, customField.Flid, wsEn, Cache.TsStrFactory.MakeString(customData, wsEn));
 				using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 				{
+					var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 					//SUT
-					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, XHTMLWriter, Cache));
+					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 					XHTMLWriter.Flush();
 					var customDataPath = String.Format("/div[@class='lexentry']/span[@class='customstring' and text()='{0}']", customData);
 					AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
@@ -1818,8 +1991,9 @@ namespace SIL.FieldWorks.XWorks
 				Cache.MainCacheAccessor.SetObjProp(testEntry.Hvo, customField.Flid, possibilityItem.Hvo);
 				using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 				{
+					var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 					//SUT
-					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, XHTMLWriter, Cache));
+					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 					XHTMLWriter.Flush();
 					var customDataPath = String.Format("/div[@class='lexentry']/span[@class='customlistitem']/span[@class='name' and text()='Djbuti']");
 					AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
@@ -1866,8 +2040,9 @@ namespace SIL.FieldWorks.XWorks
 				Cache.MainCacheAccessor.Replace(testEntry.Hvo, customField.Flid, 0, 0, new [] {possibilityItem1.Hvo, possibilityItem2.Hvo}, 2);
 				using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 				{
+					var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 					//SUT
-					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, XHTMLWriter, Cache));
+					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 					XHTMLWriter.Flush();
 					var customDataPath1 = String.Format("/div[@class='lexentry']/span[@class='customlistitems']/span[@class='customlistitem']/span[@class='name' and text()='Dallas']");
 					var customDataPath2 = String.Format("/div[@class='lexentry']/span[@class='customlistitems']/span[@class='customlistitem']/span[@class='name' and text()='Barcelona']");
@@ -1904,8 +2079,9 @@ namespace SIL.FieldWorks.XWorks
 				SilTime.SetTimeProperty(Cache.MainCacheAccessor, testEntry.Hvo, customField.Flid, customData);
 				using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 				{
+					var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
 					//SUT
-					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, XHTMLWriter, Cache));
+					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 					XHTMLWriter.Flush();
 					var customDataPath = String.Format("/div[@class='lexentry']/span[@class='customdate' and text()='{0}']", customData.ToLongDateString());
 					AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
@@ -1931,6 +2107,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.False(ConfiguredXHTMLGenerator.IsCollectionType(assembly.GetType("SIL.FieldWorks.FDO.DomainImpl.VirtualStringAccessor")));
 		}
 
+		#region Helpers
 		/// <summary>Creates a DictionaryConfigurationModel with one Main and two Minor Entry nodes, all with enabled HeadWord children</summary>
 		private static DictionaryConfigurationModel CreateInterestingConfigurationModel()
 		{
@@ -1963,6 +2140,43 @@ namespace SIL.FieldWorks.XWorks
 				AllPublications = true,
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode, minorEntryNode, minorSecondNode }
 			};
+		}
+
+		private static ConfigurableDictionaryNode CreatePictureModel()
+		{
+			var wsOpts = new DictionaryNodeWritingSystemOptions
+			{
+				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+						{
+							new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true }
+						}
+			};
+			var thumbNailNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "PictureFileRA",
+				CSSClassNameOverride = "picture",
+				IsEnabled = true
+			};
+			var pictureNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "PicturesOfSenses",
+				IsEnabled = true,
+				CSSClassNameOverride = "Pictures",
+				Children = new List<ConfigurableDictionaryNode> { thumbNailNode }
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+				Label = "Senses",
+				IsEnabled = true,
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { sensesNode, pictureNode },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			return mainEntryNode;
 		}
 
 		private ILexEntry CreateInterestingLexEntry()
@@ -2055,6 +2269,19 @@ namespace SIL.FieldWorks.XWorks
 			var wsOptions = new DictionaryNodeWritingSystemOptions { Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(languages) };
 			return wsOptions;
 		}
+
+		/// <summary>
+		/// Search haystack with regexQuery, and assert that requiredNumberOfMatches matches are found.
+		/// Can be used in place of AssertThatXmlIn.String().HasSpecifiedNumberOfMatchesForXpath(),
+		/// when slashes are needed in an argument to xpath starts-with.
+		/// </summary>
+		private static void AssertRegex(string haystack, string regexQuery, int requiredNumberOfMatches)
+		{
+			var regex = new Regex(regexQuery);
+			var matches = regex.Matches(haystack);
+			Assert.That(matches.Count, Is.EqualTo(requiredNumberOfMatches), "Unexpected number of matches");
+		}
+		#endregion Helpers
 	}
 
 	#region Test classes and interfaces for testing the reflection code in GetPropertyTypeForConfigurationNode

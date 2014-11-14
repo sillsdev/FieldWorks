@@ -359,7 +359,8 @@ namespace SIL.FieldWorks.XWorks
 			var xhtmResult = new StringBuilder();
 			using(var XHTMLWriter = XmlWriter.Create(xhtmResult))
 			{
-				ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testNode, null, XHTMLWriter, Cache);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testNode, null, settings);
 				XHTMLWriter.Flush();
 				const string positiveTest = "//*[@class='bolo']";
 				const string negativeTest = "//*[@class='lexentry']";
@@ -401,7 +402,8 @@ namespace SIL.FieldWorks.XWorks
 			var xhtmResult = new StringBuilder();
 			using(var XHTMLWriter = XmlWriter.Create(xhtmResult))
 			{
-				ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testParentNode, null, XHTMLWriter, Cache);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testParentNode, null, settings);
 				XHTMLWriter.Flush();
 				const string positiveTest = "//*[@class='tailwind']";
 				const string negativeTest = "//*[@class='headword']";
@@ -448,7 +450,8 @@ namespace SIL.FieldWorks.XWorks
 			var xhtmResult = new StringBuilder();
 			using(var XHTMLWriter = XmlWriter.Create(xhtmResult))
 			{
-				ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testEntryNode, null, XHTMLWriter, Cache);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testEntryNode, null, settings);
 				XHTMLWriter.Flush();
 				const string positiveTest = "/*[@class='lexentry']/span[@class='senses']/span[@class='sense']/span[@class='gloss']";
 				AssertThatXmlIn.String(xhtmResult.ToString()).HasSpecifiedNumberOfMatchesForXpath(positiveTest, 1);
