@@ -18,9 +18,9 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public partial class PublishToWebonaryDlg : Form, IPublishToWebonaryView
 	{
-		private IHelpTopicProvider m_helpTopicProvider;
+		private readonly IHelpTopicProvider m_helpTopicProvider;
 
-		private PublishToWebonaryController m_controller;
+		private readonly PublishToWebonaryController m_controller;
 
 		/// <summary>
 		/// Needed to get the HelpTopicProvider and to save project specific settings
@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.XWorks
 			explanationLabel.LinkClicked += (sender, args) =>
 			{
 				using (Process.Start(((LinkLabel) sender).Text.Substring(args.Link.Start, args.Link.Length)))
-				{};
+				{}
 			};
 
 			// Start with output log area not shown by default
@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.XWorks
 			this.Shown += (sender, args) => { this.Height = tableLayoutPanel.Height - outputLogTextbox.Height; };
 		}
 
-		public void PopulatePublicationsList()
+		private void PopulatePublicationsList()
 		{
 			foreach(var pub in Model.Publications)
 			{
@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public void PopulateConfigurationsList()
+		private void PopulateConfigurationsList()
 		{
 			foreach(var config in Model.Configurations.Keys)
 			{
@@ -72,7 +72,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public void PopulateReversalsCheckboxList()
+		private void PopulateReversalsCheckboxList()
 		{
 			foreach(var reversal in Model.Reversals)
 			{
@@ -80,18 +80,15 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public string UserName { get { return webonaryUsernameTextbox.Text; } }
-		public string Password { get { return webonaryPasswordTextbox.Text; } }
 		public PublishToWebonaryModel Model { get; set; }
-		public string SiteName { get { return webonarySiteNameTextbox.Text; } }
 
 		private void LoadFromModel()
 		{
 			if(Model != null)
 			{
 				// Load the contents of the drop down and checkbox list controls
-				PopulateConfigurationsList();
 				PopulatePublicationsList();
+				PopulateConfigurationsList();
 				PopulateReversalsCheckboxList();
 
 				if(Model.RememberPassword)

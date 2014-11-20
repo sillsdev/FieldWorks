@@ -367,7 +367,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private string GetCurrentConfiguration()
 		{
-			return DictionaryConfigurationListener.GetCurrentConfiguration(m_mediator, m_configObjectName);
+			return DictionaryConfigurationListener.GetCurrentConfiguration(m_mediator);
 		}
 
 		public DictionaryPublicationDecorator PublicationDecorator

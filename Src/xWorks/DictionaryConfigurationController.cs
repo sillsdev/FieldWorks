@@ -459,19 +459,20 @@ namespace SIL.FieldWorks.XWorks
 
 		private void LoadLastDictionaryConfiguration()
 		{
-			var lastUsedConfiguration = _mediator.PropertyTable.GetStringProperty("DictionaryPublicationLayout", null);
+			var lastUsedConfiguration = DictionaryConfigurationListener.GetCurrentConfiguration(_mediator);
 			_model = _dictionaryConfigurations.FirstOrDefault(config => config.FilePath == lastUsedConfiguration)
 				?? _dictionaryConfigurations.First();
 		}
 
 		private void SaveModelHandler(object sender, EventArgs e)
 		{
-			_mediator.PropertyTable.SetProperty("DictionaryPublicationLayout", _model.FilePath, true);
 			foreach (var config in _dictionaryConfigurations)
 			{
 				config.FilePath = GetProjectConfigLocationForPath(config.FilePath, _mediator);
 				config.Save();
 			}
+			// This property must be set *after* saving, because the initial save changes the FilePath
+			_mediator.PropertyTable.SetProperty("DictionaryPublicationLayout", _model.FilePath, true);
 			RefreshView();
 		}
 

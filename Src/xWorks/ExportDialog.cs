@@ -760,7 +760,7 @@ namespace SIL.FieldWorks.XWorks
 								progressDlg.Minimum = 0;
 								progressDlg.Maximum = 1; // todo: pick something legit
 								progressDlg.AllowCancel = true;
-								progressDlg.RunTask(true, ExportConfiguredXhtml, outPath, "Dictionary");
+								progressDlg.RunTask(true, ExportConfiguredXhtml, outPath);
 								break;
 							case FxtTypes.kftReversal:
 							case FxtTypes.kftClassifiedDict:
@@ -849,11 +849,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 			var xhtmlPath = (string)args[0];
 			var cssPath = Path.Combine(Path.GetDirectoryName(xhtmlPath), Path.GetFileNameWithoutExtension(xhtmlPath) + ".css");
-			var configType = (string)args[1];
 			int[] entriesToSave;
 			var publicationDecorator = ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_mediator, out entriesToSave);
 			progress.Maximum = entriesToSave.Length;
-			var configuration = new DictionaryConfigurationModel(DictionaryConfigurationListener.GetCurrentConfiguration(m_mediator, configType), m_cache);
+			var configuration = new DictionaryConfigurationModel(DictionaryConfigurationListener.GetCurrentConfiguration(m_mediator), m_cache);
 			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToSave, publicationDecorator, configuration, m_mediator, xhtmlPath, cssPath, progress);
 			return null;
 		}

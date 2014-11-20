@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
@@ -191,25 +190,22 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Returns the current configuration file
+		/// Returns the current Dictionary configuration file
 		/// </summary>
 		/// <param name="mediator"></param>
-		/// <param name="configType"></param>
 		/// <returns></returns>
-		public static string GetCurrentConfiguration(Mediator mediator, string configType)
+		public static string GetCurrentConfiguration(Mediator mediator)
 		{
 			string currentConfig = null;
 			// Since this is used in the display of the title and XWorksViews sometimes tries to display the title
-			// before full initialization (if this view is the one being displayed on startup) test the mediator before
-			// continuing.
+			// before full initialization (if this view is the one being displayed on startup) test the mediator before continuing.
 			if(mediator != null && mediator.PropertyTable != null)
 			{
-				currentConfig = mediator.PropertyTable.GetStringProperty("DictionaryPublicationLayout",
-																							String.Empty);
+				currentConfig = mediator.PropertyTable.GetStringProperty("DictionaryPublicationLayout", String.Empty);
 				if(String.IsNullOrEmpty(currentConfig)) // No configuration type has yet been selected
 				{
 					// Select the default Root configuration if no configuration has been selected
-					currentConfig = Path.Combine(FwDirectoryFinder.DefaultConfigurations, configType, "Root" + DictionaryConfigurationModel.FileExtension);
+					currentConfig = Path.Combine(GetDefaultConfigurationDirectory("Dictionary"), "Root" + DictionaryConfigurationModel.FileExtension);
 					mediator.PropertyTable.SetProperty("DictionaryPublicationLayout", currentConfig, true);
 				}
 			}

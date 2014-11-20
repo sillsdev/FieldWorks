@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using SIL.CoreImpl.Properties;
@@ -27,6 +28,10 @@ namespace SIL.FieldWorks.XWorks
 		//  Unicode line break to insert between reversals
 		private const string ReversalSeperator = "\u2028";
 
+		private string m_selectedPublication;
+
+		private string m_selectedConfiguration;
+
 		public string SiteName { get; set; }
 
 		public string UserName { get; set; }
@@ -35,18 +40,32 @@ namespace SIL.FieldWorks.XWorks
 
 		public bool RememberPassword { get; set; }
 
-		public string SelectedPublication { get; set; }
+		public string SelectedPublication // REVIEW (Hasso) 2014.11: should this have a default?
+		{
+			get { return m_selectedPublication; }
+			set { m_selectedPublication = value; }
+		}
 
-		public string SelectedConfiguration { get; set; }
+		public string SelectedConfiguration
+		{
+			get
+			{
+				if (!String.IsNullOrEmpty(m_selectedConfiguration))
+					return m_selectedConfiguration;
+				var pathToCurrentConfiguration = DictionaryConfigurationListener.GetCurrentConfiguration(Mediator);
+				return Configurations.Values.First(config => pathToCurrentConfiguration.Equals(config.FilePath)).Label;
+			}
+			set { m_selectedConfiguration = value; }
+		}
 
 		public IEnumerable<string> SelectedReversals { get; set; }
 
-		public IEnumerable<string> Reversals { get; set; }
-
-		public Dictionary<string, DictionaryConfigurationModel> Configurations { get; set; }
 
 		public List<string> Publications { get; set; }
 
+		public Dictionary<string, DictionaryConfigurationModel> Configurations { get; set; }
+
+		public IEnumerable<string> Reversals { get; set; }
 		private Mediator Mediator { get; set; }
 
 		public PublishToWebonaryModel(Mediator mediator)
@@ -87,9 +106,9 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var projectSettings = Mediator.PropertyTable;
 				SiteName = projectSettings.GetStringProperty(WebonarySite, null);
-				SelectedReversals = SplitReversalSettingString(projectSettings.GetStringProperty(WebonaryReversals, null));
-				SelectedConfiguration = projectSettings.GetStringProperty(WebonaryConfiguration, null);
 				SelectedPublication = projectSettings.GetStringProperty(WebonaryPublication, null);
+				SelectedConfiguration = projectSettings.GetStringProperty(WebonaryConfiguration, null);
+				SelectedReversals = SplitReversalSettingString(projectSettings.GetStringProperty(WebonaryReversals, null));
 			}
 		}
 
@@ -103,14 +122,14 @@ namespace SIL.FieldWorks.XWorks
 			projectSettings.SetPropertyPersistence(WebonarySite, true);
 			projectSettings.SetProperty(WebonaryReversals, CombineReversalSettingStrings(Reversals), false);
 			projectSettings.SetPropertyPersistence(WebonaryReversals, true);
-			if(SelectedConfiguration != null)
+			if(m_selectedConfiguration != null)
 			{
-				projectSettings.SetProperty(WebonaryConfiguration, SelectedConfiguration, false);
+				projectSettings.SetProperty(WebonaryConfiguration, m_selectedConfiguration, false);
 				projectSettings.SetPropertyPersistence(WebonaryConfiguration, true);
 			}
-			if(SelectedPublication != null)
+			if (m_selectedPublication != null)
 			{
-				projectSettings.SetProperty(WebonaryPublication, SelectedPublication, false);
+				projectSettings.SetProperty(WebonaryPublication, m_selectedPublication, false);
 				projectSettings.SetPropertyPersistence(WebonaryPublication, true);
 			}
 			projectSettings.SaveGlobalSettings();
