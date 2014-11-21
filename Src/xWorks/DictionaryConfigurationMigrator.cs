@@ -10,7 +10,6 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
-using Palaso.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Widgets;
@@ -252,9 +251,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var currentDefaultChildren = new List<ConfigurableDictionaryNode>(currentDefaultNode.Children);
 				var matchedChildren = new List<ConfigurableDictionaryNode>();
-				for (var i = 0; i < convertedNode.Children.Count; i++)
+				foreach (var child in convertedNode.Children)
 				{
-					var child = convertedNode.Children[i];
 					var pathStringToNode = BuildPathStringFromNode(child);
 					if (version == -1) // Some configuration nodes had name changes in the new verison
 					{
@@ -265,19 +263,6 @@ namespace SIL.FieldWorks.XWorks
 					ConfigurableDictionaryNode matchFromBase;
 					if (TryGetMatchingNode(child.Label, currentDefaultChildren, matchedChildren, out matchFromBase))
 						CopyDefaultsIntoConfigNode(child, matchFromBase, version);
-					else if (child.Label.Equals("Referenced Complex Forms") // Root's RCF's are split into Subentries and Others (only Root has Subs)
-								&& TryGetMatchingNode("Subentries", currentDefaultChildren, matchedChildren, out matchFromBase))
-					{
-						m_logger.WriteLine(String.Format(
-							"'{0}' will be restructured into 'Subentries' and 'Other Referenced Complex Forms' to match the root-based defaults",
-							pathStringToNode));
-						m_logger.IncreaseIndent();
-						ConfigurableDictionaryNode sensesFromBase;
-						TryGetMatchingNode("Senses", matchFromBase.Children, new List<ConfigurableDictionaryNode>(), out sensesFromBase);
-						SplitReferencedComplexFormsIntoSubentriesAndOthers(child, sensesFromBase);
-						m_logger.DecreaseIndent();
-						i--; // Try to match this one again
-					}
 					else
 					{
 						// This node does not match anything in the shipping defaults.
@@ -351,7 +336,7 @@ namespace SIL.FieldWorks.XWorks
 			convertedNode.Children = newChildren;
 		}
 
-		private bool IsReferencedEntriesNode(ConfigurableDictionaryNode convertedNode)
+		private static bool IsReferencedEntriesNode(ConfigurableDictionaryNode convertedNode)
 		{
 			return convertedNode.Label == "Referenced Entries";
 		}
@@ -381,70 +366,6 @@ namespace SIL.FieldWorks.XWorks
 				return true;
 			}
 			return false;
-		}
-
-		/// <summary>
-		/// Splits 'Referenced Complex Forms' into 'Other Referenced Complex Forms' and 'Subentries', if necessary, restructuring some nodes
-		/// under 'Subentries->Senses'.
-		/// This is necessary because, the Root-based (Complex Forms as Subentries) configuration distinguishes between Subentries and
-		/// 'Other Referenced Complex Forms'; however, in the old configurations, there were a few plain old 'Referenced Complex Forms' nodes,
-		/// similar to those in the Stem-based (Complex Forms as Main Entries) configuration.  So we need to restructure users' configurations
-		/// to match the new, proper configurations.
-		/// </summary>
-		internal void SplitReferencedComplexFormsIntoSubentriesAndOthers(ConfigurableDictionaryNode convertedRcfNode,
-			ConfigurableDictionaryNode currentDefaultSenseChild)
-		{
-			// Split RCF's into ORCF's and Subentries
-			var subentriesNode = convertedRcfNode.DuplicateAmongSiblings();
-			convertedRcfNode.Label = "Other Referenced Complex Forms";
-			subentriesNode.Label = "Subentries";
-			subentriesNode.LabelSuffix = convertedRcfNode.LabelSuffix;
-			subentriesNode.IsDuplicate = convertedRcfNode.IsDuplicate;
-
-			// Set up Other Referenced Complex Forms
-			convertedRcfNode.DictionaryNodeOptions = null; // "Other" Referenced Complex Forms don't have Options.
-			convertedRcfNode.Children.RemoveAll( // ORCF's also don't have these children.
-				node => (new[] { "Grammatical Info.", "Definition (or Gloss)", "Subentry Under Reference" }).Contains(node.Label));
-
-			// Set up Subentries
-			if (currentDefaultSenseChild == null)
-			{
-				m_logger.WriteLine(String.Format("Default '{0}' is childless; removing all children--incl. custom fields--from the converted model.",
-					BuildPathStringFromNode(subentriesNode)));
-				subentriesNode.Children = null;
-			}
-			else
-			{
-				m_logger.WriteLine(String.Format("Found '{0}' in the default model; restructuring some of its converted siblings thereunder.",
-					BuildPathStringFromNode(currentDefaultSenseChild)));
-
-				// Copy the default Senses node into Subentries's Children so we don't modify the original
-				currentDefaultSenseChild = currentDefaultSenseChild.DuplicateAmongSiblings(subentriesNode.Children);
-				currentDefaultSenseChild.LabelSuffix = null;
-				currentDefaultSenseChild.IsDuplicate = false;
-
-				// Complex Form and Comment are not used anywhere in Subentries
-				subentriesNode.Children.RemoveAll(node => (new[] { "Complex Form", "Comment" }).Contains(node.Label));
-
-				// Grammatical Info., Definition (or Gloss), and Example Sentences, become children of Senses under Subentries
-				var labelsToMoveToSenses = new[] { "Grammatical Info.", "Definition (or Gloss)", "Example Sentences" };
-				var nodesToMoveToSenses = subentriesNode.Children.FindAll(node => labelsToMoveToSenses.Contains(node.Label));
-				subentriesNode.Children.RemoveAll(nodesToMoveToSenses.Contains);
-				nodesToMoveToSenses.Where(node => node.Label.Equals("Example Sentences")).ForEach(node => node.Label = "Examples");
-				labelsToMoveToSenses[2] = "Examples";
-				foreach (var label in labelsToMoveToSenses)
-				{
-					var defaultNode = currentDefaultSenseChild.Children.Find(node => node.Label.Equals(label));
-					var index = currentDefaultSenseChild.Children.IndexOf(defaultNode);
-					currentDefaultSenseChild.Children.RemoveAt(index);
-					currentDefaultSenseChild.Children.InsertRange(index, nodesToMoveToSenses.Where(node => node.Label.Equals(label)));
-				}
-				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { subentriesNode });
-
-				// Subentries->Complex Form Type->Reverse Abbreviation has been renamed to Abbreviation
-				subentriesNode.Children.Where(node => node.Label.Equals("Complex Form Type")).SelectMany(cfTypeNode =>
-					cfTypeNode.Children.Where(node => node.Label.Equals("Reverse Abbreviation"))).ForEach(node => node.Label = "Abbreviation");
-			}
 		}
 
 		private void SetupCustomField(ConfigurableDictionaryNode node)
@@ -481,7 +402,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// XmlDocConfigureDlg.LayoutTreeNode's that are duplicates of duplicates will have a set of suffixes
 				// in the DupString property, separated by hyphens. The last one is what we want.
-				var i = convertedNode.LabelSuffix.LastIndexOf("-", System.StringComparison.Ordinal);
+				var i = convertedNode.LabelSuffix.LastIndexOf("-", StringComparison.Ordinal);
 				if (i >= 0)
 					convertedNode.LabelSuffix = convertedNode.LabelSuffix.Substring(i + 1);
 				var suffixNotation = string.Format(" ({0})", convertedNode.LabelSuffix);

@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.XWorks
 	[TestFixture]
 	class DictionaryConfigurationModelTests : MemoryOnlyBackendProviderTestBase
 	{
-		internal const string XmlOpenTagsThruRoot = @"<?xml version=""1.0"" encoding=""utf-8""?>
+		private const string XmlOpenTagsThruRoot = @"<?xml version=""1.0"" encoding=""utf-8""?>
 			<DictionaryConfiguration name=""Root"" version=""1"" lastModified=""2014-02-13"">";
 		private const string XmlOpenTagsThruRootWithAllPublications = @"<?xml version=""1.0"" encoding=""utf-8""?>
 			<DictionaryConfiguration allPublications=""true"" name=""Root"" version=""1"" lastModified=""2014-02-13"">";
@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.XWorks
 				</ConfigurationItem>
 				<SharedItems/>" +
 			XmlCloseTagsFromRoot;
-		internal const string XmlCloseTagsFromRoot = @"</DictionaryConfiguration>";
+		private const string XmlCloseTagsFromRoot = @"</DictionaryConfiguration>";
 
 		[Test]
 		public void Load_LoadsBasicsAndDetails()
@@ -434,7 +434,7 @@ namespace SIL.FieldWorks.XWorks
 					FieldDescription = "LexEntry"
 				};
 
-			var secondNode = new ConfigurableDictionaryNode()
+			var secondNode = new ConfigurableDictionaryNode
 				{
 					Label = "Minor Entry",
 					Before = "{",
@@ -839,7 +839,7 @@ namespace SIL.FieldWorks.XWorks
 			var child = new ConfigurableDictionaryNode();
 			var rootNode = new ConfigurableDictionaryNode
 			{
-				Children = new List<ConfigurableDictionaryNode>() {child},
+				Children = new List<ConfigurableDictionaryNode> {child},
 				Parent = null
 			};
 			var parts = new List<ConfigurableDictionaryNode> {rootNode};
@@ -855,7 +855,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Children = new List<ConfigurableDictionaryNode>()
 			};
-			var childA = new ConfigurableDictionaryNode()
+			var childA = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode>()
 			};
@@ -877,8 +877,8 @@ namespace SIL.FieldWorks.XWorks
 		public void CanDeepClone()
 		{
 			var parentNode = new ConfigurableDictionaryNode();
-			var child = new ConfigurableDictionaryNode() { After = "after", IsEnabled = true, Parent = parentNode };
-			var grandchildNode = new ConfigurableDictionaryNode() { Before = "childBefore", Parent = child };
+			var child = new ConfigurableDictionaryNode { After = "after", IsEnabled = true, Parent = parentNode };
+			var grandchildNode = new ConfigurableDictionaryNode { Before = "childBefore", Parent = child };
 			parentNode.Children = new List<ConfigurableDictionaryNode> { child };
 			child.Children = new List<ConfigurableDictionaryNode> { grandchildNode };
 			var model = new DictionaryConfigurationModel
