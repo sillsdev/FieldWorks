@@ -1092,7 +1092,7 @@
               </WritingSystemOptions>
             </ConfigurationItem>
           </ConfigurationItem>
-          <ConfigurationItem name="Complex Form" between=" " isEnabled="true" field="OwningEntry" subField="HeadWord">
+          <ConfigurationItem name="Complex Form" between=" " isEnabled="true" field="OwningEntry" subField="MLHeadWord">
             <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
               <Option id="vernacular" isEnabled="true"/>
             </WritingSystemOptions>
@@ -1114,7 +1114,7 @@
               </WritingSystemOptions>
             </ConfigurationItem>
             <ConfigurationItem name="Translations" isEnabled="true" field="TranslationsOC" cssClassNameOverride="translations">
-              <ConfigurationItem name="Type" after=" " isEnabled="false" field="Type">
+              <ConfigurationItem name="Type" after=" " isEnabled="false" field="TypeRA" cssClassNameOverride="type">
                 <ConfigurationItem name="Abbreviation" between=" " isEnabled="false" field="Abbreviation">
                   <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
                     <Option id="analysis" isEnabled="true"/>
@@ -1799,7 +1799,7 @@
             </WritingSystemOptions>
           </ConfigurationItem>
         </ConfigurationItem>
-        <ConfigurationItem name="Complex Form" between=" " isEnabled="true" field="OwningEntry" subField="HeadWord">
+        <ConfigurationItem name="Complex Form" between=" " isEnabled="true" field="OwningEntry" subField="MLHeadWord">
           <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
             <Option id="vernacular" isEnabled="true"/>
           </WritingSystemOptions>

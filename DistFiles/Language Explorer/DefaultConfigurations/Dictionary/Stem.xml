@@ -555,7 +555,7 @@
       </WritingSystemOptions>
     </ConfigurationItem>
     <ConfigurationItem name="Allomorphs" between=", " after=" " isEnabled="false" field="AlternateFormsOS" cssClassNameOverride="allomorphs">
-      <ConfigurationItem name="Morph Type" between=" " after=" " isEnabled="false" field="MorphType">
+      <ConfigurationItem name="Morph Type" between=" " after=" " isEnabled="false" field="MorphTypeRA" cssClassNameOverride="morphtype">
         <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
           <Option id="analysis" isEnabled="true"/>
         </WritingSystemOptions>
@@ -662,7 +662,7 @@
       </ConfigurationItem>
     </ConfigurationItem>
     <ConfigurationItem name="Pictures" between="  " after=" " style="Dictionary-Pictures" isEnabled="true" field="PicturesOfSenses" cssClassNameOverride="pictures">
-      <PictureOptions minimumHeight="0" maximumHeight="1" maximumWidth="0" minimumWidth="0" pictureLocation="right" stackPictures="false" />
+      <PictureOptions minimumHeight="0" maximumHeight="1" minimumWidth="0" maximumWidth="0" pictureLocation="right" stackPictures="false" />
       <ConfigurationItem name="Thumbnail" after=" " isEnabled="true" field="PictureFileRA" cssClassNameOverride="thumbnail"/>
       <ConfigurationItem name="Sense Number" after=" " isEnabled="true" field="SenseNumberTSS" cssClassNameOverride="sensenumber"/>
       <ConfigurationItem name="Caption" between=" " isEnabled="true" field="Caption">
@@ -697,12 +697,12 @@
     </ConfigurationItem>
     <ConfigurationItem name="Lexeme Form" between=" " after=" " isEnabled="false" field="LexemeFormOA" cssClassNameOverride="lexemeform">
       <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
-        <Option id="vernacular" isEnabled="false"/>
+        <Option id="vernacular" isEnabled="true"/>
       </WritingSystemOptions>
     </ConfigurationItem>
     <ConfigurationItem name="Citation Form" between=" " after=" " isEnabled="false" field="CitationForm">
       <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
-        <Option id="all vernacular" isEnabled="false"/>
+        <Option id="all vernacular" isEnabled="true"/>
       </WritingSystemOptions>
     </ConfigurationItem>
     <ConfigurationItem name="Homograph Number" after=" " isEnabled="false" field="HomographNumber"/>
@@ -847,7 +847,7 @@
         <Option isEnabled="true"  id="a32f1d1c-4832-46a2-9732-c2276d6547e8"/>
         <Option isEnabled="true"  id="0c4663b3-4d9a-47af-b9a1-c8565d8112ed"/>
       </ListTypeOptions>
-      <ConfigurationItem name="Variant Type" between=", " after=" " isEnabled="true" field="VariantEntryTypeRs">
+      <ConfigurationItem name="Variant Type" between=", " after=" " isEnabled="true" field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
         <ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="ReverseAbbr">
           <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
             <Option id="analysis" isEnabled="true"/>
@@ -1015,7 +1015,7 @@
         </ConfigurationItem>
       </ConfigurationItem>
       <ConfigurationItem name="Variants of Sense" before="(" between="; " after=") " isEnabled="true" field="VariantFormEntryBackRefs">
-        <ConfigurationItem name="Variant Type" between=", " after=" " isEnabled="true" field="VariantEntryTypes">
+        <ConfigurationItem name="Variant Type" between=", " after=" " isEnabled="true" field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
           <ConfigurationItem name="Reverse Abbreviation" between=" " after=" " isEnabled="true" field="ReverseAbbr">
             <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
               <Option id="analysis" isEnabled="true"/>

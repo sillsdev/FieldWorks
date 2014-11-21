@@ -602,7 +602,7 @@
       </WritingSystemOptions>
     </ConfigurationItem>
     <ConfigurationItem name="Allomorphs" isEnabled="false" isDuplicate="false" isCustomField="false" before="" between=", " after=" " field="AlternateFormsOS" cssClassNameOverride="allomorphs">
-      <ConfigurationItem name="Morph Type" isEnabled="false" isDuplicate="false" isCustomField="false" before="" between=" " after=" " field="MorphType">
+      <ConfigurationItem name="Morph Type" isEnabled="false" isDuplicate="false" isCustomField="false" before="" between=" " after=" " field="MorphTypeRA" cssClassNameOverride="morphtype">
         <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
           <Option id="analysis" isEnabled="true" />
         </WritingSystemOptions>
@@ -792,7 +792,7 @@
       <ListTypeOptions list="variant">
         <Option id="" isEnabled="false" />
       </ListTypeOptions>
-      <ConfigurationItem name="Variant Type" isEnabled="true" isDuplicate="false" isCustomField="false" before="" between=", " after=" " field="VariantEntryTypeRs">
+      <ConfigurationItem name="Variant Type" isEnabled="true" isDuplicate="false" isCustomField="false" before="" between=", " after=" " field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
         <ConfigurationItem name="Abbreviation" isEnabled="true" isDuplicate="false" isCustomField="false" style="Dictionary-CrossReferences" before="" between=" " after=" " field="ReverseAbbr">
           <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
             <Option id="analysis" isEnabled="true" />
@@ -955,7 +955,7 @@
         </ConfigurationItem>
       </ConfigurationItem>
       <ConfigurationItem name="Variants of Sense" isEnabled="false" isDuplicate="false" isCustomField="false" before="(" between="; " after=") " field="VariantFormEntryBackRefs">
-        <ConfigurationItem name="Variant Type" isEnabled="true" isDuplicate="false" isCustomField="false" before="" between=", " after=" " field="VariantEntryTypes">
+        <ConfigurationItem name="Variant Type" isEnabled="true" isDuplicate="false" isCustomField="false" before="" between=", " after=" " field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
           <ConfigurationItem name="Reverse Abbreviation" isEnabled="true" isDuplicate="false" isCustomField="false" before="" between=" " after=" " field="ReverseAbbr">
             <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
               <Option id="analysis" isEnabled="true" />
