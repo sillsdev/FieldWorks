@@ -845,6 +845,31 @@ namespace SIL.FieldWorks.XWorks
 				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(refEntriesPath + "ConfigurationItem[@name='Gloss (or Summary Definition)']", 1);
 			}
 		}
+
+		/// <summary>
+		/// In most cases, the 'Minor Entry->Components->Referenced Entries' node has a child 'Referenced Sense Headword' that needs to be merged
+		/// with 'Referenced Headword'; however, in one case, that child's name is 'Referenced Sense'. This tests that special case.
+		/// </summary>
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_MinorEntryComponentsReferencedEntriesChangedInSpecialCase()
+		{
+			const string refEntriesPath = "//ConfigurationItem[@name='Minor Entry']/ConfigurationItem[@name='Components']/ConfigurationItem[@name='Referenced Entries']/";
+			using(var convertedModelFile = new TempFile())
+			{
+				var convertedMinorEntry = BuildConvertedReferenceEntryNodes(true, true, true, true);
+				convertedMinorEntry.Parts[0].Children[0].Children[0].Children.First(child => child.Label == "Referenced Sense Headword").Label
+																											= "Referenced Sense";
+				convertedMinorEntry.FilePath = convertedModelFile.Path;
+				var defaultMinorEntry = BuildCurrentDefaultReferenceEntryNodes(true, true);
+
+				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedMinorEntry, defaultMinorEntry);
+				convertedMinorEntry.Save();
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(refEntriesPath + "ConfigurationItem[@name='Referenced Sense']");
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(refEntriesPath + "ConfigurationItem[@name='Referenced Sense Headword']");
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(refEntriesPath + "ConfigurationItem[@name='Referenced Headword']", 1);
+			}
+		}
+
 		///<summary/>
 		[Test]
 		public void CopyNewDefaultsIntoConvertedModel_MinorEntryComponentsBeforeAfterBetweenMigrated()

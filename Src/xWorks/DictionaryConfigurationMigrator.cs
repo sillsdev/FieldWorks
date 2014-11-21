@@ -317,7 +317,8 @@ namespace SIL.FieldWorks.XWorks
 			var newChildren = new List<ConfigurableDictionaryNode>(defaultNode.Children);
 			var newHeadword = newChildren.First(child => child.Label == "Referenced Headword");
 			var oldHeadwordNode = convertedNode.Children.First(child => child.Label == "Referenced Headword");
-			var oldSenseHeadwordNode = convertedNode.Children.First(child => child.Label == "Referenced Sense Headword");
+			// Usually "Referenced Sense Headword" but in one case it is "Referenced Sense"
+			var oldSenseHeadwordNode = convertedNode.Children.First(child => child.Label.StartsWith("Referenced Sense"));
 			newHeadword.IsEnabled = oldHeadwordNode.IsEnabled || oldSenseHeadwordNode.IsEnabled;
 			newHeadword.Before = !String.IsNullOrEmpty(oldHeadwordNode.Before) ? oldHeadwordNode.Before : oldSenseHeadwordNode.Before;
 			newHeadword.Between = !String.IsNullOrEmpty(oldHeadwordNode.Between) ? oldHeadwordNode.Between : oldSenseHeadwordNode.Between;
