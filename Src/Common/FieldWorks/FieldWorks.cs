@@ -2642,12 +2642,14 @@ namespace SIL.FieldWorks
 		private static FdoSettings CreateFdoSettings()
 		{
 			var settings = new FdoSettings();
-			using (RegistryKey fwKey = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine)
-			{
-				var sharedXMLBackendCommitLogSize = (int) fwKey.GetValue("SharedXMLBackendCommitLogSize", 0);
-				if (sharedXMLBackendCommitLogSize > 0)
-					settings.SharedXMLBackendCommitLogSize = sharedXMLBackendCommitLogSize;
-			}
+
+			int sharedXmlBackendCommitLogSize = 0;
+			if (FwRegistryHelper.FieldWorksRegistryKey != null)
+				sharedXmlBackendCommitLogSize = (int) FwRegistryHelper.FieldWorksRegistryKey.GetValue("SharedXMLBackendCommitLogSize", 0);
+			if (sharedXmlBackendCommitLogSize == 0 && FwRegistryHelper.FieldWorksRegistryKeyLocalMachine != null)
+				sharedXmlBackendCommitLogSize = (int) FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.GetValue("SharedXMLBackendCommitLogSize", 0);
+			if (sharedXmlBackendCommitLogSize > 0)
+				settings.SharedXMLBackendCommitLogSize = sharedXmlBackendCommitLogSize;
 			return settings;
 		}
 
