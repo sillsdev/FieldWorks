@@ -22,6 +22,7 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.TE
 {
@@ -388,6 +389,8 @@ namespace SIL.FieldWorks.TE
 		/// </param>
 		/// <param name="localizations">The localizations.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "cache is a reference")]
 		protected void LoadKeyTerms(IProgress dlg, ICmPossibilityList oldKtPossList,
 			ICmPossibilityList biblicalTermsPossList,
 			BiblicalTermsList list, List<BiblicalTermsLocalization> localizations)

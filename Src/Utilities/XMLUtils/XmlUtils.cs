@@ -848,6 +848,8 @@ namespace SIL.Utils
 				return base.ResolveUri(baseUri, relativeUri);
 			}
 
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "Method returns a reference")]
 			public override object GetEntity(Uri absoluteUri, string role, Type ofObjectToReturn)
 			{
 				switch (absoluteUri.Scheme)

@@ -80,6 +80,9 @@
       <HintPath>..\..\..\Output\Debug\TestUtils.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="COMInterfaces">
+      <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\AssemblyInfoForTests.cs">

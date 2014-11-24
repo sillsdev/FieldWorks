@@ -1,6 +1,7 @@
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using XCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -11,6 +12,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LexReferenceTreeBranchesSlice"/> class.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "LexReferenceTreeBranchesLauncher gets added to panel's Controls collection and disposed there")]
 		public LexReferenceTreeBranchesSlice()
 			: base(new LexReferenceTreeBranchesLauncher())
 		{

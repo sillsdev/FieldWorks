@@ -9,6 +9,7 @@ using XCore;
 using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -48,6 +49,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "infoIcon is a reference")]
 		public SwapLexemeWithAllomorphDlg()
 		{
 			//

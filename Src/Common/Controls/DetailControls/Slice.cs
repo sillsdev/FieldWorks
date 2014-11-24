@@ -760,6 +760,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary></summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "slice is a reference")]
 		public virtual void SetCurrentState(bool isCurrent)
 		{
 			CheckDisposed();
@@ -1044,10 +1046,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			if (disposing)
 			{
-				if (Parent is DataTree)
-				{
-					((DataTree)Parent).RemoveDisposedSlice(this);
-				}
+				var parent = Parent as DataTree;
+				if (parent != null)
+					parent.RemoveDisposedSlice(this);
+
 				// Dispose managed resources here.
 				SplitCont.SplitterMoved -= mySplitterMoved;
 				// If anyone but the owning DataTree called this to be disposed,
@@ -1615,6 +1617,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "parentSlice is a reference")]
 		bool IsDescendant(Slice slice)
 		{
 			var parentSlice = slice.ParentSlice;
@@ -1759,6 +1763,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="ihvoPosition">Position of this object in owning sequence;
 		/// or current position in cache, if a collection.</param>
 		/// <returns>true if this slice is part of an owning sequence property.</returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "cache is a reference")]
 		public bool GetSeqContext(out int hvoOwner, out int flid, out int ihvoPosition)
 		{
 			CheckDisposed();
@@ -1827,6 +1833,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="hvoOwner">Owner of the object this slice is part of.</param>
 		/// <param name="flid">Owning atomic property this is part of.</param>
 		/// <returns>true if this slice is part of an owning atomic property.</returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "cache is a reference")]
 		public bool GetAtomicContext(out int hvoOwner, out int flid)
 		{
 			CheckDisposed();
@@ -2274,6 +2282,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Focus the specified slice (or the first of its children that can accept focus).
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "slice is a reference")]
 		public Slice FocusSliceOrChild()
 		{
 			CheckDisposed();

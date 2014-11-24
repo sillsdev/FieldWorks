@@ -30,6 +30,7 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FDO.Infrastructure;
 using XCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.TE
 {
@@ -926,6 +927,8 @@ namespace SIL.FieldWorks.TE
 		/// Determine if the draft view is contained in a key terms wrapper
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "window is a reference")]
 		private bool IsKeyTermsView()
 		{
 			// Note: don't use commented line instead of GetType().Name... since this will cause

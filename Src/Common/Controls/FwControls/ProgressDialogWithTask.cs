@@ -752,6 +752,8 @@ namespace SIL.FieldWorks.Common.Controls
 				m_worker.CancelAsync();
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "owner is a reference")]
 		private void m_progressDialog_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			if (m_worker.IsBusy)

@@ -11,6 +11,7 @@
 // --------------------------------------------------------------------------------------------
 
 using SIL.FieldWorks.Common.Framework.DetailControls;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -22,6 +23,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>
 		/// Initializes a new instance of the <see cref="RevEntrySensesCollectionReferenceSlice"/> class.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "RevEntrySensesCollectionReferenceLauncher gets added to panel's Controls collection and disposed there")]
 		public RevEntrySensesCollectionReferenceSlice()
 			: base(new RevEntrySensesCollectionReferenceLauncher())
 		{

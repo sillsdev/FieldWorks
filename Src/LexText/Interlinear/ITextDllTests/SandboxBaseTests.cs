@@ -6,6 +6,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.IText
 {
@@ -329,6 +330,8 @@ namespace SIL.FieldWorks.IText
 		}
 
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "handlerList is a reference")]
 		public void LexEntriesComboHandler_ItemsInComboForInflVariant()
 		{
 			using (var sandbox = SetupSandbox(() =>

@@ -54,8 +54,8 @@ namespace SIL.FieldWorks.Test.TestUtils
 					string dirName = Path.GetDirectoryName(m_fileName);
 					if (!Directory.Exists(dirName))
 						Directory.CreateDirectory(Path.GetDirectoryName(m_fileName));
-					TextWriter stream = FileUtils.OpenFileForWrite(fileName, Encoding.ASCII);
-					stream.Close();
+					using (TextWriter stream = FileUtils.OpenFileForWrite(fileName, Encoding.ASCII))
+						stream.Close();
 				}
 			}
 		}

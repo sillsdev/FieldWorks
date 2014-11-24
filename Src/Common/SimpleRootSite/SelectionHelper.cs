@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 using System.Runtime.InteropServices;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -540,6 +541,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="cttp">Returned count of TsTxtProps (this is basically just the number
 		/// of runs in the selection)</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "ArrayPtr.Null is a reference")]
 		public static void GetSelectionProps(IVwSelection vwSel, out ITsTextProps[] vttp,
 			out IVwPropertyStore[] vvps, out int cttp)
 		{

@@ -269,6 +269,9 @@ namespace XCore
 #endif
 			return menu;
 		}
+
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "Variables are references or returned")]
 		protected CommandBarItem CreateMenuItem(ChoiceBase choice)
 		{
 			//note that we could handle the details of display in two different ways.

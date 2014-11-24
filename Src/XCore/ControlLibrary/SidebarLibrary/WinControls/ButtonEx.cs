@@ -6,6 +6,7 @@ using System.Data;
 using System.Windows.Forms;
 using System.Diagnostics;
 using SidebarLibrary.General;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SidebarLibrary.WinControls
 {
@@ -24,6 +25,8 @@ namespace SidebarLibrary.WinControls
 			SetStyle(ControlStyles.AllPaintingInWmPaint|ControlStyles.UserPaint|ControlStyles.DoubleBuffer, true);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "g is a reference")]
 		protected override void OnPaint(PaintEventArgs pe)
 		{
 			base.OnPaint(pe);

@@ -2299,6 +2299,8 @@ namespace SIL.FieldWorks.Discourse
 			return FindCellPartInColumn(cell) == null;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "ToolStripSeparator gets added to menu and disposed there")]
 		public ContextMenuStrip MakeCellContextMenu(ChartLocation clickedCell)
 		{
 			var irow = clickedCell.Row.IndexInOwner;

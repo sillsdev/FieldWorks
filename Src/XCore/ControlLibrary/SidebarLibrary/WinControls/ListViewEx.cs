@@ -557,6 +557,8 @@ namespace SidebarLibrary.WinControls
 			return false;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "image and imageList are references")]
 		void DoListCustomDrawing(ref Message m)
 		{
 			NMLVCUSTOMDRAW lvcd = (NMLVCUSTOMDRAW)m.GetLParam(typeof(NMLVCUSTOMDRAW));
@@ -706,6 +708,8 @@ namespace SidebarLibrary.WinControls
 			return false;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "image is a reference")]
 		void DoHeaderCustomDrawing(ref Message m)
 		{
 			NMCUSTOMDRAW nmcd = (NMCUSTOMDRAW)m.GetLParam(typeof(NMCUSTOMDRAW));

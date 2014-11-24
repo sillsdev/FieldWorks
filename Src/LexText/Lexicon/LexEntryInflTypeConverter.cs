@@ -101,6 +101,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>
 		/// Overridden to provide a chooser with multiple selections (checkboxes and all).
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "mediator is a reference")]
 		protected SimpleListChooser GetChooser(IEnumerable<ObjectLabel> labels, int classId)
 		{
 			var contents = from lexEntryType in m_cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities

@@ -61,6 +61,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 		/// <summary>
 		/// Create reader for reconstituting surrogates.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "XmlTextReader is passed in to XmlReader and hopefully disposed there")]
 		internal static XmlReader CreateReader(MemoryStream inputStream)
 		{
 			var settings = ReaderSettings;
@@ -117,8 +119,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 		/// <summary>
 		/// Common settings for XML BEP reader.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "TODO-Linux: XmlReaderSettings.DtdProcessing is missing from Mono")]
 		private static XmlReaderSettings ReaderSettings
 		{
 			get
@@ -127,11 +127,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 						{
 							CheckCharacters = false,
 							ConformanceLevel = ConformanceLevel.Document,
-#if !__MonoCS__
 							DtdProcessing = DtdProcessing.Parse,
-#else
-							ProhibitDtd = true,
-#endif
 							ValidationType = ValidationType.None,
 							CloseInput = true,
 							IgnoreWhitespace = true

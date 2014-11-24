@@ -16,6 +16,7 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites.Properties;
 using SIL.Utils;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -2857,6 +2858,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="rootbox"></param>
 		/// <param name="selection"></param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "SimpleRootSite.Mediator returns a reference")]
 		private void SetWritingSystemPropertyFromSelection(IVwRootBox rootbox,
 			IVwSelection selection)
 		{
@@ -2882,6 +2885,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "SimpleRootSite.Mediator returns a reference")]
 		internal void WritingSystemHvoChanged()
 		{
 			if (m_fSuppressNextWritingSystemHvoChanged)
@@ -3003,6 +3008,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Activates the default keyboard.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "Keyboard controller needs to be initialized/disposed elsewhere")]
 		private void ActivateDefaultKeyboard()
 		{
 			Keyboard.Controller.ActivateDefaultKeyboard();
@@ -3017,6 +3024,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			set { m_fSuppressNextBestStyleNameChanged = value; }
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "SimpleRootSite.Mediator returns a reference")]
 		internal void BestStyleNameChanged()
 		{
 			if (m_fSuppressNextBestStyleNameChanged)
@@ -3613,6 +3622,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// <returns>Returns <c>true</c> if copying is possible.</returns>
 		/// -----------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "ArrayPtr.Null is a reference")]
 		public virtual bool CanCopy()
 		{
 			CheckDisposed();

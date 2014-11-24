@@ -13,6 +13,7 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SILUBS.SharedScrUtils;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.TE
 {
@@ -31,6 +32,8 @@ namespace SIL.FieldWorks.TE
 		/// Initializes a new instance of the <see cref="T:ResolveKeyTermRenderingImportConflictDlg"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "cache is a reference")]
 		public ResolveKeyTermRenderingImportConflictDlg(IWin32Window owner, IChkRef occurrence,
 			string existingRendering, string importedRendering, IVwStylesheet ss) : this()
 		{

@@ -22,6 +22,7 @@ using SidebarLibrary.WinControls;
 using SidebarLibrary.Menus;
 using SidebarLibrary.General;
 using SIL.Utils;
+using System.Diagnostics.CodeAnalysis;
 
 namespace XCore
 {
@@ -296,6 +297,8 @@ namespace XCore
 		/// <summary>
 		/// take the opportunity to read draw this band, so that these selected and enabled items are up to date.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "band is a reference")]
 		public void OnIdle()
 		{
 			OutlookBarBand band = this.m_bar.Bands[this.m_bar.GetCurrentBand()];

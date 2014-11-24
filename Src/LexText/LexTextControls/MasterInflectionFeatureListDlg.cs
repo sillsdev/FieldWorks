@@ -15,6 +15,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.LexText.Controls.MGA;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -27,6 +28,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		public MasterInflectionFeatureListDlg()
 		{
 		}
+
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "GlossListTreeView gets disposed in base class")]
 		public MasterInflectionFeatureListDlg(string className) : base(className, new GlossListTreeView())
 		{
 		}

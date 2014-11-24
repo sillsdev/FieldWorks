@@ -12,6 +12,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -48,6 +49,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private System.ComponentModel.Container components = null;
 
 		/// <summary></summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "parent is a reference")]
 		public Slice Slice
 		{
 			get
@@ -218,6 +221,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Return whether it is OK to move the objects indicated by odi to the specified destination.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "cache is a reference")]
 		public bool OkToMove(int hvoDstOwner, int flidDst, int ihvoDstStart, ObjectDragInfo odi)
 		{
 			CheckDisposed();

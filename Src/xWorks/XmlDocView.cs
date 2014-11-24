@@ -106,6 +106,8 @@ namespace SIL.FieldWorks.XWorks
 			return layoutList;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private static IEnumerable<Tuple<string, string>> GetBuiltInLayouts(XmlNode configNode)
 		{
 			var configLayouts = XmlUtils.FindNode(configNode, "configureLayouts");

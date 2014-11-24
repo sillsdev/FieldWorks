@@ -6,6 +6,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {
@@ -163,6 +164,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "x.Cache is a reference")]
 		private void PrintAnalysesInfo(List<IAnalysis> analyses)
 		{
 			if (analyses != null && analyses.Count > 0)
@@ -739,6 +742,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <summary>
 		/// Make a first pass in which we delete any segment entirely contained in the deleted text.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "x.Cache is a reference")]
 		private void DiscardDeletedSegments()
 		{
 			int firstDeleted = -1; //marks the index into the paragraph(m_para) segments of the first segment which is deleted
@@ -1031,6 +1036,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		// Compute segment offsets as required for new paragraph contents.
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "x.Cache is a reference")]
 		private void ComputeRequiredBeginOffsets()
 		{
 			List<TsStringSegment> segs = m_para.Contents.GetSegments(m_para.Cache.WritingSystemFactory);
@@ -1295,6 +1302,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			return newAnalyses;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "x.Cache is a reference")]
 		private int GetFirstVernacularWs(ITsString token)
 		{
 			return TsStringUtils.GetFirstVernacularWs(m_para.Cache.LanguageProject.VernWss, m_para.Services.WritingSystemFactory, token);

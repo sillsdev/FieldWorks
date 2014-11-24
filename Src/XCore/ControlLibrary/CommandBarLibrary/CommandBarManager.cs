@@ -4,6 +4,9 @@
 // http://www.aisto.com/roeder
 // roeder@aisto.com
 // ---------------------------------------------------------
+using System.Diagnostics.CodeAnalysis;
+
+
 namespace Reflector.UserInterface
 {
 	using System;
@@ -119,6 +122,8 @@ namespace Reflector.UserInterface
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "commandBar is a reference")]
 		private void NotifyChevronPushed(ref Message message)
 		{
 			NativeMethods.NMREBARCHEVRON nrch = (NativeMethods.NMREBARCHEVRON)message.GetLParam(typeof(NativeMethods.NMREBARCHEVRON));
@@ -185,6 +190,8 @@ namespace Reflector.UserInterface
 			this.Height = NativeMethods.SendMessage(this.Handle, NativeMethods.RB_GETBARHEIGHT, 0, 0) + 1;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "commandBar is a reference")]
 		private NativeMethods.REBARBANDINFO GetBandInfo(int index)
 		{
 			CommandBar commandBar = this.commandBars[index];

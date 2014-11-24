@@ -1,4 +1,7 @@
 // ---------------------------------------------------------------------------------------------
+using System.Diagnostics.CodeAnalysis;
+
+
 #region // Copyright (c) 2011, SIL International. All Rights Reserved.
 // <copyright from='2011' to='2011' company='SIL International'>
 //		Copyright (c) 2011, SIL International. All Rights Reserved.
@@ -169,6 +172,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">The <see cref="System.Windows.Forms.DataGridViewEditingControlShowingEventArgs"/> instance containing the event data.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're dealing with references")]
 		private void m_dataGridView_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
 		{
 			Debug.Assert(TextControl == null && !m_regexMatchDropDown.Visible && !m_regexReplaceDropDown.Visible);
@@ -332,6 +337,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">The <see cref="System.Windows.Forms.DataGridViewCellEventArgs"/> instance containing the event data.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're dealing with references")]
 		private void m_dataGridView_RowEnter(object sender, DataGridViewCellEventArgs e)
 		{
 			UpdatePreview(e.RowIndex >= 0, m_dataGridView.Rows[e.RowIndex]);
@@ -344,6 +351,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// <param name="sender">The sender.</param>
 		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're dealing with references")]
 		private void UpdatePreview(object sender, EventArgs e)
 		{
 			UpdatePreview(m_dataGridView.CurrentRow != null, m_dataGridView.CurrentRow);
@@ -356,6 +365,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">The <see cref="System.Windows.Forms.DataGridViewCellEventArgs"/> instance containing the event data.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're dealing with references")]
 		private void m_dataGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
 		{
 			UpdatePreview(m_dataGridView.CurrentRow != null, m_dataGridView.CurrentRow);
@@ -388,6 +399,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Updates the regex preview for the given row.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're dealing with references")]
 		private void UpdatePreview(bool enabled, DataGridViewRow row)
 		{
 			m_grpPreview.Enabled = enabled;
@@ -619,6 +632,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// expression.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're dealing with references")]
 		private bool IsRegEx(DataGridViewRow row)
 		{
 			return (bool)(row.Cells[colIsRegEx.Index].Value ?? false);
@@ -679,6 +694,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Gets a Substitution object representing the current state of the given row.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're dealing with references")]
 		private Substitution GetSubstitutionForRow(DataGridViewRow row)
 		{
 			return GetSubstitutionForRow(row.Cells[colMatch.Index].Value as string,
@@ -690,6 +707,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Gets a Substitution object representing the current state of the given row.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're dealing with references")]
 		private Substitution GetSubstitutionForRow(string matchingPattern, string replacement,
 			DataGridViewRow row)
 		{

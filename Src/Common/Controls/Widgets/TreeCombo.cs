@@ -219,11 +219,13 @@ namespace SIL.FieldWorks.Common.Widgets
 					int nFontSizeTree = (int)(Tree.Font.SizeInPoints * 1000);
 					if (nFontSize > nFontSizeTree)
 					{
-						Font fntOld = Tree.Font;
-						float fntSize = nFontSize;
-						fntSize /= 1000.0F;
-						Tree.Font = new Font(fntOld.FontFamily, fntSize, fntOld.Style,
-							GraphicsUnit.Point, fntOld.GdiCharSet, fntOld.GdiVerticalFont);
+						using (Font fntOld = Tree.Font)
+						{
+							float fntSize = nFontSize;
+							fntSize /= 1000.0F;
+							Tree.Font = new Font(fntOld.FontFamily, fntSize, fntOld.Style,
+								GraphicsUnit.Point, fntOld.GdiCharSet, fntOld.GdiVerticalFont);
+						}
 					}
 				}
 			}

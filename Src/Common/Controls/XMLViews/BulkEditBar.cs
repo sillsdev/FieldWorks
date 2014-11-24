@@ -664,6 +664,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="colSpec"></param>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "besc gets added to a BulkEditItem and disposed there")]
 		protected virtual BulkEditItem MakeItem(XmlNode colSpec)
 		{
 			string beSpec = XmlUtils.GetOptionalAttributeValue(colSpec, "bulkEdit", "");
@@ -3655,6 +3657,8 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "selectedTab is a reference")]
 		private void m_operationsTabControl_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			m_operationLabel.Text = s_labels[m_operationsTabControl.SelectedIndex];
@@ -3918,6 +3922,8 @@ namespace SIL.FieldWorks.Common.Controls
 			//    combo.SelectedItem = newSelection;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "accessor gets added to a FieldComboItem and disposed there")]
 		private FieldComboItem AddStringFieldItemsToCombo(ComboBox combo, FieldComboItem selectedItem, bool fIsSourceCombo)
 		{
 			FieldComboItem newSelection = null;
@@ -4662,8 +4668,9 @@ namespace SIL.FieldWorks.Common.Controls
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				if (m_beCcontrol != null && m_beCcontrol is IDisposable)
-					(m_beCcontrol as IDisposable).Dispose();
+				var disposable = m_beCcontrol as IDisposable;
+				if (disposable != null)
+					disposable.Dispose();
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
@@ -6639,6 +6646,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private ICmSemanticDomainRepository m_semDomRepo;
 		private BulkEditBar m_bar;
 		private SemDomSearchCache m_searchCache;
+		private ToolTip m_toolTip;
 
 		// Cache suggestions from FakeDoIt so DoIt is faster.
 		private Dictionary<int, List<ICmObject>> m_suggestionCache;
@@ -6650,8 +6658,8 @@ namespace SIL.FieldWorks.Common.Controls
 			m_suggestButton.Text = XMLViewsStrings.ksSuggestButtonText;
 			m_suggestButton.Image = ResourceHelper.SuggestLightbulb;
 			m_suggestButton.ImageAlign = ContentAlignment.MiddleRight;
-			var tip = new ToolTip();
-			tip.SetToolTip(m_suggestButton, XMLViewsStrings.ksSuggestButtonToolTip);
+			m_toolTip = new ToolTip();
+			m_toolTip.SetToolTip(m_suggestButton, XMLViewsStrings.ksSuggestButtonToolTip);
 			m_doingSuggest = false;
 			m_semDomRepo = cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
 			m_bar = bar;
@@ -6777,9 +6785,12 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (disposing)
 			{
+				if (m_toolTip != null)
+					m_toolTip.Dispose();
 				m_suggestButton.Dispose();
 				IsDisposed = true;
 			}
+			m_toolTip = null;
 			m_suggestButton = null;
 		}
 

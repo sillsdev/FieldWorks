@@ -1388,6 +1388,8 @@ namespace SIL.FieldWorks.Common.UIAdapters
 		/// item, etc.) toolbar item.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "item gets returned")]
 		private ToolStripItem CreateNormalToolBarItem(XmlNode node)
 		{
 			ToolStripItem item;
@@ -1416,6 +1418,8 @@ namespace SIL.FieldWorks.Common.UIAdapters
 		/// Creates one of three different types of drop-down toolbar items.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "item gets returned")]
 		private ToolStripItem CreateDropDownToolBarItem(XmlNode node, int type)
 		{
 			ToolStripItem item;
@@ -1492,6 +1496,8 @@ namespace SIL.FieldWorks.Common.UIAdapters
 		/// Gets a custom control and return it in a returned ToolStripControlHost.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "ctrl is a reference")]
 		private ToolStripControlHost GetCustomControlHost(string name, string commandId)
 		{
 			string tooltip = null;

@@ -158,11 +158,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// still show boxes for Chinese characters when the rest of the UI is
 		/// properly showing Chinese characters.
 		/// </summary>
-		/// <param name="lbl">Lbl.</param>
+		/// <param name="lbl">Label</param>
 		private void FixLabelFont(Label lbl)
 		{
-			var oldFont = lbl.Font;
-			lbl.Font = new Font("Sans", oldFont.Size, oldFont.Style, oldFont.Unit);
+			using (var oldFont = lbl.Font)
+			{
+				lbl.Font = new Font("Sans", oldFont.Size, oldFont.Style, oldFont.Unit);
+			}
 		}
 #endif
 

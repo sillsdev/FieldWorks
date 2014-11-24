@@ -92,7 +92,7 @@ namespace SIL.Utils
 		/// <exception cref="System.ComponentModel.Win32Exception">Error activating context</exception>
 		public IDisposable Activate()
 		{
-			IntPtr cookie;
+			IntPtr cookie = IntPtr.Zero;
 #if !__MonoCS__
 			if (!ActivateActCtx(m_activationContext, out cookie))
 				throw new Win32Exception(Marshal.GetLastWin32Error(), "Error activating context");

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Drawing;
@@ -314,6 +315,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "ToolStripMenuItems are added to menu and disposed there")]
 		protected ContextMenuStrip SetupContextMenuStrip()
 		{
 			ContextMenuStrip contextMenuStrip = new System.Windows.Forms.ContextMenuStrip();

@@ -47,6 +47,8 @@ namespace SIL.FieldWorks.TE
 		/// floating window</param>
 		/// <param name="sProject">The name of the current project</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "ToolStripSeparator gets added to toolstrip and disposed there")]
 		internal KeyTermsControl(string sCaption, string sProject) : base(sCaption, sProject)
 		{
 			InitializeComponent();

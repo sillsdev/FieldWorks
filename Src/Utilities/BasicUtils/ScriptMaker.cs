@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Reflection;
 using Accessibility;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.Utils
 {
@@ -19,6 +20,8 @@ namespace SIL.Utils
 	public class ScriptMaker : IFWDisposable, IMessageFilter
 	{
 		XmlWriter m_output;
+		StreamWriter m_StreamWriterToDispose;
+
 		Set<Control> m_controls = new Set<Control>();
 		/// <summary>
 		/// Create a ScriptMaker for the specified control (typically some type of main window)
@@ -37,7 +40,8 @@ namespace SIL.Utils
 		/// <param name="root"></param>
 		public ScriptMaker(Control root)
 		{
-			Init(root, new StreamWriter("Generated Script.xml"));
+			m_StreamWriterToDispose = new StreamWriter("Generated Script.xml");
+			Init(root, m_StreamWriterToDispose);
 		}
 
 		void Init(Control root, StreamWriter destination)
@@ -47,9 +51,10 @@ namespace SIL.Utils
 			m_output.WriteStartDocument(true);
 			m_output.WriteStartElement("instructions");
 			Application.AddMessageFilter(this);
-			if (root is Form)
+			var form = root as Form;
+			if (form != null)
 			{
-				(root as Form).Closed += new EventHandler(ScriptMaker_Closed);
+				form.Closed += ScriptMaker_Closed;
 			}
 		}
 
@@ -76,6 +81,8 @@ namespace SIL.Utils
 		/// Other things are done for particular kinds of control.
 		/// </summary>
 		/// <param name="root"></param>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "form.Menu is reference")]
 		void AttachTo(Control root)
 		{
 			if (!m_controls.Contains(root))
@@ -88,8 +95,9 @@ namespace SIL.Utils
 				}
 				root.MouseDown += new MouseEventHandler(root_MouseDown);
 				root.KeyPress += new KeyPressEventHandler(root_KeyPress);
-				if (root is Form && (root as Form).Menu != null)
-					foreach (MenuItem item in (root as Form).Menu.MenuItems)
+				var form = root as Form;
+				if (form != null)
+					foreach (MenuItem item in form.Menu.MenuItems)
 						AttachTo(item);
 			}
 		}
@@ -107,6 +115,8 @@ namespace SIL.Utils
 		/// </summary>
 		/// <param name="cLeaf"></param>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "Control c is reference")]
 		public static string AccessPath(Control cLeaf)
 		{
 			StringBuilder sb = new StringBuilder();
@@ -139,6 +149,8 @@ namespace SIL.Utils
 			return ((AccessibleRole) role).ToString();
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "e.Control is reference")]
 		private void c_ControlAdded(object sender, ControlEventArgs e)
 		{
 			AttachTo(e.Control);
@@ -265,6 +277,7 @@ namespace SIL.Utils
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			m_output = null;
+			m_StreamWriterToDispose = null;
 			m_controls = null;
 
 			m_isDisposed = true;
@@ -284,6 +297,9 @@ namespace SIL.Utils
 			m_output.WriteEndElement();
 			m_output.Close();
 			m_output = null;
+			if (m_StreamWriterToDispose != null)
+				m_StreamWriterToDispose.Dispose();
+			m_StreamWriterToDispose = null;
 			Application.RemoveMessageFilter(this);
 		}
 

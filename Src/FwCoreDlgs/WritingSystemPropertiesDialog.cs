@@ -477,11 +477,39 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 
 			if (fSetSelectedItem)
-				m_listBoxRelatedWSs.SelectedItem = selectedWs;
+				SelectWritingSystem(selectedWs);
 
 			m_listBoxRelatedWSs.EndUpdate();
 			// update buttons.
 			UpdateListBoxButtons();
+		}
+
+		/// <summary>
+		/// ListBox.SelectedItem actually selects the item by finding the index
+		/// of the item in the Items collection and then setting the SelectedIndex.
+		/// It searches through the Items collection using the the Equals() method.
+		/// Writing systems implement the Equals() method to perform a value equality
+		/// check instead of a reference equality check. Because of this, it is
+		/// possible for the wrong item to be selected if there are multiple writing
+		/// systems in the ListBox that have the same property values. This method
+		/// avoids that problem by searching through the Items collection using
+		/// reference equality and then setting the selected index.
+		/// </summary>
+		private void SelectWritingSystem(IWritingSystem ws)
+		{
+			if (ws != null)
+			{
+				for (int i = 0; i < m_listBoxRelatedWSs.Items.Count; i++)
+				{
+					if (m_listBoxRelatedWSs.Items[i] == ws)
+					{
+						m_listBoxRelatedWSs.SelectedIndex = i;
+						return;
+					}
+				}
+			}
+
+			m_listBoxRelatedWSs.SelectedIndex = -1;
 		}
 
 		private void SetupDialogFromCurrentWritingSystem()
@@ -668,6 +696,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			return !m_wsContainer.AllWritingSystems.Contains(origWs);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "textBrush is a reference")]
 		private void m_listBoxRelatedWSs_DrawItem(object sender, DrawItemEventArgs e)
 		{
 			if (e.Index == -1)
@@ -1692,7 +1722,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			IWritingSystem ws = CurrentWritingSystem;
 			IWritingSystem origWs = m_tempWritingSystems[ws];
 			m_tempWritingSystems.Remove(ws);
-			m_listBoxRelatedWSs.Items.Remove(ws);
+			m_listBoxRelatedWSs.Items.RemoveAt(m_listBoxRelatedWSs.SelectedIndex);
 			m_listBoxRelatedWSs.SelectedIndex = indexNext;
 		}
 
@@ -1755,7 +1785,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				m_listBoxRelatedWSs.Items.Add(tempWs);
 				m_tempWritingSystems[tempWs] = origWs;
-				m_listBoxRelatedWSs.SelectedItem = tempWs;
+				SelectWritingSystem(tempWs);
 				if (fSwitchToGeneralTab)
 					SwitchTab(kWsGeneral);
 				// A revised Palaso WritingSystem implementation changed some message handling
@@ -2056,7 +2086,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					if (!CheckOkToChangeContext())
 					{
 						m_overrideCurrentWritingSystem = null; // override not be in force while changing back.
-						m_listBoxRelatedWSs.SelectedItem = prevSelWs; // reverse the change
+						SelectWritingSystem(prevSelWs); // reverse the change
 						m_prevSelectedWritingSystem = prevSelWs; // normal when that one is current.
 						return; // leave things set to old item; CheckOk has reported problem.
 					}

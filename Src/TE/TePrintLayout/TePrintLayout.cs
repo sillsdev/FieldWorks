@@ -21,6 +21,7 @@ using SIL.FieldWorks.FwCoreDlgs;
 using SIL.Utils;
 using XCore;
 using SIL.FieldWorks.FDO.DomainServices;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.TE
 {
@@ -1186,6 +1187,8 @@ namespace SIL.FieldWorks.TE
 		/// Find the containing FwMainWnd.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "ctrl is a reference")]
 		private FwMainWnd TheMainWnd
 		{
 			get

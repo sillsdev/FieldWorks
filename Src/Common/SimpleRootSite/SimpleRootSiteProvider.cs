@@ -850,6 +850,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <value></value>
 		/// <returns>true if the value is read-only; false if it can be modified.
 		/// </returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "m_site.EditingHelper returns a reference")]
 		public bool IsReadOnly
 		{
 			get { return !m_site.EditingHelper.Editable; }

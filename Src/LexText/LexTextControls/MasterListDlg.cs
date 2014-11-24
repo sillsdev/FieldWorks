@@ -59,12 +59,15 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected string s_helpTopic = "khtpInsertInflectionFeature";
 		protected System.Windows.Forms.HelpProvider helpProvider;
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "treeView gets disposed in Dispose")]
 		public MasterListDlg()
 		{
 			GlossListTreeView treeView = new GlossListTreeView();
 			InitDlg("FsClosedFeature", treeView);
 		}
-		public MasterListDlg(string className, GlossListTreeView treeView)
+
+		internal MasterListDlg(string className, GlossListTreeView treeView)
 		{
 			InitDlg(className, treeView);
 		}
@@ -134,11 +137,14 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					components.Dispose();
 				}
+				if (m_tvMasterList != null)
+					m_tvMasterList.Dispose();
 			}
 			m_cache = null;
 			m_selFeatDefn = null;
 			m_featureList = null;
 			m_mediator = null;
+			m_tvMasterList = null;
 
 			base.Dispose( disposing );
 		}

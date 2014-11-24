@@ -12,6 +12,7 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using XCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -396,6 +397,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			domainList.EndUpdate();
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "cache is a reference")]
 		private static Font GetFontForFormFromObjectLabels(IEnumerable<ObjectLabel> labelList, IVwStylesheet stylesheet)
 		{
 			var cache = labelList.First().Object.Cache;

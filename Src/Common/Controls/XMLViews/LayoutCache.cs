@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Xml;
 using System.Diagnostics;
@@ -300,6 +301,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache"></param>
 		/// <param name="sortItemProvider"></param>
 		/// <param name="fReturnFirstDecendentOnly"></param>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private PartOwnershipTree(FdoCache cache, IMultiListSortItemProvider sortItemProvider, bool fReturnFirstDecendentOnly)
 		{
 			XmlNode partOwnershipTreeSpec = sortItemProvider.PartOwnershipTreeSpec;

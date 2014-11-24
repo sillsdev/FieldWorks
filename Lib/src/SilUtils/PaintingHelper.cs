@@ -1,4 +1,7 @@
 // ---------------------------------------------------------------------------------------------
+using System.Diagnostics.CodeAnalysis;
+
+
 #region // Copyright (c) 2009, SIL International. All Rights Reserved.
 // <copyright from='2003' to='2009' company='SIL International'>
 //		Copyright (c) 2009, SIL International. All Rights Reserved.
@@ -181,6 +184,8 @@ namespace SIL.Utils
 		/// the menu color.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "g gets disposed or returned depending on parameter returnGraphics")]
 		public static Graphics PaintDropDownContainer(IntPtr hwnd, bool returnGraphics)
 		{
 			IntPtr hwndParent = GetParent(hwnd);

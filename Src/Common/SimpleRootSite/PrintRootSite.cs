@@ -6,6 +6,7 @@
 // Responsibility: TE Team
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Printing;
 using System.IO;
@@ -103,6 +104,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "e.Graphics is a reference")]
 		private void Init(PrintPageEventArgs e)
 		{
 #if false
@@ -214,6 +217,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "e.Graphics is a reference")]
 		private void pd_PrintPage(object sender, PrintPageEventArgs e)
 		{
 			// If the print rootsite hasn't been initialized yet, do so now.
@@ -403,6 +408,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "e.Graphics is a reference")]
 		private void SetMargins(PrintPageEventArgs e)
 		{
 			int dpiX = (int)e.Graphics.DpiX;

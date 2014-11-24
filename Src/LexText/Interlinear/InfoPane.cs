@@ -7,6 +7,7 @@ using SIL.Utils;
 using SIL.FieldWorks.XWorks;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using XCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.IText
 {
@@ -168,6 +169,8 @@ namespace SIL.FieldWorks.IText
 
 		internal class InterlinearTextsRecordEditView : RecordEditView
 		{
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "StTextDataTree gets disposed in base class")]
 			public InterlinearTextsRecordEditView(InfoPane info)
 				: base(new StTextDataTree())
 			{

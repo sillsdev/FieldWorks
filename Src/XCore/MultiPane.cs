@@ -182,6 +182,8 @@ namespace XCore
 
 		#region IxCoreCtrlTabProvider implementation
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "result is a reference")]
 		public Control PopulateCtrlTabTargetCandidateList(List<Control> targetCandidates)
 		{
 			if (targetCandidates == null)

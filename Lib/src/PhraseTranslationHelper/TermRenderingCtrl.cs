@@ -89,6 +89,8 @@ namespace SILUBS.PhraseTranslationHelper
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're dealing with references")]
 		public Font VernacularFont
 		{
 			get { return m_lbRenderings.Font; }

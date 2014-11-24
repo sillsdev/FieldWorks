@@ -222,7 +222,7 @@ namespace SIL.Utils
 		{
 			RegistryKey key = CompanyKeyLocalMachine;
 			if (key != null )
-				key = key.OpenSubKey(GetLocalMachineKeyName(subKeys));
+				return key.OpenSubKey(GetLocalMachineKeyName(subKeys));
 			return key;
 		}
 		/// ----------------------------------------------------------------------------------------

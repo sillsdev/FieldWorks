@@ -7,6 +7,7 @@ using SIL.CoreImpl;
 using System.IO;
 using SIL.Utils;
 using Utils.MessageBoxExLib;
+using System.Diagnostics.CodeAnalysis;
 
 namespace XCore
 {
@@ -23,6 +24,8 @@ namespace XCore
 		/// this can be called repeatedly, but only one will be made.
 		/// </summary>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "XMessageBoxExManager is a (per-app) singleton")]
 		public static XMessageBoxExManager CreateXMessageBoxExManager(string appName)
 		{
 			if (!s_singletonMessageBoxExManager.ContainsKey(appName))
@@ -79,13 +82,15 @@ namespace XCore
 
 		protected System.Drawing.Icon GetIcon(string name)
 		{
-				name+=".ico";
+			name += ".ico";
 
-				Stream iconStream = null;
-				System.Reflection.Assembly assembly = System.Reflection.Assembly.GetAssembly(GetType());
-				foreach(string resourcename in assembly.GetManifestResourceNames())
+			Stream iconStream = null;
+			try
+			{
+				var assembly = System.Reflection.Assembly.GetAssembly(GetType());
+				foreach (string resourcename in assembly.GetManifestResourceNames())
 				{
-					if(resourcename.EndsWith(name))
+					if (resourcename.EndsWith(name))
 					{
 						iconStream = assembly.GetManifestResourceStream(resourcename);
 						Debug.Assert(iconStream != null, "Could not load the " + name + " resource.");
@@ -93,7 +98,13 @@ namespace XCore
 					}
 				}
 				Debug.Assert(iconStream != null, "Could not load the " + name + " resource.");
-				return  new System.Drawing.Icon(iconStream);
+				return new System.Drawing.Icon(iconStream);
+			}
+			finally
+			{
+				if (iconStream != null)
+					iconStream.Dispose();
+			}
 		}
 
 		/// <summary>

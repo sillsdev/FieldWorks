@@ -1711,8 +1711,11 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// <param name="btViewName">Name of the back translation view.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "See TODO")]
 		private RegistryStringSetting GetBtWsRegistrySetting(string btViewName)
 		{
+			// TODO: we're leaking btWsRegEntries
 			RegistryKey btWsRegEntries = MainWndSettingsKey.CreateSubKey(kBtWsRegEntryName);
 			return new RegistryStringSetting(btWsRegEntries, btViewName, string.Empty);
 		}
@@ -3021,6 +3024,8 @@ namespace SIL.FieldWorks.TE
 		/// back translation.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "btDraftEditingHelper is a reference")]
 		protected bool OnUpdateBackTranslationNextMissingBtFootnoteMkr(object args)
 		{
 			TMItemProperties itemProps = args as TMItemProperties;
@@ -3225,6 +3230,8 @@ namespace SIL.FieldWorks.TE
 		/// <param name="arg">The menu or toolbar item</param>
 		/// <returns><c>true</c> because we handled the message.</returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "notesWnd is a reference")]
 		protected bool OnUpdateViewNotes(object arg)
 		{
 			try
@@ -5142,6 +5149,8 @@ namespace SIL.FieldWorks.TE
 		/// Insert Note menu
 		/// </remarks>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "notesWnd is a reference")]
 		protected bool OnInsertNote(object args)
 		{
 			if (ActiveEditingHelper == null || ActiveEditingHelper.CurrentSelection == null)
@@ -6427,6 +6436,8 @@ namespace SIL.FieldWorks.TE
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "findReplaceDlg is a reference")]
 		private void ViewGotFocus(object sender, EventArgs e)
 		{
 			if (!(sender is IRootSite) || SIBAdapter == null)
@@ -6922,6 +6933,8 @@ namespace SIL.FieldWorks.TE
 		/// <param name="scrRef">The Scripture reference.</param>
 		/// <param name="tssSelectedText">The selected text.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "notesWnd is a reference")]
 		public void ScrollToReference(object sender, ScrReference scrRef, ITsString tssSelectedText)
 		{
 			CheckDisposed();
@@ -7380,14 +7393,17 @@ namespace SIL.FieldWorks.TE
 		/// footnote tab.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "rootSite is a reference")]
 		private DialogResult DisplayScripturePropertiesDlg(bool fOnFootnoteTab, bool showFootnoteTab)
 		{
 			// even when the IP is in the footnote pane we still want to pass the draft view
 			// because that controls the footnote pane. Otherwise the scrolling doesn't work
 			// too well (DraftView scrolls to random place if IP is in footnote pane).
 			IRootSite rootSite = ActiveView;
-			if (ActiveView is FootnoteView)
-				rootSite = ((FootnoteView)ActiveView).DraftView;
+			var footnoteView = rootSite as FootnoteView;
+			if (footnoteView != null)
+				rootSite = footnoteView.DraftView;
 
 			using (ScriptureProperties dlg = new ScriptureProperties(m_cache,
 				m_StyleSheet, rootSite, showFootnoteTab, m_app))
@@ -7415,6 +7431,8 @@ namespace SIL.FieldWorks.TE
 		/// Refresh the notes window to show any updates
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "notesWnd is a reference")]
 		protected void RefreshNotesWindow()
 		{
 			NotesMainWnd notesWnd = ((TeApp)m_app).NotesWindow;

@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -4467,6 +4468,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="vwenv">The vwenv.</param>
 		/// <param name="hvo">The hvo.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public virtual void ProcessColumnSpecs(XmlNode frag, IVwEnv vwenv, int hvo)
 		{
 			XmlNode columnsElement = frag["columns"];

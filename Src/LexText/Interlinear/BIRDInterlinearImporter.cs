@@ -745,6 +745,8 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		/// <param name="word"></param>
 		/// <param name="analysis">the new analysis Gloss. If multiple glosses, returns the last one created.</param>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "cache is a reference")]
 		private static void UpgradeToWordGloss(Word word, ref IAnalysis analysis)
 		{
 			FdoCache cache = analysis.Cache;

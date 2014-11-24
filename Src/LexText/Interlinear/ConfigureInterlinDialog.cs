@@ -13,6 +13,7 @@ using SIL.Utils;
 using System.Diagnostics;
 using SIL.CoreImpl;
 using XCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.IText
 {
@@ -629,6 +630,8 @@ namespace SIL.FieldWorks.IText
 			e.DrawText();
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We return the Brush")]
 		private Brush GetBrush(InterlinLineSpec spec, bool selected)
 		{
 			Brush textBrush = SystemBrushes.ControlText;
@@ -643,6 +646,8 @@ namespace SIL.FieldWorks.IText
 			return textBrush;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "backBrush is a reference")]
 		private void DrawItem(System.Windows.Forms.DrawListViewItemEventArgs e, InterlinLineSpec spec)
 		{
 			Brush backBrush = SystemBrushes.ControlLightLight;

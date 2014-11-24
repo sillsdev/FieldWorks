@@ -27,6 +27,7 @@ using SIL.FieldWorks.Filters;
 using SIL.Utils;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.Infrastructure;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -266,6 +267,8 @@ namespace SIL.FieldWorks.XWorks
 			return possibility.OwningFlid != CmPossibilityTags.kflidSubPossibilities;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "ToolStripMenuItems get added to the menu and disposed there")]
 		protected override ContextMenuStrip CreateTreebarContextMenuStrip()
 		{
 			ContextMenuStrip menu = base.CreateTreebarContextMenuStrip();

@@ -7,6 +7,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using XCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.IText
 {
@@ -110,6 +111,8 @@ namespace SIL.FieldWorks.IText
 			/// Do the bulk of the computation, everything after initial error checking, which is now nonexistent.
 			/// </summary>
 			/// <returns>HVO of analysis (WfiWordform, WfiAnalyis, or WfiGloss)</returns>
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "fdoCache is a reference")]
 			private IAnalysis FinishItOff()
 			{
 				FdoCache fdoCache = m_caches.MainCache;

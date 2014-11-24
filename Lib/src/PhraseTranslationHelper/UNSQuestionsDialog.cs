@@ -216,6 +216,8 @@ namespace SILUBS.PhraseTranslationHelper
 
 		internal GenerateTemplateSettings GenTemplateSettings { get; private set; }
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're dealing with references")]
 		protected TranslatablePhrase CurrentPhrase
 		{
 			get
@@ -230,6 +232,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Gets a value indicating whether a cell in the Translation column is the current cell.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're dealing with references")]
 		private bool InTranslationCell
 		{
 			get
@@ -291,79 +295,81 @@ namespace SILUBS.PhraseTranslationHelper
 
 			InitializeComponent();
 
-			TxlSplashScreen splashScreen = new TxlSplashScreen();
-			splashScreen.Show(Screen.FromPoint(settings.Location));
-			splashScreen.Message = Properties.Resources.kstidSplashMsgInitializing;
-
-			ClearBiblicalTermsPane();
-
-			Text = String.Format(Text, projectName);
-			HelpButton = (m_helpDelegate != null);
-
-			mnuShowAllPhrases.Tag = PhraseTranslationHelper.KeyTermFilterType.All;
-			mnuShowPhrasesWithKtRenderings.Tag = PhraseTranslationHelper.KeyTermFilterType.WithRenderings;
-			mnuShowPhrasesWithMissingKtRenderings.Tag = PhraseTranslationHelper.KeyTermFilterType.WithoutRenderings;
-			m_lblAnswerLabel.Tag = m_lblAnswerLabel.Text.Trim();
-			m_lblCommentLabel.Tag = m_lblCommentLabel.Text.Trim();
-			lblFilterIndicator.Tag = lblFilterIndicator.Text;
-			lblRemainingWork.Tag = lblRemainingWork.Text;
-
-			Location = settings.Location;
-			WindowState = settings.DefaultWindowState;
-			if (MinimumSize.Height <= settings.DialogSize.Height &&
-				MinimumSize.Width <= settings.DialogSize.Width)
+			using (TxlSplashScreen splashScreen = new TxlSplashScreen())
 			{
-				Size = settings.DialogSize;
-			}
-			MatchWholeWords = !settings.MatchPartialWords;
-			ShowToolbar = settings.ShowToolbar;
-			GenTemplateSettings = settings.GenTemplateSettings;
-			ReceiveScrRefs = settings.ReceiveScrRefs;
-			ShowAnswersAndComments = settings.ShowAnswersAndComments;
-			MaximumHeightOfKeyTermsPane = settings.MaximumHeightOfKeyTermsPane;
+				splashScreen.Show(Screen.FromPoint(settings.Location));
+				splashScreen.Message = Properties.Resources.kstidSplashMsgInitializing;
 
-			DataGridViewCellStyle translationCellStyle = new DataGridViewCellStyle();
-			translationCellStyle.Font = vernFont;
-			m_colTranslation.DefaultCellStyle = translationCellStyle;
-			if (fVernIsRtoL)
-				m_colTranslation.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+				ClearBiblicalTermsPane();
 
-			dataGridUns.RowTemplate.MinimumHeight = dataGridUns.RowTemplate.Height = m_normalRowHeight =
+				Text = String.Format(Text, projectName);
+				HelpButton = (m_helpDelegate != null);
+
+				mnuShowAllPhrases.Tag = PhraseTranslationHelper.KeyTermFilterType.All;
+				mnuShowPhrasesWithKtRenderings.Tag = PhraseTranslationHelper.KeyTermFilterType.WithRenderings;
+				mnuShowPhrasesWithMissingKtRenderings.Tag = PhraseTranslationHelper.KeyTermFilterType.WithoutRenderings;
+				m_lblAnswerLabel.Tag = m_lblAnswerLabel.Text.Trim();
+				m_lblCommentLabel.Tag = m_lblCommentLabel.Text.Trim();
+				lblFilterIndicator.Tag = lblFilterIndicator.Text;
+				lblRemainingWork.Tag = lblRemainingWork.Text;
+
+				Location = settings.Location;
+				WindowState = settings.DefaultWindowState;
+				if (MinimumSize.Height <= settings.DialogSize.Height &&
+				   MinimumSize.Width <= settings.DialogSize.Width)
+				{
+					Size = settings.DialogSize;
+				}
+				MatchWholeWords = !settings.MatchPartialWords;
+				ShowToolbar = settings.ShowToolbar;
+				GenTemplateSettings = settings.GenTemplateSettings;
+				ReceiveScrRefs = settings.ReceiveScrRefs;
+				ShowAnswersAndComments = settings.ShowAnswersAndComments;
+				MaximumHeightOfKeyTermsPane = settings.MaximumHeightOfKeyTermsPane;
+
+				DataGridViewCellStyle translationCellStyle = new DataGridViewCellStyle();
+				translationCellStyle.Font = vernFont;
+				m_colTranslation.DefaultCellStyle = translationCellStyle;
+				if (fVernIsRtoL)
+					m_colTranslation.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+
+				dataGridUns.RowTemplate.MinimumHeight = dataGridUns.RowTemplate.Height = m_normalRowHeight =
 				(int)Math.Ceiling(vernFont.Height * CreateGraphics().DpiY / 72) + 2;
-			Margin = new Padding(Margin.Left, toolStrip1.Height, Margin.Right, Margin.Bottom);
+				Margin = new Padding(Margin.Left, toolStrip1.Height, Margin.Right, Margin.Bottom);
 
-			m_questionsFilename = Path.Combine(s_unsDataFolder, Path.ChangeExtension(Path.GetFileName(settings.QuestionsFile), "xml"));
-			string alternativesFilename = Path.Combine(Path.GetDirectoryName(settings.QuestionsFile) ?? string.Empty,
-				Path.ChangeExtension(Path.GetFileNameWithoutExtension(settings.QuestionsFile) + " - AlternateFormOverrides", "xml"));
-			m_keyTermRulesFilename = Path.Combine(Path.GetDirectoryName(settings.QuestionsFile) ?? string.Empty, "keyTermRules.xml");
-			FileInfo finfoXmlQuestions = new FileInfo(m_questionsFilename);
-			FileInfo finfoSfmQuestions = new FileInfo(settings.QuestionsFile);
-			FileInfo finfoAlternatives = new FileInfo(alternativesFilename);
+				m_questionsFilename = Path.Combine(s_unsDataFolder, Path.ChangeExtension(Path.GetFileName(settings.QuestionsFile), "xml"));
+				string alternativesFilename = Path.Combine(Path.GetDirectoryName(settings.QuestionsFile) ?? string.Empty,
+					Path.ChangeExtension(Path.GetFileNameWithoutExtension(settings.QuestionsFile) + " - AlternateFormOverrides", "xml"));
+				m_keyTermRulesFilename = Path.Combine(Path.GetDirectoryName(settings.QuestionsFile) ?? string.Empty, "keyTermRules.xml");
+				FileInfo finfoXmlQuestions = new FileInfo(m_questionsFilename);
+				FileInfo finfoSfmQuestions = new FileInfo(settings.QuestionsFile);
+				FileInfo finfoAlternatives = new FileInfo(alternativesFilename);
 
-			if (!finfoXmlQuestions.Exists ||
-				(finfoSfmQuestions.Exists && finfoXmlQuestions.CreationTimeUtc < finfoSfmQuestions.CreationTimeUtc) ||
-				(finfoSfmQuestions.Exists && finfoAlternatives.Exists && finfoXmlQuestions.CreationTimeUtc < finfoAlternatives.CreationTimeUtc))
-			{
-				if (!finfoSfmQuestions.Exists)
-					MessageBox.Show(Properties.Resources.kstidFileNotFound + settings.QuestionsFile, Text);
-				if (!finfoAlternatives.Exists)
-					alternativesFilename = null;
-				QuestionSfmFileAccessor.Generate(settings.QuestionsFile, alternativesFilename, m_questionsFilename);
+				if (!finfoXmlQuestions.Exists ||
+				   (finfoSfmQuestions.Exists && finfoXmlQuestions.CreationTimeUtc < finfoSfmQuestions.CreationTimeUtc) ||
+				   (finfoSfmQuestions.Exists && finfoAlternatives.Exists && finfoXmlQuestions.CreationTimeUtc < finfoAlternatives.CreationTimeUtc))
+				{
+					if (!finfoSfmQuestions.Exists)
+						MessageBox.Show(Properties.Resources.kstidFileNotFound + settings.QuestionsFile, Text);
+					if (!finfoAlternatives.Exists)
+						alternativesFilename = null;
+					QuestionSfmFileAccessor.Generate(settings.QuestionsFile, alternativesFilename, m_questionsFilename);
+				}
+
+				m_translationsFile = Path.Combine(s_unsDataFolder, string.Format("Translations of Checking Questions - {0}.xml", projectName));
+				m_phraseCustomizationsFile = Path.Combine(s_unsDataFolder, string.Format("Question Customizations - {0}.xml", projectName));
+				m_phraseSubstitutionsFile = Path.Combine(s_unsDataFolder, string.Format("Phrase substitutions - {0}.xml", projectName));
+				m_phraseSubstitutions = XmlSerializationHelper.LoadOrCreateList<Substitution>(m_phraseSubstitutionsFile, true);
+				KeyTermMatch.RenderingInfoFile = Path.Combine(s_unsDataFolder, string.Format("Key term rendering info - {0}.xml", projectName));
+
+				LoadTranslations(splashScreen);
+
+				// Now apply settings that have filtering or other side-effects
+				CheckedKeyTermFilterType = settings.KeyTermFilterType;
+				SendScrRefs = settings.SendScrRefs;
+
+				splashScreen.Close();
 			}
-
-			m_translationsFile = Path.Combine(s_unsDataFolder, string.Format("Translations of Checking Questions - {0}.xml", projectName));
-			m_phraseCustomizationsFile = Path.Combine(s_unsDataFolder, string.Format("Question Customizations - {0}.xml", projectName));
-			m_phraseSubstitutionsFile = Path.Combine(s_unsDataFolder, string.Format("Phrase substitutions - {0}.xml", projectName));
-			m_phraseSubstitutions = XmlSerializationHelper.LoadOrCreateList<Substitution>(m_phraseSubstitutionsFile, true);
-			KeyTermMatch.RenderingInfoFile = Path.Combine(s_unsDataFolder, string.Format("Key term rendering info - {0}.xml", projectName));
-
-			LoadTranslations(splashScreen);
-
-			// Now apply settings that have filtering or other side-effects
-			CheckedKeyTermFilterType = settings.KeyTermFilterType;
-			SendScrRefs = settings.SendScrRefs;
-
-			splashScreen.Close();
 		}
 		#endregion
 
@@ -529,6 +535,8 @@ namespace SILUBS.PhraseTranslationHelper
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're dealing with references")]
 		private void dataGridUns_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
 		{
 			int iClickedCol = e.ColumnIndex;
@@ -578,6 +586,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// after filtering.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're dealing with references")]
 		private void RememberCurrentSelection()
 		{
 			if (dataGridUns.CurrentRow != null && dataGridUns.CurrentCell != null)
@@ -618,6 +628,9 @@ namespace SILUBS.PhraseTranslationHelper
 		{
 			ApplyFilter();
 		}
+
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're dealing with references")]
 		private void ApplyFilter()
 		{
 			bool clearCurrentSelection = false;
@@ -784,6 +797,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Handles the Click event of the mnuGenerateTemplate control.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're dealing with references")]
 		private void mnuGenerateTemplate_Click(object sender, EventArgs e)
 		{
 			using (GenerateTemplateDlg dlg = new GenerateTemplateDlg(m_projectName, m_defaultLcfFolder,
@@ -1003,6 +1018,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Handles the Click event of the phraseSubstitutionsToolStripMenuItem control.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're dealing with references")]
 		private void phraseSubstitutionsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			using (PhraseSubstitutionsDlg dlg = new PhraseSubstitutionsDlg(m_phraseSubstitutions,
@@ -1054,6 +1071,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// <param name="fallBackRow">the index of the row to select if a question witht the
 		/// given key cannot be found.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're dealing with references")]
 		private void Reload(bool fForceSave, QuestionKey key, int fallBackRow)
 		{
 			using (new WaitCursor(this))
@@ -1097,6 +1116,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Handles the CheckedChanged event of the mnuViewBiblicalTermsPane control.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're dealing with references")]
 		private void mnuViewBiblicalTermsPane_CheckedChanged(object sender, EventArgs e)
 		{
 			if (mnuViewBiblicalTermsPane.Checked && dataGridUns.CurrentRow != null)
@@ -1113,6 +1134,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Handles the RowEnter event of the dataGridUns control.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're dealing with references")]
 		private void dataGridUns_RowEnter(object sender, DataGridViewCellEventArgs e)
 		{
 			m_lastRowEntered = e.RowIndex;
@@ -1162,6 +1185,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
 			Justification="See TODO-Linux comment")]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're dealing with references")]
 		private void dataGridUns_Resize(object sender, EventArgs e)
 		{
 			if (m_lastRowEntered < 0 || m_lastRowEntered >= dataGridUns.RowCount)
@@ -1226,6 +1251,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're dealing with references")]
 		private void InsertOrAddQuestion(object sender, EventArgs e)
 		{
 			TranslatablePhrase phrase = CurrentPhrase;
@@ -1258,12 +1285,16 @@ namespace SILUBS.PhraseTranslationHelper
 			mnuEditQuestion.Enabled = !fExcluded;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're dealing with references")]
 		private void dataGridUns_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
 		{
 			if (m_helper[e.RowIndex].IsExcluded)
 				dataGridUns.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.LightCoral;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're dealing with references")]
 		private void dataGridUns_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
 		{
 			if (e.Button == MouseButtons.Right && e.RowIndex >= 0)
@@ -1299,6 +1330,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Handles the SelectedIndexChanged event for one of the biblical terms list boxes.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're dealing with references")]
 		private void KeyTermRenderingSelected(TermRenderingCtrl sender)
 		{
 			if (dataGridUns.CurrentRow == null)
@@ -1328,6 +1361,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Handles the CheckStateChanged event of the btnSendScrReferences control.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're dealing with references")]
 		private void btnSendScrReferences_CheckStateChanged(object sender, EventArgs e)
 		{
 			if (btnSendScrReferences.Checked && dataGridUns.CurrentRow != null)
@@ -1339,6 +1374,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Handles the VisibleChanged event of the m_pnlAnswersAndComments control.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're dealing with references")]
 		private void m_pnlAnswersAndComments_VisibleChanged(object sender, EventArgs e)
 		{
 			if (m_pnlAnswersAndComments.Visible && dataGridUns.CurrentRow != null)
@@ -1452,6 +1489,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Handles copying and pasting cell contents (TXL-100)
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're dealing with references")]
 		private void mnuCopy_Click(object sender, EventArgs e)
 		{
 			if (txtFilterByPart.Focused)
@@ -1469,6 +1508,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Handles copying and pasting cell contents (TXL-100)
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're dealing with references")]
 		private void mnuPaste_Click(object sender, EventArgs e)
 		{
 			if (txtFilterByPart.Focused)
@@ -1501,6 +1542,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Gets the Scripture reference of the row corresponding to the given index.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're dealing with references")]
 		private BCVRef GetScrRefOfRow(int iRow)
 		{
 			string sRef = dataGridUns.Rows[iRow].Cells[m_colReference.Index].Value as string;
@@ -1625,6 +1668,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Resizes the key term pane columns.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're dealing with references")]
 		private void ResizeKeyTermPaneColumns()
 		{
 			int columnsToFit = m_biblicalTermsPane.ColumnCount;
@@ -1715,6 +1760,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// </summary>
 		/// <param name="reference">The reference in English versification scheme.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're dealing with references")]
 		private void ProcessReceivedMessage(ScrReference reference)
 		{
 			// While we process the given reference we might get additional synch events, the
@@ -1748,6 +1795,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// <param name="iRow">The index of the row</param>
 		/// <param name="reference">The reference.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're dealing with references")]
 		internal bool QuestionCoversRef(int iRow, ScrReference reference)
 		{
 			string sRef = dataGridUns.Rows[iRow].Cells[m_colReference.Index].Value as string;
@@ -1761,6 +1810,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Goes to the first row in the data grid corresponding to the given reference.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're dealing with references")]
 		private void GoToReference(ScrReference reference)
 		{
 			for (int iRow = 0; iRow < dataGridUns.Rows.Count; iRow++)

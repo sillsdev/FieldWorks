@@ -689,6 +689,8 @@ namespace XCore
 			return unified;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "ChildNodes returns a reference")]
 		private void UnifyChildren(XmlNode alteration, XmlNode baseNode, XmlNode unified)
 		{
 			bool reorder = XmlUtils.GetOptionalBooleanAttributeValue(alteration, "reorder", false);

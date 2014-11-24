@@ -7,6 +7,7 @@ using System.Xml.Serialization;
 using System.Diagnostics;
 using System.Xml;
 using System.Reflection;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.Utils
 {
@@ -48,6 +49,8 @@ namespace SIL.Utils
 			/// will preserve and return elements that contain only whitespace, otherwise
 			/// these elements will be ignored during a deserialization.</param>
 			/// --------------------------------------------------------------------------------
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification="Hopefully the base class will dispose the StreamReader :-)")]
 			public XmlScrTextReader(string filename, bool fKeepWhitespaceInElements) :
 				base(new StreamReader(filename))
 			{

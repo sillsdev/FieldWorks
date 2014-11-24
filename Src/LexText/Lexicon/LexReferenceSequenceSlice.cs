@@ -4,6 +4,7 @@ using SIL.Utils;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.FDO;
 using XCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -14,6 +15,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LexReferenceSequenceSlice"/> class.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "LexReferenceSequenceLauncher gets added to panel's Controls collection and disposed there")]
 		public LexReferenceSequenceSlice()
 			: base(new LexReferenceSequenceLauncher())
 		{

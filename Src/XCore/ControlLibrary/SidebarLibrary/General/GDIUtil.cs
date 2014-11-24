@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 
 using SidebarLibrary.Win32;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SidebarLibrary.General
 {
@@ -70,6 +71,8 @@ namespace SidebarLibrary.General
 
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "gBitmap is a reference")]
 		static public Bitmap GetStrechedBitmap(Graphics gDest, Rectangle rcDest, Bitmap bitmap)
 		{
 

@@ -9,6 +9,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Resources;
 using System.Diagnostics;
 using SIL.Utils; // for Win32 message defns.
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -1035,6 +1036,8 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Shows the drop down box.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "parent is a reference")]
 		protected void ShowDropDownBox()
 		{
 			CheckDisposed();
@@ -2014,6 +2017,8 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Make one.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "m_previousForm is a reference")]
 		public ComboListBox()
 		{
 			m_activateOnShow = true;
@@ -2027,7 +2032,6 @@ namespace SIL.FieldWorks.Common.Widgets
 
 			// Make sure this isn't null, allow launch to update its value
 			m_previousForm = Form.ActiveForm;
-
 		}
 
 		#region IDisposable & Co. implementation

@@ -246,6 +246,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "sc is a reference")]
 		private void InstallSlice(Slice slice, int index)
 		{
 			Debug.Assert(index >= 0 && index <= Slices.Count);
@@ -322,6 +324,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			movedSlice.TakeFocus();
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "otherSliceSC is a reference")]
 		private void AdjustSliceSplitPosition(Slice otherSlice)
 		{
 			SplitContainer otherSliceSC = otherSlice.SplitCont;
@@ -683,6 +687,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// if possible, otherwise, the root object. May return null if the nearest Parent is disposed.
 		/// </summary>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "loopSlice is a reference")]
 		private ICmObject DescendantForSlice(Slice slice)
 		{
 			var loopSlice = slice;
@@ -802,6 +808,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// Note: This value is a base value and should never include the LabelIndent offset.
 		/// Each Slice will add its own Label length, when its SplitterDistance is set.
 		/// </remarks>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "sc is a reference")]
 		public int SliceSplitPositionBase
 		{
 			get
@@ -1627,6 +1635,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// This actually handles Paint for the contained control that has the slice controls in it.
 		/// </summary>
 		/// <param name="pea">The <see cref="System.Windows.Forms.PaintEventArgs"/> instance containing the event data.</param>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "gr is a reference")]
 		void HandlePaintLinesBetweenSlices(PaintEventArgs pea)
 		{
 			Graphics gr = pea.Graphics;
@@ -3067,6 +3077,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		// Get or create the real slice at index i.
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "slice is a reference")]
 		public Slice FieldAt(int i)
 		{
 			CheckDisposed();

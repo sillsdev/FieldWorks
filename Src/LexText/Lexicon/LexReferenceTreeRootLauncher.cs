@@ -6,6 +6,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -101,6 +102,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		/// <remarks>internal and virtual to support testing...otherwise would be private</remarks>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "parent is a reference")]
 		internal virtual ICmObject GetChildObject()
 		{
 			LexReferenceTreeRootSlice owningSlice = null;

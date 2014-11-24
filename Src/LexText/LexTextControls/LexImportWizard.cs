@@ -1978,6 +1978,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// retrieve the last import file that was imported via the wizard from the registry.
 		/// </summary>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "key is a reference")]
 		private bool GetLastImportFile(out string fileName)
 		{
 			fileName = string.Empty;

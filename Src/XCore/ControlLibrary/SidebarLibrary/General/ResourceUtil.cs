@@ -15,19 +15,21 @@ namespace SidebarLibrary.General
 			Assembly myAssembly = Assembly.GetAssembly(assemblyType);
 
 			// Get the resource stream containing the images
-			Stream iconStream = myAssembly.GetManifestResourceStream(iconName);
-
-			// Load the Icon from the stream
-			return new Icon(iconStream);
+			using (Stream iconStream = myAssembly.GetManifestResourceStream(iconName))
+			{
+				// Load the Icon from the stream
+				return new Icon(iconStream);
+			}
 		}
 
 		public static Icon LoadIconStream(Type assemblyType, string iconName, Size iconSize)
 		{
 			// Load the entire Icon requested (may include several different Icon sizes)
-			Icon rawIcon = LoadIconStream(assemblyType, iconName);
-
-			// Create and return a new Icon that only contains the requested size
-			return new Icon(rawIcon, iconSize);
+			using (Icon rawIcon = LoadIconStream(assemblyType, iconName))
+			{
+				// Create and return a new Icon that only contains the requested size
+				return new Icon(rawIcon, iconSize);
+			}
 		}
 
 		public static Bitmap LoadBitmapStream(Type assemblyType, string imageName)
@@ -62,20 +64,21 @@ namespace SidebarLibrary.General
 			Assembly myAssembly = Assembly.GetAssembly(assemblyType);
 
 			// Get the resource stream containing the images
-			Stream imageStream = myAssembly.GetManifestResourceStream(imageName);
-
-			// Load the bitmap from stream
-			Bitmap image = new Bitmap(imageStream);
-
-			if (makeTransparent)
+			using (Stream imageStream = myAssembly.GetManifestResourceStream(imageName))
 			{
-				Color backColor = image.GetPixel(transparentPixel.X, transparentPixel.Y);
+				// Load the bitmap from stream
+				Bitmap image = new Bitmap(imageStream);
 
-				// Make backColor transparent for Bitmap
-				image.MakeTransparent(backColor);
+				if (makeTransparent)
+				{
+					Color backColor = image.GetPixel(transparentPixel.X, transparentPixel.Y);
+
+					// Make backColor transparent for Bitmap
+					image.MakeTransparent(backColor);
+				}
+
+				return image;
 			}
-
-			return image;
 		}
 
 		public static ImageList LoadImageListStream(Type assemblyType,
@@ -94,23 +97,24 @@ namespace SidebarLibrary.General
 			Assembly myAssembly = Assembly.GetAssembly(assemblyType);
 
 			// Get the resource stream containing the images
-			Stream imageStream = myAssembly.GetManifestResourceStream(imageName);
-
-			// Load the bitmap strip from resource
-			Bitmap pics = new Bitmap(imageStream);
-
-			if (makeTransparent)
+			using (Stream imageStream = myAssembly.GetManifestResourceStream(imageName))
 			{
-				Color backColor = pics.GetPixel(transparentPixel.X, transparentPixel.Y);
+				// Load the bitmap strip from resource
+				Bitmap pics = new Bitmap(imageStream);
 
-				// Make backColor transparent for Bitmap
-				pics.MakeTransparent(backColor);
+				if (makeTransparent)
+				{
+					Color backColor = pics.GetPixel(transparentPixel.X, transparentPixel.Y);
+
+					// Make backColor transparent for Bitmap
+					pics.MakeTransparent(backColor);
+				}
+
+				// Load them all !
+				images.Images.AddStrip(pics);
+
+				return images;
 			}
-
-			// Load them all !
-			images.Images.AddStrip(pics);
-
-			return images;
 		}
 
 		// The difference between the "LoadXStream" and "LoadXResource" functions is that

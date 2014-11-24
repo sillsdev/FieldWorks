@@ -19,6 +19,7 @@ using SIL.FieldWorks.LexText.Controls;
 using XCore;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.FdoUi
 {
@@ -268,6 +269,8 @@ namespace SIL.FieldWorks.FdoUi
 			return MakeUi(cache, hvo, cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo).ClassID);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "result gets returned")]
 		private static CmObjectUi MakeUi(FdoCache cache, int hvo, int clsid)
 		{
 			IFwMetaDataCache mdc = cache.DomainDataByFlid.MetaDataCache;
@@ -366,41 +369,21 @@ namespace SIL.FieldWorks.FdoUi
 		public static CmObjectUi CreateNewUiObject(Mediator mediator, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
-			CmObjectUi newUiObj;
 			switch (classId)
 			{
 				default:
-					{
-						newUiObj = DefaultCreateNewUiObject(classId, hvoOwner, flid, insertionPosition, cache);
-						break;
-					}
+					return DefaultCreateNewUiObject(classId, hvoOwner, flid, insertionPosition, cache);
 				case CmPossibilityTags.kClassId:
-					{
-						newUiObj = CmPossibilityUi.CreateNewUiObject(mediator, classId, hvoOwner, flid, insertionPosition);
-						break;
-					}
+					return CmPossibilityUi.CreateNewUiObject(mediator, classId, hvoOwner, flid, insertionPosition);
 				case PartOfSpeechTags.kClassId:
-					{
-						newUiObj = PartOfSpeechUi.CreateNewUiObject(mediator, classId, hvoOwner, flid, insertionPosition);
-						break;
-					}
+					return PartOfSpeechUi.CreateNewUiObject(mediator, classId, hvoOwner, flid, insertionPosition);
 				case FsFeatDefnTags.kClassId:
-					{
-						newUiObj = FsFeatDefnUi.CreateNewUiObject(mediator, classId, hvoOwner, flid, insertionPosition);
-						break;
-					}
+					return FsFeatDefnUi.CreateNewUiObject(mediator, classId, hvoOwner, flid, insertionPosition);
 				case LexSenseTags.kClassId:
-					{
-						newUiObj = LexSenseUi.CreateNewUiObject(mediator, classId, hvoOwner, flid, insertionPosition);
-						break;
-					}
+					return LexSenseUi.CreateNewUiObject(mediator, classId, hvoOwner, flid, insertionPosition);
 				case LexPronunciationTags.kClassId:
-					{
-						newUiObj = LexPronunciationUi.CreateNewUiObject(mediator, classId, hvoOwner, flid, insertionPosition);
-						break;
-					}
+					return LexPronunciationUi.CreateNewUiObject(mediator, classId, hvoOwner, flid, insertionPosition);
 			}
-			return newUiObj;
 		}
 
 		internal static CmObjectUi DefaultCreateNewUiObject(int classId, int hvoOwner, int flid, int insertionPosition, FdoCache cache)
@@ -709,11 +692,11 @@ namespace SIL.FieldWorks.FdoUi
 				return false; // a special magic class id, only enabled explicitly.
 			if (Object.ClassID == specifiedClsid)
 				return true;
-			int baseClsid = m_cache.DomainDataByFlid.MetaDataCache.GetBaseClsId(Object.ClassID);
-			if (baseClsid == specifiedClsid) //handle one level of subclassing
-				return true;
-			return false;
-		}
+				int baseClsid = m_cache.DomainDataByFlid.MetaDataCache.GetBaseClsId(Object.ClassID);
+				if (baseClsid == specifiedClsid) //handle one level of subclassing
+					return true;
+					return false;
+				}
 
 		/// <summary>
 		/// Get the id of the XCore Context menu that should be shown for our object
@@ -1007,7 +990,7 @@ namespace SIL.FieldWorks.FdoUi
 					{
 						string cannotDeleteMsg;
 						if (CanDelete(out cannotDeleteMsg))
-							dlg.SetDlgInfo(this, m_cache, Mediator);
+						dlg.SetDlgInfo(this, m_cache, Mediator);
 						else
 							dlg.SetDlgInfo(this, m_cache, Mediator, m_cache.TsStrFactory.MakeString(cannotDeleteMsg, m_cache.DefaultUserWs));
 						if (DialogResult.Yes == dlg.ShowDialog(mainWindow))
@@ -1066,25 +1049,25 @@ namespace SIL.FieldWorks.FdoUi
 				var app = mediator.PropertyTable.GetValue("App") as FwApp;
 				if (app != null)
 					app.PictureHolder.ReleasePicture(file.AbsoluteInternalPath);
-				string fileToDelete = file.AbsoluteInternalPath;
-				// I'm not sure why, but if we try to delete it right away, we typically get a failure,
-				// with an exception indicating that something is using the file, despite the code above that
-				// tries to make our picture cache let go of it.
-				// However, waiting until idle seems to solve the problem.
-				mediator.IdleQueue.Add(IdleQueuePriority.Low, obj =>
+			string fileToDelete = file.AbsoluteInternalPath;
+			// I'm not sure why, but if we try to delete it right away, we typically get a failure,
+			// with an exception indicating that something is using the file, despite the code above that
+			// tries to make our picture cache let go of it.
+			// However, waiting until idle seems to solve the problem.
+			mediator.IdleQueue.Add(IdleQueuePriority.Low, obj =>
+				{
+					try
 					{
-						try
-						{
-							File.Delete(fileToDelete);
-						}
-						catch (IOException)
-						{
-							// If we can't actually delete the file for some reason, don't bother the user complaining.
-						}
-						return true; // task is complete, don't try again.
-					});
-				file.Delete();
-			}
+						File.Delete(fileToDelete);
+					}
+					catch (IOException)
+					{
+						// If we can't actually delete the file for some reason, don't bother the user complaining.
+					}
+					return true; // task is complete, don't try again.
+				});
+			file.Delete();
+		}
 		}
 
 		protected virtual void ReallyDeleteUnderlyingObject()
@@ -1341,10 +1324,10 @@ namespace SIL.FieldWorks.FdoUi
 
 			public override void Display(IVwEnv vwenv, int hvo, int frag)
 			{
-				int wsUi = vwenv.DataAccess.WritingSystemFactory.UserWs;
-				vwenv.AddStringAltMember(m_flidName, wsUi, this);
+						int wsUi = vwenv.DataAccess.WritingSystemFactory.UserWs;
+						vwenv.AddStringAltMember(m_flidName, wsUi, this);
+				}
 			}
-		}
 		/// <summary>
 		/// Special VC for classes that have name and abbreviation, both displayed in UI WS.
 		/// </summary>
@@ -1614,15 +1597,15 @@ namespace SIL.FieldWorks.FdoUi
 			ICmPossibility poss = cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(hvoItem);
 			using (var col = new CmPossibilityUi(poss))
 			{
-				// If the item doesn't already have children, we can only add them if it isn't already in use
-				// as a column: we don't want to change a column into a group. Thus, if there are no
-				// children, we generally call the same routine as when deleting.
-				// However, that routine has a special case to prevent deletion of the default template even
-				// if NOT in use...and we must not prevent adding to that when it is empty! Indeed any
-				// empty CHART can always be added to, so only if col's owner is a CmPossibility (it's not a root
-				// item in the templates list) do we need to check for it being in use.
+			// If the item doesn't already have children, we can only add them if it isn't already in use
+			// as a column: we don't want to change a column into a group. Thus, if there are no
+			// children, we generally call the same routine as when deleting.
+			// However, that routine has a special case to prevent deletion of the default template even
+			// if NOT in use...and we must not prevent adding to that when it is empty! Indeed any
+			// empty CHART can always be added to, so only if col's owner is a CmPossibility (it's not a root
+			// item in the templates list) do we need to check for it being in use.
 				if (poss.SubPossibilitiesOS.Count == 0 && poss.Owner is ICmPossibility && col.CheckAndReportProtectedChartColumn())
-					return true;
+				return true;
 			}
 			// Finally, we have to confirm the three-level rule.
 			var owner = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoItem).Owner;
@@ -1715,7 +1698,7 @@ namespace SIL.FieldWorks.FdoUi
 				msg = string.Format(poss.SubPossibilitiesOS.Count == 0 ? FdoUiStrings.ksCantDeleteMarkupTagInUse
 					: FdoUiStrings.ksCantDeleteMarkupTypeInUse, textName);
 				return false;
-			}
+	}
 
 			msg = null;
 			return true;
@@ -1869,7 +1852,7 @@ namespace SIL.FieldWorks.FdoUi
 			var msa = (IMoStemMsa) Object;
 			if (msa.PartOfSpeechRA == null)
 				return Guid.Empty;
-			return msa.PartOfSpeechRA.Guid;
+				return msa.PartOfSpeechRA.Guid;
 		}
 	}
 	/// <summary>
@@ -1901,7 +1884,7 @@ namespace SIL.FieldWorks.FdoUi
 			var msa = (IMoInflAffMsa) Object;
 			if (msa.PartOfSpeechRA == null)
 				return Guid.Empty;
-			return msa.PartOfSpeechRA.Guid;
+				return msa.PartOfSpeechRA.Guid;
 		}
 	}
 
@@ -1938,7 +1921,7 @@ namespace SIL.FieldWorks.FdoUi
 			var msa = (IMoDerivAffMsa) Object;
 			if (msa.FromPartOfSpeechRA == null)
 				return Guid.Empty;
-			return msa.FromPartOfSpeechRA.Guid;
+				return msa.FromPartOfSpeechRA.Guid;
 		}
 	}
 
@@ -2442,7 +2425,7 @@ namespace SIL.FieldWorks.FdoUi
 
 			if (m_targetUi != null)
 				return m_targetUi.OnJumpToTool(commandObject);
-			return base.OnJumpToTool(commandObject);
+				return base.OnJumpToTool(commandObject);
 		}
 
 		/// <summary>
@@ -2526,8 +2509,8 @@ namespace SIL.FieldWorks.FdoUi
 				ICmObject cmo = GetSelfOrParentOfClass(Object, LexEntryTags.kClassId);
 				return (cmo == null) ? Guid.Empty : cmo.Guid;
 			}
-			return Object.Guid;
-		}
+				return Object.Guid;
+			}
 
 		protected override bool ShouldDisplayMenuForClass(int specifiedClsid, UIItemDisplayProperties display)
 		{
@@ -2678,7 +2661,7 @@ namespace SIL.FieldWorks.FdoUi
 
 			var me = (IWfiGloss) Object;
 			tss = me.ShortNameTSS;
-			ws = tss.get_PropertiesAt(0).GetIntPropValues((int) FwTextPropType.ktptWs, out nVar);
+			ws = tss.get_PropertiesAt(0).GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
 			return new DummyCmObject(m_hvo, tss.Text, ws);
 		}
 	}

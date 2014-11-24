@@ -14,6 +14,7 @@ using SIL.Utils;
 using SIL.FieldWorks.IText;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -181,6 +182,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				TurnOnSandbox();
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "parent is a reference")]
 		InterlinearSlice MySlice
 		{
 			get

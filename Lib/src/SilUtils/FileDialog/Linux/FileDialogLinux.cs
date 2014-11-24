@@ -6,6 +6,9 @@
 // 	GNU Lesser General Public License, as specified in the LICENSING.txt file.
 // </copyright>
 // --------------------------------------------------------------------------------------------
+using System.Diagnostics.CodeAnalysis;
+
+
 #if __MonoCS__
 using System;
 using System.ComponentModel;
@@ -95,6 +98,8 @@ namespace SIL.Utils.FileDialog.Linux
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "currentFilter is a reference")]
 		private int CurrentFilterIndex
 		{
 			get
@@ -208,6 +213,8 @@ namespace SIL.Utils.FileDialog.Linux
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "Widget is a reference")]
 		protected virtual FileChooserDialog CreateFileChooserDialog()
 		{
 			// TODO: set parent

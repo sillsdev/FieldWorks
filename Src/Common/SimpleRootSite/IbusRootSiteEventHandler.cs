@@ -40,6 +40,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			private readonly ITsTextProps[] m_TextProps;
 
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "SimpleRootSite.EditingHelper is a reference")]
 			public SelectionWrapper(SimpleRootSite rootSite)
 			{
 				SelectionHelper = new SelectionHelper(rootSite.EditingHelper.CurrentSelection);
@@ -187,6 +189,8 @@ namespace SIL.FieldWorks.Common.RootSites
 				propsBuilder.GetTextProps()).get_NormalizedForm(FwNormalizationMode.knmNFD);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "AssociatedSimpleRootSite.EditingHelper returns a reference")]
 		private SelectionHelper SetupForTypingEventHandler(bool checkIfFocused,
 			bool rollBackPreviousTask)
 		{
@@ -363,6 +367,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="cursorPos">0-based position where the cursor should be put after
 		/// updating the composition (pre-edit window). This position is relative to the
 		/// composition/preedit text.</param>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "SimpleRootSite.EditingHelper is a reference")]
 		public void OnUpdatePreeditText(object obj, int cursorPos)
 		{
 			if (AssociatedSimpleRootSite.InvokeRequired)
@@ -541,6 +547,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// IBus will use this information when it opens a pop-up window to present a list of
 		/// composition choices.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "SimpleRootSite.EditingHelper is a reference")]
 		public Rectangle SelectionLocationAndHeight
 		{
 			get

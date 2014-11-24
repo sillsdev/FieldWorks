@@ -62,6 +62,8 @@ namespace SIL.FieldWorks.TE
 		/// <param name="footnoteStylebar">The footnote stylebar proxy.</param>
 		/// <param name="footnoteBtDraftView">The BT footnote draft view proxy.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "persistence gets disposed when m_Container gets disposed")]
 		internal BtDraftSplitWrapper(string name, Control parent, FdoCache cache,
 			IVwStylesheet styleSheet, RegistryKey settingsRegKey, TeScrDraftViewProxy draftView,
 			DraftStylebarProxy stylebar, TeScrDraftViewProxy btDraftView,

@@ -3017,6 +3017,8 @@ namespace SIL.FieldWorks.XWorks
 			/// <param name="fWasAlreadySuppressed">Usually, clerk.ListLoadingSuppressed. When we know we just
 			/// created the clerk, already in a suppressed state, and want to treat it as if this
 			/// list update helper did the suppressing, pass false, even though the list may in fact be already suppressed.</param>
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "parentClerk is a reference")]
 			public ListUpdateHelper(RecordClerk clerk, bool fWasAlreadySuppressed)
 			{
 				m_clerk = clerk;

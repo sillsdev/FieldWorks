@@ -43,6 +43,8 @@ namespace XCore
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "g is a reference")]
 		protected override void OnPaintBackground (PaintEventArgs e)
 		{
 			base.OnPaintBackground (e);

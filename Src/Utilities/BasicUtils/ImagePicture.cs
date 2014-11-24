@@ -68,10 +68,12 @@ namespace SIL.Utils
 		/// </summary>
 		public static ImagePicture ImageBytes(byte[] pbData, int cbData)
 		{
-			MemoryStream s = new MemoryStream(pbData, 0, cbData);
-			ImagePicture ret = new ImagePicture();
-			ret.m_img = Image.FromStream(s);
-			return ret;
+			using (var s = new MemoryStream(pbData, 0, cbData))
+			{
+				ImagePicture ret = new ImagePicture();
+				ret.m_img = Image.FromStream(s);
+				return ret;
+			}
 		}
 
 		/// <summary/>

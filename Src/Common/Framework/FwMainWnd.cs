@@ -3571,6 +3571,8 @@ namespace SIL.FieldWorks.Common.Framework
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "findReplaceDlg is a reference")]
 		public void HandleActivation()
 		{
 			FwFindReplaceDlg findReplaceDlg = m_app.FindReplaceDialog;

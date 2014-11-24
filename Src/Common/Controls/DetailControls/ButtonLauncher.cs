@@ -21,6 +21,7 @@ using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using XCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -54,6 +55,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		#region Properties
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "parent is a reference")]
 		protected Slice Slice
 		{
 			get

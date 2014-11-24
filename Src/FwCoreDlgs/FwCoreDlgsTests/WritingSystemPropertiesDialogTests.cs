@@ -635,7 +635,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.PressBtnAdd("&Writing System for Kalaba...");
 			// Verify WsList has new item and it is selected
 			m_dlg.VerifyListBox(new[] { "Kalaba", "Kalaba", "Kalaba (International Phonetic Alphabet)" });
-			m_dlg.VerifyLoadedForListBoxSelection("Kalaba", 0);
+			m_dlg.VerifyLoadedForListBoxSelection("Kalaba");
 			// verify we automatically switched back to General Tab.
 			m_dlg.VerifyTab(WritingSystemPropertiesDialog.kWsGeneral);
 			// Verify Switching context is not OK (force user to make unique Ws)
@@ -666,7 +666,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Now try adding a second/duplicate ws.
 			m_dlg.PressBtnAdd("&Writing System for Kala...");
 			m_dlg.VerifyListBox(new[] { "Kala", "Kala", "Kala (International Phonetic Alphabet)", "Kala (Phonetic)" });
-			m_dlg.VerifyLoadedForListBoxSelection("Kala", 0);
+			m_dlg.VerifyLoadedForListBoxSelection("Kala");
 			m_dlg.SetVariantName("Phonetic");
 			m_dlg.VerifyListBox(new[] { "Kala", "Kala (International Phonetic Alphabet)", "Kala (Phonetic)", "Kala (Phonetic)" });
 			m_dlg.SwitchTab(WritingSystemPropertiesDialog.kWsFonts,
@@ -733,7 +733,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.PressBtnCopy();
 			// Verify WsList has new item and it is selected
 			m_dlg.VerifyListBox(new[] { "Kalaba", "Kalaba (International Phonetic Alphabet)", "Kalaba (International Phonetic Alphabet)" });
-			m_dlg.VerifyLoadedForListBoxSelection("Kalaba (International Phonetic Alphabet)", 1);
+			m_dlg.VerifyLoadedForListBoxSelection("Kalaba (International Phonetic Alphabet)");
 			m_dlg.VerifyWritingSystemsAreEqual(1, 2);
 			// verify we automatically switched back to General Tab.
 			m_dlg.VerifyTab(WritingSystemPropertiesDialog.kWsGeneral);
@@ -819,7 +819,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.PressBtnAdd("&Writing System for Kalaba...");
 			// Verify WsList has new item and it is selected
 			m_dlg.VerifyListBox(new[] { "Kalaba", "Kalaba", "Kalaba (International Phonetic Alphabet)" });
-			m_dlg.VerifyLoadedForListBoxSelection("Kalaba", 0);
+			m_dlg.VerifyLoadedForListBoxSelection("Kalaba");
 
 			//note: changes to the dialog have broken this behavior, but this test was catching more than it's advertised purpose,
 			//so rather than making a new way to set the script through the dialog I hacked out the following test code for now -naylor 2011-8-11
@@ -871,7 +871,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.PressBtnAdd("&Writing System for Kalaba...");
 			// Verify WsList has new item and it is selected
 			m_dlg.VerifyListBox(new[] { "Kalaba", "Kalaba", "Kalaba (International Phonetic Alphabet)" });
-			m_dlg.VerifyLoadedForListBoxSelection("Kalaba", 0);
+			m_dlg.VerifyLoadedForListBoxSelection("Kalaba");
 			// verify we automatically switched back to General Tab.
 			m_dlg.VerifyTab(WritingSystemPropertiesDialog.kWsGeneral);
 			// Change Region info.

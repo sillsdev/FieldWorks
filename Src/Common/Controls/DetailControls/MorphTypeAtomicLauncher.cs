@@ -360,6 +360,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return false;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "dtree is a reference")]
 		private void SwapValues(ILexEntry entry, IMoForm origForm, IMoForm newForm, IMoMorphType type,
 			List<IMoMorphSynAnalysis> rgmsaOld)
 		{

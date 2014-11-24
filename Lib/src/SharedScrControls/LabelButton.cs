@@ -1,4 +1,7 @@
 // --------------------------------------------------------------------------------------------
+using System.Diagnostics.CodeAnalysis;
+
+
 #region // Copyright (c) 2011, SIL International. All Rights Reserved.
 // <copyright from='2003' to='2011' company='SIL International'>
 //		Copyright (c) 2011, SIL International. All Rights Reserved.
@@ -219,6 +222,8 @@ namespace SILUBS.SharedScrControls
 		/// </summary>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "e.Graphics is a reference")]
 		protected new virtual void OnPaintBackground(PaintEventArgs e)
 		{
 			DeterminePaintState();

@@ -962,6 +962,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event
 		/// data.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "myParentCtrl is a reference")]
 		private void btnMore_Click(object sender, EventArgs e)
 		{
 			Control myParentCtrl = Parent;
@@ -1021,6 +1023,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "myParentCtrl is a reference")]
 		private void btnModify_Click(object sender, EventArgs e)
 		{
 			// call the v2.2 interface to "AutoConfigure" a converter

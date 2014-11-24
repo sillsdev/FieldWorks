@@ -1670,6 +1670,8 @@ namespace SIL.FieldWorks.XWorks
 		/// Perform a Pathway export, bringing up the Pathway configuration dialog, exporting
 		/// one or more XHTML files, and then postprocessing as requested.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "applicationKey is a reference")]
 		private void ProcessPathwayExport()
 		{
 			IApp app = (IApp)m_mediator.PropertyTable.GetValue("App");

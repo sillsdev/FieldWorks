@@ -4100,6 +4100,8 @@ namespace SIL.FieldWorks.IText
 		/// but select the indicated item.
 		/// </summary>
 		/// <param name="e"></param>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "tree is a reference")]
 		protected override void OnKeyPress(KeyPressEventArgs e)
 		{
 			if (IsWordPosIconSelected && !Char.IsControl(e.KeyChar))
@@ -4355,7 +4357,6 @@ namespace SIL.FieldWorks.IText
 		// object we should jump to (if any) for this type of jump.
 		private int GetHvoForJumpToToolClass(string className)
 		{
-			FdoCache cache = m_caches.MainCache;
 			int clid = 0;
 			if (CurrentGuess != null)
 				clid = CurrentGuess.ClassID;
@@ -4454,6 +4455,8 @@ namespace SIL.FieldWorks.IText
 			return m_caches.RealHvo(hvoTarget);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "container is a reference")]
 		private FocusBoxController Controller
 		{
 			get
@@ -4469,6 +4472,8 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "cache is a reference")]
 		public virtual bool OnJumpToTool(object commandObject)
 		{
 			XCore.Command cmd = (XCore.Command)commandObject;

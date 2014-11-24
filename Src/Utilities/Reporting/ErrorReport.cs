@@ -804,6 +804,8 @@ namespace SIL.Utils
 		/// </summary>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "e.Graphics returns a reference")]
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			if (m_showChips)

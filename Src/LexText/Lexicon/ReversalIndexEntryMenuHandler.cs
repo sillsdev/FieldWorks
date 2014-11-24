@@ -6,6 +6,7 @@ using XCore;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.LexText.Controls;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -39,6 +40,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return true;//we handled this, no need to ask anyone else.
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "slice and cache are references")]
 		public bool OnPromoteReversalindexEntry(object cmd)
 		{
 			//Command command = (Command) cmd;
@@ -82,6 +85,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "slice is a reference")]
 		public virtual bool OnDisplayPromoteReversalindexEntry(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -99,6 +104,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return true; //we've handled this
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "slice is a reference")]
 		public bool OnMoveReversalindexEntry(object cmd)
 		{
 			using (var dlg = new ReversalEntryGoDlg())
@@ -143,6 +150,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "slice is a reference")]
 		public virtual bool OnDisplayMoveReversalindexEntry(object commandObject,
 			ref UIItemDisplayProperties display)
 		{

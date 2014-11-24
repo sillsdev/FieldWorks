@@ -41,6 +41,9 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
 using Logger = SIL.Utils.Logger;
+using System.Diagnostics.CodeAnalysis;
+
+
 #if !__MonoCS__
 using NetSparkle;
 #endif
@@ -103,6 +106,8 @@ namespace SIL.FieldWorks.XWorks
 		/// chance to reload stuff (calling the old OnRefresh methods), then give
 		/// windows a chance to redisplay themselves.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "activeCache is a reference")]
 		public virtual void OnMasterRefresh(object sender)
 		{
 			CheckDisposed();

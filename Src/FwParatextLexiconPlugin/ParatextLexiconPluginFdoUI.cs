@@ -147,6 +147,8 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				m_activationContext = activationContext;
 			}
 
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "Form.ActiveForm returns a reference")]
 			private ISynchronizeInvoke SynchronizeInvoke
 			{
 				get

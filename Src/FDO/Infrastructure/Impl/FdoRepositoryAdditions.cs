@@ -21,6 +21,7 @@ using SIL.FieldWorks.FDO.Validation;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 {
@@ -1365,7 +1366,9 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// is true, then match against lexeme forms even if citation forms exist.  (This behavior is needed
 		/// to fix LT-6024 for categorized entry [now called Collect Words].)
 		/// </summary>
-		 List<ILexEntry> ILexEntryRepositoryInternal.CollectHomographs(string sForm, int hvo, List<ILexEntry> entries,
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "cache is a reference")]
+		List<ILexEntry> ILexEntryRepositoryInternal.CollectHomographs(string sForm, int hvo, List<ILexEntry> entries,
 														  IMoMorphType morphType, bool fMatchLexForms)
 		{
 			if (sForm == null || sForm == String.Empty || sForm == Strings.ksQuestions)		// was "??", not "???"

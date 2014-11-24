@@ -21,6 +21,7 @@ using System;
 using System.Drawing;
 
 using NUnit.Framework;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.COMInterfaces
 {
@@ -96,6 +97,8 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// </summary>
 		[Test]
 		[Category("ByHand")]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "gr.Graphics is a reference")]
 		public void SimpleCreationAndRelease()
 		{
 			IVwGraphicsWin32 vwGraphics = VwGraphicsWin32Class.Create();
@@ -148,6 +151,8 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// </summary>
 		[Test]
 		[Category("ByHand")]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "gr.Graphics is a reference")]
 		public void GetClipRect()
 		{
 			IVwGraphicsWin32 vwGraphics = VwGraphicsWin32Class.Create();
@@ -193,6 +198,8 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// </summary>
 		[Test]
 		[Category("ByHand")]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "gr.Graphics is a reference")]
 		public void Clipping()
 		{
 			IVwGraphicsWin32 vwGraphics = VwGraphicsWin32Class.Create();
@@ -258,6 +265,8 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// </summary>
 		[Test]
 		[Category("ByHand")]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "gr.Graphics is a reference")]
 		public void SetClipRect()
 		{
 			IVwGraphicsWin32 vwGraphics = VwGraphicsWin32Class.Create();
@@ -285,6 +294,8 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// </summary>
 		[Test]
 		[Category("ByHand")]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "gr.Graphics is a reference")]
 		public void ComplexClipping()
 		{
 			IVwGraphicsWin32 vwGraphics = VwGraphicsWin32Class.Create();
@@ -388,6 +399,8 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			return -1;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "gr.Graphics is a reference")]
 		internal void TestGetTextExtentHelper(string testString)
 		{
 			IVwGraphicsWin32 vwGraphics = VwGraphicsWin32Class.Create();
@@ -460,6 +473,8 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// </summary>
 		[Test]
 		[Category("ByHand")]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "gr.Graphics is a reference")]
 		public void GetTextExtentWithEmptyString()
 		{
 			IVwGraphicsWin32 vwGraphics = VwGraphicsWin32Class.Create();
@@ -497,6 +512,8 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// </summary>
 		[Test]
 		[Category("ByHand")]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "gr.Graphics is a reference")]
 		public void TextClipping()
 		{
 			const string longString = "abcdefghijklmnopqrstuvwzyzabcdefghijklmnopqrstuvwzyzabcdefghijklmnopqrstuvwzyz";
@@ -544,6 +561,8 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// </summary>
 		[Test]
 		[Category("ByHand")]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "gr.Graphics is a reference")]
 		public void LargeRectangles()
 		{
 			// EB/2011-02-08: this test is failing for me on Linux. Not sure if it should work

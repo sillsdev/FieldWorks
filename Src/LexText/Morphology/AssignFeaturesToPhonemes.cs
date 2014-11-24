@@ -17,6 +17,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using XCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -43,6 +44,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// </summary>
 		/// <param name="mediator"></param>
 		/// <param name="configurationParameters"></param>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "bulkEditBar is a reference")]
 		public override void Init(Mediator mediator, XmlNode configurationParameters)
 		{
 			base.Init(mediator, configurationParameters);

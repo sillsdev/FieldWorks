@@ -2696,6 +2696,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "menu is a reference")]
 		private void ConfigItemClicked(object sender, EventArgs args)
 		{
 			// If we have changes we need to commit, do it before we mess up the column sequence.

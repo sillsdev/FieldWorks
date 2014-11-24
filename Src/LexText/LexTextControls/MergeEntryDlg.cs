@@ -6,6 +6,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 using XCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -40,6 +41,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		#region	Construction and Destruction
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "infoIcon is a reference")]
 		public MergeEntryDlg()
 		{
 			// This call is required by the Windows Form Designer.

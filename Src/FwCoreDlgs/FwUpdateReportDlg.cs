@@ -18,6 +18,7 @@ using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
 using XCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -281,6 +282,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Handle BeginPrint event.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "FontFamily.Families contains references")]
 		private void printDocument_BeginPrint(object sender, PrintEventArgs e)
 		{
 			if (m_SansSerifFont == null)

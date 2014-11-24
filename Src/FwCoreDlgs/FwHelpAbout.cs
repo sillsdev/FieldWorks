@@ -57,6 +57,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ----------------------------------------------------------------------------------------
 		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
 			Justification = "TODO-Linux: LinkLabel.TabStop is missing from Mono")]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "m_systemMonitorLink is added to Controls collection and disposed there")]
 		public FwHelpAbout()
 		{
 			//

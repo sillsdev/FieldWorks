@@ -6237,6 +6237,8 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		#region Sequential message processing enforcement
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "parent is a reference")]
 		private XCore.IxWindow ContainingXWindow()
 		{
 			for (Control parent = this.Parent; parent != null; parent = parent.Parent)

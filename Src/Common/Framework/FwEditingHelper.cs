@@ -23,6 +23,7 @@ using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.Framework
 {
@@ -293,6 +294,8 @@ namespace SIL.FieldWorks.Common.Framework
 		/// Gets the containing Client Window, as an ISelectableView.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "ctrl is a reference")]
 		public virtual ISelectableView TheClientWnd
 		{
 			get

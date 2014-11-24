@@ -1,4 +1,7 @@
 // ---------------------------------------------------------------------------------------------
+using System.Diagnostics.CodeAnalysis;
+
+
 #region // Copyright (c) 2011, SIL International. All Rights Reserved.
 // <copyright from='2011' to='2011' company='SIL International'>
 //		Copyright (c) 2011, SIL International. All Rights Reserved.
@@ -49,6 +52,8 @@ namespace SIL.Utils
 		/// items.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "contextMenu.Items[] returns a reference")]
 		public static ContextMenuStrip ContextMenuStrip(this IContainer components, string name,
 			bool clear)
 		{

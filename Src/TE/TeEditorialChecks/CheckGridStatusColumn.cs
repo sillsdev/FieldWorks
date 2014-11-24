@@ -11,6 +11,7 @@
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.TE.TeEditorialChecks
 {
@@ -54,6 +55,8 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "fnt is a reference")]
 		public new string HeaderText
 		{
 			get {return base.HeaderText;}

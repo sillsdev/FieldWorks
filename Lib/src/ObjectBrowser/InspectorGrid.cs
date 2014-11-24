@@ -53,9 +53,11 @@ namespace SIL.ObjectBrowser
 
 			m_list = new GenericInspectorObjectList();
 
-			Image img = Properties.Resources.kimidExpand;
-			m_szHotSpot = new Size(img.Width, img.Height);
-			m_dxVLine = (int)(m_szHotSpot.Width * 1.5);
+			using (Image img = Properties.Resources.kimidExpand)
+			{
+				m_szHotSpot = new Size(img.Width, img.Height);
+				m_dxVLine = (int)(m_szHotSpot.Width * 1.5);
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -23,6 +23,7 @@ using SIL.CoreImpl;
 using SILUBS.SharedScrControls;
 using SILUBS.SharedScrUtils;
 using XCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.TE
 {
@@ -97,6 +98,8 @@ namespace SIL.FieldWorks.TE
 		/// Initializes a new instance of the <see cref="T:ExportXmlDialog"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "WindowsIdentity is a reference")]
 		public ExportXmlDialog(FdoCache cache, FilteredScrBooks filter, int defaultBookNum,
 			IVwStylesheet stylesheet, FileType exportType, IHelpTopicProvider helpTopicProvider)
 		{

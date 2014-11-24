@@ -11,6 +11,7 @@ using WeifenLuo.WinFormsUI.Docking;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using XCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FDOBrowser
 {
@@ -25,7 +26,7 @@ namespace FDOBrowser
 		private readonly Stack<ICmObject> m_forwardFDO = new Stack<ICmObject>();
 		//private ICmObject m_currentFDO;
 		private ToolStripStatusLabel m_statuslabel = null;
-		private readonly FdoCache m_cache;
+		private FdoCache m_cache;
 		private readonly IFwMetaDataCacheManaged m_mdc;
 		private int m_sortCol = 0;
 
@@ -34,6 +35,8 @@ namespace FDOBrowser
 		/// Initializes a new instance of the <see cref="ModelWnd"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "ThreadHelper gets disposed in Dispose")]
 		public ModelWnd()
 		{
 			InitializeComponent();

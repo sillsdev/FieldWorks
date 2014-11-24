@@ -19,6 +19,7 @@ using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.TE.TeEditorialChecks
 {
@@ -301,6 +302,8 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "font is a reference")]
 		protected virtual void ChangeZoomPercent(float oldFactor, float newFactor)
 		{
 			Font oldFont = m_dataGridView.DefaultCellStyle.Font;
@@ -406,6 +409,8 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "col is a reference")]
 		protected virtual void OnSaveSettings(RegistryKey key)
 		{
 			StringBuilder bldr = new StringBuilder();

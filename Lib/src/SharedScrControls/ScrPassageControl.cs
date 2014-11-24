@@ -477,6 +477,8 @@ namespace SILUBS.SharedScrControls
 		/// Determine whether or not this control has been placed on a toolstrip control.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "parent and txtTmp.Font are references")]
 		protected override void OnParentChanged(EventArgs e)
 		{
 			base.OnParentChanged(e);
@@ -515,6 +517,8 @@ namespace SILUBS.SharedScrControls
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "cboTmp.Font is a reference")]
 		void HandleSizeChanged(object sender, EventArgs e)
 		{
 			if (m_fParentIsToolstrip)
@@ -1079,6 +1083,8 @@ namespace SILUBS.SharedScrControls
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "e.Graphics is a reference")]
 		private void btnScrPsgDropDown_PaintOnToolstrip(PaintEventArgs e)
 		{
 			Color clr1 = (Application.RenderWithVisualStyles ?

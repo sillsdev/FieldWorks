@@ -8,6 +8,7 @@ using System.Diagnostics;
 using SidebarLibrary.General;
 using SidebarLibrary.WinControls;
 using SidebarLibrary.Win32;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SidebarLibrary.WinControls
 {
@@ -152,6 +153,8 @@ namespace SidebarLibrary.WinControls
 		#endregion
 
 		#region Overrides
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "g is a reference")]
 		protected override void OnPaint(PaintEventArgs pe)
 		{
 			base.OnPaint(pe);
@@ -277,7 +280,7 @@ namespace SidebarLibrary.WinControls
 			this.webColorsList.TabIndex = 0;
 			this.webColorsList.Click += new System.EventHandler(this.webColorsList_Click);
 			this.webColorsPage.Controls.AddRange(new System.Windows.Forms.Control[] {
-																						this.webColorsList});
+				this.webColorsList});
 			//
 			// systemColorsList
 			//
@@ -288,10 +291,12 @@ namespace SidebarLibrary.WinControls
 			this.systemColorsList.TabIndex = 0;
 			this.systemColorsList.Click += new System.EventHandler(this.systemColorsList_Click);
 			this.systemColorsPage.Controls.AddRange(new System.Windows.Forms.Control[] {
-																						   this.systemColorsList});
+				this.systemColorsList});
 
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "g is a reference")]
 		void customColorsPage_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
 		{
 			// Paint custom colors

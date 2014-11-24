@@ -819,6 +819,8 @@ namespace SIL.FieldWorks
 		/// cache could not be created.
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "owner is a reference")]
 		private static FdoCache CreateCache(ProjectId projectId)
 		{
 			Debug.Assert(projectId.IsValid);
@@ -829,12 +831,12 @@ namespace SIL.FieldWorks
 			{
 				FdoCache cache = FdoCache.CreateCacheFromExistingData(projectId, s_sWsUser, s_ui, FwDirectoryFinder.FdoDirectories, CreateFdoSettings(), progressDlg);
 				EnsureValidLinkedFilesFolder(cache);
-				cache.ProjectNameChanged += ProjectNameChanged;
-				cache.ServiceLocator.GetInstance<IUndoStackManager>().OnSave += FieldWorks_OnSave;
+			cache.ProjectNameChanged += ProjectNameChanged;
+			cache.ServiceLocator.GetInstance<IUndoStackManager>().OnSave += FieldWorks_OnSave;
 
-				SetupErrorPropertiesNeedingCache(cache);
-				return cache;
-			}
+			SetupErrorPropertiesNeedingCache(cache);
+			return cache;
+		}
 		}
 
 		/// <summary>
@@ -889,6 +891,8 @@ namespace SIL.FieldWorks
 		/// that as the most recent interesting project to open for the current main window's app.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "settings is a reference")]
 		private static void FieldWorks_OnSave(object sender, SaveEventArgs e)
 		{
 			if (!e.UndoableChanges)
@@ -1144,6 +1148,8 @@ namespace SIL.FieldWorks
 		/// <returns>True if the exception was lethal and the user chose to exit,
 		/// false otherise</returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "appKey is a reference")]
 		private static bool SafelyReportException(Exception error, IFwMainWnd parent, bool isLethal)
 		{
 			using (new IgnoreAppMessageProccessing(s_teApp))
@@ -1787,6 +1793,8 @@ namespace SIL.FieldWorks
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <returns>The chosen project, or null if no project was chosen</returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "activeWindow is a reference")]
 		internal static ProjectId ChooseLangProject(Form dialogOwner, IHelpTopicProvider helpTopicProvider)
 		{
 			if (!FwNewLangProject.CheckProjectDirectory(dialogOwner, helpTopicProvider))
@@ -1814,10 +1822,10 @@ namespace SIL.FieldWorks
 					if (IsSharedXmlBackendNeeded(projId))
 						projId.Type = FDOBackendProviderType.kSharedXML;
 					return projId;
-				}
+			}
 
 				return null;
-			}
+		}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2617,7 +2625,7 @@ namespace SIL.FieldWorks
 						string msg = string.Format(FwCoreDlgs.FwCoreDlgs.ksCouldNotBackupSomeFiles, backupService.FailedFiles.ToString(", ", Path.GetFileName));
 						if (MessageBox.Show(msg, FwCoreDlgs.FwCoreDlgs.ksWarning, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
 							File.Delete(backupFile);
-					}
+				}
 				}
 				catch (FwBackupException e)
 				{
@@ -3147,7 +3155,7 @@ namespace SIL.FieldWorks
 					sparkle.AboutToExitForInstallerRun += delegate(object sender, CancelEventArgs args)
 						{
 							CloseAllMainWindows();
-							if (app.ActiveMainWindow != null)
+							if(app.ActiveMainWindow != null)
 							{
 								args.Cancel = true;
 							}
@@ -4152,6 +4160,8 @@ namespace SIL.FieldWorks
 		/// <param name="projectName">Name of the project where we might switch to the newer writing system.</param>
 		/// <returns><c>true</c> to accept newer version; <c>false</c> otherwise</returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "owner is a reference")]
 		private static bool ComplainToUserAboutNewWs(string wsLabel, string projectName)
 		{
 			// Assume they want the WS updated when we're not supposed to show a UI.

@@ -79,19 +79,13 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		/// <returns>The root node</returns>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "TODO-Linux: XmlReaderSettings.DtdProcessing is missing from Mono")]
 		protected override XmlNode LoadDoc()
 		{
 			string sXmlFilePath = FwDirectoryFinder.CodeDirectory + ResourceFilePathFromFwInstall;
 			try
 			{
 				XmlReaderSettings settings = new XmlReaderSettings();
-#if !__MonoCS__
 				settings.DtdProcessing = DtdProcessing.Parse;
-#else
-				settings.ProhibitDtd = false;
-#endif
 				using (XmlReader reader = XmlReader.Create(sXmlFilePath, settings))
 				{
 					XmlDocument doc = new XmlDocument();

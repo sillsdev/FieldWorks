@@ -19,6 +19,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
 using XCore;
 using SIL.FieldWorks.Common.RootSites;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -514,6 +515,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// <param name="iCol">The index of the column.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "col is a reference")]
 		private void SortPuncPatternGridOnColumn(int iCol)
 		{
 			DataGridViewColumn col = gridPatterns.Columns[iCol];
@@ -1414,6 +1417,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "fnt is a reference")]
 		private void cboQuotationLangs_DrawItem(object sender, DrawItemEventArgs e)
 		{
 			e.DrawBackground();

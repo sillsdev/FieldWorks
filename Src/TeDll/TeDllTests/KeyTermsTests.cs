@@ -19,6 +19,7 @@ using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SILUBS.SharedScrUtils;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.TE
 {
@@ -303,6 +304,8 @@ namespace SIL.FieldWorks.TE
 //			Assert.AreEqual(expectedCount, ((IChkTerm)node.Tag).OccurrencesOS.Count);
 //		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "renderingsControl is a reference")]
 		void CheckRenderingsCount(int expectedCount, TreeNode nodeToSelect)
 		{
 			m_ktVwWrapper.KeyTermsTree.SelectedNode = nodeToSelect;
@@ -320,7 +323,8 @@ namespace SIL.FieldWorks.TE
 		/// TE-4500. Filter the terms list in the Key Terms view.
 		/// </summary>
 		[Test]
-		//[Platform(Exclude = "Linux", Reason = "TODO-Linux: failing on linux")]	// verified December 3, 2012
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "ktree is a reference")]
 		public void ApplyBookFilterToKeyTermsTree()
 		{
 			// Add mark and key terms/occurrences to matthew setup.

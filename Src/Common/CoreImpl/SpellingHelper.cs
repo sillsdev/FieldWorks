@@ -211,6 +211,8 @@ namespace SIL.CoreImpl
 			return GetSpellChecker(dictId);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're returning an object")]
 		private static SpellEngine RawGetSpellChecker(string dictId)
 		{
 			SpellEngine result = null;

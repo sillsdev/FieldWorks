@@ -106,6 +106,8 @@ namespace SIL.FieldWorks.IText
 			return true;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "parent is a reference")]
 		public bool OnExportInterlinear(object argument)
 		{
 			// If the currently selected text is from Scripture, then we need to give the dialog
@@ -498,6 +500,8 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "ToolStripSeparator gets added to the menu and disposed there")]
 		private ContextMenuStrip MakeContextMenu(int ilineChoice)
 		{
 			var menu = new ContextMenuStrip();
@@ -927,12 +931,15 @@ namespace SIL.FieldWorks.IText
 			m_rootb.PropChanged(occurrence.Segment.Hvo, SegmentTags.kflidAnalyses, occurrence.Index, 1, 1);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "parentControl is a reference")]
 		internal InterlinMaster GetMaster()
 		{
 			for (Control parentControl = Parent; parentControl != null; parentControl = parentControl.Parent)
 			{
-				if (parentControl is InterlinMaster)
-					return parentControl as InterlinMaster;
+				var master = parentControl as InterlinMaster;
+				if (master != null)
+					return master;
 			}
 			return null;
 		}

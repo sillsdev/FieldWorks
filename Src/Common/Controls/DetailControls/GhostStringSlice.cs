@@ -11,6 +11,7 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -428,6 +429,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				return true;
 			}
 
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "datatree is a reference")]
 			private void SwitchToReal()
 			{
 				// Depending on compile switch for SLICE_IS_SPLITCONTAINER,

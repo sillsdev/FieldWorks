@@ -11,6 +11,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Drawing.Text;
 using SIL.FieldWorks.FDO.DomainServices;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
 {
@@ -109,6 +110,8 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// Fill the combobox list which gives the possible fonts for displaying the numbers
 		/// of a numbered recursive sequence.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "fontFamilies contains references")]
 		private void FillNumberFontComboList()
 		{
 			m_cbNumberFont.Items.Add(FwCoreDlgControls.kstidUnspecified);

@@ -60,6 +60,8 @@ namespace SidebarLibrary.WinControls
 		#endregion
 
 		#region Overrides
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "g is a reference")]
 		protected override void OnPaint(PaintEventArgs pe)
 		{
 			base.OnPaint(pe);

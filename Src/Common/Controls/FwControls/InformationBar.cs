@@ -18,6 +18,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 
 using SIL.Utils;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -235,6 +236,8 @@ namespace SIL.FieldWorks.Common.Controls
 		[Category("Appearance")]
 		[DefaultValue(17)]
 		[Description("The default button width.")]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "button is a reference")]
 		public int ButtonWidth
 		{
 			get

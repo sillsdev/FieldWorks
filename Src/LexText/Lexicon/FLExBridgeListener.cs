@@ -44,6 +44,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// which will remain enabled after the project is migrated to the new flexbridge location.
 		/// </summary>
 		private static readonly List<string> OldLiftBridgeProjects;
+
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		static FLExBridgeListener()
 		{
 			OldLiftBridgeProjects = new List<string>();
@@ -1488,6 +1491,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return Path.Combine(Directory.GetParent(oldProjectFolder).FullName, revisedProjName);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "FwApp is a reference I guess")]
 		private static FwXWindow RefreshCacheWindowAndAll(LexTextApp app, string fullProjectFileName)
 		{
 			var manager = app.FwManager;
