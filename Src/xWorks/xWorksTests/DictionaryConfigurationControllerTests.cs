@@ -780,7 +780,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GetThePublicationsForTheCurrentConfiguration()
 		{
-			var controller = new DictionaryConfigurationController() { _model = m_model };
+			var controller = new DictionaryConfigurationController { _model = m_model };
 
 			//ensure this is handled gracefully when the publications have not been initialized.
 			Assert.AreEqual(controller.AffectedPublications, xWorksStrings.ksNone1);
@@ -806,7 +806,7 @@ namespace SIL.FieldWorks.XWorks
 		public void MergeCustomFieldsIntoDictionaryModel_DeletedFieldsAreRemoved()
 		{
 			var model = new DictionaryConfigurationModel();
-			var customNode = new ConfigurableDictionaryNode()
+			var customNode = new ConfigurableDictionaryNode
 			{
 				Label = "CustomString",
 				FieldDescription = "CustomString",
@@ -829,7 +829,7 @@ namespace SIL.FieldWorks.XWorks
 		public void MergeCustomFieldsIntoDictionaryModel_DeletedFieldsOnCollectionsAreRemoved()
 		{
 			var model = new DictionaryConfigurationModel();
-			var customNode = new ConfigurableDictionaryNode()
+			var customNode = new ConfigurableDictionaryNode
 			{
 				Label = "CustomString",
 				FieldDescription = "CustomString",
@@ -857,17 +857,16 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void MergeCustomFieldsIntoDictionaryModel_ExampleCustomFieldIsRepresented()
 		{
-			using(var cf = new CustomFieldForTest(Cache, "CustomCollection",
-														  Cache.MetaDataCacheAccessor.GetClassId("LexExampleSentence"), 0,
+			using(new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("LexExampleSentence"), 0,
 														  CellarPropertyType.ReferenceCollection, Guid.Empty))
 			{
 				var model = new DictionaryConfigurationModel();
-				var examplesNode = new ConfigurableDictionaryNode()
+				var examplesNode = new ConfigurableDictionaryNode
 				{
 					Label = "Example Sentences",
 					FieldDescription = "ExamplesOS"
 				};
-				var senseNode = new ConfigurableDictionaryNode()
+				var senseNode = new ConfigurableDictionaryNode
 				{
 					Label = "Senses",
 					FieldDescription = "SensesOS",
@@ -891,8 +890,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void MergeCustomFieldsIntoModel_MergeWithDefaultRootModelDoesNotThrow()
 		{
-			using(var cf = new CustomFieldForTest(Cache, "CustomCollection",
-														  Cache.MetaDataCacheAccessor.GetClassId("LexExampleSentence"), 0,
+			using(new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("LexExampleSentence"), 0,
 														  CellarPropertyType.ReferenceCollection, Guid.Empty))
 			{
 				var model = new DictionaryConfigurationModel(Path.Combine(FwDirectoryFinder.DefaultConfigurations, Path.Combine("Dictionary", "Root.xml")), Cache);
@@ -968,6 +966,30 @@ namespace SIL.FieldWorks.XWorks
 			Assert.IsFalse(grandchild.IsEnabled);
 		}
 
+		[Test]
+		public void SaveModelHandler_SavesUpdatedFilePath() // LT-15898
+		{
+			using (var mediator = new MockMediator(Cache))
+			{
+				var controller = new DictionaryConfigurationController
+				{
+					_mediator = mediator.Mediator,
+					_model = new DictionaryConfigurationModel
+					{
+						FilePath = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "SomeConfigurationFileName")
+					},
+				};
+				controller._dictionaryConfigurations = new List<DictionaryConfigurationModel> { controller._model };
+
+				// SUT
+				controller.SaveModel();
+				var savedPath = mediator.Mediator.PropertyTable.GetStringProperty("DictionaryPublicationLayout", null);
+				var projectConfigsPath = FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
+				Assert.AreEqual(savedPath, controller._model.FilePath, "Should have saved the path to the selected Configuration Model");
+				StringAssert.StartsWith(projectConfigsPath, savedPath, "Path should be in the project's folder");
+				StringAssert.EndsWith("SomeConfigurationFileName", savedPath, "Incorrect configuration saved");
+			}
+		}
 
 		private ILexEntry CreateLexEntryWithoutHeadword()
 		{
@@ -985,7 +1007,7 @@ namespace SIL.FieldWorks.XWorks
 		#region Context
 		private sealed class TestConfigurableDictionaryView : IDictionaryConfigurationView, IDisposable
 		{
-			private DictionaryConfigurationTreeControl m_treeControl = new DictionaryConfigurationTreeControl();
+			private readonly DictionaryConfigurationTreeControl m_treeControl = new DictionaryConfigurationTreeControl();
 
 			public DictionaryConfigurationTreeControl TreeControl
 			{
@@ -996,24 +1018,16 @@ namespace SIL.FieldWorks.XWorks
 			public string PreviewData { set; private get; }
 
 			public void Redraw()
-			{
-				;
-			}
+			{}
 
 			public void SetChoices(IEnumerable<DictionaryConfigurationModel> choices)
-			{
-				;
-			}
+			{}
 
 			public void ShowPublicationsForConfiguration(string publications)
-			{
-				;
-			}
+			{}
 
 			public void SelectConfiguration(DictionaryConfigurationModel configuration)
-			{
-				;
-			}
+			{}
 
 			public void Dispose()
 			{

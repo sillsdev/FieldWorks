@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Available dictionary configurations (eg stem- and root-based)
 		/// </summary>
-		private List<DictionaryConfigurationModel> _dictionaryConfigurations;
+		internal List<DictionaryConfigurationModel> _dictionaryConfigurations;
 
 		/// <summary>
 		/// Directory where configurations of the current type (Dictionary, Reversal, ...) are stored
@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Populate _dictionaryConfigurations with available models.
 		/// Populate view's list of alternate dictionaries with available choices.
 		/// </summary>
-		void LoadDictionaryConfigurations()
+		private void LoadDictionaryConfigurations()
 		{
 			var cache = (FdoCache) _mediator.PropertyTable.GetValue("cache");
 			_dictionaryConfigurations = GetDictionaryConfigurationModels(cache, _defaultConfigDir, _projectConfigDir);
@@ -466,6 +466,12 @@ namespace SIL.FieldWorks.XWorks
 
 		private void SaveModelHandler(object sender, EventArgs e)
 		{
+			SaveModel();
+			RefreshView(); // REVIEW (Hasso) 2014.11: refreshing here is beneficial only if some configuration change fails to refresh the preview
+		}
+
+		internal void SaveModel()
+		{
 			foreach (var config in _dictionaryConfigurations)
 			{
 				config.FilePath = GetProjectConfigLocationForPath(config.FilePath, _mediator);
@@ -473,7 +479,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 			// This property must be set *after* saving, because the initial save changes the FilePath
 			_mediator.PropertyTable.SetProperty("DictionaryPublicationLayout", _model.FilePath, true);
-			RefreshView();
 		}
 
 		internal string GetProjectConfigLocationForPath(string filePath, Mediator mediator)
@@ -484,8 +489,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				return filePath;
 			}
-			var detailedConfig =
-				filePath.Substring(FwDirectoryFinder.DefaultConfigurations.Length + 1);
+			var detailedConfig = filePath.Substring(FwDirectoryFinder.DefaultConfigurations.Length + 1);
 			return Path.Combine(projectConfigDir, detailedConfig);
 		}
 
