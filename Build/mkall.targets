@@ -290,6 +290,10 @@
 		<PalasoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt223/.lastSuccessful</PalasoDownloadUrl>
 		<!-- bt322 is the master branch build of Palaso for Linux development. Update when appropriate. -->
 		<PalasoDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt322/.lastSuccessful</PalasoDownloadUrl>
+		<!-- bt399 is the GeckoFX 29 build for Windows -->
+		<GeckoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt399/.lastSuccessful</GeckoDownloadUrl>
+		<!-- bt400 is the XULRunner 29 build for Windows -->
+		<XULRunnerDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt400/.lastSuccessful</XULRunnerDownloadUrl>
 		<!--Todo: use PalasoDownloadUrl, when it refers to somewhere that has the IPCFramework.-->
 		<!-- bt278 is the develop branch build of IPCFramework for Windows development. Update when appropriate. -->
 		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt278/.lastSuccessful</IPCFrameworkDownloadUrl>
@@ -339,6 +343,18 @@
 					  Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/taglib-sharp.dll" LocalFilename="$(fwrt)/Downloads/taglib-sharp.dll"/>
 
+		<Message Text="Downloading latest successful artifacts for GeckoFX and XULRunner." Condition="'$(OS)'=='Windows_NT'" />
+		<DownloadFile Address="$(GeckoDownloadUrl)/Geckofx-Core.dll" LocalFilename="$(fwrt)/Downloads/Geckofx-Core.dll"
+					  Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(GeckoDownloadUrl)/Geckofx-Winforms.dll" LocalFilename="$(fwrt)/Downloads/Geckofx-Winforms.dll"
+					  Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(GeckoDownloadUrl)/Geckofx-Winforms.pdb" LocalFilename="$(fwrt)/Downloads/Geckofx-Winforms.pdb"
+					  Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(GeckoDownloadUrl)/Geckofx-Core.dll.config" LocalFilename="$(fwrt)/Downloads/Geckofx-Core.dll.config"
+					  Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(XULRunnerDownloadUrl)/xulrunner-29.0.1.en-US.win32.zip" LocalFilename="$(fwrt)/Downloads/xulrunner-29.0.1.en-US.win32.zip"
+					  Condition="'$(OS)'=='Windows_NT'"/>
+
 		<Message Text="Downloading latest successful artifacts from Chorus master build."/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/Autofac.dll" LocalFilename="$(fwrt)/Downloads/Autofac.dll"/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/Chorus.exe" LocalFilename="$(fwrt)/Downloads/Chorus.exe"/>
@@ -359,8 +375,6 @@
 		<Message Text="Downloading ParaTExt DLLs." />
 		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Paratext.LexicalContracts.dll" LocalFilename="$(fwrt)/Downloads/Paratext.LexicalContracts.dll"/>
 		<!-- Windows downloads -->
-		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Windows/geckofx-core-14.dll" LocalFilename="$(fwrt)/Downloads/geckofx-core-14.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Windows/Geckofx-Winforms-14.dll" LocalFilename="$(fwrt)/Downloads/Geckofx-Winforms-14.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Windows/FormattedEditor.dll" LocalFilename="$(fwrt)/Downloads/FormattedEditor.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Windows/HelpSystem.dll" LocalFilename="$(fwrt)/Downloads/HelpSystem.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Windows/HtmlEditor.dll" LocalFilename="$(fwrt)/Downloads/HtmlEditor.dll" Condition="'$(OS)'=='Windows_NT'"/>
@@ -431,12 +445,14 @@
 		<DownloadedFiles Include="$(fwrt)/Downloads/Paratext.LexicalContracts.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/ParatextShared.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Utilities.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/geckofx-core-14.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Geckofx-Winforms-14.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/QuickGraph.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Machine.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Collections.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.HermitCrab.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/Geckofx-Core.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/Geckofx-Core.dll.config" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/Geckofx-Winforms.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/Geckofx-Winforms.pdb" Condition="'$(OS)'=='Windows_NT'"/>
 	</ItemGroup>
 
 	<Target Name="CopyDlls" DependsOnTargets="downloadDlls">
@@ -482,6 +498,10 @@
 		<!-- Copy the downloaded artifacts -->
 		<Copy SourceFiles="@(DownloadedFiles)" DestinationFolder="$(dir-outputBase)"
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+
+		<!-- XULRunner files -->
+		<Message Text="Unzipping XULRunner." Condition="'$(OS)'=='Windows_NT'"/>
+		<Unzip ZipFilename="$(fwrt)/Downloads/xulrunner-29.0.1.en-US.win32.zip" ToDir="$(dir-outputBase)" Condition="'$(OS)'=='Windows_NT'"/>
 	</Target>
 
 	<Target Name="setRegistryValues" DependsOnTargets="initLinux;initWindows;setKeysInHKLM;setKeysInHKCU"/>

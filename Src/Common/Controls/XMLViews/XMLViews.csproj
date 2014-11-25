@@ -225,13 +225,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>
     </Reference>
-    <Reference Condition="'$(OS)'=='Unix'" Include="geckofx-core-14">
-      <HintPath>\usr\lib\cli\geckofx-14.0.1\geckofx-core-14.dll</HintPath>
-    </Reference>
-    <Reference Condition="'$(OS)'=='Unix'" Include="Geckofx-Winforms-14">
-      <HintPath>\usr\lib\cli\geckofx-14.0.1\Geckofx-Winforms-14.dll</HintPath>
-    </Reference>
-    <None Condition="'$(OS)'=='Unix'" Include="\usr\lib\cli\geckofx-14.0.1\geckofx-core-14.dll.config">
+    <Reference Condition="'$(OS)'=='Unix'" Include="geckofx-core">
+      <HintPath>\usr\lib\cli\geckofx-29\Geckofx-Core.dll</HintPath>
+	</Reference>
+    <Reference Condition="'$(OS)'=='Unix'" Include="Geckofx-Winforms-29">
+      <HintPath>\usr\lib\cli\geckofx-29\Geckofx-Winforms.dll</HintPath>
+	</Reference>
+    <None Condition="'$(OS)'=='Unix'" Include="\usr\lib\cli\geckofx-29\Geckofx-Core.dll.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
