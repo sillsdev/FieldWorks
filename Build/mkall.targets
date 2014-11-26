@@ -7,7 +7,7 @@
 	<UsingTask TaskName="Unzip" AssemblyFile="FwBuildTasks.dll"/>
 
 	<!-- Make all of FieldWorks. -->
-	<Target Name="mkall" DependsOnTargets="initLinux;initWindows;LinuxRegistry;allCpp;allCsharp;CopyDlls;ensureTLBsUpToDate">
+	<Target Name="mkall" DependsOnTargets="initLinux;initWindows;LinuxRegistry;CopyDlls;allCpp;allCsharp;ensureTLBsUpToDate">
 		<Message Text="Finished mkall Target."/>
 		<CreateItem Condition="'$(action)'=='test'" Include="$(dir-outputBase)/*-nunit-output.xml">
 			<Output TaskParameter="Include" ItemName="NUnitReportFiles"/>
