@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 			var uiLocale = wsMgr.Get(cache.DefaultUserWs).IcuLocale;
 			var projectId = cache.LanguageProject.ShortName;
 
-			var model = new RampArchivingDlgViewModel(Application.ProductName, title, projectId, GetFileDescription);
+			var model = new RampArchivingDlgViewModel(Application.ProductName, title, projectId, /*appSpecificArchivalProcessInfo:*/ string.Empty, SetFilesToArchive(filesToArchive), GetFileDescription);
 
 			// image files should be labeled as Graphic rather than Photograph (the default).
 			model.ImagesArePhotographs = false;
@@ -103,8 +103,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 			}
 
 			// create the dialog
-			using (var dlg = new ArchivingDlg(model, localizationMgrId, string.Empty, dialogFont,
-				() => GetFilesToArchive(filesToArchive), new FormSettings()))
+			using (var dlg = new ArchivingDlg(model, localizationMgrId, dialogFont, new FormSettings()))
 			using (var reportingAdapter = new PalasoErrorReportingAdapter(dlg, mediator))
 			{
 				ErrorReport.SetErrorReporter(reportingAdapter);
@@ -265,6 +264,18 @@ namespace SIL.FieldWorks.XWorks.Archiving
 			files[string.Empty] = new Tuple<IEnumerable<string>, string>(filesToArchive,
 				ResourceHelper.GetResourceString("kstidAddingFwProject"));
 			return files;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Called by the Archiving Dialog to retrieve the lists of the files and description
+		/// to be included in the RAMP package.
+		/// </summary>
+		/// <param name="filesToArchive">The files to include</param>
+		/// ------------------------------------------------------------------------------------
+		private static Action<ArchivingDlgViewModel> SetFilesToArchive(IEnumerable<string> filesToArchive)
+		{
+			return advModel => advModel.AddFileGroup(string.Empty, filesToArchive, ResourceHelper.GetResourceString("kstidAddingFwProject"));
 		}
 
 		private void GetCreateDateRange(FdoCache cache)

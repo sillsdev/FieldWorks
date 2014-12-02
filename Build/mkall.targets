@@ -282,19 +282,23 @@
 	</Target>
 
 	<PropertyGroup>
-		<!-- bt274 is the FLExBridgeBeta branch build of Chorus for Windows development. Update when appropriate. -->
-		<ChorusDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt274/.lastSuccessful</ChorusDownloadUrl>
-		<!-- bt285 is the FLExBridgeBeta branch build of Chorus for Linux development. Update when appropriate. -->
-		<ChorusDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt285/.lastSuccessful</ChorusDownloadUrl>
-		<!-- fwiw, bt273 is the FLExBridgeBeta branch build of Palaso for Windows development. Update when appropriate. -->
-		<PalasoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt273/.lastSuccessful</PalasoDownloadUrl>
-		<!-- fwiw, bt284 is the FLExBridgeBeta branch build of Palaso for Linux development. Update when appropriate. -->
-		<PalasoDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt284/.lastSuccessful</PalasoDownloadUrl>
+		<!-- bt2 is the master branch build of Chorus for Windows development. Update when appropriate. -->
+		<ChorusDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt2/.lastSuccessful</ChorusDownloadUrl>
+		<!-- bt323 is the master branch build of Chorus for Linux development. Update when appropriate. -->
+		<ChorusDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt323/.lastSuccessful</ChorusDownloadUrl>
+		<!-- bt223 is the master branch build of Palaso for Windows development. Update when appropriate. -->
+		<PalasoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt223/.lastSuccessful</PalasoDownloadUrl>
+		<!-- bt322 is the master branch build of Palaso for Linux development. Update when appropriate. -->
+		<PalasoDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt322/.lastSuccessful</PalasoDownloadUrl>
 		<!--Todo: use PalasoDownloadUrl, when it refers to somewhere that has the IPCFramework.-->
 		<!-- bt278 is the develop branch build of IPCFramework for Windows development. Update when appropriate. -->
 		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt278/.lastSuccessful</IPCFrameworkDownloadUrl>
 		<!-- bt279 is the develop branch build of IPCFramework for Linux development. Update when appropriate. -->
 		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt279/.lastSuccessful</IPCFrameworkDownloadUrl>
+		<!-- bt398 is the icu50 branch build of icucil for Windows development. Update when appropriate. -->
+		<IcuDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt398/.lastSuccessful</IcuDownloadUrl>
+		<!-- bt281 is the master branch build of icucil for linux development. Update when appropriate. -->
+		<IcuDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt281/.lastSuccessful</IcuDownloadUrl>
 		<ProtoBufNetDownloadUrl>https://protobuf-net.googlecode.com/files/protobuf-net%20r668.zip</ProtoBufNetDownloadUrl>
 		<DownloadsSilOrgDownloadUrl>http://downloads.sil.org/BuildDlls/FW8.1/</DownloadsSilOrgDownloadUrl>
 		<HermitCrabDownloadUrl>http://build.palaso.org/guestAuth/repository/download/bt410/.lastSuccessful</HermitCrabDownloadUrl>
@@ -305,34 +309,37 @@
 
 	<Target Name="downloadDlls">
 		<MakeDir Directories="$(fwrt)/Downloads"/>
-		<Message Text="Downloading latest successful artifacts from Palaso [FLExBridgeBeta] build."/>
+		<Message Text="Downloading latest successful artifacts from Palaso master build."/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.dll" LocalFilename="$(fwrt)/Downloads/Palaso.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.dll.config" LocalFilename="$(fwrt)/Downloads/Palaso.dll.config"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.dll.config" LocalFilename="$(fwrt)/Downloads/Palaso.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/Palaso.$(DebugInfo)"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.Lift.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Lift.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.Lift.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/Palaso.Lift.$(DebugInfo)"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.Media.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Media.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.Media.dll.config" LocalFilename="$(fwrt)/Downloads/Palaso.Media.dll.config"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.Media.dll.config" LocalFilename="$(fwrt)/Downloads/Palaso.Media.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.Media.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/Palaso.Media.$(DebugInfo)"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/PalasoUIWindowsForms.dll" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/PalasoUIWindowsForms.dll.config" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.dll.config"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/PalasoUIWindowsForms.dll.config" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/PalasoUIWindowsForms.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.$(DebugInfo)"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Archiving.dll" LocalFilename="$(fwrt)/Downloads/SIL.Archiving.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Archiving.dll.config" LocalFilename="$(fwrt)/Downloads/SIL.Archiving.dll.config"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Archiving.dll.config" LocalFilename="$(fwrt)/Downloads/SIL.Archiving.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Archiving.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.Archiving.$(DebugInfo)"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Ionic.Zip.dll" LocalFilename="$(fwrt)/Downloads/Ionic.Zip.dll"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/Keyman7Interop.dll" LocalFilename="$(fwrt)/Downloads/Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/KeymanLink.dll" LocalFilename="$(fwrt)/Downloads/KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<Message Text="Downloading latest successful artifacts for L10NSharp, Enchant.Net, ibusdotnet, and NDesk.DBus."/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/L10NSharp.dll" LocalFilename="$(fwrt)/Downloads/L10NSharp.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Enchant.Net.dll" LocalFilename="$(fwrt)/Downloads/Enchant.Net.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Enchant.Net.dll.config" LocalFilename="$(fwrt)/Downloads/Enchant.Net.dll.config"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/Enchant.Net.dll.config" LocalFilename="$(fwrt)/Downloads/Enchant.Net.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/ibusdotnet.dll" LocalFilename="$(fwrt)/Downloads/ibusdotnet.dll"
 					  Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/NDesk.DBus.dll" LocalFilename="$(fwrt)/Downloads/NDesk.DBus.dll"
 					  Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/NDesk.DBus.dll.config" LocalFilename="$(fwrt)/Downloads/NDesk.DBus.dll.config"
 					  Condition="'$(OS)'=='Unix'"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/taglib-sharp.dll" LocalFilename="$(fwrt)/Downloads/taglib-sharp.dll"/>
 
-		<Message Text="Downloading latest successful artifacts from Chorus FLExBridgeBeta build."/>
+		<Message Text="Downloading latest successful artifacts from Chorus master build."/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/Autofac.dll" LocalFilename="$(fwrt)/Downloads/Autofac.dll"/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/Chorus.exe" LocalFilename="$(fwrt)/Downloads/Chorus.exe"/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/ChorusHub.exe" LocalFilename="$(fwrt)/Downloads/ChorusHub.exe" Condition="'$(OS)'=='Unix'"/>
@@ -341,6 +348,10 @@
 
 		<Message Text="Downloading latest successful artifacts for IPCFramework."/>
 		<DownloadFile Address="$(IPCFrameworkDownloadUrl)/IPCFramework.dll" LocalFilename="$(fwrt)/Downloads/IPCFramework.dll"/>
+
+		<Message Text="Downloading latest successful artifacts for ICU."/>
+		<DownloadFile Address="$(IcuDownloadUrl)/icu.net.dll" LocalFilename="$(fwrt)/Downloads/icu.net.dll"/>
+		<DownloadFile Address="$(IcuDownloadUrl)/icu.net.dll.config" LocalFilename="$(fwrt)/Downloads/icu.net.dll.config" Condition="'$(OS)'=='Unix'"/>
 
 		<Message Text="Downloading protobuf-net." />
 		<DownloadFile Address="$(ProtoBufNetDownloadUrl)" LocalFilename="$(fwrt)/Downloads/protobuf-net.zip" />
@@ -382,32 +393,37 @@
 		<!-- we need to explicitly specify the important files, otherwise they'll be ignored
 		if they don't exist by the time this ItemGroup is read -->
 		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.dll.config"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.dll.mdb" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.pdb" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.Lift.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.Lift.dll.mdb" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.Lift.pdb" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.Media.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.Media.dll.config"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.Media.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.Media.dll.mdb" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.Media.pdb" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.dll.config"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.dll.mdb" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.pdb" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.dll.config"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.dll.mdb" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.pdb" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/icu.net.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/icu.net.dll.config" Condition="'$(OS)'=='Unix'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/L10NSharp.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Enchant.Net.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Enchant.Net.dll.config"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/Enchant.Net.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/IPCFramework.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/ibusdotnet.dll" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/NDesk.DBus.dll" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/NDesk.DBus.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Ionic.Zip.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/taglib-sharp.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/FormattedEditor.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/HelpSystem.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/HtmlEditor.dll"/>
@@ -447,8 +463,6 @@
 		<Copy SourceFiles="$(fwrt)/DistFiles/icuin50.dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<Copy SourceFiles="$(fwrt)/DistFiles/icuuc50.dll" DestinationFolder="$(dir-outputBase)"
-				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
-		<Copy SourceFiles="$(fwrt)/DistFiles/icu.net.dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<!-- Hunspell dlls -->
 		<Copy SourceFiles="$(fwrt)/DistFiles/Windows/libhunspell.dll" DestinationFolder="$(dir-outputBase)"
