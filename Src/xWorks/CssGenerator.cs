@@ -334,6 +334,10 @@ namespace SIL.FieldWorks.XWorks
 			{
 					classAttribute = configNode.CSSClassNameOverride;
 			}
+			if (configNode.IsDuplicate)
+			{
+				classAttribute += "_" + configNode.LabelSuffix;
+			}
 			return classAttribute.ToLower();
 		}
 

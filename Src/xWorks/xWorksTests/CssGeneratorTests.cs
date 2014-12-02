@@ -957,6 +957,45 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// Duplicate nodes should not conflict with the original
+		/// Test that we append label suffix with no CSSClassNameOverride
+		/// </summary>
+		[Test]
+		public void ClassAttributeForConfig_DuplicateNodeClassUsesLabelSuffix()
+		{
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "originalfield",
+				LabelSuffix = "dup",
+				IsDuplicate = true
+			};
+
+			//SUT
+			var classAttribute = CssGenerator.GetClassAttributeForConfig(entry);
+			Assert.That(classAttribute, Is.StringMatching("originalfield_dup"));
+		}
+
+		/// <summary>
+		/// Duplicate nodes should not conflict with the original
+		/// Test that we append label suffix when CSSClassNameOverride is used.
+		/// </summary>
+		[Test]
+		public void ClassAttributeForConfig_DuplicateNodeOverrideUsesLabelSuffix()
+		{
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "originalfield",
+				CSSClassNameOverride = "override",
+				LabelSuffix = "dup",
+				IsDuplicate = true
+			};
+
+			//SUT
+			var classAttribute = CssGenerator.GetClassAttributeForConfig(entry);
+			Assert.That(classAttribute, Is.StringMatching("override_dup"));
+		}
+
+		/// <summary>
 		/// The css for a picture is floated right and we want to clear the float at each entry.
 		/// </summary>
 		[Test]
