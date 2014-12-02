@@ -369,6 +369,23 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(configNode.Label, Is.EqualTo("A b c"), "should not have a suffix on ConfigurableDictionaryNode.Label");
 		}
 
+		/// <summary>
+		/// In some cases (Minor Entry, Subsubentry), a descendent of a duplicate will be flagged as a duplicate and given a DupString. Fortunately,
+		/// these differ in that the DupString is not included in the Label. In this case, misleading Duplicate info should be discarded.
+		/// If a node has both false and true duplicate information, the true information comes last, in the form "1.0-1"; this is handled correctly
+		/// and is tested by <see cref="ConvertLayoutTreeNodeToConfigNode_DupStringInfoIsConvertedForDuplicateOfDuplicate"/>.
+		/// </summary>
+		[Test]
+		public void ConvertLayoutTreeNodeToConfigNode_DupStringInfoIsDiscardedForFalseDuplicate()
+		{
+			var duplicateNode = new XmlDocConfigureDlg.LayoutTreeNode { DupString = "1.0", IsDuplicate = true, Label = "A b c D e f" };
+			// SUT
+			var configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(duplicateNode);
+			Assert.IsFalse(configNode.IsDuplicate, "Node incorrectly marked as a duplicate.");
+			Assert.IsNullOrEmpty(configNode.LabelSuffix, "suffix incorrectly migrated");
+			Assert.AreEqual("A b c D e f", configNode.Label, "should not have a suffix on ConfigurableDictionaryNode.Label");
+		}
+
 		///<summary/>
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_ChildrenAreAdded()

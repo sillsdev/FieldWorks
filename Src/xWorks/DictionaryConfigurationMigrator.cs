@@ -353,6 +353,18 @@ namespace SIL.FieldWorks.XWorks
 			return path;
 		}
 
+		internal static string BuildPathStringFromNode(XmlDocConfigureDlg.LayoutTreeNode child)
+		{
+			var path = string.Format("{0} ({1})", child.Label, child.DupString);
+			var node = child;
+			while(node.Parent is XmlDocConfigureDlg.LayoutTreeNode)
+			{
+				node = (XmlDocConfigureDlg.LayoutTreeNode)node.Parent;
+				path = node.Label+"->"+path;
+			}
+			return path;
+		}
+
 		/// <summary>Attempts to find and return a node from the currentDefaultChildren whose Label matches childLabel.</summary>
 		/// <returns>true if successful</returns>
 		private static bool TryGetMatchingNode(string childLabel,
@@ -406,7 +418,17 @@ namespace SIL.FieldWorks.XWorks
 				if (i >= 0)
 					convertedNode.LabelSuffix = convertedNode.LabelSuffix.Substring(i + 1);
 				var suffixNotation = string.Format(" ({0})", convertedNode.LabelSuffix);
-				convertedNode.Label = convertedNode.Label.Remove(convertedNode.Label.Length - suffixNotation.Length);
+				if (convertedNode.Label.EndsWith(suffixNotation))
+				{
+					convertedNode.Label = convertedNode.Label.Remove(convertedNode.Label.Length - suffixNotation.Length);
+				}
+				else
+				{
+					m_logger.WriteLine(String.Format("The node '{0}' does not seem to be a duplicate; treating as original",
+						BuildPathStringFromNode(node)));
+					convertedNode.LabelSuffix = null;
+					convertedNode.IsDuplicate = false;
+				}
 			}
 
 			if(node.Nodes.Count > 0)
