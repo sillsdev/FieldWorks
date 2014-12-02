@@ -277,7 +277,8 @@ namespace SIL.FieldWorks.XWorks
 				currentDefaultChildren.RemoveAll(matchedChildren.Contains);
 				foreach(var newChild in currentDefaultChildren)
 				{
-					m_logger.WriteLine(String.Format("'{0}' was not in the old version; adding from default config.", BuildPathStringFromNode(newChild)));
+					m_logger.WriteLine(String.Format("'{0}->{1}' was not in the old version; adding from default config.",
+						BuildPathStringFromNode(convertedNode), newChild)); // BuildPath from convertedNode to ensure display of LabelSuffixes
 					convertedNode.Children.Add(newChild);
 				}
 			}
@@ -357,7 +358,10 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var path = string.Format("{0} ({1})", child.Label, child.DupString);
 			var node = child;
-			while(node.Parent is XmlDocConfigureDlg.LayoutTreeNode)
+			while(node.Parent != null
+				// If 'Minor Entry' is duplicated, both copies get a new, common parent 'Minor Entry', which does not affect migration
+				// apart from making log entries about 'Minor Entry->Minor Entry (1)->and so on'
+				&& !(node.Parent.Parent == null || ((XmlDocConfigureDlg.LayoutTreeNode)node.Parent).Label.Equals(node.Label)))
 			{
 				node = (XmlDocConfigureDlg.LayoutTreeNode)node.Parent;
 				path = node.Label+"->"+path;
