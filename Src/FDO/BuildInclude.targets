@@ -42,12 +42,7 @@
 		<LinuxFilesSub Include="libTECkit_x86_64.so" Condition="'$(OS)'=='Unix'"/>
 	</ItemGroup>
 	<ItemGroup>
-		<LinuxFilesDist Include="icu.net.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<LinuxFilesDist Include="icu.net.dll" Condition="'$(OS)'=='Unix'"/>
-	</ItemGroup>
-	<ItemGroup>
 		<LinuxFilesSource Include="@(LinuxFilesSub -> '$(LinuxDistFiles)/%(Identity)')" Condition="'$(OS)'=='Unix'"/>
-		<LinuxFilesSource Include="@(LinuxFilesDist -> '$(DistFiles)/%(Identity)')" Condition="'$(OS)'=='Unix'"/>
 	</ItemGroup>
 	<ItemGroup>
 		<GeneratedFiles Include="Generated*.cs"/>
@@ -63,7 +58,6 @@
 		<OutputFiles Include="@(StructureMapFiles -> '$(OutDir)/%(Identity)')"/>
 		<OutputFiles Include="@(ServiceLocatorFiles -> '$(OutDir)/%(Identity)')"/>
 		<OutputFiles Include="@(LinuxFilesSub -> '$(OutDir)/%(Identity)')"/>
-		<OutputFiles Include="@(LinuxFilesDist -> '$(OutDir)/%(Identity)')"/>
 	</ItemGroup>
 
 	<Target Name="AfterClean">
