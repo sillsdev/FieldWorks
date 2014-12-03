@@ -1140,7 +1140,7 @@
             </WritingSystemOptions>
           </ConfigurationItem>
           <ConfigurationItem name="Translations" isEnabled="true" isDuplicate="false" isCustomField="false" before="" between="" after="" field="TranslationsOC" cssClassNameOverride="translations">
-            <ConfigurationItem name="Type" isEnabled="false" isDuplicate="false" isCustomField="false" before="" after=" " field="Type">
+            <ConfigurationItem name="Type" isEnabled="false" isDuplicate="false" isCustomField="false" before="" after=" " field="TypeRA" cssClassNameOverride="type">
               <ConfigurationItem name="Abbreviation" isEnabled="false" isDuplicate="false" isCustomField="false" before="" between=" " after="" field="Abbreviation">
                 <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
                   <Option id="analysis" isEnabled="true" />
