@@ -145,7 +145,7 @@
     </Reference>
     <Reference Include="nunit.framework">
       <Name>nunit.framework</Name>
-      <HintPath>..\..\..\..\..\Output\Debug\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="Palaso, Version=2.1.23.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
