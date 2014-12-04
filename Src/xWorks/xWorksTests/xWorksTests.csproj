@@ -129,6 +129,10 @@
     <Reference Include="FwUtilsTests, Version=7.0.1.13090, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\Ionic.Zip.dll</HintPath>
+    </Reference>
     <Reference Include="LexEdDll, Version=8.0.4.12240, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\LexEdDll.dll</HintPath>

@@ -6,10 +6,14 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
+using Ionic.Zip;
 using NUnit.Framework;
+using Palaso.IO;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -368,6 +372,98 @@ namespace SIL.FieldWorks.XWorks
 			controller.UploadURI = "http://192.168.0.1/import/requesttimedout.php";
 			Assert.DoesNotThrow(() => controller.UploadToWebonary(filepath, view.Model, view));
 			Assert.That(!String.IsNullOrEmpty(view.StatusStrings.Find(s => s.Contains("An error occurred uploading your data:"))));
+		}
+
+		[Test]
+		public void IsSupportedWebonaryFile_reportsAccurately()
+		{
+			Assert.True(PublishToWebonaryController.IsSupportedWebonaryFile("foo.xhtml"));
+			Assert.True(PublishToWebonaryController.IsSupportedWebonaryFile("foo.css"));
+			Assert.True(PublishToWebonaryController.IsSupportedWebonaryFile("foo.html"));
+			Assert.True(PublishToWebonaryController.IsSupportedWebonaryFile("foo.htm"));
+			Assert.True(PublishToWebonaryController.IsSupportedWebonaryFile("foo.json"));
+			Assert.True(PublishToWebonaryController.IsSupportedWebonaryFile("foo.xml"));
+
+			Assert.True(PublishToWebonaryController.IsSupportedWebonaryFile("foo.jpg"));
+			Assert.True(PublishToWebonaryController.IsSupportedWebonaryFile("foo.jpeg"));
+			Assert.True(PublishToWebonaryController.IsSupportedWebonaryFile("foo.gif"));
+			Assert.True(PublishToWebonaryController.IsSupportedWebonaryFile("foo.png"));
+
+			Assert.True(PublishToWebonaryController.IsSupportedWebonaryFile("foo.mp3"));
+
+			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.wmf"));
+			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.tif"));
+			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.tiff"));
+			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.ico"));
+			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.pcx"));
+			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.cgm"));
+
+			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.wav"));
+			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.snd"));
+			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.au"));
+			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.aif"));
+			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.aifc"));
+			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.wma"));
+
+			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.avi"));
+			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.wmv"));
+			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.wvx"));
+			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.mpg"));
+			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.mpe"));
+			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.m1v"));
+			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.mp2"));
+			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.mpv2"));
+			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.mpa"));
+		}
+
+		[Test]
+		public void CompressExportedFiles_IncludesAcceptableMediaTypes()
+		{
+			var view = new MockWebonaryDlg();
+
+			var tempDirectoryToCompress = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+			Directory.CreateDirectory(tempDirectoryToCompress);
+			try
+			{
+				var zipFileToUpload = Path.Combine(Path.GetTempPath(), Path.GetTempFileName());
+
+				// TIFF
+				var tiffFilename = Path.GetFileName(Path.GetTempFileName() + ".tif");
+				var tiffPath = Path.Combine(tempDirectoryToCompress, tiffFilename);
+				var tiffMagicNumber = new byte[] {0x49, 0x49, 0x2A};
+				File.WriteAllBytes(tiffPath, tiffMagicNumber);
+
+				// JPEG
+				var jpegFilename = Path.GetFileName(Path.GetTempFileName() + ".jpg");
+				var jpegPath = Path.Combine(tempDirectoryToCompress, jpegFilename);
+				var jpegMagicNumber = new byte[] {0xff, 0xd8};
+				File.WriteAllBytes(jpegPath, jpegMagicNumber);
+
+				var xhtmlFilename = Path.GetFileName(Path.GetTempFileName() + ".xhtml");
+				var xhtmlPath = Path.Combine(tempDirectoryToCompress, xhtmlFilename);
+				var xhtmlContent = "<xhtml/>";
+				File.WriteAllText(xhtmlPath, xhtmlContent);
+
+				// SUT
+				PublishToWebonaryController.CompressExportedFiles(tempDirectoryToCompress, zipFileToUpload, view);
+
+				using (var uploadZip = new ZipFile(zipFileToUpload))
+				{
+					Assert.False(uploadZip.EntryFileNames.Contains(tiffFilename), "Should not have included unsupported TIFF file in file to upload.");
+					Assert.True(uploadZip.EntryFileNames.Contains(jpegFilename), "Should have included supported JPEG file in file to upload.");
+				}
+
+				var query = string.Format(".*nsupported.*{0}.*", tiffFilename);
+				Assert.True(view.StatusStrings.Exists((statusString) => Regex.Matches(statusString, query).Count==1), "Lack of support for the tiff file should have been reported to the user.");
+				query = string.Format(".*nsupported.*{0}.*", jpegFilename);
+				Assert.False(view.StatusStrings.Exists((statusString) => Regex.Matches(statusString, query).Count==1), "Should not have reported lack of support for the jpeg file.");
+
+				Assert.That(view.StatusStrings.Count(statusString => Regex.Matches(statusString, ".*nsupported.*").Count > 0), Is.EqualTo(1), "Too many unsupported files reported.");
+			}
+			finally
+			{
+				DirectoryUtilities.DeleteDirectoryRobust(tempDirectoryToCompress);
+			}
 		}
 
 		#region Helpers

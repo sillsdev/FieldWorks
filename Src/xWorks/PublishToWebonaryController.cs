@@ -3,8 +3,11 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
+using System.Windows.Forms;
 using Ionic.Zip;
 using SIL.FieldWorks.FDO;
 using XCore;
@@ -40,7 +43,7 @@ namespace SIL.FieldWorks.XWorks
 			webonaryView.UpdateStatus(xWorksStrings.ExportingEntriesToWebonaryCompleted);
 		}
 
-		private void CompressExportedFiles(string tempDirectoryToCompress, string zipFileToUpload, IPublishToWebonaryView webonaryView)
+		internal static void CompressExportedFiles(string tempDirectoryToCompress, string zipFileToUpload, IPublishToWebonaryView webonaryView)
 		{
 			webonaryView.UpdateStatus(xWorksStrings.BeginCompressingDataForWebonary);
 			using(var zipFile = new ZipFile())
@@ -55,10 +58,15 @@ namespace SIL.FieldWorks.XWorks
 		/// This method will recurse into a directory and add files into the zip file with their relative path
 		/// to the original dirToCompress.
 		/// </summary>
-		private void RecursivelyAddFilesToZip(ZipFile zipFile, string dirToCompress, string dirInZip, IPublishToWebonaryView webonaryView)
+		private static void RecursivelyAddFilesToZip(ZipFile zipFile, string dirToCompress, string dirInZip, IPublishToWebonaryView webonaryView)
 		{
 			foreach(var file in Directory.EnumerateFiles(dirToCompress))
 			{
+				if (!IsSupportedWebonaryFile(file))
+				{
+					webonaryView.UpdateStatus(string.Format("Excluding unsupported file: {0}", Path.GetFileName(file)));
+					continue;
+				}
 				zipFile.AddFile(file, dirInZip);
 				webonaryView.UpdateStatus(Path.GetFileName(file));
 			}
@@ -188,6 +196,20 @@ namespace SIL.FieldWorks.XWorks
 			ExportOtherFilesContent(tempDirectoryToCompress, model, view);
 			CompressExportedFiles(tempDirectoryToCompress, zipFileToUpload, view);
 			UploadToWebonary(zipFileToUpload, model, view);
+		}
+
+		/// <summary>
+		/// True if given a path to a file type that is acceptable to upload to Webonary. Otherwise false.
+		/// </summary>
+		/// <remarks>Could be changed to consider the magic number instead of file extension, if helpful.</remarks>
+		internal static bool IsSupportedWebonaryFile(string path)
+		{
+			var supportedFileExtensions = new List<string>
+			{
+				".xhtml", ".css", ".html", ".htm", ".json", ".xml",
+				".jpg", ".jpeg", ".gif", ".png", ".mp3"
+			};
+			return supportedFileExtensions.Any(path.EndsWith);
 		}
 	}
 }
