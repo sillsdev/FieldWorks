@@ -77,6 +77,11 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>Options for selecting and ordering items in lists, including Custom Lists and WritingSystem lists</summary>
 	public class DictionaryNodeListOptions : DictionaryNodeOptions
 	{
+		public DictionaryNodeListOptions()
+		{
+			Options = new List<DictionaryNodeOption>();
+		}
+
 		public enum ListIds
 		{
 			// REVIEW (Hasso) 2014.04: One instance of Complex Forms doesn't display the list in the old dialog. This may not be needed.
@@ -128,11 +133,10 @@ namespace SIL.FieldWorks.XWorks
 		{
 			base.DeepCloneInto(target);
 
-			if (Options != null)
-				((DictionaryNodeListOptions)target).Options = Options.Select(dno => new DictionaryNodeOption
-				{
-					Id = dno.Id, IsEnabled = dno.IsEnabled
-				}).ToList();
+			((DictionaryNodeListOptions)target).Options = Options.Select(dno => new DictionaryNodeOption
+			{
+				Id = dno.Id, IsEnabled = dno.IsEnabled
+			}).ToList();
 
 			return target;
 		}
@@ -153,6 +157,11 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>Options for selecting and ordering WritingSystems</summary>
 	public class DictionaryNodeWritingSystemOptions : DictionaryNodeOptions
 	{
+		public DictionaryNodeWritingSystemOptions()
+		{
+			Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>();
+		}
+
 		public enum WritingSystemType
 		{
 			[XmlEnum("vernacular")]
@@ -186,11 +195,10 @@ namespace SIL.FieldWorks.XWorks
 		{
 			base.DeepCloneInto(target);
 
-			if (Options != null)
-				((DictionaryNodeWritingSystemOptions)target).Options = Options.Select(dno => new DictionaryNodeListOptions.DictionaryNodeOption
-				{
-					Id = dno.Id, IsEnabled = dno.IsEnabled
-				}).ToList();
+			((DictionaryNodeWritingSystemOptions)target).Options = Options.Select(dno => new DictionaryNodeListOptions.DictionaryNodeOption
+			{
+				Id = dno.Id, IsEnabled = dno.IsEnabled
+			}).ToList();
 
 			return target;
 		}

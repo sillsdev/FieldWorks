@@ -136,9 +136,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 
 			// Find and add available and selected Writing Systems
-			var wsOptionsList = wsOptions.Options ??
-									  new List<DictionaryNodeListOptions.DictionaryNodeOption>();
-			var selectedWSs = wsOptionsList.Where(ws => ws.IsEnabled).ToList();
+			var selectedWSs = wsOptions.Options.Where(ws => ws.IsEnabled).ToList();
 			var availableWSs = GetCurrentWritingSystems(wsOptions.WsType);
 
 			bool atLeastOneWsChecked = false;
@@ -292,13 +290,12 @@ namespace SIL.FieldWorks.XWorks
 			else
 			{
 				string label;
-				var savedListOptions = listOptions.Options ?? new List<DictionaryNodeListOptions.DictionaryNodeOption>();
 				var availableOptions = GetListItemsAndLabel(listOptions.ListId, out label);
 				listOptionsView.ListViewLabel = label;
 
 				// Insert saved items in their saved order, with their saved check-state
 				int insertionIdx = 0;
-				foreach(var optn in savedListOptions)
+				foreach(var optn in listOptions.Options)
 				{
 					var savedItem = availableOptions.FirstOrDefault(item => optn.Id.Equals((item.Tag)));
 					if (savedItem != null && availableOptions.Remove(savedItem))
