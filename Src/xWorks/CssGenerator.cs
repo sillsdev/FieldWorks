@@ -266,14 +266,14 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var dec = new StyleDeclaration();
 				dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, configNode.Before) });
-				var beforeRule = new StyleRule(dec) { Value = baseSelection + ":before" };
+				var beforeRule = new StyleRule(dec) { Value = baseSelection + ":first-child:before" };
 				rules.Add(beforeRule);
 			}
 			if(!String.IsNullOrEmpty(configNode.After))
 			{
 				var dec = new StyleDeclaration();
 				dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, configNode.After) });
-				var afterRule = new StyleRule(dec) { Value = baseSelection + ":after" };
+				var afterRule = new StyleRule(dec) { Value = baseSelection + ":last-child:after" };
 				rules.Add(afterRule);
 			}
 			return rules;
