@@ -148,10 +148,10 @@ namespace SIL.FieldWorks.XWorks
 
 		#region Sense tests
 		[Test]
-		public void SenseLoadsParagraphStyles()
+		public void SenseLoadsParagraphStylesWhenShowInParaSet()
 		{
 			using (var view = new DictionaryDetailsController( // SUT
-				new ConfigurableDictionaryNode { DictionaryNodeOptions = new DictionaryNodeSenseOptions() }, m_mediator).View)
+				new ConfigurableDictionaryNode { DictionaryNodeOptions = new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true }}, m_mediator).View)
 			{
 				AssertShowingParagraphStyles(view);
 			}

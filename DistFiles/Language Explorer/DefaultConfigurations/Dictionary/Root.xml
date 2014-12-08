@@ -159,7 +159,7 @@
         <Option id="analysis" isEnabled="true"/>
       </WritingSystemOptions>
     </ConfigurationItem>
-    <ConfigurationItem name="Senses" style="Dictionary-Sense" between="  " after=" " isEnabled="true" field="SensesOS" cssClassNameOverride="senses">
+    <ConfigurationItem name="Senses" between="  " after=" " isEnabled="true" field="SensesOS" cssClassNameOverride="senses">
       <SenseOptions displayEachSenseInParagraph="false" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=") " numberingStyle="%O" numberSingleSense="false" showSingleGramInfoFirst="true"/>
       <ConfigurationItem name="Grammatical Info." after=" " style="Dictionary-Contrasting" isEnabled="true" field="MorphoSyntaxAnalysisRA" cssClassNameOverride="morphosyntaxanalysis">
         <ConfigurationItem name="Gram Info (Name)" between=" " after=" " isEnabled="false" field="InterlinearNameTSS" cssClassNameOverride="graminfoname"/>
@@ -800,7 +800,7 @@
           <Option id="analysis" isEnabled="true"/>
         </WritingSystemOptions>
       </ConfigurationItem>
-      <ConfigurationItem name="Senses" style="Dictionary-Sense" between="  " after=" " isEnabled="true" field="SensesOS" cssClassNameOverride="senses">
+      <ConfigurationItem name="Senses" between="  " after=" " isEnabled="true" field="SensesOS" cssClassNameOverride="senses">
         <SenseOptions displayEachSenseInParagraph="false" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=") " numberingStyle="%O" numberSingleSense="false" showSingleGramInfoFirst="true"/>
         <ConfigurationItem name="Grammatical Info." after=" " style="Dictionary-Contrasting" isEnabled="true" field="MorphoSyntaxAnalysisRA" cssClassNameOverride="morphosyntaxanalysis">
           <ConfigurationItem name="Gram Info (Name)" between=" " after=" " isEnabled="false" field="InterlinearNameTSS" cssClassNameOverride="graminfoname"/>
@@ -1142,7 +1142,7 @@
             </ConfigurationItem>
           </ConfigurationItem>
         </ConfigurationItem>
-        <ConfigurationItem name="Subsenses" style="Dictionary-Sense" between="  " after=" " isEnabled="true" field="SensesOS" cssClassNameOverride="senses">
+        <ConfigurationItem name="Subsenses" between="  " after=" " isEnabled="true" field="SensesOS" cssClassNameOverride="senses">
           <SenseOptions displayEachSenseInParagraph="false" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=") " numberingStyle="%O" numberSingleSense="true" showSingleGramInfoFirst="false"/>
           <ReferenceItem>LexSense</ReferenceItem>
         </ConfigurationItem>
@@ -1507,7 +1507,7 @@
         <Option id="analysis" isEnabled="true"/>
       </WritingSystemOptions>
     </ConfigurationItem>
-    <ConfigurationItem name="Senses" style="Dictionary-Sense" between="  " after=" " isEnabled="false" field="SensesOS" cssClassNameOverride="senses">
+    <ConfigurationItem name="Senses" between="  " after=" " isEnabled="false" field="SensesOS" cssClassNameOverride="senses">
       <SenseOptions displayEachSenseInParagraph="false" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=") " numberingStyle="%O" numberSingleSense="false" showSingleGramInfoFirst="true"/>
       <ConfigurationItem name="Grammatical Info." after=" " style="Dictionary-Contrasting" isEnabled="true" field="MorphoSyntaxAnalysisRA" cssClassNameOverride="morphosyntaxanalysis">
         <ConfigurationItem name="Gram Info (Name)" between=" " after=" " isEnabled="false" field="InterlinearNameTSS" cssClassNameOverride="graminfoname"/>
