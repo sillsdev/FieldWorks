@@ -143,7 +143,7 @@ namespace SIL.FieldWorks.XWorks
 			using(var xhtmlWriter = XmlWriter.Create(xhtmlPath))
 			using(var cssWriter = new StreamWriter(cssPath, false))
 			{
-				var settings = new GeneratorSettings(cache, xhtmlWriter, true, false, Path.GetDirectoryName(xhtmlPath));
+				var settings = new GeneratorSettings(cache, xhtmlWriter, true, true, Path.GetDirectoryName(xhtmlPath));
 				GenerateOpeningHtml(cssPath, settings);
 				string lastHeader = null;
 				foreach(var hvo in entryHvos)
@@ -510,11 +510,15 @@ namespace SIL.FieldWorks.XWorks
 				{
 					FileUtils.EnsureDirectoryExists(Path.Combine(settings.ExportPath, subFolder));
 					var destination = Path.Combine(settings.ExportPath, filePath);
+					var source = MakeSafeFilePath(file.AbsoluteInternalPath);
 					if(!File.Exists(destination))
 					{
-						FileUtils.Copy(MakeSafeFilePath(file.AbsoluteInternalPath), destination);
+						if(File.Exists(source))
+						{
+							FileUtils.Copy(source, destination);
+						}
 					}
-					else if(!FileUtils.AreFilesIdentical(MakeSafeFilePath(file.AbsoluteInternalPath), destination))
+					else if(!FileUtils.AreFilesIdentical(source, destination))
 					{
 						var fileWithoutExtension = Path.GetFileNameWithoutExtension(filePath);
 						var fileExtension = Path.GetExtension(filePath);
@@ -525,7 +529,10 @@ namespace SIL.FieldWorks.XWorks
 							destination = Path.Combine(settings.ExportPath, subFolder, String.Format("{0}{1}{2}", fileWithoutExtension, copyNumber, fileExtension));
 						}
 						while(File.Exists(destination));
-						FileUtils.Copy(MakeSafeFilePath(file.AbsoluteInternalPath), destination);
+						if(File.Exists(source))
+						{
+							FileUtils.Copy(source, destination);
+						}
 						// Change the filepath to point to the copied file
 						filePath = Path.Combine(subFolder, String.Format("{0}{1}{2}", fileWithoutExtension, copyNumber, fileExtension));
 					}

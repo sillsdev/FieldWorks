@@ -1952,6 +1952,41 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_MissingPictureFileDoesNotCrashOnCopy()
+		{
+			var mainEntryNode = CreatePictureModel();
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			var testEntry = CreateInterestingLexEntry();
+			var sense = testEntry.SensesOS[0];
+			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
+			sense.PicturesOS.Add(sensePic);
+			var pic = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+			Cache.LangProject.MediaOC.Add(folder);
+			folder.FilesOC.Add(pic);
+			var filePath = Path.GetRandomFileName();
+			pic.InternalPath = filePath;
+			sensePic.PictureFileRA = pic;
+
+			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var tempFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "ConfigDictPictureExportTest"));
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, true, true, tempFolder.FullName);
+				//SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
+				XHTMLWriter.Flush();
+				var pictureRelativePath = Path.Combine("pictures", Path.GetFileName(filePath));
+				var pictureWithComposedPath = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img[starts-with(@src, '" + pictureRelativePath + "')]";
+				if (!MiscUtils.IsUnix)
+					AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(pictureWithComposedPath, 1);
+				// that src starts with a string, and escaping any Windows path separators
+				AssertRegex(XHTMLStringBuilder.ToString(), string.Format("src=\"{0}[^\"]*\"", pictureRelativePath.Replace(@"\", @"\\")), 1);
+				Assert.IsFalse(File.Exists(Path.Combine(tempFolder.Name, "pictures", filePath)));
+				Palaso.IO.DirectoryUtilities.DeleteDirectoryRobust(tempFolder.FullName);
+			}
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_TwoDifferentFilesGetTwoDifferentResults()
 		{
 			var mainEntryNode = CreatePictureModel();
