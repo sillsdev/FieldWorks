@@ -843,7 +843,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private object ExportConfiguredXhtml(IThreadedProgress progress, object[] args)
 		{
-			if(args.Length < 2)
+			if(args.Length < 1)
 			{
 				return null;
 			}

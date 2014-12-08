@@ -70,7 +70,7 @@ namespace SIL.FieldWorks.XWorks
 			using(var cssWriter = new StreamWriter(previewCssPath, false))
 			{
 				var exportSettings = new GeneratorSettings((FdoCache)mediator.PropertyTable.GetValue("cache"), writer, false, false, null);
-				GenerateOpeningHtml(writer, previewCssPath);
+				GenerateOpeningHtml(previewCssPath, exportSettings);
 				GenerateXHTMLForEntry(entry, configuration, pubDecorator, exportSettings);
 				GenerateClosingHtml(writer);
 				writer.Flush();
@@ -81,8 +81,10 @@ namespace SIL.FieldWorks.XWorks
 			return stringBuilder.ToString();
 		}
 
-		private static void GenerateOpeningHtml(XmlWriter xhtmlWriter, string cssPath)
+		private static void GenerateOpeningHtml(string cssPath, GeneratorSettings exportSettings)
 		{
+			var xhtmlWriter = exportSettings.Writer;
+
 			xhtmlWriter.WriteDocType("html", PublicIdentifier, null, null);
 			xhtmlWriter.WriteStartElement("html", "http://www.w3.org/1999/xhtml");
 			xhtmlWriter.WriteAttributeString("lang", "utf-8");
@@ -91,8 +93,38 @@ namespace SIL.FieldWorks.XWorks
 			xhtmlWriter.WriteAttributeString("href", "file:///" + cssPath);
 			xhtmlWriter.WriteAttributeString("rel", "stylesheet");
 			xhtmlWriter.WriteEndElement(); //</link>
+			// write out schema links for writing system metadata
+			xhtmlWriter.WriteStartElement("link");
+			xhtmlWriter.WriteAttributeString("href", "http://purl.org/dc/terms/");
+			xhtmlWriter.WriteAttributeString("rel", "schema.DCTERMS");
+			xhtmlWriter.WriteEndElement(); //</link>
+			xhtmlWriter.WriteStartElement("link");
+			xhtmlWriter.WriteAttributeString("href", "http://purl.org/dc/elements/1.1/");
+			xhtmlWriter.WriteAttributeString("rel", "schema.DC");
+			xhtmlWriter.WriteEndElement(); //</link>
+			GenerateWritingSystemsMetadata(exportSettings);
 			xhtmlWriter.WriteEndElement(); //</head>
 			xhtmlWriter.WriteStartElement("body");
+		}
+
+		private static void GenerateWritingSystemsMetadata(GeneratorSettings exportSettings)
+		{
+			var xhtmlWriter = exportSettings.Writer;
+			var lp = exportSettings.Cache.LangProject;
+			var wsList = lp.CurrentAnalysisWritingSystems.Union(lp.CurrentVernacularWritingSystems.Union(lp.CurrentPronunciationWritingSystems));
+			foreach(var ws in wsList)
+			{
+				xhtmlWriter.WriteStartElement("meta");
+				xhtmlWriter.WriteAttributeString("name", "DC.language");
+				xhtmlWriter.WriteAttributeString("content", String.Format("{0}:{1}", ws.RFC5646, ws.LanguageName));
+				xhtmlWriter.WriteAttributeString("scheme", "DCTERMS.RFC5646");
+				xhtmlWriter.WriteEndElement();
+				xhtmlWriter.WriteStartElement("meta");
+				xhtmlWriter.WriteAttributeString("name", ws.RFC5646);
+				xhtmlWriter.WriteAttributeString("content", ws.DefaultFontName);
+				xhtmlWriter.WriteAttributeString("scheme", "language to font");
+				xhtmlWriter.WriteEndElement();
+			}
 		}
 
 		private static void GenerateClosingHtml(XmlWriter xhtmlWriter)
@@ -112,7 +144,7 @@ namespace SIL.FieldWorks.XWorks
 			using(var cssWriter = new StreamWriter(cssPath, false))
 			{
 				var settings = new GeneratorSettings(cache, xhtmlWriter, true, false, Path.GetDirectoryName(xhtmlPath));
-				GenerateOpeningHtml(xhtmlWriter, cssPath);
+				GenerateOpeningHtml(cssPath, settings);
 				string lastHeader = null;
 				foreach(var hvo in entryHvos)
 				{
