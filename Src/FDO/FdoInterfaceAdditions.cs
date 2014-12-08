@@ -2013,23 +2013,20 @@ namespace SIL.FieldWorks.FDO
 		/// Return a marked form in the desired writing system.
 		/// </summary>
 		string GetFormWithMarkers(int ws);
+
+		/// <returns>PhoneEnvRC on <see cref="IMoStemAllomorph"/> or <see cref="IMoAffixAllomorph"/> for Dictionary publication</returns>
+		IFdoReferenceCollection<IPhEnvironment> AllomorphEnvironments { get; }
 	}
 
-	/// <summary>
-	///
-	/// </summary>
+	/// <summary/>
 	public partial interface IMoInflAffixTemplate : ICloneableCmObject
 	{
 	}
 
-	/// <summary>
-	///
-	/// </summary>
+	/// <summary/>
 	public partial interface IMoInflAffixSlot
 	{
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		IEnumerable<IMoInflAffMsa> Affixes { get; }
 		/// <summary>
 		/// Get a list of inflectional affix LexEntries which do not already refer to this slot

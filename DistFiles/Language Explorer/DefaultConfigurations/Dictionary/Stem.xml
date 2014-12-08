@@ -570,12 +570,18 @@
           </WritingSystemOptions>
         </ConfigurationItem>
       </ConfigurationItem>
-      <ConfigurationItem name="Allomorph" between=" " after=" " isEnabled="false" field="Form">
+      <ConfigurationItem name="Allomorph" between=" " after="= " isEnabled="false" field="Form">
         <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
           <Option id="vernacular" isEnabled="true"/>
         </WritingSystemOptions>
       </ConfigurationItem>
-      <ConfigurationItem name="Environments" between=" " after=" " isEnabled="false" field="Environments"/>
+      <ConfigurationItem name="Environments" isEnabled="false" between=", " after=" " field="AllomorphEnvironments">
+        <ConfigurationItem name="String Representation" isEnabled="true" field="StringRepresentation">
+          <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+            <Option id="analysis" isEnabled="true" />
+          </WritingSystemOptions>
+        </ConfigurationItem>
+      </ConfigurationItem>
     </ConfigurationItem>
     <ConfigurationItem name="Date Created" before=" created on: " isEnabled="false" field="DateCreated"/>
     <ConfigurationItem name="Date Modified" before=" modified on: " isEnabled="false" field="DateModified"/>
@@ -1259,10 +1265,17 @@
           </WritingSystemOptions>
         </ConfigurationItem>
       </ConfigurationItem>
-      <ConfigurationItem name="Allomorph" between=" " after=" " isEnabled="false" field="Form">
+      <ConfigurationItem name="Allomorph" between=" " after="= " isEnabled="false" field="Form">
         <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
           <Option id="vernacular" isEnabled="true"/>
         </WritingSystemOptions>
+      </ConfigurationItem>
+      <ConfigurationItem name="Environments" isEnabled="false" between=", " after=" " field="AllomorphEnvironments">
+        <ConfigurationItem name="String Representation" isEnabled="true" field="StringRepresentation">
+          <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+            <Option id="analysis" isEnabled="true" />
+          </WritingSystemOptions>
+        </ConfigurationItem>
       </ConfigurationItem>
     </ConfigurationItem>
     <ConfigurationItem name="Date Created" before=" created on: " isEnabled="false" field="DateCreated"/>

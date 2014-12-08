@@ -29,6 +29,8 @@ namespace SIL.FieldWorks.XWorks
 	[TestFixture]
 	class ConfiguredXHTMLGeneratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase, IDisposable
 	{
+		private int m_wsEn, m_wsFr;
+
 		private FwXApp m_application;
 		private FwXWindow m_window;
 		private Mediator m_mediator;
@@ -49,6 +51,8 @@ namespace SIL.FieldWorks.XWorks
 
 			m_mediator.PropertyTable.SetProperty("ToolForAreaNamed_lexicon", "lexiconDictionary");
 			Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/");
+			m_wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			m_wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 		}
 
 		[TestFixtureTearDown]
@@ -1372,6 +1376,50 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_EnvironmentsAndAllomorphsAreGenerated()
+		{
+			var stringRepNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "StringRepresentation", IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new [] { "en" })
+			};
+			var environmentsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "AllomorphEnvironments", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { stringRepNode }
+			};
+			var formNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Form", IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new [] { "fr" })
+			};
+			var allomorphsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "AlternateFormsOS", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { formNode, environmentsNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { allomorphsNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			var mainEntry = CreateInterestingLexEntry();
+			AddAllomorphToEntry(mainEntry);
+
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				//SUT
+				ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
+				XHTMLWriter.Flush();
+				const string xPathThruAllomorph = "/div[@class='lexentry']/span[@class='alternateformsos']/span[@class='alternateformso']";
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(
+					xPathThruAllomorph + "/span[@class='form' and @lang='fr' and text()='Allomorph']", 1);
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(xPathThruAllomorph +
+					"/span[@class='allomorphenvironments']/span[@class='allomorphenvironment']/span[@class='stringrepresentation' and @lang='en' and text()='phoneyEnv']", 1);
+			}
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_ReferencedComplexFormsIncludesSubentriesAndOtherReferencedComplexForms()
 		{
 			var complexFormNode = new ConfigurableDictionaryNode
@@ -2437,13 +2485,6 @@ namespace SIL.FieldWorks.XWorks
 
 		private static ConfigurableDictionaryNode CreatePictureModel()
 		{
-			var wsOpts = new DictionaryNodeWritingSystemOptions
-			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-						{
-							new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true }
-						}
-			};
 			var thumbNailNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "PictureFileRA",
@@ -2528,27 +2569,30 @@ namespace SIL.FieldWorks.XWorks
 			return lexRef;
 		}
 
+		private void AddHeadwordToEntry(ILexEntry entry, string headword)
+		{
+			// The headword field is special: it uses Citation if available, or LexemeForm if Citation isn't filled in
+			entry.CitationForm.set_String(m_wsFr, Cache.TsStrFactory.MakeString(headword, m_wsFr));
+		}
+
 		private void AddSenseToEntry(ILexEntry entry, string gloss)
 		{
-			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			var senseFactory = Cache.ServiceLocator.GetInstance<ILexSenseFactory>();
 			var sense = senseFactory.Create();
 			entry.SensesOS.Add(sense);
-			sense.Gloss.set_String(wsEn, Cache.TsStrFactory.MakeString(gloss, wsEn));
+			sense.Gloss.set_String(m_wsEn, Cache.TsStrFactory.MakeString(gloss, m_wsEn));
 		}
 
 		private ILexExampleSentence AddExampleToSense(ILexSense sense, string content, string translation = null)
 		{
-			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 			var exampleFact = Cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>();
 			var example = exampleFact.Create(new Guid(), sense);
-			example.Example.set_String(wsFr, Cache.TsStrFactory.MakeString(content, wsFr));
+			example.Example.set_String(m_wsFr, Cache.TsStrFactory.MakeString(content, m_wsFr));
 			if (translation != null)
 			{
-				var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 				var type = Cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranFreeTranslation);
 				var cmTranslation = Cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(example, type);
-				cmTranslation.Translation.set_String(wsEn, Cache.TsStrFactory.MakeString(translation, wsEn));
+				cmTranslation.Translation.set_String(m_wsEn, Cache.TsStrFactory.MakeString(translation, m_wsEn));
 				example.TranslationsOC.Add(cmTranslation);
 			}
 			return example;
@@ -2559,14 +2603,16 @@ namespace SIL.FieldWorks.XWorks
 			var morphFact = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>();
 			var morph = morphFact.Create();
 			entry.AlternateFormsOS.Add(morph);
-			return morph;
-		}
+			morph.Form.set_String(m_wsFr, Cache.TsStrFactory.MakeString("Allomorph", m_wsFr));
 
-		private void AddHeadwordToEntry(ILexEntry entry, string headword)
-		{
-			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-			// The headword field is special: it uses Citation if available, or LexemeForm if Citation isn't filled in
-			entry.CitationForm.set_String(wsFr, Cache.TsStrFactory.MakeString(headword, wsFr));
+			// add environment to the allomorph
+			const int stringRepresentationFlid = 5097008;
+			var env = Cache.ServiceLocator.GetInstance<IPhEnvironmentFactory>().Create();
+			Cache.LangProject.PhonologicalDataOA.EnvironmentsOS.Add(env);
+			morph.PhoneEnvRC.Add(env);
+			Cache.MainCacheAccessor.SetString(env.Hvo, stringRepresentationFlid, Cache.TsStrFactory.MakeString("phoneyEnv", m_wsEn));
+
+			return morph;
 		}
 
 		private static void SetPublishAsMinorEntry(ILexEntry entry, bool publish)
