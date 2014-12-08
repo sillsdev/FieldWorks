@@ -205,7 +205,12 @@ namespace SIL.FieldWorks.XWorks
 				if(String.IsNullOrEmpty(currentConfig)) // No configuration type has yet been selected
 				{
 					// Select the default Root configuration if no configuration has been selected
-					currentConfig = Path.Combine(GetDefaultConfigurationDirectory("Dictionary"), "Root" + DictionaryConfigurationModel.FileExtension);
+					// Check for the existance of a root config in the project before falling back to the default
+					currentConfig = Path.Combine(GetProjectConfigurationDirectory(mediator, "Dictionary"), "Root" + DictionaryConfigurationModel.FileExtension);
+					if(!File.Exists(currentConfig))
+					{
+						currentConfig = Path.Combine(GetDefaultConfigurationDirectory("Dictionary"), "Root" + DictionaryConfigurationModel.FileExtension);
+					}
 					mediator.PropertyTable.SetProperty("DictionaryPublicationLayout", currentConfig, true);
 				}
 			}
