@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.XWorks
 			using(var xhtmlWriter = XmlWriter.Create(xhtmlPath))
 			using(var cssWriter = new StreamWriter(cssPath, false))
 			{
-				var settings = new GeneratorSettings(cache, xhtmlWriter, true, true, Path.GetDirectoryName(xhtmlPath));
+				var settings = new GeneratorSettings(cache, xhtmlWriter, true, false, Path.GetDirectoryName(xhtmlPath));
 				GenerateOpeningHtml(xhtmlWriter, cssPath);
 				string lastHeader = null;
 				foreach(var hvo in entryHvos)
@@ -737,6 +737,10 @@ namespace SIL.FieldWorks.XWorks
 			object item, bool isSingle, GeneratorSettings settings)
 		{
 			var writer = settings.Writer;
+			if (config.DictionaryNodeOptions is DictionaryNodeListOptions && !IsListItemSelectedForExport(config, item))
+			{
+				return;
+			}
 			// if we are working with senses start wrapping element and write out the sense number sibling item if necessary
 			if(config.DictionaryNodeOptions is DictionaryNodeSenseOptions)
 			{
@@ -819,6 +823,37 @@ namespace SIL.FieldWorks.XWorks
 			// The collections we test here are generic collection types (e.g. IEnumerable<T>). Note: This (and other code) does not work for arrays.
 			// We do have at least one collection type with at least two generic arguments; hence `> 0` instead of `== 1`
 			return (entryType.GetGenericArguments().Length > 0);
+		}
+
+		/// <summary>
+		/// Determines if the user has specified that this item should generate content.
+		/// <returns><c>true</c> if the user has ticked the list item that applies to this object</returns>
+		/// </summary>
+		internal static bool IsListItemSelectedForExport(ConfigurableDictionaryNode config, object listItem)
+		{
+			var listOptions = (DictionaryNodeListOptions)config.DictionaryNodeOptions;
+			switch (listOptions.ListId)
+			{
+			case DictionaryNodeListOptions.ListIds.Variant:
+				{
+					var entryRef = (ILexEntryRef)listItem;
+					var selectedListOptions = new List<Guid> ();
+					foreach (var option in listOptions.Options)
+					{
+						if (option.IsEnabled)
+						{
+							selectedListOptions.Add(new Guid(option.Id));
+						}
+					}
+					var entryTypeGuids = entryRef.VariantEntryTypesRS.Select (guid => guid.Guid);
+					if (entryTypeGuids.Intersect (selectedListOptions).Any ())
+						return true;
+					return false;
+				}
+			default:
+				Debug.WriteLine("Unhandled list ID encountered: " + listOptions.ListId);
+				return true;
+			}
 		}
 
 		/// <summary>

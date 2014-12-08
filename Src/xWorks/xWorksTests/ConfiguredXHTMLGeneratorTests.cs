@@ -10,7 +10,6 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
-using NMock.Constraints;
 using NUnit.Framework;
 using Palaso.TestUtilities;
 using SIL.CoreImpl;
@@ -99,6 +98,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		const string xpathThruSense = "/div[@class='lexentry']/span[@class='senses']/span[@class='sense']";
+		private const string TestVariantName = "Crazy Variant";
 
 		[Test]
 		public void GeneratorSettings_NullArgsThrowArgumentNull()
@@ -1385,6 +1385,142 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void IsListItemSelectedForExport_Variant_SelectedItemReturnsTrue()
+		{
+			var mainEntry = CreateInterestingLexEntry();
+			var variantForm = CreateInterestingLexEntry();
+			CreateVariantForm (mainEntry, variantForm);
+			var crazyVariantPoss = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.First(variant => variant.Name.BestAnalysisAlternative.Text == TestVariantName);
+
+			var variantsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantFormEntryBackRefs",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Variant, new ICmPossibility[] { crazyVariantPoss })
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { variantsNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			//SUT
+			Assert.IsTrue(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(variantsNode, variantForm.VisibleVariantEntryRefs.First()));
+		}
+
+		[Test]
+		public void IsListItemSelectedForExport_Variant_UnselectedItemReturnsFalse()
+		{
+			var formNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				SubField = "MLHeadWord",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var mainEntry = CreateInterestingLexEntry();
+			var variantForm = CreateInterestingLexEntry();
+			CreateVariantForm (mainEntry, variantForm);
+			var notCrazyVariant = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.FirstOrDefault(variant => variant.Name.BestAnalysisAlternative.Text != TestVariantName);
+			Assert.IsNotNull(notCrazyVariant);
+			var rcfsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantFormEntryBackRefs",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Variant, new ICmPossibility[] { notCrazyVariant }),
+				Children = new List<ConfigurableDictionaryNode> { formNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { rcfsNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			//SUT
+			Assert.IsFalse(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(rcfsNode, variantForm.VisibleVariantEntryRefs.First()));
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_NoncheckedListItemsAreNotGenerated()
+		{
+			var formNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				SubField = "MLHeadWord",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var mainEntry = CreateInterestingLexEntry();
+			var variantForm = CreateInterestingLexEntry();
+			CreateVariantForm (mainEntry, variantForm);
+			var notCrazyVariant = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.FirstOrDefault(variant => variant.Name.BestAnalysisAlternative.Text != TestVariantName);
+			Assert.IsNotNull(notCrazyVariant);
+			var variantsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantFormEntryBackRefs",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Variant, new ICmPossibility[] { notCrazyVariant }),
+				Children = new List<ConfigurableDictionaryNode> { formNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { variantsNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				//SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings));
+				XHTMLWriter.Flush();
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(
+					"/div[@class='lexentry']/span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']/span[@lang='fr']", 0);
+			}
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_CheckedListItemsAreGenerated()
+		{
+			var formNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				SubField = "MLHeadWord",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var mainEntry = CreateInterestingLexEntry();
+			var variantForm = CreateInterestingLexEntry();
+			CreateVariantForm (mainEntry, variantForm);
+			var crazyVariant = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.FirstOrDefault(variant => variant.Name.BestAnalysisAlternative.Text == TestVariantName);
+			Assert.IsNotNull(crazyVariant);
+			var variantsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantFormEntryBackRefs",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Variant, new ICmPossibility[] { crazyVariant }),
+				Children = new List<ConfigurableDictionaryNode> { formNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { variantsNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, XHTMLWriter, false, false, null);
+				//SUT
+				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings));
+				XHTMLWriter.Flush();
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(
+					"/div[@class='lexentry']/span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']/span[@lang='fr']", 1);
+			}
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_ReferencedComplexFormsUnderSensesIncludesSubentriesAndOtherReferencedComplexForms()
 		{
 			var complexFormNode = new ConfigurableDictionaryNode
@@ -2199,13 +2335,13 @@ namespace SIL.FieldWorks.XWorks
 			var owningList = Cache.LangProject.LexDbOA.VariantEntryTypesOA;
 			Assert.IsNotNull(owningList, "No VariantEntryTypes property on Lexicon object.");
 			var ws = Cache.DefaultAnalWs;
-			var varType = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(new Guid(), owningList);
-			varType.Name.set_String(ws, "Crazy Variant");
-
+			var varType = Cache.ServiceLocator.GetInstance<ILexEntryTypeFactory> ().Create ();
+			owningList.PossibilitiesOS.Add (varType);
+			varType.Name.set_String(ws, TestVariantName);
 			variantForm.MakeVariantOf(main, varType as ILexEntryType);
 		}
 
-		private void CreateComplexForm(ICmObject main, ILexEntry complexForm, bool subentry)
+		private ILexEntryRef CreateComplexForm(ICmObject main, ILexEntry complexForm, bool subentry)
 		{
 			var complexEntryRef = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
 			complexForm.EntryRefsOS.Add(complexEntryRef);
@@ -2215,6 +2351,7 @@ namespace SIL.FieldWorks.XWorks
 				complexEntryRef.PrimaryLexemesRS.Add(main);
 			else
 				complexEntryRef.ShowComplexFormsInRS.Add(main);
+			return complexEntryRef;
 		}
 
 		private void AddSenseToEntry(ILexEntry entry, string gloss)
@@ -2268,6 +2405,15 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var wsOptions = new DictionaryNodeWritingSystemOptions { Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(languages) };
 			return wsOptions;
+		}
+
+		public static DictionaryNodeOptions GetListOptionsForItems(DictionaryNodeListOptions.ListIds listName, ICmPossibility[] checkedItems)
+		{
+			var listOptions = new DictionaryNodeListOptions {
+				ListId = listName,
+				Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings (checkedItems.Select (id => id.Guid.ToString ()).ToList ())
+			};
+			return listOptions;
 		}
 
 		/// <summary>
