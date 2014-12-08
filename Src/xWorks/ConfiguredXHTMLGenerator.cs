@@ -173,10 +173,16 @@ namespace SIL.FieldWorks.XWorks
 		{
 				if (IsMinorEntry(entry))
 				{
-					if (((ILexEntry)entry).PublishAsMinorEntry)
-						for (var i = 1; i < configuration.Parts.Count; i++)
-							GenerateXHTMLForEntry(entry, configuration.Parts[i], publicationDecorator, settings);
-							// TODO pH 2014.08: determine whether each config is applicable (FormType is checked in the Minor Entry Options)
+					if(((ILexEntry)entry).PublishAsMinorEntry)
+					{
+						for(var i = 1; i < configuration.Parts.Count; i++)
+						{
+							if(IsListItemSelectedForExport(configuration.Parts[i], entry))
+							{
+								GenerateXHTMLForEntry(entry, configuration.Parts[i], publicationDecorator, settings);
+							}
+						}
+					}
 				}
 				else
 				{
@@ -189,7 +195,7 @@ namespace SIL.FieldWorks.XWorks
 			// owning an ILexEntryRef denotes a minor entry (Complex* or Variant Form)
 			return entry is ILexEntry && ((ILexEntry)entry).EntryRefsOS.Any();
 			// TODO pH 2014.08: *Owning a LexEntryRef denotes a minor entry only in those configs that display complex forms as subentries
-			// TODO				(Root, Bart, and their descendants) or if the reftype is Variant Form
+			// TODO				(Root, Bart?, and their descendants) or if the reftype is Variant Form
 		}
 
 		/// <summary>Generates XHTML for an ICmObject for a specific ConfigurableDictionaryNode</summary>
@@ -832,27 +838,62 @@ namespace SIL.FieldWorks.XWorks
 		internal static bool IsListItemSelectedForExport(ConfigurableDictionaryNode config, object listItem)
 		{
 			var listOptions = (DictionaryNodeListOptions)config.DictionaryNodeOptions;
-			switch (listOptions.ListId)
+			var selectedListOptions = (from option in listOptions.Options where option.IsEnabled select new Guid(option.Id)).ToList();
+			switch(listOptions.ListId)
 			{
-			case DictionaryNodeListOptions.ListIds.Variant:
+				case DictionaryNodeListOptions.ListIds.Variant:
 				{
 					var entryRef = (ILexEntryRef)listItem;
-					var selectedListOptions = new List<Guid> ();
-					foreach (var option in listOptions.Options)
+					var entryTypeGuids = entryRef.VariantEntryTypesRS.Select(guid => guid.Guid);
+					return entryTypeGuids.Intersect (selectedListOptions).Any();
+				}
+				case DictionaryNodeListOptions.ListIds.Minor:
+				{
+					// minor entry list options are a combination of both the variant and complex options
+					var entry = (ILexEntry)listItem;
+					var variantTypeGuids = new Set<Guid>();
+					var complexTypeGuids = new Set<Guid>();
+					foreach(var variantRef in entry.VariantEntryRefs)
 					{
-						if (option.IsEnabled)
-						{
-							selectedListOptions.Add(new Guid(option.Id));
-						}
+						variantTypeGuids.AddRange(variantRef.VariantEntryTypesRS.Select(guid => guid.Guid));
 					}
-					var entryTypeGuids = entryRef.VariantEntryTypesRS.Select (guid => guid.Guid);
-					if (entryTypeGuids.Intersect (selectedListOptions).Any ())
-						return true;
+					foreach(var complexRef in entry.EntryRefsOS)
+					{
+						complexTypeGuids.AddRange(complexRef.ComplexEntryTypesRS.Select(guid => guid.Guid));
+					}
+					var entryTypeGuids = complexTypeGuids.Union(variantTypeGuids);
+					return entryTypeGuids.Intersect(selectedListOptions).Any();
+				}
+				case DictionaryNodeListOptions.ListIds.Complex:
+				{
+					if(listItem is ILexEntryRef)
+					{
+						var entryRef = (ILexEntryRef)listItem;
+						var entryTypeGuids = entryRef.ComplexEntryTypesRS.Select(guid => guid.Guid);
+						if(entryTypeGuids.Intersect(selectedListOptions).Any())
+							return true;
+					}
+					else if(listItem is ILexEntry)
+					{
+						var entry = (ILexEntry)listItem;
+						var entryTypeGuids = entry.EntryRefsOS.Select(guid => guid.Guid);
+						if(entryTypeGuids.Intersect(selectedListOptions).Any())
+							return true;
+					}
 					return false;
 				}
-			default:
-				Debug.WriteLine("Unhandled list ID encountered: " + listOptions.ListId);
-				return true;
+				case DictionaryNodeListOptions.ListIds.Entry:
+				case DictionaryNodeListOptions.ListIds.Sense:
+				{
+					var entryRef = (ILexReference)listItem;
+					var entryTypeGuid = entryRef.OwnerType.Guid;
+					return selectedListOptions.Contains(entryTypeGuid);
+				}
+				default:
+				{
+					Debug.WriteLine("Unhandled list ID encountered: " + listOptions.ListId);
+					return true;
+				}
 			}
 		}
 

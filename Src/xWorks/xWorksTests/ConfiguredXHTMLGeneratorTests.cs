@@ -1088,12 +1088,34 @@ namespace SIL.FieldWorks.XWorks
 			var mainEntry = CreateInterestingLexEntry();
 			var minorEntry = CreateInterestingLexEntry();
 			CreateVariantForm(mainEntry, minorEntry);
-			SetPublishAsMinorEntry(mainEntry, true);
+			SetPublishAsMinorEntry(minorEntry, true);
+			configModel.Parts[1].DictionaryNodeOptions = configModel.Parts[2].DictionaryNodeOptions = GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Minor,
+				Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.Union(Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS).ToArray());
 			//SUT
 			var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(minorEntry, configModel, pubDecorator, m_mediator);
 			// this test relies on specific test data from CreateInterestingConfigurationModel
 			const string xpath = "/html/body/div[@class='minorentry']/span[@class='entry']";
 			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(xpath, 2);
+		}
+
+		[Test]
+		public void GenerateEntryHtmlWithStyles_MinorEntryUnCheckedItemsGenerateNothing()
+		{
+			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
+																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+			var configModel = CreateInterestingConfigurationModel();
+			var mainEntry = CreateInterestingLexEntry();
+			var minorEntry = CreateInterestingLexEntry();
+			CreateVariantForm(mainEntry, minorEntry);
+			configModel.Parts[1].DictionaryNodeOptions = configModel.Parts[2].DictionaryNodeOptions =
+				GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Minor, new ICmPossibility[0]);
+			SetPublishAsMinorEntry(minorEntry, true);
+			//SUT
+			var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(minorEntry, configModel, pubDecorator, m_mediator);
+			// this test relies on specific test data from CreateInterestingConfigurationModel
+			const string xpath = "/html/body/div[@class='minorentry']/span[@class='entry']";
+			// only the variant is selected, so the other minor entry should not have been generated
+			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(xpath, 0);
 		}
 
 		[Test]
@@ -1440,6 +1462,141 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			Assert.IsFalse(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(rcfsNode, variantForm.VisibleVariantEntryRefs.First()));
+		}
+
+		[Test]
+		public void IsListItemSelectedForExport_Complex_SelectedItemReturnsTrue()
+		{
+			var mainEntry = CreateInterestingLexEntry();
+			var complexForm = CreateInterestingLexEntry();
+			var complexFormRef = CreateComplexForm(mainEntry, complexForm, false);
+			var complexRefName = complexFormRef.ComplexEntryTypesRS[0].Name.BestAnalysisAlternative.Text;
+			var complexTypePoss = Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.First(complex => complex.Name.BestAnalysisAlternative.Text == complexRefName);
+
+			var variantsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VisibleComplexFormBackRefs",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Complex, new ICmPossibility[] { complexTypePoss })
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { variantsNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			//SUT
+			Assert.IsTrue(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(variantsNode, mainEntry.VisibleComplexFormBackRefs.First()));
+		}
+
+		[Test]
+		public void IsListItemSelectedForExport_Complex_UnselectedItemReturnsFalse()
+		{
+			var formNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				SubField = "MLHeadWord",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var mainEntry = CreateInterestingLexEntry();
+			var complexForm = CreateInterestingLexEntry();
+			var complexFormRef = CreateComplexForm(mainEntry, complexForm, false);
+			var complexRefName = complexFormRef.ComplexEntryTypesRS[0].Name.BestAnalysisAlternative.Text;
+			var notComplexTypePoss = Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.First(complex => complex.Name.BestAnalysisAlternative.Text != complexRefName);
+			Assert.IsNotNull(notComplexTypePoss);
+			var rcfsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VisibleComplexFormBackRefs",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Complex, new ICmPossibility[] { notComplexTypePoss }),
+				Children = new List<ConfigurableDictionaryNode> { formNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { rcfsNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			//SUT
+			Assert.IsFalse(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(rcfsNode, mainEntry.VisibleComplexFormBackRefs.First()));
+		}
+
+		[Test]
+		public void IsListItemSelectedForExport_Entry_SelectedItemReturnsTrue()
+		{
+			var formNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				SubField = "MLHeadWord",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var mainEntry = CreateInterestingLexEntry();
+			var referencedEntry = CreateInterestingLexEntry();
+			const string refTypeName = "TestRefType";
+			var lexicalReference = CreateLexicalReference(mainEntry, referencedEntry, refTypeName);
+			var notComplexTypePoss = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(refType => refType.Name.BestAnalysisAlternative.Text == refTypeName);
+			Assert.IsNotNull(notComplexTypePoss);
+			var entryReferenceNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MinimalLexReferences",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Entry, new ICmPossibility[] { notComplexTypePoss }),
+				Children = new List<ConfigurableDictionaryNode> { formNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { entryReferenceNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			Assert.IsTrue(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(entryReferenceNode, mainEntry.MinimalLexReferences.First()));
+		}
+
+		[Test]
+		public void IsListItemSelectedForExport_Entry_UnselectedItemReturnsFalse()
+		{
+			var formNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				SubField = "MLHeadWord",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var mainEntry = CreateInterestingLexEntry();
+			var referencedEntry = CreateInterestingLexEntry();
+			// Make an unused LexRefType
+			var lrt = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
+			if(Cache.LangProject.LexDbOA.ReferencesOA == null)
+				Cache.LangProject.LexDbOA.ReferencesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+			Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(lrt);
+			lrt.Name.set_String(Cache.DefaultAnalWs, "NotOurTestRefType");
+
+			const string refTypeName = "TestRefType";
+			var lexicalReference = CreateLexicalReference(mainEntry, referencedEntry, refTypeName);
+			var notComplexTypePoss = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(refType => refType.Name.BestAnalysisAlternative.Text != refTypeName);
+			Assert.IsNotNull(notComplexTypePoss);
+			var entryReferenceNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MinimalLexReferences",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Entry, new ICmPossibility[] { notComplexTypePoss }),
+				Children = new List<ConfigurableDictionaryNode> { formNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { entryReferenceNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			Assert.IsFalse(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(entryReferenceNode, mainEntry.MinimalLexReferences.First()));
 		}
 
 		[Test]
@@ -2338,13 +2495,15 @@ namespace SIL.FieldWorks.XWorks
 			var varType = Cache.ServiceLocator.GetInstance<ILexEntryTypeFactory> ().Create ();
 			owningList.PossibilitiesOS.Add (varType);
 			varType.Name.set_String(ws, TestVariantName);
-			variantForm.MakeVariantOf(main, varType as ILexEntryType);
+			variantForm.MakeVariantOf(main, varType);
 		}
 
 		private ILexEntryRef CreateComplexForm(ICmObject main, ILexEntry complexForm, bool subentry)
 		{
+			var owningList = Cache.LangProject.LexDbOA.ComplexEntryTypesOA;
 			var complexEntryRef = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
 			complexForm.EntryRefsOS.Add(complexEntryRef);
+			complexEntryRef.ComplexEntryTypesRS.Add((ILexEntryType)Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS[0]);
 			complexEntryRef.RefType = LexEntryRefTags.krtComplexForm;
 			complexEntryRef.ComponentLexemesRS.Add(main);
 			if (subentry)
@@ -2352,6 +2511,21 @@ namespace SIL.FieldWorks.XWorks
 			else
 				complexEntryRef.ShowComplexFormsInRS.Add(main);
 			return complexEntryRef;
+		}
+
+		private ILexReference CreateLexicalReference(ILexEntry mainEntry, ILexEntry referencedForm, string refTypeName)
+		{
+			var lrt = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
+			if(Cache.LangProject.LexDbOA.ReferencesOA == null)
+				Cache.LangProject.LexDbOA.ReferencesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+			Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(lrt);
+			lrt.Name.set_String(Cache.DefaultAnalWs, refTypeName);
+			var lexRef = Cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create();
+			lrt.MembersOC.Add(lexRef);
+			lexRef.TargetsRS.Add(mainEntry);
+			lexRef.TargetsRS.Add(referencedForm);
+
+			return lexRef;
 		}
 
 		private void AddSenseToEntry(ILexEntry entry, string gloss)
