@@ -30,8 +30,9 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private readonly Inventory m_layoutInventory;
 		private readonly Inventory m_partInventory;
-		private Mediator m_mediator;
-		private SimpleLogger m_logger = new SimpleLogger();
+		private readonly Mediator m_mediator;
+		private readonly SimpleLogger m_logger = new SimpleLogger();
+		private string m_configDirSuffixBeingMigrated;
 
 		public DictionaryConfigurationMigrator(Mediator mediator)
 		{
@@ -53,6 +54,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_logger.WriteLine(String.Format("{0}: Dictionary configurations were found in need of migration. - {1}",
 					versionProvider.ApplicationVersion, DateTime.Now.ToString("yyyy MMM d h:mm:ss")));
+				m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.s_dictionaryConfigurationDirectoryName;
 				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
 					"Undo Migrate old Dictionary Configurations", "Redo Migrate old Dictionary Configurations", Cache.ActionHandlerAccessor,
 					() =>
@@ -65,6 +67,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_logger.WriteLine(String.Format("{0}: Reversal configurations were found in need of migration. - {1}",
 					versionProvider.ApplicationVersion, DateTime.Now.ToString("yyyy MMM d h:mm:ss")));
+				m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.s_reversalIndexConfigurationDirectoryName;
 				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
 					"Undo Migrate old Reversal Configurations", "Redo Migrate old Reversal Configurations", Cache.ActionHandlerAccessor,
 					() =>
@@ -88,8 +91,7 @@ namespace SIL.FieldWorks.XWorks
 		private XmlNode GetConfigureLayoutsNodeForTool(string tool)
 		{
 			var collector = new XmlNode[1];
-			var parameter = new Tuple<string, string, XmlNode[]>("lexicon", tool,
-																				  collector);
+			var parameter = new Tuple<string, string, XmlNode[]>("lexicon", tool, collector);
 			m_mediator.SendMessage("GetContentControlParameters", parameter);
 			var controlNode = collector[0];
 			var dynLoaderNode = controlNode.SelectSingleNode("dynamicloaderinfo");
@@ -156,7 +158,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				DictionaryConfigurationModel currentDefaultModel;
 				const string extension = DictionaryConfigurationModel.FileExtension;
-				var defaultPath = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(m_mediator);
+				var defaultPath = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(m_configDirSuffixBeingMigrated);
 				const string defaultStemName = "Stem" + extension;
 				const string defaultRootName = "Root" + extension;
 				var projectConfigBasePath = FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
