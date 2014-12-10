@@ -144,7 +144,20 @@ namespace SIL.FieldWorks.XWorks
 			DictionaryConfigurationModel.SpecifyParents(convertedModel.Parts);
 			CopyNewDefaultsIntoConvertedModel(layout, convertedModel);
 			convertedModel.Save();
+			MigratePublicationLayoutSelection(layout, convertedModel.FilePath);
 			m_logger.DecreaseIndent();
+		}
+
+		private void MigratePublicationLayoutSelection(string oldLayout, string newPath)
+		{
+			if (oldLayout.Equals(m_mediator.PropertyTable.GetStringProperty("DictionaryPublicationLayout", String.Empty)))
+			{
+				m_mediator.PropertyTable.SetProperty("DictionaryPublicationLayout", newPath);
+			}
+			else if (oldLayout.Equals(m_mediator.PropertyTable.GetStringProperty("ReversalIndexPublicationLayout", String.Empty)))
+			{
+				m_mediator.PropertyTable.SetProperty("ReversalIndexPublicationLayout", newPath);
+			}
 		}
 
 		/// <summary>

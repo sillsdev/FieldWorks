@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.XWorks
 		public string Label { get; set; }
 
 		/// <summary>
-		/// The version of the DictionaryConfigurationModel for use in data migration ect.
+		/// The version of the DictionaryConfigurationModel for use in data migration etc.
 		/// </summary>
 		[XmlAttribute(AttributeName = "version")]
 		public int Version { get; set; }
