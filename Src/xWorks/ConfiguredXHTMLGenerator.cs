@@ -209,7 +209,7 @@ namespace SIL.FieldWorks.XWorks
 					{
 						for(var i = 1; i < configuration.Parts.Count; i++)
 						{
-							if(IsListItemSelectedForExport(configuration.Parts[i], entry))
+							if(IsListItemSelectedForExport(configuration.Parts[i], entry, null))
 							{
 								GenerateXHTMLForEntry(entry, configuration.Parts[i], publicationDecorator, settings);
 							}
@@ -378,7 +378,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					if(!IsCollectionEmpty(propertyValue))
 					{
-						GenerateXHTMLForCollection(propertyValue, config, publicationDecorator, settings);
+						GenerateXHTMLForCollection(propertyValue, config, publicationDecorator, field, settings);
 					}
 					return;
 				}
@@ -747,12 +747,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// This method will generate the XHTML that represents a collection and its contents
 		/// </summary>
-		/// <param name="collectionField"></param>
-		/// <param name="config"></param>
-		/// <param name="publicationDecorator"></param>
-		/// <param name="writer"></param>
-		/// <param name="cache"></param>
-		private static void GenerateXHTMLForCollection(object collectionField, ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
+		private static void GenerateXHTMLForCollection(object collectionField, ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator, object collectionOwner, GeneratorSettings settings)
 		{
 			var writer = settings.Writer;
 			writer.WriteStartElement("span");
@@ -773,16 +768,16 @@ namespace SIL.FieldWorks.XWorks
 			var isSingle = collection.Cast<object>().Count() == 1;
 			foreach(var item in collection)
 			{
-				GenerateCollectionItemContent(config, publicationDecorator, item, isSingle, settings);
+				GenerateCollectionItemContent(config, publicationDecorator, item, isSingle, collectionOwner, settings);
 			}
 			writer.WriteEndElement();
 		}
 
 		private static void GenerateCollectionItemContent(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
-			object item, bool isSingle, GeneratorSettings settings)
+			object item, bool isSingle, object collectionOwner, GeneratorSettings settings)
 		{
 			var writer = settings.Writer;
-			if (config.DictionaryNodeOptions is DictionaryNodeListOptions && !IsListItemSelectedForExport(config, item))
+			if (config.DictionaryNodeOptions is DictionaryNodeListOptions && !IsListItemSelectedForExport(config, item, collectionOwner))
 			{
 				return;
 			}
@@ -874,10 +869,25 @@ namespace SIL.FieldWorks.XWorks
 		/// Determines if the user has specified that this item should generate content.
 		/// <returns><c>true</c> if the user has ticked the list item that applies to this object</returns>
 		/// </summary>
-		internal static bool IsListItemSelectedForExport(ConfigurableDictionaryNode config, object listItem)
+		internal static bool IsListItemSelectedForExport(ConfigurableDictionaryNode config, object listItem, object parent)
 		{
 			var listOptions = (DictionaryNodeListOptions)config.DictionaryNodeOptions;
-			var selectedListOptions = (from option in listOptions.Options where option.IsEnabled select new Guid(option.Id)).ToList();
+			var selectedListOptions = new List<Guid>();
+			var forwardReverseOptions = new List<Tuple<Guid, string>>();
+			foreach(var option in listOptions.Options)
+			{
+				if (option.IsEnabled) {
+					var forwardReverseIndicator = option.Id.IndexOf(':');
+					if (forwardReverseIndicator > 0) {
+						var guid = new Guid (option.Id.Substring (0, forwardReverseIndicator));
+						forwardReverseOptions.Add(new Tuple<Guid, string>(guid, option.Id.Substring(forwardReverseIndicator)));
+					}
+					else
+					{
+						selectedListOptions.Add(new Guid(option.Id));
+					}
+				}
+			}
 			switch(listOptions.ListId)
 			{
 				case DictionaryNodeListOptions.ListIds.Variant:
@@ -926,7 +936,21 @@ namespace SIL.FieldWorks.XWorks
 				{
 					var entryRef = (ILexReference)listItem;
 					var entryTypeGuid = entryRef.OwnerType.Guid;
-					return selectedListOptions.Contains(entryTypeGuid);
+					if (selectedListOptions.Contains (entryTypeGuid)) {
+						return true;
+					}
+					else
+					{
+						foreach (var pair in forwardReverseOptions)
+						{
+							if(pair.Item1 == entryTypeGuid)
+							{
+								return (entryRef.TargetsRS[0] == parent && pair.Item2 == ":f") ||
+									(entryRef.TargetsRS[1] == parent && pair.Item2 == ":r");
+							}
+						}
+						return false;
+					}
 				}
 				default:
 				{
