@@ -35,8 +35,13 @@ namespace SIL.FieldWorks.XWorks
 			m_mainView.Dock = DockStyle.Fill;
 			m_mainView.Location = new Point(0, 0);
 			m_mainView.IsWebBrowserContextMenuEnabled = false;
-			m_mediator.AddColleague(this);
 			ReadParameters();
+			// Use update helper to help with optimizations and special cases for list loading
+			using(var luh = new RecordClerk.ListUpdateHelper(Clerk, Clerk.ListLoadingSuppressed))
+			{
+				m_mediator.AddColleague(this);
+				Clerk.UpdateOwningObjectIfNeeded();
+			}
 			Controls.Add(m_mainView);
 		}
 
@@ -50,6 +55,13 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public void PostLayoutInit()
 		{
+			// Tell the Clerk it is active so it will update the list of entries. Pass false as we have no toolbar to update.
+			Clerk.ActivateUI(false);
+			// Update the entry list if necessary
+			if(!Clerk.ListLoadingSuppressed && Clerk.RequestedLoadWhileSuppressed)
+			{
+				Clerk.UpdateList(true, true);
+			}
 			// Grab the selected publication and make sure that we grab a valid configuration for it.
 			// In some cases (e.g where a user reset their local settings) the stored configuration may no longer
 			// exist on disk.
