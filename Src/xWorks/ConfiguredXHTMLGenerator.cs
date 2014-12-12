@@ -1061,6 +1061,9 @@ namespace SIL.FieldWorks.XWorks
 			{
 				throw new ArgumentException(@"Configuration nodes for MultiString fields should have WritingSystemOptions", "config");
 			}
+			// TODO pH 2014.12: this can generate an empty span if no checked WS's contain data
+			settings.Writer.WriteStartElement("span");
+			WriteClassNameAttribute(settings.Writer, config);
 			foreach(var option in wsOptions.Options)
 			{
 				if(!option.IsEnabled)
@@ -1084,6 +1087,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				GenerateWsPrefixAndString(config, settings, wsOptions, wsId, bestString);
 			}
+			settings.Writer.WriteEndElement();
 		}
 
 		/// <summary>
@@ -1103,6 +1107,9 @@ namespace SIL.FieldWorks.XWorks
 			{
 				throw new ArgumentException(@"Configuration nodes for MultiString fields should have WritingSystemOptions", "config");
 			}
+			settings.Writer.WriteStartElement("span");
+			WriteClassNameAttribute(settings.Writer, config);
+
 			foreach(var option in wsOptions.Options)
 			{
 				if(!option.IsEnabled)
@@ -1125,6 +1132,7 @@ namespace SIL.FieldWorks.XWorks
 				var requestedString = multiStringAccessor.get_String(wsId);
 				GenerateWsPrefixAndString(config, settings, wsOptions, wsId, requestedString);
 			}
+			settings.Writer.WriteEndElement();
 		}
 
 		private static void GenerateWsPrefixAndString(ConfigurableDictionaryNode config, GeneratorSettings settings,
@@ -1145,7 +1153,6 @@ namespace SIL.FieldWorks.XWorks
 				writer.WriteEndElement();
 			}
 			writer.WriteStartElement("span");
-			WriteClassNameAttribute(writer, config);
 			var wsName = cache.WritingSystemFactory.get_EngineOrNull(wsId).Id;
 			GenerateXHTMLForString(requestedString, config, settings, wsName);
 			writer.WriteEndElement();

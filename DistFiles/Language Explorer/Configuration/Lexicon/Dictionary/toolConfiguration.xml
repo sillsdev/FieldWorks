@@ -25,7 +25,7 @@
 				<parameters PaneBarGroupId="PaneBar-Dictionary">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.XhtmlDocView"/>
-						<parameters area="lexicon" clerk="entries" altTitleId="LexEntry-Plural" persistContext="Dict" backColor="Green" layout="" layoutProperty="DictionaryPublicationLayout" layoutSuffix="Preview" editable="false" configureObjectName="Dictionary">
+						<parameters area="lexicon" clerk="entries" altTitleId="LexEntry-Plural" persistContext="Dict" backColor="White" layout="" layoutProperty="DictionaryPublicationLayout" layoutSuffix="Preview" editable="false" configureObjectName="Dictionary">
 							<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.DictionaryPublicationDecorator"/>
 							<filterProps>LexEntry.VisibleComplexFormBackRefs:LexEntryRef.OwningEntry;LexEntry.AllSubentries:LexEntryRef.OwningEntry</filterProps>
 						</parameters>

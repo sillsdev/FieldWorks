@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.IsTrue(Regex.Match(cssResult, "^\\s*\\.lexentry\\s*{.*").Success,
 							  "Css for root node(lexentry) did not generate a specific match");
 			// verify that the css result contains a line similar to: .lexentry .headword {
-			Assert.IsTrue(Regex.Match(cssResult, "\\.lexentry\\s*\\.headword\\s*{.*").Success,
+			Assert.IsTrue(Regex.Match(cssResult, "\\.lexentry\\s*\\.headword\\s*span\\s*{.*").Success,
 							  "Css for child node(headword) did not generate a specific match");
 		}
 
@@ -114,10 +114,10 @@ namespace SIL.FieldWorks.XWorks
 			model.Parts = new List<ConfigurableDictionaryNode> { mainEntryNode };
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			// Check result for before and after rules equivalent to .headword:before{content:'Z';} and .headword:after{content:'A'}
-			Assert.IsTrue(Regex.Match(cssResult, "\\.headword\\s*:\\s*first-child:before\\s*{\\s*content\\s*:\\s*'Z';\\s*}").Success,
+			// Check result for before and after rules equivalent to .headword span:first-child{content:'Z';} and .headword span:last-child{content:'A'}
+			Assert.IsTrue(Regex.Match(cssResult, "\\.headword\\s*span\\s*:\\s*first-child:before\\s*{\\s*content\\s*:\\s*'Z';\\s*}").Success,
 							  "css before rule with Z content not found on headword");
-			Assert.IsTrue(Regex.Match(cssResult, "\\.headword\\s*:\\s*last-child:after\\s*{\\s*content\\s*:\\s*'A';\\s*}").Success,
+			Assert.IsTrue(Regex.Match(cssResult, "\\.headword\\s*span\\s*:\\s*last-child:after\\s*{\\s*content\\s*:\\s*'A';\\s*}").Success,
 							  "css after rule with A content not found on headword");
 		}
 
@@ -309,7 +309,7 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			//Verify that vernacular was converted into french to match the vernholder node
-			Assert.That(cssResult, Contains.Substring(".vernholder[lang|=\"fr\"]"));
+			Assert.That(cssResult, Contains.Substring(".vernholder span[lang|=\"fr\"]"));
 		}
 
 		[Test]
@@ -332,7 +332,7 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			//Verify that analysis was converted into english to match the analyholder node
-			Assert.That(cssResult, Contains.Substring(".analyholder[lang|=\"en\"]"));
+			Assert.That(cssResult, Contains.Substring(".analyholder span[lang|=\"en\"]"));
 		}
 
 		[Test]

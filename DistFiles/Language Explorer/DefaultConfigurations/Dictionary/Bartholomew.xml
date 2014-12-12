@@ -7,7 +7,7 @@
  lastModified="2014-10-08"
  allPublications="false">
   <ConfigurationItem name="Main Entry" isEnabled="true" isDuplicate="false" isCustomField="false" field="LexEntry" cssClassNameOverride="entry">
-    <ConfigurationItem name="Headword" isEnabled="true" isDuplicate="false" isCustomField="false" style="Dictionary-Headword" before="" between=" " after="  " field="HeadWord">
+    <ConfigurationItem name="Headword" isEnabled="true" isDuplicate="false" isCustomField="false" style="Dictionary-Headword" before="" between=" " after="  " field="MLHeadWord" cssClassNameOverride="headword">
       <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
         <Option id="vernacular" isEnabled="true" />
       </WritingSystemOptions>
@@ -177,7 +177,7 @@
           </WritingSystemOptions>
         </ConfigurationItem>
         <ConfigurationItem name="Targets" isEnabled="true" isDuplicate="false" isCustomField="false" before="" between=", " after=" " field="ConfigTargets">
-          <ConfigurationItem name="Referenced Sense Headword" isEnabled="true" isDuplicate="false" isCustomField="false" style="Dictionary-CrossReferences" before="" between=" " after="" field="HeadWord">
+          <ConfigurationItem name="Referenced Sense Headword" isEnabled="true" isDuplicate="false" isCustomField="false" style="Dictionary-CrossReferences" before="" between=" " after="" field="MLHeadWord" cssClassNameOverride="headword">
             <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
               <Option id="vernacular" isEnabled="true" />
             </WritingSystemOptions>
@@ -202,7 +202,7 @@
             </WritingSystemOptions>
           </ConfigurationItem>
         </ConfigurationItem>
-        <ConfigurationItem name="Variant Form" isEnabled="true" isDuplicate="false" isCustomField="false" before="" between=", " after="" field="OwningEntry" subField="HeadWord">
+        <ConfigurationItem name="Variant Form" isEnabled="true" isDuplicate="false" isCustomField="false" before="" between=", " after="" field="OwningEntry" subField="MLHeadWord" cssClassNameOverride="headword">
           <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
             <Option id="vernacular" isEnabled="true" />
           </WritingSystemOptions>
@@ -353,7 +353,7 @@
             </WritingSystemOptions>
           </ConfigurationItem>
         </ConfigurationItem>
-        <ConfigurationItem name="Complex Form" isEnabled="true" isDuplicate="false" isCustomField="false" before="" between=" " after="" field="OwningEntry" subField="MLHeadWord">
+        <ConfigurationItem name="Complex Form" isEnabled="true" isDuplicate="false" isCustomField="false" before="" between=" " after="" field="OwningEntry" subField="MLHeadWord" cssClassNameOverride="headword">
           <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
             <Option id="vernacular" isEnabled="true" />
           </WritingSystemOptions>
@@ -437,7 +437,7 @@
           </WritingSystemOptions>
         </ConfigurationItem>
       </ConfigurationItem>
-      <ConfigurationItem name="Variant Form" isEnabled="true" isDuplicate="false" isCustomField="false" style="Classified-Headword" before="" between=", " after="" field="OwningEntry" subField="HeadWord">
+      <ConfigurationItem name="Variant Form" isEnabled="true" isDuplicate="false" isCustomField="false" style="Classified-Headword" before="" between=", " after="" field="OwningEntry" subField="MLHeadWord" cssClassNameOverride="headword">
         <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
           <Option id="vernacular" isEnabled="true" />
         </WritingSystemOptions>
@@ -496,7 +496,7 @@
           </WritingSystemOptions>
         </ConfigurationItem>
       </ConfigurationItem>
-      <ConfigurationItem name="Variant Form" isEnabled="true" isDuplicate="false" isCustomField="false" style="Classified-Headword" before="" between=", " after="" field="OwningEntry" subField="HeadWord">
+      <ConfigurationItem name="Variant Form" isEnabled="true" isDuplicate="false" isCustomField="false" style="Classified-Headword" before="" between=", " after="" field="OwningEntry" subField="MLHeadWord" cssClassNameOverride="headword">
         <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
           <Option id="vernacular" isEnabled="true" />
         </WritingSystemOptions>
@@ -548,7 +548,7 @@
         </WritingSystemOptions>
       </ConfigurationItem>
       <ConfigurationItem name="Targets" isEnabled="true" isDuplicate="false" isCustomField="false" style="Dictionary-Headword" before="" between=", " after="" field="ConfigTargets">
-        <ConfigurationItem name="Referenced Headword" isEnabled="true" isDuplicate="false" isCustomField="false" before="" between=" " after="" field="HeadWord">
+        <ConfigurationItem name="Referenced Headword" isEnabled="true" isDuplicate="false" isCustomField="false" before="" between=" " after="" field="MLHeadWord" cssClassNameOverride="headword">
           <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
             <Option id="vernacular" isEnabled="true" />
           </WritingSystemOptions>
@@ -574,7 +574,7 @@
         </ConfigurationItem>
       </ConfigurationItem>
       <ConfigurationItem name="Referenced Entries" isEnabled="true" isDuplicate="false" isCustomField="false" before="" between=", " after="" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
-        <ConfigurationItem name="Referenced Headword" isEnabled="true" isDuplicate="false" isCustomField="false" style="Classified-Headword" before="" between=" " after="" field="HeadWord">
+        <ConfigurationItem name="Referenced Headword" isEnabled="true" isDuplicate="false" isCustomField="false" style="Classified-Headword" before="" between=" " after="" field="MLHeadWord" cssClassNameOverride="headword">
           <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
             <Option id="vernacular" isEnabled="true" />
           </WritingSystemOptions>
@@ -648,7 +648,7 @@
           </WritingSystemOptions>
         </ConfigurationItem>
       </ConfigurationItem>
-      <ConfigurationItem name="Complex Form" isEnabled="true" isDuplicate="false" isCustomField="false" style="Classified-Headword" before="" between=" " after=" " field="OwningEntry" subField="MLHeadWord">
+      <ConfigurationItem name="Complex Form" isEnabled="true" isDuplicate="false" isCustomField="false" style="Classified-Headword" before="" between=" " after=" " field="OwningEntry" subField="MLHeadWord" cssClassNameOverride="headword">
         <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
           <Option id="vernacular" isEnabled="true" />
         </WritingSystemOptions>
@@ -734,7 +734,7 @@
     <ListTypeOptions list="minor">
       <Option id="" isEnabled="false" />
     </ListTypeOptions>
-    <ConfigurationItem name="Headword" isEnabled="true" isDuplicate="false" isCustomField="false" style="Dictionary-Headword" before="" between=" " after="  " field="HeadWord">
+    <ConfigurationItem name="Headword" isEnabled="true" isDuplicate="false" isCustomField="false" style="Dictionary-Headword" before="" between=" " after="  " field="MLHeadWord" cssClassNameOverride="headword">
       <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
         <Option id="vernacular" isEnabled="true" />
       </WritingSystemOptions>
@@ -948,7 +948,7 @@
           </WritingSystemOptions>
         </ConfigurationItem>
         <ConfigurationItem name="Targets" isEnabled="true" isDuplicate="false" isCustomField="false" before="" between=", " after=" " field="ConfigTargets">
-          <ConfigurationItem name="Referenced Sense Headword" isEnabled="true" isDuplicate="false" isCustomField="false" style="Dictionary-CrossReferences" before="" between=" " after="" field="HeadWord">
+          <ConfigurationItem name="Referenced Sense Headword" isEnabled="true" isDuplicate="false" isCustomField="false" style="Dictionary-CrossReferences" before="" between=" " after="" field="MLHeadWord" cssClassNameOverride="headword">
             <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
               <Option id="vernacular" isEnabled="true" />
             </WritingSystemOptions>
@@ -973,7 +973,7 @@
             </WritingSystemOptions>
           </ConfigurationItem>
         </ConfigurationItem>
-        <ConfigurationItem name="Variant Form" isEnabled="true" isDuplicate="false" isCustomField="false" before="" between=", " after="" field="OwningEntry" subField="HeadWord">
+        <ConfigurationItem name="Variant Form" isEnabled="true" isDuplicate="false" isCustomField="false" before="" between=", " after="" field="OwningEntry" subField="MLHeadWord" cssClassNameOverride="headword">
           <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
             <Option id="vernacular" isEnabled="true" />
           </WritingSystemOptions>
@@ -1124,7 +1124,7 @@
             </WritingSystemOptions>
           </ConfigurationItem>
         </ConfigurationItem>
-        <ConfigurationItem name="Complex Form" isEnabled="true" isDuplicate="false" isCustomField="false" before="" between=" " after="" field="OwningEntry" subField="MLHeadWord">
+        <ConfigurationItem name="Complex Form" isEnabled="true" isDuplicate="false" isCustomField="false" before="" between=" " after="" field="OwningEntry" subField="MLHeadWord" cssClassNameOverride="headword">
           <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
             <Option id="vernacular" isEnabled="true" />
           </WritingSystemOptions>
@@ -1193,7 +1193,7 @@
           </WritingSystemOptions>
         </ConfigurationItem>
       </ConfigurationItem>
-      <ConfigurationItem name="Variant Form" isEnabled="true" isDuplicate="false" isCustomField="false" style="Dictionary-Headword" before="" between=", " after="" field="OwningEntry" subField="HeadWord">
+      <ConfigurationItem name="Variant Form" isEnabled="true" isDuplicate="false" isCustomField="false" style="Dictionary-Headword" before="" between=", " after="" field="OwningEntry" subField="MLHeadWord" cssClassNameOverride="headword">
         <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
           <Option id="vernacular" isEnabled="true" />
         </WritingSystemOptions>
@@ -1252,7 +1252,7 @@
           </WritingSystemOptions>
         </ConfigurationItem>
       </ConfigurationItem>
-      <ConfigurationItem name="Variant Form" isEnabled="true" isDuplicate="false" isCustomField="false" style="Dictionary-Headword" before="" between=", " after="" field="OwningEntry" subField="HeadWord">
+      <ConfigurationItem name="Variant Form" isEnabled="true" isDuplicate="false" isCustomField="false" style="Dictionary-Headword" before="" between=", " after="" field="OwningEntry" subField="MLHeadWord" cssClassNameOverride="headword">
         <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
           <Option id="vernacular" isEnabled="true" />
         </WritingSystemOptions>
@@ -1309,7 +1309,7 @@
         </WritingSystemOptions>
       </ConfigurationItem>
       <ConfigurationItem name="Targets" isEnabled="true" isDuplicate="false" isCustomField="false" before="" between=", " after=" " field="ConfigTargets">
-        <ConfigurationItem name="Referenced Headword" isEnabled="true" isDuplicate="false" isCustomField="false" style="Dictionary-CrossReferences" before="" between=" " after="" field="HeadWord">
+        <ConfigurationItem name="Referenced Headword" isEnabled="true" isDuplicate="false" isCustomField="false" style="Dictionary-CrossReferences" before="" between=" " after="" field="MLHeadWord" cssClassNameOverride="headword">
           <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
             <Option id="vernacular" isEnabled="true" />
           </WritingSystemOptions>
@@ -1378,7 +1378,7 @@
           </WritingSystemOptions>
         </ConfigurationItem>
       </ConfigurationItem>
-      <ConfigurationItem name="Complex Form" isEnabled="true" isDuplicate="false" isCustomField="false" style="Dictionary-Headword" before="" between=" " after="" field="OwningEntry" subField="HeadWord">
+      <ConfigurationItem name="Complex Form" isEnabled="true" isDuplicate="false" isCustomField="false" style="Dictionary-Headword" before="" between=" " after="" field="OwningEntry" subField="MLHeadWord" cssClassNameOverride="headword">
         <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
           <Option id="vernacular" isEnabled="true" />
         </WritingSystemOptions>

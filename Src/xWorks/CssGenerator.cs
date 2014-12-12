@@ -307,6 +307,15 @@ namespace SIL.FieldWorks.XWorks
 				{
 					return " img"; // Pictures are written out as img tags
 				}
+				case ConfiguredXHTMLGenerator.PropertyType.PrimitiveType:
+				{
+					// for multi-lingual strings each language's string will have the contents generated in a span
+					if(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions)
+					{
+						return "." + GetClassAttributeForConfig(configNode) + " span";
+					}
+					goto default;
+				}
 				default:
 					return "." + GetClassAttributeForConfig(configNode);
 			}

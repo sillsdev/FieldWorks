@@ -158,8 +158,9 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var headwordNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "HeadWord",
+				FieldDescription = "MLHeadWord",
 				Label = "Headword",
+				CSSClassNameOverride = "headword",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
 				IsEnabled = true
 			};
@@ -178,7 +179,7 @@ namespace SIL.FieldWorks.XWorks
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
-				const string frenchHeadwordOfHeadwordTest = "/div[@class='lexentry']/span[@class='headword' and @lang='fr' and text()='HeadWordTest']";
+				const string frenchHeadwordOfHeadwordTest = "/div[@class='lexentry']/span[@class='headword']/span[@lang='fr' and text()='HeadWordTest']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(frenchHeadwordOfHeadwordTest, 1);
 			}
 		}
@@ -212,7 +213,7 @@ namespace SIL.FieldWorks.XWorks
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
-				const string frenchLexForm = "/div[@class='lexentry']/span[@class='lexemeformoa' and @lang='fr' and text()='LexemeFormTest']";
+				const string frenchLexForm = "/div[@class='lexentry']/span[@class='lexemeformoa']/span[@lang='fr' and text()='LexemeFormTest']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(frenchLexForm, 1);
 			}
 		}
@@ -268,7 +269,7 @@ namespace SIL.FieldWorks.XWorks
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
-				const string hereLocation = "/div[@class='lexentry']/span[@class='pronunciations']/span[@class='pronunciation']/span[@class='location']/span[@class='name' and @lang='fr' and text()='Here!']";
+				const string hereLocation = "/div[@class='lexentry']/span[@class='pronunciations']/span[@class='pronunciation']/span[@class='location']/span[@class='name']/span[@lang='fr' and text()='Here!']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(hereLocation, 1);
 			}
 		}
@@ -367,7 +368,7 @@ namespace SIL.FieldWorks.XWorks
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
-				const string oneSenseWithGlossOfGloss = xpathThruSense + "/span[@lang='en' and text()='gloss']";
+				const string oneSenseWithGlossOfGloss = xpathThruSense + "//span[@lang='en' and text()='gloss']";
 				//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithGlossOfGloss, 1);
 			}
@@ -702,7 +703,7 @@ namespace SIL.FieldWorks.XWorks
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
-				const string senseWithdefinitionOrGloss = "//span[@class='sense']/span[@class='definitionorgloss' and text()='gloss']";
+				const string senseWithdefinitionOrGloss = "//span[@class='sense']/span[@class='definitionorgloss']/span[text()='gloss']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(senseWithdefinitionOrGloss, 1);
 			}
 		}
@@ -777,7 +778,7 @@ namespace SIL.FieldWorks.XWorks
 				// SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
-				var headwordMatch = String.Format("//span[@class='{0}']//span[@class='{1}' and text()='{2}']",
+				var headwordMatch = String.Format("//span[@class='{0}']//span[@class='{1}']/span[text()='{2}']",
 															 nters, headWord, entryThreeForm);
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(headwordMatch, 1);
 			}
@@ -1177,8 +1178,8 @@ namespace SIL.FieldWorks.XWorks
 				//SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings));
 				XHTMLWriter.Flush();
-				const string senseNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]/span[@lang='en' and text()='gloss']";
-				const string senseNumberTwo = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2']]/span[@lang='en' and text()='second gloss']";
+				const string senseNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='gloss']";
+				const string senseNumberTwo = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2']]//span[@lang='en' and text()='second gloss']";
 				//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(senseNumberOne, 1);
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(senseNumberTwo, 1);
@@ -1265,7 +1266,7 @@ namespace SIL.FieldWorks.XWorks
 				// SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings));
 				XHTMLWriter.Flush();
-				const string senseNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]/span[@lang='en' and text()='gloss']";
+				const string senseNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='gloss']";
 				// This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(senseNumberOne, 1);
 			}
@@ -1367,10 +1368,10 @@ namespace SIL.FieldWorks.XWorks
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
 				const string xpathThruExampleSentence = "/div[@class='lexentry']/span[@class='complexformsnotsubentries']/span[@class='complexformsnotsubentrie']/span[@class='examplesentences']/span[@class='examplesentence']";
-				var oneSenseWithExample = String.Format(xpathThruExampleSentence + "/span[@lang='fr' and text()='{0}']", example);
+				var oneSenseWithExample = String.Format(xpathThruExampleSentence + "//span[@lang='fr' and text()='{0}']", example);
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithExample, 1);
 				var oneExampleSentenceTranslation = String.Format(
-					xpathThruExampleSentence + "/span[@class='translations']/span[@class='translation']/span[@lang='en' and text()='{0}']", translation);
+					xpathThruExampleSentence + "/span[@class='translations']/span[@class='translation']//span[@lang='en' and text()='{0}']", translation);
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(oneExampleSentenceTranslation, 1);
 			}
 		}
@@ -1413,7 +1414,7 @@ namespace SIL.FieldWorks.XWorks
 				XHTMLWriter.Flush();
 				const string xPathThruAllomorph = "/div[@class='lexentry']/span[@class='alternateformsos']/span[@class='alternateformso']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(
-					xPathThruAllomorph + "/span[@class='form' and @lang='fr' and text()='Allomorph']", 1);
+					xPathThruAllomorph + "/span[@class='form']/span[@lang='fr' and text()='Allomorph']", 1);
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(xPathThruAllomorph +
 					"/span[@class='allomorphenvironments']/span[@class='allomorphenvironment']/span[@class='stringrepresentation' and @lang='en' and text()='phoneyEnv']", 1);
 			}
@@ -1450,7 +1451,7 @@ namespace SIL.FieldWorks.XWorks
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(
-					"/div[@class='lexentry']/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@lang='fr']", 2);
+					"/div[@class='lexentry']/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']//span[@lang='fr']", 2);
 			}
 		}
 
@@ -1764,7 +1765,7 @@ namespace SIL.FieldWorks.XWorks
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(
-					"/div[@class='lexentry']/span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']/span[@lang='fr']", 1);
+					"/div[@class='lexentry']/span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']//span[@lang='fr']", 1);
 			}
 		}
 
@@ -1804,7 +1805,7 @@ namespace SIL.FieldWorks.XWorks
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(
-					xpathThruSense + "/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@lang='fr']", 2);
+					xpathThruSense + "/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']//span[@lang='fr']", 2);
 			}
 		}
 
@@ -1915,7 +1916,7 @@ namespace SIL.FieldWorks.XWorks
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 				XHTMLWriter.Flush();
 				const string oneSenseWithPicture = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/img[@class='photo' and @id]";
-				const string oneSenseWithPictureCaption = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/div[@class='caption']/span[text()='caption']";
+				const string oneSenseWithPictureCaption = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/div[@class='caption']//span[text()='caption']";
 				//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithPicture, 1);
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithPictureCaption, 1);
@@ -2368,7 +2369,7 @@ namespace SIL.FieldWorks.XWorks
 					//SUT
 					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 					XHTMLWriter.Flush();
-					var customDataPath = String.Format("/div[@class='lexentry']/span[@class='customstring' and text()='{0}']", customData);
+					var customDataPath = String.Format("/div[@class='lexentry']/span[@class='customstring']/span[text()='{0}']", customData);
 					AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
 				}
 			}
@@ -2414,7 +2415,7 @@ namespace SIL.FieldWorks.XWorks
 					//SUT
 					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 					XHTMLWriter.Flush();
-					var customDataPath = String.Format("/div[@class='lexentry']/span[@class='customlistitem']/span[@class='name' and text()='Djbuti']");
+					var customDataPath = String.Format("/div[@class='lexentry']/span[@class='customlistitem']/span[@class='name']/span[text()='Djbuti']");
 					AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
 				}
 			}
@@ -2463,8 +2464,8 @@ namespace SIL.FieldWorks.XWorks
 					//SUT
 					Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 					XHTMLWriter.Flush();
-					var customDataPath1 = String.Format("/div[@class='lexentry']/span[@class='customlistitems']/span[@class='customlistitem']/span[@class='name' and text()='Dallas']");
-					var customDataPath2 = String.Format("/div[@class='lexentry']/span[@class='customlistitems']/span[@class='customlistitem']/span[@class='name' and text()='Barcelona']");
+					var customDataPath1 = String.Format("/div[@class='lexentry']/span[@class='customlistitems']/span[@class='customlistitem']/span[@class='name']/span[text()='Dallas']");
+					var customDataPath2 = String.Format("/div[@class='lexentry']/span[@class='customlistitems']/span[@class='customlistitem']/span[@class='name']/span[text()='Barcelona']");
 					AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(customDataPath1, 1);
 					AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(customDataPath2, 1);
 				}
