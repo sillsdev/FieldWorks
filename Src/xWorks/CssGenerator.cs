@@ -77,7 +77,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				GenerateCssFromPictureOptions(configNode, pictureOptions, styleSheet, baseSelection, mediator);
 			}
-			var beforeAfterSelectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection);
+			var beforeAfterSelectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, (FdoCache)mediator.PropertyTable.GetValue("cache"));
 			rule.Value = baseSelection;
 			// if the configuration node defines a style then add all the rules generated from that style
 			if(!String.IsNullOrEmpty(configNode.Style))
@@ -238,7 +238,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		private static IEnumerable<StyleRule> GenerateSelectorsFromNode(string parentSelector,
 																							 ConfigurableDictionaryNode configNode,
-																							 out string baseSelection)
+																							 out string baseSelection, FdoCache cache)
 		{
 			var rules = new List<StyleRule>();
 			if(parentSelector == null)
@@ -260,7 +260,7 @@ namespace SIL.FieldWorks.XWorks
 					var betweenRule = new StyleRule(dec) { Value = betweenSelector };
 					rules.Add(betweenRule);
 				}
-				baseSelection = parentSelector + " " + SelectClassName(configNode);
+				baseSelection = parentSelector + " " + SelectClassName(configNode, cache);
 			}
 			if(!String.IsNullOrEmpty(configNode.Before))
 			{
@@ -286,16 +286,16 @@ namespace SIL.FieldWorks.XWorks
 			flowResetRule.Declarations.Properties.Add(new Property("clear") { Term = new PrimitiveTerm(UnitType.Ident, "both")});
 			rules.Add(flowResetRule);
 		}
-
 		/// <summary>
 		/// Generates a selector for a class name that matches xhtml that is generated for the configNode.
 		/// e.g. '.entry' or '.sense'
 		/// </summary>
 		/// <param name="configNode"></param>
+		/// <param name="cache">defaults to null, necessary for generating correct css for custom field nodes</param>
 		/// <returns></returns>
-		private static string SelectClassName(ConfigurableDictionaryNode configNode)
+		private static string SelectClassName(ConfigurableDictionaryNode configNode, FdoCache cache = null)
 		{
-			var type = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(configNode);
+			var type = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(configNode, cache);
 			switch(type)
 			{
 				case ConfiguredXHTMLGenerator.PropertyType.CollectionType:

@@ -287,18 +287,9 @@ namespace SIL.FieldWorks.XWorks
 			object propertyValue = null;
 			if(config.IsCustomField)
 			{
-				var customFieldOwnerClassName = GetClassNameForCustomFieldParent(config);
+				var customFieldOwnerClassName = GetClassNameForCustomFieldParent(config, settings.Cache);
 				int customFieldFlid;
-				try
-				{
-					customFieldFlid = cache.MetaDataCacheAccessor.GetFieldId(customFieldOwnerClassName, config.FieldDescription, false);
-				}
-				catch(FDOInvalidFieldException)
-				{
-					var usefulMessage = String.Format("The custom field {0} could not be found in the class {1} for the node labelled {2}",
-						config.FieldDescription, customFieldOwnerClassName, config.Parent.Label);
-					throw new ArgumentException(usefulMessage, "config");
-				}
+				customFieldFlid = GetCustomFieldFlid(config, cache, customFieldOwnerClassName);
 				if(customFieldFlid != 0)
 				{
 					var customFieldType = cache.MetaDataCacheAccessor.GetFieldType(customFieldFlid);
@@ -371,7 +362,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			var typeForNode = config.IsCustomField
 										? GetPropertyTypeFromReflectedTypes(propertyValue.GetType(), null)
-										: GetPropertyTypeForConfigurationNode(config);
+										: GetPropertyTypeForConfigurationNode(config, cache);
 			switch(typeForNode)
 			{
 				case(PropertyType.CollectionType):
@@ -426,16 +417,39 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		/// <summary/>
+		/// <returns>Returns the flid of the custom field identified by the configuration nodes FieldDescription
+		/// in the class identified by <code>customFieldOwnerClassName</code></returns>
+		private static int GetCustomFieldFlid(ConfigurableDictionaryNode config, FdoCache cache,
+														  string customFieldOwnerClassName)
+		{
+			int customFieldFlid;
+			try
+			{
+				customFieldFlid = cache.MetaDataCacheAccessor.GetFieldId(customFieldOwnerClassName,
+																							config.FieldDescription, false);
+			}
+			catch(FDOInvalidFieldException)
+			{
+				var usefulMessage =
+					String.Format(
+						"The custom field {0} could not be found in the class {1} for the node labelled {2}",
+						config.FieldDescription, customFieldOwnerClassName, config.Parent.Label);
+				throw new ArgumentException(usefulMessage, "config");
+			}
+			return customFieldFlid;
+		}
+
 		/// <summary>
 		/// This method will return the string representing the class name for the parent
 		/// node of a configuration item representing a custom field.
 		/// </summary>
-		private static string GetClassNameForCustomFieldParent(ConfigurableDictionaryNode customFieldNode)
+		private static string GetClassNameForCustomFieldParent(ConfigurableDictionaryNode customFieldNode, FdoCache cache)
 		{
 			Type unneeded;
 			// If the parent node of the custom field represents a collection, calling GetTypeForConfigurationNode
 			// with the parent node returns the collection type. We want the type of the elements in the collection.
-			var parentNodeType = GetTypeForConfigurationNode(customFieldNode.Parent, out unneeded);
+			var parentNodeType = GetTypeForConfigurationNode(customFieldNode.Parent, cache, out unneeded);
 			if(IsCollectionType(parentNodeType))
 			{
 				parentNodeType = parentNodeType.GetGenericArguments()[0];
@@ -573,12 +587,11 @@ namespace SIL.FieldWorks.XWorks
 		/// This method will reflectively return the type that represents the given configuration node as
 		/// described by the ancestry and FieldDescription and SubField properties of each node in it.
 		/// </summary>
-		/// <param name="config"></param>
 		/// <returns></returns>
-		internal static PropertyType GetPropertyTypeForConfigurationNode(ConfigurableDictionaryNode config)
+		internal static PropertyType GetPropertyTypeForConfigurationNode(ConfigurableDictionaryNode config, FdoCache cache = null)
 		{
 			Type parentType;
-			var fieldType = GetTypeForConfigurationNode(config, out parentType);
+			var fieldType = GetTypeForConfigurationNode(config, cache, out parentType);
 			return GetPropertyTypeFromReflectedTypes(fieldType, parentType);
 		}
 
@@ -619,14 +632,16 @@ namespace SIL.FieldWorks.XWorks
 		/// This method will return the Type that represents the data in the given configuration node.
 		/// </summary>
 		/// <param name="config">This node and it's lineage will be used to find the type</param>
+		/// <param name="cache">Used when dealing with custom field nodes</param>
 		/// <param name="parentType">This will be set to the type of the parent of config which is sometimes useful to the callers</param>
 		/// <returns></returns>
-		internal static Type GetTypeForConfigurationNode(ConfigurableDictionaryNode config, out Type parentType)
+		internal static Type GetTypeForConfigurationNode(ConfigurableDictionaryNode config, FdoCache cache, out Type parentType)
 		{
 			if(config == null)
 			{
 				throw new ArgumentNullException("config", "The configuration node must not be null.");
 			}
+
 			parentType = null;
 			var lineage = new Stack<ConfigurableDictionaryNode>();
 			// Build a list of the direct line up to the top of the configuration
@@ -654,29 +669,80 @@ namespace SIL.FieldWorks.XWorks
 			// Traverse the configuration reflectively inspecting the types in parent to child order
 			foreach(var node in lineage)
 			{
-				var property = GetProperty(lookupType, node);
-				if(property != null)
+				PropertyInfo property;
+				if(node.IsCustomField)
 				{
-					fieldType = property.PropertyType;
+					fieldType = GetCustomFieldType(lookupType, node, cache);
 				}
 				else
 				{
-					return null;
-				}
-				if(IsCollectionType(fieldType))
-				{
-					// When a node points to a collection all the child nodes operate on individual items in the
-					// collection, so look them up in the type that the collection contains. e.g. IEnumerable<ILexEntry>
-					// gives ILexEntry and IFdoVector<ICmObject> gives ICmObject
-					lookupType = fieldType.GetGenericArguments()[0];
-				}
-				else
-				{
-					parentType = lookupType;
-					lookupType = fieldType;
+					property = GetProperty(lookupType, node);
+					if(property != null)
+					{
+						fieldType = property.PropertyType;
+					}
+					else
+					{
+						return null;
+					}
+					if(IsCollectionType(fieldType))
+					{
+						// When a node points to a collection all the child nodes operate on individual items in the
+						// collection, so look them up in the type that the collection contains. e.g. IEnumerable<ILexEntry>
+						// gives ILexEntry and IFdoVector<ICmObject> gives ICmObject
+						lookupType = fieldType.GetGenericArguments()[0];
+					}
+					else
+					{
+						parentType = lookupType;
+						lookupType = fieldType;
+					}
 				}
 			}
 			return fieldType;
+		}
+
+		private static Type GetCustomFieldType(Type lookupType, ConfigurableDictionaryNode config, FdoCache cache)
+		{
+			// FDO doesn't work with interfaces, just concrete classes so chop the I off any interface types
+			var customFieldOwnerClassName = lookupType.Name.TrimStart('I');
+			var customFieldFlid = GetCustomFieldFlid(config, cache, customFieldOwnerClassName);
+			if(customFieldFlid != 0)
+			{
+				var customFieldType = cache.MetaDataCacheAccessor.GetFieldType(customFieldFlid);
+				switch(customFieldType)
+				{
+					case (int)CellarPropertyType.ReferenceSequence:
+					case (int)CellarPropertyType.OwningSequence:
+					{
+						return typeof(IFdoVector);
+					}
+					case (int)CellarPropertyType.ReferenceAtomic:
+					case (int)CellarPropertyType.OwningAtomic:
+					{
+						return typeof(ICmObject);
+					}
+					case (int)CellarPropertyType.Time:
+					{
+						return typeof(DateTime);
+					}
+					case (int)CellarPropertyType.MultiUnicode:
+					{
+						return typeof(IMultiUnicode);
+					}
+					case (int)CellarPropertyType.MultiString:
+					{
+						return typeof(IMultiString);
+					}
+					case (int)CellarPropertyType.String:
+					{
+						return typeof(string);
+					}
+					default:
+						return null;
+				}
+			}
+			return null;
 		}
 
 		/// <summary>

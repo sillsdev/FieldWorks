@@ -626,10 +626,10 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Type unneeded;
 				// The class that contains the type information for the field we are inspecting
-				var lookupClass = ConfiguredXHTMLGenerator.GetTypeForConfigurationNode(configNode, out unneeded);
+				var lookupClass = ConfiguredXHTMLGenerator.GetTypeForConfigurationNode(configNode, cache, out unneeded);
 				// If the node describes a collection we may want to add the custom field node if the collection is of
 				// the type that the field is added to. (e.g. Senses, ExampleSentences)
-				if(ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(configNode) ==
+				if(ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(configNode, cache) ==
 					ConfiguredXHTMLGenerator.PropertyType.CollectionType)
 				{
 					if(lookupClass.IsGenericType)
