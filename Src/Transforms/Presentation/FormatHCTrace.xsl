@@ -1194,8 +1194,8 @@ ShowMorph
 				</xsl:if>
 			</tr>
 			<xsl:for-each select="$phonologicalRules">
-				<tr>
-					<th style="cursor:pointer;">
+				<tr style="cursor:pointer;">
+					<th>
 						<xsl:attribute name="onclick">
 							<xsl:text>JumpToToolBasedOnHvo(</xsl:text>
 							<xsl:value-of select="PhonologicalRule/@id"/>
