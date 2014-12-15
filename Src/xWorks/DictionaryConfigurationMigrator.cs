@@ -319,7 +319,8 @@ namespace SIL.FieldWorks.XWorks
 			var newHeadword = newChildren.First(child => child.Label == "Referenced Headword");
 			var oldHeadwordNode = convertedNode.Children.First(child => child.Label == "Referenced Headword");
 			// Usually "Referenced Sense Headword" but in one case it is "Referenced Sense"
-			var oldSenseHeadwordNode = convertedNode.Children.First(child => child.Label.StartsWith("Referenced Sense"));
+			var oldSenseHeadwordNode = convertedNode.Children.FirstOrDefault(child => child.Label.StartsWith("Referenced Sense"))
+				?? new ConfigurableDictionaryNode();
 			newHeadword.IsEnabled = oldHeadwordNode.IsEnabled || oldSenseHeadwordNode.IsEnabled;
 			newHeadword.Before = !String.IsNullOrEmpty(oldHeadwordNode.Before) ? oldHeadwordNode.Before : oldSenseHeadwordNode.Before;
 			newHeadword.Between = !String.IsNullOrEmpty(oldHeadwordNode.Between) ? oldHeadwordNode.Between : oldSenseHeadwordNode.Between;
@@ -333,7 +334,8 @@ namespace SIL.FieldWorks.XWorks
 
 			var newGloss = newChildren.First(child => child.Label == "Gloss (or Summary Definition)");
 			var oldSummaryNode = convertedNode.Children.First(child => child.Label == "Summary Definition");
-			var oldGlossNode = convertedNode.Children.First(child => child.Label == "Gloss");
+			var oldGlossNode = convertedNode.Children.FirstOrDefault(child => child.Label == "Gloss")
+				?? new ConfigurableDictionaryNode();
 			newGloss.IsEnabled = oldSummaryNode.IsEnabled || oldGlossNode.IsEnabled;
 			newGloss.Before = !String.IsNullOrEmpty(oldGlossNode.Before) ? oldGlossNode.Before : oldSummaryNode.Before;
 			newGloss.Between = !String.IsNullOrEmpty(oldGlossNode.Between) ? oldGlossNode.Between : oldSummaryNode.Between;
