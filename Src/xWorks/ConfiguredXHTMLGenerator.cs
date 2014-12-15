@@ -991,7 +991,11 @@ namespace SIL.FieldWorks.XWorks
 					else if(listItem is ILexEntry)
 					{
 						var entry = (ILexEntry)listItem;
-						var entryTypeGuids = entry.EntryRefsOS.Select(guid => guid.Guid);
+						var entryTypeGuids = new List<Guid>();
+						foreach(var entryRef in entry.EntryRefsOS)
+						{
+							entryTypeGuids.AddRange(entryRef.ComplexEntryTypesRS.Select(guid => guid.Guid));
+						}
 						if(entryTypeGuids.Intersect(selectedListOptions).Any())
 							return true;
 					}

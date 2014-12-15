@@ -1541,6 +1541,33 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void IsListItemSelectedForExport_Complex_SubentrySelectedItemReturnsTrue()
+		{
+			var mainEntry = CreateInterestingLexEntry();
+			var complexForm = CreateInterestingLexEntry();
+			var complexFormRef = CreateComplexForm(mainEntry, complexForm, true);
+			var complexRefName = complexFormRef.ComplexEntryTypesRS[0].Name.BestAnalysisAlternative.Text;
+			var complexTypePoss = Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.First(complex => complex.Name.BestAnalysisAlternative.Text == complexRefName);
+
+			var variantsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Subentries",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Complex, new ICmPossibility[] { complexTypePoss })
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { variantsNode }
+			};
+			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			//SUT
+			Assert.IsTrue(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(variantsNode, mainEntry.Subentries.First(), mainEntry));
+		}
+
+		[Test]
 		public void IsListItemSelectedForExport_Complex_UnselectedItemReturnsFalse()
 		{
 			var formNode = new ConfigurableDictionaryNode
