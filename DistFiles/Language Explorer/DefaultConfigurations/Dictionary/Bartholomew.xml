@@ -617,7 +617,7 @@
           </WritingSystemOptions>
         </ConfigurationItem>
       </ConfigurationItem>
-      <ConfigurationItem name="Allomorph" isEnabled="false" isDuplicate="false" isCustomField="false" before="" between=" " after="= " field="Form">
+      <ConfigurationItem name="Allomorph" isEnabled="false" isDuplicate="false" isCustomField="false" before="" between=" " after=" " field="Form">
         <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
           <Option id="vernacular" isEnabled="true" />
         </WritingSystemOptions>
@@ -1347,7 +1347,7 @@
           </WritingSystemOptions>
         </ConfigurationItem>
       </ConfigurationItem>
-      <ConfigurationItem name="Allomorph" isEnabled="false" isDuplicate="false" isCustomField="false" between=" " after="= " field="Form">
+      <ConfigurationItem name="Allomorph" isEnabled="false" isDuplicate="false" isCustomField="false" between=" " after=" " field="Form">
         <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
           <Option id="vernacular" isEnabled="true"/>
         </WritingSystemOptions>

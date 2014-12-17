@@ -570,7 +570,7 @@
           </WritingSystemOptions>
         </ConfigurationItem>
       </ConfigurationItem>
-      <ConfigurationItem name="Allomorph" between=" " after="= " isEnabled="false" field="Form">
+      <ConfigurationItem name="Allomorph" between=" " after=" " isEnabled="false" field="Form">
         <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
           <Option id="vernacular" isEnabled="true"/>
         </WritingSystemOptions>
@@ -1265,7 +1265,7 @@
           </WritingSystemOptions>
         </ConfigurationItem>
       </ConfigurationItem>
-      <ConfigurationItem name="Allomorph" between=" " after="= " isEnabled="false" field="Form">
+      <ConfigurationItem name="Allomorph" between=" " after=" " isEnabled="false" field="Form">
         <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
           <Option id="vernacular" isEnabled="true"/>
         </WritingSystemOptions>
