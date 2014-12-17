@@ -2,7 +2,7 @@
 <DictionaryConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:noNamespaceSchemaLocation="../../Configuration/DictionaryConfiguration.xsd"
  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
- name="Bartholomew (native speaker focus)"
+ name="Hybrid (complex forms as main entries and mini subentries)"
  version="-1"
  lastModified="2014-10-08"
  allPublications="false">
