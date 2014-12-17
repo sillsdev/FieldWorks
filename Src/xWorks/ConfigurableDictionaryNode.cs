@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Xml.Serialization;
 
 namespace SIL.FieldWorks.XWorks
@@ -68,6 +69,31 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		[XmlAttribute(AttributeName = "style")]
 		public string Style { get; set; }
+
+		public enum StyleTypes
+		{
+			[XmlEnum("default")]
+			Default = 0,
+			[XmlEnum("character")]
+			Character,
+			[XmlEnum("paragraph")]
+			Paragraph
+		}
+
+		/// <summary>
+		/// Whether the node's style selection should use character or paragraph styles. Allows specifying special cases like Minor Entry - Components (LT-15834).
+		/// </summary>
+		[XmlAttribute(AttributeName="styleType")]
+		public StyleTypes StyleType { get; set; }
+
+		/// <summary>
+		/// Magic method to prevent serialization of the default value.
+		/// May not work in Mono until Mono 3.3.0.
+		/// </summary>
+		public bool ShouldSerializeStyleType()
+		{
+			return StyleType != StyleTypes.Default;
+		}
 
 		/// <summary>
 		/// String to apply before the content configured by this node

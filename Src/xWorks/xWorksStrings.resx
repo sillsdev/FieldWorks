@@ -873,4 +873,7 @@ If you are not the one designated user who adds fields, or you are making some o
     <value>Uncheck All Children</value>
     <comment>Hidden context menu command (Ctrl+Right Click) for unchecking a node and all its children in the Configuration Dialog</comment>
   </data>
+  <data name="ksDisplaySubentriesInParagraphs" xml:space="preserve">
+    <value>Display each Subentry in a paragraph</value>
+  </data>
 </root>

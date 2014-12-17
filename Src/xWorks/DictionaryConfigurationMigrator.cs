@@ -430,6 +430,10 @@ namespace SIL.FieldWorks.XWorks
 				DictionaryNodeOptions = CreateOptionsFromLayoutTreeNode(node)
 			};
 
+			// Root-based Minor Entry - Components should use character styles. See LT-15834.
+			if (node.PartName == "LexEntry-Jt-StemMinorComponentsConfig")
+				convertedNode.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
+
 			// ConfigurableDictionaryNode.Label properties don't include the suffix like XmlDocConfigureDlg.LayoutTreeNode.Label properties do.
 			if (convertedNode.IsDuplicate)
 			{
@@ -500,20 +504,22 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if(!String.IsNullOrEmpty(node.EntryType))
 			{
-				if(node.EntryType == "complex")
+				// Root-based Minor Entry - Components should not have a display-each-in-paragraph checkbox. See LT-15834.
+				if (node.EntryType == "complex" && node.PartName != "LexEntry-Jt-StemMinorComponentsConfig")
 				{
 					options = new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = node.ShowComplexFormPara };
+
+					if (node.PartName == "LexEntry-Jt-RootSubentriesConfig")
+					{
+						// LT-15834
+						(options as DictionaryNodeComplexFormOptions).DisplayEachComplexFormInAParagraph = true;
+					}
 				}
 				else
 				{
 					options = new DictionaryNodeListOptions();
 				}
 				SetListOptionsProperties(node.EntryType, node.EntryTypeSequence, (DictionaryNodeListOptions)options);
-			}
-
-			if (node.PartName == "LexEntry-Jt-RootSubentriesConfig")
-			{
-				options = new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = true };
 			}
 
 			return options;

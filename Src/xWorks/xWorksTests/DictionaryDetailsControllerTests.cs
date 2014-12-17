@@ -197,6 +197,29 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void LoadNode_AllowsStyleOverride()
+		{
+			var node = new ConfigurableDictionaryNode();
+
+			// Load paragraph styles
+			node.DictionaryNodeOptions = new DictionaryNodeComplexFormOptions
+			{
+				ListId = DictionaryNodeListOptions.ListIds.Complex,
+				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
+			};
+
+			var controller = new DictionaryDetailsController(node, m_mediator);
+
+			AssertShowingParagraphStyles(controller.View);
+			node.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
+			controller.View.Dispose();
+			// SUT
+			controller.LoadNode(node);
+			AssertShowingCharacterStyles(controller.View);
+			controller.View.Dispose();
+		}
+
+		[Test]
 		public void LoadNode_MissingWsOptionListDoesNotThrow()
 		{
 			// Load character styles

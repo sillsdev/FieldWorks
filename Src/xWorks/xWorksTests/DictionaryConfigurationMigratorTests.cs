@@ -291,7 +291,13 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_DisplaySubentriesInParagraph()
 		{
-			var node = new MockLayoutTreeNode {m_partName = "LexEntry-Jt-RootSubentriesConfig"};
+			const string disabledGuid = "-a0000000-1000-b000-2000-c00000000000";
+			var node = new MockLayoutTreeNode
+			{
+				m_partName = "LexEntry-Jt-RootSubentriesConfig",
+				EntryType = "complex",
+				EntryTypeList = ItemTypeInfo.CreateListFromStorageString(disabledGuid)
+			};
 
 			var configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(node);
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created");
@@ -299,6 +305,17 @@ namespace SIL.FieldWorks.XWorks
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeComplexFormOptions, "wrong type");
 			var options = configNode.DictionaryNodeOptions as DictionaryNodeComplexFormOptions;
 			Assert.IsTrue(options.DisplayEachComplexFormInAParagraph, "Did not set");
+		}
+
+		///<summary>Root-based Minor Entry - Components should use character styles. See LT-15834.</summary>
+		[Test]
+		public void ConvertLayoutTreeNodeToConfigNode_ComponentUsesCharStyles()
+		{
+			var node = new MockLayoutTreeNode { m_partName = "LexEntry-Jt-StemMinorComponentsConfig" };
+
+			// SUT
+			var configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(node);
+			Assert.That(configNode.StyleType, Is.EqualTo(ConfigurableDictionaryNode.StyleTypes.Character), "Need to use character styles for Component");
 		}
 
 		///<summary/>

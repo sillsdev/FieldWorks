@@ -271,16 +271,13 @@ namespace SIL.FieldWorks.XWorks
 				listOptionsView.DisplayOptionCheckBoxVisible = false;
 			}
 
-			if ("Subentries".Equals(m_node.FieldDescription) && "Subentries".Equals(m_node.Parent.FieldDescription))
-			{
-				// Subsubentries inherit everything except context from Subentries.  We doubt users will even have Subsubentries.
-				View.StylesVisible = false;
-			}
-
 			if (listOptions.ListId == DictionaryNodeListOptions.ListIds.Complex ||
 				listOptions.ListId == DictionaryNodeListOptions.ListIds.Minor)
 			{
-				View.SetStyles(m_paraStyles, m_node.Style, true);
+				if (m_node.StyleType != ConfigurableDictionaryNode.StyleTypes.Character)
+				{
+					View.SetStyles(m_paraStyles, m_node.Style, true);
+				}
 			}
 
 			if (listOptions.ListId == DictionaryNodeListOptions.ListIds.None)
@@ -317,6 +314,12 @@ namespace SIL.FieldWorks.XWorks
 		private void LoadComplexFormOptions(DictionaryNodeComplexFormOptions complexFormOptions, ListOptionsView listOptionsView)
 		{
 			listOptionsView.DisplayOptionCheckBoxLabel = xWorksStrings.ksDisplayComplexFormsInParagraphs;
+
+			if (m_node.FieldDescription == "Subentries")
+			{
+				listOptionsView.DisplayOptionCheckBoxLabel = xWorksStrings.ksDisplaySubentriesInParagraphs;
+			}
+
 			listOptionsView.DisplayOptionCheckBoxChecked = complexFormOptions.DisplayEachComplexFormInAParagraph;
 			ToggleViewForShowInPara(complexFormOptions.DisplayEachComplexFormInAParagraph);
 		}

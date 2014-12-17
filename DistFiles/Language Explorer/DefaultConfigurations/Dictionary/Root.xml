@@ -629,7 +629,7 @@
       </ConfigurationItem>
     </ConfigurationItem>
     <ConfigurationItem name="Subentries" style="Dictionary-Subentry" isEnabled="true" field="Subentries">
-      <ListTypeOptions list="complex">
+      <ComplexFormOptions list="complex" displayEachComplexFormInParagraph="true">
         <Option isEnabled="true"  id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
         <Option isEnabled="true"  id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>
         <Option isEnabled="true"  id="73266a3a-48e8-4bd7-8c84-91c730340b7d"/>
@@ -637,7 +637,7 @@
         <Option isEnabled="true"  id="b2276dec-b1a6-4d82-b121-fd114c009c59"/>
         <Option isEnabled="true"  id="35cee792-74c8-444e-a9b7-ed0461d4d3b7"/>
         <Option isEnabled="true"  id="9466d126-246e-400b-8bba-0703e09bc567"/>
-      </ListTypeOptions>
+      </ComplexFormOptions>
       <ConfigurationItem name="Complex Form Type" after=" " isEnabled="true" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
         <ConfigurationItem name="Reverse Abbreviation" between=" " isEnabled="true" field="ReverseAbbr">
           <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -1247,7 +1247,7 @@
         </ConfigurationItem>
       </ConfigurationItem>
       <ConfigurationItem name="Subsubentries" after=" " isEnabled="true" field="Subentries">
-        <ListTypeOptions list="complex">
+        <ComplexFormOptions list="complex" displayEachComplexFormInParagraph="true">
           <Option isEnabled="true"  id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
           <Option isEnabled="true"  id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>
           <Option isEnabled="true"  id="73266a3a-48e8-4bd7-8c84-91c730340b7d"/>
@@ -1255,7 +1255,7 @@
           <Option isEnabled="true"  id="b2276dec-b1a6-4d82-b121-fd114c009c59"/>
           <Option isEnabled="true"  id="35cee792-74c8-444e-a9b7-ed0461d4d3b7"/>
           <Option isEnabled="true"  id="9466d126-246e-400b-8bba-0703e09bc567"/>
-        </ListTypeOptions>
+        </ComplexFormOptions>
       </ConfigurationItem>
     </ConfigurationItem>
   </ConfigurationItem>
@@ -1464,7 +1464,7 @@
         </WritingSystemOptions>
       </ConfigurationItem>
     </ConfigurationItem>
-    <ConfigurationItem name="Components" before=" (" between=", " after=")" isEnabled="true" field="ComplexFormEntryRefs">
+    <ConfigurationItem name="Components" before=" (" between=", " after=")" isEnabled="true" field="ComplexFormEntryRefs" styleType="character">
       <ListTypeOptions list="complex">
         <Option isEnabled="true"  id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
         <Option isEnabled="true"  id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>

@@ -933,6 +933,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Display each Subentry in a paragraph.
+        /// </summary>
+        internal static string ksDisplaySubentriesInParagraphs {
+            get {
+                return ResourceManager.GetString("ksDisplaySubentriesInParagraphs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Duplicate List Name.
         /// </summary>
         internal static string ksDuplicateName {
