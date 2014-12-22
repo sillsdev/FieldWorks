@@ -122,12 +122,12 @@ namespace SIL.FieldWorks.XWorks
 			// Create the checkall and uncheckall items
 			var checkAllItem = new ToolStripMenuItem
 			{
-				Text = xWorksStrings.ConfigurationTreeControl_CheckAllChildren,
+				Text = xWorksStrings.ConfigurationTreeControl_SelectAllChildren,
 				DisplayStyle = ToolStripItemDisplayStyle.Text
 			};
 			var uncheckAllItem = new ToolStripMenuItem
 			{
-				Text = xWorksStrings.ConfigurationTreeControl_UnCheckAllChildren,
+				Text = xWorksStrings.ConfigurationTreeControl_ClearAllChildren,
 				DisplayStyle = ToolStripItemDisplayStyle.Text
 			};
 			m_CtrlRightClickMenu.Items.AddRange(new ToolStripItem[] { checkAllItem, uncheckAllItem });
@@ -135,13 +135,13 @@ namespace SIL.FieldWorks.XWorks
 			m_CtrlRightClickMenu.ItemClicked += (menu, args) =>
 			{
 				var selectedNode = (TreeNode)m_CtrlRightClickMenu.Tag;
-				if(args.ClickedItem.Text == xWorksStrings.ConfigurationTreeControl_CheckAllChildren &&
+				if(args.ClickedItem.Text == xWorksStrings.ConfigurationTreeControl_SelectAllChildren &&
 						CheckAll != null)
 				{
 					tree.SelectedNode = selectedNode;
 					CheckAll(selectedNode);
 				}
-				if(args.ClickedItem.Text == xWorksStrings.ConfigurationTreeControl_UnCheckAllChildren &&
+				if(args.ClickedItem.Text == xWorksStrings.ConfigurationTreeControl_ClearAllChildren &&
 						UnCheckAll != null)
 				{
 					tree.SelectedNode = selectedNode;

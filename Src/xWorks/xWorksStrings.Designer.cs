@@ -169,20 +169,20 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Check All Children.
+        ///   Looks up a localized string similar to Clear All Children.
         /// </summary>
-        internal static string ConfigurationTreeControl_CheckAllChildren {
+        internal static string ConfigurationTreeControl_ClearAllChildren {
             get {
-                return ResourceManager.GetString("ConfigurationTreeControl_CheckAllChildren", resourceCulture);
+                return ResourceManager.GetString("ConfigurationTreeControl_ClearAllChildren", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Uncheck All Children.
+        ///   Looks up a localized string similar to Select All Children.
         /// </summary>
-        internal static string ConfigurationTreeControl_UnCheckAllChildren {
+        internal static string ConfigurationTreeControl_SelectAllChildren {
             get {
-                return ResourceManager.GetString("ConfigurationTreeControl_UnCheckAllChildren", resourceCulture);
+                return ResourceManager.GetString("ConfigurationTreeControl_SelectAllChildren", resourceCulture);
             }
         }
         

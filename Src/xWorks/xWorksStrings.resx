@@ -865,13 +865,13 @@ If you are not the one designated user who adds fields, or you are making some o
     <value>Compression complete.</value>
     <comment>Displayed in the PublishToWebonaryDlg log box</comment>
   </data>
-	<data name="ConfigurationTreeControl_CheckAllChildren" xml:space="preserve">
-    <value>Check All Children</value>
-    <comment>Hidden context menu command (Ctrl+Right Click) for checking a node and all its children in the Configuration Dialog</comment>
+	<data name="ConfigurationTreeControl_SelectAllChildren" xml:space="preserve">
+    <value>Select All Children</value>
+    <comment>Hidden context menu command (Ctrl+Right Click) for selecting a node and all its children in the Configuration Dialog</comment>
   </data>
-	<data name="ConfigurationTreeControl_UnCheckAllChildren" xml:space="preserve">
-    <value>Uncheck All Children</value>
-    <comment>Hidden context menu command (Ctrl+Right Click) for unchecking a node and all its children in the Configuration Dialog</comment>
+	<data name="ConfigurationTreeControl_ClearAllChildren" xml:space="preserve">
+    <value>Clear All Children</value>
+    <comment>Hidden context menu command (Ctrl+Right Click) for clearing a node and all its children in the Configuration Dialog</comment>
   </data>
   <data name="ksDisplaySubentriesInParagraphs" xml:space="preserve">
     <value>Display each Subentry in a paragraph</value>
