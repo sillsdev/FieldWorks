@@ -3698,6 +3698,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			var dateCreated = m_rgPendingRelation[i].DateCreated;
 			var dateModified = m_rgPendingRelation[i].DateModified;
 			var sResidue = m_rgPendingRelation[i].Residue;
+			bool needSort = false;
 			while (i < m_rgPendingRelation.Count)
 			{
 				PendingRelation pend = m_rgPendingRelation[i];
@@ -3709,16 +3710,24 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					break;
 				}
-				// The end of a sequence relation may be marked only by a sudden drop in
-				// the order value (which starts at 1 and increments by 1 steadily, or is
-				// set to -1 for non-sequence relation).
+				// If the sequence items are out of order we must sort them.
 				if (prev != null && pend.Order < prev.Order)
-					break;
+					needSort = true;
 				pend.Target = GetObjectFromTargetIdString(m_rgPendingRelation[i].TargetId);
 				relation.Add(pend);	// We handle missing/unrecognized targets later.
 				prev = pend;
 				++i;
 			}
+			// In the (typically unusual) case that the elements of the relation are out of order,
+			// sort them. We prefer to use the Linq OrderBy method rather than the Sort method
+			// of List because it is stable (that is, if some objects have the same Order we will
+			// at least keep ones with the same Order value in their original order).
+			// Enhance JohnT: it is possible that items appear out of order because they were exported
+			// from two LexReferenceType objects with the same name (pend.RelationType) on the same
+			// source object (pend.ObjectHvo). We can't currently recreate this situation on import.
+			// See LT-15389.
+			if (needSort)
+				return relation.OrderBy(pend => pend.Order).ToList();
 			return relation;
 		}
 
