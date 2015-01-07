@@ -622,24 +622,13 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			// Gather up the custom fields and map them by type name
 			var classToCustomFields = BuildCustomFieldMap(cache);
-			foreach(var configNode in configurationList)
+			// Custom fields don't need to have their children merged; skip those
+			foreach(var configNode in configurationList.Where(node => !node.IsCustomField))
 			{
-				Type unneeded;
-				// The class that contains the type information for the field we are inspecting
-				var lookupClass = ConfiguredXHTMLGenerator.GetTypeForConfigurationNode(configNode, cache, out unneeded);
-				// If the node describes a collection we may want to add the custom field node if the collection is of
-				// the type that the field is added to. (e.g. Senses, ExampleSentences)
-				if(ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(configNode, cache) ==
-					ConfiguredXHTMLGenerator.PropertyType.CollectionType)
-				{
-					if(lookupClass.IsGenericType)
-					{
-						lookupClass = lookupClass.GetGenericArguments()[0];
-					}
-				}
+				var lookupClass = GetLookupClassForCustomFieldParent(configNode, cache);
 				if(lookupClass != null)
 				{
-					var fieldsForType = GetCustomFieldsForType(cache, lookupClass.Name, classToCustomFields);
+					var fieldsForType = GetCustomFieldsForType(cache, lookupClass, classToCustomFields);
 					if(configNode.Children == null)
 					{
 						configNode.Children = new List<ConfigurableDictionaryNode>();
@@ -651,11 +640,29 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		public static string GetLookupClassForCustomFieldParent(ConfigurableDictionaryNode parent, FdoCache cache)
+		{
+			Type unneeded;
+			// The class that contains the type information for the field we are inspecting
+			var lookupClass = ConfiguredXHTMLGenerator.GetTypeForConfigurationNode(parent, cache, out unneeded);
+			// If the node describes a collection we may want to add the custom field node if the collection is of
+			// the type that the field is added to. (e.g. Senses, ExampleSentences)
+			if(ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(parent, cache) ==
+				ConfiguredXHTMLGenerator.PropertyType.CollectionType)
+			{
+				if(lookupClass.IsGenericType)
+				{
+					lookupClass = lookupClass.GetGenericArguments()[0];
+				}
+			}
+			return lookupClass == null ? null : lookupClass.Name;
+		}
+
 		/// <summary>
 		/// This method will generate a mapping between the class name (and interface name)
 		/// and each custom field in the model associated with that class.
 		/// </summary>
-		private static Dictionary<string, List<int>> BuildCustomFieldMap(FdoCache cache)
+		public static Dictionary<string, List<int>> BuildCustomFieldMap(FdoCache cache)
 		{
 			var metaDataCache = (IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor;
 			var classToCustomFields = new Dictionary<string, List<int>>();
@@ -724,18 +731,20 @@ namespace SIL.FieldWorks.XWorks
 			var metaDataCache = (IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor;
 			foreach(var field in customFieldIds)
 			{
-					var configNode = new ConfigurableDictionaryNode();
-					configNode.Label = metaDataCache.GetFieldLabel(field) ?? metaDataCache.GetFieldName(field);
-					configNode.IsCustomField = true;
-					configNode.IsEnabled = false;
-					configNode.FieldDescription = metaDataCache.GetFieldName(field);
-					configNode.DictionaryNodeOptions = BuildOptionsForType(metaDataCache.GetFieldType(field));
-					var listId = metaDataCache.GetFieldListRoot(field);
-					if(listId != Guid.Empty)
-					{
-						AddFieldsForPossibilityList(configNode);
-					}
-					customFieldList.Add(configNode);
+				var configNode = new ConfigurableDictionaryNode
+				{
+					Label = metaDataCache.GetFieldLabel(field),
+					IsCustomField = true,
+					IsEnabled = false,
+					FieldDescription = metaDataCache.GetFieldName(field),
+					DictionaryNodeOptions = BuildOptionsForType(metaDataCache.GetFieldType(field))
+				};
+				var listId = metaDataCache.GetFieldListRoot(field);
+				if(listId != Guid.Empty)
+				{
+					AddFieldsForPossibilityList(configNode);
+				}
+				customFieldList.Add(configNode);
 			}
 			return customFieldList;
 		}

@@ -27,13 +27,19 @@ namespace SIL.FieldWorks.XWorks
 		Justification="Cache is a reference")]
 	class DictionaryConfigurationMigratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		private DictionaryConfigurationMigrator m_migrator = null;
-		private Mediator m_mediator = null;
+		private DictionaryConfigurationMigrator m_migrator;
+		private Mediator m_mediator;
 		private FwXApp m_application;
 		private string m_configFilePath;
 		private MockFwXWindow m_window;
 		private FwStyleSheet m_styleSheet;
 		private StyleInfoTable m_owningTable;
+
+		// Set up Custom Fields at the Fixture level, since disposing one in one test disposes them all in all tests
+		private const string CustomFieldChangedLabel = "Custom Label";
+		private const string CustomFieldOriginalName = "Custom Name";
+		private const string CustomFieldUnchangedNameAndLabel = "Custom";
+		private IDisposable m_cf1, m_cf2;
 
 		[TestFixtureSetUp]
 		protected void Init()
@@ -50,11 +56,19 @@ namespace SIL.FieldWorks.XWorks
 			m_owningTable = new StyleInfoTable("AbbySomebody", (IWritingSystemManager)Cache.WritingSystemFactory);
 
 			m_migrator = new DictionaryConfigurationMigrator(m_mediator);
+
+			m_cf1 = new CustomFieldForTest(Cache, CustomFieldChangedLabel, CustomFieldOriginalName, Cache.MetaDataCacheAccessor.GetClassId("LexEntry"),
+				CellarPropertyType.ReferenceCollection, Guid.Empty);
+			m_cf2 = new CustomFieldForTest(Cache, CustomFieldUnchangedNameAndLabel, Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+					CellarPropertyType.ReferenceCollection, Guid.Empty);
+
 		}
 
 		[TestFixtureTearDown]
 		protected void TearDown()
 		{
+			m_cf1.Dispose();
+			m_cf2.Dispose();
 			m_window.Dispose();
 			m_application.Dispose();
 			m_mediator.Dispose();
@@ -746,16 +760,16 @@ namespace SIL.FieldWorks.XWorks
 		public void CopyNewDefaultsIntoConvertedModel_UnmatchedNodeFromOldModelIsCustom()
 		{
 			var convertedParentNode = new ConfigurableDictionaryNode { Label = "Parent" };
-			var customNode = new ConfigurableDictionaryNode { Label = "Custom" };
+			var customNode = new ConfigurableDictionaryNode { Label = CustomFieldUnchangedNameAndLabel };
 			var oldChild = new ConfigurableDictionaryNode { Label = "Child" };
 			convertedParentNode.Children = new List<ConfigurableDictionaryNode> { customNode, oldChild };
 			var convertedModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { convertedParentNode } };
-			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent" };
+			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent", FieldDescription = "LexEntry" };
 			var baseChildNode = new ConfigurableDictionaryNode { Label = "Child" };
 			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode };
 			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
 
-			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
+			m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel);
 			Assert.AreEqual(convertedModel.Parts[0].Children.Count, 2, "Nodes incorrectly merged");
 			Assert.AreEqual(convertedModel.Parts[0].Children[0].Label, customNode.Label, "order of old model was not retained");
 			Assert.IsFalse(oldChild.IsCustomField, "Child node which is matched should not be a custom field");
@@ -768,18 +782,18 @@ namespace SIL.FieldWorks.XWorks
 		public void CopyNewDefaultsIntoConvertedModel_NestedCustomFieldsAreAllMarked()
 		{
 			var convertedParentNode = new ConfigurableDictionaryNode { Label = "Parent" };
-			var customNode = new ConfigurableDictionaryNode { Label = "Custom" };
+			var customNode = new ConfigurableDictionaryNode { Label = CustomFieldUnchangedNameAndLabel };
 			var oldChild = new ConfigurableDictionaryNode { Label = "Child" };
 			convertedParentNode.Children = new List<ConfigurableDictionaryNode> { customNode, oldChild };
 			var customChild = new ConfigurableDictionaryNode { Label = "Custom Child" };
 			customNode.Children = new List<ConfigurableDictionaryNode> { customChild };
 			var convertedModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { convertedParentNode } };
-			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent" };
+			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent", FieldDescription = "LexEntry" };
 			var baseChildNode = new ConfigurableDictionaryNode { Label = "Child" };
 			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode };
 			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
 
-			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
+			m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel);
 			Assert.AreEqual(convertedModel.Parts[0].Children.Count, 2, "Nodes incorrectly merged");
 			Assert.AreEqual(convertedModel.Parts[0].Children[0].Label, customNode.Label, "order of old model was not retained");
 			Assert.IsFalse(oldChild.IsCustomField, "Child node which is matched should not be a custom field");
@@ -787,6 +801,55 @@ namespace SIL.FieldWorks.XWorks
 			Assert.IsTrue(customChild.IsCustomField, "Children of Custom nodes should also be Custom.");
 			Assert.AreEqual(customNode.Label, customNode.FieldDescription, "Custom nodes' Labels and Fields should match");
 			Assert.AreEqual(customChild.Label, customChild.FieldDescription, "Custom nodes' Labels and Fields should match");
+		}
+
+		///<summary/>
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_RelabeledCustomFieldsNamesAreMigrated()
+		{
+			var customNode = new ConfigurableDictionaryNode { Label = CustomFieldChangedLabel };
+			var oldChild = new ConfigurableDictionaryNode { Label = "Child" };
+			var convertedParentNode = new ConfigurableDictionaryNode
+			{
+				Label = "Parent", Children = new List<ConfigurableDictionaryNode> { customNode, oldChild }
+			};
+			var convertedModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { convertedParentNode } };
+			var baseChildNode = new ConfigurableDictionaryNode { Label = "Child" };
+			var baseParentNode = new ConfigurableDictionaryNode
+			{
+				Label = "Parent", FieldDescription = "LexEntry", Children = new List<ConfigurableDictionaryNode> { baseChildNode }
+			};
+			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
+
+			m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel);
+			Assert.AreEqual(convertedModel.Parts[0].Children[0].Label, customNode.Label, "label was not retained");
+			Assert.IsTrue(customNode.IsCustomField, "The unmatched 'Custom' node should have been marked as a custom field");
+			Assert.AreEqual(CustomFieldOriginalName, customNode.FieldDescription, "Custom node's Field should have been loaded from the Cache");
+		}
+
+		///<summary>
+		/// If a standard node in the Dictionary Configuration has a custom child,
+		/// but that node doesn't have any Custom Fields in the lexical database, do *not* throw.
+		/// </summary>
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_CustomFieldInStrangePlaceDoesNotThrow()
+		{
+			var convertedParentNode = new ConfigurableDictionaryNode { Label = "Parent" };
+			var customNode = new ConfigurableDictionaryNode { Label = "Truly Custom" };
+			var oldChild = new ConfigurableDictionaryNode { Label = "Child" };
+			convertedParentNode.Children = new List<ConfigurableDictionaryNode> { customNode, oldChild };
+			var convertedModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { convertedParentNode } };
+			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent", FieldDescription = "LexReference" };
+			var baseChildNode = new ConfigurableDictionaryNode { Label = "Child" };
+			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode };
+			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
+
+			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel)); // TODO pH 2014.12: check that an error was reported
+			Assert.AreEqual(convertedModel.Parts[0].Children.Count, 2, "Nodes incorrectly merged");
+			Assert.AreEqual(convertedModel.Parts[0].Children[0].Label, customNode.Label, "order of old model was not retained");
+			Assert.IsFalse(oldChild.IsCustomField, "Child node which is matched should not be a custom field");
+			Assert.IsTrue(customNode.IsCustomField, "The unmatched 'Custom' node should have been marked as a custom field");
+			Assert.AreEqual(customNode.Label, customNode.FieldDescription, "Custom nodes' Labels and Fields should match");
 		}
 
 		#region Minor Entry Componenents Referenced Entries Tests
@@ -995,7 +1058,7 @@ namespace SIL.FieldWorks.XWorks
 			Directory.CreateDirectory(newDictConfigLoc);
 			File.AppendAllText(Path.Combine(newDictConfigLoc, "SomeConfig" + DictionaryConfigurationModel.FileExtension), "Foo");
 			Assert.That(!m_migrator.DictionaryConfigsNeedMigrating(), "If current configs exist no migration should be needed."); // SUT
-			Palaso.IO.DirectoryUtilities.DeleteDirectoryRobust(newDictConfigLoc);
+			DirectoryUtilities.DeleteDirectoryRobust(newDictConfigLoc);
 		}
 
 		///<summary/>
@@ -1006,7 +1069,7 @@ namespace SIL.FieldWorks.XWorks
 			Directory.CreateDirectory(newDictConfigLoc);
 			Directory.EnumerateFiles(newDictConfigLoc).ForEach(File.Delete);
 			Assert.That(!m_migrator.DictionaryConfigsNeedMigrating(), "With no new or old configs no migration should be needed."); // SUT
-			Palaso.IO.DirectoryUtilities.DeleteDirectoryRobust(newDictConfigLoc);
+			DirectoryUtilities.DeleteDirectoryRobust(newDictConfigLoc);
 		}
 
 		///<summary/>
@@ -1018,12 +1081,12 @@ namespace SIL.FieldWorks.XWorks
 			Directory.CreateDirectory(newDictConfigLoc);
 			Directory.EnumerateFiles(newDictConfigLoc).ForEach(File.Delete);
 			var tempFwLayoutPath = Path.Combine(configSettingsDir, "SomeConfig.fwlayout");
-			using(var tempFwLayout = Palaso.IO.TempFile.WithFilename(tempFwLayoutPath))
+			using(TempFile.WithFilename(tempFwLayoutPath))
 			{
 				File.AppendAllText(tempFwLayoutPath, "LayoutFoo");
 				Assert.That(m_migrator.DictionaryConfigsNeedMigrating(), "There is an old config, a migration is needed."); // SUT
 			}
-			Palaso.IO.DirectoryUtilities.DeleteDirectoryRobust(newDictConfigLoc);
+			DirectoryUtilities.DeleteDirectoryRobust(newDictConfigLoc);
 		}
 
 		///<summary/>

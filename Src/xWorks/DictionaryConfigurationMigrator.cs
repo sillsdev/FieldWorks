@@ -33,6 +33,14 @@ namespace SIL.FieldWorks.XWorks
 		private readonly Mediator m_mediator;
 		private readonly SimpleLogger m_logger = new SimpleLogger();
 		private string m_configDirSuffixBeingMigrated;
+		/// <summary>
+		/// Dictionary of custom fields for each parent field type: Key is parent field type (Type; e.g. ILexEntry)
+		/// Value is Dictionary of custom fields: Key is custom field Label, Value is custom field Name
+		/// Dictionary&lt;parent field type, Dictionary&lt;custom field label, custom field name&gt;&gt;
+		/// Backwards because a freshly-migrated Dictionayr Configuration comes with Labels but not Field Names.
+		/// Needed because we can't look Custom Fields' Names up in our shipping Configurations as we do for standard Fields. Cached for performance.
+		/// </summary>
+		private Dictionary<string, Dictionary<string, string>> m_classToCustomFieldsLabelToName;
 
 		public DictionaryConfigurationMigrator(Mediator mediator)
 		{
@@ -280,11 +288,19 @@ namespace SIL.FieldWorks.XWorks
 						CopyDefaultsIntoConfigNode(child, matchFromBase, version);
 					else
 					{
-						// This node does not match anything in the shipping defaults.
-						// It is probably a custom field in which case the label should match the FieldDescription.
+						// This node does not match anything in the shipping defaults; it is probably a custom field
 						m_logger.WriteLine(String.Format("Could not match '{0}'; treating as custom.", pathStringToNode));
 						m_logger.IncreaseIndent();
-						SetupCustomField(child);
+						SetupCustomFieldNameDictionaries();
+						var parentType = DictionaryConfigurationController.GetLookupClassForCustomFieldParent(currentDefaultNode, Cache);
+						Dictionary<string, string> cfLabelToName;
+						SetupCustomField(child,
+							// If we know the Custom Field's parent's type, pass a dictionary of the Custom Fields available on that type
+							(parentType != null && m_classToCustomFieldsLabelToName.TryGetValue(parentType, out cfLabelToName))
+								? cfLabelToName
+								: null);
+						// REVIEW (Hasso) 2014:12: If we have a top-level Custom Field with no matching Custom Field in this dictionary,
+						// should we alert the user with a yellow screen?
 						m_logger.DecreaseIndent();
 					}
 				}
@@ -401,16 +417,45 @@ namespace SIL.FieldWorks.XWorks
 			return false;
 		}
 
-		private void SetupCustomField(ConfigurableDictionaryNode node)
+		private void SetupCustomFieldNameDictionaries()
 		{
-			node.FieldDescription = node.Label;
+			if(m_classToCustomFieldsLabelToName != null)
+				return;
+			m_classToCustomFieldsLabelToName = new Dictionary<string, Dictionary<string, string>>();
+			var metaDataCache = Cache.MetaDataCacheAccessor;
+
+			foreach(var classToCustomFields in DictionaryConfigurationController.BuildCustomFieldMap(Cache))
+			{
+				var labelToName = m_classToCustomFieldsLabelToName[classToCustomFields.Key] = new Dictionary<string, string>();
+				foreach(var flid in classToCustomFields.Value)
+				{
+					labelToName[metaDataCache.GetFieldLabel(flid)] = metaDataCache.GetFieldName(flid);
+				}
+			}
+		}
+
+		/// <param name="node">the node that has been identified as a Custom Field</param>
+		/// <param name="labelToName">a Dictionary of possible Custom Field Names, keyed by Label</param>
+		private void SetupCustomField(ConfigurableDictionaryNode node, IDictionary<string, string> labelToName)
+		{
 			node.IsCustomField = true;
+			string nodeName;
+			if (labelToName != null && labelToName.TryGetValue(node.Label, out nodeName))
+			{
+				m_logger.WriteLine(String.Format("Found name '{0}' for Custom Field labeled '{1}'; using.", nodeName, node.Label));
+				node.FieldDescription = nodeName;
+			}
+			else
+			{
+				node.FieldDescription = node.Label;
+			}
+
 			if (node.Children != null)
 			{
 				foreach (var child in node.Children)
 				{
 					m_logger.WriteLine(String.Format("Treating '{0}' as custom.", BuildPathStringFromNode(child)));
-					SetupCustomField(child);
+					SetupCustomField(child, null);
 				}
 			}
 		}

@@ -187,12 +187,28 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// <summary>
 			/// Constructs a custom field using the given arguments and adds it into the Cache.
 			/// </summary>
-			public CustomFieldForTest(FdoCache cache, string customFieldName, int classId, int ws,
+			public CustomFieldForTest(FdoCache cache, string customFieldName, int classId, int ws, // REVIEW (Hasso) 2014.12: ws is unused
 											  CellarPropertyType fieldType, Guid listGuid)
 			{
 				m_customField = new FieldDescription(cache)
 					{
 						Userlabel = customFieldName,
+						HelpString = String.Empty,
+						Class = classId,
+						ListRootId = listGuid,
+						Type = fieldType,
+					};
+				m_customField.UpdateCustomField();
+			}
+
+			/// <summary>Constructs a custom field using the given arguments and adds it into the Cache.</summary>
+			public CustomFieldForTest(FdoCache cache, string customFieldLabel, string customFieldName, int classId,
+											  CellarPropertyType fieldType, Guid listGuid)
+			{
+				m_customField = new FieldDescription(cache)
+					{
+						Userlabel = customFieldLabel,
+						Name = customFieldName,
 						HelpString = String.Empty,
 						Class = classId,
 						ListRootId = listGuid,
