@@ -540,6 +540,42 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		HashSet<Tuple<string, string, string, ICmObject>> m_reportedMergeProblems = new HashSet<Tuple<string, string, string, ICmObject>>();
+
+		/// <summary>
+		/// Fill in any missing alternatives from the LIFT data.
+		/// </summary>
+		/// <param name="contents"></param>
+		/// <param name="destination"></param>
+		private void MergeStringsFromLiftContents(LiftMultiText contents, ITsMultiString destination, string attr, ICmObject obj)
+		{
+			if (contents != null && !contents.IsEmpty)
+			{
+				foreach (KeyValuePair<string, LiftString> keyValuePair in contents)
+				{
+					var ws = GetWsFromLiftLang(keyValuePair.Key);
+					var liftString = CreateTsStringFromLiftString(keyValuePair.Value, ws);
+					var ourString = destination.get_String(ws);
+					if (string.IsNullOrEmpty(ourString.Text))
+					{
+						destination.set_String(ws, liftString);
+					}
+					else if (liftString.Text.Normalize() != ourString.Text.Normalize()) // ignore the very unlikely case of more subtle differences we can't report
+					{
+						// Fairly typically this is called more than once on the same object...not quite sure why. Simplest thing is not to make
+						// the same report repeatedly.
+						var key = Tuple.Create(liftString.Text, ourString.Text, attr, obj);
+						if (!m_reportedMergeProblems.Contains(key))
+						{
+							m_reportedMergeProblems.Add(key);
+							m_rgErrorMsgs.Add(string.Format(LexTextControls.ksNonMatchingRelation, liftString.Text, ourString.Text, attr,
+								obj.ShortName));
+						}
+					}
+				}
+			}
+		}
+
 		public bool TsStringIsNullOrEmpty(ITsString tss)
 		{
 			return tss == null || tss.Length == 0;
