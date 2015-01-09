@@ -15,6 +15,16 @@ namespace SIL.Utils
 	public interface IQueueAccessor<P, T>
 	{
 		/// <summary>
+		/// Gets a value indicating if there is any queued work.
+		/// </summary>
+		bool HasWork { get; }
+
+		/// <summary>
+		/// Gets a value indicating if a stop was requested.
+		/// </summary>
+		bool StopRequested { get; }
+
+		/// <summary>
 		/// Gets the next work item.
 		/// </summary>
 		/// <param name="workItem">The work item.</param>
@@ -102,6 +112,7 @@ namespace SIL.Utils
 		private bool m_hasWork;
 		private bool m_isIdle = true;
 		private Exception m_unhandledException;
+		private bool m_stopRequested;
 		#endregion
 
 		#region Constructors
@@ -139,8 +150,7 @@ namespace SIL.Utils
 			m_workHandler = workHandler;
 			m_initHandler = initHandler;
 			m_queue = new PriorityQueue<P, T>(priorityComparer, workComparer);
-			m_thread = new Thread(WorkLoop);
-			m_thread.Name = "Consumer Thread";
+			m_thread = new Thread(WorkLoop) { Name = "Consumer Thread" };
 		}
 		#endregion
 
@@ -166,7 +176,7 @@ namespace SIL.Utils
 		/// <summary/>
 		protected virtual void Dispose(bool fDisposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().ToString() + " *******");
+			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + " *******");
 			if (fDisposing && !IsDisposed)
 			{
 				// dispose managed and unmanaged objects
@@ -296,7 +306,11 @@ namespace SIL.Utils
 		/// <returns><c>true</c> if the thread stopped cleanly, otherwise <c>false</c>.</returns>
 		public bool Stop()
 		{
-			m_stopEvent.Set();
+			lock (SyncRoot)
+			{
+				m_stopRequested = true;
+				m_stopEvent.Set();
+			}
 			if (!m_thread.Join(60000))
 			{
 				m_thread.Abort();
@@ -343,6 +357,25 @@ namespace SIL.Utils
 		#endregion
 
 		#region IQueueAccessor implementation
+
+		bool IQueueAccessor<P, T>.HasWork
+		{
+			get
+			{
+				lock (SyncRoot)
+					return m_hasWork;
+			}
+		}
+
+		bool IQueueAccessor<P, T>.StopRequested
+		{
+			get
+			{
+				lock (SyncRoot)
+					return m_stopRequested;
+			}
+		}
+
 		/// <summary>
 		/// Gets the next work item.
 		/// </summary>
@@ -436,11 +469,11 @@ namespace SIL.Utils
 				var events = new WaitHandle[] { m_stopEvent, m_workEvent };
 				while (WaitHandle.WaitAny(events) != 0)
 				{
-					m_workHandler((IQueueAccessor<P, T>)this);
+					m_workHandler(this);
 					lock (SyncRoot)
 					{
 						// if there is no work, signal that the thread is idle
-						if (!m_hasWork)
+						if (!m_stopRequested && !m_hasWork)
 						{
 							if (IsBackground)
 							{

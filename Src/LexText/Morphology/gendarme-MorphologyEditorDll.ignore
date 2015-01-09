@@ -31,7 +31,7 @@ M: System.Void SIL.FieldWorks.XWorks.MorphologyEditor.AdhocCoProhibVectorLaunche
 M: System.Void SIL.FieldWorks.XWorks.MorphologyEditor.RespellerDlg::SetSuggestions()
 
 # GetEnumerator() returns an object
-M: System.Collections.IEnumerator SIL.FieldWorks.XWorks.MorphologyEditor.WordformGoDlg/<GetWordformSearchFields>d__0::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.XWorks.MorphologyEditor.WordformGoSearchEngine/<GetStrings>*::System.Collections.IEnumerable.GetEnumerator()
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule

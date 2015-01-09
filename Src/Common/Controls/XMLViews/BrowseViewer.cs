@@ -3096,48 +3096,29 @@ namespace SIL.FieldWorks.Common.Controls
 		/// class (vernacular or analysis).
 		/// </summary>
 		/// <remarks>This is needed for LT-10293.</remarks>
-		public RecordSorter CreateSorterForFirstColumn(bool fVern, int ws)
+		public RecordSorter CreateSorterForFirstColumn(int ws)
 		{
-			RecordSorter sorter = null;
 			XmlNode colSpec = null;
-			string sWs = m_cache.ServiceLocator.WritingSystemManager.GetStrFromWs(ws);
+			IWritingSystem colWs = null;
 			for (int i = 0; i < m_xbv.Vc.ColumnSpecs.Count; ++i)
 			{
-				XmlNode spec = m_xbv.Vc.ColumnSpecs[i];
-				string sWsAttr = XmlUtils.GetOptionalAttributeValue(spec, "ws");
-				string sOrigWsAttr = XmlUtils.GetOptionalAttributeValue(spec, "originalWs");
-				if (String.IsNullOrEmpty(sWsAttr))
-					continue;
-				if (sWsAttr.StartsWith("$ws="))
-					sWsAttr = sWsAttr.Substring(4);
-				if (fVern)
+				XmlNode curSpec = m_xbv.Vc.ColumnSpecs[i];
+				IWritingSystem curWs = WritingSystemServices.GetWritingSystem(m_cache, curSpec, null, 0);
+				if (curWs.Handle == ws)
 				{
-					if ((sWsAttr == "vernacular" && ws == m_cache.DefaultVernWs) ||
-						sWsAttr == sWs)
-					{
-						colSpec = spec;
-						break;
-					}
-				}
-				else
-				{
-					if ((sWsAttr == "analysis" && ws == m_cache.DefaultAnalWs) ||
-						sWsAttr == sWs)
-					{
-						colSpec = spec;
-						break;
-					}
+					colSpec = curSpec;
+					colWs = curWs;
+					break;
 				}
 			}
+
 			if (colSpec != null)
 			{
 				IStringFinder finder = LayoutFinder.CreateFinder(m_cache, colSpec, m_xbv.Vc,
-					(IApp)m_mediator.PropertyTable.GetValue("App"));
-				IWritingSystem wsT = WritingSystemServices.GetWritingSystem(Cache, colSpec,
-					null, fVern ? m_cache.DefaultVernWs : m_cache.DefaultAnalWs);
-				sorter = new GenRecordSorter(new StringFinderCompare(finder, new WritingSystemComparer(wsT)));
+					(IApp) m_mediator.PropertyTable.GetValue("App"));
+				return new GenRecordSorter(new StringFinderCompare(finder, new WritingSystemComparer(colWs)));
 			}
-			return sorter;
+			return null;
 		}
 
 		private void m_xbv_SelectedIndexChanged(object sender, EventArgs e)

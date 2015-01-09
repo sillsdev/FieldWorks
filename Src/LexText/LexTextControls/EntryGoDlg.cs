@@ -4,7 +4,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -14,7 +14,6 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -27,7 +26,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected ILexSense m_newSense;
 		protected ILexEntry m_startingEntry;
 		protected int m_oldSearchWs;
-		private EntrySearchFieldGetter m_searchFieldGetter;
 
 		#endregion	// Data members
 
@@ -55,12 +53,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			get
 			{
 				CheckDisposed();
-				return m_startingEntry;
+				return (ILexEntry) m_matchingObjectsBrowser.StartingObject;
 			}
 			set
 			{
 				CheckDisposed();
-				m_startingEntry = value;
+				m_matchingObjectsBrowser.StartingObject = value;
 			}
 		}
 
@@ -85,19 +83,23 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_objectsLabel.Text = LexTextControls.ksLexicalEntries;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "searchEngine is disposed by the mediator.")]
 		protected override void InitializeMatchingObjects(FdoCache cache, Mediator mediator)
 		{
-			var xnWindow = (XmlNode)m_mediator.PropertyTable.GetValue("WindowConfiguration");
+			var xnWindow = (XmlNode) m_mediator.PropertyTable.GetValue("WindowConfiguration");
 			XmlNode configNode = xnWindow.SelectSingleNode("controls/parameters/guicontrol[@id=\"matchingEntries\"]/parameters");
-			var selectedWs = (IWritingSystem)m_cbWritingSystems.SelectedItem;
-			var wsSearch = selectedWs != null ? selectedWs.Handle : 0;
-			m_searchFieldGetter = new EntrySearchFieldGetter { AnalHvos = m_analHvos,
-				VernHvos = m_vernHvos, SearchWs = wsSearch };
-			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromMediator(mediator), mediator, configNode,
-				cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances().Cast<ICmObject>(), SearchType.FullText,
-				m_searchFieldGetter.GetEntrySearchFields);
-		}
 
+			SearchEngine searchEngine = SearchEngine.Get(mediator, "EntryGoSearchEngine", () => new EntryGoSearchEngine(cache));
+
+			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromMediator(mediator), mediator, configNode,
+				searchEngine);
+
+			// start building index
+			var selectedWs = (IWritingSystem) m_cbWritingSystems.SelectedItem;
+			if (selectedWs != null)
+				m_matchingObjectsBrowser.SearchAsync(GetFields(string.Empty, selectedWs.Handle));
+		}
 		#endregion Construction and Destruction
 
 		#region	Other methods
@@ -108,147 +110,74 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="searchKey"></param>
 		protected override void ResetMatches(string searchKey)
 		{
-			using (new WaitCursor(this))
+			string sAdjusted;
+			var mmt = MorphServices.GetTypeIfMatchesPrefix(m_cache, searchKey, out sAdjusted);
+			if (mmt != null)
 			{
-				string sAdjusted;
-				var mmt = MorphServices.GetTypeIfMatchesPrefix(m_cache, searchKey, out sAdjusted);
-				if (mmt != null)
-				{
-					searchKey = String.Empty;
-					m_btnInsert.Enabled = false;
-				}
-				else if (searchKey.Length > 0)
-				{
-					// NB: This method strips off reserved characters for searchKey,
-					// which is a good thing.  (fixes LT-802?)
-					try
-					{
-						int clsidForm;
-						MorphServices.FindMorphType(m_cache, ref searchKey, out clsidForm);
-						m_btnInsert.Enabled = searchKey.Length > 0;
-					}
-					catch (Exception ex)
-					{
-						Cursor = Cursors.Default;
-						MessageBox.Show(ex.Message, LexText.Controls.LexTextControls.ksInvalidForm,
-							MessageBoxButtons.OK);
-						m_btnInsert.Enabled = false;
-						return;
-					}
-				}
-				else
-				{
-					m_btnInsert.Enabled = false;
-				}
-				var selectedWs = (IWritingSystem) m_cbWritingSystems.SelectedItem;
-				int wsSelHvo = selectedWs != null ? selectedWs.Handle : 0;
-
-				if (!m_vernHvos.Contains(wsSelHvo) && !m_analHvos.Contains(wsSelHvo))
-				{
-					wsSelHvo = TsStringUtils.GetWsAtOffset(m_tbForm.Tss, 0);
-					if (!m_vernHvos.Contains(wsSelHvo) && !m_analHvos.Contains(wsSelHvo))
-						return;
-				}
-
-				if (m_oldSearchKey == searchKey && m_oldSearchWs == wsSelHvo)
-					return; // Nothing new to do, so skip it.
-				if (m_oldSearchWs != wsSelHvo)
-				{
-					m_matchingObjectsBrowser.Reset();
-					// This updates the writing system for the functor.
-					m_searchFieldGetter.SearchWs = wsSelHvo;
-				}
-				// disable Go button until we rebuild our match list.
-				m_btnOK.Enabled = false;
-				m_oldSearchKey = searchKey;
-				m_oldSearchWs = wsSelHvo;
-
-				// SearchFields must be added both here and in EntrySearchFieldGetter.GetEntrySearchFields
-				var fields = new List<SearchField>();
-				var tssKey = m_tsf.MakeString(searchKey, wsSelHvo);
-				if (m_vernHvos.Contains(wsSelHvo))
-				{
-					fields.Add(new SearchField(LexEntryTags.kflidCitationForm, tssKey));
-					fields.Add(new SearchField(LexEntryTags.kflidLexemeForm, tssKey));
-					fields.Add(new SearchField(LexEntryTags.kflidAlternateForms, tssKey));
-				}
-				if (m_analHvos.Contains(wsSelHvo))
-				{
-					fields.Add(new SearchField(LexSenseTags.kflidGloss, tssKey));
-					fields.Add(new SearchField(LexSenseTags.kflidReversalEntries, tssKey));
-					fields.Add(new SearchField(LexSenseTags.kflidDefinition, tssKey));
-				}
-
-				if (!Controls.Contains(m_searchAnimation))
-				{
-					Controls.Add(m_searchAnimation);
-					m_searchAnimation.BringToFront();
-				}
-
-
-				m_matchingObjectsBrowser.Search(fields, m_startingEntry == null ? null : new[] {m_startingEntry});
-
-				if (Controls.Contains(m_searchAnimation))
-					Controls.Remove(m_searchAnimation);
+				searchKey = String.Empty;
+				m_btnInsert.Enabled = false;
 			}
-		}
-
-		protected override void m_cbWritingSystems_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			m_matchingObjectsBrowser.Reset();
-			base.m_cbWritingSystems_SelectedIndexChanged(sender, e);
-		}
-
-		private class EntrySearchFieldGetter
-		{
-			public int SearchWs { private get; set; }
-			public HashSet<int> VernHvos { private get; set; }
-			public HashSet<int> AnalHvos { private get; set; }
-
-			/// <summary>
-			/// To avoid looking up the combo every time this is called...once per entry in the DB!...
-			/// the caller passes us an array in which we can cache it.
-			/// </summary>
-			public IEnumerable<SearchField> GetEntrySearchFields(ICmObject obj)
+			else if (searchKey.Length > 0)
 			{
-				var entry = (ILexEntry)obj;
-				if (VernHvos.Contains(SearchWs))
+				// NB: This method strips off reserved characters for searchKey,
+				// which is a good thing.  (fixes LT-802?)
+				try
 				{
-					var cf = entry.CitationForm.StringOrNull(SearchWs);
-					if (cf != null && cf.Length > 0)
-						yield return new SearchField(LexEntryTags.kflidCitationForm, cf);
-					if (entry.LexemeFormOA != null)
-					{
-						var lf = entry.LexemeFormOA.Form.StringOrNull(SearchWs);
-						if (lf != null && lf.Length > 0)
-							yield return new SearchField(LexEntryTags.kflidLexemeForm, lf);
-					}
-					foreach (IMoForm form in entry.AlternateFormsOS)
-					{
-						var af = form.Form.StringOrNull(SearchWs);
-						if (af != null && af.Length > 0)
-							yield return new SearchField(LexEntryTags.kflidAlternateForms, af);
-					}
+					int clsidForm;
+					MorphServices.FindMorphType(m_cache, ref searchKey, out clsidForm);
+					m_btnInsert.Enabled = searchKey.Length > 0;
 				}
+				catch (Exception ex)
+				{
+					Cursor = Cursors.Default;
+					MessageBox.Show(ex.Message, LexText.Controls.LexTextControls.ksInvalidForm,
+						MessageBoxButtons.OK);
+					m_btnInsert.Enabled = false;
+					return;
+				}
+			}
+			else
+			{
+				m_btnInsert.Enabled = false;
+			}
+			var selectedWs = (IWritingSystem) m_cbWritingSystems.SelectedItem;
+			int wsSelHvo = selectedWs != null ? selectedWs.Handle : 0;
 
-				if (AnalHvos.Contains(SearchWs))
-				{
-					foreach (ILexSense sense in entry.SensesOS)
-					{
-						var gloss = sense.Gloss.StringOrNull(SearchWs);
-						if (gloss != null && gloss.Length > 0)
-							yield return new SearchField(LexSenseTags.kflidGloss, gloss);
-						var dffn = sense.Definition.StringOrNull(SearchWs);
-						if (dffn != null && dffn.Length > 0)
-							yield return new SearchField(LexSenseTags.kflidDefinition, dffn);
-						foreach (var revEntry in sense.ReversalEntriesRC)
-						{
-							var revForm = revEntry.ReversalForm.StringOrNull(SearchWs);
-							if (revForm != null && revForm.Length > 0)
-								yield return new SearchField(LexSenseTags.kflidReversalEntries, revForm);
-						}
-					}
-				}
+			if (!m_vernHvos.Contains(wsSelHvo) && !m_analHvos.Contains(wsSelHvo))
+			{
+				wsSelHvo = TsStringUtils.GetWsAtOffset(m_tbForm.Tss, 0);
+				if (!m_vernHvos.Contains(wsSelHvo) && !m_analHvos.Contains(wsSelHvo))
+					return;
+			}
+
+			if (m_oldSearchKey == searchKey && m_oldSearchWs == wsSelHvo)
+				return; // Nothing new to do, so skip it.
+
+			if (m_oldSearchKey != string.Empty || searchKey != string.Empty)
+				StartSearchAnimation();
+
+			// disable Go button until we rebuild our match list.
+			m_btnOK.Enabled = false;
+			m_oldSearchKey = searchKey;
+			m_oldSearchWs = wsSelHvo;
+
+			m_matchingObjectsBrowser.SearchAsync(GetFields(searchKey, wsSelHvo));
+		}
+
+		private IEnumerable<SearchField> GetFields(string str, int ws)
+		{
+			var tssKey = m_tsf.MakeString(str, ws);
+			if (m_vernHvos.Contains(ws))
+			{
+				yield return new SearchField(LexEntryTags.kflidCitationForm, tssKey);
+				yield return new SearchField(LexEntryTags.kflidLexemeForm, tssKey);
+				yield return new SearchField(LexEntryTags.kflidAlternateForms, tssKey);
+			}
+			if (m_analHvos.Contains(ws))
+			{
+				yield return new SearchField(LexSenseTags.kflidGloss, tssKey);
+				yield return new SearchField(LexSenseTags.kflidReversalEntries, tssKey);
+				yield return new SearchField(LexSenseTags.kflidDefinition, tssKey);
 			}
 		}
 

@@ -23,11 +23,6 @@ namespace SIL.FieldWorks.Filters
 		int m_hvoItem;
 
 		/// <summary>
-		/// Optionally, this can store the cache that the objects belong to.
-		/// </summary>
-		private FdoCache m_cache;
-
-		/// <summary>
 		/// Array of objects in the path. m_pathObjects[0] is one of the original list items.
 		/// m_pathObjects[n+1] is an object in property m_pathFlids[n] of m_pathObjects[n].
 		/// m_hvoItem is an object in property m_pathFlids[last] of m_pathObjects[last].
@@ -142,7 +137,6 @@ namespace SIL.FieldWorks.Filters
 		public ManyOnePathSortItem(ICmObject item)
 		{
 			Init(item.Hvo, null, null);
-			m_cache = item.Cache;
 		}
 
 		/// <summary>

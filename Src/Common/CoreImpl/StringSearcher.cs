@@ -208,10 +208,7 @@ namespace SIL.CoreImpl
 			foreach (Tuple<int, string> wsStr in GetWsStrings(tss))
 			{
 				IEnumerable<T> items = Search(indexId, wsStr.Item1, wsStr.Item2);
-				if (results == null)
-					results = items;
-				else
-					results = results.Intersect(items);
+				results = results == null ? items : results.Intersect(items);
 			}
 			return results ?? Enumerable.Empty<T>();
 		}
@@ -260,15 +257,12 @@ namespace SIL.CoreImpl
 												? Icu.UColBoundMode.UCOL_BOUND_UPPER
 												: Icu.UColBoundMode.UCOL_BOUND_UPPER_LONG, ref upper);
 						IEnumerable<T> items = index.GetItems(lower, upper);
-						if (results == null)
-							results = items;
-						else
-							results = results.Intersect(items);
+						results = results == null ? items : results.Intersect(items);
 					}
 					return results;
 			}
 
-			return null;
+			return Enumerable.Empty<T>();
 		}
 
 		private static IEnumerable<string> RemoveWhitespaceAndPunctTokens(IEnumerable<string> tokens)

@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Xml;
 
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -38,57 +35,52 @@ namespace SIL.FieldWorks.LexText.Controls
 			SetDlgInfo(cache, wp, mediator, form, cache.DefaultAnalWs);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "searchEngine is disposed by the mediator.")]
 		protected override void InitializeMatchingObjects(FdoCache cache, Mediator mediator)
 		{
-			var xnWindow = (XmlNode)m_mediator.PropertyTable.GetValue("WindowConfiguration");
+			var xnWindow = (XmlNode) m_mediator.PropertyTable.GetValue("WindowConfiguration");
 			XmlNode configNode = xnWindow.SelectSingleNode("controls/parameters/guicontrol[@id=\"matchingRecords\"]/parameters");
-			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromMediator(mediator), mediator, configNode,
-				cache.ServiceLocator.GetInstance<IRnGenericRecRepository>().AllInstances().Cast<ICmObject>(), SearchType.FullText,
-				GetRecordSearchFields);
-		}
 
-		private static IEnumerable<SearchField> GetRecordSearchFields(ICmObject obj)
-		{
-			var rec = (IRnGenericRec)obj;
-			var title = rec.Title;
-			if (title != null && title.Length > 0)
-				yield return new SearchField(RnGenericRecTags.kflidTitle, title);
+			SearchEngine searchEngine = SearchEngine.Get(mediator, "RecordGoSearchEngine", () => new RecordGoSearchEngine(cache));
+
+			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromMediator(mediator), mediator, configNode,
+				searchEngine);
+
+			// start building index
+			var ws = (IWritingSystem) m_cbWritingSystems.SelectedItem;
+			if (ws != null)
+			{
+				ITsString tss = m_tsf.MakeString(string.Empty, ws.Handle);
+				var field = new SearchField(RnGenericRecTags.kflidTitle, tss);
+				m_matchingObjectsBrowser.SearchAsync(new[] { field });
+			}
 		}
 
 		protected override void ResetMatches(string searchKey)
 		{
-			using (new WaitCursor(this))
+			if (m_oldSearchKey == searchKey)
+				return; // Nothing new to do, so skip it.
+
+			// disable Go button until we rebuild our match list.
+			m_btnOK.Enabled = false;
+			m_oldSearchKey = searchKey;
+
+			var ws = (IWritingSystem) m_cbWritingSystems.SelectedItem;
+			int wsSelHvo = ws != null ? ws.Handle : 0;
+			if (wsSelHvo == 0)
 			{
-				if (m_oldSearchKey == searchKey)
-					return; // Nothing new to do, so skip it.
-
-				// disable Go button until we rebuild our match list.
-				m_btnOK.Enabled = false;
-				m_oldSearchKey = searchKey;
-
-				var ws = (IWritingSystem) m_cbWritingSystems.SelectedItem;
-				int wsSelHvo = ws != null ? ws.Handle : 0;
+				wsSelHvo = TsStringUtils.GetWsAtOffset(m_tbForm.Tss, 0);
 				if (wsSelHvo == 0)
-				{
-					wsSelHvo = TsStringUtils.GetWsAtOffset(m_tbForm.Tss, 0);
-					if (wsSelHvo == 0)
-						return;
-				}
-
-				ITsString tss = m_tsf.MakeString(searchKey, wsSelHvo);
-				var field = new SearchField(RnGenericRecTags.kflidTitle, tss);
-
-				if (!Controls.Contains(m_searchAnimation))
-				{
-					Controls.Add(m_searchAnimation);
-					m_searchAnimation.BringToFront();
-				}
-
-				m_matchingObjectsBrowser.Search(new[] {field}, null);
-
-				if (Controls.Contains(m_searchAnimation))
-					Controls.Remove(m_searchAnimation);
+					return;
 			}
+
+			if (m_oldSearchKey != string.Empty || searchKey != string.Empty)
+				StartSearchAnimation();
+
+			ITsString tss = m_tsf.MakeString(searchKey, wsSelHvo);
+			var field = new SearchField(RnGenericRecTags.kflidTitle, tss);
+			m_matchingObjectsBrowser.SearchAsync(new[] { field });
 		}
 
 		protected override void m_btnInsert_Click(object sender, EventArgs e)

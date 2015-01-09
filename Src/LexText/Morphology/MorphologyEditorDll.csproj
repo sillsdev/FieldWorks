@@ -362,6 +362,7 @@
     <Compile Include="WordformGoDlg.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="WordformGoSearchEngine.cs" />
     <EmbeddedResource Include="AdhocCoProhibAtomicLauncher.resx">
       <DependentUpon>AdhocCoProhibAtomicLauncher.cs</DependentUpon>
       <SubType>Designer</SubType>

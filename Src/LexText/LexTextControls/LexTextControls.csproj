@@ -184,6 +184,10 @@
       <Name>Sfm2Xml</Name>
       <HintPath>..\..\..\Output\Debug\Sfm2Xml.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.Collections, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Lib\debug\SIL.Collections.dll</HintPath>
+    </Reference>
     <Reference Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SilEncConverters40.dll</HintPath>
@@ -271,6 +275,8 @@
     <Compile Include="ConfigureHomographDlg.designer.cs">
       <DependentUpon>ConfigureHomographDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="EntryGoSearchEngine.cs" />
+    <Compile Include="InsertEntrySearchEngine.cs" />
     <Compile Include="OccurrenceDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -281,6 +287,7 @@
     <Compile Include="InsertionControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="RecordGoSearchEngine.cs" />
     <Compile Include="SfmToTextsAndWordsMappingBaseDlg.cs">
       <SubType>Form</SubType>
     </Compile>
