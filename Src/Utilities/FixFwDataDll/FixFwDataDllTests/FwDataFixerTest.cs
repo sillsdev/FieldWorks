@@ -45,7 +45,7 @@ namespace FixFwDataDllTests
 				"DuplicateGuid", "DanglingCustomListReference", "DanglingCustomProperty", "DanglingReference",
 				"DuplicateWs", "SequenceFixer", "EntryWithExtraMSA", "EntryWithMsaAndNoSenses", "TagAndCellRefs", "GenericDates",
 				"HomographFixer", WordformswithsameformTestDir, "MorphBundleProblems", "MissingBasicCustomField", "DeletedMsaRefBySenseAndBundle",
-				"DuplicateNameCustomList", "SingleTargetLexRefs"
+				"DuplicateNameCustomList", "SingleTargetLexRefs", "DuplicateStyles"
 			};
 
 		[TestFixtureSetUp]
@@ -298,6 +298,56 @@ namespace FixFwDataDllTests
 				"//objsur[@guid=\"" + testObjsurGuid + "\"]", 0, false);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
 				"//SenseType/objsur[@guid=\"" + secondDangler + "\"]", 0, false);
+		}
+
+		[Test]
+		public void TestDuplicateStyles()
+		{
+			var testPath = Path.Combine(basePath, "DuplicateStyles");
+			// This test checks that styles with duplicate names are removed
+			// and that an error message is produced for them.
+			const string lpBob1 = "be765e3e-ea5e-11de-9d42-0013722f8dec";
+			const string lpBob2 = "d37394b7-d47c-4e3d-9f2a-d023fd6fef24";
+			string lpFred = "cea17237-b704-4bee-9a9b-1779d3108831";
+			const string lpBob3 = "d778dff3-36fb-4ddf-aa08-91827f2c22dc";
+			string scBob = "a89670f5-8d59-42ec-bfb5-10c63642b1dc";
+			const string scJoe1 = "ac48acc9-12f2-42c6-89dc-7d48870b7758";
+			const string scJoe2 = "ba7ffa0b-1beb-45fe-976a-c849cceb3026";
+			var data = new FwDataFixer(Path.Combine(testPath, "BasicFixup.fwdata"), new DummyProgressDlg(), LogErrors);
+			data.FixErrorsAndSave();
+			// Make sure the original styles are present
+			foreach (var guid in new[] {lpBob1, lpBob2, scJoe1, scJoe2})
+			{
+				AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
+					"//objsur[@guid=\"" + guid + "\"]", 1, false);
+			}
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
+				"//objsur[@guid=\"" + lpBob3 + "\"]", 2, false);
+
+			Assert.AreEqual(4, errors.Count, "Unexpected number of errors found.");
+			//The order of these doesn't really matter but this is the one we happen to get.
+			Assert.That(errors[0], Is.EqualTo("Removing duplicate style Bob."), "Error message is incorrect.");
+			Assert.That(errors[1], Is.StringStarting("Removing dangling link to"));
+			Assert.That(errors[2], Is.EqualTo("Removing duplicate style Bob."), "Error message is incorrect.");
+			Assert.That(errors[3], Is.EqualTo("Removing duplicate style Joe."), "Error message is incorrect.");
+
+			// These should survive
+			foreach (var guid in new[] {lpBob1, lpFred, scJoe1, scBob})
+			{
+				AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+					"//objsur[@guid=\"" + guid + "\"]", 1, false);
+				AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+					"//rt[@guid=\"" + guid + "\"]", 1, false);
+			}
+
+			// These should not (the first xpath would match the reference to lpBob3 in fred as well as the owning one)
+			foreach (var guid in new[] { lpBob2, lpBob3, scJoe2 })
+			{
+				AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+					"//objsur[@guid=\"" + guid + "\"]", 0, false);
+				AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+					"//rt[@guid=\"" + guid + "\"]", 0, false);
+			}
 		}
 
 		[Test]
