@@ -570,6 +570,10 @@ namespace SIL.FieldWorks.TE
 				DisplayImportedBooksDlg(m_undoImportManager.BackupVersion);
 
 			m_undoImportManager.RemoveEmptyBackupSavedVersion();
+			// Keeping versions we made just for PT imports (which always entirely replace the current non-archived ones)
+			// just clutters things up and makes S/R more expensive.
+			if (m_fParatextStreamlinedImport)
+				m_undoImportManager.RemoveImportedVersion();
 			m_undoImportManager.CollapseAllUndoActions();
 			// sync stuff
 			if (m_app != null)
