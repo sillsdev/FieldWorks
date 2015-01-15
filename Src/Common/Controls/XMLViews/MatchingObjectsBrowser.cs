@@ -18,6 +18,7 @@ using XCore;
 using SIL.FieldWorks.Filters;
 using SIL.CoreImpl;
 using System.Collections;
+using Palaso.Xml;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -43,6 +44,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public event EventHandler SearchCompleted;
 
+		/// <summary>
+		/// Occurs when the underlying BrowseViewer's columns have changed.
+		/// </summary>
+		public event EventHandler ColumnsChanged;
+
 		#endregion Events
 
 		#region Data members
@@ -61,6 +67,8 @@ namespace SIL.FieldWorks.Common.Controls
 		private ICmObject m_selObject;
 
 		private ICmObject m_startingObject;
+
+		private string[] m_visibleColumns;
 
 		#endregion Data members
 
@@ -128,6 +136,16 @@ namespace SIL.FieldWorks.Common.Controls
 				CheckDisposed();
 				m_startingObject = value;
 			}
+		}
+
+		/// <summary>
+		/// Used by a Find dialog's SearchEngine to determine whether to search on a particular field or not
+		/// </summary>
+		public bool IsVisibleColumn(string keyString)
+		{
+			CheckDisposed();
+
+			return m_visibleColumns.Any(columnLayoutName => columnLayoutName.Contains(keyString));
 		}
 
 		#endregion Properties
@@ -231,6 +249,22 @@ namespace SIL.FieldWorks.Common.Controls
 			FireSelectionMade();
 		}
 
+		/// <summary>
+		/// This comes from modifying the browse view columns
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void m_bvMatches_ColumnsChanged(object sender, EventArgs e)
+		{
+			if (e is ColumnWidthChangedEventArgs)
+				return; // don't want to know about this kind
+
+			UpdateVisibleColumns();
+			if (ColumnsChanged != null)
+				// Find dialogs can subscribe to this to know when to check for new search fields
+				ColumnsChanged(this, new EventArgs());
+		}
+
 #if __MonoCS__
 		private bool m_recursionProtection = false; // FWNX-262
 #endif
@@ -287,8 +321,21 @@ namespace SIL.FieldWorks.Common.Controls
 				m_bvMatches.BrowseView.Vc.ReversalWs = reversalWs.Handle;
 			m_bvMatches.SelectionChanged += m_bvMatches_SelectionChanged;
 			m_bvMatches.SelectionMade += m_bvMatches_SelectionMade;
+			UpdateVisibleColumns();
 			Controls.Add(m_bvMatches);
 			m_bvMatches.ResumeLayout();
+			m_bvMatches.ColumnsChanged += m_bvMatches_ColumnsChanged;
+		}
+
+		private void UpdateVisibleColumns()
+		{
+			var results = new List<string>();
+			foreach (var columnSpec in m_bvMatches.ColumnSpecs)
+			{
+				var colLabel = columnSpec.GetStringAttribute("layout");
+				results.Add(colLabel);
+			}
+			m_visibleColumns = results.ToArray();
 		}
 
 		private void UpdateResults(SearchField firstField, IEnumerable<int> results)

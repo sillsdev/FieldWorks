@@ -132,6 +132,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		/// <summary>
 		/// Searches the specified fields.
+		/// N.B. This version is currently only used in testing.
 		/// </summary>
 		public IEnumerable<int> Search(IEnumerable<SearchField> fields)
 		{
