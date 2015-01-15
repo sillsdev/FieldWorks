@@ -853,7 +853,19 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				InitializePronunciationWritingSystems(); // make sure there is one.
-				return m_currentPronunciationWritingSystems.FirstOrDefault();
+				var result = m_currentPronunciationWritingSystems.FirstOrDefault();
+				if (result == null)
+				{
+					// The only way there is still none is if we were in the broadcast phase of a transaction.
+					// For example, some view may want this writing system for the first time while
+					// broadcasting the results of a LIFT import (LT-15695).
+					// If we're in that phase we can't be going to use it for saving something,
+					// so rather than crash, we'll just use the default vernacular for now.
+					// We also try to ensure this never happens by always making sure this WS exists
+					// when we open a project. So this fall-back is a very-last-resort.
+					return DefaultVernacularWritingSystem;
+				}
+				return result;
 			}
 		}
 
@@ -867,7 +879,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (m_currentPronunciationWritingSystems.Count > 0)
 				return;
 
-			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor,
+			NonUndoableUnitOfWorkHelper.DoSomehow(Cache.ActionHandlerAccessor,
 				() =>
 					{
 						var writingSystems = m_vernacularWritingSystems;
