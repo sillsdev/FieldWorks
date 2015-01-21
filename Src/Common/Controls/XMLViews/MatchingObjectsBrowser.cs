@@ -332,7 +332,13 @@ namespace SIL.FieldWorks.Common.Controls
 			var results = new List<string>();
 			foreach (var columnSpec in m_bvMatches.ColumnSpecs)
 			{
-				var colLabel = columnSpec.GetStringAttribute("layout");
+				var colLabel = columnSpec.GetOptionalStringAttribute("layout", null);
+				if (colLabel == null)
+				{
+					// In this case we are likely dealing with a dialog that does NOT use IsVisibleColumn()
+					// and there will be one pre-determined SearchField
+					continue;
+				}
 				results.Add(colLabel);
 			}
 			m_visibleColumns = results.ToArray();
