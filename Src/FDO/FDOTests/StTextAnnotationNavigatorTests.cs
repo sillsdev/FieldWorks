@@ -1,40 +1,25 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File: StTextAnnotationNavigatorTests.cs
 // Responsibility: maclean
-//
-// <remarks>
-// </remarks>
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary/>
 	[TestFixture]
-	public class StTextAnnotationNavigatorTests : MemoryOnlyBackendProviderBasicTestBase
+	public class StTextAnnotationNavigatorTests : MemoryOnlyBackendProviderTestBase
 	{
-
 		IText m_text;
 		private IStText m_stText;
 		private IStTxtPara m_para0, m_para1;
-		//private IList<AnalysisTree> m_analysis_para0 = new List<AnalysisTree>();
 		private List<AnalysisOccurrence> m_expectedOccurrences;
 		private List<AnalysisOccurrence> m_expectedOccurrencesPara0;
 
@@ -313,8 +298,5 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		}
 
 		#endregion
-
-
-
 	}
 }
