@@ -138,7 +138,7 @@
 		<command id="CmdHelpLanguageExplorer" label="_Language Explorer..." message="HelpLanguageExplorer" shortcut="F1"/>
 		<command id="CmdHelpTraining" label="_Training" message="HelpTraining" />
 		<command id="CmdHelpDemoMovies" label="_Demo Movies..." message="HelpDemoMovies"/>
-		<command id="CmdHelpCheckForUpdates" label="Check for _Updates..." message="HelpCheckForUpdates"/>
+		<!-- LT-15886 <command id="CmdHelpCheckForUpdates" label="Check for _Updates..." message="HelpCheckForUpdates"/> -->
 		<command id="CmdHelpReportBug" label="_Report a Problem..." message="HelpReportProblem"/>
 		<command id="CmdHelpMakeSuggestion" label="_Make a Suggestion..." message="HelpMakeSuggestion"/>
 		<command id="CmdHelpMorphologyInto" label="Introduction to _Parsing..." message="HelpMorphologyIntro"/>
@@ -657,7 +657,8 @@
 				<item command="CmdHelpXLingPap"/>
 			</menu>
 			<item label="-" translate="do not translate"/>
-			<item command="CmdHelpCheckForUpdates"/>
+			<!-- LT-15886 <item command="CmdHelpCheckForUpdates"/>
+			This feature was never completed because FLEx would crash after updating on some machines for unexplained reasons.-->
 			<item command="CmdHelpReportBug"/>
 			<item command="CmdHelpMakeSuggestion"/>
 			<item label="-" translate="do not translate"/>
