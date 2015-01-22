@@ -657,17 +657,42 @@
 		way to get the morphems in RTL in Word 2007. According to Murray Sargent at Microsoft, RTL Math was 'postponed'.-->
 		<xsl:choose>
 			<xsl:when test="count(//language[@vernacular='true' and @RightToLeft='true'])">
-				<xsl:apply-templates select="../../morph/item[@type=$myType and @lang=$myLang]" mode="rowItems">
+				<xsl:apply-templates select="../../morph" mode="singleRow">
+					<xsl:with-param name="myType" select="$myType"/>
+					<xsl:with-param name="myLang" select="$myLang"/>
 					<xsl:sort select="position()" data-type="number" order="descending"/>
 				</xsl:apply-templates>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:apply-templates select="../../morph/item[@type=$myType and @lang=$myLang]" mode="rowItems">
+				<xsl:apply-templates select="../../morph" mode="singleRow">
+					<xsl:with-param name="myType" select="$myType"/>
+					<xsl:with-param name="myLang" select="$myLang"/>
 				</xsl:apply-templates>
 			</xsl:otherwise>
 		</xsl:choose>
 	</m:mr>
   </xsl:template>
+
+	<!-- A special mode of displaying a morph that makes a single equation cell, typically containing the morph's
+	item with type and language specified by the params. If there is no such item it inserts a placeholder.-->
+	<xsl:template match="morph" mode="singleRow" xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math">
+		<xsl:param name="myType"/>
+		<xsl:param name="myLang"/>
+		<xsl:choose>
+			<xsl:when test="item[@type=$myType and @lang=$myLang]">
+				<xsl:apply-templates select="item[@type=$myType and @lang=$myLang]" mode="rowItems"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<!-- Insert an empty item to preserve the alignment. This is obviously necessary for any morph
+				where there are following items in this row. Leaving it out on trailing morphs seem to
+				produce somewhat unpredictable results...e.g., LT-15964 has an example where the last morph
+				has nothing on two lines, and Word gets one right and one wrong!
+				If we think the user might want to fill in the missing stuff, it could be helpful to apply
+				the usual styles etc to the missing item...YAGNI? Keeping simple for now.-->
+				<m:e><m:r><m:t> </m:t></m:r></m:e>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>
 
   <!-- We output each morpheme level item as a matrix element containing
   the text with a suitable style, and a trailing non-breaking space.
