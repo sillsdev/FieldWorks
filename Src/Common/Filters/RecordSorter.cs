@@ -876,7 +876,7 @@ namespace SIL.FieldWorks.Filters
 	/// </summary>
 	public class GenRecordSorter : RecordSorter
 	{
-		private IComparer m_comp;
+		protected IComparer m_comp;
 
 		/// <summary>
 		/// Normal constructor.

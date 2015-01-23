@@ -153,6 +153,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>FiltersStrings.resx</DependentUpon>
     </Compile>
+    <Compile Include="FindResultSorter.cs" />
     <Compile Include="IManyOnePathSortItem.cs" />
     <Compile Include="IntFinder.cs">
       <SubType>Code</SubType>

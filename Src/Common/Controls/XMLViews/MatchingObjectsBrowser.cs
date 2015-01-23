@@ -352,7 +352,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (firstSearchStr != null)
 			{
 				int ws = firstSearchStr.get_WritingSystemAt(0);
-				sorter = m_bvMatches.CreateSorterForFirstColumn(ws);
+				sorter = CreateFindResultSorter(firstSearchStr, ws);
 			}
 			int[] hvos;
 			if (sorter != null)
@@ -411,6 +411,13 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (!m_searchEngine.IsBusy && SearchCompleted != null)
 				SearchCompleted(this, new EventArgs());
+		}
+
+		private FindResultSorter CreateFindResultSorter(ITsString firstSearchStr, int ws)
+		{
+			var browseViewSorter = m_bvMatches.CreateSorterForFirstColumn(ws);
+
+			return browseViewSorter == null ? null: new FindResultSorter(firstSearchStr, browseViewSorter);
 		}
 
 		private void FireSelectionChanged()
