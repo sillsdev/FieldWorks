@@ -200,6 +200,17 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public void SearchAsync(IEnumerable<SearchField> fields)
 		{
+			// On the start of a new search clear the selection in the browse view results without stealing focus
+			// from any other controls so that the first result that comes in from the search will be selected.
+			if(m_bvMatches.BrowseView.IsHandleCreated) // hotfix paranoia test
+			{
+				var oldEnabledState = m_bvMatches.Enabled;
+				m_bvMatches.Enabled = false; // disable the control before changing the selection so that the focus won't change
+				m_bvMatches.SelectedIndex = -1;
+				m_bvMatches.Enabled = oldEnabledState; // restore the control to it's previous enabled state
+				m_selObject = null;
+			}
+			// Start the search
 			m_searchEngine.SearchAsync(fields);
 		}
 
