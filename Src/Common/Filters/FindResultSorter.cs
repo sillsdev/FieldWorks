@@ -15,40 +15,41 @@ namespace SIL.FieldWorks.Filters
 	{
 		public FindResultSorter(ITsString searchString, RecordSorter sorter)
 		{
-			m_comp = new ExactMatchFirstComparer(searchString, sorter.getComparer());
+			m_comp = new ExactMatchFirstComparer(searchString.Text, sorter.getComparer());
 		}
 
 		internal class ExactMatchFirstComparer : IComparer
 		{
-			private ITsString m_searchString;
-			private readonly IComparer m_comparer;
+			private string SearchString { get; set; }
+			private IComparer Comparer { get; set; }
 
-			public ExactMatchFirstComparer(ITsString searchString, IComparer comparer)
+			public ExactMatchFirstComparer(string text, IComparer comparer)
 			{
-				m_searchString = searchString;
-				m_comparer = comparer;
+				Comparer = comparer;
+				SearchString = text;
 			}
 
 			public int Compare(object x, object y)
 			{
 				// Run the core comparison first
-				var comparerResult = m_comparer.Compare(x, y);
+				var comparerResult = Comparer.Compare(x, y);
 				// if items are equal no further tests are needed
 				if(comparerResult == 0)
 				{
 					return 0;
 				}
-				// get the relevant strings out of the objects we are comparing
-				var finder = ((StringFinderCompare)m_comparer).Finder;
-				var xString = finder.Key(x as IManyOnePathSortItem);
-				var yString = finder.Key(y as IManyOnePathSortItem);
+				// Get the relevant strings out of the objects we are comparing using the GetValue on the StringFinderComparer.
+				// This makes use of the StringFinderCompare's built in cache.
+				var stringComparer = (StringFinderCompare)Comparer;
+				var xString = stringComparer.GetValue(x, stringComparer.SortedFromEnd)[0];
+				var yString = stringComparer.GetValue(y, stringComparer.SortedFromEnd)[0];
 				// Avoid string comparisons if the result is already what we would possibly return
 				if(comparerResult >= 0)
 				{
 					// Exact matches of the search string should sort to the top by virtue of being the shortest
 					// starts with matches should sort just below exact matches
-					if(xString.Text.StartsWith(m_searchString.Text, StringComparison.InvariantCultureIgnoreCase)
-						&& !yString.Text.StartsWith(m_searchString.Text, StringComparison.InvariantCultureIgnoreCase))
+					if(xString.StartsWith(SearchString, StringComparison.InvariantCultureIgnoreCase)
+						&& !yString.StartsWith(SearchString, StringComparison.InvariantCultureIgnoreCase))
 					{
 						return -1;
 					}
@@ -57,8 +58,8 @@ namespace SIL.FieldWorks.Filters
 				{
 					// Exact matches of the search string should sort to the top by virtue of being the shortest
 					// starts with matches should sort just below exact matches
-					if(yString.Text.StartsWith(m_searchString.Text, StringComparison.InvariantCultureIgnoreCase)
-						&& !xString.Text.StartsWith(m_searchString.Text, StringComparison.InvariantCultureIgnoreCase))
+					if(yString.StartsWith(SearchString, StringComparison.InvariantCultureIgnoreCase)
+						&& !xString.StartsWith(SearchString, StringComparison.InvariantCultureIgnoreCase))
 					{
 						return 1;
 					}
