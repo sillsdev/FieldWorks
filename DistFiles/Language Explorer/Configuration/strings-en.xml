@@ -130,6 +130,7 @@
 	<string id="LexExampleSentence-Plural" txt="Examples"/>
 	<string id="CmTranslation-Plural" txt="Translations"/>
 	<string id="MoForm-Plural" txt="Allomorphs"/>
+	<string id="PubSettings" txt="Publication Settings"/>
 	<string id="ReversalIndexEntry-Plural" txt="Reversal Entries"/>
 	<string id="ReversalIndex-Plural" txt="Reversals"/>
 	<string id="LexSense-Classified" txt="Classified Dictionary ({SelectedPublication})"/> <!-- Do not translate the {SelectedPublication}-->
