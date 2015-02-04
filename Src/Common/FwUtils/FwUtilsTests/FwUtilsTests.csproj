@@ -157,8 +157,6 @@
     <Compile Include="FwDirectoryFinderTests.cs" />
     <Compile Include="DummyCharPropEngine.cs" />
     <Compile Include="DummyFwRegistryHelper.cs" />
-    <Compile Include="DummyICU.cs" />
-    <Compile Include="ExemplarCharactersHelperTests.cs" />
     <Compile Include="FwLinkArgsTests.cs" />
     <Compile Include="FwRegistryHelperTests.cs" />
     <Compile Include="IcuWrapperTest.cs" />

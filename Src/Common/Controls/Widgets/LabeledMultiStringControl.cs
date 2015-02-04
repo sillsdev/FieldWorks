@@ -2,24 +2,13 @@ using System;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.IO;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;		// controls and etc...
 using System.Windows.Forms.VisualStyles;
-using System.Xml;
-using Palaso.Media;
-using Palaso.WritingSystems;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
-using System.Text;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -52,7 +41,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <param name="cache">The FdoCache.</param>
 		/// <param name="wsList">The non-standard list of IWritingSystems.</param>
 		/// <param name="vss">The stylesheet.</param>
-		public LabeledMultiStringControl(FdoCache cache, List<IWritingSystem> wsList, IVwStylesheet vss)
+		public LabeledMultiStringControl(FdoCache cache, List<WritingSystem> wsList, IVwStylesheet vss)
 		{
 
 			m_innerControl = new InnerLabeledMultiStringControl(cache, wsList);

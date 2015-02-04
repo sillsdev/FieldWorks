@@ -21,6 +21,7 @@ using System.Text;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.Utils;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -58,7 +59,7 @@ namespace SIL.FieldWorks.Common.Controls
 		#endregion
 
 		#region Member Data
-		private IWritingSystemManager m_wsManager;
+		private WritingSystemManager m_wsManager;
 		private string m_initialTarget; // If set, performs initial search for this language.
 		private string m_originalCode;
 
@@ -494,7 +495,7 @@ namespace SIL.FieldWorks.Common.Controls
 				string name = LanguageName;
 
 				if (!string.IsNullOrEmpty(code))
-					return new LanguageSubtag(LangTagUtils.GetLanguageSubtag(code), name);
+					return new LanguageSubtag(code, name);
 
 				string internalCode;
 				if (StartedInModifyState && !string.IsNullOrEmpty(m_originalCode))
@@ -507,7 +508,7 @@ namespace SIL.FieldWorks.Common.Controls
 			set
 			{
 				Debug.Assert(string.IsNullOrEmpty(LanguageName), "The LanguageSubtag can only be set once when editing an existing WS");
-				EthnologueCode = value.ISO3Code;
+				EthnologueCode = value.Iso3Code;
 				LanguageName = value.Name;
 				m_originalCode = value.Code;
 			}
@@ -541,7 +542,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Sets the writing system manager.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public IWritingSystemManager WritingSystemManager
+		public WritingSystemManager WritingSystemManager
 		{
 			set { m_wsManager = value; }
 		}

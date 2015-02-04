@@ -7,6 +7,7 @@ using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.CoreImpl;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.Common.PrintLayout
 {
@@ -28,8 +29,8 @@ namespace SIL.FieldWorks.Common.PrintLayout
 			base.FixtureSetup();
 
 			// the print layout tests are dependent on Times New Roman
-			Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.DefaultFontName = "Times New Roman";
-			Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.DefaultFontName = "Times New Roman";
+			Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.DefaultFont = new FontDefinition("Times New Roman");
+			Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.DefaultFont = new FontDefinition("Times New Roman");
 
 			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, CreateStandardPublications);
 		}

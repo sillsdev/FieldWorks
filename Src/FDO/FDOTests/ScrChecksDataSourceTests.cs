@@ -76,6 +76,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(11, headingStyles.Count);
 		}
 
+#if WS_FIX
 		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the GetParameterValue method to get sentence final punctuation.
@@ -86,7 +87,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			// Set up the punctuation for a Roman-script vernacular writing system.
 			int hvoWs = Cache.DefaultVernWs;
-			IWritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Get(hvoWs);
+			WritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Get(hvoWs);
 			PuncPatternsList list = new PuncPatternsList();
 			list.Add(new PuncPattern(". ", ContextPosition.WordFinal, PuncPatternStatus.Valid));
 			list.Add(new PuncPattern("? ", ContextPosition.WordFinal, PuncPatternStatus.Valid));
@@ -116,7 +117,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			// Set up the punctuation for a Roman-script vernacular writing system.
 			int hvoWs = Cache.DefaultVernWs;
-			IWritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Get(hvoWs);
+			WritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Get(hvoWs);
 			// We add the following Arabic punctuation: percent sign (066A), decimal separator (066B),
 			// thousands separator (066C), five pointed star (066D), full stop (06D4), question mark (061F)
 			var list = new PuncPatternsList
@@ -136,6 +137,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			// We expect that only sentence-final punctuation would be returned.
 			Assert.AreEqual("\u06D4\u061F", sentenceFinalPunc);
 		}
+#endif
 
 		///--------------------------------------------------------------------------------------
 		/// <summary>
@@ -146,7 +148,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void GetParameterValue_VerseBridge()
 		{
-			IWritingSystem ws = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			WritingSystem ws = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 
 			ws.RightToLeftScript = true;
 			Assert.AreEqual("\u200f-\u200f", m_dataSource.GetParameterValue("Verse Bridge"));

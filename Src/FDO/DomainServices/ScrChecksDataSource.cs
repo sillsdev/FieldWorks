@@ -8,10 +8,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using SIL.FieldWorks.Common.COMInterfaces;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.Utils;
+using SIL.WritingSystems;
 using SILUBS.SharedScrUtils;
 using SIL.CoreImpl;
 
@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	/// ----------------------------------------------------------------------------------------
 	public class ScrChecksDataSource : IChecksDataSource
 	{
-		private IScrBook m_bookBeingChecked = null;
+		private IScrBook m_bookBeingChecked;
 		private Dictionary<string, string> m_checkingParameters = new Dictionary<string, string>();
 
 		/// <summary>
@@ -48,12 +48,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		private readonly string m_punctWhitespaceChar;
 		private readonly string m_legacyOverridesFile;
 
-		private static StyleMarkupInfo s_styleMarkupInfo = null;
-
 		#region error-handling delegate/event
 		/// <summary>Fired if valid character data cannot be loaded</summary>
 		public event ValidCharacters.LoadExceptionDelegate LoadException;
 		#endregion
+		private static StyleMarkupInfo s_styleMarkupInfo;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -153,9 +152,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		public string GetParameterValue(string key)
 		{
-			IWritingSystemManager wsManager = m_cache.ServiceLocator.WritingSystemManager;
+			WritingSystemManager wsManager = m_cache.ServiceLocator.WritingSystemManager;
 			int hvoWs = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
-			IWritingSystem ws = wsManager.Get(hvoWs);
+			WritingSystem ws = wsManager.Get(hvoWs);
 
 			if (key.Contains("ValidCharacters"))
 				return GetValidCharactersList(key, ws);
@@ -178,6 +177,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				case "PunctWhitespaceChar":
 					return m_punctWhitespaceChar.Substring(0, 1);
 
+#if WS_FIX
 				case "MatchedPairs":
 					return ws.MatchedPairs;
 
@@ -189,6 +189,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 				case "QuotationMarkInfo":
 					return ws.QuotationMarks;
+#endif
 
 				case "StylesInfo":
 					return (StyleInfo != null) ? StyleInfo.XmlString : null;
@@ -214,6 +215,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			}
 		}
 
+#if WS_FIX
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the sentence final punctuation from the punctuation patterns for the given
@@ -223,7 +225,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="unicodeCharProps">>The unicode character properties engine.</param>
 		/// <returns>sentence final punctuation patterns for this writing system</returns>
 		/// ------------------------------------------------------------------------------------
-		private string GetSentenceFinalPunctuation(IWritingSystem ws, ILgCharacterPropertyEngine unicodeCharProps)
+		private string GetSentenceFinalPunctuation(WritingSystem ws, ILgCharacterPropertyEngine unicodeCharProps)
 		{
 			string punctuationPatterns = ws.PunctuationPatterns;
 			if (!string.IsNullOrEmpty(punctuationPatterns) && punctuationPatterns.Trim().Length > 0)
@@ -256,6 +258,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 			return string.Empty;
 		}
+#endif
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -273,7 +276,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		public bool GetText(int bookNum, int chapterNum)
 		{
-			m_bookBeingChecked = (IScrBook)m_scr.FindBook(bookNum);
+			m_bookBeingChecked = m_scr.FindBook(bookNum);
 
 			SetParameterValue("Book ID", m_bookBeingChecked.BookId);
 			SetParameterValue("Chapter Number", chapterNum.ToString());
@@ -445,9 +448,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			int bookNum = firstToken.StartRef.Book;
 			string citedText = args.Tts.Text;
 
-			IScrBookAnnotations annotations =
-				(IScrBookAnnotations)m_scr.BookAnnotationsOS[bookNum - 1];
-
 			// key for the error with the same cited text and message at a particular reference.
 			string errorLocKey = firstToken.StartRef.AsString + lastToken.EndRef.AsString +
 				citedText +	formattedMsg;
@@ -570,8 +570,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		private void AddErrorAnnotation(string citedText, int offset, int length, Guid checkId,
 			ScrCheckingToken firstToken, ScrCheckingToken lastToken, string formattedMsg)
 		{
-			IScrBookAnnotations annotations =
-				(IScrBookAnnotations)m_scr.BookAnnotationsOS[firstToken.StartRef.Book - 1];
+			IScrBookAnnotations annotations = m_scr.BookAnnotationsOS[firstToken.StartRef.Book - 1];
 
 			StTxtParaBldr quote = SetCitedText(citedText, firstToken.Ws);
 			StTxtParaBldr discussion = SetErrorMessage(formattedMsg);
@@ -676,14 +675,14 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="key">The valid characters parameter key.</param>
 		/// <param name="ws">The writing system</param>
 		/// <returns></returns>
-		private string GetValidCharactersList(string key, IWritingSystem ws)
+		private string GetValidCharactersList(string key, WritingSystem ws)
 		{
 			if (key.StartsWith("ValidCharacters_"))
 			{
 				// If the key contains a locale ID, then don't use the default vernacular
 				// writing system, build one from the locale.
 				string identifier = key.Substring(key.IndexOf("_") + 1);
-				ws = m_cache.ServiceLocator.WritingSystemManager.Get(LangTagUtils.ToLangTag(identifier));
+				ws = m_cache.ServiceLocator.WritingSystemManager.Get(IetfLanguageTag.ToLanguageTag(identifier));
 			}
 			else if (key == "AlwaysValidCharacters")
 			{
@@ -705,7 +704,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				return bldr.ToString();
 			}
 
-			var validChars = ValidCharacters.Load(ws, LoadException ?? NoErrorReport, m_legacyOverridesFile);
+			ValidCharacters validChars = ValidCharacters.Load(ws, LoadException ?? NoErrorReport, m_legacyOverridesFile);
 			return (validChars != null ? validChars.SpaceDelimitedList : string.Empty);
 		}
 

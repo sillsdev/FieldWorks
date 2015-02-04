@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 		protected int m_nMappingType = -1;
 		private readonly FdoCache m_cache;
 		private readonly ICmObjectRepository m_cmObjectRepository;
-		private readonly IWritingSystemManager m_wsManager;
+		private readonly WritingSystemManager m_wsManager;
 
 		/// <summary>Constructor.</summary>
 		public SingleLexReference(ICmObject lexRef, int hvoCrossRef)

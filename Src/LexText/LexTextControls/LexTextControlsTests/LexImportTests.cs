@@ -309,7 +309,7 @@ namespace LexTextControlsTests
 			variantInfo.RefFuncWS = "fr";
 			var subentryInfo = new FieldHierarchyInfo("se", "sub", "Vernacular", true, "SubEntry");
 			sfmInfo.Add(subentryInfo);
-			subentryInfo.RefFuncWS = "Derivative";
+			subentryInfo.RefFuncWS = "en";
 			subentryInfo.RefFunc = "en";
 			return sfmInfo;
 		}

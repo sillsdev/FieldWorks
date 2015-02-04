@@ -23,6 +23,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
+using SIL.WritingSystems;
 using SILUBS.SharedScrUtils;
 using System.Diagnostics.CodeAnalysis;
 
@@ -265,9 +266,9 @@ namespace SIL.FieldWorks.TE
 		{
 			// This problem only happens with the Graphite renderer so we need to select a
 			// Graphite font
-			IWritingSystem enWs = Cache.ServiceLocator.WritingSystemManager.Get("en");
-			enWs.DefaultFontName = "Charis SIL";
-			enWs.DefaultFontFeatures = "";
+			WritingSystem enWs = Cache.ServiceLocator.WritingSystemManager.Get("en");
+			enWs.Fonts.Clear();
+			enWs.DefaultFont = new FontDefinition("Charis SIL");
 			Options.ShowEmptyParagraphPromptsSetting = true;
 			m_draftForm.Width = 30; // set view narrow to make multiple-line user prompt
 
@@ -2521,8 +2522,7 @@ namespace SIL.FieldWorks.TE
 		[Test]
 		public void TextDirectionTest_RightToLeft()
 		{
-
-			IWritingSystem ws = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+			WritingSystem ws = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			ws.RightToLeftScript = true;
 			m_draftView.ViewConstructorWS = ws.Handle;
 			m_draftView.RefreshDisplay();

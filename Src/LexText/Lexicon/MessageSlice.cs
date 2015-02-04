@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -9,7 +7,6 @@ using Chorus;
 using Chorus.UI.Notes.Bar;
 using Palaso.Progress;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.XWorks.LexEd
@@ -53,10 +50,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			m_notesBar.SetTargetObject(m_obj);
 			// Set the writing systems for the NoteDetailDialog.  (See FWNX-1239.)
 			var vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
-			var labelWs = new ChorusWritingSystem(vernWs.LanguageName, vernWs.RFC5646, vernWs.DefaultFontName, 12);
+			var labelWs = new ChorusWritingSystem(vernWs.LanguageName, vernWs.LanguageTag, vernWs.DefaultFontName, 12);
 			m_notesBar.LabelWritingSystem = labelWs;
 			var analWs = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
-			var msgWs = new ChorusWritingSystem (analWs.LanguageName, analWs.RFC5646, analWs.DefaultFontName, 12);
+			var msgWs = new ChorusWritingSystem (analWs.LanguageName, analWs.LanguageTag, analWs.DefaultFontName, 12);
 			m_notesBar.MessageWritingSystem = msgWs;
 			this.Control = m_notesBar;
 		}

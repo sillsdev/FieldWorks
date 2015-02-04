@@ -7,18 +7,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using Palaso.Lift;
 using Palaso.Lift.Parsing;
-using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -40,7 +37,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		ITsString m_tssEmpty;
 		readonly GuidConverter m_gconv = (GuidConverter)TypeDescriptor.GetConverter(typeof(Guid));
 		public const string LiftDateTimeFormat = "yyyy-MM-ddTHH:mm:ssK";	// wants UTC, but works with Local
-		private readonly IWritingSystemManager m_wsManager;
+		private readonly WritingSystemManager m_wsManager;
 
 		readonly Regex m_regexGuid = new Regex(
 			"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
@@ -144,7 +141,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		bool m_fTrustModTimes;
 
-		readonly List<IWritingSystem> m_addedWss = new List<IWritingSystem>();
+		readonly List<WritingSystem> m_addedWss = new List<WritingSystem>();
 
 		// Repositories and factories for interacting with the project.
 
@@ -448,8 +445,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private bool IsVoiceWritingSystem(int wsString)
 		{
-			var wsEngine = m_wsManager.get_EngineOrNull(wsString);
-			return wsEngine is WritingSystemDefinition && ((WritingSystemDefinition)wsEngine).IsVoice;
+			var wsEngine = (WritingSystem) m_wsManager.get_EngineOrNull(wsString);
+			return wsEngine.IsVoice;
 		}
 
 		#region ILexiconMerger<LiftObject, LiftEntry, LiftSense, LiftExample> Members
@@ -3359,7 +3356,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				int ws = GetWsFromLiftLang(lang);
 				if (ws != 0)
 				{
-					IWritingSystem wsObj = GetExistingWritingSystem(ws);
+					WritingSystem wsObj = GetExistingWritingSystem(ws);
 					if (!m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Contains(wsObj))
 						m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Add(wsObj);
 				}

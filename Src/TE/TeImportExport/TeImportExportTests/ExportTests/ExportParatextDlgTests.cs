@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 			//importSet.ParatextScrProj = "xyz";
 			//importSet.ParatextBTProj = "xyzBT";
 			//Cache.LangProject.TranslatedScriptureOA.DefaultImportSettings = importSet;
-			IWritingSystem wsVern = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			WritingSystem wsVern = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			wsVern.Abbreviation = "xyz";
 
 			// Initialize in-memory registry settings.

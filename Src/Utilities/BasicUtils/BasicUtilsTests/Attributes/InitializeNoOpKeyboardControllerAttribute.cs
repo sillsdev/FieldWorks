@@ -4,8 +4,8 @@
 
 using System;
 using NUnit.Framework;
-using Palaso.UI.WindowsForms.Keyboarding;
-using Palaso.WritingSystems;
+using SIL.WritingSystems;
+using SIL.WritingSystems.WindowsForms.Keyboarding;
 
 namespace SIL.Utils.Attributes
 {
@@ -27,7 +27,7 @@ namespace SIL.Utils.Attributes
 		public override void BeforeTest(TestDetails testDetails)
 		{
 			base.BeforeTest(testDetails);
-			Keyboard.Controller = new NoOpKeyboardController();
+			Keyboard.Controller = new DefaultKeyboardController();
 		}
 
 		/// <summary>

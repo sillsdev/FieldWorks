@@ -167,10 +167,10 @@ namespace LexTextControlsTests
 		/// NOTE: Copied from SIL.FieldWorks.IText.InterlinSfmImportTests
 		/// </summary>
 		/// <returns></returns>
-		private PalasoWritingSystemManager GetWsf()
+		private WritingSystemManager GetWsf()
 		{
-			var wsf = new PalasoWritingSystemManager();
-			IWritingSystem wsObj;
+			var wsf = new WritingSystemManager();
+			WritingSystem wsObj;
 			wsf.GetOrSet("qaa-x-kal", out wsObj);
 			EnsureQuoteAndHyphenWordForming(wsObj);
 			return wsf;
@@ -180,10 +180,9 @@ namespace LexTextControlsTests
 		/// NOTE: Copied from SIL.FieldWorks.IText.InterlinSfmImportTests
 		/// </summary>
 		/// <param name="wsObj"></param>
-		private void EnsureQuoteAndHyphenWordForming(IWritingSystem wsObj)
+		private void EnsureQuoteAndHyphenWordForming(WritingSystem wsObj)
 		{
-			var validChars = ValidCharacters.Load(wsObj.ValidChars,
-				wsObj.DisplayLabel, null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			ValidCharacters validChars = ValidCharacters.Load(wsObj, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			var fChangedSomething = false;
 			if (!validChars.IsWordForming('-'))
 			{
@@ -199,7 +198,7 @@ namespace LexTextControlsTests
 			}
 			if (!fChangedSomething)
 				return;
-			wsObj.ValidChars = validChars.XmlString;
+			validChars.SaveTo(wsObj);
 		}
 
 		/// <summary>

@@ -15,7 +15,6 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
@@ -302,7 +301,7 @@ namespace SIL.FieldWorks.TE
 		{
 			string locale = Cache.WritingSystemFactory.GetStrFromWs(Cache.DefaultUserWs);
 			EnsureCurrentLocalization(locale, null, progressDlg);
-			foreach (IWritingSystem ws in Cache.LangProject.AnalysisWritingSystems.Where(w => w.Handle != Cache.DefaultUserWs))
+			foreach (WritingSystem ws in Cache.LangProject.AnalysisWritingSystems.Where(w => w.Handle != Cache.DefaultUserWs))
 				EnsureCurrentLocalization(ws.IcuLocale, null, progressDlg);
 		}
 
@@ -666,7 +665,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		private int EnsureWritingSystemExists(string wsId, string sAbbrev)
 		{
-			IWritingSystem ws;
+			WritingSystem ws;
 			if (!Cache.ServiceLocator.WritingSystemManager.GetOrSet(wsId, out ws))
 				ws.Abbreviation = sAbbrev;
 			return ws.Handle;

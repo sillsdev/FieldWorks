@@ -6,6 +6,7 @@ using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -17,9 +18,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	[TestFixture]
 	public class ValidCharactersTests : BaseTest
 	{
-		private const string ksXmlHeader = "<?xml version=\"1.0\" encoding=\"utf-16\"?>";
 		private Exception m_lastException;
-		private IWritingSystemManager m_wsManager;
+		private WritingSystemManager m_wsManager;
 
 		/// <summary>
 		/// Sets up the fixture.
@@ -27,16 +27,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
-			m_wsManager = new PalasoWritingSystemManager();
-		}
-
-		/// <summary/>
-		public override void FixtureTeardown()
-		{
-			var disposable = m_wsManager as IDisposable;
-			if (disposable != null)
-				disposable.Dispose();
-			base.FixtureTeardown();
+			m_wsManager = new WritingSystemManager();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -47,7 +38,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[SetUp]
 		public void Setup()
 		{
-			ReflectionHelper.SetField(typeof(ValidCharacters), "s_fTestingMode", true);
 			m_lastException = null;
 		}
 
@@ -59,7 +49,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// ------------------------------------------------------------------------------------
 		private class ValidCharsWrapper
 		{
-			ValidCharacters m_validChars;
+			readonly ValidCharacters m_validChars;
 
 			/// --------------------------------------------------------------------------------
 			/// <summary>
@@ -82,7 +72,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				get
 				{
 					return (List<string>)ReflectionHelper.GetField(m_validChars,
-						"m_WordFormingCharacters");
+						"m_wordFormingCharacters");
 				}
 			}
 
@@ -96,7 +86,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				get
 				{
 					return (List<string>)ReflectionHelper.GetField(m_validChars,
-						"m_NumericCharacters");
+						"m_numericCharacters");
 				}
 			}
 
@@ -110,59 +100,25 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				get
 				{
 					return (List<string>)ReflectionHelper.GetField(m_validChars,
-						"m_OtherCharacters");
+						"m_otherCharacters");
 				}
 			}
 		}
 
 		///--------------------------------------------------------------------------------------
 		/// <summary>
-		/// Tests initialization from an old-style list of valid characters.
+		/// Tests initialization of valid characters.
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
-		public void InitializeFromOldValidCharsList()
+		public void Load_Nonempty()
 		{
-			var validChars = ValidCharacters.Load(" a b c d . 1 2 3", "Test WS", null, null, FwDirectoryFinder.CodeDirectory);
-			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
-			Assert.AreEqual(4, validCharsW.WordFormingCharacters.Count);
-			Assert.IsTrue(validCharsW.WordFormingCharacters.Contains("a"));
-			Assert.IsTrue(validCharsW.WordFormingCharacters.Contains("b"));
-			Assert.IsTrue(validCharsW.WordFormingCharacters.Contains("c"));
-			Assert.IsTrue(validCharsW.WordFormingCharacters.Contains("d"));
-			Assert.AreEqual(3, validCharsW.NumericCharacters.Count);
-			Assert.IsTrue(validCharsW.NumericCharacters.Contains("1"));
-			Assert.IsTrue(validCharsW.NumericCharacters.Contains("2"));
-			Assert.IsTrue(validCharsW.NumericCharacters.Contains("3"));
-			Assert.AreEqual(2, validCharsW.OtherCharacters.Count);
-			Assert.IsTrue(validCharsW.OtherCharacters.Contains(" "));
-			Assert.IsTrue(validCharsW.OtherCharacters.Contains("."));
-
-			string spaceReplacer = ReflectionHelper.GetField(typeof (ValidCharacters),
-															 "kSpaceReplacment") as string;
-
-			Assert.AreEqual(ksXmlHeader +
-							"<ValidCharacters><WordForming>a\uFFFCb\uFFFCc\uFFFCd</WordForming>" +
-							"<Numeric>1\uFFFC2\uFFFC3</Numeric>" +
-							"<Other>" + spaceReplacer + "\uFFFC.</Other>" +
-							"</ValidCharacters>",
-							validChars.XmlString.Replace(Environment.NewLine, string.Empty).Replace(">  <", "><"));
-		}
-
-		///--------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests initialization from a new-style XML string of valid characters.
-		/// </summary>
-		///--------------------------------------------------------------------------------------
-		[Test]
-		public void InitializeFromXml_Valid()
-		{
-			string sXml = ksXmlHeader + "<ValidCharacters><WordForming>e\uFFFCf\uFFFCg\uFFFCh</WordForming>" +
-				"<Numeric>4\uFFFC5</Numeric>" +
-				"<Other>,\uFFFC!\uFFFC*</Other>" +
-				"</ValidCharacters>";
-			var validChars = ValidCharacters.Load(sXml, "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
-			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
+			WritingSystem ws1 = m_wsManager.Create("en");
+			ws1.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"e", "f", "g", "h"}});
+			ws1.CharacterSets.Add(new CharacterSetDefinition("numeric") {Characters = {"4", "5"}});
+			ws1.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {",", "!", "*"}});
+			ValidCharacters validChars = ValidCharacters.Load(ws1, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			var validCharsW = new ValidCharsWrapper(validChars);
 			Assert.AreEqual(4, validCharsW.WordFormingCharacters.Count);
 			Assert.IsTrue(validCharsW.WordFormingCharacters.Contains("e"));
 			Assert.IsTrue(validCharsW.WordFormingCharacters.Contains("f"));
@@ -175,204 +131,102 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.IsTrue(validCharsW.OtherCharacters.Contains(","));
 			Assert.IsTrue(validCharsW.OtherCharacters.Contains("!"));
 			Assert.IsTrue(validCharsW.OtherCharacters.Contains("*"));
-			Assert.AreEqual(sXml,
-							validChars.XmlString.Replace(Environment.NewLine, string.Empty).Replace(">  <", "><"));
+			WritingSystem ws2 = m_wsManager.Create("en");
+			validChars.SaveTo(ws2);
+			Assert.That(ws1.ValueEquals(ws2), Is.True);
 		}
 
 		///--------------------------------------------------------------------------------------
 		/// <summary>
-		/// Tests initialization from a new-style XML string which defines no valid characters.
+		/// Tests initialization which defines no valid characters.
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
-		public void InitializeFromXml_ValidEmpty()
+		public void Load_Empty()
 		{
-			string sXml = ksXmlHeader + "<ValidCharacters><WordForming />" +
-				"<Numeric />" +
-				"<Other />" +
-				"</ValidCharacters>";
-			var validChars = ValidCharacters.Load(sXml, "Test WS", null, RememberError, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
-			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
-			Assert.AreEqual(0, validCharsW.WordFormingCharacters.Count);
-			Assert.AreEqual(0, validCharsW.NumericCharacters.Count);
-			Assert.AreEqual(0, validCharsW.OtherCharacters.Count);
-			Assert.AreEqual(sXml,
-							validChars.XmlString.Replace(Environment.NewLine, string.Empty).Replace(">  <", "><"));
-			Assert.IsNull(m_lastException);
+			WritingSystem ws1 = m_wsManager.Create("en");
+			ValidCharacters validChars = ValidCharacters.Load(ws1, RememberError, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			var validCharsW = new ValidCharsWrapper(validChars);
+			Assert.That(validCharsW.WordFormingCharacters, Is.Empty);
+			Assert.That(validCharsW.NumericCharacters, Is.Empty);
+			Assert.That(validCharsW.OtherCharacters, Is.Empty);
+			WritingSystem ws2 = m_wsManager.Create("en");
+			validChars.SaveTo(ws2);
+			Assert.That(ws1.ValueEquals(ws2), Is.True);
+			Assert.That(m_lastException, Is.Null);
 		}
 
 		///--------------------------------------------------------------------------------------
 		/// <summary>
-		/// Tests initialization from a null string.
+		/// Tests initialization from valid characters containing U+2028 (Line Separator/ Hard
+		/// Line Break) in the "Other" list. LT-9985
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
-		public void InitializeFromXml_ValidNull()
+		public void Load_AllowHardLineBreakCharacter()
 		{
-			var validChars = ValidCharacters.Load(null, "Test WS", null, RememberError, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
-			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
-			Assert.AreEqual(0, validCharsW.WordFormingCharacters.Count);
-			Assert.AreEqual(0, validCharsW.NumericCharacters.Count);
-			Assert.AreEqual(0, validCharsW.OtherCharacters.Count);
-			Assert.IsNull(m_lastException);
-		}
-
-		///--------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests initialization from an empty string.
-		/// </summary>
-		///--------------------------------------------------------------------------------------
-		[Test]
-		public void InitializeFromXml_ValidEmptyString()
-		{
-			var validChars = ValidCharacters.Load(String.Empty, "Test WS", null, RememberError, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
-			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
-			Assert.AreEqual(0, validCharsW.WordFormingCharacters.Count);
-			Assert.AreEqual(0, validCharsW.NumericCharacters.Count);
-			Assert.AreEqual(0, validCharsW.OtherCharacters.Count);
-			Assert.IsNull(m_lastException);
-		}
-
-		///--------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests initialization from XML string of valid characters containing U+2028 (Line
-		/// Separator/ Hard Line Break) in the "Other" list. LT-9985
-		/// </summary>
-		///--------------------------------------------------------------------------------------
-		[Test]
-		public void InitializeFromXml_AllowHardLineBreakCharacter()
-		{
-			string sXml = ksXmlHeader + "<ValidCharacters><WordForming></WordForming>" +
-				"<Numeric></Numeric>" +
-				"<Other>\u2028</Other>" +
-				"</ValidCharacters>";
-			var validChars = ValidCharacters.Load(sXml, "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
-			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
+			WritingSystem ws1 = m_wsManager.Create("en");
+			ws1.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {"\u2028"}});
+			ValidCharacters validChars = ValidCharacters.Load(ws1, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			var validCharsW = new ValidCharsWrapper(validChars);
 			Assert.AreEqual(1, validCharsW.OtherCharacters.Count);
 			Assert.IsTrue(validCharsW.OtherCharacters.Contains("\u2028"));
 		}
 
 		///--------------------------------------------------------------------------------------
 		/// <summary>
-		/// Tests initialization from a new-style XML string with a bogus format (TE-8304).
-		/// Ideally, I think we'd want this to throw an exception, but the deserializer just
-		/// ignores the extraneous data (which is supposed to be the contents of the Numeric
-		/// element), so the only way we could notice this problem would be to write very
-		/// specific code to detect it or have a DTD that would declare it to be illegal.
+		/// Tests initialization with only bogus characters (actually only one) (LT-9985).
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
-		public void InitializeFromXml_NumericElementClosedTooEarly()
+		public void Load_SingleBogusCharacter()
 		{
-			var ws = m_wsManager.Create("en-US");
-			ws.ValidChars = ksXmlHeader + "<ValidCharacters><WordForming>e\uFFFCf\uFFFCg\uFFFCh</WordForming>" +
-				"<Numeric/>4\uFFFC5" +
-				"<Other>,\uFFFC!\uFFFC*</Other>" +
-				"</ValidCharacters>";
-			var validChars = ValidCharacters.Load(ws, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
-			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
-			Assert.AreEqual(4, validCharsW.WordFormingCharacters.Count);
-			Assert.IsTrue(validCharsW.WordFormingCharacters.Contains("e"));
-			Assert.IsTrue(validCharsW.WordFormingCharacters.Contains("f"));
-			Assert.IsTrue(validCharsW.WordFormingCharacters.Contains("g"));
-			Assert.IsTrue(validCharsW.WordFormingCharacters.Contains("h"));
-			Assert.AreEqual(0, validCharsW.NumericCharacters.Count);
-			Assert.AreEqual(3, validCharsW.OtherCharacters.Count);
-			Assert.IsTrue(validCharsW.OtherCharacters.Contains(","));
-			Assert.IsTrue(validCharsW.OtherCharacters.Contains("!"));
-			Assert.IsTrue(validCharsW.OtherCharacters.Contains("*"));
-		}
+			WritingSystem ws = m_wsManager.Create("en-US");
+			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"\u05F6"}});
 
-		///--------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests initialization from a new-style XML string with a bogus format, e.g., missing
-		/// the closing tag for one of the elements (TE-8304).
-		/// </summary>
-		///--------------------------------------------------------------------------------------
-		[Test]
-		public void InitializeFromXml_BogusFormat()
-		{
-			IWritingSystem ws = m_wsManager.Create("en-US");
-			ws.ValidChars = ksXmlHeader + "<ValidCharacters><WordForming>e\uFFFCf\uFFFCg\uFFFCh" +
-				"</WordForming>" +
-				"<Numeric>4\uFFFC5" +
-				"<Other>,\uFFFC!\uFFFC*</Other>" +
-				"</ValidCharacters>";
-
-			var validChars = ValidCharacters.Load(ws, RememberError, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
-			VerifyDefaultWordFormingCharacters(validChars);
-
-			Assert.AreEqual("Invalid ValidChars field while loading the English (United States) writing system:" +
-							Environment.NewLine + "\t" + ws.ValidChars +
-							Environment.NewLine + "Parameter name: xmlSrc",
-							m_lastException.Message);
-		}
-
-		///--------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests initialization from a new-style XML string with only bogus characters (actually
-		/// only one) (LT-9985).
-		/// </summary>
-		///--------------------------------------------------------------------------------------
-		[Test]
-		public void InitializeFromXml_SingleBogusCharacter()
-		{
-			IWritingSystem ws = m_wsManager.Create("en-US");
-			ws.ValidChars = ksXmlHeader + "<ValidCharacters><WordForming>\u05F6</WordForming>" +
-				"<Numeric></Numeric>" +
-				"<Other></Other>" +
-				"</ValidCharacters>";
-
-			var validChars = ValidCharacters.Load(ws, RememberError, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			ValidCharacters validChars = ValidCharacters.Load(ws, RememberError, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			VerifyDefaultWordFormingCharacters(validChars);
 			Assert.AreEqual("Invalid ValidChars field while loading the English (United States) writing system. " +
 							"The following characters are invalid:" +
 							Environment.NewLine + "\t\u05F6 (U+05F6)" +
-							Environment.NewLine + "Parameter name: xmlSrc",
+							Environment.NewLine + "Parameter name: ws",
 							m_lastException.Message);
 		}
 
 		///--------------------------------------------------------------------------------------
 		/// <summary>
-		/// Tests initialization from a new-style XML string with a bogus character that consists
-		/// of a base character and a diacritic (TE-8380).
+		/// Tests initialization with a bogus character that consists of a base character and a
+		/// diacritic (TE-8380).
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
-		public void InitializeFromXml_SingleCompoundBogusCharacter()
+		public void Load_SingleCompoundBogusCharacter()
 		{
-			IWritingSystem ws = m_wsManager.Create("en-US");
-			ws.ValidChars = ksXmlHeader + "<ValidCharacters><WordForming>\u200c\u0301</WordForming>" +
-				"<Numeric></Numeric>" +
-				"<Other></Other>" +
-				"</ValidCharacters>";
+			WritingSystem ws = m_wsManager.Create("en-US");
+			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"\u200c\u0301"}});
 
 			var validChars = ValidCharacters.Load(ws, RememberError, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			VerifyDefaultWordFormingCharacters(validChars);
 			Assert.AreEqual("Invalid ValidChars field while loading the English (United States) writing system. " +
 							"The following characters are invalid:" +
 							Environment.NewLine + "\t\u200c\u0301 (U+200C, U+0301)" +
-							Environment.NewLine + "Parameter name: xmlSrc",
+							Environment.NewLine + "Parameter name: ws",
 							m_lastException.Message);
 		}
 
 		///--------------------------------------------------------------------------------------
 		/// <summary>
-		/// Tests initialization from a new-style XML string with a mix of valid and bogus
-		/// characters (TE-8322).
+		/// Tests initialization with a mix of valid and bogus characters (TE-8322).
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
-		public void InitializeFromXml_ValidAndBogusCharacters()
+		public void Load_ValidAndBogusCharacters()
 		{
-			IWritingSystem ws = m_wsManager.Create("en-US");
-			ws.ValidChars = ksXmlHeader + "<ValidCharacters><WordForming>\u05F6\uFFFCg\uFFFC\u05F7\uFFFCh</WordForming>" +
-				"<Numeric>1</Numeric>" +
-				"<Other></Other>" +
-				"</ValidCharacters>";
-
-			var validChars = ValidCharacters.Load(ws, RememberError, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
-			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
+			WritingSystem ws = m_wsManager.Create("en-US");
+			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"\u05F6", "g", "\u05F7", "h"}});
+			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") {Characters = {"1"}});
+			ValidCharacters validChars = ValidCharacters.Load(ws, RememberError, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			var validCharsW = new ValidCharsWrapper(validChars);
 			Assert.AreEqual(2, validCharsW.WordFormingCharacters.Count);
 			Assert.IsTrue(validCharsW.WordFormingCharacters.Contains("g"));
 			Assert.IsTrue(validCharsW.WordFormingCharacters.Contains("h"));
@@ -384,25 +238,24 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				"The following characters are invalid:" +
 				Environment.NewLine + "\t\u05F6 (U+05F6)" +
 				Environment.NewLine + "\t\u05F7 (U+05F7)" +
-				Environment.NewLine + "Parameter name: xmlSrc",
+				Environment.NewLine + "Parameter name: ws",
 				m_lastException.Message);
 		}
 
 		///--------------------------------------------------------------------------------------
 		/// <summary>
-		/// Tests initialization from a new-style XML string where the same character occurs in
-		/// both the word-forming and punctuation XML lists.
+		/// Tests initialization where the same character occurs in both the word-forming and
+		/// punctuation lists.
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
-		public void InitializeFromXml_SameCharacterInWordFormingAndPunctuationXMLLists()
+		public void Load_SameCharacterInWordFormingAndPunctuationLists()
 		{
-			string sXml = ksXmlHeader + "<ValidCharacters><WordForming>'</WordForming>" +
-				"<Numeric></Numeric>" +
-				"<Other>'</Other>" +
-				"</ValidCharacters>";
-			var validChars = ValidCharacters.Load(sXml, "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
-			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
+			WritingSystem ws = m_wsManager.Create("en-US");
+			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"'"}});
+			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {"'"}});
+			ValidCharacters validChars = ValidCharacters.Load(ws, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			var validCharsW = new ValidCharsWrapper(validChars);
 			Assert.AreEqual(1, validCharsW.WordFormingCharacters.Count);
 			Assert.IsTrue(validCharsW.WordFormingCharacters.Contains("'"));
 			Assert.AreEqual(0, validCharsW.NumericCharacters.Count);
@@ -411,19 +264,18 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		///--------------------------------------------------------------------------------------
 		/// <summary>
-		/// Tests initialization from a new-style XML string where the same character occurs in
-		/// both the word-forming and numeric XML lists.
+		/// Tests initialization where the same character occurs in both the word-forming and
+		/// numeric lists.
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
-		public void InitializeFromXml_SameCharacterInWordFormingAndNumbericXMLLists()
+		public void Load_SameCharacterInWordFormingAndNumbericLists()
 		{
-			string sXml = ksXmlHeader + "<ValidCharacters><WordForming>1</WordForming>" +
-				"<Numeric>1</Numeric>" +
-				"<Other></Other>" +
-				"</ValidCharacters>";
-			var validChars = ValidCharacters.Load(sXml, "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
-			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
+			WritingSystem ws = m_wsManager.Create("en-US");
+			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"1"}});
+			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") {Characters = {"1"}});
+			ValidCharacters validChars = ValidCharacters.Load(ws, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			var validCharsW = new ValidCharsWrapper(validChars);
 			Assert.AreEqual(1, validCharsW.WordFormingCharacters.Count);
 			Assert.IsTrue(validCharsW.WordFormingCharacters.Contains("1"));
 			Assert.AreEqual(0, validCharsW.NumericCharacters.Count);
@@ -432,19 +284,18 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		///--------------------------------------------------------------------------------------
 		/// <summary>
-		/// Tests initialization from a new-style XML string where the same character occurs in
-		/// both the numeric and punctuation XML lists.
+		/// Tests initialization where the same character occurs in both the numeric and
+		/// punctuation lists.
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
-		public void InitializeFromXml_SameCharacterInNumericAndPunctuationXMLLists()
+		public void Load_SameCharacterInNumericAndPunctuationLists()
 		{
-			string sXml = ksXmlHeader + "<ValidCharacters><WordForming></WordForming>" +
-				"<Numeric>1</Numeric>" +
-				"<Other>1</Other>" +
-				"</ValidCharacters>";
-			var validChars = ValidCharacters.Load(sXml, "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
-			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
+			WritingSystem ws = m_wsManager.Create("en-US");
+			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") {Characters = {"1"}});
+			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {"1"}});
+			ValidCharacters validChars = ValidCharacters.Load(ws, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			var validCharsW = new ValidCharsWrapper(validChars);
 			Assert.AreEqual(0, validCharsW.WordFormingCharacters.Count);
 			Assert.AreEqual(1, validCharsW.NumericCharacters.Count);
 			Assert.IsTrue(validCharsW.NumericCharacters.Contains("1"));
@@ -453,19 +304,18 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		///--------------------------------------------------------------------------------------
 		/// <summary>
-		/// Tests initialization from a new-style XML string where the same character occurs
-		/// more than once in the same list.
+		/// Tests initialization where the same character occurs more than once in the same list.
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
-		public void InitializeFromXml_DuplicateCharacters()
+		public void Load_DuplicateCharacters()
 		{
-			string sXml = ksXmlHeader + "<ValidCharacters><WordForming>a\uFFFCa</WordForming>" +
-				"<Numeric>4\uFFFC4</Numeric>" +
-				"<Other>'\uFFFC'</Other>" +
-				"</ValidCharacters>";
-			var validChars = ValidCharacters.Load(sXml, "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
-			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
+			WritingSystem ws = m_wsManager.Create("en-US");
+			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"a", "a"}});
+			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") {Characters = {"4", "4"}});
+			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {"'", "'"}});
+			ValidCharacters validChars = ValidCharacters.Load(ws, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			var validCharsW = new ValidCharsWrapper(validChars);
 			Assert.AreEqual(1, validCharsW.WordFormingCharacters.Count);
 			Assert.IsTrue(validCharsW.WordFormingCharacters.Contains("a"));
 			Assert.AreEqual(1, validCharsW.NumericCharacters.Count);
@@ -476,42 +326,25 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		///--------------------------------------------------------------------------------------
 		/// <summary>
-		/// Tests initialization from a null string.
-		/// </summary>
-		///--------------------------------------------------------------------------------------
-		[Test]
-		public void InitializeFromNullString()
-		{
-			var validChars = ValidCharacters.Load(string.Empty, "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
-			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
-			Assert.AreEqual(0, validCharsW.WordFormingCharacters.Count);
-			Assert.AreEqual(0, validCharsW.NumericCharacters.Count);
-			Assert.AreEqual(0, validCharsW.OtherCharacters.Count);
-			Assert.AreEqual(ksXmlHeader +
-							"<ValidCharacters><WordForming /><Numeric /><Other /></ValidCharacters>",
-							validChars.XmlString.Replace(Environment.NewLine, string.Empty).Replace(">  <", "><"));
-		}
-
-		///--------------------------------------------------------------------------------------
-		/// <summary>
 		/// Tests the AddCharacter method when attempting to add a duplicate character.
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
 		public void AddCharacter_Duplicate()
 		{
-			var validChars = ValidCharacters.Load(string.Empty, "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
-			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
+			WritingSystem ws1 = m_wsManager.Create("en-US");
+			ValidCharacters validChars = ValidCharacters.Load(ws1, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			var validCharsW = new ValidCharsWrapper(validChars);
 			validChars.AddCharacter("a");
 			validChars.AddCharacter("a");
 			Assert.AreEqual(1, validCharsW.WordFormingCharacters.Count);
 			Assert.IsTrue(validCharsW.WordFormingCharacters.Contains("a"));
 			Assert.AreEqual(0, validCharsW.NumericCharacters.Count);
 			Assert.AreEqual(0, validCharsW.OtherCharacters.Count);
-			Assert.AreEqual(ksXmlHeader +
-							"<ValidCharacters><WordForming>a</WordForming>" +
-							"<Numeric /><Other /></ValidCharacters>",
-							validChars.XmlString.Replace(Environment.NewLine, string.Empty).Replace(">  <", "><"));
+			validChars.SaveTo(ws1);
+			WritingSystem ws2 = m_wsManager.Create("en-US");
+			ws2.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"a"}});
+			Assert.That(ws1.ValueEquals(ws2), Is.True);
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -523,13 +356,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void AddCharacter_DuplicateOfOverriddenWordFormingChar()
 		{
-			string sXml = ksXmlHeader +
-				"<ValidCharacters><WordForming>a\uFFFC-</WordForming>" +
-				"<Numeric/>" +
-				"<Other>{</Other>" +
-				"</ValidCharacters>";
-			var validChars = ValidCharacters.Load(sXml, "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
-			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
+			WritingSystem ws = m_wsManager.Create("en-US");
+			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"a", "-"}});
+			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {"{"}});
+			ValidCharacters validChars = ValidCharacters.Load(ws, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			var validCharsW = new ValidCharsWrapper(validChars);
 			Assert.AreEqual(2, validCharsW.WordFormingCharacters.Count);
 			Assert.AreEqual(0, validCharsW.NumericCharacters.Count);
 			Assert.AreEqual(1, validCharsW.OtherCharacters.Count);
@@ -555,8 +386,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void AddCharacter_SuperscriptedToneNumber()
 		{
-			var validChars = ValidCharacters.Load(string.Empty, "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
-			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
+			WritingSystem ws = m_wsManager.Create("en-US");
+			ValidCharacters validChars = ValidCharacters.Load(ws, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			var validCharsW = new ValidCharsWrapper(validChars);
 			validChars.AddCharacter("\u00b9");
 			validChars.AddCharacter("\u2079");
 			Assert.AreEqual(2, validCharsW.WordFormingCharacters.Count);
@@ -574,8 +406,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void GetNaturalCharType()
 		{
-			var validChars = ValidCharacters.Load(string.Empty, "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
-			DummyCharPropEngine cpe = new DummyCharPropEngine();
+			WritingSystem ws = m_wsManager.Create("en-US");
+			ValidCharacters validChars = ValidCharacters.Load(ws, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			var cpe = new DummyCharPropEngine();
 			ReflectionHelper.SetField(validChars, "m_cpe", cpe);
 			Assert.AreEqual(ValidCharacterType.WordForming,
 							ReflectionHelper.GetResult(validChars, "GetNaturalCharType", (int) 'a'));
@@ -597,11 +430,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void IsWordFormingChar()
 		{
-			var validChars = ValidCharacters.Load(ksXmlHeader +
-				"<ValidCharacters><WordForming>a\uFFFCb\uFFFCc\uFFFCd\uFFFCe\uFFFC#</WordForming>" +
-				"<Numeric></Numeric>" +
-				"<Other></Other>" +
-				"</ValidCharacters>", "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			WritingSystem ws = m_wsManager.Create("en-US");
+			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"a", "b", "c", "d", "e", "#"}});
+			ValidCharacters validChars = ValidCharacters.Load(ws, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			Assert.IsTrue(validChars.IsWordForming('#'));
 			//Assert.IsTrue(validChars.IsWordForming("#"));
 		}
@@ -614,9 +445,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void SortAfterAddSingles()
 		{
-			var validChars = ValidCharacters.Load(string.Empty, "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
-			IWritingSystem ws = m_wsManager.Create("en");
-			validChars.InitSortComparer(ws);
+			WritingSystem ws = m_wsManager.Create("en");
+			ValidCharacters validChars = ValidCharacters.Load(ws, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			validChars.AddCharacter("z");
 			validChars.AddCharacter("c");
 			validChars.AddCharacter("t");
@@ -636,12 +466,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void SortAfterAddRange()
 		{
-			var validChars = ValidCharacters.Load(string.Empty, "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
-			IWritingSystem ws = m_wsManager.Create("en");
-			validChars.InitSortComparer(ws);
-			var list = new List<string>(new[] { "z", "c", "t", "b", "8", "7", "6", "5" });
-
-			validChars.AddCharacters(list);
+			WritingSystem ws = m_wsManager.Create("en");
+			ValidCharacters validChars = ValidCharacters.Load(ws, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			validChars.AddCharacters(new[] { "z", "c", "t", "b", "8", "7", "6", "5" });
 			VerifySortOrder(validChars);
 		}
 
@@ -653,7 +480,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// ------------------------------------------------------------------------------------
 		private void VerifySortOrder(ValidCharacters validChars)
 		{
-			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
+			var validCharsW = new ValidCharsWrapper(validChars);
 			Assert.AreEqual("b", validCharsW.WordFormingCharacters[0]);
 			Assert.AreEqual("c", validCharsW.WordFormingCharacters[1]);
 			Assert.AreEqual("t", validCharsW.WordFormingCharacters[2]);
@@ -678,9 +505,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// ------------------------------------------------------------------------------------
 		private static void VerifyDefaultWordFormingCharacters(ValidCharacters validChars)
 		{
-			string[] expectedWordFormingChars = (string[])ReflectionHelper.GetField(
-				typeof(ValidCharacters), "s_defaultWordformingChars");
-			ValidCharsWrapper validCharsW = new ValidCharsWrapper(validChars);
+			var expectedWordFormingChars = (string[]) ReflectionHelper.GetField(
+				typeof(ValidCharacters), "DefaultWordformingChars");
+			var validCharsW = new ValidCharsWrapper(validChars);
 			Assert.AreEqual(expectedWordFormingChars, validCharsW.WordFormingCharacters.ToArray(),
 				"We expect the load method to have a fallback to the default word-forming characters");
 			Assert.AreEqual(0, validCharsW.NumericCharacters.Count);

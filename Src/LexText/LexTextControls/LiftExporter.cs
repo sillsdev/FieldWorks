@@ -13,7 +13,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
-using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
@@ -53,7 +52,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private readonly FdoCache m_cache;
 		private readonly IFwMetaDataCacheManaged m_mdc;
-		private readonly IWritingSystemManager m_wsManager;
+		private readonly WritingSystemManager m_wsManager;
 		private readonly int m_wsEn;
 		private readonly int m_wsBestAnalVern;
 		private Dictionary<Guid, string> m_CmPossibilityListsReferencedByFields = new Dictionary<Guid, string>();
@@ -201,7 +200,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (!Directory.Exists(sDirectory))
 				Directory.CreateDirectory(sDirectory);
 
-			var wss = new HashSet<IWritingSystem>(m_cache.ServiceLocator.WritingSystems.AllWritingSystems);
+			var wss = new HashSet<WritingSystem>(m_cache.ServiceLocator.WritingSystems.AllWritingSystems);
 			wss.UnionWith(from index in m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances()
 						  where !String.IsNullOrEmpty(index.WritingSystem)
 						  select m_cache.ServiceLocator.WritingSystemManager.Get(index.WritingSystem));
@@ -1559,8 +1558,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private bool IsVoiceWritingSystem(int wsString)
 		{
-			var wsEngine = m_wsManager.get_EngineOrNull(wsString);
-			return wsEngine is WritingSystemDefinition && ((WritingSystemDefinition)wsEngine).IsVoice;
+			var wsEngine = (WritingSystem) m_wsManager.get_EngineOrNull(wsString);
+			return wsEngine.IsVoice;
 		}
 
 		private void WriteTrait(TextWriter w, string sName, IMultiAccessorBase multi, int wsWant)

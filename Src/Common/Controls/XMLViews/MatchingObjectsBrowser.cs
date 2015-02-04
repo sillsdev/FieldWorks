@@ -157,7 +157,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="searchEngine">The search engine.</param>
 		/// <param name="reversalWs">The reversal writing system.</param>
 		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, Mediator mediator, XmlNode configNode,
-			SearchEngine searchEngine, IWritingSystem reversalWs)
+			SearchEngine searchEngine, WritingSystem reversalWs)
 		{
 			CheckDisposed();
 
@@ -270,7 +270,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		#region Other methods
 
-		private void CreateBrowseViewer(XmlNode configNode, IWritingSystem reversalWs)
+		private void CreateBrowseViewer(XmlNode configNode, WritingSystem reversalWs)
 		{
 			m_listPublisher = new ObjectListPublisher(m_cache.DomainDataByFlid as ISilDataAccessManaged, ListFlid);
 			m_bvMatches = new BrowseViewer(configNode, m_cache.LanguageProject.LexDbOA.Hvo, ListFlid, m_cache, m_mediator,

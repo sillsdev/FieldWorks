@@ -143,7 +143,7 @@ namespace SIL.FieldWorks.TE
 			set
 			{
 				m_btVc.BackTranslationWS = value;
-				IWritingSystem defWs = m_cache.ServiceLocator.WritingSystemManager.Get(value);
+				WritingSystem defWs = m_cache.ServiceLocator.WritingSystemManager.Get(value);
 				m_btVc.RightToLeft = defWs.RightToLeftScript;
 			}
 		}

@@ -19,6 +19,7 @@ using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.TE
 {
@@ -438,7 +439,7 @@ namespace SIL.FieldWorks.TE
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
-			Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.DefaultFontName = "Times New Roman";
+			Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.DefaultFont = new FontDefinition("Times New Roman");
 		}
 
 		/// ------------------------------------------------------------------------------------

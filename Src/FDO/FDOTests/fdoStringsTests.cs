@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.MultiFooTests
 					tsf.MakeString("Proyecto de prueba: FDO: desc", spanishWsHvo));
 
 				// Add Spanish as Anal WS.
-				IWritingSystem span = Cache.ServiceLocator.WritingSystemManager.Get(spanishWsHvo);
+				WritingSystem span = Cache.ServiceLocator.WritingSystemManager.Get(spanishWsHvo);
 				lp.AddToCurrentAnalysisWritingSystems(span);
 			});
 		}
@@ -100,7 +100,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.MultiFooTests
 		[Test]
 		public void MissingWsTest()
 		{
-			IWritingSystem fr = Cache.ServiceLocator.WritingSystemManager.Get("fr");
+			WritingSystem fr = Cache.ServiceLocator.WritingSystemManager.Get("fr");
 			var phantom = Cache.LangProject.WorldRegion.get_String(fr.Handle);
 			Assert.IsTrue(string.IsNullOrEmpty(phantom.Text));
 
@@ -142,7 +142,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.MultiFooTests
 			Assert.AreEqual(2, Cache.LangProject.Description.StringCount, "Wrong number of alternatives for Cache.LangProject.DescriptionAccessor");
 
 			// Create a good string.
-			IWritingSystem german = Cache.ServiceLocator.WritingSystemManager.Get("de");
+			WritingSystem german = Cache.ServiceLocator.WritingSystemManager.Get("de");
 
 			var factory = Cache.TsStrFactory;
 			var tisb = factory.GetIncBldr();
@@ -361,9 +361,9 @@ namespace SIL.FieldWorks.FDO.CoreTests.MultiFooTests
 		#region data members
 		IMultiAccessorBase m_multi;
 		IText m_text;
-		private IWritingSystem m_wsGerman;
-		private IWritingSystem m_wsFrench;
-		private IWritingSystem m_wsSpanish;
+		private WritingSystem m_wsGerman;
+		private WritingSystem m_wsFrench;
+		private WritingSystem m_wsSpanish;
 		#endregion
 
 		/// ------------------------------------------------------------------------------------

@@ -73,13 +73,13 @@ namespace SIL.FieldWorks.IText
 						new FeatureSymbol("segBdry", "Segment"),
 						new FeatureSymbol("wordBdry", "Word"))
 				};
-			foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
+			foreach (WritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
 			{
 				m_featSys.Add(new StringFeature(string.Format("entry-{0}", ws.Handle)) {Description = string.Format("Entry-{0}", ws.Abbreviation)});
 				m_featSys.Add(new StringFeature(string.Format("form-{0}", ws.Handle)) {Description = string.Format("Form-{0}", ws.Abbreviation)});
 			}
 
-			foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+			foreach (WritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 				m_featSys.Add(new StringFeature(string.Format("gloss-{0}", ws.Handle)) {Description = string.Format("Gloss-{0}", ws.Abbreviation)});
 
 			m_featSys.Add(new SymbolicFeature("cat", m_cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().AllInstances()

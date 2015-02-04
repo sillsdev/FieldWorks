@@ -1132,13 +1132,17 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 		{
 			get
 			{
-				IWritingSystem ws = CurrVernWritingSystem;
+				WritingSystem ws = CurrVernWritingSystem;
 				if (ws == null)
 					return true;
 
+#if WS_FIX
 				MatchedPairList pairs = MatchedPairList.Load(ws.MatchedPairs,
 					ws.DisplayLabel);
 				return (pairs == null || pairs.Count == 0);
+#else
+				return true;
+#endif
 			}
 		}
 
@@ -1151,13 +1155,17 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 		{
 			get
 			{
-				IWritingSystem ws = CurrVernWritingSystem;
+				WritingSystem ws = CurrVernWritingSystem;
 				if (ws == null)
 					return true;
 
+#if WS_FIX
 				PuncPatternsList patterns = PuncPatternsList.Load(ws.PunctuationPatterns,
 					ws.DisplayLabel);
 				return (patterns == null || patterns.Count == 0);
+#else
+				return true;
+#endif
 			}
 		}
 
@@ -1171,10 +1179,11 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 		{
 			get
 			{
-				IWritingSystem ws = CurrVernWritingSystem;
+				WritingSystem ws = CurrVernWritingSystem;
 				if (ws == null)
 					return true;
 
+#if WS_FIX
 				QuotationMarksList qmarks = QuotationMarksList.Load(ws.QuotationMarks,
 					ws.DisplayLabel);
 				foreach (QuotationMarks qm in qmarks.QMarksList)
@@ -1184,6 +1193,9 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 				}
 
 				return false;
+#else
+				return true;
+#endif
 			}
 		}
 
@@ -1192,7 +1204,7 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 		/// Gets the current vernacular writing system from the cache.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private IWritingSystem CurrVernWritingSystem
+		private WritingSystem CurrVernWritingSystem
 		{
 			get
 			{

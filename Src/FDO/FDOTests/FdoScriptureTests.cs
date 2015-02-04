@@ -296,7 +296,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	{
 		private static Guid kCheckId1 = Guid.NewGuid();
 		private static Guid kCheckId2 = Guid.NewGuid();
-		private IWritingSystem m_wsGerman;
+		private WritingSystem m_wsGerman;
 		private IFdoServiceLocator m_servloc;
 
 		#region Setup
@@ -1824,6 +1824,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			}
 		}
 
+#if WS_FIX
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests GetText and TextTokens for a different writing system.
@@ -1835,11 +1836,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			// Set valid characters for each writing system to a different set of three characters.
 			// The set of valid characters will be 'ABC' for the first writing system, 'DEF' for
 			// the second and so on.
-			IWritingSystemManager wsManager = Cache.ServiceLocator.WritingSystemManager;
+			WritingSystemManager wsManager = Cache.ServiceLocator.WritingSystemManager;
 			var validChars = new List<string>();
 			int iWs = 0;
 			const int numValidChars = 3;
-			foreach (IWritingSystem ws in wsManager.LocalWritingSystems)
+			foreach (WritingSystem ws in wsManager.LocalWritingSystems)
 			{
 				var strBldr = new StringBuilder();
 				for (int iChar = 0; iChar < numValidChars; iChar++)
@@ -1864,7 +1865,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			iWs = 0;
 			// Now confirm that the valid characters for the writing systems were set correctly.
-			foreach (IWritingSystem ws in wsManager.LocalWritingSystems)
+			foreach (WritingSystem ws in wsManager.LocalWritingSystems)
 			{
 				string validCharsParam = (ws.Handle == Cache.DefaultVernWs) ?
 					"ValidCharacters" : "ValidCharacters_" + ws.Id;
@@ -1872,6 +1873,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				iWs++;
 			}
 		}
+#endif
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

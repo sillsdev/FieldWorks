@@ -247,20 +247,11 @@ Description:
 		// to prevent this.
 		[propget] HRESULT SpellCheckingId(
 			[out, retval] BSTR *pbstr);
-		// Set the name of the spelling dictionary to use for this writing system.
-		// Eventually we plan to persist this fully; for now, it is useful only for setting
-		// to null to disable it for this session.
-		[propput] HRESULT SpellCheckingId(
-			[in] BSTR bstr);
 
 		// Get the primary direction, used for complex embedding; may have fragments like
 		// numbers that go the other way internally.
 		[propget] HRESULT RightToLeftScript(
 			[out, retval] ComBool * pfRightToLeft);
-		// Set the primary direction, used for complex embedding; may have fragments like
-		// numbers that go the other way internally.
-		[propput] HRESULT RightToLeftScript(
-			[in] ComBool fRightToLeft);
 
 		// Get the engine used to render text with the specified properties. At present only
 		// font, bold, and italic properties are significant.
@@ -274,10 +265,6 @@ Description:
 		// Graphite features.
 		[propget] HRESULT DefaultFontFeatures(
 			[out, retval] BSTR * pbstr);
-		// Set the "serif font variation" string which is used, for instance, to specify
-		// Graphite features.
-		[propput] HRESULT DefaultFontFeatures(
-			[in] BSTR bstr);
 
 		// Get the default serif font; usually used for the main body of text in a document.
 		[propget] HRESULT DefaultFontName(
@@ -294,22 +281,6 @@ Description:
 		// interpret the magic font names.
 		HRESULT InterpretChrp(
 			[in, out] LgCharRenderProps * pchrp);
-
-		// A Keyman keyboard name that should be used to invoke the appropriate
-		// Keyman keyboard if the writing sytem requires it. Leave as empty string
-		// for non-Keyman IMs.
-		[propget] HRESULT Keyboard(
-			[out, retval] BSTR * pbstr);
-		[propput] HRESULT Keyboard(
-			[in] BSTR bstr);
-
-		// The current input language. By default this is derived from LCID, but it can be
-		// overridden temporarily (for one session). Note that this is not persisted.
-		[propget] HRESULT CurrentLCID(
-			[out, retval] int * pnLangId);
-		// Set the current (temporary) LangId for this writing system.
-		[propput] HRESULT CurrentLCID(
-			[in] int nLangId);
 	};
 
 	//:>****************************************************************************************

@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			{
 				if (m_cache.LangProject.DefaultVernacularWritingSystem == null)
 				{
-					List<IWritingSystem> rglgws = m_cache.ServiceLocator.WritingSystemManager.LocalWritingSystems.ToList();
+					List<WritingSystem> rglgws = m_cache.ServiceLocator.WritingSystemManager.LocalWritingSystems.ToList();
 					if (rglgws.Count > 0)
 					{
 						m_cache.DomainDataByFlid.BeginNonUndoableTask();
@@ -384,7 +384,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			{
 			StringBuilder sbLog = new StringBuilder();
 			xid.ImportData(rdr, new StringWriter(sbLog), null);
-			IWritingSystem wsEn = m_cache.ServiceLocator.WritingSystemManager.Get("en");
+			WritingSystem wsEn = m_cache.ServiceLocator.WritingSystemManager.Get("en");
 			Assert.AreEqual(1, m_cache.LangProject.LexDbOA.ReversalIndexesOC.Count);
 			IReversalIndex revIdx = m_cache.LangProject.LexDbOA.ReversalIndexesOC.ToArray()[0];
 			IMultiUnicode mu = revIdx.Name;

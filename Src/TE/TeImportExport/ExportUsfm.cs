@@ -832,7 +832,7 @@ namespace SIL.FieldWorks.TE
 
 				for (int i = 0; i < numWS; i++)
 				{
-					IWritingSystem ws = m_cache.ServiceLocator.WritingSystemManager.Get(m_requestedAnalWS[i]);
+					WritingSystem ws = m_cache.ServiceLocator.WritingSystemManager.Get(m_requestedAnalWS[i]);
 					m_icuLocales[i] = ws.IcuLocale;
 				}
 			}
@@ -3257,7 +3257,7 @@ namespace SIL.FieldWorks.TE
 		{
 			if (m_exportParatextProjectFiles)
 			{
-				IWritingSystem ws = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+				WritingSystem ws = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 				m_UsfmStyFileAccessor = new UsfmStyFileAccessor(ws.RightToLeftScript,
 					m_cache.ServiceLocator.WritingSystemManager);
 				ReadUsfmStyFile();
@@ -3425,7 +3425,7 @@ namespace SIL.FieldWorks.TE
 
 			int ws = m_exportScripture || m_nonInterleavedBtWs < 0 ?
 				m_cache.DefaultVernWs : m_nonInterleavedBtWs;
-			IWritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
+			WritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
 			string wsName = wsObj.DisplayLabel;
 			string lpName = m_cache.ProjectId.Name;
 			string styleFileName = lpName + ".sty";

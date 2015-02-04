@@ -29,7 +29,7 @@ namespace XMLViewsTests
 	{
 		private RealDataCache m_sda;
 		/// <summary>Writing System Manager (reset for each test)</summary>
-		protected IWritingSystemManager m_wsManager;
+		protected WritingSystemManager m_wsManager;
 
 		private int m_hvoLexDb; // root
 		private int m_hvoKick; // one entry.
@@ -67,7 +67,7 @@ namespace XMLViewsTests
 			//m_cache.TextParagraphsFlid = kflidTextParas;
 
 			Debug.Assert(m_wsManager == null);
-			m_wsManager = Cache.ServiceLocator.GetInstance<IWritingSystemManager>();
+			m_wsManager = Cache.ServiceLocator.WritingSystemManager;
 			m_sda.WritingSystemFactory = m_wsManager;
 
 			m_wsAnal = Cache.DefaultAnalWs;

@@ -861,7 +861,7 @@ namespace SIL.FieldWorks.Common.Controls
 					// The default case ("owner") is handled by the caller setting TextParamHvo.
 					if (sTextParam == "vernws")
 					{
-						IWritingSystem co = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+						WritingSystem co = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 						m_sTextParam = co.DisplayLabel;
 					}
 				}
@@ -1264,7 +1264,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private void GenerateDefaultPage(ITsString tssTitle, ITsString tssDesc)
 		{
-			IWritingSystem ws = m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
+			WritingSystem ws = m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 			string userFont = ws.DefaultFontName;
 
 			string title, titleFont;
@@ -2421,7 +2421,7 @@ namespace SIL.FieldWorks.Common.Controls
 			CheckDisposed();
 
 			var node = new ChooserCommandNode(cmd);
-			IWritingSystem defAnalWS = cmd.Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+			WritingSystem defAnalWS = cmd.Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			string sFontName = defAnalWS.DefaultFontName;
 
 			// TODO: need to get analysis font's size

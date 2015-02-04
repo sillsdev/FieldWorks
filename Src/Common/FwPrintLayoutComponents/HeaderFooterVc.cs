@@ -78,7 +78,7 @@ namespace SIL.FieldWorks.Common.PrintLayout
 			m_page = page;
 			m_printDateTime = printDateTime;
 			m_cache = cache;
-			IWritingSystem defWs = m_cache.ServiceLocator.WritingSystemManager.Get(m_wsDefault);
+			WritingSystem defWs = m_cache.ServiceLocator.WritingSystemManager.Get(m_wsDefault);
 			RightToLeft = defWs.RightToLeftScript;
 		}
 

@@ -52,15 +52,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="obj">CmObject that is being displayed.</param>
-		/// <param name="flid">The field identifier for the attribute we are displaying.</param>
-		/// // cache, obj, flid, node, persistenceProvider, stringTbl
 		public AtomicReferencePOSSlice(FdoCache cache, ICmObject obj, int flid,
 			IPersistenceProvider persistenceProvider, Mediator mediator)
 			: base(new UserControl(), cache, obj, flid)
 		{
 			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
-			IWritingSystem defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+			WritingSystem defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			m_tree = new TreeCombo();
 			m_tree.WritingSystemFactory = cache.WritingSystemFactory;
 			m_tree.WritingSystemCode = defAnalWs.Handle;
@@ -278,12 +275,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	/// </summary>
 	public class AutomicReferencePOSDisabledSlice : AtomicReferencePOSSlice
 	{
-				/// <summary>
+		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="obj">CmObject that is being displayed.</param>
-		/// <param name="flid">The field identifier for the attribute we are displaying.</param>
-		/// // cache, obj, flid, node, persistenceProvider, stringTbl
 		public AutomicReferencePOSDisabledSlice(FdoCache cache, ICmObject obj, int flid,
 			IPersistenceProvider persistenceProvider, Mediator mediator)
 			: base(cache, obj, flid, persistenceProvider, mediator)

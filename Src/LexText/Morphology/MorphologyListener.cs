@@ -26,6 +26,7 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.IText;
 using SIL.Utils;
+using SIL.WritingSystems;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
@@ -338,11 +339,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			// to point to the appropriate Locale ID. Do this BEFORE updating the spelling dictionaries,
 			// otherwise, the update won't see that there is any dictionary set to update.
 			var cache = Cache;
-			foreach (IWritingSystem wsObj in cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
+			foreach (WritingSystem wsObj in cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
 			{
 				// This allows it to try to find a dictionary, but doesn't force one to exist.
-				if (wsObj.SpellCheckingId == null || wsObj.SpellCheckingId == "<None>") // LT-13556 new langs were null here
-					wsObj.SpellCheckingId = wsObj.Id.Replace('-', '_');
+				if (wsObj.SpellCheckDictionary == null) // LT-13556 new langs were null here
+					wsObj.SpellCheckDictionary = new SpellCheckDictionaryDefinition(wsObj.LanguageTag, SpellCheckDictionaryFormat.Hunspell);
 			}
 			// This forces the default vernacular WS spelling dictionary to exist, and updates
 			// all existing ones.

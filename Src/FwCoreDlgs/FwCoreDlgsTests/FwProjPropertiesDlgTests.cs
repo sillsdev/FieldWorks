@@ -283,7 +283,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void SimulateAnalAddingWs(IWritingSystem ws)
+		public void SimulateAnalAddingWs(WritingSystem ws)
 		{
 			CheckDisposed();
 
@@ -296,7 +296,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void SimulateVernAddingWs(IWritingSystem ws)
+		public void SimulateVernAddingWs(WritingSystem ws)
 		{
 			CheckDisposed();
 
@@ -347,7 +347,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
-			IWritingSystem ws;
+			WritingSystem ws;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("en-fonipa-x-etic", out ws);
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("es", out ws);
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("fr", out ws);
@@ -371,7 +371,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void SetupVernWss()
 		{
 			IWritingSystemContainer wsContainer = Cache.ServiceLocator.WritingSystems;
-			IWritingSystemManager wsManager = Cache.ServiceLocator.WritingSystemManager;
+			WritingSystemManager wsManager = Cache.ServiceLocator.WritingSystemManager;
 			//wsContainer.VernacularWritingSystems.Clear();
 			//wsContainer.CurrentVernacularWritingSystems.Clear();
 			// Setup so the CurVernWssRS returns the proper sequence.
@@ -394,7 +394,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void SetupAnalysisWss()
 		{
 			IWritingSystemContainer wsContainer = Cache.ServiceLocator.WritingSystems;
-			IWritingSystemManager wsManager = Cache.ServiceLocator.WritingSystemManager;
+			WritingSystemManager wsManager = Cache.ServiceLocator.WritingSystemManager;
 			//wsContainer.AnalysisWritingSystems.Clear();
 			wsContainer.AnalysisWritingSystems.Add(wsManager.Get("en"));
 			wsContainer.AnalysisWritingSystems.Add(wsManager.Get("en-fonipa-x-etic"));
@@ -450,7 +450,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			foreach (string name in wsnames)
 			{
-				bool found = list.CheckedItems.Cast<IWritingSystem>().Any(ws => name == ws.ToString());
+				bool found = list.CheckedItems.Cast<WritingSystem>().Any(ws => name == ws.ToString());
 
 				if (shouldBeChecked)
 					Assert.IsTrue(found, name + " not found in checked items list.");
@@ -661,7 +661,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.VernWsMoveDownButton.Enabled = false;
 
 			// Add a new writing system to the cache.
-			IWritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Set("en-US");
+			WritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Set("en-US");
 
 			m_dlg.SimulateVernAddingWs(ws);
 
@@ -884,19 +884,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.AnalWsMoveDownButton.Enabled = false;
 
 			// Add a new writing system to the cache.
-			IWritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Set("zh-CN");
+			WritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Set("zh-CN");
 
 			m_dlg.SimulateAnalAddingWs(ws);
 
 			VerifyWritingSystemOrder(m_dlg.AnalWsList,
-				new[] { "English", "English (Phonetic)", "French", "Spanish", "Chinese (CN)" });
+				new[] { "English", "English (Phonetic)", "French", "Spanish", "Chinese (China)" });
 
 			// Verify that the new writing system is the selected one.
 			Assert.AreEqual(ws, m_dlg.AnalWsList.SelectedItem, "New writing system is not selected.");
 
 			// Verify that the correct items are checked.
 			VerifyCheckedWritingSystems(m_dlg.AnalWsList,
-				new[] { "English (Phonetic)", "Chinese (CN)", "English" }, true);
+				new[] { "English (Phonetic)", "Chinese (China)", "English" }, true);
 
 			// Verify that the correct items are not checked.
 			VerifyCheckedWritingSystems(m_dlg.AnalWsList,
@@ -945,7 +945,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.AreEqual("English (Phonetic)", Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems[2].ToString());
 
 			// Verify the list of cached writing systems.
-			foreach (IWritingSystem ws in Cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
+			foreach (WritingSystem ws in Cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
 			{
 				Assert.IsTrue(ws.ToString() == "French" || ws.ToString() == "English" ||
 					ws.ToString() == "Spanish" || ws.ToString() == "English (Phonetic)");

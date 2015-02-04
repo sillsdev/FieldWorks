@@ -9,6 +9,7 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
@@ -596,7 +597,7 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 			Debug.Assert(addedCharError.CheckId == StandardCheckIds.kguidCharacters,
 				"Checking error should be from the valid characters check");
 
-			IWritingSystem ws = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			WritingSystem ws = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			if (TsStringUtils.IsCharacterDefined(addedCharError.MyNote.CitedText))
 			{
 				using (new WaitCursor(Parent))
@@ -606,7 +607,7 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 					if (validChars != null)
 					{
 						validChars.AddCharacter(addedCharError.MyNote.CitedText);
-						ws.ValidChars = validChars.XmlString;
+						validChars.SaveTo(ws);
 						m_cache.ServiceLocator.WritingSystemManager.Save();
 					}
 					// Mark all data grid view rows containing the newly-defined valid character to irrelevant.
@@ -823,9 +824,9 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 		/// ------------------------------------------------------------------------------------
 		private List<string> GetValidCharacters()
 		{
-			IWritingSystem ws = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			WritingSystem ws = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			ValidCharacters validChars = ValidCharacters.Load(ws, ValidCharsLoadException, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
-			return (validChars != null ? validChars.AllCharacters : null);
+			return (validChars != null ? validChars.AllCharacters.ToList() : null);
 		}
 
 		#endregion

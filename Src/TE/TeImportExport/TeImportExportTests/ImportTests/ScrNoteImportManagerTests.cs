@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		{
 			base.FixtureSetup();
 
-			IWritingSystem wsEs;
+			WritingSystem wsEs;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("es", out wsEs);
 			m_wsSpanish = wsEs.Handle;
 

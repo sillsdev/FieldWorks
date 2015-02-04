@@ -539,10 +539,10 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			if (string.IsNullOrEmpty(wssStr))
 				return;
 
-			IWritingSystemManager wsManager = m_cache.ServiceLocator.WritingSystemManager;
+			WritingSystemManager wsManager = m_cache.ServiceLocator.WritingSystemManager;
 			foreach (string wsId in wssStr.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries))
 			{
-				IWritingSystem ws;
+				WritingSystem ws;
 				wsManager.GetOrSet(wsId, out ws);
 			}
 		}
@@ -556,14 +556,16 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 			var globalStore = new GlobalFileWritingSystemStore();
 			string storePath = Path.Combine(ProjectId.SharedProjectFolder, FdoFileHelper.ksWritingSystemsDir);
-			var wsManager = (PalasoWritingSystemManager) m_cache.ServiceLocator.WritingSystemManager;
+			WritingSystemManager wsManager = m_cache.ServiceLocator.WritingSystemManager;
 			wsManager.GlobalWritingSystemStore = globalStore;
 			wsManager.LocalWritingSystemStore = new LocalFileWritingSystemStore(storePath, globalStore);
+#if WS_FIX
 			wsManager.LocalWritingSystemStore.LocalKeyboardSettings = Settings.Default.LocalKeyboards;
+#endif
 
 			// Writing systems are not "modified" when the system is freshly-initialized
 			foreach (var ws in wsManager.LocalWritingSystemStore.AllWritingSystems)
-				ws.Modified = false;
+				ws.AcceptChanges();
 		}
 
 		#region IDataSetup implementation

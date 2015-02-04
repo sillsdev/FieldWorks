@@ -58,8 +58,6 @@ namespace SIL.FieldWorks.FdoUi
 		/// Inform the editor that the text of the tree changed (without changing the selected index...
 		/// that needs to be updated).
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		public void ControlTextChanged()
 		{
 			if (m_pOSPopupTreeManager == null)

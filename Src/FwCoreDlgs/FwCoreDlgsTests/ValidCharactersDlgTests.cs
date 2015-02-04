@@ -8,19 +8,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
+using System.Linq;
 using NUnit.Framework;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -204,212 +201,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.AreEqual(0, m_dlg.BeepCount);
 		}
 
-		#region Dummy objects for InvokeFromNewProject test (FWR-3660)
-		private class Fwr3660ValidCharactersDlg: ValidCharactersDlg
+		private class Fwr3660ValidCharactersDlg : ValidCharactersDlg
 		{
 			public Fwr3660ValidCharactersDlg(FdoCache cache, IWritingSystemContainer container,
-				IWritingSystem ws)
+				WritingSystem ws)
 				: base(cache, container, null, null, ws, "dymmy")
 			{
 			}
 		}
-
-		private class DummyWritingSystem: IWritingSystem
-		{
-
-			#region IWritingSystem Members
-
-			public string Abbreviation { get; set; }
-
-			public Palaso.WritingSystems.Collation.ICollator Collator
-			{
-				get { throw new NotImplementedException(); }
-			}
-
-			public void Copy(IWritingSystem source)
-			{
-				throw new NotImplementedException();
-			}
-
-			public string DisplayLabel
-			{
-				get { return string.Empty; }
-			}
-
-			public string IcuLocale
-			{
-				get { throw new NotImplementedException(); }
-			}
-
-			public string RFC5646
-			{
-				get { throw new NotImplementedException(); }
-			}
-
-			public bool IsGraphiteEnabled { get; set; }
-
-			public LanguageSubtag LanguageSubtag { get; set; }
-
-			public string LegacyMapping { get; set; }
-
-			public bool MarkedForDeletion { get; set; }
-
-			public string MatchedPairs { get; set; }
-
-			public bool Modified { get; set; }
-
-			public string PunctuationPatterns { get; set; }
-
-			public string QuotationMarks { get; set; }
-
-			public RegionSubtag RegionSubtag { get; set; }
-
-			public ScriptSubtag ScriptSubtag { get; set; }
-
-			public string SortRules { get; set; }
-
-			public Palaso.WritingSystems.WritingSystemDefinition.SortRulesType SortUsing { get; set; }
-
-			public string ValidChars { get; set; }
-
-			public bool ValidateCollationRules(out string message)
-			{
-				throw new NotImplementedException();
-			}
-
-			public VariantSubtag VariantSubtag { get; set; }
-
-			public void WriteLdml(System.Xml.XmlWriter writer)
-			{
-				throw new NotImplementedException();
-			}
-
-			public IWritingSystemManager WritingSystemManager
-			{
-				get { throw new NotImplementedException(); }
-			}
-
-			#endregion
-
-			#region ILgWritingSystem Members
-
-			public ILgCharacterPropertyEngine CharPropEngine
-			{
-				get { throw new NotImplementedException(); }
-			}
-
-			public int CurrentLCID { get; set; }
-
-			public string DefaultFontFeatures { get; set; }
-
-			public string DefaultFontName
-			{
-				get { return "Times New Roman"; }
-				set { throw new NotImplementedException(); }
-			}
-
-			public int Handle
-			{
-				get { throw new NotImplementedException(); }
-			}
-
-			public string ISO3
-			{
-				get { throw new NotImplementedException(); }
-			}
-
-			public string Id
-			{
-				get { return "en"; }
-			}
-
-			public void InterpretChrp(ref LgCharRenderProps chrp)
-			{
-				throw new NotImplementedException();
-			}
-
-			public string Keyboard { get; set; }
-
-			public int LCID { get; set; }
-
-			public string LanguageName
-			{
-				get { throw new NotImplementedException(); }
-			}
-
-			public bool RightToLeftScript { get; set; }
-
-			public string SpellCheckingId { get; set; }
-
-			public IRenderEngine get_Renderer(IVwGraphics vg)
-			{
-				throw new NotImplementedException();
-			}
-
-			#endregion
-		}
-
-		private class DummyWritingSystemContainer: IWritingSystemContainer
-		{
-
-			public DummyWritingSystemContainer()
-			{
-				DefaultVernacularWritingSystem = new DummyWritingSystem();
-			}
-			#region IWritingSystemContainer Members
-
-			public void AddToCurrentAnalysisWritingSystems(IWritingSystem ws)
-			{
-				throw new NotImplementedException();
-			}
-
-			public void AddToCurrentVernacularWritingSystems(IWritingSystem ws)
-			{
-				throw new NotImplementedException();
-			}
-
-			public IEnumerable<IWritingSystem> AllWritingSystems
-			{
-				get { throw new NotImplementedException(); }
-			}
-
-			public ICollection<IWritingSystem> AnalysisWritingSystems
-			{
-				get { throw new NotImplementedException(); }
-			}
-
-			public IList<IWritingSystem> CurrentAnalysisWritingSystems
-			{
-				get { throw new NotImplementedException(); }
-			}
-
-			public IList<IWritingSystem> CurrentPronunciationWritingSystems
-			{
-				get { throw new NotImplementedException(); }
-			}
-
-			public IList<IWritingSystem> CurrentVernacularWritingSystems
-			{
-				get { throw new NotImplementedException(); }
-			}
-
-			public IWritingSystem DefaultAnalysisWritingSystem { get; set; }
-
-			public IWritingSystem DefaultPronunciationWritingSystem
-			{
-				get { throw new NotImplementedException(); }
-			}
-
-			public IWritingSystem DefaultVernacularWritingSystem { get; set; }
-
-			public ICollection<IWritingSystem> VernacularWritingSystems
-			{
-				get { throw new NotImplementedException(); }
-			}
-
-			#endregion
-		}
-		#endregion
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -420,8 +219,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Test]
 		public void InvokeFromNewProject()
 		{
-			using (var dlg = new Fwr3660ValidCharactersDlg(null, new DummyWritingSystemContainer(),
-				new DummyWritingSystem()))
+			var wsManager = new WritingSystemManager();
+			WritingSystem ws = wsManager.Create("en");
+			var wsContainer = new MemoryWritingSystemContainer(Enumerable.Empty<WritingSystem>(), new[] {ws}, Enumerable.Empty<WritingSystem>(),
+				new[] {ws}, Enumerable.Empty<WritingSystem>()) {DefaultVernacularWritingSystem = ws};
+			using (var dlg = new Fwr3660ValidCharactersDlg(null, wsContainer, ws))
 			{
 				Assert.NotNull(dlg);
 			}
@@ -429,7 +231,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	}
 
 	#region DummyValidCharactersDlg
-	internal class DummyValidCharactersDlg: ValidCharactersDlg
+	internal class DummyValidCharactersDlg : ValidCharactersDlg
 	{
 		#region Member variables
 		public List<string> MessageBoxText { get; set; }

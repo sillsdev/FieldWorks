@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="ws">The writing system to use.</param>
 		/// <returns>The wordform, or null if an exception was thrown by the database accessors.</returns>
 		/// ------------------------------------------------------------------------------------
-		public static IWfiWordform FindOrCreateWordform(FdoCache cache, string form, IWritingSystem ws)
+		public static IWfiWordform FindOrCreateWordform(FdoCache cache, string form, WritingSystem ws)
 		{
 			Debug.Assert(!string.IsNullOrEmpty(form));
 			return FindOrCreateWordform(cache, CreateWordformTss(form, ws.Handle));
@@ -116,7 +116,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			SpellingHelper.EnsureDictionary(cache.DefaultVernWs, lgwsFactory);
 
 			// Make all existing spelling dictionaries give as nearly as possible the right answers.
-			foreach (IWritingSystem wsObj in cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
+			foreach (WritingSystem wsObj in cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
 			{
 				int ws = wsObj.Handle;
 				ConformOneSpellingDictToWordforms(ws, cache);
@@ -140,7 +140,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			var words = new List<string>();
 			foreach (IWfiWordform wf in servloc.GetInstance<IWfiWordformRepository>().AllInstances())
 			{
-				if (wf.SpellingStatus != (int)SpellingStatusStates.correct)
+				if (wf.SpellingStatus != (int) SpellingStatusStates.correct)
 					continue; // don't put it in the list of correct words
 				string wordform = wf.Form.get_String(ws).Text;
 				if (!string.IsNullOrEmpty(wordform))
@@ -158,10 +158,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		public static void DisableVernacularSpellingDictionary(FdoCache cache)
 		{
-			IFdoServiceLocator servloc = cache.ServiceLocator;
-			var factory = servloc.GetInstance<ILgWritingSystemFactory>();
-			foreach (IWritingSystem ws in cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
-				ws.SpellCheckingId = "<None>";
+			foreach (WritingSystem ws in cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
+				ws.SpellCheckDictionary = null;
 		}
 
 		/// <summary>

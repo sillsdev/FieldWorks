@@ -794,7 +794,7 @@ namespace SIL.FieldWorks.IText
 				return false;
 			if (m_proj == null)
 				return false;
-			IWritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
+			WritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
 			switch (wsConfig)
 			{
 				case WritingSystemServices.kwsAnal:
@@ -1290,7 +1290,7 @@ namespace SIL.FieldWorks.IText
 				}
 				else
 				{
-					IWritingSystem wsAnalysis = cache.ServiceLocator.WritingSystemManager.Get(m_ws);
+					WritingSystem wsAnalysis = cache.ServiceLocator.WritingSystemManager.Get(m_ws);
 					label = wsAnalysis.Abbreviation;
 				}
 				ITsStrBldr tsb = TsStrBldrClass.Create();

@@ -9,14 +9,12 @@
 // </remarks>
 
 using System;
-using System.Drawing;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
 using System.Xml;
-using Palaso.WritingSystems;
+using SIL.WritingSystems;
 using XCore;
 using System.Text;
 using SIL.CoreImpl;
@@ -27,8 +25,6 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.FwUtils;
-using System.Xml.Xsl;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -205,17 +201,15 @@ namespace SIL.FieldWorks.XWorks
 			string sVern = m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultVernWs);
 			writer.WriteLine("<Languages defaultAnal=\"{0}\" defaultVern=\"{1}\">",
 				sAnal, sVern);
-			IWritingSystemManager manager = m_cache.ServiceLocator.GetInstance<IWritingSystemManager>();
-			foreach (var wsLocal in manager.LocalWritingSystems)
+			WritingSystemManager manager = m_cache.ServiceLocator.WritingSystemManager;
+			foreach (WritingSystem wsLocal in manager.LocalWritingSystems)
 			{
-				string tag = LangTagUtils.ToLangTag(wsLocal.LanguageSubtag,
-					wsLocal.ScriptSubtag, wsLocal.RegionSubtag, wsLocal.VariantSubtag);
+				string tag = IetfLanguageTag.ToLanguageTag(wsLocal.Language, wsLocal.Script, wsLocal.Region, wsLocal.Variants);
 				ILgWritingSystem lgws = null;
 				int ws = m_cache.WritingSystemFactory.GetWsFromStr(tag);
 				if (ws <= 0)
 					continue;
-				lgws = m_cache.WritingSystemFactory.get_EngineOrNull(ws);
-				string code = wsLocal.LanguageSubtag.Code;
+				string code = wsLocal.Language.Code;
 				string type = code.Length == 2 ? "ISO-639-1" : "ISO-639-3";
 				writer.WriteLine("<WritingSystem id=\"{0}\" language=\"{1}\" type=\"{2}\">",
 					tag, code, type);
@@ -242,10 +236,36 @@ namespace SIL.FieldWorks.XWorks
 				//        XmlUtils.MakeSafeXml(wsLocal.ValidChars));
 				//writer.WriteLine("<ICULocale><Uni>{0}</Uni></ICULocale>",
 				//    XmlUtils.MakeSafeXml(wsLocal.IcuLocale));
+				string sortUsing, sortRules;
+				var simpleCollation = wsLocal.DefaultCollation as SimpleCollationDefinition;
+				if (simpleCollation != null)
+				{
+					sortUsing = "CustomSimple";
+					sortRules = simpleCollation.SimpleRules;
+				}
+				else
+				{
+					var inheritedCollation = wsLocal.DefaultCollation as InheritedCollationDefinition;
+					if (inheritedCollation != null)
+					{
+						sortUsing = "OtherLanguage";
+						sortRules = inheritedCollation.BaseLanguageTag;
+					}
+					else if (wsLocal.DefaultCollation != null && !string.IsNullOrEmpty(wsLocal.DefaultCollation.IcuRules))
+					{
+						sortUsing = "CustomICU";
+						sortRules = wsLocal.DefaultCollation.IcuRules;
+					}
+					else
+					{
+						sortUsing = "DefaultOrdering";
+						sortRules = string.Empty;
+					}
+				}
 				writer.WriteLine("<SortUsing><Uni>{0}</Uni></SortUsing>",
-					XmlUtils.MakeSafeXml(wsLocal.SortUsing.ToString()));
+					XmlUtils.MakeSafeXml(sortUsing));
 				writer.WriteLine("<SortRules><Uni>{0}</Uni></SortRules>",
-					XmlUtils.MakeSafeXml(wsLocal.SortRules));
+					XmlUtils.MakeSafeXml(sortRules));
 				writer.WriteLine("</WritingSystem>");
 			}
 			writer.WriteLine("</Languages>");

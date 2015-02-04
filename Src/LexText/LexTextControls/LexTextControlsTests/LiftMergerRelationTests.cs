@@ -1278,8 +1278,8 @@ namespace LexTextControlsTests
 			Cache.LangProject.AnalysisWss = "en fr";
 			Cache.LangProject.CurAnalysisWss = "en";
 			Cache.LangProject.VernWss = "sen arb";
-			Cache.LangProject.AddToCurrentVernacularWritingSystems(Cache.WritingSystemFactory.get_Engine("sen") as IWritingSystem);
-			Cache.LangProject.AddToCurrentVernacularWritingSystems(Cache.WritingSystemFactory.get_Engine("arb") as IWritingSystem);
+			Cache.LangProject.AddToCurrentVernacularWritingSystems(Cache.WritingSystemFactory.get_Engine("sen") as WritingSystem);
+			Cache.LangProject.AddToCurrentVernacularWritingSystems(Cache.WritingSystemFactory.get_Engine("arb") as WritingSystem);
 			Cache.LangProject.CurVernWss = "sen";
 
 			CreateNeededStyles();

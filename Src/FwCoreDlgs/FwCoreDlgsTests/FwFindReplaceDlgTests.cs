@@ -498,7 +498,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
-			IWritingSystem ws;
+			WritingSystem ws;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("en-fonipa-x-etic", out ws);
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("es", out ws);
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("de", out ws);
@@ -516,7 +516,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			base.TestSetup();
 
-			IWritingSystemManager wsManager = Cache.ServiceLocator.WritingSystemManager;
+			WritingSystemManager wsManager = Cache.ServiceLocator.WritingSystemManager;
 			m_genesis = AddBookToMockedScripture(1, "Genesis");
 			m_text = AddTitleToMockedBook(m_genesis, m_kTitleText, wsManager.GetWsFromStr("en-fonipa-x-etic"));
 
@@ -590,8 +590,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	[TestFixture]
 	public class FwFindReplaceDlgTests : FwFindReplaceDlgBaseTests
 	{
-		private IWritingSystem m_wsFr;
-		private IWritingSystem m_wsIpa;
+		private WritingSystem m_wsFr;
+		private WritingSystem m_wsIpa;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

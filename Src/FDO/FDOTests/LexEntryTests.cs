@@ -1232,10 +1232,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			{
 				Cache.LanguageProject.VernacularWritingSystems.Clear();
 				Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Clear();
-				var frWs = Cache.WritingSystemFactory.get_Engine("fr");
-				var spWs = Cache.WritingSystemFactory.get_Engine("es");
-				Cache.LanguageProject.DefaultVernacularWritingSystem = (IWritingSystem)spWs;
-				Cache.LanguageProject.DefaultVernacularWritingSystem = (IWritingSystem)frWs; // {fr es} order
+				ILgWritingSystem frWs = Cache.WritingSystemFactory.get_Engine("fr");
+				ILgWritingSystem spWs = Cache.WritingSystemFactory.get_Engine("es");
+				Cache.LanguageProject.DefaultVernacularWritingSystem = (WritingSystem) spWs;
+				Cache.LanguageProject.DefaultVernacularWritingSystem = (WritingSystem) frWs; // {fr es} order
 				int frWsId = frWs.Handle;
 				int spWsId = spWs.Handle;
 
@@ -1301,10 +1301,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			{
 				Cache.LanguageProject.VernacularWritingSystems.Clear();
 				Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Clear();
-				var frWs = Cache.WritingSystemFactory.get_Engine("fr");
-				var spWs = Cache.WritingSystemFactory.get_Engine("es");
-				Cache.LanguageProject.DefaultVernacularWritingSystem = (IWritingSystem)spWs;
-				Cache.LanguageProject.DefaultVernacularWritingSystem = (IWritingSystem)frWs; // {fr es} order
+				ILgWritingSystem frWs = Cache.WritingSystemFactory.get_Engine("fr");
+				ILgWritingSystem spWs = Cache.WritingSystemFactory.get_Engine("es");
+				Cache.LanguageProject.DefaultVernacularWritingSystem = (WritingSystem) spWs;
+				Cache.LanguageProject.DefaultVernacularWritingSystem = (WritingSystem) frWs; // {fr es} order
 				int frWsId = frWs.Handle;
 				int spWsId = spWs.Handle;
 

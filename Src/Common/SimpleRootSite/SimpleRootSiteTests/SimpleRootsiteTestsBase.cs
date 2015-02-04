@@ -195,7 +195,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		internal const string kSecondParaFra = "C'est une deuxieme paragraph.";
 
 		/// <summary>Writing System Manager (reset for each test)</summary>
-		protected IWritingSystemManager m_wsManager;
+		protected WritingSystemManager m_wsManager;
 		/// <summary>Id of English Writing System (reset for each test)</summary>
 		protected int m_wsEng;
 		/// <summary>Id of French Writing System (reset for each test)</summary>
@@ -225,18 +225,18 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_cache.TextParagraphsFlid = SimpleRootsiteTestsConstants.kflidTextParas;
 
 			Debug.Assert(m_wsManager == null);
-			m_wsManager = new PalasoWritingSystemManager();
+			m_wsManager = new WritingSystemManager();
 			m_cache.WritingSystemFactory = m_wsManager;
 
-			IWritingSystem enWs;
+			WritingSystem enWs;
 			m_wsManager.GetOrSet("en", out enWs);
 			m_wsEng = enWs.Handle;
 
-			IWritingSystem frWs;
+			WritingSystem frWs;
 			m_wsManager.GetOrSet("fr", out frWs);
 			m_wsFrn = frWs.Handle;
 
-			IWritingSystem deWs;
+			WritingSystem deWs;
 			m_wsManager.GetOrSet("de", out deWs);
 			m_wsDeu = deWs.Handle;
 

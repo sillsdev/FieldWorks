@@ -4,8 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using Palaso.WritingSystems;
 using SIL.Utils;
+using SIL.WritingSystems;
 
 namespace SIL.CoreImpl
 {
@@ -39,9 +39,9 @@ namespace SIL.CoreImpl
 		/// Creates a new writing system definition.
 		/// </summary>
 		/// <returns></returns>
-		public override IWritingSystemDefinition CreateNew()
+		public override WritingSystemDefinition CreateNew()
 		{
-			return new PalasoWritingSystem();
+			return new WritingSystem();
 		}
 
 		/// <summary>
@@ -95,7 +95,7 @@ namespace SIL.CoreImpl
 		/// <param name="identifier">The identifier.</param>
 		/// <param name="ws">The writing system.</param>
 		/// <returns></returns>
-		public bool TryGet(string identifier, out IWritingSystemDefinition ws)
+		public bool TryGet(string identifier, out WritingSystemDefinition ws)
 		{
 			if (Contains(identifier))
 			{
@@ -124,7 +124,7 @@ namespace SIL.CoreImpl
 						stream.Close();
 					// don't really want to change anything
 				}
-				catch (UnauthorizedAccessException e)
+				catch (UnauthorizedAccessException)
 				{
 					return false;
 				}
@@ -168,19 +168,18 @@ namespace SIL.CoreImpl
 		///
 		/// </summary>
 		/// <param name="ws">The ws.</param>
-		protected override void OnChangeNotifySharedStore(IWritingSystemDefinition ws)
+		protected override void OnChangeNotifySharedStore(WritingSystemDefinition ws)
 		{
 			base.OnChangeNotifySharedStore(ws);
 
 			if (m_globalStore != null)
 			{
-				IWritingSystemDefinition globalWs;
+				WritingSystemDefinition globalWs;
 				if (m_globalStore.TryGet(ws.Id, out globalWs))
 				{
 					if (ws.DateModified > globalWs.DateModified)
 					{
 						WritingSystemDefinition newWs = ws.Clone();
-						newWs.Modified = true; // ensure any existing file for this WS is overwritten
 						try
 						{
 							m_globalStore.Remove(ws.Id);
@@ -250,7 +249,7 @@ namespace SIL.CoreImpl
 			XElement wssElem = XElement.Load(path);
 			foreach (XElement wsElem in wssElem.Elements("WritingSystem"))
 			{
-				DateTime dateModified = DateTime.ParseExact((string)wsElem.Attribute("dateModified"), "s", null, DateTimeStyles.AdjustToUniversal);
+				DateTime dateModified = DateTime.ParseExact((string) wsElem.Attribute("dateModified"), "s", null, DateTimeStyles.AdjustToUniversal);
 				WritingSystemsToIgnore[(string)wsElem.Attribute("id")] = dateModified;
 			}
 		}

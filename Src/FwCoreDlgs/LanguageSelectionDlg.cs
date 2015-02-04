@@ -11,6 +11,7 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.WritingSystems;
 using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -44,7 +45,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="wsManager">The writing system manager.</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
-		public LanguageSelectionDlg(IWritingSystemManager wsManager,
+		public LanguageSelectionDlg(WritingSystemManager wsManager,
 			IHelpTopicProvider helpTopicProvider) : this()
 		{
 			m_helpTopicProvider = helpTopicProvider;

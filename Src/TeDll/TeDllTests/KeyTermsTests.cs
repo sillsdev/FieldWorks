@@ -118,7 +118,7 @@ namespace SIL.FieldWorks.TE
 		{
 			base.FixtureSetup();
 
-			IWritingSystem ws;
+			WritingSystem ws;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("grc", out ws);
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("hbo", out ws);
 		}

@@ -5,7 +5,6 @@
 // File: FwUtils.cs
 // Responsibility: TE Team
 
-using System;
 using System.IO;
 #if __MonoCS__
 using System.Collections.Generic;
@@ -209,11 +208,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// the direction of our dependencies does not allow it to reference FwUtils and access FwDirectoryFinder.
 		/// </summary>
 		/// <returns></returns>
-		public static PalasoWritingSystemManager CreateWritingSystemManager()
+		public static WritingSystemManager CreateWritingSystemManager()
 		{
-			var result = new PalasoWritingSystemManager();
-			result.TemplateFolder = FwDirectoryFinder.TemplateDirectory;
-			return result;
+			return new WritingSystemManager {TemplateFolder = FwDirectoryFinder.TemplateDirectory};
 		}
 
 	}

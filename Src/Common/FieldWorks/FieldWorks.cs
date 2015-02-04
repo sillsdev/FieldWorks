@@ -26,7 +26,6 @@ using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using Palaso.Reporting;
-using Palaso.UI.WindowsForms.Keyboarding;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
@@ -46,6 +45,7 @@ using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.LexicalProvider;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
+using SIL.WritingSystems.WindowsForms.Keyboarding;
 using XCore;
 using SIL.CoreImpl;
 using ConfigurationException = SIL.Utils.ConfigurationException;
@@ -1590,7 +1590,7 @@ namespace SIL.FieldWorks
 			s_projectId.Path = s_cache.ProjectId.Path;
 			// Update the path in the writing system manager so that it won't crash trying to
 			// write to a nonexistent folder.
-			var manager = s_cache.ServiceLocator.GetInstance<IWritingSystemManager>();
+			WritingSystemManager manager = s_cache.ServiceLocator.WritingSystemManager;
 			manager.LocalStoreFolder = Path.Combine(s_projectId.ProjectFolder, "WritingSystemStore");
 		}
 		#endregion

@@ -1,19 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Xml;
 using SIL.CoreImpl;
 using SIL.Utils;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.OxesIO;
 using XCore;
@@ -144,7 +138,7 @@ namespace SIL.FieldWorks.TE
 					if (attrs.TryGetValue("xml:lang", out sValue))
 					{
 						// Verify that the vernacular language matches the OXES file.
-						IWritingSystem wsObj = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+						WritingSystem wsObj = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 						if (sValue != wsObj.Id)
 						{
 							// "The project's vernacular language ({0}) does not match the OXES file's data language ({1}).  Should import continue?"

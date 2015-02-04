@@ -18,7 +18,6 @@ using System.Media;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
@@ -31,6 +30,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
+using SIL.WritingSystems;
 using SILUBS.SharedScrUtils;
 using XCore;
 
@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			private IApp m_app;
 			private ValidCharacters m_validChars;
-			private IWritingSystem m_ws;
+			private WritingSystem m_ws;
 			private readonly ContextMenuStrip m_cmnu;
 			private readonly ToolStripMenuItem m_cmnuTreatAsWrdForming;
 			private readonly ToolStripMenuItem m_cmnuTreatAsNotWrdForming;
@@ -97,7 +97,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// </summary>
 			/// ---------------------------------------------------------------------------------
 			internal void Init(CharacterGrid gridWf, CharacterGrid gridOther, CharacterGrid gridNum,
-				IWritingSystem ws, IApp app)
+				WritingSystem ws, IApp app)
 			{
 				m_ws = ws;
 				m_app = app;
@@ -146,7 +146,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// <summary/>
 			~ValidCharGridsManager()
 			{
-				System.Diagnostics.Debug.WriteLine("****** Missing Dispose() call for " + GetType().ToString() + " *******");
+				Debug.WriteLine("****** Missing Dispose() call for " + GetType() + " *******");
 				Dispose(false);
 			}
 			#endif
@@ -170,7 +170,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// <summary/>
 			protected virtual void Dispose(bool fDisposing)
 			{
-				System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 				if (fDisposing && !IsDisposed)
 				{
 					// dispose managed and unmanaged objects
@@ -323,7 +323,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// ---------------------------------------------------------------------------------
 			internal void Save()
 			{
-				m_ws.ValidChars = m_validChars.XmlString;
+				m_validChars.SaveTo(m_ws);
 			}
 
 			/// ---------------------------------------------------------------------------------
@@ -366,7 +366,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// Adds the list of characters to the list of valid characters.
 			/// </summary>
 			/// ---------------------------------------------------------------------------------
-			internal void AddCharacters(List<string> chrs)
+			internal void AddCharacters(IEnumerable<string> chrs)
 			{
 				RefreshCharacterGrids(m_validChars.AddCharacters(chrs));
 
@@ -403,19 +403,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				if ((type & ValidCharacterType.WordForming) != 0)
 				{
 					m_gridWordForming.RemoveAllCharacters();
-					m_gridWordForming.AddCharacters(m_validChars.WordFormingCharacters, m_ws);
+					m_gridWordForming.AddCharacters(m_validChars.WordFormingCharacters);
 				}
 
 				if ((type & ValidCharacterType.Numeric) != 0)
 				{
 					m_gridNumbers.RemoveAllCharacters();
-					m_gridNumbers.AddCharacters(m_validChars.NumericCharacters, m_ws);
+					m_gridNumbers.AddCharacters(m_validChars.NumericCharacters);
 				}
 
 				if ((type & ValidCharacterType.Other) != 0)
 				{
 					m_gridOther.RemoveAllCharacters();
-					m_gridOther.AddCharacters(m_validChars.OtherCharacters, m_ws);
+					m_gridOther.AddCharacters(m_validChars.OtherCharacters);
 				}
 			}
 			#endregion
@@ -601,7 +601,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					selChars.Add(CurrentGrid.GetCharacterAt(cell.ColumnIndex, cell.RowIndex));
 
 				m_validChars.MoveBetweenWordFormingAndOther(selChars, gridFrom == m_gridOther);
-				gridTo.AddCharacters(gridFrom.RemoveSelectedCharacters(), m_ws);
+				gridTo.AddCharacters(gridFrom.RemoveSelectedCharacters());
 				return gridTo;
 			}
 
@@ -626,7 +626,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region Data members
-		private readonly IWritingSystem m_ws;
+		private readonly WritingSystem m_ws;
 		private ILgCharacterPropertyEngine m_chrPropEng;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private readonly IApp m_app;
@@ -657,7 +657,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		protected ValidCharGridsManager m_validCharsGridMngr;
 
 		/// <summary>Hold a reference to the writing system manager</summary>
-		private IWritingSystemManager m_wsManager;
+		private WritingSystemManager m_wsManager;
 
 		/// <summary>True if we created a temporary writing system manager that we have to
 		/// dispose</summary>
@@ -719,7 +719,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "gridcol is a reference")]
 		public ValidCharactersDlg(FdoCache cache, IWritingSystemContainer wsContainer,
-			IHelpTopicProvider helpTopicProvider, IApp app, IWritingSystem ws, string wsName) : this()
+			IHelpTopicProvider helpTopicProvider, IApp app, WritingSystem ws, string wsName) : this()
 		{
 			m_ws = ws;
 			m_helpTopicProvider = helpTopicProvider;
@@ -850,7 +850,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public static bool RunDialog(FdoCache cache, IApp app, IWin32Window owner, IHelpTopicProvider helpTopicProvider)
 		{
-			IWritingSystem ws = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			WritingSystem ws = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 
 			using (var dlg = new ValidCharactersDlg(cache, cache.ServiceLocator.WritingSystems,
 				helpTopicProvider, app, ws, ws.DisplayLabel))
@@ -891,7 +891,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// disposed later on.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private IWritingSystemManager WsManager
+		private WritingSystemManager WsManager
 		{
 			get
 			{
@@ -931,7 +931,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			//Set btnSililarWs to the language of m_langDef if it is one that LocaleMenuButton
 			//displays in it's list.
-			string code = m_ws.LanguageSubtag.Code;
+			string code = m_ws.Language.Code;
 			if (!btnSimilarWs.IsCustomLocale(code))
 				btnSimilarWs.SelectedLocaleId = code;
 
@@ -1341,19 +1341,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Try to retrieve a set of ValidChars (ExemplarCharacters) from ICU for the language
 		/// associated with the IcuLocale parameter and add those to the valid characters grids.
 		/// </summary>
-		/// <param name="IcuLocale"></param>
+		/// <param name="icuLocale"></param>
 		/// <returns>Space-delimited set of characters</returns>
 		/// ------------------------------------------------------------------------------------
-		internal void AddExemplarChars(string IcuLocale)
+		internal void AddExemplarChars(string icuLocale)
 		{
-			string chrs = ExemplarCharactersHelper.GetValidCharsForLocale(IcuLocale, m_chrPropEng);
-			if (!string.IsNullOrEmpty(chrs))
-			{
-				// Normalize and attempt to parse the space-delimited string into individual
-				// characters and add them to the character grids.
-				chrs = m_chrPropEng.NormalizeD(chrs);
-				m_validCharsGridMngr.AddCharacters(TsStringUtils.ParseCharString(chrs, " ", m_chrPropEng));
-			}
+#if WS_FIX
+			m_validCharsGridMngr.AddCharacters(ExemplarCharactersHelper.GetValidCharsForLocale(icuLocale, m_chrPropEng));
+#endif
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1394,7 +1389,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					break;
 			}
 			if (fUseWsKeyboard)
-				((IWritingSystemDefinition)m_ws).LocalKeyboard.Activate();
+				m_ws.LocalKeyboard.Activate();
 			else
 				Keyboard.Controller.ActivateDefaultKeyboard();
 		}

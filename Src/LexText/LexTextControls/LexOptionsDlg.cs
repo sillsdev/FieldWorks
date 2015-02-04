@@ -118,7 +118,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				FwRegistryHelper.FieldWorksRegistryKey.SetValue(FwRegistryHelper.UserLocaleValueName, m_sNewUserWs);
 				//The writing system the user selects for the user interface may not be loaded yet into the project
 				//database. Therefore we need to check this first and if it is not we need to load it.
-				IWritingSystem ws;
+				WritingSystem ws;
 				m_cache.ServiceLocator.WritingSystemManager.GetOrSet(m_sNewUserWs, out ws);
 				m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem = ws;
 				// Reload the mediator's string table with the appropriate language data.

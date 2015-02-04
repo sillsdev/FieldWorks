@@ -9,7 +9,6 @@ using System.Runtime.InteropServices;
 using System.Linq;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -794,7 +793,7 @@ namespace SIL.FieldWorks.Common.Controls
 			result.Spec = colSpec; // SetupFsi uses this to get the writing system to use for the combo.
 			result.Finder = LayoutFinder.CreateFinder(m_cache, colSpec, m_bv.BrowseView.Vc, m_app);
 			SetupFsi(result);
-			IWritingSystem ws = WritingSystemServices.GetWritingSystem(m_cache, colSpec, null, 0) ??
+			WritingSystem ws = WritingSystemServices.GetWritingSystem(m_cache, colSpec, null, 0) ??
 								m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			result.Sorter = new GenRecordSorter(new StringFinderCompare(result.Finder,
 				new WritingSystemComparer(ws)));
@@ -818,7 +817,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			string className = GetStringAtt(saSpec, "class");
 			string attrName = GetStringAtt(saSpec, "field");
-			IWritingSystem ws = WritingSystemServices.GetWritingSystem(m_cache, saSpec, null, 0);
+			WritingSystem ws = WritingSystemServices.GetWritingSystem(m_cache, saSpec, null, 0);
 			if (className == null || attrName == null || ws == null)
 				return null; // Can't interpret an incomplete stringalt.
 
@@ -850,7 +849,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			string className = GetStringAtt(saSpec, "class");
 			string attrName = GetStringAtt(saSpec, "field");
-			IWritingSystem ws = WritingSystemServices.GetWritingSystem(m_cache, saSpec, null, 0);
+			WritingSystem ws = WritingSystemServices.GetWritingSystem(m_cache, saSpec, null, 0);
 			if (className == null || attrName == null || ws == null)
 				return null; // Can't interpret an incomplete stringalt.
 

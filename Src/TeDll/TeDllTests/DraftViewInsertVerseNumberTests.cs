@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.TE.DraftViews
 
 		private string m_StartText = '\u0634' + '\u0677' + '\u0631' + '\u0677' + string.Empty;
 		private string m_WordsText = '\u0622' + '\u0644' + '\u0641' + '\u0627' + '\u0632' + string.Empty;
-		private IWritingSystem m_wsUrdu;
+		private WritingSystem m_wsUrdu;
 		#endregion
 
 		#region Setup and Teardown

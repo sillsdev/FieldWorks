@@ -1151,7 +1151,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				return false;
 			}
 
-			IWritingSystem wsObj = Services.WritingSystems.DefaultVernacularWritingSystem;
+			WritingSystem wsObj = Services.WritingSystems.DefaultVernacularWritingSystem;
 			int defVernWs = wsObj.Handle;
 			int iRun = Contents.get_RunAt(ichMin);
 			string sCurrVerseNumber = Contents.get_RunText(iRun);

@@ -175,6 +175,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\ECInterfaces.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.WritingSystems, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Downloads\SIL.WritingSystems.dll</HintPath>
+    </Reference>
     <Reference Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\SilEncConverters40.dll</HintPath>
@@ -227,10 +231,10 @@
     </Reference>
     <Reference Condition="'$(OS)'=='Unix'" Include="geckofx-core">
       <HintPath>\usr\lib\cli\geckofx-29\Geckofx-Core.dll</HintPath>
-	</Reference>
+    </Reference>
     <Reference Condition="'$(OS)'=='Unix'" Include="Geckofx-Winforms-29">
       <HintPath>\usr\lib\cli\geckofx-29\Geckofx-Winforms.dll</HintPath>
-	</Reference>
+    </Reference>
     <None Condition="'$(OS)'=='Unix'" Include="\usr\lib\cli\geckofx-29\Geckofx-Core.dll.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

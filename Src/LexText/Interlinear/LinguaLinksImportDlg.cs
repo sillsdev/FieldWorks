@@ -18,7 +18,6 @@ using SIL.FieldWorks.Resources;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.XWorks;
-using SilEncConverters40;
 
 namespace SIL.FieldWorks.IText
 {
@@ -630,7 +629,7 @@ namespace SIL.FieldWorks.IText
 						var wsInfo = new Dictionary<string, WsInfo>();
 
 						//getting name for a writing system given the ICU code.
-						foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystemManager.LocalWritingSystems)
+						foreach (WritingSystem ws in m_cache.ServiceLocator.WritingSystemManager.LocalWritingSystems)
 						{
 							var wsi = new WsInfo(ws.DisplayLabel, ws.Id, string.IsNullOrEmpty(ws.LegacyMapping) ? "Windows1252<>Unicode" : ws.LegacyMapping);
 							wsInfo.Add(wsi.KEY, wsi);

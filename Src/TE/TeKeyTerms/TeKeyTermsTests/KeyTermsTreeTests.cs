@@ -361,7 +361,7 @@ namespace SIL.FieldWorks.TE
 		[Test]
 		public void FindNextMatch_RequireNormalization()
 		{
-			IWritingSystem ws;
+			WritingSystem ws;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("grc", out ws);
 
 			int wsGreek = ws.Handle;

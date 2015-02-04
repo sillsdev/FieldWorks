@@ -155,7 +155,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public IWritingSystem WritingSystem
+		public WritingSystem WritingSystem
 		{
 			set { m_sortComparer = (value == null ? null : new TsStringComparer(value)); }
 		}
@@ -386,13 +386,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// character, followed by zero or more combining characters.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void AddCharacters(IEnumerable<string> value, IWritingSystem ws)
+		public void AddCharacters(IEnumerable<string> value)
 		{
 			CheckDisposed();
 			Debug.Assert(!m_loadCharactersFromFont);
 
 			foreach (string ch in value)
-				InternalAddCharacter(ch, ws);
+				InternalAddCharacter(ch);
 
 			if (m_sortComparer != null)
 				Chars.Sort(m_sortComparer.Compare);
@@ -408,7 +408,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// called by the two public methods AddCharacter and AddCharacters.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void InternalAddCharacter(string chr, IWritingSystem ws)
+		private void InternalAddCharacter(string chr)
 		{
 			// Keep track of those characters that are not control characters and for
 			// which there are no representative glyphs in the font.

@@ -20,7 +20,7 @@ namespace SIL.CoreImpl
 	/// ----------------------------------------------------------------------------------------
 	public class TsStringComparer : IComparer
 	{
-		private readonly IWritingSystem m_ws;
+		private readonly WritingSystem m_ws;
 
 		#region Constructors
 
@@ -41,7 +41,7 @@ namespace SIL.CoreImpl
 		/// </summary>
 		/// <param name="ws">The writing system.</param>
 		/// ------------------------------------------------------------------------------------
-		public TsStringComparer(IWritingSystem ws)
+		public TsStringComparer(WritingSystem ws)
 		{
 			m_ws = ws;
 		}
@@ -53,7 +53,7 @@ namespace SIL.CoreImpl
 		/// </summary>
 		/// <value>The collating engine.</value>
 		/// ------------------------------------------------------------------------------------
-		public IWritingSystem WritingSystem
+		public WritingSystem WritingSystem
 		{
 			get
 			{
@@ -103,10 +103,10 @@ namespace SIL.CoreImpl
 			if (yString == null)
 				return 1;
 
-			if (m_ws != null)
-				return m_ws.Collator.Compare(xString, yString);
+			if (m_ws != null && m_ws.DefaultCollation != null)
+				return m_ws.DefaultCollation.Collator.Compare(xString, yString);
 
-			return xString.CompareTo(yString);
+			return string.Compare(xString, yString, StringComparison.Ordinal);
 		}
 
 		#endregion

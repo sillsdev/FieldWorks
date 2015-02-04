@@ -1,25 +1,11 @@
-using System;
-using System.ComponentModel;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
-using System.IO;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;		// controls and etc...
-using System.Windows.Forms.VisualStyles;
-using System.Xml;
-using Palaso.Media;
-using Palaso.WritingSystems;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
-using System.Text;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -28,7 +14,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		LabeledMultiStringVc m_vc;
 		FdoCache m_realCache; // real one we get writing system info from
 		ISilDataAccess m_sda; // one actually used in the view.
-		List<IWritingSystem> m_rgws;
+		List<WritingSystem> m_rgws;
 
 		internal const int khvoRoot = -3045; // arbitrary but recognizeable numbers for debugging.
 		internal const int kflid = 4554;
@@ -43,7 +29,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			IsTextBox = true;	// range selection not shown when not in focus
 		}
 
-		public InnerLabeledMultiStringControl(FdoCache cache, List<IWritingSystem> wsList)
+		public InnerLabeledMultiStringControl(FdoCache cache, List<WritingSystem> wsList)
 		{
 			// Ctor for use with a non-standard list of wss (like available UI languages)
 			m_realCache = cache;
@@ -104,7 +90,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Get the number of writing systems being displayed.
 		/// </summary>
-		public List<IWritingSystem> WritingSystems
+		public List<WritingSystem> WritingSystems
 		{
 			get
 			{

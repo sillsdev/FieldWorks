@@ -6,7 +6,6 @@
 // Responsibility: TE Team
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Win32;
@@ -14,12 +13,10 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using Paratext;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
 using XCore;
 
 namespace SIL.FieldWorks.TE
@@ -308,7 +305,7 @@ namespace SIL.FieldWorks.TE
 			}
 			if (m_shortName == null)
 			{
-				IWritingSystem wsVern = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+				WritingSystem wsVern = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 				string abbr = wsVern.Abbreviation;
 				if (abbr != null && !abbr.Contains("***"))
 					m_shortName = abbr.Trim();

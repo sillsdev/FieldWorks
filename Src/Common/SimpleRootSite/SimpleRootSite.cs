@@ -17,12 +17,10 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Automation.Provider;
 using Accessibility;
-using Palaso.WritingSystems;
-using Palaso.UI.WindowsForms.Keyboarding;
-using Palaso.UI.WindowsForms.Keyboarding.Types;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
+using SIL.WritingSystems;
 using XCore;
 
 namespace SIL.FieldWorks.Common.RootSites
@@ -4871,13 +4869,13 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Writing systems the user might reasonably choose. Overridden in RootSite to limit it to the ones active in this project.
 		/// </summary>
-		protected virtual IWritingSystemDefinition[] PlausibleWritingSystems
+		protected virtual WritingSystemDefinition[] PlausibleWritingSystems
 		{
 			get
 			{
-				var manager = (WritingSystemFactory as PalasoWritingSystemManager);
+				var manager = (WritingSystemManager) WritingSystemFactory;
 				if (manager == null)
-					return new IWritingSystemDefinition[0];
+					return new WritingSystemDefinition[0];
 				return manager.LocalWritingSystemStore.AllWritingSystems.ToArray();
 			}
 		}
@@ -4897,7 +4895,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (IsDisposed || m_rootb == null || DataUpdateMonitor.IsUpdateInProgress())
 				return;
 
-			var manager = WritingSystemFactory as PalasoWritingSystemManager;
+			var manager = (WritingSystemManager) WritingSystemFactory;
 			if (manager == null)
 				return;
 			//Debug.WriteLine(string.Format("OnInputLangChanged: Handle={2}, g_focusRootSite={0}, culture={1}",
@@ -4916,14 +4914,14 @@ namespace SIL.FieldWorks.Common.RootSites
 
 				IVwSelection vwsel = m_rootb.Selection; // may be null
 				int wsSel = SelectionHelper.GetFirstWsOfSelection(vwsel); // may be zero
-				IWritingSystemDefinition wsSelDefn = null;
+				WritingSystem wsSelDefn = null;
 				if (wsSel != 0)
-					wsSelDefn = manager.Get(wsSel) as IWritingSystemDefinition;
+					wsSelDefn = manager.Get(wsSel);
 				var wsNewDefn = wsRepo.GetWsForInputLanguage(e.InputLanguage.LayoutName, e.InputLanguage.Culture, wsSelDefn, PlausibleWritingSystems);
 				if (wsNewDefn == null || wsNewDefn.Equals(wsSelDefn))
 					return;
 
-				HandleKeyboardChange(vwsel, ((PalasoWritingSystem)wsNewDefn).Handle);
+				HandleKeyboardChange(vwsel, ((WritingSystem) wsNewDefn).Handle);
 
 				// The following line is needed to get Chinese IMEs to fully initialize.
 				// This causes Text Services to set its focus, which is the crucial bit

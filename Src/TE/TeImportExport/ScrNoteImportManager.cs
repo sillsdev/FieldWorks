@@ -15,6 +15,7 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
+using SIL.WritingSystems;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.TE.TeEditorialChecks;
 using System.Diagnostics;
@@ -219,8 +220,8 @@ namespace SIL.FieldWorks.TE
 		/// -----------------------------------------------------------------------------------
 		public static int GetWsForLocale(string locale)
 		{
-			string identifier = LangTagUtils.ToLangTag(locale);
-			IWritingSystem ws;
+			string identifier = IetfLanguageTag.ToLanguageTag(locale);
+			WritingSystem ws;
 			if (s_scr.Cache.ServiceLocator.WritingSystemManager.TryGetOrSet(identifier, out ws))
 			{
 				if (!s_scr.Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Contains(ws))

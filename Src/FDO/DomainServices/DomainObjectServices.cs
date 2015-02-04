@@ -547,7 +547,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				return;
 
 			// Check the back translation for each writing system.
-			foreach (IWritingSystem ws in trans.AvailableWritingSystems)
+			foreach (WritingSystem ws in trans.AvailableWritingSystems)
 			{
 				ITsString btTss = trans.Translation.get_String(ws.Handle);
 

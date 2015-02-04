@@ -4,9 +4,9 @@
 
 using System;
 using NUnit.Framework;
-using Palaso.UI.WindowsForms.Keyboarding;
-using Palaso.WritingSystems;
 using System.Diagnostics.CodeAnalysis;
+using SIL.WritingSystems;
+using SIL.WritingSystems.WindowsForms.Keyboarding;
 
 namespace SIL.Utils.Attributes
 {
@@ -51,7 +51,7 @@ namespace SIL.Utils.Attributes
 			KeyboardController.Shutdown();
 
 			if (InitDummyAfterTests)
-				Keyboard.Controller = new NoOpKeyboardController();
+				Keyboard.Controller = new DefaultKeyboardController();
 		}
 	}
 }

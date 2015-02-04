@@ -806,7 +806,7 @@ namespace SIL.FieldWorks.TE
 			base.FixtureSetup();
 
 			// Set the default writing system to a right-to-left writing system (Urdu)
-			IWritingSystem wsUr;
+			WritingSystem wsUr;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("ur", out wsUr);
 			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
 			{
@@ -863,7 +863,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		protected override void CreateTestData()
 		{
-			IWritingSystem defWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			WritingSystem defWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 
 			// Add basic data for Genesis
 			m_genesis = AddBookToMockedScripture(1, "Genesis");

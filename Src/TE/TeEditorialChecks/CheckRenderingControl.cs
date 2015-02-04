@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 			else
 			{
 				m_cache.MainCacheAccessor.AddNotification(this);
-				IWritingSystem ws = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+				WritingSystem ws = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 				m_tsStrComparer = new TsStringComparer(ws);
 			}
 		}

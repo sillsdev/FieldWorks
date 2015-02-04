@@ -8,13 +8,15 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Linq;
 using System.Text;
 using System.IO;
 using System.Xml;
+using Palaso.Extensions;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
-using System.Xml.Serialization;
 using SIL.CoreImpl;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {
@@ -48,13 +50,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	public class ValidCharacters
 	{
 		#region Constants
-		/// <summary>This string is used to replace a space character when one is found
-		/// in the list of Other characters just before serializing to an XML string.</summary>
-		private const string kSpaceReplacment = "U+0020";
-
-		private readonly string ksDelimiter = StringUtils.kszObject;
-
-		private static string[] s_defaultWordformingChars = { "'", "-",
+		private static readonly string[] DefaultWordformingChars = { "'", "-",
 															  "\u200c", // ZWNJ
 															  "\u200d", // ZWJ
 															  "\u2070", // SUPERSCRIPT ZERO
@@ -75,21 +71,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		#endregion
 
 		#region Data members
-		/// <summary>String containing an ORC-delimited list of word-forming characters</summary>
-		//[XmlAttribute]
-		public string WordForming;
-		/// <summary>String containing an ORC-delimited list of numeric characters</summary>
-		//[XmlAttribute]
-		public string Numeric;
-		/// <summary>String containing an ORC-delimited list of punctuation, symbol, control and
-		/// whitespace characters</summary>
-		//[XmlAttribute]
-		public string Other;
 
-		private List<string> m_WordFormingCharacters;
-		private List<string> m_NumericCharacters;
-		private List<string> m_OtherCharacters;
-		private ILgCharacterPropertyEngine m_cpe;
+		private readonly List<string> m_wordFormingCharacters = new List<string>();
+		private readonly List<string> m_numericCharacters = new List<string>();
+		private readonly List<string> m_otherCharacters = new List<string>();
+		private readonly ILgCharacterPropertyEngine m_cpe;
 		private TsStringComparer m_comparer;
 		private string m_legacyOverridesFile;
 
@@ -104,8 +90,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		public event LoadExceptionDelegate LoadException;
 		#endregion
 
-		private static bool s_fTestingMode = false;
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Don't allow anyone outside this class to create an instance (protected to allow for
@@ -115,6 +99,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		protected ValidCharacters()
 		{
+			m_cpe = LgIcuCharPropEngineClass.Create();
 		}
 
 		#region Methods and Properties to load and initialize the class
@@ -131,87 +116,38 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <returns>A <see cref="ValidCharacters"/> initialized with the valid characters data
 		/// from the language definition.</returns>
 		/// ------------------------------------------------------------------------------------
-		public static ValidCharacters Load(IWritingSystem ws, LoadExceptionDelegate exceptionHandler, string legacyOverridesFile)
+		public static ValidCharacters Load(WritingSystem ws, LoadExceptionDelegate exceptionHandler, string legacyOverridesFile)
 		{
-			ValidCharacters validChars = Load(ws.ValidChars, ws.DisplayLabel, ws,
-				exceptionHandler, legacyOverridesFile);
-			if (validChars != null)
-				validChars.InitSortComparer(ws);
+			var validChars = new ValidCharacters();
+			validChars.LoadException += exceptionHandler;
 
-			return validChars;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Loads the specified XML source to initialize a new instance of the
-		/// <see cref="ValidCharacters"/> class.
-		/// </summary>
-		/// <param name="xmlSrc">The XML source representation.</param>
-		/// <param name="wsName">The name of the writing system that is being loaded</param>
-		/// <param name="ws">The writing system</param>
-		/// <param name="exceptionHandler">The exception handler to use if valid character data
-		/// cannot be loaded.</param>
-		/// <param name="legacyOverridesFile"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public static ValidCharacters Load(string xmlSrc, string wsName,
-			IWritingSystem ws, LoadExceptionDelegate exceptionHandler, string legacyOverridesFile)
-		{
-			Exception e;
-			var validChars = XmlSerializationHelper.DeserializeFromString<ValidCharacters>(xmlSrc, out e);
-
-			bool fTryOldStyleList = false;
-
-			if (validChars != null)
-			{
-				validChars.LoadException += exceptionHandler;
-			}
-			else
-			{
-				validChars = new ValidCharacters();
-				validChars.LoadException += exceptionHandler;
-				if (e != null)
-					fTryOldStyleList = !DataAppearsToBeMalFormedXml(xmlSrc);
-				if (!fTryOldStyleList && !String.IsNullOrEmpty(xmlSrc))
-				{
-					var bldr = new StringBuilder();
-					bldr.AppendFormat("Invalid ValidChars field while loading the {0} writing system:", wsName);
-					bldr.Append(Environment.NewLine);
-					bldr.Append("\t");
-					bldr.Append(xmlSrc);
-					validChars.ReportError(new ArgumentException(bldr.ToString(), "xmlSrc", e));
-				}
-			}
+			var invalidChars = new List<string>();
+			validChars.AddCharactersFromWritingSystem(ws, "main", ValidCharacterType.WordForming, invalidChars);
+			validChars.AddCharactersFromWritingSystem(ws, "numeric", ValidCharacterType.Numeric, invalidChars);
+			validChars.AddCharactersFromWritingSystem(ws, "punctuation", ValidCharacterType.Other, invalidChars);
 			validChars.m_legacyOverridesFile = legacyOverridesFile;
-
-			List<string> invalidChars = validChars.Init();
-
-			if (fTryOldStyleList)
-			{
-				e = null;
-				List<string> list = ParseCharString(xmlSrc, " ", validChars.m_cpe, out invalidChars);
-				validChars.AddCharacters(list);
-			}
 
 			if (invalidChars.Count > 0)
 			{
 				var bldr = new StringBuilder();
 				bldr.AppendFormat("Invalid ValidChars field while loading the {0} writing system. The following characters are invalid:",
-					wsName);
+					ws.DisplayLabel);
 				foreach (string chr in invalidChars)
 				{
 					bldr.Append(Environment.NewLine);
 					bldr.Append("\t");
-					bldr.AppendFormat("{0} (U+{1:X4}", chr, (int)chr[0]);
+					bldr.AppendFormat("{0} (U+{1:X4}", chr, (int) chr[0]);
 					for (int ich = 1; ich < chr.Length; ich++)
-						bldr.AppendFormat(", U+{0:X4}", (int)chr[ich]);
+						bldr.AppendFormat(", U+{0:X4}", (int) chr[ich]);
 					bldr.Append(")");
 				}
-				validChars.ReportError(new ArgumentException(bldr.ToString(), "xmlSrc"));
+				validChars.ReportError(new ArgumentException(bldr.ToString(), "ws"));
 			}
 
-			if ((e != null || invalidChars.Count > 0) && validChars.m_WordFormingCharacters.Count == 0)
+			if (invalidChars.Count > 0 && validChars.m_wordFormingCharacters.Count == 0)
 				validChars.AddDefaultWordformingCharOverrides();
+
+			validChars.InitSortComparer(ws);
 
 			return validChars;
 		}
@@ -229,58 +165,19 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			LoadException(e);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Evaluates the given string to determine whether it is apparently mal-formed XML
-		/// data for the ValidCharacters field. This allows us to avoid trying to interpret
-		/// mal-formed XML data as if it were an old-style space-delimited list of characters.
-		/// </summary>
-		/// <param name="sData">String to evalutate.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		private static bool DataAppearsToBeMalFormedXml(string sData)
+		private void AddCharactersFromWritingSystem(WritingSystem ws, string charSetType, ValidCharacterType validCharType, List<string> invalidChars)
 		{
-			return sData.Contains("WordForming") ||
-				sData.Contains("Numeric") ||
-				sData.Contains("Other");
-		}
+			CharacterSetDefinition charSet;
+			if (!ws.CharacterSets.TryGetItem(charSetType, out charSet))
+				return;
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Return true if we have the new style of valid characters information in the
-		/// specified string. Currently this is adequately detected by being able to interpret
-		/// it as XML.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static bool IsNewValidCharsString(string xmlSrc)
-		{
-			return XmlSerializationHelper.DeserializeFromString<ValidCharacters>(xmlSrc) != null;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes this object.
-		/// </summary>
-		/// <returns>The list of invalid characters encountered.</returns>
-		/// ------------------------------------------------------------------------------------
-		private List<string> Init()
-		{
-			m_cpe = LgIcuCharPropEngineClass.Create();
-
-			Reset();
-
-			if (Other != null)
-				Other = Other.Replace(kSpaceReplacment, " ");
-
-			List<string> invalidChars;
-			m_WordFormingCharacters = ParseCharString(WordForming, ksDelimiter, m_cpe, out invalidChars);
-			List<string> invalidCharsTemp;
-			m_NumericCharacters = ParseCharString(Numeric, ksDelimiter, m_cpe, out invalidCharsTemp, m_WordFormingCharacters);
-			invalidChars.AddRange(invalidCharsTemp);
-			m_OtherCharacters = ParseCharString(Other, ksDelimiter, m_cpe, out invalidCharsTemp, m_WordFormingCharacters,
-				m_NumericCharacters);
-			invalidChars.AddRange(invalidCharsTemp);
-			return invalidChars;
+			foreach (string chr in charSet.Characters)
+			{
+				if (TsStringUtils.IsValidChar(chr, m_cpe))
+					AddCharacter(chr, validCharType);
+				else
+					invalidChars.Add(chr);
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -290,13 +187,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		private IEnumerable<string> DefaultWordFormingOverrides
 		{
-			get
-			{
-				if (s_fTestingMode)
-					return s_defaultWordformingChars;
-				return ParseLegacyWordFormingCharOverrides(m_legacyOverridesFile) ??
-					(IEnumerable<string>)s_defaultWordformingChars;
-			}
+			get { return ParseLegacyWordFormingCharOverrides(m_legacyOverridesFile) ?? DefaultWordformingChars; }
 		}
 		#endregion
 
@@ -306,10 +197,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Gets a collection of valid word forming characters.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[XmlIgnore]
 		public IEnumerable<string> WordFormingCharacters
 		{
-			get { return m_WordFormingCharacters; }
+			get { return m_wordFormingCharacters; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -317,10 +207,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Gets a collection of valid numeric characters.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[XmlIgnore]
 		public IEnumerable<string> NumericCharacters
 		{
-			get { return m_NumericCharacters; }
+			get { return m_numericCharacters; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -328,10 +217,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Gets a collection of valid punctuation, symbol, control and whitespace characters.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[XmlIgnore]
 		public IEnumerable<string> OtherCharacters
 		{
-			get { return m_OtherCharacters; }
+			get { return m_otherCharacters; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -339,16 +227,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Gets a list of all the valid characters (i.e. those from all the lists).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[XmlIgnore]
-		public List<string> AllCharacters
+		public IEnumerable<string> AllCharacters
 		{
-			get
-			{
-				List<string> chars = new List<string>(m_WordFormingCharacters);
-				chars.AddRange(m_NumericCharacters);
-				chars.AddRange(m_OtherCharacters);
-				return chars;
-			}
+			get { return m_wordFormingCharacters.Concat(m_numericCharacters).Concat(m_otherCharacters); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -356,7 +237,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Gets the space delimited list containing all the valid characters from each list.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[XmlIgnore]
 		public string SpaceDelimitedList
 		{
 			get { return MakeCharString(AllCharacters, " "); }
@@ -364,28 +244,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the XML string.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[XmlIgnore]
-		public string XmlString
-		{
-			get
-			{
-				WordForming = MakeCharString(m_WordFormingCharacters, ksDelimiter);
-				Numeric = MakeCharString(m_NumericCharacters, ksDelimiter);
-				Other = MakeCharString(m_OtherCharacters, ksDelimiter);
-				Other = Other.Replace(" ", kSpaceReplacment);
-				return XmlSerializationHelper.SerializeToString(this);
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Gets the number of valid characters that are letters.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[XmlIgnore]
 		public int WordformingLetterCount
 		{
 			get
@@ -394,7 +255,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				// system with recently added (not saved) characters, this method needs to
 				// ask the language definition for the category.
 				int count = 0;
-				foreach (string chStr in m_WordFormingCharacters)
+				foreach (string chStr in m_wordFormingCharacters)
 				{
 					if (chStr.Length > 1 || m_cpe.get_IsLetter(chStr[0]))
 						count++;
@@ -418,8 +279,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		public void MoveBetweenWordFormingAndOther(List<string> chars, bool moveToWordForming)
 		{
-			List<string> listFrom = (moveToWordForming ? m_OtherCharacters : m_WordFormingCharacters);
-			List<string> listTo = (moveToWordForming ? m_WordFormingCharacters : m_OtherCharacters);
+			List<string> listFrom = (moveToWordForming ? m_otherCharacters : m_wordFormingCharacters);
+			List<string> listTo = (moveToWordForming ? m_wordFormingCharacters : m_otherCharacters);
 
 			foreach (string chr in chars)
 			{
@@ -442,7 +303,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			if (string.IsNullOrEmpty(chr))
 				return false;
-			return (m_WordFormingCharacters.Contains(chr) || m_cpe.get_IsWordForming(chr[0]));
+			return (m_wordFormingCharacters.Contains(chr) || m_cpe.get_IsWordForming(chr[0]));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -456,7 +317,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (chr == 0)
 				return false;
 
-			return (m_WordFormingCharacters.Contains(chr.ToString()) || m_cpe.get_IsWordForming(chr));
+			return (m_wordFormingCharacters.Contains(chr.ToString(CultureInfo.InvariantCulture)) || m_cpe.get_IsWordForming(chr));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -470,7 +331,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (string.IsNullOrEmpty(chr))
 				return false;
 
-			return m_WordFormingCharacters.Contains(chr) && !m_cpe.get_IsWordForming(chr[0]);
+			return m_wordFormingCharacters.Contains(chr) && !m_cpe.get_IsWordForming(chr[0]);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -526,8 +387,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		public bool IsValid(string chr)
 		{
-			return m_WordFormingCharacters.Contains(chr) || m_NumericCharacters.Contains(chr) ||
-				m_OtherCharacters.Contains(chr);
+			return m_wordFormingCharacters.Contains(chr) || m_numericCharacters.Contains(chr) ||
+				m_otherCharacters.Contains(chr);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -539,9 +400,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			get
 			{
-				return ((m_OtherCharacters == null || m_OtherCharacters.Count == 0) &&
-					(m_NumericCharacters == null || m_NumericCharacters.Count == 0) &&
-					(m_WordFormingCharacters == null || m_WordFormingCharacters.Count == 0));
+				return ((m_otherCharacters == null || m_otherCharacters.Count == 0) &&
+					(m_numericCharacters == null || m_numericCharacters.Count == 0) &&
+					(m_wordFormingCharacters == null || m_wordFormingCharacters.Count == 0));
 			}
 		}
 
@@ -552,9 +413,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		public void Reset()
 		{
-			m_WordFormingCharacters = new List<string>();
-			m_NumericCharacters = new List<string>();
-			m_OtherCharacters = new List<string>();
+			m_wordFormingCharacters.Clear();
+			m_numericCharacters.Clear();
+			m_otherCharacters.Clear();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -565,9 +426,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="characters">The list of characters.</param>
 		/// <returns>A bit-mask value indicating which types of characters were added</returns>
 		/// ------------------------------------------------------------------------------------
-		public ValidCharacterType AddCharacters(List<string> characters)
+		public ValidCharacterType AddCharacters(IEnumerable<string> characters)
 		{
-			ValidCharacterType addedTypes = ValidCharacterType.None;
+			var addedTypes = ValidCharacterType.None;
 
 			if (characters != null)
 			{
@@ -636,9 +497,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			List<string> list;
 			switch(type)
 			{
-				case ValidCharacterType.WordForming: list = m_WordFormingCharacters; break;
-				case ValidCharacterType.Numeric: list = m_NumericCharacters; break;
-				default: list = m_OtherCharacters; break;
+				case ValidCharacterType.WordForming: list = m_wordFormingCharacters; break;
+				case ValidCharacterType.Numeric: list = m_numericCharacters; break;
+				default: list = m_otherCharacters; break;
 			}
 
 			list.Add(chr);
@@ -662,9 +523,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				return ValidCharacterType.WordForming;
 			if (Icu.IsNumeric(codepoint))
 			{
-				foreach (string chr in s_defaultWordformingChars)
-					if ((int)chr[0] == codepoint)
+				foreach (string chr in DefaultWordformingChars)
+				{
+					if (chr[0] == codepoint)
 						return ValidCharacterType.WordForming;
+				}
 				return ValidCharacterType.Numeric;
 			}
 			return ValidCharacterType.Other;
@@ -677,8 +540,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		public void AddDefaultWordformingCharOverrides()
 		{
-			m_WordFormingCharacters.AddRange(DefaultWordFormingOverrides);
-			Sort(m_WordFormingCharacters);
+			m_wordFormingCharacters.AddRange(DefaultWordFormingOverrides);
+			Sort(m_wordFormingCharacters);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -690,7 +553,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		public ValidCharacterType RemoveCharacters(List<string> characters)
 		{
-			ValidCharacterType removedTypes = ValidCharacterType.None;
+			var removedTypes = ValidCharacterType.None;
 
 			if (characters != null)
 			{
@@ -709,25 +572,55 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		public ValidCharacterType RemoveCharacter(string chr)
 		{
-			if (m_WordFormingCharacters.Contains(chr))
+			if (m_wordFormingCharacters.Contains(chr))
 			{
-				m_WordFormingCharacters.Remove(chr);
+				m_wordFormingCharacters.Remove(chr);
 				return ValidCharacterType.WordForming;
 			}
 
-			if (m_NumericCharacters.Contains(chr))
+			if (m_numericCharacters.Contains(chr))
 			{
-				m_NumericCharacters.Remove(chr);
+				m_numericCharacters.Remove(chr);
 				return ValidCharacterType.Numeric;
 			}
 
-			if (m_OtherCharacters.Contains(chr))
+			if (m_otherCharacters.Contains(chr))
 			{
-				m_OtherCharacters.Remove(chr);
+				m_otherCharacters.Remove(chr);
 				return ValidCharacterType.Other;
 			}
 
 			return ValidCharacterType.None;
+		}
+
+		/// <summary>
+		/// Saves the valid characters to the specified writing system.
+		/// </summary>
+		public void SaveTo(WritingSystem ws)
+		{
+			AddCharactersToWritingSystem(ws, "main", m_wordFormingCharacters);
+			AddCharactersToWritingSystem(ws, "punctuation", m_otherCharacters);
+			AddCharactersToWritingSystem(ws, "numeric", m_numericCharacters);
+		}
+
+		private void AddCharactersToWritingSystem(WritingSystem ws, string charSetType, List<string> characters)
+		{
+			if (characters.Count == 0)
+			{
+				ws.CharacterSets.Remove(charSetType);
+			}
+			else
+			{
+				CharacterSetDefinition charSet;
+				if (!ws.CharacterSets.TryGetItem(charSetType, out charSet))
+				{
+					charSet = new CharacterSetDefinition(charSetType);
+					ws.CharacterSets.Add(charSet);
+				}
+				charSet.Characters.Clear();
+				foreach (string chr in characters)
+					charSet.Characters.Add(chr);
+			}
 		}
 
 		#endregion
@@ -738,7 +631,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Sorts the lists.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void InitSortComparer(IWritingSystem ws)
+		private void InitSortComparer(WritingSystem ws)
 		{
 			if (m_comparer != null && m_comparer.WritingSystem != ws)
 				m_comparer = null;
@@ -755,9 +648,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		private void SortLists()
 		{
-			Sort(m_WordFormingCharacters);
-			Sort(m_NumericCharacters);
-			Sort(m_OtherCharacters);
+			Sort(m_wordFormingCharacters);
+			Sort(m_numericCharacters);
+			Sort(m_otherCharacters);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -782,13 +675,17 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// returned.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public static string MakeCharString(List<string> chars, string delimiter)
+		public static string MakeCharString(IEnumerable<string> chars, string delimiter)
 		{
-			bool prependDelimiter = chars.Contains(delimiter);
-			StringBuilder bldr = new StringBuilder(chars.Count * 2);
+			bool prependDelimiter = false;
+			var bldr = new StringBuilder();
 			foreach (string ch in chars)
 			{
-				if (ch != delimiter)
+				if (ch == delimiter)
+				{
+					prependDelimiter = true;
+				}
+				else
 				{
 					bldr.Append(ch);
 					bldr.Append(delimiter);
@@ -803,57 +700,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			return bldr.ToString();
 		}
 
-		/// --------------------------------------------------------------------------------
-		/// <summary>
-		/// Parses the specified string into a list of characters. The unparsed list is a
-		/// string of valid characters delimited with the specified delimiter.
-		/// </summary>
-		/// <param name="chars">The string containing a delimited list of characters.</param>
-		/// <param name="delimiter">The delimiter (passed as a string, but really just a single
-		/// character).</param>
-		/// <param name="cpe">The character property engine.</param>
-		/// <param name="invalidChars">The list of invalid characters encountered.</param>
-		/// <param name="otherLists">Collection of other lists to check to prevent a character
-		/// from being added to multiple lists.</param>
-		/// <returns>List of unique characters</returns>
-		/// --------------------------------------------------------------------------------
-		private static List<string> ParseCharString(string chars, string delimiter,
-			ILgCharacterPropertyEngine cpe, out List<string> invalidChars,
-			params List<string>[] otherLists)
-		{
-			List<string> charlist = TsStringUtils.ParseCharString(chars, delimiter, cpe,
-				out invalidChars);
-
-			for (int i = charlist.Count - 1; i >= 0; i--)
-			{
-				if (IsInAnotherList(charlist[i], otherLists))
-					charlist.RemoveAt(i);
-			}
-			return charlist;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Determines whether the specified character is in one of the other lists.
-		/// </summary>
-		/// <param name="chr">The character to look for.</param>
-		/// <param name="otherLists">The collection of other lists.</param>
-		/// <returns>
-		/// 	<c>true</c> if the specified chatacter is in another list; otherwise, <c>false</c>.
-		/// </returns>
-		/// ------------------------------------------------------------------------------------
-		private static bool IsInAnotherList(string chr, List<string>[] otherLists)
-		{
-			if (otherLists == null || otherLists.Length == 0)
-				return false;
-			foreach (List<string> otherList in otherLists)
-			{
-				if (otherList.Contains(chr))
-					return true;
-			}
-			return false;
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Parses the legacy word-forming character overrides XML file at the specified path
@@ -862,24 +708,27 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		public static List<string> ParseLegacyWordFormingCharOverrides(string path)
+		public static IEnumerable<string> ParseLegacyWordFormingCharOverrides(string path)
 		{
 			if (!File.Exists(path))
 				return null;
 
 			try
 			{
-				XmlDocument doc = new XmlDocument();
+				var doc = new XmlDocument();
 				doc.Load(path);
 
-				List<string> result = new List<string>();
+				var result = new List<string>();
 				XmlNodeList charsList = doc.SelectNodes("/wordFormingCharacterOverrides/wordForming");
-				foreach (XmlNode charNode in charsList)
+				if (charsList != null)
 				{
-					string codepointStr = charNode.Attributes["val"].InnerText;
-					int codepoint = Convert.ToInt32(codepointStr, 16);
-					char c = (char)codepoint;
-					result.Add(c.ToString());
+					foreach (XmlNode charNode in charsList)
+					{
+						string codepointStr = charNode.Attributes["val"].InnerText;
+						int codepoint = Convert.ToInt32(codepointStr, 16);
+						var c = (char) codepoint;
+						result.Add(c.ToString(CultureInfo.InvariantCulture));
+					}
 				}
 				return result;
 			}

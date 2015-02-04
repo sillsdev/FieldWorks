@@ -19,10 +19,9 @@ using System.Xml;
 using System.IO;
 
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
+using SIL.WritingSystems;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -1817,8 +1816,8 @@ namespace SIL.FieldWorks.TE
 		/// -----------------------------------------------------------------------------------
 		private int GetWsForLang(string sLang)
 		{
-			IWritingSystem ws;
-			WritingSystemServices.FindOrCreateWritingSystem(m_cache, FwDirectoryFinder.TemplateDirectory, LangTagUtils.ToLangTag(sLang),
+			WritingSystem ws;
+			WritingSystemServices.FindOrCreateWritingSystem(m_cache, FwDirectoryFinder.TemplateDirectory, IetfLanguageTag.ToLanguageTag(sLang),
 				true, false, out ws);
 			return ws.Handle;
 		}

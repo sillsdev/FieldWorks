@@ -1506,7 +1506,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// ------------------------------------------------------------------------------------
 		private string FormatReferencePunctForWs(string punct, int hvoWs)
 		{
-			IWritingSystem ws = (hvoWs <= 0) ? Services.WritingSystems.DefaultVernacularWritingSystem :
+			WritingSystem ws = (hvoWs <= 0) ? Services.WritingSystems.DefaultVernacularWritingSystem :
 				Services.WritingSystemManager.Get(hvoWs);
 			return (ws.RightToLeftScript) ? "\u200f" + punct + "\u200f" : punct;
 		}

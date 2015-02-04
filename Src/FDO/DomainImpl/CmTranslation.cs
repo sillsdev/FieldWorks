@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <param name="newValue"></param>
 		/// ------------------------------------------------------------------------------------
 		protected override void ITsStringAltChangedSideEffectsInternal(int multiAltFlid,
-			IWritingSystem alternativeWs, ITsString originalValue, ITsString newValue)
+			WritingSystem alternativeWs, ITsString originalValue, ITsString newValue)
 		{
 			base.ITsStringAltChangedSideEffectsInternal(multiAltFlid, alternativeWs, originalValue, newValue);
 
@@ -126,11 +126,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Get a set of all writing systems used for this translation.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public HashSet<IWritingSystem> AvailableWritingSystems
+		public HashSet<WritingSystem> AvailableWritingSystems
 		{
 			get
 			{
-				var wses = new HashSet<IWritingSystem>();
+				var wses = new HashSet<WritingSystem>();
 				foreach (int hvoWs in Translation.AvailableWritingSystemIds)
 					wses.Add(Services.WritingSystemManager.Get(hvoWs));
 				return wses;

@@ -8,9 +8,7 @@
 // <remarks>
 // </remarks>
 
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -34,8 +32,8 @@ namespace SIL.FieldWorks.XWorks
 
 		void SetUserWs(string wsStr)
 		{
-			var wsMgr = Cache.ServiceLocator.GetInstance<IWritingSystemManager>();
-			IWritingSystem userWs;
+			WritingSystemManager wsMgr = Cache.ServiceLocator.WritingSystemManager;
+			WritingSystem userWs;
 			if (!wsMgr.TryGetOrSet(wsStr, out userWs))
 			{
 				var wsFact = Cache.WritingSystemFactory;
@@ -382,7 +380,7 @@ namespace SIL.FieldWorks.XWorks
 
 		#region Protected methods made Internal
 
-		internal List<IWritingSystem> GetUiWssAndInstall(IEnumerable<string> uiLanguages)
+		internal List<WritingSystem> GetUiWssAndInstall(IEnumerable<string> uiLanguages)
 		{
 			return GetUiWritingSystemAndEnglish();
 		}

@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		private FontFeaturesButton m_defaultFontFeaturesButton;
 		private HelpProvider m_helpProvider;
 
-		private IWritingSystem m_ws;
+		private WritingSystem m_ws;
 		private CheckBox m_enableGraphiteCheckBox;
 		private GroupBox m_graphiteGroupBox;
 		#endregion
@@ -114,7 +114,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// from which they will be initialized.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public IWritingSystem WritingSystem
+		public WritingSystem WritingSystem
 		{
 			get
 			{
@@ -296,7 +296,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				{
 					m_ws.DefaultFontName = m_defaultFontComboBox.Text;
 				}
-				m_ws.DefaultFontFeatures = "";
+				m_ws.DefaultFont.Features = "";
 				m_defaultFontFeaturesButton.FontName = m_defaultFontComboBox.Text;
 				m_defaultFontFeaturesButton.FontFeatures = "";
 
@@ -319,7 +319,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			if (m_ws == null)
 				return;
-			m_ws.DefaultFontFeatures = m_defaultFontFeaturesButton.FontFeatures;
+			m_ws.DefaultFont.Features = m_defaultFontFeaturesButton.FontFeatures;
 		}
 
 		private void m_enableGraphiteCheckBox_Click(object sender, EventArgs e)

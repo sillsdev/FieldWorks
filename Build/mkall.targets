@@ -282,14 +282,14 @@
 	</Target>
 
 	<PropertyGroup>
-		<!-- bt2 is the master branch build of Chorus for Windows development. Update when appropriate. -->
-		<ChorusDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt2/.lastSuccessful</ChorusDownloadUrl>
-		<!-- bt323 is the master branch build of Chorus for Linux development. Update when appropriate. -->
-		<ChorusDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt323/.lastSuccessful</ChorusDownloadUrl>
-		<!-- bt223 is the master branch build of Palaso for Windows development. Update when appropriate. -->
-		<PalasoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt223/.lastSuccessful</PalasoDownloadUrl>
-		<!-- bt322 is the master branch build of Palaso for Linux development. Update when appropriate. -->
-		<PalasoDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt322/.lastSuccessful</PalasoDownloadUrl>
+		<!-- bt453 is the SILWritingSystems branch build of Chorus for Windows development. Update when appropriate. -->
+		<ChorusDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt453/.lastSuccessful</ChorusDownloadUrl>
+		<!-- bt454 is the SILWritingSystems branch build of Chorus for Linux development. Update when appropriate. -->
+		<ChorusDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt454/.lastSuccessful</ChorusDownloadUrl>
+		<!-- bt440 is the SILWritingSystems branch build of Palaso for Windows development. Update when appropriate. -->
+		<PalasoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt440/.lastSuccessful</PalasoDownloadUrl>
+		<!-- bt441 is the SILWritingSystems branch build of Palaso for Linux development. Update when appropriate. -->
+		<PalasoDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt441/.lastSuccessful</PalasoDownloadUrl>
 		<!-- bt399 is the GeckoFX 29 build for Windows -->
 		<GeckoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt399/.lastSuccessful</GeckoDownloadUrl>
 		<!-- bt400 is the XULRunner 29 build for Windows -->
@@ -313,7 +313,7 @@
 
 	<Target Name="downloadDlls">
 		<MakeDir Directories="$(fwrt)/Downloads"/>
-		<Message Text="Downloading latest successful artifacts from Palaso master build."/>
+		<Message Text="Downloading latest successful artifacts for Palaso."/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.dll" LocalFilename="$(fwrt)/Downloads/Palaso.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.dll.config" LocalFilename="$(fwrt)/Downloads/Palaso.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/Palaso.$(DebugInfo)"/>
@@ -331,7 +331,14 @@
 		<DownloadFile Address="$(PalasoDownloadUrl)/Ionic.Zip.dll" LocalFilename="$(fwrt)/Downloads/Ionic.Zip.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Keyman7Interop.dll" LocalFilename="$(fwrt)/Downloads/Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/KeymanLink.dll" LocalFilename="$(fwrt)/Downloads/KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<Message Text="Downloading latest successful artifacts for L10NSharp, Enchant.Net, ibusdotnet, and NDesk.DBus."/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.WritingSystems.dll" LocalFilename="$(fwrt)/Downloads/SIL.WritingSystems.dll"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.WritingSystems.dll.config" LocalFilename="$(fwrt)/Downloads/SIL.WritingSystems.dll.config" Condition="'$(OS)'=='Unix'"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.WritingSystems.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.WritingSystems.$(DebugInfo)"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.WritingSystems.WindowsForms.dll" LocalFilename="$(fwrt)/Downloads/SIL.WritingSystems.WindowsForms.dll"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.WritingSystems.WindowsForms.dll.config" LocalFilename="$(fwrt)/Downloads/SIL.WritingSystems.WindowsForms.dll.config" Condition="'$(OS)'=='Unix'"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.WritingSystems.WindowsForms.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.WritingSystems.WindowsForms.$(DebugInfo)"/>
+
+		<Message Text="Downloading latest successful artifacts for L10NSharp, Enchant.Net, ibusdotnet, NDesk.DBus, and Spart."/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/L10NSharp.dll" LocalFilename="$(fwrt)/Downloads/L10NSharp.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Enchant.Net.dll" LocalFilename="$(fwrt)/Downloads/Enchant.Net.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Enchant.Net.dll.config" LocalFilename="$(fwrt)/Downloads/Enchant.Net.dll.config" Condition="'$(OS)'=='Unix'"/>
@@ -342,6 +349,7 @@
 		<DownloadFile Address="$(PalasoDownloadUrl)/NDesk.DBus.dll.config" LocalFilename="$(fwrt)/Downloads/NDesk.DBus.dll.config"
 					  Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/taglib-sharp.dll" LocalFilename="$(fwrt)/Downloads/taglib-sharp.dll"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/Spart.dll" LocalFilename="$(fwrt)/Downloads/Spart.dll"/>
 
 		<Message Text="Downloading latest successful artifacts for GeckoFX and XULRunner." Condition="'$(OS)'=='Windows_NT'" />
 		<DownloadFile Address="$(GeckoDownloadUrl)/Geckofx-Core.dll" LocalFilename="$(fwrt)/Downloads/Geckofx-Core.dll"
@@ -355,7 +363,7 @@
 		<DownloadFile Address="$(XULRunnerDownloadUrl)/xulrunner-29.0.1.en-US.win32.zip" LocalFilename="$(fwrt)/Downloads/xulrunner-29.0.1.en-US.win32.zip"
 					  Condition="'$(OS)'=='Windows_NT'"/>
 
-		<Message Text="Downloading latest successful artifacts from Chorus master build."/>
+		<Message Text="Downloading latest successful artifacts for Chorus."/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/Autofac.dll" LocalFilename="$(fwrt)/Downloads/Autofac.dll"/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/Chorus.exe" LocalFilename="$(fwrt)/Downloads/Chorus.exe"/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/ChorusHub.exe" LocalFilename="$(fwrt)/Downloads/ChorusHub.exe" Condition="'$(OS)'=='Unix'"/>
@@ -425,6 +433,14 @@
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.dll.mdb" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.pdb" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.WritingSystems.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.WritingSystems.dll.config" Condition="'$(OS)'=='Unix'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.WritingSystems.dll.mdb" Condition="'$(OS)'=='Unix'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.WritingSystems.pdb" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.WritingSystems.WindowsForms.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.WritingSystems.WindowsForms.dll.config" Condition="'$(OS)'=='Unix'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.WritingSystems.WindowsForms.dll.mdb" Condition="'$(OS)'=='Unix'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.WritingSystems.WindowsForms.pdb" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/icu.net.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/icu.net.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
@@ -438,6 +454,7 @@
 		<DownloadedFiles Include="$(fwrt)/Downloads/NDesk.DBus.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Ionic.Zip.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/taglib-sharp.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/Spart.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/FormattedEditor.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/HelpSystem.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/HtmlEditor.dll"/>

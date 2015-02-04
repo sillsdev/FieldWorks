@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Xml;
 
@@ -274,11 +275,11 @@ namespace SIL.FieldWorks.XWorks
 			}
 			return true;//we handled this, no need to ask anyone else.
 		}
-		private static void AddWritingSystemList(UIListDisplayProperties display, IEnumerable<IWritingSystem> list)
+		private static void AddWritingSystemList(UIListDisplayProperties display, IEnumerable<WritingSystem> list)
 		{
-			foreach (IWritingSystem ws in list)
+			foreach (WritingSystem ws in list)
 			{
-				display.List.Add(ws.DisplayLabel, ws.Handle.ToString(), null, null);
+				display.List.Add(ws.DisplayLabel, ws.Handle.ToString(CultureInfo.InvariantCulture), null, null);
 			}
 		}
 	}

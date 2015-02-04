@@ -135,9 +135,9 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				if (m_cache != null)
 				{
-					IWritingSystem ws = GetWritingSystem(e.RowIndex1);
+					WritingSystem ws = GetWritingSystem(e.RowIndex1);
 					Debug.Assert(ws == GetWritingSystem(e.RowIndex2));
-					e.SortResult = ws.Collator.Compare(((ITsString)e.CellValue1).Text, ((ITsString)e.CellValue2).Text);
+					e.SortResult = ws.DefaultCollation.Collator.Compare(((ITsString)e.CellValue1).Text, ((ITsString)e.CellValue2).Text);
 					e.Handled = true;
 					return;
 				}
@@ -159,7 +159,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <param name="rowIndex">Index of the row.</param>
 		/// <returns>The writing system</returns>
 		/// ------------------------------------------------------------------------------------
-		private IWritingSystem GetWritingSystem(int rowIndex)
+		private WritingSystem GetWritingSystem(int rowIndex)
 		{
 			int ws = (m_rowsAreMultiLing ? GetWritingSystemHandle(rowIndex) : m_ws);
 			return m_cache.ServiceLocator.WritingSystemManager.Get(ws);

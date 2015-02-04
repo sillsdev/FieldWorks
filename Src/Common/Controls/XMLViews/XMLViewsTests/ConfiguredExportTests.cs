@@ -4,10 +4,11 @@ using System.Globalization;
 using System.IO;
 using System.Xml;
 using NUnit.Framework;
-using Palaso.WritingSystems;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.Utils;
+using SIL.WritingSystems;
 
 namespace XMLViewsTests
 {
@@ -23,9 +24,8 @@ namespace XMLViewsTests
 		[Test]
 		public void XHTMLExportGetDigraphMapsFirstCharactersFromICUSortRules()
 		{
-			var ws = Cache.LangProject.DefaultVernacularWritingSystem;
-			ws.SortRules = "&b < az << a < c <<< ch";
-			ws.SortUsing = WritingSystemDefinition.SortRulesType.CustomICU;
+			WritingSystem ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			ws.DefaultCollation = new CollationDefinition("standard") {IcuRules = "&b < az << a < c <<< ch"};
 
 			var exporter = new ConfiguredExport(null, null, 0);
 			string output;
@@ -47,9 +47,8 @@ namespace XMLViewsTests
 		[Test]
 		public void XHTMLExportGetDigraphMapsFromICUSortRules_TertiaryIgnorableDoesNotCrash()
 		{
-			var ws = Cache.LangProject.DefaultVernacularWritingSystem;
-			ws.SortRules = "&[last tertiary ignorable] = \\";
-			ws.SortUsing = WritingSystemDefinition.SortRulesType.CustomICU;
+			WritingSystem ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			ws.DefaultCollation = new CollationDefinition("standard") {IcuRules = "&[last tertiary ignorable] = \\"};
 
 			var exporter = new ConfiguredExport(null, null, 0);
 			string output;
@@ -74,9 +73,8 @@ namespace XMLViewsTests
 		[Test]
 		public void XHTMLExportGetDigraphMapsFromICUSortRules_UnicodeTertiaryIgnorableWorks()
 		{
-			var ws = Cache.LangProject.DefaultVernacularWritingSystem;
-			ws.SortRules = "&[last tertiary ignorable] = \\uA78C";
-			ws.SortUsing = WritingSystemDefinition.SortRulesType.CustomICU;
+			WritingSystem ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			ws.DefaultCollation = new CollationDefinition("standard") {IcuRules = "&[last tertiary ignorable] = \\uA78C"};
 
 			var exporter = new ConfiguredExport(null, null, 0);
 			string output;
@@ -99,9 +97,8 @@ namespace XMLViewsTests
 		[Test]
 		public void XHTMLExportGetDigraphMapsFirstCharactersFromToolboxSortRules()
 		{
-			var ws = Cache.LangProject.DefaultVernacularWritingSystem;
-			ws.SortRules = "b" + Environment.NewLine + "az a" + Environment.NewLine + "c ch";
-			ws.SortUsing = WritingSystemDefinition.SortRulesType.CustomSimple;
+			WritingSystem ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			ws.DefaultCollation = new SimpleCollationDefinition("standard") {SimpleRules = "b" + Environment.NewLine + "az a" + Environment.NewLine + "c ch"};
 
 			var exporter = new ConfiguredExport(null, null, 0);
 			string output;
@@ -130,9 +127,8 @@ namespace XMLViewsTests
 		[Test]
 		public void XHTMLExportGetDigraphMapsFirstCharactersFromOtherSortRules()
 		{
-			var ws = Cache.LangProject.DefaultVernacularWritingSystem;
-			ws.SortRules = "fr";
-			ws.SortUsing = WritingSystemDefinition.SortRulesType.OtherLanguage;
+			WritingSystem ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			ws.DefaultCollation = new InheritedCollationDefinition("standard") {BaseLanguageTag = "fr", BaseType = "standard"};
 
 			var exporter = new ConfiguredExport(null, null, 0);
 			string output;

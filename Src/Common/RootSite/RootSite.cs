@@ -27,17 +27,14 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Automation.Provider;
 using System.Windows.Forms;
-using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
+using SIL.WritingSystems;
 using XCore;
-using SIL.FieldWorks.Resources;
 
 // How to debug COM reference counts:
 // a) create a global variable that contains a file handle:
@@ -235,9 +232,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// With access to the cache, we can limit this to writing sytems the user might plausibly want for this project.
 		/// </summary>
-		protected override IWritingSystemDefinition[] PlausibleWritingSystems
+		protected override WritingSystemDefinition[] PlausibleWritingSystems
 		{
-			get { return m_fdoCache.ServiceLocator.WritingSystems.AllWritingSystems.Cast<IWritingSystemDefinition>().ToArray(); }
+			get { return m_fdoCache.ServiceLocator.WritingSystems.AllWritingSystems.Cast<WritingSystemDefinition>().ToArray(); }
 		}
 
 		/// ------------------------------------------------------------------------------------

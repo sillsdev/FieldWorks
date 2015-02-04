@@ -5,10 +5,12 @@
 // Original author: MarkS 2010-11-29 LanguageSetupTests.cs
 
 using System;
+using System.Linq;
 using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -46,7 +48,7 @@ namespace SIL.FieldWorks.Common.Controls
 		[Test]
 		public void LanguageSubtag_newWS()
 		{
-			var wsManager = new PalasoWritingSystemManager();
+			var wsManager = new WritingSystemManager();
 			using (var langSetup = new LanguageSetup())
 			{
 				langSetup.WritingSystemManager = wsManager;
@@ -55,8 +57,8 @@ namespace SIL.FieldWorks.Common.Controls
 				LanguageSubtag subtag = langSetup.LanguageSubtag;
 				Assert.AreEqual("mon", subtag.Code);
 
-				LanguageSubtag newSubtag = new LanguageSubtag("mon", "Moniker", true, null);
-				IWritingSystem newWs = wsManager.Create(newSubtag, null, null, null);
+				var newSubtag = new LanguageSubtag("mon", "Moniker", true, null);
+				WritingSystem newWs = wsManager.Create(newSubtag, null, null, Enumerable.Empty<VariantSubtag>());
 				wsManager.Set(newWs);
 				subtag = langSetup.LanguageSubtag;
 				Assert.AreEqual("aaa", subtag.Code, "Language code 'mon' should already be in use");

@@ -145,6 +145,10 @@
       <Name>nunit.framework</Name>
       <HintPath>..\..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="Palaso, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Downloads\Palaso.dll</HintPath>
+    </Reference>
     <Reference Include="PrintLayout, Version=3.3.0.9, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\PrintLayout.dll</HintPath>
@@ -156,6 +160,10 @@
     <Reference Include="ScrUtilsInterfaces, Version=6.9.0.32455, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.WritingSystems, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Downloads\SIL.WritingSystems.dll</HintPath>
     </Reference>
     <Reference Include="SilUtils, Version=7.2.0.28885, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

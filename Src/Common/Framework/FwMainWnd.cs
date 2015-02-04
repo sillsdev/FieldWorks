@@ -16,7 +16,6 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Microsoft.Win32;
-using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
@@ -29,6 +28,7 @@ using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
+using SIL.WritingSystems;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Framework
@@ -2823,7 +2823,7 @@ namespace SIL.FieldWorks.Common.Framework
 			// so we manually switch to the default keyboard here so that the Project Properties
 			// dialog displays the default keyboard. When we're all done we switch back to the
 			// keyboard we had recently. (TE-4683)
-			var oldWsd = Keyboard.Controller.ActiveKeyboard;
+			IKeyboardDefinition oldWsd = Keyboard.Controller.ActiveKeyboard;
 			Keyboard.Controller.ActivateDefaultKeyboard();
 			// Disable windows on cache to prevent painting when fonts for writing system are changed
 			m_app.EnableMainWindows(false);
@@ -3135,7 +3135,6 @@ namespace SIL.FieldWorks.Common.Framework
 		protected bool PageSetupPreparePublication(out IPublication publication,
 			out IPubDivision division, out IPubPageLayout pageLayout)
 		{
-			publication = null;
 			division = null;
 			pageLayout = null;
 
@@ -3444,7 +3443,7 @@ namespace SIL.FieldWorks.Common.Framework
 			var box = sender as ComboBox;
 			if (box == null || ActiveView == null)
 				return;
-			IWritingSystem ws = box.SelectedItem as IWritingSystem;
+			var ws = box.SelectedItem as WritingSystem;
 			if (ws == null)
 				return;
 

@@ -666,7 +666,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		///<param name="prepend"></param>
 		///<param name="sSeparator"></param>
 		///<param name="wsUser"></param>
-		private static void AppendGlossAffix(ITsIncStrBldr sb, ITsString tssGlossAffix, bool prepend, string sSeparator, IWritingSystem wsUser)
+		private static void AppendGlossAffix(ITsIncStrBldr sb, ITsString tssGlossAffix, bool prepend, string sSeparator, WritingSystem wsUser)
 		{
 			if (prepend)
 				sb.AppendTsString(tssGlossAffix);
@@ -711,7 +711,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="sbJoinedGlossAppend"></param>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "cache is a reference")]
-		public static void JoinGlossAffixesOfInflVariantTypes(IEnumerable<ILexEntryType> variantEntryTypesRs, IWritingSystem wsGloss,
+		public static void JoinGlossAffixesOfInflVariantTypes(IEnumerable<ILexEntryType> variantEntryTypesRs, WritingSystem wsGloss,
 												out ITsIncStrBldr sbJoinedGlossPrepend,
 												out ITsIncStrBldr sbJoinedGlossAppend)
 		{
@@ -750,7 +750,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		///<returns></returns>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "cache is a reference")]
-		public static ITsString MakeGlossWithReverseAbbrs(IMultiStringAccessor gloss, IWritingSystem wsGloss, IList<ILexEntryType> variantEntryTypes)
+		public static ITsString MakeGlossWithReverseAbbrs(IMultiStringAccessor gloss, WritingSystem wsGloss, IList<ILexEntryType> variantEntryTypes)
 		{
 			if (variantEntryTypes == null || variantEntryTypes.Count() == 0 || variantEntryTypes.First() == null)
 				return GetTssGloss(gloss, wsGloss);
@@ -775,7 +775,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <returns></returns>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "cache is a reference")]
-		public static ITsString MakeGlossOptionWithInflVariantTypes(ILexEntryType variantEntryType, IMultiStringAccessor gloss, IWritingSystem wsGloss)
+		public static ITsString MakeGlossOptionWithInflVariantTypes(ILexEntryType variantEntryType, IMultiStringAccessor gloss, WritingSystem wsGloss)
 		{
 			var inflVariantEntryType = variantEntryType as ILexEntryInflType;
 			if (gloss == null || inflVariantEntryType == null)
@@ -816,7 +816,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="wsUser"></param>
 		/// <returns></returns>
 		public static ITsString AddTssGlossAffix(TsIncStrBldr sb, IMultiUnicode glossAffixAccessor,
-			IWritingSystem wsGloss, IWritingSystem wsUser)
+			WritingSystem wsGloss, WritingSystem wsUser)
 		{
 			if (sb == null)
 				sb = TsIncStrBldrClass.Create();
@@ -830,13 +830,13 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			return tssGlossPrepend;
 		}
 
-		private static void AddGloss(TsIncStrBldr sb, IMultiStringAccessor gloss, IWritingSystem wsGloss)
+		private static void AddGloss(TsIncStrBldr sb, IMultiStringAccessor gloss, WritingSystem wsGloss)
 		{
 			ITsString tssGloss = GetTssGloss(gloss, wsGloss);
 			sb.AppendTsString(tssGloss);
 		}
 
-		private static ITsString GetTssGloss(IMultiStringAccessor gloss, IWritingSystem wsGloss)
+		private static ITsString GetTssGloss(IMultiStringAccessor gloss, WritingSystem wsGloss)
 		{
 			int wsActual;
 			var tssGloss = gloss.GetAlternativeOrBestTss(wsGloss.Handle, out wsActual);
@@ -845,7 +845,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			return tssGloss;
 		}
 
-		private static void AddVariantTypeGlossInfo(TsIncStrBldr sb, IWritingSystem wsGloss, IList<IMultiUnicode> multiUnicodeAccessors, IWritingSystem wsUser)
+		private static void AddVariantTypeGlossInfo(TsIncStrBldr sb, WritingSystem wsGloss, IList<IMultiUnicode> multiUnicodeAccessors, WritingSystem wsUser)
 		{
 			const string sSeriesSeparator = kDefaultSeriesSeparatorLexEntryTypeReverseAbbr;
 			var fBeginSeparator = true;

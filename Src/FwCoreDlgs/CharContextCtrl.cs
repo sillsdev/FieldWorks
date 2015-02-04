@@ -66,7 +66,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private IWritingSystemContainer m_wsContainer;
 		private ILgCharacterPropertyEngine m_charPropEng;
 		private IApp m_app;
-		private IWritingSystem m_ws;
+		private WritingSystem m_ws;
 		private int m_gridRowHeight;
 		private CheckType m_checkToRun;
 		private string m_sListName;
@@ -126,7 +126,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="tokenGrid">The token grid.</param>
 		/// ------------------------------------------------------------------------------------
 		public void Initialize(FdoCache cache, IWritingSystemContainer wsContainer,
-			IWritingSystem ws, IApp app, Font contextFont, DataGridView tokenGrid)
+			WritingSystem ws, IApp app, Font contextFont, DataGridView tokenGrid)
 		{
 			m_cache = cache;
 			m_wsContainer = wsContainer;

@@ -332,7 +332,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					int wsGloss = TsStringUtils.GetWsAtOffset(value, 0);
 					bool fAnal = false;
-					foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+					foreach (WritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 					{
 						if (ws.Handle == wsGloss)
 						{
@@ -601,8 +601,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 				// Set writing system factory and code for the two edit boxes.
 				IWritingSystemContainer wsContainer = cache.ServiceLocator.WritingSystems;
-				IWritingSystem defAnalWs = wsContainer.DefaultAnalysisWritingSystem;
-				IWritingSystem defVernWs = wsContainer.DefaultVernacularWritingSystem;
+				WritingSystem defAnalWs = wsContainer.DefaultAnalysisWritingSystem;
+				WritingSystem defVernWs = wsContainer.DefaultVernacularWritingSystem;
 				m_tbLexicalForm.WritingSystemFactory = cache.WritingSystemFactory;
 				m_tbGloss.WritingSystemFactory = cache.WritingSystemFactory;
 

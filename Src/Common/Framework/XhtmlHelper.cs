@@ -160,7 +160,7 @@ namespace SIL.FieldWorks.Common.Framework
 			m_writer = w;
 			m_cache = cache;
 
-			IWritingSystem ws = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			WritingSystem ws = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			m_fRTL = ws.RightToLeftScript;
 		}
 
@@ -289,7 +289,7 @@ namespace SIL.FieldWorks.Common.Framework
 
 		private void WriteWritingSystemInfo()
 		{
-			foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystems.AllWritingSystems)
+			foreach (WritingSystem ws in m_cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
 				m_writer.Write("<WritingSystemInfo lang=\"{0}\" dir=\"{1}\"",
 					ws.Id, ws.RightToLeftScript ? "rtl" : "ltr");
@@ -304,10 +304,10 @@ namespace SIL.FieldWorks.Common.Framework
 			}
 		}
 
-		private void WriteWsListTag(IWritingSystem ws, IEnumerable<IWritingSystem> wss, string sAttr)
+		private void WriteWsListTag(WritingSystem ws, IEnumerable<WritingSystem> wss, string sAttr)
 		{
 			int i = 0;
-			foreach (IWritingSystem curWs in wss)
+			foreach (WritingSystem curWs in wss)
 			{
 				if (ws == curWs)
 				{
@@ -1295,7 +1295,7 @@ namespace SIL.FieldWorks.Common.Framework
 
 		private void WriteSansSerifFontFamilyForWs(int ws, bool fWriteDirection)
 		{
-			IWritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
+			WritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
 			if (fWriteDirection)
 				m_writer.WriteLine("        direction: {0};", wsObj.RightToLeftScript ? "rtl" : "ltr");
 			if (!String.IsNullOrEmpty(wsObj.DefaultFontName))
@@ -1305,7 +1305,7 @@ namespace SIL.FieldWorks.Common.Framework
 
 		private void WriteFontFamilyForWs(int ws, bool fWriteDirection)
 		{
-			IWritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
+			WritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
 			if (fWriteDirection)
 				m_writer.WriteLine("    direction: {0};", wsObj.RightToLeftScript ? "rtl" : "ltr");
 			if (!String.IsNullOrEmpty(wsObj.DefaultFontName))

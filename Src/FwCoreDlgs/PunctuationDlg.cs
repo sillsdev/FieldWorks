@@ -1,13 +1,14 @@
-
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Xml.Serialization;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.WritingSystems;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.FDO;
@@ -20,6 +21,7 @@ using SIL.CoreImpl;
 using XCore;
 using SIL.FieldWorks.Common.RootSites;
 using System.Diagnostics.CodeAnalysis;
+using MatchedPair = SILUBS.SharedScrUtils.MatchedPair;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -51,7 +53,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region Data members
-		private readonly IWritingSystem m_ws;
+		private readonly WritingSystem m_ws;
 		private ILgCharacterPropertyEngine m_chrPropEng;
 
 		private int m_gridRowHeight;
@@ -88,7 +90,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public PunctuationDlg(FdoCache cache, IWritingSystemContainer wsContainer,
-			IHelpTopicProvider helpTopicProvider, IApp app, IWritingSystem ws, string wsName, Guid chkGuid)
+			IHelpTopicProvider helpTopicProvider, IApp app, WritingSystem ws, string wsName, Guid chkGuid)
 			: this()
 		{
 			m_ws = ws;
@@ -98,8 +100,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				throw new ArgumentException("Writing system name must not be null or empty.", "wsName");
 
 			m_validChars = ValidCharacters.Load(m_ws, LoadException, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+#if WS_FIX
 			m_matchedPairList = MatchedPairList.Load(m_ws.MatchedPairs, wsName);
 			m_patternList = PuncPatternsList.Load(m_ws.PunctuationPatterns, wsName);
+#endif
 			m_chrPropEng = LgIcuCharPropEngineClass.Create();
 			m_charInfoToolTip = new CharacterInfoToolTip();
 
@@ -177,7 +181,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public static bool RunDialog(FdoCache cache, IApp app, IWin32Window owner, IHelpTopicProvider helpTopicProvider, Guid chkGuid)
 		{
-			IWritingSystem ws = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			WritingSystem ws = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			using (var dlg = new PunctuationDlg(cache, cache.ServiceLocator.WritingSystems,
 				helpTopicProvider, app, ws, ws.DisplayLabel, chkGuid))
 			{
@@ -765,10 +769,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 
 			e.Cancel = false;
+#if WS_FIX
 			m_ws.MatchedPairs = m_matchedPairList.XmlString;
 			m_ws.PunctuationPatterns = m_patternList.XmlString;
 			m_qmCurrentList = GetQuotationMarkInfo();
 			m_ws.QuotationMarks = (m_qmCurrentList == null ? null : m_qmCurrentList.XmlString);
+#endif
 			UpdateValidCharactersList();
 		}
 
@@ -890,7 +896,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 
 			if (validCharsUpdated)
-				m_ws.ValidChars = validChars.XmlString;
+				validChars.SaveTo(m_ws);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1005,7 +1011,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			using (new WaitCursor(this))
 			{
 				gridPatterns.Rows.Clear();
-				Dictionary<string, PuncPattern> patterns = new Dictionary<string, PuncPattern>();
+				var patterns = new Dictionary<string, PuncPattern>();
 				foreach (PuncPattern pat in m_patternList)
 				{
 					if (pat.Status != PuncPatternStatus.Unknown)
@@ -1195,7 +1201,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				}
 			}
 
-			cboQuotationLangs.Items.AddRange(m_quotationMarkLangs.ToArray());
+			cboQuotationLangs.Items.AddRange(m_quotationMarkLangs.Cast<object>().ToArray());
 			m_quotationMarkLangs.AddCustomItem();
 		}
 
@@ -1207,7 +1213,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private void LoadWritingSystemsQuotationMarks(string wsName)
 		{
+#if WS_FIX
 			m_qmCurrentList = QuotationMarksList.Load(m_ws.QuotationMarks, wsName);
+#endif
 			chkParaContinuation.Checked =
 				(m_qmCurrentList.ContinuationType != ParagraphContinuationType.None);
 

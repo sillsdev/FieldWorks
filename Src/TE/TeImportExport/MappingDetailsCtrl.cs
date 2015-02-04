@@ -9,23 +9,13 @@
 // </remarks>
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Windows.Forms;
-using System.Resources;
 using System.Diagnostics;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Resources;
 using SIL.Utils;
-using SIL.FieldWorks.TE;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -266,7 +256,7 @@ namespace SIL.FieldWorks.TE
 			string initialWritingSystem = string.Empty;
 			// Iterate through the available writing systems and add them to the writing systems
 			// combo box.
-			foreach (IWritingSystem wsObj in cache.ServiceLocator.WritingSystems.AllWritingSystems)
+			foreach (WritingSystem wsObj in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
 				cboWritingSys.Items.Add(wsObj);
 
@@ -415,7 +405,7 @@ namespace SIL.FieldWorks.TE
 			get
 			{
 				CheckDisposed();
-				var ws = cboWritingSys.SelectedItem as IWritingSystem;
+				var ws = cboWritingSys.SelectedItem as WritingSystem;
 				return ws == null ? null : ws.Id;
 			}
 		}
@@ -430,7 +420,7 @@ namespace SIL.FieldWorks.TE
 		{
 			get
 			{
-				var ws = cboWritingSys.SelectedItem as IWritingSystem;
+				var ws = cboWritingSys.SelectedItem as WritingSystem;
 				return ws == null ? null : ws.LegacyMapping;
 			}
 		}

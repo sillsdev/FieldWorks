@@ -138,6 +138,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SharedScrUtils.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.WritingSystems, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Downloads\SIL.WritingSystems.dll</HintPath>
+    </Reference>
     <Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
@@ -197,8 +201,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ValidationProgress.cs" />
-    <Compile Include="ExemplarCharactersHelper.cs">
-    </Compile>
     <EmbeddedResource Include="FwUtilsStrings.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>

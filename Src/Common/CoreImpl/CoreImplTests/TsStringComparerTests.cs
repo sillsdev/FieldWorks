@@ -27,7 +27,7 @@ namespace SIL.CoreImpl
 	[TestFixture]
 	public class TsStringComparerTests // we can't derive from BaseTest because of circular dependencies
 	{
-		private IWritingSystemManager m_wsManager;
+		private WritingSystemManager m_wsManager;
 		private TsStringComparer m_comparer;
 		private ITsStrFactory m_tssFact;
 
@@ -39,7 +39,7 @@ namespace SIL.CoreImpl
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
-			m_wsManager = new PalasoWritingSystemManager();
+			m_wsManager = new WritingSystemManager();
 			m_comparer = new TsStringComparer(m_wsManager.Create("en"));
 			m_tssFact = TsStrFactoryClass.Create();
 		}

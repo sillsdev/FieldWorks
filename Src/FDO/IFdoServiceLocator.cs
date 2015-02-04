@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.FDO
 		/// <summary>
 		/// Shortcut to the WS manager.
 		/// </summary>
-		IWritingSystemManager WritingSystemManager { get; }
+		WritingSystemManager WritingSystemManager { get; }
 
 		/// <summary>
 		/// Gets the writing system container.

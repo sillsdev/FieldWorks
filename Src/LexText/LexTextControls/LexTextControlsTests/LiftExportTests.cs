@@ -13,10 +13,8 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using NUnit.Framework;
-using Palaso.IO;
 using Palaso.Lift.Validation;
 using Palaso.TestUtilities;
-using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -26,9 +24,9 @@ using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 using SIL.FieldWorks.LexText.Controls;
+using SIL.WritingSystems;
 
 namespace LexTextControlsTests
 {
@@ -492,12 +490,12 @@ namespace LexTextControlsTests
 			Directory.CreateDirectory(MockLinkedFilesFolder);
 			//m_cache.LangProject.LinkedFilesRootDir = MockLinkedFilesFolder; this is already the default.
 
-			var writingSystemManager = m_cache.ServiceLocator.WritingSystemManager;
-			var languageSubtag = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.LanguageSubtag;
+			WritingSystemManager writingSystemManager = m_cache.ServiceLocator.WritingSystemManager;
+			LanguageSubtag languageSubtag = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Language;
 			//var voiceTag = RFC5646Tag.RFC5646TagForVoiceWritingSystem(languageSubtag.Name, "");
-			var audioWs = writingSystemManager.Create(languageSubtag,
-				LangTagUtils.GetScriptSubtag("Zxxx"), null, LangTagUtils.GetVariantSubtag("audio"));
-			((WritingSystemDefinition)audioWs).IsVoice = true; // should already be so? Make sure.
+			WritingSystem audioWs = writingSystemManager.Create(languageSubtag,
+				WellKnownSubtags.AudioScript, null, new VariantSubtag[] {WellKnownSubtags.AudioPrivateUse});
+			audioWs.IsVoice = true; // should already be so? Make sure.
 			writingSystemManager.Set(audioWs); // gives it a handle
 			m_audioWsCode = audioWs.Handle;
 

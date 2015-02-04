@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -12,7 +11,6 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FdoUi;
-using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
 using XCore;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -944,7 +942,7 @@ namespace SIL.FieldWorks.IText
 		internal void SetupVernWsForText(int wsVern)
 		{
 			m_wsDefault = wsVern;
-			IWritingSystem defWs = Cache.ServiceLocator.WritingSystemManager.Get(wsVern);
+			WritingSystem defWs = Cache.ServiceLocator.WritingSystemManager.Get(wsVern);
 			RightToLeft = defWs.RightToLeftScript;
 		}
 

@@ -10,13 +10,13 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
 using Palaso.Lift.Parsing;
-using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -461,24 +461,23 @@ namespace SIL.FieldWorks.LexText.Controls
 			int hvo;
 			if (m_mapLangWs.TryGetValue(key, out hvo))
 				return hvo;
-			IWritingSystem ws;
+			WritingSystem ws;
 			if (!WritingSystemServices.FindOrCreateSomeWritingSystem(m_cache, FwDirectoryFinder.TemplateDirectory, key,
 				m_fAddNewWsToAnal, m_fAddNewWsToVern, out ws))
 			{
 				m_addedWss.Add(ws);
 				// Use the LDML file if it's available.  Look in the current location first, then look
 				// in the old location.
-				var ldmlFile = Path.Combine(Path.Combine(m_sLiftDir, "WritingSystems"), key + ".ldml");
+				string ldmlFile = Path.Combine(Path.Combine(m_sLiftDir, "WritingSystems"), key + ".ldml");
 				if (!File.Exists(ldmlFile))
 					ldmlFile = Path.Combine(m_sLiftDir, key + ".ldml");
-				if (File.Exists(ldmlFile) && ws is WritingSystemDefinition && key == ws.Id)
+				if (File.Exists(ldmlFile) && key == ws.Id)
 				{
-					var wsd = ws as WritingSystemDefinition;
-					var storeId = wsd.StoreID;
+					string storeId = ws.StoreID;
 					var adaptor = new LdmlDataMapper();
-					adaptor.Read(ldmlFile, wsd);
-					wsd.StoreID = storeId;
-					wsd.Modified = true;
+					adaptor.Read(ldmlFile, ws);
+					ws.StoreID = storeId;
+					ws.ForceChanged();
 				}
 			}
 			m_mapLangWs.Add(key, ws.Handle);
@@ -782,7 +781,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				int ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
 				if (ws > 0)
 				{
-					IWritingSystem wsObj = GetExistingWritingSystem(ws);
+					WritingSystem wsObj = GetExistingWritingSystem(ws);
 					sLang = wsObj.Id;
 					sDir = wsObj.RightToLeftScript ? "RTL" : "LTR";
 					sFont = wsObj.DefaultFontName;
@@ -2157,18 +2156,18 @@ namespace SIL.FieldWorks.LexText.Controls
 			// This finds or creates a writing system for the given key.
 			int handle = GetWsFromLiftLang(id);
 			Debug.Assert(handle >= 1);
-			IWritingSystem ws = GetExistingWritingSystem(handle);
+			WritingSystem ws = GetExistingWritingSystem(handle);
 
 			if (m_msImport != MergeStyle.MsKeepOld || string.IsNullOrEmpty(ws.Abbreviation))
 			{
 				if (abbrev.Count > 0)
 					ws.Abbreviation = XmlUtils.DecodeXml(abbrev.FirstValue.Value.Text);
 			}
-			LanguageSubtag languageSubtag = ws.LanguageSubtag;
+			LanguageSubtag languageSubtag = ws.Language;
 			if (m_msImport != MergeStyle.MsKeepOld || string.IsNullOrEmpty(languageSubtag.Name))
 			{
 				if (label.Count > 0)
-					ws.LanguageSubtag = new LanguageSubtag(languageSubtag, XmlUtils.DecodeXml(label.FirstValue.Value.Text));
+					ws.Language = new LanguageSubtag(languageSubtag, XmlUtils.DecodeXml(label.FirstValue.Value.Text));
 			}
 		}
 
@@ -3013,7 +3012,7 @@ namespace SIL.FieldWorks.LexText.Controls
 							if (subtype == null)
 							{
 								subtype = CreateNewLexEntryType();
-								letVar.SubPossibilitiesOS.Add(subtype as ICmPossibility);
+								letVar.SubPossibilitiesOS.Add(subtype);
 								subtype.Name.set_String(m_cache.DefaultAnalWs, sOldCondition);
 								subtype.Abbreviation.set_String(m_cache.DefaultAnalWs, sOldCondition);
 								subtype.ReverseAbbr.set_String(m_cache.DefaultAnalWs, sOldCondition);
@@ -3892,7 +3891,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				return null;
 		}
 
-		internal IWritingSystem GetExistingWritingSystem(int handle)
+		internal WritingSystem GetExistingWritingSystem(int handle)
 		{
 			return m_cache.ServiceLocator.WritingSystemManager.Get(handle);
 		}
@@ -4488,7 +4487,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					if (m_ws > 0)
 					{
-						IWritingSystem ws = m_merger.GetExistingWritingSystem(m_ws);
+						WritingSystem ws = m_merger.GetExistingWritingSystem(m_ws);
 						return ws.DisplayLabel;
 					}
 					else

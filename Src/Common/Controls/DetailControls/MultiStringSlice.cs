@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				CheckDisposed();
 				var view = (LabeledMultiStringView)Control;
-				return (RootSite)view.InnerView;
+				return view.InnerView;
 			}
 		}
 
@@ -104,7 +104,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// Gets a list of the visible writing systems stored in our layout part ref override.
 		/// </summary>
 		/// <returns></returns>
-		IEnumerable<IWritingSystem> GetVisibleWritingSystems()
+		IEnumerable<WritingSystem> GetVisibleWritingSystems()
 		{
 			string singlePropertySequenceValue = GetVisibleWSSPropertyValue();
 			return GetVisibleWritingSystems(singlePropertySequenceValue);
@@ -133,7 +133,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		/// <param name="wss"></param>
 		/// <returns></returns>
-		private static string EncodeWssToDisplayPropertyValue(IEnumerable<IWritingSystem> wss)
+		private static string EncodeWssToDisplayPropertyValue(IEnumerable<WritingSystem> wss)
 		{
 			var wsIds = (from ws in wss
 						 select ws.Id).ToArray();
@@ -144,7 +144,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// Get the writing systems we should actually display right now. That is, from the ones
 		/// that are currently possible, select any we've previously configured to show.
 		/// </summary>
-		private IEnumerable<IWritingSystem> GetVisibleWritingSystems(string singlePropertySequenceValue)
+		private IEnumerable<WritingSystem> GetVisibleWritingSystems(string singlePropertySequenceValue)
 		{
 			string[] wsIds = ChoiceGroup.DecodeSinglePropertySequenceValue(singlePropertySequenceValue);
 			var wsIdSet = new HashSet<string>(wsIds);
@@ -184,7 +184,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Get the writing systems that are available for displaying on our slice.
 		/// </summary>
-		public IEnumerable<IWritingSystem> WritingSystemOptionsForDisplay
+		public IEnumerable<WritingSystem> WritingSystemOptionsForDisplay
 		{
 			get { return ((LabeledMultiStringView) Control).WritingSystemOptions; }
 		}
@@ -192,7 +192,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Get/Set the writing systems selected to be displayed for this kind of slice.
 		/// </summary>
-		public IEnumerable<IWritingSystem> WritingSystemsSelectedForDisplay
+		public IEnumerable<WritingSystem> WritingSystemsSelectedForDisplay
 		{
 			get
 			{
@@ -299,7 +299,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		/// <param name="display"></param>
 		/// <param name="list"></param>
-		private void AddWritingSystemListWithIcuLocales(UIListDisplayProperties display, IEnumerable<IWritingSystem> list)
+		private void AddWritingSystemListWithIcuLocales(UIListDisplayProperties display, IEnumerable<WritingSystem> list)
 		{
 			string[] active = GetVisibleWSSPropertyValue().Split(',');
 			foreach (var ws in list)
@@ -332,7 +332,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		private void PersistAndRedisplayWssToDisplayForPart(IEnumerable<IWritingSystem> wssToDisplay)
+		private void PersistAndRedisplayWssToDisplayForPart(IEnumerable<WritingSystem> wssToDisplay)
 		{
 			PersistAndRedisplayWssToDisplayForPart(EncodeWssToDisplayPropertyValue(wssToDisplay));
 		}
@@ -355,7 +355,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Get the language project's list of pronunciation writing systems into sync with the supplied list.
 		/// </summary>
-		private void UpdatePronunciationWritingSystems(IEnumerable<IWritingSystem> newValues)
+		private void UpdatePronunciationWritingSystems(IEnumerable<WritingSystem> newValues)
 		{
 			if (newValues.Count() != m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Count
 				|| !m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.SequenceEqual(newValues))
@@ -363,7 +363,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				NonUndoableUnitOfWorkHelper.Do(m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 				{
 					m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Clear();
-					foreach (IWritingSystem ws in newValues)
+					foreach (WritingSystem ws in newValues)
 						m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Add(ws);
 				});
 			}
@@ -375,7 +375,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// and redisplaying their views.
 		/// </summary>
 		/// <param name="wssToDisplay"></param>
-		private void SetWssToDisplayForPart(IEnumerable<IWritingSystem> wssToDisplay)
+		private void SetWssToDisplayForPart(IEnumerable<WritingSystem> wssToDisplay)
 		{
 			XmlNode ourPart = this.PartRef();
 			var writingSystemsToDisplay = wssToDisplay == null ? null : wssToDisplay.ToList();

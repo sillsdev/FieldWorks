@@ -122,13 +122,13 @@ namespace SIL.CoreImpl
 		/// </summary>
 		/// <param name="type">The type.</param>
 		/// <param name="wsManager">The writing system store.</param>
-		public StringSearcher(SearchType type, IWritingSystemManager wsManager)
+		public StringSearcher(SearchType type, WritingSystemManager wsManager)
 		{
 			if (wsManager == null)
 				throw new ArgumentNullException("wsManager");
 
 			m_type = type;
-			m_sortKeySelector = (ws, text) => wsManager.Get(ws).Collator.GetSortKey(text).KeyData;
+			m_sortKeySelector = (ws, text) => wsManager.Get(ws).DefaultCollation.Collator.GetSortKey(text).KeyData;
 			m_tokenizer = (ws, text) => Icu.Split(Icu.UBreakIteratorType.UBRK_WORD, wsManager.Get(ws).IcuLocale, text);
 		}
 

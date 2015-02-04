@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				searchEngine);
 
 			// start building index
-			var ws = (IWritingSystem) m_cbWritingSystems.SelectedItem;
+			var ws = (WritingSystem) m_cbWritingSystems.SelectedItem;
 			if (ws != null)
 			{
 				ITsString tss = m_tsf.MakeString(string.Empty, ws.Handle);
@@ -66,7 +66,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_btnOK.Enabled = false;
 			m_oldSearchKey = searchKey;
 
-			var ws = (IWritingSystem) m_cbWritingSystems.SelectedItem;
+			var ws = (WritingSystem) m_cbWritingSystems.SelectedItem;
 			int wsSelHvo = ws != null ? ws.Handle : 0;
 			if (wsSelHvo == 0)
 			{

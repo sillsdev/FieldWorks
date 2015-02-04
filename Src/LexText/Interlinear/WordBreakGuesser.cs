@@ -120,7 +120,7 @@ namespace SIL.FieldWorks.IText
 			//just grab the system from the first run, seems unlikely you'll be guessing wordbreaks on strings with runs in different writing systems
 			var wsID = tss.get_WritingSystem(0);
 			//get the writing system from the cache
-			IWritingSystem ws = (IWritingSystem)m_cache.WritingSystemFactory.get_EngineOrNull(wsID);
+			var ws = (WritingSystem) m_cache.WritingSystemFactory.get_EngineOrNull(wsID);
 			//get the ValidCharacters for the writing system.
 			ValidCharacters vc = ws != null ? ValidCharacters.Load(ws, e => { }, FwDirectoryFinder.CodeDirectory) : null;
 			//split the text on everything found in the OtherCharacters section

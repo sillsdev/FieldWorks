@@ -471,7 +471,7 @@ namespace SIL.FieldWorks.TE
 				if (m_publication.PaperHeight == 0)
 					return base.DefaultFontSize;
 
-				IWritingSystem ws = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
+				WritingSystem ws = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 				List<PubPageInfo> pageSizes = TePublicationsInit.GetPubPageSizes(m_publication.Name,
 					ws.Id);
 				foreach (PubPageInfo pageInfo in pageSizes)
@@ -506,7 +506,7 @@ namespace SIL.FieldWorks.TE
 				if (m_publication.PaperHeight == 0)
 					return base.DefaultLineHeight;
 
-				IWritingSystem ws = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
+				WritingSystem ws = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 				List<PubPageInfo> pageSizes = TePublicationsInit.GetPubPageSizes(m_publication.Name,
 					ws.Id);
 				foreach (PubPageInfo pageInfo in pageSizes)

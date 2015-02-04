@@ -8,17 +8,13 @@
 using System;
 
 using NUnit.Framework;
-
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Test.TestUtils;
 using SILUBS.SharedScrUtils;
 using System.Collections.Generic;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.FDO.FDOTests
@@ -56,9 +52,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	[TestFixture]
 	public class ScrBookTests : ScrInMemoryFdoTestBase
 	{
-		private IWritingSystem m_wsGerman;
-		private IWritingSystem m_wsFrench;
-		private IWritingSystem m_wsSpanish;
+		private WritingSystem m_wsGerman;
+		private WritingSystem m_wsFrench;
+		private WritingSystem m_wsSpanish;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

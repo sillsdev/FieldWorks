@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		FdoCache m_cache;
 		private HashSet<string> m_existingWsIds;
 		public event EventHandler WritingSystemAdded;
-		IWritingSystem m_wsNew;
+		WritingSystem m_wsNew;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
 		private IVwStylesheet m_stylesheet;
@@ -85,7 +85,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="stylesheet">The stylesheet.</param>
 		/// <param name="wss">The writing systems already displayed.</param>
 		public void Initialize(FdoCache cache, IHelpTopicProvider helpTopicProvider, IApp app,
-			 IVwStylesheet stylesheet, IEnumerable<IWritingSystem> wss)
+			 IVwStylesheet stylesheet, IEnumerable<WritingSystem> wss)
 		{
 			CheckDisposed();
 			m_cache = cache;
@@ -130,12 +130,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			var mnuAddWs = components.ContextMenu("mnuAddWs");
 
 				// look like the "Add" button on the WS properties dlg
-				List<IWritingSystem> xmlWs = GetOtherWritingSystems();
+				List<WritingSystem> xmlWs = GetOtherWritingSystems();
 				var xmlWsV = new MenuItem[xmlWs.Count + 2]; // one for Vernacular
 				var xmlWsA = new MenuItem[xmlWs.Count + 2]; // one for Analysis
 				for (int i = 0; i < xmlWs.Count; i++)
 				{
-					IWritingSystem ws = xmlWs[i];
+					WritingSystem ws = xmlWs[i];
 					xmlWsV[i] = new MenuItem(ws.DisplayLabel, mnuAddWS_Vern);
 					xmlWsA[i] = new MenuItem(ws.DisplayLabel, mnuAddWS_Anal);
 					xmlWsV[i].Tag = ws;
@@ -153,7 +153,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				mnuAddWs.Show(this, new Point(0, Height));
 			}
 
-		private List<IWritingSystem> GetOtherWritingSystems()
+		private List<WritingSystem> GetOtherWritingSystems()
 		{
 			return m_cache.ServiceLocator.WritingSystemManager.GlobalWritingSystems.
 				Where(ws => !m_existingWsIds.Contains(ws.Id)).OrderBy(ws => ws.DisplayLabel).ToList();
@@ -171,11 +171,11 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void CommonAddWS(bool isAnalysis, MenuItem selectedMI)
 		{
-			IWritingSystem ws = null;
+			WritingSystem ws = null;
 
 			if (selectedMI.Text == LexTextControls.ks_DefineNew_)
 			{
-				IEnumerable<IWritingSystem> newWritingSystems;
+				IEnumerable<WritingSystem> newWritingSystems;
 				if (WritingSystemPropertiesDialog.ShowNewDialog(FindForm(), m_cache, m_cache.ServiceLocator.WritingSystemManager,
 					m_cache.ServiceLocator.WritingSystems, m_helpTopicProvider, m_app, m_stylesheet, true, null,
 					out newWritingSystems))
@@ -185,7 +185,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			else
 			{
-				ws = selectedMI.Tag as IWritingSystem;
+				ws = selectedMI.Tag as WritingSystem;
 			}
 
 			if (ws != null)
@@ -220,7 +220,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Get the new writing system added by clicking this button and following the popup menus.
 		/// </summary>
-		public IWritingSystem NewWritingSystem
+		public WritingSystem NewWritingSystem
 		{
 			get
 			{

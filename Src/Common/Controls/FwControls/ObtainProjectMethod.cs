@@ -155,7 +155,7 @@ namespace SIL.FieldWorks.Common.Controls
 			var anthroFile = (string) parameters[2];
 			var cacheReceiver = (FdoCache[]) parameters[3];
 
-			IWritingSystem wsVern, wsAnalysis;
+			WritingSystem wsVern, wsAnalysis;
 			RetrieveDefaultWritingSystemsFromLift(liftPathname, out wsVern, out wsAnalysis);
 
 			string projectPath = FdoCache.CreateNewLangProj(progress,
@@ -168,15 +168,15 @@ namespace SIL.FieldWorks.Common.Controls
 			return projectPath;
 		}
 
-		private static void RetrieveDefaultWritingSystemsFromLift(string liftPath, out IWritingSystem wsVern,
-			out IWritingSystem wsAnalysis)
+		private static void RetrieveDefaultWritingSystemsFromLift(string liftPath, out WritingSystem wsVern,
+			out WritingSystem wsAnalysis)
 		{
 			using (var liftReader = new StreamReader(liftPath, Encoding.UTF8))
 			{
 				string vernWsId, analysisWsId;
 				using (var reader = XmlReader.Create(liftReader))
 					RetrieveDefaultWritingSystemIdsFromLift(reader, out vernWsId, out analysisWsId);
-				var wsManager = new PalasoWritingSystemManager(new GlobalFileWritingSystemStore());
+				var wsManager = new WritingSystemManager(new GlobalFileWritingSystemStore());
 				wsManager.GetOrSet(vernWsId, out wsVern);
 				wsManager.GetOrSet(analysisWsId, out wsAnalysis);
 			}

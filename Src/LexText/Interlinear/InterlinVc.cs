@@ -5,7 +5,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Diagnostics;
-using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FdoUi;
@@ -106,7 +105,7 @@ namespace SIL.FieldWorks.IText
 
 		protected bool m_fShowDefaultSense = false; // Use false to not change prior behavior.
 		protected bool m_fHaveOpenedParagraph = false; // Use false to not change prior behavior.
-		protected IWritingSystemManager m_wsManager;
+		protected WritingSystemManager m_wsManager;
 		protected ISegmentRepository m_segRepository;
 		protected ICmObjectRepository m_coRepository;
 		protected IWfiMorphBundleRepository m_wmbRepository;
@@ -241,7 +240,7 @@ namespace SIL.FieldWorks.IText
 
 		private void SetupRightToLeft(int wsVern)
 		{
-			IWritingSystem wsObj = m_wsManager.Get(wsVern);
+			WritingSystem wsObj = m_wsManager.Get(wsVern);
 			if (wsObj != null)
 				m_fRtl = wsObj.RightToLeftScript;
 			if (m_fRtl)
@@ -1187,7 +1186,7 @@ namespace SIL.FieldWorks.IText
 		/// <returns></returns>
 		private ITsString GetTssDirForWs(int ws)
 		{
-			IWritingSystem wsObj = m_wsManager.Get(ws);
+			WritingSystem wsObj = m_wsManager.Get(ws);
 			ITsString tssDirWs;
 			if (!m_mapWsDirTss.TryGetValue(wsObj, out tssDirWs))
 			{
@@ -1300,7 +1299,7 @@ namespace SIL.FieldWorks.IText
 				case WritingSystemServices.kwsReversalIndex:
 					return false;
 			}
-			IWritingSystem wsObj = m_wsManager.Get(ws);
+			WritingSystem wsObj = m_wsManager.Get(ws);
 			if (m_cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Contains(wsObj))
 				return !m_cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Contains(wsObj);
 			else

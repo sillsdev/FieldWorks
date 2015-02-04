@@ -87,7 +87,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				ExportWritingSystems(languageProject.CurrentAnalysisWritingSystems, "AnalysisWss"));
 		}
 
-		private static XElement ExportWritingSystems(IEnumerable<IWritingSystem> wss, string elementName)
+		private static XElement ExportWritingSystems(IEnumerable<WritingSystem> wss, string elementName)
 		{
 			return new XElement(elementName,
 				from ws in wss

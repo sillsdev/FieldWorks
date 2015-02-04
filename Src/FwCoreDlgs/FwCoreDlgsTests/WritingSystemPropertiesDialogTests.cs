@@ -12,13 +12,12 @@ using System.Linq;
 using System.Windows.Forms;
 
 using NUnit.Framework;
-using Palaso.WritingSystems;
-using Palaso.UI.WindowsForms.Keyboarding;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.CoreImpl;
 using SIL.Utils;
-
+using SIL.WritingSystems;
+using SIL.WritingSystems.WindowsForms.Keyboarding;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -55,7 +54,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// <param name="ws">The writing system which properties will be displayed</param>
 		/// <returns>A DialogResult value</returns>
-		public int ShowDialog(IWritingSystem ws)
+		public int ShowDialog(WritingSystem ws)
 		{
 			CheckDisposed();
 
@@ -122,8 +121,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		internal void VerifyWsId(string wsId)
 		{
 			//Ensure the writing system identifier is set correctly
-			Assert.AreEqual(LangTagUtils.ToLangTag(CurrentWritingSystem.LanguageSubtag, m_regionVariantControl.ScriptSubtag,
-				m_regionVariantControl.RegionSubtag, m_regionVariantControl.VariantSubtag), wsId);
+			Assert.AreEqual(IetfLanguageTag.ToLanguageTag(CurrentWritingSystem.Language, m_regionVariantControl.ScriptSubtag,
+				m_regionVariantControl.RegionSubtag, m_regionVariantControl.VariantSubtags), wsId);
 		}
 
 		/// <summary>
@@ -132,8 +131,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="langAbbr"></param>
 		internal void VerifyRelatedWritingSystem(string langAbbr)
 		{
-			foreach (IWritingSystem ws in WsList.Items)
-				Assert.AreEqual(langAbbr, ws.LanguageSubtag.Code);
+			foreach (WritingSystem ws in WsList.Items)
+				Assert.AreEqual(langAbbr, ws.Language.Code);
 		}
 
 
@@ -160,14 +159,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			Assert.Less(indexA, WsList.Items.Count);
 			Assert.Less(indexB, WsList.Items.Count);
-			Assert.AreEqual(((IWritingSystem) WsList.Items[indexA]).Id, ((IWritingSystem) WsList.Items[indexB]).Id);
+			Assert.AreEqual(((WritingSystem) WsList.Items[indexA]).Id, ((WritingSystem) WsList.Items[indexB]).Id);
 		}
 
 		private ContextMenuStrip PopulateAddWsContextMenu()
 		{
 			var cms = new ContextMenuStrip();
-			FwProjPropertiesDlg.PopulateWsContextMenu(cms, WritingSystemUtils.GetAllDistinctWritingSystems(m_wsManager),
-				m_listBoxRelatedWSs, btnAddWsItemClicked, null, btnNewWsItemClicked, (IWritingSystem)m_listBoxRelatedWSs.Items[0]);
+			FwProjPropertiesDlg.PopulateWsContextMenu(cms, m_wsManager.AllDistinctWritingSystems,
+				m_listBoxRelatedWSs, btnAddWsItemClicked, null, btnNewWsItemClicked, (WritingSystem) m_listBoxRelatedWSs.Items[0]);
 			return cms;
 		}
 
@@ -196,9 +195,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		internal void ValidateGeneralInfo()
 		{
 			// Check Language Name & EthnologueCode
-			Assert.AreEqual(CurrentWritingSystem.LanguageSubtag.Name, m_tbLanguageName.Text);
+			Assert.AreEqual(CurrentWritingSystem.Language.Name, m_tbLanguageName.Text);
 			// make sure LocaleName is properly setup as Language name, not as DisplayName.
-			Assert.IsTrue(CurrentWritingSystem.LanguageSubtag.Name.IndexOf("(") == -1);
+			Assert.IsTrue(CurrentWritingSystem.Language.Name.IndexOf("(", StringComparison.Ordinal) == -1);
 			Assert.AreEqual(!string.IsNullOrEmpty(CurrentWritingSystem.ISO3) ? CurrentWritingSystem.ISO3 : "<None>", m_LanguageCode.Text);
 		}
 
@@ -217,7 +216,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		internal void ValidateKeyboardTab()
 		{
-			Assert.AreEqual(((IWritingSystemDefinition)CurrentWritingSystem).Bcp47Tag, m_modelForKeyboard.CurrentRFC4646);
+			Assert.AreEqual(CurrentWritingSystem.LanguageTag, m_modelForKeyboard.CurrentRFC4646);
 		}
 
 		internal void ValidateConvertersTab()
@@ -226,7 +225,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 		internal void ValidateSortingTab()
 		{
-			Assert.AreEqual(CurrentWritingSystem.SortRules, m_sortRulesTextBox.Text);
+			var simpleCollation = CurrentWritingSystem.DefaultCollation as SimpleCollationDefinition;
+			string sortRules = simpleCollation != null ? simpleCollation.SimpleRules : CurrentWritingSystem.DefaultCollation.IcuRules;
+			Assert.AreEqual(sortRules, m_sortRulesTextBox.Text);
 		}
 		#endregion
 
@@ -328,7 +329,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		///
 		/// </summary>
-		protected override void ShowMsgBoxCantCreateDuplicateWs(IWritingSystem tempWs, IWritingSystem origWs)
+		protected override void ShowMsgBoxCantCreateDuplicateWs(WritingSystem tempWs, WritingSystem origWs)
 		{
 			DoExpectedMsgBoxResult(ShowMsgBoxStatus.CheckCantCreateDuplicateWs, origWs == null ? null : origWs.Id);
 		}
@@ -336,7 +337,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		///
 		/// </summary>
-		protected override void ShowMsgCantChangeUserWs(IWritingSystem tempWs, IWritingSystem origWs)
+		protected override void ShowMsgCantChangeUserWs(WritingSystem tempWs, WritingSystem origWs)
 		{
 			DoExpectedMsgBoxResult(ShowMsgBoxStatus.CheckCantChangeUserWs, origWs == null ? null : origWs.Id);
 		}
@@ -463,11 +464,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	public class WritingSystemPropertiesDialogTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private DummyWritingSystemPropertiesDialog m_dlg;
-		private IWritingSystem m_wsKalabaIpa;
-		private IWritingSystem m_wsKalaba;
-		private IWritingSystem m_wsTestIpa;
-		private readonly HashSet<IWritingSystem> m_origLocalWss = new HashSet<IWritingSystem>();
-		private readonly HashSet<IWritingSystem> m_origGlobalWss = new HashSet<IWritingSystem>();
+		private WritingSystem m_wsKalabaIpa;
+		private WritingSystem m_wsKalaba;
+		private WritingSystem m_wsTestIpa;
+		private readonly HashSet<WritingSystem> m_origLocalWss = new HashSet<WritingSystem>();
+		private readonly HashSet<WritingSystem> m_origGlobalWss = new HashSet<WritingSystem>();
 
 		#region Test Setup and Tear-Down
 
@@ -499,7 +500,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_wsKalaba = CreateWritingSystem("qaa-x-kal", "Kalaba", true);
 			CreateWritingSystem("qaa-x-wsd", "WSDialog", true);
 			CreateWritingSystem("qaa-fonipa-x-wsd", "WSDialog", true);
-			IWritingSystem wsTest = CreateWritingSystem("qaa-x-tst", "TestOnly", false);
+			WritingSystem wsTest = CreateWritingSystem("qaa-x-tst", "TestOnly", false);
 			m_wsTestIpa = CreateWritingSystem("qaa-fonipa-x-tst", "TestOnly", true);
 			Cache.ServiceLocator.WritingSystemManager.Save();
 			// this will remove it from the local store, but not from the global store
@@ -508,11 +509,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg = new DummyWritingSystemPropertiesDialog(Cache);
 		}
 
-		private IWritingSystem CreateWritingSystem(string wsId, string name, bool addVern)
+		private WritingSystem CreateWritingSystem(string wsId, string name, bool addVern)
 		{
-			IWritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Set(wsId);
-			LanguageSubtag subtag = ws.LanguageSubtag;
-			ws.LanguageSubtag = new LanguageSubtag(subtag, name);
+			WritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Set(wsId);
+			ws.Language = new LanguageSubtag(ws.Language, name);
 			if (addVern)
 				Cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Add(ws);
 			return ws;
@@ -528,13 +528,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			base.TestTearDown();
 
-			foreach (IWritingSystem ws in Cache.ServiceLocator.WritingSystemManager.LocalWritingSystems)
+			foreach (WritingSystem ws in Cache.ServiceLocator.WritingSystemManager.LocalWritingSystems)
 			{
 				if (!m_origLocalWss.Contains(ws))
 					ws.MarkedForDeletion = true;
 			}
 
-			foreach (IWritingSystem ws in Cache.ServiceLocator.WritingSystemManager.GlobalWritingSystems)
+			foreach (WritingSystem ws in Cache.ServiceLocator.WritingSystemManager.GlobalWritingSystems)
 			{
 				if (!m_origGlobalWss.Contains(ws))
 					ws.MarkedForDeletion = true;
@@ -559,7 +559,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			int i = 0;
 			foreach (int hvoWs in hvoWss)
 			{
-				IWritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Get(hvoWs);
+				WritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Get(hvoWs);
 				Assert.AreEqual(wsNames[i], ws.DisplayLabel);
 				Assert.AreEqual(wsIds[i], ws.Id);
 				i++;
@@ -571,7 +571,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			int i = 0;
 			foreach (string wsId in wsIds)
 			{
-				IWritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Get(wsId);
+				WritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Get(wsId);
 				Assert.AreEqual(wsNames[i], ws.DisplayLabel);
 				Assert.AreEqual(wsIds[i], ws.Id);
 				i++;
@@ -593,7 +593,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.VerifyRelatedWritingSystem("kal");
 			m_dlg.VerifyLoadedForListBoxSelection("Kalaba");
 			// Select Kalaba (IPA) and verify dialog is setup for that one.
-			m_dlg.WsList.SelectedItem = m_dlg.WsList.Items.Cast<IWritingSystem>().Single(ws => ws.DisplayLabel == "Kalaba (International Phonetic Alphabet)");
+			m_dlg.WsList.SelectedItem = m_dlg.WsList.Items.Cast<WritingSystem>().Single(ws => ws.DisplayLabel == "Kalaba (International Phonetic Alphabet)");
 			m_dlg.VerifyLoadedForListBoxSelection("Kalaba (International Phonetic Alphabet)");
 		}
 

@@ -20,14 +20,11 @@ using System.ComponentModel;
 using System.Threading;
 
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Resources;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
@@ -4447,7 +4444,7 @@ namespace SIL.FieldWorks.TE
 			// add the new style proxy to the hash table
 			if (mapping.WsId != null)
 			{
-				IWritingSystem wsObj;
+				WritingSystem wsObj;
 				if (m_cache.ServiceLocator.WritingSystemManager.TryGet(mapping.WsId, out wsObj))
 					ws = wsObj.Handle;
 			}

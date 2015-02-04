@@ -13,6 +13,7 @@ using ICSharpCode.SharpZipLib.Zip;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 {
@@ -221,15 +222,16 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 
 			var wsManager = m_cache.ServiceLocator.WritingSystemManager;
 
-			foreach (IWritingSystem ws in wsManager.LocalWritingSystems)
+			foreach (WritingSystem ws in wsManager.LocalWritingSystems)
 			{
-				var spellCheckingDictionary = ws.SpellCheckingId;
-				if (string.IsNullOrEmpty(spellCheckingDictionary) || spellCheckingDictionary == "<None>")
+				SpellCheckDictionaryDefinition spellCheckingDictionary = ws.SpellCheckDictionary;
+				if (spellCheckingDictionary == null || spellCheckingDictionary.Format != SpellCheckDictionaryFormat.Hunspell)
 					continue; // no spelling dictionary for WS
 
-				if (SpellingHelper.DictionaryExists(spellCheckingDictionary))
+				string id = spellCheckingDictionary.LanguageTag.Replace('-', '_');
+				if (SpellingHelper.DictionaryExists(id))
 				{
-					foreach (var path in SpellingHelper.PathsToBackup(spellCheckingDictionary))
+					foreach (string path in SpellingHelper.PathsToBackup(id))
 						dictionaryFiles.Add(path);
 				}
 			}

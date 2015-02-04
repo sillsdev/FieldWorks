@@ -1,316 +1,327 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
-	<ProjectType>Local</ProjectType>
-	<ProductVersion>9.0.30729</ProductVersion>
-	<SchemaVersion>2.0</SchemaVersion>
-	<ProjectGuid>{A0F77159-8444-4615-970D-61821B6D0AF8}</ProjectGuid>
-	<SccProjectName></SccProjectName>
-	<SccLocalPath></SccLocalPath>
-	<SccProvider></SccProvider>
-	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-	<AssemblyKeyContainerName>
-	</AssemblyKeyContainerName>
-	<AssemblyName>TeKeyTerms</AssemblyName>
-	<AssemblyOriginatorKeyFile>
-	</AssemblyOriginatorKeyFile>
-	<DefaultClientScript>JScript</DefaultClientScript>
-	<DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
-	<DefaultTargetSchema>IE50</DefaultTargetSchema>
-	<DelaySign>false</DelaySign>
-	<OutputType>Library</OutputType>
-	<RootNamespace>SIL.FieldWorks.TE</RootNamespace>
-	<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-	<FileUpgradeFlags>
-	</FileUpgradeFlags>
-	<UpgradeBackupLocation>
-	</UpgradeBackupLocation>
-	<SccAuxPath>
-	</SccAuxPath>
-	<OldToolsVersion>3.5</OldToolsVersion>
-	<IsWebBootstrapper>false</IsWebBootstrapper>
-	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-	<PublishUrl>publish\</PublishUrl>
-	<Install>true</Install>
-	<InstallFrom>Disk</InstallFrom>
-	<UpdateEnabled>false</UpdateEnabled>
-	<UpdateMode>Foreground</UpdateMode>
-	<UpdateInterval>7</UpdateInterval>
-	<UpdateIntervalUnits>Days</UpdateIntervalUnits>
-	<UpdatePeriodically>false</UpdatePeriodically>
-	<UpdateRequired>false</UpdateRequired>
-	<MapFileExtensions>true</MapFileExtensions>
-	<ApplicationRevision>0</ApplicationRevision>
-	<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-	<UseApplicationTrust>false</UseApplicationTrust>
-	<BootstrapperEnabled>true</BootstrapperEnabled>
-	<TargetFrameworkProfile />
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A0F77159-8444-4615-970D-61821B6D0AF8}</ProjectGuid>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccProvider>
+    </SccProvider>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>TeKeyTerms</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>SIL.FieldWorks.TE</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <SccAuxPath>
+    </SccAuxPath>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-	<OutputPath>..\..\..\Output\Debug\</OutputPath>
-	<BaseAddress>285212672</BaseAddress>
-	<ConfigurationOverrideFile>
-	</ConfigurationOverrideFile>
-	<DefineConstants>DEBUG;TRACE</DefineConstants>
-	<DocumentationFile>..\..\..\Output\Debug\TeKeyTerms.xml</DocumentationFile>
-	<DebugSymbols>true</DebugSymbols>
-	<FileAlignment>4096</FileAlignment>
-	<Optimize>false</Optimize>
-	<NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-	<RegisterForComInterop>false</RegisterForComInterop>
-	<RemoveIntegerChecks>false</RemoveIntegerChecks>
-	<WarningLevel>4</WarningLevel>
-	<DebugType>full</DebugType>
-	<ErrorReport>prompt</ErrorReport>
-	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-	<PlatformTarget>x86</PlatformTarget>
+    <OutputPath>..\..\..\Output\Debug\</OutputPath>
+    <BaseAddress>285212672</BaseAddress>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>..\..\..\Output\Debug\TeKeyTerms.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <Optimize>false</Optimize>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-	<OutputPath>..\..\..\Output\Release\</OutputPath>
-	<BaseAddress>285212672</BaseAddress>
-	<ConfigurationOverrideFile>
-	</ConfigurationOverrideFile>
-	<DefineConstants>TRACE</DefineConstants>
-	<DocumentationFile>
-	</DocumentationFile>
-	<DebugSymbols>true</DebugSymbols>
-	<FileAlignment>4096</FileAlignment>
-	<Optimize>true</Optimize>
-	<NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-	<RegisterForComInterop>false</RegisterForComInterop>
-	<RemoveIntegerChecks>false</RemoveIntegerChecks>
-	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-	<WarningLevel>4</WarningLevel>
-	<DebugType>full</DebugType>
-	<ErrorReport>prompt</ErrorReport>
-	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-	<PlatformTarget>x86</PlatformTarget>
+    <OutputPath>..\..\..\Output\Release\</OutputPath>
+    <BaseAddress>285212672</BaseAddress>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <Optimize>true</Optimize>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-	<Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
-	</Reference>
-	<Reference Include="COMInterfaces">
-	  <Name>COMInterfaces</Name>
-	  <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
-	</Reference>
-	<Reference Include="CoreImpl, Version=6.1.0.27857, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
-	</Reference>
-	<Reference Include="FDO">
-	  <Name>FDO</Name>
-	  <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
-	</Reference>
-	<Reference Include="FdoUi">
-	  <Name>FdoUi</Name>
-	  <HintPath>..\..\..\Output\Debug\FdoUi.dll</HintPath>
-	</Reference>
-	<Reference Include="Framework">
-	  <Name>Framework</Name>
-	  <HintPath>..\..\..\Output\Debug\Framework.dll</HintPath>
-	</Reference>
-	<Reference Include="FwControls">
-	  <Name>FwControls</Name>
-	  <HintPath>..\..\..\Output\Debug\FwControls.dll</HintPath>
-	</Reference>
-	<Reference Include="FwResources">
-	  <Name>FwResources</Name>
-	  <HintPath>..\..\..\Output\Debug\FwResources.dll</HintPath>
-	</Reference>
-	<Reference Include="FwUtils">
-	  <Name>FwUtils</Name>
-	  <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
-	</Reference>
-	<Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
-	</Reference>
-	<Reference Include="RootSite">
-	  <Name>RootSite</Name>
-	  <HintPath>..\..\..\Output\Debug\RootSite.dll</HintPath>
-	</Reference>
-	<Reference Include="ScrControls">
-	  <Name>ScrControls</Name>
-	  <HintPath>..\..\..\Output\Debug\ScrControls.dll</HintPath>
-	</Reference>
-	<Reference Include="ScriptureUtils">
-	  <Name>ScriptureUtils</Name>
-	  <HintPath>..\..\..\Output\Debug\ScriptureUtils.dll</HintPath>
-	</Reference>
-	<Reference Include="ScrUtilsInterfaces">
-	  <Name>ScrUtilsInterfaces</Name>
-	  <HintPath>..\..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>
-	</Reference>
-	<Reference Include="SharedScrUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\SharedScrUtils.dll</HintPath>
-	</Reference>
-	<Reference Include="SilUtils, Version=7.1.0.20705, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	</Reference>
-	<Reference Include="SimpleRootSite">
-	  <Name>SimpleRootSite</Name>
-	  <HintPath>..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
-	</Reference>
-	<Reference Include="SplitGridView, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\SplitGridView.dll</HintPath>
-	</Reference>
-	<Reference Include="System">
-	  <Name>System</Name>
-	</Reference>
-	<Reference Include="System.Core" />
-	<Reference Include="System.Data">
-	  <Name>System.Data</Name>
-	</Reference>
-	<Reference Include="System.Drawing">
-	  <Name>System.Drawing</Name>
-	</Reference>
-	<Reference Include="System.Windows.Forms">
-	  <Name>System.Windows.Forms</Name>
-	</Reference>
-	<Reference Include="System.Xml">
-	  <Name>System.XML</Name>
-	</Reference>
-	<Reference Include="TeEditing">
-	  <Name>TeEditing</Name>
-	  <HintPath>..\..\..\Output\Debug\TeEditing.dll</HintPath>
-	</Reference>
-	<Reference Include="TeEditorialChecks, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\TeEditorialChecks.dll</HintPath>
-	</Reference>
-	<Reference Include="TeImportExport, Version=7.1.0.31537, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	</Reference>
-	<Reference Include="TeRegistrySettings, Version=3.3.2418.16031, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\TeRegistrySettings.dll</HintPath>
-	</Reference>
-	<Reference Include="TeResources">
-	  <Name>TeResources</Name>
-	  <HintPath>..\..\..\Output\Debug\TeResources.dll</HintPath>
-	</Reference>
-	<Reference Include="TeViewConstructors, Version=3.2.2384.28935, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\TeViewConstructors.dll</HintPath>
-	</Reference>
-	<Reference Include="UIAdapterInterfaces">
-	  <Name>UIAdapterInterfaces</Name>
-	  <HintPath>..\..\..\Output\Debug\UIAdapterInterfaces.dll</HintPath>
-	</Reference>
-	<Reference Include="Widgets, Version=5.1.0.25321, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\Widgets.dll</HintPath>
-	</Reference>
-	<Reference Include="xCoreInterfaces">
-	  <Name>xCoreInterfaces</Name>
-	  <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
-	</Reference>
-	<Reference Include="XMLUtils, Version=7.1.0.21005, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	</Reference>
+    <Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="COMInterfaces">
+      <Name>COMInterfaces</Name>
+      <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="CoreImpl, Version=6.1.0.27857, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+    </Reference>
+    <Reference Include="FDO">
+      <Name>FDO</Name>
+      <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
+    </Reference>
+    <Reference Include="FdoUi">
+      <Name>FdoUi</Name>
+      <HintPath>..\..\..\Output\Debug\FdoUi.dll</HintPath>
+    </Reference>
+    <Reference Include="Framework">
+      <Name>Framework</Name>
+      <HintPath>..\..\..\Output\Debug\Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="FwControls">
+      <Name>FwControls</Name>
+      <HintPath>..\..\..\Output\Debug\FwControls.dll</HintPath>
+    </Reference>
+    <Reference Include="FwResources">
+      <Name>FwResources</Name>
+      <HintPath>..\..\..\Output\Debug\FwResources.dll</HintPath>
+    </Reference>
+    <Reference Include="FwUtils">
+      <Name>FwUtils</Name>
+      <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Palaso, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Downloads\Palaso.dll</HintPath>
+    </Reference>
+    <Reference Include="RootSite">
+      <Name>RootSite</Name>
+      <HintPath>..\..\..\Output\Debug\RootSite.dll</HintPath>
+    </Reference>
+    <Reference Include="ScrControls">
+      <Name>ScrControls</Name>
+      <HintPath>..\..\..\Output\Debug\ScrControls.dll</HintPath>
+    </Reference>
+    <Reference Include="ScriptureUtils">
+      <Name>ScriptureUtils</Name>
+      <HintPath>..\..\..\Output\Debug\ScriptureUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="ScrUtilsInterfaces">
+      <Name>ScrUtilsInterfaces</Name>
+      <HintPath>..\..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="SharedScrUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\SharedScrUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.WritingSystems, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Downloads\SIL.WritingSystems.dll</HintPath>
+    </Reference>
+    <Reference Include="SilUtils, Version=7.1.0.20705, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="SimpleRootSite">
+      <Name>SimpleRootSite</Name>
+      <HintPath>..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
+    </Reference>
+    <Reference Include="SplitGridView, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\SplitGridView.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <Reference Include="TeEditing">
+      <Name>TeEditing</Name>
+      <HintPath>..\..\..\Output\Debug\TeEditing.dll</HintPath>
+    </Reference>
+    <Reference Include="TeEditorialChecks, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\TeEditorialChecks.dll</HintPath>
+    </Reference>
+    <Reference Include="TeImportExport, Version=7.1.0.31537, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="TeRegistrySettings, Version=3.3.2418.16031, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\TeRegistrySettings.dll</HintPath>
+    </Reference>
+    <Reference Include="TeResources">
+      <Name>TeResources</Name>
+      <HintPath>..\..\..\Output\Debug\TeResources.dll</HintPath>
+    </Reference>
+    <Reference Include="TeViewConstructors, Version=3.2.2384.28935, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\TeViewConstructors.dll</HintPath>
+    </Reference>
+    <Reference Include="UIAdapterInterfaces">
+      <Name>UIAdapterInterfaces</Name>
+      <HintPath>..\..\..\Output\Debug\UIAdapterInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Widgets, Version=5.1.0.25321, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\Widgets.dll</HintPath>
+    </Reference>
+    <Reference Include="xCoreInterfaces">
+      <Name>xCoreInterfaces</Name>
+      <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="XMLUtils, Version=7.1.0.21005, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="..\..\CommonAssemblyInfo.cs">
-	  <Link>CommonAssemblyInfo.cs</Link>
-	</Compile>
-	<Compile Include="AssemblyInfo.cs">
-	  <SubType>Code</SubType>
-	</Compile>
-	<Compile Include="Properties\Resources.Designer.cs">
-	  <AutoGen>True</AutoGen>
-	  <DesignTime>True</DesignTime>
-	  <DependentUpon>Resources.resx</DependentUpon>
-	</Compile>
-	<Compile Include="ResolveKeyTermRenderingImportConflictDlg.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="ResolveKeyTermRenderingImportConflictDlg.Designer.cs">
-	  <DependentUpon>ResolveKeyTermRenderingImportConflictDlg.cs</DependentUpon>
-	</Compile>
-	<Compile Include="XmlKeyWord.cs" />
-	<Compile Include="XmlTerm.cs" />
-	<Compile Include="KeyTermRef.cs" />
-	<Compile Include="KeyTermRenderingsControl.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="KeyTermRenderingsControl.Designer.cs">
-	  <DependentUpon>KeyTermRenderingsControl.cs</DependentUpon>
-	</Compile>
-	<Compile Include="KeyTermsControl.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="KeyTermsControl.Designer.cs">
-	  <DependentUpon>KeyTermsControl.cs</DependentUpon>
-	</Compile>
-	<Compile Include="KeyTermsTree.cs">
-	  <SubType>Component</SubType>
-	</Compile>
-	<Compile Include="KeyTermsViewWrapper.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="ScrRefEventArgs.cs" />
-	<Compile Include="XmlTermRendering.cs" />
-	<Compile Include="XmlTermRenderingsList.cs" />
-	<EmbeddedResource Include="KeyTermRenderingsControl.resx">
-	  <DependentUpon>KeyTermRenderingsControl.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="KeyTermsControl.resx">
-	  <DependentUpon>KeyTermsControl.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="KeyTermsTree.resx">
-	  <DependentUpon>KeyTermsTree.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="Properties\Resources.resx">
-	  <Generator>ResXFileCodeGenerator</Generator>
-	  <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-	</EmbeddedResource>
-	<EmbeddedResource Include="ResolveKeyTermRenderingImportConflictDlg.resx">
-	  <DependentUpon>ResolveKeyTermRenderingImportConflictDlg.cs</DependentUpon>
-	</EmbeddedResource>
+    <Compile Include="..\..\CommonAssemblyInfo.cs">
+      <Link>CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ResolveKeyTermRenderingImportConflictDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ResolveKeyTermRenderingImportConflictDlg.Designer.cs">
+      <DependentUpon>ResolveKeyTermRenderingImportConflictDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="XmlKeyWord.cs" />
+    <Compile Include="XmlTerm.cs" />
+    <Compile Include="KeyTermRef.cs" />
+    <Compile Include="KeyTermRenderingsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="KeyTermRenderingsControl.Designer.cs">
+      <DependentUpon>KeyTermRenderingsControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="KeyTermsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="KeyTermsControl.Designer.cs">
+      <DependentUpon>KeyTermsControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="KeyTermsTree.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="KeyTermsViewWrapper.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ScrRefEventArgs.cs" />
+    <Compile Include="XmlTermRendering.cs" />
+    <Compile Include="XmlTermRenderingsList.cs" />
+    <EmbeddedResource Include="KeyTermRenderingsControl.resx">
+      <DependentUpon>KeyTermRenderingsControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="KeyTermsControl.resx">
+      <DependentUpon>KeyTermsControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="KeyTermsTree.resx">
+      <DependentUpon>KeyTermsTree.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ResolveKeyTermRenderingImportConflictDlg.resx">
+      <DependentUpon>ResolveKeyTermRenderingImportConflictDlg.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-	  <Visible>False</Visible>
-	  <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-	  <Install>false</Install>
-	</BootstrapperPackage>
-	<BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
-	  <Visible>False</Visible>
-	  <ProductName>
-	  </ProductName>
-	  <Install>false</Install>
-	</BootstrapperPackage>
-	<BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
-	  <Visible>False</Visible>
-	  <ProductName>
-	  </ProductName>
-	  <Install>false</Install>
-	</BootstrapperPackage>
-	<BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
-	  <Visible>False</Visible>
-	  <ProductName>
-	  </ProductName>
-	  <Install>false</Install>
-	</BootstrapperPackage>
-	<BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-	  <Visible>False</Visible>
-	  <ProductName>.NET Framework 3.5 SP1</ProductName>
-	  <Install>false</Install>
-	</BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>
+      </ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>
+      </ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>
+      </ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-	<PreBuildEvent>
-	</PreBuildEvent>
-	<PostBuildEvent>
-	</PostBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

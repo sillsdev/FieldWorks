@@ -509,16 +509,16 @@ namespace SIL.FieldWorks.IText
 		[Test]
 		public void Persistence()
 		{
-			var wsManager = new PalasoWritingSystemManager();
-			IWritingSystem enWs;
+			var wsManager = new WritingSystemManager();
+			WritingSystem enWs;
 			wsManager.GetOrSet("en", out enWs);
 			int wsEng = enWs.Handle;
 
-			IWritingSystem frWs;
+			WritingSystem frWs;
 			wsManager.GetOrSet("fr", out frWs);
 			int wsFrn = frWs.Handle;
 
-			IWritingSystem deWs;
+			WritingSystem deWs;
 			wsManager.GetOrSet("de", out deWs);
 			int wsGer = deWs.Handle;
 

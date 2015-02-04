@@ -73,7 +73,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					type = m_cache.ServiceLocator.GetInstance<IFsFeatStrucTypeFactory>().Create();
 					m_cache.LanguageProject.MsFeatureSystemOA.TypesOC.Add(type);
 					type.CatalogSourceId = "Infl";
-					foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
+					foreach (WritingSystem ws in m_cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
 					{
 						var tss = m_cache.TsStrFactory.MakeString("Infl", ws.Handle);
 						type.Abbreviation.set_String(ws.Handle, tss);

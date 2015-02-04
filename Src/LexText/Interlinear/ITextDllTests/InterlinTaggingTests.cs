@@ -19,6 +19,7 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 using System.Diagnostics.CodeAnalysis;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.IText
 {
@@ -32,7 +33,7 @@ namespace SIL.FieldWorks.IText
 	{
 		private FDO.IText m_text1;
 		private XmlDocument m_textsDefn;
-		private IWritingSystem m_wsXkal;
+		private WritingSystem m_wsXkal;
 		private ICmPossibilityList m_textMarkupTags;
 		private TestTaggingChild m_tagChild;
 		private IStTxtPara m_para1;
@@ -101,7 +102,7 @@ namespace SIL.FieldWorks.IText
 		{
 			// setup default vernacular ws.
 			m_wsXkal = Cache.ServiceLocator.WritingSystemManager.Set("qaa-x-kal");
-			m_wsXkal.DefaultFontName = "Times New Roman";
+			m_wsXkal.DefaultFont = new FontDefinition("Times New Roman");
 			Cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Add(m_wsXkal);
 			Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Insert(0, m_wsXkal);
 			m_textsDefn = new XmlDocument();

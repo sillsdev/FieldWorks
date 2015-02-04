@@ -1940,7 +1940,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		protected override void ITsStringAltChangedSideEffectsInternal(int multiAltFlid,
-			IWritingSystem alternativeWs, ITsString originalValue, ITsString newValue)
+			WritingSystem alternativeWs, ITsString originalValue, ITsString newValue)
 		{
 			base.ITsStringAltChangedSideEffectsInternal(multiAltFlid, alternativeWs, originalValue, newValue);
 			if (multiAltFlid == LexEntryTags.kflidCitationForm && alternativeWs.Handle == Cache.DefaultVernWs)
@@ -2752,7 +2752,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				postfix = mType.Postfix;
 			}
 			// The following code for setting Ws and FontFamily are to fix LT-6238.
-			IWritingSystem defVernWs = Services.WritingSystems.DefaultVernacularWritingSystem;
+			WritingSystem defVernWs = Services.WritingSystems.DefaultVernacularWritingSystem;
 			if (!String.IsNullOrEmpty(prefix))
 			{
 				tsb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, defVernWs.Handle);
@@ -5935,7 +5935,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				IWritingSystem ws = Services.WritingSystemManager.Get(WritingSystem);
+				WritingSystem ws = Services.WritingSystemManager.Get(WritingSystem);
 				ITsString tss = Name.get_String(ws.Handle);
 				if (tss == null || tss.Length == 0 || tss.Text == Strings.ksStars)
 					tss = Name.AnalysisDefaultWritingSystem;
@@ -6040,7 +6040,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
-		protected override void ITsStringAltChangedSideEffectsInternal(int multiAltFlid, IWritingSystem alternativeWs, ITsString originalValue, ITsString newValue)
+		protected override void ITsStringAltChangedSideEffectsInternal(int multiAltFlid, WritingSystem alternativeWs, ITsString originalValue, ITsString newValue)
 		{
 			base.ITsStringAltChangedSideEffectsInternal(multiAltFlid, alternativeWs, originalValue, newValue);
 			switch (multiAltFlid)
@@ -6235,9 +6235,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			Dictionary<ILexSense, string> m_keySaver = new Dictionary<ILexSense, string>();
 
-			IWritingSystem m_wsVern;
+			WritingSystem m_wsVern;
 
-			internal CompareSensesForReversal(IWritingSystem ws)
+			internal CompareSensesForReversal(WritingSystem ws)
 			{
 				m_wsVern = ws;
 			}
@@ -6254,7 +6254,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 			public override int Compare(ILexSense x, ILexSense y)
 			{
-				return m_wsVern.Collator.Compare(Key(x), Key(y));
+				return m_wsVern.DefaultCollation.Collator.Compare(Key(x), Key(y));
 			}
 		}
 	}
@@ -9014,7 +9014,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			SortSpec = lexEntryType.SortSpec;
 			UnderColor = lexEntryType.UnderColor;
 			UnderStyle = lexEntryType.UnderStyle;
-			foreach (IWritingSystem ws in lexEntryType.Services.WritingSystems.AnalysisWritingSystems)
+			foreach (WritingSystem ws in lexEntryType.Services.WritingSystems.AnalysisWritingSystems)
 			{
 				int iWs = ws.Handle;
 				var tsAbbreviation = lexEntryType.Abbreviation.get_String(iWs);
@@ -9162,7 +9162,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				IWritingSystem ws = LiftFormWritingSystem;
+				WritingSystem ws = LiftFormWritingSystem;
 				if (ws != null && Services.WritingSystems.VernacularWritingSystems.Contains(ws))
 					return "proto";
 				else
@@ -9180,7 +9180,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				string sSource = this.Source;
 				if (String.IsNullOrEmpty(sSource))
 				{
-					IWritingSystem ws = LiftFormWritingSystem;
+					WritingSystem ws = LiftFormWritingSystem;
 					if (ws != null)
 					{
 						sSource = ws.DisplayLabel;
@@ -9192,7 +9192,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
-		private IWritingSystem LiftFormWritingSystem
+		private WritingSystem LiftFormWritingSystem
 		{
 			get
 			{

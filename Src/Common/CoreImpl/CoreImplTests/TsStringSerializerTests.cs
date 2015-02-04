@@ -30,7 +30,7 @@ namespace SIL.CoreImpl
 		private int m_enWs;
 		private int m_esWs;
 		private DebugProcs m_DebugProcs;
-		private IWritingSystemManager m_wsManager;
+		private WritingSystemManager m_wsManager;
 		private TssAssertClass TssAssert { get; set; }
 		#endregion
 
@@ -47,13 +47,13 @@ namespace SIL.CoreImpl
 			RegistryHelper.CompanyName = "SIL";
 
 			Icu.InitIcuDataDir();
-			m_wsManager = new PalasoWritingSystemManager();
+			m_wsManager = new WritingSystemManager();
 
-			IWritingSystem enWs;
+			WritingSystem enWs;
 			m_wsManager.GetOrSet("en", out enWs);
 			m_enWs = enWs.Handle;
 
-			IWritingSystem esWs;
+			WritingSystem esWs;
 			m_wsManager.GetOrSet("es", out esWs);
 			m_esWs = esWs.Handle;
 		}

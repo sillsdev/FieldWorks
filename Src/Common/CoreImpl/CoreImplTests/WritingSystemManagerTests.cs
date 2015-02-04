@@ -1,18 +1,14 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Windows.Forms;
-using System.Xml;
 using System.Xml.Linq;
 using NUnit.Framework;
-using Palaso.WritingSystems;
 using SIL.CoreImpl.Properties;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
+using SIL.WritingSystems;
 
 namespace SIL.CoreImpl
 {
@@ -20,17 +16,17 @@ namespace SIL.CoreImpl
 	[SetCulture("en-US")]
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
 		Justification = "Unit tests, gets disposed in FixtureTearDown()")]
-	public class PalasoWritingSystemManagerTests // can't derive from BaseTest, but instantiate DebugProcs instead
+	public class WritingSystemManagerTests // can't derive from BaseTest, but instantiate DebugProcs instead
 	{
-		private DebugProcs m_DebugProcs;
+		private DebugProcs m_debugProcs;
 
-		private class TestPalasoWritingSystemManager : PalasoWritingSystemManager
+		private class TestWritingSystemManager : WritingSystemManager
 		{
-			public TestPalasoWritingSystemManager(IFwWritingSystemStore store) : base(store) {}
+			public TestWritingSystemManager(IFwWritingSystemStore store) : base(store) {}
 
 			public string TestUnionSettingsKeyboardsWithLocalStore()
 			{
-				return base.UnionSettingsKeyboardsWithLocalStore();
+				return UnionSettingsKeyboardsWithLocalStore();
 			}
 		}
 
@@ -43,7 +39,7 @@ namespace SIL.CoreImpl
 			// This needs to be set for ICU
 			RegistryHelper.CompanyName = "SIL";
 			Icu.InitIcuDataDir();
-			m_DebugProcs = new DebugProcs();
+			m_debugProcs = new DebugProcs();
 		}
 
 		/// <summary>
@@ -52,8 +48,8 @@ namespace SIL.CoreImpl
 		[TestFixtureTearDown]
 		public virtual void FixtureTeardown()
 		{
-			m_DebugProcs.Dispose();
-			m_DebugProcs = null;
+			m_debugProcs.Dispose();
+			m_debugProcs = null;
 		}
 
 		private static string PrepareTempStore(string name)
@@ -65,6 +61,7 @@ namespace SIL.CoreImpl
 			return path;
 		}
 
+#if WS_FIX
 		/// <summary>
 		/// Tests serialization and deserialization of writing systems.
 		/// </summary>
@@ -74,26 +71,27 @@ namespace SIL.CoreImpl
 			string storePath = PrepareTempStore("Store");
 
 			// serialize
-			var wsManager = new PalasoWritingSystemManager(new LocalFileWritingSystemStore(storePath));
-			var ws = wsManager.Set("en-US");
-			ws.SpellCheckingId = "en-US";
-			ws.MatchedPairs = "matched pairs";
-			((ILegacyWritingSystemDefinition)ws).WindowsLcid = 0x409.ToString(CultureInfo.InvariantCulture);
-			ws.ValidChars = "valid characters";
+			var wsManager = new WritingSystemManager(new LocalFileWritingSystemStore(storePath));
+			WritingSystem ws = wsManager.Set("en-US");
+			ws.SpellCheckDictionary = new SpellCheckDictionaryDefinition("en-US", SpellCheckDictionaryFormat.Hunspell);
+			ws.MatchedPairs.Add(new MatchedPair("(", ")", true));
+			ws.WindowsLcid = 0x409.ToString(CultureInfo.InvariantCulture);
+			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"a", "b", "c"}});
 			ws.LegacyMapping = "legacy mapping";
 			wsManager.Save();
 
 			// deserialize
-			wsManager = new PalasoWritingSystemManager(new LocalFileWritingSystemStore(storePath));
+			wsManager = new WritingSystemManager(new LocalFileWritingSystemStore(storePath));
 			Assert.IsTrue(wsManager.Exists("en-US"));
 			ws = wsManager.Get("en-US");
 			Assert.AreEqual("Eng", ws.Abbreviation);
-			Assert.AreEqual("English", ws.LanguageSubtag.Name);
-			Assert.AreEqual("en-US", ws.SpellCheckingId);
-			Assert.AreEqual("United States", ws.RegionSubtag.Name);
-			Assert.AreEqual("matched pairs", ws.MatchedPairs);
-			Assert.AreEqual(0x409.ToString(CultureInfo.InvariantCulture), ((ILegacyWritingSystemDefinition)ws).WindowsLcid);
-			Assert.AreEqual("valid characters", ws.ValidChars);
+			Assert.AreEqual("English", ws.Language.Name);
+			Assert.AreEqual("en-US", ws.SpellCheckDictionary.LanguageTag);
+			Assert.AreEqual("United States", ws.Region.Name);
+			Assert.That(ws.MatchedPairs, Is.EqualTo(new[] {new MatchedPair("(", ")", true)}));
+			Assert.AreEqual(0x409.ToString(CultureInfo.InvariantCulture), ws.WindowsLcid);
+			Assert.That(ws.CharacterSets.Count, Is.EqualTo(1));
+			Assert.That(ws.CharacterSets[0].ValueEquals(new CharacterSetDefinition("main") {Characters = {"a", "b", "c"}}), Is.True);
 			Assert.AreEqual("legacy mapping", ws.LegacyMapping);
 			Assert.AreEqual("eng", ws.ISO3);
 			wsManager.Save();
@@ -112,17 +110,17 @@ namespace SIL.CoreImpl
 			var storePath = PrepareTempStore("Store");
 
 			// serialize
-			var wsManager = new PalasoWritingSystemManager(new LocalFileWritingSystemStore(storePath));
+			var wsManager = new WritingSystemManager(new LocalFileWritingSystemStore(storePath));
 			var ws = wsManager.Set("en-US");
 			ws.SpellCheckingId = "en-US";
 			ws.MatchedPairs = "matched pairs";
-			((ILegacyWritingSystemDefinition)ws).WindowsLcid = 0x409.ToString(CultureInfo.InvariantCulture);
+			ws.WindowsLcid = 0x409.ToString(CultureInfo.InvariantCulture);
 			ws.ValidChars = "valid characters";
 			ws.LegacyMapping = "legacy mapping";
 			wsManager.Save();
 
 			// deserialize
-			wsManager = new PalasoWritingSystemManager(new LocalFileWritingSystemStore(storePath));
+			wsManager = new WritingSystemManager(new LocalFileWritingSystemStore(storePath));
 			Assert.IsTrue(wsManager.Exists("en-US"), "broken before SUT.");
 			ws = wsManager.Get("en-US");
 			Assert.AreEqual("valid characters", ws.ValidChars, "broken before SUT");
@@ -147,10 +145,10 @@ namespace SIL.CoreImpl
 			string globalStorePath = PrepareTempStore("GlobalStore");
 
 			var globalStore = new GlobalFileWritingSystemStore(globalStorePath);
-			var wsManager = new PalasoWritingSystemManager(
+			var wsManager = new WritingSystemManager(
 				new LocalFileWritingSystemStore(storePath1, globalStore), globalStore);
 			var ws = wsManager.Set("en-US");
-			ws.SpellCheckingId = "id1";
+			ws.SpellCheckDictionary = new SpellCheckDictionaryDefinition("fr", SpellCheckDictionaryFormat.Hunspell);
 			wsManager.Save();
 			Assert.IsTrue(File.Exists(Path.Combine(storePath1, "en-US.ldml")));
 			Assert.IsTrue(File.Exists(Path.Combine(globalStorePath, "en-US.ldml")));
@@ -158,27 +156,27 @@ namespace SIL.CoreImpl
 			Thread.Sleep(1000);
 
 			DateTime lastModified = File.GetLastWriteTime(Path.Combine(globalStorePath, "en-US.ldml"));
-			wsManager = new PalasoWritingSystemManager(
+			wsManager = new WritingSystemManager(
 				new LocalFileWritingSystemStore(storePath2, globalStore), globalStore);
 			ws = wsManager.Set("en-US");
-			ws.SpellCheckingId = "id2";
+			ws.SpellCheckDictionary = new SpellCheckDictionaryDefinition("es", SpellCheckDictionaryFormat.Hunspell);
 			wsManager.Save();
 			Assert.Less(lastModified, File.GetLastWriteTime(Path.Combine(globalStorePath, "en-US.ldml")));
 
 			lastModified = File.GetLastWriteTime(Path.Combine(storePath1, "en-US.ldml"));
-			wsManager = new PalasoWritingSystemManager(
+			wsManager = new WritingSystemManager(
 				new LocalFileWritingSystemStore(storePath1, globalStore), globalStore);
 			ws = wsManager.Get("en-US");
-			Assert.AreEqual("id1", ws.SpellCheckingId);
-			IEnumerable<IWritingSystem> sharedWss = wsManager.CheckForNewerGlobalWritingSystems();
-			Assert.AreEqual(1, sharedWss.Count());
-			IWritingSystem sharedWs = sharedWss.First();
+			Assert.AreEqual("fr", ws.SpellCheckDictionary.LanguageTag);
+			WritingSystem[] sharedWss = wsManager.CheckForNewerGlobalWritingSystems().ToArray();
+			Assert.AreEqual(1, sharedWss.Length);
+			WritingSystem sharedWs = sharedWss[0];
 			Assert.AreEqual("en-US", sharedWs.Id);
 			wsManager.Replace(sharedWs);
 			wsManager.Save();
 
 			ws = wsManager.Get("en-US");
-			Assert.AreEqual("id2", ws.SpellCheckingId);
+			Assert.AreEqual("es", ws.SpellCheckDictionary.LanguageTag);
 			Assert.Less(lastModified, File.GetLastWriteTime(Path.Combine(storePath1, "en-US.ldml")));
 		}
 
@@ -193,56 +191,57 @@ namespace SIL.CoreImpl
 			string globalStorePath = PrepareTempStore("GlobalStore");
 
 			var globalStore = new GlobalFileWritingSystemStore(globalStorePath);
-			var wsManager = new PalasoWritingSystemManager(
+			var wsManager = new WritingSystemManager(
 				new LocalFileWritingSystemStore(storePath1, globalStore), globalStore);
 			var ws = wsManager.Set("en-US");
-			ws.SpellCheckingId = "id1";
+			ws.SpellCheckDictionary = new SpellCheckDictionaryDefinition("fr", SpellCheckDictionaryFormat.Hunspell);
 			wsManager.Save();
 
 			Thread.Sleep(1000);
 
-			wsManager = new PalasoWritingSystemManager(
+			wsManager = new WritingSystemManager(
 				new LocalFileWritingSystemStore(storePath2, globalStore), globalStore);
 			ws = wsManager.Set("en-US");
-			ws.SpellCheckingId = "id2";
+			ws.SpellCheckDictionary = new SpellCheckDictionaryDefinition("es", SpellCheckDictionaryFormat.Hunspell);
 			wsManager.Save();
 
-			wsManager = new PalasoWritingSystemManager(
+			wsManager = new WritingSystemManager(
 				new LocalFileWritingSystemStore(storePath1, globalStore), globalStore);
-			IEnumerable<IWritingSystem> sharedWss = wsManager.CheckForNewerGlobalWritingSystems();
-			Assert.AreEqual(1, sharedWss.Count());
-			Assert.AreEqual("en-US", sharedWss.First().Id);
+			WritingSystem[] sharedWss = wsManager.CheckForNewerGlobalWritingSystems().ToArray();
+			Assert.AreEqual(1, sharedWss.Length);
+			Assert.AreEqual("en-US", sharedWss[0].Id);
 			ws = wsManager.Get("en-US");
-			Assert.AreEqual("id1", ws.SpellCheckingId);
+			Assert.AreEqual("fr", ws.SpellCheckDictionary.LanguageTag);
 			wsManager.Save();
 
-			wsManager = new PalasoWritingSystemManager(
+			wsManager = new WritingSystemManager(
 				new LocalFileWritingSystemStore(storePath1, globalStore), globalStore);
-			sharedWss = wsManager.CheckForNewerGlobalWritingSystems();
-			Assert.AreEqual(0, sharedWss.Count());
+			sharedWss = wsManager.CheckForNewerGlobalWritingSystems().ToArray();
+			Assert.AreEqual(0, sharedWss.Length);
 			wsManager.Save();
 
 			Thread.Sleep(1000);
 
-			wsManager = new PalasoWritingSystemManager(
+			wsManager = new WritingSystemManager(
 				new LocalFileWritingSystemStore(storePath2, globalStore), globalStore);
 			ws = wsManager.Get("en-US");
 			ws.LegacyMapping = "encoding converter";
 			wsManager.Save();
 
-			wsManager = new PalasoWritingSystemManager(
+			wsManager = new WritingSystemManager(
 				new LocalFileWritingSystemStore(storePath1, globalStore), globalStore);
 			ws = wsManager.Get("en-US");
 			Assert.IsNullOrEmpty(ws.LegacyMapping);
-			sharedWss = wsManager.CheckForNewerGlobalWritingSystems();
-			Assert.AreEqual(1, sharedWss.Count());
-			IWritingSystem sharedWs = sharedWss.First();
+			sharedWss = wsManager.CheckForNewerGlobalWritingSystems().ToArray();
+			Assert.AreEqual(1, sharedWss.Length);
+			WritingSystem sharedWs = sharedWss[0];
 			Assert.AreEqual("en-US", sharedWs.Id);
 			wsManager.Replace(sharedWs);
 			wsManager.Save();
 			ws = wsManager.Get("en-US");
 			Assert.AreEqual("encoding converter", ws.LegacyMapping);
 		}
+#endif
 
 		/// <summary>
 		/// Tests the get_Engine method.
@@ -250,8 +249,8 @@ namespace SIL.CoreImpl
 		[Test]
 		public void get_Engine()
 		{
-			var wsManager = new PalasoWritingSystemManager();
-			IWritingSystem enWs = wsManager.Set("en-US");
+			var wsManager = new WritingSystemManager();
+			WritingSystem enWs = wsManager.Set("en-US");
 			ILgWritingSystem enLgWs = wsManager.get_Engine("en-US");
 			Assert.AreSame(enWs, enLgWs);
 
@@ -260,7 +259,7 @@ namespace SIL.CoreImpl
 			ILgWritingSystem enUsLgWs = wsManager.get_Engine("en-Latn-US");
 			Assert.IsTrue(wsManager.Exists("en-Latn-US"));
 			Assert.IsTrue(wsManager.Exists(enUsLgWs.Handle));
-			IWritingSystem enUsWs = wsManager.Get("en-Latn-US");
+			WritingSystem enUsWs = wsManager.Get("en-Latn-US");
 			Assert.AreSame(enUsWs, enUsLgWs);
 			wsManager.Save();
 		}
@@ -271,9 +270,9 @@ namespace SIL.CoreImpl
 		[Test]
 		public void get_EngineOrNull()
 		{
-			var wsManager = new PalasoWritingSystemManager();
+			var wsManager = new WritingSystemManager();
 			Assert.IsNull(wsManager.get_EngineOrNull(1));
-			IWritingSystem ws = wsManager.Set("en-US");
+			WritingSystem ws = wsManager.Set("en-US");
 			Assert.AreSame(ws, wsManager.get_EngineOrNull(ws.Handle));
 			wsManager.Save();
 		}
@@ -284,9 +283,9 @@ namespace SIL.CoreImpl
 		[Test]
 		public void GetWsFromStr()
 		{
-			var wsManager = new PalasoWritingSystemManager();
+			var wsManager = new WritingSystemManager();
 			Assert.AreEqual(0, wsManager.GetWsFromStr("en-US"));
-			IWritingSystem ws = wsManager.Set("en-US");
+			WritingSystem ws = wsManager.Set("en-US");
 			Assert.AreEqual(ws.Handle, wsManager.GetWsFromStr("en-US"));
 			wsManager.Save();
 		}
@@ -297,9 +296,9 @@ namespace SIL.CoreImpl
 		[Test]
 		public void GetStrFromWs()
 		{
-			var wsManager = new PalasoWritingSystemManager();
+			var wsManager = new WritingSystemManager();
 			Assert.IsNull(wsManager.GetStrFromWs(1));
-			IWritingSystem ws = wsManager.Set("en-US");
+			WritingSystem ws = wsManager.Set("en-US");
 			Assert.AreEqual("en-US", wsManager.GetStrFromWs(ws.Handle));
 			wsManager.Save();
 		}
@@ -310,22 +309,21 @@ namespace SIL.CoreImpl
 		[Test]
 		public void Create()
 		{
-			var wsManager = new PalasoWritingSystemManager();
-			IWritingSystem enWs = wsManager.Create("en-Latn-US-fonipa");
+			var wsManager = new WritingSystemManager();
+			WritingSystem enWs = wsManager.Create("en-Latn-US-fonipa");
 			Assert.AreEqual("Eng", enWs.Abbreviation);
-			Assert.AreEqual("English", enWs.LanguageSubtag.Name);
-			Assert.AreEqual("Latin", enWs.ScriptSubtag.Name);
-			Assert.AreEqual("United States", enWs.RegionSubtag.Name);
-			Assert.AreEqual("International Phonetic Alphabet", enWs.VariantSubtag.Name);
-			Assert.AreEqual(null, ((ILegacyWritingSystemDefinition)enWs).WindowsLcid);
+			Assert.AreEqual("English", enWs.Language.Name);
+			Assert.AreEqual("Latin", enWs.Script.Name);
+			Assert.AreEqual("United States", enWs.Region.Name);
+			Assert.AreEqual("International Phonetic Alphabet", enWs.Variants[0].Name);
+			Assert.That(string.IsNullOrEmpty(enWs.WindowsLcid), Is.True);
 
-			IWritingSystem chWs = wsManager.Create("zh-CN");
-			Assert.AreEqual("Man", chWs.Abbreviation);
-			Assert.AreEqual("Mandarin Chinese", chWs.LanguageSubtag.Name);
-			Assert.AreEqual("China", chWs.RegionSubtag.Name);
+			WritingSystem chWs = wsManager.Create("zh-CN");
+			Assert.AreEqual("Chi", chWs.Abbreviation);
+			Assert.AreEqual("Chinese", chWs.Language.Name);
+			Assert.AreEqual("China", chWs.Region.Name);
 			Assert.AreEqual("Charis SIL", chWs.DefaultFontName);
-			Assert.AreEqual(WritingSystemDefinition.SortRulesType.OtherLanguage, chWs.SortUsing);
-			Assert.AreEqual("zh-CN", chWs.SortRules);
+			Assert.That(chWs.DefaultCollation.ValueEquals(new InheritedCollationDefinition("standard") {BaseLanguageTag = "zh-CN", BaseType = "standard"}), Is.True);
 			wsManager.Save();
 		}
 
@@ -335,13 +333,13 @@ namespace SIL.CoreImpl
 		[Test]
 		public void get_RendererFromChrp_Uniscribe()
 		{
-			using (GraphicsManager gm = new GraphicsManager(new Form()))
+			using (var gm = new GraphicsManager(new Form()))
 			{
 				gm.Init(1.0f);
 				try
 				{
-					var wsManager = new PalasoWritingSystemManager();
-					IWritingSystem ws = wsManager.Set("en-US");
+					var wsManager = new WritingSystemManager();
+					WritingSystem ws = wsManager.Set("en-US");
 					var chrp = new LgCharRenderProps { ws = ws.Handle, szFaceName = new ushort[32] };
 					MarshalEx.StringToUShort("Arial", chrp.szFaceName);
 					IRenderEngine engine = wsManager.get_RendererFromChrp(gm.VwGraphics, ref chrp);
@@ -363,14 +361,14 @@ namespace SIL.CoreImpl
 		[Test]
 		public void get_RendererFromChrp_Graphite()
 		{
-			using (GraphicsManager gm = new GraphicsManager(new Form()))
+			using (var gm = new GraphicsManager(new Form()))
 			{
 				gm.Init(1.0f);
 				try
 				{
-					var wsManager = new PalasoWritingSystemManager();
+					var wsManager = new WritingSystemManager();
 					// by default Graphite is disabled
-					IWritingSystem ws = wsManager.Set("en-US");
+					WritingSystem ws = wsManager.Set("en-US");
 					var chrp = new LgCharRenderProps { ws = ws.Handle, szFaceName = new ushort[32] };
 					MarshalEx.StringToUShort("Charis SIL", chrp.szFaceName);
 					IRenderEngine engine = wsManager.get_RendererFromChrp(gm.VwGraphics, ref chrp);
@@ -398,8 +396,8 @@ namespace SIL.CoreImpl
 		[Test]
 		public void InterpretChrp()
 		{
-			var wsManager = new PalasoWritingSystemManager();
-			IWritingSystem ws = wsManager.Create("en-US");
+			var wsManager = new WritingSystemManager();
+			WritingSystem ws = wsManager.Create("en-US");
 			var chrp = new LgCharRenderProps
 				{
 					ws = ws.Handle,
@@ -432,20 +430,18 @@ namespace SIL.CoreImpl
 		[Test]
 		public void get_CharPropEngine()
 		{
-			var wsManager = new PalasoWritingSystemManager();
-			IWritingSystem ws = wsManager.Set("zh-CN");
-			ws.ValidChars = "<?xml version=\"1.0\" encoding=\"utf-16\"?>"
-							+ "<ValidCharacters><WordForming>e\uFFFCf\uFFFCg\uFFFCh\uFFFC'</WordForming>"
-							+ "<Numeric>4\uFFFC5</Numeric>"
-							+ "<Other>,\uFFFC!\uFFFC*</Other>"
-							+ "</ValidCharacters>";
+			var wsManager = new WritingSystemManager();
+			WritingSystem ws = wsManager.Set("zh-CN");
+			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"e", "f", "g", "h", "'"}});
+			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") {Characters = {"4", "5"}});
+			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {",", "!", "*"}});
 			ILgCharacterPropertyEngine cpe = wsManager.get_CharPropEngine(ws.Handle);
 			Assert.IsNotNull(cpe);
 			Assert.IsTrue(cpe.get_IsWordForming('\''));
 			Assert.IsFalse(cpe.get_IsWordForming('"'));
 			Assert.AreEqual(0x0804, cpe.Locale);
 
-			ws.ValidChars = null;
+			ws.CharacterSets.Clear();
 			cpe = wsManager.get_CharPropEngine(ws.Handle);
 			Assert.IsNotNull(cpe);
 			Assert.IsFalse(cpe.get_IsWordForming('\''));
@@ -457,11 +453,11 @@ namespace SIL.CoreImpl
 		[Test]
 		public void GetOrSetWorksRepeatedlyOnIdNeedingModification()
 		{
-			var wsManager = new PalasoWritingSystemManager();
-			IWritingSystem ws;
+			var wsManager = new WritingSystemManager();
+			WritingSystem ws;
 			Assert.That(wsManager.GetOrSet("x-kal", out ws), Is.False);
 			Assert.That(ws.Id, Is.EqualTo("qaa-x-kal"));
-			IWritingSystem ws2;
+			WritingSystem ws2;
 			Assert.That(wsManager.GetOrSet("x-kal", out ws2), Is.True);
 			Assert.That(ws2, Is.EqualTo(ws));
 
@@ -482,27 +478,27 @@ namespace SIL.CoreImpl
 
 			// Set up a local store with one conflicting and one additional keyboard
 			var localStore = new LocalFileWritingSystemStore(PrepareTempStore("Store"));
-			var ws = new PalasoWritingSystem
+			var ws = new WritingSystem
 			{
-				LanguageSubtag = new LanguageSubtag("en", "en", false, null),
-				LocalKeyboard = Keyboard.Controller.CreateKeyboardDefinition("United States-Dvorak", "en-UK")
+				Language = new LanguageSubtag("en", "en", false, null),
+				LocalKeyboard = Keyboard.Controller.CreateKeyboardDefinition("en-UK_United States-Dvorak", KeyboardFormat.Unknown, Enumerable.Empty<string>())
 			};
 			localStore.Set(ws);
-			ws = new PalasoWritingSystem
+			ws = new WritingSystem
 			{
-				LanguageSubtag = new LanguageSubtag("ko", "ko", false, null),
-				LocalKeyboard = Keyboard.Controller.CreateKeyboardDefinition("US", "ta-IN")
+				Language = new LanguageSubtag("ko", "ko", false, null),
+				LocalKeyboard = Keyboard.Controller.CreateKeyboardDefinition("ta-IN_US", KeyboardFormat.Unknown, Enumerable.Empty<string>())
 			};
 			localStore.Set(ws);
-			var wsm = new TestPalasoWritingSystemManager(localStore);
+			var wsm = new TestWritingSystemManager(localStore);
 
 			// SUT
 			var resultXml = wsm.TestUnionSettingsKeyboardsWithLocalStore();
 
 			// Parse resulting string into XElements
-			var root = XElement.Parse(resultXml);
+			XElement root = XElement.Parse(resultXml);
 			var keyboardSettings = new Dictionary<string, XElement>();
-			foreach (var kbd in root.Elements("keyboard"))
+			foreach (XElement kbd in root.Elements("keyboard"))
 			{
 				keyboardSettings[kbd.Attribute("ws").Value] = kbd;
 			}
@@ -535,7 +531,7 @@ namespace SIL.CoreImpl
 			EnsureDirectoryIsEmpty(globalStorePath);
 
 			var globalStore = new GlobalFileWritingSystemStore(globalStorePath);
-			var wsManager = new PalasoWritingSystemManager(
+			var wsManager = new WritingSystemManager(
 				new LocalFileWritingSystemStore(storePath, globalStore), globalStore);
 
 			Assert.AreEqual("qip", wsManager.GetValidLangTagForNewLang("Qipkey"));
@@ -545,13 +541,13 @@ namespace SIL.CoreImpl
 			// \u00CB == E with diacritic
 			Assert.AreEqual("aaa", wsManager.GetValidLangTagForNewLang("U"));
 
-			LanguageSubtag subtag = new LanguageSubtag("qip", "Qipkey", true, null);
-			IWritingSystem newWs = wsManager.Create(subtag, null, null, null);
+			var subtag = new LanguageSubtag("qip", "Qipkey", true, null);
+			WritingSystem newWs = wsManager.Create(subtag, null, null, Enumerable.Empty<VariantSubtag>());
 			wsManager.Set(newWs);
 			Assert.AreEqual("aaa", wsManager.GetValidLangTagForNewLang("Qipsing"), "code for 'qip' should already be taken");
 
 			subtag = new LanguageSubtag("aaa", "Qipsing", true, null);
-			newWs = wsManager.Create(subtag, null, null, null);
+			newWs = wsManager.Create(subtag, null, null, Enumerable.Empty<VariantSubtag>());
 			wsManager.Set(newWs);
 			Assert.AreEqual("aab", wsManager.GetValidLangTagForNewLang("Qipwest"),
 				"code for 'qip' should already be taken twice");
@@ -570,15 +566,15 @@ namespace SIL.CoreImpl
 			EnsureDirectoryIsEmpty(globalStorePath);
 
 			var globalStore = new GlobalFileWritingSystemStore(globalStorePath);
-			var wsManager = new PalasoWritingSystemManager(
+			var wsManager = new WritingSystemManager(
 				new LocalFileWritingSystemStore(storePath, globalStore), globalStore);
 
-			IWritingSystem newWs = wsManager.Create(new LanguageSubtag("qaa", "Unknown", true, null), null, null, null);
+			WritingSystem newWs = wsManager.Create(WellKnownSubtags.UnlistedLanguage, null, null, Enumerable.Empty<VariantSubtag>());
 
-			Assert.DoesNotThrow(()=>
+			Assert.DoesNotThrow(() =>
 			{
-				newWs.ScriptSubtag = new ScriptSubtag("Zxxx", "Audio", false);
-				newWs.VariantSubtag = new VariantSubtag("x-audio", "Audio", false, null);
+				newWs.Script = WellKnownSubtags.AudioScript;
+				newWs.Variants.Add(WellKnownSubtags.AudioPrivateUse);
 			});
 		}
 
@@ -594,15 +590,15 @@ namespace SIL.CoreImpl
 			EnsureDirectoryIsEmpty(globalStorePath);
 
 			var globalStore = new GlobalFileWritingSystemStore(globalStorePath);
-			var wsManager = new PalasoWritingSystemManager(
+			var wsManager = new WritingSystemManager(
 				new LocalFileWritingSystemStore(storePath, globalStore), globalStore);
 
-			IWritingSystem newWs = wsManager.Create(new LanguageSubtag("qaa", "Unknown", true, null), null, null, null);
+			WritingSystem newWs = wsManager.Create(WellKnownSubtags.UnlistedLanguage, null, null, null);
 
 			Assert.DoesNotThrow(() =>
 			{
-				newWs.VariantSubtag = new VariantSubtag("x-audio", "Audio", false, null);
-				newWs.ScriptSubtag = new ScriptSubtag("Zxxx", "Audio", false);
+				newWs.Variants.Add(WellKnownSubtags.AudioPrivateUse);
+				newWs.Script = WellKnownSubtags.AudioScript;
 			});
 		}
 

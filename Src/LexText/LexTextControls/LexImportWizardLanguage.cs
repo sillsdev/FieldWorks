@@ -384,7 +384,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			tbLangDesc.Text = m_LangDesc;
 
 			// initialize the 'ws' combo box and the AddWs button with the data from the DB
-			foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystemManager.LocalWritingSystems)
+			foreach (WritingSystem ws in m_cache.ServiceLocator.WritingSystemManager.LocalWritingSystems)
 			{
 				var wsi = new WsInfo(ws.DisplayLabel, ws.Id, ws.LegacyMapping);
 				m_wsInfo.Add(wsi.KEY, wsi);
@@ -443,7 +443,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void btnAddWS_WritingSystemAdded(object sender, EventArgs e)
 		{
-			IWritingSystem ws = btnAddWS.NewWritingSystem;
+			WritingSystem ws = btnAddWS.NewWritingSystem;
 			if (ws != null)
 			{
 				string mapName = ws.LegacyMapping;

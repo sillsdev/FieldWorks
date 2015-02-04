@@ -91,7 +91,7 @@ namespace SIL.FieldWorks.TE
 			m_Rendering.WritingSystemCode = m_cache.DefaultVernWs;
 			m_OriginalTerm.Cache = m_cache;
 
-			IWritingSystem ws;
+			WritingSystem ws;
 			m_cache.ServiceLocator.WritingSystemManager.GetOrSet("grc", out ws);
 			m_wsGreek = ws.Handle;
 			if (m_wsGreek <= 0)

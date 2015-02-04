@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.PaObjects
 		}
 
 		/// ------------------------------------------------------------------------------------
-		private PaWritingSystem(IWritingSystem lgws, IFdoServiceLocator svcloc, bool isVern,
+		private PaWritingSystem(WritingSystem lgws, IFdoServiceLocator svcloc, bool isVern,
 			bool isAnal)
 		{
 			Id = lgws.Id;

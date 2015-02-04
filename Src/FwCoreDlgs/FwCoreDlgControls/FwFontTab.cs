@@ -239,7 +239,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			item.SubItems.Add(string.Empty);
 			m_lstWritingSystems.Items.Add(item);
 
-			foreach (IWritingSystem ws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
+			foreach (WritingSystem ws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
 				item = new ListViewItem(ws.DisplayLabel);
 				item.Tag = ws.Handle;

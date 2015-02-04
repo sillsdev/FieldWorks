@@ -3858,20 +3858,11 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 		
 		[propget] HRESULT SpellCheckingId(
 			[out, retval] BSTR *pbstr);
-		
-		
-		
-		[propput] HRESULT SpellCheckingId(
-			[in] BSTR bstr);
 
 		
 		
 		[propget] HRESULT RightToLeftScript(
 			[out, retval] ComBool * pfRightToLeft);
-		
-		
-		[propput] HRESULT RightToLeftScript(
-			[in] ComBool fRightToLeft);
 
 		
 		
@@ -3885,10 +3876,6 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 		
 		[propget] HRESULT DefaultFontFeatures(
 			[out, retval] BSTR * pbstr);
-		
-		
-		[propput] HRESULT DefaultFontFeatures(
-			[in] BSTR bstr);
 
 		
 		[propget] HRESULT DefaultFontName(
@@ -3905,22 +3892,6 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 		
 		HRESULT InterpretChrp(
 			[in, out] LgCharRenderProps * pchrp);
-
-		
-		
-		
-		[propget] HRESULT Keyboard(
-			[out, retval] BSTR * pbstr);
-		[propput] HRESULT Keyboard(
-			[in] BSTR bstr);
-
-		
-		
-		[propget] HRESULT CurrentLCID(
-			[out, retval] int * pnLangId);
-		
-		[propput] HRESULT CurrentLCID(
-			[in] int nLangId);
 	};
 
 	
@@ -5438,7 +5409,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IRegexMatcher") cpp
 	{
 		interface ILgIcuLocaleEnumerator;
 	};
-#line 1831 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Language.idh"
+#line 1802 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Language.idh"
 
 #line 24 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
 };

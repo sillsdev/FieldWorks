@@ -9,7 +9,6 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Collections.Generic;
-using System.Xml;
 using System.Text;
 using System.Diagnostics;
 using System.Windows.Forms;
@@ -17,7 +16,6 @@ using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.RootSites;
@@ -531,7 +529,7 @@ namespace SIL.FieldWorks.TE
 			// Get the fonts from the various writing systems.
 			if (m_cache != null) // Can only be null for testing
 			{
-				foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystems.AllWritingSystems)
+				foreach (WritingSystem ws in m_cache.ServiceLocator.WritingSystems.AllWritingSystems)
 					AddFontName(ws.DefaultFontName);
 			}
 
@@ -1019,7 +1017,7 @@ namespace SIL.FieldWorks.TE
 		{
 			int defaultWs = m_content == ExportContent.BackTranslation ? m_btWS : m_cache.DefaultVernWs;
 			ILgWritingSystemFactory wsf = m_cache.LanguageWritingSystemFactoryAccessor;
-			IWritingSystem ws = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			WritingSystem ws = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			m_defaultWsIsRTL = ws.RightToLeftScript;
 			m_rtfStyleTable = new RtfStyleInfoTable(m_cache, m_defaultWsIsRTL);
 

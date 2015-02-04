@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.WritingSystems;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 
@@ -18,10 +20,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	{
 		#region Member variables
 		private int m_wsEn;
-		#endregion
-
-		#region Constants
-		private const string ksXmlHeader = "<?xml version=\"1.0\" encoding=\"utf-16\"?>";
 		#endregion
 
 		#region Test setup and tear down
@@ -48,15 +46,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void SymbolPunctuationOnly()
 		{
-			var validChars = ValidCharacters.Load(ksXmlHeader +
-				"<ValidCharacters><WordForming>a\uFFFCb\uFFFCc\uFFFCd\uFFFCe</WordForming>" +
-				"<Numeric>1\uFFFC2\uFFFC3\uFFFC4\uFFFC5</Numeric>" +
-				"<Other>'\uFFFC-\uFFFC#</Other>" +
-				"</ValidCharacters>", "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
-			ILgCharacterPropertyEngine lgCharPropEngineEn = Cache.WritingSystemFactory.get_CharPropEngine(
-				m_wsEn);
+			WritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Create("th");
+			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"a", "b", "c", "d", "e"}});
+			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") {Characters = {"1", "2", "3", "4", "5"}});
+			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {"'", "-", "#"}});
+			ValidCharacters validChars = ValidCharacters.Load(ws, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			ILgCharacterPropertyEngine lgCharPropEngineEn = Cache.WritingSystemFactory.get_CharPropEngine(m_wsEn);
 
-			FwCharacterCategorizer categorizer = new FwCharacterCategorizer(validChars, lgCharPropEngineEn);
+			var categorizer = new FwCharacterCategorizer(validChars, lgCharPropEngineEn);
 			Assert.IsTrue(categorizer.IsPunctuation('#'));
 			Assert.IsFalse(categorizer.IsWordFormingCharacter('#'));
 		}
@@ -70,15 +67,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void WordAndPuncs_OverridePunc()
 		{
-			var validChars = ValidCharacters.Load(ksXmlHeader +
-				"<ValidCharacters><WordForming>a\uFFFCb\uFFFCc\uFFFCd\uFFFCe\uFFFC.</WordForming>" +
-				"<Numeric>1\uFFFC2\uFFFC3\uFFFC4\uFFFC5</Numeric>" +
-				"<Other>'\uFFFC-\uFFFC#</Other>" +
-				"</ValidCharacters>", "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
-			ILgCharacterPropertyEngine lgCharPropEngineEn = Cache.WritingSystemFactory.get_CharPropEngine(
-				m_wsEn);
+			WritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Create("th");
+			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"a", "b", "c", "d", "e", "."}});
+			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") {Characters = {"1", "2", "3", "4", "5"}});
+			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {"'", "-", "#"}});
+			ValidCharacters validChars = ValidCharacters.Load(ws, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			ILgCharacterPropertyEngine lgCharPropEngineEn = Cache.WritingSystemFactory.get_CharPropEngine(m_wsEn);
 
-			FwCharacterCategorizer categorizer = new FwCharacterCategorizer(validChars, lgCharPropEngineEn);
+			var categorizer = new FwCharacterCategorizer(validChars, lgCharPropEngineEn);
 
 			List<WordAndPunct> wordsAndPunc = categorizer.WordAndPuncts("abc.de");
 
@@ -97,15 +93,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void WordAndPuncs_Spaces()
 		{
-			var validChars = ValidCharacters.Load(ksXmlHeader +
-				"<ValidCharacters><WordForming>a\uFFFCb\uFFFCc</WordForming>" +
-				"<Numeric>1\uFFFC2\uFFFC3\uFFFC4\uFFFC5</Numeric>" +
-				"<Other>-\uFFFCU+0020</Other>" +
-				"</ValidCharacters>", "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
-			var english = Cache.ServiceLocator.WritingSystemManager.Get("en");
-			var lgCharPropEngineEn = Cache.WritingSystemFactory.get_CharPropEngine(english.Handle);
+			WritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Create("th");
+			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"a", "b", "c"}});
+			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") {Characters = {"1", "2", "3", "4", "5"}});
+			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {"-", " "}});
+			ValidCharacters validChars = ValidCharacters.Load(ws, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			ILgCharacterPropertyEngine lgCharPropEngineEn = Cache.WritingSystemFactory.get_CharPropEngine(m_wsEn);
 
-			FwCharacterCategorizer categorizer = new FwCharacterCategorizer(validChars, lgCharPropEngineEn);
+			var categorizer = new FwCharacterCategorizer(validChars, lgCharPropEngineEn);
 
 			List<WordAndPunct> wordsAndPunc = categorizer.WordAndPuncts(" ");
 			Assert.AreEqual(0, wordsAndPunc.Count);
@@ -123,16 +118,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void WordAndPuncs_EmptyString()
 		{
-			var validChars = ValidCharacters.Load(ksXmlHeader +
-				"<ValidCharacters><WordForming>a\uFFFCb\uFFFCc</WordForming>" +
-				"<Numeric>1\uFFFC2\uFFFC3\uFFFC4\uFFFC5</Numeric>" +
-				"<Other>-\uFFFCU+0020</Other>" +
-				"</ValidCharacters>", "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
-			var english = Cache.ServiceLocator.WritingSystemManager.Get("en");
-			var lgCharPropEngineEn = Cache.WritingSystemFactory.get_CharPropEngine(
-				english.Handle);
+			WritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Create("th");
+			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"a", "b", "c"}});
+			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") {Characters = {"1", "2", "3", "4", "5"}});
+			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {"-", " "}});
+			ValidCharacters validChars = ValidCharacters.Load(ws, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			ILgCharacterPropertyEngine lgCharPropEngineEn = Cache.WritingSystemFactory.get_CharPropEngine(m_wsEn);
 
-			FwCharacterCategorizer categorizer = new FwCharacterCategorizer(validChars, lgCharPropEngineEn);
+			var categorizer = new FwCharacterCategorizer(validChars, lgCharPropEngineEn);
 
 			List<WordAndPunct> wordsAndPunc = categorizer.WordAndPuncts("");
 
@@ -149,15 +142,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void WordAndPuncs_NoOverridePunc()
 		{
-			var validChars = ValidCharacters.Load(ksXmlHeader +
-				"<ValidCharacters><WordForming>a\uFFFCb\uFFFCc\uFFFCd\uFFFCe</WordForming>" +
-				"<Numeric>1\uFFFC2\uFFFC3\uFFFC4\uFFFC5</Numeric>" +
-				"<Other>'\uFFFC-\uFFFC#</Other>" +
-				"</ValidCharacters>", "Test WS", null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
-			ILgCharacterPropertyEngine lgCharPropEngineEn = Cache.WritingSystemFactory.get_CharPropEngine(
-				m_wsEn);
+			WritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Create("th");
+			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"a", "b", "c", "d", "e"}});
+			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") {Characters = {"1", "2", "3", "4", "5"}});
+			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {"'", "-", "#"}});
+			ValidCharacters validChars = ValidCharacters.Load(ws, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			ILgCharacterPropertyEngine lgCharPropEngineEn = Cache.WritingSystemFactory.get_CharPropEngine(m_wsEn);
 
-			FwCharacterCategorizer categorizer = new FwCharacterCategorizer(validChars, lgCharPropEngineEn);
+			var categorizer = new FwCharacterCategorizer(validChars, lgCharPropEngineEn);
 
 			List<WordAndPunct> wordsAndPunc = categorizer.WordAndPuncts("abc.de");
 

@@ -11,7 +11,6 @@ using System.IO;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.ComponentModel;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.FDO;
@@ -22,7 +21,6 @@ using XCore;
 using SIL.FieldWorks.IText;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.LexText.Controls.DataNotebook;
 using System.Diagnostics.CodeAnalysis;
@@ -807,7 +805,9 @@ namespace SIL.FieldWorks.XWorks.LexText
 		public override bool InitCacheForApp(IThreadedProgress progressDlg)
 		{
 			Cache.ServiceLocator.DataSetup.LoadDomainAsync(BackendBulkLoadDomain.All);
+#if WS_FIX
 			AddDefaultWordformingOverridesIfNeeded();
+#endif
 
 			// The try-catch block is modeled after that used by TeScrInitializer.Initialize(),
 			// as the suggestion for fixing LT-8797.
@@ -827,6 +827,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			return true;
 		}
 
+#if WS_FIX
 		/// <summary>
 		/// Adds the default word-forming character overrides to the list of valid
 		/// characters for each vernacular writing system that is using the old
@@ -834,7 +835,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// </summary>
 		private void AddDefaultWordformingOverridesIfNeeded()
 		{
-			foreach (IWritingSystem wsObj in Cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
+			foreach (WritingSystem wsObj in Cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
 			{
 				string validCharsSrc = wsObj.ValidChars;
 				if (!ValidCharacters.IsNewValidCharsString(validCharsSrc))
@@ -846,6 +847,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			}
 			Cache.ServiceLocator.WritingSystemManager.Save();
 		}
+#endif
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

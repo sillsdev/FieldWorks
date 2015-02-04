@@ -3045,7 +3045,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <summary>
 		/// Override to report changing Forms to the owning lex entry (if any).
 		/// </summary>
-		protected override void ITsStringAltChangedSideEffectsInternal(int multiAltFlid, IWritingSystem alternativeWs, ITsString originalValue, ITsString newValue)
+		protected override void ITsStringAltChangedSideEffectsInternal(int multiAltFlid, WritingSystem alternativeWs, ITsString originalValue, ITsString newValue)
 		{
 			base.ITsStringAltChangedSideEffectsInternal(multiAltFlid, alternativeWs, originalValue, newValue);
 			if (multiAltFlid == MoFormTags.kflidForm && Owner is LexEntry)
@@ -3630,7 +3630,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Override to clear the morpheme data cache if the form changes.
 		/// This is also adequate to make sure we get added on creation, since there is nothing to add until this property is set.
 		/// </summary>
-		protected override void ITsStringAltChangedSideEffectsInternal(int multiAltFlid, IWritingSystem alternativeWs, ITsString originalValue, ITsString newValue)
+		protected override void ITsStringAltChangedSideEffectsInternal(int multiAltFlid, WritingSystem alternativeWs, ITsString originalValue, ITsString newValue)
 		{
 			base.ITsStringAltChangedSideEffectsInternal(multiAltFlid, alternativeWs, originalValue, newValue);
 			if (multiAltFlid == MoFormTags.kflidForm)

@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	/// ----------------------------------------------------------------------------------------
 	public class DummyEditingHelper : EditingHelper
 	{
-		private PalasoWritingSystemManager m_privateWsFactory;
+		private WritingSystemManager m_privateWsFactory;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 				if (base.WritingSystemFactory == null)
 				{
 					if (m_privateWsFactory == null)
-						m_privateWsFactory = new PalasoWritingSystemManager();
+						m_privateWsFactory = new WritingSystemManager();
 					return m_privateWsFactory;
 				}
 				return base.WritingSystemFactory;
@@ -427,12 +427,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		[Test]
 		public void GetSetClipboard()
 		{
-			var wsManager = new PalasoWritingSystemManager();
-			IWritingSystem enWs;
+			var wsManager = new WritingSystemManager();
+			WritingSystem enWs;
 			wsManager.GetOrSet("en", out enWs);
 			int wsEng = enWs.Handle;
 
-			IWritingSystem swgWs;
+			WritingSystem swgWs;
 			wsManager.GetOrSet("swg", out swgWs);
 			int wsSwg = swgWs.Handle;
 
@@ -458,8 +458,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		[Test]
 		public void SetTsStringOnClipboard_UsesNFC()
 		{
-			var wsManager = new PalasoWritingSystemManager();
-			IWritingSystem enWs;
+			var wsManager = new WritingSystemManager();
+			WritingSystem enWs;
 			wsManager.GetOrSet("en", out enWs);
 			int wsEng = enWs.Handle;
 			var strFactory = TsStrFactoryClass.Create();

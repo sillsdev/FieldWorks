@@ -262,7 +262,7 @@ namespace SIL.FieldWorks.TE
 		/// Sets the properties of this entry based on the given FW style.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public override void SetPropertiesBasedOnStyle(IStStyle style, IWritingSystem forceStyleInfo)
+		public override void SetPropertiesBasedOnStyle(IStStyle style, WritingSystem forceStyleInfo)
 		{
 			base.SetPropertiesBasedOnStyle(style, forceStyleInfo);
 			m_textPropertiesFromStyFile = null;
@@ -552,7 +552,7 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// <param name="defaultRightToLeft">if set to <c>true</c> [default right to left].</param>
 		/// <param name="wsManager">The writing system manager.</param>
-		public UsfmStyFileAccessor(bool defaultRightToLeft, IWritingSystemManager wsManager)
+		public UsfmStyFileAccessor(bool defaultRightToLeft, WritingSystemManager wsManager)
 			: base(ScrStyleNames.Normal, wsManager)
 		{
 			m_defaultRightToLeft = defaultRightToLeft;

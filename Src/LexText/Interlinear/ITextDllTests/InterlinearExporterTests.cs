@@ -1,21 +1,17 @@
 ﻿using System;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using System.Xml;
 using System.IO;
 using System.Xml.Schema;
 using System.Xml.Xsl;
 using Palaso.TestUtilities;
-using Palaso.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.IText
@@ -123,7 +119,7 @@ namespace SIL.FieldWorks.IText
 			[SetUp]
 			public void BeforeEachTest()
 			{
-				IWritingSystem wsXkal;
+				WritingSystem wsXkal;
 				Cache.ServiceLocator.WritingSystemManager.GetOrSet("qaa-x-kal", out wsXkal);
 				var wsEng = Cache.ServiceLocator.WritingSystemManager.Get("en");
 				m_text1 = SetupDataForText1();
@@ -504,7 +500,7 @@ namespace SIL.FieldWorks.IText
 				ValidateInterlinearXml(exportedDoc);
 
 				XmlDocument transformedDocOO = TransformDocXml2OO(exportedDoc);
-				XmlNamespaceManager nsmgr = XmlNodeExtensions.LoadNsmgrForDoc(transformedDocOO);
+				XmlNamespaceManager nsmgr = LoadNsmgrForDoc(transformedDocOO);
 				// TODO: enhance AssertThatXmlIn to handle all prefixes
 				//AssertThatXmlIn.Dom(transformedDocOO).HasSpecifiedNumberOfMatchesForXpath(@"/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[2]", 1);
 				// "esgo 1+fr. var.\u00A0"  has no homograph number after Ls-13615
@@ -703,7 +699,7 @@ namespace SIL.FieldWorks.IText
 				//validate export xml against schema
 				ValidateInterlinearXml(exportedDoc);
 				var transformedDocOO = TransformDocXml2OO(exportedDoc);
-				XmlNamespaceManager nsmgr = XmlNodeExtensions.LoadNsmgrForDoc(transformedDocOO);
+				XmlNamespaceManager nsmgr = LoadNsmgrForDoc(transformedDocOO);
 
 				// TODO: enhance AssertThatXmlIn to handle all prefixes
 				// /text:span[@text:style-name='Interlin_VariantTypes']
@@ -773,7 +769,7 @@ namespace SIL.FieldWorks.IText
 				exportedDoc = ExportToXml();
 
 				var transformedDocWord = TransformDocXml2Word(exportedDoc);
-				XmlNamespaceManager nsmgr = XmlNodeExtensions.LoadNsmgrForDoc(transformedDocWord);
+				XmlNamespaceManager nsmgr = LoadNsmgrForDoc(transformedDocWord);
 
 				// TODO: enhance AssertThatXmlIn to handle all prefixes
 				//AssertThatXmlIn.Dom(transformedDocOO).HasSpecifiedNumberOfMatchesForXpath(@"/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[2]", 1);
@@ -836,7 +832,7 @@ namespace SIL.FieldWorks.IText
 				exportedDoc = ExportToXml();
 
 				var transformedDocWord = TransformDocXml2Word2007(exportedDoc);
-				XmlNamespaceManager nsmgr = XmlNodeExtensions.LoadNsmgrForDoc(transformedDocWord);
+				XmlNamespaceManager nsmgr = LoadNsmgrForDoc(transformedDocWord);
 
 				// TODO: enhance AssertThatXmlIn to handle all prefixes
 				//AssertThatXmlIn.Dom(transformedDocOO).HasSpecifiedNumberOfMatchesForXpath(@"/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[2]", 1);
@@ -881,7 +877,7 @@ namespace SIL.FieldWorks.IText
 				pa.ReparseParagraph();
 				exportedDoc = ExportToXml();
 				var transformedDocWord = TransformDocXml2Word(exportedDoc);
-				XmlNamespaceManager nsmgr = XmlNodeExtensions.LoadNsmgrForDoc(transformedDocWord);
+				XmlNamespaceManager nsmgr = LoadNsmgrForDoc(transformedDocWord);
 
 				Assert.That(transformedDocWord.SelectNodes("//*[text()='glossgo']", nsmgr), Has.Count.EqualTo(2), "Should only have one LexGloss per line");
 			}
@@ -909,6 +905,40 @@ namespace SIL.FieldWorks.IText
 			private XmlDocument TransformDocXml2Word2007(XmlDocument exportedDoc)
 			{
 				return TransformDoc(exportedDoc, CombineFilenameWithExportFolders("xml2Word2007.xsl"));
+			}
+
+			/// <summary>
+			/// Search through an entire document for "xmlns" attributes that define prefixes,
+			/// returns an XmlNamespaceManager able to interpret xpath for those prefixes.
+			/// </summary>
+			/// <param name="doc"></param>
+			/// <returns></returns>
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
+			private static XmlNamespaceManager LoadNsmgrForDoc(XmlDocument doc)
+			{
+				var rootNode = doc.DocumentElement;
+				var nsmgr = new XmlNamespaceManager(doc.NameTable);
+				foreach (XmlNode node in rootNode.SelectNodes("//*"))
+				{
+					foreach (XmlAttribute attr in node.Attributes)
+					{
+						if (attr.Prefix != "xmlns")
+							continue;
+						var prefix = attr.LocalName;
+						var urn = attr.Value;
+						if (prefix.Length > 0)
+						{
+							var urnDefined = nsmgr.LookupNamespace(prefix);
+							if (String.IsNullOrEmpty(urnDefined))
+							{
+								nsmgr.AddNamespace(prefix, urn);
+							}
+
+						}
+					}
+				}
+				return nsmgr;
 			}
 
 

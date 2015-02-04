@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 			IEnumerable<string> filesToArchive, Mediator mediator, FwApp thisapp, FdoCache cache)
 		{
 			var viProvider = new VersionInfoProvider(Assembly.LoadFile(thisapp.ProductExecutableFile), false);
-			var wsMgr = cache.ServiceLocator.GetInstance<IWritingSystemManager>();
+			WritingSystemManager wsMgr = cache.ServiceLocator.WritingSystemManager;
 			var appName = thisapp.ApplicationName;
 			var title = cache.LanguageProject.ShortName;
 			var uiLocale = wsMgr.Get(cache.DefaultUserWs).IcuLocale;
@@ -149,7 +149,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 		/// ------------------------------------------------------------------------------------
 		private void AddMetsPairs(RampArchivingDlgViewModel model, string fieldWorksVersion, FdoCache cache)
 		{
-			IWritingSystemManager wsManager = cache.ServiceLocator.GetInstance<IWritingSystemManager>();
+			WritingSystemManager wsManager = cache.ServiceLocator.WritingSystemManager;
 			var wsDefaultVern = wsManager.Get(cache.DefaultVernWs);
 			var vernIso3Code = wsDefaultVern.GetIso3Code();
 
@@ -183,7 +183,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 				var iso3Code = ws.GetIso3Code();
 
 				if (!string.IsNullOrEmpty(iso3Code))
-					contentLanguages.Add(new ArchivingLanguage(iso3Code, ws.LanguageSubtag.Name));
+					contentLanguages.Add(new ArchivingLanguage(iso3Code, ws.Language.Name));
 
 				if (!string.IsNullOrEmpty(ws.DefaultFontName))
 					softwareRequirements.Add(ws.DefaultFontName);

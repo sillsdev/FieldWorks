@@ -5,10 +5,8 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application;
 using SIL.Utils;
 using SIL.FieldWorks.Common.Widgets;
@@ -20,7 +18,6 @@ using SIL.FieldWorks.LexText.Controls;
 using Color=System.Drawing.Color;
 using SIL.CoreImpl;
 using XCore;
-using SIL.FieldWorks.XWorks;
 
 namespace SIL.FieldWorks.IText
 {
@@ -1801,7 +1798,7 @@ namespace SIL.FieldWorks.IText
 			}
 
 			private void AddMorphItemToList(IMoForm mf, ILexEntryRef ler, ITsString tssSense, ILexSense sense,
-											IWritingSystem wsAnalysis, ITsString tssName, int hvoLexEntry)
+											WritingSystem wsAnalysis, ITsString tssName, int hvoLexEntry)
 			{
 				MorphItem mi;
 				if (tssSense.Length == 0)

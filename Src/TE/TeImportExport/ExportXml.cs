@@ -20,7 +20,6 @@ using System.Xml;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.OxesIO;
 using SIL.Utils;
@@ -316,9 +315,9 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		private string InitializeExportWs()
 		{
-			IWritingSystem wsVern = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			WritingSystem wsVern = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			string sLang = wsVern.Id.Normalize();
-			foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+			foreach (WritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 			{
 				if (!m_dictAnalLangs.ContainsKey(ws.Handle))
 				{
@@ -1225,7 +1224,7 @@ namespace SIL.FieldWorks.TE
 
 			internal BackTranslationInfo(ICmTranslation backtran)
 			{
-				foreach (IWritingSystem ws in backtran.Cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
+				foreach (WritingSystem ws in backtran.Cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
 				{
 					ITsString tss = backtran.Translation.get_String(ws.Handle);
 					if (tss.Length > 0 && tss != backtran.Translation.NotFoundTss)
@@ -1239,7 +1238,7 @@ namespace SIL.FieldWorks.TE
 
 			internal BackTranslationInfo(ICmPicture pict)
 			{
-				foreach (IWritingSystem ws in pict.Cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
+				foreach (WritingSystem ws in pict.Cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
 				{
 					ITsString tss = pict.Caption.get_String(ws.Handle);
 					if (tss.Length > 0 && tss != pict.Caption.NotFoundTss)
@@ -2669,7 +2668,7 @@ namespace SIL.FieldWorks.TE
 			string sRFC;
 			if (!m_mapWsRFC.TryGetValue(ws, out sRFC))
 			{
-				IWritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
+				WritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
 				sRFC = wsObj.Id.Normalize();
 				m_mapWsRFC.Add(ws, sRFC);
 			}

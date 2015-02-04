@@ -142,7 +142,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 		private ILgWritingSystemFactory m_wsf;
 		private ITsStrFactory m_tsf;
 		private ICmObjectRepository m_repoCmObject;
-		private IWritingSystemManager m_wsManager;
+		private WritingSystemManager m_wsManager;
 		private IProgress m_progress;
 		// Factories for ownerless classes.
 		private IWfiWordformFactory m_factWfiWordForm;
@@ -2877,7 +2877,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 		private int GetWsFromId(string wsId)
 		{
 			// TODO WS: is this a lang tag or an ICU locale?
-			IWritingSystem ws;
+			WritingSystem ws;
 			if (!m_cache.ServiceLocator.WritingSystemManager.GetOrSet(wsId, out ws))
 			{
 				string sMsg = string.Format(AppStrings.ksCreatingWritingSystem, wsId);
@@ -3032,7 +3032,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			if (m_mapFormReversal == null)
 				CreateFormReversalMap();
 			if (m_wsManager == null)
-				m_wsManager = m_cache.ServiceLocator.GetInstance<IWritingSystemManager>();
+				m_wsManager = m_cache.ServiceLocator.GetInstance<WritingSystemManager>();
 			var wsstr = new WsString(wsHvo, sForm);
 			IReversalIndexEntry rie;
 			if (m_mapFormReversal.TryGetValue(wsstr, out rie))

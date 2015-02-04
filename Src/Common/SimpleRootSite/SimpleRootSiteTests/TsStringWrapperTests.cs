@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		[TestCase("得到", "Title", null, null, TestName="WithNonRoman")]
 		public void TestTsStringWrapperRoundTrip(string str1, string namedStyle1, string str2, string namedStyle2)
 		{
-			var wsFact = new PalasoWritingSystemManager();
+			var wsFact = new WritingSystemManager();
 			ITsStrBldr bldr = TsStrBldrClass.Create();
 			ITsPropsBldr ttpBldr = TsPropsBldrClass.Create();
 			try

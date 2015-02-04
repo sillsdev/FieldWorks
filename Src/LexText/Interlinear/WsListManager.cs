@@ -1,9 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -175,9 +173,9 @@ namespace SIL.FieldWorks.IText
 		/// Return an array of writing systems given an array of their HVOs.
 		/// </summary>
 		/// <returns></returns>
-		private IWritingSystem[] WssFromHvos(int[] hvos)
+		private WritingSystem[] WssFromHvos(int[] hvos)
 		{
-			var lgWss = new List<IWritingSystem>();
+			var lgWss = new List<WritingSystem>();
 			foreach (int ws in hvos)
 				lgWss.Add(m_lp.Services.WritingSystemManager.Get(ws));
 			return lgWss.ToArray();
@@ -219,10 +217,9 @@ namespace SIL.FieldWorks.IText
 				if (m_labels == null || ! equalArrays(m_labelBasis, AnalysisWsIds))
 				{
 					ITsTextProps ttp = LanguageCodeStyle;
-					ILgWritingSystem[] wssAnalysis = AnalysisWss;
-					List<ITsString> labels = new List<ITsString>();
+					var labels = new List<ITsString>();
 					ITsStrFactory tsf = TsStrFactoryClass.Create();
-					foreach (IWritingSystem ws in AnalysisWss)
+					foreach (WritingSystem ws in AnalysisWss.Cast<WritingSystem>())
 					{
 						string sAbbr = ws.Abbreviation;
 						labels.Add(tsf.MakeStringWithPropsRgch(sAbbr, sAbbr.Length, ttp));
@@ -236,7 +233,7 @@ namespace SIL.FieldWorks.IText
 
 		public static ITsString WsLabel(FdoCache cache, int ws)
 		{
-			IWritingSystem wsObj = cache.ServiceLocator.WritingSystemManager.Get(ws);
+			WritingSystem wsObj = cache.ServiceLocator.WritingSystemManager.Get(ws);
 			ITsString abbr = TsStringUtils.MakeTss(wsObj.Abbreviation, cache.DefaultUserWs, "Language Code");
 			ITsStrBldr tsb = abbr.GetBldr();
 			tsb.SetProperties(0, tsb.Length, LanguageCodeTextProps(cache.DefaultUserWs));

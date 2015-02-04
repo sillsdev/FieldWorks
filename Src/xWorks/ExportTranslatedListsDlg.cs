@@ -91,13 +91,13 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				List<int> list = new List<int>(m_lvWritingSystems.CheckedItems.Count);
+				var list = new List<int>(m_lvWritingSystems.CheckedItems.Count);
 				foreach (var item in m_lvWritingSystems.CheckedItems)
 				{
 					Debug.Assert(item is ListViewItem);
-					ListViewItem lvi = item as ListViewItem;
-					Debug.Assert(lvi.Tag is IWritingSystem);
-					list.Add((lvi.Tag as IWritingSystem).Handle);
+					var lvi = item as ListViewItem;
+					Debug.Assert(lvi.Tag is WritingSystem);
+					list.Add(((WritingSystem) lvi.Tag).Handle);
 				}
 				return list;
 			}
@@ -112,7 +112,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				List<ICmPossibilityList> list = new List<ICmPossibilityList>(m_lvLists.CheckedItems.Count);
+				var list = new List<ICmPossibilityList>(m_lvLists.CheckedItems.Count);
 				foreach (var item in m_lvLists.CheckedItems)
 				{
 					Debug.Assert(item is ListViewItem);
@@ -126,7 +126,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void FillInLists()
 		{
-			ICmPossibilityListRepository repo = m_cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>();
+			var repo = m_cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>();
 			foreach (var list in repo.AllInstances())
 			{
 				if (list.Owner != null &&
@@ -166,9 +166,9 @@ namespace SIL.FieldWorks.XWorks
 			m_columnWs.Width = m_lvWritingSystems.Width - 25;
 		}
 
-		private ListViewItem CreateListViewItemForWs(IWritingSystem xws)
+		private ListViewItem CreateListViewItemForWs(WritingSystem xws)
 		{
-			ListViewItem lvi = new ListViewItem();
+			var lvi = new ListViewItem();
 			lvi.Text = xws.DisplayLabel;
 			lvi.Tag = xws;
 			lvi.Checked = xws.Handle == m_cache.DefaultAnalWs;

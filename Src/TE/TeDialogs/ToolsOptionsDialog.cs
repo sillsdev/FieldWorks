@@ -8,7 +8,6 @@
 using System;
 using System.Globalization;
 using System.ComponentModel;
-using System.IO;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Framework;
@@ -91,7 +90,7 @@ namespace SIL.FieldWorks.TE
 		/// If we're interacting with the user writing system, we need to work through a
 		/// writing system manager.
 		/// </summary>
-		protected IWritingSystemManager m_wsManager;
+		protected WritingSystemManager m_wsManager;
 		#endregion
 
 		#region Constructors/Destructors
@@ -111,7 +110,7 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public ToolsOptionsDialog(IApp app, IHelpTopicProvider helpTopicProvider,
-			IWritingSystemManager wsManager) : this()
+			WritingSystemManager wsManager) : this()
 		{
 			m_app = app;
 			m_helpTopicProvider = helpTopicProvider;
@@ -662,7 +661,7 @@ namespace SIL.FieldWorks.TE
 				Options.UserInterfaceWritingSystem = sNewUserWs;
 				//The writing system the user selects for the user interface may not be loaded yet into the project
 				//database. Therefore we need to check this first and if it is not we need to load it.
-				IWritingSystem ws;
+				WritingSystem ws;
 				m_wsManager.GetOrSet(sNewUserWs, out ws);
 				m_wsManager.UserWritingSystem = ws;
 			}

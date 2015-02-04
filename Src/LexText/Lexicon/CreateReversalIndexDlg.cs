@@ -18,6 +18,7 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -28,7 +29,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	/// ----------------------------------------------------------------------------------------
 	public partial class CreateReversalIndexDlg : Form, IFWDisposable
 	{
-		private int m_hvoRevIdx = 0;
+		private int m_hvoRevIdx;
 		private FdoCache m_cache;
 		private readonly HashSet<LanguageSubtag> m_revIdx = new HashSet<LanguageSubtag>();
 
@@ -73,8 +74,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			Set<int> activeWs = new Set<int>(cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Select(wsObj => wsObj.Handle));
 			m_cbWritingSystems.Sorted = true;
 			m_cbWritingSystems.DisplayMember = "Name";
-			IWritingSystem selectedWs = null;
-			foreach (IWritingSystem ws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
+			WritingSystem selectedWs = null;
+			foreach (WritingSystem ws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
 				if (revIdxWs.Contains(ws.Handle))
 				{
@@ -84,7 +85,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				if (!activeWs.Contains(ws.Handle))
 					continue;
 				m_cbWritingSystems.Items.Add(ws);
-				if (selectedWs == null && !m_revIdx.Contains(ws.LanguageSubtag))
+				if (selectedWs == null && !m_revIdx.Contains(ws.Language))
 					selectedWs = ws;
 			}
 			if (selectedWs != null)
@@ -126,9 +127,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// display in the combo box.
 		/// </summary>
 		/// <param name="ws">The ws.</param>
-		private void AddLanguageForExistingRevIdx(IWritingSystem ws)
+		private void AddLanguageForExistingRevIdx(WritingSystem ws)
 		{
-			LanguageSubtag sLang = ws.LanguageSubtag;
+			LanguageSubtag sLang = ws.Language;
 			// LT-4937 : only add if not already present.
 			// This is really a Set.
 			if (!m_revIdx.Contains(sLang))
@@ -157,7 +158,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					}
 				case DialogResult.OK:
 					{
-						var wsObj = m_cbWritingSystems.SelectedItem as IWritingSystem;
+						var wsObj = m_cbWritingSystems.SelectedItem as WritingSystem;
 						if (wsObj != null)
 						{
 							UndoableUnitOfWorkHelper.Do(LexEdStrings.ksUndoCreateReversalIndex, LexEdStrings.ksRedoCreateReversalIndex,

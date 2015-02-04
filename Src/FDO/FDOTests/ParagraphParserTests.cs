@@ -14,6 +14,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -1476,7 +1477,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				string wsAbbr = XmlUtils.GetOptionalAttributeValue(strValue, "ws");
 				if (wsAbbr != null)
 				{
-					IWritingSystem wsObj = (IWritingSystem)m_cache.WritingSystemFactory.get_Engine(wsAbbr);
+					var wsObj = (WritingSystem) m_cache.WritingSystemFactory.get_Engine(wsAbbr);
 					ws = wsObj.Handle;
 					Debug.Assert(ws != 0, "Don't recognize ws (" + wsAbbr + ") for StringValue");
 					// add it to the vernacular writing system list, if it's not already there.
@@ -2375,8 +2376,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		FDO.IText m_text1 = null;
 		private XmlNode m_testFixtureTextsDefn = null;
 		XmlDocument m_textsDefn = null;
-		private IWritingSystem m_wsEn = null;
-		private IWritingSystem m_wsXkal = null;
+		private WritingSystem m_wsEn = null;
+		private WritingSystem m_wsXkal = null;
 
 		/// <summary>
 		///
@@ -2400,7 +2401,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			// setup default vernacular ws.
 			m_wsXkal = Cache.ServiceLocator.WritingSystemManager.Set("qaa-x-kal");
-			m_wsXkal.DefaultFontName = "Times New Roman";
+			m_wsXkal.Fonts.Clear();
+			m_wsXkal.DefaultFont = new FontDefinition("Times New Roman");
 			Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem = m_wsXkal;
 
 			m_text1 = LoadTestText(
@@ -2433,9 +2435,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// ------------------------------------------------------------------------------------
 		void SetupOldWordformingOverrides()
 		{
-			IWritingSystem wsObj = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
-			var validChars = ValidCharacters.Load(wsObj.ValidChars,
-				wsObj.DisplayLabel, null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			WritingSystem wsObj = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			var validChars = ValidCharacters.Load(wsObj, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			var fChangedSomething = false;
 			if (!validChars.IsWordForming('-'))
 			{
@@ -2451,7 +2452,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			}
 			if (!fChangedSomething)
 				return;
-			wsObj.ValidChars = validChars.XmlString;
+			validChars.SaveTo(wsObj);
 		}
 
 		private void RestoreTextDefn()

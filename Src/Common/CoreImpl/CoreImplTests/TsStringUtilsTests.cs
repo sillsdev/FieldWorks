@@ -44,7 +44,7 @@ namespace SIL.CoreImpl
 			// This needs to be set for ICU
 			RegistryHelper.CompanyName = "SIL";
 			Icu.InitIcuDataDir();
-			m_wsf = new PalasoWritingSystemManager();
+			m_wsf = new WritingSystemManager();
 			m_DebugProcs = new DebugProcs();
 		}
 

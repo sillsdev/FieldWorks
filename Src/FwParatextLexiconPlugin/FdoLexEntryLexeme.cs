@@ -335,7 +335,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 					{
 						IMultiString definition = m_lexSense.Definition;
 						var defs = new List<LanguageText>();
-						foreach (IWritingSystem ws in m_lexicon.Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+						foreach (WritingSystem ws in m_lexicon.Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 						{
 							ITsString tss = definition.StringOrNull(ws.Handle);
 							if (tss != null)
@@ -354,7 +354,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 					{
 						IMultiUnicode gloss = m_lexSense.Gloss;
 						var glosses = new List<LanguageText>();
-						foreach (IWritingSystem ws in m_lexicon.Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+						foreach (WritingSystem ws in m_lexicon.Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 						{
 							ITsString tss = gloss.StringOrNull(ws.Handle);
 							if (tss != null)
@@ -372,7 +372,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 					LanguageText lexGloss = null;
 					NonUndoableUnitOfWorkHelper.Do(m_lexSense.Cache.ActionHandlerAccessor, () =>
 						{
-							IWritingSystem ws;
+							WritingSystem ws;
 							if (!m_lexicon.Cache.ServiceLocator.WritingSystemManager.TryGet(language, out ws))
 								throw new ArgumentException("The specified language is unrecognized.", "language");
 							m_lexSense.Gloss.set_String(ws.Handle, text.Normalize(NormalizationForm.FormD));
@@ -389,7 +389,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				{
 					NonUndoableUnitOfWorkHelper.Do(m_lexSense.Cache.ActionHandlerAccessor, () =>
 						{
-							IWritingSystem ws;
+							WritingSystem ws;
 							if (!m_lexicon.Cache.ServiceLocator.WritingSystemManager.TryGet(language, out ws))
 								throw new ArgumentException("The specified language is unrecognized.", "language");
 							m_lexSense.Gloss.set_String(ws.Handle, (ITsString) null);

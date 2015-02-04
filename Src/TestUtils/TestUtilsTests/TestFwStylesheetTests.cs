@@ -119,7 +119,7 @@ namespace SIL.FieldWorks.Test.TestUtils
 
 			stylesheet.PutStyle("FirstStyle", "bla", hvoNewStyle1, 0, 0, 0, false, false, null);
 
-			var wsf = new PalasoWritingSystemManager();
+			var wsf = new WritingSystemManager();
 			ILgWritingSystem ws = wsf.get_Engine("de");
 			int hvoGermanWs = ws.Handle;
 			Assert.IsTrue(hvoGermanWs > 0, "Should have gotten an hvo for the German WS");
@@ -167,7 +167,7 @@ namespace SIL.FieldWorks.Test.TestUtils
 			stylesheet.PutStyle("FirstStyle", "bla", hvoNewStyle1, 0, 0, 0, false, false,
 				propsBldr.GetTextProps());
 
-			var wsf = new PalasoWritingSystemManager();
+			var wsf = new WritingSystemManager();
 			ILgWritingSystem wsIngles = wsf.get_Engine("en");
 			int hvoInglesWs = wsIngles.Handle;
 			Assert.IsTrue(hvoInglesWs > 0, "Should have gotten an HVO for the English WS");

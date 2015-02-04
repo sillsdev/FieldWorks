@@ -228,7 +228,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			base.FixtureSetup();
 
 			// Set a vern ws.
-			IWritingSystem french;
+			WritingSystem french;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("fr", out french);
 
 			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>

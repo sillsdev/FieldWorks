@@ -150,11 +150,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
 			cache.DomainDataByFlid.BeginNonUndoableTask();
-			var usedWses = new List<IWritingSystem>();
+			var usedWses = new List<WritingSystem>();
 			foreach (IReversalIndex rev in cache.LanguageProject.LexDbOA.ReversalIndexesOC)
 			{
 				var ws = cache.ServiceLocator.WritingSystemManager.get_Engine(rev.WritingSystem);
-				usedWses.Add((IWritingSystem)ws);
+				usedWses.Add((WritingSystem) ws);
 				if (rev.PartsOfSpeechOA == null)
 					rev.PartsOfSpeechOA = cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
 				rev.PartsOfSpeechOA.ItemClsid = PartOfSpeechTags.kClassId;
@@ -171,7 +171,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					corruptReversalIndices.Add(rev);
 					continue;
 				}
-				IWritingSystem revWs = cache.ServiceLocator.WritingSystemManager.Get(rev.WritingSystem);
+				WritingSystem revWs = cache.ServiceLocator.WritingSystemManager.Get(rev.WritingSystem);
 				// TODO WS: is DisplayLabel the right thing to use here?
 				rev.Name.SetAnalysisDefaultWritingSystem(revWs.DisplayLabel);
 			}
@@ -452,7 +452,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private void ResetListSorter(IReversalIndex ri)
 		{
 			var sorter = Sorter as GenRecordSorter;
-			var writingSystem = (IWritingSystem)Cache.WritingSystemFactory.get_Engine(ri.WritingSystem);
+			var writingSystem = (WritingSystem) Cache.WritingSystemFactory.get_Engine(ri.WritingSystem);
 			if(sorter != null)
 			{
 				var stringFinderComparer = sorter.Comparer as StringFinderCompare;

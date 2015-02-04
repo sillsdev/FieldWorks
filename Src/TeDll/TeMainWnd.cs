@@ -19,7 +19,6 @@ using System.IO;
 using System.Media;
 using System.Windows.Forms;
 using Microsoft.Win32;
-using Palaso.WritingSystems;
 using Paratext;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
@@ -38,6 +37,7 @@ using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.TE.TeEditorialChecks;
+using SIL.WritingSystems;
 using SILUBS.SharedScrControls;
 using SILUBS.SharedScrUtils;
 using XCore;
@@ -1127,9 +1127,9 @@ namespace SIL.FieldWorks.TE
 			Debug.Assert(pub != null, "Unable to find the publication " + pubName);
 
 			ScripturePublication pubControl = CreatePublicationView(pub, viewType, m_cache.DefaultVernWs);
-			IWritingSystem wsObj = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			WritingSystem wsObj = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 
-			using (NonUndoableUnitOfWorkHelper uowHelper = new NonUndoableUnitOfWorkHelper(m_cache.ServiceLocator.ActionHandler))
+			using (var uowHelper = new NonUndoableUnitOfWorkHelper(m_cache.ServiceLocator.ActionHandler))
 			{
 				pub.IsLeftBound = !wsObj.RightToLeftScript;
 				uowHelper.RollBack = false;
@@ -1261,10 +1261,9 @@ namespace SIL.FieldWorks.TE
 			int ws = GetBackTranslationWsForView(TeEditingHelper.ViewTypeString(viewType));
 			ScripturePublication pubControl = CreatePublicationView(pub, viewType, ws);
 			pubControl.BaseInfoBarCaption = viewName;
-			IWritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
+			WritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
 
-			using (NonUndoableUnitOfWorkHelper uowHelper =
-				new NonUndoableUnitOfWorkHelper(m_cache.ServiceLocator.ActionHandler))
+			using (var uowHelper = new NonUndoableUnitOfWorkHelper(m_cache.ServiceLocator.ActionHandler))
 			{
 				pub.IsLeftBound = !wsObj.RightToLeftScript;
 				uowHelper.RollBack = false;
@@ -5444,8 +5443,8 @@ namespace SIL.FieldWorks.TE
 				foreach (ICmPossibility keyTerm in Cache.LanguageProject.KeyTermsList.PossibilitiesOS)
 					AddKtLeafNodes(keyTerms, keyTerm);
 
-				IWritingSystem vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
-				IWritingSystem defaultWs = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
+				WritingSystem vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+				WritingSystem defaultWs = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 
 				ComprehensionCheckingSettings ccSettings;
 				try
@@ -5469,7 +5468,7 @@ namespace SIL.FieldWorks.TE
 					m_StyleSheet.GetUiFontForWritingSystem(Cache.DefaultVernWs, 0), vernWs.IcuLocale,
 					vernWs.RightToLeftScript, Path.Combine(ScrTextCollection.SettingsDirectory ?? @"c:\My Paratext Projects", "cms"), ccSettings,
 					App.ApplicationName, start, end,
-					vern => ((IWritingSystemDefinition)(vern ? vernWs : defaultWs)).LocalKeyboard.Activate(),
+					vern => ((vern ? vernWs : defaultWs)).LocalKeyboard.Activate(),
 					() => ShowHelp.ShowHelpTopic(m_app, "khtpNoHelpTopic"),
 					LookupTerm); // TODO: Come up with a Help topic
 
@@ -5585,9 +5584,9 @@ namespace SIL.FieldWorks.TE
 				TeProjectSettings.ShowSpellingErrors = true;
 				// Make sure that the spelling dictionary is up-to-date.
 				// Note that this will currently turn vernacular spelling on for FLEx, too.
-				var wsObj = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
-				if (string.IsNullOrEmpty(wsObj.SpellCheckingId) || wsObj.SpellCheckingId == "<None>")
-					wsObj.SpellCheckingId = wsObj.Id.Replace('-', '_');
+				WritingSystem wsObj = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+				if (wsObj.SpellCheckDictionary == null)
+					wsObj.SpellCheckDictionary = new SpellCheckDictionaryDefinition(wsObj.LanguageTag, SpellCheckDictionaryFormat.Hunspell);
 				using (new WaitCursor(this))
 					WfiWordformServices.ConformSpellingDictToWordforms(m_cache);
 			}
@@ -7690,9 +7689,9 @@ namespace SIL.FieldWorks.TE
 		protected override IPageSetupDialog CreatePageSetupDialog(IPubPageLayout pgl,
 			IPublication pub, IPubDivision div)
 		{
-			IWritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
+			WritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 
-			TePageSetupDlg dlg = new TePageSetupDlg(pgl, m_scr, pub, div, this,
+			var dlg = new TePageSetupDlg(pgl, m_scr, pub, div, this,
 				m_app, m_app, ActiveEditingHelper.IsTrialPublicationView,
 				TePublicationsInit.GetPubPageSizes(pub.Name, wsObj.Id));
 			InitializePageSetupDlg(dlg);

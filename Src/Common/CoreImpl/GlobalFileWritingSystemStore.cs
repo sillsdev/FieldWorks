@@ -7,8 +7,8 @@ using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Threading;
 using System.Collections.Generic;
-using Palaso.WritingSystems;
 using SIL.Utils;
+using SIL.WritingSystems;
 
 namespace SIL.CoreImpl
 {
@@ -75,7 +75,7 @@ namespace SIL.CoreImpl
 		/// an already-existing writing system.  Set should be called when there is a change
 		/// that updates the RFC5646 information.
 		/// </summary>
-		public void Set(IWritingSystemDefinition ws)
+		public void Set(WritingSystemDefinition ws)
 		{
 			m_mutex.WaitOne();
 			MemoryStream oldData = null;
@@ -83,7 +83,7 @@ namespace SIL.CoreImpl
 			{
 				string writingSystemFileName = GetFileName(ws);
 				string writingSystemFilePath = GetFilePath(ws);
-				if (!ws.Modified && File.Exists(writingSystemFilePath))
+				if (!ws.IsChanged && File.Exists(writingSystemFilePath))
 					return; // no need to save (better to preserve the modified date)
 				var oldId = ws.StoreID;
 				string incomingFileName = GetFileName(oldId);
@@ -107,7 +107,7 @@ namespace SIL.CoreImpl
 							// know when this event should be raised, nor am I sure I am building the argument correctly.
 							// However, I don't think anything (at least in our code) actually uses it.
 							if (WritingSystemIdChanged != null)
-								WritingSystemIdChanged(this, new WritingSystemIdChangedEventArgs(oldId, ((PalasoWritingSystem)ws).RFC5646));
+								WritingSystemIdChanged(this, new WritingSystemIdChangedEventArgs(oldId, ws.LanguageTag));
 						}
 					}
 				}
@@ -120,7 +120,7 @@ namespace SIL.CoreImpl
 					// configuration of the package which allows group access.
 					using (new FileModeOverride())
 					{
-						adaptor.Write(writingSystemFilePath, (WritingSystemDefinition)ws, oldData);
+						adaptor.Write(writingSystemFilePath, ws, oldData);
 					}
 				}
 				catch (UnauthorizedAccessException)
@@ -130,7 +130,7 @@ namespace SIL.CoreImpl
 					// as we well may not be able to in a client-server mode, too bad.
 				}
 
-				ws.Modified = false;
+				ws.AcceptChanges();
 			}
 			finally
 			{
@@ -143,7 +143,7 @@ namespace SIL.CoreImpl
 		/// <summary>
 		/// Returns true if a call to Set should succeed, false if a call to Set would throw
 		/// </summary>
-		public bool CanSet(IWritingSystemDefinition ws)
+		public bool CanSet(WritingSystemDefinition ws)
 		{
 			return true;
 		}
@@ -151,7 +151,7 @@ namespace SIL.CoreImpl
 		/// <summary>
 		/// Gets the writing system object for the given Store ID
 		/// </summary>
-		public IWritingSystemDefinition Get(string identifier)
+		public WritingSystemDefinition Get(string identifier)
 		{
 			m_mutex.WaitOne();
 			try
@@ -171,12 +171,12 @@ namespace SIL.CoreImpl
 		/// If the given writing system were passed to Set, this function returns the
 		/// new StoreID that would be assigned.
 		/// </summary>
-		public string GetNewStoreIDWhenSet(IWritingSystemDefinition ws)
+		public string GetNewStoreIDWhenSet(WritingSystemDefinition ws)
 		{
 			if (ws == null)
 				throw new ArgumentNullException("ws");
 
-			return ((PalasoWritingSystem)ws).RFC5646;
+			return ws.LanguageTag;
 		}
 
 		/// <summary>
@@ -223,8 +223,8 @@ namespace SIL.CoreImpl
 		/// <param name="wsCurrent"></param>
 		/// <param name="candidates"></param>
 		/// <returns></returns>
-		public IWritingSystemDefinition GetWsForInputLanguage(string layoutName, CultureInfo cultureInfo,
-			IWritingSystemDefinition wsCurrent, IWritingSystemDefinition[] candidates)
+		public WritingSystemDefinition GetWsForInputLanguage(string layoutName, CultureInfo cultureInfo,
+			WritingSystemDefinition wsCurrent, WritingSystemDefinition[] candidates)
 		{
 			throw new NotImplementedException();
 		}
@@ -252,9 +252,9 @@ namespace SIL.CoreImpl
 		/// Creates a new writing system object and returns it.  Set will need to be called
 		/// once identifying information has been changed in order to save it in the store.
 		/// </summary>
-		public IWritingSystemDefinition CreateNew()
+		public WritingSystemDefinition CreateNew()
 		{
-			return new PalasoWritingSystem();
+			return new WritingSystem();
 		}
 
 		/// <summary>
@@ -288,14 +288,14 @@ namespace SIL.CoreImpl
 		/// <summary>
 		/// Returns a list of all writing system definitions in the store.
 		/// </summary>
-		public IEnumerable<IWritingSystemDefinition> AllWritingSystems
+		public IEnumerable<WritingSystemDefinition> AllWritingSystems
 		{
 			get
 			{
 				m_mutex.WaitOne();
 				try
 				{
-					return Directory.GetFiles(m_path, "*.ldml").Select(filePath => GetFromFilePath(filePath)).ToArray();
+					return Directory.GetFiles(m_path, "*.ldml").Select(GetFromFilePath).ToArray();
 				}
 				finally
 				{
@@ -307,7 +307,7 @@ namespace SIL.CoreImpl
 		/// <summary>
 		/// Added to satisfy definition of IWritingSystemRepository...implementation adapted from WritingSystemRepositoryBase
 		/// </summary>
-		public IEnumerable<IWritingSystemDefinition> TextWritingSystems
+		public IEnumerable<WritingSystemDefinition> TextWritingSystems
 		{
 			get { return AllWritingSystems.Where(ws => !ws.IsVoice); }
 		}
@@ -315,7 +315,7 @@ namespace SIL.CoreImpl
 		/// <summary>
 		/// Added to satisfy definition of IWritingSystemRepository...implementation adapted from WritingSystemRepositoryBase
 		/// </summary>
-		public IEnumerable<IWritingSystemDefinition> VoiceWritingSystems
+		public IEnumerable<WritingSystemDefinition> VoiceWritingSystems
 		{
 			get { return AllWritingSystems.Where(ws => ws.IsVoice); }
 		}
@@ -323,21 +323,21 @@ namespace SIL.CoreImpl
 		/// <summary>
 		/// Event raised when writing system ID is changed. Required for interface defn, dubious implementstion.
 		/// </summary>
-		public event WritingSystemIdChangedEventHandler WritingSystemIdChanged;
+		public event EventHandler<WritingSystemIdChangedEventArgs> WritingSystemIdChanged;
 		/// <summary>
 		/// Event raised when writing system is deleted. Required for interface defn,  dubious implementstion.
 		/// </summary>
-		public event WritingSystemDeleted WritingSystemDeleted;
+		public event EventHandler<WritingSystemDeletedEventArgs> WritingSystemDeleted;
 
 #pragma warning disable 67	// WritingSystemConflated is never used, but part of interface IWritingSystemRepository
 		/// <summary/>
-		public event WritingSystemConflatedEventHandler WritingSystemConflated;
+		public event EventHandler<WritingSystemConflatedEventArgs> WritingSystemConflated;
 #pragma warning restore 67
 
 		/// <summary>
 		/// Returns a list of all writing system definitions in the store. (Obsolete)
 		/// </summary>
-		public IEnumerable<IWritingSystemDefinition> WritingSystemDefinitions
+		public IEnumerable<WritingSystemDefinition> WritingSystemDefinitions
 		{
 			get { return AllWritingSystems; }
 		}
@@ -347,7 +347,7 @@ namespace SIL.CoreImpl
 		/// to be called with this new duplicate once identifying information has been changed
 		/// in order to place the new definition in the store.
 		/// </summary>
-		public IWritingSystemDefinition MakeDuplicate(IWritingSystemDefinition definition)
+		public WritingSystemDefinition MakeDuplicate(WritingSystemDefinition definition)
 		{
 			return definition.Clone();
 		}
@@ -401,7 +401,7 @@ namespace SIL.CoreImpl
 		/// Returns a list of writing systems from rhs which are newer than ones in the store.
 		/// </summary>
 		// TODO: Maybe this should be IEnumerable<string> .... which returns the identifiers.
-		public IEnumerable<IWritingSystemDefinition> WritingSystemsNewerIn(IEnumerable<IWritingSystemDefinition> rhs)
+		public IEnumerable<WritingSystemDefinition> WritingSystemsNewerIn(IEnumerable<WritingSystemDefinition> rhs)
 		{
 			throw new NotImplementedException();
 		}
@@ -409,7 +409,7 @@ namespace SIL.CoreImpl
 		/// <summary>
 		/// Added to satisfy definition of IWritingSystemRepository...do we need to do anything?
 		/// </summary>
-		public void OnWritingSystemIDChange(IWritingSystemDefinition ws, string oldId)
+		public void OnWritingSystemIDChange(WritingSystemDefinition ws, string oldId)
 		{
 		}
 
@@ -419,7 +419,7 @@ namespace SIL.CoreImpl
 		/// <param name="identifier">The identifier.</param>
 		/// <param name="ws">The writing system.</param>
 		/// <returns></returns>
-		public bool TryGet(string identifier, out IWritingSystemDefinition ws)
+		public bool TryGet(string identifier, out WritingSystemDefinition ws)
 		{
 			m_mutex.WaitOne();
 			try
@@ -439,15 +439,15 @@ namespace SIL.CoreImpl
 			}
 		}
 
-		private IWritingSystemDefinition GetFromFilePath(string filePath)
+		private WritingSystemDefinition GetFromFilePath(string filePath)
 		{
 			try
 			{
-				var ws = (WritingSystemDefinition)CreateNew();
+				WritingSystemDefinition ws = CreateNew();
 				var adaptor = new FwLdmlAdaptor();
 				adaptor.Read(filePath, ws);
-				ws.StoreID = ((PalasoWritingSystem)ws).RFC5646;
-				ws.Modified = false;
+				ws.StoreID = ws.LanguageTag;
+				ws.AcceptChanges();
 				return ws;
 			}
 			catch (Exception e)
@@ -456,7 +456,7 @@ namespace SIL.CoreImpl
 			}
 		}
 
-		private string GetFilePath(IWritingSystemDefinition ws)
+		private string GetFilePath(WritingSystemDefinition ws)
 		{
 			return Path.Combine(m_path, GetFileName(ws));
 		}
@@ -466,11 +466,11 @@ namespace SIL.CoreImpl
 			return Path.Combine(m_path, GetFileName(identifier));
 		}
 
-		private static string GetFileName(IWritingSystemDefinition ws)
+		private static string GetFileName(WritingSystemDefinition ws)
 		{
 			if (string.IsNullOrEmpty(ws.Language))
 				return "";
-			return GetFileName(((PalasoWritingSystem)ws).RFC5646);
+			return GetFileName(ws.LanguageTag);
 		}
 
 		private static string GetFileName(string identifier)

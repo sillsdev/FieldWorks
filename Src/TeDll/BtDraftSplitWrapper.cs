@@ -5,19 +5,15 @@
 // File: BtDraftSplitWrapper.cs
 // Responsibility: TE Team
 
-using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Globalization;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.SplitGridView;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
@@ -33,7 +29,7 @@ namespace SIL.FieldWorks.TE
 	public class BtDraftSplitWrapper: ViewWrapper
 	{
 		#region Member variables
-		private IWritingSystem m_VernWs;
+		private WritingSystem m_VernWs;
 		private IContainer m_Container;
 		private DraftView m_mainDraftView;
 		private DraftView m_mainBtView;

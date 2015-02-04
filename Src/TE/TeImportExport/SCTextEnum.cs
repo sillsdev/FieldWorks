@@ -16,10 +16,8 @@ using System.Diagnostics;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using ECInterfaces;
-using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SILUBS.SharedScrUtils;
-using SIL.FieldWorks.FDO.DomainImpl;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {
@@ -459,7 +457,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 			// If there is no entry, then find the writing system with the ICU locale, get its
 			// converter name and get a converter for that name.
-			IWritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Get(wsId);
+			WritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Get(wsId);
 			IEncConverter converter = null;
 			if (ws.LegacyMapping != null)
 			{

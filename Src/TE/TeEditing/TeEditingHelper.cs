@@ -876,7 +876,7 @@ namespace SIL.FieldWorks.TE
 				}
 			}
 			return new ScrReference[] {new ScrReference(start, m_scr.Versification),
-				new ScrReference(end, m_scr.Versification)}; ;
+				new ScrReference(end, m_scr.Versification)};
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -8409,7 +8409,7 @@ namespace SIL.FieldWorks.TE
 			// Add the back translation writing system info to the output string, if needed
 			if (IsBackTranslation)
 			{
-				IWritingSystem ws = m_cache.ServiceLocator.WritingSystemManager.Get(ViewConstructorWS);
+				WritingSystem ws = m_cache.ServiceLocator.WritingSystemManager.Get(ViewConstructorWS);
 				sEditRef = string.Format(
 					TeResourceHelper.GetResourceString("kstidCaptionInBackTrans"),
 					sEditRef, ws.DisplayLabel);
@@ -8758,7 +8758,7 @@ namespace SIL.FieldWorks.TE
 	public class ChangeSpellingInfo
 	{
 		private readonly string m_word; // the word(form) we want to change occurrences of.
-		private readonly IWritingSystem m_ws;
+		private readonly WritingSystem m_ws;
 		private readonly FdoCache m_cache;
 		private readonly IApp m_app;
 

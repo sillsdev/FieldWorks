@@ -349,10 +349,10 @@ namespace SIL.FieldWorks.IText
 		public void ImportWordsWithMultipleWss()
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			IWritingSystem wsWbl;
+			WritingSystem wsWbl;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("wbl-Arab-AF", out wsWbl);
 			wsWbl.RightToLeftScript = true;
-			IWritingSystem wsWblIpa;
+			WritingSystem wsWblIpa;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("wbl-Qaaa-AF-fonipa-x-Zipa", out wsWblIpa);
 
 			const string xml =

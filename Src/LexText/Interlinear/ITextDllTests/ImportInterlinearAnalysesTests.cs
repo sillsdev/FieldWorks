@@ -756,7 +756,7 @@ namespace SIL.FieldWorks.IText
 		public void WordsFragDoc_OneWordAndOneGloss()
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			IWritingSystem wsKal;
+			WritingSystem wsKal;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("qaa-x-kal", out wsKal);
 
 			const string xml =
@@ -788,7 +788,7 @@ namespace SIL.FieldWorks.IText
 		public void WordsFragDoc_OneWordAndOneGloss_AvoidDuplication()
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			IWritingSystem wsKal;
+			WritingSystem wsKal;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("qaa-x-kal", out wsKal);
 
 			const string xml =
@@ -827,7 +827,7 @@ namespace SIL.FieldWorks.IText
 		public void WordsFragDoc_OneWordAndMultiGloss()
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			IWritingSystem wsKal;
+			WritingSystem wsKal;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("qaa-x-kal", out wsKal);
 
 			const string xml =
@@ -862,7 +862,7 @@ namespace SIL.FieldWorks.IText
 		public void WordsFragDoc_OneWordAndMultiGloss_AvoidDuplication()
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			IWritingSystem wsKal;
+			WritingSystem wsKal;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("qaa-x-kal", out wsKal);
 
 			const string xml =
@@ -903,7 +903,7 @@ namespace SIL.FieldWorks.IText
 		public void WordsFragDoc_OneWordPhraseAndOneGloss()
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			IWritingSystem wsKal;
+			WritingSystem wsKal;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("qaa-x-kal", out wsKal);
 
 			const string xml =
@@ -935,7 +935,7 @@ namespace SIL.FieldWorks.IText
 		public void WordsFragDoc_OneWordPhraseAndOneGloss_AvoidDuplicates()
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			IWritingSystem wsKal;
+			WritingSystem wsKal;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("qaa-x-kal", out wsKal);
 
 			const string xml =

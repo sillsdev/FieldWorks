@@ -22,13 +22,9 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SILUBS.SharedScrUtils;
-using System.Text;
-using System.IO;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.TE
@@ -1877,7 +1873,7 @@ namespace SIL.FieldWorks.TE
 
 			int ichStart, ichEnd, iSection, iPara;
 			ScrReference scrRef = new ScrReference(1, 1, 1, m_scr.Versification);
-			IWritingSystem frWs = Cache.ServiceLocator.WritingSystemManager.Get("fr");
+			WritingSystem frWs = Cache.ServiceLocator.WritingSystemManager.Get("fr");
 			Assert.IsTrue(TeEditingHelper.FindTextInVerse(m_scr, TsStringUtils.MakeTss("this", frWs.Handle),
 				scrRef, true, out iSection, out iPara, out ichStart, out ichEnd));
 			Assert.AreEqual(12, ichStart);
@@ -1906,7 +1902,7 @@ namespace SIL.FieldWorks.TE
 			int ichStart, ichEnd, iSection, iPara;
 			ScrReference scrRef = new ScrReference(1, 1, 1, m_scr.Versification);
 
-			IWritingSystem frWs = Cache.ServiceLocator.WritingSystemManager.Get("fr");
+			WritingSystem frWs = Cache.ServiceLocator.WritingSystemManager.Get("fr");
 			Assert.IsTrue(TeEditingHelper.FindTextInVerse(m_scr,
 				TsStringUtils.MakeTss("nice", frWs.Handle), scrRef, true, out iSection,
 				out iPara, out ichStart, out ichEnd));
@@ -1934,7 +1930,7 @@ namespace SIL.FieldWorks.TE
 			int ichStart, ichEnd, iSection, iPara;
 			ScrReference scrRef = new ScrReference(1, 1, 1, m_scr.Versification);
 
-			IWritingSystem frWs = Cache.ServiceLocator.WritingSystemManager.Get("fr");
+			WritingSystem frWs = Cache.ServiceLocator.WritingSystemManager.Get("fr");
 			Assert.IsFalse(TeEditingHelper.FindTextInVerse(m_scr,
 				TsStringUtils.MakeTss("that", frWs.Handle), scrRef, true, out iSection,
 				out iPara, out ichStart, out ichEnd));
@@ -2228,7 +2224,7 @@ namespace SIL.FieldWorks.TE
 			ITsString tssS1H1 = paraHeading.Contents;
 			IStTxtPara para1 = AddParaToMockedSectionContent(section1, ScrStyleNames.NormalParagraph);
 			AddRunToMockedPara(para1, "this is more text", null);
-			IWritingSystem wsEn = Cache.ServiceLocator.WritingSystemManager.Get("en");
+			WritingSystem wsEn = Cache.ServiceLocator.WritingSystemManager.Get("en");
 			ICmTranslation transP1 = AddBtToMockedParagraph(para1, wsEn.Handle);
 			IStFootnote fn1 = AddFootnote(philemon, para1, 1, "footnote 1 text");
 			AddBtFootnote(transP1, 0, wsEn.Handle, fn1, "BT of footnote1");
@@ -2253,7 +2249,7 @@ namespace SIL.FieldWorks.TE
 				"The last heading", ScrStyleNames.SectionHead);
 			IStTxtPara para2 = AddParaToMockedSectionContent(section3, ScrStyleNames.NormalParagraph);
 			AddRunToMockedPara(para2, "this is more text", null);
-			IWritingSystem deWs = Cache.ServiceLocator.WritingSystemManager.Get("de");
+			WritingSystem deWs = Cache.ServiceLocator.WritingSystemManager.Get("de");
 			ICmTranslation transP2 = AddBtToMockedParagraph(para2, deWs.Handle);
 			IStFootnote fn3 = AddFootnote(philemon, para2, 1, "footnote 3 text");
 			AddBtFootnote(transP2, 0, deWs.Handle, fn3, "BT of footnote3");

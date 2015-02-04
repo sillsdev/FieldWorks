@@ -19,7 +19,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Diagnostics;
-using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
@@ -28,6 +27,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.WritingSystems;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -681,7 +681,7 @@ namespace SIL.FieldWorks.Common.Controls
 			// Collect the digraph and character equivalence maps and the ignorable character set
 			// the first time through. There after, these maps and lists are just retrieved.
 			chIgnoreSet = new Set<string>(); // if ignorable chars get through they can become letter heads! LT-11172
-			Set<string> digraphs = null;
+			Set<string> digraphs;
 			// Are the maps and ignorables already setup for the taking?
 			if (m_mapWsDigraphs.TryGetValue(sWs, out digraphs))
 			{   // knows about ws, so already knows character equivalence classes
@@ -691,53 +691,15 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			digraphs = new Set<string>();
 			mapChars = new Dictionary<string, string>();
-			var ws = m_cache.ServiceLocator.WritingSystemManager.Get(sWs);
-			var sortRules = ws.SortRules;
-			var sortType = ws.SortUsing;
+			WritingSystem ws = m_cache.ServiceLocator.WritingSystemManager.Get(sWs);
 
-			if (!String.IsNullOrEmpty(sortRules) && sortType == WritingSystemDefinition.SortRulesType.CustomICU)
+			var simpleCollation = ws.DefaultCollation as SimpleCollationDefinition;
+			if (simpleCollation != null)
 			{
-				// prime with empty ws in case all the rules affect only the ignore set
-				m_mapWsMapChars[sWs] = mapChars;
-				m_mapWsDigraphs[sWs] = digraphs;
-				string[] individualRules = sortRules.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
-				for (int i = 0; i < individualRules.Length; ++i)
+				if (!string.IsNullOrEmpty(simpleCollation.SimpleRules))
 				{
-					var rule = individualRules[i];
-					RemoveICUEscapeChars(ref rule);
-					// This is a valid rule that specifies that the digraph aa should be ignored
-					// [last tertiary ignorable] = \u02bc = aa
-					// This may never happen, but some single characters should be ignored or they will
-					// will be confused for digraphs with following characters.)))
-					if (rule.Contains("["))
-					{
-						const string endMarker = "ignorable] = ";
-						// parse out the ignorables and add them to the ignore list
-						int bracketEnd = rule.IndexOf(endMarker);
-						if (bracketEnd > -1)
-						{
-							bracketEnd += endMarker.Length; // skip over the search target
-							string[] chars = rule.Substring(bracketEnd).Split(new [ ] {" = "},
-																			   StringSplitOptions.RemoveEmptyEntries);
-							if (chars.Length > 0)
-							{
-								foreach (var ch in chars)
-								{
-									chIgnoreSet.Add(ch);
-								}
-							}
-						}
-						rule = rule.Substring(0, rule.IndexOf("["));
-					}
-					if (String.IsNullOrEmpty(rule.Trim()))
-						continue;
-					rule = rule.Replace("<<<", "=");
-					rule = rule.Replace("<<", "=");
-					// "&N<ng<<<Ng<ny<<<Ny" => "&N<ng=Ng<ny=Ny"
-					// "&N<ñ<<<Ñ" => "&N<ñ=Ñ"
-					// There are other issues we are not handling proplerly such as the next line
-					// &N<\u006e\u0067
-					var primaryParts = rule.Split('<');
+					string rules = simpleCollation.SimpleRules.Replace(" ", "=");
+					string[] primaryParts = rules.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
 					foreach (var part in primaryParts)
 					{
 						BuildDigraphSet(part, sWs, m_mapWsDigraphs);
@@ -745,14 +707,59 @@ namespace SIL.FieldWorks.Common.Controls
 					}
 				}
 			}
-			else if(!String.IsNullOrEmpty(sortRules) && sortType == WritingSystemDefinition.SortRulesType.CustomSimple)
+			else
 			{
-				var rules = sortRules.Replace(" ", "=");
-				var primaryParts = rules.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-				foreach (var part in primaryParts)
+				// is this a custom ICU collation or an inherited collation?
+				var inheritedCollation = ws.DefaultCollation as InheritedCollationDefinition;
+				if (inheritedCollation == null && !string.IsNullOrEmpty(ws.DefaultCollation.IcuRules))
 				{
-					BuildDigraphSet(part, sWs, m_mapWsDigraphs);
-					MapRuleCharsToPrimary(part, sWs, m_mapWsMapChars);
+					// prime with empty ws in case all the rules affect only the ignore set
+					m_mapWsMapChars[sWs] = mapChars;
+					m_mapWsDigraphs[sWs] = digraphs;
+					string[] individualRules = ws.DefaultCollation.IcuRules.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
+					for (int i = 0; i < individualRules.Length; ++i)
+					{
+						var rule = individualRules[i];
+						RemoveICUEscapeChars(ref rule);
+						// This is a valid rule that specifies that the digraph aa should be ignored
+						// [last tertiary ignorable] = \u02bc = aa
+						// This may never happen, but some single characters should be ignored or they will
+						// will be confused for digraphs with following characters.)))
+						if (rule.Contains("["))
+						{
+							const string endMarker = "ignorable] = ";
+							// parse out the ignorables and add them to the ignore list
+							int bracketEnd = rule.IndexOf(endMarker);
+							if (bracketEnd > -1)
+							{
+								bracketEnd += endMarker.Length; // skip over the search target
+								string[] chars = rule.Substring(bracketEnd).Split(new[] { " = " },
+																				   StringSplitOptions.RemoveEmptyEntries);
+								if (chars.Length > 0)
+								{
+									foreach (var ch in chars)
+									{
+										chIgnoreSet.Add(ch);
+									}
+								}
+							}
+							rule = rule.Substring(0, rule.IndexOf("["));
+						}
+						if (String.IsNullOrEmpty(rule.Trim()))
+							continue;
+						rule = rule.Replace("<<<", "=");
+						rule = rule.Replace("<<", "=");
+						// "&N<ng<<<Ng<ny<<<Ny" => "&N<ng=Ng<ny=Ny"
+						// "&N<ñ<<<Ñ" => "&N<ñ=Ñ"
+						// There are other issues we are not handling proplerly such as the next line
+						// &N<\u006e\u0067
+						var primaryParts = rule.Split('<');
+						foreach (var part in primaryParts)
+						{
+							BuildDigraphSet(part, sWs, m_mapWsDigraphs);
+							MapRuleCharsToPrimary(part, sWs, m_mapWsMapChars);
+						}
+					}
 				}
 			}
 
@@ -848,7 +855,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			var entry = (IReversalIndexEntry) obj;
 			var idx = (IReversalIndex) objOwner;
-			IWritingSystem ws = m_cache.ServiceLocator.WritingSystemManager.Get(idx.WritingSystem);
+			WritingSystem ws = m_cache.ServiceLocator.WritingSystemManager.Get(idx.WritingSystem);
 			string sEntry = entry.ReversalForm.get_String(ws.Handle).Text;
 			if (string.IsNullOrEmpty(sEntry))
 				return;

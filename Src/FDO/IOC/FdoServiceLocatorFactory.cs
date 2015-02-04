@@ -244,12 +244,12 @@ namespace SIL.FieldWorks.FDO.IOC
 
 			// Add writing system manager
 			registry
-				.For<IWritingSystemManager>()
+				.For<WritingSystemManager>()
 				.LifecycleIs(new SingletonLifecycle())
-				.Use(() => new PalasoWritingSystemManager {TemplateFolder = m_dirs.TemplateDirectory});
+				.Use(() => new WritingSystemManager {TemplateFolder = m_dirs.TemplateDirectory});
 			registry
 				.For<ILgWritingSystemFactory>()
-				.Use(c => (ILgWritingSystemFactory)c.GetInstance<IWritingSystemManager>());
+				.Use(c => (ILgWritingSystemFactory)c.GetInstance<WritingSystemManager>());
 
 			registry
 				.For<IWritingSystemContainer>()
@@ -501,11 +501,11 @@ namespace SIL.FieldWorks.FDO.IOC
 		/// <summary>
 		/// Shortcut to the WS manager.
 		/// </summary>
-		public IWritingSystemManager WritingSystemManager
+		public WritingSystemManager WritingSystemManager
 		{
 			get
 			{
-				return GetInstance<IWritingSystemManager>();
+				return GetInstance<WritingSystemManager>();
 			}
 		}
 

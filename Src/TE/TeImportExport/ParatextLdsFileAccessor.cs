@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.TE
 			m_fontName = normalStyle.RealFontNameForWs(ws);
 			m_fontSize = (fontInfo.m_fontSize.Value / 1000).ToString();
 
-			IWritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
+			WritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
 			m_wsName = wsObj.DisplayLabel;
 			m_RtoL = (wsObj.RightToLeftScript ? "T" : "F");
 		}

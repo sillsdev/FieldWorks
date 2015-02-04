@@ -14,7 +14,6 @@ using System.IO;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
@@ -220,7 +219,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// <param name="ws">the writing system which will become the default
 		/// vernacular writing system</param>
 		/// ------------------------------------------------------------------------------------
-		public void ChangeDefaultVernWs(IWritingSystem ws)
+		public void ChangeDefaultVernWs(WritingSystem ws)
 		{
 			Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Clear();
 			Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem = ws;
@@ -589,7 +588,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// </summary>
 		/// <param name="ws">the writing system to set as the default analysis WS</param>
 		/// ------------------------------------------------------------------------------------
-		protected void ChangeDefaultAnalWs(IWritingSystem ws)
+		protected void ChangeDefaultAnalWs(WritingSystem ws)
 		{
 			Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Clear();
 			Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem = ws;

@@ -6,19 +6,15 @@
 // Responsibility: TE Team
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
@@ -52,7 +48,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		List<int> WritingSystemsToDisplay { get; }
 
 		/// <summary> </summary>
-		IWritingSystemManager WritingSystemManager { get; }
+		WritingSystemManager WritingSystemManager { get; }
 
 		/// <summary></summary>
 		ITsString GetMultiStringAlt(int tag, int ws);
@@ -187,7 +183,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				throw new InvalidOperationException("At least one writing system must be added to the WritingSystemsToDisplay property before showing the FwMultilingualPropView named " + Grid.Name);
 		}
 
-		public IWritingSystemManager WritingSystemManager {
+		public WritingSystemManager WritingSystemManager {
 			get { return m_cache.ServiceLocator.WritingSystemManager; }
 		}
 

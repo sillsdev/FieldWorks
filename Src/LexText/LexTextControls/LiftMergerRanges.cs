@@ -4,18 +4,17 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using Palaso.Lift;
 using Palaso.Lift.Parsing;
-using Palaso.WritingSystems.Migration;
-using Palaso.WritingSystems.Migration.WritingSystemsLdmlV0To1Migration;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
+using SIL.WritingSystems.Migration;
+using SIL.WritingSystems.Migration.WritingSystemsLdmlV0To1Migration;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -691,14 +690,14 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private void ListNewWritingSystems(System.IO.StreamWriter writer, string sMsg,
-			List<IWritingSystem> list)
+		private void ListNewWritingSystems(StreamWriter writer, string sMsg,
+			List<WritingSystem> list)
 		{
 			if (list.Count > 0)
 			{
 				writer.WriteLine("<p><h3>{0}</h3></p>", sMsg);
 				writer.WriteLine("<ul>");
-				foreach (IWritingSystem ws in list)
+				foreach (WritingSystem ws in list)
 					writer.WriteLine("<li>{0} ({1})</li>", ws.DisplayLabel, ws.Id);
 				writer.WriteLine("</ul>");
 			}
@@ -1524,7 +1523,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			var key = RemoveMultipleX(oldTag.ToLowerInvariant());
 			if (m_writingsytemChangeMap.TryGetValue(key, out newTag))
 				return !newTag.Equals(oldTag, StringComparison.OrdinalIgnoreCase);
-			var cleaner = new Rfc5646TagCleaner(oldTag);
+			var cleaner = new IetfLanguageTagCleaner(oldTag);
 			cleaner.Clean();
 			// FieldWorks needs to handle this special case.
 			if (cleaner.Language.ToLowerInvariant() == "cmn")
@@ -1532,13 +1531,13 @@ namespace SIL.FieldWorks.LexText.Controls
 				var region = cleaner.Region;
 				if (string.IsNullOrEmpty(region))
 					region = "CN";
-				cleaner = new Rfc5646TagCleaner("zh", cleaner.Script, region, cleaner.Variant, cleaner.PrivateUse);
+				cleaner = new IetfLanguageTagCleaner("zh", cleaner.Script, region, cleaner.Variant, cleaner.PrivateUse);
 			}
 			newTag = cleaner.GetCompleteTag();
 			while (m_writingsytemChangeMap.Values.Contains(newTag, StringComparer.OrdinalIgnoreCase))
 			{
 				// We can't use this tag because it would conflict with what we are mapping something else to.
-				cleaner = new Rfc5646TagCleaner(cleaner.Language, cleaner.Script, cleaner.Region, cleaner.Variant,
+				cleaner = new IetfLanguageTagCleaner(cleaner.Language, cleaner.Script, cleaner.Region, cleaner.Variant,
 					GetNextDuplPart(cleaner.PrivateUse));
 				newTag = cleaner.GetCompleteTag();
 			}

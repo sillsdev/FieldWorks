@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	{
 		#region Data members
 		private int m_nextStyleNumber = 1;
-		private readonly IWritingSystemManager m_wsManager;
+		private readonly WritingSystemManager m_wsManager;
 		private readonly string m_normalStyleName;
 		#endregion
 
@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="wsManager">The Writing System Factory (needed to resolve magic font names
 		/// to real ones)</param>
 		/// ------------------------------------------------------------------------------------
-		public StyleInfoTable(string normalStyleName, IWritingSystemManager wsManager)
+		public StyleInfoTable(string normalStyleName, WritingSystemManager wsManager)
 		{
 			m_wsManager = wsManager;
 			m_normalStyleName = normalStyleName;
@@ -225,7 +225,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (m_wsManager == null)
 				throw new InvalidOperationException("StyleInfoTable was constructed with a null writing system store. Cannot resolve magic font name.");
 
-			IWritingSystem wsObj = m_wsManager.Get(ws);
+			WritingSystem wsObj = m_wsManager.Get(ws);
 			switch (fontName)
 			{
 				case StyleServices.DefaultFont:

@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
 using NUnit.Framework;
 
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Test.TestUtils;
 
 namespace SIL.FieldWorks.Common.Widgets
@@ -20,17 +16,17 @@ namespace SIL.FieldWorks.Common.Widgets
 	{
 		#region Data Members
 		TestFwStylesheet m_stylesheet;
-		IWritingSystemManager m_wsManager;
+		WritingSystemManager m_wsManager;
 		int m_hvoEnglishWs;
 		#endregion
 
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
-			m_wsManager = new PalasoWritingSystemManager();
+			m_wsManager = new WritingSystemManager();
 
 			// setup English ws.
-			IWritingSystem enWs;
+			WritingSystem enWs;
 			m_wsManager.GetOrSet("en", out enWs);
 			m_hvoEnglishWs = enWs.Handle;
 		}

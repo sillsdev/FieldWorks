@@ -51,13 +51,13 @@ namespace SIL.FieldWorks.IText
 
 		private void m_cbWritingSystems_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			m_ws = ((IWritingSystem) m_cbWritingSystems.SelectedItem).Handle;
+			m_ws = ((WritingSystem) m_cbWritingSystems.SelectedItem).Handle;
 		}
 
 		private void m_btnOK_Click(object sender, EventArgs e)
 		{
 			DialogResult = DialogResult.OK;
-			m_ws = ((IWritingSystem) m_cbWritingSystems.SelectedItem).Handle;
+			m_ws = ((WritingSystem) m_cbWritingSystems.SelectedItem).Handle;
 			Close();
 		}
 

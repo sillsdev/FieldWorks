@@ -10,13 +10,12 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using Palaso.UI.WindowsForms.Keyboarding;
-using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites.Properties;
 using SIL.Utils;
 using System.Diagnostics.CodeAnalysis;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -2923,11 +2922,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Set the keyboard to match the writing system.
 		/// </summary>
-		/// <param name="ws">writing system object</param>
 		/// -----------------------------------------------------------------------------------
-		protected void SetKeyboardForWs(ILgWritingSystem ws)
+		protected void SetKeyboardForWs(ILgWritingSystem lgws)
 		{
-			if(Callbacks == null || ws == null)
+			if (Callbacks == null || lgws == null)
 			{
 				ActivateDefaultKeyboard();
 				return;
@@ -2939,10 +2937,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			try
 			{
 				m_fSettingKeyboards = true;
-				var palasoWs = ((IWritingSystemManager)WritingSystemFactory).Get(ws.Handle)
-					as IWritingSystemDefinition;
-				if (palasoWs != null && palasoWs.LocalKeyboard != null)
-					palasoWs.LocalKeyboard.Activate();
+				var ws = (WritingSystem) lgws;
+				if (ws.LocalKeyboard != null)
+					ws.LocalKeyboard.Activate();
 			}
 			catch
 			{

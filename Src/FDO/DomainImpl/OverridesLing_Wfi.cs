@@ -596,7 +596,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				new[] { this }, new IWfiWordform[0]);
 		}
 
-		protected override void ITsStringAltChangedSideEffectsInternal(int multiAltFlid, IWritingSystem alternativeWs, ITsString originalValue, ITsString newValue)
+		protected override void ITsStringAltChangedSideEffectsInternal(int multiAltFlid, WritingSystem alternativeWs, ITsString originalValue, ITsString newValue)
 		{
 			if (multiAltFlid == WfiWordformTags.kflidForm)
 			{
@@ -1643,7 +1643,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			} base.RemoveObjectSideEffectsInternal(e);
 		}
 
-		protected override void ITsStringAltChangedSideEffectsInternal(int multiAltFlid, IWritingSystem alternativeWs, ITsString originalValue, ITsString newValue)
+		protected override void ITsStringAltChangedSideEffectsInternal(int multiAltFlid, WritingSystem alternativeWs, ITsString originalValue, ITsString newValue)
 		{
 			switch(multiAltFlid)
 			{

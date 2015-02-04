@@ -82,6 +82,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\Palaso.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.WritingSystems, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Downloads\SIL.WritingSystems.dll</HintPath>
+    </Reference>
     <Reference Include="SilUtils, Version=7.0.1.23997, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
@@ -118,12 +122,9 @@
     <Compile Include="CmObjectFields.cs" />
     <Compile Include="CellarPropertyType.cs" />
     <Compile Include="CellarPropertyTypeFilter.cs" />
-    <Compile Include="IWritingSystem.cs" />
-    <Compile Include="IWritingSystemManager.cs" />
     <Compile Include="KeyboardHelper.cs" />
-    <Compile Include="LangTagUtils.cs" />
-    <Compile Include="PalasoWritingSystem.cs" />
-    <Compile Include="PalasoWritingSystemManager.cs" />
+    <Compile Include="WritingSystem.cs" />
+    <Compile Include="WritingSystemManager.cs" />
     <Compile Include="GlobalFileWritingSystemStore.cs" />
     <Compile Include="LocalFileWritingSystemStore.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

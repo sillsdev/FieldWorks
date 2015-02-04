@@ -750,7 +750,7 @@ namespace SIL.FieldWorks.TE
 		[Test]
 		public void GetPageReference_DifferentChapter_Rtl()
 		{
-			IWritingSystem ws = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			WritingSystem ws = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			ws.RightToLeftScript = true;
 
 			m_vc.SetDa(Cache.MainCacheAccessor);

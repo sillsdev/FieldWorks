@@ -43,13 +43,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml;
-using Palaso.WritingSystems;
-using Palaso.WritingSystems.Collation;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -1035,18 +1032,11 @@ namespace SIL.FieldWorks.Filters
 		public static void SetupPatternCollating(IVwPattern pattern, FdoCache cache)
 		{
 			pattern.IcuLocale = cache.ServiceLocator.WritingSystemFactory.GetStrFromWs(pattern.Pattern.get_WritingSystem(0));
-			var wsManager = cache.ServiceLocator.WritingSystemManager.Get(pattern.IcuLocale);
+			WritingSystem ws = cache.ServiceLocator.WritingSystemManager.Get(pattern.IcuLocale);
 			// Enhance JohnT: we would like to be able to make it use the defined collating rules for the
 			// other sort types, but don't currently know how.
-			if (wsManager != null)
-			{
-				if (wsManager.SortUsing == WritingSystemDefinition.SortRulesType.CustomICU)
-					pattern.IcuCollatingRules = wsManager.SortRules;
-				else if (wsManager.SortUsing == WritingSystemDefinition.SortRulesType.CustomSimple)
-					pattern.IcuCollatingRules = SimpleRulesCollator.ConvertToIcuRules(wsManager.SortRules);
-				else if (wsManager.SortUsing == WritingSystemDefinition.SortRulesType.OtherLanguage)
-					pattern.IcuCollatingRules = "#" + wsManager.SortRules;
-			}
+			if (ws != null)
+				pattern.IcuCollatingRules = ws.DefaultCollation.IcuRules;
 		}
 	}
 

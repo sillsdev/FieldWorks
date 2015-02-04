@@ -53,14 +53,14 @@ namespace SIL.FieldWorks.TE.ExportTests
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
-			IWritingSystem wsEn;
+			WritingSystem wsEn;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("en", out wsEn);
 			m_wsEnglish = wsEn.Handle;
-			IWritingSystem wsDe;
+			WritingSystem wsDe;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("de", out wsDe);
-			IWritingSystem wsEs;
+			WritingSystem wsEs;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("es", out wsEs);
-			IWritingSystem wsUr;
+			WritingSystem wsUr;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("ur", out wsUr);
 
 			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 			ILangProject lp = Cache.LangProject;
 
 			// Our export test comparisons will assume the WS's are NOT in this order:
-			IList<IWritingSystem> currentAnalWS = Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems;
+			IList<WritingSystem> currentAnalWS = Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems;
 			Assert.AreEqual("en", currentAnalWS[0].Id);
 			Assert.AreEqual("de", currentAnalWS[1].Id);
 			Assert.AreEqual("es", currentAnalWS[2].Id);
@@ -3707,7 +3707,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 		[Test]
 		public void VerseBridge_Paratext_Vern_RightToLeft()
 		{
-			IWritingSystem wsUr = Cache.ServiceLocator.WritingSystemManager.Get("ur");
+			WritingSystem wsUr = Cache.ServiceLocator.WritingSystemManager.Get("ur");
 			ChangeDefaultVernWs(wsUr);
 			Debug.Assert(wsUr.RightToLeftScript, "Vernacular should be set as a right-to-left language.");
 

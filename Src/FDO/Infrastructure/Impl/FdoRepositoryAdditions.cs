@@ -735,7 +735,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 							revIndex = m_cache.ServiceLocator.GetInstance<IReversalIndexFactory>().Create();
 							m_cache.LangProject.LexDbOA.ReversalIndexesOC.Add(revIndex);
 
-							IWritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
+							WritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
 							revIndex.WritingSystem = wsObj.Id;
 							revIndex.Name.SetUserWritingSystem(wsObj.DisplayLabel);
 							revIndex.PartsOfSpeechOA = m_cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
@@ -1188,7 +1188,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		IEnumerable<ILexEntry> SortEntries(IEnumerable<ILexEntry> input)
 		{
 			var retval = new List<ILexEntry>(input);
-			var collator = Cache.LangProject.DefaultVernacularWritingSystem.Collator;
+			var collator = Cache.LangProject.DefaultVernacularWritingSystem.DefaultCollation.Collator;
 			retval.Sort((left, right) => collator.Compare(HeadWordText(left), HeadWordText(right)));
 			return retval;
 		}
@@ -1673,7 +1673,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		public IEnumerable<ILexEntryRef> SortEntryRefs(IEnumerable<ILexEntryRef> input)
 		{
 			var retval = new List<ILexEntryRef>(input);
-			var collator = Cache.LangProject.DefaultVernacularWritingSystem.Collator;
+			var collator = Cache.LangProject.DefaultVernacularWritingSystem.DefaultCollation.Collator;
 			var entryRepo = (LexEntryRepository) Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			retval.Sort((left, right) => collator.Compare(entryRepo.HeadWordText((ILexEntry)left.Owner), entryRepo.HeadWordText((ILexEntry)right.Owner)));
 			return retval;

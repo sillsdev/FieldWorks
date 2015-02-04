@@ -11,14 +11,9 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Reflection;
 using System.Windows.Forms;
 using Microsoft.Win32;
-using Palaso.WritingSystems.Migration;
-using Palaso.WritingSystems.Migration.WritingSystemsLdmlV0To1Migration;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -27,6 +22,9 @@ using SIL.Utils;
 
 // we can't use an exit code < -1 on Linux. However, this app won't work on Linux anyways
 // since we don't have MS SQL Server there.
+using SIL.WritingSystems.Migration;
+using SIL.WritingSystems.Migration.WritingSystemsLdmlV0To1Migration;
+
 [assembly:SuppressMessage("Gendarme.Rules.Portability", "ExitCodeIsLimitedOnUnixRule",
 		Justification="Not intended to be run on Linux")]
 
@@ -173,7 +171,7 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 
 		internal static void NoteMigration(IEnumerable<LdmlVersion0MigrationStrategy.MigrationInfo> migrationInfo)
 		{
-			foreach (var info in migrationInfo)
+			foreach (LdmlVersion0MigrationStrategy.MigrationInfo info in migrationInfo)
 			{
 				// Do nothing here.
 			}

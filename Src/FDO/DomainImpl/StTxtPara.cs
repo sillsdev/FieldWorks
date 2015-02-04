@@ -355,8 +355,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			TsRunInfo tri;
 			foreach (ICmTranslation trans in TranslationsOC)
 			{
-				HashSet<IWritingSystem> transWs = trans.AvailableWritingSystems;
-				foreach (IWritingSystem ws in transWs)
+				HashSet<WritingSystem> transWs = trans.AvailableWritingSystems;
+				foreach (WritingSystem ws in transWs)
 				{
 					ITsString tss = trans.Translation.get_String(ws.Handle);
 					if (tss != null)

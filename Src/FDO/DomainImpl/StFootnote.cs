@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					(int)FwTextPropType.ktptWs, out nVar);
 				if (ws != -1)
 				{
-					IWritingSystem wsObj = Services.WritingSystemManager.Get(ws);
+					WritingSystem wsObj = Services.WritingSystemManager.Get(ws);
 					tssRepresentation += " WS='" + wsObj.Id + "'";
 				}
 

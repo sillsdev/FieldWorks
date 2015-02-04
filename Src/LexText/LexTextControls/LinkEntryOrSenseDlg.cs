@@ -170,7 +170,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			//Set the senses control so that it conforms to the size of the
 			//DefaultAnalysisWritingSystem
-			IWritingSystem defAnalWs = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+			WritingSystem defAnalWs = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			m_fwcbSenses.WritingSystemCode = defAnalWs.Handle;
 			// the default font is set to size 100, so that when adding strings to the control
 			// this becomes a limit.

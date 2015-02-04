@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			base.FixtureSetup();
 
 			// Add Kalaba and set it as the default vernacular writing system.
-			IWritingSystem xkalWs;
+			WritingSystem xkalWs;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("qaa-x-kal", out xkalWs);
 			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
 			{

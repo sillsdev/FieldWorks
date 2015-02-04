@@ -377,7 +377,7 @@ namespace SIL.FieldWorks.TE
 					{
 						if (nVal != 0)
 						{
-							IWritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(nVal);
+							WritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(nVal);
 							m_writer.Write(" {0}=\"{1}\"",
 								tpt == (int)FwTextPropType.ktptWs ? "ws" : "wsBase", wsObj.Id);
 						}
@@ -1054,7 +1054,7 @@ namespace SIL.FieldWorks.TE
 							wsReal = ws;
 						break;
 				}
-				IWritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(wsReal);
+				WritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(wsReal);
 				sLang = wsObj.Id;
 				m_mapWsToRFC.Add(ws, sLang);
 			}
