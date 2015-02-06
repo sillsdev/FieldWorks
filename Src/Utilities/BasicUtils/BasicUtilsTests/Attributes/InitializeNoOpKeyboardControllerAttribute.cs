@@ -27,7 +27,11 @@ namespace SIL.Utils.Attributes
 		public override void BeforeTest(TestDetails testDetails)
 		{
 			base.BeforeTest(testDetails);
-			Keyboard.Controller = new DefaultKeyboardController();
+			if (Keyboard.Controller != null)
+				Keyboard.Controller.Dispose();
+
+			KeyboardController.Initialize();
+			KeyboardController.Instance.SetKeyboardAdaptors(new DummyKeyboardAdaptor());
 		}
 
 		/// <summary>
@@ -35,8 +39,9 @@ namespace SIL.Utils.Attributes
 		/// </summary>
 		public override void AfterTest(TestDetails testDetails)
 		{
-			KeyboardController.Shutdown();
 			base.AfterTest(testDetails);
+			KeyboardController.Shutdown();
+			Keyboard.Controller = new DefaultKeyboardController();
 		}
 	}
 }

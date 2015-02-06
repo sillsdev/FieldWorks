@@ -7,9 +7,9 @@ using System;
 using System.Drawing;
 using NUnit.Framework;
 using IBusDotNet;
-using Palaso.UI.WindowsForms.Keyboarding;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils.Attributes;
+using SIL.WritingSystems.WindowsForms.Keyboarding;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 {
@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	/// <remarks>Note that we have slightly different parameters on the tests: we define a
 	/// selection by anchor and end whereas in Palaso we use anchor and length!</remarks>
 	[TestFixture]
-	[InitializeRealKeyboardController(InitDummyAfterTests = true)]
+	[InitializeRealKeyboardController]
 	public class IbusRootSiteEventHandlerTests_Simple: SimpleRootsiteTestsBase<UndoableRealDataCache>
 	{
 		private IbusRootSiteEventHandler m_Handler;
@@ -37,13 +37,13 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_hvoRoot = m_cache.MakeNewObject(SimpleRootsiteTestsConstants.kclsidStText, 0, -1, -1);
 
 			m_Handler = new IbusRootSiteEventHandler(m_basicView);
-			KeyboardController.Register(m_basicView, m_Handler);
+			KeyboardController.Instance.RegisterControl(m_basicView, m_Handler);
 			m_basicView.Visible = true;
 		}
 
 		public override void TestTearDown()
 		{
-			KeyboardController.Unregister(m_basicView);
+			KeyboardController.Instance.UnregisterControl(m_basicView);
 			base.TestTearDown();
 		}
 

@@ -615,20 +615,23 @@ namespace TestFwKernel
 
 			sbstr.Assign(kszEng);
 			m_qwsf->get_Engine(sbstr, &qws);
+			MockLgWritingSystem* mws = dynamic_cast<MockLgWritingSystem*>(qws.Ptr());
 			fontStr.Assign(L"Lucida Console");
-			qws->put_DefaultFontName(fontStr);
+			mws->put_DefaultFontName(fontStr);
 			qws->get_Handle(&g_wsEng);
 
 			sbstr.Assign(kszTest);
 			m_qwsf->get_Engine(sbstr, &qws);
+			mws = dynamic_cast<MockLgWritingSystem*>(qws.Ptr());
 			fontStr.Assign(L"Lucida Sans Unicode");
-			qws->put_DefaultFontName(fontStr);
+			mws->put_DefaultFontName(fontStr);
 			qws->get_Handle(&g_wsTest);
 
 			sbstr.Assign(kszTest2);
 			m_qwsf->get_Engine(sbstr, &qws);
+			mws = dynamic_cast<MockLgWritingSystem*>(qws.Ptr());
 			fontStr.Assign(L"Times New Roman");
-			qws->put_DefaultFontName(fontStr);
+			mws->put_DefaultFontName(fontStr);
 			qws->get_Handle(&g_wsTest2);
 		}
 		virtual void Teardown()

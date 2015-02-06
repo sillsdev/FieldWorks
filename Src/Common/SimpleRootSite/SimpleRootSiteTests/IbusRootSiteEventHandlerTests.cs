@@ -10,13 +10,12 @@ using System.Windows.Forms;
 using IBusDotNet;
 using NUnit.Framework;
 using X11.XKlavier;
-using Palaso.UI.WindowsForms.Keyboarding;
-using Palaso.UI.WindowsForms.Keyboarding.InternalInterfaces;
-using Palaso.UI.WindowsForms.Keyboarding.Linux;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils.Attributes;
+using SIL.WritingSystems.WindowsForms.Keyboarding;
+using SIL.WritingSystems.WindowsForms.Keyboarding.Linux;
 using NMock;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
@@ -27,7 +26,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	[InitializeRealKeyboardController(InitDummyAfterTests = true)]
+	[InitializeRealKeyboardController]
 	[Platform(Include = "Linux", Reason="IbusRootSiteEventHandlerTests is Linux only")]
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
 		Justification="Unit test. Variable disposed in Teardown method")]
@@ -82,7 +81,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		[TearDown]
 		public void TestTearDown()
 		{
-			KeyboardController.Unregister(m_dummySimpleRootSite);
+			KeyboardController.Instance.UnregisterControl(m_dummySimpleRootSite);
 
 			if (m_dummyIBusCommunicator != null)
 				m_dummyIBusCommunicator.Dispose();
@@ -94,14 +93,16 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_dummySimpleRootSite = null;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "Keyboard adaptors get disposed when the KeyboardController is shutdown.")]
 		public void ChooseSimulatedKeyboard(ITestableIbusCommunicator ibusCommunicator)
 		{
 			m_dummyIBusCommunicator = ibusCommunicator;
 			var ibusKeyboardAdapter = new IbusKeyboardAdaptorDouble(ibusCommunicator);
 			var xklEngineMock = new DynamicMock(typeof(IXklEngine));
 			var xkbKeyboardAdapter = new XkbKeyboardAdaptorDouble((IXklEngine)xklEngineMock.MockInstance);
-			KeyboardController.Manager.SetKeyboardAdaptors(new IKeyboardAdaptor[] { xkbKeyboardAdapter, ibusKeyboardAdapter});
-			KeyboardController.Register(m_dummySimpleRootSite, new IbusRootSiteEventHandler(m_dummySimpleRootSite));
+			KeyboardController.Instance.SetKeyboardAdaptors(new IKeyboardAdaptor[] { xkbKeyboardAdapter, ibusKeyboardAdapter});
+			KeyboardController.Instance.RegisterControl(m_dummySimpleRootSite, new IbusRootSiteEventHandler(m_dummySimpleRootSite));
 		}
 
 		/// <summary>Simulate multiple keypresses.</summary>
@@ -1555,7 +1556,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public DummySimpleRootSite()
 		{
 			m_rootb = new DummyRootBox(this);
-			WritingSystemFactory = new PalasoWritingSystemManager();
+			WritingSystemFactory = new WritingSystemManager();
 		}
 
 		protected override void Dispose(bool disposing)
@@ -1576,7 +1577,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		}
 	}
 
-	public interface ITestableIbusCommunicator: IIbusCommunicator
+	public interface ITestableIbusCommunicator : IIbusCommunicator
 	{
 		string PreEdit { get; }
 	}
@@ -1843,7 +1844,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		}
 	}
 
-	class XkbKeyboardAdaptorDouble: XkbKeyboardAdaptor
+	class XkbKeyboardAdaptorDouble : XkbKeyboardAdaptor
 	{
 		public XkbKeyboardAdaptorDouble(IXklEngine engine): base(engine)
 		{
@@ -1854,7 +1855,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		}
 	}
 
-	class IbusKeyboardAdaptorDouble: IbusKeyboardAdaptor
+	class IbusKeyboardAdaptorDouble : IbusKeyboardAdaptor
 	{
 		public IbusKeyboardAdaptorDouble(IIbusCommunicator ibusCommunicator): base(ibusCommunicator)
 		{

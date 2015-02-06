@@ -332,7 +332,6 @@
 		<DownloadFile Address="$(PalasoDownloadUrl)/Keyman7Interop.dll" LocalFilename="$(fwrt)/Downloads/Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/KeymanLink.dll" LocalFilename="$(fwrt)/Downloads/KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.WritingSystems.dll" LocalFilename="$(fwrt)/Downloads/SIL.WritingSystems.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.WritingSystems.dll.config" LocalFilename="$(fwrt)/Downloads/SIL.WritingSystems.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.WritingSystems.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.WritingSystems.$(DebugInfo)"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.WritingSystems.WindowsForms.dll" LocalFilename="$(fwrt)/Downloads/SIL.WritingSystems.WindowsForms.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.WritingSystems.WindowsForms.dll.config" LocalFilename="$(fwrt)/Downloads/SIL.WritingSystems.WindowsForms.dll.config" Condition="'$(OS)'=='Unix'"/>
@@ -434,7 +433,6 @@
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.dll.mdb" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.pdb" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.WritingSystems.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.WritingSystems.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.WritingSystems.dll.mdb" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.WritingSystems.pdb" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.WritingSystems.WindowsForms.dll"/>

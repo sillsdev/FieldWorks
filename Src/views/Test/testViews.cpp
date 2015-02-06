@@ -59,21 +59,24 @@ namespace TestViews
 		// Add a writing system for English.
 		stuWs.Assign(L"en");
 		CheckHr(g_qwsf->get_Engine(stuWs.Bstr(), &qws));
+		MockLgWritingSystem* mws = dynamic_cast<MockLgWritingSystem*>(qws.Ptr());
 		StrUni stuTimesNewRoman(L"Times New Roman");
-		qws->put_DefaultFontName(stuTimesNewRoman.Bstr());
+		mws->put_DefaultFontName(stuTimesNewRoman.Bstr());
 		CheckHr(qws->get_Handle(&g_wsEng));
 		CheckHr(g_qwsf->put_UserWs(g_wsEng));
 
 		// Add a writing system for French.
 		stuWs.Assign(L"fr");
 		CheckHr(g_qwsf->get_Engine(stuWs.Bstr(), &qws));
-		qws->put_DefaultFontName(stuTimesNewRoman.Bstr());
+		mws = dynamic_cast<MockLgWritingSystem*>(qws.Ptr());
+		mws->put_DefaultFontName(stuTimesNewRoman.Bstr());
 		CheckHr(qws->get_Handle(&g_wsFrn));
 
 		// Add a writing system for German.
 		stuWs.Assign(L"de");
 		CheckHr(g_qwsf->get_Engine(stuWs.Bstr(), &qws));
-		qws->put_DefaultFontName(stuTimesNewRoman.Bstr());
+		mws = dynamic_cast<MockLgWritingSystem*>(qws.Ptr());
+		mws->put_DefaultFontName(stuTimesNewRoman.Bstr());
 		CheckHr(qws->get_Handle(&g_wsGer));
 	}
 

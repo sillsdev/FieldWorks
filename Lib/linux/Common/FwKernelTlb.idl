@@ -3880,14 +3880,12 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 		
 		[propget] HRESULT DefaultFontName(
 			[out, retval] BSTR * pbstr);
-		
-		[propput] HRESULT DefaultFontName(
-			[in] BSTR bstr);
 
 		
 		
 		[propget] HRESULT CharPropEngine(
 			[out, retval] ILgCharacterPropertyEngine ** pppropeng);
+
 		
 		
 		HRESULT InterpretChrp(
@@ -5409,7 +5407,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IRegexMatcher") cpp
 	{
 		interface ILgIcuLocaleEnumerator;
 	};
-#line 1802 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Language.idh"
+#line 1800 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Language.idh"
 
 #line 24 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
 };

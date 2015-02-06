@@ -55,6 +55,7 @@ using SIL.CoreImpl.Properties;
 
 #if __MonoCS__
 using Gecko;
+using SIL.WritingSystems;
 #else
 using NetSparkle;
 
@@ -399,15 +400,15 @@ namespace SIL.FieldWorks
 		/// </remarks>
 		private static void UglyHackForXkbIndicator()
 		{
-			foreach (var ws in s_cache.ServiceLocator.WritingSystems.AllWritingSystems)
+			foreach (WritingSystem ws in s_cache.ServiceLocator.WritingSystems.AllWritingSystems)
 				SetKeyboardForWs(ws.Handle);
-			Palaso.WritingSystems.Keyboard.Controller.ActivateDefaultKeyboard();
+			Keyboard.Controller.ActivateDefaultKeyboard();
 		}
 		private static void SetKeyboardForWs(int ws)
 		{
-			var palasoWs = ((IWritingSystemManager)s_cache.WritingSystemFactory).Get(ws) as Palaso.WritingSystems.IWritingSystemDefinition;
-			if (palasoWs != null && palasoWs.LocalKeyboard != null)
-				palasoWs.LocalKeyboard.Activate();
+			WritingSystem wsObj = s_cache.ServiceLocator.WritingSystemManager.Get(ws);
+			if (wsObj != null && wsObj.LocalKeyboard != null)
+				wsObj.LocalKeyboard.Activate();
 		}
 #endif
 

@@ -19,9 +19,6 @@ namespace SIL.CoreImpl
 	{
 		private WritingSystemManager m_wsManager;
 
-		private string m_legacyMapping;
-		private bool m_isGraphiteEnabled;
-
 		private CharacterSetDefinition m_mainCharacterSet;
 
 		private readonly Dictionary<Tuple<string, bool, bool>, IRenderEngine> m_renderEngines = new Dictionary<Tuple<string, bool, bool>, IRenderEngine>();
@@ -38,8 +35,6 @@ namespace SIL.CoreImpl
 		private WritingSystem(WritingSystem ws)
 			: base(ws)
 		{
-			m_legacyMapping = ws.m_legacyMapping;
-			m_isGraphiteEnabled = ws.m_isGraphiteEnabled;
 			SetupCollectionChangeListeners();
 		}
 
@@ -135,7 +130,7 @@ namespace SIL.CoreImpl
 				}
 
 				bool graphiteFont = false;
-				if (m_isGraphiteEnabled && FontHasGraphiteTables(vg))
+				if (IsGraphiteEnabled && FontHasGraphiteTables(vg))
 				{
 					renderEngine = CreateRenderEngine(GraphiteEngineClass.Create);
 
@@ -184,7 +179,6 @@ namespace SIL.CoreImpl
 		public string DefaultFontName
 		{
 			get { return DefaultFont == null ? string.Empty : DefaultFont.Name; }
-			set { throw new NotImplementedException(); }
 		}
 
 		/// <summary>
@@ -194,7 +188,7 @@ namespace SIL.CoreImpl
 		/// <returns>A System.String </returns>
 		public string DefaultFontFeatures
 		{
-			get { return DefaultFont == null ? null : DefaultFont.Features; }
+			get { return DefaultFont == null ? string.Empty : DefaultFont.Features; }
 		}
 
 		/// <summary>
@@ -321,30 +315,6 @@ namespace SIL.CoreImpl
 		}
 
 		/// <summary>
-		/// Gets or sets the legacy mapping.
-		/// </summary>
-		/// <value>The legacy mapping.</value>
-		public string LegacyMapping
-		{
-			get { return m_legacyMapping; }
-			set { UpdateString(() => LegacyMapping, ref m_legacyMapping, value); }
-		}
-
-		/// <summary>
-		/// Gets or sets a value indicating whether Graphite is enabled for this writing system.
-		/// </summary>
-		/// <value><c>true</c> if Graphite is enabled, otherwise <c>false</c>.</value>
-		public bool IsGraphiteEnabled
-		{
-			get { return m_isGraphiteEnabled; }
-			set
-			{
-				if (UpdateField(() => IsGraphiteEnabled, ref m_isGraphiteEnabled, value))
-					ClearRenderers();
-			}
-		}
-
-		/// <summary>
 		/// Copies all of the properties from the source writing system to this writing system.
 		/// </summary>
 		/// <param name="source">The source writing system.</param>
@@ -430,8 +400,12 @@ namespace SIL.CoreImpl
 		/// </summary>
 		protected override void OnPropertyChanged(PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == GetPropertyName(() => DefaultFont) || e.PropertyName == GetPropertyName(() => RightToLeftScript))
+			if (e.PropertyName == GetPropertyName(() => DefaultFont) || e.PropertyName == GetPropertyName(() => RightToLeftScript)
+				|| e.PropertyName == GetPropertyName(() => IsGraphiteEnabled))
+			{
 				ClearRenderers();
+			}
+
 			if (e.PropertyName == GetPropertyName(() => Language) || e.PropertyName == GetPropertyName(() => Script)
 				|| e.PropertyName == GetPropertyName(() => Region))
 			{

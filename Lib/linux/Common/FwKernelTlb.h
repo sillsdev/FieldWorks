@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 8.00.0603 */
-/* at Fri Jan 23 16:36:25 2015
+/* at Thu Feb 05 17:12:51 2015
  */
 /* Compiler settings for C:\develop\fwrepo\fw\Output\Common\FwKernelTlb.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0603 
@@ -9494,9 +9494,6 @@ GraphiteEngine;
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_DefaultFontName( 
             /* [retval][out] */ BSTR *pbstr) = 0;
         
-        virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_DefaultFontName( 
-            /* [in] */ BSTR bstr) = 0;
-        
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_CharPropEngine( 
             /* [retval][out] */ ILgCharacterPropertyEngine **pppropeng) = 0;
         
@@ -9561,10 +9558,6 @@ GraphiteEngine;
             ILgWritingSystem * This,
             /* [retval][out] */ BSTR *pbstr);
         
-        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_DefaultFontName )( 
-            ILgWritingSystem * This,
-            /* [in] */ BSTR bstr);
-        
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_CharPropEngine )( 
             ILgWritingSystem * This,
             /* [retval][out] */ ILgCharacterPropertyEngine **pppropeng);
@@ -9622,9 +9615,6 @@ GraphiteEngine;
 
 #define ILgWritingSystem_get_DefaultFontName(This,pbstr)	\
     ( (This)->lpVtbl -> get_DefaultFontName(This,pbstr) ) 
-
-#define ILgWritingSystem_put_DefaultFontName(This,bstr)	\
-    ( (This)->lpVtbl -> put_DefaultFontName(This,bstr) ) 
 
 #define ILgWritingSystem_get_CharPropEngine(This,pppropeng)	\
     ( (This)->lpVtbl -> get_CharPropEngine(This,pppropeng) ) 

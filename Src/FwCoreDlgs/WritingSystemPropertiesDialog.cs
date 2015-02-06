@@ -771,7 +771,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		private void Select_cbEncodingConverter()
 		{
-			string strLegacyMapping = CurrentWritingSystem.LegacyMapping ?? FwCoreDlgs.kstidNone;
+			string strLegacyMapping = string.IsNullOrEmpty(CurrentWritingSystem.LegacyMapping) ? FwCoreDlgs.kstidNone : CurrentWritingSystem.LegacyMapping;
 			if (!cbEncodingConverter.Items.Contains(strLegacyMapping))
 			{
 				strLegacyMapping = strLegacyMapping + FwCoreDlgs.kstidNotInstalled;

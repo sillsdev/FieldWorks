@@ -459,11 +459,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			// converter name and get a converter for that name.
 			WritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Get(wsId);
 			IEncConverter converter = null;
-			if (ws.LegacyMapping != null)
+			if (!string.IsNullOrEmpty(ws.LegacyMapping))
 			{
 				try
 				{
-					converter = (IEncConverter)m_encConverters[ws.LegacyMapping];
+					converter = m_encConverters[ws.LegacyMapping];
 				}
 				catch
 				{

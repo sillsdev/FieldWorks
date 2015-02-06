@@ -137,6 +137,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Downloads\SIL.WritingSystems.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.WritingSystems.WindowsForms, Version=2.6.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Downloads\SIL.WritingSystems.WindowsForms.dll</HintPath>
+    </Reference>
     <Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
@@ -175,9 +179,6 @@
     </Reference>
     <Reference Include="ibusdotnet" Condition="'$(OS)'=='Unix'">
       <HintPath>..\..\..\..\Downloads\ibusdotnet.dll</HintPath>
-    </Reference>
-    <Reference Include="PalasoUIWindowsForms">
-      <HintPath>..\..\..\..\Downloads\PalasoUIWindowsForms.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

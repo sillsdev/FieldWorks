@@ -356,6 +356,7 @@ namespace SIL.FieldWorks.FDO
 		///  6. A set of IWritingSystem to provide additional analysis writing systems (default: no more)
 		///  7. A set of IWritingSystem to provide additional vernacular writing systems (default: no more)
 		///  8. OCM Data filename. (default: OCM-Frame.xml if available; else, null)</param>
+		///  9. The backend provider type (default: XML)
 		/// <returns>Path of the newly created project file.</returns>
 		/// <remarks>Override DisplayUi to prevent progress dialog from showing.</remarks>
 		/// ------------------------------------------------------------------------------------
@@ -387,7 +388,8 @@ namespace SIL.FieldWorks.FDO
 				progressDlg.Message = Properties.Resources.kstidInitializingDB;
 			}
 
-			var projectId = new SimpleProjectId(FDOBackendProviderType.kXML, dbFileName);
+			FDOBackendProviderType bepType = parameters.Length > 9 ? (FDOBackendProviderType) parameters[9] : FDOBackendProviderType.kXML;
+			var projectId = new SimpleProjectId(bepType, dbFileName);
 			using (FdoCache cache = CreateCacheInternal(projectId, userIcuLocale, new SilentFdoUI(synchronizeInvoke), dirs, new FdoSettings(),
 				dataSetup => dataSetup.StartupExtantLanguageProject(projectId, true, progressDlg)))
 			{
@@ -414,12 +416,12 @@ namespace SIL.FieldWorks.FDO
 				var additionalAnalysisWss = (parameters.Length > 6 && parameters[6] != null)
 												? (HashSet<WritingSystem>) parameters[6]
 												: new HashSet<WritingSystem>();
-				foreach (var additionalWs in additionalAnalysisWss)
+				foreach (WritingSystem additionalWs in additionalAnalysisWss)
 					CreateAnalysisWritingSystem(cache, additionalWs, false);
 				var additionalVernWss = (parameters.Length > 7 && parameters[7] != null)
 											? (HashSet<WritingSystem>) parameters[7]
 											: new HashSet<WritingSystem>();
-				foreach (var additionalWs in additionalVernWss)
+				foreach (WritingSystem additionalWs in additionalVernWss)
 					CreateVernacularWritingSystem(cache, additionalWs, false);
 
 				// Create a reversal index for the original default analysis writing system. (LT-4480)

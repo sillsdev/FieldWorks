@@ -412,21 +412,6 @@ namespace SIL.FieldWorks.TE
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Returns the selected writing system's data encoding key used for conversion of
-		/// legacy data to Unicode. (This is the key into Bob Eaton's encoding repository.)
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private string DataEncoding
-		{
-			get
-			{
-				var ws = cboWritingSys.SelectedItem as WritingSystem;
-				return ws == null ? null : ws.LegacyMapping;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Gets whether OK button should be enabled
 		/// </summary>
 		/// ------------------------------------------------------------------------------------

@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 			{
 				string dbFileName;
 				using (var threadHelper = new ThreadHelper())
-					dbFileName = FdoCache.CreateNewLangProj(new DummyProgressDlg(), dbName, FwDirectoryFinder.FdoDirectories, threadHelper);
+					dbFileName = FdoCache.CreateNewLangProj(new DummyProgressDlg(), dbName, FwDirectoryFinder.FdoDirectories, threadHelper, null, null, null, null, null, null, FDOBackendProviderType.kXMLWithMemoryOnlyWsMgr);
 
 				currentDirs = new List<string>(Directory.GetDirectories(FwDirectoryFinder.ProjectsDirectory));
 				if (currentDirs.Contains(writingSystemsCommonDir) && !expectedDirs.Contains(writingSystemsCommonDir))
@@ -142,7 +142,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 				// create project
 				string dbFileName;
 				using (var threadHelper = new ThreadHelper())
-					dbFileName = FdoCache.CreateNewLangProj(new DummyProgressDlg(), dbName, FwDirectoryFinder.FdoDirectories, threadHelper);
+					dbFileName = FdoCache.CreateNewLangProj(new DummyProgressDlg(), dbName, FwDirectoryFinder.FdoDirectories, threadHelper, null, null, null, null, null, null, FDOBackendProviderType.kXMLWithMemoryOnlyWsMgr);
 
 				using (var cache = FdoCache.CreateCacheFromLocalProjectFile(dbFileName, "en", m_ui, FwDirectoryFinder.FdoDirectories, new FdoSettings(), new DummyProgressDlg()))
 				{

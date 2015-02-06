@@ -16,8 +16,8 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.CoreImpl;
 using SIL.Utils;
+using SIL.Utils.Attributes;
 using SIL.WritingSystems;
-using SIL.WritingSystems.WindowsForms.Keyboarding;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -221,7 +221,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		internal void ValidateConvertersTab()
 		{
-			Assert.AreEqual(CurrentWritingSystem.LegacyMapping ?? "<None>", cbEncodingConverter.SelectedItem.ToString());
+			Assert.AreEqual(string.IsNullOrEmpty(CurrentWritingSystem.LegacyMapping) ? "<None>" : CurrentWritingSystem.LegacyMapping, cbEncodingConverter.SelectedItem.ToString());
 		}
 		internal void ValidateSortingTab()
 		{
@@ -460,6 +460,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// Summary description for TestFwProjPropertiesDlg.
 	/// </summary>
 	[TestFixture]
+	[InitializeRealKeyboardController]
 	[SetCulture("en-US")]
 	public class WritingSystemPropertiesDialogTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
@@ -480,14 +481,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_origLocalWss.UnionWith(Cache.ServiceLocator.WritingSystemManager.LocalWritingSystems);
 			m_origGlobalWss.UnionWith(Cache.ServiceLocator.WritingSystemManager.GlobalWritingSystems);
 			MessageBoxUtils.Manager.SetMessageBoxAdapter(new MessageBoxStub());
-			KeyboardController.Initialize();
-		}
-
-		/// <summary/>
-		public override void FixtureTeardown()
-		{
-			KeyboardController.Shutdown();
-			base.FixtureTeardown();
 		}
 
 		/// <summary>

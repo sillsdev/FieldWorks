@@ -269,14 +269,12 @@ Description:
 		// Get the default serif font; usually used for the main body of text in a document.
 		[propget] HRESULT DefaultFontName(
 			[out, retval] BSTR * pbstr);
-		// Set the default serif font; usually used for the main body of text in a document.
-		[propput] HRESULT DefaultFontName(
-			[in] BSTR bstr);
 
 		// Get the engine used to find character properties, including figuring out where line
 		// breaks are allowed.
 		[propget] HRESULT CharPropEngine(
 			[out, retval] ILgCharacterPropertyEngine ** pppropeng);
+
 		// Apply any changes to the chrp before it is used for real: currently,
 		// interpret the magic font names.
 		HRESULT InterpretChrp(

@@ -45,15 +45,18 @@ namespace TestFwKernel
 			SmartBstr fontStr(L"Charis SIL");
 			sbstr.Assign(kszEng);
 			m_qwsf->get_Engine(sbstr, &qws);
-			qws->put_DefaultFontName(fontStr);
+			MockLgWritingSystem* mws = dynamic_cast<MockLgWritingSystem*>(qws.Ptr());
+			mws->put_DefaultFontName(fontStr);
 
 			sbstr.Assign(kszTest);
 			m_qwsf->get_Engine(sbstr, &qws);
-			qws->put_DefaultFontName(fontStr);
+			mws = dynamic_cast<MockLgWritingSystem*>(qws.Ptr());
+			mws->put_DefaultFontName(fontStr);
 
 			sbstr.Assign(kszTest2);
 			m_qwsf->get_Engine(sbstr, &qws);
-			qws->put_DefaultFontName(fontStr);
+			mws = dynamic_cast<MockLgWritingSystem*>(qws.Ptr());
+			mws->put_DefaultFontName(fontStr);
 
 			HDC hdc;
 #ifdef WIN32

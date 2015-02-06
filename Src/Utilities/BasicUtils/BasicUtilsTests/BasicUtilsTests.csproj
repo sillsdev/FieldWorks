@@ -103,6 +103,7 @@
     <Compile Include="CharEnumeratorForByteArrayTests.cs" />
     <Compile Include="ClipboardStub.cs" />
     <Compile Include="ColorUtilTests.cs" />
+    <Compile Include="DummyKeyboardAdaptor.cs" />
     <Compile Include="FileUtilsTest.cs" />
     <Compile Include="ImagePictureTest.cs" />
     <Compile Include="MessageBoxStub.cs" />
