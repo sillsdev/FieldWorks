@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -468,6 +468,11 @@ namespace SIL.FieldWorks.XWorks
 
 		public override void PopulateRecordBar(RecordList list)
 		{
+			PopulateRecordBar(list, true);
+		}
+
+		protected virtual void PopulateRecordBar(RecordList list, bool editable)
+		{
 			CheckDisposed();
 
 			if (IsShowing)
@@ -498,14 +503,21 @@ namespace SIL.FieldWorks.XWorks
 				ReleaseRecordBar();
 
 				tree.NodeMouseClick += tree_NodeMouseClick;
-				tree.MouseDown += tree_MouseDown;
-				tree.MouseMove += tree_MouseMove;
-				tree.DragDrop += tree_DragDrop;
-				tree.DragOver += tree_DragOver;
-				tree.GiveFeedback += tree_GiveFeedback;
-				tree.ContextMenuStrip = CreateTreebarContextMenuStrip();
-				tree.ContextMenuStrip.MouseClick += tree_MouseClicked;
-				tree.AllowDrop = true;
+				if(editable)
+				{
+					tree.MouseDown += tree_MouseDown;
+					tree.MouseMove += tree_MouseMove;
+					tree.DragDrop += tree_DragDrop;
+					tree.DragOver += tree_DragOver;
+					tree.GiveFeedback += tree_GiveFeedback; // REVIEW (Hasso) 2015.02: this handler currently does nothing.  Needed?
+					tree.ContextMenuStrip = CreateTreebarContextMenuStrip();
+					tree.ContextMenuStrip.MouseClick += tree_MouseClicked;
+				}
+				else
+				{
+					tree.ContextMenuStrip = new ContextMenuStrip();
+				}
+				tree.AllowDrop = editable;
 				tree.BeginUpdate();
 				window.ClearRecordBarList();	//don't want to directly clear the nodes, because that causes an event to be fired as every single note is removed!
 				m_hvoToTreeNodeTable.Clear();

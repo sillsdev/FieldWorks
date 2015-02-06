@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
@@ -17,7 +21,7 @@ namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// This class is instantiated by reflection, based on the setting of the treeBarHandler in the
-	/// SemanticDomainList clerk in the RDE toolConfiguration.xml.
+	/// SemanticDomainList clerk in the RDE toolConfiguration.xml, but is also used to display the Semantic Domain List in the List Edit tool.
 	/// </summary>
 	class SemanticDomainRdeTreeBarHandler : PossibilityTreeBarHandler
 	{
@@ -47,7 +51,7 @@ namespace SIL.FieldWorks.XWorks
 			m_semDomRepo = m_cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
 			m_stylesheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
 			var treeBarControl = GetTreeBarControl(mediator);
-			SetupAndShowHeaderPanel(mediator, node, treeBarControl);
+			SetupAndShowHeaderPanel(node, treeBarControl);
 			m_searchTimer = new SearchTimer(treeBarControl, 500, HandleChangeInSearchText,
 				new List<Control> { treeBarControl.TreeView, treeBarControl.ListView });
 			m_textSearch.TextChanged += m_searchTimer.OnSearchTextChanged;
@@ -58,7 +62,7 @@ namespace SIL.FieldWorks.XWorks
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification="PaneBar and Panel get added to controls collection and disposed there")]
-		private void SetupAndShowHeaderPanel(Mediator mediator, XmlNode node, RecordBar treeBarControl)
+		private void SetupAndShowHeaderPanel(XmlNode node, RecordBar treeBarControl)
 		{
 			if (!treeBarControl.HasHeaderControl)
 			{
@@ -67,7 +71,7 @@ namespace SIL.FieldWorks.XWorks
 				headerPanel.Controls.Add(m_titleBar);
 				m_btnCancelSearch = new FwCancelSearchButton();
 				m_btnCancelSearch.Init();
-				m_btnCancelSearch.Click += new EventHandler(m_btnCancelSearch_Click);
+				m_btnCancelSearch.Click += m_btnCancelSearch_Click;
 				headerPanel.Controls.Add(m_btnCancelSearch);
 				m_textSearch = CreateSearchBox();
 				m_textSearch.Anchor = (AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right);
@@ -83,6 +87,14 @@ namespace SIL.FieldWorks.XWorks
 			treeBarControl.ShowHeaderControl();
 		}
 
+		public override void PopulateRecordBar(RecordList list)
+		{
+			PopulateRecordBar(list, Editable);
+		}
+
+		// Semantic Domains should be editable only in the Lists area.
+		protected bool Editable { get { return "lists".Equals(m_mediator.PropertyTable.GetStringProperty("areaChoice", null)); } }
+
 		private FwTextBox CreateSearchBox()
 		{
 			var searchBox = new FwTextBox();
@@ -95,7 +107,7 @@ namespace SIL.FieldWorks.XWorks
 			searchBox.BorderStyle = BorderStyle.Fixed3D;
 			searchBox.SuppressEnter = true;
 			searchBox.Enabled = true;
-			searchBox.GotFocus += new EventHandler(m_textSearch_GotFocus);
+			searchBox.GotFocus += m_textSearch_GotFocus;
 			return searchBox;
 		}
 
