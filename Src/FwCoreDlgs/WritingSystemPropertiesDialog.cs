@@ -661,17 +661,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		private void PopulateSpellingDictionaryComboBox()
 		{
-			var dictionaries = new ArrayList { new { Name = FwCoreDlgs.ksWsNoDictionaryMatches, Id = "<None>" } };
+			var dictionaries = new ArrayList { new { Name = FwCoreDlgs.ksWsNoDictionaryMatches, Id = FwCoreDlgs.kstidNone } };
 
 			string spellCheckingDictionary = CurrentWritingSystem.SpellCheckingId;
-			if(spellCheckingDictionary == null)
+			if (string.IsNullOrEmpty(spellCheckingDictionary))
 			{
 				dictionaries.Add(new { Name = CurrentWritingSystem.Id, Id = CurrentWritingSystem.Id.Replace('-', '_') });
 			}
 
 			bool fDictionaryExistsForLanguage = false;
 			bool fAlternateDictionaryExistsForLanguage = false;
-			string selectComboItem = "<None>";
+			string selectComboItem = FwCoreDlgs.kstidNone;
 			foreach (var languageId in SpellingHelper.GetDictionaryIds().OrderBy(di => GetDictionaryName(di)))
 			{
 				dictionaries.Add(new { Name = GetDictionaryName(languageId), Id = languageId });
@@ -2177,10 +2177,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (m_userChangedSpellCheckDictionary)
 			{
 				var dictionary = (string) cbDictionaries.SelectedValue;
-				SpellCheckDictionaryDefinition oldScdd = CurrentWritingSystem.SpellCheckDictionary;
-				CurrentWritingSystem.SpellCheckDictionary = string.IsNullOrEmpty(dictionary) ? null : new SpellCheckDictionaryDefinition(dictionary, SpellCheckDictionaryFormat.Hunspell);
-				if (oldScdd != null)
-					CurrentWritingSystem.SpellCheckDictionaries.Remove(oldScdd);
+				CurrentWritingSystem.SpellCheckingId = string.IsNullOrEmpty(dictionary) ? FwCoreDlgs.kstidNone : dictionary;
 			}
 		}
 

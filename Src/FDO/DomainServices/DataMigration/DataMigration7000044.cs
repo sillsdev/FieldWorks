@@ -51,12 +51,12 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				// In a real project we do this first; thus if by any chance a WS is differently renamed in
 				// the two folders, the renaming that is right for this project wins.
 				var globalWsFolder = DirectoryFinder.GlobalWritingSystemStoreDirectory;
-				var globalMigrator = new LdmlInFolderWritingSystemRepositoryMigrator(globalWsFolder, NoteMigration);
+				var globalMigrator = new LdmlInFolderWritingSystemRepositoryMigrator(globalWsFolder, NoteMigration, versionToMigrateTo: 2);
 				globalMigrator.Migrate();
 			}
 
 			var ldmlFolder = Path.Combine(repoDto.ProjectFolder, FdoFileHelper.ksWritingSystemsDir);
-			var migrator = new LdmlInFolderWritingSystemRepositoryMigrator(ldmlFolder, NoteMigration);
+			var migrator = new LdmlInFolderWritingSystemRepositoryMigrator(ldmlFolder, NoteMigration, versionToMigrateTo: 2);
 			migrator.Migrate();
 			UpdateTags(repoDto);
 

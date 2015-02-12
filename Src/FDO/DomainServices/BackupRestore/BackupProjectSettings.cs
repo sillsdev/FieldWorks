@@ -163,7 +163,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			get
 			{
 				return Path.Combine(FdoFileHelper.GetBackupSettingsDir(ProjectPath),
-					FdoFileHelper.kBackupSettingsFilename);
+					FdoFileHelper.ksBackupSettingsFilename);
 			}
 		}
 		#endregion

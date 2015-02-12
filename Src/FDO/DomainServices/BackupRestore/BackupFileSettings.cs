@@ -415,11 +415,11 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 
 						if (String.IsNullOrEmpty(fileName))
 							continue;
-						if (fileName.Equals(FdoFileHelper.kBackupSettingsFilename))
+						if (fileName.Equals(FdoFileHelper.ksBackupSettingsFilename))
 						{
 							if (foundBackupSettingsFile)
 								throw new InvalidOperationException("Zip file " + m_sZipFileName + " contained multiple " +
-									FdoFileHelper.kBackupSettingsFilename + " files.");
+									FdoFileHelper.ksBackupSettingsFilename + " files.");
 							foundBackupSettingsFile = true;
 							InitializeFromStream(zipIn);
 						}
@@ -436,9 +436,9 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 
 					if (!foundBackupSettingsFile)
 						throw new InvalidOperationException("Zip file " + m_sZipFileName + " did not contain the " +
-							FdoFileHelper.kBackupSettingsFilename + " file.");
+							FdoFileHelper.ksBackupSettingsFilename + " file.");
 					if (m_projectName == null)
-						throw new InvalidOperationException(FdoFileHelper.kBackupSettingsFilename + " in " +
+						throw new InvalidOperationException(FdoFileHelper.ksBackupSettingsFilename + " in " +
 							m_sZipFileName + " did not contain a project name.");
 					string expectedProjectFile = FdoFileHelper.GetXmlDataFileName(m_projectName);
 					if (dataFileName == null || dataFileName != expectedProjectFile)

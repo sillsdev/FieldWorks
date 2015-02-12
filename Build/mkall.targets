@@ -336,6 +336,8 @@
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.WritingSystems.WindowsForms.dll" LocalFilename="$(fwrt)/Downloads/SIL.WritingSystems.WindowsForms.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.WritingSystems.WindowsForms.dll.config" LocalFilename="$(fwrt)/Downloads/SIL.WritingSystems.WindowsForms.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.WritingSystems.WindowsForms.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.WritingSystems.WindowsForms.$(DebugInfo)"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.LexiconUtils.dll" LocalFilename="$(fwrt)/Downloads/SIL.LexiconUtils.dll"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.LexiconUtils.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.LexiconUtils.$(DebugInfo)"/>
 
 		<Message Text="Downloading latest successful artifacts for L10NSharp, Enchant.Net, ibusdotnet, NDesk.DBus, and Spart."/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/L10NSharp.dll" LocalFilename="$(fwrt)/Downloads/L10NSharp.dll"/>
@@ -439,6 +441,9 @@
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.WritingSystems.WindowsForms.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.WritingSystems.WindowsForms.dll.mdb" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.WritingSystems.WindowsForms.pdb" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.LexiconUtils.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.LexiconUtils.dll.mdb" Condition="'$(OS)'=='Unix'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.LexiconUtils.pdb" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/icu.net.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/icu.net.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>

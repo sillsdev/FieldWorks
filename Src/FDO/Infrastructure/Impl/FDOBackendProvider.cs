@@ -14,10 +14,11 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using SIL.CoreImpl;
-using SIL.CoreImpl.Properties;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
+using SIL.LexiconUtils;
 using SIL.Utils;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 {
@@ -558,10 +559,14 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			string storePath = Path.Combine(ProjectId.SharedProjectFolder, FdoFileHelper.ksWritingSystemsDir);
 			WritingSystemManager wsManager = m_cache.ServiceLocator.WritingSystemManager;
 			wsManager.GlobalWritingSystemStore = globalStore;
-			wsManager.LocalWritingSystemStore = new LocalFileWritingSystemStore(storePath, globalStore);
-#if WS_FIX
-			wsManager.LocalWritingSystemStore.LocalKeyboardSettings = Settings.Default.LocalKeyboards;
-#endif
+
+			// TODO (WS_FIX): migrate LocalKeyboards from CoreImpl settings
+			ICustomDataMapper[] customDataMappers =
+			{
+				new ProjectSettingsWritingSystemDataMapper(new FileSettingsStore(Path.Combine(ProjectId.SharedProjectFolder, FdoFileHelper.ksLexiconProjectSettingsFilename))),
+				new UserSettingsWritingSystemDataMapper(new FileSettingsStore(Path.Combine(FdoFileHelper.GetConfigSettingsDir(ProjectId.SharedProjectFolder), FdoFileHelper.ksLexiconUserSettingsFilename)))
+			};
+			wsManager.LocalWritingSystemStore = new LocalFileWritingSystemStore(storePath, customDataMappers, globalStore);
 
 			// Writing systems are not "modified" when the system is freshly-initialized
 			foreach (var ws in wsManager.LocalWritingSystemStore.AllWritingSystems)

@@ -52,7 +52,17 @@ namespace SIL.FieldWorks.FDO
 		public const string OtherRepositories = @"OtherRepositories";
 
 		/// <summary>The filename of the backup settings file</summary>
-		public const string kBackupSettingsFilename = "BackupSettings.xml";
+		public const string ksBackupSettingsFilename = "BackupSettings.xml";
+
+		/// <summary>
+		/// The filename for the lexicon project settings file.
+		/// </summary>
+		public const string ksLexiconProjectSettingsFilename = "LexiconProjectSettings.xml";
+
+		/// <summary>
+		/// The filename for the lexicon user settings file.
+		/// </summary>
+		public const string ksLexiconUserSettingsFilename = "LexiconUserSettings.xml";
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

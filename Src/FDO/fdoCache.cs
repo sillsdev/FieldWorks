@@ -355,8 +355,9 @@ namespace SIL.FieldWorks.FDO
 		///  5. A string with the ICU locale of the UI writing system (default: "en").
 		///  6. A set of IWritingSystem to provide additional analysis writing systems (default: no more)
 		///  7. A set of IWritingSystem to provide additional vernacular writing systems (default: no more)
-		///  8. OCM Data filename. (default: OCM-Frame.xml if available; else, null)</param>
-		///  9. The backend provider type (default: XML)
+		///  8. OCM Data filename. (default: OCM-Frame.xml if available; else, null)
+		///  9. Indicates whether or not to use a memory-only writing system manager (default: false)
+		/// </param>
 		/// <returns>Path of the newly created project file.</returns>
 		/// <remarks>Override DisplayUi to prevent progress dialog from showing.</remarks>
 		/// ------------------------------------------------------------------------------------
@@ -388,8 +389,8 @@ namespace SIL.FieldWorks.FDO
 				progressDlg.Message = Properties.Resources.kstidInitializingDB;
 			}
 
-			FDOBackendProviderType bepType = parameters.Length > 9 ? (FDOBackendProviderType) parameters[9] : FDOBackendProviderType.kXML;
-			var projectId = new SimpleProjectId(bepType, dbFileName);
+			bool useMemoryOnlyWsManager = parameters.Length > 9 && (bool) parameters[9];
+			var projectId = new SimpleProjectId(useMemoryOnlyWsManager ? FDOBackendProviderType.kXMLWithMemoryOnlyWsMgr : FDOBackendProviderType.kXML, dbFileName);
 			using (FdoCache cache = CreateCacheInternal(projectId, userIcuLocale, new SilentFdoUI(synchronizeInvoke), dirs, new FdoSettings(),
 				dataSetup => dataSetup.StartupExtantLanguageProject(projectId, true, progressDlg)))
 			{

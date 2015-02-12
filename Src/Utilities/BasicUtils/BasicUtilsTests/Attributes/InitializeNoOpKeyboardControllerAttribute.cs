@@ -30,8 +30,7 @@ namespace SIL.Utils.Attributes
 			if (Keyboard.Controller != null)
 				Keyboard.Controller.Dispose();
 
-			KeyboardController.Initialize();
-			KeyboardController.Instance.SetKeyboardAdaptors(new DummyKeyboardAdaptor());
+			KeyboardController.Initialize(new DummyKeyboardAdaptor());
 		}
 
 		/// <summary>

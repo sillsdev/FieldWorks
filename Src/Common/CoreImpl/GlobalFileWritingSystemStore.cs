@@ -111,7 +111,7 @@ namespace SIL.CoreImpl
 						}
 					}
 				}
-				var adaptor = new FwLdmlAdaptor();
+				var ldmlDataMapper = new LdmlDataMapper();
 				try
 				{
 					// Provides FW on Linux multi-user access. Overrides the system
@@ -120,7 +120,7 @@ namespace SIL.CoreImpl
 					// configuration of the package which allows group access.
 					using (new FileModeOverride())
 					{
-						adaptor.Write(writingSystemFilePath, ws, oldData);
+						ldmlDataMapper.Write(writingSystemFilePath, ws, oldData);
 					}
 				}
 				catch (UnauthorizedAccessException)
@@ -444,8 +444,8 @@ namespace SIL.CoreImpl
 			try
 			{
 				WritingSystemDefinition ws = CreateNew();
-				var adaptor = new FwLdmlAdaptor();
-				adaptor.Read(filePath, ws);
+				var ldmlDataMapper = new LdmlDataMapper();
+				ldmlDataMapper.Read(filePath, ws);
 				ws.StoreID = ws.LanguageTag;
 				ws.AcceptChanges();
 				return ws;

@@ -37,13 +37,13 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_hvoRoot = m_cache.MakeNewObject(SimpleRootsiteTestsConstants.kclsidStText, 0, -1, -1);
 
 			m_Handler = new IbusRootSiteEventHandler(m_basicView);
-			KeyboardController.Instance.RegisterControl(m_basicView, m_Handler);
+			KeyboardController.RegisterControl(m_basicView, m_Handler);
 			m_basicView.Visible = true;
 		}
 
 		public override void TestTearDown()
 		{
-			KeyboardController.Instance.UnregisterControl(m_basicView);
+			KeyboardController.UnregisterControl(m_basicView);
 			base.TestTearDown();
 		}
 

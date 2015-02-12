@@ -411,7 +411,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (UIAutomationServerProviderFactory == null)
 				UIAutomationServerProviderFactory = () => new SimpleRootSiteDataProvider(this);
 #if __MonoCS__
-			KeyboardController.Instance.RegisterControl(this, new IbusRootSiteEventHandler(this));
+			KeyboardController.RegisterControl(this, new IbusRootSiteEventHandler(this));
 #endif
 		}
 
@@ -498,7 +498,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				if (components != null)
 					components.Dispose();
 #if __MonoCS__
-				KeyboardController.Instance.UnregisterControl(this);
+				KeyboardController.UnregisterControl(this);
 #endif
 			}
 
@@ -878,9 +878,9 @@ namespace SIL.FieldWorks.Common.RootSites
 #if __MonoCS__
 				// If this is read-only, it should not try to handle keyboard input in general.
 				if (EditingHelper.Editable && value)
-					KeyboardController.Instance.UnregisterControl(this);
+					KeyboardController.UnregisterControl(this);
 				else if (!EditingHelper.Editable && !value)
-					KeyboardController.Instance.RegisterControl(this, new IbusRootSiteEventHandler(this));
+					KeyboardController.RegisterControl(this, new IbusRootSiteEventHandler(this));
 #endif
 				EditingHelper.Editable = !value;
 				// If the view is read-only, we don't want to waste time looking for an

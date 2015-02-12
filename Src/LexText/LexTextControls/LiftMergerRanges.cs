@@ -13,6 +13,7 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
+using SIL.WritingSystems;
 using SIL.WritingSystems.Migration;
 using SIL.WritingSystems.Migration.WritingSystemsLdmlV0To1Migration;
 
@@ -1437,6 +1438,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			var ldmlFolder = Path.Combine(sLIFTfilesPath, "WritingSystems");
 
+			// TODO (WS_FIX): do we need settings data mappers here?
 			var migrator = new LdmlInFolderWritingSystemRepositoryMigrator(ldmlFolder, NoteMigration);
 			migrator.Migrate();
 

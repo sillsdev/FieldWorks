@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 			get
 			{
 				return Path.Combine(FdoFileHelper.GetBackupSettingsDir(m_cache.ProjectId.ProjectFolder),
-					FdoFileHelper.kBackupSettingsFilename);
+					FdoFileHelper.ksBackupSettingsFilename);
 			}
 		}
 

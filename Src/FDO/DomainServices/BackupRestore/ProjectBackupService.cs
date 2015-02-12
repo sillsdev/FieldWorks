@@ -13,7 +13,6 @@ using ICSharpCode.SharpZipLib.Zip;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
-using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 {
@@ -93,7 +92,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		private void PersistBackupFileSettings()
 		{
 			string backupSettingsFile = Path.Combine(FdoFileHelper.GetBackupSettingsDir(
-				m_settings.ProjectPath), FdoFileHelper.kBackupSettingsFilename);
+				m_settings.ProjectPath), FdoFileHelper.ksBackupSettingsFilename);
 
 			string settingsDir = Path.GetDirectoryName(backupSettingsFile);
 			if (!Directory.Exists(settingsDir))
@@ -224,14 +223,13 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 
 			foreach (WritingSystem ws in wsManager.LocalWritingSystems)
 			{
-				SpellCheckDictionaryDefinition spellCheckingDictionary = ws.SpellCheckDictionary;
-				if (spellCheckingDictionary == null || spellCheckingDictionary.Format != SpellCheckDictionaryFormat.Hunspell)
+				string spellCheckingDictionary = ws.SpellCheckingId;
+				if (string.IsNullOrEmpty(spellCheckingDictionary) || spellCheckingDictionary == "<None>")
 					continue; // no spelling dictionary for WS
 
-				string id = spellCheckingDictionary.LanguageTag.Replace('-', '_');
-				if (SpellingHelper.DictionaryExists(id))
+				if (SpellingHelper.DictionaryExists(spellCheckingDictionary))
 				{
-					foreach (string path in SpellingHelper.PathsToBackup(id))
+					foreach (string path in SpellingHelper.PathsToBackup(spellCheckingDictionary))
 						dictionaryFiles.Add(path);
 				}
 			}

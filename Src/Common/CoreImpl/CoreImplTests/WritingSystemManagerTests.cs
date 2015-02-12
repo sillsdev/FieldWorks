@@ -532,7 +532,7 @@ namespace SIL.CoreImpl
 
 			var globalStore = new GlobalFileWritingSystemStore(globalStorePath);
 			var wsManager = new WritingSystemManager(
-				new LocalFileWritingSystemStore(storePath, globalStore), globalStore);
+				new LocalFileWritingSystemStore(storePath, Enumerable.Empty<ICustomDataMapper>(), globalStore), globalStore);
 
 			Assert.AreEqual("qip", wsManager.GetValidLangTagForNewLang("Qipkey"));
 			Assert.AreEqual("sn", wsManager.GetValidLangTagForNewLang("Sn"));
@@ -567,7 +567,7 @@ namespace SIL.CoreImpl
 
 			var globalStore = new GlobalFileWritingSystemStore(globalStorePath);
 			var wsManager = new WritingSystemManager(
-				new LocalFileWritingSystemStore(storePath, globalStore), globalStore);
+				new LocalFileWritingSystemStore(storePath, Enumerable.Empty<ICustomDataMapper>(), globalStore), globalStore);
 
 			WritingSystem newWs = wsManager.Create(WellKnownSubtags.UnlistedLanguage, null, null, Enumerable.Empty<VariantSubtag>());
 
@@ -591,7 +591,7 @@ namespace SIL.CoreImpl
 
 			var globalStore = new GlobalFileWritingSystemStore(globalStorePath);
 			var wsManager = new WritingSystemManager(
-				new LocalFileWritingSystemStore(storePath, globalStore), globalStore);
+				new LocalFileWritingSystemStore(storePath, Enumerable.Empty<ICustomDataMapper>(), globalStore), globalStore);
 
 			WritingSystem newWs = wsManager.Create(WellKnownSubtags.UnlistedLanguage, null, null, null);
 

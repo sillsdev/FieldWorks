@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace SIL.CoreImpl
 		/// Initializes a new instance of the <see cref="LocalFileWritingSystemStore"/> class.
 		/// </summary>
 		/// <param name="path">The path.</param>
-		public LocalFileWritingSystemStore(string path) : this(path, null)
+		public LocalFileWritingSystemStore(string path) : this(path, Enumerable.Empty<ICustomDataMapper>(), null)
 		{
 		}
 
@@ -28,8 +29,10 @@ namespace SIL.CoreImpl
 		/// Initializes a new instance of the <see cref="LocalFileWritingSystemStore"/> class.
 		/// </summary>
 		/// <param name="path">The path.</param>
+		/// <param name="customDataMappers">The custom data mappers.</param>
 		/// <param name="globalStore">The global store.</param>
-		public LocalFileWritingSystemStore(string path, IFwWritingSystemStore globalStore) : base(path)
+		public LocalFileWritingSystemStore(string path, IEnumerable<ICustomDataMapper> customDataMappers, IFwWritingSystemStore globalStore)
+			: base(path, customDataMappers.ToArray(), WritingSystemCompatibility.Strict)
 		{
 			m_globalStore = globalStore;
 			ReadGlobalWritingSystemsToIgnore();
@@ -42,15 +45,6 @@ namespace SIL.CoreImpl
 		public override WritingSystemDefinition CreateNew()
 		{
 			return new WritingSystem();
-		}
-
-		/// <summary>
-		/// Creates an LDML adaptor.
-		/// </summary>
-		/// <returns></returns>
-		protected override LdmlDataMapper CreateLdmlAdaptor()
-		{
-			return new FwLdmlAdaptor();
 		}
 
 		/// <summary>

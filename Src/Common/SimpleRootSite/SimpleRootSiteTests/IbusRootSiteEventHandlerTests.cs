@@ -14,6 +14,7 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils.Attributes;
+using SIL.WritingSystems;
 using SIL.WritingSystems.WindowsForms.Keyboarding;
 using SIL.WritingSystems.WindowsForms.Keyboarding.Linux;
 using NMock;
@@ -26,7 +27,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	[InitializeRealKeyboardController]
 	[Platform(Include = "Linux", Reason="IbusRootSiteEventHandlerTests is Linux only")]
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
 		Justification="Unit test. Variable disposed in Teardown method")]
@@ -81,7 +81,9 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		[TearDown]
 		public void TestTearDown()
 		{
-			KeyboardController.Instance.UnregisterControl(m_dummySimpleRootSite);
+			KeyboardController.UnregisterControl(m_dummySimpleRootSite);
+			KeyboardController.Shutdown();
+			Keyboard.Controller = new DefaultKeyboardController();
 
 			if (m_dummyIBusCommunicator != null)
 				m_dummyIBusCommunicator.Dispose();
@@ -101,8 +103,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			var ibusKeyboardAdapter = new IbusKeyboardAdaptorDouble(ibusCommunicator);
 			var xklEngineMock = new DynamicMock(typeof(IXklEngine));
 			var xkbKeyboardAdapter = new XkbKeyboardAdaptorDouble((IXklEngine)xklEngineMock.MockInstance);
-			KeyboardController.Instance.SetKeyboardAdaptors(new IKeyboardAdaptor[] { xkbKeyboardAdapter, ibusKeyboardAdapter});
-			KeyboardController.Instance.RegisterControl(m_dummySimpleRootSite, new IbusRootSiteEventHandler(m_dummySimpleRootSite));
+			KeyboardController.Initialize(xkbKeyboardAdapter, ibusKeyboardAdapter);
+			KeyboardController.RegisterControl(m_dummySimpleRootSite, new IbusRootSiteEventHandler(m_dummySimpleRootSite));
 		}
 
 		/// <summary>Simulate multiple keypresses.</summary>

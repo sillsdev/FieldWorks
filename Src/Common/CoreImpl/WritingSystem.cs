@@ -83,6 +83,14 @@ namespace SIL.CoreImpl
 		/// <value>The handle.</value>
 		public int Handle { get; internal set; }
 
+		/// <summary>
+		/// Get the language name.
+		/// </summary>
+		public string LanguageName
+		{
+			get { return Language.Name; }
+		}
+
 		private IRenderEngine CreateRenderEngine(Func<IRenderEngine> createFunc)
 		{
 			IRenderEngine renderEngine = createFunc();
@@ -252,16 +260,6 @@ namespace SIL.CoreImpl
 		}
 
 		/// <summary>
-		/// Get the name of the spelling dictionary to use for this writing system.
-		/// Currently returns a generallyuseful default, unless explicitly set to empty
-		/// to prevent this.
-		/// </summary>
-		public string SpellCheckingId
-		{
-			get { return SpellCheckDictionary == null || SpellCheckDictionary.Format != SpellCheckDictionaryFormat.Hunspell ? "<None>" : SpellCheckDictionary.LanguageTag.Replace('-', '_'); }
-		}
-
-		/// <summary>
 		/// Gets the displayable name for the writing system.
 		/// </summary>
 		/// <value>The display label.</value>
@@ -335,14 +333,11 @@ namespace SIL.CoreImpl
 			Keyboard = source.Keyboard;
 			VersionNumber = source.VersionNumber;
 			VersionDescription = source.VersionDescription;
-			NativeName = source.NativeName;
 			SpellCheckDictionaries.Clear();
 			foreach (SpellCheckDictionaryDefinition scdd in source.SpellCheckDictionaries)
 				SpellCheckDictionaries.Add(scdd.Clone());
-			SpellCheckDictionary = source.SpellCheckDictionary == null ? null : SpellCheckDictionaries[source.SpellCheckDictionaries.IndexOf(source.SpellCheckDictionary)];
+			SpellCheckingId = source.SpellCheckingId;
 			DateModified = source.DateModified;
-			IsUnicodeEncoded = source.IsUnicodeEncoded;
-			LanguageName = source.LanguageName;
 			LocalKeyboard = source.LocalKeyboard;
 			WindowsLcid = source.WindowsLcid;
 			DefaultRegion = source.DefaultRegion;
@@ -391,8 +386,8 @@ namespace SIL.CoreImpl
 		/// <param name="writer">The writer.</param>
 		public void WriteLdml(XmlWriter writer)
 		{
-			var adaptor = new FwLdmlAdaptor();
-			adaptor.Write(writer, this, null);
+			var ldmlDataMapper = new LdmlDataMapper();
+			ldmlDataMapper.Write(writer, this, null);
 		}
 
 		/// <summary>

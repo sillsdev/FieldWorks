@@ -5585,8 +5585,8 @@ namespace SIL.FieldWorks.TE
 				// Make sure that the spelling dictionary is up-to-date.
 				// Note that this will currently turn vernacular spelling on for FLEx, too.
 				WritingSystem wsObj = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
-				if (wsObj.SpellCheckDictionary == null)
-					wsObj.SpellCheckDictionary = new SpellCheckDictionaryDefinition(wsObj.LanguageTag, SpellCheckDictionaryFormat.Hunspell);
+				if (string.IsNullOrEmpty(wsObj.SpellCheckingId) || wsObj.SpellCheckingId == "<None>")
+					wsObj.SpellCheckingId = wsObj.LanguageTag.Replace('-', '_');
 				using (new WaitCursor(this))
 					WfiWordformServices.ConformSpellingDictToWordforms(m_cache);
 			}
