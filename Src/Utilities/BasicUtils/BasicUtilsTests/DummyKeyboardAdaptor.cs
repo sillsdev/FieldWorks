@@ -1,5 +1,5 @@
-﻿using SIL.WritingSystems.WindowsForms.Keyboarding;
-using SIL.WritingSystems;
+﻿using SIL.Keyboarding;
+using SIL.Windows.Forms.Keyboarding;
 
 namespace SIL.Utils
 {

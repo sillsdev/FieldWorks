@@ -8,11 +8,10 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Windows.Forms;
-using Palaso.Reporting;
 using SIL.FieldWorks.FixData;
-using Palaso.UI.WindowsForms.HotSpot;
+using SIL.Reporting;
 using SIL.Utils;
+using SIL.Windows.Forms.HotSpot;
 
 namespace FixFwData
 {

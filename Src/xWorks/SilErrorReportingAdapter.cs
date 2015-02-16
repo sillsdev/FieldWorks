@@ -9,8 +9,8 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using Microsoft.Win32;
-using Palaso.Reporting;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.Reporting;
 using SIL.Utils;
 using XCore;
 
@@ -18,20 +18,20 @@ namespace SIL.FieldWorks.XWorks
 {
 	/// ------------------------------------------------------------------------------------
 	/// <summary>
-	/// This class allows for exceptions in Palaso dlls to be reported in FieldWorks
+	/// This class allows for exceptions in SIL dlls to be reported in FieldWorks
 	/// using the normal FieldWorks error handling system and reporting dialogs. When you
 	/// create a Palaso dialog, create an instance of this class, passing it the dialog.
 	/// </summary>
 	/// ------------------------------------------------------------------------------------
 	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
 	Justification = "m_parentForm is a reference")]
-	class PalasoErrorReportingAdapter : IErrorReporter, IFWDisposable
+	class SilErrorReportingAdapter : IErrorReporter, IFWDisposable
 	{
 		private Form m_parentForm;
 		private RegistryKey m_registryKey;
 		private string m_supportEmailAddress;
 
-		internal PalasoErrorReportingAdapter(Form parentForm, Mediator mediator)
+		internal SilErrorReportingAdapter(Form parentForm, Mediator mediator)
 		{
 			m_parentForm = parentForm;
 			m_registryKey = ((IApp)mediator.PropertyTable.GetValue("App")).SettingsKey;
@@ -90,7 +90,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <remarks>
 		/// In case some clients forget to dispose it directly.
 		/// </remarks>
-		~PalasoErrorReportingAdapter()
+		~SilErrorReportingAdapter()
 		{
 			Dispose(false);
 			// The base class finalizer is called automatically.

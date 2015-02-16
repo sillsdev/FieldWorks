@@ -13,9 +13,9 @@ using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites.Properties;
+using SIL.Keyboarding;
 using SIL.Utils;
 using System.Diagnostics.CodeAnalysis;
-using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.Common.RootSites
 {

@@ -112,6 +112,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\ScriptureUtils.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Downloads\SIL.Core.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.WritingSystems, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Downloads\SIL.WritingSystems.dll</HintPath>
@@ -145,9 +149,6 @@
     </Reference>
     <Reference Include="SilUtils">
       <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="Palaso">
-      <HintPath>..\..\..\..\Downloads\Palaso.dll</HintPath>
     </Reference>
     <Reference Include="ScrUtilsInterfaces">
       <HintPath>..\..\..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>

@@ -8,8 +8,8 @@ using System.Text;
 using System.Threading;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using SIL.CoreImpl.Properties;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.Keyboarding;
 using SIL.Utils;
 using SIL.WritingSystems;
 
@@ -275,7 +275,11 @@ namespace SIL.CoreImpl
 			if (ci != null)
 			{
 				ws.DefaultCollation = new InheritedCollationDefinition("standard") {BaseLanguageTag = ci.Name, BaseType = "standard"};
-				// TODO: should we validate here?
+				// TODO (WS_FIX): should we validate here?
+			}
+			else
+			{
+				ws.DefaultCollation = new CollationDefinition("standard");
 			}
 
 			ws.DefaultFont = new FontDefinition("Charis SIL");
@@ -597,8 +601,8 @@ namespace SIL.CoreImpl
 			}
 			m_localStore.Save();
 
-			Settings.Default.LocalKeyboards = UnionSettingsKeyboardsWithLocalStore();
-			Settings.Default.Save();
+			Properties.Settings.Default.LocalKeyboards = UnionSettingsKeyboardsWithLocalStore();
+			Properties.Settings.Default.Save();
 		}
 
 		/// <summary>
@@ -607,7 +611,7 @@ namespace SIL.CoreImpl
 		/// </summary>
 		protected string UnionSettingsKeyboardsWithLocalStore()
 		{
-			if (string.IsNullOrWhiteSpace(Settings.Default.LocalKeyboards))
+			if (string.IsNullOrWhiteSpace(Properties.Settings.Default.LocalKeyboards))
 			{
 #if WS_FIX
 				return m_localStore.LocalKeyboardSettings ?? "";
@@ -617,7 +621,7 @@ namespace SIL.CoreImpl
 			}
 
 			// Parse user.config keyboard list
-			XElement root = XElement.Parse(Settings.Default.LocalKeyboards);
+			XElement root = XElement.Parse(Properties.Settings.Default.LocalKeyboards);
 			var keyboardSettings = new Dictionary<string, XElement>();
 			foreach (XElement kbd in root.Elements("keyboard"))
 			{
@@ -920,14 +924,6 @@ namespace SIL.CoreImpl
 	public class MemoryWritingSystemStore : WritingSystemRepositoryBase, IFwWritingSystemStore
 	{
 		/// <summary>
-		/// Use the default repository
-		/// </summary>
-		public MemoryWritingSystemStore() :
-			base(WritingSystemCompatibility.Strict)
-		{
-		}
-
-		/// <summary>
 		/// Creates a new writing system definition.
 		/// </summary>
 		/// <returns></returns>
@@ -1056,7 +1052,7 @@ namespace SIL.CoreImpl
 		public override void Save()
 		{
 			base.Save();
-			if (m_globalStore != null && Settings.Default.UpdateGlobalWSStore)
+			if (m_globalStore != null && Properties.Settings.Default.UpdateGlobalWSStore)
 				m_globalStore.Save();
 		}
 	}

@@ -27,8 +27,8 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Windows.Forms.WritingSystems;
 using SIL.WritingSystems;
-using SIL.WritingSystems.WindowsForms;
 using SilEncConverters40;
 using SIL.Utils;
 using SIL.FieldWorks.Common.Controls;
@@ -889,7 +889,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.tpFonts = new System.Windows.Forms.TabPage();
 			this.m_defaultFontsControl = new SIL.FieldWorks.FwCoreDlgControls.DefaultFontsControl();
 			this.tpKeyboard = new System.Windows.Forms.TabPage();
-			this.m_keyboardControl = new SIL.WritingSystems.WindowsForms.WSKeyboardControl();
+			this.m_keyboardControl = new SIL.Windows.Forms.WritingSystems.WSKeyboardControl();
 			this.tpConverters = new System.Windows.Forms.TabPage();
 			this.btnEncodingConverter = new System.Windows.Forms.Button();
 			this.m_lblEncodingConverter = new System.Windows.Forms.Label();

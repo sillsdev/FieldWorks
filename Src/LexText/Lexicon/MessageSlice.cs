@@ -5,9 +5,9 @@ using System.Text;
 using System.Xml;
 using Chorus;
 using Chorus.UI.Notes.Bar;
-using Palaso.Progress;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.FDO;
+using SIL.Progress;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {

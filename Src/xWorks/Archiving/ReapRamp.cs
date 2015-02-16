@@ -3,17 +3,17 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Palaso.Reporting;
 using SIL.Archiving;
 using SIL.FieldWorks.Common.FwUtils;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Framework;
 using L10NSharp;
-using Palaso.UI.WindowsForms.PortableSettingsProvider;
 using System.Collections.Generic;
 using System;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
+using SIL.Reporting;
+using SIL.Windows.Forms.PortableSettingsProvider;
 using XCore;
 using SIL.CoreImpl;
 
@@ -104,7 +104,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 
 			// create the dialog
 			using (var dlg = new ArchivingDlg(model, localizationMgrId, dialogFont, new FormSettings()))
-			using (var reportingAdapter = new PalasoErrorReportingAdapter(dlg, mediator))
+			using (var reportingAdapter = new SilErrorReportingAdapter(dlg, mediator))
 			{
 				ErrorReport.SetErrorReporter(reportingAdapter);
 				dlg.ShowDialog(owner);

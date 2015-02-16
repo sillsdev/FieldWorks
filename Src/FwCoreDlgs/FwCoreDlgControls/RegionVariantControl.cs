@@ -364,7 +364,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 					else //if the subtag has no name try to be nice and look one up, this avoids getting our controls in a bad state
 					{
 						RegionSubtag region;
-						RegionName = StandardSubtags.Iso3166Regions.TryGetItem(value.Code, out region) ? region.Name : value.Code;
+						RegionName = StandardSubtags.Iso3166Regions.TryGet(value.Code, out region) ? region.Name : value.Code;
 					}
 					//m_regionName.SelectedItem = value;
 					if (m_regionName.SelectedItem == null)

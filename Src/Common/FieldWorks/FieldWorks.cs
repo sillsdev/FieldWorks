@@ -25,7 +25,6 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32;
-using Palaso.Reporting;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
@@ -43,22 +42,20 @@ using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.PaObjects;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.LexicalProvider;
+using SIL.Reporting;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
-using SIL.WritingSystems.WindowsForms.Keyboarding;
+using SIL.Windows.Forms.Keyboarding;
 using XCore;
 using SIL.CoreImpl;
 using ConfigurationException = SIL.Utils.ConfigurationException;
 using ExceptionHelper = SIL.Utils.ExceptionHelper;
 using Logger = SIL.Utils.Logger;
-using SIL.CoreImpl.Properties;
-
 #if __MonoCS__
 using Gecko;
-using SIL.WritingSystems;
+using SIL.Keyboarding;
 #else
 using NetSparkle;
-
 #endif
 
 [assembly:SuppressMessage("Gendarme.Rules.Portability", "ExitCodeIsLimitedOnUnixRule",
@@ -241,12 +238,12 @@ namespace SIL.FieldWorks
 
 				s_ui = new FwFdoUI(GetHelpTopicProvider(appArgs.AppAbbrev), s_threadHelper);
 
-				if (Settings.Default.CallUpgrade)
+				if (CoreImpl.Properties.Settings.Default.CallUpgrade)
 				{
-					Settings.Default.Upgrade();
-					Settings.Default.CallUpgrade = false;
+					CoreImpl.Properties.Settings.Default.Upgrade();
+					CoreImpl.Properties.Settings.Default.CallUpgrade = false;
 				}
-				var reportingSettings = Settings.Default.Reporting;
+				var reportingSettings = CoreImpl.Properties.Settings.Default.Reporting;
 				if (reportingSettings == null)
 				{
 					// Note: to simulate this, currently it works to delete all subfolders of
@@ -254,7 +251,7 @@ namespace SIL.FieldWorks
 					// That guid may depend on version or something similar; it's some artifact of how the Settings persists.
 					s_noPreviousReportingSettings = true;
 					reportingSettings = new ReportingSettings();
-					Settings.Default.Reporting = reportingSettings; //to avoid a defect in Settings rely on the Save in the code below
+					CoreImpl.Properties.Settings.Default.Reporting = reportingSettings; //to avoid a defect in Settings rely on the Save in the code below
 				}
 
 				// Note that in FLEx we are using this flag to indicate whether we can send usage data at all.
@@ -277,7 +274,7 @@ namespace SIL.FieldWorks
 						);
 					// Init updates various things in the ReportingSettings, such as the number of times
 					// the application has been launched and the 'previous' version.
-					Settings.Default.Save();
+					CoreImpl.Properties.Settings.Default.Save();
 				}
 
 				// e.g. the first time the user runs FW8, we need to copy a bunch of registry keys
@@ -3142,13 +3139,13 @@ namespace SIL.FieldWorks
 						return true;
 
 					// Initialize NetSparkle to check for updates:
-					Settings.Default.IsBTE = WindowsInstallerQuery.IsThisBTE();
+					CoreImpl.Properties.Settings.Default.IsBTE = WindowsInstallerQuery.IsThisBTE();
 
-					var appCastUrl = Settings.Default.IsBTE
-						? (Settings.Default.CheckForBetaUpdates
+					var appCastUrl = CoreImpl.Properties.Settings.Default.IsBTE
+						? (CoreImpl.Properties.Settings.Default.CheckForBetaUpdates
 							? CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastBteBetasUrl")
 							: CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastBteUrl"))
-						: (Settings.Default.CheckForBetaUpdates
+						: (CoreImpl.Properties.Settings.Default.CheckForBetaUpdates
 							? CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastSeBetasUrl")
 							: CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastSeUrl"));
 
@@ -3161,7 +3158,7 @@ namespace SIL.FieldWorks
 								args.Cancel = true;
 							}
 						};
-					if (Settings.Default.AutoCheckForUpdates)
+					if (CoreImpl.Properties.Settings.Default.AutoCheckForUpdates)
 						sparkle.CheckOnFirstApplicationIdle();
 #endif
 					return true;
@@ -3720,7 +3717,7 @@ namespace SIL.FieldWorks
 			ErrorReporter.AddProperty("CurrentDirectory", Environment.CurrentDirectory);
 			ErrorReporter.AddProperty("MachineName", Environment.MachineName);
 			ErrorReporter.AddProperty("OSVersion", Environment.OSVersion.ToString());
-			ErrorReporter.AddProperty("OSRelease", Palaso.Reporting.ErrorReport.GetOperatingSystemLabel());
+			ErrorReporter.AddProperty("OSRelease", ErrorReport.GetOperatingSystemLabel());
 			if (MiscUtils.IsUnix)
 			{
 				var packageVersions = LinuxPackageUtils.FindInstalledPackages("fieldworks-applications*");

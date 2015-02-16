@@ -2,25 +2,25 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="SIL.CoreImpl.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="UpdateGlobalWSStore" Description="Setting controling the updating of the Global WS Store" Provider="Palaso.Settings.CrossPlatformSettingsProvider" Type="System.Boolean" Scope="User">
+    <Setting Name="UpdateGlobalWSStore" Description="Setting controling the updating of the Global WS Store" Provider="SIL.Settings.CrossPlatformSettingsProvider" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="Reporting" Description="Setting to store Reporting options" Provider="Palaso.Settings.CrossPlatformSettingsProvider" Type="Palaso.Reporting.ReportingSettings" Scope="User">
+    <Setting Name="Reporting" Description="Setting to store Reporting options" Provider="SIL.Settings.CrossPlatformSettingsProvider" Type="SIL.Reporting.ReportingSettings" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="AutoCheckForUpdates" Description="Setting controling if updates are checked automatically" Provider="Palaso.Settings.CrossPlatformSettingsProvider" Type="System.Boolean" Scope="User">
+    <Setting Name="AutoCheckForUpdates" Description="Setting controling if updates are checked automatically" Provider="SIL.Settings.CrossPlatformSettingsProvider" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="CheckForBetaUpdates" Description="Setting controlling if Beta updates should be checked" Provider="Palaso.Settings.CrossPlatformSettingsProvider" Type="System.Boolean" Scope="User">
+    <Setting Name="CheckForBetaUpdates" Description="Setting controlling if Beta updates should be checked" Provider="SIL.Settings.CrossPlatformSettingsProvider" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="IsBTE" Description="Setting to show if this is a BTE version (used for update checks)" Provider="Palaso.Settings.CrossPlatformSettingsProvider" Type="System.Boolean" Scope="User">
+    <Setting Name="IsBTE" Description="Setting to show if this is a BTE version (used for update checks)" Provider="SIL.Settings.CrossPlatformSettingsProvider" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="CallUpgrade" Description="Setting indicating that the Settings need to be upgraded" Provider="Palaso.Settings.CrossPlatformSettingsProvider" Type="System.Boolean" Scope="User">
+    <Setting Name="CallUpgrade" Description="Setting indicating that the Settings need to be upgraded" Provider="SIL.Settings.CrossPlatformSettingsProvider" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="LocalKeyboards" Description="Setting to store current keyboard assignments for writing systems" Provider="Palaso.Settings.CrossPlatformSettingsProvider" Type="System.String" Scope="User">
+    <Setting Name="LocalKeyboards" Description="Setting to store current keyboard assignments for writing systems" Provider="SIL.Settings.CrossPlatformSettingsProvider" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>

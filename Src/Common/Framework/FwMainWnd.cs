@@ -27,8 +27,8 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
+using SIL.Keyboarding;
 using SIL.Utils;
-using SIL.WritingSystems;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Framework

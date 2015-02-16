@@ -32,7 +32,7 @@ namespace SIL.CoreImpl
 		/// <param name="customDataMappers">The custom data mappers.</param>
 		/// <param name="globalStore">The global store.</param>
 		public LocalFileWritingSystemStore(string path, IEnumerable<ICustomDataMapper> customDataMappers, IFwWritingSystemStore globalStore)
-			: base(path, customDataMappers.ToArray(), WritingSystemCompatibility.Strict)
+			: base(path, customDataMappers.ToArray())
 		{
 			m_globalStore = globalStore;
 			ReadGlobalWritingSystemsToIgnore();

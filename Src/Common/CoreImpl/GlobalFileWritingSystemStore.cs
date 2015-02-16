@@ -479,18 +479,5 @@ namespace SIL.CoreImpl
 				return "";
 			return identifier + ".ldml";
 		}
-
-		/// <summary>
-		/// Gets the writing system compatibility.
-		/// </summary>
-		public WritingSystemCompatibility CompatibilityMode
-		{
-			get { return WritingSystemCompatibility.Strict; }
-		}
-
-		/// <summary>
-		/// Only used in local store.
-		/// </summary>
-		public string LocalKeyboardSettings { get; set; }
 	}
 }

@@ -9,7 +9,7 @@ using NUnit.Framework;
 using IBusDotNet;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils.Attributes;
-using SIL.WritingSystems.WindowsForms.Keyboarding;
+using SIL.Windows.Forms.Keyboarding;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 {

@@ -5,9 +5,9 @@
 using System.Runtime.InteropServices;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.Keyboarding;
 using SIL.Utils;
-using SIL.WritingSystems;
-using SIL.WritingSystems.WindowsForms.Keyboarding;
+using SIL.Windows.Forms.Keyboarding;
 
 namespace SIL.FieldWorks.Common.RootSites
 {

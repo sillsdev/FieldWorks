@@ -94,6 +94,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\protobuf-net.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Downloads\SIL.Core.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.LexiconUtils, Version=2.6.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Downloads\SIL.LexiconUtils.dll</HintPath>
@@ -162,9 +166,6 @@
     </Reference>
     <Reference Include="StructureMap">
       <HintPath>..\..\DistFiles\StructureMap.dll</HintPath>
-    </Reference>
-    <Reference Include="Palaso">
-      <HintPath>..\..\Downloads\Palaso.dll</HintPath>
     </Reference>
     <Reference Include="SilUtils">
       <HintPath>..\..\Output\Debug\SilUtils.dll</HintPath>

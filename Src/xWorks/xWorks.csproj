@@ -165,17 +165,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\DistFiles\NetSparkle.Net40.dll</HintPath>
     </Reference>
-    <Reference Include="Palaso, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Downloads\Palaso.dll</HintPath>
-    </Reference>
     <Reference Include="Palaso.Lift, Version=1.9.16.1, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Downloads\Palaso.Lift.dll</HintPath>
-    </Reference>
-    <Reference Include="PalasoUIWindowsForms, Version=2.4.24.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Downloads\PalasoUIWindowsForms.dll</HintPath>
     </Reference>
     <Reference Include="Reporting, Version=1.0.3685.30341, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Output\Debug\Reporting.dll</HintPath>
@@ -187,6 +179,14 @@
     </Reference>
     <Reference Include="SIL.Archiving">
       <HintPath>..\..\Downloads\SIL.Archiving.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Downloads\SIL.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Windows.Forms, Version=2.6.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Downloads\SIL.Windows.Forms.dll</HintPath>
     </Reference>
     <Reference Include="SIL.WritingSystems, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -261,7 +261,7 @@
     <Compile Include="Archiving\ArchivingExtensions.cs" />
     <Compile Include="Archiving\ReapRamp.cs" />
     <Compile Include="GlobalSettingServices.cs" />
-    <Compile Include="PalasoErrorReportingAdapter.cs" />
+    <Compile Include="SilErrorReportingAdapter.cs" />
     <Compile Include="ConcDecorator.cs" />
     <Compile Include="CustomListDlg.cs">
       <SubType>Form</SubType>

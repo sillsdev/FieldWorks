@@ -8,11 +8,11 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
-using Palaso.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.WritingSystems;
 using SIL.WritingSystems.Migration.WritingSystemsLdmlV0To1Migration;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 {

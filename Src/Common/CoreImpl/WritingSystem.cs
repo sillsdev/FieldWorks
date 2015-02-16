@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Xml;
-using Palaso.Extensions;
+using SIL.Extensions;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 using SIL.WritingSystems;
@@ -48,7 +48,7 @@ namespace SIL.CoreImpl
 		{
 			m_cpe = null;
 			CharacterSetDefinition mainCharSet;
-			MainCharacterSet = CharacterSets.TryGetItem("main", out mainCharSet) ? mainCharSet : null;
+			MainCharacterSet = CharacterSets.TryGet("main", out mainCharSet) ? mainCharSet : null;
 		}
 
 		private void MainCharacterSetChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -321,44 +321,30 @@ namespace SIL.CoreImpl
 			Language = source.Language;
 			Script = source.Script;
 			Region = source.Region;
-			Variants.Clear();
-			foreach (VariantSubtag variantSubtag in source.Variants)
-				Variants.Add(variantSubtag);
+			Variants.ReplaceAll(source.Variants);
 			Abbreviation = source.Abbreviation;
 			RightToLeftScript = source.RightToLeftScript;
-			Fonts.Clear();
-			foreach (FontDefinition fd in source.Fonts)
-				Fonts.Add(fd.Clone());
+			Fonts.ReplaceAll(source.Fonts.CloneItems());
 			DefaultFont = source.DefaultFont == null ? null : Fonts[source.Fonts.IndexOf(source.DefaultFont)];
 			Keyboard = source.Keyboard;
 			VersionNumber = source.VersionNumber;
 			VersionDescription = source.VersionDescription;
-			SpellCheckDictionaries.Clear();
-			foreach (SpellCheckDictionaryDefinition scdd in source.SpellCheckDictionaries)
-				SpellCheckDictionaries.Add(scdd.Clone());
+			SpellCheckDictionaries.ReplaceAll(source.SpellCheckDictionaries.CloneItems());
 			SpellCheckingId = source.SpellCheckingId;
 			DateModified = source.DateModified;
 			LocalKeyboard = source.LocalKeyboard;
 			WindowsLcid = source.WindowsLcid;
 			DefaultRegion = source.DefaultRegion;
-			KnownKeyboards.Clear();
-			foreach (IKeyboardDefinition kbd in source.KnownKeyboards)
-				KnownKeyboards.Add(kbd);
+			KnownKeyboards.ReplaceAll(source.KnownKeyboards);
 			MatchedPairs.Clear();
 			MatchedPairs.UnionWith(source.MatchedPairs);
 			PunctuationPatterns.Clear();
 			PunctuationPatterns.UnionWith(source.PunctuationPatterns);
-			QuotationMarks.Clear();
-			foreach (QuotationMark qm in source.QuotationMarks)
-				QuotationMarks.Add(qm);
+			QuotationMarks.ReplaceAll(source.QuotationMarks);
 			QuotationParagraphContinueType = source.QuotationParagraphContinueType;
-			Collations.Clear();
-			foreach (CollationDefinition cd in source.Collations)
-				Collations.Add(cd.Clone());
+			Collations.ReplaceAll(source.Collations.CloneItems());
 			DefaultCollation = source.DefaultCollation == null ? null : Collations[source.Collations.IndexOf(source.DefaultCollation)];
-			CharacterSets.Clear();
-			foreach (CharacterSetDefinition csd in source.CharacterSets)
-				CharacterSets.Add(csd.Clone());
+			CharacterSets.ReplaceAll(source.CharacterSets.CloneItems());
 			LegacyMapping = source.LegacyMapping;
 			IsGraphiteEnabled = source.IsGraphiteEnabled;
 		}

@@ -5,8 +5,8 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using NUnit.Framework;
-using SIL.CoreImpl.Properties;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.Keyboarding;
 using SIL.Utils;
 using SIL.WritingSystems;
 
@@ -470,7 +470,7 @@ namespace SIL.CoreImpl
 		public void LocalKeyboardsUnionLocalStore()
 		{
 			// Populate Settings.Default.LocalKeyboards
-			Settings.Default.LocalKeyboards = "<keyboards>"
+			Properties.Settings.Default.LocalKeyboards = "<keyboards>"
 											+ "<keyboard ws=\"en\" layout=\"US\" locale=\"en-US\" />"
 											+ "<keyboard ws=\"zh-CN-pinyin\" layout=\"US\" locale=\"en-US\" />"
 											+ "<keyboard ws=\"zh-CN\" layout=\"Chinese (Simplified) - US Keyboard\" locale=\"zh-CN\" />"
@@ -481,13 +481,13 @@ namespace SIL.CoreImpl
 			var ws = new WritingSystem
 			{
 				Language = new LanguageSubtag("en", "en", false, null),
-				LocalKeyboard = Keyboard.Controller.CreateKeyboardDefinition("en-UK_United States-Dvorak", KeyboardFormat.Unknown, Enumerable.Empty<string>())
+				LocalKeyboard = Keyboard.Controller.CreateKeyboard("en-UK_United States-Dvorak", KeyboardFormat.Unknown, Enumerable.Empty<string>())
 			};
 			localStore.Set(ws);
 			ws = new WritingSystem
 			{
 				Language = new LanguageSubtag("ko", "ko", false, null),
-				LocalKeyboard = Keyboard.Controller.CreateKeyboardDefinition("ta-IN_US", KeyboardFormat.Unknown, Enumerable.Empty<string>())
+				LocalKeyboard = Keyboard.Controller.CreateKeyboard("ta-IN_US", KeyboardFormat.Unknown, Enumerable.Empty<string>())
 			};
 			localStore.Set(ws);
 			var wsm = new TestWritingSystemManager(localStore);

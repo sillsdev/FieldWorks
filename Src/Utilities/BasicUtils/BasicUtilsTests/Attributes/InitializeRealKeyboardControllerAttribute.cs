@@ -5,8 +5,8 @@
 using System;
 using NUnit.Framework;
 using System.Diagnostics.CodeAnalysis;
-using SIL.WritingSystems;
-using SIL.WritingSystems.WindowsForms.Keyboarding;
+using SIL.Keyboarding;
+using SIL.Windows.Forms.Keyboarding;
 
 namespace SIL.Utils.Attributes
 {

@@ -176,10 +176,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="Palaso, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Downloads\Palaso.dll</HintPath>
-    </Reference>
     <Reference Include="PhraseTranslationHelper, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
@@ -210,6 +206,10 @@
     <Reference Include="SharedScrUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SharedScrUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Downloads\SIL.Core.dll</HintPath>
     </Reference>
     <Reference Include="SIL.WritingSystems, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -316,11 +316,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DraftViewTestBase.cs" />
-    <Compile Include="DummyDraftView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="DummyDraftView.cs" />
     <Compile Include="DummyFootnoteViewForm.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="FootnoteViewTests.cs" />
     <Compile Include="SegmentedBtDraftViewTests.cs" />
@@ -362,12 +360,8 @@
     <Compile Include="ScrObjWrapperTests.cs" />
     <Compile Include="TeAppTests.cs">
     </Compile>
-    <Compile Include="TeMainWndTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="TeMainWndTestsNoWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="TeMainWndTests.cs" />
+    <Compile Include="TeMainWndTestsNoWindow.cs" />
     <EmbeddedResource Include="DummyDraftViewForm.resx">
       <DependentUpon>DummyDraftViewForm.cs</DependentUpon>
       <SubType>Designer</SubType>

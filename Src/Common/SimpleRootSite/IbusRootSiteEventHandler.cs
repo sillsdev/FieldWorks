@@ -12,7 +12,7 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites.Properties;
 using SIL.Utils;
-using SIL.WritingSystems.WindowsForms.Keyboarding.Linux;
+using SIL.Windows.Forms.Keyboarding.Linux;
 
 namespace SIL.FieldWorks.Common.RootSites
 {

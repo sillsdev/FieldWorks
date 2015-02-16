@@ -10,21 +10,18 @@
 // ---------------------------------------------------------------------------------------------
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using System.Drawing;  // GDI+ stuff
-using System.Drawing.Imaging;  // ImageFormat
-
 using Microsoft.Win32;
-using Palaso.Email;
-using SIL.Utils;
+using SIL.Email;
+#if __MonoCS__
+using System.Runtime.InteropServices;
+#endif
 
 namespace SIL.Utils
 {

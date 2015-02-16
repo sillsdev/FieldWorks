@@ -4,8 +4,8 @@
 
 using System;
 using NUnit.Framework;
-using SIL.WritingSystems;
-using SIL.WritingSystems.WindowsForms.Keyboarding;
+using SIL.Keyboarding;
+using SIL.Windows.Forms.Keyboarding;
 
 namespace SIL.Utils.Attributes
 {

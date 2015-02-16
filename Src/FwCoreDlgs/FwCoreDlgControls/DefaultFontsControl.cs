@@ -15,7 +15,6 @@ using System.Drawing;
 using System.Drawing.Text;
 using System.Linq;
 using System.Windows.Forms;
-using Palaso.Extensions;
 using SIL.CoreImpl;
 using SIL.Utils;
 using SIL.FieldWorks.Common.Controls;
@@ -296,7 +295,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				if (string.Format(FwCoreDlgControls.kstidMissingFontFmt, oldFont) != m_defaultFontComboBox.Text)
 				{
 					FontDefinition font;
-					if (!m_ws.Fonts.TryGetItem(m_defaultFontComboBox.Text, out font))
+					if (!m_ws.Fonts.TryGet(m_defaultFontComboBox.Text, out font))
 						font = new FontDefinition(m_defaultFontComboBox.Text);
 					m_ws.DefaultFont = font;
 				}

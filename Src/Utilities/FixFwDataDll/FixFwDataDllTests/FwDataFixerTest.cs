@@ -7,7 +7,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FixData;
 using System.Collections.Generic;
-using Palaso.TestUtilities;
 using SIL.FieldWorks.Test.TestUtils;
 
 namespace FixFwDataDllTests

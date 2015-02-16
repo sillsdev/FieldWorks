@@ -13,7 +13,6 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Xml;
-using Palaso.Extensions;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.CoreImpl;
 using SIL.WritingSystems;
@@ -168,7 +167,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		private void AddCharactersFromWritingSystem(WritingSystem ws, string charSetType, ValidCharacterType validCharType, List<string> invalidChars)
 		{
 			CharacterSetDefinition charSet;
-			if (!ws.CharacterSets.TryGetItem(charSetType, out charSet))
+			if (!ws.CharacterSets.TryGet(charSetType, out charSet))
 				return;
 
 			foreach (string chr in charSet.Characters)
@@ -612,7 +611,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			else
 			{
 				CharacterSetDefinition charSet;
-				if (!ws.CharacterSets.TryGetItem(charSetType, out charSet))
+				if (!ws.CharacterSets.TryGet(charSetType, out charSet))
 				{
 					charSet = new CharacterSetDefinition(charSetType);
 					ws.CharacterSets.Add(charSet);

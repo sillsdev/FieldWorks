@@ -1,6 +1,6 @@
 using System.Configuration;
 using System.Diagnostics;
-using Palaso.Settings;
+using SIL.Settings;
 
 namespace SIL.CoreImpl.Properties
 {

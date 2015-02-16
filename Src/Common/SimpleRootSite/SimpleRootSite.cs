@@ -23,7 +23,7 @@ using SIL.Utils;
 using SIL.WritingSystems;
 using XCore;
 #if __MonoCS__
-using SIL.WritingSystems.WindowsForms.Keyboarding;
+using SIL.Windows.Forms.Keyboarding;
 #endif
 
 namespace SIL.FieldWorks.Common.RootSites

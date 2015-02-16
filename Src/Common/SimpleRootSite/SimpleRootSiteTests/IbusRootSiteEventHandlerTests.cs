@@ -13,10 +13,9 @@ using X11.XKlavier;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Test.TestUtils;
-using SIL.Utils.Attributes;
-using SIL.WritingSystems;
-using SIL.WritingSystems.WindowsForms.Keyboarding;
-using SIL.WritingSystems.WindowsForms.Keyboarding.Linux;
+using SIL.Keyboarding;
+using SIL.Windows.Forms.Keyboarding;
+using SIL.Windows.Forms.Keyboarding.Linux;
 using NMock;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests

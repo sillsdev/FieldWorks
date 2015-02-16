@@ -2,9 +2,9 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using NUnit.Framework;
-using Palaso.Xml;
+using SIL.Xml;
 
-namespace Palaso.TestUtilities
+namespace SIL.FieldWorks.Test.TestUtils
 {
 	//NB: if c# ever allows us to add static exension methods,
 	//then all this could be an extension on nunit's Assert class.

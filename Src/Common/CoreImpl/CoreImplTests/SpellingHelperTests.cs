@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using Palaso.IO;
+using SIL.IO;
 using FileUtils = SIL.Utils.FileUtils;
 
 namespace SIL.CoreImpl

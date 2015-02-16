@@ -28,9 +28,9 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
+using SIL.Keyboarding;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
-using SIL.WritingSystems;
 using SILUBS.SharedScrUtils;
 using XCore;
 
