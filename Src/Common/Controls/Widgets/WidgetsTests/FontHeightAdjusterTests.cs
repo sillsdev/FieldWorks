@@ -8,13 +8,14 @@
 // <remarks>
 // </remarks>
 
+using System;
 using System.Collections.Generic;
-
+using System.Diagnostics;
 using NUnit.Framework;
-
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Test.TestUtils;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -110,6 +111,67 @@ namespace SIL.FieldWorks.Common.Widgets
 				m_stylesheet, m_hvoEnglishWs, m_wsManager));
 		}
 
+		private int GetUbuntuVersion()
+		{
+			if (!MiscUtils.IsUnix)
+				return 0;
+
+			try
+			{
+				var startInfo = new ProcessStartInfo {
+					RedirectStandardOutput = true,
+					UseShellExecute = false,
+					FileName = "lsb_release",
+					Arguments = "-r -s"
+				};
+				using (var proc = Process.Start(startInfo))
+				{
+					var value = proc.StandardOutput.ReadToEnd().TrimEnd();
+					proc.WaitForExit();
+					if (value.Contains("."))
+						return int.Parse(value.Split('.')[0]);
+				}
+			}
+			catch (Exception)
+			{
+				// Just ignore and continue with the default
+			}
+			return -1;
+		}
+
+		private int GetExpectedFontHeightForArial()
+		{
+			// The font height to expect on Ubuntu 14.04 and upwards depends on the font mapping.
+			// If "Arial" is mapped to LiberationSans-Regular.ttf then we get the same value as
+			// on Windows.
+			// However, if there is a ~/.fonts.conf file that maps Arial to Arial, then we get
+			// a slightly different value, probably due to rounding errors.
+			if (MiscUtils.IsUnix && GetUbuntuVersion() >= 14)
+			{
+				try
+				{
+					var startInfo = new ProcessStartInfo {
+						RedirectStandardOutput = true,
+						UseShellExecute = false,
+						FileName = "fc-match",
+						Arguments = "Arial"
+					};
+					using (var proc = Process.Start(startInfo))
+					{
+						var value = proc.StandardOutput.ReadToEnd().TrimEnd();
+						proc.WaitForExit();
+						if (value.StartsWith("Arial", StringComparison.Ordinal))
+							return 19750;
+					}
+				}
+				catch (Exception)
+				{
+					// Just ignore and continue with the default
+				}
+			}
+			return 20750;
+		}
+
 		/// -------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the GetAdjustedTsString method.
@@ -141,7 +203,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			strBldr.ReplaceRgch(0, 0, "3 Hello", 7, propsBldr.GetTextProps());
 			propsBldrExpected = propsBldr;
 			propsBldrExpected.SetIntPropValues((int)FwTextPropType.ktptFontSize,
-				(int)FwTextPropVar.ktpvMilliPoint, 20750);
+				(int)FwTextPropVar.ktpvMilliPoint, GetExpectedFontHeightForArial());
 			strBldrExpected.ReplaceRgch(0, 0, "3 Hello", 7, propsBldrExpected.GetTextProps());
 
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "StyleB");
