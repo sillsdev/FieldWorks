@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -11,7 +15,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using XCore;
 using System.Linq;
@@ -110,11 +113,10 @@ namespace SIL.FieldWorks.IText
 		{
 			// If the currently selected text is from Scripture, then we need to give the dialog
 			// the list of Scripture texts that have been selected for interlinearization.
-			var parent = this.Parent;
+			var parent = Parent;
 			while (parent != null && !(parent is InterlinMaster))
 				parent = parent.Parent;
 			var master = parent as InterlinMaster;
-			var selectedObjs = new List<ICmObject>();
 			IBookImporter bookImporter = null;
 			if (master != null)
 			{
@@ -122,11 +124,9 @@ namespace SIL.FieldWorks.IText
 				var clerk = master.Clerk as InterlinearTextsRecordClerk;
 				if (clerk != null)
 				{
-					foreach (int hvo in clerk.GetScriptureIds())
-						selectedObjs.Add(m_objRepo.GetObject(hvo));
+					clerk.GetScriptureIds(); // initialize the InterestingTextList to include Scripture (prevent a crash trying later)
 				}
 			}
-			//AnalysisOccurrence analOld = OccurrenceContainingSelection();
 			bool fFocusBox = TryHideFocusBoxAndUninstall();
 			ICmObject objRoot = m_objRepo.GetObject(m_hvoRoot);
 			using (var dlg = new InterlinearExportDialog(m_mediator, objRoot, m_vc, bookImporter))
@@ -136,8 +136,6 @@ namespace SIL.FieldWorks.IText
 			if (fFocusBox)
 			{
 				CreateFocusBox();
-				//int hvoAnalysis = m_fdoCache.MainCacheAccessor.get_ObjectProp(oldAnnotation, CmAnnotationTags.kflidInstanceOf);
-				//TriggerAnnotationSelected(oldAnnotation, hvoAnalysis, false);
 			}
 
 			return true; // we handled this

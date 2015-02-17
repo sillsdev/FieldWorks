@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -13,7 +13,6 @@ using System.IO;
 using System.Xml;
 using System.Reflection;
 using System.Linq;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -25,7 +24,6 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.Common.Framework;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.CoreImpl;
@@ -1269,9 +1267,6 @@ namespace SIL.FieldWorks.XWorks
 			set
 			{
 				CheckDisposed();
-
-				if (m_sorter == value)
-					return;
 				m_sorter = value;
 			}
 		}
@@ -1366,7 +1361,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				CheckDisposed();
 				if (m_owningObject == value)
-					return; // no need to do redundante reload.
+					return; // no need to reload.
 
 				m_owningObject = value;
 				m_oldLength = 0;
@@ -2071,10 +2066,6 @@ namespace SIL.FieldWorks.XWorks
 			// for example, when reversing the order on the same column.
 			if (m_sortedObjects != null)
 				ReloadList();
-			//			if (m_sortedObjects != null && m_sorter != null)
-			//				m_sorter.Sort(/*ref*/ m_sortedObjects);
-			//			// Update everything that depends on the list.
-			//			SendPropChangedOnListChange();
 		}
 
 		#region navigation

@@ -1,16 +1,8 @@
-// Copyright (c) 2005-2013 SIL International
+// Copyright (c) 2005-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: XmlBrowseRDEView.cs
-// Responsibility: WordWorks
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -31,9 +23,7 @@ using XCore;
 namespace SIL.FieldWorks.Common.Controls
 {
 	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
+	/// <summary> XML Browse View for Rapid Data Entry (Collect Words) </summary>
 	/// ----------------------------------------------------------------------------------------
 	public class XmlBrowseRDEView : XmlBrowseViewBase
 	{
@@ -310,7 +300,6 @@ namespace SIL.FieldWorks.Common.Controls
 				// on the tool so we always reload when switching.
 				CreateObjectFromEntryRow(rgtss, false);
 			}
-			//ProcessRDEKeyPress('\r');
 			DoMerges();
 
 			return cancelClose;
