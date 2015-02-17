@@ -1,15 +1,16 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
-using System.CodeDom.Compiler;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Xml.Xsl; // Bizarre location for TempFileCollection
+using System.Xml.Xsl;
 using System.IO;
 using System.Xml;
 using System.Windows.Forms;
 using ICSharpCode.SharpZipLib.Zip;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -58,17 +59,14 @@ namespace SIL.FieldWorks.IText
 		{
 			return false;
 		}
+
 		/// <summary>
 		/// Override to do nothing since not configuring an FXT export process.
 		/// </summary>
-		/// <param name="document"></param>
-		/// <param name="ft"></param>
-		/// <param name="item"></param>
 		protected override void ConfigureItem(XmlDocument document, ListViewItem item, XmlNode ddNode)
 		{
 			m_ddNodes.Add(ddNode);
 			columnHeader1.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-			//columnHeader2.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
 		}
 
 		/// <summary>
@@ -140,7 +138,7 @@ namespace SIL.FieldWorks.IText
 			XmlNode ddNode = m_ddNodes[NodeIndex(fxtPath)];
 			string mode = XmlUtils.GetOptionalAttributeValue(ddNode, "mode", "xml");
 			InterlinearExporter exporter;
-			using (new SIL.Utils.WaitCursor(this))
+			using (new WaitCursor(this))
 			{
 				try
 				{
@@ -210,49 +208,6 @@ namespace SIL.FieldWorks.IText
 							{
 								Directory.Delete(tempDir, true);
 							}
-							//// Generate the styles first, based on the original export file.
-							//string styleFilePath;
-							//using (TempFileCollection tempFiles = new TempFileCollection()) // wanted only to get the default temp file dir and name
-							//{
-							//	styleFilePath = tempFiles.AddExtension("xml", false);
-							//}
-							//XslCompiledTransform xsl = new XslCompiledTransform();
-							//XmlNode implementation = XmlUtils.GetFirstNonCommentChild(ddNode);
-							//string styleFileTransform = "xml2OOStyles.xsl";
-							//if (implementation != null)
-							//	styleFileTransform = XmlUtils.GetOptionalAttributeValue(implementation, "styleTransform", styleFileTransform);
-							//xsl.Load(rootDir + @"\Language Explorer\Export Templates\Interlinear\" + styleFileTransform);
-							//xsl.Transform(outPath, styleFilePath);
-
-							//// Now generate the content. Do this after using outPath as the source above, because it renames the file.
-							//string contentFileTransform = "xml2OO.xsl";
-							//if (implementation != null)
-							//	contentFileTransform = XmlUtils.GetOptionalAttributeValue(implementation, "contentTransform", contentFileTransform);
-							//exporter.PostProcess(rootDir + @"\Language Explorer\Export Templates\Interlinear\" + contentFileTransform, outPath, 1);
-							//string intermediateFile = CollectorEnv.RenameOutputToPassN(outPath, 2);
-							//using (FileStream outFile = new FileStream(outPath, FileMode.Create))
-							//{
-							//	using (ZipOutputStream zipFile = new ZipOutputStream(outFile))
-							//	{
-							//		WriteFileToZipUncompressed("mimetype", rootDir + @"\Language Explorer\Export Templates\Interlinear\mimetype", zipFile);
-							//		WriteFileToZipUncompressed("META-INF/manifest.xml", rootDir + @"\Language Explorer\Export Templates\Interlinear\manifest.xml", zipFile);
-							//		WriteFileToZip("styles.xml", styleFilePath, zipFile);
-							//		WriteFileToZip("content.xml", intermediateFile, zipFile);
-							//		zipFile.Finish();
-							//		zipFile.Close();
-							//	}
-							//	outFile.Close();
-							//}
-							//File.Delete(styleFilePath);
-							//File.Delete(intermediateFile);
-							//System.IO.File.Copy(rootDir + @"\Language Explorer\Export Templates\Interlinear\EmptyOfficeDoc.odt",
-							//	outPath);
-							//ZipFile OOFile = new ZipFile(outPath, ZipConstants.GZIP, System.IO.FileMode.Open);
-							//System.IO.File.Delete("content.xml");
-							//System.IO.File.Move(intermediateFile, "content.xml");
-							//OOFile.Add("content.xml");
-							////OOFile.AddAs("content.xml", intermediateFile);
-							//OOFile.Close();
 							break;
 					}
 				}
