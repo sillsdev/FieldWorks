@@ -3648,7 +3648,7 @@ namespace SIL.FieldWorks
 		{
 			try
 			{
-				using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\SIL\FieldWorks\8", true))
+				using (RegistryKey key = Registry.LocalMachine.CreateSubKey(@"SOFTWARE\SIL\FieldWorks\8"))
 				{
 					key.SetValue("FwExeDir", Path.GetDirectoryName(Application.ExecutablePath));
 				}
