@@ -238,7 +238,7 @@ namespace SIL.CoreImpl
 					if (m_cpe == null)
 					{
 						string language, script, region, variant;
-						IetfLanguageTag.GetParts(LanguageTag, out language, out script, out region, out variant);
+						IetfLanguageTagHelper.GetParts(IetfLanguageTag, out language, out script, out region, out variant);
 						LgIcuCharPropEngine cpe = LgIcuCharPropEngineClass.Create();
 						cpe.Initialize(language, script, region, variant);
 						if (MainCharacterSet != null)
@@ -271,7 +271,7 @@ namespace SIL.CoreImpl
 
 				// Enhance: Is it worth negotiating with Palaso to put this part
 				// in the base class?
-				if (Script != null && !IsVoice)
+				if (Script != null && !IsVoice && (Language == null || Language.ImplicitScriptCode != Script.Code))
 					sb.Append(Script.ToString());
 
 				if (Region != null)
@@ -308,7 +308,7 @@ namespace SIL.CoreImpl
 				if (Language == null || Language.IsPrivateUse)
 					return "root";
 
-				return IetfLanguageTag.ToIcuLocale(LanguageTag);
+				return IetfLanguageTagHelper.ToIcuLocale(IetfLanguageTag);
 			}
 		}
 
@@ -398,10 +398,10 @@ namespace SIL.CoreImpl
 		/// <summary>
 		/// Updates the language tag.
 		/// </summary>
-		protected override void UpdateLanguageTag()
+		protected override void UpdateIetfLanguageTag()
 		{
 			ClearRenderers();
-			base.UpdateLanguageTag();
+			base.UpdateIetfLanguageTag();
 		}
 
 		private static bool FontHasGraphiteTables(IVwGraphics vg)

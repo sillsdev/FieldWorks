@@ -1,7 +1,6 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -230,7 +229,7 @@ namespace SIL.CoreImpl
 			ScriptSubtag scriptSubtag;
 			RegionSubtag regionSubtag;
 			IEnumerable<VariantSubtag> variantSubtags;
-			if (!IetfLanguageTag.TryGetSubtags(identifier, out languageSubtag, out scriptSubtag, out regionSubtag, out variantSubtags))
+			if (!IetfLanguageTagHelper.TryGetSubtags(identifier, out languageSubtag, out scriptSubtag, out regionSubtag, out variantSubtags))
 				throw new ArgumentException(identifier + " is not a valid RFC5646 language tag.");
 			WritingSystem result = Create(languageSubtag, scriptSubtag, regionSubtag, variantSubtags);
 #if WS_FIX
@@ -269,18 +268,18 @@ namespace SIL.CoreImpl
 			if (!string.IsNullOrEmpty(languageSubtag.Name))
 				ws.Abbreviation = languageSubtag.Name.Length > 3 ? languageSubtag.Name.Substring(0, 3) : languageSubtag.Name;
 			else
-				ws.Abbreviation = ws.Id;
+				ws.Abbreviation = ws.IetfLanguageTag;
 
-			CultureInfo ci = MiscUtils.GetCultureForWs(ws.Id);
+#if WS_FIX
+			CultureInfo ci = MiscUtils.GetCultureForWs(ws.IetfLanguageTag);
 			if (ci != null)
 			{
-				ws.DefaultCollation = new InheritedCollationDefinition("standard") {BaseLanguageTag = ci.Name, BaseType = "standard"};
+				ws.DefaultCollation = new InheritedCollationDefinition("standard") {BaseIetfLanguageTag = ci.Name, BaseType = "standard"};
 				// TODO (WS_FIX): should we validate here?
 			}
-			else
-			{
-				ws.DefaultCollation = new CollationDefinition("standard");
-			}
+#else
+			ws.DefaultCollation = new CollationDefinition("standard");
+#endif
 
 			ws.DefaultFont = new FontDefinition("Charis SIL");
 
@@ -709,7 +708,7 @@ namespace SIL.CoreImpl
 			}
 
 			string isoCode = builder.ToString().Substring(0, Math.Min(3, builder.Length));
-			if (IetfLanguageTag.IsValidLanguageCode(isoCode) && !LangTagInUse("qaa-x-" + isoCode))
+			if (IetfLanguageTagHelper.IsValidLanguageCode(isoCode) && !LangTagInUse("qaa-x-" + isoCode))
 				return isoCode; // The generated code is valid and not in use by the local or global store
 
 			// We failed to generate a valid, unused language tag from the language name so

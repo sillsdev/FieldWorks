@@ -204,7 +204,7 @@ namespace SIL.FieldWorks.XWorks
 			WritingSystemManager manager = m_cache.ServiceLocator.WritingSystemManager;
 			foreach (WritingSystem wsLocal in manager.LocalWritingSystems)
 			{
-				string tag = IetfLanguageTag.ToLanguageTag(wsLocal.Language, wsLocal.Script, wsLocal.Region, wsLocal.Variants);
+				string tag = wsLocal.IetfLanguageTag;
 				ILgWritingSystem lgws = null;
 				int ws = m_cache.WritingSystemFactory.GetWsFromStr(tag);
 				if (ws <= 0)
@@ -249,7 +249,7 @@ namespace SIL.FieldWorks.XWorks
 					if (inheritedCollation != null)
 					{
 						sortUsing = "OtherLanguage";
-						sortRules = inheritedCollation.BaseLanguageTag;
+						sortRules = inheritedCollation.BaseIetfLanguageTag;
 					}
 					else if (wsLocal.DefaultCollation != null && !string.IsNullOrEmpty(wsLocal.DefaultCollation.IcuRules))
 					{

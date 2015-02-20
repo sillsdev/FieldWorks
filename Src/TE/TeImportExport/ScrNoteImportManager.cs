@@ -220,7 +220,7 @@ namespace SIL.FieldWorks.TE
 		/// -----------------------------------------------------------------------------------
 		public static int GetWsForLocale(string locale)
 		{
-			string identifier = IetfLanguageTag.ToLanguageTag(locale);
+			string identifier = IetfLanguageTagHelper.ToIetfLanguageTag(locale);
 			WritingSystem ws;
 			if (s_scr.Cache.ServiceLocator.WritingSystemManager.TryGetOrSet(identifier, out ws))
 			{

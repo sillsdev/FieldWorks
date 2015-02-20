@@ -1367,19 +1367,19 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				return true;
 
 			// Check if this is a valid language tag
-			if (IetfLanguageTag.IsValid(identifier))
+			if (IetfLanguageTagHelper.IsValid(identifier))
 				return FindOrCreateWritingSystem(cache, templateDir, identifier, addAnalWss, addVernWss, out ws);
 
 			// Try cleaning up an old style language tag
 			var langTagCleaner = new IetfLanguageTagCleaner(identifier);
 			langTagCleaner.Clean();
 			string newIdentifier = langTagCleaner.GetCompleteTag();
-			if (IetfLanguageTag.IsValid(newIdentifier))
+			if (IetfLanguageTagHelper.IsValid(newIdentifier))
 				return FindOrCreateWritingSystem(cache, templateDir, newIdentifier, addAnalWss, addVernWss, out ws);
 
 			// Try converting an ICU locale to a valid language tag.
-			newIdentifier = IetfLanguageTag.ToLanguageTag(identifier);
-			if (IetfLanguageTag.IsValid(newIdentifier))
+			newIdentifier = IetfLanguageTagHelper.ToIetfLanguageTag(identifier);
+			if (IetfLanguageTagHelper.IsValid(newIdentifier))
 				return FindOrCreateWritingSystem(cache, templateDir, newIdentifier, addAnalWss, addVernWss, out ws);
 
 			// No, it's nothing we know how to deal with. Get drastic.

@@ -462,7 +462,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			RegionSubtag region = null;
 			if (languageSubtag.Code == "zh" && languageSubtag.Iso3Code == "cmn")
-				region = new RegionSubtag("CN", "China", false);
+				region = "CN";
 			SetupDialog(m_wsManager.Create(languageSubtag, null, region, null), null, displayRelatedWss);
 		}
 
@@ -623,7 +623,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					m_sortRulesPanel.Visible = false;
 					m_sortLanguagePanel.Visible = true;
 					var inheritedCollation = (InheritedCollationDefinition) ws.DefaultCollation;
-					if (string.IsNullOrEmpty(inheritedCollation.BaseLanguageTag))
+					if (string.IsNullOrEmpty(inheritedCollation.BaseIetfLanguageTag))
 					{
 						try
 						{
@@ -633,12 +633,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						catch (ArgumentException)
 						{
 							m_sortLanguageComboBox.SelectedIndex = 0;
-							inheritedCollation.BaseLanguageTag = (string) m_sortLanguageComboBox.SelectedValue;
+							inheritedCollation.BaseIetfLanguageTag = (string) m_sortLanguageComboBox.SelectedValue;
 						}
 					}
 					else
 					{
-						m_sortLanguageComboBox.SelectedValue = inheritedCollation.BaseLanguageTag;
+						m_sortLanguageComboBox.SelectedValue = inheritedCollation.BaseIetfLanguageTag;
 					}
 					break;
 			}
@@ -1529,7 +1529,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					ws.Language = subtag;
 					if (ws.Language.Code == "zh" && ws.Language.Iso3Code == "cmn" && ws.Region == null)
-						ws.Region = new RegionSubtag("CN", "China", false);
+						ws.Region = "CN";
 				}
 
 				if (!CheckWsIdChange())
@@ -2263,7 +2263,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			WritingSystem ws = CurrentWritingSystem;
 			if (ws != null)
-				((InheritedCollationDefinition) ws.DefaultCollation).BaseLanguageTag = (string) m_sortLanguageComboBox.SelectedValue;
+				((InheritedCollationDefinition) ws.DefaultCollation).BaseIetfLanguageTag = (string) m_sortLanguageComboBox.SelectedValue;
 		}
 
 		#endregion

@@ -121,7 +121,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		internal void VerifyWsId(string wsId)
 		{
 			//Ensure the writing system identifier is set correctly
-			Assert.AreEqual(IetfLanguageTag.ToLanguageTag(CurrentWritingSystem.Language, m_regionVariantControl.ScriptSubtag,
+			Assert.AreEqual(IetfLanguageTagHelper.ToIetfLanguageTag(CurrentWritingSystem.Language, m_regionVariantControl.ScriptSubtag,
 				m_regionVariantControl.RegionSubtag, m_regionVariantControl.VariantSubtags), wsId);
 		}
 
@@ -216,7 +216,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		internal void ValidateKeyboardTab()
 		{
-			Assert.AreEqual(CurrentWritingSystem.LanguageTag, m_modelForKeyboard.CurrentRFC4646);
+			Assert.AreEqual(CurrentWritingSystem.IetfLanguageTag, m_modelForKeyboard.CurrentIetfLanguageTag);
 		}
 
 		internal void ValidateConvertersTab()
@@ -438,7 +438,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		internal void SetCustomRegionName(string newRegionName)
 		{
 			var code = newRegionName.Substring(0, 2).ToUpperInvariant();
-			m_regionVariantControl.RegionSubtag = new RegionSubtag(code, newRegionName, true);
+			m_regionVariantControl.RegionSubtag = new RegionSubtag(code, newRegionName);
 		}
 
 		#endregion General Tab

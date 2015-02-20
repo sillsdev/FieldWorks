@@ -682,7 +682,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				// If the key contains a locale ID, then don't use the default vernacular
 				// writing system, build one from the locale.
 				string identifier = key.Substring(key.IndexOf("_") + 1);
-				ws = m_cache.ServiceLocator.WritingSystemManager.Get(IetfLanguageTag.ToLanguageTag(identifier));
+				ws = m_cache.ServiceLocator.WritingSystemManager.Get(IetfLanguageTagHelper.ToIetfLanguageTag(identifier));
 			}
 			else if (key == "AlwaysValidCharacters")
 			{

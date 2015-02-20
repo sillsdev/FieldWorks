@@ -502,7 +502,7 @@ namespace SIL.FieldWorks.Common.Controls
 					internalCode = m_originalCode; // We're modifying and existing WS, so just re-use the original code
 				else
 					internalCode = m_wsManager.GetValidLangTagForNewLang(name);
-				return new LanguageSubtag(internalCode, name, true, null);
+				return new LanguageSubtag(internalCode, name);
 			}
 
 			set

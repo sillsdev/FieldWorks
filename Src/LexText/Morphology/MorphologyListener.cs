@@ -343,7 +343,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				// This allows it to try to find a dictionary, but doesn't force one to exist.
 				if (string.IsNullOrEmpty(wsObj.SpellCheckingId) || wsObj.SpellCheckingId == "<None>") // LT-13556 new langs were null here
-					wsObj.SpellCheckingId = wsObj.LanguageTag.Replace('-', '_');
+					wsObj.SpellCheckingId = wsObj.IetfLanguageTag.Replace('-', '_');
 			}
 			// This forces the default vernacular WS spelling dictionary to exist, and updates
 			// all existing ones.

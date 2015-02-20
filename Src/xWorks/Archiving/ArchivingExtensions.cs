@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 			if (!string.IsNullOrEmpty(iso3Code))
 				return iso3Code;
 
-			iso3Code = ws.LanguageTag;
+			iso3Code = ws.IetfLanguageTag;
 
 			// split the result, the iso3 code is in the first segment
 			var segments = iso3Code.Split(new[] { '-' });

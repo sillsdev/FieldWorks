@@ -588,9 +588,9 @@ namespace SIL.FieldWorks.FDO
 
 		private static bool IsWritingSystemInProject(string wsId, FdoCache cache)
 		{
-			foreach (var ws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
+			foreach (WritingSystem ws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
-				if (ws.LanguageTag.ToLowerInvariant() == wsId.ToLowerInvariant())
+				if (ws.IetfLanguageTag.Equals(wsId, StringComparison.InvariantCultureIgnoreCase))
 					return true;
 			}
 			return false;

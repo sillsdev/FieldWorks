@@ -256,10 +256,10 @@ namespace SIL.CoreImpl
 
 			Assert.IsFalse(wsManager.Exists("en-Latn-US"));
 			// this should create a new writing system, since it doesn't exist
-			ILgWritingSystem enUsLgWs = wsManager.get_Engine("en-Latn-US");
-			Assert.IsTrue(wsManager.Exists("en-Latn-US"));
+			ILgWritingSystem enUsLgWs = wsManager.get_Engine("en-US-fonipa");
+			Assert.IsTrue(wsManager.Exists("en-US-fonipa"));
 			Assert.IsTrue(wsManager.Exists(enUsLgWs.Handle));
-			WritingSystem enUsWs = wsManager.Get("en-Latn-US");
+			WritingSystem enUsWs = wsManager.Get("en-US-fonipa");
 			Assert.AreSame(enUsWs, enUsLgWs);
 			wsManager.Save();
 		}
@@ -323,7 +323,7 @@ namespace SIL.CoreImpl
 			Assert.AreEqual("Chinese", chWs.Language.Name);
 			Assert.AreEqual("China", chWs.Region.Name);
 			Assert.AreEqual("Charis SIL", chWs.DefaultFontName);
-			Assert.That(chWs.DefaultCollation.ValueEquals(new InheritedCollationDefinition("standard") {BaseLanguageTag = "zh-CN", BaseType = "standard"}), Is.True);
+			Assert.That(chWs.DefaultCollation.ValueEquals(new InheritedCollationDefinition("standard") {BaseIetfLanguageTag = "zh-CN", BaseType = "standard"}), Is.True);
 			wsManager.Save();
 		}
 
@@ -480,13 +480,13 @@ namespace SIL.CoreImpl
 			var localStore = new LocalFileWritingSystemStore(PrepareTempStore("Store"));
 			var ws = new WritingSystem
 			{
-				Language = new LanguageSubtag("en", "en", false, null),
+				Language = "en",
 				LocalKeyboard = Keyboard.Controller.CreateKeyboard("en-UK_United States-Dvorak", KeyboardFormat.Unknown, Enumerable.Empty<string>())
 			};
 			localStore.Set(ws);
 			ws = new WritingSystem
 			{
-				Language = new LanguageSubtag("ko", "ko", false, null),
+				Language = "ko",
 				LocalKeyboard = Keyboard.Controller.CreateKeyboard("ta-IN_US", KeyboardFormat.Unknown, Enumerable.Empty<string>())
 			};
 			localStore.Set(ws);
@@ -541,12 +541,12 @@ namespace SIL.CoreImpl
 			// \u00CB == E with diacritic
 			Assert.AreEqual("aaa", wsManager.GetValidLangTagForNewLang("U"));
 
-			var subtag = new LanguageSubtag("qip", "Qipkey", true, null);
+			var subtag = new LanguageSubtag("qip", "Qipkey");
 			WritingSystem newWs = wsManager.Create(subtag, null, null, Enumerable.Empty<VariantSubtag>());
 			wsManager.Set(newWs);
 			Assert.AreEqual("aaa", wsManager.GetValidLangTagForNewLang("Qipsing"), "code for 'qip' should already be taken");
 
-			subtag = new LanguageSubtag("aaa", "Qipsing", true, null);
+			subtag = new LanguageSubtag("aaa", "Qipsing");
 			newWs = wsManager.Create(subtag, null, null, Enumerable.Empty<VariantSubtag>());
 			wsManager.Set(newWs);
 			Assert.AreEqual("aab", wsManager.GetValidLangTagForNewLang("Qipwest"),

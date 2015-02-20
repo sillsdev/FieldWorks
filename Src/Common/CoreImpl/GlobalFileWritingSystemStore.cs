@@ -107,7 +107,7 @@ namespace SIL.CoreImpl
 							// know when this event should be raised, nor am I sure I am building the argument correctly.
 							// However, I don't think anything (at least in our code) actually uses it.
 							if (WritingSystemIdChanged != null)
-								WritingSystemIdChanged(this, new WritingSystemIdChangedEventArgs(oldId, ws.LanguageTag));
+								WritingSystemIdChanged(this, new WritingSystemIdChangedEventArgs(oldId, ws.IetfLanguageTag));
 						}
 					}
 				}
@@ -176,7 +176,7 @@ namespace SIL.CoreImpl
 			if (ws == null)
 				throw new ArgumentNullException("ws");
 
-			return ws.LanguageTag;
+			return ws.IetfLanguageTag;
 		}
 
 		/// <summary>
@@ -446,7 +446,7 @@ namespace SIL.CoreImpl
 				WritingSystemDefinition ws = CreateNew();
 				var ldmlDataMapper = new LdmlDataMapper();
 				ldmlDataMapper.Read(filePath, ws);
-				ws.StoreID = ws.LanguageTag;
+				ws.StoreID = ws.IetfLanguageTag;
 				ws.AcceptChanges();
 				return ws;
 			}
@@ -470,7 +470,7 @@ namespace SIL.CoreImpl
 		{
 			if (string.IsNullOrEmpty(ws.Language))
 				return "";
-			return GetFileName(ws.LanguageTag);
+			return GetFileName(ws.IetfLanguageTag);
 		}
 
 		private static string GetFileName(string identifier)

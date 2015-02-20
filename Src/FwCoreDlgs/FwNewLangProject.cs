@@ -683,7 +683,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 							m_dbFile = (string)progressDlg.RunTask(DisplayUi, FdoCache.CreateNewLangProj,
 																	ProjectName, FwDirectoryFinder.FdoDirectories, threadHelper, m_cbAnalWrtSys.SelectedItem,
 																	m_cbVernWrtSys.SelectedItem,
-																	m_wsManager.UserWritingSystem.LanguageTag,
+																	m_wsManager.UserWritingSystem.IetfLanguageTag,
 																	m_newAnalysisWss, m_newVernWss, anthroFile);
 						}
 					}
