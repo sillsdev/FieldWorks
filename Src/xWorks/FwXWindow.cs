@@ -386,21 +386,6 @@ namespace SIL.FieldWorks.XWorks
 			m_viewHelper = new ActiveViewHelper(this);
 			LoadUI(configFile);
 
-			if (!Mediator.PropertyTable.GetBoolProperty("DidAutomaticParseIsCurrentReset", false))
-			{
-				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
-					() =>
-					{
-						var paraRepo = Cache.ServiceLocator.GetInstance<IStTxtParaRepository>();
-						foreach (var para in paraRepo.AllInstances().Where(para => para.ParseIsCurrent))
-						{
-							para.ParseIsCurrent = false;
-						}
-					});
-				Mediator.PropertyTable.SetProperty("DidAutomaticParseIsCurrentReset", true);
-				Mediator.PropertyTable.SetPropertyPersistence("DidAutomaticParseIsCurrentReset", true);
-			}
-
 			m_viewHelper.ActiveViewChanged += new EventHandler<EventArgs>(ActiveViewChanged);
 		}
 

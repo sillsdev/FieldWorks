@@ -7752,8 +7752,25 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		private void UpdateMinimalLexReferences(ICmObject extraTarget)
 		{
-			var uowService = Services.GetInstance<IUnitOfWorkService>();
-			var targets = TargetsRS.ToList();
+			// We want to register MinimalLexReferences as (typically) changed on all current targets and possibly one extra (an object removed
+			// from the sequence). This is complicated by the fact that, in a pathological case where multiple objects are removed leaving
+			// only one, 'this' may have been deleted before we call this method for some of the removed objects.
+			IUnitOfWorkService uowService;
+			List<ICmObject> targets;
+			if (IsValidObject)
+			{
+				uowService = Services.GetInstance<IUnitOfWorkService>();
+				targets = TargetsRS.ToList();
+			}
+			else if (extraTarget != null && extraTarget.IsValidObject)
+			{
+				uowService = extraTarget.Services.GetInstance<IUnitOfWorkService>();
+				targets = new List<ICmObject>();
+			}
+			else
+			{
+				return; // none of the objects we might want to register is still valid.
+			}
 			if (extraTarget != null)
 				targets.Add(extraTarget);
 			foreach (var target in targets)
@@ -7778,14 +7795,15 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				if (e.ObjectRemoved is LexSense)
 				{
 					List<ICmObject> backrefs = ((LexSense)e.ObjectRemoved).LexSenseReferences.Cast<ICmObject>().ToList();
-					Services.GetInstance<IUnitOfWorkService>().RegisterVirtualAsModified(e.ObjectRemoved, "LexSenseReferences",
+					// don't use this.Services, since 'this' may already have been deleted (in case Replace reduces target set to one item).
+					e.ObjectRemoved.Services.GetInstance<IUnitOfWorkService>().RegisterVirtualAsModified(e.ObjectRemoved, "LexSenseReferences",
 						backrefs);
 					entry = (e.ObjectRemoved as LexSense).Entry;
 				}
 				if (entry != null)
 					entry.DateModified = DateTime.Now;
 
-				if (!m_cache.ObjectsBeingDeleted.Contains(this))
+				if (IsValidObject && !m_cache.ObjectsBeingDeleted.Contains(this))
 				{
 					if (TargetsRS.Count == 1)
 					//in this situation there is only 1 or 0 items left in this lexical Relation so

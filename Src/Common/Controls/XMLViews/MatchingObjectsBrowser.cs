@@ -18,30 +18,13 @@ using XCore;
 using SIL.FieldWorks.Filters;
 using SIL.CoreImpl;
 using System.Collections;
+using Palaso.Xml;
 
 namespace SIL.FieldWorks.Common.Controls
 {
-	/// <summary>Struct pairing a field ID with a TsString</summary>
-	public struct SearchField
-	{
-		private readonly int m_flid;
-		private readonly ITsString m_tss;
-
-		/// <summary/>
-		public SearchField(int flid, ITsString tss)
-		{
-			m_flid = flid;
-			m_tss = tss;
-		}
-
-		/// <summary/>
-		public int Flid { get { return m_flid; } }
-
-		/// <summary/>
-		public ITsString String { get { return m_tss; } }
-	}
-
-	/// <summary/>
+	/// <summary>
+	/// A browse view that displays the results of a search.
+	/// </summary>
 	public class MatchingObjectsBrowser : UserControl, IFWDisposable
 	{
 		#region Events
@@ -56,6 +39,16 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public event FwSelectionChangedEventHandler SelectionMade;
 
+		/// <summary>
+		/// Occurs when the search has completed.
+		/// </summary>
+		public event EventHandler SearchCompleted;
+
+		/// <summary>
+		/// Occurs when the underlying BrowseViewer's columns have changed.
+		/// </summary>
+		public event EventHandler ColumnsChanged;
+
 		#endregion Events
 
 		#region Data members
@@ -69,12 +62,13 @@ namespace SIL.FieldWorks.Common.Controls
 		private BrowseViewer m_bvMatches;
 		private ObjectListPublisher m_listPublisher;
 
-		private StringSearcher<ICmObject> m_searcher;
+		private SearchEngine m_searchEngine;
 
-		private List<ICmObject> m_searchableObjs;
-		private int m_curObjIndex;
 		private ICmObject m_selObject;
-		private Func<ICmObject, IEnumerable<SearchField>> m_stringSelector;
+
+		private ICmObject m_startingObject;
+
+		private string[] m_visibleColumns;
 
 		#endregion Data members
 
@@ -103,7 +97,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (disposing)
 			{
-				m_searcher.Clear();
+				m_searchEngine.SearchCompleted -= m_searchEngine_SearchCompleted;
 			}
 			m_cache = null;
 
@@ -126,10 +120,37 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the starting object.
+		/// </summary>
+		public ICmObject StartingObject
+		{
+			get
+			{
+				CheckDisposed();
+				return m_startingObject;
+			}
+
+			set
+			{
+				CheckDisposed();
+				m_startingObject = value;
+			}
+		}
+
+		/// <summary>
+		/// Used by a Find dialog's SearchEngine to determine whether to search on a particular field or not
+		/// </summary>
+		public bool IsVisibleColumn(string keyString)
+		{
+			CheckDisposed();
+
+			return m_visibleColumns.Any(columnLayoutName => columnLayoutName.Contains(keyString));
+		}
+
 		#endregion Properties
 
 		#region Public methods
-
 		/// <summary>
 		/// Initialize the control, creating the BrowseViewer among other things.
 		/// </summary>
@@ -137,13 +158,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="stylesheet">The stylesheet.</param>
 		/// <param name="mediator">The mediator.</param>
 		/// <param name="configNode">The config node.</param>
-		/// <param name="objs">The searchable objects.</param>
-		/// <param name="type">The match type.</param>
-		/// <param name="stringSelector">The string selector.</param>
+		/// <param name="searchEngine">The search engine.</param>
 		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, Mediator mediator, XmlNode configNode,
-			IEnumerable<ICmObject> objs, SearchType type, Func<ICmObject, IEnumerable<SearchField>> stringSelector)
+			SearchEngine searchEngine)
 		{
-			Initialize(cache, stylesheet, mediator, configNode, objs, type, stringSelector, null);
+			Initialize(cache, stylesheet, mediator, configNode, searchEngine, null);
 		}
 
 		/// <summary>
@@ -153,103 +172,46 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="stylesheet">The stylesheet.</param>
 		/// <param name="mediator">The mediator.</param>
 		/// <param name="configNode">The config node.</param>
-		/// <param name="objs">The searchable objects.</param>
-		/// <param name="type">The match type.</param>
-		/// <param name="stringSelector">A function which generates, for an object we could match, a collection of SearchFields
-		/// which indicate the string value and field that could be matched. It should NOT generate SearchFields with null
-		/// or empty strings. (An earlier version of this class discarded them, but it is much more efficient never to make them.)</param>
+		/// <param name="searchEngine">The search engine.</param>
 		/// <param name="reversalWs">The reversal writing system.</param>
 		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, Mediator mediator, XmlNode configNode,
-			IEnumerable<ICmObject> objs, SearchType type, Func<ICmObject, IEnumerable<SearchField>> stringSelector,
-			IWritingSystem reversalWs)
+			SearchEngine searchEngine, IWritingSystem reversalWs)
 		{
 			CheckDisposed();
 
 			m_cache = cache;
 			m_stylesheet = stylesheet;
 			m_mediator = mediator;
-			m_searchableObjs = objs.ToList();
-			m_stringSelector = stringSelector;
-			m_searcher = new StringSearcher<ICmObject>(type, m_cache.ServiceLocator.WritingSystemManager);
+			m_searchEngine = searchEngine;
+			m_searchEngine.SearchCompleted += m_searchEngine_SearchCompleted;
 
 			SuspendLayout();
 			CreateBrowseViewer(configNode, reversalWs);
 			ResumeLayout(false);
 		}
 
-		private IEnumerable<SearchField> m_pendingFields;
-		private IEnumerable<ICmObject> m_pendingFilters;
-
-		private bool DoPendingSearchWhenIdle(object arg)
+		private void m_searchEngine_SearchCompleted(object sender, SearchCompletedEventArgs e)
 		{
-			if (m_pendingFields == null)
-				return true; // just in case: somehow we got triggered again after successful completion.
-			Search(m_pendingFields, m_pendingFilters);
-			return true; // we don't need to do this again.
+			UpdateResults(e.Fields.FirstOrDefault(), e.Results);
+			// On the completion of a new search set the selection to the first result without stealing the focus
+			// from any other controls.
+			if(m_bvMatches.BrowseView.IsHandleCreated) // hotfix paranoia test
+			{
+				var oldEnabledState = m_bvMatches.Enabled;
+				m_bvMatches.Enabled = false;
+				// disable the control before changing the selection so that the focus won't change
+				m_bvMatches.SelectedIndex = m_bvMatches.AllItems.Count > 0 ? 0 : -1;
+				m_bvMatches.Enabled = oldEnabledState; // restore the control to it's previous enabled state
+			}
 		}
 
 		/// <summary>
-		/// Searches the specified fields.
+		/// Searches the specified fields asynchronously.
 		/// </summary>
-		/// <param name="fields">The fields.</param>
-		/// <param name="filters">The filters.</param>
-		public void Search(IEnumerable<SearchField> fields, IEnumerable<ICmObject> filters)
+		public void SearchAsync(IEnumerable<SearchField> fields)
 		{
-			// If we abort this search (because the user typed), but somehow the system becomes idle before we complete a new
-			// search, go ahead and complete the original one.
-			m_pendingFields = fields;
-			m_pendingFilters = filters;
-			m_mediator.IdleQueue.Add(IdleQueuePriority.High, DoPendingSearchWhenIdle);
-
-			CreateSearchers();
-
-			var results = new HashSet<ICmObject>();
-			ITsString firstSearchStr = null;
-			foreach (SearchField field in fields)
-			{
-				if (ShouldAbort())
-					return;
-				if (firstSearchStr == null)
-					firstSearchStr = field.String;
-				// Searching on a lone punctation mark using SearchType.FullText returns null instead of an empty IEnumerable.
-				// Pass an empty array to avoid an ArgumentNullException.
-				results.UnionWith(m_searcher.Search(field.Flid, field.String) ?? new ICmObject[0]);
-			}
-
-			if (filters != null)
-				results.ExceptWith(filters);
-
-			if (ShouldAbort())
-				return;
-			// if the firstSearchStr is null we can't get its writing system
-			// if the cache is null the writing system of the search is now meaningless (the dialog for the results is likely gone)
-			RecordSorter sorter = null;
-			if (firstSearchStr != null && m_cache != null)
-			{
-				int ws = firstSearchStr.get_WritingSystemAt(0);
-				bool isVern = m_cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Contains(ws);
-				sorter = m_bvMatches.CreateSorterForFirstColumn(isVern, ws);
-			}
-			if (sorter != null)
-			{
-				// Convert each ICmObject in results to a IManyOnePathSortItem, and sort
-				// using the sorter.
-				var records = new ArrayList(results.Count);
-				foreach (ICmObject obj in results)
-					records.Add(new ManyOnePathSortItem(obj));
-				sorter.Sort(records);
-				var hvos = new int[records.Count];
-				for (int i = 0; i < records.Count; ++i)
-					hvos[i] = (((IManyOnePathSortItem) records[i]).KeyObject);
-				UpdateResults(hvos);
-			}
-			else
-			{
-				UpdateResults(results.Select(obj => obj.Hvo).ToArray());
-			}
-			// Completed successfully, don't want to do again.
-			m_pendingFields = null;
-			m_mediator.IdleQueue.Remove(DoPendingSearchWhenIdle);
+			// Start the search
+			m_searchEngine.SearchAsync(fields);
 		}
 
 		/// <summary>
@@ -270,15 +232,6 @@ namespace SIL.FieldWorks.Common.Controls
 			int i = m_bvMatches.SelectedIndex;
 			if (i > 0)
 				m_bvMatches.SelectedIndex = i - 1;
-		}
-
-		/// <summary>
-		/// Resets this instance.
-		/// </summary>
-		public void Reset()
-		{
-			m_curObjIndex = 0;
-			m_searcher.Clear();
 		}
 
 		#endregion
@@ -305,6 +258,22 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			m_selObject = m_cache.ServiceLocator.GetObject(e.Hvo);
 			FireSelectionMade();
+		}
+
+		/// <summary>
+		/// This comes from modifying the browse view columns
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void m_bvMatches_ColumnsChanged(object sender, EventArgs e)
+		{
+			if (e is ColumnWidthChangedEventArgs)
+				return; // don't want to know about this kind
+
+			UpdateVisibleColumns();
+			if (ColumnsChanged != null)
+				// Find dialogs can subscribe to this to know when to check for new search fields
+				ColumnsChanged(this, new EventArgs());
 		}
 
 #if __MonoCS__
@@ -346,24 +315,6 @@ namespace SIL.FieldWorks.Common.Controls
 
 		#region Other methods
 
-		private void CreateSearchers()
-		{
-			int control = 0;
-			// This is tricky and non-obvious. This loop does NOT initialize m_curObjIndex. Therefore unless something
-			// adds to m_searchableObjs (not sure this can happen) or calls Reset() to set it back to zero, this routine
-			// will do nothing except the first time it is called (after m_searchableObjs is set). I don't know exactly
-			// why it was done that way, but that is why it is fast after the first time.
-			for (; m_curObjIndex < m_searchableObjs.Count; m_curObjIndex++)
-			{
-				// Every so often see whether the user has typed something that makes our search irrelevant.
-				if (control++ % 50 == 0 && ShouldAbort())
-					return;
-
-				foreach (SearchField field in m_stringSelector(m_searchableObjs[m_curObjIndex]))
-					m_searcher.Add(m_searchableObjs[m_curObjIndex], field.Flid, field.String);
-			}
-		}
-
 		private void CreateBrowseViewer(XmlNode configNode, IWritingSystem reversalWs)
 		{
 			m_listPublisher = new ObjectListPublisher(m_cache.DomainDataByFlid as ISilDataAccessManaged, ListFlid);
@@ -381,19 +332,58 @@ namespace SIL.FieldWorks.Common.Controls
 				m_bvMatches.BrowseView.Vc.ReversalWs = reversalWs.Handle;
 			m_bvMatches.SelectionChanged += m_bvMatches_SelectionChanged;
 			m_bvMatches.SelectionMade += m_bvMatches_SelectionMade;
+			UpdateVisibleColumns();
 			Controls.Add(m_bvMatches);
 			m_bvMatches.ResumeLayout();
+			m_bvMatches.ColumnsChanged += m_bvMatches_ColumnsChanged;
 		}
 
-		private void UpdateResults(int[] hvos)
+		private void UpdateVisibleColumns()
 		{
-			// If m_bvMatches is disposed this would not go well.
-			// The UpdateResults was probably triggered by an event left on the idle queue after this control was disposed, so skip it.
-			if(m_bvMatches.IsDisposed)
-				return;
-			var count = hvos.Length;
-			var prevIndex = m_bvMatches.SelectedIndex;
-			var prevHvo = prevIndex == -1 ? 0 : m_bvMatches.AllItems[prevIndex];
+			var results = new List<string>();
+			foreach (var columnSpec in m_bvMatches.ColumnSpecs)
+			{
+				var colLabel = columnSpec.GetOptionalStringAttribute("layout", null);
+				if (colLabel == null)
+				{
+					// In this case we are likely dealing with a dialog that does NOT use IsVisibleColumn()
+					// and there will be one pre-determined SearchField
+					continue;
+				}
+				results.Add(colLabel);
+			}
+			m_visibleColumns = results.ToArray();
+		}
+
+		private void UpdateResults(SearchField firstField, IEnumerable<int> results)
+		{
+			ITsString firstSearchStr = firstField.String;
+			// if the firstSearchStr is null we can't get its writing system
+			RecordSorter sorter = null;
+			if (firstSearchStr != null)
+			{
+				int ws = firstSearchStr.get_WritingSystemAt(0);
+				sorter = CreateFindResultSorter(firstSearchStr, ws);
+			}
+			int[] hvos;
+			if (sorter != null)
+			{
+				// Convert each ICmObject in results to a IManyOnePathSortItem, and sort
+				// using the sorter.
+				var records = new ArrayList();
+				foreach (int hvo in results.Where(hvo => StartingObject == null || StartingObject.Hvo != hvo))
+					records.Add(new ManyOnePathSortItem(hvo, null, null));
+				sorter.Sort(records);
+				hvos = records.Cast<IManyOnePathSortItem>().Select(i => i.KeyObject).ToArray();
+			}
+			else
+			{
+				hvos = results.Where(hvo => StartingObject == null || StartingObject.Hvo != hvo).ToArray();
+			}
+
+			int count = hvos.Length;
+			int prevIndex = m_bvMatches.SelectedIndex;
+			int prevHvo = prevIndex == -1 ? 0 : m_bvMatches.AllItems[prevIndex];
 			m_listPublisher.CacheVecProp(m_cache.LanguageProject.LexDbOA.Hvo, hvos);
 			TabStop = count > 0;
 			// Disable the list so that it doesn't steal the focus (LT-9481)
@@ -429,6 +419,16 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				m_bvMatches.Enabled = true;
 			}
+
+			if (!m_searchEngine.IsBusy && SearchCompleted != null)
+				SearchCompleted(this, new EventArgs());
+		}
+
+		private FindResultSorter CreateFindResultSorter(ITsString firstSearchStr, int ws)
+		{
+			var browseViewSorter = m_bvMatches.CreateSorterForFirstColumn(ws);
+
+			return browseViewSorter == null ? null: new FindResultSorter(firstSearchStr, browseViewSorter);
 		}
 
 		private void FireSelectionChanged()
@@ -441,24 +441,6 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			if (SelectionMade != null)
 				SelectionMade(this, new FwObjectSelectionEventArgs(m_selObject.Hvo));
-		}
-
-		/// <summary>
-		/// Abort resetting if the user types anything, anywhere.
-		/// Also sets the flag (if it returns true) to indicate the search WAS aborted.
-		/// </summary>
-		/// <returns></returns>
-		private static bool ShouldAbort()
-		{
-#if !__MonoCS__
-			var msg = new Win32.MSG();
-			return Win32.PeekMessage(ref msg, IntPtr.Zero, (uint)Win32.WinMsgs.WM_KEYDOWN, (uint)Win32.WinMsgs.WM_KEYDOWN,
-				(uint)Win32.PeekFlags.PM_NOREMOVE);
-#else
-			// ShouldAbort seems to be used for optimization purposes so returing false
-			// just loses the optimization.
-			return false;
-#endif
 		}
 
 		#endregion Other methods

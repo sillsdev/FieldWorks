@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using SIL.FieldWorks.FDO;
+﻿using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.Filters
 {
@@ -13,6 +9,7 @@ namespace SIL.FieldWorks.Filters
 	/// This path is empty when sorting by columns containing simple (or very complex)
 	/// properties of the original objects, but may be more complex when sorting by columns
 	/// containing related objects, especially ones in many:1 relation with the original.
+	/// </summary>
 	public interface IManyOnePathSortItem
 	{
 		ICmObject RootObjectUsing(FdoCache cache);

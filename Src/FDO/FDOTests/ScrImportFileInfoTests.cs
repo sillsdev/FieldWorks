@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -9,9 +9,6 @@ using System;
 using System.IO;
 using System.Text;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.Test.TestUtils;
 using SILUBS.SharedScrUtils;
@@ -1003,7 +1000,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				ImportDomain.Main, null, null, true);
 
 			m_mappingList.Add(new ImportMappingInfo(@"\fig", null, false,
-				MappingTargetType.Figure, MarkerDomain.Default, null, null));
+				MappingTargetType.Figure, MarkerDomain.Default, "any value here prevents this mapping being overwritten", null));
 
 			// Use strict checking to make sure no error occurs.
 			info.PerformStrictScan();
@@ -1026,7 +1023,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				@"\fig stuff1|stuff2|stuff3|stuff4|stuff5|stuff6");
 
 			m_mappingList.Add(new ImportMappingInfo(@"\fig", @"\fig*", false,
-				MappingTargetType.Figure, MarkerDomain.Default, null, null));
+				MappingTargetType.Figure, MarkerDomain.Default, "any value here prevents this mapping being overwritten", null));
 
 			IScrImportFileInfo info = m_factory.Create(filename, m_mappingList,
 				ImportDomain.Main, null, null, true);
@@ -1054,7 +1051,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				@"\btfig stuff1|stuff2|stuff3|stuff4|stuff5|stuff6\btfig*");
 
 			m_mappingList.Add(new ImportMappingInfo(@"\fig", @"\fig*", false,
-				MappingTargetType.Figure, MarkerDomain.Default, null, null));
+				MappingTargetType.Figure, MarkerDomain.Default, "any value here prevents this mapping being overwritten", null));
 
 			IScrImportFileInfo info = m_factory.Create(filename, m_mappingList,
 				ImportDomain.Main, null, null, false);
@@ -1083,7 +1080,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				@"\fig stuff1|stuff2|stuff3|stuff4|stuff5");
 
 			m_mappingList.Add(new ImportMappingInfo(@"\fig", null, false,
-				MappingTargetType.Figure, MarkerDomain.Default, null, null));
+				MappingTargetType.Figure, MarkerDomain.Default, "any value here prevents this mapping being overwritten", null));
 
 			// Try it first without strict checking to make sure it does not throw an exception
 			IScrImportFileInfo info = m_factory.Create(filename, m_mappingList,
@@ -1119,7 +1116,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				@"is for 4|stuff5|stuff6");
 
 			m_mappingList.Add(new ImportMappingInfo(@"\fig", null, false,
-				MappingTargetType.Figure, MarkerDomain.Default, null, null));
+				MappingTargetType.Figure, MarkerDomain.Default, "any value here prevents this mapping being overwritten", null));
 
 			IScrImportFileInfo info = m_factory.Create(filename, m_mappingList,
 				ImportDomain.Main, null, null, true);
@@ -1148,7 +1145,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				@"|stuff6");
 
 			m_mappingList.Add(new ImportMappingInfo(@"\fig", null, false,
-				MappingTargetType.Figure, MarkerDomain.Default, null, null));
+				MappingTargetType.Figure, MarkerDomain.Default, "any value here prevents this mapping being overwritten", null));
 
 			IScrImportFileInfo info = m_factory.Create(filename, m_mappingList,
 				ImportDomain.Main, null, null, true);
@@ -1174,7 +1171,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				@"is for 4|stuff5|stuff6\em my child!\em*");
 
 			m_mappingList.Add(new ImportMappingInfo(@"\fig", null, false,
-				MappingTargetType.Figure, MarkerDomain.Default, null, null));
+				MappingTargetType.Figure, MarkerDomain.Default, "any value here prevents this mapping being overwritten", null));
 
 			IScrImportFileInfo info = m_factory.Create(filename, m_mappingList,
 				ImportDomain.Main, null, null, true);
@@ -1200,7 +1197,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				@"is for 4|stuff5|stuff6\fig* my child\");
 
 			m_mappingList.Add(new ImportMappingInfo(@"\fig", null, false,
-				MappingTargetType.Figure, MarkerDomain.Default, null, null));
+				MappingTargetType.Figure, MarkerDomain.Default, "any value here prevents this mapping being overwritten", null));
 
 			IScrImportFileInfo info = m_factory.Create(filename, m_mappingList,
 				ImportDomain.Main, null, null, true);
@@ -1227,7 +1224,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				@"\v 2 This is Paul.");
 
 			m_mappingList.Add(new ImportMappingInfo(@"\fig", null, false,
-				MappingTargetType.Figure, MarkerDomain.Default, null, null));
+				MappingTargetType.Figure, MarkerDomain.Default, "any value here prevents this mapping being overwritten", null));
 
 			IScrImportFileInfo info = m_factory.Create(filename, m_mappingList,
 				ImportDomain.Main, null, null, true);
@@ -1250,10 +1247,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				@"\fig stuff1|stuff2|stuff3|stuff4|stuff5");
 
 			m_mappingList.Add(new ImportMappingInfo(@"\fig", null, true,
-				MappingTargetType.Figure, MarkerDomain.Default, null, null));
+				MappingTargetType.Figure, MarkerDomain.Default, "any value here prevents this mapping being overwritten", null));
 
-			IScrImportFileInfo info = m_factory.Create(filename, m_mappingList,
-				ImportDomain.Main, null, null, true);
+			m_factory.Create(filename, m_mappingList, ImportDomain.Main, null, null, true);
 		}
 		#endregion
 

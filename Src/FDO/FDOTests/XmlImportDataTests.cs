@@ -1385,7 +1385,368 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string[] rgsLog = sLog.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 			Assert.LessOrEqual(1, rgsLog.Length);
 			Assert.AreEqual("data stream:0: Info: Creating new writing system for \"qaa-x-kal\".", rgsLog[0]);
+			}
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the method ImportData() on sequence lexical relations.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void ImportSequenceRelation()
+		{
+			DateTime dtLexOrig = m_cache.LangProject.LexDbOA.DateCreated;
+			TimeSpan span = new TimeSpan(dtLexOrig.Ticks - m_now.Ticks);
+			Assert.LessOrEqual(span.TotalMinutes, 1.0);
+			// should be only a second or two
+			XmlImportData xid = new XmlImportData(m_cache);
+			using (var rdr = new StringReader(@"<LexDb xmlns:msxsl='urn:schemas-microsoft-com:xslt' xmlns:user='urn:my-scripts'>
+	<Entries>
+		<LexEntry>
+			<LexemeForm>
+				<MoStemAllomorph>
+					<MorphType>
+						<Link ws='en' name='stem' />
+					</MorphType>
+					<Form>
+						<AUni ws='fr'>Wed</AUni>
+					</Form>
+				</MoStemAllomorph>
+			</LexemeForm>
+			<MorphoSyntaxAnalyses>
+				<MoStemMsa id='MSA1000'>
+					<PartOfSpeech>
+						<Link ws='en' abbr='n' />
+					</PartOfSpeech>
+				</MoStemMsa>
+			</MorphoSyntaxAnalyses>
+			<Senses>
+				<LexSense>
+					<MorphoSyntaxAnalysis>
+						<Link target='MSA1000' />
+					</MorphoSyntaxAnalysis>
+					<LexicalRelations>
+						<Link wsa='en' abbr='calendar' wsv='fr' sense='Mon' />
+						<Link wsa='en' abbr='calendar' wsv='fr' sense='Tue' />
+						<Link wsa='en' abbr='calendar' wsv='fr' sense='Wed' />
+					</LexicalRelations>
+				</LexSense>
+			</Senses>
+		</LexEntry>
+		<LexEntry>
+			<LexemeForm>
+				<MoStemAllomorph>
+					<MorphType>
+						<Link ws='en' name='stem' />
+					</MorphType>
+					<Form>
+						<AUni ws='fr'>Tue</AUni>
+					</Form>
+				</MoStemAllomorph>
+			</LexemeForm>
+			<MorphoSyntaxAnalyses>
+				<MoStemMsa id='MSA1001'>
+					<PartOfSpeech>
+						<Link ws='en' abbr='n' />
+					</PartOfSpeech>
+				</MoStemMsa>
+			</MorphoSyntaxAnalyses>
+			<Senses>
+				<LexSense>
+					<MorphoSyntaxAnalysis>
+						<Link target='MSA1001' />
+					</MorphoSyntaxAnalysis>
+					<LexicalRelations>
+						<Link wsa='en' abbr='calendar' wsv='fr' sense='Mon' />
+						<Link wsa='en' abbr='calendar' wsv='fr' sense='Tue' />
+						<Link wsa='en' abbr='calendar' wsv='fr' sense='Wed' />
+					</LexicalRelations>
+				</LexSense>
+			</Senses>
+		</LexEntry>
+		<LexEntry>
+			<LexemeForm>
+				<MoStemAllomorph>
+					<MorphType>
+						<Link ws='en' name='stem' />
+					</MorphType>
+					<Form>
+						<AUni ws='fr'>Mon</AUni>
+					</Form>
+				</MoStemAllomorph>
+			</LexemeForm>
+			<MorphoSyntaxAnalyses>
+				<MoStemMsa id='MSA1002'>
+					<PartOfSpeech>
+						<Link ws='en' abbr='n' />
+					</PartOfSpeech>
+				</MoStemMsa>
+			</MorphoSyntaxAnalyses>
+			<Senses>
+				<LexSense>
+					<MorphoSyntaxAnalysis>
+						<Link target='MSA1002' />
+					</MorphoSyntaxAnalysis>
+					<LexicalRelations>
+						<Link wsa='en' abbr='calendar' wsv='fr' sense='Mon' />
+						<Link wsa='en' abbr='calendar' wsv='fr' sense='Tue' />
+						<Link wsa='en' abbr='calendar' wsv='fr' sense='Wed' />
+					</LexicalRelations>
+				</LexSense>
+			</Senses>
+		</LexEntry>
+	</Entries>
+</LexDb>"))
+			{
+				Assert.AreEqual(0, m_cache.LangProject.LexDbOA.Entries.Count(), "The lexicon starts out empty.");
+				Assert.AreEqual(0, m_cache.LangProject.AnthroListOA.PossibilitiesOS.Count);
+				Assert.AreEqual(0, m_cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Count);
+				Assert.AreEqual(0, m_cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Count);
+				ILexRefType calendar = null;
+				UndoableUnitOfWorkHelper.Do("do", "undo", m_cache.ActionHandlerAccessor, () =>
+				{
+					m_cache.LangProject.LexDbOA.ReferencesOA = m_cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+					calendar = m_cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
+					m_cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(calendar);
+					// The importer would create this relation, but it would not defaul to the desired type
+					calendar.Name.SetAnalysisDefaultWritingSystem("calendar");
+					calendar.MappingType = (int)LexRefTypeTags.MappingTypes.kmtSenseSequence;
+				});
+				StringBuilder sbLog = new StringBuilder();
+				xid.ImportData(rdr, new StringWriter(sbLog), null);
+				// The entries are Mon, Tue, Wed.
+				// The input specifies (three times!) that there is a Calendar relation Mon, Tue, Wed.
+				Assert.AreEqual(3, m_cache.LangProject.LexDbOA.Entries.Count());
+				var lrtRepo = m_cache.ServiceLocator.GetInstance<ILexRefTypeRepository>();
+				foreach (var lrt in lrtRepo.AllInstances())
+				{
+					if (lrt.Name.AnalysisDefaultWritingSystem.Text == "calendar")
+					{
+						Assert.That(lrt, Is.EqualTo(calendar), "Should only have one Calendar LRT");
+					}
+				}
+				var relations = calendar.MembersOC.ToArray();
+				Assert.That(relations, Has.Length.EqualTo(1), "should have produced exactly one lexical relation");
+				var items = relations[0].TargetsRS;
+				Assert.That(items, Has.Count.EqualTo(3), "relation should have three items");
+				Assert.That(((ILexEntry)items[0].Owner).LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("Mon"),
+					"First thing in relation should be Mon");
+				Assert.That(((ILexEntry)items[1].Owner).LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("Tue"),
+					"Second thing in relation should be Tue");
+				Assert.That(((ILexEntry)items[2].Owner).LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("Wed"),
+					"Third thing in relation should be Wed");
+			}
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the method ImportData() on Tree lexical relations.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void ImportTreeRelation()
+		{
+			DateTime dtLexOrig = m_cache.LangProject.LexDbOA.DateCreated;
+			TimeSpan span = new TimeSpan(dtLexOrig.Ticks - m_now.Ticks);
+			Assert.LessOrEqual(span.TotalMinutes, 1.0);
+			// should be only a second or two
+			XmlImportData xid = new XmlImportData(m_cache);
+			var input = @"<LexDb xmlns:msxsl='urn:schemas-microsoft-com:xslt' xmlns:user='urn:my-scripts'>
+	<Entries>
+		<LexEntry>
+			<LexemeForm>
+				<MoStemAllomorph>
+					<MorphType>
+						<Link ws='en' name='stem' />
+					</MorphType>
+					<Form>
+						<AUni ws='fr'>house</AUni>
+					</Form>
+				</MoStemAllomorph>
+			</LexemeForm>
+			<MorphoSyntaxAnalyses>
+				<MoStemMsa id='MSA1003'>
+					<PartOfSpeech>
+						<Link ws='en' abbr='n' />
+					</PartOfSpeech>
+				</MoStemMsa>
+			</MorphoSyntaxAnalyses>
+			<Senses>
+				<LexSense>
+					<MorphoSyntaxAnalysis>
+						<Link target='MSA1003' />
+					</MorphoSyntaxAnalysis>
+					<LexicalRelations>
+						<Link wsa='en' abbr='part' wsv='fr' sense='wall2 2' />
+						<Link wsa='en' abbr='part' wsv='fr' sense='ceiling' />
+					</LexicalRelations>
+				</LexSense>
+			</Senses>
+		</LexEntry>
+		<LexEntry>
+			<LexemeForm>
+				<MoStemAllomorph>
+					<MorphType>
+						<Link ws='en' name='stem' />
+					</MorphType>
+					<Form>
+						<AUni ws='fr'>wall</AUni>
+					</Form>
+				</MoStemAllomorph>
+			</LexemeForm>
+			<HomographNumber>
+				<Integer val='1' />
+			</HomographNumber>
+			<MorphoSyntaxAnalyses>
+				<MoStemMsa id='MSA1004'>
+					<PartOfSpeech>
+						<Link ws='en' abbr='v' />
+					</PartOfSpeech>
+				</MoStemMsa>
+			</MorphoSyntaxAnalyses>
+			<Senses>
+				<LexSense>
+					<MorphoSyntaxAnalysis>
+						<Link target='MSA1004' />
+					</MorphoSyntaxAnalysis>
+				</LexSense>
+			</Senses>
+		</LexEntry>
+		<LexEntry>
+			<LexemeForm>
+				<MoStemAllomorph>
+					<MorphType>
+						<Link ws='en' name='stem' />
+					</MorphType>
+					<Form>
+						<AUni ws='fr'>wall</AUni>
+					</Form>
+				</MoStemAllomorph>
+			</LexemeForm>
+			<HomographNumber>
+				<Integer val='2' />
+			</HomographNumber>
+			<MorphoSyntaxAnalyses>
+				<MoStemMsa id='MSA1005'>
+					<PartOfSpeech>
+						<Link ws='en' abbr='v' />
+					</PartOfSpeech>
+				</MoStemMsa>
+				<MoStemMsa id='MSA1006'>
+					<PartOfSpeech>
+						<Link ws='en' abbr='n' />
+					</PartOfSpeech>
+				</MoStemMsa>
+			</MorphoSyntaxAnalyses>
+			<Senses>
+				<LexSense>
+					<MorphoSyntaxAnalysis>
+						<Link target='MSA1005' />
+					</MorphoSyntaxAnalysis>
+				</LexSense>
+				<LexSense>
+					<MorphoSyntaxAnalysis>
+						<Link target='MSA1006' />
+					</MorphoSyntaxAnalysis>
+					<LexicalRelations />
+				</LexSense>
+			</Senses>
+		</LexEntry>
+		<LexEntry>
+			<LexemeForm>
+				<MoStemAllomorph>
+					<MorphType>
+						<Link ws='en' name='stem' />
+					</MorphType>
+					<Form>
+						<AUni ws='fr'>ceiling</AUni>
+					</Form>
+				</MoStemAllomorph>
+			</LexemeForm>
+			<MorphoSyntaxAnalyses>
+				<MoStemMsa id='MSA1007'>
+					<PartOfSpeech>
+						<Link ws='en' abbr='n' />
+					</PartOfSpeech>
+				</MoStemMsa>
+			</MorphoSyntaxAnalyses>
+			<Senses>
+				<LexSense>
+					<MorphoSyntaxAnalysis>
+						<Link target='MSA1007' />
+					</MorphoSyntaxAnalysis>
+					<LexicalRelations />
+				</LexSense>
+			</Senses>
+		</LexEntry>
+	</Entries>
+</LexDb>";
+			Assert.AreEqual(0, m_cache.LangProject.LexDbOA.Entries.Count(), "The lexicon starts out empty.");
+			Assert.AreEqual(0, m_cache.LangProject.AnthroListOA.PossibilitiesOS.Count);
+			Assert.AreEqual(0, m_cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Count);
+			Assert.AreEqual(0, m_cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Count);
+			ILexRefType partWhole = null;
+			UndoableUnitOfWorkHelper.Do("do", "undo", m_cache.ActionHandlerAccessor, () =>
+			{
+				m_cache.LangProject.LexDbOA.ReferencesOA = m_cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+				partWhole = m_cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
+				m_cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(partWhole);
+				// The importer would create this relation, but it would not defaul to the desired type
+				partWhole.Name.SetAnalysisDefaultWritingSystem("part");
+				partWhole.MappingType = (int)LexRefTypeTags.MappingTypes.kmtSenseTree;
+			});
+			StringBuilder sbLog = new StringBuilder();
+			using (var rdr = new StringReader(input))
+			{
+				xid.ImportData(rdr, new StringWriter(sbLog), null);
+			}
+			// The entries are house, wall, wall, ceiling.
+			// The input specifies that there is a part-whole relation house, wall(2.2), ceiling.
+			Assert.AreEqual(4, m_cache.LangProject.LexDbOA.Entries.Count());
+			var lrtRepo = m_cache.ServiceLocator.GetInstance<ILexRefTypeRepository>();
+			foreach (var lrt in lrtRepo.AllInstances())
+			{
+				if (lrt.Name.AnalysisDefaultWritingSystem.Text == "part")
+				{
+					Assert.That(lrt, Is.EqualTo(partWhole), "Should only have one part-whole LRT");
+				}
+			}
+			var relations = partWhole.MembersOC.ToArray();
+			Assert.That(relations, Has.Length.EqualTo(1), "should have produced exactly one lexical relation");
+			var items = relations[0].TargetsRS;
+			Assert.That(items, Has.Count.EqualTo(3), "relation should have three items");
+			Assert.That(((ILexEntry)items[0].Owner).LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("house"),
+				"First thing in relation should be house");
+			// The order of the next two does not technically matter.
+			Assert.That(((ILexEntry)items[1].Owner).LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("wall"),
+				"Second thing in relation should be wall");
+			Assert.That(((ILexEntry)items[2].Owner).LexemeFormOA.Form.VernacularDefaultWritingSystem.Text,
+				Is.EqualTo("ceiling"),
+				"Third thing in relation should be ceiling");
+
+			// Now import it again.
+			// This addition may be useful one day if we actually use the code that looks for existing tree relations.
+			// Currently a tree relation only occurs once in the file, and the objects in it can't be pre-existing,
+			// so we can't ever match an existing relation.
+			//var wall = items[1];
+			//var ceiling = items[2];
+			//UndoableUnitOfWorkHelper.Do("do", "undo", m_cache.ActionHandlerAccessor, () =>
+			//{
+			//	// Move wall to the end. Should still match on a new import, since the order of the leaves is not significant.
+			//	relations[0].TargetsRS.Remove(wall);
+			//	relations[0].TargetsRS.Add(wall);
+			//});
+			//xid = new XmlImportData(m_cache); // need a new one for each import
+			//using (var rdr = new StringReader(input))
+			//{
+			//	xid.ImportData(rdr, new StringWriter(sbLog), null);
+			//}
+			//Assert.AreEqual(4, m_cache.LangProject.LexDbOA.Entries.Count());
+			//relations = partWhole.MembersOC.ToArray();
+			//Assert.That(relations, Has.Length.EqualTo(1), "should not have produced another lexical relation");
+			//items = relations[0].TargetsRS;
+			//Assert.That(items, Has.Count.EqualTo(3), "relation should still have three items");
 		}
 	}
-}
 }

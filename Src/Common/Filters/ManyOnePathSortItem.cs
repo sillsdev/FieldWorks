@@ -1,6 +1,9 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 using SIL.FieldWorks.FDO;
@@ -21,11 +24,6 @@ namespace SIL.FieldWorks.Filters
 		/// The actual item that we are sorting, filtering, etc. by.
 		/// </summary>
 		int m_hvoItem;
-
-		/// <summary>
-		/// Optionally, this can store the cache that the objects belong to.
-		/// </summary>
-		private FdoCache m_cache;
 
 		/// <summary>
 		/// Array of objects in the path. m_pathObjects[0] is one of the original list items.
@@ -142,7 +140,6 @@ namespace SIL.FieldWorks.Filters
 		public ManyOnePathSortItem(ICmObject item)
 		{
 			Init(item.Hvo, null, null);
-			m_cache = item.Cache;
 		}
 
 		/// <summary>

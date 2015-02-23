@@ -282,7 +282,8 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			{
 				bool duplicates = false;
 				return m_cache.ServiceLocator.GetInstance<ILexEntryRepository>()
-					.FindEntriesForWordform(m_cache, m_cache.TsStrFactory.MakeString(wordForm.Normalize(NormalizationForm.FormD), DefaultVernWs), null, ref duplicates).Select(GetEntryLexeme);
+					.FindEntriesForWordform(m_cache, m_cache.TsStrFactory.MakeString(wordForm.Normalize(NormalizationForm.FormD), DefaultVernWs), null, ref duplicates)
+					.Select(GetEntryLexeme).ToArray();
 			}
 		}
 
@@ -325,7 +326,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			get
 			{
 				using (m_activationContext.Activate())
-					return m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(writingSystem => writingSystem.Id);
+					return m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(writingSystem => writingSystem.Id).ToArray();
 			}
 		}
 		#endregion
@@ -433,7 +434,8 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				using (m_activationContext.Activate())
 				{
 					var analyses = new HashSet<WordAnalysis>();
-					foreach (IWfiAnalysis analysis in m_cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().AllInstances().Where(a => a.MorphBundlesOS.Count > 0 && a.ApprovalStatusIcon == (int) Opinions.approves))
+					foreach (IWfiAnalysis analysis in m_cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().AllInstances()
+						.Where(a => a.MorphBundlesOS.Count > 0 && a.ApprovalStatusIcon == (int) Opinions.approves))
 					{
 						WordAnalysis lexemes;
 						string wordFormWs = analysis.Wordform.Form.get_String(m_defaultVernWs).Text;

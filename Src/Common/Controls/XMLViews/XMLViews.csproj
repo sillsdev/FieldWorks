@@ -273,6 +273,8 @@
     </Compile>
     <Compile Include="ObjectLabels.cs" />
     <Compile Include="ObjectListPublisher.cs" />
+    <Compile Include="SearchCompletedEventArgs.cs" />
+    <Compile Include="SearchEngine.cs" />
     <Compile Include="SimpleDateMatchDlg.cs">
       <SubType>Form</SubType>
     </Compile>

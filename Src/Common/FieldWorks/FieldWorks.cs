@@ -830,6 +830,9 @@ namespace SIL.FieldWorks
 			{
 				FdoCache cache = FdoCache.CreateCacheFromExistingData(projectId, s_sWsUser, s_ui, FwDirectoryFinder.FdoDirectories, CreateFdoSettings(), progressDlg);
 				EnsureValidLinkedFilesFolder(cache);
+				// Make sure every project has one of these. (Getting it has a side effect if it does not exist.)
+				// Crashes have been caused by trying to create it at an unsafe time (LT-15695).
+				var dummy = cache.LangProject.DefaultPronunciationWritingSystem;
 				cache.ProjectNameChanged += ProjectNameChanged;
 				cache.ServiceLocator.GetInstance<IUndoStackManager>().OnSave += FieldWorks_OnSave;
 
@@ -2643,12 +2646,14 @@ namespace SIL.FieldWorks
 		private static FdoSettings CreateFdoSettings()
 		{
 			var settings = new FdoSettings();
-			using (RegistryKey fwKey = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine)
-			{
-				var sharedXMLBackendCommitLogSize = (int) fwKey.GetValue("SharedXMLBackendCommitLogSize", 0);
-				if (sharedXMLBackendCommitLogSize > 0)
-					settings.SharedXMLBackendCommitLogSize = sharedXMLBackendCommitLogSize;
-			}
+
+			int sharedXmlBackendCommitLogSize = 0;
+			if (FwRegistryHelper.FieldWorksRegistryKey != null)
+				sharedXmlBackendCommitLogSize = (int) FwRegistryHelper.FieldWorksRegistryKey.GetValue("SharedXMLBackendCommitLogSize", 0);
+			if (sharedXmlBackendCommitLogSize == 0 && FwRegistryHelper.FieldWorksRegistryKeyLocalMachine != null)
+				sharedXmlBackendCommitLogSize = (int) FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.GetValue("SharedXMLBackendCommitLogSize", 0);
+			if (sharedXmlBackendCommitLogSize > 0)
+				settings.SharedXMLBackendCommitLogSize = sharedXmlBackendCommitLogSize;
 			return settings;
 		}
 

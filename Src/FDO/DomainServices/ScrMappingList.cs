@@ -1,9 +1,6 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ScrMappingList.cs
-// Responsibility: TomB
 
 using System;
 using System.Collections;
@@ -162,8 +159,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		public ImportMappingInfo AddDefaultMappingIfNeeded(string marker, string endMarker,
 			ImportDomain importDomain, bool fAutoMapBtMarkers, bool isInUse)
 		{
-			// Look for the marker - if it is found, then we are done
-			if (this[marker] != null)
+			// Look for the marker - if it is found and it maps to a Style, then we are done
+			if (this[marker] != null && !String.IsNullOrEmpty(this[marker].StyleName))
 				return this[marker];
 
 			// Read the TEStyles XML file to generate a table of mappings

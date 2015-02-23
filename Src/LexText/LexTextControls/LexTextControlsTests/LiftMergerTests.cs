@@ -672,6 +672,66 @@ namespace LexTextControlsTests
 			Assert.AreEqual(0, lexref.PrimaryLexemesRS.Count);
 		}
 
+		static private readonly string[] s_outOfOrderRelation = new[]
+		{
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
+			"<header>",
+			"<ranges/>",
+			"<fields/>",
+			"</header>",
+			"<entry dateCreated=\"2011-03-01T22:26:47Z\" dateModified=\"2011-03-01T22:41:41Z\" guid=\"69ccc807-f3d1-44cb-b79a-e8d416b0d7c1\" id=\"house_69ccc807-f3d1-44cb-b79a-e8d416b0d7c1\">",
+			"<lexical-unit>",
+			"<form lang=\"fr\"><text>house</text></form>",
+			"</lexical-unit>",
+			"<trait name=\"morph-type\" value=\"stem\"></trait>",
+			"<sense id=\"house_f722992a-cfdc-41ec-9c46-f927f02d68ef\">",
+			"<relation type=\"Calendar\" ref=\"house_f722992a-cfdc-41ec-9c46-f927f02d68ef\" order=\"3\"/>",
+			"<relation type=\"Calendar\" ref=\"2e827b5e-1558-48fd-b629-1518f1aabba3\" order=\"1\"/>",
+			"<grammatical-info value=\"Noun\">",
+			"</grammatical-info>",
+			"<gloss lang=\"en\"><text>house</text></gloss>",
+			"</sense>",
+			"<sense id=\"2e827b5e-1558-48fd-b629-1518f1aabba3\">",
+			"<relation type=\"Calendar\" ref=\"house_f722992a-cfdc-41ec-9c46-f927f02d68ef\" order=\"3\"/>",
+			"<relation type=\"Calendar\" ref=\"2e827b5e-1558-48fd-b629-1518f1aabba3\" order=\"1\"/>",
+			"<grammatical-info value=\"Noun\">",
+			"</grammatical-info>",
+			"<gloss lang=\"en\"><text>shack</text></gloss>",
+			"</sense>",
+			"</entry>",
+			"</lift>"
+		};
+
+		[Test]
+		public void TestImportOutOfOrderRelation()
+		{
+			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
+			var repoLrType = Cache.ServiceLocator.GetInstance<ILexRefTypeRepository>();
+			Assert.AreEqual(0, repoEntry.Count);
+			Assert.AreEqual(0, repoSense.Count);
+			Assert.AreEqual(0, repoLrType.Count);
+
+			var sOrigFile = CreateInputFile(s_outOfOrderRelation);
+			var logFile = TryImport(sOrigFile, 1);
+			File.Delete(sOrigFile);
+			Assert.IsNotNull(logFile);
+			File.Delete(logFile);
+			Assert.AreEqual(1, repoEntry.Count);
+			Assert.AreEqual(2, repoSense.Count);
+			Assert.AreEqual(1, repoLrType.Count);
+			var lexEntry = repoEntry.AllInstances().First();
+			var sense1 = lexEntry.SensesOS[0];
+			var lrType = repoLrType.AllInstances().First();
+			var lexRefs = lrType.MembersOC;
+			Assert.That(lexRefs, Has.Count.EqualTo(1));
+			var targets = lexRefs.First().TargetsRS;
+			Assert.That(targets, Has.Count.EqualTo(2));
+			Assert.That(targets.First(), Is.EqualTo(lexEntry.SensesOS[1]), "Targets should be ordered according to Order attribute");
+			Assert.That(targets.Skip(1).First(), Is.EqualTo(sense1), "Both senses should be present in targets");
+		}
+
 		static private readonly string[] s_LiftData3a = new[]
 		{
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
@@ -3493,6 +3553,24 @@ namespace LexTextControlsTests
 			"</lift>"
 		};
 
+		private string[] _minimalLiftData  = new[]
+			{
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+				"<lift producer=\"SIL.FLEx 7.3.2.41302\" version=\"0.13\">",
+				"<header>",
+				"<fields/>",
+				"</header>",
+				"<entry dateCreated=\"2013-01-29T08:53:26Z\" dateModified=\"2013-01-29T08:10:28Z\" id=\"baba_aef5e807-c841-4f35-9591-c8a998dc2465\" guid=\"aef5e807-c841-4f35-9591-c8a998dc2465\">",
+				"<lexical-unit>",
+				"<form lang=\"fr\"><text>baba baba</text></form>",
+				"</lexical-unit>",
+				"<sense id=\"$guid2\" dateCreated=\"2013-01-29T08:55:26Z\" dateModified=\"2013-01-29T08:15:28Z\">",
+				"<gloss lang=\"en\"><text>dad</text></gloss>",
+				"</sense>",
+				"</entry>",
+				"</lift>"
+			};
+
 		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test LIFT merger for problems merging pronunciations.
@@ -3754,6 +3832,120 @@ namespace LexTextControlsTests
 			entry.PronunciationsOS.Add(lexPronunciation);
 			if (ws > 0)
 				lexPronunciation.Form.set_String(ws, Cache.TsStrFactory.MakeString(pronunciation, ws));
+		}
+
+		[Test]
+		public void ImportRangeWithNoId_DoesNotDuplicate_ButDoesLoadData()
+		{
+			SetWritingSystems("fr");
+			var lrtFactory = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>();
+			var lrt = lrtFactory.Create();
+			Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(lrt);
+			var noNameRangeData = new[]
+			{
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+			"<lift-ranges>",
+			"<range id='lexical-relation'>",
+			string.Format(@"<range-element id=""***"" guid=""{0}"">", lrt.Guid.ToString()),
+			"<trait  name='referenceType' value=''/>",
+			"<label>",
+			"<form lang='en'><text>Antonym</text></form>",
+			"<form lang='de'><text>AntonymG</text></form>",
+			"</label>",
+			"<description>",
+			"<form lang='en'><text>Opposite</text></form>",
+			"<form lang='de'><text>OppositeG</text></form>",
+			"</description>",
+			"<abbrev>",
+			"<form lang='en'><text>Ant</text></form>",
+			"<form lang='de'><text>AntG</text></form>",
+			"</abbrev>",
+			"</range-element>",
+			"</range>",
+			"</lift-ranges>"
+			};
+
+			Assert.That(Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS, Has.Count.EqualTo(1), "Should start out with just the one LRT");
+
+			//Create the LIFT data file
+			var sOrigFile = CreateInputFile(_minimalLiftData);
+			//Create the LIFT ranges file
+			var sOrigRangesFile = CreateInputRangesFile(noNameRangeData);
+
+			var logFile = TryImport(sOrigFile, sOrigRangesFile, FlexLiftMerger.MergeStyle.MsKeepNew, 1);
+			File.Delete(sOrigFile);
+			File.Delete(sOrigRangesFile);
+			Assert.That(Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS, Has.Count.EqualTo(1), "Should have merged import with LexRefType from input");
+			Assert.That(lrt.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Antonym"));
+			var de = Cache.WritingSystemFactory.GetWsFromStr("de");
+			Assert.That(lrt.Name.get_String(de).Text, Is.EqualTo("AntonymG"));
+			Assert.That(lrt.Description.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Opposite"));
+			Assert.That(lrt.Description.get_String(de).Text, Is.EqualTo("OppositeG"));
+			Assert.That(lrt.Abbreviation.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Ant"));
+			Assert.That(lrt.Abbreviation.get_String(de).Text, Is.EqualTo("AntG"));
+		}
+
+		[Test]
+		public void ImportRangeWithExistingObject_DoesNotDuplicate_UnifiesData()
+		{
+			SetWritingSystems("fr");
+			var lrtFactory = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>();
+			var lrt = lrtFactory.Create();
+			Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(lrt);
+			// The Rubbish values should be ignored because we will set values on those alternatives before merging.
+			// The other values should be imported.
+			var moreCompleteRangeData = new[]
+			{
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+			"<lift-ranges>",
+			"<range id='lexical-relation'>",
+			string.Format(@"<range-element id=""***"" guid=""{0}"">", lrt.Guid.ToString()),
+			"<trait  name='referenceType' value=''/>",
+			"<label>",
+			"<form lang='en'><text>AntonymRubbish</text></form>",
+			"<form lang='de'><text>AntonymG</text></form>",
+			"</label>",
+			"<description>",
+			"<form lang='en'><text>OppositeRubbish</text></form>",
+			"<form lang='de'><text>OppositeG</text></form>",
+			"</description>",
+			"<abbrev>",
+			"<form lang='en'><text>Ant</text></form>",
+			"<form lang='de'><text>AntGRubbish</text></form>",
+			"</abbrev>",
+			"</range-element>",
+			"</range>",
+			"</lift-ranges>"
+			};
+			Assert.That(Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS, Has.Count.EqualTo(1), "Should start out with just the one LRT");
+			var en = Cache.WritingSystemFactory.GetWsFromStr("en");
+			var de = Cache.WritingSystemFactory.GetWsFromStr("de");
+			lrt.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeTss("Antonym", en);
+			lrt.Description.AnalysisDefaultWritingSystem = TsStringUtils.MakeTss("Opposite", en);
+			lrt.Description.set_String(de, TsStringUtils.MakeTss("OppositeG", de));
+			lrt.Abbreviation.set_String(de, TsStringUtils.MakeTss("AntG", de));
+
+			//Create the LIFT data file
+			var sOrigFile = CreateInputFile(_minimalLiftData);
+			//Create the LIFT ranges file
+			var sOrigRangesFile = CreateInputRangesFile(moreCompleteRangeData);
+
+			var logFile = TryImport(sOrigFile, sOrigRangesFile, FlexLiftMerger.MergeStyle.MsKeepNew, 1);
+			File.Delete(sOrigFile);
+			File.Delete(sOrigRangesFile);
+			Assert.That(Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS, Has.Count.EqualTo(1), "Should have merged import with LexRefType from input");
+			Assert.That(lrt.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Antonym"));
+			Assert.That(lrt.Name.get_String(de).Text, Is.EqualTo("AntonymG"));
+			Assert.That(lrt.Description.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Opposite"));
+			Assert.That(lrt.Description.get_String(de).Text, Is.EqualTo("OppositeG"));
+			Assert.That(lrt.Abbreviation.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Ant"));
+			Assert.That(lrt.Abbreviation.get_String(de).Text, Is.EqualTo("AntG"));
+
+			var log = File.ReadAllText(logFile, Encoding.UTF8);
+			Assert.That(log, Is.StringContaining("AntonymRubbish"));
+			Assert.That(log, Is.StringContaining("had a conflicting value"));
+			Assert.That(log, Is.StringContaining("Description"));
+			Assert.That(log, Is.Not.StringContaining("OppositeG"), "should not report conflict when values are equal");
 		}
 	}
 

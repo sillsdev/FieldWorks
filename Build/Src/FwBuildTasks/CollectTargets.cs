@@ -475,6 +475,7 @@ namespace FwBuildTasks
 					return 150000;
 				case "PrintLayoutTests":	// ~22 sec
 				case "ITextDllTests":		// ~26 sec
+				case "FwUtilsTests":		// ~24 sec (overnight build machine 12/19/2014)
 				case "DiscourseTests":		// ~36 sec
 				case "TeEditingTests":		// ~30 sec (Mono 2/8/2013)
 				case "SimpleRootSiteTests":	// ~30 sec (Mono 2/8/2013)

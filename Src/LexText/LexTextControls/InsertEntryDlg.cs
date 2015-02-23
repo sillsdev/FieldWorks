@@ -21,7 +21,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using Microsoft.Win32;
-
+using SIL.Collections;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Controls;
@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private bool m_fComplexForm;
 		private bool m_fNewlyCreated;
 		private string m_oldForm = "";
-		private bool m_skipCheck;
+		private SimpleMonitor m_updateTextMonitor;
 		private ListBox.ObjectCollection m_MGAGlossListBoxItems;
 
 		private Button m_btnOK;
@@ -256,14 +256,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		// Using an explicit list instead of getting the writing systems from msLexicalForm
-		// is a LOT faster, especially when repeated thousands of times.  See LT-11547.
-		readonly List<int> m_formWss = new List<int>();
-		private IEnumerable<int> FormWss
-		{
-			get { return m_formWss; }
-		}
-
 		private ITsString SelectedOrBestGlossTss
 		{
 			get
@@ -351,14 +343,6 @@ namespace SIL.FieldWorks.LexText.Controls
 					msGloss.SetValue(fAnal ? wsGloss : m_cache.DefaultAnalWs, value);
 				}
 			}
-		}
-
-		// Using an explicit list instead of getting the writing systems from msGloss
-		// is a LOT faster, especially when repeated thousands of times.  See LT-11547.
-		private readonly List<int> m_glossWss = new List<int>();
-		private IEnumerable<int> GlossWss
-		{
-			get { return m_glossWss; }
 		}
 
 		/// <summary>
@@ -477,6 +461,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_helpProvider = new HelpProvider();
 			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 
+			m_updateTextMonitor = new SimpleMonitor();
+
 			m_searchAnimation = new SearchingAnimation();
 			AdjustWidthForLinkLabelGroupBox();
 		}
@@ -586,177 +572,187 @@ namespace SIL.FieldWorks.LexText.Controls
 			SetDlgInfo(cache, morphType, 0, MorphTypeFilterType.Any);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "searchEngine is disposed by the mediator.")]
 		protected void SetDlgInfo(FdoCache cache, IMoMorphType morphType, int wsVern, MorphTypeFilterType filter)
 		{
-try
-{
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
-			var xnWindow = (XmlNode)m_mediator.PropertyTable.GetValue("WindowConfiguration");
-			XmlNode configNode = xnWindow.SelectSingleNode("controls/parameters/guicontrol[@id=\"matchingEntries\"]/parameters");
-			m_matchingObjectsBrowser.Initialize(cache, stylesheet, m_mediator, configNode,
-				cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances().Cast<ICmObject>(),
-				SearchType.Prefix, GetEntrySearchFields);
-			m_cache = cache;
-
-			// Cache the writing systems of interest for forms and glosses.  See LT-11547.
-			var vernWss = WritingSystemServices.GetWritingSystemList(m_cache, WritingSystemServices.kwsVerns, false);
-			foreach (var ws in vernWss)
-				m_formWss.Add(ws.Handle);
-			var analWss = WritingSystemServices.GetWritingSystemList(m_cache, WritingSystemServices.kwsAnals, false);
-			foreach (var ws in analWss)
-				m_glossWss.Add(ws.Handle);
-
-			m_fNewlyCreated = false;
-			m_oldForm = "";
-
-			// Set fonts for the two edit boxes.
-			if (stylesheet != null)
+			try
 			{
-				m_tbLexicalForm.StyleSheet = stylesheet;
-				m_tbGloss.StyleSheet = stylesheet;
-			}
+				IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+				var xnWindow = (XmlNode) m_mediator.PropertyTable.GetValue("WindowConfiguration");
+				XmlNode configNode = xnWindow.SelectSingleNode("controls/parameters/guicontrol[@id=\"matchingEntries\"]/parameters");
 
-			// Set writing system factory and code for the two edit boxes.
-			IWritingSystemContainer wsContainer = cache.ServiceLocator.WritingSystems;
-			IWritingSystem defAnalWs = wsContainer.DefaultAnalysisWritingSystem;
-			IWritingSystem defVernWs = wsContainer.DefaultVernacularWritingSystem;
-			m_tbLexicalForm.WritingSystemFactory = cache.WritingSystemFactory;
-			if (wsVern <= 0)
-				wsVern = defVernWs.Handle;
-			m_tbLexicalForm.WritingSystemCode = wsVern;
-			m_tbLexicalForm.AdjustStringHeight = false;
+				SearchEngine searchEngine = SearchEngine.Get(m_mediator, "InsertEntrySearchEngine", () => new InsertEntrySearchEngine(cache));
 
-			m_tbGloss.WritingSystemFactory = cache.WritingSystemFactory;
-			m_tbGloss.WritingSystemCode = defAnalWs.Handle;
-			m_tbGloss.AdjustStringHeight = false;
+				m_matchingObjectsBrowser.Initialize(cache, stylesheet, m_mediator, configNode,
+					searchEngine);
 
-			// initialize to empty TsStrings
-			ITsStrFactory tsf = cache.TsStrFactory;
-			//we need to use the weVern so that tbLexicalForm is sized correctly for the font size.
-			//In Interlinear text the baseline can be in any of the vernacular writing systems, not just
-			//the defaultVernacularWritingSystem.
-			TssForm = tsf.MakeString("", wsVern);
-			TssGloss = tsf.MakeString("", defAnalWs.Handle);
-			((ISupportInitialize)(m_tbLexicalForm)).EndInit();
-			((ISupportInitialize)(m_tbGloss)).EndInit();
+				m_cache = cache;
 
-			if (vernWss.Count > 1)
-			{
-				msLexicalForm = ReplaceTextBoxWithMultiStringBox(m_tbLexicalForm, WritingSystemServices.kwsVerns, stylesheet);
-				msLexicalForm.TextChanged += tbLexicalForm_TextChanged;
-			}
-			else
-			{
-				// See if we need to adjust the height of the lexical form
-				AdjustTextBoxAndDialogHeight(m_tbLexicalForm);
-			}
+				m_fNewlyCreated = false;
+				m_oldForm = "";
 
-			// JohnT addition: if multiple analysis writing systems, replace tbGloss with msGloss
-			if (analWss.Count > 1)
-			{
-				msGloss = ReplaceTextBoxWithMultiStringBox(m_tbGloss, WritingSystemServices.kwsAnals, stylesheet);
-				m_lnkAssistant.Top = msGloss.Bottom - m_lnkAssistant.Height;
-				msGloss.TextChanged += tbGloss_TextChanged;
-			}
-			else
-			{
-				// See if we need to adjust the height of the gloss
-				AdjustTextBoxAndDialogHeight(m_tbGloss);
-			}
-
-			m_msaGroupBox.Initialize(cache, m_mediator, m_lnkAssistant, this);
-			// See if we need to adjust the height of the MSA group box.
-			int oldHeight = m_msaGroupBox.Height;
-			int newHeight = Math.Max(m_msaGroupBox.PreferredHeight, oldHeight);
-			GrowDialogAndAdjustControls(newHeight - oldHeight, m_msaGroupBox);
-			m_msaGroupBox.AdjustInternalControlsAndGrow();
-
-			Text = GetTitle();
-			m_lnkAssistant.Enabled = false;
-
-			// Set font for the combobox.
-			m_cbMorphType.Font = new Font(defAnalWs.DefaultFontName, 10);
-
-			// Populate morph type combo.
-			// first Fill ComplexFormType combo, since cbMorphType controls
-			// whether it gets enabled and which index is selected.
-			m_cbComplexFormType.Font = new Font(defAnalWs.DefaultFontName, 10);
-			var rgComplexTypes = new List<ICmPossibility>(m_cache.LangProject.LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities.ToArray());
-			rgComplexTypes.Sort();
-			m_idxNotComplex = m_cbComplexFormType.Items.Count;
-			m_cbComplexFormType.Items.Add(new DummyEntryType(LexTextControls.ksNotApplicable, false));
-			m_idxUnknownComplex = m_cbComplexFormType.Items.Count;
-			m_cbComplexFormType.Items.Add(new DummyEntryType(LexTextControls.ksUnknownComplexForm, true));
-			for (int i = 0; i < rgComplexTypes.Count; ++i)
-			{
-				var type = (ILexEntryType)rgComplexTypes[i];
-				m_cbComplexFormType.Items.Add(type);
-			}
-			m_cbComplexFormType.SelectedIndex = 0;
-			m_cbComplexFormType.Visible = true;
-			m_cbComplexFormType.Enabled = true;
-			// Convert from Set to List, since the Set can't sort.
-
-			var al = new List<IMoMorphType>();
-			foreach (IMoMorphType mType in m_cache.LanguageProject.LexDbOA.MorphTypesOA.ReallyReallyAllPossibilities)
-			{
-				switch (filter)
+				// Set fonts for the two edit boxes.
+				if (stylesheet != null)
 				{
-					case MorphTypeFilterType.Prefix:
-						if (mType.IsPrefixishType)
-							al.Add(mType);
-						break;
-
-					case MorphTypeFilterType.Suffix:
-						if (mType.IsSuffixishType)
-							al.Add(mType);
-						break;
-
-					case MorphTypeFilterType.Any:
-						al.Add(mType);
-						break;
+					m_tbLexicalForm.StyleSheet = stylesheet;
+					m_tbGloss.StyleSheet = stylesheet;
 				}
-			}
-			al.Sort();
-			for (int i = 0; i < al.Count; ++i)
-			{
-				m_cbMorphType.Items.Add(al[i]);
-				if (al[i] == morphType)
-					m_cbMorphType.SelectedIndex = i;
-			}
 
-			m_morphType = morphType; // Is this still needed?
-			m_msaGroupBox.MorphTypePreference = m_morphType;
-			// Now position the searching animation
-			/*
-			 * This position put the animation over the Glossing Assistant button. LT-9146
-			m_searchAnimation.Top = groupBox2.Top - m_searchAnimation.Height - 5;
-			m_searchAnimation.Left = groupBox2.Right - m_searchAnimation.Width - 10;
-			 */
-			/* This position puts the animation over the top left corner, but will that
-			 * look okay with right-to-left?
-			m_searchAnimation.Top = groupBox2.Top + 40;
-			m_searchAnimation.Left = groupBox2.Left + 10;
-			 */
-			// This position puts the animation close to the middle of the list.
-			m_searchAnimation.Top = m_matchingEntriesGroupBox.Top + (m_matchingEntriesGroupBox.Top / 2);
-			m_searchAnimation.Left = m_matchingEntriesGroupBox.Left + (m_matchingEntriesGroupBox.Right / 2);
-}
-catch(Exception e)
-{
-	MessageBox.Show(e.ToString());
-	MessageBox.Show(e.StackTrace);
-}
+				// Set writing system factory and code for the two edit boxes.
+				IWritingSystemContainer wsContainer = cache.ServiceLocator.WritingSystems;
+				IWritingSystem defAnalWs = wsContainer.DefaultAnalysisWritingSystem;
+				IWritingSystem defVernWs = wsContainer.DefaultVernacularWritingSystem;
+				m_tbLexicalForm.WritingSystemFactory = cache.WritingSystemFactory;
+				m_tbGloss.WritingSystemFactory = cache.WritingSystemFactory;
+
+				m_tbLexicalForm.AdjustStringHeight = false;
+				m_tbGloss.AdjustStringHeight = false;
+
+				if (wsVern <= 0)
+					wsVern = defVernWs.Handle;
+				// initialize to empty TsStrings
+				ITsStrFactory tsf = cache.TsStrFactory;
+				//we need to use the wsVern so that tbLexicalForm is sized correctly for the font size.
+				//In Interlinear text the baseline can be in any of the vernacular writing systems, not just
+				//the defaultVernacularWritingSystem.
+				ITsString tssForm = tsf.MakeString("", wsVern);
+				ITsString tssGloss = tsf.MakeString("", defAnalWs.Handle);
+
+				using (m_updateTextMonitor.Enter())
+				{
+					m_tbLexicalForm.WritingSystemCode = wsVern;
+					m_tbGloss.WritingSystemCode = defAnalWs.Handle;
+
+					TssForm = tssForm;
+					TssGloss = tssGloss;
+				}
+
+				// start building index
+				m_matchingObjectsBrowser.SearchAsync(BuildSearchFieldArray(tssForm, tssGloss));
+
+				((ISupportInitialize)(m_tbLexicalForm)).EndInit();
+				((ISupportInitialize)(m_tbGloss)).EndInit();
+
+				if (WritingSystemServices.GetWritingSystemList(m_cache, WritingSystemServices.kwsVerns, false).Count > 1)
+				{
+					msLexicalForm = ReplaceTextBoxWithMultiStringBox(m_tbLexicalForm, WritingSystemServices.kwsVerns, stylesheet);
+					msLexicalForm.TextChanged += tbLexicalForm_TextChanged;
+				}
+				else
+				{
+					// See if we need to adjust the height of the lexical form
+					AdjustTextBoxAndDialogHeight(m_tbLexicalForm);
+				}
+
+				// JohnT addition: if multiple analysis writing systems, replace tbGloss with msGloss
+				if (WritingSystemServices.GetWritingSystemList(m_cache, WritingSystemServices.kwsAnals, false).Count > 1)
+				{
+					msGloss = ReplaceTextBoxWithMultiStringBox(m_tbGloss, WritingSystemServices.kwsAnals, stylesheet);
+					m_lnkAssistant.Top = msGloss.Bottom - m_lnkAssistant.Height;
+					msGloss.TextChanged += tbGloss_TextChanged;
+				}
+				else
+				{
+					// See if we need to adjust the height of the gloss
+					AdjustTextBoxAndDialogHeight(m_tbGloss);
+				}
+
+				m_msaGroupBox.Initialize(cache, m_mediator, m_lnkAssistant, this);
+				// See if we need to adjust the height of the MSA group box.
+				int oldHeight = m_msaGroupBox.Height;
+				int newHeight = Math.Max(m_msaGroupBox.PreferredHeight, oldHeight);
+				GrowDialogAndAdjustControls(newHeight - oldHeight, m_msaGroupBox);
+				m_msaGroupBox.AdjustInternalControlsAndGrow();
+
+				Text = GetTitle();
+				m_lnkAssistant.Enabled = false;
+
+				// Set font for the combobox.
+				m_cbMorphType.Font = new Font(defAnalWs.DefaultFontName, 10);
+
+				// Populate morph type combo.
+				// first Fill ComplexFormType combo, since cbMorphType controls
+				// whether it gets enabled and which index is selected.
+				m_cbComplexFormType.Font = new Font(defAnalWs.DefaultFontName, 10);
+				var rgComplexTypes = new List<ICmPossibility>(m_cache.LangProject.LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities.ToArray());
+				rgComplexTypes.Sort();
+				m_idxNotComplex = m_cbComplexFormType.Items.Count;
+				m_cbComplexFormType.Items.Add(new DummyEntryType(LexTextControls.ksNotApplicable, false));
+				m_idxUnknownComplex = m_cbComplexFormType.Items.Count;
+				m_cbComplexFormType.Items.Add(new DummyEntryType(LexTextControls.ksUnknownComplexForm, true));
+				for (int i = 0; i < rgComplexTypes.Count; ++i)
+				{
+					var type = (ILexEntryType)rgComplexTypes[i];
+					m_cbComplexFormType.Items.Add(type);
+				}
+				m_cbComplexFormType.SelectedIndex = 0;
+				m_cbComplexFormType.Visible = true;
+				m_cbComplexFormType.Enabled = true;
+				// Convert from Set to List, since the Set can't sort.
+
+				var al = new List<IMoMorphType>();
+				foreach (IMoMorphType mType in m_cache.LanguageProject.LexDbOA.MorphTypesOA.ReallyReallyAllPossibilities.Cast<IMoMorphType>())
+				{
+					switch (filter)
+					{
+						case MorphTypeFilterType.Prefix:
+							if (mType.IsPrefixishType)
+								al.Add(mType);
+							break;
+
+						case MorphTypeFilterType.Suffix:
+							if (mType.IsSuffixishType)
+								al.Add(mType);
+							break;
+
+						case MorphTypeFilterType.Any:
+							al.Add(mType);
+							break;
+					}
+				}
+				al.Sort();
+				for (int i = 0; i < al.Count; ++i)
+				{
+					m_cbMorphType.Items.Add(al[i]);
+					if (al[i] == morphType)
+						m_cbMorphType.SelectedIndex = i;
+				}
+
+				m_morphType = morphType; // Is this still needed?
+				m_msaGroupBox.MorphTypePreference = m_morphType;
+				// Now position the searching animation
+				/*
+					* This position put the animation over the Glossing Assistant button. LT-9146
+				m_searchAnimation.Top = groupBox2.Top - m_searchAnimation.Height - 5;
+				m_searchAnimation.Left = groupBox2.Right - m_searchAnimation.Width - 10;
+					*/
+				/* This position puts the animation over the top left corner, but will that
+					* look okay with right-to-left?
+				m_searchAnimation.Top = groupBox2.Top + 40;
+				m_searchAnimation.Left = groupBox2.Left + 10;
+					*/
+				// This position puts the animation close to the middle of the list.
+				m_searchAnimation.Top = m_matchingEntriesGroupBox.Top + (m_matchingEntriesGroupBox.Height / 2) - (m_searchAnimation.Height / 2);
+				m_searchAnimation.Left = m_matchingEntriesGroupBox.Left + (m_matchingEntriesGroupBox.Width / 2) - (m_searchAnimation.Width / 2);
+			}
+			catch(Exception e)
+			{
+				MessageBox.Show(e.ToString());
+				MessageBox.Show(e.StackTrace);
+			}
 		}
 
 		private LabeledMultiStringControl ReplaceTextBoxWithMultiStringBox(FwTextBox tb, int wsType,
 			IVwStylesheet stylesheet)
 		{
 			tb.Hide();
-			var ms = new LabeledMultiStringControl(m_cache, wsType, stylesheet);
-			ms.Location = tb.Location;
-			ms.Width = tb.Width;
-			ms.Anchor = tb.Anchor;
+			var ms = new LabeledMultiStringControl(m_cache, wsType, stylesheet)
+			{
+				Location = tb.Location,
+				Width = tb.Width,
+				Anchor = tb.Anchor
+			};
 
 			int oldHeight = tb.Parent.Height;
 			FontHeightAdjuster.GrowDialogAndAdjustControls(tb.Parent, ms.Height - tb.Height, ms);
@@ -824,7 +820,8 @@ catch(Exception e)
 				m_fLexicalFormInitialFocus = true;
 			}
 
-			UpdateMatches();
+			if (tssForm.Length > 0)
+				UpdateMatches();
 		}
 
 		/// <summary>
@@ -899,7 +896,7 @@ catch(Exception e)
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
@@ -945,21 +942,12 @@ catch(Exception e)
 //#if DEBUG
 //            var dtStart = DateTime.Now;
 //#endif
-			var fields = new List<SearchField>();
 			ITsString tssForm = TssForm;
 			int vernWs = TsStringUtils.GetWsAtOffset(tssForm, 0);
 			string form = MorphServices.EnsureNoMarkers(tssForm.Text, m_cache);
-			if (!string.IsNullOrEmpty(form))
-			{
-				tssForm = m_cache.TsStrFactory.MakeString(form, vernWs);
-				fields.Add(new SearchField(LexEntryTags.kflidCitationForm, tssForm));
-				fields.Add(new SearchField(LexEntryTags.kflidLexemeForm, tssForm));
-				fields.Add(new SearchField(LexEntryTags.kflidAlternateForms, tssForm));
-			}
+			tssForm = m_cache.TsStrFactory.MakeString(form, vernWs);
 
 			ITsString tssGloss = SelectedOrBestGlossTss;
-			if (tssGloss != null)
-				fields.Add(new SearchField(LexSenseTags.kflidGloss, tssGloss));
 
 			if (!Controls.Contains(m_searchAnimation))
 			{
@@ -967,11 +955,7 @@ catch(Exception e)
 				m_searchAnimation.BringToFront();
 			}
 
-			m_matchingObjectsBrowser.Search(fields, Enumerable.Empty<ICmObject>());
-
-			if (Controls.Contains(m_searchAnimation))
-				Controls.Remove(m_searchAnimation);
-			CheckIfGoto();
+			m_matchingObjectsBrowser.SearchAsync(BuildSearchFieldArray(tssForm, tssGloss));
 //#if DEBUG
 //            var dtEnd = DateTime.Now;
 //            var diff = dtEnd - dtStart;
@@ -979,41 +963,21 @@ catch(Exception e)
 //#endif
 		}
 
-		private IEnumerable<SearchField> GetEntrySearchFields(ICmObject obj)
+		private SearchField[] BuildSearchFieldArray(ITsString tssForm, ITsString tssGloss)
 		{
-			var entry = (ILexEntry)obj;
 			var fields = new List<SearchField>();
-			foreach (int ws in FormWss)
-			{
-				var cf = entry.CitationForm.StringOrNull(ws);
-				if (cf != null && cf.Length > 0)
-					fields.Add(new SearchField(LexEntryTags.kflidCitationForm, cf));
-				var lexemeForm = entry.LexemeFormOA;
-				if (lexemeForm != null)
-				{
-					var formOfLexemeForm = lexemeForm.Form.StringOrNull(ws);
-					if(formOfLexemeForm != null && formOfLexemeForm.Length > 0)
-						fields.Add(new SearchField(LexEntryTags.kflidLexemeForm, formOfLexemeForm));
-				}
-				foreach (IMoForm form in entry.AlternateFormsOS)
-				{
-					var af = form.Form.StringOrNull(ws);
-					if (af != null && af.Length > 0)
-						fields.Add(new SearchField(LexEntryTags.kflidAlternateForms, af));
-				}
-			}
 
-			foreach (int ws in GlossWss)
-			{
-				foreach (ILexSense sense in entry.SensesOS)
-				{
-					var gloss = sense.Gloss.StringOrNull(ws);
-					if (gloss != null && gloss.Length > 0)
-						fields.Add(new SearchField(LexSenseTags.kflidGloss, gloss));
-				}
-			}
+			if(m_matchingObjectsBrowser.IsVisibleColumn("EntryHeadword") || m_matchingObjectsBrowser.IsVisibleColumn("CitationForm"))
+				fields.Add(new SearchField(LexEntryTags.kflidCitationForm, tssForm));
+			if (m_matchingObjectsBrowser.IsVisibleColumn("EntryHeadword") || m_matchingObjectsBrowser.IsVisibleColumn("LexemeForm"))
+				fields.Add(new SearchField(LexEntryTags.kflidLexemeForm, tssForm));
+			if (m_matchingObjectsBrowser.IsVisibleColumn("Allomorphs"))
+				fields.Add(new SearchField(LexEntryTags.kflidAlternateForms, tssForm));
 
-			return fields;
+			if (tssGloss != null && m_matchingObjectsBrowser.IsVisibleColumn("Glosses"))
+				fields.Add(new SearchField(LexSenseTags.kflidGloss, tssGloss));
+
+			return fields.ToArray();
 		}
 
 		/// <summary>
@@ -1027,9 +991,8 @@ catch(Exception e)
 
 			m_morphType = mmt;
 			m_msaGroupBox.MorphTypePreference = mmt;
-			m_skipCheck = true;
-			m_cbMorphType.SelectedItem = mmt;
-			m_skipCheck = false;
+			using (m_updateTextMonitor.Enter())
+				m_cbMorphType.SelectedItem = mmt;
 			EnableComplexFormTypeCombo();
 		}
 
@@ -1205,8 +1168,10 @@ catch(Exception e)
 			resources.ApplyResources(this.m_matchingObjectsBrowser, "m_matchingObjectsBrowser");
 			this.m_matchingObjectsBrowser.Name = "m_matchingObjectsBrowser";
 			this.m_matchingObjectsBrowser.TabStop = false;
-			this.m_matchingObjectsBrowser.SelectionChanged += new FwSelectionChangedEventHandler(this.matchingEntries_SelectionChanged);
-			this.m_matchingObjectsBrowser.SelectionMade += new FwSelectionChangedEventHandler(this.matchingEntries_SelectionMade);
+			this.m_matchingObjectsBrowser.SelectionChanged += new FwSelectionChangedEventHandler(this.m_matchingObjectsBrowser_SelectionChanged);
+			this.m_matchingObjectsBrowser.SelectionMade += new FwSelectionChangedEventHandler(this.m_matchingObjectsBrowser_SelectionMade);
+			this.m_matchingObjectsBrowser.SearchCompleted += new EventHandler(this.m_matchingObjectsBrowser_SearchCompleted);
+			this.m_matchingObjectsBrowser.ColumnsChanged += new EventHandler(this.m_matchingObjectsBrowser_ColumnsChanged);
 			//
 			// m_toolTipSlotCombo
 			//
@@ -1536,7 +1501,7 @@ catch(Exception e)
 		/// <param name="e"></param>
 		private void tbGloss_TextChanged(object sender, EventArgs e)
 		{
-			if (m_skipCheck)
+			if (m_updateTextMonitor.Busy)
 				return;
 
 			UpdateMatches();
@@ -1544,8 +1509,9 @@ catch(Exception e)
 
 		private void tbLexicalForm_TextChanged(object sender, EventArgs e)
 		{
-			if (m_skipCheck)
+			if (m_updateTextMonitor.Busy)
 				return;
+
 			//TODO?
 			Debug.Assert(BestForm != null);
 
@@ -1565,15 +1531,16 @@ catch(Exception e)
 			{
 				if (newForm != sAdjusted)
 				{
-					m_skipCheck = true;
-					BestForm = sAdjusted;
-					if (msLexicalForm == null)
+					using (m_updateTextMonitor.Enter())
 					{
-						m_tbLexicalForm.SelectionLength = 0;
-						m_tbLexicalForm.SelectionStart = newForm.Length;
+						BestForm = sAdjusted;
+						if (msLexicalForm == null)
+						{
+							m_tbLexicalForm.SelectionLength = 0;
+							m_tbLexicalForm.SelectionStart = newForm.Length;
+						}
+						// TODO: how do we handle multiple writing systems?
 					}
-					// TODO: how do we handle multiple writing systems?
-					m_skipCheck = false;
 				}
 			}
 			else if (newForm.Length == 1)
@@ -1591,10 +1558,11 @@ catch(Exception e)
 				{
 					MessageBox.Show(ex.Message, LexText.Controls.LexTextControls.ksInvalidForm,
 						MessageBoxButtons.OK);
-					m_skipCheck = true;
-					BestForm = m_oldForm;
-					UpdateMatches();
-					m_skipCheck = false;
+					using (m_updateTextMonitor.Enter())
+					{
+						BestForm = m_oldForm;
+						UpdateMatches();
+					}
 					return;
 				}
 			}
@@ -1606,17 +1574,16 @@ catch(Exception e)
 
 		private void cbMorphType_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (m_skipCheck)
+			if (m_updateTextMonitor.Busy)
 				return;
 
 			m_morphType = (IMoMorphType)m_cbMorphType.SelectedItem;
 			m_msaGroupBox.MorphTypePreference = m_morphType;
-			m_skipCheck = true;
 			if (m_morphType.Guid != MoMorphTypeTags.kguidMorphCircumfix)
 			{ // since circumfixes can be a combination of prefix, infix, and suffix, just leave it as is
-				BestForm = m_morphType.FormWithMarkers(BestForm);
+				using (m_updateTextMonitor.Enter())
+					BestForm = m_morphType.FormWithMarkers(BestForm);
 			}
-			m_skipCheck = false;
 
 			EnableComplexFormTypeCombo();
 		}
@@ -1671,7 +1638,7 @@ catch(Exception e)
 					{
 						// is prefix so set cursor to beginning (before the hyphen)
 						if (msLexicalForm == null)
-						m_tbLexicalForm.Select(0, 0);
+							m_tbLexicalForm.Select(0, 0);
 						else
 							msLexicalForm.Select(ws, 0, 0);
 					}
@@ -1679,7 +1646,7 @@ catch(Exception e)
 					{
 						// is not prefix, so set cursor to end (after the hyphen)
 						if (msLexicalForm == null)
-						m_tbLexicalForm.Select(1, 0);
+							m_tbLexicalForm.Select(1, 0);
 						else
 							msLexicalForm.Select(ws, 1, 0);
 					}
@@ -1687,7 +1654,7 @@ catch(Exception e)
 				else
 				{
 					if (msLexicalForm == null)
-					m_tbLexicalForm.Select(text.Length, 0);
+						m_tbLexicalForm.Select(text.Length, 0);
 					else
 						msLexicalForm.Select(ws, text.Length, 0);
 				}
@@ -1695,21 +1662,33 @@ catch(Exception e)
 			else
 			{
 				if (msLexicalForm == null)
-				m_tbLexicalForm.Select();
+					m_tbLexicalForm.Select();
 				else
 					msLexicalForm.Select();
 			}
 		}
 
-		private void matchingEntries_SelectionChanged(object sender, FwObjectSelectionEventArgs e)
+		private void m_matchingObjectsBrowser_SelectionChanged(object sender, FwObjectSelectionEventArgs e)
 		{
 			CheckIfGoto();
 		}
 
-		private void matchingEntries_SelectionMade(object sender, FwObjectSelectionEventArgs e)
+		private void m_matchingObjectsBrowser_SelectionMade(object sender, FwObjectSelectionEventArgs e)
 		{
 			DialogResult = DialogResult.Yes;
 			Close();
+		}
+
+		private void m_matchingObjectsBrowser_SearchCompleted(object sender, EventArgs e)
+		{
+			CheckIfGoto();
+			if (Controls.Contains(m_searchAnimation))
+				Controls.Remove(m_searchAnimation);
+		}
+
+		private void m_matchingObjectsBrowser_ColumnsChanged(object sender, EventArgs e)
+		{
+			UpdateMatches();
 		}
 
 		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
