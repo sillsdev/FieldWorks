@@ -1,13 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: BrowseViewer.cs
-// Responsibility: WordWorks
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections;
@@ -1164,8 +1157,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// 3) Otherwise, use a column's matched sorter and copy the needed information from the given sorter.
 		/// </summary>
 		/// <param name="sorter"></param>
+		/// <param name="fSortChanged">true to force updating the sorter (even if the new one is the same)</param>
 		/// <returns>true if it changed the sorter.</returns>
-		public bool InitSorter(RecordSorter sorter)
+		public bool InitSorter(RecordSorter sorter, bool fSortChanged = false)
 		{
 			CheckDisposed();
 
@@ -1184,7 +1178,6 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 
 			ArrayList newSorters = new ArrayList();
-			bool fSortChanged = false;
 			for(int i = 0; i < sorters.Count; i++)
 			{
 				int ifsi = ColumnInfoIndexOfCompatibleSorter(sorters[i] as RecordSorter);
@@ -3206,18 +3199,23 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			CheckDisposed();
 
-			// REVISIT: If more than one BrowseViewer gets this message, how do
+			if(m_filterBar == null || Sorter == null)
+				return;
+
+			// TODO: REVISIT: If more than one BrowseViewer gets this message, how do
 			// we know which one should handle it?  Can't we handle this some other way?
-			if (name == "SortedFromEnd" && m_filterBar != null && Sorter != null)
+			switch(name)
 			{
-				CurrentColumnSortedFromEnd = !CurrentColumnSortedFromEnd;
-				SetAndRaiseSorter(Sorter, true);
+				default:
+					return;
+				case "SortedFromEnd":
+					CurrentColumnSortedFromEnd = !CurrentColumnSortedFromEnd;
+					break;
+				case "SortedByLength":
+					CurrentColumnSortedByLength = !CurrentColumnSortedByLength;
+					break;
 			}
-			if (name == "SortedByLength" && m_filterBar != null && Sorter != null)
-			{
-				CurrentColumnSortedByLength = !CurrentColumnSortedByLength;
-				SetAndRaiseSorter(Sorter, true);
-			}
+			SetAndRaiseSorter(Sorter, true);
 		}
 
 		#region IxCoreColleague Members
