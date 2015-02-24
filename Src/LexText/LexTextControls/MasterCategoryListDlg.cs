@@ -578,7 +578,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 				mc.m_node = node; // remember node, too, so can put info for all WSes in database
 
-				string sDefaultWS = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id;
+				string sDefaultWS = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.ID;
 				string sContent;
 				mc.m_abbrevWs = GetBestWritingSystemForNamedNode(node, "abbrev", sDefaultWS, cache, out sContent);
 				mc.m_abbrev = sContent;
@@ -601,7 +601,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					foreach (WritingSystem ws in cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 					{
-						sWS = ws.Id;
+						sWS = ws.ID;
 						if (sWS == sDefaultWS)
 							continue;
 						nd = node.SelectSingleNode(sNodeName + "[@ws='" + sWS + "']");
@@ -667,7 +667,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				bool fContentFound = false; // be pessimistic
 				foreach (WritingSystem ws in cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 				{
-					string sWS = ws.Id;
+					string sWS = ws.ID;
 					nd = m_node.SelectSingleNode(sNodeName + "[@ws='" + sWS + "']");
 					if (nd == null || nd.InnerText.Length == 0)
 						continue;

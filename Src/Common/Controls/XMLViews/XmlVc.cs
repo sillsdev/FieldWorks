@@ -915,7 +915,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			string sLabel = qws.Abbreviation;
 			if (sLabel == null)
-				sLabel = qws.Id;
+				sLabel = qws.ID;
 			if (sLabel == null)
 				sLabel = XMLViewsStrings.ksUNK;
 			ITsStrFactory tsf = cache.TsStrFactory;

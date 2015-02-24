@@ -20,8 +20,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				Cache.WritingSystemFactory.get_EngineOrNull(germanWsId) as WritingSystem);
 			lexFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			tssGermanGloss = Cache.TsStrFactory.MakeString("da", germanWsId);
-			var tssVernacForm = Cache.TsStrFactory.MakeString("bunk",
-				Cache.WritingSystemFactory.GetWsFromStr(Cache.LangProject.DefaultVernacularWritingSystem.Id));
+			var tssVernacForm = Cache.TsStrFactory.MakeString("bunk", Cache.DefaultVernWs);
 			var msa = new SandboxGenericMSA
 			{
 				MainPOS = Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Where(

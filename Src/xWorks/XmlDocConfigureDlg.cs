@@ -457,7 +457,7 @@ namespace SIL.FieldWorks.XWorks
 					foreach (IReversalIndex ri in m_cache.LangProject.LexDbOA.CurrentReversalIndices)
 					{
 						WritingSystem ws = m_cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem);
-						string sWsTag = ws.Id;
+						string sWsTag = ws.ID;
 						m_layouts.ExpandWsTaggedNodes(sWsTag);	// just in case we have a new index.
 						// Create a copy of the layoutType node for the specific writing system.
 						XmlNode xnRealLayout = CreateWsSpecficLayoutType(xnLayoutType,
@@ -2437,7 +2437,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else if (lvi.Tag is WritingSystem)
 				{
-					sWs = ((WritingSystem) lvi.Tag).Id;
+					sWs = ((WritingSystem) lvi.Tag).ID;
 				}
 				if (sbLabel.Length > 0)
 					sbLabel.Append(",");
@@ -3003,7 +3003,7 @@ namespace SIL.FieldWorks.XWorks
 					for (int iws = 0; iws < m_lvItems.Items.Count; ++iws)
 					{
 						var ws = m_lvItems.Items[iws].Tag as WritingSystem;
-						if (ws != null && ws.Id == sLabel)
+						if (ws != null && ws.ID == sLabel)
 						{
 							m_lvItems.Items[iws].Checked = true;
 							MoveListItem(iws, indexTarget++);

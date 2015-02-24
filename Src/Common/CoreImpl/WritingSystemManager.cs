@@ -6,9 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Collections.Generic;
-using System.Xml.Linq;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Keyboarding;
 using SIL.Utils;
 using SIL.WritingSystems;
 
@@ -204,7 +202,7 @@ namespace SIL.CoreImpl
 				var results = new List<WritingSystem>();
 				foreach (WritingSystemDefinition wsDef in m_localStore.WritingSystemsNewerIn(GlobalWritingSystemStore.AllWritingSystems))
 				{
-					m_localStore.LastChecked(wsDef.Id, wsDef.DateModified);
+					m_localStore.LastChecked(wsDef.ID, wsDef.DateModified);
 					results.Add((WritingSystem) wsDef); // REVIEW Hasso 2013.12: add only if not equal?
 				}
 				return results;
@@ -268,7 +266,7 @@ namespace SIL.CoreImpl
 			if (!string.IsNullOrEmpty(languageSubtag.Name))
 				ws.Abbreviation = languageSubtag.Name.Length > 3 ? languageSubtag.Name.Substring(0, 3) : languageSubtag.Name;
 			else
-				ws.Abbreviation = ws.IetfLanguageTag;
+				ws.Abbreviation = ws.ID;
 
 #if WS_FIX
 			CultureInfo ci = MiscUtils.GetCultureForWs(ws.IetfLanguageTag);
@@ -489,10 +487,10 @@ namespace SIL.CoreImpl
 			// For example, and id of x-kal will produce a new WS with Id qaa-x-kal.
 			// In such a case, we may already have a WS with the corrected ID. Set will then fail.
 			// So, in such a case, return the already-known WS.
-			if (identifier != ws.Id)
+			if (identifier != ws.ID)
 			{
 				WritingSystem wsExisting;
-				if (TryGet(ws.Id, out wsExisting))
+				if (TryGet(ws.ID, out wsExisting))
 				{
 					foundExisting = true;
 					return wsExisting;
@@ -526,14 +524,14 @@ namespace SIL.CoreImpl
 		public void Replace(WritingSystem ws)
 		{
 			WritingSystem existingWs;
-			if (TryGet(ws.Id, out existingWs))
+			if (TryGet(ws.ID, out existingWs))
 			{
 				if (existingWs == ws)
 					// don't do anything
 					return;
 
 				m_handleWss.Remove(existingWs.Handle);
-				m_localStore.Remove(existingWs.Id);
+				m_localStore.Remove(existingWs.ID);
 				m_localStore.Set(ws);
 				ws.WritingSystemManager = this;
 				ws.Handle = existingWs.Handle;
@@ -574,7 +572,7 @@ namespace SIL.CoreImpl
 
 			set
 			{
-				if (!Exists(value.Id))
+				if (!Exists(value.ID))
 					Set(value);
 				m_userWritingSystem = value;
 			}
@@ -585,12 +583,8 @@ namespace SIL.CoreImpl
 		/// </summary>
 		public void Save()
 		{
-			DateTime now = DateTime.UtcNow;
 			foreach (WritingSystem ws in m_localStore.AllWritingSystems.Cast<WritingSystem>())
 			{
-				if (ws.IsChanged || ws.DateModified.Ticks == 0)
-					ws.DateModified = now;
-
 				if (ws.MarkedForDeletion)
 				{
 					m_handleWss.Remove(ws.Handle);
@@ -599,57 +593,6 @@ namespace SIL.CoreImpl
 				}
 			}
 			m_localStore.Save();
-
-			Properties.Settings.Default.LocalKeyboards = UnionSettingsKeyboardsWithLocalStore();
-			Properties.Settings.Default.Save();
-		}
-
-		/// <summary>
-		/// Performs the Union of Settings.Default.LocalKeyboards and m_localStore.LocalKeyboardSettings and returns the result as an XML string.
-		/// Protected for tests.
-		/// </summary>
-		protected string UnionSettingsKeyboardsWithLocalStore()
-		{
-			if (string.IsNullOrWhiteSpace(Properties.Settings.Default.LocalKeyboards))
-			{
-#if WS_FIX
-				return m_localStore.LocalKeyboardSettings ?? "";
-#else
-				return "";
-#endif
-			}
-
-			// Parse user.config keyboard list
-			XElement root = XElement.Parse(Properties.Settings.Default.LocalKeyboards);
-			var keyboardSettings = new Dictionary<string, XElement>();
-			foreach (XElement kbd in root.Elements("keyboard"))
-			{
-				keyboardSettings[kbd.Attribute("ws").Value] = kbd;
-			}
-
-			// Update user.config keyboards with any from the local store.
-			// Although user.config should take precedence, this is safe, because we already should have copied
-			// any relevant keyboards from user.config to the local store, so the only keyboards that are actually
-			// changed will be keyboards the user has intentionally changed.
-			// This step will also save default keyboards for any WS w/o one assigned.
-			foreach (WritingSystemDefinition ws in m_localStore.AllWritingSystems)
-			{
-				IKeyboardDefinition kbd = ws.LocalKeyboard;
-				if (kbd == null)
-					continue;
-				keyboardSettings[ws.Id] = new XElement("keyboard",
-					new XAttribute("ws", ws.Id),
-					new XAttribute("layout", kbd.Layout),
-					new XAttribute("locale", kbd.Locale));
-			}
-
-			// Convert back to an XML String and return
-			root.RemoveAll();
-			foreach (var kbd in keyboardSettings.Values)
-			{
-				root.Add(kbd);
-			}
-			return root.ToString();
 		}
 
 		/// <summary>
@@ -753,7 +696,7 @@ namespace SIL.CoreImpl
 		/// </summary>
 		public IEnumerable<WritingSystem> AllDistinctWritingSystems
 		{
-			get { return LocalWritingSystems.Concat(GlobalWritingSystems.Except(LocalWritingSystems, new WsIdEqualityComparer())); }
+			get { return LocalWritingSystems.Concat(GlobalWritingSystems.Except(LocalWritingSystems, new WritingSystemIDEqualityComparer())); }
 		}
 
 		#region Implementation of ILgWritingSystemFactory
@@ -823,7 +766,7 @@ namespace SIL.CoreImpl
 		{
 			WritingSystem ws;
 			if (m_handleWss.TryGetValue(handle, out ws))
-				return ws.Id;
+				return ws.ID;
 			return null;
 		}
 
@@ -936,7 +879,7 @@ namespace SIL.CoreImpl
 		/// current change log, a writing system ID has changed to something else...call WritingSystemIdHasChangedTo
 		/// to find out what.
 		/// </summary>
-		public override bool WritingSystemIdHasChanged(string id)
+		public override bool WritingSystemIDHasChanged(string id)
 		{
 			throw new NotImplementedException();
 		}
@@ -945,7 +888,7 @@ namespace SIL.CoreImpl
 		/// This is used by the orphan finder, which we don't use (yet). It tells what, typically in the scope of some
 		/// current change log, a writing system ID has changed to.
 		/// </summary>
-		public override string WritingSystemIdHasChangedTo(string id)
+		public override string WritingSystemIDHasChangedTo(string id)
 		{
 			throw new NotImplementedException();
 		}
@@ -957,7 +900,7 @@ namespace SIL.CoreImpl
 		{
 			List<string> idsToRemove = (from ws in AllWritingSystems
 				where ws.MarkedForDeletion
-				select ws.Id).ToList();
+				select ws.ID).ToList();
 			foreach (string id in idsToRemove)
 				Remove(id);
 
@@ -1028,12 +971,12 @@ namespace SIL.CoreImpl
 
 			if (m_globalStore != null)
 			{
-				if (m_globalStore.Contains(ws.Id))
+				if (m_globalStore.Contains(ws.ID))
 				{
-					if (ws.DateModified > m_globalStore.Get(ws.Id).DateModified)
+					if (ws.DateModified > m_globalStore.Get(ws.ID).DateModified)
 					{
 						WritingSystemDefinition newWs = ws.Clone();
-						m_globalStore.Remove(ws.Id);
+						m_globalStore.Remove(ws.ID);
 						m_globalStore.Set(newWs);
 					}
 				}

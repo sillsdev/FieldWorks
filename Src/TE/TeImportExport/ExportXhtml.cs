@@ -379,7 +379,7 @@ namespace SIL.FieldWorks.TE
 						{
 							WritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(nVal);
 							m_writer.Write(" {0}=\"{1}\"",
-								tpt == (int)FwTextPropType.ktptWs ? "ws" : "wsBase", wsObj.Id);
+								tpt == (int)FwTextPropType.ktptWs ? "ws" : "wsBase", wsObj.ID);
 						}
 					}
 					else if (tpt != (int)FwTextPropType.ktptMarkItem)
@@ -1055,7 +1055,7 @@ namespace SIL.FieldWorks.TE
 						break;
 				}
 				WritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(wsReal);
-				sLang = wsObj.Id;
+				sLang = wsObj.ID;
 				m_mapWsToRFC.Add(ws, sLang);
 			}
 			return sLang;

@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 				if (ws == null)
 					return null;
 				else
-					return ws.Id;
+					return ws.ID;
 			}
 		}
 
@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		{
 			WritingSystem ws = m_btnAddWritingSystem.NewWritingSystem;
 			if (ws != null)
-				NotebookImportWiz.InitializeWritingSystemCombo(ws.Id, m_cache,
+				NotebookImportWiz.InitializeWritingSystemCombo(ws.ID, m_cache,
 					m_cbWritingSystem);
 		}
 	}

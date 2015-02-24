@@ -332,7 +332,7 @@ namespace SIL.FieldWorks.Common.Controls
 					case "Sense-Reference-Number":
 						if (m_xhtml != null)
 						{
-							m_xhtml.MapCssToLang("xsensexrefnumber", m_cache.ServiceLocator.WritingSystemManager.Get(wsRun).Id);
+							m_xhtml.MapCssToLang("xsensexrefnumber", m_cache.ServiceLocator.WritingSystemManager.Get(wsRun).ID);
 						}
 						break;
 				}
@@ -547,7 +547,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (String.IsNullOrEmpty(sEntry))
 				return;
 			if (m_sWsVern == null)
-				m_sWsVern = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
+				m_sWsVern = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.ID;
 			WriteLetterHeadIfNeeded(sEntry, m_sWsVern);
 		}
 
@@ -861,7 +861,7 @@ namespace SIL.FieldWorks.Common.Controls
 				return;
 
 			if (string.IsNullOrEmpty(m_sWsRevIdx))
-				m_sWsRevIdx = ws.Id;
+				m_sWsRevIdx = ws.ID;
 			WriteLetterHeadIfNeeded(sEntry, m_sWsRevIdx);
 		}
 

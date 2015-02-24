@@ -622,7 +622,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					if (xmlLang == "Vernacular" && ws != null)
 					{
 						fwName = ws.DisplayLabel;
-						xmlLang = lang.XmlLang = ws.Id;
+						xmlLang = lang.XmlLang = ws.ID;
 						encodingconverter = ws.LegacyMapping;
 					}
 					else

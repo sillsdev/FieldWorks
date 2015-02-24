@@ -463,7 +463,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			RegionSubtag region = null;
 			if (languageSubtag.Code == "zh" && languageSubtag.Iso3Code == "cmn")
 				region = "CN";
-			SetupDialog(m_wsManager.Create(languageSubtag, null, region, null), null, displayRelatedWss);
+			SetupDialog(m_wsManager.Create(languageSubtag, null, region, Enumerable.Empty<VariantSubtag>()), null, displayRelatedWss);
 		}
 
 		private void SetupDialog(WritingSystem tempWs, WritingSystem origWs, bool displayRelatedWss)
@@ -627,7 +627,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					{
 						try
 						{
-							CultureInfo ci = CultureInfo.GetCultureInfo(ws.Id);
+							CultureInfo ci = CultureInfo.GetCultureInfo(ws.ID);
 							m_sortLanguageComboBox.SelectedValue = ci.Name;
 						}
 						catch (ArgumentException)
@@ -663,10 +663,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var dictionaries = new ArrayList { new { Name = FwCoreDlgs.ksWsNoDictionaryMatches, Id = FwCoreDlgs.kstidNone } };
 
-			string spellCheckingDictionary = CurrentWritingSystem.SpellCheckingId;
+			string spellCheckingDictionary = CurrentWritingSystem.SpellCheckingID;
 			if (string.IsNullOrEmpty(spellCheckingDictionary))
 			{
-				dictionaries.Add(new { Name = CurrentWritingSystem.Id, Id = CurrentWritingSystem.Id.Replace('-', '_') });
+				dictionaries.Add(new { Name = CurrentWritingSystem.ID, Id = CurrentWritingSystem.ID.Replace('-', '_') });
 			}
 
 			bool fDictionaryExistsForLanguage = false;
@@ -1573,7 +1573,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_regionVariantControl.WritingSystem = ws;
 			m_userChangedVariantControl = true;
 
-			m_FullCode.Text = ws.Id;
+			m_FullCode.Text = ws.ID;
 
 			LoadShortWsNameFromCurrentWritingSystem();
 			rbLeftToRight.Checked = !ws.RightToLeftScript;
@@ -1673,8 +1673,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				}
 				else if (tempWs.IsChanged)
 				{
-					if (tempWs.Id != origWs.Id)
-						wssToUpdate.Add(Tuple.Create(origWs, origWs.Id));
+					if (tempWs.ID != origWs.ID)
+						wssToUpdate.Add(Tuple.Create(origWs, origWs.ID));
 					origWs.Copy(tempWs);
 					m_fChanged = true;
 				}
@@ -1978,19 +1978,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				WritingSystem origWs = m_tempWritingSystems[tempWs];
 
-				if (origWs == null || tempWs.Id != origWs.Id)
+				if (origWs == null || tempWs.ID != origWs.ID)
 				{
 					// We can't let anyone change the user writing system (or "English"). Too many strings depend on
 					// this, and we'd get numerous crashes and terrible behavior if it was changed.
-					if (origWs != null && (origWs == m_wsManager.UserWritingSystem || origWs.Id == "en"))
+					if (origWs != null && (origWs == m_wsManager.UserWritingSystem || origWs.ID == "en"))
 					{
 						ShowMsgCantChangeUserWs(tempWs, origWs);
 						return false;
 					}
 
 					// Catch case where we are going to overwrite an existing writing system.
-					if (m_wsManager.Exists(tempWs.Id)
-						|| m_listBoxRelatedWSs.Items.Cast<WritingSystem>().Any(ws => ws != tempWs && ws.Id == tempWs.Id))
+					if (m_wsManager.Exists(tempWs.ID)
+						|| m_listBoxRelatedWSs.Items.Cast<WritingSystem>().Any(ws => ws != tempWs && ws.ID == tempWs.ID))
 					{
 						ShowMsgBoxCantCreateDuplicateWs(tempWs, origWs);
 						return false;
@@ -2008,7 +2008,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="origWs">The original writing system.</param>
 		protected virtual void ShowMsgCantChangeUserWs(WritingSystem tempWs, WritingSystem origWs)
 		{
-			string msg = string.Format(FwCoreDlgs.kstidCantChangeUserWs, origWs.Id);
+			string msg = string.Format(FwCoreDlgs.kstidCantChangeUserWs, origWs.ID);
 			MessageBox.Show(msg, FwCoreDlgs.kstidWspLabel);
 		}
 
@@ -2177,7 +2177,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (m_userChangedSpellCheckDictionary)
 			{
 				var dictionary = (string) cbDictionaries.SelectedValue;
-				CurrentWritingSystem.SpellCheckingId = string.IsNullOrEmpty(dictionary) ? FwCoreDlgs.kstidNone : dictionary;
+				CurrentWritingSystem.SpellCheckingID = string.IsNullOrEmpty(dictionary) ? FwCoreDlgs.kstidNone : dictionary;
 			}
 		}
 
@@ -2231,7 +2231,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//This next assignment updates the DisplayName so it reflects the changes
 			//made in the regionVariantControl
 			WritingSystem ws = CurrentWritingSystem;
-			m_FullCode.Text = ws.Id;
+			m_FullCode.Text = ws.ID;
 			SetFullNameLabels(ws.DisplayLabel);
 			PopulateRelatedWSsListBox(CurrentWritingSystem);
 		}

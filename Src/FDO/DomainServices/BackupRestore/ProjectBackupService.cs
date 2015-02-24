@@ -223,7 +223,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 
 			foreach (WritingSystem ws in wsManager.LocalWritingSystems)
 			{
-				string spellCheckingDictionary = ws.SpellCheckingId;
+				string spellCheckingDictionary = ws.SpellCheckingID;
 				if (string.IsNullOrEmpty(spellCheckingDictionary) || spellCheckingDictionary == "<None>")
 					continue; // no spelling dictionary for WS
 

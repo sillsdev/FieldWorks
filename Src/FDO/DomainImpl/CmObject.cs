@@ -2660,7 +2660,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		protected virtual string PreferredWsId
 		{
-			get { return Services.WritingSystems.DefaultAnalysisWritingSystem.Id; }
+			get { return Services.WritingSystems.DefaultAnalysisWritingSystem.ID; }
 		}
 
 		/// <summary>

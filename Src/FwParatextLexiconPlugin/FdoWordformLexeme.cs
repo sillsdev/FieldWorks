@@ -229,7 +229,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 						{
 							ITsString tssGloss = fdoGlosses.StringOrNull(ws.Handle);
 							if (tssGloss != null)
-								glosses.Add(new FdoLanguageText(ws.Id, tssGloss.Text.Normalize()));
+								glosses.Add(new FdoLanguageText(ws.ID, tssGloss.Text.Normalize()));
 						}
 						return glosses;
 					}

@@ -631,7 +631,7 @@ namespace SIL.FieldWorks.IText
 						//getting name for a writing system given the ICU code.
 						foreach (WritingSystem ws in m_cache.ServiceLocator.WritingSystemManager.LocalWritingSystems)
 						{
-							var wsi = new WsInfo(ws.DisplayLabel, ws.Id, string.IsNullOrEmpty(ws.LegacyMapping) ? "Windows1252<>Unicode" : ws.LegacyMapping);
+							var wsi = new WsInfo(ws.DisplayLabel, ws.ID, string.IsNullOrEmpty(ws.LegacyMapping) ? "Windows1252<>Unicode" : ws.LegacyMapping);
 							wsInfo.Add(wsi.KEY, wsi);
 						}
 

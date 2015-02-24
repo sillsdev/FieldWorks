@@ -391,7 +391,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(1, mu.StringCount);
 			ITsString tss = mu.get_String(wsEn.Handle);
 			Assert.AreEqual("English Index", tss.Text);
-			Assert.AreEqual(wsEn.Id, revIdx.WritingSystem);
+			Assert.AreEqual(wsEn.ID, revIdx.WritingSystem);
 			Assert.AreEqual(1, revIdx.EntriesOC.Count);
 			IReversalIndexEntry revEntry = revIdx.EntriesOC.ToArray()[0];
 			mu = revEntry.ReversalForm;

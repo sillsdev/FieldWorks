@@ -722,7 +722,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		protected override string PreferredWsId
 		{
-			get { return Services.WritingSystems.DefaultVernacularWritingSystem.Id; }
+			get { return Services.WritingSystems.DefaultVernacularWritingSystem.ID; }
 		}
 
 		/// <summary>

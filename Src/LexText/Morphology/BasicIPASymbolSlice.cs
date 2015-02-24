@@ -81,7 +81,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					XElement description = null;
 					if (phoneme.BasicIPASymbol.Length > 0)
 					{
-						string sLocale = writingSystem.Id;
+						string sLocale = writingSystem.ID;
 						// Mono XPath processing crashes when the expression starts out with // here.  See FWNX-730.
 						string sXPath = "/SegmentDefinitions/SegmentDefinition[Representations/Representation[.='" +
 							XmlUtils.MakeSafeXmlAttribute(phoneme.BasicIPASymbol.Text) +

@@ -3055,7 +3055,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 				riWs = m_repoIndex.FindOrCreateIndexForWs(ws.Handle);
 				IncrementCreatedClidCount(ReversalIndexTags.kClassId);
 				IncrementCreatedClidCount(CmPossibilityListTags.kClassId);
-				var sMsg = String.Format(AppStrings.ksCreatingReversalIndex, ws.DisplayLabel, ws.Id);
+				string sMsg = String.Format(AppStrings.ksCreatingReversalIndex, ws.DisplayLabel, ws.ID);
 				LogMessage(sMsg, 0);
 			}
 			if (m_factRevEntry == null)

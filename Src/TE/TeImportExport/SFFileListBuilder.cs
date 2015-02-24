@@ -869,9 +869,9 @@ namespace SIL.FieldWorks.Common.Controls
 			// Populate all three file lists from ScrImportSet
 			AddFilesToListView(scrFileList, m_ImportSettings.GetImportFiles(ImportDomain.Main), null, null);
 			AddFilesToListView(btFileList, m_ImportSettings.GetImportFiles(ImportDomain.BackTrans),
-				((WritingSystem) cboShowBtWritingSystem.SelectedItem).Id, null);
+				((WritingSystem) cboShowBtWritingSystem.SelectedItem).ID, null);
 			AddFilesToListView(notesFileList, m_ImportSettings.GetImportFiles(ImportDomain.Annotations),
-				((WritingSystem) cboShowBtWritingSystem.SelectedItem).Id,
+				((WritingSystem) cboShowBtWritingSystem.SelectedItem).ID,
 				((DisplayAnnotationDefn)cboShowNoteTypes.SelectedItem).Definition);
 		}
 
@@ -1099,7 +1099,7 @@ namespace SIL.FieldWorks.Common.Controls
 					m_currentListView = btFileList;
 					m_currentRemoveButton = btnRemoveBT;
 					m_domain = ImportDomain.BackTrans;
-					m_wsId = ((WritingSystem) cboShowBtWritingSystem.SelectedItem).Id;
+					m_wsId = ((WritingSystem) cboShowBtWritingSystem.SelectedItem).ID;
 					m_noteType = null;
 					break;
 
@@ -1107,7 +1107,7 @@ namespace SIL.FieldWorks.Common.Controls
 					m_currentListView = notesFileList;
 					m_currentRemoveButton = btnRemoveNotes;
 					m_domain = ImportDomain.Annotations;
-					m_wsId = ((WritingSystem) cboShowNotesWritingSystem.SelectedItem).Id;
+					m_wsId = ((WritingSystem) cboShowNotesWritingSystem.SelectedItem).ID;
 					m_noteType = ((DisplayAnnotationDefn)cboShowNoteTypes.SelectedItem).Definition;
 					break;
 			}
@@ -1125,7 +1125,7 @@ namespace SIL.FieldWorks.Common.Controls
 		protected void cboShowWritingSystem_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			ComboBox combo = (ComboBox)sender;
-			m_wsId = ((WritingSystem) combo.SelectedItem).Id;
+			m_wsId = ((WritingSystem) combo.SelectedItem).ID;
 			if (m_ImportSettings != null)
 			{
 				m_currentListView.Items.Clear();

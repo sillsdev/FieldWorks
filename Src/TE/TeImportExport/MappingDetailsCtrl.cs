@@ -263,7 +263,7 @@ namespace SIL.FieldWorks.TE
 				// If the mapping's ICULocale matches the current writing system's ICULocale,
 				// save the string just added to the combo box so we can initialize the
 				// combo box's value with it.
-				if (mapping.WsId == wsObj.Id)
+				if (mapping.WsId == wsObj.ID)
 					initialWritingSystem = wsObj.ToString();
 			}
 
@@ -406,7 +406,7 @@ namespace SIL.FieldWorks.TE
 			{
 				CheckDisposed();
 				var ws = cboWritingSys.SelectedItem as WritingSystem;
-				return ws == null ? null : ws.Id;
+				return ws == null ? null : ws.ID;
 			}
 		}
 

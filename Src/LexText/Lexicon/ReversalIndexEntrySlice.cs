@@ -634,7 +634,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					IReversalIndex idx = null;
 					foreach (IReversalIndex idxInner in m_fdoCache.LanguageProject.LexDbOA.ReversalIndexesOC)
 					{
-						if (idxInner.WritingSystem == ws.Id)
+						if (idxInner.WritingSystem == ws.ID)
 						{
 							idx = idxInner;
 							break;

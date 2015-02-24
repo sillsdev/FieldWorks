@@ -238,7 +238,7 @@ namespace SIL.CoreImpl
 					if (m_cpe == null)
 					{
 						string language, script, region, variant;
-						IetfLanguageTagHelper.GetParts(IetfLanguageTag, out language, out script, out region, out variant);
+						IetfLanguageTagHelper.GetParts(ID, out language, out script, out region, out variant);
 						LgIcuCharPropEngine cpe = LgIcuCharPropEngineClass.Create();
 						cpe.Initialize(language, script, region, variant);
 						if (MainCharacterSet != null)
@@ -248,15 +248,6 @@ namespace SIL.CoreImpl
 					return m_cpe;
 				}
 			}
-		}
-
-		/// <summary>
-		/// Gets the ISO 639-3 language code (or Ethnologue code).
-		/// </summary>
-		/// <value>The ISO 639-3 language code.</value>
-		public string ISO3
-		{
-			get { return Language.Iso3Code; }
 		}
 
 		/// <summary>
@@ -308,7 +299,7 @@ namespace SIL.CoreImpl
 				if (Language == null || Language.IsPrivateUse)
 					return "root";
 
-				return IetfLanguageTagHelper.ToIcuLocale(IetfLanguageTag);
+				return IetfLanguageTagHelper.ToIcuLocale(ID);
 			}
 		}
 
@@ -330,7 +321,7 @@ namespace SIL.CoreImpl
 			VersionNumber = source.VersionNumber;
 			VersionDescription = source.VersionDescription;
 			SpellCheckDictionaries.ReplaceAll(source.SpellCheckDictionaries.CloneItems());
-			SpellCheckingId = source.SpellCheckingId;
+			SpellCheckingID = source.SpellCheckingID;
 			DateModified = source.DateModified;
 			LocalKeyboard = source.LocalKeyboard;
 			WindowsLcid = source.WindowsLcid;
@@ -453,7 +444,7 @@ namespace SIL.CoreImpl
 	/// <summary>
 	/// Exception raised when the RFC5646 identifier tag for the writing system is not known.
 	/// </summary>
-	public class UnknownPalasoWsException : Exception
+	public class UnknownWritingSystemException : Exception
 	{
 		/// <summary>
 		/// Gets or sets the writing system RFC5646 identifier tag.
@@ -474,12 +465,12 @@ namespace SIL.CoreImpl
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="UnknownPalasoWsException"/> class.
+		/// Initializes a new instance of the <see cref="UnknownWritingSystemException"/> class.
 		/// </summary>
 		/// <param name="message">The error message.</param>
 		/// <param name="icuLocale">The ICU locale.</param>
 		/// <param name="identifier">The RFC5646 language tag.</param>
-		public UnknownPalasoWsException(string message, string icuLocale, string identifier) : base(message)
+		public UnknownWritingSystemException(string message, string icuLocale, string identifier) : base(message)
 		{
 			IcuLocale = icuLocale;
 			WsIdentifier = identifier;
@@ -489,7 +480,7 @@ namespace SIL.CoreImpl
 	/// <summary>
 	/// Exception raised when the RFC5646 identifier tag for the writing system is not known on single run of text.
 	/// </summary>
-	public class UnknownPalasoWsRunException : UnknownPalasoWsException
+	public class UnknownWritingSystemRunException : UnknownWritingSystemException
 	{
 		/// <summary>
 		/// Gets or sets the run text with the writing system problem.
@@ -501,13 +492,13 @@ namespace SIL.CoreImpl
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="UnknownPalasoWsRunException"/> class.
+		/// Initializes a new instance of the <see cref="UnknownWritingSystemRunException"/> class.
 		/// </summary>
 		/// <param name="message">The error message.</param>
 		/// <param name="runText">The run of text that has an unknown writing system.</param>
 		/// <param name="icuLocale">The ICU locale.</param>
 		/// <param name="identifier">The RFC5646 identifier tag.</param>
-		public UnknownPalasoWsRunException(string message, string runText, string icuLocale, string identifier) :
+		public UnknownWritingSystemRunException(string message, string runText, string icuLocale, string identifier) :
 			base(message, icuLocale, identifier)
 		{
 			RunText = runText;

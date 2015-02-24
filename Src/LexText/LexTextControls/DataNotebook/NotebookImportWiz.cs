@@ -902,14 +902,14 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 				sEncCnv = ws.LegacyMapping;
 
 			EncConverterChoice ecc;
-			if (m_mapWsEncConv.TryGetValue(ws.Id, out ecc))
+			if (m_mapWsEncConv.TryGetValue(ws.ID, out ecc))
 			{
 				ecc.ConverterName = sEncCnv;
 			}
 			else
 			{
-				ecc = new EncConverterChoice(ws.Id, sEncCnv, m_wsManager);
-				m_mapWsEncConv.Add(ecc.WritingSystem.Id, ecc);
+				ecc = new EncConverterChoice(ws.ID, sEncCnv, m_wsManager);
+				m_mapWsEncConv.Add(ecc.WritingSystem.ID, ecc);
 			}
 			return new ListViewItem(new[] { sName, sEncCnv }) {Tag = ecc};
 		}
@@ -1277,7 +1277,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 							EncConverterChoice ecc = m_mapWsEncConv[sWs];
 							xw.WriteWhitespace(Environment.NewLine);
 							xw.WriteStartElement("EncodingConverter");
-							xw.WriteAttributeString("ws", ecc.WritingSystem.Id);
+							xw.WriteAttributeString("ws", ecc.WritingSystem.ID);
 							if (!String.IsNullOrEmpty(ecc.ConverterName) && ecc.ConverterName != Sfm2Xml.STATICS.AlreadyInUnicode)
 								xw.WriteAttributeString("converter", ecc.ConverterName);
 							xw.WriteEndElement();	// EncodingConverter
@@ -2088,7 +2088,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		private void ReadConverterSettings(XmlNode xnConverter)
 		{
 			var ecc = new EncConverterChoice(xnConverter, m_wsManager);
-			m_mapWsEncConv.Add(ecc.WritingSystem.Id, ecc);
+			m_mapWsEncConv.Add(ecc.WritingSystem.ID, ecc);
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
@@ -4707,7 +4707,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			cbWritingSystem.Items.AddRange(writingSystems);
 			foreach (WritingSystem ws in cbWritingSystem.Items)
 			{
-				if (ws.Id == sWs)
+				if (ws.ID == sWs)
 				{
 					cbWritingSystem.SelectedItem = ws;
 					return true;

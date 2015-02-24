@@ -530,7 +530,7 @@ namespace SIL.FieldWorks.IText
 								//alert the user
 								cache.LanguageProject.AddToCurrentAnalysisWritingSystems((WritingSystem) writingSystem);
 								// We already have progress indications up.
-								XmlTranslatedLists.ImportTranslatedListsForWs(writingSystem.Id, cache, FwDirectoryFinder.TemplateDirectory, null);
+								XmlTranslatedLists.ImportTranslatedListsForWs(writingSystem.ID, cache, FwDirectoryFinder.TemplateDirectory, null);
 							}
 							else if (result == DialogResult.Cancel)
 							{

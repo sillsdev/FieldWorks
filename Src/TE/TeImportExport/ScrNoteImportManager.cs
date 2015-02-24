@@ -229,7 +229,7 @@ namespace SIL.FieldWorks.TE
 				return ws.Handle;
 			}
 
-			throw new UnknownPalasoWsException(identifier + " is an unknown RFC5646 language tag.",
+			throw new UnknownWritingSystemException(identifier + " is an unknown RFC5646 language tag.",
 				locale, identifier);
 		}
 

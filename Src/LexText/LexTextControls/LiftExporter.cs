@@ -213,7 +213,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			};
 			foreach (var ws in wss)
 			{
-				using (var writer = XmlWriter.Create(Path.Combine(sDirectory, ws.Id + ".ldml"), writerSettings))
+				using (var writer = XmlWriter.Create(Path.Combine(sDirectory, ws.ID + ".ldml"), writerSettings))
 				{
 					ws.WriteLdml(writer);
 					writer.Close();
@@ -1500,7 +1500,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						if (tpt == (int)FwTextPropType.ktptWs && nProp != wsString)
 						{
 							var ws = m_wsManager.Get(nProp);
-							bldr.AppendFormat(" lang=\"{0}\"", XmlUtils.MakeSafeXmlAttribute(ws.Id));
+							bldr.AppendFormat(" lang=\"{0}\"", XmlUtils.MakeSafeXmlAttribute(ws.ID));
 						}
 					}
 					cprop = ttp.StrPropCount;

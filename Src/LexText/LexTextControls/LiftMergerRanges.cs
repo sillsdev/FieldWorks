@@ -699,7 +699,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				writer.WriteLine("<p><h3>{0}</h3></p>", sMsg);
 				writer.WriteLine("<ul>");
 				foreach (WritingSystem ws in list)
-					writer.WriteLine("<li>{0} ({1})</li>", ws.DisplayLabel, ws.Id);
+					writer.WriteLine("<li>{0} ({1})</li>", ws.DisplayLabel, ws.ID);
 				writer.WriteLine("</ul>");
 			}
 		}

@@ -827,7 +827,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				m_currentVernacularWritingSystems.Insert(0, value);
 				// For the sake of unit tests, check if HomographWs is defined.
 				if (string.IsNullOrEmpty(HomographWs))
-					HomographWs = value.Id;
+					HomographWs = value.ID;
 			}
 		}
 

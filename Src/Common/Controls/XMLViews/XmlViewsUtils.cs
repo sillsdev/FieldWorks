@@ -658,7 +658,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			string sLabel = ws.Abbreviation;
 			if (sLabel == null)
-				sLabel = ws.Id;
+				sLabel = ws.ID;
 			if (sLabel == null)
 				sLabel = XMLViewsStrings.ksUNK;
 			return sLabel + " ";

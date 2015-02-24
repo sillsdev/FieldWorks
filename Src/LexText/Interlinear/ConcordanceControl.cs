@@ -291,7 +291,7 @@ namespace SIL.FieldWorks.IText
 				PropertyTable.SettingsGroup.LocalSettings);
 
 			m_mediator.PropertyTable.SetProperty("ConcordanceWs",
-				((WritingSystem) m_cbWritingSystem.SelectedItem).Id, false,
+				((WritingSystem) m_cbWritingSystem.SelectedItem).ID, false,
 				PropertyTable.SettingsGroup.LocalSettings);
 			m_mediator.PropertyTable.SetPropertyPersistence("ConcordanceWs", true,
 				PropertyTable.SettingsGroup.LocalSettings);

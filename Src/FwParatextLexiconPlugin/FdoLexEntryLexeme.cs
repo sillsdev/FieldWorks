@@ -339,7 +339,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 						{
 							ITsString tss = definition.StringOrNull(ws.Handle);
 							if (tss != null)
-								defs.Add(new FdoLanguageText(ws.Id, tss.Text.Normalize()));
+								defs.Add(new FdoLanguageText(ws.ID, tss.Text.Normalize()));
 						}
 						return defs;
 					}
@@ -358,7 +358,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 						{
 							ITsString tss = gloss.StringOrNull(ws.Handle);
 							if (tss != null)
-								glosses.Add(new FdoLanguageText(ws.Id, tss.Text.Normalize()));
+								glosses.Add(new FdoLanguageText(ws.ID, tss.Text.Normalize()));
 						}
 						return glosses;
 					}

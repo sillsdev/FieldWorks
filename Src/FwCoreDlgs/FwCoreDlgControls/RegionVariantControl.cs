@@ -570,7 +570,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			IEnumerable<VariantSubtag> orig = VariantSubtags;
 			m_variantName.ClearItems();
 			m_variantName.Items.AddRange(StandardSubtags.RegisteredVariants.Concat(StandardSubtags.CommonPrivateUseVariants)
-				.Where(v => v.IsVariantOf(m_ws.IetfLanguageTag)).Cast<object>().ToArray());
+				.Where(v => v.IsVariantOf(m_ws.ID)).Cast<object>().ToArray());
 			if (orig != null && fPreserve)
 				VariantSubtags = orig;
 			m_variantName.EndUpdate();

@@ -3503,7 +3503,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			foreach (WritingSystem ws in Services.WritingSystems.AnalysisWritingSystems)
 			{
 				Abbreviation.set_String(ws.Handle, Cache.TsStrFactory.MakeString(sAbbrev, ws.Handle));
-				if (ws.Id == "en")
+				if (ws.ID == "en")
 					Name.set_String(ws.Handle, Cache.TsStrFactory.MakeString(sName, ws.Handle));
 			}
 			ShowInGloss = true;

@@ -85,9 +85,9 @@ namespace SIL.CoreImpl
 				string writingSystemFilePath = GetFilePath(ws);
 				if (!ws.IsChanged && File.Exists(writingSystemFilePath))
 					return; // no need to save (better to preserve the modified date)
-				var oldId = ws.StoreID;
-				string incomingFileName = GetFileName(oldId);
-				string incomingFilePath = GetFilePath(oldId);
+				string oldID = ws.StoreID;
+				string incomingFileName = GetFileName(oldID);
+				string incomingFilePath = GetFilePath(oldID);
 				if (!string.IsNullOrEmpty(incomingFileName))
 				{
 					if (File.Exists(incomingFilePath))
@@ -106,8 +106,8 @@ namespace SIL.CoreImpl
 							// JohnT: Added this without fully understanding, to get things to compile. I don't fully
 							// know when this event should be raised, nor am I sure I am building the argument correctly.
 							// However, I don't think anything (at least in our code) actually uses it.
-							if (WritingSystemIdChanged != null)
-								WritingSystemIdChanged(this, new WritingSystemIdChangedEventArgs(oldId, ws.IetfLanguageTag));
+							if (WritingSystemIDChanged != null)
+								WritingSystemIDChanged(this, new WritingSystemIDChangedEventArgs(oldID, ws.ID));
 						}
 					}
 				}
@@ -176,7 +176,7 @@ namespace SIL.CoreImpl
 			if (ws == null)
 				throw new ArgumentNullException("ws");
 
-			return ws.IetfLanguageTag;
+			return ws.ID;
 		}
 
 		/// <summary>
@@ -210,9 +210,9 @@ namespace SIL.CoreImpl
 		/// </summary>
 		/// <param name="idsToFilter"></param>
 		/// <returns></returns>
-		public IEnumerable<string> FilterForTextIds(IEnumerable<string> idsToFilter)
+		public IEnumerable<string> FilterForTextIDs(IEnumerable<string> idsToFilter)
 		{
-			return TextWritingSystems.Where(ws => idsToFilter.Contains(ws.Id)).Select(ws => ws.Id);
+			return TextWritingSystems.Where(ws => idsToFilter.Contains(ws.ID)).Select(ws => ws.ID);
 		}
 
 		/// <summary>
@@ -323,7 +323,7 @@ namespace SIL.CoreImpl
 		/// <summary>
 		/// Event raised when writing system ID is changed. Required for interface defn, dubious implementstion.
 		/// </summary>
-		public event EventHandler<WritingSystemIdChangedEventArgs> WritingSystemIdChanged;
+		public event EventHandler<WritingSystemIDChangedEventArgs> WritingSystemIDChanged;
 		/// <summary>
 		/// Event raised when writing system is deleted. Required for interface defn,  dubious implementstion.
 		/// </summary>
@@ -357,7 +357,7 @@ namespace SIL.CoreImpl
 		/// current change log, a writing system ID has changed to something else...call WritingSystemIdHasChangedTo
 		/// to find out what.
 		/// </summary>
-		public bool WritingSystemIdHasChanged(string id)
+		public bool WritingSystemIDHasChanged(string id)
 		{
 			throw new NotImplementedException();
 		}
@@ -366,7 +366,7 @@ namespace SIL.CoreImpl
 		/// This is used by the orphan finder, which we don't use (yet). It tells what, typically in the scope of some
 		/// current change log, a writing system ID has changed to.
 		/// </summary>
-		public string WritingSystemIdHasChangedTo(string id)
+		public string WritingSystemIDHasChangedTo(string id)
 		{
 			throw new NotImplementedException();
 		}
@@ -446,7 +446,7 @@ namespace SIL.CoreImpl
 				WritingSystemDefinition ws = CreateNew();
 				var ldmlDataMapper = new LdmlDataMapper();
 				ldmlDataMapper.Read(filePath, ws);
-				ws.StoreID = ws.IetfLanguageTag;
+				ws.StoreID = ws.ID;
 				ws.AcceptChanges();
 				return ws;
 			}
@@ -470,7 +470,7 @@ namespace SIL.CoreImpl
 		{
 			if (string.IsNullOrEmpty(ws.Language))
 				return "";
-			return GetFileName(ws.IetfLanguageTag);
+			return GetFileName(ws.ID);
 		}
 
 		private static string GetFileName(string identifier)

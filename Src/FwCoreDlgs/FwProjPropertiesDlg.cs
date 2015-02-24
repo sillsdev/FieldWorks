@@ -989,7 +989,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var topVernWs = (WritingSystem)m_lstVernWs.CheckedItems[0];
 			Debug.Assert(m_topVernWs != null, "There was no checked top vernacular ws when this dialog loaded");
 			// if the top vern ws changed and it is not the current hg ws, ask
-			if (m_topVernWs.Id != topVernWs.Id && topVernWs.Id != m_cache.LanguageProject.HomographWs)
+			if (m_topVernWs.ID != topVernWs.ID && topVernWs.ID != m_cache.LanguageProject.HomographWs)
 			{
 				var msg = ResourceHelper.GetResourceString("kstidChangeHomographNumberWs");
 				changeHgWs = MessageBox.Show(
@@ -1013,7 +1013,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					// if dialog indicates it's needed, change homograph ws and renumber
 					if (changeHgWs == DialogResult.No)
 						return;
-					m_cache.LanguageProject.HomographWs = topVernWs.Id;
+					m_cache.LanguageProject.HomographWs = topVernWs.ID;
 					m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().ResetHomographs(null);
 				});
 				m_cache.ServiceLocator.WritingSystemManager.Save();
@@ -1292,7 +1292,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			bool fAddDivider = cmnuAddWs.Items.Count > 0;
 			IEnumerable<WritingSystem> q = from ws in wssToAdd
-											where !listToAddExistingTo.Items.Cast<WritingSystem>().Contains(ws, new WsIdEqualityComparer())
+											where !listToAddExistingTo.Items.Cast<WritingSystem>().Contains(ws, new WritingSystemIDEqualityComparer())
 											orderby ws.DisplayLabel
 											select ws;
 			foreach (WritingSystem ws in q)
@@ -1381,19 +1381,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				m_fWsChanged = true;
 				foreach (WritingSystem newWs in newWritingSystems)
 				{
-					if (!list.Items.Cast<WritingSystem>().Any(ws => ws.Id == newWs.Id))
+					if (!list.Items.Cast<WritingSystem>().Any(ws => ws.ID == newWs.ID))
 						list.Items.Add(newWs, true);
 				}
 				list.Invalidate();
 				//LT-13893   Make sure that the HomographWs still matches the DefaultVernacularWritingSystem in case it was changed.
-				if (!m_cache.LanguageProject.DefaultVernacularWritingSystem.Id.Equals(m_cache.LanguageProject.HomographWs))
+				if (!m_cache.LanguageProject.DefaultVernacularWritingSystem.ID.Equals(m_cache.LanguageProject.HomographWs))
 				{
 					UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
 						"Undo HomographWs", "Redo HomographWs",
 						m_cache.ActionHandlerAccessor,
 						() =>
 						{
-							m_cache.LanguageProject.HomographWs = m_cache.LanguageProject.DefaultVernacularWritingSystem.Id;
+							m_cache.LanguageProject.HomographWs = m_cache.LanguageProject.DefaultVernacularWritingSystem.ID;
 						});
 				}
 			}
@@ -1603,7 +1603,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					listBox.Select();
 					listBox.SelectedIndex = index;
 					WritingSystem ws = GetCurrentSelectedWs(listBox);
-					bool isUserOrEnWs = m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem == ws || ws.Id == "en";
+					bool isUserOrEnWs = m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem == ws || ws.ID == "en";
 					m_mergeMenuItem.Enabled = !isUserOrEnWs;
 					m_deleteMenuItem.Enabled = !isUserOrEnWs;
 					m_wsMenuStrip.Show(listBox, e.Location);
@@ -1683,7 +1683,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (list == m_lstAnalWs )//&& list.SelectedItem.ToString() == m_cache.DefaultUserWs)
 			{
 				var ws = (WritingSystem) list.SelectedItem;
-				if ("en" == ws.Id && BringUpEnglishWarningMsg() != DialogResult.Yes)
+				if ("en" == ws.ID && BringUpEnglishWarningMsg() != DialogResult.Yes)
 					return;
 			}
 

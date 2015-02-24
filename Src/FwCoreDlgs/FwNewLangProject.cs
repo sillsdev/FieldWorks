@@ -459,13 +459,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Set the default writing systems for new language projects.
 			foreach (WritingSystem ws in m_cbAnalWrtSys.Items)
 			{
-				if (ws.Id == "en")
+				if (ws.ID == "en")
 					m_cbAnalWrtSys.SelectedItem = ws;
 			}
 
 			foreach (WritingSystem ws in m_cbVernWrtSys.Items)
 			{
-				if (ws.Id == "fr")
+				if (ws.ID == "fr")
 					m_cbVernWrtSys.SelectedItem = ws;
 			}
 			return;
@@ -683,7 +683,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 							m_dbFile = (string)progressDlg.RunTask(DisplayUi, FdoCache.CreateNewLangProj,
 																	ProjectName, FwDirectoryFinder.FdoDirectories, threadHelper, m_cbAnalWrtSys.SelectedItem,
 																	m_cbVernWrtSys.SelectedItem,
-																	m_wsManager.UserWritingSystem.IetfLanguageTag,
+																	m_wsManager.UserWritingSystem.ID,
 																	m_newAnalysisWss, m_newVernWss, anthroFile);
 						}
 					}
@@ -957,8 +957,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				null, false, defaultName, out newWritingSystems))
 			{
 				UpdateLanguageCombos();
-				string selectedWsId = newWritingSystems.First().Id;
-				comboWS.SelectedItem = comboWS.Items.Cast<WritingSystem>().First(ws => ws.Id == selectedWsId);
+				string selectedWsId = newWritingSystems.First().ID;
+				comboWS.SelectedItem = comboWS.Items.Cast<WritingSystem>().First(ws => ws.ID == selectedWsId);
 				return newWritingSystems.ToArray();
 			}
 			return new WritingSystem[0];

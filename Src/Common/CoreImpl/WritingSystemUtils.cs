@@ -51,7 +51,7 @@ namespace SIL.CoreImpl
 	/// <summary>
 	/// An equality comparer for writing systems that determines equality based on the writing system identifier.
 	/// </summary>
-	public class WsIdEqualityComparer : IEqualityComparer<WritingSystem>
+	public class WritingSystemIDEqualityComparer : IEqualityComparer<WritingSystem>
 	{
 		/// <summary>
 		/// Determines whether the specified writing systems are equal.
@@ -66,7 +66,7 @@ namespace SIL.CoreImpl
 			if (ReferenceEquals(x, y))
 				return true;
 
-			return x.Id == y.Id;
+			return x.ID == y.ID;
 		}
 
 		/// <summary>
@@ -79,7 +79,7 @@ namespace SIL.CoreImpl
 		/// <exception cref="T:System.ArgumentNullException">The <paramref name="ws"/> is null.</exception>
 		public int GetHashCode(WritingSystem ws)
 		{
-			return ws.Id.GetHashCode();
+			return ws.ID.GetHashCode();
 		}
 	}
 }

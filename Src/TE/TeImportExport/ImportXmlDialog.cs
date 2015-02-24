@@ -139,13 +139,13 @@ namespace SIL.FieldWorks.TE
 					{
 						// Verify that the vernacular language matches the OXES file.
 						WritingSystem wsObj = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
-						if (sValue != wsObj.Id)
+						if (sValue != wsObj.ID)
 						{
 							// "The project's vernacular language ({0}) does not match the OXES file's data language ({1}).  Should import continue?"
 							string sFmt = TeResourceHelper.GetResourceString("kstidImportXmlLangMismatch");
 							// "Import Language Mismatch"
 							string sCaption = TeResourceHelper.GetResourceString("kstidImportXmlLangMismatchCaption");
-							string sMsg = String.Format(sFmt, wsObj.Id, sValue);
+							string sMsg = String.Format(sFmt, wsObj.ID, sValue);
 							if (MessageBox.Show(sMsg, sCaption, MessageBoxButtons.YesNo) != DialogResult.Yes)
 								return false;
 						}

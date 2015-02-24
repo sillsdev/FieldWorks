@@ -59,7 +59,7 @@ namespace SIL.FieldWorks.TE
 			m_progressDlg = progressDlg;
 			m_categories = categories;
 			m_defUserWs = m_servLoc.WritingSystemManager.UserWs;
-			m_wsId = m_servLoc.WritingSystemManager.UserWritingSystem.Id;
+			m_wsId = m_servLoc.WritingSystemManager.UserWritingSystem.ID;
 			m_fallbackUserWsId = WritingSystemServices.FallbackUserWsId;
 		}
 

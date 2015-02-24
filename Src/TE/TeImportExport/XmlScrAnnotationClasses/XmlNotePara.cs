@@ -176,9 +176,9 @@ namespace SIL.FieldWorks.TE
 					ws = (string.IsNullOrEmpty(run.IcuLocale) ?
 						wsPara : ScrNoteImportManager.GetWsForLocale(run.IcuLocale));
 				}
-				catch (UnknownPalasoWsException e)
+				catch (UnknownWritingSystemException e)
 				{
-					throw new UnknownPalasoWsRunException(e.IcuLocale + " on a text run is not known",
+					throw new UnknownWritingSystemRunException(e.IcuLocale + " on a text run is not known",
 						run.Text, e.IcuLocale, e.WsIdentifier);
 				}
 				run.AddToParaBldr(bldr, ws, styleSheet);

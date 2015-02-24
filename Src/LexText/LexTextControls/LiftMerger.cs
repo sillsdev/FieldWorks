@@ -5999,7 +5999,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				ws = GetWsFromLiftLang(sWs);
 				if (GetWsFromStr(sWs) == 0)
-					sWs = GetExistingWritingSystem(ws).Id;	// Must be old-style ICU Locale.
+					sWs = GetExistingWritingSystem(ws).ID;	// Must be old-style ICU Locale.
 			}
 			return FindOrCreateReversalIndex(ws);
 		}

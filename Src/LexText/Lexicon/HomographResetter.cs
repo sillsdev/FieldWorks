@@ -74,10 +74,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			Debug.Assert(m_dlg != null);
 			var cache = (FdoCache)m_dlg.Mediator.PropertyTable.GetValue("cache");
 			var homographWsId = cache.LanguageProject.HomographWs;
-			var homographWs = cache.ServiceLocator.WritingSystems.AllWritingSystems.Where(ws => ws.Id == homographWsId);
+			var homographWs = cache.ServiceLocator.WritingSystems.AllWritingSystems.Where(ws => ws.ID == homographWsId);
 			var homographWsLabel = homographWs.First().DisplayLabel;
 			var defaultVernacularWs = cache.LanguageProject.DefaultVernacularWritingSystem;
-			var defaultVernacularWsId = defaultVernacularWs.Id;
+			var defaultVernacularWsId = defaultVernacularWs.ID;
 			var changeWs = false;
 			if (homographWsId != defaultVernacularWsId)
 			{

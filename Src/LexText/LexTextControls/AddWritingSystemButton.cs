@@ -91,7 +91,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_cache = cache;
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;
-			m_existingWsIds = new HashSet<string>(wss.Select(ws => ws.Id).ToList());
+			m_existingWsIds = new HashSet<string>(wss.Select(ws => ws.ID).ToList());
 			m_stylesheet = stylesheet;
 		}
 
@@ -156,7 +156,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private List<WritingSystem> GetOtherWritingSystems()
 		{
 			return m_cache.ServiceLocator.WritingSystemManager.GlobalWritingSystems.
-				Where(ws => !m_existingWsIds.Contains(ws.Id)).OrderBy(ws => ws.DisplayLabel).ToList();
+				Where(ws => !m_existingWsIds.Contains(ws.ID)).OrderBy(ws => ws.DisplayLabel).ToList();
 		}
 
 		private void mnuAddWS_Vern(object sender, EventArgs e)

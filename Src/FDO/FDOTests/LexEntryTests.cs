@@ -1393,7 +1393,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Cache.LanguageProject.DefaultVernacularWritingSystem = newDvWs;
 			if (changeHgWs)
 			{
-				Cache.LanguageProject.HomographWs = newDvWs.Id; // set homograph number ws to the new default vern ws
+				Cache.LanguageProject.HomographWs = newDvWs.ID; // set homograph number ws to the new default vern ws
 				Cache.ServiceLocator.GetInstance<ILexEntryRepository>().ResetHomographs(null);
 			}
 		}
@@ -1426,7 +1426,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		private int GetVernWs(int seq)
 		{
 			var vernWsList = Cache.LanguageProject.CurrentVernacularWritingSystems;
-			return Cache.WritingSystemFactory.GetWsFromStr(vernWsList.ElementAt(seq).Id);
+			return Cache.WritingSystemFactory.GetWsFromStr(vernWsList.ElementAt(seq).ID);
 		}
 
 		/// <summary>

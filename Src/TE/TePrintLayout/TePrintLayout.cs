@@ -473,7 +473,7 @@ namespace SIL.FieldWorks.TE
 
 				WritingSystem ws = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 				List<PubPageInfo> pageSizes = TePublicationsInit.GetPubPageSizes(m_publication.Name,
-					ws.Id);
+					ws.ID);
 				foreach (PubPageInfo pageInfo in pageSizes)
 				{
 					if (m_publication.PaperHeight == pageInfo.Height &&
@@ -508,7 +508,7 @@ namespace SIL.FieldWorks.TE
 
 				WritingSystem ws = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 				List<PubPageInfo> pageSizes = TePublicationsInit.GetPubPageSizes(m_publication.Name,
-					ws.Id);
+					ws.ID);
 				foreach (PubPageInfo pageInfo in pageSizes)
 				{
 					if (m_publication.PaperHeight == pageInfo.Height &&

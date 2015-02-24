@@ -136,7 +136,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private static string EncodeWssToDisplayPropertyValue(IEnumerable<WritingSystem> wss)
 		{
 			var wsIds = (from ws in wss
-						 select ws.Id).ToArray();
+						 select ws.ID).ToArray();
 			return ChoiceGroup.EncodeSinglePropertySequenceValue(wsIds);
 		}
 
@@ -149,7 +149,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			string[] wsIds = ChoiceGroup.DecodeSinglePropertySequenceValue(singlePropertySequenceValue);
 			var wsIdSet = new HashSet<string>(wsIds);
 			return from ws in WritingSystemOptionsForDisplay
-				   where wsIdSet.Contains(ws.Id)
+				   where wsIdSet.Contains(ws.ID)
 				   select ws;
 		}
 
@@ -306,8 +306,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				// generally enable all items, but if only one is checked that one is disabled;
 				// it can't be turned off.
-				bool enabled = (active.Length != 1 || ws.Id != active[0]);
-				display.List.Add(ws.DisplayLabel, ws.Id, null, null, enabled);
+				bool enabled = (active.Length != 1 || ws.ID != active[0]);
+				display.List.Add(ws.DisplayLabel, ws.ID, null, null, enabled);
 			}
 		}
 

@@ -315,7 +315,7 @@ namespace SIL.FieldWorks.TE
 							ProcessCanons(m_reader);
 						}
 					}
-					catch (UnknownPalasoWsException e)
+					catch (UnknownWritingSystemException e)
 					{
 						string wsFile = WritingSystemFile(e.WsIdentifier);
 						string strDetailsTemplate =
@@ -323,7 +323,7 @@ namespace SIL.FieldWorks.TE
 						string strUknownWsDetails = Environment.NewLine + string.Format(
 							strDetailsTemplate, e.IcuLocale, Path.GetDirectoryName(wsFile), Path.GetFileName(wsFile));
 
-						UnknownPalasoWsRunException runEx = (e as UnknownPalasoWsRunException);
+						UnknownWritingSystemRunException runEx = (e as UnknownWritingSystemRunException);
 						string runText = null;
 						int lineNumber = -1;
 						SUE_ErrorCode errorCode = SUE_ErrorCode.UndefinedWritingSystem;

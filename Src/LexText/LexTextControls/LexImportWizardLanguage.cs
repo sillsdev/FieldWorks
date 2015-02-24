@@ -386,7 +386,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// initialize the 'ws' combo box and the AddWs button with the data from the DB
 			foreach (WritingSystem ws in m_cache.ServiceLocator.WritingSystemManager.LocalWritingSystems)
 			{
-				var wsi = new WsInfo(ws.DisplayLabel, ws.Id, ws.LegacyMapping);
+				var wsi = new WsInfo(ws.DisplayLabel, ws.ID, ws.LegacyMapping);
 				m_wsInfo.Add(wsi.KEY, wsi);
 				cbWS.Items.Add(wsi);
 			}
@@ -447,7 +447,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (ws != null)
 			{
 				string mapName = ws.LegacyMapping;
-				var wsi = new WsInfo(ws.DisplayLabel, ws.Id, mapName);
+				var wsi = new WsInfo(ws.DisplayLabel, ws.ID, mapName);
 				m_wsInfo.Add(wsi.KEY, wsi);
 
 				// now select it for the ws combo box

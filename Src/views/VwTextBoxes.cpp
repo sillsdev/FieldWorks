@@ -8573,7 +8573,7 @@ public:
 		CheckHr(m_qwsf->get_EngineOrNull(ws, &qwse));
 		if (!qwse)
 			return;
-		CheckHr(qwse->get_SpellCheckingId(&sbstrWsId));
+		CheckHr(qwse->get_SpellCheckingID(&sbstrWsId));
 		if (sbstrWsId.Length() == 0)
 			return;
 		GetDictionary(sbstrWsId.Chars());

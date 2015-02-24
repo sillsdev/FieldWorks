@@ -2214,7 +2214,7 @@ namespace SIL.FieldWorks.Filters
 		public WritingSystemComparer(WritingSystem ws)
 		{
 			m_ws = ws;
-			m_wsId = ws.Id;
+			m_wsId = ws.ID;
 		}
 
 		/// <summary>

@@ -169,14 +169,14 @@ namespace SIL.CoreImpl
 			if (m_globalStore != null)
 			{
 				WritingSystemDefinition globalWs;
-				if (m_globalStore.TryGet(ws.Id, out globalWs))
+				if (m_globalStore.TryGet(ws.ID, out globalWs))
 				{
 					if (ws.DateModified > globalWs.DateModified)
 					{
 						WritingSystemDefinition newWs = ws.Clone();
 						try
 						{
-							m_globalStore.Remove(ws.Id);
+							m_globalStore.Remove(ws.ID);
 							m_globalStore.Set(newWs);
 						}
 						catch (UnauthorizedAccessException)

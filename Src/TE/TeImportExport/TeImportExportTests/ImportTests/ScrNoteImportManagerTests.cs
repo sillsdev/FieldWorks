@@ -261,7 +261,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// Tests the Create method with a bogus identifier. We expect an InvalidPalasoWsException.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(UnknownPalasoWsException))]
+		[ExpectedException(typeof(UnknownWritingSystemException))]
 		public void CreateBogusWs()
 		{
 			int ws = ScrNoteImportManager.GetWsForLocale("x-unknown-ws");

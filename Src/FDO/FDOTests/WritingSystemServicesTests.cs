@@ -46,7 +46,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			WritingSystem ws;
 			Assert.That(WritingSystemServices.FindOrCreateSomeWritingSystem(Cache, null, "x-unk", true, false, out ws), Is.False);
-			Assert.That(ws.Id, Is.EqualTo("qaa-x-unk"));
+			Assert.That(ws.ID, Is.EqualTo("qaa-x-unk"));
 		}
 
 		/// <summary>
@@ -59,7 +59,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			WritingSystem ws;
 			Assert.That(WritingSystemServices.FindOrCreateSomeWritingSystem(Cache, null, "Fr-Tech 30Oct", true, false, out ws), Is.False);
-			Assert.That(ws.Id, Is.EqualTo("fr-x-Tech30Oc")); //8 characters is the maximum allowed for a part.
+			Assert.That(ws.ID, Is.EqualTo("fr-x-Tech30Oc")); //8 characters is the maximum allowed for a part.
 		}
 
 		/// <summary>
@@ -70,7 +70,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			WritingSystem ws;
 			Assert.That(WritingSystemServices.FindOrCreateSomeWritingSystem(Cache, null, "x", true, false, out ws), Is.False);
-			Assert.That(ws.Id, Is.EqualTo("qaa"));
+			Assert.That(ws.ID, Is.EqualTo("qaa"));
 		}
 
 		/// <summary>

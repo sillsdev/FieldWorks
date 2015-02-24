@@ -3837,7 +3837,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgWritingSystem") cpp_quote(",") cpp_quote("9F74A170-E8BB-466d-8848-5FDB28AC5AF8") cpp_quote(");") [ uuid("9F74A170-E8BB-466d-8848-5FDB28AC5AF8"), object, pointer_default(unique) ] interface ILgWritingSystem : IUnknown
 	{
 		
-		[propget] HRESULT Id(
+		[propget] HRESULT ID(
 			[out, retval] BSTR *pbstr);
 
 		
@@ -3850,13 +3850,9 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 			[out, retval] BSTR * pbstr);
 
 		
-		[propget] HRESULT ISO3(
-			[out, retval] BSTR * pbstr);
-
 		
 		
-		
-		[propget] HRESULT SpellCheckingId(
+		[propget] HRESULT SpellCheckingID(
 			[out, retval] BSTR *pbstr);
 
 		
@@ -5407,7 +5403,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IRegexMatcher") cpp
 	{
 		interface ILgIcuLocaleEnumerator;
 	};
-#line 1800 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Language.idh"
+#line 1796 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Language.idh"
 
 #line 24 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
 };

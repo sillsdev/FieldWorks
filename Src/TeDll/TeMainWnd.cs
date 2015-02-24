@@ -5585,8 +5585,8 @@ namespace SIL.FieldWorks.TE
 				// Make sure that the spelling dictionary is up-to-date.
 				// Note that this will currently turn vernacular spelling on for FLEx, too.
 				WritingSystem wsObj = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
-				if (string.IsNullOrEmpty(wsObj.SpellCheckingId) || wsObj.SpellCheckingId == "<None>")
-					wsObj.SpellCheckingId = wsObj.IetfLanguageTag.Replace('-', '_');
+				if (string.IsNullOrEmpty(wsObj.SpellCheckingID) || wsObj.SpellCheckingID == "<None>")
+					wsObj.SpellCheckingID = wsObj.ID.Replace('-', '_');
 				using (new WaitCursor(this))
 					WfiWordformServices.ConformSpellingDictToWordforms(m_cache);
 			}
@@ -7693,7 +7693,7 @@ namespace SIL.FieldWorks.TE
 
 			var dlg = new TePageSetupDlg(pgl, m_scr, pub, div, this,
 				m_app, m_app, ActiveEditingHelper.IsTrialPublicationView,
-				TePublicationsInit.GetPubPageSizes(pub.Name, wsObj.Id));
+				TePublicationsInit.GetPubPageSizes(pub.Name, wsObj.ID));
 			InitializePageSetupDlg(dlg);
 			return dlg;
 		}

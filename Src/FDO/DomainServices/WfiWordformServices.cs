@@ -159,7 +159,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		public static void DisableVernacularSpellingDictionary(FdoCache cache)
 		{
 			foreach (WritingSystem ws in cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
-				ws.SpellCheckingId = "<None>";
+				ws.SpellCheckingID = "<None>";
 		}
 
 		/// <summary>

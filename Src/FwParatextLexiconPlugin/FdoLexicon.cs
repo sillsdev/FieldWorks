@@ -325,7 +325,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			get
 			{
 				using (m_activationContext.Activate())
-					return m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(writingSystem => writingSystem.Id);
+					return m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(writingSystem => writingSystem.ID);
 			}
 		}
 		#endregion

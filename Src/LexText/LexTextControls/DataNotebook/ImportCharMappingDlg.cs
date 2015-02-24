@@ -171,7 +171,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		{
 			WritingSystem ws = m_btnAddWS.NewWritingSystem;
 			if (ws != null)
-				FillWritingSystemCombo(ws.Id);
+				FillWritingSystemCombo(ws.ID);
 		}
 
 		private void m_rbEndOfWord_CheckedChanged(object sender, EventArgs e)
@@ -207,7 +207,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			{
 				if (!m_chkIgnore.Checked && m_cbWritingSystem.SelectedItem is WritingSystem)
 				{
-					return ((WritingSystem) m_cbWritingSystem.SelectedItem).Id;
+					return ((WritingSystem) m_cbWritingSystem.SelectedItem).ID;
 				}
 				else
 				{

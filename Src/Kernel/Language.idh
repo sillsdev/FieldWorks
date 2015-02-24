@@ -226,7 +226,7 @@ Description:
 	DeclareInterface(LgWritingSystem, Unknown, 9F74A170-E8BB-466d-8848-5FDB28AC5AF8)
 	{
 		// The identifier for this writing system.
-		[propget] HRESULT Id(
+		[propget] HRESULT ID(
 			[out, retval] BSTR *pbstr);
 
 		// GET THE WRITING SYSTEM INTEGER that identifies this writing system to classes which
@@ -238,14 +238,10 @@ Description:
 		[propget] HRESULT LanguageName(
 			[out, retval] BSTR * pbstr);
 
-		// Get the ISO 639-3 language code (Ethnologue code).
-		[propget] HRESULT ISO3(
-			[out, retval] BSTR * pbstr);
-
 		// Get the name of the spelling dictionary to use for this writing system.
 		// Currently returns a generally-useful default, unless explicitly set to empty
 		// to prevent this.
-		[propget] HRESULT SpellCheckingId(
+		[propget] HRESULT SpellCheckingID(
 			[out, retval] BSTR *pbstr);
 
 		// Get the primary direction, used for complex embedding; may have fragments like

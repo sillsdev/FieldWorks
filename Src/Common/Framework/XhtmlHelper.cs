@@ -292,7 +292,7 @@ namespace SIL.FieldWorks.Common.Framework
 			foreach (WritingSystem ws in m_cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
 				m_writer.Write("<WritingSystemInfo lang=\"{0}\" dir=\"{1}\"",
-					ws.Id, ws.RightToLeftScript ? "rtl" : "ltr");
+					ws.ID, ws.RightToLeftScript ? "rtl" : "ltr");
 				WriteWsListTag(ws, m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems, "vernTag");
 				WriteWsListTag(ws, m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems, "analTag");
 				WriteWsListTag(ws, m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems, "pronTag");

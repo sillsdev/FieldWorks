@@ -1535,7 +1535,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			StringServices.CrawlStrings(cache, str => DeleteRuns(ws, str), multiStr => DeleteMultiString(ws, multiStr));
 
-			UpdateWritingSystemFields(cache, ws.Id, null);
+			UpdateWritingSystemFields(cache, ws.ID, null);
 			ws.MarkedForDeletion = true;
 		}
 
@@ -1590,7 +1590,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				}
 			}
 
-			UpdateWritingSystemFields(cache, fromWs.Id, toWs.Id);
+			UpdateWritingSystemFields(cache, fromWs.ID, toWs.ID);
 			foreach (var style in cache.ServiceLocator.GetInstance<IStStyleRepository>().AllInstances())
 			{
 				var oldProps = style.Rules;
@@ -1623,7 +1623,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			var ws = changedWs.Handle;
 			StringServices.CrawlStrings(cache, (obj, str) => CheckForWs(obj, str, ws), (obj, ms) => CheckForWs(obj, ms, ws));
-			UpdateWritingSystemFields(cache, oldId, changedWs.Id);
+			UpdateWritingSystemFields(cache, oldId, changedWs.ID);
 		}
 
 		/// <summary>
@@ -2060,9 +2060,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		public virtual void Add(WritingSystem item)
 		{
 			var wsIds = new List<string>(WsIds);
-			if (!wsIds.Contains(item.Id))
+			if (!wsIds.Contains(item.ID))
 			{
-				wsIds.Add(item.Id);
+				wsIds.Add(item.ID);
 				WsIds = wsIds;
 			}
 			RaiseChanged();
@@ -2086,7 +2086,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="item">The object to locate in the <see cref="T:System.Collections.Generic.ICollection`1"/>.</param>
 		public bool Contains(WritingSystem item)
 		{
-			return WsIds.Contains(item.Id);
+			return WsIds.Contains(item.ID);
 		}
 
 		/// <summary>
@@ -2131,7 +2131,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			var newWsIds = new List<string>();
 			foreach (string wsId in WsIds)
 			{
-				if (wsId == item.Id)
+				if (wsId == item.ID)
 					removed = true;
 				else
 					newWsIds.Add(wsId);
@@ -2238,9 +2238,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			string wss = Wss;
 			if (string.IsNullOrEmpty(wss))
-				wss = item.Id;
+				wss = item.ID;
 			else
-				wss += " " + item.Id;
+				wss += " " + item.ID;
 			Wss = wss;
 			RaiseChanged();
 		}
@@ -2256,7 +2256,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="item">The object to locate in the <see cref="T:System.Collections.Generic.IList`1"/>.</param>
 		public int IndexOf(WritingSystem item)
 		{
-			return WsIds.IndexOf(item.Id);
+			return WsIds.IndexOf(item.ID);
 		}
 
 		/// <summary>
@@ -2275,11 +2275,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			for (int i = 0; i < wsIds.Count; i++)
 			{
 				if (i == index)
-					newWsIds.Add(item.Id);
+					newWsIds.Add(item.ID);
 				newWsIds.Add(wsIds[i]);
 			}
 			if (index == wsIds.Count)
-				newWsIds.Add(item.Id);
+				newWsIds.Add(item.ID);
 			WsIds = newWsIds;
 			RaiseChanged();
 		}
@@ -2329,7 +2329,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				if (index < 0 || index >= wsIds.Count)
 					throw new ArgumentOutOfRangeException("index");
 				var newWsIds = new List<string>(wsIds);
-				newWsIds[index] = value.Id;
+				newWsIds[index] = value.ID;
 				WsIds = newWsIds;
 				RaiseChanged();
 			}

@@ -166,7 +166,7 @@ namespace SIL.FieldWorks.TE
 			m_cboMeasurement.SelectedIndex = FwRegistrySettings.MeasurementUnitSetting;
 
 			// Configure the same way as Flex for consistency.  (See FWR-1997.)
-			string sUserWs = m_wsManager.UserWritingSystem.Id;
+			string sUserWs = m_wsManager.UserWritingSystem.ID;
 			m_userInterfaceChooser.Init(sUserWs);
 
 			// Use the following code block to set the checked values for experimental features.
@@ -644,7 +644,7 @@ namespace SIL.FieldWorks.TE
 
 			// IMPORTANT: This has to be the last thing we do because changing the UI locale
 			// will reload the controls in the dialog box and lose any changes the user made.
-			string sUserWs = m_wsManager.UserWritingSystem.Id;
+			string sUserWs = m_wsManager.UserWritingSystem.ID;
 			string sNewUserWs = m_userInterfaceChooser.NewUserWs;
 			if (sUserWs != sNewUserWs)
 			{

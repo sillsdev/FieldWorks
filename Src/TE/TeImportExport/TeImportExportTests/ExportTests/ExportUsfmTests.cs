@@ -94,9 +94,9 @@ namespace SIL.FieldWorks.TE.ExportTests
 
 			// Our export test comparisons will assume the WS's are NOT in this order:
 			IList<WritingSystem> currentAnalWS = Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems;
-			Assert.AreEqual("en", currentAnalWS[0].Id);
-			Assert.AreEqual("de", currentAnalWS[1].Id);
-			Assert.AreEqual("es", currentAnalWS[2].Id);
+			Assert.AreEqual("en", currentAnalWS[0].ID);
+			Assert.AreEqual("de", currentAnalWS[1].ID);
+			Assert.AreEqual("es", currentAnalWS[2].ID);
 
 			// save the default vernacular ws
 			m_wsVern = Cache.DefaultVernWs;

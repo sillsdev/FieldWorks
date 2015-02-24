@@ -501,8 +501,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					id = m_currentFile.WsId;
 					if (id == null) // Get the converter from default vern WS
 					{
-						id = (m_domain == ImportDomain.Main) ? Cache.LanguageProject.DefaultVernacularWritingSystem.Id
-							: Cache.LanguageProject.DefaultAnalysisWritingSystem.Id;
+						id = (m_domain == ImportDomain.Main) ? Cache.LanguageProject.DefaultVernacularWritingSystem.ID
+							: Cache.LanguageProject.DefaultAnalysisWritingSystem.ID;
 					}
 					break;
 
@@ -510,7 +510,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				case MarkerDomain.Note:
 					// Get the converter from default analysis WS
 					id = (m_domain == ImportDomain.Main) ?
-						Cache.LanguageProject.DefaultAnalysisWritingSystem.Id : m_currentFile.WsId;
+						Cache.LanguageProject.DefaultAnalysisWritingSystem.ID : m_currentFile.WsId;
 					break;
 
 				default:

@@ -249,7 +249,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_mediator = mediator;
 			m_cache = cache;
 			m_helpTopicProvider = mediator.HelpTopicProvider;
-			m_sUserWs = m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem.Id;
+			m_sUserWs = m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem.ID;
 			m_sNewUserWs = m_sUserWs;
 			m_userInterfaceChooser.SuppressKeyTermLocalizationLangs = true;
 			m_userInterfaceChooser.Init(m_sUserWs);

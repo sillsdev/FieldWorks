@@ -159,7 +159,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			Assert.Less(indexA, WsList.Items.Count);
 			Assert.Less(indexB, WsList.Items.Count);
-			Assert.AreEqual(((WritingSystem) WsList.Items[indexA]).Id, ((WritingSystem) WsList.Items[indexB]).Id);
+			Assert.AreEqual(((WritingSystem) WsList.Items[indexA]).ID, ((WritingSystem) WsList.Items[indexB]).ID);
 		}
 
 		private ContextMenuStrip PopulateAddWsContextMenu()
@@ -198,7 +198,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.AreEqual(CurrentWritingSystem.Language.Name, m_tbLanguageName.Text);
 			// make sure LocaleName is properly setup as Language name, not as DisplayName.
 			Assert.IsTrue(CurrentWritingSystem.Language.Name.IndexOf("(", StringComparison.Ordinal) == -1);
-			Assert.AreEqual(!string.IsNullOrEmpty(CurrentWritingSystem.ISO3) ? CurrentWritingSystem.ISO3 : "<None>", m_LanguageCode.Text);
+			Assert.AreEqual(!string.IsNullOrEmpty(CurrentWritingSystem.Language.Iso3Code) ? CurrentWritingSystem.Language.Iso3Code : "<None>", m_LanguageCode.Text);
 		}
 
 		internal void ValidateGeneralTab()
@@ -216,7 +216,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		internal void ValidateKeyboardTab()
 		{
-			Assert.AreEqual(CurrentWritingSystem.IetfLanguageTag, m_modelForKeyboard.CurrentIetfLanguageTag);
+			Assert.AreEqual(CurrentWritingSystem.ID, m_modelForKeyboard.CurrentIetfLanguageTag);
 		}
 
 		internal void ValidateConvertersTab()
@@ -331,7 +331,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		protected override void ShowMsgBoxCantCreateDuplicateWs(WritingSystem tempWs, WritingSystem origWs)
 		{
-			DoExpectedMsgBoxResult(ShowMsgBoxStatus.CheckCantCreateDuplicateWs, origWs == null ? null : origWs.Id);
+			DoExpectedMsgBoxResult(ShowMsgBoxStatus.CheckCantCreateDuplicateWs, origWs == null ? null : origWs.ID);
 		}
 
 		/// <summary>
@@ -339,7 +339,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		protected override void ShowMsgCantChangeUserWs(WritingSystem tempWs, WritingSystem origWs)
 		{
-			DoExpectedMsgBoxResult(ShowMsgBoxStatus.CheckCantChangeUserWs, origWs == null ? null : origWs.Id);
+			DoExpectedMsgBoxResult(ShowMsgBoxStatus.CheckCantChangeUserWs, origWs == null ? null : origWs.ID);
 		}
 
 		/// <summary>
@@ -541,7 +541,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void VerifyNewlyAddedWritingSystems(string[] newExpectedWsIds)
 		{
-			List<string> actualWsIds = m_dlg.NewWritingSystems.Select(ws => ws.Id).ToList();
+			List<string> actualWsIds = m_dlg.NewWritingSystems.Select(ws => ws.ID).ToList();
 			Assert.AreEqual(newExpectedWsIds.Length, actualWsIds.Count);
 			foreach (string expectedWsId in newExpectedWsIds)
 				Assert.Contains(expectedWsId, actualWsIds);
@@ -554,7 +554,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				WritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Get(hvoWs);
 				Assert.AreEqual(wsNames[i], ws.DisplayLabel);
-				Assert.AreEqual(wsIds[i], ws.Id);
+				Assert.AreEqual(wsIds[i], ws.ID);
 				i++;
 			}
 		}
@@ -566,7 +566,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				WritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Get(wsId);
 				Assert.AreEqual(wsNames[i], ws.DisplayLabel);
-				Assert.AreEqual(wsIds[i], ws.Id);
+				Assert.AreEqual(wsIds[i], ws.ID);
 				i++;
 			}
 		}

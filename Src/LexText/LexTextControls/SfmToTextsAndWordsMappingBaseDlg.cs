@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			WritingSystem ws = ((AddWritingSystemButton)m_addWritingSystemButton).NewWritingSystem;
 			if (ws != null)
-				NotebookImportWiz.InitializeWritingSystemCombo(ws.Id, m_cache, m_writingSystemCombo);
+				NotebookImportWiz.InitializeWritingSystemCombo(ws.ID, m_cache, m_writingSystemCombo);
 		}
 
 		public void SetupDlg(IHelpTopicProvider helpTopicProvider, IApp app, FdoCache cache,  Sfm2FlexTextMappingBase mappingToModify, IEnumerable<InterlinDestination> destinationsToDisplay)
@@ -99,7 +99,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			var oldWs = m_mapping.WritingSystem;
 			if (m_writingSystemCombo.SelectedItem is WritingSystem)
-				oldWs = ((WritingSystem) m_writingSystemCombo.SelectedItem).Id;
+				oldWs = ((WritingSystem) m_writingSystemCombo.SelectedItem).ID;
 			return oldWs;
 		}
 
@@ -208,7 +208,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void m_okButton_Click(object sender, EventArgs e)
 		{
 			var dest = ((DestinationItem) m_destinationsListBox.SelectedItem).Dest;
-			m_mapping.WritingSystem = dest == InterlinDestination.Ignored ? null : ((WritingSystem) m_writingSystemCombo.SelectedItem).Id;
+			m_mapping.WritingSystem = dest == InterlinDestination.Ignored ? null : ((WritingSystem) m_writingSystemCombo.SelectedItem).ID;
 			m_mapping.Converter = m_converterCombo.SelectedIndex <= 0 ? "" : m_converterCombo.Text;
 			m_mapping.Destination = dest;
 		}

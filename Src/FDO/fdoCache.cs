@@ -586,11 +586,11 @@ namespace SIL.FieldWorks.FDO
 			}
 		}
 
-		private static bool IsWritingSystemInProject(string wsId, FdoCache cache)
+		private static bool IsWritingSystemInProject(string wsID, FdoCache cache)
 		{
 			foreach (WritingSystem ws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
-				if (ws.IetfLanguageTag.Equals(wsId, StringComparison.InvariantCultureIgnoreCase))
+				if (ws.ID.Equals(wsID, StringComparison.InvariantCultureIgnoreCase))
 					return true;
 			}
 			return false;
@@ -642,7 +642,7 @@ namespace SIL.FieldWorks.FDO
 		{
 			var mapLocalWs = new Dictionary<string, WritingSystem>();
 			foreach (var wsT in wsm.LocalWritingSystems)
-				mapLocalWs.Add(wsT.Id, wsT);
+				mapLocalWs.Add(wsT.ID, wsT);
 			using (var rdr = new StreamReader(fileName, Encoding.UTF8))
 			{
 			string sLine;
@@ -743,7 +743,7 @@ namespace SIL.FieldWorks.FDO
 		/// ------------------------------------------------------------------------------------
 		private static void CreateAnalysisWritingSystem(FdoCache cache, WritingSystem analWrtSys, bool fDefault)
 		{
-			string wsId = (analWrtSys == null) ? "en" : analWrtSys.Id;
+			string wsId = (analWrtSys == null) ? "en" : analWrtSys.ID;
 			WritingSystem wsAnalysis;
 			cache.ServiceLocator.WritingSystemManager.GetOrSet(wsId, out wsAnalysis);
 
@@ -773,7 +773,7 @@ namespace SIL.FieldWorks.FDO
 		/// ------------------------------------------------------------------------------------
 		private static void CreateVernacularWritingSystem(FdoCache cache, WritingSystem vernWrtSys, bool fDefault)
 		{
-			string wsId = (vernWrtSys == null) ? "fr" : vernWrtSys.Id;
+			string wsId = (vernWrtSys == null) ? "fr" : vernWrtSys.ID;
 			WritingSystem wsVern;
 			cache.ServiceLocator.WritingSystemManager.GetOrSet(wsId, out wsVern);
 
@@ -782,7 +782,7 @@ namespace SIL.FieldWorks.FDO
 			if (fDefault)
 			{
 				cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem = wsVern;
-				cache.LanguageProject.HomographWs = wsVern.Id;
+				cache.LanguageProject.HomographWs = wsVern.ID;
 			}
 			else
 				cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(wsVern);

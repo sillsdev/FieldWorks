@@ -204,7 +204,7 @@ namespace SIL.FieldWorks.XWorks
 			WritingSystemManager manager = m_cache.ServiceLocator.WritingSystemManager;
 			foreach (WritingSystem wsLocal in manager.LocalWritingSystems)
 			{
-				string tag = wsLocal.IetfLanguageTag;
+				string tag = wsLocal.ID;
 				ILgWritingSystem lgws = null;
 				int ws = m_cache.WritingSystemFactory.GetWsFromStr(tag);
 				if (ws <= 0)

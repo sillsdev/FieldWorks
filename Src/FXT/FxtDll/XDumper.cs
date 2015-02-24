@@ -847,7 +847,7 @@ namespace SIL.FieldWorks.Common.FXT
 			string str = ws.Abbreviation;
 			if (!string.IsNullOrEmpty(str))
 				return str;
-			return ws.Id;
+			return ws.ID;
 		}
 
 		/// <summary>
@@ -1413,7 +1413,7 @@ namespace SIL.FieldWorks.Common.FXT
 				switch (m_writingSystemAttrStyle)
 				{
 					case WritingSystemAttrStyles.LIFT:
-						writer.WriteAttributeString("lang", ws.Id);
+						writer.WriteAttributeString("lang", ws.ID);
 						break;
 					case WritingSystemAttrStyles.FieldWorks:
 						writer.WriteAttributeString("ws", ws.Abbreviation);
@@ -1547,7 +1547,7 @@ namespace SIL.FieldWorks.Common.FXT
 					if (m_writingSystemAttrStyle == WritingSystemAttrStyles.LIFT && name == "form")
 					{
 						WritingSystem ws = m_wsManager.Get(wsFake);
-						writer.WriteAttributeString("lang", ws.Id); // keep LIFT happy with bogus ws.
+						writer.WriteAttributeString("lang", ws.ID); // keep LIFT happy with bogus ws.
 					}
 					if (!String.IsNullOrEmpty(sInternalName))
 						writer.WriteStartElement(sInternalName);
@@ -1700,7 +1700,7 @@ namespace SIL.FieldWorks.Common.FXT
 						if (tpt == (int)FwTextPropType.ktptWs && nProp != wsString)
 						{
 							WritingSystem ws = m_wsManager.Get(nProp);
-							writer.WriteAttributeString("lang", ws.Id);
+							writer.WriteAttributeString("lang", ws.ID);
 						}
 					}
 					cprop = ttp.StrPropCount;
@@ -3227,7 +3227,7 @@ namespace SIL.FieldWorks.Common.FXT
 			}
 			else if (propertyObject is WritingSystem)
 			{
-				return ((WritingSystem) propertyObject).Id;
+				return ((WritingSystem) propertyObject).ID;
 			}
 			throw new ConfigurationException ("Sorry, XDumper can not yet handle attributes of this class: '"+type.ToString()+"'.");
 		}

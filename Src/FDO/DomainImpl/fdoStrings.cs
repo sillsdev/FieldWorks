@@ -902,7 +902,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				return; // Skip writing TsStrings with no content.
 
 			writer.WriteStartElement("AUni");
-			writer.WriteAttributeString("ws", m_object.Services.WritingSystemManager.Get(ws).Id);
+			writer.WriteAttributeString("ws", m_object.Services.WritingSystemManager.Get(ws).ID);
 			text = Icu.Normalize(text, Icu.UNormalizationMode.UNORM_NFC);
 			writer.WriteString(text);
 			writer.WriteEndElement();

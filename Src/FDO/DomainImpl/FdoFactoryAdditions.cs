@@ -391,8 +391,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <returns></returns>
 		public ILexEntry Create(IMoMorphType morphType, ITsString tssLexemeForm, string gloss, SandboxGenericMSA sandboxMSA)
 		{
-			int writingSystem = m_cache.WritingSystemFactory.GetWsFromStr(m_cache.LangProject.DefaultAnalysisWritingSystem.Id);
-			var tssGloss = m_cache.TsStrFactory.MakeString(gloss, writingSystem);
+			var tssGloss = m_cache.TsStrFactory.MakeString(gloss, m_cache.DefaultAnalWs);
 			return Create(morphType, tssLexemeForm, tssGloss, sandboxMSA);
 		}
 

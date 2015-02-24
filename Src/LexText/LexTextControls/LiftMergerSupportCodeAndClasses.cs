@@ -471,7 +471,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				string ldmlFile = Path.Combine(Path.Combine(m_sLiftDir, "WritingSystems"), key + ".ldml");
 				if (!File.Exists(ldmlFile))
 					ldmlFile = Path.Combine(m_sLiftDir, key + ".ldml");
-				if (File.Exists(ldmlFile) && key == ws.Id)
+				if (File.Exists(ldmlFile) && key == ws.ID)
 				{
 					string storeId = ws.StoreID;
 					var adaptor = new LdmlDataMapper();
@@ -483,8 +483,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_mapLangWs.Add(key, ws.Handle);
 			// If FindOrCreate had to get creative, the WS ID may not match the input identifier. We want both the
 			// original and actual keys in the map.
-			if (!m_mapLangWs.ContainsKey(ws.Id))
-				m_mapLangWs.Add(ws.Id, ws.Handle);
+			if (!m_mapLangWs.ContainsKey(ws.ID))
+				m_mapLangWs.Add(ws.ID, ws.Handle);
 			return ws.Handle;
 		}
 
@@ -782,7 +782,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (ws > 0)
 				{
 					WritingSystem wsObj = GetExistingWritingSystem(ws);
-					sLang = wsObj.Id;
+					sLang = wsObj.ID;
 					sDir = wsObj.RightToLeftScript ? "RTL" : "LTR";
 					sFont = wsObj.DefaultFontName;
 				}

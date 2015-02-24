@@ -288,7 +288,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				if (ws.Language == sLang)
 				{
-					wsCombo.Items.Add(new WsComboItem(ws.DisplayLabel, ws.Id));
+					wsCombo.Items.Add(new WsComboItem(ws.DisplayLabel, ws.ID));
 				}
 			}
 			//foreach (NamedWritingSystem nws in m_cache.LangProject.GetDbNamedWritingSystems())
@@ -527,7 +527,7 @@ namespace SIL.FieldWorks.Common.Controls
 		public static void AddWritingSystemsToCombo(FdoCache cache, ComboBox.ObjectCollection items, IEnumerable<WritingSystem> wss)
 		{
 			foreach (WritingSystem ws in wss)
-				items.Add(new WsComboItem(ws.DisplayLabel, ws.Id));
+				items.Add(new WsComboItem(ws.DisplayLabel, ws.ID));
 		}
 
 		void InitChoicesList()

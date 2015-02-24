@@ -1,12 +1,14 @@
-using System.Collections.Generic;
+using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Keyboarding;
+using SIL.LexiconUtils;
 using SIL.Utils;
 using SIL.WritingSystems;
 
@@ -18,17 +20,22 @@ namespace SIL.CoreImpl
 		Justification = "Unit tests, gets disposed in FixtureTearDown()")]
 	public class WritingSystemManagerTests // can't derive from BaseTest, but instantiate DebugProcs instead
 	{
-		private DebugProcs m_debugProcs;
-
-		private class TestWritingSystemManager : WritingSystemManager
+		private class TestSettingsStore : ISettingsStore
 		{
-			public TestWritingSystemManager(IFwWritingSystemStore store) : base(store) {}
+			private XElement m_settings;
 
-			public string TestUnionSettingsKeyboardsWithLocalStore()
+			public XElement GetSettings()
 			{
-				return UnionSettingsKeyboardsWithLocalStore();
+				return m_settings;
+			}
+
+			public void SaveSettings(XElement settingsElem)
+			{
+				m_settings = settingsElem;
 			}
 		}
+
+		private DebugProcs m_debugProcs;
 
 		/// <summary>
 		/// If a test overrides this, it should call this base implementation.
@@ -61,7 +68,6 @@ namespace SIL.CoreImpl
 			return path;
 		}
 
-#if WS_FIX
 		/// <summary>
 		/// Tests serialization and deserialization of writing systems.
 		/// </summary>
@@ -70,10 +76,16 @@ namespace SIL.CoreImpl
 		{
 			string storePath = PrepareTempStore("Store");
 
+			var projectSettingsStore = new TestSettingsStore();
+			var userSettingsStore = new TestSettingsStore();
 			// serialize
-			var wsManager = new WritingSystemManager(new LocalFileWritingSystemStore(storePath));
+			var wsManager = new WritingSystemManager(new LocalFileWritingSystemStore(storePath, new ICustomDataMapper[]
+			{
+				new ProjectSettingsWritingSystemDataMapper(projectSettingsStore),
+				new UserSettingsWritingSystemDataMapper(userSettingsStore)
+			}, null));
 			WritingSystem ws = wsManager.Set("en-US");
-			ws.SpellCheckDictionary = new SpellCheckDictionaryDefinition("en-US", SpellCheckDictionaryFormat.Hunspell);
+			ws.SpellCheckingID = "en_US";
 			ws.MatchedPairs.Add(new MatchedPair("(", ")", true));
 			ws.WindowsLcid = 0x409.ToString(CultureInfo.InvariantCulture);
 			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"a", "b", "c"}});
@@ -81,57 +93,23 @@ namespace SIL.CoreImpl
 			wsManager.Save();
 
 			// deserialize
-			wsManager = new WritingSystemManager(new LocalFileWritingSystemStore(storePath));
+			wsManager = new WritingSystemManager(new LocalFileWritingSystemStore(storePath, new ICustomDataMapper[]
+			{
+				new ProjectSettingsWritingSystemDataMapper(projectSettingsStore),
+				new UserSettingsWritingSystemDataMapper(userSettingsStore)
+			}, null));
 			Assert.IsTrue(wsManager.Exists("en-US"));
 			ws = wsManager.Get("en-US");
 			Assert.AreEqual("Eng", ws.Abbreviation);
 			Assert.AreEqual("English", ws.Language.Name);
-			Assert.AreEqual("en-US", ws.SpellCheckDictionary.LanguageTag);
+			Assert.AreEqual("en_US", ws.SpellCheckingID);
 			Assert.AreEqual("United States", ws.Region.Name);
 			Assert.That(ws.MatchedPairs, Is.EqualTo(new[] {new MatchedPair("(", ")", true)}));
 			Assert.AreEqual(0x409.ToString(CultureInfo.InvariantCulture), ws.WindowsLcid);
 			Assert.That(ws.CharacterSets.Count, Is.EqualTo(1));
 			Assert.That(ws.CharacterSets[0].ValueEquals(new CharacterSetDefinition("main") {Characters = {"a", "b", "c"}}), Is.True);
 			Assert.AreEqual("legacy mapping", ws.LegacyMapping);
-			Assert.AreEqual("eng", ws.ISO3);
 			wsManager.Save();
-		}
-
-		/// <summary>
-		/// Tests to make sure that the special fw extensions of ldml aren't duplicated when round tripping.
-		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		public void FieldWorksExtensionsAreNotDuplicatedOnRoundTrip()
-		{
-			var storePath = PrepareTempStore("Store");
-
-			// serialize
-			var wsManager = new WritingSystemManager(new LocalFileWritingSystemStore(storePath));
-			var ws = wsManager.Set("en-US");
-			ws.SpellCheckingId = "en-US";
-			ws.MatchedPairs = "matched pairs";
-			ws.WindowsLcid = 0x409.ToString(CultureInfo.InvariantCulture);
-			ws.ValidChars = "valid characters";
-			ws.LegacyMapping = "legacy mapping";
-			wsManager.Save();
-
-			// deserialize
-			wsManager = new WritingSystemManager(new LocalFileWritingSystemStore(storePath));
-			Assert.IsTrue(wsManager.Exists("en-US"), "broken before SUT.");
-			ws = wsManager.Get("en-US");
-			Assert.AreEqual("valid characters", ws.ValidChars, "broken before SUT");
-			//change the valid chars data and save back out, this was duplicating in LT-15048
-			ws.ValidChars = "more valid characters";
-			wsManager.Save();
-
-			var xmlDoc = new XmlDocument();
-			xmlDoc.Load(Path.Combine(storePath, "en-US.ldml"));
-			Assert.AreEqual(1, xmlDoc.SelectNodes("//special/*[local-name()='validChars']").Count, "Special fw elements were duplicated");
-			Assert.AreEqual(1, xmlDoc.SelectNodes("//special/*[local-name()='validChars' and @value='more valid characters']").Count, "special fw changes not saved");
 		}
 
 		/// <summary>
@@ -146,9 +124,9 @@ namespace SIL.CoreImpl
 
 			var globalStore = new GlobalFileWritingSystemStore(globalStorePath);
 			var wsManager = new WritingSystemManager(
-				new LocalFileWritingSystemStore(storePath1, globalStore), globalStore);
+				new LocalFileWritingSystemStore(storePath1, Enumerable.Empty<ICustomDataMapper>(), globalStore), globalStore);
 			var ws = wsManager.Set("en-US");
-			ws.SpellCheckDictionary = new SpellCheckDictionaryDefinition("fr", SpellCheckDictionaryFormat.Hunspell);
+			ws.RightToLeftScript = true;
 			wsManager.Save();
 			Assert.IsTrue(File.Exists(Path.Combine(storePath1, "en-US.ldml")));
 			Assert.IsTrue(File.Exists(Path.Combine(globalStorePath, "en-US.ldml")));
@@ -157,26 +135,26 @@ namespace SIL.CoreImpl
 
 			DateTime lastModified = File.GetLastWriteTime(Path.Combine(globalStorePath, "en-US.ldml"));
 			wsManager = new WritingSystemManager(
-				new LocalFileWritingSystemStore(storePath2, globalStore), globalStore);
+				new LocalFileWritingSystemStore(storePath2, Enumerable.Empty<ICustomDataMapper>(), globalStore), globalStore);
 			ws = wsManager.Set("en-US");
-			ws.SpellCheckDictionary = new SpellCheckDictionaryDefinition("es", SpellCheckDictionaryFormat.Hunspell);
+			ws.RightToLeftScript = false;
 			wsManager.Save();
 			Assert.Less(lastModified, File.GetLastWriteTime(Path.Combine(globalStorePath, "en-US.ldml")));
 
 			lastModified = File.GetLastWriteTime(Path.Combine(storePath1, "en-US.ldml"));
 			wsManager = new WritingSystemManager(
-				new LocalFileWritingSystemStore(storePath1, globalStore), globalStore);
+				new LocalFileWritingSystemStore(storePath1, Enumerable.Empty<ICustomDataMapper>(), globalStore), globalStore);
 			ws = wsManager.Get("en-US");
-			Assert.AreEqual("fr", ws.SpellCheckDictionary.LanguageTag);
+			Assert.That(ws.RightToLeftScript, Is.True);
 			WritingSystem[] sharedWss = wsManager.CheckForNewerGlobalWritingSystems().ToArray();
 			Assert.AreEqual(1, sharedWss.Length);
 			WritingSystem sharedWs = sharedWss[0];
-			Assert.AreEqual("en-US", sharedWs.Id);
+			Assert.AreEqual("en-US", sharedWs.ID);
 			wsManager.Replace(sharedWs);
 			wsManager.Save();
 
 			ws = wsManager.Get("en-US");
-			Assert.AreEqual("es", ws.SpellCheckDictionary.LanguageTag);
+			Assert.That(ws.RightToLeftScript, Is.False);
 			Assert.Less(lastModified, File.GetLastWriteTime(Path.Combine(storePath1, "en-US.ldml")));
 		}
 
@@ -192,30 +170,30 @@ namespace SIL.CoreImpl
 
 			var globalStore = new GlobalFileWritingSystemStore(globalStorePath);
 			var wsManager = new WritingSystemManager(
-				new LocalFileWritingSystemStore(storePath1, globalStore), globalStore);
+				new LocalFileWritingSystemStore(storePath1, Enumerable.Empty<ICustomDataMapper>(), globalStore), globalStore);
 			var ws = wsManager.Set("en-US");
-			ws.SpellCheckDictionary = new SpellCheckDictionaryDefinition("fr", SpellCheckDictionaryFormat.Hunspell);
+			ws.RightToLeftScript = true;
 			wsManager.Save();
 
 			Thread.Sleep(1000);
 
 			wsManager = new WritingSystemManager(
-				new LocalFileWritingSystemStore(storePath2, globalStore), globalStore);
+				new LocalFileWritingSystemStore(storePath2, Enumerable.Empty<ICustomDataMapper>(), globalStore), globalStore);
 			ws = wsManager.Set("en-US");
-			ws.SpellCheckDictionary = new SpellCheckDictionaryDefinition("es", SpellCheckDictionaryFormat.Hunspell);
+			ws.RightToLeftScript = false;
 			wsManager.Save();
 
 			wsManager = new WritingSystemManager(
-				new LocalFileWritingSystemStore(storePath1, globalStore), globalStore);
+				new LocalFileWritingSystemStore(storePath1, Enumerable.Empty<ICustomDataMapper>(), globalStore), globalStore);
 			WritingSystem[] sharedWss = wsManager.CheckForNewerGlobalWritingSystems().ToArray();
 			Assert.AreEqual(1, sharedWss.Length);
-			Assert.AreEqual("en-US", sharedWss[0].Id);
+			Assert.AreEqual("en-US", sharedWss[0].ID);
 			ws = wsManager.Get("en-US");
-			Assert.AreEqual("fr", ws.SpellCheckDictionary.LanguageTag);
+			Assert.That(ws.RightToLeftScript, Is.True);
 			wsManager.Save();
 
 			wsManager = new WritingSystemManager(
-				new LocalFileWritingSystemStore(storePath1, globalStore), globalStore);
+				new LocalFileWritingSystemStore(storePath1, Enumerable.Empty<ICustomDataMapper>(), globalStore), globalStore);
 			sharedWss = wsManager.CheckForNewerGlobalWritingSystems().ToArray();
 			Assert.AreEqual(0, sharedWss.Length);
 			wsManager.Save();
@@ -223,25 +201,25 @@ namespace SIL.CoreImpl
 			Thread.Sleep(1000);
 
 			wsManager = new WritingSystemManager(
-				new LocalFileWritingSystemStore(storePath2, globalStore), globalStore);
+				new LocalFileWritingSystemStore(storePath2, Enumerable.Empty<ICustomDataMapper>(), globalStore), globalStore);
 			ws = wsManager.Get("en-US");
-			ws.LegacyMapping = "encoding converter";
+			ws.CharacterSets.Add(new CharacterSetDefinition("main"));
 			wsManager.Save();
 
 			wsManager = new WritingSystemManager(
-				new LocalFileWritingSystemStore(storePath1, globalStore), globalStore);
+				new LocalFileWritingSystemStore(storePath1, Enumerable.Empty<ICustomDataMapper>(), globalStore), globalStore);
 			ws = wsManager.Get("en-US");
-			Assert.IsNullOrEmpty(ws.LegacyMapping);
+			Assert.That(ws.CharacterSets, Is.Empty);
 			sharedWss = wsManager.CheckForNewerGlobalWritingSystems().ToArray();
 			Assert.AreEqual(1, sharedWss.Length);
 			WritingSystem sharedWs = sharedWss[0];
-			Assert.AreEqual("en-US", sharedWs.Id);
+			Assert.AreEqual("en-US", sharedWs.ID);
 			wsManager.Replace(sharedWs);
 			wsManager.Save();
 			ws = wsManager.Get("en-US");
-			Assert.AreEqual("encoding converter", ws.LegacyMapping);
+			Assert.That(ws.CharacterSets.Count, Is.EqualTo(1));
+			Assert.That(ws.CharacterSets[0].Type, Is.EqualTo("main"));
 		}
-#endif
 
 		/// <summary>
 		/// Tests the get_Engine method.
@@ -456,7 +434,7 @@ namespace SIL.CoreImpl
 			var wsManager = new WritingSystemManager();
 			WritingSystem ws;
 			Assert.That(wsManager.GetOrSet("x-kal", out ws), Is.False);
-			Assert.That(ws.Id, Is.EqualTo("qaa-x-kal"));
+			Assert.That(ws.ID, Is.EqualTo("qaa-x-kal"));
 			WritingSystem ws2;
 			Assert.That(wsManager.GetOrSet("x-kal", out ws2), Is.True);
 			Assert.That(ws2, Is.EqualTo(ws));
@@ -464,56 +442,6 @@ namespace SIL.CoreImpl
 			// By the way it should work the same for one where it does not have to modify the ID.
 			Assert.That(wsManager.GetOrSet("fr", out ws), Is.False);
 			Assert.That(wsManager.GetOrSet("fr", out ws), Is.True);
-		}
-
-		[Test]
-		public void LocalKeyboardsUnionLocalStore()
-		{
-			// Populate Settings.Default.LocalKeyboards
-			Properties.Settings.Default.LocalKeyboards = "<keyboards>"
-											+ "<keyboard ws=\"en\" layout=\"US\" locale=\"en-US\" />"
-											+ "<keyboard ws=\"zh-CN-pinyin\" layout=\"US\" locale=\"en-US\" />"
-											+ "<keyboard ws=\"zh-CN\" layout=\"Chinese (Simplified) - US Keyboard\" locale=\"zh-CN\" />"
-											+ "</keyboards>";
-
-			// Set up a local store with one conflicting and one additional keyboard
-			var localStore = new LocalFileWritingSystemStore(PrepareTempStore("Store"));
-			var ws = new WritingSystem
-			{
-				Language = "en",
-				LocalKeyboard = Keyboard.Controller.CreateKeyboard("en-UK_United States-Dvorak", KeyboardFormat.Unknown, Enumerable.Empty<string>())
-			};
-			localStore.Set(ws);
-			ws = new WritingSystem
-			{
-				Language = "ko",
-				LocalKeyboard = Keyboard.Controller.CreateKeyboard("ta-IN_US", KeyboardFormat.Unknown, Enumerable.Empty<string>())
-			};
-			localStore.Set(ws);
-			var wsm = new TestWritingSystemManager(localStore);
-
-			// SUT
-			var resultXml = wsm.TestUnionSettingsKeyboardsWithLocalStore();
-
-			// Parse resulting string into XElements
-			XElement root = XElement.Parse(resultXml);
-			var keyboardSettings = new Dictionary<string, XElement>();
-			foreach (XElement kbd in root.Elements("keyboard"))
-			{
-				keyboardSettings[kbd.Attribute("ws").Value] = kbd;
-			}
-
-			Assert.AreEqual(4, keyboardSettings.Count, "Incorrect number of keyboards in Union");
-			// the same
-			Assert.AreEqual("US", keyboardSettings["zh-CN-pinyin"].Attribute("layout").Value, "Pinyin keyboard layout should not have changed");
-			Assert.AreEqual("en-US", keyboardSettings["zh-CN-pinyin"].Attribute("locale").Value, "Pinyin keyboard locale should not have changed");
-			Assert.AreEqual("Chinese (Simplified) - US Keyboard", keyboardSettings["zh-CN"].Attribute("layout").Value, "Chinese keyboard layout should not have changed");
-			Assert.AreEqual("zh-CN", keyboardSettings["zh-CN"].Attribute("locale").Value, "Chinese keyboard locale should not have changed");
-			// new or changed
-			Assert.AreEqual("United States-Dvorak", keyboardSettings["en"].Attribute("layout").Value, "English keyboard layout should have changed");
-			Assert.AreEqual("en-UK", keyboardSettings["en"].Attribute("locale").Value, "English keyboard locale should have changed");
-			Assert.AreEqual("US", keyboardSettings["ko"].Attribute("layout").Value, "Korean keyboard layout should have been created");
-			Assert.AreEqual("ta-IN", keyboardSettings["ko"].Attribute("locale").Value, "Korean keyboard locale should have been created");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -593,7 +521,7 @@ namespace SIL.CoreImpl
 			var wsManager = new WritingSystemManager(
 				new LocalFileWritingSystemStore(storePath, Enumerable.Empty<ICustomDataMapper>(), globalStore), globalStore);
 
-			WritingSystem newWs = wsManager.Create(WellKnownSubtags.UnlistedLanguage, null, null, null);
+			WritingSystem newWs = wsManager.Create(WellKnownSubtags.UnlistedLanguage, null, null, Enumerable.Empty<VariantSubtag>());
 
 			Assert.DoesNotThrow(() =>
 			{

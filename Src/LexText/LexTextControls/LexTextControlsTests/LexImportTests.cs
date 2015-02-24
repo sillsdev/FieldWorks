@@ -245,7 +245,7 @@ namespace LexTextControlsTests
 
 				var uiLangsNew = new Hashtable();
 				var infoEn = new LanguageInfoUI("English", "English", "", "en");
-				var vernId = Cache.LangProject.DefaultVernacularWritingSystem.Id;
+				var vernId = Cache.LangProject.DefaultVernacularWritingSystem.ID;
 				var infoV = new LanguageInfoUI("Vernacular", "Vern", "", vernId);
 				uiLangsNew[infoEn.Key] = infoEn;
 				uiLangsNew["Vernacular"] = infoV;

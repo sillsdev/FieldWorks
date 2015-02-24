@@ -339,7 +339,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			bool dataChanged;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(fullProjectFileName, SendReceiveUser,
 																  FLExBridgeHelper.SendReceive,
-																  null, FDOBackendProvider.ModelVersion, "0.13", Cache.LangProject.DefaultVernacularWritingSystem.Id,
+																  null, FDOBackendProvider.ModelVersion, "0.13", Cache.LangProject.DefaultVernacularWritingSystem.ID,
 																  out dataChanged, out dummy);
 			if (!success)
 			{
@@ -911,7 +911,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				fullProjectFileName,
 				SendReceiveUser,
 				FLExBridgeHelper.SendReceiveLift, // May create a new lift repo in the process of doing the S/R. Or, it may just use the extant lift repo.
-				null, FDOBackendProvider.ModelVersion, "0.13", Cache.LangProject.DefaultVernacularWritingSystem.Id,
+				null, FDOBackendProvider.ModelVersion, "0.13", Cache.LangProject.DefaultVernacularWritingSystem.ID,
 				out dataChanged, out dummy);
 			if (!success)
 			{

@@ -316,12 +316,12 @@ namespace SIL.FieldWorks.TE
 		private string InitializeExportWs()
 		{
 			WritingSystem wsVern = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
-			string sLang = wsVern.Id.Normalize();
+			string sLang = wsVern.ID.Normalize();
 			foreach (WritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 			{
 				if (!m_dictAnalLangs.ContainsKey(ws.Handle))
 				{
-					string sRFC = ws.Id.Normalize();
+					string sRFC = ws.ID.Normalize();
 					m_dictAnalLangs.Add(ws.Handle, sRFC);
 					m_mapWsRFC.Add(ws.Handle, sRFC);
 				}
@@ -2669,7 +2669,7 @@ namespace SIL.FieldWorks.TE
 			if (!m_mapWsRFC.TryGetValue(ws, out sRFC))
 			{
 				WritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
-				sRFC = wsObj.Id.Normalize();
+				sRFC = wsObj.ID.Normalize();
 				m_mapWsRFC.Add(ws, sRFC);
 			}
 			return sRFC;

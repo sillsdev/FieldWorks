@@ -36,7 +36,7 @@ namespace XMLViewsTests
 					exporter.Initialize(Cache, null, writer, null, "xhtml", null, "dicBody");
 					Dictionary<string, string> mapChars;
 					Set<string> ignoreSet;
-					var data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet);
+					var data = exporter.GetDigraphs(ws.ID, out mapChars, out ignoreSet);
 					Assert.AreEqual(mapChars.Count, 2, "Too many characters found equivalents");
 					Assert.AreEqual(mapChars["a"], "az");
 					Assert.AreEqual(mapChars["ch"], "c");
@@ -60,10 +60,10 @@ namespace XMLViewsTests
 					Dictionary<string, string> mapChars = null;
 					Set<string> ignoreSet = null;
 					Set<string> data = null;
-					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet));
+					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws.ID, out mapChars, out ignoreSet));
 					// The second test catches the real world scenario, GetDigraphs is actually called many times, but the first time
 					// is the only one that should trigger the algorithm, afterward the information is cached in the exporter.
-					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet));
+					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws.ID, out mapChars, out ignoreSet));
 					Assert.AreEqual(mapChars.Count, 0, "Too many characters found equivalents");
 					Assert.AreEqual(ignoreSet.Count, 1, "Ignorable character not parsed from rule");
 				}
@@ -86,7 +86,7 @@ namespace XMLViewsTests
 					Dictionary<string, string> mapChars = null;
 					Set<string> ignoreSet = null;
 					Set<string> data = null;
-					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet));
+					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws.ID, out mapChars, out ignoreSet));
 					Assert.AreEqual(mapChars.Count, 0, "Too many characters found equivalents");
 					Assert.AreEqual(ignoreSet.Count, 1, "Ignorable character not parsed from rule");
 					Assert.IsTrue(ignoreSet.Contains('\uA78C'.ToString(CultureInfo.InvariantCulture)));
@@ -109,7 +109,7 @@ namespace XMLViewsTests
 					exporter.Initialize(Cache, null, writer, null, "xhtml", null, "dicBody");
 					Dictionary<string, string> mapChars;
 					Set<string> ignoreSet;
-					var data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet);
+					var data = exporter.GetDigraphs(ws.ID, out mapChars, out ignoreSet);
 					Assert.AreEqual(mapChars.Count, 2, "Too many characters found equivalents");
 					Assert.AreEqual(mapChars["a"], "az");
 					Assert.AreEqual(mapChars["ch"], "c");
@@ -139,7 +139,7 @@ namespace XMLViewsTests
 					exporter.Initialize(Cache, null, writer, null, "xhtml", null, "dicBody");
 					Dictionary<string, string> mapChars;
 					Set<string> ignoreSet;
-					var data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet);
+					var data = exporter.GetDigraphs(ws.ID, out mapChars, out ignoreSet);
 					Assert.AreEqual(mapChars.Count, 0, "No equivalents expected");
 				}
 			}

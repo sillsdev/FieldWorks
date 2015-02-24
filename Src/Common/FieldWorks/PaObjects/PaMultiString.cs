@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.PaObjects
 
 				// hvoWs should *always* be found in AllWritingSystems.
 				var ws = svcloc.WritingSystems.AllWritingSystems.SingleOrDefault(w => w.Handle == hvoWs);
-				WsIds.Add(ws == null ? null : ws.Id);
+				WsIds.Add(ws == null ? null : ws.ID);
 			}
 		}
 
