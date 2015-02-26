@@ -1672,7 +1672,7 @@
     <value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/bulk_choose_semantic_domains.htm</value>
   </data>
   <data name="khtpConfigDictionary" xml:space="preserve">
-    <value>User_Interface/Menus/Tools/Configure_Dictionary/Configure_Dictionary_View.htm</value>
+    <value>User_Interface/Menus/Tools/Configure_Dictionary/Configure_Dictionary.htm</value>
   </data>
   <data name="khtpField-MoDerivAffMsa-FromStemName" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Grammatical_Info_Details_fields/From_Stem_Name_field.htm</value>
