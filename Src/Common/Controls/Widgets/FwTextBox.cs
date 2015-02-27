@@ -1226,15 +1226,12 @@ namespace SIL.FieldWorks.Common.Widgets
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// When all properties have been initialized, this will be called. This is where we
-		/// can register to handle the InputLanguageChanged event.
+		/// When all properties have been initialized, this will be called.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public virtual void EndInit()
 		{
 			CheckDisposed();
-
-			m_innerFwTextBox.RegisterForInputLanguageChanges();
 		}
 		#endregion ISupportInitialize implementation
 
