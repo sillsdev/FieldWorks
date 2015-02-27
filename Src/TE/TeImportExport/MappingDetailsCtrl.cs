@@ -636,14 +636,12 @@ namespace SIL.FieldWorks.TE
 		{
 			switch(cboList.SelectedIndex)
 			{
-				case 0:	// basic
+				case 0:	// basic Fall through
+				case 2:	// custom
 					m_styleListHelper.MaxStyleLevel = 0;
 					break;
 				case 1:	// all
 					m_styleListHelper.MaxStyleLevel = int.MaxValue;
-					break;
-				case 2:	// custom
-					m_styleListHelper.MaxStyleLevel = ToolsOptionsDialog.MaxStyleLevel;
 					break;
 			}
 			m_styleListHelper.Refresh();

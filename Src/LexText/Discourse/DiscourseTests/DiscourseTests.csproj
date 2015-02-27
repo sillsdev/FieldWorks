@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -145,7 +145,9 @@
     <Compile Include="ConstChartRowDecoratorTests.cs">
     </Compile>
     <Compile Include="ConstituentChartDatabaseTests.cs" />
-    <Compile Include="ConstituentChartTests.cs" />
+    <Compile Include="ConstituentChartTests.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="DiscourseExportTests.cs" />
     <Compile Include="InMemoryMovedTextTests.cs" />
     <Compile Include="DiscourseTestHelper.cs" />

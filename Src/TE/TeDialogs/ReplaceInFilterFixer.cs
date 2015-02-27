@@ -8,14 +8,9 @@
 // <remarks>
 // </remarks>
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.TE
 {
@@ -48,51 +43,6 @@ namespace SIL.FieldWorks.TE
 			m_bookOld = bookOld;
 			m_bookNew = bookNew;
 			m_app = app;
-		}
-
-		/// <summary>
-		/// Do the actual swap. Also issues a ksyncReloadScriptureControl, which seems to be
-		/// needed any time we change the list of active books.
-		/// </summary>
-		/// <param name="bookOld"></param>
-		/// <param name="bookNew"></param>
-		private void Swap(IScrBook bookOld, IScrBook bookNew)
-		{
-			if (m_app != null) // app may be null in tests
-			{
-				foreach (FwMainWnd wnd in m_app.MainWindows)
-					Swap(bookOld, bookNew, wnd);
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Swaps the specified bookNew into the book filter and the specified bookOld out of the
-		/// filter.
-		/// </summary>
-		/// <param name="bookOld">The old book to be swapped out of the filter.</param>
-		/// <param name="bookNew">The new book to be swapped into the filter.</param>
-		/// <param name="mainWnd">The window which contains the filter.</param>
-		/// ------------------------------------------------------------------------------------
-		private void Swap(IScrBook bookOld, IScrBook bookNew, FwMainWnd mainWnd)
-		{
-			FilteredScrBooks filter = null;
-			try
-			{
-				filter = (FilteredScrBooks)ReflectionHelper.GetProperty(mainWnd, "BookFilter");
-			}
-			catch (System.MissingMethodException e)
-			{
-				Logger.WriteEvent(e.Message + " Main window: " + mainWnd.ToString());
-			}
-
-			if (filter != null)
-			{
-				Logger.WriteEvent("Replacing book " +
-					(bookOld != null ? bookOld.BookId : bookNew.BookId) +
-					" in Book Filter for main window: " + mainWnd.ToString());
-				filter.SwapBooks(bookOld, bookNew);
-			}
 		}
 
 		#region IUndoAction Members
@@ -136,7 +86,6 @@ namespace SIL.FieldWorks.TE
 		/// <returns></returns>
 		public bool Redo()
 		{
-			Swap(m_bookOld, m_bookNew);
 			return true;
 		}
 
@@ -154,7 +103,6 @@ namespace SIL.FieldWorks.TE
 		/// <returns></returns>
 		public bool Undo()
 		{
-			Swap(m_bookNew, m_bookOld);
 			return true;
 		}
 

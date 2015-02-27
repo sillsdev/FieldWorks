@@ -471,8 +471,6 @@
 		<!-- Windows dynamically loaded libraries -->
 		<Copy SourceFiles="$(fwrt)/DistFiles/xample.dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
-		<Copy SourceFiles="$(fwrt)/DistFiles/Commons.Xml.Relaxng.dll" DestinationFolder="$(dir-outputBase)"
-				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<!-- ICU50 dlls -->
 		<Copy SourceFiles="$(fwrt)/DistFiles/icudt50.dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
@@ -552,7 +550,5 @@
 			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\EncodingConverterRepository\Registry"
 			Value="$(fwrt)/DistFiles/SIL/Repository/mappingRegistry.xml"/>
 	</Target>
-
-	<Target Name="allTe" DependsOnTargets="BasicUtils,ZipUtils,Design,FwControls,ScriptureUtils,TeExe,ScrChecks,SharedScrUtils,FwRemoteDatabaseConnectorService"/>
 
 </Project>

@@ -221,26 +221,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		private void btnCompare_Click(object sender, EventArgs e)
 		{
-			BookMerger bookMerger = CurrentBookMerger;
-			if (bookMerger == null || bookMerger.BookCurr == null || bookMerger.NumberOfDifferences == 0)
-				return;
-
-			using (UndoableUnitOfWorkHelper undoHelper = new UndoableUnitOfWorkHelper(
-				m_cache.ServiceLocator.GetInstance<IActionHandler>(), "You should not see this Backup",
-				"You should not see this Backup"))
-			{
-				MakeBackupIfNeeded(bookMerger);
-				undoHelper.RollBack = false;
-			}
-
-			using (DiffDialog dlg = new DiffDialog(bookMerger, m_cache, m_styleSheet,
-				m_zoomPercentageDraft, m_zoomPercentageFootnote, false, m_app, m_helpTopicProvider))
-			{
-				dlg.ShowDialog();
-			}
-
-			UpdateDiffCount(lstImportedBooks.SelectedItems[0], bookMerger);
-			lstBooksToMerge_SelectedIndexChanged(null, null);
+			throw new InvalidProgramException("Report this to developers, as you can't show Scripture merge diffs from FLEx.");
 		}
 
 		/// ------------------------------------------------------------------------------------

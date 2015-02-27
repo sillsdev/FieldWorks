@@ -431,7 +431,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string kHelp = "help";
 		/// <summary>Command-line argument: Culture abbreviation</summary>
 		public const string kLocale = "locale";
-		/// <summary>Command-line argument: The application to start (te or flex)</summary>
+		/// <summary>Command-line argument: The application to start (only flex now)</summary>
 		public const string kApp = "app";
 		/// <summary>Command-line argument: The project name (or file)</summary>
 		public const string kProject = "db";
@@ -517,8 +517,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the lowercase application name (either "translation editor" or "language
-		/// explorer"). Will never return null.
+		/// Gets the lowercase application name ("language explorer"). Will never return null.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public string AppName
@@ -532,7 +531,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the application abbreviation (either "te" or "flex"). Will never return null.
+		/// Gets the application abbreviation ("flex"). Will never return null.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public string AppAbbrev
@@ -1032,13 +1031,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private void SetAppNameAndAbbrev(string value)
 		{
 			string appNameOrAbbrev = value.ToLowerInvariant();
-			if (appNameOrAbbrev == FwUtils.ksTeAppName.ToLowerInvariant() ||
-				appNameOrAbbrev == FwUtils.ksTeAbbrev.ToLowerInvariant())
-			{
-				m_appName = FwUtils.ksTeAppName.ToLowerInvariant();
-				m_appAbbrev = FwUtils.ksTeAbbrev.ToLowerInvariant();
-			}
-			else if (appNameOrAbbrev == FwUtils.ksFlexAppName.ToLowerInvariant() ||
+			if (appNameOrAbbrev == FwUtils.ksFlexAppName.ToLowerInvariant() ||
 				appNameOrAbbrev == FwUtils.ksFlexAbbrev.ToLowerInvariant())
 			{
 				m_appName = FwUtils.ksFlexAppName.ToLowerInvariant();

@@ -18,7 +18,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
 using System.Diagnostics;
-using SIL.FieldWorks.Resources;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;

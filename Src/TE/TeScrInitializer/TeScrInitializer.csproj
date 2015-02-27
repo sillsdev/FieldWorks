@@ -130,10 +130,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\FwCoreDlgs.dll</HintPath>
     </Reference>
-    <Reference Include="FwPrintLayoutComponents, Version=6.0.0.27033, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\FwPrintLayoutComponents.dll</HintPath>
-    </Reference>
     <Reference Include="FwResources">
       <Name>FwResources</Name>
       <HintPath>..\..\..\Output\Debug\FwResources.dll</HintPath>
@@ -208,7 +204,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="BiblicalTermsList.cs" />
-    <Compile Include="ChkRefMatcher.cs" />
     <Compile Include="BiblicalTermsLocalization.cs" />
     <Compile Include="TeScrBookRefsInit.cs" />
     <Compile Include="FixedOrphanFootnoteReportDlg.cs">
@@ -222,10 +217,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="TeKeyTermsInit.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="TePublicationsInit.cs" />
     <Compile Include="TeScrInitializer.cs">
       <SubType>Code</SubType>
     </Compile>

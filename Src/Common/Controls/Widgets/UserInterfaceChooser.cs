@@ -11,15 +11,15 @@
 // which the program has been (at least partially) localized.  Each language name is given in
 // its own language and script.
 // </remarks>
-
 using System;
+#if __MonoCS__
 using System.Collections.Generic;
 using System.Drawing;
+#endif
 using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Globalization;
-
 using System.IO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -79,17 +79,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			get { return (m_sNewUserWs == "en-US" ? "en" : m_sNewUserWs); }
 		}
 
-		/// <summary>
-		/// Set true in FLEx, where the UI languages combo should not show extra languages
-		/// just because TE has localizations of the Key Terms list in those languages.
-		/// This is a bit of a kludge. Ideally we would make TE behave more like FLEx, where
-		/// list localizations are a function of analysis language rather than UI language,
-		/// and hence available localizations of them do not need to affect the UI language
-		/// choices. The negative definition makes TE's choice the default and avoids
-		/// having to change TE code.
-		/// </summary>
-		public bool SuppressKeyTermLocalizationLangs { get; set; }
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Populate the User Interface Languages combobox with the available languages.
@@ -101,9 +90,6 @@ namespace SIL.FieldWorks.Common.Widgets
 
 			// First, find those languages having satellite resource DLLs.
 			AddAvailableLangsFromSatelliteDlls();
-
-			if(!SuppressKeyTermLocalizationLangs)
-				AddAvailableLangsFromKeyTermsLocalizations();
 
 			// If no English locale was added, then add generic English. Otherwise,
 			// if another, non US version of English, was added (e.g. en_GB), then add
@@ -165,20 +151,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			// to the list.
 			foreach (string dir in rgsDirs.Where(dir => Directory.GetFiles(dir, "*.resources.dll").Length > 0))
 				AddLanguage(Path.GetFileName(dir));
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Adds the available languages from localizations of the biblical terms file.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void AddAvailableLangsFromKeyTermsLocalizations()
-		{
-			foreach (string file in FwDirectoryFinder.KeyTermsLocalizationFiles)
-			{
-				if (!String.IsNullOrEmpty(file))
-					AddLanguage(FwDirectoryFinder.GetLocaleFromKeyTermsLocFile(file));
-			}
 		}
 
 		/// ------------------------------------------------------------------------------------

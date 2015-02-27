@@ -43,23 +43,11 @@ namespace SIL.FieldWorks.Common.Controls
 			m_bookImporter = importer;
 			using (var progressDlg = new ProgressDialogWithTask(this))
 			{
-				// This somewhat duplicates some logic in FieldWorks.GetHelpTopicProvider, but it feels
-				// wrong to reference the main exe even though I can't find an actual circular dependency.
-				// As far as I can discover, the help topic provider is only used if the user has modified
-				// TE styles and TE needs to display a dialog about it (possibly because it has loaded a
-				// new version of the standard ones?). Anyway, I don't think it will be used at all if TE
-				// is not installed, so it should be safe to use the regular FLEx one.
-				IHelpTopicProvider helpProvider;
-				if (FwUtils.FwUtils.IsTEInstalled)
-				{
-					helpProvider = (IHelpTopicProvider) DynamicLoader.CreateObject(FwDirectoryFinder.TeDll,
-						"SIL.FieldWorks.TE.TeHelpTopicProvider");
-				}
-				else
-				{
-					helpProvider = (IHelpTopicProvider)DynamicLoader.CreateObject(FwDirectoryFinder.FlexDll,
+				// Use FLEx's help provider. I (RBR) hope TeScrInitializer can figure out
+				// what to do with it. The "SE" version used it,
+				// so no ground has been lost.
+				var helpProvider = (IHelpTopicProvider)DynamicLoader.CreateObject(FwDirectoryFinder.FlexDll,
 						"SIL.FieldWorks.XWorks.LexText.FlexHelpTopicProvider");
-				}
 				NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () =>
 				TeScrInitializer.EnsureMinimalScriptureInitialization(cache, progressDlg,
 					helpProvider));

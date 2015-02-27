@@ -134,10 +134,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="OxesIO, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\OxesIO.dll</HintPath>
-    </Reference>
     <Reference Include="ParatextShared, Version=7.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\ParatextShared.dll</HintPath>
@@ -190,21 +186,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\TeDialogs.dll</HintPath>
     </Reference>
-    <Reference Include="TeEditingTests, Version=5.5.0.28076, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\TeEditingTests.dll</HintPath>
-    </Reference>
-    <Reference Include="TeEditorialChecks, Version=6.1.1.20786, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\TeEditorialChecks.dll</HintPath>
-    </Reference>
     <Reference Include="TeImportExport, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\TeImportExport.dll</HintPath>
-    </Reference>
-    <Reference Include="TeRegistrySettings, Version=5.5.0.22243, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\TeRegistrySettings.dll</HintPath>
     </Reference>
     <Reference Include="TeResources, Version=7.0.1.24126, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -225,30 +209,10 @@
     <Compile Include="..\..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
-    <Compile Include="ExportTests\ExportXhtmlTests.cs" />
-    <Compile Include="..\..\TeViewConstructors\TeViewConstructorsTests\SetupFixtureClass.cs">
-      <Link>SetupFixtureClass.cs</Link>
-    </Compile>
-    <Compile Include="ExportTests\DummyExportUsfm.cs" />
-    <Compile Include="ExportTests\DummyFileWriter.cs" />
-    <Compile Include="ExportTests\ExportHelper.cs" />
-    <Compile Include="ExportTests\ExportParatextDlgTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ExportTests\ExportParatextTests.cs" />
-    <Compile Include="ExportTests\ExportRtfTests.cs" />
-    <Compile Include="ExportTests\ExportUsfmTests.cs" />
-    <Compile Include="ExportTests\ExportXmlTests.cs" />
     <Compile Include="ImportComponentsTests\CharacterMappingSettingsTests.cs" />
-    <Compile Include="ImportComponentsTests\ImportWizardTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ImportComponentsTests\ScrImportSetMessageTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ImportTests\ImportDialogTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="ImportComponentsTests\ImportWizardTests.cs" />
+    <Compile Include="ImportComponentsTests\ScrImportSetMessageTests.cs" />
+    <Compile Include="ImportTests\ImportDialogTests.cs" />
     <Compile Include="ImportTests\ImportStyleProxyTests.cs" />
     <Compile Include="ImportTests\ScrNoteImportManagerTests.cs" />
     <Compile Include="ImportTests\TeAnnotationXmlImportTests.cs" />
@@ -261,12 +225,8 @@
     <Compile Include="ImportTests\TeImportParatext6Tests.cs" />
     <Compile Include="ImportTests\TeImportTests.cs" />
     <Compile Include="ImportTests\TeImportTestsBase.cs" />
-    <Compile Include="ImportTests\TeXmlImportTests.cs" />
-    <Compile Include="ExportTests\XmlNoteCategoryTests.cs" />
     <Compile Include="SCTextEnumTests.cs" />
-    <Compile Include="SFFileListBuilderTests.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="SFFileListBuilderTests.cs" />
     <Compile Include="TeImportExportExtensionsTests.cs" />
   </ItemGroup>
   <ItemGroup>

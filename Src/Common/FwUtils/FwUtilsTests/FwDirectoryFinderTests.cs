@@ -150,8 +150,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void GetCodeSubDirectory_NoLeadingSlash()
 		{
-			Assert.That(FwDirectoryFinder.GetCodeSubDirectory("Translation Editor/Configuration"),
-				Is.SamePath(Path.Combine(FwDirectoryFinder.CodeDirectory, "Translation Editor/Configuration")));
+			Assert.That(FwDirectoryFinder.GetCodeSubDirectory("Language Explorer/Configuration"),
+				Is.SamePath(Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer/Configuration")));
 		}
 
 		///-------------------------------------------------------------------------------------
@@ -163,8 +163,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void GetCodeSubDirectory_LeadingSlash()
 		{
-			Assert.That(FwDirectoryFinder.GetCodeSubDirectory("/Translation Editor/Configuration"),
-				Is.SamePath(Path.Combine(FwDirectoryFinder.CodeDirectory, "Translation Editor/Configuration")));
+			Assert.That(FwDirectoryFinder.GetCodeSubDirectory("/Language Explorer/Configuration"),
+				Is.SamePath(Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer/Configuration")));
 		}
 
 		///-------------------------------------------------------------------------------------
@@ -188,8 +188,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void GetDataSubDirectory_NoLeadingSlash()
 		{
-			Assert.That(FwDirectoryFinder.GetDataSubDirectory("Translation Editor/Configuration"),
-				Is.SamePath(Path.Combine(FwDirectoryFinder.DataDirectory, "Translation Editor/Configuration")));
+			Assert.That(FwDirectoryFinder.GetDataSubDirectory("Language Explorer/Configuration"),
+				Is.SamePath(Path.Combine(FwDirectoryFinder.DataDirectory, "Language Explorer/Configuration")));
 		}
 
 		///-------------------------------------------------------------------------------------
@@ -201,8 +201,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void GetDataSubDirectory_LeadingSlash()
 		{
-			Assert.That(FwDirectoryFinder.GetDataSubDirectory("/Translation Editor/Configuration"),
-				Is.SamePath(Path.Combine(FwDirectoryFinder.DataDirectory, "Translation Editor/Configuration")));
+			Assert.That(FwDirectoryFinder.GetDataSubDirectory("/Language Explorer/Configuration"),
+				Is.SamePath(Path.Combine(FwDirectoryFinder.DataDirectory, "Language Explorer/Configuration")));
 		}
 
 		///-------------------------------------------------------------------------------------

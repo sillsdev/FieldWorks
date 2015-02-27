@@ -196,9 +196,6 @@
     <Compile Include="SelInfoTests.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WindowlessFwAppTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="MainWindowDelegateTests.cs" />
   </ItemGroup>
   <ItemGroup>

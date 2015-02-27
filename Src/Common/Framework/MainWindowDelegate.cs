@@ -934,12 +934,7 @@ namespace SIL.FieldWorks.Common.Framework
 
 			string applicationExecutablePath = null;
 			string iconPath = null;
-			if (m_app.ApplicationName == FwUtils.FwUtils.ksTeAppName)
-			{
-				applicationExecutablePath = "fieldworks-te";
-				iconPath = "fieldworks-te";
-			}
-			else if (m_app.ApplicationName == FwUtils.FwUtils.ksFlexAppName)
+			if (m_app.ApplicationName == FwUtils.FwUtils.ksFlexAppName)
 			{
 				applicationExecutablePath = "fieldworks-flex";
 				iconPath = "fieldworks-flex";

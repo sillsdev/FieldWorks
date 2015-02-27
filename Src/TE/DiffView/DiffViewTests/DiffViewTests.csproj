@@ -177,24 +177,12 @@
       <Name>SimpleRootSite</Name>
       <HintPath>..\..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
     </Reference>
-    <Reference Include="SplitGridView, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\SplitGridView.dll</HintPath>
-    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms">
       <Name>System.Windows.Forms</Name>
-    </Reference>
-    <Reference Include="TeEditing, Version=4.1.0.9, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\TeEditing.dll</HintPath>
-    </Reference>
-    <Reference Include="TeRegistrySettings, Version=6.9.5.32380, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\TeRegistrySettings.dll</HintPath>
     </Reference>
     <Reference Include="TestUtils">
       <Name>TestUtils</Name>
@@ -210,9 +198,6 @@
     <Compile Include="..\..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
-    <Compile Include="..\..\TeViewConstructors\TeViewConstructorsTests\SetupFixtureClass.cs">
-      <Link>SetupFixtureClass.cs</Link>
-    </Compile>
     <Compile Include="BookMergerTests.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -221,9 +206,6 @@
     <Compile Include="BookRevListTests.cs" />
     <Compile Include="AutoMergeTests.cs" />
     <Compile Include="DataLossDiffTests.cs" />
-    <Compile Include="DiffDialogTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="DifferenceTests.cs">
       <SubType>Code</SubType>
     </Compile>

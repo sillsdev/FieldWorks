@@ -279,7 +279,7 @@ namespace SIL.FieldWorks.TE
 				m_btnHelp.Visible = false;
 			if (m_app != null)
 			{
-				m_LatestImportFolder = new RegistryStringSetting(FwSubKey.TE, m_scr.Cache.ProjectId.Name,
+				m_LatestImportFolder = new RegistryStringSetting(FwSubKey.LexText, m_scr.Cache.ProjectId.Name,
 					"LatestImportDirectory", string.Empty);
 				sfFileListBuilder.LatestImportFolder = m_LatestImportFolder.Value;
 			}

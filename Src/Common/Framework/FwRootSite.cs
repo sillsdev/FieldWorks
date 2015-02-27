@@ -104,20 +104,6 @@ namespace SIL.FieldWorks.Common.Framework
 				return EditingHelper as FwEditingHelper;
 			}
 		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Find the containing FwMainWnd.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public virtual FwMainWnd TheMainWnd
-		{
-			get
-			{
-				CheckDisposed();
-				return FindForm() as FwMainWnd;
-			}
-		}
 		#endregion
 
 		#region Other virtual methods
@@ -144,19 +130,6 @@ namespace SIL.FieldWorks.Common.Framework
 		#endregion
 
 		#region Other non-virtual methods
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="vss"></param>
-		/// -----------------------------------------------------------------------------------
-		protected override void Activate(VwSelectionState vss)
-		{
-			base.Activate(vss);
-			if (TheMainWnd != null)
-				TheMainWnd.UpdateStyleComboBoxValue(this);
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Same as the version of GetVirtualTagForFlid that takes an int, but allows FDO-style
@@ -194,8 +167,7 @@ namespace SIL.FieldWorks.Common.Framework
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			base.OnHandleCreated(e);
-			FwMainWnd wnd = TheMainWnd;
-			Mediator = wnd == null ? null : wnd.Mediator;
+			Mediator = null;
 		}
 		#endregion
 	}

@@ -157,7 +157,6 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 			m_styleSheet.Init(Cache, m_Scripture.Hvo, ScriptureTags.kflidStyles);
 
 			m_mapping = new ImportMappingInfo("emph{", "}", "Emphasis");
-			Options.ShowTheseStylesSetting = Options.ShowTheseStyles.All;
 			m_dialog = new DummyCharacterMappingSettings(m_mapping, m_styleSheet, Cache);
 			m_dialog.StyleListHelper.MaxStyleLevel = int.MaxValue;
 		}

@@ -129,10 +129,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\Framework.dll</HintPath>
     </Reference>
-    <Reference Include="FwPrintLayoutComponents, Version=6.1.0.21713, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\FwPrintLayoutComponents.dll</HintPath>
-    </Reference>
     <Reference Include="FwResources, Version=8.0.6.26892, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\FwResources.dll</HintPath>
@@ -194,11 +190,6 @@
     <None Include="App.config" />
     <Compile Include="..\..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
-    </Compile>
-    <Compile Include="ChkRefMatcherTests.cs" />
-    <Compile Include="TePublicationInitTests.cs" />
-    <Compile Include="TeKeyTermsInitTests.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="TeScrInitializerTests.cs">
       <SubType>Code</SubType>

@@ -18,7 +18,6 @@ using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl;
-using SILUBS.PhraseTranslationHelper;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {
@@ -304,84 +303,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			DateCreated = DateTime.Now;
 		}
 	}
-	#endregion
-
-	#region ChkTerm
-	internal partial class ChkTerm : IKeyTerm
-	{
-		#region IKeyTerm Members
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the term in the "source" language (i.e., the source of the UNS questions list,
-		/// which is in English).
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string Term
-		{
-			get { return Name.get_String(Cache.WritingSystemFactory.GetWsFromStr("en")).Text; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the renderings for the term in the target language.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public IEnumerable<string> Renderings
-		{
-			get
-			{
-				return RenderingsOC.Select(r => r.SurfaceFormRA.Wordform.Form.VernacularDefaultWritingSystem.Text);
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the references of all occurences of this key term as integers in the form
-		/// BBBCCCVVV.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public IEnumerable<int> BcvOccurences
-		{
-			get
-			{
-				foreach (IChkRef occurence in OccurrencesOS)
-					yield return occurence.Ref;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the primary (best) rendering for the term in the target language.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string BestRendering
-		{
-			get
-			{
-				int max = 0;
-				string bestTranslation = null;
-				Dictionary<string, int> occurrences = new Dictionary<string, int>();
-				foreach (IChkRef chkRef in OccurrencesOS)
-				{
-					IWfiWordform rendering = chkRef.RenderingRA;
-					if (rendering == null)
-						continue;
-					string text = rendering.Form.BestVernacularAlternative.Text;
-					int num;
-					occurrences.TryGetValue(text, out num);
-					occurrences[text] = ++num;
-					if (num > max)
-					{
-						bestTranslation = text;
-						max = num;
-					}
-				}
-				return bestTranslation;
-			}
-		}
-		#endregion
-	}
-
 	#endregion
 
 	#region CmProject class

@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.TE
 			m_helpProvider = helpProvider;
 
 
-			m_chkBxApplyToAllBtWs.Checked = TeProjectSettings.ChangeAllBtWs;
+			m_chkBxApplyToAllBtWs.Checked = false;
 
 			foreach (IWritingSystem ws in cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
 			{
@@ -196,8 +196,6 @@ namespace SIL.FieldWorks.TE
 		private void m_btnOK_Click(object sender, System.EventArgs e)
 		{
 			DialogResult = DialogResult.OK;
-			// Save the check box value to the registry.
-			TeProjectSettings.ChangeAllBtWs = m_chkBxApplyToAllBtWs.Checked;
 			Close();
 		}
 

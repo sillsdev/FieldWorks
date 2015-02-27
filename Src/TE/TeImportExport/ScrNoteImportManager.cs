@@ -12,14 +12,10 @@ using System;
 using System.Collections.Generic;
 
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Resources;
 using SILUBS.SharedScrUtils;
-using SIL.FieldWorks.TE.TeEditorialChecks;
 using System.Diagnostics;
 using System.Globalization;
-using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.TE
 {
@@ -60,8 +56,6 @@ namespace SIL.FieldWorks.TE
 
 			if (!string.IsNullOrEmpty(alternateRfcWsDir))
 				s_alternateRfcWsDir = alternateRfcWsDir;
-
-			CacheCheckIds();
 
 			if (bookNum != s_prevBookNum)
 			{
@@ -126,29 +120,6 @@ namespace SIL.FieldWorks.TE
 		#endregion
 
 		#region Methods for getting annotation types
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Ensure that the error checking annotation subtypes are defined.
-		/// </summary>
-		/// <remarks>This may need to be made more flexible somehow.</remarks>
-		/// -----------------------------------------------------------------------------------
-		private static void CacheCheckIds()
-		{
-			if (s_checkNamesToGuids != null)
-				return;
-
-			// This creates the annotation types for installed checks.
-			SortedList<ScrCheckKey, IScriptureCheck> chks =
-				InstalledScriptureChecks.GetChecks(new ScrChecksDataSource(s_scr.Cache,
-					ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"), FwDirectoryFinder.LegacyWordformingCharOverridesFile));
-
-			if (chks != null)
-			{
-				s_checkNamesToGuids = new Dictionary<string, Guid>(chks.Count);
-				foreach (IScriptureCheck check in chks.Values)
-					s_checkNamesToGuids[check.CheckName] = check.CheckId;
-			}
-		}
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>

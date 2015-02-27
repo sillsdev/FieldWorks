@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The path where the settings file is found.
-		/// For example, @"\Translation Editor\Testyles.xml"
+		/// For example, @"\Language Explorer\TeStyles.xml"
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		protected abstract string ResourceFilePathFromFwInstall { get; }

@@ -16,12 +16,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 	public class FwSubKey
 	{
 		/// <summary>
-		/// The name of the Translation Editor registry subkey (Even though this is the same as
-		/// FwDirectoryFinder.ksTeFolderName and FwUtils.ksTeAppName, PLEASE do not use them interchangeably.
-		/// Use the one that is correct for your context, in case they need to be changed later.)
-		/// </summary>
-		public const string TE = FwUtils.ksTeAppName;
-		/// <summary>
 		/// The name of the Language Explorer registry subkey (Even though this is the same as
 		/// FwDirectoryFinder.ksFlexFolderName and FwUtils.ksFlexAppName, PLEASE do not use them interchangeably.
 		/// Use the one that is correct for your context, in case they need to be changed later.)

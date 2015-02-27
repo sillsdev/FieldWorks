@@ -146,10 +146,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="PrintLayout, Version=6.1.1.23692, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\Output\Debug\PrintLayout.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
     <Reference Include="RootSite">
       <Name>RootSite</Name>
       <HintPath>..\..\..\Output\Debug\RootSite.dll</HintPath>
@@ -174,10 +170,6 @@
       <Name>SimpleRootSite</Name>
       <HintPath>..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
     </Reference>
-    <Reference Include="SplitGridView, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\SplitGridView.dll</HintPath>
-    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -194,17 +186,9 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <Reference Include="TeEditing, Version=4.1.0.9, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\TeEditing.dll</HintPath>
-    </Reference>
     <Reference Include="TeResources">
       <Name>TeResources</Name>
       <HintPath>..\..\..\Output\Debug\TeResources.dll</HintPath>
-    </Reference>
-    <Reference Include="TeViewConstructors">
-      <Name>TeViewConstructors</Name>
-      <HintPath>..\..\..\Output\Debug\TeViewConstructors.dll</HintPath>
     </Reference>
     <Reference Include="UIAdapterInterfaces">
       <Name>UIAdapterInterfaces</Name>
@@ -228,28 +212,8 @@
     <Compile Include="Cluster.cs" />
     <Compile Include="BookRevList.cs" />
     <Compile Include="DiffLocation.cs" />
-    <Compile Include="DiffDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Difference.cs">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DiffFootnoteVc.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DiffFootnoteView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DiffView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DiffViewEditingHelper.cs" />
-    <Compile Include="DiffViewProxy.cs" />
-    <Compile Include="DiffViewVc.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DiffViewWrapper.cs">
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="IBookVersionAgent.cs" />
     <Compile Include="TeDiffViewResources.Designer.cs">
@@ -257,19 +221,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>TeDiffViewResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="UndoDifferenceAction.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <EmbeddedResource Include="DiffDialog.resx">
-      <DependentUpon>DiffDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Difference.resx">
       <DependentUpon>Difference.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DiffView.resx">
-      <DependentUpon>DiffView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="TeDiffViewResources.resx">

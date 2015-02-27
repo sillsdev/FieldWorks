@@ -233,7 +233,6 @@ namespace SILUBS.ScriptureChecks
 				if (tok.IsParagraphStart)
 					inPublishable = tok.IsPublishable ||
 						tok.IsChapter;
-				// sadly \c does not have publishable property set in usfm.sty
 
 				if (inPublishable)
 					tokens.Add(tok);

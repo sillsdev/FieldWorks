@@ -143,9 +143,6 @@
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="PhraseTranslationHelper">
-      <HintPath>..\..\Output\Debug\PhraseTranslationHelper.dll</HintPath>
-    </Reference>
     <Reference Include="ScrUtilsInterfaces">
       <HintPath>..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>
     </Reference>

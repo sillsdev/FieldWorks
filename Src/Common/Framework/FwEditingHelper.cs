@@ -11,7 +11,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -20,7 +19,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using System.Diagnostics.CodeAnalysis;
@@ -119,10 +117,6 @@ namespace SIL.FieldWorks.Common.Framework
 			try
 			{
 				base.HandleSelectionChange(prootb, vwselNew);
-				if (TheMainWnd == null)
-					return;
-				TheMainWnd.UpdateStyleComboBoxValue(Callbacks as IRootSite);
-				TheMainWnd.UpdateWritingSystemSelectorForSelection(Callbacks.EditedRootBox);
 			}
 			catch(COMException e)
 			{
@@ -275,52 +269,6 @@ namespace SIL.FieldWorks.Common.Framework
 		#endregion
 
 		#region Public Properties
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the containing Main Window, an FwMainWnd.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public virtual FwMainWnd TheMainWnd
-		{
-			get
-			{
-				CheckDisposed();
-				return Control.FindForm() as FwMainWnd;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the containing Client Window, as an ISelectableView.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "ctrl is a reference")]
-		public virtual ISelectableView TheClientWnd
-		{
-			get
-			{
-				CheckDisposed();
-
-				// In TeMainWnd draft views, the individual panes are created and then they are
-				// added to the client window and their ownership reassigned to the client window.
-				// This property is called before ownership is reassigned, so attempting to use a
-				// saved m_theClientWnd here produces an incorrect result.
-				//if (m_theClientWnd != null)
-				//	return m_theClientWnd;
-
-				Control ctrl = Control;
-				while (ctrl != null)
-				{
-					if (ctrl is ISelectableView && !(ctrl.Parent is ISelectableView))
-						return (ISelectableView)ctrl;
-
-					ctrl = ctrl.Parent;
-				}
-
-				return null;
-			}
-		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
