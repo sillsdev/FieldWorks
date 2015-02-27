@@ -418,6 +418,41 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		}
 
 		/// <summary>
+		/// A Replace on the target of a LexReference should result in the deletion of the lex reference,
+		/// if it reduces the count of targets to one.
+		/// (Per LT-15389: check in particular the case where more than one target is removed.)
+		/// </summary>
+		[Test]
+		public void LexRefTargets_Replace_ShortensToOneItem_Deletes()
+		{
+			var hot = MakeEntry("hot", "high temp");
+			var warm = MakeEntry("warm", "rather high temp");
+			var boiling = MakeEntry("boiling", "very high temp");
+			var molten = MakeEntry("molten", "extremely high temp");
+			var refType = MakeLexRefType("synonym");
+			var sut = MakeLexReference(refType, hot.SensesOS[0]);
+			UndoableUnitOfWorkHelper.Do("setup", "redo", m_actionHandler,
+				() =>
+				{
+					sut.TargetsRS.Add(warm.SensesOS[0]);
+					sut.TargetsRS.Add(boiling.SensesOS[0]);
+					sut.TargetsRS.Add(molten.SensesOS[0]);
+					PrepareToTrackPropChanged();
+				});
+			UndoableUnitOfWorkHelper.Do("undo make kick a component of kickBucket", "redo", m_actionHandler,
+				() => sut.TargetsRS.Replace(0, 4, new[] {hot.SensesOS[0]}));
+			Assert.That(sut.IsValidObject, Is.False, "reducing length of targets to 1 should have deleted Lex Ref");
+			CheckChange(LexSenseTags.kClassId, hot.SensesOS[0], "MinimalLexReferences", 0, 1, 0,
+				"changing Targets of LexReference should update MinimalLexReferences of targets");
+			CheckChange(LexSenseTags.kClassId, warm.SensesOS[0], "MinimalLexReferences", 0, 0, 0,
+						"Removing target from should update MinimalLexReferences of removed target");
+			CheckChange(LexSenseTags.kClassId, boiling.SensesOS[0], "MinimalLexReferences", 0, 0, 0,
+						"Removing target from should update MinimalLexReferences of removed target");
+			CheckChange(LexSenseTags.kClassId, molten.SensesOS[0], "MinimalLexReferences", 0, 0, 0,
+						"Removing target from should update MinimalLexReferences of removed target");
+		}
+
+		/// <summary>
 		/// Tests (one of) the dependencies of LexEntry.VisibleComplexFormBackRefs and VisibleCompleFormEntries.
 		/// </summary>
 		[Test]
@@ -705,7 +740,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 						"Removing picture from sense should update PicturesOfSenses");
 		}
 
-		private ILexReference MakeLexReference(ILexRefType owner, ILexEntry firstTarget)
+		private ILexReference MakeLexReference(ILexRefType owner, ICmObject firstTarget)
 		{
 			ILexReference result = null;
 			UndoableUnitOfWorkHelper.Do("undo make ler", "redo", m_actionHandler,
