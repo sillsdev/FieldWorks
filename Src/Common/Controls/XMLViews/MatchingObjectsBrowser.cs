@@ -18,6 +18,7 @@ using XCore;
 using SIL.FieldWorks.Filters;
 using SIL.CoreImpl;
 using System.Collections;
+using Palaso.Xml;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -43,6 +44,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public event EventHandler SearchCompleted;
 
+		/// <summary>
+		/// Occurs when the underlying BrowseViewer's columns have changed.
+		/// </summary>
+		public event EventHandler ColumnsChanged;
+
 		#endregion Events
 
 		#region Data members
@@ -61,6 +67,8 @@ namespace SIL.FieldWorks.Common.Controls
 		private ICmObject m_selObject;
 
 		private ICmObject m_startingObject;
+
+		private string[] m_visibleColumns;
 
 		#endregion Data members
 
@@ -130,6 +138,16 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
+		/// <summary>
+		/// Used by a Find dialog's SearchEngine to determine whether to search on a particular field or not
+		/// </summary>
+		public bool IsVisibleColumn(string keyString)
+		{
+			CheckDisposed();
+
+			return m_visibleColumns.Any(columnLayoutName => columnLayoutName.Contains(keyString));
+		}
+
 		#endregion Properties
 
 		#region Public methods
@@ -175,6 +193,16 @@ namespace SIL.FieldWorks.Common.Controls
 		private void m_searchEngine_SearchCompleted(object sender, SearchCompletedEventArgs e)
 		{
 			UpdateResults(e.Fields.FirstOrDefault(), e.Results);
+			// On the completion of a new search set the selection to the first result without stealing the focus
+			// from any other controls.
+			if(m_bvMatches.BrowseView.IsHandleCreated) // hotfix paranoia test
+			{
+				var oldEnabledState = m_bvMatches.Enabled;
+				m_bvMatches.Enabled = false;
+				// disable the control before changing the selection so that the focus won't change
+				m_bvMatches.SelectedIndex = m_bvMatches.AllItems.Count > 0 ? 0 : -1;
+				m_bvMatches.Enabled = oldEnabledState; // restore the control to it's previous enabled state
+			}
 		}
 
 		/// <summary>
@@ -182,6 +210,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public void SearchAsync(IEnumerable<SearchField> fields)
 		{
+			// Start the search
 			m_searchEngine.SearchAsync(fields);
 		}
 
@@ -229,6 +258,22 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			m_selObject = m_cache.ServiceLocator.GetObject(e.Hvo);
 			FireSelectionMade();
+		}
+
+		/// <summary>
+		/// This comes from modifying the browse view columns
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void m_bvMatches_ColumnsChanged(object sender, EventArgs e)
+		{
+			if (e is ColumnWidthChangedEventArgs)
+				return; // don't want to know about this kind
+
+			UpdateVisibleColumns();
+			if (ColumnsChanged != null)
+				// Find dialogs can subscribe to this to know when to check for new search fields
+				ColumnsChanged(this, new EventArgs());
 		}
 
 #if __MonoCS__
@@ -287,8 +332,27 @@ namespace SIL.FieldWorks.Common.Controls
 				m_bvMatches.BrowseView.Vc.ReversalWs = reversalWs.Handle;
 			m_bvMatches.SelectionChanged += m_bvMatches_SelectionChanged;
 			m_bvMatches.SelectionMade += m_bvMatches_SelectionMade;
+			UpdateVisibleColumns();
 			Controls.Add(m_bvMatches);
 			m_bvMatches.ResumeLayout();
+			m_bvMatches.ColumnsChanged += m_bvMatches_ColumnsChanged;
+		}
+
+		private void UpdateVisibleColumns()
+		{
+			var results = new List<string>();
+			foreach (var columnSpec in m_bvMatches.ColumnSpecs)
+			{
+				var colLabel = columnSpec.GetOptionalStringAttribute("layout", null);
+				if (colLabel == null)
+				{
+					// In this case we are likely dealing with a dialog that does NOT use IsVisibleColumn()
+					// and there will be one pre-determined SearchField
+					continue;
+				}
+				results.Add(colLabel);
+			}
+			m_visibleColumns = results.ToArray();
 		}
 
 		private void UpdateResults(SearchField firstField, IEnumerable<int> results)
@@ -299,7 +363,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (firstSearchStr != null)
 			{
 				int ws = firstSearchStr.get_WritingSystemAt(0);
-				sorter = m_bvMatches.CreateSorterForFirstColumn(ws);
+				sorter = CreateFindResultSorter(firstSearchStr, ws);
 			}
 			int[] hvos;
 			if (sorter != null)
@@ -358,6 +422,13 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (!m_searchEngine.IsBusy && SearchCompleted != null)
 				SearchCompleted(this, new EventArgs());
+		}
+
+		private FindResultSorter CreateFindResultSorter(ITsString firstSearchStr, int ws)
+		{
+			var browseViewSorter = m_bvMatches.CreateSorterForFirstColumn(ws);
+
+			return browseViewSorter == null ? null: new FindResultSorter(firstSearchStr, browseViewSorter);
 		}
 
 		private void FireSelectionChanged()

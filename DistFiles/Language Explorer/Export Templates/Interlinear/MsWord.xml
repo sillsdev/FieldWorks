@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FxtDocumentDescription dataLabel="Microsoft Word XML" formatLabel="XML" defaultExtension="xml" filter="XML files (*.xml)|*.xml|All files (*.*)|*.*" mode="applySingleTransform" transform="xml2Word.xsl">
-Export to an XML format which can be read directly by Microsoft Word (2003). After opening the document, you need to run a macro to adjust things. Instructions (and the macro) can be found in Program Files\SIL\FieldWorks\Language Explorer\Export Templates\Interlinear\Interlinear Macros and Instructions.doc
+Export to an XML format which can be read directly by Microsoft Word (2003). After opening the document, you need to run a macro to adjust things. Instructions (and the macro) can be found in C:\Program Files\SIL\FieldWorks\Language Explorer\Export Templates\Interlinear\Interlinear Macros and Instructions.doc or C:\Program Files (x86)\SIL\FieldWorks\Language Explorer\Export Templates\Interlinear\Interlinear Macros and Instructions.doc.
 </FxtDocumentDescription>

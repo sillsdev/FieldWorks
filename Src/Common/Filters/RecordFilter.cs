@@ -1625,7 +1625,7 @@ namespace SIL.FieldWorks.Filters
 			return Strings(item, sortedFromEnd);
 		}
 
-		public ITsString Key(IManyOnePathSortItem item)
+		public virtual ITsString Key(IManyOnePathSortItem item)
 		{
 			throw new NotImplementedException("Don't have new Key function implemented on class " + this.GetType());
 		}
@@ -1814,6 +1814,18 @@ namespace SIL.FieldWorks.Filters
 			if (other2 == null)
 				return false;
 			return other2.m_flid == this.m_flid && other2.m_sda == this.m_sda && other2.m_ws == this.m_ws;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Keys the specified item.
+		/// </summary>
+		/// <param name="item">The item.</param>
+		/// <returns></returns>
+		/// ------------------------------------------------------------------------------------
+		public override ITsString Key(IManyOnePathSortItem item)
+		{
+			return m_sda.get_MultiStringAlt(item.KeyObject, m_flid, m_ws);
 		}
 
 		#endregion

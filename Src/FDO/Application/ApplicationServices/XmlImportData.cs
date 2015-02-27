@@ -1945,6 +1945,125 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 
 		ILexReferenceFactory m_factLexRef = null;
 
+		/// <summary>
+		/// Holds state information for HandleLrSeq
+		/// </summary>
+		class LrSeqInfo
+		{
+			public List<ICmObject> Targets = new List<ICmObject>();
+			public ILexRefType RefType;
+			public ICmObject PendingOwner;
+			public int PendingFieldId;
+		}
+		/// <summary>
+		/// Work on a pending link that might be part of a sequence (or tree).
+		/// Returns true if pend is a member of one and should not be otherwise handled.
+		/// Accumulates pending relations in lrSeq until it encounters a new item
+		/// that is not part of the same sequence (or tree); then matches or adds it.
+		/// </summary>
+		/// <returns></returns>
+		private bool HandleLrSeq(LrSeqInfo info, PendingLink pend, ICmObject target, ILexRefType parent)
+		{
+			switch (parent.MappingType)
+			{
+				case (int)LexRefTypeTags.MappingTypes.kmtSenseSequence:
+				case (int)LexRefTypeTags.MappingTypes.kmtEntrySequence:
+				case (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseSequence:
+				case (int)LexRefTypeTags.MappingTypes.kmtEntryTree:
+				case (int)LexRefTypeTags.MappingTypes.kmtSenseTree:
+				case (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
+					break;
+				default:
+					// not part of any sequence; if we have a pending sequence finish it.
+					FinalizeLrSeq(info);
+					return false;
+			}
+			// OK, we have something to add and the RefType takes a sequence.
+			if (info.RefType != parent
+				|| pend.FieldInformation.Owner != info.PendingOwner
+				|| pend.FieldInformation.FieldId != info.PendingFieldId)
+			{
+				// new (possibly first) sequence; wrap up any pending one.
+				FinalizeLrSeq(info);
+			}
+			info.RefType = parent;
+			info.PendingOwner = pend.FieldInformation.Owner;
+			info.PendingFieldId = pend.FieldInformation.FieldId;
+			info.Targets.Add(target);
+			return true;
+		}
+
+		/// <summary>
+		/// Finish any sequence being accumulated by HandlLrSeq. This is called both when
+		/// we find the start of another sequence, and also when anything else happens that
+		/// signals the end of the sequence (including the end of the whole list of links).
+		/// </summary>
+		/// <param name="info"></param>
+		private void FinalizeLrSeq(LrSeqInfo info)
+		{
+			if (!info.Targets.Any())
+				return;
+			switch (info.RefType.MappingType)
+			{
+				case (int) LexRefTypeTags.MappingTypes.kmtSenseSequence:
+				case (int) LexRefTypeTags.MappingTypes.kmtEntrySequence:
+				case (int) LexRefTypeTags.MappingTypes.kmtEntryOrSenseSequence:
+					foreach (var rel in info.RefType.MembersOC)
+					{
+						if (IsMatchingSeq(info.Targets, rel))
+						{
+							info.Targets.Clear();
+							return; // nothing to do, an exactly matching sequence exists.
+						}
+					}
+					break;
+				default: // tree
+					// The first item in a tree is the 'whole', which is understood to be the
+					// element that the links occur in. There is not a link for the 'whole'
+					// but we need to include it in the relation.
+					info.Targets.Insert(0, info.PendingOwner);
+					// This check is currently redundant...a well-formed input file should only have one
+					// copy of a tree relation, and it can't match something existing because we don't
+					// (yet) try to match entries or senses in the input with ones in the database already.
+					// I'm leaving it in just in case there's an unexpected duplicate in the file,
+					// or in case we one day enhance things to match existing entries and senses,
+					// which would make it relevant.
+					// If we do implement that matching, enable the disabled part of the ImportTreeRelation test.
+					foreach (var rel in info.RefType.MembersOC)
+					{
+						if (IsMatchingTree(info.Targets, rel))
+						{
+							info.Targets.Clear();
+							return; // nothing to do, an exactly matching tree exists.
+						}
+					}
+					break;
+			}
+			var newRel = info.Targets[0].Services.GetInstance<ILexReferenceFactory>().Create();
+			info.RefType.MembersOC.Add(newRel);
+			newRel.TargetsRS.Replace(0,0, info.Targets);
+			info.Targets.Clear();
+		}
+
+		private bool IsMatchingSeq(List<ICmObject> targets, ILexReference lr)
+		{
+			if (targets.Count != lr.TargetsRS.Count)
+				return false;
+			for (int i = 0; i < targets.Count; i++)
+			{
+				if (targets[i] != lr.TargetsRS[i])
+					return false;
+			}
+			return true;
+		}
+
+		private bool IsMatchingTree(List<ICmObject> targets, ILexReference lr)
+		{
+			if (targets.Count != lr.TargetsRS.Count || targets[0] != lr.TargetsRS[0])
+				return false;
+			return (new HashSet<ICmObject>(targets.Skip(1)).Intersect(lr.TargetsRS.Skip(1)).Count() == targets.Count - 1);
+		}
+
 		private void FixPendingLinks()
 		{
 			if (m_repoCmObject == null)
@@ -1954,6 +2073,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			ILexRefType lrtPrev = null;
 			bool fReversePrev = false;
 			ILexReference lrPrev = null;
+			var lrSeqInfo = new LrSeqInfo();
 
 			// This fills it in if we haven't already made it, but also, there are special cases where
 			// some existing entries are not present in the map with the key corresponding to their
@@ -1988,6 +2108,8 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 					ICmObject cmoOwner = pend.FieldInformation.Owner;
 					// lrt, fReverse, cmoOwner, cmoTarget ...
 					bool fJoinWithPrev = false;
+					if (HandleLrSeq(lrSeqInfo, pend, cmoTarget, lrt))
+						continue;
 					switch (lrt.MappingType)
 					{
 						case (int)LexRefTypeTags.MappingTypes.kmtSenseCollection:
@@ -2039,6 +2161,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 				}
 				else
 				{
+					FinalizeLrSeq(lrSeqInfo); // found something not part of an lr sequence.
 					int hvo = ResolveLinkReference(flid, pend, true);
 					if (hvo == 0)
 					{
@@ -2079,6 +2202,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 					lrPrev = null;
 				}
 			}
+			FinalizeLrSeq(lrSeqInfo);
 		}
 
 		private ILexReference FindMatchingLexRef(ILexRefType lrt, ICmObject cmoOwner,
@@ -2087,11 +2211,8 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			switch (lrt.MappingType)
 			{
 				case (int)LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair:
-				case (int)LexRefTypeTags.MappingTypes.kmtEntrySequence:
 				case (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseAsymmetricPair:
-				case (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseSequence:
 				case (int)LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair:
-				case (int)LexRefTypeTags.MappingTypes.kmtSenseSequence:
 					foreach (ILexReference lr in lrt.MembersOC)
 					{
 						if (lr.TargetsRS.Count >= 2)
@@ -2127,23 +2248,10 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 				case (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
 				case (int)LexRefTypeTags.MappingTypes.kmtEntryTree:
 				case (int)LexRefTypeTags.MappingTypes.kmtSenseTree:
-					foreach (ILexReference lr in lrt.MembersOC)
-					{
-						if (lr.TargetsRS.Count >= 2)
-						{
-							if (fReverse)
-							{
-								if (lr.TargetsRS[0] == cmoTarget && lr.TargetsRS.Contains(cmoOwner))
-									return lr;
-							}
-							else
-							{
-								if (lr.TargetsRS[0] == cmoOwner && lr.TargetsRS.Contains(cmoTarget))
-									return lr;
-							}
-						}
-					}
-					break;
+				case (int)LexRefTypeTags.MappingTypes.kmtEntrySequence:
+				case (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseSequence:
+				case (int)LexRefTypeTags.MappingTypes.kmtSenseSequence:
+					throw new ApplicationException("FindMatchingLexRef should not be called for sequences or trees");
 			}
 			return null;
 		}

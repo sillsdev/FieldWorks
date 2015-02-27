@@ -629,13 +629,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 
 				// start building index
-				m_matchingObjectsBrowser.SearchAsync(new[]
-				{
-					new SearchField(LexEntryTags.kflidCitationForm, tssForm),
-					new SearchField(LexEntryTags.kflidLexemeForm, tssForm),
-					new SearchField(LexEntryTags.kflidAlternateForms, tssForm),
-					new SearchField(LexSenseTags.kflidGloss, tssGloss)
-				});
+				m_matchingObjectsBrowser.SearchAsync(BuildSearchFieldArray(tssForm, tssGloss));
 
 				((ISupportInitialize)(m_tbLexicalForm)).EndInit();
 				((ISupportInitialize)(m_tbGloss)).EndInit();
@@ -948,18 +942,12 @@ namespace SIL.FieldWorks.LexText.Controls
 //#if DEBUG
 //            var dtStart = DateTime.Now;
 //#endif
-			var fields = new List<SearchField>();
 			ITsString tssForm = TssForm;
 			int vernWs = TsStringUtils.GetWsAtOffset(tssForm, 0);
 			string form = MorphServices.EnsureNoMarkers(tssForm.Text, m_cache);
 			tssForm = m_cache.TsStrFactory.MakeString(form, vernWs);
-			fields.Add(new SearchField(LexEntryTags.kflidCitationForm, tssForm));
-			fields.Add(new SearchField(LexEntryTags.kflidLexemeForm, tssForm));
-			fields.Add(new SearchField(LexEntryTags.kflidAlternateForms, tssForm));
 
 			ITsString tssGloss = SelectedOrBestGlossTss;
-			if (tssGloss != null)
-				fields.Add(new SearchField(LexSenseTags.kflidGloss, tssGloss));
 
 			if (!Controls.Contains(m_searchAnimation))
 			{
@@ -967,12 +955,29 @@ namespace SIL.FieldWorks.LexText.Controls
 				m_searchAnimation.BringToFront();
 			}
 
-			m_matchingObjectsBrowser.SearchAsync(fields);
+			m_matchingObjectsBrowser.SearchAsync(BuildSearchFieldArray(tssForm, tssGloss));
 //#if DEBUG
 //            var dtEnd = DateTime.Now;
 //            var diff = dtEnd - dtStart;
 //            Debug.WriteLine(String.Format("InsertEntryDlg.UpdateMatches took {0}", diff));
 //#endif
+		}
+
+		private SearchField[] BuildSearchFieldArray(ITsString tssForm, ITsString tssGloss)
+		{
+			var fields = new List<SearchField>();
+
+			if(m_matchingObjectsBrowser.IsVisibleColumn("EntryHeadword") || m_matchingObjectsBrowser.IsVisibleColumn("CitationForm"))
+				fields.Add(new SearchField(LexEntryTags.kflidCitationForm, tssForm));
+			if (m_matchingObjectsBrowser.IsVisibleColumn("EntryHeadword") || m_matchingObjectsBrowser.IsVisibleColumn("LexemeForm"))
+				fields.Add(new SearchField(LexEntryTags.kflidLexemeForm, tssForm));
+			if (m_matchingObjectsBrowser.IsVisibleColumn("Allomorphs"))
+				fields.Add(new SearchField(LexEntryTags.kflidAlternateForms, tssForm));
+
+			if (tssGloss != null && m_matchingObjectsBrowser.IsVisibleColumn("Glosses"))
+				fields.Add(new SearchField(LexSenseTags.kflidGloss, tssGloss));
+
+			return fields.ToArray();
 		}
 
 		/// <summary>
@@ -1166,6 +1171,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_matchingObjectsBrowser.SelectionChanged += new FwSelectionChangedEventHandler(this.m_matchingObjectsBrowser_SelectionChanged);
 			this.m_matchingObjectsBrowser.SelectionMade += new FwSelectionChangedEventHandler(this.m_matchingObjectsBrowser_SelectionMade);
 			this.m_matchingObjectsBrowser.SearchCompleted += new EventHandler(this.m_matchingObjectsBrowser_SearchCompleted);
+			this.m_matchingObjectsBrowser.ColumnsChanged += new EventHandler(this.m_matchingObjectsBrowser_ColumnsChanged);
 			//
 			// m_toolTipSlotCombo
 			//
@@ -1678,6 +1684,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			CheckIfGoto();
 			if (Controls.Contains(m_searchAnimation))
 				Controls.Remove(m_searchAnimation);
+		}
+
+		private void m_matchingObjectsBrowser_ColumnsChanged(object sender, EventArgs e)
+		{
+			UpdateMatches();
 		}
 
 		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",

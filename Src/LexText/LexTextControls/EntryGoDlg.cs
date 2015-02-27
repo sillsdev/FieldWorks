@@ -95,6 +95,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromMediator(mediator), mediator, configNode,
 				searchEngine);
 
+			m_matchingObjectsBrowser.ColumnsChanged += m_matchingObjectsBrowser_ColumnsChanged;
+
 			// start building index
 			var selectedWs = (IWritingSystem) m_cbWritingSystems.SelectedItem;
 			if (selectedWs != null)
@@ -169,15 +171,31 @@ namespace SIL.FieldWorks.LexText.Controls
 			var tssKey = m_tsf.MakeString(str, ws);
 			if (m_vernHvos.Contains(ws))
 			{
-				yield return new SearchField(LexEntryTags.kflidCitationForm, tssKey);
-				yield return new SearchField(LexEntryTags.kflidLexemeForm, tssKey);
-				yield return new SearchField(LexEntryTags.kflidAlternateForms, tssKey);
+				if (m_matchingObjectsBrowser.IsVisibleColumn("EntryHeadword") || m_matchingObjectsBrowser.IsVisibleColumn("CitationForm"))
+					yield return new SearchField(LexEntryTags.kflidCitationForm, tssKey);
+				if (m_matchingObjectsBrowser.IsVisibleColumn("EntryHeadword") || m_matchingObjectsBrowser.IsVisibleColumn("LexemeForm"))
+					yield return new SearchField(LexEntryTags.kflidLexemeForm, tssKey);
+				if (m_matchingObjectsBrowser.IsVisibleColumn("Allomorphs"))
+					yield return new SearchField(LexEntryTags.kflidAlternateForms, tssKey);
 			}
 			if (m_analHvos.Contains(ws))
 			{
-				yield return new SearchField(LexSenseTags.kflidGloss, tssKey);
-				yield return new SearchField(LexSenseTags.kflidReversalEntries, tssKey);
-				yield return new SearchField(LexSenseTags.kflidDefinition, tssKey);
+				if (m_matchingObjectsBrowser.IsVisibleColumn("Glosses"))
+					yield return new SearchField(LexSenseTags.kflidGloss, tssKey);
+				if (m_matchingObjectsBrowser.IsVisibleColumn("Reversals"))
+					yield return new SearchField(LexSenseTags.kflidReversalEntries, tssKey);
+				if (m_matchingObjectsBrowser.IsVisibleColumn("Definitions"))
+					yield return new SearchField(LexSenseTags.kflidDefinition, tssKey);
+			}
+		}
+
+		private void m_matchingObjectsBrowser_ColumnsChanged(object sender, EventArgs e)
+		{
+			if (m_oldSearchKey != string.Empty && m_oldSearchWs != 0)
+			{
+				var tempKey = m_oldSearchKey;
+				m_oldSearchKey = string.Empty;
+				ResetMatches(tempKey); // force Reset w/o changing strings
 			}
 		}
 

@@ -831,12 +831,15 @@ namespace SIL.FieldWorks
 			{
 				FdoCache cache = FdoCache.CreateCacheFromExistingData(projectId, s_sWsUser, s_ui, FwDirectoryFinder.FdoDirectories, CreateFdoSettings(), progressDlg);
 				EnsureValidLinkedFilesFolder(cache);
-			cache.ProjectNameChanged += ProjectNameChanged;
-			cache.ServiceLocator.GetInstance<IUndoStackManager>().OnSave += FieldWorks_OnSave;
+				// Make sure every project has one of these. (Getting it has a side effect if it does not exist.)
+				// Crashes have been caused by trying to create it at an unsafe time (LT-15695).
+				var dummy = cache.LangProject.DefaultPronunciationWritingSystem;
+				cache.ProjectNameChanged += ProjectNameChanged;
+				cache.ServiceLocator.GetInstance<IUndoStackManager>().OnSave += FieldWorks_OnSave;
 
-			SetupErrorPropertiesNeedingCache(cache);
-			return cache;
-		}
+				SetupErrorPropertiesNeedingCache(cache);
+				return cache;
+			}
 		}
 
 		/// <summary>

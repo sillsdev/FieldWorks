@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.PaObjects
 			xGuid = lxPro.Guid;
 
 			xMediaFiles = (from x in lxPro.MediaFilesOS
-						   where x != null
+						   where x != null && x.MediaFileRA != null
 						   select new PaMediaFile(x)).ToList();
 		}
 

@@ -2170,7 +2170,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public int CurrentObjectHvo
+		/// <remarks>virtual for tests</remarks>
+		public virtual int CurrentObjectHvo
 		{
 			get
 			{

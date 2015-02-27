@@ -1730,7 +1730,7 @@ namespace Sfm2Xml
 						System.Diagnostics.Debug.WriteLine("badData: index=" + System.Convert.ToString(i + 1) + " ");
 						bytesUntilNextCodePoint = i;
 						// now search until we find a valid begin byte for utf8 sequence
-						while (i < m_ByteLength && IsValidBeginByte(m_Data[++i]) == false)
+						while (++i < m_ByteLength && IsValidBeginByte(m_Data[i]) == false)
 						{
 							if (m_invalidBytes.Count < MaxInvalidBytes)
 								m_invalidBytes.Enqueue(new DP(i + 1, m_Data[i]));
