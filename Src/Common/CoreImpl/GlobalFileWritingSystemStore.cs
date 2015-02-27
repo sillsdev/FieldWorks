@@ -230,6 +230,19 @@ namespace SIL.CoreImpl
 		}
 
 		/// <summary>
+		/// Only needed in local store
+		/// </summary>
+		/// <param name="keyboard"></param>
+		/// <param name="wsCurrent"></param>
+		/// <param name="candidates"></param>
+		/// <returns></returns>
+		public IWritingSystemDefinition GetWsForInputMethod(IKeyboardDefinition keyboard,
+			IWritingSystemDefinition wsCurrent, IWritingSystemDefinition[] candidates)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
 		/// Gives the total number of writing systems in the store
 		/// </summary>
 		public int Count
