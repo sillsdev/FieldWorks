@@ -1847,6 +1847,8 @@ namespace LexTextControlsTests
 			Assert.Fail("expected Ws alternative not found");
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void VerifyForm(XmlNode form, ITsString tssText, string baseLang)
 		{
 			var sText = form.FirstChild.InnerText;
