@@ -167,8 +167,7 @@ namespace SIL.FieldWorks.Resources
 			s_fileFilterExtensions[FileFilterType.ShoeboxAnthropologyDatabase] = "*.db; *.sfm; *.sf";
 			s_fileFilterExtensions[FileFilterType.InterlinearSfm] = "*.db; *.sfm; *.sf; *.it; *.itx; *.txt";
 			s_fileFilterExtensions[FileFilterType.ShoeboxProjectFiles] = "*.prj";
-			s_fileFilterExtensions[FileFilterType.FieldWorksProjectFiles] =
-				"*" + FdoFileHelper.ksFwDataXmlFileExtension + "; *" + FdoFileHelper.ksFwDataDb4oFileExtension;
+			s_fileFilterExtensions[FileFilterType.FieldWorksProjectFiles] = "*" + FdoFileHelper.ksFwDataXmlFileExtension;
 			s_fileFilterExtensions[FileFilterType.FieldWorksBackupFiles] = "*" + FdoFileHelper.ksFwBackupFileExtension;
 			s_fileFilterExtensions[FileFilterType.FieldWorksAllBackupFiles] = String.Format("*{0}; *{1}; *.xml",
 				FdoFileHelper.ksFwBackupFileExtension, FdoFileHelper.ksFw60BackupFileExtension);

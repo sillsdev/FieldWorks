@@ -4,7 +4,6 @@
 //
 // File: PicturePropertiesDialog.cs
 // Responsibility: TeTeam
-
 using System;
 using System.Drawing;
 using System.ComponentModel;
@@ -787,8 +786,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			// We can only leave the file where it is if we're working locally. If we don't copy
 			// (or move) to the project folder other users can't see it.
-			var OkToLeave = m_cache.ProjectId.IsLocal;
-			m_rbLeave.Enabled = OkToLeave;
+			m_rbLeave.Enabled = true;
 			switch (s_defaultFileLocChoiceForSession)
 			{
 				case FileLocationChoice.Copy:
@@ -798,13 +796,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					m_rbMove.Checked = true;
 					break;
 				case FileLocationChoice.Leave:
-					if (!OkToLeave)
-					{
-						// User has somehow been in the habit of leaving files (can this even happen?)
-						// but now can't...Copy seems safest as the fall-back.
-						m_rbCopy.Checked = true;
-						break;
-					}
 					m_rbLeave.Checked = true;
 					break;
 			}

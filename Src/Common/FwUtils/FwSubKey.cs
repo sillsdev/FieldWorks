@@ -20,6 +20,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// FwDirectoryFinder.ksFlexFolderName and FwUtils.ksFlexAppName, PLEASE do not use them interchangeably.
 		/// Use the one that is correct for your context, in case they need to be changed later.)
 		/// </summary>
-		public const string LexText = FwUtils.ksFlexAppName;
+		public const string LexText = "Language Explorer";
 	}
 }

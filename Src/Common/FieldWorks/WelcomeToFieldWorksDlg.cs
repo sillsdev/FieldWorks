@@ -3,15 +3,12 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File: WelcomeToFieldWorksDlg.cs
-
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using XCore;
 using Logger = SIL.Utils.Logger;
@@ -27,7 +24,6 @@ namespace SIL.FieldWorks
 	{
 		private string m_helpTopic = "khtpWelcomeToFieldworks";
 		private readonly HelpProvider helpProvider;
-		private string m_appAbbrev;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -65,18 +61,16 @@ namespace SIL.FieldWorks
 		/// Initializes a new instance of the <see cref="WelcomeToFieldWorksDlg"/> class.
 		/// </summary>
 		/// <param name="helpTopicProvider">Help topic provider</param>
-		/// <param name="appAbbrev">Standard application abbreviation.</param>
 		/// <param name="exception">Exception that was thrown if the previously requested
 		/// project could not be opened.</param>
 		/// <param name="showReportingRow">True (usually only on the first run) when we want to show the first-time warning about
 		/// sending google analytics information</param>
 		/// ------------------------------------------------------------------------------------
-		public WelcomeToFieldWorksDlg(IHelpTopicProvider helpTopicProvider, string appAbbrev, StartupException exception, bool showReportingRow)
+		public WelcomeToFieldWorksDlg(IHelpTopicProvider helpTopicProvider, StartupException exception, bool showReportingRow)
 		{
-			m_appAbbrev = appAbbrev;
 			InitializeComponent();
 			AccessibleName = GetType().Name;
-			var fullAppName = AppIsFlex ? Properties.Resources.kstidFLEx : Properties.Resources.kstidTE;
+			var fullAppName = Properties.Resources.kstidFLEx;
 			SetCheckboxText = fullAppName;  // Setter uses the app name in a format string.
 
 			if (exception == null || !exception.ReportToUser)
@@ -105,17 +99,7 @@ namespace SIL.FieldWorks
 			helpProvider.HelpNamespace = FwDirectoryFinder.CodeDirectory + m_helpTopicProvider.GetHelpString("UserHelpFile");
 			helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(m_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
-			receiveButton.Enabled =
-				ClientServerServices.Current.Local.DefaultBackendType != FDOBackendProviderType.kDb4oClientServer &&
-					FLExBridgeHelper.IsFlexBridgeInstalled();
-		}
-
-		public bool AppIsFlex
-		{
-			get
-			{
-				return string.IsNullOrEmpty(m_appAbbrev) || m_appAbbrev == FwUtils.ksFlexAbbrev.ToLowerInvariant();
-			}
+			receiveButton.Enabled = FLExBridgeHelper.IsFlexBridgeInstalled();
 		}
 
 		public bool OpenLastProjectCheckboxIsChecked

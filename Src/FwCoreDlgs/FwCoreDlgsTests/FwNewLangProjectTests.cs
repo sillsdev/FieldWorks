@@ -95,6 +95,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
+	[Platform(Exclude = "Linux", Reason = "Tests time out")]
 	public class FwNewLangProjectTests: BaseTest
 	{
 		/// ------------------------------------------------------------------------------------

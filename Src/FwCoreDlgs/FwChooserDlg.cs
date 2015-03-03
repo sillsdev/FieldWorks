@@ -4,7 +4,6 @@
 //
 // File: FwChooserDlg.cs
 // Responsibility: TE Team
-
 using System;
 using Microsoft.Win32;
 using System.Collections.Generic;
@@ -16,7 +15,6 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.Common.COMInterfaces;
 using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs

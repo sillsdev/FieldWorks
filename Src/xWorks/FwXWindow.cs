@@ -8,9 +8,7 @@
 // <remarks>
 //	This just wraps the FieldWorks-agnostic XWindow in a form that FwApp can swallow.
 // </remarks>
-
 using System;
-using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
 using Microsoft.Win32;
@@ -20,8 +18,6 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Text;
 using L10NSharp;
-using SIL.Archiving;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.UIAdapters;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
@@ -748,7 +744,7 @@ namespace SIL.FieldWorks.XWorks
 			if (string.IsNullOrEmpty(pathname))
 				return false;
 			pathname = MoveOrCopyFilesDlg.MoveCopyOrLeaveExternalFile(pathname,
-				Cache.LangProject.LinkedFilesRootDir, m_mediator.HelpTopicProvider,  Cache.ProjectId.IsLocal);
+				Cache.LangProject.LinkedFilesRootDir, m_mediator.HelpTopicProvider);
 			if (String.IsNullOrEmpty(pathname))
 				return false;
 			// JohnT: don't use m_StyleSheet, no guarantee it has been created (see LT-7034)
@@ -1229,8 +1225,6 @@ namespace SIL.FieldWorks.XWorks
 		/// ------------------------------------------------------------------------------------
 		private void LaunchProjPropertiesDlg(bool startOnWSPage)
 		{
-			if (!ClientServerServicesHelper.WarnOnOpeningSingleUserDialog(Cache))
-				return;
 			if (!SharedBackendServicesHelper.WarnOnOpeningSingleUserDialog(Cache))
 				return;
 
@@ -1355,8 +1349,7 @@ namespace SIL.FieldWorks.XWorks
 		/// ------------------------------------------------------------------------------------
 		protected bool OnFileProjectSharingLocation(object arg)
 		{
-			if (m_app.Cache.ProjectId.IsLocal)
-				m_app.FwManager.FileProjectSharingLocation(m_app, this);
+			m_app.FwManager.FileProjectSharingLocation(m_app, this);
 			return true;
 		}
 
@@ -1367,7 +1360,7 @@ namespace SIL.FieldWorks.XWorks
 		/// ------------------------------------------------------------------------------------
 		protected bool OnDisplayFileProjectSharingLocation(object commandObject, ref UIItemDisplayProperties display)
 		{
-			display.Enabled = m_app.Cache.ProjectId.IsLocal && FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.CanWriteKey();
+			display.Enabled = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.CanWriteKey();
 			return true;
 		}
 

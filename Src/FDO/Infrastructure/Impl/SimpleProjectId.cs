@@ -5,7 +5,6 @@
 // File: SimpleProjectId.cs
 // Responsibility: FW Team
 // ---------------------------------------------------------------------------------------------
-
 using System;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
@@ -98,43 +97,12 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// A possibly alternate project path that should be used for things that should be
-		/// shared. This includes writing systems, etc. and possibly linked files.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string SharedProjectFolder
-		{
-			get { return ProjectFolder; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the name of the server (will typically be <c>null</c> for a local project).
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string ServerName
-		{
-			get { return null; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Gets the type of back-end used for storing the project.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public FDOBackendProviderType Type
 		{
 			get { return m_type; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets a value indicating whether this project is on the local host.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public bool IsLocal
-		{
-			get { return true; }
 		}
 		#endregion
 	}

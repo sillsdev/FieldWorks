@@ -832,25 +832,12 @@ Enter a shorter name.</value>
 			Caption for warning message box
 		</comment>
   </data>
-  <data name="ksServerNowUnavailable" xml:space="preserve">
-    <value>Server unexpectedly became unavailable. Check your network connection.</value>
-    <comment>
-			Server has been previously available but now has gone away.
-		</comment>
-  </data>
-  <data name="ksCannotConnectToHost" xml:space="preserve">
-    <value>Could not contact host: {0} using port {1}</value>
-    <comment>params host then port.</comment>
-  </data>
   <data name="ksChooseProjectFolder" xml:space="preserve">
     <value>Projects Folder</value>
     <comment>label for folder chooser dialog</comment>
   </data>
   <data name="ksNetworkNeighborhood" xml:space="preserve">
     <value>Network Neighborhood</value>
-  </data>
-  <data name="ksCannotConnectToServer" xml:space="preserve">
-    <value>Could not connect to server. Check service is running and that any running firewalls are configured to allow connections to the service.</value>
   </data>
   <data name="ksSupportingFilesRestoreDlg" xml:space="preserve">
     <value>Supporting Files</value>
@@ -960,10 +947,6 @@ The error was:
     <value>Cannot Share Projects</value>
     <comment>caption for ksCantShareDiffProjectFolders</comment>
   </data>
-  <data name="ksCantShareDiffProjectFolders" xml:space="preserve">
-    <value>Project sharing is not currently possible, because your projects folder ({0}) is different from the projects folder used by the sharing service ({1}). To share your projects, you must make these folders the same, then use this dialog again to turn on sharing.</value>
-    <comment>Displayed after a click on the "Share my projects" button in the project Location and Sharing dialog, typically if the user has changed the projects directory.</comment>
-  </data>
   <data name="ksWarningForSendReceiveLinkedFileslesPathCaption" xml:space="preserve">
     <value>How to change to default Linked files location</value>
   </data>
@@ -978,9 +961,6 @@ The error was:
   </data>
   <data name="ksCouldNotBackupSomeFiles" xml:space="preserve">
     <value>FieldWorks was not able to back up some of the files used by this project. Do you want to keep the backup anyway? The files not backed up were {0}</value>
-  </data>
-  <data name="ksFindServersError" xml:space="preserve">
-    <value>Unable to search for remote servers.</value>
   </data>
   <data name="CancelDeleteWS" xml:space="preserve">
     <value>Cancel Delete Writing System</value>

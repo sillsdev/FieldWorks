@@ -4,7 +4,6 @@
 //
 // File: FwProjPropertiesDlg.cs
 // Responsibility: TE Team
-
 using System;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
@@ -160,7 +159,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				throw new ArgumentNullException("cache", "Null Cache passed to FwProjProperties");
 
 			m_cache = cache;
-			m_txtProjName.Enabled = m_cache.ProjectId.IsLocal;
+			m_txtProjName.Enabled = true;
 
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;
@@ -171,14 +170,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			InitializeGeneralTab();
 			m_fLinkedFilesChanged = false;
 			txtExtLnkEdit.Text = m_langProj.LinkedFilesRootDir;
-			if (!cache.ProjectId.IsLocal)
-			{
-				int deltaX = btnLinkedFilesBrowse.Width + btnLinkedFilesBrowse.Location.X - (txtExtLnkEdit.Location.X + txtExtLnkEdit.Width);
-				btnLinkedFilesBrowse.Enabled = false;
-				btnLinkedFilesBrowse.Visible = false;
-				txtExtLnkEdit.Width = txtExtLnkEdit.Width + deltaX;
-				txtExtLnkEdit.Enabled = false;
-			}
 
 			m_defaultLinkedFilesFolder = FdoFileHelper.GetDefaultLinkedFilesDir(m_cache.ServiceLocator.DataSetup.ProjectId.ProjectFolder);
 		}
@@ -191,8 +182,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void InitializeGeneralTab()
 		{
 			m_txtProjName.Text = m_lblProjName.Text = m_sOrigProjName = m_cache.ProjectId.Name;
-			m_tbLocation.Text = m_cache.ProjectId.IsLocal ? m_cache.ProjectId.Path :
-				m_cache.ProjectId.SharedProjectFolder;
+			m_tbLocation.Text = m_cache.ProjectId.Path;
 			m_lblProjCreatedDate.Text = m_langProj.DateCreated.ToString("g");
 			m_lblProjModifiedDate.Text = m_langProj.DateModified.ToString("g");
 			m_txtProjDescription.Text = m_sOrigDescription = m_langProj.Description.UserDefaultWritingSystem.Text;
@@ -967,12 +957,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (!DidProjectTabChange() && !DidWsTabChange() && !DidLinkedFilesTabChange())
 			{
 				NotifyProjectPropsChangedAndClose(); //Ok, but nothing changed. Nothing to see here, carry on.
-				return;
-			}
-
-			if (!ClientServerServicesHelper.WarnOnConfirmingSingleUserChanges(m_cache)) //if Anything changed, check and warn about DB4o
-			{
-				NotifyProjectPropsChangedAndClose(); //The user changed something, but when warned decided against it, so do not save just quit
 				return;
 			}
 			if (!SharedBackendServicesHelper.WarnOnConfirmingSingleUserChanges(m_cache)) //if Anything changed, check and warn about other apps

@@ -10,7 +10,6 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
@@ -19,7 +18,6 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using XCore;
 
@@ -3849,8 +3847,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				return;
 			var hvo = obj.Hvo;
 
-			FwLinkArgs link = new FwAppArgs(FwUtils.FwUtils.ksFlexAppName, Cache.ProjectId.Handle,
-											Cache.ProjectId.ServerName, toolToJumpTo, Guid.Empty);
+			FwLinkArgs link = new FwAppArgs(Cache.ProjectId.Handle, toolToJumpTo, Guid.Empty);
 			List<Property> additionalProps = link.PropertyTableEntries;
 			additionalProps.Add(new Property("SuspendLoadListUntilOnChangeFilter", link.ToolName));
 			additionalProps.Add(new Property("LinkSetupInfo", linkSetupInfo));

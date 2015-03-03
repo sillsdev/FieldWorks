@@ -4,7 +4,6 @@
 //
 // File: FwSplashScreen.cs
 // Responsibility: TE Team
-
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -12,7 +11,6 @@ using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 using SIL.FieldWorks.Common.Controls;
 

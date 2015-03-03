@@ -4,7 +4,6 @@
 //
 // File: FwApplyStyleDlg.cs
 // Responsibility: TE Team
-
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -13,7 +12,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.DomainServices;

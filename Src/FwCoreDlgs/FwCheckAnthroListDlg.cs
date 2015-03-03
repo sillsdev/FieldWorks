@@ -4,18 +4,13 @@
 //
 // File: FwCheckAnthroList.cs
 // Responsibility: mcconnel
-
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
 using System.IO;
-using SIL.Utils;
 using System.Diagnostics;
-using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.Common.FwUtils;
 using XCore;
 

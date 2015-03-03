@@ -371,7 +371,7 @@ namespace SIL.FieldWorks.Common.Framework
 					"[Desktop Entry]{1}" +
 					"Version=1.0{1}" +
 					"Terminal=false{1}" +
-					"Exec=fieldworks-flex -db \"{0}\" -s \"\"{1}" +
+					"Exec=fieldworks-flex -db \"{0}\"{1}" +
 					"Icon=fieldworks-flex{1}" +
 					"Type=Application{1}" +
 					"Name={0}{1}" +

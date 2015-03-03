@@ -4,7 +4,6 @@
 //
 // File: ProjectBackupService.cs
 // Responsibility: FW team
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -60,7 +59,6 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 				m_cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
 				m_cache.ServiceLocator.GetInstance<IDataStorer>().CompleteAllCommits();
 
-				string tempFilePath = ClientServerServices.Current.Local.CopyToXmlFile(m_cache, m_settings.DatabaseFolder);
 				var filesToZip = CreateListOfFilesToZip();
 
 				progressDlg.Title = Strings.ksBackupProgressCaption;
@@ -68,8 +66,6 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 				progressDlg.AllowCancel = false;
 				m_failedFiles.Clear(); // I think it's always a new instance, but play safe.
 				backupFile = (string)progressDlg.RunTask(true, BackupTask, filesToZip);
-				if (tempFilePath != null)
-					File.Delete(tempFilePath); // don't leave the extra fwdata file around to confuse things.
 			}
 			catch (Exception e)
 			{

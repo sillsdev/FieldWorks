@@ -4,16 +4,13 @@
 //
 // File: FwHelpAbout.cs
 // Responsibility: TE Team
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
-using System.Diagnostics;
 using System.Threading;
 
 namespace SIL.FieldWorks.FwCoreDlgs

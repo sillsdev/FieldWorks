@@ -100,15 +100,20 @@ namespace SIL.FieldWorks.IText
 			{
 				var interestingTextsList = InterestingTextsDecorator.GetInterestingTextList(m_mediator, m_cache.ServiceLocator);
 				var textsToChooseFrom = new List<IStText>(interestingTextsList.InterestingTexts);
-				if (!FwUtils.IsOkToDisplayScriptureIfPresent)
+				var isOkToDisplayScripture = m_cache.ServiceLocator.GetInstance<IScrBookRepository>().AllInstances().Any();
+				if (!isOkToDisplayScripture)
 				{   // Mustn't show any Scripture, so remove scripture from the list
 					textsToChooseFrom = textsToChooseFrom.Where(text => !ScriptureServices.ScriptureIsResponsibleFor(text)).ToList();
 				}
 				var interestingTexts = textsToChooseFrom.ToArray();
-				if (FwUtils.IsOkToDisplayScriptureIfPresent)
+				if (isOkToDisplayScripture)
+				{
 					dlg = new FilterTextsDialogTE(m_cache, interestingTexts, m_mediator.HelpTopicProvider, m_bookImporter);
+				}
 				else
+				{
 					dlg = new FilterTextsDialog(m_cache, interestingTexts, m_mediator.HelpTopicProvider);
+				}
 				// LT-12181: Was 'PruneToSelectedTexts(text) and most others were deleted.
 				// We want 'PruneToInterestingTextsAndSelect(interestingTexts, selectedText)'
 				dlg.PruneToInterestingTextsAndSelect(interestingTexts, (IStText)m_objRoot);

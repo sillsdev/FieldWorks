@@ -4,7 +4,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using FwRemoteDatabaseConnector;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -31,28 +30,6 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			m_random = new Random((int)DateTime.Now.Ticks);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// If a test overrides this, it should call the base implementation.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public override void FixtureSetup()
-		{
-			RemotingServer.Start(FwDirectoryFinder.RemotingTcpServerConfigFile, FwDirectoryFinder.FdoDirectories, () => false, v => {});
-			base.FixtureSetup();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// If a test overrides this, it should call the base implementation.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public override void FixtureTeardown()
-		{
-			base.FixtureTeardown();
-			RemotingServer.Stop();
-		}
-
 		#region Non-test methods.
 
 		private BackendStartupParameter GenerateBackendStartupParameters(bool isTarget, FDOBackendProviderType type)
@@ -63,9 +40,6 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			{
 				case FDOBackendProviderType.kXML:
 					name = FdoFileHelper.GetXmlDataFileName("TLP" + nameSuffix);
-					break;
-				case FDOBackendProviderType.kDb4oClientServer:
-					name = "TLPCS" + nameSuffix;
 					break;
 				//case FDOBackendProviderType.kMemoryOnly: name = null;
 			}
@@ -118,9 +92,6 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		/// <param name="backendParameters"></param>
 		private static void DeleteDatabase(BackendStartupParameter backendParameters)
 		{
-			// db4o client/server has its own mechanism.
-			if(backendParameters.ProjectId.Type == FDOBackendProviderType.kDb4oClientServer)
-				return;
 			string pathname = string.Empty;
 			if(backendParameters.ProjectId.Type != FDOBackendProviderType.kMemoryOnly)
 				pathname = backendParameters.ProjectId.Path;
@@ -154,9 +125,9 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "source/targetDataSetup are singletons; disposed by service locator")]
 		public void PortAllBEPsTestsUsingAnAlreadyOpenedSource(
-			[Values(FDOBackendProviderType.kXML, FDOBackendProviderType.kDb4oClientServer, FDOBackendProviderType.kMemoryOnly)]
+			[Values(FDOBackendProviderType.kXML, FDOBackendProviderType.kMemoryOnly)]
 			FDOBackendProviderType sourceType,
-			[Values(FDOBackendProviderType.kXML, FDOBackendProviderType.kDb4oClientServer, FDOBackendProviderType.kMemoryOnly)]
+			[Values(FDOBackendProviderType.kXML, FDOBackendProviderType.kMemoryOnly)]
 			FDOBackendProviderType targetType)
 		{
 			var sourceBackendStartupParameters = GenerateBackendStartupParameters(false, sourceType);
@@ -212,9 +183,9 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "source/targetDataSetup are singletons; disposed by service locator")]
 		public void PortAllBEPsTestsUsingAnUnopenedSource(
-			[Values(FDOBackendProviderType.kXML, FDOBackendProviderType.kDb4oClientServer)]
+			[Values(FDOBackendProviderType.kXML)]
 			FDOBackendProviderType sourceType,
-			[Values(FDOBackendProviderType.kXML, FDOBackendProviderType.kDb4oClientServer, FDOBackendProviderType.kMemoryOnly)]
+			[Values(FDOBackendProviderType.kXML, FDOBackendProviderType.kMemoryOnly)]
 			FDOBackendProviderType targetType)
 		{
 			var path = Path.Combine(Path.GetTempPath(), "FieldWorksTest");

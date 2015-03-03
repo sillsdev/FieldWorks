@@ -128,10 +128,6 @@ namespace SIL.FieldWorks.TE
 		{
 			EnsureProjectValid(cache, app, existingProgressDlg);
 
-			// TE-8621: Don't try to upgrade the database unless we're the project server and no one is connected
-			if (!cache.ProjectId.IsLocal || cache.NumberOfRemoteClients > 0)
-				return;
-
 			ILangProject lp = cache.LangProject;
 
 			TeScrBookRefsInit.EnsureFactoryScrBookRefs(cache, existingProgressDlg);

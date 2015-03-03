@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace FDOBrowser
+﻿namespace FDOBrowser
 {
 	/// <summary>
 	/// Class to hold custom fields in FDOBrowser

@@ -253,12 +253,8 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// Write a collection of IManyOneSortItems in a form that can be reconstituted by ReadItems.
 		/// </summary>
-		public static void WriteItems(ArrayList items, StreamWriter output, ICmObjectRepository repo, string versionStamp)
+		public static void WriteItems(ArrayList items, StreamWriter output, ICmObjectRepository repo)
 		{
-			// Make an XML-like header if we include a version stamp. The rest of the file is not XML-ish, but let's start
-			// identifying the header information clearly, in case we have reason to add any more types.
-			if (versionStamp != null)
-				output.WriteLine("<version>" + versionStamp + "</version>");
 			foreach (IManyOnePathSortItem item in items)
 				output.WriteLine(item.PersistData(repo));
 			output.Flush();
@@ -267,19 +263,10 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// Build a collection of IManyOneSortItems from data written by WriteItems.
 		/// </summary>
-		public static ArrayList ReadItems(StreamReader input, ICmObjectRepository repo, out string versionStamp)
+		public static ArrayList ReadItems(StreamReader input, ICmObjectRepository repo)
 		{
-			versionStamp = null; // default.
 			try
 			{
-				if (!input.EndOfStream && input.Peek() == '<')
-				{
-					// Get a version stamp and check it out.
-					var line = input.ReadLine();
-					if (!line.StartsWith("<version>") || !line.EndsWith("</version>"))
-						return null; // cache is no good at all!
-					versionStamp = line.Substring("<version>".Length, line.Length - "<version></version>".Length);
-				}
 				var result = new ArrayList();
 				while (!input.EndOfStream)
 					result.Add(new LazyManyOnePathSortItem(input.ReadLine(), repo));
@@ -310,12 +297,12 @@ namespace SIL.FieldWorks.Filters
 				return null;
 			}
 			// If the string representing a GUID that we read from the file doesn't produce
-				// a byte array exactly 8 bytes long, we get this (FWR-2890). Similar to FormatException,
-				// if the file is corrupt we'll just rebuild the index.
-				// Review JohnT: is this a case where we should just catch all exceptions? But then
-				// if someone introduces a defect the program may just slow down without our ever
-				// realizing why.
-			catch(ArgumentException)
+			// a byte array exactly 8 bytes long, we get this (FWR-2890). Similar to FormatException,
+			// if the file is corrupt we'll just rebuild the index.
+			// Review JohnT: is this a case where we should just catch all exceptions? But then
+			// if someone introduces a defect the program may just slow down without our ever
+			// realizing why.
+			catch (ArgumentException)
 			{
 				return null;
 			}

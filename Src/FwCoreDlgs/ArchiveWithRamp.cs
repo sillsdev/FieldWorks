@@ -15,16 +15,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	{
 		private readonly List<string> m_filesToArchive = new List<string>();
 		private readonly FdoCache m_cache;
-		private readonly string m_appAbbrev;
 		private readonly XCore.IHelpTopicProvider m_helpTopicProvider;
 		private string m_lastBackupFile;
 
 		/// ------------------------------------------------------------------------------------
-		public ArchiveWithRamp(FdoCache cache, string appAbbrev,
+		public ArchiveWithRamp(FdoCache cache,
 			XCore.IHelpTopicProvider helpTopicProvider)
 		{
 			m_cache = cache;
-			m_appAbbrev = appAbbrev;
 			m_helpTopicProvider = helpTopicProvider;
 			InitializeComponent();
 
@@ -38,8 +36,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				if (m_rbNewBackup.Checked)
 				{
-					using (BackupProjectDlg dlg = new BackupProjectDlg(m_cache, m_appAbbrev,
-						m_helpTopicProvider))
+					using (BackupProjectDlg dlg = new BackupProjectDlg(m_cache, m_helpTopicProvider))
 					{
 						if ((dlg.ShowDialog(this) == DialogResult.OK)
 							&& (!string.IsNullOrEmpty(dlg.BackupFilePath)))

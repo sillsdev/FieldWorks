@@ -4,11 +4,7 @@
 //
 // File: BrowserProjectId.cs
 // Responsibility: FW Team
-
-using System;
-using System.IO;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace FDOBrowser

@@ -7,7 +7,6 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,7 +19,6 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.Utils;
-using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.PaObjects
 {
@@ -29,17 +27,6 @@ namespace SIL.FieldWorks.PaObjects
 	{
 		private List<PaWritingSystem> m_writingSystems;
 		private List<PaLexEntry> m_lexEntries;
-
-		#region constructors
-		/// <summary>
-		/// Contstructor is required to initialize ClientServerServices
-		/// </summary>
-		public PaLexicalInfo()
-		{
-			// need to call this iniitialization routine to allow the ChooseLangProjectDialog can be used
-			ClientServerServices.SetCurrentToDb4OBackend(null, FwDirectoryFinder.FdoDirectories);
-		}
-		#endregion
 
 		#region Disposable stuff
 		#if DEBUG
@@ -96,7 +83,7 @@ namespace SIL.FieldWorks.PaObjects
 				if (dlg.ShowDialog(owner) == DialogResult.OK)
 				{
 					name = dlg.Project;
-					server = dlg.Server;
+					server = null;
 					dialogBounds = dlg.Bounds;
 					dialogSplitterPos = dlg.SplitterPosition;
 					return true;
@@ -172,7 +159,7 @@ namespace SIL.FieldWorks.PaObjects
 					{
 						newProcessStarted = true;
 						newFwInstance = FieldWorks.OpenProjectWithNewProcess(null, name, server,
-							FwUtils.ksFlexAbbrev, "-" + FwAppArgs.kNoUserInterface);
+							"-" + FwAppArgs.kNoUserInterface);
 
 						// TODO-Linux: WaitForInputIdle isn't fully implemented on Linux.
 						if (!newFwInstance.WaitForInputIdle(timeToWaitForProcessStart))

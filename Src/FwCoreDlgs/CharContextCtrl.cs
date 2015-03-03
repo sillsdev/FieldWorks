@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -135,8 +136,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			ContextFont = contextFont;
 			TokenGrid = tokenGrid;
 
-			if (FwUtils.IsOkToDisplayScriptureIfPresent)
+			var isOkToDisplayScripture = m_cache != null && m_cache.ServiceLocator.GetInstance<IScrBookRepository>().AllInstances().Any();
+			if (isOkToDisplayScripture)
+			{
 				m_scrChecksDllFile = FwDirectoryFinder.BasicEditorialChecksDll;
+			}
 
 			if (m_ws != null)
 			{
@@ -146,7 +150,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				// If TE isn't installed, we can't support creating an inventory
 				// based on Scripture data. Likewise if we don't yet have any books (which also guards
 				// against showing the option in the SE edition, unless it has been paired with Paratext).
-				cmnuScanScripture.Visible = (FwUtils.IsOkToDisplayScriptureIfPresent &&
+				cmnuScanScripture.Visible = (isOkToDisplayScripture &&
 					File.Exists(m_scrChecksDllFile) &&
 					m_cache != null && m_cache.LanguageProject.TranslatedScriptureOA != null
 					&& m_cache.LanguageProject.TranslatedScriptureOA.ScriptureBooksOS.Count > 0

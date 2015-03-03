@@ -34,8 +34,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Use the one that is correct for your context, in case they need to be changed later.)
 		/// </summary>
 		public const string ksFlexAppName = "Language Explorer";
-		/// <summary>The command-line abbreviation for the Language Explorer</summary>
-		public const string ksFlexAbbrev = "FLEx";
 		/// <summary>
 		/// The fully-qualified (with namespace) C# object name for LexTextApp
 		/// </summary>
@@ -44,31 +42,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// The current version of FieldWorks. This is also known in COMInterfaces/IcuWrappers.cs, InitIcuDataDir.
 		/// </summary>
 		public const int SuiteVersion = 8;
-
-		/// <summary>
-		/// Many of the previous calls to IsTeInstalled were changed to call this instead,
-		/// when we made the SE edition able to work with Paratext Scripture if present.
-		/// Currently it always returns true, but if we someday want to hide every trace of Scripture
-		/// from the UI, we can make this configurable.
-		/// </summary>
-		public static bool IsOkToDisplayScriptureIfPresent
-		{
-			get { return true; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets a value indicating whether FLEx is installed.
-		/// We consider FLEx to be installed if we can find it in the same directory as our
-		/// own assembly. That's a rather strong requirement, but it's how we install it.
-		/// </summary>
-		/// <remarks>We could do the really complicated thing they do above to see if TE is
-		/// installed, but why bother?</remarks>
-		/// ------------------------------------------------------------------------------------
-		public static bool IsFlexInstalled
-		{
-			get { return File.Exists(FwDirectoryFinder.FlexExe); }
-		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

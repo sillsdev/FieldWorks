@@ -5,12 +5,9 @@ using System.Linq;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FdoUi;
-using SIL.Utils;
 using WeifenLuo.WinFormsUI.Docking;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
-using XCore;
 using System.Diagnostics.CodeAnalysis;
 
 namespace FDOBrowser

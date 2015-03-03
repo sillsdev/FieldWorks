@@ -916,7 +916,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 
 		private void btnBackup_Click(object sender, EventArgs e)
 		{
-			using (var dlg = new BackupProjectDlg(m_cache, FwUtils.ksFlexAbbrev, m_mediator.HelpTopicProvider))
+			using (var dlg = new BackupProjectDlg(m_cache, m_mediator.HelpTopicProvider))
 				dlg.ShowDialog(this);
 		}
 

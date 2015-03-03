@@ -4,7 +4,6 @@
 //
 // File: FwNewLangProject.cs
 // Responsibility: TE Team
-
 using System;
 using System.Drawing;
 using System.Collections.Generic;
@@ -12,7 +11,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using System.IO;
-
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -538,7 +536,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					{
 						case DialogResult.OK:
 							m_fCreateNew = false;
-							m_dbFile = ClientServerServices.Current.Local.IdForLocalProject(ProjectName);
+							m_dbFile = Path.Combine(FwDirectoryFinder.FdoDirectories.ProjectsDirectory, ProjectName + FdoFileHelper.ksFwDataXmlFileExtension);
 							break;
 						case DialogResult.Cancel:
 							Enabled = true;

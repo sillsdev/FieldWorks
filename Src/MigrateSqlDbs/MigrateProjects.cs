@@ -7,21 +7,15 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
-
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
-using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 {
@@ -59,8 +53,7 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 				string dir = Path.Combine(FwDirectoryFinder.ProjectsDirectory, name);
 				if (Directory.Exists(dir))
 				{
-					if (File.Exists(Path.Combine(dir, name + FdoFileHelper.ksFwDataXmlFileExtension)) ||
-						File.Exists(Path.Combine(dir, name + FdoFileHelper.ksFwDataDb4oFileExtension)))
+					if (File.Exists(Path.Combine(dir, name + FdoFileHelper.ksFwDataXmlFileExtension)))
 					{
 						m_fExists = true;
 					}

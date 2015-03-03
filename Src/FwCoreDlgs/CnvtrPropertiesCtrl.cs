@@ -1,17 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
-using System.Data;
 using System.Windows.Forms;
-using System.Resources;
-using System.Reflection;
 using ECInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SilEncConverters40;
-
 using SIL.Utils;
 using SIL.Utils.FileDialog;
 using SIL.FieldWorks.Common.COMInterfaces;

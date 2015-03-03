@@ -9,11 +9,8 @@
 // This implements a control during the dialog.
 // The control is a listbox that lists the whatever is passsed into it.
 // </remarks>
-
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Windows.Forms;
 
 namespace FDOBrowser

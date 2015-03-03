@@ -11,12 +11,10 @@ using System.Diagnostics;
 using Microsoft.Win32;
 using System.Collections.Generic;
 using System.IO;
-
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using SILUBS.SharedScrUtils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks

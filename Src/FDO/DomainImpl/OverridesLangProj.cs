@@ -90,14 +90,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				return String.IsNullOrEmpty(LinkedFilesRootDir_Generated)
-					? Path.Combine(m_cache.ProjectId.SharedProjectFolder, FdoFileHelper.ksLinkedFilesDir)
+					? Path.Combine(m_cache.ProjectId.ProjectFolder, FdoFileHelper.ksLinkedFilesDir)
 					: LinkedFilesRelativePathHelper.GetLinkedFilesFullPathFromRelativePath(Services.GetInstance<IFdoDirectories>().ProjectsDirectory,
-					LinkedFilesRootDir_Generated, m_cache.ProjectId.SharedProjectFolder);
+					LinkedFilesRootDir_Generated, m_cache.ProjectId.ProjectFolder);
 			}
 			set
 			{
 				string relativePath = LinkedFilesRelativePathHelper.GetLinkedFilesRelativePathFromFullPath(Services.GetInstance<IFdoDirectories>().ProjectsDirectory,
-					value, m_cache.ProjectId.SharedProjectFolder, ShortName);
+					value, m_cache.ProjectId.ProjectFolder, ShortName);
 
 				LinkedFilesRootDir_Generated = relativePath;
 			}

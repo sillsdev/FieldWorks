@@ -4,7 +4,6 @@
 //
 // File: FwFindReplaceDlg.cs
 // Responsibility: TE Team
-
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -12,7 +11,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
-
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;

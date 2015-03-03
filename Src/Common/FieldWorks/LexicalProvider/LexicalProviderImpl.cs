@@ -25,7 +25,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 using XCore;
 
@@ -78,7 +77,7 @@ namespace SIL.FieldWorks.LexicalProvider
 			{
 				ITsString tss = TsStringUtils.MakeTss(entry, FieldWorks.Cache.DefaultVernWs);
 				Mediator mediator = new Mediator();
-				mediator.HelpTopicProvider = FieldWorks.GetHelpTopicProvider(FwUtils.ksFlexAbbrev);
+				mediator.HelpTopicProvider = FieldWorks.GetHelpTopicProvider();
 				mediator.FeedbackInfoProvider = FieldWorks.GetOrCreateFlexApp();
 				mediator.PropertyTable.SetProperty("App", FieldWorks.GetOrCreateFlexApp());
 
@@ -108,7 +107,7 @@ namespace SIL.FieldWorks.LexicalProvider
 			{
 				ITsString tss = TsStringUtils.MakeTss(entry, FieldWorks.Cache.DefaultVernWs);
 				Mediator mediator = new Mediator();
-				mediator.HelpTopicProvider = FieldWorks.GetHelpTopicProvider(FwUtils.ksFlexAbbrev);
+				mediator.HelpTopicProvider = FieldWorks.GetHelpTopicProvider();
 				mediator.FeedbackInfoProvider = FieldWorks.GetOrCreateFlexApp();
 				mediator.PropertyTable.SetProperty("App", FieldWorks.GetOrCreateFlexApp());
 

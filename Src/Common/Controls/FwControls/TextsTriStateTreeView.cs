@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.Common.Controls
 			Nodes.Clear();
 			LoadGeneralTexts(cache);
 
-			if (FwUtils.FwUtils.IsOkToDisplayScriptureIfPresent)
+			if (cache.ServiceLocator.GetInstance<IScrBookRepository>().AllInstances().Any())
 				LoadScriptureTexts(cache, bookImporter);
 		}
 

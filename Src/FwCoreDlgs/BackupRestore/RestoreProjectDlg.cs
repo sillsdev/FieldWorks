@@ -4,7 +4,6 @@
 //
 // File: RestoreProjectDlg.cs
 // Responsibility: TE Team
-
 using System;
 using System.IO;
 using System.Linq;
@@ -31,16 +30,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// </summary>
 		/// <param name="parentWindow">The parent window to use when reporting an error (can be
 		/// null).</param>
-		/// <param name="caption">Used in title bar of message box when reporting an error
-		/// (typically the name of the application).
-		/// </param>
 		/// <param name="zipFilename">The backup zip filename.</param>
 		/// <param name="action">The action to perform.</param>
 		/// <returns>
 		/// 	<c>true</c> if successful (no exception caught); <c>false</c> otherwise
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
-		public static bool HandleRestoreFileErrors(IWin32Window parentWindow, string caption, string zipFilename, Action action)
+		public static bool HandleRestoreFileErrors(IWin32Window parentWindow, string zipFilename, Action action)
 		{
 			try
 			{
@@ -52,7 +48,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 					error is UnauthorizedAccessException)
 				{
 					Logger.WriteError(error);
-					MessageBoxUtils.Show(parentWindow, error.Message, caption, MessageBoxButtons.OK, MessageBoxIcon.Information);
+					MessageBoxUtils.Show(parentWindow, error.Message, "FLEx", MessageBoxButtons.OK, MessageBoxIcon.Information);
 					return false;
 				}
 				throw;
@@ -61,7 +57,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		}
 
 		#region Data members
-		private readonly string m_appName;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private readonly RestoreProjectPresenter m_presenter;
 		private readonly RestoreProjectSettings m_settings;
@@ -88,11 +83,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// </summary>
 		/// <param name="backupFileSettings">Specific backup file settings to use (dialog
 		/// controls to select a backup file will be disabled)</param>
-		/// <param name="appName">Name of the application (for showing in message box captions).</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
-		public RestoreProjectDlg(BackupFileSettings backupFileSettings, string appName,
-			IHelpTopicProvider helpTopicProvider) : this(appName, helpTopicProvider)
+		public RestoreProjectDlg(BackupFileSettings backupFileSettings,
+			IHelpTopicProvider helpTopicProvider) : this(helpTopicProvider)
 		{
 			m_lblBackupZipFile.Text = backupFileSettings.File;
 			m_presenter = new RestoreProjectPresenter(this);
@@ -107,11 +101,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// Initializes a new instance of the <see cref="RestoreProjectDlg"/> class.
 		/// </summary>
 		/// <param name="defaultProjectName">Default project to show existing backups for.</param>
-		/// <param name="appName">Name of the application (for showing in message box captions).</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
-		public RestoreProjectDlg(string defaultProjectName, string appName,
-			IHelpTopicProvider helpTopicProvider) : this(appName, helpTopicProvider)
+		public RestoreProjectDlg(string defaultProjectName,
+			IHelpTopicProvider helpTopicProvider) : this(helpTopicProvider)
 		{
 			m_presenter = new RestoreProjectPresenter(this, defaultProjectName);
 			m_rdoDefaultFolder_CheckedChanged(null, null);
@@ -122,12 +115,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// <summary>
 		/// Initializes a new instance of the <see cref="RestoreProjectDlg"/> class.
 		/// </summary>
-		/// <param name="appName">Name of the application (for showing in message box captions).</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
-		private RestoreProjectDlg(string appName, IHelpTopicProvider helpTopicProvider) : this()
+		private RestoreProjectDlg(IHelpTopicProvider helpTopicProvider) : this()
 		{
-			m_appName = appName;
 			m_helpTopicProvider = helpTopicProvider;
 			m_lblOtherBackupIncludes.Text = String.Empty;
 			m_lblDefaultBackupIncludes.Text = String.Empty;
@@ -323,7 +314,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 				return;
 			}
 
-			if (HandleRestoreFileErrors(this, m_appName, BackupZipFile,
+			if (HandleRestoreFileErrors(this, BackupZipFile,
 				() => BackupFileSettings = new BackupFileSettings(BackupZipFile, true)))
 			{
 				SetOriginalNameFromSettings();
@@ -422,7 +413,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 					{
 						m_txtOtherProjectName.Select();
 						m_txtOtherProjectName.SelectAll();
-						return;
 					}
 				}
 			}
@@ -582,7 +572,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 				return;
 			}
 			e.Handled = false; // Gets processed normally elsewhere
-			return;
 		}
 
 		private bool IsIllegalInFilename(char keyPressed)

@@ -229,7 +229,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var fwargs = new FwAppArgs(new[] {url});
 				FdoCache cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
-				if (SameServer(fwargs, cache) && SameDatabase(fwargs, cache))
+				if (SameDatabase(fwargs, cache))
 				{
 					OnFollowLink(fwargs);
 					args.LinkHandledLocally = true;
@@ -248,17 +248,6 @@ namespace SIL.FieldWorks.XWorks
 				fwargs.Database.ToLowerInvariant() == cache.ProjectId.Name.ToLowerInvariant()
 				|| fwargs.Database.ToLowerInvariant() == cache.ProjectId.Path.ToLowerInvariant()
 				|| Path.GetFileName(fwargs.Database).ToLowerInvariant() == cache.ProjectId.Name.ToLowerInvariant();
-		}
-
-		private bool SameServer(FwAppArgs fwargs, FdoCache cache)
-		{
-			if (String.IsNullOrEmpty(fwargs.Server) && String.IsNullOrEmpty(cache.ProjectId.ServerName))
-				return true;
-			if (String.IsNullOrEmpty(fwargs.Server) && fwargs.Database == "this$")
-				return true;
-			if (String.IsNullOrEmpty(fwargs.Server) || String.IsNullOrEmpty(cache.ProjectId.ServerName))
-				return false;
-			return fwargs.Server.ToLowerInvariant() == cache.ProjectId.ServerName.ToLowerInvariant();
 		}
 
 		/// <summary>
@@ -342,8 +331,8 @@ namespace SIL.FieldWorks.XWorks
 			if (m_currentContext != null)
 			{
 				FdoCache cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
-				var args = new FwAppArgs(FwUtils.ksFlexAbbrev, cache.ProjectId.Handle,
-					cache.ProjectId.ServerName, m_currentContext.ToolName, m_currentContext.TargetGuid);
+				var args = new FwAppArgs(cache.ProjectId.Handle,
+					m_currentContext.ToolName, m_currentContext.TargetGuid);
 				ClipboardUtils.SetDataObject(args.ToString(), true);
 			}
 			return true;
@@ -457,7 +446,6 @@ namespace SIL.FieldWorks.XWorks
 					var realTarget = GetObjectToShowInTool(target);
 					string realTool;
 					var majorObject = realTarget.Owner ?? realTarget;
-					var app = FwUtils.ksFlexAbbrev;
 					switch (majorObject.ClassID)
 					{
 						case ReversalIndexTags.kClassId:

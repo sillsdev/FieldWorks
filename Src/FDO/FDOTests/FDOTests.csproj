@@ -124,14 +124,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
     </Reference>
-    <Reference Include="Db4objects.Db4o, Version=7.12.156.14667, Culture=neutral, PublicKeyToken=6199cd4f203aa8eb, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\Db4objects.Db4o.dll</HintPath>
-    </Reference>
-    <Reference Include="Db4objects.Db4o.CS, Version=7.12.156.14667, Culture=neutral, PublicKeyToken=6199cd4f203aa8eb, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\Db4objects.Db4o.CS.dll</HintPath>
-    </Reference>
     <Reference Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\ECInterfaces.dll</HintPath>
@@ -239,19 +231,12 @@
     <Compile Include="AnalysisOccurrenceTests.cs" />
     <Compile Include="AndIFilterTests.cs" />
     <Compile Include="AtomicPropertyTests.cs" />
-    <Compile Include="BackupRestore\BackupFileRepositoryTests.cs" />
-    <Compile Include="BackupRestore\BackupRestoreSettingsTests.cs" />
-    <Compile Include="BackupRestore\ProjectBackupServiceTestForLinkedFiles.cs" />
-    <Compile Include="BackupRestore\ProjectBackupServiceTests.cs" />
-    <Compile Include="BackupRestore\ProjectRestoreServiceTests.cs" />
     <Compile Include="BackupRestore\ProjectRestoreTestService.cs" />
     <Compile Include="BaseStyleInfoTests.cs" />
     <Compile Include="BtConverterTests.cs" />
     <Compile Include="BulletInfoTests.cs" />
     <Compile Include="CellarTests.cs" />
     <Compile Include="CircularReferenceTests.cs" />
-    <Compile Include="ClientServerServicesTests.cs" />
-    <Compile Include="ClientServerTests.cs" />
     <Compile Include="ConfigureHomographTests.cs" />
     <Compile Include="DataMigrationTests\DataMigration7000058Tests.cs" />
     <Compile Include="DataMigrationTests\DataMigration7000047Tests.cs" />
@@ -294,7 +279,6 @@
     <Compile Include="DataMigrationTests\DataMigration7000067Tests.cs" />
     <Compile Include="DataSortingServiceTests.cs" />
     <Compile Include="DataStoreInitializationServicesTests.cs" />
-    <Compile Include="Db4oServerInfoTests.cs" />
     <Compile Include="DummyFdoUI.cs" />
     <Compile Include="DummyProgressDlg.cs" />
     <Compile Include="DuplicateAnalysisFixerTests.cs" />
@@ -386,7 +370,6 @@
     <Compile Include="ValidCharactersTests.cs" />
     <Compile Include="FwStyleSheetTests.cs" />
     <Compile Include="IActionHandlerTests.cs" />
-    <Compile Include="PersistingBackendProviderTests.cs" />
     <Compile Include="ScrInMemoryFdoTestBase.cs" />
     <Compile Include="GeneratedPropertyAccessorTests.cs" />
     <Compile Include="FdoCacheTests.cs" />
@@ -404,9 +387,6 @@
     <Compile Include="FdoInvertSetTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="BuildInclude.targets">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="gendarme-FDOTests.ignore" />
   </ItemGroup>
   <ItemGroup>
@@ -574,5 +554,4 @@
   <PropertyGroup>
     <DistFiles>../../../DistFiles</DistFiles>
   </PropertyGroup>
-  <Import Project="BuildInclude.targets" />
 </Project>

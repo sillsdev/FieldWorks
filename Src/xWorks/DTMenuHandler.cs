@@ -8,7 +8,6 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -295,7 +294,7 @@ namespace SIL.FieldWorks.XWorks
 					if (dialogResult == DialogResult.OK)
 					{
 						string file = MoveOrCopyFilesDlg.MoveCopyOrLeaveMediaFile(dlg.FileName,
-							Cache.LangProject.LinkedFilesRootDir, m_mediator.HelpTopicProvider, Cache.ProjectId.IsLocal);
+							Cache.LangProject.LinkedFilesRootDir, m_mediator.HelpTopicProvider);
 						if (String.IsNullOrEmpty(file))
 							return true;
 						string sFolderName = null;

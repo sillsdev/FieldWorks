@@ -8,12 +8,8 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.XWorks.LexText
 {
@@ -35,7 +31,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		[STAThread]
 		public static int Main(string[] rgArgs)
 		{
-			using (FieldWorks.StartFwApp(FwUtils.ksFlexAbbrev, rgArgs))
+			using (FieldWorks.StartFwApp(rgArgs))
 			{
 				return 0;
 			}

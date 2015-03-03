@@ -5,7 +5,6 @@
 // File: FDOBackendProvider.cs
 // Responsibility: John Thomson, Steve Miller
 // Last reviewed: never
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -551,11 +550,11 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		{
 			// if there is no project path specified, then just use the default memory-based manager.
 			// this will happen with the memory-only BEP.
-			if (UseMemoryWritingSystemManager || string.IsNullOrEmpty(ProjectId.SharedProjectFolder))
+			if (UseMemoryWritingSystemManager || string.IsNullOrEmpty(ProjectId.ProjectFolder))
 				return;
 
 			var globalStore = new GlobalFileWritingSystemStore();
-			string storePath = Path.Combine(ProjectId.SharedProjectFolder, FdoFileHelper.ksWritingSystemsDir);
+			string storePath = Path.Combine(ProjectId.ProjectFolder, FdoFileHelper.ksWritingSystemsDir);
 			var wsManager = (PalasoWritingSystemManager) m_cache.ServiceLocator.WritingSystemManager;
 			wsManager.GlobalWritingSystemStore = globalStore;
 			wsManager.LocalWritingSystemStore = new LocalFileWritingSystemStore(storePath, globalStore);

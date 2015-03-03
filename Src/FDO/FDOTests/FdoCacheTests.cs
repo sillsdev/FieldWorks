@@ -4,11 +4,9 @@
 //
 // File: FdoCacheTests.cs
 // Responsibility: FW Team
-
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Remoting;
 using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
@@ -41,25 +39,11 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 			Directory.CreateDirectory(FwDirectoryFinder.ProjectsDirectory);
 
 			m_ui = new DummyFdoUI();
-
-			try
-			{
-				// Allow db4o client server unit test to work without running the window service.
-				FwRemoteDatabaseConnector.RemotingServer.Start(FwDirectoryFinder.RemotingTcpServerConfigFile, FwDirectoryFinder.FdoDirectories, () => false, v => {});
-			}
-			catch (RemotingException e)
-			{
-				// This can happen if the server is already running (e.g. if only running CreateNewLangProject_DbFilesExist
-				// multiple times. In this case the port is already in use.
-				// REVIEW (EberhardB): Do we have to throw for other error cases?
-				Console.WriteLine("Got remoting exception: " + e.Message);
-			}
 		}
 
-		/// <summary>Stop db4o client server.</summary>
+		/// <summary></summary>
 		public override void FixtureTeardown()
 		{
-			FwRemoteDatabaseConnector.RemotingServer.Stop();
 			Directory.Delete(FwDirectoryFinder.ProjectsDirectory, true);
 			FwDirectoryFinder.ProjectsDirectory = m_oldProjectDirectory;
 			base.FixtureTeardown();
@@ -402,20 +386,6 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 				lp.PeopleOA = null;
 				cache.ActionHandlerAccessor.EndNonUndoableTask();
 				Assert.IsFalse(peopleList.IsValidObject);
-			}
-		}
-
-		/// <summary>
-		/// Test NumberOfRemoteClients with a non client server BEP.
-		/// </summary>
-		[Test]
-		public void NumberOfRemoteClients_NotClientServer_ReturnsZero()
-		{
-			using (
-				var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-																	 "en", "fr", "en", m_ui, FwDirectoryFinder.FdoDirectories, new FdoSettings()))
-			{
-				Assert.AreEqual(0, cache.NumberOfRemoteClients);
 			}
 		}
 	}

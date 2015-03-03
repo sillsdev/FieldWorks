@@ -8,7 +8,6 @@
 // <remarks>
 // </remarks>
 // ---------------------------------------------------------------------------------------------
-
 using System;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
@@ -149,8 +148,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				if (addNewForLangOfSelectedWs)
 					wsPropsDlg.AddNewWsForLanguage();
 
-				if (!ClientServerServicesHelper.WarnOnOpeningSingleUserDialog(cache))
-					return false; // nothing changed.
 				if (!SharedBackendServicesHelper.WarnOnOpeningSingleUserDialog(cache))
 					return false;
 
@@ -1592,8 +1589,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				if (!CheckOkToChangeContext())
 					return;
-				if (ThereAreChanges && ClientServerServicesHelper.WarnOnConfirmingSingleUserChanges(m_cache)
-					&& SharedBackendServicesHelper.WarnOnConfirmingSingleUserChanges(m_cache))
+				if (ThereAreChanges && SharedBackendServicesHelper.WarnOnConfirmingSingleUserChanges(m_cache))
 				{
 					SaveChanges();
 				}

@@ -125,15 +125,6 @@
     <Reference Include="CoreImpl">
       <HintPath>..\..\Output\Debug\CoreImpl.dll</HintPath>
     </Reference>
-    <Reference Include="Db4objects.Db4o">
-      <HintPath>..\..\Output\Debug\Db4objects.Db4o.dll</HintPath>
-    </Reference>
-    <Reference Include="Db4objects.Db4o.CS">
-      <HintPath>..\..\Output\Debug\Db4objects.Db4o.CS.dll</HintPath>
-    </Reference>
-    <Reference Include="Db4objects.Db4o.Linq">
-      <HintPath>..\..\Output\Debug\Db4objects.Db4o.Linq.dll</HintPath>
-    </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\..\Lib\debug\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
@@ -224,7 +215,6 @@
     <Compile Include="DomainImpl\StTxtPara.cs" />
     <Compile Include="DomainServices\BtConverter.cs" />
     <Compile Include="DomainServices\BulletInfo.cs" />
-    <Compile Include="DomainServices\ClientServerServices.cs" />
     <Compile Include="DomainServices\CmPictureServices.cs" />
     <Compile Include="DomainServices\ConstraintFailure.cs" />
     <Compile Include="DomainServices\CopyObject.cs" />
@@ -265,9 +255,7 @@
     <Compile Include="DomainServices\DataMigration\DataMigration7000067.cs" />
     <Compile Include="DomainServices\DataMigration\FdoDataMigrationManager.cs" />
     <Compile Include="DomainServices\DataMigration\ImportFrom6_0.cs" />
-    <Compile Include="DomainServices\Db4OServerFinder.cs" />
     <Compile Include="DomainServices\FootnoteLocationInfo.cs" />
-    <Compile Include="DomainServices\FwProjectFinder.cs" />
     <Compile Include="DomainServices\M3ModelExportServices.cs" />
     <Compile Include="DomainServices\DataMigration\DataMigration7000010.cs" />
     <Compile Include="DomainServices\DataMigration\DataMigration7000008.cs" />
@@ -370,18 +358,12 @@
     <Compile Include="Infrastructure\FdoXmlServices.cs" />
     <Compile Include="Infrastructure\GenericUndoAction.cs" />
     <Compile Include="Infrastructure\Impl\ChangeReconciler.cs" />
-    <Compile Include="Infrastructure\Impl\ClientIPServerSink.cs" />
-    <Compile Include="Infrastructure\Impl\ClientIPServerSinkProvider.cs" />
-    <Compile Include="Infrastructure\Impl\ClientServerBackendProvider.cs" />
     <Compile Include="Infrastructure\Impl\CmObjectId.cs" />
     <Compile Include="Infrastructure\Impl\CommitData.cs" />
     <Compile Include="Infrastructure\Impl\DataSortingService.cs" />
-    <Compile Include="DomainServices\Db4OPorts.cs" />
     <Compile Include="Infrastructure\Impl\FdoInvertSet.cs" />
     <Compile Include="Infrastructure\Impl\FdoRepositoryBase.cs" />
     <Compile Include="Infrastructure\Impl\FilteredScrBookRepository.cs" />
-    <Compile Include="Infrastructure\Impl\Db4oClientServerBackendProvider.cs" />
-    <Compile Include="Infrastructure\Impl\Db4oServerInfo.cs" />
     <Compile Include="Infrastructure\Impl\GeneratedFDOBackendProvider.cs" />
     <Compile Include="Infrastructure\Impl\CmSemanticDomainRepository.cs" />
     <Compile Include="Infrastructure\Impl\ObjectSurrogateEquater.cs" />
@@ -453,7 +435,6 @@
     <Compile Include="Infrastructure\NonUndoableUnitOfWorkHelper.cs" />
     <Compile Include="Infrastructure\UndoableUnitOfWorkHelper.cs" />
     <Compile Include="Infrastructure\Impl\FdoIFwMetaDataCache.cs" />
-    <Compile Include="Infrastructure\Impl\DB4oCustomSerialization.cs" />
     <Compile Include="Infrastructure\Impl\MemoryOnlyBackendProvider.cs" />
     <Compile Include="Infrastructure\Impl\XMLBackendProvider.cs" />
     <Compile Include="Infrastructure\Impl\FdoRepositoryAdditions.cs" />

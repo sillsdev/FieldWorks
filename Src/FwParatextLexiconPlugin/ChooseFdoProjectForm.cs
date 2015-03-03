@@ -2,10 +2,9 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Sockets;
-using System.Runtime.Remoting;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
@@ -110,7 +109,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 			m_ui = ui;
-			PopulateLanguageProjectsList(Dns.GetHostName(), true);
+			PopulateLanguageProjectsList(Dns.GetHostName());
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -118,50 +117,21 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		/// Queries a given host for avaiable Projects on a separate thread
 		/// </summary>
 		/// <param name="host">The host.</param>
-		/// <param name="showLocalProjects">true if we want to show local fwdata projects</param>
 		/// ------------------------------------------------------------------------------------
-		private void PopulateLanguageProjectsList(string host, bool showLocalProjects)
+		private void PopulateLanguageProjectsList(string host)
 		{
-			// Need to end the previous project finder if the user clicks another host while
-			// searching the current host.
-			ClientServerServices.Current.ForceEndFindProjects();
-
 			btnOk.Enabled = false;
 			listBox.Items.Clear();
 			listBox.Enabled = true;
 
-			ClientServerServices.Current.BeginFindProjects(host, AddProject,
-				HandleProjectFindingExceptions, showLocalProjects);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Handles any exceptions thrown in the thread that looks for projects.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void HandleProjectFindingExceptions(Exception e)
-		{
-			if (InvokeRequired)
+			// Load projects.
+			foreach (var projectPathname in Directory.GetDirectories(FwDirectoryFinder.ProjectsDirectory))
 			{
-				Invoke((Action<Exception>)HandleProjectFindingExceptions, e);
-				return;
-			}
-
-			if (e is SocketException || e is RemotingException)
-			{
-				MessageBox.Show(
-					ActiveForm,
-					Strings.ksCouldNotConnectText,
-					Strings.ksWarningCaption,
-					MessageBoxButtons.OK, MessageBoxIcon.Warning);
-			}
-			else if (e is DirectoryNotFoundException)
-			{
-				// this indicates that the project directory does not exist, just ignore
-			}
-			else
-			{
-				throw e;
+				var projectDirName = new DirectoryInfo(projectPathname).Name;
+				var dataPathname = Path.Combine(projectPathname, projectDirName + FdoFileHelper.ksFwDataXmlFileExtension);
+				if (!File.Exists(dataPathname))
+					continue;
+				AddProject(dataPathname);
 			}
 		}
 
@@ -290,6 +260,5 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			}
 		}
 		#endregion
-
 	}
 }

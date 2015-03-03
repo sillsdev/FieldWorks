@@ -8,7 +8,6 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -449,8 +448,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			if (hvo == 0)
 				return;
 			ICmObject cmo = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
-			FwAppArgs link = new FwAppArgs(FwUtils.ksFlexAppName, m_cache.ProjectId.Handle,
-				m_cache.ProjectId.ServerName, "lexiconEdit", cmo.Guid);
+			FwAppArgs link = new FwAppArgs(m_cache.ProjectId.Handle, "lexiconEdit", cmo.Guid);
 			Debug.Assert(m_mediator != null, "The program must pass in a mediator to follow a link in the same application!");
 			IApp app = (IApp)m_mediator.PropertyTable.GetValue("App");
 			app.HandleOutgoingLink(link);

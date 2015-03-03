@@ -4,7 +4,6 @@
 //
 // File: BackupSettings.cs
 // Responsibility: FW team
-
 using System;
 using System.IO;
 using SIL.Utils;
@@ -33,7 +32,6 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		private DateTime m_backupTime;
 		private string m_comment;
 		private string m_projectName;
-		private string m_sharedProjectFolder;
 		private bool m_includeConfigurationSettings;
 		private bool m_includeMediaFiles;
 		private bool m_includeSupportingFiles;
@@ -62,15 +60,11 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// default, but if these setings represent a project elsewhere, then this will be the
 		/// root folder for that project).</param>
 		/// <param name="linkedFilesPath">The linked files path.</param>
-		/// <param name="sharedProjectFolder">A possibly alternate project path that
-		/// should be used for things that should be shared.</param>
 		/// ------------------------------------------------------------------------------------
-		protected BackupSettings(string projectsRootFolder, string linkedFilesPath,
-			string sharedProjectFolder)
+		protected BackupSettings(string projectsRootFolder, string linkedFilesPath)
 		{
 			m_projectsRootFolder = projectsRootFolder;
 			m_linkedFilesPath = linkedFilesPath;
-			m_sharedProjectFolder = sharedProjectFolder;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -195,8 +189,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			{
 				if (String.IsNullOrEmpty(m_linkedFilesPath))
 				{
-					return Path.Combine(!string.IsNullOrEmpty(m_sharedProjectFolder) ?
-						m_sharedProjectFolder : ProjectPath, FdoFileHelper.ksLinkedFilesDir);
+					return Path.Combine(ProjectPath, FdoFileHelper.ksLinkedFilesDir);
 				}
 				return m_linkedFilesPath;
 			}
@@ -237,8 +230,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		{
 			get
 			{
-				return FdoFileHelper.GetWritingSystemDir(
-					string.IsNullOrEmpty(m_sharedProjectFolder) ? ProjectPath : m_sharedProjectFolder);
+				return FdoFileHelper.GetWritingSystemDir(ProjectPath);
 			}
 		}
 

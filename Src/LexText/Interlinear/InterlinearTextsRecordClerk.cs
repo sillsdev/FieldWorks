@@ -161,10 +161,14 @@ namespace SIL.FieldWorks.IText
 			IFilterTextsDialog<IStText> dlg = null;
 			try
 			{
-				if (FwUtils.IsOkToDisplayScriptureIfPresent)
+				if (Cache.ServiceLocator.GetInstance<IScrBookRepository>().AllInstances().Any())
+				{
 					dlg = new FilterTextsDialogTE(Cache, interestingTexts, m_mediator.HelpTopicProvider, this);
+				}
 				else
+				{
 					dlg = new FilterTextsDialog(Cache, interestingTexts, m_mediator.HelpTopicProvider);
+				}
 				if (dlg.ShowDialog(((IApp)m_mediator.PropertyTable.GetValue("App")).ActiveMainWindow) == DialogResult.OK)
 				{
 					interestingTextsList.SetInterestingTexts(dlg.GetListOfIncludedTexts());

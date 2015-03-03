@@ -4,7 +4,6 @@
 //
 // File: BackupFileSettings.cs
 // Responsibility: FW team
-
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -34,7 +33,6 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		private string m_projectPathPersisted;
 		private string m_linkedFilesPathRelative;
 		private string m_linkedFilesPathActual;
-		private string m_appAbbrev;
 		private int m_dbVersion;
 		private bool m_configurationSettings;
 		private bool m_linkedFiles;
@@ -123,7 +121,6 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			m_fwVersion = settings.FwVersion;
 			m_linkedFilesPathRelative = LinkedFilesRelativePathHelper.GetLinkedFilesRelativePathFromFullPath(settings.ProjectsRootFolder, settings.LinkedFilesPath, settings.ProjectPath, settings.ProjectName);
 			m_linkedFilesPathActual = settings.LinkedFilesPath;
-			m_appAbbrev = settings.AppAbbrev;
 		}
 		#endregion
 
@@ -309,18 +306,6 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		{
 			get { PopulateSettingsFromZipFileIfNeeded(); return m_linkedFilesPathRelative; }
 			private set { m_linkedFilesPathRelative = value; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the name of the app that was used.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[DataMember]
-		public string AppAbbrev
-		{
-			get { PopulateSettingsFromZipFileIfNeeded(); return m_appAbbrev; }
-			private set { m_appAbbrev = value; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -546,7 +531,6 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			m_spellCheckAdditions = settings.IncludeSpellCheckAdditions;
 			m_dbVersion = settings.DbVersion;
 			m_fwVersion = settings.FwVersion;
-			m_appAbbrev = settings.AppAbbrev;
 		}
 
 		#endregion

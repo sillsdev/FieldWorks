@@ -867,8 +867,7 @@ namespace SIL.FieldWorks.Common.Framework
 				return true;
 			}
 
-			var arguments = "-" + FwAppArgs.kProject + " \"" + Cache.ProjectId.Handle + "\"" +
-				" -" + FwAppArgs.kServer + " \"" + Cache.ProjectId.ServerName + "\"";
+			var arguments = "-" + FwAppArgs.kProject + " \"" + Cache.ProjectId.Handle + "\"";
 			var description = ResourceHelper.FormatResourceString(
 				"kstidCreateShortcutLinkDescription", Cache.ProjectId.UiName,
 				m_app.ApplicationName);
@@ -932,13 +931,8 @@ namespace SIL.FieldWorks.Common.Framework
 				tailNumber++;
 			}
 
-			string applicationExecutablePath = null;
-			string iconPath = null;
-			if (m_app.ApplicationName == FwUtils.FwUtils.ksFlexAppName)
-			{
-				applicationExecutablePath = "fieldworks-flex";
-				iconPath = "fieldworks-flex";
-			}
+			const string applicationExecutablePath = "fieldworks-flex";
+			const string iconPath = "fieldworks-flex";
 			if (string.IsNullOrEmpty(applicationExecutablePath))
 				return false;
 

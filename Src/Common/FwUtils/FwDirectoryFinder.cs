@@ -9,7 +9,6 @@
 //		string sMyDocs = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 // See the MSDN documentation for the System.Environment.SpecialFolder enumeration for details.
 // </remarks>
-
 using System;
 using System.IO;
 using System.Diagnostics;
@@ -31,10 +30,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 	{
 		/// <summary>
 		/// The name of the Language Explorer folder (Even though this is the same as
-		/// FwUtils.ksFlexAppName and FwSubKey.LexText, PLEASE do not use them interchangeably.
+		/// FwSubKey.LexText, PLEASE do not use it interchangeably.
 		/// Use the one that is correct for your context, in case they need to be changed later.)
 		/// </summary>
-		public const string ksFlexFolderName = FwUtils.ksFlexAppName;
+		public const string ksFlexFolderName = "Language Explorer";
 
 		/// <summary>The Scripture-specific stylesheet (ideally, this would be in a TE-specific place, but FDO needs it)</summary>
 		public const string kTeStylesFilename = "TeStyles.xml";
@@ -116,21 +115,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static string ConverterConsoleExe
 		{
 			get { return ExeOrDllPath("ConverterConsole.exe"); }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the full path of the config file
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static string RemotingTcpServerConfigFile
-		{
-			get
-			{
-				if (MiscUtils.RunningTests)
-					return ExeOrDllPath("remoting_tcp_server_tests.config");
-				return ExeOrDllPath("remoting_tcp_server.config");
-			}
 		}
 
 		/// ------------------------------------------------------------------------------------

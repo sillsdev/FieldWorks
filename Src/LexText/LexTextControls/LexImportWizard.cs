@@ -4,7 +4,6 @@
 //
 // File: LexImportWizard.cs
 // Responsibility: FLEx Team
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,7 +14,6 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using Microsoft.Win32;		// For Registry and RegistryKey.
-
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;	// FW WS stuff
 using SIL.FieldWorks.Common.Controls;
@@ -3665,7 +3663,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void btnBackup_Click(object sender, System.EventArgs e)
 		{
-			using (var dlg = new BackupProjectDlg(m_cache, FwUtils.ksFlexAbbrev, m_mediator.HelpTopicProvider))
+			using (var dlg = new BackupProjectDlg(m_cache, m_mediator.HelpTopicProvider))
 			dlg.ShowDialog(this);
 		}
 

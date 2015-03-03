@@ -194,7 +194,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			_mediator.PropertyTable.SetProperty("LastBridgeUsed", obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
 				PropertyTable.SettingsGroup.LocalSettings);
 
-			FieldWorks.OpenNewProject(new ProjectId(FDOBackendProviderType.kXML, newprojectPathname, null), FwUtils.ksFlexAppName);
+			FieldWorks.OpenNewProject(new ProjectId(newprojectPathname));
 
 			return true;
 		}
@@ -317,16 +317,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			StopParser();
 			SaveAllDataToDisk();
 			_mediator.PropertyTable.SetProperty("LastBridgeUsed", "FLExBridge", PropertyTable.SettingsGroup.LocalSettings);
-			if (IsDb4oProject)
-			{
-				var dlg = new Db4oSendReceiveDialog();
-				if (dlg.ShowDialog() == DialogResult.Abort)
-				{
-					// User clicked on link
-					_mediator.SendMessage("FileProjectSharingLocation", null);
-				}
-				return true;
-			}
 
 			if (ChangeProjectNameIfNeeded())
 				return true;
@@ -521,10 +511,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private string GetFullProjectFileName()
 		{
-			var currentExtension = IsDb4oProject
-				? FdoFileHelper.ksFwDataDb4oFileExtension
-				: FdoFileHelper.ksFwDataXmlFileExtension;
-			return Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + currentExtension);
+			return Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FdoFileHelper.ksFwDataXmlFileExtension);
 		}
 
 		private void SaveAllDataToDisk()
@@ -643,18 +630,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <remarks>If you change the name of this method, you need to check for calls to SendMessage("ViewMessages").</remarks>
 		public bool OnViewMessages(object commandObject)
 		{
-			if (IsDb4oProject)
-			{
-				using (var dlg = new Db4oSendReceiveDialog())
-				{
-					if (dlg.ShowDialog() == DialogResult.Abort)
-					{
-						// User clicked on link
-						_mediator.SendMessage("FileProjectSharingLocation", null);
-					}
-					return true;
-				}
-			}
 			bool dummy1;
 			string dummy2;
 			FLExBridgeHelper.FLExJumpUrlChanged += JumpToFlexObject;
@@ -1505,11 +1480,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			newAppWindow.ClearInvalidatedStoredData();
 			newAppWindow.RefreshDisplay();
 			return newAppWindow;
-		}
-
-		private bool IsDb4oProject
-		{
-			get { return Cache.ProjectId.Type == FDOBackendProviderType.kDb4oClientServer; }
 		}
 
 		private static bool DetectLiftConflicts(string path, Dictionary<string, long> savedState)

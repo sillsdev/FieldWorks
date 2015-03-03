@@ -4,7 +4,6 @@
 //
 // File: RecordList.cs
 // History: John Hatton, created
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -3723,7 +3722,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				using (var stream = new StreamWriter(pathname))
 				{
-					ManyOnePathSortItem.WriteItems(m_sortedObjects, stream, repo, Cache.VersionStamp);
+					ManyOnePathSortItem.WriteItems(m_sortedObjects, stream, repo);
 					stream.Close();
 				}
 			}
@@ -3765,35 +3764,16 @@ namespace SIL.FieldWorks.XWorks
 			if (Cache.ServiceLocator.ObjectRepository.InstancesCreatedThisSession(ListItemsClass))
 				return false;
 			ArrayList items;
-			string versionStamp;
 			using (var stream = new StreamReader(pathname))
 			{
-				items = ManyOnePathSortItem.ReadItems(stream, Cache.ServiceLocator.ObjectRepository, out versionStamp);
+				items = ManyOnePathSortItem.ReadItems(stream, Cache.ServiceLocator.ObjectRepository);
 				stream.Close();
 			}
 			// This particular cache cannot reliably be used again, since items may be created or deleted
 			// while the program is running. In case a crash occurs, we don't want to reload an obsolete
 			// list the next time we start up.
 			FileUtils.Delete(pathname);
-			if (items == null)
-				return false; // could not restore, bad file or deleted objects or...
-			if (versionStamp != null)
-			{
-				var listItemsClassName = Cache.MetaDataCacheAccessor.GetClassName(ListItemsClass);
-				if (Cache.NewObjectsSinceVersion(versionStamp, listItemsClassName))
-					return false; // not safe to use restored list, other client may have added items since we saved it.
-			}
-			m_sortedObjects = items;
-			m_requestedLoadWhileSuppressed = false; // If a load was pending, we just removed the need for it.
-			if (m_currentIndex == -1 && m_sortedObjects.Count > 0)
-			{
-				CurrentIndex = GetPersistedCurrentIndex(m_sortedObjects.Count);
-			}
-			if (m_currentIndex > m_sortedObjects.Count)
-				CurrentIndex = m_sortedObjects.Count == 0 ? -1 : 0;
-			// Let the view update to show the restored list.
-			SendPropChangedOnListChange(m_currentIndex, m_sortedObjects, ListChangedEventArgs.ListChangedActions.Normal);
-			return true;
+			return false; // could not restore, bad file or deleted objects or...
 		}
 
 		/// <summary>

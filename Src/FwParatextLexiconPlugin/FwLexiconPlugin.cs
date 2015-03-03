@@ -9,7 +9,6 @@ using Microsoft.Win32;
 using Paratext.LexicalContracts;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
@@ -44,11 +43,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			m_lexiconCache = new FdoLexiconCollection();
 			m_fdoCacheCache = new FdoCacheCollection();
 			m_activationContext = new ActivationContextHelper("FwParatextLexiconPlugin.dll.manifest");
-
-			// initialize client-server services to use Db4O backend for FDO
 			m_ui = new ParatextLexiconPluginFdoUI(m_activationContext);
-			var dirs = ParatextLexiconPluginDirectoryFinder.FdoDirectories;
-			ClientServerServices.SetCurrentToDb4OBackend(m_ui, dirs);
 		}
 
 		/// <summary>
@@ -167,14 +162,10 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			}
 			else
 			{
-				var backendProviderType = FDOBackendProviderType.kSharedXML;
-				string path = Path.Combine(ParatextLexiconPluginDirectoryFinder.ProjectsDirectory, projectId, projectId + FdoFileHelper.ksFwDataXmlFileExtension);
+				var path = Path.Combine(ParatextLexiconPluginDirectoryFinder.ProjectsDirectory, projectId, projectId + FdoFileHelper.ksFwDataXmlFileExtension);
 				if (!File.Exists(path))
 				{
-					backendProviderType = FDOBackendProviderType.kDb4oClientServer;
-					path = Path.Combine(ParatextLexiconPluginDirectoryFinder.ProjectsDirectory, projectId, projectId + FdoFileHelper.ksFwDataDb4oFileExtension);
-					if (!File.Exists(path))
-						return LexicalProjectValidationResult.ProjectDoesNotExist;
+					return LexicalProjectValidationResult.ProjectDoesNotExist;
 				}
 
 				var settings = new FdoSettings {DisableDataMigration = true};
@@ -188,7 +179,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				try
 				{
 					var progress = new ParatextLexiconPluginThreadedProgress(m_ui.SynchronizeInvoke) { IsIndeterminate = true, Title = string.Format("Opening {0}", projectId) };
-					fdoCache = FdoCache.CreateCacheFromExistingData(new ParatextLexiconPluginProjectID(backendProviderType, path), Thread.CurrentThread.CurrentUICulture.Name, m_ui,
+					fdoCache = FdoCache.CreateCacheFromExistingData(new ParatextLexiconPluginProjectID(FDOBackendProviderType.kSharedXML, path), Thread.CurrentThread.CurrentUICulture.Name, m_ui,
 						ParatextLexiconPluginDirectoryFinder.FdoDirectories, settings, progress);
 				}
 				catch (FdoDataMigrationForbiddenException)

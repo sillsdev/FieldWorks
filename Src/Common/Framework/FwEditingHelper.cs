@@ -7,13 +7,11 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -21,7 +19,6 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Resources;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.Framework
 {
@@ -258,8 +255,7 @@ namespace SIL.FieldWorks.Common.Framework
 				return false;
 
 			if (stylesheet != null && stylesheet.Cache != null && stylesheet.Cache.ProjectId != null)
-				sUrl = FwLinkArgs.FixSilfwUrlForCurrentProject(sUrl, stylesheet.Cache.ProjectId.Name,
-					stylesheet.Cache.ProjectId.ServerName);
+				sUrl = FwLinkArgs.FixSilfwUrlForCurrentProject(sUrl, stylesheet.Cache.ProjectId.Name);
 			int ichStart = strBldr.Length;
 			strBldr.Replace(ichStart, ichStart, sLinkText, StyleUtils.CharStyleTextProps(null, ws));
 			StringServices.MarkTextInBldrAsHyperlink(strBldr, ichStart, strBldr.Length,
