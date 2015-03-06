@@ -333,6 +333,8 @@
 		<DownloadFile Address="$(PalasoDownloadUrl)/KeymanLink.dll" LocalFilename="$(fwrt)/Downloads/KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<Message Text="Downloading latest successful artifacts for L10NSharp, Enchant.Net, ibusdotnet, and NDesk.DBus."/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/L10NSharp.dll" LocalFilename="$(fwrt)/Downloads/L10NSharp.dll"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/Commons.Xml.Relaxng.dll" LocalFilename="$(fwrt)/Downloads/Commons.Xml.Relaxng.dll"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/irrKlang.NET4.dll" LocalFilename="$(fwrt)/Downloads/irrKlang.NET4.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Enchant.Net.dll" LocalFilename="$(fwrt)/Downloads/Enchant.Net.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Enchant.Net.dll.config" LocalFilename="$(fwrt)/Downloads/Enchant.Net.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/ibusdotnet.dll" LocalFilename="$(fwrt)/Downloads/ibusdotnet.dll"
@@ -430,6 +432,8 @@
 		<DownloadedFiles Include="$(fwrt)/Downloads/Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/L10NSharp.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/Commons.Xml.Relaxng.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/irrKlang.NET4.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Enchant.Net.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Enchant.Net.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/IPCFramework.dll"/>

@@ -98,7 +98,7 @@
     </Reference>
     <Reference Include="Commons.Xml.Relaxng">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\DistFiles\Commons.Xml.Relaxng.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\Commons.Xml.Relaxng.dll</HintPath>
     </Reference>
     <Reference Include="CoreImpl, Version=7.1.0.21236, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

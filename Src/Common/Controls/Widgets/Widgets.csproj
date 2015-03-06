@@ -128,11 +128,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\Palaso.Media.dll</HintPath>
     </Reference>
-    <Reference Include="irrKlang.NET4.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\DistFiles\irrKlang.NET4.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Reporting, Version=1.0.3244.30943, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\Reporting.dll</HintPath>
