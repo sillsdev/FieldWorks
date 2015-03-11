@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	{
 		private const string HelpTopic = "khtpProjPropsMergeWS";
 
-		private readonly WritingSystem m_ws;
+		private readonly CoreWritingSystemDefinition m_ws;
 		private FdoCache m_cache;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 
@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "infoIcon is a reference")]
-		public MergeWritingSystemDlg(FdoCache cache, WritingSystem ws, IEnumerable<WritingSystem> wss, IHelpTopicProvider helpTopicProvider)
+		public MergeWritingSystemDlg(FdoCache cache, CoreWritingSystemDefinition ws, IEnumerable<CoreWritingSystemDefinition> wss, IHelpTopicProvider helpTopicProvider)
 		{
 			m_cache = cache;
 			m_ws = ws;
@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_infoPictureBox.Image = infoIcon.ToBitmap();
 			m_infoPictureBox.Size = infoIcon.Size;
 
-			foreach (WritingSystem curWs in wss.Except(new[] { ws }))
+			foreach (CoreWritingSystemDefinition curWs in wss.Except(new[] { ws }))
 				m_wsListBox.Items.Add(curWs);
 			m_wsListBox.SelectedIndex = 0;
 
@@ -73,11 +73,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Gets the selected writing system.
 		/// </summary>
 		/// <value>The selected writing system.</value>
-		public WritingSystem SelectedWritingSystem
+		public CoreWritingSystemDefinition SelectedWritingSystem
 		{
 			get
 			{
-				return (WritingSystem) m_wsListBox.SelectedItem;
+				return (CoreWritingSystemDefinition) m_wsListBox.SelectedItem;
 			}
 		}
 

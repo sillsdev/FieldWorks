@@ -11,7 +11,7 @@ using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.WritingSystems;
-using SIL.WritingSystems.Migration.WritingSystemsLdmlV0To1Migration;
+using SIL.WritingSystems.Migration;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
@@ -142,7 +142,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 						string localPath = Path.Combine(localStoreFolder, ldmlFileName);
 						if (File.Exists(localPath))
 							continue; // already have one.
-						string globalPath = Path.Combine(DirectoryFinder.GlobalWritingSystemStoreDirectory, ldmlFileName);
+						string globalPath = Path.Combine(DirectoryFinder.OldGlobalWritingSystemStoreDirectory, ldmlFileName);
 						if (File.Exists(globalPath))
 							continue; // already have one.
 						// Need to make one.

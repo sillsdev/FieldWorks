@@ -203,7 +203,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				m_fdoCacheCache.Add(fdoCache);
 			}
 
-			if (fdoCache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.All(ws => ws.ID != langId))
+			if (fdoCache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.All(ws => ws.Id != langId))
 			{
 				DisposeFdoCacheIfUnused(fdoCache);
 				fdoCache = null;

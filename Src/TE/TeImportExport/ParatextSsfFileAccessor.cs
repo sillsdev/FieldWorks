@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.TE
 		private void ComputeSettings(FileNameFormat format, string projPath, int ws)
 		{
 			m_projPath = projPath.Trim();
-			WritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
+			CoreWritingSystemDefinition wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
 			m_wsName = wsObj.DisplayLabel;
 			m_fileScheme = format.ParatextFileScheme;
 			m_sPostPart = format.m_fileSuffix + "." + format.m_fileExtension;

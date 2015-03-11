@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void WritingSystemsLists()
 		{
-			List<WritingSystem> list = new List<WritingSystem>();
+			List<CoreWritingSystemDefinition> list = new List<CoreWritingSystemDefinition>();
 			foreach (var x in Cache.LangProject.AllWritingSystems)
 				list.Add(x);
 			Assert.AreEqual(2, list.Count);
@@ -51,8 +51,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreNotEqual(0, wsEn, "factory should contain English WS");
 			int wsFr = factWs.GetWsFromStr("fr");
 			Assert.AreNotEqual(0, wsFr, "factory should contain French WS");
-			WritingSystem eng = null;
-			WritingSystem frn = null;
+			CoreWritingSystemDefinition eng = null;
+			CoreWritingSystemDefinition frn = null;
 			foreach (var x in list)
 			{
 				Assert.IsTrue(set.Contains(x.Handle), "AllWritingSystems should be a subset of the factory list");
@@ -156,7 +156,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			int wsDe = factWs.GetWsFromStr("de");
 			if (wsDe != 0)
 			{
-				var german = factWs.get_EngineOrNull(wsDe) as WritingSystem;
+				var german = factWs.get_EngineOrNull(wsDe) as CoreWritingSystemDefinition;
 				Assert.IsNotNull(german, "IWritingSystem and ILgWritingSystem are the same now");
 				Cache.LangProject.AnalysisWritingSystems.Add(german);
 				Cache.LangProject.CurrentAnalysisWritingSystems.Add(german);

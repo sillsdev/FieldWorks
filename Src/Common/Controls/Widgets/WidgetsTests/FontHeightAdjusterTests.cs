@@ -48,12 +48,12 @@ namespace SIL.FieldWorks.Common.Widgets
 			m_wsManager = new WritingSystemManager();
 
 			// English
-			WritingSystem enWs;
+			CoreWritingSystemDefinition enWs;
 			m_wsManager.GetOrSet("en", out enWs);
 			m_hvoEnglishWs = enWs.Handle;
 			Assert.IsTrue(m_hvoEnglishWs > 0, "Should have gotten an hvo for the English WS");
 			// German
-			WritingSystem deWs;
+			CoreWritingSystemDefinition deWs;
 			m_wsManager.GetOrSet("de", out deWs);
 			m_hvoGermanWs = deWs.Handle;
 			Assert.IsTrue(m_hvoGermanWs > 0, "Should have gotten an hvo for the German WS");

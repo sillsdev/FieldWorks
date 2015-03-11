@@ -972,7 +972,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_wsBest = GetBestWsForNode(node, hvo);
 			if (m_wsBest != 0)
 			{
-				WritingSystem ws = m_cache.ServiceLocator.WritingSystemManager.Get(m_wsBest);
+				CoreWritingSystemDefinition ws = m_cache.ServiceLocator.WritingSystemManager.Get(m_wsBest);
 				if (ws != null)
 				{
 					fRightToLeft = ws.RightToLeftScript;
@@ -1389,7 +1389,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			if (ws != 0)
 			{
-				WritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
+				CoreWritingSystemDefinition wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
 				return wsObj.RightToLeftScript;
 			}
 			return false;
@@ -1512,7 +1512,7 @@ namespace SIL.FieldWorks.Common.Controls
 			var bestWsHandle = GetBestWsForNode(node, hvo);
 			if (bestWsHandle != 0)
 			{
-				WritingSystem ws = m_cache.ServiceLocator.WritingSystemManager.Get(bestWsHandle);
+				CoreWritingSystemDefinition ws = m_cache.ServiceLocator.WritingSystemManager.Get(bestWsHandle);
 				if (ws != null)
 					fVoice = ws.IsVoice;
 			}

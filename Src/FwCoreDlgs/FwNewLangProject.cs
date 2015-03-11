@@ -43,8 +43,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private IHelpTopicProvider m_helpTopicProvider;
 		private FwOverrideComboBox m_cbVernWrtSys;
 		private FwOverrideComboBox m_cbAnalWrtSys;
-		HashSet<WritingSystem> m_newVernWss = new HashSet<WritingSystem>();
-		HashSet<WritingSystem> m_newAnalysisWss = new HashSet<WritingSystem>();
+		HashSet<CoreWritingSystemDefinition> m_newVernWss = new HashSet<CoreWritingSystemDefinition>();
+		HashSet<CoreWritingSystemDefinition> m_newAnalysisWss = new HashSet<CoreWritingSystemDefinition>();
 		/// <summary>
 		/// Protected for testing.
 		/// </summary>
@@ -57,6 +57,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private Label m_lblSpecifyWrtSys;
 		private HelpProvider helpProvider1;
 		private string m_dbFile;
+		private readonly bool m_useMemoryWSManager;
 		#endregion
 
 		#region Properties
@@ -129,12 +130,20 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		#region Construction, initialization, disposal
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="FwNewLangProject"/> class.
+		/// </summary>
+		public FwNewLangProject()
+			: this(false)
+		{
+		}
+
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Constructs a new instance of the <see cref="FwNewLangProject"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public FwNewLangProject()
+		public FwNewLangProject(bool useMemoryWSManager)
 		{
 			Logger.WriteEvent("Opening New Language Project dialog");
 			//
@@ -142,7 +151,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			InitializeComponent();
 			AccessibleName = GetType().Name;
-			m_wsManager = new WritingSystemManager(new GlobalFileWritingSystemStore());
+			m_useMemoryWSManager = useMemoryWSManager;
+			m_wsManager = m_useMemoryWSManager ? new WritingSystemManager() : new WritingSystemManager(SingletonsContainer.Get<CoreGlobalWritingSystemRepository>());
 #if __MonoCS__
 			FixLabelFont(m_lblTip);
 			FixLabelFont(m_lblAnalysisWrtSys);
@@ -457,15 +467,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			UpdateLanguageCombos();
 
 			// Set the default writing systems for new language projects.
-			foreach (WritingSystem ws in m_cbAnalWrtSys.Items)
+			foreach (CoreWritingSystemDefinition ws in m_cbAnalWrtSys.Items)
 			{
-				if (ws.ID == "en")
+				if (ws.Id == "en")
 					m_cbAnalWrtSys.SelectedItem = ws;
 			}
 
-			foreach (WritingSystem ws in m_cbVernWrtSys.Items)
+			foreach (CoreWritingSystemDefinition ws in m_cbVernWrtSys.Items)
 			{
-				if (ws.ID == "fr")
+				if (ws.Id == "fr")
 					m_cbVernWrtSys.SelectedItem = ws;
 			}
 			return;
@@ -654,6 +664,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region Protected methods
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Create a new language project showing a progress dialog.
@@ -683,8 +694,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 							m_dbFile = (string)progressDlg.RunTask(DisplayUi, FdoCache.CreateNewLangProj,
 																	ProjectName, FwDirectoryFinder.FdoDirectories, threadHelper, m_cbAnalWrtSys.SelectedItem,
 																	m_cbVernWrtSys.SelectedItem,
-																	m_wsManager.UserWritingSystem.ID,
-																	m_newAnalysisWss, m_newVernWss, anthroFile);
+																	m_wsManager.UserWritingSystem.Id,
+																	m_newAnalysisWss, m_newVernWss, anthroFile, m_useMemoryWSManager);
 						}
 					}
 				}
@@ -740,9 +751,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		void RemoveWs(HashSet<WritingSystem> wss, object target)
+		void RemoveWs(HashSet<CoreWritingSystemDefinition> wss, object target)
 		{
-			var realTarget = (from item in wss where item.IcuLocale == ((WritingSystem) target).IcuLocale select item).FirstOrDefault();
+			var realTarget = (from item in wss where item.IcuLocale == ((CoreWritingSystemDefinition) target).IcuLocale select item).FirstOrDefault();
 			if (realTarget == null)
 				return;
 			wss.Remove(realTarget);
@@ -890,8 +901,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private void UpdateLanguageCombos()
 		{
-			var wsSaveVern = (WritingSystem) m_cbVernWrtSys.SelectedItem;
-			var wsSaveAnal = (WritingSystem) m_cbAnalWrtSys.SelectedItem;
+			var wsSaveVern = (CoreWritingSystemDefinition) m_cbVernWrtSys.SelectedItem;
+			var wsSaveAnal = (CoreWritingSystemDefinition) m_cbAnalWrtSys.SelectedItem;
 
 			m_cbAnalWrtSys.BeginUpdate();
 			m_cbVernWrtSys.BeginUpdate();
@@ -903,11 +914,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			foreach (var templateLangFile in Directory.GetFiles(FwDirectoryFinder.TemplateDirectory, @"*.ldml"))
 			{
 				var id = Path.GetFileNameWithoutExtension(templateLangFile);
-				WritingSystem dummy;
+				CoreWritingSystemDefinition dummy;
 				m_wsManager.GetOrSet(id, out dummy);
 			}
 
-			foreach (WritingSystem ws in m_wsManager.LocalWritingSystems)
+			foreach (CoreWritingSystemDefinition ws in m_wsManager.WritingSystems)
 			{
 				m_cbAnalWrtSys.Items.Add(ws);
 				m_cbVernWrtSys.Items.Add(ws);
@@ -947,21 +958,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="comboWS">Combo box containing the list of writing systems</param>
 		/// <param name="defaultName">project name, or null</param>
 		/// ------------------------------------------------------------------------------------
-		private WritingSystem[] DisplayNewWritingSystemProperties(ComboBox comboWS,
+		private CoreWritingSystemDefinition[] DisplayNewWritingSystemProperties(ComboBox comboWS,
 			string defaultName)
 		{
-			IWritingSystemContainer wsContainer = new MemoryWritingSystemContainer(m_wsManager.LocalWritingSystems, m_wsManager.LocalWritingSystems,
-				Enumerable.Empty<WritingSystem>(), Enumerable.Empty<WritingSystem>(), Enumerable.Empty<WritingSystem>());
-			IEnumerable<WritingSystem> newWritingSystems;
+			IWritingSystemContainer wsContainer = new MemoryWritingSystemContainer(m_wsManager.WritingSystems, m_wsManager.WritingSystems,
+				Enumerable.Empty<CoreWritingSystemDefinition>(), Enumerable.Empty<CoreWritingSystemDefinition>(), Enumerable.Empty<CoreWritingSystemDefinition>());
+			IEnumerable<CoreWritingSystemDefinition> newWritingSystems;
 			if (WritingSystemPropertiesDialog.ShowNewDialog(this, null, m_wsManager, wsContainer, m_helpTopicProvider, (IApp) m_helpTopicProvider,
 				null, false, defaultName, out newWritingSystems))
 			{
 				UpdateLanguageCombos();
-				string selectedWsId = newWritingSystems.First().ID;
-				comboWS.SelectedItem = comboWS.Items.Cast<WritingSystem>().First(ws => ws.ID == selectedWsId);
+				string selectedWsId = newWritingSystems.First().Id;
+				comboWS.SelectedItem = comboWS.Items.Cast<CoreWritingSystemDefinition>().First(ws => ws.Id == selectedWsId);
 				return newWritingSystems.ToArray();
 			}
-			return new WritingSystem[0];
+			return new CoreWritingSystemDefinition[0];
 		}
 
 		#endregion

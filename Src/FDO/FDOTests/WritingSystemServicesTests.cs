@@ -39,17 +39,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		}
 
 		/// <summary>
-		/// For LT-12274. x-unk should convert to qaa-x-unk.
-		/// </summary>
-		[Test]
-		public void FindOrCreateSomeWritingSystem_Converts_x_unk_To_qaa_x_unk()
-		{
-			WritingSystem ws;
-			Assert.That(WritingSystemServices.FindOrCreateSomeWritingSystem(Cache, null, "x-unk", true, false, out ws), Is.False);
-			Assert.That(ws.ID, Is.EqualTo("qaa-x-unk"));
-		}
-
-		/// <summary>
 		/// For LT-12274. "Fr-Tech 30Oct" should convert to fr-x-Tech30Oc.
 		/// (Fr-x-Tech-30Oct or Fr-Qaaa-x-Tech-30Oct might be better, but this is last-resort handling for a code we don't really understand;
 		/// main thing is the result is a valid code that is recognizably derived from the original.
@@ -57,9 +46,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FindOrCreateSomeWritingSystem_Converts_Fr_Tech_30Oct_To_fr_x_Tech30Oct()
 		{
-			WritingSystem ws;
+			CoreWritingSystemDefinition ws;
 			Assert.That(WritingSystemServices.FindOrCreateSomeWritingSystem(Cache, null, "Fr-Tech 30Oct", true, false, out ws), Is.False);
-			Assert.That(ws.ID, Is.EqualTo("fr-x-Tech30Oc")); //8 characters is the maximum allowed for a part.
+			Assert.That(ws.Id, Is.EqualTo("fr-x-Tech30Oc")); //8 characters is the maximum allowed for a part.
 		}
 
 		/// <summary>
@@ -68,9 +57,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FindOrCreateSomeWritingSystem_Converts_x_To_qaa()
 		{
-			WritingSystem ws;
+			CoreWritingSystemDefinition ws;
 			Assert.That(WritingSystemServices.FindOrCreateSomeWritingSystem(Cache, null, "x", true, false, out ws), Is.False);
-			Assert.That(ws.ID, Is.EqualTo("qaa"));
+			Assert.That(ws.Id, Is.EqualTo("qaa"));
 		}
 
 		/// <summary>
@@ -104,7 +93,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void UpdateWritingSystemTag_MarksObjectsAsDirty()
 		{
 			var entry0 = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
-			WritingSystem newWs;
+			CoreWritingSystemDefinition newWs;
 			var ws = WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "en-NO", true, false, out newWs);
 			// A string property NOT using the WS we will change.
 			entry0.ImportResidue = Cache.TsStrFactory.MakeString("hello", Cache.DefaultAnalWs);
@@ -168,9 +157,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void MergeWritingSystem_ConvertsMultiStrings()
 		{
 			var entry1 = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
-			WritingSystem fromWs;
+			CoreWritingSystemDefinition fromWs;
 			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "en-NO", true, false, out fromWs);
-			WritingSystem toWs;
+			CoreWritingSystemDefinition toWs;
 			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "en-SO", true, false, out toWs);
 			EnsureAnalysisWs(new [] {fromWs, toWs});
 			var sense1 = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
@@ -189,7 +178,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// sometimes if an earlier test already created one FindOrCreate doesn't have to create,
 		/// and then it no longer ensures it is in the list.)
 		/// </summary>
-		void EnsureAnalysisWs(WritingSystem[] wss)
+		void EnsureAnalysisWs(CoreWritingSystemDefinition[] wss)
 		{
 			foreach (var ws in wss)
 			{
@@ -205,9 +194,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void MergeWritingSystem_ConvertsStyleDefinition()
 		{
-			WritingSystem fromWs;
+			CoreWritingSystemDefinition fromWs;
 			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "en-NO", true, false, out fromWs);
-			WritingSystem toWs;
+			CoreWritingSystemDefinition toWs;
 			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "en-SO", true, false, out toWs);
 			EnsureAnalysisWs(new [] { fromWs, toWs });
 
@@ -236,9 +225,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void MergeWritingSystemWithStyleDefnForToWs_DoesNotConvertStyleDefinition()
 		{
-			WritingSystem fromWs;
+			CoreWritingSystemDefinition fromWs;
 			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "en-NO", true, false, out fromWs);
-			WritingSystem toWs;
+			CoreWritingSystemDefinition toWs;
 			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "en-SO", true, false, out toWs);
 			EnsureAnalysisWs(new[] { fromWs, toWs });
 
@@ -273,9 +262,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void MergeWritingSystem_ConvertsLiftResidue()
 		{
-			WritingSystem fromWs;
+			CoreWritingSystemDefinition fromWs;
 			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "en-NO", true, false, out fromWs);
-			WritingSystem toWs;
+			CoreWritingSystemDefinition toWs;
 			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "en-SO", true, false, out toWs);
 			EnsureAnalysisWs(new[] { fromWs, toWs });
 
@@ -302,7 +291,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			Assert.DoesNotThrow(() =>
 				{
-					WritingSystem fromWs;
+					CoreWritingSystemDefinition fromWs;
 					WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "sen", false, true, out fromWs);
 					Cache.LangProject.DefaultVernacularWritingSystem = fromWs;
 					fromWs.DefaultCollation.Collator.GetSortKey("boom");

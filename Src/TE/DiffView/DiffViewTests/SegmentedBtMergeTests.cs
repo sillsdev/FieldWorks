@@ -191,7 +191,7 @@ namespace SIL.FieldWorks.TE
 			if (freeTrans != null)
 			{
 				// Add literal and free translations and note contents
-				foreach (WritingSystem ws in Cache.LanguageProject.AnalysisWritingSystems)
+				foreach (CoreWritingSystemDefinition ws in Cache.LanguageProject.AnalysisWritingSystems)
 				{
 					string trans = freeTrans;
 					if (ws.Handle != Cache.DefaultAnalWs)
@@ -244,7 +244,7 @@ namespace SIL.FieldWorks.TE
 			IList<int> lengths, IList<int> segNotes, IList<int> expectedWordforms, string label)
 		{
 			Assert.AreEqual(translations.Count, para.SegmentsOS.Count);
-			foreach (WritingSystem ws in Cache.LanguageProject.AnalysisWritingSystems)
+			foreach (CoreWritingSystemDefinition ws in Cache.LanguageProject.AnalysisWritingSystems)
 			{
 				int cumLength = 0;
 				StringBuilder btBuilder = new StringBuilder();

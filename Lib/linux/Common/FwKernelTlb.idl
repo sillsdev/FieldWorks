@@ -3837,7 +3837,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgWritingSystem") cpp_quote(",") cpp_quote("9F74A170-E8BB-466d-8848-5FDB28AC5AF8") cpp_quote(");") [ uuid("9F74A170-E8BB-466d-8848-5FDB28AC5AF8"), object, pointer_default(unique) ] interface ILgWritingSystem : IUnknown
 	{
 		
-		[propget] HRESULT ID(
+		[propget] HRESULT Id(
 			[out, retval] BSTR *pbstr);
 
 		
@@ -3852,7 +3852,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 		
 		
 		
-		[propget] HRESULT SpellCheckingID(
+		[propget] HRESULT SpellCheckingId(
 			[out, retval] BSTR *pbstr);
 
 		

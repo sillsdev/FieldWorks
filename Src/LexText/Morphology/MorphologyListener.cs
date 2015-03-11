@@ -339,11 +339,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			// to point to the appropriate Locale ID. Do this BEFORE updating the spelling dictionaries,
 			// otherwise, the update won't see that there is any dictionary set to update.
 			FdoCache cache = Cache;
-			foreach (WritingSystem wsObj in cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
+			foreach (CoreWritingSystemDefinition wsObj in cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
 			{
 				// This allows it to try to find a dictionary, but doesn't force one to exist.
-				if (string.IsNullOrEmpty(wsObj.SpellCheckingID) || wsObj.SpellCheckingID == "<None>") // LT-13556 new langs were null here
-					wsObj.SpellCheckingID = wsObj.ID.Replace('-', '_');
+				if (string.IsNullOrEmpty(wsObj.SpellCheckingId) || wsObj.SpellCheckingId == "<None>") // LT-13556 new langs were null here
+					wsObj.SpellCheckingId = wsObj.Id.Replace('-', '_');
 			}
 			// This forces the default vernacular WS spelling dictionary to exist, and updates
 			// all existing ones.

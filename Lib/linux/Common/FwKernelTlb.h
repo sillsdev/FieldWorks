@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 8.00.0603 */
-/* at Mon Feb 23 17:29:10 2015
+/* at Wed Mar 04 10:55:32 2015
  */
 /* Compiler settings for C:\develop\fwrepo\fw\Output\Common\FwKernelTlb.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0603 
@@ -9466,7 +9466,7 @@ GraphiteEngine;
     ILgWritingSystem : public IUnknown
     {
     public:
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_ID( 
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Id( 
             /* [retval][out] */ BSTR *pbstr) = 0;
         
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Handle( 
@@ -9475,7 +9475,7 @@ GraphiteEngine;
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_LanguageName( 
             /* [retval][out] */ BSTR *pbstr) = 0;
         
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_SpellCheckingID( 
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_SpellCheckingId( 
             /* [retval][out] */ BSTR *pbstr) = 0;
         
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_RightToLeftScript( 
@@ -9518,7 +9518,7 @@ GraphiteEngine;
         ULONG ( STDMETHODCALLTYPE *Release )( 
             ILgWritingSystem * This);
         
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_ID )( 
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Id )( 
             ILgWritingSystem * This,
             /* [retval][out] */ BSTR *pbstr);
         
@@ -9530,7 +9530,7 @@ GraphiteEngine;
             ILgWritingSystem * This,
             /* [retval][out] */ BSTR *pbstr);
         
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_SpellCheckingID )( 
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_SpellCheckingId )( 
             ILgWritingSystem * This,
             /* [retval][out] */ BSTR *pbstr);
         
@@ -9582,8 +9582,8 @@ GraphiteEngine;
     ( (This)->lpVtbl -> Release(This) ) 
 
 
-#define ILgWritingSystem_get_ID(This,pbstr)	\
-    ( (This)->lpVtbl -> get_ID(This,pbstr) ) 
+#define ILgWritingSystem_get_Id(This,pbstr)	\
+    ( (This)->lpVtbl -> get_Id(This,pbstr) ) 
 
 #define ILgWritingSystem_get_Handle(This,pws)	\
     ( (This)->lpVtbl -> get_Handle(This,pws) ) 
@@ -9591,8 +9591,8 @@ GraphiteEngine;
 #define ILgWritingSystem_get_LanguageName(This,pbstr)	\
     ( (This)->lpVtbl -> get_LanguageName(This,pbstr) ) 
 
-#define ILgWritingSystem_get_SpellCheckingID(This,pbstr)	\
-    ( (This)->lpVtbl -> get_SpellCheckingID(This,pbstr) ) 
+#define ILgWritingSystem_get_SpellCheckingId(This,pbstr)	\
+    ( (This)->lpVtbl -> get_SpellCheckingId(This,pbstr) ) 
 
 #define ILgWritingSystem_get_RightToLeftScript(This,pfRightToLeft)	\
     ( (This)->lpVtbl -> get_RightToLeftScript(This,pfRightToLeft) ) 

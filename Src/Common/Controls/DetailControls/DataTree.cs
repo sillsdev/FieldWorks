@@ -2749,7 +2749,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 										break; // not recognized, treat as visible
 									var rgws = WritingSystemServices.GetWritingSystemList(m_cache, wsMagic, false).ToArray();
 									bool anyNonEmpty = false;
-									foreach (WritingSystem wsInst in rgws)
+									foreach (CoreWritingSystemDefinition wsInst in rgws)
 									{
 										if (realSda.get_MultiStringAlt(obj.Hvo, flid, wsInst.Handle).Length != 0)
 										{

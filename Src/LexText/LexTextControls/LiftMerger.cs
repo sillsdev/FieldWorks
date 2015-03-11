@@ -141,7 +141,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		bool m_fTrustModTimes;
 
-		readonly List<WritingSystem> m_addedWss = new List<WritingSystem>();
+		readonly List<CoreWritingSystemDefinition> m_addedWss = new List<CoreWritingSystemDefinition>();
 
 		// Repositories and factories for interacting with the project.
 
@@ -445,7 +445,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private bool IsVoiceWritingSystem(int wsString)
 		{
-			var wsEngine = (WritingSystem) m_wsManager.get_EngineOrNull(wsString);
+			var wsEngine = (CoreWritingSystemDefinition) m_wsManager.get_EngineOrNull(wsString);
 			return wsEngine.IsVoice;
 		}
 
@@ -3356,7 +3356,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				int ws = GetWsFromLiftLang(lang);
 				if (ws != 0)
 				{
-					WritingSystem wsObj = GetExistingWritingSystem(ws);
+					CoreWritingSystemDefinition wsObj = GetExistingWritingSystem(ws);
 					if (!m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Contains(wsObj))
 						m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Add(wsObj);
 				}
@@ -5999,7 +5999,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				ws = GetWsFromLiftLang(sWs);
 				if (GetWsFromStr(sWs) == 0)
-					sWs = GetExistingWritingSystem(ws).ID;	// Must be old-style ICU Locale.
+					sWs = GetExistingWritingSystem(ws).Id;	// Must be old-style ICU Locale.
 			}
 			return FindOrCreateReversalIndex(ws);
 		}

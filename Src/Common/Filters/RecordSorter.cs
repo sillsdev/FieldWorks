@@ -2204,17 +2204,17 @@ namespace SIL.FieldWorks.Filters
 	{
 		private string m_wsId;
 		private FdoCache m_cache;
-		private WritingSystem m_ws;
+		private CoreWritingSystemDefinition m_ws;
 
 		#region Constructors, etc.
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="ws">The writing system.</param>
-		public WritingSystemComparer(WritingSystem ws)
+		public WritingSystemComparer(CoreWritingSystemDefinition ws)
 		{
 			m_ws = ws;
-			m_wsId = ws.ID;
+			m_wsId = ws.Id;
 		}
 
 		/// <summary>

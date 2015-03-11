@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			/// --------------------------------------------------------------------------------
 			public void CallWriteToCache(FdoCache cache, FwStyleSheet styleSheet)
 			{
-				WriteToCache(cache, styleSheet, null);
+				WriteToCache(cache, styleSheet);
 			}
 		}
 		#endregion

@@ -131,7 +131,7 @@ namespace SIL.FieldWorks.TE
 			progressDlg.Position = 0;
 			progressDlg.Title = TeResourceHelper.GetResourceString("kstidCreatingBookNames");
 			ITsStrFactory tsf = m_cache.TsStrFactory;
-			WritingSystem ws;
+			CoreWritingSystemDefinition ws;
 
 			foreach (XmlNode writingSystem in tagList)
 			{

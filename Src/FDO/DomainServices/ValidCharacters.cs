@@ -115,7 +115,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <returns>A <see cref="ValidCharacters"/> initialized with the valid characters data
 		/// from the language definition.</returns>
 		/// ------------------------------------------------------------------------------------
-		public static ValidCharacters Load(WritingSystem ws, LoadExceptionDelegate exceptionHandler, string legacyOverridesFile)
+		public static ValidCharacters Load(CoreWritingSystemDefinition ws, LoadExceptionDelegate exceptionHandler, string legacyOverridesFile)
 		{
 			var validChars = new ValidCharacters();
 			validChars.LoadException += exceptionHandler;
@@ -164,7 +164,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			LoadException(e);
 		}
 
-		private void AddCharactersFromWritingSystem(WritingSystem ws, string charSetType, ValidCharacterType validCharType, List<string> invalidChars)
+		private void AddCharactersFromWritingSystem(CoreWritingSystemDefinition ws, string charSetType, ValidCharacterType validCharType, List<string> invalidChars)
 		{
 			CharacterSetDefinition charSet;
 			if (!ws.CharacterSets.TryGet(charSetType, out charSet))
@@ -595,14 +595,14 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <summary>
 		/// Saves the valid characters to the specified writing system.
 		/// </summary>
-		public void SaveTo(WritingSystem ws)
+		public void SaveTo(CoreWritingSystemDefinition ws)
 		{
 			AddCharactersToWritingSystem(ws, "main", m_wordFormingCharacters);
 			AddCharactersToWritingSystem(ws, "punctuation", m_otherCharacters);
 			AddCharactersToWritingSystem(ws, "numeric", m_numericCharacters);
 		}
 
-		private void AddCharactersToWritingSystem(WritingSystem ws, string charSetType, List<string> characters)
+		private void AddCharactersToWritingSystem(CoreWritingSystemDefinition ws, string charSetType, List<string> characters)
 		{
 			if (characters.Count == 0)
 			{
@@ -630,7 +630,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Sorts the lists.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void InitSortComparer(WritingSystem ws)
+		private void InitSortComparer(CoreWritingSystemDefinition ws)
 		{
 			if (m_comparer != null && m_comparer.WritingSystem != ws)
 				m_comparer = null;

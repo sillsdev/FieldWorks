@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		private FontFeaturesButton m_defaultFontFeaturesButton;
 		private HelpProvider m_helpProvider;
 
-		private WritingSystem m_ws;
+		private CoreWritingSystemDefinition m_ws;
 		private CheckBox m_enableGraphiteCheckBox;
 		private GroupBox m_graphiteGroupBox;
 		#endregion
@@ -114,7 +114,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// from which they will be initialized.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public WritingSystem WritingSystem
+		public CoreWritingSystemDefinition WritingSystem
 		{
 			get
 			{

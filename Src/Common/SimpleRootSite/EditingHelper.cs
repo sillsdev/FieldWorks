@@ -543,7 +543,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					if (vws[iws] == 0)
 						continue;
 					ws = wsf.get_EngineOrNull(vws[iws]);
-					if (ws == null || WritingSystemFactory.GetWsFromStr(ws.ID) == 0)
+					if (ws == null || WritingSystemFactory.GetWsFromStr(ws.Id) == 0)
 						return false; // found writing system not in current project
 				}
 			}
@@ -2937,7 +2937,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			try
 			{
 				m_fSettingKeyboards = true;
-				var ws = (WritingSystem) lgws;
+				var ws = (CoreWritingSystemDefinition) lgws;
 				if (ws.LocalKeyboard != null)
 					ws.LocalKeyboard.Activate();
 			}

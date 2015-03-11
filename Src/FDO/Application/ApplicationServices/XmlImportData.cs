@@ -2877,7 +2877,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 		private int GetWsFromId(string wsId)
 		{
 			// TODO WS: is this a lang tag or an ICU locale?
-			WritingSystem ws;
+			CoreWritingSystemDefinition ws;
 			if (!m_cache.ServiceLocator.WritingSystemManager.GetOrSet(wsId, out ws))
 			{
 				string sMsg = string.Format(AppStrings.ksCreatingWritingSystem, wsId);
@@ -3055,7 +3055,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 				riWs = m_repoIndex.FindOrCreateIndexForWs(ws.Handle);
 				IncrementCreatedClidCount(ReversalIndexTags.kClassId);
 				IncrementCreatedClidCount(CmPossibilityListTags.kClassId);
-				string sMsg = String.Format(AppStrings.ksCreatingReversalIndex, ws.DisplayLabel, ws.ID);
+				string sMsg = String.Format(AppStrings.ksCreatingReversalIndex, ws.DisplayLabel, ws.Id);
 				LogMessage(sMsg, 0);
 			}
 			if (m_factRevEntry == null)

@@ -1449,7 +1449,7 @@ namespace SIL.FieldWorks.TE
 				// Figure out what the writing system's name is to display it in the list view.
 				if (mapping.WsId != null)
 				{
-					WritingSystem ws = m_cache.ServiceLocator.WritingSystemManager.Get(mapping.WsId);
+					CoreWritingSystemDefinition ws = m_cache.ServiceLocator.WritingSystemManager.Get(mapping.WsId);
 
 					string wsName = ws.DisplayLabel;
 					if (wsName != null)

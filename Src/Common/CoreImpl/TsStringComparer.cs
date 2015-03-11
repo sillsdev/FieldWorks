@@ -20,7 +20,7 @@ namespace SIL.CoreImpl
 	/// ----------------------------------------------------------------------------------------
 	public class TsStringComparer : IComparer
 	{
-		private readonly WritingSystem m_ws;
+		private readonly CoreWritingSystemDefinition m_ws;
 
 		#region Constructors
 
@@ -41,7 +41,7 @@ namespace SIL.CoreImpl
 		/// </summary>
 		/// <param name="ws">The writing system.</param>
 		/// ------------------------------------------------------------------------------------
-		public TsStringComparer(WritingSystem ws)
+		public TsStringComparer(CoreWritingSystemDefinition ws)
 		{
 			m_ws = ws;
 		}
@@ -53,7 +53,7 @@ namespace SIL.CoreImpl
 		/// </summary>
 		/// <value>The collating engine.</value>
 		/// ------------------------------------------------------------------------------------
-		public WritingSystem WritingSystem
+		public CoreWritingSystemDefinition WritingSystem
 		{
 			get
 			{

@@ -384,9 +384,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			tbLangDesc.Text = m_LangDesc;
 
 			// initialize the 'ws' combo box and the AddWs button with the data from the DB
-			foreach (WritingSystem ws in m_cache.ServiceLocator.WritingSystemManager.LocalWritingSystems)
+			foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystemManager.WritingSystems)
 			{
-				var wsi = new WsInfo(ws.DisplayLabel, ws.ID, ws.LegacyMapping);
+				var wsi = new WsInfo(ws.DisplayLabel, ws.Id, ws.LegacyMapping);
 				m_wsInfo.Add(wsi.KEY, wsi);
 				cbWS.Items.Add(wsi);
 			}
@@ -394,7 +394,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			cbWS.Sorted = false;
 			var wsiIgnore = new WsInfo();
 			cbWS.Items.Add(wsiIgnore);
-			btnAddWS.Initialize(m_cache, m_helpTopicProvider, m_app, m_stylesheet, m_cache.ServiceLocator.WritingSystemManager.LocalWritingSystems);
+			btnAddWS.Initialize(m_cache, m_helpTopicProvider, m_app, m_stylesheet, m_cache.ServiceLocator.WritingSystemManager.WritingSystems);
 
 			// select the proper index if there is a valid writing system
 			int index = 0;
@@ -443,11 +443,11 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void btnAddWS_WritingSystemAdded(object sender, EventArgs e)
 		{
-			WritingSystem ws = btnAddWS.NewWritingSystem;
+			CoreWritingSystemDefinition ws = btnAddWS.NewWritingSystem;
 			if (ws != null)
 			{
 				string mapName = ws.LegacyMapping;
-				var wsi = new WsInfo(ws.DisplayLabel, ws.ID, mapName);
+				var wsi = new WsInfo(ws.DisplayLabel, ws.Id, mapName);
 				m_wsInfo.Add(wsi.KEY, wsi);
 
 				// now select it for the ws combo box

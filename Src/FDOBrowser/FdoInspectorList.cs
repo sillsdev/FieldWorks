@@ -432,7 +432,7 @@ namespace FDOBrowser
 			{
 				foreach (int ws in multiStr.AvailableWritingSystemIds)
 				{
-					WritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
+					CoreWritingSystemDefinition wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
 					IInspectorObject ino = CreateInspectorObject(multiStr.get_String(ws), obj, ioParent, level);
 					ino.DisplayName = wsObj.DisplayLabel;
 					list.Add(ino);
@@ -1247,7 +1247,7 @@ namespace FDOBrowser
 
 			if (tpt == (int)FwTextPropType.ktptWs)
 			{
-				WritingSystem ws = cache.ServiceLocator.WritingSystemManager.Get(Value);
+				CoreWritingSystemDefinition ws = cache.ServiceLocator.WritingSystemManager.Get(Value);
 				m_toStringValue += "  {" + ws + "}";
 			}
 		}

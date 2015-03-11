@@ -397,13 +397,13 @@ namespace SIL.FieldWorks
 		/// </remarks>
 		private static void UglyHackForXkbIndicator()
 		{
-			foreach (WritingSystem ws in s_cache.ServiceLocator.WritingSystems.AllWritingSystems)
+			foreach (CoreWritingSystemDefinition ws in s_cache.ServiceLocator.WritingSystems.AllWritingSystems)
 				SetKeyboardForWs(ws.Handle);
 			Keyboard.Controller.ActivateDefaultKeyboard();
 		}
 		private static void SetKeyboardForWs(int ws)
 		{
-			WritingSystem wsObj = s_cache.ServiceLocator.WritingSystemManager.Get(ws);
+			CoreWritingSystemDefinition wsObj = s_cache.ServiceLocator.WritingSystemManager.Get(ws);
 			if (wsObj != null && wsObj.LocalKeyboard != null)
 				wsObj.LocalKeyboard.Activate();
 		}

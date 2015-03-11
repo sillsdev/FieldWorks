@@ -81,7 +81,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				// Check for a valid vernacular writing system.  (See LT-8892.)
 				var ws = TsStringUtils.GetWsAtOffset(tssWord, 0);
 				var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
-				WritingSystem wsObj = cache.ServiceLocator.WritingSystemManager.Get(ws);
+				CoreWritingSystemDefinition wsObj = cache.ServiceLocator.WritingSystemManager.Get(ws);
 				if (cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Contains(wsObj))
 					return tssWord;
 			}

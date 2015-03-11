@@ -1132,7 +1132,7 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 		{
 			get
 			{
-				WritingSystem ws = CurrVernWritingSystem;
+				CoreWritingSystemDefinition ws = CurrVernWritingSystem;
 				if (ws == null)
 					return true;
 
@@ -1155,7 +1155,7 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 		{
 			get
 			{
-				WritingSystem ws = CurrVernWritingSystem;
+				CoreWritingSystemDefinition ws = CurrVernWritingSystem;
 				if (ws == null)
 					return true;
 
@@ -1179,7 +1179,7 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 		{
 			get
 			{
-				WritingSystem ws = CurrVernWritingSystem;
+				CoreWritingSystemDefinition ws = CurrVernWritingSystem;
 				if (ws == null)
 					return true;
 
@@ -1204,7 +1204,7 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 		/// Gets the current vernacular writing system from the cache.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private WritingSystem CurrVernWritingSystem
+		private CoreWritingSystemDefinition CurrVernWritingSystem
 		{
 			get
 			{

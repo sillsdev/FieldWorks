@@ -177,7 +177,7 @@ namespace SIL.FieldWorks.TE
 				try
 				{
 					StyleProxyListManager.Initialize(styleSheet);
-					list.WriteToCache(cache, styleSheet, Path.GetDirectoryName(filename));
+					list.WriteToCache(cache, styleSheet);
 				}
 				finally
 				{
@@ -224,10 +224,8 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// <param name="styleSheet">The style sheet.</param>
-		/// <param name="OXESADir">The OXESA directory.</param>
 		/// ------------------------------------------------------------------------------------
-		protected void WriteToCache(FdoCache cache, FwStyleSheet styleSheet,
-			string OXESADir)
+		protected void WriteToCache(FdoCache cache, FwStyleSheet styleSheet)
 		{
 			IScripture scr = cache.LangProject.TranslatedScriptureOA;
 
@@ -235,7 +233,7 @@ namespace SIL.FieldWorks.TE
 			{
 				foreach (XmlScrNote ann in Annotations)
 				{
-					ScrNoteImportManager.Initialize(scr, ann.BeginScrBCVRef.Book, OXESADir);
+					ScrNoteImportManager.Initialize(scr, ann.BeginScrBCVRef.Book);
 					ann.WriteToCache(scr, styleSheet);
 				}
 			}

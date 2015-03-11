@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.FDO
 		/// <summary>
 		/// Get a set of all writing systems used for this translation.
 		/// </summary>
-		HashSet<WritingSystem> AvailableWritingSystems { get; }
+		HashSet<CoreWritingSystemDefinition> AvailableWritingSystems { get; }
 	}
 
 	/// <summary>

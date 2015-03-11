@@ -1816,7 +1816,7 @@ namespace SIL.FieldWorks.TE
 		/// -----------------------------------------------------------------------------------
 		private int GetWsForLang(string sLang)
 		{
-			WritingSystem ws;
+			CoreWritingSystemDefinition ws;
 			WritingSystemServices.FindOrCreateWritingSystem(m_cache, FwDirectoryFinder.TemplateDirectory, IetfLanguageTagHelper.ToIetfLanguageTag(sLang),
 				true, false, out ws);
 			return ws.Handle;

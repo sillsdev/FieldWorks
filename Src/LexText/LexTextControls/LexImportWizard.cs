@@ -622,7 +622,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					if (xmlLang == "Vernacular" && ws != null)
 					{
 						fwName = ws.DisplayLabel;
-						xmlLang = lang.XmlLang = ws.ID;
+						xmlLang = lang.XmlLang = ws.Id;
 						encodingconverter = ws.LegacyMapping;
 					}
 					else
@@ -981,7 +981,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private string ConvertNameFromIdtoFW(string wsId)
 		{
 			//getting name for a writing system given the identifier.
-			WritingSystem ws;
+			CoreWritingSystemDefinition ws;
 
 			if (m_cache.ServiceLocator.WritingSystemManager.TryGet(wsId, out ws))
 				return ws.DisplayLabel;

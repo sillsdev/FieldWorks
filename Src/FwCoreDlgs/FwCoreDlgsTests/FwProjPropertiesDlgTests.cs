@@ -283,7 +283,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void SimulateAnalAddingWs(WritingSystem ws)
+		public void SimulateAnalAddingWs(CoreWritingSystemDefinition ws)
 		{
 			CheckDisposed();
 
@@ -296,7 +296,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void SimulateVernAddingWs(WritingSystem ws)
+		public void SimulateVernAddingWs(CoreWritingSystemDefinition ws)
 		{
 			CheckDisposed();
 
@@ -347,7 +347,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
-			WritingSystem ws;
+			CoreWritingSystemDefinition ws;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("en-fonipa-x-etic", out ws);
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("es", out ws);
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("fr", out ws);
@@ -450,7 +450,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			foreach (string name in wsnames)
 			{
-				bool found = list.CheckedItems.Cast<WritingSystem>().Any(ws => name == ws.ToString());
+				bool found = list.CheckedItems.Cast<CoreWritingSystemDefinition>().Any(ws => name == ws.ToString());
 
 				if (shouldBeChecked)
 					Assert.IsTrue(found, name + " not found in checked items list.");
@@ -661,7 +661,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.VernWsMoveDownButton.Enabled = false;
 
 			// Add a new writing system to the cache.
-			WritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Set("en-US");
+			CoreWritingSystemDefinition ws = Cache.ServiceLocator.WritingSystemManager.Set("en-US");
 
 			m_dlg.SimulateVernAddingWs(ws);
 
@@ -884,7 +884,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.AnalWsMoveDownButton.Enabled = false;
 
 			// Add a new writing system to the cache.
-			WritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Set("zh-CN");
+			CoreWritingSystemDefinition ws = Cache.ServiceLocator.WritingSystemManager.Set("zh-CN");
 
 			m_dlg.SimulateAnalAddingWs(ws);
 
@@ -945,7 +945,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.AreEqual("English (Phonetic)", Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems[2].ToString());
 
 			// Verify the list of cached writing systems.
-			foreach (WritingSystem ws in Cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
+			foreach (CoreWritingSystemDefinition ws in Cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
 			{
 				Assert.IsTrue(ws.ToString() == "French" || ws.ToString() == "English" ||
 					ws.ToString() == "Spanish" || ws.ToString() == "English (Phonetic)");

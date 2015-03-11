@@ -172,7 +172,7 @@ namespace SIL.CoreImpl
 				ILgWritingSystem ws = lgwsf.get_Engine(wsId);
 				return ws.Handle;
 			}
-			catch (ArgumentException e)
+			catch (Exception e)
 			{
 				throw new XmlSchemaException("Unable to create writing system: " + wsId, e);
 			}

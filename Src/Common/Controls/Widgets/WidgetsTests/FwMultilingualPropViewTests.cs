@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.Common.Widgets
 
 			public DummyFwMultilingualPropViewDataSource()
 			{
-				WritingSystem ws;
+				CoreWritingSystemDefinition ws;
 				m_writingSystemManager.GetOrSet("en", out ws);
 				m_list.Add(ws.Handle);
 				m_writingSystemManager.GetOrSet("fr", out ws);

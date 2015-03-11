@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.IText
 	{
 		private FDO.IText m_text1;
 		private XmlDocument m_textsDefn;
-		private WritingSystem m_wsXkal;
+		private CoreWritingSystemDefinition m_wsXkal;
 		private ICmPossibilityList m_textMarkupTags;
 		private TestTaggingChild m_tagChild;
 		private IStTxtPara m_para1;

@@ -204,7 +204,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private class Fwr3660ValidCharactersDlg : ValidCharactersDlg
 		{
 			public Fwr3660ValidCharactersDlg(FdoCache cache, IWritingSystemContainer container,
-				WritingSystem ws)
+				CoreWritingSystemDefinition ws)
 				: base(cache, container, null, null, ws, "dymmy")
 			{
 			}
@@ -220,9 +220,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void InvokeFromNewProject()
 		{
 			var wsManager = new WritingSystemManager();
-			WritingSystem ws = wsManager.Create("en");
-			var wsContainer = new MemoryWritingSystemContainer(Enumerable.Empty<WritingSystem>(), new[] {ws}, Enumerable.Empty<WritingSystem>(),
-				new[] {ws}, Enumerable.Empty<WritingSystem>()) {DefaultVernacularWritingSystem = ws};
+			CoreWritingSystemDefinition ws = wsManager.Create("en");
+			var wsContainer = new MemoryWritingSystemContainer(Enumerable.Empty<CoreWritingSystemDefinition>(), new[] {ws}, Enumerable.Empty<CoreWritingSystemDefinition>(),
+				new[] {ws}, Enumerable.Empty<CoreWritingSystemDefinition>()) {DefaultVernacularWritingSystem = ws};
 			using (var dlg = new Fwr3660ValidCharactersDlg(null, wsContainer, ws))
 			{
 				Assert.NotNull(dlg);

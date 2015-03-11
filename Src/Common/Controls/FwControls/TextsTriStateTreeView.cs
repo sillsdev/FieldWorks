@@ -173,7 +173,7 @@ namespace SIL.FieldWorks.Common.Controls
 						foundFirstText = true;
 						var ws1 = tex.ChooserNameTS.get_WritingSystemAt(0);
 						var wsEngine = cache.WritingSystemFactory.get_EngineOrNull(ws1);
-						collator.Open(wsEngine.ID);
+						collator.Open(wsEngine.Id);
 					}
 				}
 			}
@@ -242,7 +242,7 @@ namespace SIL.FieldWorks.Common.Controls
 								foundFirstText = true;
 								var ws1 = tex.ChooserNameTS.get_WritingSystemAt(0);
 								var wsEngine = gen.Cache.WritingSystemFactory.get_EngineOrNull(ws1);
-								collator.Open(wsEngine.ID);
+								collator.Open(wsEngine.Id);
 							}
 							break;
 						}

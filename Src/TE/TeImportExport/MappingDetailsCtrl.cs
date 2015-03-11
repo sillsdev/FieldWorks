@@ -256,14 +256,14 @@ namespace SIL.FieldWorks.TE
 			string initialWritingSystem = string.Empty;
 			// Iterate through the available writing systems and add them to the writing systems
 			// combo box.
-			foreach (WritingSystem wsObj in cache.ServiceLocator.WritingSystems.AllWritingSystems)
+			foreach (CoreWritingSystemDefinition wsObj in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
 				cboWritingSys.Items.Add(wsObj);
 
 				// If the mapping's ICULocale matches the current writing system's ICULocale,
 				// save the string just added to the combo box so we can initialize the
 				// combo box's value with it.
-				if (mapping.WsId == wsObj.ID)
+				if (mapping.WsId == wsObj.Id)
 					initialWritingSystem = wsObj.ToString();
 			}
 
@@ -405,8 +405,8 @@ namespace SIL.FieldWorks.TE
 			get
 			{
 				CheckDisposed();
-				var ws = cboWritingSys.SelectedItem as WritingSystem;
-				return ws == null ? null : ws.ID;
+				var ws = cboWritingSys.SelectedItem as CoreWritingSystemDefinition;
+				return ws == null ? null : ws.Id;
 			}
 		}
 

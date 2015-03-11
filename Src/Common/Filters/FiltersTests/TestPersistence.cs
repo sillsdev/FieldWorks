@@ -160,7 +160,7 @@ namespace SIL.FieldWorks.Filters
 		[Test]
 		public void PersistMatchersEtc()
 		{
-			WritingSystem defAnalWs = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+			CoreWritingSystemDefinition defAnalWs = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			// BaseMatcher is abstract
 			// IntMatcher is abstract
 			RangeIntMatcher rangeIntMatch = new RangeIntMatcher(5, 23);

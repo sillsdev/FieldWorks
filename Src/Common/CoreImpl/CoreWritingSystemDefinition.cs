@@ -15,7 +15,7 @@ namespace SIL.CoreImpl
 	/// <summary>
 	/// A writing system implementation based on the Palaso writing system library.
 	/// </summary>
-	public class WritingSystem : WritingSystemDefinition, ILgWritingSystem
+	public class CoreWritingSystemDefinition : WritingSystemDefinition, ILgWritingSystem
 	{
 		private WritingSystemManager m_wsManager;
 
@@ -27,12 +27,27 @@ namespace SIL.CoreImpl
 
 		private readonly object m_syncRoot = new object();
 
-		internal WritingSystem()
+		/// <summary>
+		/// Initializes a new instance of the <see cref="CoreWritingSystemDefinition"/> class.
+		/// </summary>
+		public CoreWritingSystemDefinition()
 		{
 			SetupCollectionChangeListeners();
 		}
 
-		private WritingSystem(WritingSystem ws)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="CoreWritingSystemDefinition"/> class.
+		/// </summary>
+		public CoreWritingSystemDefinition(string ietfLanguageTag)
+			: base(ietfLanguageTag)
+		{
+			SetupCollectionChangeListeners();
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="CoreWritingSystemDefinition"/> class.
+		/// </summary>
+		public CoreWritingSystemDefinition(CoreWritingSystemDefinition ws)
 			: base(ws)
 		{
 			SetupCollectionChangeListeners();
@@ -238,7 +253,7 @@ namespace SIL.CoreImpl
 					if (m_cpe == null)
 					{
 						string language, script, region, variant;
-						IetfLanguageTagHelper.GetParts(ID, out language, out script, out region, out variant);
+						IetfLanguageTagHelper.TryGetParts(IetfLanguageTag, out language, out script, out region, out variant);
 						LgIcuCharPropEngine cpe = LgIcuCharPropEngineClass.Create();
 						cpe.Initialize(language, script, region, variant);
 						if (MainCharacterSet != null)
@@ -299,7 +314,7 @@ namespace SIL.CoreImpl
 				if (Language == null || Language.IsPrivateUse)
 					return "root";
 
-				return IetfLanguageTagHelper.ToIcuLocale(ID);
+				return IetfLanguageTagHelper.ToIcuLocale(IetfLanguageTag);
 			}
 		}
 
@@ -307,7 +322,7 @@ namespace SIL.CoreImpl
 		/// Copies all of the properties from the source writing system to this writing system.
 		/// </summary>
 		/// <param name="source">The source writing system.</param>
-		public void Copy(WritingSystem source)
+		public void Copy(CoreWritingSystemDefinition source)
 		{
 			Language = source.Language;
 			Script = source.Script;
@@ -321,7 +336,7 @@ namespace SIL.CoreImpl
 			VersionNumber = source.VersionNumber;
 			VersionDescription = source.VersionDescription;
 			SpellCheckDictionaries.ReplaceAll(source.SpellCheckDictionaries.CloneItems());
-			SpellCheckingID = source.SpellCheckingID;
+			SpellCheckingId = source.SpellCheckingId;
 			DateModified = source.DateModified;
 			LocalKeyboard = source.LocalKeyboard;
 			WindowsLcid = source.WindowsLcid;
@@ -363,7 +378,7 @@ namespace SIL.CoreImpl
 		/// <param name="writer">The writer.</param>
 		public void WriteLdml(XmlWriter writer)
 		{
-			var ldmlDataMapper = new LdmlDataMapper();
+			var ldmlDataMapper = new LdmlDataMapper(new CoreWritingSystemFactory());
 			ldmlDataMapper.Write(writer, this, null);
 		}
 
@@ -426,7 +441,7 @@ namespace SIL.CoreImpl
 		/// <returns></returns>
 		public override WritingSystemDefinition Clone()
 		{
-			return new WritingSystem(this);
+			return new CoreWritingSystemDefinition(this);
 		}
 
 		/// <summary>

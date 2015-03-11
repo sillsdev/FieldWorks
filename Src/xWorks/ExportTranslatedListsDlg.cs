@@ -96,8 +96,8 @@ namespace SIL.FieldWorks.XWorks
 				{
 					Debug.Assert(item is ListViewItem);
 					var lvi = item as ListViewItem;
-					Debug.Assert(lvi.Tag is WritingSystem);
-					list.Add(((WritingSystem) lvi.Tag).Handle);
+					Debug.Assert(lvi.Tag is CoreWritingSystemDefinition);
+					list.Add(((CoreWritingSystemDefinition) lvi.Tag).Handle);
 				}
 				return list;
 			}
@@ -166,7 +166,7 @@ namespace SIL.FieldWorks.XWorks
 			m_columnWs.Width = m_lvWritingSystems.Width - 25;
 		}
 
-		private ListViewItem CreateListViewItemForWs(WritingSystem xws)
+		private ListViewItem CreateListViewItemForWs(CoreWritingSystemDefinition xws)
 		{
 			var lvi = new ListViewItem();
 			lvi.Text = xws.DisplayLabel;

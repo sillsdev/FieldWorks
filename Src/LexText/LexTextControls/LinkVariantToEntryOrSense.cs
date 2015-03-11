@@ -404,7 +404,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			string trimmed = m_tbForm.Text.Trim();
 			if (trimmed.Length > 0 && m_cbWritingSystems.SelectedItem != null)
 			{
-				var ws = (WritingSystem) m_cbWritingSystems.SelectedItem;
+				var ws = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
 				if (m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Contains(ws))
 					tssNewVariantLexemeForm = TsStringUtils.MakeTss(trimmed, ws.Handle);
 			}

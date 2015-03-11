@@ -219,7 +219,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 			{
 				var wsFr = cache.DefaultVernWs;
 				Assert.That(cache.LangProject.DefaultVernacularWritingSystem.Handle, Is.EqualTo(wsFr));
-				WritingSystem wsObjGerman = null;
+				CoreWritingSystemDefinition wsObjGerman = null;
 				UndoableUnitOfWorkHelper.Do("undoit", "redoit", cache.ActionHandlerAccessor,
 					() =>
 					{
@@ -252,7 +252,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 			{
 				var wsEn = cache.DefaultAnalWs;
 				Assert.That(cache.LangProject.DefaultAnalysisWritingSystem.Handle, Is.EqualTo(wsEn));
-				WritingSystem wsObjGerman = null;
+				CoreWritingSystemDefinition wsObjGerman = null;
 				UndoableUnitOfWorkHelper.Do("undoit", "redoit", cache.ActionHandlerAccessor,
 					() =>
 					{
@@ -286,8 +286,8 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 			{
 				var wsFr = cache.DefaultPronunciationWs;
 				Assert.That(cache.LangProject.DefaultPronunciationWritingSystem.Handle, Is.EqualTo(wsFr));
-				WritingSystem wsObjGerman = null;
-				WritingSystem wsObjSpanish = null;
+				CoreWritingSystemDefinition wsObjGerman = null;
+				CoreWritingSystemDefinition wsObjSpanish = null;
 				UndoableUnitOfWorkHelper.Do("undoit", "redoit", cache.ActionHandlerAccessor,
 					() =>
 					{

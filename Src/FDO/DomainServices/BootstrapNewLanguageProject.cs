@@ -230,7 +230,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			WritingSystemManager wsManager = lp.Services.WritingSystemManager;
 			// English WS.
-			WritingSystem ws;
+			CoreWritingSystemDefinition ws;
 			wsManager.GetOrSet("en", out ws);
 			lp.AddToCurrentAnalysisWritingSystems(ws);
 

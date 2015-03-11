@@ -735,8 +735,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 							revIndex = m_cache.ServiceLocator.GetInstance<IReversalIndexFactory>().Create();
 							m_cache.LangProject.LexDbOA.ReversalIndexesOC.Add(revIndex);
 
-							WritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
-							revIndex.WritingSystem = wsObj.ID;
+							CoreWritingSystemDefinition wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
+							revIndex.WritingSystem = wsObj.Id;
 							revIndex.Name.SetUserWritingSystem(wsObj.DisplayLabel);
 							revIndex.PartsOfSpeechOA = m_cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
 							revIndex.PartsOfSpeechOA.Name.set_String(ws, m_cache.TsStrFactory.MakeString(

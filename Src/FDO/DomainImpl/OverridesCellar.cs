@@ -1609,7 +1609,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
-		protected override void ITsStringAltChangedSideEffectsInternal(int multiAltFlid, WritingSystem alternativeWs, ITsString originalValue, ITsString newValue)
+		protected override void ITsStringAltChangedSideEffectsInternal(int multiAltFlid, CoreWritingSystemDefinition alternativeWs, ITsString originalValue, ITsString newValue)
 		{
 			base.ITsStringAltChangedSideEffectsInternal(multiAltFlid, alternativeWs, originalValue, newValue);
 			switch (multiAltFlid)
@@ -2747,7 +2747,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				if (parentFsType == null)
 				{
 					// do not have any real values for abbrev, name, or description.  Just use the abbreviation
-					foreach (WritingSystem ws in Services.WritingSystems.AnalysisWritingSystems)
+					foreach (CoreWritingSystemDefinition ws in Services.WritingSystems.AnalysisWritingSystems)
 					{
 						var tss = m_cache.TsStrFactory.MakeString(type, ws.Handle);
 						fst.Abbreviation.set_String(ws.Handle, tss);
@@ -3500,10 +3500,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <param name="sName"></param>
 		public void SimpleInit(string sAbbrev, string sName)
 		{
-			foreach (WritingSystem ws in Services.WritingSystems.AnalysisWritingSystems)
+			foreach (CoreWritingSystemDefinition ws in Services.WritingSystems.AnalysisWritingSystems)
 			{
 				Abbreviation.set_String(ws.Handle, Cache.TsStrFactory.MakeString(sAbbrev, ws.Handle));
-				if (ws.ID == "en")
+				if (ws.Id == "en")
 					Name.set_String(ws.Handle, Cache.TsStrFactory.MakeString(sName, ws.Handle));
 			}
 			ShowInGloss = true;
@@ -4406,7 +4406,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <param name="originalValue"></param>
 		/// <param name="newValue"></param>
 		/// ------------------------------------------------------------------------------------
-		protected override void ITsStringAltChangedSideEffectsInternal(int multiAltFlid, WritingSystem alternativeWs, ITsString originalValue, ITsString newValue)
+		protected override void ITsStringAltChangedSideEffectsInternal(int multiAltFlid, CoreWritingSystemDefinition alternativeWs, ITsString originalValue, ITsString newValue)
 		{
 			base.ITsStringAltChangedSideEffectsInternal(multiAltFlid, alternativeWs, originalValue, newValue);
 			if (multiAltFlid == SegmentTags.kflidFreeTranslation)

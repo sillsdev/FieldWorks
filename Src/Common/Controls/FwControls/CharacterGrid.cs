@@ -155,7 +155,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public WritingSystem WritingSystem
+		public CoreWritingSystemDefinition WritingSystem
 		{
 			set { m_sortComparer = (value == null ? null : new TsStringComparer(value)); }
 		}

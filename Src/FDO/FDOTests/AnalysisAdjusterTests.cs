@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 							};
 			adjuster.OldContents = "pus yalola nihimbilira.";
 			adjuster.SetNewContents(Cache.TsStrFactory.MakeString("pus yalola nihimbilira.", spanishWs));
-			Cache.LangProject.AddToCurrentVernacularWritingSystems((WritingSystem) Cache.WritingSystemFactory.get_Engine("es"));
+			Cache.LangProject.AddToCurrentVernacularWritingSystems((CoreWritingSystemDefinition) Cache.WritingSystemFactory.get_Engine("es"));
 			adjuster.RunTest();
 		}
 

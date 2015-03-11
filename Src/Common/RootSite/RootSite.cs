@@ -232,9 +232,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// With access to the cache, we can limit this to writing sytems the user might plausibly want for this project.
 		/// </summary>
-		protected override WritingSystemDefinition[] PlausibleWritingSystems
+		protected override CoreWritingSystemDefinition[] PlausibleWritingSystems
 		{
-			get { return m_fdoCache.ServiceLocator.WritingSystems.AllWritingSystems.Cast<WritingSystemDefinition>().ToArray(); }
+			get { return m_fdoCache.ServiceLocator.WritingSystems.AllWritingSystems.ToArray(); }
 		}
 
 		/// ------------------------------------------------------------------------------------

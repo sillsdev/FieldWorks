@@ -199,8 +199,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_cache = le.Cache;
 
 			IWritingSystemContainer wsContainer = m_cache.ServiceLocator.WritingSystems;
-			WritingSystem defVernWs = wsContainer.DefaultVernacularWritingSystem;
-			WritingSystem defAnalWs = wsContainer.DefaultAnalysisWritingSystem;
+			CoreWritingSystemDefinition defVernWs = wsContainer.DefaultVernacularWritingSystem;
+			CoreWritingSystemDefinition defAnalWs = wsContainer.DefaultAnalysisWritingSystem;
 			m_fwtbCitationForm.Font = new Font(defVernWs.DefaultFontName, 10);
 			m_fwtbGloss.Font = new Font(defAnalWs.DefaultFontName, 10);
 			var stylesheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);

@@ -12,9 +12,8 @@ using SIL.WritingSystems;
 
 namespace SIL.CoreImpl
 {
-	#region PalasoWritingSystemManager class
 	/// <summary>
-	/// A Palaso-based writing system manager.
+	/// The writing system manager.
 	/// </summary>
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
 		Justification="m_renderEngines is a singleton and gets disposed by SingletonsContainer")]
@@ -80,49 +79,30 @@ namespace SIL.CoreImpl
 		}
 		#endregion
 
-		private IFwWritingSystemStore m_localStore;
-		private readonly Dictionary<int, WritingSystem> m_handleWss = new Dictionary<int, WritingSystem>();
+		private IWritingSystemRepository<CoreWritingSystemDefinition> m_repo;
+		private readonly Dictionary<int, CoreWritingSystemDefinition> m_handleWSs = new Dictionary<int, CoreWritingSystemDefinition>();
 		// List of render engines that get created during our lifetime.
 		private readonly Container m_renderEngines = SingletonsContainer.Get<Container>("RenderEngineContainer");
 
-		private WritingSystem m_userWritingSystem;
+		private CoreWritingSystemDefinition m_userWritingSystem;
 		private int m_nextHandle = 999000001;
 
 		private readonly object m_syncRoot = new object();
-
-		/// <summary>
-		/// The folder in which the manager looks for template LDML files when a writing system is wanted
-		/// that cannot be found in either the local or global store.
-		/// </summary>
-		public string TemplateFolder { get; set; }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="WritingSystemManager"/> class.
 		/// </summary>
 		public WritingSystemManager()
 		{
-			GlobalWritingSystemStore = new MemoryWritingSystemStore();
-			LocalWritingSystemStore = new LocalMemoryWritingSystemStore(GlobalWritingSystemStore);
+			WritingSystemStore = new MemoryWritingSystemRepository(new MemoryWritingSystemRepository());
 		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="WritingSystemManager"/> class.
 		/// </summary>
-		/// <param name="store">The store.</param>
-		public WritingSystemManager(IFwWritingSystemStore store) : this(store, null)
+		public WritingSystemManager(IWritingSystemRepository<CoreWritingSystemDefinition> wsRepo)
 		{
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="WritingSystemManager"/> class.
-		/// </summary>
-		/// <param name="localStore">The local store.</param>
-		/// <param name="globalStore">The global store.</param>
-		/// <remarks>localStore and globalStore will be disposed by the PalasoWritingSystemManager!</remarks>
-		public WritingSystemManager(IFwWritingSystemStore localStore, IFwWritingSystemStore globalStore)
-		{
-			GlobalWritingSystemStore = globalStore;
-			LocalWritingSystemStore = localStore;
+			WritingSystemStore = wsRepo;
 		}
 
 		/// <summary>
@@ -136,32 +116,26 @@ namespace SIL.CoreImpl
 		}
 
 		/// <summary>
-		/// Gets or sets the global writing system store.
-		/// </summary>
-		/// <value>The global writing system store.</value>
-		public IFwWritingSystemStore GlobalWritingSystemStore { get; set; }
-
-		/// <summary>
 		/// Gets or sets the local writing system store.
 		/// </summary>
 		/// <value>The local writing system store.</value>
-		public IFwWritingSystemStore LocalWritingSystemStore
+		public IWritingSystemRepository<CoreWritingSystemDefinition> WritingSystemStore
 		{
-			get { return m_localStore; }
+			get { return m_repo; }
 			set
 			{
 				if (value == null)
 					throw new ArgumentNullException("value");
 
-				if (m_localStore != value)
+				if (m_repo != value)
 				{
-					m_localStore = value;
-					m_handleWss.Clear();
-					foreach (WritingSystem ws in m_localStore.AllWritingSystems.Cast<WritingSystem>())
+					m_repo = value;
+					m_handleWSs.Clear();
+					foreach (CoreWritingSystemDefinition ws in m_repo.AllWritingSystems)
 					{
 						ws.WritingSystemManager = this;
 						ws.Handle = m_nextHandle++;
-						m_handleWss[ws.Handle] = ws;
+						m_handleWSs[ws.Handle] = ws;
 					}
 				}
 			}
@@ -169,81 +143,48 @@ namespace SIL.CoreImpl
 
 
 		/// <summary>
-		/// Gets the global writing systems.
+		/// Gets a list of other writing systems. These are typically the global writing systems.
 		/// </summary>
-		/// <value>The global writing systems.</value>
-		public IEnumerable<WritingSystem> GlobalWritingSystems
+		public IEnumerable<CoreWritingSystemDefinition> OtherWritingSystems
 		{
 			get
 			{
-				if (GlobalWritingSystemStore != null)
-					return GlobalWritingSystemStore.AllWritingSystems.Cast<WritingSystem>();
-				return Enumerable.Empty<WritingSystem>();
+			var localRepo = m_repo as ILocalWritingSystemRepository<CoreWritingSystemDefinition>;
+			return localRepo != null ? localRepo.GlobalWritingSystemRepository.AllWritingSystems : Enumerable.Empty<CoreWritingSystemDefinition>();
 			}
 		}
 
 		/// <summary>
-		/// Gets the local writing systems.
+		/// Gets a list of writing systems.
 		/// </summary>
-		/// <value>The local writing systems.</value>
-		public IEnumerable<WritingSystem> LocalWritingSystems
+		public IEnumerable<CoreWritingSystemDefinition> WritingSystems
 		{
-			get { return m_localStore.AllWritingSystems.Cast<WritingSystem>(); }
+			get { return m_repo.AllWritingSystems; }
 		}
 
 		/// <summary>
 		/// Gets all newer shared writing systems.
 		/// </summary>
 		/// <value>The newer shared writing systems.</value>
-		public IEnumerable<WritingSystem> CheckForNewerGlobalWritingSystems()
+		public IEnumerable<CoreWritingSystemDefinition> CheckForNewerGlobalWritingSystems()
 		{
-			if (GlobalWritingSystemStore != null)
-			{
-				var results = new List<WritingSystem>();
-				foreach (WritingSystemDefinition wsDef in m_localStore.WritingSystemsNewerIn(GlobalWritingSystemStore.AllWritingSystems))
-				{
-					m_localStore.LastChecked(wsDef.ID, wsDef.DateModified);
-					results.Add((WritingSystem) wsDef); // REVIEW Hasso 2013.12: add only if not equal?
-				}
-				return results;
-			}
-			return Enumerable.Empty<WritingSystem>();
+			var localRepo = m_repo as ILocalWritingSystemRepository<CoreWritingSystemDefinition>;
+			return localRepo != null ? localRepo.CheckForNewerGlobalWritingSystems() : Enumerable.Empty<CoreWritingSystemDefinition>();
 		}
 
 		/// <summary>
 		/// Creates a new writing system.
 		/// </summary>
 		/// <returns></returns>
-		public WritingSystem Create(string identifier)
+		public CoreWritingSystemDefinition Create(string ietfLanguageTag)
 		{
-			if (GlobalWritingSystemStore != null)
-			{
-				WritingSystemDefinition globalWs;
-				if (GlobalWritingSystemStore.TryGet(identifier, out globalWs))
-					return (WritingSystem) GlobalWritingSystemStore.MakeDuplicate(globalWs);
-			}
-
-			LanguageSubtag languageSubtag;
-			ScriptSubtag scriptSubtag;
-			RegionSubtag regionSubtag;
-			IEnumerable<VariantSubtag> variantSubtags;
-			if (!IetfLanguageTagHelper.TryGetSubtags(identifier, out languageSubtag, out scriptSubtag, out regionSubtag, out variantSubtags))
-				throw new ArgumentException(identifier + " is not a valid RFC5646 language tag.");
-			WritingSystem result = Create(languageSubtag, scriptSubtag, regionSubtag, variantSubtags);
-#if WS_FIX
-			if (TemplateFolder != null)
-			{
-				// try in our master template file
-				// Todo: have property TemplateFolderPath, initialize in FdoBackendProvider.InitializeWritingSystemManager
-				var template = Path.Combine(TemplateFolder, Path.ChangeExtension(identifier, "ldml"));
-				if (File.Exists(template))
-				{
-					var loader = new FwLdmlAdaptor();
-					loader.Read(template, result);
-				}
-			}
-#endif
-			return result;
+			LanguageSubtag language;
+			ScriptSubtag script;
+			RegionSubtag region;
+			IEnumerable<VariantSubtag> variants;
+			if (!IetfLanguageTagHelper.TryGetSubtags(ietfLanguageTag, out language, out script, out region, out variants))
+				throw new ArgumentException("The IETF language tag is invalid.", "ietfLanguageTag");
+			return Create(language, script, region, variants);
 		}
 
 		/// <summary>
@@ -254,32 +195,24 @@ namespace SIL.CoreImpl
 		/// <param name="regionSubtag">The region subtag.</param>
 		/// <param name="variantSubtags">The variant subtags.</param>
 		/// <returns></returns>
-		public WritingSystem Create(LanguageSubtag languageSubtag, ScriptSubtag scriptSubtag, RegionSubtag regionSubtag, IEnumerable<VariantSubtag> variantSubtags)
+		public CoreWritingSystemDefinition Create(LanguageSubtag languageSubtag, ScriptSubtag scriptSubtag, RegionSubtag regionSubtag, IEnumerable<VariantSubtag> variantSubtags)
 		{
-			var ws = (WritingSystem) m_localStore.CreateNew();
-
+			VariantSubtag[] variantSubtagsArray = variantSubtags.ToArray();
+			string langTag = IetfLanguageTagHelper.ToIetfLanguageTag(languageSubtag, scriptSubtag, regionSubtag, variantSubtagsArray);
+			CoreWritingSystemDefinition ws = m_repo.WritingSystemFactory.Create(langTag);
 			ws.Language = languageSubtag;
 			ws.Script = scriptSubtag;
 			ws.Region = regionSubtag;
-			foreach (VariantSubtag variantSubtag in variantSubtags)
-				ws.Variants.Add(variantSubtag);
-			if (!string.IsNullOrEmpty(languageSubtag.Name))
-				ws.Abbreviation = languageSubtag.Name.Length > 3 ? languageSubtag.Name.Substring(0, 3) : languageSubtag.Name;
+			ws.Variants.ReplaceAll(variantSubtagsArray);
+			if (ws.Language != null && !string.IsNullOrEmpty(ws.Language.Name))
+				ws.Abbreviation = ws.Language.Name.Length > 3 ? ws.Language.Name.Substring(0, 3) : ws.Language.Name;
 			else
-				ws.Abbreviation = ws.ID;
+				ws.Abbreviation = ws.IetfLanguageTag;
 
-#if WS_FIX
-			CultureInfo ci = MiscUtils.GetCultureForWs(ws.IetfLanguageTag);
-			if (ci != null)
-			{
-				ws.DefaultCollation = new InheritedCollationDefinition("standard") {BaseIetfLanguageTag = ci.Name, BaseType = "standard"};
-				// TODO (WS_FIX): should we validate here?
-			}
-#else
-			ws.DefaultCollation = new CollationDefinition("standard");
-#endif
-
-			ws.DefaultFont = new FontDefinition("Charis SIL");
+			if (ws.DefaultCollation == null)
+				ws.DefaultCollation = new IcuCollationDefinition("standard");
+			if (ws.DefaultFont == null)
+				ws.DefaultFont = new FontDefinition("Charis SIL");
 
 			ws.AcceptChanges();
 			return ws;
@@ -290,9 +223,9 @@ namespace SIL.CoreImpl
 		/// </summary>
 		/// <param name="ws">The writing system.</param>
 		/// <returns></returns>
-		public WritingSystem CreateFrom(WritingSystem ws)
+		public CoreWritingSystemDefinition CreateFrom(CoreWritingSystemDefinition ws)
 		{
-			return (WritingSystem) m_localStore.MakeDuplicate(ws);
+			return new CoreWritingSystemDefinition(ws);
 		}
 
 		/// <summary>
@@ -302,7 +235,7 @@ namespace SIL.CoreImpl
 		/// <returns></returns>
 		public bool Exists(int handle)
 		{
-			return m_handleWss.ContainsKey(handle);
+			return m_handleWSs.ContainsKey(handle);
 		}
 
 		/// <summary>
@@ -312,38 +245,38 @@ namespace SIL.CoreImpl
 		/// <returns></returns>
 		public bool Exists(string identifier)
 		{
-			bool fExists = m_localStore.Contains(identifier);
+			bool fExists = m_repo.Contains(identifier);
 			if (!fExists)
 			{
 				if (identifier.StartsWith("cmn"))
 				{
 					string ident = identifier.Remove(0, 3).Insert(0, "zh");
-					fExists = m_localStore.Contains(ident);
+					fExists = m_repo.Contains(ident);
 					if (!fExists && identifier.StartsWith("cmn"))
 					{
 						ident = ident.Insert(2, "-CN");
-						fExists = m_localStore.Contains(ident);
+						fExists = m_repo.Contains(ident);
 					}
 				}
 				else if (identifier.StartsWith("zh"))
 				{
 					string ident = identifier.Insert(2, "-CN");
-					fExists = m_localStore.Contains(ident);
+					fExists = m_repo.Contains(ident);
 				}
 				else if (identifier.StartsWith("pes"))
 				{
 					string ident = identifier.Remove(0, 3).Insert(0, "fa");
-					fExists = m_localStore.Contains(ident);
+					fExists = m_repo.Contains(ident);
 				}
 				else if (identifier.StartsWith("zlm"))
 				{
 					string ident = identifier.Remove(0, 3).Insert(0, "ms");
-					fExists = m_localStore.Contains(ident);
+					fExists = m_repo.Contains(ident);
 				}
 				else if (identifier.StartsWith("arb"))
 				{
 					string ident = identifier.Remove(2, 1); // changes to "ar"
-					fExists = m_localStore.Contains(ident);
+					fExists = m_repo.Contains(ident);
 				}
 			}
 			return fExists;
@@ -354,10 +287,10 @@ namespace SIL.CoreImpl
 		/// </summary>
 		/// <param name="handle">The handle.</param>
 		/// <returns></returns>
-		public WritingSystem Get(int handle)
+		public CoreWritingSystemDefinition Get(int handle)
 		{
-			WritingSystem ws;
-			if (!m_handleWss.TryGetValue(handle, out ws))
+			CoreWritingSystemDefinition ws;
+			if (!m_handleWSs.TryGetValue(handle, out ws))
 				throw new ArgumentOutOfRangeException("handle");
 			return ws;
 		}
@@ -368,39 +301,39 @@ namespace SIL.CoreImpl
 		/// </summary>
 		/// <param name="identifier">The identifier.</param>
 		/// <returns></returns>
-		public WritingSystem Get(string identifier)
+		public CoreWritingSystemDefinition Get(string identifier)
 		{
 			WritingSystemDefinition wrsys;
-			if (!m_localStore.TryGet(identifier, out wrsys))
+			if (!m_repo.TryGet(identifier, out wrsys))
 			{
 				if (identifier.StartsWith("cmn"))
 				{
 					string ident = identifier.Remove(0, 3).Insert(0, "zh");
-					if (!m_localStore.TryGet(ident, out wrsys) && identifier.StartsWith("cmn"))
+					if (!m_repo.TryGet(ident, out wrsys) && identifier.StartsWith("cmn"))
 					{
 						ident = ident.Insert(2, "-CN");
-						m_localStore.TryGet(ident, out wrsys);
+						m_repo.TryGet(ident, out wrsys);
 					}
 				}
 				else if (identifier.StartsWith("zh"))
 				{
 					string ident = identifier.Insert(2, "-CN");
-					m_localStore.TryGet(ident, out wrsys);
+					m_repo.TryGet(ident, out wrsys);
 				}
 				else if (identifier.StartsWith("pes"))
 				{
 					string ident = identifier.Remove(0, 3).Insert(0, "fa");
-					m_localStore.TryGet(ident, out wrsys);
+					m_repo.TryGet(ident, out wrsys);
 				}
 				else if (identifier.StartsWith("zlm"))
 				{
 					string ident = identifier.Remove(0, 3).Insert(0, "ms");
-					m_localStore.TryGet(ident, out wrsys);
+					m_repo.TryGet(ident, out wrsys);
 				}
 				else if (identifier.StartsWith("arb"))
 				{
 					string ident = identifier.Remove(2, 1); // changes to "ar"
-					m_localStore.TryGet(ident, out wrsys);
+					m_repo.TryGet(ident, out wrsys);
 				}
 				if (wrsys == null) //if all other special cases did not apply or work
 				{
@@ -408,7 +341,7 @@ namespace SIL.CoreImpl
 					throw new KeyNotFoundException("The writing system " + identifier + " was not found in this manager.");
 				}
 			}
-			return (WritingSystem) wrsys;
+			return (CoreWritingSystemDefinition) wrsys;
 		}
 
 		/// <summary>
@@ -417,7 +350,7 @@ namespace SIL.CoreImpl
 		/// <param name="identifier">The identifier.</param>
 		/// <param name="ws">The writing system.</param>
 		/// <returns></returns>
-		public bool TryGet(string identifier, out WritingSystem ws)
+		public bool TryGet(string identifier, out CoreWritingSystemDefinition ws)
 		{
 			if (Exists(identifier))
 			{
@@ -429,36 +362,15 @@ namespace SIL.CoreImpl
 		}
 
 		/// <summary>
-		/// Gets the specified writing system if it exists, otherwise it creates
-		/// a writing system using the specified identifier and sets it.
-		/// </summary>
-		/// <param name="identifier">The identifier.</param>
-		/// <param name="ws">The writing system.</param>
-		/// <returns><c>true</c> if identifier is valid (and created);
-		/// <c>false</c> otherwise</returns>
-		public bool TryGetOrSet(string identifier, out WritingSystem ws)
-		{
-			ws = null;
-			if (Exists(identifier) || (GlobalWritingSystemStore != null && GlobalWritingSystemStore.Contains(identifier)))
-			{
-				GetOrSet(identifier, out ws);
-				if (ws != null)
-					return true;
-			}
-
-			return false;
-		}
-
-		/// <summary>
 		/// Sets the specified writing system.
 		/// </summary>
 		/// <param name="ws">The writing system.</param>
-		public void Set(WritingSystem ws)
+		public void Set(CoreWritingSystemDefinition ws)
 		{
-			m_localStore.Set(ws);
+			m_repo.Set(ws);
 			ws.WritingSystemManager = this;
 			ws.Handle = m_nextHandle++;
-			m_handleWss[ws.Handle] = ws;
+			m_handleWSs[ws.Handle] = ws;
 		}
 
 		/// <summary>
@@ -466,10 +378,11 @@ namespace SIL.CoreImpl
 		/// </summary>
 		/// <param name="identifier">The identifier.</param>
 		/// <returns></returns>
-		public WritingSystem Set(string identifier)
+		public CoreWritingSystemDefinition Set(string identifier)
 		{
-			bool dummy;
-			return Set(identifier, out dummy);
+			CoreWritingSystemDefinition ws;
+			Set(identifier, out ws);
+			return ws;
 		}
 
 		/// <summary>
@@ -477,27 +390,26 @@ namespace SIL.CoreImpl
 		/// that there is an existing one. Set foundExisting true if so.
 		/// </summary>
 		/// <param name="identifier"></param>
-		/// <param name="foundExisting"></param>
+		/// <param name="ws"></param>
 		/// <returns></returns>
-		private WritingSystem Set(string identifier, out bool foundExisting)
+		private bool Set(string identifier, out CoreWritingSystemDefinition ws)
 		{
-			foundExisting = false;
-			WritingSystem ws = Create(identifier);
+			ws = Create(identifier);
 			// Pathologically, the ws that Create chooses to create may not have the exact expected ID.
 			// For example, and id of x-kal will produce a new WS with Id qaa-x-kal.
 			// In such a case, we may already have a WS with the corrected ID. Set will then fail.
 			// So, in such a case, return the already-known WS.
-			if (identifier != ws.ID)
+			if (identifier != ws.IetfLanguageTag)
 			{
-				WritingSystem wsExisting;
-				if (TryGet(ws.ID, out wsExisting))
+				CoreWritingSystemDefinition wsExisting;
+				if (TryGet(ws.IetfLanguageTag, out wsExisting))
 				{
-					foundExisting = true;
-					return wsExisting;
+					ws = wsExisting;
+					return true;
 				}
 			}
 			Set(ws);
-			return ws;
+			return false;
 		}
 
 		/// <summary>
@@ -507,35 +419,34 @@ namespace SIL.CoreImpl
 		/// <param name="identifier">The identifier.</param>
 		/// <param name="ws">The writing system.</param>
 		/// <returns><c>true</c> if the writing system already existed, otherwise <c>false</c></returns>
-		public bool GetOrSet(string identifier, out WritingSystem ws)
+		public bool GetOrSet(string identifier, out CoreWritingSystemDefinition ws)
 		{
 			if (TryGet(identifier, out ws))
 				return true;
 			bool foundExisting;
-			ws = Set(identifier, out foundExisting);
-			return foundExisting;
+			return Set(identifier, out ws);
 		}
 
 		/// <summary>
-		/// Replaces an existing writing system with the specified writing system if they
+		/// Replaces an existing writing system with the specified new writing system if they
 		/// have the same identifier.
 		/// </summary>
 		/// <param name="ws">The writing system.</param>
-		public void Replace(WritingSystem ws)
+		public void Replace(CoreWritingSystemDefinition ws)
 		{
-			WritingSystem existingWs;
-			if (TryGet(ws.ID, out existingWs))
+			CoreWritingSystemDefinition existingWs;
+			if (TryGet(ws.IetfLanguageTag, out existingWs))
 			{
 				if (existingWs == ws)
 					// don't do anything
 					return;
 
-				m_handleWss.Remove(existingWs.Handle);
-				m_localStore.Remove(existingWs.ID);
-				m_localStore.Set(ws);
+				m_handleWSs.Remove(existingWs.Handle);
+				m_repo.Remove(existingWs.Id);
+				m_repo.Set(ws);
 				ws.WritingSystemManager = this;
 				ws.Handle = existingWs.Handle;
-				m_handleWss[ws.Handle] = ws;
+				m_handleWSs[ws.Handle] = ws;
 			}
 			else
 			{
@@ -547,7 +458,7 @@ namespace SIL.CoreImpl
 		/// Gets or sets the user writing system.
 		/// </summary>
 		/// <value>The user writing system.</value>
-		public WritingSystem UserWritingSystem
+		public CoreWritingSystemDefinition UserWritingSystem
 		{
 			get
 			{
@@ -555,7 +466,7 @@ namespace SIL.CoreImpl
 				{
 					if (m_userWritingSystem == null)
 					{
-						WritingSystem ws;
+						CoreWritingSystemDefinition ws;
 						if (TryGet(Thread.CurrentThread.CurrentUICulture.Name, out ws))
 						{
 							m_userWritingSystem = ws;
@@ -572,7 +483,7 @@ namespace SIL.CoreImpl
 
 			set
 			{
-				if (!Exists(value.ID))
+				if (!Exists(value.Id))
 					Set(value);
 				m_userWritingSystem = value;
 			}
@@ -583,28 +494,41 @@ namespace SIL.CoreImpl
 		/// </summary>
 		public void Save()
 		{
-			foreach (WritingSystem ws in m_localStore.AllWritingSystems.Cast<WritingSystem>())
+			foreach (CoreWritingSystemDefinition ws in m_repo.AllWritingSystems)
 			{
 				if (ws.MarkedForDeletion)
 				{
-					m_handleWss.Remove(ws.Handle);
+					m_handleWSs.Remove(ws.Handle);
 					if (m_userWritingSystem == ws)
 						m_userWritingSystem = null;
 				}
 			}
-			m_localStore.Save();
+			m_repo.Save();
 		}
 
 		/// <summary>
 		/// Return true if we expect (absent pathological changes while we're not looking) to be able to save changes
 		/// to this writing system.
 		/// </summary>
-		public bool CanSave(WritingSystem ws, out string path)
+		public bool CanSave(CoreWritingSystemDefinition ws)
 		{
-			// JohnT: I don't know why the global store has to be able to save, but the check was there
-			// so I left it. However, it needs to be guarded because m_globalStore might not exist.
-			return m_localStore.CanSave(ws, out path) &&
-				(GlobalWritingSystemStore == null || GlobalWritingSystemStore.CanSave(ws, out path));
+			return m_repo.CanSave(ws);
+		}
+
+		/// <summary>
+		/// Gets the LDML file path of the specified writing system.
+		/// </summary>
+		public string GetLdmlFilePath(CoreWritingSystemDefinition ws)
+		{
+			var localFileRepo = m_repo as CoreLdmlInFolderWritingSystemRepository;
+			if (localFileRepo != null)
+			{
+				if (localFileRepo.Contains(ws.Id))
+					return localFileRepo.GetFilePathFromIetfLanguageTag(ws.IetfLanguageTag);
+				if (localFileRepo.GlobalWritingSystemRepository.Contains(ws.IetfLanguageTag))
+					return localFileRepo.GlobalWritingSystemRepository.GetFilePathFromIetfLanguageTag(ws.IetfLanguageTag);
+			}
+			return string.Empty;
 		}
 
 		/// <summary>
@@ -614,9 +538,23 @@ namespace SIL.CoreImpl
 		{
 			set
 			{
-				var folderRepo = m_localStore as LdmlInFolderWritingSystemRepository;
-				if (folderRepo != null)
-					folderRepo.PathToWritingSystems = value;
+				var localFileRepo = m_repo as CoreLdmlInFolderWritingSystemRepository;
+				if (localFileRepo != null)
+					localFileRepo.PathToWritingSystems = value;
+			}
+		}
+
+		/// <summary>
+		/// The folder in which the manager looks for template LDML files when a writing system is wanted
+		/// that cannot be found in either the local or global store.
+		/// </summary>
+		public string TemplateFolder
+		{
+			set
+			{
+				var localFileFactory = m_repo.WritingSystemFactory as CoreLdmlInFolderWritingSystemFactory;
+				if (localFileFactory != null)
+					localFileFactory.TemplateFolder = value;
 			}
 		}
 
@@ -660,12 +598,12 @@ namespace SIL.CoreImpl
 			builder.Append("aaa");
 			while (LangTagInUse("qaa-x-" + builder))
 			{
-				char newCharLast = (char)(builder[2] + 1);
+				var newCharLast = (char) (builder[2] + 1);
 				if (newCharLast > 'z')
 				{
 					// Incremented the last letter too far so reset it back to 'a' and increment the middle letter
 					newCharLast = 'a';
-					char newCharMiddle = (char)(builder[1] + 1);
+					var newCharMiddle = (char) (builder[1] + 1);
 					if (newCharMiddle > 'z')
 					{
 						// Incremented the middle letter too far so reset it back to 'a' and increment the first letter
@@ -687,16 +625,20 @@ namespace SIL.CoreImpl
 		/// <param name="identifier">The language tag to check.</param>
 		private bool LangTagInUse(string identifier)
 		{
-			return m_localStore.Contains(identifier) || (GlobalWritingSystemStore != null && GlobalWritingSystemStore.Contains(identifier));
+			if (m_repo.Contains(identifier))
+				return true;
+
+			var localRepo = m_repo as ILocalWritingSystemRepository<CoreWritingSystemDefinition>;
+			return localRepo != null && localRepo.GlobalWritingSystemRepository != null && localRepo.GlobalWritingSystemRepository.Contains(identifier);
 		}
 
 		/// <summary>
 		/// Gets all distinct writing systems (local and global) from the writing system manager. Local writing systems
 		/// take priority over global writing systems.
 		/// </summary>
-		public IEnumerable<WritingSystem> AllDistinctWritingSystems
+		public IEnumerable<CoreWritingSystemDefinition> AllDistinctWritingSystems
 		{
-			get { return LocalWritingSystems.Concat(GlobalWritingSystems.Except(LocalWritingSystems, new WritingSystemIDEqualityComparer())); }
+			get { return WritingSystems.Concat(OtherWritingSystems.Except(WritingSystems, new WritingSystemLangTagEqualityComparer())); }
 		}
 
 		#region Implementation of ILgWritingSystemFactory
@@ -723,7 +665,7 @@ namespace SIL.CoreImpl
 		{
 			lock (m_syncRoot)
 			{
-				WritingSystem ws;
+				CoreWritingSystemDefinition ws;
 				GetOrSet(bstrIdentifier, out ws);
 				return ws;
 			}
@@ -739,7 +681,7 @@ namespace SIL.CoreImpl
 		/// <returns></returns>
 		public ILgWritingSystem get_EngineOrNull(int ws)
 		{
-			if (!m_handleWss.ContainsKey(ws))
+			if (!m_handleWSs.ContainsKey(ws))
 				return null;
 			return Get(ws);
 		}
@@ -751,7 +693,7 @@ namespace SIL.CoreImpl
 		/// <returns></returns>
 		public int GetWsFromStr(string identifier)
 		{
-			WritingSystem ws;
+			CoreWritingSystemDefinition ws;
 			if (TryGet(identifier, out ws))
 				return ws.Handle;
 			return 0;
@@ -764,9 +706,9 @@ namespace SIL.CoreImpl
 		/// <returns></returns>
 		public string GetStrFromWs(int handle)
 		{
-			WritingSystem ws;
-			if (m_handleWss.TryGetValue(handle, out ws))
-				return ws.ID;
+			CoreWritingSystemDefinition ws;
+			if (m_handleWSs.TryGetValue(handle, out ws))
+				return ws.Id;
 			return null;
 		}
 
@@ -777,7 +719,7 @@ namespace SIL.CoreImpl
 		/// <returns>A System.Int32 </returns>
 		public int NumberOfWs
 		{
-			get { return m_localStore.Count; }
+			get { return m_repo.Count; }
 		}
 
 		/// <summary>
@@ -789,7 +731,7 @@ namespace SIL.CoreImpl
 		{
 			var wss = new int[cws];
 			int i = 0;
-			foreach (WritingSystem ws in LocalWritingSystems)
+			foreach (CoreWritingSystemDefinition ws in WritingSystems)
 			{
 				if (i >= cws)
 					break;
@@ -836,167 +778,4 @@ namespace SIL.CoreImpl
 
 		#endregion
 	}
-	#endregion
-
-	#region IFwWritingSystemStore interface
-	/// <summary>
-	///
-	/// </summary>
-	public interface IFwWritingSystemStore : IWritingSystemRepository
-	{
-		/// <summary>
-		/// Gets the specified writing system if it exists.
-		/// </summary>
-		/// <param name="identifier">The identifier.</param>
-		/// <param name="ws">The writing system.</param>
-		/// <returns></returns>
-		bool TryGet(string identifier, out WritingSystemDefinition ws);
-
-		/// <summary>
-		/// True if it is capable of saving changes to the specified WS.
-		/// </summary>
-		bool CanSave(WritingSystemDefinition ws, out string path);
-	}
-	#endregion
-
-	#region LocalFileWritingSystemStore class
-	/// <summary>
-	/// A memory-based writing system store.
-	/// </summary>
-	public class MemoryWritingSystemStore : WritingSystemRepositoryBase, IFwWritingSystemStore
-	{
-		/// <summary>
-		/// Creates a new writing system definition.
-		/// </summary>
-		/// <returns></returns>
-		public override WritingSystemDefinition CreateNew()
-		{
-			return new WritingSystem();
-		}
-
-		/// <summary>
-		/// This is used by the orphan finder, which we don't use (yet). It tells whether, typically in the scope of some
-		/// current change log, a writing system ID has changed to something else...call WritingSystemIdHasChangedTo
-		/// to find out what.
-		/// </summary>
-		public override bool WritingSystemIDHasChanged(string id)
-		{
-			throw new NotImplementedException();
-		}
-
-		/// <summary>
-		/// This is used by the orphan finder, which we don't use (yet). It tells what, typically in the scope of some
-		/// current change log, a writing system ID has changed to.
-		/// </summary>
-		public override string WritingSystemIDHasChangedTo(string id)
-		{
-			throw new NotImplementedException();
-		}
-
-		/// <summary>
-		/// Saves this instance.
-		/// </summary>
-		public override void Save()
-		{
-			List<string> idsToRemove = (from ws in AllWritingSystems
-				where ws.MarkedForDeletion
-				select ws.ID).ToList();
-			foreach (string id in idsToRemove)
-				Remove(id);
-
-			var allDefs = (from ws in AllWritingSystems
-				where CanSet(ws)
-				select ws).ToList();
-			foreach (WritingSystemDefinition ws in allDefs)
-			{
-				Set(ws);
-				ws.AcceptChanges();
-				OnChangeNotifySharedStore(ws);
-			}
-		}
-
-		/// <summary>
-		/// Review JohnT: is there ever a case where Save isn't possible for this store?
-		/// </summary>
-		public bool CanSave(WritingSystemDefinition ws, out string path)
-		{
-			path = "";
-			return true;
-		}
-
-		/// <summary>
-		/// Gets the specified writing system if it exists.
-		/// </summary>
-		/// <param name="identifier">The identifier.</param>
-		/// <param name="ws">The writing system.</param>
-		/// <returns></returns>
-		public bool TryGet(string identifier, out WritingSystemDefinition ws)
-		{
-			if (Contains(identifier))
-			{
-				ws = Get(identifier);
-				return true;
-			}
-
-			ws = null;
-			return false;
-		}
-	}
-	#endregion
-
-	#region LocalMemoryWritingSystemStore class
-	/// <summary>
-	/// A memory-based local writing system store.
-	/// </summary>
-	public class LocalMemoryWritingSystemStore : MemoryWritingSystemStore
-	{
-		private readonly IFwWritingSystemStore m_globalStore;
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LocalMemoryWritingSystemStore"/> class.
-		/// </summary>
-		/// <param name="globalStore">The global store.</param>
-		public LocalMemoryWritingSystemStore(IFwWritingSystemStore globalStore)
-		{
-			m_globalStore = globalStore;
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="ws">The ws.</param>
-		protected override void OnChangeNotifySharedStore(WritingSystemDefinition ws)
-		{
-			base.OnChangeNotifySharedStore(ws);
-
-			if (m_globalStore != null)
-			{
-				if (m_globalStore.Contains(ws.ID))
-				{
-					if (ws.DateModified > m_globalStore.Get(ws.ID).DateModified)
-					{
-						WritingSystemDefinition newWs = ws.Clone();
-						m_globalStore.Remove(ws.ID);
-						m_globalStore.Set(newWs);
-					}
-				}
-
-				else
-				{
-					m_globalStore.Set(ws.Clone());
-				}
-			}
-		}
-
-		/// <summary>
-		/// Saves this instance.
-		/// </summary>
-		public override void Save()
-		{
-			base.Save();
-			if (m_globalStore != null && Properties.Settings.Default.UpdateGlobalWSStore)
-				m_globalStore.Save();
-		}
-	}
-	#endregion
 }

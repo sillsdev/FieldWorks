@@ -309,9 +309,9 @@ namespace SIL.FieldWorks.TE
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
-			WritingSystem wsSpanish;
+			CoreWritingSystemDefinition wsSpanish;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("es", out wsSpanish);
-			WritingSystem wsGerman;
+			CoreWritingSystemDefinition wsGerman;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("de", out wsGerman);
 			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
 			{

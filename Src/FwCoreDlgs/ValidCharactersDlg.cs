@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			private IApp m_app;
 			private ValidCharacters m_validChars;
-			private WritingSystem m_ws;
+			private CoreWritingSystemDefinition m_ws;
 			private readonly ContextMenuStrip m_cmnu;
 			private readonly ToolStripMenuItem m_cmnuTreatAsWrdForming;
 			private readonly ToolStripMenuItem m_cmnuTreatAsNotWrdForming;
@@ -97,7 +97,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// </summary>
 			/// ---------------------------------------------------------------------------------
 			internal void Init(CharacterGrid gridWf, CharacterGrid gridOther, CharacterGrid gridNum,
-				WritingSystem ws, IApp app)
+				CoreWritingSystemDefinition ws, IApp app)
 			{
 				m_ws = ws;
 				m_app = app;
@@ -626,7 +626,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region Data members
-		private readonly WritingSystem m_ws;
+		private readonly CoreWritingSystemDefinition m_ws;
 		private ILgCharacterPropertyEngine m_chrPropEng;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private readonly IApp m_app;
@@ -719,7 +719,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "gridcol is a reference")]
 		public ValidCharactersDlg(FdoCache cache, IWritingSystemContainer wsContainer,
-			IHelpTopicProvider helpTopicProvider, IApp app, WritingSystem ws, string wsName) : this()
+			IHelpTopicProvider helpTopicProvider, IApp app, CoreWritingSystemDefinition ws, string wsName) : this()
 		{
 			m_ws = ws;
 			m_helpTopicProvider = helpTopicProvider;
@@ -850,7 +850,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public static bool RunDialog(FdoCache cache, IApp app, IWin32Window owner, IHelpTopicProvider helpTopicProvider)
 		{
-			WritingSystem ws = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			CoreWritingSystemDefinition ws = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 
 			using (var dlg = new ValidCharactersDlg(cache, cache.ServiceLocator.WritingSystems,
 				helpTopicProvider, app, ws, ws.DisplayLabel))

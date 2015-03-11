@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.IText
 		private void DoSetupFixture()
 		{
 			// setup default vernacular ws.
-			WritingSystem wsXkal = Cache.ServiceLocator.WritingSystemManager.Set("qaa-x-kal");
+			CoreWritingSystemDefinition wsXkal = Cache.ServiceLocator.WritingSystemManager.Set("qaa-x-kal");
 			wsXkal.DefaultFont = new FontDefinition("Times New Roman");
 			Cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Add(wsXkal);
 			Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Insert(0, wsXkal);

@@ -88,8 +88,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					(int)FwTextPropType.ktptWs, out nVar);
 				if (ws != -1)
 				{
-					WritingSystem wsObj = Services.WritingSystemManager.Get(ws);
-					tssRepresentation += " WS='" + wsObj.ID + "'";
+					CoreWritingSystemDefinition wsObj = Services.WritingSystemManager.Get(ws);
+					tssRepresentation += " WS='" + wsObj.Id + "'";
 				}
 
 				// character style of run
@@ -147,7 +147,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				if (tss != null && tss.Length > 0)
 				{
 					transRepresentation.Append("<TRANS WS='");
-					transRepresentation.Append(ws.ID);
+					transRepresentation.Append(ws.Id);
 					transRepresentation.Append("'>");
 					transRepresentation.Append(GetTextRepresentationOfTsString(tss));
 					transRepresentation.Append("</TRANS>");

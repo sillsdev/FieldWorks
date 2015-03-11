@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
-			WritingSystem ws;
+			CoreWritingSystemDefinition ws;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("ur", out ws);
 			m_wsUr = ws.Handle;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("es", out ws);

@@ -102,7 +102,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			// Set font, writing system factory, and code for the edit box.
 			float fntSize = label1.Font.Size * 2.0F;
-			WritingSystem defVernWs = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			CoreWritingSystemDefinition defVernWs = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			m_fwtbCitationForm.Font = new Font(defVernWs.DefaultFontName, fntSize);
 			m_fwtbCitationForm.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_fwtbCitationForm.WritingSystemCode = defVernWs.Handle;

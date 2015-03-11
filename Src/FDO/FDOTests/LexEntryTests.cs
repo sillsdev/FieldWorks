@@ -1234,8 +1234,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Clear();
 				ILgWritingSystem frWs = Cache.WritingSystemFactory.get_Engine("fr");
 				ILgWritingSystem spWs = Cache.WritingSystemFactory.get_Engine("es");
-				Cache.LanguageProject.DefaultVernacularWritingSystem = (WritingSystem) spWs;
-				Cache.LanguageProject.DefaultVernacularWritingSystem = (WritingSystem) frWs; // {fr es} order
+				Cache.LanguageProject.DefaultVernacularWritingSystem = (CoreWritingSystemDefinition) spWs;
+				Cache.LanguageProject.DefaultVernacularWritingSystem = (CoreWritingSystemDefinition) frWs; // {fr es} order
 				int frWsId = frWs.Handle;
 				int spWsId = spWs.Handle;
 
@@ -1303,8 +1303,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Clear();
 				ILgWritingSystem frWs = Cache.WritingSystemFactory.get_Engine("fr");
 				ILgWritingSystem spWs = Cache.WritingSystemFactory.get_Engine("es");
-				Cache.LanguageProject.DefaultVernacularWritingSystem = (WritingSystem) spWs;
-				Cache.LanguageProject.DefaultVernacularWritingSystem = (WritingSystem) frWs; // {fr es} order
+				Cache.LanguageProject.DefaultVernacularWritingSystem = (CoreWritingSystemDefinition) spWs;
+				Cache.LanguageProject.DefaultVernacularWritingSystem = (CoreWritingSystemDefinition) frWs; // {fr es} order
 				int frWsId = frWs.Handle;
 				int spWsId = spWs.Handle;
 
@@ -1393,7 +1393,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Cache.LanguageProject.DefaultVernacularWritingSystem = newDvWs;
 			if (changeHgWs)
 			{
-				Cache.LanguageProject.HomographWs = newDvWs.ID; // set homograph number ws to the new default vern ws
+				Cache.LanguageProject.HomographWs = newDvWs.Id; // set homograph number ws to the new default vern ws
 				Cache.ServiceLocator.GetInstance<ILexEntryRepository>().ResetHomographs(null);
 			}
 		}
@@ -1426,7 +1426,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		private int GetVernWs(int seq)
 		{
 			var vernWsList = Cache.LanguageProject.CurrentVernacularWritingSystems;
-			return Cache.WritingSystemFactory.GetWsFromStr(vernWsList.ElementAt(seq).ID);
+			return Cache.WritingSystemFactory.GetWsFromStr(vernWsList.ElementAt(seq).Id);
 		}
 
 		/// <summary>

@@ -226,7 +226,7 @@ Description:
 	DeclareInterface(LgWritingSystem, Unknown, 9F74A170-E8BB-466d-8848-5FDB28AC5AF8)
 	{
 		// The identifier for this writing system.
-		[propget] HRESULT ID(
+		[propget] HRESULT Id(
 			[out, retval] BSTR *pbstr);
 
 		// GET THE WRITING SYSTEM INTEGER that identifies this writing system to classes which
@@ -241,7 +241,7 @@ Description:
 		// Get the name of the spelling dictionary to use for this writing system.
 		// Currently returns a generally-useful default, unless explicitly set to empty
 		// to prevent this.
-		[propget] HRESULT SpellCheckingID(
+		[propget] HRESULT SpellCheckingId(
 			[out, retval] BSTR *pbstr);
 
 		// Get the primary direction, used for complex embedding; may have fragments like

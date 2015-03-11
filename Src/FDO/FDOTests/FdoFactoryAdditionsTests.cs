@@ -17,7 +17,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			germanWsId = Cache.WritingSystemFactory.GetWsFromStr("de");
 			Cache.LangProject.AnalysisWritingSystems.Add(
-				Cache.WritingSystemFactory.get_EngineOrNull(germanWsId) as WritingSystem);
+				Cache.WritingSystemFactory.get_EngineOrNull(germanWsId) as CoreWritingSystemDefinition);
 			lexFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			tssGermanGloss = Cache.TsStrFactory.MakeString("da", germanWsId);
 			var tssVernacForm = Cache.TsStrFactory.MakeString("bunk", Cache.DefaultVernWs);
@@ -81,7 +81,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			germanWsId = Cache.WritingSystemFactory.GetWsFromStr("de");
 			Cache.LangProject.AnalysisWritingSystems.Add(
-				Cache.WritingSystemFactory.get_EngineOrNull(germanWsId) as WritingSystem);
+				Cache.WritingSystemFactory.get_EngineOrNull(germanWsId) as CoreWritingSystemDefinition);
 			var lexFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			tssGermanGloss = Cache.TsStrFactory.MakeString("da", germanWsId);
 			entry = lexFactory.Create();

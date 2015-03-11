@@ -166,7 +166,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
 		public void GetFontFaceNameFromStyle()
 		{
 			// Get the default font names
-			WritingSystem defaultVernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			CoreWritingSystemDefinition defaultVernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			string defaultSerif = defaultVernWs.DefaultFontName;
 
 			// do the tests

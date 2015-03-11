@@ -16,7 +16,6 @@ using System.Xml.XPath;
 using SIL.CoreImpl;
 using System;
 using SIL.WritingSystems.Migration;
-using SIL.WritingSystems.Migration.WritingSystemsLdmlV0To1Migration;
 
 namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 {
@@ -50,13 +49,13 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				// Skip migrating the global repository if we're just running tests. Slow and may not be wanted.
 				// In a real project we do this first; thus if by any chance a WS is differently renamed in
 				// the two folders, the renaming that is right for this project wins.
-				var globalWsFolder = DirectoryFinder.GlobalWritingSystemStoreDirectory;
-				var globalMigrator = new LdmlInFolderWritingSystemRepositoryMigrator(globalWsFolder, NoteMigration, versionToMigrateTo: 2);
+				var globalWsFolder = DirectoryFinder.OldGlobalWritingSystemStoreDirectory;
+				var globalMigrator = new LdmlInFolderWritingSystemRepositoryMigrator(globalWsFolder, NoteMigration, 2);
 				globalMigrator.Migrate();
 			}
 
 			var ldmlFolder = Path.Combine(repoDto.ProjectFolder, FdoFileHelper.ksWritingSystemsDir);
-			var migrator = new LdmlInFolderWritingSystemRepositoryMigrator(ldmlFolder, NoteMigration, versionToMigrateTo: 2);
+			var migrator = new LdmlInFolderWritingSystemRepositoryMigrator(ldmlFolder, NoteMigration, 2);
 			migrator.Migrate();
 			UpdateTags(repoDto);
 
@@ -350,7 +349,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			return input;
 		}
 
-		internal void NoteMigration(IEnumerable<LdmlVersion0MigrationStrategy.MigrationInfo> migrationInfo)
+		internal void NoteMigration(int toVersion, IEnumerable<LdmlMigrationInfo> migrationInfo)
 		{
 			foreach (var info in migrationInfo)
 			{
@@ -361,13 +360,13 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				if (info.FileName.StartsWith("zh", StringComparison.OrdinalIgnoreCase))
 				{
 					var fileNameTag = Path.GetFileNameWithoutExtension(info.FileName);
-					if (fileNameTag != info.RfcTagBeforeMigration)
-						m_tagMap[RemoveMultipleX(fileNameTag.ToLowerInvariant())] = info.RfcTagAfterMigration;
+					if (fileNameTag != info.IetfLanguageTagBeforeMigration)
+						m_tagMap[RemoveMultipleX(fileNameTag.ToLowerInvariant())] = info.IetfLanguageTagAfterMigration;
 				}
 				else
 				{
 					// Add the unchanged writing systems so that they can be handled properly in UpdateTags
-					m_tagMap[RemoveMultipleX(info.RfcTagBeforeMigration.ToLowerInvariant())] = info.RfcTagAfterMigration;
+					m_tagMap[RemoveMultipleX(info.IetfLanguageTagBeforeMigration.ToLowerInvariant())] = info.IetfLanguageTagAfterMigration;
 				}
 			}
 		}

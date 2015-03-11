@@ -1277,7 +1277,7 @@ namespace SIL.CoreImpl
 				var ws = wsf.get_EngineOrNull(wid);
 				if (ws != null)
 				{   // ws.Id is short like "en"
-					if (vernWsVecImage.IndexOf(ws.ID) >= 0)
+					if (vernWsVecImage.IndexOf(ws.Id, StringComparison.Ordinal) >= 0)
 						break; // wid > -1
 				}
 				wid = -1;

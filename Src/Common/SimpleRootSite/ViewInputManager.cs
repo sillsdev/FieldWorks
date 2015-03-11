@@ -117,7 +117,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 		#endregion /* IViewInputMgr */
 
-		private WritingSystem CurrentWritingSystem
+		private CoreWritingSystemDefinition CurrentWritingSystem
 		{
 			get
 			{
@@ -130,7 +130,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				if (wsf == null)
 					return null;
 
-				return (WritingSystem) wsf.get_EngineOrNull(nWs);
+				return (CoreWritingSystemDefinition) wsf.get_EngineOrNull(nWs);
 			}
 		}
 
@@ -144,11 +144,11 @@ namespace SIL.FieldWorks.Common.RootSites
 			get
 			{
 				var manager = (WritingSystemManager) m_rootb.DataAccess.WritingSystemFactory;
-				WritingSystem ws = CurrentWritingSystem;
+				CoreWritingSystemDefinition ws = CurrentWritingSystem;
 				if (ws == null)
 					return KeyboardController.NullKeyboard;
 
-				WritingSystem wsd = manager.Get(ws.Handle);
+				CoreWritingSystemDefinition wsd = manager.Get(ws.Handle);
 				return wsd.LocalKeyboard;
 			}
 		}

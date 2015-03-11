@@ -435,7 +435,7 @@ namespace SIL.FieldWorks.TE
 			LoadFileNameSchemeControl(RegistrySettingType, DefaultSuffix);
 
 			// Populate checked list box with currently used analysis writing systems
-			foreach (WritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+			foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 				chklbWritingSystems.Items.Add(ws);
 			if (chklbWritingSystems.Items.Count > 0)
 			{
@@ -755,7 +755,7 @@ namespace SIL.FieldWorks.TE
 		{
 			get
 			{
-				WritingSystem ws = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+				CoreWritingSystemDefinition ws = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 				return ws.Abbreviation ?? string.Empty;
 			}
 		}
@@ -856,7 +856,7 @@ namespace SIL.FieldWorks.TE
 
 				int[] requestedAnalWs = new int[chklbWritingSystems.CheckedItems.Count];
 				for (int i = 0; i < chklbWritingSystems.CheckedItems.Count; i++)
-					requestedAnalWs[i] = ((WritingSystem) chklbWritingSystems.CheckedItems[i]).Handle;
+					requestedAnalWs[i] = ((CoreWritingSystemDefinition) chklbWritingSystems.CheckedItems[i]).Handle;
 				return requestedAnalWs;
 			}
 		}

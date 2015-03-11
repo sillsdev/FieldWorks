@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region Data members
-		private readonly WritingSystem m_ws;
+		private readonly CoreWritingSystemDefinition m_ws;
 		private ILgCharacterPropertyEngine m_chrPropEng;
 
 		private int m_gridRowHeight;
@@ -90,7 +90,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public PunctuationDlg(FdoCache cache, IWritingSystemContainer wsContainer,
-			IHelpTopicProvider helpTopicProvider, IApp app, WritingSystem ws, string wsName, Guid chkGuid)
+			IHelpTopicProvider helpTopicProvider, IApp app, CoreWritingSystemDefinition ws, string wsName, Guid chkGuid)
 			: this()
 		{
 			m_ws = ws;
@@ -181,7 +181,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public static bool RunDialog(FdoCache cache, IApp app, IWin32Window owner, IHelpTopicProvider helpTopicProvider, Guid chkGuid)
 		{
-			WritingSystem ws = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			CoreWritingSystemDefinition ws = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			using (var dlg = new PunctuationDlg(cache, cache.ServiceLocator.WritingSystems,
 				helpTopicProvider, app, ws, ws.DisplayLabel, chkGuid))
 			{

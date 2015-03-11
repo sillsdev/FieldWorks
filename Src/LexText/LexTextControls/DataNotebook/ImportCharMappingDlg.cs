@@ -79,12 +79,12 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			m_cbWritingSystem.Enabled = true;
 			m_cbWritingSystem.Items.Clear();
 			m_cbWritingSystem.Sorted = true;
-			foreach (WritingSystem ws in m_cache.ServiceLocator.WritingSystems.AllWritingSystems)
+			foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.AllWritingSystems)
 				m_cbWritingSystem.Items.Add(ws);
 
 			if (!string.IsNullOrEmpty(sWs))
 			{
-				WritingSystem selectedWs;
+				CoreWritingSystemDefinition selectedWs;
 				if (!m_cache.ServiceLocator.WritingSystemManager.GetOrSet(sWs, out selectedWs))
 					m_cbWritingSystem.Items.Add(selectedWs);
 				m_cbWritingSystem.SelectedItem = selectedWs;
@@ -169,9 +169,9 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 
 		private void m_btnAddWS_WritingSystemAdded(object sender, EventArgs e)
 		{
-			WritingSystem ws = m_btnAddWS.NewWritingSystem;
+			CoreWritingSystemDefinition ws = m_btnAddWS.NewWritingSystem;
 			if (ws != null)
-				FillWritingSystemCombo(ws.ID);
+				FillWritingSystemCombo(ws.Id);
 		}
 
 		private void m_rbEndOfWord_CheckedChanged(object sender, EventArgs e)
@@ -205,9 +205,9 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		{
 			get
 			{
-				if (!m_chkIgnore.Checked && m_cbWritingSystem.SelectedItem is WritingSystem)
+				if (!m_chkIgnore.Checked && m_cbWritingSystem.SelectedItem is CoreWritingSystemDefinition)
 				{
-					return ((WritingSystem) m_cbWritingSystem.SelectedItem).ID;
+					return ((CoreWritingSystemDefinition) m_cbWritingSystem.SelectedItem).Id;
 				}
 				else
 				{

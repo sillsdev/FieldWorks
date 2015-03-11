@@ -69,9 +69,9 @@ namespace LexTextControlsTests
 			LanguageSubtag languageSubtag =
 				Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Language;
 			//var voiceTag = RFC5646Tag.RFC5646TagForVoiceWritingSystem(languageSubtag.Name, "");
-			WritingSystem audioWs = writingSystemManager.Create(languageSubtag, WellKnownSubtags.AudioScript, null, new VariantSubtag[] {WellKnownSubtags.AudioPrivateUse});
-			WritingSystem existingAudioWs;
-			if (writingSystemManager.TryGet(audioWs.ID, out existingAudioWs))
+			CoreWritingSystemDefinition audioWs = writingSystemManager.Create(languageSubtag, WellKnownSubtags.AudioScript, null, new VariantSubtag[] {WellKnownSubtags.AudioPrivateUse});
+			CoreWritingSystemDefinition existingAudioWs;
+			if (writingSystemManager.TryGet(audioWs.IetfLanguageTag, out existingAudioWs))
 			{
 				m_audioWsCode = existingAudioWs.Handle;
 			}

@@ -296,7 +296,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	{
 		private static Guid kCheckId1 = Guid.NewGuid();
 		private static Guid kCheckId2 = Guid.NewGuid();
-		private WritingSystem m_wsGerman;
+		private CoreWritingSystemDefinition m_wsGerman;
 		private IFdoServiceLocator m_servloc;
 
 		#region Setup

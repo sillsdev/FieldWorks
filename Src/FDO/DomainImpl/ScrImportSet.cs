@@ -460,7 +460,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				lock (SyncRoot)
 				{
-					return m_defaultBtWsId ?? Services.WritingSystems.DefaultAnalysisWritingSystem.ID;
+					return m_defaultBtWsId ?? Services.WritingSystems.DefaultAnalysisWritingSystem.Id;
 				}
 			}
 			set

@@ -529,7 +529,7 @@ namespace SIL.FieldWorks.TE
 			// Get the fonts from the various writing systems.
 			if (m_cache != null) // Can only be null for testing
 			{
-				foreach (WritingSystem ws in m_cache.ServiceLocator.WritingSystems.AllWritingSystems)
+				foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.AllWritingSystems)
 					AddFontName(ws.DefaultFontName);
 			}
 
@@ -1017,7 +1017,7 @@ namespace SIL.FieldWorks.TE
 		{
 			int defaultWs = m_content == ExportContent.BackTranslation ? m_btWS : m_cache.DefaultVernWs;
 			ILgWritingSystemFactory wsf = m_cache.LanguageWritingSystemFactoryAccessor;
-			WritingSystem ws = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			CoreWritingSystemDefinition ws = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			m_defaultWsIsRTL = ws.RightToLeftScript;
 			m_rtfStyleTable = new RtfStyleInfoTable(m_cache, m_defaultWsIsRTL);
 

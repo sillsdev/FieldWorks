@@ -597,7 +597,7 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 			Debug.Assert(addedCharError.CheckId == StandardCheckIds.kguidCharacters,
 				"Checking error should be from the valid characters check");
 
-			WritingSystem ws = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			CoreWritingSystemDefinition ws = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			if (TsStringUtils.IsCharacterDefined(addedCharError.MyNote.CitedText))
 			{
 				using (new WaitCursor(Parent))
@@ -824,7 +824,7 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 		/// ------------------------------------------------------------------------------------
 		private List<string> GetValidCharacters()
 		{
-			WritingSystem ws = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			CoreWritingSystemDefinition ws = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			ValidCharacters validChars = ValidCharacters.Load(ws, ValidCharsLoadException, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			return (validChars != null ? validChars.AllCharacters.ToList() : null);
 		}

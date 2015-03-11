@@ -570,7 +570,7 @@ namespace SIL.FieldWorks.Common.Framework
 				box.SelectedIndex = -1;
 				return;
 			}
-			WritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Get(hvoWs);
+			CoreWritingSystemDefinition ws = Cache.ServiceLocator.WritingSystemManager.Get(hvoWs);
 			box.SelectedIndex = box.FindString(ws.DisplayLabel);
 		}
 

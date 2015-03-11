@@ -457,7 +457,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 			// If there is no entry, then find the writing system with the ICU locale, get its
 			// converter name and get a converter for that name.
-			WritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Get(wsId);
+			CoreWritingSystemDefinition ws = Cache.ServiceLocator.WritingSystemManager.Get(wsId);
 			IEncConverter converter = null;
 			if (!string.IsNullOrEmpty(ws.LegacyMapping))
 			{
@@ -501,8 +501,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					id = m_currentFile.WsId;
 					if (id == null) // Get the converter from default vern WS
 					{
-						id = (m_domain == ImportDomain.Main) ? Cache.LanguageProject.DefaultVernacularWritingSystem.ID
-							: Cache.LanguageProject.DefaultAnalysisWritingSystem.ID;
+						id = (m_domain == ImportDomain.Main) ? Cache.LanguageProject.DefaultVernacularWritingSystem.Id
+							: Cache.LanguageProject.DefaultAnalysisWritingSystem.Id;
 					}
 					break;
 
@@ -510,7 +510,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				case MarkerDomain.Note:
 					// Get the converter from default analysis WS
 					id = (m_domain == ImportDomain.Main) ?
-						Cache.LanguageProject.DefaultAnalysisWritingSystem.ID : m_currentFile.WsId;
+						Cache.LanguageProject.DefaultAnalysisWritingSystem.Id : m_currentFile.WsId;
 					break;
 
 				default:

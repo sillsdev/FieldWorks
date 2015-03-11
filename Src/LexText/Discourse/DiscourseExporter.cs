@@ -109,7 +109,7 @@ namespace SIL.FieldWorks.Discourse
 				m_writer.WriteStartElement("language");
 				// we don't have enough context at this point to get all the possible writing system
 				// information we may encounter in the word bundles.
-				string wsId = ws.ID;
+				string wsId = ws.Id;
 				m_writer.WriteAttributeString("lang", wsId);
 				var fontName = ws.DefaultFontName;
 				m_writer.WriteAttributeString("font", fontName);

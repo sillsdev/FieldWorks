@@ -432,7 +432,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		public class EncConverterChoice
 		{
 			private string m_sConverter;
-			private readonly WritingSystem m_ws;
+			private readonly CoreWritingSystemDefinition m_ws;
 			private ECInterfaces.IEncConverter m_conv = null;
 
 			/// <summary>
@@ -458,7 +458,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			/// <summary>
 			/// Get the identifier for the writing system.
 			/// </summary>
-			public WritingSystem WritingSystem
+			public CoreWritingSystemDefinition WritingSystem
 			{
 				get { return m_ws; }
 			}
@@ -543,7 +543,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 				internal bool m_fStartParaShortLine;
 				internal int m_cchShortLim;
 				internal string m_wsId;
-				internal WritingSystem m_ws;
+				internal CoreWritingSystemDefinition m_ws;
 			};
 			internal TextOptions m_txo = new TextOptions();
 
@@ -553,7 +553,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			internal class TopicsListOptions
 			{
 				internal string m_wsId;
-				internal WritingSystem m_ws;
+				internal CoreWritingSystemDefinition m_ws;
 				internal bool m_fHaveMulti;
 				internal string m_sDelimMulti;
 				internal bool m_fHaveSub;
@@ -594,7 +594,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			internal class StringOptions
 			{
 				internal string m_wsId;
-				internal WritingSystem m_ws;
+				internal CoreWritingSystemDefinition m_ws;
 			};
 			internal StringOptions m_sto = new StringOptions();
 
@@ -618,7 +618,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			private string m_sEndMkr;
 			private bool m_fEndWithWord;
 			private string m_sDestWsId;
-			private WritingSystem m_ws;
+			private CoreWritingSystemDefinition m_ws;
 			private string m_sDestStyle;
 			private bool m_fIgnoreMarker;
 
@@ -660,7 +660,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 				set { m_sDestWsId = value; }
 			}
 
-			public WritingSystem DestinationWritingSystem
+			public CoreWritingSystemDefinition DestinationWritingSystem
 			{
 				get { return m_ws; }
 				set { m_ws = value; }
@@ -871,14 +871,14 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		private void FillLanguageMappingView()
 		{
 			m_lvMappingLanguages.Items.Clear();
-			var wss = new HashSet<WritingSystem>();
+			var wss = new HashSet<CoreWritingSystemDefinition>();
 			foreach (string sWs in m_mapWsEncConv.Keys)
 			{
 				EncConverterChoice ecc = m_mapWsEncConv[sWs];
 				wss.Add(ecc.WritingSystem);
 				m_lvMappingLanguages.Items.Add(new ListViewItem(new[] { ecc.Name, ecc.ConverterName }) {Tag = ecc});
 			}
-			foreach (WritingSystem ws in m_cache.ServiceLocator.WritingSystems.AllWritingSystems)
+			foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
 				if (wss.Contains(ws))
 					continue;
@@ -892,7 +892,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			m_btnAddWritingSystem.Initialize(m_cache, m_mediator.HelpTopicProvider, app, m_stylesheet, wss);
 		}
 
-		private ListViewItem CreateListViewItemForWS(WritingSystem ws)
+		private ListViewItem CreateListViewItemForWS(CoreWritingSystemDefinition ws)
 		{
 			string sName = ws.DisplayLabel;
 			string sEncCnv;
@@ -902,14 +902,14 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 				sEncCnv = ws.LegacyMapping;
 
 			EncConverterChoice ecc;
-			if (m_mapWsEncConv.TryGetValue(ws.ID, out ecc))
+			if (m_mapWsEncConv.TryGetValue(ws.Id, out ecc))
 			{
 				ecc.ConverterName = sEncCnv;
 			}
 			else
 			{
-				ecc = new EncConverterChoice(ws.ID, sEncCnv, m_wsManager);
-				m_mapWsEncConv.Add(ecc.WritingSystem.ID, ecc);
+				ecc = new EncConverterChoice(ws.Id, sEncCnv, m_wsManager);
+				m_mapWsEncConv.Add(ecc.WritingSystem.Id, ecc);
 			}
 			return new ListViewItem(new[] { sName, sEncCnv }) {Tag = ecc};
 		}
@@ -1277,7 +1277,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 							EncConverterChoice ecc = m_mapWsEncConv[sWs];
 							xw.WriteWhitespace(Environment.NewLine);
 							xw.WriteStartElement("EncodingConverter");
-							xw.WriteAttributeString("ws", ecc.WritingSystem.ID);
+							xw.WriteAttributeString("ws", ecc.WritingSystem.Id);
 							if (!String.IsNullOrEmpty(ecc.ConverterName) && ecc.ConverterName != Sfm2Xml.STATICS.AlreadyInUnicode)
 								xw.WriteAttributeString("converter", ecc.ConverterName);
 							xw.WriteEndElement();	// EncodingConverter
@@ -1802,7 +1802,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			string sWs = cm.DestinationWritingSystemId;
 			if (!string.IsNullOrEmpty(sWs))
 			{
-				WritingSystem ws;
+				CoreWritingSystemDefinition ws;
 				m_cache.ServiceLocator.WritingSystemManager.GetOrSet(sWs, out ws);
 				Debug.Assert(ws != null);
 				sWsName = ws.DisplayLabel;
@@ -2088,7 +2088,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		private void ReadConverterSettings(XmlNode xnConverter)
 		{
 			var ecc = new EncConverterChoice(xnConverter, m_wsManager);
-			m_mapWsEncConv.Add(ecc.WritingSystem.ID, ecc);
+			m_mapWsEncConv.Add(ecc.WritingSystem.Id, ecc);
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
@@ -2397,7 +2397,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 
 		private void m_btnAddWritingSystem_WritingSystemAdded(object sender, EventArgs e)
 		{
-			WritingSystem ws = m_btnAddWritingSystem.NewWritingSystem;
+			CoreWritingSystemDefinition ws = m_btnAddWritingSystem.NewWritingSystem;
 			if (ws != null)
 			{
 				ListViewItem lvi = CreateListViewItemForWS(ws);
@@ -2873,7 +2873,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			{
 				if (!String.IsNullOrEmpty(cm.DestinationWritingSystemId))
 				{
-					WritingSystem ws;
+					CoreWritingSystemDefinition ws;
 					m_cache.ServiceLocator.WritingSystemManager.GetOrSet(cm.DestinationWritingSystemId, out ws);
 					cm.DestinationWritingSystem = ws;
 				}
@@ -4698,16 +4698,16 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		}
 
 
-		public static bool InitializeWritingSystemCombo(string sWs, FdoCache cache, ComboBox cbWritingSystem, WritingSystem[] writingSystems)
+		public static bool InitializeWritingSystemCombo(string sWs, FdoCache cache, ComboBox cbWritingSystem, CoreWritingSystemDefinition[] writingSystems)
 		{
 			if (String.IsNullOrEmpty(sWs))
 				sWs = cache.WritingSystemFactory.GetStrFromWs(cache.DefaultAnalWs);
 			cbWritingSystem.Items.Clear();
 			cbWritingSystem.Sorted = true;
 			cbWritingSystem.Items.AddRange(writingSystems);
-			foreach (WritingSystem ws in cbWritingSystem.Items)
+			foreach (CoreWritingSystemDefinition ws in cbWritingSystem.Items)
 			{
-				if (ws.ID == sWs)
+				if (ws.Id == sWs)
 				{
 					cbWritingSystem.SelectedItem = ws;
 					return true;

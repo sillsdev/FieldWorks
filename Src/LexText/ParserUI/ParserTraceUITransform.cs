@@ -42,14 +42,14 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			ILgWritingSystemFactory wsf = cache.WritingSystemFactory;
 			IWritingSystemContainer wsContainer = cache.ServiceLocator.WritingSystems;
-			WritingSystem defAnalWs = wsContainer.DefaultAnalysisWritingSystem;
+			CoreWritingSystemDefinition defAnalWs = wsContainer.DefaultAnalysisWritingSystem;
 			using (var myFont = FontHeightAdjuster.GetFontForNormalStyle(defAnalWs.Handle, mediator, wsf))
 			{
 				argumentList.AddParam("prmAnalysisFont", "", myFont.FontFamily.Name);
 				argumentList.AddParam("prmAnalysisFontSize", "", myFont.Size + "pt");
 			}
 
-			WritingSystem defVernWs = wsContainer.DefaultVernacularWritingSystem;
+			CoreWritingSystemDefinition defVernWs = wsContainer.DefaultVernacularWritingSystem;
 			using (var myFont = FontHeightAdjuster.GetFontForNormalStyle(defVernWs.Handle, mediator, wsf))
 			{
 				argumentList.AddParam("prmVernacularFont", "", myFont.FontFamily.Name);

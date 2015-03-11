@@ -15,7 +15,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// </summary>
 	internal static class MultiStringSelectionUtils
 	{
-		internal static IVwSelection GetSelAtStartOfWs(IVwRootBox rootBox, int flid, int wsIndex, WritingSystem ws)
+		internal static IVwSelection GetSelAtStartOfWs(IVwRootBox rootBox, int flid, int wsIndex, CoreWritingSystemDefinition ws)
 		{
 			try
 			{
@@ -27,7 +27,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 		}
 
-		internal static int GetCurrentSelectionIndex(SelectionHelper curSel, List<WritingSystem> writingSystems)
+		internal static int GetCurrentSelectionIndex(SelectionHelper curSel, List<CoreWritingSystemDefinition> writingSystems)
 		{
 			var ws = curSel.SelProps.GetWs();
 			int index = -1;
@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			return index;
 		}
 
-		internal static void HandleUpDownArrows(KeyEventArgs e, IVwRootBox rootBox, SelectionHelper curSel, List<WritingSystem> wsList, int flid)
+		internal static void HandleUpDownArrows(KeyEventArgs e, IVwRootBox rootBox, SelectionHelper curSel, List<CoreWritingSystemDefinition> wsList, int flid)
 		{
 			if (curSel == null || !curSel.IsValid) // LT-13805: sometimes selection was null
 				return;

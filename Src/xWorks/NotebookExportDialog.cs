@@ -202,9 +202,9 @@ namespace SIL.FieldWorks.XWorks
 			writer.WriteLine("<Languages defaultAnal=\"{0}\" defaultVern=\"{1}\">",
 				sAnal, sVern);
 			WritingSystemManager manager = m_cache.ServiceLocator.WritingSystemManager;
-			foreach (WritingSystem wsLocal in manager.LocalWritingSystems)
+			foreach (CoreWritingSystemDefinition wsLocal in manager.WritingSystems)
 			{
-				string tag = wsLocal.ID;
+				string tag = wsLocal.Id;
 				ILgWritingSystem lgws = null;
 				int ws = m_cache.WritingSystemFactory.GetWsFromStr(tag);
 				if (ws <= 0)
@@ -236,7 +236,7 @@ namespace SIL.FieldWorks.XWorks
 				//        XmlUtils.MakeSafeXml(wsLocal.ValidChars));
 				//writer.WriteLine("<ICULocale><Uni>{0}</Uni></ICULocale>",
 				//    XmlUtils.MakeSafeXml(wsLocal.IcuLocale));
-				string sortUsing, sortRules;
+				string sortUsing = string.Empty, sortRules = string.Empty;
 				var simpleCollation = wsLocal.DefaultCollation as SimpleCollationDefinition;
 				if (simpleCollation != null)
 				{
@@ -245,27 +245,32 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else
 				{
-					var inheritedCollation = wsLocal.DefaultCollation as InheritedCollationDefinition;
-					if (inheritedCollation != null)
+					var icuCollation = wsLocal.DefaultCollation as IcuCollationDefinition;
+					if (icuCollation != null)
 					{
-						sortUsing = "OtherLanguage";
-						sortRules = inheritedCollation.BaseIetfLanguageTag;
-					}
-					else if (wsLocal.DefaultCollation != null && !string.IsNullOrEmpty(wsLocal.DefaultCollation.IcuRules))
-					{
-						sortUsing = "CustomICU";
-						sortRules = wsLocal.DefaultCollation.IcuRules;
-					}
-					else
-					{
-						sortUsing = "DefaultOrdering";
-						sortRules = string.Empty;
+						if (string.IsNullOrEmpty(icuCollation.IcuRules) && icuCollation.Imports.Count == 1 && icuCollation.Imports[0].IetfLanguageTag != wsLocal.IetfLanguageTag)
+						{
+							sortUsing = "OtherLanguage";
+							sortRules = icuCollation.Imports[0].IetfLanguageTag;
+						}
+						else if (!string.IsNullOrEmpty(icuCollation.IcuRules) || icuCollation.Imports.Count > 0)
+						{
+							sortUsing = "CustomICU";
+							sortRules = icuCollation.CollationRules;
+						}
+						else
+						{
+							sortUsing = "DefaultOrdering";
+						}
 					}
 				}
-				writer.WriteLine("<SortUsing><Uni>{0}</Uni></SortUsing>",
-					XmlUtils.MakeSafeXml(sortUsing));
-				writer.WriteLine("<SortRules><Uni>{0}</Uni></SortRules>",
-					XmlUtils.MakeSafeXml(sortRules));
+				if (!string.IsNullOrEmpty(sortUsing))
+				{
+					writer.WriteLine("<SortUsing><Uni>{0}</Uni></SortUsing>",
+						XmlUtils.MakeSafeXml(sortUsing));
+					writer.WriteLine("<SortRules><Uni>{0}</Uni></SortRules>",
+						XmlUtils.MakeSafeXml(sortRules));
+				}
 				writer.WriteLine("</WritingSystem>");
 			}
 			writer.WriteLine("</Languages>");

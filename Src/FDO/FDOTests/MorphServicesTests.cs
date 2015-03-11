@@ -336,7 +336,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			return let;
 		}
 
-		static internal ILexEntryType LookupLexEntryTypeByName(IFdoServiceLocator sl, string variantTypeName, WritingSystem ws)
+		static internal ILexEntryType LookupLexEntryTypeByName(IFdoServiceLocator sl, string variantTypeName, CoreWritingSystemDefinition ws)
 		{
 			var eng = sl.WritingSystemManager.UserWritingSystem;
 			var letRepo = sl.GetInstance<ILexEntryTypeRepository>();

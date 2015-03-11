@@ -66,7 +66,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private IWritingSystemContainer m_wsContainer;
 		private ILgCharacterPropertyEngine m_charPropEng;
 		private IApp m_app;
-		private WritingSystem m_ws;
+		private CoreWritingSystemDefinition m_ws;
 		private int m_gridRowHeight;
 		private CheckType m_checkToRun;
 		private string m_sListName;
@@ -126,7 +126,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="tokenGrid">The token grid.</param>
 		/// ------------------------------------------------------------------------------------
 		public void Initialize(FdoCache cache, IWritingSystemContainer wsContainer,
-			WritingSystem ws, IApp app, Font contextFont, DataGridView tokenGrid)
+			CoreWritingSystemDefinition ws, IApp app, Font contextFont, DataGridView tokenGrid)
 		{
 			m_cache = cache;
 			m_wsContainer = wsContainer;
@@ -141,7 +141,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (m_ws != null)
 			{
 				bool modifyingVernWs = (m_wsContainer.DefaultVernacularWritingSystem != null &&
-					m_ws.ID == m_wsContainer.DefaultVernacularWritingSystem.ID);
+					m_ws.Id == m_wsContainer.DefaultVernacularWritingSystem.Id);
 
 				// If TE isn't installed, we can't support creating an inventory
 				// based on Scripture data. Likewise if we don't yet have any books (which also guards

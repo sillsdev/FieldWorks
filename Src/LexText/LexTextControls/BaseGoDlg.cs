@@ -296,7 +296,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_vernHvos.UnionWith(vernList);
 			LoadWritingSystemCombo();
 			int iWs = vernList.IndexOf(ws);
-			WritingSystem currentWs;
+			CoreWritingSystemDefinition currentWs;
 			if (iWs < 0)
 			{
 				List<int> analList = cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(wsObj => wsObj.Handle).ToList();
@@ -401,10 +401,10 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		protected virtual void LoadWritingSystemCombo()
 		{
-			foreach (WritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+			foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 				m_cbWritingSystems.Items.Add(ws);
 
-			foreach (WritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
+			foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
 			{
 				if (!m_cbWritingSystems.Items.Contains(ws))
 					m_cbWritingSystems.Items.Add(ws);
@@ -530,7 +530,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <returns>DefaultUserWritingSystem integer</returns>
 		protected int SetupBottomMsg()
 		{
-			WritingSystem userWs = m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
+			CoreWritingSystemDefinition userWs = m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 			m_fwTextBoxBottomMsg.Font = new Font(userWs.DefaultFontName, 10);
 			m_fwTextBoxBottomMsg.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_fwTextBoxBottomMsg.WritingSystemCode = userWs.Handle;

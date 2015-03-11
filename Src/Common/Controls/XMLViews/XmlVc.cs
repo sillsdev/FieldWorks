@@ -103,7 +103,7 @@ namespace SIL.FieldWorks.Common.Controls
 		// Current writing system id being used in multilingual fragment.
 		// Some methods that refer to this variable are static, so it must be static also.
 		/// <summary></summary>
-		static protected WritingSystem s_qwsCurrent = null;
+		static protected CoreWritingSystemDefinition s_qwsCurrent = null;
 		/// <summary></summary>
 		static protected int s_cwsMulti = 0;	// count of current ws alternatives.
 		/// <summary></summary>
@@ -908,14 +908,14 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		internal static void DisplayWsLabel(WritingSystem qws, IVwEnv vwenv, FdoCache cache)
+		internal static void DisplayWsLabel(CoreWritingSystemDefinition qws, IVwEnv vwenv, FdoCache cache)
 		{
 			if (qws == null)
 				return;
 
 			string sLabel = qws.Abbreviation;
 			if (sLabel == null)
-				sLabel = qws.ID;
+				sLabel = qws.Id;
 			if (sLabel == null)
 				sLabel = XMLViewsStrings.ksUNK;
 			ITsStrFactory tsf = cache.TsStrFactory;
@@ -1116,7 +1116,7 @@ namespace SIL.FieldWorks.Common.Controls
 					(vwenv as ConfiguredExport).BeginMultilingualAlternative(ws);
 				if (fLabel)
 				{
-					WritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
+					CoreWritingSystemDefinition wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
 					DisplayWsLabel(wsObj, vwenv, m_cache);
 				}
 				if (fCurrentHvo)
@@ -1358,7 +1358,7 @@ namespace SIL.FieldWorks.Common.Controls
 					case "table":
 						{
 							ProcessProperties(frag, vwenv);
-							WritingSystem ws = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+							CoreWritingSystemDefinition ws = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 							if (ws.RightToLeftScript)
 								vwenv.set_IntProperty((int)FwTextPropType.ktptRightToLeft, (int)FwTextPropVar.ktpvEnum, -1);
 							// defaults for table settings.

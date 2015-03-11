@@ -32,12 +32,10 @@ namespace SIL.FieldWorks.TE
 	public static class ScrNoteImportManager
 	{
 		private static Dictionary<ScrNoteKey, IScrScriptureNote> s_existingAnnotations;
-		private static Dictionary<string, Guid> s_checkNamesToGuids = null;
+		private static Dictionary<string, Guid> s_checkNamesToGuids;
 		private static IScrBookAnnotations s_annotationList;
 		private static IScripture s_scr;
 		private static int s_prevBookNum = 0;
-		// TODO WS: how should this be used in the new world?
-		private static string s_alternateRfcWsDir;
 
 		#region Initialization and cleanup
 		/// ------------------------------------------------------------------------------------
@@ -47,20 +45,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		public static void Initialize(IScripture scr, int bookNum)
 		{
-			Initialize(scr, bookNum, null);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes the scripture note import manager.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static void Initialize(IScripture scr, int bookNum, string alternateRfcWsDir)
-		{
 			s_scr = scr;
-
-			if (!string.IsNullOrEmpty(alternateRfcWsDir))
-				s_alternateRfcWsDir = alternateRfcWsDir;
 
 			CacheCheckIds();
 
@@ -221,16 +206,11 @@ namespace SIL.FieldWorks.TE
 		public static int GetWsForLocale(string locale)
 		{
 			string identifier = IetfLanguageTagHelper.ToIetfLanguageTag(locale);
-			WritingSystem ws;
-			if (s_scr.Cache.ServiceLocator.WritingSystemManager.TryGetOrSet(identifier, out ws))
-			{
-				if (!s_scr.Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Contains(ws))
-					s_scr.Cache.ServiceLocator.WritingSystems.AddToCurrentAnalysisWritingSystems(ws);
-				return ws.Handle;
-			}
-
-			throw new UnknownWritingSystemException(identifier + " is an unknown RFC5646 language tag.",
-				locale, identifier);
+			CoreWritingSystemDefinition ws;
+			s_scr.Cache.ServiceLocator.WritingSystemManager.GetOrSet(identifier, out ws);
+			if (!s_scr.Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Contains(ws))
+				s_scr.Cache.ServiceLocator.WritingSystems.AddToCurrentAnalysisWritingSystems(ws);
+			return ws.Handle;
 		}
 
 		/// -----------------------------------------------------------------------------------

@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <param name="cache">The FdoCache.</param>
 		/// <param name="wsList">The non-standard list of IWritingSystems.</param>
 		/// <param name="vss">The stylesheet.</param>
-		public LabeledMultiStringControl(FdoCache cache, List<WritingSystem> wsList, IVwStylesheet vss)
+		public LabeledMultiStringControl(FdoCache cache, List<CoreWritingSystemDefinition> wsList, IVwStylesheet vss)
 		{
 
 			m_innerControl = new InnerLabeledMultiStringControl(cache, wsList);

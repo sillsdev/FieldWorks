@@ -52,9 +52,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	[TestFixture]
 	public class ScrBookTests : ScrInMemoryFdoTestBase
 	{
-		private WritingSystem m_wsGerman;
-		private WritingSystem m_wsFrench;
-		private WritingSystem m_wsSpanish;
+		private CoreWritingSystemDefinition m_wsGerman;
+		private CoreWritingSystemDefinition m_wsFrench;
+		private CoreWritingSystemDefinition m_wsSpanish;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

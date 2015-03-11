@@ -14,12 +14,12 @@ namespace SIL.CoreImpl
 		/// <param name="ws">The writing system.</param>
 		/// <param name="wss">The writing systems.</param>
 		/// <returns></returns>
-		public static IEnumerable<WritingSystem> Related(this IEnumerable<WritingSystem> wss, WritingSystem ws)
+		public static IEnumerable<CoreWritingSystemDefinition> Related(this IEnumerable<CoreWritingSystemDefinition> wss, CoreWritingSystemDefinition ws)
 		{
 			return wss.Where(curWs => AreRelated(ws, curWs));
 		}
 
-		private static bool AreRelated(WritingSystem ws1, WritingSystem ws2)
+		private static bool AreRelated(CoreWritingSystemDefinition ws1, CoreWritingSystemDefinition ws2)
 		{
 			return ws1.Language == ws2.Language && ws2 != ws1;
 		}
@@ -29,7 +29,7 @@ namespace SIL.CoreImpl
 		/// </summary>
 		/// <param name="wss">The writing systems.</param>
 		/// <returns></returns>
-		public static IEnumerable<int> Handles(this IEnumerable<WritingSystem> wss)
+		public static IEnumerable<int> Handles(this IEnumerable<CoreWritingSystemDefinition> wss)
 		{
 			return wss.Select(ws => ws.Handle);
 		}
@@ -42,16 +42,16 @@ namespace SIL.CoreImpl
 		/// <returns>
 		/// 	<c>true</c> if the writing systems contains a writing system with the handle, otherwise <c>false</c>.
 		/// </returns>
-		public static bool Contains(this IEnumerable<WritingSystem> wss, int wsHandle)
+		public static bool Contains(this IEnumerable<CoreWritingSystemDefinition> wss, int wsHandle)
 		{
 			return wss.Any(ws => ws.Handle == wsHandle);
 		}
 	}
 
 	/// <summary>
-	/// An equality comparer for writing systems that determines equality based on the writing system identifier.
+	/// An equality comparer for writing systems that determines equality based on the IETF language tag.
 	/// </summary>
-	public class WritingSystemIDEqualityComparer : IEqualityComparer<WritingSystem>
+	public class WritingSystemLangTagEqualityComparer : IEqualityComparer<CoreWritingSystemDefinition>
 	{
 		/// <summary>
 		/// Determines whether the specified writing systems are equal.
@@ -61,12 +61,12 @@ namespace SIL.CoreImpl
 		/// </returns>
 		/// <param name="x">The first writing system to compare.</param>
 		/// <param name="y">The second writing system to compare.</param>
-		public bool Equals(WritingSystem x, WritingSystem y)
+		public bool Equals(CoreWritingSystemDefinition x, CoreWritingSystemDefinition y)
 		{
 			if (ReferenceEquals(x, y))
 				return true;
 
-			return x.ID == y.ID;
+			return x.IetfLanguageTag == y.IetfLanguageTag;
 		}
 
 		/// <summary>
@@ -77,9 +77,9 @@ namespace SIL.CoreImpl
 		/// </returns>
 		/// <param name="ws">The writing system for which a hash code is to be returned.</param>
 		/// <exception cref="T:System.ArgumentNullException">The <paramref name="ws"/> is null.</exception>
-		public int GetHashCode(WritingSystem ws)
+		public int GetHashCode(CoreWritingSystemDefinition ws)
 		{
-			return ws.ID.GetHashCode();
+			return ws.IetfLanguageTag.GetHashCode();
 		}
 	}
 }

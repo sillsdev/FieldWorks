@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			: base(new UserControl(), cache, obj, flid)
 		{
 			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
-			WritingSystem defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+			CoreWritingSystemDefinition defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			m_tree = new TreeCombo();
 			m_tree.WritingSystemFactory = cache.WritingSystemFactory;
 			m_tree.WritingSystemCode = defAnalWs.Handle;

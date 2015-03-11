@@ -456,8 +456,8 @@ namespace SIL.FieldWorks.XWorks
 						continue;
 					foreach (IReversalIndex ri in m_cache.LangProject.LexDbOA.CurrentReversalIndices)
 					{
-						WritingSystem ws = m_cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem);
-						string sWsTag = ws.ID;
+						CoreWritingSystemDefinition ws = m_cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem);
+						string sWsTag = ws.Id;
 						m_layouts.ExpandWsTaggedNodes(sWsTag);	// just in case we have a new index.
 						// Create a copy of the layoutType node for the specific writing system.
 						XmlNode xnRealLayout = CreateWsSpecficLayoutType(xnLayoutType,
@@ -2435,9 +2435,9 @@ namespace SIL.FieldWorks.XWorks
 					WritingSystemServices.SmartMagicWsToSimpleMagicWs(ws);
 					sWs = WritingSystemServices.GetMagicWsNameFromId(ws);
 				}
-				else if (lvi.Tag is WritingSystem)
+				else if (lvi.Tag is CoreWritingSystemDefinition)
 				{
-					sWs = ((WritingSystem) lvi.Tag).ID;
+					sWs = ((CoreWritingSystemDefinition) lvi.Tag).Id;
 				}
 				if (sbLabel.Length > 0)
 					sbLabel.Append(",");
@@ -2921,7 +2921,7 @@ namespace SIL.FieldWorks.XWorks
 					wsDefault = WritingSystemServices.kwsAnal;
 					lvi.Tag = wsDefault;
 					m_lvItems.Items.Add(lvi);
-					foreach (WritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+					foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 						m_lvItems.Items.Add(new ListViewItem(ws.DisplayLabel) {Tag = ws});
 					break;
 				case "vernacular":
@@ -2929,7 +2929,7 @@ namespace SIL.FieldWorks.XWorks
 					wsDefault = WritingSystemServices.kwsVern;
 					lvi.Tag = wsDefault;
 					m_lvItems.Items.Add(lvi);
-					foreach (WritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
+					foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
 						m_lvItems.Items.Add(new ListViewItem(ws.DisplayLabel) {Tag = ws});
 					break;
 				case "pronunciation":
@@ -2937,7 +2937,7 @@ namespace SIL.FieldWorks.XWorks
 					wsDefault = WritingSystemServices.kwsPronunciation;
 					lvi.Tag = wsDefault;
 					m_lvItems.Items.Add(lvi);
-					foreach (WritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems)
+					foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems)
 						m_lvItems.Items.Add(new ListViewItem(ws.DisplayLabel) { Tag = ws });
 					break;
 				case "reversal":
@@ -2945,7 +2945,7 @@ namespace SIL.FieldWorks.XWorks
 					wsDefault = WritingSystemServices.kwsReversalIndex;
 					lvi.Tag = wsDefault;
 					m_lvItems.Items.Add(lvi);
-					foreach (WritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+					foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 						m_lvItems.Items.Add(new ListViewItem(ws.DisplayLabel) {Tag = ws});
 					break;
 				case "analysis vernacular":
@@ -2957,9 +2957,9 @@ namespace SIL.FieldWorks.XWorks
 					wsDefault2 = WritingSystemServices.kwsVern;
 					lvi.Tag = wsDefault2;
 					m_lvItems.Items.Add(lvi);
-					foreach (WritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+					foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 						m_lvItems.Items.Add(new ListViewItem(ws.DisplayLabel) {Tag = ws});
-					foreach (WritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
+					foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
 						m_lvItems.Items.Add(new ListViewItem(ws.DisplayLabel) {Tag = ws});
 					break;
 				default:	// "vernacular analysis"
@@ -2971,9 +2971,9 @@ namespace SIL.FieldWorks.XWorks
 					wsDefault2 = WritingSystemServices.kwsAnal;
 					lvi.Tag = wsDefault2;
 					m_lvItems.Items.Add(lvi);
-					foreach (WritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
+					foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
 						m_lvItems.Items.Add(new ListViewItem(ws.DisplayLabel) {Tag = ws});
-					foreach (WritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+					foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 						m_lvItems.Items.Add(new ListViewItem(ws.DisplayLabel) {Tag = ws});
 					break;
 			}
@@ -3002,8 +3002,8 @@ namespace SIL.FieldWorks.XWorks
 					bool fChecked = false;
 					for (int iws = 0; iws < m_lvItems.Items.Count; ++iws)
 					{
-						var ws = m_lvItems.Items[iws].Tag as WritingSystem;
-						if (ws != null && ws.ID == sLabel)
+						var ws = m_lvItems.Items[iws].Tag as CoreWritingSystemDefinition;
+						if (ws != null && ws.Id == sLabel)
 						{
 							m_lvItems.Items[iws].Checked = true;
 							MoveListItem(iws, indexTarget++);
@@ -3015,7 +3015,7 @@ namespace SIL.FieldWorks.XWorks
 					{
 						// Add this to the list of writing systems, since the user must have
 						// wanted it at some time.
-						WritingSystem ws;
+						CoreWritingSystemDefinition ws;
 						if (m_cache.ServiceLocator.WritingSystemManager.TryGet(sLabel, out ws))
 							m_lvItems.Items.Insert(indexTarget++, new ListViewItem(ws.DisplayLabel) { Tag = ws, Checked = true });
 					}

@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_repoScrBook = Cache.ServiceLocator.GetInstance<IScrBookRepository>();
 			m_repoScrSection = Cache.ServiceLocator.GetInstance<IScrSectionRepository>();
 			m_repoStTxtPara = Cache.ServiceLocator.GetInstance<IScrTxtParaRepository>();
-			WritingSystem temp;
+			CoreWritingSystemDefinition temp;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("en", out temp);
 			m_wsEn = temp.Handle;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("de", out temp);
@@ -979,7 +979,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 						AddRunToStrBldr(strBldr, fieldData, ws, "Chapter Number");
 						break;
 					case 'v':
-						WritingSystem vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+						CoreWritingSystemDefinition vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 						string sBridge = Cache.LangProject.TranslatedScriptureOA.Bridge;
 						string[] pieces = fieldData.Split(new string[] { sBridge }, 2, StringSplitOptions.RemoveEmptyEntries);
 						StringBuilder strb = new StringBuilder();

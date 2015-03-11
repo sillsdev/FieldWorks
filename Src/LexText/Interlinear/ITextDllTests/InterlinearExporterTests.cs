@@ -119,7 +119,7 @@ namespace SIL.FieldWorks.IText
 			[SetUp]
 			public void BeforeEachTest()
 			{
-				WritingSystem wsXkal;
+				CoreWritingSystemDefinition wsXkal;
 				Cache.ServiceLocator.WritingSystemManager.GetOrSet("qaa-x-kal", out wsXkal);
 				var wsEng = Cache.ServiceLocator.WritingSystemManager.Get("en");
 				m_text1 = SetupDataForText1();

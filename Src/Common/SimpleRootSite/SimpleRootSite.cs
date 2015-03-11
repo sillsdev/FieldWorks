@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Printing;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -4872,14 +4873,14 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Writing systems the user might reasonably choose. Overridden in RootSite to limit it to the ones active in this project.
 		/// </summary>
-		protected virtual WritingSystemDefinition[] PlausibleWritingSystems
+		protected virtual CoreWritingSystemDefinition[] PlausibleWritingSystems
 		{
 			get
 			{
 				var manager = (WritingSystemManager) WritingSystemFactory;
 				if (manager == null)
-					return new WritingSystemDefinition[0];
-				return manager.LocalWritingSystemStore.AllWritingSystems.ToArray();
+					return new CoreWritingSystemDefinition[0];
+				return manager.WritingSystemStore.AllWritingSystems.ToArray();
 			}
 		}
 
@@ -4909,22 +4910,21 @@ namespace SIL.FieldWorks.Common.RootSites
 			// Responding before that causes a nasty bug in language/keyboard selection.
 			// SMc: also, we trust the lcid derived from vwsel more than we trust the one
 			// passed in as e.CultureInfo.LCID.
-			var wsRepo = manager.LocalWritingSystemStore;
-			if (this.Focused && g_focusRootSite.Target == this && wsRepo != null)
+			if (Focused && g_focusRootSite.Target == this)
 			{
 				// If possible, adjust the language of the selection to be one that matches
 				// the keyboard just selected.
 
 				IVwSelection vwsel = m_rootb.Selection; // may be null
 				int wsSel = SelectionHelper.GetFirstWsOfSelection(vwsel); // may be zero
-				WritingSystem wsSelDefn = null;
+				CoreWritingSystemDefinition wsSelDefn = null;
 				if (wsSel != 0)
 					wsSelDefn = manager.Get(wsSel);
-				var wsNewDefn = wsRepo.GetWsForInputLanguage(e.InputLanguage.LayoutName, e.InputLanguage.Culture, wsSelDefn, PlausibleWritingSystems);
-				if (wsNewDefn == null || wsNewDefn.Equals(wsSelDefn))
+				WritingSystemDefinition wsNewDefn = GetWSForInputLanguage(e.InputLanguage.LayoutName, e.InputLanguage.Culture, wsSelDefn, PlausibleWritingSystems);
+				if (wsNewDefn == null || wsNewDefn == wsSelDefn)
 					return;
 
-				HandleKeyboardChange(vwsel, ((WritingSystem) wsNewDefn).Handle);
+				HandleKeyboardChange(vwsel, ((CoreWritingSystemDefinition) wsNewDefn).Handle);
 
 				// The following line is needed to get Chinese IMEs to fully initialize.
 				// This causes Text Services to set its focus, which is the crucial bit
@@ -4940,6 +4940,53 @@ namespace SIL.FieldWorks.Common.RootSites
 			//    Debug.WriteLine("End SimpleRootSite.OnInputLangChanged(" + LcidHelper.LangIdFromLCID(e.Culture.LCID).ToString() +
 			//        ") [hwnd = " + this.Handle + "] -> no action");
 			//}
+		}
+
+		/// <summary>
+		/// Get the writing system that is most probably intended by the user, when input language changes to the specified layout and cultureInfo,
+		/// given the indicated candidates, and that wsCurrent is the preferred result if it is a possible WS for the specified culture.
+		/// wsCurrent is also returned if none of the candidates is found to match the specified inputs.
+		/// See interface comment for intended usage information.
+		/// Enhance JohnT: it may be helpful, if no WS has an exact match, to look for one where the culture prefix (before hyphen) matches,
+		/// thus finding a WS that has a keyboard for the same language as the one the user selected.
+		/// Could similarly match against WS ID's language ID, for WS's with no RawLocalKeyboard.
+		/// Could use LocalKeyboard instead of RawLocalKeyboard, thus allowing us to find keyboards for writing systems where the
+		/// local keyboard has not yet been determined. However, this would potentially establish a particular local keyboard for
+		/// a user who has never typed in that writing system or configured a keyboard for it, nor even selected any text in it.
+		/// In the expected usage of this library, there will be a RawLocalKeyboard for every writing system in which the user has
+		/// ever typed or selected text. That should have a high probability of catching anything actually useful.
+		/// </summary>
+		internal static WritingSystemDefinition GetWSForInputLanguage(string layoutName, CultureInfo cultureInfo, CoreWritingSystemDefinition wsCurrent, IEnumerable<CoreWritingSystemDefinition> options)
+		{
+			// See if the default is suitable.
+			if (WSMatchesLayout(layoutName, wsCurrent) && WSMatchesCulture(cultureInfo, wsCurrent))
+				return wsCurrent;
+			WritingSystemDefinition layoutMatch = null;
+			WritingSystemDefinition cultureMatch = null;
+			foreach (CoreWritingSystemDefinition ws in options)
+			{
+				bool matchesCulture = WSMatchesCulture(cultureInfo, ws);
+				if (WSMatchesLayout(layoutName, ws))
+				{
+					if (matchesCulture)
+						return ws;
+					if (layoutMatch == null || ws.Equals(wsCurrent))
+						layoutMatch = ws;
+				}
+				if (matchesCulture && (cultureMatch == null || ws.Equals(wsCurrent)))
+					cultureMatch = ws;
+			}
+			return layoutMatch ?? cultureMatch ?? wsCurrent;
+		}
+
+		private static bool WSMatchesLayout(string layoutName, CoreWritingSystemDefinition ws)
+		{
+			return ws != null && ws.RawLocalKeyboard != null && ws.RawLocalKeyboard.Layout == layoutName;
+		}
+
+		private static bool WSMatchesCulture(CultureInfo cultureInfo, CoreWritingSystemDefinition ws)
+		{
+			return ws != null && ws.RawLocalKeyboard != null && ws.RawLocalKeyboard.Locale == cultureInfo.Name;
 		}
 
 		/// -----------------------------------------------------------------------------------

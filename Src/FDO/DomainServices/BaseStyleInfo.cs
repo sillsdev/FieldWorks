@@ -752,7 +752,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// current list.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public BaseStyleInfo(IStStyle style, WritingSystem forceStyleInfo)
+		public BaseStyleInfo(IStStyle style, CoreWritingSystemDefinition forceStyleInfo)
 			: this()
 		{
 			Debug.Assert(style != null);
@@ -767,7 +767,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// style.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public BaseStyleInfo(IStStyle style) : this(style, (WritingSystem) null)
+		public BaseStyleInfo(IStStyle style) : this(style, (CoreWritingSystemDefinition) null)
 		{
 		}
 
@@ -814,7 +814,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Sets the properties of this entry based on the given FW style.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public virtual void SetPropertiesBasedOnStyle(IStStyle style, WritingSystem forceStyleInfo)
+		public virtual void SetPropertiesBasedOnStyle(IStStyle style, CoreWritingSystemDefinition forceStyleInfo)
 		{
 			SetInfoProperties(style, forceStyleInfo);
 
@@ -853,7 +853,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// </summary>
 		/// <param name="style"></param>
 		/// <param name="forceStyleInfo"></param>
-		private void SetInfoProperties(IStStyle style, WritingSystem forceStyleInfo)
+		private void SetInfoProperties(IStStyle style, CoreWritingSystemDefinition forceStyleInfo)
 		{
 			CreateFontInfoOverrides(style.Cache);
 			// Ensure this one exists (before we process style rules and possibly miss loading data for it).
@@ -892,7 +892,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			m_fontInfoOverrides.Clear();
 
-			foreach (WritingSystem ws in cache.ServiceLocator.WritingSystems.AnalysisWritingSystems
+			foreach (CoreWritingSystemDefinition ws in cache.ServiceLocator.WritingSystems.AnalysisWritingSystems
 				.Concat(cache.ServiceLocator.WritingSystems.VernacularWritingSystems))
 			{
 				// Create a FontInfo for each available writing system

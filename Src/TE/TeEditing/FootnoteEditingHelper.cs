@@ -640,7 +640,7 @@ namespace SIL.FieldWorks.TE
 			// Add the back translation writing system info to the output string, if needed
 			if (IsBackTranslation)
 			{
-				WritingSystem ws = m_cache.ServiceLocator.WritingSystemManager.Get(ViewConstructorWS);
+				CoreWritingSystemDefinition ws = m_cache.ServiceLocator.WritingSystemManager.Get(ViewConstructorWS);
 
 				sEditRef = string.Format(
 					TeResourceHelper.GetResourceString("kstidCaptionInBackTrans"),

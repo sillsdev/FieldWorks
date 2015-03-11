@@ -825,7 +825,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			AddReversalsToSense(sense, new string[] { "sunset, atmosphere", "hell on earth" });
 
 			var oldWs = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
-			WritingSystem wsFr;
+			CoreWritingSystemDefinition wsFr;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("fr", out wsFr);
 			UndoableUnitOfWorkHelper.Do("Undo CreateEntry", "Redo CreateEntry", Cache.ActionHandlerAccessor, () =>
 			{

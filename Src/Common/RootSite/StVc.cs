@@ -261,7 +261,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				if (m_cache != null && value > 0 && DefaultWs != value)
 				{
-					WritingSystem defWs = m_cache.ServiceLocator.WritingSystemManager.Get(value);
+					CoreWritingSystemDefinition defWs = m_cache.ServiceLocator.WritingSystemManager.Get(value);
 					RightToLeft = defWs.RightToLeftScript;
 				}
 				base.DefaultWs = value;

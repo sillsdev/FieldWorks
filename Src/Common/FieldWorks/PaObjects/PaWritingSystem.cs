@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.PaObjects
 
 			foreach (var ws in svcloc.WritingSystems.AllWritingSystems)
 			{
-				if (!wsList.Any(w => w.Id == ws.ID))
+				if (!wsList.Any(w => w.Id == ws.Id))
 				{
 					bool isVern = (svcloc.WritingSystems.VernacularWritingSystems.Contains(ws));
 					bool isAnal = (svcloc.WritingSystems.AnalysisWritingSystems.Contains(ws));
@@ -39,10 +39,10 @@ namespace SIL.FieldWorks.PaObjects
 		}
 
 		/// ------------------------------------------------------------------------------------
-		private PaWritingSystem(WritingSystem lgws, IFdoServiceLocator svcloc, bool isVern,
+		private PaWritingSystem(CoreWritingSystemDefinition lgws, IFdoServiceLocator svcloc, bool isVern,
 			bool isAnal)
 		{
-			Id = lgws.ID;
+			Id = lgws.Id;
 			DisplayName = lgws.DisplayLabel;
 			LanguageName = lgws.LanguageName;
 			Abbreviation = lgws.Abbreviation;

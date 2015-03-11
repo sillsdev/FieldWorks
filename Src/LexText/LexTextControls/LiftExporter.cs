@@ -200,7 +200,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (!Directory.Exists(sDirectory))
 				Directory.CreateDirectory(sDirectory);
 
-			var wss = new HashSet<WritingSystem>(m_cache.ServiceLocator.WritingSystems.AllWritingSystems);
+			var wss = new HashSet<CoreWritingSystemDefinition>(m_cache.ServiceLocator.WritingSystems.AllWritingSystems);
 			wss.UnionWith(from index in m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances()
 						  where !String.IsNullOrEmpty(index.WritingSystem)
 						  select m_cache.ServiceLocator.WritingSystemManager.Get(index.WritingSystem));
@@ -213,7 +213,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			};
 			foreach (var ws in wss)
 			{
-				using (var writer = XmlWriter.Create(Path.Combine(sDirectory, ws.ID + ".ldml"), writerSettings))
+				using (var writer = XmlWriter.Create(Path.Combine(sDirectory, ws.Id + ".ldml"), writerSettings))
 				{
 					ws.WriteLdml(writer);
 					writer.Close();
@@ -1500,7 +1500,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						if (tpt == (int)FwTextPropType.ktptWs && nProp != wsString)
 						{
 							var ws = m_wsManager.Get(nProp);
-							bldr.AppendFormat(" lang=\"{0}\"", XmlUtils.MakeSafeXmlAttribute(ws.ID));
+							bldr.AppendFormat(" lang=\"{0}\"", XmlUtils.MakeSafeXmlAttribute(ws.Id));
 						}
 					}
 					cprop = ttp.StrPropCount;
@@ -1558,7 +1558,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private bool IsVoiceWritingSystem(int wsString)
 		{
-			var wsEngine = (WritingSystem) m_wsManager.get_EngineOrNull(wsString);
+			var wsEngine = (CoreWritingSystemDefinition) m_wsManager.get_EngineOrNull(wsString);
 			return wsEngine.IsVoice;
 		}
 

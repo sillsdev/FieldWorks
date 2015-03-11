@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 		private HelpProvider m_helpProvider;
 
-		private WritingSystem m_ws;
+		private CoreWritingSystemDefinition m_ws;
 		private ScriptSubtag m_origScriptSubtag;
 		private RegionSubtag m_origRegionSubtag;
 		private readonly List<VariantSubtag> m_origVariantSubtags = new List<VariantSubtag>();
@@ -232,7 +232,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// The larger component using this control must supply a writing system
 		/// which this control will help to edit.
 		/// </summary>
-		public WritingSystem WritingSystem
+		public CoreWritingSystemDefinition WritingSystem
 		{
 			get
 			{
@@ -570,7 +570,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			IEnumerable<VariantSubtag> orig = VariantSubtags;
 			m_variantName.ClearItems();
 			m_variantName.Items.AddRange(StandardSubtags.RegisteredVariants.Concat(StandardSubtags.CommonPrivateUseVariants)
-				.Where(v => v.IsVariantOf(m_ws.ID)).Cast<object>().ToArray());
+				.Where(v => v.IsVariantOf(m_ws.IetfLanguageTag)).Cast<object>().ToArray());
 			if (orig != null && fPreserve)
 				VariantSubtags = orig;
 			m_variantName.EndUpdate();

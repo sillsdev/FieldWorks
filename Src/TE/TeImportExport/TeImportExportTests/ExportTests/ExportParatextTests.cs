@@ -255,7 +255,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 		{
 			base.FixtureSetup();
 
-			WritingSystem wsUr;
+			CoreWritingSystemDefinition wsUr;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("ur", out wsUr);
 
 			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
@@ -812,7 +812,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 		public void WriteParatextSsfFile_DefaultVersification()
 		{
 			m_scr.Versification = 0;
-			WritingSystem vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			CoreWritingSystemDefinition vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 
 			using (DummyFileWriter writer = new DummyFileWriter())
 			{
@@ -857,7 +857,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 		public void WriteParatextSsfFile_SeptuagintVersification()
 		{
 			m_scr.Versification = ScrVers.Septuagint;
-			WritingSystem vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			CoreWritingSystemDefinition vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 
 			using (DummyFileWriter writer = new DummyFileWriter())
 			{
@@ -905,7 +905,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 		public void UpdateParatextSsfFile_SameFolderAndSpec()
 		{
 			m_scr.Versification = 0; // Should default to English
-			WritingSystem vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			CoreWritingSystemDefinition vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 
 			// The existing file has Exodus and Matthew.
 			string existingSsf =
@@ -1006,7 +1006,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void UpdateParatextSsfFile_DifferentFolderSameSpec()
 		{
-			WritingSystem vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			CoreWritingSystemDefinition vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 
 			// The existing file has a lot of books.
 			string existingSsf =
@@ -1085,7 +1085,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void UpdateParatextSsfFile_NoLanguageSpecified()
 		{
-			WritingSystem vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			CoreWritingSystemDefinition vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 
 			// The existing file has a lot of books.
 			string existingSsf =
@@ -1163,7 +1163,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void UpdateParatextSsfFile_SameFolderDifferentSpec()
 		{
-			WritingSystem vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			CoreWritingSystemDefinition vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 
 			// The existing file has a lot of books.
 			string existingSsf =
@@ -1242,7 +1242,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void UpdateParatextSsfFile_DifferentEncoding()
 		{
-			WritingSystem vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			CoreWritingSystemDefinition vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 
 			// The existing file has a lot of books.
 			string existingSsf =
@@ -1321,7 +1321,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void UpdateParatextSsfFile_BogusFile()
 		{
-			WritingSystem vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			CoreWritingSystemDefinition vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 
 			// The existing file has a lot of books.
 			string existingSsf =
@@ -1390,7 +1390,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void UpdateParatextSsfFile_MissingStylsheetSpecInOrig()
 		{
-			WritingSystem vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			CoreWritingSystemDefinition vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 
 			// The existing file has Exodus and Matthew.
 			string existingSsf =
@@ -1468,7 +1468,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 		public void WriteParatextLdsFile()
 		{
 
-			WritingSystem vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			CoreWritingSystemDefinition vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 
 			DummyUsfmStyEntry normalEntry = new DummyUsfmStyEntry();
 			m_exporter.UsfmEntries.Add(ScrStyleNames.Normal, normalEntry);
@@ -1513,7 +1513,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 		public void WriteParatextLdsFile_BT()
 		{
 
-			WritingSystem wsUr = Cache.ServiceLocator.WritingSystemManager.Get("ur");
+			CoreWritingSystemDefinition wsUr = Cache.ServiceLocator.WritingSystemManager.Get("ur");
 			wsUr.RightToLeftScript = true;
 			string btWsName = wsUr.DisplayLabel;
 
@@ -1561,7 +1561,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 		public void UpdateParatextLdsFile_NoChange()
 		{
 
-			WritingSystem vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			CoreWritingSystemDefinition vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 
 			DummyUsfmStyEntry normalEntry = new DummyUsfmStyEntry();
 			m_exporter.UsfmEntries.Add(ScrStyleNames.Normal, normalEntry);
@@ -1653,7 +1653,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void UpdateParatextLdsFile_UpdateFontAndSizeAndAddRTL()
 		{
-			WritingSystem vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			CoreWritingSystemDefinition vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 
 			DummyUsfmStyEntry normalEntry = new DummyUsfmStyEntry();
 			m_exporter.UsfmEntries.Add(ScrStyleNames.Normal, normalEntry);
@@ -1726,7 +1726,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void UpdateParatextLdsFile_CriticalStuffMissing()
 		{
-			WritingSystem vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			CoreWritingSystemDefinition vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 
 			DummyUsfmStyEntry normalEntry = new DummyUsfmStyEntry();
 			m_exporter.UsfmEntries.Add(ScrStyleNames.Normal, normalEntry);
@@ -1768,7 +1768,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void UpdateParatextLdsFile_GeneralSectionMissing()
 		{
-			WritingSystem vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			CoreWritingSystemDefinition vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 
 			DummyUsfmStyEntry normalEntry = new DummyUsfmStyEntry();
 			m_exporter.UsfmEntries.Add(ScrStyleNames.Normal, normalEntry);

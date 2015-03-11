@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			var window = mediator.PropertyTable.GetValue("window") as FwXWindow;
 			if (window != null)
 				m_styleSheet = window.StyleSheet;
-			WritingSystem wsObj = m_fdoCache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			CoreWritingSystemDefinition wsObj = m_fdoCache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			RightToLeft = wsObj.RightToLeftScript ? RightToLeft.Yes : RightToLeft.No;
 			AutoScroll = true;
 		}

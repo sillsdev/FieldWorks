@@ -14,7 +14,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		LabeledMultiStringVc m_vc;
 		FdoCache m_realCache; // real one we get writing system info from
 		ISilDataAccess m_sda; // one actually used in the view.
-		List<WritingSystem> m_rgws;
+		List<CoreWritingSystemDefinition> m_rgws;
 
 		internal const int khvoRoot = -3045; // arbitrary but recognizeable numbers for debugging.
 		internal const int kflid = 4554;
@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			IsTextBox = true;	// range selection not shown when not in focus
 		}
 
-		public InnerLabeledMultiStringControl(FdoCache cache, List<WritingSystem> wsList)
+		public InnerLabeledMultiStringControl(FdoCache cache, List<CoreWritingSystemDefinition> wsList)
 		{
 			// Ctor for use with a non-standard list of wss (like available UI languages)
 			m_realCache = cache;
@@ -90,7 +90,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Get the number of writing systems being displayed.
 		/// </summary>
-		public List<WritingSystem> WritingSystems
+		public List<CoreWritingSystemDefinition> WritingSystems
 		{
 			get
 			{

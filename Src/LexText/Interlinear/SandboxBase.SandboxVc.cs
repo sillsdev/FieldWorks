@@ -83,7 +83,7 @@ namespace SIL.FieldWorks.IText
 				m_tssMissingWordPos = m_tssMissingMorphPos;
 				m_PulldownArrowPic = VwConstructorServices.ConvertImageToComPicture(ResourceHelper.InterlinPopupArrow);
 				m_dxmpArrowPicWidth = ConvertPictureWidthToMillipoints(m_PulldownArrowPic.Picture);
-				WritingSystem wsObj = caches.MainCache.ServiceLocator.WritingSystemManager.Get(m_sandbox.RawWordformWs);
+				CoreWritingSystemDefinition wsObj = caches.MainCache.ServiceLocator.WritingSystemManager.Get(m_sandbox.RawWordformWs);
 				if (wsObj != null)
 					m_fRtl = wsObj.RightToLeftScript;
 

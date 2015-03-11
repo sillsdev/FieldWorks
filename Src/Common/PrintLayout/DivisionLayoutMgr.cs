@@ -96,7 +96,7 @@ namespace SIL.FieldWorks.Common.PrintLayout
 		/// </summary>
 		private int m_hPageBeingBuilt;
 
-		private WritingSystem m_MainStreamWs;
+		private CoreWritingSystemDefinition m_MainStreamWs;
 		/// <summary>The name used as name of the main layout stream</summary>
 		private string m_Name;
 		/// <summary/>

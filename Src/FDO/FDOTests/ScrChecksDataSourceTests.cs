@@ -148,7 +148,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void GetParameterValue_VerseBridge()
 		{
-			WritingSystem ws = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			CoreWritingSystemDefinition ws = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 
 			ws.RightToLeftScript = true;
 			Assert.AreEqual("\u200f-\u200f", m_dataSource.GetParameterValue("Verse Bridge"));

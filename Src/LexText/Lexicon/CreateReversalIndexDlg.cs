@@ -74,8 +74,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			Set<int> activeWs = new Set<int>(cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Select(wsObj => wsObj.Handle));
 			m_cbWritingSystems.Sorted = true;
 			m_cbWritingSystems.DisplayMember = "Name";
-			WritingSystem selectedWs = null;
-			foreach (WritingSystem ws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
+			CoreWritingSystemDefinition selectedWs = null;
+			foreach (CoreWritingSystemDefinition ws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
 				if (revIdxWs.Contains(ws.Handle))
 				{
@@ -127,7 +127,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// display in the combo box.
 		/// </summary>
 		/// <param name="ws">The ws.</param>
-		private void AddLanguageForExistingRevIdx(WritingSystem ws)
+		private void AddLanguageForExistingRevIdx(CoreWritingSystemDefinition ws)
 		{
 			LanguageSubtag sLang = ws.Language;
 			// LT-4937 : only add if not already present.
@@ -158,7 +158,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					}
 				case DialogResult.OK:
 					{
-						var wsObj = m_cbWritingSystems.SelectedItem as WritingSystem;
+						var wsObj = m_cbWritingSystems.SelectedItem as CoreWritingSystemDefinition;
 						if (wsObj != null)
 						{
 							UndoableUnitOfWorkHelper.Do(LexEdStrings.ksUndoCreateReversalIndex, LexEdStrings.ksRedoCreateReversalIndex,

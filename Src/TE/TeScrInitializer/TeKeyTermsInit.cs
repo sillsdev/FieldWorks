@@ -301,7 +301,7 @@ namespace SIL.FieldWorks.TE
 		{
 			string locale = Cache.WritingSystemFactory.GetStrFromWs(Cache.DefaultUserWs);
 			EnsureCurrentLocalization(locale, null, progressDlg);
-			foreach (WritingSystem ws in Cache.LangProject.AnalysisWritingSystems.Where(w => w.Handle != Cache.DefaultUserWs))
+			foreach (CoreWritingSystemDefinition ws in Cache.LangProject.AnalysisWritingSystems.Where(w => w.Handle != Cache.DefaultUserWs))
 				EnsureCurrentLocalization(ws.IcuLocale, null, progressDlg);
 		}
 
@@ -665,7 +665,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		private int EnsureWritingSystemExists(string wsId, string sAbbrev)
 		{
-			WritingSystem ws;
+			CoreWritingSystemDefinition ws;
 			if (!Cache.ServiceLocator.WritingSystemManager.GetOrSet(wsId, out ws))
 				ws.Abbreviation = sAbbrev;
 			return ws.Handle;

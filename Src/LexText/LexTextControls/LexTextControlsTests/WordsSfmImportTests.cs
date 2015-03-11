@@ -170,7 +170,7 @@ namespace LexTextControlsTests
 		private WritingSystemManager GetWsf()
 		{
 			var wsf = new WritingSystemManager();
-			WritingSystem wsObj;
+			CoreWritingSystemDefinition wsObj;
 			wsf.GetOrSet("qaa-x-kal", out wsObj);
 			EnsureQuoteAndHyphenWordForming(wsObj);
 			return wsf;
@@ -180,7 +180,7 @@ namespace LexTextControlsTests
 		/// NOTE: Copied from SIL.FieldWorks.IText.InterlinSfmImportTests
 		/// </summary>
 		/// <param name="wsObj"></param>
-		private void EnsureQuoteAndHyphenWordForming(WritingSystem wsObj)
+		private void EnsureQuoteAndHyphenWordForming(CoreWritingSystemDefinition wsObj)
 		{
 			ValidCharacters validChars = ValidCharacters.Load(wsObj, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			var fChangedSomething = false;

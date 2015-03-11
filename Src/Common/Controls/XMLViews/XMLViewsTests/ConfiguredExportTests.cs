@@ -24,8 +24,8 @@ namespace XMLViewsTests
 		[Test]
 		public void XHTMLExportGetDigraphMapsFirstCharactersFromICUSortRules()
 		{
-			WritingSystem ws = Cache.LangProject.DefaultVernacularWritingSystem;
-			ws.DefaultCollation = new CollationDefinition("standard") {IcuRules = "&b < az << a < c <<< ch"};
+			CoreWritingSystemDefinition ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			ws.DefaultCollation = new IcuCollationDefinition("standard") {IcuRules = "&b < az << a < c <<< ch"};
 
 			var exporter = new ConfiguredExport(null, null, 0);
 			string output;
@@ -36,7 +36,7 @@ namespace XMLViewsTests
 					exporter.Initialize(Cache, null, writer, null, "xhtml", null, "dicBody");
 					Dictionary<string, string> mapChars;
 					Set<string> ignoreSet;
-					var data = exporter.GetDigraphs(ws.ID, out mapChars, out ignoreSet);
+					var data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet);
 					Assert.AreEqual(mapChars.Count, 2, "Too many characters found equivalents");
 					Assert.AreEqual(mapChars["a"], "az");
 					Assert.AreEqual(mapChars["ch"], "c");
@@ -47,8 +47,8 @@ namespace XMLViewsTests
 		[Test]
 		public void XHTMLExportGetDigraphMapsFromICUSortRules_TertiaryIgnorableDoesNotCrash()
 		{
-			WritingSystem ws = Cache.LangProject.DefaultVernacularWritingSystem;
-			ws.DefaultCollation = new CollationDefinition("standard") {IcuRules = "&[last tertiary ignorable] = \\"};
+			CoreWritingSystemDefinition ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			ws.DefaultCollation = new IcuCollationDefinition("standard") {IcuRules = "&[last tertiary ignorable] = \\"};
 
 			var exporter = new ConfiguredExport(null, null, 0);
 			string output;
@@ -60,10 +60,10 @@ namespace XMLViewsTests
 					Dictionary<string, string> mapChars = null;
 					Set<string> ignoreSet = null;
 					Set<string> data = null;
-					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws.ID, out mapChars, out ignoreSet));
+					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet));
 					// The second test catches the real world scenario, GetDigraphs is actually called many times, but the first time
 					// is the only one that should trigger the algorithm, afterward the information is cached in the exporter.
-					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws.ID, out mapChars, out ignoreSet));
+					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet));
 					Assert.AreEqual(mapChars.Count, 0, "Too many characters found equivalents");
 					Assert.AreEqual(ignoreSet.Count, 1, "Ignorable character not parsed from rule");
 				}
@@ -73,8 +73,8 @@ namespace XMLViewsTests
 		[Test]
 		public void XHTMLExportGetDigraphMapsFromICUSortRules_UnicodeTertiaryIgnorableWorks()
 		{
-			WritingSystem ws = Cache.LangProject.DefaultVernacularWritingSystem;
-			ws.DefaultCollation = new CollationDefinition("standard") {IcuRules = "&[last tertiary ignorable] = \\uA78C"};
+			CoreWritingSystemDefinition ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			ws.DefaultCollation = new IcuCollationDefinition("standard") {IcuRules = "&[last tertiary ignorable] = \\uA78C"};
 
 			var exporter = new ConfiguredExport(null, null, 0);
 			string output;
@@ -86,7 +86,7 @@ namespace XMLViewsTests
 					Dictionary<string, string> mapChars = null;
 					Set<string> ignoreSet = null;
 					Set<string> data = null;
-					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws.ID, out mapChars, out ignoreSet));
+					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet));
 					Assert.AreEqual(mapChars.Count, 0, "Too many characters found equivalents");
 					Assert.AreEqual(ignoreSet.Count, 1, "Ignorable character not parsed from rule");
 					Assert.IsTrue(ignoreSet.Contains('\uA78C'.ToString(CultureInfo.InvariantCulture)));
@@ -97,7 +97,7 @@ namespace XMLViewsTests
 		[Test]
 		public void XHTMLExportGetDigraphMapsFirstCharactersFromToolboxSortRules()
 		{
-			WritingSystem ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			CoreWritingSystemDefinition ws = Cache.LangProject.DefaultVernacularWritingSystem;
 			ws.DefaultCollation = new SimpleCollationDefinition("standard") {SimpleRules = "b" + Environment.NewLine + "az a" + Environment.NewLine + "c ch"};
 
 			var exporter = new ConfiguredExport(null, null, 0);
@@ -109,7 +109,7 @@ namespace XMLViewsTests
 					exporter.Initialize(Cache, null, writer, null, "xhtml", null, "dicBody");
 					Dictionary<string, string> mapChars;
 					Set<string> ignoreSet;
-					var data = exporter.GetDigraphs(ws.ID, out mapChars, out ignoreSet);
+					var data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet);
 					Assert.AreEqual(mapChars.Count, 2, "Too many characters found equivalents");
 					Assert.AreEqual(mapChars["a"], "az");
 					Assert.AreEqual(mapChars["ch"], "c");
@@ -127,8 +127,8 @@ namespace XMLViewsTests
 		[Test]
 		public void XHTMLExportGetDigraphMapsFirstCharactersFromOtherSortRules()
 		{
-			WritingSystem ws = Cache.LangProject.DefaultVernacularWritingSystem;
-			ws.DefaultCollation = new InheritedCollationDefinition("standard") {BaseIetfLanguageTag = "fr", BaseType = "standard"};
+			CoreWritingSystemDefinition ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			ws.DefaultCollation = new IcuCollationDefinition("standard") {Imports = {new IcuCollationImport("fr")}};
 
 			var exporter = new ConfiguredExport(null, null, 0);
 			string output;
@@ -139,7 +139,7 @@ namespace XMLViewsTests
 					exporter.Initialize(Cache, null, writer, null, "xhtml", null, "dicBody");
 					Dictionary<string, string> mapChars;
 					Set<string> ignoreSet;
-					var data = exporter.GetDigraphs(ws.ID, out mapChars, out ignoreSet);
+					var data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet);
 					Assert.AreEqual(mapChars.Count, 0, "No equivalents expected");
 				}
 			}

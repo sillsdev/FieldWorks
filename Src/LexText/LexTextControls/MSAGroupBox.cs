@@ -517,7 +517,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
 			int defUserWs = m_cache.ServiceLocator.WritingSystemManager.UserWs;
-			WritingSystem defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+			CoreWritingSystemDefinition defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			string defAnalWsFont = defAnalWs.DefaultFontName;
 
 			m_fwcbAffixTypes.WritingSystemFactory = m_cache.WritingSystemFactory;

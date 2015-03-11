@@ -305,7 +305,7 @@ namespace SIL.FieldWorks.TE
 			}
 			if (m_shortName == null)
 			{
-				WritingSystem wsVern = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+				CoreWritingSystemDefinition wsVern = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 				string abbr = wsVern.Abbreviation;
 				if (abbr != null && !abbr.Contains("***"))
 					m_shortName = abbr.Trim();

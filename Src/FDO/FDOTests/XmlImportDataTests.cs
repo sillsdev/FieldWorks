@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			{
 				if (m_cache.LangProject.DefaultVernacularWritingSystem == null)
 				{
-					List<WritingSystem> rglgws = m_cache.ServiceLocator.WritingSystemManager.LocalWritingSystems.ToList();
+					List<CoreWritingSystemDefinition> rglgws = m_cache.ServiceLocator.WritingSystemManager.WritingSystems.ToList();
 					if (rglgws.Count > 0)
 					{
 						m_cache.DomainDataByFlid.BeginNonUndoableTask();
@@ -384,14 +384,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			{
 			StringBuilder sbLog = new StringBuilder();
 			xid.ImportData(rdr, new StringWriter(sbLog), null);
-			WritingSystem wsEn = m_cache.ServiceLocator.WritingSystemManager.Get("en");
+			CoreWritingSystemDefinition wsEn = m_cache.ServiceLocator.WritingSystemManager.Get("en");
 			Assert.AreEqual(1, m_cache.LangProject.LexDbOA.ReversalIndexesOC.Count);
 			IReversalIndex revIdx = m_cache.LangProject.LexDbOA.ReversalIndexesOC.ToArray()[0];
 			IMultiUnicode mu = revIdx.Name;
 			Assert.AreEqual(1, mu.StringCount);
 			ITsString tss = mu.get_String(wsEn.Handle);
 			Assert.AreEqual("English Index", tss.Text);
-			Assert.AreEqual(wsEn.ID, revIdx.WritingSystem);
+			Assert.AreEqual(wsEn.Id, revIdx.WritingSystem);
 			Assert.AreEqual(1, revIdx.EntriesOC.Count);
 			IReversalIndexEntry revEntry = revIdx.EntriesOC.ToArray()[0];
 			mu = revEntry.ReversalForm;

@@ -832,7 +832,7 @@ namespace SIL.FieldWorks.FDO
 		/// <param name="alternativeWs">The WS of the alternative that was changed</param>
 		/// <param name="originalValue">Original value. (May be null.)</param>
 		/// <param name="newValue">New value. (May be null.)</param>
-		void ITsStringAltChangedSideEffects(int multiAltFlid, WritingSystem alternativeWs, ITsString originalValue, ITsString newValue);
+		void ITsStringAltChangedSideEffects(int multiAltFlid, CoreWritingSystemDefinition alternativeWs, ITsString originalValue, ITsString newValue);
 
 		/// <summary>
 		/// (Re)-Set owner in new field.
@@ -1517,19 +1517,19 @@ namespace SIL.FieldWorks.FDO
 		/// Gets all writing systems.
 		/// </summary>
 		/// <value>All writing systems.</value>
-		IEnumerable<WritingSystem> AllWritingSystems { get; }
+		IEnumerable<CoreWritingSystemDefinition> AllWritingSystems { get; }
 
 		/// <summary>
 		/// Gets the analysis writing systems.
 		/// </summary>
 		/// <value>The analysis writing systems.</value>
-		ICollection<WritingSystem> AnalysisWritingSystems { get; }
+		ICollection<CoreWritingSystemDefinition> AnalysisWritingSystems { get; }
 
 		/// <summary>
 		/// Gets the vernacular writing systems.
 		/// </summary>
 		/// <value>The vernacular writing systems.</value>
-		ICollection<WritingSystem> VernacularWritingSystems { get; }
+		ICollection<CoreWritingSystemDefinition> VernacularWritingSystems { get; }
 
 		/// <summary>
 		/// Gets the current analysis writing systems. Please don't Add directly to
@@ -1537,7 +1537,7 @@ namespace SIL.FieldWorks.FDO
 		/// from this list, please first remove from AnalysisWritingSystems.
 		/// </summary>
 		/// <value>The current analysis writing systems.</value>
-		IList<WritingSystem> CurrentAnalysisWritingSystems { get; }
+		IList<CoreWritingSystemDefinition> CurrentAnalysisWritingSystems { get; }
 
 		/// <summary>
 		/// Gets the current vernacular writing systems. Please don't Add directly to
@@ -1545,45 +1545,45 @@ namespace SIL.FieldWorks.FDO
 		/// from this list, please first remove from VernacularWritingSystems.
 		/// </summary>
 		/// <value>The current vernacular writing systems.</value>
-		IList<WritingSystem> CurrentVernacularWritingSystems { get; }
+		IList<CoreWritingSystemDefinition> CurrentVernacularWritingSystems { get; }
 
 		/// <summary>
 		/// Gets the current pronunciation writing systems.
 		/// </summary>
 		/// <value>The current pronunciation writing systems.</value>
-		IList<WritingSystem> CurrentPronunciationWritingSystems { get; }
+		IList<CoreWritingSystemDefinition> CurrentPronunciationWritingSystems { get; }
 
 		/// <summary>
 		/// Gets the default analysis writing system.
 		/// </summary>
 		/// <value>The default analysis writing system.</value>
-		WritingSystem DefaultAnalysisWritingSystem { get; set; }
+		CoreWritingSystemDefinition DefaultAnalysisWritingSystem { get; set; }
 
 		/// <summary>
 		/// Gets the default vernacular writing system.
 		/// </summary>
 		/// <value>The default vernacular writing system.</value>
-		WritingSystem DefaultVernacularWritingSystem { get; set; }
+		CoreWritingSystemDefinition DefaultVernacularWritingSystem { get; set; }
 
 		/// <summary>
 		/// Gets the default pronunciation writing system.
 		/// </summary>
 		/// <value>The default pronunciation writing system.</value>
-		WritingSystem DefaultPronunciationWritingSystem { get; }
+		CoreWritingSystemDefinition DefaultPronunciationWritingSystem { get; }
 
 		/// <summary>
 		/// Adds the given writing system to the current analysis writing systems
 		/// and also to the collection of all analysis writing systems if necessary.
 		/// </summary>
 		/// <param name="ws">The writing system to add.</param>
-		void AddToCurrentAnalysisWritingSystems(WritingSystem ws);
+		void AddToCurrentAnalysisWritingSystems(CoreWritingSystemDefinition ws);
 
 		/// <summary>
 		/// Adds the given writing system to the current vernacular writing systems
 		/// and also to the collection of all vernacular writing systems if necessary.
 		/// </summary>
 		/// <param name="ws">The writing system to add.</param>
-		void AddToCurrentVernacularWritingSystems(WritingSystem ws);
+		void AddToCurrentVernacularWritingSystems(CoreWritingSystemDefinition ws);
 	}
 	#endregion
 

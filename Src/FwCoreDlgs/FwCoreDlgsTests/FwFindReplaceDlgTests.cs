@@ -499,7 +499,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
-			WritingSystem ws;
+			CoreWritingSystemDefinition ws;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("en-fonipa-x-etic", out ws);
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("es", out ws);
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("de", out ws);
@@ -591,8 +591,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	[TestFixture]
 	public class FwFindReplaceDlgTests : FwFindReplaceDlgBaseTests
 	{
-		private WritingSystem m_wsFr;
-		private WritingSystem m_wsIpa;
+		private CoreWritingSystemDefinition m_wsFr;
+		private CoreWritingSystemDefinition m_wsIpa;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

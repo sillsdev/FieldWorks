@@ -26,7 +26,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			m_wsManager = new WritingSystemManager();
 
 			// setup English ws.
-			WritingSystem enWs;
+			CoreWritingSystemDefinition enWs;
 			m_wsManager.GetOrSet("en", out enWs);
 			m_hvoEnglishWs = enWs.Handle;
 		}

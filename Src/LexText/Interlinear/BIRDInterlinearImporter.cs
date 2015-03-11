@@ -501,7 +501,7 @@ namespace SIL.FieldWorks.IText
 							result = (DialogResult)progress.SynchronizeInvoke.EndInvoke(asyncResult);
 							if (result == DialogResult.OK)
 							{
-								cache.LanguageProject.AddToCurrentVernacularWritingSystems((WritingSystem) writingSystem);
+								cache.LanguageProject.AddToCurrentVernacularWritingSystems((CoreWritingSystemDefinition) writingSystem);
 							}
 							else if (result == DialogResult.Cancel)
 							{
@@ -528,9 +528,9 @@ namespace SIL.FieldWorks.IText
 							if (result == DialogResult.OK)
 							{
 								//alert the user
-								cache.LanguageProject.AddToCurrentAnalysisWritingSystems((WritingSystem) writingSystem);
+								cache.LanguageProject.AddToCurrentAnalysisWritingSystems((CoreWritingSystemDefinition) writingSystem);
 								// We already have progress indications up.
-								XmlTranslatedLists.ImportTranslatedListsForWs(writingSystem.ID, cache, FwDirectoryFinder.TemplateDirectory, null);
+								XmlTranslatedLists.ImportTranslatedListsForWs(writingSystem.Id, cache, FwDirectoryFinder.TemplateDirectory, null);
 							}
 							else if (result == DialogResult.Cancel)
 							{
@@ -632,7 +632,7 @@ namespace SIL.FieldWorks.IText
 			}
 			catch (ArgumentException e)
 			{
-				WritingSystem ws;
+				CoreWritingSystemDefinition ws;
 				WritingSystemServices.FindOrCreateSomeWritingSystem(cache, FwDirectoryFinder.TemplateDirectory, lang.lang,
 					!fIsVernacular, fIsVernacular, out ws);
 				writingSystem = ws;

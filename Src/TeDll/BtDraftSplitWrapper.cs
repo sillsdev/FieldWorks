@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.TE
 	public class BtDraftSplitWrapper: ViewWrapper
 	{
 		#region Member variables
-		private WritingSystem m_VernWs;
+		private CoreWritingSystemDefinition m_VernWs;
 		private IContainer m_Container;
 		private DraftView m_mainDraftView;
 		private DraftView m_mainBtView;

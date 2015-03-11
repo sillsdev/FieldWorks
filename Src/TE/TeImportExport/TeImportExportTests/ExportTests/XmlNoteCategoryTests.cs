@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 		{
 			base.FixtureSetup();
 
-			WritingSystem wsEs;
+			CoreWritingSystemDefinition wsEs;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("es", out wsEs);
 			m_wsSpanish = wsEs.Handle;
 			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () => Cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Add(wsEs));

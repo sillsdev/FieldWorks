@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -543,11 +544,13 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			WritingSystemManager wsManager = m_cache.ServiceLocator.WritingSystemManager;
 			foreach (string wsId in wssStr.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries))
 			{
-				WritingSystem ws;
+				CoreWritingSystemDefinition ws;
 				wsManager.GetOrSet(wsId, out ws);
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "globalRepo disposed by SingletonsContainer")]
 		private void InitializeWritingSystemManager()
 		{
 			// if there is no project path specified, then just use the default memory-based manager.
@@ -555,21 +558,20 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			if (UseMemoryWritingSystemManager || string.IsNullOrEmpty(ProjectId.SharedProjectFolder))
 				return;
 
-			var globalStore = new GlobalFileWritingSystemStore();
+			var globalRepo = SingletonsContainer.Get<CoreGlobalWritingSystemRepository>();
 			string storePath = Path.Combine(ProjectId.SharedProjectFolder, FdoFileHelper.ksWritingSystemsDir);
 			WritingSystemManager wsManager = m_cache.ServiceLocator.WritingSystemManager;
-			wsManager.GlobalWritingSystemStore = globalStore;
 
 			// TODO (WS_FIX): migrate LocalKeyboards from CoreImpl settings
-			ICustomDataMapper[] customDataMappers =
+			ICustomDataMapper<CoreWritingSystemDefinition>[] customDataMappers =
 			{
 				new ProjectSettingsWritingSystemDataMapper(new FileSettingsStore(Path.Combine(ProjectId.SharedProjectFolder, FdoFileHelper.ksLexiconProjectSettingsFilename))),
 				new UserSettingsWritingSystemDataMapper(new FileSettingsStore(Path.Combine(FdoFileHelper.GetConfigSettingsDir(ProjectId.SharedProjectFolder), FdoFileHelper.ksLexiconUserSettingsFilename)))
 			};
-			wsManager.LocalWritingSystemStore = new LocalFileWritingSystemStore(storePath, customDataMappers, globalStore);
+			wsManager.WritingSystemStore = new CoreLdmlInFolderWritingSystemRepository(storePath, customDataMappers, globalRepo);
 
 			// Writing systems are not "modified" when the system is freshly-initialized
-			foreach (var ws in wsManager.LocalWritingSystemStore.AllWritingSystems)
+			foreach (var ws in wsManager.WritingSystemStore.AllWritingSystems)
 				ws.AcceptChanges();
 		}
 

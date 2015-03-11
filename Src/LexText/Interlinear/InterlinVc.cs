@@ -240,7 +240,7 @@ namespace SIL.FieldWorks.IText
 
 		private void SetupRightToLeft(int wsVern)
 		{
-			WritingSystem wsObj = m_wsManager.Get(wsVern);
+			CoreWritingSystemDefinition wsObj = m_wsManager.Get(wsVern);
 			if (wsObj != null)
 				m_fRtl = wsObj.RightToLeftScript;
 			if (m_fRtl)
@@ -1186,7 +1186,7 @@ namespace SIL.FieldWorks.IText
 		/// <returns></returns>
 		private ITsString GetTssDirForWs(int ws)
 		{
-			WritingSystem wsObj = m_wsManager.Get(ws);
+			CoreWritingSystemDefinition wsObj = m_wsManager.Get(ws);
 			ITsString tssDirWs;
 			if (!m_mapWsDirTss.TryGetValue(wsObj, out tssDirWs))
 			{
@@ -1299,7 +1299,7 @@ namespace SIL.FieldWorks.IText
 				case WritingSystemServices.kwsReversalIndex:
 					return false;
 			}
-			WritingSystem wsObj = m_wsManager.Get(ws);
+			CoreWritingSystemDefinition wsObj = m_wsManager.Get(ws);
 			if (m_cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Contains(wsObj))
 				return !m_cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Contains(wsObj);
 			else

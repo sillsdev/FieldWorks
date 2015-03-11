@@ -1,9 +1,8 @@
-using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using NUnit.Framework;
@@ -32,6 +31,19 @@ namespace SIL.CoreImpl
 			public void SaveSettings(XElement settingsElem)
 			{
 				m_settings = settingsElem;
+			}
+		}
+
+		private class TestCoreLdmlInFolderWritingSystemRepository : CoreLdmlInFolderWritingSystemRepository
+		{
+			public TestCoreLdmlInFolderWritingSystemRepository(string path, IEnumerable<ICustomDataMapper<CoreWritingSystemDefinition>> customDataMappers,
+				CoreGlobalWritingSystemRepository globalRepository = null) : base(path, customDataMappers, globalRepository)
+			{
+			}
+
+			protected override IWritingSystemFactory<CoreWritingSystemDefinition> CreateWritingSystemFactory()
+			{
+				return new CoreWritingSystemFactory();
 			}
 		}
 
@@ -79,13 +91,13 @@ namespace SIL.CoreImpl
 			var projectSettingsStore = new TestSettingsStore();
 			var userSettingsStore = new TestSettingsStore();
 			// serialize
-			var wsManager = new WritingSystemManager(new LocalFileWritingSystemStore(storePath, new ICustomDataMapper[]
+			var wsManager = new WritingSystemManager(new TestCoreLdmlInFolderWritingSystemRepository(storePath, new ICustomDataMapper<CoreWritingSystemDefinition>[]
 			{
 				new ProjectSettingsWritingSystemDataMapper(projectSettingsStore),
 				new UserSettingsWritingSystemDataMapper(userSettingsStore)
-			}, null));
-			WritingSystem ws = wsManager.Set("en-US");
-			ws.SpellCheckingID = "en_US";
+			}));
+			CoreWritingSystemDefinition ws = wsManager.Set("en-US");
+			ws.SpellCheckingId = "en_US";
 			ws.MatchedPairs.Add(new MatchedPair("(", ")", true));
 			ws.WindowsLcid = 0x409.ToString(CultureInfo.InvariantCulture);
 			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"a", "b", "c"}});
@@ -93,16 +105,16 @@ namespace SIL.CoreImpl
 			wsManager.Save();
 
 			// deserialize
-			wsManager = new WritingSystemManager(new LocalFileWritingSystemStore(storePath, new ICustomDataMapper[]
+			wsManager = new WritingSystemManager(new TestCoreLdmlInFolderWritingSystemRepository(storePath, new ICustomDataMapper<CoreWritingSystemDefinition>[]
 			{
 				new ProjectSettingsWritingSystemDataMapper(projectSettingsStore),
 				new UserSettingsWritingSystemDataMapper(userSettingsStore)
-			}, null));
+			}));
 			Assert.IsTrue(wsManager.Exists("en-US"));
 			ws = wsManager.Get("en-US");
 			Assert.AreEqual("Eng", ws.Abbreviation);
 			Assert.AreEqual("English", ws.Language.Name);
-			Assert.AreEqual("en_US", ws.SpellCheckingID);
+			Assert.AreEqual("en_US", ws.SpellCheckingId);
 			Assert.AreEqual("United States", ws.Region.Name);
 			Assert.That(ws.MatchedPairs, Is.EqualTo(new[] {new MatchedPair("(", ")", true)}));
 			Assert.AreEqual(0x409.ToString(CultureInfo.InvariantCulture), ws.WindowsLcid);
@@ -113,122 +125,13 @@ namespace SIL.CoreImpl
 		}
 
 		/// <summary>
-		/// Tests the global store.
-		/// </summary>
-		[Test]
-		public void GlobalStore()
-		{
-			string storePath1 = PrepareTempStore("Store1");
-			string storePath2 = PrepareTempStore("Store2");
-			string globalStorePath = PrepareTempStore("GlobalStore");
-
-			var globalStore = new GlobalFileWritingSystemStore(globalStorePath);
-			var wsManager = new WritingSystemManager(
-				new LocalFileWritingSystemStore(storePath1, Enumerable.Empty<ICustomDataMapper>(), globalStore), globalStore);
-			var ws = wsManager.Set("en-US");
-			ws.RightToLeftScript = true;
-			wsManager.Save();
-			Assert.IsTrue(File.Exists(Path.Combine(storePath1, "en-US.ldml")));
-			Assert.IsTrue(File.Exists(Path.Combine(globalStorePath, "en-US.ldml")));
-
-			Thread.Sleep(1000);
-
-			DateTime lastModified = File.GetLastWriteTime(Path.Combine(globalStorePath, "en-US.ldml"));
-			wsManager = new WritingSystemManager(
-				new LocalFileWritingSystemStore(storePath2, Enumerable.Empty<ICustomDataMapper>(), globalStore), globalStore);
-			ws = wsManager.Set("en-US");
-			ws.RightToLeftScript = false;
-			wsManager.Save();
-			Assert.Less(lastModified, File.GetLastWriteTime(Path.Combine(globalStorePath, "en-US.ldml")));
-
-			lastModified = File.GetLastWriteTime(Path.Combine(storePath1, "en-US.ldml"));
-			wsManager = new WritingSystemManager(
-				new LocalFileWritingSystemStore(storePath1, Enumerable.Empty<ICustomDataMapper>(), globalStore), globalStore);
-			ws = wsManager.Get("en-US");
-			Assert.That(ws.RightToLeftScript, Is.True);
-			WritingSystem[] sharedWss = wsManager.CheckForNewerGlobalWritingSystems().ToArray();
-			Assert.AreEqual(1, sharedWss.Length);
-			WritingSystem sharedWs = sharedWss[0];
-			Assert.AreEqual("en-US", sharedWs.ID);
-			wsManager.Replace(sharedWs);
-			wsManager.Save();
-
-			ws = wsManager.Get("en-US");
-			Assert.That(ws.RightToLeftScript, Is.False);
-			Assert.Less(lastModified, File.GetLastWriteTime(Path.Combine(storePath1, "en-US.ldml")));
-		}
-
-		/// <summary>
-		/// Tests the global store.
-		/// </summary>
-		[Test]
-		public void GlobalStore_WritingSystemsToIgnore()
-		{
-			string storePath1 = PrepareTempStore("Store1");
-			string storePath2 = PrepareTempStore("Store2");
-			string globalStorePath = PrepareTempStore("GlobalStore");
-
-			var globalStore = new GlobalFileWritingSystemStore(globalStorePath);
-			var wsManager = new WritingSystemManager(
-				new LocalFileWritingSystemStore(storePath1, Enumerable.Empty<ICustomDataMapper>(), globalStore), globalStore);
-			var ws = wsManager.Set("en-US");
-			ws.RightToLeftScript = true;
-			wsManager.Save();
-
-			Thread.Sleep(1000);
-
-			wsManager = new WritingSystemManager(
-				new LocalFileWritingSystemStore(storePath2, Enumerable.Empty<ICustomDataMapper>(), globalStore), globalStore);
-			ws = wsManager.Set("en-US");
-			ws.RightToLeftScript = false;
-			wsManager.Save();
-
-			wsManager = new WritingSystemManager(
-				new LocalFileWritingSystemStore(storePath1, Enumerable.Empty<ICustomDataMapper>(), globalStore), globalStore);
-			WritingSystem[] sharedWss = wsManager.CheckForNewerGlobalWritingSystems().ToArray();
-			Assert.AreEqual(1, sharedWss.Length);
-			Assert.AreEqual("en-US", sharedWss[0].ID);
-			ws = wsManager.Get("en-US");
-			Assert.That(ws.RightToLeftScript, Is.True);
-			wsManager.Save();
-
-			wsManager = new WritingSystemManager(
-				new LocalFileWritingSystemStore(storePath1, Enumerable.Empty<ICustomDataMapper>(), globalStore), globalStore);
-			sharedWss = wsManager.CheckForNewerGlobalWritingSystems().ToArray();
-			Assert.AreEqual(0, sharedWss.Length);
-			wsManager.Save();
-
-			Thread.Sleep(1000);
-
-			wsManager = new WritingSystemManager(
-				new LocalFileWritingSystemStore(storePath2, Enumerable.Empty<ICustomDataMapper>(), globalStore), globalStore);
-			ws = wsManager.Get("en-US");
-			ws.CharacterSets.Add(new CharacterSetDefinition("main"));
-			wsManager.Save();
-
-			wsManager = new WritingSystemManager(
-				new LocalFileWritingSystemStore(storePath1, Enumerable.Empty<ICustomDataMapper>(), globalStore), globalStore);
-			ws = wsManager.Get("en-US");
-			Assert.That(ws.CharacterSets, Is.Empty);
-			sharedWss = wsManager.CheckForNewerGlobalWritingSystems().ToArray();
-			Assert.AreEqual(1, sharedWss.Length);
-			WritingSystem sharedWs = sharedWss[0];
-			Assert.AreEqual("en-US", sharedWs.ID);
-			wsManager.Replace(sharedWs);
-			wsManager.Save();
-			ws = wsManager.Get("en-US");
-			Assert.That(ws.CharacterSets.Count, Is.EqualTo(1));
-			Assert.That(ws.CharacterSets[0].Type, Is.EqualTo("main"));
-		}
-
-		/// <summary>
 		/// Tests the get_Engine method.
 		/// </summary>
 		[Test]
 		public void get_Engine()
 		{
 			var wsManager = new WritingSystemManager();
-			WritingSystem enWs = wsManager.Set("en-US");
+			CoreWritingSystemDefinition enWs = wsManager.Set("en-US");
 			ILgWritingSystem enLgWs = wsManager.get_Engine("en-US");
 			Assert.AreSame(enWs, enLgWs);
 
@@ -237,7 +140,7 @@ namespace SIL.CoreImpl
 			ILgWritingSystem enUsLgWs = wsManager.get_Engine("en-US-fonipa");
 			Assert.IsTrue(wsManager.Exists("en-US-fonipa"));
 			Assert.IsTrue(wsManager.Exists(enUsLgWs.Handle));
-			WritingSystem enUsWs = wsManager.Get("en-US-fonipa");
+			CoreWritingSystemDefinition enUsWs = wsManager.Get("en-US-fonipa");
 			Assert.AreSame(enUsWs, enUsLgWs);
 			wsManager.Save();
 		}
@@ -250,7 +153,7 @@ namespace SIL.CoreImpl
 		{
 			var wsManager = new WritingSystemManager();
 			Assert.IsNull(wsManager.get_EngineOrNull(1));
-			WritingSystem ws = wsManager.Set("en-US");
+			CoreWritingSystemDefinition ws = wsManager.Set("en-US");
 			Assert.AreSame(ws, wsManager.get_EngineOrNull(ws.Handle));
 			wsManager.Save();
 		}
@@ -263,7 +166,7 @@ namespace SIL.CoreImpl
 		{
 			var wsManager = new WritingSystemManager();
 			Assert.AreEqual(0, wsManager.GetWsFromStr("en-US"));
-			WritingSystem ws = wsManager.Set("en-US");
+			CoreWritingSystemDefinition ws = wsManager.Set("en-US");
 			Assert.AreEqual(ws.Handle, wsManager.GetWsFromStr("en-US"));
 			wsManager.Save();
 		}
@@ -276,7 +179,7 @@ namespace SIL.CoreImpl
 		{
 			var wsManager = new WritingSystemManager();
 			Assert.IsNull(wsManager.GetStrFromWs(1));
-			WritingSystem ws = wsManager.Set("en-US");
+			CoreWritingSystemDefinition ws = wsManager.Set("en-US");
 			Assert.AreEqual("en-US", wsManager.GetStrFromWs(ws.Handle));
 			wsManager.Save();
 		}
@@ -288,21 +191,24 @@ namespace SIL.CoreImpl
 		public void Create()
 		{
 			var wsManager = new WritingSystemManager();
-			WritingSystem enWs = wsManager.Create("en-Latn-US-fonipa");
-			Assert.AreEqual("Eng", enWs.Abbreviation);
-			Assert.AreEqual("English", enWs.Language.Name);
-			Assert.AreEqual("Latin", enWs.Script.Name);
-			Assert.AreEqual("United States", enWs.Region.Name);
-			Assert.AreEqual("International Phonetic Alphabet", enWs.Variants[0].Name);
-			Assert.That(string.IsNullOrEmpty(enWs.WindowsLcid), Is.True);
+			CoreWritingSystemDefinition enWS = wsManager.Create("en-Latn-US-fonipa");
+			Assert.AreEqual("Eng", enWS.Abbreviation);
+			Assert.AreEqual("English", enWS.Language.Name);
+			Assert.AreEqual("Latin", enWS.Script.Name);
+			Assert.AreEqual("United States", enWS.Region.Name);
+			Assert.AreEqual("International Phonetic Alphabet", enWS.Variants[0].Name);
+			Assert.That(enWS.DefaultFontName, Is.EqualTo("Charis SIL"));
+			Assert.That(enWS.DefaultCollation.ValueEquals(new IcuCollationDefinition("standard")), Is.True);
+			Assert.That(enWS.IetfLanguageTag, Is.EqualTo("en-US-fonipa"));
+			Assert.That(string.IsNullOrEmpty(enWS.WindowsLcid), Is.True);
 
-			WritingSystem chWs = wsManager.Create("zh-CN");
-			Assert.AreEqual("Chi", chWs.Abbreviation);
-			Assert.AreEqual("Chinese", chWs.Language.Name);
-			Assert.AreEqual("China", chWs.Region.Name);
-			Assert.AreEqual("Charis SIL", chWs.DefaultFontName);
-			Assert.That(chWs.DefaultCollation.ValueEquals(new InheritedCollationDefinition("standard") {BaseIetfLanguageTag = "zh-CN", BaseType = "standard"}), Is.True);
-			wsManager.Save();
+			CoreWritingSystemDefinition chWS = wsManager.Create("zh-CN");
+			Assert.AreEqual("Chi", chWS.Abbreviation);
+			Assert.That(chWS.Script, Is.Null);
+			Assert.AreEqual("Chinese", chWS.Language.Name);
+			Assert.AreEqual("China", chWS.Region.Name);
+			Assert.That(chWS.DefaultFontName, Is.EqualTo("Charis SIL"));
+			Assert.That(chWS.DefaultCollation.ValueEquals(new IcuCollationDefinition("standard")), Is.True);
 		}
 
 		/// <summary>
@@ -317,7 +223,7 @@ namespace SIL.CoreImpl
 				try
 				{
 					var wsManager = new WritingSystemManager();
-					WritingSystem ws = wsManager.Set("en-US");
+					CoreWritingSystemDefinition ws = wsManager.Set("en-US");
 					var chrp = new LgCharRenderProps { ws = ws.Handle, szFaceName = new ushort[32] };
 					MarshalEx.StringToUShort("Arial", chrp.szFaceName);
 					IRenderEngine engine = wsManager.get_RendererFromChrp(gm.VwGraphics, ref chrp);
@@ -346,7 +252,7 @@ namespace SIL.CoreImpl
 				{
 					var wsManager = new WritingSystemManager();
 					// by default Graphite is disabled
-					WritingSystem ws = wsManager.Set("en-US");
+					CoreWritingSystemDefinition ws = wsManager.Set("en-US");
 					var chrp = new LgCharRenderProps { ws = ws.Handle, szFaceName = new ushort[32] };
 					MarshalEx.StringToUShort("Charis SIL", chrp.szFaceName);
 					IRenderEngine engine = wsManager.get_RendererFromChrp(gm.VwGraphics, ref chrp);
@@ -375,7 +281,7 @@ namespace SIL.CoreImpl
 		public void InterpretChrp()
 		{
 			var wsManager = new WritingSystemManager();
-			WritingSystem ws = wsManager.Create("en-US");
+			CoreWritingSystemDefinition ws = wsManager.Create("en-US");
 			var chrp = new LgCharRenderProps
 				{
 					ws = ws.Handle,
@@ -409,7 +315,7 @@ namespace SIL.CoreImpl
 		public void get_CharPropEngine()
 		{
 			var wsManager = new WritingSystemManager();
-			WritingSystem ws = wsManager.Set("zh-CN");
+			CoreWritingSystemDefinition ws = wsManager.Set("zh-CN");
 			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"e", "f", "g", "h", "'"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") {Characters = {"4", "5"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {",", "!", "*"}});
@@ -432,11 +338,11 @@ namespace SIL.CoreImpl
 		public void GetOrSetWorksRepeatedlyOnIdNeedingModification()
 		{
 			var wsManager = new WritingSystemManager();
-			WritingSystem ws;
-			Assert.That(wsManager.GetOrSet("x-kal", out ws), Is.False);
-			Assert.That(ws.ID, Is.EqualTo("qaa-x-kal"));
-			WritingSystem ws2;
-			Assert.That(wsManager.GetOrSet("x-kal", out ws2), Is.True);
+			CoreWritingSystemDefinition ws;
+			Assert.That(wsManager.GetOrSet("en-Latn", out ws), Is.False);
+			Assert.That(ws.Id, Is.EqualTo("en"));
+			CoreWritingSystemDefinition ws2;
+			Assert.That(wsManager.GetOrSet("en-Latn", out ws2), Is.True);
 			Assert.That(ws2, Is.EqualTo(ws));
 
 			// By the way it should work the same for one where it does not have to modify the ID.
@@ -452,15 +358,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void GetValidLangCodeForNewLang()
 		{
-			string storePath = PrepareTempStore("Store");
-			string globalStorePath = PrepareTempStore("GlobalStore");
-
-			EnsureDirectoryIsEmpty(storePath);
-			EnsureDirectoryIsEmpty(globalStorePath);
-
-			var globalStore = new GlobalFileWritingSystemStore(globalStorePath);
-			var wsManager = new WritingSystemManager(
-				new LocalFileWritingSystemStore(storePath, Enumerable.Empty<ICustomDataMapper>(), globalStore), globalStore);
+			var wsManager = new WritingSystemManager();
 
 			Assert.AreEqual("qip", wsManager.GetValidLangTagForNewLang("Qipkey"));
 			Assert.AreEqual("sn", wsManager.GetValidLangTagForNewLang("Sn"));
@@ -470,7 +368,7 @@ namespace SIL.CoreImpl
 			Assert.AreEqual("aaa", wsManager.GetValidLangTagForNewLang("U"));
 
 			var subtag = new LanguageSubtag("qip", "Qipkey");
-			WritingSystem newWs = wsManager.Create(subtag, null, null, Enumerable.Empty<VariantSubtag>());
+			CoreWritingSystemDefinition newWs = wsManager.Create(subtag, null, null, Enumerable.Empty<VariantSubtag>());
 			wsManager.Set(newWs);
 			Assert.AreEqual("aaa", wsManager.GetValidLangTagForNewLang("Qipsing"), "code for 'qip' should already be taken");
 
@@ -479,25 +377,17 @@ namespace SIL.CoreImpl
 			wsManager.Set(newWs);
 			Assert.AreEqual("aab", wsManager.GetValidLangTagForNewLang("Qipwest"),
 				"code for 'qip' should already be taken twice");
-
-			// ENHANCE: Ideally, we would want to test incrementing the middle and first character,
-			// but that would require at least 677 (26^2 + 1) writing systems be created.
 		}
+
+		// ENHANCE: Ideally, we would want to test incrementing the middle and first character,
+		// but that would require at least 677 (26^2 + 1) writing systems be created.
 
 		[Test]
 		public void CreateAudioWritingSystemScriptFirst()
 		{
-			string storePath = PrepareTempStore("Store");
-			string globalStorePath = PrepareTempStore("GlobalStore");
+			var wsManager = new WritingSystemManager();
 
-			EnsureDirectoryIsEmpty(storePath);
-			EnsureDirectoryIsEmpty(globalStorePath);
-
-			var globalStore = new GlobalFileWritingSystemStore(globalStorePath);
-			var wsManager = new WritingSystemManager(
-				new LocalFileWritingSystemStore(storePath, Enumerable.Empty<ICustomDataMapper>(), globalStore), globalStore);
-
-			WritingSystem newWs = wsManager.Create(WellKnownSubtags.UnlistedLanguage, null, null, Enumerable.Empty<VariantSubtag>());
+			CoreWritingSystemDefinition newWs = wsManager.Create(WellKnownSubtags.UnlistedLanguage, null, null, Enumerable.Empty<VariantSubtag>());
 
 			Assert.DoesNotThrow(() =>
 			{
@@ -510,18 +400,9 @@ namespace SIL.CoreImpl
 		[Ignore("If the system changed so that this and the test above could both work we could remove a lot of complexity")]
 		public void CreateAudioWritingSystemVariantFirst()
 		{
+			var wsManager = new WritingSystemManager();
 
-			string storePath = PrepareTempStore("Store");
-			string globalStorePath = PrepareTempStore("GlobalStore");
-
-			EnsureDirectoryIsEmpty(storePath);
-			EnsureDirectoryIsEmpty(globalStorePath);
-
-			var globalStore = new GlobalFileWritingSystemStore(globalStorePath);
-			var wsManager = new WritingSystemManager(
-				new LocalFileWritingSystemStore(storePath, Enumerable.Empty<ICustomDataMapper>(), globalStore), globalStore);
-
-			WritingSystem newWs = wsManager.Create(WellKnownSubtags.UnlistedLanguage, null, null, Enumerable.Empty<VariantSubtag>());
+			CoreWritingSystemDefinition newWs = wsManager.Create(WellKnownSubtags.UnlistedLanguage, null, null, Enumerable.Empty<VariantSubtag>());
 
 			Assert.DoesNotThrow(() =>
 			{

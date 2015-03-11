@@ -53,19 +53,19 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		{
 			get
 			{
-				var ws = m_cbWritingSystem.SelectedItem as WritingSystem;
+				var ws = m_cbWritingSystem.SelectedItem as CoreWritingSystemDefinition;
 				if (ws == null)
 					return null;
 				else
-					return ws.ID;
+					return ws.Id;
 			}
 		}
 
 		private void m_btnAddWritingSystem_WritingSystemAdded(object sender, EventArgs e)
 		{
-			WritingSystem ws = m_btnAddWritingSystem.NewWritingSystem;
+			CoreWritingSystemDefinition ws = m_btnAddWritingSystem.NewWritingSystem;
 			if (ws != null)
-				NotebookImportWiz.InitializeWritingSystemCombo(ws.ID, m_cache,
+				NotebookImportWiz.InitializeWritingSystemCombo(ws.Id, m_cache,
 					m_cbWritingSystem);
 		}
 	}

@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		{
 			string storePath = Path.Combine(Path.GetTempPath(), FdoFileHelper.ksWritingSystemsDir);
 			PrepareStore(storePath);
-			string globalStorePath = DirectoryFinder.GlobalWritingSystemStoreDirectory;
+			string globalStorePath = DirectoryFinder.OldGlobalWritingSystemStoreDirectory;
 			PrepareStore(globalStorePath);
 
 			var dtos = DataMigrationTestServices.ParseProjectFile("DataMigration7000019Tests.xml");

@@ -3443,7 +3443,7 @@ namespace SIL.FieldWorks.Common.Framework
 			var box = sender as ComboBox;
 			if (box == null || ActiveView == null)
 				return;
-			var ws = box.SelectedItem as WritingSystem;
+			var ws = box.SelectedItem as CoreWritingSystemDefinition;
 			if (ws == null)
 				return;
 

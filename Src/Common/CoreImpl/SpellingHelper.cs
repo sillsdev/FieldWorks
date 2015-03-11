@@ -416,13 +416,13 @@ namespace SIL.CoreImpl
 			ILgWritingSystem wsEngine = wsf.get_EngineOrNull(ws);
 			if (wsEngine == null)
 				return null;
-			string wsId = wsEngine.SpellCheckingID;
+			string wsId = wsEngine.SpellCheckingId;
 			if (String.IsNullOrEmpty(wsId))
 			{
 				// Our old spelling engine, Enchant, did not allow hyphen;
 				// keeping that rule in case we switch again or there is some other good reason for it that we don't know.
 				// Changing to underscore is OK since lang ID does not allow underscore.
-				return wsEngine.ID.Replace('-', '_');
+				return wsEngine.Id.Replace('-', '_');
 			}
 			if (wsId == "<None>")
 				return null;

@@ -1524,7 +1524,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <param name="originalValue">Original value. (May be null.)</param>
 		/// <param name="newValue">New value. (May be null.)</param>
 		/// ------------------------------------------------------------------------------------
-		void ICmObjectInternal.ITsStringAltChangedSideEffects(int multiAltFlid, WritingSystem alternativeWs, ITsString originalValue, ITsString newValue)
+		void ICmObjectInternal.ITsStringAltChangedSideEffects(int multiAltFlid, CoreWritingSystemDefinition alternativeWs, ITsString originalValue, ITsString newValue)
 		{
 			if (alternativeWs == null) throw new ArgumentNullException("alternativeWs");
 
@@ -1536,7 +1536,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Subclasses should override this, if they need to have side effects.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected virtual void ITsStringAltChangedSideEffectsInternal(int multiAltFlid, WritingSystem alternativeWs, ITsString originalValue, ITsString newValue)
+		protected virtual void ITsStringAltChangedSideEffectsInternal(int multiAltFlid, CoreWritingSystemDefinition alternativeWs, ITsString originalValue, ITsString newValue)
 		{ /* Do nothing. */ }
 
 		/// ------------------------------------------------------------------------------------
@@ -2660,7 +2660,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		protected virtual string PreferredWsId
 		{
-			get { return Services.WritingSystems.DefaultAnalysisWritingSystem.ID; }
+			get { return Services.WritingSystems.DefaultAnalysisWritingSystem.Id; }
 		}
 
 		/// <summary>

@@ -22,10 +22,10 @@ namespace SIL.CoreImpl
 		public void FixtureSetup()
 		{
 			m_wsManager = new WritingSystemManager();
-			WritingSystem enWs;
+			CoreWritingSystemDefinition enWs;
 			m_wsManager.GetOrSet("en", out enWs);
 			m_enWs = enWs.Handle;
-			WritingSystem frWs;
+			CoreWritingSystemDefinition frWs;
 			m_wsManager.GetOrSet("fr", out frWs);
 			m_frWs = frWs.Handle;
 			m_tsf = TsStrFactoryClass.Create();

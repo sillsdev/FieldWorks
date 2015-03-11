@@ -842,12 +842,12 @@ namespace SIL.FieldWorks.Common.FXT
 		/// <summary>
 		/// Get the SFM tag extension for the given writing system.
 		/// </summary>
-		private string LabelString(WritingSystem ws)
+		private string LabelString(CoreWritingSystemDefinition ws)
 		{
 			string str = ws.Abbreviation;
 			if (!string.IsNullOrEmpty(str))
 				return str;
-			return ws.ID;
+			return ws.Id;
 		}
 
 		/// <summary>
@@ -1091,7 +1091,7 @@ namespace SIL.FieldWorks.Common.FXT
 			{
 				possibleWss = GetWssWithData(propertyObject as IMultiStringAccessor);
 			}
-			foreach (WritingSystem ws in GetDesiredWritingSystemsList(writingSystems, possibleWss))
+			foreach (CoreWritingSystemDefinition ws in GetDesiredWritingSystemsList(writingSystems, possibleWss))
 			{
 				bool fHasData = false;
 				if (methodName != null)
@@ -1150,7 +1150,7 @@ namespace SIL.FieldWorks.Common.FXT
 			if (propertyObject is IMultiStringAccessor)
 				possibleWss = GetWssWithData(propertyObject as IMultiStringAccessor);
 
-			foreach (WritingSystem ws in GetDesiredWritingSystemsList(writingSystems, possibleWss))
+			foreach (CoreWritingSystemDefinition ws in GetDesiredWritingSystemsList(writingSystems, possibleWss))
 			{
 				if (possibleWss != null && !possibleWss.Contains(ws.Handle))
 					continue;
@@ -1160,13 +1160,13 @@ namespace SIL.FieldWorks.Common.FXT
 			return false;
 		}
 
-		private IEnumerable<WritingSystem> GetDesiredWritingSystemsList(string writingSystemsDescriptor, HashSet<int> possibleWss)
+		private IEnumerable<CoreWritingSystemDefinition> GetDesiredWritingSystemsList(string writingSystemsDescriptor, HashSet<int> possibleWss)
 		{
-			var wsList = new List<WritingSystem>();
+			var wsList = new List<CoreWritingSystemDefinition>();
 
 			if (writingSystemsDescriptor == "all" || writingSystemsDescriptor == "all analysis")
 			{
-				foreach (WritingSystem ws in m_wsContainer.CurrentAnalysisWritingSystems)
+				foreach (CoreWritingSystemDefinition ws in m_wsContainer.CurrentAnalysisWritingSystems)
 				{
 					if (possibleWss == null || possibleWss.Contains(ws.Handle))
 					{
@@ -1177,7 +1177,7 @@ namespace SIL.FieldWorks.Common.FXT
 			}
 			if (writingSystemsDescriptor == "all" || writingSystemsDescriptor == "all vernacular")
 			{
-				foreach (WritingSystem ws in m_wsContainer.CurrentVernacularWritingSystems)
+				foreach (CoreWritingSystemDefinition ws in m_wsContainer.CurrentVernacularWritingSystems)
 				{
 					if (possibleWss == null || possibleWss.Contains(ws.Handle))
 					{
@@ -1188,7 +1188,7 @@ namespace SIL.FieldWorks.Common.FXT
 			}
 			if (writingSystemsDescriptor == "every")
 			{
-				foreach (WritingSystem ws in m_wsContainer.AllWritingSystems)
+				foreach (CoreWritingSystemDefinition ws in m_wsContainer.AllWritingSystems)
 				{
 					if (possibleWss == null || possibleWss.Contains(ws.Handle))
 					{
@@ -1213,7 +1213,7 @@ namespace SIL.FieldWorks.Common.FXT
 			var alreadyOutput = new HashSet<int>();
 			if (writingSystems == "all" || writingSystems == "all analysis")
 			{
-				foreach (WritingSystem ws in m_wsContainer.CurrentAnalysisWritingSystems)
+				foreach (CoreWritingSystemDefinition ws in m_wsContainer.CurrentAnalysisWritingSystems)
 				{
 					writeCustomStringAlternativeToSFM(currentObject, flid, ws, name, contentsStream);
 					alreadyOutput.Add(ws.Handle);
@@ -1238,7 +1238,7 @@ namespace SIL.FieldWorks.Common.FXT
 		/// <param name="ws"></param>
 		/// <param name="name"></param>
 		/// <param name="contentsStream"></param>
-		protected void writeCustomStringAlternativeToSFM(ICmObject currentObject, int flid, WritingSystem ws,
+		protected void writeCustomStringAlternativeToSFM(ICmObject currentObject, int flid, CoreWritingSystemDefinition ws,
 			string name, TextWriter contentsStream)
 		{
 			if (m_mapFlids.ContainsKey(flid))
@@ -1307,7 +1307,7 @@ namespace SIL.FieldWorks.Common.FXT
 			return flid;
 		}
 
-		private bool TryWriteStringAlternative(object orange, WritingSystem ws, string name,
+		private bool TryWriteStringAlternative(object orange, CoreWritingSystemDefinition ws, string name,
 			string internalElementName, TextWriter contentsStream, bool fLeadingNewline)
 		{
 			ITsString tss = null;
@@ -1331,7 +1331,7 @@ namespace SIL.FieldWorks.Common.FXT
 			}
 		}
 
-		private void WriteString(string s, string name, WritingSystem ws, string internalElementName,
+		private void WriteString(string s, string name, CoreWritingSystemDefinition ws, string internalElementName,
 			TextWriter contentsStream)
 		{
 			if (m_format == "xml")
@@ -1345,7 +1345,7 @@ namespace SIL.FieldWorks.Common.FXT
 //			WriteString(s, name, ws, null, contentsStream);
 //		}
 
-		private void WriteStringSFM(string s, string name, WritingSystem ws, TextWriter contentsStream)
+		private void WriteStringSFM(string s, string name, CoreWritingSystemDefinition ws, TextWriter contentsStream)
 		{
 			if (s != null && s.Trim().Length > 0)
 			{
@@ -1368,7 +1368,7 @@ namespace SIL.FieldWorks.Common.FXT
 //			WriteStringXml(s, name, ws, null, contentsStream);
 //        }
 
-		private void WriteStringXml(string s, string name, WritingSystem ws,
+		private void WriteStringXml(string s, string name, CoreWritingSystemDefinition ws,
 			string internalElementName, TextWriter contentsStream)
 		{
 			if (s == null || s.Trim().Length == 0)
@@ -1383,7 +1383,7 @@ namespace SIL.FieldWorks.Common.FXT
 			}
 		}
 
-		private void WriteTsStringXml(ITsString tss, string name, WritingSystem ws,
+		private void WriteTsStringXml(ITsString tss, string name, CoreWritingSystemDefinition ws,
 			string internalElementName, TextWriter contentsStream)
 		{
 			if (tss == null || tss.Length == 0)
@@ -1405,7 +1405,7 @@ namespace SIL.FieldWorks.Common.FXT
 		}
 
 		private void WriteStringStartElements(XmlWriter writer, string name,
-			WritingSystem ws, string internalElementName)
+			CoreWritingSystemDefinition ws, string internalElementName)
 		{
 			writer.WriteStartElement(name);
 			if (ws != null)
@@ -1413,7 +1413,7 @@ namespace SIL.FieldWorks.Common.FXT
 				switch (m_writingSystemAttrStyle)
 				{
 					case WritingSystemAttrStyles.LIFT:
-						writer.WriteAttributeString("lang", ws.ID);
+						writer.WriteAttributeString("lang", ws.Id);
 						break;
 					case WritingSystemAttrStyles.FieldWorks:
 						writer.WriteAttributeString("ws", ws.Abbreviation);
@@ -1546,8 +1546,8 @@ namespace SIL.FieldWorks.Common.FXT
 						wsFake = m_wsContainer.DefaultAnalysisWritingSystem.Handle;
 					if (m_writingSystemAttrStyle == WritingSystemAttrStyles.LIFT && name == "form")
 					{
-						WritingSystem ws = m_wsManager.Get(wsFake);
-						writer.WriteAttributeString("lang", ws.ID); // keep LIFT happy with bogus ws.
+						CoreWritingSystemDefinition ws = m_wsManager.Get(wsFake);
+						writer.WriteAttributeString("lang", ws.Id); // keep LIFT happy with bogus ws.
 					}
 					if (!String.IsNullOrEmpty(sInternalName))
 						writer.WriteStartElement(sInternalName);
@@ -1699,8 +1699,8 @@ namespace SIL.FieldWorks.Common.FXT
 						nProp = ttp.GetIntProp(iprop, out tpt, out nVar);
 						if (tpt == (int)FwTextPropType.ktptWs && nProp != wsString)
 						{
-							WritingSystem ws = m_wsManager.Get(nProp);
-							writer.WriteAttributeString("lang", ws.ID);
+							CoreWritingSystemDefinition ws = m_wsManager.Get(nProp);
+							writer.WriteAttributeString("lang", ws.Id);
 						}
 					}
 					cprop = ttp.StrPropCount;
@@ -2302,7 +2302,7 @@ namespace SIL.FieldWorks.Common.FXT
 						obj = GetProperty(co, wsProp);
 						if (obj != null)
 						{
-							WritingSystem ws = obj as WritingSystem ?? m_wsManager.Get((string) obj);
+							CoreWritingSystemDefinition ws = obj as CoreWritingSystemDefinition ?? m_wsManager.Get((string) obj);
 							if (ws != null)
 								labelWs = LabelString(ws);
 						}
@@ -2492,7 +2492,7 @@ namespace SIL.FieldWorks.Common.FXT
 				obj = GetProperty(co, wsProp);
 				if (obj != null)
 				{
-					var ws = obj as WritingSystem ?? m_wsManager.Get((int) obj);
+					var ws = obj as CoreWritingSystemDefinition ?? m_wsManager.Get((int) obj);
 					if (ws != null)
 						labelWs = LabelString(ws);
 				}
@@ -3182,7 +3182,7 @@ namespace SIL.FieldWorks.Common.FXT
 				Dictionary<string, string> dict = (Dictionary<string, string>)propertyObject;
 				string value;
 
-				WritingSystem ws = FindWritingSystem(alternative);
+				CoreWritingSystemDefinition ws = FindWritingSystem(alternative);
 				if (dict.TryGetValue(ws.Abbreviation, out value))
 				{
 					return value;
@@ -3225,9 +3225,9 @@ namespace SIL.FieldWorks.Common.FXT
 			{
 				return propertyObject.ToString();
 			}
-			else if (propertyObject is WritingSystem)
+			else if (propertyObject is CoreWritingSystemDefinition)
 			{
-				return ((WritingSystem) propertyObject).ID;
+				return ((CoreWritingSystemDefinition) propertyObject).Id;
 			}
 			throw new ConfigurationException ("Sorry, XDumper can not yet handle attributes of this class: '"+type.ToString()+"'.");
 		}
@@ -3277,7 +3277,7 @@ namespace SIL.FieldWorks.Common.FXT
 				return GetTsStringOfProperty(propertyObject, -1);
 		}
 
-		protected WritingSystem FindWritingSystem(int handle)
+		protected CoreWritingSystemDefinition FindWritingSystem(int handle)
 		{
 			return m_wsManager.Get(handle);
 		}

@@ -225,7 +225,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (m_wsManager == null)
 				throw new InvalidOperationException("StyleInfoTable was constructed with a null writing system store. Cannot resolve magic font name.");
 
-			WritingSystem wsObj = m_wsManager.Get(ws);
+			CoreWritingSystemDefinition wsObj = m_wsManager.Get(ws);
 			switch (fontName)
 			{
 				case StyleServices.DefaultFont:

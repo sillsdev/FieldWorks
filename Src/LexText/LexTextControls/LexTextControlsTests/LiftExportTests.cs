@@ -493,7 +493,7 @@ namespace LexTextControlsTests
 			WritingSystemManager writingSystemManager = m_cache.ServiceLocator.WritingSystemManager;
 			LanguageSubtag languageSubtag = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Language;
 			//var voiceTag = RFC5646Tag.RFC5646TagForVoiceWritingSystem(languageSubtag.Name, "");
-			WritingSystem audioWs = writingSystemManager.Create(languageSubtag,
+			CoreWritingSystemDefinition audioWs = writingSystemManager.Create(languageSubtag,
 				WellKnownSubtags.AudioScript, null, new VariantSubtag[] {WellKnownSubtags.AudioPrivateUse});
 			audioWs.IsVoice = true; // should already be so? Make sure.
 			writingSystemManager.Set(audioWs); // gives it a handle

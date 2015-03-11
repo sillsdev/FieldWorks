@@ -221,9 +221,9 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 
 			var wsManager = m_cache.ServiceLocator.WritingSystemManager;
 
-			foreach (WritingSystem ws in wsManager.LocalWritingSystems)
+			foreach (CoreWritingSystemDefinition ws in wsManager.WritingSystems)
 			{
-				string spellCheckingDictionary = ws.SpellCheckingID;
+				string spellCheckingDictionary = ws.SpellCheckingId;
 				if (string.IsNullOrEmpty(spellCheckingDictionary) || spellCheckingDictionary == "<None>")
 					continue; // no spelling dictionary for WS
 

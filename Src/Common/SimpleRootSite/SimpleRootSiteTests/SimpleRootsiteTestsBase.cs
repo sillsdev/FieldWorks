@@ -228,15 +228,15 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_wsManager = new WritingSystemManager();
 			m_cache.WritingSystemFactory = m_wsManager;
 
-			WritingSystem enWs;
+			CoreWritingSystemDefinition enWs;
 			m_wsManager.GetOrSet("en", out enWs);
 			m_wsEng = enWs.Handle;
 
-			WritingSystem frWs;
+			CoreWritingSystemDefinition frWs;
 			m_wsManager.GetOrSet("fr", out frWs);
 			m_wsFrn = frWs.Handle;
 
-			WritingSystem deWs;
+			CoreWritingSystemDefinition deWs;
 			m_wsManager.GetOrSet("de", out deWs);
 			m_wsDeu = deWs.Handle;
 

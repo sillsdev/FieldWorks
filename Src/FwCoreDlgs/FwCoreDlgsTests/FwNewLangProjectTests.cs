@@ -14,7 +14,6 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using NUnit.Framework;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Test.TestUtils;
@@ -30,6 +29,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// ----------------------------------------------------------------------------------------
 	public class DummyFwNewLangProject : FwNewLangProject
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="DummyFwNewLangProject"/> class.
+		/// </summary>
+		public DummyFwNewLangProject()
+			: base(true)
+		{
+		}
+
 		/// <summary>
 		/// Tells tests whether or not the Non-Ascii project name warning dialog was activated.
 		/// </summary>
@@ -95,7 +102,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class FwNewLangProjectTests: BaseTest
+	public class FwNewLangProjectTests : BaseTest
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -107,8 +114,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void CreateNewLangProject()
 		{
 			const string dbName = "Maileingwij2025";
-			string storePath = FdoFileHelper.GetWritingSystemDir(Path.Combine(FwDirectoryFinder.ProjectsDirectory, dbName));
-			string sharedStorePath = DirectoryFinder.GlobalWritingSystemStoreDirectory;
 
 			using (var dlg = new DummyFwNewLangProject())
 			{
@@ -126,7 +131,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					// despite of the name is DummyProgressDlg no real dialog (doesn't derive from Control), so
 					// we don't need a 'using'
 					cache = FdoCache.CreateCacheFromExistingData(
-						new TestProjectId(FDOBackendProviderType.kXML, DbFilename(dbName)), "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories,
+						new TestProjectId(FDOBackendProviderType.kXMLWithMemoryOnlyWsMgr, DbFilename(dbName)), "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories,
 						new FdoSettings(), new DummyProgressDlg());
 					CheckInitialSetOfPartsOfSpeech(cache);
 

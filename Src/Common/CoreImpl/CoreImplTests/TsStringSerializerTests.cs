@@ -49,11 +49,11 @@ namespace SIL.CoreImpl
 			Icu.InitIcuDataDir();
 			m_wsManager = new WritingSystemManager();
 
-			WritingSystem enWs;
+			CoreWritingSystemDefinition enWs;
 			m_wsManager.GetOrSet("en", out enWs);
 			m_enWs = enWs.Handle;
 
-			WritingSystem esWs;
+			CoreWritingSystemDefinition esWs;
 			m_wsManager.GetOrSet("es", out esWs);
 			m_esWs = esWs.Handle;
 		}

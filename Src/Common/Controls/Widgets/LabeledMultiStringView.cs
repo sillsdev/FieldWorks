@@ -173,7 +173,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// This is the list of writing systems that can be enabled for this control. It should be either the Vernacular list
 		/// or Analysis list shown in the WritingSystemPropertiesDialog which are checked and unchecked.
 		/// </summary>
-		public List<WritingSystem> WritingSystemOptions
+		public List<CoreWritingSystemDefinition> WritingSystemOptions
 		{
 			get
 			{
@@ -187,7 +187,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		/// <param name="fIncludeUncheckedActiveWss">if false, include only current wss,
 		/// if true, includes unchecked active wss.</param>
-		public List<WritingSystem> GetWritingSystemOptions(bool fIncludeUncheckedActiveWss)
+		public List<CoreWritingSystemDefinition> GetWritingSystemOptions(bool fIncludeUncheckedActiveWss)
 		{
 			CheckDisposed();
 			return m_innerView.GetWritingSystemOptions(fIncludeUncheckedActiveWss);
@@ -198,7 +198,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// are the writing systems the user has checked in the WritingSystemPropertiesDialog.
 		/// if null, we'll display every writing system option.
 		/// </summary>
-		public List<WritingSystem> WritingSystemsToDisplay
+		public List<CoreWritingSystemDefinition> WritingSystemsToDisplay
 		{
 			get { return m_innerView.WritingSystemsToDisplay; }
 			set { m_innerView.WritingSystemsToDisplay = value; }
@@ -224,11 +224,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// If we're shutting down, this might return null
 		/// </summary>
-		WritingSystem WsForSoundField(ShortSoundFieldControl sc, out int wsIndex)
+		CoreWritingSystemDefinition WsForSoundField(ShortSoundFieldControl sc, out int wsIndex)
 		{
 			int index = m_soundControls.IndexOf(sc);
 			wsIndex = -1;
-			foreach (WritingSystem ws in m_innerView.WritingSystems)
+			foreach (CoreWritingSystemDefinition ws in m_innerView.WritingSystems)
 			{
 				wsIndex++;
 				if (!ws.IsVoice)

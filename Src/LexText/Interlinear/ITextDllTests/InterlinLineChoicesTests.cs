@@ -510,15 +510,15 @@ namespace SIL.FieldWorks.IText
 		public void Persistence()
 		{
 			var wsManager = new WritingSystemManager();
-			WritingSystem enWs;
+			CoreWritingSystemDefinition enWs;
 			wsManager.GetOrSet("en", out enWs);
 			int wsEng = enWs.Handle;
 
-			WritingSystem frWs;
+			CoreWritingSystemDefinition frWs;
 			wsManager.GetOrSet("fr", out frWs);
 			int wsFrn = frWs.Handle;
 
-			WritingSystem deWs;
+			CoreWritingSystemDefinition deWs;
 			wsManager.GetOrSet("de", out deWs);
 			int wsGer = deWs.Handle;
 

@@ -28,8 +28,8 @@ namespace SIL.FieldWorks.Common.Widgets
 		// by m_wsMagic. Currently the only example is that on a pronunciation field, vernacular as well as
 		// the default pronunciation WSS might be relevant.
 		int m_wsOptional;
-		List<WritingSystem> m_rgws;
-		List<WritingSystem> m_rgwsToDisplay;
+		List<CoreWritingSystemDefinition> m_rgws;
+		List<CoreWritingSystemDefinition> m_rgwsToDisplay;
 		LabeledMultiStringVc m_vc;
 		private string m_textStyle;
 		/// <summary>
@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Return the relevant writing systems.
 		/// </summary>
-		internal List<WritingSystem> WritingSystems
+		internal List<CoreWritingSystemDefinition> WritingSystems
 		{
 			get { return m_rgws; }
 		}
@@ -401,7 +401,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// This is the list of writing systems that can be enabled for this control. It should be either the Vernacular list
 		/// or Analysis list shown in the WritingSystemPropertiesDialog which are checked and unchecked.
 		/// </summary>
-		public List<WritingSystem> WritingSystemOptions
+		public List<CoreWritingSystemDefinition> WritingSystemOptions
 		{
 			get
 			{
@@ -415,13 +415,13 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		/// <param name="fIncludeUncheckedActiveWss">if false, include only current wss,
 		/// if true, includes unchecked active wss.</param>
-		public List<WritingSystem> GetWritingSystemOptions(bool fIncludeUncheckedActiveWss)
+		public List<CoreWritingSystemDefinition> GetWritingSystemOptions(bool fIncludeUncheckedActiveWss)
 		{
 			var result = WritingSystemServices.GetWritingSystemList(m_fdoCache, m_wsMagic, m_hvoObj,
 				m_forceIncludeEnglish, fIncludeUncheckedActiveWss);
 			if (fIncludeUncheckedActiveWss && m_wsOptional != 0)
 			{
-				result = new List<WritingSystem>(result); // just in case caller does not want it modified
+				result = new List<CoreWritingSystemDefinition>(result); // just in case caller does not want it modified
 				var additionalWss = WritingSystemServices.GetWritingSystemList(m_fdoCache, m_wsOptional, m_hvoObj,
 					m_forceIncludeEnglish, fIncludeUncheckedActiveWss);
 				foreach (var ws in additionalWss)
@@ -436,7 +436,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// are the writing systems the user has checked in the WritingSystemPropertiesDialog.
 		/// if null, we'll display every writing system option.
 		/// </summary>
-		public List<WritingSystem> WritingSystemsToDisplay
+		public List<CoreWritingSystemDefinition> WritingSystemsToDisplay
 		{
 			get { return m_rgwsToDisplay; }
 			set
@@ -480,13 +480,13 @@ namespace SIL.FieldWorks.Common.Widgets
 	internal class LabeledMultiStringVc: FwBaseVc
 	{
 		internal int m_flid;
-		internal List<WritingSystem> m_rgws; // writing systems to display
+		internal List<CoreWritingSystemDefinition> m_rgws; // writing systems to display
 		ITsTextProps m_ttpLabel; // Props to use for ws name labels
 		bool m_editable = true;
 		int m_wsEn;
 		internal int m_mDxmpLabelWidth;
 
-		public LabeledMultiStringVc(int flid, List<WritingSystem> rgws, int wsUser, bool editable, int wsEn, ITsStrFactory tsf)
+		public LabeledMultiStringVc(int flid, List<CoreWritingSystemDefinition> rgws, int wsUser, bool editable, int wsEn, ITsStrFactory tsf)
 		{
 			Reuse(flid, rgws, editable);
 			m_ttpLabel = WritingSystemServices.AbbreviationTextProperties;
@@ -525,7 +525,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 		}
 
-		public void Reuse(int flid, List<WritingSystem> rgws, bool editable)
+		public void Reuse(int flid, List<CoreWritingSystemDefinition> rgws, bool editable)
 		{
 			m_flid = flid;
 			m_rgws = rgws;
@@ -628,7 +628,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				}
 				vwenv.set_IntProperty((int)FwTextPropType.ktptPadTop, (int)FwTextPropVar.ktpvMilliPoint, 2000);
 				vwenv.OpenTableCell(1,1);
-				WritingSystem wsdef = m_rgws[i];
+				CoreWritingSystemDefinition wsdef = m_rgws[i];
 				if (wsdef != null && wsdef.IsVoice)
 				{
 					// We embed it in a conc paragraph to ensure it never takes more than a line.
@@ -693,7 +693,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	{
 		private InnerLabeledMultiStringView m_view;
 
-		public InnerLabeledMultiStringViewVc(int flid, List<WritingSystem> rgws, int wsUser, bool editable,
+		public InnerLabeledMultiStringViewVc(int flid, List<CoreWritingSystemDefinition> rgws, int wsUser, bool editable,
 			ITsStrFactory tsf, InnerLabeledMultiStringView view)
 			: base(flid, rgws, wsUser, editable, view.WritingSystemFactory.GetWsFromStr("en"), tsf)
 		{

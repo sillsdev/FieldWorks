@@ -1477,7 +1477,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				string wsAbbr = XmlUtils.GetOptionalAttributeValue(strValue, "ws");
 				if (wsAbbr != null)
 				{
-					var wsObj = (WritingSystem) m_cache.WritingSystemFactory.get_Engine(wsAbbr);
+					var wsObj = (CoreWritingSystemDefinition) m_cache.WritingSystemFactory.get_Engine(wsAbbr);
 					ws = wsObj.Handle;
 					Debug.Assert(ws != 0, "Don't recognize ws (" + wsAbbr + ") for StringValue");
 					// add it to the vernacular writing system list, if it's not already there.
@@ -2376,8 +2376,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		FDO.IText m_text1 = null;
 		private XmlNode m_testFixtureTextsDefn = null;
 		XmlDocument m_textsDefn = null;
-		private WritingSystem m_wsEn = null;
-		private WritingSystem m_wsXkal = null;
+		private CoreWritingSystemDefinition m_wsEn = null;
+		private CoreWritingSystemDefinition m_wsXkal = null;
 
 		/// <summary>
 		///
@@ -2435,7 +2435,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// ------------------------------------------------------------------------------------
 		void SetupOldWordformingOverrides()
 		{
-			WritingSystem wsObj = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			CoreWritingSystemDefinition wsObj = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			var validChars = ValidCharacters.Load(wsObj, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			var fChangedSomething = false;
 			if (!validChars.IsWordForming('-'))

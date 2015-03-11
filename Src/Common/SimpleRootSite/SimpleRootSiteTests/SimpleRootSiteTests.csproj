@@ -195,6 +195,7 @@
     <Compile Include="SimpleRootSiteDataProviderView.Designer.cs">
       <DependentUpon>SimpleRootSiteDataProviderView.cs</DependentUpon>
     </Compile>
+    <Compile Include="SimpleRootSiteTests.cs" />
     <Compile Include="SimpleViewVc.cs" />
     <Compile Include="EditingHelperTests.cs">
       <SubType>Code</SubType>

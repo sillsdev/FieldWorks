@@ -46,7 +46,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void SymbolPunctuationOnly()
 		{
-			WritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Create("th");
+			CoreWritingSystemDefinition ws = Cache.ServiceLocator.WritingSystemManager.Create("th");
 			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"a", "b", "c", "d", "e"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") {Characters = {"1", "2", "3", "4", "5"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {"'", "-", "#"}});
@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void WordAndPuncs_OverridePunc()
 		{
-			WritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Create("th");
+			CoreWritingSystemDefinition ws = Cache.ServiceLocator.WritingSystemManager.Create("th");
 			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"a", "b", "c", "d", "e", "."}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") {Characters = {"1", "2", "3", "4", "5"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {"'", "-", "#"}});
@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void WordAndPuncs_Spaces()
 		{
-			WritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Create("th");
+			CoreWritingSystemDefinition ws = Cache.ServiceLocator.WritingSystemManager.Create("th");
 			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"a", "b", "c"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") {Characters = {"1", "2", "3", "4", "5"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {"-", " "}});
@@ -118,7 +118,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void WordAndPuncs_EmptyString()
 		{
-			WritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Create("th");
+			CoreWritingSystemDefinition ws = Cache.ServiceLocator.WritingSystemManager.Create("th");
 			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"a", "b", "c"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") {Characters = {"1", "2", "3", "4", "5"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {"-", " "}});
@@ -142,7 +142,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void WordAndPuncs_NoOverridePunc()
 		{
-			WritingSystem ws = Cache.ServiceLocator.WritingSystemManager.Create("th");
+			CoreWritingSystemDefinition ws = Cache.ServiceLocator.WritingSystemManager.Create("th");
 			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"a", "b", "c", "d", "e"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") {Characters = {"1", "2", "3", "4", "5"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {"'", "-", "#"}});

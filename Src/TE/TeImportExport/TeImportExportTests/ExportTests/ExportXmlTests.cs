@@ -147,11 +147,11 @@ namespace SIL.FieldWorks.TE.ExportTests
 			FileUtils.Manager.SetFileAdapter(new MockFileOS());
 
 			// Define writing systems.
-			WritingSystem wsHbo;
+			CoreWritingSystemDefinition wsHbo;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("hbo", out wsHbo);
-			WritingSystem wsDe;
+			CoreWritingSystemDefinition wsDe;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("de", out wsDe);
-			WritingSystem wsUr;
+			CoreWritingSystemDefinition wsUr;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("ur", out wsUr);
 
 			// Define Scripture checks.
@@ -816,7 +816,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 		[Test]
 		public void ExportBookSection_MultipleBT()
 		{
-			WritingSystem lgHbo = Cache.ServiceLocator.WritingSystemManager.Get("hbo");
+			CoreWritingSystemDefinition lgHbo = Cache.ServiceLocator.WritingSystemManager.Get("hbo");
 			int wsAnal = Cache.DefaultAnalWs;
 			IScrSection introSection = AddSectionToMockedBook(m_book, true);
 			AddSectionHeadParaToSection(introSection, "Introduccion", ScrStyleNames.IntroSectionHead);
@@ -1333,8 +1333,8 @@ namespace SIL.FieldWorks.TE.ExportTests
 		[Test]
 		public void ExportPicture_MultipleWS()
 		{
-			WritingSystem wsDe = Cache.ServiceLocator.WritingSystemManager.Get("de");
-			WritingSystem wsUr = Cache.ServiceLocator.WritingSystemManager.Get("ur");
+			CoreWritingSystemDefinition wsDe = Cache.ServiceLocator.WritingSystemManager.Get("de");
+			CoreWritingSystemDefinition wsUr = Cache.ServiceLocator.WritingSystemManager.Get("ur");
 
 			// Create a picture that has a caption with three different writing systems.
 			ITsStrBldr tssBldr = TsStrBldrClass.Create();
@@ -1382,7 +1382,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 		[Test]
 		public void ExportPicture_InsideParaTrGroup()
 		{
-			WritingSystem wsDe = Cache.ServiceLocator.WritingSystemManager.Get("de");
+			CoreWritingSystemDefinition wsDe = Cache.ServiceLocator.WritingSystemManager.Get("de");
 
 			// Create a picture that has a caption with three different writing systems.
 			ITsStrBldr tssBldr = TsStrBldrClass.Create();

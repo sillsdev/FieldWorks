@@ -281,7 +281,7 @@ namespace SIL.FieldWorks.TE
 		{
 			FileUtils.Manager.Reset();
 			base.TestTearDown();
-			foreach (WritingSystem ws in Cache.ServiceLocator.WritingSystemManager.LocalWritingSystems)
+			foreach (CoreWritingSystemDefinition ws in Cache.ServiceLocator.WritingSystemManager.WritingSystems)
 				ws.LegacyMapping = null;
 		}
 
@@ -321,7 +321,7 @@ namespace SIL.FieldWorks.TE
 		/// Gets the default vernacular writing system
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private WritingSystem VernacularWs
+		private CoreWritingSystemDefinition VernacularWs
 		{
 			get
 			{

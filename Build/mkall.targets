@@ -300,9 +300,9 @@
 		<!-- bt279 is the develop branch build of IPCFramework for Linux development. Update when appropriate. -->
 		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt279/.lastSuccessful</IPCFrameworkDownloadUrl>
 		<!-- bt398 is the icu50 branch build of icucil for Windows development. Update when appropriate. -->
-		<IcuDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt398/.lastSuccessful</IcuDownloadUrl>
+		<IcuDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt470/.lastSuccessful</IcuDownloadUrl>
 		<!-- bt281 is the master branch build of icucil for linux development. Update when appropriate. -->
-		<IcuDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt281/.lastSuccessful</IcuDownloadUrl>
+		<IcuDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt478/.lastSuccessful</IcuDownloadUrl>
 		<ProtoBufNetDownloadUrl>https://protobuf-net.googlecode.com/files/protobuf-net%20r668.zip</ProtoBufNetDownloadUrl>
 		<DownloadsSilOrgDownloadUrl>http://downloads.sil.org/BuildDlls/FW8.1/</DownloadsSilOrgDownloadUrl>
 		<HermitCrabDownloadUrl>http://build.palaso.org/guestAuth/repository/download/bt410/.lastSuccessful</HermitCrabDownloadUrl>
@@ -374,7 +374,7 @@
 		<Message Text="Downloading latest successful artifacts for IPCFramework."/>
 		<DownloadFile Address="$(IPCFrameworkDownloadUrl)/IPCFramework.dll" LocalFilename="$(fwrt)/Downloads/IPCFramework.dll"/>
 
-		<Message Text="Downloading latest successful artifacts for ICU."/>
+		<Message Text="Downloading latest successful artifacts for ICU.NET."/>
 		<DownloadFile Address="$(IcuDownloadUrl)/icu.net.dll" LocalFilename="$(fwrt)/Downloads/icu.net.dll"/>
 		<DownloadFile Address="$(IcuDownloadUrl)/icu.net.dll.config" LocalFilename="$(fwrt)/Downloads/icu.net.dll.config" Condition="'$(OS)'=='Unix'"/>
 
@@ -572,6 +572,34 @@
 		<WriteRegistry Hive="CurrentUser"
 			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\EncodingConverterRepository\Registry"
 			Value="$(fwrt)/DistFiles/SIL/Repository/mappingRegistry.xml"/>
+	</Target>
+
+	<PropertyGroup>
+		<SldrUrl>https://ldml.api.sil.org/</SldrUrl>
+	</PropertyGroup>
+
+	<Target Name="updateTemplateLdmlFiles">
+		<DownloadFile Address="$(SldrUrl)bn" LocalFilename="$(fwrt)/DistFiles/Templates/bn.ldml"/>
+		<DownloadFile Address="$(SldrUrl)de" LocalFilename="$(fwrt)/DistFiles/Templates/de.ldml"/>
+		<DownloadFile Address="$(SldrUrl)en" LocalFilename="$(fwrt)/DistFiles/Templates/en.ldml"/>
+		<DownloadFile Address="$(SldrUrl)es" LocalFilename="$(fwrt)/DistFiles/Templates/es.ldml"/>
+		<DownloadFile Address="$(SldrUrl)fa" LocalFilename="$(fwrt)/DistFiles/Templates/fa.ldml"/>
+		<DownloadFile Address="$(SldrUrl)fr" LocalFilename="$(fwrt)/DistFiles/Templates/fr.ldml"/>
+		<!-- DownloadFile Address="$(SldrUrl)grc" LocalFilename="$(fwrt)/DistFiles/Templates/grc.ldml"/ -->
+		<!-- DownloadFile Address="$(SldrUrl)hbo" LocalFilename="$(fwrt)/DistFiles/Templates/hbo.ldml"/ -->
+		<DownloadFile Address="$(SldrUrl)hi" LocalFilename="$(fwrt)/DistFiles/Templates/hi.ldml"/>
+		<DownloadFile Address="$(SldrUrl)id" LocalFilename="$(fwrt)/DistFiles/Templates/id.ldml"/>
+		<DownloadFile Address="$(SldrUrl)km" LocalFilename="$(fwrt)/DistFiles/Templates/km.ldml"/>
+		<DownloadFile Address="$(SldrUrl)ko" LocalFilename="$(fwrt)/DistFiles/Templates/ko.ldml"/>
+		<DownloadFile Address="$(SldrUrl)ms" LocalFilename="$(fwrt)/DistFiles/Templates/ms.ldml"/>
+		<DownloadFile Address="$(SldrUrl)ne" LocalFilename="$(fwrt)/DistFiles/Templates/ne.ldml"/>
+		<DownloadFile Address="$(SldrUrl)pt" LocalFilename="$(fwrt)/DistFiles/Templates/pt.ldml"/>
+		<DownloadFile Address="$(SldrUrl)ru" LocalFilename="$(fwrt)/DistFiles/Templates/ru.ldml"/>
+		<DownloadFile Address="$(SldrUrl)te" LocalFilename="$(fwrt)/DistFiles/Templates/te.ldml"/>
+		<DownloadFile Address="$(SldrUrl)th" LocalFilename="$(fwrt)/DistFiles/Templates/th.ldml"/>
+		<DownloadFile Address="$(SldrUrl)tr" LocalFilename="$(fwrt)/DistFiles/Templates/tr.ldml"/>
+		<DownloadFile Address="$(SldrUrl)vi" LocalFilename="$(fwrt)/DistFiles/Templates/vi.ldml"/>
+		<DownloadFile Address="$(SldrUrl)zh-CN" LocalFilename="$(fwrt)/DistFiles/Templates/zh-CN.ldml"/>
 	</Target>
 
 	<Target Name="allTe" DependsOnTargets="BasicUtils,ZipUtils,Design,FwControls,ScriptureUtils,TeExe,ScrChecks,SharedScrUtils,FwRemoteDatabaseConnectorService"/>

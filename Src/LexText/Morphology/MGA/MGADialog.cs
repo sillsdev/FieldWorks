@@ -146,7 +146,7 @@ namespace  SIL.FieldWorks.LexText.Controls.MGA
 				String.Format("Language Explorer{0}MGA{0}GlossLists{0}EticGlossList.xml",
 				Path.DirectorySeparatorChar));
 			treeViewGlossListItem.LoadGlossListTreeFromXml(sXmlFile,
-				m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.ID);
+				m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id);
 
 			using (var graphics = CreateGraphics())
 			{

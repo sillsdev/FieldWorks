@@ -461,7 +461,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			int hvo;
 			if (m_mapLangWs.TryGetValue(key, out hvo))
 				return hvo;
-			WritingSystem ws;
+			CoreWritingSystemDefinition ws;
 			if (!WritingSystemServices.FindOrCreateSomeWritingSystem(m_cache, FwDirectoryFinder.TemplateDirectory, key,
 				m_fAddNewWsToAnal, m_fAddNewWsToVern, out ws))
 			{
@@ -471,20 +471,20 @@ namespace SIL.FieldWorks.LexText.Controls
 				string ldmlFile = Path.Combine(Path.Combine(m_sLiftDir, "WritingSystems"), key + ".ldml");
 				if (!File.Exists(ldmlFile))
 					ldmlFile = Path.Combine(m_sLiftDir, key + ".ldml");
-				if (File.Exists(ldmlFile) && key == ws.ID)
+				if (File.Exists(ldmlFile) && key == ws.Id)
 				{
-					string storeId = ws.StoreID;
-					var adaptor = new LdmlDataMapper();
+					string id = ws.Id;
+					var adaptor = new LdmlDataMapper(new WritingSystemFactory());
 					adaptor.Read(ldmlFile, ws);
-					ws.StoreID = storeId;
+					ws.Id = id;
 					ws.ForceChanged();
 				}
 			}
 			m_mapLangWs.Add(key, ws.Handle);
 			// If FindOrCreate had to get creative, the WS ID may not match the input identifier. We want both the
 			// original and actual keys in the map.
-			if (!m_mapLangWs.ContainsKey(ws.ID))
-				m_mapLangWs.Add(ws.ID, ws.Handle);
+			if (!m_mapLangWs.ContainsKey(ws.Id))
+				m_mapLangWs.Add(ws.Id, ws.Handle);
 			return ws.Handle;
 		}
 
@@ -781,8 +781,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				int ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
 				if (ws > 0)
 				{
-					WritingSystem wsObj = GetExistingWritingSystem(ws);
-					sLang = wsObj.ID;
+					CoreWritingSystemDefinition wsObj = GetExistingWritingSystem(ws);
+					sLang = wsObj.Id;
 					sDir = wsObj.RightToLeftScript ? "RTL" : "LTR";
 					sFont = wsObj.DefaultFontName;
 				}
@@ -2156,7 +2156,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// This finds or creates a writing system for the given key.
 			int handle = GetWsFromLiftLang(id);
 			Debug.Assert(handle >= 1);
-			WritingSystem ws = GetExistingWritingSystem(handle);
+			CoreWritingSystemDefinition ws = GetExistingWritingSystem(handle);
 
 			if (m_msImport != MergeStyle.MsKeepOld || string.IsNullOrEmpty(ws.Abbreviation))
 			{
@@ -3891,7 +3891,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				return null;
 		}
 
-		internal WritingSystem GetExistingWritingSystem(int handle)
+		internal CoreWritingSystemDefinition GetExistingWritingSystem(int handle)
 		{
 			return m_cache.ServiceLocator.WritingSystemManager.Get(handle);
 		}
@@ -4487,7 +4487,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					if (m_ws > 0)
 					{
-						WritingSystem ws = m_merger.GetExistingWritingSystem(m_ws);
+						CoreWritingSystemDefinition ws = m_merger.GetExistingWritingSystem(m_ws);
 						return ws.DisplayLabel;
 					}
 					else

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Reflection;
 using SIL.Utils;
+using SIL.WritingSystems;
 
 namespace SIL.CoreImpl
 {
@@ -117,6 +118,16 @@ namespace SIL.CoreImpl
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public static string GlobalWritingSystemStoreDirectory
+		{
+			get { return GlobalWritingSystemRepository.CurrentVersionPath(GlobalWritingSystemRepository.DefaultBasePath); }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the old global writing system store directory.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public static string OldGlobalWritingSystemStoreDirectory
 		{
 			get { return CommonAppDataFolder("WritingSystemStore"); }
 		}

@@ -154,7 +154,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			WritingSystemManager wsManager = m_cache.ServiceLocator.WritingSystemManager;
 			int hvoWs = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
-			WritingSystem ws = wsManager.Get(hvoWs);
+			CoreWritingSystemDefinition ws = wsManager.Get(hvoWs);
 
 			if (key.Contains("ValidCharacters"))
 				return GetValidCharactersList(key, ws);
@@ -675,7 +675,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="key">The valid characters parameter key.</param>
 		/// <param name="ws">The writing system</param>
 		/// <returns></returns>
-		private string GetValidCharactersList(string key, WritingSystem ws)
+		private string GetValidCharactersList(string key, CoreWritingSystemDefinition ws)
 		{
 			if (key.StartsWith("ValidCharacters_"))
 			{

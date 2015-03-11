@@ -103,8 +103,12 @@
     <Compile Include="..\..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="CoreLdmlInFolderWritingSystemFactory.cs" />
+    <Compile Include="CoreSldrWritingSystemFactory.cs" />
+    <Compile Include="CoreWritingSystemFactory.cs" />
     <Compile Include="DirectoryFinder.cs" />
     <Compile Include="CaseFunctions.cs" />
+    <Compile Include="MemoryWritingSystemRepository.cs" />
     <Compile Include="StringSearcher.cs" />
     <Compile Include="VersionInfoProvider.cs" />
     <Compile Include="StartupException.cs" />
@@ -123,10 +127,10 @@
     <Compile Include="CellarPropertyType.cs" />
     <Compile Include="CellarPropertyTypeFilter.cs" />
     <Compile Include="KeyboardHelper.cs" />
-    <Compile Include="WritingSystem.cs" />
+    <Compile Include="CoreWritingSystemDefinition.cs" />
     <Compile Include="WritingSystemManager.cs" />
-    <Compile Include="GlobalFileWritingSystemStore.cs" />
-    <Compile Include="LocalFileWritingSystemStore.cs" />
+    <Compile Include="CoreGlobalWritingSystemRepository.cs" />
+    <Compile Include="CoreLdmlInFolderWritingSystemRepository.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

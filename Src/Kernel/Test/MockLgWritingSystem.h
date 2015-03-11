@@ -55,7 +55,7 @@ public:
 		return cref;
 	}
 
-	STDMETHOD(get_ID)(BSTR * pbstr)
+	STDMETHOD(get_Id)(BSTR * pbstr)
 	{
 		m_id.GetBstr(pbstr);
 		return S_OK;
@@ -72,7 +72,7 @@ public:
 		return E_NOTIMPL;
 	}
 
-	STDMETHOD(get_SpellCheckingID)(BSTR * pbstr)
+	STDMETHOD(get_SpellCheckingId)(BSTR * pbstr)
 	{
 		if (m_stuSpellCheckDictionary.Length())
 			m_stuSpellCheckDictionary.GetBstr(pbstr);

@@ -1032,11 +1032,11 @@ namespace SIL.FieldWorks.Filters
 		public static void SetupPatternCollating(IVwPattern pattern, FdoCache cache)
 		{
 			pattern.IcuLocale = cache.ServiceLocator.WritingSystemFactory.GetStrFromWs(pattern.Pattern.get_WritingSystem(0));
-			WritingSystem ws = cache.ServiceLocator.WritingSystemManager.Get(pattern.IcuLocale);
+			CoreWritingSystemDefinition ws = cache.ServiceLocator.WritingSystemManager.Get(pattern.IcuLocale);
 			// Enhance JohnT: we would like to be able to make it use the defined collating rules for the
 			// other sort types, but don't currently know how.
 			if (ws != null)
-				pattern.IcuCollatingRules = ws.DefaultCollation.IcuRules;
+				pattern.IcuCollatingRules = ws.DefaultCollation.CollationRules;
 		}
 	}
 

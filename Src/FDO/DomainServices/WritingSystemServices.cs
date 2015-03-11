@@ -217,14 +217,14 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="currentWS">The current WS.</param>
 		/// <param name="wsDefault">The ws default.</param>
 		/// <returns></returns>
-		public static WritingSystem GetWritingSystem(FdoCache cache, XmlNode frag, WritingSystem currentWS, int wsDefault)
+		public static CoreWritingSystemDefinition GetWritingSystem(FdoCache cache, XmlNode frag, CoreWritingSystemDefinition currentWS, int wsDefault)
 		{
 			return GetWritingSystem(cache, frag, currentWS, 0, 0, wsDefault);
 		}
 		/// <summary>
 		/// Get the writing system for the specified arguments, using the supplied SDA to interpret hvo and flid.
 		/// </summary>
-		public static WritingSystem GetWritingSystem(FdoCache cache, ISilDataAccess sda, XmlNode frag, WritingSystem currentWS,
+		public static CoreWritingSystemDefinition GetWritingSystem(FdoCache cache, ISilDataAccess sda, XmlNode frag, CoreWritingSystemDefinition currentWS,
 			int hvo, int flid, int wsDefault)
 		{
 			if (wsDefault == 0)
@@ -253,7 +253,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Get the writing system for the specified arguments, using the default cache to interpret hvo and flid.
 		/// Consider using the overload that takes an SDA if hvo or flid might be decorator objects/properties.
 		/// </summary>
-		public static WritingSystem GetWritingSystem(FdoCache cache, XmlNode frag, WritingSystem currentWS, int hvo, int flid, int wsDefault)
+		public static CoreWritingSystemDefinition GetWritingSystem(FdoCache cache, XmlNode frag, CoreWritingSystemDefinition currentWS, int hvo, int flid, int wsDefault)
 		{
 			return GetWritingSystem(cache, cache.DomainDataByFlid, frag, currentWS, hvo, flid, wsDefault);
 		}
@@ -340,7 +340,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="hvo">object to use in determining 'best' names</param>
 		/// <param name="flid">flid to use in determining 'best' names</param>
 		/// <returns></returns>
-		public static HashSet<int> GetAllWritingSystems(FdoCache cache, XmlNode frag, WritingSystem currentWS, int hvo, int flid)
+		public static HashSet<int> GetAllWritingSystems(FdoCache cache, XmlNode frag, CoreWritingSystemDefinition currentWS, int hvo, int flid)
 		{
 			var sWs = XmlUtils.GetOptionalAttributeValue(frag, "ws");
 			return GetAllWritingSystems(cache, sWs, currentWS, hvo, flid);
@@ -355,7 +355,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="hvo">object to use in determining 'best' names</param>
 		/// <param name="flid">flid to use in determining 'best' names</param>
 		/// <returns></returns>
-		public static HashSet<int> GetAllWritingSystems(FdoCache cache, string sWs, WritingSystem currentWS, int hvo, int flid)
+		public static HashSet<int> GetAllWritingSystems(FdoCache cache, string sWs, CoreWritingSystemDefinition currentWS, int hvo, int flid)
 		{
 			var allWsIds = new HashSet<int>();
 			if (sWs != null)
@@ -411,8 +411,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <returns>
 		/// An actual writing system id, or 0, if it can't recognize the wsSpec parameter.
 		/// </returns>
-		public static int InterpretWsLabel(FdoCache cache, string wsSpec, WritingSystem wsDefault,
-										   int hvoObj, int flid, WritingSystem currentWS)
+		public static int InterpretWsLabel(FdoCache cache, string wsSpec, CoreWritingSystemDefinition wsDefault,
+										   int hvoObj, int flid, CoreWritingSystemDefinition currentWS)
 		{
 			int wsMagic;
 			return InterpretWsLabel(cache, wsSpec, wsDefault, hvoObj, flid, currentWS, out wsMagic);
@@ -434,8 +434,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <returns>
 		/// An actual writing system id, or 0, if it can't recognize the wsSpec parameter.
 		/// </returns>
-		public static int InterpretWsLabel(FdoCache cache, ISilDataAccess sda, string wsSpec, WritingSystem wsDefault,
-			int hvoObj, int flid, WritingSystem currentWS, out int wsMagic)
+		public static int InterpretWsLabel(FdoCache cache, ISilDataAccess sda, string wsSpec, CoreWritingSystemDefinition wsDefault,
+			int hvoObj, int flid, CoreWritingSystemDefinition currentWS, out int wsMagic)
 		{
 			wsMagic = GetMagicWsIdFromName(wsSpec);	// note: doesn't cover "va" and "av".
 			var defAnalWs = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
@@ -545,8 +545,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <returns>
 		/// An actual writing system id, or 0, if it can't recognize the wsSpec parameter.
 		/// </returns>
-		public static int InterpretWsLabel(FdoCache cache, string wsSpec, WritingSystem wsDefault,
-			int hvoObj, int flid, WritingSystem currentWS, out int wsMagic)
+		public static int InterpretWsLabel(FdoCache cache, string wsSpec, CoreWritingSystemDefinition wsDefault,
+			int hvoObj, int flid, CoreWritingSystemDefinition currentWS, out int wsMagic)
 		{
 			return InterpretWsLabel(cache, cache.DomainDataByFlid, wsSpec, wsDefault, hvoObj, flid,
 				currentWS, out wsMagic);
@@ -648,7 +648,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="hvoObj">The hvo obj.</param>
 		/// <param name="wsDefault">The ws default.</param>
 		/// <returns></returns>
-		public static WritingSystem GetReversalIndexEntryWritingSystem(FdoCache cache, int hvoObj, WritingSystem wsDefault)
+		public static CoreWritingSystemDefinition GetReversalIndexEntryWritingSystem(FdoCache cache, int hvoObj, CoreWritingSystemDefinition wsDefault)
 		{
 			IReversalIndex ri = null;
 
@@ -779,7 +779,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						retWs = defaultAnalWs;
 						return null;
 					}
-					foreach (WritingSystem wsLoop in cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+					foreach (CoreWritingSystemDefinition wsLoop in cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 					{
 						retTss = sda.get_MultiStringAlt(hvo, flid, wsLoop.Handle);
 						if (retTss.Length > 0)
@@ -791,7 +791,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					if (retWs == 0)
 					{
 						// Try non-current analysis WSes.
-						foreach (WritingSystem wsLoop in cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
+						foreach (CoreWritingSystemDefinition wsLoop in cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
 						{
 							retTss = sda.get_MultiStringAlt(hvo, flid, wsLoop.Handle);
 							if (retTss.Length <= 0) continue;
@@ -886,7 +886,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						retWs = defaultAnalWs;
 						return null;
 					}
-					foreach (WritingSystem wsLoop in cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+					foreach (CoreWritingSystemDefinition wsLoop in cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 					{
 						retTss = sda.get_MultiStringAlt(hvo, flid, wsLoop.Handle);
 						if (retTss != null && retTss.Length > 0)
@@ -897,7 +897,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					}
 					if (retWs == 0)
 					{
-						foreach (WritingSystem wsLoop in cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
+						foreach (CoreWritingSystemDefinition wsLoop in cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
 						{
 							retTss = sda.get_MultiStringAlt(hvo, flid, wsLoop.Handle);
 							if (retTss != null && retTss.Length > 0)
@@ -910,7 +910,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					if (retWs == 0)
 					{
 						// Try non-current analysis WSes.
-						foreach (WritingSystem wsLoop in cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
+						foreach (CoreWritingSystemDefinition wsLoop in cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
 						{
 							retTss = sda.get_MultiStringAlt(hvo, flid, wsLoop.Handle);
 							if (retTss != null && retTss.Length > 0)
@@ -923,7 +923,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					if (retWs == 0)
 					{
 						// Try non-current vernacular WSes.
-						foreach (WritingSystem wsLoop in cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
+						foreach (CoreWritingSystemDefinition wsLoop in cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
 						{
 							retTss = sda.get_MultiStringAlt(hvo, flid, wsLoop.Handle);
 							if (retTss != null && retTss.Length > 0)
@@ -970,7 +970,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						retWs = defaultVernWs;
 						return null;
 					}
-					foreach (WritingSystem wsLoop in cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
+					foreach (CoreWritingSystemDefinition wsLoop in cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
 					{
 						retTss = sda.get_MultiStringAlt(hvo, flid, wsLoop.Handle);
 						if (retTss != null && retTss.Length > 0)
@@ -981,7 +981,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					}
 					if (retWs == 0)
 					{
-						foreach (WritingSystem wsLoop in cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+						foreach (CoreWritingSystemDefinition wsLoop in cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 						{
 							retTss = sda.get_MultiStringAlt(hvo, flid, wsLoop.Handle);
 							if (retTss != null && retTss.Length > 0)
@@ -994,7 +994,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					if (retWs == 0)
 					{
 						// Try non-current vernacular WSes.
-						foreach (WritingSystem wsLoop in cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
+						foreach (CoreWritingSystemDefinition wsLoop in cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
 						{
 							retTss = sda.get_MultiStringAlt(hvo, flid, wsLoop.Handle);
 							if (retTss != null && retTss.Length > 0)
@@ -1007,7 +1007,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					if (retWs == 0)
 					{
 						// Try non-current analysis WSes.
-						foreach (WritingSystem wsLoop in cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
+						foreach (CoreWritingSystemDefinition wsLoop in cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
 						{
 							retTss = sda.get_MultiStringAlt(hvo, flid, wsLoop.Handle);
 							if (retTss != null && retTss.Length > 0)
@@ -1173,12 +1173,12 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="hvoObj">id of a reversal index entry, reversal index, PartOfSpeech or LexSense</param>
 		/// <param name="forceIncludeEnglish">True, if it is to include English, no matter what.</param>
 		/// <returns></returns>
-		public static List<WritingSystem> GetReversalIndexWritingSystems(FdoCache cache, int hvoObj, bool forceIncludeEnglish)
+		public static List<CoreWritingSystemDefinition> GetReversalIndexWritingSystems(FdoCache cache, int hvoObj, bool forceIncludeEnglish)
 		{
 			// This method actually handles reversal index, reversal index entry, other classes, and even hvo 0.
-			WritingSystem wsPrimary = GetReversalIndexEntryWritingSystem(cache, hvoObj, cache.LanguageProject.DefaultAnalysisWritingSystem);
-			var rgwsWanted = new List<WritingSystem>(4) { wsPrimary };
-			foreach (WritingSystem ws in cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+			CoreWritingSystemDefinition wsPrimary = GetReversalIndexEntryWritingSystem(cache, hvoObj, cache.LanguageProject.DefaultAnalysisWritingSystem);
+			var rgwsWanted = new List<CoreWritingSystemDefinition>(4) { wsPrimary };
+			foreach (CoreWritingSystemDefinition ws in cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 			{
 				if (ws == wsPrimary)
 					continue;
@@ -1189,7 +1189,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 			if (forceIncludeEnglish)
 			{
-				WritingSystem english = cache.ServiceLocator.WritingSystemManager.Get("en");
+				CoreWritingSystemDefinition english = cache.ServiceLocator.WritingSystemManager.Get("en");
 				if (!rgwsWanted.Contains(english))
 					rgwsWanted.Add(english);
 			}
@@ -1203,9 +1203,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="cache">The cache.</param>
 		/// <param name="hvosWss">Array of LgWritingSystem Hvos.</param>
 		/// <returns></returns>
-		public static List<WritingSystem> WssFromHvos(FdoCache cache, int[] hvosWss)
+		public static List<CoreWritingSystemDefinition> WssFromHvos(FdoCache cache, int[] hvosWss)
 		{
-			var result = new List<WritingSystem>(hvosWss.Length);
+			var result = new List<CoreWritingSystemDefinition>(hvosWss.Length);
 			for (var i = 0; i < hvosWss.Length; i++)
 				result.Add(cache.ServiceLocator.WritingSystemManager.Get(hvosWss[i]));
 
@@ -1219,7 +1219,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="wsMagic">The ws magic.</param>
 		/// <param name="forceIncludeEnglish">if set to <c>true</c> [force include english].</param>
 		/// <returns></returns>
-		public static List<WritingSystem> GetWritingSystemList(FdoCache cache, int wsMagic, bool forceIncludeEnglish)
+		public static List<CoreWritingSystemDefinition> GetWritingSystemList(FdoCache cache, int wsMagic, bool forceIncludeEnglish)
 		{
 			return GetWritingSystemList(cache, wsMagic, 0, forceIncludeEnglish);
 		}
@@ -1232,7 +1232,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="hvoObj">The hvo obj.</param>
 		/// <param name="forceIncludeEnglish">if set to <c>true</c> [force include english].</param>
 		/// <returns></returns>
-		public static List<WritingSystem> GetWritingSystemList(FdoCache cache, int wsMagic, int hvoObj, bool forceIncludeEnglish)
+		public static List<CoreWritingSystemDefinition> GetWritingSystemList(FdoCache cache, int wsMagic, int hvoObj, bool forceIncludeEnglish)
 		{
 			// add only current writing systems (not all active), by default
 			return GetWritingSystemList(cache, wsMagic, hvoObj, forceIncludeEnglish, false);
@@ -1247,7 +1247,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="forceIncludeEnglish">if set to <c>true</c> [force include english].</param>
 		/// <param name="fIncludeUncheckedActiveWss">if true, add appropriate non-current but active writing systems.</param>
 		/// <returns></returns>
-		public static List<WritingSystem> GetWritingSystemList(FdoCache cache, int wsMagic, int hvoObj,
+		public static List<CoreWritingSystemDefinition> GetWritingSystemList(FdoCache cache, int wsMagic, int hvoObj,
 			bool forceIncludeEnglish, bool fIncludeUncheckedActiveWss)
 		{
 			switch (wsMagic)
@@ -1269,14 +1269,14 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			}
 		}
 
-		private static List<WritingSystem> VernWss(FdoCache cache, bool fIncludeUncheckedActiveWss)
+		private static List<CoreWritingSystemDefinition> VernWss(FdoCache cache, bool fIncludeUncheckedActiveWss)
 		{
 			return GetCurrentThenRemainingActiveWss(cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems,
 				cache.ServiceLocator.WritingSystems.VernacularWritingSystems, !fIncludeUncheckedActiveWss);
 		}
 
 
-		private static List<WritingSystem> AnalysisWss(FdoCache cache, bool fIncludeUncheckedActiveWss)
+		private static List<CoreWritingSystemDefinition> AnalysisWss(FdoCache cache, bool fIncludeUncheckedActiveWss)
 		{
 			return GetCurrentThenRemainingActiveWss(cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems,
 				cache.ServiceLocator.WritingSystems.AnalysisWritingSystems, !fIncludeUncheckedActiveWss);
@@ -1289,16 +1289,16 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="activeWss"></param>
 		/// <param name="fAddOnlyCurrent">if true, only add the current wss, ignoring remaining active wss.</param>
 		/// <returns></returns>
-		public static List<WritingSystem> GetCurrentThenRemainingActiveWss(IEnumerable<WritingSystem> currentWss, ICollection<WritingSystem> activeWss,
+		public static List<CoreWritingSystemDefinition> GetCurrentThenRemainingActiveWss(IEnumerable<CoreWritingSystemDefinition> currentWss, ICollection<CoreWritingSystemDefinition> activeWss,
 			bool fAddOnlyCurrent)
 		{
-			List<WritingSystem> wss = currentWss.ToList();
+			List<CoreWritingSystemDefinition> wss = currentWss.ToList();
 
 			if (fAddOnlyCurrent)
 				return wss; // finished adding current wss, so return;
 
 			// Now add the unchecked (or not current) writing systems to the list.
-			foreach (WritingSystem ws in activeWss)
+			foreach (CoreWritingSystemDefinition ws in activeWss)
 			{
 				if (!wss.Contains(ws))
 					wss.Add(ws);
@@ -1306,9 +1306,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			return wss;
 		}
 
-		private static List<WritingSystem> VernacularAnalysisWss(FdoCache cache, bool fIncludeUncheckedActiveWss)
+		private static List<CoreWritingSystemDefinition> VernacularAnalysisWss(FdoCache cache, bool fIncludeUncheckedActiveWss)
 		{
-			var mergedSet = new HashSet<WritingSystem>();
+			var mergedSet = new HashSet<CoreWritingSystemDefinition>();
 			mergedSet.UnionWith(GetCurrentThenRemainingActiveWss(cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems,
 				cache.ServiceLocator.WritingSystems.VernacularWritingSystems, !fIncludeUncheckedActiveWss));
 			mergedSet.UnionWith(GetCurrentThenRemainingActiveWss(cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems,
@@ -1316,9 +1316,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			return mergedSet.ToList();
 		}
 
-		private static List<WritingSystem> AnalysisVernacularWss(FdoCache cache, bool fIncludeUncheckedActiveWss)
+		private static List<CoreWritingSystemDefinition> AnalysisVernacularWss(FdoCache cache, bool fIncludeUncheckedActiveWss)
 		{
-			var mergedSet = new HashSet<WritingSystem>();
+			var mergedSet = new HashSet<CoreWritingSystemDefinition>();
 			mergedSet.UnionWith(GetCurrentThenRemainingActiveWss(cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems,
 				cache.ServiceLocator.WritingSystems.VernacularWritingSystems, !fIncludeUncheckedActiveWss));
 			mergedSet.UnionWith(GetCurrentThenRemainingActiveWss(cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems,
@@ -1337,7 +1337,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="addVernWss">if set to <c>true</c> ***new*** writing systems will be added to the list of vernacular writing systems.</param>
 		/// <param name="ws">The writing system.</param>
 		/// <returns>true if the writing system already exists, false if it had to be created</returns>
-		public static bool FindOrCreateWritingSystem(FdoCache cache, string templateDir, string identifier, bool addAnalWss, bool addVernWss, out WritingSystem ws)
+		public static bool FindOrCreateWritingSystem(FdoCache cache, string templateDir, string identifier, bool addAnalWss, bool addVernWss, out CoreWritingSystemDefinition ws)
 		{
 			if (cache.ServiceLocator.WritingSystemManager.GetOrSet(identifier, out ws))
 				return true;
@@ -1361,7 +1361,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// systems if the appropriate flag is set.
 		/// </summary>
 		/// <returns>true if the writing system already exists, false if it had to be created</returns>
-		public static bool FindOrCreateSomeWritingSystem(FdoCache cache, string templateDir, string identifier, bool addAnalWss, bool addVernWss, out WritingSystem ws)
+		public static bool FindOrCreateSomeWritingSystem(FdoCache cache, string templateDir, string identifier, bool addAnalWss, bool addVernWss, out CoreWritingSystemDefinition ws)
 		{
 			if (cache.ServiceLocator.WritingSystemManager.TryGet(identifier, out ws))
 				return true;
@@ -1420,22 +1420,22 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				((ILexDb) condemnedReversal.Owner).ReversalIndexesOC.Remove(condemnedReversal);
 			}
 
-			UpdateWritingSystemField(cache, servLocator.GetInstance<IWordformLookupListRepository>().AllInstances().Cast<ICmObject>(),
+			UpdateWritingSystemField(cache, servLocator.GetInstance<IWordformLookupListRepository>().AllInstances(),
 				WordformLookupListTags.kflidWritingSystem, origWsId, newWsId);
 
-			UpdateWritingSystemField(cache, servLocator.GetInstance<ICmPossibilityListRepository>().AllInstances().Cast<ICmObject>(),
+			UpdateWritingSystemField(cache, servLocator.GetInstance<ICmPossibilityListRepository>().AllInstances(),
 				CmPossibilityListTags.kflidWritingSystem, origWsId, newWsId);
 
-			UpdateWritingSystemField(cache, servLocator.GetInstance<ICmBaseAnnotationRepository>().AllInstances().Cast<ICmObject>(),
+			UpdateWritingSystemField(cache, servLocator.GetInstance<ICmBaseAnnotationRepository>().AllInstances(),
 				CmBaseAnnotationTags.kflidWritingSystem, origWsId, newWsId);
 
-			UpdateWritingSystemField(cache, servLocator.GetInstance<IFsOpenFeatureRepository>().AllInstances().Cast<ICmObject>(),
+			UpdateWritingSystemField(cache, servLocator.GetInstance<IFsOpenFeatureRepository>().AllInstances(),
 				FsOpenFeatureTags.kflidWritingSystem, origWsId, newWsId);
 
-			UpdateWritingSystemField(cache, servLocator.GetInstance<IScrMarkerMappingRepository>().AllInstances().Cast<ICmObject>(),
+			UpdateWritingSystemField(cache, servLocator.GetInstance<IScrMarkerMappingRepository>().AllInstances(),
 				ScrMarkerMappingTags.kflidWritingSystem, origWsId, newWsId);
 
-			UpdateWritingSystemField(cache, servLocator.GetInstance<IScrImportSourceRepository>().AllInstances().Cast<ICmObject>(),
+			UpdateWritingSystemField(cache, servLocator.GetInstance<IScrImportSourceRepository>().AllInstances(),
 				ScrImportSourceTags.kflidWritingSystem, origWsId, newWsId);
 
 			UpdateWritingSystemListField(cache, cache.LanguageProject, LangProjectTags.kflidVernWss, origWsId, newWsId);
@@ -1531,20 +1531,20 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// <param name="ws">The writing system.</param>
-		public static void DeleteWritingSystem(FdoCache cache, WritingSystem ws)
+		public static void DeleteWritingSystem(FdoCache cache, CoreWritingSystemDefinition ws)
 		{
 			StringServices.CrawlStrings(cache, str => DeleteRuns(ws, str), multiStr => DeleteMultiString(ws, multiStr));
 
-			UpdateWritingSystemFields(cache, ws.ID, null);
+			UpdateWritingSystemFields(cache, ws.Id, null);
 			ws.MarkedForDeletion = true;
 		}
 
-		private static ITsString DeleteRuns(WritingSystem ws, ITsString str)
+		private static ITsString DeleteRuns(CoreWritingSystemDefinition ws, ITsString str)
 		{
 			return StringServices.CrawlRuns(str, run => run.get_WritingSystemAt(0) == ws.Handle ? null : run);
 		}
 
-		private static void DeleteMultiString(WritingSystem ws, ITsMultiString multiStr)
+		private static void DeleteMultiString(CoreWritingSystemDefinition ws, ITsMultiString multiStr)
 		{
 			multiStr.set_String(ws.Handle, null);
 
@@ -1569,7 +1569,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="cache">The cache.</param>
 		/// <param name="fromWs">The writing system to merge from.</param>
 		/// <param name="toWs">The writing system to merge into.</param>
-		public static void MergeWritingSystems(FdoCache cache, WritingSystem fromWs, WritingSystem toWs)
+		public static void MergeWritingSystems(FdoCache cache, CoreWritingSystemDefinition fromWs, CoreWritingSystemDefinition toWs)
 		{
 			StringServices.CrawlStrings(cache, str => StringServices.CrawlRuns(str,
 				run => MergeRun(fromWs, toWs, run)),
@@ -1590,7 +1590,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				}
 			}
 
-			UpdateWritingSystemFields(cache, fromWs.ID, toWs.ID);
+			UpdateWritingSystemFields(cache, fromWs.Id, toWs.Id);
 			foreach (var style in cache.ServiceLocator.GetInstance<IStStyleRepository>().AllInstances())
 			{
 				var oldProps = style.Rules;
@@ -1619,11 +1619,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Every object that uses the WS in its representation must be marked dirty so a new representation with
 		/// the new ID can be written out. Also fields which store a string representation of the ID must be updated.
 		/// </summary>
-		public static void UpdateWritingSystemId(FdoCache cache, WritingSystem changedWs, string oldId)
+		public static void UpdateWritingSystemId(FdoCache cache, CoreWritingSystemDefinition changedWs, string oldId)
 		{
 			var ws = changedWs.Handle;
 			StringServices.CrawlStrings(cache, (obj, str) => CheckForWs(obj, str, ws), (obj, ms) => CheckForWs(obj, ms, ws));
-			UpdateWritingSystemFields(cache, oldId, changedWs.ID);
+			UpdateWritingSystemFields(cache, oldId, changedWs.Id);
 		}
 
 		/// <summary>
@@ -1658,7 +1658,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			}
 		}
 
-		private static ITsString MergeRun(WritingSystem fromWs, WritingSystem toWs, ITsString run)
+		private static ITsString MergeRun(CoreWritingSystemDefinition fromWs, CoreWritingSystemDefinition toWs, ITsString run)
 		{
 			int ws = run.get_WritingSystemAt(0);
 			int var;
@@ -1674,7 +1674,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			return tsb.GetString();
 		}
 
-		private static void MergeMultiString(WritingSystem fromWs, WritingSystem toWs, ITsMultiString multiStr)
+		private static void MergeMultiString(CoreWritingSystemDefinition fromWs, CoreWritingSystemDefinition toWs, ITsMultiString multiStr)
 		{
 			var changes = new Dictionary<int, ITsString>(multiStr.StringCount);
 			ITsString toWsStr = null;
@@ -1735,10 +1735,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(cache.ActionHandlerAccessor, () =>
 			{
-				WritingSystem defVernWs = wsContainer.DefaultVernacularWritingSystem;
-				IEnumerable<WritingSystem> relatedWss = wsContainer.AllWritingSystems.Related(defVernWs).ToArray();
+				CoreWritingSystemDefinition defVernWs = wsContainer.DefaultVernacularWritingSystem;
+				IEnumerable<CoreWritingSystemDefinition> relatedWss = wsContainer.AllWritingSystems.Related(defVernWs).ToArray();
 
-				foreach (WritingSystem ws in relatedWss.Where(ws => ws.Variants.Contains(WellKnownSubtags.IpaVariant)))
+				foreach (CoreWritingSystemDefinition ws in relatedWss.Where(ws => ws.Variants.Contains(WellKnownSubtags.IpaVariant)))
 					wsContainer.CurrentPronunciationWritingSystems.Add(ws);
 
 				// Add the primary vernacular writing system if nothing else fits.
@@ -1759,9 +1759,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="currentWS"></param>
 		/// <returns>A Set of writing system ids, or an empty Set, if it can't recognize the wsSpec parameter.</returns>
 		public static IEnumerable<int> GetWritingSystemIdsFromLabel(FdoCache cache,
-															  string wsSpec, WritingSystem wsDefault,
+															  string wsSpec, CoreWritingSystemDefinition wsDefault,
 															  int hvoObj, int flid,
-															  WritingSystem currentWS)
+															  CoreWritingSystemDefinition currentWS)
 		{
 			var writingSystemIds = new HashSet<int>();
 
@@ -1803,11 +1803,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	/// </summary>
 	public class MemoryWritingSystemContainer : IWritingSystemContainer
 	{
-		private readonly HashSet<WritingSystem> m_analWss;
-		private readonly HashSet<WritingSystem> m_vernWss;
-		private readonly List<WritingSystem> m_curAnalWss;
-		private readonly List<WritingSystem> m_curVernWss;
-		private readonly List<WritingSystem> m_curPronWss;
+		private readonly HashSet<CoreWritingSystemDefinition> m_analWss;
+		private readonly HashSet<CoreWritingSystemDefinition> m_vernWss;
+		private readonly List<CoreWritingSystemDefinition> m_curAnalWss;
+		private readonly List<CoreWritingSystemDefinition> m_curVernWss;
+		private readonly List<CoreWritingSystemDefinition> m_curPronWss;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MemoryWritingSystemContainer"/> class.
@@ -1817,21 +1817,21 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="curAnalWss">The current analysis writing systems.</param>
 		/// <param name="curVernWss">The current vernacular writing systems.</param>
 		/// <param name="curPronWss">The current pronunciation writing systems.</param>
-		public MemoryWritingSystemContainer(IEnumerable<WritingSystem> analWss, IEnumerable<WritingSystem> vernWss,
-			IEnumerable<WritingSystem> curAnalWss, IEnumerable<WritingSystem> curVernWss, IEnumerable<WritingSystem> curPronWss)
+		public MemoryWritingSystemContainer(IEnumerable<CoreWritingSystemDefinition> analWss, IEnumerable<CoreWritingSystemDefinition> vernWss,
+			IEnumerable<CoreWritingSystemDefinition> curAnalWss, IEnumerable<CoreWritingSystemDefinition> curVernWss, IEnumerable<CoreWritingSystemDefinition> curPronWss)
 		{
-			m_analWss = new HashSet<WritingSystem>(analWss);
-			m_vernWss = new HashSet<WritingSystem>(vernWss);
-			m_curAnalWss = new List<WritingSystem>(curAnalWss);
-			m_curVernWss = new List<WritingSystem>(curVernWss);
-			m_curPronWss = new List<WritingSystem>(curPronWss);
+			m_analWss = new HashSet<CoreWritingSystemDefinition>(analWss);
+			m_vernWss = new HashSet<CoreWritingSystemDefinition>(vernWss);
+			m_curAnalWss = new List<CoreWritingSystemDefinition>(curAnalWss);
+			m_curVernWss = new List<CoreWritingSystemDefinition>(curVernWss);
+			m_curPronWss = new List<CoreWritingSystemDefinition>(curPronWss);
 		}
 
 		/// <summary>
 		/// Gets all writing systems.
 		/// </summary>
 		/// <value>All writing systems.</value>
-		public IEnumerable<WritingSystem> AllWritingSystems
+		public IEnumerable<CoreWritingSystemDefinition> AllWritingSystems
 		{
 			get
 			{
@@ -1843,7 +1843,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Gets the analysis writing systems.
 		/// </summary>
 		/// <value>The analysis writing systems.</value>
-		public ICollection<WritingSystem> AnalysisWritingSystems
+		public ICollection<CoreWritingSystemDefinition> AnalysisWritingSystems
 		{
 			get
 			{
@@ -1855,7 +1855,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Gets the vernacular writing systems.
 		/// </summary>
 		/// <value>The vernacular writing systems.</value>
-		public ICollection<WritingSystem> VernacularWritingSystems
+		public ICollection<CoreWritingSystemDefinition> VernacularWritingSystems
 		{
 			get
 			{
@@ -1867,7 +1867,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Gets the current analysis writing systems.
 		/// </summary>
 		/// <value>The current analysis writing systems.</value>
-		public IList<WritingSystem> CurrentAnalysisWritingSystems
+		public IList<CoreWritingSystemDefinition> CurrentAnalysisWritingSystems
 		{
 			get
 			{
@@ -1879,7 +1879,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Gets the current vernacular writing systems.
 		/// </summary>
 		/// <value>The current vernacular writing systems.</value>
-		public IList<WritingSystem> CurrentVernacularWritingSystems
+		public IList<CoreWritingSystemDefinition> CurrentVernacularWritingSystems
 		{
 			get
 			{
@@ -1891,7 +1891,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Gets the current pronunciation writing systems.
 		/// </summary>
 		/// <value>The current pronunciation writing systems.</value>
-		public IList<WritingSystem> CurrentPronunciationWritingSystems
+		public IList<CoreWritingSystemDefinition> CurrentPronunciationWritingSystems
 		{
 			get
 			{
@@ -1903,7 +1903,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Gets the default analysis writing system.
 		/// </summary>
 		/// <value>The default analysis writing system.</value>
-		public WritingSystem DefaultAnalysisWritingSystem
+		public CoreWritingSystemDefinition DefaultAnalysisWritingSystem
 		{
 			get
 			{
@@ -1924,7 +1924,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Gets the default vernacular writing system.
 		/// </summary>
 		/// <value>The default vernacular writing system.</value>
-		public WritingSystem DefaultVernacularWritingSystem
+		public CoreWritingSystemDefinition DefaultVernacularWritingSystem
 		{
 			get
 			{
@@ -1945,7 +1945,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Gets the default pronunciation writing system.
 		/// </summary>
 		/// <value>The default pronunciation writing system.</value>
-		public WritingSystem DefaultPronunciationWritingSystem
+		public CoreWritingSystemDefinition DefaultPronunciationWritingSystem
 		{
 			get
 			{
@@ -1960,7 +1960,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// </summary>
 		/// <param name="ws">The writing system to add.</param>
 		/// ------------------------------------------------------------------------------------
-		public void AddToCurrentAnalysisWritingSystems(WritingSystem ws)
+		public void AddToCurrentAnalysisWritingSystems(CoreWritingSystemDefinition ws)
 		{
 			if (!m_analWss.Contains(ws))
 				m_analWss.Add(ws);
@@ -1974,7 +1974,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// </summary>
 		/// <param name="ws">The writing system to add.</param>
 		/// ------------------------------------------------------------------------------------
-		public void AddToCurrentVernacularWritingSystems(WritingSystem ws)
+		public void AddToCurrentVernacularWritingSystems(CoreWritingSystemDefinition ws)
 		{
 			if (!m_vernWss.Contains(ws))
 				m_vernWss.Add(ws);
@@ -1986,7 +1986,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	/// A collection of writing systems backed by a space-delimited list of writing system IDs
 	/// contained in a string property of an FDO object.
 	/// </summary>
-	public class WritingSystemCollection : ICollection<WritingSystem>
+	public class WritingSystemCollection : ICollection<CoreWritingSystemDefinition>
 	{
 		/// <summary>
 		/// The FDO object
@@ -2025,11 +2025,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
 		/// </returns>
 		/// <filterpriority>1</filterpriority>
-		public IEnumerator<WritingSystem> GetEnumerator()
+		public IEnumerator<CoreWritingSystemDefinition> GetEnumerator()
 		{
 			foreach (string wsId in WsIds)
 			{
-				WritingSystem ret;
+				CoreWritingSystemDefinition ret;
 				m_obj.Services.WritingSystemManager.TryGet(wsId, out ret);
 				yield return ret;
 			}
@@ -2057,12 +2057,12 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Adds an item to the <see cref="T:System.Collections.Generic.ICollection`1"/>.
 		/// </summary>
 		/// <param name="item">The object to add to the <see cref="T:System.Collections.Generic.ICollection`1"/>.</param>
-		public virtual void Add(WritingSystem item)
+		public virtual void Add(CoreWritingSystemDefinition item)
 		{
 			var wsIds = new List<string>(WsIds);
-			if (!wsIds.Contains(item.ID))
+			if (!wsIds.Contains(item.Id))
 			{
-				wsIds.Add(item.ID);
+				wsIds.Add(item.Id);
 				WsIds = wsIds;
 			}
 			RaiseChanged();
@@ -2084,9 +2084,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// true if <paramref name="item"/> is found in the <see cref="T:System.Collections.Generic.ICollection`1"/>; otherwise, false.
 		/// </returns>
 		/// <param name="item">The object to locate in the <see cref="T:System.Collections.Generic.ICollection`1"/>.</param>
-		public bool Contains(WritingSystem item)
+		public bool Contains(CoreWritingSystemDefinition item)
 		{
-			return WsIds.Contains(item.ID);
+			return WsIds.Contains(item.Id);
 		}
 
 		/// <summary>
@@ -2102,7 +2102,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		///                     -or-
 		///                     The number of elements in the source <see cref="T:System.Collections.Generic.ICollection`1"/> is greater than the available space from <paramref name="arrayIndex"/> to the end of the destination <paramref name="array"/>.
 		///                 </exception>
-		public void CopyTo(WritingSystem[] array, int arrayIndex)
+		public void CopyTo(CoreWritingSystemDefinition[] array, int arrayIndex)
 		{
 			if (array == null)
 				throw new ArgumentNullException("array");
@@ -2125,13 +2125,13 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// true if <paramref name="item"/> was successfully removed from the <see cref="T:System.Collections.Generic.ICollection`1"/>; otherwise, false. This method also returns false if <paramref name="item"/> is not found in the original <see cref="T:System.Collections.Generic.ICollection`1"/>.
 		/// </returns>
 		/// <param name="item">The object to remove from the <see cref="T:System.Collections.Generic.ICollection`1"/>.</param>
-		public bool Remove(WritingSystem item)
+		public bool Remove(CoreWritingSystemDefinition item)
 		{
 			bool removed = false;
 			var newWsIds = new List<string>();
 			foreach (string wsId in WsIds)
 			{
-				if (wsId == item.ID)
+				if (wsId == item.Id)
 					removed = true;
 				else
 					newWsIds.Add(wsId);
@@ -2218,7 +2218,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	/// A list of writing systems backed by a space-delimited list of writing system IDs
 	/// contained in a string property of an FDO object.
 	/// </summary>
-	public class WritingSystemList : WritingSystemCollection, IList<WritingSystem>
+	public class WritingSystemList : WritingSystemCollection, IList<CoreWritingSystemDefinition>
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="WritingSystemList"/> class.
@@ -2234,13 +2234,13 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Adds an item to the <see cref="T:System.Collections.Generic.ICollection`1"/>.
 		/// </summary>
 		/// <param name="item">The object to add to the <see cref="T:System.Collections.Generic.ICollection`1"/>.</param>
-		public override void Add(WritingSystem item)
+		public override void Add(CoreWritingSystemDefinition item)
 		{
 			string wss = Wss;
 			if (string.IsNullOrEmpty(wss))
-				wss = item.ID;
+				wss = item.Id;
 			else
-				wss += " " + item.ID;
+				wss += " " + item.Id;
 			Wss = wss;
 			RaiseChanged();
 		}
@@ -2254,9 +2254,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// The index of <paramref name="item"/> if found in the list; otherwise, -1.
 		/// </returns>
 		/// <param name="item">The object to locate in the <see cref="T:System.Collections.Generic.IList`1"/>.</param>
-		public int IndexOf(WritingSystem item)
+		public int IndexOf(CoreWritingSystemDefinition item)
 		{
-			return WsIds.IndexOf(item.ID);
+			return WsIds.IndexOf(item.Id);
 		}
 
 		/// <summary>
@@ -2265,7 +2265,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="index">The zero-based index at which <paramref name="item"/> should be inserted.</param>
 		/// <param name="item">The object to insert into the <see cref="T:System.Collections.Generic.IList`1"/>.</param>
 		/// <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="index"/> is not a valid index in the <see cref="T:System.Collections.Generic.IList`1"/>.</exception>
-		public void Insert(int index, WritingSystem item)
+		public void Insert(int index, CoreWritingSystemDefinition item)
 		{
 			IList<string> wsIds = WsIds;
 			if (index < 0 || index > wsIds.Count)
@@ -2275,11 +2275,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			for (int i = 0; i < wsIds.Count; i++)
 			{
 				if (i == index)
-					newWsIds.Add(item.ID);
+					newWsIds.Add(item.Id);
 				newWsIds.Add(wsIds[i]);
 			}
 			if (index == wsIds.Count)
-				newWsIds.Add(item.ID);
+				newWsIds.Add(item.Id);
 			WsIds = newWsIds;
 			RaiseChanged();
 		}
@@ -2313,7 +2313,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// </returns>
 		/// <param name="index">The zero-based index of the element to get or set.</param>
 		/// <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="index"/> is not a valid index in the <see cref="T:System.Collections.Generic.IList`1"/>.</exception>
-		public WritingSystem this[int index]
+		public CoreWritingSystemDefinition this[int index]
 		{
 			get
 			{
@@ -2329,7 +2329,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				if (index < 0 || index >= wsIds.Count)
 					throw new ArgumentOutOfRangeException("index");
 				var newWsIds = new List<string>(wsIds);
-				newWsIds[index] = value.ID;
+				newWsIds[index] = value.Id;
 				WsIds = newWsIds;
 				RaiseChanged();
 			}

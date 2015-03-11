@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.Common.Controls
 				Assert.AreEqual("mon", subtag.Code);
 
 				var newSubtag = new LanguageSubtag("mon", "Moniker");
-				WritingSystem newWs = wsManager.Create(newSubtag, null, null, Enumerable.Empty<VariantSubtag>());
+				CoreWritingSystemDefinition newWs = wsManager.Create(newSubtag, null, null, Enumerable.Empty<VariantSubtag>());
 				wsManager.Set(newWs);
 				subtag = langSetup.LanguageSubtag;
 				Assert.AreEqual("aaa", subtag.Code, "Language code 'mon' should already be in use");

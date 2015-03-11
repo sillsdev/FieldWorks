@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.XWorks
 			m_writingSystemsListBox.SelectedIndex = 0;
 		}
 
-		private object CreateItemForWs(CoreImpl.WritingSystem xws)
+		private object CreateItemForWs(CoreImpl.CoreWritingSystemDefinition xws)
 		{
 			return new Item {Label = xws.DisplayLabel, Ws = xws.Handle};
 		}

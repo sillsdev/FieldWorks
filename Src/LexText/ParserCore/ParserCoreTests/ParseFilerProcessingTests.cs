@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private ParseFiler m_filer;
 		private IdleQueue m_idleQueue;
-		private WritingSystem m_vernacularWS;
+		private CoreWritingSystemDefinition m_vernacularWS;
 		private ILexEntryFactory m_entryFactory;
 		private ILexSenseFactory m_senseFactory;
 		private IMoStemAllomorphFactory m_stemAlloFactory;

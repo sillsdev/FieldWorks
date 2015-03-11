@@ -13,9 +13,7 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
-using SIL.WritingSystems;
 using SIL.WritingSystems.Migration;
-using SIL.WritingSystems.Migration.WritingSystemsLdmlV0To1Migration;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -692,14 +690,14 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		private void ListNewWritingSystems(StreamWriter writer, string sMsg,
-			List<WritingSystem> list)
+			List<CoreWritingSystemDefinition> list)
 		{
 			if (list.Count > 0)
 			{
 				writer.WriteLine("<p><h3>{0}</h3></p>", sMsg);
 				writer.WriteLine("<ul>");
-				foreach (WritingSystem ws in list)
-					writer.WriteLine("<li>{0} ({1})</li>", ws.DisplayLabel, ws.ID);
+				foreach (CoreWritingSystemDefinition ws in list)
+					writer.WriteLine("<li>{0} ({1})</li>", ws.DisplayLabel, ws.Id);
 				writer.WriteLine("</ul>");
 			}
 		}
@@ -1482,13 +1480,13 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 
-		internal void NoteMigration(IEnumerable<LdmlVersion0MigrationStrategy.MigrationInfo> migrationInfo)
+		internal void NoteMigration(int toVersion, IEnumerable<LdmlMigrationInfo> migrationInfo)
 		{
-			foreach (var info in migrationInfo)
+			foreach (LdmlMigrationInfo info in migrationInfo)
 			{
 				// Not sure if it ever reports unchanged ones, but we don't care about them.
-				if (info.RfcTagBeforeMigration != info.RfcTagAfterMigration)
-					m_writingsytemChangeMap[RemoveMultipleX(info.RfcTagBeforeMigration.ToLowerInvariant())] = info.RfcTagAfterMigration;
+				if (info.IetfLanguageTagBeforeMigration != info.IetfLanguageTagAfterMigration)
+					m_writingsytemChangeMap[RemoveMultipleX(info.IetfLanguageTagBeforeMigration.ToLowerInvariant())] = info.IetfLanguageTagAfterMigration;
 				// Due to earlier bugs, FieldWorks projects sometimes contain cmn* writing systems in zh* files,
 				// and the fwdata incorrectly labels this data using a tag based on the file name rather than the
 				// language tag indicated by the internal properties. We attempt to correct this by also converting the
@@ -1496,8 +1494,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (info.FileName.StartsWith("zh", StringComparison.OrdinalIgnoreCase))
 				{
 					var fileNameTag = Path.GetFileNameWithoutExtension(info.FileName);
-					if (fileNameTag != info.RfcTagBeforeMigration)
-						m_writingsytemChangeMap[RemoveMultipleX(fileNameTag.ToLowerInvariant())] = info.RfcTagAfterMigration;
+					if (fileNameTag != info.IetfLanguageTagBeforeMigration)
+						m_writingsytemChangeMap[RemoveMultipleX(fileNameTag.ToLowerInvariant())] = info.IetfLanguageTagAfterMigration;
 				}
 			}
 		}

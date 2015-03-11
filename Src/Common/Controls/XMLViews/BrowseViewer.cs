@@ -3101,11 +3101,11 @@ namespace SIL.FieldWorks.Common.Controls
 		public RecordSorter CreateSorterForFirstColumn(int ws)
 		{
 			XmlNode colSpec = null;
-			WritingSystem colWs = null;
+			CoreWritingSystemDefinition colWs = null;
 			for (int i = 0; i < m_xbv.Vc.ColumnSpecs.Count; ++i)
 			{
 				XmlNode curSpec = m_xbv.Vc.ColumnSpecs[i];
-				WritingSystem curWs = WritingSystemServices.GetWritingSystem(m_cache, curSpec, null, 0);
+				CoreWritingSystemDefinition curWs = WritingSystemServices.GetWritingSystem(m_cache, curSpec, null, 0);
 				if (curWs.Handle == ws)
 				{
 					colSpec = curSpec;

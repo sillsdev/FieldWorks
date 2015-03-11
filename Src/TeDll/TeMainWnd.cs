@@ -1127,7 +1127,7 @@ namespace SIL.FieldWorks.TE
 			Debug.Assert(pub != null, "Unable to find the publication " + pubName);
 
 			ScripturePublication pubControl = CreatePublicationView(pub, viewType, m_cache.DefaultVernWs);
-			WritingSystem wsObj = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			CoreWritingSystemDefinition wsObj = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 
 			using (var uowHelper = new NonUndoableUnitOfWorkHelper(m_cache.ServiceLocator.ActionHandler))
 			{
@@ -1261,7 +1261,7 @@ namespace SIL.FieldWorks.TE
 			int ws = GetBackTranslationWsForView(TeEditingHelper.ViewTypeString(viewType));
 			ScripturePublication pubControl = CreatePublicationView(pub, viewType, ws);
 			pubControl.BaseInfoBarCaption = viewName;
-			WritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
+			CoreWritingSystemDefinition wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
 
 			using (var uowHelper = new NonUndoableUnitOfWorkHelper(m_cache.ServiceLocator.ActionHandler))
 			{
@@ -5443,8 +5443,8 @@ namespace SIL.FieldWorks.TE
 				foreach (ICmPossibility keyTerm in Cache.LanguageProject.KeyTermsList.PossibilitiesOS)
 					AddKtLeafNodes(keyTerms, keyTerm);
 
-				WritingSystem vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
-				WritingSystem defaultWs = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
+				CoreWritingSystemDefinition vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+				CoreWritingSystemDefinition defaultWs = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 
 				ComprehensionCheckingSettings ccSettings;
 				try
@@ -5584,9 +5584,9 @@ namespace SIL.FieldWorks.TE
 				TeProjectSettings.ShowSpellingErrors = true;
 				// Make sure that the spelling dictionary is up-to-date.
 				// Note that this will currently turn vernacular spelling on for FLEx, too.
-				WritingSystem wsObj = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
-				if (string.IsNullOrEmpty(wsObj.SpellCheckingID) || wsObj.SpellCheckingID == "<None>")
-					wsObj.SpellCheckingID = wsObj.ID.Replace('-', '_');
+				CoreWritingSystemDefinition wsObj = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+				if (string.IsNullOrEmpty(wsObj.SpellCheckingId) || wsObj.SpellCheckingId == "<None>")
+					wsObj.SpellCheckingId = wsObj.Id.Replace('-', '_');
 				using (new WaitCursor(this))
 					WfiWordformServices.ConformSpellingDictToWordforms(m_cache);
 			}
@@ -7689,11 +7689,11 @@ namespace SIL.FieldWorks.TE
 		protected override IPageSetupDialog CreatePageSetupDialog(IPubPageLayout pgl,
 			IPublication pub, IPubDivision div)
 		{
-			WritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
+			CoreWritingSystemDefinition wsObj = m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 
 			var dlg = new TePageSetupDlg(pgl, m_scr, pub, div, this,
 				m_app, m_app, ActiveEditingHelper.IsTrialPublicationView,
-				TePublicationsInit.GetPubPageSizes(pub.Name, wsObj.ID));
+				TePublicationsInit.GetPubPageSizes(pub.Name, wsObj.Id));
 			InitializePageSetupDlg(dlg);
 			return dlg;
 		}

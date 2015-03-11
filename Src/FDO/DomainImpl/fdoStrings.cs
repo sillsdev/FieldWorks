@@ -603,7 +603,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (source == null)
 				return; // Nothing to do.
 
-			foreach (var lws in m_object.Services.WritingSystemManager.LocalWritingSystems)
+			foreach (var lws in m_object.Services.WritingSystemManager.WritingSystems)
 			{
 				var ws = lws.Handle;
 				var myAlt = get_String(ws);
@@ -902,7 +902,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				return; // Skip writing TsStrings with no content.
 
 			writer.WriteStartElement("AUni");
-			writer.WriteAttributeString("ws", m_object.Services.WritingSystemManager.Get(ws).ID);
+			writer.WriteAttributeString("ws", m_object.Services.WritingSystemManager.Get(ws).Id);
 			text = Icu.Normalize(text, Icu.UNormalizationMode.UNORM_NFC);
 			writer.WriteString(text);
 			writer.WriteEndElement();

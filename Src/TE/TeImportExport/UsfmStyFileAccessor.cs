@@ -262,7 +262,7 @@ namespace SIL.FieldWorks.TE
 		/// Sets the properties of this entry based on the given FW style.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public override void SetPropertiesBasedOnStyle(IStStyle style, WritingSystem forceStyleInfo)
+		public override void SetPropertiesBasedOnStyle(IStStyle style, CoreWritingSystemDefinition forceStyleInfo)
 		{
 			base.SetPropertiesBasedOnStyle(style, forceStyleInfo);
 			m_textPropertiesFromStyFile = null;

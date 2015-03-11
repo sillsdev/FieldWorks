@@ -266,7 +266,7 @@ namespace SIL.FieldWorks.TE
 		{
 			// This problem only happens with the Graphite renderer so we need to select a
 			// Graphite font
-			WritingSystem enWs = Cache.ServiceLocator.WritingSystemManager.Get("en");
+			CoreWritingSystemDefinition enWs = Cache.ServiceLocator.WritingSystemManager.Get("en");
 			enWs.Fonts.Clear();
 			enWs.DefaultFont = new FontDefinition("Charis SIL");
 			Options.ShowEmptyParagraphPromptsSetting = true;
@@ -2522,7 +2522,7 @@ namespace SIL.FieldWorks.TE
 		[Test]
 		public void TextDirectionTest_RightToLeft()
 		{
-			WritingSystem ws = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+			CoreWritingSystemDefinition ws = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			ws.RightToLeftScript = true;
 			m_draftView.ViewConstructorWS = ws.Handle;
 			m_draftView.RefreshDisplay();

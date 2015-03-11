@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="ws">The writing system to use.</param>
 		/// <returns>The wordform, or null if an exception was thrown by the database accessors.</returns>
 		/// ------------------------------------------------------------------------------------
-		public static IWfiWordform FindOrCreateWordform(FdoCache cache, string form, WritingSystem ws)
+		public static IWfiWordform FindOrCreateWordform(FdoCache cache, string form, CoreWritingSystemDefinition ws)
 		{
 			Debug.Assert(!string.IsNullOrEmpty(form));
 			return FindOrCreateWordform(cache, CreateWordformTss(form, ws.Handle));
@@ -116,7 +116,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			SpellingHelper.EnsureDictionary(cache.DefaultVernWs, lgwsFactory);
 
 			// Make all existing spelling dictionaries give as nearly as possible the right answers.
-			foreach (WritingSystem wsObj in cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
+			foreach (CoreWritingSystemDefinition wsObj in cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
 			{
 				int ws = wsObj.Handle;
 				ConformOneSpellingDictToWordforms(ws, cache);
@@ -158,8 +158,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		public static void DisableVernacularSpellingDictionary(FdoCache cache)
 		{
-			foreach (WritingSystem ws in cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
-				ws.SpellCheckingID = "<None>";
+			foreach (CoreWritingSystemDefinition ws in cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
+				ws.SpellCheckingId = "<None>";
 		}
 
 		/// <summary>

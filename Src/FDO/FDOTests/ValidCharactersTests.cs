@@ -113,7 +113,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void Load_Nonempty()
 		{
-			WritingSystem ws1 = m_wsManager.Create("en");
+			CoreWritingSystemDefinition ws1 = m_wsManager.Create("en");
 			ws1.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"e", "f", "g", "h"}});
 			ws1.CharacterSets.Add(new CharacterSetDefinition("numeric") {Characters = {"4", "5"}});
 			ws1.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {",", "!", "*"}});
@@ -131,7 +131,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.IsTrue(validCharsW.OtherCharacters.Contains(","));
 			Assert.IsTrue(validCharsW.OtherCharacters.Contains("!"));
 			Assert.IsTrue(validCharsW.OtherCharacters.Contains("*"));
-			WritingSystem ws2 = m_wsManager.Create("en");
+			CoreWritingSystemDefinition ws2 = m_wsManager.Create("en");
 			validChars.SaveTo(ws2);
 			Assert.That(ws1.ValueEquals(ws2), Is.True);
 		}
@@ -144,13 +144,13 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void Load_Empty()
 		{
-			WritingSystem ws1 = m_wsManager.Create("en");
+			CoreWritingSystemDefinition ws1 = m_wsManager.Create("en");
 			ValidCharacters validChars = ValidCharacters.Load(ws1, RememberError, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			var validCharsW = new ValidCharsWrapper(validChars);
 			Assert.That(validCharsW.WordFormingCharacters, Is.Empty);
 			Assert.That(validCharsW.NumericCharacters, Is.Empty);
 			Assert.That(validCharsW.OtherCharacters, Is.Empty);
-			WritingSystem ws2 = m_wsManager.Create("en");
+			CoreWritingSystemDefinition ws2 = m_wsManager.Create("en");
 			validChars.SaveTo(ws2);
 			Assert.That(ws1.ValueEquals(ws2), Is.True);
 			Assert.That(m_lastException, Is.Null);
@@ -165,7 +165,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void Load_AllowHardLineBreakCharacter()
 		{
-			WritingSystem ws1 = m_wsManager.Create("en");
+			CoreWritingSystemDefinition ws1 = m_wsManager.Create("en");
 			ws1.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {"\u2028"}});
 			ValidCharacters validChars = ValidCharacters.Load(ws1, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			var validCharsW = new ValidCharsWrapper(validChars);
@@ -181,7 +181,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void Load_SingleBogusCharacter()
 		{
-			WritingSystem ws = m_wsManager.Create("en-US");
+			CoreWritingSystemDefinition ws = m_wsManager.Create("en-US");
 			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"\u05F6"}});
 
 			ValidCharacters validChars = ValidCharacters.Load(ws, RememberError, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
@@ -202,7 +202,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void Load_SingleCompoundBogusCharacter()
 		{
-			WritingSystem ws = m_wsManager.Create("en-US");
+			CoreWritingSystemDefinition ws = m_wsManager.Create("en-US");
 			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"\u200c\u0301"}});
 
 			var validChars = ValidCharacters.Load(ws, RememberError, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
@@ -222,7 +222,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void Load_ValidAndBogusCharacters()
 		{
-			WritingSystem ws = m_wsManager.Create("en-US");
+			CoreWritingSystemDefinition ws = m_wsManager.Create("en-US");
 			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"\u05F6", "g", "\u05F7", "h"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") {Characters = {"1"}});
 			ValidCharacters validChars = ValidCharacters.Load(ws, RememberError, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
@@ -251,7 +251,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void Load_SameCharacterInWordFormingAndPunctuationLists()
 		{
-			WritingSystem ws = m_wsManager.Create("en-US");
+			CoreWritingSystemDefinition ws = m_wsManager.Create("en-US");
 			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"'"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {"'"}});
 			ValidCharacters validChars = ValidCharacters.Load(ws, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
@@ -271,7 +271,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void Load_SameCharacterInWordFormingAndNumbericLists()
 		{
-			WritingSystem ws = m_wsManager.Create("en-US");
+			CoreWritingSystemDefinition ws = m_wsManager.Create("en-US");
 			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"1"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") {Characters = {"1"}});
 			ValidCharacters validChars = ValidCharacters.Load(ws, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
@@ -291,7 +291,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void Load_SameCharacterInNumericAndPunctuationLists()
 		{
-			WritingSystem ws = m_wsManager.Create("en-US");
+			CoreWritingSystemDefinition ws = m_wsManager.Create("en-US");
 			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") {Characters = {"1"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {"1"}});
 			ValidCharacters validChars = ValidCharacters.Load(ws, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
@@ -310,7 +310,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void Load_DuplicateCharacters()
 		{
-			WritingSystem ws = m_wsManager.Create("en-US");
+			CoreWritingSystemDefinition ws = m_wsManager.Create("en-US");
 			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"a", "a"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") {Characters = {"4", "4"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {"'", "'"}});
@@ -332,7 +332,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void AddCharacter_Duplicate()
 		{
-			WritingSystem ws1 = m_wsManager.Create("en-US");
+			CoreWritingSystemDefinition ws1 = m_wsManager.Create("en-US");
 			ValidCharacters validChars = ValidCharacters.Load(ws1, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			var validCharsW = new ValidCharsWrapper(validChars);
 			validChars.AddCharacter("a");
@@ -342,7 +342,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(0, validCharsW.NumericCharacters.Count);
 			Assert.AreEqual(0, validCharsW.OtherCharacters.Count);
 			validChars.SaveTo(ws1);
-			WritingSystem ws2 = m_wsManager.Create("en-US");
+			CoreWritingSystemDefinition ws2 = m_wsManager.Create("en-US");
 			ws2.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"a"}});
 			Assert.That(ws1.ValueEquals(ws2), Is.True);
 		}
@@ -356,7 +356,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void AddCharacter_DuplicateOfOverriddenWordFormingChar()
 		{
-			WritingSystem ws = m_wsManager.Create("en-US");
+			CoreWritingSystemDefinition ws = m_wsManager.Create("en-US");
 			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"a", "-"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {"{"}});
 			ValidCharacters validChars = ValidCharacters.Load(ws, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
@@ -386,7 +386,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void AddCharacter_SuperscriptedToneNumber()
 		{
-			WritingSystem ws = m_wsManager.Create("en-US");
+			CoreWritingSystemDefinition ws = m_wsManager.Create("en-US");
 			ValidCharacters validChars = ValidCharacters.Load(ws, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			var validCharsW = new ValidCharsWrapper(validChars);
 			validChars.AddCharacter("\u00b9");
@@ -406,7 +406,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void GetNaturalCharType()
 		{
-			WritingSystem ws = m_wsManager.Create("en-US");
+			CoreWritingSystemDefinition ws = m_wsManager.Create("en-US");
 			ValidCharacters validChars = ValidCharacters.Load(ws, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			var cpe = new DummyCharPropEngine();
 			ReflectionHelper.SetField(validChars, "m_cpe", cpe);
@@ -430,7 +430,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void IsWordFormingChar()
 		{
-			WritingSystem ws = m_wsManager.Create("en-US");
+			CoreWritingSystemDefinition ws = m_wsManager.Create("en-US");
 			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"a", "b", "c", "d", "e", "#"}});
 			ValidCharacters validChars = ValidCharacters.Load(ws, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			Assert.IsTrue(validChars.IsWordForming('#'));
@@ -445,7 +445,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void SortAfterAddSingles()
 		{
-			WritingSystem ws = m_wsManager.Create("en");
+			CoreWritingSystemDefinition ws = m_wsManager.Create("en");
 			ValidCharacters validChars = ValidCharacters.Load(ws, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			validChars.AddCharacter("z");
 			validChars.AddCharacter("c");
@@ -466,7 +466,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void SortAfterAddRange()
 		{
-			WritingSystem ws = m_wsManager.Create("en");
+			CoreWritingSystemDefinition ws = m_wsManager.Create("en");
 			ValidCharacters validChars = ValidCharacters.Load(ws, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			validChars.AddCharacters(new[] { "z", "c", "t", "b", "8", "7", "6", "5" });
 			VerifySortOrder(validChars);

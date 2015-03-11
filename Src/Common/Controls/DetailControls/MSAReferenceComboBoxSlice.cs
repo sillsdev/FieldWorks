@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			IPersistenceProvider persistenceProvider)
 			: base(new UserControl(), cache, obj, flid)
 		{
-			WritingSystem defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+			CoreWritingSystemDefinition defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			m_persistProvider = persistenceProvider;
 			m_tree = new TreeCombo();
 			m_tree.WritingSystemFactory = cache.WritingSystemFactory;

@@ -428,11 +428,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public void GetSetClipboard()
 		{
 			var wsManager = new WritingSystemManager();
-			WritingSystem enWs;
+			CoreWritingSystemDefinition enWs;
 			wsManager.GetOrSet("en", out enWs);
 			int wsEng = enWs.Handle;
 
-			WritingSystem swgWs;
+			CoreWritingSystemDefinition swgWs;
 			wsManager.GetOrSet("swg", out swgWs);
 			int wsSwg = swgWs.Handle;
 
@@ -459,7 +459,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public void SetTsStringOnClipboard_UsesNFC()
 		{
 			var wsManager = new WritingSystemManager();
-			WritingSystem enWs;
+			CoreWritingSystemDefinition enWs;
 			wsManager.GetOrSet("en", out enWs);
 			int wsEng = enWs.Handle;
 			var strFactory = TsStrFactoryClass.Create();

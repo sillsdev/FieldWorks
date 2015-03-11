@@ -332,7 +332,7 @@ namespace SIL.FieldWorks.Common.Controls
 					case "Sense-Reference-Number":
 						if (m_xhtml != null)
 						{
-							m_xhtml.MapCssToLang("xsensexrefnumber", m_cache.ServiceLocator.WritingSystemManager.Get(wsRun).ID);
+							m_xhtml.MapCssToLang("xsensexrefnumber", m_cache.ServiceLocator.WritingSystemManager.Get(wsRun).Id);
 						}
 						break;
 				}
@@ -547,7 +547,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (String.IsNullOrEmpty(sEntry))
 				return;
 			if (m_sWsVern == null)
-				m_sWsVern = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.ID;
+				m_sWsVern = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
 			WriteLetterHeadIfNeeded(sEntry, m_sWsVern);
 		}
 
@@ -691,7 +691,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			digraphs = new Set<string>();
 			mapChars = new Dictionary<string, string>();
-			WritingSystem ws = m_cache.ServiceLocator.WritingSystemManager.Get(sWs);
+			CoreWritingSystemDefinition ws = m_cache.ServiceLocator.WritingSystemManager.Get(sWs);
 
 			var simpleCollation = ws.DefaultCollation as SimpleCollationDefinition;
 			if (simpleCollation != null)
@@ -709,14 +709,14 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			else
 			{
-				// is this a custom ICU collation or an inherited collation?
-				var inheritedCollation = ws.DefaultCollation as InheritedCollationDefinition;
-				if (inheritedCollation == null && !string.IsNullOrEmpty(ws.DefaultCollation.IcuRules))
+				// is this a custom ICU collation?
+				var icuCollation = ws.DefaultCollation as IcuCollationDefinition;
+				if (icuCollation != null && !string.IsNullOrEmpty(icuCollation.IcuRules))
 				{
 					// prime with empty ws in case all the rules affect only the ignore set
 					m_mapWsMapChars[sWs] = mapChars;
 					m_mapWsDigraphs[sWs] = digraphs;
-					string[] individualRules = ws.DefaultCollation.IcuRules.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
+					string[] individualRules = icuCollation.IcuRules.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
 					for (int i = 0; i < individualRules.Length; ++i)
 					{
 						var rule = individualRules[i];
@@ -855,13 +855,13 @@ namespace SIL.FieldWorks.Common.Controls
 
 			var entry = (IReversalIndexEntry) obj;
 			var idx = (IReversalIndex) objOwner;
-			WritingSystem ws = m_cache.ServiceLocator.WritingSystemManager.Get(idx.WritingSystem);
+			CoreWritingSystemDefinition ws = m_cache.ServiceLocator.WritingSystemManager.Get(idx.WritingSystem);
 			string sEntry = entry.ReversalForm.get_String(ws.Handle).Text;
 			if (string.IsNullOrEmpty(sEntry))
 				return;
 
 			if (string.IsNullOrEmpty(m_sWsRevIdx))
-				m_sWsRevIdx = ws.ID;
+				m_sWsRevIdx = ws.Id;
 			WriteLetterHeadIfNeeded(sEntry, m_sWsRevIdx);
 		}
 

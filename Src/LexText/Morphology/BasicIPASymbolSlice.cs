@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				return;
 
 			bool fADescriptionChanged = false;
-			foreach (WritingSystem writingSystem in m_cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
+			foreach (CoreWritingSystemDefinition writingSystem in m_cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
 			{
 				int ws = writingSystem.Handle;
 				ITsString tssDesc = phoneme.Description.get_String(ws);
@@ -81,7 +81,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					XElement description = null;
 					if (phoneme.BasicIPASymbol.Length > 0)
 					{
-						string sLocale = writingSystem.ID;
+						string sLocale = writingSystem.Id;
 						// Mono XPath processing crashes when the expression starts out with // here.  See FWNX-730.
 						string sXPath = "/SegmentDefinitions/SegmentDefinition[Representations/Representation[.='" +
 							XmlUtils.MakeSafeXmlAttribute(phoneme.BasicIPASymbol.Text) +

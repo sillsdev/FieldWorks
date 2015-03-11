@@ -737,7 +737,7 @@ namespace SIL.FieldWorks.IText
 
 		private void SetAnalysisRightToLeft()
 		{
-			WritingSystem wsAnal = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+			CoreWritingSystemDefinition wsAnal = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			if (wsAnal != null)
 				m_fAnalRtl = wsAnal.RightToLeftScript;
 		}

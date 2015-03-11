@@ -326,7 +326,7 @@ namespace SIL.FieldWorks.IText
 				// Last ditch effort
 				if (wsName == "")
 				{
-					WritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ls.WritingSystem);
+					CoreWritingSystemDefinition wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ls.WritingSystem);
 					if (wsObj != null)
 						wsName = wsObj.DisplayLabel;
 				}

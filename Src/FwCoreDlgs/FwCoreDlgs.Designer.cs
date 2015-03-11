@@ -1011,7 +1011,7 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to By removing the English writing system, some of your topics list items, may show &quot;***&quot; instead of their normal contents. For this reason, it is strongly recommended that you keep the English writing system active in your project. However, if you choose to remove English now and encounter problems viewing your topics list items, you may add English back at any time using the Add button.
+        ///   Looks up a localized string similar to By removing the English writing system, some of your List items, may show &quot;***&quot; instead of their normal contents. For this reason, it is strongly recommended that you keep the English writing system active in your project. However, if you choose to remove English now and encounter problems viewing your List items, you may add English back at any time using the Add button.
         ///
         ///Do you want to remove English now?.
         /// </summary>
@@ -1330,18 +1330,18 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         /// <summary>
         ///   Looks up a localized string similar to You cannot change the full code &quot;{0}&quot; of the default user writing system..
         /// </summary>
-        public static string kstidCantChangeUserWs {
+        public static string kstidCantChangeUserWS {
             get {
-                return ResourceManager.GetString("kstidCantChangeUserWs", resourceCulture);
+                return ResourceManager.GetString("kstidCantChangeUserWS", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to The &quot;{0}&quot; writing system already exists. To distinguish the new writing system you are creating from &quot;{0}&quot;, add script, region and/or variant information.{1}{1}Alternatively, remove this new writing system and use the existing writing system, &quot;{0}&quot;, if it meets your needs..
         /// </summary>
-        public static string kstidCantCreateDuplicateWs {
+        public static string kstidCantCreateDuplicateWS {
             get {
-                return ResourceManager.GetString("kstidCantCreateDuplicateWs", resourceCulture);
+                return ResourceManager.GetString("kstidCantCreateDuplicateWS", resourceCulture);
             }
         }
         

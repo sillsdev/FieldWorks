@@ -323,7 +323,7 @@ namespace SIL.FieldWorks.IText
 		private WritingSystemManager GetWsf()
 		{
 			var wsf = new WritingSystemManager();
-			WritingSystem wsObj;
+			CoreWritingSystemDefinition wsObj;
 			wsf.GetOrSet("qaa-x-kal", out wsObj);
 			EnsureQuoteAndHyphenWordForming(wsObj);
 			return wsf;
@@ -344,7 +344,7 @@ namespace SIL.FieldWorks.IText
 			return mappings;
 		}
 
-		private void EnsureQuoteAndHyphenWordForming(WritingSystem wsObj)
+		private void EnsureQuoteAndHyphenWordForming(CoreWritingSystemDefinition wsObj)
 		{
 			ValidCharacters validChars = ValidCharacters.Load(wsObj, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
 			var fChangedSomething = false;
