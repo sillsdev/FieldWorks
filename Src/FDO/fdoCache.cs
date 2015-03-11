@@ -1389,6 +1389,18 @@ namespace SIL.FieldWorks.FDO
 					return itype.ToString();
 			}
 		}
+
+		/// <summary>
+		/// Have BEP re-write everything as if they had all been modified.
+		/// </summary>
+		/// <remarks>This method essentailly re-does DM66, but without the DM formalism.</remarks>
+		public void ExportEverythingAsModified()
+		{
+			var bep = (IDataStorer)m_serviceLocator.DataSetup;
+			bep.Commit(new HashSet<ICmObjectOrSurrogate>(),
+				new HashSet<ICmObjectOrSurrogate>(from obj in m_serviceLocator.ObjectRepository.AllInstances() select (ICmObjectOrSurrogate)obj),
+				new HashSet<ICmObjectId>());
+		}
 		#endregion Public methods
 
 		#endregion Public interface
