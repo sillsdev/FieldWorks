@@ -326,6 +326,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					continue;
 				AddProject(dataPathname);
 			}
+			m_lstLanguageProjects.Enabled = m_lstLanguageProjects.Items.Count > 0;
+		}
+
+		private void m_lstLanguageProjects_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			m_btnOk.Enabled = m_lstLanguageProjects.SelectedItem != null;
 		}
 		#endregion
 	}

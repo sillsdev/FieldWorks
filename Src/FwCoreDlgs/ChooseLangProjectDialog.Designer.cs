@@ -66,6 +66,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.m_lstLanguageProjects.FormattingEnabled = true;
 			this.m_lstLanguageProjects.Name = "m_lstLanguageProjects";
 			this.m_lstLanguageProjects.Sorted = true;
+			this.m_lstLanguageProjects.SelectedIndexChanged += new System.EventHandler(this.m_lstLanguageProjects_SelectedIndexChanged);
 			this.m_lstLanguageProjects.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.HandleDoubleClickOnProjectList);
 			// 
 			// m_btnCancel
