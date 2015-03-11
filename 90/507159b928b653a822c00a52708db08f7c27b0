@@ -1,0 +1,8 @@
+Verified+1: Jenkins CI <jenkins@sil.org>
+Verified-Linux+1: Jenkins CI <jenkins@sil.org>
+Code-Review+2: Ken Zook <ken_zook@sil.org>
+Submitted-by: Randy Regnier <rbregnier@gmail.com>
+Submitted-at: Wed, 11 Mar 2015 14:30:37 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/2930
+Project: FieldWorks
+Branch: refs/heads/develop
