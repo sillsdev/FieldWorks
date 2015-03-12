@@ -1582,7 +1582,7 @@ namespace SIL.FieldWorks
 								dlg.SetFirstOrLastProjectText(true);
 								// LT-13943 - forgot to set this variable, which made it not be able to open
 								// the sample db.
-								projectToTry = new ProjectId(startingApp.SampleDatabase, null);
+								projectToTry = new ProjectId(startingApp.SampleDatabase);
 							}
 							else // user didn't install Sena 3!
 							{
@@ -1699,7 +1699,7 @@ namespace SIL.FieldWorks
 		{
 			ProjectId sampleProjId = null;
 			if (app != null && app.SampleDatabase != null)
-				sampleProjId = new ProjectId(app.SampleDatabase, null);
+				sampleProjId = new ProjectId(app.SampleDatabase);
 			if (sampleProjId == null || !sampleProjId.IsValid)
 				return null;
 			return sampleProjId;
@@ -1769,14 +1769,14 @@ namespace SIL.FieldWorks
 				{
 					case DialogResult.OK:
 						if (dlg.IsProjectNew)
-							return new ProjectId(dlg.GetDatabaseFile(), null);
+							return new ProjectId(dlg.GetDatabaseFile());
 						else
 						{
 							// The user tried to create a new project which already exists and
 							// then choose to open the project. Therefore open the project and return
 							// null for the ProjectId so the caller of this method does not try to
 							// create a new project.
-							ProjectId projectId = new ProjectId(dlg.GetDatabaseFile(), null);
+							ProjectId projectId = new ProjectId(dlg.GetDatabaseFile());
 							OpenExistingProject(projectId, app, dialogOwner);
 							return null;
 						}
@@ -2162,14 +2162,14 @@ namespace SIL.FieldWorks
 					string projFileName = Path.GetFileName(projectPath);
 					string projName = Path.GetFileNameWithoutExtension(projectPath);
 					string path = Path.Combine(Path.Combine(newFolderForProjects, projName), projFileName);
-					return new ProjectId(path, null);
+					return new ProjectId(path);
 				}
 			}
 			else
 			{
 				if (projectPath.StartsWith(oldFolderForProjects, StringComparison.InvariantCultureIgnoreCase))
 				{
-					return new ProjectId(projectPath, null);
+					return new ProjectId(projectPath);
 				}
 			}
 			return oldProjectId;
@@ -2299,7 +2299,7 @@ namespace SIL.FieldWorks
 			s_threadHelper.Invoke(() =>
 			{
 				// Determine if we need to start a new process for the restore
-				if (s_projectId != null && s_projectId.IsSameLocalProject(new ProjectId(restoreSettings.Settings.FullProjectPath, null)))
+				if (s_projectId != null && s_projectId.IsSameLocalProject(new ProjectId(restoreSettings.Settings.FullProjectPath)))
 				{
 					// We need to invoke so that the mediator that processed the restore menu item
 					// can be safely disposed of (and everything that it holds on to can be released).
@@ -2437,7 +2437,7 @@ namespace SIL.FieldWorks
 			using (var progressDlg = new ProgressDialogWithTask(dialogOwner))
 			{
 				FdoCache cache = existingCache ?? FdoCache.CreateCacheFromExistingData(
-					new ProjectId(restoreSettings.Settings.FullProjectPath, null),
+					new ProjectId(restoreSettings.Settings.FullProjectPath),
 					s_sWsUser, s_ui, FwDirectoryFinder.FdoDirectories, CreateFdoSettings(), progressDlg);
 
 				try

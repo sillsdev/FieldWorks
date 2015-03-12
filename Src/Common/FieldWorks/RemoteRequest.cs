@@ -50,7 +50,7 @@ namespace SIL.FieldWorks
 		public bool HandleRestoreProjectRequest(FwRestoreProjectSettings restoreSettings)
 		{
 			ProjectMatch isMyProject = FieldWorks.GetProjectMatchStatus(
-				new ProjectId(restoreSettings.Settings.FullProjectPath, null));
+				new ProjectId(restoreSettings.Settings.FullProjectPath));
 			if (isMyProject != ProjectMatch.ItsMyProject)
 				return false;
 
