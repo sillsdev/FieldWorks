@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -182,14 +182,16 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	}
 	#endregion
 
-	#region MemoryOnlyBackendProviderBasicTestBase class
+	#region MemoryOnlyBackendProviderTestBase class
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Base class for testing the FdoCache with the FDOBackendProviderType.kMemoryOnly
 	/// backend provider where each test should start with a fresh system.
+	/// This class does *not* restore the data between test runs; derive from
+	/// MemoryOnlyBackendProviderRestoredForEachTestTestBase if that is desired.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public abstract class MemoryOnlyBackendProviderBasicTestBase : FdoTestBase
+	public abstract class MemoryOnlyBackendProviderTestBase : FdoTestBase
 	{
 		/// <summary>
 		/// Override to create and load a very basic cache.
@@ -273,20 +275,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	}
 	#endregion
 
-	#region MemoryOnlyBackendProviderTestBase class
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// Base class for testing the FdoCache with the FDOBackendProviderType.kMemoryOnly
-	/// backend provider. This class does *not* restore the data between test runs.
-	/// Derive from MemoryOnlyBackendProviderRestoredForEachTestTestBase if that is desired.
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	public abstract class MemoryOnlyBackendProviderTestBase : MemoryOnlyBackendProviderBasicTestBase
-	{
-		// REVIEW (TimS): Why do we have this class?
-	}
-	#endregion
-
 	#region MemoryOnlyBackendProviderRestoredForEachTestTestBase class
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -296,7 +284,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// for every test. It just loops through Undo as long as possible "MemoryOnlyUndoForEachTestBase "
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public abstract class MemoryOnlyBackendProviderRestoredForEachTestTestBase : MemoryOnlyBackendProviderBasicTestBase
+	public abstract class MemoryOnlyBackendProviderRestoredForEachTestTestBase : MemoryOnlyBackendProviderTestBase
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -669,7 +657,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// In contrast to MemoryOnlyBackendProviderRestoredForEachTestTestBase, this class doesn't rely on Undo mechanism for
 	/// restoring each tests, instead it tries to recreate the FDO Cache.
 	///</summary>
-	public abstract class MemoryOnlyBackendProviderReallyRestoredForEachTestTestBase : MemoryOnlyBackendProviderBasicTestBase
+	public abstract class MemoryOnlyBackendProviderReallyRestoredForEachTestTestBase : MemoryOnlyBackendProviderTestBase
 	{
 		/// <summary>
 		/// Setup the FDO Cache and Action Handler

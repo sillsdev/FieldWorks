@@ -53,14 +53,6 @@ CopyRegistryKey()
 		mkdir -p "${FW_DATA}/Projects/"
 	fi
 
-	# if we haven't setup running the remote access daemon yet, set it up and start it.
-	if [ ! -f "${XDG_CONFIG_HOME}/autostart/ShareFwProjects.desktop" ]; then
-		echo "# Starting remote access"
-		mkdir -p "${XDG_CONFIG_HOME}/autostart"
-		cp -a "${FW_SHARE}/ShareFwProjects.desktop" "${XDG_CONFIG_HOME}/autostart"
-		${FW_LIB}/ShareFwProjects
-	fi
-
 	mkdir -p "${FW_CONFIG}/SIL/Repository"
 	mkdir -p "${FW_CONFIG}/MoveRepositoryTo"
 

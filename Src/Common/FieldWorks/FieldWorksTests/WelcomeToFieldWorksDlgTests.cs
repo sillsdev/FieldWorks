@@ -3,12 +3,12 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // Original author: MarkS 2013-02-20 WelcomeToFieldWorksDlgTests.cs
-
 using System.Windows.Forms;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.FieldWorks.XWorks.LexText;
 using SIL.Utils;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks
 {
@@ -20,7 +20,7 @@ namespace SIL.FieldWorks
 		[Test]
 		public void Basic()
 		{
-			using (var dlg = new WelcomeToFieldWorksDlg(new FlexHelpTopicProvider(), null, null, false))
+			using (var dlg = new WelcomeToFieldWorksDlg(new FlexHelpTopicProvider(), null, false))
 			{
 				Assert.That(dlg, Is.Not.Null);
 			}
@@ -32,10 +32,10 @@ namespace SIL.FieldWorks
 		[Test]
 		public void ReceiveButtonIsDisabled()
 		{
-			using (var dlg = new WelcomeToFieldWorksDlg(new FlexHelpTopicProvider(), null, null, false))
+			using (var dlg = new WelcomeToFieldWorksDlg(new FlexHelpTopicProvider(), null, false))
 			{
 				var receiveButton = ReflectionHelper.GetField(dlg, "receiveButton") as Button;
-				if (SIL.FieldWorks.Common.FwUtils.FLExBridgeHelper.IsFlexBridgeInstalled())
+				if (FLExBridgeHelper.IsFlexBridgeInstalled())
 					Assert.That(receiveButton.Enabled, Is.True);
 				else
 					Assert.That(receiveButton.Enabled, Is.False);

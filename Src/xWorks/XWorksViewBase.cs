@@ -8,7 +8,6 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -574,13 +573,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			// Only allow adding custom fields when a single client is connected.
-			if (Cache.NumberOfRemoteClients > 1 || (Cache.ProjectId.IsLocal && Cache.NumberOfRemoteClients > 0))
-			{
-				MessageBoxUtils.Show(ParentForm, xWorksStrings.ksCustomFieldsCanNotBeAddedDueToRemoteClientsText,
-					xWorksStrings.ksCustomFieldsCanNotBeAddedDueToRemoteClientsCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				return true;
-			}
 			if (SharedBackendServices.AreMultipleApplicationsConnected(Cache))
 			{
 				MessageBoxUtils.Show(ParentForm, xWorksStrings.ksCustomFieldsCanNotBeAddedDueToOtherAppsText,

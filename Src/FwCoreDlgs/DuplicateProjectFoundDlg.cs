@@ -4,11 +4,9 @@
 //
 // File: DuplicateProjectFoundDlg.cs
 // Responsibility: FW Team
-
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs

@@ -254,23 +254,4 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 		bool Commit(HashSet<ICmObjectOrSurrogate> newbies, HashSet<ICmObjectOrSurrogate> dirtballs, HashSet<ICmObjectId> goners);
 		void CompleteAllCommits();
 	}
-
-	/// <summary>
-	/// Additional functionality implemented by a client-server backend.
-	/// </summary>
-	internal interface IClientServerDataManager
-	{
-		/// <summary>
-		/// Return a string (typically at or near shutdown) which may be passed back to NewObjectsSinceVersion.
-		/// </summary>
-		string VersionStamp { get; }
-
-		/// <summary>
-		/// Pass as versionStamp a string previously obtained from VersionStamp. Answer true if changes saved to
-		/// the database since versionStamp included the creation of new objects of class classname.
-		/// If the backend cannot be sure, it should answer true; this method is used to suppress use of locally
-		/// persisted lists as an optimization.
-		/// </summary>
-		bool NewObjectsSinceVersion(string versionStamp, string classname);
-	}
 }

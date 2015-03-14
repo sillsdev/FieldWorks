@@ -82,6 +82,14 @@
     <Reference Include="SilUtils, Version=7.2.0.26222, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="CoreImpl">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+    </Reference>
+    <Reference Include="xCoreInterfaces">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -98,6 +106,7 @@
     <Compile Include="BasicCustomPropertyFixer.cs" />
     <Compile Include="CustomListNameFixer.cs" />
     <Compile Include="CustomPropertyFixer.cs" />
+    <Compile Include="DuplicateStyleFixer.cs" />
     <Compile Include="DuplicateWordformFixer.cs" />
     <Compile Include="GrammaticalSenseFixer.cs" />
     <Compile Include="HomographFixer.cs" />
@@ -119,6 +128,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
+    <Compile Include="WriteAllObjectsUtility.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="FixErrorsDlg.resx">
@@ -147,12 +157,6 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Common\CoreImpl\CoreImpl.csproj">
-      <Project>{4C7D6B65-A331-4ED7-9B53-3301E714F8E7}</Project>
-      <Name>CoreImpl</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

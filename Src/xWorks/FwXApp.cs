@@ -11,12 +11,10 @@ using System.Diagnostics;
 using Microsoft.Win32;
 using System.Collections.Generic;
 using System.IO;
-
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using SILUBS.SharedScrUtils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -335,28 +333,5 @@ namespace SIL.FieldWorks.XWorks
 			get { return "FLEXUsage@sil.org"; }
 		}
 		#endregion
-
-		#region Other methods
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Use this for slow operations that should happen during the splash screen instead of
-		/// during app construction
-		/// </summary>
-		/// <param name="progressDlg">The progress dialog to use.</param>
-		/// ------------------------------------------------------------------------------------
-		public override void DoApplicationInitialization(IProgress progressDlg)
-		{
-			base.DoApplicationInitialization(progressDlg);
-			if (FwUtils.IsOkToDisplayScriptureIfPresent)
-				ScrReference.InitializeVersification(FwDirectoryFinder.TeFolder, false);
-
-			//usage report - Unnecessary now that we are doing Google Analytics reporting
-			//Improvement idea: should we do a special analytics ping for the 10 or 40 launches?
-			//UsageEmailDialog.DoTrivialUsageReport(ApplicationName, SettingsKey, FeedbackEmailAddress, xWorksStrings.ThankYouForCheckingOutFlex, false, 1);
-			//UsageEmailDialog.DoTrivialUsageReport(ApplicationName, SettingsKey, FeedbackEmailAddress, xWorksStrings.HaveLaunchedFLEXTenTimes, true, 10);
-			//UsageEmailDialog.DoTrivialUsageReport(ApplicationName, SettingsKey, FeedbackEmailAddress, xWorksStrings.HaveLaunchedFLEXFortyTimes, true, 40);
-		}
-		#endregion // Other methods
 	}
 }

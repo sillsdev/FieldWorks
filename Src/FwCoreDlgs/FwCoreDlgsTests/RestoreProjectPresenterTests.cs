@@ -1,10 +1,9 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File: RestoreProjectPresenterTests.cs
 // Responsibility: FW Team
-
 using System;
 using System.IO;
 using NUnit.Framework;
@@ -13,7 +12,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
-using SIL.FieldWorks.Resources;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -22,7 +20,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// Test the Presenter logic that controls the Restore Project Dialog
 	/// </summary>
 	[TestFixture]
-	public class RestoreProjectPresenterTests : MemoryOnlyBackendProviderBasicTestBase
+	public class RestoreProjectPresenterTests : MemoryOnlyBackendProviderTestBase
 	{
 		private MockFileOS m_fileOs;
 
@@ -162,7 +160,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			backupSettings.ProjectName = "AAA";
 			string backupFileName1 = backupSettings.ZipFileName;
 			m_fileOs.AddExistingFile(backupFileName1);
-			using (RestoreProjectDlg dlg1 = new RestoreProjectDlg("AAA", "Test", null))
+			using (RestoreProjectDlg dlg1 = new RestoreProjectDlg("Test", null))
 			{
 			dlg1.Settings.ProjectName = "AAA";
 			RestoreProjectPresenter presenter1 = new RestoreProjectPresenter(dlg1, "AAA");
@@ -173,7 +171,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			backupSettings.ProjectName = "BBB";
 			string backupFileName2 = backupSettings.ZipFileName;
 			m_fileOs.AddExistingFile(backupFileName2);
-			using (RestoreProjectDlg dlg2 = new RestoreProjectDlg("BBB", "Test", null))
+			using (RestoreProjectDlg dlg2 = new RestoreProjectDlg("Test", null))
 			{
 			dlg2.Settings.ProjectName = "BBB";
 			RestoreProjectPresenter presenter2 = new RestoreProjectPresenter(dlg2, "BBB");
@@ -184,7 +182,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			backupSettings.ProjectName = "CCC";
 			string backupFileName3 = backupSettings.ZipFileName;
 			m_fileOs.AddExistingFile(backupFileName3);
-			using (RestoreProjectDlg dlg3 = new RestoreProjectDlg("CCC", "Test", null))
+			using (RestoreProjectDlg dlg3 = new RestoreProjectDlg("Test", null))
 			{
 			dlg3.Settings.ProjectName = "CCC";
 			RestoreProjectPresenter presenter3 = new RestoreProjectPresenter(dlg3, "CCC");

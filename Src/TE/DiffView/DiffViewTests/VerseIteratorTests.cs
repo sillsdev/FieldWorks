@@ -13,7 +13,6 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
 
 namespace SIL.FieldWorks.TE
 {

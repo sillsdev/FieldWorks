@@ -4,20 +4,16 @@
 //
 // File: FwDeleteProjectDlg.cs
 // Responsibility: FW Team
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using System.Data.SqlClient;
-
 using SIL.Utils;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Common.FwUtils;
 using XCore;
 using SIL.FieldWorks.FDO;
 using System.IO;
-using System.Diagnostics;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -296,9 +292,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						string path = Path.Combine(folder, info.DatabaseName + FdoFileHelper.ksFwDataXmlFileExtension);
 						if (File.Exists(path))
 							File.Delete(path);
-						path = Path.ChangeExtension(path, FdoFileHelper.ksFwDataDb4oFileExtension);
-						if (File.Exists(path))
-							File.Delete(path);
 						path = Path.ChangeExtension(path, FdoFileHelper.ksFwDataFallbackFileExtension);
 						if (File.Exists(path))
 							File.Delete(path);
@@ -356,7 +349,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				string file = Path.GetFileName(filepath);
 				if (file != info.DatabaseName + FdoFileHelper.ksFwDataXmlFileExtension &&
-					file != info.DatabaseName + FdoFileHelper.ksFwDataDb4oFileExtension &&
 					file != info.DatabaseName + FdoFileHelper.ksFwDataFallbackFileExtension)
 				{
 					return true;

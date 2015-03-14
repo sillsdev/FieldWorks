@@ -205,13 +205,9 @@
       <Name>System</Name>
     </Reference>
     <Reference Include="System.Core" />
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
-    </Reference>
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
-    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms">
       <Name>System.Windows.Forms</Name>
     </Reference>
@@ -307,7 +303,6 @@
     <Compile Include="ChooserTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ClientServerServicesHelper.cs" />
     <Compile Include="CnvtrPropertiesCtrl.cs">
       <SubType>UserControl</SubType>
     </Compile>

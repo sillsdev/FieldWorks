@@ -7,16 +7,9 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
-using System.Drawing;
-using System.Collections;
-using System.ComponentModel;
 using System.Windows.Forms;
-using System.Diagnostics;
-
 using SIL.FieldWorks.Common.Drawing;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using XCore;

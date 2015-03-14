@@ -792,39 +792,7 @@ namespace SIL.FieldWorks.TE
 			foreach (XmlNoteResponse response in Responses)
 				response.WriteToCache(scrNote, styleSheet);
 
-			//((Scripture)scr).AttachAnnotatedObjects(bookNum, scrNote);
-			if (scrNote.BeginObjectRA == null && scrNote.CitedTextTss != null)
-				AttachAnnotatedObjects(scr, bookNum, scrNote);
-
 			return scrNote;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Attaches the annotated objects to the specifed annotation.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private static void AttachAnnotatedObjects(IScripture scr, int bookNum,
-			IScrScriptureNote scrNote)
-		{
-			int iSection, iPara, ichStart, ichEnd;
-			ScrReference scrRef = new ScrReference(scrNote.BeginRef, scr.Versification);
-			if (TeEditingHelper.FindTextInVerse(scr, scrNote.CitedTextTss,
-				 scrRef, true, out iSection, out iPara, out ichStart, out ichEnd))
-			{
-				IScrBook book = scr.FindBook(bookNum);
-				Debug.Assert(book != null);
-				scrNote.BeginOffset = ichStart;
-				scrNote.EndOffset = ichEnd;
-
-				if (iSection == -1)
-					scrNote.BeginObjectRA = scrNote.EndObjectRA = book.TitleOA.ParagraphsOS[iPara];
-				else
-				{
-					scrNote.BeginObjectRA = scrNote.EndObjectRA =
-						book.SectionsOS[iSection].ContentOA.ParagraphsOS[iPara];
-				}
-			}
 		}
 
 		/// ------------------------------------------------------------------------------------

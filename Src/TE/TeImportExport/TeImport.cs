@@ -1,14 +1,6 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TeImport.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// Implementation of TeImporter
-// </remarks>
-// --------------------------------------------------------------------------------------------
 
 using System;
 using System.IO;
@@ -699,7 +691,7 @@ namespace SIL.FieldWorks.TE
 		/// </remarks>
 		protected virtual void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (m_isDisposed)
 				return;
@@ -748,7 +740,7 @@ namespace SIL.FieldWorks.TE
 	/// ----------------------------------------------------------------------------------------
 	public class TeSfmImporter : TeImporter
 	{
-		private static readonly char[] kControlCharacters = new char[] {'\u0000', '\u0001', '\u0002', '\u0003',
+		private static readonly char[] kControlCharacters = {'\u0000', '\u0001', '\u0002', '\u0003',
 			'\u0004', '\u0005', '\u0006', '\u0007', '\u0008', '\u0009', '\u000A', '\u000B', '\u000C',
 			'\u000D', '\u000E', '\u000F', '\u0010', '\u0011', '\u0012', '\u0013', '\u0014', '\u0015',
 			'\u0016', '\u0017', '\u0018', '\u0019', '\u001A', '\u001B','\u001C', '\u001D', '\u001E', '\u001F' } ;
@@ -1062,7 +1054,9 @@ namespace SIL.FieldWorks.TE
 				{
 					FinalizeImport();
 				}
+// ReSharper disable EmptyGeneralCatchClause Justification: want to throw the exception from the outer try/catch block
 				catch {}
+// ReSharper restore EmptyGeneralCatchClause
 				throw;
 			}
 			finally

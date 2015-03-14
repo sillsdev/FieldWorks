@@ -244,18 +244,6 @@ namespace SIL.FieldWorks.Common.Framework
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Get/set the hostname of the server of the last project opened in the application
-		/// (empty/null if local)
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string LatestServer
-		{
-			get { return m_latestServer.Value; }
-			set { m_latestServer.Value = value; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Gets or sets the value in the registry for the sidebar's visibility.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------

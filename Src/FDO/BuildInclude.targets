@@ -15,14 +15,6 @@
 		<LinuxDistFiles>$(DistFiles)/$(LinuxDlls)</LinuxDistFiles>
 	</PropertyGroup>
 	<ItemGroup>
-		<Db4oFiles Include="Db4objects.Db4o.dll"/>
-		<Db4oFiles Include="Db4objects.Db4o.CS.dll"/>
-		<Db4oFiles Include="Db4objects.Db4o.Linq.dll"/>
-	</ItemGroup>
-	<ItemGroup>
-		<Db4oFilesSource Include="@(Db4oFiles -> '$(DistFiles)/$(platformSource)/%(Identity)')"/>
-	</ItemGroup>
-	<ItemGroup>
 		<StructureMapFiles Include="StructureMap.dll"/>
 	</ItemGroup>
 	<ItemGroup>
@@ -54,7 +46,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<OutputFiles Include="@(GeneratedFiles)"/>
-		<OutputFiles Include="@(Db4oFiles -> '$(OutDir)/%(Identity)')"/>
 		<OutputFiles Include="@(StructureMapFiles -> '$(OutDir)/%(Identity)')"/>
 		<OutputFiles Include="@(ServiceLocatorFiles -> '$(OutDir)/%(Identity)')"/>
 		<OutputFiles Include="@(LinuxFilesSub -> '$(OutDir)/%(Identity)')"/>
@@ -78,7 +69,6 @@
 
 	<Target Name="BeforeBuild" DependsOnTargets="CheckWinForms;GenerateModel">
 		<!-- generate C# files used in FDO -->
-		<Copy SourceFiles="@(Db4oFilesSource)" DestinationFolder="$(OutDir)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true"/>
 		<Copy SourceFiles="@(StructureMapSource)" DestinationFolder="$(OutDir)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true"/>
 		<Copy SourceFiles="@(ServiceLocatorSource)" DestinationFolder="$(OutDir)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true"/>
 		<Copy SourceFiles="@(LinuxFilesSource)" DestinationFolder="$(OutDir)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true"/>

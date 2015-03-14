@@ -120,7 +120,7 @@ namespace SIL.FieldWorks.IText
 
 		private string[] InputFiles
 		{
-			get { return m_fileListBox.Text.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries); }
+			get { return SplitPaths(m_fileListBox.Text); }
 		}
 
 		string FirstInputFile
@@ -144,7 +144,7 @@ namespace SIL.FieldWorks.IText
 				openFileDialog.CheckFileExists = true;
 				openFileDialog.Multiselect = true; // can import multiple files
 
-				var files = currentFiles.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+				var files = SplitPaths(currentFiles);
 				string dir = string.Empty;
 				string initialFileName = string.Empty;
 				openFileDialog.FileName = "";
@@ -187,15 +187,60 @@ namespace SIL.FieldWorks.IText
 							ITextStrings.ksPossibleInvalidFile,
 							MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
 						if (dr == DialogResult.Yes)
-							return string.Join(", ", openFileDialog.FileNames);
+							return JoinPaths(openFileDialog.FileNames);
 						if (dr == DialogResult.No)
 							continue; // loop and show dialog again...hopefully same files selected.
 						break; // user must have chosen cancel, break out of loop
 					}
-					return string.Join(", ", openFileDialog.FileNames);
+					return JoinPaths(openFileDialog.FileNames);
 				}
 				return currentFiles; // leave things unchanged.
 			}
+		}
+
+		// Join a list of file paths into something that will look reasonable to the user but can be parsed back into the
+		// same list of paths. Unfortunately paths can contain spaces and commas. We take the approach of quoting any
+		// path that contains spaces or commas. Paths can NOT contain quotes.
+		internal static string JoinPaths(string[] paths)
+		{
+			return string.Join(", ", paths.Select(x=> x.IndexOf(',') >= 0  || x.IndexOf(' ') >= 0? "\"" + x + "\"" : x));
+		}
+
+		// Split up a list in the format produced by JoinPaths. We need to handle pathological strings that could NOT be
+		// so produced, too, because the user can type straight into the box.
+		internal static string[] SplitPaths(string input)
+		{
+			if (string.IsNullOrEmpty(input))
+				return new string[0];
+			var results = new List<string>();
+			var remaining = input;
+			for (;;)
+			{
+				int index = remaining.IndexOf('"');
+				if (index < 0)
+				{
+					AddSimpleItems(results, remaining);
+					return results.ToArray();
+				}
+				var piece = remaining.Substring(0, index);
+				AddSimpleItems(results, piece);
+				int nextQuote = remaining.IndexOf('"', index + 1);
+				if (nextQuote <= 0)
+				{
+					// unmatched...ugh!
+					results.Add(remaining.Substring(index + 1));
+					return results.ToArray();
+				}
+				results.Add(remaining.Substring(index + 1, nextQuote - index - 1));
+				remaining = remaining.Substring(nextQuote+1);
+			}
+		}
+
+		private static void AddSimpleItems(List<string> results, string remaining)
+		{
+			if (string.IsNullOrWhiteSpace(remaining))
+				return;
+			results.AddRange(remaining.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).Where(x => !string.IsNullOrWhiteSpace(x)));
 		}
 
 		private string GetFile(string currentFile, string pathForInitialDirectory,
@@ -522,7 +567,7 @@ namespace SIL.FieldWorks.IText
 				dlg.AllowCancel = false;
 				dlg.Minimum = 0;
 				// Allow 100 units of progress for each file for now. This allows for plenty of resolution for the LL importer
-				dlg.Maximum = m_fileListBox.Text.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Count() * 100;
+				dlg.Maximum = InputFiles.Count() * 100;
 
 				try
 				{
@@ -559,7 +604,7 @@ namespace SIL.FieldWorks.IText
 		private object DoConversion(IThreadedProgress dlg, object[] parameters)
 		{
 			m_firstNewText = null;
-			foreach (var path1 in m_fileListBox.Text.Split(new char[] {','}, StringSplitOptions.RemoveEmptyEntries))
+			foreach (var path1 in InputFiles)
 			{
 				var path = path1.Trim();
 				if (!File.Exists(path))

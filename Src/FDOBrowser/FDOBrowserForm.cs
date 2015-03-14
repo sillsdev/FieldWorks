@@ -60,7 +60,6 @@ namespace FDOBrowser
 		ToolStripMenuItem m_cmnuDeleteObject;
 		ToolStripMenuItem m_cmnuSelectProps;
 		ToolStripButton m_tsbShowCmObjectProps;
-		ToolStripMenuItem mnuDb4oToXml;
 		ToolStripMenuItem m_mnuView;
 		ToolStripMenuItem m_mnuSaveFileFDO;
 		ToolStripMenuItem m_mnuDisplayVirtual;
@@ -254,16 +253,6 @@ namespace FDOBrowser
 			m_mnuClassProperties.Size = new System.Drawing.Size(230, 22);
 			m_mnuClassProperties.Text = "Class &Properties...";
 			m_mnuClassProperties.Click += MnuClassPropertiesClick;
-
-			//mnuDb4oToXml
-			//
-
-			mnuDb4oToXml = new ToolStripMenuItem();
-			mnuDb4oToXml.Name = "mnuDb4oToXml";
-			mnuDb4oToXml.Size = new System.Drawing.Size(230, 22);
-			mnuDb4oToXml.Text = "Extract Db4o file contents to XML...";
-			mnuDb4oToXml.Checked = false;
-			mnuDb4oToXml.Click += mnuDb4oToXmlClicked;
 			// mnuView
 			//
 			m_mnuView = new ToolStripMenuItem();
@@ -286,8 +275,6 @@ namespace FDOBrowser
 			// mnuTools
 			//
 			this.mnuTools.DropDownItems.Add(m_mnuToolsAllowEdit);
-
-			this.mnuTools.DropDownItems.Add(mnuDb4oToXml);
 
 			//
 			// mnuFile
@@ -508,8 +495,6 @@ namespace FDOBrowser
 					return FDOBackendProviderType.kMemoryOnly;
 				case FdoFileHelper.ksFwDataXmlFileExtension:
 					return FDOBackendProviderType.kXML;
-				case FdoFileHelper.ksFwDataDb4oFileExtension:
-					return FDOBackendProviderType.kDb4oClientServer;
 
 			}
 		}
@@ -891,14 +876,6 @@ namespace FDOBrowser
 		private void MnuClassPropertiesClick(object sender, EventArgs e)
 		{
 			ShowPropertySelectorDialog(null);
-		}
-
-		private void mnuDb4oToXmlClicked(object sender, EventArgs e)
-		{
-			using (var choose = new FileInOutChooser())
-			{
-				choose.ShowDialog();
-			}
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -30,7 +30,6 @@
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProjectLocationSharingDlg));
-			this.m_cbShareMyProjects = new System.Windows.Forms.CheckBox();
 			this.m_btnBrowseProjectFolder = new System.Windows.Forms.Button();
 			this.label3 = new System.Windows.Forms.Label();
 			this.m_tbProjectsFolder = new System.Windows.Forms.TextBox();
@@ -40,13 +39,6 @@
 			this.m_lbCurrentProject = new System.Windows.Forms.Label();
 			this.m_tbCurrentProjectPath = new System.Windows.Forms.TextBox();
 			this.SuspendLayout();
-			// 
-			// m_cbShareMyProjects
-			// 
-			resources.ApplyResources(this.m_cbShareMyProjects, "m_cbShareMyProjects");
-			this.m_cbShareMyProjects.Name = "m_cbShareMyProjects";
-			this.m_cbShareMyProjects.UseVisualStyleBackColor = true;
-			this.m_cbShareMyProjects.CheckedChanged += new System.EventHandler(this.m_cbShareMyProjects_CheckedChanged);
 			// 
 			// m_btnBrowseProjectFolder
 			// 
@@ -108,7 +100,6 @@
 			this.Controls.Add(this.m_btnHelp);
 			this.Controls.Add(this.m_btnCancel);
 			this.Controls.Add(this.m_btnOK);
-			this.Controls.Add(this.m_cbShareMyProjects);
 			this.Controls.Add(this.m_btnBrowseProjectFolder);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.m_tbProjectsFolder);
@@ -124,7 +115,6 @@
 
 		#endregion
 
-		private System.Windows.Forms.CheckBox m_cbShareMyProjects;
 		private System.Windows.Forms.Button m_btnBrowseProjectFolder;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TextBox m_tbProjectsFolder;

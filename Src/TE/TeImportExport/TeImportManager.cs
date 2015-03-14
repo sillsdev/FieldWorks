@@ -92,24 +92,6 @@ namespace SIL.FieldWorks.TE
 		/// Initializes a new instance of the <see cref="TeImportManager"/> class.
 		/// </summary>
 		/// <param name="mainWnd">The main window initiating the import</param>
-		/// <param name="importCallbacks">The import callbacks.</param>
-		/// <param name="app">The app.</param>
-		/// <param name="fParatextStreamlinedImport">if set to <c>true</c> do a Paratext
-		/// streamlined import (minimal UI).</param>
-		/// ------------------------------------------------------------------------------------
-		internal TeImportManager(FwMainWnd mainWnd, ITeImportCallbacks importCallbacks,
-			FwApp app, bool fParatextStreamlinedImport)
-			: this(app.Cache, mainWnd.StyleSheet, app, fParatextStreamlinedImport)
-		{
-			m_mainWnd = mainWnd;
-			m_importCallbacks = importCallbacks;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="TeImportManager"/> class.
-		/// </summary>
-		/// <param name="mainWnd">The main window initiating the import</param>
 		/// <param name="styleSheet">The stylesheet.</param>
 		/// <param name="app">The app.</param>
 		/// <param name="fParatextStreamlinedImport">if set to <c>true</c> do a Paratext
@@ -146,20 +128,6 @@ namespace SIL.FieldWorks.TE
 		#endregion
 
 		#region Public Static methods
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Perform the Standard Format import
-		/// </summary>
-		/// <param name="mainWnd">The main window.</param>
-		/// <param name="importCallbacks">The import callbacks.</param>
-		/// <param name="app">The app.</param>
-		/// ------------------------------------------------------------------------------------
-		public static void ImportSf(FwMainWnd mainWnd, ITeImportCallbacks importCallbacks,
-			FwApp app)
-		{
-			TeImportManager mgr = new TeImportManager(mainWnd, importCallbacks, app, false);
-			mgr.ImportSf();
-		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -175,21 +143,6 @@ namespace SIL.FieldWorks.TE
 			TeImportManager mgr = new TeImportManager(mainWnd, stylesheet, app, true);
 			return mgr.ImportSf();
 		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Import an OXES (Open XML for Editing Scripture) file.
-		/// </summary>
-		/// <param name="mainWnd">The main WND.</param>
-		/// <param name="importCallbacks">The import callbacks.</param>
-		/// <param name="app">The app.</param>
-		/// ------------------------------------------------------------------------------------
-		public static void ImportXml(FwMainWnd mainWnd, ITeImportCallbacks importCallbacks,
-			FwApp app)
-		{
-			TeImportManager mgr = new TeImportManager(mainWnd, importCallbacks, app, false);
-			mgr.ImportXml();
-		}
 		#endregion
 
 		#region Miscellaneous protected methods
@@ -199,7 +152,7 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// <returns><c>true</c> if something got imported; <c>false</c> otherwise</returns>
 		/// ------------------------------------------------------------------------------------
-		protected bool ImportSf()
+		private bool ImportSf()
 		{
 			IScrImportSet importSettings;
 
@@ -570,6 +523,10 @@ namespace SIL.FieldWorks.TE
 				DisplayImportedBooksDlg(m_undoImportManager.BackupVersion);
 
 			m_undoImportManager.RemoveEmptyBackupSavedVersion();
+			// Keeping versions we made just for PT imports (which always entirely replace the current non-archived ones)
+			// just clutters things up and makes S/R more expensive.
+			if (m_fParatextStreamlinedImport)
+				m_undoImportManager.RemoveImportedVersion();
 			m_undoImportManager.CollapseAllUndoActions();
 			// sync stuff
 			if (m_app != null)
@@ -633,14 +590,7 @@ namespace SIL.FieldWorks.TE
 		protected virtual ScrReference Import(IScrImportSet importSettings, UndoImportManager undoManager,
 			TeImportUi importUi)
 		{
-			if (importSettings != null)
-			{
-				return TeSfmImporter.Import(importSettings, m_cache, m_styleSheet,
-					undoManager, importUi);
-			}
-
-			return (ScrReference) TeXmlImporter.Import(m_cache, m_styleSheet, m_sOXESFile,
-				undoManager, importUi);
+			return TeSfmImporter.Import(importSettings, m_cache, m_styleSheet, undoManager, importUi);
 		}
 
 		#endregion
@@ -812,30 +762,6 @@ namespace SIL.FieldWorks.TE
 		}
 		#endregion
 
-		#region Methods to support XML (OXES) import
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Prepare for and perform the OXES import.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected void ImportXml()
-		{
-			// Prevent creation of unnecessary multiple undo tasks.
-			// Display ImportDialog
-			using (var importDlg = new ImportXmlDialog(m_cache, m_helpTopicProvider))
-			{
-				importDlg.ShowDialog(m_mainWnd);
-				if (importDlg.DialogResult == DialogResult.Cancel)
-				{
-					Logger.WriteEvent("User canceled import XML dialog");
-					return;
-				}
-				m_sOXESFile = importDlg.FileName;
-			}
-
-			DoImport(null, "ImportXml");
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Set selections after import.
@@ -855,6 +781,5 @@ namespace SIL.FieldWorks.TE
 			// a book so that it is possible to select the verse for the current key term.
 			m_importCallbacks.UpdateKeyTermsView();
 		}
-		#endregion
 	}
 }

@@ -4,7 +4,6 @@
 //
 // File: BackupProjectDlg.cs
 // Responsibility: FW Team
-
 using System;
 using System.IO;
 using System.Media;
@@ -48,17 +47,15 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// Initializes a new instance of the <see cref="BackupProjectDlg"/> class.
 		/// </summary>
 		/// <param name="cache">The cache.</param>
-		/// <param name="appAbbrev">The command-line abbreviation for the application displaying
-		/// this backup dialog box.</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
-		public BackupProjectDlg(FdoCache cache, string appAbbrev,
+		public BackupProjectDlg(FdoCache cache,
 			IHelpTopicProvider helpTopicProvider) : this()
 		{
 			m_cache = cache;
 			m_helpTopicProvider = helpTopicProvider;
 
-			m_presenter = new BackupProjectPresenter(this, appAbbrev, m_cache);
+			m_presenter = new BackupProjectPresenter(this, m_cache);
 
 			//It should only be displayed if the SupportingFiles folder has content.
 			if (!m_presenter.SupportingFilesFolderContainsFiles)

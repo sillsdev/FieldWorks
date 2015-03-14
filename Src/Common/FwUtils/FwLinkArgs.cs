@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File: FwLinkArgs.cs
-
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -11,7 +10,6 @@ using System.Text;
 using System.Collections.Generic;
 using System.Web;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using XCore;
 
@@ -374,16 +372,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// any internal crossreferences in the form of hyperlinks.  (See FWR-3437.)
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public static string FixSilfwUrlForCurrentProject(string url, string project, string server)
+		public static string FixSilfwUrlForCurrentProject(string url, string project)
 		{
 			if (!url.StartsWith(kFwUrlPrefix))
 				return url;
 			string query = HttpUtility.UrlDecode(url.Substring(kFwUrlPrefix.Length));
 			string[] properties = query.Split(new char[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
 			int idxDatabase = -1;
-			int idxServer = -1;
 			string urlDatabase = null;
-			string urlServer = null;
 			for (int i = 0; i < properties.Length; ++i)
 			{
 				if (properties[i].StartsWith("database="))
@@ -391,17 +387,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 					idxDatabase = i;
 					urlDatabase = properties[i].Substring(9);
 				}
-				else if (properties[i].StartsWith("server="))
-				{
-					idxServer = i;
-					urlServer = properties[i].Substring(7);
-				}
 			}
-			if (idxServer < 0 || idxDatabase < 0)
+			if (idxDatabase < 0)
 				return url;
-			if ((String.IsNullOrEmpty(urlServer) || urlServer == server) && urlDatabase == project)
+			if (urlDatabase == project)
 			{
-				properties[idxServer] = "server=";
 				properties[idxDatabase] = "database=this$";
 				string fixedUrl = kFwUrlPrefix + HttpUtility.UrlEncode(properties.ToString("&"));
 				return fixedUrl;
@@ -431,18 +421,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string kHelp = "help";
 		/// <summary>Command-line argument: Culture abbreviation</summary>
 		public const string kLocale = "locale";
-		/// <summary>Command-line argument: The application to start (te or flex)</summary>
-		public const string kApp = "app";
 		/// <summary>Command-line argument: The project name (or file)</summary>
 		public const string kProject = "db";
 		/// <summary>URI argument: The project name (or file)</summary>
 		public const string kProjectUri = "database";
-		/// <summary>Command-line argument: The server name</summary>
-		public const string kServer = "s";
-		/// <summary>URI argument: The server name</summary>
-		public const string kServerUri = "server";
-		/// <summary>Command-line argument: The database type</summary>
-		public const string kDbType = "type";
 		/// <summary>Command-line argument: </summary>
 		public const string kFlexConfigFile = "x";
 		/// <summary>Command-line argument: The fwbackup file</summary>
@@ -459,9 +441,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		#region Member variables
 		private string m_database = string.Empty;
-		private string m_server = string.Empty;
-		private string m_appName = string.Empty;
-		private string m_appAbbrev = string.Empty;
 		private string m_dbType = string.Empty;
 		private string m_locale = string.Empty;
 		private string m_configFile = string.Empty;
@@ -488,21 +467,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the server name (for a remote project).
-		/// Will never return null.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string Server
-		{
-			get
-			{
-				Debug.Assert(m_server != null);
-				return m_server;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Gets the type of the database/backend. (e.g. XML, MySql, etc.) Will never return null.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -512,35 +476,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				Debug.Assert(m_dbType != null);
 				return m_dbType;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the lowercase application name (either "translation editor" or "language
-		/// explorer"). Will never return null.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string AppName
-		{
-			get
-			{
-				Debug.Assert(m_appName != null);
-				return m_appName;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the application abbreviation (either "te" or "flex"). Will never return null.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string AppAbbrev
-		{
-			get
-			{
-				Debug.Assert(m_appAbbrev != null);
-				return m_appAbbrev;
 			}
 		}
 
@@ -658,19 +593,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:FwAppArgs"/> class.
 		/// </summary>
-		/// <param name="applicationNameOrAbbrev">Name or abbreviation of the application.</param>
 		/// <param name="database">The name of the database.</param>
-		/// <param name="server">The server (or null for a local database).</param>
 		/// <param name="toolName">Name/path of the tool or view within the specific application.</param>
 		/// <param name="targetGuid">The GUID of the object which is the target of this link.</param>
 		/// ------------------------------------------------------------------------------------
-		public FwAppArgs(string applicationNameOrAbbrev, string database, string server,
+		public FwAppArgs(string database,
 			string toolName, Guid targetGuid) : base(toolName, targetGuid)
 		{
-			ProcessArg(kApp, applicationNameOrAbbrev);
 			ProcessArg(kProject, database);
-			if (!string.IsNullOrEmpty(server))
-				ProcessArg(kServer, server);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -728,8 +658,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		protected override void AddProperties(StringBuilder bldr)
 		{
-			bldr.AppendFormat("{0}={1}&{2}={3}&{4}={5}&", kApp, AppAbbrev, kProjectUri,
-				Database, kServerUri, Server);
+			bldr.AppendFormat("{0}={1}", kProjectUri, Database);
 			base.AddProperties(bldr);
 		}
 
@@ -745,8 +674,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			FwAppArgs appArgs = lnk as FwAppArgs;
 			if (appArgs == null || !base.EssentiallyEquals(lnk))
 				return false;
-			return (appArgs.AppAbbrev == AppAbbrev && appArgs.Database == Database &&
-				appArgs.Server == Server);
+			return (appArgs.Database == Database);
 		}
 		#endregion
 
@@ -859,16 +787,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			if (FindCommandLineArgument(sArg, ref iCurrChar, kAppServerMode))
 				return kAppServerMode;
-			if (FindCommandLineArgument(sArg, ref iCurrChar, kApp))
-				return kApp;
 			if (FindCommandLineArgument(sArg, ref iCurrChar, kProject)) // (old) project name
 				return kProject;
 			if (FindCommandLineArgument(sArg, ref iCurrChar, "proj")) // project name
 				return kProject;
-			if (FindCommandLineArgument(sArg, ref iCurrChar, kServer)) // server name
-				return kServer;
-			if (FindCommandLineArgument(sArg, ref iCurrChar, kDbType)) // database (BEP) type
-				return kDbType;
 			if (FindCommandLineArgument(sArg, ref iCurrChar, kHelp))
 				return kHelp;
 			if (FindCommandLineArgument(sArg, ref iCurrChar, kChooseProject))
@@ -960,18 +882,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 						continue;
 					string name = pair.Substring(0, i);
 					string value = pair.Substring(i + 1);
-					if (name == kServerUri && value.LastIndexOf('\\') >= 0)
-					{
-						// Attempt to handle old SQL Server links
-						value = value.Substring(0, value.LastIndexOf('\\'));
-						if (value == ".") // Old SQL Server on local host
-							value = string.Empty;
-					}
 					ProcessArg(name, value);
 				}
 
-				if (String.IsNullOrEmpty(AppName))
-					throw new UriFormatException("FieldWorks link must include an application identifier.");
 				if (String.IsNullOrEmpty(Database))
 					throw new UriFormatException("FieldWorks link must include a project name.");
 			}
@@ -997,11 +910,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				case kProject:
 				case kProjectUri: m_database = value; break;
-				case "c": // For historical purposes (even though it will probably never work)
-				case kServer:
-				case kServerUri: m_server = value; break;
-				case kApp: SetAppNameAndAbbrev(value); break;
-				case kDbType: m_dbType = value; break;
 				case kLocale: m_locale = value; break;
 				case kHelp: ShowHelp = true; break;
 				case kChooseProject: m_chooseProjectFile = value; break;
@@ -1020,32 +928,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 					PropertyTableEntries.Add(new Property(name, Decode(value)));
 					break;
 			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Sets the application name and abbreviation.
-		/// </summary>
-		/// <param name="value">The URL or command-line parameter value that is supposed to
-		/// match one of the know FW application names or abbreviations.</param>
-		/// ------------------------------------------------------------------------------------
-		private void SetAppNameAndAbbrev(string value)
-		{
-			string appNameOrAbbrev = value.ToLowerInvariant();
-			if (appNameOrAbbrev == FwUtils.ksTeAppName.ToLowerInvariant() ||
-				appNameOrAbbrev == FwUtils.ksTeAbbrev.ToLowerInvariant())
-			{
-				m_appName = FwUtils.ksTeAppName.ToLowerInvariant();
-				m_appAbbrev = FwUtils.ksTeAbbrev.ToLowerInvariant();
-			}
-			else if (appNameOrAbbrev == FwUtils.ksFlexAppName.ToLowerInvariant() ||
-				appNameOrAbbrev == FwUtils.ksFlexAbbrev.ToLowerInvariant())
-			{
-				m_appName = FwUtils.ksFlexAppName.ToLowerInvariant();
-				m_appAbbrev = FwUtils.ksFlexAbbrev.ToLowerInvariant();
-			}
-			else
-				ShowHelp = true;
 		}
 		#endregion
 	}

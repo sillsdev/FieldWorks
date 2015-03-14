@@ -140,9 +140,6 @@
 {1}</value>
     <comment>Message shown on the Unable to Open Project dialog box when FieldWorks previously crashed on startup</comment>
   </data>
-  <data name="kstidAboutToConvertToShared" xml:space="preserve">
-    <value>FieldWorks will now begin converting your projects to the shared format. This may take some time, and requires you to close all other projects you currently have open.</value>
-  </data>
   <data name="ksProjectsFailedToMigrate" xml:space="preserve">
     <value>{0} project(s) failed to migrate properly.</value>
   </data>
@@ -184,9 +181,6 @@ Ensure that this folder is shared and that you have permission to access it.</va
     <value>When I start {0}, always open the last edited project automatically.</value>
     <comment>{0} will be either Language Explorer or Translation Editor</comment>
   </data>
-  <data name="kstidAboutToConvertToNonShared" xml:space="preserve">
-    <value>FieldWorks will now begin converting your projects to the non-shared format. This may take some time, and requires everyone to close the shared projects they currently have open (except FieldWorks will close the current one on this computer for you and reopen it after the conversion).</value>
-  </data>
   <data name="kstidOtherApplicationBusy" xml:space="preserve">
     <value>{0} cannot open project {1} because {2} is busy. If you wait until {2} has finished, {0} will continue.</value>
     <comment>Message shown when TE or FLEx is started when the other application is doing something that can't be interrupted.</comment>
@@ -203,9 +197,6 @@ Ensure that this folder is shared and that you have permission to access it.</va
   </data>
   <data name="ksDoYouWantToMigrate" xml:space="preserve">
     <value>Do you want to migrate existing projects from an older version of FieldWorks?</value>
-  </data>
-  <data name="kstidTE" xml:space="preserve">
-    <value>Translation Editor</value>
   </data>
   <data name="kstidGlobalWsChangedCaption" xml:space="preserve">
     <value>Global Writing Systems Changed</value>
@@ -237,10 +228,6 @@ Ensure that this folder is shared and that you have permission to access it.</va
   <data name="ksFailed" xml:space="preserve">
     <value>Failed</value>
   </data>
-  <data name="kstidAboutToConvertCaption" xml:space="preserve">
-    <value>About to Convert</value>
-    <comment>Caption for dialog with message kstidAboutToConverToShared or ksticAboutToConvertToNonShared.</comment>
-  </data>
   <data name="ksMovingProject" xml:space="preserve">
     <value>Moving project {0}</value>
     <comment>Must contain {0}, the project name</comment>
@@ -271,11 +258,6 @@ Continue using English as the user interface language?</value>
   </data>
   <data name="SendReceiveGetArrow32x32" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SendReceiveGetArrow32x32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="kstidInvalidServer" xml:space="preserve">
-    <value>Server name could not be resolved to a valid host:
-{0}
-{1}</value>
   </data>
   <data name="ksProjectNameAndServerFmt" xml:space="preserve">
     <value>{0} - {1}</value>

@@ -459,14 +459,12 @@ namespace SIL.FieldWorks.Filters
 				var originalPersistData = mopsi.PersistData(objRepo);
 				using (var writer = new StreamWriter(stream))
 				{
-					ManyOnePathSortItem.WriteItems(m_list, writer, objRepo, null);
+					ManyOnePathSortItem.WriteItems(m_list, writer, objRepo);
 					stream.Seek(0, SeekOrigin.Begin);
 					using (var reader = new StreamReader(stream))
 					{
-						string versionStamp;
-						var items = ManyOnePathSortItem.ReadItems(reader, objRepo, out versionStamp);
+						var items = ManyOnePathSortItem.ReadItems(reader, objRepo);
 						Assert.That(items.Count, Is.EqualTo(m_list.Count));
-						Assert.That(versionStamp, Is.Null);
 						mopsi = (IManyOnePathSortItem)items[0];
 						Assert.That(mopsi.KeyObject, Is.EqualTo(Cache.LangProject.Hvo));
 						Assert.That(mopsi.PathLength, Is.EqualTo(0));
@@ -504,17 +502,15 @@ namespace SIL.FieldWorks.Filters
 				var objRepo = Cache.ServiceLocator.ObjectRepository;
 				using (var writer = new StreamWriter(stream))
 				{
-					ManyOnePathSortItem.WriteItems(m_list, writer, objRepo, "123");
+					ManyOnePathSortItem.WriteItems(m_list, writer, objRepo);
 					writer.WriteLine(Convert.ToBase64String(Guid.NewGuid().ToByteArray()));
 					// fake item, bad guid
 					writer.Flush();
 					stream.Seek(0, SeekOrigin.Begin);
 					using (var reader = new StreamReader(stream))
 					{
-						string versionStamp;
-						var items = ManyOnePathSortItem.ReadItems(reader, objRepo, out versionStamp);
+						var items = ManyOnePathSortItem.ReadItems(reader, objRepo);
 						Assert.That(items, Is.Null);
-						Assert.That(versionStamp, Is.EqualTo("123"));
 					}
 				}
 			}

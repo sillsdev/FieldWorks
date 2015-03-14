@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
@@ -129,17 +128,11 @@ namespace SIL.FieldWorks.TE
 		{
 			EnsureProjectValid(cache, app, existingProgressDlg);
 
-			// TE-8621: Don't try to upgrade the database unless we're the project server and no one is connected
-			if (!cache.ProjectId.IsLocal || cache.NumberOfRemoteClients > 0)
-				return;
-
 			ILangProject lp = cache.LangProject;
 
 			TeScrBookRefsInit.EnsureFactoryScrBookRefs(cache, existingProgressDlg);
-			TePublicationsInit.EnsureFactoryPublications(lp, existingProgressDlg);
 			TeStylesXmlAccessor.EnsureCurrentStylesheet(cache, existingProgressDlg, app);
 			TeScrNoteCategoriesInit.EnsureCurrentScrNoteCategories(lp, existingProgressDlg);
-			TeKeyTermsInit.EnsureCurrentKeyTerms(lp, app, existingProgressDlg);
 		}
 		#endregion
 
@@ -252,7 +245,7 @@ namespace SIL.FieldWorks.TE
 					UndoResult ures = m_cache.DomainDataByFlid.GetActionHandler().Undo();
 					// Enhance JohnT: make use of ures?
 				}
-				MessageBox.Show(Form.ActiveForm, e.InnerException.Message, FwUtils.ksTeAppName,
+				MessageBox.Show(Form.ActiveForm, e.InnerException.Message, FwUtils.ksFlexAppName,
 					MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return false;
 			}
@@ -276,15 +269,6 @@ namespace SIL.FieldWorks.TE
 			// REVIEW: Since all the version-based initialization will be taken care of by a
 			// subsequent call to EnsureProjectComponentsValid, we could probably get rid of this and/or
 			// put it in the above block as we do with the stylesheet initialization.
-
-			//Initialize factory publications
-			if (m_scr.PublicationsOC.Count == 0)
-				TePublicationsInit.CreatePublicationInfo(progressDialog, m_scr);
-
-			//Initialize the key terms
-			ICmPossibilityList keyTermsList = lp.KeyTermsList;
-			if (keyTermsList.PossibilitiesOS.Count < 1)
-				TeKeyTermsInit.CreateKeyTerms(progressDialog, keyTermsList, m_app);
 
 			//Initialize the annotation categories
 			if (m_scr.NoteCategoriesOA == null || m_scr.NoteCategoriesOA.PossibilitiesOS.Count == 0)

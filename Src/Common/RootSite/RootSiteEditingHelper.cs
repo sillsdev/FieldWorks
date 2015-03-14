@@ -4,7 +4,6 @@
 //
 // File: RootSiteEditingHelper.cs
 // Responsibility:
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -1144,8 +1143,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				RootSiteStrings.ksUndoInsertLink, RootSiteStrings.ksRedoInsertLink))
 			{
 				if (m_cache != null && m_cache.ProjectId != null)
-					clip = FwLinkArgs.FixSilfwUrlForCurrentProject(clip, m_cache.ProjectId.Name,
-						m_cache.ProjectId.ServerName);
+					clip = FwLinkArgs.FixSilfwUrlForCurrentProject(clip, m_cache.ProjectId.Name);
 				var filename = StringServices.MarkTextInBldrAsHyperlink(tsb, 0, tsb.Length, clip, hyperlinkStyle, m_cache.LanguageProject.LinkedFilesRootDir);
 				if (FileUtils.IsFilePathValid(filename))
 				{

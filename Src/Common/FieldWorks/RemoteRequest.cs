@@ -4,9 +4,7 @@
 //
 // File: RemoteRequest.cs
 // Responsibility: FW Team
-
 using System;
-using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -52,7 +50,7 @@ namespace SIL.FieldWorks
 		public bool HandleRestoreProjectRequest(FwRestoreProjectSettings restoreSettings)
 		{
 			ProjectMatch isMyProject = FieldWorks.GetProjectMatchStatus(
-				new ProjectId(restoreSettings.Settings.FullProjectPath, null));
+				new ProjectId(restoreSettings.Settings.FullProjectPath));
 			if (isMyProject != ProjectMatch.ItsMyProject)
 				return false;
 
@@ -70,7 +68,7 @@ namespace SIL.FieldWorks
 		public bool HandleLinkRequest(FwAppArgs link)
 		{
 			ProjectMatch isMyProject = FieldWorks.GetProjectMatchStatus(
-				new ProjectId(link.DatabaseType, link.Database, link.Server));
+				new ProjectId(link.DatabaseType, link.Database));
 			if (isMyProject != ProjectMatch.ItsMyProject)
 				return false;
 

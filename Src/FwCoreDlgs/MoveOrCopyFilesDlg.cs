@@ -1,16 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
 using System.IO;
-using System.Diagnostics;
-
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using XCore;
@@ -168,7 +160,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public void Initialize2(string sFilename, string sRootDir,
-			IHelpTopicProvider helpTopicProvider, bool isLocal)
+			IHelpTopicProvider helpTopicProvider)
 		{
 			CheckDisposed();
 			m_msgText.Text = String.Format(FwCoreDlgs.ksMoveOrCopyFileToLinkedFilesDir);
@@ -189,7 +181,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_btnCopy.Text = FwCoreDlgs.ksCopyFile;
 			m_btnMove.Text = FwCoreDlgs.ksMoveFile;
 			m_btnLeave.Text = FwCoreDlgs.ksLeaveFile;
-			m_btnLeave.Enabled = isLocal;
+			m_btnLeave.Enabled = true;
 
 			SetupHelp(helpTopicProvider, "khtpMoveOrCopyFile");
 		}
@@ -303,20 +295,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="sFile">The fully-specified path name of the file.</param>
 		/// <param name="sRootDirLinkedFiles">The fully-specified path name of the LinkedFiles root
 		/// directory.</param>
-		/// <param name="isLocal">True if running on the local server: allows file not to be
-		/// moved or copied</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <returns>The fully specified path name of the file to use, which might be the same
 		/// as the given path or it could be in its new location under the LinkedFiles folder
 		/// if the user elected to move or copy it.</returns>
 		/// ------------------------------------------------------------------------------------
 		public static string MoveCopyOrLeaveMediaFile(string sFile, string sRootDirLinkedFiles,
-			IHelpTopicProvider helpTopicProvider, bool isLocal)
+			IHelpTopicProvider helpTopicProvider)
 		{
 			return MoveCopyOrLeaveFile(sFile,
 				Path.Combine(sRootDirLinkedFiles, FdoFileHelper.ksMediaDir),
 				sRootDirLinkedFiles,
-				helpTopicProvider, isLocal);
+				helpTopicProvider);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -329,23 +319,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="sRootDirLinkedFiles">The fully-specified path name of the LinkedFiles root
 		/// directory.</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
-		/// <param name="isLocal">True if running on the local server: allows file not to be
-		/// moved or copied</param>
 		/// <returns>The fully specified path name of the file to use, which might be the same
 		/// as the given path or it could be in its new location under the LinkedFiles folder
 		/// if the user elected to move or copy it.</returns>
 		/// ------------------------------------------------------------------------------------
 		public static string MoveCopyOrLeaveExternalFile(string sFile, string sRootDirLinkedFiles,
-			IHelpTopicProvider helpTopicProvider, bool isLocal)
+			IHelpTopicProvider helpTopicProvider)
 		{
 			return MoveCopyOrLeaveFile(sFile,
 				Path.Combine(sRootDirLinkedFiles, FdoFileHelper.ksOtherLinkedFilesDir),
 				sRootDirLinkedFiles,
-				helpTopicProvider, isLocal);
+				helpTopicProvider);
 		}
 
 		private static string MoveCopyOrLeaveFile(string sFile, string subFolder, string sRootDirExternalLinks,
-			IHelpTopicProvider helpTopicProvider, bool isLocal)
+			IHelpTopicProvider helpTopicProvider)
 		{
 			try
 			{
@@ -365,7 +353,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			using (MoveOrCopyFilesDlg dlg = new MoveOrCopyFilesDlg())
 			{
-				dlg.Initialize2(sFile, subFolder, helpTopicProvider, isLocal);
+				dlg.Initialize2(sFile, subFolder, helpTopicProvider);
 				if (dlg.ShowDialog() != DialogResult.OK)
 					return null;	// leave where it is.
 				return PerformMoveCopyOrLeaveFile(sFile, subFolder, dlg.Choice);

@@ -9,13 +9,20 @@ using Microsoft.Win32;
 using Paratext.LexicalContracts;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
 	/// <summary>
-	/// This is the main Paratext lexicon plugin class
+	/// This is the main Paratext lexicon plugin.
+	///
+	/// It uses an activation context to load the required COM objects. The activation context should be activated
+	/// when making any calls to FDO to ensure that COM objects can be loaded properly. Care should be taken to ensure
+	/// that no calls to FDO occur outside of an activated activation context. The easiest way to do this is to ensure
+	/// that the activation context is activated in all public methods of all implemented interfaces. Be careful of
+	/// deferred execution enumerables, such as those used in LINQ and yield statements. The best way to avoid deferred
+	/// execution of enumerables is to call "ToArray()" or something equivalent when returning the results of LINQ
+	/// functions. Do not use yield statements, instead add all objects to a collection and return the collection.
 	/// </summary>
 	[LexiconPlugin(ID = "FieldWorks", DisplayName = "FieldWorks Language Explorer")]
 	public class FwLexiconPlugin : FwDisposableBase, LexiconPlugin
@@ -36,11 +43,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			m_lexiconCache = new FdoLexiconCollection();
 			m_fdoCacheCache = new FdoCacheCollection();
 			m_activationContext = new ActivationContextHelper("FwParatextLexiconPlugin.dll.manifest");
-
-			// initialize client-server services to use Db4O backend for FDO
 			m_ui = new ParatextLexiconPluginFdoUI(m_activationContext);
-			var dirs = ParatextLexiconPluginDirectoryFinder.FdoDirectories;
-			ClientServerServices.SetCurrentToDb4OBackend(m_ui, dirs);
 		}
 
 		/// <summary>
@@ -159,14 +162,10 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			}
 			else
 			{
-				var backendProviderType = FDOBackendProviderType.kSharedXML;
-				string path = Path.Combine(ParatextLexiconPluginDirectoryFinder.ProjectsDirectory, projectId, projectId + FdoFileHelper.ksFwDataXmlFileExtension);
+				var path = Path.Combine(ParatextLexiconPluginDirectoryFinder.ProjectsDirectory, projectId, projectId + FdoFileHelper.ksFwDataXmlFileExtension);
 				if (!File.Exists(path))
 				{
-					backendProviderType = FDOBackendProviderType.kDb4oClientServer;
-					path = Path.Combine(ParatextLexiconPluginDirectoryFinder.ProjectsDirectory, projectId, projectId + FdoFileHelper.ksFwDataDb4oFileExtension);
-					if (!File.Exists(path))
-						return LexicalProjectValidationResult.ProjectDoesNotExist;
+					return LexicalProjectValidationResult.ProjectDoesNotExist;
 				}
 
 				var settings = new FdoSettings {DisableDataMigration = true};
@@ -180,7 +179,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				try
 				{
 					var progress = new ParatextLexiconPluginThreadedProgress(m_ui.SynchronizeInvoke) { IsIndeterminate = true, Title = string.Format("Opening {0}", projectId) };
-					fdoCache = FdoCache.CreateCacheFromExistingData(new ParatextLexiconPluginProjectID(backendProviderType, path), Thread.CurrentThread.CurrentUICulture.Name, m_ui,
+					fdoCache = FdoCache.CreateCacheFromExistingData(new ParatextLexiconPluginProjectID(FDOBackendProviderType.kSharedXML, path), Thread.CurrentThread.CurrentUICulture.Name, m_ui,
 						ParatextLexiconPluginDirectoryFinder.FdoDirectories, settings, progress);
 				}
 				catch (FdoDataMigrationForbiddenException)

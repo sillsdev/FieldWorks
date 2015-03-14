@@ -1,8 +1,6 @@
-﻿using System.Globalization;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.Keyboarding;
-using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 {
@@ -10,7 +8,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	public class SimpleRootSiteTests
 	{
 		[Test]
-		public void GetWsForInputLanguage_GetsMatchingWsByCulture()
+		public void GetWSForInputMethod_GetsMatchingWSByInputMethod()
 		{
 			var wsEn = new CoreWritingSystemDefinition("en");
 			var wsFr = new CoreWritingSystemDefinition("fr");
@@ -19,49 +17,34 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			DefaultKeyboardDefinition kbdFr = CreateKeyboard("French", "fr-FR");
 			wsFr.LocalKeyboard = kbdFr;
 
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("", new CultureInfo("en-US"), wsEn, new[] {wsEn, wsFr}), Is.EqualTo(wsEn));
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("", new CultureInfo("en-US"), wsFr, new[] { wsEn, wsFr }), Is.EqualTo(wsEn));
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("", new CultureInfo("en-US"), wsEn, new[] { wsFr, wsEn }), Is.EqualTo(wsEn));
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("", new CultureInfo("en-US"), wsFr, new[] { wsFr, wsEn }), Is.EqualTo(wsEn));
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("", new CultureInfo("fr-FR"), wsEn, new[] { wsFr, wsEn }), Is.EqualTo(wsFr));
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("", new CultureInfo("fr-FR"), wsEn, new[] { wsEn, wsFr }), Is.EqualTo(wsFr));
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("", new CultureInfo("fr-FR"), null, new[] { wsEn, wsFr }), Is.EqualTo(wsFr));
+			Assert.That(SimpleRootSite.GetWSForInputMethod(kbdEn, wsEn, new[] { wsEn, wsFr }), Is.EqualTo(wsEn));
+			Assert.That(SimpleRootSite.GetWSForInputMethod(kbdEn, wsFr, new[] { wsEn, wsFr }), Is.EqualTo(wsEn));
+			Assert.That(SimpleRootSite.GetWSForInputMethod(kbdEn, wsEn, new[] { wsFr, wsEn }), Is.EqualTo(wsEn));
+			Assert.That(SimpleRootSite.GetWSForInputMethod(kbdEn, wsFr, new[] { wsFr, wsEn }), Is.EqualTo(wsEn));
+			Assert.That(SimpleRootSite.GetWSForInputMethod(kbdFr, wsEn, new[] { wsFr, wsEn }), Is.EqualTo(wsFr));
+			Assert.That(SimpleRootSite.GetWSForInputMethod(kbdFr, wsEn, new[] { wsEn, wsFr }), Is.EqualTo(wsFr));
+			Assert.That(SimpleRootSite.GetWSForInputMethod(kbdFr, null, new[] { wsEn, wsFr }), Is.EqualTo(wsFr));
 		}
 
 		[Test]
-		public void GetWsForInputLanguage_PrefersCurrentCultureIfTwoMatch()
+		public void GetWSForInputMethod_PrefersCurrentLayoutIfTwoMatch()
 		{
 			var wsEn = new CoreWritingSystemDefinition("en");
 			var wsFr = new CoreWritingSystemDefinition("fr");
 			DefaultKeyboardDefinition kbdEn = CreateKeyboard("English", "en-US");
 			wsEn.LocalKeyboard = kbdEn;
-			DefaultKeyboardDefinition kbdFr = CreateKeyboard("French", "en-US");
+			DefaultKeyboardDefinition kbdFr = CreateKeyboard("French", "fr-FR");
 			wsFr.LocalKeyboard = kbdFr;
+			DefaultKeyboardDefinition kbdDe = CreateKeyboard("German", "de-DE");
 
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("", new CultureInfo("en-US"), wsEn, new[] { wsEn, wsFr }), Is.EqualTo(wsEn));
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("", new CultureInfo("en-US"), wsFr, new[] { wsEn, wsFr }), Is.EqualTo(wsFr));
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("", new CultureInfo("en-US"), wsEn, new[] { wsFr, wsEn }), Is.EqualTo(wsEn));
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("", new CultureInfo("en-US"), wsFr, new[] { wsFr, wsEn }), Is.EqualTo(wsFr));
+			Assert.That(SimpleRootSite.GetWSForInputMethod(kbdDe, wsEn, new[] { wsEn, wsFr }), Is.EqualTo(wsEn));
+			Assert.That(SimpleRootSite.GetWSForInputMethod(kbdDe, wsFr, new[] { wsEn, wsFr }), Is.EqualTo(wsFr));
+			Assert.That(SimpleRootSite.GetWSForInputMethod(kbdDe, wsEn, new[] { wsFr, wsEn }), Is.EqualTo(wsEn));
+			Assert.That(SimpleRootSite.GetWSForInputMethod(kbdDe, wsFr, new[] { wsFr, wsEn }), Is.EqualTo(wsFr));
 		}
 
 		[Test]
-		public void GetWsForInputLanguage_PrefersCurrentLayoutIfTwoMatch()
-		{
-			var wsEn = new CoreWritingSystemDefinition("en");
-			var wsFr = new CoreWritingSystemDefinition("fr");
-			DefaultKeyboardDefinition kbdEn = CreateKeyboard("English", "en-US");
-			wsEn.LocalKeyboard = kbdEn;
-			DefaultKeyboardDefinition kbdFr = CreateKeyboard("English", "fr-US");
-			wsFr.LocalKeyboard = kbdFr;
-
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("English", new CultureInfo("de-DE"), wsEn, new[] { wsEn, wsFr }), Is.EqualTo(wsEn));
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("English", new CultureInfo("de-DE"), wsFr, new[] { wsEn, wsFr }), Is.EqualTo(wsFr));
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("English", new CultureInfo("de-DE"), wsEn, new[] { wsFr, wsEn }), Is.EqualTo(wsEn));
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("English", new CultureInfo("de-DE"), wsFr, new[] { wsFr, wsEn }), Is.EqualTo(wsFr));
-		}
-
-		[Test]
-		public void GetWsForInputLanguage_CorrectlyPrioritizesLayoutAndCulture()
+		public void GetWsForInputMethod_CorrectlyPrioritizesInputMethod()
 		{
 			var wsEn = new CoreWritingSystemDefinition("en");
 			var wsEnIpa = new CoreWritingSystemDefinition("en-fonipa");
@@ -73,24 +56,20 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			wsEnIpa.LocalKeyboard = kbdEnIpa;
 			DefaultKeyboardDefinition kbdFr = CreateKeyboard("French", "fr-FR");
 			wsFr.LocalKeyboard = kbdFr;
-			DefaultKeyboardDefinition kbdDe = CreateKeyboard("English", "de-DE");
+			DefaultKeyboardDefinition kbdDe = CreateKeyboard("German", "de-DE");
 			wsDe.LocalKeyboard = kbdDe;
 
 			CoreWritingSystemDefinition[] wss = {wsEn, wsFr, wsDe, wsEnIpa};
 
 			// Exact match selects correct one, even though there are other matches for layout and/or culture
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("English", new CultureInfo("en-US"), wsFr, wss), Is.EqualTo(wsEn));
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("English-IPA", new CultureInfo("en-US"), wsEn, wss), Is.EqualTo(wsEnIpa));
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("French", new CultureInfo("fr-FR"), wsDe, wss), Is.EqualTo(wsFr));
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("English", new CultureInfo("de-DE"), wsEn, wss), Is.EqualTo(wsDe));
-
-			// If there is no exact match, but there are matches by both layout and culture, we prefer layout (even though there is a
-			// culture match for the default WS)
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("English", new CultureInfo("fr-FR"), wsFr, wss), Is.EqualTo(wsEn)); // first of two equally good matches
+			Assert.That(SimpleRootSite.GetWSForInputMethod(kbdEn, wsFr, wss), Is.EqualTo(wsEn));
+			Assert.That(SimpleRootSite.GetWSForInputMethod(kbdEnIpa, wsEn, wss), Is.EqualTo(wsEnIpa));
+			Assert.That(SimpleRootSite.GetWSForInputMethod(kbdFr, wsDe, wss), Is.EqualTo(wsFr));
+			Assert.That(SimpleRootSite.GetWSForInputMethod(kbdDe, wsEn, wss), Is.EqualTo(wsDe));
 		}
 
 		[Test]
-		public void GetWsForInputLanguage_PrefersWsCurrentIfEqualMatches()
+		public void GetWSForInputMethod_PrefersWSCurrentIfEqualMatches()
 		{
 			var wsEn = new CoreWritingSystemDefinition("en");
 			var wsEnUS = new CoreWritingSystemDefinition("en-US");
@@ -104,44 +83,33 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			wsEnUS.LocalKeyboard = kbdEn; // exact same keyboard used!
 			DefaultKeyboardDefinition kbdFr = CreateKeyboard("French", "fr-FR");
 			wsFr.LocalKeyboard = kbdFr;
-			DefaultKeyboardDefinition kbdDe = CreateKeyboard("English", "de-DE");
+			DefaultKeyboardDefinition kbdDe = CreateKeyboard("German", "de-DE");
 			wsDe.LocalKeyboard = kbdDe;
 
 			CoreWritingSystemDefinition[] wss = {wsEn, wsFr, wsDe, wsEnIpa, wsEnUS};
 
 			// Exact matches
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("English", new CultureInfo("en-US"), wsFr, wss), Is.EqualTo(wsEn)); // first of 2
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("English", new CultureInfo("en-US"), wsEn, wss), Is.EqualTo(wsEn)); // prefer default
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("English", new CultureInfo("en-US"), wsEnUS, wss), Is.EqualTo(wsEnUS)); // prefer default
-
-			// Match on Layout only
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("English", new CultureInfo("fr-FR"), wsFr, wss), Is.EqualTo(wsEn)); // first of 3
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("English", new CultureInfo("fr-FR"), wsEn, wss), Is.EqualTo(wsEn)); // prefer default
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("English", new CultureInfo("fr-FR"), wsEnUS, wss), Is.EqualTo(wsEnUS)); // prefer default
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("English", new CultureInfo("fr-FR"), wsDe, wss), Is.EqualTo(wsDe)); // prefer default
-
-			// Match on culture only
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("Nonsence", new CultureInfo("en-US"), wsDe, wss), Is.EqualTo(wsEn)); // first of 3
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("Nonsence", new CultureInfo("en-US"), wsEn, wss), Is.EqualTo(wsEn)); // prefer default
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("Nonsence", new CultureInfo("en-US"), wsEnUS, wss), Is.EqualTo(wsEnUS)); // prefer default
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("Nonsence", new CultureInfo("en-US"), wsEnIpa, wss), Is.EqualTo(wsEnIpa)); // prefer default
+			Assert.That(SimpleRootSite.GetWSForInputMethod(kbdEn, wsFr, wss), Is.EqualTo(wsEn)); // first of 2
+			Assert.That(SimpleRootSite.GetWSForInputMethod(kbdEn, wsEn, wss), Is.EqualTo(wsEn)); // prefer default
+			Assert.That(SimpleRootSite.GetWSForInputMethod(kbdEn, wsEnUS, wss), Is.EqualTo(wsEnUS)); // prefer default
 		}
 
 		[Test]
-		public void GetWsForInputLanguage_ReturnsCurrentIfNoneMatches()
+		public void GetWSForInputMethod_ReturnsCurrentIfNoneMatches()
 		{
 			var wsEn = new CoreWritingSystemDefinition("en");
 			var wsFr = new CoreWritingSystemDefinition("fr");
 			DefaultKeyboardDefinition kbdEn = CreateKeyboard("English", "en-US");
 			wsEn.LocalKeyboard = kbdEn;
-			DefaultKeyboardDefinition kbdFr = CreateKeyboard("French", "en-US");
+			DefaultKeyboardDefinition kbdFr = CreateKeyboard("French", "fr-FR");
 			wsFr.LocalKeyboard = kbdFr;
+			DefaultKeyboardDefinition kbdDe = CreateKeyboard("German", "de-DE");
 
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("", new CultureInfo("fr-FR"), wsEn, new[] { wsEn, wsFr }), Is.EqualTo(wsEn));
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("", new CultureInfo("fr-FR"), wsFr, new[] { wsEn, wsFr }), Is.EqualTo(wsFr));
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("", new CultureInfo("fr-FR"), wsEn, new[] { wsFr, wsEn }), Is.EqualTo(wsEn));
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("", new CultureInfo("fr-FR"), wsFr, new[] { wsFr, wsEn }), Is.EqualTo(wsFr));
-			Assert.That(SimpleRootSite.GetWSForInputLanguage("", new CultureInfo("fr-FR"), null, new[] { wsFr, wsEn }), Is.Null);
+			Assert.That(SimpleRootSite.GetWSForInputMethod(kbdDe, wsEn, new[] { wsEn, wsFr }), Is.EqualTo(wsEn));
+			Assert.That(SimpleRootSite.GetWSForInputMethod(kbdDe, wsFr, new[] { wsEn, wsFr }), Is.EqualTo(wsFr));
+			Assert.That(SimpleRootSite.GetWSForInputMethod(kbdDe, wsEn, new[] { wsFr, wsEn }), Is.EqualTo(wsEn));
+			Assert.That(SimpleRootSite.GetWSForInputMethod(kbdDe, wsFr, new[] { wsFr, wsEn }), Is.EqualTo(wsFr));
+			Assert.That(SimpleRootSite.GetWSForInputMethod(kbdDe, null, new[] { wsFr, wsEn }), Is.Null);
 		}
 
 		private static DefaultKeyboardDefinition CreateKeyboard(string layout, string locale)

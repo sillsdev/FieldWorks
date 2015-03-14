@@ -194,10 +194,6 @@
       <Name>TeDialogs</Name>
       <HintPath>..\..\..\..\Output\Debug\TeDialogs.dll</HintPath>
     </Reference>
-    <Reference Include="TeRegistrySettings">
-      <Name>TeRegistrySettings</Name>
-      <HintPath>..\..\..\..\Output\Debug\TeRegistrySettings.dll</HintPath>
-    </Reference>
     <Reference Include="TestUtils">
       <Name>TestUtils</Name>
       <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
@@ -211,9 +207,6 @@
     <Compile Include="..\..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
-    <Compile Include="..\..\TeViewConstructors\TeViewConstructorsTests\SetupFixtureClass.cs">
-      <Link>SetupFixtureClass.cs</Link>
-    </Compile>
     <Compile Include="ArchiveMaintenanceDialogTests.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -225,9 +218,6 @@
     </Compile>
     <Compile Include="ImportedBooksTests.cs" />
     <Compile Include="ScripturePropertiesTests.cs">
-    </Compile>
-    <Compile Include="ToolsOptionsDialogTests.cs">
-      <SubType>Form</SubType>
     </Compile>
     <None Include="App.config" />
   </ItemGroup>

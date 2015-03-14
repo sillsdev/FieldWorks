@@ -12,15 +12,11 @@ using System;
 using System.Collections.Generic;
 
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Resources;
 using SIL.WritingSystems;
 using SILUBS.SharedScrUtils;
-using SIL.FieldWorks.TE.TeEditorialChecks;
 using System.Diagnostics;
 using System.Globalization;
-using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.TE
 {
@@ -46,8 +42,6 @@ namespace SIL.FieldWorks.TE
 		public static void Initialize(IScripture scr, int bookNum)
 		{
 			s_scr = scr;
-
-			CacheCheckIds();
 
 			if (bookNum != s_prevBookNum)
 			{
@@ -112,29 +106,6 @@ namespace SIL.FieldWorks.TE
 		#endregion
 
 		#region Methods for getting annotation types
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Ensure that the error checking annotation subtypes are defined.
-		/// </summary>
-		/// <remarks>This may need to be made more flexible somehow.</remarks>
-		/// -----------------------------------------------------------------------------------
-		private static void CacheCheckIds()
-		{
-			if (s_checkNamesToGuids != null)
-				return;
-
-			// This creates the annotation types for installed checks.
-			SortedList<ScrCheckKey, IScriptureCheck> chks =
-				InstalledScriptureChecks.GetChecks(new ScrChecksDataSource(s_scr.Cache,
-					ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"), FwDirectoryFinder.LegacyWordformingCharOverridesFile));
-
-			if (chks != null)
-			{
-				s_checkNamesToGuids = new Dictionary<string, Guid>(chks.Count);
-				foreach (IScriptureCheck check in chks.Values)
-					s_checkNamesToGuids[check.CheckName] = check.CheckId;
-			}
-		}
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
@@ -207,6 +178,7 @@ namespace SIL.FieldWorks.TE
 		{
 			string identifier = IetfLanguageTagHelper.ToIetfLanguageTag(locale);
 			CoreWritingSystemDefinition ws;
+			// TODO (WS_FIX): This used to be TryGetOrSet. How should we handle it now?
 			s_scr.Cache.ServiceLocator.WritingSystemManager.GetOrSet(identifier, out ws);
 			if (!s_scr.Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Contains(ws))
 				s_scr.Cache.ServiceLocator.WritingSystems.AddToCurrentAnalysisWritingSystems(ws);

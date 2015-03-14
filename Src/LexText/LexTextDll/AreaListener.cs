@@ -357,13 +357,14 @@ namespace SIL.FieldWorks.XWorks.LexText
 			else
 			{
 				var nodes = windowConfiguration.SelectNodes(GetToolXPath("lists"));
-				if (nodes != null)
-					foreach (XmlNode node in nodes)
-					{
-						if ((!FwUtils.IsTEInstalled) && XmlUtils.GetOptionalBooleanAttributeValue(node, "bteOnly", false))
-							continue;
-						AddToolNodeToDisplay(possRepo, cache, display, tbl, node);
-					}
+				if (nodes == null)
+				{
+					return true;
+				}
+				foreach (XmlNode node in nodes)
+				{
+					AddToolNodeToDisplay(possRepo, cache, display, tbl, node);
+				}
 			}
 			return true;
 		}

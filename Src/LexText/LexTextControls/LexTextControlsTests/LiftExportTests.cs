@@ -827,12 +827,21 @@ namespace LexTextControlsTests
 			m_customFieldEntryIds.Add(fd.Id);
 			var firstCustomListEntry = m_customPossibilityList.FindOrCreatePossibility("list item 1", m_cache.DefaultAnalWs);
 			m_sda.SetObjProp(m_entryTest.Hvo, fd.Id, firstCustomListEntry.Hvo);
+
+			fd = MakeCustomField("CustomField6-LexEntry", LexEntryTags.kClassId,
+					 WritingSystemServices.kwsVernAnals, CustomFieldType.SingleLineString, Guid.Empty);
+			m_customFieldEntryIds.Add(fd.Id);
+			AddCustomFieldMultistringText(fd, m_entryTest.Hvo);
+			m_cache.DomainDataByFlid.SetMultiStringAlt(m_entryTest.Hvo, fd.Id, m_audioWsCode,
+				m_cache.TsStrFactory.MakeString(kcustomMultiFileName, m_audioWsCode));
 		}
 
 		private void AddCustomFieldSimpleString(FieldDescription fd, int ws, int hvo)
 		{
 			var tss = m_cache.TsStrFactory.MakeString(fd.Userlabel + " text.", ws);
-			m_cache.DomainDataByFlid.SetString(hvo, fd.Id, tss);
+			var bldr = tss.GetBldr();
+			bldr.SetIntPropValues(5, 10, (int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, ws == m_cache.DefaultVernWs ? m_cache.DefaultAnalWs : m_cache.DefaultVernWs);
+			m_cache.DomainDataByFlid.SetString(hvo, fd.Id, bldr.GetString());
 		}
 
 		private void AddCustomFieldsInLexSense()
@@ -948,6 +957,13 @@ namespace LexTextControlsTests
 		{
 			ITsString tss;
 			tss = m_cache.TsStrFactory.MakeString("MultiString Analysis ws string", m_cache.DefaultAnalWs);
+			if (fd.Type == CellarPropertyType.MultiString)
+			{
+				// A decent test of a multi-string property (as opposed to Multi-Unicode) requires more than one run.
+				var bldr = tss.GetBldr();
+				bldr.SetIntPropValues(5, 10, (int) FwTextPropType.ktptWs, (int) FwTextPropVar.ktpvDefault, m_cache.DefaultVernWs);
+				tss = bldr.GetString();
+			}
 			m_cache.DomainDataByFlid.SetMultiStringAlt(hvo, fd.Id, m_cache.DefaultAnalWs, tss);
 
 			tss = m_cache.TsStrFactory.MakeString("MultiString Vernacular ws string", m_cache.DefaultVernWs);
@@ -986,6 +1002,7 @@ namespace LexTextControlsTests
 		private enum CustomFieldType
 		{
 			SingleLineText,
+			SingleLineString,
 			MultiparagraphText,
 			Number,
 			Date,
@@ -1005,7 +1022,11 @@ namespace LexTextControlsTests
 						CellarPropertyType.String : CellarPropertyType.MultiUnicode;
 					fd.WsSelector = ws;
 					break;
-
+				case CustomFieldType.SingleLineString:
+					fd.Type = ws == WritingSystemServices.kwsAnal || ws == WritingSystemServices.kwsVern ?
+						CellarPropertyType.String : CellarPropertyType.MultiString;
+					fd.WsSelector = ws;
+					break;
 				case CustomFieldType.MultiparagraphText:
 					fd.Type = CellarPropertyType.OwningAtomic;
 					fd.DstCls = StTextTags.kClassId;
@@ -1476,7 +1497,7 @@ namespace LexTextControlsTests
 		{
 			var xfields = xentry.SelectNodes("field");
 			Assert.IsNotNull(xfields);
-			Assert.AreEqual(4, xfields.Count);
+			Assert.AreEqual(5, xfields.Count);
 			foreach (XmlNode xfield in xfields)
 			{
 				var sType = XmlUtils.GetOptionalAttributeValue(xfield, "type");
@@ -1490,7 +1511,7 @@ namespace LexTextControlsTests
 					var tssString = m_cache.DomainDataByFlid.get_StringProp(entry.Hvo, m_customFieldEntryIds[0]);
 					VerifyTsString(xfield, m_cache.DefaultAnalWs, tssString);
 				}
-				else if (sType == "CustomField2-LexEntry")
+				else if (sType == "CustomField2-LexEntry" || sType == "CustomField6-LexEntry")
 				{
 					var tssMultiString = m_cache.DomainDataByFlid.get_MultiStringProp(entry.Hvo, m_customFieldEntryIds[1]);
 					VerifyMultiStringAnalVern(xfield, tssMultiString, true);
@@ -1801,7 +1822,7 @@ namespace LexTextControlsTests
 			Assert.AreEqual(1, xforms.Count);
 			var sLang = XmlUtils.GetOptionalAttributeValue(xforms[0], "lang");
 			Assert.AreEqual(m_cache.WritingSystemFactory.GetStrFromWs(wsItem), sLang);
-			VerifyForm(xforms[0], tssText);
+			VerifyForm(xforms[0], tssText, sLang);
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
@@ -1817,20 +1838,48 @@ namespace LexTextControlsTests
 				var sLang = XmlUtils.GetOptionalAttributeValue(form, "lang");
 				if (sLang == langWanted)
 				{
-					VerifyForm(form, tssText);
+					VerifyForm(form, tssText, langWanted);
 					return; // got it.
 				}
 			}
 			Assert.Fail("expected Ws alternative not found");
 		}
 
-		private void VerifyForm(XmlNode form, ITsString tssText)
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
+		private void VerifyForm(XmlNode form, ITsString tssText, string baseLang)
 		{
 			var sText = form.FirstChild.InnerText;
 			var expected = tssText.Text;
 			if (!DontExpectNewlinesCorrected)
 				expected = expected.Replace("\x2028", Environment.NewLine);
 			Assert.AreEqual(expected, sText);
+			var runs = form.FirstChild.ChildNodes;
+			Assert.That(runs, Has.Count.EqualTo(tssText.RunCount), "form should have correct run count");
+			for (int i = 0; i < tssText.RunCount; i++)
+			{
+				var content = tssText.get_RunText(i);
+				if (!DontExpectNewlinesCorrected)
+					content = content.Replace("\x2028", Environment.NewLine);
+				int val;
+				var lang = tssText.get_Properties(i).GetIntPropValues((int) FwTextPropType.ktptWs, out val);
+				var wsCode = m_cache.WritingSystemFactory.GetStrFromWs(lang);
+				var run = runs[i];
+				Assert.That(run.InnerText, Is.EqualTo(content));
+				if (run is XmlElement)
+				{
+					Assert.That(run.Name, Is.EqualTo("span"), "element embedded in form text must be span");
+					var runLang = XmlUtils.GetOptionalAttributeValue(run, "lang");
+					if (string.IsNullOrEmpty(runLang))
+						Assert.That(wsCode, Is.EqualTo(baseLang)); // could be some other reason for a span, in which case it will have the default ws.
+					else
+						Assert.That(runLang, Is.EqualTo(wsCode));
+				}
+				else
+				{
+					Assert.That(wsCode, Is.EqualTo(baseLang));
+				}
+			}
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",

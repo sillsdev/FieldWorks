@@ -539,6 +539,42 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		HashSet<Tuple<string, string, string, ICmObject>> m_reportedMergeProblems = new HashSet<Tuple<string, string, string, ICmObject>>();
+
+		/// <summary>
+		/// Fill in any missing alternatives from the LIFT data.
+		/// </summary>
+		/// <param name="contents"></param>
+		/// <param name="destination"></param>
+		private void MergeStringsFromLiftContents(LiftMultiText contents, ITsMultiString destination, string attr, ICmObject obj)
+		{
+			if (contents != null && !contents.IsEmpty)
+			{
+				foreach (KeyValuePair<string, LiftString> keyValuePair in contents)
+				{
+					var ws = GetWsFromLiftLang(keyValuePair.Key);
+					var liftString = CreateTsStringFromLiftString(keyValuePair.Value, ws);
+					var ourString = destination.get_String(ws);
+					if (string.IsNullOrEmpty(ourString.Text))
+					{
+						destination.set_String(ws, liftString);
+					}
+					else if (liftString.Text.Normalize() != ourString.Text.Normalize()) // ignore the very unlikely case of more subtle differences we can't report
+					{
+						// Fairly typically this is called more than once on the same object...not quite sure why. Simplest thing is not to make
+						// the same report repeatedly.
+						var key = Tuple.Create(liftString.Text, ourString.Text, attr, obj);
+						if (!m_reportedMergeProblems.Contains(key))
+						{
+							m_reportedMergeProblems.Add(key);
+							m_rgErrorMsgs.Add(string.Format(LexTextControls.ksNonMatchingRelation, liftString.Text, ourString.Text, attr,
+								obj.ShortName));
+						}
+					}
+				}
+			}
+		}
+
 		public bool TsStringIsNullOrEmpty(ITsString tss)
 		{
 			return tss == null || tss.Length == 0;
@@ -3697,6 +3733,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			var dateCreated = m_rgPendingRelation[i].DateCreated;
 			var dateModified = m_rgPendingRelation[i].DateModified;
 			var sResidue = m_rgPendingRelation[i].Residue;
+			bool needSort = false;
 			while (i < m_rgPendingRelation.Count)
 			{
 				PendingRelation pend = m_rgPendingRelation[i];
@@ -3708,16 +3745,24 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					break;
 				}
-				// The end of a sequence relation may be marked only by a sudden drop in
-				// the order value (which starts at 1 and increments by 1 steadily, or is
-				// set to -1 for non-sequence relation).
+				// If the sequence items are out of order we must sort them.
 				if (prev != null && pend.Order < prev.Order)
-					break;
+					needSort = true;
 				pend.Target = GetObjectFromTargetIdString(m_rgPendingRelation[i].TargetId);
 				relation.Add(pend);	// We handle missing/unrecognized targets later.
 				prev = pend;
 				++i;
 			}
+			// In the (typically unusual) case that the elements of the relation are out of order,
+			// sort them. We prefer to use the Linq OrderBy method rather than the Sort method
+			// of List because it is stable (that is, if some objects have the same Order we will
+			// at least keep ones with the same Order value in their original order).
+			// Enhance JohnT: it is possible that items appear out of order because they were exported
+			// from two LexReferenceType objects with the same name (pend.RelationType) on the same
+			// source object (pend.ObjectHvo). We can't currently recreate this situation on import.
+			// See LT-15389.
+			if (needSort)
+				return relation.OrderBy(pend => pend.Order).ToList();
 			return relation;
 		}
 

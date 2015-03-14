@@ -5,7 +5,6 @@
 // File: FDOBackendProvider.cs
 // Responsibility: John Thomson, Steve Miller
 // Last reviewed: never
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -555,18 +554,18 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		{
 			// if there is no project path specified, then just use the default memory-based manager.
 			// this will happen with the memory-only BEP.
-			if (UseMemoryWritingSystemManager || string.IsNullOrEmpty(ProjectId.SharedProjectFolder))
+			if (UseMemoryWritingSystemManager || string.IsNullOrEmpty(ProjectId.ProjectFolder))
 				return;
 
 			var globalRepo = SingletonsContainer.Get<CoreGlobalWritingSystemRepository>();
-			string storePath = Path.Combine(ProjectId.SharedProjectFolder, FdoFileHelper.ksWritingSystemsDir);
+			string storePath = Path.Combine(ProjectId.ProjectFolder, FdoFileHelper.ksWritingSystemsDir);
 			WritingSystemManager wsManager = m_cache.ServiceLocator.WritingSystemManager;
 
 			// TODO (WS_FIX): migrate LocalKeyboards from CoreImpl settings
 			ICustomDataMapper<CoreWritingSystemDefinition>[] customDataMappers =
 			{
-				new ProjectSettingsWritingSystemDataMapper(new FileSettingsStore(Path.Combine(ProjectId.SharedProjectFolder, FdoFileHelper.ksLexiconProjectSettingsFilename))),
-				new UserSettingsWritingSystemDataMapper(new FileSettingsStore(Path.Combine(FdoFileHelper.GetConfigSettingsDir(ProjectId.SharedProjectFolder), FdoFileHelper.ksLexiconUserSettingsFilename)))
+				new ProjectSettingsWritingSystemDataMapper(new FileSettingsStore(Path.Combine(ProjectId.ProjectFolder, FdoFileHelper.ksLexiconProjectSettingsFilename))),
+				new UserSettingsWritingSystemDataMapper(new FileSettingsStore(Path.Combine(FdoFileHelper.GetConfigSettingsDir(ProjectId.ProjectFolder), FdoFileHelper.ksLexiconUserSettingsFilename)))
 			};
 			wsManager.WritingSystemStore = new CoreLdmlInFolderWritingSystemRepository(storePath, customDataMappers, globalRepo);
 

@@ -17,7 +17,6 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using System.Diagnostics;
-using SIL.FieldWorks.FDO.DomainServices;
 using XCore;
 
 namespace SIL.FieldWorks.TE
@@ -456,20 +455,7 @@ namespace SIL.FieldWorks.TE
 					merger.UseFilteredDiffList = false;
 				}
 			}
-
-			// If there were differences detected then show the diff dialog
-			if (fShowCompareAndMergeDlg)
-			{
-				using (DiffDialog dlg = new DiffDialog(merger, m_cache, m_styleSheet, m_zoomDraft,
-					m_zoomFootnote, m_app, m_helpTopicProvider))
-				{
-					// We have to pass the owner (this), so that the dialog shows when the
-					// user clicks on the TE icon in the taskbar. Otherwise only the Archive
-					// dialog would pop up and beeps; diff dialog could only be regained by Alt-Tab.
-					dlg.ShowDialog(this);
-				}
-			}
-			else if (cUnfilteredDifferences == 0)
+			if (cUnfilteredDifferences == 0)
 			{
 				// Tell users that no differences were found in the merge
 					MessageBoxUtils.Show(this,

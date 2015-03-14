@@ -899,11 +899,22 @@ abbrORname
 	</xsl:variable>
 	<!-- Now use the 'sortedNodes' variable as our node-set -->
 	<xsl:for-each select="msxsl:node-set($sortedNodes)/xyz[not(@sortKey=preceding-sibling::xyz[1]/@sortKey)]">
-	  <Custom ws="{@ws}" fwid="{@fwid}" type="{@type}">
-		<xsl:copy-of select="@abbr"/>
-		<xsl:copy-of select="node()"/>
-		<xsl:call-template name="joinCustom"/>
-	  </Custom>
+		<xsl:choose>
+			<xsl:when test="@type = 'ListMultiRef'">
+				<Custom ws="{@ws}" fwid="{@fwid}" type="{@type}">
+					<xsl:copy-of select="@abbr"/>
+					<xsl:copy-of select="node()"/>
+				</Custom>
+				<xsl:call-template name="copyCustom"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<Custom ws="{@ws}" fwid="{@fwid}" type="{@type}">
+					<xsl:copy-of select="@abbr"/>
+					<xsl:copy-of select="node()"/>
+					<xsl:call-template name="joinCustom"/>
+				</Custom>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:for-each>
   </xsl:template>
 
@@ -915,6 +926,20 @@ abbrORname
 	  <xsl:call-template name="joinCustom"/>
 	</xsl:for-each>
 </xsl:template>
+
+	<!-- Recursive helper routine to copy all elements with the same type as one -->
+	<xsl:template name="copyCustom" >
+		<xsl:variable name="sortKey" select="@sortKey"/>
+		<xsl:variable name="type" select="@type"/>
+		<xsl:for-each select="following-sibling::node()[1][@sortKey=$sortKey and @type=$type]">
+			<Custom ws="{@ws}" fwid="{@fwid}" type="{@type}">
+				<xsl:copy-of select="@abbr"/>
+				<xsl:copy-of select="node()"/>
+			</Custom>
+			<xsl:call-template name="copyCustom"/>
+		</xsl:for-each>
+	</xsl:template>
+
 <!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 JoinOnWs

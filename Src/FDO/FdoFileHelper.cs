@@ -19,8 +19,6 @@ namespace SIL.FieldWorks.FDO
 	{
 		/// <summary>Default extension for FieldWorks XML data files (with the period)</summary>
 		public const string ksFwDataXmlFileExtension = ".fwdata";
-		/// <summary>Default extension for FieldWorks DB4o data files (with the period)</summary>
-		public const string ksFwDataDb4oFileExtension = ".fwdb";
 		/// <summary>Default extension for FieldWorks backup files (with the period).</summary>
 		public const string ksFwBackupFileExtension = ".fwbackup";
 		/// <summary>Default extension for FieldWorks 6.0 and earlier backup files (with the period).</summary>
@@ -221,22 +219,6 @@ namespace SIL.FieldWorks.FDO
 			// Do not use Path.ChangeExtension because it will strip off anything following a period in the project name!
 			return projectName.EndsWith(ksFwDataXmlFileExtension) ? projectName :
 						projectName + ksFwDataXmlFileExtension;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the name of the DB4O data file, given a project name (basically just adds the
-		/// FW db4o file extension).
-		/// </summary>
-		/// <param name="projectName">Name of the project (not a filename).</param>
-		/// ------------------------------------------------------------------------------------
-		public static string GetDb4oDataFileName(string projectName)
-		{
-			Debug.Assert(Path.GetExtension(projectName) != ksFwDataDb4oFileExtension,
-						String.Format("There is a faint chance the user might have specified a real project name ending in {0} (in which case, sorry, but we're going to trim it off), but probably this is a programming error", ksFwDataDb4oFileExtension));
-			// Do not use Path.ChangeExtension because it will strip off anything following a period in the project name!
-			return projectName.EndsWith(ksFwDataDb4oFileExtension) ? projectName :
-						projectName + ksFwDataDb4oFileExtension;
 		}
 
 		/// ------------------------------------------------------------------------------------

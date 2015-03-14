@@ -4,7 +4,6 @@
 //
 // File: ProjectLocationSharingDlg.cs
 // Responsibility: FW team
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -13,7 +12,6 @@ using System.Security.Principal;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
 #if __MonoCS__
@@ -53,7 +51,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public ProjectLocationSharingDlg(IHelpTopicProvider helpTopicProvider, FdoCache cache = null)
 			: this()
 		{
-			m_cbShareMyProjects.Checked = ClientServerServices.Current.Local.ShareMyProjects;
 			if (cache == null)
 			{
 				m_tbCurrentProjectPath.Visible = false;
@@ -64,9 +61,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				m_tbCurrentProjectPath.Text = cache.ProjectId.Path;
 			}
 			m_tbProjectsFolder.Text = FwDirectoryFinder.ProjectsDirectory;
-			// We can only change the folder if sharing is INITIALLY turned off.
-			m_tbProjectsFolder.Enabled = !m_cbShareMyProjects.Checked;
-			m_btnBrowseProjectFolder.Enabled = !m_cbShareMyProjects.Checked;
+			m_tbProjectsFolder.Enabled = true;
+			m_btnBrowseProjectFolder.Enabled = true;
 			m_helpTopicProvider = helpTopicProvider;
 			m_tbProjectsFolder.TextChanged += m_tbProjectsFolder_TextChanged;
 		}
@@ -75,7 +71,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Justification="See TODO-Linux comment")]
 		private void m_tbProjectsFolder_TextChanged(object sender, EventArgs e)
 		{
-			m_cbShareMyProjects.Enabled = false;
 			m_btnOK.Enabled = true;
 			if(Directory.Exists(m_tbProjectsFolder.Text))
 			{
@@ -107,7 +102,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 							string filename = file;
 							if(!MiscUtils.IsUnix)
 								filename = filename.ToLowerInvariant();
-							if(filename.EndsWith(".fwdata") || filename.EndsWith(".fwdb"))
+							if(filename.EndsWith(".fwdata"))
 							{
 								m_btnOK.Enabled = false;
 								return;
@@ -236,11 +231,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary>
-		/// Answer whether the shared projects check box was checked.
-		/// </summary>
-		public bool ProjectsSharedChecked { get { return m_cbShareMyProjects.Checked; } }
-
-		/// <summary>
 		/// Answer what the user wants the projects folder to be.
 		/// </summary>
 		public string ProjectsFolder { get { return m_tbProjectsFolder.Text; } }
@@ -261,24 +251,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtpProjectLocationSharingDlg");
-		}
-
-		private void m_cbShareMyProjects_CheckedChanged(object sender, EventArgs e)
-		{
-			// If we just turned it on, and it was on to start with, changing the project directory is not allowed;
-			// revert any changes that have been made to that.
-			if (m_cbShareMyProjects.Checked && ClientServerServices.Current.Local.ShareMyProjects)
-				m_tbProjectsFolder.Text = FwDirectoryFinder.ProjectsDirectory;
-			// Sharing can only be turned on if these directories are the same, because of complications when the ProjectsDirectory
-			// seen by FieldWorks is different from the one seen by the FwRemoteDatabaseConnectorService.
-			if (m_cbShareMyProjects.Checked && FwDirectoryFinder.ProjectsDirectory != FwDirectoryFinder.ProjectsDirectoryLocalMachine)
-			{
-				MessageBox.Show(this,
-					string.Format(FwCoreDlgs.ksCantShareDiffProjectFolders, FwDirectoryFinder.ProjectsDirectory,
-						FwDirectoryFinder.ProjectsDirectoryLocalMachine),
-						FwCoreDlgs.ksCantShare);
-				m_cbShareMyProjects.Checked = false;
-			}
 		}
 	}
 }

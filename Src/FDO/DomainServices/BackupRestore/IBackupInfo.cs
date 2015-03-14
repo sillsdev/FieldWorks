@@ -4,7 +4,6 @@
 //
 // File: IBackupInfo.cs
 // Responsibility: FW team
-
 using System;
 
 namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore

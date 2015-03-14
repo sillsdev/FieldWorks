@@ -138,9 +138,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="PhraseTranslationHelper, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
     <Reference Include="RootSite">
       <Name>RootSite</Name>
       <HintPath>..\..\..\Output\Debug\RootSite.dll</HintPath>
@@ -192,10 +189,6 @@
     </Reference>
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
-    </Reference>
-    <Reference Include="TeRegistrySettings">
-      <Name>TeRegistrySettings</Name>
-      <HintPath>..\..\..\Output\Debug\TeRegistrySettings.dll</HintPath>
     </Reference>
     <Reference Include="TeResources">
       <Name>TeResources</Name>
@@ -270,9 +263,6 @@
     <Compile Include="SymbolChooserDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ToolsOptionsDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <EmbeddedResource Include="ArchiveDraftDialog.resx">
       <DependentUpon>ArchiveDraftDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -323,10 +313,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SymbolChooserDialog.resx">
       <DependentUpon>SymbolChooserDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ToolsOptionsDialog.resx">
-      <DependentUpon>ToolsOptionsDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Compile Include="AssemblyInfo.cs">

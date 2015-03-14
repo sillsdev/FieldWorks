@@ -6,17 +6,7 @@
 
 	<!-- call preparatory Windows targets -->
 	<Target Name="initWindows" Condition="'$(OS)'=='Windows_NT'"
-			DependsOnTargets="Initialize;EncConvertersDlls;CopyOtherDlls;BuildWindowsXslAssemblies;graphite2Windows;Unit++">
-	</Target>
-
-	<ItemGroup>
-		<OtherDllsToCopy Include="../DistFiles/irrKlang.NET4.dll"/>
-	</ItemGroup>
-	<Target Name="CopyOtherDlls" Condition="'$(OS)'=='Windows_NT'">
-		<Copy SourceFiles="@(OtherDllsToCopy)"
-			  DestinationFolder="$(dir-outputBase)"
-			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
-			  Condition="'$(action)'!='clean'"/>
+			DependsOnTargets="Initialize;EncConvertersDlls;BuildWindowsXslAssemblies;graphite2Windows;Unit++">
 	</Target>
 
 	<ItemGroup>

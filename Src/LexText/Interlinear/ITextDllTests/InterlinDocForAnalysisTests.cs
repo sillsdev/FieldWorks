@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.IText
 	/// todo: Probably should move these into FocusBoxControllerTests.cs
 	/// </summary>
 	[TestFixture]
-	public class FocusBoxControllerTests : MemoryOnlyBackendProviderBasicTestBase
+	public class FocusBoxControllerTests : MemoryOnlyBackendProviderTestBase
 	{
 		FDO.IText m_text0;
 		private IStText m_stText0;

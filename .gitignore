@@ -99,7 +99,8 @@ Src/FDO/DomainImpl/Generated*.cs
 Src/FDO/IOC/Generated*.cs
 DistFiles/Db4objects.Db4o.dll
 DistFiles/FirebirdSql.Data.FirebirdClient.dll
-DistFiles/Editorial\ Checks/
+DistFiles/Editorial\ Checks/ScrChecks.dll*
+DistFiles/Editorial\ Checks/ScrChecks.pdb
 DistFiles/Language\ Explorer/Configuration/Available\ Plugins/
 Src/AppCore/libAppCore
 Src/DebugProcs/libDebugProcs

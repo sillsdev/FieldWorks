@@ -50,9 +50,9 @@ namespace SIL.FieldWorks.FDO
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Get a set of projects on the current server.
+		/// Get a set of projects on the local computer.
 		/// </summary>
-		/// <returns>Set of ProjectInfo objects, representing the projects on server</returns>
+		/// <returns>Set of ProjectInfo objects, representing the projects on local computer</returns>
 		/// ------------------------------------------------------------------------------------
 		public static List<ProjectInfo> GetAllProjects(string projectsDir)
 		{
@@ -63,13 +63,11 @@ namespace SIL.FieldWorks.FDO
 			{
 
 				string basename = Path.GetFileName(dir);
-				if (File.Exists(Path.Combine(dir, basename + FdoFileHelper.ksFwDataXmlFileExtension)) ||
-					File.Exists(Path.Combine(dir, basename + FdoFileHelper.ksFwDataDb4oFileExtension)))
+				if (File.Exists(Path.Combine(dir, basename + FdoFileHelper.ksFwDataXmlFileExtension)))
 				{
 					projectList.Add(new ProjectInfo(basename));
 				}
 			}
-			//projectList.AddRange(projectDirectories.Select(sFolder => new ProjectInfo(Path.GetFileName(sFolder))));
 			return projectList;
 		}
 		#endregion

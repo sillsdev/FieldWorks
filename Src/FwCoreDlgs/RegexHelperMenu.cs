@@ -1,9 +1,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Windows.Forms;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.COMInterfaces;
 using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs

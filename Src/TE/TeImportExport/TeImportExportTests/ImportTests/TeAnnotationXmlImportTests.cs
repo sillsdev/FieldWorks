@@ -14,7 +14,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl;
-using SIL.FieldWorks.TE.TeEditorialChecks;
 using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.TE.ImportTests
@@ -55,22 +54,6 @@ namespace SIL.FieldWorks.TE.ImportTests
 		#endregion
 
 		#region Test setup and tear down
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Fixture setup - define Scripture Check IDs.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public override void FixtureSetup()
-		{
-			base.FixtureSetup();
-			// force scripture check definitions to be created - don't want this done as
-			// part of the normal undoable work.
-			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
-			{
-				InstalledScriptureChecks.GetChecks(new ScrChecksDataSource(m_scr.Cache,
-					ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"), FwDirectoryFinder.LegacyWordformingCharOverridesFile));
-			});
-		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

@@ -4,7 +4,6 @@
 //
 // File: FwApp.cs
 // Responsibility: TE Team
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,7 +15,6 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Security;
 using Microsoft.Win32;
-
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -27,7 +25,9 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
-using SIL.CoreImpl;
+#if DEBUG
+using SIL.CoreImpl; // Needed for DebugProcs in CoreImpl.
+#endif
 using XCore;
 
 namespace SIL.FieldWorks.Common.Framework
@@ -359,9 +359,6 @@ namespace SIL.FieldWorks.Common.Framework
 			fwMainWindow.Show(); // Show method loads persisted settings for window & controls
 			fwMainWindow.Activate(); // This makes main window come to front after splash screen closes
 
-			if (fwMainWindow is FwMainWnd)
-				((FwMainWnd)fwMainWindow).HandleActivation();
-
 			// adjust position if this is an additional window
 			if (wndCopyFrom != null)
 			{
@@ -652,13 +649,6 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		protected virtual void OnClosingWindow(object sender, CancelEventArgs e)
 		{
-			if (sender is FwMainWnd)
-			{
-				FwMainWnd wnd = (FwMainWnd)sender;
-				Logger.WriteEvent(string.Format("Exiting {0} for {1}", wnd.Name,
-					wnd.Cache.ProjectId.Name));
-			}
-
 			if (sender is IFwMainWnd)
 			{
 				if (FindReplaceDialog != null)
@@ -842,7 +832,7 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			get
 			{
-				return ClientServerServices.Current.Local.IdForLocalProject("Sena 3");
+				return Path.Combine(FwDirectoryFinder.FdoDirectories.ProjectsDirectory, "Sena 3", "Sena 3" + FdoFileHelper.ksFwDataXmlFileExtension);
 			}
 		}
 
@@ -1466,42 +1456,6 @@ namespace SIL.FieldWorks.Common.Framework
 				return true;
 			}
 			return false;
-		}
-		#endregion
-
-		#region Painting suppression methods
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Suppresses painting in every view and every main window.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void SuppressPaint()
-		{
-			foreach (IFwMainWnd wnd in m_rgMainWindows)
-			{
-				if (wnd is FwMainWnd)
-				{
-					foreach (IRootSite site in ((FwMainWnd)wnd).ActiveViewHelper.Views)
-						site.AllowPainting = false;
-				}
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Resumes painting in every view and every main window.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void ResumePaint()
-		{
-			foreach (IFwMainWnd wnd in m_rgMainWindows)
-			{
-				if (wnd is FwMainWnd)
-				{
-					foreach (IRootSite site in ((FwMainWnd)wnd).ActiveViewHelper.Views)
-						site.AllowPainting = true;
-				}
-			}
 		}
 		#endregion
 

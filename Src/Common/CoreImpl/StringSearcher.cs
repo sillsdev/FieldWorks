@@ -202,7 +202,7 @@ namespace SIL.CoreImpl
 				return Enumerable.Empty<T>();
 
 			if (tss.RunCount == 1) // VERY common special case
-				return Search(indexId, tss.get_WritingSystemAt(0), tss.Text);
+				return Search(indexId, tss.get_WritingSystemAt(0), tss.Text) ?? Enumerable.Empty<T>();
 
 			IEnumerable<T> results = null;
 			foreach (Tuple<int, string> wsStr in GetWsStrings(tss))

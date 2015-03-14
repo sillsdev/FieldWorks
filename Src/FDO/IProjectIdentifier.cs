@@ -34,42 +34,6 @@ namespace SIL.FieldWorks.FDO
 		/// <remarks>uses MemoryOnlyBackendProvider</remarks>
 		kMemoryOnly,
 
-#if USING_MERCURIALBACKEND
-		/// <summary>
-		/// </summary>
-		kMercurial = 5,
-#endif
-
-#if USING_GITBACKEND
-		/// <summary>
-		/// Attempt at using Git DVCS as a back end. Makes use of Git's ability to store
-		/// blobs.
-		/// </summary>
-		kGit = 6,
-#endif
-
-#if USING_XMLFILES
-		/// <summary>
-		/// Multiple XML files
-		/// </summary>
-		/// <remarks>XMLFilesBackendProvider</remarks>
-		kXmlFiles = 7,
-#endif
-
-#if USING_MYSQL
-		/// <summary>
-		/// A client/server MySQL database, with a MyISAM engine.
-		/// </summary>
-		/// <remarks>MySQLClientServer</remarks>
-		kMySqlClientServer = 101,
-
-		/// <summary>
-		/// A client/server MySQL database, with an InnoDB engine.
-		/// </summary>
-		/// <remarks>MySQLClientServer</remarks>
-		kMySqlClientServerInnoDB = 102,
-#endif
-
 		/// <summary>
 		/// A FieldWorks XML file.
 		/// This has an actual backend data store on the hard drive, but does not use a real
@@ -78,12 +42,6 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		/// <remarks>uses XMLBackendProvider</remarks>
 		kXMLWithMemoryOnlyWsMgr,
-
-		/// <summary>
-		/// A db4o client/server database
-		/// </summary>
-		/// <remarks>db4oClientServer</remarks>
-		kDb4oClientServer = 103,
 
 		/// <summary>
 		/// A FieldWorks XML file that can be accessed by multiple local clients.
@@ -157,31 +115,9 @@ namespace SIL.FieldWorks.FDO
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// A possibly alternate project path that should be used for things that should be
-		/// shared. This includes writing systems, etc. and possibly linked files.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		string SharedProjectFolder { get; }
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the name of the server (will typically be <c>null</c> for a local project).
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		string ServerName { get; }
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Gets the type of back-end used for storing the project.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		FDOBackendProviderType Type { get; }
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets a value indicating whether this project is on the local host.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		bool IsLocal { get; }
 	}
 }

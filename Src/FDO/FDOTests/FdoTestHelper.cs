@@ -420,7 +420,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// </summary>
 		public static void SetupStaticFdoProperties()
 		{
-			ClientServerServices.SetCurrentToDb4OBackend(new DummyFdoUI(), FwDirectoryFinder.FdoDirectories);
 			ScrMappingList.TeStylesPath = FwDirectoryFinder.TeStylesPath;
 		}
 	}

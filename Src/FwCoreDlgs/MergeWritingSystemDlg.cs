@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Linq;
-
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -189,7 +188,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void m_backupButton_Click(object sender, EventArgs e)
 		{
-			using (var dlg = new BackupProjectDlg(m_cache, FwUtils.ksFlexAbbrev, m_helpTopicProvider))
+			using (var dlg = new BackupProjectDlg(m_cache, m_helpTopicProvider))
 				dlg.ShowDialog(this);
 
 		}

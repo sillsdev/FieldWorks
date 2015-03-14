@@ -106,10 +106,6 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 				throw;
 			}
 
-			// switch to the desired backend (if it's in the projects directory...anything else stays XML for now).
-			if (Path.GetDirectoryName(m_restoreSettings.ProjectPath) == m_restoreSettings.ProjectsRootFolder && !suppressConversion)
-				ClientServerServices.Current.Local.ConvertToDb4oBackendIfNeeded(progressDlg, m_restoreSettings.FullProjectPath);
-
 			CleanupAfterRestore(true);
 		}
 

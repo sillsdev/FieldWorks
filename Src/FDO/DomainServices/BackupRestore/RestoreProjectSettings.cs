@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// Initializes a new instance of the <see cref="RestoreProjectSettings"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public RestoreProjectSettings(string projectsRootFolder) : base (projectsRootFolder, null, null)
+		public RestoreProjectSettings(string projectsRootFolder) : base (projectsRootFolder, null)
 		{
 		}
 

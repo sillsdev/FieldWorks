@@ -7,7 +7,6 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using NUnit.Framework;
 using SIL.FieldWorks.Test.TestUtils;
@@ -253,15 +252,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void CreateFwAppArgs_Link_NoKeySpecified()
 		{
-			FwAppArgs args = new FwAppArgs("silfw://localhost/link?&app=Translation Editor&database=primate" +
-				"&server=&tool=BTdraftView&guid=F48AC2E4-27E3-404e-965D-9672337E0AAF&tag=front");
-			Assert.AreEqual(FwUtils.ksTeAppName.ToLowerInvariant(), args.AppName);
-			Assert.AreEqual(FwUtils.ksTeAbbrev.ToLowerInvariant(), args.AppAbbrev);
+			FwAppArgs args = new FwAppArgs("silfw://localhost/link?&database=primate" +
+				"&tool=default&guid=F48AC2E4-27E3-404e-965D-9672337E0AAF&tag=");
 			Assert.AreEqual("primate", args.Database);
-			Assert.AreEqual(string.Empty, args.Server);
-			Assert.AreEqual("front", args.Tag);
+			Assert.AreEqual(String.Empty, args.Tag);
 			Assert.AreEqual(new Guid("F48AC2E4-27E3-404e-965D-9672337E0AAF"), args.TargetGuid);
-			Assert.AreEqual("BTdraftView", args.ToolName);
+			Assert.AreEqual("default", args.ToolName);
 			Assert.IsTrue(args.HasLinkInformation);
 			Assert.AreEqual(string.Empty, args.ConfigFile);
 			Assert.AreEqual(string.Empty, args.DatabaseType);
@@ -278,16 +274,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void CreateFwAppArgs_Link_OverridesOtherSettings()
 		{
-			FwAppArgs args = new FwAppArgs("-app", FwUtils.ksFlexAbbrev, "-db", "monkey",
-				"-s", "soup", "-link", "silfw://localhost/link?&app=TE&database=primate" +
-				"&server=salad&tool=BTdraftView&guid=F48AC2E4-27E3-404e-965D-9672337E0AAF&tag=front");
-			Assert.AreEqual(FwUtils.ksTeAppName.ToLowerInvariant(), args.AppName);
-			Assert.AreEqual(FwUtils.ksTeAbbrev.ToLowerInvariant(), args.AppAbbrev);
+			FwAppArgs args = new FwAppArgs("-db", "monkey",
+				"-link", "silfw://localhost/link?&database=primate" +
+				"&tool=default&guid=F48AC2E4-27E3-404e-965D-9672337E0AAF&tag=front");
 			Assert.AreEqual("primate", args.Database);
-			Assert.AreEqual("salad", args.Server);
 			Assert.AreEqual("front", args.Tag);
 			Assert.AreEqual(new Guid("F48AC2E4-27E3-404e-965D-9672337E0AAF"), args.TargetGuid);
-			Assert.AreEqual("BTdraftView", args.ToolName);
+			Assert.AreEqual("default", args.ToolName);
 			Assert.IsTrue(args.HasLinkInformation);
 			Assert.AreEqual(string.Empty, args.ConfigFile);
 			Assert.AreEqual(string.Empty, args.DatabaseType);
@@ -298,27 +291,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Tests creating FwAppArgs with a link parameter without an application specified
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void CreateFwAppArgs_Link_NoApplicationSpecified()
-		{
-			FwAppArgs args = new FwAppArgs("silfw://localhost/link?&database=primate" +
-				"&server=soup&tool=BTdraftView&guid=F48AC2E4-27E3-404e-965D-9672337E0AAF&tag=front");
-			Assert.IsTrue(args.ShowHelp, "Bad arguments should set ShowHelp to true");
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Tests creating FwAppArgs with a link parameter without a database specified
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void CreateFwAppArgs_Link_NoDatabaseSpecified()
 		{
-			FwAppArgs args = new FwAppArgs("silfw://localhost/link?&app=Translation Editor" +
-				"&server=&tool=BTdraftView&guid=F48AC2E4-27E3-404e-965D-9672337E0AAF&tag=front");
+			FwAppArgs args = new FwAppArgs("silfw://localhost/link?" +
+				"&tool=default&guid=F48AC2E4-27E3-404e-965D-9672337E0AAF&tag=");
 			Assert.IsTrue(args.ShowHelp, "Bad arguments should set ShowHelp to true");
 		}
 
@@ -330,11 +310,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void CreateFwAppArgs_Normal()
 		{
-			FwAppArgs args = new FwAppArgs("-app", FwUtils.ksTeAbbrev, "-db", "monkey", "-s", "soup");
-			Assert.AreEqual(FwUtils.ksTeAppName.ToLowerInvariant(), args.AppName);
-			Assert.AreEqual(FwUtils.ksTeAbbrev.ToLowerInvariant(), args.AppAbbrev);
+			FwAppArgs args = new FwAppArgs("-db", "monkey");
 			Assert.AreEqual("monkey", args.Database);
-			Assert.AreEqual("soup", args.Server);
 			Assert.AreEqual(string.Empty, args.ConfigFile);
 			Assert.AreEqual(string.Empty, args.DatabaseType);
 			Assert.AreEqual(string.Empty, args.Locale);
@@ -355,14 +332,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void CreateFwAppArgs_UnknownSwitch()
 		{
-			FwAppArgs args = new FwAppArgs("-app", FwUtils.ksFlexAbbrev, "-init", "DN");
-			Assert.AreEqual(FwUtils.ksFlexAppName.ToLowerInvariant(), args.AppName);
-			Assert.AreEqual(FwUtils.ksFlexAbbrev.ToLowerInvariant(), args.AppAbbrev);
+			FwAppArgs args = new FwAppArgs("-init", "DN");
 			Assert.AreEqual(1, args.PropertyTableEntries.Count);
 			Assert.AreEqual("init", args.PropertyTableEntries[0].name);
 			Assert.AreEqual("DN", args.PropertyTableEntries[0].value);
 			Assert.AreEqual(string.Empty, args.Database);
-			Assert.AreEqual(string.Empty, args.Server);
 			Assert.AreEqual(string.Empty, args.ConfigFile);
 			Assert.AreEqual(string.Empty, args.DatabaseType);
 			Assert.AreEqual(string.Empty, args.Locale);
@@ -375,49 +349,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		///--------------------------------------------------------------------------------------
 		/// <summary>
-		/// Tests creating FwAppArgs when a switch is used more than once.
-		/// </summary>
-		///--------------------------------------------------------------------------------------
-		[Test]
-		public void CreateFwAppArgs_DuplicateSwitches()
-		{
-			FwAppArgs args = new FwAppArgs("-app", FwUtils.ksTeAppName, "-app", FwUtils.ksFlexAbbrev, "-proj", "monkey");
-			Assert.IsTrue(args.ShowHelp, "Bad arguments should set ShowHelp to true");
-		}
-
-		///--------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests creating FwAppArgs when the application name/abbrev supplied is not recognized.
-		/// </summary>
-		///--------------------------------------------------------------------------------------
-		[Test]
-		public void CreateFwAppArgs_BogusApp()
-		{
-			FwAppArgs args = new FwAppArgs("-app", "gobledygook", "-proj", "monkey");
-			Assert.IsTrue(args.ShowHelp, "Bad arguments should set ShowHelp to true");
-		}
-
-		///--------------------------------------------------------------------------------------
-		/// <summary>
 		/// Tests creating FwAppArgs when -db and -proj are both specified
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
 		public void CreateFwAppArgs_DbAndProjSame()
 		{
-			FwAppArgs args = new FwAppArgs("-app", "te", "-db", "tim", "-proj", "monkey");
-			Assert.IsTrue(args.ShowHelp, "Bad arguments should set ShowHelp to true");
-		}
-
-		///--------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests creating FwAppArgs when two different FW apps are specified.
-		/// </summary>
-		///--------------------------------------------------------------------------------------
-		[Test]
-		public void CreateFwAppArgs_MultipleValues()
-		{
-			FwAppArgs args = new FwAppArgs("-app", "te", "flex", "-proj", "monkey");
+			FwAppArgs args = new FwAppArgs("-db", "tim", "-proj", "monkey");
 			Assert.IsTrue(args.ShowHelp, "Bad arguments should set ShowHelp to true");
 		}
 
@@ -429,16 +367,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void CreateFwAppArgs_RunTogether()
 		{
-			FwAppArgs args = new FwAppArgs("-appte", "-projmonkey", "-ssoup", "-typexml");
-			Assert.AreEqual(FwUtils.ksTeAppName.ToLowerInvariant(), args.AppName);
-			Assert.AreEqual(FwUtils.ksTeAbbrev.ToLowerInvariant(), args.AppAbbrev);
+			FwAppArgs args = new FwAppArgs("-projmonkey", "-typexml");
 			Assert.AreEqual("monkey", args.Database);
-			Assert.AreEqual("soup", args.Server);
-			Assert.AreEqual("xml", args.DatabaseType);
 			Assert.AreEqual(string.Empty, args.ConfigFile);
 			Assert.AreEqual(string.Empty, args.Locale);
 			Assert.IsFalse(args.ShowHelp);
-			Assert.AreEqual(0, args.PropertyTableEntries.Count);
+			Assert.AreEqual(1, args.PropertyTableEntries.Count);
 			Assert.AreEqual(string.Empty, args.Tag);
 			Assert.AreEqual(Guid.Empty, args.TargetGuid);
 			Assert.AreEqual(string.Empty, args.ToolName);
@@ -453,11 +387,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void CreateFwAppArgs_Help()
 		{
-			FwAppArgs args = new FwAppArgs("-?", "-app", "te", "-type", "XML", "-db", "monkey", "-s", "soup");
+			FwAppArgs args = new FwAppArgs("-?", "-db", "monkey");
 			Assert.IsTrue(args.ShowHelp);
-			Assert.AreEqual(string.Empty, args.AppName, "Showing help should ignore all other parameters");
 			Assert.AreEqual(string.Empty, args.Database, "Showing help should ignore all other parameters");
-			Assert.AreEqual(string.Empty, args.Server, "Showing help should ignore all other parameters");
 			Assert.AreEqual(string.Empty, args.DatabaseType, "Showing help should ignore all other parameters");
 			Assert.AreEqual(string.Empty, args.ConfigFile);
 			Assert.AreEqual(string.Empty, args.Locale);
@@ -469,9 +401,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			args = new FwAppArgs(new[] { "-h" });
 			Assert.IsTrue(args.ShowHelp);
-			Assert.AreEqual(string.Empty, args.AppName);
 			Assert.AreEqual(string.Empty, args.Database);
-			Assert.AreEqual(string.Empty, args.Server);
 			Assert.AreEqual(string.Empty, args.DatabaseType);
 			Assert.AreEqual(string.Empty, args.ConfigFile);
 			Assert.AreEqual(string.Empty, args.Locale);
@@ -483,9 +413,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			args = new FwAppArgs(new[] { "-help" });
 			Assert.IsTrue(args.ShowHelp);
-			Assert.AreEqual(string.Empty, args.AppName);
 			Assert.AreEqual(string.Empty, args.Database);
-			Assert.AreEqual(string.Empty, args.Server);
 			Assert.AreEqual(string.Empty, args.DatabaseType);
 			Assert.AreEqual(string.Empty, args.ConfigFile);
 			Assert.AreEqual(string.Empty, args.Locale);
@@ -505,9 +433,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void CreateFwAppArgs_MultiWordQuotedValue()
 		{
-			FwAppArgs args = new FwAppArgs("-app", FwUtils.ksTeAbbrev, "-db", "monkey on a string.fwdata");
-			Assert.AreEqual(FwUtils.ksTeAppName.ToLowerInvariant(), args.AppName);
-			Assert.AreEqual(FwUtils.ksTeAbbrev.ToLowerInvariant(), args.AppAbbrev);
+			FwAppArgs args = new FwAppArgs("-db", "monkey on a string.fwdata");
 			Assert.AreEqual("monkey on a string.fwdata", args.Database);
 			Assert.AreEqual(string.Empty, args.DatabaseType);
 			Assert.AreEqual(string.Empty, args.ConfigFile);
@@ -529,9 +455,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Platform(Include="Linux")]
 		public void CreateFwAppArgs_DbAbsolutePath_Linux()
 		{
-			FwAppArgs args = new FwAppArgs("-app", FwUtils.ksTeAbbrev, "-db", "/database.fwdata");
-			Assert.AreEqual(FwUtils.ksTeAppName.ToLowerInvariant(), args.AppName);
-			Assert.AreEqual(FwUtils.ksTeAbbrev.ToLowerInvariant(), args.AppAbbrev);
+			FwAppArgs args = new FwAppArgs("-db", "/database.fwdata");
 			Assert.AreEqual("/database.fwdata", args.Database, "Should be able to open up database by absolute path");
 			Assert.AreEqual(string.Empty, args.ConfigFile);
 			Assert.AreEqual(string.Empty, args.DatabaseType);

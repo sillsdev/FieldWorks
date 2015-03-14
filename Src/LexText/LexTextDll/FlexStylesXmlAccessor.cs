@@ -1,5 +1,5 @@
 using System;
-using SIL.FieldWorks.Common.FwUtils;
+using System.IO;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
 using SIL.Utils;
@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// -------------------------------------------------------------------------------------
 		protected override string ResourceFilePathFromFwInstall
 		{
-			get { return @"/Language Explorer/" + ResourceFileName; }
+			get { return Path.DirectorySeparatorChar + @"Language Explorer" + Path.DirectorySeparatorChar + ResourceFileName; }
 		}
 
 		/// -------------------------------------------------------------------------------------

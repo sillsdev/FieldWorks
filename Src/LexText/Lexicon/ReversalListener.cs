@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -430,7 +434,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				return;
 			}
-			ResetListSorter(ri);
 
 			var layoutName = String.Format("publishReversal-{0}", ri.WritingSystem);
 			m_mediator.PropertyTable.SetProperty("ReversalIndexPublicationLayout", layoutName);
@@ -438,38 +441,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			ICmObject newOwningObj = NewOwningObject(ri);
 			if (newOwningObj != OwningObject)
 			{
-				OwningObject = newOwningObj;
+				UpdateFiltersAndSortersIfNeeded(); // Load the index-specific sorter
+				OnChangeSorter(); // Update the column headers with sort arrows
+				OwningObject = newOwningObj; // This automatically reloads (and sorts) the list
 				m_mediator.PropertyTable.SetProperty("ActiveClerkOwningObject", newOwningObj, true);
 				m_mediator.PropertyTable.SetPropertyPersistence("ActiveClerkOwningObject", false);
 				m_mediator.SendMessage("ClerkOwningObjChanged", this);
-			}
-		}
-
-		/// <summary>
-		/// Resets the sorter so that it will use the writing system of the given reversal index.
-		/// </summary>
-		/// <param name="ri"></param>
-		private void ResetListSorter(IReversalIndex ri)
-		{
-			var sorter = Sorter as GenRecordSorter;
-			var writingSystem = (CoreWritingSystemDefinition) Cache.WritingSystemFactory.get_Engine(ri.WritingSystem);
-			if(sorter != null)
-			{
-				var stringFinderComparer = sorter.Comparer as StringFinderCompare;
-				if(stringFinderComparer != null)
-				{
-					var comparer = new StringFinderCompare(stringFinderComparer.Finder, new WritingSystemComparer(writingSystem));
-					sorter.Comparer = comparer;
-				}
-			}
-			else if(Sorter == null)
-			{
-				var fakevc = new XmlBrowseViewBaseVc { SuppressPictures = true, Cache = Cache}; // SuppressPictures to make sure that we don't leak anything as this will not be disposed.
-				m_list.Sorter = new GenRecordSorter(new StringFinderCompare(LayoutFinder.CreateFinder(Cache,
-																									  BrowseViewFormCol,
-																									  fakevc,
-																									  (IApp)m_mediator.PropertyTable.GetValue("App")),
-																		   new WritingSystemComparer(writingSystem)));
 			}
 		}
 
@@ -520,16 +497,39 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		/// <summary>
-		/// The stored sorter files keep messing us up here, so let's just ignore them since information about how things
-		/// should be sorted could change in other views with regards to reversal indexes.
+		/// The stored sorter files keep messing us up here, so we need to do a bit of post-deserialization processing.
 		/// </summary>
-		/// <param name="mediator"></param>
-		/// <param name="clerkConfiguration"></param>
-		/// <param name="cache"></param>
-		/// <returns></returns>
+		/// <returns>true if we restored something different from what was already there.</returns>
 		protected override bool TryRestoreSorter(Mediator mediator, XmlNode clerkConfiguration, FdoCache cache)
 		{
-			return false;
+			var fakevc = new XmlBrowseViewBaseVc { SuppressPictures = true, Cache = Cache }; // SuppressPictures to make sure that we don't leak anything as this will not be disposed.
+			if(base.TryRestoreSorter(mediator, clerkConfiguration, cache) && Sorter is GenRecordSorter)
+			{
+				var sorter = (GenRecordSorter)Sorter;
+				var stringFinderComparer = sorter.Comparer as StringFinderCompare;
+				if (stringFinderComparer != null)
+				{
+					var colSpec = ReflectionHelper.GetField(stringFinderComparer.Finder, "m_colSpec") as XmlNode ?? BrowseViewFormCol;
+					sorter.Comparer = new StringFinderCompare(LayoutFinder.CreateFinder(Cache, colSpec, fakevc,
+																						(IApp)m_mediator.PropertyTable.GetValue("App")),
+															stringFinderComparer.SubComparer);
+				}
+				return true;
+			}
+			if(Sorter is GenRecordSorter) // If we already have a GenRecordSorter, it's probably an existing, valid one.
+				return false;
+			// Try to create a sorter based on the current Reversal Index's WritingSystem
+			var newGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(mediator, "ReversalIndexGuid");
+			if(newGuid.Equals(Guid.Empty))
+				return false;
+			var ri = cache.ServiceLocator.GetObject(newGuid) as IReversalIndex;
+			if(ri == null)
+				return false;
+			var writingSystem = (CoreWritingSystemDefinition) Cache.WritingSystemFactory.get_Engine(ri.WritingSystem);
+			m_list.Sorter = new GenRecordSorter(new StringFinderCompare(LayoutFinder.CreateFinder(Cache, BrowseViewFormCol, fakevc,
+																								(IApp)m_mediator.PropertyTable.GetValue("App")),
+																		new WritingSystemComparer(writingSystem)));
+			return true;
 		}
 
 		/// <summary>

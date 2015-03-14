@@ -4,7 +4,6 @@
 //
 // File: LexTextApp.cs
 // Responsibility: RandyR
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -814,8 +813,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			try
 			{
 				// Make sure this DB uses the current stylesheet version.
-				if (Cache.ProjectId.IsLocal && Cache.NumberOfRemoteClients == 0)
-					FlexStylesXmlAccessor.EnsureCurrentStylesheet(Cache.LangProject, progressDlg);
+				FlexStylesXmlAccessor.EnsureCurrentStylesheet(Cache.LangProject, progressDlg);
 			}
 			catch (WorkerThreadException e)
 			{

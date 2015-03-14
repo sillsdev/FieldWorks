@@ -4,11 +4,9 @@
 //
 // File: RestoreProjectPresenter.cs
 // Responsibility: FW Team
-
 using System;
 using System.Linq;
 using System.Text;
-using System.Web.Configuration;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;

@@ -5,9 +5,7 @@
 // File: FwRestoreProjectSettings.cs
 // Responsibility: TE Team
 // ---------------------------------------------------------------------------------------------
-
 using System;
-using System.IO;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
 
 namespace SIL.FieldWorks
@@ -21,7 +19,6 @@ namespace SIL.FieldWorks
 	public class FwRestoreProjectSettings
 	{
 		#region Member variables
-		private readonly string m_fwAppCommandLineAbbrev;
 		private readonly RestoreProjectSettings m_settings;
 		#endregion
 
@@ -30,28 +27,15 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Initializes a new instance of the <see cref="FwRestoreProjectSettings"/> class.
 		/// </summary>
-		/// <param name="fwAppCommandLineAbbrev">The FW application command line abbrev (TE or
-		/// FLEx), case-insensitive.</param>
 		/// <param name="settings">The restore settings (as saved by the dialog).</param>
 		/// ------------------------------------------------------------------------------------
-		internal FwRestoreProjectSettings(string fwAppCommandLineAbbrev, RestoreProjectSettings settings)
+		internal FwRestoreProjectSettings(RestoreProjectSettings settings)
 		{
-			m_fwAppCommandLineAbbrev = fwAppCommandLineAbbrev;
 			m_settings = settings;
 		}
 		#endregion
 
 		#region Properties
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the FW application command line abbrev (TE or FLEx), case-insensitive.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		internal string FwAppCommandLineAbbrev
-		{
-			get { return m_fwAppCommandLineAbbrev; }
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the restore settings (as saved by the dialog).

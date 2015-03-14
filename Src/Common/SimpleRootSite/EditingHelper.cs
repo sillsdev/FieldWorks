@@ -2923,9 +2923,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Set the keyboard to match the writing system.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		protected void SetKeyboardForWs(ILgWritingSystem lgws)
+		protected void SetKeyboardForWs(CoreWritingSystemDefinition ws)
 		{
-			if (Callbacks == null || lgws == null)
+			if (Callbacks == null || ws == null)
 			{
 				ActivateDefaultKeyboard();
 				return;
@@ -2937,7 +2937,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			try
 			{
 				m_fSettingKeyboards = true;
-				var ws = (CoreWritingSystemDefinition) lgws;
 				if (ws.LocalKeyboard != null)
 					ws.LocalKeyboard.Activate();
 			}
@@ -2965,9 +2964,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			CheckDisposed();
 
 			if (Callbacks == null || !Callbacks.GotCacheOrWs || WritingSystemFactory == null)
-				return;			// Can't do anything useful, so let's not do anything at all.
+				return; // Can't do anything useful, so let's not do anything at all.
 
-			ILgWritingSystem ws = WritingSystemFactory.get_EngineOrNull(newWs);
+			CoreWritingSystemDefinition ws = ((WritingSystemManager) WritingSystemFactory).Get(newWs);
 			SetKeyboardForWs(ws);
 		}
 
@@ -2988,10 +2987,11 @@ namespace SIL.FieldWorks.Common.RootSites
 				return;
 
 			//JohnT: was, LgWritingSystemFactoryClass.Create();
-			ILgWritingSystem ws = null;
+			CoreWritingSystemDefinition ws = null;
 
-			if (WritingSystemFactory != null) // this sometimes happened in our tests when the window got/lost focus
-				ws = WritingSystemFactory.get_EngineOrNull(nWs);
+			var writingSystemManager = WritingSystemFactory as WritingSystemManager;
+			if (writingSystemManager != null) // this sometimes happened in our tests when the window got/lost focus
+				ws = writingSystemManager.Get(nWs);
 
 			SetKeyboardForWs(ws);
 

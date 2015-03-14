@@ -189,6 +189,32 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void FindOrCreateLexRefType(string relationTypeName, string guid, string parent,
 														LiftMultiText desc, LiftMultiText label, LiftMultiText abbrev, LiftMultiText revName, LiftMultiText revAbbrev, int refType)
 		{
+			if (!string.IsNullOrEmpty(guid))
+			{
+				// If we got a guid our first choice is to match that object.
+				var objRepo = m_cache.ServiceLocator.ObjectRepository;
+				Guid realGuid;
+				ICmObject match;
+				if (Guid.TryParse(guid, out realGuid) && objRepo.TryGetObject(realGuid, out match))
+				{
+					var lrt1 = match as ILexRefType;
+					if (lrt1 != null)
+					{
+						// For now we're doing this minimal merge. If we want to switch to using the regular merge rules
+						// for entries/senses, change these calls to MergeInMultiString.
+						MergeStringsFromLiftContents(desc, lrt1.Description, "Description", lrt1);
+						MergeStringsFromLiftContents(abbrev, lrt1.Abbreviation, "Abbreviation", lrt1);
+						MergeStringsFromLiftContents(label, lrt1.Name, "Name", lrt1);
+						MergeStringsFromLiftContents(revName, lrt1.ReverseName, "ReverseName", lrt1);
+						MergeStringsFromLiftContents(revAbbrev, lrt1.ReverseAbbreviation, "ReverseAbbreviation", lrt1);
+						return;
+					}
+					// What should we do now? The guid is taken but it's the wrong type!
+					// If we make a new LRT with a different guid, anything that references it in the file will point at the wrong object (of the wrong type).
+					// If we make one using THIS guid the whole database will be corrupt, with two objects that have the same guid.
+					throw new ApplicationException(string.Format("input file expects object {0} to be a LexRefType, but it is a {1}", guid, match.GetType().Name));
+				}
+			}
 			ICmPossibility poss;
 			var normalizedRelTypeName = relationTypeName.Normalize().ToLowerInvariant();
 			if(m_dictLexRefTypes.TryGetValue(normalizedRelTypeName, out poss))

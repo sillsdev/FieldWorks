@@ -325,7 +325,7 @@ namespace SIL.FieldWorks.TE
 					string sMsg = string.Format(TeResourceHelper.GetResourceString("kstidConfirmStopImport"),
 												m_importer.PrevBook);
 
-					if (MessageBox.Show(sMsg, FwUtils.ksTeAppName,
+					if (MessageBox.Show(sMsg, FwUtils.ksFlexAppName,
 										MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
 					{
 						// the user does not wish to cancel the import, so cancel the event

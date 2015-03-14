@@ -242,9 +242,6 @@
     <Compile Include="FwEditingHelper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FwMainWnd.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="FwRegistrySettings.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -255,9 +252,6 @@
     <Compile Include="IFwMainWnd.cs" />
     <Compile Include="MainWindowDelegate.cs">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="MoreWindowsForm.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="PublicationInterfaces.cs" />
     <Compile Include="SettingsXmlAccessorBase.cs" />
@@ -272,16 +266,8 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>FrameworkStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="FwMainWnd.resx">
-      <DependentUpon>FwMainWnd.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="FwRootSite.resx">
       <DependentUpon>FwRootSite.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MoreWindowsForm.resx">
-      <DependentUpon>MoreWindowsForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="UndoRedoDropDown.resx">

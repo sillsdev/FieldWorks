@@ -12,7 +12,6 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Printing;
-using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -20,12 +19,10 @@ using System.Windows.Automation.Provider;
 using Accessibility;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.Keyboarding;
 using SIL.Utils;
-using SIL.WritingSystems;
-using XCore;
-#if __MonoCS__
 using SIL.Windows.Forms.Keyboarding;
-#endif
+using XCore;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -44,7 +41,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// ------------------------------------------------------------------------------------
 	public class SuspendDrawing : IFWDisposable
 	{
-		private IRootSite m_Parent;
+		private IRootSite m_parent;
 
 		/// --------------------------------------------------------------------------------
 		/// <summary>
@@ -54,8 +51,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// --------------------------------------------------------------------------------
 		public SuspendDrawing(IRootSite parent)
 		{
-			m_Parent = parent;
-			m_Parent.AllowPainting = false;
+			m_parent = parent;
+			m_parent.AllowPainting = false;
 		}
 
 		#region IDisposable & Co. implementation
@@ -64,7 +61,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// True, if the object has been disposed.
 		/// </summary>
-		private bool m_isDisposed = false;
+		private bool m_isDisposed;
 
 		/// <summary>
 		/// See if the object has been disposed.
@@ -133,12 +130,12 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				if (m_Parent != null)
-					m_Parent.AllowPainting = true;
+				if (m_parent != null)
+					m_parent.AllowPainting = true;
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
-			m_Parent = null;
+			m_parent = null;
 
 			m_isDisposed = true;
 		}
@@ -175,6 +172,66 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>This event gets fired when the AutoScrollPosition value changes</summary>
 		public event ScrollPositionChanged VerticalScrollPositionChanged;
 		#endregion Events
+
+		#region WindowsLanguageProfileSink class
+
+		// NOTE: we implement the IWIndowsLanguageProfileSink interface in a private class
+		// so that we don't introduce an otherwise unnecessary dependency on
+		// PalasoUIWindowsForms which would require to add a reference to all projects that
+		// use a SimpleRootSite.
+		private class WindowsLanguageProfileSink : IWindowsLanguageProfileSink
+		{
+			private SimpleRootSite Parent { get; set; }
+
+			public WindowsLanguageProfileSink(SimpleRootSite parent)
+			{
+				Parent = parent;
+			}
+
+			/// <summary>
+			/// Called after the language profile has changed.
+			/// </summary>
+			/// <param name="previousKeyboard">The previous input method</param>
+			/// <param name="newKeyboard">The new input method</param>
+			public void OnInputLanguageChanged(IKeyboardDefinition previousKeyboard, IKeyboardDefinition newKeyboard)
+			{
+				if (Parent.IsDisposed || Parent.m_rootb == null || DataUpdateMonitor.IsUpdateInProgress())
+					return;
+
+				var manager = Parent.WritingSystemFactory as WritingSystemManager;
+				if (manager == null)
+					return;
+
+				// JT: apparently this comes to all the views, but only the active keyboard
+				// needs to handle it.
+				// SMc: furthermore, this is not really focused until OnGotFocus() has run.
+				// Responding before that causes a nasty bug in language/keyboard selection.
+				if (!Parent.Focused || g_focusRootSite.Target != Parent)
+					return;
+
+				// If possible, adjust the language of the selection to be one that matches
+				// the keyboard just selected.
+
+				var vwsel = Parent.m_rootb.Selection; // may be null
+				int wsSel = SelectionHelper.GetFirstWsOfSelection(vwsel); // may be zero
+				CoreWritingSystemDefinition wsSelDefn = null;
+				if (wsSel != 0)
+					wsSelDefn = manager.Get(wsSel);
+
+				CoreWritingSystemDefinition wsNewDefn = GetWSForInputMethod(newKeyboard, wsSelDefn, Parent.PlausibleWritingSystems);
+				if (wsNewDefn == null || wsNewDefn.Equals(wsSelDefn))
+					return;
+
+				Parent.HandleKeyboardChange(vwsel, wsNewDefn.Handle);
+
+				// The following line is needed to get Chinese IMEs to fully initialize.
+				// This causes Text Services to set its focus, which is the crucial bit
+				// of behavior.  See LT-7488 and LT-5345.
+				Parent.Activate(VwSelectionState.vssEnabled);
+			}
+
+		}
+		#endregion
 
 		#region Member variables
 		/// <summary>Value for the available width to tell the view that we want to do a
@@ -329,9 +386,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		private bool m_fMouseInProcess = false;
 
-		/// <summary>Flag used to ensure that OnInputLangChanged gets registered once.</summary>
-		private bool m_fRegisteredOnInputLangChanged = false;
-
 		/// <summary>
 		/// This is set true during processing of the OnPaint message. It serves to suppress
 		/// certain behavior that ought not to happen during a paint.
@@ -412,8 +466,11 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (UIAutomationServerProviderFactory == null)
 				UIAutomationServerProviderFactory = () => new SimpleRootSiteDataProvider(this);
 #if __MonoCS__
-			KeyboardController.RegisterControl(this, new IbusRootSiteEventHandler(this));
+			var eventHandler = new IbusRootSiteEventHandler(this);
+#else
+			var eventHandler = new WindowsLanguageProfileSink(this);
 #endif
+			KeyboardController.RegisterControl(this, eventHandler);
 		}
 
 #if DEBUG
@@ -877,12 +934,15 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				CheckDisposed();
 #if __MonoCS__
+				var eventHandler = new IbusRootSiteEventHandler(this);
+#else
+				var eventHandler = new WindowsLanguageProfileSink(this);
+#endif
 				// If this is read-only, it should not try to handle keyboard input in general.
 				if (EditingHelper.Editable && value)
 					KeyboardController.UnregisterControl(this);
 				else if (!EditingHelper.Editable && !value)
-					KeyboardController.RegisterControl(this, new IbusRootSiteEventHandler(this));
-#endif
+					KeyboardController.RegisterControl(this, eventHandler);
 				EditingHelper.Editable = !value;
 				// If the view is read-only, we don't want to waste time looking for an
 				// editable insertion point when moving the cursor with the cursor movement
@@ -3232,8 +3292,6 @@ namespace SIL.FieldWorks.Common.RootSites
 				// the user? Or go ahead with create, but set up Paint to display some message?
 			}
 
-			RegisterForInputLanguageChanges();
-
 			// Create a timer used to flash the insertion point if any.
 			// We flash every half second (500 ms).
 			// Note that the timer is not started until we get focus.
@@ -3345,9 +3403,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			CheckDisposed();
 
 			//Debug.WriteLine("SimpleRootSite.OnGotFocus() hwnd = " + this.Handle);
-			// If it hasn't been registered yet, register OnInputLanguageChanged().
-			if (m_fRegisteredOnInputLangChanged == false)
-				RegisterForInputLanguageChanges();
 
 			g_focusRootSite.Target = this;
 			base.OnGotFocus(e);
@@ -4583,9 +4638,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			else
 			{
-				e.Graphics.FillRectangle(SystemBrushes.Window, this.ClientRectangle);
-				e.Graphics.DrawString("Empty " + this.GetType().ToString(),
-					SystemInformation.MenuFont, SystemBrushes.WindowText, this.ClientRectangle);
+				e.Graphics.FillRectangle(SystemBrushes.Window, ClientRectangle);
+				e.Graphics.DrawString("Empty " + GetType(),
+					SystemInformation.MenuFont, SystemBrushes.WindowText, ClientRectangle);
 			}
 		}
 
@@ -4636,13 +4691,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			CheckDisposed();
 			if (DesignMode || m_rootb == null)
 				return;
-
-			Form topForm = FindForm();
-			if (topForm != null)
-			{
-				topForm.InputLanguageChanged -= OnInputLangChanged;
-				m_fRegisteredOnInputLangChanged = false;
-			}
 
 			if (m_Timer != null)
 				m_Timer.Stop();
@@ -4884,112 +4932,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// The system keyboard has changed. Determine the corresponding codepage to use when
-		/// processing characters.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// <remarks>Because .NET uses only Unicode characters, there is no need to set a code
-		/// page</remarks>
-		/// -----------------------------------------------------------------------------------
-		protected virtual void OnInputLangChanged(object sender, InputLanguageChangedEventArgs e)
-		{
-			if (IsDisposed || m_rootb == null || DataUpdateMonitor.IsUpdateInProgress())
-				return;
-
-			var manager = (WritingSystemManager) WritingSystemFactory;
-			if (manager == null)
-				return;
-			//Debug.WriteLine(string.Format("OnInputLangChanged: Handle={2}, g_focusRootSite={0}, culture={1}",
-			//    g_focusRootSite.Target, e.InputLanguage.Culture.ToString(), Handle));
-			// JT: apparently this comes to all the views, but only the active keyboard
-			// needs to handle it.
-			// SMc: furthermore, this is not really focused until OnGotFocus() has run.
-			// Responding before that causes a nasty bug in language/keyboard selection.
-			// SMc: also, we trust the lcid derived from vwsel more than we trust the one
-			// passed in as e.CultureInfo.LCID.
-			if (Focused && g_focusRootSite.Target == this)
-			{
-				// If possible, adjust the language of the selection to be one that matches
-				// the keyboard just selected.
-
-				IVwSelection vwsel = m_rootb.Selection; // may be null
-				int wsSel = SelectionHelper.GetFirstWsOfSelection(vwsel); // may be zero
-				CoreWritingSystemDefinition wsSelDefn = null;
-				if (wsSel != 0)
-					wsSelDefn = manager.Get(wsSel);
-				WritingSystemDefinition wsNewDefn = GetWSForInputLanguage(e.InputLanguage.LayoutName, e.InputLanguage.Culture, wsSelDefn, PlausibleWritingSystems);
-				if (wsNewDefn == null || wsNewDefn == wsSelDefn)
-					return;
-
-				HandleKeyboardChange(vwsel, ((CoreWritingSystemDefinition) wsNewDefn).Handle);
-
-				// The following line is needed to get Chinese IMEs to fully initialize.
-				// This causes Text Services to set its focus, which is the crucial bit
-				// of behavior.  See LT-7488 and LT-5345.
-				Activate(VwSelectionState.vssEnabled);
-
-				//Debug.WriteLine("End SimpleRootSite.OnInputLangChanged(" + lcid +
-				//    ") [hwnd = " + this.Handle + "] -> HandleKeyBoardChange(vwsel, " + lcid +
-				//    ")");
-			}
-			//else
-			//{
-			//    Debug.WriteLine("End SimpleRootSite.OnInputLangChanged(" + LcidHelper.LangIdFromLCID(e.Culture.LCID).ToString() +
-			//        ") [hwnd = " + this.Handle + "] -> no action");
-			//}
-		}
-
-		/// <summary>
-		/// Get the writing system that is most probably intended by the user, when input language changes to the specified layout and cultureInfo,
-		/// given the indicated candidates, and that wsCurrent is the preferred result if it is a possible WS for the specified culture.
-		/// wsCurrent is also returned if none of the candidates is found to match the specified inputs.
-		/// See interface comment for intended usage information.
-		/// Enhance JohnT: it may be helpful, if no WS has an exact match, to look for one where the culture prefix (before hyphen) matches,
-		/// thus finding a WS that has a keyboard for the same language as the one the user selected.
-		/// Could similarly match against WS ID's language ID, for WS's with no RawLocalKeyboard.
-		/// Could use LocalKeyboard instead of RawLocalKeyboard, thus allowing us to find keyboards for writing systems where the
-		/// local keyboard has not yet been determined. However, this would potentially establish a particular local keyboard for
-		/// a user who has never typed in that writing system or configured a keyboard for it, nor even selected any text in it.
-		/// In the expected usage of this library, there will be a RawLocalKeyboard for every writing system in which the user has
-		/// ever typed or selected text. That should have a high probability of catching anything actually useful.
-		/// </summary>
-		internal static WritingSystemDefinition GetWSForInputLanguage(string layoutName, CultureInfo cultureInfo, CoreWritingSystemDefinition wsCurrent, IEnumerable<CoreWritingSystemDefinition> options)
-		{
-			// See if the default is suitable.
-			if (WSMatchesLayout(layoutName, wsCurrent) && WSMatchesCulture(cultureInfo, wsCurrent))
-				return wsCurrent;
-			WritingSystemDefinition layoutMatch = null;
-			WritingSystemDefinition cultureMatch = null;
-			foreach (CoreWritingSystemDefinition ws in options)
-			{
-				bool matchesCulture = WSMatchesCulture(cultureInfo, ws);
-				if (WSMatchesLayout(layoutName, ws))
-				{
-					if (matchesCulture)
-						return ws;
-					if (layoutMatch == null || ws.Equals(wsCurrent))
-						layoutMatch = ws;
-				}
-				if (matchesCulture && (cultureMatch == null || ws.Equals(wsCurrent)))
-					cultureMatch = ws;
-			}
-			return layoutMatch ?? cultureMatch ?? wsCurrent;
-		}
-
-		private static bool WSMatchesLayout(string layoutName, CoreWritingSystemDefinition ws)
-		{
-			return ws != null && ws.RawLocalKeyboard != null && ws.RawLocalKeyboard.Layout == layoutName;
-		}
-
-		private static bool WSMatchesCulture(CultureInfo cultureInfo, CoreWritingSystemDefinition ws)
-		{
-			return ws != null && ws.RawLocalKeyboard != null && ws.RawLocalKeyboard.Locale == cultureInfo.Name;
-		}
-
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// When the user has selected a keyboard from the system tray, adjust the language of
 		/// the selection to something that matches, if possible.
@@ -5190,25 +5132,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		public bool WasFocused()
 		{
 			return g_focusRootSite.Target == this;
-		}
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Register for the InputLanguageChanged event of the form.  Don't do anything if it
-		/// has already been registered.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void RegisterForInputLanguageChanges()
-		{
-			CheckDisposed();
-			if (m_fRegisteredOnInputLangChanged == false)
-			{
-				Form topForm = FindForm();
-				if (topForm != null)
-				{
-					topForm.InputLanguageChanged += OnInputLangChanged;
-					m_fRegisteredOnInputLangChanged = true;
-				}
-			}
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -6154,6 +6077,39 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			return rcDst.Top + (y - rcSrc.Top) * dyd / dys;
 		}
+
+		/// <summary>
+		/// Get the writing system that is most probably intended by the user, when the input
+		/// method changes to the specified <paramref name="inputMethod"/>, given the indicated
+		/// candidates, and that <paramref name="wsCurrent"/> is the preferred result if it is
+		/// a possible WS for the specified input method. wsCurrent is also returned if none
+		/// of the <paramref name="candidates"/> is found to match the specified inputs.
+		/// </summary>
+		/// <param name="inputMethod">The input method or keyboard</param>
+		/// <param name="wsCurrent">The writing system that is currently active in the form.
+		/// This serves as a default that will be returned if no writing system can be
+		/// determined from the first argument. It may be null. Also, if there is more than
+		/// one equally promising match in candidates, and wsCurrent is one of them, it will
+		/// be preferred. This ensures that we don't change WS on the user unless the keyboard
+		/// they have selected definitely indicates a different WS.</param>
+		/// <param name="candidates">The writing systems that should be considered as possible
+		/// return values.</param>
+		/// <returns>The best writing system for <paramref name="inputMethod"/>.</returns>
+		/// <remarks>This method replaces IWritingSystemRepository.GetWsForInputLanguage and
+		/// should preferably be used.</remarks>
+		internal static CoreWritingSystemDefinition GetWSForInputMethod(IKeyboardDefinition inputMethod,
+			CoreWritingSystemDefinition wsCurrent, CoreWritingSystemDefinition[] candidates)
+		{
+			if (inputMethod == null)
+				throw new ArgumentNullException("inputMethod");
+
+			// See if the default is suitable.
+			if (wsCurrent != null && inputMethod.Equals(wsCurrent.LocalKeyboard))
+				return wsCurrent;
+
+			return candidates.FirstOrDefault(ws => inputMethod.Equals(ws.LocalKeyboard)) ?? wsCurrent;
+		}
+
 		#endregion
 
 		#region implementation of IReceiveSequentialMessages
@@ -6368,6 +6324,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			return false; // Let the message be dispatched
 		}
 		#endregion
+
 	}
 	#endregion
 }

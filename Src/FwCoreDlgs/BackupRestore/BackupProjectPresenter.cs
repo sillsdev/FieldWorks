@@ -4,7 +4,6 @@
 //
 // File: BackupProjectPresenter.cs
 // Responsibility: FW Team
-
 using System;
 using System.IO;
 using System.Windows.Forms;
@@ -22,21 +21,17 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 	{
 		private readonly IBackupProjectView m_backupProjectView;
 		private readonly FdoCache m_cache;
-		private readonly string m_appAbbrev;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="backupProjectView">The backup project dialog box.</param>
-		/// <param name="appAbbrev">The command-line abbreviation for the application displaying
-		/// this backup dialog box.</param>
 		/// <param name="cache">The cache.</param>
 		/// ------------------------------------------------------------------------------------
-		internal BackupProjectPresenter(IBackupProjectView backupProjectView, string appAbbrev, FdoCache cache)
+		internal BackupProjectPresenter(IBackupProjectView backupProjectView, FdoCache cache)
 		{
 			m_cache = cache;
-			m_appAbbrev = appAbbrev;
 			m_backupProjectView = backupProjectView;
 
 			//Older projects might not have this folder so when launching the backup dialog we want to create it.
@@ -118,7 +113,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		{
 			BackupProjectSettings settings = new BackupProjectSettings(m_cache, m_backupProjectView, FwDirectoryFinder.DefaultBackupDirectory);
 			settings.DestinationFolder = m_backupProjectView.DestinationFolder;
-			settings.AppAbbrev = m_appAbbrev;
 
 			ProjectBackupService backupService = new ProjectBackupService(m_cache, settings);
 			string backupFile;

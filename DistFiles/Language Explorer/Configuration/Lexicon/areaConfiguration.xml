@@ -91,8 +91,8 @@
 						<column label="Morph Type" visibility="menu" editable="false" field="LexEntry.LexemeForm" subfield="MoForm.MorphType" list="LexDb.MorphTypes" layout="MorphTypeofEntry"/>
 						<column label="Citation Form" visibility="menu" sortmethod="CitationFormSortKey" ws="$ws=best vernoranal" editable="false" layout="CitationFormForFindEntry"/>
 						<column label="Glosses" editable="false" width="68000" ws="$ws=best analorvern" layout="GlossesForFindEntry"/>
-						<column label="Reversals" width="68000" editable="false" ws="$ws=best analorvern" layout="ReversalsForFindEntry"/>
-						<column label="Definitions" editable="false" width="68000" ws="$ws=best analorvern" layout="DefinitionsForFindEntry"/>
+						<column label="Reversals" visibility="menu" width="68000" editable="false" ws="$ws=best analorvern" layout="ReversalsForFindEntry"/>
+						<column label="Definitions" visibility="menu" editable="false" width="68000" ws="$ws=best analorvern" layout="DefinitionsForFindEntry"/>
 						<column headerlabel="Grammatical Info." label="Grammatical Info. (Full)" visibility="menu" multipara="true" layout="MsasOfSenses" chooserFilter="external" editable="false">
 							<dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.EntryPosFilter"/>
 						</column>

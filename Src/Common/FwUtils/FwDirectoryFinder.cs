@@ -9,7 +9,6 @@
 //		string sMyDocs = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 // See the MSDN documentation for the System.Environment.SpecialFolder enumeration for details.
 // </remarks>
-
 using System;
 using System.IO;
 using System.Diagnostics;
@@ -30,28 +29,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 	public static class FwDirectoryFinder
 	{
 		/// <summary>
-		/// The name of the Translation Editor folder (Even though this is the same as
-		/// FwUtils.ksTeAppName and FwSubKey.TE, PLEASE do not use them interchangeably. Use
-		/// the one that is correct for your context, in case they need to be changed later.)
-		/// </summary>
-		public const string ksTeFolderName = FwUtils.ksTeAppName;
-		/// <summary>
 		/// The name of the Language Explorer folder (Even though this is the same as
-		/// FwUtils.ksFlexAppName and FwSubKey.LexText, PLEASE do not use them interchangeably.
+		/// FwSubKey.LexText, PLEASE do not use it interchangeably.
 		/// Use the one that is correct for your context, in case they need to be changed later.)
 		/// </summary>
-		public const string ksFlexFolderName = FwUtils.ksFlexAppName;
+		public const string ksFlexFolderName = "Language Explorer";
 
 		/// <summary>The Scripture-specific stylesheet (ideally, this would be in a TE-specific place, but FDO needs it)</summary>
 		public const string kTeStylesFilename = "TeStyles.xml";
-
-		/// <summary>The name of the folder containing global writing systems.
-		/// Also see SIL.FieldWorks.FDO.FdoFileHelper.ksWritingSystemsDir
-		/// for the project-level directory.</summary>
-		private const string ksWritingSystemsDir = "WritingSystemStore";
-
-		private const string ksBiblicaltermsLocFilePrefix = "BiblicalTerms-";
-		private const string ksBiblicaltermsLocFileExtension = ".xml";
 		private const string ksProjectsDir = "ProjectsDir";
 
 		private static readonly IFdoDirectories s_fdoDirs = new FwFdoDirectories();
@@ -65,17 +50,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		public static string TeStylesPath
 		{
-			get { return Path.Combine(CodeDirectory, kTeStylesFilename); }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the full path of the folder where TE-specific files are installed.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static string TeFolder
-		{
-			get { return GetCodeSubDirectory(ksTeFolderName); }
+			get { return Path.Combine(CodeDirectory, ksFlexFolderName, kTeStylesFilename); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -94,26 +69,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static string FlexBridgeFolder
 		{
 			get { return GetFLExBridgeFolderPath(); }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the full path of the Translation Editor executable.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static string TeExe
-		{
-			get { return ExeOrDllPath("TE.exe"); }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the full path of the Translation Editor dynamic load library.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static string TeDll
-		{
-			get { return ExeOrDllPath("TeDll.dll"); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -160,21 +115,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static string ConverterConsoleExe
 		{
 			get { return ExeOrDllPath("ConverterConsole.exe"); }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the full path of the config file
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static string RemotingTcpServerConfigFile
-		{
-			get
-			{
-				if (MiscUtils.RunningTests)
-					return ExeOrDllPath("remoting_tcp_server_tests.config");
-				return ExeOrDllPath("remoting_tcp_server.config");
-			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -632,46 +572,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 						key.SetValue("DefaultBackupDirectory", value);
 				}
 			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the biblical key terms localization files.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		static public string[] KeyTermsLocalizationFiles
-		{
-			get
-			{
-				// SE version doesn't install the TE folder.
-				if (!Directory.Exists(TeFolder))
-					return new string[]{""};
-				return Directory.GetFiles(TeFolder, ksBiblicaltermsLocFilePrefix + "*" +
-					ksBiblicaltermsLocFileExtension, SearchOption.TopDirectoryOnly);
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Returns the file name containing the localization of the key terms list for the
-		/// given ICU locale.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		static public string GetKeyTermsLocFilename(string locale)
-		{
-			return Path.Combine(TeFolder, ksBiblicaltermsLocFilePrefix + locale +
-				ksBiblicaltermsLocFileExtension);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Extracts the locale identifier (string) from a key terms localization file name.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		static public string GetLocaleFromKeyTermsLocFile(string locFilename)
-		{
-			return Path.GetFileName(locFilename).Replace(ksBiblicaltermsLocFilePrefix,
-				String.Empty).Replace(ksBiblicaltermsLocFileExtension, String.Empty);
 		}
 
 		/// <summary>

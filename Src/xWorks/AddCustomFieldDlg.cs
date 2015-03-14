@@ -218,7 +218,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 			// Key is a list we found, value is an index in result.
 			var resultsByList = new Dictionary<ICmObject, int>();
-			var isBTEVersion = Directory.Exists(FwDirectoryFinder.TeFolder);
 			foreach (
 				XmlNode elt in
 					windowConfiguration.SelectNodes("//item[@value='lists' or @value='grammar']/parameters/tools/tool"))
@@ -236,7 +235,7 @@ namespace SIL.FieldWorks.XWorks
 				var owner = recordList.Attributes["owner"].Value;
 				var property = recordList.Attributes["property"].Value;
 				var list = PossibilityRecordList.GetListFromOwnerAndProperty(cache, owner, property);
-				if (list == null || !(list is ICmPossibilityList))
+				if (!(list is ICmPossibilityList))
 					continue; // some tools in the lists area are not actually lists.
 				int oldIndex;
 				if (resultsByList.TryGetValue(list, out oldIndex))
@@ -247,8 +246,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					resultsByList[list] = result.Count;
 					var label = elt.Attributes["label"].Value;
-					if (isBTEVersion || label != "Scripture Note Categories")
-						result.Add(new IdAndString<Guid>(list.Guid, label));
+					result.Add(new IdAndString<Guid>(list.Guid, label));
 				}
 			}
 			result.Sort((x, y) => x.Name.CompareTo(y.Name));

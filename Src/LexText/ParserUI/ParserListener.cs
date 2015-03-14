@@ -17,7 +17,6 @@
 //	</code>
 // </example>
 // --------------------------------------------------------------------------------------------
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +26,6 @@ using System.Xml;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.XWorks;
 using XCore;
 using SIL.Utils;
@@ -56,12 +54,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Control how much output we send to the application's listeners (e.g. visual studio output window)
 		/// </summary>
 		private TraceSwitch m_traceSwitch = new TraceSwitch("ParserListener", "");
-
-		/// <summary>
-		/// Set when we are running the parser; must be freed when we no longer are.
-		/// </summary>
-		private IDisposable m_lock;
-
 		private TryAWordDlg m_dialog;
 		private FormWindowState m_prevWindowState;
 		private ParserConnection m_parserConnection;
@@ -185,8 +177,6 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			if (m_parserConnection == null)
 			{
-				if (!GetLock())
-					return false;
 				// Don't bother if the lexicon is empty.  See FWNX-1019.
 				if (m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().Count == 0)
 					return false;
@@ -204,7 +194,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (m_parserConnection != null)
 			{
 				m_parserConnection.Dispose();
-				Unlock();
 			}
 			m_parserConnection = null;
 		}
@@ -396,8 +385,6 @@ namespace SIL.FieldWorks.LexText.Controls
 				m_mediator.RemoveColleague(this);
 				if (m_parserConnection != null)
 					m_parserConnection.Dispose();
-				if (m_lock != null)
-					m_lock.Dispose();
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
@@ -406,7 +393,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_mediator = null;
 			m_cache = null;
 			m_traceSwitch = null;
-			m_lock = null;
 			m_parserConnection = null;
 
 			m_isDisposed = true;
@@ -525,28 +511,6 @@ namespace SIL.FieldWorks.LexText.Controls
 				m_parserConnection.UpdateWordforms(m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances(), ParserPriority.Low);
 
 			return true;	//we handled this.
-		}
-
-		private bool GetLock()
-		{
-			if (m_lock != null)
-				return true; // we already have it locked.
-			m_lock = ClientServerServices.Current.GetExclusiveModeToken(m_cache, ParserLockName);
-			if (m_lock == null)
-			{
-				MessageBox.Show(Form.ActiveForm, ParserUIStrings.ksOtherClientIsParsing, ParserUIStrings.ksParsingElsewhere,
-								MessageBoxButtons.OK);
-				return false;
-			}
-			return true;
-		}
-
-		private void Unlock()
-		{
-			if (m_lock == null)
-				return; // nothing to do.
-			m_lock.Dispose();
-			m_lock = null;
 		}
 
 		private bool InTextsWordsArea

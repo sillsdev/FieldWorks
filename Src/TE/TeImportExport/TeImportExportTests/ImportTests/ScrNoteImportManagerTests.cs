@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO;
 using SIL.CoreImpl;
-using SIL.FieldWorks.TE.ExportTests;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.Infrastructure;
 
@@ -54,13 +54,66 @@ namespace SIL.FieldWorks.TE.ImportTests
 				Cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Add(wsEs);
 
 				// Initialize the annotation category possibility list.
-				m_possList = XmlNoteCategoryTests.CreateCategories(Cache, m_wsSpanish);
+				m_possList = CreateCategories(Cache, m_wsSpanish);
 
 				ScrNoteImportManager.Initialize(m_scr, 1);
 			});
 
 		}
 		#endregion
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Creates the categories.
+		/// </summary>
+		/// <param name="cache">The cache.</param>
+		/// <param name="ws">The writing system for setting the category names.</param>
+		/// <returns></returns>
+		/// ------------------------------------------------------------------------------------
+		internal static ICmPossibilityList CreateCategories(FdoCache cache, int ws)
+		{
+			ICmPossibilityList list = cache.LangProject.TranslatedScriptureOA.NoteCategoriesOA;
+			list.PossibilitiesOS.Clear();
+			var possFactory = cache.ServiceLocator.GetInstance<ICmPossibilityFactory>();
+
+			// Initialize text.
+			ITsPropsBldr ttpBldr = TsPropsBldrClass.Create();
+			ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs,
+									 (int)FwTextPropVar.ktpvDefault, ws);
+			ITsStrBldr tsStrBldr = TsStrBldrClass.Create();
+
+			// Set possibilities on top level--"Level 1a"
+			ICmPossibility possibility1a = possFactory.Create();
+			list.PossibilitiesOS.Add(possibility1a);
+			tsStrBldr.ReplaceRgch(0, 0, "Level 1a", 8, ttpBldr.GetTextProps());
+			possibility1a.Name.set_String(ws, tsStrBldr.GetString());
+
+			// Add another on top level--"Level 1b"
+			ICmPossibility possibility1b = possFactory.Create();
+			list.PossibilitiesOS.Add(possibility1b);
+			tsStrBldr.ReplaceRgch(0, tsStrBldr.Length, "Level 1b", 8, ttpBldr.GetTextProps());
+			possibility1b.Name.set_String(ws, tsStrBldr.GetString());
+
+			// Add possibilities on second level under "Level 1b"--"Level 2a"
+			ICmPossibility subPossibility2a = possFactory.Create();
+			possibility1b.SubPossibilitiesOS.Add(subPossibility2a);
+			tsStrBldr.ReplaceRgch(0, tsStrBldr.Length, "Level 2a, parent is 1b", 22, ttpBldr.GetTextProps());
+			subPossibility2a.Name.set_String(ws, tsStrBldr.GetString());
+
+			// Add "Level 2b" under "Level 1b"
+			ICmPossibility subPossibility2b = possFactory.Create();
+			possibility1b.SubPossibilitiesOS.Add(subPossibility2b);
+			tsStrBldr.ReplaceRgch(0, tsStrBldr.Length, "Level 2b, parent is 1b", 22, ttpBldr.GetTextProps());
+			subPossibility2b.Name.set_String(ws, tsStrBldr.GetString());
+
+			// Add "Level 3" under "Level 2b"
+			ICmPossibility subSubPossibility3 = possFactory.Create();
+			subPossibility2b.SubPossibilitiesOS.Add(subSubPossibility3);
+			tsStrBldr.ReplaceRgch(0, tsStrBldr.Length, "Level 3, parent is 2b", 21, ttpBldr.GetTextProps());
+			subSubPossibility3.Name.set_String(ws, tsStrBldr.GetString());
+
+			return list;
+		}
 
 		#region FindOrCreateAnnotationCategory Tests
 		///--------------------------------------------------------------------------------------

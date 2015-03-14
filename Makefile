@@ -210,16 +210,13 @@ idl-clean:
 fieldworks-flex.1.gz: DistFiles/Linux/fieldworks-flex.1.xml
 	docbook2x-man DistFiles/Linux/fieldworks-flex.1.xml
 	gzip fieldworks-flex.1
-fieldworks-te.1.gz: DistFiles/Linux/fieldworks-te.1.xml
-	docbook2x-man DistFiles/Linux/fieldworks-te.1.xml
-	gzip fieldworks-te.1
 unicodechareditor.1.gz: DistFiles/Linux/unicodechareditor.1.xml
 	docbook2x-man DistFiles/Linux/unicodechareditor.1.xml
 	gzip unicodechareditor.1
 manpage-clean:
-	rm -f fieldworks-*.1.gz unicodechareditor.1.gz
+	rm -f fieldworks-flex.1.gz unicodechareditor.1.gz
 
-install-tree: fieldworks-flex.1.gz fieldworks-te.1.gz unicodechareditor.1.gz
+install-tree: fieldworks-flex.1.gz unicodechareditor.1.gz
 	# Create directories
 	install -d $(DESTDIR)/usr/bin
 	install -d $(DESTDIR)/usr/lib/fieldworks
@@ -230,13 +227,11 @@ install-tree: fieldworks-flex.1.gz fieldworks-te.1.gz unicodechareditor.1.gz
 	install -d $(DESTDIR)/var/lib/fieldworks
 	# Install libraries and their support files
 	install -m 644 DistFiles/*.{dll*,so} $(DESTDIR)/usr/lib/fieldworks
-	install -m 644 DistFiles/Linux/*.{dll*,so} $(DESTDIR)/usr/lib/fieldworks
+	install -m 644 DistFiles/Linux/*.so $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 $(OUT_DIR)/*.{dll*,so} $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 $(OUT_DIR)/{*.compmap,components.map} $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 $(OUT_DIR)/EC/Plugins/*.xml $(DESTDIR)/usr/lib/fieldworks/EC/Plugins
 	install -m 644 Lib/src/icu/install$(ARCH)/lib/lib* $(DESTDIR)/usr/lib/fieldworks
-	# Install read-only configuration files
-	install -m 644 $(OUT_DIR)/remoting_tcp_server.config $(DESTDIR)/usr/lib/fieldworks
 	# Install executables and scripts
 	install $(OUT_DIR)/*.exe $(DESTDIR)/usr/lib/fieldworks
 	install DistFiles/*.exe $(DESTDIR)/usr/lib/fieldworks
@@ -244,17 +239,15 @@ install-tree: fieldworks-flex.1.gz fieldworks-te.1.gz unicodechareditor.1.gz
 	install Bin/WriteKey.exe $(DESTDIR)/usr/lib/fieldworks
 	install Lib/src/icu/install$(ARCH)/bin/* $(DESTDIR)/usr/lib/fieldworks/icu-bin
 	install Lib/src/icu/source/bin/* $(DESTDIR)/usr/lib/fieldworks/icu-bin
-	install Lib/linux/fieldworks-{te,flex} $(DESTDIR)/usr/bin
+	install Lib/linux/fieldworks-flex $(DESTDIR)/usr/bin
 	install Lib/linux/unicodechareditor $(DESTDIR)/usr/bin
 	install Lib/linux/{cpol-action,run-app,extract-userws.xsl} $(DESTDIR)/usr/lib/fieldworks
 	install Lib/linux/setup-user $(DESTDIR)/usr/share/fieldworks/
-	install Lib/linux/ShareFwProjects $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 environ{,-xulrunner} $(DESTDIR)/usr/lib/fieldworks
-	install -m 644 Lib/linux/ShareFwProjects.desktop $(DESTDIR)/usr/share/fieldworks
 	# Install content and plug-ins
 	install -m 644 DistFiles/*.{pdf,txt,xml,map,tec,reg,dtd} $(DESTDIR)/usr/share/fieldworks
 	cp -pdr DistFiles/{"Editorial Checks",EncodingConverters} $(DESTDIR)/usr/share/fieldworks
-	cp -pdr DistFiles/{Ethnologue,Fonts,Graphite,Helps,Icu50,Keyboards,"Language Explorer",Parts,SIL,Templates,"Translation Editor"} $(DESTDIR)/usr/share/fieldworks
+	cp -pdr DistFiles/{Ethnologue,Fonts,Graphite,Helps,Icu50,Keyboards,"Language Explorer",Parts,SIL,Templates} $(DESTDIR)/usr/share/fieldworks
 	# Install man pages
 	install -m 644 *.1.gz $(DESTDIR)/usr/share/man/man1
 	# Remove localization data that came from "DistFiles/Language Explorer", which is handled separately by l10n-install
@@ -283,8 +276,6 @@ install-menuentries:
 	install -d $(DESTDIR)/usr/share/pixmaps
 	install -d $(DESTDIR)/usr/share/applications
 	install -m 644 Src/LexText/LexTextExe/LT.png $(DESTDIR)/usr/share/pixmaps/fieldworks-flex.png
-	install -m 644 Src/TeExe/Res/TE.png $(DESTDIR)/usr/share/pixmaps/fieldworks-te.png
-	desktop-file-install --dir $(DESTDIR)/usr/share/applications Lib/linux/fieldworks-te.desktop
 	desktop-file-install --dir $(DESTDIR)/usr/share/applications Lib/linux/fieldworks-flex.desktop
 	desktop-file-install --dir $(DESTDIR)/usr/share/applications Lib/linux/unicodechareditor.desktop
 
@@ -294,11 +285,11 @@ install-package: install install-COM
 	$(DESTDIR)/usr/lib/fieldworks/cpol-action pack
 
 uninstall: uninstall-menuentries
-	rm -rf $(DESTDIR)/usr/bin/{te,flex} $(DESTDIR)/usr/lib/fieldworks $(DESTDIR)/usr/share/fieldworks
+	rm -rf $(DESTDIR)/usr/bin/flex $(DESTDIR)/usr/lib/fieldworks $(DESTDIR)/usr/share/fieldworks
 
 uninstall-menuentries:
-	rm -f $(DESTDIR)/usr/share/pixmaps/fieldworks-{te,flex}.png
-	rm -f $(DESTDIR)/usr/share/applications/fieldworks-{te,flex}.desktop
+	rm -f $(DESTDIR)/usr/share/pixmaps/fieldworks-flex.png
+	rm -f $(DESTDIR)/usr/share/applications/fieldworks-flex.desktop
 
 installable-COM-all:
 	mkdir -p $(COM_DIR)/installer$(ARCH)

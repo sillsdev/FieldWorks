@@ -4,7 +4,6 @@
 //
 // File: BackupProjectSettings.cs
 // Responsibility: FW team
-
 using System;
 using System.IO;
 using SIL.CoreImpl;
@@ -32,7 +31,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// ------------------------------------------------------------------------------------
 		public BackupProjectSettings(FdoCache cache, IBackupInfo backupInfo, string destFolder) :
 			this(Path.GetDirectoryName(cache.ProjectId.ProjectFolder), cache.ProjectId.Name,
-			cache.LanguageProject.LinkedFilesRootDir, cache.ProjectId.SharedProjectFolder,
+			cache.LanguageProject.LinkedFilesRootDir,
 			cache.ProjectId.Type, destFolder)
 		{
 			if (backupInfo != null)
@@ -54,21 +53,16 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// root folder for this project).</param>
 		/// <param name="projectName">Name of the project.</param>
 		/// <param name="linkedFilesPath">The linked files path.</param>
-		/// <param name="sharedProjectFolder">A possibly alternate project path that
-		/// should be used for things that should be shared.</param>
 		/// <param name="originalProjType">Type of the project before converting for backup.</param>
 		/// <param name="destFolder">The destination folder.</param>
 		/// ------------------------------------------------------------------------------------
 		protected BackupProjectSettings(string projectsRootFolder, string projectName,
-			string linkedFilesPath, string sharedProjectFolder, FDOBackendProviderType originalProjType, string destFolder) :
-			base(projectsRootFolder, linkedFilesPath, sharedProjectFolder)
+			string linkedFilesPath, FDOBackendProviderType originalProjType, string destFolder) :
+			base(projectsRootFolder, linkedFilesPath)
 		{
 			ProjectName = projectName;
 			DbVersion = FDOBackendProvider.ModelVersion;
 			FwVersion = new VersionInfoProvider(Assembly.GetExecutingAssembly(), false).MajorVersion;
-			// For DB4o projects, we need to convert them over to XML. We can't put the
-			// converted project in the same directory so we convert them to a temporary
-			// directory (see FWR-2813).
 			DatabaseFolder = (originalProjType == FDOBackendProviderType.kXML || originalProjType == FDOBackendProviderType.kSharedXML) ? ProjectPath : Path.GetTempPath();
 			DestinationFolder = destFolder;
 			BackupTime = DateTime.Now;
@@ -80,14 +74,6 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// Folder into which the backup file will be written.
 		///</summary>
 		public string DestinationFolder { get; set; }
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets or sets the command-line abbreviation for the application used to create this
-		/// backup.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string AppAbbrev { get; set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

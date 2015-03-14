@@ -4,7 +4,6 @@
 //
 // File: fdoCache.cs
 // Responsibility: Randy Regnier
-
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -505,7 +504,7 @@ namespace SIL.FieldWorks.FDO
 					cache.SaveAndForceNewestXmlForCmObjectWithoutUnitOfWork(null, cache.m_serviceLocator.ObjectRepository.AllInstances().ToList());
 				}
 			}
-			return ClientServerServices.Current.Local.ConvertToDb4oBackendIfNeeded(progressDlg, dbFileName);
+			return dbFileName;
 		}
 
 		/// <summary>
@@ -842,25 +841,6 @@ namespace SIL.FieldWorks.FDO
 		public IProjectIdentifier ProjectId
 		{
 			get { return m_serviceLocator.GetInstance<IDataSetup>().ProjectId; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the number of remote clients that are currently connected to the Database.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public int NumberOfRemoteClients
-		{
-			get
-			{
-				if (!(ServiceLocator.GetInstance<IDataStorer>() is IClientServerDataManager))
-					return 0; // not a CS backend.
-
-				var serverName = ProjectId.ServerName;
-				var projectName = ProjectId.Name;
-
-				return ClientServerServices.Current.ListConnectedClients(serverName, projectName).Length - (ProjectId.IsLocal ? 1 : 0);
-			}
 		}
 
 		/// <summary>
@@ -1411,6 +1391,18 @@ namespace SIL.FieldWorks.FDO
 					return itype.ToString();
 			}
 		}
+
+		/// <summary>
+		/// Have BEP re-write everything as if they had all been modified.
+		/// </summary>
+		/// <remarks>This method essentailly re-does DM66, but without the DM formalism.</remarks>
+		public void ExportEverythingAsModified()
+		{
+			var bep = (IDataStorer)m_serviceLocator.DataSetup;
+			bep.Commit(new HashSet<ICmObjectOrSurrogate>(),
+				new HashSet<ICmObjectOrSurrogate>(from obj in m_serviceLocator.ObjectRepository.AllInstances() select (ICmObjectOrSurrogate)obj),
+				new HashSet<ICmObjectId>());
+		}
 		#endregion Public methods
 
 		#endregion Public interface
@@ -1469,34 +1461,6 @@ namespace SIL.FieldWorks.FDO
 		#endregion Private Properties
 
 		#endregion Private interface
-
-		/// <summary>
-		/// Return a string (typically at or near shutdown) which may be passed back to NewObjectsSinceVersion.
-		/// </summary>
-		public string VersionStamp
-		{
-			get
-			{
-				var csdm = ServiceLocator.GetInstance<IDataStorer>() as IClientServerDataManager;
-				if (csdm == null)
-					return null;
-				return csdm.VersionStamp;
-			}
-		}
-
-		/// <summary>
-		/// Pass as versionStamp a string previously obtained from VersionStamp. Answer true if changes saved to
-		/// the database since versionStamp included the creation of new objects of class classname.
-		/// If the backend cannot be sure, it should answer true; this method is used to suppress use of locally
-		/// persisted lists as an optimization.
-		/// </summary>
-		public bool NewObjectsSinceVersion(string versionStamp, string classname)
-		{
-			var csdm = ServiceLocator.GetInstance<IDataStorer>() as IClientServerDataManager;
-			if (csdm == null)
-				return false; // not a CS backend, there should be no way for it to get out of date.
-			return csdm.NewObjectsSinceVersion(versionStamp, classname);
-		}
 	}
 
 	#region Cache Pair, one attached to database and one purely in memory

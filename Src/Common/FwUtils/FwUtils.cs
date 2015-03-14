@@ -29,25 +29,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public const string ksSuiteName = "FieldWorks";
 		/// <summary>
-		/// The name of the Translation Editor folder (Even though this is the same as
-		/// FwDirectoryFinder.ksTeFolderName and FwSubKey.TE, PLEASE do not use them interchangeably.
-		/// Use the one that is correct for your context, in case they need to be changed later.)
-		/// </summary>
-		public const string ksTeAppName = "Translation Editor";
-		/// <summary>The command-line abbreviation for Translation Editor</summary>
-		public const string ksTeAbbrev = "TE";
-		/// <summary>
-		/// The fully-qualified (with namespace) C# object name for TeApp
-		/// </summary>
-		public const string ksFullTeAppObjectName = "SIL.FieldWorks.TE.TeApp";
-		/// <summary>
 		/// The name of the Language Explorer folder (Even though this is the same as
 		/// FwDirectoryFinder.ksFlexFolderName and FwSubKey.LexText, PLEASE do not use them interchangeably.
 		/// Use the one that is correct for your context, in case they need to be changed later.)
 		/// </summary>
 		public const string ksFlexAppName = "Language Explorer";
-		/// <summary>The command-line abbreviation for the Language Explorer</summary>
-		public const string ksFlexAbbrev = "FLEx";
 		/// <summary>
 		/// The fully-qualified (with namespace) C# object name for LexTextApp
 		/// </summary>
@@ -56,49 +42,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// The current version of FieldWorks. This is also known in COMInterfaces/IcuWrappers.cs, InitIcuDataDir.
 		/// </summary>
 		public const int SuiteVersion = 8;
-
-		/// <summary>Used in tests to fake TE being installed (Set by using reflection)</summary>
-		private static bool? s_fIsTEInstalled;
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Indicates whether TE is installed or not (formerly part of MiscUtils in Utils.cs).
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static bool IsTEInstalled
-		{
-			get
-			{
-				if (s_fIsTEInstalled == null)
-					s_fIsTEInstalled = File.Exists(FwDirectoryFinder.TeExe);
-				return (bool)s_fIsTEInstalled;
-			}
-		}
-
-		/// <summary>
-		/// Many of the previous calls to IsTeInstalled were changed to call this instead,
-		/// when we made the SE edition able to work with Paratext Scripture if present.
-		/// Currently it always returns true, but if we someday want to hide every trace of Scripture
-		/// from the UI, we can make this configurable.
-		/// </summary>
-		public static bool IsOkToDisplayScriptureIfPresent
-		{
-			get { return true; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets a value indicating whether FLEx is installed.
-		/// We consider FLEx to be installed if we can find it in the same directory as our
-		/// own assembly. That's a rather strong requirement, but it's how we install it.
-		/// </summary>
-		/// <remarks>We could do the really complicated thing they do above to see if TE is
-		/// installed, but why bother?</remarks>
-		/// ------------------------------------------------------------------------------------
-		public static bool IsFlexInstalled
-		{
-			get { return File.Exists(FwDirectoryFinder.FlexExe); }
-		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

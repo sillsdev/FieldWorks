@@ -4,7 +4,6 @@
 //
 // File: FieldWorksManager.cs
 // Responsibility: FW Team
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -110,7 +109,7 @@ namespace SIL.FieldWorks
 		public void CreateNewProject(FwApp app, Form dialogOwner)
 		{
 			ProjectId newProject = FieldWorks.CreateNewProject(dialogOwner, app, app);
-			if (newProject != null && !FieldWorks.OpenNewProject(newProject, app.ApplicationName))
+			if (newProject != null && !FieldWorks.OpenNewProject(newProject))
 			{
 				Debug.Fail("Failed to open the new project");
 			}

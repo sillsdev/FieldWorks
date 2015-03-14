@@ -5,7 +5,6 @@
 // File: ServiceLocatorFactory.cs
 // Responsibility: Randy Regnier
 // Last reviewed: never
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -165,12 +164,6 @@ namespace SIL.FieldWorks.FDO.IOC
 						.For<IDataSetup>()
 						.LifecycleIs(new SingletonLifecycle())
 						.Use<XMLBackendProvider>();
-					break;
-				case FDOBackendProviderType.kDb4oClientServer:
-					registry
-						.For<IDataSetup>()
-						.LifecycleIs(new SingletonLifecycle())
-						.Use<Db4oClientServerBackendProvider>();
 					break;
 				case FDOBackendProviderType.kMemoryOnly:
 					registry

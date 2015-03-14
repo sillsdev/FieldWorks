@@ -40,6 +40,9 @@
     <Reference Include="BasicUtils">
       <HintPath>..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
+    <Reference Include="FwUtils">
+      <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
+    </Reference>
     <Reference Include="COMInterfaces">
       <HintPath>..\..\Output\Debug\COMInterfaces.dll</HintPath>
     </Reference>

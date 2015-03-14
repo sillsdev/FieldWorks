@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -118,6 +122,25 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			base.DeleteCurrentObject(state, thingToDelete);
 
 			ReloadList();
+		}
+
+		protected override string PropertyTableId(string sorterOrFilter)
+		{
+			//var layoutName = String.Format("publishReversal-{0}", ri.WritingSystem);
+			var reversalPub = m_mediator.PropertyTable.GetStringProperty("ReversalIndexPublicationLayout", null);
+			var reversalLang = reversalPub.Substring(reversalPub.IndexOf('-') + 1); // strip initial "publishReversal-"
+
+			// Dependent lists do not have owner/property set. Rather they have class/field.
+			string className = VirtualListPublisher.MetaDataCache.GetOwnClsName((int)m_flid);
+			string fieldName = VirtualListPublisher.MetaDataCache.GetFieldName((int)m_flid);
+			if (String.IsNullOrEmpty(PropertyName) || PropertyName == fieldName)
+			{
+				return String.Format("{0}.{1}-{2}_{3}", className, fieldName, reversalLang, sorterOrFilter);
+			}
+			else
+			{
+				return String.Format("{0}.{1}-{2}_{3}", className, PropertyName, reversalLang, sorterOrFilter);
+			}
 		}
 	}
 

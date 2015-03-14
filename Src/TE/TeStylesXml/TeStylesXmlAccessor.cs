@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.TE
 		/// -------------------------------------------------------------------------------------
 		protected override string ResourceFilePathFromFwInstall
 		{
-			get { return Path.DirectorySeparatorChar + ResourceFileName;}
+			get { return Path.DirectorySeparatorChar + @"Language Explorer" + Path.DirectorySeparatorChar + ResourceFileName; }
 		}
 
 		/// -------------------------------------------------------------------------------------
@@ -226,18 +226,6 @@ namespace SIL.FieldWorks.TE
 		{
 			TeStylesXmlAccessor acc = new TeStylesXmlAccessor(cache.LangProject.TranslatedScriptureOA);
 			acc.EnsureCurrentResource(progressDlg);
-
-			// This class is used specifically for TE styles; FLEx *should* use a different class,
-			// but per LT-14704, that is not the case. So always checking for current styles, but
-			// suppressing a potentially confusing dialog when TE is not installed.
-			if (acc.UserModifiedStyles.Count > 0 && FwUtils.IsTEInstalled)
-			{
-				using (FwStylesModifiedDlg dlg = new FwStylesModifiedDlg(acc.UserModifiedStyles,
-					cache.ProjectId.UiName, helpTopicProvider))
-				{
-					dlg.ShowDialog();
-				}
-			}
 		}
 
 		#region CreateFactoryScrStyles

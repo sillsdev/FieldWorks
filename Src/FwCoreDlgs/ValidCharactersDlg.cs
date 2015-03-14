@@ -5,7 +5,6 @@
 // File: ValidCharactersDlg.cs
 // Responsibility: TE Team
 // --------------------------------------------------------------------------------------------
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

@@ -168,6 +168,7 @@
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
     <Compile Include="DateTimeMatcherTests.cs" />
+    <Compile Include="FindResultsSorterTests.cs" />
     <Compile Include="TestPersistence.cs">
       <SubType>Code</SubType>
     </Compile>
