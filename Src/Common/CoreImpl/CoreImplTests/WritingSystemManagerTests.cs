@@ -397,7 +397,6 @@ namespace SIL.CoreImpl
 		}
 
 		[Test]
-		[Ignore("If the system changed so that this and the test above could both work we could remove a lot of complexity")]
 		public void CreateAudioWritingSystemVariantFirst()
 		{
 			var wsManager = new WritingSystemManager();
@@ -409,20 +408,6 @@ namespace SIL.CoreImpl
 				newWs.Variants.Add(WellKnownSubtags.AudioPrivateUse);
 				newWs.Script = WellKnownSubtags.AudioScript;
 			});
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Ensures that the specified directory is empty.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private static void EnsureDirectoryIsEmpty(string dir)
-		{
-			if (Directory.Exists(dir))
-			{
-				foreach (string file in Directory.GetFiles(dir))
-					File.Delete(file); // If we can't delete, let the exception go through so the test will fail in a useful way
-			}
 		}
 	}
 }

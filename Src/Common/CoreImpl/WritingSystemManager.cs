@@ -198,7 +198,7 @@ namespace SIL.CoreImpl
 		public CoreWritingSystemDefinition Create(LanguageSubtag languageSubtag, ScriptSubtag scriptSubtag, RegionSubtag regionSubtag, IEnumerable<VariantSubtag> variantSubtags)
 		{
 			VariantSubtag[] variantSubtagsArray = variantSubtags.ToArray();
-			string langTag = IetfLanguageTagHelper.ToIetfLanguageTag(languageSubtag, scriptSubtag, regionSubtag, variantSubtagsArray);
+			string langTag = IetfLanguageTagHelper.CreateIetfLanguageTag(languageSubtag, scriptSubtag, regionSubtag, variantSubtagsArray);
 			CoreWritingSystemDefinition ws = m_repo.WritingSystemFactory.Create(langTag);
 			ws.Language = languageSubtag;
 			ws.Script = scriptSubtag;

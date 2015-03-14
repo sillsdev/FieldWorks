@@ -122,7 +122,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		internal void VerifyWsId(string wsId)
 		{
 			//Ensure the writing system identifier is set correctly
-			Assert.AreEqual(IetfLanguageTagHelper.ToIetfLanguageTag(CurrentWritingSystem.Language, m_regionVariantControl.ScriptSubtag,
+			Assert.AreEqual(IetfLanguageTagHelper.CreateIetfLanguageTag(CurrentWritingSystem.Language, m_regionVariantControl.ScriptSubtag,
 				m_regionVariantControl.RegionSubtag, m_regionVariantControl.VariantSubtags), wsId);
 		}
 

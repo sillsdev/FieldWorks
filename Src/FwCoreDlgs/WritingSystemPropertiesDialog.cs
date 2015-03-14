@@ -2112,10 +2112,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				return;
 			}
-			// While we are editing this writing system we can't enforce valid tags; the user may temporarily
-			// do something invalid, or we may even go through an invalid state while changing two properties
-			// at once. It will become true again at latest when we close the dialog and try to save changes.
-			CurrentWritingSystem.RequiresValidLanguageTag = false;
 			if (!m_fSkipCheckOkToChangeContext && m_prevSelectedWritingSystem != null
 				&& m_listBoxRelatedWSs.Items.Contains(m_prevSelectedWritingSystem))
 			{

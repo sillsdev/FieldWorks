@@ -50,6 +50,11 @@ namespace SIL.Utils
 			get { return m_defaultKeyboard; }
 		}
 
+		public KeyboardDescription ActiveKeyboard
+		{
+			get { return null; }
+		}
+
 		public KeyboardAdaptorType Type
 		{
 			get { return KeyboardAdaptorType.System; }
