@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.Common.Controls
 		#region Member Data
 		private WritingSystemManager m_wsManager;
 		private string m_initialTarget; // If set, performs initial search for this language.
-		private string m_originalCode;
+		private LanguageSubtag m_originalSubtag;
 
 		/// <summary>
 		/// Overriding testing instances of this class should set
@@ -495,14 +495,20 @@ namespace SIL.FieldWorks.Common.Controls
 				string name = LanguageName;
 
 				if (!string.IsNullOrEmpty(code))
-					return new LanguageSubtag(code, name);
+				{
+					LanguageSubtag language;
+					if (!StandardSubtags.RegisteredLanguages.TryGet(code, out language))
+					{
+						if (!StandardSubtags.TryGetLanguageFromIso3Code(code, out language))
+							return new LanguageSubtag(code, name);
+					}
+					return new LanguageSubtag(language, name);
+				}
 
-				string internalCode;
-				if (StartedInModifyState && !string.IsNullOrEmpty(m_originalCode))
-					internalCode = m_originalCode; // We're modifying and existing WS, so just re-use the original code
-				else
-					internalCode = m_wsManager.GetValidLangTagForNewLang(name);
-				return new LanguageSubtag(internalCode, name);
+				if (m_originalSubtag != null && StartedInModifyState)
+					return new LanguageSubtag(m_originalSubtag, name);
+
+				return new LanguageSubtag(GetPrivateUseLangCodeForNewLang(name), name);
 			}
 
 			set
@@ -510,8 +516,78 @@ namespace SIL.FieldWorks.Common.Controls
 				Debug.Assert(string.IsNullOrEmpty(LanguageName), "The LanguageSubtag can only be set once when editing an existing WS");
 				EthnologueCode = value.Iso3Code;
 				LanguageName = value.Name;
-				m_originalCode = value.Code;
+				m_originalSubtag = value;
 			}
+		}
+
+		/// <summary>
+		/// Returns a private use language code that is guaranteed to be valid and unique for both the
+		/// local and the global writing system store.
+		/// NOTE: This method should only be used for writing systems that are custom (i.e. not
+		/// defined in the current version of the ethnologue).
+		/// The returned code will *not* have the 'x-' prefix denoting a user-defined writing system,
+		/// but it will check that an existing user-defined writing system does not exist with
+		/// the returned language tag.
+		/// This method also does not worry about regions, variants, etc. as it's use is restricted to
+		/// the language subtag for a custom writing system.
+		/// </summary>
+		/// <param name="langName">The full name of the language.</param>
+		private string GetPrivateUseLangCodeForNewLang(string langName)
+		{
+			string nameD = langName.Normalize(NormalizationForm.FormD); // Get the name in NFD format
+			var builder = new StringBuilder(nameD.ToLowerInvariant());
+			int index = 0;
+			while (index < builder.Length)
+			{
+				char c = builder[index];
+				bool charValid = (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+				if (!charValid)
+				{
+					// Found an invalid character, so remove it.
+					builder.Remove(index, 1);
+					continue;
+				}
+				index++;
+			}
+
+			string isoCode = builder.ToString().Substring(0, Math.Min(3, builder.Length));
+			if (IetfLanguageTagHelper.IsValidLanguageCode(isoCode) && !LangTagInUse("qaa-x-" + isoCode))
+				return isoCode; // The generated code is valid and not in use by the local or global store
+
+			// We failed to generate a valid, unused language tag from the language name so
+			// find one that isn't taken starting with 'aaa' and incrementing ('aab', 'aac', etc.)
+			builder.Remove(0, builder.Length); // Clear the builder
+			builder.Append("aaa");
+			while (LangTagInUse("qaa-x-" + builder))
+			{
+				var newCharLast = (char) (builder[2] + 1);
+				if (newCharLast > 'z')
+				{
+					// Incremented the last letter too far so reset it back to 'a' and increment the middle letter
+					newCharLast = 'a';
+					var newCharMiddle = (char) (builder[1] + 1);
+					if (newCharMiddle > 'z')
+					{
+						// Incremented the middle letter too far so reset it back to 'a' and increment the first letter
+						// Assume we won't ever have more then 4096 (26^3) custom writing systems
+						newCharMiddle = 'a';
+						builder[0] = (char) (builder[0] + 1);
+					}
+					builder[1] = newCharMiddle;
+				}
+				builder[2] = newCharLast;
+			}
+			return builder.ToString();
+		}
+
+		/// <summary>
+		/// Determines whether or not the specified language tag is in use by another writing system
+		/// in either the local or global writing system store.
+		/// </summary>
+		/// <param name="identifier">The language tag to check.</param>
+		private bool LangTagInUse(string identifier)
+		{
+			return m_wsManager.AllDistinctWritingSystems.Select(ws => ws.IetfLanguageTag).Contains(identifier);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -696,7 +772,7 @@ namespace SIL.FieldWorks.Common.Controls
 			lblCurrentEthCodeValue.Text = (string)lblCurrentEthCodeValue.Tag;
 			lblOtherNamesList.Text = (string)lblOtherNamesList.Tag;
 			// Forget any original code...no longer meaningful since we're trying to find some other language.
-			m_originalCode = "";
+			m_originalSubtag = null;
 		}
 
 		/// ------------------------------------------------------------------------------------

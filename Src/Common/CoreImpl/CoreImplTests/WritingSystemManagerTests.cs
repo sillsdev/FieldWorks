@@ -350,35 +350,6 @@ namespace SIL.CoreImpl
 			Assert.That(wsManager.GetOrSet("fr", out ws), Is.True);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests the GetValidLangCodeForNewLang method
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void GetValidLangCodeForNewLang()
-		{
-			var wsManager = new WritingSystemManager();
-
-			Assert.AreEqual("qip", wsManager.GetValidLangTagForNewLang("Qipkey"));
-			Assert.AreEqual("sn", wsManager.GetValidLangTagForNewLang("Sn"));
-			Assert.AreEqual("eba", wsManager.GetValidLangTagForNewLang("\u00CBbashlish")); // \u00CB == E with diacritic
-			Assert.AreEqual("eee", wsManager.GetValidLangTagForNewLang("\u00CB\u00CB\u00CBlish"));
-			// \u00CB == E with diacritic
-			Assert.AreEqual("aaa", wsManager.GetValidLangTagForNewLang("U"));
-
-			var subtag = new LanguageSubtag("qip", "Qipkey");
-			CoreWritingSystemDefinition newWs = wsManager.Create(subtag, null, null, Enumerable.Empty<VariantSubtag>());
-			wsManager.Set(newWs);
-			Assert.AreEqual("aaa", wsManager.GetValidLangTagForNewLang("Qipsing"), "code for 'qip' should already be taken");
-
-			subtag = new LanguageSubtag("aaa", "Qipsing");
-			newWs = wsManager.Create(subtag, null, null, Enumerable.Empty<VariantSubtag>());
-			wsManager.Set(newWs);
-			Assert.AreEqual("aab", wsManager.GetValidLangTagForNewLang("Qipwest"),
-				"code for 'qip' should already be taken twice");
-		}
-
 		// ENHANCE: Ideally, we would want to test incrementing the middle and first character,
 		// but that would require at least 677 (26^2 + 1) writing systems be created.
 

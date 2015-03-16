@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
 using System.Collections.Generic;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -267,43 +266,7 @@ namespace SIL.CoreImpl
 		public bool Exists(string identifier)
 		{
 			lock (m_syncRoot)
-			{
-				bool fExists = m_repo.Contains(identifier);
-				if (!fExists)
-				{
-					if (identifier.StartsWith("cmn"))
-					{
-						string ident = identifier.Remove(0, 3).Insert(0, "zh");
-						fExists = m_repo.Contains(ident);
-						if (!fExists && identifier.StartsWith("cmn"))
-						{
-							ident = ident.Insert(2, "-CN");
-							fExists = m_repo.Contains(ident);
-						}
-					}
-					else if (identifier.StartsWith("zh"))
-					{
-						string ident = identifier.Insert(2, "-CN");
-						fExists = m_repo.Contains(ident);
-					}
-					else if (identifier.StartsWith("pes"))
-					{
-						string ident = identifier.Remove(0, 3).Insert(0, "fa");
-						fExists = m_repo.Contains(ident);
-					}
-					else if (identifier.StartsWith("zlm"))
-					{
-						string ident = identifier.Remove(0, 3).Insert(0, "ms");
-						fExists = m_repo.Contains(ident);
-					}
-					else if (identifier.StartsWith("arb"))
-					{
-						string ident = identifier.Remove(2, 1); // changes to "ar"
-						fExists = m_repo.Contains(ident);
-					}
-				}
-				return fExists;
-			}
+				return m_repo.Contains(identifier);
 		}
 
 		/// <summary>
@@ -334,42 +297,7 @@ namespace SIL.CoreImpl
 			{
 				WritingSystemDefinition wrsys;
 				if (!m_repo.TryGet(identifier, out wrsys))
-				{
-					if (identifier.StartsWith("cmn"))
-					{
-						string ident = identifier.Remove(0, 3).Insert(0, "zh");
-						if (!m_repo.TryGet(ident, out wrsys) && identifier.StartsWith("cmn"))
-						{
-							ident = ident.Insert(2, "-CN");
-							m_repo.TryGet(ident, out wrsys);
-						}
-					}
-					else if (identifier.StartsWith("zh"))
-					{
-						string ident = identifier.Insert(2, "-CN");
-						m_repo.TryGet(ident, out wrsys);
-					}
-					else if (identifier.StartsWith("pes"))
-					{
-						string ident = identifier.Remove(0, 3).Insert(0, "fa");
-						m_repo.TryGet(ident, out wrsys);
-					}
-					else if (identifier.StartsWith("zlm"))
-					{
-						string ident = identifier.Remove(0, 3).Insert(0, "ms");
-						m_repo.TryGet(ident, out wrsys);
-					}
-					else if (identifier.StartsWith("arb"))
-					{
-						string ident = identifier.Remove(2, 1); // changes to "ar"
-						m_repo.TryGet(ident, out wrsys);
-					}
-					if (wrsys == null) //if all other special cases did not apply or work
-					{
-						//throw the expected exception for Get
-						throw new KeyNotFoundException("The writing system " + identifier + " was not found in this manager.");
-					}
-				}
+					throw new ArgumentException("The writing system " + identifier + " was not found in this manager.", "identifier");
 				return (CoreWritingSystemDefinition) wrsys;
 			}
 		}
@@ -617,83 +545,6 @@ namespace SIL.CoreImpl
 						localFileFactory.TemplateFolder = value;
 				}
 			}
-		}
-
-		/// <summary>
-		/// Returns an ISO 639 language tag that is guaranteed to be valid and unique for both the
-		/// local and the global writing system store.
-		/// NOTE: This method should only be used for writing systems that are custom (i.e. not
-		/// defined in the current version of the ethnologue).
-		/// The returned code will *not* have the 'x-' prefix denoting a user-defined writing system,
-		/// but it will check that an existing user-defined writing system does not exist with
-		/// the returned language tag.
-		/// This method also does not worry about regions, variants, etc. as it's use is restricted to
-		/// the language tag for a custom writing system.
-		/// </summary>
-		/// <param name="langName">The full name of the language.</param>
-		public string GetValidLangTagForNewLang(string langName)
-		{
-			lock (m_syncRoot)
-			{
-				string nameD = langName.Normalize(NormalizationForm.FormD); // Get the name in NFD format
-				var builder = new StringBuilder(nameD.ToLowerInvariant());
-				int index = 0;
-				while (index < builder.Length)
-				{
-					char c = builder[index];
-					bool charValid = (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
-					if (!charValid)
-					{
-						// Found an invalid character, so remove it.
-						builder.Remove(index, 1);
-						continue;
-					}
-					index++;
-				}
-
-				string isoCode = builder.ToString().Substring(0, Math.Min(3, builder.Length));
-				if (IetfLanguageTagHelper.IsValidLanguageCode(isoCode) && !LangTagInUse("qaa-x-" + isoCode))
-					return isoCode; // The generated code is valid and not in use by the local or global store
-
-				// We failed to generate a valid, unused language tag from the language name so
-				// find one that isn't taken starting with 'aaa' and incrementing ('aab', 'aac', etc.)
-				builder.Remove(0, builder.Length); // Clear the builder
-				builder.Append("aaa");
-				while (LangTagInUse("qaa-x-" + builder))
-				{
-					var newCharLast = (char) (builder[2] + 1);
-					if (newCharLast > 'z')
-					{
-						// Incremented the last letter too far so reset it back to 'a' and increment the middle letter
-						newCharLast = 'a';
-						var newCharMiddle = (char) (builder[1] + 1);
-						if (newCharMiddle > 'z')
-						{
-							// Incremented the middle letter too far so reset it back to 'a' and increment the first letter
-							// Assume we won't ever have more then 4096 (26^3) custom writing systems
-							newCharMiddle = 'a';
-							builder[0] = (char) (builder[0] + 1);
-						}
-						builder[1] = newCharMiddle;
-					}
-					builder[2] = newCharLast;
-				}
-				return builder.ToString();
-			}
-		}
-
-		/// <summary>
-		/// Determines whether or not the specified language tag is in use by another writing system
-		/// in either the local or global writing system store.
-		/// </summary>
-		/// <param name="identifier">The language tag to check.</param>
-		private bool LangTagInUse(string identifier)
-		{
-			if (m_repo.Contains(identifier))
-				return true;
-
-			var localRepo = m_repo as ILocalWritingSystemRepository<CoreWritingSystemDefinition>;
-			return localRepo != null && localRepo.GlobalWritingSystemRepository != null && localRepo.GlobalWritingSystemRepository.Contains(identifier);
 		}
 
 		/// <summary>
