@@ -121,21 +121,28 @@ namespace SIL.CoreImpl
 		/// <value>The local writing system store.</value>
 		public IWritingSystemRepository<CoreWritingSystemDefinition> WritingSystemStore
 		{
-			get { return m_repo; }
+			get
+			{
+				lock (m_syncRoot)
+					return m_repo;
+			}
 			set
 			{
 				if (value == null)
 					throw new ArgumentNullException("value");
 
-				if (m_repo != value)
+				lock (m_syncRoot)
 				{
-					m_repo = value;
-					m_handleWSs.Clear();
-					foreach (CoreWritingSystemDefinition ws in m_repo.AllWritingSystems)
+					if (m_repo != value)
 					{
-						ws.WritingSystemManager = this;
-						ws.Handle = m_nextHandle++;
-						m_handleWSs[ws.Handle] = ws;
+						m_repo = value;
+						m_handleWSs.Clear();
+						foreach (CoreWritingSystemDefinition ws in m_repo.AllWritingSystems)
+						{
+							ws.WritingSystemManager = this;
+							ws.Handle = m_nextHandle++;
+							m_handleWSs[ws.Handle] = ws;
+						}
 					}
 				}
 			}
@@ -149,8 +156,11 @@ namespace SIL.CoreImpl
 		{
 			get
 			{
-			var localRepo = m_repo as ILocalWritingSystemRepository<CoreWritingSystemDefinition>;
-			return localRepo != null ? localRepo.GlobalWritingSystemRepository.AllWritingSystems : Enumerable.Empty<CoreWritingSystemDefinition>();
+				lock (m_syncRoot)
+				{
+					var localRepo = m_repo as ILocalWritingSystemRepository<CoreWritingSystemDefinition>;
+					return localRepo != null ? localRepo.GlobalWritingSystemRepository.AllWritingSystems : Enumerable.Empty<CoreWritingSystemDefinition>();
+				}
 			}
 		}
 
@@ -159,7 +169,11 @@ namespace SIL.CoreImpl
 		/// </summary>
 		public IEnumerable<CoreWritingSystemDefinition> WritingSystems
 		{
-			get { return m_repo.AllWritingSystems; }
+			get
+			{
+				lock (m_syncRoot)
+					return m_repo.AllWritingSystems.ToArray();
+			}
 		}
 
 		/// <summary>
@@ -168,8 +182,11 @@ namespace SIL.CoreImpl
 		/// <value>The newer shared writing systems.</value>
 		public IEnumerable<CoreWritingSystemDefinition> CheckForNewerGlobalWritingSystems()
 		{
-			var localRepo = m_repo as ILocalWritingSystemRepository<CoreWritingSystemDefinition>;
-			return localRepo != null ? localRepo.CheckForNewerGlobalWritingSystems() : Enumerable.Empty<CoreWritingSystemDefinition>();
+			lock (m_syncRoot)
+			{
+				var localRepo = m_repo as ILocalWritingSystemRepository<CoreWritingSystemDefinition>;
+				return localRepo != null ? localRepo.CheckForNewerGlobalWritingSystems() : Enumerable.Empty<CoreWritingSystemDefinition>();
+			}
 		}
 
 		/// <summary>
@@ -197,25 +214,28 @@ namespace SIL.CoreImpl
 		/// <returns></returns>
 		public CoreWritingSystemDefinition Create(LanguageSubtag languageSubtag, ScriptSubtag scriptSubtag, RegionSubtag regionSubtag, IEnumerable<VariantSubtag> variantSubtags)
 		{
-			VariantSubtag[] variantSubtagsArray = variantSubtags.ToArray();
-			string langTag = IetfLanguageTagHelper.CreateIetfLanguageTag(languageSubtag, scriptSubtag, regionSubtag, variantSubtagsArray);
-			CoreWritingSystemDefinition ws = m_repo.WritingSystemFactory.Create(langTag);
-			ws.Language = languageSubtag;
-			ws.Script = scriptSubtag;
-			ws.Region = regionSubtag;
-			ws.Variants.ReplaceAll(variantSubtagsArray);
-			if (ws.Language != null && !string.IsNullOrEmpty(ws.Language.Name))
-				ws.Abbreviation = ws.Language.Name.Length > 3 ? ws.Language.Name.Substring(0, 3) : ws.Language.Name;
-			else
-				ws.Abbreviation = ws.IetfLanguageTag;
+			lock (m_syncRoot)
+			{
+				VariantSubtag[] variantSubtagsArray = variantSubtags.ToArray();
+				string langTag = IetfLanguageTagHelper.CreateIetfLanguageTag(languageSubtag, scriptSubtag, regionSubtag, variantSubtagsArray);
+				CoreWritingSystemDefinition ws = m_repo.WritingSystemFactory.Create(langTag);
+				ws.Language = languageSubtag;
+				ws.Script = scriptSubtag;
+				ws.Region = regionSubtag;
+				ws.Variants.ReplaceAll(variantSubtagsArray);
+				if (ws.Language != null && !string.IsNullOrEmpty(ws.Language.Name))
+					ws.Abbreviation = ws.Language.Name.Length > 3 ? ws.Language.Name.Substring(0, 3) : ws.Language.Name;
+				else
+					ws.Abbreviation = ws.IetfLanguageTag;
 
-			if (ws.DefaultCollation == null)
-				ws.DefaultCollation = new IcuCollationDefinition("standard");
-			if (ws.DefaultFont == null)
-				ws.DefaultFont = new FontDefinition("Charis SIL");
+				if (ws.DefaultCollation == null)
+					ws.DefaultCollation = new IcuCollationDefinition("standard");
+				if (ws.DefaultFont == null)
+					ws.DefaultFont = new FontDefinition("Charis SIL");
 
-			ws.AcceptChanges();
-			return ws;
+				ws.AcceptChanges();
+				return ws;
+			}
 		}
 
 		/// <summary>
@@ -235,7 +255,8 @@ namespace SIL.CoreImpl
 		/// <returns></returns>
 		public bool Exists(int handle)
 		{
-			return m_handleWSs.ContainsKey(handle);
+			lock (m_syncRoot)
+				return m_handleWSs.ContainsKey(handle);
 		}
 
 		/// <summary>
@@ -245,41 +266,44 @@ namespace SIL.CoreImpl
 		/// <returns></returns>
 		public bool Exists(string identifier)
 		{
-			bool fExists = m_repo.Contains(identifier);
-			if (!fExists)
+			lock (m_syncRoot)
 			{
-				if (identifier.StartsWith("cmn"))
+				bool fExists = m_repo.Contains(identifier);
+				if (!fExists)
 				{
-					string ident = identifier.Remove(0, 3).Insert(0, "zh");
-					fExists = m_repo.Contains(ident);
-					if (!fExists && identifier.StartsWith("cmn"))
+					if (identifier.StartsWith("cmn"))
 					{
-						ident = ident.Insert(2, "-CN");
+						string ident = identifier.Remove(0, 3).Insert(0, "zh");
+						fExists = m_repo.Contains(ident);
+						if (!fExists && identifier.StartsWith("cmn"))
+						{
+							ident = ident.Insert(2, "-CN");
+							fExists = m_repo.Contains(ident);
+						}
+					}
+					else if (identifier.StartsWith("zh"))
+					{
+						string ident = identifier.Insert(2, "-CN");
+						fExists = m_repo.Contains(ident);
+					}
+					else if (identifier.StartsWith("pes"))
+					{
+						string ident = identifier.Remove(0, 3).Insert(0, "fa");
+						fExists = m_repo.Contains(ident);
+					}
+					else if (identifier.StartsWith("zlm"))
+					{
+						string ident = identifier.Remove(0, 3).Insert(0, "ms");
+						fExists = m_repo.Contains(ident);
+					}
+					else if (identifier.StartsWith("arb"))
+					{
+						string ident = identifier.Remove(2, 1); // changes to "ar"
 						fExists = m_repo.Contains(ident);
 					}
 				}
-				else if (identifier.StartsWith("zh"))
-				{
-					string ident = identifier.Insert(2, "-CN");
-					fExists = m_repo.Contains(ident);
-				}
-				else if (identifier.StartsWith("pes"))
-				{
-					string ident = identifier.Remove(0, 3).Insert(0, "fa");
-					fExists = m_repo.Contains(ident);
-				}
-				else if (identifier.StartsWith("zlm"))
-				{
-					string ident = identifier.Remove(0, 3).Insert(0, "ms");
-					fExists = m_repo.Contains(ident);
-				}
-				else if (identifier.StartsWith("arb"))
-				{
-					string ident = identifier.Remove(2, 1); // changes to "ar"
-					fExists = m_repo.Contains(ident);
-				}
+				return fExists;
 			}
-			return fExists;
 		}
 
 		/// <summary>
@@ -289,10 +313,13 @@ namespace SIL.CoreImpl
 		/// <returns></returns>
 		public CoreWritingSystemDefinition Get(int handle)
 		{
-			CoreWritingSystemDefinition ws;
-			if (!m_handleWSs.TryGetValue(handle, out ws))
-				throw new ArgumentOutOfRangeException("handle");
-			return ws;
+			lock (m_syncRoot)
+			{
+				CoreWritingSystemDefinition ws;
+				if (!m_handleWSs.TryGetValue(handle, out ws))
+					throw new ArgumentOutOfRangeException("handle");
+				return ws;
+			}
 		}
 
 		/// <summary>
@@ -303,45 +330,48 @@ namespace SIL.CoreImpl
 		/// <returns></returns>
 		public CoreWritingSystemDefinition Get(string identifier)
 		{
-			WritingSystemDefinition wrsys;
-			if (!m_repo.TryGet(identifier, out wrsys))
+			lock (m_syncRoot)
 			{
-				if (identifier.StartsWith("cmn"))
+				WritingSystemDefinition wrsys;
+				if (!m_repo.TryGet(identifier, out wrsys))
 				{
-					string ident = identifier.Remove(0, 3).Insert(0, "zh");
-					if (!m_repo.TryGet(ident, out wrsys) && identifier.StartsWith("cmn"))
+					if (identifier.StartsWith("cmn"))
 					{
-						ident = ident.Insert(2, "-CN");
+						string ident = identifier.Remove(0, 3).Insert(0, "zh");
+						if (!m_repo.TryGet(ident, out wrsys) && identifier.StartsWith("cmn"))
+						{
+							ident = ident.Insert(2, "-CN");
+							m_repo.TryGet(ident, out wrsys);
+						}
+					}
+					else if (identifier.StartsWith("zh"))
+					{
+						string ident = identifier.Insert(2, "-CN");
 						m_repo.TryGet(ident, out wrsys);
 					}
+					else if (identifier.StartsWith("pes"))
+					{
+						string ident = identifier.Remove(0, 3).Insert(0, "fa");
+						m_repo.TryGet(ident, out wrsys);
+					}
+					else if (identifier.StartsWith("zlm"))
+					{
+						string ident = identifier.Remove(0, 3).Insert(0, "ms");
+						m_repo.TryGet(ident, out wrsys);
+					}
+					else if (identifier.StartsWith("arb"))
+					{
+						string ident = identifier.Remove(2, 1); // changes to "ar"
+						m_repo.TryGet(ident, out wrsys);
+					}
+					if (wrsys == null) //if all other special cases did not apply or work
+					{
+						//throw the expected exception for Get
+						throw new KeyNotFoundException("The writing system " + identifier + " was not found in this manager.");
+					}
 				}
-				else if (identifier.StartsWith("zh"))
-				{
-					string ident = identifier.Insert(2, "-CN");
-					m_repo.TryGet(ident, out wrsys);
-				}
-				else if (identifier.StartsWith("pes"))
-				{
-					string ident = identifier.Remove(0, 3).Insert(0, "fa");
-					m_repo.TryGet(ident, out wrsys);
-				}
-				else if (identifier.StartsWith("zlm"))
-				{
-					string ident = identifier.Remove(0, 3).Insert(0, "ms");
-					m_repo.TryGet(ident, out wrsys);
-				}
-				else if (identifier.StartsWith("arb"))
-				{
-					string ident = identifier.Remove(2, 1); // changes to "ar"
-					m_repo.TryGet(ident, out wrsys);
-				}
-				if (wrsys == null) //if all other special cases did not apply or work
-				{
-					//throw the expected exception for Get
-					throw new KeyNotFoundException("The writing system " + identifier + " was not found in this manager.");
-				}
+				return (CoreWritingSystemDefinition) wrsys;
 			}
-			return (CoreWritingSystemDefinition) wrsys;
 		}
 
 		/// <summary>
@@ -352,13 +382,16 @@ namespace SIL.CoreImpl
 		/// <returns></returns>
 		public bool TryGet(string identifier, out CoreWritingSystemDefinition ws)
 		{
-			if (Exists(identifier))
+			lock (m_syncRoot)
 			{
-				ws = Get(identifier);
-				return true;
+				if (Exists(identifier))
+				{
+					ws = Get(identifier);
+					return true;
+				}
+				ws = null;
+				return false;
 			}
-			ws = null;
-			return false;
 		}
 
 		/// <summary>
@@ -367,10 +400,13 @@ namespace SIL.CoreImpl
 		/// <param name="ws">The writing system.</param>
 		public void Set(CoreWritingSystemDefinition ws)
 		{
-			m_repo.Set(ws);
-			ws.WritingSystemManager = this;
-			ws.Handle = m_nextHandle++;
-			m_handleWSs[ws.Handle] = ws;
+			lock (m_syncRoot)
+			{
+				m_repo.Set(ws);
+				ws.WritingSystemManager = this;
+				ws.Handle = m_nextHandle++;
+				m_handleWSs[ws.Handle] = ws;
+			}
 		}
 
 		/// <summary>
@@ -394,22 +430,25 @@ namespace SIL.CoreImpl
 		/// <returns></returns>
 		private bool Set(string identifier, out CoreWritingSystemDefinition ws)
 		{
-			ws = Create(identifier);
-			// Pathologically, the ws that Create chooses to create may not have the exact expected ID.
-			// For example, and id of x-kal will produce a new WS with Id qaa-x-kal.
-			// In such a case, we may already have a WS with the corrected ID. Set will then fail.
-			// So, in such a case, return the already-known WS.
-			if (identifier != ws.IetfLanguageTag)
+			lock (m_syncRoot)
 			{
-				CoreWritingSystemDefinition wsExisting;
-				if (TryGet(ws.IetfLanguageTag, out wsExisting))
+				ws = Create(identifier);
+				// Pathologically, the ws that Create chooses to create may not have the exact expected ID.
+				// For example, and id of x-kal will produce a new WS with Id qaa-x-kal.
+				// In such a case, we may already have a WS with the corrected ID. Set will then fail.
+				// So, in such a case, return the already-known WS.
+				if (identifier != ws.IetfLanguageTag)
 				{
-					ws = wsExisting;
-					return true;
+					CoreWritingSystemDefinition wsExisting;
+					if (TryGet(ws.IetfLanguageTag, out wsExisting))
+					{
+						ws = wsExisting;
+						return true;
+					}
 				}
+				Set(ws);
+				return false;
 			}
-			Set(ws);
-			return false;
 		}
 
 		/// <summary>
@@ -421,10 +460,13 @@ namespace SIL.CoreImpl
 		/// <returns><c>true</c> if the writing system already existed, otherwise <c>false</c></returns>
 		public bool GetOrSet(string identifier, out CoreWritingSystemDefinition ws)
 		{
-			if (TryGet(identifier, out ws))
-				return true;
-			bool foundExisting;
-			return Set(identifier, out ws);
+			lock (m_syncRoot)
+			{
+				if (TryGet(identifier, out ws))
+					return true;
+				bool foundExisting;
+				return Set(identifier, out ws);
+			}
 		}
 
 		/// <summary>
@@ -434,23 +476,26 @@ namespace SIL.CoreImpl
 		/// <param name="ws">The writing system.</param>
 		public void Replace(CoreWritingSystemDefinition ws)
 		{
-			CoreWritingSystemDefinition existingWs;
-			if (TryGet(ws.IetfLanguageTag, out existingWs))
+			lock (m_syncRoot)
 			{
-				if (existingWs == ws)
-					// don't do anything
-					return;
+				CoreWritingSystemDefinition existingWs;
+				if (TryGet(ws.IetfLanguageTag, out existingWs))
+				{
+					if (existingWs == ws)
+						// don't do anything
+						return;
 
-				m_handleWSs.Remove(existingWs.Handle);
-				m_repo.Remove(existingWs.Id);
-				m_repo.Set(ws);
-				ws.WritingSystemManager = this;
-				ws.Handle = existingWs.Handle;
-				m_handleWSs[ws.Handle] = ws;
-			}
-			else
-			{
-				Set(ws);
+					m_handleWSs.Remove(existingWs.Handle);
+					m_repo.Remove(existingWs.Id);
+					m_repo.Set(ws);
+					ws.WritingSystemManager = this;
+					ws.Handle = existingWs.Handle;
+					m_handleWSs[ws.Handle] = ws;
+				}
+				else
+				{
+					Set(ws);
+				}
 			}
 		}
 
@@ -483,9 +528,12 @@ namespace SIL.CoreImpl
 
 			set
 			{
-				if (!Exists(value.Id))
-					Set(value);
-				m_userWritingSystem = value;
+				lock (m_syncRoot)
+				{
+					if (!Exists(value.Id))
+						Set(value);
+					m_userWritingSystem = value;
+				}
 			}
 		}
 
@@ -494,16 +542,19 @@ namespace SIL.CoreImpl
 		/// </summary>
 		public void Save()
 		{
-			foreach (CoreWritingSystemDefinition ws in m_repo.AllWritingSystems)
+			lock (m_syncRoot)
 			{
-				if (ws.MarkedForDeletion)
+				foreach (CoreWritingSystemDefinition ws in m_repo.AllWritingSystems)
 				{
-					m_handleWSs.Remove(ws.Handle);
-					if (m_userWritingSystem == ws)
-						m_userWritingSystem = null;
+					if (ws.MarkedForDeletion)
+					{
+						m_handleWSs.Remove(ws.Handle);
+						if (m_userWritingSystem == ws)
+							m_userWritingSystem = null;
+					}
 				}
+				m_repo.Save();
 			}
-			m_repo.Save();
 		}
 
 		/// <summary>
@@ -512,7 +563,8 @@ namespace SIL.CoreImpl
 		/// </summary>
 		public bool CanSave(CoreWritingSystemDefinition ws)
 		{
-			return m_repo.CanSave(ws);
+			lock (m_syncRoot)
+				return m_repo.CanSave(ws);
 		}
 
 		/// <summary>
@@ -520,15 +572,18 @@ namespace SIL.CoreImpl
 		/// </summary>
 		public string GetLdmlFilePath(CoreWritingSystemDefinition ws)
 		{
-			var localFileRepo = m_repo as CoreLdmlInFolderWritingSystemRepository;
-			if (localFileRepo != null)
+			lock (m_syncRoot)
 			{
-				if (localFileRepo.Contains(ws.Id))
-					return localFileRepo.GetFilePathFromIetfLanguageTag(ws.IetfLanguageTag);
-				if (localFileRepo.GlobalWritingSystemRepository.Contains(ws.IetfLanguageTag))
-					return localFileRepo.GlobalWritingSystemRepository.GetFilePathFromIetfLanguageTag(ws.IetfLanguageTag);
+				var localFileRepo = m_repo as CoreLdmlInFolderWritingSystemRepository;
+				if (localFileRepo != null)
+				{
+					if (localFileRepo.Contains(ws.Id))
+						return localFileRepo.GetFilePathFromIetfLanguageTag(ws.IetfLanguageTag);
+					if (localFileRepo.GlobalWritingSystemRepository.Contains(ws.IetfLanguageTag))
+						return localFileRepo.GlobalWritingSystemRepository.GetFilePathFromIetfLanguageTag(ws.IetfLanguageTag);
+				}
+				return string.Empty;
 			}
-			return string.Empty;
 		}
 
 		/// <summary>
@@ -538,9 +593,12 @@ namespace SIL.CoreImpl
 		{
 			set
 			{
-				var localFileRepo = m_repo as CoreLdmlInFolderWritingSystemRepository;
-				if (localFileRepo != null)
-					localFileRepo.PathToWritingSystems = value;
+				lock (m_syncRoot)
+				{
+					var localFileRepo = m_repo as CoreLdmlInFolderWritingSystemRepository;
+					if (localFileRepo != null)
+						localFileRepo.PathToWritingSystems = value;
+				}
 			}
 		}
 
@@ -552,9 +610,12 @@ namespace SIL.CoreImpl
 		{
 			set
 			{
-				var localFileFactory = m_repo.WritingSystemFactory as CoreLdmlInFolderWritingSystemFactory;
-				if (localFileFactory != null)
-					localFileFactory.TemplateFolder = value;
+				lock (m_syncRoot)
+				{
+					var localFileFactory = m_repo.WritingSystemFactory as CoreLdmlInFolderWritingSystemFactory;
+					if (localFileFactory != null)
+						localFileFactory.TemplateFolder = value;
+				}
 			}
 		}
 
@@ -572,50 +633,53 @@ namespace SIL.CoreImpl
 		/// <param name="langName">The full name of the language.</param>
 		public string GetValidLangTagForNewLang(string langName)
 		{
-			string nameD = langName.Normalize(NormalizationForm.FormD); // Get the name in NFD format
-			var builder = new StringBuilder(nameD.ToLowerInvariant());
-			int index = 0;
-			while (index < builder.Length)
+			lock (m_syncRoot)
 			{
-				char c = builder[index];
-				bool charValid = (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
-				if (!charValid)
+				string nameD = langName.Normalize(NormalizationForm.FormD); // Get the name in NFD format
+				var builder = new StringBuilder(nameD.ToLowerInvariant());
+				int index = 0;
+				while (index < builder.Length)
 				{
-					// Found an invalid character, so remove it.
-					builder.Remove(index, 1);
-					continue;
-				}
-				index++;
-			}
-
-			string isoCode = builder.ToString().Substring(0, Math.Min(3, builder.Length));
-			if (IetfLanguageTagHelper.IsValidLanguageCode(isoCode) && !LangTagInUse("qaa-x-" + isoCode))
-				return isoCode; // The generated code is valid and not in use by the local or global store
-
-			// We failed to generate a valid, unused language tag from the language name so
-			// find one that isn't taken starting with 'aaa' and incrementing ('aab', 'aac', etc.)
-			builder.Remove(0, builder.Length); // Clear the builder
-			builder.Append("aaa");
-			while (LangTagInUse("qaa-x-" + builder))
-			{
-				var newCharLast = (char) (builder[2] + 1);
-				if (newCharLast > 'z')
-				{
-					// Incremented the last letter too far so reset it back to 'a' and increment the middle letter
-					newCharLast = 'a';
-					var newCharMiddle = (char) (builder[1] + 1);
-					if (newCharMiddle > 'z')
+					char c = builder[index];
+					bool charValid = (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+					if (!charValid)
 					{
-						// Incremented the middle letter too far so reset it back to 'a' and increment the first letter
-						// Assume we won't ever have more then 4096 (26^3) custom writing systems
-						newCharMiddle = 'a';
-						builder[0] = (char)(builder[0] + 1);
+						// Found an invalid character, so remove it.
+						builder.Remove(index, 1);
+						continue;
 					}
-					builder[1] = newCharMiddle;
+					index++;
 				}
-				builder[2] = newCharLast;
+
+				string isoCode = builder.ToString().Substring(0, Math.Min(3, builder.Length));
+				if (IetfLanguageTagHelper.IsValidLanguageCode(isoCode) && !LangTagInUse("qaa-x-" + isoCode))
+					return isoCode; // The generated code is valid and not in use by the local or global store
+
+				// We failed to generate a valid, unused language tag from the language name so
+				// find one that isn't taken starting with 'aaa' and incrementing ('aab', 'aac', etc.)
+				builder.Remove(0, builder.Length); // Clear the builder
+				builder.Append("aaa");
+				while (LangTagInUse("qaa-x-" + builder))
+				{
+					var newCharLast = (char) (builder[2] + 1);
+					if (newCharLast > 'z')
+					{
+						// Incremented the last letter too far so reset it back to 'a' and increment the middle letter
+						newCharLast = 'a';
+						var newCharMiddle = (char) (builder[1] + 1);
+						if (newCharMiddle > 'z')
+						{
+							// Incremented the middle letter too far so reset it back to 'a' and increment the first letter
+							// Assume we won't ever have more then 4096 (26^3) custom writing systems
+							newCharMiddle = 'a';
+							builder[0] = (char) (builder[0] + 1);
+						}
+						builder[1] = newCharMiddle;
+					}
+					builder[2] = newCharLast;
+				}
+				return builder.ToString();
 			}
-			return builder.ToString();
 		}
 
 		/// <summary>
@@ -638,7 +702,11 @@ namespace SIL.CoreImpl
 		/// </summary>
 		public IEnumerable<CoreWritingSystemDefinition> AllDistinctWritingSystems
 		{
-			get { return WritingSystems.Concat(OtherWritingSystems.Except(WritingSystems, new WritingSystemLangTagEqualityComparer())); }
+			get
+			{
+				lock (m_syncRoot)
+					return WritingSystems.Concat(OtherWritingSystems.Except(WritingSystems, new WritingSystemLangTagEqualityComparer())).ToArray();
+			}
 		}
 
 		#region Implementation of ILgWritingSystemFactory
@@ -649,8 +717,16 @@ namespace SIL.CoreImpl
 		/// <value>The user writing system's HVO.</value>
 		public int UserWs
 		{
-			get { return UserWritingSystem.Handle; }
-			set { UserWritingSystem = Get(value); }
+			get
+			{
+				lock (m_syncRoot)
+					return UserWritingSystem.Handle;
+			}
+			set
+			{
+				lock (m_syncRoot)
+					UserWritingSystem = Get(value);
+			}
 		}
 
 		/// <summary>
@@ -681,9 +757,12 @@ namespace SIL.CoreImpl
 		/// <returns></returns>
 		public ILgWritingSystem get_EngineOrNull(int ws)
 		{
-			if (!m_handleWSs.ContainsKey(ws))
-				return null;
-			return Get(ws);
+			lock (m_syncRoot)
+			{
+				if (!m_handleWSs.ContainsKey(ws))
+					return null;
+				return Get(ws);
+			}
 		}
 
 		/// <summary>
@@ -706,10 +785,13 @@ namespace SIL.CoreImpl
 		/// <returns></returns>
 		public string GetStrFromWs(int handle)
 		{
-			CoreWritingSystemDefinition ws;
-			if (m_handleWSs.TryGetValue(handle, out ws))
-				return ws.Id;
-			return null;
+			lock (m_syncRoot)
+			{
+				CoreWritingSystemDefinition ws;
+				if (m_handleWSs.TryGetValue(handle, out ws))
+					return ws.Id;
+				return null;
+			}
 		}
 
 		/// <summary>
@@ -719,7 +801,11 @@ namespace SIL.CoreImpl
 		/// <returns>A System.Int32 </returns>
 		public int NumberOfWs
 		{
-			get { return m_repo.Count; }
+			get
+			{
+				lock (m_syncRoot)
+					return m_repo.Count;
+			}
 		}
 
 		/// <summary>

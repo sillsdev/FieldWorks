@@ -364,7 +364,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 					else //if the subtag has no name try to be nice and look one up, this avoids getting our controls in a bad state
 					{
 						RegionSubtag region;
-						RegionName = StandardSubtags.Iso3166Regions.TryGet(value.Code, out region) ? region.Name : value.Code;
+						RegionName = StandardSubtags.RegisteredRegions.TryGet(value.Code, out region) ? region.Name : value.Code;
 					}
 					//m_regionName.SelectedItem = value;
 					if (m_regionName.SelectedItem == null)
@@ -551,11 +551,11 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			m_origRegionSubtag = m_ws.Region;
 			m_origScriptSubtag = m_ws.Script;
 			m_scriptName.ClearItems();
-			m_scriptName.Items.AddRange(StandardSubtags.Iso15924Scripts.Cast<object>().ToArray());
+			m_scriptName.Items.AddRange(StandardSubtags.RegisteredScripts.Cast<object>().ToArray());
 			ScriptSubtag = m_origScriptSubtag;
 
 			m_regionName.ClearItems();
-			m_regionName.Items.AddRange(StandardSubtags.Iso3166Regions.Cast<object>().ToArray());
+			m_regionName.Items.AddRange(StandardSubtags.RegisteredRegions.Cast<object>().ToArray());
 			RegionSubtag = m_origRegionSubtag;
 
 			PopulateVariantCombo(false);
@@ -599,7 +599,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			}
 			if (scriptSubtag != null && scriptSubtag.IsPrivateUse)
 			{
-				if (StandardSubtags.Iso15924Scripts.Contains(scriptSubtag.Code))
+				if (StandardSubtags.RegisteredScripts.Contains(scriptSubtag.Code))
 				{
 					MessageBox.Show(FindForm(), FwCoreDlgControls.kstidDupScrAbbr, caption);
 					return false;
@@ -620,7 +620,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			}
 			if (regionSubtag != null && regionSubtag.IsPrivateUse)
 			{
-				if (StandardSubtags.Iso3166Regions.Contains(regionSubtag.Code))
+				if (StandardSubtags.RegisteredRegions.Contains(regionSubtag.Code))
 				{
 					MessageBox.Show(FindForm(), FwCoreDlgControls.kstidDupRgnAbbr, caption);
 					return false;
@@ -850,7 +850,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			{
 				m_ws.IsVoice = true;
 				m_scriptName.Enabled = false;
-				string newScriptName = StandardSubtags.Iso15924Scripts[WellKnownSubtags.AudioScript].Name;
+				string newScriptName = StandardSubtags.RegisteredScripts[WellKnownSubtags.AudioScript].Name;
 				if (m_scriptNameString != newScriptName)
 				{
 					if (m_scriptName.FindStringExact(newScriptName) < 0)

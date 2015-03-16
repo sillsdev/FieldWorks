@@ -1282,7 +1282,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				throw new ArgumentNullException("code");
 
 			Version19ScriptSubtag subtag;
-			return new Version19ScriptSubtag(code, null, !StandardSubtags.Iso15924Scripts.Contains(code));
+			return new Version19ScriptSubtag(code, null, !StandardSubtags.RegisteredScripts.Contains(code));
 		}
 
 		/// <summary>
@@ -1296,7 +1296,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				throw new ArgumentNullException("code");
 
 			Version19RegionSubtag subtag;
-			return new Version19RegionSubtag(code, null, !StandardSubtags.Iso3166Regions.Contains(code));
+			return new Version19RegionSubtag(code, null, !StandardSubtags.RegisteredRegions.Contains(code));
 		}
 
 		/// <summary>
