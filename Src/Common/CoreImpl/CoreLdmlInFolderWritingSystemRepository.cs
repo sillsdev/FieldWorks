@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using System.Linq;
+using SIL.LexiconUtils;
 using SIL.WritingSystems;
 
 namespace SIL.CoreImpl
@@ -14,22 +14,20 @@ namespace SIL.CoreImpl
 		/// <summary>
 		/// Initializes a new instance of the <see cref="CoreLdmlInFolderWritingSystemRepository"/> class.
 		/// </summary>
-		/// <param name="path">The path.</param>
-		public CoreLdmlInFolderWritingSystemRepository(string path) : this(path, Enumerable.Empty<ICustomDataMapper<CoreWritingSystemDefinition>>())
-		{
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="CoreLdmlInFolderWritingSystemRepository"/> class.
-		/// </summary>
-		/// <param name="path">The path.</param>
-		/// <param name="customDataMappers">The custom data mappers.</param>
-		/// <param name="globalRepository">The global repository.</param>
-		public CoreLdmlInFolderWritingSystemRepository(string path, IEnumerable<ICustomDataMapper<CoreWritingSystemDefinition>> customDataMappers,
+		public CoreLdmlInFolderWritingSystemRepository(string path, ISettingsStore projectSettingsStore, ISettingsStore userSettingsStore,
 			CoreGlobalWritingSystemRepository globalRepository = null)
-			: base(path, customDataMappers.ToArray(), globalRepository)
+			: base(path, CreateCustomDataMappers(projectSettingsStore, userSettingsStore), globalRepository)
 		{
 			m_globalRepository = globalRepository;
+		}
+
+		private static IEnumerable<ICustomDataMapper<CoreWritingSystemDefinition>> CreateCustomDataMappers(ISettingsStore projectSettingsStore, ISettingsStore userSettingsStore)
+		{
+			return new ICustomDataMapper<CoreWritingSystemDefinition>[]
+			{
+				new ProjectSettingsWritingSystemDataMapper<CoreWritingSystemDefinition>(projectSettingsStore),
+				new UserSettingsWritingSystemDataMapper<CoreWritingSystemDefinition>(userSettingsStore)
+			};
 		}
 
 		/// <summary>

@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<languageproject version="7000068">
+
+	<rt class="LexEntry" guid="7ecbb299-bf35-4795-a5cc-8d38ce8b891c">
+		<DateCreated val="2005-6-23 16:30:31.590" />
+		<DateModified val="2006-9-29 21:58:0.17" />
+		<ExcludeAsHeadword val="true" />
+		<CitationForm>
+			<AUni ws="am-Ethi">himbilira</AUni>
+		</CitationForm>
+		<LiftResidue>
+			<Uni>
+&lt;lift-residue id="ऐक1_28406474-3ef2-4426-a157-8b71778bf620" dateCreated="2006-12-27T10:30:37Z" dateModified="2010-07-20T09:48:59Z"&gt;&lt;/lift-residue&gt; &lt;lift-residue id="ऐक2_1ba7bea3-db25-4970-b4a8-2348adfd628a" dateCreated="2009-12-08T10:33:30Z" dateModified="2009-12-08T10:33:30Z"&gt;&lt;/lift-residue&gt;
+</Uni>
+		</LiftResidue>
+	</rt>
+
+	<rt class="LexSense" guid="e3c2d179-3ccd-431e-ac2e-100bdb883680" ownerguid="7ecbb299-bf35-4795-a5cc-8d38ce8b891c">
+		<Definition>
+			<AStr ws="en">
+				<Run ws="en">female feline</Run>
+				<Run ws="am-Ethi">female feline</Run>
+			</AStr>
+			<AStr ws="am-Ethi">himbilira</AStr>
+			<AStr ws="fr"/>
+		</Definition>
+		<Gloss>
+			<AUni ws="en">cat</AUni>
+			<AUni ws="es">gato</AUni>
+		</Gloss>
+		<Bibliography>
+			<AUni ws="fr"></AUni>
+			<AUni ws="en">b</AUni>
+			<AUni ws="am-Ethi"></AUni>
+		</Bibliography>
+		<LiftResidue>
+			<Uni>
+				&lt;lift-residue id=&quot;aj1_8ef13061-21ae-480f-b3a9-6b694e1ec3c4&quot; dateCreated=&quot;2005-11-09T02:57:45Z&quot; dateModified=&quot;2010-07-03T08:15:00Z&quot;&gt;&lt;field type=&quot;Source Language&quot;&gt;
+				&lt;form lang=&quot;en&quot;&gt;&lt;text&gt;Proto-Tai&lt;/text&gt;&lt;/form&gt;
+				&lt;form lang=&quot;am-Ethi&quot;&gt;&lt;text&gt;￥ﾎﾟ￥ﾧﾋ￥ﾏﾰ￨ﾯﾭ&lt;/text&gt;&lt;/form&gt;
+				&lt;/field&gt;
+				&lt;/lift-residue&gt;
+			</Uni>
+		</LiftResidue>
+	</rt>
+
+	<rt guid="4d312f11-439e-11d4-b5e7-00400543a266" class="StStyle" ownerguid="b8bdad3d-9006-46f0-83e8-ae1d1726f2ad">
+		<IsBuiltIn val="True" />
+		<Name>
+			<Uni>Normal</Uni>
+		</Name>
+		<Type val="0" />
+		<Rules>
+			<Prop italic="off" bold="off" superscript="off" underline="none" fontsize="10000" fontsizeUnit="mpt" offset="0" offsetUnit="mpt" forecolor="black" backcolor="white" undercolor="black" align="leading" firstIndent="0" leadingIndent="0" trailingIndent="0" spaceBefore="0" spaceAfter="6000" lineHeight="10000" lineHeightUnit="rel" rightToLeft="0" borderTop="0" borderBottom="0" borderLeading="0" borderTrailing="0" borderColor="black" bulNumScheme="0" bulNumStartAt="1" fontFamily="&lt;default font&gt;">
+				<BulNumFontInfo backcolor="white" bold="off" fontsize="0mpt" forecolor="black" italic="off" offset="0mpt" superscript="off" undercolor="black" underline="none" fontFamily="Times New Roman" />
+				<WsStyles9999>
+					<WsProp ws="fr-fonipa" fontsize="14000" fontsizeUnit="mpt" />
+					<WsProp ws="am-Ethi" fontsize="14000" fontsizeUnit="mpt" />
+					<WsProp ws="dv" fontsize="14000" fontsizeUnit="mpt" />
+				</WsStyles9999>
+			</Prop>
+		</Rules>
+	</rt>
+
+	<rt guid="b8bdad3d-9006-46f0-83e8-ae1d1726f2ad" class="LangProject">
+		<DateCreated val="2005-4-29 20:57:23.193" />
+		<DateModified val="2011-3-2 21:9:26.862" />
+		<Description>
+			<AStr ws="en">
+				<Run ws="en">***</Run>
+			</AStr>
+		</Description>
+		<AnalysisWss>
+			<Uni>en am-Ethi</Uni>
+		</AnalysisWss>
+		<CurVernWss>
+			<Uni>seh am-Ethi fr</Uni>
+		</CurVernWss>
+		<CurAnalysisWss>
+			<Uni>en am-Ethi</Uni>
+		</CurAnalysisWss>
+		<CurPronunWss>
+			<Uni>am-Ethi</Uni>
+		</CurPronunWss>
+		<VernWss>
+			<Uni>am-Ethi</Uni>
+		</VernWss>
+		<Styles>
+			<objsur guid="4d312f11-439e-11d4-b5e7-00400543a266" t="o" />
+		</Styles>
+		<AffixCategories>
+			<objsur guid="b30aa28d-7510-49e6-b9ac-bc1902398ce6" t="o" />
+		</AffixCategories>
+		<LexDb>
+			<objsur guid="9c3c22f8-bf36-46e7-bc12-5c4e540ab897" t="o" />
+		</LexDb>
+	</rt>
+
+	<rt guid="9c3c22f8-bf36-46e7-bc12-5c4e540ab897" class="LexDb" ownerguid="b8bdad3d-9006-46f0-83e8-ae1d1726f2ad">
+		<Name>
+			<AUni ws="en">Sena Dictionary</AUni>
+		</Name>
+		<DateCreated val="2005-6-22 13:56:8.370" />
+		<DateModified val="2009-4-8 21:49:25.197" />
+		<IsHeadwordCitationForm val="False" />
+		<IsBodyInSeparateSubentry val="False" />
+		<ReversalIndexes>
+			<objsur t="o" guid="62105696-da6c-405e-b87f-a2a0294bb179" />
+		</ReversalIndexes>
+	</rt>
+
+	<rt class="ReversalIndex" guid="62105696-da6c-405e-b87f-a2a0294bb179" ownerguid="b8bdad3d-9006-46f0-83e8-ae1d1726f2ad">
+		<DateCreated val="2005-5-24 13:38:58.560" />
+		<DateModified val="2006-6-26 15:44:43.427" />
+		<Name>
+			<AUni ws="en">English</AUni>
+		</Name>
+		<PartsOfSpeech>
+			<objsur t="o" guid="b30aa28d-7510-49e6-b9ac-bc1902398ce6" />
+		</PartsOfSpeech>
+		<WritingSystem>
+			<Uni>am-Ethi</Uni>
+		</WritingSystem>
+	</rt>
+
+	<rt class="CmPossibilityList" guid="b30aa28d-7510-49e6-b9ac-bc1902398ce6" ownerguid="62105696-da6c-405e-b87f-a2a0294bb179">
+		<Name>
+			<AUni ws="en">Parts Of Speech-English</AUni>
+		</Name>
+		<WritingSystem>
+			<Uni>am-Ethi</Uni>
+		</WritingSystem>
+	</rt>
+
+	<rt class="CmBaseAnnotation" guid="dc747a85-ceb6-491e-8b54-7fc37d7b2f80">
+		<CompDetails>
+			<Uni>
+				&lt;phonEnv status="syntax" pos="6" syntaxErrType="unknown"&gt;/ _ i _
+				&lt;/phonEnv&gt;
+			</Uni>
+		</CompDetails>
+		<WritingSystem>
+			<Uni>am-Ethi</Uni>
+		</WritingSystem>
+	</rt>
+
+</languageproject>

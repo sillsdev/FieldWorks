@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ldml>
+	<identity>
+		<version number="" />
+		<generation date="2011-06-15T19:35:32" />
+		<language type="am" />
+		<script type="Ethi" />
+		<variant type="fonipa" />
+	</identity>
+	<special xmlns:palaso="urn://palaso.org/ldmlExtensions/v1">
+		<palaso:abbreviation value="AmhP" />
+		<palaso:defaultFontFamily value="Doulos SIL" />
+		<palaso:languageName value="Amharic" />
+		<palaso:spellCheckingId value="&lt;None&gt;" />
+		<palaso:version value="2" />
+	</special>
+	<special xmlns:palaso2="urn://palaso.org/ldmlExtensions/v2">
+		<palaso2:knownKeyboards>
+			<palaso2:keyboard
+				layout="English"
+				locale="en-US"
+				os="Win32NT" />
+		</palaso2:knownKeyboards>
+		<palaso2:version value="2" />
+	</special>
+	<special xmlns:fw="urn://fieldworks.sil.org/ldmlExtensions/v1">
+		<fw:graphiteEnabled value="False" />
+		<fw:validChars value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-16&quot;?&gt; &lt;ValidCharacters&gt;   &lt;WordForming&gt;'￼-￼‌￼‍￼⁰￼¹￼²￼³￼⁴￼⁵￼⁶￼⁷￼⁸￼⁹￼་￼༌￼Ꞌ￼ꞌ&lt;/WordForming&gt;   &lt;Numeric /&gt;   &lt;Other /&gt; &lt;/ValidCharacters&gt;" />
+		<fw:windowsLCID value="1033" />
+	</special>
+</ldml>

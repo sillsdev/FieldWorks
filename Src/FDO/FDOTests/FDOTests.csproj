@@ -281,6 +281,8 @@
     <Compile Include="DataMigrationTests\DataMigration7000065Tests.cs" />
     <Compile Include="DataMigrationTests\DataMigration7000066Tests.cs" />
     <Compile Include="DataMigrationTests\DataMigration7000067Tests.cs" />
+    <Compile Include="DataMigrationTests\DataMigration7000069Tests.cs" />
+    <Compile Include="DataMigrationTests\WritingSystemIdMigratorTests.cs" />
     <Compile Include="DataSortingServiceTests.cs" />
     <Compile Include="DataStoreInitializationServicesTests.cs" />
     <Compile Include="DummyFdoUI.cs" />

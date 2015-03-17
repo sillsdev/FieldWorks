@@ -18,7 +18,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.LexiconUtils;
 using SIL.Utils;
-using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 {
@@ -561,16 +560,12 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			string storePath = Path.Combine(ProjectId.ProjectFolder, FdoFileHelper.ksWritingSystemsDir);
 			WritingSystemManager wsManager = m_cache.ServiceLocator.WritingSystemManager;
 
-			// TODO (WS_FIX): migrate LocalKeyboards from CoreImpl settings
-			ICustomDataMapper<CoreWritingSystemDefinition>[] customDataMappers =
-			{
-				new ProjectSettingsWritingSystemDataMapper(new FileSettingsStore(Path.Combine(ProjectId.ProjectFolder, FdoFileHelper.ksLexiconProjectSettingsFilename))),
-				new UserSettingsWritingSystemDataMapper(new FileSettingsStore(Path.Combine(FdoFileHelper.GetConfigSettingsDir(ProjectId.ProjectFolder), FdoFileHelper.ksLexiconUserSettingsFilename)))
-			};
-			wsManager.WritingSystemStore = new CoreLdmlInFolderWritingSystemRepository(storePath, customDataMappers, globalRepo);
+			var projectSettingsStore = new FileSettingsStore(Path.Combine(FdoFileHelper.GetConfigSettingsDir(ProjectId.ProjectFolder), FdoFileHelper.ksLexiconProjectSettingsFilename));
+			var userSettingsStore = new FileSettingsStore(Path.Combine(FdoFileHelper.GetConfigSettingsDir(ProjectId.ProjectFolder), FdoFileHelper.ksLexiconUserSettingsFilename));
+			wsManager.WritingSystemStore = new CoreLdmlInFolderWritingSystemRepository(storePath, projectSettingsStore, userSettingsStore, globalRepo);
 
 			// Writing systems are not "modified" when the system is freshly-initialized
-			foreach (var ws in wsManager.WritingSystemStore.AllWritingSystems)
+			foreach (CoreWritingSystemDefinition ws in wsManager.WritingSystemStore.AllWritingSystems)
 				ws.AcceptChanges();
 		}
 

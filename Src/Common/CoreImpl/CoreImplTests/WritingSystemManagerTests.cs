@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
@@ -36,8 +35,8 @@ namespace SIL.CoreImpl
 
 		private class TestCoreLdmlInFolderWritingSystemRepository : CoreLdmlInFolderWritingSystemRepository
 		{
-			public TestCoreLdmlInFolderWritingSystemRepository(string path, IEnumerable<ICustomDataMapper<CoreWritingSystemDefinition>> customDataMappers,
-				CoreGlobalWritingSystemRepository globalRepository = null) : base(path, customDataMappers, globalRepository)
+			public TestCoreLdmlInFolderWritingSystemRepository(string path, ISettingsStore projectSettingsStore, ISettingsStore userSettingsStore,
+				CoreGlobalWritingSystemRepository globalRepository = null) : base(path, projectSettingsStore, userSettingsStore, globalRepository)
 			{
 			}
 
@@ -91,11 +90,7 @@ namespace SIL.CoreImpl
 			var projectSettingsStore = new TestSettingsStore();
 			var userSettingsStore = new TestSettingsStore();
 			// serialize
-			var wsManager = new WritingSystemManager(new TestCoreLdmlInFolderWritingSystemRepository(storePath, new ICustomDataMapper<CoreWritingSystemDefinition>[]
-			{
-				new ProjectSettingsWritingSystemDataMapper(projectSettingsStore),
-				new UserSettingsWritingSystemDataMapper(userSettingsStore)
-			}));
+			var wsManager = new WritingSystemManager(new TestCoreLdmlInFolderWritingSystemRepository(storePath, projectSettingsStore, userSettingsStore));
 			CoreWritingSystemDefinition ws = wsManager.Set("en-US");
 			ws.SpellCheckingId = "en_US";
 			ws.MatchedPairs.Add(new MatchedPair("(", ")", true));
@@ -105,11 +100,7 @@ namespace SIL.CoreImpl
 			wsManager.Save();
 
 			// deserialize
-			wsManager = new WritingSystemManager(new TestCoreLdmlInFolderWritingSystemRepository(storePath, new ICustomDataMapper<CoreWritingSystemDefinition>[]
-			{
-				new ProjectSettingsWritingSystemDataMapper(projectSettingsStore),
-				new UserSettingsWritingSystemDataMapper(userSettingsStore)
-			}));
+			wsManager = new WritingSystemManager(new TestCoreLdmlInFolderWritingSystemRepository(storePath, projectSettingsStore, userSettingsStore));
 			Assert.IsTrue(wsManager.Exists("en-US"));
 			ws = wsManager.Get("en-US");
 			Assert.AreEqual("Eng", ws.Abbreviation);
