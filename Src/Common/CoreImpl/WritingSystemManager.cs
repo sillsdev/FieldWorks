@@ -218,10 +218,17 @@ namespace SIL.CoreImpl
 				VariantSubtag[] variantSubtagsArray = variantSubtags.ToArray();
 				string langTag = IetfLanguageTagHelper.CreateIetfLanguageTag(languageSubtag, scriptSubtag, regionSubtag, variantSubtagsArray);
 				CoreWritingSystemDefinition ws = m_repo.WritingSystemFactory.Create(langTag);
-				ws.Language = languageSubtag;
-				ws.Script = scriptSubtag;
-				ws.Region = regionSubtag;
-				ws.Variants.ReplaceAll(variantSubtagsArray);
+				if (ws.Language != null && languageSubtag != null && ws.Language.Name != languageSubtag.Name)
+					ws.Language = new LanguageSubtag(ws.Language, languageSubtag.Name);
+				if (ws.Script != null && scriptSubtag != null && ws.Script.Name != scriptSubtag.Name)
+					ws.Script = new ScriptSubtag(ws.Script, scriptSubtag.Name);
+				if (ws.Region != null && regionSubtag != null && ws.Region.Name != regionSubtag.Name)
+					ws.Region = new RegionSubtag(ws.Region, regionSubtag.Name);
+				for (int i = 0; i < Math.Min(ws.Variants.Count, variantSubtagsArray.Length); i++)
+				{
+					if (ws.Variants[i].Code == variantSubtagsArray[i].Code && ws.Variants[i].Name != variantSubtagsArray[i].Name)
+						ws.Variants[i] = new VariantSubtag(ws.Variants[i], variantSubtagsArray[i].Name);
+				}
 				if (ws.Language != null && !string.IsNullOrEmpty(ws.Language.Name))
 					ws.Abbreviation = ws.Language.Name.Length > 3 ? ws.Language.Name.Substring(0, 3) : ws.Language.Name;
 				else
