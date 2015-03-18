@@ -2336,7 +2336,7 @@ namespace SIL.FieldWorks
 						// right away if we don't work with the process object. It might be better
 						// though to change the signature of OpenProjectWithNewProcess to return
 						// a boolean.
-						using (OpenProjectWithNewProcess((string)null, settings.ProjectName, null,
+						using (OpenProjectWithNewProcess(settings.ProjectName,
 							"-" + FwAppArgs.kRestoreFile, settings.Backup.File,
 							"-" + FwAppArgs.kRestoreOptions, settings.CommandLineOptions))
 						{
