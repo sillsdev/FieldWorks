@@ -547,7 +547,7 @@ namespace SIL.CoreImpl
 			{
 				lock (m_syncRoot)
 				{
-					var localFileFactory = m_repo.WritingSystemFactory as CoreLdmlInFolderWritingSystemFactory;
+					var localFileFactory = m_repo.WritingSystemFactory as CoreWritingSystemFactory;
 					if (localFileFactory != null)
 						localFileFactory.TemplateFolder = value;
 				}

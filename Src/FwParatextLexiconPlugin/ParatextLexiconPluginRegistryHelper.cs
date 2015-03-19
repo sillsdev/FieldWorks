@@ -8,7 +8,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 	internal class ParatextLexiconPluginRegistryHelper
 	{
 		private const string ProductName = "FieldWorks";
-		private const string FdoVersion = "8";
+		private const string FdoVersion = "9";
 
 		static ParatextLexiconPluginRegistryHelper()
 		{

@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// The current version of FieldWorks. This is also known in COMInterfaces/IcuWrappers.cs, InitIcuDataDir.
 		/// </summary>
-		public const int SuiteVersion = 8;
+		public const int SuiteVersion = 9;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

@@ -35,6 +35,8 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 					CopyDirectoryContents(DirectoryFinder.OldGlobalWritingSystemStoreDirectory,
 						GlobalWritingSystemRepository.CurrentVersionPath(GlobalWritingSystemRepository.DefaultBasePath));
 					globalMigrator.Migrate();
+					// delete old global writing systems, so they aren't migrated again
+					Directory.Delete(DirectoryFinder.OldGlobalWritingSystemStoreDirectory, true);
 				}
 			}
 
@@ -58,8 +60,8 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 					CoreWritingSystemDefinition ws;
 					if (repo.TryGet(wsId, out ws))
 					{
-						var layout = (string) keyboardsElem.Attribute("layout");
-						var locale = (string) keyboardsElem.Attribute("locale");
+						var layout = (string) keyboardElem.Attribute("layout");
+						var locale = (string) keyboardElem.Attribute("locale");
 						string keyboardId = string.IsNullOrEmpty(locale) ? layout : string.Format("{0}_{1}", locale, layout);
 						IKeyboardDefinition keyboard;
 						if (!Keyboard.Controller.TryGetKeyboard(keyboardId, out keyboard))

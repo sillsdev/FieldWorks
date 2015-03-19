@@ -2,7 +2,7 @@
 
 namespace SIL.CoreImpl
 {
-	internal class CoreWritingSystemFactory : WritingSystemFactoryBase<CoreWritingSystemDefinition>
+	internal class CoreWritingSystemFactory : WritingSystemFactory<CoreWritingSystemDefinition>
 	{
 		protected override CoreWritingSystemDefinition ConstructDefinition()
 		{
