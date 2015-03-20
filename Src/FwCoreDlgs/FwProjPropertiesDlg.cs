@@ -18,6 +18,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LexiconUtils;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -124,7 +125,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>Used to check if the vern ws at the top of the list changed</summary>
 		private CoreWritingSystemDefinition m_topVernWs;
 		private LinkLabel linkLbl_useDefaultFolder;
+		private CheckBox m_addWSsToSldrCheckBox;
 		private String m_defaultLinkedFilesFolder;
+		private readonly LexiconProjectSettings m_lexiconProjectSettings;
+		private readonly LexiconProjectSettingsDataMapper m_lexiconProjectSettingsDataMapper;
 		#endregion
 
 		#region Construction and initialization
@@ -164,6 +168,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;
 			m_stylesheet = stylesheet;
+			m_lexiconProjectSettingsDataMapper = new LexiconProjectSettingsDataMapper(m_cache.ServiceLocator.DataSetup.ProjectSettingsStore);
+			m_lexiconProjectSettings = new LexiconProjectSettings();
+			m_lexiconProjectSettingsDataMapper.Read(m_lexiconProjectSettings);
 
 			m_langProj = m_cache.LanguageProject;
 			InitializeWsTab();
@@ -229,6 +236,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				// Select the first item in the analysis writing system list.
 				if (m_lstAnalWs.Items.Count > 0)
 					m_lstAnalWs.SelectedIndex = 0;
+
+				m_addWSsToSldrCheckBox.Enabled = FLExBridgeHelper.DoesProjectHaveFlexRepo(m_cache.ProjectId) || FLExBridgeHelper.DoesProjectHaveLiftRepo(m_cache.ProjectId);
+				if (m_addWSsToSldrCheckBox.Enabled)
+					m_addWSsToSldrCheckBox.Checked = m_lexiconProjectSettings.AddWritingSystemsToSldr;
 				UpdateOKButton();
 			}
 		}
@@ -336,6 +347,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.m_lblProjCreatedDate = new System.Windows.Forms.Label();
 			this.m_lblProjName = new System.Windows.Forms.Label();
 			this.m_txtProjName = new System.Windows.Forms.TextBox();
+			this.m_addWSsToSldrCheckBox = new System.Windows.Forms.CheckBox();
 			this.m_btnAnalMoveUp = new System.Windows.Forms.Button();
 			this.m_btnAnalMoveDown = new System.Windows.Forms.Button();
 			this.m_btnDelAnalWs = new System.Windows.Forms.Button();
@@ -348,6 +360,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.m_btnAddVernWs = new System.Windows.Forms.Button();
 			this.m_lstAnalWs = new System.Windows.Forms.CheckedListBox();
 			this.m_lstVernWs = new System.Windows.Forms.CheckedListBox();
+			this.linkLbl_useDefaultFolder = new System.Windows.Forms.LinkLabel();
 			this.btnLinkedFilesBrowse = new System.Windows.Forms.Button();
 			this.txtExtLnkEdit = new System.Windows.Forms.TextBox();
 			this.m_btnOK = new System.Windows.Forms.Button();
@@ -361,7 +374,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.m_hideMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_mergeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_deleteMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.linkLbl_useDefaultFolder = new System.Windows.Forms.LinkLabel();
 			m_btnHelp = new System.Windows.Forms.Button();
 			m_btnCancel = new System.Windows.Forms.Button();
 			m_tpGeneral = new System.Windows.Forms.TabPage();
@@ -432,7 +444,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			// m_tbLocation
 			//
-			this.m_tbLocation.AccessibleDescription = global::SIL.FieldWorks.FwCoreDlgs.FwCoreDlgs.kstidOpen;
 			resources.ApplyResources(this.m_tbLocation, "m_tbLocation");
 			this.m_tbLocation.BackColor = System.Drawing.SystemColors.Window;
 			this.m_tbLocation.BorderStyle = System.Windows.Forms.BorderStyle.None;
@@ -540,6 +551,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			// m_tpWritingSystems
 			//
+			m_tpWritingSystems.Controls.Add(this.m_addWSsToSldrCheckBox);
 			m_tpWritingSystems.Controls.Add(this.m_btnAnalMoveUp);
 			m_tpWritingSystems.Controls.Add(this.m_btnAnalMoveDown);
 			m_tpWritingSystems.Controls.Add(this.m_btnDelAnalWs);
@@ -559,6 +571,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_tpWritingSystems.Name = "m_tpWritingSystems";
 			this.helpProvider1.SetShowHelp(m_tpWritingSystems, ((bool)(resources.GetObject("m_tpWritingSystems.ShowHelp"))));
 			m_tpWritingSystems.UseVisualStyleBackColor = true;
+			//
+			// m_addWSsToSldrCheckBox
+			//
+			resources.ApplyResources(this.m_addWSsToSldrCheckBox, "m_addWSsToSldrCheckBox");
+			this.m_addWSsToSldrCheckBox.Name = "m_addWSsToSldrCheckBox";
+			this.m_addWSsToSldrCheckBox.UseVisualStyleBackColor = true;
+			this.m_addWSsToSldrCheckBox.CheckedChanged += new System.EventHandler(this.m_addWSsToSldrCheckBox_CheckedChanged);
 			//
 			// m_btnAnalMoveUp
 			//
@@ -614,7 +633,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// m_btnVernMoveDown
 			//
 			resources.ApplyResources(this.m_btnVernMoveDown, "m_btnVernMoveDown");
-			this.helpProvider1.SetHelpKeyword(this.m_btnVernMoveDown, global::SIL.FieldWorks.FwCoreDlgs.FwCoreDlgs.kstidOpen);
+			this.helpProvider1.SetHelpKeyword(this.m_btnVernMoveDown, resources.GetString("m_btnVernMoveDown.HelpKeyword"));
 			this.helpProvider1.SetHelpString(this.m_btnVernMoveDown, resources.GetString("m_btnVernMoveDown.HelpString"));
 			this.m_btnVernMoveDown.Image = global::SIL.FieldWorks.FwCoreDlgs.Properties.Resources.arrowdown;
 			this.m_btnVernMoveDown.Name = "m_btnVernMoveDown";
@@ -699,6 +718,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.helpProvider1.SetShowHelp(m_tpExternalLinks, ((bool)(resources.GetObject("m_tpExternalLinks.ShowHelp"))));
 			m_tpExternalLinks.UseVisualStyleBackColor = true;
 			//
+			// linkLbl_useDefaultFolder
+			//
+			resources.ApplyResources(this.linkLbl_useDefaultFolder, "linkLbl_useDefaultFolder");
+			this.linkLbl_useDefaultFolder.Name = "linkLbl_useDefaultFolder";
+			this.linkLbl_useDefaultFolder.TabStop = true;
+			this.linkLbl_useDefaultFolder.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLbl_useDefaultFolder_LinkClicked);
+			//
 			// label13
 			//
 			resources.ApplyResources(label13, "label13");
@@ -769,13 +795,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			// m_wsMenuStrip
 			//
-			this.m_wsMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[]
-				{
-					this.m_modifyMenuItem,
-					this.m_hideMenuItem,
-					this.m_mergeMenuItem,
-					this.m_deleteMenuItem
-				});
+			this.m_wsMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+				this.m_modifyMenuItem,
+				this.m_hideMenuItem,
+				this.m_mergeMenuItem,
+				this.m_deleteMenuItem
+			});
 			this.m_wsMenuStrip.Name = "m_wsMenuStrip";
 			resources.ApplyResources(this.m_wsMenuStrip, "m_wsMenuStrip");
 			//
@@ -803,13 +828,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			resources.ApplyResources(this.m_deleteMenuItem, "m_deleteMenuItem");
 			this.m_deleteMenuItem.Click += new System.EventHandler(this.m_deleteMenuItem_Click);
 			//
-			// linkLbl_useDefaultFolder
-			//
-			resources.ApplyResources(this.linkLbl_useDefaultFolder, "linkLbl_useDefaultFolder");
-			this.linkLbl_useDefaultFolder.Name = "linkLbl_useDefaultFolder";
-			this.linkLbl_useDefaultFolder.TabStop = true;
-			this.linkLbl_useDefaultFolder.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLbl_useDefaultFolder_LinkClicked);
-			//
 			// FwProjPropertiesDlg
 			//
 			resources.ApplyResources(this, "$this");
@@ -820,7 +838,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.Controls.Add(m_btnHelp);
 			this.Controls.Add(this.m_btnOK);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-			this.helpProvider1.SetHelpString(this, global::SIL.FieldWorks.FwCoreDlgs.FwCoreDlgs.kstidOpen);
+			this.helpProvider1.SetHelpString(this, resources.GetString("$this.HelpString"));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "FwProjPropertiesDlg";
@@ -1057,6 +1075,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			var sNewLinkedFilesRootDir = txtExtLnkEdit.Text;
 			SaveLinkedFilesChanges(sNewLinkedFilesRootDir);
+
+			m_lexiconProjectSettingsDataMapper.Write(m_lexiconProjectSettings);
 		}
 
 		private void SaveLinkedFilesChanges(string sNewLinkedFilesRootDir)
@@ -1430,44 +1450,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		/// <summary>
-		/// If the LinkedFilesRootDir needs to exist when launching the Browse dialog for selecting LinkedFiles.
-		/// </summary>
-		private string HandleLinkedFilesPathDoesNotExist(string linkedFilesPath)
-		{
-
-			var defaultLinkedFilesPath = FdoFileHelper.GetDefaultLinkedFilesDir(m_cache.ProjectId.ProjectFolder);
-			if (!Directory.Exists(linkedFilesPath) && linkedFilesPath.Equals(defaultLinkedFilesPath))
-			{
-				//if the path points to the default location but does not exist then create it.
-				Directory.CreateDirectory(defaultLinkedFilesPath);
-				return defaultLinkedFilesPath;
-			}
-			while (true)
-			{
-				if (!Directory.Exists(linkedFilesPath))
-				{
-					var message =
-						String.Format(
-							FwCoreDlgs.ksLinkedFilesFolderDoesNotExist,
-							linkedFilesPath);
-					var result = MessageBox.Show(message, FwCoreDlgs.ksLinkedFilesPathNotAccessible, MessageBoxButtons.YesNo,
-												 MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
-					if (result == DialogResult.No)
-					{
-						//if the path points to the default location but does not exist then create it.
-						Directory.CreateDirectory(defaultLinkedFilesPath);
-						m_fLinkedFilesChanged = true;
-						return defaultLinkedFilesPath;
-					}
-				}
-				else
-				{
-					return linkedFilesPath;
-				}
-			}
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handle Help button click. Show Help.
@@ -1787,6 +1769,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		// This is used before SaveInternal, which sets m_fWsChanged for these (and the modify) cases.
 		bool DidWsTabChange()
 		{
+			if (m_lexiconProjectSettings.IsChanged)
+				return true;
 			if (m_deletedWritingSystems.Count > 0)
 				return true;
 			if (m_mergedWritingSystems.Count > 0)
@@ -1840,7 +1824,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					allSet.Add(ws);
 				}
 				m_fWsChanged = true;
-				foreach (var newWs in newWsIds)
+				foreach (string newWs in newWsIds)
 				{
 					// IcuLocale uses _ to separate, RFC5646 uses -.  We need the latter (see FWNX-1165).
 					ProgressDialogWithTask.ImportTranslatedListsForWs(this, m_cache, newWs.Replace("_","-"));
@@ -1936,6 +1920,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			txtExtLnkEdit.Text = m_defaultLinkedFilesFolder;
 			if (!Directory.Exists(m_defaultLinkedFilesFolder))
 				Directory.CreateDirectory(m_defaultLinkedFilesFolder);
+		}
+
+		private void m_addWSsToSldrCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			m_lexiconProjectSettings.AddWritingSystemsToSldr = m_addWSsToSldrCheckBox.Checked;
 		}
 	}
 	#endregion //FwProjPropertiesDlg dialog

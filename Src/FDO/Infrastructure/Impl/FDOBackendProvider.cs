@@ -560,9 +560,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			string storePath = Path.Combine(ProjectId.ProjectFolder, FdoFileHelper.ksWritingSystemsDir);
 			WritingSystemManager wsManager = m_cache.ServiceLocator.WritingSystemManager;
 
-			var projectSettingsStore = new FileSettingsStore(Path.Combine(FdoFileHelper.GetConfigSettingsDir(ProjectId.ProjectFolder), FdoFileHelper.ksLexiconProjectSettingsFilename));
-			var userSettingsStore = new FileSettingsStore(Path.Combine(FdoFileHelper.GetConfigSettingsDir(ProjectId.ProjectFolder), FdoFileHelper.ksLexiconUserSettingsFilename));
-			wsManager.WritingSystemStore = new CoreLdmlInFolderWritingSystemRepository(storePath, projectSettingsStore, userSettingsStore, globalRepo);
+			wsManager.WritingSystemStore = new CoreLdmlInFolderWritingSystemRepository(storePath, ProjectSettingsStore, UserSettingsStore, globalRepo);
 
 			// Writing systems are not "modified" when the system is freshly-initialized
 			foreach (CoreWritingSystemDefinition ws in wsManager.WritingSystemStore.AllWritingSystems)
@@ -945,6 +943,9 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		// MySQL in particular gets confused if you monkey directly with file names,
 		// because each table is a separate file, and the database name is a directory.
 		public abstract bool RenameDatabase(string sNewBasename);
+
+		public abstract ISettingsStore ProjectSettingsStore { get; }
+		public abstract ISettingsStore UserSettingsStore { get; }
 
 		#endregion IDataSetup implementation
 

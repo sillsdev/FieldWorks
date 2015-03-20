@@ -15,6 +15,7 @@ using System.Xml;
 using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
+using SIL.LexiconUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
@@ -114,6 +115,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		private bool m_needConversion; // communicates to MakeSurrogate that we're reading an old version.
 		private int m_startupVersionNumber;
 		private IList<string> m_listOfDuplicateGuids = new List<string>();
+		private ISettingsStore m_projectSettingsStore;
+		private ISettingsStore m_userSettingsStore;
 		#endregion
 
 		/// <summary>
@@ -152,8 +155,15 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// ------------------------------------------------------------------------------------
 		protected override int StartupInternal(int currentModelVersion)
 		{
+			CreateSettingsStores();
 			LockProject();
 			return ReadInSurrogates(currentModelVersion);
+		}
+
+		protected void CreateSettingsStores()
+		{
+			m_projectSettingsStore = new FileSettingsStore(Path.Combine(FdoFileHelper.GetConfigSettingsDir(ProjectId.ProjectFolder), FdoFileHelper.ksLexiconProjectSettingsFilename));
+			m_userSettingsStore = new FileSettingsStore(Path.Combine(FdoFileHelper.GetConfigSettingsDir(ProjectId.ProjectFolder), FdoFileHelper.ksLexiconUserSettingsFilename));
 		}
 
 		protected int ReadInSurrogates(int currentModelVersion)
@@ -771,6 +781,16 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				return false;
 			}
 			return true;
+		}
+
+		public override ISettingsStore ProjectSettingsStore
+		{
+			get { return m_projectSettingsStore; }
+		}
+
+		public override ISettingsStore UserSettingsStore
+		{
+			get { return m_userSettingsStore; }
 		}
 
 		static string GetAttribute(byte[] name, byte[] input)

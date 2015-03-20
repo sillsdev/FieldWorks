@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using SIL.LexiconUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.Infrastructure
@@ -116,6 +117,16 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 		/// <param name="sNewBasename"></param>
 		/// <returns>true if the rename succeeds, false if it fails</returns>
 		bool RenameDatabase(string sNewBasename);
+
+		/// <summary>
+		/// Gets the lexicon project settings store.
+		/// </summary>
+		ISettingsStore ProjectSettingsStore { get; }
+
+		/// <summary>
+		/// Gets the lexicon user settings store.
+		/// </summary>
+		ISettingsStore UserSettingsStore { get; }
 	}
 
 	/// <summary>

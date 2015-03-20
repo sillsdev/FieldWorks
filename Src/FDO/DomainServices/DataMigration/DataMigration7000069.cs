@@ -44,8 +44,11 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			var migrator = new LdmlInFolderWritingSystemRepositoryMigrator(ldmlFolder, NoteMigration, 3);
 			migrator.Migrate();
 
-			var projectSettingsStore = new FileSettingsStore(Path.Combine(FdoFileHelper.GetConfigSettingsDir(repoDto.ProjectFolder), FdoFileHelper.ksLexiconProjectSettingsFilename));
-			var userSettingsStore = new FileSettingsStore(Path.Combine(FdoFileHelper.GetConfigSettingsDir(repoDto.ProjectFolder), FdoFileHelper.ksLexiconUserSettingsFilename));
+			string configSettingsPath = FdoFileHelper.GetConfigSettingsDir(repoDto.ProjectFolder);
+			if (!Directory.Exists(configSettingsPath))
+				Directory.CreateDirectory(configSettingsPath);
+			var projectSettingsStore = new FileSettingsStore(Path.Combine(configSettingsPath, FdoFileHelper.ksLexiconProjectSettingsFilename));
+			var userSettingsStore = new FileSettingsStore(Path.Combine(configSettingsPath, FdoFileHelper.ksLexiconUserSettingsFilename));
 			var repo = new CoreLdmlInFolderWritingSystemRepository(ldmlFolder, projectSettingsStore, userSettingsStore);
 			migrator.ResetRemovedProperties(repo);
 

@@ -118,12 +118,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				// If Fix it app does not exist, then disable main FLEx S/R, since FB needs to call it, after a merge.
 				// If !IsConfiguredForSR (failed the first time), disable the button and hotkey
-				display.Enabled = display.Enabled && FLExBridgeHelper.FixItAppExists && IsConfiguredForSR(Cache.ProjectId.ProjectFolder);
+				display.Enabled = display.Enabled && FLExBridgeHelper.FixItAppExists && FLExBridgeHelper.DoesProjectHaveFlexRepo(Cache.ProjectId);
 			}
 			else if (bridgeLastUsed == "LiftBridge")
 			{
 				// If !IsConfiguredForLiftSR (failed first time), disable the button and hotkey
-				display.Enabled = display.Enabled && IsConfiguredForLiftSR(Cache.ProjectId.ProjectFolder);
+				display.Enabled = display.Enabled && FLExBridgeHelper.DoesProjectHaveLiftRepo(Cache.ProjectId);
 			}
 			else // there was no LastBridgeUsed (this is the first time), disable the button and hotkey
 			{
@@ -265,14 +265,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				return true; // Flex Bridge isn't installed, so the rest doesn't matter.
 
 			// If Fix it app does not exist, then disable main FLEx S/R, since FB needs to call it, after a merge.
-			display.Enabled = IsConfiguredForSR(Cache.ProjectId.ProjectFolder) && FLExBridgeHelper.FixItAppExists;
+			display.Enabled = FLExBridgeHelper.DoesProjectHaveFlexRepo(Cache.ProjectId) && FLExBridgeHelper.FixItAppExists;
 
 			return true; // We dealt with it.
-		}
-
-		private static bool IsConfiguredForSR(string projectFolder)
-		{
-			return Directory.Exists(Path.Combine(projectFolder, ".hg"));
 		}
 
 		/// <summary>
@@ -389,18 +384,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (!display.Enabled)
 				return true; // Flex Bridge isn't installed, so the rest doesn't matter.
 
-			display.Enabled = !OldLiftBridgeProjects.Contains(Cache.LangProject.Guid.ToString()) &&
-									!IsConfiguredForLiftSR(Cache.ProjectId.ProjectFolder);
+			display.Enabled = !OldLiftBridgeProjects.Contains(Cache.LangProject.Guid.ToString())
+				&& !FLExBridgeHelper.DoesProjectHaveLiftRepo(Cache.ProjectId);
 			return true; // We dealt with it.
-		}
-
-		private static bool IsConfiguredForLiftSR(string folder)
-		{
-			var otherRepoPath = Path.Combine(folder, FdoFileHelper.OtherRepositories);
-			if (!Directory.Exists(otherRepoPath))
-				return false;
-			var liftFolder = Directory.EnumerateDirectories(otherRepoPath, "*_LIFT").FirstOrDefault();
-			return !String.IsNullOrEmpty(liftFolder) && IsConfiguredForSR(liftFolder);
 		}
 
 		/// <summary>
@@ -412,7 +398,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (!display.Enabled)
 				return true; // Flex Bridge isn't installed, so the rest doesn't matter.
 
-			display.Enabled = !IsConfiguredForSR(Cache.ProjectId.ProjectFolder);
+			display.Enabled = !FLExBridgeHelper.DoesProjectHaveFlexRepo(Cache.ProjectId);
 			return true; // We dealt with it.
 		}
 
@@ -436,7 +422,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (!display.Enabled)
 				return true; // Flex Bridge isn't installed, so the rest doesn't matter.
 
-				display.Enabled = OldLiftBridgeProjects.Contains(Cache.LangProject.Guid.ToString()) || IsConfiguredForLiftSR(Cache.ProjectId.ProjectFolder);
+				display.Enabled = OldLiftBridgeProjects.Contains(Cache.LangProject.Guid.ToString()) || FLExBridgeHelper.DoesProjectHaveLiftRepo(Cache.ProjectId);
 			return true; // We dealt with it.
 		}
 

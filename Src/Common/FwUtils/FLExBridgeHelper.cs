@@ -8,6 +8,7 @@ using System.Reflection;
 using System.ServiceModel;
 using System.Threading;
 using System.Windows.Forms;
+using SIL.FieldWorks.FDO;
 using SIL.Utils;
 
 using IPCFramework;
@@ -368,18 +369,35 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns><c>true</c> if is flex bridge installed; otherwise, <c>false</c>.</returns>
 		public static bool IsFlexBridgeInstalled()
 		{
-			var fullName = FLExBridgeHelper.FullFieldWorksBridgePath();
+			string fullName = FullFieldWorksBridgePath();
 			return FileUtils.FileExists(fullName); // Flex Bridge exe has to exist
 		}
 
 		/// <summary>
 		/// Answer whether the project appears to have a FLEx repo. This is currently determined by its having a .hg folder.
 		/// </summary>
-		/// <param name="projectFolderPath">Path to the project folder</param>
 		/// <returns></returns>
-		public static bool DoesProjectHaveFlexRepo(string projectFolderPath)
+		public static bool DoesProjectHaveFlexRepo(IProjectIdentifier projectId)
 		{
-			return Directory.Exists(Path.Combine(projectFolderPath, ".hg"));
+			return IsMercurialRepo(projectId.ProjectFolder);
+		}
+
+		/// <summary>
+		/// Answer whether the project appears to have a LIFT repo.
+		/// </summary>
+		/// <returns></returns>
+		public static bool DoesProjectHaveLiftRepo(IProjectIdentifier projectId)
+		{
+			string otherRepoPath = Path.Combine(projectId.ProjectFolder, FdoFileHelper.OtherRepositories);
+			if (!Directory.Exists(otherRepoPath))
+				return false;
+			string liftFolder = Directory.EnumerateDirectories(otherRepoPath, "*_LIFT").FirstOrDefault();
+			return !String.IsNullOrEmpty(liftFolder) && IsMercurialRepo(liftFolder);
+		}
+
+		private static bool IsMercurialRepo(string path)
+		{
+			return Directory.Exists(Path.Combine(path, ".hg"));
 		}
 
 		/// <summary>

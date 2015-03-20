@@ -9,6 +9,7 @@
 
 using System.Collections.Generic;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
+using SIL.LexiconUtils;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 {
@@ -18,6 +19,9 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 	/// </summary>
 	internal sealed class MemoryOnlyBackendProvider : FDOBackendProvider
 	{
+		private readonly ISettingsStore m_projectSettingsStore;
+		private readonly ISettingsStore m_userSettingsStore;
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -25,6 +29,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			IFwMetaDataCacheManagedInternal mdc, IDataMigrationManager dataMigrationManager, IFdoUI ui, IFdoDirectories dirs, FdoSettings settings)
 			: base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager, ui, dirs, settings)
 		{
+			m_projectSettingsStore = new MemorySettingsStore();
+			m_userSettingsStore = new MemorySettingsStore();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -104,6 +110,16 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		public override bool RenameDatabase(string sNewBasename)
 		{
 			return RenameMyFiles(sNewBasename);
+		}
+
+		public override ISettingsStore ProjectSettingsStore
+		{
+			get { return m_projectSettingsStore; }
+		}
+
+		public override ISettingsStore UserSettingsStore
+		{
+			get { return m_userSettingsStore; }
 		}
 
 		/// <summary>

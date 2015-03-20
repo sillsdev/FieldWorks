@@ -68,6 +68,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		protected override int StartupInternal(int currentModelVersion)
 		{
+			CreateSettingsStores();
 			bool createdNew;
 			m_commitLogMutex = new Mutex(true, MutexName, out createdNew);
 			if (!createdNew)
