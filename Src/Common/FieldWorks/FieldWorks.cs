@@ -275,8 +275,9 @@ namespace SIL.FieldWorks
 					Settings.Default.Save();
 				}
 
-				// e.g. the first time the user runs FW8, we need to copy a bunch of registry keys
-				// from HKCU/Software/SIL/FieldWorks/7.0 -> FieldWorks/8.
+				// e.g. the first time the user runs FW9, we need to copy a bunch of registry keys
+				// from HKCU/Software/SIL/FieldWorks/7.0 -> FieldWorks/9 or
+				// from HKCU/Software/SIL/FieldWorks/8 -> FieldWorks/9
 				FwRegistryHelper.UpgradeUserSettingsIfNeeded();
 
 				// initialize the TE styles path so that ScrMappingList can load default styles

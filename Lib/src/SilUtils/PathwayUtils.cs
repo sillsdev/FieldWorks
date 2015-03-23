@@ -32,7 +32,7 @@ namespace SIL.Utils
 			get
 			{
 				object regObj;
-				if (RegistryHelper.RegEntryExists(RegistryHelper.CompanyKey, SilSubKey.Pathway,
+				if (RegistryHelper.RegEntryValueExists(RegistryHelper.CompanyKey, SilSubKey.Pathway,
 					"PathwayDir", out regObj))
 				{
 					return (string)regObj;
@@ -49,7 +49,7 @@ namespace SIL.Utils
 						return string.Empty;
 				}
 
-				if (RegistryHelper.RegEntryExists(RegistryHelper.CompanyKeyLocalMachine, SilSubKey.Pathway,
+				if (RegistryHelper.RegEntryValueExists(RegistryHelper.CompanyKeyLocalMachine, SilSubKey.Pathway,
 					"PathwayDir", out regObj))
 				{
 					return (string) regObj;
