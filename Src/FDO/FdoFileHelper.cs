@@ -55,12 +55,12 @@ namespace SIL.FieldWorks.FDO
 		/// <summary>
 		/// The filename for the lexicon project settings file.
 		/// </summary>
-		public const string ksLexiconProjectSettingsFilename = "LexiconProjectSettings.xml";
+		public const string ksLexiconProjectSettingsFilename = "LexiconProjectSettings.lpsx";
 
 		/// <summary>
 		/// The filename for the lexicon user settings file.
 		/// </summary>
-		public const string ksLexiconUserSettingsFilename = "LexiconUserSettings.xml";
+		public const string ksLexiconUserSettingsFilename = "LexiconUserSettings.lusx";
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
