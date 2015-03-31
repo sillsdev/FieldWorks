@@ -693,7 +693,7 @@ namespace SIL.FieldWorks.Common.Controls
 			mapChars = new Dictionary<string, string>();
 			CoreWritingSystemDefinition ws = m_cache.ServiceLocator.WritingSystemManager.Get(sWs);
 
-			var simpleCollation = ws.DefaultCollation as SimpleCollationDefinition;
+			var simpleCollation = ws.DefaultCollation as SimpleRulesCollationDefinition;
 			if (simpleCollation != null)
 			{
 				if (!string.IsNullOrEmpty(simpleCollation.SimpleRules))
@@ -710,7 +710,7 @@ namespace SIL.FieldWorks.Common.Controls
 			else
 			{
 				// is this a custom ICU collation?
-				var icuCollation = ws.DefaultCollation as IcuCollationDefinition;
+				var icuCollation = ws.DefaultCollation as IcuRulesCollationDefinition;
 				if (icuCollation != null && !string.IsNullOrEmpty(icuCollation.IcuRules))
 				{
 					// prime with empty ws in case all the rules affect only the ignore set

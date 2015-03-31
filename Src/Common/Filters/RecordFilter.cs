@@ -51,6 +51,7 @@ using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.CoreImpl;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.Filters
 {
@@ -1036,7 +1037,11 @@ namespace SIL.FieldWorks.Filters
 			// Enhance JohnT: we would like to be able to make it use the defined collating rules for the
 			// other sort types, but don't currently know how.
 			if (ws != null)
-				pattern.IcuCollatingRules = ws.DefaultCollation.CollationRules;
+			{
+				var rulesCollation = ws.DefaultCollation as RulesCollationDefinition;
+				if (rulesCollation != null && rulesCollation.IsValid)
+					pattern.IcuCollatingRules = rulesCollation.CollationRules;
+			}
 		}
 	}
 

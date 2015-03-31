@@ -226,8 +226,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 		internal void ValidateSortingTab()
 		{
-			var simpleCollation = CurrentWritingSystem.DefaultCollation as SimpleCollationDefinition;
-			string sortRules = simpleCollation != null ? simpleCollation.SimpleRules : ((IcuCollationDefinition) CurrentWritingSystem.DefaultCollation).IcuRules;
+			var simpleCollation = CurrentWritingSystem.DefaultCollation as SimpleRulesCollationDefinition;
+			string sortRules = simpleCollation != null ? simpleCollation.SimpleRules : ((IcuRulesCollationDefinition) CurrentWritingSystem.DefaultCollation).IcuRules;
 			Assert.AreEqual(sortRules, m_sortRulesTextBox.Text);
 		}
 		#endregion

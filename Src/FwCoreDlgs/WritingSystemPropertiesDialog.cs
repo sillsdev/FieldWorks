@@ -566,19 +566,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				m_currentCollationRulesType = CollationRulesType.DefaultOrdering;
 			}
-			else if (CurrentWritingSystem.DefaultCollation is SimpleCollationDefinition)
+			else if (CurrentWritingSystem.DefaultCollation is SimpleRulesCollationDefinition)
 			{
 				m_currentCollationRulesType = CollationRulesType.CustomSimple;
 			}
-			else if (CurrentWritingSystem.DefaultCollation is IcuCollationDefinition)
+			else if (CurrentWritingSystem.DefaultCollation is IcuRulesCollationDefinition)
 			{
-				var icuCollation = (IcuCollationDefinition) CurrentWritingSystem.DefaultCollation;
-				if (string.IsNullOrEmpty(icuCollation.IcuRules) && icuCollation.Imports.Count == 1 && icuCollation.Imports[0].IetfLanguageTag != CurrentWritingSystem.IetfLanguageTag)
-					m_currentCollationRulesType = CollationRulesType.OtherLanguage;
-				else if (!string.IsNullOrEmpty(icuCollation.IcuRules) || icuCollation.Imports.Count > 0)
+				var icuCollation = (IcuRulesCollationDefinition) CurrentWritingSystem.DefaultCollation;
+				if (!string.IsNullOrEmpty(icuCollation.IcuRules) || icuCollation.Imports.Count > 0)
 					m_currentCollationRulesType = CollationRulesType.CustomIcu;
 				else
 					m_currentCollationRulesType = CollationRulesType.DefaultOrdering;
+			}
+			else if (CurrentWritingSystem.DefaultCollation is SystemCollationDefinition)
+			{
+				m_currentCollationRulesType = CollationRulesType.OtherLanguage;
 			}
 		}
 
@@ -611,7 +613,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					m_sortRulesButtonPanel.Visible = true;
 					m_sortRulesLoadPanel.Visible = true;
 					m_sortingHelpLabel.Text = string.Format(FwCoreDlgs.kstidIcuSortingHelp, Environment.NewLine);
-					var icuCollation = (IcuCollationDefinition) ws.DefaultCollation;
+					var icuCollation = (IcuRulesCollationDefinition) ws.DefaultCollation;
 					m_sortRulesTextBox.Tss = m_tsf.MakeString(icuCollation.CollationRules, ws.Handle);
 					break;
 
@@ -621,32 +623,20 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					m_sortRulesButtonPanel.Visible = false;
 					m_sortRulesLoadPanel.Visible = false;
 					m_sortingHelpLabel.Text = string.Format(FwCoreDlgs.kstidSimpleSortingHelp, Environment.NewLine);
-					var simpleCollation = (SimpleCollationDefinition) ws.DefaultCollation;
+					var simpleCollation = (SimpleRulesCollationDefinition) ws.DefaultCollation;
 					m_sortRulesTextBox.Tss = m_tsf.MakeString(simpleCollation.SimpleRules, ws.Handle);
 					break;
 
 				case CollationRulesType.OtherLanguage:
 					m_sortRulesPanel.Visible = false;
 					m_sortLanguagePanel.Visible = true;
-					var otherLangCollation = (IcuCollationDefinition) ws.DefaultCollation;
-					string langTag = otherLangCollation.Imports.Count == 0 ? string.Empty : otherLangCollation.Imports[0].IetfLanguageTag;
-					if (string.IsNullOrEmpty(langTag))
+					var systemCollation = (SystemCollationDefinition) ws.DefaultCollation;
+					if (string.IsNullOrEmpty(systemCollation.IetfLanguageTag))
 					{
-						try
-						{
-							CultureInfo ci = CultureInfo.GetCultureInfo(ws.IetfLanguageTag);
-							m_sortLanguageComboBox.SelectedValue = ci.Name;
-						}
-						catch (ArgumentException)
-						{
-							m_sortLanguageComboBox.SelectedIndex = 0;
-							otherLangCollation.Imports.Add(new IcuCollationImport((string) m_sortLanguageComboBox.SelectedValue));
-						}
+						string message;
+						systemCollation.IetfLanguageTag = SystemCollator.ValidateIetfLanguageTag(ws.IetfLanguageTag, out message) ? ws.IetfLanguageTag : ((CultureInfo) m_sortLanguageComboBox.Items[0]).Name;
 					}
-					else
-					{
-						m_sortLanguageComboBox.SelectedValue = langTag;
-					}
+					m_sortLanguageComboBox.SelectedValue = systemCollation.IetfLanguageTag;
 					break;
 			}
 			m_userChangedSortRules = true;
@@ -1863,7 +1853,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void m_similarWsButton_LocaleSelected(object sender, EventArgs e)
 		{
 			string baseLocale = m_similarWsButton.SelectedLocaleId;
-			var icuCollation = (IcuCollationDefinition) CurrentWritingSystem.DefaultCollation;
+			var icuCollation = (IcuRulesCollationDefinition) CurrentWritingSystem.DefaultCollation;
 			if (!string.IsNullOrEmpty(icuCollation.IcuRules))
 			{
 				// "Overwrite existing collation rules?";
@@ -2187,13 +2177,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				switch (m_currentCollationRulesType)
 				{
 					case CollationRulesType.CustomIcu:
-						var icuCollation = (IcuCollationDefinition) ws.DefaultCollation;
+						var icuCollation = (IcuRulesCollationDefinition) ws.DefaultCollation;
 						icuCollation.Imports.Clear();
 						icuCollation.IcuRules = rules;
 						break;
 
 					case CollationRulesType.CustomSimple:
-						((SimpleCollationDefinition) ws.DefaultCollation).SimpleRules = rules;
+						((SimpleRulesCollationDefinition) ws.DefaultCollation).SimpleRules = rules;
 						break;
 				}
 			}
@@ -2246,11 +2236,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				case CollationRulesType.DefaultOrdering:
 				case CollationRulesType.CustomIcu:
-				case CollationRulesType.OtherLanguage:
-					ws.DefaultCollation = new IcuCollationDefinition(ws.DefaultCollation.Type);
+					ws.DefaultCollation = new IcuRulesCollationDefinition(ws.DefaultCollationType);
 					break;
 				case CollationRulesType.CustomSimple:
-					ws.DefaultCollation = new SimpleCollationDefinition(ws.DefaultCollation.Type);
+					ws.DefaultCollation = new SimpleRulesCollationDefinition(ws.DefaultCollationType);
+					break;
+				case CollationRulesType.OtherLanguage:
+					ws.DefaultCollation = new SystemCollationDefinition();
 					break;
 			}
 			SetupSortTab(ws);
@@ -2261,10 +2253,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			CoreWritingSystemDefinition ws = CurrentWritingSystem;
 			if (ws != null)
 			{
-				var otherLangCollation = (IcuCollationDefinition) ws.DefaultCollation;
-				otherLangCollation.Imports.Clear();
-				otherLangCollation.Imports.Add(new IcuCollationImport((string) m_sortLanguageComboBox.SelectedValue));
-				otherLangCollation.IcuRules = string.Empty;
+				var systemCollation = (SystemCollationDefinition) ws.DefaultCollation;
+				systemCollation.IetfLanguageTag = (string) m_sortLanguageComboBox.SelectedValue;
 			}
 		}
 

@@ -189,7 +189,7 @@ namespace SIL.CoreImpl
 			Assert.AreEqual("United States", enWS.Region.Name);
 			Assert.AreEqual("International Phonetic Alphabet", enWS.Variants[0].Name);
 			Assert.That(enWS.DefaultFontName, Is.EqualTo("Charis SIL"));
-			Assert.That(enWS.DefaultCollation.ValueEquals(new IcuCollationDefinition("standard")), Is.True);
+			Assert.That(enWS.DefaultCollation.ValueEquals(new IcuRulesCollationDefinition("standard")), Is.True);
 			Assert.That(enWS.IetfLanguageTag, Is.EqualTo("en-US-fonipa"));
 			Assert.That(string.IsNullOrEmpty(enWS.WindowsLcid), Is.True);
 
@@ -199,7 +199,7 @@ namespace SIL.CoreImpl
 			Assert.AreEqual("Chinese", chWS.Language.Name);
 			Assert.AreEqual("China", chWS.Region.Name);
 			Assert.That(chWS.DefaultFontName, Is.EqualTo("Charis SIL"));
-			Assert.That(chWS.DefaultCollation.ValueEquals(new IcuCollationDefinition("standard")), Is.True);
+			Assert.That(chWS.DefaultCollation.ValueEquals(new SystemCollationDefinition {IetfLanguageTag = "zh-CN"}), Is.True);
 		}
 
 		/// <summary>

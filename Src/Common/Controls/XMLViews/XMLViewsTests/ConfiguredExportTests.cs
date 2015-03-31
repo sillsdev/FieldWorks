@@ -25,7 +25,7 @@ namespace XMLViewsTests
 		public void XHTMLExportGetDigraphMapsFirstCharactersFromICUSortRules()
 		{
 			CoreWritingSystemDefinition ws = Cache.LangProject.DefaultVernacularWritingSystem;
-			ws.DefaultCollation = new IcuCollationDefinition("standard") {IcuRules = "&b < az << a < c <<< ch"};
+			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") {IcuRules = "&b < az << a < c <<< ch"};
 
 			var exporter = new ConfiguredExport(null, null, 0);
 			string output;
@@ -48,7 +48,7 @@ namespace XMLViewsTests
 		public void XHTMLExportGetDigraphMapsFromICUSortRules_TertiaryIgnorableDoesNotCrash()
 		{
 			CoreWritingSystemDefinition ws = Cache.LangProject.DefaultVernacularWritingSystem;
-			ws.DefaultCollation = new IcuCollationDefinition("standard") {IcuRules = "&[last tertiary ignorable] = \\"};
+			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") {IcuRules = "&[last tertiary ignorable] = \\"};
 
 			var exporter = new ConfiguredExport(null, null, 0);
 			string output;
@@ -74,7 +74,7 @@ namespace XMLViewsTests
 		public void XHTMLExportGetDigraphMapsFromICUSortRules_UnicodeTertiaryIgnorableWorks()
 		{
 			CoreWritingSystemDefinition ws = Cache.LangProject.DefaultVernacularWritingSystem;
-			ws.DefaultCollation = new IcuCollationDefinition("standard") {IcuRules = "&[last tertiary ignorable] = \\uA78C"};
+			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") {IcuRules = "&[last tertiary ignorable] = \\uA78C"};
 
 			var exporter = new ConfiguredExport(null, null, 0);
 			string output;
@@ -98,7 +98,7 @@ namespace XMLViewsTests
 		public void XHTMLExportGetDigraphMapsFirstCharactersFromToolboxSortRules()
 		{
 			CoreWritingSystemDefinition ws = Cache.LangProject.DefaultVernacularWritingSystem;
-			ws.DefaultCollation = new SimpleCollationDefinition("standard") {SimpleRules = "b" + Environment.NewLine + "az a" + Environment.NewLine + "c ch"};
+			ws.DefaultCollation = new SimpleRulesCollationDefinition("standard") {SimpleRules = "b" + Environment.NewLine + "az a" + Environment.NewLine + "c ch"};
 
 			var exporter = new ConfiguredExport(null, null, 0);
 			string output;
@@ -128,7 +128,7 @@ namespace XMLViewsTests
 		public void XHTMLExportGetDigraphMapsFirstCharactersFromOtherSortRules()
 		{
 			CoreWritingSystemDefinition ws = Cache.LangProject.DefaultVernacularWritingSystem;
-			ws.DefaultCollation = new IcuCollationDefinition("standard") {Imports = {new IcuCollationImport("fr")}};
+			ws.DefaultCollation = new SystemCollationDefinition {IetfLanguageTag = "fr"};
 
 			var exporter = new ConfiguredExport(null, null, 0);
 			string output;

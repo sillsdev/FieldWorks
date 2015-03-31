@@ -235,7 +235,13 @@ namespace SIL.CoreImpl
 					ws.Abbreviation = ws.IetfLanguageTag;
 
 				if (ws.DefaultCollation == null)
-					ws.DefaultCollation = new IcuCollationDefinition("standard");
+				{
+					string message;
+					if (SystemCollator.ValidateIetfLanguageTag(ws.IetfLanguageTag, out message))
+						ws.DefaultCollation = new SystemCollationDefinition {IetfLanguageTag = ws.IetfLanguageTag};
+					else
+						ws.DefaultCollation = new IcuRulesCollationDefinition("standard");
+				}
 				if (ws.DefaultFont == null)
 					ws.DefaultFont = new FontDefinition("Charis SIL");
 
