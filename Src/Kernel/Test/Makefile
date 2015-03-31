@@ -51,7 +51,7 @@ LDLIBS := \
 	-L$(WIN32BASE_LIB) -lWin32Base \
 	-L$(OUT_DIR) -lDebugProcs \
 	$(shell pkg-config --libs $(PACKAGES)) \
-	-luuid -lexpat \
+	-luuid -lexpat -ldl \
 
 CPPFLAGS = $(DEFINES) $(INCLUDES) -MMD
 CXXFLAGS = -g $(OPTIMIZATIONS) -fvisibility=hidden -Werror

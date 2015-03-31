@@ -37,7 +37,7 @@ bool GetIcuDir(HKEY hkRoot, char* dir, DWORD size)
 	if (lRet == ERROR_SUCCESS)
 	{
 		DWORD dwType;
-		long lRet = ::RegQueryValueExA(hk, "Icu50DataDir", NULL, &dwType, (BYTE*) dir, &size);
+		long lRet = ::RegQueryValueExA(hk, "Icu" ICU_VERSION "DataDir", NULL, &dwType, (BYTE*) dir, &size);
 		if (lRet == ERROR_SUCCESS && dwType == REG_SZ)
 			fRes = true;
 		::RegCloseKey(hk);
@@ -73,7 +73,7 @@ void InitIcuDataDir()
 				defaultDir.Append(commonApplicationData);
 			else
 				defaultDir.Append("C:\\ProgramData");
-			defaultDir.Append("\\SIL\\Icu50");
+			defaultDir.Append("\\SIL\\Icu" ICU_VERSION);
 
 			strncpy_s(rgchDataDirectory, defaultDir.Chars(), sizeof(rgchDataDirectory));
 		}

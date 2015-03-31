@@ -20,26 +20,31 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// Wrapper for ICU methods (for version 3.4)
+	/// Wrapper for ICU methods
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	public static class Icu
 	{
+		/// <summary>
+		/// The ICU major version
+		/// </summary>
+		public const string Version = "54";
+
 		private const string kIcuUcDllName =
 #if !__MonoCS__
-			"icuuc50.dll";
+			"icuuc" + Version + ".dll";
 #else // __MonoCS__
 			"libicuuc.so";
 #endif // __MonoCS__
 
 		private const string kIcuinDllName =
 #if !__MonoCS__
-			"icuin50.dll";
+			"icuin" + Version + ".dll";
 #else // __MonoCS__
 			"libicui18n.so";
 #endif // __MonoCS__
 
-		private const string kIcuVersion = "_50";
+		private const string VersionSuffix = "_" + Version;
 
 		#region Public Properties
 		/// ------------------------------------------------------------------------------------
@@ -70,20 +75,21 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		{
 			get
 			{
-				var dir = Path.Combine(Environment.GetFolderPath(
-					Environment.SpecialFolder.CommonApplicationData), "SIL/Icu50");
+				string dir = Path.Combine(Environment.GetFolderPath(
+					Environment.SpecialFolder.CommonApplicationData), string.Format("SIL/Icu{0}", Version));
 
+				string icuDirValueName = string.Format("Icu{0}DataDir", Version);
 				using(var userKey = RegistryHelper.CompanyKey)
 				using(var machineKey = RegistryHelper.CompanyKeyLocalMachine)
 				{
-					if (userKey != null && userKey.GetValue("Icu50DataDir") != null)
+					if (userKey != null && userKey.GetValue(icuDirValueName) != null)
 					{
-						dir = userKey.GetValue("Icu50DataDir", dir) as string ?? dir;
+						dir = userKey.GetValue(icuDirValueName, dir) as string ?? dir;
 					}
-					else if (machineKey != null && machineKey.GetValue("Icu50DataDir") != null)
+					else if (machineKey != null && machineKey.GetValue(icuDirValueName) != null)
 					{
 
-						dir = machineKey.GetValue("Icu50DataDir", dir) as string ?? dir;
+						dir = machineKey.GetValue(icuDirValueName, dir) as string ?? dir;
 					}
 				}
 				return dir;
@@ -219,11 +225,6 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// ------------------------------------------------------------------------------------
 		public static void InitIcuDataDir()
 		{
-			Debug.Assert(kIcuVersion == "_50", "Yo developers! We are using a different version of ICU. " +
-				"Change UnicodeVersion to return the correct version, and then change this assertion so that it checks for the new version of kIcuVersion." +
-				"We had to do it this way because ICU can't tell us which version of Unicode it supports. " +
-				"If they add a method to do this in the future, then we can just make UnicodeVersion work by calling that method." +
-				"If you don't understand what this is all about, see TomB (who will almost certainly have forgotten by then) or TimS.");
 			string szDir = DataDirectory;
 			if (string.IsNullOrEmpty(szDir))
 			{
@@ -294,28 +295,28 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			[MarshalAs(UnmanagedType.LPStr)]string pathname);
 
 		/// <summary>get the name of an ICU code point</summary>
-		[DllImport(kIcuUcDllName, EntryPoint = "u_init" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "u_init" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl)]
 		private static extern void u_Init(out UErrorCode errorCode);
 
 		/// <summary>Clean up the ICU files that could be locked</summary>
-		[DllImport(kIcuUcDllName, EntryPoint = "u_cleanup" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "u_cleanup" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl)]
 		private static extern void u_Cleanup();
 
 		/// <summary>Return the ICU data directory</summary>
-		[DllImport(kIcuUcDllName, EntryPoint = "u_getDataDirectory" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "u_getDataDirectory" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr u_GetDataDirectory();
 
 		/// <summary>Set the ICU data directory</summary>
-		[DllImport(kIcuUcDllName, EntryPoint = "u_setDataDirectory" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "u_setDataDirectory" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl)]
 		private static extern void u_SetDataDirectory(
 			[MarshalAs(UnmanagedType.LPStr)]string directory);
 
 		/// <summary>get the name of an ICU code point</summary>
-		[DllImport(kIcuUcDllName, EntryPoint = "u_charName" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "u_charName" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl)]
 		private static extern int u_CharName(
 			int code,
@@ -386,7 +387,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// get the numeric value for the Unicode digit
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[DllImport(kIcuUcDllName, EntryPoint = "u_digit" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "u_digit" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl)]
 		private static extern int u_digit(
 			int characterCode,
@@ -410,13 +411,13 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// enumeration that doesn't match the enumeration in FwKernel: LgGeneralCharCategory
 		/// </remarks>
 		/// ------------------------------------------------------------------------------------
-		[DllImport(kIcuUcDllName, EntryPoint = "u_getIntPropertyValue" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "u_getIntPropertyValue" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl)]
 		private static extern int u_getIntPropertyValue(
 			int characterCode,
 			UProperty choice);
 
-		[DllImport(kIcuUcDllName, EntryPoint = "u_getUnicodeVersion" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "u_getUnicodeVersion" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl)]
 		private static extern void u_getUnicodeVersion(byte[] versionInfo);
 
@@ -461,7 +462,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// </summary>
 		/// <param name="characterCode"></param>
 		/// <returns></returns>
-		[DllImport(kIcuUcDllName, EntryPoint = "u_charType" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "u_charType" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl)]
 		private static extern int u_charType(int characterCode);
 
@@ -545,7 +546,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		///<param name="characterCode">Code point to get the numeric value for</param>
 		///<returns>Numeric value of c, or U_NO_NUMERIC_VALUE if none is defined.</returns>
 		/// ------------------------------------------------------------------------------------
-		[DllImport(kIcuUcDllName, EntryPoint = "u_getNumericValue" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "u_getNumericValue" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl)]
 		private static extern double u_getNumericValue(
 			int characterCode);
@@ -561,7 +562,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// </summary>
 		/// <param name="characterCode">the code point to be tested</param>
 		/// ------------------------------------------------------------------------------------
-		[DllImport(kIcuUcDllName, EntryPoint = "u_ispunct" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "u_ispunct" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl)]
 		// Required because ICU returns a one-byte boolean. Without this C# assumes 4, and picks up 3 more random bytes,
 		// which are usually zero, especially in debug builds...but one day we will be sorry.
@@ -594,7 +595,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// <param name="characterCode">the code point to be tested</param>
 		/// <returns><c>true</c> if the character has the Bidi_Mirrored property</returns>
 		/// ------------------------------------------------------------------------------------
-		[DllImport(kIcuUcDllName, EntryPoint = "u_isMirrored" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "u_isMirrored" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl)]
 		// Required because ICU returns a one-byte boolean. Without this C# assumes 4, and picks up 3 more random bytes,
 		// which are usually zero, especially in debug builds...but one day we will be sorry.
@@ -621,7 +622,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// </summary>
 		/// <param name="characterCode">the code point to be tested</param>
 		/// ------------------------------------------------------------------------------------
-		[DllImport(kIcuUcDllName, EntryPoint = "u_iscntrl" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "u_iscntrl" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl)]
 		// Required because ICU returns a one-byte boolean. Without this C# assumes 4, and picks up 3 more random bytes,
 		// which are usually zero, especially in debug builds...but one day we will be sorry.
@@ -670,7 +671,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		///	</remarks>
 		/// <param name="characterCode">the code point to be tested</param>
 		/// ------------------------------------------------------------------------------------
-		[DllImport(kIcuUcDllName, EntryPoint = "u_isspace" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "u_isspace" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl)]
 		// Required because ICU returns a one-byte boolean. Without this C# assumes 4, and picks up 3 more random bytes,
 		// which are usually zero, especially in debug builds...but one day we will be sorry.
@@ -761,7 +762,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// ------------------------------------------------------------------------------------
 		/// <summary>Get the ICU LCID for a locale</summary>
 		/// ------------------------------------------------------------------------------------
-		[DllImport(kIcuUcDllName, EntryPoint = "uloc_getLCID" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "uloc_getLCID" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uloc_getLCID(string localeID);
 		/// <summary></summary>
@@ -773,7 +774,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// ------------------------------------------------------------------------------------
 		/// <summary>Return the ISO 3 char value, if it exists</summary>
 		/// ------------------------------------------------------------------------------------
-		[DllImport(kIcuUcDllName, EntryPoint = "uloc_getISO3Country" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "uloc_getISO3Country" + VersionSuffix,
 			CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr uloc_getISO3Country(
 			[MarshalAs(UnmanagedType.LPStr)]string locale);
@@ -787,7 +788,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// ------------------------------------------------------------------------------------
 		/// <summary>Return the ISO 3 char value, if it exists</summary>
 		/// ------------------------------------------------------------------------------------
-		[DllImport(kIcuUcDllName, EntryPoint = "uloc_getISO3Language" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "uloc_getISO3Language" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr uloc_getISO3Language(
 			[MarshalAs(UnmanagedType.LPStr)]string locale);
@@ -805,7 +806,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// </summary>
 		/// <returns>the size of the locale list </returns>
 		/// ------------------------------------------------------------------------------------
-		[DllImport(kIcuUcDllName, EntryPoint = "uloc_countAvailable" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "uloc_countAvailable" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uloc_countAvailable();
 		/// <summary></summary>
@@ -824,7 +825,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// <param name="n">n  the specific locale name index of the available locale list</param>
 		/// <returns>a specified locale name of all available locales</returns>
 		/// ------------------------------------------------------------------------------------
-		[DllImport(kIcuUcDllName, EntryPoint = "uloc_getAvailable" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "uloc_getAvailable" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr uloc_getAvailable(int n);
 
@@ -856,7 +857,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// <returns>the actual buffer size needed for the language code. If it's greater
 		/// than languageCapacity, the returned language code will be truncated</returns>
 		/// ------------------------------------------------------------------------------------
-		[DllImport(kIcuUcDllName, EntryPoint = "uloc_getLanguage" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "uloc_getLanguage" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uloc_getLanguage(string localeID, IntPtr language,
 			int languageCapacity, out UErrorCode err);
@@ -916,7 +917,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// <returns>the actual buffer size needed for the script code. If it's greater
 		/// than scriptCapacity, the returned script code will be truncated</returns>
 		/// ------------------------------------------------------------------------------------
-		[DllImport(kIcuUcDllName, EntryPoint = "uloc_getScript" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "uloc_getScript" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uloc_getScript(string localeID, IntPtr script,
 			int scriptCapacity, out UErrorCode err);
@@ -959,7 +960,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// <returns>the actual buffer size needed for the country code. If it's greater
 		/// than countryCapacity, the returned country code will be truncated</returns>
 		/// ------------------------------------------------------------------------------------
-		[DllImport(kIcuUcDllName, EntryPoint = "uloc_getCountry" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "uloc_getCountry" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uloc_getCountry(string localeID, IntPtr country,
 			int countryCapacity, out UErrorCode err);
@@ -1019,7 +1020,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// <returns>the actual buffer size needed for the variant code. If it's greater
 		/// than variantCapacity, the returned variant code will be truncated</returns>
 		/// ------------------------------------------------------------------------------------
-		[DllImport(kIcuUcDllName, EntryPoint = "uloc_getVariant" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "uloc_getVariant" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uloc_getVariant(string localeID, IntPtr variant,
 			int variantCapacity, out UErrorCode err);
@@ -1066,7 +1067,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// <returns>the actual buffer size needed for the displayable name. If it's greater
 		/// than variantCapacity, the returned displayable name will be truncated.</returns>
 		/// ------------------------------------------------------------------------------------
-		[DllImport(kIcuUcDllName, EntryPoint = "uloc_getDisplayName" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "uloc_getDisplayName" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uloc_getDisplayName(string localeID, string inLocaleID,
 			IntPtr result, int maxResultSize, out UErrorCode err);
@@ -1099,22 +1100,22 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		enum DisplayType { Name, Language, Script, Country, Variant };
 
 
-		[DllImport(kIcuUcDllName, EntryPoint = "uloc_getDisplayLanguage" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "uloc_getDisplayLanguage" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uloc_getDisplayLanguage(string localeID, string displayLocaleID,
 			IntPtr result, int maxResultSize, out UErrorCode err);
 
-		[DllImport(kIcuUcDllName, EntryPoint = "uloc_getDisplayScript" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "uloc_getDisplayScript" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uloc_getDisplayScript(string localeID, string displayLocaleID,
 			IntPtr result, int maxResultSize, out UErrorCode err);
 
-		[DllImport(kIcuUcDllName, EntryPoint = "uloc_getDisplayCountry" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "uloc_getDisplayCountry" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uloc_getDisplayCountry(string localeID, string displayLocaleID,
 			IntPtr result, int maxResultSize, out UErrorCode err);
 
-		[DllImport(kIcuUcDllName, EntryPoint = "uloc_getDisplayVariant" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "uloc_getDisplayVariant" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uloc_getDisplayVariant(string localeID, string displayLocaleID,
 			IntPtr result, int maxResultSize, out UErrorCode err);
@@ -1236,7 +1237,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// <summary>
 		/// Gets the full name for the specified locale.
 		/// </summary>
-		[DllImport(kIcuUcDllName, EntryPoint = "uloc_getName" + kIcuVersion, CharSet = CharSet.Ansi,
+		[DllImport(kIcuUcDllName, EntryPoint = "uloc_getName" + VersionSuffix, CharSet = CharSet.Ansi,
 			 CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uloc_getName(
 			string localeID,
@@ -1250,7 +1251,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			return uloc_getName(localeID, name, nameCapacity, out err);
 		}
 
-		[DllImport(kIcuUcDllName, EntryPoint = "uloc_getName" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "uloc_getName" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uloc_getName(string localeID, IntPtr name,
 			int nameCapacity, out UErrorCode err);
@@ -1284,19 +1285,19 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		#region case related
 
 		/// <summary>Return the lower case equivalent of the string.</summary>
-		[DllImport(kIcuUcDllName, EntryPoint = "u_strToLower" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "u_strToLower" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 		private static extern int u_strToLower(IntPtr dest,
 			 int destCapacity, string src, int srcLength, [MarshalAs(UnmanagedType.LPStr)] string locale, out UErrorCode errorCode);
 
 		/// <summary>Return the title case equivalent of the string.</summary>
-		[DllImport(kIcuUcDllName, EntryPoint = "u_strToTitle" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "u_strToTitle" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 		private static extern int u_strToTitle(IntPtr dest,
 			int destCapacity, string src, int srcLength, IntPtr titleIter, [MarshalAs(UnmanagedType.LPStr)] string locale, out UErrorCode errorCode);
 
 		/// <summary>Return the upper case equivalent of the string.</summary>
-		[DllImport(kIcuUcDllName, EntryPoint = "u_strToUpper" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "u_strToUpper" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 		private static extern int u_strToUpper(IntPtr dest,
 			int destCapacity, string src, int srcLength, [MarshalAs(UnmanagedType.LPStr)] string locale, out UErrorCode errorCode);
@@ -1349,7 +1350,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// <summary>
 		/// Open a UCollator for comparing strings.
 		/// </summary>
-		[DllImport(kIcuinDllName, EntryPoint = "ucol_open" + kIcuVersion,
+		[DllImport(kIcuinDllName, EntryPoint = "ucol_open" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr ucol_open(
 			byte[] loc,
@@ -1374,7 +1375,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// <summary>
 		/// Get a sort key for a string from a UCollator
 		/// </summary>
-		[DllImport(kIcuinDllName, EntryPoint = "ucol_getSortKey" + kIcuVersion, CharSet = CharSet.Unicode,
+		[DllImport(kIcuinDllName, EntryPoint = "ucol_getSortKey" + VersionSuffix, CharSet = CharSet.Unicode,
 			 CallingConvention = CallingConvention.Cdecl)]
 		private static extern int ucol_getSortKey(IntPtr col1, string source, int sourceLength, byte[] result, int resultLength);
 
@@ -1425,18 +1426,18 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			UCOL_FULL_RULES
 		}
 
-		[DllImport(kIcuinDllName, EntryPoint = "ucol_open" + kIcuVersion,
+		[DllImport(kIcuinDllName, EntryPoint = "ucol_open" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 		private static extern IntPtr ucol_open([MarshalAs(UnmanagedType.LPStr)] string locale, out UErrorCode errorCode);
-		[DllImport(kIcuinDllName, EntryPoint = "ucol_getRulesEx" + kIcuVersion,
+		[DllImport(kIcuinDllName, EntryPoint = "ucol_getRulesEx" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 		private static extern int ucol_getRulesEx(IntPtr coll, UColRuleOption delta, IntPtr buffer, int bufferLen);
 		/// <summary>Test the rules to see if they are valid.</summary>
-		[DllImport(kIcuinDllName, EntryPoint = "ucol_openRules" + kIcuVersion,
+		[DllImport(kIcuinDllName, EntryPoint = "ucol_openRules" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 		private static extern IntPtr ucol_openRules(string rules, int rulesLength, UColAttributeValue normalizationMode,
 			UColAttributeValue strength, out UParseError parseError, out UErrorCode status);
-		[DllImport(kIcuinDllName, EntryPoint = "ucol_close" + kIcuVersion,
+		[DllImport(kIcuinDllName, EntryPoint = "ucol_close" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 		private static extern void ucol_close(IntPtr coll);
 
@@ -1539,7 +1540,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			UCOL_BOUND_UPPER_LONG
 		}
 
-		[DllImport(kIcuinDllName, EntryPoint = "ucol_getBound" + kIcuVersion,
+		[DllImport(kIcuinDllName, EntryPoint = "ucol_getBound" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 		private static extern int ucol_getBound(byte[] source, int sourceLength, UColBoundMode boundType, int noOfLevels,
 			byte[] result, int resultLength, out UErrorCode status);
@@ -1565,7 +1566,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			}
 		}
 
-		[DllImport(kIcuinDllName, EntryPoint = "ucol_strcoll" + kIcuVersion,
+		[DllImport(kIcuinDllName, EntryPoint = "ucol_strcoll" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 		private static extern int ucol_strcoll(IntPtr coll, string source, int sourceLength, string target, int targetLength);
 
@@ -1681,22 +1682,28 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 
 		#region normalization
 		/// <summary>
-		/// Normalize a string according to the given mode and options.
+		/// Get a normalizer for the specified name and mode.
 		/// </summary>
-		[DllImport(kIcuUcDllName, EntryPoint = "unorm_normalize" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "unorm2_getInstance" + VersionSuffix,
+			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		private static extern IntPtr unorm2_getInstance(string packageName, string name, UNormalization2Mode mode, out UErrorCode errorCode);
+
+		/// <summary>
+		/// Normalize a string using the specified normalizer.
+		/// </summary>
+		[DllImport(kIcuUcDllName, EntryPoint = "unorm2_normalize" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private static extern int unorm_normalize(string source, int sourceLength,
-			UNormalizationMode mode, int options,
+		private static extern int unorm2_normalize(IntPtr normalizer, string source, int sourceLength,
 			IntPtr result, int resultLength, out UErrorCode errorCode);
 
 		/// <summary>
 		/// Check whether a string is normalized according to the given mode and options.
 		/// </summary>
-		[DllImport(kIcuUcDllName, EntryPoint = "unorm_isNormalized" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "unorm2_isNormalized" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 		// Note that ICU's UBool type is typedef to an 8-bit integer.
-		private static extern byte unorm_isNormalize(string source, int sourceLength,
-			UNormalizationMode mode, out UErrorCode errorCode);
+		private static extern byte unorm2_isNormalized(IntPtr normalizer, string source, int sourceLength,
+			out UErrorCode errorCode);
 
 		/// <summary>
 		/// Normalization mode constants.
@@ -1720,6 +1727,62 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		}
 
 		/// <summary>
+		/// Normalization 2 modes
+		/// </summary>
+		private enum UNormalization2Mode
+		{
+			/// <summary>
+			/// Decomposition followed by composition.
+			/// </summary>
+			UNORM2_COMPOSE = 0,
+			/// <summary>
+			/// Map, and reorder canonically.
+			/// </summary>
+			UNORM2_DECOMPOSE = 1,
+			/// <summary>
+			/// "Fast C or D" form.
+			/// </summary>
+			UNORM2_FCD = 2,
+			/// <summary>
+			/// Compose only contiguously.
+			/// </summary>
+			UNORM2_COMPOSE_CONTIGUOUS = 3
+		}
+
+		private static IntPtr GetIcuNormalizer(UNormalizationMode mode)
+		{
+			var err = UErrorCode.U_ZERO_ERROR;
+			IntPtr normalizer = IntPtr.Zero;
+			switch (mode)
+			{
+				case UNormalizationMode.UNORM_NFC:
+					normalizer = unorm2_getInstance(null, "nfc_fw", UNormalization2Mode.UNORM2_COMPOSE, out err);
+					break;
+
+				case UNormalizationMode.UNORM_NFD:
+					normalizer = unorm2_getInstance(null, "nfc_fw", UNormalization2Mode.UNORM2_DECOMPOSE, out err);
+					break;
+
+				case UNormalizationMode.UNORM_NFKC:
+					normalizer = unorm2_getInstance(null, "nfkc_fw", UNormalization2Mode.UNORM2_COMPOSE, out err);
+					break;
+
+				case UNormalizationMode.UNORM_NFKD:
+					normalizer = unorm2_getInstance(null, "nfkc_fw", UNormalization2Mode.UNORM2_DECOMPOSE, out err);
+					break;
+
+				case UNormalizationMode.UNORM_FCD:
+					normalizer = unorm2_getInstance(null, "nfc_fw", UNormalization2Mode.UNORM2_FCD, out err);
+					break;
+			}
+
+			if (IsFailure(err))
+				throw new IcuException("unorm2_getInstance() failed with code " + err, err);
+
+			return normalizer;
+		}
+
+		/// <summary>
 		/// Normalize the string according to the given mode.
 		/// </summary>
 		/// <param name="src"></param>
@@ -1730,12 +1793,16 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			if (string.IsNullOrEmpty(src))
 				return "";
 
+			if (mode == UNormalizationMode.UNORM_NONE)
+				return src;
+
+			IntPtr norm = GetIcuNormalizer(mode);
 			int length = src.Length + 10;
 			IntPtr resPtr = Marshal.AllocCoTaskMem(length * 2);
 			try
 			{
 				UErrorCode err;
-				int outLength = unorm_normalize(src, src.Length, mode, 0, resPtr, length, out err);
+				int outLength = unorm2_normalize(norm, src, src.Length, resPtr, length, out err);
 				if (IsFailure(err) && err != UErrorCode.U_BUFFER_OVERFLOW_ERROR)
 					throw new IcuException("unorm_normalize() failed with code " + err, err);
 				if (outLength >= length)
@@ -1744,10 +1811,10 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 					Marshal.FreeCoTaskMem(resPtr);
 					length = outLength + 1;		// allow room for the terminating NUL (FWR-505)
 					resPtr = Marshal.AllocCoTaskMem(length * 2);
-					unorm_normalize(src, src.Length, mode, 0, resPtr, length, out err);
+					unorm2_normalize(norm, src, src.Length, resPtr, length, out err);
 				}
 				if (IsFailure(err))
-					throw new IcuException("unorm_normalize() failed with code " + err, err);
+					throw new IcuException("unorm2_normalize() failed with code " + err, err);
 
 				string result = Marshal.PtrToStringUni(resPtr);
 				// Strip any garbage left over at the end of the string.
@@ -1771,13 +1838,14 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// <returns></returns>
 		public static bool IsNormalized(string src, UNormalizationMode mode)
 		{
-			if (string.IsNullOrEmpty(src))
+			if (string.IsNullOrEmpty(src) || mode == UNormalizationMode.UNORM_NONE)
 				return true;
 
+			IntPtr norm = GetIcuNormalizer(mode);
 			UErrorCode err;
-			byte fIsNorm = unorm_isNormalize(src, src.Length, mode, out err);
+			byte fIsNorm = unorm2_isNormalized(norm, src, src.Length, out err);
 			if (IsFailure(err))
-				throw new IcuException("unorm_isNormalize() failed with code " + err, err);
+				throw new IcuException("unorm2_isNormalized() failed with code " + err, err);
 			return fIsNorm != 0;
 		}
 
@@ -1836,7 +1904,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// <param name="textLength">Length of the text.</param>
 		/// <param name="errorCode">The error code.</param>
 		/// <returns></returns>
-		[DllImport(kIcuUcDllName, EntryPoint = "ubrk_open" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "ubrk_open" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 		private static extern IntPtr ubrk_open(UBreakIteratorType type, string locale,
 			IntPtr text, int textLength, out UErrorCode errorCode);
@@ -1845,7 +1913,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// Close a UBreakIterator.
 		/// </summary>
 		/// <param name="bi">The break iterator.</param>
-		[DllImport(kIcuUcDllName, EntryPoint = "ubrk_close" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "ubrk_close" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 		private static extern void ubrk_close(IntPtr bi);
 
@@ -1854,7 +1922,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// </summary>
 		/// <param name="bi">The break iterator.</param>
 		/// <returns></returns>
-		[DllImport(kIcuUcDllName, EntryPoint = "ubrk_first" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "ubrk_first" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 		private static extern int ubrk_first(IntPtr bi);
 
@@ -1863,7 +1931,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// </summary>
 		/// <param name="bi">The break iterator.</param>
 		/// <returns></returns>
-		[DllImport(kIcuUcDllName, EntryPoint = "ubrk_next" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "ubrk_next" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 		private static extern int ubrk_next(IntPtr bi);
 
@@ -1872,7 +1940,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// </summary>
 		/// <param name="bi">The break iterator.</param>
 		/// <returns></returns>
-		[DllImport(kIcuUcDllName, EntryPoint = "ubrk_getRuleStatus" + kIcuVersion,
+		[DllImport(kIcuUcDllName, EntryPoint = "ubrk_getRuleStatus" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 		private static extern int ubrk_getRuleStatus(IntPtr bi);
 

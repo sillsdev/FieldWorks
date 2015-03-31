@@ -6,7 +6,7 @@
 
 	<!-- call preparatory Windows targets -->
 	<Target Name="initWindows" Condition="'$(OS)'=='Windows_NT'"
-			DependsOnTargets="Initialize;EncConvertersDlls;BuildWindowsXslAssemblies;graphite2Windows;Unit++">
+			DependsOnTargets="Initialize;EncConvertersDlls;BuildWindowsXslAssemblies;graphite2Windows;Unit++;BuildIcuWindows">
 	</Target>
 
 	<ItemGroup>
@@ -104,22 +104,30 @@
 		<PresentationTransformsPath>$(fwrt)\Src\Transforms\Presentation</PresentationTransformsPath>
 	</PropertyGroup>
 	<ItemGroup>
-		<ApplicationTransforms Include="$(ApplicationTransformsPath)\*.xsl" Condition="'$(OS)'=='Windows_NT'"/>
-		<PresentationTransforms Include="$(PresentationTransformsPath)\*.xsl" Condition="'$(OS)'=='Windows_NT'"/>
+		<ApplicationTransforms Include="$(ApplicationTransformsPath)\*.xsl" />
+		<PresentationTransforms Include="$(PresentationTransformsPath)\*.xsl" />
 	</ItemGroup>
-	<Target Name="BuildWindowsXslAssemblies" Inputs="@(ApplicationTransforms);@(PresentationTransforms)" Outputs="$(dir-outputBase)\ApplicationTransforms.dll;$(dir-outputBase)\PresentationTransforms.dll" Condition="'$(OS)'=='Windows_NT'">
+	<Target Name="BuildWindowsXslAssemblies" Inputs="@(ApplicationTransforms);@(PresentationTransforms)" Outputs="$(dir-outputBase)\ApplicationTransforms.dll;$(dir-outputBase)\PresentationTransforms.dll" Condition="'$(action)'!='clean'">
 		<Exec Command="xsltc /settings:document /out:$(dir-outputBase)\ApplicationTransforms.dll $(ApplicationTransformsPath)\FxtM3MorphologySketch.xsl $(ApplicationTransformsPath)\FxtM3ParserToGAFAWS.xsl $(ApplicationTransformsPath)\FxtM3ParserToToXAmpleGrammar.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleADCtl.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleLex.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleWordGrammarDebuggingXSLT.xsl" />
 		<Exec Command="xsltc /settings:document /out:$(dir-outputBase)\PresentationTransforms.dll $(PresentationTransformsPath)\FormatHCTrace.xsl $(PresentationTransformsPath)\FormatXAmpleParse.xsl $(PresentationTransformsPath)\FormatXAmpleTrace.xsl $(PresentationTransformsPath)\FormatXAmpleWordGrammarDebuggerResult.xsl $(PresentationTransformsPath)\XLingPap1.xsl" />
 	</Target>
 
 	<ItemGroup>
-		<Graphite2Sources Include="$(fwrt)\Lib\src\graphite2\src\*.*" Condition="'$(OS)'=='Windows_NT'"/>
+		<Graphite2Sources Include="$(fwrt)\Lib\src\graphite2\src\*.*" />
 	</ItemGroup>
-	<Target Name="graphite2Windows" Inputs="@(Graphite2Sources)" Outputs="$(fwrt)\Lib\$(config-lower)\graphite2.lib" Condition="'$(OS)'=='Windows_NT'">
+	<Target Name="graphite2Windows" Inputs="@(Graphite2Sources)" Outputs="$(fwrt)\Lib\$(config-lower)\graphite2.lib" Condition="'$(action)'!='clean'">
 		<Make Makefile="$(fwrt)\Lib\src\graphite2\graphite2.mak"
 				Configuration="$(config-capital)"
 				BuildRoot="$(fwrt)"
 				WorkingDirectory="$(fwrt)\Lib\src\graphite2"/>
 		<Message Text="Finished building graphite2."/>
+	</Target>
+
+	<Target Name="BuildIcuWindows" Condition="'$(action)'!='clean'">
+		<MSBuild Projects="$(fwrt)\Lib\src\icu\source\allinone\allinone.sln" Targets="Build" Properties="Configuration=Release;Platform=Win32" />
+		<Copy SourceFiles="$(fwrt)\Lib\src\icu\bin\icutu$(IcuVersion).dll" DestinationFolder="$(fwrt)\DistFiles\Windows"
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+		<Copy SourceFiles="$(fwrt)\Lib\src\icu\bin\gennorm2.exe" DestinationFolder="$(fwrt)\DistFiles\Windows"
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 	</Target>
 </Project>

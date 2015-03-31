@@ -357,6 +357,39 @@ bool SilUtil::FileExists(const wchar * pszPath)
 	}
 }
 
+const Normalizer2* SilUtil::GetIcuNormalizer(UNormalizationMode mode)
+{
+	UErrorCode uerr = U_ZERO_ERROR;
+	const Normalizer2* norm = NULL;
+	switch (mode)
+	{
+	case UNORM_NFD:
+		norm = Normalizer2::getInstance(NULL, "nfc_fw", UNORM2_DECOMPOSE, uerr);
+		break;
+
+	case UNORM_NFC:
+		norm = Normalizer2::getInstance(NULL, "nfc_fw", UNORM2_COMPOSE, uerr);
+		break;
+
+	case UNORM_NFKD:
+		norm = Normalizer2::getInstance(NULL, "nfkc_fw", UNORM2_DECOMPOSE, uerr);
+		break;
+
+	case UNORM_NFKC:
+		norm = Normalizer2::getInstance(NULL, "nfkc_fw", UNORM2_COMPOSE, uerr);
+		break;
+
+	case UNORM_FCD:
+		norm = Normalizer2::getInstance(NULL, "nfc_fw", UNORM2_FCD, uerr);
+		break;
+	}
+
+	if (!U_SUCCESS(uerr))
+		ThrowHr(E_FAIL);
+
+	return norm;
+}
+
 // Local Variables:
 // mode:C++
 // compile-command:"cmd.exe /e:4096 /c c:\\FW\\Bin\\mkgenlib.bat"

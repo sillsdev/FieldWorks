@@ -2602,21 +2602,44 @@ int VwTextStore::AcpToLog(int acpReq)
 		stuIn.SetSize(cch + 1, &pchIn);
 		RetrieveText(0, cch, cch + 1, pchIn);
 
-		wchar szOut[kNFDBufferSize];
-		UCharIterator iter;
-		uiter_setString(&iter, pchIn, -1);
+		int currentIndex = 0;
+		int bufferPos = 0;
+		UnicodeString buffer;
+		const Normalizer2* norm = SilUtil::GetIcuNormalizer(UNORM_NFC);
+		UCharCharacterIterator iter(pchIn, cch);
 		int acpIch = 0;
-		while (iter.hasNext(&iter))
+		while (iter.hasNext())
 		{
 			if (acpIch >= acpReq)
-				return iter.getIndex(&iter, UITER_CURRENT);
-			UBool neededToNormalize;
-			UErrorCode uerr = U_ZERO_ERROR;
-			unorm_next(&iter, szOut, kNFDBufferSize, UNORM_NFC, 0, FALSE, &neededToNormalize, &uerr);
-			Assert(U_SUCCESS(uerr));
+				return bufferPos < buffer.length() ? currentIndex : iter.getIndex();
+
+			if (buffer.length() == bufferPos)
+			{
+				currentIndex = iter.getIndex();
+				UnicodeString segment(iter.next32PostInc());
+				while (iter.hasNext())
+				{
+					UChar32 c = iter.next32PostInc();
+					if (norm->hasBoundaryBefore(c))
+					{
+						iter.move32(-1, CharacterIterator::kCurrent);
+						break;
+					}
+					segment.append(c);
+				}
+
+				buffer.remove();
+				bufferPos = 0;
+				UErrorCode uerr = U_ZERO_ERROR;
+				norm->normalize(segment, buffer, uerr);
+			}
+
+			UChar32 ch = buffer.char32At(bufferPos);
+			bufferPos += U16_LENGTH(ch);
+
 			acpIch++;
 		}
-		return iter.getIndex(&iter, UITER_CURRENT);
+		return iter.getIndex();
 	}
 }
 
@@ -2648,17 +2671,39 @@ int VwTextStore::LogToAcp(int ichReq)
 		stuIn.SetSize(cch + 1, &pchIn);
 		RetrieveText(0, cch, cch + 1, pchIn);
 
-		wchar szOut[kNFDBufferSize];
-		UCharIterator iter;
-		uiter_setString(&iter, pchIn, -1);
+		int currentIndex = 0;
+		int bufferPos = 0;
+		UnicodeString buffer;
+		const Normalizer2* norm = SilUtil::GetIcuNormalizer(UNORM_NFC);
+		UCharCharacterIterator iter(pchIn, cch);
 		int acpIch = 0;
-		while (iter.hasNext(&iter))
+		while (iter.hasNext())
 		{
-			UBool neededToNormalize;
-			UErrorCode uerr = U_ZERO_ERROR;
-			unorm_next(&iter, szOut, kNFDBufferSize, UNORM_NFC, 0, FALSE, &neededToNormalize, &uerr);
-			Assert(U_SUCCESS(uerr));
-			int index = iter.getIndex(&iter, UITER_CURRENT);
+			if (buffer.length() == bufferPos)
+			{
+				currentIndex = iter.getIndex();
+				UnicodeString segment(iter.next32PostInc());
+				while (iter.hasNext())
+				{
+					UChar32 c = iter.next32PostInc();
+					if (norm->hasBoundaryBefore(c))
+					{
+						iter.move32(-1, CharacterIterator::kCurrent);
+						break;
+					}
+					segment.append(c);
+				}
+
+				buffer.remove();
+				bufferPos = 0;
+				UErrorCode uerr = U_ZERO_ERROR;
+				norm->normalize(segment, buffer, uerr);
+			}
+
+			UChar32 ch = buffer.char32At(bufferPos);
+			bufferPos += U16_LENGTH(ch);
+
+			int index = bufferPos < buffer.length() ? currentIndex : iter.getIndex();
 			if (index > ichReq)
 				return acpIch;
 			acpIch++;
