@@ -20,6 +20,9 @@ namespace TestViews
 	class TestVwTextStore;
 };
 
+typedef int HVO;
+typedef int PropTag;
+
 DEFINE_COM_PTR(ITextStoreACP);
 DEFINE_COM_PTR(ITextStoreACPSink);
 DEFINE_COM_PTR(ITextStoreACPServices);
@@ -182,7 +185,7 @@ protected:
 	int AcpToLog(int acpReq);
 	int LogToAcp(int ichReq);
 	bool IsNfdIMEActive();
-	void GetCurrentWritingSystem();
+	virtual void GetCurrentWritingSystem();
 
 	VwRootBox * m_prootb;
 

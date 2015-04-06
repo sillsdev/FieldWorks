@@ -578,8 +578,17 @@ namespace TestViews
 	class VwTextStoreTestSub: public VwTextStore
 	{
 	public:
+		int m_cCalledGetCurrentWS;
+
 		VwTextStoreTestSub(VwRootBox * prootb): VwTextStore(prootb)
 		{
+			m_cCalledGetCurrentWS = 0;
+		}
+
+		void GetCurrentWritingSystem()
+		{
+			m_cCalledGetCurrentWS++;
+			VwTextStore::GetCurrentWritingSystem();
 		}
 
 		int CallAcpToLog(int cchAcp)
@@ -1827,7 +1836,108 @@ namespace TestViews
 		}
 
 		/*--------------------------------------------------------------------------------------
-			Test VwTextStore::GetEndACP() for single paragraph selections.
+		Test VwRootBox::PropChanged(), that it calls NotifySelChange and resets its postponed state
+		iff NotifySelChange has been postponed and HVO and PropTag both match what was postponed.
+		Doesn't build in TestVwRootBox.h on Linux because it can't find VwTextStoreTestSub, even with this file included.
+		--------------------------------------------------------------------------------------*/
+		void testVwRootBox_PropChanged()
+		{
+			HVO hvo = 1;
+			PropTag tag = 2;
+			VwRootBox* prootb = dynamic_cast<VwRootBox*>(m_qrootb.Ptr());
+			VwTextStoreTestSub* ptxs = new VwTextStoreTestSub(prootb);
+			prootb->m_qvim.Attach(ptxs);
+			prootb->PostponeNotifySelChange(hvo, tag);
+			ptxs->m_cCalledGetCurrentWS = 0;
+
+			// test postponed and same HVO but different PropTag
+			prootb->PropChanged(hvo, 10);
+			unitpp::assert_eq("PropChanged(Different PropTag) ptxs->m_cCalledGetCurrentWS", 0, ptxs->m_cCalledGetCurrentWS);
+			unitpp::assert_true("PropChanged(Different PropTag) prootb->m_fPostponeNotifySelChange", prootb->m_fPostponeNotifySelChange);
+
+			// test postponed and same PropTag but different HVO
+			prootb->PropChanged(10, tag);
+			unitpp::assert_eq("PropChanged(Different HVO) ptxs->m_cCalledGetCurrentWS", 0, ptxs->m_cCalledGetCurrentWS);
+			unitpp::assert_true("PropChanged(Different HVO) prootb->m_fPostponeNotifySelChange", prootb->m_fPostponeNotifySelChange);
+
+			// test same HVO and PropTag, but not postponed
+			prootb->m_fPostponeNotifySelChange = false;
+			prootb->PropChanged(hvo, tag);
+			unitpp::assert_eq("PropChanged(Not Postponed) ptxs->m_cCalledGetCurrentWS", 0, ptxs->m_cCalledGetCurrentWS);
+			unitpp::assert_eq("PropChanged(Not Postponed) prootb->m_postponeNotifySelChangeHVO", hvo, prootb->m_postponeNotifySelChangeHVO);
+			unitpp::assert_eq("PropChanged(Not Postponed) prootb->m_postponeNotifySelChangeTag", tag, prootb->m_postponeNotifySelChangeTag);
+			prootb->m_fPostponeNotifySelChange = true;
+
+			// test postponed and same HVO and PropTag
+			prootb->PropChanged(hvo, tag);
+			unitpp::assert_eq("PropChanged(correct) ptxs->m_cCalledGetCurrentWS", 1, ptxs->m_cCalledGetCurrentWS);
+			unitpp::assert_false("PropChanged(correct) prootb->m_fPostponeNotifySelChange", prootb->m_fPostponeNotifySelChange);
+		}
+
+		/*--------------------------------------------------------------------------------------
+		Test VwTextStore::OnSelectionChange() when the selection is near the end of a string
+		that gets longer in normalization during commit.  This is really a test of VwRootBox,
+		but it requires that we set up and monitor a Selection, which is more easily done here.
+		--------------------------------------------------------------------------------------*/
+		void testOnSelectionChange()
+		{
+			if (!m_fTestable)
+				return;
+			const OLECHAR * rgchKoreanTestData[] = {
+				// These are Korean characters:
+				L"\x110b\x1163" // the first two codepoints are one decomposed character
+				L"\xbb44" // the third codepoint is one composed character; it will be decomposed into three codepoints
+				// We will place the insertion point (IP) here (Anchor=End=3)
+				L"\x110c", // the fourth codepoint is one atomic character.
+				// This setup is important: We start with Anchor=End=3 (IP), Limit=4 (length).  When we NfdAndFixOffsets, the third codepoint is
+				// decomposed into three, giving us       Anchor=End=5,      Limit=6.  This way, we can catch the following potential problems:
+				// - Anchor is never adjusted and remains 3
+				// - Anchor is adjusted twice, to 7, which will crash because 7 > Limit=6
+				// - Anchor is bumped to the end of the string (possibly adjusted twice, but capped at Limit=6)
+				NULL
+			};
+			MakeStringList(rgchKoreanTestData);
+
+			// Select at the end of the string
+			IVwSelectionPtr qselTemp;
+			CheckHr(m_qrootb->MakeSimpleSel(false, true, false, true, &qselTemp));
+			VwTextSelection *pselTemp = dynamic_cast<VwTextSelection *>(qselTemp.Ptr());
+
+			int* pichLimEditProp = &(pselTemp->m_ichLimEditProp); // limit (end of the string)
+			int* pichAnchor = &(pselTemp->m_ichAnchor); // Anchor ("selection start" or IP)
+			int* pichEnd = &(pselTemp->m_ichEnd); // [selction] end (IP: same as Anchor for this test)
+			*pichAnchor = *pichEnd = 3; // set the IP (hack)
+
+			// Use the VwTextStoreTestSub
+			VwTextStoreTestSub* ptxs = dynamic_cast<VwTextStoreTestSub*>(m_qtxs.Detach());
+			m_qrootb->m_qvim.Attach(ptxs);
+
+			pselTemp->StartEditing();
+			ptxs->m_cCalledGetCurrentWS = 0;
+			m_qcda->SuppressPropChanges();
+#pragma warning(push)
+#pragma warning(disable: 4482)
+			CheckHr(pselTemp->CommitAndNotify(VwSelChangeType::ksctSamePara, m_qrootb));
+#pragma warning(pop)
+			m_qcda->ResumePropChanges();
+			unitpp::assert_eq("OnSelectionChange(1) ptxs->m_cCalledGetCurrentWS", 1, ptxs->m_cCalledGetCurrentWS);
+			unitpp::assert_false("OnSelectionChange(false) m_qrootb->m_fPostponeNotifySelChange", m_qrootb->m_fPostponeNotifySelChange);
+			unitpp::assert_eq("OnSelectionChange(5) pichAnchor", 5, *pichAnchor);
+			unitpp::assert_eq("OnSelectionChange(5) pichEnd", 5, *pichEnd);
+			unitpp::assert_eq("OnSelectionChange(6) pichLimEditProp", 6, *pichLimEditProp);
+		}
+
+		/*--------------------------------------------------------------------------------------
+		Test that Tests are run and Asserts reported on Jenkins.
+		--------------------------------------------------------------------------------------*/
+		void testTests()
+		{
+			Assert("This causes Jenkins to report a test failure" && false);
+		}
+
+
+		/*--------------------------------------------------------------------------------------
+		Test VwTextStore::GetEndACP() for single paragraph selections.
 		--------------------------------------------------------------------------------------*/
 		void testGetEndACP()
 		{

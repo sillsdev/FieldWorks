@@ -21,6 +21,10 @@ Description:
 #pragma once
 #ifndef VwCacheDa_INCLUDED
 #define VwCacheDa_INCLUDED
+namespace TestViews
+{
+	class TestVwTextStore;
+};
 //#include <hash_set>
 #include <set>
 /*----------------------------------------------------------------------------------------------
@@ -221,6 +225,7 @@ typedef Set<ObjPropEncRec> ObjPropEncSet; // Hungarian soper
 ----------------------------------------------------------------------------------------------*/
 class VwCacheDa : public VwBaseDataAccess, public IVwCacheDa
 {
+	friend class TestViews::TestVwTextStore;
 public:
 	typedef VwBaseDataAccess SuperClass;
 

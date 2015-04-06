@@ -29,6 +29,7 @@ enum VwSourceType
 
 class VwMappedTxtSrc;
 
+/*	Struct: VpsTssRec: ViewPropertyStore Ts[Multi]String Record*/
 struct VpsTssRec
 {
 	VwPropertyStorePtr qzvps;

@@ -235,7 +235,10 @@ void VwSimpleTxtSrc::AddString(ITsMutString * ptms, VwPropertyStore * pzvps,
 	If ppzvps is not null, return the property store which was used to obtain the result
 	cached props, either by calling ChrpFor(*ppttp) or, if that is null, Chrp().
 	Char indexes are relative to the list of rendered characters.
-----------------------------------------------------------------------------------------------*/
+	REVIEW (Hasso) 2015.02: is this note valid? was at least misplaced before:
+	Note: irun refers to the original, underlying string; it is not altered to reflect any
+	fake runs produced by the overridden properties. (Most callers don't use this argument.)
+	----------------------------------------------------------------------------------------------*/
 CachedProps * VwSimpleTxtSrc::GetCharPropInfo(int ich,
 	int * pichMin, int * pichLim, int * pisbt, int * pirun, ITsTextProps ** ppttp,
 	VwPropertyStore ** ppzvps)
@@ -255,12 +258,10 @@ CachedProps * VwSimpleTxtSrc::GetCharPropInfo(int ich,
 			CheckHr(qtms->get_Length(&cch));
 		else
 			cch = 1;
-		// If it is within this string or exactly at the end of the last string, go ahead
-		// here.
+		// If it is within this string or exactly at the end of the last string, we have the relevant character, so get the run info.
 		if (cch > ichString ||
 			(cch == ichString && isbt == csbt - 1))
 		{
-			// We have the relevant character. Get the run info.
 			VwPropertyStore * pzvps = m_vpst[isbt].qzvps;
 			if (m_qwsf)
 				pzvps->putref_WritingSystemFactory(m_qwsf);		// Just to be safe.
@@ -1781,8 +1782,6 @@ void VwConcTxtSrc::AdjustDiscards()
 	Get the properties of a particular character and indicate the range over which they apply.
 	It is possible they also apply to a larger range.
 	ich is in rendered characters.
-	Note: irun refers to the original, underlying string; it is not altered to reflect any
-	fake runs produced by the overridden properties. (Most callers don't use this argument.)
 ----------------------------------------------------------------------------------------------*/
 STDMETHODIMP VwOverrideTxtSrc::GetCharProps(int ich, LgCharRenderProps * pchrp,
 	int * pichMin, int * pichLim)

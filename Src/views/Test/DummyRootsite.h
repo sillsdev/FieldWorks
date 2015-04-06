@@ -254,6 +254,13 @@ namespace TestViews
 		}
 		STDMETHOD(SelectionChanged)(IVwRootBox * prootb, IVwSelection * pvwselNew)
 		{
+			IVwSelection * pvwselFromRootb;
+			CheckHr(prootb->get_Selection(&pvwselFromRootb));
+			unitpp::assert_eq("pvwselNew == pvwselFromRootb", pvwselNew, pvwselFromRootb); // copied from SimpleRootSite.SelectionChanged
+			// these calls to TextSelInfo are needed for more-complete coverage in TestVwTextStore.testOnSelectionChange
+			ITsString * pptss; int pich; ComBool pfAssocPrev; HVO phvoObj; PropTag ptag; int pws; // dummy output vars
+			pvwselNew->TextSelInfo(true, &pptss, &pich, &pfAssocPrev, &phvoObj, &ptag, &pws);
+			pvwselNew->TextSelInfo(false, &pptss, &pich, &pfAssocPrev, &phvoObj, &ptag, &pws);
 			return S_OK;
 		}
 		STDMETHOD(OverlayChanged)(IVwRootBox * prootb, IVwOverlay * pvo)

@@ -16,6 +16,12 @@ Description:
 
 #include "OleStringLiteral.h"
 
+namespace TestViews
+{
+	class TestVwRootBox;
+	class TestVwTextStore;
+}
+
 class VwTextStore;
 DEFINE_COM_PTR(VwTextStore);
 
@@ -60,6 +66,8 @@ class VwRootBox : public IVwRootBox, public IServiceProvider, public VwDivBox
 	friend class VwParagraphBox; // just for Assert in destructor.
 	typedef VwDivBox SuperClass;
 	friend class VwLazyBox;
+	friend class TestViews::TestVwRootBox;
+	friend class TestViews::TestVwTextStore;
 public:
 	// Static methods
 
@@ -282,6 +290,9 @@ public:
 		return m_qvo;
 	}
 	void NotifySelChange(VwSelChangeType nHow, bool fUpdateRootSite = true);
+	void PostponeNotifySelChange(HVO hvo, PropTag tag);
+	bool IsNotifySelChangePostponed() { return m_fPostponeNotifySelChange; }
+	void PropChanged(HVO hvo, PropTag tag);
 
 	// This calls Layout with the correct parameters. It also notifies the root site of
 	// any size changes in case it needs to update anything.
@@ -481,6 +492,11 @@ protected:
 	void FindBreak(VwPrintInfo * pvpi, Rect rcSrc, Rect rcDst, int ysStart, int * pysEnd);
 	bool OnMouseEvent(int xd, int yd, RECT rcSrc, RECT rcDst, VwMouseEvent me);
 	IGetSpellCheckerPtr m_qgspCheckerRepository;
+	// We postpone NotifySelChange until after the underlying string has been updated
+	// (in case length changes in normalization)
+	bool m_fPostponeNotifySelChange;
+	HVO m_postponeNotifySelChangeHVO;
+	PropTag m_postponeNotifySelChangeTag;
 
 public:
 	bool FixSelectionsForStringReplacement(VwTxtSrc * psrcModify, int itssMin, int itssLim,

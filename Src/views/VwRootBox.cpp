@@ -238,6 +238,7 @@ STDMETHODIMP VwRootBox::PropChanged(HVO hvo, PropTag tag, int ivMin, int cvIns,
 				CheckHr(vpanote[i]->PropChanged(hvo, tag, ivMinDisp, cvIns, cvDel));
 			// REVIEW JohnT: should we try to do the rest even if one fails?
 		}
+		PropChanged(hvo, tag);
 	}
 	catch(...)
 	{
@@ -3904,12 +3905,39 @@ void VwRootBox::SetDirty(bool fDirty)
 	m_fDirty = fDirty;
 }
 
+void VwRootBox::PostponeNotifySelChange(HVO hvo, PropTag tag)
+{
+	m_fPostponeNotifySelChange = true;
+	m_postponeNotifySelChangeHVO = hvo;
+	m_postponeNotifySelChangeTag = tag;
+}
+
+/* If we're waiting for a postponed Selection Change on this HVO and tag, clear the postponed state and handle the change */
+void VwRootBox::PropChanged(HVO hvo, PropTag tag)
+{
+	if (m_fPostponeNotifySelChange && m_postponeNotifySelChangeHVO == hvo && m_postponeNotifySelChangeTag == tag)
+	{
+		m_fPostponeNotifySelChange = m_postponeNotifySelChangeHVO = m_postponeNotifySelChangeTag = false;
+		NotifySelChange(ksctSamePara);
+	}
+}
 
 /*----------------------------------------------------------------------------------------------
 	Notify listeners that the selection changed. -1=notchanged; 1= same para; 2=different para
 ----------------------------------------------------------------------------------------------*/
 void VwRootBox::NotifySelChange(VwSelChangeType nHow, bool fUpdateRootSite)
 {
+	if (m_fPostponeNotifySelChange)
+	{
+		// The only case in which we postpone NotifySelChange is when nHow == ksctSamePara.
+		// If this is not the case here, we must have been interrupted before resetting the
+		// postponed state and actually handling this event; reset the state now.
+		if (nHow == ksctSamePara)
+			return; // REVIEW (Hasso) 2015.03: is there any case in which fUpdateRootSite should be false here? Doubt it.
+		Assert(nHow == ksctSamePara); // the redundant comparison here yields a useful message for the developer.
+		m_fPostponeNotifySelChange = m_postponeNotifySelChangeHVO = m_postponeNotifySelChangeTag = false;
+	}
+
 	if (m_qvwsel && fUpdateRootSite && m_qvwsel->IsValid())
 		CheckHr(m_qvrs->SelectionChanged(this, m_qvwsel));
 
