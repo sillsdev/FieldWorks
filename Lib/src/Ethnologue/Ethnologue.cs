@@ -888,7 +888,7 @@ namespace SIL.Ethnologue
 			// Note. We don't want to use CreateSubKey here because it will fail on
 			// non-administrator logins. The user doesn't need to modify this setting.
 			// Trying to use DirectoryFinder for this causes circular dependencies.
-			using (var regKey = key.OpenSubKey(@"Software\SIL\FieldWorks\8"))
+			using (var regKey = key.OpenSubKey(@"Software\SIL\FieldWorks\9"))
 			{
 				return (regKey == null) ? null : regKey.GetValue("RootCodeDir") as string;
 			}
