@@ -295,6 +295,12 @@
 	  <BldIncOutput Include="../Output/Common/bldinc.h"/>
 	  <GlobalIncludeTemplate Include="GlobalInclude.properties.template"/>
 	  <GlobalIncludeOutput Include="GlobalInclude.properties"/>
+	  <EthnologueTemplate Include="../Lib/src/Ethnologue/Ethnologue.template.cs"/>
+	  <EthnologueOutput Include="../Lib/src/Ethnologue/GeneratedEthnologue.cs"/>
+	  <FwParatextLexiconPluginTemplate Include="../Src/FwParatextLexiconPlugin/ParatextLexiconPluginRegistryHelper.template.cs"/>
+	  <FwParatextLexiconPluginOutput Include="../Src/FwParatextLexiconPlugin/GeneratedParatextLexiconPluginRegistryHelper.cs"/>
+	  <FwUtilsTemplate Include="../Src/Common/FwUtils/FwUtils.template.cs"/>
+	  <FwUtilsOutput Include="../Src/Common/FwUtils/GeneratedFwUtils.cs"/>
   </ItemGroup>
   <!--
 	  Don't use Inputs and Outputs on the GenerateVersionFiles Target.  (Substitute won't
@@ -305,6 +311,10 @@
 	  <Substitute Template="@(VersionTemplate)" Symbols="@(VersionSymbols)" Output="@(VersionOutput)" Condition="'$(action)'!='clean'"/>
 	  <Substitute Template="@(BldIncTemplate)" Symbols="@(VersionSymbols)" Output="@(BldIncOutput)" Condition="'$(action)'!='clean' And Exists('../Output/Common')"/>
 	  <Substitute Template="@(GlobalIncludeTemplate)" Symbols="@(VersionSymbols)" Output="@(GlobalIncludeOutput)" Condition="'$(action)'!='clean'"/>
+	  <Substitute Template="@(EthnologueTemplate)" Symbols="@(VersionSymbols)" Output="@(EthnologueOutput)" Condition="'$(action)'!='clean'"/>
+	  <Substitute Template="@(FwParatextLexiconPluginTemplate)" Symbols="@(VersionSymbols)" Output="@(FwParatextLexiconPluginOutput)" Condition="'$(action)'!='clean'"/>
+	  <Substitute Template="@(FwUtilsTemplate)" Symbols="@(VersionSymbols)" Output="@(FwUtilsOutput)" Condition="'$(action)'!='clean'"/>
+
 	  <Message Text="Updated CommonAssemblyInfo.cs, bldinc.h and GlobalInclude.properties (if needed)."/>
   </Target>
 

@@ -27,6 +27,9 @@ Lib/release/DebugProcs.lib
 Lib/release/Generic.lib
 Lib/release/unit++.lib
 DistFiles/Parts/Generated.fwlayout
+Lib/src/Ethnologue/GeneratedEthnologue.cs
+Src/FwParatextLexiconPlugin/GeneratedParatextLexiconPluginRegistryHelper.cs
+Src/Common/FwUtils/GeneratedFwUtils.cs
 Src/CommonAssemblyInfo.cs
 Src/LangInst/InstallLanguageTests/timing.txt
 

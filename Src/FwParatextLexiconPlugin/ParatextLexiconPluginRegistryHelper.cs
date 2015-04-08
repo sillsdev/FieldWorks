@@ -5,10 +5,9 @@ using SIL.Utils;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
-	internal class ParatextLexiconPluginRegistryHelper
+	internal partial class ParatextLexiconPluginRegistryHelper
 	{
 		private const string ProductName = "FieldWorks";
-		private const string FdoVersion = "9";
 
 		static ParatextLexiconPluginRegistryHelper()
 		{
@@ -31,14 +30,14 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			Justification = "Disposed in caller.")]
 		public static RegistryKey FieldWorksRegistryKey
 		{
-			get { return RegistryHelper.SettingsKey(FdoVersion); }
+			get { return RegistryHelper.SettingsKey(FWMajorVersion); }
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "Disposed in caller.")]
 		public static RegistryKey FieldWorksRegistryKeyLocalMachine
 		{
-			get { return RegistryHelper.SettingsKeyLocalMachine(FdoVersion); }
+			get { return RegistryHelper.SettingsKeyLocalMachine(FWMajorVersion); }
 		}
 	}
 }

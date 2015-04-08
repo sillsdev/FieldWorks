@@ -128,6 +128,7 @@
     <ClCompile Include="Zipper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Output\Common\bldinc.h" />
     <ClInclude Include="BinTree.h" />
     <ClInclude Include="ComHashMap.h" />
     <ClInclude Include="common.h" />

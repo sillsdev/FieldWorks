@@ -102,6 +102,7 @@
     <Compile Include="FdoSemanticDomain.cs" />
     <Compile Include="FdoWordAnalysis.cs" />
     <Compile Include="FdoWordformLexeme.cs" />
+    <Compile Include="GeneratedParatextLexiconPluginRegistryHelper.cs" />
     <Compile Include="LexemeKey.cs" />
     <Compile Include="ParatextLexiconPluginDirectoryFinder.cs" />
     <Compile Include="ParatextLexiconPluginProjectID.cs" />

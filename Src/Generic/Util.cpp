@@ -10,6 +10,7 @@ Last reviewed:
 	Code for general utilities.
 -------------------------------------------------------------------------------*//*:End Ignore*/
 #include "main.h"
+#include "bldinc.h"
 #pragma hdrstop
 
 #ifdef _MSC_VER
@@ -2563,8 +2564,8 @@ StrUni DirectoryFinder::FwRootDataDir()
 #ifdef WIN32
 	RegKey rk;
 	StrUni stuResult;
-	if (rk.InitCu(_T("Software\\SIL\\FieldWorks\\9")) ||
-		rk.InitLm(_T("Software\\SIL\\FieldWorks\\9")))
+	if (rk.InitCu(REGISTRYPATHWITHVERSION) ||
+		rk.InitLm(REGISTRYPATHWITHVERSION))
 	{
 		achar rgch[MAX_PATH];
 		DWORD cb = isizeof(rgch);
@@ -2608,8 +2609,8 @@ StrUni DirectoryFinder::FwRootCodeDir()
 #ifdef WIN32
 	RegKey rk;
 	StrUni stuResult;
-	if (rk.InitCu(_T("Software\\SIL\\FieldWorks\\9")) ||
-		rk.InitLm(_T("Software\\SIL\\FieldWorks\\9")))
+	if (rk.InitCu(REGISTRYPATHWITHVERSION) ||
+		rk.InitLm(REGISTRYPATHWITHVERSION))
 	{
 		achar rgch[MAX_PATH];
 		DWORD cb = isizeof(rgch);

@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// Collection of miscellaneous utility methods needed for FieldWorks
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public static class FwUtils
+	public static partial class FwUtils
 	{
 		/// <summary>
 		/// The name of the overarching umbrella application that will one day conquer the world:
@@ -38,10 +38,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// The fully-qualified (with namespace) C# object name for LexTextApp
 		/// </summary>
 		public const string ksFullFlexAppObjectName = "SIL.FieldWorks.XWorks.LexText.LexTextApp";
-		/// <summary>
-		/// The current version of FieldWorks. This is also known in COMInterfaces/IcuWrappers.cs, InitIcuDataDir.
-		/// </summary>
-		public const int SuiteVersion = 9;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

@@ -172,6 +172,7 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="ConsoleProgress.cs" />
     <Compile Include="FLExBridgeHelper.cs" />
+    <Compile Include="GeneratedFwUtils.cs" />
     <Compile Include="IFocusablePanePortion.cs" />
     <Compile Include="FwDirectoryFinder.cs" />
     <Compile Include="FwLinkArgs.cs" />
