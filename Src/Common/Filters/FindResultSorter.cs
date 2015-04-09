@@ -15,7 +15,7 @@ namespace SIL.FieldWorks.Filters
 	{
 		public FindResultSorter(ITsString searchString, RecordSorter sorter)
 		{
-			m_comp = new ExactMatchFirstComparer(searchString.Text, sorter.getComparer());
+			m_comp = searchString.Text != null ? new ExactMatchFirstComparer(searchString.Text, sorter.getComparer()) : sorter.getComparer();
 		}
 
 		internal class ExactMatchFirstComparer : IComparer

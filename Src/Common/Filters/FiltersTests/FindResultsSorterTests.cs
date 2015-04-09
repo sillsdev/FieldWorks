@@ -21,6 +21,19 @@ namespace SIL.FieldWorks.Filters
 		}
 
 		[Test]
+		public void SortIsAlphabeticalForNullSearchString()
+		{
+			var enWs = Cache.DefaultAnalWs;
+			var nullString = Cache.TsStrFactory.MakeString(null, enWs);
+			var sorter = new GenRecordSorter(new StringFinderCompare(new OwnMlPropFinder(Cache.DomainDataByFlid, m_CitationFlid, Cache.DefaultAnalWs),
+				new WritingSystemComparer((IWritingSystem)Cache.WritingSystemFactory.get_EngineOrNull(Cache.DefaultAnalWs))));
+			var resultsSorter = new FindResultSorter(nullString, sorter);
+			var records = CreateRecords(new[] { "c", "b", "a" });
+			resultsSorter.Sort(records);
+			VerifySortOrder(new[] { "a", "b", "c" }, records);
+		}
+
+		[Test]
 		public void SortIsAlphabeticalIfNoMatches()
 		{
 
