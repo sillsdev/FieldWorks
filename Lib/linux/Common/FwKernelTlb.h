@@ -3,11 +3,11 @@
 /* this ALWAYS GENERATED file contains the definitions for the interfaces */
 
 
- /* File created by MIDL compiler version 7.00.0555 */
-/* at Tue Sep 30 16:04:47 2014
+ /* File created by MIDL compiler version 8.00.0603 */
+/* at Mon Mar 02 10:08:21 2015
  */
-/* Compiler settings for C:\develop\fwrepo\fw\Output\Common\FwKernelTlb.idl:
-    Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 7.00.0555 
+/* Compiler settings for C:\fwrepo\fw\Output\Common\FwKernelTlb.idl:
+    Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0603 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
     VC __declspec() decoration level: 
@@ -44,30 +44,35 @@
 #ifndef __ITsString_FWD_DEFINED__
 #define __ITsString_FWD_DEFINED__
 typedef interface ITsString ITsString;
+
 #endif 	/* __ITsString_FWD_DEFINED__ */
 
 
 #ifndef __IUndoGrouper_FWD_DEFINED__
 #define __IUndoGrouper_FWD_DEFINED__
 typedef interface IUndoGrouper IUndoGrouper;
+
 #endif 	/* __IUndoGrouper_FWD_DEFINED__ */
 
 
 #ifndef __IFwMetaDataCache_FWD_DEFINED__
 #define __IFwMetaDataCache_FWD_DEFINED__
 typedef interface IFwMetaDataCache IFwMetaDataCache;
+
 #endif 	/* __IFwMetaDataCache_FWD_DEFINED__ */
 
 
 #ifndef __IUndoAction_FWD_DEFINED__
 #define __IUndoAction_FWD_DEFINED__
 typedef interface IUndoAction IUndoAction;
+
 #endif 	/* __IUndoAction_FWD_DEFINED__ */
 
 
 #ifndef __IActionHandler_FWD_DEFINED__
 #define __IActionHandler_FWD_DEFINED__
 typedef interface IActionHandler IActionHandler;
+
 #endif 	/* __IActionHandler_FWD_DEFINED__ */
 
 
@@ -86,12 +91,14 @@ typedef struct ActionHandler ActionHandler;
 #ifndef __IDebugReportSink_FWD_DEFINED__
 #define __IDebugReportSink_FWD_DEFINED__
 typedef interface IDebugReportSink IDebugReportSink;
+
 #endif 	/* __IDebugReportSink_FWD_DEFINED__ */
 
 
 #ifndef __IDebugReport_FWD_DEFINED__
 #define __IDebugReport_FWD_DEFINED__
 typedef interface IDebugReport IDebugReport;
+
 #endif 	/* __IDebugReport_FWD_DEFINED__ */
 
 
@@ -110,54 +117,63 @@ typedef struct DebugReport DebugReport;
 #ifndef __IComDisposable_FWD_DEFINED__
 #define __IComDisposable_FWD_DEFINED__
 typedef interface IComDisposable IComDisposable;
+
 #endif 	/* __IComDisposable_FWD_DEFINED__ */
 
 
 #ifndef __ITsTextProps_FWD_DEFINED__
 #define __ITsTextProps_FWD_DEFINED__
 typedef interface ITsTextProps ITsTextProps;
+
 #endif 	/* __ITsTextProps_FWD_DEFINED__ */
 
 
 #ifndef __ITsStrFactory_FWD_DEFINED__
 #define __ITsStrFactory_FWD_DEFINED__
 typedef interface ITsStrFactory ITsStrFactory;
+
 #endif 	/* __ITsStrFactory_FWD_DEFINED__ */
 
 
 #ifndef __ITsPropsFactory_FWD_DEFINED__
 #define __ITsPropsFactory_FWD_DEFINED__
 typedef interface ITsPropsFactory ITsPropsFactory;
+
 #endif 	/* __ITsPropsFactory_FWD_DEFINED__ */
 
 
 #ifndef __ITsStrBldr_FWD_DEFINED__
 #define __ITsStrBldr_FWD_DEFINED__
 typedef interface ITsStrBldr ITsStrBldr;
+
 #endif 	/* __ITsStrBldr_FWD_DEFINED__ */
 
 
 #ifndef __ITsIncStrBldr_FWD_DEFINED__
 #define __ITsIncStrBldr_FWD_DEFINED__
 typedef interface ITsIncStrBldr ITsIncStrBldr;
+
 #endif 	/* __ITsIncStrBldr_FWD_DEFINED__ */
 
 
 #ifndef __ITsPropsBldr_FWD_DEFINED__
 #define __ITsPropsBldr_FWD_DEFINED__
 typedef interface ITsPropsBldr ITsPropsBldr;
+
 #endif 	/* __ITsPropsBldr_FWD_DEFINED__ */
 
 
 #ifndef __ITsMultiString_FWD_DEFINED__
 #define __ITsMultiString_FWD_DEFINED__
 typedef interface ITsMultiString ITsMultiString;
+
 #endif 	/* __ITsMultiString_FWD_DEFINED__ */
 
 
 #ifndef __ILgWritingSystemFactory_FWD_DEFINED__
 #define __ILgWritingSystemFactory_FWD_DEFINED__
 typedef interface ILgWritingSystemFactory ILgWritingSystemFactory;
+
 #endif 	/* __ILgWritingSystemFactory_FWD_DEFINED__ */
 
 
@@ -236,24 +252,28 @@ typedef struct TsMultiString TsMultiString;
 #ifndef __IVwGraphics_FWD_DEFINED__
 #define __IVwGraphics_FWD_DEFINED__
 typedef interface IVwGraphics IVwGraphics;
+
 #endif 	/* __IVwGraphics_FWD_DEFINED__ */
 
 
 #ifndef __IJustifyingRenderer_FWD_DEFINED__
 #define __IJustifyingRenderer_FWD_DEFINED__
 typedef interface IJustifyingRenderer IJustifyingRenderer;
+
 #endif 	/* __IJustifyingRenderer_FWD_DEFINED__ */
 
 
 #ifndef __ISimpleInit_FWD_DEFINED__
 #define __ISimpleInit_FWD_DEFINED__
 typedef interface ISimpleInit ISimpleInit;
+
 #endif 	/* __ISimpleInit_FWD_DEFINED__ */
 
 
 #ifndef __IVwGraphicsWin32_FWD_DEFINED__
 #define __IVwGraphicsWin32_FWD_DEFINED__
 typedef interface IVwGraphicsWin32 IVwGraphicsWin32;
+
 #endif 	/* __IVwGraphicsWin32_FWD_DEFINED__ */
 
 
@@ -272,24 +292,28 @@ typedef struct VwGraphicsWin32 VwGraphicsWin32;
 #ifndef __IVwTextSource_FWD_DEFINED__
 #define __IVwTextSource_FWD_DEFINED__
 typedef interface IVwTextSource IVwTextSource;
+
 #endif 	/* __IVwTextSource_FWD_DEFINED__ */
 
 
 #ifndef __IVwJustifier_FWD_DEFINED__
 #define __IVwJustifier_FWD_DEFINED__
 typedef interface IVwJustifier IVwJustifier;
+
 #endif 	/* __IVwJustifier_FWD_DEFINED__ */
 
 
 #ifndef __ILgSegment_FWD_DEFINED__
 #define __ILgSegment_FWD_DEFINED__
 typedef interface ILgSegment ILgSegment;
+
 #endif 	/* __ILgSegment_FWD_DEFINED__ */
 
 
 #ifndef __IRenderEngine_FWD_DEFINED__
 #define __IRenderEngine_FWD_DEFINED__
 typedef interface IRenderEngine IRenderEngine;
+
 #endif 	/* __IRenderEngine_FWD_DEFINED__ */
 
 
@@ -332,102 +356,119 @@ typedef struct GraphiteEngine GraphiteEngine;
 #ifndef __IRenderingFeatures_FWD_DEFINED__
 #define __IRenderingFeatures_FWD_DEFINED__
 typedef interface IRenderingFeatures IRenderingFeatures;
+
 #endif 	/* __IRenderingFeatures_FWD_DEFINED__ */
 
 
 #ifndef __ILgCharacterPropertyEngine_FWD_DEFINED__
 #define __ILgCharacterPropertyEngine_FWD_DEFINED__
 typedef interface ILgCharacterPropertyEngine ILgCharacterPropertyEngine;
+
 #endif 	/* __ILgCharacterPropertyEngine_FWD_DEFINED__ */
 
 
 #ifndef __ILgStringConverter_FWD_DEFINED__
 #define __ILgStringConverter_FWD_DEFINED__
 typedef interface ILgStringConverter ILgStringConverter;
+
 #endif 	/* __ILgStringConverter_FWD_DEFINED__ */
 
 
 #ifndef __ILgTokenizer_FWD_DEFINED__
 #define __ILgTokenizer_FWD_DEFINED__
 typedef interface ILgTokenizer ILgTokenizer;
+
 #endif 	/* __ILgTokenizer_FWD_DEFINED__ */
 
 
 #ifndef __ILgSpellCheckFactory_FWD_DEFINED__
 #define __ILgSpellCheckFactory_FWD_DEFINED__
 typedef interface ILgSpellCheckFactory ILgSpellCheckFactory;
+
 #endif 	/* __ILgSpellCheckFactory_FWD_DEFINED__ */
 
 
 #ifndef __ILgSpellChecker_FWD_DEFINED__
 #define __ILgSpellChecker_FWD_DEFINED__
 typedef interface ILgSpellChecker ILgSpellChecker;
+
 #endif 	/* __ILgSpellChecker_FWD_DEFINED__ */
 
 
 #ifndef __ILgCollatingEngine_FWD_DEFINED__
 #define __ILgCollatingEngine_FWD_DEFINED__
 typedef interface ILgCollatingEngine ILgCollatingEngine;
+
 #endif 	/* __ILgCollatingEngine_FWD_DEFINED__ */
 
 
 #ifndef __ILgSearchEngine_FWD_DEFINED__
 #define __ILgSearchEngine_FWD_DEFINED__
 typedef interface ILgSearchEngine ILgSearchEngine;
+
 #endif 	/* __ILgSearchEngine_FWD_DEFINED__ */
 
 
 #ifndef __ILgWritingSystem_FWD_DEFINED__
 #define __ILgWritingSystem_FWD_DEFINED__
 typedef interface ILgWritingSystem ILgWritingSystem;
+
 #endif 	/* __ILgWritingSystem_FWD_DEFINED__ */
 
 
 #ifndef __ILgIcuCharPropEngine_FWD_DEFINED__
 #define __ILgIcuCharPropEngine_FWD_DEFINED__
 typedef interface ILgIcuCharPropEngine ILgIcuCharPropEngine;
+
 #endif 	/* __ILgIcuCharPropEngine_FWD_DEFINED__ */
 
 
 #ifndef __ILgNumericEngine_FWD_DEFINED__
 #define __ILgNumericEngine_FWD_DEFINED__
 typedef interface ILgNumericEngine ILgNumericEngine;
+
 #endif 	/* __ILgNumericEngine_FWD_DEFINED__ */
 
 
 #ifndef __ILgKeymanHandler_FWD_DEFINED__
 #define __ILgKeymanHandler_FWD_DEFINED__
 typedef interface ILgKeymanHandler ILgKeymanHandler;
+
 #endif 	/* __ILgKeymanHandler_FWD_DEFINED__ */
 
 
 #ifndef __ILgIcuConverterEnumerator_FWD_DEFINED__
 #define __ILgIcuConverterEnumerator_FWD_DEFINED__
 typedef interface ILgIcuConverterEnumerator ILgIcuConverterEnumerator;
+
 #endif 	/* __ILgIcuConverterEnumerator_FWD_DEFINED__ */
 
 
 #ifndef __ILgIcuTransliteratorEnumerator_FWD_DEFINED__
 #define __ILgIcuTransliteratorEnumerator_FWD_DEFINED__
 typedef interface ILgIcuTransliteratorEnumerator ILgIcuTransliteratorEnumerator;
+
 #endif 	/* __ILgIcuTransliteratorEnumerator_FWD_DEFINED__ */
 
 
 #ifndef __ILgIcuLocaleEnumerator_FWD_DEFINED__
 #define __ILgIcuLocaleEnumerator_FWD_DEFINED__
 typedef interface ILgIcuLocaleEnumerator ILgIcuLocaleEnumerator;
+
 #endif 	/* __ILgIcuLocaleEnumerator_FWD_DEFINED__ */
 
 
 #ifndef __ILgIcuResourceBundle_FWD_DEFINED__
 #define __ILgIcuResourceBundle_FWD_DEFINED__
 typedef interface ILgIcuResourceBundle ILgIcuResourceBundle;
+
 #endif 	/* __ILgIcuResourceBundle_FWD_DEFINED__ */
 
 
 #ifndef __IRegexMatcher_FWD_DEFINED__
 #define __IRegexMatcher_FWD_DEFINED__
 typedef interface IRegexMatcher IRegexMatcher;
+
 #endif 	/* __IRegexMatcher_FWD_DEFINED__ */
 
 
@@ -657,10 +698,11 @@ extern RPC_IF_HANDLE __MIDL_itf_FwKernelTlb_0000_0000_v0_0_s_ifspec;
 
 typedef /* [v1_enum] */ 
 enum UndoResult
-    {	kuresSuccess	= 0,
-	kuresRefresh	= ( kuresSuccess + 1 ) ,
-	kuresFailed	= ( kuresRefresh + 1 ) ,
-	kuresError	= ( kuresFailed + 1 ) 
+    {
+        kuresSuccess	= 0,
+        kuresRefresh	= ( kuresSuccess + 1 ) ,
+        kuresFailed	= ( kuresRefresh + 1 ) ,
+        kuresError	= ( kuresFailed + 1 ) 
     } 	UndoResult;
 
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
@@ -685,9 +727,10 @@ EDBB1DED-7065-4b56-A262-746453835451
 );
 typedef /* [v1_enum] */ 
 enum CrtReportType
-    {	Warn	= 0,
-	Error	= 0x1,
-	Assert	= 0x2
+    {
+        Warn	= 0,
+        Error	= 0x1,
+        Assert	= 0x2
     } 	CrtReportType;
 
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
@@ -734,229 +777,243 @@ const OLECHAR kchObject = 0xFFFC;
 
 typedef /* [v1_enum] */ 
 enum FwTextPropVar
-    {	ktpvDefault	= 0,
-	ktpvMilliPoint	= 0x1,
-	ktpvRelative	= 0x2,
-	ktpvEnum	= 0x3,
-	ktpvNinch	= 0xf
+    {
+        ktpvDefault	= 0,
+        ktpvMilliPoint	= 0x1,
+        ktpvRelative	= 0x2,
+        ktpvEnum	= 0x3,
+        ktpvNinch	= 0xf
     } 	FwTextPropVar;
 
 typedef /* [v1_enum] */ 
 enum FwNormalizationMode
-    {	knmNone	= 1,
-	knmNFD	= 2,
-	knmNFKD	= 3,
-	knmNFC	= 4,
-	knmDefault	= 4,
-	knmNFKC	= 5,
-	knmFCD	= 6,
-	knmNFSC	= 7,
-	knmLim	= ( knmNFSC + 1 ) 
+    {
+        knmNone	= 1,
+        knmNFD	= 2,
+        knmNFKD	= 3,
+        knmNFC	= 4,
+        knmDefault	= 4,
+        knmNFKC	= 5,
+        knmFCD	= 6,
+        knmNFSC	= 7,
+        knmLim	= ( knmNFSC + 1 ) 
     } 	FwNormalizationMode;
 
 typedef /* [v1_enum] */ 
 enum FwTextPropType
-    {	ktptWs	= 1,
-	ktptItalic	= 2,
-	ktptBold	= 3,
-	ktptSuperscript	= 4,
-	ktptUnderline	= 5,
-	ktptFontSize	= 6,
-	ktptOffset	= 7,
-	ktptForeColor	= 8,
-	ktptBackColor	= 9,
-	ktptUnderColor	= 10,
-	ktptBaseWs	= 16,
-	ktptAlign	= 17,
-	ktptFirstIndent	= 18,
-	ktptLeadingIndent	= 19,
-	ktptMarginLeading	= 19,
-	ktptTrailingIndent	= 20,
-	ktptMarginTrailing	= 20,
-	ktptSpaceBefore	= 21,
-	ktptMswMarginTop	= 21,
-	ktptSpaceAfter	= 22,
-	ktptMarginBottom	= 22,
-	ktptTabDef	= 23,
-	ktptLineHeight	= 24,
-	ktptParaColor	= 25,
-	ktptSpellCheck	= 26,
-	ktptMarginTop	= 50,
-	ktptFontFamily	= 1,
-	ktptCharStyle	= 2,
-	ktptParaStyle	= 3,
-	ktptTabList	= 4,
-	ktptTags	= 5,
-	ktptObjData	= 6,
-	ktptRightToLeft	= 128,
-	ktptDirectionDepth	= 129,
-	ktptFontVariations	= 130,
-	ktptNamedStyle	= 133,
-	ktptPadLeading	= 134,
-	ktptPadTrailing	= 135,
-	ktptPadTop	= 136,
-	ktptPadBottom	= 137,
-	ktptBorderTop	= 138,
-	ktptBorderBottom	= 139,
-	ktptBorderLeading	= 140,
-	ktptBorderTrailing	= 141,
-	ktptBorderColor	= 142,
-	ktptBulNumScheme	= 143,
-	ktptBulNumStartAt	= 144,
-	ktptBulNumTxtBef	= 145,
-	ktptBulNumTxtAft	= 146,
-	ktptBulNumFontInfo	= 147,
-	ktptKeepWithNext	= 148,
-	ktptKeepTogether	= 149,
-	ktptHyphenate	= 150,
-	ktptMaxLines	= 151,
-	ktptCellBorderWidth	= 152,
-	ktptCellSpacing	= 153,
-	ktptCellPadding	= 154,
-	ktptEditable	= 155,
-	ktptWsStyle	= 156,
-	ktptSetRowDefaults	= 159,
-	ktptRelLineHeight	= 160,
-	ktptTableRule	= 161,
-	ktptWidowOrphanControl	= 162,
-	ktptFieldName	= 9998,
-	ktptMarkItem	= 9999
+    {
+        ktptWs	= 1,
+        ktptItalic	= 2,
+        ktptBold	= 3,
+        ktptSuperscript	= 4,
+        ktptUnderline	= 5,
+        ktptFontSize	= 6,
+        ktptOffset	= 7,
+        ktptForeColor	= 8,
+        ktptBackColor	= 9,
+        ktptUnderColor	= 10,
+        ktptBaseWs	= 16,
+        ktptAlign	= 17,
+        ktptFirstIndent	= 18,
+        ktptLeadingIndent	= 19,
+        ktptMarginLeading	= 19,
+        ktptTrailingIndent	= 20,
+        ktptMarginTrailing	= 20,
+        ktptSpaceBefore	= 21,
+        ktptMswMarginTop	= 21,
+        ktptSpaceAfter	= 22,
+        ktptMarginBottom	= 22,
+        ktptTabDef	= 23,
+        ktptLineHeight	= 24,
+        ktptParaColor	= 25,
+        ktptSpellCheck	= 26,
+        ktptMarginTop	= 50,
+        ktptFontFamily	= 1,
+        ktptCharStyle	= 2,
+        ktptParaStyle	= 3,
+        ktptTabList	= 4,
+        ktptTags	= 5,
+        ktptObjData	= 6,
+        ktptRightToLeft	= 128,
+        ktptDirectionDepth	= 129,
+        ktptFontVariations	= 130,
+        ktptNamedStyle	= 133,
+        ktptPadLeading	= 134,
+        ktptPadTrailing	= 135,
+        ktptPadTop	= 136,
+        ktptPadBottom	= 137,
+        ktptBorderTop	= 138,
+        ktptBorderBottom	= 139,
+        ktptBorderLeading	= 140,
+        ktptBorderTrailing	= 141,
+        ktptBorderColor	= 142,
+        ktptBulNumScheme	= 143,
+        ktptBulNumStartAt	= 144,
+        ktptBulNumTxtBef	= 145,
+        ktptBulNumTxtAft	= 146,
+        ktptBulNumFontInfo	= 147,
+        ktptKeepWithNext	= 148,
+        ktptKeepTogether	= 149,
+        ktptHyphenate	= 150,
+        ktptMaxLines	= 151,
+        ktptCellBorderWidth	= 152,
+        ktptCellSpacing	= 153,
+        ktptCellPadding	= 154,
+        ktptEditable	= 155,
+        ktptWsStyle	= 156,
+        ktptSetRowDefaults	= 159,
+        ktptRelLineHeight	= 160,
+        ktptTableRule	= 161,
+        ktptWidowOrphanControl	= 162,
+        ktptFieldName	= 9998,
+        ktptMarkItem	= 9999
     } 	FwTextPropType;
 
 typedef /* [v1_enum] */ 
 enum TptEditable
-    {	ktptNotEditable	= 0,
-	ktptIsEditable	= ( ktptNotEditable + 1 ) ,
-	ktptSemiEditable	= ( ktptIsEditable + 1 ) 
+    {
+        ktptNotEditable	= 0,
+        ktptIsEditable	= ( ktptNotEditable + 1 ) ,
+        ktptSemiEditable	= ( ktptIsEditable + 1 ) 
     } 	TptEditable;
 
 typedef /* [v1_enum] */ 
 enum SpellingModes
-    {	ksmMin	= 0,
-	ksmNormalCheck	= 0,
-	ksmDoNotCheck	= ( ksmNormalCheck + 1 ) ,
-	ksmForceCheck	= ( ksmDoNotCheck + 1 ) ,
-	ksmLim	= ( ksmForceCheck + 1 ) 
+    {
+        ksmMin	= 0,
+        ksmNormalCheck	= 0,
+        ksmDoNotCheck	= ( ksmNormalCheck + 1 ) ,
+        ksmForceCheck	= ( ksmDoNotCheck + 1 ) ,
+        ksmLim	= ( ksmForceCheck + 1 ) 
     } 	SpellingModes;
 
 typedef /* [v1_enum] */ 
 enum FwObjDataTypes
-    {	kodtPictEvenHot	= 1,
-	kodtPictOddHot	= 2,
-	kodtNameGuidHot	= 3,
-	kodtExternalPathName	= 4,
-	kodtOwnNameGuidHot	= 5,
-	kodtEmbeddedObjectData	= 6,
-	kodtContextString	= 7,
-	kodtGuidMoveableObjDisp	= 8
+    {
+        kodtPictEvenHot	= 1,
+        kodtPictOddHot	= 2,
+        kodtNameGuidHot	= 3,
+        kodtExternalPathName	= 4,
+        kodtOwnNameGuidHot	= 5,
+        kodtEmbeddedObjectData	= 6,
+        kodtContextString	= 7,
+        kodtGuidMoveableObjDisp	= 8
     } 	FwObjDataTypes;
 
 typedef /* [v1_enum] */ 
 enum FwTextScalarProp
-    {	kscpWs	= ( ( ktptWs << 2 )  | 2 ) ,
-	kscpWsAndOws	= ( ( ktptWs << 2 )  | 3 ) ,
-	kscpItalic	= ( ( ktptItalic << 2 )  | 0 ) ,
-	kscpBold	= ( ( ktptBold << 2 )  | 0 ) ,
-	kscpSuperscript	= ( ( ktptSuperscript << 2 )  | 0 ) ,
-	kscpUnderline	= ( ( ktptUnderline << 2 )  | 0 ) ,
-	kscpFontSize	= ( ( ktptFontSize << 2 )  | 2 ) ,
-	kscpOffset	= ( ( ktptOffset << 2 )  | 2 ) ,
-	kscpForeColor	= ( ( ktptForeColor << 2 )  | 2 ) ,
-	kscpBackColor	= ( ( ktptBackColor << 2 )  | 2 ) ,
-	kscpUnderColor	= ( ( ktptUnderColor << 2 )  | 2 ) ,
-	kscpSpellCheck	= ( ( ktptSpellCheck << 2 )  | 0 ) ,
-	kscpBaseWs	= ( ( ktptBaseWs << 2 )  | 2 ) ,
-	kscpBaseWsAndOws	= ( ( ktptBaseWs << 2 )  | 3 ) ,
-	kscpAlign	= ( ( ktptAlign << 2 )  | 0 ) ,
-	kscpFirstIndent	= ( ( ktptFirstIndent << 2 )  | 2 ) ,
-	kscpLeadingIndent	= ( ( ktptLeadingIndent << 2 )  | 2 ) ,
-	kscpTrailingIndent	= ( ( ktptTrailingIndent << 2 )  | 2 ) ,
-	kscpSpaceBefore	= ( ( ktptSpaceBefore << 2 )  | 2 ) ,
-	kscpSpaceAfter	= ( ( ktptSpaceAfter << 2 )  | 2 ) ,
-	kscpTabDef	= ( ( ktptTabDef << 2 )  | 2 ) ,
-	kscpLineHeight	= ( ( ktptLineHeight << 2 )  | 2 ) ,
-	kscpParaColor	= ( ( ktptParaColor << 2 )  | 2 ) ,
-	kscpKeepWithNext	= ( ( ktptKeepWithNext << 2 )  | 0 ) ,
-	kscpKeepTogether	= ( ( ktptKeepTogether << 2 )  | 0 ) ,
-	kscpWidowOrphanControl	= ( ( ktptWidowOrphanControl << 2 )  | 0 ) ,
-	kscpMarkItem	= ( ( ktptMarkItem << 2 )  | 0 ) 
+    {
+        kscpWs	= ( ( ktptWs << 2 )  | 2 ) ,
+        kscpWsAndOws	= ( ( ktptWs << 2 )  | 3 ) ,
+        kscpItalic	= ( ( ktptItalic << 2 )  | 0 ) ,
+        kscpBold	= ( ( ktptBold << 2 )  | 0 ) ,
+        kscpSuperscript	= ( ( ktptSuperscript << 2 )  | 0 ) ,
+        kscpUnderline	= ( ( ktptUnderline << 2 )  | 0 ) ,
+        kscpFontSize	= ( ( ktptFontSize << 2 )  | 2 ) ,
+        kscpOffset	= ( ( ktptOffset << 2 )  | 2 ) ,
+        kscpForeColor	= ( ( ktptForeColor << 2 )  | 2 ) ,
+        kscpBackColor	= ( ( ktptBackColor << 2 )  | 2 ) ,
+        kscpUnderColor	= ( ( ktptUnderColor << 2 )  | 2 ) ,
+        kscpSpellCheck	= ( ( ktptSpellCheck << 2 )  | 0 ) ,
+        kscpBaseWs	= ( ( ktptBaseWs << 2 )  | 2 ) ,
+        kscpBaseWsAndOws	= ( ( ktptBaseWs << 2 )  | 3 ) ,
+        kscpAlign	= ( ( ktptAlign << 2 )  | 0 ) ,
+        kscpFirstIndent	= ( ( ktptFirstIndent << 2 )  | 2 ) ,
+        kscpLeadingIndent	= ( ( ktptLeadingIndent << 2 )  | 2 ) ,
+        kscpTrailingIndent	= ( ( ktptTrailingIndent << 2 )  | 2 ) ,
+        kscpSpaceBefore	= ( ( ktptSpaceBefore << 2 )  | 2 ) ,
+        kscpSpaceAfter	= ( ( ktptSpaceAfter << 2 )  | 2 ) ,
+        kscpTabDef	= ( ( ktptTabDef << 2 )  | 2 ) ,
+        kscpLineHeight	= ( ( ktptLineHeight << 2 )  | 2 ) ,
+        kscpParaColor	= ( ( ktptParaColor << 2 )  | 2 ) ,
+        kscpKeepWithNext	= ( ( ktptKeepWithNext << 2 )  | 0 ) ,
+        kscpKeepTogether	= ( ( ktptKeepTogether << 2 )  | 0 ) ,
+        kscpWidowOrphanControl	= ( ( ktptWidowOrphanControl << 2 )  | 0 ) ,
+        kscpMarkItem	= ( ( ktptMarkItem << 2 )  | 0 ) 
     } 	FwTextScalarProp;
 
 typedef /* [v1_enum] */ 
 enum FwTextStringProp
-    {	kstpFontFamily	= ktptFontFamily,
-	kstpCharStyle	= ktptCharStyle,
-	kstpParaStyle	= ktptParaStyle,
-	kstpTabList	= ktptTabList,
-	kstpTags	= ktptTags,
-	kstpObjData	= ktptObjData,
-	kstpFontVariations	= ktptFontVariations,
-	kstpNamedStyle	= ktptNamedStyle,
-	kstpBulNumTxtBef	= ktptBulNumTxtBef,
-	kstpBulNumTxtAft	= ktptBulNumTxtAft,
-	kstpBulNumFontInfo	= ktptBulNumFontInfo,
-	kstpWsStyle	= ktptWsStyle,
-	kstpFieldName	= ktptFieldName
+    {
+        kstpFontFamily	= ktptFontFamily,
+        kstpCharStyle	= ktptCharStyle,
+        kstpParaStyle	= ktptParaStyle,
+        kstpTabList	= ktptTabList,
+        kstpTags	= ktptTags,
+        kstpObjData	= ktptObjData,
+        kstpFontVariations	= ktptFontVariations,
+        kstpNamedStyle	= ktptNamedStyle,
+        kstpBulNumTxtBef	= ktptBulNumTxtBef,
+        kstpBulNumTxtAft	= ktptBulNumTxtAft,
+        kstpBulNumFontInfo	= ktptBulNumFontInfo,
+        kstpWsStyle	= ktptWsStyle,
+        kstpFieldName	= ktptFieldName
     } 	FwTextStringProp;
 
 typedef /* [v1_enum] */ 
 enum FwTextPropConstants
-    {	kdenTextPropRel	= 10000,
-	kcbitTextPropVar	= 4,
-	knNinch	= 0x80000000,
-	knConflicting	= 0x80000001
+    {
+        kdenTextPropRel	= 10000,
+        kcbitTextPropVar	= 4,
+        knNinch	= 0x80000000,
+        knConflicting	= 0x80000001
     } 	FwTextPropConstants;
 
 typedef /* [v1_enum] */ 
 enum FwTextToggleVal
-    {	kttvOff	= 0,
-	kttvForceOn	= 1,
-	kttvInvert	= 2
+    {
+        kttvOff	= 0,
+        kttvForceOn	= 1,
+        kttvInvert	= 2
     } 	FwTextToggleVal;
 
 typedef /* [v1_enum] */ 
 enum FwSuperscriptVal
-    {	kssvOff	= 0,
-	kssvSuper	= 1,
-	kssvSub	= 2
+    {
+        kssvOff	= 0,
+        kssvSuper	= 1,
+        kssvSub	= 2
     } 	FwSuperscriptVal;
 
 typedef /* [v1_enum] */ 
 enum FwTextColor
-    {	kclrWhite	= 0xffffff,
-	kclrBlack	= 0,
-	kclrRed	= 0xff,
-	kclrGreen	= 0xff00,
-	kclrBlue	= 0xff0000,
-	kclrYellow	= 0xffff,
-	kclrMagenta	= 0xff00ff,
-	kclrCyan	= 0xffff00,
-	kclrTransparent	= 0xc0000000
+    {
+        kclrWhite	= 0xffffff,
+        kclrBlack	= 0,
+        kclrRed	= 0xff,
+        kclrGreen	= 0xff00,
+        kclrBlue	= 0xff0000,
+        kclrYellow	= 0xffff,
+        kclrMagenta	= 0xff00ff,
+        kclrCyan	= 0xffff00,
+        kclrTransparent	= 0xc0000000
     } 	FwTextColor;
 
 typedef /* [v1_enum] */ 
 enum FwUnderlineType
-    {	kuntMin	= 0,
-	kuntNone	= kuntMin,
-	kuntDotted	= ( kuntNone + 1 ) ,
-	kuntDashed	= ( kuntDotted + 1 ) ,
-	kuntSingle	= ( kuntDashed + 1 ) ,
-	kuntDouble	= ( kuntSingle + 1 ) ,
-	kuntStrikethrough	= ( kuntDouble + 1 ) ,
-	kuntSquiggle	= ( kuntStrikethrough + 1 ) ,
-	kuntLim	= ( kuntSquiggle + 1 ) 
+    {
+        kuntMin	= 0,
+        kuntNone	= kuntMin,
+        kuntDotted	= ( kuntNone + 1 ) ,
+        kuntDashed	= ( kuntDotted + 1 ) ,
+        kuntSingle	= ( kuntDashed + 1 ) ,
+        kuntDouble	= ( kuntSingle + 1 ) ,
+        kuntStrikethrough	= ( kuntDouble + 1 ) ,
+        kuntSquiggle	= ( kuntStrikethrough + 1 ) ,
+        kuntLim	= ( kuntSquiggle + 1 ) 
     } 	FwUnderlineType;
 
 typedef /* [v1_enum] */ 
 enum FwTextAlign
-    {	ktalMin	= 0,
-	ktalLeading	= ktalMin,
-	ktalLeft	= ( ktalLeading + 1 ) ,
-	ktalCenter	= ( ktalLeft + 1 ) ,
-	ktalRight	= ( ktalCenter + 1 ) ,
-	ktalTrailing	= ( ktalRight + 1 ) ,
-	ktalJustify	= ( ktalTrailing + 1 ) ,
-	ktalLim	= ( ktalJustify + 1 ) 
+    {
+        ktalMin	= 0,
+        ktalLeading	= ktalMin,
+        ktalLeft	= ( ktalLeading + 1 ) ,
+        ktalCenter	= ( ktalLeft + 1 ) ,
+        ktalRight	= ( ktalCenter + 1 ) ,
+        ktalTrailing	= ( ktalRight + 1 ) ,
+        ktalJustify	= ( ktalTrailing + 1 ) ,
+        ktalLim	= ( ktalJustify + 1 ) 
     } 	FwTextAlign;
 
 typedef struct TsRunInfo
@@ -1043,72 +1100,81 @@ TsMultiString
 
 typedef /* [v1_enum] */ 
 enum LgLineBreak
-    {	klbNoBreak	= 0,
-	klbWsBreak	= 10,
-	klbWordBreak	= 15,
-	klbGoodBreak	= 19,
-	klbHyphenBreak	= 20,
-	klbLetterBreak	= 30,
-	klbClipBreak	= 40
+    {
+        klbNoBreak	= 0,
+        klbWsBreak	= 10,
+        klbWordBreak	= 15,
+        klbGoodBreak	= 19,
+        klbHyphenBreak	= 20,
+        klbLetterBreak	= 30,
+        klbClipBreak	= 40
     } 	LgLineBreak;
 
 typedef /* [v1_enum] */ 
 enum LgLineBreakStatus
-    {	kflbsBrk	= 0x1,
-	kflbsSpace	= 0x2,
-	kflbsBrkL	= 0x4
+    {
+        kflbsBrk	= 0x1,
+        kflbsSpace	= 0x2,
+        kflbsBrkL	= 0x4
     } 	LgLineBreakStatus;
 
 typedef /* [v1_enum] */ 
 enum LgIPDrawMode
-    {	kdmNormal	= 0,
-	kdmSplitPrimary	= ( kdmNormal + 1 ) ,
-	kdmSplitSecondary	= ( kdmSplitPrimary + 1 ) 
+    {
+        kdmNormal	= 0,
+        kdmSplitPrimary	= ( kdmNormal + 1 ) ,
+        kdmSplitSecondary	= ( kdmSplitPrimary + 1 ) 
     } 	LgIPDrawMode;
 
 typedef /* [v1_enum] */ 
 enum LgIpValidResult
-    {	kipvrOK	= 0,
-	kipvrBad	= ( kipvrOK + 1 ) ,
-	kipvrUnknown	= ( kipvrBad + 1 ) 
+    {
+        kipvrOK	= 0,
+        kipvrBad	= ( kipvrOK + 1 ) ,
+        kipvrUnknown	= ( kipvrBad + 1 ) 
     } 	LgIpValidResult;
 
 typedef /* [v1_enum] */ 
 enum LgTrailingWsHandling
-    {	ktwshAll	= 0,
-	ktwshNoWs	= ( ktwshAll + 1 ) ,
-	ktwshOnlyWs	= ( ktwshNoWs + 1 ) 
+    {
+        ktwshAll	= 0,
+        ktwshNoWs	= ( ktwshAll + 1 ) ,
+        ktwshOnlyWs	= ( ktwshNoWs + 1 ) 
     } 	LgTrailingWsHandling;
 
 typedef /* [v1_enum] */ 
 enum LgUtfForm
-    {	kutf8	= 0,
-	kutf16	= ( kutf8 + 1 ) ,
-	kutf32	= ( kutf16 + 1 ) 
+    {
+        kutf8	= 0,
+        kutf16	= ( kutf8 + 1 ) ,
+        kutf32	= ( kutf16 + 1 ) 
     } 	LgUtfForm;
 
 typedef /* [v1_enum] */ 
 enum VwGenericFontNames
-    {	kvgfnCustom	= 0,
-	kvgfnSerif	= ( kvgfnCustom + 1 ) ,
-	kvgfnSansSerif	= ( kvgfnSerif + 1 ) ,
-	kvgfnMonospace	= ( kvgfnSansSerif + 1 ) 
+    {
+        kvgfnCustom	= 0,
+        kvgfnSerif	= ( kvgfnCustom + 1 ) ,
+        kvgfnSansSerif	= ( kvgfnSerif + 1 ) ,
+        kvgfnMonospace	= ( kvgfnSansSerif + 1 ) 
     } 	VwGenericFontNames;
 
 typedef /* [v1_enum] */ 
 enum VwFontStyle
-    {	kfsNormal	= 0,
-	kfsItalic	= ( kfsNormal + 1 ) ,
-	kfsOblique	= ( kfsItalic + 1 ) 
+    {
+        kfsNormal	= 0,
+        kfsItalic	= ( kfsNormal + 1 ) ,
+        kfsOblique	= ( kfsItalic + 1 ) 
     } 	VwFontStyle;
 
 typedef /* [v1_enum] */ 
 enum VwTextUnderline
-    {	ktuNoUnderline	= 0,
-	ktuSingleUnderline	= ( ktuNoUnderline + 1 ) 
+    {
+        ktuNoUnderline	= 0,
+        ktuSingleUnderline	= ( ktuNoUnderline + 1 ) 
     } 	VwTextUnderline;
 
-typedef /* [public][public][public][public][public][public] */ struct __MIDL___MIDL_itf_FwKernelTlb_0001_0079_0001
+typedef /* [public][public][public][public][public][public] */ struct __MIDL___MIDL_itf_FwKernelTlb_0001_0087_0001
     {
     COLORREF clrFore;
     COLORREF clrBack;
@@ -1128,39 +1194,41 @@ typedef /* [public][public][public][public][public][public] */ struct __MIDL___M
 
 typedef 
 enum ScriptDirCode
-    {	kfsdcNone	= 0,
-	kfsdcHorizLtr	= 1,
-	kfsdcHorizRtl	= 2,
-	kfsdcVertFromLeft	= 4,
-	kfsdcVertFromRight	= 8
+    {
+        kfsdcNone	= 0,
+        kfsdcHorizLtr	= 1,
+        kfsdcHorizRtl	= 2,
+        kfsdcVertFromLeft	= 4,
+        kfsdcVertFromRight	= 8
     } 	ScriptDirCode;
 
 typedef 
 enum JustGlyphAttr
-    {	kjgatStretch	= 1,
-	kjgatShrink	= ( kjgatStretch + 1 ) ,
-	kjgatWeight	= ( kjgatShrink + 1 ) ,
-	kjgatStep	= ( kjgatWeight + 1 ) ,
-	kjgatChunk	= ( kjgatStep + 1 ) ,
-	kjgatWidth	= ( kjgatChunk + 1 ) ,
-	kjgatBreak	= ( kjgatWidth + 1 ) ,
-	kjgatStretchInSteps	= ( kjgatBreak + 1 ) ,
-	kjgatWidthInSteps	= ( kjgatStretchInSteps + 1 ) ,
-	kjgatAdvWidth	= ( kjgatWidthInSteps + 1 ) ,
-	kjgatAdvHeight	= ( kjgatAdvWidth + 1 ) ,
-	kjgatBbLeft	= ( kjgatAdvHeight + 1 ) ,
-	kjgatBbRight	= ( kjgatBbLeft + 1 ) ,
-	kjgatBbTop	= ( kjgatBbRight + 1 ) ,
-	kjgatBbBottom	= ( kjgatBbTop + 1 ) 
+    {
+        kjgatStretch	= 1,
+        kjgatShrink	= ( kjgatStretch + 1 ) ,
+        kjgatWeight	= ( kjgatShrink + 1 ) ,
+        kjgatStep	= ( kjgatWeight + 1 ) ,
+        kjgatChunk	= ( kjgatStep + 1 ) ,
+        kjgatWidth	= ( kjgatChunk + 1 ) ,
+        kjgatBreak	= ( kjgatWidth + 1 ) ,
+        kjgatStretchInSteps	= ( kjgatBreak + 1 ) ,
+        kjgatWidthInSteps	= ( kjgatStretchInSteps + 1 ) ,
+        kjgatAdvWidth	= ( kjgatWidthInSteps + 1 ) ,
+        kjgatAdvHeight	= ( kjgatAdvWidth + 1 ) ,
+        kjgatBbLeft	= ( kjgatAdvHeight + 1 ) ,
+        kjgatBbRight	= ( kjgatBbLeft + 1 ) ,
+        kjgatBbTop	= ( kjgatBbRight + 1 ) ,
+        kjgatBbBottom	= ( kjgatBbTop + 1 ) 
     } 	JustGlyphAttr;
 
-typedef /* [public][public] */ struct __MIDL___MIDL_itf_FwKernelTlb_0001_0079_0002
+typedef /* [public][public] */ struct __MIDL___MIDL_itf_FwKernelTlb_0001_0087_0002
     {
     ScriptDirCode sdcPara;
     ScriptDirCode sdcOuter;
     } 	LgParaRenderProps;
 
-typedef /* [public][public] */ struct __MIDL___MIDL_itf_FwKernelTlb_0001_0079_0003
+typedef /* [public][public] */ struct __MIDL___MIDL_itf_FwKernelTlb_0001_0087_0003
     {
     OLECHAR glyphIndex;
     int x;
@@ -1203,15 +1271,16 @@ ILgSegment
 3818E245-6A0B-45A7-A5D6-52694931279E
 );
 typedef /* [public][public][v1_enum] */ 
-enum __MIDL___MIDL_itf_FwKernelTlb_0001_0085_0001
-    {	kestNoMore	= 0,
-	kestMoreLines	= ( kestNoMore + 1 ) ,
-	kestHardBreak	= ( kestMoreLines + 1 ) ,
-	kestBadBreak	= ( kestHardBreak + 1 ) ,
-	kestOkayBreak	= ( kestBadBreak + 1 ) ,
-	kestWsBreak	= ( kestOkayBreak + 1 ) ,
-	kestMoreWhtsp	= ( kestWsBreak + 1 ) ,
-	kestNothingFit	= ( kestMoreWhtsp + 1 ) 
+enum __MIDL___MIDL_itf_FwKernelTlb_0001_0094_0001
+    {
+        kestNoMore	= 0,
+        kestMoreLines	= ( kestNoMore + 1 ) ,
+        kestHardBreak	= ( kestMoreLines + 1 ) ,
+        kestBadBreak	= ( kestHardBreak + 1 ) ,
+        kestOkayBreak	= ( kestBadBreak + 1 ) ,
+        kestWsBreak	= ( kestOkayBreak + 1 ) ,
+        kestMoreWhtsp	= ( kestWsBreak + 1 ) ,
+        kestNothingFit	= ( kestMoreWhtsp + 1 ) 
     } 	LgEndSegmentType;
 
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
@@ -1257,122 +1326,127 @@ IJustifyingRenderer
 
 typedef /* [v1_enum] */ 
 enum LgGeneralCharCategory
-    {	kccLu	= 0,
-	kccLl	= ( kccLu + 1 ) ,
-	kccLt	= ( kccLl + 1 ) ,
-	kccLm	= ( kccLt + 1 ) ,
-	kccLo	= ( kccLm + 1 ) ,
-	kccMn	= ( kccLo + 1 ) ,
-	kccMc	= ( kccMn + 1 ) ,
-	kccMe	= ( kccMc + 1 ) ,
-	kccNd	= ( kccMe + 1 ) ,
-	kccNl	= ( kccNd + 1 ) ,
-	kccNo	= ( kccNl + 1 ) ,
-	kccZs	= ( kccNo + 1 ) ,
-	kccZl	= ( kccZs + 1 ) ,
-	kccZp	= ( kccZl + 1 ) ,
-	kccCc	= ( kccZp + 1 ) ,
-	kccCf	= ( kccCc + 1 ) ,
-	kccCs	= ( kccCf + 1 ) ,
-	kccCo	= ( kccCs + 1 ) ,
-	kccCn	= ( kccCo + 1 ) ,
-	kccPc	= ( kccCn + 1 ) ,
-	kccPd	= ( kccPc + 1 ) ,
-	kccPs	= ( kccPd + 1 ) ,
-	kccPe	= ( kccPs + 1 ) ,
-	kccPi	= ( kccPe + 1 ) ,
-	kccPf	= ( kccPi + 1 ) ,
-	kccPo	= ( kccPf + 1 ) ,
-	kccSm	= ( kccPo + 1 ) ,
-	kccSc	= ( kccSm + 1 ) ,
-	kccSk	= ( kccSc + 1 ) ,
-	kccSo	= ( kccSk + 1 ) 
+    {
+        kccLu	= 0,
+        kccLl	= ( kccLu + 1 ) ,
+        kccLt	= ( kccLl + 1 ) ,
+        kccLm	= ( kccLt + 1 ) ,
+        kccLo	= ( kccLm + 1 ) ,
+        kccMn	= ( kccLo + 1 ) ,
+        kccMc	= ( kccMn + 1 ) ,
+        kccMe	= ( kccMc + 1 ) ,
+        kccNd	= ( kccMe + 1 ) ,
+        kccNl	= ( kccNd + 1 ) ,
+        kccNo	= ( kccNl + 1 ) ,
+        kccZs	= ( kccNo + 1 ) ,
+        kccZl	= ( kccZs + 1 ) ,
+        kccZp	= ( kccZl + 1 ) ,
+        kccCc	= ( kccZp + 1 ) ,
+        kccCf	= ( kccCc + 1 ) ,
+        kccCs	= ( kccCf + 1 ) ,
+        kccCo	= ( kccCs + 1 ) ,
+        kccCn	= ( kccCo + 1 ) ,
+        kccPc	= ( kccCn + 1 ) ,
+        kccPd	= ( kccPc + 1 ) ,
+        kccPs	= ( kccPd + 1 ) ,
+        kccPe	= ( kccPs + 1 ) ,
+        kccPi	= ( kccPe + 1 ) ,
+        kccPf	= ( kccPi + 1 ) ,
+        kccPo	= ( kccPf + 1 ) ,
+        kccSm	= ( kccPo + 1 ) ,
+        kccSc	= ( kccSm + 1 ) ,
+        kccSk	= ( kccSc + 1 ) ,
+        kccSo	= ( kccSk + 1 ) 
     } 	LgGeneralCharCategory;
 
 typedef /* [v1_enum] */ 
 enum LgBidiCategory
-    {	kbicL	= 0,
-	kbicLRE	= ( kbicL + 1 ) ,
-	kbicLRO	= ( kbicLRE + 1 ) ,
-	kbicR	= ( kbicLRO + 1 ) ,
-	kbicAL	= ( kbicR + 1 ) ,
-	kbicRLE	= ( kbicAL + 1 ) ,
-	kbicRLO	= ( kbicRLE + 1 ) ,
-	kbicPDF	= ( kbicRLO + 1 ) ,
-	kbicEN	= ( kbicPDF + 1 ) ,
-	kbicES	= ( kbicEN + 1 ) ,
-	kbicET	= ( kbicES + 1 ) ,
-	kbicAN	= ( kbicET + 1 ) ,
-	kbicCS	= ( kbicAN + 1 ) ,
-	kbicNSM	= ( kbicCS + 1 ) ,
-	kbicBN	= ( kbicNSM + 1 ) ,
-	kbicB	= ( kbicBN + 1 ) ,
-	kbicS	= ( kbicB + 1 ) ,
-	kbicWS	= ( kbicS + 1 ) ,
-	kbicON	= ( kbicWS + 1 ) 
+    {
+        kbicL	= 0,
+        kbicLRE	= ( kbicL + 1 ) ,
+        kbicLRO	= ( kbicLRE + 1 ) ,
+        kbicR	= ( kbicLRO + 1 ) ,
+        kbicAL	= ( kbicR + 1 ) ,
+        kbicRLE	= ( kbicAL + 1 ) ,
+        kbicRLO	= ( kbicRLE + 1 ) ,
+        kbicPDF	= ( kbicRLO + 1 ) ,
+        kbicEN	= ( kbicPDF + 1 ) ,
+        kbicES	= ( kbicEN + 1 ) ,
+        kbicET	= ( kbicES + 1 ) ,
+        kbicAN	= ( kbicET + 1 ) ,
+        kbicCS	= ( kbicAN + 1 ) ,
+        kbicNSM	= ( kbicCS + 1 ) ,
+        kbicBN	= ( kbicNSM + 1 ) ,
+        kbicB	= ( kbicBN + 1 ) ,
+        kbicS	= ( kbicB + 1 ) ,
+        kbicWS	= ( kbicS + 1 ) ,
+        kbicON	= ( kbicWS + 1 ) 
     } 	LgBidiCategory;
 
 typedef /* [v1_enum] */ 
 enum LgLBP
-    {	klbpAI	= 0,
-	klbpAL	= ( klbpAI + 1 ) ,
-	klbpB2	= ( klbpAL + 1 ) ,
-	klbpBA	= ( klbpB2 + 1 ) ,
-	klbpBB	= ( klbpBA + 1 ) ,
-	klbpBK	= ( klbpBB + 1 ) ,
-	klbpCB	= ( klbpBK + 1 ) ,
-	klbpCL	= ( klbpCB + 1 ) ,
-	klbpCM	= ( klbpCL + 1 ) ,
-	klbpCR	= ( klbpCM + 1 ) ,
-	klbpEX	= ( klbpCR + 1 ) ,
-	klbpGL	= ( klbpEX + 1 ) ,
-	klbpHY	= ( klbpGL + 1 ) ,
-	klbpID	= ( klbpHY + 1 ) ,
-	klbpIN	= ( klbpID + 1 ) ,
-	klbpIS	= ( klbpIN + 1 ) ,
-	klbpLF	= ( klbpIS + 1 ) ,
-	klbpNS	= ( klbpLF + 1 ) ,
-	klbpNU	= ( klbpNS + 1 ) ,
-	klbpOP	= ( klbpNU + 1 ) ,
-	klbpPO	= ( klbpOP + 1 ) ,
-	klbpPR	= ( klbpPO + 1 ) ,
-	klbpQU	= ( klbpPR + 1 ) ,
-	klbpSA	= ( klbpQU + 1 ) ,
-	klbpSG	= ( klbpSA + 1 ) ,
-	klbpSP	= ( klbpSG + 1 ) ,
-	klbpSY	= ( klbpSP + 1 ) ,
-	klbpXX	= ( klbpSY + 1 ) ,
-	klbpZW	= ( klbpXX + 1 ) 
+    {
+        klbpAI	= 0,
+        klbpAL	= ( klbpAI + 1 ) ,
+        klbpB2	= ( klbpAL + 1 ) ,
+        klbpBA	= ( klbpB2 + 1 ) ,
+        klbpBB	= ( klbpBA + 1 ) ,
+        klbpBK	= ( klbpBB + 1 ) ,
+        klbpCB	= ( klbpBK + 1 ) ,
+        klbpCL	= ( klbpCB + 1 ) ,
+        klbpCM	= ( klbpCL + 1 ) ,
+        klbpCR	= ( klbpCM + 1 ) ,
+        klbpEX	= ( klbpCR + 1 ) ,
+        klbpGL	= ( klbpEX + 1 ) ,
+        klbpHY	= ( klbpGL + 1 ) ,
+        klbpID	= ( klbpHY + 1 ) ,
+        klbpIN	= ( klbpID + 1 ) ,
+        klbpIS	= ( klbpIN + 1 ) ,
+        klbpLF	= ( klbpIS + 1 ) ,
+        klbpNS	= ( klbpLF + 1 ) ,
+        klbpNU	= ( klbpNS + 1 ) ,
+        klbpOP	= ( klbpNU + 1 ) ,
+        klbpPO	= ( klbpOP + 1 ) ,
+        klbpPR	= ( klbpPO + 1 ) ,
+        klbpQU	= ( klbpPR + 1 ) ,
+        klbpSA	= ( klbpQU + 1 ) ,
+        klbpSG	= ( klbpSA + 1 ) ,
+        klbpSP	= ( klbpSG + 1 ) ,
+        klbpSY	= ( klbpSP + 1 ) ,
+        klbpXX	= ( klbpSY + 1 ) ,
+        klbpZW	= ( klbpXX + 1 ) 
     } 	LgLBP;
 
 typedef /* [v1_enum] */ 
 enum LgDecompMapTag
-    {	kdtNoTag	= 0,
-	kdtFont	= ( kdtNoTag + 1 ) ,
-	kdtNoBreak	= ( kdtFont + 1 ) ,
-	kdtInitial	= ( kdtNoBreak + 1 ) ,
-	kdtMedial	= ( kdtInitial + 1 ) ,
-	kdtFinal	= ( kdtMedial + 1 ) ,
-	kdtIsolated	= ( kdtFinal + 1 ) ,
-	kdtCircle	= ( kdtIsolated + 1 ) ,
-	kdtSuper	= ( kdtCircle + 1 ) ,
-	kdtSub	= ( kdtSuper + 1 ) ,
-	kdtVertical	= ( kdtSub + 1 ) ,
-	kdtWide	= ( kdtVertical + 1 ) ,
-	kdtNarrow	= ( kdtWide + 1 ) ,
-	kdtSmall	= ( kdtNarrow + 1 ) ,
-	kdtSquare	= ( kdtSmall + 1 ) ,
-	kdtFraction	= ( kdtSquare + 1 ) ,
-	kdtCompat	= ( kdtFraction + 1 ) 
+    {
+        kdtNoTag	= 0,
+        kdtFont	= ( kdtNoTag + 1 ) ,
+        kdtNoBreak	= ( kdtFont + 1 ) ,
+        kdtInitial	= ( kdtNoBreak + 1 ) ,
+        kdtMedial	= ( kdtInitial + 1 ) ,
+        kdtFinal	= ( kdtMedial + 1 ) ,
+        kdtIsolated	= ( kdtFinal + 1 ) ,
+        kdtCircle	= ( kdtIsolated + 1 ) ,
+        kdtSuper	= ( kdtCircle + 1 ) ,
+        kdtSub	= ( kdtSuper + 1 ) ,
+        kdtVertical	= ( kdtSub + 1 ) ,
+        kdtWide	= ( kdtVertical + 1 ) ,
+        kdtNarrow	= ( kdtWide + 1 ) ,
+        kdtSmall	= ( kdtNarrow + 1 ) ,
+        kdtSquare	= ( kdtSmall + 1 ) ,
+        kdtFraction	= ( kdtSquare + 1 ) ,
+        kdtCompat	= ( kdtFraction + 1 ) 
     } 	LgDecompMapTag;
 
 typedef /* [v1_enum] */ 
 enum LgXMLTag
-    {	kxmlInvalid	= 0,
-	kxmlChardefs	= ( kxmlInvalid + 1 ) ,
-	kxmlDef	= ( kxmlChardefs + 1 ) ,
-	kxmlUdata	= ( kxmlDef + 1 ) ,
-	kxmlLinebrk	= ( kxmlUdata + 1 ) 
+    {
+        kxmlInvalid	= 0,
+        kxmlChardefs	= ( kxmlInvalid + 1 ) ,
+        kxmlDef	= ( kxmlChardefs + 1 ) ,
+        kxmlUdata	= ( kxmlDef + 1 ) ,
+        kxmlLinebrk	= ( kxmlUdata + 1 ) 
     } 	LgXMLTag;
 
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
@@ -1382,10 +1456,11 @@ ILgWritingSystem
 );
 typedef /* [v1_enum] */ 
 enum LgCollatingOptions
-    {	fcoDefault	= 0,
-	fcoIgnoreCase	= 1,
-	fcoDontIgnoreVariant	= 2,
-	fcoLim	= ( fcoDontIgnoreVariant + 1 ) 
+    {
+        fcoDefault	= 0,
+        fcoIgnoreCase	= 1,
+        fcoDontIgnoreVariant	= 2,
+        fcoLim	= ( fcoDontIgnoreVariant + 1 ) 
     } 	LgCollatingOptions;
 
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
@@ -1420,41 +1495,43 @@ ILgTokenizer
 );
 typedef /* [v1_enum] */ 
 enum LgSpellCheckOptions
-    {	fsplcNil	= 0,
-	fsplcSuggestFromUserDict	= 0x1,
-	fsplcIgnoreAllCaps	= 0x2,
-	fsplcIgnoreMixedDigits	= 0x4,
-	fsplcIgnoreRomanNumerals	= 0x8,
-	fsplcFindUncappedSentences	= 0x10,
-	fsplcFindMissingSpaces	= 0x20,
-	fsplcFindRepeatWord	= 0x40,
-	fsplcFindExtraSpaces	= 0x80,
-	fsplcFindSpacesBeforePunc	= 0x100,
-	fsplcFindSpacesAfterPunc	= 0x200,
-	fsplcFindInitialNumerals	= 0x800,
-	fsplcQuickSuggest	= 0x2000,
-	fsplcUseAllOpenUdr	= 0x4000,
-	fsplcSglStepSugg	= 0x10000,
-	fsplcIgnoreSingleLetter	= 0x20000
+    {
+        fsplcNil	= 0,
+        fsplcSuggestFromUserDict	= 0x1,
+        fsplcIgnoreAllCaps	= 0x2,
+        fsplcIgnoreMixedDigits	= 0x4,
+        fsplcIgnoreRomanNumerals	= 0x8,
+        fsplcFindUncappedSentences	= 0x10,
+        fsplcFindMissingSpaces	= 0x20,
+        fsplcFindRepeatWord	= 0x40,
+        fsplcFindExtraSpaces	= 0x80,
+        fsplcFindSpacesBeforePunc	= 0x100,
+        fsplcFindSpacesAfterPunc	= 0x200,
+        fsplcFindInitialNumerals	= 0x800,
+        fsplcQuickSuggest	= 0x2000,
+        fsplcUseAllOpenUdr	= 0x4000,
+        fsplcSglStepSugg	= 0x10000,
+        fsplcIgnoreSingleLetter	= 0x20000
     } 	LgSpellCheckOptions;
 
 typedef /* [v1_enum] */ 
 enum LgSpellCheckResults
-    {	scrsNoErrors	= 0,
-	scrsUnknownInputWord	= 1,
-	scrsReturningChangeAlways	= 2,
-	scrsReturningChangeOnce	= 3,
-	scrsInvalidHyphenation	= 4,
-	scrsErrorCapitalization	= 5,
-	scrsWordConsideredAbbreviation	= 6,
-	scrsHyphChangesSpelling	= 7,
-	scrsNoMoreSuggestions	= 8,
-	scrsMoreInfoThanBufferCouldHold	= 9,
-	scrsNoSentenceStartCap	= 10,
-	scrsRepeatWord	= 11,
-	scrsExtraSpaces	= 12,
-	scrsMissingSpace	= 13,
-	scrsInitialNumeral	= 14
+    {
+        scrsNoErrors	= 0,
+        scrsUnknownInputWord	= 1,
+        scrsReturningChangeAlways	= 2,
+        scrsReturningChangeOnce	= 3,
+        scrsInvalidHyphenation	= 4,
+        scrsErrorCapitalization	= 5,
+        scrsWordConsideredAbbreviation	= 6,
+        scrsHyphChangesSpelling	= 7,
+        scrsNoMoreSuggestions	= 8,
+        scrsMoreInfoThanBufferCouldHold	= 9,
+        scrsNoSentenceStartCap	= 10,
+        scrsRepeatWord	= 11,
+        scrsExtraSpaces	= 12,
+        scrsMissingSpace	= 13,
+        scrsInitialNumeral	= 14
     } 	LgSpellCheckResults;
 
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
@@ -1749,6 +1826,7 @@ LgIcuLocaleEnumerator
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct ITsStringVtbl
@@ -1759,7 +1837,7 @@ LgIcuLocaleEnumerator
             ITsString * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             ITsString * This);
@@ -2128,6 +2206,7 @@ LgIcuLocaleEnumerator
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IUndoGrouperVtbl
@@ -2138,7 +2217,7 @@ LgIcuLocaleEnumerator
             IUndoGrouper * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IUndoGrouper * This);
@@ -2347,6 +2426,7 @@ LgIcuLocaleEnumerator
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IFwMetaDataCacheVtbl
@@ -2357,7 +2437,7 @@ LgIcuLocaleEnumerator
             IFwMetaDataCache * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IFwMetaDataCache * This);
@@ -2678,6 +2758,7 @@ LgIcuLocaleEnumerator
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IUndoActionVtbl
@@ -2688,7 +2769,7 @@ LgIcuLocaleEnumerator
             IUndoAction * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IUndoAction * This);
@@ -2893,6 +2974,7 @@ LgIcuLocaleEnumerator
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IActionHandlerVtbl
@@ -2903,7 +2985,7 @@ LgIcuLocaleEnumerator
             IActionHandler * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IActionHandler * This);
@@ -3220,6 +3302,7 @@ ActionHandler;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IDebugReportSinkVtbl
@@ -3230,7 +3313,7 @@ ActionHandler;
             IDebugReportSink * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IDebugReportSink * This);
@@ -3311,6 +3394,7 @@ ActionHandler;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IDebugReportVtbl
@@ -3321,7 +3405,7 @@ ActionHandler;
             IDebugReport * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IDebugReport * This);
@@ -3403,6 +3487,7 @@ DebugReport;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IComDisposableVtbl
@@ -3413,7 +3498,7 @@ DebugReport;
             IComDisposable * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IComDisposable * This);
@@ -3531,6 +3616,7 @@ DebugReport;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct ITsTextPropsVtbl
@@ -3541,7 +3627,7 @@ DebugReport;
             ITsTextProps * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             ITsTextProps * This);
@@ -3770,6 +3856,7 @@ DebugReport;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct ITsStrFactoryVtbl
@@ -3780,7 +3867,7 @@ DebugReport;
             ITsStrFactory * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             ITsStrFactory * This);
@@ -3993,6 +4080,7 @@ DebugReport;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct ITsPropsFactoryVtbl
@@ -4003,7 +4091,7 @@ DebugReport;
             ITsPropsFactory * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             ITsPropsFactory * This);
@@ -4221,6 +4309,7 @@ DebugReport;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct ITsStrBldrVtbl
@@ -4231,7 +4320,7 @@ DebugReport;
             ITsStrBldr * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             ITsStrBldr * This);
@@ -4529,6 +4618,7 @@ DebugReport;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct ITsIncStrBldrVtbl
@@ -4539,7 +4629,7 @@ DebugReport;
             ITsIncStrBldr * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             ITsIncStrBldr * This);
@@ -4740,6 +4830,7 @@ DebugReport;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct ITsPropsBldrVtbl
@@ -4750,7 +4841,7 @@ DebugReport;
             ITsPropsBldr * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             ITsPropsBldr * This);
@@ -4914,6 +5005,7 @@ DebugReport;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct ITsMultiStringVtbl
@@ -4924,7 +5016,7 @@ DebugReport;
             ITsMultiString * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             ITsMultiString * This);
@@ -5058,6 +5150,7 @@ DebugReport;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct ILgWritingSystemFactoryVtbl
@@ -5068,7 +5161,7 @@ DebugReport;
             ILgWritingSystemFactory * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             ILgWritingSystemFactory * This);
@@ -5418,6 +5511,7 @@ TsMultiString;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IVwGraphicsVtbl
@@ -5428,7 +5522,7 @@ TsMultiString;
             IVwGraphics * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IVwGraphics * This);
@@ -5799,6 +5893,7 @@ TsMultiString;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IJustifyingRendererVtbl
@@ -5809,7 +5904,7 @@ TsMultiString;
             IJustifyingRenderer * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IJustifyingRenderer * This);
@@ -5915,6 +6010,7 @@ TsMultiString;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct ISimpleInitVtbl
@@ -5925,7 +6021,7 @@ TsMultiString;
             ISimpleInit * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             ISimpleInit * This);
@@ -6014,6 +6110,7 @@ TsMultiString;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IVwGraphicsWin32Vtbl
@@ -6024,7 +6121,7 @@ TsMultiString;
             IVwGraphicsWin32 * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IVwGraphicsWin32 * This);
@@ -6491,6 +6588,7 @@ VwGraphicsWin32;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IVwTextSourceVtbl
@@ -6501,7 +6599,7 @@ VwGraphicsWin32;
             IVwTextSource * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IVwTextSource * This);
@@ -6707,6 +6805,7 @@ VwGraphicsWin32;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IVwJustifierVtbl
@@ -6717,7 +6816,7 @@ VwGraphicsWin32;
             IVwJustifier * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IVwJustifier * This);
@@ -7018,6 +7117,7 @@ VwGraphicsWin32;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct ILgSegmentVtbl
@@ -7028,7 +7128,7 @@ VwGraphicsWin32;
             ILgSegment * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             ILgSegment * This);
@@ -7499,6 +7599,7 @@ VwGraphicsWin32;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IRenderEngineVtbl
@@ -7509,7 +7610,7 @@ VwGraphicsWin32;
             IRenderEngine * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IRenderEngine * This);
@@ -7688,6 +7789,7 @@ GraphiteEngine;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IRenderingFeaturesVtbl
@@ -7698,7 +7800,7 @@ GraphiteEngine;
             IRenderingFeatures * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IRenderingFeatures * This);
@@ -8036,6 +8138,7 @@ GraphiteEngine;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct ILgCharacterPropertyEngineVtbl
@@ -8046,7 +8149,7 @@ GraphiteEngine;
             ILgCharacterPropertyEngine * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             ILgCharacterPropertyEngine * This);
@@ -8564,6 +8667,7 @@ GraphiteEngine;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct ILgStringConverterVtbl
@@ -8574,7 +8678,7 @@ GraphiteEngine;
             ILgStringConverter * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             ILgStringConverter * This);
@@ -8668,6 +8772,7 @@ GraphiteEngine;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct ILgTokenizerVtbl
@@ -8678,7 +8783,7 @@ GraphiteEngine;
             ILgTokenizer * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             ILgTokenizer * This);
@@ -8768,6 +8873,7 @@ GraphiteEngine;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct ILgSpellCheckFactoryVtbl
@@ -8778,7 +8884,7 @@ GraphiteEngine;
             ILgSpellCheckFactory * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             ILgSpellCheckFactory * This);
@@ -8881,6 +8987,7 @@ GraphiteEngine;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct ILgSpellCheckerVtbl
@@ -8891,7 +8998,7 @@ GraphiteEngine;
             ILgSpellChecker * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             ILgSpellChecker * This);
@@ -9064,6 +9171,7 @@ GraphiteEngine;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct ILgCollatingEngineVtbl
@@ -9074,7 +9182,7 @@ GraphiteEngine;
             ILgCollatingEngine * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             ILgCollatingEngine * This);
@@ -9240,6 +9348,7 @@ GraphiteEngine;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct ILgSearchEngineVtbl
@@ -9250,7 +9359,7 @@ GraphiteEngine;
             ILgSearchEngine * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             ILgSearchEngine * This);
@@ -9417,6 +9526,7 @@ GraphiteEngine;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct ILgWritingSystemVtbl
@@ -9427,7 +9537,7 @@ GraphiteEngine;
             ILgWritingSystem * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             ILgWritingSystem * This);
@@ -9629,6 +9739,7 @@ GraphiteEngine;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct ILgIcuCharPropEngineVtbl
@@ -9639,7 +9750,7 @@ GraphiteEngine;
             ILgIcuCharPropEngine * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             ILgIcuCharPropEngine * This);
@@ -10207,6 +10318,7 @@ GraphiteEngine;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct ILgNumericEngineVtbl
@@ -10217,7 +10329,7 @@ GraphiteEngine;
             ILgNumericEngine * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             ILgNumericEngine * This);
@@ -10363,6 +10475,7 @@ GraphiteEngine;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct ILgKeymanHandlerVtbl
@@ -10373,7 +10486,7 @@ GraphiteEngine;
             ILgKeymanHandler * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             ILgKeymanHandler * This);
@@ -10463,6 +10576,7 @@ GraphiteEngine;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct ILgIcuConverterEnumeratorVtbl
@@ -10473,7 +10587,7 @@ GraphiteEngine;
             ILgIcuConverterEnumerator * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             ILgIcuConverterEnumerator * This);
@@ -10566,6 +10680,7 @@ GraphiteEngine;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct ILgIcuTransliteratorEnumeratorVtbl
@@ -10576,7 +10691,7 @@ GraphiteEngine;
             ILgIcuTransliteratorEnumerator * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             ILgIcuTransliteratorEnumerator * This);
@@ -10682,6 +10797,7 @@ GraphiteEngine;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct ILgIcuLocaleEnumeratorVtbl
@@ -10692,7 +10808,7 @@ GraphiteEngine;
             ILgIcuLocaleEnumerator * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             ILgIcuLocaleEnumerator * This);
@@ -10829,6 +10945,7 @@ GraphiteEngine;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct ILgIcuResourceBundleVtbl
@@ -10839,7 +10956,7 @@ GraphiteEngine;
             ILgIcuResourceBundle * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             ILgIcuResourceBundle * This);
@@ -10986,6 +11103,7 @@ GraphiteEngine;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IRegexMatcherVtbl
@@ -10996,7 +11114,7 @@ GraphiteEngine;
             IRegexMatcher * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IRegexMatcher * This);
