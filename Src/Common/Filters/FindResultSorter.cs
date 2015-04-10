@@ -41,8 +41,11 @@ namespace SIL.FieldWorks.Filters
 				// Get the relevant strings out of the objects we are comparing using the GetValue on the StringFinderComparer.
 				// This makes use of the StringFinderCompare's built in cache.
 				var stringComparer = (StringFinderCompare)Comparer;
-				var xString = stringComparer.GetValue(x, stringComparer.SortedFromEnd)[0];
-				var yString = stringComparer.GetValue(y, stringComparer.SortedFromEnd)[0];
+				var xStringArray = stringComparer.GetValue(x, stringComparer.SortedFromEnd);
+				var yStringArray = stringComparer.GetValue(y, stringComparer.SortedFromEnd);
+				var xString = xStringArray.Length == 0 ? String.Empty : xStringArray[0];
+				var yString = yStringArray.Length == 0 ? String.Empty : yStringArray[0];
+
 				// Avoid string comparisons if the result is already what we would possibly return
 				if(comparerResult >= 0)
 				{
