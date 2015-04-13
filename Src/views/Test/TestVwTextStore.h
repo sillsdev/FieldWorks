@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------------*//*:Ignore this sentence.
-Copyright (c) 2003-2013 SIL International
+Copyright (c) 2003-2015 SIL International
 This software is licensed under the LGPL, version 2.1 or later
 (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -578,8 +578,16 @@ namespace TestViews
 	class VwTextStoreTestSub: public VwTextStore
 	{
 	public:
+		int m_cCalledGetCurrentWS = 0;
+
 		VwTextStoreTestSub(VwRootBox * prootb): VwTextStore(prootb)
 		{
+		}
+
+		void GetCurrentWritingSystem()
+		{
+			m_cCalledGetCurrentWS++;
+			VwTextStore::GetCurrentWritingSystem();
 		}
 
 		int CallAcpToLog(int cchAcp)
@@ -1827,7 +1835,103 @@ namespace TestViews
 		}
 
 		/*--------------------------------------------------------------------------------------
-			Test VwTextStore::GetEndACP() for single paragraph selections.
+		Test VwRootBox::PropChanged(), that it calls NotifySelChange and resets the NormalizationCommitInProgress state
+		iff m_fNormalizationCommitInProgress and HVO and PropTag both match what was those for the commit in progress.
+		This is a test of VwRootBox, but it needs VwTextStoreTestSub, so we put it here.
+		--------------------------------------------------------------------------------------*/
+		void testVwRootBox_PropChanged()
+		{
+			HVO hvo = 1;
+			PropTag tag = 2;
+			VwRootBox* prootb = dynamic_cast<VwRootBox*>(m_qrootb.Ptr());
+			VwTextStoreTestSub* ptxs = new VwTextStoreTestSub(prootb);
+			prootb->m_qvim.Attach(ptxs);
+			prootb->BeginNormalizationCommit(hvo, tag);
+			ptxs->m_cCalledGetCurrentWS = 0;
+
+			// NormalizationCommitInProgress and same HVO but different PropTag
+			prootb->PropChanged(hvo, 10);
+			unitpp::assert_eq("PropChanged(Different PropTag) ptxs->m_cCalledGetCurrentWS", 0, ptxs->m_cCalledGetCurrentWS);
+			unitpp::assert_true("PropChanged(Different PropTag) prootb->m_fNormalizationCommitInProgress", prootb->m_fNormalizationCommitInProgress);
+
+			// NormalizationCommitInProgress and same PropTag but different HVO
+			prootb->PropChanged(10, tag);
+			unitpp::assert_eq("PropChanged(Different HVO) ptxs->m_cCalledGetCurrentWS", 0, ptxs->m_cCalledGetCurrentWS);
+			unitpp::assert_true("PropChanged(Different HVO) prootb->m_fNormalizationCommitInProgress", prootb->m_fNormalizationCommitInProgress);
+
+			// test same HVO and PropTag, but no NormalizationCommitInProgress
+			prootb->m_fNormalizationCommitInProgress = false;
+			prootb->PropChanged(hvo, tag);
+			unitpp::assert_eq("PropChanged(No NormalizationCommitInProgress) ptxs->m_cCalledGetCurrentWS",
+				0, ptxs->m_cCalledGetCurrentWS);
+			unitpp::assert_eq("PropChanged(No NormalizationCommitInProgress) prootb->m_hvoNormalizationCommitInProgress",
+				hvo, prootb->m_hvoNormalizationCommitInProgress);
+			unitpp::assert_eq("PropChanged(No NormalizationCommitInProgress) prootb->m_tagNormalizationCommitInProgress",
+				tag, prootb->m_tagNormalizationCommitInProgress);
+			prootb->m_fNormalizationCommitInProgress = true;
+
+			// NormalizationCommitInProgress and same HVO and PropTag
+			prootb->PropChanged(hvo, tag);
+			unitpp::assert_eq("NormalizationCommitInProgress(correct) ptxs->m_cCalledGetCurrentWS",
+				1, ptxs->m_cCalledGetCurrentWS);
+			unitpp::assert_false("NormalizationCommitInProgress(correct) prootb->m_fNormalizationCommitInProgress",
+				prootb->m_fNormalizationCommitInProgress);
+		}
+
+		/*--------------------------------------------------------------------------------------
+		Test VwTextStore::OnSelectionChange() when the selection is near the end of a string
+		that gets longer in normalization during commit.  This is really a test of VwRootBox,
+		but it requires that we set up and monitor a Selection, which is more easily done here.
+		--------------------------------------------------------------------------------------*/
+		void testOnSelectionChange()
+		{
+			if (!m_fTestable)
+				return;
+			const OLECHAR * rgchKoreanTestData[] = {
+				// These are Korean characters:
+				L"\x110b\x1163" // the first two codepoints are one decomposed character
+				L"\xbb44" // the third codepoint is one composed character; it will be decomposed into three codepoints
+				// We will place the insertion point (IP) here (Anchor=End=3)
+				L"\x110c", // the fourth codepoint is one atomic character.
+				// This setup is important: We start with Anchor=End=3 (IP), Limit=4 (length).  When we NfdAndFixOffsets, the third codepoint is
+				// decomposed into three, giving us       Anchor=End=5,      Limit=6.  This way, we can catch the following potential problems:
+				// - Anchor is never adjusted and remains 3
+				// - Anchor is adjusted twice, to 7, which will crash because 7 > Limit=6
+				// - Anchor is bumped to the end of the string (possibly adjusted twice, but capped at Limit=6)
+				NULL
+			};
+			MakeStringList(rgchKoreanTestData);
+
+			// Select at the end of the string
+			IVwSelectionPtr qselTemp;
+			CheckHr(m_qrootb->MakeSimpleSel(false, true, false, true, &qselTemp));
+			VwTextSelection *pselTemp = dynamic_cast<VwTextSelection *>(qselTemp.Ptr());
+
+			int* pichLimEditProp = &(pselTemp->m_ichLimEditProp); // limit (end of the string)
+			int* pichAnchor = &(pselTemp->m_ichAnchor); // Anchor ("selection start" or IP)
+			int* pichEnd = &(pselTemp->m_ichEnd); // [selction] end (IP: same as Anchor for this test)
+			*pichAnchor = *pichEnd = 3; // set the IP (hack)
+
+			// Use the VwTextStoreTestSub to track whether we call GetWritingSystem (called by NotifySelChange) when we ResumePropChanges.
+			VwTextStoreTestSub* ptxs = dynamic_cast<VwTextStoreTestSub*>(m_qtxs.Detach());
+			m_qrootb->m_qvim.Attach(ptxs);
+
+			pselTemp->StartEditing();
+			ptxs->m_cCalledGetCurrentWS = 0;
+			// suppressing immediate propChanged notifications makes the CachedDataAccess class behave
+			// like the real FdoCache in a way that is crucial for the function we are testing here.
+			m_qcda->SuppressPropChanges();
+			CheckHr(pselTemp->CommitAndNotify(VwSelChangeType::ksctSamePara, m_qrootb));
+			m_qcda->ResumePropChanges(); // Resume retriggers NotifySelChange after it was postponed for a normalization commit.
+			unitpp::assert_eq("OnSelectionChange(1) ptxs->m_cCalledGetCurrentWS", 1, ptxs->m_cCalledGetCurrentWS);
+			unitpp::assert_false("OnSelectionChange(false) m_qrootb->m_fNormalizationCommitInProgress", m_qrootb->m_fNormalizationCommitInProgress);
+			unitpp::assert_eq("OnSelectionChange(5) pichAnchor", 5, *pichAnchor);
+			unitpp::assert_eq("OnSelectionChange(5) pichEnd", 5, *pichEnd);
+			unitpp::assert_eq("OnSelectionChange(6) pichLimEditProp", 6, *pichLimEditProp);
+		}
+
+		/*--------------------------------------------------------------------------------------
+		Test VwTextStore::GetEndACP() for single paragraph selections.
 		--------------------------------------------------------------------------------------*/
 		void testGetEndACP()
 		{

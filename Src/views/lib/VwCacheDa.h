@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------------*//*:Ignore this sentence.
-Copyright (c) 1999-2013 SIL International
+Copyright (c) 1999-2015 SIL International
 This software is licensed under the LGPL, version 2.1 or later
 (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -21,6 +21,10 @@ Description:
 #pragma once
 #ifndef VwCacheDa_INCLUDED
 #define VwCacheDa_INCLUDED
+namespace TestViews
+{
+	class TestVwTextStore;
+};
 //#include <hash_set>
 #include <set>
 /*----------------------------------------------------------------------------------------------
@@ -221,6 +225,7 @@ typedef Set<ObjPropEncRec> ObjPropEncSet; // Hungarian soper
 ----------------------------------------------------------------------------------------------*/
 class VwCacheDa : public VwBaseDataAccess, public IVwCacheDa
 {
+	friend class TestViews::TestVwTextStore;
 public:
 	typedef VwBaseDataAccess SuperClass;
 
