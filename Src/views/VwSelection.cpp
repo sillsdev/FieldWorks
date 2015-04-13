@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------------*//*:Ignore this sentence.
-Copyright (c) 1999-2013 SIL International
+Copyright (c) 1999-2015 SIL International
 This software is licensed under the LGPL, version 2.1 or later
 (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -1546,7 +1546,7 @@ STDMETHODIMP VwTextSelection::GetSelectionProps(int cttpMax, ITsTextProps ** prg
 	// Loop over all boxes involved
 	VwBox * pboxCurr = m_pvpbox;
 	VwParagraphBox * pvpboxLast = m_pvpbox;
-	VwParagraphBox * pvpboxCurr;
+	VwParagraphBox * pvpboxCurr = NULL;
 	int ichStart = m_ichAnchor;
 	int ichEnd = 0;
 	if (m_pvpboxEnd)
@@ -6174,7 +6174,7 @@ public:
 			// a separate line in the result.
 			VwBox * pboxCurr = m_pvwsel->m_pvpbox;
 			m_pvpboxLast = m_pvwsel->m_pvpbox;
-			VwParagraphBox * pvpboxCurr;
+			VwParagraphBox * pvpboxCurr = NULL;
 			m_ichStart = m_pvwsel->m_ichAnchor;
 			m_ichLim = m_pvwsel->m_ichEnd;
 			if (m_pvwsel->m_pvpboxEnd)
@@ -7297,10 +7297,14 @@ void VwTextSelection::DoUpdateProp(VwRootBox * prootb, HVO hvo, PropTag tag, VwN
 			CheckHr(qtssT->NfdAndFixOffsets(&qtssNewSub, &poffset, 1));
 		}
 		ichNormalizedAnchor = ichNormalizedEnd = ichOffset + m_ichMinEditProp;
-		// If m_ichAnchor got adjusted during normalization, postpone calling
-		// OnSelectionChange until PropChange updates the Paragraph in the TextStore
+		// If m_ichAnchor got adjusted during normalization, mark that a normalization commit is in progress.
+		// Until we get the PropChange notification and update the contents of our paragraph's text source, things are in an inconsistent
+		// state: ichAnchor represents a position in the normalized string, but the paragraph box still contains the unnormalized string. So if
+		// recipients of NotifyChange try to find things out about the selection while in this state, they may get invalid results or even
+		// out-of-range crashes. We solve this by postponing NotifyChange until after the PropChanged (which updates the paragraph content).
+		// We also use use the IsNormalizationCommitInProgress flag to prevent adjusting ichAnchor a second time when we update the paragraph.
 		if (ichNormalizedAnchor != m_ichAnchor)
-			m_qrootb->PostponeNotifySelChange(hvo, tag);
+			m_qrootb->BeginNormalizationCommit(hvo, tag);
 		int cch;
 		CheckHr(qtssNewSub->get_Length(&cch));
 		ichNormalizedLim = m_ichMinEditProp + cch;
@@ -14246,9 +14250,8 @@ bool VwTextSelection::AdjustForStringReplacement(VwTxtSrc * psrcModify, int itss
 	VwTxtSrc * psrcRep)
 {
 	bool fDidChange = false;
-	// If NotifySelChange is postponed, do not change any ichs. As of 2015.03, the only reason NSC would be postponed
-	// is that the string was just normalized, and ichs have already been adjusted as part of the normalization.
-	if (m_qrootb->IsNotifySelChangePostponed())
+	// If a normalization commit is in progress for this Selection, ichs have already been adjusted as part of the normalization.
+	if (this == m_qrootb->Selection() && m_qrootb->IsNormalizationCommitInProgress())
 		return fDidChange;
 	if (m_qtsbProp)
 	{

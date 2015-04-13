@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------------*//*:Ignore this sentence.
-Copyright (c) 2003-2013 SIL International
+Copyright (c) 2003-2015 SIL International
 This software is licensed under the LGPL, version 2.1 or later
 (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -1836,9 +1836,9 @@ namespace TestViews
 		}
 
 		/*--------------------------------------------------------------------------------------
-		Test VwRootBox::PropChanged(), that it calls NotifySelChange and resets its postponed state
-		iff NotifySelChange has been postponed and HVO and PropTag both match what was postponed.
-		Doesn't build in TestVwRootBox.h on Linux because it can't find VwTextStoreTestSub, even with this file included.
+		Test VwRootBox::PropChanged(), that it calls NotifySelChange and resets the NormalizationCommitInProgress state
+		iff m_fNormalizationCommitInProgress and HVO and PropTag both match what was those for the commit in progress.
+		This is a test of VwRootBox, but it needs VwTextStoreTestSub, so we put it here.
 		--------------------------------------------------------------------------------------*/
 		void testVwRootBox_PropChanged()
 		{
@@ -1847,31 +1847,36 @@ namespace TestViews
 			VwRootBox* prootb = dynamic_cast<VwRootBox*>(m_qrootb.Ptr());
 			VwTextStoreTestSub* ptxs = new VwTextStoreTestSub(prootb);
 			prootb->m_qvim.Attach(ptxs);
-			prootb->PostponeNotifySelChange(hvo, tag);
+			prootb->BeginNormalizationCommit(hvo, tag);
 			ptxs->m_cCalledGetCurrentWS = 0;
 
-			// test postponed and same HVO but different PropTag
+			// NormalizationCommitInProgress and same HVO but different PropTag
 			prootb->PropChanged(hvo, 10);
 			unitpp::assert_eq("PropChanged(Different PropTag) ptxs->m_cCalledGetCurrentWS", 0, ptxs->m_cCalledGetCurrentWS);
-			unitpp::assert_true("PropChanged(Different PropTag) prootb->m_fPostponeNotifySelChange", prootb->m_fPostponeNotifySelChange);
+			unitpp::assert_true("PropChanged(Different PropTag) prootb->m_fNormalizationCommitInProgress", prootb->m_fNormalizationCommitInProgress);
 
-			// test postponed and same PropTag but different HVO
+			// NormalizationCommitInProgress and same PropTag but different HVO
 			prootb->PropChanged(10, tag);
 			unitpp::assert_eq("PropChanged(Different HVO) ptxs->m_cCalledGetCurrentWS", 0, ptxs->m_cCalledGetCurrentWS);
-			unitpp::assert_true("PropChanged(Different HVO) prootb->m_fPostponeNotifySelChange", prootb->m_fPostponeNotifySelChange);
+			unitpp::assert_true("PropChanged(Different HVO) prootb->m_fNormalizationCommitInProgress", prootb->m_fNormalizationCommitInProgress);
 
-			// test same HVO and PropTag, but not postponed
-			prootb->m_fPostponeNotifySelChange = false;
+			// test same HVO and PropTag, but no NormalizationCommitInProgress
+			prootb->m_fNormalizationCommitInProgress = false;
 			prootb->PropChanged(hvo, tag);
-			unitpp::assert_eq("PropChanged(Not Postponed) ptxs->m_cCalledGetCurrentWS", 0, ptxs->m_cCalledGetCurrentWS);
-			unitpp::assert_eq("PropChanged(Not Postponed) prootb->m_postponeNotifySelChangeHVO", hvo, prootb->m_postponeNotifySelChangeHVO);
-			unitpp::assert_eq("PropChanged(Not Postponed) prootb->m_postponeNotifySelChangeTag", tag, prootb->m_postponeNotifySelChangeTag);
-			prootb->m_fPostponeNotifySelChange = true;
+			unitpp::assert_eq("PropChanged(No NormalizationCommitInProgress) ptxs->m_cCalledGetCurrentWS",
+				0, ptxs->m_cCalledGetCurrentWS);
+			unitpp::assert_eq("PropChanged(No NormalizationCommitInProgress) prootb->m_hvoNormalizationCommitInProgress",
+				hvo, prootb->m_hvoNormalizationCommitInProgress);
+			unitpp::assert_eq("PropChanged(No NormalizationCommitInProgress) prootb->m_tagNormalizationCommitInProgress",
+				tag, prootb->m_tagNormalizationCommitInProgress);
+			prootb->m_fNormalizationCommitInProgress = true;
 
-			// test postponed and same HVO and PropTag
+			// NormalizationCommitInProgress and same HVO and PropTag
 			prootb->PropChanged(hvo, tag);
-			unitpp::assert_eq("PropChanged(correct) ptxs->m_cCalledGetCurrentWS", 1, ptxs->m_cCalledGetCurrentWS);
-			unitpp::assert_false("PropChanged(correct) prootb->m_fPostponeNotifySelChange", prootb->m_fPostponeNotifySelChange);
+			unitpp::assert_eq("NormalizationCommitInProgress(correct) ptxs->m_cCalledGetCurrentWS",
+				1, ptxs->m_cCalledGetCurrentWS);
+			unitpp::assert_false("NormalizationCommitInProgress(correct) prootb->m_fNormalizationCommitInProgress",
+				prootb->m_fNormalizationCommitInProgress);
 		}
 
 		/*--------------------------------------------------------------------------------------
@@ -1908,33 +1913,23 @@ namespace TestViews
 			int* pichEnd = &(pselTemp->m_ichEnd); // [selction] end (IP: same as Anchor for this test)
 			*pichAnchor = *pichEnd = 3; // set the IP (hack)
 
-			// Use the VwTextStoreTestSub
+			// Use the VwTextStoreTestSub to track whether we call GetWritingSystem (called by NotifySelChange) when we ResumePropChanges.
 			VwTextStoreTestSub* ptxs = dynamic_cast<VwTextStoreTestSub*>(m_qtxs.Detach());
 			m_qrootb->m_qvim.Attach(ptxs);
 
 			pselTemp->StartEditing();
 			ptxs->m_cCalledGetCurrentWS = 0;
+			// suppressing immediate propChanged notifications makes the CachedDataAccess class behave
+			// like the real FdoCache in a way that is crucial for the function we are testing here.
 			m_qcda->SuppressPropChanges();
-#pragma warning(push)
-#pragma warning(disable: 4482)
-			CheckHr(pselTemp->CommitAndNotify(VwSelChangeType::ksctSamePara, m_qrootb));
-#pragma warning(pop)
-			m_qcda->ResumePropChanges();
+			CheckHr(pselTemp->CommitAndNotify(ksctSamePara, m_qrootb));
+			m_qcda->ResumePropChanges(); // Resume retriggers NotifySelChange after it was postponed for a normalization commit.
 			unitpp::assert_eq("OnSelectionChange(1) ptxs->m_cCalledGetCurrentWS", 1, ptxs->m_cCalledGetCurrentWS);
-			unitpp::assert_false("OnSelectionChange(false) m_qrootb->m_fPostponeNotifySelChange", m_qrootb->m_fPostponeNotifySelChange);
+			unitpp::assert_false("OnSelectionChange(false) m_qrootb->m_fNormalizationCommitInProgress", m_qrootb->m_fNormalizationCommitInProgress);
 			unitpp::assert_eq("OnSelectionChange(5) pichAnchor", 5, *pichAnchor);
 			unitpp::assert_eq("OnSelectionChange(5) pichEnd", 5, *pichEnd);
 			unitpp::assert_eq("OnSelectionChange(6) pichLimEditProp", 6, *pichLimEditProp);
 		}
-
-		/*--------------------------------------------------------------------------------------
-		Test that Tests are run and Asserts reported on Jenkins.
-		--------------------------------------------------------------------------------------*/
-		void testTests()
-		{
-			Assert("This causes Jenkins to report a test failure" && false);
-		}
-
 
 		/*--------------------------------------------------------------------------------------
 		Test VwTextStore::GetEndACP() for single paragraph selections.

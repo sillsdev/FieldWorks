@@ -1,14 +1,7 @@
 /*--------------------------------------------------------------------*//*:Ignore this sentence.
-Copyright (c) 1999-2013 SIL International
+Copyright (c) 1999-2015 SIL International
 This software is licensed under the LGPL, version 2.1 or later
 (http://www.gnu.org/licenses/lgpl-2.1.html)
-
-File: VwRootBox.h
-Responsibility: John Thomson
-Last reviewed: Not yet.
-
-Description:
-
 -------------------------------------------------------------------------------*//*:End Ignore*/
 #pragma once
 #ifndef VWROOTBOX_INCLUDED
@@ -290,8 +283,8 @@ public:
 		return m_qvo;
 	}
 	void NotifySelChange(VwSelChangeType nHow, bool fUpdateRootSite = true);
-	void PostponeNotifySelChange(HVO hvo, PropTag tag);
-	bool IsNotifySelChangePostponed() { return m_fPostponeNotifySelChange; }
+	void BeginNormalizationCommit(HVO hvo, PropTag tag);
+	bool IsNormalizationCommitInProgress() { return m_fNormalizationCommitInProgress; }
 	void PropChanged(HVO hvo, PropTag tag);
 
 	// This calls Layout with the correct parameters. It also notifies the root site of
@@ -492,11 +485,11 @@ protected:
 	void FindBreak(VwPrintInfo * pvpi, Rect rcSrc, Rect rcDst, int ysStart, int * pysEnd);
 	bool OnMouseEvent(int xd, int yd, RECT rcSrc, RECT rcDst, VwMouseEvent me);
 	IGetSpellCheckerPtr m_qgspCheckerRepository;
-	// We postpone NotifySelChange until after the underlying string has been updated
-	// (in case length changes in normalization)
-	bool m_fPostponeNotifySelChange;
-	HVO m_postponeNotifySelChangeHVO;
-	PropTag m_postponeNotifySelChangeTag;
+	// The string in the paragraph box can fall out of sync with selection indices while a normalize commit is in progress.
+	bool m_fNormalizationCommitInProgress;
+	HVO m_hvoNormalizationCommitInProgress;
+	PropTag m_tagNormalizationCommitInProgress;
+	void EndNormalizationCommit();
 
 public:
 	bool FixSelectionsForStringReplacement(VwTxtSrc * psrcModify, int itssMin, int itssLim,

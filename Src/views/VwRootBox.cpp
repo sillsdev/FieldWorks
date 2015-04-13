@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------------*//*:Ignore this sentence.
-Copyright (c) 1999-2013 SIL International
+Copyright (c) 1999-2015 SIL International
 This software is licensed under the LGPL, version 2.1 or later
 (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -3905,19 +3905,25 @@ void VwRootBox::SetDirty(bool fDirty)
 	m_fDirty = fDirty;
 }
 
-void VwRootBox::PostponeNotifySelChange(HVO hvo, PropTag tag)
+void VwRootBox::BeginNormalizationCommit(HVO hvo, PropTag tag)
 {
-	m_fPostponeNotifySelChange = true;
-	m_postponeNotifySelChangeHVO = hvo;
-	m_postponeNotifySelChangeTag = tag;
+	m_fNormalizationCommitInProgress = true;
+	m_hvoNormalizationCommitInProgress = hvo;
+	m_tagNormalizationCommitInProgress = tag;
+}
+
+void VwRootBox::EndNormalizationCommit()
+{
+	m_fNormalizationCommitInProgress = false;
+	m_hvoNormalizationCommitInProgress = m_tagNormalizationCommitInProgress = 0;
 }
 
 /* If we're waiting for a postponed Selection Change on this HVO and tag, clear the postponed state and handle the change */
 void VwRootBox::PropChanged(HVO hvo, PropTag tag)
 {
-	if (m_fPostponeNotifySelChange && m_postponeNotifySelChangeHVO == hvo && m_postponeNotifySelChangeTag == tag)
+	if (m_fNormalizationCommitInProgress && m_hvoNormalizationCommitInProgress == hvo && m_tagNormalizationCommitInProgress == tag)
 	{
-		m_fPostponeNotifySelChange = m_postponeNotifySelChangeHVO = m_postponeNotifySelChangeTag = false;
+		EndNormalizationCommit();
 		NotifySelChange(ksctSamePara);
 	}
 }
@@ -3927,15 +3933,15 @@ void VwRootBox::PropChanged(HVO hvo, PropTag tag)
 ----------------------------------------------------------------------------------------------*/
 void VwRootBox::NotifySelChange(VwSelChangeType nHow, bool fUpdateRootSite)
 {
-	if (m_fPostponeNotifySelChange)
+	if (m_fNormalizationCommitInProgress)
 	{
-		// The only case in which we postpone NotifySelChange is when nHow == ksctSamePara.
+		// The only case in which a normalization commit could be in progress is when nHow == ksctSamePara.
 		// If this is not the case here, we must have been interrupted before resetting the
 		// postponed state and actually handling this event; reset the state now.
 		if (nHow == ksctSamePara)
 			return; // REVIEW (Hasso) 2015.03: is there any case in which fUpdateRootSite should be false here? Doubt it.
-		Assert(nHow == ksctSamePara); // the redundant comparison here yields a useful message for the developer.
-		m_fPostponeNotifySelChange = m_postponeNotifySelChangeHVO = m_postponeNotifySelChangeTag = false;
+		Assert(nHow == ksctSamePara); // Effecively Assert.Fail(); the redundant comparison here yields a useful message for the developer.
+		EndNormalizationCommit();
 	}
 
 	if (m_qvwsel && fUpdateRootSite && m_qvwsel->IsValid())
