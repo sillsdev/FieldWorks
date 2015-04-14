@@ -465,9 +465,10 @@ namespace FwBuildTasks
 			{
 				case "xWorksTests":			// ~244 sec (Mono 2/8/2013)
 				case "FDOTests":			// ~143 sec
-					return 420000;
+					return 540000;
 				case "FwCoreDlgsTests":		// ~122 sec
 				case "TeDllTests":			// ~122 sec (Mono 2/8/2013)
+					return 420000;
 				case "TeImportExportTests":	// ~90 sec
 					return 240000;
 				case "DiffViewTests":		// ~55 sec
@@ -482,8 +483,8 @@ namespace FwBuildTasks
 				case "FwCoreDlgControlsTests": // ~34 sec (overnight build machine 4/1/2013)
 				case "TeScrInitializerTests":  // ~29 sec  (overnight build machine 4/23/2013)
 				case "LexTextControlsTests":			// ~only 8 sec on dev windows, but took longer than 40 sec on mono build machine
-					return 75000;
 				case "RootSiteTests":			// ~11 sec
+					return 75000;
 				case "TeDialogsTests":			// ~11 sec
 				case "TePrintLayoutTests":				// ~12 sec
 				case "FwPrintLayoutComponentsTests":	// ~13 sec

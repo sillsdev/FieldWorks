@@ -77,6 +77,12 @@
 		<Exec Command="make externaltargets" WorkingDirectory="$(fwrt)" Condition="'$(action)'!='clean'"/>
 		<Exec Command="make externaltargets-test" WorkingDirectory="$(fwrt)" Condition="'$(action)'=='test'"/>
 		<!-- Always copy from Release -->
+		<CreateProperty Value="" Condition="'$(arch)'!='x86_64'">
+			<Output TaskParameter="Value" PropertyName="encConverters-ext"/>
+		</CreateProperty>
+		<CreateProperty Value="_64" Condition="'$(arch)'=='x86_64'">
+			<Output TaskParameter="Value" PropertyName="encConverters-ext"/>
+		</CreateProperty>
 		<CreateItem Include="$(dir-fwoutputlibPlatform)/Release/*.*">
 			<Output TaskParameter="Include" ItemName="LinuxReleaseLibs"/>
 		</CreateItem>
@@ -84,21 +90,28 @@
 			  DestinationFolder="$(dir-outputBase)"
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
 			  Condition="'$(action)'!='clean'"/>
-		<CreateItem Include="$(dir-fwoutputlibPlatformBase)/*.*">
+		<CreateItem Include="/opt/mono-sil/lib/encConverters/*.dll">
 			<Output TaskParameter="Include" ItemName="LinuxDebugLibs"/>
 		</CreateItem>
 		<Copy SourceFiles="@(LinuxDebugLibs)"
 			  DestinationFolder="$(dir-outputBase)"
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
 			  Condition="'$(action)'!='clean'"/>
-		<CreateItem Include="$(dir-fwoutputlibPlatform)/*.config">
+		<CreateItem Include="/opt/mono-sil/lib/encConverters/*$(encConverters-ext).so">
+			<Output TaskParameter="Include" ItemName="LinuxDebugLibs"/>
+		</CreateItem>
+		<Copy SourceFiles="@(LinuxDebugLibs)"
+			  DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
+			  Condition="'$(action)'!='clean'"/>
+		<CreateItem Include="/opt/mono-sil/lib/encConverters/*.config">
 			<Output TaskParameter="Include" ItemName="LinuxLibConfigFiles"/>
 		</CreateItem>
 		<Copy SourceFiles="@(LinuxLibConfigFiles)"
 			  DestinationFolder="$(dir-outputBase)"
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
 			  Condition="'$(action)'!='clean'"/>
-		<CreateItem Include="$(dir-fwoutputlibPlatform)/ECPlugins/*.xml">
+		<CreateItem Include="/opt/mono-sil/lib/encConverters/EC/Plugins/*.xml">
 			<Output TaskParameter="Include" ItemName="LinuxLibECPlugins"/>
 		</CreateItem>
 		<MakeDir Directories="$(dir-outputBase)/EC/Plugins" Condition="'$(action)'!='clean'"/>
@@ -245,6 +258,7 @@
 		<Graphite2Sources Include="$(fwrt)/Lib/src/graphite2/src/*.*" Condition="'$(OS)'=='Unix'"/>
 	</ItemGroup>
 	<Target Name="graphite2Linux" Inputs="@(Graphite2Sources)" Outputs="$(fwrt)/Lib/linux/$(config-capital)/libgraphite2.a" Condition="'$(OS)'=='Unix'">
+		<MakeDir Directories="$(fwrt)/Lib/linux/$(config-capital)" />
 		<Make ToolPath="/usr/bin"
 				Makefile="$(fwrt)/Lib/src/graphite2/Makefile"
 				Configuration="$(config-capital)" Target="$(make-target)"
