@@ -858,18 +858,18 @@ namespace SIL.FieldWorks
 
 			if (!Directory.Exists(linkedFilesFolder))
 			{
-				if (!Directory.Exists(defaultFolder))
-					defaultFolder = cache.ProjectId.ProjectFolder;
 				MessageBox.Show(String.Format(Properties.Resources.ksInvalidLinkedFilesFolder, linkedFilesFolder), Properties.Resources.ksErrorCaption);
-				while (!Directory.Exists(linkedFilesFolder))
+				using (var folderBrowserDlg = new FolderBrowserDialogAdapter())
 				{
-					using (var folderBrowserDlg = new FolderBrowserDialogAdapter())
+					folderBrowserDlg.Description = Properties.Resources.ksLinkedFilesFolder;
+					folderBrowserDlg.RootFolder = Environment.SpecialFolder.Desktop;
+					folderBrowserDlg.SelectedPath = Directory.Exists(defaultFolder) ? defaultFolder : cache.ProjectId.ProjectFolder;
+					if (folderBrowserDlg.ShowDialog() == DialogResult.OK)
+						linkedFilesFolder = folderBrowserDlg.SelectedPath;
+					else
 					{
-						folderBrowserDlg.Description = Properties.Resources.ksLinkedFilesFolder;
-						folderBrowserDlg.RootFolder = Environment.SpecialFolder.Desktop;
-						folderBrowserDlg.SelectedPath = defaultFolder;
-						if (folderBrowserDlg.ShowDialog() == DialogResult.OK)
-							linkedFilesFolder = folderBrowserDlg.SelectedPath;
+						FileUtils.EnsureDirectoryExists(defaultFolder);
+						linkedFilesFolder = defaultFolder;
 					}
 				}
 				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(cache.ActionHandlerAccessor, () =>
@@ -878,8 +878,7 @@ namespace SIL.FieldWorks
 		}
 
 		/// <summary>
-		/// Just make the directory if it's the default.
-		/// See FWNX-1092, LT-14491.
+		/// Create the specified Linked Files directory only if it's the default Linked Files directory. See FWNX-1092, LT-14491.
 		/// </summary>
 		internal static void EnsureValidLinkedFilesFolderCore(string linkedFilesFolder, string defaultLinkedFilesFolder)
 		{
