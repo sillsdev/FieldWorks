@@ -4,9 +4,9 @@
 
 
  /* File created by MIDL compiler version 8.00.0603 */
-/* at Mon Mar 02 10:08:21 2015
+/* at Wed Apr 22 10:36:13 2015
  */
-/* Compiler settings for C:\fwrepo\fw\Output\Common\FwKernelTlb.idl:
+/* Compiler settings for c:\develop\fwrepo\fw\Output\Common\FwKernelTlb.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0603 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
@@ -7560,7 +7560,8 @@ VwGraphicsWin32;
             /* [in] */ IVwGraphics *pvg,
             /* [in] */ BSTR bstrData) = 0;
         
-        virtual HRESULT STDMETHODCALLTYPE FontIsValid( void) = 0;
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_FontIsValid( 
+            /* [retval][out] */ ComBool *pfValid) = 0;
         
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_SegDatMaxLength( 
             /* [retval][out] */ int *cb) = 0;
@@ -7623,8 +7624,9 @@ VwGraphicsWin32;
             /* [in] */ IVwGraphics *pvg,
             /* [in] */ BSTR bstrData);
         
-        HRESULT ( STDMETHODCALLTYPE *FontIsValid )( 
-            IRenderEngine * This);
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_FontIsValid )( 
+            IRenderEngine * This,
+            /* [retval][out] */ ComBool *pfValid);
         
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_SegDatMaxLength )( 
             IRenderEngine * This,
@@ -7693,8 +7695,8 @@ VwGraphicsWin32;
 #define IRenderEngine_InitRenderer(This,pvg,bstrData)	\
     ( (This)->lpVtbl -> InitRenderer(This,pvg,bstrData) ) 
 
-#define IRenderEngine_FontIsValid(This)	\
-    ( (This)->lpVtbl -> FontIsValid(This) ) 
+#define IRenderEngine_get_FontIsValid(This,pfValid)	\
+    ( (This)->lpVtbl -> get_FontIsValid(This,pfValid) ) 
 
 #define IRenderEngine_get_SegDatMaxLength(This,cb)	\
     ( (This)->lpVtbl -> get_SegDatMaxLength(This,cb) ) 
