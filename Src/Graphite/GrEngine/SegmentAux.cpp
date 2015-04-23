@@ -1,8 +1,7 @@
 /*--------------------------------------------------------------------*//*:Ignore this sentence.
-Copyright (C) 2005 SIL International. All rights reserved.
-
-Distributable under the terms of either the Common Public License or the
-GNU Lesser General Public License, as specified in the LICENSING.txt file.
+Copyright (c) 2005-2015 SIL International
+This software is licensed under the LGPL, version 2.1 or later
+(http://www.gnu.org/licenses/lgpl-2.1.html)
 
 File: SegmentAux.cpp
 Responsibility: Sharon Correll
