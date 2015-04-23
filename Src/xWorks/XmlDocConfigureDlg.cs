@@ -75,6 +75,7 @@ namespace SIL.FieldWorks.XWorks
 		private string m_helpTopicID; // should we store the helpID or the configObject
 		bool m_fDeleteCustomFiles;
 		string m_configObjectName;
+		string m_configNotLocalizedObjectName;
 		/// <summary>
 		/// Store nodes that need to be persisted as part of a new copy of a whole layout,
 		/// but which don't directly (or indirectly) appear in configuration.
@@ -382,6 +383,8 @@ namespace SIL.FieldWorks.XWorks
 			m_parts = Inventory.GetInventory("parts", cache.ProjectId.Name);
 			m_configObjectName = XmlUtils.GetLocalizedAttributeValue(m_stringTbl,
 				configurationParameters, "configureObjectName", "");
+			m_configNotLocalizedObjectName = XmlUtils.GetOptionalAttributeValue(
+				configurationParameters, "configureObjectName", "");
 			Text = String.Format(Text, m_configObjectName);
 			m_defaultRootLayoutName = XmlUtils.GetAttributeValue(configurationParameters, "layout");
 			string sLayoutType = null;
@@ -410,7 +413,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			// Make a help topic ID
-			m_helpTopicID = generateChooserHelpTopicID(m_configObjectName);
+			m_helpTopicID = generateChooserHelpTopicID(m_configNotLocalizedObjectName);
 
 			// Load the lists for the styles combo boxes.
 			SetStylesLists();
