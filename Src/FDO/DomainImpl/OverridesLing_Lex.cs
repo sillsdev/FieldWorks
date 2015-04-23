@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2014 SIL International
+// Copyright (c) 2002-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -5189,17 +5189,17 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				var tisb = TsIncStrBldrClass.Create();
-				tisb.SetIntPropValues((int) FwTextPropType.ktptBold,
-					(int) FwTextPropVar.ktpvEnum,
-					(int) FwTextToggleVal.kttvForceOn);
-				tisb.SetIntPropValues((int) FwTextPropType.ktptBold,
-					(int) FwTextPropVar.ktpvEnum,
-					(int) FwTextToggleVal.kttvOff);
-				var wsAnal = Cache.DefaultAnalWs;
-				var msa = MorphoSyntaxAnalysisRA;
 				var tsf = Cache.TsStrFactory;
+				var wsAnal = Cache.DefaultAnalWs;
+
+				// Add sense number
+				tisb.AppendTsString(tsf.MakeString(SenseNumber, wsAnal));
+
+				// Add grammatical info
+				var msa = MorphoSyntaxAnalysisRA;
 				if (msa != null)
 				{
+					tisb.AppendTsString(tsf.MakeString(" ", wsAnal));
 					tisb.SetIntPropValues((int) FwTextPropType.ktptItalic,
 						(int) FwTextPropVar.ktpvEnum,
 						(int) FwTextToggleVal.kttvForceOn);
@@ -5209,28 +5209,18 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						(int) FwTextToggleVal.kttvOff);
 				}
 
-				if (Gloss.AnalysisDefaultWritingSystem != null)
+				// Add gloss or definition
+				if (Gloss.AnalysisDefaultWritingSystem != null && Gloss.AnalysisDefaultWritingSystem.Length > 0)
 				{
-					if (Gloss.AnalysisDefaultWritingSystem.Length > 0)
-					{
-						tisb.AppendTsString(
-							tsf.MakeString((string.IsNullOrEmpty(tisb.Text) ? "" : " ") + Gloss.AnalysisDefaultWritingSystem.Text,
-								wsAnal));
-					}
+					tisb.AppendTsString(tsf.MakeString(" ", wsAnal));
+					tisb.AppendTsString(Gloss.AnalysisDefaultWritingSystem);
 				}
-				else if (Definition.AnalysisDefaultWritingSystem != null
-						&& Definition.AnalysisDefaultWritingSystem.Length > 0)
+				else if (Definition.AnalysisDefaultWritingSystem != null && Definition.AnalysisDefaultWritingSystem.Length > 0)
 				{
-					if (!string.IsNullOrEmpty(tisb.Text))
-						tisb.AppendTsString(tsf.MakeString(" ", wsAnal));
+					tisb.AppendTsString(tsf.MakeString(" ", wsAnal));
 					tisb.AppendTsString(Definition.AnalysisDefaultWritingSystem);
 				}
-				if (string.IsNullOrEmpty(tisb.Text))
-				{
-					// This is not just to prevent a blank item in a combo, but an actual crash (FWR-3224):
-					// If nothing has been put in the builder it currently has no WS, and that is not allowed.
-					return tsf.MakeString(Strings.ksBlankSense, Cache.DefaultUserWs);
-				}
+
 				return tisb.GetString();
 			}
 		}
