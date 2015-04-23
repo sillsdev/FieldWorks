@@ -193,7 +193,7 @@
 			<xsl:value-of select="@lang"/>
 			<xsl:text>-</xsl:text>
 			<xsl:choose>
-				<xsl:when test="following-sibling::morphemes or @type='punct'">
+				<xsl:when test="following-sibling::morphemes or @type='punct' or @type='txt' and count(../*)=1">
 					<xsl:text>baseline</xsl:text>
 				</xsl:when>
 				<xsl:otherwise>

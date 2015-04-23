@@ -53,13 +53,15 @@ Main template
 			<backMatter>
 				<appendix id="a1">
 					<secTitle>Interlinear text</secTitle>
-					<interlinear-text>
+					<xsl:for-each select="interlinear-text">
+						<interlinear-text>
 						<textInfo>
-						   <textTitle><xsl:value-of select="//interlinear-text/item[@type='title']"/></textTitle>
-						   <shortTitle><xsl:value-of select="//interlinear-text/item[@type='title-abbreviation']"/></shortTitle>
+						   <textTitle><xsl:value-of select="item[@type='title']"/></textTitle>
+						   <shortTitle><xsl:value-of select="item[@type='title-abbreviation']"/></shortTitle>
 						</textInfo>
 						<xsl:apply-templates/>
-					</interlinear-text>
+						</interlinear-text>
+					</xsl:for-each>
 				</appendix>
 				<endnotes/>
 				<references/>
