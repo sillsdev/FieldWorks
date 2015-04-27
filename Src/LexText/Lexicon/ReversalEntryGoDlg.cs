@@ -1,5 +1,10 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -11,13 +16,11 @@ using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
-	/// <summary>
-	///
-	/// </summary>
+	/// <summary/>
 	public class ReversalEntryGoDlg : BaseGoDlg
 	{
 		private IReversalIndex m_reveralIndex;
-		private readonly HashSet<IReversalIndexEntry> m_filteredReversalEntries = new HashSet<IReversalIndexEntry>();
+		private readonly HashSet<int> m_FilteredReversalEntryHvos = new HashSet<int>();
 
 		public ReversalEntryGoDlg()
 		{
@@ -44,12 +47,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 		}
 
-		public ICollection<IReversalIndexEntry> FilteredReversalEntries
+		public ICollection<int> FilteredReversalEntryHvos
 		{
 			get
 			{
 				CheckDisposed();
-				return m_filteredReversalEntries;
+				return m_FilteredReversalEntryHvos;
 			}
 		}
 
@@ -66,7 +69,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			XmlNode configNode = xnWindow.SelectSingleNode("controls/parameters/guicontrol[@id=\"matchingReversalEntries\"]/parameters");
 
 			SearchEngine searchEngine = SearchEngine.Get(mediator, "ReversalEntryGoSearchEngine-" + m_reveralIndex.Hvo,
-				() => new ReversalEntryGoSearchEngine(cache, m_reveralIndex));
+				() => new ReversalEntrySearchEngine(cache, m_reveralIndex, m_FilteredReversalEntryHvos));
 
 			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromMediator(mediator), mediator, configNode,
 				searchEngine, m_cache.ServiceLocator.WritingSystemManager.Get(m_reveralIndex.WritingSystem));
@@ -78,6 +81,21 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				ITsString tss = m_tsf.MakeString(string.Empty, wsObj.Handle);
 				var field = new SearchField(ReversalIndexEntryTags.kflidReversalForm, tss);
 				m_matchingObjectsBrowser.SearchAsync(new[] { field });
+			}
+		}
+
+		private class ReversalEntrySearchEngine : ReversalEntryGoSearchEngine
+		{
+			private readonly ICollection<int> m_FilteredEntryHvos;
+
+			public ReversalEntrySearchEngine(FdoCache cache, IReversalIndex revIndex, ICollection<int> filteredEntryHvos) : base(cache, revIndex)
+			{
+				m_FilteredEntryHvos = filteredEntryHvos;
+			}
+
+			protected override IEnumerable<int> FilterResults(IEnumerable<int> results)
+			{
+				return results == null ? null : results.Where(hvo => !m_FilteredEntryHvos.Contains(hvo));
 			}
 		}
 
