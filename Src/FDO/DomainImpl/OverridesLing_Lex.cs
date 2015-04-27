@@ -5192,14 +5192,21 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				var tsf = Cache.TsStrFactory;
 				var wsAnal = Cache.DefaultAnalWs;
 
-				// Add sense number
-				tisb.AppendTsString(tsf.MakeString(SenseNumber, wsAnal));
+				// Add sense number, if there is more than one sense
+				var owner = Owner;
+				var isSingleSense = ((owner is ILexEntry && ((ILexEntry)owner).SensesOS.Count == 1)
+									|| (owner is ILexSense && ((ILexSense)owner).SensesOS.Count == 1));
+				if (!isSingleSense)
+				{
+					tisb.AppendTsString(tsf.MakeString(SenseNumber, wsAnal));
+				}
 
 				// Add grammatical info
 				var msa = MorphoSyntaxAnalysisRA;
 				if (msa != null)
 				{
-					tisb.AppendTsString(tsf.MakeString(" ", wsAnal));
+					if (!string.IsNullOrEmpty(tisb.Text))
+						tisb.AppendTsString(tsf.MakeString(" ", wsAnal));
 					tisb.SetIntPropValues((int) FwTextPropType.ktptItalic,
 						(int) FwTextPropVar.ktpvEnum,
 						(int) FwTextToggleVal.kttvForceOn);
@@ -5212,13 +5219,22 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				// Add gloss or definition
 				if (Gloss.AnalysisDefaultWritingSystem != null && Gloss.AnalysisDefaultWritingSystem.Length > 0)
 				{
-					tisb.AppendTsString(tsf.MakeString(" ", wsAnal));
+					if (!string.IsNullOrEmpty(tisb.Text))
+						tisb.AppendTsString(tsf.MakeString(" ", wsAnal));
 					tisb.AppendTsString(Gloss.AnalysisDefaultWritingSystem);
 				}
 				else if (Definition.AnalysisDefaultWritingSystem != null && Definition.AnalysisDefaultWritingSystem.Length > 0)
 				{
-					tisb.AppendTsString(tsf.MakeString(" ", wsAnal));
+					if (!string.IsNullOrEmpty(tisb.Text))
+						tisb.AppendTsString(tsf.MakeString(" ", wsAnal));
 					tisb.AppendTsString(Definition.AnalysisDefaultWritingSystem);
+				}
+
+				if (string.IsNullOrEmpty(tisb.Text))
+				{
+					// This is not just to prevent a blank item in a combo, but an actual crash (FWR-3224):
+					// If nothing has been put in the builder it currently has no WS, and that is not allowed.
+					tisb.AppendTsString(tsf.MakeString(Strings.ksBlankSense, Cache.DefaultUserWs));
 				}
 
 				return tisb.GetString();
