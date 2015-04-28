@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -237,6 +241,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				m_changedFontOnly = true; // a flag to let later adjustment ops remember this
 			}
 		}
+
+		/// <summary>for tests</summary>
+		internal AnalysisAdjuster() {}
 		#endregion
 
 		#region Public methods
@@ -1014,20 +1021,24 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (annObjectsToCheck == null)
 				return null; // none to remove.
 			List<IAnalysisReference> result;
-			result = annObjectsToCheck.Where(segmentIsOutsideOfRange).ToList();
+			result = annObjectsToCheck.Where(SegmentIsOutsideOfRange).ToList();
 			if (result.Count > 0)
 				foreach (var iar in result)
 					annObjectsToCheck.Remove(iar);
 			return annObjectsToCheck;
 		}
 
-		private bool segmentIsOutsideOfRange(IAnalysisReference refObj)
+		internal bool SegmentIsOutsideOfRange(IAnalysisReference refObj)
 		{
-			ISegment seg = null;
+			ISegment endSeg = null, begSeg = null;
 			var endRef = refObj.EndRef();
 			if (endRef != null) // added for LT-13414 - one segment had a null endRef
-				seg = refObj.EndRef().Segment;
-			return seg != null && (seg.IndexInOwner < m_iSegFirstModified || refObj.BegRef().Segment.IndexInOwner > m_iOldSegLastModified);
+				endSeg = refObj.EndRef().Segment;
+			var begRef = refObj.BegRef();
+			if (begRef != null) // added for LT-16136 - one segment had a null begRef
+				begSeg = refObj.BegRef().Segment;
+			return endSeg != null && begSeg != null
+				&& (endSeg.IndexInOwner < m_iSegFirstModified || begSeg.IndexInOwner > m_iOldSegLastModified);
 		}
 
 		// Compute segment offsets as required for new paragraph contents.
