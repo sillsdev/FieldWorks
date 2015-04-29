@@ -68,8 +68,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var xnWindow = (XmlNode) m_mediator.PropertyTable.GetValue("WindowConfiguration");
 			XmlNode configNode = xnWindow.SelectSingleNode("controls/parameters/guicontrol[@id=\"matchingReversalEntries\"]/parameters");
 
-			SearchEngine searchEngine = SearchEngine.Get(mediator, "ReversalEntryGoSearchEngine-" + m_reveralIndex.Hvo,
-				() => new ReversalEntrySearchEngine(cache, m_reveralIndex, m_FilteredReversalEntryHvos));
+			var searchEngine = (ReversalEntrySearchEngine)SearchEngine.Get(mediator, "ReversalEntryGoSearchEngine-" + m_reveralIndex.Hvo,
+				() => new ReversalEntrySearchEngine(cache, m_reveralIndex));
+			searchEngine.FilteredEntryHvos = m_FilteredReversalEntryHvos;
 
 			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromMediator(mediator), mediator, configNode,
 				searchEngine, m_cache.ServiceLocator.WritingSystemManager.Get(m_reveralIndex.WritingSystem));
@@ -86,16 +87,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private class ReversalEntrySearchEngine : ReversalEntryGoSearchEngine
 		{
-			private readonly ICollection<int> m_FilteredEntryHvos;
+			public ICollection<int> FilteredEntryHvos { private get; set; }
 
-			public ReversalEntrySearchEngine(FdoCache cache, IReversalIndex revIndex, ICollection<int> filteredEntryHvos) : base(cache, revIndex)
-			{
-				m_FilteredEntryHvos = filteredEntryHvos;
-			}
+			public ReversalEntrySearchEngine(FdoCache cache, IReversalIndex revIndex) : base(cache, revIndex) {}
 
 			protected override IEnumerable<int> FilterResults(IEnumerable<int> results)
 			{
-				return results == null ? null : results.Where(hvo => !m_FilteredEntryHvos.Contains(hvo));
+				return results == null ? null : results.Where(hvo => !FilteredEntryHvos.Contains(hvo));
 			}
 		}
 
