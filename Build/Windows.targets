@@ -124,7 +124,7 @@
 	</Target>
 
 	<Target Name="BuildIcuWindows" Condition="'$(action)'!='clean'">
-		<MSBuild Projects="$(fwrt)\Lib\src\icu\source\allinone\allinone.sln" Targets="Build" Properties="Configuration=Release;Platform=Win32" />
+		<MSBuild Projects="$(fwrt)\Lib\src\icu\source\allinone\allinone.sln" Targets="common;gennorm2;i18n;makedata;toolutil" Properties="Configuration=Release;Platform=Win32" />
 		<Copy SourceFiles="$(fwrt)\Lib\src\icu\bin\icutu$(IcuVersion).dll" DestinationFolder="$(fwrt)\DistFiles\Windows"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 		<Copy SourceFiles="$(fwrt)\Lib\src\icu\bin\gennorm2.exe" DestinationFolder="$(fwrt)\DistFiles\Windows"
