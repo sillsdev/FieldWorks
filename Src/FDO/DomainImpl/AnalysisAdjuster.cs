@@ -526,13 +526,22 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			foreach (var iar in m_oldParaRefs)
 			{
 				var endSeg = iar.EndRef().Segment;
+				var begSeg = iar.BegRef().Segment;
+				if(begSeg == null || endSeg == null)
+				{
+					var logString = String.Format("Found a corrupt IAnalysisReference when trying to update and adjust. Removed the reference with GUID {0}",
+						iar.Guid);
+					// This data is corrupt, rather than crashing delete the ref
+					Logger.WriteEvent(logString);
+					refsToDelete.Add(iar);
+					continue;
+				}
 				var iend = iar.EndRef().Index;
 				var iendSeg = endSeg.IndexInOwner;
 				if (iendSeg < m_iSegFirstModified ||
 					(iendSeg == m_iSegFirstModified && iend < m_iFirstAnalysisToFix))
 						continue; // The whole IAnalysisReference is before the change, so no change.
 				var ifirstAnalysisInSegToFix = 0;
-				var begSeg = iar.BegRef().Segment;
 				var ibeg = iar.BegRef().Index;
 				var ibegSeg = begSeg.IndexInOwner;
 				if (ibegSeg > m_iNewSegLastModified)
