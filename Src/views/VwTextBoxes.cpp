@@ -8561,9 +8561,9 @@ public:
 		// Actually check the spelling of the word at the current boundaries; it's all in one writing system.
 		StrUni word = m_text.Mid(ichMinWord, ichLimWord - ichMinWord);
 		UnicodeString ucInput(word.Chars(), word.Length());
-		UnicodeString ucOutput;
 		UErrorCode uerr = U_ZERO_ERROR;
-		Normalizer::normalize(ucInput, (UNormalizationMode)knmNFC, 0, ucOutput, uerr);
+		const Normalizer2* norm = SilUtil::GetIcuNormalizer(UNORM_NFC);
+		UnicodeString ucOutput = norm->normalize(ucInput, uerr);
 		if (U_FAILURE(uerr)) // may get warnings, like not terminated.
 			return; // give up if we can't normalize.
 		word.Assign(ucOutput.getBuffer(), ucOutput.length());

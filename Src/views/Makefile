@@ -24,7 +24,7 @@ else
 endif
 
 INCLUDES := \
-	$(shell icu-config --cppflags) \
+	$(shell icu-config --detect-prefix --cppflags) \
 	-I. -Ilib \
 	-I$(GENERIC_SRC) -I$(APPCORE_SRC) -I$(DEBUGPROCS_SRC) \
 	-I$(COMMONDLGS_SRC) \
@@ -32,6 +32,7 @@ INCLUDES := \
 	-I$(WIN32MORE_INC) \
 	-I$(COM_INC) \
 	-I$(WIN32BASE_INC) \
+	-I$(ICU_INC_DIR) \
 	$(shell pkg-config --cflags $(PACKAGES)) \
 
 
@@ -40,7 +41,7 @@ LDLIBS := \
 	-L$(COM_LIB) -lcom \
 	-L$(WIN32BASE_LIB) -lWin32Base \
 	$(shell pkg-config --libs $(PACKAGES)) \
-	$(shell icu-config --ldflags) \
+	$(shell icu-config --detect-prefix --ldflags) \
 	-ldl \
 
 

@@ -1549,9 +1549,9 @@ template<class TxtBuf> STDMETHODIMP TsStrBase<TxtBuf>::get_IsNormalizedForm(
 	try
 	{
 		UnicodeString usInput(prgchContents, cch);
+		const Normalizer2* norm = SilUtil::GetIcuNormalizer((UNormalizationMode)(nm == knmNFSC ? knmNFC : nm));
 		UErrorCode uerr = U_ZERO_ERROR;
-		if (Normalizer::isNormalized (usInput,
-			(UNormalizationMode)(nm == knmNFSC ? knmNFC : nm), uerr))
+		if (norm->isNormalized(usInput, uerr))
 		{
 			Assert(U_SUCCESS(uerr));
 			NoteNormalized(nm == knmNFSC ? knmNFC : nm);	// remember, NFC => NFSC
@@ -1715,9 +1715,9 @@ public:
 				cchProcess = 2;
 			}
 			UnicodeString ucInput(m_prgchInput + ich, cchProcess);
-			UnicodeString ucOutput;
 			UErrorCode uerr = U_ZERO_ERROR;
-			Normalizer::normalize(ucInput, (UNormalizationMode)m_nm, 0, ucOutput, uerr);
+			const Normalizer2* norm = SilUtil::GetIcuNormalizer((UNormalizationMode) m_nm);
+			UnicodeString ucOutput = norm->normalize(ucInput, uerr);
 			ITsTextPropsPtr qttp;
 			CheckHr(m_ptssThis->get_PropertiesAt(ich, &qttp));
 			for (int ich2 = 0; ich2 < ucOutput.length(); ich2++)
@@ -1765,18 +1765,14 @@ public:
 			if (ichLimOfRun - m_ichLastInput > 1)
 			{
 				// We can compress the leading (ichLimOfRun - m_ichLastInput) characters
-				Normalizer norm2(m_prgchInput + m_ichLastInput, ichLimOfRun - m_ichLastInput,
-					(UNormalizationMode)knmNFC);
-				m_ch = norm2.current();
-				// insert m_ch
-				Add32BitCharToVch();
-				norm2.next();
-				m_ch = norm2.current();
-				while (m_ch != Normalizer::DONE)
+				UnicodeString input(m_prgchInput + m_ichLastInput, ichLimOfRun - m_ichLastInput);
+				const Normalizer2* norm = SilUtil::GetIcuNormalizer(UNORM_NFC);
+				UErrorCode uerr = U_ZERO_ERROR;
+				UnicodeString output = norm->normalize(input, uerr);
+				for (int i = 0; i < output.length(); output.getChar32Limit(++i))
 				{
+					m_ch = output.char32At(i);
 					Add32BitCharToVch();
-					norm2.next();
-					m_ch = norm2.current();
 				}
 				// adjust limits
 				FlushBuffer();
@@ -1830,20 +1826,6 @@ public:
 		Assert(m_cchInput > 0);
 		try
 		{
-			Normalizer norm(m_prgchInput, m_cchInput,
-				(UNormalizationMode)(m_nm == knmNFSC ? knmNFC : m_nm));
-
-			// Check to see if the normalizer thinks the string is already normalized
-			// If it is then just return the entire text. This fixes TE-3406
-			norm.getIndex();
-			if (norm.current() == Normalizer::DONE)
-			{
-				m_ptssThis->AddRef();
-				*m_pptssRet = m_ptssThis;
-				CheckHr(m_ptssThis->UnlockText(m_prgchInput));
-				return S_OK;
-			}
-
 			// The text props that should be applied to the characters in the buffer when they are
 			// put into the string. If the buffer is empty, its value is meaningless and kept null.
 			m_qtsbResult.CreateInstance(CLSID_TsStrBldr);
@@ -1851,13 +1833,17 @@ public:
 			m_ichLimRun = 0; // force first char to start new run.
 			m_iRun = -1;
 			m_cchBufGood = 0;
+			m_ichInput = 0;
 
 			// 30% + 10 should mean it rarely needs to grow
 			m_vch.Resize(m_cchInput * 13 / 10 + 10);
 
+			const Normalizer2* norm = SilUtil::GetIcuNormalizer((UNormalizationMode)(m_nm == knmNFSC ? knmNFC : m_nm));
+			int bufferPos = 0;
+			UnicodeString buffer;
+			UCharCharacterIterator iter(m_prgchInput, m_cchInput);
 			for (;;)
 			{
-				m_ichInput = norm.getIndex();
 				// Fix any offsets not yet handled up to m_ichInput.
 				while (m_iichNextOffsetToFix < m_cichOffsetsToFix &&
 					*m_prgpichOffsetsToFix[m_iichNextOffsetToFix] <= m_ichInput)
@@ -1887,7 +1873,7 @@ public:
 					}
 					if (m_ichInput == m_cchInput)
 					{
-						Assert(norm.current() == Normalizer::DONE);
+						Assert(!iter.hasNext());
 						break;
 					}
 					CheckHr(m_ptssThis->get_RunAt(m_ichInput, &m_iRun));
@@ -1901,11 +1887,35 @@ public:
 					m_cchBufGood = m_cchBuf;
 				}
 				m_ichLastInput = m_ichInput; // Remember for next time.
-				m_ch = norm.current();
 
-				norm.next();
+				if (bufferPos == buffer.length())
+				{
+					m_ichInput = iter.getIndex();
+					UnicodeString segment(iter.next32PostInc());
+					while (iter.hasNext())
+					{
+						UChar32 c = iter.next32PostInc();
+						if (norm->hasBoundaryBefore(c))
+						{
+							iter.move32(-1, CharacterIterator::kCurrent);
+							break;
+						}
+						segment.append(c);
+					}
+
+					buffer.remove();
+					bufferPos = 0;
+					UErrorCode uerr = U_ZERO_ERROR;
+					norm->normalize(segment, buffer, uerr);
+				}
+
+				m_ch = buffer.char32At(bufferPos);
+				bufferPos += U16_LENGTH(m_ch);
 
 				Add32BitCharToVch();
+
+				if (bufferPos == buffer.length())
+					m_ichInput = iter.getIndex();
 			}
 			// Add final run to new string.
 			FlushBuffer();

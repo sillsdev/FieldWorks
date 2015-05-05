@@ -9,13 +9,16 @@
 // </remarks>
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing.Text;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security;
 using Microsoft.Win32;
+using SIL.FieldWorks.FDO;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
@@ -27,6 +30,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// ----------------------------------------------------------------------------------------
 	public static class FwRegistryHelper
 	{
+		/// <summary>
+		/// TE string
+		/// </summary>
+		public static readonly string TranslationEditor = "Translation Editor";
 		private static IFwRegistryHelper RegistryHelperImpl = new FwRegistryHelperImpl();
 
 		/// <summary/>
@@ -117,7 +124,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				get
 				{
-					return Registry.LocalMachine.OpenSubKey("Software\\SIL\\FLEx Bridge\\8");
+					return Registry.LocalMachine.OpenSubKey("Software\\SIL\\FLEx Bridge\\" + FwUtils.SuiteVersion);
 				}
 			}
 
@@ -337,6 +344,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		internal const string OldFieldWorksRegistryKeyNameVersion7 = "7.0";
 
 		/// <summary>
+		/// It's probably a good idea to keep around the name of the old versions' keys
+		/// for upgrading purposes. See UpgradeUserSettingsIfNeeded().
+		/// </summary>
+		internal const string OldFieldWorksRegistryKeyNameVersion8 = "8";
+
+		/// <summary>
 		/// The value we look up in the FieldWorksRegistryKey to get(or set) the persisted user locale.
 		/// </summary>
 		public static string UserLocaleValueName
@@ -361,97 +374,130 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
-		/// E.g. the first time the user runs FW8, we need to copy a bunch of registry keys
-		/// from HKCU/Software/SIL/FieldWorks/7.0 -> FieldWorks/8.
+		/// E.g. the first time the user runs FW9, we need to copy a bunch of registry keys
+		/// from HKCU/Software/SIL/FieldWorks/7.0 -> FieldWorks/9 or
+		/// from HKCU/Software/SIL/FieldWorks/8 -> FieldWorks/9.
 		/// </summary>
-		public static void UpgradeUserSettingsIfNeeded()
+		/// <returns>'true' if upgrade was done from any earlier version, otherwise, 'false'.</returns>
+		public static bool UpgradeUserSettingsIfNeeded()
 		{
 			try
 			{
 				using (var fieldWorksVersionlessRegistryKey = FieldWorksVersionlessRegistryKey)
 				{
-					var v7exists = RegistryHelper.KeyExists(fieldWorksVersionlessRegistryKey,
+					var v7Exists = RegistryHelper.KeyExists(fieldWorksVersionlessRegistryKey,
 						OldFieldWorksRegistryKeyNameVersion7);
-					if (!v7exists)
-						return; // We'll assume this already got done!
+					var v8Exists = RegistryHelper.KeyExists(fieldWorksVersionlessRegistryKey,
+						OldFieldWorksRegistryKeyNameVersion8);
 
-					// If v8 key exists, we will go ahead and do the copy, but not overwrite any existing values.
-					using (var version7Key = fieldWorksVersionlessRegistryKey.CreateSubKey(OldFieldWorksRegistryKeyNameVersion7))
-					using (var version8Key = fieldWorksVersionlessRegistryKey.CreateSubKey(FieldWorksRegistryKeyName))
+					// With 'false' it won't throw an exception if the key doesn't exist.
+					fieldWorksVersionlessRegistryKey.DeleteSubKeyTree(TranslationEditor, false);
+					fieldWorksVersionlessRegistryKey.DeleteSubKeyTree(TranslationEditor.ToLowerInvariant(), false);
+
+					// Go from extant settings (7 and/or 8) to 9 settings.
+					if (v7Exists && v8Exists)
 					{
-						// Copy over almost everything from 7.0 to 8
-						// Don't copy the "launches" key or keys starting with "NumberOf"
-						CopySubKeyTree(version7Key, version8Key);
+						// Both exist? How odd.
+						using (var version7Key = fieldWorksVersionlessRegistryKey.OpenSubKey(OldFieldWorksRegistryKeyNameVersion7))
+						using (var version8Key = fieldWorksVersionlessRegistryKey.OpenSubKey(OldFieldWorksRegistryKeyNameVersion8, true))
+						using (var version9Key = fieldWorksVersionlessRegistryKey.CreateSubKey(FieldWorksRegistryKeyName))
+						{
+							// Copy over almost everything from 7.0 to 8 and then to 9.
+							CopyFilteredSubKeyTree(version7Key, version8Key);
+							CopyFilteredSubKeyTree(version8Key, version9Key);
+						}
+						// After copying everything delete the old v7 & v8 keys.
+						fieldWorksVersionlessRegistryKey.DeleteSubKeyTree(OldFieldWorksRegistryKeyNameVersion7);
+						fieldWorksVersionlessRegistryKey.DeleteSubKeyTree(OldFieldWorksRegistryKeyNameVersion8);
+						return true;
 					}
 
-					// After copying everything delete the old key
-					fieldWorksVersionlessRegistryKey.DeleteSubKeyTree(OldFieldWorksRegistryKeyNameVersion7);
+					if (v7Exists)
+					{
+						// 7 exists, but not 8, so move from 7->9.
+						using (var version7Key = fieldWorksVersionlessRegistryKey.OpenSubKey(OldFieldWorksRegistryKeyNameVersion7))
+						using (var version9Key = fieldWorksVersionlessRegistryKey.CreateSubKey(FieldWorksRegistryKeyName))
+						{
+							// Copy over almost everything from 7.0 to 9
+							// Don't copy the "launches" key or keys starting with "NumberOf"
+							CopyFilteredSubKeyTree(version7Key, version9Key);
+						}
+						// After copying everything delete the old v7 key.
+						fieldWorksVersionlessRegistryKey.DeleteSubKeyTree(OldFieldWorksRegistryKeyNameVersion7);
+						return true; // Done, so quit.
+					}
+
+					if (v8Exists)
+					{
+						// 7 not present, but 8 is.
+						using (var version8Key = fieldWorksVersionlessRegistryKey.OpenSubKey(OldFieldWorksRegistryKeyNameVersion8))
+						using (var version9Key = fieldWorksVersionlessRegistryKey.CreateSubKey(FieldWorksRegistryKeyName))
+						{
+							// Copy over almost everything from 8 to 9
+							// Don't copy the "launches" key or keys starting with "NumberOf"
+							CopyFilteredSubKeyTree(version8Key, version9Key);
+						}
+						// After copying everything delete the old v8 key.
+						fieldWorksVersionlessRegistryKey.DeleteSubKeyTree(OldFieldWorksRegistryKeyNameVersion8);
+						return true;
+					}
 				}
 			}
 			catch (SecurityException se)
 			{
 				// What to do here? Punt!
 			}
+			return false;
 		}
 
 		/// <summary>
-		/// Migrate the ProjectShared value stored in HKLM in version 7 into the HKCU (.Default since this will be run as system)
+		/// Copies filtered list of keys and values from src to dest subKey recursively.
 		/// </summary>
-		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "LocalMachineHive is a reference")]
-		public static void MigrateVersion7ValueIfNeeded()
+		private static void CopyFilteredSubKeyTree(RegistryKey srcSubKey, RegistryKey destSubKey)
 		{
-			// Guard for some broken Windows machines having trouble accessing HKLM (LT-15158).
-			var hklm = LocalMachineHive;
-			if (hklm != null)
-			{
-				using (var oldProjectSharedSettingLocation = hklm.OpenSubKey(@"SOFTWARE\SIL\FieldWorks\7.0"))
-				{
-					object oldProjectSharedValue, newProjectSharedValue;
-					if (oldProjectSharedSettingLocation != null
-						&& !RegistryHelper.RegEntryExists(FieldWorksRegistryKey, string.Empty, @"ProjectShared", out newProjectSharedValue)
-						&& RegistryHelper.RegEntryExists(oldProjectSharedSettingLocation, string.Empty, @"ProjectShared", out oldProjectSharedValue))
-					{
-						FieldWorksRegistryKey.SetValue(@"ProjectShared", oldProjectSharedValue);
-					}
-				}
-			}
-		}
+			CopyFilteredValues(srcSubKey, destSubKey);
 
-		private static void CopySubKeyTree(RegistryKey srcSubKey, RegistryKey destSubKey)
-		{
-			// Copies all keys and values from src to dest subKey recursively
-			// except 'launches' value (whereever found) and values with names starting with "NumberOf"
-			CopyAllValuesToNewSubKey(srcSubKey, destSubKey);
+			// Copy subkeys, except these that are not copied.
+			var subkeysToRemove = new HashSet<string>
+			{
+				TranslationEditor.ToLowerInvariant()
+			};
 			foreach (var subKeyName in srcSubKey.GetSubKeyNames())
 			{
-				using(var newDestKey = destSubKey.CreateSubKey(subKeyName))
+				if (subkeysToRemove.Contains(subKeyName.ToLowerInvariant()))
+					continue;
+
+				using (var srcKey = srcSubKey.OpenSubKey(subKeyName))
+				using (var newDestKey = destSubKey.CreateSubKey(subKeyName))
 				{
-					CopySubKeyTree(srcSubKey.CreateSubKey(subKeyName), newDestKey);
+					CopyFilteredSubKeyTree(srcKey, newDestKey);
 				}
 			}
 		}
 
-		private static void CopyAllValuesToNewSubKey(RegistryKey srcSubKey, RegistryKey destSubKey)
+		private static void CopyFilteredValues(RegistryKey srcSubKey, RegistryKey destSubKey)
 		{
-			const string NumberPrefix = "NumberOf";
-			const string LaunchesString = "launches";
-			foreach (var valueName in srcSubKey.GetValueNames().Where(
-				valueName => !valueName.StartsWith(NumberPrefix) && valueName != LaunchesString))
+			// Copy all values, except these that are not copied.
+			const string NumberPrefix = "numberof";
+			var valuesToBeRemoved = new HashSet<string>
 			{
-				CopyValueToNewKey(valueName, srcSubKey, destSubKey);
-			}
-		}
+				"launches",
+				"projectshared"
+			};
+			foreach (var valueName in srcSubKey.GetValueNames())
+			{
+				var lcValueName = valueName.ToLowerInvariant();
+				if (lcValueName.StartsWith(NumberPrefix) || valuesToBeRemoved.Contains(lcValueName))
+					continue;
 
-		private static void CopyValueToNewKey(string valueName, RegistryKey oldSubKey, RegistryKey newSubKey)
-		{
-			// Just don't overwrite the value if it exists already!
-			object dummyValue;
-			if (RegistryHelper.RegEntryExists(newSubKey, string.Empty, valueName, out dummyValue))
-				return;
-			var valueObject = oldSubKey.GetValue(valueName);
-			newSubKey.SetValue(valueName, valueObject);
+				// Don't overwrite the value if it exists already!
+				object dummyValue;
+				if (RegistryHelper.RegEntryValueExists(destSubKey, string.Empty, valueName, out dummyValue))
+					continue;
+
+				var valueObject = srcSubKey.GetValue(valueName);
+				destSubKey.SetValue(valueName, valueObject);
+			}
 		}
 	}
 

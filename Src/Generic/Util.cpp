@@ -10,6 +10,7 @@ Last reviewed:
 	Code for general utilities.
 -------------------------------------------------------------------------------*//*:End Ignore*/
 #include "main.h"
+#include "bldinc.h"
 #pragma hdrstop
 
 #ifdef _MSC_VER
@@ -2556,15 +2557,15 @@ const wchar_t kchDirSep[] = L"/";
 #endif//WIN32
 
 /*----------------------------------------------------------------------------------------------
-	looks up and returns the FW root data direcory path.
+	looks up and returns the FW root data directory path.
 ----------------------------------------------------------------------------------------------*/
 StrUni DirectoryFinder::FwRootDataDir()
 {
 #ifdef WIN32
 	RegKey rk;
 	StrUni stuResult;
-	if (rk.InitCu(_T("Software\\SIL\\FieldWorks\\8")) ||
-		rk.InitLm(_T("Software\\SIL\\FieldWorks\\8")))
+	if (rk.InitCu(REGISTRYPATHWITHVERSION) ||
+		rk.InitLm(REGISTRYPATHWITHVERSION))
 	{
 		achar rgch[MAX_PATH];
 		DWORD cb = isizeof(rgch);
@@ -2601,15 +2602,15 @@ StrUni DirectoryFinder::FwRootDataDir()
 }
 
 /*----------------------------------------------------------------------------------------------
-	looks up and returns the FW root code direcory path.
+	looks up and returns the FW root code directory path.
 ----------------------------------------------------------------------------------------------*/
 StrUni DirectoryFinder::FwRootCodeDir()
 {
 #ifdef WIN32
 	RegKey rk;
 	StrUni stuResult;
-	if (rk.InitCu(_T("Software\\SIL\\FieldWorks\\8")) ||
-		rk.InitLm(_T("Software\\SIL\\FieldWorks\\8")))
+	if (rk.InitCu(REGISTRYPATHWITHVERSION) ||
+		rk.InitLm(REGISTRYPATHWITHVERSION))
 	{
 		achar rgch[MAX_PATH];
 		DWORD cb = isizeof(rgch);

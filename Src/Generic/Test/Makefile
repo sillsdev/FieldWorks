@@ -32,7 +32,7 @@ INCLUDES := \
 	-I$(WIN32MORE_INC) \
 	-I$(COM_INC) \
 	-I$(WIN32BASE_INC) \
-	$(shell icu-config --cppflags) \
+	$(shell icu-config --detect-prefix --cppflags) \
 	-I$(FWINCLUDE) \
 	$(shell pkg-config --cflags $(PACKAGES)) \
 
@@ -43,8 +43,8 @@ LDLIBS := \
 	-L$(COM_LIB) -lcom \
 	-L$(WIN32BASE_LIB) -lWin32Base \
 	$(shell pkg-config --libs $(PACKAGES)) \
-	$(shell icu-config --ldflags) \
-	-lexpat\
+	$(shell icu-config --detect-prefix --ldflags) \
+	-lexpat -ldl \
 
 CPPFLAGS = $(DEFINES) $(INCLUDES) -MMD
 CXXFLAGS = -g $(OPTIMIZATIONS) -fPIC -fvisibility=hidden -Werror

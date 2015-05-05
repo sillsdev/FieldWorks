@@ -160,7 +160,7 @@ namespace SIL.Utils
 		/// <param name="value">[out] value of the registry entry if it exists; null otherwise.</param>
 		/// <returns><c>true</c> if the registry entry exists, otherwise <c>false</c></returns>
 		/// ------------------------------------------------------------------------------------
-		public static bool RegEntryExists(RegistryKey key, string subKey, string regEntry, out object value)
+		public static bool RegEntryValueExists(RegistryKey key, string subKey, string regEntry, out object value)
 		{
 			if (key == null)
 				throw new ArgumentNullException("key");

@@ -306,7 +306,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				try
 				{
 					var baseDir = FwDirectoryFinder.DataDirectory;
-					zipIn = new ZipInputStream(File.OpenRead(Path.Combine(baseDir, "Icu50.zip")));
+					zipIn = new ZipInputStream(File.OpenRead(Path.Combine(baseDir, string.Format("Icu{0}.zip", Icu.Version))));
 				}
 				catch (Exception e1)
 				{
@@ -317,24 +317,21 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				if (zipIn == null)
 					return false;
 				Icu.Cleanup();
-				foreach (var dir in Directory.GetDirectories(icuDir))
+				foreach (string dir in Directory.GetDirectories(icuDir))
 				{
-					var subdir = Path.GetFileName(dir).ToLowerInvariant();
-					if (subdir =="data" ||
-						(subdir.StartsWith("icudt") && subdir.EndsWith("l")))
-					{
+					string subdir = Path.GetFileName(dir);
+					if (subdir.Equals(string.Format("icudt{0}l", Icu.Version), StringComparison.OrdinalIgnoreCase))
 						Directory.Delete(dir, true);
-					}
 				}
 				ZipEntry entry;
 				while ((entry = zipIn.GetNextEntry()) != null)
 				{
-					var dirName = Path.GetDirectoryName(entry.Name);
-					var match = new Regex(@"^ICU\d\d[\\/]?(.*)$").Match(dirName);
+					string dirName = Path.GetDirectoryName(entry.Name);
+					Match match = Regex.Match(dirName, @"^ICU\d\d[\\/]?(.*)$", RegexOptions.IgnoreCase);
 					if (match.Success) // Zip file was built in a way that includes the root directory name.
 						dirName = match.Groups[1].Value; // Strip it off. May leave empty string.
-					var fileName = Path.GetFileName(entry.Name);
-					var fOk = UnzipFile(zipIn, fileName, entry.Size, Path.Combine(icuDir, dirName));
+					string fileName = Path.GetFileName(entry.Name);
+					bool fOk = UnzipFile(zipIn, fileName, entry.Size, Path.Combine(icuDir, dirName));
 					if (!fOk)
 						return false;
 				}

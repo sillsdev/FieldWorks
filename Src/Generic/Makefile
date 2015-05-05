@@ -27,7 +27,7 @@ endif
 
 PACKAGES := gtkmm-2.4
 
-INCLUDES := $(shell icu-config --cppflags) \
+INCLUDES := $(shell icu-config --detect-prefix --cppflags) \
 	 $(INCLUDES) \
 	-I$(GENERIC_SRC) -I$(TLB_SRC) -I$(INCLUDE) \
 	-I$(WIN32MORE_INC) \
@@ -41,7 +41,8 @@ LDLIBS = \
 	-L$(COM_LIB) -lcom \
 	-L$(WIN32BASE_LIB) -lWin32Base \
 	$(shell pkg-config --libs $(PACKAGES)) \
-	$(shell icu-config --ldflags) \
+	$(shell icu-config --detect-prefix --ldflags) \
+	-ldl
 
 LINK_LIBS := \
 	$(LINK_LIBS) \

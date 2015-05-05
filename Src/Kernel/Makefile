@@ -31,7 +31,7 @@ PACKAGES = glib-2.0 gtk+-2.0 glibmm-2.4 gtkmm-2.4 cairomm-1.0 pangomm-1.4
 INCLUDES := -I$(KERNEL_SRC) -I$(CELLAR_SRC) -I$(GENERIC_SRC) -I$(APPCORE_SRC) $(DEBUG_INCLUDES)
 INCLUDES := $(INCLUDES) -I$(VIEWS_SRC) -I$(VIEWS_LIB) -I$(GR2_INC)
 
-INCLUDES := $(shell icu-config --cppflags) \
+INCLUDES := $(shell icu-config --detect-prefix --cppflags) \
 	$(INCLUDES) \
 	-I$(FWINCLUDE) \
 	-I$(COM_OUT_DIR) \
@@ -45,8 +45,8 @@ LDLIBS := $(LDLIBS) \
 	-L$(COM_LIB) -lcom \
 	-L$(WIN32BASE_LIB) -lWin32Base \
 	$(shell pkg-config --libs $(PACKAGES)) \
-	$(shell icu-config --ldflags) \
-	-luuid -lexpat
+	$(shell icu-config --detect-prefix --ldflags) \
+	-luuid -lexpat -ldl
 
 CPPFLAGS = $(DEFINES) $(INCLUDES) -MMD
 CXXFLAGS = -g $(OPTIMIZATIONS) -fPIC -fvisibility=hidden -Werror -Waddress -Warray-bounds -Wmissing-field-initializers -Wclobbered -Wreturn-type -fstack-protector-all -Wshadow -rdynamic

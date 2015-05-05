@@ -3,6 +3,10 @@
 	<UsingTask TaskName="Substitute" AssemblyFile="FwBuildTasks.dll"/>
 	<UsingTask TaskName="GetSpecialFolderPath" AssemblyFile="FwBuildTasks.dll"/>
 
+	<PropertyGroup>
+		<IcuVersion>54</IcuVersion>
+	</PropertyGroup>
+
 	<!-- config is generally either Debug or Release, but might be Bounds or Profile. -->
 	<!-- if the user gives it lowercase, fix it to be capitalized -->
 	<Choose>
@@ -142,7 +146,7 @@
 	  <Output TaskParameter="Value" PropertyName="dir-fwdistfiles-data"/>
 	</PathCombine>
 
-	<PathCombine BasePath="$(dir-fwdistfiles)" SubPath="Icu50">
+	<PathCombine BasePath="$(dir-fwdistfiles)" SubPath="Icu$(IcuVersion)">
 	  <Output TaskParameter="Value" PropertyName="dir-icuData"/>
 	</PathCombine>
 
@@ -240,7 +244,7 @@
 	<SetEnvVar Variable="BUILD_TYPE" Value="$(build-type)"/>
 	<SetEnvVar Variable="BUILD_CONFIG" Value="$(config-capital)" />
 	<SetEnvVar Variable="BUILD_ROOT" Value="$(fwrt)" />
-	<SetEnvVar Variable="ICU_DATA" Value="$(fwrt)/DistFiles/Icu50" />
+	<SetEnvVar Variable="ICU_DATA" Value="$(fwrt)/DistFiles/Icu$(IcuVersion)" />
 
 	<!-- Set some environment variables needed on Linux. -->
 	<SetEnvVar Variable="LD_LIBRARY_PATH" Value="$(com_dir)/build$(arch)/src/.libs:$(com_dir)/build$(arch)/lib:$(icu_lib):$(dir-outputBase):$(LD_LIBRARY_PATH)" Condition="'$(OS)'=='Unix'"/>
@@ -295,6 +299,12 @@
 	  <BldIncOutput Include="../Output/Common/bldinc.h"/>
 	  <GlobalIncludeTemplate Include="GlobalInclude.properties.template"/>
 	  <GlobalIncludeOutput Include="GlobalInclude.properties"/>
+	  <EthnologueTemplate Include="../Lib/src/Ethnologue/Ethnologue.template.cs"/>
+	  <EthnologueOutput Include="../Lib/src/Ethnologue/GeneratedEthnologue.cs"/>
+	  <FwParatextLexiconPluginTemplate Include="../Src/FwParatextLexiconPlugin/ParatextLexiconPluginRegistryHelper.template.cs"/>
+	  <FwParatextLexiconPluginOutput Include="../Src/FwParatextLexiconPlugin/GeneratedParatextLexiconPluginRegistryHelper.cs"/>
+	  <FwUtilsTemplate Include="../Src/Common/FwUtils/FwUtils.template.cs"/>
+	  <FwUtilsOutput Include="../Src/Common/FwUtils/GeneratedFwUtils.cs"/>
   </ItemGroup>
   <!--
 	  Don't use Inputs and Outputs on the GenerateVersionFiles Target.  (Substitute won't
@@ -305,6 +315,10 @@
 	  <Substitute Template="@(VersionTemplate)" Symbols="@(VersionSymbols)" Output="@(VersionOutput)" Condition="'$(action)'!='clean'"/>
 	  <Substitute Template="@(BldIncTemplate)" Symbols="@(VersionSymbols)" Output="@(BldIncOutput)" Condition="'$(action)'!='clean' And Exists('../Output/Common')"/>
 	  <Substitute Template="@(GlobalIncludeTemplate)" Symbols="@(VersionSymbols)" Output="@(GlobalIncludeOutput)" Condition="'$(action)'!='clean'"/>
+	  <Substitute Template="@(EthnologueTemplate)" Symbols="@(VersionSymbols)" Output="@(EthnologueOutput)" Condition="'$(action)'!='clean'"/>
+	  <Substitute Template="@(FwParatextLexiconPluginTemplate)" Symbols="@(VersionSymbols)" Output="@(FwParatextLexiconPluginOutput)" Condition="'$(action)'!='clean'"/>
+	  <Substitute Template="@(FwUtilsTemplate)" Symbols="@(VersionSymbols)" Output="@(FwUtilsOutput)" Condition="'$(action)'!='clean'"/>
+
 	  <Message Text="Updated CommonAssemblyInfo.cs, bldinc.h and GlobalInclude.properties (if needed)."/>
   </Target>
 

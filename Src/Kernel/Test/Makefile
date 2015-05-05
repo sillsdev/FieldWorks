@@ -33,7 +33,7 @@ INCLUDES := -I$(KERNEL_SRC) -I$(KERNEL_SRC)/Test -I$(CELLAR_SRC) -I$(GENERIC_SRC
 INCLUDES := $(INCLUDES) -I$(VIEWS_SRC) -I$(VIEWS_LIB) -I$(GR2_INC)
 
 INCLUDES := \
-	$(shell icu-config --cppflags) \
+	$(shell icu-config --detect-prefix --cppflags) \
 	$(INCLUDES) \
 	-I$(FWINCLUDE) \
 	-I$(UNIT) -I$(LIB_UNIT) \
@@ -44,14 +44,14 @@ INCLUDES := \
 	$(shell pkg-config --cflags $(PACKAGES)) \
 
 LDLIBS := \
-	$(shell icu-config --ldflags) \
+	$(shell icu-config --detect-prefix --ldflags) \
 	-L$(FWINCLUDE) \
 	-L$(WIN32MORE_LIB) -lWin32More \
 	-L$(COM_LIB) -lcom \
 	-L$(WIN32BASE_LIB) -lWin32Base \
 	-L$(OUT_DIR) -lDebugProcs \
 	$(shell pkg-config --libs $(PACKAGES)) \
-	-luuid -lexpat \
+	-luuid -lexpat -ldl \
 
 CPPFLAGS = $(DEFINES) $(INCLUDES) -MMD
 CXXFLAGS = -g $(OPTIMIZATIONS) -fvisibility=hidden -Werror

@@ -1014,19 +1014,9 @@ void WriteXmlUnicode(IStream * pstrm, const OLECHAR * rgchTxt, int cchTxt)
 #define UTF16BUFSIZE 4096
 
 	// Use an ICU function to normalize the Unicode string.
-	OLECHAR rgchwBuffer[UTF16BUFSIZE];
-	OLECHAR * prgchNorm = rgchwBuffer;
-	int32_t cchwBuf = UTF16BUFSIZE;
-	int32_t cchNorm = unorm_normalize(rgchTxt, cchTxt, UNORM_NFC, 0, prgchNorm, cchwBuf, &uerr);
-	Vector<OLECHAR> vchw;
-	if (uerr == U_BUFFER_OVERFLOW_ERROR)
-	{
-		uerr = U_ZERO_ERROR;
-		vchw.Resize(cchNorm + 1);
-		prgchNorm = vchw.Begin();
-		cchwBuf = vchw.Size();
-		cchNorm = unorm_normalize(rgchTxt, cchTxt, UNORM_NFC, 0, prgchNorm, cchwBuf, &uerr);
-	}
+	const Normalizer2* norm = SilUtil::GetIcuNormalizer(UNORM_NFC);
+	UnicodeString input(rgchTxt, cchTxt);
+	UnicodeString output = norm->normalize(input, uerr);
 	Assert(U_SUCCESS(uerr));
 
 #if 0	/* cannot use this block of code due to XML encodings of <>& */
@@ -1051,7 +1041,7 @@ void WriteXmlUnicode(IStream * pstrm, const OLECHAR * rgchTxt, int cchTxt)
 	char rgchsBuffer[UTF16BUFSIZE * 2];
 	ulong cchsBuffer = isizeof(rgchsBuffer);
 	char * prgchUtf8 = rgchsBuffer;
-	ulong cchUtf8 = CountXmlUtf8FromUtf16(prgchNorm, cchNorm);
+	ulong cchUtf8 = CountXmlUtf8FromUtf16(output.getBuffer(), output.length());
 	Vector<char> vchs;
 	if (cchUtf8 >= cchsBuffer)
 	{
@@ -1059,7 +1049,7 @@ void WriteXmlUnicode(IStream * pstrm, const OLECHAR * rgchTxt, int cchTxt)
 		prgchUtf8 = vchs.Begin();
 		cchsBuffer = cchUtf8 + 1;
 	}
-	ConvertUtf16ToXmlUtf8(prgchUtf8, cchsBuffer, prgchNorm, cchNorm);
+	ConvertUtf16ToXmlUtf8(prgchUtf8, cchsBuffer, output.getBuffer(), output.length());
 
 	if (!prgchUtf8[cchUtf8 - 1])
 		cchUtf8--; // If there is a null at the end of the string, remove it

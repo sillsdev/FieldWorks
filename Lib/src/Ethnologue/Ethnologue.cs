@@ -31,7 +31,7 @@ namespace SIL.Ethnologue
 	/// read the raw data directly from tab delimited files, and store it in
 	/// memory.
 	/// </summary>
-	public class Ethnologue
+	public partial class Ethnologue
 	{
 		/// <summary>
 		/// This table defines the possible language status values, which are
@@ -888,7 +888,7 @@ namespace SIL.Ethnologue
 			// Note. We don't want to use CreateSubKey here because it will fail on
 			// non-administrator logins. The user doesn't need to modify this setting.
 			// Trying to use DirectoryFinder for this causes circular dependencies.
-			using (var regKey = key.OpenSubKey(@"Software\SIL\FieldWorks\8"))
+			using (var regKey = key.OpenSubKey(RegistryPathWithVersion))
 			{
 				return (regKey == null) ? null : regKey.GetValue("RootCodeDir") as string;
 			}

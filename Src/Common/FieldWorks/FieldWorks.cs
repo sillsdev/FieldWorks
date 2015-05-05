@@ -273,8 +273,9 @@ namespace SIL.FieldWorks
 					CoreImpl.Properties.Settings.Default.Save();
 				}
 
-				// e.g. the first time the user runs FW8, we need to copy a bunch of registry keys
-				// from HKCU/Software/SIL/FieldWorks/7.0 -> FieldWorks/8.
+				// e.g. the first time the user runs FW9, we need to copy a bunch of registry keys
+				// from HKCU/Software/SIL/FieldWorks/7.0 -> FieldWorks/9 or
+				// from HKCU/Software/SIL/FieldWorks/8 -> FieldWorks/9
 				FwRegistryHelper.UpgradeUserSettingsIfNeeded();
 
 				// initialize the TE styles path so that ScrMappingList can load default styles
@@ -2333,7 +2334,7 @@ namespace SIL.FieldWorks
 						// right away if we don't work with the process object. It might be better
 						// though to change the signature of OpenProjectWithNewProcess to return
 						// a boolean.
-						using (OpenProjectWithNewProcess((string)null, settings.ProjectName, null,
+						using (OpenProjectWithNewProcess(settings.ProjectName,
 							"-" + FwAppArgs.kRestoreFile, settings.Backup.File,
 							"-" + FwAppArgs.kRestoreOptions, settings.CommandLineOptions))
 						{

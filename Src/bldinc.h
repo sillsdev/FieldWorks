@@ -17,3 +17,4 @@
 #define FWSUITE_VERSION "$!{FWMAJOR:0}.$!{FWMINOR:0}.$!{FWREVISION:0}.0\0"
 #define COPYRIGHT "Copyright © 2002-$YEAR SIL International\0"
 #define COPYRIGHTRESERVED "Copyright © 2002-$YEAR SIL International. All rights reserved."
+#define REGISTRYPATHWITHVERSION _T("Software\\SIL\\FieldWorks\\$!{FWMAJOR:0}")
