@@ -127,8 +127,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private LinkLabel linkLbl_useDefaultFolder;
 		private CheckBox m_addWSsToSldrCheckBox;
 		private String m_defaultLinkedFilesFolder;
-		private readonly LexiconProjectSettings m_lexiconProjectSettings;
-		private readonly LexiconProjectSettingsDataMapper m_lexiconProjectSettingsDataMapper;
+		private readonly ProjectLexiconSettings m_projectLexiconSettings;
+		private readonly ProjectLexiconSettingsDataMapper m_projectLexiconSettingsDataMapper;
 		#endregion
 
 		#region Construction and initialization
@@ -168,9 +168,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;
 			m_stylesheet = stylesheet;
-			m_lexiconProjectSettingsDataMapper = new LexiconProjectSettingsDataMapper(m_cache.ServiceLocator.DataSetup.ProjectSettingsStore);
-			m_lexiconProjectSettings = new LexiconProjectSettings();
-			m_lexiconProjectSettingsDataMapper.Read(m_lexiconProjectSettings);
+			m_projectLexiconSettingsDataMapper = new ProjectLexiconSettingsDataMapper(m_cache.ServiceLocator.DataSetup.ProjectSettingsStore);
+			m_projectLexiconSettings = new ProjectLexiconSettings();
+			m_projectLexiconSettingsDataMapper.Read(m_projectLexiconSettings);
 
 			m_langProj = m_cache.LanguageProject;
 			InitializeWsTab();
@@ -239,7 +239,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				m_addWSsToSldrCheckBox.Enabled = FLExBridgeHelper.DoesProjectHaveFlexRepo(m_cache.ProjectId) || FLExBridgeHelper.DoesProjectHaveLiftRepo(m_cache.ProjectId);
 				if (m_addWSsToSldrCheckBox.Enabled)
-					m_addWSsToSldrCheckBox.Checked = m_lexiconProjectSettings.AddWritingSystemsToSldr;
+					m_addWSsToSldrCheckBox.Checked = m_projectLexiconSettings.AddWritingSystemsToSldr;
 				UpdateOKButton();
 			}
 		}
@@ -1076,7 +1076,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var sNewLinkedFilesRootDir = txtExtLnkEdit.Text;
 			SaveLinkedFilesChanges(sNewLinkedFilesRootDir);
 
-			m_lexiconProjectSettingsDataMapper.Write(m_lexiconProjectSettings);
+			m_projectLexiconSettingsDataMapper.Write(m_projectLexiconSettings);
 		}
 
 		private void SaveLinkedFilesChanges(string sNewLinkedFilesRootDir)
@@ -1769,7 +1769,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		// This is used before SaveInternal, which sets m_fWsChanged for these (and the modify) cases.
 		bool DidWsTabChange()
 		{
-			if (m_lexiconProjectSettings.IsChanged)
+			if (m_projectLexiconSettings.IsChanged)
 				return true;
 			if (m_deletedWritingSystems.Count > 0)
 				return true;
@@ -1924,7 +1924,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void m_addWSsToSldrCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			m_lexiconProjectSettings.AddWritingSystemsToSldr = m_addWSsToSldrCheckBox.Checked;
+			m_projectLexiconSettings.AddWritingSystemsToSldr = m_addWSsToSldrCheckBox.Checked;
 		}
 	}
 	#endregion //FwProjPropertiesDlg dialog

@@ -52,16 +52,6 @@ namespace SIL.FieldWorks.FDO
 		/// <summary>The filename of the backup settings file</summary>
 		public const string ksBackupSettingsFilename = "BackupSettings.xml";
 
-		/// <summary>
-		/// The filename for the lexicon project settings file.
-		/// </summary>
-		public const string ksLexiconProjectSettingsFilename = "LexiconProjectSettings.lpsx";
-
-		/// <summary>
-		/// The filename for the lexicon user settings file.
-		/// </summary>
-		public const string ksLexiconUserSettingsFilename = "LexiconUserSettings.lusx";
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the path to the configuration settings for the specified project.

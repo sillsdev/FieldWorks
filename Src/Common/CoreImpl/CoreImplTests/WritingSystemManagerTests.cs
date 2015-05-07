@@ -183,21 +183,21 @@ namespace SIL.CoreImpl
 		{
 			var wsManager = new WritingSystemManager();
 			CoreWritingSystemDefinition enWS = wsManager.Create("en-Latn-US-fonipa");
-			Assert.AreEqual("Eng", enWS.Abbreviation);
-			Assert.AreEqual("English", enWS.Language.Name);
-			Assert.AreEqual("Latin", enWS.Script.Name);
-			Assert.AreEqual("United States", enWS.Region.Name);
-			Assert.AreEqual("International Phonetic Alphabet", enWS.Variants[0].Name);
+			Assert.That(enWS.Abbreviation, Is.EqualTo("Eng"));
+			Assert.That(enWS.Language, Is.EqualTo((LanguageSubtag) "en"));
+			Assert.That(enWS.Script, Is.EqualTo((ScriptSubtag) "Latn"));
+			Assert.That(enWS.Region, Is.EqualTo((RegionSubtag) "US"));
+			Assert.That(enWS.Variants, Is.EqualTo(new VariantSubtag[] {"fonipa"}));
 			Assert.That(enWS.DefaultFontName, Is.EqualTo("Charis SIL"));
 			Assert.That(enWS.DefaultCollation.ValueEquals(new IcuRulesCollationDefinition("standard")), Is.True);
 			Assert.That(enWS.IetfLanguageTag, Is.EqualTo("en-US-fonipa"));
 			Assert.That(string.IsNullOrEmpty(enWS.WindowsLcid), Is.True);
 
 			CoreWritingSystemDefinition chWS = wsManager.Create("zh-CN");
-			Assert.AreEqual("Chi", chWS.Abbreviation);
-			Assert.That(chWS.Script, Is.Null);
-			Assert.AreEqual("Chinese", chWS.Language.Name);
-			Assert.AreEqual("China", chWS.Region.Name);
+			Assert.That(chWS.Abbreviation, Is.EqualTo("Chi"));
+			Assert.That(chWS.Language, Is.EqualTo((LanguageSubtag) "zh"));
+			Assert.That(chWS.Script, Is.EqualTo((ScriptSubtag) "Hans"));
+			Assert.That(chWS.Region, Is.EqualTo((RegionSubtag) "CN"));
 			Assert.That(chWS.DefaultFontName, Is.EqualTo("Charis SIL"));
 			Assert.That(chWS.DefaultCollation.ValueEquals(new SystemCollationDefinition {IetfLanguageTag = "zh-CN"}), Is.True);
 		}

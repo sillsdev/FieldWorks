@@ -25,8 +25,8 @@ namespace SIL.CoreImpl
 		{
 			return new ICustomDataMapper<CoreWritingSystemDefinition>[]
 			{
-				new LexiconProjectSettingsWritingSystemDataMapper<CoreWritingSystemDefinition>(projectSettingsStore),
-				new LexiconUserSettingsWritingSystemDataMapper<CoreWritingSystemDefinition>(userSettingsStore)
+				new ProjectLexiconSettingsWritingSystemDataMapper<CoreWritingSystemDefinition>(projectSettingsStore),
+				new UserLexiconSettingsWritingSystemDataMapper<CoreWritingSystemDefinition>(userSettingsStore)
 			};
 		}
 

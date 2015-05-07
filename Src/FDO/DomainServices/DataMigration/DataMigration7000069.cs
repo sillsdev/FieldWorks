@@ -44,11 +44,11 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			var migrator = new LdmlInFolderWritingSystemRepositoryMigrator(ldmlFolder, NoteMigration, 3);
 			migrator.Migrate();
 
-			string configSettingsPath = FdoFileHelper.GetConfigSettingsDir(repoDto.ProjectFolder);
-			if (!Directory.Exists(configSettingsPath))
-				Directory.CreateDirectory(configSettingsPath);
-			var projectSettingsStore = new FileSettingsStore(Path.Combine(configSettingsPath, FdoFileHelper.ksLexiconProjectSettingsFilename));
-			var userSettingsStore = new FileSettingsStore(Path.Combine(configSettingsPath, FdoFileHelper.ksLexiconUserSettingsFilename));
+			string sharedSettingsPath = LexiconSettingsFileHelper.GetSharedSettingsPath(repoDto.ProjectFolder);
+			if (!Directory.Exists(sharedSettingsPath))
+				Directory.CreateDirectory(sharedSettingsPath);
+			var projectSettingsStore = new FileSettingsStore(LexiconSettingsFileHelper.GetProjectLexiconSettingsPath(repoDto.ProjectFolder));
+			var userSettingsStore = new FileSettingsStore(LexiconSettingsFileHelper.GetUserLexiconSettingsPath(repoDto.ProjectFolder));
 			var repo = new CoreLdmlInFolderWritingSystemRepository(ldmlFolder, projectSettingsStore, userSettingsStore);
 			migrator.ResetRemovedProperties(repo);
 
@@ -117,7 +117,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				newTag = cleaner.GetCompleteTag();
 			}
 
-			newTag = IetfLanguageTagHelper.Canonicalize(newTag);
+			newTag = IetfLanguageTagHelper.Normalize(newTag, IetfLanguageTagNormalizationMode.SilCompatible);
 
 			m_tagMap[oldTag] = newTag;
 			return !newTag.Equals(oldTag, StringComparison.InvariantCultureIgnoreCase);

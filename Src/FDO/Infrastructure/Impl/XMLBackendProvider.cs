@@ -162,8 +162,11 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		protected void CreateSettingsStores()
 		{
-			m_projectSettingsStore = new FileSettingsStore(Path.Combine(FdoFileHelper.GetConfigSettingsDir(ProjectId.ProjectFolder), FdoFileHelper.ksLexiconProjectSettingsFilename));
-			m_userSettingsStore = new FileSettingsStore(Path.Combine(FdoFileHelper.GetConfigSettingsDir(ProjectId.ProjectFolder), FdoFileHelper.ksLexiconUserSettingsFilename));
+			string sharedSettingsPath = LexiconSettingsFileHelper.GetSharedSettingsPath(ProjectId.ProjectFolder);
+			if (!Directory.Exists(sharedSettingsPath))
+				Directory.CreateDirectory(sharedSettingsPath);
+			m_projectSettingsStore = new FileSettingsStore(LexiconSettingsFileHelper.GetProjectLexiconSettingsPath(ProjectId.ProjectFolder));
+			m_userSettingsStore = new FileSettingsStore(LexiconSettingsFileHelper.GetUserLexiconSettingsPath(ProjectId.ProjectFolder));
 		}
 
 		protected int ReadInSurrogates(int currentModelVersion)

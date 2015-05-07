@@ -634,7 +634,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					if (string.IsNullOrEmpty(systemCollation.IetfLanguageTag))
 					{
 						string message;
-						systemCollation.IetfLanguageTag = SystemCollator.ValidateIetfLanguageTag(ws.IetfLanguageTag, out message) ? ws.IetfLanguageTag : ((CultureInfo) m_sortLanguageComboBox.Items[0]).Name;
+						systemCollation.IetfLanguageTag = SystemCollator.ValidateIetfLanguageTag(ws.IetfLanguageTag, out message) ? ws.IetfLanguageTag : (string) m_sortLanguageComboBox.SelectedValue;
 					}
 					m_sortLanguageComboBox.SelectedValue = systemCollation.IetfLanguageTag;
 					break;
