@@ -6,6 +6,7 @@
 #
 #	MarkS - 2007-08-08
 
+ICU_VERSION = 54
 BUILD_ROOT = $(shell pwd)
 include $(BUILD_ROOT)/Bld/_names.mak
 BUILD_PRODUCT = FieldWorks
@@ -108,15 +109,15 @@ tlbs-copy:
 tlbs-clean:
 	$(RM) -rf $(COM_OUT_DIR)
 
-# ICU on Linux looks for files (like unorm.icu uprops.icu in
-# $(BUILD_ROOT)/DistFiles/Icu50/icudt50l/icudt50l/icudt50l
+# ICU on Linux looks for files (like unorm.icu uprops.icu) in
+# $(BUILD_ROOT)/DistFiles/Icu54/icudt54l/icudt54l
 # I think we need to move the *.icu into a sub dir
 # currently copying incase anything trys to access *.icu in the first
 # icudt50l directory.icudt
 IcuDataFiles:
-	(cd $(BUILD_ROOT)/DistFiles/Icu50 && unzip -u ../Icu50.zip)
-	-(cd $(BUILD_ROOT)/DistFiles/Icu50/icudt50l && mkdir icudt50l)
-	-(cd $(BUILD_ROOT)/DistFiles/Icu50/icudt50l && cp -p *.icu icudt50l)
+	(cd $(BUILD_ROOT)/DistFiles/Icu$(ICU_VERSION) && unzip -u ../Icu$(ICU_VERSION).zip)
+	-(cd $(BUILD_ROOT)/DistFiles/Icu$(ICU_VERSION)/icudt$(ICU_VERSION)l && mkdir icudt$(ICU_VERSION)l)
+	-(cd $(BUILD_ROOT)/DistFiles/Icu54/icudt$(ICU_VERSION)l && cp -p *.icu icudt$(ICU_VERSION)l)
 
 
 # This build item isn't run on a normal build.

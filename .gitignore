@@ -123,3 +123,8 @@ Lib/debug/graphite2.lib
 Lib/release/graphite2.lib
 Lib/linux/Debug/libgraphite2.a
 Lib/linux/Release/libgraphite2.a
+DistFiles/Windows/gennorm2.exe
+DistFiles/Windows/icutu*.dll
+DistFiles/Icu*.zip
+DistFiles/Icu*/icudt*l
+DistFiles/Icu*/*.*

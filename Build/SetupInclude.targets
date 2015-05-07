@@ -3,6 +3,10 @@
 	<UsingTask TaskName="Substitute" AssemblyFile="FwBuildTasks.dll"/>
 	<UsingTask TaskName="GetSpecialFolderPath" AssemblyFile="FwBuildTasks.dll"/>
 
+	<PropertyGroup>
+		<IcuVersion>54</IcuVersion>
+	</PropertyGroup>
+
 	<!-- config is generally either Debug or Release, but might be Bounds or Profile. -->
 	<!-- if the user gives it lowercase, fix it to be capitalized -->
 	<Choose>
@@ -142,7 +146,7 @@
 	  <Output TaskParameter="Value" PropertyName="dir-fwdistfiles-data"/>
 	</PathCombine>
 
-	<PathCombine BasePath="$(dir-fwdistfiles)" SubPath="Icu50">
+	<PathCombine BasePath="$(dir-fwdistfiles)" SubPath="Icu$(IcuVersion)">
 	  <Output TaskParameter="Value" PropertyName="dir-icuData"/>
 	</PathCombine>
 
@@ -240,7 +244,7 @@
 	<SetEnvVar Variable="BUILD_TYPE" Value="$(build-type)"/>
 	<SetEnvVar Variable="BUILD_CONFIG" Value="$(config-capital)" />
 	<SetEnvVar Variable="BUILD_ROOT" Value="$(fwrt)" />
-	<SetEnvVar Variable="ICU_DATA" Value="$(fwrt)/DistFiles/Icu50" />
+	<SetEnvVar Variable="ICU_DATA" Value="$(fwrt)/DistFiles/Icu$(IcuVersion)" />
 
 	<!-- Set some environment variables needed on Linux. -->
 	<SetEnvVar Variable="LD_LIBRARY_PATH" Value="$(com_dir)/build$(arch)/src/.libs:$(com_dir)/build$(arch)/lib:$(icu_lib):$(dir-outputBase):$(LD_LIBRARY_PATH)" Condition="'$(OS)'=='Unix'"/>

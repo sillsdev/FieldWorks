@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -12,10 +14,20 @@ namespace FwBuildTasks
 	public class Zip : Task
 	{
 		[Required]
-		public string Source { get; set; }
+		public ITaskItem[] Source { get; set; }
 
 		[Required]
 		public string Destination { get; set; }
+
+		/// <summary>
+		/// Gets or sets the working directory for the zip file.
+		/// </summary>
+		/// <value>The working directory.</value>
+		/// <remarks>
+		/// The working directory is the base of the zip file.
+		/// All files will be made relative from the working directory.
+		/// </remarks>
+		public string WorkingDirectory { get; set; }
 
 		public override bool Execute()
 		{
@@ -35,38 +47,39 @@ namespace FwBuildTasks
 					name, but with the extension changed to .zip.
 			*/
 
-			var inputPaths = Source.Split(new[] { ';' });
-
-			if (Destination.EndsWith(".zip"))
-				CompressFilesToOneZipFile(inputPaths, Destination);
+			if (Destination.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
+				CompressFilesToOneZipFile();
 			else
-				CompressFilesToMultipleZipFiles(inputPaths, Destination);
+				CompressFilesToMultipleZipFiles();
 
 			return true;
 		}
 
-		private void CompressFilesToOneZipFile(ICollection<string> inputPaths, string zipFilePath)
+		private void CompressFilesToOneZipFile()
 		{
-			Log.LogMessage(MessageImportance.Normal, "Zipping " + inputPaths.Count + " files to zip file " + zipFilePath);
+			Log.LogMessage(MessageImportance.Normal, "Zipping " + Source.Length + " files to zip file " + Destination);
 
-			using (var fsOut = File.Create(zipFilePath)) // Overwrites previous file
+			using (var fsOut = File.Create(Destination)) // Overwrites previous file
 			{
 				using (var zipStream = new ZipOutputStream(fsOut))
 				{
-					foreach (var inputPath in inputPaths)
+					foreach (ITaskItem item in Source)
 					{
+						string inputPath = item.ItemSpec;
 						zipStream.SetLevel(9); // Highest level of compression
 
 						var inputFileInfo = new FileInfo(inputPath);
 
-						var newEntry = new ZipEntry(inputFileInfo.Name) { DateTime = inputFileInfo.CreationTime };
+						// clean up name
+						string pathInArchive = !string.IsNullOrEmpty(WorkingDirectory) ? GetPath(inputFileInfo.FullName, WorkingDirectory)
+							: Path.GetFileName(inputFileInfo.FullName);
+
+						var newEntry = new ZipEntry(pathInArchive) { DateTime = inputFileInfo.CreationTime };
 						zipStream.PutNextEntry(newEntry);
 
 						var buffer = new byte[4096];
-						using (var streamReader = File.OpenRead(inputPath))
-						{
+						using (FileStream streamReader = File.OpenRead(inputPath))
 							ICSharpCode.SharpZipLib.Core.StreamUtils.Copy(streamReader, zipStream, buffer);
-						}
 
 						zipStream.CloseEntry();
 					}
@@ -76,18 +89,20 @@ namespace FwBuildTasks
 			}
 		}
 
-		private void CompressFilesToMultipleZipFiles(ICollection<string> inputPaths, string outputFolder)
+		private void CompressFilesToMultipleZipFiles()
 		{
-			Log.LogMessage(MessageImportance.Normal, "Zipping " + inputPaths.Count + " files to zip files in folder " + outputFolder);
+			Log.LogMessage(MessageImportance.Normal, "Zipping " + Source.Length + " files to zip files in folder " + Destination);
 
 			// Create the output folder if it does not exist:
-			if (!Directory.Exists(outputFolder))
-				Directory.CreateDirectory(outputFolder);
+			if (!Directory.Exists(Destination))
+				Directory.CreateDirectory(Destination);
 
-			foreach (var inputPath in inputPaths)
+			foreach (ITaskItem item in Source)
 			{
+				string inputPath = item.ItemSpec;
+
 				// Form output zip file full path:
-				var outputPath = Path.Combine(outputFolder, Path.GetFileNameWithoutExtension(inputPath) + ".zip");
+				var outputPath = Path.Combine(Destination, Path.GetFileNameWithoutExtension(inputPath) + ".zip");
 
 				using (var fsOut = File.Create(outputPath)) // Overwrites previous file
 				{
@@ -97,14 +112,15 @@ namespace FwBuildTasks
 
 						var inputFileInfo = new FileInfo(inputPath);
 
-						var newEntry = new ZipEntry(inputFileInfo.Name) { DateTime = inputFileInfo.CreationTime };
+						string pathInArchive = !string.IsNullOrEmpty(WorkingDirectory) ? GetPath(inputFileInfo.FullName, WorkingDirectory)
+							: Path.GetFileName(inputFileInfo.FullName);
+
+						var newEntry = new ZipEntry(pathInArchive) { DateTime = inputFileInfo.CreationTime };
 						zipStream.PutNextEntry(newEntry);
 
 						var buffer = new byte[4096];
 						using (var streamReader = File.OpenRead(inputPath))
-						{
 							ICSharpCode.SharpZipLib.Core.StreamUtils.Copy(streamReader, zipStream, buffer);
-						}
 
 						zipStream.CloseEntry();
 						zipStream.IsStreamOwner = true;
@@ -112,6 +128,37 @@ namespace FwBuildTasks
 					}
 				}
 			}
+		}
+
+		private static string GetPath(string originalPath, string rootDirectory)
+		{
+			var rootDirInfo = new DirectoryInfo(rootDirectory);
+
+			var relativePath = new List<string>();
+			string[] originalDirectories = originalPath.Split(Path.DirectorySeparatorChar);
+			string[] rootDirectories = rootDirInfo.FullName.Split(Path.DirectorySeparatorChar);
+
+			int length = Math.Min(originalDirectories.Length, rootDirectories.Length);
+
+			int lastCommonRoot = -1;
+
+			// find common root
+			for (int x = 0; x < length; x++)
+			{
+				if (!string.Equals(originalDirectories[x], rootDirectories[x], StringComparison.OrdinalIgnoreCase))
+					break;
+
+				lastCommonRoot = x;
+			}
+			if (lastCommonRoot == -1)
+				return originalPath;
+
+			// add extra original directories
+			for (int x = lastCommonRoot + 1; x < originalDirectories.Length; x++)
+				relativePath.Add(originalDirectories[x]);
+
+			return string.Join(Path.DirectorySeparatorChar.ToString(CultureInfo.InvariantCulture),
+				relativePath.ToArray());
 		}
 	}
 }

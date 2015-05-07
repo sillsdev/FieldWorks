@@ -52,7 +52,7 @@ then
 	FW_ROOT="${BASE}/../../share/fieldworks"
 	FW_ROOTDATA="${HOME}/.config/fieldworks"
 	FW_ROOTCODE="${BASE}/../../share/fieldworks"
-	ICU_DATA="${HOME}/.config/fieldworks/Icu50"
+	ICU_DATA="${HOME}/.config/fieldworks/Icu54"
 	PATH="${BASE}/icu-bin:${PATH}"
 	LD_LIBRARY_PATH="${BASE}:${LD_LIBRARY_PATH}"
 	MONO_REGISTRY_PATH="${HOME}/.config/fieldworks/registry"
@@ -61,7 +61,7 @@ else
 	FW_ROOT="${BASE}/DistFiles"
 	FW_ROOTDATA="${BASE}/DistFiles"
 	FW_ROOTCODE="${BASE}/DistFiles"
-	ICU_DATA="${BASE}/DistFiles/Icu50"
+	ICU_DATA="${BASE}/DistFiles/Icu54"
 	MONO_REGISTRY_PATH="${BASE}/Output_${ARCH}/registry"
 fi
 

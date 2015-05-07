@@ -42,6 +42,7 @@ LDLIBS = \
 	-L$(WIN32BASE_LIB) -lWin32Base \
 	$(shell pkg-config --libs $(PACKAGES)) \
 	$(shell icu-config --ldflags) \
+	-ldl
 
 LINK_LIBS := \
 	$(LINK_LIBS) \

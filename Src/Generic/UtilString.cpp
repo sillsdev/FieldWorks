@@ -5329,28 +5329,19 @@ bool StrUtil::NormalizeStrUni(StrUni & stu, UNormalizationMode nm)
 		return true;		// empty strings are normalized by definition.
 
 	bool fOk = true;
-	UNormalizationCheckResult x;
+	const Normalizer2* norm = SilUtil::GetIcuNormalizer(nm);
+	UnicodeString input(stu.Chars(), stu.Length());
 	UErrorCode uerr = U_ZERO_ERROR;
-	x = unorm_quickCheck(stu.Chars(), stu.Length(), nm, &uerr);
+	UNormalizationCheckResult x = norm->quickCheck(input, uerr);
 	Assert(U_SUCCESS(uerr));
 	if (U_SUCCESS(uerr) && x != UNORM_YES)
 	{
-		int32_t cchOut;
-		Vector<wchar> vchOut;
-		vchOut.Resize(stu.Length() * 2);
-		cchOut = unorm_normalize(stu.Chars(), stu.Length(), nm, 0,
-			vchOut.Begin(), vchOut.Size(), &uerr);
-		if (uerr == U_BUFFER_OVERFLOW_ERROR)
-		{
-			vchOut.Resize(cchOut);
-			uerr = U_ZERO_ERROR;
-			cchOut = unorm_normalize(stu.Chars(), stu.Length(), nm, 0,
-				vchOut.Begin(), vchOut.Size(), &uerr);
-		}
+		uerr = U_ZERO_ERROR;
+		UnicodeString output = norm->normalize(input, uerr);
 		fOk = U_SUCCESS(uerr);
 		Assert(fOk);
 		if (fOk)
-			stu.Assign(vchOut.Begin(), cchOut);
+			stu.Assign(output.getBuffer(), output.length());
 	}
 
 	return fOk;
