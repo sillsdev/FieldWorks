@@ -393,7 +393,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				{
 					string code = m_variantAbbrev.Text.Trim();
 					IEnumerable<VariantSubtag> variantSubtags;
-					if (IetfLanguageTagHelper.TryGetVariantSubtags(code, out variantSubtags))
+					if (IetfLanguageTag.TryGetVariantSubtags(code, out variantSubtags))
 					{
 						foreach (VariantSubtag variantSubtag in variantSubtags)
 							yield return variantSubtag;
@@ -457,7 +457,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 					{
 						VariantName = "";
 						m_variantAbbrev.Enabled = true;
-						m_variantAbbrev.Text = IetfLanguageTagHelper.GetVariantCodes(variantSubtags);
+						m_variantAbbrev.Text = IetfLanguageTag.GetVariantCodes(variantSubtags);
 					}
 				}
 			}
@@ -570,7 +570,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			IEnumerable<VariantSubtag> orig = VariantSubtags;
 			m_variantName.ClearItems();
 			m_variantName.Items.AddRange(StandardSubtags.RegisteredVariants.Concat(StandardSubtags.CommonPrivateUseVariants)
-				.Where(v => v.IsVariantOf(m_ws.IetfLanguageTag)).Cast<object>().ToArray());
+				.Where(v => v.IsVariantOf(m_ws.LanguageTag)).Cast<object>().ToArray());
 			if (orig != null && fPreserve)
 				VariantSubtags = orig;
 			m_variantName.EndUpdate();
@@ -604,7 +604,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 					MessageBox.Show(FindForm(), FwCoreDlgControls.kstidDupScrAbbr, caption);
 					return false;
 				}
-				if (!IetfLanguageTagHelper.IsValidScriptCode(scriptSubtag.Code))
+				if (!IetfLanguageTag.IsValidScriptCode(scriptSubtag.Code))
 				{
 					MessageBox.Show(FindForm(), FwCoreDlgControls.kstidInvalidScrAbbr, caption);
 					return false;
@@ -625,7 +625,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 					MessageBox.Show(FindForm(), FwCoreDlgControls.kstidDupRgnAbbr, caption);
 					return false;
 				}
-				if (!IetfLanguageTagHelper.IsValidRegionCode(regionSubtag.Code))
+				if (!IetfLanguageTag.IsValidRegionCode(regionSubtag.Code))
 				{
 					MessageBox.Show(FindForm(), FwCoreDlgControls.kstidInvalidRgnAbbr, caption);
 					return false;
@@ -648,7 +648,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 						MessageBox.Show(FindForm(), FwCoreDlgControls.kstidDupVarAbbr, caption);
 						return false;
 					}
-					if (!IetfLanguageTagHelper.IsValidPrivateUseCode(variantSubtag.Code))
+					if (!IetfLanguageTag.IsValidPrivateUseCode(variantSubtag.Code))
 					{
 						MessageBox.Show(FindForm(), FwCoreDlgControls.kstidInvalidVarAbbr, caption);
 						return false;

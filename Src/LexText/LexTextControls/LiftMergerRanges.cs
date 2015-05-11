@@ -1511,8 +1511,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			foreach (LdmlMigrationInfo info in migrationInfo)
 			{
 				// Not sure if it ever reports unchanged ones, but we don't care about them.
-				if (info.IetfLanguageTagBeforeMigration != info.IetfLanguageTagAfterMigration)
-					m_writingsytemChangeMap[RemoveMultipleX(info.IetfLanguageTagBeforeMigration.ToLowerInvariant())] = info.IetfLanguageTagAfterMigration;
+				if (info.LanguageTagBeforeMigration != info.LanguageTagAfterMigration)
+					m_writingsytemChangeMap[RemoveMultipleX(info.LanguageTagBeforeMigration.ToLowerInvariant())] = info.LanguageTagAfterMigration;
 				// Due to earlier bugs, FieldWorks projects sometimes contain cmn* writing systems in zh* files,
 				// and the fwdata incorrectly labels this data using a tag based on the file name rather than the
 				// language tag indicated by the internal properties. We attempt to correct this by also converting the
@@ -1520,8 +1520,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (info.FileName.StartsWith("zh", StringComparison.OrdinalIgnoreCase))
 				{
 					var fileNameTag = Path.GetFileNameWithoutExtension(info.FileName);
-					if (fileNameTag != info.IetfLanguageTagBeforeMigration)
-						m_writingsytemChangeMap[RemoveMultipleX(fileNameTag.ToLowerInvariant())] = info.IetfLanguageTagAfterMigration;
+					if (fileNameTag != info.LanguageTagBeforeMigration)
+						m_writingsytemChangeMap[RemoveMultipleX(fileNameTag.ToLowerInvariant())] = info.LanguageTagAfterMigration;
 				}
 			}
 		}

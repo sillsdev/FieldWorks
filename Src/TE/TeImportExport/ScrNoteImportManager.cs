@@ -176,7 +176,7 @@ namespace SIL.FieldWorks.TE
 		/// -----------------------------------------------------------------------------------
 		public static int GetWsForLocale(string locale)
 		{
-			string identifier = IetfLanguageTagHelper.ToIetfLanguageTag(locale);
+			string identifier = IetfLanguageTag.ToLanguageTag(locale);
 			CoreWritingSystemDefinition ws;
 			// TODO (WS_FIX): This used to be TryGetOrSet. How should we handle it now?
 			s_scr.Cache.ServiceLocator.WritingSystemManager.GetOrSet(identifier, out ws);

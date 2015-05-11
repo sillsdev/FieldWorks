@@ -71,7 +71,7 @@ namespace LexTextControlsTests
 			//var voiceTag = RFC5646Tag.RFC5646TagForVoiceWritingSystem(languageSubtag.Name, "");
 			CoreWritingSystemDefinition audioWs = writingSystemManager.Create(languageSubtag, WellKnownSubtags.AudioScript, null, new VariantSubtag[] {WellKnownSubtags.AudioPrivateUse});
 			CoreWritingSystemDefinition existingAudioWs;
-			if (writingSystemManager.TryGet(audioWs.IetfLanguageTag, out existingAudioWs))
+			if (writingSystemManager.TryGet(audioWs.LanguageTag, out existingAudioWs))
 			{
 				m_audioWsCode = existingAudioWs.Handle;
 			}

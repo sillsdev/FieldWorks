@@ -71,13 +71,13 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				if (info.FileName.StartsWith("zh", StringComparison.OrdinalIgnoreCase))
 				{
 					var fileNameTag = Path.GetFileNameWithoutExtension(info.FileName);
-					if (fileNameTag != info.IetfLanguageTagBeforeMigration)
-						m_tagMap[RemoveMultipleX(fileNameTag.ToLowerInvariant())] = info.IetfLanguageTagAfterMigration;
+					if (fileNameTag != info.LanguageTagBeforeMigration)
+						m_tagMap[RemoveMultipleX(fileNameTag.ToLowerInvariant())] = info.LanguageTagAfterMigration;
 				}
 				else
 				{
 					// Add the unchanged writing systems so that they can be handled properly in UpdateTags
-					m_tagMap[RemoveMultipleX(info.IetfLanguageTagBeforeMigration.ToLowerInvariant())] = info.IetfLanguageTagAfterMigration;
+					m_tagMap[RemoveMultipleX(info.LanguageTagBeforeMigration.ToLowerInvariant())] = info.LanguageTagAfterMigration;
 				}
 			}
 		}

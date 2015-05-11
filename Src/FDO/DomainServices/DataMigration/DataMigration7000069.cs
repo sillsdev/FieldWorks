@@ -98,7 +98,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		private void NoteMigration(int toVersion, IEnumerable<LdmlMigrationInfo> migrationInfo)
 		{
 			foreach (LdmlMigrationInfo info in migrationInfo)
-				m_tagMap[info.IetfLanguageTagBeforeMigration] = info.IetfLanguageTagAfterMigration;
+				m_tagMap[info.LanguageTagBeforeMigration] = info.LanguageTagAfterMigration;
 		}
 
 		private bool TryGetNewLangTag(string oldTag, out string newTag)
@@ -117,7 +117,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				newTag = cleaner.GetCompleteTag();
 			}
 
-			newTag = IetfLanguageTagHelper.Normalize(newTag, IetfLanguageTagNormalizationMode.SilCompatible);
+			newTag = IetfLanguageTag.Normalize(newTag, IetfLanguageTagNormalizationForm.SilCompatible);
 
 			m_tagMap[oldTag] = newTag;
 			return !newTag.Equals(oldTag, StringComparison.InvariantCultureIgnoreCase);

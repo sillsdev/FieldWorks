@@ -190,7 +190,7 @@ namespace SIL.CoreImpl
 			Assert.That(enWS.Variants, Is.EqualTo(new VariantSubtag[] {"fonipa"}));
 			Assert.That(enWS.DefaultFontName, Is.EqualTo("Charis SIL"));
 			Assert.That(enWS.DefaultCollation.ValueEquals(new IcuRulesCollationDefinition("standard")), Is.True);
-			Assert.That(enWS.IetfLanguageTag, Is.EqualTo("en-US-fonipa"));
+			Assert.That(enWS.LanguageTag, Is.EqualTo("en-US-fonipa"));
 			Assert.That(string.IsNullOrEmpty(enWS.WindowsLcid), Is.True);
 
 			CoreWritingSystemDefinition chWS = wsManager.Create("zh-CN");
@@ -199,7 +199,7 @@ namespace SIL.CoreImpl
 			Assert.That(chWS.Script, Is.EqualTo((ScriptSubtag) "Hans"));
 			Assert.That(chWS.Region, Is.EqualTo((RegionSubtag) "CN"));
 			Assert.That(chWS.DefaultFontName, Is.EqualTo("Charis SIL"));
-			Assert.That(chWS.DefaultCollation.ValueEquals(new SystemCollationDefinition {IetfLanguageTag = "zh-CN"}), Is.True);
+			Assert.That(chWS.DefaultCollation.ValueEquals(new SystemCollationDefinition {LanguageTag = "zh-CN"}), Is.True);
 		}
 
 		/// <summary>

@@ -128,7 +128,7 @@ namespace XMLViewsTests
 		public void XHTMLExportGetDigraphMapsFirstCharactersFromOtherSortRules()
 		{
 			CoreWritingSystemDefinition ws = Cache.LangProject.DefaultVernacularWritingSystem;
-			ws.DefaultCollation = new SystemCollationDefinition {IetfLanguageTag = "fr"};
+			ws.DefaultCollation = new SystemCollationDefinition {LanguageTag = "fr"};
 
 			var exporter = new ConfiguredExport(null, null, 0);
 			string output;

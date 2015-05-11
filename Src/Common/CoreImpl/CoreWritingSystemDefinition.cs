@@ -253,7 +253,7 @@ namespace SIL.CoreImpl
 					if (m_cpe == null)
 					{
 						string language, script, region, variant;
-						IetfLanguageTagHelper.TryGetParts(IetfLanguageTag, out language, out script, out region, out variant);
+						IetfLanguageTag.TryGetParts(LanguageTag, out language, out script, out region, out variant);
 						LgIcuCharPropEngine cpe = LgIcuCharPropEngineClass.Create();
 						cpe.Initialize(language, script, region, variant);
 						if (MainCharacterSet != null)
@@ -314,7 +314,7 @@ namespace SIL.CoreImpl
 				if (Language == null || Language.IsPrivateUse)
 					return "root";
 
-				return IetfLanguageTagHelper.ToIcuLocale(IetfLanguageTag);
+				return IetfLanguageTag.ToIcuLocale(LanguageTag);
 			}
 		}
 
@@ -404,10 +404,10 @@ namespace SIL.CoreImpl
 		/// <summary>
 		/// Updates the language tag.
 		/// </summary>
-		protected override void UpdateIetfLanguageTag()
+		protected override void UpdateLanguageTag()
 		{
 			ClearRenderers();
-			base.UpdateIetfLanguageTag();
+			base.UpdateLanguageTag();
 		}
 
 		private static bool FontHasGraphiteTables(IVwGraphics vg)

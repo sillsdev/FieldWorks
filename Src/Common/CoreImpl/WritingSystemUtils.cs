@@ -51,7 +51,7 @@ namespace SIL.CoreImpl
 	/// <summary>
 	/// An equality comparer for writing systems that determines equality based on the IETF language tag.
 	/// </summary>
-	public class WritingSystemLangTagEqualityComparer : IEqualityComparer<CoreWritingSystemDefinition>
+	public class WritingSystemLanguageTagEqualityComparer : IEqualityComparer<CoreWritingSystemDefinition>
 	{
 		/// <summary>
 		/// Determines whether the specified writing systems are equal.
@@ -66,7 +66,7 @@ namespace SIL.CoreImpl
 			if (ReferenceEquals(x, y))
 				return true;
 
-			return x.IetfLanguageTag == y.IetfLanguageTag;
+			return x.LanguageTag == y.LanguageTag;
 		}
 
 		/// <summary>
@@ -79,7 +79,7 @@ namespace SIL.CoreImpl
 		/// <exception cref="T:System.ArgumentNullException">The <paramref name="ws"/> is null.</exception>
 		public int GetHashCode(CoreWritingSystemDefinition ws)
 		{
-			return ws.IetfLanguageTag.GetHashCode();
+			return ws.LanguageTag.GetHashCode();
 		}
 	}
 }

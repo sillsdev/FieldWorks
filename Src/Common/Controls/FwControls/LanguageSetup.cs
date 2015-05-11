@@ -551,7 +551,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 
 			string isoCode = builder.ToString().Substring(0, Math.Min(3, builder.Length));
-			if (IetfLanguageTagHelper.IsValidLanguageCode(isoCode) && !LangTagInUse("qaa-x-" + isoCode))
+			if (IetfLanguageTag.IsValidLanguageCode(isoCode) && !LangTagInUse("qaa-x-" + isoCode))
 				return isoCode; // The generated code is valid and not in use by the local or global store
 
 			// We failed to generate a valid, unused language tag from the language name so
@@ -587,7 +587,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="identifier">The language tag to check.</param>
 		private bool LangTagInUse(string identifier)
 		{
-			return m_wsManager.AllDistinctWritingSystems.Select(ws => ws.IetfLanguageTag).Contains(identifier);
+			return m_wsManager.AllDistinctWritingSystems.Select(ws => ws.LanguageTag).Contains(identifier);
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -198,7 +198,7 @@ namespace SIL.CoreImpl
 			ScriptSubtag script;
 			RegionSubtag region;
 			IEnumerable<VariantSubtag> variants;
-			if (!IetfLanguageTagHelper.TryGetSubtags(ietfLanguageTag, out language, out script, out region, out variants))
+			if (!IetfLanguageTag.TryGetSubtags(ietfLanguageTag, out language, out script, out region, out variants))
 				throw new ArgumentException("The IETF language tag is invalid.", "ietfLanguageTag");
 			return Create(language, script, region, variants);
 		}
@@ -216,7 +216,7 @@ namespace SIL.CoreImpl
 			lock (m_syncRoot)
 			{
 				VariantSubtag[] variantSubtagsArray = variantSubtags.ToArray();
-				string langTag = IetfLanguageTagHelper.CreateIetfLanguageTag(languageSubtag, scriptSubtag, regionSubtag, variantSubtagsArray);
+				string langTag = IetfLanguageTag.Create(languageSubtag, scriptSubtag, regionSubtag, variantSubtagsArray);
 				CoreWritingSystemDefinition ws = m_repo.WritingSystemFactory.Create(langTag);
 				if (ws.Language != null && languageSubtag != null && ws.Language.Name != languageSubtag.Name)
 					ws.Language = new LanguageSubtag(ws.Language, languageSubtag.Name);
@@ -232,13 +232,13 @@ namespace SIL.CoreImpl
 				if (ws.Language != null && !string.IsNullOrEmpty(ws.Language.Name))
 					ws.Abbreviation = ws.Language.Name.Length > 3 ? ws.Language.Name.Substring(0, 3) : ws.Language.Name;
 				else
-					ws.Abbreviation = ws.IetfLanguageTag;
+					ws.Abbreviation = ws.LanguageTag;
 
 				if (ws.DefaultCollation == null)
 				{
 					string message;
-					if (SystemCollator.ValidateIetfLanguageTag(ws.IetfLanguageTag, out message))
-						ws.DefaultCollation = new SystemCollationDefinition {IetfLanguageTag = ws.IetfLanguageTag};
+					if (SystemCollator.ValidateLanguageTag(ws.LanguageTag, out message))
+						ws.DefaultCollation = new SystemCollationDefinition {LanguageTag = ws.LanguageTag};
 					else
 						ws.DefaultCollation = new IcuRulesCollationDefinition("standard");
 				}
@@ -378,10 +378,10 @@ namespace SIL.CoreImpl
 				// For example, and id of x-kal will produce a new WS with Id qaa-x-kal.
 				// In such a case, we may already have a WS with the corrected ID. Set will then fail.
 				// So, in such a case, return the already-known WS.
-				if (identifier != ws.IetfLanguageTag)
+				if (identifier != ws.LanguageTag)
 				{
 					CoreWritingSystemDefinition wsExisting;
-					if (TryGet(ws.IetfLanguageTag, out wsExisting))
+					if (TryGet(ws.LanguageTag, out wsExisting))
 					{
 						ws = wsExisting;
 						return true;
@@ -420,7 +420,7 @@ namespace SIL.CoreImpl
 			lock (m_syncRoot)
 			{
 				CoreWritingSystemDefinition existingWs;
-				if (TryGet(ws.IetfLanguageTag, out existingWs))
+				if (TryGet(ws.LanguageTag, out existingWs))
 				{
 					if (existingWs == ws)
 						// don't do anything
@@ -519,9 +519,9 @@ namespace SIL.CoreImpl
 				if (localFileRepo != null)
 				{
 					if (localFileRepo.Contains(ws.Id))
-						return localFileRepo.GetFilePathFromIetfLanguageTag(ws.IetfLanguageTag);
-					if (localFileRepo.GlobalWritingSystemRepository.Contains(ws.IetfLanguageTag))
-						return localFileRepo.GlobalWritingSystemRepository.GetFilePathFromIetfLanguageTag(ws.IetfLanguageTag);
+						return localFileRepo.GetFilePathFromLanguageTag(ws.LanguageTag);
+					if (localFileRepo.GlobalWritingSystemRepository.Contains(ws.LanguageTag))
+						return localFileRepo.GlobalWritingSystemRepository.GetFilePathFromLanguageTag(ws.LanguageTag);
 				}
 				return string.Empty;
 			}
@@ -569,7 +569,7 @@ namespace SIL.CoreImpl
 			get
 			{
 				lock (m_syncRoot)
-					return WritingSystems.Concat(OtherWritingSystems.Except(WritingSystems, new WritingSystemLangTagEqualityComparer())).ToArray();
+					return WritingSystems.Concat(OtherWritingSystems.Except(WritingSystems, new WritingSystemLanguageTagEqualityComparer())).ToArray();
 			}
 		}
 

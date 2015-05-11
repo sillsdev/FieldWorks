@@ -122,7 +122,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		internal void VerifyWsId(string wsId)
 		{
 			//Ensure the writing system identifier is set correctly
-			Assert.AreEqual(IetfLanguageTagHelper.CreateIetfLanguageTag(CurrentWritingSystem.Language, m_regionVariantControl.ScriptSubtag,
+			Assert.AreEqual(IetfLanguageTag.Create(CurrentWritingSystem.Language, m_regionVariantControl.ScriptSubtag,
 				m_regionVariantControl.RegionSubtag, m_regionVariantControl.VariantSubtags), wsId);
 		}
 
@@ -217,7 +217,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		internal void ValidateKeyboardTab()
 		{
-			Assert.AreEqual(CurrentWritingSystem.IetfLanguageTag, m_modelForKeyboard.CurrentIetfLanguageTag);
+			Assert.AreEqual(CurrentWritingSystem.LanguageTag, m_modelForKeyboard.CurrentLanguageTag);
 		}
 
 		internal void ValidateConvertersTab()
@@ -531,7 +531,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void VerifyNewlyAddedWritingSystems(string[] newExpectedWsIds)
 		{
-			List<string> actualWsIds = m_dlg.NewWritingSystems.Select(ws => ws.IetfLanguageTag).ToList();
+			List<string> actualWsIds = m_dlg.NewWritingSystems.Select(ws => ws.LanguageTag).ToList();
 			Assert.AreEqual(newExpectedWsIds.Length, actualWsIds.Count);
 			foreach (string expectedWsId in newExpectedWsIds)
 				Assert.Contains(expectedWsId, actualWsIds);

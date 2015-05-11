@@ -264,7 +264,7 @@ namespace SIL.FieldWorks.XWorks
 						if (systemCollation != null)
 						{
 							sortUsing = "OtherLanguage";
-							sortRules = systemCollation.IetfLanguageTag;
+							sortRules = systemCollation.LanguageTag;
 						}
 					}
 				}

@@ -631,12 +631,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					m_sortRulesPanel.Visible = false;
 					m_sortLanguagePanel.Visible = true;
 					var systemCollation = (SystemCollationDefinition) ws.DefaultCollation;
-					if (string.IsNullOrEmpty(systemCollation.IetfLanguageTag))
+					if (string.IsNullOrEmpty(systemCollation.LanguageTag))
 					{
 						string message;
-						systemCollation.IetfLanguageTag = SystemCollator.ValidateIetfLanguageTag(ws.IetfLanguageTag, out message) ? ws.IetfLanguageTag : (string) m_sortLanguageComboBox.SelectedValue;
+						systemCollation.LanguageTag = SystemCollator.ValidateLanguageTag(ws.LanguageTag, out message) ? ws.LanguageTag : (string) m_sortLanguageComboBox.SelectedValue;
 					}
-					m_sortLanguageComboBox.SelectedValue = systemCollation.IetfLanguageTag;
+					m_sortLanguageComboBox.SelectedValue = systemCollation.LanguageTag;
 					break;
 			}
 			m_userChangedSortRules = true;
@@ -663,7 +663,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			string spellCheckingDictionary = CurrentWritingSystem.SpellCheckingId;
 			if (string.IsNullOrEmpty(spellCheckingDictionary))
 			{
-				dictionaries.Add(new { Name = CurrentWritingSystem.IetfLanguageTag, Id = CurrentWritingSystem.IetfLanguageTag.Replace('-', '_') });
+				dictionaries.Add(new { Name = CurrentWritingSystem.LanguageTag, Id = CurrentWritingSystem.LanguageTag.Replace('-', '_') });
 			}
 
 			bool fDictionaryExistsForLanguage = false;
@@ -1570,7 +1570,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_regionVariantControl.WritingSystem = ws;
 			m_userChangedVariantControl = true;
 
-			m_FullCode.Text = ws.IetfLanguageTag;
+			m_FullCode.Text = ws.LanguageTag;
 
 			LoadShortWsNameFromCurrentWritingSystem();
 			rbLeftToRight.Checked = !ws.RightToLeftScript;
@@ -1672,7 +1672,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					{
 						string oldId = origWS.Id;
 						origWS.Copy(tempWS);
-						if (oldId != tempWS.IetfLanguageTag)
+						if (oldId != tempWS.LanguageTag)
 						{
 							// update the ID
 							m_wsManager.Set(origWS);
@@ -1969,19 +1969,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				CoreWritingSystemDefinition origWS = m_tempWritingSystems[tempWS];
 
-				if (origWS == null || tempWS.IetfLanguageTag != origWS.IetfLanguageTag)
+				if (origWS == null || tempWS.LanguageTag != origWS.LanguageTag)
 				{
 					// We can't let anyone change the user writing system (or "English"). Too many strings depend on
 					// this, and we'd get numerous crashes and terrible behavior if it was changed.
-					if (origWS != null && (origWS == m_wsManager.UserWritingSystem || origWS.IetfLanguageTag == "en"))
+					if (origWS != null && (origWS == m_wsManager.UserWritingSystem || origWS.LanguageTag == "en"))
 					{
 						ShowMsgCantChangeUserWS(tempWS, origWS);
 						return false;
 					}
 
 					// Catch case where we are going to overwrite an existing writing system.
-					if (m_wsManager.Exists(tempWS.IetfLanguageTag)
-						|| m_listBoxRelatedWSs.Items.Cast<CoreWritingSystemDefinition>().Any(ws => ws != tempWS && ws.IetfLanguageTag == tempWS.IetfLanguageTag))
+					if (m_wsManager.Exists(tempWS.LanguageTag)
+						|| m_listBoxRelatedWSs.Items.Cast<CoreWritingSystemDefinition>().Any(ws => ws != tempWS && ws.LanguageTag == tempWS.LanguageTag))
 					{
 						ShowMsgBoxCantCreateDuplicateWs(tempWS, origWS);
 						return false;
@@ -1999,7 +1999,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="origWS">The original writing system.</param>
 		protected virtual void ShowMsgCantChangeUserWS(CoreWritingSystemDefinition tempWS, CoreWritingSystemDefinition origWS)
 		{
-			string msg = string.Format(FwCoreDlgs.kstidCantChangeUserWS, origWS.IetfLanguageTag);
+			string msg = string.Format(FwCoreDlgs.kstidCantChangeUserWS, origWS.LanguageTag);
 			MessageBox.Show(msg, FwCoreDlgs.kstidWspLabel);
 		}
 
@@ -2220,7 +2220,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//This next assignment updates the DisplayName so it reflects the changes
 			//made in the regionVariantControl
 			CoreWritingSystemDefinition ws = CurrentWritingSystem;
-			m_FullCode.Text = ws.IetfLanguageTag;
+			m_FullCode.Text = ws.LanguageTag;
 			SetFullNameLabels(ws.DisplayLabel);
 			PopulateRelatedWSsListBox(CurrentWritingSystem);
 		}
@@ -2254,7 +2254,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (ws != null)
 			{
 				var systemCollation = (SystemCollationDefinition) ws.DefaultCollation;
-				systemCollation.IetfLanguageTag = (string) m_sortLanguageComboBox.SelectedValue;
+				systemCollation.LanguageTag = (string) m_sortLanguageComboBox.SelectedValue;
 			}
 		}
 

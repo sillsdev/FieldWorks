@@ -145,7 +145,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (m_ws != null)
 			{
 				bool modifyingVernWs = (m_wsContainer.DefaultVernacularWritingSystem != null &&
-					m_ws.IetfLanguageTag == m_wsContainer.DefaultVernacularWritingSystem.IetfLanguageTag);
+					m_ws.LanguageTag == m_wsContainer.DefaultVernacularWritingSystem.LanguageTag);
 
 				// If TE isn't installed, we can't support creating an inventory
 				// based on Scripture data. Likewise if we don't yet have any books (which also guards

@@ -1296,7 +1296,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			bool fAddDivider = cmnuAddWs.Items.Count > 0;
 			IEnumerable<CoreWritingSystemDefinition> q = from ws in wssToAdd
-											where !listToAddExistingTo.Items.Cast<CoreWritingSystemDefinition>().Contains(ws, new WritingSystemLangTagEqualityComparer())
+											where !listToAddExistingTo.Items.Cast<CoreWritingSystemDefinition>().Contains(ws, new WritingSystemLanguageTagEqualityComparer())
 											orderby ws.DisplayLabel
 											select ws;
 			foreach (CoreWritingSystemDefinition ws in q)
