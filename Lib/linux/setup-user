@@ -35,11 +35,11 @@ CopyRegistryKey()
 }
 
 (
-	if [ ! -d "${FW_CONFIG}/Icu50/" ]; then
+	if [ ! -d "${FW_CONFIG}/Icu54/" ]; then
 		echo "# Copying ICU data"
-		mkdir -p "${FW_CONFIG}/Icu50/"
-		cp -a "${FW_SHARE}/Icu50/icudt50l" "${FW_CONFIG}/Icu50/"
-		cp -a "${FW_SHARE}/Icu50/data" "${FW_CONFIG}/Icu50/"
+		mkdir -p "${FW_CONFIG}/Icu54/"
+		cp -a "${FW_SHARE}/Icu54/icudt54l" "${FW_CONFIG}/Icu54/"
+		cp -a "${FW_SHARE}/Icu54/data" "${FW_CONFIG}/Icu54/"
 	fi
 
 	if [ ! -d "${FW_CONFIG}/SIL/" ]; then
@@ -103,8 +103,8 @@ CopyRegistryKey()
 
 	echo "# Updating configuration"
 
-	mono "${WRITEKEY}" LM "Software/SIL" "Icu50DataDir" "${FW_CONFIG}/Icu50/icudt50l"
-	mono "${WRITEKEY}" LM "Software/SIL" "Icu50Dir" "${FW_CONFIG}/Icu50"
+	mono "${WRITEKEY}" LM "Software/SIL" "Icu54DataDir" "${FW_CONFIG}/Icu54/icudt50l"
+	mono "${WRITEKEY}" LM "Software/SIL" "Icu54Dir" "${FW_CONFIG}/Icu54"
 
 	mono "${WRITEKEY}" LM "Software/SIL/SilEncConverters40" "PluginDir" "${FW_LIB}/EC/Plugins"
 	mono "${WRITEKEY}" LM "Software/SIL/SilEncConverters40" "RootDir" "${FW_LIB}"
