@@ -1325,9 +1325,9 @@ namespace SIL.FieldWorks.XWorks
 		/// Handle the File/Restore menu command
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected bool OnFileProjectSharingLocation(object arg)
+		protected bool OnFileProjectLocation(object arg)
 		{
-			m_app.FwManager.FileProjectSharingLocation(m_app, this);
+			m_app.FwManager.FileProjectLocation(m_app, this);
 			return true;
 		}
 
@@ -1336,7 +1336,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Updates the enabled state of the File Project Sharing Location menu item
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected bool OnDisplayFileProjectSharingLocation(object commandObject, ref UIItemDisplayProperties display)
+		protected bool OnDisplayFileProjectLocation(object commandObject, ref UIItemDisplayProperties display)
 		{
 			display.Enabled = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.CanWriteKey();
 			return true;

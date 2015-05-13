@@ -347,11 +347,11 @@
     <Compile Include="MoveOrCopyFilesDlg.Designer.cs">
       <DependentUpon>MoveOrCopyFilesDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="ProjectLocationSharingDlg.cs">
+    <Compile Include="ProjectLocationDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ProjectLocationSharingDlg.Designer.cs">
-      <DependentUpon>ProjectLocationSharingDlg.cs</DependentUpon>
+    <Compile Include="ProjectLocationDlg.Designer.cs">
+      <DependentUpon>ProjectLocationDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="PunctuationDlg.cs">
       <SubType>Form</SubType>
@@ -544,8 +544,8 @@
       <SubType>Designer</SubType>
       <DependentUpon>MoveOrCopyFilesDlg.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ProjectLocationSharingDlg.resx">
-      <DependentUpon>ProjectLocationSharingDlg.cs</DependentUpon>
+    <EmbeddedResource Include="ProjectLocationDlg.resx">
+      <DependentUpon>ProjectLocationDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PunctuationDlg.resx">
       <DependentUpon>PunctuationDlg.cs</DependentUpon>

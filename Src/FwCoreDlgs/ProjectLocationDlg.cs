@@ -2,7 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
-// File: ProjectLocationSharingDlg.cs
+// File: ProjectLocationDlg.cs
 // Responsibility: FW team
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -26,16 +26,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// This dialog supports controlling the location and sharing of the project folder.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public partial class ProjectLocationSharingDlg : Form
+	public partial class ProjectLocationDlg : Form
 	{
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ProjectLocationSharingDlg"/> class.
+		/// Initializes a new instance of the <see cref="ProjectLocationDlg"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private ProjectLocationSharingDlg()
+		private ProjectLocationDlg()
 		{
 			InitializeComponent();
 		}
@@ -43,12 +43,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ProjectLocationSharingDlg"/> class.
+		/// Initializes a new instance of the <see cref="ProjectLocationDlg"/> class.
 		/// </summary>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <param name="cache"></param>
 		/// ------------------------------------------------------------------------------------
-		public ProjectLocationSharingDlg(IHelpTopicProvider helpTopicProvider, FdoCache cache = null)
+		public ProjectLocationDlg(IHelpTopicProvider helpTopicProvider, FdoCache cache = null)
 			: this()
 		{
 			if (cache == null)

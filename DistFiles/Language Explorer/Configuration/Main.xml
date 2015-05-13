@@ -56,7 +56,7 @@
 
 		<!-- F5 doesn't seem to work with the open source adapter -->
 		<command id="CmdProjectProperties" label="Field_Works Project Properties..." message="FileProjectProperties"/>
-		<command id="CmdProjectSharingLocation" label="Project Locations and Sharing..." message="FileProjectSharingLocation"/>
+		<command id="CmdProjectLocation" label="Project Locations..." message="FileProjectLocation"/>
 		<command id="CmdDeleteProject" label="_Delete Project..." message="DeleteProject" icon="Delete"/>
 		<command id="CmdCreateProjectShortcut" label="_Create Shortcut on Desktop" message="CreateShortcut"/>
 		<command id="CmdNewLangProject" label="_New FieldWorks Project..." message="NewLangProject" icon="NewProject"/>
@@ -452,7 +452,7 @@
 				<item command="CmdBackup"/>
 				<item command="CmdRestoreFromBackup"/>
 				<item label="-" translate="do not translate"/>
-				<item command ="CmdProjectSharingLocation"/>
+				<item command ="CmdProjectLocation"/>
 				<item command="CmdDeleteProject"/>
 				<item command="CmdCreateProjectShortcut"/>
 			</menu>

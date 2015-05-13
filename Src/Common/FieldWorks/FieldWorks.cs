@@ -1905,18 +1905,18 @@ namespace SIL.FieldWorks
 		}
 		#endregion
 
-		#region Project sharing and location methods
+		#region Project location methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Displays the Project Location Sharing dialog box
+		/// Displays the Project Location dialog box
 		/// </summary>
 		/// <param name="dialogOwner">The form that should be used as the dialog owner.</param>
 		/// <param name="fwApp">The FieldWorks application from with this command was initiated.
 		/// </param>
 		/// ------------------------------------------------------------------------------------
-		internal static void FileProjectSharingLocation(Form dialogOwner, FwApp fwApp)
+		internal static void FileProjectLocation(Form dialogOwner, FwApp fwApp)
 		{
-			using (ProjectLocationSharingDlg dlg = new ProjectLocationSharingDlg(fwApp, fwApp.Cache))
+			using (ProjectLocationDlg dlg = new ProjectLocationDlg(fwApp, fwApp.Cache))
 			{
 			if (dlg.ShowDialog(dialogOwner) != DialogResult.OK)
 				return;

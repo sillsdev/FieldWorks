@@ -1,6 +1,6 @@
 ﻿namespace SIL.FieldWorks.FwCoreDlgs
 {
-	partial class ProjectLocationSharingDlg
+	partial class ProjectLocationDlg
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -29,7 +29,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProjectLocationSharingDlg));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProjectLocationDlg));
 			this.m_btnBrowseProjectFolder = new System.Windows.Forms.Button();
 			this.label3 = new System.Windows.Forms.Label();
 			this.m_tbProjectsFolder = new System.Windows.Forms.TextBox();
@@ -91,7 +91,7 @@
 			this.m_tbCurrentProjectPath.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.m_tbCurrentProjectPath.Name = "m_tbCurrentProjectPath";
 			// 
-			// ProjectLocationSharingDlg
+			// ProjectLocationDlg
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -106,7 +106,7 @@
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
-			this.Name = "ProjectLocationSharingDlg";
+			this.Name = "ProjectLocationDlg";
 			this.ShowInTaskbar = false;
 			this.ResumeLayout(false);
 			this.PerformLayout();

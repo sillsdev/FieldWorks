@@ -808,7 +808,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				if (MessageBox.Show(string.Format(FwCoreDlgs.ksNLPFolderDoesNotExist, dataDirectory),
 									FwCoreDlgs.ksNLPFolderError, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
 					return false; // can't go on.
-				using (var dlg = new ProjectLocationSharingDlg(helpTopicProvider))
+				using (var dlg = new ProjectLocationDlg(helpTopicProvider))
 				{
 					if (dlg.ShowDialog(f) != DialogResult.OK)
 						return false; // can't go on.

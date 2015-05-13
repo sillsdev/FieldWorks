@@ -355,7 +355,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		///
 		/// </summary>
-		public void FileProjectSharingLocation(FwApp fwApp, Form dialogOwner)
+		public void FileProjectLocation(FwApp fwApp, Form dialogOwner)
 		{
 			throw new NotImplementedException();
 		}
